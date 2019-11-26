@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,36 +28,24 @@
 
 #include <microhttpd.h>
 
+static const char *MSG_401 = "<html><body>401 - Unauthorized</body></html>";
+static const char *MSG_404 = "<html><body>404 - Page not found</body></html>";
+
 struct MicroHttpd::Private {
-	MHD_Daemon *mhd;
+	MHD_Daemon *mhd = nullptr;
 	QList<QPair<QRegularExpression, HttpRequestHandler>> requesthandlers;
 
 	// Basic auth
-	QString baRealm;
-	QString baUser;
-	QString baPass;
+	QByteArray baRealm;
+	QByteArray baUser;
+	QByteArray baPass;
 
 	// Access controls
 	AcceptPolicy acceptPolicy;
 
-	// standard error responses
-	MHD_Response *response404;
-	MHD_Response *response401;
-
-	Private() : mhd(0)
+	Private()
 	{
 		acceptPolicy = [](const QHostAddress &addr) { return addr.isLoopback(); };
-
-		const char *msg404 = "<html><body>404 - Page not found</body></html>";
-		response404 = MHD_create_response_from_buffer(strlen(msg404), const_cast<char*>(msg404), MHD_RESPMEM_PERSISTENT);
-		const char *msg401 = "<html><body>401 - Unauthorized</body></html>";
-		response401 = MHD_create_response_from_buffer(strlen(msg401), const_cast<char*>(msg401), MHD_RESPMEM_PERSISTENT);
-	}
-
-	~Private()
-	{
-		MHD_destroy_response(response404);
-		MHD_destroy_response(response401);
 	}
 };
 
@@ -153,16 +141,32 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 
 		// Demand authentication if basic auth is enabled
 		if(!d->baPass.isEmpty()) {
-			char *user, *pass;
+			char *user, *pass = nullptr;
+			bool fail = false;
+
 			user = MHD_basic_auth_get_username_password(connection, &pass);
-			if(user != d->baUser || pass != d->baPass) {
+			if(d->baUser != user || d->baPass != pass) {
 				// Invalid username or password
 				logMessage(connection, 401, methodstr, url);
-				return MHD_queue_basic_auth_fail_response(connection, d->baRealm.toUtf8().constData(), d->response401);
+				fail = true;
 			}
 
-			if(user) free(user);
-			if(pass) free(pass);
+			if(user) MHD_free(user);
+			if(pass) MHD_free(pass);
+
+			if(fail) {
+				auto response = MHD_create_response_from_buffer(
+					strlen(MSG_401),
+					const_cast<char*>(MSG_401),
+					MHD_RESPMEM_PERSISTENT
+					);
+				const auto ret = MHD_queue_basic_auth_fail_response(
+					connection,
+					d->baRealm.constData(),
+					response);
+				MHD_destroy_response(response);
+				return ret;
+			}
 		}
 
 		// Find request handler
@@ -180,7 +184,13 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 		// Send 404 error immediately if no handler was found
 		if(!reqhandler) {
 			logMessage(connection, 404, methodstr, url);
-			return MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, d->response404);
+			auto response = MHD_create_response_from_buffer(
+					strlen(MSG_404),
+					const_cast<char*>(MSG_404),
+					MHD_RESPMEM_PERSISTENT);
+			const auto ret = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
+			MHD_destroy_response(response);
+			return ret;
 		}
 
 		RequestContext *ctx = new RequestContext(request, reqhandler);
@@ -237,7 +247,6 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 	// Send response
 	HttpResponse response = reqctx->reqhandler(reqctx->request);
 	MHD_Response *mhdresponse;
-	int ret;
 
 	logMessage(connection, response.code(), methodstr, url);
 
@@ -247,7 +256,7 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 		MHD_add_response_header(mhdresponse, i.key().toUtf8().constData(), i.value().toUtf8().constData());
 	}
 
-	ret = MHD_queue_response (connection, response.code(), mhdresponse);
+	const auto ret = MHD_queue_response (connection, response.code(), mhdresponse);
 	MHD_destroy_response(mhdresponse);
 
 	return ret;
@@ -338,9 +347,9 @@ void MicroHttpd::addRequestHandler(const char *urlMatcher, HttpRequestHandler ha
 
 void MicroHttpd::setBasicAuth(const QString &realm, const QString &username, const QString &password)
 {
-	_d->baRealm = realm;
-	_d->baUser = username;
-	_d->baPass = password;
+	_d->baRealm = realm.toUtf8();
+	_d->baUser = username.toUtf8();
+	_d->baPass = password.toUtf8();
 }
 
 QString MicroHttpd::version()
@@ -393,6 +402,6 @@ HttpResponse HttpResponse::MethodNotAllowed(const QStringList &allow)
 
 HttpResponse HttpResponse::NotFound()
 {
-	return HttpResponse(404, "<html><body>404 - Page not found</body></html>");
+	return HttpResponse(404, MSG_404);
 }
 
