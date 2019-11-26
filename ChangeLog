@@ -4,6 +4,7 @@
  * Server: Abuse report token can now be set via admin API
  * Server: List server whitelist can now be edited via the API
  * Server: Fixed memory leak in admin API
+ * Server: The server can now also serve web admin site static files
  * Added command line options to override data and config paths (portable app mode)
  * Added "closed" session list filtering option
 

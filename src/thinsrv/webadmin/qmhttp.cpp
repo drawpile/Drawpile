@@ -25,6 +25,8 @@
 #include <QJsonObject>
 #include <QUrl>
 #include <QDateTime>
+#include <QMimeDatabase>
+#include <QFile>
 
 #include <microhttpd.h>
 
@@ -416,5 +418,35 @@ HttpResponse HttpResponse::MethodNotAllowed(const QStringList &allow)
 HttpResponse HttpResponse::NotFound()
 {
 	return HttpResponse(404, MSG_404);
+}
+
+HttpResponse HttpResponse::FileResponse(const QString &path, bool head)
+{
+	QFile f { path };
+	if(!f.open(QFile::ReadOnly))
+		return NotFound();
+
+	QByteArray body;
+	qint64 size;
+
+	if(head) {
+		size = f.size();
+
+	} else {
+		body = f.readAll();
+		size = body.length();
+	}
+
+	HttpResponse r { 200, body };
+	r.setHeader("Content-Length", QString::number(size));
+
+	QMimeDatabase mimedb;
+	QList<QMimeType> mimetypes = mimedb.mimeTypesForFileName(path);
+	if(mimetypes.isEmpty())
+		r.setHeader("Content-Type", "application/octet-stream");
+	else
+		r.setHeader("Content-Type", mimetypes.first().name());
+
+	return r;
 }
 

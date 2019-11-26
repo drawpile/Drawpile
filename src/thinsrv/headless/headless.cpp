@@ -24,6 +24,7 @@
 #include "../libserver/sslserver.h"
 #include "../libserver/inmemoryconfig.h"
 #include "configfile.h"
+#include "../libshared/util/paths.h"
 
 #ifdef HAVE_WEBADMIN
 #include "webadmin/webadmin.h"
@@ -308,6 +309,10 @@ bool start() {
 #ifdef HAVE_WEBADMIN
 			if(webadminPort>0) {
 				webadmin->setSessions(server);
+				const auto webadminDirectory = utils::paths::locateDataFile("webadmin/");
+				if(!webadminDirectory.isEmpty()) {
+					webadmin->setStaticFileRoot(QDir(webadminDirectory));
+				}
 				webadmin->start(webadminPort);
 			}
 #endif

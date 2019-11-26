@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2016 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QObject>
 
 class MicroHttpd;
+class QDir;
 
 namespace server {
 
@@ -31,7 +32,7 @@ class Webadmin : public QObject
 {
 	Q_OBJECT
 public:
-	Webadmin(QObject *parent=0);
+	Webadmin(QObject *parent=nullptr);
 
 	/**
 	 * @brief Enable basic authentication
@@ -44,6 +45,15 @@ public:
 
 	//! Set the session server to administrate
 	void setSessions(MultiServer *server);
+
+	/**
+	 * @brief Set static file directory
+	 *
+	 * If set, files from this directory will be served at the root path.
+	 * Requests for any URL ending with / will return first the index file of that
+	 * directory, if present, then the root index file.
+	 */
+	void setStaticFileRoot(const QDir &path);
 
 	/**
 	 * @brief Set the subnet from which the web admin can be accessed.

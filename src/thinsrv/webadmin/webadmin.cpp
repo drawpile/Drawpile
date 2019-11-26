@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 #include <QJsonObject>
 #include <QMetaObject>
+#include <QDir>
 
 namespace server {
 
@@ -102,6 +103,41 @@ void Webadmin::setSessions(MultiServer *server)
 			);
 
 		return HttpResponse::JsonResponse(result.body, result.status);
+	});
+}
+
+void Webadmin::setStaticFileRoot(const QDir &dir)
+{
+	m_server->addRequestHandler("^/", [dir](const HttpRequest &req) {
+		if(req.method() != HttpRequest::HEAD && req.method() != HttpRequest::GET)
+			return HttpResponse::MethodNotAllowed(QStringList() << "HEAD" << "GET");
+
+		// Note: microhttpd sanitizes the request path for us.
+		auto path = req.path();
+
+		if(path.endsWith('/')) {
+			if(path.length() > 1) {
+				QFileInfo indexhtml { dir, "." + req.path() + "index.html" };
+				if(indexhtml.exists()) {
+					return HttpResponse::FileResponse(
+						indexhtml.absoluteFilePath(),
+						req.method() == HttpRequest::HEAD
+						);
+				}
+			}
+
+			// Fall back to root index HTML
+			path = "/index.html";
+		}
+
+		QFileInfo f { dir, "." + path };
+		if(f.exists())
+			return HttpResponse::FileResponse(
+				f.absoluteFilePath(),
+				req.method() == HttpRequest::HEAD
+				);
+
+		return HttpResponse::NotFound();
 	});
 }
 

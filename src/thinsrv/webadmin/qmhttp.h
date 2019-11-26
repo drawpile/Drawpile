@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2018 Calle Laakkonen
+   Copyright (C) 2014-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -138,6 +138,9 @@ public:
 
 	//! Return a response configured for HTML content
 	static HttpResponse HtmlResponse(const QString &html);
+
+	//! Return a file from the filesystem
+	static HttpResponse FileResponse(const QString &path, bool head=false);
 
 	//! Return a JSON document
 	static HttpResponse JsonResponse(const QJsonDocument &doc, int statuscode=200);
