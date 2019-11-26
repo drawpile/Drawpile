@@ -103,6 +103,8 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 			m_filteredSessions, &SessionFilterProxyModel::setShowPassworded);
 	connect(m_ui->showNsfw, &QAbstractButton::toggled,
 			m_filteredSessions, &SessionFilterProxyModel::setShowNsfw);
+	connect(m_ui->showClosed, &QAbstractButton::toggled,
+			m_filteredSessions, &SessionFilterProxyModel::setShowClosed);
 	connect(m_ui->filter, &QLineEdit::textChanged,
 			m_filteredSessions, &SessionFilterProxyModel::setFilterFixedString);
 
@@ -149,6 +151,7 @@ JoinDialog::~JoinDialog()
 	cfg.beginGroup("history");
 	cfg.setValue("filterlocked", m_ui->showPassworded->isChecked());
 	cfg.setValue("filternsfw", m_ui->showNsfw->isChecked());
+	cfg.setValue("filterclosed", m_ui->showClosed->isChecked());
 
 	delete m_ui;
 }
@@ -176,6 +179,7 @@ void JoinDialog::setListingVisible(bool show)
 	m_ui->filterLabel->setVisible(show);
 	m_ui->showPassworded->setVisible(show);
 	m_ui->showNsfw->setVisible(show);
+	m_ui->showClosed->setVisible(show);
 	m_ui->listing->setVisible(show);
 	m_ui->line->setVisible(show);
 
@@ -336,6 +340,7 @@ void JoinDialog::restoreSettings()
 	m_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
 
 	m_ui->showPassworded->setChecked(cfg.value("filterlocked", true).toBool());
+	m_ui->showClosed->setChecked(cfg.value("filterclosed", true).toBool());
 
 	if(m_ui->showNsfw->isEnabled())
 		m_ui->showNsfw->setChecked(cfg.value("filternsfw", true).toBool());

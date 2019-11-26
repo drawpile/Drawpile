@@ -70,6 +70,13 @@ padding: 6px;</string>
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="showClosed">
+       <property name="text">
+        <string>Closed</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QCheckBox" name="showPassworded">
        <property name="text">
         <string>Passworded</string>

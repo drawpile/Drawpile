@@ -44,10 +44,18 @@ void SessionFilterProxyModel::setShowNsfw(bool show)
 	}
 }
 
+void SessionFilterProxyModel::setShowClosed(bool show)
+{
+	if(m_showClosed != show) {
+		m_showClosed = show;
+		invalidateFilter();
+	}
+}
+
 bool SessionFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
 	const QModelIndex i = sourceModel()->index(source_row, 0, source_parent);
-	int nsfwRole=0, pwRole=0;
+	int nsfwRole=0, pwRole=0, closedRole=0;
 
 	if(sourceModel()->inherits(SessionListingModel::staticMetaObject.className())) {
 		// Always show the top level items (listin servers)
@@ -56,10 +64,12 @@ bool SessionFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 
 		nsfwRole = SessionListingModel::IsNsfwRole;
 		pwRole = SessionListingModel::IsPasswordedRole;
+		closedRole = SessionListingModel::IsClosedRole;
 
 	} else if(sourceModel()->inherits(net::LoginSessionModel::staticMetaObject.className())) {
 		nsfwRole = net::LoginSessionModel::NsfmRole;
 		pwRole = net::LoginSessionModel::NeedPasswordRole;
+		closedRole = net::LoginSessionModel::ClosedRole;
 	}
 
 	if(!m_showNsfw && nsfwRole) {
@@ -68,6 +78,11 @@ bool SessionFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 	}
 
 	if(!m_showPassworded && pwRole) {
+		if(i.data(pwRole).toBool())
+			return false;
+	}
+
+	if(!m_showClosed && closedRole) {
 		if(i.data(pwRole).toBool())
 			return false;
 	}

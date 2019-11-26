@@ -5,6 +5,7 @@
  * Server: List server whitelist can now be edited via the API
  * Server: Fixed memory leak in admin API
  * Added command line options to override data and config paths (portable app mode)
+ * Added "closed" session list filtering option
 
 2019-11-16 Version 2.1.14
  * Fixed dab spacing in default brush presets

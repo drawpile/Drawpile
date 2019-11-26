@@ -41,6 +41,7 @@ public:
 public slots:
 	void setShowNsfw(bool show);
 	void setShowPassworded(bool show);
+	void setShowClosed(bool show);
 
 protected:
 	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
@@ -48,6 +49,7 @@ protected:
 private:
 	bool m_showPassworded;
 	bool m_showNsfw;
+	bool m_showClosed;
 };
 
 #endif
