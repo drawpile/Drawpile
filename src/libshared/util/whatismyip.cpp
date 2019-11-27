@@ -82,8 +82,8 @@ void WhatIsMyIp::discoverMyIp()
 	m_querying = true;
 
 	auto *filedownload = new networkaccess::FileDownload(this);
-
 	filedownload->setMaxSize(64);
+	filedownload->start(QUrl("https://ipecho.net/plain"));
 
 	connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {
 		filedownload->deleteLater();
