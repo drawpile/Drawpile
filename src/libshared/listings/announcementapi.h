@@ -89,6 +89,7 @@ public:
 
 	void setResult(const QVariant &result, const QString &message=QString());
 	void setError(const QString &error);
+	void setUrl(const QUrl &url) { m_apiUrl = url; }
 
 	QUrl apiUrl() const { return m_apiUrl; }
 	QVariant result() const { return m_result; }

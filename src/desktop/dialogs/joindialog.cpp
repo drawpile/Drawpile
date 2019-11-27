@@ -26,7 +26,9 @@
 #include "utils/sessionfilterproxymodel.h"
 #include "utils/images.h"
 #include "utils/newversion.h"
+#include "utils/icon.h"
 #include "../libshared/listings/announcementapi.h"
+#include "../libshared/util/networkaccess.h"
 #include "parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
@@ -41,6 +43,7 @@
 #include <QUrl>
 #include <QDebug>
 #include <QFileDialog>
+#include <QMessageBox>
 
 namespace dialogs {
 
@@ -57,6 +60,10 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->setupUi(this);
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+
+	m_addServerButton = m_ui->buttons->addButton(tr("Add"), QDialogButtonBox::ActionRole);
+	m_addServerButton->setIcon(icon::fromTheme("list-add"));
+	connect(m_addServerButton, &QPushButton::clicked, this, &JoinDialog::addListServer);
 
 	if(!url.isEmpty())
 		m_ui->address->setCurrentText(url.toString());
@@ -182,6 +189,7 @@ void JoinDialog::setListingVisible(bool show)
 	m_ui->showClosed->setVisible(show);
 	m_ui->listing->setVisible(show);
 	m_ui->line->setVisible(show);
+	m_addServerButton->setVisible(show);
 
 	if(show)
 		refreshListing();
@@ -216,6 +224,8 @@ static bool isRoomcode(const QString &str) {
 
 void JoinDialog::addressChanged(const QString &addr)
 {
+	m_addServerButton->setEnabled(!addr.isEmpty());
+
 	if(isRoomcode(addr)) {
 		// A room code was just entered. Trigger session URL query
 		m_ui->address->setEditText(QString());
@@ -399,6 +409,91 @@ QUrl JoinDialog::getUrl() const
 		return QUrl();
 
 	return url;
+}
+
+void JoinDialog::addListServer()
+{
+	// This is the "simplified" way of adding list servers:
+	// The application will fetch the server's root page (http://DOMAIN/)
+	// and see if there is a <meta name="drawpile:list-server"> tag.
+	// If there is, it will follow it and add the list server.
+	QString urlStr = m_ui->address->currentText();
+	QUrl url;
+	if(!urlStr.contains('/')) {
+		url = QUrl { "http://" + urlStr };
+	} else {
+		url = QUrl { "http://" + QUrl{urlStr}.host() };
+	}
+
+	m_addServerButton->setEnabled(false);
+
+	qInfo() << "Querying" << url << "for list server info...";
+
+	auto *response = sessionlisting::getApiInfo(url);
+	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
+		m_addServerButton->setEnabled(true);
+		if(!error.isEmpty()) {
+			QMessageBox::warning(this, tr("Add listing server"), error);
+			return;
+		}
+
+		const auto info = result.value<sessionlisting::ListServerInfo>();
+		const QString apiUrl = response->apiUrl().toString();
+
+		sessionlisting::ListServerModel listservers(true, this);
+
+		// Don't overwrite any existing server here.
+		// That can be done in the preferences dialog.
+		if(!listservers.addServer(
+			info.name,
+			apiUrl,
+			info.description,
+			info.readOnly,
+			info.publicListings,
+			info.privateListings
+		)) {
+			qInfo() << apiUrl << "List server already added.";
+			return;
+		}
+
+		if(info.faviconUrl == "drawpile") {
+			listservers.setFavicon(
+				apiUrl,
+				QIcon(":/icons/drawpile.png").pixmap(128, 128).toImage()
+				);
+
+		} else {
+			const QUrl favicon(info.faviconUrl);
+			if(favicon.isValid()) {
+				auto *filedownload = new networkaccess::FileDownload(this);
+
+				filedownload->setExpectedType("image/");
+
+				connect(filedownload, &networkaccess::FileDownload::finished, this, [filedownload, apiUrl](const QString &errorMessage) {
+					if(!errorMessage.isEmpty()) {
+						qWarning("Couldnt' fetch favicon: %s", qPrintable(errorMessage));
+						return;
+					}
+
+					QImage image;
+					if(!image.load(filedownload->file(), nullptr)) {
+						qWarning("Couldn't load favicon.");
+						return;
+					}
+
+					sessionlisting::ListServerModel listservers(true);
+					listservers.setFavicon(apiUrl, image);
+				});
+				connect(filedownload, &networkaccess::FileDownload::finished, filedownload, &QObject::deleteLater);
+
+				filedownload->start(favicon);
+			}
+		}
+
+		listservers.saveServers();
+		m_sessions->setMessage(info.name, tr("Loading..."));
+	});
+	connect(response, &sessionlisting::AnnouncementApiResponse::finished, response, &QObject::deleteLater);
 }
 
 }

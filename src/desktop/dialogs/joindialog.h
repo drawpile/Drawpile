@@ -58,11 +58,14 @@ private slots:
 	void refreshListing();
 	void recordingToggled(bool checked);
 
+	void addListServer();
+
 private:
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
 	void setListingVisible(bool show);
 
 	Ui_JoinDialog *m_ui;
+	QPushButton *m_addServerButton;
 	SessionFilterProxyModel *m_filteredSessions;
 	SessionListingModel *m_sessions;
 

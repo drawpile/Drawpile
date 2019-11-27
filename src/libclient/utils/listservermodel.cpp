@@ -73,20 +73,35 @@ bool ListServerModel::removeRows(int row, int count, const QModelIndex &parent)
 	return true;
 }
 
-void ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv)
+bool ListServerModel::addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv)
 {
+	const ListServer lstSrv {
+			QIcon(),
+			QString(),
+			name,
+			url,
+			description,
+			readonly,
+			pub,
+			priv
+		};
+
+	// First check if a server with this URL already exists
+	for(int i=0;i<m_servers.size();++i) {
+		if(m_servers.at(i).url == url) {
+			// Already exists! Update data instead of adding
+			m_servers[i] = lstSrv;
+			const auto idx = index(i);
+			emit dataChanged(idx, idx);
+			return false;
+		}
+	}
+
+	// No? Then add it
 	beginInsertRows(QModelIndex(), m_servers.size(), m_servers.size());
-	m_servers << ListServer {
-		QIcon(),
-		QString(),
-		name,
-		url,
-		description,
-		readonly,
-		pub,
-		priv
-	};
+	m_servers << lstSrv;
 	endInsertRows();
+	return true;
 }
 
 void ListServerModel::setFavicon(const QString &url, const QImage &icon)

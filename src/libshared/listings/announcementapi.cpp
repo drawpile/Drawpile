@@ -18,6 +18,7 @@
 */
 
 #include "announcementapi.h"
+#include "listserverfinder.h"
 #include "../util/networkaccess.h"
 #include "config.h" // for DRAWPILE_VERSION
 
@@ -102,63 +103,98 @@ void AnnouncementApiResponse::setError(const QString &error)
 	emit finished(QVariant(), QString(), error);
 }
 
+static void readApiInfoReply(QNetworkReply *reply, AnnouncementApiResponse *res)
+{
+	auto r = readReply(reply);
+	if(IsApiError(r)) {
+		res->setError(ApiError(r));
+		return;
+	}
+	const auto doc = ApiSuccess(r);
+
+	res->setUrl(reply->url());
+
+	if(!doc.isObject()) {
+		res->setError(QStringLiteral("Invalid response: object expected!"));
+		return;
+	}
+
+	const QJsonObject obj = doc.object();
+
+	QString apiname = obj.value("api_name").toString();
+	if(apiname != "drawpile-session-list") {
+		res->setError(QStringLiteral("This is not a Drawpile listing server!"));
+		return;
+	}
+
+	ListServerInfo info {
+		obj.value("version").toString(),
+		obj.value("name").toString().trimmed(),
+		obj.value("description").toString().trimmed(),
+		obj.value("favicon").toString(),
+		obj.value("read_only").toBool(),
+		obj.value("public").toBool(true),
+		// backward compatibility: private defaults to true only
+		// if the server is not a read only server.
+		obj.value("private").toBool(!obj.value("read_only").toBool())
+	};
+
+	if(info.version.isEmpty()) {
+		res->setError(QStringLiteral("API version not specified!"));
+		return;
+	}
+
+	if(!info.version.startsWith("1.")) {
+		res->setError(QStringLiteral("Unsupported API version!"));
+		return;
+	}
+
+	if(info.name.isEmpty()) {
+		res->setError(QStringLiteral("Server name missing!"));
+		return;
+	}
+
+	res->setResult(QVariant::fromValue(info));
+}
+
 AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 {
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
 	QNetworkRequest req(apiUrl);
 	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
-		auto r = readReply(reply);
-		if(IsApiError(r)) {
-			res->setError(ApiError(r));
-			return;
+		const auto contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
+
+		// If the URL returns HTML, extract the link to the real API from the meta tags and try again
+		if(contentType.startsWith("text/html") || contentType.startsWith("application/xhtml+xml")) {
+			if(reply->error() != QNetworkReply::NoError) {
+				res->setError(reply->errorString());
+				return;
+			}
+
+			const auto realApiUrl = findListserverLinkHtml(reply);  
+			if(realApiUrl.isEmpty()) {
+				res->setError("No listserver link found!");
+
+			} else {
+				QNetworkRequest req2(realApiUrl);
+				req2.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+				req2.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+				QNetworkReply *reply2 = networkaccess::getInstance()->get(req2);
+				reply2->connect(reply2, &QNetworkReply::finished, res, [reply2, res]() {
+					readApiInfoReply(reply2, res);
+				});
+				reply2->connect(reply2, &QNetworkReply::finished, reply2, &QObject::deleteLater);
+			}
+
+		} else {
+			readApiInfoReply(reply, res);
 		}
-		const auto doc = ApiSuccess(r);
-
-		if(!doc.isObject()) {
-			res->setError(QStringLiteral("Invalid response: object expected!"));
-			return;
-		}
-
-		const QJsonObject obj = doc.object();
-
-		QString apiname = obj.value("api_name").toString();
-		if(apiname != "drawpile-session-list") {
-			res->setError(QStringLiteral("This is not a Drawpile listing server!"));
-			return;
-		}
-
-		ListServerInfo info {
-			obj.value("version").toString(),
-			obj.value("name").toString().trimmed(),
-			obj.value("description").toString().trimmed(),
-			obj.value("favicon").toString(),
-			obj.value("read_only").toBool(),
-			obj.value("public").toBool(true),
-			// backward compatibility: private defaults to true only
-			// if the server is not a read only server.
-			obj.value("private").toBool(!obj.value("read_only").toBool())
-		};
-
-		if(info.version.isEmpty()) {
-			res->setError(QStringLiteral("API version not specified!"));
-			return;
-		}
-
-		if(!info.version.startsWith("1.")) {
-			res->setError(QStringLiteral("Unsupported API version!"));
-			return;
-		}
-
-		if(info.name.isEmpty()) {
-			res->setError(QStringLiteral("Server name missing!"));
-			return;
-		}
-
-		res->setResult(QVariant::fromValue(info));
 	});
 	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
 

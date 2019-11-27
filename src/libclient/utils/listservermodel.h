@@ -53,7 +53,11 @@ public:
 
 	bool removeRows(int row, int count, const QModelIndex &parent) override;
 
-	void addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv);
+	/**
+	 * @brief Add a new server to the list
+	 * @return false if an existing item was updated instead of added
+	 */
+	bool addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv);
 
 	//!  Set the favicon for the server with the given URL
 	void setFavicon(const QString &url, const QImage &icon);

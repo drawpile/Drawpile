@@ -606,15 +606,21 @@ void SettingsDialog::addListingServer()
 	if(urlstr.isEmpty())
 		return;
 
+	if(!urlstr.startsWith("http"))
+		urlstr = "http://" + urlstr;
+
 	QUrl url(urlstr);
 	if(!url.isValid()) {
 		QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
 		return;
 	}
 
+	m_ui->addListServer->setEnabled(false);
+
 	auto *response = sessionlisting::getApiInfo(url);
 	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
 		response->deleteLater();
+		m_ui->addListServer->setEnabled(true);
 		if(!error.isEmpty()) {
 			QMessageBox::warning(this, tr("Add public listing server"), error);
 			return;

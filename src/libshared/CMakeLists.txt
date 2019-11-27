@@ -28,6 +28,7 @@ set (
 	util/validators.cpp
 	util/paths.cpp
 	listings/announcementapi.cpp
+	listings/listserverfinder.cpp
 	)
 
 if( Sodium_FOUND )

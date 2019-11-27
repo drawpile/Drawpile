@@ -7,6 +7,7 @@
  * Server: The server can now also serve web admin site static files
  * Added command line options to override data and config paths (portable app mode)
  * Added "closed" session list filtering option
+ * Added "Add" button to join dialog for adding the server's associated list server
 
 2019-11-16 Version 2.1.14
  * Fixed dab spacing in default brush presets
