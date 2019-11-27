@@ -24,7 +24,8 @@
 SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 	: QSortFilterProxyModel(parent),
 	m_showPassworded(true),
-	m_showNsfw(true)
+	m_showNsfw(true),
+	m_showClosed(true)
 {
 }
 
