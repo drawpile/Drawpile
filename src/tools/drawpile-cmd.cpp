@@ -162,9 +162,9 @@ int main(int argc, char *argv[]) {
 		outputFormat = outputFilePattern.mid(suffix+1).toLower().toUtf8();
 	}
 
-	if(!QImageWriter::supportedImageFormats().contains(outputFormat)) {
+	if(!QImageWriter::supportedImageFormats().contains(outputFormat) && outputFormat.compare("ora", Qt::CaseInsensitive)) {
 		fprintf(stderr, "Unsupported file format: %s\n", outputFormat.constData());
-		fprintf(stderr, "Must be one of: %s\n", QImageWriter::supportedImageFormats().join(", ").constData());
+		fprintf(stderr, "Must be one of: %s, ora\n", QImageWriter::supportedImageFormats().join(", ").constData());
 		return 1;
 	}
 
