@@ -304,15 +304,15 @@ void handleClientServerCommand(Client *client, const QString &command, const QJs
 	for(const SrvCommand &c : COMMANDS.commands) {
 		if(c.name() == command) {
 			if(c.mode() == SrvCommand::MOD && !client->isModerator()) {
-				client->sendDirectMessage(protocol::Command::error("Not a moderator"));
+				client->sendDirectMessage(protocol::Command::error(command + ": Not a moderator"));
 				return;
 			}
 			else if(c.mode() == SrvCommand::OP && !client->isOperator()) {
-				client->sendDirectMessage(protocol::Command::error("Not a session owner"));
+				client->sendDirectMessage(protocol::Command::error(command + ": Not a session owner"));
 				return;
 			}
 			else if(c.mode() == SrvCommand::DEPUTY && !client->isOperator() && !client->isDeputy()) {
-				client->sendDirectMessage(protocol::Command::error("Not a session owner or a deputy"));
+				client->sendDirectMessage(protocol::Command::error(command + ": Not a session owner or a deputy"));
 				return;
 			}
 
