@@ -23,7 +23,7 @@ fi
 
 echo "Running $CMD in $IMAGE"
 
-docker run --rm -ti -v "$SRCVOL" -v "$OUTVOL"  $IMAGE $CMD
+docker run --rm -ti -v "$SRCVOL" -v "$OUTVOL" -e "HOST_UID=$UID" $IMAGE $CMD
 
 if [ "$1" == "installer" ] || [ "$1" == "release" ]; then
 	cd -

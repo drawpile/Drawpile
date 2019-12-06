@@ -22,6 +22,9 @@ VERSION=$(readlink /Build/bin/drawpile.exe | cut -d - -f 2)
 PKGNAME="drawpile-$VERSION"
 
 cd /out/
+
+trap "chown $HOST_UID -R /out" EXIT
+
 mkdir -p $PKGNAME
 rm -f pkg
 ln -s $PKGNAME pkg
