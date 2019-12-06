@@ -185,8 +185,8 @@ int request_handler(void *cls, MHD_Connection *connection, const char *url, cons
 				fail = true;
 			}
 
-			if(user) MHD_free(user);
-			if(pass) MHD_free(pass);
+			if(user) free(user);
+			if(pass) free(pass);
 
 			if(fail) {
 				auto response = MHD_create_response_from_buffer(
