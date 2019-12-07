@@ -23,6 +23,26 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.15" date="2019-12-07">
+      <url>https://drawpile.net/news/release-2.1.15/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Server: Added support for list server API 1.6</li>
+          <li>Server: Added `ext_host` and `ext_port` fields to status API endpoint</li>
+          <li>Server: Abuse report token can now be set via admin API</li>
+          <li>Server: List server whitelist can now be edited via the API</li>
+          <li>Server: Fixed memory leak in admin API</li>
+          <li>Server: The server can now also serve web admin site static files</li>
+          <li>Server-gui: Added "welcome message" field</li>
+          <li>drawpile-cmd: fixed ORA export format support</li>
+          <li>Added command line options to override data and config paths (portable app mode)</li>
+          <li>Added "closed" session list filtering option</li>
+          <li>Added "Add" button to join dialog for adding the server's associated list server</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.14" date="2019-11-16">
       <url>https://drawpile.net/news/release-2.1.14/</url>
       <description>
