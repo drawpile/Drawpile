@@ -5,6 +5,7 @@
  * Server: List server whitelist can now be edited via the API
  * Server: Fixed memory leak in admin API
  * Server: The server can now also serve web admin site static files
+ * Server-gui: Added "welcome message" field
  * drawpile-cmd: fixed ORA export format support
  * Added command line options to override data and config paths (portable app mode)
  * Added "closed" session list filtering option
