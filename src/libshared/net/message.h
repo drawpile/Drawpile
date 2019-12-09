@@ -57,6 +57,7 @@ enum MessageType {
 	MSG_FEATURE_LEVELS,
 	MSG_LAYER_DEFAULT,
 	MSG_FILTERED,
+	MSG_EXTENSION, // reserved for non-standard extension use
 
 	// Command messages (opaque)
 	MSG_UNDOPOINT=128,
