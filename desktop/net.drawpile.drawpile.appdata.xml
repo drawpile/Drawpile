@@ -41,7 +41,28 @@
           <li>Added "Add" button to join dialog for adding the server's associated list server</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.15-setup.exe</location>
+          <checksum type="sha256">36ee7e57a9d95785a45f9ae1bc09a226f741f582dc41b15a5f9f2f3495eab43b</checksum>
+          <size type="download">16491127</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.15-setup-w32.exe</location>
+          <checksum type="sha256">338540184d8de391e3f0e7b17dafe24a753dff08c24bb3d447b2b1361e041751</checksum>
+          <size type="download">15484837</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.15.dmg</location>
+          <checksum type="sha256">3e6004fb9b4b40a1c4bba70160bd107ea6f2cd806bc850d8d5a613038700f3b1</checksum>
+          <size type="download">14163265</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.15.tar.gz</location>
+          <checksum type="sha256">36625a40574e76ac4145cedc2d752038100e715263e3dfd1935f5a9bc36bcb70</checksum>
+          <size type="download">2531195</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.14" date="2019-11-16">
       <url>https://drawpile.net/news/release-2.1.14/</url>
