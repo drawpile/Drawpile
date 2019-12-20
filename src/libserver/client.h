@@ -74,6 +74,14 @@ public:
 	void setId(uint8_t id);
 
 	/**
+	 * @brief Get an authenticated user's flags
+	 *
+	 * User flags come from the account system, either the built-in one or ext-auth.
+	 */
+	QStringList authFlags() const;
+	void setAuthFlags(const QStringList &flags);
+
+	/**
 	 * @brief Get the user name of this client
 	 * @return user name
 	 */

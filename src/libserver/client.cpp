@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2019 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ struct Client::Private {
 	QString username;
 	QString authId;
 	QByteArray avatar;
+	QStringList flags;
 
 	uint8_t id = 0;
 	bool isOperator = false;
@@ -163,6 +164,16 @@ void Client::setId(uint8_t id)
 uint8_t Client::id() const
 {
 	return d->id;
+}
+
+void Client::setAuthFlags(const QStringList &flags)
+{
+	d->flags = flags;
+}
+
+QStringList Client::authFlags() const
+{
+	return d->flags;
 }
 
 void Client::setUsername(const QString &username)

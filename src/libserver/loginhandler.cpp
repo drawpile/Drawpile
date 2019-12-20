@@ -189,6 +189,17 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	}
 }
 
+static QStringList jsonArrayToStringList(const QJsonArray &a)
+{
+	QStringList sl;
+	for(const auto &v : a) {
+		const auto s = v.toString();
+		if(!s.isEmpty())
+			sl << s;
+	}
+	return sl;
+}
+
 void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 {
 	if(cmd.args.size()!=1 && cmd.args.size()!=2) {
@@ -264,7 +275,7 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 				authLoginOk(
 					ea["username"].toString(),
 					extAuthId,
-					ea["flags"].toArray(),
+					jsonArrayToStringList(ea["flags"].toArray()),
 					avatar,
 					m_config->getConfigBool(config::ExtAuthMod)
 					);
@@ -321,7 +332,7 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 		authLoginOk(
 			username,
 			QStringLiteral("internal:%1").arg(userAccount.userId),
-			QJsonArray::fromStringList(userAccount.flags),
+			userAccount.flags,
 			QByteArray(),
 			true
 		);
@@ -329,18 +340,19 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 	}
 }
 
-void LoginHandler::authLoginOk(const QString &username, const QString &authId, const QJsonArray &flags, const QByteArray &avatar, bool allowMod)
+void LoginHandler::authLoginOk(const QString &username, const QString &authId, const QStringList &flags, const QByteArray &avatar, bool allowMod)
 {
 	Q_ASSERT(!authId.isEmpty());
 
 	m_client->setUsername(username);
 	m_client->setAuthId(authId);
+	m_client->setAuthFlags(flags);
 
 	protocol::ServerReply identReply;
 	identReply.type = protocol::ServerReply::RESULT;
 	identReply.message = "Authenticated login OK!";
 	identReply.reply["state"] = "identOk";
-	identReply.reply["flags"] = flags;
+	identReply.reply["flags"] = QJsonArray::fromStringList(flags);
 	identReply.reply["ident"] = m_client->username();
 	identReply.reply["guest"] = false;
 

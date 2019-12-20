@@ -201,7 +201,7 @@ void Session::joinUser(Client *user, bool host)
 	if(user->isOperator() || m_history->isOperator(user->authId()))
 		changeOpStatus(user->id(), true, "the server");
 
-	if(m_history->isTrusted(user->authId()))
+	if(user->authFlags().contains("TRUSTED") || m_history->isTrusted(user->authId()))
 		changeTrustedStatus(user->id(), true, "the server");
 
 	ensureOperatorExists();
