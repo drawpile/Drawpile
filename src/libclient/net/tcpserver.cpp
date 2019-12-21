@@ -63,7 +63,6 @@ TcpServer::TcpServer(QObject *parent) :
 
 void TcpServer::login(LoginHandler *login)
 {
-	m_url = login->url();
 	m_loginstate = login;
 	m_loginstate->setParent(this);
 	m_loginstate->setServer(this);
@@ -95,6 +94,21 @@ void TcpServer::handleMessage()
 {
 	while(m_msgqueue->isPending()) {
 		protocol::MessagePtr msg = m_msgqueue->getPending();
+		if(msg->type() == protocol::MSG_DISCONNECT) {
+			const auto d = msg.cast<protocol::Disconnect>();
+			switch(d.reason()) {
+			case protocol::Disconnect::KICK:
+				m_error = tr("You were kicked by %1").arg(d.message());
+				break;
+			case protocol::Disconnect::SHUTDOWN:
+				m_error = tr("The server is shutting down.");
+				break;
+			default:
+				m_error = tr("Error: %1").arg(d.message());
+				break;
+			}
+		}
+
 		if(m_loginstate)
 			m_loginstate->receiveMessage(msg);
 		else
@@ -146,13 +160,13 @@ void TcpServer::loginFailure(const QString &message, const QString &errorcode)
 
 void TcpServer::loginSuccess()
 {
-	qDebug() << "logged in to session" << m_loginstate->sessionId() << ". Got user id" << m_loginstate->userId();
+	qDebug() << "logged in to session" << m_loginstate->url() << ". Got user id" << m_loginstate->userId();
 
 	m_supportsPersistence = m_loginstate->supportsPersistence();
 	m_supportsAbuseReports = m_loginstate->supportsAbuseReports();
 
 	emit loggedIn(
-		m_loginstate->sessionId(),
+		m_loginstate->url(),
 		m_loginstate->userId(),
 		m_loginstate->mode() == LoginHandler::Mode::Join,
 		m_loginstate->isAuthenticated(),

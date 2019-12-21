@@ -35,6 +35,8 @@ namespace drawingboard {
 
 namespace widgets {
 
+class NotificationBar;
+
 /**
  * @brief Editor view
  *
@@ -82,6 +84,9 @@ public:
 	//! Get the scale factor needed to fit the whole canvas in the viewport
 	qreal fitToWindowScale() const;
 
+	//! Show the notification bar with the "reconnect" button visible
+	void showDisconnectedWarning(const QString &message);
+
 signals:
 	//! An image has been dropped on the widget
 	void imageDropped(const QImage &image);
@@ -107,6 +112,8 @@ signals:
 	void viewRectChange(const QPolygonF &viewport);
 
 	void rightClicked(const QPoint &p);
+
+	void reconnectRequested();
 
 public slots:
 	//! Set the size of the brush preview outline
@@ -228,6 +235,9 @@ private:
 	enum class PenMode {
 		Normal, Colorpick, Layerpick
 	};
+
+	NotificationBar *m_notificationBar;
+
 	PenMode m_penmode;
 
 	//! Is the view being dragged

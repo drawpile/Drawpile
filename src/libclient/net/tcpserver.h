@@ -58,10 +58,8 @@ public:
 	bool supportsPersistence() const override { return m_supportsPersistence; }
 	bool supportsAbuseReports() const override { return m_supportsAbuseReports; }
 
-	QUrl url() const { return m_url; }
-
 signals:
-	void loggedIn(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator, bool hasAutoreset);
+	void loggedIn(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool hasAutoreset);
 	void loggingOut();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
@@ -81,7 +79,6 @@ private slots:
 	void handleSocketError();
 
 private:
-	QUrl m_url;
 	QSslSocket *m_socket;
 	protocol::MessageQueue *m_msgqueue;
 	LoginHandler *m_loginstate;

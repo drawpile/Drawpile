@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include <QSslCertificate>
+#include <QUrl>
 
 class QJsonObject;
 class QJsonArray;
@@ -72,17 +73,9 @@ public:
 	uint8_t myId() const { return m_myId; }
 
 	/**
-	 * @brief Return the URL of the current session
-	 *
-	 * Returns an invalid URL not connected
+	 * Return the URL of the current (or last connected) session
 	 */
 	QUrl sessionUrl(bool includeUser=false) const;
-
-	/**
-	 * @brief Get the ID of the current session.
-	 * @return
-	 */
-	QString sessionId() const;
 
 	/**
 	 * @brief Is the client connected to a local server?
@@ -162,6 +155,11 @@ public:
 	 */
 	void setRecordedChatMode(bool recordedChat) { m_recordedChat = recordedChat; }
 
+	/**
+	 * Get the last session URL the client connected to.
+	 */
+	QUrl lastUrl() const { return m_lastUrl; }
+
 public slots:
 	/**
 	 * @brief Send a message to the server
@@ -204,7 +202,7 @@ signals:
 
 private slots:
 	void handleMessage(const protocol::MessagePtr &msg);
-	void handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
+	void handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
@@ -215,7 +213,7 @@ private:
 	Server *m_server;
 	LoopbackServer *m_loopback;
 
-	QString m_sessionId;
+	QUrl m_lastUrl;
 	uint8_t m_myId;
 	bool m_isloopback;
 	bool m_recordedChat;

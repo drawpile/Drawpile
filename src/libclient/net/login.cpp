@@ -537,7 +537,7 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 	}
 
 	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
-		m_loggedInSessionId = msg.reply["join"].toObject()["id"].toString();
+		m_address.setPath("/" + msg.reply["join"].toObject()["id"].toString());
 		const int userid = msg.reply["join"].toObject()["user"].toInt();
 
 		if(userid < 1 || userid > 254) {
@@ -829,14 +829,6 @@ void LoginHandler::send(const protocol::ServerCommand &cmd)
 	} else {
 		m_server->sendMessage(msg);
 	}
-}
-
-QString LoginHandler::sessionId() const {
-	Q_ASSERT(!m_loggedInSessionId.isEmpty());
-	if(m_mode == Mode::HostRemote && !m_sessionAlias.isEmpty())
-		return m_sessionAlias;
-
-	return m_loggedInSessionId;
 }
 
 bool LoginHandler::hasUserFlag(const QString &flag) const

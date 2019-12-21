@@ -126,8 +126,9 @@ public:
 	Mode mode() const { return m_mode; }
 
 	/**
-	 * @brief Server URL
-	 * @return
+	 * @brief Session URL
+	 *
+	 * The ID of the selected session is included
 	 */
 	const QUrl &url() const { return m_address; }
 
@@ -136,14 +137,6 @@ public:
 	 * @return user id
 	 */
 	uint8_t userId() const { return m_userid; }
-
-	/**
-	 * @brief get the ID of the session.
-	 *
-	 * This is valid only after a successful login.
-	 * @return session ID
-	 */
-	QString sessionId() const;
 
 	/**
 	 * @brief Does the server support session persistence?
@@ -403,7 +396,6 @@ private:
 	LoginSessionModel *m_sessions;
 
 	QString m_selectedId;
-	QString m_loggedInSessionId;
 	QStringList m_sessionFlags;
 
 	QFileInfo m_certFile;

@@ -87,27 +87,17 @@ void Client::disconnectFromServer()
 	m_server->logout();
 }
 
-QString Client::sessionId() const
-{
-	return m_sessionId;
-}
-
 QUrl Client::sessionUrl(bool includeUser) const
 {
-	if(!isConnected())
-		return QUrl();
-
-	QUrl url = static_cast<const TcpServer*>(m_server)->url();
-	url.setScheme("drawpile");
+	QUrl url = m_lastUrl;
 	if(!includeUser)
 		url.setUserInfo(QString());
-	url.setPath("/" + sessionId());
 	return url;
 }
 
-void Client::handleConnect(const QString &sessionId, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset)
+void Client::handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset)
 {
-	m_sessionId = sessionId;
+	m_lastUrl = url;
 	m_myId = userid;
 	m_moderator = moderator;
 	m_isAuthenticated = auth;
