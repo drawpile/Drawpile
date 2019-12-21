@@ -181,7 +181,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 				res->setError("No listserver link found!");
 
 			} else {
-				QNetworkRequest req2(realApiUrl);
+				QNetworkRequest req2(reply->url().resolved(realApiUrl));
 				req2.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
 				req2.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 

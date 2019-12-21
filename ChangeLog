@@ -1,5 +1,6 @@
 2020-0?-?? Version 2.1.16
  * Server: Added support for ext-auth "TRUSTED" flag
+ * Relative URLs are now supported in "drawpile:list-server" meta tag
 
 2019-12-07 Version 2.1.15
  * Server: Added support for list server API 1.6
