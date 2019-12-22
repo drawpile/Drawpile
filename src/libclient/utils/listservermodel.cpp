@@ -50,6 +50,14 @@ QVariant ListServerModel::data(const QModelIndex &index, int role) const
 		switch(role) {
 		case Qt::DisplayRole: return srv.name;
 		case Qt::DecorationRole: return srv.icon;
+		case Qt::ToolTipRole: return QString("%1\n\n%2\n\nURL: %3\nRead-only: %4, public: %5, private: %6").arg(
+			srv.name,
+			srv.description,
+			srv.url,
+			srv.readonly ? QStringLiteral("yes") : QStringLiteral("no"),
+			srv.publicListings ? QStringLiteral("yes") : QStringLiteral("no"),
+			srv.privateListings ? QStringLiteral("yes") : QStringLiteral("no")
+			);
 		case UrlRole: return srv.url;
 		case DescriptionRole: return srv.description;
 		case PublicListRole: return srv.publicListings;
