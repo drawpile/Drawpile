@@ -500,7 +500,7 @@ void BrushSettings::setForeground(const QColor& color)
 void BrushSettings::quickAdjust1(qreal adjustment)
 {
 	d->quickAdjust1 += adjustment;
-	if(qAbs(d->quickAdjust1) > 1.0) {
+	if(qAbs(d->quickAdjust1) >= 1.0) {
 		qreal i;
 		d->quickAdjust1 = modf(d->quickAdjust1, &i);
 		d->ui.brushsizeBox->setValue(d->ui.brushsizeBox->value() + int(i));
