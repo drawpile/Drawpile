@@ -48,6 +48,8 @@ struct Client::Private {
 	QByteArray avatar;
 	QStringList flags;
 
+	qint64 lastActive = 0;
+
 	uint8_t id = 0;
 	bool isOperator = false;
 	bool isModerator = false;
@@ -103,6 +105,7 @@ QJsonObject Client::description(bool includeSession) const
 	u["id"] = id();
 	u["name"] = username();
 	u["ip"] = peerAddress().toString();
+	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, Qt::UTC).toString(Qt::ISODate);
 	u["auth"] = isAuthenticated();
 	u["op"] = isOperator();
 	u["muted"] = isMuted();
@@ -308,6 +311,8 @@ void Client::receiveMessages()
 {
 	while(d->msgqueue->isPending()) {
 		MessagePtr msg = d->msgqueue->getPending();
+
+		d->lastActive = QDateTime::currentMSecsSinceEpoch();
 
 		if(d->session.isNull()) {
 			// No session? We must be in the login phase

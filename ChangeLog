@@ -1,5 +1,6 @@
 2020-0?-?? Version 2.1.16
  * Server: Added support for ext-auth "TRUSTED" flag
+ * Server: Added "lastActive" timestamp field to session user list API
  * Relative URLs are now supported in "drawpile:list-server" meta tag
  * Added disconnect notification bar (with a reconnect button)
  * List servers can now be manually sorted

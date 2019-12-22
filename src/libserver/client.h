@@ -155,6 +155,13 @@ public:
 	 */
 	void setConnectionTimeout(int timeout);
 
+	/**
+	 * Get the timestamp of this client's last activity (i.e. non-keepalive message received)
+	 *
+	 * Returned value is given in milliseconds since Epoch.
+	 */
+	qint64 lastActive() const;
+
 #ifndef NDEBUG
 	void setRandomLag(uint lag);
 #endif
