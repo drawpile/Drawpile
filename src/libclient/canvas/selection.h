@@ -58,8 +58,12 @@ public:
 	//! Add a point to the selection polygon. The shape must be open
 	void addPointToShape(const QPointF &point);
 
-	//! Close the selection
-	void closeShape();
+	/**
+	 * Close the selection and clip it to the given rectangle
+	 * @param clipRect rectangle that represents the working area
+	 * @return false if selection was entirely outside the clip rectangle
+	 */
+	bool closeShape(const QRectF &clipRect);
 
 	/**
 	 * @brief Is the polygon closed?

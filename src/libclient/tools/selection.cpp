@@ -89,7 +89,18 @@ void SelectionTool::end()
 		return;
 
 	// The shape must be closed after the end of the selection operation
-	owner.model()->selection()->closeShape();
+	if(!owner.model()->selection()->closeShape(QRectF(QPointF(), owner.model()->layerStack()->size()))) {
+		// Clear selection if it was entirely outside the canvas
+		owner.model()->setSelection(nullptr);
+		return;
+	}
+
+	// Remove tiny selections
+	QRectF selrect = sel->boundingRect();
+	if(selrect.width() * selrect.height() <= 2) {
+		owner.model()->setSelection(nullptr);
+		return;
+	}
 
 	// Toggle adjustment mode if just clicked
 	if((m_end - m_start).manhattanLength() < 2.0) {
@@ -98,20 +109,6 @@ void SelectionTool::end()
 				? canvas::Selection::AdjustmentMode::Rotate
 				: canvas::Selection::AdjustmentMode::Scale
 		);
-	}
-
-	// Remove tiny selections
-	QRectF selrect = sel->boundingRect();
-	if(selrect.width() * selrect.height() <= 2) {
-		owner.model()->setSelection(nullptr);
-
-	} else {
-		// Remove selections completely outside the canvas
-		const QSize cs = owner.model()->layerStack()->size();
-		if(selrect.right() <= 0 || selrect.left() >= cs.width() ||
-				selrect.bottom() <= 0 || selrect.top() >= cs.height()) {
-			owner.model()->setSelection(nullptr);
-		}
 	}
 }
 

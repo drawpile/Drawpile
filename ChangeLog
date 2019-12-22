@@ -5,6 +5,7 @@
  * Added disconnect notification bar (with a reconnect button)
  * List servers can now be manually sorted
  * Fixed brush size adjustment shortcut (needed to presses to adjust)
+ * Fixed selection scaling if selection was not entirely contained by the canvas (selection is now clipped to canvas)
 
 2019-12-07 Version 2.1.15
  * Server: Added support for list server API 1.6

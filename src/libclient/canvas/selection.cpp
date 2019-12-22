@@ -306,13 +306,22 @@ void Selection::addPointToShape(const QPointF &point)
 	}
 }
 
-void Selection::closeShape()
+bool Selection::closeShape(const QRectF &clipRect)
 {
 	if(!m_closedPolygon) {
+		const QPolygonF clipPolygon{clipRect};
+
+		if(!m_shape.intersects(clipRect))
+			return false;
+
+		m_shape = m_shape.intersected(clipPolygon);
+
 		m_closedPolygon = true;
 		saveShape();
 		emit closed();
 	}
+
+	return true;
 }
 
 static bool isAxisAlignedRectangle(const QPolygon &p)
