@@ -1056,7 +1056,7 @@ QJsonObject Session::getDescription(bool full) const
 		{"closed", isClosed()},
 		{"authOnly", m_history->hasFlag(SessionHistory::AuthOnly)},
 		{"nsfm", m_history->hasFlag(SessionHistory::Nsfm)},
-		{"startTime", m_history->startTime().toUTC().toString(Qt::ISODate)},
+		{"startTime", m_history->startTime().toString(Qt::ISODate)},
 		{"size", int(m_history->sizeInBytes())}
 	};
 

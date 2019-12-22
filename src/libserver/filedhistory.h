@@ -24,7 +24,6 @@
 #include "../libshared/net/protover.h"
 
 #include <QDir>
-#include <QDateTime>
 #include <QVector>
 #include <QSet>
 
@@ -83,7 +82,6 @@ public:
 	uint autoResetThreshold() const override { return m_autoResetThreshold; }
 	Flags flags() const override { return m_flags; }
 
-	QDateTime startTime() const override;
 	void setPasswordHash(const QByteArray &password) override;
 	void setOpwordHash(const QByteArray &opword) override;
 	void setMaxUsers(int max) override;

@@ -22,7 +22,6 @@
 #include "sessionhistory.h"
 #include "../libshared/net/protover.h"
 
-#include <QDateTime>
 #include <QSet>
 
 namespace server {
@@ -47,7 +46,6 @@ public:
 	void setPasswordHash(const QByteArray &password) override { m_password = password; }
 	QByteArray opwordHash() const override { return m_opword; }
 	void setOpwordHash(const QByteArray &opword) override { m_opword = opword; }
-	QDateTime startTime() const override { return m_startTime; }
 	int maxUsers() const override { return m_maxUsers; }
 	void setMaxUsers(int max) override { m_maxUsers = qBound(1, max, 254); }
 	QString title() const override { return m_title; }
@@ -95,7 +93,6 @@ private:
 	QString m_founder;
 	QString m_title;
 	protocol::ProtocolVersion m_version;
-	QDateTime m_startTime;
 	QByteArray m_password;
 	QByteArray m_opword;
 	int m_maxUsers;

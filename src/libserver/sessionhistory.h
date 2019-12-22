@@ -26,6 +26,7 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QDateTime>
 #include <tuple>
 
 namespace protocol {
@@ -90,7 +91,7 @@ public:
 	void setOpword(const QString &opword) { setOpwordHash(passwordhash::hash(opword)); }
 
 	//! Get the starting timestamp
-	virtual QDateTime startTime() const = 0;
+	QDateTime startTime() const { return m_startTime; }
 
 	//! Get the maximum number of users allowed
 	virtual int maxUsers() const = 0;
@@ -309,6 +310,7 @@ protected:
 private:
 	QUuid m_id;
 	IdQueue m_idqueue;
+	QDateTime m_startTime;
 
 	uint m_sizeInBytes;
 	uint m_sizeLimit;
