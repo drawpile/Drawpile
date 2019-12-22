@@ -178,6 +178,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	connect(m_ui->addListServer, &QPushButton::clicked, this, &SettingsDialog::addListingServer);
 	connect(m_ui->removeListServer, &QPushButton::clicked, this, &SettingsDialog::removeListingServer);
+	connect(m_ui->listserverUp, &QPushButton::clicked, this, &SettingsDialog::moveListingServerUp);
+	connect(m_ui->listserverDown, &QPushButton::clicked, this, &SettingsDialog::moveListingServerDown);
 
 	// Parental controls
 	connect(m_ui->nsfmLock, &QPushButton::clicked, this, &SettingsDialog::lockParentalControls);
@@ -672,6 +674,22 @@ void SettingsDialog::addListingServer()
 			}
 		}
 	});
+}
+
+void SettingsDialog::moveListingServerUp()
+{
+	QModelIndex selection = m_ui->listserverview->selectionModel()->currentIndex();
+	if(selection.isValid()) {
+		m_listservers->moveRow(QModelIndex(), selection.row(), QModelIndex(), selection.row()-1);
+	}
+}
+
+void SettingsDialog::moveListingServerDown()
+{
+	QModelIndex selection = m_ui->listserverview->selectionModel()->currentIndex();
+	if(selection.isValid()) {
+		m_listservers->moveRow(QModelIndex(), selection.row(), QModelIndex(), selection.row()+1);
+	}
 }
 
 void SettingsDialog::removeListingServer()

@@ -170,11 +170,11 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		}
 
 	} else {
-		const Listing &listing = m_listings.at(index.row());
-
-		if(role == Qt::DisplayRole || role == SortKeyRole) {
+		if(role == Qt::DisplayRole) {
 			if(index.column() == 0)
-				return listing.name;
+				return m_listings.at(index.row()).name;
+		} else if(role == SortKeyRole) {
+			return index.row();
 		}
 	}
 

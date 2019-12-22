@@ -52,6 +52,8 @@ private slots:
 
 	void addListingServer();
 	void removeListingServer();
+	void moveListingServerUp();
+	void moveListingServerDown();
 
 	void lockParentalControls();
 

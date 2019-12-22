@@ -950,9 +950,29 @@
                </spacer>
               </item>
               <item>
+               <widget class="QPushButton" name="listserverUp">
+                <property name="text">
+                 <string>Move up</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="arrow-up"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="listserverDown">
+                <property name="text">
+                 <string>Move down</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="arrow-down"/>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="addListServer">
                 <property name="text">
-                 <string>Add</string>
+                 <string>Add...</string>
                 </property>
                </widget>
               </item>
