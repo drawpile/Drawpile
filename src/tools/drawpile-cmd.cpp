@@ -38,6 +38,9 @@ void printVersion()
 }
 
 int main(int argc, char *argv[]) {
+	// Force the use of offscreen platform, so this can be used headlessly.
+	qputenv("QT_QPA_PLATFORM", "offscreen");
+
 	QGuiApplication app(argc, argv);
 
 	QGuiApplication::setOrganizationName("drawpile");
