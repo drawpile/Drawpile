@@ -32,7 +32,7 @@
 #include "core/annotationmodel.h"
 
 #include <QDebug>
-#include <QDeadlineTimer>
+#include <QElapsedTimer>
 #include <QSaveFile>
 
 namespace recording {
@@ -208,12 +208,11 @@ bool IndexBuilder::generateIndex(QDataStream &stream, Reader &reader)
 	canvas::StateTracker statetracker(&image, &layermodel, 1);
 
 	MessageRecord record;
-	QDeadlineTimer timer;
+	QElapsedTimer timer;
 	int messagesSinceLastEntry = SNAPSHOT_MIN_ACTIONS + 1;
 	int messagesSinceLastThumbnail = THUMBNAIL_INTERVAL + 1;
 	LayerStackWriteResult lastSnapshot;
 
-	timer.setRemainingTime(0);
 	do {
 		if(m_abortflag.load()) {
 			qWarning() << "Indexing aborted";
@@ -230,7 +229,7 @@ bool IndexBuilder::generateIndex(QDataStream &stream, Reader &reader)
 				record.message->type() == protocol::MSG_MARKER ||
 				(
 					messagesSinceLastEntry > SNAPSHOT_MIN_ACTIONS &&
-					timer.hasExpired()
+					(!timer.isValid() || timer.hasExpired(SNAPSHOT_INTERVAL_MS))
 				)
 			) {
 				messagesSinceLastEntry = 0;
@@ -260,7 +259,7 @@ bool IndexBuilder::generateIndex(QDataStream &stream, Reader &reader)
 
 				emit progress(messageOffset);
 
-				timer.setRemainingTime(SNAPSHOT_INTERVAL_MS);
+				timer.start();
 			}
 
 			++messagesSinceLastEntry;

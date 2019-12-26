@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include <QVector>
-#include <QDeadlineTimer>
+#include <QElapsedTimer>
 
 namespace server {
 	class ServerConfig;
@@ -82,7 +82,7 @@ private:
 		Announcable *session;
 		Announcement announcement;
 
-		QDeadlineTimer refreshTimer;
+		QElapsedTimer refreshTimer;
 		PrivacyMode mode; // undefined means the announcement hasn't finishe yet
 	};
 

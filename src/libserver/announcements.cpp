@@ -60,7 +60,7 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 		listServer,
 		session,
 		Announcement {},
-		QDeadlineTimer(),
+		QElapsedTimer(),
 		PrivacyMode::Undefined
 	};
 
@@ -104,7 +104,7 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 		listing->announcement = result.value<sessionlisting::Announcement>();
 		Q_ASSERT(listing->announcement.apiUrl == listing->listServer);
 		listing->mode = listing->announcement.isPrivate ? PrivacyMode::Private : PrivacyMode::Public;
-		listing->refreshTimer.setRemainingTime(listing->announcement.refreshInterval * 60 * 1000);
+		listing->refreshTimer.start();
 
 		emit announcementsChanged(listing->session);
 
@@ -181,7 +181,7 @@ void Announcements::refreshListings()
 
 	// Gather a list of announcements that need refreshing
 	for(Listing &listing : m_announcements) {
-		if(listing.mode != PrivacyMode::Undefined && (listing.refreshTimer.hasExpired() || refreshServer == listing.listServer)) {
+		if(listing.mode != PrivacyMode::Undefined && (listing.refreshTimer.hasExpired(listing.announcement.refreshInterval * 60 * 1000) || refreshServer == listing.listServer)) {
 			Q_ASSERT(listing.announcement.apiUrl == listing.listServer);
 
 			// The bulk update function can only update one server at a time.
@@ -206,7 +206,7 @@ void Announcements::refreshListings()
 				description
 			};
 
-			listing.refreshTimer.setRemainingTime(listing.announcement.refreshInterval * 60 * 1000);
+			listing.refreshTimer.start();
 		}
 	}
 
