@@ -305,7 +305,9 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 				return;
 			}
 		}
-		Q_FALLTHROUGH(); // fall through to badpass if guest logins are disabled
+		#if QT_VERSION >= 0x050800
+			Q_FALLTHROUGH(); // fall through to badpass if guest logins are disabled
+		#endif
 		}
 	case RegisteredUser::BadPass:
 		if(password.isEmpty()) {
