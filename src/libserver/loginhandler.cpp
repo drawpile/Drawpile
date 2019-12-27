@@ -36,6 +36,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#ifndef Q_FALLTHROUGH
+	#define Q_FALLTHROUGH() (void)0  // work-around for qt<5.8
+#endif
+
 namespace server {
 
 Sessions::~Sessions()
@@ -305,9 +309,7 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 				return;
 			}
 		}
-		#if QT_VERSION >= 0x050800
-			Q_FALLTHROUGH(); // fall through to badpass if guest logins are disabled
-		#endif
+		Q_FALLTHROUGH(); // fall through to badpass if guest logins are disabled
 		}
 	case RegisteredUser::BadPass:
 		if(password.isEmpty()) {
