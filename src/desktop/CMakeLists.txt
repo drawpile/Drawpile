@@ -74,6 +74,7 @@ set (
 	docks/layeraclmenu.cpp
 	docks/inputsettingsdock.cpp
 	chat/chatlineedit.cpp
+	chat/chatwidgetpinnedarea.cpp
 	chat/chatwidget.cpp 
 	chat/useritemdelegate.cpp
 	chat/chatbox.cpp

@@ -18,6 +18,7 @@
 */
 
 #include "chatlineedit.h"
+#include "chatwidgetpinnedarea.h"
 #include "chatwidget.h"
 #include "utils/html.h"
 #include "utils/funstuff.h"
@@ -85,7 +86,7 @@ struct ChatWidget::Private {
 	ChatWidget * const chatbox;
 	QTextBrowser *view = nullptr;
 	ChatLineEdit *myline = nullptr;
-	QLabel *pinned = nullptr;
+	ChatWidgetPinnedArea *pinned = nullptr;
 	QTabBar *tabs = nullptr;
 
 	QList<int> announcedUsers;
@@ -152,16 +153,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(d->tabs, &QTabBar::tabCloseRequested, this, &ChatWidget::chatTabClosed);
 	layout->addWidget(d->tabs, 0);
 
-	d->pinned = new QLabel(this);
-	d->pinned->setVisible(false);
-	d->pinned->setOpenExternalLinks(true);
-	d->pinned->setWordWrap(true);
-	d->pinned->setStyleSheet(QStringLiteral(
-		"background: #232629;"
-		"border-bottom: 1px solid #2980b9;"
-		"color: #eff0f1;"
-		"padding: 3px;"
-		));
+	d->pinned = new ChatWidgetPinnedArea(this);
 	layout->addWidget(d->pinned, 0);
 
 	d->view = new QTextBrowser(this);
@@ -554,17 +546,7 @@ void ChatWidget::receiveMessage(const protocol::MessagePtr &msg)
 		const QString safetext = chat.message().toHtmlEscaped();
 
 		if(chat.isPin()) {
-			if(safetext == "-") {
-				// note: the protocol doesn't allow empty chat messages,
-				// which is why we have to use a special value like this
-				// to clear the pinning.
-				d->pinned->setVisible(false);
-				d->pinned->setText(QString());
-			} else {
-				d->pinned->setText(htmlutils::linkify(safetext, QStringLiteral("style=\"color:#3daae9\"")));
-				d->pinned->setVisible(true);
-			}
-
+			d->pinned->setPinText(safetext);
 		} else if(chat.isAction()) {
 			d->publicChat().appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
 
