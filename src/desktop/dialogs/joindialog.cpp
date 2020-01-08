@@ -483,6 +483,7 @@ void JoinDialog::addListServer()
 
 					sessionlisting::ListServerModel listservers(true);
 					listservers.setFavicon(apiUrl, image);
+					listservers.saveServers();
 				});
 				connect(filedownload, &networkaccess::FileDownload::finished, filedownload, &QObject::deleteLater);
 
