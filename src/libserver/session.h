@@ -31,7 +31,6 @@
 #include <QObject>
 #include <QDateTime>
 #include <QElapsedTimer>
-#include <QUuid>
 #include <QJsonObject>
 
 class QTimer;
@@ -80,13 +79,7 @@ public:
 	const ServerConfig *config() const { return m_config; }
 
 	//! Get the unique ID of the session
-	QUuid id() const override { return m_history->id(); }
-
-	//! Get the session ID as a properly formatted string
-	QString idString() const {
-		QString s = id().toString();
-		return s.mid(1, s.length()-2);
-	}
+	QString id() const override { return m_history->id(); }
 
 	/**
 	 * @brief Get the custom alias for the session ID
@@ -97,7 +90,7 @@ public:
 
 	//! Get the session alias if set, or the ID if not
 	QString aliasOrId() const {
-		return m_history->idAlias().isEmpty() ? idString() : m_history->idAlias();
+		return m_history->idAlias().isEmpty() ? id() : m_history->idAlias();
 	}
 
 	/**

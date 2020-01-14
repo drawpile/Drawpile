@@ -34,20 +34,20 @@ private slots:
 	{	
 		Log e = Log()
 			.about(Log::Level::Info, Log::Topic::Join)
-			.session(QUuid("{12345678-1234-1234-1234-123456789abc}"))
+			.session("12345678-1234-1234-1234-123456789abc")
 			.user(1,QHostAddress("192.168.1.1"), "My Test Username")
 			.message("Test message!")
 				;
 
 		QString estr = e.toString(true);
-		QCOMPARE(estr, QString("Join 1;192.168.1.1;My Test Username@{12345678-1234-1234-1234-123456789abc}: Test message!"));
+		QCOMPARE(estr, QString("Join 1;192.168.1.1;My Test Username@12345678-1234-1234-1234-123456789abc: Test message!"));
 	}
 
 	void testSessionLogEntry()
 	{
 		Log e = Log()
 			.about(Log::Level::Info, Log::Topic::Status)
-			.session(QUuid("{12345678-1234-1234-1234-123456789abc}"))
+			.session("{12345678-1234-1234-1234-123456789abc}")
 			.message("Test message!")
 				;
 
@@ -71,7 +71,7 @@ private slots:
 		InMemoryLog srvlog;
 		srvlog.setSilent(true);
 
-		QUuid session = QUuid::createUuid();
+		auto session = Ulid::make().toString();
 
 		srvlog.logMessage(Log().message("Hello 1"));
 		srvlog.logMessage(Log().session(session).message("Hello 2"));

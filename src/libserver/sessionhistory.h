@@ -25,7 +25,6 @@
 #include "idqueue.h"
 
 #include <QObject>
-#include <QUuid>
 #include <QDateTime>
 #include <tuple>
 
@@ -53,10 +52,10 @@ public:
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
-	SessionHistory(const QUuid &id, QObject *parent);
+	SessionHistory(const QString &id, QObject *parent);
 
 	//! Get the unique ID of the session
-	QUuid id() const { return m_id; }
+	QString id() const { return m_id; }
 
 	/**
 	 * @brief Get the alias for the session ID (if set)
@@ -308,7 +307,7 @@ protected:
 	SessionBanList m_banlist;
 
 private:
-	QUuid m_id;
+	QString m_id;
 	IdQueue m_idqueue;
 	QDateTime m_startTime;
 

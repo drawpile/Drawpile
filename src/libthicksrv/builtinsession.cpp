@@ -25,7 +25,7 @@
 
 namespace server {
 
-BuiltinSession::BuiltinSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent)
+BuiltinSession::BuiltinSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QString &id, const QString &idAlias, const QString &founder, QObject *parent)
 	: ThickSession(config, announcements, statetracker, aclFilter, id, idAlias, founder, parent)
 {
 }

@@ -106,7 +106,7 @@ QJsonArray SessionServer::sessionDescriptions() const
 	return descs;
 }
 
-SessionHistory *SessionServer::initHistory(const QUuid &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+SessionHistory *SessionServer::initHistory(const QString &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	if(m_useFiledSessions) {
 		FiledHistory *fh = FiledHistory::startNew(m_sessiondir, id, alias, protocolVersion, founder);
@@ -117,7 +117,7 @@ SessionHistory *SessionServer::initHistory(const QUuid &id, const QString alias,
 	}
 }
 
-std::tuple<Session*, QString> SessionServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+std::tuple<Session*, QString> SessionServer::createSession(const QString &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
 
@@ -125,7 +125,7 @@ std::tuple<Session*, QString> SessionServer::createSession(const QUuid &id, cons
 		return std::tuple<Session*, QString> { nullptr, "closed" };
 	}
 
-	if(getSessionById(id.toString(), false) || (!idAlias.isEmpty() && getSessionById(idAlias, false))) {
+	if(getSessionById(id, false) || (!idAlias.isEmpty() && getSessionById(idAlias, false))) {
 		return std::tuple<Session*, QString> { nullptr, "idInUse" };
 	}
 
@@ -155,7 +155,7 @@ Session *SessionServer::createFromTemplate(const QString &idAlias)
 		return nullptr;
 
 	SessionHistory *history = initHistory(
-		QUuid::createUuid(),
+		Ulid::make().toString(),
 		idAlias, 
 		protocol::ProtocolVersion::fromString(desc["protocol"].toString()),
 		desc["founder"].toString());
@@ -178,7 +178,7 @@ void SessionServer::initSession(Session *session)
 {
 	m_sessions.append(session);
 
-	const QString idString = session->idString();
+	const QString idString = session->id();
 
 	connect(session, &Session::sessionAttributeChanged, this, &SessionServer::onSessionAttributeChanged);
 	connect(session, &Session::destroyed, this, [this, idString](QObject *object) {
@@ -195,15 +195,9 @@ void SessionServer::initSession(Session *session)
 
 Session *SessionServer::getSessionById(const QString &id, bool load)
 {
-	const QUuid uuid(id);
 	for(Session *s : m_sessions) {
-		if(uuid.isNull()) {
-			if(s->idAlias() == id)
-				return s;
-		} else {
-			if(s->id() == uuid)
-				return s;
-		}
+		if(s->id() == id || s->idAlias() == id)
+			return s;
 	}
 
 	if(load && templateLoader() && templateLoader()->exists(id)) {

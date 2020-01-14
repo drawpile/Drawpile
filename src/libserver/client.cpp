@@ -112,7 +112,7 @@ QJsonObject Client::description(bool includeSession) const
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
 	if(includeSession && d->session)
-		u["session"] = d->session->idString();
+		u["session"] = d->session->id();
 	return u;
 }
 

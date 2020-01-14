@@ -92,7 +92,7 @@ public:
 	 * @param founder session founder username
 	 * @return the newly created session
 	 */
-	std::tuple<Session*, QString> createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) override;
+	std::tuple<Session*, QString> createSession(const QString &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) override;
 
 	/**
 	 * @brief Create a new session by instantiating a template
@@ -189,7 +189,7 @@ private slots:
 	void cleanupSessions();
 
 private:
-	SessionHistory *initHistory(const QUuid &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
+	SessionHistory *initHistory(const QString &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 	void initSession(Session *session);
 
 	sessionlisting::Announcements *m_announcements;

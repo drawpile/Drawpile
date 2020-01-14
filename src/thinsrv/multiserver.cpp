@@ -228,8 +228,8 @@ void MultiServer::assignRecording(Session *session)
 	QDateTime now = QDateTime::currentDateTime();
 	filename.replace("%d", now.toString("yyyy-MM-dd"));
 	filename.replace("%t", now.toString("HH.mm.ss"));
-	filename.replace("%i", session->idString());
-	filename.replace("%a", session->idAlias().isEmpty() ? session->idString() : session->idAlias());
+	filename.replace("%i", session->id());
+	filename.replace("%a", session->aliasOrId());
 
 	fi = filename;
 
@@ -614,12 +614,8 @@ JsonApiResult MultiServer::logJsonApi(JsonApiMethod method, const QStringList &p
 	auto q = m_config->logger()->query();
 	q.page(request.value("page").toInt(), 100);
 
-	if(request.contains("session")) {
-		QUuid s = request.value("session").toString();
-		if(s.isNull())
-			return JsonApiErrorResult(JsonApiResult::BadRequest, "Invalid session ID");
-		q.session(s);
-	}
+	if(request.contains("session"))
+		q.session(request.value("session").toString());
 
 	if(request.contains("after")) {
 		QDateTime after = QDateTime::fromString(request.value("after").toString(), Qt::ISODate);

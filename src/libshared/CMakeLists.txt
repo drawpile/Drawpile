@@ -27,6 +27,7 @@ set (
 	util/networkaccess.cpp
 	util/validators.cpp
 	util/paths.cpp
+	util/ulid.cpp
 	listings/announcementapi.cpp
 	listings/listserverfinder.cpp
 	)

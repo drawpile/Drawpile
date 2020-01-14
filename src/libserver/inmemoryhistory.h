@@ -32,7 +32,7 @@ namespace server {
 class InMemoryHistory : public SessionHistory {
 	Q_OBJECT
 public:
-	InMemoryHistory(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent=nullptr);
+	InMemoryHistory(const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent=nullptr);
 
 	std::tuple<protocol::MessageList, int> getBatch(int after) const override;
 

@@ -538,7 +538,12 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	// Create a new session
 	Session *session;
 	QString sessionErrorCode;
-	std::tie(session, sessionErrorCode) = m_sessions->createSession(QUuid::createUuid(), sessionAlias, protocolVersion, m_client->username());
+	std::tie(session, sessionErrorCode) = m_sessions->createSession(
+		Ulid::make().toString(),
+		sessionAlias,
+		protocolVersion,
+		m_client->username()
+		);
 
 	if(!session) {
 		QString msg;
@@ -565,7 +570,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	reply.reply["state"] = "host";
 
 	QJsonObject joinInfo;
-	joinInfo["id"] = sessionAlias.isEmpty() ? session->idString() : sessionAlias;
+	joinInfo["id"] = sessionAlias.isEmpty() ? session->id() : sessionAlias;
 	joinInfo["user"] = userId;
 	joinInfo["flags"] = sessionFlags(session);
 	reply.reply["join"] = joinInfo;

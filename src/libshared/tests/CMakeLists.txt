@@ -17,6 +17,7 @@ AddUnitTest(messages)
 AddUnitTest(recording)
 AddUnitTest(messagequeue)
 AddUnitTest(listings)
+AddUnitTest(ulid)
 
 if(Sodium_FOUND)
 	AddUnitTest(authtoken)

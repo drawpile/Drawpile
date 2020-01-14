@@ -40,13 +40,13 @@ bool DbLog::initDb()
 	);
 }
 
-QList<Log> DbLog::getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const
+QList<Log> DbLog::getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const
 {
 	QString sql = "SELECT timestamp, session, user, level, topic, message FROM serverlog WHERE 1=1";
 	QVariantList params;
-	if(!session.isNull()) {
+	if(!session.isEmpty()) {
 		sql += " AND session=?";
-		params << session.toString();
+		params << session;
 	}
 	if(after.isValid()) {
 		sql += " AND timestamp>=?";
@@ -83,7 +83,7 @@ QList<Log> DbLog::getLogEntries(const QUuid &session, const QDateTime &after, Lo
 	while(q.next()) {
 		results << Log(
 			q.value(0).toDateTime(),
-			QUuid(q.value(1).toString()),
+			q.value(1).toString(),
 			q.value(2).toString(),
 			Log::Level(q.value(3).toInt()),
 			Log::Topic(QMetaEnum::fromType<Log::Topic>().keyToValue(q.value(4).toString().toLocal8Bit().constData())),
@@ -101,7 +101,7 @@ void DbLog::storeMessage(const Log &entry)
 	q.bindValue(1, int(entry.level()));
 	q.bindValue(2, QMetaEnum::fromType<Log::Topic>().valueToKey(int(entry.topic())));
 	q.bindValue(3, entry.user());
-	q.bindValue(4, entry.session().toString());
+	q.bindValue(4, entry.session());
 	q.bindValue(5, entry.message());
 	q.exec();
 }

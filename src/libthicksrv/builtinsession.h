@@ -31,7 +31,7 @@ class BuiltinSession : public ThickSession
 {
 	Q_OBJECT
 public:
-	BuiltinSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
+	BuiltinSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QString &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
 
 public slots:
 	void doInternalResetNow();

@@ -218,14 +218,14 @@ Session *ThickServer::getSessionById(const QString &id, bool loadTemplate)
 {
 	Q_UNUSED(loadTemplate)
 
-	if(!id.isEmpty() && m_session && (m_session->idString() == id || m_session->idAlias() == id))
+	if(!id.isEmpty() && m_session && (m_session->id() == id || m_session->idAlias() == id))
 		return m_session;
 
 	return nullptr;
 }
 
 
-std::tuple<Session*, QString> ThickServer::createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
+std::tuple<Session*, QString> ThickServer::createSession(const QString &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder)
 {
 	Q_ASSERT(!id.isNull());
 

@@ -1,5 +1,6 @@
 #include "../filedhistory.h"
 #include "../../libshared/util/passwordhash.h"
+#include "../../libshared/util/ulid.h"
 #include "../../libshared/net/meta.h"
 
 #include <QtTest/QtTest>
@@ -38,7 +39,7 @@ private slots:
 
 		const QString announcementUrl = "http://example.com/";
 
-		QUuid testId = QUuid::createUuid();
+		auto testId = Ulid::make().toString();
 		{
 			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, testId, idAlias, protover, founder) };
 			QVERIFY(fh.get());
@@ -276,7 +277,7 @@ private slots:
 
 	void testUserLeave()
 	{
-		QUuid id = QUuid::createUuid();
+		auto id = Ulid::make().toString();
 		{
 			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, id, QString(), protocol::ProtocolVersion::current(), "test") };
 
@@ -305,7 +306,7 @@ private:
 	// Generate a test recording containing three messages.
 	QString makeTestRecording()
 	{
-		QUuid id = QUuid::createUuid();
+		auto id = Ulid::make().toString();
 		std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, id, QString(), protocol::ProtocolVersion::current(), "test") };
 
 		fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test1"))));

@@ -38,14 +38,14 @@ public:
 	/**
 	 * Construct a fully self contained ThickSession
 	 */
-	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
+	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, const QString &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
 
 	void readyToAutoReset(int ctxId) override;
 
 	bool supportsAutoReset() const override { return false; }
 
 protected:
-	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
+	ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QString &id, const QString &idAlias, const QString &founder, QObject *parent=nullptr);
 
 	void addToHistory(protocol::MessagePtr msg) override;
     void onSessionReset() override;

@@ -18,6 +18,7 @@
 */
 
 #include "validators.h"
+#include "ulid.h"
 
 #include <QString>
 #include <QUuid>
@@ -39,8 +40,11 @@ bool validateSessionIdAlias(const QString &alias)
 	}
 
 	// To avoid confusion with real session IDs,
-	// aliases may not be valid UUIDs.
+	// aliases may not be valid UUIDs or ULIDs
 	if(!QUuid(alias).isNull())
+		return false;
+
+	if(!Ulid(alias).isNull())
 		return false;
 
 	return true;

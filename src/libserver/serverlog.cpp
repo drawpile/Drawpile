@@ -21,12 +21,12 @@ QString Log::toString(bool abridged) const
 	msg += ' ';
 	if(!m_user.isEmpty())
 		msg += m_user;
-	if(!m_user.isEmpty() && !m_session.isNull())
+	if(!m_user.isEmpty() && !m_session.isEmpty())
 		msg += '@';
-	if(!m_session.isNull())
-		msg += m_session.toString();
+	if(!m_session.isEmpty())
+		msg += m_session;
 
-	if(!m_user.isEmpty() || !m_session.isNull())
+	if(!m_user.isEmpty() || !m_session.isEmpty())
 	msg += QStringLiteral(": ");
 
 	msg += m_message;
@@ -40,8 +40,8 @@ QJsonObject Log::toJson(JsonOptions options) const
 	o["timestamp"] = m_timestamp.toString(Qt::ISODate);
 	o["level"] = QMetaEnum::fromType<Log::Level>().valueToKey(int(m_level));
 	o["topic"] = QMetaEnum::fromType<Log::Topic>().valueToKey(int(m_topic));
-	if(!options.testFlag(NoSession) && !m_session.isNull())
-		o["session"] = m_session.toString();
+	if(!options.testFlag(NoSession) && !m_session.isEmpty())
+		o["session"] = m_session;
 
 	if(!m_user.isEmpty()) {
 		if(options.testFlag(NoPrivateData)) {
@@ -85,7 +85,7 @@ void InMemoryLog::storeMessage(const Log &entry)
 		m_history.pop_back();
 }
 
-QList<Log> InMemoryLog::getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const
+QList<Log> InMemoryLog::getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const
 {
 	QList<Log> filtered;
 
@@ -93,7 +93,7 @@ QList<Log> InMemoryLog::getLogEntries(const QUuid &session, const QDateTime &aft
 		if(after.isValid() && after.msecsTo(l.timestamp()) < 1000)
 			break;
 
-		if(!session.isNull() && session != l.session())
+		if(!session.isEmpty() && session != l.session())
 			continue;
 
 		if(l.level() > atleast)

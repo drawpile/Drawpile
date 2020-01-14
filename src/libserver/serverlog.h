@@ -21,8 +21,9 @@
 #define DP_SRV_SERVERLOG_H
 
 #include <QDateTime>
-#include <QUuid>
 #include <QHostAddress>
+
+#include "../libshared/util/ulid.h"
 
 class QJsonObject;
 
@@ -64,15 +65,15 @@ public:
 	Q_ENUM(Topic)
 
 	Log() : m_timestamp(QDateTime::currentDateTimeUtc()), m_level(Level::Warn), m_topic(Topic::Status) { }
-	Log(const QDateTime &ts, const QUuid &session, const QString &user, Level level, Topic topic, const QString message)
-		: m_timestamp(ts), m_session(session), m_user(user), m_level(level), m_topic(topic), m_message(message)
+	Log(const QDateTime &ts, const QString &sessionId, const QString &user, Level level, Topic topic, const QString message)
+		: m_timestamp(ts), m_session(sessionId), m_user(user), m_level(level), m_topic(topic), m_message(message)
 		{ }
 
 	//! Get the entry timestamp
 	QDateTime timestamp() const { return m_timestamp; }
 
-	//! Get the session ID (null if not pertinent to any session)
-	QUuid session() const { return m_session; }
+	//! Get the session ID (blank if not pertinent to any session)
+	QString session() const { return m_session; }
 
 	//! Get the user info triplet (ID;IP;name) or empty if not pertinent to any user
 	QString user() const { return m_user; }
@@ -88,7 +89,7 @@ public:
 
 	Log &about(Level l, Topic t) { m_level=l; m_topic=t; return *this; }
 	Log &user(uint8_t id, const QHostAddress &ip, const QString &name) { m_user = QStringLiteral("%1;%2;%3").arg(int(id)).arg(ip.toString()).arg(name); return *this; }
-	Log &session(const QUuid &id) { m_session=id; return *this; }
+	Log &session(const QString &id) { m_session=id; return *this; }
 	Log &message(const QString &msg) { m_message=msg; return *this; }
 
 	inline void to(ServerLog *logger);
@@ -118,7 +119,7 @@ public:
 
 private:
 	QDateTime m_timestamp;
-	QUuid m_session;
+	QString m_session;
 	QString m_user;
 	Level m_level;
 	Topic m_topic;
@@ -136,7 +137,7 @@ class ServerLogQuery {
 public:
 	ServerLogQuery(const ServerLog &log) : m_log(log), m_offset(0), m_limit(0), m_atleast(Log::Level::Debug) { }
 
-	ServerLogQuery &session(const QUuid &id) { m_session = id; return *this; }
+	ServerLogQuery &session(const QString &id) { m_session = id; return *this; }
 	ServerLogQuery &page(int page, int entriesPerPage) { m_offset = page*entriesPerPage; m_limit=entriesPerPage; return *this; }
 	ServerLogQuery &after(const QDateTime &ts) { m_after = ts; return *this; }
 	ServerLogQuery &atleast(Log::Level level) { m_atleast = level; return *this; }
@@ -146,7 +147,7 @@ public:
 
 private:
 	const ServerLog &m_log;
-	QUuid m_session;
+	QString m_session;
 	int m_offset;
 	int m_limit;
 	Log::Level m_atleast;
@@ -181,7 +182,7 @@ public:
 	 * @param offset ignore first *offset* messages
 	 * @param limit return at most this many messages
 	 */
-	virtual QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const = 0;
+	virtual QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const = 0;
 
 	/**
 	 * @brief Return a query builder
@@ -217,7 +218,7 @@ public:
 	InMemoryLog() : m_limit(1000) { }
 	void setHistoryLimit(int limit);
 
-	QList<Log> getLogEntries(const QUuid &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const override;
+	QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const override;
 
 protected:
 	void storeMessage(const Log &entry) override;

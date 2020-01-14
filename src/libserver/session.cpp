@@ -1003,7 +1003,7 @@ void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QStri
 	}
 
 	QJsonObject o;
-	o["session"] = idString();
+	o["session"] = id();
 	o["sessionTitle"] = m_history->title();
 	o["user"] = reporter->username();
 	o["auth"] = reporter->isAuthenticated();
@@ -1045,7 +1045,7 @@ QJsonObject Session::getDescription(bool full) const
 	// The basic description contains just the information
 	// needed for the login session listing
 	QJsonObject o {
-		{"id", idString()},
+		{"id", id()},
 		{"alias", idAlias()},
 		{"protocol", m_history->protocolVersion().asString()},
 		{"userCount", userCount()},

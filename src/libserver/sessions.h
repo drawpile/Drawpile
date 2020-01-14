@@ -24,7 +24,6 @@
 
 class QJsonArray;
 class QString;
-class QUuid;
 
 namespace protocol {
 	class ProtocolVersion;
@@ -71,7 +70,7 @@ public:
 	 *
 	 * @return session, error string pair: if session is null, error string contains the error code
 	 */
-	virtual std::tuple<Session*, QString> createSession(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) = 0;
+	virtual std::tuple<Session*, QString> createSession(const QString &id, const QString &alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) = 0;
 };
 
 }

@@ -34,7 +34,7 @@
 
 namespace server {
 
-ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent)
+ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, const QString &id, const QString &idAlias, const QString &founder, QObject *parent)
 	: Session(
 		new InMemoryHistory(id, idAlias, protocol::ProtocolVersion::current(), founder),
 	    config, announcements, parent
@@ -50,7 +50,7 @@ ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *
 			this);
 }
 
-ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QUuid &id, const QString &idAlias, const QString &founder, QObject *parent)
+ThickSession::ThickSession(ServerConfig *config, sessionlisting::Announcements *announcements, canvas::StateTracker *statetracker, const canvas::AclFilter *aclFilter, const QString &id, const QString &idAlias, const QString &founder, QObject *parent)
 	: Session(
 		new InMemoryHistory(id, idAlias, protocol::ProtocolVersion::current(), founder),
 		config, announcements, parent

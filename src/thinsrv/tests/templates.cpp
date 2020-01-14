@@ -2,12 +2,12 @@
 #include "../../libserver/inmemoryhistory.h"
 #include "../../libshared/net/protover.h"
 #include "../../libshared/util/passwordhash.h"
+#include "../../libshared/util/ulid.h"
 
 #include <QtTest/QtTest>
 #include <QTemporaryDir>
 #include <QDir>
 #include <QFile>
-#include <QUuid>
 
 #include <QDebug>
 
@@ -45,7 +45,7 @@ private slots:
 
 		// Try loading the template
 		InMemoryHistory history(
-			QUuid::createUuid(),
+			Ulid::make().toString(),
 			"test",
 			protocol::ProtocolVersion::fromString(desc.value("protocol").toString()),
 			desc.value("founder").toString()

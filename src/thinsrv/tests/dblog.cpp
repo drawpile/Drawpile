@@ -25,10 +25,10 @@ private slots:
 	{
 		const QDateTime now = QDateTime::currentDateTimeUtc();
 
-		logger->logMessage(Log(now.addDays(-1), QUuid(), "test", Log::Level::Info, Log::Topic::Status, "day 1"));
-		logger->logMessage(Log(now.addDays(-2), QUuid(), "test", Log::Level::Info, Log::Topic::Status, "day 2"));
-		logger->logMessage(Log(now.addDays(-2), QUuid(), "test", Log::Level::Info, Log::Topic::Status, "day 2.2"));
-		logger->logMessage(Log(now.addDays(-3), QUuid(), "test", Log::Level::Info, Log::Topic::Status, "day 3"));
+		logger->logMessage(Log(now.addDays(-1), QString(), "test", Log::Level::Info, Log::Topic::Status, "day 1"));
+		logger->logMessage(Log(now.addDays(-2), QString(), "test", Log::Level::Info, Log::Topic::Status, "day 2"));
+		logger->logMessage(Log(now.addDays(-2), QString(), "test", Log::Level::Info, Log::Topic::Status, "day 2.2"));
+		logger->logMessage(Log(now.addDays(-3), QString(), "test", Log::Level::Info, Log::Topic::Status, "day 3"));
 
 		QCOMPARE(logEntryCount(), 4);
 
@@ -48,7 +48,7 @@ private slots:
 private:
 	int logEntryCount()
 	{
-		return logger->getLogEntries(QUuid(), QDateTime(), Log::Level::Debug, 0, 0).size();
+		return logger->getLogEntries(QString(), QDateTime(), Log::Level::Debug, 0, 0).size();
 	}
 
 	QScopedPointer<Database> m_db;

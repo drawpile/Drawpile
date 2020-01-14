@@ -70,7 +70,7 @@ public:
 
 	QJsonArray sessionDescriptions() const override;
 	Session *getSessionById(const QString &id, bool loadTemplate) override;
-	std::tuple<Session*, QString> createSession(const QUuid &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) override;
+	std::tuple<Session*, QString> createSession(const QString &id, const QString &idAlias, const protocol::ProtocolVersion &protocolVersion, const QString &founder) override;
 
 	/**
 	 * Start the server.

@@ -20,7 +20,6 @@
 #ifndef ANNOUNCABLE_H
 #define ANNOUNCABLE_H
 
-class QUuid;
 class QString;
 
 namespace sessionlisting {
@@ -35,7 +34,7 @@ public:
 	virtual ~Announcable();
 
 	//! Get the ID of the announcable session
-	virtual QUuid id() const = 0;
+	virtual QString id() const = 0;
 
 	//! Get an announcement for this session
 	virtual Session getSessionAnnouncement() const = 0;

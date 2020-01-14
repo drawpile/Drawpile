@@ -34,7 +34,7 @@ namespace server {
 // A block is closed when its size goes above this limit
 static const qint64 MAX_BLOCK_SIZE = 0xffff * 10;
 
-FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
+FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
 	: SessionHistory(id, parent),
 	  m_dir(dir),
 	  m_journal(journal),
@@ -53,7 +53,7 @@ FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, con
 	startTimer(1000 * 30, Qt::VeryCoarseTimer);
 }
 
-FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QUuid &id, QObject *parent)
+FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QString &id, QObject *parent)
 	: FiledHistory(dir, journal, id, QString(), protocol::ProtocolVersion(), QString(), parent)
 {
 }
@@ -62,26 +62,22 @@ FiledHistory::~FiledHistory()
 {
 }
 
-QString FiledHistory::journalFilename(const QUuid &id)
+QString FiledHistory::journalFilename(const QString &id)
 {
-	QString journalFilename = id.toString();
-	journalFilename = journalFilename.mid(1, journalFilename.length()-2) + ".session";
-	return journalFilename;
+	return id + ".session";
 }
 
-static QString uniqueRecordingFilename(const QDir &dir, const QUuid &id, int idx)
+static QString uniqueRecordingFilename(const QDir &dir, const QString &id, int idx)
 {
-	QString idstr = id.toString();
-	idstr = idstr.mid(1, idstr.length()-2);
-
+	QString idstr = id;
 	if(idx > 1)
-		idstr = QString("%1_r%2").arg(idstr).arg(idx);
+		idstr = QString("%1_r%2").arg(id).arg(idx);
 
 	// The filename should be unique already, but better safe than sorry
 	return utils::uniqueFilename(dir, idstr, "dprec", false);
 }
 
-FiledHistory *FiledHistory::startNew(const QDir &dir, const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
+FiledHistory *FiledHistory::startNew(const QDir &dir, const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
 {
 	QFile *journal = new QFile(QFileInfo(dir, journalFilename(id)).absoluteFilePath());
 
@@ -100,11 +96,7 @@ FiledHistory *FiledHistory::load(const QString &path, QObject *parent)
 {
 	const QString filename = QFileInfo(path).baseName();
 	const QDir dir = QFileInfo(path).dir();
-	const QUuid id = filename;
-	if(id.isNull()) {
-		qWarning() << filename << "History file name not a valid ID";
-		return nullptr;
-	}
+	// TODO validate session ID here
 
 	QFile *journal = new QFile(path);
 	if(!journal->open(QFile::ReadWrite)) {
@@ -113,7 +105,7 @@ FiledHistory *FiledHistory::load(const QString &path, QObject *parent)
 		return nullptr;
 	}
 
-	FiledHistory *fh = new FiledHistory(dir, journal, id, parent);
+	FiledHistory *fh = new FiledHistory(dir, journal, filename, parent);
 	journal->setParent(fh);
 	if(!fh->load()) {
 		delete fh;
@@ -210,13 +202,13 @@ bool FiledHistory::load()
 			if(m_alias.isEmpty())
 				m_alias = QString::fromUtf8(params);
 			else
-				qWarning() << id().toString() << "alias set twice.";
+				qWarning() << id() << "alias set twice.";
 
 		} else if(cmd == "FOUNDER") {
 			if(m_founder.isEmpty())
 				m_founder = QString::fromUtf8(params);
 			else
-				qWarning() << id().toString() << "founder set twice.";
+				qWarning() << id() << "founder set twice.";
 
 		} else if(cmd == "PASSWORD") {
 			if(params.isEmpty() || passwordhash::isValidHash(params))
@@ -249,14 +241,14 @@ bool FiledHistory::load()
 				else if(f == "authonly")
 					flags |= AuthOnly;
 				else
-					qWarning() << id().toString() << "unknown flag:" << QString::fromUtf8(f);
+					qWarning() << id() << "unknown flag:" << QString::fromUtf8(f);
 			}
 			m_flags = flags;
 
 		} else if(cmd == "BAN") {
 			const QList<QByteArray> args = params.split(' ');
 			if(args.length() != 5) {
-				qWarning() << id().toString() << "invalid ban entry:" << QString::fromUtf8(params);
+				qWarning() << id() << "invalid ban entry:" << QString::fromUtf8(params);
 			} else {
 				int id = args.at(0).toInt();
 				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
@@ -303,13 +295,13 @@ bool FiledHistory::load()
 			m_trusted.remove(QString::fromUtf8(params));
 
 		} else {
-			qWarning() << id().toString() << "unknown journal entry:" << QString::fromUtf8(cmd);
+			qWarning() << id() << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
 	} while(!m_journal->atEnd());
 
 	// The latest recording file must exist
 	if(recordingFile.isEmpty()) {
-		qWarning() << id().toString() << "content file not set!";
+		qWarning() << id() << "content file not set!";
 		return false;
 	}
 

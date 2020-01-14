@@ -22,7 +22,7 @@
 
 namespace server {
 
-InMemoryHistory::InMemoryHistory(const QUuid &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
+InMemoryHistory::InMemoryHistory(const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
 	: SessionHistory(id, parent),
 	  m_alias(alias),
 	  m_founder(founder),
