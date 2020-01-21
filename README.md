@@ -1,4 +1,4 @@
-Drawpile - a collaborative drawing program
+Drawpile - a collaborative drawing program  [![Build Status](https://travis-ci.org/drawpile/Drawpile.svg?branch=master)](https://travis-ci.org/drawpile/Drawpile)
 ------------------------------------------
 
 Drawpile is a drawing program that lets you share the canvas
