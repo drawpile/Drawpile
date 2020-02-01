@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -309,12 +309,11 @@ void Selection::addPointToShape(const QPointF &point)
 bool Selection::closeShape(const QRectF &clipRect)
 {
 	if(!m_closedPolygon) {
-		const QPolygonF clipPolygon{clipRect};
-
-		if(!m_shape.intersects(clipRect))
+		QPolygonF intersection = m_shape.intersected(clipRect);
+		if(intersection.isEmpty())
 			return false;
-
-		m_shape = m_shape.intersected(clipPolygon);
+		intersection.pop_back(); // We use implicitly closed polygons
+		m_shape = intersection;
 
 		m_closedPolygon = true;
 		saveShape();
