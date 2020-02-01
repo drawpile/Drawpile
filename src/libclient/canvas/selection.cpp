@@ -454,6 +454,11 @@ protocol::MessageList Selection::pasteOrMoveToCanvas(uint8_t contextId, int laye
 	return msgs;
 }
 
+QImage Selection::transformedPasteImage() const
+{
+	return tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), nullptr);
+}
+
 protocol::MessageList Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
 {
 	QRect area;
