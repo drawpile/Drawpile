@@ -46,6 +46,8 @@ typedef QPair<QJsonDocument,QString> ApiReply;
 static inline ApiReply ApiSuccess(const QJsonDocument &doc) { return ApiReply(doc, QString()); }
 static inline QJsonDocument ApiSuccess(const ApiReply &r) { return r.first; }
 static inline ApiReply ApiError(const QString &message) { return ApiReply(QJsonDocument(), message); }
+static inline ApiReply ApiGone() { return ApiReply(QJsonDocument(), QStringLiteral("ERROR 410 GONE")); }
+static inline bool isGoneMessage(const QString &message) { return message == "ERROR 410 GONE"; }
 static inline QString ApiError(const ApiReply &r) { return r.second; }
 static inline bool IsApiError(const ApiReply &r) { return !ApiError(r).isEmpty(); }
 
@@ -72,6 +74,9 @@ static ApiReply readReply(QNetworkReply *reply)
 			} else {
 				return ApiError(msg);
 			}
+		} else if(statusCode == 410) {
+			// Server has been shut down permanently
+			return ApiGone();
 
 		} else {
 			// Other errors
@@ -100,6 +105,9 @@ void AnnouncementApiResponse::setResult(const QVariant &result, const QString &m
 void AnnouncementApiResponse::setError(const QString &error)
 {
 	m_error = error;
+	m_gone = isGoneMessage(error);
+	if(m_gone)
+		emit serverGone();
 	emit finished(QVariant(), QString(), error);
 }
 

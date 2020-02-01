@@ -266,7 +266,8 @@ void JoinDialog::refreshListing()
 		return;
 	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
 
-	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers(true)) {
+	auto listservers = sessionlisting::ListServerModel::listServers(true);
+	for(const sessionlisting::ListServer &ls : listservers) {
 		if(!ls.publicListings)
 			continue;
 
@@ -278,6 +279,13 @@ void JoinDialog::refreshListing()
 
 		auto response = sessionlisting::getSessionList(url);
 
+		connect(response, &sessionlisting::AnnouncementApiResponse::serverGone,
+			[ls]() {
+				qInfo() << "List server at" << ls.url << "is gone. Removing.";
+				sessionlisting::ListServerModel servers(true);
+				if(servers.removeServer(ls.url))
+					servers.saveServers();
+			});
 		connect(response, &sessionlisting::AnnouncementApiResponse::finished,
 			this, [this, ls](const QVariant &result, const QString &message, const QString &error)
 			{

@@ -131,6 +131,25 @@ bool ListServerModel::addServer(const QString &name, const QString &url, const Q
 	return true;
 }
 
+bool ListServerModel::removeServer(const QString &url)
+{
+	// Find the server
+	int found = -1;
+	for(int i=0;i<m_servers.size();++i) {
+		if(m_servers[i].url == url) {
+			found = i;
+			break;
+		}
+	}
+
+	if(found < 0)
+		return false;
+
+	removeRow(found);
+
+	return true;
+}
+
 void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 {
 	// Find the server
