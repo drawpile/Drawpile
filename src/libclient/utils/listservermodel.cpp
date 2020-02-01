@@ -221,33 +221,6 @@ QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 		list << ls;
 	}
 	cfg.endArray();
-
-	// Add the default drawpile.net server if there is nothing else
-	if(list.isEmpty()) {
-		list << ListServer {
-			QIcon(":/icons/drawpile.png"),
-			QStringLiteral("drawpile"),
-			QStringLiteral("drawpile.net"),
-			QStringLiteral("http://drawpile.net/api/listing/"),
-			QStringLiteral("This is the default public listing server.\n"
-			"Note that as this server is open to all, please do not share any images that would "
-			"not suitable for everyone."),
-			false,
-			true,
-			true
-		};
-	}
-
-	// Use HTTPS for drawpile.net listing if possible. It would be better to
-	// just always use HTTPS, but SSL support is not always available (on Windows,
-	// since OpenSSL is not part of the base system.)
-	// TODO is this true anymore?
-	if(QSslSocket::supportsSsl()) {
-		for(ListServer &ls : list) {
-			if(ls.url == QStringLiteral("http://drawpile.net/api/listing/"))
-				ls.url = QStringLiteral("https://drawpile.net/api/listing/");
-		}
-	}
 	return list;
 }
 
