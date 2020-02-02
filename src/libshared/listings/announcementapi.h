@@ -84,7 +84,7 @@ class AnnouncementApiResponse : public QObject
 	Q_OBJECT
 public:
 	AnnouncementApiResponse(const QUrl &url, QObject *parent=nullptr)
-		: QObject(parent), m_apiUrl(url)
+		: QObject(parent), m_apiUrl(url), m_gone(false)
 	{ }
 
 	void setResult(const QVariant &result, const QString &message=QString());
@@ -95,15 +95,18 @@ public:
 	QVariant result() const { return m_result; }
 	QString message() const { return m_message; }
 	QString errorMessage() const { return m_error; }
+	bool isGone() const { return m_gone; }
 
 signals:
 	void finished(const QVariant &result, const QString &message, const QString &error);
+	void serverGone();
 
 private:
 	QUrl m_apiUrl;
 	QVariant m_result;
 	QString m_message;
 	QString m_error;
+	bool m_gone;
 };
 
 /**

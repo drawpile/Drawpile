@@ -847,6 +847,9 @@ void Document::cutLayer()
 {
 	if(m_canvas) {
 		copyFromLayer(m_toolctrl->activeLayer());
+		if(m_canvas->selection() && m_canvas->selection()->isMovedFromCanvas())
+			m_canvas->selection()->setShape(m_canvas->selection()->moveSourceRegion());
+
 		fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
 		m_canvas->setSelection(nullptr);
 	}

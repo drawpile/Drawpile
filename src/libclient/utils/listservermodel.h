@@ -60,6 +60,12 @@ public:
 	 */
 	bool addServer(const QString &name, const QString &url, const QString &description, bool readonly, bool pub, bool priv);
 
+	/**
+	 * @brief Remove the server with the given URL
+	 * @return false if no such server was found
+	 */
+	bool removeServer(const QString &url);
+
 	//!  Set the favicon for the server with the given URL
 	void setFavicon(const QString &url, const QImage &icon);
 

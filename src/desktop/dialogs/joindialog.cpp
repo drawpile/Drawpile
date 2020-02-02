@@ -91,10 +91,12 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	}
 #endif
 
-	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers(true)) {
+	const auto servers = sessionlisting::ListServerModel::listServers(true);
+	for(const sessionlisting::ListServer &ls : servers) {
 		if(ls.publicListings)
 			m_sessions->setMessage(ls.name, tr("Loading..."));
 	}
+	m_ui->noListServersNotification->setVisible(servers.isEmpty());
 
 	m_filteredSessions = new SessionFilterProxyModel(this);
 	m_filteredSessions->setSourceModel(m_sessions);
@@ -189,7 +191,6 @@ void JoinDialog::setListingVisible(bool show)
 	m_ui->showClosed->setVisible(show);
 	m_ui->listing->setVisible(show);
 	m_ui->line->setVisible(show);
-	m_addServerButton->setVisible(show);
 
 	if(show)
 		refreshListing();
@@ -266,7 +267,8 @@ void JoinDialog::refreshListing()
 		return;
 	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
 
-	for(const sessionlisting::ListServer &ls : sessionlisting::ListServerModel::listServers(true)) {
+	auto listservers = sessionlisting::ListServerModel::listServers(true);
+	for(const sessionlisting::ListServer &ls : listservers) {
 		if(!ls.publicListings)
 			continue;
 
@@ -278,6 +280,13 @@ void JoinDialog::refreshListing()
 
 		auto response = sessionlisting::getSessionList(url);
 
+		connect(response, &sessionlisting::AnnouncementApiResponse::serverGone,
+			[ls]() {
+				qInfo() << "List server at" << ls.url << "is gone. Removing.";
+				sessionlisting::ListServerModel servers(true);
+				if(servers.removeServer(ls.url))
+					servers.saveServers();
+			});
 		connect(response, &sessionlisting::AnnouncementApiResponse::finished,
 			this, [this, ls](const QVariant &result, const QString &message, const QString &error)
 			{
@@ -493,6 +502,19 @@ void JoinDialog::addListServer()
 
 		listservers.saveServers();
 		m_sessions->setMessage(info.name, tr("Loading..."));
+		m_ui->noListServersNotification->hide();
+
+		if(height() < COMPACT_MODE_THRESHOLD)
+			resize(width(), COMPACT_MODE_THRESHOLD + 10);
+
+		QTimer::singleShot(1, [this]() {
+			const auto index = m_sessions->index(m_sessions->rowCount()-1, 0);
+			m_ui->listing->expandAll();
+			m_ui->listing->scrollTo(index);
+		});
+
+		m_lastRefresh = 0;
+		refreshListing();
 	});
 	connect(response, &sessionlisting::AnnouncementApiResponse::finished, response, &QObject::deleteLater);
 }

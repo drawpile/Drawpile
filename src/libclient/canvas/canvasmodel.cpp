@@ -338,6 +338,10 @@ QImage CanvasModel::selectionToImage(int layerId) const
 {
 	QImage img;
 
+	if(m_selection && !m_selection->pasteImage().isNull()) {
+		return m_selection->transformedPasteImage();
+	}
+
 	const paintcore::Layer *layer = m_layerstack->getLayer(layerId);
 	if(layer)
 		img = layer->toImage();

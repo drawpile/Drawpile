@@ -7,6 +7,9 @@
  * List servers can now be manually sorted
  * Fixed brush size adjustment shortcut (needed to presses to adjust)
  * Fixed selection scaling if selection was not entirely contained by the canvas (selection is now clipped to canvas)
+ * Fixed copying and cutting a moved selection
+ * Automatically remove list servers that return HTTP 410 (Gone)
+ * Removed the default list server. Instead, a link to drawpile.net's communities section is shown.
 
 2019-12-07 Version 2.1.15
  * Server: Added support for list server API 1.6
