@@ -345,8 +345,12 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 
 			emit extAuthComplete(false);
 
+		} else if(status == "outgroup") {
+			qWarning("Ext-auth error: group membership needed");
+			failLogin(tr("Group membership needed"));
+
 		} else {
-			failLogin(tr("Unexpected ext-auth response: %s").arg(status));
+			failLogin(tr("Unexpected ext-auth response: %1").arg(status));
 		}
 	});
 }
