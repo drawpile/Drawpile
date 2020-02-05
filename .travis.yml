@@ -12,5 +12,5 @@ before_install:
 
 script:
   - mkdir -p build
-  - cd build && cmake .. && make && make test
+  - cd build && cmake .. -DTESTS=ON && make && make test
 
