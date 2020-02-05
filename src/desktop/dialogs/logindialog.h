@@ -59,8 +59,8 @@ private slots:
 	void showNewCert();
 
 	void onUsernameNeeded(bool canSelectAvatar);
-	void onLoginNeeded(const QString &prompt);
-	void onExtAuthNeeded(const QUrl &url);
+	void onLoginNeeded(const QString &forUsername, const QString &prompt);
+	void onExtAuthNeeded(const QString &forUsername, const QUrl &url);
 	void onExtAuthComplete(bool success);
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
 	void onSessionPasswordNeeded();

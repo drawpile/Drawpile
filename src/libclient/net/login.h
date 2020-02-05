@@ -277,7 +277,7 @@ signals:
 	 *
 	 * @param prompt prompt text
 	 */
-	void loginNeeded(const QString &prompt);
+	void loginNeeded(const QString &currentUsername, const QString &prompt);
 
 	/**
 	 * @brief External authentication is needed
@@ -289,7 +289,7 @@ signals:
 	 *
 	 * @param url ext auth server URL
 	 */
-	void extAuthNeeded(const QUrl &url);
+	void extAuthNeeded(const QString &currentUsername, const QUrl &url);
 
 	/**
 	 * @brief External authentication request completed

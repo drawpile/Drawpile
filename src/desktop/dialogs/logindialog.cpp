@@ -348,15 +348,21 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 	}
 }
 
-void LoginDialog::onLoginNeeded(const QString &prompt)
+void LoginDialog::onLoginNeeded(const QString &forUsername, const QString &prompt)
 {
+	if(!forUsername.isEmpty())
+		d->ui->username->setText(forUsername);
+
 	d->extauthurl = QUrl();
 	d->setLoginMode(prompt);
 }
 
-void LoginDialog::onExtAuthNeeded(const QUrl &url)
+void LoginDialog::onExtAuthNeeded(const QString &forUsername, const QUrl &url)
 {
 	Q_ASSERT(url.isValid());
+
+	if(!forUsername.isEmpty())
+		d->ui->username->setText(forUsername);
 
 	QString prompt = tr("Log in with %1 credentials").arg("<i>" + url.host() + "</i>");
 	if(url.scheme() != "https")

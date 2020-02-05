@@ -253,7 +253,7 @@ void LoginHandler::prepareToSendIdentity()
 		else
 			prompt = tr("Password needed to log in as \"%1\"").arg(m_address.userName());
 
-		emit loginNeeded(prompt);
+		emit loginNeeded(m_address.userName(), prompt);
 
 	} else {
 		sendIdentity();
@@ -383,7 +383,7 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 		m_extAuthGroup = msg.reply["group"].toString();
 		m_extAuthNonce = msg.reply["nonce"].toString();
 
-		emit extAuthNeeded(m_extAuthUrl);
+		emit extAuthNeeded(m_address.userName(), m_extAuthUrl);
 		return;
 	}
 
