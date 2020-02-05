@@ -281,7 +281,8 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 					extAuthId,
 					jsonArrayToStringList(ea["flags"].toArray()),
 					avatar,
-					m_config->getConfigBool(config::ExtAuthMod)
+					m_config->getConfigBool(config::ExtAuthMod),
+					m_config->getConfigBool(config::ExtAuthHost)
 					);
 
 			} else {
@@ -338,13 +339,14 @@ void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 			QStringLiteral("internal:%1").arg(userAccount.userId),
 			userAccount.flags,
 			QByteArray(),
+			true,
 			true
 		);
 		break;
 	}
 }
 
-void LoginHandler::authLoginOk(const QString &username, const QString &authId, const QStringList &flags, const QByteArray &avatar, bool allowMod)
+void LoginHandler::authLoginOk(const QString &username, const QString &authId, const QStringList &flags, const QByteArray &avatar, bool allowMod, bool allowHost)
 {
 	Q_ASSERT(!authId.isEmpty());
 
@@ -363,7 +365,7 @@ void LoginHandler::authLoginOk(const QString &username, const QString &authId, c
 	m_client->setModerator(flags.contains("MOD") && allowMod);
 	if(!avatar.isEmpty())
 		m_client->setAvatar(avatar);
-	m_hostPrivilege = flags.contains("HOST");
+	m_hostPrivilege = flags.contains("HOST") && allowHost;
 	m_state = State::WaitForLogin;
 
 	send(identReply);

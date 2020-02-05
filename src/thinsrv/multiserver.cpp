@@ -386,6 +386,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtAuthGroup,
 		config::ExtAuthFallback,
 		config::ExtAuthMod,
+		config::ExtAuthHost,
 		config::ExtAuthAvatars,
 #endif
 		config::LogPurgeDays,

@@ -109,7 +109,7 @@ private:
 	void handleStarttls();
 	void requestExtAuth();
 	void guestLogin(const QString &username);
-	void authLoginOk(const QString &username, const QString &authId, const QStringList &flags, const QByteArray &avatar, bool allowMod);
+	void authLoginOk(const QString &username, const QString &authId, const QStringList &flags, const QByteArray &avatar, bool allowMod, bool allowHost);
 	bool send(const protocol::ServerReply &cmd);
 	void sendError(const QString &code, const QString &message);
 	void extAuthGuestLogin(const QString &username);

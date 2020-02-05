@@ -73,6 +73,7 @@ struct ServerSummaryPage::Private {
 	QLineEdit *extAuthGroup;
 	QCheckBox *extAuthFallback;
 	QCheckBox *extAuthMod;
+	QCheckBox *extAuthHost;
 
 	QCheckBox *customAvatars;
 	QCheckBox *extAuthAvatars;
@@ -104,6 +105,7 @@ struct ServerSummaryPage::Private {
 		  extAuthGroup(new QLineEdit),
 		  extAuthFallback(new QCheckBox),
 		  extAuthMod(new QCheckBox),
+		  extAuthHost(new QCheckBox),
 		  customAvatars(new QCheckBox),
 		  extAuthAvatars(new QCheckBox)
 	{
@@ -137,6 +139,7 @@ struct ServerSummaryPage::Private {
 		useExtAuth->setText(ServerSummaryPage::tr("Enable"));
 		extAuthFallback->setText(ServerSummaryPage::tr("Permit guest logins when ext-auth server is unreachable"));
 		extAuthMod->setText(ServerSummaryPage::tr("Allow ext-auth moderators"));
+		extAuthHost->setText(ServerSummaryPage::tr("Allow ext-auth hosts"));
 		extAuthAvatars->setText(ServerSummaryPage::tr("Use ext-auth avatars"));
 	}
 };
@@ -246,6 +249,7 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	addWidgets(d, layout, row++, tr("User group"), d->extAuthGroup, true);
 	addWidgets(d, layout, row++, QString(), d->extAuthFallback);
 	addWidgets(d, layout, row++, QString(), d->extAuthMod);
+	addWidgets(d, layout, row++, QString(), d->extAuthHost);
 	addWidgets(d, layout, row++, QString(), d->extAuthAvatars);
 
 
@@ -325,12 +329,14 @@ void ServerSummaryPage::handleResponse(const QString &requestId, const JsonApiRe
 	d->extAuthGroup->setText(o[config::ExtAuthGroup.name].toString());
 	d->extAuthFallback->setChecked(o[config::ExtAuthFallback.name].toBool());
 	d->extAuthMod->setChecked(o[config::ExtAuthMod.name].toBool());
+	d->extAuthHost->setChecked(o[config::ExtAuthHost.name].toBool());
 	d->extAuthAvatars->setChecked(o[config::ExtAuthAvatars.name].toBool());
 	const bool supportsExtAuth = o.contains(config::UseExtAuth.name);
 	d->useExtAuth->setEnabled(supportsExtAuth);
 	d->extAuthGroup->setEnabled(supportsExtAuth);
 	d->extAuthFallback->setEnabled(supportsExtAuth);
 	d->extAuthMod->setEnabled(supportsExtAuth);
+	d->extAuthHost->setEnabled(supportsExtAuth);
 	d->extAuthAvatars->setEnabled(supportsExtAuth);
 }
 
@@ -356,6 +362,7 @@ void ServerSummaryPage::saveSettings()
 		{config::ExtAuthGroup.name, d->extAuthGroup->text()},
 		{config::ExtAuthFallback.name, d->extAuthFallback->isChecked()},
 		{config::ExtAuthMod.name, d->extAuthMod->isChecked()},
+		{config::ExtAuthHost.name, d->extAuthHost->isChecked()},
 		{config::ExtAuthAvatars.name, d->extAuthAvatars->isChecked()}
 	};
 
