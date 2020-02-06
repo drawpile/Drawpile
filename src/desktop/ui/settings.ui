@@ -65,11 +65,6 @@
        </item>
        <item>
         <property name="text">
-         <string>Passwords</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Avatars</string>
         </property>
        </item>
@@ -87,7 +82,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>5</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
            <layout class="QFormLayout" name="formLayout_2">
@@ -1067,48 +1062,6 @@
                <string>Block layer uncensoring</string>
               </property>
              </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="passwordPage">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <widget class="QLabel" name="passwordListMessage">
-              <property name="text">
-               <string>Note: passwords are not encrypted.</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QTreeView" name="passwordListView">
-              <attribute name="headerVisible">
-               <bool>false</bool>
-              </attribute>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <spacer name="horizontalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QPushButton" name="passwordListRemove">
-                <property name="text">
-                 <string>Remove</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </item>
            </layout>
           </widget>

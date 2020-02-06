@@ -57,8 +57,6 @@ private slots:
 
 	void lockParentalControls();
 
-	void removeStoredPassword();
-
 	void addAvatar();
 	void removeSelectedAvatar();
 

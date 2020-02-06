@@ -11,6 +11,7 @@
  * Fixed copying and cutting a moved selection
  * Automatically remove list servers that return HTTP 410 (Gone)
  * Removed the default list server. Instead, a link to drawpile.net's communities section is shown.
+ * Saved passwords are now stored in the system password store
 
 2019-12-07 Version 2.1.15
  * Server: Added support for list server API 1.6

@@ -30,6 +30,8 @@ RUN make download-karchive download-extra-cmake-modules download-dnssd_shim down
 # Build our dependencies
 RUN make extra-cmake-modules karchive kdnssd
 
+# Testing
+RUN make -j$(nproc) qtkeychain
 # Create the app build directory
 RUN mkdir /Build && chmod a+w /Build
 

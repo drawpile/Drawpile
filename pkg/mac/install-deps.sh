@@ -9,6 +9,7 @@ LIBVPX_URL=https://github.com/webmproject/libvpx/archive/v1.8.0.zip
 ECM_URL=https://download.kde.org/stable/frameworks/5.64/extra-cmake-modules-5.64.0.tar.xz
 KARCHIVE_URL=https://download.kde.org/stable/frameworks/5.64/karchive-5.64.0.tar.xz
 KDNSSD_URL=https://download.kde.org/stable/frameworks/5.64/kdnssd-5.64.0.tar.xz
+KEYCHAIN_URL=https://github.com/frankosterfeld/qtkeychain/archive/v0.10.0.zip
 
 ### Build flags
 export CFLAGS=-mmacosx-version-min=10.10
@@ -106,6 +107,7 @@ download_package "$LIBVPX_URL" libvpx.zip
 download_package "$ECM_URL" extra-cmake-modules.tar.xz
 download_package "$KARCHIVE_URL" karchive.tar.xz
 download_package "$KDNSSD_URL" kdnssd.tar.xz
+download_package "$KEYCHAIN_URL" qtkeychain.zip
 
 # Make sure we have the right versions (and they haven't been tampered with)
 shasum -a 256 -c ../deps.sha256
@@ -117,4 +119,5 @@ install_package libvpx autoconf_libvpx
 install_package extra-cmake-modules cmake
 install_package karchive cmake
 install_package kdnssd cmake
+install_package qtkeychain cmake
 

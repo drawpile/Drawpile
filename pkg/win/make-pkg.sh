@@ -55,6 +55,7 @@ cp "$MBIN/libsqlite3-0.dll" .
 cp "$MBIN/libKF5Archive.dll" .
 cp "$MBIN/libKF5DNSSD.dll" .
 cp "$MBIN/libsodium-23.dll" .
+cp "$MBIN/libqt5keychain.dll" .
 
 QROOT="$MXEROOT/qt5"
 cp "$QROOT/bin/Qt5Core.dll" .

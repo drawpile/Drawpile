@@ -27,11 +27,14 @@
 #include "utils/avatarlistmodel.h"
 #include "utils/sessionfilterproxymodel.h"
 #include "utils/usernamevalidator.h"
-#include "utils/passwordstore.h"
 #include "utils/html.h"
 #include "utils/icon.h"
 
 #include "ui_logindialog.h"
+
+#ifdef HAVE_QTKEYCHAIN
+#include <qt5keychain/keychain.h>
+#endif
 
 #include <QPushButton>
 #include <QMessageBox>
@@ -84,6 +87,10 @@ struct LoginDialog::Private {
 		avatars = new AvatarListModel(dlg);
 		avatars->loadAvatars(true);
 		ui->avatarList->setModel(avatars);
+
+#ifndef HAVE_QTKEYCHAIN
+		ui->rememberPassword->setEnabled(false);
+#endif
 
 #ifdef Q_OS_OSX
 		// The avatar selection combobox looks terrible on macOS
@@ -208,6 +215,25 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	ui->pages->setCurrentWidget(page);
 }
 
+#ifdef HAVE_QTKEYCHAIN
+static const QString KEYCHAIN_NAME = QStringLiteral("Drawpile");
+
+static QString keychainSecretName(const QString &username, const QUrl &extAuthUrl, const QString &server)
+{
+	QString prefix, host;
+	if(extAuthUrl.isValid()) {
+		prefix = "ext:";
+		host = extAuthUrl.host();
+	} else {
+		prefix = "srv:";
+		host = server;
+	}
+
+	return prefix + username.toLower() + "@" + host;
+}
+#endif
+
+
 LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	QDialog(parent), d(new Private(login, this))
 {
@@ -316,10 +342,8 @@ void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 
 void LoginDialog::Private::setLoginMode(const QString &prompt)
 {
-	const bool extauth = extauthurl.isValid();
-
 	ui->loginPromptLabel->setText(prompt);
-	if(extauth)
+	if(extauthurl.isValid())
 		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
 			"background: #3498db;"
 			"color: #fcfcfc;"
@@ -334,18 +358,40 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 
 	resetMode(Mode::authenticate);
 
-	PasswordStore ps;
-	ps.load();
-	ui->password->setText(ps.getPassword(
-		extauth ? extauthurl.host() : loginHandler->url().host(),
-		loginHandler->url().userName().toLower(),
-		extauth ? PasswordStore::Type::Extauth : PasswordStore::Type::Server
-		));
+#ifdef HAVE_QTKEYCHAIN
+	auto *readJob = new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
+	readJob->setKey(
+		keychainSecretName(
+			loginHandler->url().userName(),
+			extauthurl,
+			loginHandler->url().host()
+		)
+	);
 
-	if(!ui->password->text().isEmpty()) {
-		// Autologin with remembered password
-		okButton->click();
-	}
+	connect(readJob, &QKeychain::ReadPasswordJob::finished, okButton, [this, readJob]() {
+		if(readJob->error() != QKeychain::NoError) {
+			qWarning("Keychain error (key=%s): %s",
+				qPrintable(readJob->key()),
+				qPrintable(readJob->errorString())
+			);
+			return;
+		}
+
+		if(mode != Mode::authenticate) {
+			// Unlikely, but...
+			qWarning("Keychain returned too late!");
+			return;
+		}
+
+		const QString password = readJob->textData();
+		if(!password.isEmpty()) {
+			ui->password->setText(password);
+			okButton->click();
+		}
+	});
+
+	readJob->start();
+#endif
 }
 
 void LoginDialog::onLoginNeeded(const QString &forUsername, const QString &prompt)
@@ -384,15 +430,18 @@ void LoginDialog::onExtAuthComplete(bool success)
 void LoginDialog::onLoginOk()
 {
 	if(d->ui->rememberPassword->isChecked()) {
-		PasswordStore ps;
-
-		ps.load();
-		ps.setPassword(
-			d->extauthurl.isValid() ? d->extauthurl.host() : d->loginHandler->url().host(),
-			d->loginHandler->url().userName().toLower(),
-			d->extauthurl.isValid() ? PasswordStore::Type::Extauth : PasswordStore::Type::Server,
-			d->ui->password->text());
-		ps.save();
+#ifdef HAVE_QTKEYCHAIN
+		auto *writeJob = new QKeychain::WritePasswordJob(KEYCHAIN_NAME);
+		writeJob->setKey(
+			keychainSecretName(
+				d->loginHandler->url().userName(),
+				d->extauthurl,
+				d->loginHandler->url().host()
+			)
+		);
+		writeJob->setTextData(d->ui->password->text());
+		writeJob->start();
+#endif
 	}
 }
 
@@ -401,16 +450,17 @@ void LoginDialog::onBadLoginPassword()
 	d->resetMode(Mode::authenticate);
 	d->ui->password->setText(QString());
 
-	PasswordStore ps;
-	ps.load();
-	if(ps.forgetPassword(
-		d->extauthurl.isValid() ? d->extauthurl.host() : d->loginHandler->url().host(),
-		d->loginHandler->url().userName().toLower(),
-		d->extauthurl.isValid() ? PasswordStore::Type::Extauth : PasswordStore::Type::Extauth
-		))
-	{
-		ps.save();
-	}
+#ifdef HAVE_QTKEYCHAIN
+	auto *deleteJob = new QKeychain::DeletePasswordJob(KEYCHAIN_NAME);
+	deleteJob->setKey(
+		keychainSecretName(
+			d->loginHandler->url().userName(),
+			d->extauthurl,
+			d->loginHandler->url().host()
+		)
+	);
+	deleteJob->start();
+#endif
 
 	d->ui->badPasswordLabel->show();
 	QTimer::singleShot(2000, d->ui->badPasswordLabel, &QLabel::hide);

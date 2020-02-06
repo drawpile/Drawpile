@@ -56,7 +56,6 @@ set (
 	utils/colorscheme.cpp
 	utils/icon.cpp
 	utils/logging.cpp
-	utils/passwordstore.cpp
 	utils/identicon.cpp
 	utils/avatarlistmodel.cpp
 	utils/sessionfilterproxymodel.cpp

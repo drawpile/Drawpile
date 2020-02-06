@@ -3,6 +3,7 @@ find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(QtColorWidgets)
 find_package(Vpx)
+find_package(Qt5Keychain)
 
 include_directories("../libclient")
 
@@ -124,6 +125,12 @@ endif()
 
 if(LIBVPX_FOUND)
 	add_definitions(-DHAVE_WEBM)
+endif()
+
+if(QTKEYCHAIN_LIBRARIES)
+	add_definitions(-DHAVE_QTKEYCHAIN)
+else ()
+	message(WARNING "QtKeyChain not found: password remembering not enabled")
 endif()
 
 set (
@@ -254,6 +261,10 @@ target_link_libraries(${CLIENTNAME}
 
 if(QTCOLORWIDGETS_FOUND)
 	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORWIDGETS_LIBRARIES})
+endif()
+
+if(QTKEYCHAIN_LIBRARIES)
+	target_link_libraries(${CLIENTNAME} ${QTKEYCHAIN_LIBRARIES})
 endif()
 
 set_target_properties (

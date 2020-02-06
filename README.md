@@ -27,17 +27,18 @@ Common dependencies:
 
 Client specific dependencies:
 
-* [QtColorPicker]
-* KF5 KDNSSD (optional: local server discovery with Zeroconf)
-* GIFLIB (optional: animated GIF export)
-* MiniUPnP (optional: automatic port forwarding setup)
-* LibVPX (optional: WebM video export)
+* [QtColorPicker]: optional, bundled copy is included
+* [QtKeyChain]: optional, enables password storage
+* KF5 KDNSSD: optional, local server discovery with Zeroconf
+* MiniUPnP: optional, automatic port forwarding setup
+* GIFLIB: optional, animated GIF export
+* LibVPX: optional, WebM video export
 
 Server specific dependencies (you can also take a look at [Docker build](server/docker/Dockerfile) script):
 
-* libsystemd (optional: systemd socket activation support)
-* libmicrohttpd (optional: HTTP admin API)
-* libsodium (optional: ext-auth support)
+* libsystemd: optional, systemd socket activation support
+* libmicrohttpd: optional, HTTP admin API
+* libsodium: optional: ext-auth support
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.
@@ -75,5 +76,6 @@ For instructions on how to build Drawpile on Windows and OSX, see the [Building 
 
 [KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive  
 [QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets  
+[QtKeyChain]: https://github.com/frankosterfeld/qtkeychain  
 [Building from sources]: https://github.com/callaa/Drawpile/wiki/Building-from-sources  
 

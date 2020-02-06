@@ -28,7 +28,6 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
-#include "utils/passwordstore.h"
 #include "utils/avatarlistmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../libshared/listings/announcementapi.h"
@@ -183,15 +182,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	// Parental controls
 	connect(m_ui->nsfmLock, &QPushButton::clicked, this, &SettingsDialog::lockParentalControls);
-
-	// Stored password list
-	PasswordStore passwords;
-	passwords.load();
-
-	m_ui->passwordListView->setModel(passwords.toStandardItemModel(m_ui->passwordListView));
-	m_ui->passwordListView->expandAll();
-
-	connect(m_ui->passwordListRemove, &QPushButton::clicked, this, &SettingsDialog::removeStoredPassword);
 
 	// Avatar list
 	m_avatars = new AvatarListModel(this);
@@ -738,29 +728,6 @@ void SettingsDialog::lockParentalControls()
 	}
 
 	setParentalControlsLocked(locked);
-}
-
-void SettingsDialog::removeStoredPassword()
-{
-	const QModelIndex idx = m_ui->passwordListView->currentIndex();
-	if(idx.isValid()) {
-		const QString server = idx.data(Qt::UserRole+1).toString();
-		const QString username = idx.data(Qt::UserRole+2).toString();
-		const PasswordStore::Type type = PasswordStore::Type(idx.data(Qt::UserRole+3).toInt());
-
-		PasswordStore passwords;
-		passwords.load();
-
-		if(passwords.forgetPassword(server, username, type)) {
-			QString error;
-			if(!passwords.save(&error)) {
-				m_ui->passwordListMessage->setText(error);
-			} else {
-				delete m_ui->passwordListView->model();
-				m_ui->passwordListView->setModel(passwords.toStandardItemModel(m_ui->passwordListView));
-			}
-		}
-	}
 }
 
 void SettingsDialog::addAvatar()
