@@ -94,9 +94,9 @@ private slots:
 
 		NewVersionCheck::Version latest = vc.getNewer().at(0);
 
-		QCOMPARE(latest.downloadUrl, "http://example.com/download-win64.zip");
-		QCOMPARE(latest.downloadChecksum, "test");
-		QCOMPARE(latest.downloadChecksumType, "sha256");
+		QCOMPARE(latest.downloadUrl, QString("http://example.com/download-win64.zip"));
+		QCOMPARE(latest.downloadChecksum, QString("test"));
+		QCOMPARE(latest.downloadChecksumType, QString("sha256"));
 		QCOMPARE(latest.downloadSize, 100);
 	}
 
