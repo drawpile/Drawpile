@@ -66,7 +66,7 @@ HostDialog::HostDialog(QWidget *parent)
 
 	const QStringList recentRemoteHosts = cfg.value("recentremotehosts").toStringList();
 	if(recentRemoteHosts.isEmpty())
-		m_ui->remotehost->setCurrentText("drawpile.net");
+		m_ui->remotehost->setCurrentText("pub.drawpile.net");
 	else
 		m_ui->remotehost->insertItems(0, recentRemoteHosts);
 
