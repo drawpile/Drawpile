@@ -82,7 +82,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
            <layout class="QFormLayout" name="formLayout_2">
@@ -565,34 +565,13 @@
              <enum>QFormLayout::FieldsStayAtSizeHint</enum>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Default server port:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QSpinBox" name="serverport">
-              <property name="maximum">
-               <number>65536</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Session history:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
              <widget class="QLabel" name="label_6">
               <property name="text">
                <string>Connection timeout:</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="0" column="1">
              <widget class="QSpinBox" name="connTimeout">
               <property name="suffix">
                <string> s</string>
@@ -608,57 +587,66 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Default server port:</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
+             <widget class="QSpinBox" name="serverport">
+              <property name="maximum">
+               <number>65536</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
              <widget class="QCheckBox" name="dnssd">
               <property name="text">
                <string>Announce with Zeroconf</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="3" column="1">
              <widget class="QCheckBox" name="useupnp">
               <property name="text">
                <string>Automatically set up port forwarding with UPnP</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="4" column="1">
              <widget class="QCheckBox" name="privateUserList">
               <property name="text">
                <string>Never publish user list</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <spacer name="verticalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Session history:</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="7" column="1">
-             <spacer name="verticalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
+             </widget>
             </item>
             <item row="5" column="1">
              <widget class="QCheckBox" name="lowspaceAutoreset">
               <property name="text">
                <string>Automatically reset when space is low</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_29">
+              <property name="text">
+               <string>Account passwords:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QCheckBox" name="insecurePasswordStorage">
+              <property name="text">
+               <string>Permit insecure storage</string>
               </property>
              </widget>
             </item>
@@ -709,7 +697,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="widgets::ModifierKeys" name="dragRotateKeys"/>
+             <widget class="widgets::ModifierKeys" name="dragRotateKeys" native="true"/>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="label_21">
@@ -719,7 +707,7 @@
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="widgets::ModifierKeys" name="dragZoomKeys"/>
+             <widget class="widgets::ModifierKeys" name="dragZoomKeys" native="true"/>
             </item>
             <item row="6" column="0">
              <widget class="QLabel" name="label_20">
@@ -729,7 +717,7 @@
              </widget>
             </item>
             <item row="6" column="1">
-             <widget class="widgets::ModifierKeys" name="dragQuickAdjustKeys"/>
+             <widget class="widgets::ModifierKeys" name="dragQuickAdjustKeys" native="true"/>
             </item>
             <item row="9" column="0">
              <widget class="QLabel" name="label_22">
@@ -739,7 +727,7 @@
              </widget>
             </item>
             <item row="9" column="1">
-             <widget class="widgets::ModifierKeys" name="scrollZoomKeys"/>
+             <widget class="widgets::ModifierKeys" name="scrollZoomKeys" native="true"/>
             </item>
             <item row="11" column="0">
              <widget class="QLabel" name="label_23">
@@ -749,7 +737,7 @@
              </widget>
             </item>
             <item row="11" column="1">
-             <widget class="widgets::ModifierKeys" name="scrollQuickAdjustKeys"/>
+             <widget class="widgets::ModifierKeys" name="scrollQuickAdjustKeys" native="true"/>
             </item>
             <item row="13" column="0">
              <widget class="QLabel" name="label_24">
@@ -759,7 +747,7 @@
              </widget>
             </item>
             <item row="13" column="1">
-             <widget class="widgets::ModifierKeys" name="colorPickKeys"/>
+             <widget class="widgets::ModifierKeys" name="colorPickKeys" native="true"/>
             </item>
             <item row="15" column="0">
              <widget class="QLabel" name="label_25">
@@ -769,7 +757,7 @@
              </widget>
             </item>
             <item row="15" column="1">
-             <widget class="widgets::ModifierKeys" name="layerPickKeys"/>
+             <widget class="widgets::ModifierKeys" name="layerPickKeys" native="true"/>
             </item>
             <item row="17" column="0">
              <widget class="QLabel" name="label_26">
@@ -779,7 +767,7 @@
              </widget>
             </item>
             <item row="17" column="1">
-             <widget class="widgets::ModifierKeys" name="toolConstrain1Keys"/>
+             <widget class="widgets::ModifierKeys" name="toolConstrain1Keys" native="true"/>
             </item>
             <item row="20" column="0">
              <widget class="QLabel" name="label_27">
@@ -789,7 +777,7 @@
              </widget>
             </item>
             <item row="20" column="1">
-             <widget class="widgets::ModifierKeys" name="toolConstrain2Keys"/>
+             <widget class="widgets::ModifierKeys" name="toolConstrain2Keys" native="true"/>
             </item>
             <item row="7" column="0">
              <spacer name="verticalSpacer_4">
@@ -851,7 +839,7 @@
              </widget>
             </item>
             <item row="8" column="1">
-             <widget class="widgets::ModifierKeys" name="scrollRotateKeys"/>
+             <widget class="widgets::ModifierKeys" name="scrollRotateKeys" native="true"/>
             </item>
            </layout>
           </widget>
@@ -950,7 +938,8 @@
                  <string>Move up</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="arrow-up"/>
+                 <iconset theme="arrow-up">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -960,7 +949,8 @@
                  <string>Move down</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="arrow-down"/>
+                 <iconset theme="arrow-down">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>

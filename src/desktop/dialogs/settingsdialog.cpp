@@ -264,6 +264,8 @@ void SettingsDialog::restoreSettings()
 	m_ui->toolToggleShortcut->setChecked(cfg.value("tooltoggle", true).toBool());
 	m_ui->shareBrushSlotColor->setChecked(cfg.value("sharebrushslotcolor", false).toBool());
 
+	m_ui->insecurePasswordStorage->setChecked(cfg.value("insecurepasswordstorage", false).toBool());
+
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
@@ -379,6 +381,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
+	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
 
 	cfg.beginGroup("settings/input");
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)

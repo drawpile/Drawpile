@@ -360,6 +360,7 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 
 #ifdef HAVE_QTKEYCHAIN
 	auto *readJob = new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
+	readJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
 	readJob->setKey(
 		keychainSecretName(
 			loginHandler->url().userName(),
@@ -432,6 +433,7 @@ void LoginDialog::onLoginOk()
 	if(d->ui->rememberPassword->isChecked()) {
 #ifdef HAVE_QTKEYCHAIN
 		auto *writeJob = new QKeychain::WritePasswordJob(KEYCHAIN_NAME);
+		writeJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
 		writeJob->setKey(
 			keychainSecretName(
 				d->loginHandler->url().userName(),
@@ -452,6 +454,7 @@ void LoginDialog::onBadLoginPassword()
 
 #ifdef HAVE_QTKEYCHAIN
 	auto *deleteJob = new QKeychain::DeletePasswordJob(KEYCHAIN_NAME);
+	deleteJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
 	deleteJob->setKey(
 		keychainSecretName(
 			d->loginHandler->url().userName(),
