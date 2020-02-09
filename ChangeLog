@@ -1,4 +1,4 @@
-2020-0?-?? Version 2.1.16
+2020-02-09 Version 2.1.16
  * Server: Added support for ext-auth "TRUSTED" flag
  * Server: Added "lastActive" timestamp field to session user list API
  * Server: Changed session ID style from GUID to ULID
