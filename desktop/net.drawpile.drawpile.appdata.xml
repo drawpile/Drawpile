@@ -43,7 +43,28 @@
           <li>Saved passwords are now stored in the system password store</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.16-setup.exe</location>
+          <checksum type="sha256">9d849c2622998b8595fe9036ca0baac6e29ad6ab776e0b174daacd22702cb311</checksum>
+          <size type="download">16509525</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.16-setup-w32.exe</location>
+          <checksum type="sha256">273eac5b491798e89e148a60a6a2f0c589ce28f2ea0f6fad2fe968ebf2ac5a2e</checksum>
+          <size type="download">15506742</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.16.dmg</location>
+          <checksum type="sha256">cd3ef956aeae9c6ec2b4a9dda98465efeaa65762c54dfcdb8966d18e003107db</checksum>
+          <size type="download">14186201</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.16.tar.gz</location>
+          <checksum type="sha256">5c799e7a02ef63cf6a5d1e78511f3fa9051ca809f1602c853420f5a20223e6d7</checksum>
+          <size type="download">2513154</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.15" date="2019-12-07">
       <url>https://drawpile.net/news/release-2.1.15/</url>
