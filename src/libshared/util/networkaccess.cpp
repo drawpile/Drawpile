@@ -47,6 +47,9 @@ QNetworkAccessManager *getInstance()
 	if(!nam) {
 		qDebug() << "Creating new NetworkAccessManager for thread" << t;
 		nam = new QNetworkAccessManager;
+#if QT_VERSION > QT_VERSION_CHECK(5, 9, 0)
+		nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+#endif
 		t->connect(t, &QThread::finished, [nam, t]() {
 			qDebug() << "thread" << t << "ended. Removing NetworkAccessManager";
 			nam->deleteLater();

@@ -171,7 +171,6 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 
 	QNetworkRequest req(apiUrl);
 	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
-	req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
@@ -191,7 +190,6 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 			} else {
 				QNetworkRequest req2(reply->url().resolved(realApiUrl));
 				req2.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
-				req2.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 				QNetworkReply *reply2 = networkaccess::getInstance()->get(req2);
 				reply2->connect(reply2, &QNetworkReply::finished, res, [reply2, res]() {

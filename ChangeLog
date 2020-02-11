@@ -1,3 +1,6 @@
+2020-0?-?? Version 2.1.18
+ * HTTP redirects (e.g. when searching for a list server) are now followed
+
 2020-02-09 Version 2.1.16
  * Server: Added support for ext-auth "TRUSTED" flag
  * Server: Added "lastActive" timestamp field to session user list API

@@ -398,8 +398,6 @@ void NewVersionCheck::queryVersions(QUrl url)
 	qInfo("Querying %s for latest version list...", qPrintable(url.toString()));
 
 	QNetworkRequest req(url);
-	req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
 	auto reply = networkaccess::getInstance()->get(req);
 
 	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
