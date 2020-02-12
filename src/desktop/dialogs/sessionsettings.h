@@ -87,8 +87,12 @@ private slots:
 
 	void updatePasswordLabel(QLabel *label);
 
+protected:
+	void showEvent(QShowEvent *event) override;
+
 private:
 	void initPermissionComboBoxes();
+	void reloadSettings();
 	QComboBox *featureBox(canvas::Feature f);
 
 	Ui_SessionSettingsDialog *m_ui;

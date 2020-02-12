@@ -115,19 +115,6 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	QMenu *addAnnouncementMenu = new QMenu(this);
 	QMenu *addPrivateAnnouncementMenu = new QMenu(this);
 
-	const auto listservers = sessionlisting::ListServerModel::listServers(false);
-	for(const auto &listserver : listservers) {
-		if(listserver.publicListings) {
-			QAction *a = addAnnouncementMenu->addAction(listserver.icon, listserver.name);
-			a->setProperty("API_URL", listserver.url);
-		}
-
-		if(listserver.privateListings) {
-			QAction *a2 = addPrivateAnnouncementMenu->addAction(listserver.icon, listserver.name);
-			a2->setProperty("API_URL", listserver.url);
-		}
-	}
-
 	m_ui->addAnnouncement->setMenu(addAnnouncementMenu);
 	m_ui->addPrivateAnnouncement->setMenu(addPrivateAnnouncementMenu);
 
@@ -157,6 +144,38 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 SessionSettingsDialog::~SessionSettingsDialog()
 {
 	delete m_ui;
+}
+
+void SessionSettingsDialog::showEvent(QShowEvent *event)
+{
+	QDialog::showEvent(event);
+	reloadSettings();
+}
+
+void SessionSettingsDialog::reloadSettings()
+{
+	qInfo("Realoding settings");
+	const auto listservers = sessionlisting::ListServerModel::listServers(false);
+	auto *addAnnouncementMenu = m_ui->addAnnouncement->menu();
+	auto *addPrivateAnnouncementMenu = m_ui->addPrivateAnnouncement->menu();
+
+	addAnnouncementMenu->clear();
+	addPrivateAnnouncementMenu->clear();
+
+	for(const auto &listserver : listservers) {
+		if(listserver.publicListings) {
+			QAction *a = addAnnouncementMenu->addAction(listserver.icon, listserver.name);
+			a->setProperty("API_URL", listserver.url);
+		}
+
+		if(listserver.privateListings) {
+			QAction *a2 = addPrivateAnnouncementMenu->addAction(listserver.icon, listserver.name);
+			a2->setProperty("API_URL", listserver.url);
+		}
+	}
+
+	m_ui->addAnnouncement->setEnabled(!addAnnouncementMenu->isEmpty());
+	m_ui->addPrivateAnnouncement->setEnabled(!addPrivateAnnouncementMenu->isEmpty());
 }
 
 void SessionSettingsDialog::setPersistenceEnabled(bool enable)
