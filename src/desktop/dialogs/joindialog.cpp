@@ -65,9 +65,6 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_addServerButton->setIcon(icon::fromTheme("list-add"));
 	connect(m_addServerButton, &QPushButton::clicked, this, &JoinDialog::addListServer);
 
-	if(!url.isEmpty())
-		m_ui->address->setCurrentText(url.toString());
-
 	connect(m_ui->address, &QComboBox::editTextChanged, this, &JoinDialog::addressChanged);
 	connect(m_ui->autoRecord, &QAbstractButton::clicked, this, &JoinDialog::recordingToggled);
 
@@ -142,6 +139,9 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	new MandatoryFields(this, m_ui->buttons->button(QDialogButtonBox::Ok));
 
 	restoreSettings();
+
+	if(!url.isEmpty())
+		m_ui->address->setCurrentText(url.toString());
 
 	// Periodically refresh the session listing
 	auto refreshTimer = new QTimer(this);
