@@ -83,7 +83,7 @@
         <location filename="../../desktop/ui/brushdock.ui" line="477"/>
         <location filename="../../desktop/ui/brushdock.ui" line="498"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Paineen tunnistus</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="593"/>
@@ -593,7 +593,7 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Et ole vielä lisännyt palvelimia. Löydät niitä sivulta &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Voit heti kokeilla sitä kirjoittamalla osoitelaatikkoon pub.drawpile.net ja painamalla &lt;span style=&quot; font-style:italic;&quot;&gt;Lisää Palvelin&lt;/span&gt; nappia.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="88"/>
@@ -603,7 +603,7 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="95"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Suljetut</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="102"/>
@@ -1014,7 +1014,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1642"/>
         <source>Disconnected:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yhteys katkesi:</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1683"/>
@@ -2639,82 +2639,82 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="642"/>
         <source>Account passwords:</source>
-        <translation type="unfinished"></translation>
+        <translation>Salasanat:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="649"/>
         <source>Permit insecure storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Salli suojaamaton tallennus</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="681"/>
         <source>Drag mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Raahaus:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="688"/>
         <source>Spacebar / middle mouse button</source>
-        <translation type="unfinished"></translation>
+        <translation>Välilyönti / keskimmäinen hiiren nappi</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="695"/>
         <source>Drag rotate view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pyöritys raahamalla:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="705"/>
         <source>Drag zoom view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoomaus raahaamalla:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="715"/>
         <source>Drag tool adjust:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sudin säätö raahamalla:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="725"/>
         <source>Scroll zoom view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoomaus rullaamalla:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="735"/>
         <source>Scroll tool adjust:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sudin säätö rullaamalla:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="745"/>
         <source>Color picker mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Värin poiminta:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="755"/>
         <source>Layer picker mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tason poiminta:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="765"/>
         <source>Tool constrain mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Työkalun rajaus:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="775"/>
         <source>Tool center mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Työkalun keskitys:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="837"/>
         <source>Scroll rotate view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pyöritys rullaamalla:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="938"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirrä ylös</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="949"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirrä alas</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="980"/>
@@ -2871,7 +2871,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="48"/>
         <source>Canvas Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Erikoisnäppäimet</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="607"/>
@@ -3113,7 +3113,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <location filename="../brushes/brushpresetmodel.cpp" line="557"/>
         <location filename="../brushes/brushpresetmodel.cpp" line="637"/>
         <source>Default</source>
-        <translation type="unfinished">Oletus</translation>
+        <translation>Oletus</translation>
     </message>
 </context>
 <context>
@@ -3269,7 +3269,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="64"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää palvelin</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
@@ -3302,7 +3302,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="445"/>
         <source>Add listing server</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää listauspalvelin</translation>
     </message>
 </context>
 <context>
@@ -3672,49 +3672,49 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="96"/>
         <source>Add Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää suti</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="97"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa suti</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="98"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista suti</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
         <source>Move to</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirrä</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
         <source>Overwrite brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Korvaa suti</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
         <source>Delete brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista suti</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="202"/>
         <source>New folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Uusi kansio</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="213"/>
         <source>Delete Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista kansio</translation>
     </message>
     <message numerus="yes">
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="214"/>
         <source>Really delete folder &quot;%1&quot; and %n brushes?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Poistetaanko kansio &quot;%1&quot; ja %n suti?</numerusform>
+            <numerusform>Poistetaanko kansio &quot;%1&quot; ja %n sutia?</numerusform>
         </translation>
     </message>
 </context>
@@ -4088,12 +4088,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/login.cpp" line="350"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ryhmän jäsenyys vaadittu</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="353"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Odottamaton vastaus tunnistautumispalvelimelta. %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="775"/>
@@ -4154,17 +4154,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../net/tcpserver.cpp" line="101"/>
         <source>You were kicked by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 potki sinut pois</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="104"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Palvelin sammuu</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="107"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Virhe: %1</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="124"/>
@@ -4328,7 +4328,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/scene/canvasview.cpp" line="92"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Yhdistä uudelleen</translation>
     </message>
 </context>
 <context>
@@ -4574,7 +4574,7 @@ Heksa: %5</translation>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="53"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Lataa</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="56"/>
