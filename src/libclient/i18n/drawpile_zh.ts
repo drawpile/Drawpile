@@ -63,42 +63,45 @@
         <translation>圆头笔刷</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="275"/>
-        <source>Watercolor</source>
-        <translation>水彩笔刷</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="298"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="291"/>
         <source>Pick initial color from layer</source>
         <translation>从图层中拾色</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="312"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="305"/>
         <source>Eraser mode</source>
         <translation>橡皮模式</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="342"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="322"/>
         <source>Direct drawing mode</source>
         <translation>直接绘画模式</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="405"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="429"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="443"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="498"/>
+        <source>Pressure sensitivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="593"/>
         <source>px</source>
         <translation>像素</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="444"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="379"/>
         <source>Hardness:</source>
         <translation>硬度:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="422"/>
         <source>Opacity:</source>
         <translation>透明度:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="484"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="372"/>
         <source>Size:</source>
         <translation>大小:</translation>
     </message>
@@ -108,55 +111,20 @@
         <translation>间距:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="498"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="386"/>
         <source>Smudging:</source>
         <translation>色延伸:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="531"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="457"/>
         <source>Color pickup:</source>
         <translation>浓度:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="564"/>
-        <source>Pressure:</source>
-        <translation>压感:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="573"/>
-        <source>Size</source>
-        <translation>大小</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="580"/>
-        <source>Opacity</source>
-        <translation>透明度</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="587"/>
-        <source>Hardness</source>
-        <translation>硬度</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="594"/>
-        <source>Smudging</source>
-        <translation>色延伸</translation>
     </message>
 </context>
 <context>
     <name>BrushPalette</name>
     <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="47"/>
-        <source>Add a new brush preset</source>
-        <translation>创建新笔刷预设</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="61"/>
-        <source>Overwrite selected preset</source>
-        <translation>保存预设</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="75"/>
+        <location filename="../../desktop/ui/brushpalette.ui" line="66"/>
         <source>Delete selected preset</source>
         <translation>删除预设</translation>
     </message>
@@ -354,22 +322,22 @@
         <translation>扩展:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="125"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="122"/>
         <source>Fill under</source>
         <translation>填充</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="132"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="129"/>
         <source>Size limit:</source>
         <translation>大小限制:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="139"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="136"/>
         <source> ྾ 10² px</source>
         <translation> ྾ 10² px</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="158"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="155"/>
         <source>Erase</source>
         <translation>擦除</translation>
     </message>
@@ -503,22 +471,22 @@
         <translation>类型:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="137"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="134"/>
         <source>P&amp;ublic</source>
         <translation>P&amp;ublic</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="166"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
         <source>Use Drawpile&apos;s built-in server</source>
         <translation>Use Drawpile&apos;s built-in server</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="169"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="163"/>
         <source>This co&amp;mputer</source>
         <translation>&amp;本机</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="181"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="175"/>
         <source>Use an external dedicated server</source>
         <translation>Use an external dedicated server</translation>
     </message>
@@ -538,17 +506,17 @@
         <translation>列于公开列表</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="150"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="144"/>
         <source>Private (room code onl&amp;y)</source>
         <translation>Private (room code onl&amp;y)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="154"/>
         <source>Server</source>
         <translation>服务器</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="184"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="178"/>
         <source>Re&amp;mote:</source>
         <translation>&amp;远程服务器:</translation>
     </message>
@@ -612,7 +580,7 @@
         <translation>加入房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="42"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="62"/>
         <source>Filter</source>
         <translation>筛选</translation>
     </message>
@@ -622,27 +590,37 @@
         <translation>与此不兼容的新Drawpile版本已经发布,请您前往官网下载吧.</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="68"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="47"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="88"/>
         <source>Show:</source>
         <translation>显示:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="75"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="95"/>
+        <source>Closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="102"/>
         <source>Passworded</source>
         <translation>密码房</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="82"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="109"/>
         <source>NSFW</source>
         <translation>18禁房</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="111"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="138"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
         <translation>Enter a host address, session URL or room code to join a session:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="142"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="169"/>
         <source>Record session</source>
         <translation>录制</translation>
     </message>
@@ -650,12 +628,12 @@
 <context>
     <name>KisCurveWidget</name>
     <message>
-        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="74"/>
+        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="73"/>
         <source>Remove point</source>
         <translation>移除点</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="75"/>
+        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="74"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
@@ -797,189 +775,189 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="632"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1435"/>
+        <location filename="../../desktop/mainwindow.cpp" line="637"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1440"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="862"/>
-        <location filename="../../desktop/mainwindow.cpp" line="883"/>
+        <location filename="../../desktop/mainwindow.cpp" line="867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="888"/>
         <source>Exit Drawpile</source>
         <translation>退出Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="863"/>
+        <location filename="../../desktop/mainwindow.cpp" line="868"/>
         <source>You are still connected to a drawing session.</source>
         <translation>您还有未退出的房间.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="872"/>
         <source>Exit anyway</source>
         <translation>仍然离开</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="869"/>
-        <location filename="../../desktop/mainwindow.cpp" line="891"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1215"/>
+        <location filename="../../desktop/mainwindow.cpp" line="874"/>
+        <location filename="../../desktop/mainwindow.cpp" line="896"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1220"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="884"/>
+        <location filename="../../desktop/mainwindow.cpp" line="889"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>有未保存的更改，要存么？</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="887"/>
+        <location filename="../../desktop/mainwindow.cpp" line="892"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="889"/>
+        <location filename="../../desktop/mainwindow.cpp" line="894"/>
         <source>Discard</source>
         <translation>放弃</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1072"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1077"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>The selected format does not support layers or annotations.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1074"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1079"/>
         <source>Flatten</source>
         <translation>跳过</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1075"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1080"/>
         <source>Save as OpenRaster</source>
         <translation>以OpenRaster格式保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1169"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1174"/>
         <source>Saving...</source>
         <translation>保存为...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1183"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1188"/>
         <source>Couldn&apos;t save image</source>
         <translation>无法保存图片</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1185"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1190"/>
         <source>Image saved</source>
         <translation>图片已保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1236"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1241"/>
         <source>Export Session Template</source>
         <translation>导出房间模板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1263"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1268"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1266"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1271"/>
         <source>Play</source>
         <translation>播放</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1358"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1363"/>
         <source>Invalid address</source>
         <translation>无效地址</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1436"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1441"/>
         <source>Really leave the session?</source>
         <translation>确认离开房间？</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1442"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1447"/>
         <source>Leave</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1444"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1449"/>
         <source>Stay</source>
         <translation>保留</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1453"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1458"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>信息未完全传出，请稍等!</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1614"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1620"/>
         <source>Would you like to join the session instead?</source>
         <translation>Would you like to join the session instead?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1616"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1622"/>
         <source>Join</source>
         <translation>加入</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1661"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1671"/>
         <source>Board is locked</source>
         <translation>画布已锁定</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1980"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1990"/>
         <source>The image could not be loaded</source>
         <translation>无法载入图片</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2102"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2115"/>
         <source>Marker text</source>
         <translation>标记文字</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2110"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2123"/>
         <source>About Drawpile</source>
         <translation>关于 Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2112"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2125"/>
         <source>A collaborative drawing program.</source>
         <translation>A collaborative drawing program.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2225"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2238"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>&amp;新建</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2226"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2239"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>&amp;打开...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2230"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>&amp;Save</source>
         <translation>&amp;保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2231"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2244"/>
         <source>Save &amp;As...</source>
         <translation>&amp;另存为...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2232"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2245"/>
         <source>Autosave</source>
         <translation>自动保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2233"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
         <source>&amp;Animation...</source>
         <translation>&amp;动画...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1274"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2236"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1279"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2249"/>
         <source>Record...</source>
         <translation>录像...</translation>
     </message>
@@ -996,789 +974,794 @@ Simplify the canvas and reset manually before space runs out.</source>
 请在空间用完前清理画布并手动重置.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1209"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1214"/>
         <source>Export error</source>
         <translation>导出错误</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1215"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1220"/>
         <source>Exporting...</source>
         <translation>导出中...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1483"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1488"/>
         <source>Become Operator</source>
         <translation>成为管理员</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1484"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1489"/>
         <source>Enter operator password</source>
         <translation>输入管理员密码</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1522"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1527"/>
         <source>Terminate session</source>
         <translation>终止房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1523"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1528"/>
         <source>Really terminate this session?</source>
         <translation>确认终止此房间?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1528"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1533"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2639"/>
         <source>Terminate</source>
         <translation>终止</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1642"/>
+        <source>Disconnected:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1683"/>
         <source>Session blocked by parental controls</source>
         <translation>Session blocked by parental controls</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2214"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2227"/>
         <source>Lock in place</source>
         <translation>锁定界面</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2218"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2231"/>
         <source>Hide Docks</source>
         <translation>隐藏面板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2233"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
         <source>Export layers as animation frames</source>
         <translation>将图层导出为动画帧</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2234"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
         <source>Session Template...</source>
         <translation>房间模板...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2234"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
         <source>Export current session as a template recording for use with the dedicated server</source>
         <translation>Export current session as a template recording for use with the dedicated server</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2237"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2250"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>&amp;退出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2267"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2280"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>&amp;文件</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2281"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2294"/>
         <source>&amp;Export</source>
         <translation>&amp;导出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2306"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2319"/>
         <source>&amp;Undo</source>
         <translation>&amp;撤销</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2307"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2320"/>
         <source>&amp;Redo</source>
         <translation>&amp;重做</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2308"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
         <source>Copy selected area to the clipboard</source>
         <translation>将所选区域复制到剪贴板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2309"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
         <source>Copy Merged</source>
         <translation>复制合并区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2309"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>将选定区域（不包括背景）复制到剪贴板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2310"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2323"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>将当前图层的选定区域复制到剪贴板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2311"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2324"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>将当前图层的选定区域剪切到剪贴板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2312"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2325"/>
         <source>&amp;Paste</source>
         <translation>&amp;黏贴</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2313"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2326"/>
         <source>&amp;Stamp</source>
         <translation>&amp;印章</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2318"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2331"/>
         <source>Set Background...</source>
         <translation>设置背景...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2335"/>
         <source>&amp;Deselect</source>
         <translation>&amp;取消选择</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2330"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2343"/>
         <source>Expand &amp;Up</source>
         <translation>&amp;向上扩大</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2331"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2344"/>
         <source>Expand &amp;Down</source>
         <translation>&amp;向下扩大</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2332"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2345"/>
         <source>Expand &amp;Left</source>
         <translation>&amp;向左扩大</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2333"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2346"/>
         <source>Expand &amp;Right</source>
         <translation>&amp;向右扩大</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2336"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2349"/>
         <source>Fill Selection</source>
         <translation>填充所选区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2337"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2350"/>
         <source>Recolor Selection</source>
         <translation>填充所选像素区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2338"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2351"/>
         <source>Color Erase Selection</source>
         <translation>擦除所选颜色区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2396"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2409"/>
         <source>&amp;Edit</source>
         <translation>&amp;编辑</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2414"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2427"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;扩大画布</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2443"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2456"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;工具栏</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2446"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2459"/>
         <source>&amp;Docks</source>
         <translation>&amp;面板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2449"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2462"/>
         <source>Chat</source>
         <translation>聊天</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2451"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
         <source>Flipbook</source>
         <translation>动画预览</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2451"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
         <source>Show animation preview window</source>
         <translation>显示动画预览窗口</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2457"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2470"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>顺时针旋转画布</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2458"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2471"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>逆时针旋转画布</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2460"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2473"/>
         <source>Mirror</source>
         <translation>水平翻转</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2461"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
         <source>Flip</source>
         <translation>垂直翻转</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2465"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2478"/>
         <source>Show Names</source>
         <translation>显示用户名字</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2466"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2479"/>
         <source>Show Layers</source>
         <translation>显示用户图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2467"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2480"/>
         <source>Show Avatars</source>
         <translation>显示用户头像</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2555"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2568"/>
         <source>User Pointers</source>
         <translation>用户光标</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2574"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2587"/>
         <source>New Layer</source>
         <translation>新建图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2575"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2588"/>
         <source>Duplicate Layer</source>
         <translation>复制图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2576"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2589"/>
         <source>Merge with Layer Below</source>
         <translation>向下合并图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2577"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2590"/>
         <source>Delete Layer</source>
         <translation>删除图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2581"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2594"/>
         <source>Solo</source>
         <translation>Solo</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2582"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2595"/>
         <source>Onionskin</source>
         <translation>洋葱皮功能</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2583"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2596"/>
         <source>Show Numbers</source>
         <translation>显示图层编号</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2597"/>
         <source>Show Censored Layers</source>
         <translation>显示屏蔽图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2586"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2599"/>
         <source>Select Above</source>
         <translation>选择上一个图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2587"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2600"/>
         <source>Select Below</source>
         <translation>选择下一个图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2596"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2609"/>
         <source>Layer</source>
         <translation>图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
         <source>Report...</source>
         <translation>Report...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
         <source>Lock Everything</source>
         <translation>锁定全部</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2825"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2838"/>
         <source>Finish action</source>
         <translation>完成动作</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2829"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2842"/>
         <source>Cancel action</source>
         <translation>取消动作</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2477"/>
         <source>Show User &amp;Pointers</source>
         <translation>&amp;显示光标</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2468"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2481"/>
         <source>Show La&amp;ser Trails</source>
         <translation>&amp;显示轨迹</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2469"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2482"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>&amp;显示像素网格</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2533"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2546"/>
         <source>&amp;View</source>
         <translation>&amp;显示</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2540"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2553"/>
         <source>&amp;Zoom</source>
         <translation>&amp;缩放</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2545"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2558"/>
         <source>Rotation</source>
         <translation>旋转</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>&amp;服务器...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <source>Share your drawingboard with others</source>
         <translation>分享画板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>&amp;加入...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>加入其它用户的房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>&amp;Leave</source>
         <translation>&amp;退出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>Leave this drawing session</source>
         <translation>退出这个房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2624"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2637"/>
         <source>Become Operator...</source>
         <translation>成为管理员...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
         <source>Prevent changes to the drawing board</source>
         <translation>保护画板设置</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2652"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>&amp;房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2678"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
         <source>Fill areas</source>
         <translation>油漆桶</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2683"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
         <source>Select area for copying</source>
         <translation>选择要复制的区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2714"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>&amp;缩小笔刷</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2715"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
         <source>&amp;Increase Brush Size</source>
         <translation>&amp;放大笔刷</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2730"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2743"/>
         <source>Drawing tools</source>
         <translation>绘画工具</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2856"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2869"/>
         <source>Color</source>
         <translation>颜色</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1044"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1049"/>
         <source>Open Image</source>
         <translation>打开图像</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1071"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1127"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1076"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1132"/>
         <source>Save Image</source>
         <translation>保存图片</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1297"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1302"/>
         <source>Record Session</source>
         <translation>录制房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1271"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1276"/>
         <source>Stop Recording</source>
         <translation>停止录像</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1371"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1376"/>
         <source>Host Session</source>
         <translation>创建房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1602"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1608"/>
         <source>Could not connect to server</source>
         <translation>无法连接至服务器</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1961"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1971"/>
         <source>Paste Image</source>
         <translation>黏贴图像</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2102"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2115"/>
         <source>Mark</source>
         <translation>标记</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2228"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2241"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2270"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2283"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>&amp;最近文件</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2290"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2303"/>
         <source>File Tools</source>
         <translation>文件工具</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2308"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
         <source>&amp;Copy Visible</source>
         <translation>&amp;复制可见区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2310"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2323"/>
         <source>Copy &amp;Layer</source>
         <translation>&amp;复制图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2311"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2324"/>
         <source>Cu&amp;t Layer</source>
         <translation>&amp;剪切图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2315"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2328"/>
         <source>Paste &amp;From File...</source>
         <translation>&amp;从文件黏贴...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2316"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2329"/>
         <source>Delete Empty Annotations</source>
         <translation>删除空白注释</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2317"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2330"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>&amp;修改画布大小...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2319"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2332"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>&amp;首选项</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2334"/>
         <source>Select &amp;All</source>
         <translation>&amp;全选</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2430"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2443"/>
         <source>Edit Tools</source>
         <translation>编辑工具</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2453"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2466"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;放大</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2454"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2467"/>
         <source>Zoom &amp;Out</source>
         <translation>&amp;缩小</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2455"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2468"/>
         <source>&amp;Normal Size</source>
         <translation>&amp;一般大小</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2456"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2469"/>
         <source>&amp;Reset Rotation</source>
         <translation>&amp;旋转角度归零</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2463"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2476"/>
         <source>Show &amp;Annotations</source>
         <translation>&amp;显示注释</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2471"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2484"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;全屏</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2681"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2694"/>
         <source>Pick colors from the image</source>
         <translation>从当前图层取色</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2681"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2694"/>
         <source>&amp;Color Picker</source>
         <translation>&amp;拾色器</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2674"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
         <source>&amp;Line</source>
         <translation>&amp;直线</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2335"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2348"/>
         <source>Delete</source>
         <translation>删除所选区域</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2621"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2634"/>
         <source>Event Log</source>
         <translation>事件日志</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2622"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2635"/>
         <source>Settings...</source>
         <translation>设置...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2625"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2638"/>
         <source>&amp;Reset...</source>
         <translation>&amp;重置...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2658"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
         <source>Moderation</source>
         <translation>调节面板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2672"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
         <source>Freehand</source>
         <translation>笔刷面板</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2672"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
         <source>Freehand brush tool</source>
         <translation>Freehand brush tool</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
         <source>Eraser</source>
         <translation>橡皮</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
         <source>Freehand eraser brush</source>
         <translation>Freehand eraser brush</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2674"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
         <source>Draw straight lines</source>
         <translation>绘制直线</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2675"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2688"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;矩形</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2675"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2688"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>绘制未填充的正方形和矩形</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2676"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;椭圆</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2676"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>绘制未填充的圆圈和椭圆</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2677"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
         <source>Bezier Curve</source>
         <translation>贝齐尔曲线</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2677"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
         <source>Draw bezier curves</source>
         <translation>绘制贝塞尔曲线</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2678"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
         <source>&amp;Flood Fill</source>
         <translation>&amp;填充工具</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2679"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
         <source>&amp;Annotation</source>
         <translation>&amp;文字输入</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2679"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
         <source>Add text to the picture</source>
         <translation>在图中插入文字</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2682"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
         <source>Point out things on the canvas</source>
         <translation>指出画布上的东西</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2682"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
         <source>&amp;Laser Pointer</source>
         <translation>&amp;记号笔</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2683"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>&amp;选择(矩形)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2684"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>&amp;选择(自由形状)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2684"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
         <source>Select a free-form area for copying</source>
         <translation>选择一个自由格式区域进行复制</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
         <source>Zoom</source>
         <translation>缩放</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
         <source>Zoom the canvas view</source>
         <translation>缩放画布视图</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
         <source>Inspector</source>
         <translation>检查员</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
         <source>Find out who did it</source>
         <translation>找出是谁做的</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
         <source>&amp;Mark</source>
         <translation>&amp;标记</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>添加标记以在录像中找对应位置</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2706"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
         <source>&amp;Tools</source>
         <translation>&amp;工具</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2710"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;快捷键</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2712"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
         <source>Toggle eraser mode</source>
         <translation>切换橡皮擦模式</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2713"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
         <source>Swap Last Colors</source>
         <translation>交换上一个颜色</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2753"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2766"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>&amp;主页</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2754"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2767"/>
         <source>Tablet Tester</source>
         <translation>数位板测试</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2755"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2768"/>
         <source>Log File</source>
         <translation>日志文件</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2756"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2769"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;关于 Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2757"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2770"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>关于 &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2758"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2771"/>
         <source>Check For Updates</source>
         <translation>检查更新</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2789"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2802"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>&amp;帮助</translation>
@@ -1851,7 +1834,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>PaletteListModel</name>
     <message>
-        <location filename="../utils/palettelistmodel.cpp" line="172"/>
+        <location filename="../utils/palettelistmodel.cpp" line="171"/>
         <source>New palette</source>
         <translation>新色板</translation>
     </message>
@@ -1937,13 +1920,13 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="79"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="550"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="76"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="573"/>
         <source>All files (*)</source>
         <translation>所有文件(*)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="544"/>
+        <location filename="../../desktop/mainwindow.cpp" line="549"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -2023,12 +2006,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>检查员</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="203"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="86"/>
         <source>Erase</source>
         <translation>擦除</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="207"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="90"/>
         <source>Color Erase</source>
         <translation>颜色擦除</translation>
     </message>
@@ -2088,57 +2071,44 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>文件不是 OpenRaster 格式</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="109"/>
+        <location filename="../utils/images.cpp" line="103"/>
         <source>Images (%1)</source>
         <translation>Images (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="117"/>
+        <location filename="../utils/images.cpp" line="111"/>
         <source>Binary Recordings (%1)</source>
         <translation>Binary Recordings (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="118"/>
+        <location filename="../utils/images.cpp" line="112"/>
         <source>Text Recordings (%1)</source>
         <translation>Text Recordings (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="119"/>
+        <location filename="../utils/images.cpp" line="113"/>
         <source>Compressed Binary Recordings (%1)</source>
         <translation>Compressed Binary Recordings (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="120"/>
+        <location filename="../utils/images.cpp" line="114"/>
         <source>Compressed Text Recordings (%1)</source>
         <translation>Compressed Text Recordings (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="127"/>
+        <location filename="../utils/images.cpp" line="121"/>
         <source>Recordings (%1)</source>
         <translation>录像 (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="134"/>
+        <location filename="../utils/images.cpp" line="128"/>
         <source>All Supported Files (%1)</source>
         <translation>所有支持格式 (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="140"/>
+        <location filename="../utils/images.cpp" line="134"/>
         <source>All Files (*)</source>
         <translation>所有文件(*)</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../utils/passwordstore.cpp" line="189"/>
-        <source>Servers</source>
-        <translation>Servers</translation>
-    </message>
-    <message>
-        <location filename="../utils/passwordstore.cpp" line="193"/>
-        <source>Websites</source>
-        <translation>Websites</translation>
     </message>
 </context>
 <context>
@@ -2505,7 +2475,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>网络</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="584"/>
+        <location filename="../../desktop/ui/settings.ui" line="628"/>
         <source>Session history:</source>
         <translation>房间历史:</translation>
     </message>
@@ -2520,14 +2490,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>通知</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="58"/>
+        <location filename="../../desktop/ui/settings.ui" line="63"/>
         <source>Parental Controls</source>
         <translation>限制级设定</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="63"/>
-        <source>Passwords</source>
-        <translation>密码</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="68"/>
@@ -2670,62 +2635,138 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>每 </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="800"/>
+        <location filename="../../desktop/ui/settings.ui" line="642"/>
+        <source>Account passwords:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="649"/>
+        <source>Permit insecure storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="681"/>
+        <source>Drag mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="688"/>
+        <source>Spacebar / middle mouse button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="695"/>
+        <source>Drag rotate view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="705"/>
+        <source>Drag zoom view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="715"/>
+        <source>Drag tool adjust:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="725"/>
+        <source>Scroll zoom view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="735"/>
+        <source>Scroll tool adjust:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="745"/>
+        <source>Color picker mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="755"/>
+        <source>Layer picker mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="765"/>
+        <source>Tool constrain mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="775"/>
+        <source>Tool center mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="837"/>
+        <source>Scroll rotate view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="938"/>
+        <source>Move up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="949"/>
+        <source>Move down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="980"/>
         <source>NSFM tag words:</source>
         <translation>限制级标签:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="810"/>
+        <location filename="../../desktop/ui/settings.ui" line="990"/>
         <source>Automatically add NSFM tag based on title</source>
         <translation>根据房名自动加上限制级标签</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="817"/>
+        <location filename="../../desktop/ui/settings.ui" line="997"/>
         <source>NSFM sessions:</source>
         <translation>限制级房间:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="824"/>
+        <location filename="../../desktop/ui/settings.ui" line="1004"/>
         <source>&amp;Unrestricted</source>
         <translation>&amp;不严格的</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="831"/>
+        <location filename="../../desktop/ui/settings.ui" line="1011"/>
         <source>Hide fro&amp;m listings</source>
         <translation>&amp;在列表中隐藏</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="838"/>
+        <location filename="../../desktop/ui/settings.ui" line="1018"/>
         <source>Disallow &amp;joining</source>
         <translation>&amp;不允许加入</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="845"/>
+        <location filename="../../desktop/ui/settings.ui" line="1025"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
         <translation>&amp;当标记为不适于未成年人时断开连接</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="852"/>
+        <location filename="../../desktop/ui/settings.ui" line="1032"/>
         <source>Lock</source>
         <translation>锁定</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="872"/>
+        <location filename="../../desktop/ui/settings.ui" line="1052"/>
         <source>Block layer uncensoring</source>
         <translation>Block layer uncensoring</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="883"/>
-        <source>Note: passwords are not encrypted.</source>
-        <translation>Note: passwords are not encrypted.</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="947"/>
+        <location filename="../../desktop/ui/settings.ui" line="960"/>
+        <location filename="../../desktop/ui/settings.ui" line="1085"/>
         <source>Add...</source>
         <translation>添加...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="954"/>
+        <location filename="../../desktop/ui/settings.ui" line="1092"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -2735,13 +2776,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>暂停录制</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="570"/>
+        <location filename="../../desktop/ui/settings.ui" line="593"/>
         <source>Default server port:</source>
         <translation>默认服务器端口:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="251"/>
-        <location filename="../../desktop/ui/settings.ui" line="598"/>
+        <location filename="../../desktop/ui/settings.ui" line="577"/>
         <source> s</source>
         <translation>秒</translation>
     </message>
@@ -2801,64 +2842,63 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="672"/>
+        <location filename="../../desktop/ui/settings.ui" line="660"/>
         <source>Filter</source>
         <translation>筛选</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="48"/>
+        <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Known Hosts</source>
         <translation>已知服务器</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="53"/>
+        <location filename="../../desktop/ui/settings.ui" line="58"/>
         <source>List Servers</source>
         <translation>列表服务器</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="780"/>
-        <source>Add</source>
-        <translation>添加</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="705"/>
+        <location filename="../../desktop/ui/settings.ui" line="863"/>
         <source>Import trusted...</source>
         <translation>导入信任...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="591"/>
+        <location filename="../../desktop/ui/settings.ui" line="570"/>
         <source>Connection timeout:</source>
         <translation>连接超时:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="614"/>
+        <location filename="../../desktop/ui/settings.ui" line="48"/>
+        <source>Canvas Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="607"/>
         <source>Announce with Zeroconf</source>
         <translation>发布时无配置文件</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="621"/>
+        <location filename="../../desktop/ui/settings.ui" line="614"/>
         <source>Automatically set up port forwarding with UPnP</source>
         <translation>自动使用UpnP端口转发</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="628"/>
+        <location filename="../../desktop/ui/settings.ui" line="621"/>
         <source>Never publish user list</source>
         <translation>从不公开用户列表</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="661"/>
+        <location filename="../../desktop/ui/settings.ui" line="635"/>
         <source>Automatically reset when space is low</source>
         <translation>空间不足时自动重置</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="728"/>
+        <location filename="../../desktop/ui/settings.ui" line="886"/>
         <source>Mark as trusted</source>
         <translation>标记信任</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="742"/>
-        <location filename="../../desktop/ui/settings.ui" line="787"/>
-        <location filename="../../desktop/ui/settings.ui" line="912"/>
+        <location filename="../../desktop/ui/settings.ui" line="900"/>
+        <location filename="../../desktop/ui/settings.ui" line="967"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
@@ -3066,6 +3106,15 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>brushes::BrushPresetModel</name>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="557"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="637"/>
+        <source>Default</source>
+        <translation type="unfinished">默认</translation>
+    </message>
+</context>
+<context>
     <name>canvas::UserListModel</name>
     <message>
         <location filename="../canvas/userlist.cpp" line="72"/>
@@ -3142,24 +3191,24 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::AvatarImport</name>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="77"/>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="87"/>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="92"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="84"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="89"/>
         <source>Import Avatar</source>
         <translation>导入头像</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="78"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="75"/>
         <source>Images (%1)</source>
         <translation>图像 (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="87"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="84"/>
         <source>Couldn&apos;t read image</source>
         <translation>无法识别图像</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="92"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="89"/>
         <source>Picture is too small</source>
         <translation>图像太小</translation>
     </message>
@@ -3216,47 +3265,58 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>加入</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="64"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="85"/>
         <source>Nearby</source>
         <translation>Nearby</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="91"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="94"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="504"/>
         <source>Loading...</source>
         <translation>加载中...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="220"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="233"/>
         <source>Searching...</source>
         <translation>搜索...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="237"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="250"/>
         <source>Record</source>
         <translation>录制</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="283"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="307"/>
         <source>Room code not found!</source>
         <translation>房间代码无法找到!</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="445"/>
+        <source>Add listing server</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="143"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="147"/>
         <source>Report...</source>
         <translation>Report...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="202"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="206"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="364"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="414"/>
         <source>Log in with %1 credentials</source>
         <translation>Log in with %1 credentials</translation>
     </message>
@@ -3272,17 +3332,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::NewDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/newdialog.cpp" line="38"/>
+        <location filename="../../desktop/dialogs/newdialog.cpp" line="36"/>
         <source>Create</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/newdialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/newdialog.cpp" line="72"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/newdialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/newdialog.cpp" line="72"/>
         <source>Size is too large</source>
         <translation>大小超过上限</translation>
     </message>
@@ -3290,53 +3350,53 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="51"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="48"/>
         <source>Playback</source>
         <translation>回放</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="101"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="98"/>
         <source>Video error</source>
         <translation>视频错误</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="200"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
         <translation>This recording was made with a different Drawpile version (%1) and may appear differently</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
         <translation>This recording was made with a newer Drawpile version (%1) which might not be compatible</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="209"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
         <translation>Recording is incompatible. This recording was made with Drawpile version %1.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="213"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="210"/>
         <source>Selected file is not a Drawpile recording</source>
         <translation>所选文件不是drapile录像</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="217"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="214"/>
         <source>Cannot read file: %1</source>
         <translation>无法读取文件: %1</translation>
     </message>
     <message>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="221"/>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="224"/>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="227"/>
         <source>Open Recording</source>
         <translation>打开录像</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="261"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="258"/>
         <source>Stop on markers</source>
         <translation>在标记处停止</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="270"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="267"/>
         <source>No indexed markers</source>
         <translation>没有已索引的标记</translation>
     </message>
@@ -3363,22 +3423,22 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::ResizeDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="42"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="39"/>
         <source>Resize</source>
         <translation>修改画布大小</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="44"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="41"/>
         <source>Center</source>
         <translation>居中</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="71"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="71"/>
         <source>Size is too large</source>
         <translation>尺寸太大</translation>
     </message>
@@ -3386,72 +3446,72 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="248"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="268"/>
         <source>Operators</source>
         <translation>管理员</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="249"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="269"/>
         <source>Trusted</source>
         <translation>信任用户</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="250"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="270"/>
         <source>Registered</source>
         <translation>注册用户</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="251"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="271"/>
         <source>Everyone</source>
         <translation>所有人</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="334"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
         <source>yes</source>
         <comment>password</comment>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="334"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
         <source>change</source>
         <comment>password</comment>
         <translation>修改</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="336"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
         <source>no</source>
         <comment>password</comment>
         <translation>否</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="336"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
         <source>assign</source>
         <comment>password</comment>
         <translation>赋值</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="392"/>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="413"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="412"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="433"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>设置新的密码或留空来移除.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="394"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="414"/>
         <source>Set a password for the session.</source>
         <translation>设置房间密码.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="399"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="419"/>
         <source>Session Password</source>
         <translation>房间密码</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="415"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="435"/>
         <source>Set a password for gaining operator status.</source>
         <translation>设置获取管理员权限的密码.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="420"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="440"/>
         <source>Operator Password</source>
         <translation>管理员密码</translation>
     </message>
@@ -3459,96 +3519,96 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="89"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="88"/>
         <source>off</source>
         <comment>notifications sounds</comment>
         <translatorcomment>通知声音</translatorcomment>
         <translation>关</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="93"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="92"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="223"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="215"/>
         <source>Reset settings</source>
         <translation>重新设置</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="224"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="216"/>
         <source>Clear all settings?</source>
         <translation>清除所有设置？</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="351"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="682"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="359"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="729"/>
         <source>Unlock</source>
         <translation>开启</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="351"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="673"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="359"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="720"/>
         <source>Lock</source>
         <translation>锁定</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="548"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="558"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="563"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="571"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="581"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="586"/>
         <source>Import trusted certificate</source>
         <translation>导入信任证书</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="549"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="572"/>
         <source>Certificates (%1)</source>
         <translation>证书 (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="558"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="581"/>
         <source>Invalid certificate!</source>
         <translation>无效证书!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="563"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="586"/>
         <source>Certificate common name not set!</source>
         <translation>证书通用名称未设置!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="577"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="583"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="591"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="600"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="609"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="620"/>
         <source>Add public listing server</source>
         <translation>添加公共列表服务器</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="583"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="609"/>
         <source>Invalid URL!</source>
         <translation>无效地址!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="659"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="675"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="706"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="722"/>
         <source>Unlock Parental Controls</source>
         <translation>开启控制面板</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="660"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="707"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="662"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
         <source>Lock Parental Controls</source>
         <translation>锁定控制面板</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="663"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="710"/>
         <source>Set password</source>
         <translation>设置密码</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="675"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="722"/>
         <source>Incorrect password</source>
         <translation>错误密码</translation>
     </message>
@@ -3556,17 +3616,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::VersionCheckDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="123"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="120"/>
         <source>Download %1 (%2 MB)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="181"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="176"/>
         <source>Downloaded %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="190"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="185"/>
         <source>Downloading %1...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3574,29 +3634,29 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="79"/>
         <source>Original</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="83"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="80"/>
         <source>Custom:</source>
         <translation>自定义:</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="189"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="186"/>
         <source>Select output directory</source>
         <translation>选择输出目录</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="207"/>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="230"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="204"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="227"/>
         <source>Export video</source>
         <translation>导出视频</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="207"/>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="230"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="204"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="227"/>
         <source>%1 files (*%2)</source>
         <translation>%1 文件 (%2)</translation>
     </message>
@@ -3604,76 +3664,123 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="48"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="49"/>
         <source>Brushes</source>
         <translation>笔刷预设</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="96"/>
+        <source>Add Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="97"/>
+        <source>Overwrite Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="98"/>
+        <source>Delete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
+        <source>Move to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
+        <source>Overwrite brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
+        <source>Delete brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="202"/>
+        <source>New folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="213"/>
+        <source>Delete Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="214"/>
+        <source>Really delete folder &quot;%1&quot; and %n brushes?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
     <name>docks::ColorBox</name>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="96"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="93"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="97"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="94"/>
         <source>Duplicate</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
-        <location filename="../../desktop/docks/colorbox.cpp" line="265"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="95"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="262"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="101"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
         <source>Write Protect</source>
         <translation>写入保护</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="105"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="102"/>
         <source>Import...</source>
         <translation>导入...</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="106"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="103"/>
         <source>Export...</source>
         <translation>导出...</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="202"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="199"/>
         <source>Import palette</source>
         <translation>导入色板</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="204"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="201"/>
         <source>Palettes (%1)</source>
         <translation>色板 (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="205"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="202"/>
         <source>All files (*)</source>
         <translation>所有文件(*)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="225"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="222"/>
         <source>Export palette</source>
         <translation>导出色板</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="227"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="224"/>
         <source>GIMP palette (%1)</source>
         <translation>GIMP色板(%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="233"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="230"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="266"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="263"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation>删除色板&quot;%1&quot;?</translation>
     </message>
@@ -3732,38 +3839,38 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="50"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="48"/>
         <source>Layers</source>
         <translation>图层组</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="72"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="70"/>
         <source>Insert layer</source>
         <translation>插入图层</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="76"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="74"/>
         <source>Hide from self</source>
         <translation>隐藏</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="79"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="77"/>
         <source>Fixed</source>
         <translation>Fixed</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="84"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="88"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="86"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="381"/>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="402"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="379"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="400"/>
         <source>Layer</source>
         <translation>图层</translation>
     </message>
@@ -3835,12 +3942,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="239"/>
+        <location filename="../net/client.cpp" line="229"/>
         <source>A server error occurred!</source>
         <translation>服务器发生错误!</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="241"/>
+        <location filename="../net/client.cpp" line="231"/>
         <source>The server is shutting down!</source>
         <translation>服务器已关闭!</translation>
     </message>
@@ -3848,16 +3955,16 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="108"/>
-        <location filename="../net/login.cpp" line="134"/>
+        <location filename="../net/login.cpp" line="104"/>
+        <location filename="../net/login.cpp" line="130"/>
         <location filename="../net/login.cpp" line="392"/>
         <source>Invalid state</source>
         <translation>状态无效</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="156"/>
-        <location filename="../net/login.cpp" line="163"/>
-        <location filename="../net/login.cpp" line="230"/>
+        <location filename="../net/login.cpp" line="152"/>
+        <location filename="../net/login.cpp" line="159"/>
+        <location filename="../net/login.cpp" line="226"/>
         <location filename="../net/login.cpp" line="427"/>
         <location filename="../net/login.cpp" line="549"/>
         <location filename="../net/login.cpp" line="592"/>
@@ -3865,12 +3972,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="170"/>
+        <location filename="../net/login.cpp" line="166"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server is for a different Drawpile version!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="215"/>
+        <location filename="../net/login.cpp" line="211"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
@@ -3880,30 +3987,25 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="101"/>
+        <location filename="../net/login.cpp" line="97"/>
         <source>Your IP address is banned from this server</source>
         <translation>你的IP地址已被该服务器禁止访问</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="256"/>
+        <location filename="../net/login.cpp" line="252"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登入</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="258"/>
+        <location filename="../net/login.cpp" line="254"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
         <translation> &quot;%1&quot; 需要登录密码</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="324"/>
-        <location filename="../net/login.cpp" line="330"/>
+        <location filename="../net/login.cpp" line="320"/>
+        <location filename="../net/login.cpp" line="326"/>
         <source>Auth server error: %1</source>
         <translation>Auth server error: %1</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="353"/>
-        <source>Unexpected ext-auth response: %s</source>
-        <translation>Unexpected ext-auth response: %s</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="375"/>
@@ -3982,6 +4084,16 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>已取消</translation>
     </message>
     <message>
+        <location filename="../net/login.cpp" line="350"/>
+        <source>Group membership needed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/login.cpp" line="353"/>
+        <source>Unexpected ext-auth response: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../net/login.cpp" line="775"/>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
@@ -4038,7 +4150,22 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="110"/>
+        <location filename="../net/tcpserver.cpp" line="101"/>
+        <source>You were kicked by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/tcpserver.cpp" line="104"/>
+        <source>The server is shutting down.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/tcpserver.cpp" line="107"/>
+        <source>Error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/tcpserver.cpp" line="124"/>
         <source>Received invalid data</source>
         <translation>接受信息无效</translation>
     </message>
@@ -4137,33 +4264,33 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="67"/>
         <source>Left</source>
         <translation>靠左</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="73"/>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="83"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="68"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="78"/>
         <source>Center</source>
         <translation>居中</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="74"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="69"/>
         <source>Justify</source>
         <translation>两端对齐</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="70"/>
         <source>Right</source>
         <translation>靠右</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="82"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="77"/>
         <source>Top</source>
         <translation>靠上</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="79"/>
         <source>Bottom</source>
         <translation>靠下</translation>
     </message>
@@ -4195,67 +4322,67 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>widgets::BrushPreview</name>
+    <name>widgets::CanvasView</name>
     <message>
-        <location filename="../../desktop/widgets/brushpreview.cpp" line="55"/>
-        <source>Change Foreground Color</source>
-        <translation>修改前景色</translation>
+        <location filename="../../desktop/scene/canvasview.cpp" line="92"/>
+        <source>Reconnect</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="134"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="135"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">公开</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="206"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="198"/>
         <source>Chat (recorded)...</source>
         <translation type="unfinished">Chat (recorded)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="209"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="201"/>
         <source>Chat...</source>
         <translation type="unfinished">聊天...</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="506"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="495"/>
         <source>%1 joined the session</source>
         <translation type="unfinished">%1 加入房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="524"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="513"/>
         <source>%1 left the session</source>
         <translation type="unfinished">%1 离开房间</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="545"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="534"/>
         <source>You have been kicked by %1</source>
         <translation type="unfinished">You have been kicked by %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="701"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="680"/>
         <source>Invalid dice roll description</source>
         <translation type="unfinished">随机决策无效</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="762"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="741"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">清除</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="764"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="743"/>
         <source>Compact mode</source>
         <translation type="unfinished">Compact mode</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="769"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="748"/>
         <source>Detach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="775"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="754"/>
         <source>Attach</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4271,7 +4398,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::ColorButton</name>
     <message>
-        <location filename="../../desktop/widgets/colorbutton.cpp" line="56"/>
+        <location filename="../../desktop/widgets/colorbutton.cpp" line="58"/>
         <source>Select a color</source>
         <translation>选择颜色</translation>
     </message>
@@ -4438,17 +4565,22 @@ Hex: %5</source>
 <context>
     <name>widgets::PresetSelector</name>
     <message>
-        <location filename="../../desktop/widgets/presetselector.cpp" line="47"/>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="45"/>
         <source>Presets</source>
         <translation>预设</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/presetselector.cpp" line="55"/>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="53"/>
+        <source>Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="56"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/presetselector.cpp" line="58"/>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="59"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -4521,7 +4653,7 @@ Hex: %5</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../../desktop/widgets/viewstatus.cpp" line="64"/>
+        <location filename="../../desktop/widgets/viewstatus.cpp" line="71"/>
         <source>Canvas Rotation</source>
         <translation>画布旋转</translation>
     </message>

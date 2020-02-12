@@ -63,42 +63,45 @@
         <translation>Пензель</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="275"/>
-        <source>Watercolor</source>
-        <translation>Акварель</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="298"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="291"/>
         <source>Pick initial color from layer</source>
         <translation>Взяти початковий колір з шару</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="312"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="305"/>
         <source>Eraser mode</source>
         <translation>Режим гумки</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="342"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="322"/>
         <source>Direct drawing mode</source>
         <translation>Режим безпосереднього малювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="405"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="429"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="443"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="498"/>
+        <source>Pressure sensitivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="593"/>
         <source>px</source>
         <translation>пк</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="444"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="379"/>
         <source>Hardness:</source>
         <translation>Жорсткість:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="422"/>
         <source>Opacity:</source>
         <translation>Непрозорість:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="484"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="372"/>
         <source>Size:</source>
         <translation>Розмір:</translation>
     </message>
@@ -108,55 +111,20 @@
         <translation>Інтервал:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="498"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="386"/>
         <source>Smudging:</source>
         <translation>Розмазування:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="531"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="457"/>
         <source>Color pickup:</source>
         <translation>Всотування кольору:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="564"/>
-        <source>Pressure:</source>
-        <translation>Тиск:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="573"/>
-        <source>Size</source>
-        <translation>Розмір</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="580"/>
-        <source>Opacity</source>
-        <translation>Непрозорість</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="587"/>
-        <source>Hardness</source>
-        <translation>Жорсткість</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="594"/>
-        <source>Smudging</source>
-        <translation>Розмазування</translation>
     </message>
 </context>
 <context>
     <name>BrushPalette</name>
     <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="47"/>
-        <source>Add a new brush preset</source>
-        <translation>Додавання нового набору пензлів</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="61"/>
-        <source>Overwrite selected preset</source>
-        <translation>Перезаписати позначений набір</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="75"/>
+        <location filename="../../desktop/ui/brushpalette.ui" line="66"/>
         <source>Delete selected preset</source>
         <translation>Вилучити позначений шаблон</translation>
     </message>
@@ -354,22 +322,22 @@
         <translation>Розгортання:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="125"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="122"/>
         <source>Fill under</source>
         <translation>Заповнення тла</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="132"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="129"/>
         <source>Size limit:</source>
         <translation>Обмеження розміру:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="139"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="136"/>
         <source> ྾ 10² px</source>
         <translation> ྾ 10² пк</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="158"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="155"/>
         <source>Erase</source>
         <translation>Витерти</translation>
     </message>
@@ -523,37 +491,37 @@
         <translation>Тип:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="137"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="134"/>
         <source>P&amp;ublic</source>
         <translation>П&amp;ублічний</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="150"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="144"/>
         <source>Private (room code onl&amp;y)</source>
         <translation>Конфіденційний (&amp;лише код кімнати)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="154"/>
         <source>Server</source>
         <translation>Сервер</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="166"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
         <source>Use Drawpile&apos;s built-in server</source>
         <translation>Вбудований сервер Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="169"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="163"/>
         <source>This co&amp;mputer</source>
         <translation>&amp;Цей комп&apos;ютер</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="181"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="175"/>
         <source>Use an external dedicated server</source>
         <translation>Використовувати спеціалізований зовнішній сервер</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="184"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="178"/>
         <source>Re&amp;mote:</source>
         <translation>Ві&amp;ддалений:</translation>
     </message>
@@ -617,32 +585,42 @@
         <translation>Було випущено нову версію Drawpile, яка є несумісною з поточною.</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="68"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="47"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="88"/>
         <source>Show:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="75"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="95"/>
+        <source>Closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/joindialog.ui" line="102"/>
         <source>Passworded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="82"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="109"/>
         <source>NSFW</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="42"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="62"/>
         <source>Filter</source>
         <translation>Фільтр</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="111"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="138"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
         <translation>Вкажіть адресу вузла, адресу сеансу або код кімнати для долучення до сеансу:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/joindialog.ui" line="142"/>
+        <location filename="../../desktop/ui/joindialog.ui" line="169"/>
         <source>Record session</source>
         <translation>Записувати сеанс</translation>
     </message>
@@ -650,12 +628,12 @@
 <context>
     <name>KisCurveWidget</name>
     <message>
-        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="74"/>
+        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="73"/>
         <source>Remove point</source>
         <translation>Вилучити точку</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="75"/>
+        <location filename="../../desktop/widgets/kis_curve_widget.cpp" line="74"/>
         <source>Reset</source>
         <translation>Скинути</translation>
     </message>
@@ -811,979 +789,984 @@ Simplify the canvas and reset manually before space runs out.</source>
 Спростіть полотно і відновіть початковий стан вручну так, щоб місця вистачило.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="632"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1435"/>
+        <location filename="../../desktop/mainwindow.cpp" line="637"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1440"/>
         <source>Untitled</source>
         <translation>Без назви</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="862"/>
-        <location filename="../../desktop/mainwindow.cpp" line="883"/>
+        <location filename="../../desktop/mainwindow.cpp" line="867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="888"/>
         <source>Exit Drawpile</source>
         <translation>Вихід з Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="863"/>
+        <location filename="../../desktop/mainwindow.cpp" line="868"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Ваш обліковий запис усе ще пов&apos;язано із сеансом малювання.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="872"/>
         <source>Exit anyway</source>
         <translation>Вийти попри це</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="869"/>
-        <location filename="../../desktop/mainwindow.cpp" line="891"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1215"/>
+        <location filename="../../desktop/mainwindow.cpp" line="874"/>
+        <location filename="../../desktop/mainwindow.cpp" line="896"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1220"/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="884"/>
+        <location filename="../../desktop/mainwindow.cpp" line="889"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Деякі зміни не збережено. Зберегти їх перед виходом?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="887"/>
+        <location filename="../../desktop/mainwindow.cpp" line="892"/>
         <source>Save</source>
         <translation>Зберегти</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="889"/>
+        <location filename="../../desktop/mainwindow.cpp" line="894"/>
         <source>Discard</source>
         <translation>Відкинути</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1044"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1049"/>
         <source>Open Image</source>
         <translation>Відкриття зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1071"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1127"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1076"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1132"/>
         <source>Save Image</source>
         <translation>Збереження зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1072"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1077"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>У вибраному форматі не передбачено підтримки шарів або анотацій.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1074"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1079"/>
         <source>Flatten</source>
         <translation>Спростити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1075"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1080"/>
         <source>Save as OpenRaster</source>
         <translation>Зберегти як OpenRaster</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1169"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1174"/>
         <source>Saving...</source>
         <translation>Збереження...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1183"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1188"/>
         <source>Couldn&apos;t save image</source>
         <translation>Не вдалося зберегти зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1185"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1190"/>
         <source>Image saved</source>
         <translation>Зображення збережено</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1209"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1214"/>
         <source>Export error</source>
         <translation>Помилка експортування</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1215"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1220"/>
         <source>Exporting...</source>
         <translation>Експортування…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1236"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1241"/>
         <source>Export Session Template</source>
         <translation>Експорт шаблона сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1263"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1268"/>
         <source>Pause</source>
         <translation>Призупинити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1266"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1271"/>
         <source>Play</source>
         <translation>Пуск</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1271"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1276"/>
         <source>Stop Recording</source>
         <translation>Припинити записування</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1274"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2236"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1279"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2249"/>
         <source>Record...</source>
         <translation>Записати…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1297"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1302"/>
         <source>Record Session</source>
         <translation>Запис сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1358"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1363"/>
         <source>Invalid address</source>
         <translation>Некоректна адреса</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1371"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1376"/>
         <source>Host Session</source>
         <translation>Запуск сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1436"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1441"/>
         <source>Really leave the session?</source>
         <translation>Справді хочете полишити сеанс?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1442"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1447"/>
         <source>Leave</source>
         <translation>Вийти</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1444"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1449"/>
         <source>Stay</source>
         <translation>Лишитися</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1453"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1458"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>Частину даних ще не надіслано. Будь ласка, зачекайте на завершення передавання даних!</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1483"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1488"/>
         <source>Become Operator</source>
         <translation>Набуття прав оператора</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1484"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1489"/>
         <source>Enter operator password</source>
         <translation>Вкажіть пароль оператора</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1522"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1527"/>
         <source>Terminate session</source>
         <translation>Перервання сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1523"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1528"/>
         <source>Really terminate this session?</source>
         <translation>Справді хочете перервати сеанс?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1528"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1533"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2639"/>
         <source>Terminate</source>
         <translation>Перервати</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1602"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1608"/>
         <source>Could not connect to server</source>
         <translation>Не вдалося з&apos;єднатися з сервером</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1614"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1620"/>
         <source>Would you like to join the session instead?</source>
         <translation>Хочете замість цього долучитися до сеансу?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1616"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1622"/>
         <source>Join</source>
         <translation>Долучитися</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1661"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1642"/>
+        <source>Disconnected:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1671"/>
         <source>Board is locked</source>
         <translation>Дошку заблоковано</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1683"/>
         <source>Session blocked by parental controls</source>
         <translation>Сеанс заблоковано засобами батьківського контролю</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1961"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1971"/>
         <source>Paste Image</source>
         <translation>Вставити зображення\n
 вставлення зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1980"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1990"/>
         <source>The image could not be loaded</source>
         <translation>Не вдалося завантажити зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2102"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2115"/>
         <source>Mark</source>
         <translation>Позначка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2102"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2115"/>
         <source>Marker text</source>
         <translation>Текст позначки</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2110"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2123"/>
         <source>About Drawpile</source>
         <translation>Про Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2112"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2125"/>
         <source>A collaborative drawing program.</source>
         <translation>Програма для спільного малювання.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2214"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2227"/>
         <source>Lock in place</source>
         <translation>Зафіксувати на місці</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2218"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2231"/>
         <source>Hide Docks</source>
         <translation>Сховати діалоги з підтримкою прикріплення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2225"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2238"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>&amp;Створити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2226"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2239"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>&amp;Відкрити…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2228"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2241"/>
         <source>Close</source>
         <translation>Закрити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2230"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2243"/>
         <source>&amp;Save</source>
         <translation>&amp;Зберегти</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2231"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2244"/>
         <source>Save &amp;As...</source>
         <translation>Зберегти &amp;як…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2232"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2245"/>
         <source>Autosave</source>
         <translation>Автозбереження</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2233"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
         <source>&amp;Animation...</source>
         <translation>&amp;Анімація…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2233"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
         <source>Export layers as animation frames</source>
         <translation>Експортувати шари як кадри анімації</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2234"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
         <source>Session Template...</source>
         <translation>Шаблон сеансу…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2234"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
         <source>Export current session as a template recording for use with the dedicated server</source>
         <translation>Експортувати поточний сеанс як запис шалона для використання на спеціалізованому сервері</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2237"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2250"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>Ви&amp;йти</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2267"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2280"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2270"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2283"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>Відкрити &amp;недавні</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2281"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2294"/>
         <source>&amp;Export</source>
         <translation>&amp;Експорт</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2290"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2303"/>
         <source>File Tools</source>
         <translation>Робота з файлами</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2306"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2319"/>
         <source>&amp;Undo</source>
         <translation>С&amp;касувати</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2307"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2320"/>
         <source>&amp;Redo</source>
         <translation>Повт&amp;орити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2308"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
         <source>&amp;Copy Visible</source>
         <translation>&amp;Копіювати видиме</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2308"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Копіювати видиму ділянку до буфера обміну даними</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2309"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
         <source>Copy Merged</source>
         <translation>Копіювати об’єднаним</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2309"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>Копіювати позначену ділянку, окрім тла, до буфера обміну даними</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2310"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2323"/>
         <source>Copy &amp;Layer</source>
         <translation>Копіювати &amp;шар</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2310"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2323"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Копіювати позначену ділянку поточного шару до буфера обміну даними</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2311"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2324"/>
         <source>Cu&amp;t Layer</source>
         <translation>Ви&amp;різати шар</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2311"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2324"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Вирізати позначену ділянку поточного шару до буфера обміну даними</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2312"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2325"/>
         <source>&amp;Paste</source>
         <translation>&amp;Вставити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2313"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2326"/>
         <source>&amp;Stamp</source>
         <translation>&amp;Штамп</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2315"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2328"/>
         <source>Paste &amp;From File...</source>
         <translation>Вставити&#xa0;&amp;із файла...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2316"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2329"/>
         <source>Delete Empty Annotations</source>
         <translation>Вилучити порожні анотації</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2317"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2330"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>З&amp;мінити розміри полотна…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2318"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2331"/>
         <source>Set Background...</source>
         <translation>Встановити тло…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2319"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2332"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>На&amp;лаштування</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2334"/>
         <source>Select &amp;All</source>
         <translation>Позна&amp;чити все</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2335"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Скасувати позначення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2330"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2343"/>
         <source>Expand &amp;Up</source>
         <translation>Розширити в&amp;гору</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2331"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2344"/>
         <source>Expand &amp;Down</source>
         <translation>Розширити в&amp;низ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2332"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2345"/>
         <source>Expand &amp;Left</source>
         <translation>Розширити &amp;ліворуч</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2333"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2346"/>
         <source>Expand &amp;Right</source>
         <translation>Розширити &amp;праворуч</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2335"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2348"/>
         <source>Delete</source>
         <translation>Вилучити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2336"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2349"/>
         <source>Fill Selection</source>
         <translation>Заповнити позначене</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2337"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2350"/>
         <source>Recolor Selection</source>
         <translation>Перефарбувати позначене</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2338"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2351"/>
         <source>Color Erase Selection</source>
         <translation>Витерти колір позначеного</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2396"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2409"/>
         <source>&amp;Edit</source>
         <translation>З&amp;міни</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2414"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2427"/>
         <source>&amp;Expand Canvas</source>
         <translation>Роз&amp;ширити полотно</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2430"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2443"/>
         <source>Edit Tools</source>
         <translation>Інструменти редагування</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2443"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2456"/>
         <source>&amp;Toolbars</source>
         <translation>П&amp;анелі інструментів</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2446"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2459"/>
         <source>&amp;Docks</source>
         <translation>&amp;Бічні панелі</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2449"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2462"/>
         <source>Chat</source>
         <translation>Спілкування</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2451"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
         <source>Flipbook</source>
         <translation>Кінеограф</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2451"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
         <source>Show animation preview window</source>
         <translation>Показати вікно попереднього перегляду анімації</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2453"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2466"/>
         <source>Zoom &amp;In</source>
         <translation>З&amp;більшити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2454"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2467"/>
         <source>Zoom &amp;Out</source>
         <translation>З&amp;меншити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2455"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2468"/>
         <source>&amp;Normal Size</source>
         <translation>З&amp;вичайний розмір</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2456"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2469"/>
         <source>&amp;Reset Rotation</source>
         <translation>С&amp;кинути обертання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2457"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2470"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Обертати полотно за годинниковою стрілкою</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2458"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2471"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>Обертати полотно проти годинникової стрілки</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2460"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2473"/>
         <source>Mirror</source>
         <translation>Віддзеркалити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2461"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
         <source>Flip</source>
         <translation>Перевернути</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2463"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2476"/>
         <source>Show &amp;Annotations</source>
         <translation>Показати &amp;анотації</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2477"/>
         <source>Show User &amp;Pointers</source>
         <translation>Показати в&amp;казівники користувача</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2465"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2478"/>
         <source>Show Names</source>
         <translation>Показати імена</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2466"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2479"/>
         <source>Show Layers</source>
         <translation>Показати шари</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2467"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2480"/>
         <source>Show Avatars</source>
         <translation>Показати аватари</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2468"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2481"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Показати &amp;лазерні вказівники</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2469"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2482"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>Показати &amp;піксельну сітку</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2471"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2484"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;На весь екран</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2533"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2546"/>
         <source>&amp;View</source>
         <translation>П&amp;ерегляд</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2540"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2553"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Масштаб</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2545"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2558"/>
         <source>Rotation</source>
         <translation>Обертання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2555"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2568"/>
         <source>User Pointers</source>
         <translation>Вказівники користувача</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2574"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2587"/>
         <source>New Layer</source>
         <translation>Створити шар</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2575"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2588"/>
         <source>Duplicate Layer</source>
         <translation>Дублювати шар</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2576"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2589"/>
         <source>Merge with Layer Below</source>
         <translation>Об&apos;єднати з шаром нижче</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2577"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2590"/>
         <source>Delete Layer</source>
         <translation>Вилучити шар\n
 вилучення шару</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2581"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2594"/>
         <source>Solo</source>
         <translation>Соло</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2582"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2595"/>
         <source>Onionskin</source>
         <translation>Калька</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2583"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2596"/>
         <source>Show Numbers</source>
         <translation>Показати номери</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2597"/>
         <source>Show Censored Layers</source>
         <translation>Показати цензуровані шари</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2586"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2599"/>
         <source>Select Above</source>
         <translation>Позначити вище</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2587"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2600"/>
         <source>Select Below</source>
         <translation>Позначити нижче</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2596"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2609"/>
         <source>Layer</source>
         <translation>Шар</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>В&amp;узол…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <source>Share your drawingboard with others</source>
         <translation>Оприлюднення дошки для малювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>Д&amp;олучитися...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Долучитися до сеансу малювання іншого користувача</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>&amp;Leave</source>
         <translation>По&amp;лишити</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>Leave this drawing session</source>
         <translation>Полишити цей сеанс малювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2621"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2634"/>
         <source>Event Log</source>
         <translation>Журнал подій</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2622"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2635"/>
         <source>Settings...</source>
         <translation>Параметри…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2624"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2637"/>
         <source>Become Operator...</source>
         <translation>Стати оператором…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2625"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2638"/>
         <source>&amp;Reset...</source>
         <translation>С&amp;кинути…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
         <source>Report...</source>
         <translation>Звіт…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
         <source>Lock Everything</source>
         <translation>Заблокувати усе</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Запобігти змінам на дошці для малювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2652"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>&amp;Сеанс</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2658"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
         <source>Moderation</source>
         <translation>Модерація</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2672"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
         <source>Freehand</source>
         <translation>Вручну</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2672"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
         <source>Freehand brush tool</source>
         <translation>Пензель довільного малювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
         <source>Eraser</source>
         <translation>Гумка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
         <source>Freehand eraser brush</source>
         <translation>Пензель-гумка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2674"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
         <source>&amp;Line</source>
         <translation>П&amp;ряма</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2674"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
         <source>Draw straight lines</source>
         <translation>Малювання прямих ліній</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2675"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2688"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;Прямокутник</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2675"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2688"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>Малювання квадратів та прямокутників</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2676"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Еліпс</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2676"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>Малювання кіл та еліпсів</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2677"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
         <source>Bezier Curve</source>
         <translation>Крива Безьє</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2677"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
         <source>Draw bezier curves</source>
         <translation>Малювання кривих Безьє</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2678"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
         <source>&amp;Flood Fill</source>
         <translation>З&amp;аповнення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2678"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
         <source>Fill areas</source>
         <translation>Заповнення ділянок кольором</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2679"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
         <source>&amp;Annotation</source>
         <translation>&amp;Анотація</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2679"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
         <source>Add text to the picture</source>
         <translation>Додавання тексту на малюнок</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2681"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2694"/>
         <source>&amp;Color Picker</source>
         <translation>П&amp;іпетка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2681"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2694"/>
         <source>Pick colors from the image</source>
         <translation>Вбирає кольори з зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2682"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
         <source>&amp;Laser Pointer</source>
         <translation>&amp;Лазерний вказівник</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2682"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
         <source>Point out things on the canvas</source>
         <translation>Вказує на елементи на полотні</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2683"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>Поз&amp;начення (прямокутне)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2683"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
         <source>Select area for copying</source>
         <translation>Позначення ділянки для копіювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2684"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>Поз&amp;начення (довільна форма)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2684"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
         <source>Select a free-form area for copying</source>
         <translation>Позначення довільної ділянки для копіювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
         <source>Zoom</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
         <source>Zoom the canvas view</source>
         <translation>Масштабування полотна</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
         <source>Inspector</source>
         <translation>Інспектор</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
         <source>Find out who did it</source>
         <translation>Визначити автора</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
         <source>&amp;Mark</source>
         <translation>Позна&amp;чка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>Створити позначку для відшукання цього фрагмента у записі сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2706"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
         <source>&amp;Tools</source>
         <translation>&amp;Інструменти</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2710"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Клавіатурні скорочення</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2712"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
         <source>Toggle eraser mode</source>
         <translation>Увімкнути або вимкнути режим гумки</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2713"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
         <source>Swap Last Colors</source>
         <translation>Поміняти місцями останні кольори</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2714"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>З&amp;меншити розмір пензля</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2715"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
         <source>&amp;Increase Brush Size</source>
         <translation>З&amp;більшити розмір пензля</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2730"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2743"/>
         <source>Drawing tools</source>
         <translation>Інструменти малювання</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2753"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2766"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>Дома&amp;шня сторінка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2754"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2767"/>
         <source>Tablet Tester</source>
         <translation>Тестування планшета</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2755"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2768"/>
         <source>Log File</source>
         <translation>Файл журналу</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2756"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2769"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;Про Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2757"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2770"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>Про &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2758"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2771"/>
         <source>Check For Updates</source>
         <translation>Пошук оновлень</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2789"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2802"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>&amp;Довідка</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2825"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2838"/>
         <source>Finish action</source>
         <translation>Завершити дію</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2829"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2842"/>
         <source>Cancel action</source>
         <translation>Скасувати дію</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2856"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2869"/>
         <source>Color</source>
         <translation>Колір</translation>
     </message>
@@ -1855,7 +1838,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>PaletteListModel</name>
     <message>
-        <location filename="../utils/palettelistmodel.cpp" line="172"/>
+        <location filename="../utils/palettelistmodel.cpp" line="171"/>
         <source>New palette</source>
         <translation>Створити палітру</translation>
     </message>
@@ -1941,8 +1924,8 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="79"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="550"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="76"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="573"/>
         <source>All files (*)</source>
         <translation>усі файли (*)</translation>
     </message>
@@ -2022,17 +2005,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Інспектор</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="544"/>
+        <location filename="../../desktop/mainwindow.cpp" line="549"/>
         <source>Warning</source>
         <translation>Попередження</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="203"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="86"/>
         <source>Erase</source>
         <translation>Гумка</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="207"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="90"/>
         <source>Color Erase</source>
         <translation>Стерти колір</translation>
     </message>
@@ -2093,57 +2076,44 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Файл не є фалом OpenRaster</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="109"/>
+        <location filename="../utils/images.cpp" line="103"/>
         <source>Images (%1)</source>
         <translation>Зображення (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="117"/>
+        <location filename="../utils/images.cpp" line="111"/>
         <source>Binary Recordings (%1)</source>
         <translation>двійкові записи (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="118"/>
+        <location filename="../utils/images.cpp" line="112"/>
         <source>Text Recordings (%1)</source>
         <translation>текстові записи (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="119"/>
+        <location filename="../utils/images.cpp" line="113"/>
         <source>Compressed Binary Recordings (%1)</source>
         <translation>стиснути двійкові записи (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="120"/>
+        <location filename="../utils/images.cpp" line="114"/>
         <source>Compressed Text Recordings (%1)</source>
         <translation>стиснуті текстові записи (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="127"/>
+        <location filename="../utils/images.cpp" line="121"/>
         <source>Recordings (%1)</source>
         <translation>записи (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="134"/>
+        <location filename="../utils/images.cpp" line="128"/>
         <source>All Supported Files (%1)</source>
         <translation>Усі підтримувані файли (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="140"/>
+        <location filename="../utils/images.cpp" line="134"/>
         <source>All Files (*)</source>
         <translation>усі файли (*)</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../utils/passwordstore.cpp" line="189"/>
-        <source>Servers</source>
-        <translation>Сервери</translation>
-    </message>
-    <message>
-        <location filename="../utils/passwordstore.cpp" line="193"/>
-        <source>Websites</source>
-        <translation>Сайти</translation>
     </message>
 </context>
 <context>
@@ -2526,23 +2496,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="48"/>
+        <source>Canvas Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Known Hosts</source>
         <translation>Відомі вузли</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="53"/>
+        <location filename="../../desktop/ui/settings.ui" line="58"/>
         <source>List Servers</source>
         <translation>Списки серверів</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="58"/>
+        <location filename="../../desktop/ui/settings.ui" line="63"/>
         <source>Parental Controls</source>
         <translation>Батьківський контроль</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="63"/>
-        <source>Passwords</source>
-        <translation>Паролі</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="68"/>
@@ -2626,7 +2596,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="251"/>
-        <location filename="../../desktop/ui/settings.ui" line="598"/>
+        <location filename="../../desktop/ui/settings.ui" line="577"/>
         <source> s</source>
         <translation> с</translation>
     </message>
@@ -2746,124 +2716,194 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Відтінки шарів</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="570"/>
+        <location filename="../../desktop/ui/settings.ui" line="593"/>
         <source>Default server port:</source>
         <translation>Типовий порт сервера:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="584"/>
+        <location filename="../../desktop/ui/settings.ui" line="628"/>
         <source>Session history:</source>
         <translation>Журнал сеансу:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="591"/>
+        <location filename="../../desktop/ui/settings.ui" line="938"/>
+        <source>Move up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="949"/>
+        <source>Move down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="570"/>
         <source>Connection timeout:</source>
         <translation>Перевищення часу очікування на з&apos;єднання:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="614"/>
+        <location filename="../../desktop/ui/settings.ui" line="607"/>
         <source>Announce with Zeroconf</source>
         <translation>Оголошення за допомогою Zeroconf</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="621"/>
+        <location filename="../../desktop/ui/settings.ui" line="614"/>
         <source>Automatically set up port forwarding with UPnP</source>
         <translation>Автоматично налаштовувати переспрямування портів з UPnP</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="628"/>
+        <location filename="../../desktop/ui/settings.ui" line="621"/>
         <source>Never publish user list</source>
         <translation>Ніколи не оприлюднювати список користувачів</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="661"/>
+        <location filename="../../desktop/ui/settings.ui" line="635"/>
         <source>Automatically reset when space is low</source>
         <translation>Автоматично відновлювати стан, якщо не вистачає місця</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="672"/>
+        <location filename="../../desktop/ui/settings.ui" line="642"/>
+        <source>Account passwords:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="649"/>
+        <source>Permit insecure storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="660"/>
         <source>Filter</source>
         <translation>Фільтр</translation>
     </message>
     <message>
+        <location filename="../../desktop/ui/settings.ui" line="681"/>
+        <source>Drag mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="688"/>
+        <source>Spacebar / middle mouse button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="695"/>
+        <source>Drag rotate view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../desktop/ui/settings.ui" line="705"/>
+        <source>Drag zoom view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="715"/>
+        <source>Drag tool adjust:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="725"/>
+        <source>Scroll zoom view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="735"/>
+        <source>Scroll tool adjust:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="745"/>
+        <source>Color picker mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="755"/>
+        <source>Layer picker mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="765"/>
+        <source>Tool constrain mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="775"/>
+        <source>Tool center mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="837"/>
+        <source>Scroll rotate view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="863"/>
         <source>Import trusted...</source>
         <translation>Імпортувати надійні…</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="728"/>
+        <location filename="../../desktop/ui/settings.ui" line="886"/>
         <source>Mark as trusted</source>
         <translation>Позначити як надійний</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="742"/>
-        <location filename="../../desktop/ui/settings.ui" line="787"/>
-        <location filename="../../desktop/ui/settings.ui" line="912"/>
+        <location filename="../../desktop/ui/settings.ui" line="900"/>
+        <location filename="../../desktop/ui/settings.ui" line="967"/>
         <source>Remove</source>
         <translation>Вилучити</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="780"/>
-        <source>Add</source>
-        <translation>Додати</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="800"/>
+        <location filename="../../desktop/ui/settings.ui" line="980"/>
         <source>NSFM tag words:</source>
         <translation>Слова-мітки непристойного:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="810"/>
+        <location filename="../../desktop/ui/settings.ui" line="990"/>
         <source>Automatically add NSFM tag based on title</source>
         <translation>Автоматично додавати мітку непристойного на основі заголовка</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="817"/>
+        <location filename="../../desktop/ui/settings.ui" line="997"/>
         <source>NSFM sessions:</source>
         <translation>Непристойні сеанси:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="824"/>
+        <location filename="../../desktop/ui/settings.ui" line="1004"/>
         <source>&amp;Unrestricted</source>
         <translation>&amp;Без обмежень</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="831"/>
+        <location filename="../../desktop/ui/settings.ui" line="1011"/>
         <source>Hide fro&amp;m listings</source>
         <translation>С&amp;ховати зі списків</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="838"/>
+        <location filename="../../desktop/ui/settings.ui" line="1018"/>
         <source>Disallow &amp;joining</source>
         <translation>За&amp;боронити долучення</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="845"/>
+        <location filename="../../desktop/ui/settings.ui" line="1025"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
         <translation>Від&apos;єднуватися, якщо поз&amp;начено непристойним</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="852"/>
+        <location filename="../../desktop/ui/settings.ui" line="1032"/>
         <source>Lock</source>
         <translation>Заблокувати</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="872"/>
+        <location filename="../../desktop/ui/settings.ui" line="1052"/>
         <source>Block layer uncensoring</source>
         <translation>Блокувати скасування цензури для шарів</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="883"/>
-        <source>Note: passwords are not encrypted.</source>
-        <translation>Зауваження: паролі не зашифровано.</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="947"/>
+        <location filename="../../desktop/ui/settings.ui" line="960"/>
+        <location filename="../../desktop/ui/settings.ui" line="1085"/>
         <source>Add...</source>
         <translation>Додати…</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="954"/>
+        <location filename="../../desktop/ui/settings.ui" line="1092"/>
         <source>Delete</source>
         <translation>Вилучити</translation>
     </message>
@@ -3071,6 +3111,15 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>brushes::BrushPresetModel</name>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="557"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="637"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>canvas::UserListModel</name>
     <message>
         <location filename="../canvas/userlist.cpp" line="72"/>
@@ -3147,24 +3196,24 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::AvatarImport</name>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="77"/>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="87"/>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="92"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="84"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="89"/>
         <source>Import Avatar</source>
         <translation>Імпортування аватару</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="78"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="75"/>
         <source>Images (%1)</source>
         <translation>Зображення (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="87"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="84"/>
         <source>Couldn&apos;t read image</source>
         <translation>Не вдалося прочитати зображення</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/avatarimport.cpp" line="92"/>
+        <location filename="../../desktop/dialogs/avatarimport.cpp" line="89"/>
         <source>Picture is too small</source>
         <translation>Зображення є надто малим</translation>
     </message>
@@ -3221,47 +3270,58 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Долучитися</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="64"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="85"/>
         <source>Nearby</source>
         <translation type="unfinished">Поблизу</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="91"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="94"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="504"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="220"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="233"/>
         <source>Searching...</source>
         <translation>Шукаємо…</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="237"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="250"/>
         <source>Record</source>
         <translation>Запис</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="283"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="307"/>
         <source>Room code not found!</source>
         <translation>Не знайдено код кімнати!</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="445"/>
+        <source>Add listing server</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="143"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="147"/>
         <source>Report...</source>
         <translation>Звіт…</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="202"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="206"/>
         <source>Close</source>
         <translation>Закрити</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="364"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="414"/>
         <source>Log in with %1 credentials</source>
         <translation>Увійти за допомогою реєстраційних даних %1</translation>
     </message>
@@ -3277,17 +3337,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::NewDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/newdialog.cpp" line="38"/>
+        <location filename="../../desktop/dialogs/newdialog.cpp" line="36"/>
         <source>Create</source>
         <translation>Створити</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/newdialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/newdialog.cpp" line="72"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/newdialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/newdialog.cpp" line="72"/>
         <source>Size is too large</source>
         <translation>Розмір надто великий</translation>
     </message>
@@ -3295,53 +3355,53 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="51"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="48"/>
         <source>Playback</source>
         <translation>Відтворення</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="101"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="98"/>
         <source>Video error</source>
         <translation>Помилка відео</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="200"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
         <translation>Цей запис було зроблено за допомогою іншої версії Drawpile (%1), отже він може виглядати по-іншому</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
         <translation>Цей запис було зроблено у новішій версії Drawpile (%1), яка може бути несумісною з поточною</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="209"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
         <translation>Запис є несумісним. Цей запис було зроблено у Drawpile версії %1.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="213"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="210"/>
         <source>Selected file is not a Drawpile recording</source>
         <translation>Вибраний файл не є файлом Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="217"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="214"/>
         <source>Cannot read file: %1</source>
         <translation>Не вадлося прочитати файл: %1</translation>
     </message>
     <message>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="221"/>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="224"/>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="227"/>
         <source>Open Recording</source>
         <translation>Відкриття запису</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="261"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="258"/>
         <source>Stop on markers</source>
         <translation>Зупинятися на позначках</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="270"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="267"/>
         <source>No indexed markers</source>
         <translation>Немає індексованих позначок</translation>
     </message>
@@ -3368,22 +3428,22 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::ResizeDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="42"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="39"/>
         <source>Resize</source>
         <translation>Змінити розмір</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="44"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="41"/>
         <source>Center</source>
         <translation>Центр</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="71"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="74"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="71"/>
         <source>Size is too large</source>
         <translation>Розмір є надто великим</translation>
     </message>
@@ -3391,72 +3451,72 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="248"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="268"/>
         <source>Operators</source>
         <translation>Оператори</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="249"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="269"/>
         <source>Trusted</source>
         <translation>Надійний</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="250"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="270"/>
         <source>Registered</source>
         <translation>З реєстрацією</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="251"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="271"/>
         <source>Everyone</source>
         <translation>Будь-хто</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="334"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
         <source>yes</source>
         <comment>password</comment>
         <translation>так</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="334"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
         <source>change</source>
         <comment>password</comment>
         <translation>змінити</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="336"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
         <source>no</source>
         <comment>password</comment>
         <translation>ні</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="336"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
         <source>assign</source>
         <comment>password</comment>
         <translation>призначити</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="392"/>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="413"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="412"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="433"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>Встановіть новий пароль або не заповнюйте, щоб вилучити пароль.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="394"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="414"/>
         <source>Set a password for the session.</source>
         <translation>Встановіть пароль для сеансу.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="399"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="419"/>
         <source>Session Password</source>
         <translation>Пароль сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="415"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="435"/>
         <source>Set a password for gaining operator status.</source>
         <translation>Встановіть пароль для отримання стану оператора.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="420"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="440"/>
         <source>Operator Password</source>
         <translation>Пароль оператора</translation>
     </message>
@@ -3464,95 +3524,95 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="89"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="88"/>
         <source>off</source>
         <comment>notifications sounds</comment>
         <translation>вимкнено</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="93"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="92"/>
         <source>Default</source>
         <translation>Типова</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="223"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="215"/>
         <source>Reset settings</source>
         <translation>Повернення початкових параметрів</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="224"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="216"/>
         <source>Clear all settings?</source>
         <translation>Вилучити усі параметри?</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="351"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="682"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="359"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="729"/>
         <source>Unlock</source>
         <translation>Розблокувати</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="351"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="673"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="359"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="720"/>
         <source>Lock</source>
         <translation>Заблокувати</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="548"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="558"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="563"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="571"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="581"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="586"/>
         <source>Import trusted certificate</source>
         <translation>Імпортування надійного сертифіката</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="549"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="572"/>
         <source>Certificates (%1)</source>
         <translation>сертифікати (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="558"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="581"/>
         <source>Invalid certificate!</source>
         <translation>Некоректний сертифікат!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="563"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="586"/>
         <source>Certificate common name not set!</source>
         <translation>Не встановлено загальну назву для сертифіката!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="577"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="583"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="591"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="600"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="609"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="620"/>
         <source>Add public listing server</source>
         <translation>Додати сервер відкритого списку</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="583"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="609"/>
         <source>Invalid URL!</source>
         <translation>Некоректна адреса!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="659"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="675"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="706"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="722"/>
         <source>Unlock Parental Controls</source>
         <translation>Розблокувати батьківський контроль</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="660"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="707"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="662"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
         <source>Lock Parental Controls</source>
         <translation>Застосувати батьківський контроль</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="663"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="710"/>
         <source>Set password</source>
         <translation>Встановіть пароль</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="675"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="722"/>
         <source>Incorrect password</source>
         <translation>Помилковий пароль</translation>
     </message>
@@ -3560,17 +3620,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::VersionCheckDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="123"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="120"/>
         <source>Download %1 (%2 MB)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="181"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="176"/>
         <source>Downloaded %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="190"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="185"/>
         <source>Downloading %1...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3578,29 +3638,29 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="79"/>
         <source>Original</source>
         <translation>Оригінал</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="83"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="80"/>
         <source>Custom:</source>
         <translation>Нетипове:</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="189"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="186"/>
         <source>Select output directory</source>
         <translation>Виберіть каталог виведення</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="207"/>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="230"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="204"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="227"/>
         <source>Export video</source>
         <translation>Експортування відео</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="207"/>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="230"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="204"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="227"/>
         <source>%1 files (*%2)</source>
         <translation>файли %1 (*%2)</translation>
     </message>
@@ -3608,76 +3668,125 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="48"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="49"/>
         <source>Brushes</source>
         <translation>Пензлі</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="96"/>
+        <source>Add Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="97"/>
+        <source>Overwrite Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="98"/>
+        <source>Delete Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
+        <source>Move to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
+        <source>Overwrite brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
+        <source>Delete brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="202"/>
+        <source>New folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="213"/>
+        <source>Delete Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="214"/>
+        <source>Really delete folder &quot;%1&quot; and %n brushes?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
     <name>docks::ColorBox</name>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="96"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="93"/>
         <source>New</source>
         <translation>Створити</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="97"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="94"/>
         <source>Duplicate</source>
         <translation>Здублювати</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
-        <location filename="../../desktop/docks/colorbox.cpp" line="265"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="95"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="262"/>
         <source>Delete</source>
         <translation>Вилучити</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="101"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
         <source>Write Protect</source>
         <translation>Захист від запису</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="105"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="102"/>
         <source>Import...</source>
         <translation>Імпортувати…</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="106"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="103"/>
         <source>Export...</source>
         <translation>Експортувати…</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="202"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="199"/>
         <source>Import palette</source>
         <translation>Імпортувати палітру</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="204"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="201"/>
         <source>Palettes (%1)</source>
         <translation>палітри (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="205"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="202"/>
         <source>All files (*)</source>
         <translation>усі файли (*)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="225"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="222"/>
         <source>Export palette</source>
         <translation>Експортування палітри</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="227"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="224"/>
         <source>GIMP palette (%1)</source>
         <translation>палітра GIMP (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="233"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="230"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="266"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="263"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation>Вилучити палітру «%1»?</translation>
     </message>
@@ -3736,38 +3845,38 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="50"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="48"/>
         <source>Layers</source>
         <translation>Шари</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="72"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="70"/>
         <source>Insert layer</source>
         <translation>Вставити шар</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="76"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="74"/>
         <source>Hide from self</source>
         <translation>Приховати від себе</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="79"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="77"/>
         <source>Fixed</source>
         <translation>Фіксований</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="84"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
         <source>Default</source>
         <translation>Типовий</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="88"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="86"/>
         <source>Rename</source>
         <translation>Перейменувати</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="381"/>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="402"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="379"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="400"/>
         <source>Layer</source>
         <translation>Шар</translation>
     </message>
@@ -3839,12 +3948,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="239"/>
+        <location filename="../net/client.cpp" line="229"/>
         <source>A server error occurred!</source>
         <translation>Сталася помилка із сервером!</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="241"/>
+        <location filename="../net/client.cpp" line="231"/>
         <source>The server is shutting down!</source>
         <translation>Сервер завершив роботу!</translation>
     </message>
@@ -3852,21 +3961,21 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="101"/>
+        <location filename="../net/login.cpp" line="97"/>
         <source>Your IP address is banned from this server</source>
         <translation>Вашу IP-адресу заблоковано на цьому сервері</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="108"/>
-        <location filename="../net/login.cpp" line="134"/>
+        <location filename="../net/login.cpp" line="104"/>
+        <location filename="../net/login.cpp" line="130"/>
         <location filename="../net/login.cpp" line="392"/>
         <source>Invalid state</source>
         <translation>Некоректний стан</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="156"/>
-        <location filename="../net/login.cpp" line="163"/>
-        <location filename="../net/login.cpp" line="230"/>
+        <location filename="../net/login.cpp" line="152"/>
+        <location filename="../net/login.cpp" line="159"/>
+        <location filename="../net/login.cpp" line="226"/>
         <location filename="../net/login.cpp" line="427"/>
         <location filename="../net/login.cpp" line="549"/>
         <location filename="../net/login.cpp" line="592"/>
@@ -3874,35 +3983,40 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Несумісний сервер</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="170"/>
+        <location filename="../net/login.cpp" line="166"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>На сервері встановлено іншу версію Drawpile!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="215"/>
+        <location filename="../net/login.cpp" line="211"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>На довіреному вузлі не увімкнено безпечний режим!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="256"/>
+        <location filename="../net/login.cpp" line="252"/>
         <source>This server does not allow guest logins</source>
         <translation>На сервері заборонено вхід від імені гостя</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="258"/>
+        <location filename="../net/login.cpp" line="254"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
         <translation>Для входу від імені «%1» потрібен пароль</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="324"/>
-        <location filename="../net/login.cpp" line="330"/>
+        <location filename="../net/login.cpp" line="320"/>
+        <location filename="../net/login.cpp" line="326"/>
         <source>Auth server error: %1</source>
         <translation>Помилка розпізнавання на сервері: %1</translation>
     </message>
     <message>
+        <location filename="../net/login.cpp" line="350"/>
+        <source>Group membership needed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../net/login.cpp" line="353"/>
-        <source>Unexpected ext-auth response: %s</source>
-        <translation>Неочікувана відповідь розширеного розпізнавання: %s</translation>
+        <source>Unexpected ext-auth response: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="375"/>
@@ -4042,7 +4156,22 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="110"/>
+        <location filename="../net/tcpserver.cpp" line="101"/>
+        <source>You were kicked by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/tcpserver.cpp" line="104"/>
+        <source>The server is shutting down.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/tcpserver.cpp" line="107"/>
+        <source>Error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../net/tcpserver.cpp" line="124"/>
         <source>Received invalid data</source>
         <translation>Отримано некоректні дані</translation>
     </message>
@@ -4141,33 +4270,33 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="72"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="67"/>
         <source>Left</source>
         <translation>Ліворуч</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="73"/>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="83"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="68"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="78"/>
         <source>Center</source>
         <translation>За центром</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="74"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="69"/>
         <source>Justify</source>
         <translation>За шириною</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="70"/>
         <source>Right</source>
         <translation>Праворуч</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="82"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="77"/>
         <source>Top</source>
         <translation>Вгору</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="84"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="79"/>
         <source>Bottom</source>
         <translation>Вниз</translation>
     </message>
@@ -4199,67 +4328,67 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>widgets::BrushPreview</name>
+    <name>widgets::CanvasView</name>
     <message>
-        <location filename="../../desktop/widgets/brushpreview.cpp" line="55"/>
-        <source>Change Foreground Color</source>
-        <translation>Зміна кольору переднього плану</translation>
+        <location filename="../../desktop/scene/canvasview.cpp" line="92"/>
+        <source>Reconnect</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="134"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="135"/>
         <source>Public</source>
         <translation type="unfinished">Відкритий</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="206"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="198"/>
         <source>Chat (recorded)...</source>
         <translation type="unfinished">Спілкування (записане)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="209"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="201"/>
         <source>Chat...</source>
         <translation type="unfinished">Спілкування…</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="506"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="495"/>
         <source>%1 joined the session</source>
         <translation type="unfinished">%1 долучився(-лася) до сеансу</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="524"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="513"/>
         <source>%1 left the session</source>
         <translation type="unfinished">%1 полишив(-ла) сеанс</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="545"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="534"/>
         <source>You have been kicked by %1</source>
         <translation type="unfinished">Вас викинуто користувачем %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="701"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="680"/>
         <source>Invalid dice roll description</source>
         <translation type="unfinished">Некоректний опис кидання кістки</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="762"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="741"/>
         <source>Clear</source>
         <translation type="unfinished">Спорожнити</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="764"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="743"/>
         <source>Compact mode</source>
         <translation type="unfinished">Компактний режим</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="769"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="748"/>
         <source>Detach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="775"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="754"/>
         <source>Attach</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4275,7 +4404,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::ColorButton</name>
     <message>
-        <location filename="../../desktop/widgets/colorbutton.cpp" line="56"/>
+        <location filename="../../desktop/widgets/colorbutton.cpp" line="58"/>
         <source>Select a color</source>
         <translation>Виберіть колір</translation>
     </message>
@@ -4442,17 +4571,22 @@ Hex: %5</source>
 <context>
     <name>widgets::PresetSelector</name>
     <message>
-        <location filename="../../desktop/widgets/presetselector.cpp" line="47"/>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="45"/>
         <source>Presets</source>
         <translation>Набори</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/presetselector.cpp" line="55"/>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="53"/>
+        <source>Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="56"/>
         <source>Save</source>
         <translation>Зберегти</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/presetselector.cpp" line="58"/>
+        <location filename="../../desktop/widgets/presetselector.cpp" line="59"/>
         <source>Delete</source>
         <translation>Вилучити</translation>
     </message>
@@ -4525,7 +4659,7 @@ Hex: %5</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../../desktop/widgets/viewstatus.cpp" line="64"/>
+        <location filename="../../desktop/widgets/viewstatus.cpp" line="71"/>
         <source>Canvas Rotation</source>
         <translation>Обертання полотна</translation>
     </message>
