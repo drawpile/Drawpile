@@ -44,7 +44,7 @@ border-radius: 3px;
 padding: 6px;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven't added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven't added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

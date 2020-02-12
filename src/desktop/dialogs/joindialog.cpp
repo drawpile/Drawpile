@@ -61,7 +61,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
 
-	m_addServerButton = m_ui->buttons->addButton(tr("Add"), QDialogButtonBox::ActionRole);
+	m_addServerButton = m_ui->buttons->addButton(tr("Add Server"), QDialogButtonBox::ActionRole);
 	m_addServerButton->setIcon(icon::fromTheme("list-add"));
 	connect(m_addServerButton, &QPushButton::clicked, this, &JoinDialog::addListServer);
 
