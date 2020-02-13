@@ -3,6 +3,7 @@
  * When launched with an URL, the URL gets set to the address box correctly again
  * Available list servers are now updated in session settings dialog if servers are added or removed while connected
  * Updated Finnish and Chinese translations
+ * Server: User "trusted" status flag can now be changed via admin API
 
 2020-02-09 Version 2.1.16
  * Server: Added support for ext-auth "TRUSTED" flag

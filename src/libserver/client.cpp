@@ -138,6 +138,14 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 				d->session->changeOpStatus(id(), op, "the server administrator");
 			}
 		}
+
+		if(request.contains("trusted")) {
+			const bool trusted = request["trusted"].toBool();
+			if(d->isTrusted != trusted && d->session) {
+				d->session->changeTrustedStatus(id(), trusted, "the server administrator");
+			}
+		}
+
 		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
 
 	} else if(method == JsonApiMethod::Get) {
