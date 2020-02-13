@@ -83,7 +83,7 @@
         <location filename="../../desktop/ui/brushdock.ui" line="477"/>
         <location filename="../../desktop/ui/brushdock.ui" line="498"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>笔压感应</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="593"/>
@@ -592,7 +592,8 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;你还没有添加任何列表服务器. 你可以在这里查看到一些 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;请在最下面的地址栏填上  pub.drawpile.net 然后点击
+ &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="88"/>
@@ -1012,7 +1013,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1642"/>
         <source>Disconnected:</source>
-        <translation type="unfinished"></translation>
+        <translation>已断开连接:</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1683"/>
@@ -2210,17 +2211,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="144"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="148"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>未知版本</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="150"/>
         <source>Incompatible version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容的版本 (%1)</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="190"/>
@@ -2637,12 +2638,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="642"/>
         <source>Account passwords:</source>
-        <translation type="unfinished"></translation>
+        <translation>账号密码:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="649"/>
         <source>Permit insecure storage</source>
-        <translation type="unfinished"></translation>
+        <translation>允许存储</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="681"/>
@@ -2869,7 +2870,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="48"/>
         <source>Canvas Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>画布快捷键</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="607"/>
@@ -3111,7 +3112,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../brushes/brushpresetmodel.cpp" line="557"/>
         <location filename="../brushes/brushpresetmodel.cpp" line="637"/>
         <source>Default</source>
-        <translation type="unfinished">默认</translation>
+        <translation>默认</translation>
     </message>
 </context>
 <context>
@@ -3267,7 +3268,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="64"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Server</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
@@ -3300,7 +3301,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="445"/>
         <source>Add listing server</source>
-        <translation type="unfinished"></translation>
+        <translation>添加列表服务器</translation>
     </message>
 </context>
 <context>
@@ -3671,48 +3672,48 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="96"/>
         <source>Add Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>新建笔刷</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="97"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>保存笔刷</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="98"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>删除笔刷</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
         <source>Move to</source>
-        <translation type="unfinished"></translation>
+        <translation>移动到</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
         <source>Overwrite brush</source>
-        <translation type="unfinished"></translation>
+        <translation>保存笔刷</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
         <source>Delete brush</source>
-        <translation type="unfinished"></translation>
+        <translation>删除笔刷</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="202"/>
         <source>New folder</source>
-        <translation type="unfinished"></translation>
+        <translation>新建分组</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="213"/>
         <source>Delete Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>删除分组</translation>
     </message>
     <message numerus="yes">
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="214"/>
         <source>Really delete folder &quot;%1&quot; and %n brushes?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>确定要删除此分组 &quot;%1&quot;和 %n笔刷吗？</numerusform>
         </translation>
     </message>
 </context>
@@ -4020,12 +4021,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="468"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="472"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>未知版本</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="513"/>
@@ -4040,7 +4041,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="519"/>
         <source>Session for a different Drawpile version (%s) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Session for a different Drawpile version (%s) in progress!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="705"/>
@@ -4076,7 +4077,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="832"/>
         <source>Tried to send oversized message (%1 KB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tried to send oversized message (%1 KB)</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="766"/>
@@ -4091,7 +4092,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="353"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="775"/>
@@ -4129,7 +4130,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/loginsessions.cpp" line="88"/>
         <source>Incompatible version (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容版本 (%1)</translation>
     </message>
     <message>
         <location filename="../net/loginsessions.cpp" line="129"/>
@@ -4326,7 +4327,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/scene/canvasview.cpp" line="92"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>重新连接</translation>
     </message>
 </context>
 <context>
@@ -4334,37 +4335,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="135"/>
         <source>Public</source>
-        <translation type="unfinished">公开</translation>
+        <translation>公开</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="198"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Chat (recorded)...</translation>
+        <translation>聊天 (录制中)...</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="201"/>
         <source>Chat...</source>
-        <translation type="unfinished">聊天...</translation>
+        <translation>聊天...</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="495"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished">%1 加入房间</translation>
+        <translation>%1 加入房间</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="513"/>
         <source>%1 left the session</source>
-        <translation type="unfinished">%1 离开房间</translation>
+        <translation>%1 离开房间</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="534"/>
         <source>You have been kicked by %1</source>
-        <translation type="unfinished">You have been kicked by %1</translation>
+        <translation>You have been kicked by %1</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="680"/>
         <source>Invalid dice roll description</source>
-        <translation type="unfinished">随机决策无效</translation>
+        <translation>随机决策无效</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="741"/>
@@ -4392,7 +4393,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/chat/chatwindow.cpp" line="29"/>
         <source>Chat</source>
-        <translation type="unfinished">聊天</translation>
+        <translation>聊天</translation>
     </message>
 </context>
 <context>
@@ -4572,7 +4573,7 @@ Hex: %5</source>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="53"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>加载</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="56"/>
