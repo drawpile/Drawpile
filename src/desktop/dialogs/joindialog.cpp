@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "utils/newversion.h"
 #include "utils/icon.h"
 #include "../libshared/listings/announcementapi.h"
-#include "../libshared/util/networkaccess.h"
 #include "parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
@@ -41,9 +40,9 @@
 #include <QSettings>
 #include <QTimer>
 #include <QUrl>
+#include <QUrlQuery>
 #include <QDebug>
 #include <QFileDialog>
-#include <QMessageBox>
 
 namespace dialogs {
 
@@ -140,8 +139,15 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	restoreSettings();
 
-	if(!url.isEmpty())
+	if(!url.isEmpty()) {
 		m_ui->address->setCurrentText(url.toString());
+
+		const QUrlQuery q(url);
+		QUrl addListServer = q.queryItemValue("list-server");
+		if(addListServer.isValid() && !addListServer.isEmpty()) {
+			addListServerUrl(addListServer);
+		}
+	}
 
 	// Periodically refresh the session listing
 	auto refreshTimer = new QTimer(this);
