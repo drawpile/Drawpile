@@ -18,8 +18,8 @@
 */
 
 #include "joindialog.h"
+#include "addserverdialog.h"
 
-#include "net/sessionlistingmodel.h"
 #include "utils/mandatoryfields.h"
 #include "utils/usernamevalidator.h"
 #include "utils/listservermodel.h"
@@ -434,89 +434,33 @@ void JoinDialog::addListServer()
 		url = QUrl { "http://" + QUrl{urlStr}.host() };
 	}
 
+	addListServerUrl(url);
+}
+
+void JoinDialog::addListServerUrl(const QUrl &url)
+{
 	m_addServerButton->setEnabled(false);
 
-	qInfo() << "Querying" << url << "for list server info...";
+	auto *dlg = new AddServerDialog(this);
 
-	auto *response = sessionlisting::getApiInfo(url);
-	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
-		m_addServerButton->setEnabled(true);
-		if(!error.isEmpty()) {
-			QMessageBox::warning(this, tr("Add listing server"), error);
-			return;
-		}
+	connect(dlg, &QObject::destroyed, [this]() { m_addServerButton->setEnabled(true); });
 
-		const auto info = result.value<sessionlisting::ListServerInfo>();
-		const QString apiUrl = response->apiUrl().toString();
-
-		sessionlisting::ListServerModel listservers(true, this);
-
-		// Don't overwrite any existing server here.
-		// That can be done in the preferences dialog.
-		if(!listservers.addServer(
-			info.name,
-			apiUrl,
-			info.description,
-			info.readOnly,
-			info.publicListings,
-			info.privateListings
-		)) {
-			qInfo() << apiUrl << "List server already added.";
-			return;
-		}
-
-		if(info.faviconUrl == "drawpile") {
-			listservers.setFavicon(
-				apiUrl,
-				QIcon(":/icons/drawpile.png").pixmap(128, 128).toImage()
-				);
-
-		} else {
-			const QUrl favicon(info.faviconUrl);
-			if(favicon.isValid()) {
-				auto *filedownload = new networkaccess::FileDownload(this);
-
-				filedownload->setExpectedType("image/");
-
-				connect(filedownload, &networkaccess::FileDownload::finished, this, [filedownload, apiUrl](const QString &errorMessage) {
-					if(!errorMessage.isEmpty()) {
-						qWarning("Couldnt' fetch favicon: %s", qPrintable(errorMessage));
-						return;
-					}
-
-					QImage image;
-					if(!image.load(filedownload->file(), nullptr)) {
-						qWarning("Couldn't load favicon.");
-						return;
-					}
-
-					sessionlisting::ListServerModel listservers(true);
-					listservers.setFavicon(apiUrl, image);
-					listservers.saveServers();
-				});
-				connect(filedownload, &networkaccess::FileDownload::finished, filedownload, &QObject::deleteLater);
-
-				filedownload->start(favicon);
-			}
-		}
-
-		listservers.saveServers();
-		m_sessions->setMessage(info.name, tr("Loading..."));
+	connect(dlg, &AddServerDialog::serverAdded, this, [this](const QString &name) {
+		m_sessions->setMessage(name, tr("Loading..."));
 		m_ui->noListServersNotification->hide();
 
 		if(height() < COMPACT_MODE_THRESHOLD)
 			resize(width(), COMPACT_MODE_THRESHOLD + 10);
 
-		QTimer::singleShot(1, [this]() {
-			const auto index = m_sessions->index(m_sessions->rowCount()-1, 0);
-			m_ui->listing->expandAll();
-			m_ui->listing->scrollTo(index);
-		});
+		const auto index = m_sessions->index(m_sessions->rowCount()-1, 0);
+		m_ui->listing->expandAll();
+		m_ui->listing->scrollTo(index);
 
 		m_lastRefresh = 0;
 		refreshListing();
 	});
-	connect(response, &sessionlisting::AnnouncementApiResponse::finished, response, &QObject::deleteLater);
+
+	dlg->query(url);
 }
 
 }

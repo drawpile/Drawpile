@@ -22,6 +22,7 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
 #include "dialogs/avatarimport.h"
+#include "dialogs/addserverdialog.h"
 #include "widgets/keysequenceedit.h"
 #include "../scene/canvasviewmodifiers.h"
 #include "utils/icon.h"
@@ -604,69 +605,15 @@ void SettingsDialog::addListingServer()
 	if(!urlstr.startsWith("http"))
 		urlstr = "http://" + urlstr;
 
-	QUrl url(urlstr);
+	const QUrl url(urlstr);
 	if(!url.isValid()) {
 		QMessageBox::warning(this, tr("Add public listing server"), tr("Invalid URL!"));
 		return;
 	}
 
-	m_ui->addListServer->setEnabled(false);
-
-	auto *response = sessionlisting::getApiInfo(url);
-	connect(response, &sessionlisting::AnnouncementApiResponse::finished, this, [this, response](const QVariant &result, const QString&, const QString &error) {
-		response->deleteLater();
-		m_ui->addListServer->setEnabled(true);
-		if(!error.isEmpty()) {
-			QMessageBox::warning(this, tr("Add public listing server"), error);
-			return;
-		}
-
-		const auto info = result.value<sessionlisting::ListServerInfo>();
-		const QString apiUrl = response->apiUrl().toString();
-
-		m_listservers->addServer(
-			info.name,
-			apiUrl,
-			info.description,
-			info.readOnly,
-			info.publicListings,
-			info.privateListings
-			);
-
-		if(info.faviconUrl == "drawpile") {
-			m_listservers->setFavicon(
-				apiUrl,
-				QIcon(":/icons/drawpile.png").pixmap(128, 128).toImage()
-				);
-
-		} else {
-			const QUrl favicon(info.faviconUrl);
-			if(favicon.isValid()) {
-				auto *filedownload = new networkaccess::FileDownload(this);
-
-				filedownload->setExpectedType("image/");
-
-				connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload, apiUrl](const QString &errorMessage) {
-					filedownload->deleteLater();
-
-					if(!errorMessage.isEmpty()) {
-						qWarning("Couldnt' fetch favicon: %s", qPrintable(errorMessage));
-						return;
-					}
-
-					QImage image;
-					if(!image.load(filedownload->file(), nullptr)) {
-						qWarning("Couldn't load favicon.");
-						return;
-					}
-
-					m_listservers->setFavicon(apiUrl, image);
-				});
-
-				filedownload->start(favicon);
-			}
-		}
-	});
+	auto *dlg = new AddServerDialog(this);
+	dlg->setListServerModel(m_listservers);
+	dlg->query(url);
 }
 
 void SettingsDialog::moveListingServerUp()

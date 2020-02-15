@@ -48,6 +48,7 @@ set (
 	dialogs/tablettester.cpp
 	dialogs/avatarimport.cpp
 	dialogs/versioncheckdialog.cpp
+	dialogs/addserverdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp

@@ -64,6 +64,8 @@ private:
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
 	void setListingVisible(bool show);
 
+	void addListServerUrl(const QUrl &url);
+
 	Ui_JoinDialog *m_ui;
 	QPushButton *m_addServerButton;
 	SessionFilterProxyModel *m_filteredSessions;
