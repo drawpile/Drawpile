@@ -74,6 +74,9 @@ public:
 
 	explicit LoginSessionModel(QObject *parent=nullptr);
 
+	void setModeratorMode(bool mod);
+	bool isModeratorMode() const { return m_moderatorMode; }
+
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	int columnCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
@@ -87,6 +90,7 @@ public:
 
 private:
 	QVector<LoginSession> m_sessions;
+	bool m_moderatorMode;
 };
 
 }

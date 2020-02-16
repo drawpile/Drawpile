@@ -26,8 +26,17 @@
 namespace net {
 
 LoginSessionModel::LoginSessionModel(QObject *parent) :
-	QAbstractTableModel(parent)
+	QAbstractTableModel(parent), m_moderatorMode(false)
 {
+}
+
+void LoginSessionModel::setModeratorMode(bool mod)
+{
+	if(mod != m_moderatorMode) {
+		beginResetModel();
+		m_moderatorMode = mod;
+		endResetModel();
+	}
 }
 
 int LoginSessionModel::rowCount(const QModelIndex &parent) const
@@ -100,7 +109,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case PersistentRole: return ls.persistent;
 		case ClosedRole: return ls.closed;
 		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
-		case JoinableRole: return !ls.closed && ls.incompatibleSeries.isEmpty();
+		case JoinableRole: return (!ls.closed || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
 		case NsfmRole: return ls.nsfm;
 		}
 	}
@@ -114,7 +123,7 @@ Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 		return Qt::NoItemFlags;
 
 	const LoginSession &ls = m_sessions.at(index.row());
-	if(!ls.incompatibleSeries.isEmpty() || ls.closed)
+	if(!ls.incompatibleSeries.isEmpty() || (ls.closed && !m_moderatorMode))
 		return Qt::NoItemFlags;
 	else
 		return QAbstractTableModel::flags(index);

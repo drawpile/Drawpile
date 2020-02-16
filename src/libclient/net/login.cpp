@@ -399,6 +399,8 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 	for(const QJsonValue f : msg.reply["flags"].toArray())
 		m_userFlags << f.toString().toUpper();
 
+	m_sessions->setModeratorMode(m_userFlags.contains("MOD"));
+
 	if(m_mode != Mode::Join) {
 		m_state = EXPECT_SESSIONLIST_TO_HOST;
 
@@ -597,7 +599,7 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
 	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
-	if(needPassword) {
+	if(needPassword && !m_sessions->isModeratorMode()) {
 		emit sessionPasswordNeeded();
 		m_state = WAIT_FOR_JOIN_PASSWORD;
 

@@ -5,6 +5,7 @@
  * Updated Finnish and Chinese translations
  * Server: User "trusted" status flag can now be changed via admin API
  * A list server can now be added via drawpile:// link
+ * Fixed moderator login (would ask for password when none was needed)
 
 2020-02-09 Version 2.1.16
  * Server: Added support for ext-auth "TRUSTED" flag
