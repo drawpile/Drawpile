@@ -23,6 +23,22 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.17" date="2020-02-16">
+      <url>https://drawpile.net/news/release-2.1.17/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>HTTP redirects (e.g. when searching for a list server) are now followed</li>
+          <li>When launched with an URL, the URL gets set to the address box correctly again</li>
+          <li>Available list servers are now updated in session settings dialog if servers are added or removed while connected</li>
+          <li>Updated Finnish and Chinese translations</li>
+          <li>Server: User "trusted" status flag can now be changed via admin API</li>
+          <li>A list server can now be added via drawpile:// link</li>
+          <li>Fixed moderator login (would ask for password when none was needed)</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.16" date="2020-02-09">
       <url>https://drawpile.net/news/release-2.1.16/</url>
       <description>

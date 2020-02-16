@@ -1,4 +1,4 @@
-2020-0?-?? Version 2.1.18
+2020-02-16 Version 2.1.17
  * HTTP redirects (e.g. when searching for a list server) are now followed
  * When launched with an URL, the URL gets set to the address box correctly again
  * Available list servers are now updated in session settings dialog if servers are added or removed while connected
