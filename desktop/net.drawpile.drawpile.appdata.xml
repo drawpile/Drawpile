@@ -37,7 +37,28 @@
           <li>Fixed moderator login (would ask for password when none was needed)</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.17-setup.exe</location>
+          <checksum type="sha256">0b1d66f6a432643cb9192eb8ab991b387e4e0c677d70258314702f7a08be2ab8</checksum>
+          <size type="download">16515121</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.17-setup-w32.exe</location>
+          <checksum type="sha256">15c969eeee46aeb594cc096251a6521a6950ad9cafc12dee4951ecc1e7f9a0f9</checksum>
+          <size type="download">15505070</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.17.dmg</location>
+          <checksum type="sha256">2318fbf8dd2402736a1d86666618d719900685c73a0b3eeb2de30546bb9c1a22</checksum>
+          <size type="download">14193165</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.17.tar.gz</location>
+          <checksum type="sha256">ee7f7ba81e6f1a9c3c32275f84364d10713c24ec040da8cb4b13c3ea6bb09086</checksum>
+          <size type="download">2521585</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.16" date="2020-02-09">
       <url>https://drawpile.net/news/release-2.1.16/</url>
