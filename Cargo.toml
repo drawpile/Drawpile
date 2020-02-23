@@ -2,5 +2,7 @@
 
 members = [
 	"src/rustpile",
+	"src/dpcore",
+	"src/drawpile-cli",
 ]
 

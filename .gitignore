@@ -4,10 +4,12 @@ config.h
 Makefile
 Makefile.*
 CMakeLists.txt.user
+example_*.png
 
 # Build directories
 /bin/
 /*build*/
+**/target
 
 *.swp
 *.so

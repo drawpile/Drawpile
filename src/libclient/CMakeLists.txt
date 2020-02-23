@@ -144,7 +144,8 @@ add_library (
 	${QM_TRANSLATIONS}
 )
 
-target_link_libraries(dpclient dpshared rustpile Qt5::Gui Qt5::Network)
+target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network)
+target_link_libraries(dpclient rustpile pthread dl)
 
 if(GIF_FOUND)
 	target_link_libraries(dpclient ${GIF_LIBRARIES})

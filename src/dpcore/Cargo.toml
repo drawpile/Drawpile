@@ -1,0 +1,27 @@
+[package]
+name = "dpcore"
+version = "0.0.1"
+publish = false
+edition = "2018"
+license = "GPLv3"
+
+[dependencies]
+base64 = "0.11.0"
+serde_json = "1.0.44"
+tracing = "0.1.5"
+num_enum = "0.4.2"
+inflate = "0.4.5"
+bitvec = "0.17.1"
+
+[dev-dependencies]
+itertools = "0.8.2"
+image = "0.22.3"
+criterion = "0.3"
+
+[[bench]]
+name = "rasterops"
+harness = false
+
+[[bench]]
+name = "brushdabs"
+harness = false

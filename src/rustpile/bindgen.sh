@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$(which cbindgen)" == "" ]
+if [ "$(which cbindgen 2>/dev/null)" == "" ]
 then
 	echo "cbindgen not found."
 	echo "install it with: cargo install cbindgen"

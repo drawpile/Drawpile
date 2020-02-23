@@ -15,6 +15,9 @@ set(CMAKE_MODULE_PATH
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+enable_language(Rust)
+include(CMakeCargo)
+
 ### generic info
 set ( WEBSITE "https://drawpile.net/" )
 set ( DRAWPILE_VERSION "2.1.19" )
