@@ -1,4 +1,4 @@
-Drawpile - a collaborative drawing program  [![Build Status](https://travis-ci.org/drawpile/Drawpile.svg?branch=master)](https://travis-ci.org/drawpile/Drawpile)
+Drawpile - a collaborative drawing program  (dev branch)
 ------------------------------------------
 
 Drawpile is a drawing program that lets you share the canvas
@@ -24,6 +24,7 @@ Common dependencies:
  * Qt 5.9 or newer (QtGui not required for headless server)
  * KF5 Extra CMake Modules
  * [KF5 KArchive]
+ * Rust compiler (tested with rustc 1.40)
 
 Client specific dependencies:
 

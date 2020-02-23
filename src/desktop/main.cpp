@@ -27,6 +27,7 @@
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
 #include "../libshared/util/paths.h"
+#include "../rustpile/rustpile.h"
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
@@ -341,6 +342,8 @@ int main(int argc, char *argv[]) {
 	// CanvasView does not work correctly with this enabled.
 	// (Scale factor must be taken in account when zooming)
 	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+	rustpile_init();
 
 	DrawpileApp app(argc, argv);
 

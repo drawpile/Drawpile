@@ -21,6 +21,7 @@ endif()
 
 add_subdirectory(libshared)
 add_subdirectory(libserver)
+add_subdirectory(rustpile)
 
 if(CLIENT OR THICKSRV)
 	add_subdirectory(libclient)

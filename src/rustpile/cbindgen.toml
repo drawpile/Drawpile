@@ -1,0 +1,6 @@
+include_guard = "DP_RUSTPILE_FFI_H"
+autogen_warning = "/* Generated with cbindgen, do not edit manually. Run bindgen.sh to regenerate this file. */"
+
+style = "tag"
+
+
