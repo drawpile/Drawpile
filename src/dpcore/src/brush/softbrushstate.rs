@@ -104,7 +104,7 @@ impl SoftBrushState {
         if self.dabs.is_empty()
             || dx.abs() > MAX_XY_DELTA
             || dy.abs() > MAX_XY_DELTA
-            || self.dabs.last().unwrap().dabs.len() >= DrawDabsClassicMessage::MAX_ITEMS
+            || self.dabs.last().unwrap().dabs.len() >= DrawDabsClassicMessage::MAX_CLASSICDABS
             || self.dabs.last().unwrap().color != color
         {
             self.dabs.push(DrawDabsClassicMessage {

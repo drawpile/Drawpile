@@ -38,6 +38,7 @@ mod blendmode;
 mod brushmask;
 mod layer;
 mod rect;
+mod flattenediter;
 
 pub use aoe::AoE;
 pub use blendmode::Blendmode;
@@ -46,3 +47,5 @@ pub use color::{Color, Pixel};
 pub use layer::Layer;
 pub use layerstack::LayerStack;
 pub use rect::Rectangle;
+pub use flattenediter::FlattenedTileIterator;
+

@@ -39,7 +39,7 @@ pub struct {{ message.name }}Message {
 impl {{ message.name }}Message {
     {# ADD MAX STRUCT ITEM COUNT CONSTANT #}
     {% if message.fields[-1].max_items %}
-    pub const MAX_ITEMS: usize = {{ message.fields[-1].max_items }};
+    pub const MAX_{{ message.fields[-1].struct_name|upper }}S: usize = {{ message.fields[-1].max_items }};
     {% endif %}
 
     {# ADD FLAG CONSTANTS #}

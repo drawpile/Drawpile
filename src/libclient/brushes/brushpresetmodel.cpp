@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2019 Calle Laakkonen
+   Copyright (C) 2019-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@
 #include "pixelbrushpainter.h"
 #include "classicbrushpainter.h"
 #include "brush.h"
-
-#include "brushpresetmigration.h"
 
 #include "../core/brushmask.h"
 #include "../utils/icon.h"
@@ -69,13 +67,13 @@ static QImage makePreviewIcon(const ClassicBrush &brush)
 {
 	paintcore::BrushMask mask;
 	switch(brush.shape()) {
-	case ClassicBrush::ROUND_PIXEL:
+	case rustpile::ClassicBrushShape::RoundPixel:
 		mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
 		break;
-	case ClassicBrush::SQUARE_PIXEL:
+	case rustpile::ClassicBrushShape::SquarePixel:
 		mask = brushes::makeSquarePixelBrushMask(brush.size1(), brush.opacity1()*255);
 		break;
-	case ClassicBrush::ROUND_SOFT:
+	case rustpile::ClassicBrushShape::RoundSoft:
 		mask = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1()).mask;
 		break;
 	}
@@ -142,6 +140,7 @@ struct PresetFolder {
 	QVector<BrushPreset> presets;
 };
 
+#if 0
 QDataStream &operator<<(QDataStream &out, const BrushPreset &bp)
 {
 	return out << bp.brush << bp.filename << bp.icon << bp.saved;
@@ -151,6 +150,7 @@ QDataStream &operator>>(QDataStream &in, BrushPreset &bp)
 {
 	return in >> bp.brush >> bp.filename >> bp.icon >> bp.saved;
 }
+#endif
 
 }
 
@@ -168,7 +168,7 @@ BrushPresetModel::BrushPresetModel(QObject *parent)
 	: QAbstractItemModel(parent), d(new Private)
 {
 	qRegisterMetaType<BrushPreset>();
-	qRegisterMetaTypeStreamOperators<BrushPreset>("BrushPreset");
+	//qRegisterMetaTypeStreamOperators<BrushPreset>("BrushPreset");
 
 	// A timer is used to delay the saving of changes to disk.
 	// This serves two purpose:
@@ -235,7 +235,7 @@ static void makeDefaultBrushes()
 {
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_PIXEL);
+		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
 		b.setSize(16);
 		b.setOpacity(1.0);
 		b.setSpacing(0.15);
@@ -244,7 +244,7 @@ static void makeDefaultBrushes()
 	}
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_SOFT);
+		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
 		b.setSize(10);
 		b.setOpacity(1.0);
 		b.setHardness(0.8);
@@ -255,7 +255,7 @@ static void makeDefaultBrushes()
 	}
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_SOFT);
+		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
 		b.setSize(30);
 		b.setOpacity(0.34);
 		b.setHardness(1.0);
@@ -264,7 +264,7 @@ static void makeDefaultBrushes()
 	}
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_PIXEL);
+		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
 		b.setIncremental(false);
 		b.setSize(32);
 		b.setOpacity(0.65);
@@ -273,7 +273,7 @@ static void makeDefaultBrushes()
 	}
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_PIXEL);
+		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
 		b.setIncremental(false);
 		b.setSize(70);
 		b.setOpacity(0.42);
@@ -283,7 +283,7 @@ static void makeDefaultBrushes()
 	}
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_SOFT);
+		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
 		b.setSize(113);
 		b.setOpacity(0.6);
 		b.setHardness(1.0);
@@ -293,7 +293,7 @@ static void makeDefaultBrushes()
 	}
 	{
 		ClassicBrush b;
-		b.setShape(ClassicBrush::ROUND_SOFT);
+		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
 		b.setSize(43);
 		b.setOpacity(0.3);
 		b.setHardness(1.0);
@@ -312,8 +312,7 @@ BrushPresetModel *BrushPresetModel::getSharedInstance()
 		m = new BrushPresetModel;
 		m->loadBrushes();
 		if(m->d->folders.size()==1 && m->d->folders.first().presets.isEmpty()) {
-			if(!migrateQSettingsBrushPresets())
-				makeDefaultBrushes();
+			makeDefaultBrushes();
 			m->loadBrushes();
 		}
 	}

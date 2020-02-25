@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,18 +19,6 @@
 
 #include "brushpreview.h"
 
-#ifndef DESIGNER_PLUGIN
-#include "core/point.h"
-#include "core/layerstack.h"
-#include "core/layerstackpixmapcacheobserver.h"
-#include "core/layer.h"
-#include "core/floodfill.h"
-#include "brushes/shapes.h"
-#include "brushes/brushengine.h"
-#include "brushes/brushpainter.h"
-#include "utils/icon.h"
-#endif
-
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
@@ -42,27 +30,33 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
+
+	const int w = 16;
+	m_background = QPixmap(w*2, w*2);
+	m_background.fill(QColor(128, 128, 128));
+	QPainter p(&m_background);
+	p.fillRect(0, 0, w, w, Qt::white);
+	p.fillRect(w, w, w, w, Qt::white);
 }
 
 BrushPreview::~BrushPreview() {
 #ifndef DESIGNER_PLUGIN
-	delete m_previewCache;
-	delete m_preview;
+	rustpile::brushpreview_free(m_previewcanvas);
 #endif
 }
 
 void BrushPreview::setBrush(const brushes::ClassicBrush &brush)
 {
 	m_brush = brush;
-	m_needupdate = true;
+	m_needUpdate = true;
 	update();
 }
 
-void BrushPreview::setPreviewShape(PreviewShape shape)
+void BrushPreview::setPreviewShape(rustpile::BrushPreviewShape shape)
 {
 	if(m_shape != shape) {
 		m_shape = shape;
-		m_needupdate = true;
+		m_needUpdate = true;
 		update();
 	}
 }
@@ -71,7 +65,7 @@ void BrushPreview::setFloodFillTolerance(int tolerance)
 {
 	if(m_fillTolerance != tolerance) {
 		m_fillTolerance = tolerance;
-		m_needupdate = true;
+		m_needUpdate = true;
 		update();
 	}
 }
@@ -80,7 +74,7 @@ void BrushPreview::setFloodFillExpansion(int expansion)
 {
 	if(m_fillExpansion != expansion) {
 		m_fillExpansion = expansion;
-		m_needupdate = true;
+		m_needUpdate = true;
 		update();
 	}
 }
@@ -89,174 +83,48 @@ void BrushPreview::setUnderFill(bool underfill)
 {
 	if(m_underFill != underfill) {
 		m_underFill = underfill;
-		m_needupdate = true;
+		m_needUpdate = true;
 		update();
 	}
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)
 { 
-	m_needupdate = true;
+	m_needUpdate = true;
 }
 
 void BrushPreview::changeEvent(QEvent *)
 {
-	m_needupdate = true;
+	m_needUpdate = true;
 	update();
 }
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
-#ifndef DESIGNER_PLUGIN
-	if(m_needupdate)
+	if(m_needUpdate)
 		updatePreview();
 
 	QPainter painter(this);
-	painter.drawPixmap(event->rect(), m_previewCache->getPixmap(event->rect()), event->rect());
+#ifdef DESIGNER_PLUGIN
+	Q_UNUSED(event)
+	painter.drawTiledPixmap(0, 0, width(), height(), m_background);
+#else
+	painter.drawPixmap(event->rect(), m_preview, event->rect());
 #endif
 }
 
 void BrushPreview::updatePreview()
 {
 #ifndef DESIGNER_PLUGIN
-	if(!m_preview) {
-		m_preview = new paintcore::LayerStack;
-		m_previewCache = new paintcore::LayerStackPixmapCacheObserver(this);
-		m_previewCache->attachToLayerStack(m_preview);
+	const QSize size = contentsRect().size();
+
+	if(size != m_preview.size()) {
+		rustpile::brushpreview_free(m_previewcanvas);
+		m_previewcanvas = rustpile::brushpreview_new(size.width(), size.height());
+		m_preview = QPixmap(size);
 	}
 
-	auto layerstack = m_preview->editor(0);
-
-	if(m_preview->width() == 0) {
-		const QSize size = contentsRect().size();
-		layerstack.resize(0, size.width(), size.height(), 0);
-		layerstack.createLayer(0, 0, QColor(0,0,0), false, false, QString());
-
-	} else if(m_preview->width() != contentsRect().width() || m_preview->height() != contentsRect().height()) {
-		layerstack.resize(0, contentsRect().width() - m_preview->width(), contentsRect().height() - m_preview->height(), 0);
-	}
-
-	const QRectF previewRect {
-		m_preview->width()/8.0,
-		m_preview->height()/4.0,
-		m_preview->width()-m_preview->width()/4.0,
-		m_preview->height()-m_preview->height()/2.0
-	};
-
-	paintcore::PointVector pointvector;
-
-	switch(m_shape) {
-	case Stroke: pointvector = brushes::shapes::sampleStroke(previewRect); break;
-	case Line:
-		pointvector
-			<< paintcore::Point(previewRect.left(), previewRect.top(), 1.0)
-			<< paintcore::Point(previewRect.right(), previewRect.bottom(), 1.0);
-		break;
-	case Rectangle: pointvector = brushes::shapes::rectangle(previewRect); break;
-	case Ellipse: pointvector = brushes::shapes::ellipse(previewRect); break;
-	case FloodFill:
-	case FloodErase: pointvector = brushes::shapes::sampleBlob(previewRect); break;
-	}
-
-	QColor bgColor = icon::isDark(m_brush.color()) ? QColor(250, 250, 250) : QColor(32, 32, 32);
-	QColor layerColor = Qt::transparent;
-	enum class LayerFill {
-		Solid,
-		RainbowBars,
-		RainbowDabs
-	};
-	auto fgStyle = m_brush.smudge1()>0 ? LayerFill::RainbowBars : LayerFill::Solid;
-
-	brushes::ClassicBrush brush = m_brush;
-
-	if(brush.blendingMode() == paintcore::BlendMode::MODE_ERASE) {
-		layerColor = bgColor;
-		bgColor = Qt::transparent;
-
-	} else if(brush.blendingMode() == paintcore::BlendMode::MODE_COLORERASE) {
-		// Color-erase mode: use fg color as background
-		bgColor = Qt::transparent;
-		layerColor = brushColor();
-
-	} else if(!paintcore::findBlendMode(brush.blendingMode()).flags.testFlag(paintcore::BlendMode::IncrOpacity)) {
-		fgStyle = LayerFill::RainbowDabs;
-		bgColor = Qt::transparent;
-	}
-
-	if(m_shape == FloodFill) {
-		brush.setColor(bgColor);
-		bgColor = Qt::transparent;
-
-	} else if(m_shape == FloodErase) {
-		layerColor = brush.color();
-		brush.setColor(bgColor);
-		bgColor = Qt::transparent;
-	}
-
-	auto layer = layerstack.getEditableLayerByIndex(0);
-	layerstack.setBackground(paintcore::Tile(bgColor));
-	layer.putTile(0, 0, 99999, paintcore::Tile(layerColor));
-
-	if(fgStyle == LayerFill::Solid) {
-
-		// When using the "behind" mode, draw something in the foreground to show off the effect
-		if(brush.blendingMode() == paintcore::BlendMode::MODE_BEHIND) {
-			const int w = layer->width();
-			const int h = layer->height();
-			const int b = qMax(2, w / 20);
-			layer.fillRect(QRect{w/4*1-b/2, 0, b, h}, Qt::black, paintcore::BlendMode::MODE_NORMAL);
-			layer.fillRect(QRect{w/4*2-b/2, 0, b, h}, Qt::gray, paintcore::BlendMode::MODE_NORMAL);
-			layer.fillRect(QRect{w/4*3-b/2, 0, b, h}, Qt::white, paintcore::BlendMode::MODE_NORMAL);
-		}
-
-	} else if(fgStyle == LayerFill::RainbowDabs) {
-		const int w = layer->width();
-		const int h = layer->height();
-		const uint8_t d = qBound(10, h*2/3, 255);
-		const int x0 = d, x1 = w - d;
-		const int step = d * 70 / 100;
-		const int huestep = 359 / ((x1-x0) / step);
-		int hue = 0;
-		for(int x=x0;x<x1;x+=step, hue+=huestep) {
-			protocol::DrawDabsPixel dab(
-				protocol::DabShape::Round,
-				1,
-				layer->id(),
-				x, h/2,
-				QColor::fromHsv(hue, 160, 220).rgb() & 0x00ffffff,
-				paintcore::BlendMode::MODE_NORMAL,
-				protocol::PixelBrushDabVector { protocol::PixelBrushDab {0, 0, d, 255} }
-			);
-			brushes::drawBrushDabsDirect(dab, layer);
-		}
-
-	} else if(fgStyle == LayerFill::RainbowBars) {
-		const int w = layer->width();
-		const int h = layer->height();
-		const int bars = 5;
-		const int bw = w/bars;
-
-		for(int i=0;i<bars;++i) {
-			layer.fillRect(QRect{i*bw, 0, bw, h}, QColor::fromHsv(i*(359/bars), 160, 220), paintcore::BlendMode::MODE_NORMAL);
-		}
-	}
-
-	// Draw the brush preview shape
-	{
-		brushes::BrushEngine brushengine;
-		brushengine.setBrush(1, 1, brush);
-
-		for(int i=0;i<pointvector.size();++i)
-			brushengine.strokeTo(pointvector[i], layer.layer());
-		brushengine.endStroke();
-
-		const auto dabs = brushengine.takeDabs();
-		for(int i=0;i<dabs.size();++i)
-			brushes::drawBrushDabsDirect(*dabs.at(i), layer);
-
-		layer.mergeSublayer(1);
-	}
-
+#if 0
 	// Do the flood fill
 	// In flood fill mode, the shape drawn with the brush creates
 	// a closed area that will be filled here.
@@ -274,10 +142,23 @@ void BrushPreview::updatePreview()
 			fr = paintcore::expandFill(fr, m_fillExpansion, brushColor());
 		if(!fr.image.isNull())
 			layer.putImage(fr.x, fr.y, fr.image, m_shape == FloodFill ? (m_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
+#endif
+
+	rustpile::brushpreview_render(m_previewcanvas, &m_brush.brush(), m_shape);
+	if(m_shape == rustpile::BrushPreviewShape::FloodFill || m_shape == rustpile::BrushPreviewShape::FloodErase) {
+		auto color = m_brush.rpColor();
+		rustpile::brushpreview_floodfill(m_previewcanvas, &color, m_fillTolerance, m_fillExpansion, m_underFill);
 	}
 
-	m_needupdate=false;
+	QPainter p(&m_preview);
+	p.drawTiledPixmap(0, 0, m_preview.width(), m_preview.height(), m_background);
+	rustpile::brushpreview_paint(m_previewcanvas, &p, [](void *p, int x, int y, const uchar *pixels) {
+		const QImage img(pixels, 64, 64, 64*4, QImage::Format_ARGB32_Premultiplied);
+		static_cast<QPainter*>(p)->drawImage(x, y, img);
+	});
+
 #endif
+	m_needUpdate=false;
 }
 
 void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)

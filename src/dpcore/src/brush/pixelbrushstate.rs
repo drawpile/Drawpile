@@ -114,7 +114,7 @@ impl PixelBrushState {
         if self.dabs.is_empty()
             || dx.abs() > MAX_XY_DELTA
             || dy.abs() > MAX_XY_DELTA
-            || self.dabs.last().unwrap().dabs.len() >= DrawDabsPixelMessage::MAX_ITEMS
+            || self.dabs.last().unwrap().dabs.len() >= DrawDabsPixelMessage::MAX_PIXELDABS
             || self.dabs.last().unwrap().color != color
         {
             self.dabs.push(DrawDabsPixelMessage {

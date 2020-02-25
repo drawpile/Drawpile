@@ -356,12 +356,12 @@ void BrushSettings::updateUi()
 	const ClassicBrush &brush = tool.brush;
 
 	// Select brush type
-	const bool softmode = brush.shape() == ClassicBrush::ROUND_SOFT;
+	const bool softmode = brush.shape() == rustpile::ClassicBrushShape::RoundSoft;
 
 	switch(brush.shape()) {
-	case ClassicBrush::ROUND_PIXEL: d->ui.hardedgeMode->setChecked(true); break;
-	case ClassicBrush::SQUARE_PIXEL: d->ui.squareMode->setChecked(true); break;
-	case ClassicBrush::ROUND_SOFT: d->ui.softedgeMode->setChecked(true); break;
+	case rustpile::ClassicBrushShape::RoundPixel: d->ui.hardedgeMode->setChecked(true); break;
+	case rustpile::ClassicBrushShape::SquarePixel: d->ui.squareMode->setChecked(true); break;
+	case rustpile::ClassicBrushShape::RoundSoft: d->ui.softedgeMode->setChecked(true); break;
 	}
 
 	emit subpixelModeChanged(getSubpixelMode(), isSquare());
@@ -429,11 +429,11 @@ void BrushSettings::updateFromUi()
 	auto &brush = d->currentBrush();
 
 	if(d->ui.hardedgeMode->isChecked())
-		brush.setShape(ClassicBrush::ROUND_PIXEL);
+		brush.setShape(rustpile::ClassicBrushShape::RoundPixel);
 	else if(d->ui.squareMode->isChecked())
-		brush.setShape(ClassicBrush::SQUARE_PIXEL);
+		brush.setShape(rustpile::ClassicBrushShape::SquarePixel);
 	else 
-		brush.setShape(ClassicBrush::ROUND_SOFT);
+		brush.setShape(rustpile::ClassicBrushShape::RoundSoft);
 
 	brush.setSize(d->ui.brushsizeBox->value());
 	brush.setSizePressure(d->ui.pressureSize->isChecked());
@@ -602,10 +602,10 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 {
 	switch(tool) {
-	case tools::Tool::LINE: d->ui.preview->setPreviewShape(widgets::BrushPreview::Line); break;
-	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(widgets::BrushPreview::Rectangle); break;
-	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(widgets::BrushPreview::Ellipse); break;
-	default: d->ui.preview->setPreviewShape(widgets::BrushPreview::Stroke); break;
+	case tools::Tool::LINE: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Line); break;
+	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Rectangle); break;
+	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Ellipse); break;
+	default: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Stroke); break;
 	}
 
 	if(tool == tools::Tool::ERASER) {
@@ -655,12 +655,12 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().shape() == ClassicBrush::ROUND_SOFT;
+	return d->currentBrush().shape() == rustpile::ClassicBrushShape::RoundSoft;
 }
 
 bool BrushSettings::isSquare() const
 {
-	return d->currentBrush().shape() == ClassicBrush::SQUARE_PIXEL;
+	return d->currentBrush().shape() == rustpile::ClassicBrushShape::SquarePixel;
 }
 
 }

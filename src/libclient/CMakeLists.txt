@@ -81,7 +81,6 @@ set (
 	brushes/pixelbrushpainter.cpp
 	brushes/shapes.cpp
 	brushes/brushpresetmodel.cpp
-	brushes/brushpresetmigration.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

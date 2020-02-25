@@ -32,6 +32,7 @@ pub const ZERO_PIXEL: Pixel = [0, 0, 0, 0];
 pub const WHITE_PIXEL: Pixel = [255, 255, 255, 255];
 
 #[derive(Copy, Clone, Debug)]
+#[repr(C)]
 pub struct Color {
     pub r: f32,
     pub g: f32,
@@ -69,6 +70,52 @@ impl Color {
             g: ((c & 0x00_00ff00) >> 8) as f32 / 255.0,
             b: (c & 0x00_0000ff) as f32 / 255.0,
             a: ((c & 0xff_000000) >> 24) as f32 / 255.0,
+        }
+    }
+
+    pub fn from_hsv(h: f32, s: f32, v: f32) -> Color {
+        let c = v * s;
+        let hp = (h / 60.0) % 6.0;
+        let x = c * ( 1.0 - ((hp % 2.0) - 1.0).abs());
+        let m = v - c;
+
+        let r;
+        let g;
+        let b;
+        if 0.0 <= hp && hp < 1.0 {
+            r = c;
+            g = x;
+            b = 0.0;
+        } else if hp < 2.0 {
+            r = x;
+            g = c;
+            b = 0.0;
+        } else if hp < 3.0 {
+            r = 0.0;
+            g = c;
+            b = x;
+        } else if hp < 4.0 {
+            r = 0.0;
+            g = x;
+            b = c;
+        } else if hp < 5.0 {
+            r = x;
+            g = 0.0;
+            b = c;
+        } else if hp < 6.0 {
+            r = c;
+            g = 0.0;
+            b = x;
+        } else {
+            r = 0.0;
+            g = 0.0;
+            b = 0.0;
+        }
+        Color{
+            r: r+m,
+            g: g+m,
+            b: b+m,
+            a: 1.0
         }
     }
 
@@ -112,6 +159,12 @@ impl Color {
 
     pub fn is_transparent(&self) -> bool {
         self.a < (1.0 / 255.0)
+    }
+
+    /// Is this a perceptually dark color
+    pub fn is_dark(&self) -> bool {
+        let luminance = self.r * 0.216 + self.g * 0.7152 + self.b * 0.0722;
+        luminance <= 0.5
     }
 }
 

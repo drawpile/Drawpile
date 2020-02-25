@@ -8,3 +8,6 @@ license = "GPLv3"
 [lib]
 crate-type = ["staticlib"]
 
+[dependencies]
+dpcore = { path = "../dpcore" }
+

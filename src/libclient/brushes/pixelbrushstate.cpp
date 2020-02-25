@@ -188,7 +188,7 @@ void PixelBrushState::addDab(int x, int y, qreal pressure, const paintcore::Laye
 			|| m_lastDab->color() != color
 	) {
 		m_lastDab = new protocol::DrawDabsPixel(
-			m_brush.shape() == ClassicBrush::SQUARE_PIXEL ? protocol::DabShape::Square : protocol::DabShape::Round,
+			m_brush.shape() == rustpile::ClassicBrushShape::SquarePixel ? protocol::DabShape::Square : protocol::DabShape::Round,
 			m_contextId,
 			m_layerId,
 			x,

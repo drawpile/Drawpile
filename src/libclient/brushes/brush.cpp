@@ -24,38 +24,59 @@
 
 namespace brushes {
 
+ClassicBrush::ClassicBrush()
+	: m_brush(rustpile::ClassicBrush {
+		{1.0, 10.0},
+		{0, 1},
+		{0, 1},
+		{0, 0},
+		0.1,
+		0,
+		rustpile::Color_BLACK,
+		rustpile::ClassicBrushShape::RoundPixel,
+		rustpile::Blendmode::Normal,
+		true,
+		false,
+		false,
+		false,
+		false,
+		false
+	})
+{
+}
+
 QJsonObject ClassicBrush::toJson() const
 {
 	QJsonObject o;
-	switch(m_shape) {
-	case ROUND_PIXEL: o["shape"] = "round-pixel"; break;
-	case SQUARE_PIXEL: o["shape"] = "square-pixel"; break;
-	case ROUND_SOFT: o["shape"] = "round-soft"; break;
+	switch(shape()) {
+	case rustpile::ClassicBrushShape::RoundPixel: o["shape"] = "round-pixel"; break;
+	case rustpile::ClassicBrushShape::SquarePixel: o["shape"] = "square-pixel"; break;
+	case rustpile::ClassicBrushShape::RoundSoft: o["shape"] = "round-soft"; break;
 	}
 
-	o["size"] = m_size1;
-	if(m_size2>1) o["size2"] = m_size2;
+	o["size"] = size1();
+	if(size2()>1) o["size2"] = size2();
 
-	o["opacity"] = m_opacity1;
-	if(m_opacity2>0) o["opacity2"] = m_opacity2;
+	o["opacity"] = opacity1();
+	if(opacity2()>0) o["opacity2"] = opacity2();
 
-	o["hard"] = m_hardness1;
-	if(m_hardness2>0) o["hard2"] = m_hardness2;
+	o["hard"] = hardness1();
+	if(opacity2()>0) o["hard2"] = hardness2();
 
-	if(m_smudge1>0) o["smudge"] = m_smudge1;
-	if(m_smudge2>0) o["smudge2"] = m_smudge2;
+	if(smudge1()>0) o["smudge"] = smudge1();
+	if(smudge2()>0) o["smudge2"] = smudge2();
 
-	o["spacing"] = m_spacing;
-	if(m_resmudge>0) o["resmudge"] = m_resmudge;
+	o["spacing"] = spacing();
+	if(resmudge()>0) o["resmudge"] = resmudge();
 
-	if(m_incremental) o["inc"] = true;
-	if(m_colorpick) o["colorpick"] = true;
-	if(m_sizePressure) o["sizep"] = true;
-	if(m_hardnessPressure) o["hardp"] = true;
-	if(m_opacityPressure) o["opacityp"] = true;
-	if(m_smudgePressure) o["smudgep"] = true;
+	if(incremental()) o["inc"] = true;
+	if(isColorPickMode()) o["colorpick"] = true;
+	if(useSizePressure()) o["sizep"] = true;
+	if(useHardnessPressure()) o["hardp"] = true;
+	if(useOpacityPressure()) o["opacityp"] = true;
+	if(useSmudgePressure()) o["smudgep"] = true;
 
-	o["blend"] = paintcore::findBlendMode(m_blend).svgname;
+	o["blend"] = paintcore::findBlendMode(blendingMode()).svgname;
 
 	// Note: color is intentionally omitted
 
@@ -77,11 +98,11 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	const QJsonObject o = json["settings"].toObject();
 
 	if(o["shape"] == "round-pixel")
-		b.m_shape = ROUND_PIXEL;
+		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
 	else if(o["shape"] == "square-pixel")
-		b.m_shape = SQUARE_PIXEL;
+		b.setShape(rustpile::ClassicBrushShape::SquarePixel);
 	else
-		b.m_shape = ROUND_SOFT;
+		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
 
 	b.setSize(o["size"].toInt());
 	b.setSize2(o["size2"].toInt());
@@ -110,6 +131,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	return b;
 }
 
+#if 0
 QDataStream &operator<<(QDataStream &out, const ClassicBrush &b)
 {
 	return out
@@ -147,6 +169,7 @@ QDataStream &operator>>(QDataStream &in, ClassicBrush &b)
 	b.m_blend = paintcore::BlendMode::Mode(blend);
 	return in;
 }
+#endif
 
 }
 

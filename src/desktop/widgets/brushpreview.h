@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define BRUSHPREVIEW_H
 
 #include "../../libclient/brushes/brush.h"
-#include "../../libclient/core/blendmodes.h"
+#include "../../rustpile/rustpile.h"
 
 #include <QFrame>
 
@@ -32,11 +32,6 @@
 
 class QMenu;
 
-namespace paintcore {
-	class LayerStack;
-	class LayerStackPixmapCacheObserver;
-}
-
 namespace widgets {
 
 /**
@@ -44,8 +39,6 @@ namespace widgets {
  */
 class QDESIGNER_WIDGET_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT
-	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
-	Q_ENUMS(PreviewShape)
 public:
 	enum PreviewShape {Stroke, Line, Rectangle, Ellipse, FloodFill, FloodErase};
 
@@ -53,9 +46,9 @@ public:
 	~BrushPreview();
 
 	//! Set preview shape
-	void setPreviewShape(PreviewShape shape);
+	void setPreviewShape(rustpile::BrushPreviewShape shape);
 
-	PreviewShape previewShape() const { return m_shape; }
+	rustpile::BrushPreviewShape previewShape() const { return m_shape; }
 
 	QColor brushColor() const { return m_brush.color(); }
 	const brushes::ClassicBrush &brush() const { return m_brush; }
@@ -86,17 +79,17 @@ private:
 	void updatePreview();
 	void updateBackground();
 
+	QPixmap m_background;
 	brushes::ClassicBrush m_brush;
 
-	paintcore::LayerStack *m_preview = nullptr;
-	paintcore::LayerStackPixmapCacheObserver *m_previewCache = nullptr;
+	rustpile::BrushPreview *m_previewcanvas = nullptr;
+	QPixmap m_preview;
 
-	QColor m_bg = Qt::white;
-	PreviewShape m_shape = Stroke;
+	rustpile::BrushPreviewShape m_shape = rustpile::BrushPreviewShape::Stroke;
 	int m_fillTolerance = 0;
 	int m_fillExpansion = 0;
 	bool m_underFill = false;
-	bool m_needupdate = false;
+	bool m_needUpdate = false;
 };
 
 }

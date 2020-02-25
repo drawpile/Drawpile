@@ -23,9 +23,12 @@
 use crate::paint::Blendmode;
 use crate::paint::Color;
 
+/// cbindgen:field-names=[min, max]
 #[derive(Copy, Clone)]
+#[repr(C)]
 pub struct Range(pub f32, pub f32);
 
+#[derive(Copy, Clone)]
 #[repr(u8)]
 pub enum ClassicBrushShape {
     RoundPixel,
@@ -34,6 +37,8 @@ pub enum ClassicBrushShape {
 }
 
 /// The parameters of a classic soft and pixel Drawpile brushes.
+#[derive(Clone)]
+#[repr(C)]
 pub struct ClassicBrush {
     /// The diameter of the brush
     pub size: Range,

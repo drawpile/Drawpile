@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-mod brushes;
+pub mod brushes;
 mod compression;
 mod history;
 mod observable;
