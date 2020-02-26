@@ -121,9 +121,9 @@ impl TileMap {
         }
     }
 
-	pub fn is_set(&self, i: u32, j: u32) -> bool {
-		self.tiles[(j*self.w+i) as usize]
-	}
+    pub fn is_set(&self, i: u32, j: u32) -> bool {
+        self.tiles[(j * self.w + i) as usize]
+    }
 
     fn set_tiles(mut self, r: &Rectangle) -> Self {
         let w = self.w as i32;

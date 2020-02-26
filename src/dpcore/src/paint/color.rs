@@ -55,6 +55,13 @@ impl Color {
         a: 1.0,
     };
 
+    pub const WHITE: Self = Self {
+        r: 1.0,
+        g: 1.0,
+        b: 1.0,
+        a: 1.0,
+    };
+
     pub fn rgb8(r: u8, g: u8, b: u8) -> Color {
         Color {
             r: r as f32 / 255.0,
@@ -76,7 +83,7 @@ impl Color {
     pub fn from_hsv(h: f32, s: f32, v: f32) -> Color {
         let c = v * s;
         let hp = (h / 60.0) % 6.0;
-        let x = c * ( 1.0 - ((hp % 2.0) - 1.0).abs());
+        let x = c * (1.0 - ((hp % 2.0) - 1.0).abs());
         let m = v - c;
 
         let r;
@@ -111,11 +118,11 @@ impl Color {
             g = 0.0;
             b = 0.0;
         }
-        Color{
-            r: r+m,
-            g: g+m,
-            b: b+m,
-            a: 1.0
+        Color {
+            r: r + m,
+            g: g + m,
+            b: b + m,
+            a: 1.0,
         }
     }
 

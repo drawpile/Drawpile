@@ -124,30 +124,13 @@ void BrushPreview::updatePreview()
 		m_preview = QPixmap(size);
 	}
 
-#if 0
-	// Do the flood fill
-	// In flood fill mode, the shape drawn with the brush creates
-	// a closed area that will be filled here.
-	if(m_shape == FloodFill || m_shape == FloodErase) {
-		paintcore::FillResult fr = paintcore::floodfill(
-			m_preview,
-			previewRect.center().toPoint(),
-			m_shape == FloodFill ? brushColor() : QColor(),
-			m_fillTolerance,
-			0,
-			false,
-			360000);
-
-		if(m_fillExpansion>0)
-			fr = paintcore::expandFill(fr, m_fillExpansion, brushColor());
-		if(!fr.image.isNull())
-			layer.putImage(fr.x, fr.y, fr.image, m_shape == FloodFill ? (m_underFill ? paintcore::BlendMode::MODE_BEHIND : paintcore::BlendMode::MODE_NORMAL) : paintcore::BlendMode::MODE_ERASE);
-#endif
-
 	rustpile::brushpreview_render(m_previewcanvas, &m_brush.brush(), m_shape);
 	if(m_shape == rustpile::BrushPreviewShape::FloodFill || m_shape == rustpile::BrushPreviewShape::FloodErase) {
 		auto color = m_brush.rpColor();
-		rustpile::brushpreview_floodfill(m_previewcanvas, &color, m_fillTolerance, m_fillExpansion, m_underFill);
+		if(m_shape == rustpile::BrushPreviewShape::FloodErase) {
+			color.a = 0;
+		}
+		rustpile::brushpreview_floodfill(m_previewcanvas, &color, m_fillTolerance / 255.0, m_fillExpansion, m_underFill);
 	}
 
 	QPainter p(&m_preview);

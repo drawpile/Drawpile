@@ -260,6 +260,22 @@ impl Tile {
         }
     }
 
+    pub fn set_pixel_at(&mut self, user: UserID, x: u32, y: u32, px: Pixel) {
+        debug_assert!(x < TILE_SIZE);
+        debug_assert!(y < TILE_SIZE);
+        match self {
+            Tile::Bitmap(td) => {
+                let data = Rc::make_mut(td);
+                data.pixels[(y * TILE_SIZE + x) as usize] = px;
+                data.maybe_blank |= px == ZERO_PIXEL;
+            }
+            Tile::Blank => {
+                *self = Tile::new_solid(&Color::TRANSPARENT, user);
+                self.set_pixel_at(user, x, y, px);
+            }
+        }
+    }
+
     /// Do a shallow equality comparison between these two tiles
     pub fn ptr_eq(&self, other: &Tile) -> bool {
         use Tile::*;
@@ -424,5 +440,13 @@ mod tests {
                 a: 0.5
             })
         );
+    }
+
+    #[test]
+    fn test_pixels() {
+        let mut t = Tile::Blank;
+        t.set_pixel_at(0, 0, 0, WHITE_PIXEL);
+        assert_eq!(t.pixel_at(0, 0), WHITE_PIXEL);
+        assert_eq!(t.pixel_at(1, 0), ZERO_PIXEL);
     }
 }

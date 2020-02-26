@@ -24,9 +24,8 @@ use std::rc::Rc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
-use super::color::{Color, Pixel, ZERO_PIXEL};
 use super::tile::{Tile, TileData, TILE_SIZE};
-use super::{Layer, LayerID, Rectangle};
+use super::{Layer, LayerID, Rectangle, Color, Image};
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -230,7 +229,7 @@ impl LayerStack {
     }
 
     // Convert to a flat image
-    pub fn to_image(&self) -> (Vec<Pixel>, u32, u32) {
+    pub fn to_image(&self) -> Image {
         let xtiles = Tile::div_up(self.width) as usize;
         let ytiles = Tile::div_up(self.height) as usize;
 
@@ -238,7 +237,7 @@ impl LayerStack {
         let width = self.width as usize;
         let height = self.height as usize;
 
-        let mut image = vec![ZERO_PIXEL; width * height];
+        let mut image = Image::new(width, height);
 
         for j in 0..ytiles {
             let h = tw.min(height - (j * tw));
@@ -249,13 +248,13 @@ impl LayerStack {
                     let dest_offset = (j * tw + y) * width + i * tw;
                     let src_offset = y * tw;
 
-                    image[dest_offset..dest_offset + w]
+                    image.pixels[dest_offset..dest_offset + w]
                         .copy_from_slice(&td.pixels[src_offset..src_offset + w]);
                 }
             }
         }
 
-        (image, self.width, self.height)
+        image
     }
 
     /// Return a resized copy of this stack

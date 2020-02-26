@@ -51,11 +51,11 @@ pub extern "C" fn brushpreview_render(
 pub extern "C" fn brushpreview_floodfill(
     bp: &mut BrushPreview,
     color: &Color,
-    tolerance: i32,
+    tolerance: f32,
     expansion: i32,
     fill_under: bool,
 ) {
-    bp.floodfill(color, tolerance, expansion, fill_under);
+    bp.floodfill(*color, tolerance, expansion, fill_under);
 }
 
 #[no_mangle]

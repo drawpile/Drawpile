@@ -83,6 +83,7 @@ struct Color {
 };
 static const Color Color_TRANSPARENT = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 0.0 };
 static const Color Color_BLACK = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 1.0 };
+static const Color Color_WHITE = Color{ /* .r = */ 1.0, /* .g = */ 1.0, /* .b = */ 1.0, /* .a = */ 1.0 };
 
 /// The parameters of a classic soft and pixel Drawpile brushes.
 struct ClassicBrush {
@@ -130,7 +131,7 @@ void brushpreview_render(BrushPreview *bp, const ClassicBrush *brush, BrushPrevi
 
 void brushpreview_floodfill(BrushPreview *bp,
                             const Color *color,
-                            int32_t tolerance,
+                            float tolerance,
                             int32_t expansion,
                             bool fill_under);
 

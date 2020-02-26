@@ -46,6 +46,13 @@ impl Rectangle {
         }
     }
 
+    pub fn contains(&self, other: &Rectangle) -> bool {
+        self.x <= other.x
+            && self.y <= other.y
+            && self.right() >= other.right()
+            && self.bottom() >= other.bottom()
+    }
+
     pub fn intersected(&self, other: &Rectangle) -> Option<Rectangle> {
         let leftx = max(self.x, other.x);
         let rightx = min(self.x + self.w, other.x + other.w);

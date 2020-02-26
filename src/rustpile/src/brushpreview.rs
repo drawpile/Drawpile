@@ -25,7 +25,7 @@ use dpcore::canvas::brushes;
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
-    editlayer, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID, Rectangle,
+    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID, Rectangle,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -240,20 +240,43 @@ impl BrushPreview {
         editlayer::merge_sublayer(layer, 1);
     }
 
-    pub fn floodfill(&mut self, color: &Color, tolerance: i32, expansion: i32, fill_under: bool) {
-        let layer = self.layerstack.get_layer_mut(LAYER_ID).unwrap();
-        // TODO
-        editlayer::fill_rect(
-            layer,
-            1,
+    pub fn floodfill(&mut self, color: Color, tolerance: f32, expansion: i32, fill_under: bool) {
+        let mut result = floodfill::floodfill(
+            &self.layerstack,
+            self.layerstack.width() as i32 / 2,
+            self.layerstack.height() as i32 / 2,
             color,
-            Blendmode::Normal,
+            tolerance,
+            LAYER_ID,
+            false,
+            1000 * 1000,
+        );
+        if result.image.is_null() {
+            return;
+        }
+
+        if expansion > 0 {
+            result = floodfill::expand_floodfill(result, expansion);
+        }
+
+        editlayer::draw_image(
+            self.layerstack.get_layer_mut(LAYER_ID).unwrap(),
+            1,
+            &result.image.pixels,
             &Rectangle::new(
-                10,
-                20,
-                layer.width() as i32 - 20,
-                layer.height() as i32 - 40,
+                result.x as i32,
+                result.y as i32,
+                result.image.width as i32,
+                result.image.height as i32,
             ),
+            1.0,
+            if color.is_transparent() {
+                Blendmode::Erase
+            } else if fill_under {
+                Blendmode::Behind
+            } else {
+                Blendmode::Normal
+            },
         );
     }
 }

@@ -24,6 +24,7 @@ pub mod annotation;
 pub mod aoe;
 pub mod color;
 pub mod editlayer;
+pub mod floodfill;
 pub mod layerstack;
 pub mod rasterop;
 pub mod rectiter;
@@ -36,16 +37,17 @@ pub type LayerID = i32;
 // Re-export types most commonly used from the outside
 mod blendmode;
 mod brushmask;
+mod flattenediter;
+mod image;
 mod layer;
 mod rect;
-mod flattenediter;
 
 pub use aoe::AoE;
 pub use blendmode::Blendmode;
 pub use brushmask::{BrushMask, ClassicBrushCache};
 pub use color::{Color, Pixel};
+pub use flattenediter::FlattenedTileIterator;
+pub use self::image::Image;
 pub use layer::Layer;
 pub use layerstack::LayerStack;
 pub use rect::Rectangle;
-pub use flattenediter::FlattenedTileIterator;
-

@@ -26,12 +26,12 @@ use std::rc::Rc;
 use super::aoe::{AoE, TileMap};
 use super::blendmode::Blendmode;
 use super::brushmask::BrushMask;
-use super::color::{Color, Pixel};
+use super::color::{Color, Pixel, ZERO_PIXEL};
 use super::rect::Rectangle;
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::tileiter::MutableTileIterator;
-use super::LayerID;
+use super::{Image, LayerID};
 
 /// A tiled image layer.
 ///
@@ -111,6 +111,67 @@ impl Layer {
 
         layer.optimize(&AoE::Everything);
         layer
+    }
+
+    /// Get a cropped image
+    ///
+    /// For efficiency, the image is cropped at tile boundaries.
+    /// Returns: (image, x coordinate, y coordinate)
+    pub fn to_cropped_image(&self) -> (Image, i32, i32) {
+        // Find bounding rectangle of non-blank tiles
+        let xtiles = Tile::div_up(self.width) as usize;
+        let ytiles = Tile::div_up(self.height) as usize;
+        let mut top = ytiles;
+        let mut btm = 0;
+        let mut left = xtiles;
+        let mut right = 0;
+
+        for y in 0..ytiles {
+            for x in 0..xtiles {
+                if !self.tiles[y * xtiles + x].is_blank() {
+                    left = left.min(x);
+                    right = right.max(x);
+                    top = top.min(y);
+                    btm = btm.max(y);
+                }
+            }
+        }
+
+        if top == ytiles {
+            return (Image::default(), 0, 0);
+        }
+
+        // Copy tiles to image
+        let tw = TILE_SIZE as usize;
+        let width = (right - left + 1) * tw;
+        let height = (btm - top + 1) * tw;
+        let mut image = vec![ZERO_PIXEL; width * height];
+        for y in top..=btm {
+            for x in left..=right {
+                match &self.tiles[y * xtiles + x] {
+                    Tile::Bitmap(td) => {
+                        for line in 0..tw {
+                            let dest_offset = ((y - top) * tw + line) * width + (x - left) * tw;
+                            let src_offset = line * tw;
+
+                            image[dest_offset..dest_offset + tw]
+                                .copy_from_slice(&td.pixels[src_offset..src_offset + tw]);
+                        }
+                    }
+                    Tile::Blank => {}
+                }
+            }
+        }
+
+        (
+            Image {
+                pixels: image,
+                width,
+                height,
+            },
+            (left * tw) as i32,
+            (top * tw) as i32,
+        )
     }
 
     /// Get mutable access to a sublayer with the given ID
@@ -286,6 +347,15 @@ impl Layer {
         let xtiles = Tile::div_up(self.width);
         let v = Rc::make_mut(&mut self.tiles);
         &mut v[(j * xtiles + i) as usize]
+    }
+
+    /// Replace a tile at the given index
+    pub fn replace_tile(&mut self, i: u32, j: u32, tile: Tile) {
+        debug_assert!(i * TILE_SIZE < self.width);
+        debug_assert!(j * TILE_SIZE < self.height);
+        let xtiles = Tile::div_up(self.width);
+        let v = Rc::make_mut(&mut self.tiles);
+        v[(j * xtiles + i) as usize] = tile;
     }
 
     /// Get direct access to the tile vector.
@@ -722,5 +792,21 @@ mod tests {
                 a: 0.75
             }
         );
+    }
+
+    #[test]
+    fn test_cropped_image() {
+        let mut layer = Layer::new(0, TILE_SIZE * 4, TILE_SIZE * 4, &Color::TRANSPARENT);
+        layer.tile_mut(1, 1).set_pixel_at(0, 0, 0, WHITE_PIXEL);
+        layer.tile_mut(2, 1).set_pixel_at(0, 1, 0, WHITE_PIXEL);
+
+        let (img, x, y) = layer.to_cropped_image();
+        assert_eq!(x, TILE_SIZEI);
+        assert_eq!(y, TILE_SIZEI);
+        assert_eq!(img.width, TILE_SIZE as usize * 2);
+        assert_eq!(img.height, TILE_SIZE as usize);
+        assert_eq!(img.pixels.len(), (TILE_SIZE * 2 * TILE_SIZE) as usize);
+        assert_eq!(img.pixels[0], WHITE_PIXEL);
+        assert_eq!(img.pixels[TILE_SIZE as usize + 1], WHITE_PIXEL);
     }
 }
