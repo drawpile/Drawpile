@@ -781,9 +781,11 @@ void MainWindow::updateLayerViewMode()
 	else if(onionskin)
 		mode = paintcore::LayerStack::ONIONSKIN;
 
+#if 0 // FIXME
 	auto layers = m_doc->canvas()->layerStack()->editor(0);
 	layers.setViewMode(mode);
 	layers.setCensorship(censor);
+#endif
 	updateLockWidget();
 }
 
@@ -1218,6 +1220,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 void MainWindow::exportAnimation()
 {
+#if 0 // FIXME
 	auto *dlg = new dialogs::VideoExportDialog(this);
 	dlg->showAnimationSettings(m_doc->canvas()->layerStack()->layerCount());
 
@@ -1251,6 +1254,7 @@ void MainWindow::exportAnimation()
 	});
 
 	dlg->show();
+#endif
 }
 
 void MainWindow::exportTemplate()
@@ -1271,10 +1275,12 @@ void MainWindow::exportTemplate()
 
 void MainWindow::showFlipbook()
 {
+#if 0 // FIXME
 	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
 	fp->setAttribute(Qt::WA_DeleteOnClose);
 	fp->setLayers(m_doc->canvas()->layerStack());
 	fp->show();
+#endif
 }
 
 void MainWindow::setRecorderStatus(bool on)
@@ -1385,6 +1391,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 
 	// Start server if hosting locally
 	if(!useremote) {
+#if 0 // FIXME
 		auto *server = new server::BuiltinServer(
 			m_doc->canvas()->stateTracker(),
 			m_doc->canvas()->aclFilter(),
@@ -1402,6 +1409,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 
 		if(server->port() != DRAWPILE_PROTO_DEFAULT_PORT)
 			address.setPort(server->port());
+#endif
 	}
 
 	// Connect to server
@@ -1514,6 +1522,7 @@ void MainWindow::tryToGainOp()
 
 void MainWindow::resetSession()
 {
+#if 0 // FIXME
 	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->stateTracker(), this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
@@ -1537,6 +1546,7 @@ void MainWindow::resetSession()
 	});
 
 	dlg->show();
+#endif
 }
 
 void MainWindow::terminateSession()
@@ -2095,6 +2105,7 @@ void MainWindow::clearOrDelete()
 
 void MainWindow::resizeCanvas()
 {
+#if 0 // FIXME
 	if(!m_doc->canvas()) {
 		qWarning("resizeCanvas: no canvas!");
 		return;
@@ -2119,10 +2130,12 @@ void MainWindow::resizeCanvas()
 		}
 	});
 	dlg->show();
+#endif
 }
 
 void MainWindow::changeCanvasBackground()
 {
+#if 0 // FIXME
 	if(!m_doc->canvas()) {
 		qWarning("changeCanvasBackground: no canvas!");
 		return;
@@ -2133,6 +2146,7 @@ void MainWindow::changeCanvasBackground()
 
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
 	dlg->show();
+#endif
 }
 
 void MainWindow::markSpotForRecording()

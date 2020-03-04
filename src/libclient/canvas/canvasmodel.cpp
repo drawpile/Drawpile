@@ -37,6 +37,8 @@
 #include "../libshared/net/meta2.h"
 #include "../libshared/net/recording.h"
 
+#include "../rustpile/rustpile.h"
+
 #include <QSettings>
 #include <QDebug>
 #include <QPainter>
@@ -55,8 +57,11 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_aclfilter, &AclFilter::trustedUserListChanged, m_userlist, &UserListModel::updateTrustedUsers);
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
 
+#if 0
 	m_layerstack = new paintcore::LayerStack(this);
 	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
+#endif
+	m_paintengine = rustpile::paintengine_new();
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
@@ -65,31 +70,52 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	m_layerlist->setMyId(localUserId);
 	m_layerlist->setAclFilter(m_aclfilter);
 	m_layerlist->setLayerGetter([this](int id)->const paintcore::Layer* {
+#if 0 // FIXME
 		return m_layerstack->getLayer(id);
+#endif
+		return nullptr;
 	});
 
 	m_usercursors->setLayerList(m_layerlist);
 
+#if 0 // FIXME
 	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
 
 	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 
 	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
+#endif
 
 	updateLayerViewOptions();
 }
 
+CanvasModel::~CanvasModel()
+{
+	rustpile::paintengine_free(m_paintengine);
+}
+
 uint8_t CanvasModel::localUserId() const
 {
+#if 0 // FIXME
 	return m_statetracker->localId();
+#endif
+	return 0;
+}
+
+QSize CanvasModel::size() const
+{
+	const auto s = rustpile::paintengine_canvas_size(m_paintengine);
+	return QSize{s.width, s.height};
 }
 
 void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
+#if 0 // FIXME
 	m_statetracker->setLocalId(myUserId);
+#endif
 
 	if(join)
 		m_aclfilter->reset(myUserId, false);
@@ -102,9 +128,11 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 
 void CanvasModel::disconnectedFromServer()
 {
+#if 0 // FIXME
 	m_statetracker->endRemoteContexts();
 	m_userlist->allLogout();
 	m_aclfilter->reset(m_statetracker->localId(), true);
+#endif
 	m_mode = Mode::Offline;
 }
 
@@ -112,24 +140,30 @@ void CanvasModel::startPlayback()
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_mode = Mode::Playback;
+#if 0 // FIXME
 	m_statetracker->setShowAllUserMarkers(true);
+#endif
 }
 
 void CanvasModel::endPlayback()
 {
 	Q_ASSERT(m_mode == Mode::Playback);
+#if 0 // FIXME
 	m_statetracker->setShowAllUserMarkers(false);
 	m_statetracker->endPlayback();
+#endif
 }
 
 void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 {
 	using namespace protocol;
 
+#if 0 // FIXME
 	if(cmd->type() == protocol::MSG_INTERNAL) {
 		m_statetracker->receiveQueuedCommand(cmd);
 		return;
 	}
+#endif
 
 	// Apply ACL filter
 	if(m_mode != Mode::Playback && !m_aclfilter->filterMessage(*cmd)) {
@@ -189,7 +223,10 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 
 	} else if(cmd->isCommand()) {
 		// The state tracker handles all drawing commands
-		m_statetracker->receiveQueuedCommand(cmd);
+		QByteArray buf(cmd->length(), 0);
+		cmd->serialize(buf.data());
+		rustpile::paintengine_receive_messages(m_paintengine, reinterpret_cast<const uint8_t*>(buf.constData()), buf.length());
+		//m_statetracker->receiveQueuedCommand(cmd);
 		emit canvasModified();
 
 	} else {
@@ -199,42 +236,58 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 {
-	m_statetracker->localCommand(cmd);
+	//m_statetracker->localCommand(cmd);
+	// FIXME receive local
+	QByteArray buf(cmd->length(), 0);
+	cmd->serialize(buf.data());
+	rustpile::paintengine_receive_messages(m_paintengine, reinterpret_cast<const uint8_t*>(buf.constData()), buf.length());
 	emit canvasModified();
 }
 
 QImage CanvasModel::toImage(bool withBackground, bool withSublayers) const
 {
 	// TODO include annotations or not?
+#if 0 // FIXME
 	return m_layerstack->toFlatImage(false, withBackground, withSublayers);
+#endif
+	return QImage();
 }
 
 bool CanvasModel::needsOpenRaster() const
 {
+#if 0 // FIXME
 	return m_layerstack->layerCount() > 1 ||
 		!m_layerstack->annotations()->isEmpty() ||
 		!m_layerstack->background().isBlank()
 		;
+#endif
+	return true;
 }
 
 protocol::MessageList CanvasModel::generateSnapshot() const
 {
+#if 0 // FIXME
 	auto loader = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_aclfilter);
 	loader.setDefaultLayer(m_layerlist->defaultLayer());
 	loader.setPinnedMessage(m_pinnedMessage);
 	return loader.loadInitCommands();
+#endif
+	return protocol::MessageList();
 }
 
 void CanvasModel::pickLayer(int x, int y)
 {
+#if 0 // FIXME
 	const paintcore::Layer *l = m_layerstack->layerAt(x, y);
 	if(l) {
 		emit layerAutoselectRequest(l->id());
 	}
+#endif
 }
 
 void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 {
+#if 0 // FIXME
 	QColor color;
 	if(layer>0) {
 		const paintcore::Layer *l = m_layerstack->getLayer(layer);
@@ -248,10 +301,12 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 		color.setAlpha(255);
 		emit colorPicked(color);
 	}
+#endif
 }
 
 void CanvasModel::inspectCanvas(int x, int y)
 {
+#if 0 // FIXME
 	if(x>=0 && y>=0 && x<m_layerstack->width() && y<m_layerstack->height()) {
 		const int tx = x / paintcore::Tile::SIZE;
 		const int ty = y / paintcore::Tile::SIZE;
@@ -259,27 +314,35 @@ void CanvasModel::inspectCanvas(int x, int y)
 		inspectCanvas(id);
 		emit canvasInspected(tx, ty, id);
 	}
+#endif
 }
 
 void CanvasModel::inspectCanvas(int contextId)
 {
+#if 0 // FIXME
 	m_layerstack->editor(0).setInspectorHighlight(contextId);
+#endif
 }
 
 void CanvasModel::stopInspectingCanvas()
 {
+#if 0 // FIXME
 	m_layerstack->editor(0).setInspectorHighlight(0);
 	emit canvasInspectionEnded();
+#endif
 }
 
 void CanvasModel::setLayerViewMode(int mode)
 {
+#if 0 // FIXME
 	m_layerstack->editor(0).setViewMode(paintcore::LayerStack::ViewMode(mode));
+#endif
 	updateLayerViewOptions();
 }
 
 void CanvasModel::setSelection(Selection *selection)
 {
+#if 0 // FIXME
 	if(m_selection != selection) {
 		m_layerstack->editor(0).removePreviews();
 
@@ -297,10 +360,12 @@ void CanvasModel::setSelection(Selection *selection)
 		if(hadSelection && !selection)
 			emit selectionRemoved();
 	}
+#endif
 }
 
 void CanvasModel::updateLayerViewOptions()
 {
+#if 0 // FIXME
 	QSettings cfg;
 	cfg.beginGroup("settings/animation");
 	m_layerstack->editor(0).setOnionskinMode(
@@ -308,6 +373,7 @@ void CanvasModel::updateLayerViewOptions()
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
 	);
+#endif
 }
 
 /**
@@ -318,6 +384,7 @@ void CanvasModel::updateLayerViewOptions()
  */
 uint16_t CanvasModel::getAvailableAnnotationId() const
 {
+#if 0 // FIXME
 	const uint16_t prefix = uint16_t(m_statetracker->localId() << 8);
 	QList<uint16_t> takenIds;
 	for(const paintcore::Annotation &a : m_layerstack->annotations()->getAnnotations()) {
@@ -330,7 +397,7 @@ uint16_t CanvasModel::getAvailableAnnotationId() const
 		if(!takenIds.contains(id))
 			return id;
 	}
-
+#endif
 	return 0;
 }
 
@@ -338,6 +405,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 {
 	QImage img;
 
+#if 0 // FIXME
 	if(m_selection && !m_selection->pasteImage().isNull()) {
 		return m_selection->transformedPasteImage();
 	}
@@ -363,6 +431,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 			mp.drawImage(qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
 		}
 	}
+#endif
 
 	return img;
 }
@@ -399,9 +468,11 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
+#if 0 // FIXME
 	m_layerstack->editor(0).reset();
 	m_statetracker->reset();
 	m_aclfilter->reset(m_statetracker->localId(), false);
+#endif
 }
 
 void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
@@ -424,7 +495,7 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 		msg.contextId(),
 		msg.name(),
 		QPixmap::fromImage(avatar),
-		msg.contextId() == m_statetracker->localId(),
+		false, //FIXME msg.contextId() == m_statetracker->localId(),
 		false,
 		false,
 		msg.isModerator(),
@@ -485,16 +556,20 @@ void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
 void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
 {
 	m_layerlist->setDefaultLayer(msg.layer());
+#if 0 // FIXME
 	if(!m_statetracker->hasParticipated())
 		emit layerAutoselectRequest(msg.layer());
+#endif
 }
 
 void CanvasModel::metaSoftReset(uint8_t resetterId)
 {
+#if 0 // FIXME
 	m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeTruncatePoint());
 
 	if(resetterId == localUserId())
 		m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeSoftResetPoint());
+#endif
 }
 
 }

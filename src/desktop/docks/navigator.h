@@ -22,16 +22,13 @@
 
 class Ui_Navigator;
 
-namespace paintcore {
-	class LayerStackPixmapCacheObserver;
-}
-
 namespace drawingboard {
 	class CanvasScene;
 }
 
 namespace canvas {
 	class UserCursorModel;
+	class PaintEnginePixmap;
 }
 
 namespace docks {
@@ -42,7 +39,7 @@ class NavigatorView : public QWidget
 public:
 	NavigatorView(QWidget *parent);
 
-	void setLayerStackObserver(paintcore::LayerStackPixmapCacheObserver *observer);
+	void setPaintEnginePixmap(canvas::PaintEnginePixmap *pep);
 	void setUserCursors(canvas::UserCursorModel *cursors) { m_cursors = cursors; }
 
 	void setViewFocus(const QPolygonF& rect);
@@ -68,7 +65,7 @@ private slots:
 	void refreshCache();
 
 private:
-	paintcore::LayerStackPixmapCacheObserver *m_observer;
+	canvas::PaintEnginePixmap *m_pep;
 	canvas::UserCursorModel *m_cursors;
 	QPixmap m_cache;
 	QPixmap m_cursorBackground;

@@ -70,6 +70,8 @@ enum class ClassicBrushShape : uint8_t {
 
 struct BrushPreview;
 
+struct PaintEngine;
+
 struct Range {
   float min;
   float max;
@@ -119,6 +121,18 @@ struct ClassicBrush {
   bool smudge_pressure;
 };
 
+struct Size {
+  uint32_t width;
+  uint32_t height;
+};
+
+struct Rectangle {
+  int32_t x;
+  int32_t y;
+  int32_t w;
+  int32_t h;
+};
+
 extern "C" {
 
 void rustpile_init();
@@ -138,6 +152,25 @@ void brushpreview_floodfill(BrushPreview *bp,
 void brushpreview_paint(const BrushPreview *bp,
                         void *ctx,
                         void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
+
+PaintEngine *paintengine_new();
+
+void paintengine_free(PaintEngine *dp);
+
+Size paintengine_canvas_size(const PaintEngine *dp);
+
+/// Receive one or more messages
+/// Only Command type messages are handled.
+void paintengine_receive_messages(PaintEngine *dp, const uint8_t *messages, uintptr_t messages_len);
+
+/// Paint all the changed tiles in the given area
+///
+/// For each changed tile in the area, the tile is flattened and the paint callback called.
+/// The change flag is then cleared for that tile.
+void paintengine_paint_changes(const PaintEngine *dp,
+                               void *ctx,
+                               Rectangle rect,
+                               void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
 
 } // extern "C"
 

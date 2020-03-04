@@ -45,6 +45,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(right);
 
+#if 0 // FIXME
 	const paintcore::Annotation *selection = owner.model()->layerStack()->annotations()->annotationAtPos(point.toPoint(), zoom);
 	m_p1 = point;
 	m_p2 = point;
@@ -75,6 +76,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 		owner.model()->layerStack()->annotations()->addAnnotation(m_selectedId, QRect(m_p1.toPoint(), m_p1.toPoint() + QPoint(5,5)));
 		m_handle = paintcore::Annotation::RS_BOTTOMRIGHT;
 	}
+#endif
 }
 
 /**
@@ -89,9 +91,11 @@ void Annotation::motion(const paintcore::Point& point, bool constrain, bool cent
 	if(m_handle == paintcore::Annotation::OUTSIDE)
 		return;
 
+#if 0 // FIXME
 	QPointF p = point - m_p2;
 	m_handle = owner.model()->layerStack()->annotations()->annotationAdjustGeometry(m_selectedId, m_handle, p.toPoint());
 	m_p2 = point;
+#endif
 }
 
 /**
@@ -103,6 +107,7 @@ void Annotation::end()
 	if(!m_selectedId)
 		return;
 
+#if 0 // FIXME
 	protocol::MessageList msgs;
 	const uint8_t contextId = owner.client()->myId();
 
@@ -149,6 +154,7 @@ void Annotation::end()
 		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(contextId)));
 		owner.client()->sendMessages(msgs);
 	}
+#endif
 }
 
 }

@@ -29,7 +29,7 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/statetracker.h"
-#include "core/layerstackpixmapcacheobserver.h"
+#include "canvas/paintenginepixmap.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
@@ -41,8 +41,8 @@ CanvasScene::CanvasScene(QObject *parent)
 	  _showAnnotationBorders(false), _showAnnotations(true),
 	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
 {
-	m_layerstackObserver = new paintcore::LayerStackPixmapCacheObserver(this);
-	m_canvasItem = new CanvasItem(m_layerstackObserver);
+	m_paintEnginePixmap = new canvas::PaintEnginePixmap(nullptr, this);
+	m_canvasItem = new CanvasItem(m_paintEnginePixmap);
 
 	setItemIndexMethod(NoIndex);
 
@@ -69,15 +69,17 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	onSelectionChanged(nullptr);
 
 	m_model = model;
-	m_layerstackObserver->attachToLayerStack(m_model->layerStack());
+	m_paintEnginePixmap->setPaintEngine(m_model->paintEngine());
 
-	connect(m_layerstackObserver, &paintcore::LayerStackPixmapCacheObserver::resized, this, &CanvasScene::handleCanvasResize);
+#if 0 // FIXME
+	connect(m_paintEnginePixmap, &paintcore::LayerStackPixmapCacheObserver::resized, this, &CanvasScene::handleCanvasResize);
 
 	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();
 	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
 	connect(anns, &paintcore::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);
 	connect(anns, &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &CanvasScene::annotationsRemoved);
 	connect(anns, &paintcore::AnnotationModel::modelReset, this, &CanvasScene::annotationsReset);
+#endif
 
 	canvas::UserCursorModel *cursors = m_model->userCursors();
 	connect(cursors, &canvas::UserCursorModel::rowsInserted, this, &CanvasScene::userCursorAdded);
@@ -176,6 +178,7 @@ void CanvasScene::activeAnnotationChanged(int id)
 
 void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
 {
+#if 0 // FIXME
 	for(int i=first;i<=last;++i) {
 		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
 		const int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
@@ -190,10 +193,12 @@ void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
 		addItem(item);
 		annotationsChanged(a, a, QVector<int>());
 	}
+#endif
 }
 
 void CanvasScene::annotationsRemoved(const QModelIndex&, int first, int last)
 {
+#if 0 // FIXME
 	for(int i=first;i<=last;++i) {
 		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
 		int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
@@ -203,11 +208,12 @@ void CanvasScene::annotationsRemoved(const QModelIndex&, int first, int last)
 		else
 			qWarning("Could not find annotation item %#x for deletion", id);
 	}
-
+#endif
 }
 
 void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
 {
+#if 0 // FIXME
 	const int ifirst = first.row();
 	const int ilast = last.row();
 	for(int i=ifirst;i<=ilast;++i) {
@@ -232,10 +238,12 @@ void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex
 		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::VAlignRole))
 			item->setValign(a.data(paintcore::AnnotationModel::VAlignRole).toInt());
 	}
+#endif
 }
 
 void CanvasScene::annotationsReset()
 {
+#if 0 // FIXME
 	// Clear out any old annotation items
 	for(QGraphicsItem *item : items()) {
 		if(item->type() == AnnotationItem::Type) {
@@ -246,6 +254,7 @@ void CanvasScene::annotationsReset()
 	if(!m_model->layerStack()->annotations()->isEmpty()) {
 		annotationsAdded(QModelIndex(), 0, m_model->layerStack()->annotations()->rowCount()-1);
 	}
+#endif
 }
 
 void CanvasScene::laserAdded(const QModelIndex&, int first, int last)

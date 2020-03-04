@@ -25,7 +25,7 @@ use std::rc::Rc;
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::tile::{Tile, TileData, TILE_SIZE};
-use super::{Layer, LayerID, Rectangle, Color, Image};
+use super::{Color, Image, Layer, LayerID, Rectangle};
 
 #[derive(Clone)]
 pub struct LayerStack {

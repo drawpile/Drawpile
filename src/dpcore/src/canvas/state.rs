@@ -110,6 +110,7 @@ impl CanvasState {
     }
 
     fn handle_message(&mut self, msg: &CommandMessage) -> AoE {
+        println!("Handling {:?}", msg);
         use CommandMessage::*;
         match &msg {
             UndoPoint(user) => self.handle_undopoint(*user),

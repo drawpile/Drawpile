@@ -118,7 +118,9 @@ void Document::initCanvas()
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
+#if 0 // FIXME
 	connect(m_canvas->stateTracker(), &canvas::StateTracker::catchupProgress, this, &Document::catchupProgress);
+#endif
 
 	emit canvasChanged(m_canvas);
 
@@ -163,7 +165,9 @@ bool Document::loadCanvas(canvas::SessionLoader &loader)
 
 	setAutosave(false);
 	initCanvas();
+#if 0 // FIXME
 	m_canvas->layerStack()->setDpi(loader.dotsPerInch());
+#endif
 	m_client->sendResetMessages(init);
 	setCurrentFilename(loader.filename());
 	unmarkDirty();
@@ -604,6 +608,7 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 	// set the session owner as well
 	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
 
+#if 0 // FIXME
 	auto loader =  canvas::SnapshotLoader(
 		initialUserId,
 		m_canvas->layerStack(),
@@ -615,6 +620,7 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 	for(const protocol::MessagePtr &ptr : snapshot) {
 		writer.writeMessage(*ptr);
 	}
+#endif
 
 	writer.close();
 	return true;
@@ -711,6 +717,7 @@ void Document::snapshotNeeded()
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
 			qInfo("Generating snapshot for session reset...");
+#if 0 // FIXME
 			if(m_canvas->layerStack()->size().isEmpty()) {
 				qWarning("Canvas has no size! Cannot generate reset snapshot!");
 				m_client->sendMessage(net::command::serverCommand("init-cancel"));
@@ -724,6 +731,7 @@ void Document::snapshotNeeded()
 			 loader.setPinnedMessage(m_canvas->pinnedMessage());
 
 			 m_resetstate = loader.loadInitCommands();
+#endif
 		}
 
 		// Size limit check. The server will kick us if we send an oversized reset.
@@ -778,7 +786,9 @@ void Document::selectAll()
 		return;
 
 	canvas::Selection *selection = new canvas::Selection;
+#if 0 // FIXME
 	selection->setShapeRect(QRect(QPoint(), m_canvas->layerStack()->size()));
+#endif
 	selection->closeShape();
 	m_canvas->setSelection(selection);
 }
@@ -818,8 +828,10 @@ void Document::copyFromLayer(int layer)
 		};
 
 	} else {
+#if 0 // FIXME
 		QSize s = m_canvas->layerStack()->size();
 		srcpos = QPoint(s.width()/2, s.height()/2);
+#endif
 	}
 
 	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());
@@ -894,6 +906,7 @@ void Document::removeEmptyAnnotations()
 		return;
 	}
 
+#if 0 // FIXME
 	QList<uint16_t> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
 	if(!ids.isEmpty()) {
 		protocol::MessageList msgs;
@@ -902,6 +915,7 @@ void Document::removeEmptyAnnotations()
 			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));
 		m_client->sendMessages(msgs);
 	}
+#endif
 }
 
 void Document::addServerLogEntry(const QString &log)

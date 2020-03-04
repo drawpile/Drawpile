@@ -70,6 +70,7 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 
 void ShapeTool::cancelMultipart()
 {
+#if 0 // FIXME
 	auto layers = owner.model()->layerStack()->editor(owner.client()->myId());
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 
@@ -78,10 +79,12 @@ void ShapeTool::cancelMultipart()
 	}
 
 	m_drawing = false;
+#endif
 }
 
 void ShapeTool::end()
 {
+#if 0 // FIXME
 	if(!m_drawing)
 		return;
 
@@ -109,10 +112,12 @@ void ShapeTool::end()
 	msgs << brushengine.takeDabs();
 	msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 	owner.client()->sendMessages(msgs);
+#endif
 }
 
 void ShapeTool::updatePreview()
 {
+#if 0 // FIXME
 	auto layers = owner.model()->layerStack()->editor(0);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 	if(layer.isNull()) {
@@ -135,6 +140,7 @@ void ShapeTool::updatePreview()
 	const auto dabs = brushengine.takeDabs();
 	for(int i=0;i<dabs.size();++i)
 		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
+#endif
 }
 
 Line::Line(ToolController &owner)

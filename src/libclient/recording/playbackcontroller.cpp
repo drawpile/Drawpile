@@ -69,7 +69,9 @@ PlaybackController::PlaybackController(canvas::CanvasModel *canvas, Reader *read
 	m_autoplayTimer->start(0);
 
 	connect(this, &PlaybackController::endOfFileReached, [this]() { setPlaying(false); });
+#if 0 // FIXME
 	connect(canvas->stateTracker(), &canvas::StateTracker::sequencePoint, this, &PlaybackController::onSequencePoint);
+#endif
 }
 
 PlaybackController::~PlaybackController()
@@ -312,7 +314,9 @@ void PlaybackController::jumpToSnapshot(const IndexEntry &entry)
 	}
 
 	m_reader->seekTo(entry.index, entry.messageOffset);
+#if 0 // FIXME
 	m_canvas->stateTracker()->resetToSavepoint(savepoint);
+#endif
 	updateIndexPosition();
 }
 

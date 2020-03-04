@@ -112,6 +112,7 @@ void BezierTool::end()
 
 void BezierTool::finishMultipart()
 {
+#if 0 // FIXME
 	if(m_points.size() > 2) {
 		m_points.pop_back();
 
@@ -132,17 +133,19 @@ void BezierTool::finishMultipart()
 		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
 		owner.client()->sendMessages(msgs);
 	}
-
+#endif
 	cancelMultipart();
 }
 
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
+#if 0 // FIXME
 	auto layers = owner.model()->layerStack()->editor(0);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 	if(!layer.isNull())
 		layer.removeSublayer(-1);
+#endif
 }
 
 void BezierTool::undoMultipart()
@@ -183,6 +186,7 @@ PointVector BezierTool::calculateBezierCurve() const
 
 void BezierTool::updatePreview()
 {
+#if 0 // FIXME
 	auto layers = owner.model()->layerStack()->editor(0);
 	auto layer = layers.getEditableLayer(owner.activeLayer());
 	if(layer.isNull()) {
@@ -206,6 +210,7 @@ void BezierTool::updatePreview()
 	const auto dabs = brushengine.takeDabs();
 	for(int i=0;i<dabs.size();++i)
 		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
+#endif
 }
 
 }

@@ -268,13 +268,16 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
     } else {
         // Not enough room! Image must be padded.
         let mut new_image = Image::new(padded_area.w as usize, padded_area.h as usize);
-        input.image.rect_iter(&content_bounds)
+        input
+            .image
+            .rect_iter(&content_bounds)
             .zip(new_image.rect_iter_mut(&Rectangle::new(
                 dia,
                 dia,
                 content_bounds.w,
                 content_bounds.h,
-            ))).for_each(|(src,dest)| dest.copy_from_slice(src));
+            )))
+            .for_each(|(src, dest)| dest.copy_from_slice(src));
         (
             new_image,
             input.x + padded_area.x,
@@ -310,8 +313,11 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
         for x in expansion_area.x..expansion_area.right() {
             'outer: for ky in 0..dia {
                 for kx in 0..dia {
-                    if kernel[(ky * dia + kx) as usize] && image.pixels[(y + ky - expansion) as usize * image.width
-                        + (x + kx - expansion) as usize][ALPHA_CHANNEL] > 0 {
+                    if kernel[(ky * dia + kx) as usize]
+                        && image.pixels[(y + ky - expansion) as usize * image.width
+                            + (x + kx - expansion) as usize][ALPHA_CHANNEL]
+                            > 0
+                    {
                         new_image.pixels[y as usize * image.width + x as usize] = fill_pixel;
                         break 'outer;
                     }
@@ -327,16 +333,18 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
     if xoffset < 0 || yoffset < 0 {
         let xshift = 0.max(-xoffset);
         let yshift = 0.max(-yoffset);
-        let crop_rect = Rectangle::new(xshift, yshift, new_image.width as i32 - xshift, new_image.height as i32 - yshift);
+        let crop_rect = Rectangle::new(
+            xshift,
+            yshift,
+            new_image.width as i32 - xshift,
+            new_image.height as i32 - yshift,
+        );
 
         let mut crop_image = Image::new(crop_rect.w as usize, crop_rect.h as usize);
-        new_image.rect_iter(&crop_rect)
-            .zip(crop_image.rect_iter_mut(&Rectangle::new(
-                0,
-                0,
-                crop_rect.w,
-                crop_rect.h,
-            ))).for_each(|(src,dest)| dest.copy_from_slice(src));
+        new_image
+            .rect_iter(&crop_rect)
+            .zip(crop_image.rect_iter_mut(&Rectangle::new(0, 0, crop_rect.w, crop_rect.h)))
+            .for_each(|(src, dest)| dest.copy_from_slice(src));
 
         FloodFillResult {
             image: crop_image,

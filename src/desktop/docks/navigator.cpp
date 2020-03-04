@@ -21,10 +21,10 @@ using docks::NavigatorView;
 #include "docks/utils.h"
 #include "scene/canvasscene.h"
 
-#include "core/layerstackpixmapcacheobserver.h"
 #include "core/layerstack.h"
 
 #include "canvas/usercursormodel.h"
+#include "canvas/paintenginepixmap.h"
 
 #include <QMouseEvent>
 #include <QTimer>
@@ -66,7 +66,7 @@ static QPixmap makeCursorBackground(const int avatarSize)
 }
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QWidget(parent), m_observer(nullptr), m_cursors(nullptr), m_zoomWheelDelta(0),
+	: QWidget(parent), m_pep(nullptr), m_cursors(nullptr), m_zoomWheelDelta(0),
 	  m_showCursors(true)
 {
 	m_refreshTimer = new QTimer(this);
@@ -78,11 +78,11 @@ NavigatorView::NavigatorView(QWidget *parent)
 	m_cursorBackground = makeCursorBackground(16);
 }
 
-void NavigatorView::setLayerStackObserver(paintcore::LayerStackPixmapCacheObserver *observer)
+void NavigatorView::setPaintEnginePixmap(canvas::PaintEnginePixmap *pep)
 {
-	m_observer = observer;
-	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &NavigatorView::onChange);
-	connect(m_observer, &paintcore::LayerStackPixmapCacheObserver::resized, this, &NavigatorView::onResize);
+	m_pep = pep;
+	connect(m_pep, &canvas::PaintEnginePixmap::areaChanged, this, &NavigatorView::onChange);
+	connect(m_pep, &canvas::PaintEnginePixmap::resized, this, &NavigatorView::onResize);
 	refreshCache();
 }
 
@@ -117,9 +117,10 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
 	const QPoint p = event->pos();
 
 	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
+	const QSize canvasSize = m_pep->size();
 
-	const qreal xscale = s.width() / qreal(m_observer->layerStack()->width());
-	const qreal yscale = s.height() / qreal(m_observer->layerStack()->height());
+	const qreal xscale = s.width() / qreal(canvasSize.width());
+	const qreal yscale = s.height() / qreal(canvasSize.height());
 
 	const QPoint offset { width()/2 - s.width()/2, height()/2 - s.height()/2 };
 
@@ -174,14 +175,14 @@ void NavigatorView::onResize()
 
 void NavigatorView::refreshCache()
 {
-	const QPixmap &canvas = m_observer->getPixmap();
+	const QPixmap &canvas = m_pep->getPixmap();
 	if(canvas.isNull())
 		return;
 
 	const QSize size = this->size();
 	if(size != m_cachedSize) {
 		m_cachedSize = size;
-		const QSize pixmapSize = m_observer->layerStack()->size().scaled(size, Qt::KeepAspectRatio);
+		const QSize pixmapSize = m_pep->size().scaled(size, Qt::KeepAspectRatio);
 		m_cache = QPixmap(pixmapSize);
 	}
 
@@ -217,8 +218,9 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	painter.setPen(pen);
 	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 
-	const qreal xscale = s.width() / qreal(m_observer->layerStack()->width());
-	const qreal yscale = s.height() / qreal(m_observer->layerStack()->height());
+	const auto canvasSize = m_pep->size();
+	const qreal xscale = s.width() / qreal(canvasSize.width());
+	const qreal yscale = s.height() / qreal(canvasSize.height());
 	painter.translate(canvasRect.topLeft());
 	painter.scale(xscale, yscale);
 	painter.drawPolygon(m_focusRect);
@@ -319,7 +321,7 @@ Navigator::~Navigator()
 
 void Navigator::setScene(drawingboard::CanvasScene *scene)
 {
-	m_ui->view->setLayerStackObserver(scene->layerStackObserver());
+	m_ui->view->setPaintEnginePixmap(scene->paintEnginePixmap());
 }
 
 void Navigator::setUserCursors(canvas::UserCursorModel *cursors)

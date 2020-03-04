@@ -127,8 +127,10 @@ void ToolController::setActiveLayer(uint16_t id)
 	if(m_activeLayer != id) {
 		m_activeLayer = id;
 		if(m_model) {
+#if 0 // FIXME
 			auto layers = m_model->layerStack()->editor(0);
 			layers.setViewLayer(id);
+#endif
 		}
 
 		emit activeLayerChanged(id);
@@ -146,8 +148,10 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	if(m_model != model) {
 		m_model = model;
 
+#if 0 // FIXME
 		connect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
 		connect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
+#endif
 		connect(m_model->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
 	}
 	emit modelChanged(model);
@@ -155,11 +159,13 @@ void ToolController::setModel(canvas::CanvasModel *model)
 
 void ToolController::onAnnotationRowDelete(const QModelIndex&, int first, int last)
 {
+#if 0 // FIXME
 	for(int i=first;i<=last;++i) {
 		const QModelIndex &a = m_model->layerStack()->annotations()->index(i);
 		if(a.data(paintcore::AnnotationModel::IdRole).toInt() == activeAnnotation())
 			setActiveAnnotation(0);
 	}
+#endif
 }
 
 void ToolController::onFeatureAccessChange(canvas::Feature feature, bool canUse)
@@ -192,8 +198,10 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 	m_smoother.reset();
 	m_activeTool->begin(paintcore::Point(point, pressure), right, zoom);
 
+#if 0 // FIXME
 	if(!m_activeTool->isMultipart())
 		m_model->stateTracker()->setLocalDrawingInProgress(true);
+#endif
 
 	if(!m_activebrush.isEraser())
 		emit colorUsed(m_activebrush.color());
@@ -253,7 +261,9 @@ void ToolController::endDrawing()
 	}
 
 	m_activeTool->end();
+#if 0 // FIXME
 	m_model->stateTracker()->setLocalDrawingInProgress(false);
+#endif
 }
 
 bool ToolController::undoMultipartDrawing()

@@ -89,11 +89,13 @@ void SelectionTool::end()
 		return;
 
 	// The shape must be closed after the end of the selection operation
+#if 0 // FIXME
 	if(!owner.model()->selection()->closeShape(QRectF(QPointF(), owner.model()->layerStack()->size()))) {
 		// Clear selection if it was entirely outside the canvas
 		owner.model()->setSelection(nullptr);
 		return;
 	}
+#endif
 
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
@@ -154,6 +156,7 @@ bool SelectionTool::isMultipart() const
 
 void SelectionTool::startMove()
 {
+#if 0 // FIXME
 	canvas::Selection *sel = owner.model()->selection();
 	auto layers = owner.model()->layerStack()->editor(owner.client()->myId());
 
@@ -173,6 +176,7 @@ void SelectionTool::startMove()
 		auto tmplayer = layer.getEditableSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
 		tmplayer.putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
 	}
+#endif
 }
 
 RectangleSelection::RectangleSelection(ToolController &owner)

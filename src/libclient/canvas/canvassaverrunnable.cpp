@@ -26,7 +26,7 @@ namespace canvas {
 
 CanvasSaverRunnable::CanvasSaverRunnable(const CanvasModel *canvas, const QString &filename, QObject *parent)
 	: QObject(parent),
-	  m_layerstack(canvas->layerStack()->clone(this)),
+	  m_layerstack(nullptr), // FIXME: canvas->layerStack()->clone(this)),
 	  m_filename(filename)
 {
 }

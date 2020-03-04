@@ -546,7 +546,8 @@ bool LayerList::isCurrentLayerLocked() const
 		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
 		return item.hidden
 			|| m_canvas->aclFilter()->isLayerLocked(item.id)
-			|| (m_canvas->layerStack()->isCensored() && item.censored);
+			;
+			// FIXME: || (m_canvas->layerStack()->isCensored() && item.censored);
 	}
 	return false;
 }

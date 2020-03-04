@@ -42,12 +42,12 @@ mod image;
 mod layer;
 mod rect;
 
+pub use self::image::Image;
 pub use aoe::AoE;
 pub use blendmode::Blendmode;
 pub use brushmask::{BrushMask, ClassicBrushCache};
 pub use color::{Color, Pixel};
 pub use flattenediter::FlattenedTileIterator;
-pub use self::image::Image;
 pub use layer::Layer;
 pub use layerstack::LayerStack;
 pub use rect::Rectangle;

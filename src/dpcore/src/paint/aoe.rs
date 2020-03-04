@@ -84,6 +84,13 @@ impl AoE {
             (Bounds(r1), Bounds(r2)) => r1.union(&r2).into(),
         }
     }
+
+    pub fn is_nothing(&self) -> bool {
+        match self {
+            AoE::Nothing => true,
+            _ => false,
+        }
+    }
 }
 
 impl From<TileMap> for AoE {

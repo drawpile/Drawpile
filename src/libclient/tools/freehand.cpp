@@ -57,8 +57,10 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 		return;
 
 	const paintcore::Layer *srcLayer = nullptr;
+#if 0 // FIXME
 	if(owner.activeBrush().smudge1()>0 || owner.activeBrush().isColorPickMode())
 		srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
+#endif
 
 	if(m_firstPoint) {
 		m_firstPoint = false;

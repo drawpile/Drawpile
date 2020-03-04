@@ -22,7 +22,6 @@
 #include <QGraphicsScene>
 
 namespace paintcore {
-	class LayerStackPixmapCacheObserver;
 	class LayerStack;
 	class Brush;
 }
@@ -36,6 +35,7 @@ class QGraphicsItem;
 namespace canvas {
 	class CanvasModel;
 	class Selection;
+	class PaintEnginePixmap;
 }
 
 //! Drawing board related classes
@@ -78,7 +78,7 @@ public:
 
 	canvas::CanvasModel *model() const { return m_model; }
 
-	paintcore::LayerStackPixmapCacheObserver *layerStackObserver() { return m_layerstackObserver; }
+	canvas::PaintEnginePixmap *paintEnginePixmap() { return m_paintEnginePixmap; }
 
 public slots:
 	//! Show annotation borders
@@ -133,7 +133,7 @@ private:
 	AnnotationItem *getAnnotationItem(int id);
 
 	//! The board contents
-	paintcore::LayerStackPixmapCacheObserver *m_layerstackObserver;
+	canvas::PaintEnginePixmap *m_paintEnginePixmap;
 	CanvasItem *m_canvasItem;
 
 	canvas::CanvasModel *m_model;

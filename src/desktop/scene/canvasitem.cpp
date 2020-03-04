@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,8 +19,7 @@
 
 #include "canvasitem.h"
 
-#include "core/layerstackpixmapcacheobserver.h"
-#include "core/layerstack.h"
+#include "canvas/paintenginepixmap.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -31,11 +30,11 @@ namespace drawingboard {
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-CanvasItem::CanvasItem(paintcore::LayerStackPixmapCacheObserver *layerstack, QGraphicsItem *parent)
-	: QGraphicsObject(parent), m_image(layerstack)
+CanvasItem::CanvasItem(canvas::PaintEnginePixmap *image, QGraphicsItem *parent)
+	: QGraphicsObject(parent), m_image(image)
 {
-	connect(m_image, &paintcore::LayerStackPixmapCacheObserver::areaChanged, this, &CanvasItem::refreshImage);
-	connect(m_image, &paintcore::LayerStackPixmapCacheObserver::resized, this, &CanvasItem::canvasResize);
+	connect(m_image, &canvas::PaintEnginePixmap::areaChanged, this, &CanvasItem::refreshImage);
+	connect(m_image, &canvas::PaintEnginePixmap::resized, this, &CanvasItem::canvasResize);
 	setFlag(ItemUsesExtendedStyleOption);
 }
 
@@ -51,9 +50,7 @@ void CanvasItem::canvasResize()
 
 QRectF CanvasItem::boundingRect() const
 {
-	if(m_image->layerStack())
-		return QRectF(0,0, m_image->layerStack()->width(), m_image->layerStack()->height());
-	return QRectF();
+	return QRectF(QPointF(), QSizeF(m_image->size()));
 }
 
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,

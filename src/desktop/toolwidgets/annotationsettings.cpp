@@ -277,6 +277,7 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 
 void AnnotationSettings::setSelectionId(uint16_t id)
 {
+#if 0 // FIXME
 	m_noupdate = true;
 	setUiEnabled(id>0);
 
@@ -311,6 +312,7 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 			_ui->protect->setEnabled(false);
 	}
 	m_noupdate = false;
+#endif
 }
 
 void AnnotationSettings::setFocusAt(int cursorPos)
@@ -368,6 +370,7 @@ void AnnotationSettings::removeAnnotation()
 void AnnotationSettings::bake()
 {
 	Q_ASSERT(selected());
+#if 0
 
 	const paintcore::Annotation *a = controller()->model()->layerStack()->annotations()->getById(selected());
 	if(!a) {
@@ -384,6 +387,7 @@ void AnnotationSettings::bake()
 	msgs << net::command::putQImage(contextId, layer, a->rect.x(), a->rect.y(), img, paintcore::BlendMode::MODE_NORMAL);
 	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));
 	controller()->client()->sendMessages(msgs);
+#endif
 }
 
 }

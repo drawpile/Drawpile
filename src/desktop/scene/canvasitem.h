@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2014 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 
 #include <QGraphicsObject>
 
-namespace paintcore {
-	class LayerStackPixmapCacheObserver;
+namespace canvas {
+	class PaintEnginePixmap;
 }
 
 namespace drawingboard {
@@ -35,7 +35,7 @@ class CanvasItem : public QGraphicsObject
 Q_OBJECT
 public:
 	//! Construct an empty board
-	CanvasItem(paintcore::LayerStackPixmapCacheObserver *observer, QGraphicsItem *parent=nullptr);
+	CanvasItem(canvas::PaintEnginePixmap *image, QGraphicsItem *parent=nullptr);
 
 	QRectF boundingRect() const override;
 
@@ -47,7 +47,7 @@ protected:
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
 
 private:
-	paintcore::LayerStackPixmapCacheObserver *m_image;
+	canvas::PaintEnginePixmap *m_image;
 };
 
 }

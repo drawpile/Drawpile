@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,10 @@
 #include <QObject>
 #include <QPointer>
 
+namespace rustpile {
+	struct PaintEngine;
+}
+
 namespace protocol {
 	class UserJoin;
 	class UserLeave;
@@ -51,10 +55,10 @@ class LayerListModel;
 
 class CanvasModel : public QObject
 {
-	Q_PROPERTY(paintcore::LayerStack* layerStack READ layerStack CONSTANT)
+	//Q_PROPERTY(paintcore::LayerStack* layerStack READ layerStack CONSTANT)
 	Q_PROPERTY(UserCursorModel* userCursors READ userCursors CONSTANT)
 	Q_PROPERTY(LaserTrailModel* laserTrails READ laserTrails CONSTANT)
-	Q_PROPERTY(StateTracker* stateTracker READ stateTracker CONSTANT)
+	//Q_PROPERTY(StateTracker* stateTracker READ stateTracker CONSTANT)
 	Q_PROPERTY(Selection* selection READ selection WRITE setSelection NOTIFY selectionChanged)
 
 	Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
@@ -64,9 +68,11 @@ class CanvasModel : public QObject
 
 public:
 	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
+	~CanvasModel();
 
-	paintcore::LayerStack *layerStack() const { return m_layerstack; }
-	StateTracker *stateTracker() const { return m_statetracker; }
+	rustpile::PaintEngine *paintEngine() const { return m_paintengine; }
+	//paintcore::LayerStack *layerStack() const { return m_layerstack; }
+	//StateTracker *stateTracker() const { return m_statetracker; }
 	UserCursorModel *userCursors() const { return m_usercursors; }
 	LaserTrailModel *laserTrails() const { return m_lasers; }
 
@@ -110,6 +116,9 @@ public:
 	 * @brief Set the Writer to use for recording
 	 */
 	void setRecorder(recording::Writer *writer) { m_recorder = writer; }
+
+	//! Size of the canvas
+	QSize size() const;
 
 public slots:
 	//! Handle a meta/command message received from the server
@@ -168,8 +177,9 @@ private:
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;
 
-	paintcore::LayerStack *m_layerstack;
-	StateTracker *m_statetracker;
+	//paintcore::LayerStack *m_layerstack;
+	//StateTracker *m_statetracker;
+	rustpile::PaintEngine *m_paintengine;
 	UserCursorModel *m_usercursors;
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;

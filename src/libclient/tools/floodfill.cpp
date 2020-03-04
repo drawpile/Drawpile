@@ -43,6 +43,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
+#if 0 // FIXME
 	QColor color = owner.activeBrush().color();
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -95,6 +96,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	}
 
 	QGuiApplication::restoreOverrideCursor();
+#endif
 }
 
 void FloodFill::motion(const paintcore::Point &point, bool constrain, bool center)
