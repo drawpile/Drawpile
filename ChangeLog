@@ -1,3 +1,6 @@
+2020-0?-?? Version 2.1.18
+ * All actions can now be assigned an alternate shortcut
+
 2020-02-16 Version 2.1.17
  * HTTP redirects (e.g. when searching for a list server) are now followed
  * When launched with an URL, the URL gets set to the address box correctly again

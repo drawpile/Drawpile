@@ -140,6 +140,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
 	keyseqdel->setItemEditorFactory(itemeditorfactory);
 	m_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
+	m_ui->shortcuts->setItemDelegateForColumn(2, keyseqdel);
 
 	// Deselect item before saving. This causes the editor widget to close
 	// and commit the change.

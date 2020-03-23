@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ struct CustomShortcut {
 	QString name;
 	QString title;
 	QKeySequence defaultShortcut;
+	QKeySequence alternateShortcut;
 	QKeySequence currentShortcut;
 
 	bool operator<(const CustomShortcut &other) const { return title.compare(other.title) < 0; }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2020 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,8 +45,9 @@ int CustomShortcutModel::columnCount(const QModelIndex &parent) const
 	// Columns:
 	// 0 - Action title
 	// 1 - Current shortcut
-	// 2 - Default shortcut
-	return 3;
+	// 2 - Alternate shortcut
+	// 3 - Default shortcut
+	return 4;
 }
 
 QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
@@ -57,7 +58,8 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 		switch(index.column()) {
 		case 0: return cs.title;
 		case 1: return cs.currentShortcut;
-		case 2: return cs.defaultShortcut;
+		case 2: return cs.alternateShortcut;
+		case 3: return cs.defaultShortcut;
 		}
 	}
 
@@ -66,9 +68,12 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 
 bool CustomShortcutModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if(role == Qt::EditRole && index.column()==1) {
+	if(role == Qt::EditRole && (index.column()==1 || index.column()==2)) {
 		CustomShortcut &cs = m_shortcuts[index.row()];
-		cs.currentShortcut = value.value<QKeySequence>();
+		if(index.column()==1)
+			cs.currentShortcut = value.value<QKeySequence>();
+		else
+			cs.alternateShortcut = value.value<QKeySequence>();
 		return true;
 	}
 
@@ -77,7 +82,7 @@ bool CustomShortcutModel::setData(const QModelIndex &index, const QVariant &valu
 
 Qt::ItemFlags CustomShortcutModel::flags(const QModelIndex &index) const
 {
-	if(index.column()==1)
+	if(index.column()==1 || index.column()==2)
 		return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 	else
 		return Qt::NoItemFlags;
@@ -91,7 +96,8 @@ QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientatio
 	switch(section) {
 	case 0: return tr("Action");
 	case 1: return tr("Shortcut");
-	case 2: return tr("Default");
+	case 2: return tr("Alternate");
+	case 3: return tr("Default");
 	}
 	return QVariant();
 }
@@ -106,10 +112,21 @@ void CustomShortcutModel::loadShortcuts()
 
 	for(CustomShortcut a : m_customizableActions) {
 		Q_ASSERT(!a.name.isEmpty());
-		if(cfg.contains(a.name))
-			a.currentShortcut = cfg.value(a.name).value<QKeySequence>();
-		else
+		if(cfg.contains(a.name)) {
+			const QVariant v = cfg.value(a.name);
+			if(v.canConvert<QKeySequence>())
+				a.currentShortcut = v.value<QKeySequence>();
+			else if(v.canConvert<QVariantList>()) {
+				auto vv = v.toList();
+				if(vv.size() >= 1)
+					a.currentShortcut = vv[0].value<QKeySequence>();
+				if(vv.size() >= 2)
+					a.alternateShortcut = vv[1].value<QKeySequence>();
+			}
+
+		} else {
 			a.currentShortcut = a.defaultShortcut;
+		}
 
 		actions.append(a);
 	}
@@ -129,8 +146,13 @@ void CustomShortcutModel::saveShortcuts()
 	cfg.remove(QString());
 
 	for(const CustomShortcut &cs : m_shortcuts) {
-		if(cs.currentShortcut != cs.defaultShortcut)
-			cfg.setValue(cs.name, cs.currentShortcut);
+		if(cs.currentShortcut != cs.defaultShortcut || !cs.alternateShortcut.isEmpty()) {
+			if(cs.alternateShortcut.isEmpty()) {
+				cfg.setValue(cs.name, cs.currentShortcut);
+			} else {
+				cfg.setValue(cs.name, QVariantList() << cs.currentShortcut << cs.alternateShortcut);
+			}
+		}
 	}
 }
 
@@ -143,6 +165,7 @@ void CustomShortcutModel::registerCustomizableAction(const QString &name, const 
 		name,
 		title,
 		defaultShortcut,
+		QKeySequence(),
 		QKeySequence()
 	};
 }

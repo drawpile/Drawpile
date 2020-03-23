@@ -673,10 +673,24 @@ void MainWindow::loadShortcuts()
 	for(QAction *a : actions) {
 		const QString &name = a->objectName();
 		if(!name.isEmpty()) {
-			if(cfg.contains(name))
-				a->setShortcut(cfg.value(name).value<QKeySequence>());
-			else
+			if(cfg.contains(name)) {
+				const auto v = cfg.value(name);
+				QList<QKeySequence> shortcuts;
+
+				if(v.canConvert<QKeySequence>()) {
+					shortcuts << v.value<QKeySequence>();
+				} else {
+					const auto list = v.toList();
+					for(const auto &vv : list) {
+						if(vv.canConvert<QKeySequence>())
+							shortcuts << vv.value<QKeySequence>();
+					}
+				}
+				a->setShortcuts(shortcuts);
+
+			} else {
 				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
+			}
 
 			if(a->shortcut() == standardCopyShortcut) {
 				m_textCopyConnection = connect(a, &QAction::triggered, this, &MainWindow::copyText);
