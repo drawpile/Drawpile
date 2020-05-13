@@ -124,9 +124,9 @@ void CanvasView::scrollBy(int x, int y)
 void CanvasView::zoomSteps(int steps)
 {
 	if(m_zoom<100 || (m_zoom==100 && steps<0))
-		setZoom(qRound((m_zoom + steps * 10) / 10) * 10);
+		setZoom(qRound(qMin(qreal(100), m_zoom + steps * 10) / 10) * 10);
 	else
-		setZoom(qRound((m_zoom + steps * 50) / 50) * 50);
+		setZoom(qRound(qMax(qreal(100), m_zoom + steps * 50) / 50) * 50);
 	viewRectChanged();
 }
 
