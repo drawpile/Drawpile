@@ -710,8 +710,9 @@ void StateTracker::handleMoveRegion(const protocol::MoveRegion &cmd)
 	});
 
 	// Sanity check: without a size limit, a user could create huge temporary images and potentially other clients
-	const int targetArea = target.boundingRect().size().width() * target.boundingRect().size().height();
-	if(targetArea > m_layerstack->width() * m_layerstack->height()) {
+	const auto targetSize = target.boundingRect().size();
+	const int targetArea = targetSize.width() * targetSize.height();
+	if(targetArea > (m_layerstack->width()+1) * (m_layerstack->height()+1)) {
 		qWarning("moveRegion: cannot scale beyond image size");
 		return;
 	}
