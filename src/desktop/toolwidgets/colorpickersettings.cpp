@@ -109,9 +109,10 @@ int ColorPickerSettings::getSize() const
 void ColorPickerSettings::quickAdjust1(qreal adjustment)
 {
 	m_quickAdjust1 += adjustment;
-	if(qAbs(m_quickAdjust1) > 1.0) {
-		qreal i;
-		m_quickAdjust1 = modf(m_quickAdjust1, &i);
+	qreal i;
+	qreal f = modf(m_quickAdjust1, &i);
+	if(int(i)) {
+		m_quickAdjust1 = f;
 		m_size->setValue(m_size->value() + int(i));
 	}
 }
