@@ -306,6 +306,15 @@ void Selection::addPointToShape(const QPointF &point)
 	}
 }
 
+void Selection::closeShape()
+{
+	if(!m_closedPolygon) {
+		m_closedPolygon = true;
+		saveShape();
+		emit closed();
+	}
+}
+
 bool Selection::closeShape(const QRectF &clipRect)
 {
 	if(!m_closedPolygon) {
@@ -377,6 +386,7 @@ void Selection::setPasteImage(const QImage &image)
 		setShapeRect(QRect(c.x() - image.width()/2, c.y()-image.height()/2, image.width(), image.height()));
 	}
 
+	closeShape();
 	m_pasteImage = image;
 	emit pasteImageChanged(image);
 }
