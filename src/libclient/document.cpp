@@ -779,6 +779,7 @@ void Document::selectAll()
 
 	canvas::Selection *selection = new canvas::Selection;
 	selection->setShapeRect(QRect(QPoint(), m_canvas->layerStack()->size()));
+	selection->closeShape();
 	m_canvas->setSelection(selection);
 }
 
