@@ -1,5 +1,6 @@
 2020-0?-?? Version 2.1.18
  * All actions can now be assigned an alternate shortcut
+ * Added French translation
 
 2020-02-16 Version 2.1.17
  * HTTP redirects (e.g. when searching for a list server) are now followed
