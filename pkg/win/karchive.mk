@@ -1,11 +1,11 @@
 PKG             := karchive
 $(PKG)_WEBSITE  := https://community.kde.org/Frameworks
 $(PKG)_DESCR    := KDE Frameworks 5 KArchive
-$(PKG)_VERSION  := 5.55.0
-$(PKG)_CHECKSUM := 8475efa46cdc054d9fb6336e42c6075fb037921a9147d4e5aa564a5e58b79fd2
+$(PKG)_VERSION  := 5.70.0
+$(PKG)_CHECKSUM := f5f361a2ce857d7e7af49276ab70506c6a2ece45a183971ed9abdd5386d50a7d
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $($(PKG)_SUBDIR).tar.xz
-$(PKG)_URL      := http://download.kde.org/stable/frameworks/5.55/$($(PKG)_FILE)
+$(PKG)_URL      := http://download.kde.org/stable/frameworks/5.70/$($(PKG)_FILE)
 $(PKG)_DEPS     := gcc qtbase
 
 define $(PKG)_BUILD
