@@ -491,6 +491,8 @@ void CanvasView::onPenUp()
 		emit penUp();
 
 	m_penmode = PenMode::Normal;
+	resetCursor();
+	updateOutline();
 }
 
 void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
