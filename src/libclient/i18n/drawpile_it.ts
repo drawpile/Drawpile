@@ -34,7 +34,7 @@
     <message>
         <location filename="../../desktop/ui/avatarimport.ui" line="14"/>
         <source>Crop Avatar</source>
-        <translation>Ritaglia l&apos;Avatar</translation>
+        <translation>Ritaglia l'&apos;Avatar</translation>
     </message>
 </context>
 <context>
@@ -83,7 +83,7 @@
         <location filename="../../desktop/ui/brushdock.ui" line="477"/>
         <location filename="../../desktop/ui/brushdock.ui" line="498"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation type=>Sensibilità alla pressione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="593"/>
@@ -587,7 +587,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Non hai ancor&apos;a aggiunto alcun server. Puoi trovarne alcuni su &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Puoi provare ad aggiungerne uno ora inserendo pub.drawpile.net nella casella dell'indirizzo e facendo clic &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source></translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="88"/>
@@ -597,7 +597,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="95"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation type=>Chiuso</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="102"/>
@@ -752,8 +752,7 @@
     <message numerus="yes">
         <location filename="../../desktop/widgets/macmenu.cpp" line="208"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</numerusform>
+        <translation type=>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</translation>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -986,7 +985,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1642"/>
         <source>Disconnected:</source>
-        <translation type="unfinished"></translation>
+        <translation type=>Disconnesso:</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1671"/>
@@ -1136,7 +1135,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2321"/>
         <source>Copy selected area to the clipboard</source>
-        <translation>Copia l&apos;area selezionata negli appunti</translation>
+        <translation>Copia l'&apos;area selezionata negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2322"/>
@@ -1146,7 +1145,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2322"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation>Copia l&apos;area selezionata, escluso lo sfondo, negli appunti</translation>
+        <translation>Copia l'&apos;area selezionata, escluso lo sfondo, negli appunti</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2323"/>
@@ -2724,12 +2723,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="938"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta in alto</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="949"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation type>Sposta in basso</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="570"/>
@@ -2759,12 +2758,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="642"/>
         <source>Account passwords:</source>
-        <translation type="unfinished"></translation>
+        <translation>Password dell'account:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="649"/>
         <source>Permit insecure storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Consentire conservazione non sicura</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="660"/>
@@ -2774,62 +2773,62 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="681"/>
         <source>Drag mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità trascinamento:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="688"/>
         <source>Spacebar / middle mouse button</source>
-        <translation type="unfinished"></translation>
+        <translation>Barra spaziatrice / pulsante centrale del mouse</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="695"/>
         <source>Drag rotate view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Trascina vista ruotata:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="705"/>
         <source>Drag zoom view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Trascina vista zoom:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="715"/>
         <source>Drag tool adjust:</source>
-        <translation type="unfinished"></translation>
+        <translation>trascina strumento di regolazione:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="725"/>
         <source>Scroll zoom view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Scorri vista zoom</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="735"/>
         <source>Scroll tool adjust:</source>
-        <translation type="unfinished"></translation>
+        <translation>Scorri strumento di regolazione:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="745"/>
         <source>Color picker mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità selezione colori:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="755"/>
         <source>Layer picker mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità selezione livelli:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="765"/>
         <source>Tool constrain mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità vincolo strumento:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="775"/>
         <source>Tool center mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità centro strumento:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="837"/>
         <source>Scroll rotate view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Scorri vista ruotata</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="863"/>
@@ -3112,7 +3111,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../brushes/brushpresetmodel.cpp" line="557"/>
         <location filename="../brushes/brushpresetmodel.cpp" line="637"/>
         <source>Default</source>
-        <translation type="unfinished">Predefinito</translation>
+        <translation>Predefinito</translation>
     </message>
 </context>
 <context>
@@ -3268,7 +3267,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="64"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Server</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
@@ -3301,7 +3300,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="445"/>
         <source>Add listing server</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi elenco server</translation>
     </message>
 </context>
 <context>
@@ -3671,42 +3670,42 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="96"/>
         <source>Add Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="97"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sovrascrivi Pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="98"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancella Pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
         <source>Move to</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta in</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
         <source>Overwrite brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sovrascrivi pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
         <source>Delete brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancella pennello</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="202"/>
         <source>New folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova cartella</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="213"/>
         <source>Delete Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancella Cartella</translation>
     </message>
     <message numerus="yes">
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="214"/>
@@ -4006,12 +4005,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="350"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>È necessaria l'appartenenza al gruppo</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="353"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Risposta ext-auth imprevista: %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="375"/>
@@ -4153,17 +4152,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/tcpserver.cpp" line="101"/>
         <source>You were kicked by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sei stato espulso da %1</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="104"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il server si sta spegnendo.</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="107"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore: %1</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="124"/>
@@ -4327,7 +4326,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/scene/canvasview.cpp" line="92"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Riconnetti</translation>
     </message>
 </context>
 <context>
@@ -4573,7 +4572,7 @@ Esadecimale: %5</translation>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="53"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Carica</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/presetselector.cpp" line="56"/>
