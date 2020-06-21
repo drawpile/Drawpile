@@ -43,7 +43,7 @@ Returns a list of server settings:
         "welcomeMessage": "string")  (welcome chat message sent to new users)
         "privateUserList": boolean   (if true, user list is never included in announcements)
         "allowGuests": boolean       (allow unauthenticated logins)
-        "archive": boolean       (archive file backed sessions instead of deleting them)
+        "archive": boolean           (archive file backed sessions instead of deleting them)
         "extauth": boolean           (enable external authentication)
                                      (auth server URL must have been set via command line parameter)
         "extauthkey": "key string"   (ext-auth server public key)
