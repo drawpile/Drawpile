@@ -60,7 +60,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="322"/>
         <source>Direct drawing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>直接描画モード</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="215"/>
@@ -70,12 +70,12 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="235"/>
         <source>Square pixel brush</source>
-        <translation type="unfinished"></translation>
+        <translation>正方形ピクセルブラシ</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="291"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>描き始め地点の色を使用</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="429"/>
@@ -93,7 +93,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="379"/>
         <source>Hardness:</source>
-        <translation>硬さ:</translation>
+        <translation>ハードエッジ:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="422"/>
@@ -113,12 +113,12 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="386"/>
         <source>Smudging:</source>
-        <translation>ぼかし:</translation>
+        <translation>色混ぜ:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="457"/>
         <source>Color pickup:</source>
-        <translation type="unfinished"></translation>
+        <translation>色混ぜ頻度:</translation>
     </message>
 </context>
 <context>
@@ -806,7 +806,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="889"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>未保存の変更内容があります。保存してから終了しますか？</translation>
+        <translation>未保存の変更内容があります。終了する前に保存しますか？</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="892"/>
@@ -1459,7 +1459,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2247"/>
         <source>Export current session as a template recording for use with the dedicated server</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2322"/>
@@ -1494,7 +1494,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2478"/>
         <source>Show Names</source>
-        <translation type="unfinished"></translation>
+        <translation>名前を表示</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2479"/>
@@ -1539,7 +1539,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2596"/>
         <source>Show Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>番号を表示</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2597"/>
@@ -1549,12 +1549,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2599"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation>前面のレイヤーを選択</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2600"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation>背面のレイヤーを選択</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2609"/>
@@ -1689,12 +1689,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2699"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>インスペクター</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2699"/>
         <source>Find out who did it</source>
-        <translation type="unfinished"></translation>
+        <translation>誰が手がけたものか調べる</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2700"/>
@@ -2298,7 +2298,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="97"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation>チャット内容を、後から参加したユーザーが遡れるようセッション履歴に保存</translation>
+        <translation>後から参加したユーザーが閲覧できるよう、チャットの内容をセッション履歴に保存</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="100"/>
@@ -2313,12 +2313,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="110"/>
         <source>Persist without users</source>
-        <translation>ユーザーがいなくても保持する</translation>
+        <translation>ユーザーがいなくても保持</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="117"/>
         <source>This session contains material not suitable for minors</source>
-        <translation>セッションの内容が未成年のユーザーにとって不適切である場合にチェックします</translation>
+        <translation>未成年のユーザーにとって不適切な内容を含む場合はチェックしてください</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="153"/>
