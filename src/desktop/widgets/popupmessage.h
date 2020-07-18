@@ -20,6 +20,7 @@
 #define POPUPMESSAGE_H
 
 #include <QWidget>
+#include <QPainterPath>
 
 class QTextDocument;
 class QTimer;

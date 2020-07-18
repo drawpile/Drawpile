@@ -25,6 +25,7 @@
 #include <QtMath>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QLineF>
 #include <QDragEnterEvent>
 #include <QMimeData>
