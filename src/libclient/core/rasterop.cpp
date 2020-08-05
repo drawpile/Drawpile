@@ -19,7 +19,7 @@
 
 #include "rasterop.h"
 
-#include <QRgb>
+#include <QColor>
 
 namespace paintcore {
 
@@ -290,11 +290,33 @@ void doMaskCopy(quint32 *base, quint32 color, const uchar *mask, int w, int h, i
 	}
 }
 
-// A generic composition function for special blending modes
-// This doesn't touch the alpha channel.
 typedef uint(*BlendOp)(uchar,uchar);
 template<BlendOp BO>
-void doMaskComposite(quint32 *base, quint32 color, const uchar *mask,
+void compositePixel(uchar *d, const uchar *s, uchar a)
+{
+	d[0] = UINT8_BLEND(BO(d[0], s[0]), d[0], a);
+	d[1] = UINT8_BLEND(BO(d[1], s[1]), d[1], a);
+	d[2] = UINT8_BLEND(BO(d[2], s[2]), d[2], a);
+}
+
+template<bool HUE, bool SATURATION, bool LUMINOSITY>
+void compositeHslPixel(uchar *d, const uchar *s, uchar a)
+{
+	const QColor dcolor = QColor::fromRgb(d[2], d[0], d[1]).toHsl();
+	const QColor scolor = QColor::fromRgb(s[2], s[0], s[1]).toHsl();
+	const QColor target = QColor::fromHsl(
+			HUE ? scolor.hue() : dcolor.hue(),
+			SATURATION ? scolor.hslSaturation() : dcolor.hslSaturation(),
+			LUMINOSITY ? scolor.lightness() : dcolor.lightness()).toRgb();
+
+	d[0] = UINT8_BLEND(target.green(), d[0], a);
+	d[1] = UINT8_BLEND(target.blue(), d[1], a);
+	d[2] = UINT8_BLEND(target.red(), d[2], a);
+}
+
+typedef void(*CompositeOp)(uchar *, const uchar *, uchar);
+template<CompositeOp CO>
+void doMaskCompositeOp(quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
 	const uchar *src = reinterpret_cast<const uchar*>(&color);
@@ -307,15 +329,31 @@ void doMaskComposite(quint32 *base, quint32 color, const uchar *mask,
 			} else {
 				quint32 dest = qUnpremultiply(*reinterpret_cast<QRgb*>(base));
 				uchar *d = reinterpret_cast<uchar*>(&dest);
-				d[0] = UINT8_BLEND(BO(d[0], src[0]), d[0], *mask);
-				d[1] = UINT8_BLEND(BO(d[1], src[1]), d[1], *mask);
-				d[2] = UINT8_BLEND(BO(d[2], src[2]), d[2], *mask);
+				CO(d, src, *mask);
 				*(base++) = qPremultiply(dest);
 			}
 		}
 		base += baseskip;
 		mask += maskskip;
 	}
+}
+
+// A generic composition function for special blending modes
+// This doesn't touch the alpha channel.
+template<BlendOp BO>
+void doMaskComposite(quint32 *base, quint32 color, const uchar *mask,
+		int w, int h, int maskskip, int baseskip)
+{
+	doMaskCompositeOp<compositePixel<BO>>(
+			base, color, mask, w, h, maskskip, baseskip);
+}
+
+template<bool HUE, bool SATURATION, bool LUMINOSITY>
+void doMaskHslComposite(quint32 *base, quint32 color, const uchar *mask,
+		int w, int h, int maskskip, int baseskip)
+{
+	doMaskCompositeOp<compositeHslPixel<HUE, SATURATION, LUMINOSITY>>(
+			base, color, mask, w, h, maskskip, baseskip);
 }
 
 std::array<quint32, 5> sampleMask(const quint32 *pixels, const uchar *mask, int w, int h, int maskskip, int pixelskip)
@@ -430,8 +468,8 @@ void tintPixels(quint32 *pixels, int len, quint32 tint)
 	}
 }
 
-template<BlendOp BO>
-void doPixelComposite(quint32 *base, const quint32 *source, uchar alpha, int len)
+template<CompositeOp CO>
+void doPixelCompositeOp(quint32 *base, const quint32 *source, uchar alpha, int len)
 {
 	while(len--) {
 		if(*source & *base) {
@@ -441,18 +479,28 @@ void doPixelComposite(quint32 *base, const quint32 *source, uchar alpha, int len
 
 			auto *d = reinterpret_cast<uchar*>(&dest);
 			auto *s = reinterpret_cast<const uchar*>(&src);
-
 			const uchar a = UINT8_MULT(s[3], alpha);
 
-			d[0] = UINT8_BLEND(BO(d[0], s[0]), d[0], a);
-			d[1] = UINT8_BLEND(BO(d[1], s[1]), d[1], a);
-			d[2] = UINT8_BLEND(BO(d[2], s[2]), d[2], a);
+			CO(d, s, a);
 
 			*base = qPremultiply(dest);
 		}
 		++base;
 		++source;
 	}
+}
+
+template<BlendOp BO>
+void doPixelComposite(quint32 *base, const quint32 *source, uchar alpha, int len)
+{
+	doPixelCompositeOp<compositePixel<BO>>(base, source, alpha, len);
+}
+
+template<bool HUE, bool SATURATION, bool LUMINOSITY>
+void doHslPixelComposite(quint32 *base, const quint32 *source, uchar alpha, int len)
+{
+	doPixelCompositeOp<compositeHslPixel<HUE, SATURATION, LUMINOSITY>>(
+			base, source, alpha, len);
 }
 
 void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uchar *mask,
@@ -472,6 +520,10 @@ void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uch
 	case BlendMode::MODE_RECOLOR: doMaskComposite<blend_blend>(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_BEHIND: doAlphaMaskUnder(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_COLORERASE: doMaskColorErase(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_HSL_HUE: doMaskHslComposite<true, false, false>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_HSL_SATURATION: doMaskHslComposite<false, true, false>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_HSL_COLOR: doMaskHslComposite<true, true, false>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_HSL_LUMINOSITY: doMaskHslComposite<false, false, true>(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_REPLACE: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
 	}
 }
@@ -494,6 +546,10 @@ void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, i
 	case BlendMode::MODE_RECOLOR: doPixelComposite<blend_blend>(base, over, opacity, len); break;
 	case BlendMode::MODE_BEHIND: doPixelAlphaUnder(base, over, opacity, len); break;
 	case BlendMode::MODE_COLORERASE: doPixelColorErase(base, over, opacity, len); break;
+	case BlendMode::MODE_HSL_HUE: doHslPixelComposite<true, false, false>(base, over, opacity, len); break;
+	case BlendMode::MODE_HSL_SATURATION: doHslPixelComposite<false, true, false>(base, over, opacity, len); break;
+	case BlendMode::MODE_HSL_COLOR: doHslPixelComposite<true, true, false>(base, over, opacity, len); break;
+	case BlendMode::MODE_HSL_LUMINOSITY: doHslPixelComposite<false, false, true>(base, over, opacity, len); break;
 	case BlendMode::MODE_REPLACE: /* not implemented */ break;
 	}
 }
