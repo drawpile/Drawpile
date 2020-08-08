@@ -2100,7 +2100,14 @@ void MainWindow::resizeCanvas()
 	dlg->setPreviewImage(m_doc->canvas()->toImage().scaled(300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
+	if (m_doc->canvas()->selection()) {
+		dlg->setBounds(m_doc->canvas()->selection()->boundingRect());
+	}
+
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
+		if (m_doc->canvas()->selection()) {
+			m_doc->canvas()->setSelection(nullptr);
+		}
 		dialogs::ResizeVector r = dlg->resizeVector();
 		if(!r.isZero()) {
 			m_doc->sendResizeCanvas(r.top, r.right, r.bottom, r.left);
