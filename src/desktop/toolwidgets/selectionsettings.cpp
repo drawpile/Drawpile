@@ -52,6 +52,11 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	connect(m_ui->mirror, SIGNAL(clicked()), this, SLOT(mirrorSelection()));
 	connect(m_ui->fittoscreen, SIGNAL(clicked()), this, SLOT(fitToScreen()));
 	connect(m_ui->resetsize, SIGNAL(clicked()), this, SLOT(resetSize()));
+	connect(m_ui->scale, SIGNAL(clicked()), this, SLOT(scale()));
+	connect(m_ui->rotateShear, SIGNAL(clicked()), this, SLOT(rotateShear()));
+	connect(controller(), &ToolController::modelChanged, this, &SelectionSettings::modelChanged);
+
+	setControlsEnabled(false);
 
 	return uiwidget;
 }
@@ -115,6 +120,49 @@ void SelectionSettings::resetSize()
 		sel->resetShape();
 }
 
+void SelectionSettings::scale()
+{
+	updateSelectionMode(canvas::Selection::AdjustmentMode::Scale);
+}
+
+void SelectionSettings::rotateShear()
+{
+	updateSelectionMode(canvas::Selection::AdjustmentMode::Rotate);
+}
+
+void SelectionSettings::updateSelectionMode(canvas::Selection::AdjustmentMode mode)
+{
+	if(!controller()->model())
+		return;
+
+	canvas::Selection *sel = controller()->model()->selection();
+	if(sel && sel->adjustmentMode() != mode)
+		sel->setAdjustmentMode(mode);
+}
+
+void SelectionSettings::modelChanged(canvas::CanvasModel *model)
+{
+	if(model) {
+		connect(model, &canvas::CanvasModel::selectionChanged, this, &SelectionSettings::selectionChanged);
+		selectionChanged(model->selection());
+	}
+}
+
+void SelectionSettings::selectionChanged(canvas::Selection *selection)
+{
+	setControlsEnabled(selection && selection->isClosed());
+	if(selection) {
+		connect(selection, &canvas::Selection::adjustmentModeChanged, this, &SelectionSettings::selectionAdjustmentModeChanged);
+		connect(selection, &canvas::Selection::closed, this, &SelectionSettings::selectionClosed);
+		selectionAdjustmentModeChanged(selection->adjustmentMode());
+	}
+}
+
+void SelectionSettings::selectionClosed()
+{
+	setControlsEnabled(true);
+}
+
 void SelectionSettings::cutSelection()
 {
 	canvas::Selection *sel = controller()->model()->selection();
@@ -122,6 +170,28 @@ void SelectionSettings::cutSelection()
 
 	if(sel && sel->pasteImage().isNull() && !controller()->model()->aclFilter()->isLayerLocked(layer)) {
 		static_cast<tools::SelectionTool*>(controller()->getTool(Tool::SELECTION))->startMove();
+	}
+}
+
+void SelectionSettings::setControlsEnabled(bool enabled)
+{
+	m_ui->flip->setEnabled(enabled);
+	m_ui->mirror->setEnabled(enabled);
+	m_ui->fittoscreen->setEnabled(enabled);
+	m_ui->resetsize->setEnabled(enabled);
+	m_ui->scale->setEnabled(enabled);
+	m_ui->rotateShear->setEnabled(enabled);
+	if(!enabled) {
+		m_ui->scale->setChecked(true);
+	}
+}
+
+void SelectionSettings::selectionAdjustmentModeChanged(canvas::Selection::AdjustmentMode mode)
+{
+	if(mode == canvas::Selection::AdjustmentMode::Scale) {
+		m_ui->scale->setChecked(true);
+	} else {
+		m_ui->rotateShear->setChecked(true);
 	}
 }
 
