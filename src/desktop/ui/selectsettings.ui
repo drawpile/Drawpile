@@ -111,6 +111,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QRadioButton" name="distort">
+        <property name="text">
+         <string>Distort</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

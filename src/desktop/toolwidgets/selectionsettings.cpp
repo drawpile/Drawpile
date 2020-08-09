@@ -54,6 +54,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	connect(m_ui->resetsize, SIGNAL(clicked()), this, SLOT(resetSize()));
 	connect(m_ui->scale, SIGNAL(clicked()), this, SLOT(scale()));
 	connect(m_ui->rotateShear, SIGNAL(clicked()), this, SLOT(rotateShear()));
+	connect(m_ui->distort, SIGNAL(clicked()), this, SLOT(distort()));
 	connect(controller(), &ToolController::modelChanged, this, &SelectionSettings::modelChanged);
 
 	setControlsEnabled(false);
@@ -130,6 +131,11 @@ void SelectionSettings::rotateShear()
 	updateSelectionMode(canvas::Selection::AdjustmentMode::Rotate);
 }
 
+void SelectionSettings::distort()
+{
+	updateSelectionMode(canvas::Selection::AdjustmentMode::Distort);
+}
+
 void SelectionSettings::updateSelectionMode(canvas::Selection::AdjustmentMode mode)
 {
 	if(!controller()->model())
@@ -181,6 +187,7 @@ void SelectionSettings::setControlsEnabled(bool enabled)
 	m_ui->resetsize->setEnabled(enabled);
 	m_ui->scale->setEnabled(enabled);
 	m_ui->rotateShear->setEnabled(enabled);
+	m_ui->distort->setEnabled(enabled);
 	if(!enabled) {
 		m_ui->scale->setChecked(true);
 	}
@@ -188,10 +195,19 @@ void SelectionSettings::setControlsEnabled(bool enabled)
 
 void SelectionSettings::selectionAdjustmentModeChanged(canvas::Selection::AdjustmentMode mode)
 {
-	if(mode == canvas::Selection::AdjustmentMode::Scale) {
+	switch(mode) {
+	case canvas::Selection::AdjustmentMode::Scale:
 		m_ui->scale->setChecked(true);
-	} else {
+		break;
+	case canvas::Selection::AdjustmentMode::Rotate:
 		m_ui->rotateShear->setChecked(true);
+		break;
+	case canvas::Selection::AdjustmentMode::Distort:
+		m_ui->distort->setChecked(true);
+		break;
+	default:
+		qWarning("SelectionSettings::selectionAdjustmentModeChanged: unknown adjustment mode");
+		break;
 	}
 }
 
