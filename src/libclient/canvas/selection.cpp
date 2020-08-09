@@ -175,7 +175,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 
 		switch(m_adjustmentHandle) {
 		case Handle::Outside: return;
-		case Handle::Center: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case Handle::Center: adjustTranslation(delta); break;
 
 		case Handle::TopLeft: adjustScale(dx, dy, 0, 0); break;
 		case Handle::TopRight: adjustScale(0, -dx, dy, 0); break;
@@ -190,7 +190,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 	} else {
 		switch(m_adjustmentHandle) {
 		case Handle::Outside: return;
-		case Handle::Center: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case Handle::Center: adjustTranslation(delta); break;
 		case Handle::TopLeft: adjustScale(delta.x(), delta.y(), 0, 0); break;
 		case Handle::TopRight: adjustScale(0, delta.y(), delta.x(), 0); break;
 		case Handle::BottomRight: adjustScale(0, 0, delta.x(), delta.y()); break;
@@ -207,7 +207,7 @@ void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point,
 {
 	switch(m_adjustmentHandle) {
 	case Handle::Outside: return;
-	case Handle::Center: m_shape = m_preAdjustmentShape.translated(point - start); break;
+	case Handle::Center: adjustTranslation(point - start); break;
 	case Handle::TopLeft:
 	case Handle::TopRight:
 	case Handle::BottomRight:
@@ -230,6 +230,14 @@ void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point,
 	case Handle::Left: adjustShear(0, (start.y() - point.y()) / 100.0); break;
 	}
 
+void Selection::adjustTranslation(const QPointF &start, const QPointF &point)
+{
+	adjustTranslation(point - start);
+}
+
+void Selection::adjustTranslation(const QPointF &delta)
+{
+	m_shape = m_preAdjustmentShape.translated(delta);
 	emit shapeChanged(m_shape);
 }
 

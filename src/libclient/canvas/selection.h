@@ -213,6 +213,8 @@ signals:
 private:
 	void adjustGeometryScale(const QPoint &delta, bool keepAspect);
 	void adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain);
+	void adjustTranslation(const QPointF &start, const QPointF &point);
+	void adjustTranslation(const QPointF &delta);
 	void adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2);
 	void adjustRotation(qreal angle);
 	void adjustShear(qreal sh, qreal sv);
