@@ -201,8 +201,6 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		case Handle::Left: adjustScale(delta.x(), 0, 0, 0); break;
 		}
 	}
-
-	emit shapeChanged(m_shape);
 }
 
 void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain)
@@ -252,9 +250,11 @@ void Selection::adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2)
 		if(std::isnan(m_shape[i].x()) || std::isnan(m_shape[i].y())) {
 			qWarning("Selection shape[%d] is Not a Number!", i);
 			m_shape = m_preAdjustmentShape;
-			return;
+			break;
 		}
 	}
+
+	emit shapeChanged(m_shape);
 }
 
 void Selection::adjustRotation(qreal angle)
