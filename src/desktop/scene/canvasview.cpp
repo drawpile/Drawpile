@@ -53,7 +53,8 @@ CanvasView::CanvasView(QWidget *parent)
 	m_enableTouchScroll(true), m_enableTouchPinch(true), m_enableTouchTwist(true),
 	m_touching(false), m_touchRotating(false),
 	m_dpi(96),
-	m_brushCursorStyle(0)
+	m_brushCursorStyle(0),
+	m_brushOutlineWidth(1.0)
 {
 	viewport()->setAcceptDrops(true);
 #ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
@@ -260,9 +261,10 @@ void CanvasView::setLocked(bool lock)
 	resetCursor();
 }
 
-void CanvasView::setBrushCursorStyle(int style)
+void CanvasView::setBrushCursorStyle(int style, qreal outlineWidth)
 {
 	m_brushCursorStyle = style;
+	m_brushOutlineWidth = qIsNaN(outlineWidth) || outlineWidth < 1.0 ? 1.0 : outlineWidth;
 	resetCursor();
 }
 
@@ -370,6 +372,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->save();
 			QPen pen(QColor(96, 191, 96));
 			pen.setCosmetic(true);
+			pen.setWidthF(m_brushOutlineWidth);
 			painter->setPen(pen);
 			painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 			if(m_squareoutline)

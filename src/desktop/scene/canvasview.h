@@ -169,7 +169,7 @@ public slots:
 	 * 1. Crosshair
 	 * 2. Arrow
 	 */
-	void setBrushCursorStyle(int style);
+	void setBrushCursorStyle(int style, qreal outlineWidth);
 
 	void updateShortcuts();
 
@@ -282,6 +282,7 @@ private:
 	qreal m_touchStartZoom, m_touchStartRotate;
 	qreal m_dpi;
 	int m_brushCursorStyle;
+	qreal m_brushOutlineWidth;
 };
 
 }
