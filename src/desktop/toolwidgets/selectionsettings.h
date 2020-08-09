@@ -65,6 +65,7 @@ private slots:
 	void resetSize();
 	void scale();
 	void rotateShear();
+	void distort();
 	void modelChanged(canvas::CanvasModel *model);
 	void selectionChanged(canvas::Selection *selection);
 	void selectionClosed();

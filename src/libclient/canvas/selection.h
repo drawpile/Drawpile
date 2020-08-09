@@ -42,7 +42,7 @@ class Selection : public QObject
 	Q_OBJECT
 public:
 	enum class Handle {Outside, Center, TopLeft, TopRight, BottomRight, BottomLeft, Top, Right, Bottom, Left};
-	enum class AdjustmentMode { Scale, Rotate };
+	enum class AdjustmentMode { Scale, Rotate, Distort };
 
 	explicit Selection(QObject *parent=nullptr);
 
@@ -213,11 +213,13 @@ signals:
 private:
 	void adjustGeometryScale(const QPoint &delta, bool keepAspect);
 	void adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain);
+	void adjustGeometryDistort(const QPointF &delta);
 	void adjustTranslation(const QPointF &start, const QPointF &point);
 	void adjustTranslation(const QPointF &delta);
 	void adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2);
 	void adjustRotation(qreal angle);
 	void adjustShear(qreal sh, qreal sv);
+	void adjustDistort(const QPointF &delta, int corner1, int corner2 = -1);
 
 	void saveShape();
 

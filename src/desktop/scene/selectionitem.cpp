@@ -114,6 +114,38 @@ static const QPointF *getRotationArrow(canvas::Selection::Handle handle, unsigne
 	}
 }
 
+static const QPointF *getDistortArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
+{
+	switch(handle) {
+	case canvas::Selection::Handle::TopLeft:
+		outPlen = sizeof(arrows::distortTopLeft);
+		return arrows::distortTopLeft;
+	case canvas::Selection::Handle::Top:
+		outPlen = sizeof(arrows::distortTop);
+		return arrows::distortTop;
+	case canvas::Selection::Handle::TopRight:
+		outPlen = sizeof(arrows::distortTopRight);
+		return arrows::distortTopRight;
+	case canvas::Selection::Handle::Right:
+		outPlen = sizeof(arrows::distortRight);
+		return arrows::distortRight;
+	case canvas::Selection::Handle::BottomRight:
+		outPlen = sizeof(arrows::distortBottomRight);
+		return arrows::distortBottomRight;
+	case canvas::Selection::Handle::Bottom:
+		outPlen = sizeof(arrows::distortBottom);
+		return arrows::distortBottom;
+	case canvas::Selection::Handle::BottomLeft:
+		outPlen = sizeof(arrows::distortBottomLeft);
+		return arrows::distortBottomLeft;
+	case canvas::Selection::Handle::Left:
+		outPlen = sizeof(arrows::distortLeft);
+		return arrows::distortLeft;
+	default:
+		return nullptr;
+	}
+}
+
 typedef const QPointF *(*GetArrowFunction)(canvas::Selection::Handle handle, unsigned int &outPlen);
 
 static GetArrowFunction mapModeToGetArrowFunction(canvas::Selection::AdjustmentMode mode)
@@ -123,6 +155,8 @@ static GetArrowFunction mapModeToGetArrowFunction(canvas::Selection::AdjustmentM
 		return getScaleArrow;
 	case canvas::Selection::AdjustmentMode::Rotate:
 		return getRotationArrow;
+	case canvas::Selection::AdjustmentMode::Distort:
+		return getDistortArrow;
 	default:
 		qWarning("mapModeToGetArrowFunction: unknown mode");
 		return nullptr;
