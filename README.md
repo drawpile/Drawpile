@@ -34,7 +34,7 @@ Client specific dependencies:
 * GIFLIB: optional, animated GIF export
 * LibVPX: optional, WebM video export
 
-Server specific dependencies (you can also take a look at [Docker build](server/docker/Dockerfile) script):
+Server specific dependencies (you can also take a look at [Docker build](pkg/docker/Dockerfile) script):
 
 * libsystemd: optional, systemd socket activation support
 * libmicrohttpd: optional, HTTP admin API
