@@ -20,8 +20,11 @@
 #define InputSettings_H
 
 #include "canvas/pressure.h"
+#include "inputpresetmodel.h"
 
 #include <QDockWidget>
+#include <QMenu>
+#include <QSettings>
 
 class Ui_InputSettings;
 
@@ -29,26 +32,36 @@ namespace docks {
 
 class InputSettings : public QDockWidget
 {
-	Q_PROPERTY(PressureMapping pressureMapping READ getPressureMapping NOTIFY pressureMappingChanged)
-	Q_PROPERTY(int smoothing READ getSmoothing NOTIFY smoothingChanged)
-
 	Q_OBJECT
 public:
-	explicit InputSettings(QWidget *parent = 0);
+	explicit InputSettings(input::PresetModel *presetModel, QWidget *parent = 0);
 	~InputSettings();
 
-	int getSmoothing() const;
-	PressureMapping getPressureMapping() const;
-
-signals:
-	void smoothingChanged(int value);
-	void pressureMappingChanged(const PressureMapping &mapping);
+	const input::Preset *currentPreset() const;
 
 private slots:
+	void updateSmoothing();
 	void updatePressureMapping();
+	void choosePreset(int index);
+	void addPreset();
+	void renamePreset();
+	void removePreset();
+	void presetDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
 private:
+	input::Preset *mutableCurrentPreset();
+
+	void applyPresetToUi(const input::Preset &preset);
+	void applyUiToPreset(input::Preset &preset) const;
+	void updatePresetMenu() const;
+
 	Ui_InputSettings *m_ui;
+	input::PresetModel *m_presetModel;
+	bool m_updateInProgress;
+	QMenu *m_presetmenu;
+	QAction *m_addPresetAction;
+	QAction *m_renamePresetAction;
+	QAction *m_removePresetAction;
 };
 
 }

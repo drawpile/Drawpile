@@ -22,6 +22,7 @@
 #include "tools/toolproperties.h"
 #include "brushes/brush.h"
 
+#include "inputpresetmodel.h"
 #include "ui_brushdock.h"
 
 #include <QKeyEvent>
@@ -46,11 +47,14 @@ namespace {
 		// For remembering previuous selection when switching between normal/erase mode
 		paintcore::BlendMode::Mode normalMode = paintcore::BlendMode::MODE_NORMAL;
 		paintcore::BlendMode::Mode eraserMode = paintcore::BlendMode::MODE_ERASE;
+
+		QString inputPresetUuid;
 	};
 }
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
+	input::PresetModel *presetModel;
 
 	QStandardItemModel *blendModes, *eraseModes;
 
@@ -73,7 +77,8 @@ struct BrushSettings::Private {
 		return toolSlots[current];
 	}
 
-	Private(BrushSettings *b)
+	Private(BrushSettings *b, input::PresetModel *presetModel) :
+		presetModel(presetModel)
 	{
 		blendModes = new QStandardItemModel(0, 1, b);
 		for(const auto &bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode)) {
@@ -105,10 +110,28 @@ struct BrushSettings::Private {
 		default: qFatal("brushSlotButton(%d): no such button", i);
 		}
 	}
+
+	void updateInputPresetUuid(ToolSlot &tool)
+	{
+		const input::Preset *preset = presetFor(tool);
+		if(!preset && presetModel->size() >= 1) {
+			tool.inputPresetUuid = presetModel->at(0)->uuid;
+		}
+	}
+
+	const input::Preset *currentPreset()
+	{
+		return presetFor(currentTool());
+	}
+
+	const input::Preset *presetFor(const ToolSlot &tool)
+	{
+		return presetModel->searchPresetByUuid(tool.inputPresetUuid);
+	}
 };
 
-BrushSettings::BrushSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), d(new Private(this))
+BrushSettings::BrushSettings(ToolController *ctrl, input::PresetModel *presetModel, QObject *parent)
+	: ToolSettings(ctrl, parent), d(new Private(this, presetModel))
 {
 }
 
@@ -121,6 +144,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
+	d->ui.inputPreset->setModel(d->presetModel);
 
 	// Outside communication
 	connect(d->ui.brushsizeBox, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -153,6 +177,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+
+	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &BrushSettings::chooseInputPreset);
+	connect(d->presetModel, &input::PresetModel::presetRemoved, this, &BrushSettings::inputPresetRemoved);
+	connect(d->presetModel, &input::PresetModel::presetChanged, this, &BrushSettings::inputPresetChanged);
 
 	// Brush slot buttons
 	for(int i=0;i<BRUSH_COUNT;++i) {
@@ -206,6 +234,8 @@ void BrushSettings::selectBrushSlot(int i)
 
 	if(!d->shareBrushSlotColor)
 		emit colorChanged(d->currentBrush().color());
+
+	d->updateInputPresetUuid(d->currentTool());
 
 	updateUi();
 
@@ -342,6 +372,8 @@ void BrushSettings::updateUi()
 	d->ui.modeIncremental->setChecked(brush.incremental());
 	d->ui.modeColorpick->setChecked(brush.isColorPickMode());
 
+	updateInputPresetIndex(tool.inputPresetUuid);
+
 	d->updateInProgress = false;
 	d->ui.preview->setBrush(d->currentBrush());
 	pushSettings();
@@ -381,6 +413,8 @@ void BrushSettings::updateFromUi()
 	brush.setColorPickMode(d->ui.modeColorpick->isChecked());
 	brush.setBlendingMode(paintcore::BlendMode::Mode(d->ui.blendmode->currentData(Qt::UserRole).toInt()));
 
+	chooseInputPreset(d->ui.inputPreset->currentIndex());
+
 	d->ui.preview->setBrush(brush);
 
 	d->ui.modeIncremental->setEnabled(brush.smudge1() == 0.0);
@@ -391,6 +425,66 @@ void BrushSettings::updateFromUi()
 void BrushSettings::pushSettings()
 {
 	controller()->setActiveBrush(d->ui.preview->brush());
+}
+
+void BrushSettings::chooseInputPreset(int index)
+{
+	ToolSlot &tool = d->currentTool();
+	const input::Preset *preset = d->presetModel->at(index);
+	if(preset && tool.inputPresetUuid != preset->uuid) {
+		tool.inputPresetUuid = preset->uuid;
+	}
+	emitPresetChanges(preset);
+}
+
+void BrushSettings::inputPresetRemoved(const QString &uuid)
+{
+	int current = d->current;
+	for(int i = 0; i < BRUSH_COUNT; ++i) {
+		ToolSlot &tool = d->toolSlots[i];
+		if(tool.inputPresetUuid == uuid) {
+			d->updateInputPresetUuid(tool);
+			if(i == current) {
+				updateInputPresetIndex(tool.inputPresetUuid);
+				emitPresetChanges(d->presetFor(tool));
+			}
+		}
+	}
+}
+
+void BrushSettings::updateInputPresetIndex(const QString &uuid)
+{
+	int i = d->presetModel->searchIndexByUuid(uuid);
+	if(i >= 0) {
+		d->ui.inputPreset->setCurrentIndex(i);
+	}
+}
+
+void BrushSettings::inputPresetChanged(const input::Preset &preset)
+{
+	if(d->currentTool().inputPresetUuid == preset.uuid) {
+		emitPresetChanges(&preset);
+	}
+}
+
+void BrushSettings::emitPresetChanges(const input::Preset *preset)
+{
+	if(preset) {
+		emit smoothingChanged(preset->smoothing);
+		emit pressureMappingChanged(preset->getPressureMapping());
+	}
+}
+
+int BrushSettings::getSmoothing() const
+{
+	const input::Preset *preset = d->currentPreset();
+	return preset ? preset->smoothing : input::PresetModel::SMOOTHING_DEFAULT;
+}
+
+PressureMapping BrushSettings::getPressureMapping() const
+{
+	const input::Preset *preset = d->currentPreset();
+	return preset ? preset->getPressureMapping() : PressureMapping{};
 }
 
 namespace toolprop {
@@ -413,7 +507,8 @@ ToolProperties BrushSettings::saveToolSettings()
 		b["_slot"] = QJsonObject {
 			{"normalMode", tool.normalMode},
 			{"eraserMode", tool.eraserMode},
-			{"color", tool.brush.color().name()}
+			{"color", tool.brush.color().name()},
+			{"inputPresetUuid", tool.inputPresetUuid}
 		};
 
 		cfg.setValue(
@@ -460,6 +555,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		tool.brush.setColor(color.isValid() ? color : Qt::black);
 		tool.normalMode = paintcore::BlendMode::Mode(s["normalMode"].toInt());
 		tool.eraserMode = paintcore::BlendMode::Mode(s["eraserMode"].toInt());
+		tool.inputPresetUuid = s["inputPresetUuid"].toString();
+		d->updateInputPresetUuid(tool);
 
 		if(!d->shareBrushSlotColor)
 			d->brushSlotButton(i)->setColorSwatch(tool.brush.color());

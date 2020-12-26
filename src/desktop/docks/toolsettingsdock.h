@@ -25,6 +25,9 @@
 
 class QStackedWidget;
 
+namespace input {
+	class PresetModel;
+}
 
 namespace tools {
 	class ToolSettings;
@@ -41,7 +44,8 @@ class ToolSettings : public QDockWidget
 {
 Q_OBJECT
 public:
-	ToolSettings(tools::ToolController *ctrl, QWidget *parent=nullptr);
+	ToolSettings(tools::ToolController *ctrl, input::PresetModel *presetModel,
+			QWidget *parent=nullptr);
 	~ToolSettings();
 
 	//! Get the current foreground color
