@@ -19,12 +19,18 @@
 #ifndef TOOLSETTINGS_BRUSHES_H
 #define TOOLSETTINGS_BRUSHES_H
 
+#include "canvas/pressure.h"
 #include "toolsettings.h"
 
 class QAction;
 
 namespace brushes {
 	class ClassicBrush;
+}
+
+namespace input {
+	class Preset;
+	class PresetModel;
 }
 
 namespace tools {
@@ -38,7 +44,7 @@ class BrushSettings : public ToolSettings {
 	Q_OBJECT
 	friend class AdvancedBrushSettings;
 public:
-	BrushSettings(ToolController *ctrl, QObject *parent=nullptr);
+	BrushSettings(ToolController *ctrl, input::PresetModel *presetModel, QObject *parent=nullptr);
 	~BrushSettings();
 
 	QString toolType() const override { return QStringLiteral("brush"); }
@@ -63,6 +69,9 @@ public:
 
 	void setShareBrushSlotColor(bool sameColor);
 
+	int getSmoothing() const;
+	PressureMapping getPressureMapping() const;
+
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
@@ -72,6 +81,8 @@ signals:
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
+	void smoothingChanged(int smoothing);
+	void pressureMappingChanged(const PressureMapping &pressureMapping);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
@@ -81,8 +92,14 @@ private slots:
 	void setEraserMode(bool erase);
 	void updateUi();
 	void updateFromUi();
+	void chooseInputPreset(int index);
+	void inputPresetRemoved(const QString &uuid);
+	void inputPresetChanged(const input::Preset &preset);
 
 private:
+	void updateInputPresetIndex(const QString &uuid);
+	void emitPresetChanges(const input::Preset *preset);
+
 	struct Private;
 	Private *d;
 };

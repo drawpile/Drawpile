@@ -12,6 +12,7 @@ set (
 	main.cpp
 	mainwindow.cpp
 	notifications.cpp
+	inputpresetmodel.cpp
 	toolwidgets/toolsettings.cpp
 	toolwidgets/brushsettings.cpp
 	toolwidgets/colorpickersettings.cpp

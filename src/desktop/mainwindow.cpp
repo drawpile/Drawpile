@@ -61,6 +61,7 @@
 #include "mainwindow.h"
 #include "document.h"
 #include "main.h"
+#include "inputpresetmodel.h"
 
 #include "core/layerstack.h"
 #include "canvas/loader.h"
@@ -146,6 +147,7 @@ static void setLastPath(const QString &lastpath) { QSettings().setValue("window/
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(),
 	  m_splitter(nullptr),
+	  m_presetModel(nullptr),
 	  m_dockToolSettings(nullptr),
 	  m_dockBrushPalette(nullptr),
 	  m_dockInput(nullptr),
@@ -275,6 +277,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 			palette().brush(QPalette::Active,QPalette::Window));
 	m_view->setCanvas(m_canvasscene);
 
+	// Input presets, used by both the brush and the input panel
+	m_presetModel = new input::PresetModel(this);
+
 	// Create docks
 	createDocks();
 
@@ -315,7 +320,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(static_cast<tools::ZoomSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ZOOM)), &tools::ZoomSettings::fitToWindow,
 		m_view, &widgets::CanvasView::zoomToFit);
 
-	connect(m_dockInput, &docks::InputSettings::pressureMappingChanged, m_view, &widgets::CanvasView::setPressureMapping);
+	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
+	connect(brushSettings, &tools::BrushSettings::pressureMappingChanged, m_view, &widgets::CanvasView::setPressureMapping);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
@@ -370,8 +376,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockColors, &docks::ColorBox::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
 
-	connect(m_dockInput, &docks::InputSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
-	m_doc->toolCtrl()->setSmoothing(m_dockInput->getSmoothing());
+	connect(brushSettings, &tools::BrushSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
+	m_doc->toolCtrl()->setSmoothing(brushSettings->getSmoothing());
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, m_view, &widgets::CanvasView::setToolCursor);
 	m_view->setToolCursor(m_doc->toolCtrl()->activeToolCursor());
 
@@ -2863,9 +2869,10 @@ void MainWindow::createDocks()
 	Q_ASSERT(m_doc);
 	Q_ASSERT(m_view);
 	Q_ASSERT(m_canvasscene);
+	Q_ASSERT(m_presetModel);
 
 	// Create tool settings
-	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
+	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), m_presetModel, this);
 	m_dockToolSettings->setObjectName("ToolSettings");
 	m_dockToolSettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockToolSettings);
@@ -2877,7 +2884,8 @@ void MainWindow::createDocks()
 	m_dockBrushPalette->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockBrushPalette);
 
-	m_dockBrushPalette->connectBrushSettings(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
+	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
+	m_dockBrushPalette->connectBrushSettings(brushSettings);
 
 	// Create color box
 	m_dockColors = new docks::ColorBox(tr("Color"), this);
@@ -2899,11 +2907,11 @@ void MainWindow::createDocks()
 	m_dockNavigator->setScene(m_canvasscene);
 
 	// Create input settings
-	m_dockInput = new docks::InputSettings(this);
+	m_dockInput = new docks::InputSettings(m_presetModel, this);
 	m_dockInput->setObjectName("InputSettings");
 	m_dockInput->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockInput);
-	m_view->setPressureMapping(m_dockInput->getPressureMapping());
+	m_view->setPressureMapping(brushSettings->getPressureMapping());
 
 	// Tabify docks
 	tabifyDockWidget(m_dockLayers, m_dockInput);
