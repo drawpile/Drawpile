@@ -274,7 +274,7 @@ void PlaybackController::jumpTo(int messageIndex)
 
 		// Restore snapshot only when jumping backward and when
 		// the nearest target snapshot is after this one
-		if(messageIndex < m_reader->currentIndex() || nearest.index > m_reader->currentIndex())
+		if(messageIndex < m_reader->currentIndex() || int(nearest.index) > m_reader->currentIndex())
 			jumpToSnapshot(nearest);
 	}
 

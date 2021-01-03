@@ -214,7 +214,11 @@ bool IndexBuilder::generateIndex(QDataStream &stream, Reader &reader)
 	LayerStackWriteResult lastSnapshot;
 
 	do {
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 		if(m_abortflag.load()) {
+#else
+		if(m_abortflag.loadRelaxed()) {
+#endif
 			qWarning() << "Indexing aborted";
 			return false;
 		}

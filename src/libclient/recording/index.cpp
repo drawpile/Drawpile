@@ -30,7 +30,7 @@ IndexEntry IndexEntry::nearest(const QVector<IndexEntry> &index, int pos)
 	Q_ASSERT(!index.isEmpty());
 
 	int i=0;
-	while(i<index.size() && index.at(i).index < pos)
+	while(i<index.size() && int(index.at(i).index) < pos)
 		++i;
 	return index.at(qMax(0, i-1));
 }

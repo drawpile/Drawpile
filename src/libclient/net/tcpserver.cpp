@@ -48,7 +48,11 @@ TcpServer::TcpServer(QObject *parent) :
 	m_msgqueue->setPingInterval(15 * 1000);
 
 	connect(m_socket, &QSslSocket::disconnected, this, &TcpServer::handleDisconnect);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	connect(m_socket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error), this, &TcpServer::handleSocketError);
+#else
+	connect(m_socket, &QTcpSocket::errorOccurred, this, &TcpServer::handleSocketError);
+#endif
 	connect(m_socket, &QSslSocket::stateChanged, this, [this](QAbstractSocket::SocketState state) {
 		if(state==QAbstractSocket::ClosingState)
 			emit loggingOut();

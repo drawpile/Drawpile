@@ -314,7 +314,11 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 		const int rowid = q.value(0).toInt();
 		const QByteArray passwordHash = q.value(1).toByteArray();
 		const int locked = q.value(2).toInt();
-		const QStringList flags = q.value(3).toString().split(',',QString::SkipEmptyParts);
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+		const QStringList flags = q.value(3).toString().split(',', QString::SkipEmptyParts);
+#else
+		const QStringList flags = q.value(3).toString().split(',', Qt::SkipEmptyParts);
+#endif
 
 		if(locked) {
 			return RegisteredUser {

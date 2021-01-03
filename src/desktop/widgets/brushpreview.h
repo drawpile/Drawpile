@@ -49,7 +49,7 @@ class QDESIGNER_WIDGET_EXPORT BrushPreview : public QFrame {
 public:
 	enum PreviewShape {Stroke, Line, Rectangle, Ellipse, FloodFill, FloodErase};
 
-	explicit BrushPreview(QWidget *parent=nullptr, Qt::WindowFlags f=0);
+	explicit BrushPreview(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
 	~BrushPreview();
 
 	//! Set preview shape

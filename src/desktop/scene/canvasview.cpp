@@ -203,13 +203,13 @@ void CanvasView::setZoom(qreal zoom)
 		return;
 
 	m_zoom = zoom;
-	QMatrix nm(1,0,0,1, matrix().dx(), matrix().dy());
-	nm.scale(m_zoom/100.0, m_zoom/100.0);
-	nm.rotate(m_rotate);
+	QTransform t(1,0,0,1, transform().dx(), transform().dy());
+	t.scale(m_zoom/100.0, m_zoom/100.0);
+	t.rotate(m_rotate);
 
-	nm.scale(m_mirror ? -1 : 1, m_flip ? -1 : 1);
+	t.scale(m_mirror ? -1 : 1, m_flip ? -1 : 1);
 
-	setMatrix(nm);
+	setTransform(t);
 
 	// Enable smooth scaling when under 200% zoom, because nearest-neighbour
 	// interpolation just doesn't look good in that range.

@@ -56,7 +56,15 @@ bool isNsfmTitle(const QString &title)
 		return false;
 
 	QString wordlist = cfg.value("tagwords").toString();
-	for(const QStringRef &word : wordlist.splitRef(QRegularExpression("[\\s,]"), QString::SkipEmptyParts)) {
+	const auto words = wordlist.splitRef(QRegularExpression("[\\s,]"),
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+			QString::SkipEmptyParts
+#else
+			Qt::SkipEmptyParts
+#endif
+			);
+
+	for(const QStringRef &word : words) {
 		if(title.contains(word, Qt::CaseInsensitive))
 			return true;
 	}

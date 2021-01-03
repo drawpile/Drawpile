@@ -44,7 +44,7 @@ typedef std::function<QImage(int)> LoadImageFn;
 class QDESIGNER_WIDGET_EXPORT Filmstrip : public QWidget {
 	Q_OBJECT
 public:
-	Filmstrip(QWidget *parent=nullptr, Qt::WindowFlags f=0);
+	Filmstrip(QWidget *parent=nullptr);
 	~Filmstrip();
 
 	//! Set the length of the recording (in arbitrary units)

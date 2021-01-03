@@ -29,7 +29,7 @@ InMemoryHistory::InMemoryHistory(const QString &id, const QString &alias, const 
 	  m_version(version),
 	  m_maxUsers(254),
 	  m_autoReset(0),
-	  m_flags(0)
+	  m_flags()
 {
 }
 

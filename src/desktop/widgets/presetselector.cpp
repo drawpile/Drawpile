@@ -31,8 +31,8 @@
 
 namespace widgets {
 
-PresetSelector::PresetSelector(QWidget *parent, Qt::WindowFlags f)
-	: QWidget(parent,f), m_writeOnly(false)
+PresetSelector::PresetSelector(QWidget *parent)
+	: QWidget(parent), m_writeOnly(false)
 {
 
 	auto *layout = new QHBoxLayout;

@@ -36,7 +36,7 @@ Q_PROPERTY(QColor color READ color WRITE setColor)
 Q_PROPERTY(bool setAlpha READ alpha WRITE setAlpha)
 Q_PROPERTY(bool locked READ locked WRITE setLocked)
 public:
-	ColorButton(QWidget *parent=0,const QColor& color = Qt::black);
+	ColorButton(QWidget *parent=nullptr, const QColor& color = Qt::black);
 	~ColorButton() {}
 
 	//! Get the selected color

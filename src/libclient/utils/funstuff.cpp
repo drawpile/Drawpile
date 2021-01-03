@@ -21,6 +21,9 @@
 
 #include <QRegularExpression>
 #include <QVector>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#include <QRandomGenerator>
+#endif
 
 #include <cstdlib>
 
@@ -34,7 +37,11 @@ int diceRoll(int number, int faces)
 
 	int result = 0;
 	while(number-->0) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
 		result += qrand() / double(RAND_MAX) * (faces) + 1;
+#else
+		result += QRandomGenerator::global()->generateDouble() * faces + 1;
+#endif
 	}
 
 	return result;

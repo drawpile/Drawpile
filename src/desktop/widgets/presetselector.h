@@ -39,7 +39,7 @@ class QDESIGNER_WIDGET_EXPORT PresetSelector : public QWidget {
 	Q_PROPERTY(QString presetFolder READ presetFolder WRITE setPresetFolder)
 	Q_PROPERTY(bool writeOnly READ writeOnly WRITE setWriteOnly)
 public:
-	PresetSelector(QWidget *parent=nullptr, Qt::WindowFlags f=0);
+	PresetSelector(QWidget *parent=nullptr);
 
 	QString presetFolder() const { return m_folder; }
 	bool writeOnly() const { return m_writeOnly; }

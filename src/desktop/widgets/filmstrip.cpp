@@ -30,8 +30,8 @@ namespace widgets {
 static const int MARGIN = 22;
 static const int FRAME_MARGIN = 4;
 
-Filmstrip::Filmstrip(QWidget *parent, Qt::WindowFlags f)
-	: QWidget(parent,f), m_cursor(0), m_length(100)
+Filmstrip::Filmstrip(QWidget *parent)
+	: QWidget(parent), m_cursor(0), m_length(100)
 {
 	setMinimumHeight(MARGIN*4);
 	m_scrollbar = new QScrollBar(Qt::Horizontal, this);

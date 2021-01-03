@@ -455,8 +455,9 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 
 void PaletteWidget::wheelEvent(QWheelEvent *event)
 {
-	if(event->orientation() == Qt::Vertical && _enableScrolling) {
-		_scrollbar->setValue(_scrollbar->value() - event->delta()/16);
+	if(_enableScrolling) {
+		const QPoint delta = event->angleDelta();
+		_scrollbar->setValue(_scrollbar->value() - delta.y()/16);
 	}
 }
 

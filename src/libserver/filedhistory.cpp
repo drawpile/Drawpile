@@ -43,7 +43,7 @@ FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QString &id, c
 	  m_founder(founder),
 	  m_version(version),
 	  m_maxUsers(254),
-	  m_flags(0),
+	  m_flags(),
 	  m_fileCount(0),
 	  m_archive(false)
 {

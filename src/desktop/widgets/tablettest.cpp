@@ -89,10 +89,17 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	e->accept();
 
 	QString msg;
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	switch(e->device()) {
 		case QTabletEvent::Stylus: msg = "Stylus"; break;
 		default: msg = QString("Device(%1)").arg(e->device()); break;
 	}
+#else
+	switch(e->deviceType()) {
+		case QTabletEvent::Stylus: msg = "Stylus"; break;
+		default: msg = QString("Device(%1)").arg(e->deviceType()); break;
+	}
+#endif
 
 	switch(e->type()) {
 		case QEvent::TabletMove:
