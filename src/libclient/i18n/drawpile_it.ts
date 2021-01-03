@@ -83,7 +83,7 @@
         <location filename="../../desktop/ui/brushdock.ui" line="477"/>
         <location filename="../../desktop/ui/brushdock.ui" line="498"/>
         <source>Pressure sensitivity</source>
-        <translation type=>Sensibilità alla pressione</translation>
+        <translation>Sensibilità alla pressione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="593"/>
@@ -587,7 +587,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Non hai ancor&apos;a aggiunto alcun server. Puoi trovarne alcuni su &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Puoi provare ad aggiungerne uno ora inserendo pub.drawpile.net nella casella dell'indirizzo e facendo clic &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Non hai ancor&apos;a aggiunto alcun server. Puoi trovarne alcuni su &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Puoi provare ad aggiungerne uno ora inserendo pub.drawpile.net nella casella dell'indirizzo e facendo clic &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="88"/>
@@ -597,7 +597,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="95"/>
         <source>Closed</source>
-        <translation type=>Chiuso</translation>
+        <translation>Chiuso</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="102"/>
@@ -752,8 +752,8 @@
     <message numerus="yes">
         <location filename="../../desktop/widgets/macmenu.cpp" line="208"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type=>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</translation>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</numerusform>
         </translation>
     </message>
     <message>
@@ -985,7 +985,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1642"/>
         <source>Disconnected:</source>
-        <translation type=>Disconnesso:</translation>
+        <translation>Disconnesso:</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1671"/>
@@ -2728,7 +2728,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="949"/>
         <source>Move down</source>
-        <translation type>Sposta in basso</translation>
+        <translation>Sposta in basso</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="570"/>
