@@ -115,6 +115,13 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 		}
 	}
 
+	// Set initial content format
+	QTextCharFormat fmt;
+	fmt.setFontFamily(_ui->font->currentText());
+	fmt.setFontPointSize(_ui->size->value());
+	fmt.setForeground(_ui->btnTextColor->color());
+	_ui->content->setCurrentCharFormat(fmt);
+
 	setUiEnabled(false);
 
 	return widget;
