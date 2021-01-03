@@ -41,6 +41,7 @@ public:
 	~ResizeDialog();
 
 	void setPreviewImage(const QImage &image);
+	void setBounds(const QRect &rect);
 
 	QSize newSize() const;
 	QPoint newOffset() const;

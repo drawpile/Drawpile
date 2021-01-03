@@ -64,6 +64,19 @@ void ResizeDialog::setPreviewImage(const QImage &image)
 	m_ui->resizer->setImage(image);
 }
 
+void ResizeDialog::setBounds(const QRect &rect)
+{
+	auto rectIn = rect.intersected({{0,0}, m_ui->resizer->originalSize()});
+
+	m_aspectratio = rectIn.width() / float(rectIn.height());
+
+	m_ui->width->setValue(rectIn.width());
+	m_ui->height->setValue(rectIn.height());
+
+	m_ui->resizer->setOffset(-rectIn.topLeft());
+	m_ui->resizer->setTargetSize(rectIn.size());
+}
+
 void ResizeDialog::done(int r)
 {
 	if(r == QDialog::Accepted) {
