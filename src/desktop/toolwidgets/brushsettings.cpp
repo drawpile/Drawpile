@@ -421,11 +421,24 @@ ToolProperties BrushSettings::saveToolSettings()
 				QStringLiteral("brush%1").arg(i),
 				QByteArray()
 			},
-			QJsonDocument(b).toBinaryData()
+			QJsonDocument(b).toJson(QJsonDocument::Compact)
 		);
 	}
 
 	return cfg;
+}
+
+// Transitional: pre-2.1.18 versions used Qt's proprietary binary JSON encoding
+// to save tool settings. This format is deprecated since Qt 5.15.
+// Once most users have upgraded to Drawpile 2.1.18, this compatibility wrapper can be removed.
+static QJsonDocument loadJsonOrBinary(const QByteArray &data)
+{
+	const QJsonDocument doc = QJsonDocument::fromJson(data);
+	if(doc.isNull()) {
+		// Might be in the old binary format
+		return QJsonDocument::fromBinaryData(data);
+	}
+	return doc;
 }
 
 void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
@@ -434,7 +447,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		ToolSlot &tool = d->toolSlots[i];
 
-		const QJsonObject o = QJsonDocument::fromBinaryData(
+		const QJsonObject o = loadJsonOrBinary(
 			cfg.value(ToolProperties::Value<QByteArray> {
 				QStringLiteral("brush%1").arg(i),
 				QByteArray()
