@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "inputpresetmodel.h"
+#include "canvas/inputpresetmodel.h"
 
 #include "docks/toolsettingsdock.h"
 #include "docks/utils.h"

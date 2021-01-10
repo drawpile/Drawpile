@@ -19,6 +19,7 @@
 
 #include "docks/inputsettingsdock.h"
 #include "docks/utils.h"
+#include "canvas/inputpresetmodel.h"
 
 #include "ui_inputcfg.h"
 

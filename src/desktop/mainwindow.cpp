@@ -61,7 +61,7 @@
 #include "mainwindow.h"
 #include "document.h"
 #include "main.h"
-#include "inputpresetmodel.h"
+#include "canvas/inputpresetmodel.h"
 
 #include "core/layerstack.h"
 #include "canvas/loader.h"

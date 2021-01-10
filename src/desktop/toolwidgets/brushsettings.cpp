@@ -22,7 +22,7 @@
 #include "tools/toolproperties.h"
 #include "brushes/brush.h"
 
-#include "inputpresetmodel.h"
+#include "canvas/inputpresetmodel.h"
 #include "ui_brushdock.h"
 
 #include <QKeyEvent>

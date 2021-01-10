@@ -20,13 +20,17 @@
 #define InputSettings_H
 
 #include "canvas/pressure.h"
-#include "inputpresetmodel.h"
 
 #include <QDockWidget>
 #include <QMenu>
 #include <QSettings>
 
 class Ui_InputSettings;
+
+namespace input {
+	class PresetModel;
+	class Preset;
+}
 
 namespace docks {
 

@@ -32,6 +32,7 @@ set (
 	canvas/layerlist.cpp
 	canvas/history.cpp
 	canvas/canvassaverrunnable.cpp
+	canvas/inputpresetmodel.cpp
 	net/client.cpp
 	net/server.cpp
 	net/loopbackserver.cpp
