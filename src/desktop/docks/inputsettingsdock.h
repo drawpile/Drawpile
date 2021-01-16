@@ -38,33 +38,29 @@ class InputSettings : public QDockWidget
 {
 	Q_OBJECT
 public:
-	explicit InputSettings(input::PresetModel *presetModel, QWidget *parent = 0);
+	explicit InputSettings(input::PresetModel *presetModel, QWidget *parent=nullptr);
 	~InputSettings();
 
 	const input::Preset *currentPreset() const;
 
 private slots:
-	void updateSmoothing();
-	void updatePressureMapping();
 	void choosePreset(int index);
+	void presetNameChanged(const QString &name);
 	void addPreset();
-	void renamePreset();
+	void copyPreset();
 	void removePreset();
-	void presetDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+	void onPresetCountChanged();
 
 private:
 	input::Preset *mutableCurrentPreset();
 
 	void applyPresetToUi(const input::Preset &preset);
-	void applyUiToPreset(input::Preset &preset) const;
-	void updatePresetMenu() const;
+	void applyUiToPreset();
 
 	Ui_InputSettings *m_ui;
 	input::PresetModel *m_presetModel;
 	bool m_updateInProgress;
 	QMenu *m_presetmenu;
-	QAction *m_addPresetAction;
-	QAction *m_renamePresetAction;
 	QAction *m_removePresetAction;
 };
 

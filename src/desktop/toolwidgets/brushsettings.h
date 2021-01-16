@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -93,11 +93,9 @@ private slots:
 	void updateUi();
 	void updateFromUi();
 	void chooseInputPreset(int index);
-	void inputPresetRemoved(const QString &uuid);
-	void inputPresetChanged(const input::Preset &preset);
+	void inputPresetChanged(const QString &id);
 
 private:
-	void updateInputPresetIndex(const QString &uuid);
 	void emitPresetChanges(const input::Preset *preset);
 
 	struct Private;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2020 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,17 +28,17 @@
 namespace input {
 
 struct Preset {
-	QString uuid;
-	QString name;
-	int smoothing;
-	int pressureMode;
-	KisCubicCurve stylusCurve;
-	KisCubicCurve distanceCurve;
-	KisCubicCurve velocityCurve;
-	int distance;
-	int velocity;
+	//! A unique ID for the preset
+	QString id;
 
-	PressureMapping getPressureMapping() const;
+	//! Human readable name of the preset
+	QString name;
+
+	int smoothing;
+	PressureMapping curve;
+
+	static Preset loadFromSettings(const QSettings &cfg);
+	void saveToSettings(QSettings &cfg) const;
 };
 
 }
@@ -58,44 +58,23 @@ public:
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+	bool removeRows(int row, int count, const QModelIndex &parent) override;
 
-	Preset *operator[](int i);
 	const Preset *at(int i) const;
-	int indexOf(const Preset &preset) const;
-	int size() const;
+	int searchIndexById(const QString &id) const;
+	const Preset *searchPresetById(const QString &id) const;
 
-	int searchIndexByUuid(const QString &uuid) const;
-	const Preset *searchPresetByUuid(const QString &uuid) const;
-
-	Preset &add(const Preset *from = nullptr);
-	void remove(const Preset &preset);
-	void rename(Preset &preset, const QString &name);
-	void apply(Preset &preset, int smoothing, int pressureMode,
-			const KisCubicCurve &stylusCurve, const KisCubicCurve &distanceCurve,
-			const KisCubicCurve &velocityCurve, int distance, int velocity);
-
-	static const int SMOOTHING_DEFAULT;
-	static const int DISTANCE_DEFAULT;
-	static const int VELOCITY_DEFAULT;
+	void add(const Preset &preset);
+	void update(int index, const Preset &preset);
 
 signals:
-	void presetRemoved(const QString &uuid);
-	void presetChanged(const Preset &preset);
+	void presetChanged(const QString &id);
 
 private:
 	void restoreSettings();
 	void saveSettings();
-
-	void createPresetFrom(Preset &preset, int i, const Preset &from);
-	void emitChangeAt(int i);
-
-	void restorePresetsSettings(QSettings &cfg);
-	void restoreLegacySettings(QSettings &cfg);
-	void restorePreset(QSettings &cfg, Preset &preset, int i);
-	Preset &firstPresetOrCreateBlank();
-	void createBlankPreset(Preset &preset, int i);
-
-	void savePreset(QSettings &cfg, const Preset &preset, bool legacy);
 
 	QVector<Preset> m_presets;
 };

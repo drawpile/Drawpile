@@ -879,13 +879,14 @@ qreal CanvasView::mapPressure(qreal pressure, bool stylus)
 		return stylus ? m_pressuremapping.curve.value(pressure) : 1.0;
 
 	case PressureMapping::DISTANCE: {
-		qreal d = qMin(m_pointerdistance, m_pressuremapping.param) / m_pressuremapping.param;
-		return m_pressuremapping.curve.value(d);
+		const qreal scale = 10 + m_pressuremapping.param * 190.0;
+		return m_pressuremapping.curve.value(m_pointerdistance / scale);
 	}
 
-	case PressureMapping::VELOCITY:
-		qreal v = qMin(m_pointervelocity, m_pressuremapping.param) / m_pressuremapping.param;
-		return m_pressuremapping.curve.value(v);
+	case PressureMapping::VELOCITY: {
+		const qreal scale = 10 + m_pressuremapping.param * 90.0;
+		return m_pressuremapping.curve.value(m_pointervelocity / scale);
+	}
 	}
 
 	// Shouldn't be reached

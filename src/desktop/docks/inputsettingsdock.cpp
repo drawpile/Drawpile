@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2015 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 #include "ui_inputcfg.h"
 
 #include <QDebug>
-#include <QInputDialog>
-#include <QUuid>
 
 namespace docks {
 
@@ -42,9 +40,9 @@ InputSettings::InputSettings(input::PresetModel *presetModel, QWidget *parent) :
 	setStyleSheet(defaultDockStylesheet());
 
 	m_presetmenu = new QMenu(this);
-	m_addPresetAction = m_presetmenu->addAction(tr("Add preset"), this, &InputSettings::addPreset);
-	m_renamePresetAction = m_presetmenu->addAction(tr("Rename preset"), this, &InputSettings::renamePreset);
-	m_removePresetAction = m_presetmenu->addAction(tr("Remove preset"), this, &InputSettings::removePreset);
+	m_presetmenu->addAction(tr("New"), this, &InputSettings::addPreset);
+	m_presetmenu->addAction(tr("Duplicate"), this, &InputSettings::copyPreset);
+	m_removePresetAction = m_presetmenu->addAction(tr("Delete"), this, &InputSettings::removePreset);
 	m_ui->presetButton->setMenu(m_presetmenu);
 
 	m_ui->preset->setModel(m_presetModel);
@@ -52,18 +50,17 @@ InputSettings::InputSettings(input::PresetModel *presetModel, QWidget *parent) :
 	choosePreset(m_ui->preset->currentIndex());
 
 	// Make connections
-	connect(m_ui->smoothing, &QSlider::valueChanged, this, &InputSettings::updateSmoothing);
+	connect(m_ui->smoothing, &QSlider::valueChanged, this, &InputSettings::applyUiToPreset);
+	connect(m_ui->curve, &KisCurveWidget::curveChanged, this, &InputSettings::applyUiToPreset);
+	connect(m_ui->curveParam, &QSlider::valueChanged, this, &InputSettings::applyUiToPreset);
+	connect(m_ui->pressuresrc, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::applyUiToPreset);
 
-	connect(m_ui->stylusCurve, &KisCurveWidget::curveChanged, this, &InputSettings::updatePressureMapping);
-	connect(m_ui->distanceCurve, &KisCurveWidget::curveChanged, this, &InputSettings::updatePressureMapping);
-	connect(m_ui->velocityCurve, &KisCurveWidget::curveChanged, this, &InputSettings::updatePressureMapping);
-
-	connect(m_ui->pressuresrc, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePressureMapping()));
-	connect(m_ui->distance, SIGNAL(valueChanged(int)), this, SLOT(updatePressureMapping()));
-	connect(m_ui->velocity, SIGNAL(valueChanged(int)), this, SLOT(updatePressureMapping()));
-
+	connect(m_ui->preset, &QComboBox::editTextChanged, this, &InputSettings::presetNameChanged);
 	connect(m_ui->preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::choosePreset);
-	connect(m_presetModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(presetDataChanged(QModelIndex,QModelIndex)));
+	connect(m_presetModel, &QAbstractItemModel::rowsRemoved, this, &InputSettings::onPresetCountChanged);
+	connect(m_presetModel, &QAbstractItemModel::modelReset, this, &InputSettings::onPresetCountChanged);
+
+	onPresetCountChanged();
 }
 
 InputSettings::~InputSettings()
@@ -71,112 +68,82 @@ InputSettings::~InputSettings()
 	delete m_ui;
 }
 
-
-input::Preset *InputSettings::mutableCurrentPreset()
-{
-	return (*m_presetModel)[m_ui->preset->currentIndex()];
-}
-
-const input::Preset *InputSettings::currentPreset() const
-{
-	return m_presetModel->at(m_ui->preset->currentIndex());
-}
-
-void InputSettings::updateSmoothing()
-{
-	input::Preset *preset = mutableCurrentPreset();
-	if(preset) {
-		applyUiToPreset(*preset);
-	}
-}
-
-void InputSettings::updatePressureMapping()
-{
-	input::Preset *preset = mutableCurrentPreset();
-	if(preset) {
-		applyUiToPreset(*preset);
-	}
-}
-
 void InputSettings::choosePreset(int index)
 {
 	const input::Preset *preset = m_presetModel->at(index);
 	if(preset) {
 		applyPresetToUi(*preset);
-		updatePresetMenu();
 	}
+}
+
+void InputSettings::presetNameChanged(const QString &name)
+{
+	auto *m = m_ui->preset->model();
+	m->setData(m->index(m_ui->preset->currentIndex(), 0), name);
 }
 
 void InputSettings::addPreset()
 {
-	const input::Preset &preset = m_presetModel->add(currentPreset());
-	m_ui->preset->setCurrentIndex(m_presetModel->indexOf(preset));
+	input::Preset p;
+	p.name = tr("New");
+	m_presetModel->add(p);
+	m_ui->preset->setCurrentIndex(m_presetModel->rowCount()-1);
 }
 
-void InputSettings::renamePreset()
+void InputSettings::copyPreset()
 {
-	const input::Preset *preset = currentPreset();
-	if(preset) {
-		bool ok;
-		QString name = QInputDialog::getText(this, tr("Rename Preset"),
-				tr("Preset name:"), QLineEdit::Normal, preset->name, &ok);
-		input::Preset *mutablePreset = mutableCurrentPreset();
-		if(preset == mutablePreset && ok && !name.isEmpty()) {
-			m_presetModel->rename(*mutablePreset, name);
-		}
-	}
+	const input::Preset *current = m_presetModel->at(m_ui->preset->currentIndex());
+	if(!current)
+		return;
+	input::Preset p = *current;
+	p.id = QString();
+	p.name = tr("New %1").arg(p.name);
+	m_presetModel->add(p);
+	m_ui->preset->setCurrentIndex(m_presetModel->rowCount()-1);
 }
 
 void InputSettings::removePreset()
 {
-	const input::Preset *preset = currentPreset();
-	if(preset) {
-		m_presetModel->remove(*preset);
-	}
+	m_presetModel->removeRows(m_ui->preset->currentIndex(), 1, QModelIndex());
 }
 
-void InputSettings::presetDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+void InputSettings::onPresetCountChanged()
 {
-	int i = m_ui->preset->currentIndex();
-	if(i >= 0 && i >= topLeft.row() && i <= bottomRight.row()) {
-		const input::Preset *preset = currentPreset();
-		if(preset) {
-			updatePresetMenu();
-		}
-	}
+	m_removePresetAction->setEnabled(m_presetModel->rowCount() > 1);
 }
-
 
 void InputSettings::applyPresetToUi(const input::Preset &preset)
 {
 	if(!m_updateInProgress) {
 		m_updateInProgress = true;
 		m_ui->smoothing->setValue(preset.smoothing);
-		m_ui->pressuresrc->setCurrentIndex(preset.pressureMode);
-		m_ui->stackedWidget->setCurrentIndex(m_ui->pressuresrc->currentIndex());
-		m_ui->stylusCurve->setCurve(preset.stylusCurve);
-		m_ui->distanceCurve->setCurve(preset.distanceCurve);
-		m_ui->velocityCurve->setCurve(preset.velocityCurve);
-		m_ui->distance->setValue(preset.distance);
-		m_ui->velocity->setValue(preset.velocity);
+		m_ui->pressuresrc->setCurrentIndex(preset.curve.mode);
+		m_ui->curve->setCurve(preset.curve.curve);
+		m_ui->curveParam->setValue(int(preset.curve.param * 100.0));
 		m_updateInProgress = false;
-		updateSmoothing();
-		updatePressureMapping();
 	}
 }
 
-void InputSettings::updatePresetMenu() const
-{
-	m_removePresetAction->setEnabled(m_presetModel->size() > 1);
-}
-
-void InputSettings::applyUiToPreset(input::Preset &preset) const
+void InputSettings::applyUiToPreset()
 {
 	if(!m_updateInProgress) {
-		m_presetModel->apply(preset, m_ui->smoothing->value(),
-				m_ui->pressuresrc->currentIndex(), m_ui->stylusCurve->curve(),
-				m_ui->distanceCurve->curve(), m_ui->velocityCurve->curve(),
-				m_ui->distance->value(), m_ui->velocity->value());
+		const input::Preset *current = m_presetModel->at(m_ui->preset->currentIndex());
+		if(!current)
+			return;
+
+		m_presetModel->update(
+			m_ui->preset->currentIndex(),
+			input::Preset{
+				current->id,
+				current->name,
+				m_ui->smoothing->value(),
+				PressureMapping {
+					PressureMapping::Mode(m_ui->pressuresrc->currentIndex()),
+					m_ui->curve->curve(),
+					qreal(m_ui->curveParam->value()) / 100.0
+				}
+			}
+		);
 	}
 }
 

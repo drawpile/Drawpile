@@ -32,8 +32,6 @@ struct PressureMapping {
 	Mode mode;
 	KisCubicCurve curve;
 	qreal param;
-
-	PressureMapping() : mode(STYLUS), param(1.0) { }
 };
 
 Q_DECLARE_METATYPE(PressureMapping)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>215</width>
-    <height>249</height>
+    <width>263</width>
+    <height>255</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -104,7 +104,7 @@
           </sizepolicy>
          </property>
          <property name="editable">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="insertPolicy">
           <enum>QComboBox::NoInsert</enum>
@@ -149,151 +149,43 @@
     </layout>
    </item>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget">
-     <property name="currentIndex">
-      <number>2</number>
-     </property>
-     <widget class="QWidget" name="page_4">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QSlider" name="curveParam">
+       <property name="toolTip">
+        <string>Velocity range</string>
+       </property>
+       <property name="minimum">
         <number>0</number>
        </property>
-       <property name="leftMargin">
-        <number>0</number>
+       <property name="maximum">
+        <number>100</number>
        </property>
-       <property name="topMargin">
-        <number>0</number>
+       <property name="tracking">
+        <bool>false</bool>
        </property>
-       <property name="rightMargin">
-        <number>0</number>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="bottomMargin">
-        <number>0</number>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBelow</enum>
        </property>
-       <item>
-        <widget class="KisCurveWidget" name="stylusCurve" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_5">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>0</number>
+       <property name="tickInterval">
+        <number>25</number>
        </property>
-       <property name="leftMargin">
-        <number>0</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="KisCurveWidget" name="curve" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
        </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QSlider" name="distance">
-         <property name="toolTip">
-          <string>Curve distance</string>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>200</number>
-         </property>
-         <property name="tracking">
-          <bool>false</bool>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBelow</enum>
-         </property>
-         <property name="tickInterval">
-          <number>10</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="KisCurveWidget" name="distanceCurve" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_6">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QSlider" name="velocity">
-         <property name="toolTip">
-          <string>Velocity range</string>
-         </property>
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="tracking">
-          <bool>false</bool>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBelow</enum>
-         </property>
-         <property name="tickInterval">
-          <number>10</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="KisCurveWidget" name="velocityCurve" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -311,22 +203,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>pressuresrc</sender>
-   <signal>activated(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>135</x>
-     <y>31</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>192</x>
-     <y>200</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
