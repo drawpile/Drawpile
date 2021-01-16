@@ -51,10 +51,11 @@ class PresetModel : public QAbstractListModel {
 	Q_OBJECT
 public:
 	explicit PresetModel(QObject *parent = nullptr);
-	~PresetModel();
 
 	PresetModel(const PresetModel &) = delete;
 	PresetModel &operator=(const PresetModel &) = delete;
+
+	static PresetModel *getSharedInstance();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -69,13 +70,13 @@ public:
 	void add(const Preset &preset);
 	void update(int index, const Preset &preset);
 
+	void restoreSettings();
+	void saveSettings();
+
 signals:
 	void presetChanged(const QString &id);
 
 private:
-	void restoreSettings();
-	void saveSettings();
-
 	QVector<Preset> m_presets;
 };
 

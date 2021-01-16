@@ -27,9 +27,9 @@
 
 namespace docks {
 
-InputSettings::InputSettings(input::PresetModel *presetModel, QWidget *parent) :
+InputSettings::InputSettings(QWidget *parent) :
 	QDockWidget(tr("Input"), parent),
-	m_presetModel(presetModel),
+	m_presetModel(input::PresetModel::getSharedInstance()),
 	m_updateInProgress(false)
 {
 	m_ui = new Ui_InputSettings;
@@ -65,6 +65,7 @@ InputSettings::InputSettings(input::PresetModel *presetModel, QWidget *parent) :
 
 InputSettings::~InputSettings()
 {
+	m_presetModel->saveSettings();
 	delete m_ui;
 }
 

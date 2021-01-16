@@ -25,12 +25,16 @@ PresetModel::PresetModel(QObject *parent) :
 	QAbstractListModel{parent},
 	m_presets{}
 {
-	restoreSettings();
 }
 
-PresetModel::~PresetModel()
+PresetModel *PresetModel::getSharedInstance()
 {
-	saveSettings();
+	static PresetModel *instance;
+	if(!instance) {
+		instance = new PresetModel;
+		instance->restoreSettings();
+	}
+	return instance;
 }
 
 int PresetModel::rowCount(const QModelIndex &parent) const

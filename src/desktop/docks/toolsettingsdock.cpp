@@ -17,8 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvas/inputpresetmodel.h"
-
 #include "docks/toolsettingsdock.h"
 #include "docks/utils.h"
 
@@ -68,7 +66,7 @@ struct ToolSettings::Private {
 		return pages[currentTool].settings.data();
 	}
 
-	Private(tools::ToolController *ctrl, input::PresetModel *presetModel)
+	Private(tools::ToolController *ctrl)
 		: ctrl(ctrl),
 		  widgetStack(nullptr),
 		  colorDialog(nullptr),
@@ -81,7 +79,7 @@ struct ToolSettings::Private {
 		Q_ASSERT(ctrl);
 
 		// Create tool pages
-		auto brush = QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl, presetModel));
+		auto brush = QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl));
 		auto sel = QSharedPointer<tools::ToolSettings>(new tools::SelectionSettings(ctrl));
 
 		pages[tools::Tool::FREEHAND] = {
@@ -162,8 +160,8 @@ struct ToolSettings::Private {
 	}
 };
 
-ToolSettings::ToolSettings(tools::ToolController *ctrl, input::PresetModel *presetModel,
-		QWidget *parent) : QDockWidget(parent), d(new Private(ctrl, presetModel))
+ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
+	: QDockWidget(parent), d(new Private(ctrl))
 {
 	setStyleSheet(defaultDockStylesheet());
 

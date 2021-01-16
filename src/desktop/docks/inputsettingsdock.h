@@ -38,7 +38,7 @@ class InputSettings : public QDockWidget
 {
 	Q_OBJECT
 public:
-	explicit InputSettings(input::PresetModel *presetModel, QWidget *parent=nullptr);
+	explicit InputSettings(QWidget *parent=nullptr);
 	~InputSettings();
 
 	const input::Preset *currentPreset() const;

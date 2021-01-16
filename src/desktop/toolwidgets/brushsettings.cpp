@@ -77,9 +77,10 @@ struct BrushSettings::Private {
 		return toolSlots[current];
 	}
 
-	Private(BrushSettings *b, input::PresetModel *presetModel) :
-		presetModel(presetModel)
+	Private(BrushSettings *b)
 	{
+		presetModel = input::PresetModel::getSharedInstance();
+
 		blendModes = new QStandardItemModel(0, 1, b);
 		for(const auto &bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode)) {
 			auto item = new QStandardItem(bm.second);
@@ -132,8 +133,8 @@ struct BrushSettings::Private {
 	}
 };
 
-BrushSettings::BrushSettings(ToolController *ctrl, input::PresetModel *presetModel, QObject *parent)
-	: ToolSettings(ctrl, parent), d(new Private(this, presetModel))
+BrushSettings::BrushSettings(ToolController *ctrl, QObject *parent)
+	: ToolSettings(ctrl, parent), d(new Private(this))
 {
 }
 

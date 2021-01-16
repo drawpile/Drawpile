@@ -61,7 +61,6 @@
 #include "mainwindow.h"
 #include "document.h"
 #include "main.h"
-#include "canvas/inputpresetmodel.h"
 
 #include "core/layerstack.h"
 #include "canvas/loader.h"
@@ -147,7 +146,6 @@ static void setLastPath(const QString &lastpath) { QSettings().setValue("window/
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(),
 	  m_splitter(nullptr),
-	  m_presetModel(nullptr),
 	  m_dockToolSettings(nullptr),
 	  m_dockBrushPalette(nullptr),
 	  m_dockInput(nullptr),
@@ -276,9 +274,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_canvasscene->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	m_view->setCanvas(m_canvasscene);
-
-	// Input presets, used by both the brush and the input panel
-	m_presetModel = new input::PresetModel(this);
 
 	// Create docks
 	createDocks();
@@ -2876,10 +2871,9 @@ void MainWindow::createDocks()
 	Q_ASSERT(m_doc);
 	Q_ASSERT(m_view);
 	Q_ASSERT(m_canvasscene);
-	Q_ASSERT(m_presetModel);
 
 	// Create tool settings
-	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), m_presetModel, this);
+	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
 	m_dockToolSettings->setObjectName("ToolSettings");
 	m_dockToolSettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockToolSettings);
@@ -2914,7 +2908,7 @@ void MainWindow::createDocks()
 	m_dockNavigator->setScene(m_canvasscene);
 
 	// Create input settings
-	m_dockInput = new docks::InputSettings(m_presetModel, this);
+	m_dockInput = new docks::InputSettings(this);
 	m_dockInput->setObjectName("InputSettings");
 	m_dockInput->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockInput);

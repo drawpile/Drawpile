@@ -30,7 +30,6 @@ namespace brushes {
 
 namespace input {
 	class Preset;
-	class PresetModel;
 }
 
 namespace tools {
@@ -44,7 +43,7 @@ class BrushSettings : public ToolSettings {
 	Q_OBJECT
 	friend class AdvancedBrushSettings;
 public:
-	BrushSettings(ToolController *ctrl, input::PresetModel *presetModel, QObject *parent=nullptr);
+	BrushSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~BrushSettings();
 
 	QString toolType() const override { return QStringLiteral("brush"); }

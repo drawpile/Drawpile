@@ -68,10 +68,6 @@ namespace canvas {
 	class SessionLoader;
 }
 
-namespace input {
-	class PresetModel;
-}
-
 namespace net {
 	class Client;
 	class LoginHandler;
@@ -217,7 +213,6 @@ private:
 	void setupActions();
 
 	QSplitter *m_splitter;
-	input::PresetModel *m_presetModel;
 
 	docks::ToolSettings *m_dockToolSettings;
 	docks::BrushPalette *m_dockBrushPalette;
