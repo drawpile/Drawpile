@@ -49,6 +49,7 @@ set (
 	dialogs/avatarimport.cpp
 	dialogs/versioncheckdialog.cpp
 	dialogs/addserverdialog.cpp
+	dialogs/inputsettings.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -74,7 +75,6 @@ set (
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
-	docks/inputsettingsdock.cpp
 	chat/chatlineedit.cpp
 	chat/chatwidgetpinnedarea.cpp
 	chat/chatwidget.cpp 

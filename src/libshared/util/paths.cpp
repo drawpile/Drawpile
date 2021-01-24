@@ -17,7 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h"
 #include "paths.h"
 
 #include <QCoreApplication>

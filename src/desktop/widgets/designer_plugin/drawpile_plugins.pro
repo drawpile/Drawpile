@@ -31,5 +31,6 @@ SOURCES += collection.cpp \
 	../tablettest.cpp tablettester_plugin.cpp \
 	../spinner.cpp spinner_plugin.cpp \
 	../presetselector.cpp presetselector_plugin.cpp \
-	../modifierkeys.cpp modifierkeys_plugin.cpp
+	../modifierkeys.cpp modifierkeys_plugin.cpp \
+	../../../libshared/util/paths.cpp
 

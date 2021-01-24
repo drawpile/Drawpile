@@ -21,6 +21,7 @@
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "brushes/brush.h"
+#include "dialogs/inputsettings.h"
 
 #include "canvas/inputpresetmodel.h"
 #include "ui_brushdock.h"
@@ -32,6 +33,7 @@
 #include <QStandardItemModel>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QPointer>
 
 namespace tools {
 
@@ -54,6 +56,7 @@ namespace {
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
+	QPointer<dialogs::InputSettings> inputSettingsDialog = nullptr;
 	input::PresetModel *presetModel;
 
 	QStandardItemModel *blendModes, *eraseModes;
@@ -148,6 +151,15 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
 	d->ui.inputPreset->setModel(d->presetModel);
+
+	connect(d->ui.configureInput, &QAbstractButton::clicked, [this, parent]() {
+		if(!d->inputSettingsDialog) {
+			d->inputSettingsDialog = new dialogs::InputSettings(parent);
+			d->inputSettingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+		}
+		d->inputSettingsDialog->setCurrentPreset(d->currentTool().inputPresetId);
+		d->inputSettingsDialog->show();
+	});
 
 	// Outside communication
 	connect(d->ui.brushsizeBox, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));

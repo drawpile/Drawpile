@@ -92,7 +92,6 @@
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/layerlistdock.h"
-#include "docks/inputsettingsdock.h"
 
 #include "net/client.h"
 #include "net/login.h"
@@ -2878,6 +2877,7 @@ void MainWindow::createDocks()
 	m_dockToolSettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockToolSettings);
 	static_cast<tools::SelectionSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(m_view);
+	m_view->setPressureMapping(static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->getPressureMapping());
 
 	// Create brush palette
 	m_dockBrushPalette = new docks::BrushPalette(this);
@@ -2906,14 +2906,4 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default
 	m_dockNavigator->setScene(m_canvasscene);
-
-	// Create input settings
-	m_dockInput = new docks::InputSettings(this);
-	m_dockInput->setObjectName("InputSettings");
-	m_dockInput->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockInput);
-	m_view->setPressureMapping(brushSettings->getPressureMapping());
-
-	// Tabify docks
-	tabifyDockWidget(m_dockLayers, m_dockInput);
 }

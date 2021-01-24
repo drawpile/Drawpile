@@ -17,27 +17,22 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "docks/inputsettingsdock.h"
-#include "docks/utils.h"
+#include "inputsettings.h"
 #include "canvas/inputpresetmodel.h"
 
 #include "ui_inputcfg.h"
 
 #include <QDebug>
 
-namespace docks {
+namespace dialogs {
 
 InputSettings::InputSettings(QWidget *parent) :
-	QDockWidget(tr("Input"), parent),
+	QDialog(parent),
 	m_presetModel(input::PresetModel::getSharedInstance()),
 	m_updateInProgress(false)
 {
 	m_ui = new Ui_InputSettings;
-	QWidget *w = new QWidget(this);
-	setWidget(w);
-	m_ui->setupUi(w);
-
-	setStyleSheet(defaultDockStylesheet());
+	m_ui->setupUi(this);
 
 	m_presetmenu = new QMenu(this);
 	m_presetmenu->addAction(tr("New"), this, &InputSettings::addPreset);
@@ -67,6 +62,13 @@ InputSettings::~InputSettings()
 {
 	m_presetModel->saveSettings();
 	delete m_ui;
+}
+
+void InputSettings::setCurrentPreset(const QString &id)
+{
+	const int idx = m_presetModel->searchIndexById(id);
+	if(idx>=0)
+		m_ui->preset->setCurrentIndex(idx);
 }
 
 void InputSettings::choosePreset(int index)
