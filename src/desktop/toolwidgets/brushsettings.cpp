@@ -127,7 +127,14 @@ struct BrushSettings::Private {
 
 	const input::Preset *currentPreset()
 	{
-		return presetFor(currentTool());
+		const input::Preset *p = presetFor(currentTool());
+		if(!p) {
+			if(presetModel->rowCount()>0) {
+				p = presetModel->at(0);
+				currentTool().inputPresetId = p->id;
+			}
+		}
+		return p;
 	}
 
 	const input::Preset *presetFor(const ToolSlot &tool)

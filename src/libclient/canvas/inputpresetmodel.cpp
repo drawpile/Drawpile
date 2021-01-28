@@ -139,10 +139,7 @@ void PresetModel::update(int index, const Preset &preset)
 void PresetModel::restoreSettings()
 {
 	beginResetModel();
-	m_presets.clear();
-
 	QSettings cfg;
-
 	const int size = cfg.beginReadArray("inputpresets");
 	m_presets.resize(size);
 	for(int i = 0; i < size; ++i) {
