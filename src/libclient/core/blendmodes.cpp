@@ -99,6 +99,30 @@ const BlendMode BLEND_MODE[] = {
 		BlendMode::UniversalMode
 	},
 	{
+		QT_TRANSLATE_NOOP("paintcore", "HSL Hue"),
+		QString("hue"),
+		BlendMode::MODE_HSL_HUE,
+		BlendMode::UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("paintcore", "HSL Saturation"),
+		QString("saturation"),
+		BlendMode::MODE_HSL_SATURATION,
+		BlendMode::UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("paintcore", "HSL Luminosity"),
+		QString("luminosity"),
+		BlendMode::MODE_HSL_LUMINOSITY,
+		BlendMode::UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("paintcore", "HSL Color"),
+		QString("color"),
+		BlendMode::MODE_HSL_COLOR,
+		BlendMode::UniversalMode
+	},
+	{
 		"Color erase", // This is a special mode
 		QString("-dp-cerase"), /* this is used internally only */
 		BlendMode::MODE_COLORERASE,

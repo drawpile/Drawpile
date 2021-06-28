@@ -167,6 +167,11 @@ void BrushPreview::updatePreview()
 	};
 	auto fgStyle = m_brush.smudge1()>0 ? LayerFill::RainbowBars : LayerFill::Solid;
 
+	constexpr int DAB_HUE = 0x1;
+	constexpr int DAB_SATURATION = 0x2;
+	constexpr int DAB_VALUE = 0x4;
+	int dabModes = 0x0;
+
 	brushes::ClassicBrush brush = m_brush;
 
 	if(brush.blendingMode() == paintcore::BlendMode::MODE_ERASE) {
@@ -181,6 +186,17 @@ void BrushPreview::updatePreview()
 	} else if(!paintcore::findBlendMode(brush.blendingMode()).flags.testFlag(paintcore::BlendMode::IncrOpacity)) {
 		fgStyle = LayerFill::RainbowDabs;
 		bgColor = Qt::transparent;
+		switch(brush.blendingMode()) {
+		case paintcore::BlendMode::MODE_HSL_HUE:
+		case paintcore::BlendMode::MODE_HSL_SATURATION:
+		case paintcore::BlendMode::MODE_HSL_LUMINOSITY:
+		case paintcore::BlendMode::MODE_HSL_COLOR:
+			dabModes = DAB_HUE | DAB_SATURATION | DAB_VALUE;
+			break;
+		default:
+			dabModes = DAB_HUE;
+			break;
+		}
 	}
 
 	if(m_shape == FloodFill) {
@@ -215,15 +231,19 @@ void BrushPreview::updatePreview()
 		const uint8_t d = qBound(10, h*2/3, 255);
 		const int x0 = d, x1 = w - d;
 		const int step = d * 70 / 100;
-		const int huestep = 359 / ((x1-x0) / step);
-		int hue = 0;
-		for(int x=x0;x<x1;x+=step, hue+=huestep) {
+		const int huestep = dabModes & DAB_HUE ? 359 / ((x1-x0) / step) : 0;
+		const int saturationstep = dabModes & DAB_SATURATION ?  255 / ((x1-x0) / step) : 0;
+		const int valuestep = dabModes & DAB_VALUE ? 255 / ((x1-x0) / step) : 0;
+		int hue = huestep == 0 ? 359 / 2 : 0;
+		int saturation = saturationstep == 0 ? 160 : 0;
+		int value = valuestep == 0 ? 220 : 0;
+		for(int x=x0;x<x1;x+=step, hue+=huestep, saturation += saturationstep, value += valuestep) {
 			protocol::DrawDabsPixel dab(
 				protocol::DabShape::Round,
 				1,
 				layer->id(),
 				x, h/2,
-				QColor::fromHsv(hue, 160, 220).rgb() & 0x00ffffff,
+				QColor::fromHsv(hue, saturation, value).rgb() & 0x00ffffff,
 				paintcore::BlendMode::MODE_NORMAL,
 				protocol::PixelBrushDabVector { protocol::PixelBrushDab {0, 0, d, 255} }
 			);
