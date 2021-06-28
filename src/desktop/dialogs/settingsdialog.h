@@ -30,6 +30,8 @@ class AvatarListModel;
 
 namespace sessionlisting { class ListServerModel; }
 
+namespace color_widgets { class ColorWheel; }
+
 namespace dialogs {
 
 class SettingsDialog : public QDialog
@@ -60,9 +62,18 @@ private slots:
 	void addAvatar();
 	void removeSelectedAvatar();
 
+	void changeColorWheelShape(int index);
+	void changeColorWheelAngle(int index);
+	void changeColorWheelSpace(int index);
+
 private:
+	enum ColorWheelShape { Square, Triangle };
+	enum ColorWheelAngle { Fixed, Rotating };
+	enum ColorWheelSpace { Hsv, Hsl, Lch };
+
 	void restoreSettings();
 	void setParentalControlsLocked(bool lock);
+	void restoreColorWheelSettings(int flags);
 	void rememberPcLevel();
 
 	Ui_SettingsDialog *m_ui;

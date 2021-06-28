@@ -25,6 +25,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Color Wheel</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Notifications</string>
         </property>
        </item>
@@ -333,6 +338,98 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="colorwheelPage">
+           <layout class="QFormLayout" name="formLayout_9">
+            <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::ExpandingFieldsGrow</enum>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_30">
+              <property name="text">
+               <string>Shape:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="colorwheelShapeBox">
+              <item>
+               <property name="text">
+                <string>Square</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Triangle</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_31">
+              <property name="text">
+               <string>Angle:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="colorwheelAngleBox">
+              <item>
+               <property name="text">
+                <string>Fixed</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Rotating</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_32">
+              <property name="text">
+               <string>Color Space:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QComboBox" name="colorwheelSpaceBox">
+              <item>
+               <property name="text">
+                <string>HSV (Hue, Saturation, Value)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>HSL (Hue, Saturation, Lightness)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Lch (Luminance, Chroma, Hue)</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="color_widgets::ColorWheel" name="colorwheel" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_33">
+              <property name="text">
+               <string>Preview:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="page_2">
            <layout class="QFormLayout" name="formLayout_6">
             <item row="0" column="0">
@@ -375,6 +472,13 @@
               </item>
              </layout>
             </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>Notifications:</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="QCheckBox" name="notifChat">
               <property name="text">
@@ -400,13 +504,6 @@
              <widget class="QCheckBox" name="notifLock">
               <property name="text">
                <string>Canvas lock</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Notifications:</string>
               </property>
              </widget>
             </item>
@@ -1121,6 +1218,11 @@
    <class>widgets::ModifierKeys</class>
    <extends>QWidget</extends>
    <header>widgets/modifierkeys.h</header>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::ColorWheel</class>
+   <extends>QWidget</extends>
+   <header>ColorWheel</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -22,6 +22,7 @@
 #include <ColorWheel>
 #include <HueSlider>
 
+#include "main.h"
 #include "docks/colorbox.h"
 #include "docks/utils.h"
 #include "utils/palettelistmodel.h"
@@ -33,6 +34,8 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
+
+using color_widgets::ColorWheel;
 
 namespace docks {
 
@@ -157,6 +160,10 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 
 	connect(_ui->lastused, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
 	connect(_ui->lastused, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
+
+	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
+			this, &ColorBox::updateSettings);
+	updateSettings();
 }
 
 ColorBox::~ColorBox()
@@ -310,7 +317,7 @@ void ColorBox::updateFromRgbSliders()
 {
 	if(!_updating) {
 		QColor color(_ui->red->value(), _ui->green->value(), _ui->blue->value());
-				
+
 		setColor(color);
 		emit colorChanged(color);
 	}
@@ -381,6 +388,15 @@ void ColorBox::swapLastUsedColors()
 
 	setColor(altColor);
 	emit colorChanged(altColor);
+}
+
+void ColorBox::updateSettings()
+{
+	QSettings cfg;
+	cfg.beginGroup("settings/colorwheel");
+	_ui->colorwheel->setDisplayFlags(
+			static_cast<ColorWheel::DisplayFlags>(cfg.value("flags").toInt()));
+	cfg.endGroup();
 }
 
 }

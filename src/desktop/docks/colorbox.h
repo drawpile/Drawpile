@@ -55,6 +55,8 @@ private slots:
 	void updateFromHsvSliders();
 	void updateFromHsvSpinbox();
 
+	void updateSettings();
+
 private:
 	Ui_ColorBox *_ui;
 	Palette *m_lastused;
