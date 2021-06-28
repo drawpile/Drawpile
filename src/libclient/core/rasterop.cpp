@@ -57,6 +57,11 @@ inline uint blend_multiply(uchar base, uchar blend) {
 	return qMin(255u, UINT8_MULT(base, blend));
 }
 
+//! Screen blend, the counterpart to multiply
+inline uint blend_screen(uchar base, uchar blend) {
+	return 255u - qMin(255u, UINT8_MULT(255u - base, 255u - blend));
+}
+
 //! Divide color values
 inline uint blend_divide(uchar base, uchar blend) {
 	return qMin(255u, (base*256u + blend/2) / (1+blend));
@@ -462,6 +467,7 @@ void compositeMask(BlendMode::Mode mode, quint32 *base, quint32 color, const uch
 	case BlendMode::MODE_ERASE: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_NORMAL: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_MULTIPLY: doMaskComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip); break;
+	case BlendMode::MODE_SCREEN: doMaskComposite<blend_screen>(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_DIVIDE: doMaskComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_BURN: doMaskComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip); break;
 	case BlendMode::MODE_DODGE: doMaskComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip); break;
@@ -484,6 +490,7 @@ void compositePixels(BlendMode::Mode mode, quint32 *base, const quint32 *over, i
 	case BlendMode::MODE_ERASE: doPixelErase(base, over, opacity, len); break;
 	case BlendMode::MODE_NORMAL: doPixelAlphaBlend(base, over, opacity, len); break;
 	case BlendMode::MODE_MULTIPLY: doPixelComposite<blend_multiply>(base, over, opacity, len); break;
+	case BlendMode::MODE_SCREEN: doPixelComposite<blend_screen>(base, over, opacity, len); break;
 	case BlendMode::MODE_DIVIDE: doPixelComposite<blend_divide>(base, over, opacity, len); break;
 	case BlendMode::MODE_BURN: doPixelComposite<blend_burn>(base, over, opacity, len); break;
 	case BlendMode::MODE_DODGE: doPixelComposite<blend_dodge>(base, over, opacity, len); break;

@@ -57,8 +57,14 @@ const BlendMode BLEND_MODE[] = {
 		BlendMode::UniversalMode
 	},
 	{
-		QT_TRANSLATE_NOOP("paintcore", "Divide"),
+		QT_TRANSLATE_NOOP("paintcore", "Screen"),
 		QString("screen"),
+		BlendMode::MODE_SCREEN,
+		BlendMode::UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("paintcore", "Divide"),
+		QString("-dp-divide"),
 		BlendMode::MODE_DIVIDE,
 		BlendMode::UniversalMode
 	},
