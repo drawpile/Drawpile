@@ -53,6 +53,8 @@
 
 #include <QDebug>
 
+using color_widgets::ColorWheel;
+
 class KeySequenceEditFactory : public QItemEditorCreatorBase
 {
 public:
@@ -191,6 +193,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	connect(m_ui->addAvatar, &QPushButton::clicked, this, &SettingsDialog::addAvatar);
 	connect(m_ui->deleteAvatar, &QPushButton::clicked, this, &SettingsDialog::removeSelectedAvatar);
+
+	// Color wheel
+	connect(m_ui->colorwheelShapeBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+			this, &SettingsDialog::changeColorWheelShape);
+	connect(m_ui->colorwheelAngleBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+			this, &SettingsDialog::changeColorWheelAngle);
+	connect(m_ui->colorwheelSpaceBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+			this, &SettingsDialog::changeColorWheelSpace);
 
 	// Load configuration
 	restoreSettings();
@@ -347,6 +357,10 @@ void SettingsDialog::restoreSettings()
 	m_ui->toolConstrain2Keys->setModifiers(viewShortcuts.toolConstraint2);
 	cfg.endGroup();
 
+	cfg.beginGroup("settings/colorwheel");
+	restoreColorWheelSettings(cfg.value("flags").toInt());
+	cfg.endGroup();
+
 	m_customShortcuts->loadShortcuts();
 	m_avatars->loadAvatars();
 }
@@ -359,6 +373,45 @@ void SettingsDialog::setParentalControlsLocked(bool lock)
 	m_ui->nsfmDisconnect->setDisabled(lock);
 	m_ui->noUncensoring->setDisabled(lock);
 	m_ui->nsfmLock->setText(lock ? tr("Unlock") : tr("Lock"));
+}
+
+void SettingsDialog::restoreColorWheelSettings(int flags)
+{
+	int shape;
+	switch(flags & ColorWheel::SHAPE_FLAGS) {
+	case ColorWheel::SHAPE_TRIANGLE:
+		shape = ColorWheelShape::Triangle;
+		break;
+	default:
+		shape = ColorWheelShape::Square;
+		break;
+	}
+	m_ui->colorwheelShapeBox->setCurrentIndex(shape);
+
+	int angle;
+	switch(flags & ColorWheel::ANGLE_FLAGS) {
+	case ColorWheel::ANGLE_ROTATING:
+		angle = ColorWheelAngle::Rotating;
+		break;
+	default:
+		angle = ColorWheelAngle::Fixed;
+		break;
+	}
+	m_ui->colorwheelAngleBox->setCurrentIndex(angle);
+
+	int space;
+	switch(flags & ColorWheel::COLOR_FLAGS) {
+	case ColorWheel::COLOR_HSL:
+		space = ColorWheelSpace::Hsl;
+		break;
+	case ColorWheel::COLOR_LCH:
+		space = ColorWheelSpace::Lch;
+		break;
+	default:
+		space = ColorWheelSpace::Hsv;
+		break;
+	}
+	m_ui->colorwheelSpaceBox->setCurrentIndex(space);
 }
 
 void SettingsDialog::rememberSettings()
@@ -445,6 +498,10 @@ void SettingsDialog::rememberSettings()
 	viewShortcuts.toolConstraint1 = m_ui->toolConstrain1Keys->modifiers();
 	viewShortcuts.toolConstraint2 = m_ui->toolConstrain2Keys->modifiers();
 	viewShortcuts.save(cfg);
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/colorwheel");
+	cfg.setValue("flags", static_cast<int>(m_ui->colorwheel->displayFlags()));
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())
@@ -691,6 +748,61 @@ void SettingsDialog::removeSelectedAvatar()
 	const QModelIndex idx = m_ui->avatarList->currentIndex();
 	if(idx.isValid())
 		m_avatars->removeRow(idx.row());
+}
+
+
+void SettingsDialog::changeColorWheelShape(int index)
+{
+	ColorWheel::DisplayFlags flags;
+	switch(index) {
+	case ColorWheelShape::Square:
+		flags = ColorWheel::SHAPE_SQUARE;
+		break;
+	case ColorWheelShape::Triangle:
+		flags = ColorWheel::SHAPE_TRIANGLE;
+		break;
+	default:
+		qWarning() << "Unknown color wheel shape index " << index;
+		return;
+	}
+	m_ui->colorwheel->setDisplayFlag(flags, ColorWheel::SHAPE_FLAGS);
+}
+
+void SettingsDialog::changeColorWheelAngle(int index)
+{
+	ColorWheel::DisplayFlags flags;
+	switch(index) {
+	case ColorWheelAngle::Fixed:
+		flags = ColorWheel::ANGLE_FIXED;
+		break;
+	case ColorWheelAngle::Rotating:
+		flags = ColorWheel::ANGLE_ROTATING;
+		break;
+	default:
+		qWarning() << "Unknown color wheel angle index " << index;
+		return;
+	}
+	m_ui->colorwheel->setDisplayFlag(flags, ColorWheel::ANGLE_FLAGS);
+}
+
+void SettingsDialog::changeColorWheelSpace(int index)
+{
+	ColorWheel::DisplayFlags flags;
+	switch(index) {
+	case ColorWheelSpace::Hsv:
+		flags = ColorWheel::COLOR_HSV;
+		break;
+	case ColorWheelSpace::Hsl:
+		flags = ColorWheel::COLOR_HSL;
+		break;
+	case ColorWheelSpace::Lch:
+		flags = ColorWheel::COLOR_LCH;
+		break;
+	default:
+		qWarning() << "Unknown color wheel space index " << index;
+		return;
+	}
+	m_ui->colorwheel->setDisplayFlag(flags, ColorWheel::COLOR_FLAGS);
 }
 
 }
