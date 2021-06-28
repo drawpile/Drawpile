@@ -263,6 +263,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
 	m_ui->brushCursorBox->setCurrentIndex(cfg.value("brushcursor").toInt());
+	m_ui->brushOutlineWidth->setValue(cfg.value("brushoutlinewidth", 1.0).toReal());
 	m_ui->toolToggleShortcut->setChecked(cfg.value("tooltoggle", true).toBool());
 	m_ui->shareBrushSlotColor->setChecked(cfg.value("sharebrushslotcolor", false).toBool());
 
@@ -381,6 +382,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/logfile", m_ui->logfile->isChecked());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
+	cfg.setValue("settings/brushoutlinewidth", static_cast<qreal>(m_ui->brushOutlineWidth->value()));
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
