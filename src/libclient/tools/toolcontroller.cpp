@@ -149,9 +149,8 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		connect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
 		connect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
 		connect(m_model->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
-
-		emit modelChanged(model);
 	}
+	emit modelChanged(model);
 }
 
 void ToolController::onAnnotationRowDelete(const QModelIndex&, int first, int last)

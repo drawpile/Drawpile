@@ -104,11 +104,19 @@ void SelectionTool::end()
 
 	// Toggle adjustment mode if just clicked
 	if((m_end - m_start).manhattanLength() < 2.0) {
-		sel->setAdjustmentMode(
-			sel->adjustmentMode() == canvas::Selection::AdjustmentMode::Scale
-				? canvas::Selection::AdjustmentMode::Rotate
-				: canvas::Selection::AdjustmentMode::Scale
-		);
+		canvas::Selection::AdjustmentMode nextMode;
+		switch(sel->adjustmentMode()) {
+		case canvas::Selection::AdjustmentMode::Scale:
+			nextMode = canvas::Selection::AdjustmentMode::Rotate;
+			break;
+		case canvas::Selection::AdjustmentMode::Rotate:
+			nextMode = canvas::Selection::AdjustmentMode::Distort;
+			break;
+		default:
+			nextMode = canvas::Selection::AdjustmentMode::Scale;
+			break;
+		}
+		sel->setAdjustmentMode(nextMode);
 	}
 }
 

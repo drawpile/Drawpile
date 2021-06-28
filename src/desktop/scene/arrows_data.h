@@ -41,6 +41,30 @@ static const QPointF
 ,verticalSkew[] {
 	{2,5}, {8,0}, {8,5}, {2,10}
 }
+,distortTopLeft[] {
+	{0,0}, {5,0}, {5,5}, {0,5}
+}
+,distortTop[] {
+	{3,0}, {8,0}, {8,5}, {3,5}
+}
+,distortTopRight[] {
+	{5,0}, {10,0}, {10,5}, {5,5}
+}
+,distortRight[] {
+	{5,3}, {10,3}, {10,8}, {5,8}
+}
+,distortBottomRight[] {
+	{5,5}, {10,5}, {10,10}, {5,10}
+}
+,distortBottom[] {
+	{3,5}, {8,5}, {8,10}, {3,10}
+}
+,distortBottomLeft[] {
+	{0,5}, {5,5}, {5,10}, {0,10}
+}
+,distortLeft[] {
+	{0,3}, {5,3}, {5,8}, {0,8}
+}
 ;
 
 }
