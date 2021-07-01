@@ -337,7 +337,7 @@
                <string>Enable this workaround if your cursor doesn't update when you move it into the canvas with the tablet pen.</string>
               </property>
               <property name="text">
-               <string>Enable canvas viewport entry hack (Linux only)</string>
+               <string>Enable canvas viewport entry hack</string>
               </property>
              </widget>
             </item>
