@@ -23,6 +23,7 @@
 #include "ui_inputcfg.h"
 
 #include <QDebug>
+#include <qpushbutton.h>
 
 namespace dialogs {
 
@@ -54,6 +55,8 @@ InputSettings::InputSettings(QWidget *parent) :
 	connect(m_ui->preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::choosePreset);
 	connect(m_presetModel, &QAbstractItemModel::rowsRemoved, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::modelReset, this, &InputSettings::onPresetCountChanged);
+
+	connect(m_ui->closeButton, &QPushButton::pressed, this, &QDialog::reject);
 
 	onPresetCountChanged();
 }
