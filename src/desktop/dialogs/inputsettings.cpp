@@ -23,6 +23,7 @@
 #include "ui_inputcfg.h"
 
 #include <QDebug>
+#include <qpushbutton.h>
 
 namespace dialogs {
 
@@ -54,6 +55,8 @@ InputSettings::InputSettings(QWidget *parent) :
 	connect(m_ui->preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::choosePreset);
 	connect(m_presetModel, &QAbstractItemModel::rowsRemoved, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::modelReset, this, &InputSettings::onPresetCountChanged);
+
+	connect(m_ui->closeButton, &QPushButton::pressed, this, &QDialog::reject);
 
 	onPresetCountChanged();
 }
@@ -123,6 +126,7 @@ void InputSettings::applyPresetToUi(const input::Preset &preset)
 		m_ui->pressuresrc->setCurrentIndex(preset.curve.mode);
 		m_ui->curve->setCurve(preset.curve.curve);
 		m_ui->curveParam->setValue(int(preset.curve.param * 100.0));
+		updateModeUi(preset.curve.mode);
 		m_updateInProgress = false;
 	}
 }
@@ -147,7 +151,31 @@ void InputSettings::applyUiToPreset()
 				}
 			}
 		);
+		updateModeUi(current->curve.mode);
 	}
+}
+
+void InputSettings::updateModeUi(PressureMapping::Mode mode)
+{
+	const char *curveParam;
+	switch(mode) {
+	case PressureMapping::STYLUS:
+		curveParam = nullptr;
+		break;
+	case PressureMapping::DISTANCE:
+		curveParam = "Curve distance";
+		break;
+	case PressureMapping::VELOCITY:
+		curveParam = "Velocity range";
+		break;
+	default:
+		break;
+	}
+	m_ui->curveParam->setVisible(curveParam != nullptr);
+#if QT_CONFIG(tooltip)
+	m_ui->curveParam->setToolTip(QCoreApplication::translate(
+			"InputSettings", curveParam, nullptr));
+#endif
 }
 
 }

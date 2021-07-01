@@ -612,6 +612,9 @@
      </item>
      <item row="6" column="3">
       <widget class="widgets::GroupedToolButton" name="configureInput">
+       <property name="toolTip">
+        <string>Configure input presets</string>
+       </property>
        <property name="icon">
         <iconset theme="configure">
          <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
