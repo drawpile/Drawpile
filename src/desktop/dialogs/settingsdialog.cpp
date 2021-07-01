@@ -126,6 +126,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	m_ui->relativePenModeHack->hide();
 #endif
 
+	// Same for Linux-specific hacks.
+#if !defined(Q_OS_LINUX)
+	m_ui->viewportEntryHack->hide();
+#endif
+
 	// Editable shortcuts
 	m_customShortcuts = new CustomShortcutModel(this);
 	auto filteredShortcuts = new QSortFilterProxyModel(this);
@@ -285,6 +290,9 @@ void SettingsDialog::restoreSettings()
 	m_ui->windowsink->setChecked(cfg.value("windowsink", true).toBool());
 	m_ui->relativePenModeHack->setChecked(cfg.value("relativepenhack", false).toBool());
 #endif
+#if defined(Q_OS_LINUX)
+	m_ui->viewportEntryHack->setChecked(cfg.value("viewportentryhack").toBool());
+#endif
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
 #ifdef Q_OS_MAC
@@ -442,6 +450,9 @@ void SettingsDialog::rememberSettings()
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 	cfg.setValue("windowsink", m_ui->windowsink->isChecked());
 	cfg.setValue("relativepenhack", m_ui->relativePenModeHack->isChecked());
+#endif
+#if defined(Q_OS_LINUX)
+	cfg.setValue("viewportentryhack", m_ui->viewportEntryHack->isChecked());
 #endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
