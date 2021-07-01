@@ -56,6 +56,7 @@ private:
 
 	void applyPresetToUi(const input::Preset &preset);
 	void applyUiToPreset();
+	void updateModeUi(PressureMapping::Mode mode);
 
 	Ui_InputSettings *m_ui;
 	input::PresetModel *m_presetModel;
