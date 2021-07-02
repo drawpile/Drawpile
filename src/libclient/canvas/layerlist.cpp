@@ -107,7 +107,11 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	if(count < 2)
 		return;
 
-	if(oldIdx<0 || oldIdx >= count || newIdx<0 || newIdx >= count) {
+	// If we're moving the layer to a higher index, take into
+	// account that all previous indexes shift down by one.
+	int adjustedNewIdx = newIdx > oldIdx ? newIdx - 1 : newIdx;
+
+	if(oldIdx < 0 || oldIdx >= count || adjustedNewIdx < 0 || adjustedNewIdx >= count) {
 		// This can happen when a layer is deleted while someone is drag&dropping it
 		qWarning("Whoops, can't move layer from %d to %d because it was just deleted!", oldIdx, newIdx);
 		return;
@@ -118,10 +122,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	for(const LayerListItem &li : m_items)
 		layers.append(li.id);
 
-	if(newIdx>oldIdx)
-		--newIdx;
-
-	layers.move(oldIdx, newIdx);
+	layers.move(oldIdx, adjustedNewIdx);
 
 	// Layers are shown topmost first in the list but
 	// are sent bottom first in the protocol.
