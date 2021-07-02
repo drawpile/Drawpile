@@ -219,26 +219,30 @@ void LayerList::layerContextMenu(const QPoint &pos)
 
 void LayerList::selectLayer(int id)
 {
-	const QModelIndex i = m_canvas->layerlist()->layerIndex(id);
+	selectLayerIndex(m_canvas->layerlist()->layerIndex(id));
+}
 
-	m_ui->layerlist->selectionModel()->select(i, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
-	m_ui->layerlist->scrollTo(i);
+void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
+{
+	if(index.isValid()) {
+		m_ui->layerlist->selectionModel()->select(
+			index, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+		if(scrollTo) {
+			m_ui->layerlist->scrollTo(index);
+		}
+	}
 }
 
 void LayerList::selectAbove()
 {
 	QModelIndex current = currentSelection();
-	QModelIndex prev = current.sibling(current.row() - 1, 0);
-	if(prev.isValid())
-		m_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+	selectLayerIndex(current.sibling(current.row() - 1, 0), true);
 }
 
 void LayerList::selectBelow()
 {
 	QModelIndex current = currentSelection();
-	QModelIndex prev = current.sibling(current.row() + 1, 0);
-	if(prev.isValid())
-		m_ui->layerlist->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
+	selectLayerIndex(current.sibling(current.row() + 1, 0), true);
 }
 
 void LayerList::opacityAdjusted()
@@ -499,7 +503,7 @@ void LayerList::onLayerDelete(const QModelIndex &, int first, int last)
 	// Automatically select neighbouring on deletion
 	if(row >= first && row <= last) {
 		row = qBound(0, row, m_canvas->layerlist()->rowCount()-1);
-		selectLayer(m_canvas->layerlist()->index(row).data(canvas::LayerListModel::IdRole).toInt());
+		selectLayerIndex(m_canvas->layerlist()->index(row), true);
 	}
 }
 

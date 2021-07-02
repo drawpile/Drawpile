@@ -106,6 +106,7 @@ private:
 	bool canMergeCurrent() const;
 
 	QModelIndex currentSelection() const;
+	void selectLayerIndex(QModelIndex index, bool scrollTo=false);
 
 	Ui_LayerBox *m_ui;
 	canvas::CanvasModel *m_canvas;
