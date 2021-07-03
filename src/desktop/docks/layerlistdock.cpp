@@ -112,10 +112,6 @@ LayerList::LayerList(QWidget *parent)
 
 	// Custom layer list item delegate
 	LayerListDelegate *del = new LayerListDelegate(this);
-	connect(del, &LayerListDelegate::layerCommand, [this](protocol::MessagePtr msg) {
-		msg->setContextId(m_canvas->localUserId());
-		emit layerCommand(msg);
-	});
 	connect(del, &LayerListDelegate::toggleVisibility, this, &LayerList::setLayerVisibility);
 	connect(del, &LayerListDelegate::editProperties, this, &LayerList::showPropertiesOfIndex);
 	m_ui->layerlist->setItemDelegate(del);

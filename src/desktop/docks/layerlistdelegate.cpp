@@ -132,15 +132,6 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 	editor->setGeometry(option.rect.adjusted(btnwidth, 0, -btnwidth, 0));
 }
 
-void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, const QModelIndex& index) const
-{
-	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
-	QString newtitle = static_cast<QLineEdit*>(editor)->text();
-	if(layer.title != newtitle) {
-		emit const_cast<LayerListDelegate*>(this)->layerCommand(protocol::MessagePtr(new protocol::LayerRetitle(0, layer.id, newtitle)));
-	}
-}
-
 void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const
 {
 	const QRect r {

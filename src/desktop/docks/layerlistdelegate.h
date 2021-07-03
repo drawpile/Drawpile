@@ -45,7 +45,6 @@ public:
 			const QModelIndex & index ) const;
 
 	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
 	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
 	void setShowNumbers(bool show);
@@ -53,7 +52,6 @@ public:
 signals:
 	void toggleVisibility(int layerId, bool visible);
 	void editProperties(QModelIndex index);
-	void layerCommand(protocol::MessagePtr msg);
 
 private:
 	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const;
