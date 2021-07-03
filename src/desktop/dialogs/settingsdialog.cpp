@@ -23,6 +23,7 @@
 #include "dialogs/certificateview.h"
 #include "dialogs/avatarimport.h"
 #include "dialogs/addserverdialog.h"
+#include "../toolwidgets/brushsettings.h"
 #include "widgets/keysequenceedit.h"
 #include "../scene/canvasviewmodifiers.h"
 #include "utils/icon.h"
@@ -363,6 +364,13 @@ void SettingsDialog::restoreSettings()
 	restoreColorWheelSettings(cfg.value("flags").toInt());
 	cfg.endGroup();
 
+	cfg.beginGroup("settings/brushsliderlimits");
+	m_ui->sizeLimitSpinner->setValue(cfg.value(
+			"size", tools::BrushSettings::DEFAULT_BRUSH_SIZE).toInt());
+	m_ui->spacingLimitSpinner->setValue(cfg.value(
+			"spacing", tools::BrushSettings::DEFAULT_BRUSH_SPACING).toInt());
+	cfg.endGroup();
+
 	m_customShortcuts->loadShortcuts();
 	m_avatars->loadAvatars();
 }
@@ -506,6 +514,11 @@ void SettingsDialog::rememberSettings()
 
 	cfg.beginGroup("settings/colorwheel");
 	cfg.setValue("flags", static_cast<int>(m_ui->colorwheel->displayFlags()));
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/brushsliderlimits");
+	cfg.setValue("size", m_ui->sizeLimitSpinner->value());
+	cfg.setValue("spacing", m_ui->spacingLimitSpinner->value());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())

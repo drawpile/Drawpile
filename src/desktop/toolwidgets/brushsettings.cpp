@@ -18,6 +18,7 @@
 */
 
 #include "brushsettings.h"
+#include "main.h"
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "brushes/brush.h"
@@ -34,6 +35,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QPointer>
+#include <qapplication.h>
+#include <qglobal.h>
 
 namespace tools {
 
@@ -143,6 +146,11 @@ struct BrushSettings::Private {
 	}
 };
 
+const int BrushSettings::MAX_BRUSH_SIZE = 255;
+const int BrushSettings::MAX_BRUSH_SPACING = 999;
+const int BrushSettings::DEFAULT_BRUSH_SIZE = 128;
+const int BrushSettings::DEFAULT_BRUSH_SPACING = 50;
+
 BrushSettings::BrushSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent), d(new Private(this))
 {
@@ -211,6 +219,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		connect(d->brushSlotButton(i), &QToolButton::clicked, this, [this, i]() { selectBrushSlot(i); });
 	}
+
+	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
+			this, &BrushSettings::updateSettings);
+	updateSettings();
 
 	return widget;
 }
@@ -490,6 +502,19 @@ PressureMapping BrushSettings::getPressureMapping() const
 {
 	const input::Preset *preset = d->currentPreset();
 	return preset ? preset->curve : PressureMapping{};
+}
+
+void BrushSettings::updateSettings()
+{
+	QSettings cfg;
+	cfg.beginGroup("settings/brushsliderlimits");
+	d->ui.brushsizeSlider->setMaximum(qMin(
+			cfg.value("size", DEFAULT_BRUSH_SIZE).toInt(),
+			MAX_BRUSH_SIZE));
+	d->ui.brushspacingSlider->setMaximum(qMin(
+			cfg.value("spacing", DEFAULT_BRUSH_SPACING).toInt(),
+			MAX_BRUSH_SPACING));
+	cfg.endGroup();
 }
 
 namespace toolprop {
