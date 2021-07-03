@@ -23,6 +23,7 @@
 #include "dialogs/certificateview.h"
 #include "dialogs/avatarimport.h"
 #include "dialogs/addserverdialog.h"
+#include "../toolwidgets/brushsettings.h"
 #include "widgets/keysequenceedit.h"
 #include "../scene/canvasviewmodifiers.h"
 #include "utils/icon.h"
@@ -347,6 +348,13 @@ void SettingsDialog::restoreSettings()
 	m_ui->toolConstrain2Keys->setModifiers(viewShortcuts.toolConstraint2);
 	cfg.endGroup();
 
+	cfg.beginGroup("settings/brushsliderlimits");
+	m_ui->sizeLimitSpinner->setValue(cfg.value(
+			"size", tools::BrushSettings::DEFAULT_BRUSH_SIZE).toInt());
+	m_ui->spacingLimitSpinner->setValue(cfg.value(
+			"spacing", tools::BrushSettings::DEFAULT_BRUSH_SPACING).toInt());
+	cfg.endGroup();
+
 	m_customShortcuts->loadShortcuts();
 	m_avatars->loadAvatars();
 }
@@ -445,6 +453,11 @@ void SettingsDialog::rememberSettings()
 	viewShortcuts.toolConstraint1 = m_ui->toolConstrain1Keys->modifiers();
 	viewShortcuts.toolConstraint2 = m_ui->toolConstrain2Keys->modifiers();
 	viewShortcuts.save(cfg);
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/brushsliderlimits");
+	cfg.setValue("size", m_ui->sizeLimitSpinner->value());
+	cfg.setValue("spacing", m_ui->spacingLimitSpinner->value());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())

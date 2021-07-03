@@ -71,6 +71,11 @@ public:
 	int getSmoothing() const;
 	PressureMapping getPressureMapping() const;
 
+	static const int MAX_BRUSH_SIZE;
+	static const int MAX_BRUSH_SPACING;
+	static const int DEFAULT_BRUSH_SIZE;
+	static const int DEFAULT_BRUSH_SPACING;
+
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
@@ -93,6 +98,7 @@ private slots:
 	void updateFromUi();
 	void chooseInputPreset(int index);
 	void inputPresetChanged(const QString &id);
+	void updateSettings();
 
 private:
 	void emitPresetChanges(const input::Preset *preset);
