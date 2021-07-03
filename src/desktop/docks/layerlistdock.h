@@ -20,6 +20,7 @@
 #define LAYERLISTDOCK_H
 
 #include "canvas/features.h"
+#include "dialogs/layerproperties.h"
 
 #include <QDockWidget>
 
@@ -85,7 +86,8 @@ private slots:
 	void deleteSelected();
 	void setSelectedDefault();
 	void mergeSelected();
-	void renameSelected();
+	void showPropertiesOfSelected();
+	void showPropertiesOfIndex(QModelIndex index);
 	void opacityAdjusted();
 	void blendModeChanged();
 	void hideSelected();
@@ -101,6 +103,8 @@ private slots:
 
 	void sendOpacityUpdate();
 
+	void emitPropertyChangeCommands(const dialogs::LayerProperties::ChangedLayerData &c);
+
 private:
 	void updateLockedControls();
 	bool canMergeCurrent() const;
@@ -112,6 +116,7 @@ private:
 	int m_selectedId;
 	int m_lastSelectedRow;
 	bool m_noupdate;
+	dialogs::LayerProperties *m_layerProperties;
 	LayerAclMenu *m_aclmenu;
 	QMenu *m_layermenu;
 
@@ -123,7 +128,7 @@ private:
 	QAction *m_menuInsertAction;
 	QAction *m_menuSeparator;
 	QAction *m_menuHideAction;
-	QAction *m_menuRenameAction;
+	QAction *m_menuPropertiesAction;
 	QAction *m_menuDefaultAction;
 	QAction *m_menuFixedAction;
 
