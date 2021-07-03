@@ -64,6 +64,10 @@ LayerList::LayerList(QWidget *parent)
 	for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::LayerMode))
 		m_ui->blendmode->addItem(bm.second, bm.first);
 
+	m_layerProperties = new dialogs::LayerProperties(this);
+	connect(m_layerProperties, &dialogs::LayerProperties::propertiesChanged,
+			this, &LayerList::emitPropertyChangeCommands);
+
 	// Layer menu
 
 	m_layermenu = new QMenu(this);
@@ -83,7 +87,8 @@ LayerList::LayerList(QWidget *parent)
 	m_menuDefaultAction->setCheckable(true);
 	m_menuDefaultAction->setActionGroup(makeDefault);
 
-	m_menuRenameAction = m_layermenu->addAction(tr("Rename"), this, SLOT(renameSelected()));
+	m_menuPropertiesAction = m_layermenu->addAction(tr("Properties..."),
+			this, &LayerList::showPropertiesOfSelected);
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
@@ -112,6 +117,7 @@ LayerList::LayerList(QWidget *parent)
 		emit layerCommand(msg);
 	});
 	connect(del, &LayerListDelegate::toggleVisibility, this, &LayerList::setLayerVisibility);
+	connect(del, &LayerListDelegate::editProperties, this, &LayerList::showPropertiesOfIndex);
 	m_ui->layerlist->setItemDelegate(del);
 }
 
@@ -204,7 +210,7 @@ void LayerList::updateLockedControls()
 	m_ui->blendmode->setEnabled(enabled);
 
 	m_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
-	m_menuRenameAction->setEnabled(enabled);
+	m_menuPropertiesAction->setEnabled(enabled);
 	m_menuDefaultAction->setEnabled(enabled);
 	m_menuFixedAction->setEnabled(enabled);
 }
@@ -460,13 +466,26 @@ void LayerList::mergeSelected()
 	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, true)));
 }
 
-void LayerList::renameSelected()
+void LayerList::showPropertiesOfSelected()
 {
-	QModelIndex index = currentSelection();
-	if(!index.isValid())
-		return;
+	showPropertiesOfIndex(currentSelection());
+}
 
-	m_ui->layerlist->edit(index);
+void LayerList::showPropertiesOfIndex(QModelIndex index)
+{
+	if(index.isValid()) {
+		const canvas::LayerListItem &item = index.data().value<canvas::LayerListItem>();
+		m_layerProperties->setLayerData(dialogs::LayerProperties::LayerData {
+			item.id,
+			item.title,
+			item.opacity,
+			item.blend,
+			item.hidden,
+			item.fixed,
+			index.data(canvas::LayerListModel::IsDefaultRole).toBool(),
+		});
+		m_layerProperties->show();
+	}
 }
 
 /**
@@ -587,6 +606,54 @@ void LayerList::lockStatusChanged(int layerId)
 		const canvas::AclFilter::LayerAcl acl = m_canvas->aclFilter()->layerAcl(layerId);
 		m_ui->lockButton->setChecked(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty());
 		m_aclmenu->setAcl(acl.locked, acl.tier, acl.exclusive);
+	}
+}
+
+void LayerList::emitPropertyChangeCommands(const dialogs::LayerProperties::ChangedLayerData &c)
+{
+	// Changes that get grouped together into a single layer attribute change message.
+	static const unsigned int CHANGE_LAYER_ATTRIBUTES =
+			dialogs::LayerProperties::CHANGE_OPACITY |
+			dialogs::LayerProperties::CHANGE_BLEND |
+			dialogs::LayerProperties::CHANGE_FIXED;
+
+	uint16_t layerId = c.id;
+	QModelIndex layerIndex = m_canvas->layerlist()->layerIndex(layerId);
+	if(!m_canvas || !layerIndex.isValid()) {
+		return; // Looks like the layer was deleted from under us.
+	}
+
+	uint8_t contextId = m_canvas->localUserId();
+	if(c.changes & dialogs::LayerProperties::CHANGE_TITLE) {
+		emit layerCommand(protocol::MessagePtr(
+				new protocol::LayerRetitle(contextId, layerId, c.title)));
+	}
+
+	if(c.changes & CHANGE_LAYER_ATTRIBUTES) {
+		canvas::LayerListItem layer = layerIndex.data().value<canvas::LayerListItem>();
+
+		ChangeFlags<uint8_t> flags;
+		if(c.changes & dialogs::LayerProperties::CHANGE_FIXED) {
+			flags.set(protocol::LayerAttributes::FLAG_FIXED, c.fixed);
+		}
+
+		int opacity = -1;
+		if(c.changes & dialogs::LayerProperties::CHANGE_OPACITY) {
+			opacity = c.opacity * 255;
+		}
+
+		int blend = -1;
+		if(c.changes & dialogs::LayerProperties::CHANGE_BLEND) {
+			blend = c.blend;
+		}
+
+		emit layerCommand(updateLayerAttributesMessage(
+				contextId, layer, flags, opacity, blend));
+	}
+
+	if((c.changes & dialogs::LayerProperties::CHANGE_DEFAULT) && c.defaultLayer) {
+		emit layerCommand(protocol::MessagePtr(
+				new protocol::DefaultLayer(contextId, layerId)));
 	}
 }
 

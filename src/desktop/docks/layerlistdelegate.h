@@ -52,6 +52,7 @@ public:
 
 signals:
 	void toggleVisibility(int layerId, bool visible);
+	void editProperties(QModelIndex index);
 	void layerCommand(protocol::MessagePtr msg);
 
 private:

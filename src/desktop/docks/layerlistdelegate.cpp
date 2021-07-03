@@ -89,7 +89,8 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-	if(event->type() == QEvent::MouseButtonPress) {
+	QEvent::Type type = event->type();
+	if(type == QEvent::MouseButtonPress) {
 		const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
@@ -99,6 +100,14 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 				emit toggleVisibility(layer.id, layer.hidden);
 				return true;
 			}
+		}
+	}
+
+	if(type == QEvent::MouseButtonDblClick) {
+		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
+		if(me->button() == Qt::LeftButton) {
+			emit editProperties(index);
+			return true;
 		}
 	}
 
