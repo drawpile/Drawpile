@@ -341,10 +341,10 @@
           <widget class="QWidget" name="colorwheelPage">
            <layout class="QFormLayout" name="formLayout_9">
             <property name="fieldGrowthPolicy">
-            <enum>QFormLayout::ExpandingFieldsGrow</enum>
+             <enum>QFormLayout::ExpandingFieldsGrow</enum>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_30">
+             <widget class="QLabel" name="colorwheelShapeLabel">
               <property name="text">
                <string>Shape:</string>
               </property>
@@ -365,7 +365,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_31">
+             <widget class="QLabel" name="colorwheelAngleLabel">
               <property name="text">
                <string>Angle:</string>
               </property>
@@ -386,7 +386,7 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_32">
+             <widget class="QLabel" name="colorwheelSpaceLabel">
               <property name="text">
                <string>Color Space:</string>
               </property>
@@ -422,7 +422,7 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_33">
+             <widget class="QLabel" name="colorwheelPreviewLabel">
               <property name="text">
                <string>Preview:</string>
               </property>
