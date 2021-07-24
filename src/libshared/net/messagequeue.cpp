@@ -26,6 +26,7 @@
 #include <cstring>
 
 #ifndef NDEBUG
+#include <QRandomGenerator>
 #include <QThread>
 #endif
 
@@ -294,7 +295,7 @@ void MessageQueue::writeData() {
 #ifndef NDEBUG
 			// Debugging tool: simulate bad network connections by sleeping at odd times
 			if(m_randomlag>0) {
-				QThread::msleep(qrand() % m_randomlag);
+				QThread::msleep(QRandomGenerator::global()->generate() % m_randomlag);
 			}
 #endif
 
