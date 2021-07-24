@@ -20,7 +20,11 @@
 #include "zeroconfannouncement.h"
 #include "../net/protover.h"
 
-#include <KDNSSD/DNSSD/PublicService>
+#ifdef HAVE_DNSSD_BEFORE_5_84_0
+#	include <KDNSSD/DNSSD/PublicService>
+#else
+#	include <KDNSSD/PublicService>
+#endif
 #include <QDateTime>
 
 ZeroConfAnnouncement::ZeroConfAnnouncement(QObject *parent)

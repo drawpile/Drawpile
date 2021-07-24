@@ -120,8 +120,12 @@ if(LIBMINIUPNPC_FOUND)
 	add_definitions(-DHAVE_UPNP)
 endif()
 
-if(KF5DNSSD_FOUND) 
+if(KF5DNSSD_FOUND)
 	add_definitions(-DHAVE_DNSSD)
+	# KF5DNSSD 8.84.0 moves a bunch of headers to a different place.
+	if("${KF5DNSSD_VERSION}" VERSION_LESS "5.84.0")
+		add_definitions(-DHAVE_DNSSD_BEFORE_5_84_0)
+	endif()
 endif()
 
 if(LIBVPX_FOUND)

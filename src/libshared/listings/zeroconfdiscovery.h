@@ -22,7 +22,11 @@
 #include "announcementapi.h"
 
 #include <QVector>
-#include <KDNSSD/DNSSD/RemoteService>
+#ifdef HAVE_DNSSD_BEFORE_5_84_0
+#	include <KDNSSD/DNSSD/RemoteService>
+#else
+#	include <KDNSSD/RemoteService>
+#endif
 
 namespace KDNSSD {
 	class ServiceBrowser;
