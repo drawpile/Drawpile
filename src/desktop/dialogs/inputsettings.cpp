@@ -53,6 +53,7 @@ InputSettings::InputSettings(QWidget *parent) :
 
 	connect(m_ui->preset, &QComboBox::editTextChanged, this, &InputSettings::presetNameChanged);
 	connect(m_ui->preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::choosePreset);
+	connect(m_presetModel, &QAbstractItemModel::rowsInserted, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::rowsRemoved, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::modelReset, this, &InputSettings::onPresetCountChanged);
 
