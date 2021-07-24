@@ -54,9 +54,9 @@ QPalette loadFromFile(const QString &filename)
 
 	QSettings settings(filename, QSettings::IniFormat);
 
-	for(const auto group : GROUPS) {
+	for(const auto &group : GROUPS) {
 		settings.beginGroup(group.second);
-		for(const auto role : ROLES) {
+		for(const auto &role : ROLES) {
 			palette.setColor(group.first, role.first, QColor(settings.value(role.second).toString()));
 		}
 		settings.endGroup();
@@ -68,9 +68,9 @@ bool saveToFile(const QString &filename, const QPalette &palette)
 {
 	QSettings settings(filename, QSettings::IniFormat);
 
-	for(const auto group : GROUPS) {
+	for(const auto &group : GROUPS) {
 		settings.beginGroup(group.second);
-		for(const auto role : ROLES) {
+		for(const auto &role : ROLES) {
 			settings.setValue(role.second, palette.color(group.first, role.first).name());
 		}
 		settings.endGroup();

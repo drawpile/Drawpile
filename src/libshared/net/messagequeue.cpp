@@ -166,7 +166,7 @@ void MessageQueue::sendPing()
 int MessageQueue::uploadQueueBytes() const
 {
 	int total = m_socket->bytesToWrite() + m_sendbuflen - m_sentbytes;
-	for(const MessagePtr msg : m_outbox)
+	for(const MessagePtr &msg : m_outbox)
 		total += msg->length();
 	return total;
 }

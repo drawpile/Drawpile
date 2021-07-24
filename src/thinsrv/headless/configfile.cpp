@@ -167,7 +167,7 @@ bool ConfigFile::isAddressBanned(const QHostAddress &addr) const
 	if(isModified())
 		reloadFile();
 
-	for(const QPair<QHostAddress,int> ipban : m_banlist) {
+	for(const QPair<QHostAddress,int> &ipban : m_banlist) {
 		QHostAddress subnet = ipban.first;
 		int mask = ipban.second;
 

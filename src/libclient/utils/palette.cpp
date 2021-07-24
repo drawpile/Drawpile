@@ -130,7 +130,7 @@ bool Palette::exportPalette(const QString &filename, QString *errorString)
 		out << "Name: " << _name << "\n";
 		out << "Columns: " << _columns << "\n";
 		out << "#\n";
-		for(const PaletteColor c : _colors) {
+		for(const PaletteColor &c : _colors) {
 			out << c.color.red() << ' ' << c.color.green() << ' ' << c.color.blue() << '\t' << c.name << '\n';
 		}
 		return true;
