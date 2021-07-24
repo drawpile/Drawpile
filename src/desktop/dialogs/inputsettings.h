@@ -43,6 +43,12 @@ public:
 	void setCurrentPreset(const QString &id);
 	const input::Preset *currentPreset() const;
 
+signals:
+	void currentIndexChanged(int index);
+
+public slots:
+	void setCurrentIndex(int index);
+
 private slots:
 	void choosePreset(int index);
 	void presetNameChanged(const QString &name);
@@ -61,6 +67,7 @@ private:
 	Ui_InputSettings *m_ui;
 	input::PresetModel *m_presetModel;
 	bool m_updateInProgress;
+	bool m_indexChangeInProgress;
 	QMenu *m_presetmenu;
 	QAction *m_removePresetAction;
 };

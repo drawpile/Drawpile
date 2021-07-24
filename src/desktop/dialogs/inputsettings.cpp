@@ -30,7 +30,8 @@ namespace dialogs {
 InputSettings::InputSettings(QWidget *parent) :
 	QDialog(parent),
 	m_presetModel(input::PresetModel::getSharedInstance()),
-	m_updateInProgress(false)
+	m_updateInProgress(false),
+	m_indexChangeInProgress(false)
 {
 	m_ui = new Ui_InputSettings;
 	m_ui->setupUi(this);
@@ -53,6 +54,7 @@ InputSettings::InputSettings(QWidget *parent) :
 
 	connect(m_ui->preset, &QComboBox::editTextChanged, this, &InputSettings::presetNameChanged);
 	connect(m_ui->preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::choosePreset);
+	connect(m_ui->preset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::currentIndexChanged);
 	connect(m_presetModel, &QAbstractItemModel::rowsInserted, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::rowsRemoved, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::modelReset, this, &InputSettings::onPresetCountChanged);
@@ -66,6 +68,15 @@ InputSettings::~InputSettings()
 {
 	m_presetModel->saveSettings();
 	delete m_ui;
+}
+
+void InputSettings::setCurrentIndex(int index)
+{
+	if(!m_indexChangeInProgress && index >= 0 && index < m_ui->preset->count()) {
+		m_indexChangeInProgress = true;
+		m_ui->preset->setCurrentIndex(index);
+		m_indexChangeInProgress = false;
+	}
 }
 
 void InputSettings::setCurrentPreset(const QString &id)
@@ -94,7 +105,7 @@ void InputSettings::addPreset()
 	input::Preset p;
 	p.name = tr("New");
 	m_presetModel->add(p);
-	m_ui->preset->setCurrentIndex(m_presetModel->rowCount()-1);
+	setCurrentIndex(m_presetModel->rowCount()-1);
 }
 
 void InputSettings::copyPreset()
@@ -106,7 +117,7 @@ void InputSettings::copyPreset()
 	p.id = QString();
 	p.name = tr("New %1").arg(p.name);
 	m_presetModel->add(p);
-	m_ui->preset->setCurrentIndex(m_presetModel->rowCount()-1);
+	setCurrentIndex(m_presetModel->rowCount()-1);
 }
 
 void InputSettings::removePreset()
