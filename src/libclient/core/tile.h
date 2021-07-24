@@ -45,7 +45,14 @@ struct TileData : public QSharedData {
 	TileData(const TileData &td);
 	~TileData();
 
-	static int globalCount() { return _count.load() ; }
+	static int globalCount()
+	{
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+		return _count.load(); // deprecated since Qt 5.14
+#else
+		return _count.loadRelaxed();
+#endif
+	}
 	static float megabytesUsed() { return globalCount() * sizeof(pixels) / float(1024*1024); }
 private:
 	static QAtomicInt _count;
