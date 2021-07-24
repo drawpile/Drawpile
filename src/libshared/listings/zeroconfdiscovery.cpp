@@ -20,7 +20,11 @@
 #include "zeroconfdiscovery.h"
 
 #include <QUrl>
-#include <KDNSSD/DNSSD/ServiceBrowser>
+#ifdef HAVE_DNSSD_BEFORE_5_84_0
+#	include <KDNSSD/DNSSD/ServiceBrowser>
+#else
+#	include <KDNSSD/ServiceBrowser>
+#endif
 
 ZeroconfDiscovery::ZeroconfDiscovery(QObject *parent)
 	: QObject(parent), m_browser(nullptr)
