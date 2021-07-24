@@ -156,7 +156,7 @@ QString Message::toString() const
 			i.next();
 			if(i.value().contains(space)) {
 				QStringList lines = i.value().split('\n');
-				for(const QString line : lines) {
+				for(const QString &line : lines) {
 					str += "\n\t";
 					str += i.key();
 					str += "=";
