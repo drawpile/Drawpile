@@ -178,16 +178,15 @@ void InputSettings::updateModeUi(PressureMapping::Mode mode)
 {
 	const char *curveParam;
 	switch(mode) {
-	case PressureMapping::STYLUS:
-		curveParam = nullptr;
-		break;
 	case PressureMapping::DISTANCE:
 		curveParam = "Curve distance";
 		break;
 	case PressureMapping::VELOCITY:
 		curveParam = "Velocity range";
 		break;
+	case PressureMapping::STYLUS:
 	default:
+		curveParam = nullptr;
 		break;
 	}
 	m_ui->curveParam->setVisible(curveParam != nullptr);
