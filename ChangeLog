@@ -1,6 +1,18 @@
-2020-0?-?? Version 2.1.18
+2021-0?-?? Version 2.1.18
  * All actions can now be assigned an alternate shortcut
- * Added French translation
+ * Added French and Portugese translations
+ * Fixed inconsistent zooming at certain values
+ * Fixed brush size adjustment shortcuts not working consistently
+ * Fixed that undo operations would cause the layer list to scroll
+ * Fixed moving a layer to the bottom-most position
+ * Various bugfixes
+ * Breaking change: active tool setting format was changed. Not compatible with older Drawpile versions.
+ * Input preferences can now be saved per tool
+ * Brush cursor outline width can now be changed
+ * Layer properties can now be edited in a dialog
+ * Color wheel shape is now selectable
+ * Maximum brush size and spacings can now be extended (affects sliders)
+ * Added selection perspective transform mode
 
 2020-02-16 Version 2.1.17
  * HTTP redirects (e.g. when searching for a list server) are now followed
