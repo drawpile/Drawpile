@@ -20,8 +20,11 @@
 #define TOOLSETTINGS_SELECTION_H
 
 #include "toolsettings.h"
+#include "tools/selection.h"
 
 class Ui_SelectionSettings;
+
+namespace canvas { class CanvasModel; }
 
 namespace widgets { class CanvasView; }
 
@@ -53,16 +56,26 @@ public:
 	int getSize() const override { return 0; }
 	bool getSubpixelMode() const override { return false; }
 
+	void setControlsEnabled(bool enabled);
+
 private slots:
 	void flipSelection();
 	void mirrorSelection();
 	void fitToScreen();
 	void resetSize();
+	void scale();
+	void rotateShear();
+	void distort();
+	void modelChanged(canvas::CanvasModel *model);
+	void selectionChanged(canvas::Selection *selection);
+	void selectionClosed();
+	void selectionAdjustmentModeChanged(canvas::Selection::AdjustmentMode mode);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	void updateSelectionMode(canvas::Selection::AdjustmentMode mode);
 	void cutSelection();
 
 	Ui_SelectionSettings *m_ui;

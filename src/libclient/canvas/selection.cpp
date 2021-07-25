@@ -160,6 +160,9 @@ void Selection::adjustGeometry(const QPointF &start, const QPointF &point, bool 
 	case AdjustmentMode::Rotate:
 		adjustGeometryRotate(start, point, constrain);
 		break;
+	case AdjustmentMode::Distort:
+		adjustGeometryDistort((point - start).toPoint());
+		break;
 	}
 }
 
@@ -175,7 +178,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 
 		switch(m_adjustmentHandle) {
 		case Handle::Outside: return;
-		case Handle::Center: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case Handle::Center: adjustTranslation(delta); break;
 
 		case Handle::TopLeft: adjustScale(dx, dy, 0, 0); break;
 		case Handle::TopRight: adjustScale(0, -dx, dy, 0); break;
@@ -190,7 +193,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 	} else {
 		switch(m_adjustmentHandle) {
 		case Handle::Outside: return;
-		case Handle::Center: m_shape = m_preAdjustmentShape.translated(delta); break;
+		case Handle::Center: adjustTranslation(delta); break;
 		case Handle::TopLeft: adjustScale(delta.x(), delta.y(), 0, 0); break;
 		case Handle::TopRight: adjustScale(0, delta.y(), delta.x(), 0); break;
 		case Handle::BottomRight: adjustScale(0, 0, delta.x(), delta.y()); break;
@@ -201,15 +204,13 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		case Handle::Left: adjustScale(delta.x(), 0, 0, 0); break;
 		}
 	}
-
-	emit shapeChanged(m_shape);
 }
 
 void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain)
 {
 	switch(m_adjustmentHandle) {
 	case Handle::Outside: return;
-	case Handle::Center: m_shape = m_preAdjustmentShape.translated(point - start); break;
+	case Handle::Center: adjustTranslation(point - start); break;
 	case Handle::TopLeft:
 	case Handle::TopRight:
 	case Handle::BottomRight:
@@ -231,7 +232,32 @@ void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point,
 	case Handle::Right: adjustShear(0, (point.y() - start.y()) / 100.0); break;
 	case Handle::Left: adjustShear(0, (start.y() - point.y()) / 100.0); break;
 	}
+}
 
+void Selection::adjustGeometryDistort(const QPointF &delta)
+{
+	switch(m_adjustmentHandle) {
+	case Handle::Outside: return;
+	case Handle::Center: adjustTranslation(delta); break;
+	case Handle::TopLeft: adjustDistort(delta, 0); break;
+	case Handle::Top: adjustDistort(delta, 0, 1); break;
+	case Handle::TopRight: adjustDistort(delta, 1); break;
+	case Handle::Right: adjustDistort(delta, 1, 2); break;
+	case Handle::BottomRight: adjustDistort(delta, 2); break;
+	case Handle::Bottom: adjustDistort(delta, 2, 3); break;
+	case Handle::BottomLeft: adjustDistort(delta, 3); break;
+	case Handle::Left: adjustDistort(delta, 3, 0); break;
+	}
+}
+
+void Selection::adjustTranslation(const QPointF &start, const QPointF &point)
+{
+	adjustTranslation(point - start);
+}
+
+void Selection::adjustTranslation(const QPointF &delta)
+{
+	m_shape = m_preAdjustmentShape.translated(delta);
 	emit shapeChanged(m_shape);
 }
 
@@ -252,9 +278,11 @@ void Selection::adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2)
 		if(std::isnan(m_shape[i].x()) || std::isnan(m_shape[i].y())) {
 			qWarning("Selection shape[%d] is Not a Number!", i);
 			m_shape = m_preAdjustmentShape;
-			return;
+			break;
 		}
 	}
+
+	emit shapeChanged(m_shape);
 }
 
 void Selection::adjustRotation(qreal angle)
@@ -289,6 +317,47 @@ void Selection::adjustShear(qreal sh, qreal sv)
 	for(int i=0;i<m_shape.size();++i) {
 		const QPointF p = m_preAdjustmentShape[i] - origin;
 		m_shape[i] = t.map(p);
+	}
+
+	emit shapeChanged(m_shape);
+}
+
+void Selection::adjustDistort(const QPointF &delta, int corner1, int corner2)
+{
+	Q_ASSERT(m_preAdjustmentShape.size() == m_shape.size());
+
+	if(corner1 < 0 || corner1 > 3 || corner2 > 3) {
+		qWarning("Selection::adjustDistort: corner index out of bounds");
+		return;
+	}
+
+	// There exists a constructor to create a QPolygonF from a QRectF, but it
+	// creates a closed polygon with 5 points. QTransform::quadToQuad takes an
+	// open polygon with 4 points though, so we're initializing it like this.
+	auto bounds = m_preAdjustmentShape.boundingRect();
+	auto source = QPolygonF{QVector<QPointF>{{
+		bounds.topLeft(),
+		bounds.topRight(),
+		bounds.bottomRight(),
+		bounds.bottomLeft(),
+	}}};
+
+	auto target = QPolygonF{source};
+	target[corner1] += delta;
+	if (corner1 != corner2 && corner2 >= 0) {
+		target[corner2] += delta;
+	}
+
+	QTransform t;
+	if(!QTransform::quadToQuad(source, target, t)) {
+		qDebug("Selection::adjustDistort: no transformation possible");
+		return;
+	}
+
+	for(int i=0;i<m_shape.size();++i) {
+		// No need to adjust the origin like in the other transformation
+		// functions, the quadToQuad call deals with that already.
+		m_shape[i] = t.map(m_preAdjustmentShape[i]);
 	}
 
 	emit shapeChanged(m_shape);
