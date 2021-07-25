@@ -44,7 +44,28 @@
           <li>Added selection perspective transform mode</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.18-setup.exe</location>
+          <checksum type="sha256">0de039c24185981270118b019a836706023f667cb3d3ee040bdf872c4472e882</checksum>
+          <size type="download">16580365</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.18-setup-w32.exe</location>
+          <checksum type="sha256">e5c6da2a9e69eb70c2103fd3d4670e8562558f38efdeb19c93de63dfab58a265</checksum>
+          <size type="download">15563890</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.18.dmg</location>
+          <checksum type="sha256">371ea7fd68aa821671ef6f5f92702e84429978f529774c084e9568b17cbc6e9a</checksum>
+          <size type="download">14273941</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.18.tar.gz</location>
+          <checksum type="sha256">20668661f6949addceb934ef094232f0890ade620fa78ae4849558d059d03caa</checksum>
+          <size type="download">2580382</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.17" date="2020-02-16">
       <url>https://drawpile.net/news/release-2.1.17/</url>
