@@ -23,6 +23,29 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.18" date="2021-07-25">
+      <url>https://drawpile.net/news/release-2.1.18/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>All actions can now be assigned an alternate shortcut</li>
+          <li>Added French and Portugese translations</li>
+          <li>Fixed inconsistent zooming at certain values</li>
+          <li>Fixed brush size adjustment shortcuts not working consistently</li>
+          <li>Fixed that undo operations would cause the layer list to scroll</li>
+          <li>Fixed moving a layer to the bottom-most position</li>
+          <li>Various bugfixes</li>
+          <li>Breaking change: active tool setting format was changed. Not compatible with older Drawpile versions.</li>
+          <li>Input preferences can now be saved per tool</li>
+          <li>Brush cursor outline width can now be changed</li>
+          <li>Layer properties can now be edited in a dialog</li>
+          <li>Color wheel shape is now selectable</li>
+          <li>Maximum brush size and spacings can now be extended (affects sliders)</li>
+          <li>Added selection perspective transform mode</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.17" date="2020-02-16">
       <url>https://drawpile.net/news/release-2.1.17/</url>
       <description>
