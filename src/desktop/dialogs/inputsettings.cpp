@@ -102,9 +102,16 @@ void InputSettings::presetNameChanged(const QString &name)
 
 void InputSettings::addPreset()
 {
-	input::Preset p;
-	p.name = tr("New");
-	m_presetModel->add(p);
+	m_presetModel->add(input::Preset {
+		QString(), // Generate a new id.
+		tr("New"),
+		8,
+		PressureMapping {
+			PressureMapping::STYLUS,
+			KisCubicCurve(),
+			1.0
+		},
+	});
 	setCurrentIndex(m_presetModel->rowCount()-1);
 }
 
