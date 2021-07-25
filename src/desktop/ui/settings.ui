@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>775</width>
-    <height>545</height>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,7 +87,7 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
            <layout class="QFormLayout" name="formLayout_2">
@@ -302,7 +302,7 @@
               </item>
              </widget>
             </item>
-            <item row="20" column="1">
+            <item row="21" column="1">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -315,21 +315,21 @@
               </property>
              </spacer>
             </item>
-            <item row="21" column="0">
+            <item row="22" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
                <string>Tools:</string>
               </property>
              </widget>
             </item>
-            <item row="21" column="1">
+            <item row="22" column="1">
              <widget class="QCheckBox" name="toolToggleShortcut">
               <property name="text">
                <string>Shortcut toggles last selection</string>
               </property>
              </widget>
             </item>
-            <item row="22" column="1">
+            <item row="23" column="1">
              <widget class="QCheckBox" name="shareBrushSlotColor">
               <property name="text">
                <string>Share color across brush slots</string>
@@ -343,6 +343,26 @@
               </property>
               <property name="text">
                <string>Enable canvas viewport entry hack</string>
+              </property>
+             </widget>
+            </item>
+            <item row="20" column="1">
+             <widget class="QDoubleSpinBox" name="brushOutlineWidth">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>25.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="20" column="0">
+             <widget class="QLabel" name="label_30">
+              <property name="text">
+               <string>Brush outline width:</string>
               </property>
              </widget>
             </item>
@@ -816,7 +836,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="widgets::ModifierKeys" name="dragRotateKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="dragRotateKeys"/>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="label_21">
@@ -826,7 +846,7 @@
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="widgets::ModifierKeys" name="dragZoomKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="dragZoomKeys"/>
             </item>
             <item row="6" column="0">
              <widget class="QLabel" name="label_20">
@@ -836,7 +856,7 @@
              </widget>
             </item>
             <item row="6" column="1">
-             <widget class="widgets::ModifierKeys" name="dragQuickAdjustKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="dragQuickAdjustKeys"/>
             </item>
             <item row="9" column="0">
              <widget class="QLabel" name="label_22">
@@ -846,7 +866,7 @@
              </widget>
             </item>
             <item row="9" column="1">
-             <widget class="widgets::ModifierKeys" name="scrollZoomKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="scrollZoomKeys"/>
             </item>
             <item row="11" column="0">
              <widget class="QLabel" name="label_23">
@@ -856,7 +876,7 @@
              </widget>
             </item>
             <item row="11" column="1">
-             <widget class="widgets::ModifierKeys" name="scrollQuickAdjustKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="scrollQuickAdjustKeys"/>
             </item>
             <item row="13" column="0">
              <widget class="QLabel" name="label_24">
@@ -866,7 +886,7 @@
              </widget>
             </item>
             <item row="13" column="1">
-             <widget class="widgets::ModifierKeys" name="colorPickKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="colorPickKeys"/>
             </item>
             <item row="15" column="0">
              <widget class="QLabel" name="label_25">
@@ -876,7 +896,7 @@
              </widget>
             </item>
             <item row="15" column="1">
-             <widget class="widgets::ModifierKeys" name="layerPickKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="layerPickKeys"/>
             </item>
             <item row="17" column="0">
              <widget class="QLabel" name="label_26">
@@ -886,7 +906,7 @@
              </widget>
             </item>
             <item row="17" column="1">
-             <widget class="widgets::ModifierKeys" name="toolConstrain1Keys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="toolConstrain1Keys"/>
             </item>
             <item row="20" column="0">
              <widget class="QLabel" name="label_27">
@@ -896,7 +916,7 @@
              </widget>
             </item>
             <item row="20" column="1">
-             <widget class="widgets::ModifierKeys" name="toolConstrain2Keys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="toolConstrain2Keys"/>
             </item>
             <item row="7" column="0">
              <spacer name="verticalSpacer_4">
@@ -958,7 +978,7 @@
              </widget>
             </item>
             <item row="8" column="1">
-             <widget class="widgets::ModifierKeys" name="scrollRotateKeys" native="true"/>
+             <widget class="widgets::ModifierKeys" name="scrollRotateKeys"/>
             </item>
            </layout>
           </widget>

@@ -169,7 +169,7 @@ public slots:
 	 * 1. Crosshair
 	 * 2. Arrow
 	 */
-	void setBrushCursorStyle(int style);
+	void setBrushCursorStyle(int style, qreal outlineWidth);
 
 	void updateShortcuts();
 
@@ -291,6 +291,7 @@ private:
 	// to be synthesized. This is picked up by the viewport and ignored by the
 	// canvas view by checking for the synthetic flag.
 	bool m_enableViewportEntryHack;
+	qreal m_brushOutlineWidth;
 };
 
 }
