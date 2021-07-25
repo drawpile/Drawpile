@@ -50,6 +50,7 @@ set (
 	dialogs/versioncheckdialog.cpp
 	dialogs/addserverdialog.cpp
 	dialogs/inputsettings.cpp
+	dialogs/layerproperties.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -170,6 +171,7 @@ set (
 	ui/avatarimport.ui
 	ui/navigator.ui
 	ui/versioncheck.ui
+	ui/layerproperties.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found

@@ -89,7 +89,8 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-	if(event->type() == QEvent::MouseButtonPress) {
+	QEvent::Type type = event->type();
+	if(type == QEvent::MouseButtonPress) {
 		const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
@@ -99,6 +100,14 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 				emit toggleVisibility(layer.id, layer.hidden);
 				return true;
 			}
+		}
+	}
+
+	if(type == QEvent::MouseButtonDblClick) {
+		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
+		if(me->button() == Qt::LeftButton) {
+			emit editProperties(index);
+			return true;
 		}
 	}
 
@@ -121,15 +130,6 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 	static_cast<QLineEdit*>(editor)->setFrame(true);
 	editor->setGeometry(option.rect.adjusted(btnwidth, 0, -btnwidth, 0));
-}
-
-void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, const QModelIndex& index) const
-{
-	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
-	QString newtitle = static_cast<QLineEdit*>(editor)->text();
-	if(layer.title != newtitle) {
-		emit const_cast<LayerListDelegate*>(this)->layerCommand(protocol::MessagePtr(new protocol::LayerRetitle(0, layer.id, newtitle)));
-	}
 }
 
 void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const
