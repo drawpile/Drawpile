@@ -102,9 +102,16 @@ void InputSettings::presetNameChanged(const QString &name)
 
 void InputSettings::addPreset()
 {
-	input::Preset p;
-	p.name = tr("New");
-	m_presetModel->add(p);
+	m_presetModel->add(input::Preset {
+		QString(), // Generate a new id.
+		tr("New"),
+		8,
+		PressureMapping {
+			PressureMapping::STYLUS,
+			KisCubicCurve(),
+			1.0
+		},
+	});
 	setCurrentIndex(m_presetModel->rowCount()-1);
 }
 
@@ -171,16 +178,15 @@ void InputSettings::updateModeUi(PressureMapping::Mode mode)
 {
 	const char *curveParam;
 	switch(mode) {
-	case PressureMapping::STYLUS:
-		curveParam = nullptr;
-		break;
 	case PressureMapping::DISTANCE:
 		curveParam = "Curve distance";
 		break;
 	case PressureMapping::VELOCITY:
 		curveParam = "Velocity range";
 		break;
+	case PressureMapping::STYLUS:
 	default:
+		curveParam = nullptr;
 		break;
 	}
 	m_ui->curveParam->setVisible(curveParam != nullptr);
