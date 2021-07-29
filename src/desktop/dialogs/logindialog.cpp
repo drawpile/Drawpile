@@ -43,6 +43,7 @@
 #include <QStyle>
 #include <QItemSelectionModel>
 #include <QAction>
+#include <QPointer>
 
 namespace dialogs {
 
@@ -59,7 +60,7 @@ enum class Mode {
 struct LoginDialog::Private {
 	Mode mode;
 
-	net::LoginHandler *loginHandler;
+	QPointer<net::LoginHandler> loginHandler;
 	AvatarListModel *avatars;
 	SessionFilterProxyModel *sessions;
 	Ui_LoginDialog *ui;
@@ -160,6 +161,11 @@ struct LoginDialog::Private {
 
 void LoginDialog::Private::resetMode(Mode newMode)
 {
+	if(!loginHandler) {
+		qWarning("LoginDialog::resetMode: login process already ended!");
+		return;
+	}
+
 	mode = newMode;
 
 	QWidget *page = nullptr;
@@ -296,7 +302,7 @@ void LoginDialog::updateOkButtonEnabled()
 		else
 			enabled = sel.first().data(net::LoginSessionModel::JoinableRole).toBool();
 
-		d->reportButton->setEnabled(!sel.isEmpty() && d->loginHandler->supportsAbuseReports());
+		d->reportButton->setEnabled(!sel.isEmpty() && d->loginHandler && d->loginHandler->supportsAbuseReports());
 		break; }
 	case Mode::certChanged:
 		enabled = d->ui->replaceCert->isChecked();
@@ -308,14 +314,14 @@ void LoginDialog::updateOkButtonEnabled()
 
 void LoginDialog::showOldCert()
 {
-	auto dlg = new CertificateView(d->loginHandler->url().host(), d->oldCert);
+	auto dlg = new CertificateView(d->loginHandler ? d->loginHandler->url().host() : QString(), d->oldCert);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 }
 
 void LoginDialog::showNewCert()
 {
-	auto dlg = new CertificateView(d->loginHandler->url().host(), d->newCert);
+	auto dlg = new CertificateView(d->loginHandler ? d->loginHandler->url().host() : QString(), d->newCert);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 }
@@ -359,6 +365,11 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 	resetMode(Mode::authenticate);
 
 #ifdef HAVE_QTKEYCHAIN
+	if(!loginHandler) {
+		qWarning("LoginDialog::setLoginMode: login process already ended!");
+		return;
+	}
+
 	auto *readJob = new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
 	readJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
 	readJob->setKey(
@@ -508,8 +519,8 @@ void LoginDialog::onLoginDone(bool join)
 		// self-destruct. But we can keep the login dialog open and show
 		// the catchup progress bar until fully caught up or the user
 		// manually closes the dialog.
-		disconnect(d->loginDestructConnection);
-		d->loginHandler = nullptr;
+		if(d->loginHandler)
+			disconnect(d->loginDestructConnection);
 		d->resetMode(Mode::catchup);
 	}
 
@@ -523,6 +534,11 @@ void LoginDialog::onServerTitleChanged(const QString &title)
 
 void LoginDialog::onOkClicked()
 {
+	if(!d->loginHandler) {
+		qWarning("LoginDialog::onOkClicked: login process already ended!");
+		return;
+	}
+
 	const Mode mode = d->mode;
 	d->resetMode(Mode::loading);
 
@@ -593,6 +609,10 @@ void LoginDialog::onReportClicked()
 	reportDlg->setSessionInfo(sessionId, sessionAlias, sessionTitle);
 
 	connect(reportDlg, &AbuseReportDialog::accepted, this, [this, sessionId, reportDlg]() {
+		if(!d->loginHandler) {
+			qWarning("LoginDialog abuse report: login process already ended!");
+			return;
+		}
 		d->loginHandler->reportSession(sessionId, reportDlg->message());
 	});
 
