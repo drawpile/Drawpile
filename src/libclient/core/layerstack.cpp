@@ -742,9 +742,7 @@ void EditableLayerStack::reset()
 void EditableLayerStack::removePreviews()
 {
 	for(Layer *l : d->m_layers) {
-		EditableLayer el(l, d, contextId);
-		el.removePreviews();
-		el.markOpaqueDirty();
+		EditableLayer(l, d, contextId).removePreviews();
 	}
 }
 
