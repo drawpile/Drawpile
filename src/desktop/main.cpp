@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -61,8 +61,13 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setOrganizationName("drawpile");
 	setOrganizationDomain("drawpile.net");
 	setApplicationName("drawpile");
-	setApplicationDisplayName("Drawpile");
+#ifdef BUILD_LABEL
+	setApplicationVersion(DRAWPILE_VERSION " " BUILD_LABEL);
+	setApplicationDisplayName("Drawpile (" BUILD_LABEL ")");
+#else
 	setApplicationVersion(DRAWPILE_VERSION);
+	setApplicationDisplayName("Drawpile");
+#endif
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
 }
 

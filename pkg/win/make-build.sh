@@ -11,6 +11,6 @@ fi
 
 mkdir -p /Build
 cd /Build
-$CMAKE /Drawpile -DTOOLS=on -DKIS_TABLET=on
+$CMAKE /Drawpile -DTOOLS=on -DKIS_TABLET=on -DBUILD_LABEL="${BUILD_LABEL}"
 make -j5
 
