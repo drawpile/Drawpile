@@ -445,11 +445,11 @@ void EditableLayerStack::restoreSavepoint(const Savepoint &savepoint)
 				// Gather list of sublayer IDs to compare
 				QVarLengthArray<int, 10> sublayers;
 				for(const Layer *sl : l0->sublayers())
-					if(sl->id() > 0 && !sl->isHidden() && !sublayers.contains(sl->id()))
+					if(!sl->isHidden() && !sublayers.contains(sl->id()))
 						sublayers << sl->id();
 
 				for(const Layer *sl : l1->sublayers())
-					if(sl->id() > 0 && !sl->isHidden() && !sublayers.contains(sl->id()))
+					if(!sl->isHidden() && !sublayers.contains(sl->id()))
 						sublayers << sl->id();
 
 				// Compare sublayers

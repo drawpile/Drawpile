@@ -145,11 +145,10 @@ Layer::Layer(const Layer &layer)
 	  m_width(layer.m_width), m_height(layer.m_height),
 	  m_xtiles(layer.m_xtiles), m_ytiles(layer.m_ytiles)
 {
-	// Hidden and ephemeral layers are not copied, since hiding a sublayer is
-	// effectively the same as deleting it and ephemeral layers are not considered
-	// part of the true layer content.
+	// Hidden sublayers are deleted layers, kept around only as a performance
+	// optimization. No need to copy them.
 	for(const Layer *sl : layer.sublayers()) {
-		if(sl->id() >= 0 && !sl->isHidden())
+		if(!sl->isHidden())
 			m_sublayers.append(new Layer(*sl));
 	}
 }
