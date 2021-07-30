@@ -1,3 +1,8 @@
+2021-08-?? Version 2.1.19
+ * Fixed performance regression
+ * Fixed potential crash during login (catchup stage)
+ * Fixed crash when adding a new input preset
+
 2021-07-25 Version 2.1.18
  * All actions can now be assigned an alternate shortcut
  * Added French and Portugese translations
