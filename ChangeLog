@@ -2,6 +2,7 @@
  * Fixed performance regression
  * Fixed potential crash during login (catchup stage)
  * Fixed crash when adding a new input preset
+ * "Fusion" style is now always used on Windows for consistency
 
 2021-07-25 Version 2.1.18
  * All actions can now be assigned an alternate shortcut

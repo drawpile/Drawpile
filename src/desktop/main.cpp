@@ -123,10 +123,6 @@ void DrawpileApp::setDarkTheme(bool dark)
 			qWarning("Cannot switch to night mode: couldn't find color scheme file!");
 		} else {
 			pal = colorscheme::loadFromFile(paletteFile);
-#ifdef Q_OS_WIN
-			// The Vista style does not work with customized palettes very well
-			setStyle("fusion");
-#endif
 		}
 
 	} else {
@@ -262,6 +258,13 @@ static QStringList initApp(DrawpileApp &app)
 
 	// Continue initialization (can use QSettings from now on)
 	utils::initLogging();
+
+#ifdef Q_OS_WIN
+	// The Vista style does not work with customized palettes very well
+	// and the "fusion" style tends to look a bit better anyway.
+	// For consistency we'll use it always.
+	app.setStyle("fusion");
+#endif
 
 	if(QSettings().value("settings/nightmode").toBool())
 		app.setDarkTheme(true);
