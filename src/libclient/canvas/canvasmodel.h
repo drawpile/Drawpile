@@ -79,7 +79,7 @@ public:
 	void setSelection(Selection *selection);
 
 	bool needsOpenRaster() const;
-	QImage toImage(bool withBackground=true) const;
+	QImage toImage(bool withBackground=true, bool withSublayers=false) const;
 
 	protocol::MessageList generateSnapshot() const;
 

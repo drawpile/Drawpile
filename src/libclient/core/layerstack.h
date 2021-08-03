@@ -110,7 +110,7 @@ public:
 	 * @param includeAnnotations merge annotations onto the final image
 	 * @param includeBackground include canvas background and fixed layers
 	 */
-	QImage toFlatImage(bool includeAnnotations, bool includeBackground) const;
+	QImage toFlatImage(bool includeAnnotations, bool includeBackground, bool includeSublayers) const;
 
 	/**
 	 * @brief Return a single layer merged with the background

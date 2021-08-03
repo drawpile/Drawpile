@@ -176,6 +176,14 @@ public:
 	//! Get the sublayers
 	const QList<Layer*> &sublayers() const { return m_sublayers; }
 
+	//! Does this layer have any visible sublayers?
+	bool hasSublayers() const {
+		for(const Layer *l : m_sublayers)
+			if(!l->isHidden())
+				return true;
+		return false;
+	}
+
 	/**
 	 * @brief Is this layer visible
 	 * A layer is visible when its opacity is greater than zero AND

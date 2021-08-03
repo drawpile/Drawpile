@@ -5,6 +5,7 @@
  * "Fusion" style is now always used on Windows for consistency
  * Added canvas rotation gauge widget to status bar
  * Invalid canvas resize commands are now ignored
+ * Fixed that ongoing indirect strokes weren't drawn when exporting a recording to video
 
 2021-07-25 Version 2.1.18
  * All actions can now be assigned an alternate shortcut

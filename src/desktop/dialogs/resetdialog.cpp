@@ -130,7 +130,7 @@ ResetDialog::ResetDialog(const canvas::StateTracker *state, QWidget *parent)
 	connect(d->ui->btnPrev, &QToolButton::clicked, this, &ResetDialog::onPrevClick);
 	connect(d->ui->btnNext, &QToolButton::clicked, this, &ResetDialog::onNextClick);
 
-	QImage currentImage = state->image()->toFlatImage(true, true);
+	QImage currentImage = state->image()->toFlatImage(true, true, false);
 	if(currentImage.width() > THUMBNAIL_SIZE.width() || currentImage.height() > THUMBNAIL_SIZE.height())
 		currentImage = currentImage.scaled(THUMBNAIL_SIZE, Qt::KeepAspectRatio);
 	drawCheckerBackground(currentImage);

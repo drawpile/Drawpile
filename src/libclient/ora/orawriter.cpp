@@ -186,7 +186,7 @@ static bool writeBackground(KZip &zf, const paintcore::LayerStack *layers, QStri
 
 static bool writePreviewImages(KZip &zf, const paintcore::LayerStack *layers, QString *errorMessage)
 {
-	QImage img = layers->toFlatImage(false, true);
+	QImage img = layers->toFlatImage(false, true, false);
 
 	// Flattened full size version for image viewers
 	if(!putPngInZip(zf, "mergedimage.png", img, errorMessage))

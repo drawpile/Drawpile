@@ -537,7 +537,7 @@ void PlaybackController::exportFrame(int count)
 		count = 1;
 
 	if(m_exporter) {
-		QImage img = m_canvas->toImage();
+		const QImage img = m_canvas->toImage(true, true);
 		if(!img.isNull()) {
 			Q_ASSERT(m_exporterReady);
 			m_exporterReady = false;

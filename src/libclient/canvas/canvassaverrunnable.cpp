@@ -43,7 +43,7 @@ void CanvasSaverRunnable::run()
 	} else {
 		// Regular image formats: flatten the image first.
 		QImageWriter writer(m_filename);
-		if(!writer.write(m_layerstack->toFlatImage(false, true))) {
+		if(!writer.write(m_layerstack->toFlatImage(false, true, false))) {
 			errorMessage = writer.errorString();
 			ok = false;
 
