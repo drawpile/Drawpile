@@ -68,6 +68,7 @@ set (
 	widgets/spinner.cpp
 	widgets/modifierkeys.cpp
 	widgets/notifbar.cpp
+	widgets/KisAngleGauge.cpp
 	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp

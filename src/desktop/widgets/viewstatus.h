@@ -27,6 +27,7 @@ class QSlider;
 namespace widgets {
 
 class GroupedToolButton;
+class KisAngleGauge;
 
 class ViewStatus : public QWidget
 {
@@ -57,6 +58,7 @@ private:
 
 	QSlider *m_zoomSlider;
 	QComboBox *m_zoomBox;
+	KisAngleGauge *m_compass;
 	QComboBox *m_angleBox;
 	bool m_updating;
 	widgets::GroupedToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomReset;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2019 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 */
 
 #include "viewstatus.h"
-#include "widgets/groupedtoolbutton.h"
+#include "groupedtoolbutton.h"
+#include "KisAngleGauge.h"
 
 #include <QComboBox>
 #include <QLineEdit>
@@ -63,6 +64,14 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->addSpacing(10);
 	layout->addWidget(m_rotationReset);
 
+	// Canvas compass
+	m_compass = new KisAngleGauge(this);
+	m_compass->setFixedSize(22, 22);
+	m_compass->setIncreasingDirection(KisAngleGauge::IncreasingDirection_Clockwise);
+	connect(m_compass, &KisAngleGauge::angleChanged, this, &ViewStatus::angleChanged);
+	layout->addSpacing(10);
+	layout->addWidget(m_compass);
+
 	// Canvas rotation box
 	m_angleBox = new QComboBox(this);
 	m_angleBox->setFixedWidth(m_angleBox->fontMetrics().boundingRect("9999-O--").width());
@@ -70,6 +79,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_angleBox->setEditable(true);
 	m_angleBox->setToolTip(tr("Canvas Rotation"));
 
+	layout->addSpacing(4);
 	layout->addWidget(m_angleBox);
 
 	m_angleBox->addItem(QStringLiteral("-90°"));
@@ -158,6 +168,8 @@ void ViewStatus::setTransformation(qreal zoom, qreal angle)
 	const int zoomCursorPos = m_zoomBox->lineEdit()->cursorPosition();
 	m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
 	m_zoomBox->lineEdit()->setCursorPosition(zoomCursorPos);
+
+	m_compass->setAngle(angle);
 
 	const int intAngle = qRound(angle);
 	const int angleCursorPos = m_angleBox->lineEdit()->cursorPosition();
