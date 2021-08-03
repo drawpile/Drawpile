@@ -33,6 +33,8 @@ namespace paintcore {
 static const Tile CENSORED_TILE = Tile::ZebraBlock(QColor("#232629"), QColor("#eff0f1"));
 static const Tile ZEBRA_TILE = Tile::ZebraBlock(Qt::red, Qt::black, 2);
 
+static const int MAX_SIZE = 32767;
+
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), m_width(0), m_height(0), m_xtiles(0), m_ytiles(0), m_dpix(0), m_dpiy(0),
 	m_viewmode(NORMAL), m_viewlayeridx(0), m_highlightId(0),
@@ -522,16 +524,25 @@ void EditableLayerStack::resize(int top, int right, int bottom, int left)
 {
 	const QSize oldsize(d->m_width, d->m_height);
 
-	int newtop = -top;
-	int newleft = -left;
-	int newright = d->m_width + right;
-	int newbottom = d->m_height + bottom;
+	const int newtop = -top;
+	const int newleft = -left;
+	const int newright = d->m_width + right;
+	const int newbottom = d->m_height + bottom;
 	if(newtop >= newbottom || newleft >= newright) {
 		qWarning("Invalid resize: borders reversed");
 		return;
 	}
-	d->m_width = newright - newleft;
-	d->m_height = newbottom - newtop;
+
+	const int newwidth = newright - newleft;
+	const int newheight = newbottom - newtop;
+
+	if(newwidth < 1 || newheight < 1 || newwidth > MAX_SIZE || newheight > MAX_SIZE) {
+		qWarning("Invalid resize: size would be %d x %d", newwidth, newheight);
+		return;
+	}
+
+	d->m_width = newwidth;
+	d->m_height = newheight;
 
 	d->m_xtiles = Tile::roundTiles(d->m_width);
 	d->m_ytiles = Tile::roundTiles(d->m_height);
