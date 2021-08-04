@@ -3,7 +3,7 @@
  *
  * \author Mattia Basaglia
  *
- * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2013-2020 Mattia Basaglia
  * \copyright Copyright (C) 2014 Calle Laakkonen
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "color_dialog.hpp"
+#include "QtColorWidgets/color_dialog.hpp"
 #include "ui_color_dialog.h"
 
 #include <QDropEvent>
 #include <QDragEnterEvent>
-#include <QDesktopWidget>
 #include <QMimeData>
 #include <QPushButton>
 #include <QScreen>
 
+#include "QtColorWidgets/color_utils.hpp"
+
+#include <QDebug>
 namespace color_widgets {
 
 class ColorDialog::Private
@@ -39,10 +41,21 @@ public:
     ButtonMode button_mode;
     bool pick_from_screen;
     bool alpha_enabled;
+    QColor color;
 
     Private() : pick_from_screen(false), alpha_enabled(true)
     {}
 
+#ifdef Q_OS_ANDROID
+    void screen_rotation()
+    {
+        auto scr = QApplication::primaryScreen();
+        if ( scr->size().height() > scr->size().width() )
+            ui.layout_main->setDirection(QBoxLayout::TopToBottom);
+        else
+            ui.layout_main->setDirection(QBoxLayout::LeftToRight);
+    }
+#endif
 };
 
 ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
@@ -52,18 +65,32 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
 
     setAcceptDrops(true);
 
+#ifdef Q_OS_ANDROID
+    connect(
+        QGuiApplication::primaryScreen(),
+        &QScreen::primaryOrientationChanged,
+        this,
+        [this]{p->screen_rotation();}
+    );
+    p->ui.wheel->setWheelWidth(50);
+    p->screen_rotation();
+#else
     // Add "pick color" button
     QPushButton *pickButton = p->ui.buttonBox->addButton(tr("Pick"), QDialogButtonBox::ActionRole);
     pickButton->setIcon(QIcon::fromTheme(QStringLiteral("color-picker")));
+#endif
 
     setButtonMode(OkApplyCancel);
 
-    connect(p->ui.wheel,&ColorWheel::displayFlagsChanged,this, &ColorDialog::wheelFlagsChanged);
+    connect(p->ui.wheel, &ColorWheel::colorSpaceChanged, this, &ColorDialog::colorSpaceChanged);
+    connect(p->ui.wheel, &ColorWheel::selectorShapeChanged, this, &ColorDialog::wheelShapeChanged);
+    connect(p->ui.wheel, &ColorWheel::rotatingSelectorChanged, this, &ColorDialog::wheelRotatingChanged);
+
 }
 
 ColorDialog::~ColorDialog()
 {
-	delete p;
+    delete p;
 }
 
 QSize ColorDialog::sizeHint() const
@@ -71,16 +98,11 @@ QSize ColorDialog::sizeHint() const
     return QSize(400,0);
 }
 
-ColorWheel::DisplayFlags ColorDialog::wheelFlags() const
-{
-    return p->ui.wheel->displayFlags();
-}
-
 QColor ColorDialog::color() const
 {
-    QColor col = p->ui.wheel->color();
-    if(p->alpha_enabled)
-        col.setAlpha(p->ui.slide_alpha->value());
+    QColor col = p->color;
+    if ( !p->alpha_enabled )
+        col.setAlpha(255);
     return col;
 }
 
@@ -91,26 +113,10 @@ void ColorDialog::setColor(const QColor &c)
     setColorInternal(c);
 }
 
-void ColorDialog::setColorInternal(const QColor &c)
-{
-    /**
-     * \note Unlike setColor, this is used to update the current color which
-     * migth differ from the final selected color
-     */
-    p->ui.wheel->setColor(c);
-    p->ui.slide_alpha->setValue(c.alpha());
-    update_widgets();
-}
-
 void ColorDialog::showColor(const QColor &c)
 {
     setColor(c);
     show();
-}
-
-void ColorDialog::setWheelFlags(ColorWheel::DisplayFlags flags)
-{
-    p->ui.wheel->setDisplayFlags(flags);
 }
 
 void ColorDialog::setPreviewDisplayMode(ColorPreview::DisplayMode mode)
@@ -161,14 +167,21 @@ ColorDialog::ButtonMode ColorDialog::buttonMode() const
     return p->button_mode;
 }
 
-void ColorDialog::update_widgets()
+void ColorDialog::setColorInternal(const QColor &col)
 {
+    /**
+     * \note Unlike setColor, this is used to update the current color which
+     * migth differ from the final selected color
+     */
+    p->ui.wheel->setColor(col);
+
+    p->color = col;
+
     bool blocked = signalsBlocked();
     blockSignals(true);
     Q_FOREACH(QWidget* w, findChildren<QWidget*>())
         w->blockSignals(true);
 
-    QColor col = color();
 
     p->ui.slide_red->setValue(col.red());
     p->ui.spin_red->setValue(p->ui.slide_red->value());
@@ -206,7 +219,8 @@ void ColorDialog::update_widgets()
     p->ui.slide_alpha->setFirstColor(apha_color);
     apha_color.setAlpha(255);
     p->ui.slide_alpha->setLastColor(apha_color);
-    p->ui.spin_alpha->setValue(p->ui.slide_alpha->value());
+    p->ui.spin_alpha->setValue(col.alpha());
+    p->ui.slide_alpha->setValue(col.alpha());
 
     if ( !p->ui.edit_hex->isModified() )
         p->ui.edit_hex->setColor(col);
@@ -224,12 +238,24 @@ void ColorDialog::set_hsv()
 {
     if ( !signalsBlocked() )
     {
-        p->ui.wheel->setColor(QColor::fromHsv(
-                p->ui.slide_hue->value(),
-                p->ui.slide_saturation->value(),
-                p->ui.slide_value->value()
-            ));
-        update_widgets();
+        QColor col = QColor::fromHsv(
+            p->ui.slide_hue->value(),
+            p->ui.slide_saturation->value(),
+            p->ui.slide_value->value(),
+            p->ui.slide_alpha->value()
+        );
+        p->ui.wheel->setColor(col);
+        setColorInternal(col);
+    }
+}
+
+void ColorDialog::set_alpha()
+{
+    if ( !signalsBlocked() )
+    {
+        QColor col = p->color;
+        col.setAlpha(p->ui.slide_alpha->value());
+        setColorInternal(col);
     }
 }
 
@@ -240,12 +266,13 @@ void ColorDialog::set_rgb()
         QColor col(
                 p->ui.slide_red->value(),
                 p->ui.slide_green->value(),
-                p->ui.slide_blue->value()
+                p->ui.slide_blue->value(),
+                p->ui.slide_alpha->value()
             );
         if (col.saturation() == 0)
             col = QColor::fromHsv(p->ui.slide_hue->value(), 0, col.value());
         p->ui.wheel->setColor(col);
-        update_widgets();
+        setColorInternal(col);
     }
 }
 
@@ -313,23 +340,11 @@ void ColorDialog::dropEvent(QDropEvent *event)
     }
 }
 
-static QColor get_screen_color(const QPoint &global_pos)
-{
-	QScreen *screen = QApplication::screenAt(global_pos);
-	if(!screen)
-		return QColor();
-
-    WId wid = QApplication::desktop()->winId();
-    QImage img = screen->grabWindow(wid, global_pos.x(), global_pos.y(), 1, 1).toImage();
-
-    return img.pixel(0,0);
-}
-
 void ColorDialog::mouseReleaseEvent(QMouseEvent *event)
 {
     if (p->pick_from_screen)
     {
-        setColorInternal(get_screen_color(event->globalPos()));
+        setColorInternal(utils::get_screen_color(event->globalPos()));
         p->pick_from_screen = false;
         releaseMouse();
     }
@@ -339,8 +354,60 @@ void ColorDialog::mouseMoveEvent(QMouseEvent *event)
 {
     if (p->pick_from_screen)
     {
-        setColorInternal(get_screen_color(event->globalPos()));
+        setColorInternal(utils::get_screen_color(event->globalPos()));
     }
+}
+
+void ColorDialog::keyReleaseEvent(QKeyEvent *ev)
+{
+    QDialog::keyReleaseEvent(ev);
+
+#ifdef Q_OS_ANDROID
+    if ( ev->key() == Qt::Key_Back )
+    {
+        reject();
+        ev->accept();
+    }
+#endif
+}
+
+void ColorDialog::setWheelShape(ColorWheel::ShapeEnum shape)
+{
+    p->ui.wheel->setSelectorShape(shape);
+}
+
+ColorWheel::ShapeEnum ColorDialog::wheelShape() const
+{
+    return p->ui.wheel->selectorShape();
+}
+
+void ColorDialog::setColorSpace(ColorWheel::ColorSpaceEnum space)
+{
+    p->ui.wheel->setColorSpace(space);
+}
+
+ColorWheel::ColorSpaceEnum ColorDialog::colorSpace() const
+{
+    return p->ui.wheel->colorSpace();
+}
+
+void ColorDialog::setWheelRotating(bool rotating)
+{
+    p->ui.wheel->setRotatingSelector(rotating);
+}
+
+bool ColorDialog::wheelRotating() const
+{
+    return p->ui.wheel->rotatingSelector();
+}
+
+int ColorDialog::exec()
+{
+#if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_FAKE)
+    showMaximized();
+    setFocus();
+#endif
+    return QDialog::exec();
 }
 
 } // namespace color_widgets

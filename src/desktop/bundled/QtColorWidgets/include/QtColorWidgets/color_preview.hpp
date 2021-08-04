@@ -3,7 +3,7 @@
  *
  * \author Mattia Basaglia
  *
- * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2013-2020 Mattia Basaglia
  * \copyright Copyright (C) 2014 Calle Laakkonen
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,9 +36,10 @@ class QCP_EXPORT ColorPreview : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true)
-    Q_PROPERTY(QColor comparisonColor READ comparisonColor WRITE setComparisonColor DESIGNABLE true)
-    Q_PROPERTY(DisplayMode display_mode READ displayMode WRITE setDisplayMode DESIGNABLE true)
-    Q_PROPERTY(QBrush background READ background WRITE setBackground DESIGNABLE true)
+    Q_PROPERTY(QColor comparisonColor READ comparisonColor WRITE setComparisonColor NOTIFY comparisonColorChanged DESIGNABLE true)
+    Q_PROPERTY(DisplayMode display_mode READ displayMode WRITE setDisplayMode NOTIFY displayModeChanged DESIGNABLE true)
+    Q_PROPERTY(QBrush background READ background WRITE setBackground NOTIFY backgroundChanged DESIGNABLE true)
+    Q_PROPERTY(bool drawFrame READ drawFrame WRITE setDrawFrame NOTIFY drawFrameChanged DESIGNABLE true)
     Q_ENUMS(DisplayMode)
 public:
     enum DisplayMode
@@ -46,7 +47,8 @@ public:
         NoAlpha,    ///< Show current color with no transparency
         AllAlpha,   ///< show current color with transparency
         SplitAlpha, ///< Show both solid and transparent side by side
-        SplitColor  ///< Show current and comparison colors side by side
+        SplitColor, ///< Show current and comparison colors side by side
+        SplitColorReverse, ///< Like Split color but swapped
     };
     Q_ENUMS(DisplayMode)
 
@@ -71,9 +73,13 @@ public:
     /// Get the comparison color
     QColor comparisonColor() const;
 
-    QSize sizeHint () const;
+    QSize sizeHint () const Q_DECL_OVERRIDE;
 
     void paint(QPainter &painter, QRect rect) const;
+
+    /// Whether to draw a frame around the color
+    bool drawFrame() const;
+    void setDrawFrame(bool);
     
 public Q_SLOTS:
     /// Set current color
@@ -89,11 +95,15 @@ Q_SIGNALS:
     /// Emitted on setColor
     void colorChanged(QColor);
 
+    void comparisonColorChanged(QColor);
+    void displayModeChanged(DisplayMode);
+    void backgroundChanged(const QBrush&);
+    void drawFrameChanged(bool);
 protected:
-    void paintEvent(QPaintEvent *);
-    void resizeEvent(QResizeEvent *);
-    void mouseReleaseEvent(QMouseEvent *ev);
-    void mouseMoveEvent(QMouseEvent *ev);
+    void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
 
 private:
     class Private;

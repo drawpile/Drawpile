@@ -3,7 +3,7 @@
  *
  * \author Mattia Basaglia
  *
- * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2013-2020 Mattia Basaglia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -37,7 +37,9 @@ class QCP_EXPORT ColorDialog : public QDialog
     Q_OBJECT
     Q_ENUMS(ButtonMode)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true)
-    Q_PROPERTY(ColorWheel::DisplayFlags wheelFlags READ wheelFlags WRITE setWheelFlags NOTIFY wheelFlagsChanged)
+    Q_PROPERTY(ColorWheel::ShapeEnum wheelShape READ wheelShape WRITE setWheelShape NOTIFY wheelShapeChanged)
+    Q_PROPERTY(ColorWheel::ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged)
+    Q_PROPERTY(bool wheelRotating READ wheelRotating WRITE setWheelRotating NOTIFY wheelRotatingChanged)
     /**
      * \brief whether the color alpha channel can be edited.
      *
@@ -52,8 +54,9 @@ public:
         Close
     };
 
-    explicit ColorDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-	~ColorDialog();
+    explicit ColorDialog(QWidget *parent = 0, Qt::WindowFlags f = {});
+
+    ~ColorDialog();
 
     /**
      * Get currently selected color
@@ -83,9 +86,13 @@ public:
     void setButtonMode(ButtonMode mode);
     ButtonMode buttonMode() const;
 
-    QSize sizeHint() const;
+    QSize sizeHint() const Q_DECL_OVERRIDE;
 
-    ColorWheel::DisplayFlags wheelFlags() const;
+    ColorWheel::ShapeEnum wheelShape() const;
+    ColorWheel::ColorSpaceEnum colorSpace() const;
+    bool wheelRotating() const;
+
+    int exec() Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
 
@@ -99,7 +106,9 @@ public Q_SLOTS:
      */
     void showColor(const QColor &oldcolor);
 
-    void setWheelFlags(ColorWheel::DisplayFlags flags);
+    void setWheelShape(ColorWheel::ShapeEnum shape);
+    void setColorSpace(ColorWheel::ColorSpaceEnum space);
+    void setWheelRotating(bool rotating);
 
     /**
      * Set whether the color alpha channel can be edited.
@@ -118,30 +127,33 @@ Q_SIGNALS:
      */
     void colorSelected(QColor);
 
-    void wheelFlagsChanged(ColorWheel::DisplayFlags flags);
+    void wheelShapeChanged(ColorWheel::ShapeEnum shape);
+    void colorSpaceChanged(ColorWheel::ColorSpaceEnum space);
+    void wheelRotatingChanged(bool rotating);
+
     void alphaEnabledChanged(bool alphaEnabled);
 
 private Q_SLOTS:
     /// Update all the Ui elements to match the selected color
-    void update_widgets();
+    void setColorInternal(const QColor &color);
     /// Update from HSV sliders
     void set_hsv();
     /// Update from RGB sliders
     void set_rgb();
+    /// Update from Alpha slider
+    void set_alpha();
 
     void on_edit_hex_colorChanged(const QColor& color);
     void on_edit_hex_colorEditingFinished(const QColor& color);
 
     void on_buttonBox_clicked(QAbstractButton*);
 
-private:
-    void setColorInternal(const QColor &color);
-
 protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dropEvent(QDropEvent * event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent * event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 private:
     class Private;

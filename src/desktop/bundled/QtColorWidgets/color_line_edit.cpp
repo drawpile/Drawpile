@@ -3,7 +3,7 @@
  *
  * \author Mattia Basaglia
  *
- * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2013-2020 Mattia Basaglia
  * \copyright Copyright (C) 2017 caryoscelus
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "color_line_edit.hpp"
+#include "QtColorWidgets/color_line_edit.hpp"
 
 #include <QDropEvent>
 #include <QDragEnterEvent>
@@ -29,8 +29,8 @@
 #include <QPainter>
 #include <QStyleOptionFrame>
 
-#include "color_utils.hpp"
-#include "color_names.hpp"
+#include "QtColorWidgets/color_utils.hpp"
+#include "QtColorWidgets/color_names.hpp"
 
 namespace color_widgets {
 
@@ -53,7 +53,7 @@ public:
         if ( preview_color )
         {
             QColor bg = customAlpha() ? Qt::transparent : color;
-            QColor text = detail::color_lumaF(color) > 0.5 || color.alphaF() < 0.2 ? Qt::black : Qt::white;
+            QColor text = utils::color_lumaF(color) > 0.5 || color.alphaF() < 0.2 ? Qt::black : Qt::white;
             parent->setStyleSheet(
                 QString("background-color: %1; color: %2;")
                 .arg(bg.name()).arg(text.name())
