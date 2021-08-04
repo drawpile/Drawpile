@@ -100,6 +100,12 @@ BrushPalette::BrushPalette(QWidget *parent)
 	auto *addFolderAction = hamburgerMenu->addAction("New Folder");
 	auto *deleteFolderAction = hamburgerMenu->addAction("Delete Folder");
 
+	// Default folder cannot be deleted
+	deleteFolderAction->setEnabled(false);
+	connect(d->ui.folder, QOverload<int>::of(&QComboBox::currentIndexChanged), deleteFolderAction, [=](int index) {
+		deleteFolderAction->setEnabled(index != 0);
+	});
+
 	d->ui.menuButton->setMenu(hamburgerMenu);
 
 	d->ui.brushPaletteView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -134,7 +140,6 @@ BrushPalette::BrushPalette(QWidget *parent)
 			d->presets->moveBrush(idx, targetFolder);
 		}
 	});
-
 
 	connect(addBrushAction, &QAction::triggered, this, &BrushPalette::addBrush);
 	connect(overwriteBrushAction, &QAction::triggered, this, &BrushPalette::overwriteBrush);
@@ -205,7 +210,12 @@ void BrushPalette::addFolder()
 
 void BrushPalette::deleteFolder()
 {
-	const auto idx = d->presets->index(d->ui.folder->currentIndex());
+	const auto index = d->ui.folder->currentIndex();
+	if(index == 0){
+		qWarning("Cannot delete Default folder");
+		return;
+	}
+	const auto idx = d->presets->index(index);
 	const int brushCount = d->presets->rowCount(idx);
 	if(brushCount > 0) {
 		const auto btn = QMessageBox::question(
