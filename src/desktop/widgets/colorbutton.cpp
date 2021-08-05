@@ -20,7 +20,7 @@
 #include "colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
-#include <ColorDialog>
+#include <QtColorWidgets/ColorDialog>
 #endif
 
 #include <QStylePainter>

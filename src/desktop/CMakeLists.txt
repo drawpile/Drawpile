@@ -182,18 +182,76 @@ else()
 	message(WARNING "QtColorWidgets not found: using bundled copy!")
 	set(
 		SOURCES ${SOURCES}
-		bundled/QtColorWidgets/color_wheel.cpp
-		bundled/QtColorWidgets/color_preview.cpp
+		bundled/QtColorWidgets/abstract_widget_list.cpp
+		bundled/QtColorWidgets/bound_color_selector.cpp
+		bundled/QtColorWidgets/color_2d_slider.cpp
+		bundled/QtColorWidgets/color_delegate.cpp
 		bundled/QtColorWidgets/color_dialog.cpp
-		bundled/QtColorWidgets/gradient_slider.cpp
-		bundled/QtColorWidgets/hue_slider.cpp
 		bundled/QtColorWidgets/color_line_edit.cpp
-		bundled/QtColorWidgets/color_utils.cpp
+		bundled/QtColorWidgets/color_list_widget.cpp
 		bundled/QtColorWidgets/color_names.cpp
+		bundled/QtColorWidgets/color_palette.cpp
+		bundled/QtColorWidgets/color_palette_model.cpp
+		bundled/QtColorWidgets/color_palette_widget.cpp
+		bundled/QtColorWidgets/color_preview.cpp
+		bundled/QtColorWidgets/color_selector.cpp
+		bundled/QtColorWidgets/color_utils.cpp
+		bundled/QtColorWidgets/color_wheel.cpp
+		bundled/QtColorWidgets/color_widgets.qrc
+		bundled/QtColorWidgets/gradient_editor.cpp
+		bundled/QtColorWidgets/gradient_list_model.cpp
+		bundled/QtColorWidgets/gradient_slider.cpp
+		bundled/QtColorWidgets/harmony_color_wheel.cpp
+		bundled/QtColorWidgets/hue_slider.cpp
+		bundled/QtColorWidgets/swatch.cpp
+		bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
+		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/BoundColorSelector
+		bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/CMakeLists.txt
+		bundled/QtColorWidgets/include/QtColorWidgets/color_2d_slider.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorDelegate
+		bundled/QtColorWidgets/include/QtColorWidgets/color_delegate.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorDialog
+		bundled/QtColorWidgets/include/QtColorWidgets/color_dialog.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_line_edit.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorListWidget
+		bundled/QtColorWidgets/include/QtColorWidgets/color_list_widget.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_names.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_palette.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_palette_model.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_palette_widget.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorPreview
+		bundled/QtColorWidgets/include/QtColorWidgets/color_preview.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorSelector
+		bundled/QtColorWidgets/include/QtColorWidgets/color_selector.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_utils.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorWheel
+		bundled/QtColorWidgets/include/QtColorWidgets/color_wheel.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_wheel_private.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/colorwidgets_global.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_delegate.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/GradientEditor
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_editor.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_helper.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/GradientListModel
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_list_model.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/GradientSlider
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_slider.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/HarmonyColorWheel
+		bundled/QtColorWidgets/include/QtColorWidgets/harmony_color_wheel.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/HueSlider
+		bundled/QtColorWidgets/include/QtColorWidgets/hue_slider.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/swatch.hpp
 	)
 	qt5_add_resources( QtResource bundled/QtColorWidgets/color_widgets.qrc )
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include")
 	add_definitions(-DQTCOLORPICKER_STATICALLY_LINKED)
+	set (
+		UIs ${UIs}
+		bundled/QtColorWidgets/color_dialog.ui
+		bundled/QtColorWidgets/color_palette_widget.ui
+	)
 endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )

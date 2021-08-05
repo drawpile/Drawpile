@@ -361,7 +361,9 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/colorwheel");
-	restoreColorWheelSettings(cfg.value("flags").toInt());
+	changeColorWheelShape(cfg.value("shape").toInt());
+	changeColorWheelAngle(cfg.value("rotate").toInt());
+	changeColorWheelSpace(cfg.value("space").toInt());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/brushsliderlimits");
@@ -383,45 +385,6 @@ void SettingsDialog::setParentalControlsLocked(bool lock)
 	m_ui->nsfmDisconnect->setDisabled(lock);
 	m_ui->noUncensoring->setDisabled(lock);
 	m_ui->nsfmLock->setText(lock ? tr("Unlock") : tr("Lock"));
-}
-
-void SettingsDialog::restoreColorWheelSettings(int flags)
-{
-	int shape;
-	switch(flags & ColorWheel::SHAPE_FLAGS) {
-	case ColorWheel::SHAPE_TRIANGLE:
-		shape = ColorWheelShape::Triangle;
-		break;
-	default:
-		shape = ColorWheelShape::Square;
-		break;
-	}
-	m_ui->colorwheelShapeBox->setCurrentIndex(shape);
-
-	int angle;
-	switch(flags & ColorWheel::ANGLE_FLAGS) {
-	case ColorWheel::ANGLE_ROTATING:
-		angle = ColorWheelAngle::Rotating;
-		break;
-	default:
-		angle = ColorWheelAngle::Fixed;
-		break;
-	}
-	m_ui->colorwheelAngleBox->setCurrentIndex(angle);
-
-	int space;
-	switch(flags & ColorWheel::COLOR_FLAGS) {
-	case ColorWheel::COLOR_HSL:
-		space = ColorWheelSpace::Hsl;
-		break;
-	case ColorWheel::COLOR_LCH:
-		space = ColorWheelSpace::Lch;
-		break;
-	default:
-		space = ColorWheelSpace::Hsv;
-		break;
-	}
-	m_ui->colorwheelSpaceBox->setCurrentIndex(space);
 }
 
 void SettingsDialog::rememberSettings()
@@ -513,7 +476,9 @@ void SettingsDialog::rememberSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/colorwheel");
-	cfg.setValue("flags", static_cast<int>(m_ui->colorwheel->displayFlags()));
+	cfg.setValue("shape", static_cast<int>(m_ui->colorwheel->selectorShape()));
+	cfg.setValue("rotate", static_cast<int>(m_ui->colorwheel->rotatingSelector()));
+	cfg.setValue("space", static_cast<int>(m_ui->colorwheel->colorSpace()));
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/brushsliderlimits");
@@ -770,56 +735,62 @@ void SettingsDialog::removeSelectedAvatar()
 
 void SettingsDialog::changeColorWheelShape(int index)
 {
-	ColorWheel::DisplayFlags flags;
+	ColorWheel::ShapeEnum shape;
 	switch(index) {
-	case ColorWheelShape::Square:
-		flags = ColorWheel::SHAPE_SQUARE;
+	case ColorWheel::ShapeTriangle:
+		shape = ColorWheel::ShapeTriangle;
 		break;
-	case ColorWheelShape::Triangle:
-		flags = ColorWheel::SHAPE_TRIANGLE;
+	case ColorWheel::ShapeSquare:
+		shape = ColorWheel::ShapeSquare;
 		break;
 	default:
 		qWarning() << "Unknown color wheel shape index " << index;
-		return;
+		shape = ColorWheel::ShapeSquare;
+		break;
 	}
-	m_ui->colorwheel->setDisplayFlag(flags, ColorWheel::SHAPE_FLAGS);
+	m_ui->colorwheel->setSelectorShape(shape);
+	m_ui->colorwheelShapeBox->setCurrentIndex(shape);
 }
 
 void SettingsDialog::changeColorWheelAngle(int index)
 {
-	ColorWheel::DisplayFlags flags;
+	ColorWheel::AngleEnum rotating;
 	switch(index) {
-	case ColorWheelAngle::Fixed:
-		flags = ColorWheel::ANGLE_FIXED;
+	case ColorWheel::AngleFixed:
+		rotating = ColorWheel::AngleFixed;
 		break;
-	case ColorWheelAngle::Rotating:
-		flags = ColorWheel::ANGLE_ROTATING;
+	case ColorWheel::AngleRotating:
+		rotating = ColorWheel::AngleRotating;
 		break;
 	default:
 		qWarning() << "Unknown color wheel angle index " << index;
-		return;
+		rotating = ColorWheel::AngleFixed;
+		break;
 	}
-	m_ui->colorwheel->setDisplayFlag(flags, ColorWheel::ANGLE_FLAGS);
+	m_ui->colorwheel->setRotatingSelector(rotating);
+	m_ui->colorwheelAngleBox->setCurrentIndex(rotating);
 }
 
 void SettingsDialog::changeColorWheelSpace(int index)
 {
-	ColorWheel::DisplayFlags flags;
+	ColorWheel::ColorSpaceEnum space;
 	switch(index) {
-	case ColorWheelSpace::Hsv:
-		flags = ColorWheel::COLOR_HSV;
+	case ColorWheel::ColorHSV:
+		space = ColorWheel::ColorHSV;
 		break;
-	case ColorWheelSpace::Hsl:
-		flags = ColorWheel::COLOR_HSL;
+	case ColorWheel::ColorHSL:
+		space = ColorWheel::ColorHSL;
 		break;
-	case ColorWheelSpace::Lch:
-		flags = ColorWheel::COLOR_LCH;
+	case ColorWheel::ColorLCH:
+		space = ColorWheel::ColorLCH;
 		break;
 	default:
 		qWarning() << "Unknown color wheel space index " << index;
-		return;
+		space = ColorWheel::ColorHSV;
+		break;
 	}
-	m_ui->colorwheel->setDisplayFlag(flags, ColorWheel::COLOR_FLAGS);
+	m_ui->colorwheel->setColorSpace(space);
+	m_ui->colorwheelSpaceBox->setCurrentIndex(space);
 }
 
 }

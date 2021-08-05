@@ -31,7 +31,7 @@
 
 #include "tools/toolproperties.h"
 
-#include <ColorDialog>
+#include <QtColorWidgets/ColorDialog>
 
 #include <QStackedWidget>
 #include <QApplication>

@@ -19,8 +19,8 @@
 
 #include "widgets/palettewidget.h"
 #include "widgets/groupedtoolbutton.h"
-#include <ColorWheel>
-#include <HueSlider>
+#include <QtColorWidgets/ColorWheel>
+#include <QtColorWidgets/HueSlider>
 
 #include "main.h"
 #include "docks/colorbox.h"
@@ -394,8 +394,12 @@ void ColorBox::updateSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/colorwheel");
-	_ui->colorwheel->setDisplayFlags(
-			static_cast<ColorWheel::DisplayFlags>(cfg.value("flags").toInt()));
+	_ui->colorwheel->setSelectorShape(
+			static_cast<ColorWheel::ShapeEnum>(cfg.value("shape").toInt()));
+	_ui->colorwheel->setRotatingSelector(
+			static_cast<ColorWheel::AngleEnum>(cfg.value("rotate").toInt()));
+	_ui->colorwheel->setColorSpace(
+			static_cast<ColorWheel::ColorSpaceEnum>(cfg.value("space").toInt()));
 	cfg.endGroup();
 }
 
