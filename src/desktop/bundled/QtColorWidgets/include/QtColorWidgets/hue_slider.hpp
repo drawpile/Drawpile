@@ -4,7 +4,7 @@
  * \author Mattia Basaglia
  *
  * \copyright Copyright (C) 2014 Calle Laakkonen
- * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2013-2020 Mattia Basaglia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -36,20 +36,20 @@ class QCP_EXPORT HueSlider : public GradientSlider
     /**
      * \brief Saturation used in the rainbow gradient, as a [0-1] float
      */
-    Q_PROPERTY(qreal colorSaturation READ colorSaturation WRITE setColorSaturation)
+    Q_PROPERTY(qreal colorSaturation READ colorSaturation WRITE setColorSaturation NOTIFY colorSaturationChanged)
     /**
      * \brief Value used in the rainbow gradient, as a [0-1] float
      */
-    Q_PROPERTY(qreal colorValue READ colorValue WRITE setColorValue)
+    Q_PROPERTY(qreal colorValue READ colorValue WRITE setColorValue NOTIFY colorValueChanged)
     /**
      * \brief Alpha used in the rainbow gradient, as a [0-1] float
      */
-    Q_PROPERTY(qreal colorAlpha READ colorAlpha WRITE setColorAlpha)
+    Q_PROPERTY(qreal colorAlpha READ colorAlpha WRITE setColorAlpha NOTIFY colorAlphaChanged)
 
     /**
      * \brief Color with corresponding color* components
      */
-    Q_PROPERTY(QColor color READ color WRITE setColor)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
     /**
      * \brief Normalized Hue, as indicated from the slider
@@ -85,6 +85,9 @@ public Q_SLOTS:
 Q_SIGNALS:
     void colorHueChanged(qreal colorHue);
     void colorChanged(QColor);
+    void colorAlphaChanged(qreal v);
+    void colorSaturationChanged(qreal v);
+    void colorValueChanged(qreal v);
 
 private:
     class Private;

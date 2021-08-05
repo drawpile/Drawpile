@@ -32,7 +32,7 @@
 #include <QDrag>
 #include <QMimeData>
 
-#include <ColorDialog>
+#include <QtColorWidgets/ColorDialog>
 
 namespace widgets {
 

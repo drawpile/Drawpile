@@ -503,12 +503,12 @@
              <widget class="QComboBox" name="colorwheelShapeBox">
               <item>
                <property name="text">
-                <string>Square</string>
+                <string>Triangle</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>Triangle</string>
+                <string>Square</string>
                </property>
               </item>
              </widget>
@@ -1377,7 +1377,7 @@
   <customwidget>
    <class>color_widgets::ColorWheel</class>
    <extends>QWidget</extends>
-   <header>ColorWheel</header>
+   <header>QtColorWidgets/ColorWheel</header>
   </customwidget>
  </customwidgets>
  <resources/>

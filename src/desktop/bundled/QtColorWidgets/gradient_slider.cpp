@@ -3,7 +3,7 @@
  *
  * \author Mattia Basaglia
  *
- * \copyright Copyright (C) 2013-2017 Mattia Basaglia
+ * \copyright Copyright (C) 2013-2020 Mattia Basaglia
  * \copyright Copyright (C) 2014 Calle Laakkonen
  * \copyright Copyright (C) 2017 caryoscelus
  *
@@ -21,12 +21,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gradient_slider.hpp"
+#include "QtColorWidgets/gradient_slider.hpp"
 
 #include <QPainter>
 #include <QStyleOptionSlider>
 #include <QLinearGradient>
 #include <QMouseEvent>
+#include <QDebug>
 
 static void loadResource()
 {
@@ -55,49 +56,13 @@ public:
         gradient.setSpread(QGradient::RepeatSpread);
     }
 
-    void mouse_event(QMouseEvent *ev, GradientSlider* owner, bool allow_jumps)
+    void mouse_event(QMouseEvent *ev, GradientSlider* owner)
     {
-        QStyleOptionSlider opt;
-        owner->initStyleOption(&opt);
-        QRect slider_rect = owner->style()->subControlRect(
-            QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, owner
-        );
-
-        if ( !allow_jumps && slider_rect.contains(ev->pos()) )
-            return;
-
-        QPoint center = slider_rect.center() - slider_rect.topLeft();
-        QPoint point = ev->pos() - center;
-
-        QRect groove_rect = owner->style()->subControlRect(
-            QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, owner
-        );
-
-        int slider_length;
-        int slider_min;
-        int slider_max;
-        int pos;
-
-        if (owner->orientation() == Qt::Horizontal) {
-            slider_length = slider_rect.width();
-            slider_min = groove_rect.x();
-            slider_max = groove_rect.right() - slider_length + 1;
-            pos = point.x();
-        } else {
-            slider_length = slider_rect.height();
-            slider_min = groove_rect.y();
-            slider_max = groove_rect.bottom() - slider_length + 1;
-            pos = point.y();
-        }
-        owner->setSliderPosition(
-            QStyle::sliderValueFromPosition(
-                owner->minimum(),
-                owner->maximum(),
-                pos - slider_min,
-                slider_max - slider_min,
-                opt.upsideDown
-            )
-        );
+        qreal pos = (owner->geometry().width() > 5) ?
+            static_cast<qreal>(ev->pos().x() - 2.5) / (owner->geometry().width() - 5) : 0;
+        pos = qMax(qMin(pos, 1.0), 0.0);
+        owner->setSliderPosition(qRound(owner->minimum() +
+            pos * (owner->maximum() - owner->minimum())));
     }
 
 };
@@ -123,7 +88,7 @@ void GradientSlider::mousePressEvent(QMouseEvent *ev)
     {
         ev->accept();
         setSliderDown(true);
-        p->mouse_event(ev, this, false);
+        p->mouse_event(ev, this);
         update();
     }
     else
@@ -137,7 +102,7 @@ void GradientSlider::mouseMoveEvent(QMouseEvent *ev)
     if ( ev->buttons() & Qt::LeftButton )
     {
         ev->accept();
-        p->mouse_event(ev, this, true);
+        p->mouse_event(ev, this);
         update();
     }
     else
@@ -169,6 +134,7 @@ void GradientSlider::setBackground(const QBrush &bg)
 {
     p->back = bg;
     update();
+    Q_EMIT backgroundChanged(bg);
 }
 
 QGradientStops GradientSlider::colors() const
@@ -271,19 +237,40 @@ void GradientSlider::paintEvent(QPaintEvent *)
     painter.setBrush(p->gradient);
     painter.drawRect(1,1,geometry().width()-2,geometry().height()-2);
 
-    painter.setClipping(false);
-    QStyleOptionSlider opt_slider;
-    initStyleOption(&opt_slider);
-    opt_slider.tickPosition = TicksBothSides;
-    opt_slider.state &= ~QStyle::State_HasFocus;
-    opt_slider.subControls = QStyle::SC_SliderHandle;
-    if (isSliderDown())
-    {
-        opt_slider.state |= QStyle::State_Sunken;
-        opt_slider.activeSubControls = QStyle::SC_SliderHandle;
+    qreal pos = (maximum() != 0) ?
+        static_cast<qreal>(value() - minimum()) / maximum() : 0;
+    QColor color;
+    auto stops = p->gradient.stops();
+    int i;
+    for (i = 0; i < stops.size(); i++) {
+        if (stops[i].first > pos)
+            break;
+    }
+    if (i == 0) {
+        color = firstColor();
+    } if (i == stops.size()) {
+        color = lastColor();
+    } else {
+        auto &a = stops[i - 1];
+        auto &b = stops[i];
+        auto c = (b.first - a.first);
+        qreal q = (c != 0) ?
+            (pos - a.first) / c : 0;
+        color = QColor::fromRgbF(b.second.redF() * q + a.second.redF() * (1.0 - q),
+            b.second.greenF() * q + a.second.greenF() * (1.0 - q),
+            b.second.blueF() * q + a.second.blueF() * (1.0 - q),
+            b.second.alphaF() * q + a.second.alphaF() * (1.0 - q));
     }
 
-    style()->drawComplexControl(QStyle::CC_Slider, &opt_slider, &painter, this);
+    pos = pos * (geometry().width() - 5);
+    if (color.valueF() > 0.5 || color.alphaF() < 0.5) {
+        painter.setPen(QPen(Qt::black, 3));
+    } else {
+        painter.setPen(QPen(Qt::white, 3));
+    }
+    QPointF p1 = QPointF(2.5, 2.5) + QPointF(pos, 0);
+    QPointF p2 = p1 + QPointF(0, geometry().height() - 5);
+    painter.drawLine(p1, p2);
 }
 
 } // namespace color_widgets

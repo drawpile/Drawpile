@@ -332,17 +332,17 @@
   <customwidget>
    <class>color_widgets::ColorWheel</class>
    <extends>QWidget</extends>
-   <header>ColorWheel</header>
+   <header>QtColorWidgets/ColorWheel</header>
   </customwidget>
   <customwidget>
    <class>color_widgets::GradientSlider</class>
    <extends>QSlider</extends>
-   <header>GradientSlider</header>
+   <header>QtColorWidgets/GradientSlider</header>
   </customwidget>
   <customwidget>
    <class>color_widgets::HueSlider</class>
    <extends>GradientSlider</extends>
-   <header>HueSlider</header>
+   <header>QtColorWidgets/HueSlider</header>
   </customwidget>
   <customwidget>
    <class>widgets::PaletteWidget</class>

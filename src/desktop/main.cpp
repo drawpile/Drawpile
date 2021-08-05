@@ -53,7 +53,7 @@
 #include <QDateTime>
 #include <QStyle>
 
-#include <ColorWheel>
+#include <QtColorWidgets/ColorWheel>
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -319,8 +319,6 @@ static QStringList initApp(DrawpileApp &app)
 	}
 #endif
 #endif // KIS_TABLET
-
-	color_widgets::ColorWheel::setDefaultDisplayFlags(color_widgets::ColorWheel::SHAPE_SQUARE | color_widgets::ColorWheel::ANGLE_FIXED | color_widgets::ColorWheel::COLOR_HSV);
 
 	// Set override locale from settings, or use system locale if no override is set
 	QLocale locale = QLocale::c();

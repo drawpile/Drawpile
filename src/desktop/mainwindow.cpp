@@ -44,7 +44,7 @@
 #include <QListView>
 #include <QTextEdit>
 
-#include <ColorDialog>
+#include <QtColorWidgets/ColorDialog>
 
 #ifndef NDEBUG
 #include "core/tile.h"

@@ -67,13 +67,8 @@ private slots:
 	void changeColorWheelSpace(int index);
 
 private:
-	enum ColorWheelShape { Square, Triangle };
-	enum ColorWheelAngle { Fixed, Rotating };
-	enum ColorWheelSpace { Hsv, Hsl, Lch };
-
 	void restoreSettings();
 	void setParentalControlsLocked(bool lock);
-	void restoreColorWheelSettings(int flags);
 	void rememberPcLevel();
 
 	Ui_SettingsDialog *m_ui;
