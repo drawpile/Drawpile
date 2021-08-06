@@ -38,7 +38,28 @@
           <li>Fixed garbled navigator content when joining a new session</li>
         </ul>
       </description>
-      <artifacts/>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.19-setup.exe</location>
+          <checksum type="sha256">c6eb9a6a34de0354c880b154bf1a0bb273ef55078a7a942e250eb4ba845bcba7</checksum>
+          <size type="download">16610905</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.19-setup-w32.exe</location>
+          <checksum type="sha256">b9bddca67ff340ae082a59a4663037cef58ff889453f638c81acef6dc10ebfc0</checksum>
+          <size type="download">15677308</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.19.dmg</location>
+          <checksum type="sha256">db4632b79612c5f0b3d524717742c76955fa61fe3efdc59e370a3b40e6a07934</checksum>
+          <size type="download">14360834</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.19.tar.gz</location>
+          <checksum type="sha256">8086ed74f38848d15476d3fb245887fe1e0eb271e28a00947fe481972265dd68</checksum>
+          <size type="download">2614456</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.1.18" date="2021-07-25">
       <url>https://drawpile.net/news/release-2.1.18/</url>
