@@ -174,7 +174,8 @@ void NavigatorView::onResize()
 
 void NavigatorView::refreshCache()
 {
-	if(!m_observer->layerStack())
+	const QPixmap &canvas = m_observer->getPixmap();
+	if(canvas.isNull())
 		return;
 
 	const QSize size = this->size();
@@ -185,7 +186,7 @@ void NavigatorView::refreshCache()
 	}
 
 	QPainter painter(&m_cache);
-	painter.drawPixmap(m_cache.rect(), m_observer->getPixmap());
+	painter.drawPixmap(m_cache.rect(), canvas);
 
 	update();
 }
