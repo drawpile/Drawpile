@@ -23,6 +23,23 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.19" date="2021-08-06">
+      <url>https://drawpile.net/news/release-2.1.19/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed performance regression</li>
+          <li>Fixed potential crash during login (catchup stage)</li>
+          <li>Fixed crash when adding a new input preset</li>
+          <li>"Fusion" style is now always used on Windows for consistency</li>
+          <li>Added canvas rotation gauge widget to status bar</li>
+          <li>Invalid canvas resize commands are now ignored</li>
+          <li>Fixed that ongoing indirect strokes weren't drawn when exporting a recording to video</li>
+          <li>Fixed garbled navigator content when joining a new session</li>
+        </ul>
+      </description>
+      <artifacts/>
+    </release>
     <release version="2.1.18" date="2021-07-25">
       <url>https://drawpile.net/news/release-2.1.18/</url>
       <description>
