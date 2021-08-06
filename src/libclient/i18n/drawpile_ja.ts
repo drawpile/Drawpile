@@ -2,6 +2,29 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>AbstractWidgetList</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
+        <source>Add New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
+        <source>Move Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
+        <source>Move Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AbuseReportDialog</name>
     <message>
         <location filename="../../desktop/ui/abusereport.ui" line="14"/>
@@ -89,6 +112,16 @@
         <location filename="../../desktop/ui/brushdock.ui" line="593"/>
         <source>px</source>
         <translation>px</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="606"/>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="616"/>
+        <source>Configure input presets</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="379"/>
@@ -241,47 +274,47 @@
 <context>
     <name>ColorDialog</name>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="319"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="14"/>
         <source>Select Color</source>
         <translation>色の選択</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="320"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="55"/>
         <source>Saturation</source>
         <translation>彩度</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="321"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="62"/>
         <source>Hue</source>
         <translation>色相</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="322"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="79"/>
         <source>Hex</source>
         <translation>16 進数</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="323"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="86"/>
         <source>Blue</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="324"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="123"/>
         <source>Value</source>
         <translation>明度</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="325"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="130"/>
         <source>Green</source>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="326"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="137"/>
         <source>Alpha</source>
         <translation>アルファ</translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/ui_color_dialog.h" line="327"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="144"/>
         <source>Red</source>
         <translation>R</translation>
     </message>
@@ -289,17 +322,22 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="92"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="97"/>
         <source>Action</source>
         <translation>アクション</translation>
     </message>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="93"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="98"/>
         <source>Shortcut</source>
         <translation>ショートカット</translation>
     </message>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="94"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="99"/>
+        <source>Alternate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/customshortcutmodel.cpp" line="100"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
@@ -530,36 +568,46 @@
     <name>InputSettings</name>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
+        <source>Preset:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
         <source>Smoothing:</source>
         <translation>スムージング:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="66"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="73"/>
         <source>Pressure:</source>
         <translation>筆圧:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="74"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="81"/>
         <source>Stylus</source>
         <translation>スタイラス</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="79"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="86"/>
         <source>Distance</source>
         <translation>距離</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="84"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="91"/>
         <source>Velocity</source>
         <translation>速度</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="145"/>
-        <source>Curve distance</source>
+        <location filename="../../desktop/ui/inputcfg.ui" line="133"/>
+        <source>Preset options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="202"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/inputcfg.ui" line="162"/>
         <source>Velocity range</source>
         <translation type="unfinished"></translation>
     </message>
@@ -680,6 +728,49 @@
     </message>
 </context>
 <context>
+    <name>LayerProperties</name>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="17"/>
+        <source>Layer Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
+        <source>Opacity:</source>
+        <translation type="unfinished">不透明度:</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
+        <source>Blend Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
+        <source>Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
+        <source>Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="116"/>
+        <source>Default</source>
+        <translation type="unfinished">デフォルト</translation>
+    </message>
+</context>
+<context>
     <name>LoginDialog</name>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="283"/>
@@ -776,991 +867,991 @@
     <name>MainWindow</name>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="637"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1440"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1459"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="867"/>
-        <location filename="../../desktop/mainwindow.cpp" line="888"/>
+        <location filename="../../desktop/mainwindow.cpp" line="886"/>
+        <location filename="../../desktop/mainwindow.cpp" line="907"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile を終了</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="868"/>
+        <location filename="../../desktop/mainwindow.cpp" line="887"/>
         <source>You are still connected to a drawing session.</source>
         <translation>ドローイングセッションに接続中です。</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="872"/>
+        <location filename="../../desktop/mainwindow.cpp" line="891"/>
         <source>Exit anyway</source>
         <translation>とにかく終了</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="874"/>
-        <location filename="../../desktop/mainwindow.cpp" line="896"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1220"/>
+        <location filename="../../desktop/mainwindow.cpp" line="893"/>
+        <location filename="../../desktop/mainwindow.cpp" line="915"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1239"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="889"/>
+        <location filename="../../desktop/mainwindow.cpp" line="908"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>未保存の変更内容があります。終了する前に保存しますか？</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="892"/>
+        <location filename="../../desktop/mainwindow.cpp" line="911"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="894"/>
+        <location filename="../../desktop/mainwindow.cpp" line="913"/>
         <source>Discard</source>
         <translation>破棄</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1077"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1096"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>選択したファイル形式は、レイヤーまたは注釈をサポートしていません。</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1079"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1098"/>
         <source>Flatten</source>
         <translation>レイヤーを統合</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1080"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1099"/>
         <source>Save as OpenRaster</source>
         <translation>OpenRaster として保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1188"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1207"/>
         <source>Couldn&apos;t save image</source>
         <translation>画像を保存できませんでした</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1363"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1382"/>
         <source>Invalid address</source>
         <translation>無効なアドレスです</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1441"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1460"/>
         <source>Really leave the session?</source>
         <translation>本当にセッションを退出しますか？</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1447"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1466"/>
         <source>Leave</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1449"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1468"/>
         <source>Stay</source>
         <translation>とどまる</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1458"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1477"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>未送信のデータがあります！転送が完了するまでお待ちください！</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1620"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1639"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1622"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1641"/>
         <source>Join</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1671"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1690"/>
         <source>Board is locked</source>
         <translation>ドローイングボードはロック中です</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1990"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2009"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2115"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2141"/>
         <source>Marker text</source>
         <translation>マーカーテキスト</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2123"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2154"/>
         <source>About Drawpile</source>
         <translation>Drawpile について</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2238"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2269"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>新規(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2239"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2270"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>開く(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2243"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2274"/>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2244"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2275"/>
         <source>Save &amp;As...</source>
         <translation>名前を付けて保存(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2245"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2276"/>
         <source>Autosave</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2277"/>
         <source>&amp;Animation...</source>
         <translation>アニメーション(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1279"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2249"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1298"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2280"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1174"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1193"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1190"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1209"/>
         <source>Image saved</source>
         <translation>画像を保存しました</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1241"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1260"/>
         <source>Export Session Template</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1268"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1287"/>
         <source>Pause</source>
         <translation>一時停止</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1271"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1290"/>
         <source>Play</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1527"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1546"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1528"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1547"/>
         <source>Really terminate this session?</source>
         <translation>本当にこのセッションを終了しますか？</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1533"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2639"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1552"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2670"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2227"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2258"/>
         <source>Lock in place</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2250"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2281"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2280"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2311"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2294"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2325"/>
         <source>&amp;Export</source>
         <translation>エクスポート(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2319"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2350"/>
         <source>&amp;Undo</source>
         <translation>取り消し(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2320"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2351"/>
         <source>&amp;Redo</source>
         <translation>やり直し(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2352"/>
         <source>Copy selected area to the clipboard</source>
         <translation>選択範囲をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2323"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2354"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>現在のレイヤーの選択範囲をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2324"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2355"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>現在のレイヤーの選択範囲をクリップボードに切り取り</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2325"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2356"/>
         <source>&amp;Paste</source>
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2326"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2357"/>
         <source>&amp;Stamp</source>
         <translation>スタンプ(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2335"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2366"/>
         <source>&amp;Deselect</source>
         <translation>選択解除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2343"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2374"/>
         <source>Expand &amp;Up</source>
         <translation>上に拡張(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2344"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2375"/>
         <source>Expand &amp;Down</source>
         <translation>下に拡張(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2345"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2376"/>
         <source>Expand &amp;Left</source>
         <translation>左に拡張(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2346"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2377"/>
         <source>Expand &amp;Right</source>
         <translation>右に拡張(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2349"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2380"/>
         <source>Fill Selection</source>
         <translation>選択範囲を塗りつぶす</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2350"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2381"/>
         <source>Recolor Selection</source>
         <translation>選択範囲を色替え</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2351"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2382"/>
         <source>Color Erase Selection</source>
         <translation>選択範囲を色消しゴムで消去</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2409"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2440"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2427"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2458"/>
         <source>&amp;Expand Canvas</source>
         <translation>キャンバスを拡張(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2456"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2487"/>
         <source>&amp;Toolbars</source>
         <translation>ツールバー(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2459"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2490"/>
         <source>&amp;Docks</source>
         <translation>ドック(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2462"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2493"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2495"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2464"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2495"/>
         <source>Show animation preview window</source>
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2473"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2504"/>
         <source>Mirror</source>
         <translation>左右反転</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2505"/>
         <source>Flip</source>
         <translation>上下反転</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2568"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2599"/>
         <source>User Pointers</source>
         <translation>ユーザーポインター</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
         <source>Lock Everything</source>
         <translation>すべてをロック</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2838"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2869"/>
         <source>Finish action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2842"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2873"/>
         <source>Cancel action</source>
         <translation>アクションをキャンセル</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2477"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2508"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2481"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2512"/>
         <source>Show La&amp;ser Trails</source>
         <translation>レーザーの軌跡を表示(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2482"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2513"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>ピクセルグリッドを表示(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2546"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2577"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2553"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
         <source>&amp;Zoom</source>
         <translation>ズーム(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2558"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2589"/>
         <source>Rotation</source>
         <translation>回転</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>ホスト(&amp;H)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
         <source>Share your drawingboard with others</source>
         <translation>ドローイングボードを他のユーザーと共有</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>参加(&amp;J)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>他のユーザーのドローイングセッションに参加</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2663"/>
         <source>&amp;Leave</source>
         <translation>退出(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2663"/>
         <source>Leave this drawing session</source>
         <translation>このドローイングセッションを退出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2637"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2668"/>
         <source>Become Operator...</source>
         <translation>管理者になる...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2642"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
         <source>Prevent changes to the drawing board</source>
         <translation>ドローイングボードを変更されないようにします</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>セッション(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2722"/>
         <source>Fill areas</source>
         <translation>空白を塗りつぶす</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
         <source>Select area for copying</source>
         <translation>範囲を指定して選択</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2758"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>ブラシサイズを小さく(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2759"/>
         <source>&amp;Increase Brush Size</source>
         <translation>ブラシサイズを大きく(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2743"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2774"/>
         <source>Drawing tools</source>
         <translation>描画ツール</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2869"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2902"/>
         <source>Color</source>
         <translation>色</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1049"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1068"/>
         <source>Open Image</source>
         <translation>画像を開く</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1076"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1132"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1095"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1151"/>
         <source>Save Image</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1302"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1321"/>
         <source>Record Session</source>
         <translation>セッションを記録</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1276"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1295"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1376"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1395"/>
         <source>Host Session</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1608"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1627"/>
         <source>Could not connect to server</source>
         <translation>サーバーに接続できませんでした</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1971"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1990"/>
         <source>Paste Image</source>
         <translation>画像を貼り付け</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2115"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2141"/>
         <source>Mark</source>
         <translation>マーク</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2125"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2156"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2241"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2272"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2283"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2314"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>最近使ったファイルを開く(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2303"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2334"/>
         <source>File Tools</source>
         <translation>ファイルツール</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2321"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2352"/>
         <source>&amp;Copy Visible</source>
         <translation>可視部分をコピー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2323"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2354"/>
         <source>Copy &amp;Layer</source>
         <translation>レイヤーをコピー(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2324"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2355"/>
         <source>Cu&amp;t Layer</source>
         <translation>レイヤーを切り取り(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2328"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2359"/>
         <source>Paste &amp;From File...</source>
         <translation>ファイルから貼り付け(&amp;F)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2329"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2360"/>
         <source>Delete Empty Annotations</source>
         <translation>空の注釈を削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2330"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2361"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>キャンバスのサイズを変更(&amp;Z)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2332"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2363"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>設定(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2334"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2365"/>
         <source>Select &amp;All</source>
         <translation>すべて選択(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2443"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
         <source>Edit Tools</source>
         <translation>編集ツール</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2466"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2497"/>
         <source>Zoom &amp;In</source>
         <translation>ズームイン(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2467"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2498"/>
         <source>Zoom &amp;Out</source>
         <translation>ズームアウト(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2468"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2499"/>
         <source>&amp;Normal Size</source>
         <translation>通常のサイズ(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2469"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2500"/>
         <source>&amp;Reset Rotation</source>
         <translation>回転をリセット(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2476"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2507"/>
         <source>Show &amp;Annotations</source>
         <translation>注釈を表示(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2484"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2515"/>
         <source>&amp;Full Screen</source>
         <translation>フルスクリーン(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2694"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2694"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
         <source>&amp;Color Picker</source>
         <translation>カラーピッカー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2718"/>
         <source>&amp;Line</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="299"/>
+        <location filename="../../desktop/mainwindow.cpp" line="298"/>
         <source>Server out of space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="300"/>
+        <location filename="../../desktop/mainwindow.cpp" line="299"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1214"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1233"/>
         <source>Export error</source>
         <translation>エクスポートエラー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1220"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1239"/>
         <source>Exporting...</source>
         <translation>エクスポート中...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1488"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1507"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1489"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1508"/>
         <source>Enter operator password</source>
         <translation>管理者パスワードを入力</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1642"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1661"/>
         <source>Disconnected:</source>
         <translation>切断:</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1683"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1702"/>
         <source>Session blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2231"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2262"/>
         <source>Hide Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2246"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2277"/>
         <source>Export layers as animation frames</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2278"/>
         <source>Session Template...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2247"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2278"/>
         <source>Export current session as a template recording for use with the dedicated server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2353"/>
         <source>Copy Merged</source>
         <translation>結合部分をコピー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2322"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2353"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>選択範囲のうち、背景以外をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2331"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2362"/>
         <source>Set Background...</source>
         <translation>背景を設定...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2348"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2379"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2470"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2501"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>キャンバスを時計回りに回転</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2471"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2502"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>キャンバスを反時計回りに回転</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2478"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2509"/>
         <source>Show Names</source>
         <translation>名前を表示</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2479"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2510"/>
         <source>Show Layers</source>
         <translation>レイヤーを表示</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2480"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2511"/>
         <source>Show Avatars</source>
         <translation>アバターを表示</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2587"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
         <source>New Layer</source>
         <translation>新しいレイヤー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2588"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
         <source>Duplicate Layer</source>
         <translation>レイヤーを複製</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2589"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2620"/>
         <source>Merge with Layer Below</source>
         <translation>下のレイヤーと統合</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2590"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2621"/>
         <source>Delete Layer</source>
         <translation>レイヤーを削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2594"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2625"/>
         <source>Solo</source>
         <translation>ソロ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2595"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
         <source>Onionskin</source>
         <translation>オニオンスキン</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2596"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
         <source>Show Numbers</source>
         <translation>番号を表示</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2597"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
         <source>Show Censored Layers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2599"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
         <source>Select Above</source>
         <translation>前面のレイヤーを選択</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2600"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
         <source>Select Below</source>
         <translation>背面のレイヤーを選択</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2609"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
         <source>Layer</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2634"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
         <source>Event Log</source>
         <translation>イベントログ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2635"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2666"/>
         <source>Settings...</source>
         <translation>設定...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2638"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2669"/>
         <source>&amp;Reset...</source>
         <translation>リセット(&amp;R)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2702"/>
         <source>Moderation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2716"/>
         <source>Freehand</source>
         <translation>フリーハンド</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2716"/>
         <source>Freehand brush tool</source>
         <translation>フリーハンドのブラシツール</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2717"/>
         <source>Eraser</source>
         <translation>消しゴム</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2717"/>
         <source>Freehand eraser brush</source>
         <translation>フリーハンドの消しゴムツール</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2718"/>
         <source>Draw straight lines</source>
         <translation>直線を描画</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2688"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
         <source>&amp;Rectangle</source>
         <translation>矩形(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2688"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>矩形 (塗りつぶしなし) を描画</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2720"/>
         <source>&amp;Ellipse</source>
         <translation>楕円(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2720"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>円 (塗りつぶしなし) を描画</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2721"/>
         <source>Bezier Curve</source>
         <translation>ベジェ曲線</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2721"/>
         <source>Draw bezier curves</source>
         <translation>ベジェ曲線を描画</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2722"/>
         <source>&amp;Flood Fill</source>
         <translation>塗りつぶす(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
         <source>&amp;Annotation</source>
         <translation>注釈(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
         <source>Add text to the picture</source>
         <translation>画像にテキストを追加</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
         <source>Point out things on the canvas</source>
         <translation>キャンバス上の場所を指し示す</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2695"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
         <source>&amp;Laser Pointer</source>
         <translation>レーザーポインター(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>選択 (矩形)(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>選択 (自由形状)(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
         <source>Select a free-form area for copying</source>
         <translation>範囲を自由な形状で指定して選択</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2729"/>
         <source>Zoom</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2698"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2729"/>
         <source>Zoom the canvas view</source>
         <translation>キャンバスの表示を拡縮</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2730"/>
         <source>Inspector</source>
         <translation>インスペクター</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2699"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2730"/>
         <source>Find out who did it</source>
         <translation>誰が手がけたものか調べる</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2731"/>
         <source>&amp;Mark</source>
         <translation>マーカーを追加(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2731"/>
         <source>Leave a marker to find this spot on the recording</source>
         <translation>セッション記録から現在の位置を検索するためのマーカーを追加</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2750"/>
         <source>&amp;Tools</source>
         <translation>ツール(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2754"/>
         <source>&amp;Shortcuts</source>
         <translation>ショートカット(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2756"/>
         <source>Toggle eraser mode</source>
         <translation>消しゴムモードを切り替え</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2757"/>
         <source>Swap Last Colors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2766"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2797"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>ホームページ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2767"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2798"/>
         <source>Tablet Tester</source>
         <translation>タブレットテスター</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2768"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2799"/>
         <source>Log File</source>
         <translation>ログファイル</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2769"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2800"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>Drawpile について(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2770"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2801"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>&amp;Qt について</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2771"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2802"/>
         <source>Check For Updates</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2802"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2833"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
@@ -1920,7 +2011,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>QApplication</name>
     <message>
         <location filename="../../desktop/dialogs/avatarimport.cpp" line="76"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="573"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="614"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
@@ -1997,20 +2088,20 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="148"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ズーム</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="153"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">インスペクター</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="86"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="98"/>
         <source>Erase</source>
         <translation>消去</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="90"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="102"/>
         <source>Color Erase</source>
         <translation>色消しゴム</translation>
     </message>
@@ -2153,6 +2244,21 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/ui/selectsettings.ui" line="81"/>
         <source>Reset size</source>
         <translation>サイズの変更をリセット</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/selectsettings.ui" line="100"/>
+        <source>Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/selectsettings.ui" line="110"/>
+        <source>Rotate/Shear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/selectsettings.ui" line="117"/>
+        <source>Distort</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2465,17 +2571,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="435"/>
+        <location filename="../../desktop/ui/settings.ui" line="687"/>
         <source>s</source>
         <translation>秒</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="38"/>
+        <location filename="../../desktop/ui/settings.ui" line="48"/>
         <source>Network</source>
         <translation>ネットワーク</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="628"/>
+        <location filename="../../desktop/ui/settings.ui" line="880"/>
         <source>Session history:</source>
         <translation>セッションの履歴:</translation>
     </message>
@@ -2486,419 +2592,533 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="28"/>
+        <source>Brushes</source>
+        <translation type="unfinished">ブラシ</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="33"/>
+        <source>Color Wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="38"/>
         <source>Notifications</source>
         <translation>通知</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="63"/>
+        <location filename="../../desktop/ui/settings.ui" line="73"/>
         <source>Parental Controls</source>
         <translation>ペアレンタルコントロール</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="68"/>
+        <location filename="../../desktop/ui/settings.ui" line="78"/>
         <source>Avatars</source>
         <translation>アバター</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="95"/>
+        <location filename="../../desktop/ui/settings.ui" line="105"/>
         <source>Language:</source>
         <translation>言語:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="105"/>
+        <location filename="../../desktop/ui/settings.ui" line="115"/>
         <source>Theme:</source>
         <translation>テーマ:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="112"/>
+        <location filename="../../desktop/ui/settings.ui" line="122"/>
         <source>Night mode (requires restart)</source>
         <translation>ナイトモード (要再起動)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="119"/>
+        <location filename="../../desktop/ui/settings.ui" line="129"/>
         <source>Logging:</source>
         <translation>ログ保存:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="126"/>
+        <location filename="../../desktop/ui/settings.ui" line="136"/>
         <source>Write log file</source>
         <translation>ログファイルを生成</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="146"/>
+        <location filename="../../desktop/ui/settings.ui" line="156"/>
         <source>Tablet:</source>
         <translation>ペンタブレット:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="153"/>
+        <location filename="../../desktop/ui/settings.ui" line="163"/>
         <source>Enable pressure sensitivity</source>
         <translation>筆圧感知を有効化</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="163"/>
+        <location filename="../../desktop/ui/settings.ui" line="173"/>
         <source>Use Windows Ink (requires restart)</source>
         <translation>Windows Ink を使用 (要再起動)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="170"/>
+        <location filename="../../desktop/ui/settings.ui" line="180"/>
         <source>Enable relative pen mode hack (Wintab only)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="177"/>
+        <location filename="../../desktop/ui/settings.ui" line="187"/>
         <source>Detect eraser tip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="277"/>
+        <location filename="../../desktop/ui/settings.ui" line="287"/>
         <source>Brush cursor:</source>
         <translation>ブラシカーソル:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="285"/>
+        <location filename="../../desktop/ui/settings.ui" line="295"/>
         <source>Dot</source>
         <translation>点</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="290"/>
+        <location filename="../../desktop/ui/settings.ui" line="300"/>
         <source>Crosshair</source>
         <translation>十字</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="295"/>
+        <location filename="../../desktop/ui/settings.ui" line="305"/>
         <source>Arrow</source>
         <translation>矢印</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="316"/>
+        <location filename="../../desktop/ui/settings.ui" line="326"/>
         <source>Tools:</source>
         <translation>ツール:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="323"/>
+        <location filename="../../desktop/ui/settings.ui" line="333"/>
         <source>Shortcut toggles last selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="330"/>
+        <location filename="../../desktop/ui/settings.ui" line="340"/>
         <source>Share color across brush slots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="341"/>
+        <location filename="../../desktop/ui/settings.ui" line="347"/>
+        <source>Enable this workaround if your cursor doesn&apos;t update when you move it into the canvas with the tablet pen.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="350"/>
+        <source>Enable canvas viewport entry hack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="370"/>
+        <source>Brush outline width:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="387"/>
+        <location filename="../../desktop/ui/settings.ui" line="399"/>
+        <location filename="../../desktop/ui/settings.ui" line="418"/>
+        <source>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="390"/>
+        <source>Size Slider Limit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="421"/>
+        <source>px</source>
+        <translation type="unfinished">px</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="436"/>
+        <location filename="../../desktop/ui/settings.ui" line="448"/>
+        <location filename="../../desktop/ui/settings.ui" line="467"/>
+        <source>The maximum value for the brush spacing slider. You can always enter larger values manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="439"/>
+        <source>Spacing Slider Limit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="470"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="498"/>
+        <source>Shape:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="506"/>
+        <source>Triangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="511"/>
+        <source>Square</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="519"/>
+        <source>Angle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="527"/>
+        <source>Fixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="532"/>
+        <source>Rotating</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="540"/>
+        <source>Color Space:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="548"/>
+        <source>HSV (Hue, Saturation, Value)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="553"/>
+        <source>HSL (Hue, Saturation, Lightness)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="558"/>
+        <source>Lch (Luminance, Chroma, Hue)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="582"/>
+        <source>Preview:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="593"/>
         <source>Notification volume:</source>
         <translation>通知ボリューム:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="381"/>
+        <location filename="../../desktop/ui/settings.ui" line="640"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="388"/>
+        <location filename="../../desktop/ui/settings.ui" line="647"/>
         <source>Recording marker</source>
         <translation>セッション記録マーカー</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="395"/>
+        <location filename="../../desktop/ui/settings.ui" line="654"/>
         <source>User login and logout</source>
         <translation>ユーザーのログインとログアウト</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="402"/>
+        <location filename="../../desktop/ui/settings.ui" line="661"/>
         <source>Canvas lock</source>
         <translation>キャンバスのロック</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="409"/>
+        <location filename="../../desktop/ui/settings.ui" line="633"/>
         <source>Notifications:</source>
         <translation>通知:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="432"/>
+        <location filename="../../desktop/ui/settings.ui" line="684"/>
         <source>shortest: </source>
         <translation>最短: </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="478"/>
+        <location filename="../../desktop/ui/settings.ui" line="730"/>
         <source> minutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="481"/>
+        <location filename="../../desktop/ui/settings.ui" line="733"/>
         <source>every </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="642"/>
+        <location filename="../../desktop/ui/settings.ui" line="894"/>
         <source>Account passwords:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="649"/>
+        <location filename="../../desktop/ui/settings.ui" line="901"/>
         <source>Permit insecure storage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="681"/>
+        <location filename="../../desktop/ui/settings.ui" line="933"/>
         <source>Drag mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="688"/>
+        <location filename="../../desktop/ui/settings.ui" line="940"/>
         <source>Spacebar / middle mouse button</source>
         <translation>スペースキー / マウス中ボタンクリック</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="695"/>
+        <location filename="../../desktop/ui/settings.ui" line="947"/>
         <source>Drag rotate view:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="705"/>
+        <location filename="../../desktop/ui/settings.ui" line="957"/>
         <source>Drag zoom view:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="715"/>
+        <location filename="../../desktop/ui/settings.ui" line="967"/>
         <source>Drag tool adjust:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="725"/>
+        <location filename="../../desktop/ui/settings.ui" line="977"/>
         <source>Scroll zoom view:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="735"/>
+        <location filename="../../desktop/ui/settings.ui" line="987"/>
         <source>Scroll tool adjust:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="745"/>
+        <location filename="../../desktop/ui/settings.ui" line="997"/>
         <source>Color picker mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="755"/>
+        <location filename="../../desktop/ui/settings.ui" line="1007"/>
         <source>Layer picker mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="765"/>
+        <location filename="../../desktop/ui/settings.ui" line="1017"/>
         <source>Tool constrain mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="775"/>
+        <location filename="../../desktop/ui/settings.ui" line="1027"/>
         <source>Tool center mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="837"/>
+        <location filename="../../desktop/ui/settings.ui" line="1089"/>
         <source>Scroll rotate view:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="938"/>
+        <location filename="../../desktop/ui/settings.ui" line="1190"/>
         <source>Move up</source>
         <translation>上に移動</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="949"/>
+        <location filename="../../desktop/ui/settings.ui" line="1201"/>
         <source>Move down</source>
         <translation>下に移動</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1004"/>
+        <location filename="../../desktop/ui/settings.ui" line="1256"/>
         <source>&amp;Unrestricted</source>
         <translation>制限なし(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1011"/>
+        <location filename="../../desktop/ui/settings.ui" line="1263"/>
         <source>Hide fro&amp;m listings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1018"/>
+        <location filename="../../desktop/ui/settings.ui" line="1270"/>
         <source>Disallow &amp;joining</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1025"/>
+        <location filename="../../desktop/ui/settings.ui" line="1277"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1032"/>
+        <location filename="../../desktop/ui/settings.ui" line="1284"/>
         <source>Lock</source>
         <translation>ロック</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1052"/>
+        <location filename="../../desktop/ui/settings.ui" line="1304"/>
         <source>Block layer uncensoring</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="960"/>
-        <location filename="../../desktop/ui/settings.ui" line="1085"/>
+        <location filename="../../desktop/ui/settings.ui" line="1212"/>
+        <location filename="../../desktop/ui/settings.ui" line="1337"/>
         <source>Add...</source>
         <translation>追加...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1092"/>
+        <location filename="../../desktop/ui/settings.ui" line="1344"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="469"/>
+        <location filename="../../desktop/ui/settings.ui" line="721"/>
         <source>Add timestamp markers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="980"/>
+        <location filename="../../desktop/ui/settings.ui" line="1232"/>
         <source>NSFM tag words:</source>
         <translation>NSFM タグワード:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="990"/>
+        <location filename="../../desktop/ui/settings.ui" line="1242"/>
         <source>Automatically add NSFM tag based on title</source>
         <translation>タイトルに基づいて NSFM タグを自動的に追加</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="997"/>
+        <location filename="../../desktop/ui/settings.ui" line="1249"/>
         <source>NSFM sessions:</source>
         <translation>NSFM セッション:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="420"/>
+        <location filename="../../desktop/ui/settings.ui" line="672"/>
         <source>Record pauses</source>
         <translation>中断を記録</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="593"/>
+        <location filename="../../desktop/ui/settings.ui" line="845"/>
         <source>Default server port:</source>
         <translation>デフォルトのサーバーポート:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="251"/>
-        <location filename="../../desktop/ui/settings.ui" line="577"/>
+        <location filename="../../desktop/ui/settings.ui" line="261"/>
+        <location filename="../../desktop/ui/settings.ui" line="829"/>
         <source> s</source>
         <translation> 秒</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="244"/>
+        <location filename="../../desktop/ui/settings.ui" line="254"/>
         <source>Autosave interval:</source>
         <translation>自動保存間隔:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="207"/>
+        <location filename="../../desktop/ui/settings.ui" line="217"/>
         <source>Scroll with finger</source>
         <translation>指でスクロール</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="200"/>
+        <location filename="../../desktop/ui/settings.ui" line="210"/>
         <source>Touch:</source>
         <translation>タッチ操作:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="214"/>
+        <location filename="../../desktop/ui/settings.ui" line="224"/>
         <source>Pinch to zoom</source>
         <translation>ピンチ操作でズーム</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="221"/>
+        <location filename="../../desktop/ui/settings.ui" line="231"/>
         <source>Twist to rotate</source>
         <translation>2 本指ドラッグで回転</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="33"/>
+        <location filename="../../desktop/ui/settings.ui" line="43"/>
         <source>Animation</source>
         <translation>アニメーション</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="524"/>
+        <location filename="../../desktop/ui/settings.ui" line="776"/>
         <source> below</source>
         <translation> 枚下に</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="531"/>
+        <location filename="../../desktop/ui/settings.ui" line="783"/>
         <source> above</source>
         <translation> 枚上に</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="515"/>
+        <location filename="../../desktop/ui/settings.ui" line="767"/>
         <source>Onionskin layers:</source>
         <translation>レイヤーのオニオンスキン表示:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="556"/>
+        <location filename="../../desktop/ui/settings.ui" line="808"/>
         <source>Tint layers</source>
         <translation>レイヤーに色を付ける</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="43"/>
+        <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Shortcuts</source>
         <translation>ショートカット</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="660"/>
+        <location filename="../../desktop/ui/settings.ui" line="912"/>
         <source>Filter</source>
         <translation>フィルタ</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="53"/>
+        <location filename="../../desktop/ui/settings.ui" line="63"/>
         <source>Known Hosts</source>
         <translation>既知のホスト</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="58"/>
+        <location filename="../../desktop/ui/settings.ui" line="68"/>
         <source>List Servers</source>
         <translation>サーバーの一覧</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="863"/>
+        <location filename="../../desktop/ui/settings.ui" line="1115"/>
         <source>Import trusted...</source>
         <translation>信頼済みホストをインポート...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="570"/>
+        <location filename="../../desktop/ui/settings.ui" line="822"/>
         <source>Connection timeout:</source>
         <translation>接続タイムアウト:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="48"/>
+        <location filename="../../desktop/ui/settings.ui" line="58"/>
         <source>Canvas Shortcuts</source>
         <translation>キャンバス操作のショートカット</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="607"/>
+        <location filename="../../desktop/ui/settings.ui" line="859"/>
         <source>Announce with Zeroconf</source>
         <translation>Zeroconf で告知</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="614"/>
+        <location filename="../../desktop/ui/settings.ui" line="866"/>
         <source>Automatically set up port forwarding with UPnP</source>
         <translation>UPnP でポート転送を自動的にセットアップ</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="621"/>
+        <location filename="../../desktop/ui/settings.ui" line="873"/>
         <source>Never publish user list</source>
         <translation>ユーザーリストを公開しない</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="635"/>
+        <location filename="../../desktop/ui/settings.ui" line="887"/>
         <source>Automatically reset when space is low</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="886"/>
+        <location filename="../../desktop/ui/settings.ui" line="1138"/>
         <source>Mark as trusted</source>
         <translation>信頼済みとしてマーク</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="900"/>
-        <location filename="../../desktop/ui/settings.ui" line="967"/>
+        <location filename="../../desktop/ui/settings.ui" line="1152"/>
+        <location filename="../../desktop/ui/settings.ui" line="1219"/>
         <source>Remove</source>
         <translation>削除</translation>
     </message>
@@ -3175,9 +3395,151 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>color_widgets::ColorDialog</name>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.cpp" line="56"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.cpp" line="79"/>
         <source>Pick</source>
         <translation>抽出</translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorPalette</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette.cpp" line="428"/>
+        <source>Unnamed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorPaletteModel</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="70"/>
+        <source>Unnamed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="144"/>
+        <source>%1 (%2 colors)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorPaletteWidget</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="59"/>
+        <source>Open a new palette from file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="71"/>
+        <source>Create a new palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="83"/>
+        <source>Duplicate the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="121"/>
+        <source>Delete the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="133"/>
+        <source>Revert changes to the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="145"/>
+        <source>Save changes to the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="170"/>
+        <source>Add a color to the palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="182"/>
+        <source>Remove the selected color from the palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="186"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="201"/>
+        <source>New Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="187"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="202"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="228"/>
+        <source>GIMP Palettes (*.gpl)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="229"/>
+        <source>Palette Image (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="230"/>
+        <source>All Files (*)</source>
+        <translation type="unfinished">すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="231"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="244"/>
+        <source>Open Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="245"/>
+        <source>Failed to load the palette file
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::GradientEditor</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="335"/>
+        <source>Add Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="344"/>
+        <source>Remove Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="352"/>
+        <source>Edit Color...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::GradientListModel</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_list_model.cpp" line="231"/>
+        <source>%1 (%2 colors)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::Swatch</name>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="824"/>
+        <source>Clear Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="833"/>
+        <source>%1 (%2)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3186,6 +3548,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/abusereport.cpp" line="34"/>
         <source>Report</source>
         <translation>報告</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::AddServerDialog</name>
+    <message>
+        <location filename="../../desktop/dialogs/addserverdialog.cpp" line="32"/>
+        <source>Add Server</source>
+        <translation type="unfinished">サーバーを追加</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/addserverdialog.cpp" line="71"/>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3258,65 +3633,84 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::InputSettings</name>
+    <message>
+        <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
+        <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
+        <source>New</source>
+        <translation type="unfinished">新規</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
+        <source>Duplicate</source>
+        <translation type="unfinished">複製</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
+        <source>New %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::JoinDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="61"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="60"/>
         <source>Join</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="64"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="63"/>
         <source>Add Server</source>
         <translation>サーバーを追加</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="85"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
         <source>Nearby</source>
         <translation>付近</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="83"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="94"/>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="504"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="93"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="455"/>
         <source>Loading...</source>
         <translation>読み込み中...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="233"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="239"/>
         <source>Searching...</source>
         <translation>検索中...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="250"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="256"/>
         <source>Record</source>
         <translation>記録</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="307"/>
+        <location filename="../../desktop/dialogs/joindialog.cpp" line="313"/>
         <source>Room code not found!</source>
         <translation>ルームコードが見つかりません！</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/joindialog.cpp" line="445"/>
-        <source>Add listing server</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="147"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="148"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="206"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="212"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/logindialog.cpp" line="414"/>
+        <location filename="../../desktop/dialogs/logindialog.cpp" line="425"/>
         <source>Log in with %1 credentials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3433,12 +3827,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>中心</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="71"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="84"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="71"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="84"/>
         <source>Size is too large</source>
         <translation>サイズが大きすぎます</translation>
     </message>
@@ -3519,95 +3913,94 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="88"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="92"/>
         <source>off</source>
         <comment>notifications sounds</comment>
         <translation>オフ</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="92"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="96"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="215"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="228"/>
         <source>Reset settings</source>
         <translation>設定をリセット</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="216"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="229"/>
         <source>Clear all settings?</source>
         <translation>すべての設定を消去しますか？</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="359"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="729"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="387"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="716"/>
         <source>Unlock</source>
         <translation>ロックを解除</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="359"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="720"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="387"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="707"/>
         <source>Lock</source>
         <translation>ロック</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="571"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="581"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="586"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="612"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="622"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="627"/>
         <source>Import trusted certificate</source>
         <translation>信頼済み証明書をインポート</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="572"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="613"/>
         <source>Certificates (%1)</source>
         <translation>証明書 (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="581"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="622"/>
         <source>Invalid certificate!</source>
         <translation>無効な証明書です！</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="586"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="627"/>
         <source>Certificate common name not set!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="600"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="609"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="620"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="641"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="650"/>
         <source>Add public listing server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="609"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="650"/>
         <source>Invalid URL!</source>
         <translation>無効な URL です！</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="706"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="722"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="693"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
         <source>Unlock Parental Controls</source>
         <translation>ペアレンタルコントロールのロックを解除</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="707"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="694"/>
         <source>Password</source>
         <translation>パスワード</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="696"/>
         <source>Lock Parental Controls</source>
         <translation>ペアレンタルコントロールをロック</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="710"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="697"/>
         <source>Set password</source>
         <translation>パスワードを設定</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="722"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
         <source>Incorrect password</source>
         <translation>パスワードが違います</translation>
     </message>
@@ -3683,32 +4076,32 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ブラシを削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="120"/>
         <source>Move to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="128"/>
         <source>Overwrite brush</source>
         <translation>ブラシを上書き</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="129"/>
         <source>Delete brush</source>
         <translation>ブラシを削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="202"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="207"/>
         <source>New folder</source>
         <translation>新しいフォルダ</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="213"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="223"/>
         <source>Delete Folder</source>
         <translation>フォルダを削除</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="214"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="224"/>
         <source>Really delete folder &quot;%1&quot; and %n brushes?</source>
         <translation>
             <numerusform>本当にフォルダ &quot;%1&quot; と %n 個のブラシを削除しますか？</numerusform>
@@ -3718,78 +4111,70 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::ColorBox</name>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="93"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="96"/>
         <source>New</source>
         <translation>新規</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="94"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="97"/>
         <source>Duplicate</source>
         <translation>複製</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="95"/>
-        <location filename="../../desktop/docks/colorbox.cpp" line="262"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="269"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="101"/>
         <source>Write Protect</source>
         <translation>書き込み禁止</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="102"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="105"/>
         <source>Import...</source>
         <translation>インポート...</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="103"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="106"/>
         <source>Export...</source>
         <translation>エクスポート...</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="199"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="206"/>
         <source>Import palette</source>
         <translation>パレットをインポート</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="201"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="208"/>
         <source>Palettes (%1)</source>
         <translation>パレット (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="202"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="209"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="222"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="229"/>
         <source>Export palette</source>
         <translation>パレットをエクスポート</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="224"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="231"/>
         <source>GIMP palette (%1)</source>
         <translation>GIMP パレット (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="230"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="237"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="263"/>
+        <location filename="../../desktop/docks/colorbox.cpp" line="270"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation>パレット &quot;%1&quot; を削除しますか？</translation>
-    </message>
-</context>
-<context>
-    <name>docks::InputSettings</name>
-    <message>
-        <location filename="../../desktop/docks/inputsettingsdock.cpp" line="34"/>
-        <source>Input</source>
-        <translation>入力</translation>
     </message>
 </context>
 <context>
@@ -3843,33 +4228,33 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="70"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="74"/>
         <source>Insert layer</source>
         <translation>レイヤーを挿入</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="74"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
         <source>Hide from self</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="77"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="81"/>
         <source>Fixed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="82"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="86"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="86"/>
-        <source>Rename</source>
-        <translation>名前を変更</translation>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="90"/>
+        <source>Properties...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="379"/>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="400"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="385"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="406"/>
         <source>Layer</source>
         <translation>レイヤー</translation>
     </message>
@@ -3877,17 +4262,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="270"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="271"/>
         <source>Navigator</source>
         <translation>ナビゲーター</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="284"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="285"/>
         <source>Show Cursors</source>
         <translation>カーソルを表示</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="288"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="289"/>
         <source>Realtime Update</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3969,9 +4354,9 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../net/login.cpp" line="152"/>
         <location filename="../net/login.cpp" line="159"/>
         <location filename="../net/login.cpp" line="226"/>
-        <location filename="../net/login.cpp" line="427"/>
-        <location filename="../net/login.cpp" line="549"/>
-        <location filename="../net/login.cpp" line="592"/>
+        <location filename="../net/login.cpp" line="429"/>
+        <location filename="../net/login.cpp" line="551"/>
+        <location filename="../net/login.cpp" line="594"/>
         <source>Incompatible server</source>
         <translation>互換性のないサーバー</translation>
     </message>
@@ -4012,58 +4397,58 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="468"/>
+        <location filename="../net/login.cpp" line="470"/>
         <source>New version</source>
         <translation>新バージョン</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="472"/>
+        <location filename="../net/login.cpp" line="474"/>
         <source>Unknown version</source>
         <translation>不明なバージョン</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="513"/>
+        <location filename="../net/login.cpp" line="515"/>
         <source>Session not yet started!</source>
         <translation>セッションはまだ開始されていません！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="516"/>
+        <location filename="../net/login.cpp" line="518"/>
         <source>Blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="519"/>
+        <location filename="../net/login.cpp" line="521"/>
         <source>Session for a different Drawpile version (%s) in progress!</source>
         <translation>違うバージョン (%s) の Drawpile 用セッションが進行中です！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="786"/>
+        <location filename="../net/login.cpp" line="788"/>
         <source>Server is full!</source>
         <translation>サーバーが満員です！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="788"/>
+        <location filename="../net/login.cpp" line="790"/>
         <source>Hosting not authorized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="790"/>
+        <location filename="../net/login.cpp" line="792"/>
         <source>You have been banned from this session!</source>
         <translation>あなたはこのセッションから BAN されました！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="792"/>
+        <location filename="../net/login.cpp" line="794"/>
         <source>Session alias is reserved!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="832"/>
+        <location filename="../net/login.cpp" line="834"/>
         <source>Tried to send oversized message (%1 KB)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="705"/>
-        <location filename="../net/login.cpp" line="725"/>
+        <location filename="../net/login.cpp" line="707"/>
+        <location filename="../net/login.cpp" line="727"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4078,42 +4463,42 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="708"/>
+        <location filename="../net/login.cpp" line="710"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>信頼済みサーバーの証明書が更新されました！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="766"/>
+        <location filename="../net/login.cpp" line="768"/>
         <source>Cancelled</source>
         <translation>キャンセルしました</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="775"/>
+        <location filename="../net/login.cpp" line="777"/>
         <source>Session not found!</source>
         <translation>セッションが見つかりません！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="777"/>
+        <location filename="../net/login.cpp" line="779"/>
         <source>Incorrect password!</source>
         <translation>パスワードが違います！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="780"/>
+        <location filename="../net/login.cpp" line="782"/>
         <source>Invalid username!</source>
         <translation>無効なユーザー名です！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="782"/>
+        <location filename="../net/login.cpp" line="784"/>
         <source>This username has been locked</source>
         <translation>このユーザー名はロックされました</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="786"/>
+        <location filename="../net/login.cpp" line="788"/>
         <source>Session is closed!</source>
         <translation>セッションは閉じられています！</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="784"/>
+        <location filename="../net/login.cpp" line="786"/>
         <source>Username already taken!</source>
         <translation>ユーザー名は既に取得されています！</translation>
     </message>
@@ -4121,27 +4506,27 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::LoginSessionModel</name>
     <message>
-        <location filename="../net/loginsessions.cpp" line="64"/>
+        <location filename="../net/loginsessions.cpp" line="73"/>
         <source>(untitled)</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location filename="../net/loginsessions.cpp" line="88"/>
+        <location filename="../net/loginsessions.cpp" line="97"/>
         <source>Incompatible version (%1)</source>
         <translation>互換性のないバージョン (%1)</translation>
     </message>
     <message>
-        <location filename="../net/loginsessions.cpp" line="129"/>
+        <location filename="../net/loginsessions.cpp" line="138"/>
         <source>Title</source>
         <translation>タイトル</translation>
     </message>
     <message>
-        <location filename="../net/loginsessions.cpp" line="130"/>
+        <location filename="../net/loginsessions.cpp" line="139"/>
         <source>Started by</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../net/loginsessions.cpp" line="131"/>
+        <location filename="../net/loginsessions.cpp" line="140"/>
         <source>Users</source>
         <translation>ユーザー</translation>
     </message>
@@ -4149,22 +4534,22 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="101"/>
+        <location filename="../net/tcpserver.cpp" line="105"/>
         <source>You were kicked by %1</source>
         <translation>あなたは %1 にキックされました</translation>
     </message>
     <message>
-        <location filename="../net/tcpserver.cpp" line="104"/>
+        <location filename="../net/tcpserver.cpp" line="108"/>
         <source>The server is shutting down.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../net/tcpserver.cpp" line="107"/>
+        <location filename="../net/tcpserver.cpp" line="111"/>
         <source>Error: %1</source>
         <translation>エラー: %1</translation>
     </message>
     <message>
-        <location filename="../net/tcpserver.cpp" line="124"/>
+        <location filename="../net/tcpserver.cpp" line="128"/>
         <source>Received invalid data</source>
         <translation>無効なデータを受信しました</translation>
     </message>
@@ -4323,7 +4708,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../../desktop/scene/canvasview.cpp" line="92"/>
+        <location filename="../../desktop/scene/canvasview.cpp" line="94"/>
         <source>Reconnect</source>
         <translation>再接続</translation>
     </message>
@@ -4652,7 +5037,7 @@ B: %4
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../../desktop/widgets/viewstatus.cpp" line="71"/>
+        <location filename="../../desktop/widgets/viewstatus.cpp" line="80"/>
         <source>Canvas Rotation</source>
         <translation>キャンバスの回転</translation>
     </message>
