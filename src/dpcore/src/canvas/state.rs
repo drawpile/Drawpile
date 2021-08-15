@@ -189,12 +189,14 @@ impl CanvasState {
     }
 
     fn handle_canvas_resize(&mut self, msg: &CanvasResizeMessage) -> AoE {
+        let original_size = self.layerstack.size();
+
         if let Some(ls) = self
             .layerstack
             .resized(msg.top, msg.right, msg.bottom, msg.left)
         {
             self.layerstack = Rc::new(ls);
-            AoE::Resize(msg.left, msg.top)
+            AoE::Resize(msg.left, msg.top, original_size)
         } else {
             warn!("Invalid resize: {:?}", msg);
             AoE::Nothing

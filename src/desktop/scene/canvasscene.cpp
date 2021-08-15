@@ -41,8 +41,10 @@ CanvasScene::CanvasScene(QObject *parent)
 	  _showAnnotationBorders(false), _showAnnotations(true),
 	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
 {
-	m_paintEnginePixmap = new canvas::PaintEnginePixmap(nullptr, this);
+	m_paintEnginePixmap = new canvas::PaintEnginePixmap(this);
 	m_canvasItem = new CanvasItem(m_paintEnginePixmap);
+
+	connect(m_paintEnginePixmap, &canvas::PaintEnginePixmap::resized, this, &CanvasScene::handleCanvasResize);
 
 	setItemIndexMethod(NoIndex);
 
@@ -72,8 +74,6 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	m_paintEnginePixmap->setPaintEngine(m_model->paintEngine());
 
 #if 0 // FIXME
-	connect(m_paintEnginePixmap, &paintcore::LayerStackPixmapCacheObserver::resized, this, &CanvasScene::handleCanvasResize);
-
 	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();
 	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
 	connect(anns, &paintcore::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);

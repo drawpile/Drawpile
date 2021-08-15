@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ uint8_t CanvasModel::localUserId() const
 QSize CanvasModel::size() const
 {
 	const auto s = rustpile::paintengine_canvas_size(m_paintengine);
-	return QSize{s.width, s.height};
+	return QSize{int(s.width), int(s.height)};
 }
 
 void CanvasModel::connectedToServer(uint8_t myUserId, bool join)

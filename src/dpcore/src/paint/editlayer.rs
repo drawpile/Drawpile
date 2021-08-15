@@ -41,7 +41,7 @@ pub fn fill_rect(
     mode: Blendmode,
     rect: &Rectangle,
 ) -> AoE {
-    let r = match rect.cropped(layer.width(), layer.height()) {
+    let r = match rect.cropped(layer.size()) {
         Some(r) => r,
         None => return AoE::Nothing,
     };
@@ -93,7 +93,7 @@ pub fn draw_brush_dab(
     mode: Blendmode,
 ) -> AoE {
     let d = mask.diameter as i32;
-    let rect = match Rectangle::new(x, y, d, d).cropped(layer.width(), layer.height()) {
+    let rect = match Rectangle::new(x, y, d, d).cropped(layer.size()) {
         Some(r) => r,
         None => return AoE::Nothing,
     };
@@ -145,7 +145,7 @@ pub fn draw_image(
     blendmode: Blendmode,
 ) -> AoE {
     assert_eq!(image.len(), (rect.w * rect.h) as usize);
-    let destrect = match rect.cropped(layer.width(), layer.height()) {
+    let destrect = match rect.cropped(layer.size()) {
         Some(r) => r,
         None => return AoE::Nothing,
     };
@@ -222,7 +222,7 @@ pub fn put_tile(
     }
 
     if end > start {
-        let mut aoe = TileMap::new(xtiles, Tile::div_up(layer.height()));
+        let mut aoe = TileMap::new(layer.width(), layer.height());
         aoe.tiles[start..=end].set_all(true);
         aoe.into()
     } else {

@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::canvas::{CanvasObserver, CanvasState, ObservableCanvasState};
-use dpcore::paint::AoE;
+use dpcore::paint::{AoE, Size};
 use dpcore::protocol::message::{CanvasResizeMessage, CommandMessage};
 
 use std::cell::RefCell;
@@ -51,7 +51,7 @@ fn test_canvas_state_observation() {
         },
     ));
 
-    assert_eq!(observer.borrow().changed, AoE::Resize(0, 0));
+    assert_eq!(observer.borrow().changed, AoE::Resize(0, 0, Size::new(0, 0)));
 
     drop(observer);
     assert_eq!(canvas.observer_count(), 1);

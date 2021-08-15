@@ -25,14 +25,19 @@
 
 namespace rustpile {
 	struct PaintEngine;
+	struct Rectangle;
+	struct Size;
 }
 
 namespace canvas {
 
+/**
+ * @brief A pixmap cache of the canvas content
+ */
 class PaintEnginePixmap : public QObject {
 	Q_OBJECT
 public:
-	PaintEnginePixmap(rustpile::PaintEngine *pe, QObject *parent=nullptr);
+	explicit PaintEnginePixmap(QObject *parent=nullptr);
 
 	void setPaintEngine(rustpile::PaintEngine *pe);
 
@@ -54,6 +59,9 @@ signals:
 private:
 	rustpile::PaintEngine *m_pe;
 	QPixmap m_cache;
+
+	friend void paintEngineAreaChanged(void *pep, rustpile::Rectangle area);
+	friend void paintEngineResized(void *pep, int xoffset, int yoffset, rustpile::Size oldSize);
 };
 
 }

@@ -24,9 +24,9 @@
 
 namespace {
 static const int TILE_SIZE = 64; // FIXME
+
 static void updateCacheTile(void *p, int x, int y, const uchar *pixels)
 {
-	qInfo("Updating tile at %d, %d", x, y);
 	((QPainter*)p)->drawImage(
 			x,
 			y,
@@ -41,8 +41,20 @@ static void updateCacheTile(void *p, int x, int y, const uchar *pixels)
 
 namespace canvas {
 
-PaintEnginePixmap::PaintEnginePixmap(rustpile::PaintEngine *pe, QObject *parent)
-	: QObject(parent), m_pe(pe)
+void paintEngineAreaChanged(void *pep, rustpile::Rectangle area)
+{
+	PaintEnginePixmap *p = reinterpret_cast<PaintEnginePixmap*>(pep);
+	emit p->areaChanged(QRect(area.x, area.y, area.w, area.h));
+}
+
+void paintEngineResized(void *pep, int xoffset, int yoffset, rustpile::Size oldSize)
+{
+	PaintEnginePixmap *p = reinterpret_cast<PaintEnginePixmap*>(pep);
+	emit p->resized(xoffset, yoffset, QSize{oldSize.width, oldSize.height});
+}
+
+PaintEnginePixmap::PaintEnginePixmap(QObject *parent)
+	: QObject(parent), m_pe(nullptr)
 {
 }
 
@@ -50,6 +62,8 @@ void PaintEnginePixmap::setPaintEngine(rustpile::PaintEngine *pe)
 {
 	m_pe = pe;
 	m_cache = QPixmap();
+
+	rustpile::paintengine_register_notify_callbacks(pe, this, paintEngineAreaChanged, paintEngineResized);
 }
 
 const QPixmap& PaintEnginePixmap::getPixmap(const QRect &refreshArea)
@@ -73,9 +87,9 @@ const QPixmap& PaintEnginePixmap::getPixmap(const QRect &refreshArea)
 		refreshArea.height()
 	};
 
-	qInfo("getPixmap(%d, %d, %d, %d)", r.x, r.y, r.w, r.h);
 	QPainter painter(&m_cache);
 	painter.setCompositionMode(QPainter::CompositionMode_Source);
+
 	rustpile::paintengine_paint_changes(m_pe, &painter, r, &updateCacheTile);
 
 	return m_cache;
@@ -94,6 +108,5 @@ QSize PaintEnginePixmap::size() const
 	const auto size = rustpile::paintengine_canvas_size(m_pe);
 	return QSize(size.width, size.height);
 }
-
 
 }

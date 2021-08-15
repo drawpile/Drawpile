@@ -70,6 +70,7 @@ enum class ClassicBrushShape : uint8_t {
 
 struct BrushPreview;
 
+/// The paint engine.
 struct PaintEngine;
 
 struct Range {
@@ -121,17 +122,21 @@ struct ClassicBrush {
   bool smudge_pressure;
 };
 
-struct Size {
-  uint32_t width;
-  uint32_t height;
-};
-
 struct Rectangle {
   int32_t x;
   int32_t y;
   int32_t w;
   int32_t h;
 };
+
+using NotifyChangesCallback = void(*)(void *ctx, Rectangle area);
+
+struct Size {
+  int32_t width;
+  int32_t height;
+};
+
+using NotifyResizeCallback = void(*)(void *ctx, int32_t x_offset, int32_t y_offset, Size old_size);
 
 extern "C" {
 
@@ -153,10 +158,21 @@ void brushpreview_paint(const BrushPreview *bp,
                         void *ctx,
                         void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
 
+/// Construct a new paint engine with an empty canvas.
 PaintEngine *paintengine_new();
 
+/// Delete a paint engine instance
 void paintengine_free(PaintEngine *dp);
 
+/// Register callback functions for notifying canvas view of changes
+///
+/// The paintengine can only be observed by one view at a time.
+void paintengine_register_notify_callbacks(PaintEngine *dp,
+                                           void *ctx,
+                                           NotifyChangesCallback changes,
+                                           NotifyResizeCallback resizes);
+
+/// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);
 
 /// Receive one or more messages
@@ -165,9 +181,13 @@ void paintengine_receive_messages(PaintEngine *dp, const uint8_t *messages, uint
 
 /// Paint all the changed tiles in the given area
 ///
-/// For each changed tile in the area, the tile is flattened and the paint callback called.
-/// The change flag is then cleared for that tile.
-void paintengine_paint_changes(const PaintEngine *dp,
+/// A paintengine instance can only have a single observer (which itself can be
+/// a caching layer that is observed by multiple views,) so it keeps track of which
+/// tiles have changed since they were last painted. Calling this function will flatten
+/// all tiles intersecting the given region of interest and call the provided paint fallback
+/// function for each tile with the raw flattened pixel data. The dirty flag is then
+/// cleared for the repainted tile.
+void paintengine_paint_changes(PaintEngine *dp,
                                void *ctx,
                                Rectangle rect,
                                void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));

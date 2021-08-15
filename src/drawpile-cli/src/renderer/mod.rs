@@ -173,17 +173,17 @@ fn save_canvas(
 
     let filename = make_filename(opts, state.image_num);
 
-    let (img, w, h) = canvas.layerstack().to_image();
-    let mut rgba = Vec::<u8>::with_capacity(w as usize * h as usize * 4);
-    for px in img.iter() {
+    let img = canvas.layerstack().to_image();
+    let mut rgba = Vec::<u8>::with_capacity(img.width * img.height * 4);
+    for px in img.pixels.iter() {
         rgba.push(px[RED_CHANNEL]);
         rgba.push(px[GREEN_CHANNEL]);
         rgba.push(px[BLUE_CHANNEL]);
         rgba.push(px[ALPHA_CHANNEL]);
     }
-    let mut ib = image::RgbaImage::from_raw(w, h, rgba).unwrap();
+    let mut ib = image::RgbaImage::from_raw(img.width as u32, img.height as u32, rgba).unwrap();
 
-    let size = Size(w, h);
+    let size = Size(img.width as u32, img.height as u32);
 
     if let Some(resize) = state.resize {
         if size != resize {

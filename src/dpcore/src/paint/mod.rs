@@ -50,4 +50,4 @@ pub use color::{Color, Pixel};
 pub use flattenediter::FlattenedTileIterator;
 pub use layer::Layer;
 pub use layerstack::LayerStack;
-pub use rect::Rectangle;
+pub use rect::{Rectangle, Size};

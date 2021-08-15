@@ -31,6 +31,13 @@ pub struct Rectangle {
     pub h: i32,
 }
 
+#[derive(Eq, PartialEq, Debug, Clone, Copy)]
+#[repr(C)]
+pub struct Size {
+    pub width: i32,
+    pub height: i32,
+}
+
 impl Rectangle {
     pub fn new(x: i32, y: i32, w: i32, h: i32) -> Rectangle {
         assert!(w > 0 && h > 0);
@@ -81,11 +88,9 @@ impl Rectangle {
         }
     }
 
-    pub fn cropped(&self, w: u32, h: u32) -> Option<Rectangle> {
-        assert!(w > 0 && h > 0);
-        assert!(w <= i32::max_value() as u32 && h <= i32::max_value() as u32);
-
-        self.intersected(&Rectangle::new(0, 0, w as i32, h as i32))
+    pub fn cropped(&self, size: Size) -> Option<Rectangle> {
+        assert!(size.width > 0 && size.height > 0);
+        self.intersected(&Rectangle::new(0, 0, size.width, size.height))
     }
 
     pub fn right(&self) -> i32 {
@@ -101,6 +106,22 @@ impl Rectangle {
             y: self.y + y,
             w: self.w,
             h: self.h,
+        }
+    }
+
+    pub fn size(&self) -> Size {
+        Size {
+            width: self.w,
+            height: self.h,
+        }
+    }
+}
+
+impl Size {
+    pub fn new(width: i32, height: i32) -> Size {
+        Size{
+            width,
+            height
         }
     }
 }

@@ -27,7 +27,7 @@ use super::aoe::{AoE, TileMap};
 use super::blendmode::Blendmode;
 use super::brushmask::BrushMask;
 use super::color::{Color, Pixel, ZERO_PIXEL};
-use super::rect::Rectangle;
+use super::rect::{Rectangle, Size};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::tileiter::MutableTileIterator;
@@ -221,8 +221,8 @@ impl Layer {
         self.height
     }
 
-    pub fn size(&self) -> (u32, u32) {
-        (self.width, self.height)
+    pub fn size(&self) -> Size {
+        Size::new(self.width as i32, self.height as i32)
     }
 
     /// A layer is visible when it's not explicitly hidden and it's opacity is greater than zero
@@ -252,7 +252,7 @@ impl Layer {
     /// Get a weighted average of the color under the dab mask
     pub fn sample_dab_color(&self, x: i32, y: i32, dab: &BrushMask) -> Color {
         let sample_rect = match Rectangle::new(x, y, dab.diameter as i32, dab.diameter as i32)
-            .cropped(self.width, self.height)
+            .cropped(self.size())
         {
             Some(r) => r,
             None => return Color::TRANSPARENT,
@@ -445,7 +445,7 @@ impl Layer {
             return AoE::Nothing;
         }
         if self.width != other.width || self.height != other.height {
-            return AoE::Resize(0, 0);
+            return AoE::Resize(0, 0, self.size());
         }
 
         TileMap {
@@ -524,7 +524,7 @@ impl Layer {
             // It might be out of bounds if the layer is being contracted.
             let target_rect = source_tile_geometry.offset(offx, offy);
 
-            if let Some(cropped) = target_rect.cropped(w, h) {
+            if let Some(cropped) = target_rect.cropped(Size::new(w as i32, h as i32)) {
                 // It appears to be in bounds.
 
                 // Depending on the offset, the source tile will overlap

@@ -25,7 +25,7 @@ use std::rc::Rc;
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::tile::{Tile, TileData, TILE_SIZE};
-use super::{Color, Image, Layer, LayerID, Rectangle};
+use super::{Color, Image, Layer, LayerID, Rectangle, Size};
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -65,6 +65,10 @@ impl LayerStack {
 
     pub fn height(&self) -> u32 {
         self.height
+    }
+
+    pub fn size(&self) -> Size {
+        Size::new(self.width as i32, self.height as i32)
     }
 
     /// Add a new layer and return a mutable reference to it
@@ -304,7 +308,7 @@ impl LayerStack {
     /// For performance reasons, shallow comparison is used.
     pub fn compare(&self, other: &LayerStack) -> AoE {
         if self.width != other.width || self.height != other.height {
-            return AoE::Resize(0, 0);
+            return AoE::Resize(0, 0, self.size());
         }
         if Rc::ptr_eq(&self.layers, &other.layers) {
             return AoE::Nothing;
