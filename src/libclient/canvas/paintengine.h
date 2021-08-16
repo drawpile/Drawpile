@@ -23,45 +23,58 @@
 #include <QObject>
 #include <QPixmap>
 
+#include "layerlist.h"
+
 namespace rustpile {
 	struct PaintEngine;
 	struct Rectangle;
 	struct Size;
+	struct LayerInfo;
 }
 
 namespace canvas {
 
 /**
- * @brief A pixmap cache of the canvas content
+ * @brief A Qt compatibility wrapper around the Rust paint engine library.
+ *
+ * The canvas view cache is held on this side of the C++/Rust boundary.
  */
-class PaintEnginePixmap : public QObject {
+class PaintEngine : public QObject {
 	Q_OBJECT
 public:
-	explicit PaintEnginePixmap(QObject *parent=nullptr);
+	explicit PaintEngine(QObject *parent=nullptr);
+	~PaintEngine();
 
-	void setPaintEngine(rustpile::PaintEngine *pe);
+	/// Reset the paint engine to its default state
+	void reset();
 
 	/**
-	 * @brief Get a reference to the underlying cache pixmap while makign sure at least the given area has been refreshed
+	 * @brief Get a reference to the view cache pixmap while makign sure at least the given area has been refreshed
 	 */
 	const QPixmap &getPixmap(const QRect &refreshArea);
 
-	//! Get a reference to the underlying cache pixmap while making sure the whole pixmap is refreshed
-	const QPixmap &getPixmap();
+	//! Get a reference to the view cache pixmap while making sure the whole pixmap is refreshed
+	const QPixmap &getPixmap() { return getPixmap(QRect{-1, -1, -1, -1}); }
 
 	//! Get the current size of the canvas
 	QSize size() const;
 
+	//! Receive and handle messages
+	void receiveMessages(bool local, const QByteArray &msgs);
+
 signals:
 	void areaChanged(const QRect &area);
 	void resized(int xoffset, int yoffset, const QSize &oldSize);
+	void layersChanged(QVector<LayerListItem> layers);
 
 private:
 	rustpile::PaintEngine *m_pe;
 	QPixmap m_cache;
 
-	friend void paintEngineAreaChanged(void *pep, rustpile::Rectangle area);
-	friend void paintEngineResized(void *pep, int xoffset, int yoffset, rustpile::Size oldSize);
+	// Callbacks:
+	friend void paintEngineAreaChanged(void *pe, rustpile::Rectangle area);
+	friend void paintEngineResized(void *pe, int xoffset, int yoffset, rustpile::Size oldSize);
+	friend void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layers, uintptr_t count);
 };
 
 }

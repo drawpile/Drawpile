@@ -119,10 +119,7 @@ impl Rectangle {
 
 impl Size {
     pub fn new(width: i32, height: i32) -> Size {
-        Size{
-            width,
-            height
-        }
+        Size { width, height }
     }
 }
 

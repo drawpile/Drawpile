@@ -19,7 +19,7 @@
 
 #include "canvasitem.h"
 
-#include "canvas/paintenginepixmap.h"
+#include "canvas/paintengine.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -30,12 +30,19 @@ namespace drawingboard {
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-CanvasItem::CanvasItem(canvas::PaintEnginePixmap *image, QGraphicsItem *parent)
-	: QGraphicsObject(parent), m_image(image)
+CanvasItem::CanvasItem(QGraphicsItem *parent)
+	: QGraphicsObject(parent), m_image(nullptr)
 {
-	connect(m_image, &canvas::PaintEnginePixmap::areaChanged, this, &CanvasItem::refreshImage);
-	connect(m_image, &canvas::PaintEnginePixmap::resized, this, &CanvasItem::canvasResize);
 	setFlag(ItemUsesExtendedStyleOption);
+}
+
+void CanvasItem::setPaintEngine(canvas::PaintEngine *pe)
+{
+	m_image = pe;
+	if(m_image) {
+		connect(m_image, &canvas::PaintEngine::areaChanged, this, &CanvasItem::refreshImage);
+		connect(m_image, &canvas::PaintEngine::resized, this, &CanvasItem::canvasResize);
+	}
 }
 
 void CanvasItem::refreshImage(const QRect &area)
@@ -50,14 +57,18 @@ void CanvasItem::canvasResize()
 
 QRectF CanvasItem::boundingRect() const
 {
-	return QRectF(QPointF(), QSizeF(m_image->size()));
+	if(m_image)
+		return QRectF(QPointF(), QSizeF(m_image->size()));
+	return QRectF();
 }
 
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
-	const QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
-	painter->drawPixmap(exposed, m_image->getPixmap(exposed), exposed);
+	if(m_image) {
+		const QRect exposed = option->exposedRect.adjusted(-1, -1, 1, 1).toAlignedRect();
+		painter->drawPixmap(exposed, m_image->getPixmap(exposed), exposed);
+	}
 }
 
 }

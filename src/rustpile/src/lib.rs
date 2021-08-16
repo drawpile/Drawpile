@@ -1,3 +1,4 @@
+mod adapters;
 mod brushpreview;
 pub mod brushpreview_ffi;
 pub mod paintengine_ffi;

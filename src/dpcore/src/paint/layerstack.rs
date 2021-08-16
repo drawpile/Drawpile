@@ -322,6 +322,37 @@ impl LayerStack {
             .zip(other.layers.iter())
             .fold(AoE::Nothing, |aoe, (a, b)| aoe.merge(a.compare(b)))
     }
+
+    /// Compare this layer stack with the other and return true if they
+    /// differ structurally (different number of layers, different order,
+    /// or different layer attributes.)
+    pub fn compare_layer_structure(&self, other: &LayerStack) -> bool {
+        if self.layers.len() != other.layers.len() {
+            return true;
+        }
+
+        for (a, b) in self.layers.iter().zip(other.layers.iter()) {
+            if !Rc::ptr_eq(a, b) {
+                if a.id != b.id
+                    || a.title != b.title
+                    || a.opacity != b.opacity
+                    || a.hidden != b.hidden
+                    || a.censored != b.censored
+                    || a.fixed != b.fixed
+                    || a.blendmode != b.blendmode
+                {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
+
+    /// Return true if the annotations differ between the two layer stacks
+    pub fn compare_annotations(&self, other: &LayerStack) -> bool {
+        !Rc::ptr_eq(&self.annotations, &other.annotations)
+    }
 }
 
 #[cfg(test)]

@@ -77,7 +77,11 @@ impl AoE {
 
             (Bitmap(mut s), Bitmap(o)) => {
                 if s.w != o.w || s.h != o.h {
-                    Resize(0, 0, Size::new(s.w as i32 * TILE_SIZEI, s.h as i32 * TILE_SIZEI))
+                    Resize(
+                        0,
+                        0,
+                        Size::new(s.w as i32 * TILE_SIZEI, s.h as i32 * TILE_SIZEI),
+                    )
                 } else {
                     s.tiles |= o.tiles;
                     Bitmap(s)
@@ -122,7 +126,8 @@ impl AoE {
             }
 
             Bitmap(s) => {
-                let rect_bits = TileMap::new(bounds.width as u32, bounds.height as u32).set_rect(&rect, true);
+                let rect_bits =
+                    TileMap::new(bounds.width as u32, bounds.height as u32).set_rect(&rect, true);
                 let intersection = s.clone().intersected(&rect_bits);
                 (s.clear_tiles(rect_bits).into(), intersection.into())
             }
@@ -133,9 +138,7 @@ impl AoE {
         use AoE::*;
         match self {
             Nothing => None,
-            Everything | Resize(_, _, _) => {
-                Some(Rectangle::new(0, 0, bounds.width, bounds.height))
-            }
+            Everything | Resize(_, _, _) => Some(Rectangle::new(0, 0, bounds.width, bounds.height)),
             Bounds(b) => Some(*b),
             Bitmap(b) => b.bounds(),
         }

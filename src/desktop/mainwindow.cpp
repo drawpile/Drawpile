@@ -499,6 +499,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	m_dockLayers->setCanvas(canvas);
 	m_serverLogDialog->setUserList(canvas->userlist());
+	m_dockNavigator->setPaintEngine(canvas->paintEngine());
 	m_dockNavigator->setUserCursors(canvas->userCursors());
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
@@ -2929,5 +2930,4 @@ void MainWindow::createDocks()
 	m_dockNavigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default
-	m_dockNavigator->setScene(m_canvasscene);
 }

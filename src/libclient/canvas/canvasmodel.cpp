@@ -25,6 +25,7 @@
 #include "userlist.h"
 #include "aclfilter.h"
 #include "loader.h"
+#include "paintengine.h"
 
 #include "core/layerstack.h"
 #include "core/annotationmodel.h"
@@ -61,7 +62,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	m_layerstack = new paintcore::LayerStack(this);
 	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
 #endif
-	m_paintengine = rustpile::paintengine_new();
+	m_paintengine = new PaintEngine(this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
@@ -83,16 +84,12 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 
 	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
-
-	connect(m_layerstack, &paintcore::LayerStack::resized, this, &CanvasModel::onCanvasResize);
 #endif
 
-	updateLayerViewOptions();
-}
+	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);
+	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers);
 
-CanvasModel::~CanvasModel()
-{
-	rustpile::paintengine_free(m_paintengine);
+	updateLayerViewOptions();
 }
 
 uint8_t CanvasModel::localUserId() const
@@ -105,8 +102,7 @@ uint8_t CanvasModel::localUserId() const
 
 QSize CanvasModel::size() const
 {
-	const auto s = rustpile::paintengine_canvas_size(m_paintengine);
-	return QSize{int(s.width), int(s.height)};
+	return m_paintengine->size();
 }
 
 void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
@@ -225,7 +221,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		// The state tracker handles all drawing commands
 		QByteArray buf(cmd->length(), 0);
 		cmd->serialize(buf.data());
-		rustpile::paintengine_receive_messages(m_paintengine, reinterpret_cast<const uint8_t*>(buf.constData()), buf.length());
+		m_paintengine->receiveMessages(false, buf);
 		//m_statetracker->receiveQueuedCommand(cmd);
 		emit canvasModified();
 
@@ -236,11 +232,9 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 {
-	//m_statetracker->localCommand(cmd);
-	// FIXME receive local
 	QByteArray buf(cmd->length(), 0);
 	cmd->serialize(buf.data());
-	rustpile::paintengine_receive_messages(m_paintengine, reinterpret_cast<const uint8_t*>(buf.constData()), buf.length());
+	m_paintengine->receiveMessages(true, buf);
 	emit canvasModified();
 }
 

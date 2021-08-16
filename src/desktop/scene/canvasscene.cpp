@@ -28,8 +28,7 @@
 #include "scene/lasertrailitem.h"
 
 #include "canvas/canvasmodel.h"
-#include "canvas/statetracker.h"
-#include "canvas/paintenginepixmap.h"
+#include "canvas/paintengine.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
@@ -41,10 +40,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	  _showAnnotationBorders(false), _showAnnotations(true),
 	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
 {
-	m_paintEnginePixmap = new canvas::PaintEnginePixmap(this);
-	m_canvasItem = new CanvasItem(m_paintEnginePixmap);
-
-	connect(m_paintEnginePixmap, &canvas::PaintEnginePixmap::resized, this, &CanvasScene::handleCanvasResize);
+	m_canvasItem = new CanvasItem;
 
 	setItemIndexMethod(NoIndex);
 
@@ -71,7 +67,9 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	onSelectionChanged(nullptr);
 
 	m_model = model;
-	m_paintEnginePixmap->setPaintEngine(m_model->paintEngine());
+
+	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize);
+	m_canvasItem->setPaintEngine(m_model->paintEngine());
 
 #if 0 // FIXME
 	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();

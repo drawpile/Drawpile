@@ -22,7 +22,7 @@
 #include <QGraphicsObject>
 
 namespace canvas {
-	class PaintEnginePixmap;
+	class PaintEngine;
 }
 
 namespace drawingboard {
@@ -34,8 +34,9 @@ class CanvasItem : public QGraphicsObject
 {
 Q_OBJECT
 public:
-	//! Construct an empty board
-	CanvasItem(canvas::PaintEnginePixmap *image, QGraphicsItem *parent=nullptr);
+	CanvasItem(QGraphicsItem *parent=nullptr);
+
+	void setPaintEngine(canvas::PaintEngine *pe);
 
 	QRectF boundingRect() const override;
 
@@ -47,7 +48,7 @@ protected:
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
 
 private:
-	canvas::PaintEnginePixmap *m_image;
+	canvas::PaintEngine *m_image;
 };
 
 }

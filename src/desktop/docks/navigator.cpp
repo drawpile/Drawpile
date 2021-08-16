@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008-2019 Calle Laakkonen, 2007 M.K.A.
+   Copyright (C) 2008-2021 Calle Laakkonen, 2007 M.K.A.
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
 using docks::NavigatorView;
 #include "ui_navigator.h"
 #include "docks/utils.h"
-#include "scene/canvasscene.h"
 
 #include "core/layerstack.h"
 
 #include "canvas/usercursormodel.h"
-#include "canvas/paintenginepixmap.h"
+#include "canvas/paintengine.h"
 
 #include <QMouseEvent>
 #include <QTimer>
@@ -66,7 +65,7 @@ static QPixmap makeCursorBackground(const int avatarSize)
 }
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QWidget(parent), m_pep(nullptr), m_cursors(nullptr), m_zoomWheelDelta(0),
+	: QWidget(parent), m_pe(nullptr), m_cursors(nullptr), m_zoomWheelDelta(0),
 	  m_showCursors(true)
 {
 	m_refreshTimer = new QTimer(this);
@@ -78,11 +77,11 @@ NavigatorView::NavigatorView(QWidget *parent)
 	m_cursorBackground = makeCursorBackground(16);
 }
 
-void NavigatorView::setPaintEnginePixmap(canvas::PaintEnginePixmap *pep)
+void NavigatorView::setPaintEngine(canvas::PaintEngine *pe)
 {
-	m_pep = pep;
-	connect(m_pep, &canvas::PaintEnginePixmap::areaChanged, this, &NavigatorView::onChange);
-	connect(m_pep, &canvas::PaintEnginePixmap::resized, this, &NavigatorView::onResize);
+	m_pe = pe;
+	connect(m_pe, &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange);
+	connect(m_pe, &canvas::PaintEngine::resized, this, &NavigatorView::onResize);
 	refreshCache();
 }
 
@@ -117,7 +116,7 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
 	const QPoint p = event->pos();
 
 	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
-	const QSize canvasSize = m_pep->size();
+	const QSize canvasSize = m_pe->size();
 
 	const qreal xscale = s.width() / qreal(canvasSize.width());
 	const qreal yscale = s.height() / qreal(canvasSize.height());
@@ -175,14 +174,17 @@ void NavigatorView::onResize()
 
 void NavigatorView::refreshCache()
 {
-	const QPixmap &canvas = m_pep->getPixmap();
+	if(!m_pe)
+		return;
+
+	const QPixmap &canvas = m_pe->getPixmap();
 	if(canvas.isNull())
 		return;
 
 	const QSize size = this->size();
 	if(size != m_cachedSize) {
 		m_cachedSize = size;
-		const QSize pixmapSize = m_pep->size().scaled(size, Qt::KeepAspectRatio);
+		const QSize pixmapSize = m_pe->size().scaled(size, Qt::KeepAspectRatio);
 		m_cache = QPixmap(pixmapSize);
 	}
 
@@ -196,6 +198,9 @@ void NavigatorView::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 	painter.fillRect(rect(), QColor(100,100,100));
+
+	if(!m_pe)
+		return;
 
 	// Draw downscaled canvas
 	if(m_cache.isNull())
@@ -218,7 +223,7 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	painter.setPen(pen);
 	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 
-	const auto canvasSize = m_pep->size();
+	const auto canvasSize = m_pe->size();
 	const qreal xscale = s.width() / qreal(canvasSize.width());
 	const qreal yscale = s.height() / qreal(canvasSize.height());
 	painter.translate(canvasRect.topLeft());
@@ -319,9 +324,9 @@ Navigator::~Navigator()
 	delete m_ui;
 }
 
-void Navigator::setScene(drawingboard::CanvasScene *scene)
+void Navigator::setPaintEngine(canvas::PaintEngine *pe)
 {
-	m_ui->view->setPaintEnginePixmap(scene->paintEnginePixmap());
+	m_ui->view->setPaintEngine(pe);
 }
 
 void Navigator::setUserCursors(canvas::UserCursorModel *cursors)

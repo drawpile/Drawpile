@@ -138,6 +138,19 @@ struct Size {
 
 using NotifyResizeCallback = void(*)(void *ctx, int32_t x_offset, int32_t y_offset, Size old_size);
 
+struct LayerInfo {
+  const uint8_t *title;
+  int32_t titlelen;
+  float opacity;
+  int32_t id;
+  bool hidden;
+  bool censored;
+  bool fixed;
+  Blendmode blendmode;
+};
+
+using NotifyLayerListCallback = void(*)(void *ctx, const LayerInfo *layers, uintptr_t count);
+
 extern "C" {
 
 void rustpile_init();
@@ -167,17 +180,21 @@ void paintengine_free(PaintEngine *dp);
 /// Register callback functions for notifying canvas view of changes
 ///
 /// The paintengine can only be observed by one view at a time.
-void paintengine_register_notify_callbacks(PaintEngine *dp,
-                                           void *ctx,
-                                           NotifyChangesCallback changes,
-                                           NotifyResizeCallback resizes);
+void paintengine_register_callbacks(PaintEngine *dp,
+                                    void *ctx,
+                                    NotifyChangesCallback changes,
+                                    NotifyResizeCallback resizes,
+                                    NotifyLayerListCallback layers);
 
 /// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);
 
 /// Receive one or more messages
 /// Only Command type messages are handled.
-void paintengine_receive_messages(PaintEngine *dp, const uint8_t *messages, uintptr_t messages_len);
+void paintengine_receive_messages(PaintEngine *dp,
+                                  bool local,
+                                  const uint8_t *messages,
+                                  uintptr_t messages_len);
 
 /// Paint all the changed tiles in the given area
 ///

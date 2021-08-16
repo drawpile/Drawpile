@@ -20,7 +20,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::canvas::CanvasState;
+use super::adapters::LayerInfo;
+use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::{AoE, FlattenedTileIterator, Rectangle, Size};
 use dpcore::protocol::message::Message;
 
@@ -32,14 +33,18 @@ type NotifyChangesCallback = Option<extern "C" fn(ctx: *mut c_void, area: Rectan
 type NotifyResizeCallback =
     Option<extern "C" fn(ctx: *mut c_void, x_offset: i32, y_offset: i32, old_size: Size)>;
 
+type NotifyLayerListCallback =
+    Option<extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize)>;
+
 /// The paint engine.
 pub struct PaintEngine {
     canvas: CanvasState,
-    changes: AoE,
+    unrefreshed_area: AoE,
 
-    change_context_object: *mut c_void,
+    callback_context_object: *mut c_void,
     notify_changes_callback: NotifyChangesCallback,
     notify_resize_callback: NotifyResizeCallback,
+    notify_layerlist_callback: NotifyLayerListCallback,
 }
 
 /// Construct a new paint engine with an empty canvas.
@@ -47,10 +52,11 @@ pub struct PaintEngine {
 pub extern "C" fn paintengine_new() -> *mut PaintEngine {
     let dp = Box::new(PaintEngine {
         canvas: CanvasState::new(),
-        changes: AoE::Nothing,
-        change_context_object: ptr::null_mut(),
+        unrefreshed_area: AoE::Nothing,
+        callback_context_object: ptr::null_mut(),
         notify_changes_callback: None,
         notify_resize_callback: None,
+        notify_layerlist_callback: None,
     });
 
     Box::into_raw(dp)
@@ -69,15 +75,17 @@ pub extern "C" fn paintengine_free(dp: *mut PaintEngine) {
 ///
 /// The paintengine can only be observed by one view at a time.
 #[no_mangle]
-pub extern "C" fn paintengine_register_notify_callbacks(
+pub extern "C" fn paintengine_register_callbacks(
     dp: &mut PaintEngine,
     ctx: *mut c_void,
     changes: NotifyChangesCallback,
     resizes: NotifyResizeCallback,
+    layers: NotifyLayerListCallback,
 ) {
-    dp.change_context_object = ctx;
+    dp.callback_context_object = ctx;
     dp.notify_changes_callback = changes;
     dp.notify_resize_callback = resizes;
+    dp.notify_layerlist_callback = layers;
 }
 
 /// Get the current size of the canvas.
@@ -91,13 +99,12 @@ pub extern "C" fn paintengine_canvas_size(dp: &PaintEngine) -> Size {
 #[no_mangle]
 pub extern "C" fn paintengine_receive_messages(
     dp: &mut PaintEngine,
+    local: bool,
     messages: *const u8,
     messages_len: usize,
 ) {
     let msgs = unsafe { slice::from_raw_parts(messages, messages_len) };
-    let mut aoe = AoE::Nothing;
-
-    println!("Receiving {} messages", messages_len);
+    let mut changes = CanvasStateChange::nothing();
 
     // TODO loop and consume all messages, or specify that this function
     // only takes one.
@@ -105,8 +112,11 @@ pub extern "C" fn paintengine_receive_messages(
     let msg = Message::deserialize(msgs);
     match msg {
         Result::Ok(Message::Command(m)) => {
-            aoe = aoe.merge(dp.canvas.receive_message(&m));
-            println!("AoE: {:?}", aoe);
+            changes |= if local {
+                dp.canvas.receive_local_message(&m)
+            } else {
+                dp.canvas.receive_message(&m)
+            };
         }
         Result::Ok(_) => {
             // other messages are ignored
@@ -121,29 +131,27 @@ pub extern "C" fn paintengine_receive_messages(
     // This doesn't immediately trigger a repaint if no view is observing the changed
     // region. Repainting is lazy: changed tiles are not refreshed until they are actually
     // being viewed.
-    match aoe {
+    match changes.aoe {
         AoE::Nothing => {}
         AoE::Resize(rx, ry, original_size) => {
-            dp.changes = AoE::Everything;
-            dp.notify_canvas_resize(
-                rx,
-                ry,
-                original_size
-            );
+            dp.unrefreshed_area = AoE::Everything;
+            dp.notify_canvas_resize(rx, ry, original_size);
         }
         _ => {
             let canvas_size = paintengine_canvas_size(dp);
-            let aoe_bounds = aoe.bounds(canvas_size);
-            match aoe_bounds {
-                Some(bounds) => {
-                    let changes = std::mem::replace(&mut dp.changes, AoE::Nothing);
-                    dp.changes = changes.merge(aoe);
-                    dp.notify_changes(bounds);
-                }
-                None => {}
+            if let Some(bounds) = changes.aoe.bounds(canvas_size) {
+                let unrefreshed_area = std::mem::replace(&mut dp.unrefreshed_area, AoE::Nothing);
+                dp.unrefreshed_area = unrefreshed_area.merge(changes.aoe);
+                dp.notify_changes(bounds);
             }
         }
     }
+
+    if changes.layers_changed {
+        dp.notify_layerinfo();
+    }
+
+    if changes.annotations_changed {}
 }
 
 /// Paint all the changed tiles in the given area
@@ -163,7 +171,7 @@ pub extern "C" fn paintengine_paint_changes(
 ) {
     let intersection = if rect.w < 0 {
         // We interpret an invalid rectangle to mean "refresh everything"
-        std::mem::replace(&mut dp.changes, AoE::Nothing)
+        std::mem::replace(&mut dp.unrefreshed_area, AoE::Nothing)
     } else {
         let ls = dp.canvas.layerstack();
         let rect = match rect.cropped(ls.size()) {
@@ -173,10 +181,9 @@ pub extern "C" fn paintengine_paint_changes(
             }
         };
 
-        let changes = std::mem::replace(&mut dp.changes, AoE::Nothing);
-        let (difference, intersection) =
-            changes.diff_and_intersect(rect, ls.size());
-        dp.changes = difference;
+        let unrefreshed_area = std::mem::replace(&mut dp.unrefreshed_area, AoE::Nothing);
+        let (remaining, intersection) = unrefreshed_area.diff_and_intersect(rect, ls.size());
+        dp.unrefreshed_area = remaining;
 
         intersection
     };
@@ -187,17 +194,27 @@ pub extern "C" fn paintengine_paint_changes(
 
 impl PaintEngine {
     fn notify_changes(&self, bounds: Rectangle) {
-        match self.notify_changes_callback {
-            Some(f) => f(self.change_context_object, bounds),
-            None => {}
+        if let Some(f) = self.notify_changes_callback {
+            f(self.callback_context_object, bounds);
         }
     }
 
     fn notify_canvas_resize(&self, xoffset: i32, yoffset: i32, old_size: Size) {
-        println!("Notifying of resize {},{} {:?}", xoffset, yoffset, old_size);
-        match self.notify_resize_callback {
-            Some(f) => f(self.change_context_object, xoffset, yoffset, old_size),
-            None => {}
+        if let Some(f) = self.notify_resize_callback {
+            f(self.callback_context_object, xoffset, yoffset, old_size);
+        }
+    }
+
+    fn notify_layerinfo(&self) {
+        if let Some(f) = self.notify_layerlist_callback {
+            let layers: Vec<LayerInfo> = self
+                .canvas
+                .layerstack()
+                .iter_layers()
+                .map(|l| l.into())
+                .collect();
+
+            f(self.callback_context_object, layers.as_ptr(), layers.len());
         }
     }
 }

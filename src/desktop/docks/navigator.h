@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008-2019 Calle Laakkonen, 2007 M.K.A.
+   Copyright (C) 2008-2021 Calle Laakkonen, 2007 M.K.A.
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,13 +22,9 @@
 
 class Ui_Navigator;
 
-namespace drawingboard {
-	class CanvasScene;
-}
-
 namespace canvas {
 	class UserCursorModel;
-	class PaintEnginePixmap;
+	class PaintEngine;
 }
 
 namespace docks {
@@ -39,7 +35,7 @@ class NavigatorView : public QWidget
 public:
 	NavigatorView(QWidget *parent);
 
-	void setPaintEnginePixmap(canvas::PaintEnginePixmap *pep);
+	void setPaintEngine(canvas::PaintEngine *pep);
 	void setUserCursors(canvas::UserCursorModel *cursors) { m_cursors = cursors; }
 
 	void setViewFocus(const QPolygonF& rect);
@@ -65,7 +61,7 @@ private slots:
 	void refreshCache();
 
 private:
-	canvas::PaintEnginePixmap *m_pep;
+	canvas::PaintEngine *m_pe;
 	canvas::UserCursorModel *m_cursors;
 	QPixmap m_cache;
 	QPixmap m_cursorBackground;
@@ -87,7 +83,7 @@ public:
 	~Navigator();
 
 	//! Set associated graphics scene
-	void setScene(drawingboard::CanvasScene *scene);
+	void setPaintEngine(canvas::PaintEngine *pe);
 
 	//! Set the user list (optional)
 	void setUserCursors(canvas::UserCursorModel *cursors);

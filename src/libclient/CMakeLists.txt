@@ -33,7 +33,7 @@ set (
 	canvas/history.cpp
 	canvas/canvassaverrunnable.cpp
 	canvas/inputpresetmodel.cpp
-	canvas/paintenginepixmap.cpp
+	canvas/paintengine.cpp
 	net/client.cpp
 	net/server.cpp
 	net/loopbackserver.cpp

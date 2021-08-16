@@ -32,10 +32,6 @@
 #include <QObject>
 #include <QPointer>
 
-namespace rustpile {
-	struct PaintEngine;
-}
-
 namespace protocol {
 	class UserJoin;
 	class UserLeave;
@@ -52,6 +48,7 @@ class StateTracker;
 class AclFilter;
 class UserListModel;
 class LayerListModel;
+class PaintEngine;
 
 class CanvasModel : public QObject
 {
@@ -68,9 +65,8 @@ class CanvasModel : public QObject
 
 public:
 	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
-	~CanvasModel();
 
-	rustpile::PaintEngine *paintEngine() const { return m_paintengine; }
+	PaintEngine *paintEngine() const { return m_paintengine; }
 	//paintcore::LayerStack *layerStack() const { return m_layerstack; }
 	//StateTracker *stateTracker() const { return m_statetracker; }
 	UserCursorModel *userCursors() const { return m_usercursors; }
@@ -177,9 +173,7 @@ private:
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;
 
-	//paintcore::LayerStack *m_layerstack;
-	//StateTracker *m_statetracker;
-	rustpile::PaintEngine *m_paintengine;
+	PaintEngine *m_paintengine;
 	UserCursorModel *m_usercursors;
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;

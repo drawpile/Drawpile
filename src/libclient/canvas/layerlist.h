@@ -109,7 +109,6 @@ public:
 	void reorderLayers(QList<uint16_t> neworder);
 	
 	QVector<LayerListItem> getLayers() const { return m_items; }
-	void setLayers(const QVector<LayerListItem> &items);
 
 	void previewOpacityChange(uint16_t id, float opacity);
 
@@ -139,6 +138,9 @@ public:
 	 * @return unique name
 	 */
 	QString getAvailableLayerName(QString basename) const;
+
+public slots:
+	void setLayers(const QVector<LayerListItem> &items);
 
 signals:
 	void layersReordered();

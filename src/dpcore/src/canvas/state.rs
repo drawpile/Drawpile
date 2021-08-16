@@ -33,6 +33,7 @@ use crate::protocol::message::*;
 
 use std::convert::TryFrom;
 use std::mem;
+use std::ops::BitOrAssign;
 use std::rc::Rc;
 use tracing::{error, warn};
 
@@ -42,6 +43,61 @@ pub struct CanvasState {
     brushcache: ClassicBrushCache,
     localfork: LocalFork,
     local_user_id: UserID,
+}
+
+/// A structure describing what parts of the canvas was changed.
+/// In addition to the usual layerstack area of effect,
+/// we're interested in whether layer structure or annotations
+/// were changed as well.
+pub struct CanvasStateChange {
+    pub aoe: AoE,
+    pub layers_changed: bool,
+    pub annotations_changed: bool,
+}
+
+impl CanvasStateChange {
+    pub fn nothing() -> Self {
+        CanvasStateChange {
+            aoe: AoE::Nothing,
+            layers_changed: false,
+            annotations_changed: false,
+        }
+    }
+
+    fn layers(aoe: AoE) -> Self {
+        CanvasStateChange {
+            aoe,
+            layers_changed: true,
+            annotations_changed: false,
+        }
+    }
+
+    fn annotations() -> Self {
+        CanvasStateChange {
+            aoe: AoE::Nothing,
+            layers_changed: false,
+            annotations_changed: true,
+        }
+    }
+}
+
+impl From<AoE> for CanvasStateChange {
+    fn from(item: AoE) -> Self {
+        Self {
+            aoe: item,
+            layers_changed: false,
+            annotations_changed: false,
+        }
+    }
+}
+
+impl BitOrAssign for CanvasStateChange {
+    fn bitor_assign(&mut self, rhs: Self) {
+        let aoe = std::mem::replace(&mut self.aoe, AoE::Nothing);
+        self.aoe = aoe.merge(rhs.aoe);
+        self.layers_changed |= rhs.layers_changed;
+        self.annotations_changed |= rhs.annotations_changed;
+    }
 }
 
 impl CanvasState {
@@ -60,14 +116,14 @@ impl CanvasState {
     }
 
     /// Receive a message from the canonical session history and execute it
-    pub fn receive_message(&mut self, msg: &CommandMessage) -> AoE {
+    pub fn receive_message(&mut self, msg: &CommandMessage) -> CanvasStateChange {
         self.history.add(msg.clone());
 
         let retcon = self.localfork.receive_remote_message(msg);
 
         match retcon {
             RetconAction::Concurrent => self.handle_message(msg),
-            RetconAction::AlreadyDone => AoE::Nothing,
+            RetconAction::AlreadyDone => CanvasStateChange::nothing(),
             RetconAction::Rollback(pos) => {
                 let replay = self.history.reset_before(pos);
 
@@ -80,10 +136,16 @@ impl CanvasState {
                     for m in messages.iter().chain(localfork.iter()) {
                         self.handle_message(m);
                     }
-                    old_layerstack.compare(&self.layerstack)
+                    let aoe = old_layerstack.compare(&self.layerstack);
+
+                    CanvasStateChange {
+                        aoe: aoe,
+                        layers_changed: old_layerstack.compare_layer_structure(&self.layerstack),
+                        annotations_changed: old_layerstack.compare_annotations(&self.layerstack),
+                    }
                 } else {
                     error!("Retcon failed! No savepoint found before {}", pos);
-                    AoE::Nothing
+                    CanvasStateChange::nothing()
                 }
             }
         }
@@ -93,7 +155,7 @@ impl CanvasState {
     /// history and execute it. If an official message conflicts with any of
     /// the locally added messages, the canvas is is reset to an earlier savepoint
     /// and the history straightened out.
-    pub fn receive_local_message(&mut self, msg: &CommandMessage) -> AoE {
+    pub fn receive_local_message(&mut self, msg: &CommandMessage) -> CanvasStateChange {
         match msg {
             CommandMessage::UndoPoint(_) => {
                 // Try creating a new savepoint before the local fork exists
@@ -101,7 +163,7 @@ impl CanvasState {
             }
             CommandMessage::Undo(_, _) => {
                 // Undos have to go through the server
-                return AoE::Nothing;
+                return CanvasStateChange::nothing();
             }
             _ => (),
         }
@@ -109,31 +171,31 @@ impl CanvasState {
         self.handle_message(msg)
     }
 
-    fn handle_message(&mut self, msg: &CommandMessage) -> AoE {
+    fn handle_message(&mut self, msg: &CommandMessage) -> CanvasStateChange {
         println!("Handling {:?}", msg);
         use CommandMessage::*;
         match &msg {
-            UndoPoint(user) => self.handle_undopoint(*user),
-            CanvasResize(_, m) => self.handle_canvas_resize(m),
+            UndoPoint(user) => self.handle_undopoint(*user).into(),
+            CanvasResize(_, m) => self.handle_canvas_resize(m).into(),
             LayerCreate(_, m) => self.handle_layer_create(m),
             LayerAttributes(_, m) => self.handle_layer_attributes(m),
             LayerRetitle(_, m) => self.handle_layer_retitle(m),
             LayerOrder(_, order) => self.handle_layer_order(order),
             LayerDelete(_, m) => self.handle_layer_delete(m),
             LayerVisibility(u, m) => self.handle_layer_visibility(*u, m),
-            PutImage(u, m) => self.handle_putimage(*u, m),
-            FillRect(user, m) => self.handle_fillrect(*user, m),
-            PenUp(user) => self.handle_penup(*user),
+            PutImage(u, m) => self.handle_putimage(*u, m).into(),
+            FillRect(user, m) => self.handle_fillrect(*user, m).into(),
+            PenUp(user) => self.handle_penup(*user).into(),
             AnnotationCreate(_, m) => self.handle_annotation_create(m),
             AnnotationReshape(_, m) => self.handle_annotation_reshape(m),
             AnnotationEdit(_, m) => self.handle_annotation_edit(m),
             AnnotationDelete(_, id) => self.handle_annotation_delete(*id),
-            PutTile(user, m) => self.handle_puttile(*user, m),
-            CanvasBackground(_, m) => self.handle_background(m),
-            DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m),
-            DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
-            DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true),
-            Undo(user, m) => self.handle_undo(*user, m),
+            PutTile(user, m) => self.handle_puttile(*user, m).into(),
+            CanvasBackground(_, m) => self.handle_background(m).into(),
+            DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m).into(),
+            DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false).into(),
+            DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true).into(),
+            Undo(user, m) => self.handle_undo(*user, m).into(),
         }
     }
 
@@ -203,7 +265,7 @@ impl CanvasState {
         }
     }
 
-    fn handle_layer_create(&mut self, msg: &LayerCreateMessage) -> AoE {
+    fn handle_layer_create(&mut self, msg: &LayerCreateMessage) -> CanvasStateChange {
         let pos = match (
             msg.flags & LayerCreateMessage::FLAGS_INSERT != 0,
             msg.source,
@@ -224,7 +286,7 @@ impl CanvasState {
         {
             layer.title = msg.name.clone();
 
-            match fill {
+            let aoe = match fill {
                 LayerFill::Copy(_) => layer.nonblank_tilemap().into(),
                 LayerFill::Solid(c) => {
                     if c.is_transparent() {
@@ -233,47 +295,52 @@ impl CanvasState {
                         AoE::Everything
                     }
                 }
-            }
+            };
+
+            CanvasStateChange::layers(aoe)
         } else {
             // todo add_layer could return Result instead with a better error message
             warn!("LayerCreate: layer {:04x} could not be created", msg.id);
-            AoE::Nothing
+            CanvasStateChange::nothing()
         }
     }
 
-    fn handle_layer_attributes(&mut self, msg: &LayerAttributesMessage) -> AoE {
+    fn handle_layer_attributes(&mut self, msg: &LayerAttributesMessage) -> CanvasStateChange {
         if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
-            editlayer::change_attributes(
+            let aoe = editlayer::change_attributes(
                 layer,
                 msg.sublayer as LayerID,
                 msg.opacity as f32 / 255.0,
                 Blendmode::try_from(msg.blend).unwrap_or(Blendmode::Normal),
                 (msg.flags & LayerAttributesMessage::FLAGS_CENSOR) != 0,
                 (msg.flags & LayerAttributesMessage::FLAGS_FIXED) != 0,
-            )
+            );
+
+            CanvasStateChange::layers(aoe)
         } else {
             warn!("LayerAttributes: Layer {:04x} not found!", msg.id);
-            AoE::Nothing
+            CanvasStateChange::nothing()
         }
     }
 
-    fn handle_layer_retitle(&mut self, msg: &LayerRetitleMessage) -> AoE {
+    fn handle_layer_retitle(&mut self, msg: &LayerRetitleMessage) -> CanvasStateChange {
         if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
-            layer.title = msg.title.clone()
+            layer.title = msg.title.clone();
+            CanvasStateChange::layers(AoE::Nothing)
         } else {
             warn!("LayerRetitle: Layer {:04x} not found!", msg.id);
+            CanvasStateChange::nothing()
         }
-        AoE::Nothing
     }
 
-    fn handle_layer_order(&mut self, new_order: &[u16]) -> AoE {
+    fn handle_layer_order(&mut self, new_order: &[u16]) -> CanvasStateChange {
         let order: Vec<LayerID> = new_order.iter().map(|i| *i as LayerID).collect();
         self.layerstack = Rc::new(self.layerstack.reordered(&order));
 
-        AoE::Everything
+        CanvasStateChange::layers(AoE::Everything)
     }
 
-    fn handle_layer_delete(&mut self, msg: &LayerDeleteMessage) -> AoE {
+    fn handle_layer_delete(&mut self, msg: &LayerDeleteMessage) -> CanvasStateChange {
         let stack = Rc::make_mut(&mut self.layerstack);
         let id = msg.id as LayerID;
         let aoe = if msg.merge {
@@ -282,8 +349,10 @@ impl CanvasState {
                 editlayer::merge(stack.get_layer_mut(below).unwrap(), &above);
             } else {
                 warn!("LayerDelete: Cannot merge {:04x}", id);
-                return AoE::Nothing;
+                return CanvasStateChange::nothing();
             }
+
+            // merging a layer to the one below it causes no visual change
             AoE::Nothing
         } else {
             stack
@@ -293,36 +362,40 @@ impl CanvasState {
         };
 
         stack.remove_layer(id);
-        aoe
+        CanvasStateChange::layers(aoe)
     }
 
-    fn handle_layer_visibility(&mut self, user: UserID, msg: &LayerVisibilityMessage) -> AoE {
+    fn handle_layer_visibility(
+        &mut self,
+        user: UserID,
+        msg: &LayerVisibilityMessage,
+    ) -> CanvasStateChange {
         if user == self.local_user_id {
             if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID)
             {
                 layer.hidden = !msg.visible;
-                return layer.nonblank_tilemap().into();
+                return CanvasStateChange::layers(layer.nonblank_tilemap().into());
             }
         }
-        AoE::Nothing
+        CanvasStateChange::nothing()
     }
 
-    fn handle_annotation_create(&mut self, msg: &AnnotationCreateMessage) -> AoE {
+    fn handle_annotation_create(&mut self, msg: &AnnotationCreateMessage) -> CanvasStateChange {
         Rc::make_mut(&mut self.layerstack).add_annotation(
             msg.id,
             Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32),
         );
-        AoE::Nothing
+        CanvasStateChange::annotations()
     }
 
-    fn handle_annotation_reshape(&mut self, msg: &AnnotationReshapeMessage) -> AoE {
+    fn handle_annotation_reshape(&mut self, msg: &AnnotationReshapeMessage) -> CanvasStateChange {
         if let Some(a) = Rc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.rect = Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32);
         }
-        AoE::Nothing
+        CanvasStateChange::annotations()
     }
 
-    fn handle_annotation_edit(&mut self, msg: &AnnotationEditMessage) -> AoE {
+    fn handle_annotation_edit(&mut self, msg: &AnnotationEditMessage) -> CanvasStateChange {
         if let Some(a) = Rc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.background = Color::from_argb32(msg.bg);
             a.protect = (msg.flags & 0x01) != 0;
@@ -334,12 +407,12 @@ impl CanvasState {
             // border not implemented yet
             a.text = msg.text.clone();
         }
-        AoE::Nothing
+        CanvasStateChange::annotations()
     }
 
-    fn handle_annotation_delete(&mut self, id: AnnotationID) -> AoE {
+    fn handle_annotation_delete(&mut self, id: AnnotationID) -> CanvasStateChange {
         Rc::make_mut(&mut self.layerstack).remove_annotation(id);
-        AoE::Nothing
+        CanvasStateChange::annotations()
     }
 
     fn handle_puttile(&mut self, user_id: UserID, msg: &PutTileMessage) -> AoE {
