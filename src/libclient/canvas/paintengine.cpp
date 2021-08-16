@@ -108,6 +108,11 @@ void PaintEngine::receiveMessages(bool local, const QByteArray &msgs)
 	rustpile::paintengine_receive_messages(m_pe, local, reinterpret_cast<const uint8_t*>(msgs.constData()), msgs.length());
 }
 
+void PaintEngine::cleanup()
+{
+	rustpile::paintengine_cleanup(m_pe);
+}
+
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 {
 	const auto size = this->size();

@@ -208,6 +208,11 @@ impl Layer {
         }
     }
 
+    /// Return a list of visible sublayers this layer has
+    pub fn sublayer_ids(&self) -> Vec<LayerID> {
+        self.sublayers.iter().map(|sl| sl.id).collect()
+    }
+
     /// Check if a sublayer with the given ID exists
     pub fn has_sublayer(&self, id: LayerID) -> bool {
         self.sublayers.iter().any(|sl| sl.id == id)

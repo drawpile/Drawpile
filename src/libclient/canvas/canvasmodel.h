@@ -183,6 +183,8 @@ private:
 	QString m_title;
 	QString m_pinnedMessage;
 
+	uint8_t m_localUserId;
+
 	enum class Mode { Offline, Online, Playback } m_mode;
 };
 

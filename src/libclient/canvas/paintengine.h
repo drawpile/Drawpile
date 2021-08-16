@@ -62,6 +62,9 @@ public:
 	//! Receive and handle messages
 	void receiveMessages(bool local, const QByteArray &msgs);
 
+	//! Clean up dangling state after disconnecting from a remote session
+	void cleanup();
+
 signals:
 	void areaChanged(const QRect &area);
 	void resized(int xoffset, int yoffset, const QSize &oldSize);

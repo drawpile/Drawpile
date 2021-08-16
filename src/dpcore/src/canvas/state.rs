@@ -183,6 +183,24 @@ impl CanvasState {
         self.handle_message(msg)
     }
 
+    /// Clean up the state after disconnecting from a remote session
+    ///
+    /// This does the following:
+    ///  * moves the local fork to the mainline history
+    ///  * merges all sublayers in case there are any remaining indirect strokes
+    pub fn cleanup(&mut self) -> AoE {
+        for msg in self.localfork.messages() {
+            self.history.add(msg);
+        }
+        self.localfork.clear();
+
+        Arc::make_mut(&mut self.layerstack)
+            .iter_layers_mut()
+            .fold(AoE::Nothing, |aoe, l| {
+                aoe.merge(editlayer::merge_all_sublayers(Arc::make_mut(l)))
+            })
+    }
+
     fn handle_message(&mut self, msg: &CommandMessage) -> CanvasStateChange {
         println!("Handling {:?}", msg);
         use CommandMessage::*;

@@ -272,6 +272,16 @@ pub fn remove_sublayer(layer: &mut Layer, sublayer_id: LayerID) -> AoE {
     }
 }
 
+pub fn merge_all_sublayers(layer: &mut Layer) -> AoE {
+    let mut aoe = AoE::Nothing;
+    let sublayers = layer.sublayer_ids();
+    for id in sublayers {
+        aoe = aoe.merge(merge_sublayer(layer, id));
+    }
+
+    aoe
+}
+
 pub fn change_attributes(
     layer: &mut Layer,
     sublayer: LayerID,

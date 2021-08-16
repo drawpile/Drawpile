@@ -61,6 +61,7 @@ unsafe impl Send for NotificationCallbacks {}
 enum PaintEngineCommand {
     LocalMessage(CommandMessage),
     RemoteMessage(CommandMessage),
+    Cleanup,
 }
 
 /// The paint engine
@@ -93,6 +94,7 @@ fn run_paintengine(viewcache: Arc<Mutex<ViewCache>>, channel: Receiver<PaintEngi
             match cmd {
                 LocalMessage(m) => { changes |= canvas.receive_local_message(&m); }
                 RemoteMessage(m) => { changes |= canvas.receive_message(&m); }
+                Cleanup => { canvas.cleanup(); }
             };
 
             cmd = match channel.try_recv() {
@@ -229,6 +231,14 @@ pub extern "C" fn paintengine_receive_messages(
             panic!();
         }
     };
+}
+
+/// Clean up the paint engine state after disconnecting from a session
+#[no_mangle]
+pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::Cleanup) {
+        warn!("Couldn't send cleanup command to paint engine thread {:?}", err);
+    }
 }
 
 /// Paint all the changed tiles in the given area

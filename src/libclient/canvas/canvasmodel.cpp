@@ -47,7 +47,7 @@
 namespace canvas {
 
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
-	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline)
+	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(0)
 {
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
@@ -93,10 +93,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 
 uint8_t CanvasModel::localUserId() const
 {
-#if 0 // FIXME
-	return m_statetracker->localId();
-#endif
-	return 0;
+	return m_localUserId;
 }
 
 QSize CanvasModel::size() const
@@ -107,11 +104,14 @@ QSize CanvasModel::size() const
 void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
+	if(myUserId == 0) {
+		// Zero is a reserved "null" user ID
+		qWarning("connectedToServer: local user ID is zero!");
+	}
+
+	m_localUserId = myUserId;
 	m_layerlist->setMyId(myUserId);
 	m_layerlist->setAutoselectAny(true);
-#if 0 // FIXME
-	m_statetracker->setLocalId(myUserId);
-#endif
 
 	if(join)
 		m_aclfilter->reset(myUserId, false);
@@ -124,11 +124,9 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 
 void CanvasModel::disconnectedFromServer()
 {
-#if 0 // FIXME
-	m_statetracker->endRemoteContexts();
+	m_paintengine->cleanup();
 	m_userlist->allLogout();
-	m_aclfilter->reset(m_statetracker->localId(), true);
-#endif
+	m_aclfilter->reset(m_localUserId, true);
 	m_mode = Mode::Offline;
 }
 

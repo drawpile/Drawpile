@@ -70,7 +70,7 @@ enum class ClassicBrushShape : uint8_t {
 
 struct BrushPreview;
 
-/// The paint engine.
+/// The paint engine
 struct PaintEngine;
 
 struct Range {
@@ -189,6 +189,9 @@ void paintengine_receive_messages(PaintEngine *dp,
                                   bool local,
                                   const uint8_t *messages,
                                   uintptr_t messages_len);
+
+/// Clean up the paint engine state after disconnecting from a session
+void paintengine_cleanup(PaintEngine *dp);
 
 /// Paint all the changed tiles in the given area
 ///
