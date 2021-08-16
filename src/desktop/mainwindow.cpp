@@ -70,6 +70,7 @@
 #include "scene/selectionitem.h"
 #include "canvas/statetracker.h"
 #include "canvas/userlist.h"
+#include "canvas/paintengine.h"
 
 #include "utils/recentfiles.h"
 #include "../libshared/util/whatismyip.h"
@@ -2136,18 +2137,16 @@ void MainWindow::resizeCanvas()
 
 void MainWindow::changeCanvasBackground()
 {
-#if 0 // FIXME
 	if(!m_doc->canvas()) {
 		qWarning("changeCanvasBackground: no canvas!");
 		return;
 	}
 	auto *dlg = new color_widgets::ColorDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setColor(m_doc->canvas()->layerStack()->background().solidColor());
+	dlg->setColor(m_doc->canvas()->paintEngine()->backgroundColor());
 
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
 	dlg->show();
-#endif
 }
 
 void MainWindow::markSpotForRecording()

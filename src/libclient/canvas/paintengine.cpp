@@ -113,6 +113,12 @@ void PaintEngine::cleanup()
 	rustpile::paintengine_cleanup(m_pe);
 }
 
+QColor PaintEngine::backgroundColor() const
+{
+	const auto c = rustpile::paintengine_background_color(m_pe);
+	return QColor::fromRgbF(c.r, c.g, c.b, c.a);
+}
+
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 {
 	const auto size = this->size();

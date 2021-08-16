@@ -193,6 +193,12 @@ void paintengine_receive_messages(PaintEngine *dp,
 /// Clean up the paint engine state after disconnecting from a session
 void paintengine_cleanup(PaintEngine *dp);
 
+/// Get the color of the background tile
+///
+/// TODO this presently assumes the background tile is always solid.
+/// TODO We should support background patterns in the GUI as well.
+Color paintengine_background_color(const PaintEngine *dp);
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be

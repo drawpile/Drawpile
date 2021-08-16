@@ -22,7 +22,7 @@
 
 use super::adapters::LayerInfo;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
-use dpcore::paint::{LayerStack, AoE, FlattenedTileIterator, Rectangle, Size};
+use dpcore::paint::{LayerStack, AoE, FlattenedTileIterator, Rectangle, Size, Color};
 use dpcore::protocol::message::{Message, CommandMessage};
 
 use core::ffi::c_void;
@@ -239,6 +239,16 @@ pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::Cleanup) {
         warn!("Couldn't send cleanup command to paint engine thread {:?}", err);
     }
+}
+
+/// Get the color of the background tile
+///
+/// TODO this presently assumes the background tile is always solid.
+/// TODO We should support background patterns in the GUI as well.
+#[no_mangle]
+pub extern "C" fn paintengine_background_color(dp: &PaintEngine) -> Color {
+    let vc = dp.viewcache.lock().unwrap();
+    vc.layerstack.background.solid_color().unwrap_or(Color::TRANSPARENT)
 }
 
 /// Paint all the changed tiles in the given area

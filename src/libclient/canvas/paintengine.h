@@ -65,6 +65,9 @@ public:
 	//! Clean up dangling state after disconnecting from a remote session
 	void cleanup();
 
+	//! Get the color of the background tile
+	QColor backgroundColor() const;
+
 signals:
 	void areaChanged(const QRect &area);
 	void resized(int xoffset, int yoffset, const QSize &oldSize);
