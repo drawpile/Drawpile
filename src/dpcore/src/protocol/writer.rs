@@ -130,7 +130,7 @@ mod tests {
 
         assert_eq!(
             buf,
-            &b"DPREC\0\0\x11{\"version\":\"1.0\"}\0\x04\x20\x01\x03\x03XYZ"[..]
+            &b"DPREC\0\0\x11{\"version\":\"1.0\"}\0\x05\x20\x01\x03\x03XYZ"[..]
         );
     }
 

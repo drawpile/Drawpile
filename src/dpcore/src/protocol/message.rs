@@ -25,12 +25,10 @@ impl DisconnectMessage {
         Ok(Self { reason, message })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(1, user_id, 1 + self.message.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(1, user_id, 1 + self.message.len());
         w.write(self.reason);
         w.write(&self.message);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -82,18 +80,12 @@ impl JoinMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(
-            32,
-            user_id,
-            1 + self.name.len() + self.avatar.len(),
-        );
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(32, user_id, 1 + 1 + self.name.len() + self.avatar.len());
         w.write(self.flags);
         w.write(self.name.len() as u8);
         w.write(&self.name);
         w.write(&self.avatar);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -133,12 +125,10 @@ impl ChatMessage {
         Ok(Self { flags, message })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(35, user_id, 1 + self.message.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(35, user_id, 1 + self.message.len());
         w.write(self.flags);
         w.write(&self.message);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -179,13 +169,11 @@ impl PrivateChatMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(38, user_id, 2 + self.message.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(38, user_id, 2 + self.message.len());
         w.write(self.target);
         w.write(self.flags);
         w.write(&self.message);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -219,12 +207,10 @@ impl LaserTrailMessage {
         Ok(Self { color, persistence })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(65, user_id, 5);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(65, user_id, 5);
         w.write(self.color);
         w.write(self.persistence);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -256,12 +242,10 @@ impl MovePointerMessage {
         Ok(Self { x, y })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(66, user_id, 8);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(66, user_id, 8);
         w.write(self.x);
         w.write(self.y);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -299,13 +283,11 @@ impl LayerACLMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(69, user_id, 3 + self.exclusive.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(69, user_id, 3 + self.exclusive.len());
         w.write(self.id);
         w.write(self.flags);
         w.write(&self.exclusive);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -348,14 +330,12 @@ impl CanvasResizeMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(129, user_id, 16);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(129, user_id, 16);
         w.write(self.top);
         w.write(self.right);
         w.write(self.bottom);
         w.write(self.left);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -407,15 +387,13 @@ impl LayerCreateMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(130, user_id, 9 + self.name.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(130, user_id, 9 + self.name.len());
         w.write(self.id);
         w.write(self.source);
         w.write(self.fill);
         w.write(self.flags);
         w.write(&self.name);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -469,15 +447,13 @@ impl LayerAttributesMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(131, user_id, 6);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(131, user_id, 6);
         w.write(self.id);
         w.write(self.sublayer);
         w.write(self.flags);
         w.write(self.opacity);
         w.write(self.blend);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -515,12 +491,10 @@ impl LayerRetitleMessage {
         Ok(Self { id, title })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(132, user_id, 2 + self.title.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(132, user_id, 2 + self.title.len());
         w.write(self.id);
         w.write(&self.title);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -552,12 +526,10 @@ impl LayerDeleteMessage {
         Ok(Self { id, merge })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(134, user_id, 3);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(134, user_id, 3);
         w.write(self.id);
         w.write(self.merge);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -589,12 +561,10 @@ impl LayerVisibilityMessage {
         Ok(Self { id, visible })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(135, user_id, 3);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(135, user_id, 3);
         w.write(self.id);
         w.write(self.visible);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -644,8 +614,8 @@ impl PutImageMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(136, user_id, 19 + self.image.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(136, user_id, 19 + self.image.len());
         w.write(self.layer);
         w.write(self.mode);
         w.write(self.x);
@@ -653,8 +623,6 @@ impl PutImageMessage {
         w.write(self.w);
         w.write(self.h);
         w.write(&self.image);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -714,8 +682,8 @@ impl FillRectMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(137, user_id, 23);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(137, user_id, 23);
         w.write(self.layer);
         w.write(self.mode);
         w.write(self.x);
@@ -723,8 +691,6 @@ impl FillRectMessage {
         w.write(self.w);
         w.write(self.h);
         w.write(self.color);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -772,15 +738,13 @@ impl AnnotationCreateMessage {
         Ok(Self { id, x, y, w, h })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(141, user_id, 14);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(141, user_id, 14);
         w.write(self.id);
         w.write(self.x);
         w.write(self.y);
         w.write(self.w);
         w.write(self.h);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -824,15 +788,13 @@ impl AnnotationReshapeMessage {
         Ok(Self { id, x, y, w, h })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(142, user_id, 14);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(142, user_id, 14);
         w.write(self.id);
         w.write(self.x);
         w.write(self.y);
         w.write(self.w);
         w.write(self.h);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -882,15 +844,13 @@ impl AnnotationEditMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(143, user_id, 8 + self.text.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(143, user_id, 8 + self.text.len());
         w.write(self.id);
         w.write(self.bg);
         w.write(self.flags);
         w.write(self.border);
         w.write(&self.text);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -943,16 +903,14 @@ impl PutTileMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(146, user_id, 9 + self.image.len());
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(146, user_id, 9 + self.image.len());
         w.write(self.layer);
         w.write(self.sublayer);
         w.write(self.col);
         w.write(self.row);
         w.write(self.repeat);
         w.write(&self.image);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -1031,8 +989,8 @@ impl DrawDabsClassicMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(148, user_id, 15 + (self.dabs.len() * 6));
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(148, user_id, 15 + (self.dabs.len() * 6));
         w.write(self.layer);
         w.write(self.x);
         w.write(self.y);
@@ -1045,8 +1003,6 @@ impl DrawDabsClassicMessage {
             w.write(item.hardness);
             w.write(item.opacity);
         }
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -1146,8 +1102,8 @@ impl DrawDabsPixelMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(149, user_id, 15 + (self.dabs.len() * 4));
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(149, user_id, 15 + (self.dabs.len() * 4));
         w.write(self.layer);
         w.write(self.x);
         w.write(self.y);
@@ -1159,8 +1115,6 @@ impl DrawDabsPixelMessage {
             w.write(item.size);
             w.write(item.opacity);
         }
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -1225,12 +1179,10 @@ impl UndoMessage {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(255, user_id, 2);
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(255, user_id, 2);
         w.write(self.override_user);
         w.write(self.redo);
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -1634,12 +1586,12 @@ pub enum Message {
 }
 
 impl ControlMessage {
-    pub fn serialize(&self) -> Vec<u8> {
+    pub fn write(&self, w: &mut MessageWriter) {
         use ControlMessage::*;
         match &self {
-            ServerCommand(user_id, b) => MessageWriter::single(0, *user_id, b),
-            Disconnect(user_id, b) => b.serialize(*user_id),
-            Ping(user_id, b) => MessageWriter::single(2, *user_id, *b),
+            ServerCommand(user_id, b) => w.single(0, *user_id, b),
+            Disconnect(user_id, b) => b.serialize(w, *user_id),
+            Ping(user_id, b) => w.single(2, *user_id, *b),
         }
     }
 
@@ -1677,16 +1629,16 @@ impl From<ControlMessage> for Message {
 }
 
 impl ServerMetaMessage {
-    pub fn serialize(&self) -> Vec<u8> {
+    pub fn write(&self, w: &mut MessageWriter) {
         use ServerMetaMessage::*;
         match &self {
-            Join(user_id, b) => b.serialize(*user_id),
-            Leave(user_id) => MessageWriter::with_expected_payload(33, *user_id, 0).into(),
-            SessionOwner(user_id, b) => MessageWriter::single(34, *user_id, b),
-            Chat(user_id, b) => b.serialize(*user_id),
-            TrustedUsers(user_id, b) => MessageWriter::single(36, *user_id, b),
-            SoftReset(user_id) => MessageWriter::with_expected_payload(37, *user_id, 0).into(),
-            PrivateChat(user_id, b) => b.serialize(*user_id),
+            Join(user_id, b) => b.serialize(w, *user_id),
+            Leave(user_id) => w.write_header(33, *user_id, 0),
+            SessionOwner(user_id, b) => w.single(34, *user_id, b),
+            Chat(user_id, b) => b.serialize(w, *user_id),
+            TrustedUsers(user_id, b) => w.single(36, *user_id, b),
+            SoftReset(user_id) => w.write_header(37, *user_id, 0),
+            PrivateChat(user_id, b) => b.serialize(w, *user_id),
         }
     }
 
@@ -1734,18 +1686,18 @@ impl From<ServerMetaMessage> for Message {
 }
 
 impl ClientMetaMessage {
-    pub fn serialize(&self) -> Vec<u8> {
+    pub fn write(&self, w: &mut MessageWriter) {
         use ClientMetaMessage::*;
         match &self {
-            Interval(user_id, b) => MessageWriter::single(64, *user_id, *b),
-            LaserTrail(user_id, b) => b.serialize(*user_id),
-            MovePointer(user_id, b) => b.serialize(*user_id),
-            Marker(user_id, b) => MessageWriter::single(67, *user_id, b),
-            UserACL(user_id, b) => MessageWriter::single(68, *user_id, b),
-            LayerACL(user_id, b) => b.serialize(*user_id),
-            FeatureAccessLevels(user_id, b) => MessageWriter::single(70, *user_id, b),
-            DefaultLayer(user_id, b) => MessageWriter::single(71, *user_id, *b),
-            Filtered(user_id, b) => MessageWriter::single(72, *user_id, b),
+            Interval(user_id, b) => w.single(64, *user_id, *b),
+            LaserTrail(user_id, b) => b.serialize(w, *user_id),
+            MovePointer(user_id, b) => b.serialize(w, *user_id),
+            Marker(user_id, b) => w.single(67, *user_id, b),
+            UserACL(user_id, b) => w.single(68, *user_id, b),
+            LayerACL(user_id, b) => b.serialize(w, *user_id),
+            FeatureAccessLevels(user_id, b) => w.single(70, *user_id, b),
+            DefaultLayer(user_id, b) => w.single(71, *user_id, *b),
+            Filtered(user_id, b) => w.single(72, *user_id, b),
         }
     }
 
@@ -1799,30 +1751,30 @@ impl From<ClientMetaMessage> for Message {
 }
 
 impl CommandMessage {
-    pub fn serialize(&self) -> Vec<u8> {
+    pub fn write(&self, w: &mut MessageWriter) {
         use CommandMessage::*;
         match &self {
-            UndoPoint(user_id) => MessageWriter::with_expected_payload(128, *user_id, 0).into(),
-            CanvasResize(user_id, b) => b.serialize(*user_id),
-            LayerCreate(user_id, b) => b.serialize(*user_id),
-            LayerAttributes(user_id, b) => b.serialize(*user_id),
-            LayerRetitle(user_id, b) => b.serialize(*user_id),
-            LayerOrder(user_id, b) => MessageWriter::single(133, *user_id, b),
-            LayerDelete(user_id, b) => b.serialize(*user_id),
-            LayerVisibility(user_id, b) => b.serialize(*user_id),
-            PutImage(user_id, b) => b.serialize(*user_id),
-            FillRect(user_id, b) => b.serialize(*user_id),
-            PenUp(user_id) => MessageWriter::with_expected_payload(140, *user_id, 0).into(),
-            AnnotationCreate(user_id, b) => b.serialize(*user_id),
-            AnnotationReshape(user_id, b) => b.serialize(*user_id),
-            AnnotationEdit(user_id, b) => b.serialize(*user_id),
-            AnnotationDelete(user_id, b) => MessageWriter::single(144, *user_id, *b),
-            PutTile(user_id, b) => b.serialize(*user_id),
-            CanvasBackground(user_id, b) => MessageWriter::single(147, *user_id, b),
-            DrawDabsClassic(user_id, b) => b.serialize(*user_id),
-            DrawDabsPixel(user_id, b) => b.serialize(*user_id),
-            DrawDabsPixelSquare(user_id, b) => b.serialize(*user_id),
-            Undo(user_id, b) => b.serialize(*user_id),
+            UndoPoint(user_id) => w.write_header(128, *user_id, 0),
+            CanvasResize(user_id, b) => b.serialize(w, *user_id),
+            LayerCreate(user_id, b) => b.serialize(w, *user_id),
+            LayerAttributes(user_id, b) => b.serialize(w, *user_id),
+            LayerRetitle(user_id, b) => b.serialize(w, *user_id),
+            LayerOrder(user_id, b) => w.single(133, *user_id, b),
+            LayerDelete(user_id, b) => b.serialize(w, *user_id),
+            LayerVisibility(user_id, b) => b.serialize(w, *user_id),
+            PutImage(user_id, b) => b.serialize(w, *user_id),
+            FillRect(user_id, b) => b.serialize(w, *user_id),
+            PenUp(user_id) => w.write_header(140, *user_id, 0),
+            AnnotationCreate(user_id, b) => b.serialize(w, *user_id),
+            AnnotationReshape(user_id, b) => b.serialize(w, *user_id),
+            AnnotationEdit(user_id, b) => b.serialize(w, *user_id),
+            AnnotationDelete(user_id, b) => w.single(144, *user_id, *b),
+            PutTile(user_id, b) => b.serialize(w, *user_id),
+            CanvasBackground(user_id, b) => w.single(147, *user_id, b),
+            DrawDabsClassic(user_id, b) => b.serialize(w, *user_id),
+            DrawDabsPixel(user_id, b) => b.serialize(w, *user_id),
+            DrawDabsPixelSquare(user_id, b) => b.serialize(w, *user_id),
+            Undo(user_id, b) => b.serialize(w, *user_id),
         }
     }
 
@@ -2106,12 +2058,18 @@ impl Message {
     }
 
     pub fn serialize(&self) -> Vec<u8> {
+        let mut w = MessageWriter::new();
+        self.write(&mut w);
+        w.into()
+    }
+
+    pub fn write(&self, w: &mut MessageWriter) {
         use Message::*;
         match &self {
-            Control(m) => m.serialize(),
-            ServerMeta(m) => m.serialize(),
-            ClientMeta(m) => m.serialize(),
-            Command(m) => m.serialize(),
+            Control(m) => m.write(w),
+            ServerMeta(m) => m.write(w),
+            ClientMeta(m) => m.write(w),
+            Command(m) => m.write(w),
         }
     }
 

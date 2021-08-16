@@ -234,34 +234,37 @@ impl<'a> MessageReader<'a> {
 
 pub struct MessageWriter {
     buf: Vec<u8>,
+    expecting: i32,
 }
 
 impl MessageWriter {
-    pub fn with_expected_payload(
-        message_type: u8,
-        user_id: u8,
-        payload_len: usize,
-    ) -> MessageWriter {
-        debug_assert!(payload_len <= 0xffff);
-        let mut w = MessageWriter {
-            buf: Vec::with_capacity(HEADER_LEN + payload_len),
-        };
-        w.write_header(message_type, user_id, payload_len as u16);
-        w
+    pub fn new() -> MessageWriter {
+        MessageWriter {
+            buf: Vec::new(),
+            expecting: 0,
+        }
     }
 
-    pub fn single<T: Serializable>(message_type: u8, user_id: u8, value: T) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload(message_type, user_id, value.len());
-        w.write(value);
-        w.into()
+    /// Write a message whose payload consists of a single value
+    pub fn single<T: Serializable>(&mut self, message_type: u8, user_id: u8, value: T) {
+        self.write_header(message_type, user_id, value.len());
+        self.write(value);
     }
 
+    /// Write a payload value
     pub fn write<T: Serializable>(&mut self, value: T) {
         value.write(&mut self.buf);
+        self.expecting -= value.len() as i32;
+        assert!(self.expecting >= 0);
     }
 
-    pub fn write_header(&mut self, message_type: u8, user_id: u8, payload_len: u16) {
-        self.write(payload_len);
+    /// Write a message header. Previous message (if any) must have been completed.
+    pub fn write_header(&mut self, message_type: u8, user_id: u8, payload_len: usize) {
+        assert!(payload_len <= 0xffff);
+        assert!(self.expecting == 0);
+        // TODO reserve known capacity?
+        self.expecting = 4 + payload_len as i32;
+        self.write(payload_len as u16);
         self.write(message_type);
         self.write(user_id);
     }
@@ -269,7 +272,7 @@ impl MessageWriter {
 
 impl Into<Vec<u8>> for MessageWriter {
     fn into(self) -> Vec<u8> {
-        debug_assert!(self.buf.len() <= (HEADER_LEN + 0xffff));
+        assert!(self.expecting == 0);
         self.buf
     }
 }
@@ -302,16 +305,17 @@ mod tests {
 
     #[test]
     fn test_writer() {
-        let mut writer = MessageWriter { buf: Vec::new() };
-        writer.write(0xff_u8);
-        writer.write(0xa0b0_u16);
-        writer.write(3_u32);
-        writer.write(5_u8);
-        writer.write(&String::from("hello"));
-        writer.write(5_u8);
-        writer.write(&b"by\0es".to_vec());
-        writer.write(&[1u16, 2u16].to_vec());
-        writer.write(&String::from("world"));
+        let mut writer = MessageWriter::new();
+        writer.expecting = 28;
+        writer.write(0xff_u8);     // +1
+        writer.write(0xa0b0_u16);  // +2
+        writer.write(3_u32);       // +4
+        writer.write(5_u8);        // +1
+        writer.write(&String::from("hello")); // +5
+        writer.write(5_u8);        // +1
+        writer.write(&b"by\0es".to_vec()); // +5
+        writer.write(&[1u16, 2u16].to_vec()); // +4
+        writer.write(&String::from("world")); // +5
 
         let result: Vec<u8> = writer.into();
         let expected = b"\xff\xa0\xb0\0\0\0\x03\x05hello\x05by\0es\x00\x01\x00\x02world";
@@ -320,7 +324,9 @@ mod tests {
 
     #[test]
     fn test_single_writer() {
-        let msg = MessageWriter::single(1, 2, &String::from("Hello"));
+        let mut w = MessageWriter::new();
+        w.single(1, 2, &String::from("Hello"));
+        let msg: Vec<u8> = w.into();
 
         let mut reader = MessageReader::new(&msg);
         assert_eq!(reader.read::<u16>(), 5);

@@ -26,7 +26,7 @@ use dpcore::protocol::message::*;
 fn test_message_serialization() {
     let test_data = vec![
         (
-            b"\x00\x0b\x20\x01\x03\x05helloworld".to_vec(),
+            b"\x00\x0c\x20\x01\x03\x05helloworld".to_vec(),
             Message::from(ServerMetaMessage::Join(
                 1,
                 JoinMessage {

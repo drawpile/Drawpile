@@ -87,8 +87,8 @@ impl {{ message.name }}Message {
         })
     }
 
-    fn serialize(&self, user_id: u8) -> Vec<u8> {
-        let mut w = MessageWriter::with_expected_payload({{ message.id }}, user_id, {{ payload_len(message) }});
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header({{ message.id }}, user_id, {{ payload_len(message) }});
         {% for field in message.fields %}
         {% if field.subfields %}
         for item in self.{{ field.name }}.iter() {
@@ -103,8 +103,6 @@ impl {{ message.name }}Message {
         w.{{ write_field(field.field_type, 'self.' + field.name) }};
         {% endif %}{# struct or normal field#}
         {% endfor %}{# field in message.fields #}
-
-        w.into()
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
@@ -178,16 +176,16 @@ pub enum Message {
 
 {% for message_type in message_types %}
 impl {{ message_type }}Message {
-    pub fn serialize(&self) -> Vec<u8> {
+    pub fn write(&self, w: &mut MessageWriter) {
         use {{ message_type }}Message::*;
         match &self {
             {% for message in messages %}{% if message.message_type == message_type %}
             {% if message.alias or message.fields|length > 1 %}
-            {{ message.name }}(user_id, b) => b.serialize(*user_id),
+            {{ message.name }}(user_id, b) => b.serialize(w, *user_id),
             {% elif message.fields %}
-            {{ message.name }}(user_id, b) => MessageWriter::single({{ message.id }}, *user_id, {{ deref_primitive(message.fields[0]) }}b),
+            {{ message.name }}(user_id, b) => w.single({{ message.id }}, *user_id, {{ deref_primitive(message.fields[0]) }}b),
             {% else %}
-            {{ message.name }}(user_id) => MessageWriter::with_expected_payload({{ message.id }}, *user_id, 0).into(),
+            {{ message.name }}(user_id) => w.write_header({{ message.id }}, *user_id, 0),
             {% endif %}
             {% endif %}{% endfor %}{# message in messages #}
         }
@@ -287,9 +285,15 @@ impl Message {
     }
 
     pub fn serialize(&self) -> Vec<u8> {
+        let mut w = MessageWriter::new();
+        self.write(&mut w);
+        w.into()
+    }
+
+    pub fn write(&self, w: &mut MessageWriter) {
         use Message::*;
         match &self {
-            {% for mt in message_types %}{{ mt }}(m) => m.serialize(),{% endfor %}
+            {% for mt in message_types %}{{ mt }}(m) => m.write(w),{% endfor %}
         }
     }
 
