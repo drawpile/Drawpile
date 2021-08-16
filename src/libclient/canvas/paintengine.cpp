@@ -93,10 +93,8 @@ PaintEngine::~PaintEngine()
 void PaintEngine::reset()
 {
 	rustpile::paintengine_free(m_pe);
-	m_pe = rustpile::paintengine_new();
-
-	rustpile::paintengine_register_callbacks(
-		m_pe, this,
+	m_pe = rustpile::paintengine_new(
+		this,
 		paintEngineAreaChanged,
 		paintEngineResized,
 		paintEngineLayersChanged

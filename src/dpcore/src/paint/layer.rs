@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use std::convert::TryFrom;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use super::aoe::{AoE, TileMap};
 use super::blendmode::Blendmode;
@@ -50,8 +50,8 @@ pub struct Layer {
     pub blendmode: Blendmode,
     width: u32,
     height: u32,
-    tiles: Rc<Vec<Tile>>,
-    sublayers: Vec<Rc<Layer>>,
+    tiles: Arc<Vec<Tile>>,
+    sublayers: Vec<Arc<Layer>>,
 }
 
 impl Layer {
@@ -67,7 +67,7 @@ impl Layer {
             blendmode: Blendmode::Normal,
             width,
             height,
-            tiles: Rc::new(vec![
+            tiles: Arc::new(vec![
                 Tile::new(&fill, 0);
                 (Tile::div_up(width) * Tile::div_up(height)) as usize
             ]),
@@ -86,7 +86,7 @@ impl Layer {
 
         let imagerect = Rectangle::new(0, 0, width as i32, height as i32);
 
-        let tilevec = Rc::make_mut(&mut layer.tiles);
+        let tilevec = Arc::make_mut(&mut layer.tiles);
         for ty in 0..ytiles {
             for tx in 0..xtiles {
                 let srcrect = Rectangle::new(
@@ -184,23 +184,23 @@ impl Layer {
         assert!(id != 0, "Sublayer ID 0 is not allowed");
 
         if let Some(i) = self.sublayers.iter().position(|sl| sl.id == id) {
-            return Rc::make_mut(&mut self.sublayers[i]);
+            return Arc::make_mut(&mut self.sublayers[i]);
         }
-        self.sublayers.push(Rc::new(Layer::new(
+        self.sublayers.push(Arc::new(Layer::new(
             id,
             self.width,
             self.height,
             &Color::TRANSPARENT,
         )));
         let last = self.sublayers.len() - 1;
-        Rc::make_mut(&mut self.sublayers[last])
+        Arc::make_mut(&mut self.sublayers[last])
     }
 
     /// Find and remove a sublayer with the given ID (if it exists)
     ///
     /// Note: you should not typically need to call this directly.
     /// Instead, use `merge_sublayer` or `remove_sublayer` from `editlayer` module
-    pub fn take_sublayer(&mut self, id: LayerID) -> Option<Rc<Layer>> {
+    pub fn take_sublayer(&mut self, id: LayerID) -> Option<Arc<Layer>> {
         if let Some(i) = self.sublayers.iter().position(|sl| sl.id == id) {
             Some(self.sublayers.remove(i))
         } else {
@@ -345,7 +345,7 @@ impl Layer {
         debug_assert!(i * TILE_SIZE < self.width);
         debug_assert!(j * TILE_SIZE < self.height);
         let xtiles = Tile::div_up(self.width);
-        let v = Rc::make_mut(&mut self.tiles);
+        let v = Arc::make_mut(&mut self.tiles);
         &mut v[(j * xtiles + i) as usize]
     }
 
@@ -354,7 +354,7 @@ impl Layer {
         debug_assert!(i * TILE_SIZE < self.width);
         debug_assert!(j * TILE_SIZE < self.height);
         let xtiles = Tile::div_up(self.width);
-        let v = Rc::make_mut(&mut self.tiles);
+        let v = Arc::make_mut(&mut self.tiles);
         v[(j * xtiles + i) as usize] = tile;
     }
 
@@ -368,7 +368,7 @@ impl Layer {
     /// You normally shouldn't use this directly. Instead, use the
     /// functions in `editlayer` module.
     pub fn tilevec_mut(&mut self) -> &mut Vec<Tile> {
-        Rc::make_mut(&mut self.tiles)
+        Arc::make_mut(&mut self.tiles)
     }
 
     /// Return a mutable iterator to the tiles that intersect the given
@@ -432,7 +432,7 @@ impl Layer {
             // entire vector anyway and an optimize call is cheap enough
             // that there's no point to the extra check.
             _ => {
-                Rc::make_mut(&mut self.tiles)
+                Arc::make_mut(&mut self.tiles)
                     .iter_mut()
                     .for_each(|t| t.optimize());
             }
@@ -441,7 +441,7 @@ impl Layer {
 
     /// Do a shallow comparison between these layers and return the difference
     pub fn compare(&self, other: &Layer) -> AoE {
-        if Rc::ptr_eq(&self.tiles, &other.tiles) {
+        if Arc::ptr_eq(&self.tiles, &other.tiles) {
             return AoE::Nothing;
         }
         if self.width != other.width || self.height != other.height {
@@ -472,7 +472,7 @@ impl Layer {
 
         let new_tiles = if let Some(c) = self.solid_color() {
             // The fastest case: this layer is filled with solid color
-            Rc::new(vec![
+            Arc::new(vec![
                 Tile::new(&c, 0);
                 (Tile::div_up(new_width) * Tile::div_up(new_height))
                     as usize
@@ -494,18 +494,18 @@ impl Layer {
             sublayers: self
                 .sublayers
                 .iter()
-                .map(|sl| Rc::new(sl.resized(top, right, bottom, left)))
+                .map(|sl| Arc::new(sl.resized(top, right, bottom, left)))
                 .collect(),
             ..*self
         }
     }
 
-    fn resized_slow(&self, offx: i32, offy: i32, w: u32, h: u32) -> Rc<Vec<Tile>> {
+    fn resized_slow(&self, offx: i32, offy: i32, w: u32, h: u32) -> Arc<Vec<Tile>> {
         let oldxtiles = Tile::div_up(self.width) as i32;
         let newxtiles = Tile::div_up(w) as i32;
         let newytiles = Tile::div_up(h) as i32;
-        let mut new_vec = Rc::new(vec![Tile::Blank; (newxtiles * newytiles) as usize]);
-        let tiles = Rc::make_mut(&mut new_vec);
+        let mut new_vec = Arc::new(vec![Tile::Blank; (newxtiles * newytiles) as usize]);
+        let tiles = Arc::make_mut(&mut new_vec);
 
         // Iterate through the original image. Most of the time, the canvas
         // is being expanded so this is the set of tiles we'd iterate over anyway.
@@ -565,19 +565,19 @@ impl Layer {
         new_vec
     }
 
-    fn resized_fast(&self, offx: i32, offy: i32, w: u32, h: u32) -> Rc<Vec<Tile>> {
+    fn resized_fast(&self, offx: i32, offy: i32, w: u32, h: u32) -> Arc<Vec<Tile>> {
         debug_assert!(offx % TILE_SIZEI == 0);
         debug_assert!(offy % TILE_SIZEI == 0);
         let oldxtiles = Tile::div_up(self.width) as i32;
         let oldytiles = Tile::div_up(self.height) as i32;
         let newxtiles = Tile::div_up(w) as i32;
         let newytiles = Tile::div_up(h) as i32;
-        let mut new_vec = Rc::new(vec![Tile::Blank; (newxtiles * newytiles) as usize]);
+        let mut new_vec = Arc::new(vec![Tile::Blank; (newxtiles * newytiles) as usize]);
 
         let xt_off = offx / TILE_SIZEI;
         let yt_off = offy / TILE_SIZEI;
 
-        let tiles = Rc::make_mut(&mut new_vec);
+        let tiles = Arc::make_mut(&mut new_vec);
 
         for y in yt_off.max(0)..newytiles.min(oldytiles + yt_off) {
             let sy = y - yt_off;
@@ -592,7 +592,7 @@ impl Layer {
 
     #[cfg(test)]
     fn refcount(&self) -> usize {
-        Rc::strong_count(&self.tiles) + Rc::weak_count(&self.tiles)
+        Arc::strong_count(&self.tiles) + Arc::weak_count(&self.tiles)
     }
 }
 

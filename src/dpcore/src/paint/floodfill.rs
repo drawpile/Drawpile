@@ -24,7 +24,7 @@ use super::color::{Color, Pixel, ALPHA_CHANNEL};
 use super::tile::{Tile, TILE_SIZE};
 use super::{Image, Layer, LayerID, LayerStack, Rectangle};
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct FloodFillResult {
     pub image: Image,
@@ -193,7 +193,7 @@ impl<'a> ScratchLayer<'a> {
                 tx,
                 ty,
                 if self.sample_merged {
-                    Tile::Bitmap(Rc::new(self.image.flatten_tile(tx, ty)))
+                    Tile::Bitmap(Arc::new(self.image.flatten_tile(tx, ty)))
                 } else {
                     self.source_layer.tile(tx, ty).clone()
                 },

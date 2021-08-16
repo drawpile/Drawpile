@@ -172,19 +172,13 @@ void brushpreview_paint(const BrushPreview *bp,
                         void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
 
 /// Construct a new paint engine with an empty canvas.
-PaintEngine *paintengine_new();
+PaintEngine *paintengine_new(void *ctx,
+                             NotifyChangesCallback changes,
+                             NotifyResizeCallback resizes,
+                             NotifyLayerListCallback layers);
 
-/// Delete a paint engine instance
+/// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);
-
-/// Register callback functions for notifying canvas view of changes
-///
-/// The paintengine can only be observed by one view at a time.
-void paintengine_register_callbacks(PaintEngine *dp,
-                                    void *ctx,
-                                    NotifyChangesCallback changes,
-                                    NotifyResizeCallback resizes,
-                                    NotifyLayerListCallback layers);
 
 /// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);

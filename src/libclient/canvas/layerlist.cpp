@@ -28,8 +28,6 @@
 #include <QImage>
 #include <QRegularExpression>
 
-#include <iostream>
-
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
@@ -245,11 +243,11 @@ void LayerListModel::reorderLayers(QList<uint16_t> neworder)
 	emit layersReordered();
 }
 
-void LayerListModel::setLayers(const QVector<LayerListItem> &items)
+void LayerListModel::setLayers(QVector<LayerListItem> items)
 {
 	// See if there are any new layers we should autoselect
 	int autoselect = -1;
-	std::cout <<"Checking new layers, my id is " << int(m_myId) << std::endl;
+
 	if(m_items.size() < items.size()) {
 		for(const LayerListItem &newItem : items) {
 			// O(n²) loop but the number of layers is typically small enough that

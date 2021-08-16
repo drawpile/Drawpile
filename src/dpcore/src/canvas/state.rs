@@ -34,11 +34,11 @@ use crate::protocol::message::*;
 use std::convert::TryFrom;
 use std::mem;
 use std::ops::BitOrAssign;
-use std::rc::Rc;
+use std::sync::Arc;
 use tracing::{error, warn};
 
 pub struct CanvasState {
-    layerstack: Rc<LayerStack>,
+    layerstack: Arc<LayerStack>,
     history: History,
     brushcache: ClassicBrushCache,
     localfork: LocalFork,
@@ -79,6 +79,14 @@ impl CanvasStateChange {
             annotations_changed: true,
         }
     }
+
+    pub fn has_any(&self) -> bool {
+        match &self.aoe {
+            AoE::Nothing => {},
+            _ => { return true; }
+        };
+        return self.layers_changed | self.annotations_changed;
+    }
 }
 
 impl From<AoE> for CanvasStateChange {
@@ -103,7 +111,7 @@ impl BitOrAssign for CanvasStateChange {
 impl CanvasState {
     pub fn new() -> CanvasState {
         CanvasState {
-            layerstack: Rc::new(LayerStack::new(0, 0)),
+            layerstack: Arc::new(LayerStack::new(0, 0)),
             history: History::new(),
             brushcache: ClassicBrushCache::new(),
             localfork: LocalFork::new().set_fallbehind(1000),
@@ -113,6 +121,10 @@ impl CanvasState {
 
     pub fn layerstack(&self) -> &LayerStack {
         &self.layerstack
+    }
+
+    pub fn arc_layerstack(&self) -> Arc<LayerStack> {
+        self.layerstack.clone()
     }
 
     /// Receive a message from the canonical session history and execute it
@@ -242,11 +254,11 @@ impl CanvasState {
         // this is necesary at all, but we can just as well simply
         // not send unnecessary PenUps.
 
-        Rc::make_mut(&mut self.layerstack)
+        Arc::make_mut(&mut self.layerstack)
             .iter_layers_mut()
             .filter(|l| l.has_sublayer(sublayer_id)) // avoid unnecessary clones
             .fold(AoE::Nothing, |aoe, l| {
-                aoe.merge(editlayer::merge_sublayer(Rc::make_mut(l), sublayer_id))
+                aoe.merge(editlayer::merge_sublayer(Arc::make_mut(l), sublayer_id))
             })
     }
 
@@ -257,7 +269,7 @@ impl CanvasState {
             .layerstack
             .resized(msg.top, msg.right, msg.bottom, msg.left)
         {
-            self.layerstack = Rc::new(ls);
+            self.layerstack = Arc::new(ls);
             AoE::Resize(msg.left, msg.top, original_size)
         } else {
             warn!("Invalid resize: {:?}", msg);
@@ -282,7 +294,7 @@ impl CanvasState {
         };
 
         if let Some(layer) =
-            Rc::make_mut(&mut self.layerstack).add_layer(msg.id as LayerID, fill.clone(), pos)
+            Arc::make_mut(&mut self.layerstack).add_layer(msg.id as LayerID, fill.clone(), pos)
         {
             layer.title = msg.name.clone();
 
@@ -306,7 +318,7 @@ impl CanvasState {
     }
 
     fn handle_layer_attributes(&mut self, msg: &LayerAttributesMessage) -> CanvasStateChange {
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
             let aoe = editlayer::change_attributes(
                 layer,
                 msg.sublayer as LayerID,
@@ -324,7 +336,7 @@ impl CanvasState {
     }
 
     fn handle_layer_retitle(&mut self, msg: &LayerRetitleMessage) -> CanvasStateChange {
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
             layer.title = msg.title.clone();
             CanvasStateChange::layers(AoE::Nothing)
         } else {
@@ -335,13 +347,13 @@ impl CanvasState {
 
     fn handle_layer_order(&mut self, new_order: &[u16]) -> CanvasStateChange {
         let order: Vec<LayerID> = new_order.iter().map(|i| *i as LayerID).collect();
-        self.layerstack = Rc::new(self.layerstack.reordered(&order));
+        self.layerstack = Arc::new(self.layerstack.reordered(&order));
 
         CanvasStateChange::layers(AoE::Everything)
     }
 
     fn handle_layer_delete(&mut self, msg: &LayerDeleteMessage) -> CanvasStateChange {
-        let stack = Rc::make_mut(&mut self.layerstack);
+        let stack = Arc::make_mut(&mut self.layerstack);
         let id = msg.id as LayerID;
         let aoe = if msg.merge {
             if let Some(below) = stack.find_layer_below(id) {
@@ -371,7 +383,7 @@ impl CanvasState {
         msg: &LayerVisibilityMessage,
     ) -> CanvasStateChange {
         if user == self.local_user_id {
-            if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID)
+            if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID)
             {
                 layer.hidden = !msg.visible;
                 return CanvasStateChange::layers(layer.nonblank_tilemap().into());
@@ -381,7 +393,7 @@ impl CanvasState {
     }
 
     fn handle_annotation_create(&mut self, msg: &AnnotationCreateMessage) -> CanvasStateChange {
-        Rc::make_mut(&mut self.layerstack).add_annotation(
+        Arc::make_mut(&mut self.layerstack).add_annotation(
             msg.id,
             Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32),
         );
@@ -389,14 +401,14 @@ impl CanvasState {
     }
 
     fn handle_annotation_reshape(&mut self, msg: &AnnotationReshapeMessage) -> CanvasStateChange {
-        if let Some(a) = Rc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
+        if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.rect = Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32);
         }
         CanvasStateChange::annotations()
     }
 
     fn handle_annotation_edit(&mut self, msg: &AnnotationEditMessage) -> CanvasStateChange {
-        if let Some(a) = Rc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
+        if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.background = Color::from_argb32(msg.bg);
             a.protect = (msg.flags & 0x01) != 0;
             a.valign = match msg.flags & 0x06 {
@@ -411,12 +423,12 @@ impl CanvasState {
     }
 
     fn handle_annotation_delete(&mut self, id: AnnotationID) -> CanvasStateChange {
-        Rc::make_mut(&mut self.layerstack).remove_annotation(id);
+        Arc::make_mut(&mut self.layerstack).remove_annotation(id);
         CanvasStateChange::annotations()
     }
 
     fn handle_puttile(&mut self, user_id: UserID, msg: &PutTileMessage) -> AoE {
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             if let Some(tile) = compression::decompress_tile(&msg.image, user_id) {
                 return editlayer::put_tile(
@@ -435,7 +447,7 @@ impl CanvasState {
     }
 
     fn handle_putimage(&mut self, user_id: UserID, msg: &PutImageMessage) -> AoE {
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             if msg.w == 0 || msg.h == 0 {
                 warn!("PutImage: zero size!");
@@ -471,7 +483,7 @@ impl CanvasState {
 
     fn handle_background(&mut self, pixels: &[u8]) -> AoE {
         if let Some(tile) = compression::decompress_tile(pixels, 0) {
-            Rc::make_mut(&mut self.layerstack).background = tile;
+            Arc::make_mut(&mut self.layerstack).background = tile;
             AoE::Everything
         } else {
             AoE::Nothing
@@ -484,7 +496,7 @@ impl CanvasState {
             return AoE::Nothing;
         }
 
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             let mode = Blendmode::try_from(msg.mode).unwrap_or_default();
             let aoe = editlayer::fill_rect(
@@ -507,7 +519,7 @@ impl CanvasState {
     }
 
     fn handle_drawdabs_classic(&mut self, user: UserID, msg: &DrawDabsClassicMessage) -> AoE {
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             brushes::drawdabs_classic(layer, user, &msg, &mut self.brushcache)
         } else {
@@ -522,7 +534,7 @@ impl CanvasState {
         msg: &DrawDabsPixelMessage,
         square: bool,
     ) -> AoE {
-        if let Some(layer) = Rc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             brushes::drawdabs_pixel(layer, user, &msg, square)
         } else {

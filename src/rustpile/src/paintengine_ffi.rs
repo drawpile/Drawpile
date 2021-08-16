@@ -22,76 +22,176 @@
 
 use super::adapters::LayerInfo;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
-use dpcore::paint::{AoE, FlattenedTileIterator, Rectangle, Size};
-use dpcore::protocol::message::Message;
+use dpcore::paint::{LayerStack, AoE, FlattenedTileIterator, Rectangle, Size};
+use dpcore::protocol::message::{Message, CommandMessage};
 
 use core::ffi::c_void;
-use std::ptr;
-use std::slice;
+use std::{slice, thread};
+use std::sync::{Arc, Mutex, mpsc};
+use std::sync::mpsc::{Sender, Receiver};
 
-type NotifyChangesCallback = Option<extern "C" fn(ctx: *mut c_void, area: Rectangle)>;
-type NotifyResizeCallback =
-    Option<extern "C" fn(ctx: *mut c_void, x_offset: i32, y_offset: i32, old_size: Size)>;
+use tracing::{error, warn};
 
-type NotifyLayerListCallback =
-    Option<extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize)>;
+type NotifyChangesCallback = extern "C" fn(ctx: *mut c_void, area: Rectangle);
+type NotifyResizeCallback = extern "C" fn(ctx: *mut c_void, x_offset: i32, y_offset: i32, old_size: Size);
+type NotifyLayerListCallback = extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize);
 
-/// The paint engine.
-pub struct PaintEngine {
-    canvas: CanvasState,
+/// A copy of the layerstack to use in the main thread while the
+/// paint engine is busy
+struct ViewCache {
+    layerstack: Arc<LayerStack>,
     unrefreshed_area: AoE,
+}
 
-    callback_context_object: *mut c_void,
-    notify_changes_callback: NotifyChangesCallback,
-    notify_resize_callback: NotifyResizeCallback,
-    notify_layerlist_callback: NotifyLayerListCallback,
+/// The callbacks used to (asynchronously) notify the view layer of
+/// changes to the canvas.
+/// Note that these callbacks are called in the *paint engine thread*.
+/// They should only be used to post events to the main thread's event loop.
+struct NotificationCallbacks {
+    context_object: *mut c_void,
+    notify_changes: NotifyChangesCallback,
+    notify_resize: NotifyResizeCallback,
+    notify_layerlist: NotifyLayerListCallback,
+}
+
+// Unsafe due to the c_void pointer
+unsafe impl Send for NotificationCallbacks {}
+
+/// Commands sent to the paint engine
+enum PaintEngineCommand {
+    LocalMessage(CommandMessage),
+    RemoteMessage(CommandMessage),
+}
+
+/// The paint engine
+pub struct PaintEngine {
+    /// A copy of the canvas state for read-only use in the view layer
+    viewcache: Arc<Mutex<ViewCache>>,
+
+    /// A channel for sending commands to the paint engine
+    engine_channel: Sender<PaintEngineCommand>,
+
+    /// The paint engine thread's handle
+    thread_handle: thread::JoinHandle<()>,
+}
+
+fn run_paintengine(viewcache: Arc<Mutex<ViewCache>>, channel: Receiver<PaintEngineCommand>, callbacks: NotificationCallbacks) {
+    let mut canvas = CanvasState::new();
+
+    loop {
+        // Wait for a command
+        let mut cmd = match channel.recv() {
+            Ok(m) => m,
+            Err(_) => { return; },
+        };
+
+        let mut changes = CanvasStateChange::nothing();
+
+        // Execute the received command and see if there are more queued
+        loop {
+            use PaintEngineCommand::*;
+            match cmd {
+                LocalMessage(m) => { changes |= canvas.receive_local_message(&m); }
+                RemoteMessage(m) => { changes |= canvas.receive_message(&m); }
+            };
+
+            cmd = match channel.try_recv() {
+                Ok(m) => m,
+                Err(mpsc::TryRecvError::Empty) => { break; },
+                Err(mpsc::TryRecvError::Disconnected) => { return; },
+            };
+        }
+
+        // Notify changes
+        if changes.has_any() {
+            {
+                let mut vc = viewcache.lock().unwrap();
+                vc.layerstack = canvas.arc_layerstack();
+
+                match changes.aoe {
+                    AoE::Nothing => {}
+                    AoE::Resize(rx, ry, original_size) => {
+                        vc.unrefreshed_area = AoE::Everything;
+                        (callbacks.notify_resize)(callbacks.context_object, rx, ry, original_size);
+                    }
+                    _ => {
+                        let canvas_size = canvas.layerstack().size();
+                        if let Some(bounds) = changes.aoe.bounds(canvas_size) {
+                            let unrefreshed_area = std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing);
+                            vc.unrefreshed_area = unrefreshed_area.merge(changes.aoe);
+                            (callbacks.notify_changes)(callbacks.context_object, bounds);
+                        }
+                    }
+                }
+            }
+
+            if changes.layers_changed {
+                let layers: Vec<LayerInfo> = canvas
+                    .layerstack()
+                    .iter_layers()
+                    .map(|l| l.into())
+                    .collect();
+                (callbacks.notify_layerlist)(callbacks.context_object, layers.as_ptr(), layers.len());
+            }
+
+            if changes.annotations_changed {}
+        }
+    }
 }
 
 /// Construct a new paint engine with an empty canvas.
 #[no_mangle]
-pub extern "C" fn paintengine_new() -> *mut PaintEngine {
-    let dp = Box::new(PaintEngine {
-        canvas: CanvasState::new(),
+pub extern "C" fn paintengine_new(
+    ctx: *mut c_void,
+    changes: NotifyChangesCallback,
+    resizes: NotifyResizeCallback,
+    layers: NotifyLayerListCallback,
+) -> *mut PaintEngine {
+    let viewcache = Arc::new(Mutex::new(ViewCache{
+        layerstack: Arc::new(LayerStack::new(0, 0)),
         unrefreshed_area: AoE::Nothing,
-        callback_context_object: ptr::null_mut(),
-        notify_changes_callback: None,
-        notify_resize_callback: None,
-        notify_layerlist_callback: None,
+    }));
+
+    let callbacks = NotificationCallbacks {
+        context_object: ctx,
+        notify_changes: changes,
+        notify_resize: resizes,
+        notify_layerlist: layers,
+    };
+
+    let (sender, receiver) = mpsc::channel::<PaintEngineCommand>();
+
+    let dp = Box::new(PaintEngine {
+        viewcache: viewcache.clone(),
+        engine_channel: sender,
+        thread_handle: thread::spawn(move || {
+            run_paintengine(viewcache, receiver, callbacks);
+        }),
     });
 
     Box::into_raw(dp)
 }
 
-/// Delete a paint engine instance
+/// Delete a paint engine instance and wait for its thread to finish
 #[no_mangle]
 pub extern "C" fn paintengine_free(dp: *mut PaintEngine) {
     if !dp.is_null() {
-        let dp = unsafe { Box::from_raw(dp) };
-        drop(dp);
-    }
-}
+        let handle = {
+            let dp = unsafe { Box::from_raw(dp) };
+            dp.thread_handle
+        };
 
-/// Register callback functions for notifying canvas view of changes
-///
-/// The paintengine can only be observed by one view at a time.
-#[no_mangle]
-pub extern "C" fn paintengine_register_callbacks(
-    dp: &mut PaintEngine,
-    ctx: *mut c_void,
-    changes: NotifyChangesCallback,
-    resizes: NotifyResizeCallback,
-    layers: NotifyLayerListCallback,
-) {
-    dp.callback_context_object = ctx;
-    dp.notify_changes_callback = changes;
-    dp.notify_resize_callback = resizes;
-    dp.notify_layerlist_callback = layers;
+        if let Err(err) = handle.join() {
+            error!("Paintengine thread exited with an error {:?}", err);
+        }
+    }
 }
 
 /// Get the current size of the canvas.
 #[no_mangle]
 pub extern "C" fn paintengine_canvas_size(dp: &PaintEngine) -> Size {
-    dp.canvas.layerstack().size()
+    let vc = dp.viewcache.lock().unwrap();
+    vc.layerstack.size()
 }
 
 /// Receive one or more messages
@@ -104,7 +204,6 @@ pub extern "C" fn paintengine_receive_messages(
     messages_len: usize,
 ) {
     let msgs = unsafe { slice::from_raw_parts(messages, messages_len) };
-    let mut changes = CanvasStateChange::nothing();
 
     // TODO loop and consume all messages, or specify that this function
     // only takes one.
@@ -112,11 +211,15 @@ pub extern "C" fn paintengine_receive_messages(
     let msg = Message::deserialize(msgs);
     match msg {
         Result::Ok(Message::Command(m)) => {
-            changes |= if local {
-                dp.canvas.receive_local_message(&m)
-            } else {
-                dp.canvas.receive_message(&m)
-            };
+            if let Err(err) = dp.engine_channel.send(
+                if local {
+                    PaintEngineCommand::LocalMessage(m)
+                } else {
+                    PaintEngineCommand::RemoteMessage(m)
+                }
+            ) {
+                warn!("Couldn't send command to paint engine thread {:?}", err);
+            }
         }
         Result::Ok(_) => {
             // other messages are ignored
@@ -126,32 +229,6 @@ pub extern "C" fn paintengine_receive_messages(
             panic!();
         }
     };
-
-    // Notify view layer of changed regions
-    // This doesn't immediately trigger a repaint if no view is observing the changed
-    // region. Repainting is lazy: changed tiles are not refreshed until they are actually
-    // being viewed.
-    match changes.aoe {
-        AoE::Nothing => {}
-        AoE::Resize(rx, ry, original_size) => {
-            dp.unrefreshed_area = AoE::Everything;
-            dp.notify_canvas_resize(rx, ry, original_size);
-        }
-        _ => {
-            let canvas_size = paintengine_canvas_size(dp);
-            if let Some(bounds) = changes.aoe.bounds(canvas_size) {
-                let unrefreshed_area = std::mem::replace(&mut dp.unrefreshed_area, AoE::Nothing);
-                dp.unrefreshed_area = unrefreshed_area.merge(changes.aoe);
-                dp.notify_changes(bounds);
-            }
-        }
-    }
-
-    if changes.layers_changed {
-        dp.notify_layerinfo();
-    }
-
-    if changes.annotations_changed {}
 }
 
 /// Paint all the changed tiles in the given area
@@ -169,52 +246,27 @@ pub extern "C" fn paintengine_paint_changes(
     rect: Rectangle,
     paint_func: extern "C" fn(ctx: *mut c_void, x: i32, y: i32, pixels: *const u8),
 ) {
+    let mut vc = dp.viewcache.lock().unwrap();
+
     let intersection = if rect.w < 0 {
         // We interpret an invalid rectangle to mean "refresh everything"
-        std::mem::replace(&mut dp.unrefreshed_area, AoE::Nothing)
+        std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing)
     } else {
-        let ls = dp.canvas.layerstack();
-        let rect = match rect.cropped(ls.size()) {
+        let ls = vc.layerstack.size();
+        let rect = match rect.cropped(ls) {
             Some(r) => r,
             None => {
                 return;
             }
         };
 
-        let unrefreshed_area = std::mem::replace(&mut dp.unrefreshed_area, AoE::Nothing);
-        let (remaining, intersection) = unrefreshed_area.diff_and_intersect(rect, ls.size());
-        dp.unrefreshed_area = remaining;
+        let unrefreshed_area = std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing);
+        let (remaining, intersection) = unrefreshed_area.diff_and_intersect(rect, ls);
+        vc.unrefreshed_area = remaining;
 
         intersection
     };
 
-    FlattenedTileIterator::new(&dp.canvas.layerstack(), intersection)
+    FlattenedTileIterator::new(&vc.layerstack, intersection)
         .for_each(|(x, y, t)| paint_func(ctx, x, y, t.pixels.as_ptr() as *const u8));
-}
-
-impl PaintEngine {
-    fn notify_changes(&self, bounds: Rectangle) {
-        if let Some(f) = self.notify_changes_callback {
-            f(self.callback_context_object, bounds);
-        }
-    }
-
-    fn notify_canvas_resize(&self, xoffset: i32, yoffset: i32, old_size: Size) {
-        if let Some(f) = self.notify_resize_callback {
-            f(self.callback_context_object, xoffset, yoffset, old_size);
-        }
-    }
-
-    fn notify_layerinfo(&self) {
-        if let Some(f) = self.notify_layerlist_callback {
-            let layers: Vec<LayerInfo> = self
-                .canvas
-                .layerstack()
-                .iter_layers()
-                .map(|l| l.into())
-                .collect();
-
-            f(self.callback_context_object, layers.as_ptr(), layers.len());
-        }
-    }
 }

@@ -151,7 +151,7 @@ public:
 	QString getAvailableLayerName(QString basename) const;
 
 public slots:
-	void setLayers(const QVector<LayerListItem> &items);
+	void setLayers(QVector<LayerListItem> items);
 
 signals:
 	void layersReordered();

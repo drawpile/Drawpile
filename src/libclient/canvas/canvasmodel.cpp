@@ -86,7 +86,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 #endif
 
 	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);
-	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers);
+	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers, Qt::QueuedConnection); // queued connection needs to be set explicitly here for some reason
 
 	updateLayerViewOptions();
 }

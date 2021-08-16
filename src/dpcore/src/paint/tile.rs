@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use std::fmt;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use super::color::*;
 use super::rectiter::{MutableRectIterator, RectIterator};
@@ -48,7 +48,7 @@ pub struct TileData {
 
 #[derive(Clone)]
 pub enum Tile {
-    Bitmap(Rc<TileData>),
+    Bitmap(Arc<TileData>),
     Blank,
 }
 
@@ -93,20 +93,20 @@ impl Tile {
         if p[ALPHA_CHANNEL] == 0 {
             Tile::Blank
         } else {
-            Tile::Bitmap(Rc::new(TileData::new(p, user)))
+            Tile::Bitmap(Arc::new(TileData::new(p, user)))
         }
     }
 
     // Construct a new tile filled with the given color.
     // A bitmap tile is constructed even if the color is transparent.
     pub fn new_solid(color: &Color, user: UserID) -> Tile {
-        Tile::Bitmap(Rc::new(TileData::new(color.as_pixel(), user)))
+        Tile::Bitmap(Arc::new(TileData::new(color.as_pixel(), user)))
     }
 
     pub fn from_data(data: &[Pixel], user: UserID) -> Tile {
         assert_eq!(data.len(), TILE_LENGTH, "Wrong tile data length");
-        let mut td = Rc::new(TileData::new(ZERO_PIXEL, user));
-        Rc::make_mut(&mut td).pixels.clone_from_slice(data);
+        let mut td = Arc::new(TileData::new(ZERO_PIXEL, user));
+        Arc::make_mut(&mut td).pixels.clone_from_slice(data);
         Tile::Bitmap(td)
     }
 
@@ -154,7 +154,7 @@ impl Tile {
                     if td.pixels.iter().all(|&p| p[ALPHA_CHANNEL] == 0) {
                         *self = Tile::Blank;
                     } else {
-                        Rc::make_mut(td).maybe_blank = false;
+                        Arc::make_mut(td).maybe_blank = false;
                     }
                 }
             }
@@ -178,7 +178,7 @@ impl Tile {
             match self {
                 Tile::Bitmap(td) => {
                     let pixel = color.as_pixel();
-                    let data = Rc::make_mut(td);
+                    let data = Arc::make_mut(td);
                     data.last_touched_by = user;
                     data.maybe_blank = false;
                     for i in data.pixels.iter_mut() {
@@ -196,7 +196,7 @@ impl Tile {
     pub fn merge(&mut self, other: &Tile, opacity: f32, mode: Blendmode) {
         if let Tile::Bitmap(o) = other {
             match self {
-                Tile::Bitmap(td) => Rc::make_mut(td).merge_data(o, opacity, mode),
+                Tile::Bitmap(td) => Arc::make_mut(td).merge_data(o, opacity, mode),
                 Tile::Blank => {
                     if mode.can_increase_opacity() {
                         if opacity == 1.0 {
@@ -240,7 +240,7 @@ impl Tile {
 
         match self {
             Tile::Bitmap(td) => {
-                let data = Rc::make_mut(td);
+                let data = Arc::make_mut(td);
                 data.maybe_blank |= maybe_erase;
                 MutableRectIterator::from_rectangle(&mut data.pixels, TILE_SIZE as usize, r)
             }
@@ -265,7 +265,7 @@ impl Tile {
         debug_assert!(y < TILE_SIZE);
         match self {
             Tile::Bitmap(td) => {
-                let data = Rc::make_mut(td);
+                let data = Arc::make_mut(td);
                 data.pixels[(y * TILE_SIZE + x) as usize] = px;
                 data.maybe_blank |= px == ZERO_PIXEL;
             }
@@ -281,7 +281,7 @@ impl Tile {
         use Tile::*;
         match (self, other) {
             (Blank, Blank) => true,
-            (Bitmap(a), Bitmap(b)) => Rc::ptr_eq(a, b),
+            (Bitmap(a), Bitmap(b)) => Arc::ptr_eq(a, b),
             (_, _) => false,
         }
     }
@@ -289,7 +289,7 @@ impl Tile {
     #[cfg(test)]
     pub fn refcount(&self) -> usize {
         match self {
-            Tile::Bitmap(d) => Rc::strong_count(&d) + Rc::weak_count(&d),
+            Tile::Bitmap(d) => Arc::strong_count(&d) + Arc::weak_count(&d),
             Tile::Blank => 0,
         }
     }
@@ -339,7 +339,7 @@ impl fmt::Debug for Tile {
                 d.pixels[0],
                 d.pixels[TILE_LENGTH - 1],
                 d.last_touched_by,
-                Rc::strong_count(&d)
+                Arc::strong_count(&d)
             ),
             Tile::Blank => write!(f, "Tile(blank)"),
         }

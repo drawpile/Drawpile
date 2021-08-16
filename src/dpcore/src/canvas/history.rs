@@ -23,7 +23,7 @@
 use crate::paint::{LayerStack, UserID};
 use crate::protocol::message::{CommandMessage, UNDO_DEPTH};
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 struct HistoryEntry {
     msg: CommandMessage,
@@ -39,7 +39,7 @@ enum UndoState {
 }
 
 struct Savepoint {
-    layerstack: Rc<LayerStack>,
+    layerstack: Arc<LayerStack>,
     seq_num: u32,
 }
 
@@ -138,7 +138,7 @@ impl History {
     /// Undo the given user's last undoable sequence.
     /// The messages are marked as undone and a snapshot of the canvas at some point prior to the undone sequence + messages that must
     /// be replayed are returned.
-    pub fn undo(&mut self, user: UserID) -> Option<(Rc<LayerStack>, Vec<CommandMessage>)> {
+    pub fn undo(&mut self, user: UserID) -> Option<(Arc<LayerStack>, Vec<CommandMessage>)> {
         // Step 1. Find the first not-undone UndoPoint belonging to this user,
         // starting from the end of the history.
         let oldest_up = self.oldest_undopoint_seqnum()?;
@@ -185,7 +185,7 @@ impl History {
     /// Undo the given user's last undoable sequence.
     /// The messages are marked as done and a snapshot of the canvas at some point prior to the undone sequence + messages that must
     /// be replayed are returned.
-    pub fn redo(&mut self, user: UserID) -> Option<(Rc<LayerStack>, Vec<CommandMessage>)> {
+    pub fn redo(&mut self, user: UserID) -> Option<(Arc<LayerStack>, Vec<CommandMessage>)> {
         // Step 1. Find the oldest undone undopoint
         let oldest_up = self.oldest_undopoint_seqnum()?;
 
@@ -228,7 +228,7 @@ impl History {
         Some((layerstack, replay))
     }
 
-    pub fn add_savepoint(&mut self, layerstack: Rc<LayerStack>) {
+    pub fn add_savepoint(&mut self, layerstack: Arc<LayerStack>) {
         if self.savepoints.last().map(|sp| sp.seq_num) != Some(self.sequence) {
             self.savepoints.push(Savepoint {
                 layerstack,
@@ -238,7 +238,7 @@ impl History {
     }
 
     /// Find a savepoint at or before this position and reset history to it.
-    pub fn reset_before(&mut self, pos: u32) -> Option<(Rc<LayerStack>, Vec<CommandMessage>)> {
+    pub fn reset_before(&mut self, pos: u32) -> Option<(Arc<LayerStack>, Vec<CommandMessage>)> {
         let savepoint = self.savepoints.iter().rfind(|sp| sp.seq_num <= pos)?;
 
         let replay = self

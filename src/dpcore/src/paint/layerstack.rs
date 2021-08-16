@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
@@ -29,8 +29,8 @@ use super::{Color, Image, Layer, LayerID, Rectangle, Size};
 
 #[derive(Clone)]
 pub struct LayerStack {
-    layers: Rc<Vec<Rc<Layer>>>,
-    annotations: Rc<Vec<Rc<Annotation>>>,
+    layers: Arc<Vec<Arc<Layer>>>,
+    annotations: Arc<Vec<Arc<Annotation>>>,
     pub background: Tile,
     width: u32,
     height: u32,
@@ -51,8 +51,8 @@ pub enum LayerInsertion {
 impl LayerStack {
     pub fn new(width: u32, height: u32) -> LayerStack {
         LayerStack {
-            layers: Rc::new(Vec::<Rc<Layer>>::new()),
-            annotations: Rc::new(Vec::<Rc<Annotation>>::new()),
+            layers: Arc::new(Vec::<Arc<Layer>>::new()),
+            annotations: Arc::new(Vec::<Arc<Annotation>>::new()),
             background: Tile::Blank,
             width,
             height,
@@ -92,17 +92,17 @@ impl LayerStack {
         };
 
         let new_layer = match fill {
-            LayerFill::Solid(c) => Rc::new(Layer::new(id, self.width, self.height, &c)),
+            LayerFill::Solid(c) => Arc::new(Layer::new(id, self.width, self.height, &c)),
             LayerFill::Copy(src_id) => {
                 let mut l = self.layers[self.find_layer_index(src_id)?].clone();
-                Rc::make_mut(&mut l).id = id;
+                Arc::make_mut(&mut l).id = id;
                 l
             }
         };
 
-        let layers = Rc::make_mut(&mut self.layers);
+        let layers = Arc::make_mut(&mut self.layers);
         layers.insert(insert_idx, new_layer);
-        Some(Rc::make_mut(layers.last_mut().unwrap()))
+        Some(Arc::make_mut(layers.last_mut().unwrap()))
     }
 
     /// Find a layer with the given ID and return a reference to it
@@ -116,7 +116,7 @@ impl LayerStack {
     }
 
     /// Find a layer with the given ID and return a reference counted pointer to it
-    pub fn get_layer_rc(&self, id: LayerID) -> Option<Rc<Layer>> {
+    pub fn get_layer_rc(&self, id: LayerID) -> Option<Arc<Layer>> {
         for l in self.layers.iter() {
             if l.id == id {
                 return Some(l.clone());
@@ -128,7 +128,7 @@ impl LayerStack {
     /// Find a layer with the given ID
     pub fn get_layer_mut(&mut self, id: LayerID) -> Option<&mut Layer> {
         if let Some(idx) = self.find_layer_index(id) {
-            Some(Rc::make_mut(&mut Rc::make_mut(&mut self.layers)[idx]))
+            Some(Arc::make_mut(&mut Arc::make_mut(&mut self.layers)[idx]))
         } else {
             None
         }
@@ -137,7 +137,7 @@ impl LayerStack {
     /// Remove a layer with the given ID
     pub fn remove_layer(&mut self, id: LayerID) {
         if let Some(idx) = self.find_layer_index(id) {
-            Rc::make_mut(&mut self.layers).remove(idx);
+            Arc::make_mut(&mut self.layers).remove(idx);
         }
     }
 
@@ -159,7 +159,7 @@ impl LayerStack {
     /// The new order vector is sanitized. Duplicate and nonexistent layers
     /// are dropped and missing layers are appended.
     pub fn reordered(&self, new_order: &[LayerID]) -> LayerStack {
-        let mut ordered = Vec::<Rc<Layer>>::new();
+        let mut ordered = Vec::<Arc<Layer>>::new();
         let mut oldorder = (*self.layers).clone();
 
         // Take layers from the old list and add them in the specified order.
@@ -173,7 +173,7 @@ impl LayerStack {
         ordered.extend_from_slice(&oldorder);
 
         LayerStack {
-            layers: Rc::new(ordered),
+            layers: Arc::new(ordered),
             annotations: self.annotations.clone(),
             background: self.background.clone(),
             ..*self
@@ -185,7 +185,7 @@ impl LayerStack {
         if self.find_annotation_index(id).is_some() {
             return;
         }
-        Rc::make_mut(&mut self.annotations).push(Rc::new(Annotation {
+        Arc::make_mut(&mut self.annotations).push(Arc::new(Annotation {
             id,
             text: String::new(),
             rect: rect,
@@ -196,7 +196,7 @@ impl LayerStack {
     }
 
     pub fn remove_annotation(&mut self, id: AnnotationID) {
-        Rc::make_mut(&mut self.annotations).retain(|a| a.id != id);
+        Arc::make_mut(&mut self.annotations).retain(|a| a.id != id);
     }
 
     pub fn get_annotation(&self, id: AnnotationID) -> Option<&Annotation> {
@@ -209,7 +209,7 @@ impl LayerStack {
 
     pub fn get_annotation_mut(&mut self, id: AnnotationID) -> Option<&mut Annotation> {
         if let Some(idx) = self.find_annotation_index(id) {
-            Some(Rc::make_mut(&mut Rc::make_mut(&mut self.annotations)[idx]))
+            Some(Arc::make_mut(&mut Arc::make_mut(&mut self.annotations)[idx]))
         } else {
             None
         }
@@ -270,17 +270,17 @@ impl LayerStack {
         }
 
         Some(LayerStack {
-            layers: Rc::new(
+            layers: Arc::new(
                 self.layers
                     .iter()
-                    .map(|l| Rc::new(l.resized(top, right, bottom, left)))
+                    .map(|l| Arc::new(l.resized(top, right, bottom, left)))
                     .collect(),
             ),
-            annotations: Rc::new(
+            annotations: Arc::new(
                 self.annotations
                     .iter()
                     .map(|a| {
-                        Rc::new(Annotation {
+                        Arc::new(Annotation {
                             rect: a.rect.offset(left, top),
                             text: a.text.clone(),
                             ..**a
@@ -298,8 +298,8 @@ impl LayerStack {
         return self.layers.iter().map(|l| l.as_ref());
     }
 
-    pub fn iter_layers_mut(&mut self) -> impl Iterator<Item = &mut Rc<Layer>> {
-        return Rc::make_mut(&mut self.layers).iter_mut();
+    pub fn iter_layers_mut(&mut self) -> impl Iterator<Item = &mut Arc<Layer>> {
+        return Arc::make_mut(&mut self.layers).iter_mut();
     }
 
     /// Compare this layer stack with the other and return an Area Of Effect.
@@ -310,7 +310,7 @@ impl LayerStack {
         if self.width != other.width || self.height != other.height {
             return AoE::Resize(0, 0, self.size());
         }
-        if Rc::ptr_eq(&self.layers, &other.layers) {
+        if Arc::ptr_eq(&self.layers, &other.layers) {
             return AoE::Nothing;
         }
         if self.layers.len() != other.layers.len() {
@@ -332,7 +332,7 @@ impl LayerStack {
         }
 
         for (a, b) in self.layers.iter().zip(other.layers.iter()) {
-            if !Rc::ptr_eq(a, b) {
+            if !Arc::ptr_eq(a, b) {
                 if a.id != b.id
                     || a.title != b.title
                     || a.opacity != b.opacity
@@ -351,7 +351,7 @@ impl LayerStack {
 
     /// Return true if the annotations differ between the two layer stacks
     pub fn compare_annotations(&self, other: &LayerStack) -> bool {
-        !Rc::ptr_eq(&self.annotations, &other.annotations)
+        !Arc::ptr_eq(&self.annotations, &other.annotations)
     }
 }
 
