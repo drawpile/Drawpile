@@ -2107,17 +2107,17 @@ void MainWindow::clearOrDelete()
 
 void MainWindow::resizeCanvas()
 {
-#if 0 // FIXME
 	if(!m_doc->canvas()) {
 		qWarning("resizeCanvas: no canvas!");
 		return;
 	}
 
-	QSize size = m_doc->canvas()->layerStack()->size();
+	const QSize size = m_doc->canvas()->size();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
-	dlg->setPreviewImage(m_doc->canvas()->toImage().scaled(300, 300, Qt::KeepAspectRatio));
+	dlg->setPreviewImage(m_doc->canvas()->paintEngine()->getPixmap().scaled(300, 300, Qt::KeepAspectRatio).toImage());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
+	// Preset crop from selection if one exists
 	if (m_doc->canvas()->selection()) {
 		dlg->setBounds(m_doc->canvas()->selection()->boundingRect());
 	}
@@ -2132,7 +2132,6 @@ void MainWindow::resizeCanvas()
 		}
 	});
 	dlg->show();
-#endif
 }
 
 void MainWindow::changeCanvasBackground()
