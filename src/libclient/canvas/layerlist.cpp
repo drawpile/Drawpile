@@ -28,10 +28,13 @@
 #include <QImage>
 #include <QRegularExpression>
 
+#include <iostream>
+
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent), m_aclfilter(nullptr), m_defaultLayer(0), m_myId(1)
+	: QAbstractListModel(parent), m_aclfilter(nullptr),
+	  m_autoselectAny(true), m_defaultLayer(0), m_myId(1)
 {
 }
 	
@@ -244,9 +247,49 @@ void LayerListModel::reorderLayers(QList<uint16_t> neworder)
 
 void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 {
+	// See if there are any new layers we should autoselect
+	int autoselect = -1;
+	std::cout <<"Checking new layers, my id is " << int(m_myId) << std::endl;
+	if(m_items.size() < items.size()) {
+		for(const LayerListItem &newItem : items) {
+			// O(n²) loop but the number of layers is typically small enough that
+			// it doesn't matter
+			bool isNew = true;
+			for(const LayerListItem &oldItem : qAsConst(m_items)) {
+				if(oldItem.id == newItem.id) {
+					isNew = false;
+					break;
+				}
+			}
+			if(!isNew)
+				continue;
+
+			// Autoselection rules:
+			// 1. If we haven't participated yet, and there is a default layer,
+			//    only select the default layer
+			// 2. If we haven't participated in the session yet, select any new layer
+			// 3. Otherwise, select any new layer that was created by us
+			// TODO implement the other rules
+			if(
+					newItem.creatorId() == m_myId ||
+					(m_autoselectAny && (
+						 (m_defaultLayer>0 && newItem.id == m_defaultLayer)
+						 || m_defaultLayer==0
+						 )
+					 )
+				) {
+				autoselect = newItem.id;
+				break;
+			}
+		}
+	}
+
 	beginResetModel();
 	m_items = items;
 	endResetModel();
+
+	if(autoselect>=0)
+		emit autoSelectRequest(autoselect);
 }
 
 void LayerListModel::setDefaultLayer(uint16_t id)

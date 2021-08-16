@@ -79,9 +79,8 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 
 	m_usercursors->setLayerList(m_layerlist);
 
+	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
 #if 0 // FIXME
-	connect(m_statetracker, &StateTracker::layerAutoselectRequest, this, &CanvasModel::layerAutoselectRequest);
-
 	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
 	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
 #endif
@@ -109,6 +108,7 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 {
 	Q_ASSERT(m_mode == Mode::Offline);
 	m_layerlist->setMyId(myUserId);
+	m_layerlist->setAutoselectAny(true);
 #if 0 // FIXME
 	m_statetracker->setLocalId(myUserId);
 #endif
@@ -232,6 +232,7 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
 {
+	m_layerlist->setAutoselectAny(false);
 	QByteArray buf(cmd->length(), 0);
 	cmd->serialize(buf.data());
 	m_paintengine->receiveMessages(true, buf);

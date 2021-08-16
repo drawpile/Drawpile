@@ -67,6 +67,9 @@ struct LayerListItem {
 
 	//! Get the LayerAttributes flags as a bitfield
 	uint8_t attributeFlags() const;
+
+	//! Get the ID of the user who created this layer
+	uint8_t creatorId() const { return uint8_t((id & 0xff00) >> 8); }
 };
 
 }
@@ -120,6 +123,14 @@ public:
 	void setMyId(uint8_t id) { m_myId = id; }
 
 	/**
+	 * Enable/disable any (not just own) layer autoselect requests
+	 *
+	 * When the local user hasn't yet drawn anything, any newly created layer
+	 * should be selected.
+	 */
+	void setAutoselectAny(bool autoselect) { m_autoselectAny = autoselect; }
+
+	/**
 	 * @brief Get the default layer to select when logging in
 	 * Zero means no default.
 	 */
@@ -145,6 +156,9 @@ public slots:
 signals:
 	void layersReordered();
 
+	//! A new layer was created that should be automatically selected
+	void autoSelectRequest(int);
+
 	//! Emitted when layers are manually reordered
 	void layerCommand(protocol::MessagePtr msg);
 
@@ -159,6 +173,7 @@ private:
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
 	AclFilter *m_aclfilter;
+	bool m_autoselectAny;
 	uint16_t m_defaultLayer;
 	uint8_t m_myId;
 };
