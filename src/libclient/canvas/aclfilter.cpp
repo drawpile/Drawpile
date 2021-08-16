@@ -258,6 +258,10 @@ bool AclFilter::filterMessage(const protocol::Message &msg)
 			m_layers.remove(msg.layer());
 		break;
 	}
+	case MSG_LAYER_VISIBILITY:
+		// Layer visibility command affects only the user who sent it
+		return msg.contextId() == m_myId;
+
 	case MSG_LAYER_ORDER:
 		return tier <= featureTier(Feature::EditLayers);
 

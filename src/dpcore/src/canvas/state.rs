@@ -42,7 +42,6 @@ pub struct CanvasState {
     history: History,
     brushcache: ClassicBrushCache,
     localfork: LocalFork,
-    local_user_id: UserID,
 }
 
 /// A structure describing what parts of the canvas was changed.
@@ -82,8 +81,10 @@ impl CanvasStateChange {
 
     pub fn has_any(&self) -> bool {
         match &self.aoe {
-            AoE::Nothing => {},
-            _ => { return true; }
+            AoE::Nothing => {}
+            _ => {
+                return true;
+            }
         };
         return self.layers_changed | self.annotations_changed;
     }
@@ -115,7 +116,6 @@ impl CanvasState {
             history: History::new(),
             brushcache: ClassicBrushCache::new(),
             localfork: LocalFork::new().set_fallbehind(1000),
-            local_user_id: 0,
         }
     }
 
@@ -194,7 +194,7 @@ impl CanvasState {
             LayerRetitle(_, m) => self.handle_layer_retitle(m),
             LayerOrder(_, order) => self.handle_layer_order(order),
             LayerDelete(_, m) => self.handle_layer_delete(m),
-            LayerVisibility(u, m) => self.handle_layer_visibility(*u, m),
+            LayerVisibility(_, m) => self.handle_layer_visibility(m),
             PutImage(u, m) => self.handle_putimage(*u, m).into(),
             FillRect(user, m) => self.handle_fillrect(*user, m).into(),
             PenUp(user) => self.handle_penup(*user).into(),
@@ -377,19 +377,13 @@ impl CanvasState {
         CanvasStateChange::layers(aoe)
     }
 
-    fn handle_layer_visibility(
-        &mut self,
-        user: UserID,
-        msg: &LayerVisibilityMessage,
-    ) -> CanvasStateChange {
-        if user == self.local_user_id {
-            if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID)
-            {
-                layer.hidden = !msg.visible;
-                return CanvasStateChange::layers(layer.nonblank_tilemap().into());
-            }
+    fn handle_layer_visibility(&mut self, msg: &LayerVisibilityMessage) -> CanvasStateChange {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
+            layer.hidden = !msg.visible;
+            CanvasStateChange::layers(layer.nonblank_tilemap().into())
+        } else {
+            CanvasStateChange::nothing()
         }
-        CanvasStateChange::nothing()
     }
 
     fn handle_annotation_create(&mut self, msg: &AnnotationCreateMessage) -> CanvasStateChange {

@@ -209,7 +209,9 @@ impl LayerStack {
 
     pub fn get_annotation_mut(&mut self, id: AnnotationID) -> Option<&mut Annotation> {
         if let Some(idx) = self.find_annotation_index(id) {
-            Some(Arc::make_mut(&mut Arc::make_mut(&mut self.annotations)[idx]))
+            Some(Arc::make_mut(
+                &mut Arc::make_mut(&mut self.annotations)[idx],
+            ))
         } else {
             None
         }
