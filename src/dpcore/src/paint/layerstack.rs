@@ -25,7 +25,7 @@ use std::sync::Arc;
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::tile::{Tile, TileData, TILE_SIZE};
-use super::{Color, Image, Layer, LayerID, Rectangle, Size};
+use super::{Color, Image, Layer, LayerID, Rectangle, Size, UserID};
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -219,6 +219,43 @@ impl LayerStack {
 
     fn find_annotation_index(&self, id: AnnotationID) -> Option<usize> {
         self.annotations.iter().position(|a| a.id == id)
+    }
+
+    pub fn get_annotations(&self) -> Arc<Vec<Arc<Annotation>>> {
+        self.annotations.clone()
+    }
+
+    /// Find the annotation at the given coordinates.
+    ///
+    /// If expand is nonzero, the annotations' bounds will be expanded in all
+    /// directions by the given amount. This is used to account for the
+    /// grab handles drawn in the UI.
+    pub fn get_annotation_at(&self, x: i32, y: i32, expand: i32) -> Option<&Annotation> {
+        for a in self.annotations.iter() {
+            if a.rect.expanded(expand).contains_point(x, y) {
+                return Some(a);
+            }
+        }
+        None
+    }
+
+    pub fn find_available_annotation_id(&self, for_user: UserID) -> AnnotationID {
+        let prefix = (for_user as AnnotationID) << 8;
+
+        let taken_ids: Vec<AnnotationID> = self
+            .annotations
+            .iter()
+            .map(|a| a.id)
+            .filter(|id| id & 0xff00 == prefix)
+            .collect();
+
+        for id in 0..256 {
+            if !taken_ids.contains(&(prefix | id)) {
+                return prefix | id;
+            }
+        }
+
+        return 0;
     }
 
     /// Flatten layer stack content

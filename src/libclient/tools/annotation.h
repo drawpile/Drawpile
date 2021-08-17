@@ -19,12 +19,9 @@
 #ifndef TOOLS_ANNOTATION_H
 #define TOOLS_ANNOTATION_H
 
-#include "core/annotationmodel.h"
 #include "tool.h"
 
-namespace drawingboard {
-	class AnnotationItem;
-}
+#include <QRect>
 
 namespace tools {
 
@@ -40,12 +37,36 @@ public:
 	void end() override;
 
 private:
-	static const uint16_t PREVIEW_ID = 0xffff;
+	/// Where the annotation was grabbed
+	enum class Handle {
+		Outside,
+		Inside,
+		TopLeft,
+		TopRight,
+		BottomRight,
+		BottomLeft,
+		Top,
+		Right,
+		Bottom,
+		Left
+	};
+
+	/// ID of the currently selected annotation
 	uint16_t m_selectedId;
+
+	/// Are we currently creating a new annotation?
 	bool m_isNew;
 
+	/// Drag start and last point
 	QPointF m_p1, m_p2;
-	paintcore::Annotation::Handle m_handle;
+
+	/// Grabbed handle
+	Handle m_handle;
+
+	/// The shape of the annotation being edited
+	QRect m_shape;
+
+	Handle handleAt(const QRect &rect, const QPoint &p, int handleSize);
 };
 
 }

@@ -31,7 +31,11 @@ namespace rustpile {
 	struct Rectangle;
 	struct Size;
 	struct LayerInfo;
+	struct Annotations;
+	struct AnnotationAt;
 }
+
+Q_DECLARE_OPAQUE_POINTER(rustpile::Annotations*)
 
 namespace canvas {
 
@@ -69,10 +73,17 @@ public:
 	//! Get the color of the background tile
 	QColor backgroundColor() const;
 
+	//! Find an unused ID for a new annotation
+	uint16_t findAvailableAnnotationId(uint8_t forUser) const;
+
+	rustpile::AnnotationAt getAnnotationAt(int x, int y, int expand) const;
+
 signals:
+	// Note: these signals are emitted from the paint engine thread
 	void areaChanged(const QRect &area);
 	void resized(int xoffset, int yoffset, const QSize &oldSize);
 	void layersChanged(QVector<LayerListItem> layers);
+	void annotationsChanged(rustpile::Annotations *annotations);
 
 private:
 	rustpile::PaintEngine *m_pe;
@@ -82,6 +93,7 @@ private:
 	friend void paintEngineAreaChanged(void *pe, rustpile::Rectangle area);
 	friend void paintEngineResized(void *pe, int xoffset, int yoffset, rustpile::Size oldSize);
 	friend void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layers, uintptr_t count);
+	friend void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations);
 };
 
 }

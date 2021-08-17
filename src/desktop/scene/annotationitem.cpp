@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2016 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,21 +28,31 @@
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_id(id), m_valign(0), m_highlight(false), m_showborder(false)
+	: QGraphicsItem(parent),
+	  m_id(id),
+	  m_valign(0),
+	  m_color(Qt::transparent),
+	  m_highlight(false),
+	  m_showborder(false),
+	  m_protect(false)
 {
 }
 
 void AnnotationItem::setGeometry(const QRect &rect)
 {
-	prepareGeometryChange();
-	m_rect = rect;
-	m_doc.setTextWidth(rect.width());
+	if(m_rect != rect) {
+		prepareGeometryChange();
+		m_rect = rect;
+		m_doc.setTextWidth(rect.width());
+	}
 }
 
 void AnnotationItem::setColor(const QColor &color)
 {
-	m_color = color;
-	update();
+	if(m_color != color) {
+		m_color = color;
+		update();
+	}
 }
 
 void AnnotationItem::setText(const QString &text)
@@ -53,8 +63,10 @@ void AnnotationItem::setText(const QString &text)
 
 void AnnotationItem::setValign(int valign)
 {
-	m_valign = valign;
-	update();
+	if(m_valign != valign) {
+		m_valign = valign;
+		update();
+	}
 }
 
 /**
@@ -151,6 +163,42 @@ void AnnotationItem::paintHiddenBorder(QPainter *painter)
 	bpen.setColor(highlightColor);
 	painter->setPen(bpen);
 	painter->drawRect(m_rect);
+}
+
+static void paintAnnotation(QPainter *painter, const QRectF &paintrect, const QColor &background, const QString &text, int valign)
+{
+	painter->save();
+	painter->translate(paintrect.topLeft());
+
+	const QRectF rect0(QPointF(), paintrect.size());
+
+	painter->fillRect(rect0, background);
+
+	QTextDocument doc;
+	doc.setHtml(text);
+	doc.setTextWidth(rect0.width());
+
+	QPointF offset;
+	if(valign == protocol::AnnotationEdit::FLAG_VALIGN_CENTER) {
+		offset.setY((rect0.height() - doc.size().height()) / 2);
+
+	} else if(valign == protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM) {
+		offset.setY(rect0.height() - doc.size().height());
+	}
+	painter->translate(offset);
+
+	doc.drawContents(painter, QRectF(-offset, rect0.size()));
+
+	painter->restore();
+}
+
+QImage AnnotationItem::toImage() const
+{
+	QImage img(m_rect.size().toSize(), QImage::Format_ARGB32_Premultiplied);
+	img.fill(0);
+	QPainter painter(&img);
+	paintAnnotation(&painter, QRectF(0, 0, m_rect.width(), m_rect.height()), m_color, text(), m_valign);
+	return img;
 }
 
 }

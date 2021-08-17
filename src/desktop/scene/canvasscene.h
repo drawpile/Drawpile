@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,16 +21,9 @@
 
 #include <QGraphicsScene>
 
-namespace paintcore {
-	class LayerStack;
-	class Brush;
+namespace rustpile {
+	struct Annotations;
 }
-
-namespace net {
-	class Client;
-}
-
-class QGraphicsItem;
 
 namespace canvas {
 	class CanvasModel;
@@ -41,16 +34,13 @@ namespace canvas {
 namespace drawingboard {
 
 class CanvasItem;
-class AnnotationState;
 class AnnotationItem;
 class SelectionItem;
 class UserMarkerItem;
 class LaserTrailItem;
 
 /**
- * @brief The drawing board
- * The drawing board contains the picture and provides methods
- * to modify it.
+ * @brief The drawing board scene
  */
 class CanvasScene : public QGraphicsScene
 {
@@ -60,26 +50,29 @@ public:
 	//! Margin around the image to make working near corners easier
 	static const int MARGIN = 900;
 
-	CanvasScene(QObject *parent);
-	~CanvasScene();
+	explicit CanvasScene(QObject *parent);
 
-	//! Clear and initialize the canvas
+	//! Clear the canvas and assign a new model to it
 	void initCanvas(canvas::CanvasModel *model);
 
 	//! Is there an image on the drawing board
 	bool hasImage() const { return m_model != nullptr; }
 
 	//! Are annotation borders shown?
-	bool showAnnotationBorders() const { return _showAnnotationBorders; }
+	bool showAnnotationBorders() const { return m_showAnnotationBorders; }
 
 	//! Show/hide annotations
 	void showAnnotations(bool show);
 
+	//! Get the current canvas model
 	canvas::CanvasModel *model() const { return m_model; }
+
+	//! Get an annotation item
+	AnnotationItem *getAnnotationItem(int id);
 
 public slots:
 	//! Show annotation borders
-	void showAnnotationBorders(bool hl);
+	void showAnnotationBorders(bool show);
 
 	//! Show/hide remote cursor markers
 	void showUserMarkers(bool show);
@@ -93,10 +86,11 @@ public slots:
 	//! Show avatars in cursor marker
 	void showUserAvatars(bool show);
 
-	//! Show hide laser pointer trails
+	//! Show/hide laser pointer trails
 	void showLaserTrails(bool show);
 
-	void activeAnnotationChanged(int id);
+	//! Select the currently active/highlighted annotation
+	void setActiveAnnotation(int id);
 
 	//! Reveal the canvas item
 	void showCanvas();
@@ -117,34 +111,31 @@ private slots:
 	void userCursorRemoved(const QModelIndex&, int first, int last);
 	void userCursorChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
 
-	void annotationsAdded(const QModelIndex&, int first, int last);
-	void annotationsRemoved(const QModelIndex&, int first, int last);
-	void annotationsChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
-	void annotationsReset();
+	void annotationsChanged(rustpile::Annotations *annotations);
+	void previewAnnotation(int id, const QRect &shape);
 
 	void laserAdded(const QModelIndex&, int first, int last);
 	void laserRemoved(const QModelIndex&, int first, int last);
 	void laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
 
 private:
-	AnnotationItem *getAnnotationItem(int id);
-
-	CanvasItem *m_canvasItem;
+	//! The actual canvas model
 	canvas::CanvasModel *m_model;
 
-	//! Laser pointer trails
+	//! The item that shows the canvas pixel content
+	CanvasItem *m_canvasItem;
+
+	//! Laser pointer trail items
 	QHash<int, LaserTrailItem*> m_lasertrails;
+
+	//! User cursor items
+	QHash<int, UserMarkerItem*> m_usermarkers;
 
 	//! Current selection
 	SelectionItem *m_selection;
 
-	//! User markers display remote user cursor positions
-	QHash<int, UserMarkerItem*> m_usermarkers;
-
-	QTimer *_animTickTimer;
-
-	bool _showAnnotationBorders;
-	bool _showAnnotations;
+	bool m_showAnnotationBorders;
+	bool m_showAnnotations;
 	bool m_showUserMarkers;
 	bool m_showUserNames;
 	bool m_showUserLayers;

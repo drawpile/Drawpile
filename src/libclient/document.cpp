@@ -24,7 +24,7 @@
 #include "net/banlistmodel.h"
 #include "net/announcementlist.h"
 #include "canvas/canvasmodel.h"
-#include "canvas/statetracker.h"
+#include "canvas/selection.h"
 #include "canvas/layerlist.h"
 #include "canvas/aclfilter.h"
 #include "canvas/loader.h"

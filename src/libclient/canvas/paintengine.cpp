@@ -79,6 +79,12 @@ void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, u
 	emit reinterpret_cast<PaintEngine*>(pe)->layersChanged(layers);
 }
 
+void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations)
+{
+	// Note: rustpile::Annotations is thread safe
+	emit reinterpret_cast<PaintEngine*>(pe)->annotationsChanged(annotations);
+}
+
 PaintEngine::PaintEngine(QObject *parent)
 	: QObject(parent), m_pe(nullptr)
 {
@@ -97,7 +103,8 @@ void PaintEngine::reset()
 		this,
 		paintEngineAreaChanged,
 		paintEngineResized,
-		paintEngineLayersChanged
+		paintEngineLayersChanged,
+		paintEngineAnnotationsChanged
 	);
 
 	m_cache = QPixmap();
@@ -117,6 +124,16 @@ QColor PaintEngine::backgroundColor() const
 {
 	const auto c = rustpile::paintengine_background_color(m_pe);
 	return QColor::fromRgbF(c.r, c.g, c.b, c.a);
+}
+
+uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
+{
+	return rustpile::paintengine_get_available_annotation_id(m_pe, forUser);
+}
+
+rustpile::AnnotationAt PaintEngine::getAnnotationAt(int x, int y, int expand) const
+{
+	return rustpile::paintengine_get_annotation_at(m_pe, x, y, expand);
 }
 
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)

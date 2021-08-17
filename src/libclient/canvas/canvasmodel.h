@@ -21,12 +21,6 @@
 #define CANVASMODEL_H
 
 #include "../libshared/net/message.h"
-
-// note: we must include these so the datatypes get registered properly for use in QML
-#include "usercursormodel.h"
-#include "lasertrailmodel.h"
-#include "selection.h"
-#include "core/layerstack.h"
 #include "../libshared/record/writer.h"
 
 #include <QObject>
@@ -48,14 +42,15 @@ class StateTracker;
 class AclFilter;
 class UserListModel;
 class LayerListModel;
+class UserCursorModel;
+class LaserTrailModel;
+class Selection;
 class PaintEngine;
 
 class CanvasModel : public QObject
 {
-	//Q_PROPERTY(paintcore::LayerStack* layerStack READ layerStack CONSTANT)
 	Q_PROPERTY(UserCursorModel* userCursors READ userCursors CONSTANT)
 	Q_PROPERTY(LaserTrailModel* laserTrails READ laserTrails CONSTANT)
-	//Q_PROPERTY(StateTracker* stateTracker READ stateTracker CONSTANT)
 	Q_PROPERTY(Selection* selection READ selection WRITE setSelection NOTIFY selectionChanged)
 
 	Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
@@ -67,8 +62,6 @@ public:
 	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
-	//paintcore::LayerStack *layerStack() const { return m_layerstack; }
-	//StateTracker *stateTracker() const { return m_statetracker; }
 	UserCursorModel *userCursors() const { return m_usercursors; }
 	LaserTrailModel *laserTrails() const { return m_lasers; }
 
@@ -86,8 +79,6 @@ public:
 	protocol::MessageList generateSnapshot() const;
 
 	uint8_t localUserId() const;
-
-	uint16_t getAvailableAnnotationId() const;
 
 	QImage selectionToImage(int layerId) const;
 	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
@@ -116,6 +107,16 @@ public:
 	//! Size of the canvas
 	QSize size() const;
 
+	/**
+	 * Request the view layer to preview a change to an annotation
+	 *
+	 * This is used to preview the change or creation of an annotation.
+	 * If an annotation with the given ID does not exist yet, one will be created.
+	 * The annotation only exists in the view layer and will thus be automatically erased
+	 * or replaced when the actual change goes through.
+	 */
+	void previewAnnotation(int id, const QRect &shape);
+
 public slots:
 	//! Handle a meta/command message received from the server
 	void handleCommand(protocol::MessagePtr cmd);
@@ -139,6 +140,8 @@ signals:
 	void canvasModified();
 	void selectionChanged(Selection *selection);
 	void selectionRemoved();
+
+	void previewAnnotationRequested(int id, const QRect &shape);
 
 	void titleChanged(QString title);
 	void pinnedMessageChanged(QString message);

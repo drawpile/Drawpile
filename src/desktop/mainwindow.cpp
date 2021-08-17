@@ -68,7 +68,6 @@
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
 #include "scene/selectionitem.h"
-#include "canvas/statetracker.h"
 #include "canvas/userlist.h"
 #include "canvas/paintengine.h"
 
@@ -367,7 +366,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
 
 	// Tool controller <-> UI connections
-	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::activeAnnotationChanged);
+	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockColors, &docks::ColorBox::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
 
@@ -2900,6 +2899,7 @@ void MainWindow::createDocks()
 	m_dockToolSettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockToolSettings);
 	static_cast<tools::SelectionSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(m_view);
+	static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->setScene(m_canvasscene);
 	m_view->setPressureMapping(static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->getPressureMapping());
 
 	// Create brush palette

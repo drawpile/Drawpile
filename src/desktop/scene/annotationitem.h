@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2016 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,37 +22,44 @@
 #include <QGraphicsItem>
 #include <QTextDocument>
 
-namespace paintcore { struct Annotation; }
-
 namespace drawingboard {
 
 /**
  * @brief A text box that can be overlaid on the picture.
- *
- * This class inherits from QGraphicsObject so we can point to
- * its instances with QPointer
  */
 class AnnotationItem : public QGraphicsItem {
 public:
 	enum { Type = UserType + 10 };
 	static const int HANDLE=10;
 
-	AnnotationItem(int id, QGraphicsItem *parent=0);
+	explicit AnnotationItem(int id, QGraphicsItem *parent=nullptr);
+
+	//! Get the ID number of this annotation
+	int id() const { return m_id; }
 
 	//! Set the text box position and size
 	void setGeometry(const QRect &rect);
 
+	QRectF rect() const { return m_rect; }
+
 	//! Set the background color (transparent by default)
 	void setColor(const QColor &color);
+
+	QColor color() const { return m_color; }
 
 	//! Set the text content (subset of HTML is supported)
 	void setText(const QString &text);
 
+	QString text() const { return m_doc.toHtml(); }
+
 	//! Set vertical alignment
 	void setValign(int valign);
 
-	//! Get the ID number of this annotation
-	int id() const { return m_id; }
+	int valign() const { return m_valign; }
+
+	//! Set the "protected" flag
+	void setProtect(bool protect) { m_protect = protect; }
+	bool protect() const { return m_protect; }
 
 	//! Highlight this item
 	void setHighlight(bool h);
@@ -65,6 +72,9 @@ public:
 
 	//! reimplementation
 	int type() const { return Type; }
+
+	//! Render this annotation into an image
+	QImage toImage() const;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
@@ -80,6 +90,7 @@ private:
 
 	bool m_highlight;
 	bool m_showborder;
+	bool m_protect;
 };
 
 }

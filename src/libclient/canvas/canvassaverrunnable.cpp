@@ -33,6 +33,7 @@ CanvasSaverRunnable::CanvasSaverRunnable(const CanvasModel *canvas, const QStrin
 
 void CanvasSaverRunnable::run()
 {
+#if 0 // FIXME
 	bool ok;
 	QString errorMessage;
 
@@ -55,6 +56,7 @@ void CanvasSaverRunnable::run()
 		errorMessage = "Unknown Error";
 
 	emit saveComplete(errorMessage);
+#endif
 }
 
 }

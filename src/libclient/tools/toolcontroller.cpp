@@ -31,10 +31,7 @@
 #include "inspector.h"
 
 #include "core/point.h"
-#include "core/layerstack.h"
-#include "core/annotationmodel.h"
 #include "canvas/canvasmodel.h"
-#include "canvas/statetracker.h"
 #include "canvas/aclfilter.h"
 
 namespace tools {

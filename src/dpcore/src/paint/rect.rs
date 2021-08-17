@@ -61,6 +61,19 @@ impl Rectangle {
             && self.bottom() >= other.bottom()
     }
 
+    pub fn contains_point(&self, x: i32, y: i32) -> bool {
+        x >= self.x && x < (self.x + self.w) && y >= self.y && y < (self.y + self.h)
+    }
+
+    pub fn expanded(&self, expand: i32) -> Rectangle {
+        Rectangle {
+            x: self.x - expand,
+            y: self.y - expand,
+            w: self.w + expand * 2,
+            h: self.h + expand * 2,
+        }
+    }
+
     pub fn intersected(&self, other: &Rectangle) -> Option<Rectangle> {
         let leftx = max(self.x, other.x);
         let rightx = min(self.x + self.w, other.x + other.w);

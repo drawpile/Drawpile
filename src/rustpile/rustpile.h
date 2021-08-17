@@ -68,14 +68,30 @@ enum class ClassicBrushShape : uint8_t {
   RoundSoft,
 };
 
+enum class VAlign {
+  Top,
+  Center,
+  Bottom,
+};
+
+/// A snapshot of annotations for updating their GUI representations
+///
+/// This struct is thread-safe and can be passed to the main thread
+/// from the paint engine thread.
+struct Annotations;
+
 struct BrushPreview;
 
 /// The paint engine
 struct PaintEngine;
 
-struct Range {
-  float min;
-  float max;
+using AnnotationID = uint16_t;
+
+struct Rectangle {
+  int32_t x;
+  int32_t y;
+  int32_t w;
+  int32_t h;
 };
 
 struct Color {
@@ -87,6 +103,13 @@ struct Color {
 static const Color Color_TRANSPARENT = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 0.0 };
 static const Color Color_BLACK = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 1.0 };
 static const Color Color_WHITE = Color{ /* .r = */ 1.0, /* .g = */ 1.0, /* .b = */ 1.0, /* .a = */ 1.0 };
+
+using UpdateAnnotationCallback = void(*)(void *ctx, AnnotationID id, const char *text, uintptr_t textlen, Rectangle rect, Color background, bool protect, VAlign valign);
+
+struct Range {
+  float min;
+  float max;
+};
 
 /// The parameters of a classic soft and pixel Drawpile brushes.
 struct ClassicBrush {
@@ -122,13 +145,6 @@ struct ClassicBrush {
   bool smudge_pressure;
 };
 
-struct Rectangle {
-  int32_t x;
-  int32_t y;
-  int32_t w;
-  int32_t h;
-};
-
 using NotifyChangesCallback = void(*)(void *ctx, Rectangle area);
 
 struct Size {
@@ -138,6 +154,7 @@ struct Size {
 
 using NotifyResizeCallback = void(*)(void *ctx, int32_t x_offset, int32_t y_offset, Size old_size);
 
+/// Layer's properties for updating a layer list in the GUI
 struct LayerInfo {
   const uint8_t *title;
   int32_t titlelen;
@@ -151,9 +168,30 @@ struct LayerInfo {
 
 using NotifyLayerListCallback = void(*)(void *ctx, const LayerInfo *layers, uintptr_t count);
 
+using NotifyAnnotationsCallback = void(*)(void *ctx, Annotations *annotations);
+
+using UserID = uint8_t;
+
+/// The result of an "annotation at point" query
+struct AnnotationAt {
+  /// ID of the annotation at the queried point.
+  /// Will be zero if none was found
+  AnnotationID id;
+  /// The shape of the annotation
+  Rectangle rect;
+  /// The annotation's protected bit
+  bool protect;
+};
+
 extern "C" {
 
 void rustpile_init();
+
+void annotations_get_all(const Annotations *annotations,
+                         void *ctx,
+                         UpdateAnnotationCallback callback);
+
+void annotations_free(Annotations *annotations);
 
 BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
 
@@ -175,7 +213,8 @@ void brushpreview_paint(const BrushPreview *bp,
 PaintEngine *paintengine_new(void *ctx,
                              NotifyChangesCallback changes,
                              NotifyResizeCallback resizes,
-                             NotifyLayerListCallback layers);
+                             NotifyLayerListCallback layers,
+                             NotifyAnnotationsCallback annotations);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);
@@ -198,6 +237,15 @@ void paintengine_cleanup(PaintEngine *dp);
 /// TODO this presently assumes the background tile is always solid.
 /// TODO We should support background patterns in the GUI as well.
 Color paintengine_background_color(const PaintEngine *dp);
+
+/// Find the next unused annotation ID for the given user
+AnnotationID paintengine_get_available_annotation_id(const PaintEngine *dp, UserID user);
+
+/// Find the annotation at the given position
+AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
+                                           int32_t x,
+                                           int32_t y,
+                                           int32_t expand);
 
 /// Paint all the changed tiles in the given area
 ///

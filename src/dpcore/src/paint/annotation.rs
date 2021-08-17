@@ -44,6 +44,7 @@ pub struct Annotation {
 }
 
 #[derive(Clone, Copy)]
+#[repr(C)]
 pub enum VAlign {
     Top,
     Center,

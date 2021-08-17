@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@
 class Ui_TextSettings;
 class QTimer;
 class QAction;
+
+namespace drawingboard {
+	class CanvasScene;
+}
 
 namespace tools {
 
@@ -57,6 +61,8 @@ public:
 	int getSize() const override { return 0; }
 	bool getSubpixelMode() const override { return false; }
 
+	void setScene(drawingboard::CanvasScene *scene) { m_scene = scene; }
+
 public slots:
 	//! Set the currently selected annotation item
 	void setSelectionId(uint16_t id);
@@ -85,12 +91,13 @@ private:
 	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);
 	void setUiEnabled(bool enabled);
 
-	Ui_TextSettings *_ui;
+	Ui_TextSettings *m_ui;
 
 	uint16_t m_selectionId;
 
 	bool m_noupdate;
 	QTimer *m_updatetimer;
+	drawingboard::CanvasScene *m_scene;
 };
 
 }

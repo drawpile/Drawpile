@@ -307,12 +307,12 @@ mod tests {
     fn test_writer() {
         let mut writer = MessageWriter::new();
         writer.expecting = 28;
-        writer.write(0xff_u8);     // +1
-        writer.write(0xa0b0_u16);  // +2
-        writer.write(3_u32);       // +4
-        writer.write(5_u8);        // +1
+        writer.write(0xff_u8); // +1
+        writer.write(0xa0b0_u16); // +2
+        writer.write(3_u32); // +4
+        writer.write(5_u8); // +1
         writer.write(&String::from("hello")); // +5
-        writer.write(5_u8);        // +1
+        writer.write(5_u8); // +1
         writer.write(&b"by\0es".to_vec()); // +5
         writer.write(&[1u16, 2u16].to_vec()); // +4
         writer.write(&String::from("world")); // +5

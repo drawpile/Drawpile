@@ -35,7 +35,6 @@ class CanvasItem : public QGraphicsObject
 Q_OBJECT
 public:
 	CanvasItem(QGraphicsItem *parent=nullptr);
-
 	void setPaintEngine(canvas::PaintEngine *pe);
 
 	QRectF boundingRect() const override;

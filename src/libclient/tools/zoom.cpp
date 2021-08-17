@@ -18,11 +18,13 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/selection.h"
 
 #include "tools/zoom.h"
 #include "tools/toolcontroller.h"
 
 #include <QCursor>
+#include <QPixmap>
 
 namespace tools {
 

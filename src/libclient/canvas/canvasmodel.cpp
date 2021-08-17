@@ -20,16 +20,13 @@
 #include "canvasmodel.h"
 #include "usercursormodel.h"
 #include "lasertrailmodel.h"
-#include "statetracker.h"
 #include "layerlist.h"
 #include "userlist.h"
 #include "aclfilter.h"
+#include "selection.h"
 #include "loader.h"
 #include "paintengine.h"
 
-#include "core/layerstack.h"
-#include "core/annotationmodel.h"
-#include "core/layer.h"
 #include "ora/orawriter.h"
 #include "utils/identicon.h"
 #include "net/internalmsg.h"
@@ -47,7 +44,7 @@
 namespace canvas {
 
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
-	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(0)
+	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(1)
 {
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
@@ -58,10 +55,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_aclfilter, &AclFilter::trustedUserListChanged, m_userlist, &UserListModel::updateTrustedUsers);
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
 
-#if 0
-	m_layerstack = new paintcore::LayerStack(this);
-	m_statetracker = new StateTracker(m_layerstack, m_layerlist, localUserId, this);
-#endif
 	m_paintengine = new PaintEngine(this);
 	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
@@ -99,6 +92,11 @@ uint8_t CanvasModel::localUserId() const
 QSize CanvasModel::size() const
 {
 	return m_paintengine->size();
+}
+
+void CanvasModel::previewAnnotation(int id, const QRect &shape)
+{
+	emit previewAnnotationRequested(id, shape);
 }
 
 void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
@@ -367,31 +365,6 @@ void CanvasModel::updateLayerViewOptions()
 		cfg.value("onionskintint", true).toBool()
 	);
 #endif
-}
-
-/**
- * @brief Find an unused annotation ID
- *
- * Find an annotation ID (for this user) that is currently not in use.
- * @return available ID or 0 if none found
- */
-uint16_t CanvasModel::getAvailableAnnotationId() const
-{
-#if 0 // FIXME
-	const uint16_t prefix = uint16_t(m_statetracker->localId() << 8);
-	QList<uint16_t> takenIds;
-	for(const paintcore::Annotation &a : m_layerstack->annotations()->getAnnotations()) {
-		if((a.id & 0xff00) == prefix)
-				takenIds << a.id;
-	}
-
-	for(uint16_t i=0;i<256;++i) {
-		uint16_t id = prefix | i;
-		if(!takenIds.contains(id))
-			return id;
-	}
-#endif
-	return 0;
 }
 
 QImage CanvasModel::selectionToImage(int layerId) const

@@ -20,21 +20,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::adapters::LayerInfo;
+use super::adapters::{AnnotationAt, Annotations, LayerInfo};
 use dpcore::canvas::{CanvasState, CanvasStateChange};
-use dpcore::paint::{LayerStack, AoE, FlattenedTileIterator, Rectangle, Size, Color};
-use dpcore::protocol::message::{Message, CommandMessage};
+use dpcore::paint::annotation::AnnotationID;
+use dpcore::paint::{AoE, Color, FlattenedTileIterator, LayerStack, Rectangle, Size, UserID};
+use dpcore::protocol::message::{CommandMessage, Message};
 
 use core::ffi::c_void;
+use std::sync::mpsc::{Receiver, Sender};
+use std::sync::{mpsc, Arc, Mutex};
 use std::{slice, thread};
-use std::sync::{Arc, Mutex, mpsc};
-use std::sync::mpsc::{Sender, Receiver};
 
 use tracing::{error, warn};
 
 type NotifyChangesCallback = extern "C" fn(ctx: *mut c_void, area: Rectangle);
-type NotifyResizeCallback = extern "C" fn(ctx: *mut c_void, x_offset: i32, y_offset: i32, old_size: Size);
-type NotifyLayerListCallback = extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize);
+type NotifyResizeCallback =
+    extern "C" fn(ctx: *mut c_void, x_offset: i32, y_offset: i32, old_size: Size);
+type NotifyLayerListCallback =
+    extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize);
+type NotifyAnnotationsCallback = extern "C" fn(ctx: *mut c_void, annotations: *mut Annotations);
 
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
@@ -52,6 +56,7 @@ struct NotificationCallbacks {
     notify_changes: NotifyChangesCallback,
     notify_resize: NotifyResizeCallback,
     notify_layerlist: NotifyLayerListCallback,
+    notify_annotations: NotifyAnnotationsCallback,
 }
 
 // Unsafe due to the c_void pointer
@@ -76,14 +81,20 @@ pub struct PaintEngine {
     thread_handle: thread::JoinHandle<()>,
 }
 
-fn run_paintengine(viewcache: Arc<Mutex<ViewCache>>, channel: Receiver<PaintEngineCommand>, callbacks: NotificationCallbacks) {
+fn run_paintengine(
+    viewcache: Arc<Mutex<ViewCache>>,
+    channel: Receiver<PaintEngineCommand>,
+    callbacks: NotificationCallbacks,
+) {
     let mut canvas = CanvasState::new();
 
     loop {
         // Wait for a command
         let mut cmd = match channel.recv() {
             Ok(m) => m,
-            Err(_) => { return; },
+            Err(_) => {
+                return;
+            }
         };
 
         let mut changes = CanvasStateChange::nothing();
@@ -92,15 +103,25 @@ fn run_paintengine(viewcache: Arc<Mutex<ViewCache>>, channel: Receiver<PaintEngi
         loop {
             use PaintEngineCommand::*;
             match cmd {
-                LocalMessage(m) => { changes |= canvas.receive_local_message(&m); }
-                RemoteMessage(m) => { changes |= canvas.receive_message(&m); }
-                Cleanup => { canvas.cleanup(); }
+                LocalMessage(m) => {
+                    changes |= canvas.receive_local_message(&m);
+                }
+                RemoteMessage(m) => {
+                    changes |= canvas.receive_message(&m);
+                }
+                Cleanup => {
+                    canvas.cleanup();
+                }
             };
 
             cmd = match channel.try_recv() {
                 Ok(m) => m,
-                Err(mpsc::TryRecvError::Empty) => { break; },
-                Err(mpsc::TryRecvError::Disconnected) => { return; },
+                Err(mpsc::TryRecvError::Empty) => {
+                    break;
+                }
+                Err(mpsc::TryRecvError::Disconnected) => {
+                    return;
+                }
             };
         }
 
@@ -119,7 +140,8 @@ fn run_paintengine(viewcache: Arc<Mutex<ViewCache>>, channel: Receiver<PaintEngi
                     _ => {
                         let canvas_size = canvas.layerstack().size();
                         if let Some(bounds) = changes.aoe.bounds(canvas_size) {
-                            let unrefreshed_area = std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing);
+                            let unrefreshed_area =
+                                std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing);
                             vc.unrefreshed_area = unrefreshed_area.merge(changes.aoe);
                             (callbacks.notify_changes)(callbacks.context_object, bounds);
                         }
@@ -133,10 +155,19 @@ fn run_paintengine(viewcache: Arc<Mutex<ViewCache>>, channel: Receiver<PaintEngi
                     .iter_layers()
                     .map(|l| l.into())
                     .collect();
-                (callbacks.notify_layerlist)(callbacks.context_object, layers.as_ptr(), layers.len());
+                (callbacks.notify_layerlist)(
+                    callbacks.context_object,
+                    layers.as_ptr(),
+                    layers.len(),
+                );
             }
 
-            if changes.annotations_changed {}
+            if changes.annotations_changed {
+                let annotations = Box::new(Annotations(canvas.layerstack().get_annotations()));
+
+                // Important: the user is responsible for calling annotations_free
+                (callbacks.notify_annotations)(callbacks.context_object, Box::leak(annotations));
+            }
         }
     }
 }
@@ -148,8 +179,9 @@ pub extern "C" fn paintengine_new(
     changes: NotifyChangesCallback,
     resizes: NotifyResizeCallback,
     layers: NotifyLayerListCallback,
+    annotations: NotifyAnnotationsCallback,
 ) -> *mut PaintEngine {
-    let viewcache = Arc::new(Mutex::new(ViewCache{
+    let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
         unrefreshed_area: AoE::Nothing,
     }));
@@ -159,6 +191,7 @@ pub extern "C" fn paintengine_new(
         notify_changes: changes,
         notify_resize: resizes,
         notify_layerlist: layers,
+        notify_annotations: annotations,
     };
 
     let (sender, receiver) = mpsc::channel::<PaintEngineCommand>();
@@ -213,13 +246,11 @@ pub extern "C" fn paintengine_receive_messages(
     let msg = Message::deserialize(msgs);
     match msg {
         Result::Ok(Message::Command(m)) => {
-            if let Err(err) = dp.engine_channel.send(
-                if local {
-                    PaintEngineCommand::LocalMessage(m)
-                } else {
-                    PaintEngineCommand::RemoteMessage(m)
-                }
-            ) {
+            if let Err(err) = dp.engine_channel.send(if local {
+                PaintEngineCommand::LocalMessage(m)
+            } else {
+                PaintEngineCommand::RemoteMessage(m)
+            }) {
                 warn!("Couldn't send command to paint engine thread {:?}", err);
             }
         }
@@ -237,7 +268,10 @@ pub extern "C" fn paintengine_receive_messages(
 #[no_mangle]
 pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::Cleanup) {
-        warn!("Couldn't send cleanup command to paint engine thread {:?}", err);
+        warn!(
+            "Couldn't send cleanup command to paint engine thread {:?}",
+            err
+        );
     }
 }
 
@@ -248,7 +282,46 @@ pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
 #[no_mangle]
 pub extern "C" fn paintengine_background_color(dp: &PaintEngine) -> Color {
     let vc = dp.viewcache.lock().unwrap();
-    vc.layerstack.background.solid_color().unwrap_or(Color::TRANSPARENT)
+    vc.layerstack
+        .background
+        .solid_color()
+        .unwrap_or(Color::TRANSPARENT)
+}
+
+/// Find the next unused annotation ID for the given user
+#[no_mangle]
+pub extern "C" fn paintengine_get_available_annotation_id(
+    dp: &PaintEngine,
+    user: UserID,
+) -> AnnotationID {
+    let vc = dp.viewcache.lock().unwrap();
+
+    vc.layerstack.find_available_annotation_id(user)
+}
+
+/// Find the annotation at the given position
+#[no_mangle]
+pub extern "C" fn paintengine_get_annotation_at(
+    dp: &PaintEngine,
+    x: i32,
+    y: i32,
+    expand: i32,
+) -> AnnotationAt {
+    let vc = dp.viewcache.lock().unwrap();
+
+    if let Some(a) = vc.layerstack.get_annotation_at(x, y, expand) {
+        AnnotationAt {
+            id: a.id,
+            rect: a.rect,
+            protect: a.protect,
+        }
+    } else {
+        AnnotationAt {
+            id: 0,
+            rect: Rectangle::new(0, 0, 1, 1),
+            protect: false,
+        }
+    }
 }
 
 /// Paint all the changed tiles in the given area

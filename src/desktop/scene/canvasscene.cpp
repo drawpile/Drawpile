@@ -29,33 +29,32 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
+#include "canvas/usercursormodel.h"
+#include "canvas/lasertrailmodel.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
+
+#include "../rustpile/rustpile.h"
 
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), m_canvasItem(nullptr), m_model(nullptr),
+	: QGraphicsScene(parent), m_model(nullptr),
 	  m_selection(nullptr),
-	  _showAnnotationBorders(false), _showAnnotations(true),
-	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true), m_showLaserTrails(true)
+	  m_showAnnotationBorders(false), m_showAnnotations(true),
+	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true),
+	  m_showLaserTrails(true)
 {
-	m_canvasItem = new CanvasItem;
-
 	setItemIndexMethod(NoIndex);
 
+	m_canvasItem = new CanvasItem;
 	addItem(m_canvasItem);
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
-	_animTickTimer = new QTimer(this);
-	connect(_animTickTimer, &QTimer::timeout, this, &CanvasScene::advanceUsermarkerAnimation);
-	_animTickTimer->setInterval(200);
-	_animTickTimer->start(200);
-}
-
-CanvasScene::~CanvasScene()
-{
-	delete m_canvasItem;
+	auto animationTimer = new QTimer(this);
+	connect(animationTimer, &QTimer::timeout, this, &CanvasScene::advanceUsermarkerAnimation);
+	animationTimer->setInterval(200);
+	animationTimer->start(200);
 }
 
 /**
@@ -64,20 +63,20 @@ CanvasScene::~CanvasScene()
  */
 void CanvasScene::initCanvas(canvas::CanvasModel *model)
 {
+	if(model == m_model) {
+		qWarning("initCanvas already called on this model");
+		return;
+	}
+
 	onSelectionChanged(nullptr);
 
 	m_model = model;
 
 	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize);
-	m_canvasItem->setPaintEngine(m_model->paintEngine());
+	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged);
+	connect(m_model, &canvas::CanvasModel::previewAnnotationRequested, this, &CanvasScene::previewAnnotation);
 
-#if 0 // FIXME
-	paintcore::AnnotationModel *anns = m_model->layerStack()->annotations();
-	connect(anns, &paintcore::AnnotationModel::rowsInserted, this, &CanvasScene::annotationsAdded);
-	connect(anns, &paintcore::AnnotationModel::dataChanged, this, &CanvasScene::annotationsChanged);
-	connect(anns, &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &CanvasScene::annotationsRemoved);
-	connect(anns, &paintcore::AnnotationModel::modelReset, this, &CanvasScene::annotationsReset);
-#endif
+	m_canvasItem->setPaintEngine(m_model->paintEngine());
 
 	canvas::UserCursorModel *cursors = m_model->userCursors();
 	connect(cursors, &canvas::UserCursorModel::rowsInserted, this, &CanvasScene::userCursorAdded);
@@ -91,10 +90,11 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
 
-	annotationsReset();
-
-	for(UserMarkerItem *i : m_usermarkers)
-		delete i;
+	for(QGraphicsItem *item : items()) {
+		if(item->type() == AnnotationItem::Type || item->type() == UserMarkerItem::Type) {
+			delete item;
+		}
+	}
 	m_usermarkers.clear();
 	
 	QList<QRectF> regions;
@@ -129,19 +129,24 @@ void CanvasScene::onSelectionChanged(canvas::Selection *selection)
 
 void CanvasScene::showAnnotations(bool show)
 {
-	_showAnnotations = show;
-	for(QGraphicsItem *item : items()) {
-		if(item->type() == AnnotationItem::Type)
-			item->setVisible(show);
+	if(m_showAnnotations != show) {
+		m_showAnnotations = show;
+		for(QGraphicsItem *item : items()) {
+			if(item->type() == AnnotationItem::Type)
+				item->setVisible(show);
+		}
 	}
 }
 
-void CanvasScene::showAnnotationBorders(bool hl)
+void CanvasScene::showAnnotationBorders(bool showBorders)
 {
-	_showAnnotationBorders = hl;
-	for(QGraphicsItem *item : items()) {
-		if(item->type() == AnnotationItem::Type)
-			static_cast<AnnotationItem*>(item)->setShowBorder(hl);
+	if(m_showAnnotationBorders != showBorders) {
+		m_showAnnotationBorders = showBorders;
+		for(QGraphicsItem *item : items()) {
+			auto *ai = qgraphicsitem_cast<AnnotationItem*>(item);
+			if(ai)
+				ai->setShowBorder(showBorders);
+		}
 	}
 }
 
@@ -165,7 +170,7 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 	return nullptr;
 }
 
-void CanvasScene::activeAnnotationChanged(int id)
+void CanvasScene::setActiveAnnotation(int id)
 {
 	for(QGraphicsItem *i : items()) {
 		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem*>(i);
@@ -174,85 +179,70 @@ void CanvasScene::activeAnnotationChanged(int id)
 	}
 }
 
-void CanvasScene::annotationsAdded(const QModelIndex&, int first, int last)
-{
-#if 0 // FIXME
-	for(int i=first;i<=last;++i) {
-		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		const int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
-		if(getAnnotationItem(id)) {
-			qWarning("Annotation item already exists for ID %#x", id);
-			continue;
-		}
+void CanvasScene::annotationsChanged(rustpile::Annotations *annotations) {
+	struct Context {
+		QList<AnnotationItem*> items;
+		QList<AnnotationItem*> newItems;
+	} ctx;
 
-		AnnotationItem *item = new AnnotationItem(id);
-		item->setShowBorder(showAnnotationBorders());
-		item->setVisible(_showAnnotations);
-		addItem(item);
-		annotationsChanged(a, a, QVector<int>());
-	}
-#endif
-}
-
-void CanvasScene::annotationsRemoved(const QModelIndex&, int first, int last)
-{
-#if 0 // FIXME
-	for(int i=first;i<=last;++i) {
-		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
-		AnnotationItem *item = getAnnotationItem(id);
-		if(item)
-			delete item;
-		else
-			qWarning("Could not find annotation item %#x for deletion", id);
-	}
-#endif
-}
-
-void CanvasScene::annotationsChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
-{
-#if 0 // FIXME
-	const int ifirst = first.row();
-	const int ilast = last.row();
-	for(int i=ifirst;i<=ilast;++i) {
-		const QModelIndex a = m_model->layerStack()->annotations()->index(i);
-		const int id = a.data(paintcore::AnnotationModel::IdRole).toInt();
-		AnnotationItem *item = getAnnotationItem(id);
-
-		if(!item) {
-			qWarning("Could not find annotation item %#x for update", id);
-			continue;
-		}
-
-		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
-			item->setText(a.data(Qt::DisplayRole).toString());
-
-		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::RectRole))
-			item->setGeometry(a.data(paintcore::AnnotationModel::RectRole).toRect());
-
-		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::BgColorRole))
-			item->setColor(a.data(paintcore::AnnotationModel::BgColorRole).value<QColor>());
-
-		if(changed.isEmpty() || changed.contains(paintcore::AnnotationModel::VAlignRole))
-			item->setValign(a.data(paintcore::AnnotationModel::VAlignRole).toInt());
-	}
-#endif
-}
-
-void CanvasScene::annotationsReset()
-{
-#if 0 // FIXME
-	// Clear out any old annotation items
+	// Gather up all the existing annotation items
 	for(QGraphicsItem *item : items()) {
-		if(item->type() == AnnotationItem::Type) {
-			delete item;
-		}
+		 auto ai = qgraphicsitem_cast<AnnotationItem*>(item);
+		 if(ai)
+			 ctx.items << ai;
 	}
 
-	if(!m_model->layerStack()->annotations()->isEmpty()) {
-		annotationsAdded(QModelIndex(), 0, m_model->layerStack()->annotations()->rowCount()-1);
+	// The update function
+	auto update = [](void *ctx, rustpile::AnnotationID id, const char *text, uintptr_t textlen, rustpile::Rectangle rect, rustpile::Color background, bool protect, rustpile::VAlign valign) {
+		auto context = reinterpret_cast<Context*>(ctx);
+		AnnotationItem *ai = nullptr;
+		for(int i=0;i<context->items.size();++i) {
+			if(context->items.at(i)->id() == id) {
+				ai = context->items.takeAt(i);
+				break;
+			}
+		}
+
+		if(!ai) {
+			ai = new AnnotationItem(id);
+			context->newItems << ai;
+		}
+
+		ai->setText(QString::fromUtf8(text, textlen));
+		ai->setGeometry(QRect{rect.x, rect.y, rect.w, rect.h});
+		ai->setColor(QColor::fromRgbF(background.r, background.g, background.b, background.a));
+		ai->setProtect(protect);
+		ai->setValign(int(valign));
+	};
+
+	// Update or create annotations
+	rustpile::annotations_get_all(annotations, &ctx, update);
+	rustpile::annotations_free(annotations);
+
+	// Whatever remains in the list are annotations that were removed
+	for(auto ai : qAsConst(ctx.items)) {
+		delete ai;
 	}
-#endif
+
+	// These were added
+	for(auto ai : qAsConst(ctx.newItems)) {
+		ai->setShowBorder(showAnnotationBorders());
+		ai->setVisible(m_showAnnotations);
+		addItem(ai);
+	}
+}
+
+void CanvasScene::previewAnnotation(int id, const QRect &shape)
+{
+	auto ai = getAnnotationItem(id);
+	if(!ai) {
+		ai = new AnnotationItem(id);
+		ai->setShowBorder(showAnnotationBorders());
+		ai->setVisible(m_showAnnotations);
+		addItem(ai);
+	}
+
+	ai->setGeometry(shape);
 }
 
 void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
