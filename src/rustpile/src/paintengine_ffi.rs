@@ -324,6 +324,18 @@ pub extern "C" fn paintengine_get_annotation_at(
     }
 }
 
+/// Check if the paint engine's content is simple enough to be saved in a flat image
+///
+/// If any features that requires the OpenRaster file format (such as multiple layers)
+/// are used, this will return false.
+#[no_mangle]
+pub extern "C" fn paintengine_is_simple(dp: &PaintEngine) -> bool {
+    let vc = dp.viewcache.lock().unwrap();
+    vc.layerstack.layer_count() <= 1
+        && vc.layerstack.get_annotations().len() == 0
+        && vc.layerstack.background.is_blank()
+}
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be

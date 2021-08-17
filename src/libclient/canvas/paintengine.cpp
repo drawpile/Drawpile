@@ -136,6 +136,11 @@ rustpile::AnnotationAt PaintEngine::getAnnotationAt(int x, int y, int expand) co
 	return rustpile::paintengine_get_annotation_at(m_pe, x, y, expand);
 }
 
+bool PaintEngine::needsOpenRaster() const
+{
+	return !rustpile::paintengine_is_simple(m_pe);
+}
+
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 {
 	const auto size = this->size();

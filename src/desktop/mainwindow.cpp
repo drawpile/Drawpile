@@ -1129,7 +1129,7 @@ void MainWindow::save()
 		return;
 	}
 
-	if(!filename.endsWith("ora", Qt::CaseInsensitive) && m_doc->canvas()->needsOpenRaster()) {
+	if(!filename.endsWith("ora", Qt::CaseInsensitive) && m_doc->canvas()->paintEngine()->needsOpenRaster()) {
 		// Note: the user may decide to save an ORA file instead, in which case the name is changed
 		if(confirmFlatten(filename)==false)
 			return;
@@ -1163,7 +1163,7 @@ void MainWindow::saveas()
 		if(info.suffix().isEmpty()) {
 			if(selfilter.isEmpty()) {
 				// If we don't have selfilter, pick what is best
-				if(m_doc->canvas()->needsOpenRaster())
+				if(m_doc->canvas()->paintEngine()->needsOpenRaster())
 					file += ".ora";
 				else
 					file += ".png";
@@ -1176,7 +1176,7 @@ void MainWindow::saveas()
 		}
 
 		// Confirm format choice if saving would result in flattening layers
-		if(m_doc->canvas()->needsOpenRaster() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
+		if(m_doc->canvas()->paintEngine()->needsOpenRaster() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
 			if(confirmFlatten(file)==false)
 				return;
 		}

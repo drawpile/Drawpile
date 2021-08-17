@@ -341,6 +341,10 @@ impl LayerStack {
         return Arc::make_mut(&mut self.layers).iter_mut();
     }
 
+    pub fn layer_count(&self) -> usize {
+        return self.layers.len()
+    }
+
     /// Compare this layer stack with the other and return an Area Of Effect.
     /// This is used when the entire layer stack is replaced, e.g. when
     /// resetting to an earlier state as a part of an undo operation.

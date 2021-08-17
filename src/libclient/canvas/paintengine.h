@@ -76,7 +76,11 @@ public:
 	//! Find an unused ID for a new annotation
 	uint16_t findAvailableAnnotationId(uint8_t forUser) const;
 
+	//! Get the annotation at the given point
 	rustpile::AnnotationAt getAnnotationAt(int x, int y, int expand) const;
+
+	//! Is OpenRaster file format needed to save the canvas losslessly?
+	bool needsOpenRaster() const;
 
 signals:
 	// Note: these signals are emitted from the paint engine thread

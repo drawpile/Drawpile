@@ -244,17 +244,6 @@ QImage CanvasModel::toImage(bool withBackground, bool withSublayers) const
 	return QImage();
 }
 
-bool CanvasModel::needsOpenRaster() const
-{
-#if 0 // FIXME
-	return m_layerstack->layerCount() > 1 ||
-		!m_layerstack->annotations()->isEmpty() ||
-		!m_layerstack->background().isBlank()
-		;
-#endif
-	return true;
-}
-
 protocol::MessageList CanvasModel::generateSnapshot() const
 {
 #if 0 // FIXME

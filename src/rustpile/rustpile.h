@@ -247,6 +247,12 @@ AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
                                            int32_t y,
                                            int32_t expand);
 
+/// Check if the paint engine's content is simple enough to be saved in a flat image
+///
+/// If any features that requires the OpenRaster file format (such as multiple layers)
+/// are used, this will return false.
+bool paintengine_is_simple(const PaintEngine *dp);
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be
