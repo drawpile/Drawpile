@@ -24,6 +24,7 @@
 #include <QPixmap>
 
 #include "layerlist.h"
+#include "net/envelope.h"
 
 namespace rustpile {
 	struct PaintEngine;
@@ -60,7 +61,7 @@ public:
 	QSize size() const;
 
 	//! Receive and handle messages
-	void receiveMessages(bool local, const QByteArray &msgs);
+	void receiveMessages(bool local, const net::Envelope &msgs);
 
 	//! Clean up dangling state after disconnecting from a remote session
 	void cleanup();

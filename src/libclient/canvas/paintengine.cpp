@@ -103,9 +103,9 @@ void PaintEngine::reset()
 	m_cache = QPixmap();
 }
 
-void PaintEngine::receiveMessages(bool local, const QByteArray &msgs)
+void PaintEngine::receiveMessages(bool local, const net::Envelope &msgs)
 {
-	rustpile::paintengine_receive_messages(m_pe, local, reinterpret_cast<const uint8_t*>(msgs.constData()), msgs.length());
+	rustpile::paintengine_receive_messages(m_pe, local, msgs.data(), msgs.length());
 }
 
 void PaintEngine::cleanup()
