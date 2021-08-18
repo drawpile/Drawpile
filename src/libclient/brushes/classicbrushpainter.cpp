@@ -17,9 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../libshared/net/brushes.h"
 #include "core/brushmask.h"
-#include "core/layer.h"
 
 #include <QCache>
 #include <QtMath>
@@ -255,42 +253,6 @@ paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius
 	s.mask = offsetMask(s.mask, xfrac, yfrac);
 
 	return s;
-}
-
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::EditableLayer layer, int sublayer)
-{
-	if(dabs.dabs().isEmpty()) {
-		qWarning("drawDabs(ctx=%d, layer=%d): empty dab vector!", dabs.contextId(), dabs.layer());
-		return;
-	}
-
-	auto blendmode = paintcore::BlendMode::Mode(dabs.mode());
-	const QColor color = QColor::fromRgba(dabs.color());
-
-	if(sublayer==0 && color.alpha()>0)
-		sublayer = dabs.contextId();
-
-	if(sublayer != 0) {
-		layer = layer.getEditableSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
-		layer.updateChangeBounds(dabs.bounds());
-		blendmode = paintcore::BlendMode::MODE_NORMAL;
-	}
-
-	int lastX = dabs.originX();
-	int lastY = dabs.originY();
-	for(const protocol::ClassicBrushDab &d : dabs.dabs()) {
-		const int nextX = lastX + d.x;
-		const int nextY = lastY + d.y;
-		const paintcore::BrushStamp bs = makeGimpStyleBrushStamp(
-			QPointF(nextX/4.0, nextY/4.0),
-			d.size/256.0,
-			d.hardness/255.0,
-			d.opacity/255.0
-		);
-		layer.putBrushStamp(bs, color, blendmode);
-		lastX = nextX;
-		lastY = nextY;
-	}
 }
 
 }

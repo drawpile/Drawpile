@@ -24,20 +24,10 @@
 class QPointF;
 
 namespace paintcore {
-	class EditableLayer;
 	struct BrushStamp;
 }
 
-namespace protocol {
-	class DrawDabsClassic;
-}
-
 namespace brushes {
-
-/**
- * Draw brush drabs on the canvas
- */
-void drawClassicBrushDabs(const protocol::DrawDabsClassic &dabs, paintcore::EditableLayer layer, int sublayer=0);
 
 paintcore::BrushStamp makeGimpStyleBrushStamp(const QPointF &point, qreal radius, qreal hardness, qreal opacity);
 

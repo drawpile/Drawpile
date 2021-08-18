@@ -17,9 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../libshared/net/brushes.h"
 #include "core/brushmask.h"
-#include "core/layer.h"
 
 namespace brushes {
 
@@ -49,53 +47,6 @@ paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity)
 paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity)
 {
 	return paintcore::BrushMask(diameter, QVector<uchar>(square(diameter), opacity));
-}
-
-void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::EditableLayer layer, int sublayer)
-{
-	if(dabs.dabs().isEmpty()) {
-		qWarning("drawPixelBrushDabs(ctx=%d, layer=%d): empty dab vector!", dabs.contextId(), dabs.layer());
-		return;
-	}
-
-	auto blendmode = paintcore::BlendMode::Mode(dabs.mode());
-	const QColor color = QColor::fromRgba(dabs.color());
-
-	if(sublayer == 0 && color.alpha()>0)
-		sublayer = dabs.contextId();
-
-	if(sublayer != 0) {
-		layer = layer.getEditableSubLayer(sublayer, blendmode, color.alpha() > 0 ? color.alpha() : 255);
-		layer.updateChangeBounds(dabs.bounds());
-		blendmode = paintcore::BlendMode::MODE_NORMAL;
-	}
-
-	paintcore::BrushMask mask;
-	int lastSize = -1, lastOpacity = 0;
-
-	int lastX = dabs.originX();
-	int lastY = dabs.originY();
-	for(const protocol::PixelBrushDab &d : dabs.dabs()) {
-		const int nextX = lastX + d.x;
-		const int nextY = lastY + d.y;
-
-		if(d.size != lastSize|| d.opacity != lastOpacity) {
-			// The mask is often reusable
-			mask = dabs.isSquare() ? makeSquarePixelBrushMask(d.size, d.opacity) : makeRoundPixelBrushMask(d.size, d.opacity);
-			lastSize = d.size;
-			lastOpacity = d.opacity;
-		}
-
-		const int offset = d.size/2;
-		layer.putBrushStamp(
-			paintcore::BrushStamp { nextX-offset, nextY-offset, mask },
-			color,
-			blendmode
-		);
-
-		lastX = nextX;
-		lastY = nextY;
-	}
 }
 
 }

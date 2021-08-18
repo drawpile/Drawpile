@@ -74,14 +74,10 @@ set (
 	core/floodfill.cpp
 	core/tilevector.cpp
 	brushes/brush.cpp
-	brushes/brushengine.cpp
-	brushes/brushpainter.cpp
-	brushes/classicbrushstate.cpp
-	brushes/classicbrushpainter.cpp
-	brushes/pixelbrushstate.cpp
-	brushes/pixelbrushpainter.cpp
 	brushes/shapes.cpp
 	brushes/brushpresetmodel.cpp
+	brushes/classicbrushpainter.cpp
+	brushes/pixelbrushpainter.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp

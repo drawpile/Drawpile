@@ -24,7 +24,6 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "brushes/brushpainter.h"
 #include "net/commands.h"
 #include "net/internalmsg.h"
 #include "tools/selection.h" // for selection transform utils
@@ -608,7 +607,7 @@ void StateTracker::handleDrawDabs(const protocol::Message &cmd)
 {
 	auto layers = m_layerstack->editor(cmd.contextId());
 
-	brushes::drawBrushDabs(cmd, layers);
+	//brushes::drawBrushDabs(cmd, layers);
 
 	if(_showallmarkers || cmd.contextId() != localId())
 		emit userMarkerMove(cmd.contextId(), cmd.layer(), static_cast<const protocol::DrawDabs&>(cmd).lastPoint());

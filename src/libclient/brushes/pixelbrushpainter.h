@@ -20,20 +20,10 @@
 #define BRUSHES_PIXELBRUSHPAINTER_H
 
 namespace paintcore {
-	class EditableLayer;
-	class BrushMask;
-}
-
-namespace protocol {
-	class DrawDabsPixel;
+	struct BrushMask;
 }
 
 namespace brushes {
-
-/**
- * Draw brush drabs on the canvas
- */
-void drawPixelBrushDabs(const protocol::DrawDabsPixel &dabs, paintcore::EditableLayer layer, int sublayer=0);
 
 paintcore::BrushMask makeRoundPixelBrushMask(int diameter, uchar opacity);
 paintcore::BrushMask makeSquarePixelBrushMask(int diameter, uchar opacity);
