@@ -20,6 +20,7 @@
 #define DP_CANVASITEM_H
 
 #include <QGraphicsObject>
+#include <QPointer>
 
 namespace canvas {
 	class PaintEngine;
@@ -47,7 +48,7 @@ protected:
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
 
 private:
-	canvas::PaintEngine *m_image;
+	QPointer<canvas::PaintEngine> m_image;
 };
 
 }

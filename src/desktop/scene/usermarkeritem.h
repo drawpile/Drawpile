@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef USERMARKERITEM_H
 #define USERMARKERITEM_H
 
-#include <QGraphicsObject>
+#include <QGraphicsItem>
 #include <QPainterPath>
 #include <QPixmap>
 #include <QBrush>
@@ -53,7 +53,7 @@ public:
 	void fadein();
 	void fadeout();
 
-	bool fadeoutStep(double dt);
+	void animationStep(double dt);
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
@@ -69,6 +69,7 @@ private:
 	QRectF m_textRect;
 	QRectF m_avatarRect;
 	double m_fadeout;
+	qint64 m_lastMoved;
 
 	QString m_text1, m_text2;
 	QString m_fulltext;

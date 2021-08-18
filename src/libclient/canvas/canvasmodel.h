@@ -42,14 +42,12 @@ class StateTracker;
 class AclFilter;
 class UserListModel;
 class LayerListModel;
-class UserCursorModel;
 class LaserTrailModel;
 class Selection;
 class PaintEngine;
 
 class CanvasModel : public QObject
 {
-	Q_PROPERTY(UserCursorModel* userCursors READ userCursors CONSTANT)
 	Q_PROPERTY(LaserTrailModel* laserTrails READ laserTrails CONSTANT)
 	Q_PROPERTY(Selection* selection READ selection WRITE setSelection NOTIFY selectionChanged)
 
@@ -62,7 +60,6 @@ public:
 	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
-	UserCursorModel *userCursors() const { return m_usercursors; }
 	LaserTrailModel *laserTrails() const { return m_lasers; }
 
 	QString title() const { return m_title; }
@@ -176,7 +173,6 @@ private:
 	LayerListModel *m_layerlist;
 
 	PaintEngine *m_paintengine;
-	UserCursorModel *m_usercursors;
 	LaserTrailModel *m_lasers;
 	Selection *m_selection;
 

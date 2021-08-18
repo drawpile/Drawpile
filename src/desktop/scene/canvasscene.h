@@ -105,11 +105,9 @@ signals:
 private slots:
 	void onSelectionChanged(canvas::Selection *sel);
 	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
-	void advanceUsermarkerAnimation();
+	void advanceAnimations();
 
-	void userCursorAdded(const QModelIndex&, int first, int last);
-	void userCursorRemoved(const QModelIndex&, int first, int last);
-	void userCursorChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
+	void userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y);
 
 	void annotationsChanged(rustpile::Annotations *annotations);
 	void previewAnnotation(int id, const QRect &shape);

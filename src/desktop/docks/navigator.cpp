@@ -20,10 +20,9 @@ using docks::NavigatorView;
 #include "ui_navigator.h"
 #include "docks/utils.h"
 
-#include "core/layerstack.h"
-
-#include "canvas/usercursormodel.h"
+#include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
+#include "canvas/userlist.h"
 
 #include <QMouseEvent>
 #include <QTimer>
@@ -31,6 +30,7 @@ using docks::NavigatorView;
 #include <QPainterPath>
 #include <QAction>
 #include <QSettings>
+#include <QDateTime>
 
 namespace docks {
 
@@ -65,7 +65,7 @@ static QPixmap makeCursorBackground(const int avatarSize)
 }
 
 NavigatorView::NavigatorView(QWidget *parent)
-	: QWidget(parent), m_pe(nullptr), m_cursors(nullptr), m_zoomWheelDelta(0),
+	: QWidget(parent), m_model(nullptr), m_zoomWheelDelta(0),
 	  m_showCursors(true)
 {
 	m_refreshTimer = new QTimer(this);
@@ -77,11 +77,13 @@ NavigatorView::NavigatorView(QWidget *parent)
 	m_cursorBackground = makeCursorBackground(16);
 }
 
-void NavigatorView::setPaintEngine(canvas::PaintEngine *pe)
+void NavigatorView::setCanvasModel(canvas::CanvasModel *model)
 {
-	m_pe = pe;
-	connect(m_pe, &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange);
-	connect(m_pe, &canvas::PaintEngine::resized, this, &NavigatorView::onResize);
+	m_model = model;
+	connect(m_model->paintEngine(), &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &NavigatorView::onResize, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &NavigatorView::onCursorMove, Qt::QueuedConnection);
+
 	refreshCache();
 }
 
@@ -116,7 +118,7 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
 	const QPoint p = event->pos();
 
 	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
-	const QSize canvasSize = m_pe->size();
+	const QSize canvasSize = m_model->size();
 
 	const qreal xscale = s.width() / qreal(canvasSize.width());
 	const qreal yscale = s.height() / qreal(canvasSize.height());
@@ -174,17 +176,17 @@ void NavigatorView::onResize()
 
 void NavigatorView::refreshCache()
 {
-	if(!m_pe)
+	if(!m_model)
 		return;
 
-	const QPixmap &canvas = m_pe->getPixmap();
+	const QPixmap &canvas = m_model->paintEngine()->getPixmap();
 	if(canvas.isNull())
 		return;
 
 	const QSize size = this->size();
 	if(size != m_cachedSize) {
 		m_cachedSize = size;
-		const QSize pixmapSize = m_pe->size().scaled(size, Qt::KeepAspectRatio);
+		const QSize pixmapSize = canvas.size().scaled(size, Qt::KeepAspectRatio);
 		m_cache = QPixmap(pixmapSize);
 	}
 
@@ -199,7 +201,7 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	QPainter painter(this);
 	painter.fillRect(rect(), QColor(100,100,100));
 
-	if(!m_pe)
+	if(!m_model)
 		return;
 
 	// Draw downscaled canvas
@@ -223,7 +225,7 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	painter.setPen(pen);
 	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 
-	const auto canvasSize = m_pe->size();
+	const auto canvasSize = m_model->size();
 	const qreal xscale = s.width() / qreal(canvasSize.width());
 	const qreal yscale = s.height() / qreal(canvasSize.height());
 	painter.translate(canvasRect.topLeft());
@@ -241,18 +243,21 @@ void NavigatorView::paintEvent(QPaintEvent *)
 
 	painter.restore();
 	// Draw user cursors
-	if(m_cursors && m_showCursors) {
-		const int cursorCount = m_cursors->rowCount();
-		for(int i=0;i<cursorCount;++i) {
-			const QModelIndex idx = m_cursors->index(i);
-			if(!idx.data(canvas::UserCursorModel::VisibleRole).toBool())
-				continue;
+	if(m_showCursors) {
+		QMutableVectorIterator<UserCursor> ci(m_cursors);
 
-			const QPixmap avatar = idx.data(Qt::DecorationRole).value<QPixmap>();
-			const QPoint pos = idx.data(canvas::UserCursorModel::PositionRole).toPoint();
+		const qint64 cutoff = QDateTime::currentMSecsSinceEpoch() - 1000;
+
+		while(ci.hasNext()) {
+			const auto &cursor = ci.next();
+			if(cursor.lastMoved < cutoff) {
+				ci.remove();
+				continue;
+			}
+
 			const QPoint viewPoint = QPoint(
-				pos.x() * xscale + canvasRect.x() - m_cursorBackground.width() / 2,
-				pos.y() * yscale + canvasRect.y() - m_cursorBackground.height()
+				cursor.pos.x() * xscale + canvasRect.x() - m_cursorBackground.width() / 2,
+				cursor.pos.y() * yscale + canvasRect.y() - m_cursorBackground.height()
 			);
 
 			painter.drawPixmap(viewPoint, m_cursorBackground);
@@ -260,15 +265,43 @@ void NavigatorView::paintEvent(QPaintEvent *)
 			painter.drawPixmap(
 				QRect(
 					viewPoint + QPoint(
-						m_cursorBackground.width()/2 - avatar.width()/4,
-						m_cursorBackground.width()/2 - avatar.height()/4
+						m_cursorBackground.width()/2 - cursor.avatar.width()/4,
+						m_cursorBackground.width()/2 - cursor.avatar.height()/4
 					),
-					avatar.size() / 2
+					cursor.avatar.size() / 2
 				),
-				avatar
+				cursor.avatar
 			);
 		}
 	}
+}
+
+void NavigatorView::onCursorMove(uint8_t userId, uint16_t layer, int x, int y)
+{
+	Q_UNUSED(layer);
+
+	if(!m_showCursors)
+		return;
+
+	// Never show the local user's cursor in the navigator
+	if(userId == m_model->localUserId())
+		return;
+
+	for(UserCursor &uc : m_cursors) {
+		if(uc.id == userId) {
+			uc.pos = QPoint(x, y);
+			uc.lastMoved = QDateTime::currentMSecsSinceEpoch();
+			return;
+		}
+	}
+
+	const canvas::User user = m_model->userlist()->getUserById(userId);
+	m_cursors << UserCursor {
+		user.avatar,
+		QPoint(x, y),
+		QDateTime::currentMSecsSinceEpoch(),
+		userId
+	};
 }
 
 /**
@@ -324,14 +357,9 @@ Navigator::~Navigator()
 	delete m_ui;
 }
 
-void Navigator::setPaintEngine(canvas::PaintEngine *pe)
+void Navigator::setCanvasModel(canvas::CanvasModel *model)
 {
-	m_ui->view->setPaintEngine(pe);
-}
-
-void Navigator::setUserCursors(canvas::UserCursorModel *cursors)
-{
-	m_ui->view->setUserCursors(cursors);
+	m_ui->view->setCanvasModel(model);
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)

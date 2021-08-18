@@ -23,8 +23,7 @@
 class Ui_Navigator;
 
 namespace canvas {
-	class UserCursorModel;
-	class PaintEngine;
+	class CanvasModel;
 }
 
 namespace docks {
@@ -35,9 +34,7 @@ class NavigatorView : public QWidget
 public:
 	NavigatorView(QWidget *parent);
 
-	void setPaintEngine(canvas::PaintEngine *pep);
-	void setUserCursors(canvas::UserCursorModel *cursors) { m_cursors = cursors; }
-
+	void setCanvasModel(canvas::CanvasModel *model);
 	void setViewFocus(const QPolygonF& rect);
 
 public slots:
@@ -59,10 +56,18 @@ private slots:
 	void onChange();
 	void onResize();
 	void refreshCache();
+	void onCursorMove(uint8_t user, uint16_t layer, int x, int y);
 
 private:
-	canvas::PaintEngine *m_pe;
-	canvas::UserCursorModel *m_cursors;
+	struct UserCursor {
+		QPixmap avatar;
+		QPoint pos;
+		qint64 lastMoved;
+		int id;
+	};
+
+	canvas::CanvasModel *m_model;
+	QVector<UserCursor> m_cursors;
 	QPixmap m_cache;
 	QPixmap m_cursorBackground;
 	QSize m_cachedSize;
@@ -82,11 +87,7 @@ public:
 	Navigator(QWidget *parent);
 	~Navigator();
 
-	//! Set associated graphics scene
-	void setPaintEngine(canvas::PaintEngine *pe);
-
-	//! Set the user list (optional)
-	void setUserCursors(canvas::UserCursorModel *cursors);
+	void setCanvasModel(canvas::CanvasModel *model);
 
 public slots:
 	//! Move the view focus rectangle

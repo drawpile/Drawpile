@@ -39,6 +39,7 @@ type NotifyResizeCallback =
 type NotifyLayerListCallback =
     extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize);
 type NotifyAnnotationsCallback = extern "C" fn(ctx: *mut c_void, annotations: *mut Annotations);
+type NotifyCursorCallback = extern "C" fn(ctx: *mut c_void, user: UserID, layer: u16, x: i32, y: i32);
 
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
@@ -57,6 +58,7 @@ struct NotificationCallbacks {
     notify_resize: NotifyResizeCallback,
     notify_layerlist: NotifyLayerListCallback,
     notify_annotations: NotifyAnnotationsCallback,
+    notify_cursor: NotifyCursorCallback,
 }
 
 // Unsafe due to the c_void pointer
@@ -168,6 +170,10 @@ fn run_paintengine(
                 // Important: the user is responsible for calling annotations_free
                 (callbacks.notify_annotations)(callbacks.context_object, Box::leak(annotations));
             }
+
+            if changes.user > 0 {
+                (callbacks.notify_cursor)(callbacks.context_object, changes.user, changes.layer, changes.cursor.0, changes.cursor.1);
+            }
         }
     }
 }
@@ -180,6 +186,7 @@ pub extern "C" fn paintengine_new(
     resizes: NotifyResizeCallback,
     layers: NotifyLayerListCallback,
     annotations: NotifyAnnotationsCallback,
+    cursors: NotifyCursorCallback,
 ) -> *mut PaintEngine {
     let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
@@ -192,6 +199,7 @@ pub extern "C" fn paintengine_new(
         notify_resize: resizes,
         notify_layerlist: layers,
         notify_annotations: annotations,
+        notify_cursor: cursors,
     };
 
     let (sender, receiver) = mpsc::channel::<PaintEngineCommand>();

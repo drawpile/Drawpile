@@ -18,7 +18,6 @@
 */
 
 #include "canvasmodel.h"
-#include "usercursormodel.h"
 #include "lasertrailmodel.h"
 #include "layerlist.h"
 #include "userlist.h"
@@ -56,7 +55,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
 
 	m_paintengine = new PaintEngine(this);
-	m_usercursors = new UserCursorModel(this);
 	m_lasers = new LaserTrailModel(this);
 
 	m_aclfilter->reset(localUserId, true);
@@ -70,14 +68,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 		return nullptr;
 	});
 
-	m_usercursors->setLayerList(m_layerlist);
-
 	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
-#if 0 // FIXME
-	connect(m_statetracker, &StateTracker::userMarkerMove, m_usercursors, &UserCursorModel::setCursorPosition);
-	connect(m_statetracker, &StateTracker::userMarkerHide, m_usercursors, &UserCursorModel::hideCursor);
-#endif
-
 	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers, Qt::QueuedConnection); // queued connection needs to be set explicitly here for some reason
 
@@ -462,9 +453,6 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 	};
 
 	m_userlist->userLogin(u);
-	m_usercursors->setCursorName(msg.contextId(), msg.name());
-	m_usercursors->setCursorAvatar(msg.contextId(), u.avatar);
-
 	emit userJoined(msg.contextId(), msg.name());
 }
 
@@ -498,8 +486,11 @@ void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
 
 void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 {
+
 	QPoint p(int(msg.x() / 4.0), int(msg.y() / 4.0));
+#if 0 // FIXME
 	m_usercursors->setCursorPosition(msg.contextId(), 0, p);
+#endif
 	m_lasers->addPoint(msg.contextId(), p);
 }
 

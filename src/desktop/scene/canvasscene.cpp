@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,10 +29,8 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
-#include "canvas/usercursormodel.h"
 #include "canvas/lasertrailmodel.h"
-#include "core/layerstack.h"
-#include "core/layer.h"
+#include "canvas/userlist.h"
 
 #include "../rustpile/rustpile.h"
 
@@ -51,8 +49,10 @@ CanvasScene::CanvasScene(QObject *parent)
 	addItem(m_canvasItem);
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
+	// Our animation needs are very simple, so we use this instead of QGraphicsScene own
+	// animation system.
 	auto animationTimer = new QTimer(this);
-	connect(animationTimer, &QTimer::timeout, this, &CanvasScene::advanceUsermarkerAnimation);
+	connect(animationTimer, &QTimer::timeout, this, &CanvasScene::advanceAnimations);
 	animationTimer->setInterval(200);
 	animationTimer->start(200);
 }
@@ -63,25 +63,15 @@ CanvasScene::CanvasScene(QObject *parent)
  */
 void CanvasScene::initCanvas(canvas::CanvasModel *model)
 {
-	if(model == m_model) {
-		qWarning("initCanvas already called on this model");
-		return;
-	}
+	m_model = model;
+	m_canvasItem->setPaintEngine(m_model->paintEngine());
 
 	onSelectionChanged(nullptr);
 
-	m_model = model;
-
-	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &CanvasScene::userCursorMoved, Qt::QueuedConnection);
 	connect(m_model, &canvas::CanvasModel::previewAnnotationRequested, this, &CanvasScene::previewAnnotation);
-
-	m_canvasItem->setPaintEngine(m_model->paintEngine());
-
-	canvas::UserCursorModel *cursors = m_model->userCursors();
-	connect(cursors, &canvas::UserCursorModel::rowsInserted, this, &CanvasScene::userCursorAdded);
-	connect(cursors, &canvas::UserCursorModel::dataChanged, this, &CanvasScene::userCursorChanged);
-	connect(cursors, &canvas::UserCursorModel::rowsAboutToBeRemoved, this, &CanvasScene::userCursorRemoved);
 
 	canvas::LaserTrailModel *lasers = m_model->laserTrails();
 	connect(lasers, &canvas::LaserTrailModel::rowsInserted, this, &CanvasScene::laserAdded);
@@ -312,100 +302,56 @@ void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last
  * Note. We don't use the scene's built-in animation features since we care about
  * just a few specific animations.
  */
-void CanvasScene::advanceUsermarkerAnimation()
+void CanvasScene::advanceAnimations()
 {
 	const double STEP = 0.2; // time delta in seconds
 
 	for(LaserTrailItem *lt : m_lasertrails)
 		lt->animationStep(STEP);
 
-	for(UserMarkerItem *um : m_usermarkers) {
-		um->fadeoutStep(STEP);
+	for(UserMarkerItem *um : qAsConst(m_usermarkers)) {
+		um->animationStep(STEP);
 	}
 
 	if(m_selection)
 		m_selection->marchingAnts();
 }
 
-void CanvasScene::userCursorAdded(const QModelIndex&, int first, int last)
+void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y)
 {
-	for(int i=first;i<=last;++i) {
-		const QModelIndex um = m_model->userCursors()->index(i);
-		const int id = um.data(canvas::UserCursorModel::IdRole).toInt();
+	if(!m_showUserMarkers)
+		return;
 
-		if(m_usermarkers.contains(id)) {
-			qWarning("User marker item %d already exists!", id);
+	// TODO in some cases (playback, laser pointer) we want to show our cursor as well.
+	if(userId == m_model->localUserId())
+		return;
 
-		} else {
-			UserMarkerItem *item = new UserMarkerItem(id);
-			item->setShowText(m_showUserNames);
-			item->setShowSubtext(m_showUserLayers);
-			item->setShowAvatar(m_showUserAvatars);
-			item->hide();
-			addItem(item);
-			m_usermarkers[id] = item;
-		}
-		userCursorChanged(um, um, QVector<int>());
+	UserMarkerItem *item = m_usermarkers[userId];
+	if(!item) {
+		const auto user = m_model->userlist()->getUserById(userId);
+		item = new UserMarkerItem(userId);
+		item->setText(user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId)) : user.name);
+		item->setShowText(m_showUserNames);
+		item->setShowSubtext(m_showUserLayers);
+		item->setAvatar(user.avatar);
+		item->setShowAvatar(m_showUserAvatars);
+		addItem(item);
+		m_usermarkers[userId] = item;
 	}
-}
 
-void CanvasScene::userCursorRemoved(const QModelIndex&, int first, int last)
-{
-	for(int i=first;i<=last;++i) {
-		const QModelIndex um = m_model->userCursors()->index(i);
-		delete m_usermarkers.take(um.data(canvas::UserCursorModel::IdRole).toInt());
-	}
-}
+	if(m_showUserLayers)
+		item->setSubtext(m_model->layerlist()->layerIndex(layerId).data(canvas::LayerListModel::TitleRole).toString());
 
-void CanvasScene::userCursorChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
-{
-	const int ifirst = first.row();
-	const int ilast = last.row();
-	for(int i=ifirst;i<=ilast;++i) {
-		const QModelIndex um = m_model->userCursors()->index(i);
-		int id = um.data(canvas::UserCursorModel::IdRole).toInt();
-		if(!m_usermarkers.contains(id)) {
-			qWarning("User marker %d changed, but not yet created!", id);
-			continue;
-		}
-		UserMarkerItem *item = m_usermarkers[id];
-
-		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::PositionRole))
-			item->setPos(um.data(canvas::UserCursorModel::PositionRole).toPointF());
-
-		if(changed.isEmpty() || changed.contains(Qt::DecorationRole))
-			item->setAvatar(um.data(Qt::DecorationRole).value<QPixmap>());
-
-		if(changed.isEmpty() || changed.contains(Qt::DisplayRole))
-			item->setText(um.data(Qt::DisplayRole).toString());
-
-		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::LayerRole))
-			item->setSubtext(um.data(canvas::UserCursorModel::LayerRole).toString());
-
-		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::ColorRole))
-			item->setColor(um.data(canvas::UserCursorModel::ColorRole).value<QColor>());
-
-		if(changed.isEmpty() || changed.contains(canvas::UserCursorModel::VisibleRole)) {
-			if(m_showUserMarkers) {
-				bool v = um.data(canvas::UserCursorModel::VisibleRole).toBool();
-				if(v)
-					item->fadein();
-				else
-					item->fadeout();
-			}
-		}
-	}
+	item->setPos(x, y);
+	item->fadein();
 }
 
 void CanvasScene::showUserMarkers(bool show)
 {
 	if(m_showUserMarkers != show) {
 		m_showUserMarkers = show;
-		for(UserMarkerItem *item : m_usermarkers) {
-			if(show) {
-				if(m_model->userCursors()->indexForId(item->id()).data(canvas::UserCursorModel::VisibleRole).toBool())
-					item->fadein();
-			} else {
+		if(!show) {
+			for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
 				item->hide();
 			}
 		}
@@ -416,7 +362,7 @@ void CanvasScene::showUserNames(bool show)
 {
 	if(m_showUserNames != show) {
 		m_showUserNames = show;
-		for(UserMarkerItem *item : m_usermarkers)
+		for(UserMarkerItem *item : qAsConst(m_usermarkers))
 			item->setShowText(show);
 	}
 }
@@ -425,7 +371,7 @@ void CanvasScene::showUserLayers(bool show)
 {
 	if(m_showUserLayers != show) {
 		m_showUserLayers = show;
-		for(UserMarkerItem *item : m_usermarkers)
+		for(UserMarkerItem *item : qAsConst(m_usermarkers))
 			item->setShowSubtext(show);
 	}
 }
@@ -434,7 +380,7 @@ void CanvasScene::showUserAvatars(bool show)
 {
 	if(m_showUserAvatars != show) {
 		m_showUserAvatars = show;
-		for(UserMarkerItem *item : m_usermarkers)
+		for(UserMarkerItem *item : qAsConst(m_usermarkers))
 			item->setShowAvatar(show);
 	}
 }

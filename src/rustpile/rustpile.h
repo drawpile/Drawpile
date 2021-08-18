@@ -172,6 +172,8 @@ using NotifyAnnotationsCallback = void(*)(void *ctx, Annotations *annotations);
 
 using UserID = uint8_t;
 
+using NotifyCursorCallback = void(*)(void *ctx, UserID user, uint16_t layer, int32_t x, int32_t y);
+
 /// The result of an "annotation at point" query
 struct AnnotationAt {
   /// ID of the annotation at the queried point.
@@ -214,7 +216,8 @@ PaintEngine *paintengine_new(void *ctx,
                              NotifyChangesCallback changes,
                              NotifyResizeCallback resizes,
                              NotifyLayerListCallback layers,
-                             NotifyAnnotationsCallback annotations);
+                             NotifyAnnotationsCallback annotations,
+                             NotifyCursorCallback cursors);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);

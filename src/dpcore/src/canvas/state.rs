@@ -48,10 +48,21 @@ pub struct CanvasState {
 /// In addition to the usual layerstack area of effect,
 /// we're interested in whether layer structure or annotations
 /// were changed as well.
+/// This is also used to report user cursor movements for display
+/// in the UI layer.
 pub struct CanvasStateChange {
     pub aoe: AoE,
     pub layers_changed: bool,
     pub annotations_changed: bool,
+
+    /// This user's cursor moved while doing this change
+    pub user: UserID,
+
+    /// The user's target layer
+    pub layer: u16,
+
+    /// The user's last cursor position
+    pub cursor: (i32, i32),
 }
 
 impl CanvasStateChange {
@@ -60,6 +71,9 @@ impl CanvasStateChange {
             aoe: AoE::Nothing,
             layers_changed: false,
             annotations_changed: false,
+            user: 0,
+            layer: 0,
+            cursor: (0, 0),
         }
     }
 
@@ -68,14 +82,31 @@ impl CanvasStateChange {
             aoe,
             layers_changed: true,
             annotations_changed: false,
+            user: 0,
+            layer: 0,
+            cursor: (0, 0),
         }
     }
 
-    fn annotations() -> Self {
+    fn annotations(user: UserID, cursor: (i32, i32)) -> Self {
         CanvasStateChange {
             aoe: AoE::Nothing,
             layers_changed: false,
             annotations_changed: true,
+            user,
+            layer: 0,
+            cursor,
+        }
+    }
+
+    fn aoe(aoe: AoE, user: UserID, layer: u16, cursor: (i32, i32)) -> Self {
+        Self {
+            aoe,
+            layers_changed: false,
+            annotations_changed: false,
+            user,
+            layer,
+            cursor
         }
     }
 
@@ -96,6 +127,9 @@ impl From<AoE> for CanvasStateChange {
             aoe: item,
             layers_changed: false,
             annotations_changed: false,
+            user: 0,
+            layer: 0,
+            cursor: (0, 0),
         }
     }
 }
@@ -106,6 +140,11 @@ impl BitOrAssign for CanvasStateChange {
         self.aoe = aoe.merge(rhs.aoe);
         self.layers_changed |= rhs.layers_changed;
         self.annotations_changed |= rhs.annotations_changed;
+        if rhs.user > 0 {
+            self.user = rhs.user;
+            self.layer = rhs.layer;
+            self.cursor = rhs.cursor;
+        }
     }
 }
 
@@ -154,6 +193,9 @@ impl CanvasState {
                         aoe: aoe,
                         layers_changed: old_layerstack.compare_layer_structure(&self.layerstack),
                         annotations_changed: old_layerstack.compare_annotations(&self.layerstack),
+                        user: 0,
+                        layer: 0,
+                        cursor: (0, 0),
                     }
                 } else {
                     error!("Retcon failed! No savepoint found before {}", pos);
@@ -214,17 +256,17 @@ impl CanvasState {
             LayerDelete(_, m) => self.handle_layer_delete(m),
             LayerVisibility(_, m) => self.handle_layer_visibility(m),
             PutImage(u, m) => self.handle_putimage(*u, m).into(),
-            FillRect(user, m) => self.handle_fillrect(*user, m).into(),
+            FillRect(user, m) => self.handle_fillrect(*user, m),
             PenUp(user) => self.handle_penup(*user).into(),
-            AnnotationCreate(_, m) => self.handle_annotation_create(m),
-            AnnotationReshape(_, m) => self.handle_annotation_reshape(m),
-            AnnotationEdit(_, m) => self.handle_annotation_edit(m),
+            AnnotationCreate(user, m) => self.handle_annotation_create(*user, m),
+            AnnotationReshape(user, m) => self.handle_annotation_reshape(*user, m),
+            AnnotationEdit(user, m) => self.handle_annotation_edit(*user, m),
             AnnotationDelete(_, id) => self.handle_annotation_delete(*id),
             PutTile(user, m) => self.handle_puttile(*user, m).into(),
             CanvasBackground(_, m) => self.handle_background(m).into(),
-            DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m).into(),
-            DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false).into(),
-            DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true).into(),
+            DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m),
+            DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
+            DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true),
             Undo(user, m) => self.handle_undo(*user, m).into(),
         }
     }
@@ -404,22 +446,25 @@ impl CanvasState {
         }
     }
 
-    fn handle_annotation_create(&mut self, msg: &AnnotationCreateMessage) -> CanvasStateChange {
+    fn handle_annotation_create(&mut self, user_id: UserID, msg: &AnnotationCreateMessage) -> CanvasStateChange {
         Arc::make_mut(&mut self.layerstack).add_annotation(
             msg.id,
             Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32),
         );
-        CanvasStateChange::annotations()
+        CanvasStateChange::annotations(user_id, (msg.x + msg.w as i32 / 2, msg.y + msg.h as i32 / 2))
     }
 
-    fn handle_annotation_reshape(&mut self, msg: &AnnotationReshapeMessage) -> CanvasStateChange {
+    fn handle_annotation_reshape(&mut self, user_id: UserID, msg: &AnnotationReshapeMessage) -> CanvasStateChange {
         if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.rect = Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32);
+            CanvasStateChange::annotations(user_id, (msg.x + msg.w as i32 / 2, msg.y + msg.h as i32 /2))
+        } else {
+            CanvasStateChange::nothing()
         }
-        CanvasStateChange::annotations()
+
     }
 
-    fn handle_annotation_edit(&mut self, msg: &AnnotationEditMessage) -> CanvasStateChange {
+    fn handle_annotation_edit(&mut self, user_id: UserID, msg: &AnnotationEditMessage) -> CanvasStateChange {
         if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.background = Color::from_argb32(msg.bg);
             a.protect = (msg.flags & 0x01) != 0;
@@ -430,13 +475,17 @@ impl CanvasState {
             };
             // border not implemented yet
             a.text = msg.text.clone();
+
+            CanvasStateChange::annotations(user_id, (a.rect.x+a.rect.w/2, a.rect.y+a.rect.h/2))
+
+        } else {
+            CanvasStateChange::nothing()
         }
-        CanvasStateChange::annotations()
     }
 
     fn handle_annotation_delete(&mut self, id: AnnotationID) -> CanvasStateChange {
         Arc::make_mut(&mut self.layerstack).remove_annotation(id);
-        CanvasStateChange::annotations()
+        CanvasStateChange::annotations(0, (0, 0))
     }
 
     fn handle_puttile(&mut self, user_id: UserID, msg: &PutTileMessage) -> AoE {
@@ -502,10 +551,10 @@ impl CanvasState {
         }
     }
 
-    fn handle_fillrect(&mut self, user: UserID, msg: &FillRectMessage) -> AoE {
+    fn handle_fillrect(&mut self, user: UserID, msg: &FillRectMessage) -> CanvasStateChange {
         if msg.w == 0 || msg.h == 0 {
             warn!("FillRect(user {}): zero size rectangle", user);
-            return AoE::Nothing;
+            return CanvasStateChange::nothing();
         }
 
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
@@ -523,20 +572,22 @@ impl CanvasState {
                 layer.optimize(&aoe);
             }
 
-            return aoe;
+            return CanvasStateChange::aoe(aoe, user, msg.layer, ((msg.x + msg.w/2) as i32, (msg.y + msg.h/2) as i32));
         } else {
-            warn!("DrawDabsClassic: Layer {:04x} not found!", msg.layer);
+            warn!("FillRect: Layer {:04x} not found!", msg.layer);
         }
-        AoE::Nothing
+        CanvasStateChange::nothing()
     }
 
-    fn handle_drawdabs_classic(&mut self, user: UserID, msg: &DrawDabsClassicMessage) -> AoE {
+    fn handle_drawdabs_classic(&mut self, user: UserID, msg: &DrawDabsClassicMessage) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
-            brushes::drawdabs_classic(layer, user, &msg, &mut self.brushcache)
+            let (aoe, pos) = brushes::drawdabs_classic(layer, user, &msg, &mut self.brushcache);
+            CanvasStateChange::aoe(aoe, user, msg.layer, pos)
+
         } else {
             warn!("DrawDabsClassic: Layer {:04x} not found!", msg.layer);
-            AoE::Nothing
+            CanvasStateChange::nothing()
         }
     }
 
@@ -545,13 +596,15 @@ impl CanvasState {
         user: UserID,
         msg: &DrawDabsPixelMessage,
         square: bool,
-    ) -> AoE {
+    ) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
-            brushes::drawdabs_pixel(layer, user, &msg, square)
+            let (aoe, pos) = brushes::drawdabs_pixel(layer, user, &msg, square);
+            CanvasStateChange::aoe(aoe, user, msg.layer, pos)
+
         } else {
             warn!("DrawDabsPixel: Layer {:04x} not found!", msg.layer);
-            AoE::Nothing
+            CanvasStateChange::nothing()
         }
     }
 

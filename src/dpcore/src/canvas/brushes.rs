@@ -32,11 +32,11 @@ pub fn drawdabs_classic(
     user: UserID,
     dabs: &DrawDabsClassicMessage,
     cache: &mut ClassicBrushCache,
-) -> AoE {
+) -> (AoE, (i32, i32)) {
     let mode = Blendmode::try_from(dabs.mode).unwrap_or(Blendmode::Normal);
     let mut color = Color::from_argb32(dabs.color);
 
-    let aoe = if color.a > 0.0 {
+    let result = if color.a > 0.0 {
         // If alpha is given, these dabs will be drawn in indirect mode
         let sublayer = layer.get_or_create_sublayer(user as LayerID);
         sublayer.opacity = color.a;
@@ -49,10 +49,10 @@ pub fn drawdabs_classic(
     };
 
     if mode.can_decrease_opacity() {
-        layer.optimize(&aoe);
+        layer.optimize(&result.0);
     }
 
-    aoe
+    result
 }
 
 fn drawdabs_classic_draw(
@@ -62,7 +62,7 @@ fn drawdabs_classic_draw(
     mode: Blendmode,
     dabs: &DrawDabsClassicMessage,
     cache: &mut ClassicBrushCache,
-) -> AoE {
+) -> (AoE, (i32, i32)) {
     let mut last_x = dabs.x;
     let mut last_y = dabs.y;
     let mut aoe = AoE::Nothing;
@@ -86,7 +86,7 @@ fn drawdabs_classic_draw(
         last_y = y;
     }
 
-    aoe
+    (aoe, (last_x / 4, last_y / 4))
 }
 
 pub fn drawdabs_pixel(
@@ -94,11 +94,11 @@ pub fn drawdabs_pixel(
     user: UserID,
     dabs: &DrawDabsPixelMessage,
     square: bool,
-) -> AoE {
+) -> (AoE, (i32, i32)) {
     let mode = Blendmode::try_from(dabs.mode).unwrap_or(Blendmode::Normal);
     let mut color = Color::from_argb32(dabs.color);
 
-    let aoe = if color.a > 0.0 {
+    let result = if color.a > 0.0 {
         // If alpha is given, these dabs will be drawn in indirect mode
         let sublayer = layer.get_or_create_sublayer(user as LayerID);
         sublayer.opacity = color.a;
@@ -111,10 +111,10 @@ pub fn drawdabs_pixel(
     };
 
     if mode.can_decrease_opacity() {
-        layer.optimize(&aoe);
+        layer.optimize(&result.0);
     }
 
-    aoe
+    result
 }
 
 fn drawdabs_pixel_draw(
@@ -124,7 +124,7 @@ fn drawdabs_pixel_draw(
     mode: Blendmode,
     dabs: &DrawDabsPixelMessage,
     square: bool,
-) -> AoE {
+) -> (AoE, (i32, i32)) {
     let mut mask = BrushMask {
         diameter: 0,
         mask: Vec::new(),
@@ -165,5 +165,5 @@ fn drawdabs_pixel_draw(
         last_y = y;
     }
 
-    aoe
+    (aoe, (last_x, last_y))
 }

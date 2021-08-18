@@ -499,8 +499,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	m_dockLayers->setCanvas(canvas);
 	m_serverLogDialog->setUserList(canvas->userlist());
-	m_dockNavigator->setPaintEngine(canvas->paintEngine());
-	m_dockNavigator->setUserCursors(canvas->userCursors());
+	m_dockNavigator->setCanvasModel(canvas);
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 

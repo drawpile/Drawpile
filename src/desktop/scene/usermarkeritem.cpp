@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QFontMetrics>
 #include <QPainterPath>
 #include <QGraphicsDropShadowEffect>
+#include <QDateTime>
 
 #include "usermarkeritem.h"
 
@@ -34,7 +35,8 @@ static const int ARROW = 10;
 }
 UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
 	: QGraphicsItem(parent),
-	  m_id(id), m_fadeout(0), m_showText(true), m_showSubtext(false), m_showAvatar(true)
+	  m_id(id), m_fadeout(0), m_lastMoved(0),
+	  m_showText(true), m_showSubtext(false), m_showAvatar(true)
 {
 	setFlag(ItemIgnoresTransformations);
 	m_bgbrush.setStyle(Qt::SolidPattern);
@@ -43,6 +45,7 @@ UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
 	shadow->setBlurRadius(10);
 	setGraphicsEffect(shadow);
 	setZValue(9999);
+	setColor(Qt::black);
 }
 
 void UserMarkerItem::setColor(const QColor &color)
@@ -189,6 +192,7 @@ void UserMarkerItem::fadein()
 	m_fadeout = 0;
 	setOpacity(1);
 	show();
+	m_lastMoved = QDateTime::currentMSecsSinceEpoch();
 }
 
 void UserMarkerItem::fadeout()
@@ -196,17 +200,19 @@ void UserMarkerItem::fadeout()
 	m_fadeout = 1.0;
 }
 
-bool UserMarkerItem::fadeoutStep(double dt)
+void UserMarkerItem::animationStep(double dt)
 {
-	if(m_fadeout>0) {
-		m_fadeout -= dt;
-		if(m_fadeout <= 0.0) {
-			hide();
-			return true;
-		} else if(m_fadeout < 1.0)
-			setOpacity(m_fadeout);
+	if(isVisible()) {
+		if(m_fadeout>0) {
+			m_fadeout -= dt;
+			if(m_fadeout <= 0.0) {
+				hide();
+			} else if(m_fadeout < 1.0)
+				setOpacity(m_fadeout);
+		} else if(m_lastMoved < QDateTime::currentMSecsSinceEpoch() - 1000) {
+			fadeout();
+		}
 	}
-	return false;
 }
 
 }
