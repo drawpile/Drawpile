@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2019 Calle Laakkonen
+   Copyright (C) 2017-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,19 +18,16 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 
-#include "core/layerstack.h"
-#include "core/layer.h"
 #include "brushes/shapes.h"
-#include "brushes/brushengine.h"
-#include "brushes/brushpainter.h"
 #include "net/client.h"
-#include "net/commands.h"
+#include "net/envelope.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/beziertool.h"
 
-#include "../libshared/net/undo.h"
+#include "../rustpile/rustpile.h"
 
 #include <QPixmap>
 
@@ -112,40 +109,39 @@ void BezierTool::end()
 
 void BezierTool::finishMultipart()
 {
-#if 0 // FIXME
 	if(m_points.size() > 2) {
 		m_points.pop_back();
 
-		const paintcore::Layer *layer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-
-		brushes::BrushEngine brushengine;
-		brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
-
-		const auto pv = calculateBezierCurve();
-		for(const Point &p : pv)
-			brushengine.strokeTo(p, layer);
-		brushengine.endStroke();
+		auto brushengine = rustpile::brushengine_new();
+		rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
 
 		const uint8_t contextId = owner.client()->myId();
-		protocol::MessageList msgs;
-		msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-		msgs << brushengine.takeDabs();
-		msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
-		owner.client()->sendMessages(msgs);
+		auto engine = owner.model()->paintEngine()->engine();
+
+		const auto pv = calculateBezierCurve();
+		for(const auto &p : pv) {
+			rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+		}
+		rustpile::brushengine_end_stroke(brushengine);
+
+		auto writer = rustpile::messagewriter_new();
+		rustpile::write_undopoint(writer, contextId);
+		rustpile::brushengine_write_dabs(brushengine, contextId, writer);
+		rustpile::write_penup(writer, contextId);
+
+		const net::Envelope e = net::Envelope::fromMessageWriter(writer);
+		rustpile::messagewriter_free(writer);
+		rustpile::brushengine_free(brushengine);
+
+		owner.client()->sendEnvelope(e);
 	}
-#endif
 	cancelMultipart();
 }
 
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
-#if 0 // FIXME
-	auto layers = owner.model()->layerStack()->editor(0);
-	auto layer = layers.getEditableLayer(owner.activeLayer());
-	if(!layer.isNull())
-		layer.removeSublayer(-1);
-#endif
+	rustpile::paintengine_remove_preview(owner.model()->paintEngine()->engine(), owner.activeLayer());
 }
 
 void BezierTool::undoMultipart()
@@ -186,31 +182,22 @@ PointVector BezierTool::calculateBezierCurve() const
 
 void BezierTool::updatePreview()
 {
-#if 0 // FIXME
-	auto layers = owner.model()->layerStack()->editor(0);
-	auto layer = layers.getEditableLayer(owner.activeLayer());
-	if(layer.isNull()) {
-		qWarning("BezierTool::updatePreview: no active layer!");
-		return;
-	}
-
 	const PointVector pv = calculateBezierCurve();
 	if(pv.size()<=1)
 		return;
 
-	brushes::BrushEngine brushengine;
-	brushengine.setBrush(0, 0, owner.activeBrush());
+	auto brushengine = rustpile::brushengine_new();
+	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
 
-	for(int i=0;i<pv.size();++i)
-		brushengine.strokeTo(pv.at(i), layer.layer());
-	brushengine.endStroke();
+	auto engine = owner.model()->paintEngine()->engine();
 
-	layer.removeSublayer(-1);
+	for(const auto &p : pv) {
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+	}
+	rustpile::brushengine_end_stroke(brushengine);
 
-	const auto dabs = brushengine.takeDabs();
-	for(int i=0;i<dabs.size();++i)
-		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
-#endif
+	rustpile::paintengine_preview_brush(engine, owner.activeLayer(), brushengine);
+	rustpile::brushengine_free(brushengine);
 }
 
 }

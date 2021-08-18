@@ -36,7 +36,7 @@ pub fn drawdabs_classic(
     let mode = Blendmode::try_from(dabs.mode).unwrap_or(Blendmode::Normal);
     let mut color = Color::from_argb32(dabs.color);
 
-    let result = if color.a > 0.0 {
+    let result = if color.a > 0.0 && user != 0 {
         // If alpha is given, these dabs will be drawn in indirect mode
         let sublayer = layer.get_or_create_sublayer(user as LayerID);
         sublayer.opacity = color.a;
@@ -98,7 +98,7 @@ pub fn drawdabs_pixel(
     let mode = Blendmode::try_from(dabs.mode).unwrap_or(Blendmode::Normal);
     let mut color = Color::from_argb32(dabs.color);
 
-    let result = if color.a > 0.0 {
+    let result = if color.a > 0.0 && user != 0 {
         // If alpha is given, these dabs will be drawn in indirect mode
         let sublayer = layer.get_or_create_sublayer(user as LayerID);
         sublayer.opacity = color.a;
