@@ -251,9 +251,9 @@ impl TileMap {
     }
 
     pub fn bounds(&self) -> Option<Rectangle> {
-        let mut left = self.w as i32 + 1;
+        let mut left = self.w as i32;
         let mut right = 0i32;
-        let mut top = self.h as i32 + 1;
+        let mut top = self.h as i32;
         let mut bottom = 0i32;
 
         for (row, bits) in self.tiles.chunks(self.w as usize).enumerate() {
@@ -267,12 +267,12 @@ impl TileMap {
                 None => {}
             }
         }
-        if left <= self.w as i32 {
+        if left < self.w as i32 {
             Some(Rectangle::new(
                 left * TILE_SIZEI,
                 top * TILE_SIZEI,
-                (right - left) * TILE_SIZEI,
-                (bottom - top) * TILE_SIZEI,
+                (right - left + 1) * TILE_SIZEI,
+                (bottom - top + 1) * TILE_SIZEI,
             ))
         } else {
             None

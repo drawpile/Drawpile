@@ -264,6 +264,14 @@ AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
 /// are used, this will return false.
 bool paintengine_is_simple(const PaintEngine *dp);
 
+/// Draw a preview brush stroke onto the given layer
+///
+/// This consumes the content of the brush engine.
+void paintengine_preview_brush(PaintEngine *dp, LayerID layer_id, BrushEngine *brushengine);
+
+/// Remove preview brush strokes from the given layer
+void paintengine_remove_preview(PaintEngine *dp, LayerID layer_id);
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be

@@ -106,7 +106,7 @@ impl CanvasStateChange {
             annotations_changed: false,
             user,
             layer,
-            cursor
+            cursor,
         }
     }
 
@@ -223,6 +223,50 @@ impl CanvasState {
         }
         self.localfork.add_local_message(msg, self.history.end());
         self.handle_message(msg)
+    }
+
+    pub fn apply_preview(
+        &mut self,
+        layer_id: LayerID,
+        msgs: &[CommandMessage],
+    ) -> CanvasStateChange {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
+            let mut layer = layer.get_or_create_sublayer(-1);
+
+            let mut aoe = editlayer::clear_layer(&mut layer);
+
+            for msg in msgs {
+                aoe = aoe.merge(match msg {
+                    CommandMessage::DrawDabsClassic(_, m) => {
+                        let (a, _) = brushes::drawdabs_classic(layer, 0, &m, &mut self.brushcache);
+                        a
+                    }
+                    CommandMessage::DrawDabsPixel(_, m) => {
+                        let (a, _) = brushes::drawdabs_pixel(layer, 0, &m, false);
+                        a
+                    }
+                    CommandMessage::DrawDabsPixelSquare(_, m) => {
+                        let (a, _) = brushes::drawdabs_pixel(layer, 0, &m, true);
+                        a
+                    }
+                    _ => AoE::Nothing,
+                });
+            }
+
+            aoe.into()
+        } else {
+            warn!("apply_preview: Layer {:04x} not found!", layer_id);
+            CanvasStateChange::nothing()
+        }
+    }
+
+    pub fn remove_preview(&mut self, layer_id: LayerID) -> CanvasStateChange {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
+            editlayer::remove_sublayer(layer, -1).into()
+        } else {
+            warn!("remove_preview: Layer {:04x} not found!", layer_id);
+            CanvasStateChange::nothing()
+        }
     }
 
     /// Clean up the state after disconnecting from a remote session
@@ -446,25 +490,42 @@ impl CanvasState {
         }
     }
 
-    fn handle_annotation_create(&mut self, user_id: UserID, msg: &AnnotationCreateMessage) -> CanvasStateChange {
+    fn handle_annotation_create(
+        &mut self,
+        user_id: UserID,
+        msg: &AnnotationCreateMessage,
+    ) -> CanvasStateChange {
         Arc::make_mut(&mut self.layerstack).add_annotation(
             msg.id,
             Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32),
         );
-        CanvasStateChange::annotations(user_id, (msg.x + msg.w as i32 / 2, msg.y + msg.h as i32 / 2))
+        CanvasStateChange::annotations(
+            user_id,
+            (msg.x + msg.w as i32 / 2, msg.y + msg.h as i32 / 2),
+        )
     }
 
-    fn handle_annotation_reshape(&mut self, user_id: UserID, msg: &AnnotationReshapeMessage) -> CanvasStateChange {
+    fn handle_annotation_reshape(
+        &mut self,
+        user_id: UserID,
+        msg: &AnnotationReshapeMessage,
+    ) -> CanvasStateChange {
         if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.rect = Rectangle::new(msg.x, msg.y, msg.w.max(1) as i32, msg.h.max(1) as i32);
-            CanvasStateChange::annotations(user_id, (msg.x + msg.w as i32 / 2, msg.y + msg.h as i32 /2))
+            CanvasStateChange::annotations(
+                user_id,
+                (msg.x + msg.w as i32 / 2, msg.y + msg.h as i32 / 2),
+            )
         } else {
             CanvasStateChange::nothing()
         }
-
     }
 
-    fn handle_annotation_edit(&mut self, user_id: UserID, msg: &AnnotationEditMessage) -> CanvasStateChange {
+    fn handle_annotation_edit(
+        &mut self,
+        user_id: UserID,
+        msg: &AnnotationEditMessage,
+    ) -> CanvasStateChange {
         if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.background = Color::from_argb32(msg.bg);
             a.protect = (msg.flags & 0x01) != 0;
@@ -476,8 +537,10 @@ impl CanvasState {
             // border not implemented yet
             a.text = msg.text.clone();
 
-            CanvasStateChange::annotations(user_id, (a.rect.x+a.rect.w/2, a.rect.y+a.rect.h/2))
-
+            CanvasStateChange::annotations(
+                user_id,
+                (a.rect.x + a.rect.w / 2, a.rect.y + a.rect.h / 2),
+            )
         } else {
             CanvasStateChange::nothing()
         }
@@ -572,19 +635,27 @@ impl CanvasState {
                 layer.optimize(&aoe);
             }
 
-            return CanvasStateChange::aoe(aoe, user, msg.layer, ((msg.x + msg.w/2) as i32, (msg.y + msg.h/2) as i32));
+            return CanvasStateChange::aoe(
+                aoe,
+                user,
+                msg.layer,
+                ((msg.x + msg.w / 2) as i32, (msg.y + msg.h / 2) as i32),
+            );
         } else {
             warn!("FillRect: Layer {:04x} not found!", msg.layer);
         }
         CanvasStateChange::nothing()
     }
 
-    fn handle_drawdabs_classic(&mut self, user: UserID, msg: &DrawDabsClassicMessage) -> CanvasStateChange {
+    fn handle_drawdabs_classic(
+        &mut self,
+        user: UserID,
+        msg: &DrawDabsClassicMessage,
+    ) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             let (aoe, pos) = brushes::drawdabs_classic(layer, user, &msg, &mut self.brushcache);
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)
-
         } else {
             warn!("DrawDabsClassic: Layer {:04x} not found!", msg.layer);
             CanvasStateChange::nothing()
@@ -601,7 +672,6 @@ impl CanvasState {
         {
             let (aoe, pos) = brushes::drawdabs_pixel(layer, user, &msg, square);
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)
-
         } else {
             warn!("DrawDabsPixel: Layer {:04x} not found!", msg.layer);
             CanvasStateChange::nothing()

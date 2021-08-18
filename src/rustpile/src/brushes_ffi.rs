@@ -1,7 +1,7 @@
+use super::paintengine_ffi::PaintEngine;
 use dpcore::brush::{BrushEngine, BrushState, ClassicBrush};
 use dpcore::paint::LayerID;
 use dpcore::protocol::MessageWriter;
-use super::paintengine_ffi::PaintEngine;
 
 #[no_mangle]
 pub extern "C" fn brushengine_new() -> *mut BrushEngine {
@@ -16,13 +16,24 @@ pub extern "C" fn brushengine_free(be: *mut BrushEngine) {
 }
 
 #[no_mangle]
-pub extern "C" fn brushengine_set_classicbrush(be: &mut BrushEngine, brush: &ClassicBrush, layer: u16) {
+pub extern "C" fn brushengine_set_classicbrush(
+    be: &mut BrushEngine,
+    brush: &ClassicBrush,
+    layer: u16,
+) {
     be.set_classicbrush(brush.clone());
     be.set_layer(layer);
 }
 
 #[no_mangle]
-pub extern "C" fn brushengine_stroke_to(be: &mut BrushEngine, x: f32, y: f32, p: f32, pe: Option<&PaintEngine>, layer_id: LayerID) {
+pub extern "C" fn brushengine_stroke_to(
+    be: &mut BrushEngine,
+    x: f32,
+    y: f32,
+    p: f32,
+    pe: Option<&PaintEngine>,
+    layer_id: LayerID,
+) {
     if let Some(paintengine) = pe {
         let vc = paintengine.viewcache.lock().unwrap();
         be.stroke_to(x, y, p, vc.layerstack.get_layer(layer_id));
@@ -42,6 +53,10 @@ pub extern "C" fn brushengine_add_offset(be: &mut BrushEngine, x: f32, y: f32) {
 }
 
 #[no_mangle]
-pub extern "C" fn brushengine_write_dabs(be: &mut BrushEngine, user_id: u8, writer: &mut MessageWriter) {
+pub extern "C" fn brushengine_write_dabs(
+    be: &mut BrushEngine,
+    user_id: u8,
+    writer: &mut MessageWriter,
+) {
     be.write_dabs(user_id, writer)
 }

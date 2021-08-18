@@ -296,7 +296,7 @@ impl Layer {
 
         // There must be at least some alpha for the results to make sense
         if sum_color.a < ((dab.diameter * dab.diameter) as f32 * 0.1) {
-            return Color::TRANSPARENT
+            return Color::TRANSPARENT;
         }
 
         sum_color.r /= sum_weight;

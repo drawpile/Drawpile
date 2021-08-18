@@ -21,9 +21,12 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::adapters::{AnnotationAt, Annotations, LayerInfo};
+use dpcore::brush::{BrushEngine, BrushState};
 use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
-use dpcore::paint::{AoE, Color, FlattenedTileIterator, LayerStack, Rectangle, Size, UserID};
+use dpcore::paint::{
+    AoE, Color, FlattenedTileIterator, LayerID, LayerStack, Rectangle, Size, UserID,
+};
 use dpcore::protocol::message::{CommandMessage, Message};
 
 use core::ffi::c_void;
@@ -39,7 +42,8 @@ type NotifyResizeCallback =
 type NotifyLayerListCallback =
     extern "C" fn(ctx: *mut c_void, layers: *const LayerInfo, count: usize);
 type NotifyAnnotationsCallback = extern "C" fn(ctx: *mut c_void, annotations: *mut Annotations);
-type NotifyCursorCallback = extern "C" fn(ctx: *mut c_void, user: UserID, layer: u16, x: i32, y: i32);
+type NotifyCursorCallback =
+    extern "C" fn(ctx: *mut c_void, user: UserID, layer: u16, x: i32, y: i32);
 
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
@@ -68,6 +72,8 @@ unsafe impl Send for NotificationCallbacks {}
 enum PaintEngineCommand {
     LocalMessage(CommandMessage),
     RemoteMessage(CommandMessage),
+    BrushPreview(LayerID, Vec<CommandMessage>),
+    RemovePreview(LayerID),
     Cleanup,
 }
 
@@ -110,6 +116,12 @@ fn run_paintengine(
                 }
                 RemoteMessage(m) => {
                     changes |= canvas.receive_message(&m);
+                }
+                BrushPreview(layer, commands) => {
+                    changes |= canvas.apply_preview(layer, &commands);
+                }
+                RemovePreview(layer) => {
+                    changes |= canvas.remove_preview(layer);
                 }
                 Cleanup => {
                     canvas.cleanup();
@@ -172,7 +184,13 @@ fn run_paintengine(
             }
 
             if changes.user > 0 {
-                (callbacks.notify_cursor)(callbacks.context_object, changes.user, changes.layer, changes.cursor.0, changes.cursor.1);
+                (callbacks.notify_cursor)(
+                    callbacks.context_object,
+                    changes.user,
+                    changes.layer,
+                    changes.cursor.0,
+                    changes.cursor.1,
+                );
             }
         }
     }
@@ -342,6 +360,34 @@ pub extern "C" fn paintengine_is_simple(dp: &PaintEngine) -> bool {
     vc.layerstack.layer_count() <= 1
         && vc.layerstack.get_annotations().len() == 0
         && vc.layerstack.background.is_blank()
+}
+
+/// Draw a preview brush stroke onto the given layer
+///
+/// This consumes the content of the brush engine.
+#[no_mangle]
+pub extern "C" fn paintengine_preview_brush(
+    dp: &mut PaintEngine,
+    layer_id: LayerID,
+    brushengine: &mut BrushEngine,
+) {
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
+        layer_id,
+        brushengine.take_dabs(0),
+    )) {
+        warn!("Couldn't send preview strokes to paint engine: {:?}", err);
+    }
+}
+
+/// Remove preview brush strokes from the given layer
+#[no_mangle]
+pub extern "C" fn paintengine_remove_preview(dp: &mut PaintEngine, layer_id: LayerID) {
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::RemovePreview(layer_id))
+    {
+        warn!("Couldn't send remove preview to paint engine: {:?}", err);
+    }
 }
 
 /// Paint all the changed tiles in the given area

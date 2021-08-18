@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,19 +18,17 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 
-#include "core/layerstack.h"
-#include "core/layer.h"
 #include "brushes/shapes.h"
-#include "brushes/brushpainter.h"
 #include "net/client.h"
-#include "net/commands.h"
+#include "net/envelope.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/shapetools.h"
 #include "tools/utils.h"
 
-#include "../libshared/net/undo.h"
+#include "../rustpile/rustpile.h"
 
 #include <QPixmap>
 
@@ -70,77 +68,61 @@ void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool cente
 
 void ShapeTool::cancelMultipart()
 {
-#if 0 // FIXME
-	auto layers = owner.model()->layerStack()->editor(owner.client()->myId());
-	auto layer = layers.getEditableLayer(owner.activeLayer());
-
-	if(!layer.isNull()) {
-		layer.removeSublayer(-1);
-	}
-
+	rustpile::paintengine_remove_preview(owner.model()->paintEngine()->engine(), owner.activeLayer());
 	m_drawing = false;
-#endif
 }
 
 void ShapeTool::end()
 {
-#if 0 // FIXME
 	if(!m_drawing)
 		return;
 
 	m_drawing = false;
 
 	const uint8_t contextId = owner.client()->myId();
+	auto engine = owner.model()->paintEngine()->engine();
 
-	auto layers = owner.model()->layerStack()->editor(contextId);
-	auto layer = layers.getEditableLayer(owner.activeLayer());
+	auto brushengine = rustpile::brushengine_new();
 
-	if(!layer.isNull()) {
-		layer.removeSublayer(-1);
-	}
-
-	brushes::BrushEngine brushengine;
-	brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
 
 	const auto pv = pointVector();
-	for(int i=0;i<pv.size();++i)
-		brushengine.strokeTo(pv.at(i), layer.layer());
-	brushengine.endStroke();
+	for(const auto &p : pv) {
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+	}
+	rustpile::brushengine_end_stroke(brushengine);
 
-	protocol::MessageList msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-	msgs << brushengine.takeDabs();
-	msgs << protocol::MessagePtr(new protocol::PenUp(contextId));
-	owner.client()->sendMessages(msgs);
-#endif
+	auto writer = rustpile::messagewriter_new();
+	rustpile::write_undopoint(writer, contextId);
+	rustpile::brushengine_write_dabs(brushengine, contextId, writer);
+	rustpile::write_penup(writer, contextId);
+
+	const net::Envelope e = net::Envelope::fromMessageWriter(writer);
+	rustpile::messagewriter_free(writer);
+	rustpile::brushengine_free(brushengine);
+
+	rustpile::paintengine_remove_preview(engine, owner.activeLayer());
+	owner.client()->sendEnvelope(e);
 }
 
 void ShapeTool::updatePreview()
 {
-#if 0 // FIXME
-	auto layers = owner.model()->layerStack()->editor(0);
-	auto layer = layers.getEditableLayer(owner.activeLayer());
-	if(layer.isNull()) {
-		qWarning("ShapeTool::updatePreview: no active layer!");
-		return;
-	}
+	auto brushengine = rustpile::brushengine_new();
+
+	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
+
+	auto engine = owner.model()->paintEngine()->engine();
 
 	const paintcore::PointVector pv = pointVector();
 	Q_ASSERT(pv.size()>1);
 
-	brushes::BrushEngine brushengine;
-	brushengine.setBrush(0, 0, owner.activeBrush());
+	for(const auto &p : pv) {
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+	}
+	rustpile::brushengine_end_stroke(brushengine);
 
-	for(int i=0;i<pv.size();++i)
-		brushengine.strokeTo(pv.at(i), layer.layer());
-	brushengine.endStroke();
-
-	layer.removeSublayer(-1);
-
-	const auto dabs = brushengine.takeDabs();
-	for(int i=0;i<dabs.size();++i)
-		brushes::drawBrushDabsDirect(*dabs.at(i), layer, -1);
-#endif
+	rustpile::paintengine_preview_brush(engine, owner.activeLayer(), brushengine);
+	rustpile::brushengine_free(brushengine);
 }
 
 Line::Line(ToolController &owner)

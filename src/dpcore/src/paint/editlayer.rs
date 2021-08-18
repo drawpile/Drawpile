@@ -69,6 +69,16 @@ pub fn fill_rect(
     r.into()
 }
 
+/// Clear a layer
+pub fn clear_layer(layer: &mut Layer) -> AoE {
+    let old_content = layer.nonblank_tilemap();
+    layer
+        .tilevec_mut()
+        .iter_mut()
+        .for_each(|t| *t = Tile::Blank);
+    old_content.into()
+}
+
 /// Draw a brush mask onto the layer
 ///
 /// Note: When drawing in "indirect" mode, the brush dabs should be

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
 #define TOOLS_SHAPETOOLS_H
 
 #include "tool.h"
-#include "brushes/brushengine.h"
+
+#include <QRectF>
 
 namespace tools {
 
@@ -56,10 +57,10 @@ class Line : public ShapeTool {
 public:
 	Line(ToolController &owner);
 
-	void motion(const paintcore::Point& point, bool constrain, bool center);
+	void motion(const paintcore::Point& point, bool constrain, bool center) override;
 
 protected:
-	virtual paintcore::PointVector pointVector() const;
+	paintcore::PointVector pointVector() const override;
 };
 
 /**
@@ -72,7 +73,7 @@ public:
 	Rectangle(ToolController &owner);
 
 protected:
-	virtual paintcore::PointVector pointVector() const;
+	paintcore::PointVector pointVector() const override;
 };
 
 /**
@@ -85,7 +86,7 @@ public:
 	Ellipse(ToolController &owner);
 
 protected:
-	virtual paintcore::PointVector pointVector() const;
+	paintcore::PointVector pointVector() const override;
 };
 
 }

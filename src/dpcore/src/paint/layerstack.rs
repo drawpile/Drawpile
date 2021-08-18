@@ -342,7 +342,7 @@ impl LayerStack {
     }
 
     pub fn layer_count(&self) -> usize {
-        return self.layers.len()
+        return self.layers.len();
     }
 
     /// Compare this layer stack with the other and return an Area Of Effect.
