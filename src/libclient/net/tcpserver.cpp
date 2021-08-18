@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #include "config.h"
 #include "tcpserver.h"
 #include "login.h"
+#include "messagequeue.h"
 
-#include "../libshared/net/messagequeue.h"
 #include "../libshared/net/control.h"
 
 #include <QDebug>
@@ -41,8 +41,7 @@ TcpServer::TcpServer(QObject *parent) :
 	sslconf.setSslOption(QSsl::SslOptionDisableCompression, false);
 	m_socket->setSslConfiguration(sslconf);
 
-	m_msgqueue = new protocol::MessageQueue(m_socket, this);
-	m_msgqueue->setDecodeOpaque(true);
+	m_msgqueue = new MessageQueue(m_socket, this);
 
 	m_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
 	m_msgqueue->setPingInterval(15 * 1000);
@@ -58,11 +57,11 @@ TcpServer::TcpServer(QObject *parent) :
 			emit loggingOut();
 	});
 
-	connect(m_msgqueue, &protocol::MessageQueue::messageAvailable, this, &TcpServer::handleMessage);
-	connect(m_msgqueue, &protocol::MessageQueue::bytesReceived, this, &TcpServer::bytesReceived);
-	connect(m_msgqueue, &protocol::MessageQueue::bytesSent, this, &TcpServer::bytesSent);
-	connect(m_msgqueue, &protocol::MessageQueue::badData, this, &TcpServer::handleBadData);
-	connect(m_msgqueue, &protocol::MessageQueue::pingPong, this, &TcpServer::lagMeasured);
+	connect(m_msgqueue, &MessageQueue::messageAvailable, this, &TcpServer::handleMessage);
+	connect(m_msgqueue, &MessageQueue::bytesReceived, this, &TcpServer::bytesReceived);
+	connect(m_msgqueue, &MessageQueue::bytesSent, this, &TcpServer::bytesSent);
+	connect(m_msgqueue, &MessageQueue::badData, this, &TcpServer::handleBadData);
+	connect(m_msgqueue, &MessageQueue::pingPong, this, &TcpServer::lagMeasured);
 }
 
 void TcpServer::login(LoginHandler *login)
@@ -86,37 +85,61 @@ int TcpServer::uploadQueueBytes() const
 
 void TcpServer::sendMessage(const protocol::MessagePtr &msg)
 {
-	m_msgqueue->send(msg);
+	QByteArray b(msg->length(), 0);
+	msg->serialize(b.data());
+
+	m_msgqueue->send(b);
 }
 
 void TcpServer::sendMessages(const protocol::MessageList &msgs)
 {
-	m_msgqueue->send(msgs);
+	int len=0;
+	for(const auto &m : msgs)
+		len += m->length();
+	QByteArray b(len, 0);
+	char *data = b.data();
+	for(const auto &m : msgs) {
+		m->serialize(data);
+		data += m->length();
+	}
+
+	m_msgqueue->send(b);
+}
+
+void TcpServer::sendEnvelope(const Envelope &e)
+{
+	m_msgqueue->send(e);
 }
 
 void TcpServer::handleMessage()
 {
 	while(m_msgqueue->isPending()) {
-		protocol::MessagePtr msg = m_msgqueue->getPending();
-		if(msg->type() == protocol::MSG_DISCONNECT) {
-			const auto d = msg.cast<protocol::Disconnect>();
-			switch(d.reason()) {
-			case protocol::Disconnect::KICK:
-				m_error = tr("You were kicked by %1").arg(d.message());
-				break;
-			case protocol::Disconnect::SHUTDOWN:
-				m_error = tr("The server is shutting down.");
-				break;
-			default:
-				m_error = tr("Error: %1").arg(d.message());
-				break;
+		Envelope envelope = m_msgqueue->getPending();
+		while(!envelope.isEmpty()) {
+			auto msg = protocol::Message::deserialize(envelope.data(), envelope.length(), true);
+			Q_ASSERT(!msg.isNull());
+			if(msg->type() == protocol::MSG_DISCONNECT) {
+				const auto d = msg.cast<protocol::Disconnect>();
+				switch(d.reason()) {
+				case protocol::Disconnect::KICK:
+					m_error = tr("You were kicked by %1").arg(d.message());
+					break;
+				case protocol::Disconnect::SHUTDOWN:
+					m_error = tr("The server is shutting down.");
+					break;
+				default:
+					m_error = tr("Error: %1").arg(d.message());
+					break;
+				}
 			}
-		}
 
-		if(m_loginstate)
-			m_loginstate->receiveMessage(msg);
-		else
-			emit messageReceived(msg);
+			if(m_loginstate)
+				m_loginstate->receiveMessage(protocol::MessagePtr::fromNullable(msg));
+			else
+				emit messageReceived(protocol::MessagePtr::fromNullable(msg));
+
+			envelope = envelope.next();
+		}
 	}
 }
 

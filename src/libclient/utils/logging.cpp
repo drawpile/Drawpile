@@ -20,6 +20,7 @@
 #include "logging.h"
 #include "config.h"
 #include "../libshared/util/paths.h"
+#include "../rustpile/rustpile.h"
 
 #include <QMessageLogContext>
 #include <QDateTime>
@@ -66,8 +67,28 @@ QByteArray logFilePath()
 			).toLocal8Bit();
 }
 
+void logToRustpile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
+{
+	Q_UNUSED(ctx); // TODO
+
+	int level;
+	switch(type) {
+	case QtCriticalMsg:
+	case QtFatalMsg: level = 0; break;
+	case QtWarningMsg: level = 1; break;
+	case QtInfoMsg: level = 2; break;
+	default: level = 3; break;
+	}
+
+	rustpile::qt_log_handler(level, reinterpret_cast<const ushort*>(msg.constData()), msg.size());
+}
+
 void initLogging()
 {
+	// Use Rustpile logging
+	qInstallMessageHandler(logToRustpile);
+
+	// TODO log to file on Rustpile side
 	if(!QSettings().value("settings/logfile", true).toBool()) {
 		qInfo("Logfile disabled");
 		return;

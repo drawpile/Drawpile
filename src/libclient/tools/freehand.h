@@ -20,7 +20,10 @@
 #define TOOLS_FREEHAND_H
 
 #include "tool.h"
-#include "brushes/brushengine.h"
+
+namespace rustpile {
+	struct PaintEngineBrush;
+}
 
 namespace tools {
 
@@ -29,6 +32,7 @@ class Freehand : public Tool
 {
 public:
 	Freehand(ToolController &owner, bool isEraser);
+	~Freehand();
 
 	void begin(const paintcore::Point& point, bool right, float zoom) override;
 	void motion(const paintcore::Point& point, bool constrain, bool center) override;
@@ -39,7 +43,7 @@ public:
 	void offsetActiveTool(int x, int y) override;
 
 private:
-	brushes::BrushEngine m_brushengine;
+	rustpile::BrushEngine *m_brushengine;
 	bool m_drawing;
 	bool m_firstPoint;
 	paintcore::Point m_start;

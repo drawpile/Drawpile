@@ -338,8 +338,8 @@ def _required(name, obj, key, valuetype):
     return val
 
 
-def load_protocol_definition():
-    with open('protocol.yaml') as f:
+def load_protocol_definition(path='protocol.yaml'):
+    with open(path) as f:
         desc = load_yaml(f)
 
     protocol = {}

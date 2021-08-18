@@ -23,6 +23,7 @@
 #include "net/login.h"
 #include "net/commands.h"
 #include "net/internalmsg.h"
+#include "net/envelope.h"
 
 #include "core/point.h"
 
@@ -154,6 +155,24 @@ void Client::sendMessages(const protocol::MessageList &msgs)
 			emit drawingCommandLocal(msg);
 	}
 	m_server->sendMessages(msgs);
+}
+
+void Client::sendEnvelope(const Envelope &envelope) {
+	if(envelope.isEmpty())
+		return;
+
+	Envelope e = envelope;
+	while(!e.isEmpty()) {
+		if(e.isCommand()) {
+			// FIXME we want to pass around only envelopes
+			protocol::NullableMessageRef m = protocol::Message::deserialize(e.data(), e.length(), true);
+			Q_ASSERT(!m.isNull());
+			emit drawingCommandLocal(protocol::MessagePtr::fromNullable(m));
+		}
+
+		e = e.next();
+	}
+	m_server->sendEnvelope(envelope);
 }
 
 void Client::sendResetMessages(const protocol::MessageList &msgs)

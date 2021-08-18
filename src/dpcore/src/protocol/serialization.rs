@@ -268,6 +268,11 @@ impl MessageWriter {
         self.write(message_type);
         self.write(user_id);
     }
+
+    pub fn as_ptr(&self, len: &mut usize) -> *const u8 {
+        *len = self.buf.len();
+        self.buf.as_ptr()
+    }
 }
 
 impl Into<Vec<u8>> for MessageWriter {

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,13 +25,10 @@
 
 class QSslSocket;
 
-namespace protocol {
-    class MessageQueue;
-}
-
 namespace net {
 
 class LoginHandler;
+class MessageQueue;
 
 class TcpServer : public Server
 {
@@ -45,6 +42,7 @@ public:
 
 	void sendMessage(const protocol::MessagePtr &msg) override;
 	void sendMessages(const protocol::MessageList &msg) override;
+	void sendEnvelope(const Envelope &e) override;
 
 	bool isLoggedIn() const override { return m_loginstate == nullptr; }
 
@@ -80,7 +78,7 @@ private slots:
 
 private:
 	QSslSocket *m_socket;
-	protocol::MessageQueue *m_msgqueue;
+	MessageQueue *m_msgqueue;
 	LoginHandler *m_loginstate;
 	QString m_error, m_errorcode;
 	Security m_securityLevel;

@@ -26,6 +26,7 @@ use super::pixelbrushstate::PixelBrushState;
 use super::softbrushstate::SoftBrushState;
 use crate::paint::Layer;
 use crate::protocol::message::CommandMessage;
+use crate::protocol::MessageWriter;
 
 pub struct BrushEngine {
     pixel: PixelBrushState,
@@ -81,6 +82,10 @@ impl BrushState for BrushEngine {
 
     fn take_dabs(&mut self, user_id: u8) -> Vec<CommandMessage> {
         self.state().take_dabs(user_id)
+    }
+
+    fn write_dabs(&mut self, user_id: u8, writer: &mut MessageWriter) {
+        self.state().write_dabs(user_id, writer);
     }
 
     fn add_offset(&mut self, x: f32, y: f32) {

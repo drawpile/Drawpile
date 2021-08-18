@@ -43,8 +43,8 @@ type NotifyCursorCallback = extern "C" fn(ctx: *mut c_void, user: UserID, layer:
 
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
-struct ViewCache {
-    layerstack: Arc<LayerStack>,
+pub struct ViewCache {
+    pub layerstack: Arc<LayerStack>,
     unrefreshed_area: AoE,
 }
 
@@ -74,7 +74,7 @@ enum PaintEngineCommand {
 /// The paint engine
 pub struct PaintEngine {
     /// A copy of the canvas state for read-only use in the view layer
-    viewcache: Arc<Mutex<ViewCache>>,
+    pub viewcache: Arc<Mutex<ViewCache>>,
 
     /// A channel for sending commands to the paint engine
     engine_channel: Sender<PaintEngineCommand>,

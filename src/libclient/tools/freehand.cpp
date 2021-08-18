@@ -18,19 +18,28 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 #include "net/client.h"
 #include "net/commands.h"
+#include "net/envelope.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/freehand.h"
 
 #include "../libshared/net/undo.h"
+#include "../rustpile/rustpile.h"
 
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor), m_drawing(false)
 {
+	m_brushengine = rustpile::brushengine_new();
+}
+
+Freehand::~Freehand()
+{
+	rustpile::brushengine_free(m_brushengine);
 }
 
 void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
@@ -41,7 +50,8 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 
 	m_drawing = true;
 	m_firstPoint = true;
-	m_brushengine.setBrush(owner.client()->myId(), owner.activeLayer(), owner.activeBrush());
+
+	rustpile::brushengine_set_classicbrush(m_brushengine, &owner.activeBrush().brush(), owner.activeLayer());
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
@@ -56,20 +66,37 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 	if(!m_drawing)
 		return;
 
-	const paintcore::Layer *srcLayer = nullptr;
-#if 0 // FIXME
-	if(owner.activeBrush().smudge1()>0 || owner.activeBrush().isColorPickMode())
-		srcLayer = owner.model()->layerStack()->getLayer(owner.activeLayer());
-#endif
+	auto writer = rustpile::messagewriter_new();
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
-		m_brushengine.strokeTo(paintcore::Point(m_start, qMin(m_start.pressure(), point.pressure())), srcLayer);
-		owner.client()->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId())));
-	}
 
-	m_brushengine.strokeTo(point, srcLayer);
-	owner.client()->sendMessages(m_brushengine.takeDabs());
+		rustpile::write_undopoint(writer, owner.client()->myId());
+
+		rustpile::brushengine_stroke_to(
+			m_brushengine,
+			m_start.x(),
+			m_start.y(),
+			qMin(m_start.pressure(), point.pressure()),
+			owner.model()->paintEngine()->engine(),
+			owner.activeLayer()
+		);
+	}
+	rustpile::brushengine_stroke_to(
+		m_brushengine,
+		point.x(),
+		point.y(),
+		point.pressure(),
+		owner.model()->paintEngine()->engine(),
+		owner.activeLayer()
+	);
+
+	rustpile::brushengine_write_dabs(m_brushengine, owner.client()->myId(), writer);
+
+	auto envelope = net::Envelope::fromMessageWriter(writer);
+	rustpile::messagewriter_free(writer);
+
+	owner.client()->sendEnvelope(envelope);
 }
 
 void Freehand::end()
@@ -77,23 +104,38 @@ void Freehand::end()
 	if(m_drawing) {
 		m_drawing = false;
 
+		auto writer = rustpile::messagewriter_new();
+
 		if(m_firstPoint) {
 			m_firstPoint = false;
-			m_brushengine.strokeTo(m_start, nullptr);
-			owner.client()->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId())));
+
+			rustpile::write_undopoint(writer, owner.client()->myId());
+
+			rustpile::brushengine_stroke_to(
+				m_brushengine,
+				m_start.x(),
+				m_start.y(),
+				m_start.pressure(),
+				nullptr,
+				0
+			);
 		}
 
-		m_brushengine.endStroke();
-		auto msgs = m_brushengine.takeDabs();
-		msgs << protocol::MessagePtr(new protocol::PenUp(owner.client()->myId()));
-		owner.client()->sendMessages(msgs);
+		rustpile::brushengine_end_stroke(m_brushengine);
+		rustpile::brushengine_write_dabs(m_brushengine, owner.client()->myId(), writer);
+		rustpile::write_penup(writer, owner.client()->myId());
+
+		auto envelope = net::Envelope::fromMessageWriter(writer);
+		rustpile::messagewriter_free(writer);
+
+		owner.client()->sendEnvelope(envelope);
 	}
 }
 
 void Freehand::offsetActiveTool(int x, int y)
 {
 	if(m_drawing)
-		m_brushengine.addOffset(x, y);
+		rustpile::brushengine_add_offset(m_brushengine, x, y);
 }
 
 }

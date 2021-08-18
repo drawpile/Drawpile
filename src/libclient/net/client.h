@@ -45,6 +45,7 @@ namespace net {
 	
 class LoopbackServer;
 class LoginHandler;
+class Envelope;
 
 /**
  * The client for accessing the drawing server.
@@ -173,6 +174,7 @@ public slots:
 	 */
 	void sendMessage(const protocol::MessagePtr &msg);
 	void sendMessages(const protocol::MessageList &msgs);
+	void sendEnvelope(const Envelope &envelope);
 
 	//! Send messages as part of a session reset/init
 	void sendResetMessages(const protocol::MessageList &msgs);

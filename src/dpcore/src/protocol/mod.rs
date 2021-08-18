@@ -33,6 +33,6 @@ pub use protover::ProtocolVersion;
 pub use reader::{
     open_recording, BinaryReader, Compatibility, ReadMessage, RecordingReader, TextReader,
 };
-pub use serialization::DeserializationError;
+pub use serialization::{DeserializationError, MessageWriter};
 pub use textparser::TextParser;
 pub use writer::{BinaryWriter, RecordingWriter, TextWriter};

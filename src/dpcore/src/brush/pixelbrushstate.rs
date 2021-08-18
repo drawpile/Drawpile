@@ -24,6 +24,7 @@ use super::brushstate::BrushState;
 use super::classicbrush::{ClassicBrush, ClassicBrushShape};
 use crate::paint::{Blendmode, Color, Layer};
 use crate::protocol::message::{CommandMessage, DrawDabsPixelMessage, PixelDab};
+use crate::protocol::MessageWriter;
 
 use std::mem;
 
@@ -246,6 +247,22 @@ impl BrushState for PixelBrushState {
                 .map(|d| CommandMessage::DrawDabsPixelSquare(user_id, d))
                 .collect(),
         }
+    }
+
+    fn write_dabs(&mut self, user_id: u8, writer: &mut MessageWriter) {
+        let dabs = mem::replace(&mut self.dabs, Vec::new());
+        match self.brush.shape {
+            ClassicBrushShape::RoundPixel => {
+                for d in dabs {
+                    CommandMessage::DrawDabsPixel(user_id, d).write(writer);
+                }
+            }
+            _ => {
+                for d in dabs {
+                    CommandMessage::DrawDabsPixelSquare(user_id, d).write(writer);
+                }
+            }
+        };
     }
 
     fn add_offset(&mut self, x: f32, y: f32) {

@@ -24,6 +24,7 @@ use super::brushstate::BrushState;
 use super::classicbrush::ClassicBrush;
 use crate::paint::{Blendmode, Color, Layer};
 use crate::protocol::message::{ClassicDab, CommandMessage, DrawDabsClassicMessage};
+use crate::protocol::MessageWriter;
 
 use std::mem;
 
@@ -232,6 +233,16 @@ impl BrushState for SoftBrushState {
         dabs.into_iter()
             .map(|d| CommandMessage::DrawDabsClassic(user_id, d))
             .collect()
+    }
+
+    fn write_dabs(&mut self, user_id: u8, writer: &mut MessageWriter) {
+        // TODO excessive copying. We should be able to preserve
+        // the vector and not make temporary copies of the individual
+        // messages.
+        let dabs = mem::replace(&mut self.dabs, Vec::new());
+        for d in dabs {
+            CommandMessage::DrawDabsClassic(user_id, d).write(writer);
+        }
     }
 
     fn add_offset(&mut self, x: f32, y: f32) {

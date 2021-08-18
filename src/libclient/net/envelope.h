@@ -22,6 +22,10 @@
 #include <QByteArray>
 #include <QtEndian>
 
+namespace rustpile {
+	struct MessageWriter;
+}
+
 namespace net {
 
 /**
@@ -48,6 +52,9 @@ public:
 		Q_ASSERT(len >= HEADER_LEN);
 	}
 
+	//! Take the content of a message writer and put it in the envelope
+	static Envelope fromMessageWriter(rustpile::MessageWriter *writer);
+
 	// Return the type of the first message in the envelope, or -1 if there is none
 	int messageType() const {
 		if(m_offset >= m_data.length())
@@ -59,6 +66,8 @@ public:
 		Q_ASSERT(length() >= HEADER_LEN);
 		return m_data[m_offset+2];
 	}
+
+	bool isCommand() const { return messageType() >= 128; }
 
 	//! Return an envelope starting with the next message
 	Envelope next() const {
@@ -84,6 +93,10 @@ public:
 
 	bool isEmpty() const {
 		return m_offset >= m_data.length();
+	}
+
+	void append(const Envelope &other) {
+		m_data.append(other.m_data.constData() + other.m_offset, other.length());
 	}
 
 private:

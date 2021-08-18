@@ -20,6 +20,7 @@
 #define DP_NET_SERVER_H
 
 #include "../libshared/net/message.h"
+#include "envelope.h"
 
 #include <QObject>
 
@@ -47,6 +48,7 @@ public:
 	 */
 	virtual void sendMessage(const protocol::MessagePtr &msg) = 0;
 	virtual void sendMessages(const protocol::MessageList &msgs) = 0;
+	virtual void sendEnvelope(const Envelope &e) = 0;
 
     /**
      * @brief Log out from the server

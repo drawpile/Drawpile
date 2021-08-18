@@ -82,6 +82,9 @@ public:
 	//! Is OpenRaster file format needed to save the canvas losslessly?
 	bool needsOpenRaster() const;
 
+	//! Get the raw rustpile paint engine instance
+	rustpile::PaintEngine *engine() const { return m_pe; }
+
 signals:
 	// Note: these signals are emitted from the paint engine thread
 	void areaChanged(const QRect &area);

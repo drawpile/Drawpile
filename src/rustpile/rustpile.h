@@ -80,7 +80,11 @@ enum class VAlign {
 /// from the paint engine thread.
 struct Annotations;
 
+struct BrushEngine;
+
 struct BrushPreview;
+
+struct MessageWriter;
 
 /// The paint engine
 struct PaintEngine;
@@ -185,9 +189,13 @@ struct AnnotationAt {
   bool protect;
 };
 
+using LayerID = int32_t;
+
 extern "C" {
 
 void rustpile_init();
+
+void qt_log_handler(int32_t loglevel, const uint16_t *message, uintptr_t message_len);
 
 void annotations_get_all(const Annotations *annotations,
                          void *ctx,
@@ -268,6 +276,180 @@ void paintengine_paint_changes(PaintEngine *dp,
                                void *ctx,
                                Rectangle rect,
                                void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
+
+BrushEngine *brushengine_new();
+
+void brushengine_free(BrushEngine *be);
+
+void brushengine_set_classicbrush(BrushEngine *be, const ClassicBrush *brush, uint16_t layer);
+
+void brushengine_stroke_to(BrushEngine *be,
+                           float x,
+                           float y,
+                           float p,
+                           const PaintEngine *pe,
+                           LayerID layer_id);
+
+void brushengine_end_stroke(BrushEngine *be);
+
+void brushengine_add_offset(BrushEngine *be, float x, float y);
+
+void brushengine_write_dabs(BrushEngine *be, uint8_t user_id, MessageWriter *writer);
+
+MessageWriter *messagewriter_new();
+
+void messagewriter_free(MessageWriter *mw);
+
+const uint8_t *messagewriter_content(const MessageWriter *mw, uintptr_t *len);
+
+void write_servercommand(MessageWriter *writer, UserID ctx, const uint8_t *msg, uintptr_t msg_len);
+
+void write_sessionowner(MessageWriter *writer,
+                        UserID ctx,
+                        const uint8_t *users,
+                        uintptr_t users_len);
+
+void write_chat(MessageWriter *writer,
+                UserID ctx,
+                uint8_t flags,
+                const uint8_t *message,
+                uintptr_t message_len);
+
+void write_trusted(MessageWriter *writer, UserID ctx, const uint8_t *users, uintptr_t users_len);
+
+void write_privatechat(MessageWriter *writer,
+                       UserID ctx,
+                       uint8_t target,
+                       uint8_t flags,
+                       const uint8_t *message,
+                       uintptr_t message_len);
+
+void write_lasertrail(MessageWriter *writer, UserID ctx, uint32_t color, uint8_t persistence);
+
+void write_movepointer(MessageWriter *writer, UserID ctx, int32_t x, int32_t y);
+
+void write_marker(MessageWriter *writer, UserID ctx, const uint8_t *text, uintptr_t text_len);
+
+void write_useracl(MessageWriter *writer, UserID ctx, const uint8_t *users, uintptr_t users_len);
+
+void write_layeracl(MessageWriter *writer,
+                    UserID ctx,
+                    uint16_t id,
+                    uint8_t flags,
+                    const uint8_t *exclusive,
+                    uintptr_t exclusive_len);
+
+void write_featureaccess(MessageWriter *writer,
+                         UserID ctx,
+                         const uint8_t *feature_tiers,
+                         uintptr_t feature_tiers_len);
+
+void write_defaultlayer(MessageWriter *writer, UserID ctx, uint16_t id);
+
+void write_undopoint(MessageWriter *writer, UserID ctx);
+
+void write_resize(MessageWriter *writer,
+                  UserID ctx,
+                  int32_t top,
+                  int32_t right,
+                  int32_t bottom,
+                  int32_t left);
+
+void write_newlayer(MessageWriter *writer,
+                    UserID ctx,
+                    uint16_t id,
+                    uint16_t source,
+                    uint32_t fill,
+                    uint8_t flags,
+                    const uint8_t *name,
+                    uintptr_t name_len);
+
+void write_layerattr(MessageWriter *writer,
+                     UserID ctx,
+                     uint16_t id,
+                     uint8_t sublayer,
+                     uint8_t flags,
+                     uint8_t opacity,
+                     uint8_t blend);
+
+void write_retitlelayer(MessageWriter *writer,
+                        UserID ctx,
+                        uint16_t id,
+                        const uint8_t *title,
+                        uintptr_t title_len);
+
+void write_layerorder(MessageWriter *writer,
+                      UserID ctx,
+                      const uint16_t *layers,
+                      uintptr_t layers_len);
+
+void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, bool merge);
+
+void write_layervisibility(MessageWriter *writer, UserID ctx, uint16_t id, bool visible);
+
+void write_putimage(MessageWriter *writer,
+                    UserID ctx,
+                    uint16_t layer,
+                    uint8_t mode,
+                    uint32_t x,
+                    uint32_t y,
+                    uint32_t w,
+                    uint32_t h,
+                    const uint8_t *image,
+                    uintptr_t image_len);
+
+void write_fillrect(MessageWriter *writer,
+                    UserID ctx,
+                    uint16_t layer,
+                    uint8_t mode,
+                    uint32_t x,
+                    uint32_t y,
+                    uint32_t w,
+                    uint32_t h,
+                    uint32_t color);
+
+void write_penup(MessageWriter *writer, UserID ctx);
+
+void write_newannotation(MessageWriter *writer,
+                         UserID ctx,
+                         uint16_t id,
+                         int32_t x,
+                         int32_t y,
+                         uint16_t w,
+                         uint16_t h);
+
+void write_reshapeannotation(MessageWriter *writer,
+                             UserID ctx,
+                             uint16_t id,
+                             int32_t x,
+                             int32_t y,
+                             uint16_t w,
+                             uint16_t h);
+
+void write_editannotation(MessageWriter *writer,
+                          UserID ctx,
+                          uint16_t id,
+                          uint32_t bg,
+                          uint8_t flags,
+                          uint8_t border,
+                          const uint8_t *text,
+                          uintptr_t text_len);
+
+void write_deleteannotation(MessageWriter *writer, UserID ctx, uint16_t id);
+
+void write_puttile(MessageWriter *writer,
+                   UserID ctx,
+                   uint16_t layer,
+                   uint8_t sublayer,
+                   uint16_t col,
+                   uint16_t row,
+                   uint16_t repeat,
+                   const uint8_t *image,
+                   uintptr_t image_len);
+
+void write_background(MessageWriter *writer, UserID ctx, const uint8_t *image, uintptr_t image_len);
+
+void write_undo(MessageWriter *writer, UserID ctx, uint8_t override_user, bool redo);
 
 } // extern "C"
 

@@ -22,6 +22,7 @@
 
 use crate::paint::Layer;
 use crate::protocol::message::CommandMessage;
+use crate::protocol::MessageWriter;
 
 pub trait BrushState {
     /// Set the target layer
@@ -36,6 +37,10 @@ pub trait BrushState {
 
     /// End the current stroke (if any)
     fn end_stroke(&mut self);
+
+    /// Take the dabs computed so far and write them with the given message writer
+    /// Doing this will not end the current stroke.
+    fn write_dabs(&mut self, user_id: u8, writer: &mut MessageWriter);
 
     /// Take the dabs computed so far.
     /// Doing this will not end the current stroke.
