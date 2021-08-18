@@ -153,6 +153,16 @@ impl Color {
         }
     }
 
+    // Get the color values as is, premultiplication included
+    pub fn from_premultiplied_pixel(p: Pixel) -> Color {
+        Color {
+            r: p[RED_CHANNEL] as f32 / 255.0,
+            g: p[GREEN_CHANNEL] as f32 / 255.0,
+            b: p[BLUE_CHANNEL] as f32 / 255.0,
+            a: p[ALPHA_CHANNEL] as f32 / 255.0,
+        }
+    }
+
     // Get a premultiplied pixel value from this color
     pub fn as_pixel(&self) -> Pixel {
         let af = self.a * 255.0;

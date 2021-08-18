@@ -284,7 +284,7 @@ impl Layer {
                     .zip(dab.rect_iter(&rect_in_dab).flatten())
                 {
                     let m = *mask as f32 / 255.0;
-                    let c = Color::from_pixel(*pix);
+                    let c = Color::from_premultiplied_pixel(*pix);
                     sum_weight += m;
                     sum_color.r += c.r * m;
                     sum_color.g += c.g * m;
@@ -294,10 +294,20 @@ impl Layer {
             }
         }
 
+        // There must be at least some alpha for the results to make sense
+        if sum_color.a < ((dab.diameter * dab.diameter) as f32 * 0.1) {
+            return Color::TRANSPARENT
+        }
+
         sum_color.r /= sum_weight;
         sum_color.g /= sum_weight;
         sum_color.b /= sum_weight;
         sum_color.a /= sum_weight;
+
+        // Unpremultiply
+        sum_color.r = 1.0f32.min(sum_color.r / sum_color.a);
+        sum_color.g = 1.0f32.min(sum_color.g / sum_color.a);
+        sum_color.b = 1.0f32.min(sum_color.b / sum_color.a);
 
         sum_color
     }
