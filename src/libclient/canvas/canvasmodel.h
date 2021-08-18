@@ -42,25 +42,16 @@ class StateTracker;
 class AclFilter;
 class UserListModel;
 class LayerListModel;
-class LaserTrailModel;
 class Selection;
 class PaintEngine;
 
 class CanvasModel : public QObject
 {
-	Q_PROPERTY(LaserTrailModel* laserTrails READ laserTrails CONSTANT)
-	Q_PROPERTY(Selection* selection READ selection WRITE setSelection NOTIFY selectionChanged)
-
-	Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
-	Q_PROPERTY(QString pinnedMessage READ pinnedMessage NOTIFY pinnedMessageChanged)
-
 	Q_OBJECT
-
 public:
 	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
-	LaserTrailModel *laserTrails() const { return m_lasers; }
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
@@ -150,6 +141,8 @@ signals:
 	void chatMessageReceived(const protocol::MessagePtr &msg);
 	void markerMessageReceived(int id, const QString &message);
 
+	void laserTrail(uint8_t userId, int persistence, const QColor &color);
+
 	void userJoined(int id, const QString &name);
 	void userLeft(int id, const QString &name);
 
@@ -173,7 +166,6 @@ private:
 	LayerListModel *m_layerlist;
 
 	PaintEngine *m_paintengine;
-	LaserTrailModel *m_lasers;
 	Selection *m_selection;
 
 	QPointer<recording::Writer> m_recorder;

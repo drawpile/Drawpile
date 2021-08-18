@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2017 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,19 +21,16 @@
 
 #include <QApplication>
 #include <QPainter>
+#include <QDateTime>
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_blink(false)
+LaserTrailItem::LaserTrailItem(uint8_t owner, const QColor &color, QGraphicsItem *parent)
+	: QGraphicsItem(parent), m_blink(false), m_fadeout(false), m_owner(owner), m_lastModified(0)
 {
 	m_pen.setWidth(qApp->devicePixelRatio() * 3);
 	m_pen.setCapStyle(Qt::RoundCap);
 	m_pen.setCosmetic(true);
-}
-
-void LaserTrailItem::setColor(const QColor &color)
-{
 	m_pen.setColor(color);
 }
 
@@ -42,35 +39,16 @@ QRectF LaserTrailItem::boundingRect() const
 	return m_bounds;
 }
 
-void LaserTrailItem::setPoints(const QVector<QPointF> &points)
+void LaserTrailItem::addPoint(const QPointF &point)
 {
 	prepareGeometryChange();
-	m_points = points;
-
-	QRectF bounds;
-	if(m_points.size()>0) {
-		bounds = QRectF(m_points.at(0), QSize(1,1));
-		for(int i=1;i<m_points.size();++i) {
-			qreal x = m_points.at(i).x();
-			qreal y = m_points.at(i).y();
-
-			if(x<bounds.left())
-				bounds.setLeft(x);
-			if(x>bounds.right())
-				bounds.setRight(x);
-			if(y<bounds.top())
-				bounds.setTop(y);
-			if(y>bounds.bottom())
-				bounds.setBottom(y);
-		}
-		m_bounds = bounds;
+	m_points.append(point);
+	if(m_points.length()==1) {
+		m_bounds = QRectF{point, QSizeF{1, 1}};
+	} else {
+		m_bounds = m_bounds.united(QRectF{point, QSizeF{1, 1}});
 	}
-}
-
-void LaserTrailItem::setFadeVisible(bool visible)
-{
-	// Visibility change is animated
-	m_visible = visible;
+	m_lastModified = QDateTime::currentMSecsSinceEpoch();
 }
 
 void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -93,19 +71,21 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->restore();
 }
 
-void LaserTrailItem::animationStep(float dt)
+bool LaserTrailItem::animationStep(float dt)
 {
 	m_blink = !m_blink;
 
-	if(m_visible) {
-		if(opacity() < 1.0)
-			setOpacity(qMin(1.0, opacity() + dt));
-	} else {
-		if(opacity() > 0)
-			setOpacity(qMax(0.0, opacity() - dt));
+	bool retain = true;
+	if(m_fadeout) {
+		setOpacity(qMax(0.0, opacity() - dt));
+		retain = opacity() == 0.0;
+	} else if(m_lastModified < QDateTime::currentMSecsSinceEpoch() - 3000) {
+		m_fadeout = true;
 	}
 
 	update(boundingRect());
+
+	return retain;
 }
 
 }

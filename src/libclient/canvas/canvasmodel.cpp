@@ -18,7 +18,6 @@
 */
 
 #include "canvasmodel.h"
-#include "lasertrailmodel.h"
 #include "layerlist.h"
 #include "userlist.h"
 #include "aclfilter.h"
@@ -55,7 +54,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
 
 	m_paintengine = new PaintEngine(this);
-	m_lasers = new LaserTrailModel(this);
 
 	m_aclfilter->reset(localUserId, true);
 
@@ -481,17 +479,14 @@ void CanvasModel::metaChatMessage(protocol::MessagePtr msg)
 
 void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
 {
-	m_lasers->startTrail(msg.contextId(), QColor::fromRgb(msg.color()), msg.persistence());
+	emit laserTrail(msg.contextId(), msg.persistence(), QColor::fromRgb(msg.color()));
 }
 
 void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
 {
 
 	QPoint p(int(msg.x() / 4.0), int(msg.y() / 4.0));
-#if 0 // FIXME
-	m_usercursors->setCursorPosition(msg.contextId(), 0, p);
-#endif
-	m_lasers->addPoint(msg.contextId(), p);
+	emit m_paintengine->cursorMoved(msg.contextId(), 0, p.x(), p.y());
 }
 
 void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)

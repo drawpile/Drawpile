@@ -23,7 +23,6 @@ set (
 	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp
-	canvas/lasertrailmodel.cpp
 	canvas/retcon.cpp
 	canvas/loader.cpp
 	canvas/aclfilter.cpp

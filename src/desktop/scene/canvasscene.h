@@ -108,13 +108,10 @@ private slots:
 	void advanceAnimations();
 
 	void userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y);
+	void laserTrail(uint8_t userId, int persistence, const QColor &color);
 
 	void annotationsChanged(rustpile::Annotations *annotations);
 	void previewAnnotation(int id, const QRect &shape);
-
-	void laserAdded(const QModelIndex&, int first, int last);
-	void laserRemoved(const QModelIndex&, int first, int last);
-	void laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed);
 
 private:
 	//! The actual canvas model
@@ -123,11 +120,11 @@ private:
 	//! The item that shows the canvas pixel content
 	CanvasItem *m_canvasItem;
 
-	//! Laser pointer trail items
-	QHash<int, LaserTrailItem*> m_lasertrails;
+	//! Active laser pointer trail item (per user)
+	QHash<uint8_t, LaserTrailItem*> m_activeLaserTrail;
 
 	//! User cursor items
-	QHash<int, UserMarkerItem*> m_usermarkers;
+	QHash<uint8_t, UserMarkerItem*> m_usermarkers;
 
 	//! Current selection
 	SelectionItem *m_selection;

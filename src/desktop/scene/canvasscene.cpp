@@ -29,7 +29,6 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
-#include "canvas/lasertrailmodel.h"
 #include "canvas/userlist.h"
 
 #include "../rustpile/rustpile.h"
@@ -71,21 +70,19 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize, Qt::QueuedConnection);
 	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged, Qt::QueuedConnection);
 	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &CanvasScene::userCursorMoved, Qt::QueuedConnection);
+
 	connect(m_model, &canvas::CanvasModel::previewAnnotationRequested, this, &CanvasScene::previewAnnotation);
-
-	canvas::LaserTrailModel *lasers = m_model->laserTrails();
-	connect(lasers, &canvas::LaserTrailModel::rowsInserted, this, &CanvasScene::laserAdded);
-	connect(lasers, &canvas::LaserTrailModel::dataChanged, this, &CanvasScene::laserChanged);
-	connect(lasers, &canvas::LaserTrailModel::rowsAboutToBeRemoved, this, &CanvasScene::laserRemoved);
-
+	connect(m_model, &canvas::CanvasModel::laserTrail, this, &CanvasScene::laserTrail);
 	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
 
-	for(QGraphicsItem *item : items()) {
-		if(item->type() == AnnotationItem::Type || item->type() == UserMarkerItem::Type) {
+	const auto items = this->items();
+	for(QGraphicsItem *item : items) {
+		if(item->type() == AnnotationItem::Type || item->type() == UserMarkerItem::Type || item->type() == LaserTrailItem::Type) {
 			delete item;
 		}
 	}
 	m_usermarkers.clear();
+	m_activeLaserTrail.clear();
 	
 	QList<QRectF> regions;
 	regions.append(sceneRect());
@@ -235,67 +232,6 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 	ai->setGeometry(shape);
 }
 
-void CanvasScene::laserAdded(const QModelIndex&, int first, int last)
-{
-	if(!m_canvasItem)
-		return;
-
-	// Don't add new lasers when canvas is hidden
-	// or when laser trails are disabled
-	if(!m_canvasItem->isVisible() || !m_showLaserTrails)
-		return;
-
-	for(int i=first;i<=last;++i) {
-		const QModelIndex l = m_model->laserTrails()->index(i);
-		const int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
-		if(m_lasertrails.contains(id)) {
-			qWarning("Item for laser trail %d already exists!", id);
-			continue;
-		} else {
-			LaserTrailItem *item = new LaserTrailItem;
-			addItem(item);
-			m_lasertrails[id] = item;
-		}
-		laserChanged(l, l, QVector<int>());
-	}
-}
-
-void CanvasScene::laserRemoved(const QModelIndex&, int first, int last)
-{
-	for(int i=first;i<=last;++i) {
-		const QModelIndex l = m_model->laserTrails()->index(i);
-		const int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
-		delete m_lasertrails.take(id);
-	}
-
-}
-
-void CanvasScene::laserChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> &changed)
-{
-	if(!m_canvasItem || !m_canvasItem->isVisible() || !m_showLaserTrails)
-		return;
-
-	const int ifirst = first.row();
-	const int ilast = last.row();
-	for(int i=ifirst;i<=ilast;++i) {
-		const QModelIndex l = m_model->laserTrails()->index(i);
-		const int id = l.data(canvas::LaserTrailModel::InternalIdRole).toInt();
-		if(!m_lasertrails.contains(id)) {
-			qWarning("Laser trail %d changed, but not yet created!", id);
-			continue;
-		}
-		LaserTrailItem *item = m_lasertrails[id];
-		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::ColorRole))
-			item->setColor(l.data(canvas::LaserTrailModel::ColorRole).value<QColor>());
-
-		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::PointsRole))
-			item->setPoints(l.data(canvas::LaserTrailModel::PointsRole).value<QVector<QPointF>>());
-
-		if(changed.isEmpty() || changed.contains(canvas::LaserTrailModel::VisibleRole))
-			item->setFadeVisible(l.data(canvas::LaserTrailModel::VisibleRole).toBool());
-	}
-}
-
 /**
  * @brief Advance canvas animations
  *
@@ -306,21 +242,45 @@ void CanvasScene::advanceAnimations()
 {
 	const double STEP = 0.2; // time delta in seconds
 
-	for(LaserTrailItem *lt : m_lasertrails)
-		lt->animationStep(STEP);
+	const auto items = this->items();
+	for(QGraphicsItem *item : items) {
+		if(LaserTrailItem *lt = qgraphicsitem_cast<LaserTrailItem*>(item)) {
+			if(lt->animationStep(STEP) == false) {
+				if(m_activeLaserTrail.value(lt->owner()) == lt)
+					m_activeLaserTrail.remove(lt->owner());
+				delete item;
+			}
 
-	for(UserMarkerItem *um : qAsConst(m_usermarkers)) {
-		um->animationStep(STEP);
+		} else if(UserMarkerItem *um = qgraphicsitem_cast<UserMarkerItem*>(item)) {
+			um->animationStep(STEP);
+		}
 	}
 
 	if(m_selection)
 		m_selection->marchingAnts();
 }
 
+void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &color)
+{
+	if(persistence == 0) {
+		m_activeLaserTrail.remove(userId);
+	} else {
+		LaserTrailItem *item = new LaserTrailItem(userId, color);
+		m_activeLaserTrail[userId] = item;
+		addItem(item);
+	}
+}
+
 void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y)
 {
 	if(!m_showUserMarkers)
 		return;
+
+	// User cursor motion is used to update the laser trail, if one exists
+	if(m_activeLaserTrail.contains(userId)) {
+		LaserTrailItem *laser = m_activeLaserTrail[userId];
+		laser->addPoint(QPointF(x, y));
+	}
 
 	// TODO in some cases (playback, laser pointer) we want to show our cursor as well.
 	if(userId == m_model->localUserId())
@@ -388,8 +348,14 @@ void CanvasScene::showUserAvatars(bool show)
 void CanvasScene::showLaserTrails(bool show)
 {
 	m_showLaserTrails = show;
-	for(LaserTrailItem *i : m_lasertrails)
-		i->hide();
+	if(!show) {
+		m_activeLaserTrail.clear();
+		const auto items = this->items();
+		for(auto i : items) {
+			if(i->type() == LaserTrailItem::Type)
+				delete i;
+		}
+	}
 }
 
 }
