@@ -27,7 +27,8 @@ use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use crate::paint::{
-    editlayer, AoE, Blendmode, ClassicBrushCache, Color, LayerID, Rectangle, UserID,
+    editlayer, AoE, Blendmode, ClassicBrushCache, Color, InternalLayerID, LayerID, Rectangle,
+    UserID,
 };
 use crate::protocol::message::*;
 
@@ -231,7 +232,7 @@ impl CanvasState {
         msgs: &[CommandMessage],
     ) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
-            let mut layer = layer.get_or_create_sublayer(-1);
+            let mut layer = layer.get_or_create_sublayer(InternalLayerID(-1));
 
             let mut aoe = editlayer::clear_layer(&mut layer);
 
@@ -255,16 +256,16 @@ impl CanvasState {
 
             aoe.into()
         } else {
-            warn!("apply_preview: Layer {:04x} not found!", layer_id);
+            warn!("apply_preview: Layer {} not found!", layer_id);
             CanvasStateChange::nothing()
         }
     }
 
     pub fn remove_preview(&mut self, layer_id: LayerID) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
-            editlayer::remove_sublayer(layer, -1).into()
+            editlayer::remove_sublayer(layer, InternalLayerID(-1)).into()
         } else {
-            warn!("remove_preview: Layer {:04x} not found!", layer_id);
+            warn!("remove_preview: Layer {} not found!", layer_id);
             CanvasStateChange::nothing()
         }
     }
@@ -352,7 +353,7 @@ impl CanvasState {
     /// Penup does nothing but end indirect strokes.
     /// This is done by merging this user's sublayers.
     fn handle_penup(&mut self, user_id: UserID) -> AoE {
-        let sublayer_id = user_id as LayerID;
+        let sublayer_id = InternalLayerID::from(user_id);
 
         // Note: we could do a read-only pass first to check if
         // this is necesary at all, but we can just as well simply
@@ -425,7 +426,7 @@ impl CanvasState {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
             let aoe = editlayer::change_attributes(
                 layer,
-                msg.sublayer as LayerID,
+                msg.sublayer.into(),
                 msg.opacity as f32 / 255.0,
                 Blendmode::try_from(msg.blend).unwrap_or(Blendmode::Normal),
                 (msg.flags & LayerAttributesMessage::FLAGS_CENSOR) != 0,
@@ -557,7 +558,7 @@ impl CanvasState {
             if let Some(tile) = compression::decompress_tile(&msg.image, user_id) {
                 return editlayer::put_tile(
                     layer,
-                    msg.sublayer as LayerID,
+                    msg.sublayer.into(),
                     msg.col.into(),
                     msg.row.into(),
                     msg.repeat.into(),

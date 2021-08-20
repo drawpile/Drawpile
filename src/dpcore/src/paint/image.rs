@@ -22,7 +22,7 @@
 
 use super::color::{Pixel, ZERO_PIXEL};
 use super::rectiter::{MutableRectIterator, RectIterator};
-use super::Rectangle;
+use super::{Rectangle, Size};
 
 /// A flat image buffer
 pub struct Image {
@@ -53,6 +53,10 @@ impl Image {
     pub fn is_null(&self) -> bool {
         assert!(self.pixels.len() == self.width * self.height);
         self.pixels.len() == 0
+    }
+
+    pub fn size(&self) -> Size {
+        Size::new(self.width as i32, self.height as i32)
     }
 
     /// Find the bounding rectangle of the opaque pixels in this image
@@ -98,5 +102,23 @@ impl Image {
 
     pub fn rect_iter_mut(&mut self, rect: &Rectangle) -> MutableRectIterator<Pixel> {
         MutableRectIterator::from_rectangle(&mut self.pixels, self.width, rect)
+    }
+
+    /// Return a cropped version of the image
+    pub fn cropped(&self, rect: &Rectangle) -> Image {
+        let rect = match rect.cropped(self.size()) {
+            Some(r) => r,
+            None => return Image::default(),
+        };
+
+        let mut cropped_pixels: Vec<Pixel> = Vec::with_capacity((rect.w * rect.h) as usize);
+        self.rect_iter(&rect)
+            .for_each(|p| cropped_pixels.extend_from_slice(p));
+
+        Image {
+            pixels: cropped_pixels,
+            width: rect.w as usize,
+            height: rect.h as usize,
+        }
     }
 }

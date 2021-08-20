@@ -24,9 +24,10 @@ use crate::paint::tile::{Tile, TILE_LENGTH};
 use crate::paint::{Color, Pixel, UserID};
 
 use std::convert::TryInto;
-use std::mem;
+use std::{mem, slice};
 use tracing::warn;
 
+use deflate::deflate_bytes_zlib;
 use inflate::inflate_bytes_zlib;
 
 /// Decompress a Tile.
@@ -115,4 +116,27 @@ pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> 
         .map(|p| p.try_into().unwrap())
         .collect();
     return Some(pixels);
+}
+
+pub fn compress_image(pixels: &[Pixel]) -> Vec<u8> {
+    // TODO this could take an iterator of slices so we could compress
+    // cropped image regions without having to make copies
+    let pixelbytes = unsafe {
+        slice::from_raw_parts(
+            pixels.as_ptr() as *const u8,
+            pixels.len() * mem::size_of::<Pixel>(),
+        )
+    };
+
+    let compressed = deflate_bytes_zlib(pixelbytes);
+
+    // For compatibility with Qt's compresssion function, add a prefix
+    // containing the expected length of the decompressed buffer.
+    // We can probably drop this in the next protocol change.
+    let prefix = u32::to_be_bytes(pixelbytes.len() as u32);
+    let mut prefixed_data = Vec::<u8>::with_capacity(prefix.len() + compressed.len());
+    prefixed_data.extend_from_slice(&prefix);
+    prefixed_data.extend_from_slice(&compressed);
+
+    prefixed_data
 }

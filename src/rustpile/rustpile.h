@@ -149,6 +149,12 @@ struct ClassicBrush {
   bool smudge_pressure;
 };
 
+/// The regular layer ID type is used for layers that can be accessed
+/// via the protocol.
+using LayerID = uint16_t;
+
+using UserID = uint8_t;
+
 using NotifyChangesCallback = void(*)(void *ctx, Rectangle area);
 
 struct Size {
@@ -174,8 +180,6 @@ using NotifyLayerListCallback = void(*)(void *ctx, const LayerInfo *layers, uint
 
 using NotifyAnnotationsCallback = void(*)(void *ctx, Annotations *annotations);
 
-using UserID = uint8_t;
-
 using NotifyCursorCallback = void(*)(void *ctx, UserID user, uint16_t layer, int32_t x, int32_t y);
 
 /// The result of an "annotation at point" query
@@ -189,8 +193,6 @@ struct AnnotationAt {
   bool protect;
 };
 
-using LayerID = int32_t;
-
 extern "C" {
 
 void rustpile_init();
@@ -202,88 +204,6 @@ void annotations_get_all(const Annotations *annotations,
                          UpdateAnnotationCallback callback);
 
 void annotations_free(Annotations *annotations);
-
-BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
-
-void brushpreview_free(BrushPreview *bp);
-
-void brushpreview_render(BrushPreview *bp, const ClassicBrush *brush, BrushPreviewShape shape);
-
-void brushpreview_floodfill(BrushPreview *bp,
-                            const Color *color,
-                            float tolerance,
-                            int32_t expansion,
-                            bool fill_under);
-
-void brushpreview_paint(const BrushPreview *bp,
-                        void *ctx,
-                        void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
-
-/// Construct a new paint engine with an empty canvas.
-PaintEngine *paintengine_new(void *ctx,
-                             NotifyChangesCallback changes,
-                             NotifyResizeCallback resizes,
-                             NotifyLayerListCallback layers,
-                             NotifyAnnotationsCallback annotations,
-                             NotifyCursorCallback cursors);
-
-/// Delete a paint engine instance and wait for its thread to finish
-void paintengine_free(PaintEngine *dp);
-
-/// Get the current size of the canvas.
-Size paintengine_canvas_size(const PaintEngine *dp);
-
-/// Receive one or more messages
-/// Only Command type messages are handled.
-void paintengine_receive_messages(PaintEngine *dp,
-                                  bool local,
-                                  const uint8_t *messages,
-                                  uintptr_t messages_len);
-
-/// Clean up the paint engine state after disconnecting from a session
-void paintengine_cleanup(PaintEngine *dp);
-
-/// Get the color of the background tile
-///
-/// TODO this presently assumes the background tile is always solid.
-/// TODO We should support background patterns in the GUI as well.
-Color paintengine_background_color(const PaintEngine *dp);
-
-/// Find the next unused annotation ID for the given user
-AnnotationID paintengine_get_available_annotation_id(const PaintEngine *dp, UserID user);
-
-/// Find the annotation at the given position
-AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
-                                           int32_t x,
-                                           int32_t y,
-                                           int32_t expand);
-
-/// Check if the paint engine's content is simple enough to be saved in a flat image
-///
-/// If any features that requires the OpenRaster file format (such as multiple layers)
-/// are used, this will return false.
-bool paintengine_is_simple(const PaintEngine *dp);
-
-/// Draw a preview brush stroke onto the given layer
-///
-/// This consumes the content of the brush engine.
-void paintengine_preview_brush(PaintEngine *dp, LayerID layer_id, BrushEngine *brushengine);
-
-/// Remove preview brush strokes from the given layer
-void paintengine_remove_preview(PaintEngine *dp, LayerID layer_id);
-
-/// Paint all the changed tiles in the given area
-///
-/// A paintengine instance can only have a single observer (which itself can be
-/// a caching layer that is observed by multiple views,) so it keeps track of which
-/// tiles have changed since they were last painted. Calling this function will flatten
-/// all tiles intersecting the given region of interest and call the provided paint fallback
-/// function for each tile with the raw flattened pixel data. The dirty flag is then
-/// cleared for the repainted tile.
-void paintengine_paint_changes(PaintEngine *dp,
-                               void *ctx,
-                               Rectangle rect,
-                               void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
 
 BrushEngine *brushengine_new();
 
@@ -303,6 +223,22 @@ void brushengine_end_stroke(BrushEngine *be);
 void brushengine_add_offset(BrushEngine *be, float x, float y);
 
 void brushengine_write_dabs(BrushEngine *be, uint8_t user_id, MessageWriter *writer);
+
+BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
+
+void brushpreview_free(BrushPreview *bp);
+
+void brushpreview_render(BrushPreview *bp, const ClassicBrush *brush, BrushPreviewShape shape);
+
+void brushpreview_floodfill(BrushPreview *bp,
+                            const Color *color,
+                            float tolerance,
+                            int32_t expansion,
+                            bool fill_under);
+
+void brushpreview_paint(const BrushPreview *bp,
+                        void *ctx,
+                        void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
 
 MessageWriter *messagewriter_new();
 
@@ -458,6 +394,89 @@ void write_puttile(MessageWriter *writer,
 void write_background(MessageWriter *writer, UserID ctx, const uint8_t *image, uintptr_t image_len);
 
 void write_undo(MessageWriter *writer, UserID ctx, uint8_t override_user, bool redo);
+
+/// Construct a new paint engine with an empty canvas.
+PaintEngine *paintengine_new(void *ctx,
+                             NotifyChangesCallback changes,
+                             NotifyResizeCallback resizes,
+                             NotifyLayerListCallback layers,
+                             NotifyAnnotationsCallback annotations,
+                             NotifyCursorCallback cursors);
+
+/// Delete a paint engine instance and wait for its thread to finish
+void paintengine_free(PaintEngine *dp);
+
+/// Get the current size of the canvas.
+Size paintengine_canvas_size(const PaintEngine *dp);
+
+/// Receive one or more messages
+/// Only Command type messages are handled.
+void paintengine_receive_messages(PaintEngine *dp,
+                                  bool local,
+                                  const uint8_t *messages,
+                                  uintptr_t messages_len);
+
+/// Clean up the paint engine state after disconnecting from a session
+void paintengine_cleanup(PaintEngine *dp);
+
+/// Get the color of the background tile
+///
+/// TODO this presently assumes the background tile is always solid.
+/// TODO We should support background patterns in the GUI as well.
+Color paintengine_background_color(const PaintEngine *dp);
+
+/// Find the next unused annotation ID for the given user
+AnnotationID paintengine_get_available_annotation_id(const PaintEngine *dp, UserID user);
+
+/// Find the annotation at the given position
+AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
+                                           int32_t x,
+                                           int32_t y,
+                                           int32_t expand);
+
+/// Check if the paint engine's content is simple enough to be saved in a flat image
+///
+/// If any features that requires the OpenRaster file format (such as multiple layers)
+/// are used, this will return false.
+bool paintengine_is_simple(const PaintEngine *dp);
+
+/// Draw a preview brush stroke onto the given layer
+///
+/// This consumes the content of the brush engine.
+void paintengine_preview_brush(PaintEngine *dp, LayerID layer_id, BrushEngine *brushengine);
+
+/// Remove preview brush strokes from the given layer
+void paintengine_remove_preview(PaintEngine *dp, LayerID layer_id);
+
+/// Perform a flood fill operation
+///
+/// Returns a MessageWriter containig the commands for drawing the result
+/// onto a canvas. If the operation fails (e.g. due to size limit), a null pointer
+/// is returned. The caller is responsible for freeing the returned MessageWriter
+MessageWriter *paintengine_floodfill(PaintEngine *dp,
+                                     UserID user_id,
+                                     LayerID layer_id,
+                                     int32_t x,
+                                     int32_t y,
+                                     Color color,
+                                     float tolerance,
+                                     bool sample_merged,
+                                     uint32_t size_limit,
+                                     int32_t expansion,
+                                     bool fill_under);
+
+/// Paint all the changed tiles in the given area
+///
+/// A paintengine instance can only have a single observer (which itself can be
+/// a caching layer that is observed by multiple views,) so it keeps track of which
+/// tiles have changed since they were last painted. Calling this function will flatten
+/// all tiles intersecting the given region of interest and call the provided paint fallback
+/// function for each tile with the raw flattened pixel data. The dirty flag is then
+/// cleared for the repainted tile.
+void paintengine_paint_changes(PaintEngine *dp,
+                               void *ctx,
+                               Rectangle rect,
+                               void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
 
 } // extern "C"
 

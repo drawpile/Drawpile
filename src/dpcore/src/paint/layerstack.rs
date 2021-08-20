@@ -20,6 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use std::convert::TryInto;
 use std::sync::Arc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
@@ -92,10 +93,10 @@ impl LayerStack {
         };
 
         let new_layer = match fill {
-            LayerFill::Solid(c) => Arc::new(Layer::new(id, self.width, self.height, &c)),
+            LayerFill::Solid(c) => Arc::new(Layer::new(id.into(), self.width, self.height, &c)),
             LayerFill::Copy(src_id) => {
                 let mut l = self.layers[self.find_layer_index(src_id)?].clone();
-                Arc::make_mut(&mut l).id = id;
+                Arc::make_mut(&mut l).id = id.into();
                 l
             }
         };
@@ -145,7 +146,7 @@ impl LayerStack {
     pub fn find_layer_below(&self, id: LayerID) -> Option<LayerID> {
         if let Some(idx) = self.find_layer_index(id) {
             if idx > 0 {
-                return Some(self.layers[idx - 1].id);
+                return Some(self.layers[idx - 1].id.try_into().unwrap());
             }
         }
         None

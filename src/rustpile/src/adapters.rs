@@ -23,7 +23,7 @@ impl From<&Layer> for LayerInfo {
             title: item.title.as_ptr(),
             titlelen: item.title.len() as i32,
             opacity: item.opacity,
-            id: item.id,
+            id: item.id.0,
             hidden: item.hidden,
             censored: item.censored,
             fixed: item.fixed,

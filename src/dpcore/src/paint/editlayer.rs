@@ -23,7 +23,9 @@
 use super::aoe::{AoE, TileMap};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
-use super::{rasterop, Blendmode, BrushMask, Color, Layer, LayerID, Pixel, Rectangle, UserID};
+use super::{
+    rasterop, Blendmode, BrushMask, Color, InternalLayerID, Layer, Pixel, Rectangle, UserID,
+};
 
 /// Fills a rectangle with a solid color using the given blending mode
 ///
@@ -197,7 +199,7 @@ pub fn draw_image(
 /// at the start of a session.
 pub fn put_tile(
     layer: &mut Layer,
-    sublayer: LayerID,
+    sublayer: InternalLayerID,
     col: u32,
     row: u32,
     repeat: u32,
@@ -206,7 +208,7 @@ pub fn put_tile(
     if sublayer != 0 {
         return put_tile(
             layer.get_or_create_sublayer(sublayer),
-            0,
+            InternalLayerID(0),
             col,
             row,
             repeat,
@@ -265,7 +267,7 @@ pub fn merge(target_layer: &mut Layer, source_layer: &Layer) -> AoE {
 }
 
 /// Merge a sublayer
-pub fn merge_sublayer(layer: &mut Layer, sublayer_id: LayerID) -> AoE {
+pub fn merge_sublayer(layer: &mut Layer, sublayer_id: InternalLayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
         merge(layer, &sublayer)
     } else {
@@ -274,7 +276,7 @@ pub fn merge_sublayer(layer: &mut Layer, sublayer_id: LayerID) -> AoE {
 }
 
 /// Remove a sublayer without merging it
-pub fn remove_sublayer(layer: &mut Layer, sublayer_id: LayerID) -> AoE {
+pub fn remove_sublayer(layer: &mut Layer, sublayer_id: InternalLayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
         sublayer.nonblank_tilemap().into()
     } else {
@@ -294,7 +296,7 @@ pub fn merge_all_sublayers(layer: &mut Layer) -> AoE {
 
 pub fn change_attributes(
     layer: &mut Layer,
-    sublayer: LayerID,
+    sublayer: InternalLayerID,
     opacity: f32,
     blend: Blendmode,
     censored: bool,

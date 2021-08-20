@@ -23,6 +23,7 @@
 pub mod brushes;
 mod compression;
 mod history;
+pub mod images;
 mod retcon;
 mod state;
 

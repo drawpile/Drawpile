@@ -25,7 +25,8 @@ use dpcore::canvas::brushes;
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
-    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID, Rectangle,
+    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, LayerID,
+    Rectangle,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -115,7 +116,14 @@ impl BrushPreview {
         // Draw the background
         self.layerstack.background = Tile::new(&background_color, 1);
         let layer = self.layerstack.get_layer_mut(LAYER_ID).unwrap();
-        editlayer::put_tile(layer, 0, 0, 0, 9999, &Tile::new(&layer_color, 1));
+        editlayer::put_tile(
+            layer,
+            InternalLayerID(0),
+            0,
+            0,
+            9999,
+            &Tile::new(&layer_color, 1),
+        );
 
         match foreground_style {
             ForegroundStyle::Solid => {
@@ -237,7 +245,7 @@ impl BrushPreview {
             };
         }
 
-        editlayer::merge_sublayer(layer, 1);
+        editlayer::merge_sublayer(layer, InternalLayerID(1));
     }
 
     pub fn floodfill(&mut self, color: Color, tolerance: f32, expansion: i32, fill_under: bool) {

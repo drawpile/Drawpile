@@ -31,8 +31,55 @@ pub mod rectiter;
 pub mod tile;
 pub mod tileiter;
 
+use std::convert::TryFrom;
+use std::fmt;
+
 pub type UserID = u8;
-pub type LayerID = i32;
+
+/// Internal Layer ID is used on the layers themselves to support
+/// the extended non-protocol range of IDs for temporary layers.
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub struct InternalLayerID(pub i32);
+
+/// The regular layer ID type is used for layers that can be accessed
+/// via the protocol.
+pub type LayerID = u16;
+
+impl fmt::Display for InternalLayerID {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:04x}", self.0)
+    }
+}
+
+impl PartialEq<LayerID> for InternalLayerID {
+    fn eq(&self, other: &LayerID) -> bool {
+        self.0 == *other as i32
+    }
+}
+
+impl From<LayerID> for InternalLayerID {
+    fn from(id: LayerID) -> Self {
+        Self(id as i32)
+    }
+}
+
+impl From<UserID> for InternalLayerID {
+    fn from(id: UserID) -> Self {
+        Self(id as i32)
+    }
+}
+
+impl TryFrom<InternalLayerID> for LayerID {
+    type Error = &'static str;
+
+    fn try_from(id: InternalLayerID) -> Result<Self, Self::Error> {
+        if id.0 < 0 || id.0 > 0xffff {
+            Err("Non-internal layer IDs must be in range 0-65535")
+        } else {
+            Ok(id.0 as LayerID)
+        }
+    }
+}
 
 // Re-export types most commonly used from the outside
 mod blendmode;

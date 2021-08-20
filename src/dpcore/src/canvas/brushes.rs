@@ -20,9 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::paint::{
-    editlayer, AoE, Blendmode, BrushMask, ClassicBrushCache, Color, Layer, LayerID, UserID,
-};
+use crate::paint::{editlayer, AoE, Blendmode, BrushMask, ClassicBrushCache, Color, Layer, UserID};
 use crate::protocol::message::{DrawDabsClassicMessage, DrawDabsPixelMessage};
 
 use std::convert::TryFrom;
@@ -38,7 +36,7 @@ pub fn drawdabs_classic(
 
     let result = if color.a > 0.0 && user != 0 {
         // If alpha is given, these dabs will be drawn in indirect mode
-        let sublayer = layer.get_or_create_sublayer(user as LayerID);
+        let sublayer = layer.get_or_create_sublayer(user.into());
         sublayer.opacity = color.a;
         sublayer.blendmode = mode;
         color.a = 1.0;
@@ -100,7 +98,7 @@ pub fn drawdabs_pixel(
 
     let result = if color.a > 0.0 && user != 0 {
         // If alpha is given, these dabs will be drawn in indirect mode
-        let sublayer = layer.get_or_create_sublayer(user as LayerID);
+        let sublayer = layer.get_or_create_sublayer(user.into());
         sublayer.opacity = color.a;
         sublayer.blendmode = mode;
         color.a = 1.0;

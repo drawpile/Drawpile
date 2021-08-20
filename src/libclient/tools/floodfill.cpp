@@ -22,10 +22,8 @@
 
 #include "core/floodfill.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 #include "net/client.h"
-#include "net/commands.h"
-
-#include "../libshared/net/undo.h"
 
 #include <QGuiApplication>
 #include <QPixmap>
@@ -43,60 +41,35 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
-#if 0 // FIXME
-	QColor color = owner.activeBrush().color();
+	const QColor color = owner.activeBrush().color();
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	paintcore::FillResult fill = paintcore::floodfill(
-		owner.model()->layerStack(),
-		QPoint(point.x(), point.y()),
-		m_eraseMode ? QColor() : color,
-		m_tolerance,
+	rustpile::MessageWriter *w = rustpile::paintengine_floodfill(
+		owner.model()->paintEngine()->engine(),
+		owner.model()->localUserId(),
 		owner.activeLayer(),
+		point.x(),
+		point.y(),
+		rustpile::Color {
+			static_cast<float>(color.redF()),
+			static_cast<float>(color.greenF()),
+			static_cast<float>(color.blueF()),
+			m_eraseMode ? 0.0f : 1.0f,
+		},
+		m_tolerance,
 		m_sampleMerged,
-		m_sizelimit
+		m_sizelimit,
+		m_expansion,
+		m_underFill
 	);
 
-	if(!fill.oversize)
-		fill = paintcore::expandFill(fill, m_expansion, color);
-
-	if(fill.image.isNull()) {
-		QGuiApplication::restoreOverrideCursor();
-		return;
-	}
-
-	if(fill.oversize) {
-		// Oversized fill: don't draw
-
-	} else {
-		// If the target area is transparent, use the BEHIND compositing mode.
-		// This results in nice smooth blending with soft outlines, when the
-		// outline has different color than the fill.
-		paintcore::BlendMode::Mode mode = paintcore::BlendMode::MODE_NORMAL;
-
-		if(m_eraseMode)
-			mode = paintcore::BlendMode::MODE_ERASE;
-		else if(m_underFill && (fill.layerSeedColor & 0xff000000) == 0)
-			mode = paintcore::BlendMode::MODE_BEHIND;
-
-		// Flood fill is implemented using PutImage rather than a native command.
-		// This has the following advantages:
-		// - backward and forward compatibility: changes in the algorithm can be made freely
-		// - tolerates out-of-sync canvases (shouldn't normally happen, but...)
-		// - bugs don't crash/freeze other clients
-		//
-		// The disadvantage is increased bandwith consumption. However, this is not as bad
-		// as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
-		// consist of large solid areas, meaning they should compress ridiculously well.
-		protocol::MessageList msgs;
-		msgs << protocol::MessagePtr(new protocol::UndoPoint(owner.client()->myId()));
-		msgs << net::command::putQImage(owner.client()->myId(), owner.activeLayer(), fill.x, fill.y, fill.image, mode);
-		owner.client()->sendMessages(msgs);
+	if(w != nullptr) {
+		owner.client()->sendEnvelope(net::Envelope::fromMessageWriter(w));
+		rustpile::messagewriter_free(w);
 	}
 
 	QGuiApplication::restoreOverrideCursor();
-#endif
 }
 
 void FloodFill::motion(const paintcore::Point &point, bool constrain, bool center)

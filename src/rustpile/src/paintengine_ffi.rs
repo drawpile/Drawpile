@@ -21,18 +21,22 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::adapters::{AnnotationAt, Annotations, LayerInfo};
+use super::messages_ffi;
 use dpcore::brush::{BrushEngine, BrushState};
+use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
+use dpcore::paint::floodfill;
 use dpcore::paint::{
-    AoE, Color, FlattenedTileIterator, LayerID, LayerStack, Rectangle, Size, UserID,
+    AoE, Blendmode, Color, FlattenedTileIterator, LayerID, LayerStack, Rectangle, Size, UserID,
 };
 use dpcore::protocol::message::{CommandMessage, Message};
+use dpcore::protocol::MessageWriter;
 
 use core::ffi::c_void;
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
-use std::{slice, thread};
+use std::{ptr, slice, thread};
 
 use tracing::{error, warn};
 
@@ -388,6 +392,83 @@ pub extern "C" fn paintengine_remove_preview(dp: &mut PaintEngine, layer_id: Lay
     {
         warn!("Couldn't send remove preview to paint engine: {:?}", err);
     }
+}
+
+/// Perform a flood fill operation
+///
+/// Returns a MessageWriter containig the commands for drawing the result
+/// onto a canvas. If the operation fails (e.g. due to size limit), a null pointer
+/// is returned. The caller is responsible for freeing the returned MessageWriter
+#[no_mangle]
+pub extern "C" fn paintengine_floodfill(
+    dp: &mut PaintEngine,
+    user_id: UserID,
+    layer_id: LayerID,
+    x: i32,
+    y: i32,
+    color: Color,
+    tolerance: f32,
+    sample_merged: bool,
+    size_limit: u32,
+    expansion: i32,
+    fill_under: bool,
+) -> *mut MessageWriter {
+    let mut result = {
+        let vc = dp.viewcache.lock().unwrap();
+        floodfill::floodfill(
+            &vc.layerstack,
+            x,
+            y,
+            color,
+            tolerance,
+            layer_id,
+            sample_merged,
+            size_limit,
+        )
+    };
+
+    if result.image.is_null() || result.oversize {
+        return ptr::null_mut();
+    }
+
+    if expansion > 0 {
+        result = floodfill::expand_floodfill(result, expansion);
+    }
+
+    // Flood fill is implemented using PutImage rather than a native command.
+    // This has the following advantages:
+    // - backward and forward compatibility: changes in the algorithm can be made freely
+    // - tolerates out-of-sync canvases (shouldn't normally happen, but...)
+    // - bugs don't crash/freeze other clients
+    //
+    // The disadvantage is increased bandwith consumption. However, this is not as bad
+    // as one might think: the effective bit-depth of the bitmap is 1bpp and most fills
+    // consist of large solid areas, meaning they should compress ridiculously well.
+
+    let mut writer = Box::new(MessageWriter::new());
+    messages_ffi::write_undopoint(&mut writer, user_id);
+
+    // Note: If the target area is transparent, use the BEHIND compositing mode.
+	// This results in nice smooth blending with soft outlines, when the
+	// outline's color is different from the fill.
+
+    make_putimage(
+        &mut writer,
+        user_id,
+        layer_id,
+        result.x as u32,
+        result.y as u32,
+        &result.image,
+        if color.a == 0.0 {
+            Blendmode::Erase
+        } else if fill_under || result.layer_seed_color.a == 0.0 {
+            Blendmode::Behind
+        } else {
+            Blendmode::Normal
+        },
+    );
+
+    Box::into_raw(writer)
 }
 
 /// Paint all the changed tiles in the given area

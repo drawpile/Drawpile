@@ -31,7 +31,7 @@ use super::rect::{Rectangle, Size};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::tileiter::MutableTileIterator;
-use super::{Image, LayerID};
+use super::{Image, InternalLayerID};
 
 /// A tiled image layer.
 ///
@@ -41,7 +41,7 @@ use super::{Image, LayerID};
 ///
 #[derive(Clone)]
 pub struct Layer {
-    pub id: LayerID,
+    pub id: InternalLayerID,
     pub title: String,
     pub opacity: f32,
     pub hidden: bool,
@@ -56,7 +56,7 @@ pub struct Layer {
 
 impl Layer {
     /// Construct a new layer filled with the given color
-    pub fn new(id: i32, width: u32, height: u32, fill: &Color) -> Layer {
+    pub fn new(id: InternalLayerID, width: u32, height: u32, fill: &Color) -> Layer {
         Layer {
             id,
             title: String::new(),
@@ -82,7 +82,7 @@ impl Layer {
         let xtiles = Tile::div_up(width);
         let ytiles = Tile::div_up(height);
 
-        let mut layer = Layer::new(0, width, height, &Color::TRANSPARENT);
+        let mut layer = Layer::new(InternalLayerID(0), width, height, &Color::TRANSPARENT);
 
         let imagerect = Rectangle::new(0, 0, width as i32, height as i32);
 
@@ -180,7 +180,7 @@ impl Layer {
     ///
     /// By convention, ID 0 is not used. Sublayers with positive IDs are used for indirect
     /// drawing (matching user IDs) and sublayers with negative IDs are for local previews.
-    pub fn get_or_create_sublayer(&mut self, id: LayerID) -> &mut Layer {
+    pub fn get_or_create_sublayer(&mut self, id: InternalLayerID) -> &mut Layer {
         assert!(id != 0, "Sublayer ID 0 is not allowed");
 
         if let Some(i) = self.sublayers.iter().position(|sl| sl.id == id) {
@@ -200,7 +200,7 @@ impl Layer {
     ///
     /// Note: you should not typically need to call this directly.
     /// Instead, use `merge_sublayer` or `remove_sublayer` from `editlayer` module
-    pub fn take_sublayer(&mut self, id: LayerID) -> Option<Arc<Layer>> {
+    pub fn take_sublayer(&mut self, id: InternalLayerID) -> Option<Arc<Layer>> {
         if let Some(i) = self.sublayers.iter().position(|sl| sl.id == id) {
             Some(self.sublayers.remove(i))
         } else {
@@ -209,12 +209,12 @@ impl Layer {
     }
 
     /// Return a list of visible sublayers this layer has
-    pub fn sublayer_ids(&self) -> Vec<LayerID> {
+    pub fn sublayer_ids(&self) -> Vec<InternalLayerID> {
         self.sublayers.iter().map(|sl| sl.id).collect()
     }
 
     /// Check if a sublayer with the given ID exists
-    pub fn has_sublayer(&self, id: LayerID) -> bool {
+    pub fn has_sublayer(&self, id: InternalLayerID) -> bool {
         self.sublayers.iter().any(|sl| sl.id == id)
     }
 

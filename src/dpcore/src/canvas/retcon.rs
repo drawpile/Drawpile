@@ -254,7 +254,7 @@ impl LocalFork {
                     AffectedArea::Pixels(m.layer as LayerID, puttile_rect(m))
                 }
             }
-            CanvasBackground(_, _) => AffectedArea::LayerAttrs(-1),
+            CanvasBackground(_, _) => AffectedArea::LayerAttrs(0),
             DrawDabsClassic(u, m) => {
                 if Color::argb32_alpha(m.color) > 0 {
                     self.update_indirect_area(*u, m.layer, classicdabs_area(m))

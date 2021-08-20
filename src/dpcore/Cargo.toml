@@ -12,6 +12,7 @@ tracing = "0.1.5"
 num_enum = "0.4.2"
 inflate = "0.4.5"
 bitvec = "0.22.3"
+deflate = "0.8.4"
 
 [dev-dependencies]
 itertools = "0.8.2"
