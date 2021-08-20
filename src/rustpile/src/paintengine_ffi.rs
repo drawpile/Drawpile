@@ -471,6 +471,27 @@ pub extern "C" fn paintengine_floodfill(
     Box::into_raw(writer)
 }
 
+#[no_mangle]
+pub extern "C" fn paintengine_sample_color(
+    dp: &PaintEngine,
+    x: i32,
+    y: i32,
+    layer_id: LayerID,
+    dia: i32
+) -> Color {
+    let vc = dp.viewcache.lock().unwrap();
+
+    if layer_id > 0 {
+        if let Some(layer) = vc.layerstack.get_layer(layer_id) {
+            layer.sample_color(x, y, dia)
+        } else {
+            Color::TRANSPARENT
+        }
+    } else {
+        vc.layerstack.sample_color(x, y, dia)
+    }
+}
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be

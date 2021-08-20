@@ -94,7 +94,7 @@ impl PixelBrushState {
         self.smudge_distance += 1;
         if smudge > 0.0 && self.smudge_distance > self.brush.resmudge {
             if let Some(sl) = source {
-                let sample = sl.sample_color(x, y, dia as u32);
+                let sample = sl.sample_color(x, y, dia as i32);
                 if sample.a > 0.0 {
                     let a = sample.a * smudge;
                     self.smudge_color.r = self.smudge_color.r * (1.0 - a) + sample.r * a;
@@ -215,7 +215,7 @@ impl BrushState for PixelBrushState {
                     self.smudge_color = sl.sample_color(
                         x as i32,
                         y as i32,
-                        self.brush.size_at(p).max(1.0).min(128.0) as u32,
+                        self.brush.size_at(p).max(1.0).min(128.0) as i32,
                     );
                     self.smudge_distance = -1;
                 }

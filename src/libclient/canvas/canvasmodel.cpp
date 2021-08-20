@@ -256,21 +256,10 @@ void CanvasModel::pickLayer(int x, int y)
 
 void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 {
-#if 0 // FIXME
-	QColor color;
-	if(layer>0) {
-		const paintcore::Layer *l = m_layerstack->getLayer(layer);
-		if(layer)
-			color = l->colorAt(x, y, diameter);
-	} else {
-		color = m_layerstack->colorAt(x, y, diameter);
+	const rustpile::Color c = rustpile::paintengine_sample_color(m_paintengine->engine(), x, y, layer, diameter);
+	if(c.a > 0) {
+		emit colorPicked(QColor::fromRgbF(c.r, c.g, c.b));
 	}
-
-	if(color.isValid() && color.alpha()>0) {
-		color.setAlpha(255);
-		emit colorPicked(color);
-	}
-#endif
 }
 
 void CanvasModel::inspectCanvas(int x, int y)

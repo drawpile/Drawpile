@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, Blendmode, Color, Layer, Rectangle};
+use dpcore::paint::{editlayer, Blendmode, Color, InternalLayerID, Layer, Rectangle, Tile};
 
 mod utils;
 
@@ -29,7 +29,7 @@ fn main() {
         0xff845ec2, 0xffd65db1, 0xffff6f91, 0xffff9671, 0xffffc75f, 0xfff9f871,
     ];
 
-    let mut layer = Layer::new(0, 256, 256, &Color::TRANSPARENT);
+    let mut layer = Layer::new(InternalLayerID(0), 256, 256, Tile::Blank);
 
     // A background almost that leaves a transparent skirt
     editlayer::fill_rect(

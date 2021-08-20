@@ -20,13 +20,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, Blendmode, BrushMask, ClassicBrushCache, Color, Layer};
+use dpcore::paint::{
+    editlayer, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, Layer, Tile,
+};
 
 mod utils;
 
 fn main() {
     let mut cache = ClassicBrushCache::new();
-    let mut layer = Layer::new(0, 512, 256, &Color::rgb8(255, 255, 255));
+    let mut layer = Layer::new(
+        InternalLayerID(0),
+        512,
+        256,
+        Tile::new(&Color::rgb8(255, 255, 255), 0),
+    );
 
     draw_stroke(&mut layer, 10.5, 10.0, 500.5, 12.0, 1.0, 1.0, &mut cache);
     draw_stroke(&mut layer, 10.5, 13.0, 500.5, 15.0, 1.0, 0.0, &mut cache);

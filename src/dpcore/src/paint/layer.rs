@@ -56,7 +56,7 @@ pub struct Layer {
 
 impl Layer {
     /// Construct a new layer filled with the given color
-    pub fn new(id: InternalLayerID, width: u32, height: u32, fill: &Color) -> Layer {
+    pub fn new(id: InternalLayerID, width: u32, height: u32, fill: Tile) -> Layer {
         Layer {
             id,
             title: String::new(),
@@ -68,7 +68,7 @@ impl Layer {
             width,
             height,
             tiles: Arc::new(vec![
-                Tile::new(&fill, 0);
+                fill;
                 (Tile::div_up(width) * Tile::div_up(height)) as usize
             ]),
             sublayers: vec![],
@@ -82,7 +82,7 @@ impl Layer {
         let xtiles = Tile::div_up(width);
         let ytiles = Tile::div_up(height);
 
-        let mut layer = Layer::new(InternalLayerID(0), width, height, &Color::TRANSPARENT);
+        let mut layer = Layer::new(InternalLayerID(0), width, height, Tile::Blank);
 
         let imagerect = Rectangle::new(0, 0, width as i32, height as i32);
 
@@ -190,7 +190,7 @@ impl Layer {
             id,
             self.width,
             self.height,
-            &Color::TRANSPARENT,
+            Tile::Blank,
         )));
         let last = self.sublayers.len() - 1;
         Arc::make_mut(&mut self.sublayers[last])
@@ -249,9 +249,17 @@ impl Layer {
     }
 
     /// Get a weighted average of the color using a default sampling mask
-    pub fn sample_color(&self, x: i32, y: i32, dia: u32) -> Color {
-        let mask = BrushMask::new_round_pixel(dia, 1.0);
-        self.sample_dab_color(x, y, &mask)
+    pub fn sample_color(&self, x: i32, y: i32, dia: i32) -> Color {
+        if dia <= 1 {
+            if x < 0 || y < 0 || x as u32 > self.width || y as u32 > self.height {
+                Color::TRANSPARENT
+            } else {
+                Color::from_pixel(self.pixel_at(x as u32, y as u32))
+            }
+        } else {
+            let mask = BrushMask::new_round_pixel(dia as u32, 1.0);
+            self.sample_dab_color(x, y, &mask)
+        }
     }
 
     /// Get a weighted average of the color under the dab mask
@@ -620,15 +628,18 @@ mod tests {
     #[test]
     fn test_tilevector_cow() {
         let mut layer = Layer::new(
-            0,
+            InternalLayerID(0),
             100,
             64,
-            &Color {
-                r: 1.0,
-                g: 0.0,
-                b: 0.0,
-                a: 1.0,
-            },
+            Tile::new(
+                &Color {
+                    r: 1.0,
+                    g: 0.0,
+                    b: 0.0,
+                    a: 1.0,
+                },
+                0,
+            ),
         );
         let layer2 = layer.clone();
         assert_eq!(layer.refcount(), 2);
@@ -675,7 +686,7 @@ mod tests {
     #[test]
     fn test_solid_expand() {
         let r = Color::rgb8(255, 0, 0);
-        let layer = Layer::new(0, TILE_SIZE, TILE_SIZE, &r);
+        let layer = Layer::new(InternalLayerID(0), TILE_SIZE, TILE_SIZE, Tile::new(&r, 0));
         let layer2 = layer.resized(10, 10, 0, 0);
         for t in layer2.tiles.iter() {
             assert_eq!(t.solid_color(), Some(r));
@@ -686,7 +697,7 @@ mod tests {
     fn test_fast_expand() {
         let t = Color::TRANSPARENT;
 
-        let mut layer = Layer::new(0, TILE_SIZE, TILE_SIZE, &t);
+        let mut layer = Layer::new(InternalLayerID(0), TILE_SIZE, TILE_SIZE, Tile::Blank);
         // Change a pixel so the whole layer won't be of uniform color
         layer
             .tile_mut(0, 0)
@@ -723,9 +734,12 @@ mod tests {
 
     #[test]
     fn test_fast_contract() {
-        let t = Color::TRANSPARENT;
-
-        let mut layer = Layer::new(0, TILE_SIZE * 3, TILE_SIZE * 3, &t);
+        let mut layer = Layer::new(
+            InternalLayerID(0),
+            TILE_SIZE * 3,
+            TILE_SIZE * 3,
+            Tile::Blank,
+        );
         // Change a pixel so the whole layer won't be of uniform color
         // and so we can distinguish the tiles from the new fully transparent ones.
         for y in 0..3 {
@@ -749,12 +763,17 @@ mod tests {
         assert_eq!(layer2.height(), TILE_SIZE * 3);
         assert_eq!(layer2.tile(0, 0).solid_color(), None);
         assert_eq!(layer2.tile(0, 1).solid_color(), None);
-        assert_eq!(layer2.tile(0, 2).solid_color(), Some(t));
+        assert_eq!(layer2.tile(0, 2).solid_color(), Some(Color::TRANSPARENT));
     }
 
     #[test]
     fn test_slow_expand() {
-        let mut layer = Layer::new(0, TILE_SIZE, TILE_SIZE, &Color::rgb8(0, 0, 0));
+        let mut layer = Layer::new(
+            InternalLayerID(0),
+            TILE_SIZE,
+            TILE_SIZE,
+            Tile::new(&Color::rgb8(0, 0, 0), 0),
+        );
         layer
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(0, 0, 1, 1), false)
@@ -772,7 +791,7 @@ mod tests {
 
     #[test]
     fn test_slow_contract() {
-        let mut layer = Layer::new(0, TILE_SIZE, TILE_SIZE, &Color::TRANSPARENT);
+        let mut layer = Layer::new(InternalLayerID(0), TILE_SIZE, TILE_SIZE, Tile::Blank);
         layer
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(5, 10, 1, 1), false)
@@ -790,7 +809,12 @@ mod tests {
 
     #[test]
     fn test_sample_dab() {
-        let mut layer = Layer::new(0, TILE_SIZE * 2, TILE_SIZE * 2, &Color::TRANSPARENT);
+        let mut layer = Layer::new(
+            InternalLayerID(0),
+            TILE_SIZE * 2,
+            TILE_SIZE * 2,
+            Tile::Blank,
+        );
         layer.tile_mut(0, 0).fill(&Color::rgb8(255, 0, 0), 0);
         layer.tile_mut(1, 0).fill(&Color::rgb8(0, 255, 0), 0);
         layer.tile_mut(0, 1).fill(&Color::rgb8(0, 0, 255), 0);
@@ -801,9 +825,9 @@ mod tests {
         assert_eq!(
             sampled,
             Color {
-                r: 0.25,
-                g: 0.25,
-                b: 0.25,
+                r: 0.333,
+                g: 0.333,
+                b: 0.333,
                 a: 0.75
             }
         );
@@ -811,7 +835,12 @@ mod tests {
 
     #[test]
     fn test_cropped_image() {
-        let mut layer = Layer::new(0, TILE_SIZE * 4, TILE_SIZE * 4, &Color::TRANSPARENT);
+        let mut layer = Layer::new(
+            InternalLayerID(0),
+            TILE_SIZE * 4,
+            TILE_SIZE * 4,
+            Tile::Blank,
+        );
         layer.tile_mut(1, 1).set_pixel_at(0, 0, 0, WHITE_PIXEL);
         layer.tile_mut(2, 1).set_pixel_at(0, 1, 0, WHITE_PIXEL);
 

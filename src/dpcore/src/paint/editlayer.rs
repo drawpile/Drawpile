@@ -326,7 +326,7 @@ mod tests {
 
     #[test]
     fn test_fill_rect() {
-        let mut layer = Layer::new(0, 200, 200, &Color::TRANSPARENT);
+        let mut layer = Layer::new(InternalLayerID(0), 200, 200, Tile::Blank);
 
         fill_rect(
             &mut layer,
@@ -352,7 +352,7 @@ mod tests {
 
     #[test]
     fn test_draw_brush_dab() {
-        let mut layer = Layer::new(0, 128, 128, &Color::TRANSPARENT);
+        let mut layer = Layer::new(InternalLayerID(0), 128, 128, Tile::Blank);
         let brush = BrushMask::new_round_pixel(4, 1.0);
         // Shape should look like this:
         // 0110
@@ -394,8 +394,18 @@ mod tests {
 
     #[test]
     fn test_layer_merge() {
-        let mut btm = Layer::new(0, 128, 128, &Color::rgb8(0, 0, 0));
-        let mut top = Layer::new(0, 128, 128, &Color::rgb8(255, 0, 0));
+        let mut btm = Layer::new(
+            InternalLayerID(0),
+            128,
+            128,
+            Tile::new(&Color::rgb8(0, 0, 0), 0),
+        );
+        let mut top = Layer::new(
+            InternalLayerID(0),
+            128,
+            128,
+            Tile::new(&Color::rgb8(255, 0, 0), 0),
+        );
         top.opacity = 0.5;
 
         merge(&mut btm, &top);

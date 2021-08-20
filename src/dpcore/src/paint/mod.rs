@@ -38,7 +38,7 @@ pub type UserID = u8;
 
 /// Internal Layer ID is used on the layers themselves to support
 /// the extended non-protocol range of IDs for temporary layers.
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub struct InternalLayerID(pub i32);
 
 /// The regular layer ID type is used for layers that can be accessed
@@ -98,3 +98,4 @@ pub use flattenediter::FlattenedTileIterator;
 pub use layer::Layer;
 pub use layerstack::LayerStack;
 pub use rect::{Rectangle, Size};
+pub use tile::Tile;

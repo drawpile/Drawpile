@@ -179,7 +179,7 @@ impl BrushState for SoftBrushState {
                         let sample = sl.sample_color(
                             dab_x as i32,
                             dab_y as i32,
-                            self.brush.size_at(dab_p).max(1.0).min(128.0) as u32,
+                            self.brush.size_at(dab_p).max(1.0).min(128.0) as i32,
                         );
                         if sample.a > 0.0 {
                             let a = sample.a * smudge;
@@ -207,7 +207,7 @@ impl BrushState for SoftBrushState {
                     self.smudge_color = sl.sample_color(
                         x as i32,
                         y as i32,
-                        self.brush.size_at(p).max(1.0).min(128.0) as u32,
+                        self.brush.size_at(p).max(1.0).min(128.0) as i32,
                     );
                     self.smudge_distance = -1;
                 }

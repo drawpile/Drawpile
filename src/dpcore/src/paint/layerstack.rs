@@ -26,7 +26,7 @@ use std::sync::Arc;
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::tile::{Tile, TileData, TILE_SIZE};
-use super::{Color, Image, Layer, LayerID, Rectangle, Size, UserID};
+use super::{Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID};
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -93,7 +93,12 @@ impl LayerStack {
         };
 
         let new_layer = match fill {
-            LayerFill::Solid(c) => Arc::new(Layer::new(id.into(), self.width, self.height, &c)),
+            LayerFill::Solid(c) => Arc::new(Layer::new(
+                id.into(),
+                self.width,
+                self.height,
+                Tile::new(&c, 0),
+            )),
             LayerFill::Copy(src_id) => {
                 let mut l = self.layers[self.find_layer_index(src_id)?].clone();
                 Arc::make_mut(&mut l).id = id.into();
@@ -270,6 +275,46 @@ impl LayerStack {
         }
 
         destination
+    }
+
+    /// Get a weighted average of a color
+    pub fn sample_color(&self, x: i32, y: i32, dia: i32) -> Color {
+        if x < 0 || y < 0 || x as u32 >= self.width || y as u32 >= self.height {
+            return Color::TRANSPARENT;
+        }
+
+        // TODO some more efficient way of doing this
+        if dia <= 1 {
+            let ti = x as u32 / TILE_SIZE;
+            let tj = y as u32 / TILE_SIZE;
+            let tile = self.flatten_tile(ti, tj);
+
+            let tx = x as u32 - ti * TILE_SIZE;
+            let ty = y as u32 - tj * TILE_SIZE;
+
+            Color::from_pixel(tile.pixels[(ty * TILE_SIZE + tx) as usize])
+        } else {
+            let r = (dia / 2).min(1) as i32;
+
+            let mut tmp = Layer::new(
+                InternalLayerID(0),
+                self.width,
+                self.height,
+                self.background.clone(),
+            );
+
+            tmp.tile_rect_mut(&Rectangle::new(
+                x as i32 - r,
+                y as i32 - r,
+                dia as i32,
+                dia as i32,
+            ))
+            .for_each(|(i, j, t)| {
+                *t = Tile::Bitmap(Arc::new(self.flatten_tile(i as u32, j as u32)))
+            });
+
+            tmp.sample_color(x as i32, y as i32, dia)
+        }
     }
 
     // Convert to a flat image

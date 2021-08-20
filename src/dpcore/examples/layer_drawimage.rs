@@ -20,12 +20,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, Blendmode, Color, Layer, Rectangle};
+use dpcore::paint::{editlayer, Blendmode, Color, InternalLayerID, Layer, Rectangle, Tile};
 
 mod utils;
 
 fn main() {
-    let mut layer = Layer::new(0, 256, 256, &Color::rgb8(255, 255, 255));
+    let mut layer = Layer::new(
+        InternalLayerID(0),
+        256,
+        256,
+        Tile::new(&Color::rgb8(255, 255, 255), 0),
+    );
 
     let (image, w, h) = utils::load_image("testdata/logo.png");
 

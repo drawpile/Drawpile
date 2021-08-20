@@ -465,6 +465,12 @@ MessageWriter *paintengine_floodfill(PaintEngine *dp,
                                      int32_t expansion,
                                      bool fill_under);
 
+Color paintengine_sample_color(const PaintEngine *dp,
+                               int32_t x,
+                               int32_t y,
+                               LayerID layer_id,
+                               int32_t dia);
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be
