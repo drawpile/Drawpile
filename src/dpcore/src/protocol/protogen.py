@@ -76,6 +76,10 @@ class Message:
             else:
                 arrays.append(field)
 
+        # Array length headers
+        if len(arrays) > 1:
+            fixed += len(arrays) - 1
+
         return (fixed, arrays)
 
     @property

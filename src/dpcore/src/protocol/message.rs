@@ -81,7 +81,7 @@ impl JoinMessage {
     }
 
     fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(32, user_id, 1 + 1 + self.name.len() + self.avatar.len());
+        w.write_header(32, user_id, 2 + self.name.len() + self.avatar.len());
         w.write(self.flags);
         w.write(self.name.len() as u8);
         w.write(&self.name);
