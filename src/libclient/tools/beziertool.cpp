@@ -22,7 +22,7 @@
 
 #include "brushes/shapes.h"
 #include "net/client.h"
-#include "net/envelope.h"
+#include "net/envelopebuilder.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/beziertool.h"
@@ -124,16 +124,14 @@ void BezierTool::finishMultipart()
 		}
 		rustpile::brushengine_end_stroke(brushengine);
 
-		auto writer = rustpile::messagewriter_new();
+		net::EnvelopeBuilder writer;
 		rustpile::write_undopoint(writer, contextId);
 		rustpile::brushengine_write_dabs(brushengine, contextId, writer);
 		rustpile::write_penup(writer, contextId);
 
-		const net::Envelope e = net::Envelope::fromMessageWriter(writer);
-		rustpile::messagewriter_free(writer);
 		rustpile::brushengine_free(brushengine);
 
-		owner.client()->sendEnvelope(e);
+		owner.client()->sendEnvelope(writer.toEnvelope());
 	}
 	cancelMultipart();
 }

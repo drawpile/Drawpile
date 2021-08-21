@@ -1,6 +1,7 @@
 // Generated with protogen-builder.py
 
-use dpcore::paint::UserID;
+use dpcore::canvas::images::make_putimage;
+use dpcore::paint::{Blendmode, Image, LayerID, Pixel, UserID};
 use dpcore::protocol::message::*;
 use dpcore::protocol::MessageWriter;
 use std::slice;
@@ -334,34 +335,6 @@ pub extern "C" fn write_layervisibility(
 }
 
 #[no_mangle]
-pub extern "C" fn write_putimage(
-    writer: &mut MessageWriter,
-    ctx: UserID,
-    layer: u16,
-    mode: u8,
-    x: u32,
-    y: u32,
-    w: u32,
-    h: u32,
-    image: *const u8,
-    image_len: usize,
-) {
-    CommandMessage::PutImage(
-        ctx,
-        PutImageMessage {
-            layer: layer,
-            mode: mode,
-            x: x,
-            y: y,
-            w: w,
-            h: h,
-            image: unsafe { slice::from_raw_parts(image, image_len) }.into(),
-        },
-    )
-    .write(writer);
-}
-
-#[no_mangle]
 pub extern "C" fn write_fillrect(
     writer: &mut MessageWriter,
     ctx: UserID,
@@ -510,6 +483,36 @@ pub extern "C" fn write_background(
 }
 
 #[no_mangle]
+pub extern "C" fn write_moverect(
+    writer: &mut MessageWriter,
+    ctx: UserID,
+    layer: u16,
+    sx: i32,
+    sy: i32,
+    tx: i32,
+    ty: i32,
+    w: i32,
+    h: i32,
+    mask: *const u8,
+    mask_len: usize,
+) {
+    CommandMessage::MoveRect(
+        ctx,
+        MoveRectMessage {
+            layer: layer,
+            sx: sx,
+            sy: sy,
+            tx: tx,
+            ty: ty,
+            w: w,
+            h: h,
+            mask: unsafe { slice::from_raw_parts(mask, mask_len) }.into(),
+        },
+    )
+    .write(writer);
+}
+
+#[no_mangle]
 pub extern "C" fn write_undo(
     writer: &mut MessageWriter,
     ctx: UserID,
@@ -524,4 +527,30 @@ pub extern "C" fn write_undo(
         },
     )
     .write(writer);
+}
+
+// Custom implementation for PutImage that automatically splits the image
+// and takes a byte array as input.
+#[no_mangle]
+pub extern "C" fn write_putimage(
+    writer: &mut MessageWriter,
+    user: UserID,
+    layer: LayerID,
+    x: u32,
+    y: u32,
+    w: u32,
+    h: u32,
+    mode: Blendmode,
+    pixels: *const u8,
+) {
+    // TODO ImageRef type so we don't need to make copies
+    let mut image = Image::new(w as usize, h as usize);
+
+    image.pixels[..].copy_from_slice(unsafe {
+        slice::from_raw_parts_mut(pixels as *mut Pixel, (w * h) as usize)
+    });
+
+    make_putimage(user, layer, x, y, &image, mode)
+        .iter()
+        .for_each(|cmd| cmd.write(writer));
 }

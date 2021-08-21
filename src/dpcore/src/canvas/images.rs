@@ -23,7 +23,6 @@
 use super::compression::compress_image;
 use crate::paint::{Blendmode, Image, Rectangle, UserID};
 use crate::protocol::message::{CommandMessage, PutImageMessage};
-use crate::protocol::MessageWriter;
 
 const MAX_IMAGE_LEN: usize = 0xffff - 19;
 
@@ -32,14 +31,13 @@ const MAX_IMAGE_LEN: usize = 0xffff - 19;
 /// If the image is too big to fit into a single command,
 /// multiple PutImages will be written.
 pub fn make_putimage(
-    writer: &mut MessageWriter,
     user: UserID,
     layer: u16,
     x: u32,
     y: u32,
     image: &Image,
     mode: Blendmode,
-) {
+) -> Vec<CommandMessage> {
     // TODO this could be implemented with just image rect iterators to avoid unnecessary copies
     let compressed = compress_image(&image.pixels);
 
@@ -51,17 +49,17 @@ pub fn make_putimage(
         let splitx = (image.width / 2) as i32;
         let splity = (image.height / 2) as i32;
 
-        make_putimage(
-            writer,
+        let mut cmds: Vec<CommandMessage> = Vec::with_capacity(4);
+
+        cmds.append(&mut make_putimage(
             user,
             layer,
             x,
             y,
             &image.cropped(&Rectangle::new(0, 0, splitx, splity)),
             mode,
-        );
-        make_putimage(
-            writer,
+        ));
+        cmds.append(&mut make_putimage(
             user,
             layer,
             x + splitx as u32,
@@ -73,9 +71,8 @@ pub fn make_putimage(
                 splity,
             )),
             mode,
-        );
-        make_putimage(
-            writer,
+        ));
+        cmds.append(&mut make_putimage(
             user,
             layer,
             x,
@@ -87,9 +84,8 @@ pub fn make_putimage(
                 image.height as i32 - splity,
             )),
             mode,
-        );
-        make_putimage(
-            writer,
+        ));
+        cmds.append(&mut make_putimage(
             user,
             layer,
             x + splitx as u32,
@@ -101,9 +97,10 @@ pub fn make_putimage(
                 image.height as i32 - splity,
             )),
             mode,
-        );
+        ));
+        cmds
     } else {
-        CommandMessage::PutImage(
+        vec![CommandMessage::PutImage(
             user,
             PutImageMessage {
                 layer,
@@ -114,7 +111,6 @@ pub fn make_putimage(
                 h: image.height as u32,
                 image: compressed,
             },
-        )
-        .write(writer);
+        )]
     }
 }

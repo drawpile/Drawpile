@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2020 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 */
 
 #include "selection.h"
-#include "net/commands.h"
+#include "net/envelopebuilder.h"
+#include "net/envelope.h"
 #include "../tools/selection.h" // for selection utilities
-
-#include "../libshared/net/undo.h"
-#include "../libshared/net/image.h"
+#include "../rustpile/rustpile.h"
 
 #include <QPainter>
 #include <QtMath>
@@ -57,7 +56,7 @@ void Selection::resetShape()
 {
 	const QPointF center = m_shape.boundingRect().center();
 	m_shape.clear();
-	for(const QPointF &p : m_originalShape)
+	for(const QPointF &p : qAsConst(m_originalShape))
 		m_shape << p + center - m_originalCenter;
 
 	emit shapeChanged(m_shape);
@@ -476,61 +475,78 @@ void Selection::setMoveImage(const QImage &image, const QRect &imageRect, const 
 	emit pasteImageChanged(image);
 }
 
-protocol::MessageList Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
+net::Envelope Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 {
-	protocol::MessageList msgs;
-
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
-		return msgs;
+		return net::Envelope();
 	}
 
 	if(m_shape.size()!=4) {
 		qWarning("Paste selection is not a quad!");
-		return msgs;
+		return net::Envelope();
 	}
 
 	// Merge image
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
+	net::EnvelopeBuilder writer;
+
+	rustpile::write_undopoint(writer, contextId);
 
 	if(!m_moveRegion.isEmpty()) {
-		qDebug("Moving instead of pasting");
 		// Get source pixel mask
 		QRect moveBounds;
-		QByteArray mask;
+		QImage mask;
 
 		if(!canvas::isAxisAlignedRectangle(m_moveRegion.toPolygon())) {
-			QImage maskimg = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, &moveBounds, true);
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-			mask = qCompress(maskimg.constBits(), maskimg.byteCount());
-#else
-			mask = qCompress(maskimg.constBits(), maskimg.sizeInBytes());
-#endif
+			mask = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, &moveBounds);
+
 		} else {
 			moveBounds = m_moveRegion.boundingRect().toRect();
 		}
 
 		// Send move command
-		QPolygon s = m_shape.toPolygon();
-		msgs << protocol::MessagePtr(new protocol::MoveRegion(contextId,
-			uint16_t(m_sourceLayerId),
-			moveBounds.x(), moveBounds.y(), moveBounds.width(), moveBounds.height(),
-			s[0].x(), s[0].y(),
-			s[1].x(), s[1].y(),
-			s[2].x(), s[2].y(),
-			s[3].x(), s[3].y(),
-			mask
-		));
+		if(false) {
+			// FIXME new message type, we need to get rid of MessagePtrs in
+			// the client before we can test this.
+			rustpile::write_moverect(
+				writer,
+				contextId,
+				layer,
+				moveBounds.x(),
+				moveBounds.y(),
+				m_shape.at(0).x(),
+				m_shape.at(0).y(),
+				moveBounds.width(),
+				moveBounds.height(),
+				nullptr,
+				0
+			);
+		} else {
+			// Version 2.1 MoveRegion is presently not implemented in the Rustpile
+			// engine, so a transformed selection must be processed clientside and sent
+			// as an image.
+
+			QPoint offset;
+			const QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
+
+			if(mask.isNull()) {
+				rustpile::write_fillrect(writer, contextId, layer, paintcore::BlendMode::MODE_ERASE, moveBounds.x(), moveBounds.y(), moveBounds.width(), moveBounds.height(), 0xffffffff);
+			} else {
+				writer.buildPutQImage(contextId, layer, moveBounds.x(), moveBounds.y(), mask, uint8_t(rustpile::Blendmode::Erase));
+			}
+
+			writer.buildPutQImage(contextId, layer, offset.x(), offset.y(), image, uint8_t(rustpile::Blendmode::Normal));
+		}
 
 	} else {
-		QImage image;
+		// A pasted image
 		QPoint offset;
+		const QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
 
-		image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
-
-		msgs << net::command::putQImage(contextId, layer, offset.x(), offset.y(), image, paintcore::BlendMode::MODE_NORMAL);
+		writer.buildPutQImage(contextId, layer, offset.x(), offset.y(), image, uint8_t(rustpile::Blendmode::Normal));
 	}
-	return msgs;
+
+	return writer.toEnvelope();
 }
 
 QImage Selection::transformedPasteImage() const
@@ -538,7 +554,7 @@ QImage Selection::transformedPasteImage() const
 	return tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), nullptr);
 }
 
-protocol::MessageList Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
+net::Envelope Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
 {
 	QRect area;
 	QImage mask;
@@ -549,19 +565,19 @@ protocol::MessageList Selection::fillCanvas(uint8_t contextId, const QColor &col
 	else
 		mask = shapeMask(color, &maskBounds);
 
-	protocol::MessageList msgs;
-
 	if(!area.isEmpty() || !mask.isNull()) {
+		net::EnvelopeBuilder writer;
+		rustpile::write_undopoint(writer, contextId);
+
 		if(mask.isNull())
-			msgs << protocol::MessagePtr(new protocol::FillRect(contextId, layer, int(mode), area.x(), area.y(), area.width(), area.height(), color.rgba()));
+			rustpile::write_fillrect(writer, contextId, layer, paintcore::BlendMode::MODE_ERASE, area.x(), area.y(), area.width(), area.height(), color.rgba());
 		else
-			msgs << net::command::putQImage(contextId, layer, maskBounds.left(), maskBounds.top(), mask, mode);
+			writer.buildPutQImage(contextId, layer, maskBounds.left(), maskBounds.top(), mask, mode);
+
+		return writer.toEnvelope();
+	} else {
+		return net::Envelope();
 	}
-
-	if(!msgs.isEmpty())
-		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(contextId)));
-
-	return msgs;
 }
 
 }

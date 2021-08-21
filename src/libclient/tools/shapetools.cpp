@@ -22,7 +22,7 @@
 
 #include "brushes/shapes.h"
 #include "net/client.h"
-#include "net/envelope.h"
+#include "net/envelopebuilder.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/shapetools.h"
@@ -92,17 +92,15 @@ void ShapeTool::end()
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 
-	auto writer = rustpile::messagewriter_new();
+	net::EnvelopeBuilder writer;
 	rustpile::write_undopoint(writer, contextId);
 	rustpile::brushengine_write_dabs(brushengine, contextId, writer);
 	rustpile::write_penup(writer, contextId);
 
-	const net::Envelope e = net::Envelope::fromMessageWriter(writer);
-	rustpile::messagewriter_free(writer);
 	rustpile::brushengine_free(brushengine);
 
 	rustpile::paintengine_remove_preview(engine, owner.activeLayer());
-	owner.client()->sendEnvelope(e);
+	owner.client()->sendEnvelope(writer.toEnvelope());
 }
 
 void ShapeTool::updatePreview()

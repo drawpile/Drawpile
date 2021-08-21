@@ -536,7 +536,7 @@ AnnotationDelete:
 
 MoveRegion:
     id: 145
-    comment: Difficult to reimplement.
+    comment: Difficult to reimplement. Replaced by MoveRect
     reserved: true
     #fields:
     #    - layer u16: hex
@@ -635,6 +635,32 @@ DrawDabsPixelSquare:
     name: squarepixeldabs
     comment: Draw square pixel brush dabs
     alias: DrawDabsPixel
+
+MoveRect:
+    id: 160
+    comment: |
+             Move a rectangular area on a layer.
+
+             A 1-bpp mask can be given to mask out part of the region
+             to support non-rectangular selections.
+
+             Source and target rects may be (partially) outside the canvas.
+
+             Note: The MoveRegion command that can also transform the
+             selection is currently not implemented. The same effect can be
+             achieved by performing the transformation clientside then
+             sending the results as PutImages, including one to erase the
+             source.
+    fields:
+      - layer u16: hex
+      # source rectangle
+      - sx i32
+      - sy i32
+      - tx i32
+      - ty i32
+      - w i32
+      - h i32
+      - mask bytes
 
 Undo:
     id: 255

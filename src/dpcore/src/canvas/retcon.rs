@@ -269,6 +269,10 @@ impl LocalFork {
                     AffectedArea::Pixels(m.layer as LayerID, pixeldabs_area(m))
                 }
             }
+            MoveRect(_, m) => AffectedArea::Pixels(
+                m.layer as LayerID,
+                Rectangle::new(m.sx, m.sy, m.w, m.h).union(&Rectangle::new(m.tx, m.ty, m.w, m.h)),
+            ),
             Undo(_, _) => AffectedArea::UserAttrs, // These are never put in the local fork
         }
     }

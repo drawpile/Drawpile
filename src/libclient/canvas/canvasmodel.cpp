@@ -300,9 +300,8 @@ void CanvasModel::setLayerViewMode(int mode)
 
 void CanvasModel::setSelection(Selection *selection)
 {
-#if 0 // FIXME
 	if(m_selection != selection) {
-		m_layerstack->editor(0).removePreviews();
+		rustpile::paintengine_remove_preview(m_paintengine->engine(), 0);
 
 		const bool hadSelection = m_selection != nullptr;
 
@@ -318,7 +317,6 @@ void CanvasModel::setSelection(Selection *selection)
 		if(hadSelection && !selection)
 			emit selectionRemoved();
 	}
-#endif
 }
 
 void CanvasModel::updateLayerViewOptions()
@@ -336,36 +334,41 @@ void CanvasModel::updateLayerViewOptions()
 
 QImage CanvasModel::selectionToImage(int layerId) const
 {
-	QImage img;
-
-#if 0 // FIXME
 	if(m_selection && !m_selection->pasteImage().isNull()) {
 		return m_selection->transformedPasteImage();
 	}
 
-	const paintcore::Layer *layer = m_layerstack->getLayer(layerId);
-	if(layer)
-		img = layer->toImage();
-	else
-		img = toImage(layerId==0);
+	QRect rect { QPoint(), size() };
+	if(m_selection)
+		rect = rect.intersected(m_selection->boundingRect());
 
+	QImage img(rect.size(), QImage::Format_ARGB32_Premultiplied);
 
-	if(m_selection) {
-		img = img.copy(m_selection->boundingRect().intersected(QRect(0, 0, img.width(), img.height())));
+	// Note: it's important to initialize the image content, as
+	// get_layer_content will skip blank tiles
+	img.fill(0);
 
-		if(!m_selection->isAxisAlignedRectangle()) {
-			// Mask out pixels outside the selection
-			QPainter mp(&img);
-			mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-
-			QRect maskBounds;
-			const QImage mask = m_selection->shapeMask(Qt::white, &maskBounds);
-
-			mp.drawImage(qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
-		}
+	if(!rustpile::paintengine_get_layer_content(
+		m_paintengine->engine(),
+		layerId,
+		rustpile::Rectangle { rect.x(), rect.y(), rect.width(), rect.height() },
+		img.bits()
+	)) {
+		// Error (shouldn't happen unless there's a bug)
+		qWarning("paintengine_get_layer_content failed!");
+		img.fill(QColor(255, 0, 255));
 	}
-#endif
 
+	if(m_selection && !m_selection->isAxisAlignedRectangle()) {
+		// Mask out pixels outside the selection
+		QPainter mp(&img);
+		mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+
+		QRect maskBounds;
+		const QImage mask = m_selection->shapeMask(Qt::white, &maskBounds);
+
+		mp.drawImage(qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
+	}
 	return img;
 }
 

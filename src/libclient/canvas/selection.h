@@ -27,6 +27,10 @@
 #include <QImage>
 #include <QPolygonF>
 
+namespace net {
+	class Envelope;
+}
+
 namespace canvas {
 
 /**
@@ -132,7 +136,7 @@ public:
 
 	QImage shapeMask(const QColor &color, QRect *maskBounds) const;
 
-	//! Set the image from pasting
+	//! Set the pasted image
 	void setPasteImage(const QImage &image);
 
 	/**
@@ -167,7 +171,7 @@ public:
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	protocol::MessageList pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
+	net::Envelope pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
 
 	/**
 	 * @brief Generate the commands to fill the selection with solid color
@@ -181,7 +185,7 @@ public:
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	protocol::MessageList fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
+	net::Envelope fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
 
 	/**
 	 * @brief Get the size of the adjustment handles in pixels at 1:1 zoom level

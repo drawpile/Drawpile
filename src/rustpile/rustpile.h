@@ -331,17 +331,6 @@ void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, bool merg
 
 void write_layervisibility(MessageWriter *writer, UserID ctx, uint16_t id, bool visible);
 
-void write_putimage(MessageWriter *writer,
-                    UserID ctx,
-                    uint16_t layer,
-                    uint8_t mode,
-                    uint32_t x,
-                    uint32_t y,
-                    uint32_t w,
-                    uint32_t h,
-                    const uint8_t *image,
-                    uintptr_t image_len);
-
 void write_fillrect(MessageWriter *writer,
                     UserID ctx,
                     uint16_t layer,
@@ -393,7 +382,29 @@ void write_puttile(MessageWriter *writer,
 
 void write_background(MessageWriter *writer, UserID ctx, const uint8_t *image, uintptr_t image_len);
 
+void write_moverect(MessageWriter *writer,
+                    UserID ctx,
+                    uint16_t layer,
+                    int32_t sx,
+                    int32_t sy,
+                    int32_t tx,
+                    int32_t ty,
+                    int32_t w,
+                    int32_t h,
+                    const uint8_t *mask,
+                    uintptr_t mask_len);
+
 void write_undo(MessageWriter *writer, UserID ctx, uint8_t override_user, bool redo);
+
+void write_putimage(MessageWriter *writer,
+                    UserID user,
+                    LayerID layer,
+                    uint32_t x,
+                    uint32_t y,
+                    uint32_t w,
+                    uint32_t h,
+                    Blendmode mode,
+                    const uint8_t *pixels);
 
 /// Construct a new paint engine with an empty canvas.
 PaintEngine *paintengine_new(void *ctx,
@@ -445,31 +456,50 @@ bool paintengine_is_simple(const PaintEngine *dp);
 /// This consumes the content of the brush engine.
 void paintengine_preview_brush(PaintEngine *dp, LayerID layer_id, BrushEngine *brushengine);
 
+/// Make a temporary eraser layer to preview a cut operation
+void paintengine_preview_cut(PaintEngine *dp,
+                             LayerID layer_id,
+                             Rectangle rect,
+                             const uint8_t *mask);
+
 /// Remove preview brush strokes from the given layer
+/// If layer ID is 0, previews from all layers will be removed
 void paintengine_remove_preview(PaintEngine *dp, LayerID layer_id);
 
 /// Perform a flood fill operation
 ///
-/// Returns a MessageWriter containig the commands for drawing the result
-/// onto a canvas. If the operation fails (e.g. due to size limit), a null pointer
-/// is returned. The caller is responsible for freeing the returned MessageWriter
-MessageWriter *paintengine_floodfill(PaintEngine *dp,
-                                     UserID user_id,
-                                     LayerID layer_id,
-                                     int32_t x,
-                                     int32_t y,
-                                     Color color,
-                                     float tolerance,
-                                     bool sample_merged,
-                                     uint32_t size_limit,
-                                     int32_t expansion,
-                                     bool fill_under);
+/// Returns false if the operation fails (e.g. due to size limit.)
+bool paintengine_floodfill(PaintEngine *dp,
+                           MessageWriter *writer,
+                           UserID user_id,
+                           LayerID layer_id,
+                           int32_t x,
+                           int32_t y,
+                           Color color,
+                           float tolerance,
+                           bool sample_merged,
+                           uint32_t size_limit,
+                           int32_t expansion,
+                           bool fill_under);
 
+/// Pick a color from the canvas
+///
+/// If the given layer ID is 0, color is taken from merged layers
 Color paintengine_sample_color(const PaintEngine *dp,
                                int32_t x,
                                int32_t y,
                                LayerID layer_id,
                                int32_t dia);
+
+/// Copy layer pixel data to the given buffer
+///
+/// The rectangle must be contained within the layer bounds.
+/// The size if the buffer must be rect.w * rect.h * 4 bytes.
+/// If the copy operation fails, false will be returned.
+bool paintengine_get_layer_content(const PaintEngine *dp,
+                                   LayerID layer_id,
+                                   Rectangle rect,
+                                   uint8_t *pixels);
 
 /// Paint all the changed tiles in the given area
 ///

@@ -22,10 +22,6 @@
 #include <QByteArray>
 #include <QtEndian>
 
-namespace rustpile {
-	struct MessageWriter;
-}
-
 namespace net {
 
 /**
@@ -51,9 +47,6 @@ public:
 	{
 		Q_ASSERT(len >= HEADER_LEN);
 	}
-
-	//! Take the content of a message writer and put it in the envelope
-	static Envelope fromMessageWriter(rustpile::MessageWriter *writer);
 
 	// Return the type of the first message in the envelope, or -1 if there is none
 	int messageType() const {

@@ -106,7 +106,7 @@ impl Tile {
     pub fn from_data(data: &[Pixel], user: UserID) -> Tile {
         assert_eq!(data.len(), TILE_LENGTH, "Wrong tile data length");
         let mut td = Arc::new(TileData::new(ZERO_PIXEL, user));
-        Arc::make_mut(&mut td).pixels.clone_from_slice(data);
+        Arc::make_mut(&mut td).pixels.copy_from_slice(data);
         Tile::Bitmap(td)
     }
 

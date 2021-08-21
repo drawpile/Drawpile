@@ -21,7 +21,7 @@
 #include "canvas/paintengine.h"
 #include "net/client.h"
 #include "net/commands.h"
-#include "net/envelope.h"
+#include "net/envelopebuilder.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/freehand.h"
@@ -66,7 +66,7 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 	if(!m_drawing)
 		return;
 
-	auto writer = rustpile::messagewriter_new();
+	net::EnvelopeBuilder writer;
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
@@ -93,10 +93,7 @@ void Freehand::motion(const paintcore::Point& point, bool constrain, bool center
 
 	rustpile::brushengine_write_dabs(m_brushengine, owner.client()->myId(), writer);
 
-	auto envelope = net::Envelope::fromMessageWriter(writer);
-	rustpile::messagewriter_free(writer);
-
-	owner.client()->sendEnvelope(envelope);
+	owner.client()->sendEnvelope(writer.toEnvelope());
 }
 
 void Freehand::end()
@@ -104,7 +101,7 @@ void Freehand::end()
 	if(m_drawing) {
 		m_drawing = false;
 
-		auto writer = rustpile::messagewriter_new();
+		net::EnvelopeBuilder writer;
 
 		if(m_firstPoint) {
 			m_firstPoint = false;
@@ -125,10 +122,7 @@ void Freehand::end()
 		rustpile::brushengine_write_dabs(m_brushengine, owner.client()->myId(), writer);
 		rustpile::write_penup(writer, owner.client()->myId());
 
-		auto envelope = net::Envelope::fromMessageWriter(writer);
-		rustpile::messagewriter_free(writer);
-
-		owner.client()->sendEnvelope(envelope);
+		owner.client()->sendEnvelope(writer.toEnvelope());
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 */
 
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 #include "canvas/aclfilter.h"
-#include "core/layer.h"
 #include "net/client.h"
 
 #include "tools/selection.h"
@@ -49,10 +49,8 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 	m_end = point;
 
 	if(m_handle == canvas::Selection::Handle::Outside) {
-		if(sel) {
-			owner.client()->sendMessages(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
-			sel->detachMove();
-		}
+		if(sel)
+			owner.client()->sendEnvelope(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
 
 		sel = new canvas::Selection;
 		initSelection(sel);
@@ -89,13 +87,11 @@ void SelectionTool::end()
 		return;
 
 	// The shape must be closed after the end of the selection operation
-#if 0 // FIXME
-	if(!owner.model()->selection()->closeShape(QRectF(QPointF(), owner.model()->layerStack()->size()))) {
+	if(!owner.model()->selection()->closeShape(QRectF(QPointF(), owner.model()->size()))) {
 		// Clear selection if it was entirely outside the canvas
 		owner.model()->setSelection(nullptr);
 		return;
 	}
-#endif
 
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
@@ -126,9 +122,8 @@ void SelectionTool::finishMultipart()
 {
 	canvas::Selection *sel = owner.model()->selection();
 	if(sel && !sel->pasteImage().isNull()) {
-		owner.client()->sendMessages(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
+		owner.client()->sendEnvelope(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
 		owner.model()->setSelection(nullptr);
-
 	}
 }
 
@@ -156,27 +151,26 @@ bool SelectionTool::isMultipart() const
 
 void SelectionTool::startMove()
 {
-#if 0 // FIXME
 	canvas::Selection *sel = owner.model()->selection();
-	auto layers = owner.model()->layerStack()->editor(owner.client()->myId());
+	Q_ASSERT(sel);
 
-	paintcore::EditableLayer layer = layers.getEditableLayer(owner.activeLayer());
-	if(sel && !layer.isNull()) {
-		// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
-		QRect maskBounds;
-		QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
+	// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
+	QRect maskBounds;
+	QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
 
-		// Copy layer content into move preview buffer.
-		QImage img = owner.model()->selectionToImage(owner.activeLayer());
-		sel->setMoveImage(img, maskBounds, owner.model()->layerStack()->size(), owner.activeLayer());
+	// Copy layer content into move preview buffer.
+	const QImage img = owner.model()->selectionToImage(owner.activeLayer());
+	sel->setMoveImage(img, maskBounds, owner.model()->size(), owner.activeLayer());
 
-		// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
-		// to erase the selected region.
-		layer.removeSublayer(-1);
-		auto tmplayer = layer.getEditableSubLayer(-1, paintcore::BlendMode::MODE_ERASE, 255);
-		tmplayer.putImage(maskBounds.left(), maskBounds.top(), eraseMask, paintcore::BlendMode::MODE_REPLACE);
-	}
-#endif
+	// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
+	// to erase the selected region.
+
+	rustpile::paintengine_preview_cut(
+		owner.model()->paintEngine()->engine(),
+		owner.activeLayer(),
+		rustpile::Rectangle { maskBounds.x(), maskBounds.y(), maskBounds.width(), maskBounds.height() },
+		eraseMask.isNull() ? nullptr : eraseMask.constBits()
+	);
 }
 
 RectangleSelection::RectangleSelection(ToolController &owner)

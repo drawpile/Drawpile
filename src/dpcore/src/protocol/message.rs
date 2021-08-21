@@ -1161,6 +1161,80 @@ impl DrawDabsPixelMessage {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct MoveRectMessage {
+    pub layer: u16,
+    pub sx: i32,
+    pub sy: i32,
+    pub tx: i32,
+    pub ty: i32,
+    pub w: i32,
+    pub h: i32,
+    pub mask: Vec<u8>,
+}
+
+impl MoveRectMessage {
+    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
+        let mut reader = MessageReader::new(buf).check_len(26, 65535, 160, 0)?;
+
+        let layer = reader.read::<u16>();
+        let sx = reader.read::<i32>();
+        let sy = reader.read::<i32>();
+        let tx = reader.read::<i32>();
+        let ty = reader.read::<i32>();
+        let w = reader.read::<i32>();
+        let h = reader.read::<i32>();
+        let mask = reader.read_remaining_vec::<u8>();
+
+        Ok(Self {
+            layer,
+            sx,
+            sy,
+            tx,
+            ty,
+            w,
+            h,
+            mask,
+        })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(160, user_id, 26 + self.mask.len());
+        w.write(self.layer);
+        w.write(self.sx);
+        w.write(self.sy);
+        w.write(self.tx);
+        w.write(self.ty);
+        w.write(self.w);
+        w.write(self.h);
+        w.write(&self.mask);
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        txt.set("layer", format!("0x{:04x}", self.layer))
+            .set("sx", self.sx.to_string())
+            .set("sy", self.sy.to_string())
+            .set("tx", self.tx.to_string())
+            .set("ty", self.ty.to_string())
+            .set("w", self.w.to_string())
+            .set("h", self.h.to_string())
+            .set_bytes("mask", &self.mask)
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        Self {
+            layer: tm.get_u16("layer"),
+            sx: i32::from_str(tm.get_str("sx")).unwrap_or_default(),
+            sy: i32::from_str(tm.get_str("sy")).unwrap_or_default(),
+            tx: i32::from_str(tm.get_str("tx")).unwrap_or_default(),
+            ty: i32::from_str(tm.get_str("ty")).unwrap_or_default(),
+            w: i32::from_str(tm.get_str("w")).unwrap_or_default(),
+            h: i32::from_str(tm.get_str("h")).unwrap_or_default(),
+            mask: tm.get_bytes("mask"),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct UndoMessage {
     pub override_user: u8,
     pub redo: bool,
@@ -1573,6 +1647,21 @@ pub enum CommandMessage {
     /// Draw square pixel brush dabs
     DrawDabsPixelSquare(u8, DrawDabsPixelMessage),
 
+    /// Move a rectangular area on a layer.
+    ///
+    /// A 1-bpp mask can be given to mask out part of the region
+    /// to support non-rectangular selections.
+    ///
+    /// Source and target rects may be (partially) outside the canvas.
+    ///
+    /// Note: The MoveRegion command that can also transform the
+    /// selection is currently not implemented. The same effect can be
+    /// achieved by performing the transformation clientside then
+    /// sending the results as PutImages, including one to erase the
+    /// source.
+    ///
+    MoveRect(u8, MoveRectMessage),
+
     /// Undo or redo actions
     Undo(u8, UndoMessage),
 }
@@ -1774,6 +1863,7 @@ impl CommandMessage {
             DrawDabsClassic(user_id, b) => b.serialize(w, *user_id),
             DrawDabsPixel(user_id, b) => b.serialize(w, *user_id),
             DrawDabsPixelSquare(user_id, b) => b.serialize(w, *user_id),
+            MoveRect(user_id, b) => b.serialize(w, *user_id),
             Undo(user_id, b) => b.serialize(w, *user_id),
         }
     }
@@ -1811,6 +1901,7 @@ impl CommandMessage {
             DrawDabsPixelSquare(user_id, b) => {
                 b.to_text(TextMessage::new(*user_id, "squarepixeldabs"))
             }
+            MoveRect(user_id, b) => b.to_text(TextMessage::new(*user_id, "moverect")),
             Undo(user_id, b) => b.to_text(TextMessage::new(*user_id, "undo")),
         }
     }
@@ -1838,6 +1929,7 @@ impl CommandMessage {
             DrawDabsClassic(user_id, _) => *user_id,
             DrawDabsPixel(user_id, _) => *user_id,
             DrawDabsPixelSquare(user_id, _) => *user_id,
+            MoveRect(user_id, _) => *user_id,
             Undo(user_id, _) => *user_id,
         }
     }
@@ -2042,6 +2134,10 @@ impl Message {
                 user_id,
                 DrawDabsPixelMessage::deserialize(&buf)?,
             )),
+            160 => Command(CommandMessage::MoveRect(
+                user_id,
+                MoveRectMessage::deserialize(&buf)?,
+            )),
             255 => Command(CommandMessage::Undo(
                 user_id,
                 UndoMessage::deserialize(&buf)?,
@@ -2217,6 +2313,10 @@ impl Message {
             "squarepixeldabs" => Command(CommandMessage::DrawDabsPixelSquare(
                 tm.user_id,
                 DrawDabsPixelMessage::from_text(&tm),
+            )),
+            "moverect" => Command(CommandMessage::MoveRect(
+                tm.user_id,
+                MoveRectMessage::from_text(&tm),
             )),
             "undo" => Command(CommandMessage::Undo(
                 tm.user_id,

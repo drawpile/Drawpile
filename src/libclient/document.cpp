@@ -796,7 +796,7 @@ void Document::selectAll()
 void Document::selectNone()
 {
 	if(m_canvas && m_canvas->selection()) {
-		m_client->sendMessages(m_canvas->selection()->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
+		m_client->sendEnvelope(m_canvas->selection()->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
 		cancelSelection();
 	}
 }
@@ -883,7 +883,7 @@ void Document::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull()) {
-		m_client->sendMessages(sel->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
+		m_client->sendEnvelope(sel->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
 		sel->detachMove();
 	}
 }
@@ -895,7 +895,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		return;
 	}
 	if(m_canvas->selection() && !m_canvas->aclFilter()->isLayerLocked(m_toolctrl->activeLayer())) {
-		m_client->sendMessages(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
+		m_client->sendEnvelope(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
 	}
 }
 

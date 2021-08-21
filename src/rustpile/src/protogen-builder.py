@@ -6,7 +6,8 @@ template = Template("""
 // Generated with protogen-builder.py
 
 use dpcore::protocol::message::*;
-use dpcore::paint::UserID;
+use dpcore::paint::{Image, UserID, LayerID, Blendmode, Pixel};
+use dpcore::canvas::images::make_putimage;
 use dpcore::protocol::MessageWriter;
 use std::slice;
 
@@ -46,6 +47,31 @@ pub extern "C" fn write_{{ msg.cmd_name }}(
     ).write(writer);
 }
 {% endfor %}
+
+// Custom implementation for PutImage that automatically splits the image
+// and takes a byte array as input.
+#[no_mangle]
+pub extern "C" fn write_putimage(
+    writer: &mut MessageWriter,
+    user: UserID,
+    layer: LayerID,
+    x: u32,
+    y: u32,
+    w: u32,
+    h: u32,
+    mode: Blendmode,
+    pixels: *const u8,
+) {
+    // TODO ImageRef type so we don't need to make copies
+    let mut image = Image::new(w as usize, h as usize);
+
+    image.pixels[..].copy_from_slice(unsafe {
+        slice::from_raw_parts_mut(pixels as *mut Pixel, (w * h) as usize)
+    });
+
+    make_putimage(user, layer, x, y, &image, mode)
+        .iter().for_each(|cmd| cmd.write(writer));
+}
 """)
 
 
@@ -62,7 +88,7 @@ def field_parameter(field):
         ff = ((field.name, field.field_type),)
 
     return ''.join('{}: {},'.format(*f) for f in ff)
-    
+
 
 def field_argument(field, named=False):
     if field.field_type in ('Bytes', 'Vec<u8>', 'Vec<u16>'):
@@ -105,7 +131,7 @@ if __name__ == '__main__':
         'LayerOrder',
         'LayerDelete',
         'LayerVisibility',
-        'PutImage',
+        # 'PutImage', custom implementation
         'FillRect',
         'PenUp',
         'AnnotationCreate',
@@ -115,6 +141,7 @@ if __name__ == '__main__':
         #'MoveRegion',
         'PutTile',
         'CanvasBackground',
+        'MoveRect',
         'Undo',
     ))
 

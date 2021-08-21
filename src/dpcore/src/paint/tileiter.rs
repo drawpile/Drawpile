@@ -30,6 +30,70 @@ fn test_bounds(buflen: usize, stride: usize, x: usize, y: usize, w: usize, h: us
 
 /// Iterate through a rectangular area of tiles
 ///
+/// The iterator returns (i, j, &T) tuples,
+/// where (i, j) is the index of the tile.
+pub struct TileIterator<'a, T: 'a> {
+    buf: &'a [T],
+    skip: usize,
+    x0: usize,
+    x: usize,
+    x1: usize,
+    row: usize,
+    row1: usize,
+}
+
+impl<'a, T> TileIterator<'a, T> {
+    pub fn new(buf: &'a [T], stride: usize, x: usize, y: usize, w: usize, h: usize) -> Self {
+        test_bounds(buf.len(), stride, x, y, w, h);
+        Self {
+            buf: &buf[(y * stride + x)..],
+            skip: stride - w + 1,
+            x0: x,
+            x,
+            x1: x + w,
+            row: y,
+            row1: y + h,
+        }
+    }
+}
+
+impl<'a, T> Iterator for TileIterator<'a, T> {
+    type Item = (i32, i32, &'a T);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row < self.row1 {
+            let (i, j) = (self.x as i32, self.row as i32);
+
+            self.x += 1;
+            let skip;
+            if self.x >= self.x1 {
+                self.x = self.x0;
+                self.row += 1;
+                if self.row < self.row1 {
+                    skip = self.skip;
+                } else {
+                    skip = 1usize;
+                }
+            } else {
+                skip = 1usize;
+            }
+
+            let item = &self.buf[0];
+            self.buf = &self.buf[skip..];
+
+            Some((i, j, item))
+        } else {
+            None
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let s = (self.row1 - self.row) * (self.x1 - self.x0);
+        (s, Some(s))
+    }
+}
+
+/// Iterate through a rectangular area of tiles
+///
 /// The iterator returns (i, j, &mut T) tuples,
 /// where (i, j) is the index of the tile.
 pub struct MutableTileIterator<'a, T: 'a> {
@@ -103,6 +167,32 @@ impl<'a, T> Iterator for MutableTileIterator<'a, T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_tileiter() {
+        #[rustfmt::skip]
+        let buf = [
+            1,  2, 3,
+            2, 4, 6,
+            3, 6, 9,
+        ];
+
+        let iter = TileIterator::new(&buf, 3, 0, 0, 3, 3);
+        assert_eq!(iter.size_hint(), (9, Some(9)));
+
+        for (i, j, &v) in iter {
+            assert_eq!((i + 1) * (j + 1), v);
+        }
+
+        let mut iter = TileIterator::new(&buf, 3, 1, 1, 2, 2);
+        assert_eq!(iter.size_hint(), (4, Some(4)));
+
+        assert_eq!(iter.next(), Some((1, 1, &4)));
+        assert_eq!(iter.next(), Some((2, 1, &6)));
+        assert_eq!(iter.next(), Some((1, 2, &6)));
+        assert_eq!(iter.next(), Some((2, 2, &9)));
+        assert_eq!(iter.next(), None);
+    }
 
     #[test]
     fn test_mutation_full() {

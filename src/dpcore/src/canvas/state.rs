@@ -226,6 +226,8 @@ impl CanvasState {
         self.handle_message(msg)
     }
 
+    /// Apply commands to a preview layer. This is used to preview
+    /// shape tools and selection cutouts.
     pub fn apply_preview(
         &mut self,
         layer_id: LayerID,
@@ -250,6 +252,39 @@ impl CanvasState {
                         let (a, _) = brushes::drawdabs_pixel(layer, 0, &m, true);
                         a
                     }
+                    CommandMessage::PutImage(_, m) => {
+                        if m.w == 0 || m.h == 0 {
+                            warn!("Preview PutImage: zero size!");
+                            AoE::Nothing
+                        } else if m.w > 65535 || m.h > 65535 {
+                            warn!("Preview PutImage: oversize image! ({}, {})", m.w, m.h);
+                            AoE::Nothing
+                        } else if let Some(imagedata) =
+                            compression::decompress_image(&m.image, (m.w * m.h) as usize)
+                        {
+                            let mode = Blendmode::try_from(m.mode).unwrap_or_default();
+                            editlayer::draw_image(
+                                layer,
+                                0,
+                                &imagedata,
+                                &Rectangle::new(m.x as i32, m.y as i32, m.w as i32, m.h as i32),
+                                1.0,
+                                mode,
+                            )
+                        } else {
+                            AoE::Nothing
+                        }
+                    }
+                    CommandMessage::FillRect(_, m) => {
+                        let mode = Blendmode::try_from(m.mode).unwrap_or_default();
+                        editlayer::fill_rect(
+                            layer,
+                            0,
+                            &Color::from_argb32(m.color),
+                            mode,
+                            &Rectangle::new(m.x as i32, m.y as i32, m.w as i32, m.h as i32),
+                        )
+                    }
                     _ => AoE::Nothing,
                 });
             }
@@ -261,8 +296,19 @@ impl CanvasState {
         }
     }
 
+    /// Remove a preview layer or all preview layers if id is 0
     pub fn remove_preview(&mut self, layer_id: LayerID) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
+        if layer_id == 0 {
+            Arc::make_mut(&mut self.layerstack)
+                .iter_layers_mut()
+                .fold(AoE::Nothing, |aoe, layer| {
+                    aoe.merge(editlayer::remove_sublayer(
+                        Arc::make_mut(layer),
+                        InternalLayerID(-1),
+                    ))
+                })
+                .into()
+        } else if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
             editlayer::remove_sublayer(layer, InternalLayerID(-1)).into()
         } else {
             warn!("remove_preview: Layer {} not found!", layer_id);
@@ -312,6 +358,7 @@ impl CanvasState {
             DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m),
             DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
             DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true),
+            MoveRect(user, m) => self.handle_moverect(*user, m),
             Undo(user, m) => self.handle_undo(*user, m).into(),
         }
     }
@@ -338,6 +385,9 @@ impl CanvasState {
 
         if let Some((savepoint, messages)) = replay {
             let old_layerstack = mem::replace(&mut self.layerstack, savepoint);
+
+            self.remove_preview(0);
+
             // We can move the local fork to the end while we're at it
             self.localfork.set_seqnum(self.history.end());
             let localfork = self.localfork.messages();
@@ -646,6 +696,84 @@ impl CanvasState {
             warn!("FillRect: Layer {:04x} not found!", msg.layer);
         }
         CanvasStateChange::nothing()
+    }
+
+    fn handle_moverect(&mut self, user: UserID, msg: &MoveRectMessage) -> CanvasStateChange {
+        if msg.w <= 0 || msg.h <= 0 {
+            warn!("MoveRect(user {}): zero size move rect!", user);
+            return CanvasStateChange::nothing();
+        }
+
+        if let Some(mut layer) =
+            Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        {
+            let src_rect = match Rectangle::new(msg.sx, msg.sy, msg.w, msg.h).cropped(layer.size())
+            {
+                Some(r) => r,
+                None => {
+                    warn!(
+                        "MoveRect(user {}): source rectangle outside the canvas!",
+                        user
+                    );
+                    return CanvasStateChange::nothing();
+                }
+            };
+
+            let target_rect = match Rectangle::new(msg.tx, msg.ty, src_rect.w, src_rect.h)
+                .cropped(layer.size())
+            {
+                Some(r) => r,
+                None => {
+                    warn!(
+                        "MoveRect(user {}): target rectangle outside the canvas!",
+                        user
+                    );
+                    return CanvasStateChange::nothing();
+                }
+            };
+
+            // Both rectangles must be the same size
+            let src_rect = Rectangle::new(
+                src_rect.x,
+                src_rect.y,
+                src_rect.w.min(target_rect.w),
+                src_rect.h.min(target_rect.h),
+            );
+
+            let source_image = match layer.to_image(src_rect) {
+                Ok(i) => i,
+                Err(e) => {
+                    warn!("MoveRect failed: {}", e);
+                    return CanvasStateChange::nothing();
+                }
+            };
+
+            // TODO mask
+
+            // Clear out the source area
+            let mut aoe = editlayer::fill_rect(
+                layer,
+                user,
+                &Color::TRANSPARENT,
+                Blendmode::Replace,
+                &src_rect,
+            );
+
+            // Draw pixels to target area
+            aoe = aoe.merge(editlayer::draw_image(
+                &mut layer,
+                user,
+                &source_image.pixels,
+                &target_rect,
+                1.0,
+                Blendmode::Normal,
+            ));
+
+            CanvasStateChange::aoe(aoe, user, msg.layer, target_rect.center())
+        } else {
+            warn!("MoveRect: Layer {:04x} not found!", msg.layer);
+            CanvasStateChange::nothing()
+        }
     }
 
     fn handle_drawdabs_classic(

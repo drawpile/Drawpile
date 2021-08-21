@@ -61,6 +61,10 @@ impl Rectangle {
             && self.bottom() >= other.bottom()
     }
 
+    pub fn in_bounds(&self, size: Size) -> bool {
+        self.x >= 0 && self.y >= 0 && self.right() < size.width && self.bottom() < size.height
+    }
+
     pub fn contains_point(&self, x: i32, y: i32) -> bool {
         x >= self.x && x < (self.x + self.w) && y >= self.y && y < (self.y + self.h)
     }
@@ -111,6 +115,10 @@ impl Rectangle {
     }
     pub fn bottom(&self) -> i32 {
         self.y + self.h - 1
+    }
+
+    pub fn center(&self) -> (i32, i32) {
+        (self.x + self.w / 2, self.y + self.h / 2)
     }
 
     pub fn offset(&self, x: i32, y: i32) -> Rectangle {

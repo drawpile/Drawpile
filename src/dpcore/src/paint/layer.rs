@@ -28,9 +28,9 @@ use super::blendmode::Blendmode;
 use super::brushmask::BrushMask;
 use super::color::{Color, Pixel, ZERO_PIXEL};
 use super::rect::{Rectangle, Size};
-use super::rectiter::RectIterator;
+use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
-use super::tileiter::MutableTileIterator;
+use super::tileiter::{MutableTileIterator, TileIterator};
 use super::{Image, InternalLayerID};
 
 /// A tiled image layer.
@@ -104,7 +104,7 @@ impl Layer {
                 let src = RectIterator::from_rectangle(pixels, width as usize, &srcrect);
 
                 for (destrow, srcrow) in tile.zip(src) {
-                    destrow.clone_from_slice(srcrow);
+                    destrow.copy_from_slice(srcrow);
                 }
             }
         }
@@ -172,6 +172,73 @@ impl Layer {
             (left * tw) as i32,
             (top * tw) as i32,
         )
+    }
+
+    /// Copy pixels from the given rectangle to the pixel slice
+    ///
+    /// Note: the destination should be initialized to zero, as this function
+    /// skips blank tiles.
+    /// The rectangle must be fully within the layer bounds.
+    /// The length of the pixel slice must be rect width*height.
+    pub fn to_pixels(&self, rect: Rectangle, pixels: &mut [Pixel]) -> Result<(), &str> {
+        if !rect.in_bounds(self.size()) {
+            return Err("source rectangle out of bounds");
+        }
+        if pixels.len() != (rect.w * rect.h) as usize {
+            return Err("pixel slice length does not match source rectangle size");
+        }
+
+        for (i, j, tile) in self.tile_rect(&rect) {
+            match tile {
+                Tile::Blank => {
+                    continue;
+                }
+                _ => (),
+            };
+
+            // This tile's bounding rectangle
+            let tilerect = Rectangle::tile(i, j, TILE_SIZEI);
+
+            // The rectangle of interest in the layer
+            let layerrect = rect.intersected(&tilerect).unwrap();
+
+            // The source rectangle in the tile
+            let srcrect = layerrect.offset(-tilerect.x, -tilerect.y);
+
+            // The destination rectangle in the pixel buffer
+            let pixelrect = layerrect.offset(-rect.x, -rect.y);
+
+            // Copy pixels from tile to image
+            let srciter = tile.rect_iter(&srcrect);
+            let destiter = MutableRectIterator::new(
+                pixels,
+                rect.w as usize,
+                pixelrect.x as usize,
+                pixelrect.y as usize,
+                pixelrect.w as usize,
+                pixelrect.h as usize,
+            );
+
+            destiter
+                .zip(srciter)
+                .for_each(|(d, s)| d.copy_from_slice(s));
+        }
+
+        Ok(())
+    }
+
+    pub fn to_image(&self, rect: Rectangle) -> Result<Image, &str> {
+        let rect = match rect.cropped(self.size()) {
+            Some(r) => r,
+            None => {
+                return Err("source rectangle out of bounds");
+            }
+        };
+
+        let mut img = Image::new(rect.w as usize, rect.h as usize);
+
+        self.to_pixels(rect, &mut img.pixels)?;
+        Ok(img)
     }
 
     /// Get mutable access to a sublayer with the given ID
@@ -394,15 +461,32 @@ impl Layer {
         Arc::make_mut(&mut self.tiles)
     }
 
+    /// Return an iterator to the tiles that intersect the given
+    /// rectangle (in normal pixel coordinates)
+    pub fn tile_rect(&self, r: &Rectangle) -> TileIterator<Tile> {
+        assert!(r.in_bounds(self.size()));
+
+        let tx0 = (r.x / TILE_SIZEI) as usize;
+        let tx1 = (r.right() / TILE_SIZEI) as usize;
+        let ty0 = (r.y / TILE_SIZEI) as usize;
+        let ty1 = (r.bottom() / TILE_SIZEI) as usize;
+        let stride = Tile::div_up(self.width) as usize;
+
+        TileIterator::new(
+            self.tilevec(),
+            stride,
+            tx0,
+            ty0,
+            tx1 - tx0 + 1,
+            ty1 - ty0 + 1,
+        )
+    }
+
     /// Return a mutable iterator to the tiles that intersect the given
     /// rectangle (in normal pixel coordinates)
     pub fn tile_rect_mut(&mut self, r: &Rectangle) -> MutableTileIterator<Tile> {
-        assert!(
-            r.x >= 0
-                && r.y >= 0
-                && r.right() < self.width as i32
-                && r.bottom() < self.height as i32
-        );
+        assert!(r.in_bounds(self.size()));
+
         let tx0 = (r.x / TILE_SIZEI) as usize;
         let tx1 = (r.right() / TILE_SIZEI) as usize;
         let ty0 = (r.y / TILE_SIZEI) as usize;
@@ -580,7 +664,7 @@ impl Layer {
                     dest_tile
                         .rect_iter_mut(tile.last_touched_by(), &dest_tile_rect, true)
                         .zip(tile.rect_iter(&source_tile_rect))
-                        .for_each(|(d, s)| d.clone_from_slice(s));
+                        .for_each(|(d, s)| d.copy_from_slice(s));
                 }
             }
         }

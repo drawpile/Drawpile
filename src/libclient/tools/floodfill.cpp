@@ -24,6 +24,7 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "net/client.h"
+#include "net/envelopebuilder.h"
 
 #include <QGuiApplication>
 #include <QPixmap>
@@ -45,8 +46,11 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	rustpile::MessageWriter *w = rustpile::paintengine_floodfill(
+	net::EnvelopeBuilder writer;
+
+	if(rustpile::paintengine_floodfill(
 		owner.model()->paintEngine()->engine(),
+		writer,
 		owner.model()->localUserId(),
 		owner.activeLayer(),
 		point.x(),
@@ -62,11 +66,8 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 		m_sizelimit,
 		m_expansion,
 		m_underFill
-	);
-
-	if(w != nullptr) {
-		owner.client()->sendEnvelope(net::Envelope::fromMessageWriter(w));
-		rustpile::messagewriter_free(w);
+	)) {
+		owner.client()->sendEnvelope(writer.toEnvelope());
 	}
 
 	QGuiApplication::restoreOverrideCursor();
