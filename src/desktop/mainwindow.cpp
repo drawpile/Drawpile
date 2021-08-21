@@ -370,6 +370,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockColors, &docks::ColorBox::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
 
+	connect(m_canvasscene, &drawingboard::CanvasScene::annotationDeleted, this, [this](int id) {
+		if(m_doc->toolCtrl()->activeAnnotation() == id)
+			m_doc->toolCtrl()->setActiveAnnotation(0);
+	});
+
 	connect(brushSettings, &tools::BrushSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
 	m_doc->toolCtrl()->setSmoothing(brushSettings->getSmoothing());
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, m_view, &widgets::CanvasView::setToolCursor);
@@ -486,6 +491,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(canvas, &canvas::CanvasModel::colorPicked, static_cast<tools::ColorPickerSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::addColor);
 	connect(canvas, &canvas::CanvasModel::canvasInspected, static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR)), &tools::InspectorSettings::onCanvasInspected);
+	connect(canvas, &canvas::CanvasModel::previewAnnotationRequested, m_doc->toolCtrl(), &tools::ToolController::setActiveAnnotation);
 
 	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
 

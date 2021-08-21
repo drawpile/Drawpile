@@ -208,6 +208,7 @@ void CanvasScene::annotationsChanged(rustpile::Annotations *annotations) {
 
 	// Whatever remains in the list are annotations that were removed
 	for(auto ai : qAsConst(ctx.items)) {
+		emit annotationDeleted(ai->id());
 		delete ai;
 	}
 

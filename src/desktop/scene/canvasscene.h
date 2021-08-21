@@ -102,6 +102,9 @@ signals:
 	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
 
+	//! An annotation item was just deleted
+	void annotationDeleted(int id);
+
 private slots:
 	void onSelectionChanged(canvas::Selection *sel);
 	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);

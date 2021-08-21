@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -144,25 +144,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	if(m_model != model) {
 		m_model = model;
-
-#if 0 // FIXME
-		connect(m_model->stateTracker(), &canvas::StateTracker::myAnnotationCreated, this, &ToolController::setActiveAnnotation);
-		connect(m_model->layerStack()->annotations(), &paintcore::AnnotationModel::rowsAboutToBeRemoved, this, &ToolController::onAnnotationRowDelete);
-#endif
 		connect(m_model->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
 	}
 	emit modelChanged(model);
-}
-
-void ToolController::onAnnotationRowDelete(const QModelIndex&, int first, int last)
-{
-#if 0 // FIXME
-	for(int i=first;i<=last;++i) {
-		const QModelIndex &a = m_model->layerStack()->annotations()->index(i);
-		if(a.data(paintcore::AnnotationModel::IdRole).toInt() == activeAnnotation())
-			setActiveAnnotation(0);
-	}
-#endif
 }
 
 void ToolController::onFeatureAccessChange(canvas::Feature feature, bool canUse)
