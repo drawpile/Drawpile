@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use lazy_static::lazy_static;
 use std::convert::TryFrom;
 use std::sync::Arc;
 
@@ -27,11 +28,28 @@ use super::aoe::{AoE, TileMap};
 use super::blendmode::Blendmode;
 use super::brushmask::BrushMask;
 use super::color::{Color, Pixel, ZERO_PIXEL};
+use super::rasterop::tint_pixels;
 use super::rect::{Rectangle, Size};
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::tileiter::{MutableTileIterator, TileIterator};
-use super::{Image, InternalLayerID};
+use super::{Image, InternalLayerID, UserID};
+
+lazy_static! {
+    static ref ZEBRA_TILE: TileData = {
+        let mut z = TileData::new(Color::TRANSPARENT.as_pixel(), 0);
+        let colors = [
+            Color::rgb8(35, 38, 41).as_pixel(),
+            Color::rgb8(239, 240, 241).as_pixel(),
+        ];
+
+        z.pixels
+            .iter_mut()
+            .enumerate()
+            .for_each(|(i, p)| *p = colors[(i / 64 + i % 64) / 16 % colors.len()]);
+        z
+    };
+}
 
 /// A tiled image layer.
 ///
@@ -503,17 +521,41 @@ impl Layer {
         )
     }
 
-    pub fn flatten_tile(&self, destination: &mut TileData, i: u32, j: u32) {
+    /// Composite a tile from this layer onto the destination tile.
+    ///
+    pub fn flatten_tile(
+        &self,
+        destination: &mut TileData,
+        i: u32,
+        j: u32,
+        opacity: f32,
+        censor: bool,
+        highlight_id: UserID,
+        tint: u32,
+    ) {
         if !self.is_visible() {
             return;
         }
 
-        // TODO censor
-        if self.sublayers.is_empty() {
-            // No sublayers: just composite this one as is
-            destination.merge_tile(self.tile(i, j), self.opacity, self.blendmode);
+        let tile = self.tile(i, j);
+
+        if self.censored && censor {
+            match tile {
+                Tile::Blank => (),
+                _ => {
+                    destination.merge_data(&ZEBRA_TILE, opacity, self.blendmode);
+                }
+            };
+            return;
+        }
+
+        let highlight = highlight_id > 0 && tile.last_touched_by() == highlight_id;
+
+        if self.sublayers.is_empty() && !highlight && tint == 0 {
+            // No sublayers or special features: just composite this one as is
+            destination.merge_tile(self.tile(i, j), opacity, self.blendmode);
         } else {
-            // Sublayers present: compositing needed
+            // Compositing needed
             let mut tmp = self.tile(i, j).clone_data();
             for sublayer in self.sublayers.iter() {
                 if sublayer.is_visible() {
@@ -521,9 +563,15 @@ impl Layer {
                 }
             }
 
-            // TODO tint, highlight and onionskin
+            if highlight {
+                tmp.merge_data(&ZEBRA_TILE, 0.5, Blendmode::Normal);
+            }
 
-            destination.merge_data(&tmp, self.opacity, self.blendmode);
+            if tint != 0 {
+                tint_pixels(&mut tmp.pixels, Color::from_argb32(tint));
+            }
+
+            destination.merge_data(&tmp, opacity, self.blendmode);
         }
     }
 

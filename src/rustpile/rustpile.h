@@ -68,6 +68,12 @@ enum class ClassicBrushShape : uint8_t {
   RoundSoft,
 };
 
+enum class LayerViewMode {
+  Normal,
+  Solo,
+  Onionskin,
+};
+
 enum class VAlign {
   Top,
   Center,
@@ -450,6 +456,25 @@ AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
 /// If any features that requires the OpenRaster file format (such as multiple layers)
 /// are used, this will return false.
 bool paintengine_is_simple(const PaintEngine *dp);
+
+void paintengine_set_view_mode(PaintEngine *dp, LayerViewMode mode, bool censor);
+
+void paintengine_set_onionskin_opts(PaintEngine *dp,
+                                    int32_t skins_below,
+                                    int32_t skins_above,
+                                    bool tint);
+
+void paintengine_set_active_layer(PaintEngine *dp, LayerID layer_id);
+
+/// Check the given coordinates and return the ID of the user
+/// who last touched the tile under it.
+/// This will also set that user ID as the canvas highlight ID.
+UserID paintengine_inspect_canvas(PaintEngine *dp, int32_t x, int32_t y);
+
+/// Set the canvas inspect target user ID.
+/// When set, all tiles last  touched by this use will be highlighted.
+/// Setting this to zero switches off inspection mode.
+void paintengine_set_highlight_user(PaintEngine *dp, UserID user);
 
 /// Draw a preview brush stroke onto the given layer
 ///

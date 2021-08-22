@@ -10,9 +10,10 @@ base64 = "0.11.0"
 serde_json = "1.0.44"
 tracing = "0.1.5"
 num_enum = "0.4.2"
-inflate = "0.4.5"
 bitvec = "0.22.3"
+inflate = "0.4.5"
 deflate = "0.8.4"
+lazy_static = "1.4.0"
 
 [dev-dependencies]
 itertools = "0.8.2"

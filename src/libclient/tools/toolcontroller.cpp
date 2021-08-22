@@ -32,6 +32,7 @@
 
 #include "core/point.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 #include "canvas/aclfilter.h"
 
 namespace tools {
@@ -124,10 +125,7 @@ void ToolController::setActiveLayer(uint16_t id)
 	if(m_activeLayer != id) {
 		m_activeLayer = id;
 		if(m_model) {
-#if 0 // FIXME
-			auto layers = m_model->layerStack()->editor(0);
-			layers.setViewLayer(id);
-#endif
+			m_model->paintEngine()->setViewLayer(id);
 		}
 
 		emit activeLayerChanged(id);

@@ -44,10 +44,8 @@ QWidget *InspectorSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
-void InspectorSettings::onCanvasInspected(int tx, int ty, int lastEditedBy)
+void InspectorSettings::onCanvasInspected(int lastEditedBy)
 {
-	Q_UNUSED(tx);
-	Q_UNUSED(ty);
 
 	if(m_userlist) {
 		const canvas::User u = m_userlist->getUserById(lastEditedBy);

@@ -48,7 +48,7 @@ public:
 	void setUserList(canvas::UserListModel *userlist) { m_userlist = userlist; }
 
 public slots:
-	void onCanvasInspected(int tx, int ty, int lastEditedBy);
+	void onCanvasInspected(int lastEditedBy);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;

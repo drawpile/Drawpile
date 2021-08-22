@@ -22,7 +22,7 @@
 
 use dpcore::paint::color::*;
 use dpcore::paint::tile::{Tile, TileData, TILE_SIZE};
-use dpcore::paint::{Layer, LayerStack};
+use dpcore::paint::{Layer, LayerStack, LayerViewOptions};
 use image;
 use image::{ImageBuffer, RgbaImage};
 
@@ -94,10 +94,11 @@ pub fn save_layerstack(layerstack: &LayerStack, filename: &str) {
     assert!(layerstack.height() % TILE_SIZE == 0);
 
     let mut rgba = vec![0u8; (layerstack.width() * layerstack.height() * 4) as usize];
+    let opts = LayerViewOptions::default();
 
     for ty in 0..(layerstack.height() / TILE_SIZE) {
         for tx in 0..(layerstack.width() / TILE_SIZE) {
-            let td = layerstack.flatten_tile(tx, ty);
+            let td = layerstack.flatten_tile(tx, ty, &opts);
             copy_tile_to(&mut rgba, layerstack.width(), &td, tx, ty);
         }
     }

@@ -353,6 +353,18 @@ fn mask_composite(comp_op: fn(f32, f32) -> f32, base: &mut [Pixel], color: Pixel
     }
 }
 
+pub fn tint_pixels(pixels: &mut [Pixel], tint: Color) {
+    for px in pixels {
+        // TODO optimize this. This operation works on non-premultiplied color
+        let mut p = Color::from_pixel(*px);
+        p.r = blend(tint.r, p.r, tint.a);
+        p.g = blend(tint.g, p.g, tint.a);
+        p.b = blend(tint.b, p.b, tint.a);
+
+        *px = p.as_pixel();
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

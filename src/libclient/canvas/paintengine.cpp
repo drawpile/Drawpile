@@ -148,6 +148,21 @@ bool PaintEngine::needsOpenRaster() const
 	return !rustpile::paintengine_is_simple(m_pe);
 }
 
+void PaintEngine::setViewMode(rustpile::LayerViewMode mode, bool censor)
+{
+	rustpile::paintengine_set_view_mode(m_pe, mode, censor);
+}
+
+void PaintEngine::setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint)
+{
+	rustpile::paintengine_set_onionskin_opts(m_pe, skinsBelow, skinsAbove, tint);
+}
+
+void PaintEngine::setViewLayer(int id)
+{
+	rustpile::paintengine_set_active_layer(m_pe, id);
+}
+
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 {
 	const auto size = this->size();

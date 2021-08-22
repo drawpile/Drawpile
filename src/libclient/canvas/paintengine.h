@@ -33,6 +33,7 @@ namespace rustpile {
 	struct LayerInfo;
 	struct Annotations;
 	struct AnnotationAt;
+	enum class LayerViewMode;
 }
 
 Q_DECLARE_OPAQUE_POINTER(rustpile::Annotations*)
@@ -81,6 +82,15 @@ public:
 
 	//! Is OpenRaster file format needed to save the canvas losslessly?
 	bool needsOpenRaster() const;
+
+	//! Set layerstack rendering mode (normal, solo, onionskin)
+	void setViewMode(rustpile::LayerViewMode mode, bool censor);
+
+	//! Set the active view layer (for solo and onionskin modes)
+	void setViewLayer(int id);
+
+	//! Set options to use with onion skin layer rendering mode
+	void setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint);
 
 	//! Get the raw rustpile paint engine instance
 	rustpile::PaintEngine *engine() const { return m_pe; }

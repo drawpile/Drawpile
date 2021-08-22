@@ -22,7 +22,7 @@
 
 use super::color::{Color, Pixel, ALPHA_CHANNEL};
 use super::tile::{Tile, TILE_SIZE};
-use super::{Image, InternalLayerID, Layer, LayerID, LayerStack, Rectangle};
+use super::{Image, InternalLayerID, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle};
 
 use std::sync::Arc;
 
@@ -203,7 +203,11 @@ impl<'a> ScratchLayer<'a> {
                 tx,
                 ty,
                 if self.sample_merged {
-                    Tile::Bitmap(Arc::new(self.image.flatten_tile(tx, ty)))
+                    Tile::Bitmap(Arc::new(self.image.flatten_tile(
+                        tx,
+                        ty,
+                        &LayerViewOptions::default(),
+                    )))
                 } else {
                     self.source_layer.tile(tx, ty).clone()
                 },

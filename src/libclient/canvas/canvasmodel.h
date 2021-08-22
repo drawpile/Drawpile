@@ -119,7 +119,6 @@ public slots:
 	void inspectCanvas(int contextId);
 	void stopInspectingCanvas();
 
-	void setLayerViewMode(int mode);
 	void updateLayerViewOptions();
 
 signals:
@@ -135,7 +134,7 @@ signals:
 	void imageSizeChanged();
 
 	void colorPicked(const QColor &color);
-	void canvasInspected(int tx, int ty, int lastEditedBy);
+	void canvasInspected(int lastEditedBy);
 	void canvasInspectionEnded();
 
 	void chatMessageReceived(const protocol::MessagePtr &msg);

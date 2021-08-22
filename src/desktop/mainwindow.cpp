@@ -780,18 +780,14 @@ void MainWindow::updateLayerViewMode()
 	const bool onionskin = getAction("layerviewonionskin")->isChecked();
 	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
-	paintcore::LayerStack::ViewMode mode = 	paintcore::LayerStack::NORMAL;
+	rustpile::LayerViewMode mode = rustpile::LayerViewMode::Normal;
 
 	if(solo)
-		mode = paintcore::LayerStack::SOLO;
+		mode = rustpile::LayerViewMode::Solo;
 	else if(onionskin)
-		mode = paintcore::LayerStack::ONIONSKIN;
+		mode = rustpile::LayerViewMode::Onionskin;
 
-#if 0 // FIXME
-	auto layers = m_doc->canvas()->layerStack()->editor(0);
-	layers.setViewMode(mode);
-	layers.setCensorship(censor);
-#endif
+	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
 	updateLockWidget();
 }
 

@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,6 +47,52 @@ pub enum LayerInsertion {
     Top,
     Above(LayerID),
     Bottom,
+}
+
+#[derive(PartialEq)]
+#[repr(C)]
+pub enum LayerViewMode {
+    Normal,
+    Solo,
+    Onionskin,
+}
+
+/// Layer flattening options
+pub struct LayerViewOptions {
+    /// Replace tiles of censored layers with a censor pattern
+    pub censor: bool,
+
+    /// Paint a highlight pattern over all non-blank tiles last touched by this user
+    pub highlight: UserID,
+
+    /// Special layer view modes
+    pub viewmode: LayerViewMode,
+
+    /// Add a color tint to onionskin layers
+    pub onionskin_tint: bool,
+
+    /// Number of onionskin layers to show above the active one
+    pub onionskins_above: i32,
+
+    /// Number of onionskin layers to show below the active one
+    pub onionskins_below: i32,
+
+    /// Index of the active layer for solo and onionskin mode
+    pub active_layer_idx: usize,
+}
+
+impl Default for LayerViewOptions {
+    fn default() -> Self {
+        LayerViewOptions {
+            censor: false,
+            highlight: 0,
+            viewmode: LayerViewMode::Normal,
+            onionskin_tint: false,
+            onionskins_above: 1,
+            onionskins_below: 1,
+            active_layer_idx: 0,
+        }
+    }
 }
 
 impl LayerStack {
@@ -157,7 +203,7 @@ impl LayerStack {
         None
     }
 
-    fn find_layer_index(&self, id: LayerID) -> Option<usize> {
+    pub fn find_layer_index(&self, id: LayerID) -> Option<usize> {
         self.layers.iter().position(|l| l.id == id)
     }
 
@@ -265,12 +311,69 @@ impl LayerStack {
     }
 
     /// Flatten layer stack content
-    pub fn flatten_tile(&self, i: u32, j: u32) -> TileData {
+    pub fn flatten_tile(&self, i: u32, j: u32, opts: &LayerViewOptions) -> TileData {
         let mut destination = self.background.clone_data();
 
         if (i * TILE_SIZE) < self.width && (j * TILE_SIZE) < self.height {
-            for layer in self.layers.iter() {
-                layer.flatten_tile(&mut destination, i, j);
+            for (idx, layer) in self.layers.iter().enumerate() {
+                // Don't render hidden layers
+                if layer.hidden {
+                    continue;
+                }
+
+                // Layer opacity can be overridden be special view modes
+                let (opacity, tint) = match opts.viewmode {
+                    LayerViewMode::Normal => (layer.opacity, 0),
+                    LayerViewMode::Solo => (
+                        if idx == opts.active_layer_idx || layer.fixed {
+                            layer.opacity
+                        } else {
+                            0.0
+                        },
+                        0,
+                    ),
+                    LayerViewMode::Onionskin => {
+                        if layer.fixed {
+                            (layer.opacity, 0)
+                        } else {
+                            let d = opts.active_layer_idx as i32 - idx as i32;
+                            let rd = if d == 0 {
+                                0.0
+                            } else if d < 0 && d >= -opts.onionskins_above {
+                                -d as f32 / (opts.onionskins_above + 1) as f32
+                            } else if d > 0 && d <= opts.onionskins_below {
+                                d as f32 / (opts.onionskins_below + 1) as f32
+                            } else {
+                                1.0
+                            };
+                            (
+                                layer.opacity * (1.0 - rd).powi(2),
+                                if d == 0 || !opts.onionskin_tint {
+                                    0
+                                } else if d < 0 {
+                                    0x80_3333ff
+                                } else {
+                                    0x80_ff3333
+                                },
+                            )
+                        }
+                    }
+                };
+
+                // No need to render fully transparent layers
+                if opacity < 1.0 / 256.0 {
+                    continue;
+                }
+
+                layer.flatten_tile(
+                    &mut destination,
+                    i,
+                    j,
+                    opacity,
+                    opts.censor,
+                    opts.highlight,
+                    tint,
+                );
             }
         }
 
@@ -287,7 +390,7 @@ impl LayerStack {
         if dia <= 1 {
             let ti = x as u32 / TILE_SIZE;
             let tj = y as u32 / TILE_SIZE;
-            let tile = self.flatten_tile(ti, tj);
+            let tile = self.flatten_tile(ti, tj, &LayerViewOptions::default());
 
             let tx = x as u32 - ti * TILE_SIZE;
             let ty = y as u32 - tj * TILE_SIZE;
@@ -303,6 +406,8 @@ impl LayerStack {
                 self.background.clone(),
             );
 
+            let opts = LayerViewOptions::default();
+
             tmp.tile_rect_mut(&Rectangle::new(
                 x as i32 - r,
                 y as i32 - r,
@@ -310,11 +415,33 @@ impl LayerStack {
                 dia as i32,
             ))
             .for_each(|(i, j, t)| {
-                *t = Tile::Bitmap(Arc::new(self.flatten_tile(i as u32, j as u32)))
+                *t = Tile::Bitmap(Arc::new(self.flatten_tile(i as u32, j as u32, &opts)))
             });
 
             tmp.sample_color(x as i32, y as i32, dia)
         }
+    }
+
+    pub fn last_edited_by(&self, x: i32, y: i32) -> UserID {
+        if x < 0 || y < 0 || x as u32 >= self.width || y as u32 >= self.height {
+            return 0;
+        }
+
+        let tx = x as u32 / TILE_SIZE;
+        let ty = y as u32 / TILE_SIZE;
+
+        for layer in self.layers.iter().rev() {
+            if layer.is_visible() {
+                match layer.tile(tx, ty) {
+                    Tile::Bitmap(td) => {
+                        return td.last_touched_by;
+                    }
+                    _ => (),
+                }
+            }
+        }
+
+        0
     }
 
     // Convert to a flat image
@@ -326,12 +453,13 @@ impl LayerStack {
         let width = self.width as usize;
         let height = self.height as usize;
 
+        let opts = LayerViewOptions::default();
         let mut image = Image::new(width, height);
 
         for j in 0..ytiles {
             let h = tw.min(height - (j * tw));
             for i in 0..xtiles {
-                let td = self.flatten_tile(i as u32, j as u32);
+                let td = self.flatten_tile(i as u32, j as u32, &opts);
                 let w = tw.min(width - (i * tw));
                 for y in 0..h {
                     let dest_offset = (j * tw + y) * width + i * tw;
@@ -554,6 +682,7 @@ mod tests {
     #[test]
     fn test_flattening() {
         let mut stack = LayerStack::new(128, 64);
+        let opts = LayerViewOptions::default();
         stack.background = Tile::new_solid(&Color::rgb8(255, 255, 255), 0);
         stack.add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
         stack.add_layer(2, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
@@ -562,10 +691,10 @@ mod tests {
         *layer.tile_mut(0, 0) = Tile::new_solid(&Color::rgb8(255, 0, 0), 0);
         layer.opacity = 0.5;
 
-        let t1 = stack.flatten_tile(0, 0);
+        let t1 = stack.flatten_tile(0, 0, &opts);
         assert_eq!(t1.pixels[0], Color::rgb8(255, 128, 128).as_pixel());
 
-        let t2 = stack.flatten_tile(1, 0);
+        let t2 = stack.flatten_tile(1, 0, &opts);
         assert_eq!(t2.pixels[0], Color::rgb8(255, 255, 255).as_pixel());
     }
 }

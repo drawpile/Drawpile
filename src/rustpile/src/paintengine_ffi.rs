@@ -28,10 +28,10 @@ use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
 use dpcore::paint::floodfill;
 use dpcore::paint::{
-    AoE, Blendmode, Color, FlattenedTileIterator, LayerID, LayerStack, Pixel, Rectangle, Size,
-    UserID, Image,
+    AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
+    LayerViewOptions, Pixel, Rectangle, Size, UserID,
 };
-use dpcore::protocol::message::{CommandMessage, Message, FillRectMessage};
+use dpcore::protocol::message::{CommandMessage, FillRectMessage, Message};
 use dpcore::protocol::MessageWriter;
 
 use core::ffi::c_void;
@@ -87,11 +87,18 @@ pub struct PaintEngine {
     /// A copy of the canvas state for read-only use in the view layer
     pub viewcache: Arc<Mutex<ViewCache>>,
 
+    /// Layer view mode
+    view_opts: LayerViewOptions,
+
     /// A channel for sending commands to the paint engine
     engine_channel: Sender<PaintEngineCommand>,
 
     /// The paint engine thread's handle
     thread_handle: thread::JoinHandle<()>,
+
+    /// View mode changes are done in the main thread
+    notify_changes: NotifyChangesCallback,
+    context_object: *mut c_void,
 }
 
 fn run_paintengine(
@@ -229,10 +236,13 @@ pub extern "C" fn paintengine_new(
 
     let dp = Box::new(PaintEngine {
         viewcache: viewcache.clone(),
+        view_opts: LayerViewOptions::default(),
         engine_channel: sender,
         thread_handle: thread::spawn(move || {
             run_paintengine(viewcache, receiver, callbacks);
         }),
+        notify_changes: changes,
+        context_object: ctx,
     });
 
     Box::into_raw(dp)
@@ -367,6 +377,144 @@ pub extern "C" fn paintengine_is_simple(dp: &PaintEngine) -> bool {
         && vc.layerstack.background.is_blank()
 }
 
+#[no_mangle]
+pub extern "C" fn paintengine_set_view_mode(
+    dp: &mut PaintEngine,
+    mode: LayerViewMode,
+    censor: bool,
+) {
+    if dp.view_opts.viewmode != mode || dp.view_opts.censor != censor {
+        dp.view_opts.viewmode = mode;
+        dp.view_opts.censor = censor;
+        let aoe_bounds = {
+            let mut vc = dp.viewcache.lock().unwrap();
+            if vc.layerstack.width() == 0 {
+                None
+            } else {
+                vc.unrefreshed_area = AoE::Everything;
+                vc.unrefreshed_area.bounds(vc.layerstack.size())
+            }
+        };
+
+        if let Some(r) = aoe_bounds {
+            (dp.notify_changes)(dp.context_object, r);
+        }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_set_onionskin_opts(
+    dp: &mut PaintEngine,
+    skins_below: i32,
+    skins_above: i32,
+    tint: bool,
+) {
+    if skins_below != dp.view_opts.onionskins_below
+        || skins_above != dp.view_opts.onionskins_above
+        || tint != dp.view_opts.onionskin_tint
+    {
+        dp.view_opts.onionskins_below = skins_below;
+        dp.view_opts.onionskins_above = skins_above;
+        dp.view_opts.onionskin_tint = tint;
+
+        if dp.view_opts.viewmode != LayerViewMode::Onionskin {
+            return;
+        }
+
+        let aoe_bounds = {
+            let mut vc = dp.viewcache.lock().unwrap();
+            if vc.layerstack.width() == 0 {
+                None
+            } else {
+                vc.unrefreshed_area = AoE::Everything;
+                vc.unrefreshed_area.bounds(vc.layerstack.size())
+            }
+        };
+
+        if let Some(r) = aoe_bounds {
+            (dp.notify_changes)(dp.context_object, r);
+        }
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: LayerID) {
+    let aoe_bounds = {
+        let mut vc = dp.viewcache.lock().unwrap();
+        let idx = match vc.layerstack.find_layer_index(layer_id) {
+            Some(i) => i,
+            None => {
+                return;
+            }
+        };
+
+        if dp.view_opts.active_layer_idx == idx {
+            return;
+        }
+
+        dp.view_opts.active_layer_idx = idx;
+
+        if vc.layerstack.width() == 0 || dp.view_opts.viewmode == LayerViewMode::Normal {
+            None
+        } else {
+            vc.unrefreshed_area = AoE::Everything;
+            vc.unrefreshed_area.bounds(vc.layerstack.size())
+        }
+    };
+
+    if let Some(r) = aoe_bounds {
+        (dp.notify_changes)(dp.context_object, r);
+    }
+}
+
+/// Check the given coordinates and return the ID of the user
+/// who last touched the tile under it.
+/// This will also set that user ID as the canvas highlight ID.
+#[no_mangle]
+pub extern "C" fn paintengine_inspect_canvas(dp: &mut PaintEngine, x: i32, y: i32) -> UserID {
+    let (user, aoe_bounds) = {
+        let mut vc = dp.viewcache.lock().unwrap();
+        let user = vc.layerstack.last_edited_by(x, y);
+
+        if dp.view_opts.highlight != user {
+            dp.view_opts.highlight = user;
+            vc.unrefreshed_area = AoE::Everything;
+            (user, vc.unrefreshed_area.bounds(vc.layerstack.size()))
+        } else {
+            (user, None)
+        }
+    };
+
+    if let Some(r) = aoe_bounds {
+        (dp.notify_changes)(dp.context_object, r);
+    }
+
+    user
+}
+
+/// Set the canvas inspect target user ID.
+/// When set, all tiles last  touched by this use will be highlighted.
+/// Setting this to zero switches off inspection mode.
+#[no_mangle]
+pub extern "C" fn paintengine_set_highlight_user(dp: &mut PaintEngine, user: UserID) {
+    if user != dp.view_opts.highlight {
+        dp.view_opts.highlight = user;
+        let aoe_bounds = {
+            let mut vc = dp.viewcache.lock().unwrap();
+            if vc.layerstack.width() == 0 {
+                None
+            } else {
+                vc.unrefreshed_area = AoE::Everything;
+                vc.unrefreshed_area.bounds(vc.layerstack.size())
+            }
+        };
+
+        if let Some(r) = aoe_bounds {
+            (dp.notify_changes)(dp.context_object, r);
+        }
+    }
+}
+
 /// Draw a preview brush stroke onto the given layer
 ///
 /// This consumes the content of the brush engine.
@@ -393,15 +541,18 @@ pub extern "C" fn paintengine_preview_cut(
     mask: *const u8,
 ) {
     let cmd = if mask.is_null() {
-        vec![CommandMessage::FillRect(0, FillRectMessage{
-            layer: 0,
-            mode: Blendmode::Replace.into(),
-            x: rect.x as u32,
-            y: rect.y as u32,
-            w: rect.w as u32,
-            h: rect.h as u32,
-            color: 0xff_ffffff,
-        })]
+        vec![CommandMessage::FillRect(
+            0,
+            FillRectMessage {
+                layer: 0,
+                mode: Blendmode::Replace.into(),
+                x: rect.x as u32,
+                y: rect.y as u32,
+                w: rect.w as u32,
+                h: rect.h as u32,
+                color: 0xff_ffffff,
+            },
+        )]
     } else {
         // TODO an ImageRef struct so we could do this without copying
         let mut maskimg = Image::new(rect.w as usize, rect.h as usize);
@@ -409,13 +560,20 @@ pub extern "C" fn paintengine_preview_cut(
             slice::from_raw_parts_mut(mask as *mut Pixel, (rect.w * rect.h) as usize)
         });
 
-        make_putimage(0, 0, rect.x as u32, rect.y as u32, &maskimg, Blendmode::Replace)
+        make_putimage(
+            0,
+            0,
+            rect.x as u32,
+            rect.y as u32,
+            &maskimg,
+            Blendmode::Replace,
+        )
     };
 
-    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
-        layer_id,
-        cmd,
-    )) {
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::BrushPreview(layer_id, cmd))
+    {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
 }
@@ -501,7 +659,9 @@ pub extern "C" fn paintengine_floodfill(
         } else {
             Blendmode::Normal
         },
-    ).iter().for_each(|cmd| cmd.write(writer));
+    )
+    .iter()
+    .for_each(|cmd| cmd.write(writer));
 
     true
 }
@@ -595,6 +755,6 @@ pub extern "C" fn paintengine_paint_changes(
         intersection
     };
 
-    FlattenedTileIterator::new(&vc.layerstack, intersection)
+    FlattenedTileIterator::new(&vc.layerstack, &dp.view_opts, intersection)
         .for_each(|(x, y, t)| paint_func(ctx, x, y, t.pixels.as_ptr() as *const u8));
 }

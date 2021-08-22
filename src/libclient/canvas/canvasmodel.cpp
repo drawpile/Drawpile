@@ -264,38 +264,20 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 
 void CanvasModel::inspectCanvas(int x, int y)
 {
-#if 0 // FIXME
-	if(x>=0 && y>=0 && x<m_layerstack->width() && y<m_layerstack->height()) {
-		const int tx = x / paintcore::Tile::SIZE;
-		const int ty = y / paintcore::Tile::SIZE;
-		const int id = m_layerstack->tileLastEditedBy(tx, ty);
-		inspectCanvas(id);
-		emit canvasInspected(tx, ty, id);
-	}
-#endif
+	int user = rustpile::paintengine_inspect_canvas(m_paintengine->engine(), x, y);
+	emit canvasInspected(user);
 }
 
 void CanvasModel::inspectCanvas(int contextId)
 {
-#if 0 // FIXME
-	m_layerstack->editor(0).setInspectorHighlight(contextId);
-#endif
+	Q_ASSERT(contextId > 0 && contextId < 256);
+	rustpile::paintengine_set_highlight_user(m_paintengine->engine(), contextId);
 }
 
 void CanvasModel::stopInspectingCanvas()
 {
-#if 0 // FIXME
-	m_layerstack->editor(0).setInspectorHighlight(0);
+	rustpile::paintengine_set_highlight_user(m_paintengine->engine(), 0);
 	emit canvasInspectionEnded();
-#endif
-}
-
-void CanvasModel::setLayerViewMode(int mode)
-{
-#if 0 // FIXME
-	m_layerstack->editor(0).setViewMode(paintcore::LayerStack::ViewMode(mode));
-#endif
-	updateLayerViewOptions();
 }
 
 void CanvasModel::setSelection(Selection *selection)
@@ -321,15 +303,14 @@ void CanvasModel::setSelection(Selection *selection)
 
 void CanvasModel::updateLayerViewOptions()
 {
-#if 0 // FIXME
 	QSettings cfg;
 	cfg.beginGroup("settings/animation");
-	m_layerstack->editor(0).setOnionskinMode(
+
+	m_paintengine->setOnionskinOptions(
 		cfg.value("onionskinsbelow", 4).toInt(),
 		cfg.value("onionskinsabove", 4).toInt(),
 		cfg.value("onionskintint", true).toBool()
 	);
-#endif
 }
 
 QImage CanvasModel::selectionToImage(int layerId) const

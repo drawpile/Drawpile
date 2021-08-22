@@ -96,6 +96,6 @@ pub use brushmask::{BrushMask, ClassicBrushCache};
 pub use color::{Color, Pixel};
 pub use flattenediter::FlattenedTileIterator;
 pub use layer::Layer;
-pub use layerstack::LayerStack;
+pub use layerstack::{LayerStack, LayerViewMode, LayerViewOptions};
 pub use rect::{Rectangle, Size};
 pub use tile::Tile;
