@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,16 +21,40 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use std::convert::TryInto;
+use std::fmt;
 use std::mem;
 
 pub const HEADER_LEN: usize = 4;
 
 #[derive(Debug)]
-pub struct DeserializationError {
-    pub user_id: u8,
-    pub message_type: u8,
-    pub payload_len: usize,
-    pub error: &'static str,
+pub enum DeserializationError {
+    /// No more messages remain in the buffer
+    NoMoreMessages,
+
+    /// Buffer contains only a partial message header
+    TruncatedHeader,
+
+    /// Buffer does not contain the whole message (expected, actual)
+    TruncatedPayload(usize, usize),
+
+    /// Unhandled message type (user, type, payload length)
+    UnknownMessage(u8, u8, usize),
+
+    /// An error in a message field
+    InvalidField(&'static str),
+}
+
+impl fmt::Display for DeserializationError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use DeserializationError::*;
+        match self {
+            NoMoreMessages => write!(f, "No more messages in buffer"),
+            TruncatedHeader => write!(f, "Message header truncated"),
+            TruncatedPayload(expected, actual) => write!(f, "Message payload short by {} bytes", expected - actual),
+            UnknownMessage(user, msgtype, payload_len) => write!(f, "Unknown message type {} (user {}, payload length {})", msgtype, user, payload_len),
+            InvalidField(msg) => write!(f, "Invalid message field: {}", msg),
+        }
+    }
 }
 
 pub trait Serializable {
@@ -166,61 +190,78 @@ impl Serializable for &Vec<u16> {
 
 pub struct MessageReader<'a> {
     buf: &'a [u8],
+    remaining: usize,
 }
 
 impl<'a> MessageReader<'a> {
     pub fn new(buf: &'a [u8]) -> MessageReader<'a> {
-        MessageReader { buf }
-    }
-
-    pub fn check_len(
-        self,
-        min_len: usize,
-        max_len: usize,
-        message_type: u8,
-        user_id: u8,
-    ) -> Result<MessageReader<'a>, DeserializationError> {
-        if self.buf.len() < min_len {
-            Err(DeserializationError {
-                user_id,
-                message_type,
-                payload_len: self.buf.len(),
-                error: "Payload is shorten than expected minimum length",
-            })
-        } else if self.buf.len() > max_len {
-            Err(DeserializationError {
-                user_id,
-                message_type,
-                payload_len: self.buf.len(),
-                error: "Payload is longer than expected maximum length",
-            })
-        } else {
-            Ok(self)
+        MessageReader {
+            buf,
+            remaining: 0
         }
     }
 
     pub fn remaining(&self) -> usize {
-        self.buf.len()
+        self.remaining
+    }
+
+    /// Read the message header
+    ///
+    /// This must be called first, as it sets up the expected length
+    /// of the message. After the whole message has been consumed,
+    /// the reader can read a second message from the buffer, if there is one.
+    /// Returns (message type, user ID) if OK.
+    pub fn read_header(&mut self) -> Result<(u8, u8), DeserializationError> {
+        assert!(self.remaining == 0);
+
+        if self.buf.len() == 0 {
+            return Err(DeserializationError::NoMoreMessages);
+        }
+
+        if self.buf.len() < HEADER_LEN {
+            return Err(DeserializationError::TruncatedHeader)
+        }
+
+        self.remaining = u16::from_be_bytes(self.buf[0..2].try_into().unwrap()) as usize;
+
+        if self.buf.len() < HEADER_LEN + self.remaining {
+            return Err(DeserializationError::TruncatedPayload(self.remaining, self.buf.len() - 4))
+        }
+
+        let message_type = self.buf[2];
+        let user_id = self.buf[3];
+
+        self.buf = &self.buf[HEADER_LEN..];
+
+        return Ok((message_type, user_id))
     }
 
     pub fn read<T: DeserializableScalar>(&mut self) -> T {
+        debug_assert!(self.remaining >= mem::size_of::<T>());
         let value = T::read(&self.buf);
         self.buf = &self.buf[mem::size_of::<T>()..];
+        self.remaining -= mem::size_of::<T>();
         value
     }
 
     pub fn read_vec<T: DeserializableScalar>(&mut self, items: usize) -> Vec<T> {
         let size = mem::size_of::<T>();
+        debug_assert!((size * items) <= self.remaining);
+
         let mut vec = Vec::<T>::with_capacity(items);
         for i in (0..size * items).step_by(size) {
             vec.push(T::read(&self.buf[i..]))
         }
         self.buf = &self.buf[(size * items)..];
+        self.remaining -= size * items;
         vec
     }
 
     pub fn read_remaining_vec<T: DeserializableScalar>(&mut self) -> Vec<T> {
-        self.read_vec::<T>(self.remaining() / mem::size_of::<T>())
+        let vec = self.read_vec::<T>(self.remaining / mem::size_of::<T>());
+        self.buf = &self.buf[self.remaining..];
+        self.remaining = 0;
+        vec
     }
 
     pub fn read_str(&mut self, len: usize) -> String {
@@ -228,7 +269,7 @@ impl<'a> MessageReader<'a> {
     }
 
     pub fn read_remaining_str(&mut self) -> String {
-        self.read_str(self.remaining())
+        self.read_str(self.remaining)
     }
 }
 
@@ -263,7 +304,7 @@ impl MessageWriter {
         assert!(payload_len <= 0xffff);
         assert!(self.expecting == 0);
         // TODO reserve known capacity?
-        self.expecting = 4 + payload_len as i32;
+        self.expecting = (HEADER_LEN + payload_len) as i32;
         self.write(payload_len as u16);
         self.write(message_type);
         self.write(user_id);
@@ -290,6 +331,7 @@ mod tests {
     fn test_reader() {
         let test = b"\xff\xa0\xb0\0\0\0\x03\x05hello\x05by\0es\x00\x01\x00\x02world";
         let mut reader = MessageReader::new(&test[..]);
+        reader.remaining = test.len();
 
         assert_eq!(reader.read::<u8>(), 0xffu8);
         assert_eq!(reader.read::<u16>(), 0xa0b0u16);
@@ -303,9 +345,9 @@ mod tests {
 
         assert_eq!(reader.read_vec::<u16>(2), vec![1u16, 2u16]);
 
-        assert_eq!(reader.read_str(reader.remaining()), "world");
+        assert_eq!(reader.read_remaining_str(), "world");
 
-        assert_eq!(reader.read_vec::<u8>(reader.remaining()), b"");
+        assert_eq!(reader.read_remaining_vec::<u8>(), b"");
     }
 
     #[test]
@@ -334,9 +376,40 @@ mod tests {
         let msg: Vec<u8> = w.into();
 
         let mut reader = MessageReader::new(&msg);
+        reader.remaining = msg.len();
         assert_eq!(reader.read::<u16>(), 5);
         assert_eq!(reader.read::<u8>(), 1);
         assert_eq!(reader.read::<u8>(), 2);
         assert_eq!(reader.read_str(5), "Hello");
+    }
+
+    #[test]
+    fn test_multi_read() {
+        let mut w = MessageWriter::new();
+        w.write_header(1, 2, 2);
+        w.write(10_u16);
+        w.write_header(10, 20, 4);
+        w.write(100_u32);
+
+        let msg: Vec<u8> = w.into();
+
+        let mut r = MessageReader::new(&msg);
+        let (t, u) = r.read_header().unwrap();
+        assert_eq!(t, 1);
+        assert_eq!(u, 2);
+        let val = r.read::<u16>();
+        assert_eq!(val, 10);
+
+        let (t, u) = r.read_header().unwrap();
+        assert_eq!(t, 10);
+        assert_eq!(u, 20);
+        let val = r.read::<u32>();
+        assert_eq!(val, 100);
+
+        assert_eq!(r.remaining(), 0);
+        assert!(match r.read_header() {
+            Err(DeserializationError::NoMoreMessages) => true,
+            _ => false
+        });
     }
 }

@@ -9,7 +9,6 @@ template = Template("""
 
 use super::serialization::{MessageReader, MessageWriter, DeserializationError};
 use super::textmessage::TextMessage;
-use std::convert::TryInto;
 use std::fmt;
 use std::str::FromStr;
 
@@ -52,10 +51,7 @@ impl {{ message.name }}Message {
     {% endif %}{% endfor %}
 
     {# (DE)SERIALIZATION FUNCTIONS #}
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf)
-        {%+ if message.min_len > 0 or message.max_len < 65535 %}.check_len({{ message.min_len }}, {{ message.max_len }}, {{ message.id }}, 0)?{% endif %};
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         {% for field in message.fields %}
         {% if field.subfields %}
         let mut {{ field.name }} = Vec::<{{ field.struct_name }}>::with_capacity(reader.remaining() / {{ field.min_len }});
@@ -69,12 +65,7 @@ impl {{ message.name }}Message {
         }{% elif field.prefix_type %}
         let {{ field.name }}_len = reader.{{ read_field(field.prefix_type) }} as usize;
         if reader.remaining() < {{ field.name }}_len {
-            return Err(DeserializationError{
-                user_id: 0,
-                message_type: {{ message.id }},
-                payload_len: buf.len(),
-                error: "{{ message.name }}::{{ field.name }} field is too long",
-            });
+            return Err(DeserializationError::InvalidField("{{ message.name }}::{{ field.name }} field is too long"));
         }
         let {{ field.name }} = reader.{{ read_field(field.field_type, field.name + "_len") }};
         {% else %}
@@ -236,58 +227,35 @@ impl From<{{ message_type }}Message> for Message {
 
 impl Message {
     pub fn deserialize(buf: &[u8]) -> Result<Message, DeserializationError> {
-        if buf.len() < 4 {
-            return Err(DeserializationError {
-                user_id: 0,
-                message_type: 0,
-                payload_len: 0,
-                error: "Message header too short",
-            });
-        }
-        let payload_len = u16::from_be_bytes(buf[0..2].try_into().unwrap()) as usize;
-        let message_type = buf[2];
-        let user_id = buf[3];
-
-        if buf.len() < 4 + payload_len {
-            return Err(DeserializationError {
-                user_id,
-                message_type,
-                payload_len,
-                error: "Message truncated",
-            });
-        }
-
-        let buf = &buf[4..];
-
-        use Message::*;
-        Ok(match message_type {
-            {% for message in messages %}
-            {{ message.id }} => {{ message.message_type }}({{ message.message_type }}Message::{{ message.name }}(user_id,
-                {% if message.alias %}
-                    {{ message.alias }}Message::deserialize(&buf)?
-                {% elif message.fields|length > 1 %}
-                    {{ message.name }}Message::deserialize(&buf)?
-                {% elif message.fields %}
-                    MessageReader::new(&buf)
-                        {%+ if message.min_len > 0 or message.max_len < 65535 %}.check_len({{ message.min_len }}, {{ message.max_len }}, {{ message.id }}, 0)?{% endif -%}
-                        .{{ read_field(message.fields[0].field_type) }}
-                {% endif %})),
-            {% endfor %}{# message in messages #}
-            _ => {
-                return Err(DeserializationError {
-                    user_id,
-                    message_type,
-                    payload_len,
-                    error: "Unknown message type",
-                });
-            }
-        })
+        let mut r = MessageReader::new(buf);
+        Message::read(&mut r)
     }
 
     pub fn serialize(&self) -> Vec<u8> {
         let mut w = MessageWriter::new();
         self.write(&mut w);
         w.into()
+    }
+
+    pub fn read(r: &mut MessageReader) -> Result<Message, DeserializationError> {
+        let (message_type, u) = r.read_header()?;
+
+        use Message::*;
+        Ok(match message_type {
+            {% for message in messages %}
+            {{ message.id }} => {{ message.message_type }}({{ message.message_type }}Message::{{ message.name }}(u,
+                {% if message.alias %}
+                    {{ message.alias }}Message::deserialize(r)?
+                {% elif message.fields|length > 1 %}
+                    {{ message.name }}Message::deserialize(r)?
+                {% elif message.fields %}
+                    r.{{ read_field(message.fields[0].field_type) }}
+                {% endif %})),
+            {% endfor %}{# message in messages #}
+            _ => {
+                return Err(DeserializationError::UnknownMessage(u, message_type, r.remaining()));
+            }
+        })
     }
 
     pub fn write(&self, w: &mut MessageWriter) {

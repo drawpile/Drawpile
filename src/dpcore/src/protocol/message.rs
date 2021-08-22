@@ -2,7 +2,6 @@
 
 use super::serialization::{DeserializationError, MessageReader, MessageWriter};
 use super::textmessage::TextMessage;
-use std::convert::TryInto;
 use std::fmt;
 use std::str::FromStr;
 
@@ -16,9 +15,7 @@ pub struct DisconnectMessage {
 }
 
 impl DisconnectMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(1, 65535, 1, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let reason = reader.read::<u8>();
         let message = reader.read_remaining_str();
 
@@ -57,18 +54,13 @@ impl JoinMessage {
     pub const FLAGS_BOT: u8 = 0x4;
     pub const FLAGS: &'static [&'static str] = &["auth", "mod", "bot"];
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(2, 65535, 32, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let flags = reader.read::<u8>();
         let name_len = reader.read::<u8>() as usize;
         if reader.remaining() < name_len {
-            return Err(DeserializationError {
-                user_id: 0,
-                message_type: 32,
-                payload_len: buf.len(),
-                error: "Join::name field is too long",
-            });
+            return Err(DeserializationError::InvalidField(
+                "Join::name field is too long",
+            ));
         }
         let name = reader.read_str(name_len);
         let avatar = reader.read_remaining_vec::<u8>();
@@ -116,9 +108,7 @@ impl ChatMessage {
     pub const FLAGS_PIN: u8 = 0x8;
     pub const FLAGS: &'static [&'static str] = &["bypass", "shout", "action", "pin"];
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(1, 65535, 35, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let flags = reader.read::<u8>();
         let message = reader.read_remaining_str();
 
@@ -155,9 +145,7 @@ impl PrivateChatMessage {
     pub const FLAGS_ACTION: u8 = 0x1;
     pub const FLAGS: &'static [&'static str] = &["action"];
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(2, 65535, 38, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let target = reader.read::<u8>();
         let flags = reader.read::<u8>();
         let message = reader.read_remaining_str();
@@ -198,9 +186,7 @@ pub struct LaserTrailMessage {
 }
 
 impl LaserTrailMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(5, 5, 65, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let color = reader.read::<u32>();
         let persistence = reader.read::<u8>();
 
@@ -233,9 +219,7 @@ pub struct MovePointerMessage {
 }
 
 impl MovePointerMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(8, 8, 66, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let x = reader.read::<i32>();
         let y = reader.read::<i32>();
 
@@ -269,9 +253,7 @@ pub struct LayerACLMessage {
 }
 
 impl LayerACLMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(3, 258, 69, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let flags = reader.read::<u8>();
         let exclusive = reader.read_remaining_vec();
@@ -314,9 +296,7 @@ pub struct CanvasResizeMessage {
 }
 
 impl CanvasResizeMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(16, 16, 129, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let top = reader.read::<i32>();
         let right = reader.read::<i32>();
         let bottom = reader.read::<i32>();
@@ -369,9 +349,7 @@ impl LayerCreateMessage {
     pub const FLAGS_INSERT: u8 = 0x2;
     pub const FLAGS: &'static [&'static str] = &["copy", "insert"];
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(9, 65535, 130, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let source = reader.read::<u16>();
         let fill = reader.read::<u32>();
@@ -429,9 +407,7 @@ impl LayerAttributesMessage {
     pub const FLAGS_FIXED: u8 = 0x2;
     pub const FLAGS: &'static [&'static str] = &["censor", "fixed"];
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(6, 6, 131, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let sublayer = reader.read::<u8>();
         let flags = reader.read::<u8>();
@@ -482,9 +458,7 @@ pub struct LayerRetitleMessage {
 }
 
 impl LayerRetitleMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(2, 65535, 132, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let title = reader.read_remaining_str();
 
@@ -517,9 +491,7 @@ pub struct LayerDeleteMessage {
 }
 
 impl LayerDeleteMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(3, 3, 134, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let merge = reader.read::<bool>();
 
@@ -552,9 +524,7 @@ pub struct LayerVisibilityMessage {
 }
 
 impl LayerVisibilityMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(3, 3, 135, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let visible = reader.read::<bool>();
 
@@ -592,9 +562,7 @@ pub struct PutImageMessage {
 }
 
 impl PutImageMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(19, 65535, 136, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let layer = reader.read::<u16>();
         let mode = reader.read::<u8>();
         let x = reader.read::<u32>();
@@ -660,9 +628,7 @@ pub struct FillRectMessage {
 }
 
 impl FillRectMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(23, 23, 137, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let layer = reader.read::<u16>();
         let mode = reader.read::<u8>();
         let x = reader.read::<u32>();
@@ -726,9 +692,7 @@ pub struct AnnotationCreateMessage {
 }
 
 impl AnnotationCreateMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(14, 14, 141, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let x = reader.read::<i32>();
         let y = reader.read::<i32>();
@@ -776,9 +740,7 @@ pub struct AnnotationReshapeMessage {
 }
 
 impl AnnotationReshapeMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(14, 14, 142, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let x = reader.read::<i32>();
         let y = reader.read::<i32>();
@@ -826,9 +788,7 @@ pub struct AnnotationEditMessage {
 }
 
 impl AnnotationEditMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(8, 65535, 143, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let id = reader.read::<u16>();
         let bg = reader.read::<u32>();
         let flags = reader.read::<u8>();
@@ -883,9 +843,7 @@ pub struct PutTileMessage {
 }
 
 impl PutTileMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(9, 65535, 146, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let layer = reader.read::<u16>();
         let sublayer = reader.read::<u8>();
         let col = reader.read::<u16>();
@@ -956,9 +914,7 @@ pub struct DrawDabsClassicMessage {
 impl DrawDabsClassicMessage {
     pub const MAX_CLASSICDABS: usize = 10920;
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(21, 65535, 148, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let layer = reader.read::<u16>();
         let x = reader.read::<i32>();
         let y = reader.read::<i32>();
@@ -1071,9 +1027,7 @@ pub struct DrawDabsPixelMessage {
 impl DrawDabsPixelMessage {
     pub const MAX_PIXELDABS: usize = 16380;
 
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(19, 65535, 149, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let layer = reader.read::<u16>();
         let x = reader.read::<i32>();
         let y = reader.read::<i32>();
@@ -1173,9 +1127,7 @@ pub struct MoveRectMessage {
 }
 
 impl MoveRectMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(26, 65535, 160, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let layer = reader.read::<u16>();
         let sx = reader.read::<i32>();
         let sy = reader.read::<i32>();
@@ -1241,9 +1193,7 @@ pub struct UndoMessage {
 }
 
 impl UndoMessage {
-    fn deserialize(buf: &[u8]) -> Result<Self, DeserializationError> {
-        let mut reader = MessageReader::new(buf).check_len(2, 2, 255, 0)?;
-
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         let override_user = reader.read::<u8>();
         let redo = reader.read::<bool>();
 
@@ -1949,214 +1899,136 @@ impl From<CommandMessage> for Message {
 
 impl Message {
     pub fn deserialize(buf: &[u8]) -> Result<Message, DeserializationError> {
-        if buf.len() < 4 {
-            return Err(DeserializationError {
-                user_id: 0,
-                message_type: 0,
-                payload_len: 0,
-                error: "Message header too short",
-            });
-        }
-        let payload_len = u16::from_be_bytes(buf[0..2].try_into().unwrap()) as usize;
-        let message_type = buf[2];
-        let user_id = buf[3];
-
-        if buf.len() < 4 + payload_len {
-            return Err(DeserializationError {
-                user_id,
-                message_type,
-                payload_len,
-                error: "Message truncated",
-            });
-        }
-
-        let buf = &buf[4..];
-
-        use Message::*;
-        Ok(match message_type {
-            0 => Control(ControlMessage::ServerCommand(
-                user_id,
-                MessageReader::new(&buf).read_remaining_str(),
-            )),
-            1 => Control(ControlMessage::Disconnect(
-                user_id,
-                DisconnectMessage::deserialize(&buf)?,
-            )),
-            2 => Control(ControlMessage::Ping(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(1, 1, 2, 0)?
-                    .read::<bool>(),
-            )),
-            32 => ServerMeta(ServerMetaMessage::Join(
-                user_id,
-                JoinMessage::deserialize(&buf)?,
-            )),
-            33 => ServerMeta(ServerMetaMessage::Leave(user_id)),
-            34 => ServerMeta(ServerMetaMessage::SessionOwner(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(0, 255, 34, 0)?
-                    .read_remaining_vec(),
-            )),
-            35 => ServerMeta(ServerMetaMessage::Chat(
-                user_id,
-                ChatMessage::deserialize(&buf)?,
-            )),
-            36 => ServerMeta(ServerMetaMessage::TrustedUsers(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(0, 255, 36, 0)?
-                    .read_remaining_vec(),
-            )),
-            37 => ServerMeta(ServerMetaMessage::SoftReset(user_id)),
-            38 => ServerMeta(ServerMetaMessage::PrivateChat(
-                user_id,
-                PrivateChatMessage::deserialize(&buf)?,
-            )),
-            64 => ClientMeta(ClientMetaMessage::Interval(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(2, 2, 64, 0)?
-                    .read::<u16>(),
-            )),
-            65 => ClientMeta(ClientMetaMessage::LaserTrail(
-                user_id,
-                LaserTrailMessage::deserialize(&buf)?,
-            )),
-            66 => ClientMeta(ClientMetaMessage::MovePointer(
-                user_id,
-                MovePointerMessage::deserialize(&buf)?,
-            )),
-            67 => ClientMeta(ClientMetaMessage::Marker(
-                user_id,
-                MessageReader::new(&buf).read_remaining_str(),
-            )),
-            68 => ClientMeta(ClientMetaMessage::UserACL(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(0, 255, 68, 0)?
-                    .read_remaining_vec(),
-            )),
-            69 => ClientMeta(ClientMetaMessage::LayerACL(
-                user_id,
-                LayerACLMessage::deserialize(&buf)?,
-            )),
-            70 => ClientMeta(ClientMetaMessage::FeatureAccessLevels(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(9, 9, 70, 0)?
-                    .read_remaining_vec(),
-            )),
-            71 => ClientMeta(ClientMetaMessage::DefaultLayer(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(2, 2, 71, 0)?
-                    .read::<u16>(),
-            )),
-            72 => ClientMeta(ClientMetaMessage::Filtered(
-                user_id,
-                MessageReader::new(&buf).read_remaining_vec::<u8>(),
-            )),
-            128 => Command(CommandMessage::UndoPoint(user_id)),
-            129 => Command(CommandMessage::CanvasResize(
-                user_id,
-                CanvasResizeMessage::deserialize(&buf)?,
-            )),
-            130 => Command(CommandMessage::LayerCreate(
-                user_id,
-                LayerCreateMessage::deserialize(&buf)?,
-            )),
-            131 => Command(CommandMessage::LayerAttributes(
-                user_id,
-                LayerAttributesMessage::deserialize(&buf)?,
-            )),
-            132 => Command(CommandMessage::LayerRetitle(
-                user_id,
-                LayerRetitleMessage::deserialize(&buf)?,
-            )),
-            133 => Command(CommandMessage::LayerOrder(
-                user_id,
-                MessageReader::new(&buf).read_remaining_vec(),
-            )),
-            134 => Command(CommandMessage::LayerDelete(
-                user_id,
-                LayerDeleteMessage::deserialize(&buf)?,
-            )),
-            135 => Command(CommandMessage::LayerVisibility(
-                user_id,
-                LayerVisibilityMessage::deserialize(&buf)?,
-            )),
-            136 => Command(CommandMessage::PutImage(
-                user_id,
-                PutImageMessage::deserialize(&buf)?,
-            )),
-            137 => Command(CommandMessage::FillRect(
-                user_id,
-                FillRectMessage::deserialize(&buf)?,
-            )),
-            140 => Command(CommandMessage::PenUp(user_id)),
-            141 => Command(CommandMessage::AnnotationCreate(
-                user_id,
-                AnnotationCreateMessage::deserialize(&buf)?,
-            )),
-            142 => Command(CommandMessage::AnnotationReshape(
-                user_id,
-                AnnotationReshapeMessage::deserialize(&buf)?,
-            )),
-            143 => Command(CommandMessage::AnnotationEdit(
-                user_id,
-                AnnotationEditMessage::deserialize(&buf)?,
-            )),
-            144 => Command(CommandMessage::AnnotationDelete(
-                user_id,
-                MessageReader::new(&buf)
-                    .check_len(2, 2, 144, 0)?
-                    .read::<u16>(),
-            )),
-            146 => Command(CommandMessage::PutTile(
-                user_id,
-                PutTileMessage::deserialize(&buf)?,
-            )),
-            147 => Command(CommandMessage::CanvasBackground(
-                user_id,
-                MessageReader::new(&buf).read_remaining_vec::<u8>(),
-            )),
-            148 => Command(CommandMessage::DrawDabsClassic(
-                user_id,
-                DrawDabsClassicMessage::deserialize(&buf)?,
-            )),
-            149 => Command(CommandMessage::DrawDabsPixel(
-                user_id,
-                DrawDabsPixelMessage::deserialize(&buf)?,
-            )),
-            150 => Command(CommandMessage::DrawDabsPixelSquare(
-                user_id,
-                DrawDabsPixelMessage::deserialize(&buf)?,
-            )),
-            160 => Command(CommandMessage::MoveRect(
-                user_id,
-                MoveRectMessage::deserialize(&buf)?,
-            )),
-            255 => Command(CommandMessage::Undo(
-                user_id,
-                UndoMessage::deserialize(&buf)?,
-            )),
-            _ => {
-                return Err(DeserializationError {
-                    user_id,
-                    message_type,
-                    payload_len,
-                    error: "Unknown message type",
-                });
-            }
-        })
+        let mut r = MessageReader::new(buf);
+        Message::read(&mut r)
     }
 
     pub fn serialize(&self) -> Vec<u8> {
         let mut w = MessageWriter::new();
         self.write(&mut w);
         w.into()
+    }
+
+    pub fn read(r: &mut MessageReader) -> Result<Message, DeserializationError> {
+        let (message_type, u) = r.read_header()?;
+
+        use Message::*;
+        Ok(match message_type {
+            0 => Control(ControlMessage::ServerCommand(u, r.read_remaining_str())),
+            1 => Control(ControlMessage::Disconnect(
+                u,
+                DisconnectMessage::deserialize(r)?,
+            )),
+            2 => Control(ControlMessage::Ping(u, r.read::<bool>())),
+            32 => ServerMeta(ServerMetaMessage::Join(u, JoinMessage::deserialize(r)?)),
+            33 => ServerMeta(ServerMetaMessage::Leave(u)),
+            34 => ServerMeta(ServerMetaMessage::SessionOwner(u, r.read_remaining_vec())),
+            35 => ServerMeta(ServerMetaMessage::Chat(u, ChatMessage::deserialize(r)?)),
+            36 => ServerMeta(ServerMetaMessage::TrustedUsers(u, r.read_remaining_vec())),
+            37 => ServerMeta(ServerMetaMessage::SoftReset(u)),
+            38 => ServerMeta(ServerMetaMessage::PrivateChat(
+                u,
+                PrivateChatMessage::deserialize(r)?,
+            )),
+            64 => ClientMeta(ClientMetaMessage::Interval(u, r.read::<u16>())),
+            65 => ClientMeta(ClientMetaMessage::LaserTrail(
+                u,
+                LaserTrailMessage::deserialize(r)?,
+            )),
+            66 => ClientMeta(ClientMetaMessage::MovePointer(
+                u,
+                MovePointerMessage::deserialize(r)?,
+            )),
+            67 => ClientMeta(ClientMetaMessage::Marker(u, r.read_remaining_str())),
+            68 => ClientMeta(ClientMetaMessage::UserACL(u, r.read_remaining_vec())),
+            69 => ClientMeta(ClientMetaMessage::LayerACL(
+                u,
+                LayerACLMessage::deserialize(r)?,
+            )),
+            70 => ClientMeta(ClientMetaMessage::FeatureAccessLevels(
+                u,
+                r.read_remaining_vec(),
+            )),
+            71 => ClientMeta(ClientMetaMessage::DefaultLayer(u, r.read::<u16>())),
+            72 => ClientMeta(ClientMetaMessage::Filtered(u, r.read_remaining_vec::<u8>())),
+            128 => Command(CommandMessage::UndoPoint(u)),
+            129 => Command(CommandMessage::CanvasResize(
+                u,
+                CanvasResizeMessage::deserialize(r)?,
+            )),
+            130 => Command(CommandMessage::LayerCreate(
+                u,
+                LayerCreateMessage::deserialize(r)?,
+            )),
+            131 => Command(CommandMessage::LayerAttributes(
+                u,
+                LayerAttributesMessage::deserialize(r)?,
+            )),
+            132 => Command(CommandMessage::LayerRetitle(
+                u,
+                LayerRetitleMessage::deserialize(r)?,
+            )),
+            133 => Command(CommandMessage::LayerOrder(u, r.read_remaining_vec())),
+            134 => Command(CommandMessage::LayerDelete(
+                u,
+                LayerDeleteMessage::deserialize(r)?,
+            )),
+            135 => Command(CommandMessage::LayerVisibility(
+                u,
+                LayerVisibilityMessage::deserialize(r)?,
+            )),
+            136 => Command(CommandMessage::PutImage(
+                u,
+                PutImageMessage::deserialize(r)?,
+            )),
+            137 => Command(CommandMessage::FillRect(
+                u,
+                FillRectMessage::deserialize(r)?,
+            )),
+            140 => Command(CommandMessage::PenUp(u)),
+            141 => Command(CommandMessage::AnnotationCreate(
+                u,
+                AnnotationCreateMessage::deserialize(r)?,
+            )),
+            142 => Command(CommandMessage::AnnotationReshape(
+                u,
+                AnnotationReshapeMessage::deserialize(r)?,
+            )),
+            143 => Command(CommandMessage::AnnotationEdit(
+                u,
+                AnnotationEditMessage::deserialize(r)?,
+            )),
+            144 => Command(CommandMessage::AnnotationDelete(u, r.read::<u16>())),
+            146 => Command(CommandMessage::PutTile(u, PutTileMessage::deserialize(r)?)),
+            147 => Command(CommandMessage::CanvasBackground(
+                u,
+                r.read_remaining_vec::<u8>(),
+            )),
+            148 => Command(CommandMessage::DrawDabsClassic(
+                u,
+                DrawDabsClassicMessage::deserialize(r)?,
+            )),
+            149 => Command(CommandMessage::DrawDabsPixel(
+                u,
+                DrawDabsPixelMessage::deserialize(r)?,
+            )),
+            150 => Command(CommandMessage::DrawDabsPixelSquare(
+                u,
+                DrawDabsPixelMessage::deserialize(r)?,
+            )),
+            160 => Command(CommandMessage::MoveRect(
+                u,
+                MoveRectMessage::deserialize(r)?,
+            )),
+            255 => Command(CommandMessage::Undo(u, UndoMessage::deserialize(r)?)),
+            _ => {
+                return Err(DeserializationError::UnknownMessage(
+                    u,
+                    message_type,
+                    r.remaining(),
+                ));
+            }
+        })
     }
 
     pub fn write(&self, w: &mut MessageWriter) {
