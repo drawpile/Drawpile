@@ -27,6 +27,7 @@ use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::tile::{Tile, TileData, TILE_SIZE};
 use super::{Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID};
+use super::color::ALPHA_CHANNEL;
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -420,6 +421,23 @@ impl LayerStack {
 
             tmp.sample_color(x as i32, y as i32, dia)
         }
+    }
+
+    /// Find the topmost layer with a non-transparent pixel at the given point
+    ///
+    /// Returns 0 if no layer was found
+    pub fn pick_layer(&self, x: i32, y: i32) -> LayerID {
+        if x < 0 || y < 0 || x as u32 >= self.width || y as u32 >= self.height {
+            return 0;
+        }
+
+        for layer in self.layers.iter().rev() {
+            if layer.is_visible() && layer.pixel_at(x as u32, y as u32)[ALPHA_CHANNEL] > 0 {
+                return layer.id.try_into().unwrap()
+            }
+        }
+
+        return 0;
     }
 
     pub fn last_edited_by(&self, x: i32, y: i32) -> UserID {

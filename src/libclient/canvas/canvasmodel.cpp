@@ -214,12 +214,9 @@ protocol::MessageList CanvasModel::generateSnapshot() const
 
 void CanvasModel::pickLayer(int x, int y)
 {
-#if 0 // FIXME
-	const paintcore::Layer *l = m_layerstack->layerAt(x, y);
-	if(l) {
-		emit layerAutoselectRequest(l->id());
-	}
-#endif
+	const uint16_t layer = rustpile::paintengine_pick_layer(m_paintengine->engine(), x, y);
+	if(layer > 0)
+		emit layerAutoselectRequest(layer);
 }
 
 void CanvasModel::pickColor(int x, int y, int layer, int diameter)

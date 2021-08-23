@@ -198,6 +198,8 @@ using LaserCallback = void(*)(void *ctx, UserID user, uint8_t persistence, uint3
 
 using MarkerCallback = void(*)(void *ctx, UserID user, const uint8_t *message, uintptr_t message_len);
 
+using DefaultLayerCallback = void(*)(void *ctx, LayerID layer);
+
 /// The result of an "annotation at point" query
 struct AnnotationAt {
   /// ID of the annotation at the queried point.
@@ -441,7 +443,8 @@ void paintengine_register_meta_callbacks(PaintEngine *dp,
                                          LeaveCallback leave,
                                          ChatCallback chat,
                                          LaserCallback laser,
-                                         MarkerCallback markers);
+                                         MarkerCallback markers,
+                                         DefaultLayerCallback defaultlayer);
 
 /// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);
@@ -535,6 +538,10 @@ Color paintengine_sample_color(const PaintEngine *dp,
                                int32_t y,
                                LayerID layer_id,
                                int32_t dia);
+
+/// Find the topmost layer at the given coordinates
+///
+LayerID paintengine_pick_layer(const PaintEngine *dp, int32_t x, int32_t y);
 
 /// Copy layer pixel data to the given buffer
 ///

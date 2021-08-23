@@ -771,6 +771,19 @@ pub extern "C" fn paintengine_sample_color(
     }
 }
 
+/// Find the topmost layer at the given coordinates
+///
+#[no_mangle]
+pub extern "C" fn paintengine_pick_layer(
+    dp: &PaintEngine,
+    x: i32,
+    y: i32,
+) -> LayerID {
+    let vc = dp.viewcache.lock().unwrap();
+
+    vc.layerstack.pick_layer(x, y)
+}
+
 /// Copy layer pixel data to the given buffer
 ///
 /// The rectangle must be contained within the layer bounds.
