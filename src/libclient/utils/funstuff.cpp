@@ -47,7 +47,7 @@ int diceRoll(int number, int faces)
 	return result;
 }
 
-DiceRoll diceRoll(const QString &rolltype)
+DiceRoll diceRoll(const QStringRef &rolltype)
 {
 	DiceRoll result;
 	static QRegularExpression re("^([1-9]\\d*)?[dD]([1-9]\\d*)?([+-]\\d+)?$");
@@ -78,7 +78,7 @@ QList<float> diceRollDistribution(const QString &rolltype)
 	const int ROLLS = 1000;
 
 	for(int i=0;i<ROLLS;++i) {
-		DiceRoll r = diceRoll(rolltype);
+		DiceRoll r = diceRoll(rolltype.midRef(0));
 		if(r.number==0)
 			return QList<float>();
 		if(rolls.isEmpty())

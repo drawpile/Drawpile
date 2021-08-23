@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2019 Calle Laakkonen
+   Copyright (C) 2019-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-namespace protocol { class MessagePtr; }
+namespace net { class Envelope; }
 namespace canvas {
 	class CanvasModel;
 }
@@ -55,7 +55,7 @@ private slots:
 
 signals:
 	//! User has written a new message
-	void message(const protocol::MessagePtr &msg);
+	void message(const net::Envelope &msg);
 
 	//! The chatbox was either expanded or collapsed
 	void expandedChanged(bool isExpanded);

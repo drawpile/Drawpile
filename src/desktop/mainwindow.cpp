@@ -360,7 +360,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 		sessionHistorySize->setText(QString("%1 MB").arg(size / float(1024*1024), 0, 'f', 2));
 	});
 
-	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
+	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendEnvelope);
 
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);

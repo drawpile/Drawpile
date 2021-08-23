@@ -137,7 +137,7 @@ signals:
 	void canvasInspected(int lastEditedBy);
 	void canvasInspectionEnded();
 
-	void chatMessageReceived(const protocol::MessagePtr &msg);
+	void chatMessageReceived(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message);
 	void markerMessageReceived(int id, const QString &message);
 
 	void laserTrail(uint8_t userId, int persistence, const QColor &color);
@@ -151,14 +151,12 @@ private slots:
 	void onCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 
 private:
-	void metaUserJoin(const protocol::UserJoin &msg);
-	void metaUserLeave(const protocol::UserLeave &msg);
-	void metaChatMessage(protocol::MessagePtr msg);
-	void metaLaserTrail(const protocol::LaserTrail &msg);
-	void metaMovePointer(const protocol::MovePointer &msg);
-	void metaMarkerMessage(const protocol::Marker &msg);
-	void metaDefaultLayer(const protocol::DefaultLayer &msg);
-	void metaSoftReset(uint8_t resetterId);
+	friend void metaUserJoin(void *canvas, uint8_t user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
+	friend void metaUserLeave(void *ctx, uint8_t user);
+	friend void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len);
+	friend void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
+	friend void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
+	friend void metaDefaultLayer(void *ctx, uint16_t layerId);
 
 	AclFilter *m_aclfilter;
 	UserListModel *m_userlist;
@@ -172,9 +170,9 @@ private:
 	QString m_title;
 	QString m_pinnedMessage;
 
-	uint8_t m_localUserId;
-
 	enum class Mode { Offline, Online, Playback } m_mode;
+
+	uint8_t m_localUserId;
 };
 
 }

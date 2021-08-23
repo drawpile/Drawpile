@@ -41,6 +41,13 @@
 
 namespace canvas {
 
+void metaUserJoin(void *ctx, uint8_t user, uint8_t flags, const uint8_t *username, uintptr_t name_len, const uint8_t *avatarbytes, uintptr_t avatar_len);
+void metaUserLeave(void *ctx, uint8_t user);
+void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len);
+void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
+void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
+void metaDefaultLayer(void *ctx, uint16_t layerId);
+
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(1)
 {
@@ -54,6 +61,17 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
 
 	m_paintengine = new PaintEngine(this);
+
+	rustpile::paintengine_register_meta_callbacks(
+		m_paintengine->engine(),
+		this,
+		&metaUserJoin,
+		&metaUserLeave,
+		&metaChatMessage,
+		&metaLaserTrail,
+		&metaMarkerMessage,
+		&metaDefaultLayer
+	);
 
 	m_aclfilter->reset(localUserId, true);
 
@@ -157,62 +175,12 @@ void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 		m_recorder->recordMessage(cmd);
 	}
 
-	if(cmd->isMeta()) {
-		// Handle meta commands here
-		switch(cmd->type()) {
-		case MSG_CHAT:
-			metaChatMessage(cmd);
-			break;
-		case MSG_PRIVATE_CHAT:
-			emit chatMessageReceived(cmd);
-			break;
-		case MSG_USER_JOIN:
-			metaUserJoin(cmd.cast<UserJoin>());
-			break;
-		case MSG_USER_LEAVE:
-			metaUserLeave(cmd.cast<UserLeave>());
-			break;
-		case MSG_SESSION_OWNER:
-		case MSG_TRUSTED_USERS:
-		case MSG_USER_ACL:
-		case MSG_FEATURE_LEVELS:
-		case MSG_LAYER_ACL:
-			// Handled by the ACL filter
-			break;
-		case MSG_INTERVAL:
-		case MSG_FILTERED:
-			// recording playback related messages
-			break;
-		case MSG_LASERTRAIL:
-			metaLaserTrail(cmd.cast<protocol::LaserTrail>());
-			break;
-		case MSG_MOVEPOINTER:
-			metaMovePointer(cmd.cast<MovePointer>());
-			break;
-		case MSG_MARKER:
-			metaMarkerMessage(cmd.cast<Marker>());
-			break;
-		case MSG_LAYER_DEFAULT:
-			metaDefaultLayer(cmd.cast<DefaultLayer>());
-			break;
-		case MSG_SOFTRESET:
-			metaSoftReset(cmd->contextId());
-			break;
-		default:
-			qWarning("Unhandled meta message %s", qPrintable(cmd->messageName()));
-		}
-
-	} else if(cmd->isCommand()) {
-		// The state tracker handles all drawing commands
-		QByteArray buf(cmd->length(), 0);
-		cmd->serialize(buf.data());
-		m_paintengine->receiveMessages(false, buf);
-		//m_statetracker->receiveQueuedCommand(cmd);
-		emit canvasModified();
-
-	} else {
-		qWarning("CanvasModel::handleDrawingCommand: command %d is neither Meta nor Command type!", cmd->type());
-	}
+	// TODO use envelopes rather than MessagePtrs
+	QByteArray buf(cmd->length(), 0);
+	cmd->serialize(buf.data());
+	m_paintengine->receiveMessages(false, buf);
+	//m_statetracker->receiveQueuedCommand(cmd);
+	emit canvasModified();
 }
 
 void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
@@ -392,13 +360,18 @@ void CanvasModel::resetCanvas()
 #endif
 }
 
-void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
+void metaUserJoin(void *ctx, uint8_t user, uint8_t flags, const uint8_t *username, uintptr_t name_len, const uint8_t *avatarbytes, uintptr_t avatar_len)
 {
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
+
+	const QString name = QString::fromUtf8(reinterpret_cast<const char*>(username), name_len);
+
 	QImage avatar;
-	if(!msg.avatar().isEmpty()) {
-		QByteArray avatarData = msg.avatar();
+	if(avatar_len == 0) {
+		QByteArray avatarData = QByteArray::fromRawData(reinterpret_cast<const char*>(avatarbytes), avatar_len);
 		if(!avatar.loadFromData(avatarData))
-			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(msg.name()), msg.contextId());
+			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(name), user);
 
 		// Rescale avatar if its the wrong size
 		if(avatar.width() > 32 || avatar.height() > 32) {
@@ -406,84 +379,79 @@ void CanvasModel::metaUserJoin(const protocol::UserJoin &msg)
 		}
 	}
 	if(avatar.isNull())
-		avatar = make_identicon(msg.name());
+		avatar = make_identicon(name);
 
 	const User u {
-		msg.contextId(),
-		msg.name(),
+		user,
+		name,
 		QPixmap::fromImage(avatar),
-		false, //FIXME msg.contextId() == m_statetracker->localId(),
+		user == canvas->localUserId(),
 		false,
 		false,
-		msg.isModerator(),
-		msg.isBot(),
-		msg.isAuthenticated(),
+		bool(flags & rustpile::JoinMessage_FLAGS_MOD),
+		bool(flags & rustpile::JoinMessage_FLAGS_BOT),
+		bool(flags & rustpile::JoinMessage_FLAGS_AUTH),
 		false,
 		false,
 		true
 	};
 
-	m_userlist->userLogin(u);
-	emit userJoined(msg.contextId(), msg.name());
+	canvas->m_userlist->userLogin(u);
+	emit canvas->userJoined(user, name);
 }
 
-void CanvasModel::metaUserLeave(const protocol::UserLeave &msg)
+void metaUserLeave(void *ctx, uint8_t user)
 {
-	const QString name = m_userlist->getUsername(msg.contextId());
-	m_userlist->userLogout(msg.contextId());
-	emit userLeft(msg.contextId(), name);
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
+
+	const QString name = canvas->m_userlist->getUsername(user);
+	canvas->m_userlist->userLogout(user);
+	emit canvas->userLeft(user, name);
 }
 
-void CanvasModel::metaChatMessage(protocol::MessagePtr msg)
+void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len)
 {
-	Q_ASSERT(msg->type() == protocol::MSG_CHAT);
-	const protocol::Chat &chat = msg.cast<protocol::Chat>();
-	if(chat.isPin()) {
-		QString pm = chat.message();
-		if(m_pinnedMessage != pm) {
-			if(pm == "-") // special value to remove a pinned message
-				pm = QString();
-			m_pinnedMessage = pm;
-			emit pinnedMessageChanged(pm);
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
+
+	QString msg = QString::fromUtf8(reinterpret_cast<const char*>(message), message_len);
+
+	if(oflags & rustpile::ChatMessage_OFLAGS_PIN) {
+		if(msg == "-") // Special value to remove a pinned message
+			msg = QString();
+
+		if(canvas->m_pinnedMessage != msg) {
+			canvas->m_pinnedMessage = msg;
+			emit canvas->pinnedMessageChanged(msg);
 		}
+	} else {
+		emit canvas->chatMessageReceived(sender, recipient, tflags, oflags, msg);
 	}
-	emit chatMessageReceived(msg);
 }
 
-void CanvasModel::metaLaserTrail(const protocol::LaserTrail &msg)
+void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color)
 {
-	emit laserTrail(msg.contextId(), msg.persistence(), QColor::fromRgb(msg.color()));
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
+
+	emit canvas->laserTrail(user, persistence, QColor::fromRgb(color));
 }
 
-void CanvasModel::metaMovePointer(const protocol::MovePointer &msg)
+void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len)
 {
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
 
-	QPoint p(int(msg.x() / 4.0), int(msg.y() / 4.0));
-	emit m_paintengine->cursorMoved(msg.contextId(), 0, p.x(), p.y());
+	emit canvas->markerMessageReceived(user, QString::fromUtf8(reinterpret_cast<const char*>(message), message_len));
 }
 
-void CanvasModel::metaMarkerMessage(const protocol::Marker &msg)
+void metaDefaultLayer(void *ctx, uint16_t layerId)
 {
-	emit markerMessageReceived(msg.contextId(), msg.text());
-}
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
 
-void CanvasModel::metaDefaultLayer(const protocol::DefaultLayer &msg)
-{
-	m_layerlist->setDefaultLayer(msg.layer());
-#if 0 // FIXME
-	if(!m_statetracker->hasParticipated())
-		emit layerAutoselectRequest(msg.layer());
-#endif
-}
-
-void CanvasModel::metaSoftReset(uint8_t resetterId)
-{
-#if 0 // FIXME
-	m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeTruncatePoint());
-
-	if(resetterId == localUserId())
-		m_statetracker->receiveQueuedCommand(protocol::ClientInternal::makeSoftResetPoint());
-#endif
+	canvas->m_layerlist->setDefaultLayer(layerId);
 }
 
 }

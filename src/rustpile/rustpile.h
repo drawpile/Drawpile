@@ -10,13 +10,9 @@
 
 namespace rustpile {
 
-static const uint8_t ChatMessage_FLAGS_ACTION = 4;
-
 static const uint8_t JoinMessage_FLAGS_AUTH = 1;
 
 static const uint8_t JoinMessage_FLAGS_BOT = 4;
-
-static const uint8_t ChatMessage_FLAGS_BYPASS = 1;
 
 static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
 
@@ -28,13 +24,17 @@ static const uint8_t LayerCreateMessage_FLAGS_INSERT = 2;
 
 static const uint8_t JoinMessage_FLAGS_MOD = 2;
 
-static const uint8_t ChatMessage_FLAGS_PIN = 8;
-
-static const uint8_t ChatMessage_FLAGS_SHOUT = 2;
-
 static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
 
 static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
+
+static const uint8_t ChatMessage_OFLAGS_ACTION = 2;
+
+static const uint8_t ChatMessage_OFLAGS_PIN = 4;
+
+static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
+
+static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
 
 enum class Blendmode : uint8_t {
   Erase = 0,
@@ -188,6 +188,16 @@ using NotifyAnnotationsCallback = void(*)(void *ctx, Annotations *annotations);
 
 using NotifyCursorCallback = void(*)(void *ctx, UserID user, uint16_t layer, int32_t x, int32_t y);
 
+using JoinCallback = void(*)(void *ctx, UserID user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
+
+using LeaveCallback = void(*)(void *ctx, UserID user);
+
+using ChatCallback = void(*)(void *ctx, UserID sender, UserID recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len);
+
+using LaserCallback = void(*)(void *ctx, UserID user, uint8_t persistence, uint32_t color);
+
+using MarkerCallback = void(*)(void *ctx, UserID user, const uint8_t *message, uintptr_t message_len);
+
 /// The result of an "annotation at point" query
 struct AnnotationAt {
   /// ID of the annotation at the queried point.
@@ -252,7 +262,7 @@ void messagewriter_free(MessageWriter *mw);
 
 const uint8_t *messagewriter_content(const MessageWriter *mw, uintptr_t *len);
 
-void write_servercommand(MessageWriter *writer, UserID ctx, const uint8_t *msg, uintptr_t msg_len);
+void write_servercommand(MessageWriter *writer, UserID ctx, const uint16_t *msg, uintptr_t msg_len);
 
 void write_sessionowner(MessageWriter *writer,
                         UserID ctx,
@@ -261,8 +271,9 @@ void write_sessionowner(MessageWriter *writer,
 
 void write_chat(MessageWriter *writer,
                 UserID ctx,
-                uint8_t flags,
-                const uint8_t *message,
+                uint8_t tflags,
+                uint8_t oflags,
+                const uint16_t *message,
                 uintptr_t message_len);
 
 void write_trusted(MessageWriter *writer, UserID ctx, const uint8_t *users, uintptr_t users_len);
@@ -270,15 +281,15 @@ void write_trusted(MessageWriter *writer, UserID ctx, const uint8_t *users, uint
 void write_privatechat(MessageWriter *writer,
                        UserID ctx,
                        uint8_t target,
-                       uint8_t flags,
-                       const uint8_t *message,
+                       uint8_t oflags,
+                       const uint16_t *message,
                        uintptr_t message_len);
 
 void write_lasertrail(MessageWriter *writer, UserID ctx, uint32_t color, uint8_t persistence);
 
 void write_movepointer(MessageWriter *writer, UserID ctx, int32_t x, int32_t y);
 
-void write_marker(MessageWriter *writer, UserID ctx, const uint8_t *text, uintptr_t text_len);
+void write_marker(MessageWriter *writer, UserID ctx, const uint16_t *text, uintptr_t text_len);
 
 void write_useracl(MessageWriter *writer, UserID ctx, const uint8_t *users, uintptr_t users_len);
 
@@ -311,7 +322,7 @@ void write_newlayer(MessageWriter *writer,
                     uint16_t source,
                     uint32_t fill,
                     uint8_t flags,
-                    const uint8_t *name,
+                    const uint16_t *name,
                     uintptr_t name_len);
 
 void write_layerattr(MessageWriter *writer,
@@ -325,7 +336,7 @@ void write_layerattr(MessageWriter *writer,
 void write_retitlelayer(MessageWriter *writer,
                         UserID ctx,
                         uint16_t id,
-                        const uint8_t *title,
+                        const uint16_t *title,
                         uintptr_t title_len);
 
 void write_layerorder(MessageWriter *writer,
@@ -371,7 +382,7 @@ void write_editannotation(MessageWriter *writer,
                           uint32_t bg,
                           uint8_t flags,
                           uint8_t border,
-                          const uint8_t *text,
+                          const uint16_t *text,
                           uintptr_t text_len);
 
 void write_deleteannotation(MessageWriter *writer, UserID ctx, uint16_t id);
@@ -423,11 +434,20 @@ PaintEngine *paintengine_new(void *ctx,
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);
 
+/// Register callbacks for Meta messages
+void paintengine_register_meta_callbacks(PaintEngine *dp,
+                                         void *ctx,
+                                         JoinCallback join,
+                                         LeaveCallback leave,
+                                         ChatCallback chat,
+                                         LaserCallback laser,
+                                         MarkerCallback markers);
+
 /// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);
 
 /// Receive one or more messages
-/// Only Command type messages are handled.
+/// Only Command and Meta type messages are handled.
 void paintengine_receive_messages(PaintEngine *dp,
                                   bool local,
                                   const uint8_t *messages,

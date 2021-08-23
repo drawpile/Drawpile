@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2019 Calle Laakkonen
+   Copyright (C) 2007-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-namespace protocol { class MessagePtr; }
+namespace net { class Envelope; }
 namespace canvas { class UserListModel; }
 
 namespace widgets {
@@ -53,13 +53,16 @@ public slots:
 	void setPreserveMode(bool preservechat);
 
 	//! Display a received message
-	void receiveMessage(const protocol::MessagePtr &msg);
+	void receiveMessage(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message);
 
 	//! Display a received marker
 	void receiveMarker(int id, const QString &message);
 
 	//! Display a system message
 	void systemMessage(const QString& message, bool isAlert=false);
+
+	//! Set the message pinned to the top of the chat box
+	void setPinnedMessage(const QString &message);
 
 	void userJoined(int id, const QString &name);
 	void userParted(int id);
@@ -82,7 +85,7 @@ private slots:
 	void setCompactMode(bool compact);
 
 signals:
-	void message(const protocol::MessagePtr &msg);
+	void message(const net::Envelope &msg);
 	void detachRequested();
 
 private:

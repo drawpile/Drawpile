@@ -21,8 +21,9 @@
 
 #include "tools/toolcontroller.h"
 #include "tools/laser.h"
+#include "net/envelopebuilder.h"
 
-#include "../libshared/net/meta2.h"
+#include "../rustpile/rustpile.h"
 
 #include <QPixmap>
 
@@ -41,13 +42,11 @@ void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 
 	m_drawing = true;
 
-	protocol::MessageList msgs;
-	msgs << protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(),
-		owner.activeBrush().color().rgb(),
-		m_persistence
-	));
-	msgs << protocol::MessagePtr(new protocol::MovePointer(owner.client()->myId(), point.x() * 4, point.y() * 4));
-	owner.client()->sendMessages(msgs);
+	net::EnvelopeBuilder msgs;
+
+	rustpile::write_lasertrail(msgs, owner.client()->myId(), owner.activeBrush().color().rgb(), m_persistence);
+	rustpile::write_movepointer(msgs, owner.client()->myId(), point.x(), point.y());
+	owner.client()->sendEnvelope(msgs.toEnvelope());
 
 }
 
@@ -55,15 +54,21 @@ void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool ce
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	if(m_drawing)
-		owner.client()->sendMessage(protocol::MessagePtr(new protocol::MovePointer(owner.client()->myId(), point.x() * 4, point.y() * 4)));
+	if(m_drawing) {
+		net::EnvelopeBuilder msgs;
+		rustpile::write_movepointer(msgs, owner.client()->myId(), point.x(), point.y());
+		owner.client()->sendEnvelope(msgs.toEnvelope());
+	}
 }
 
 void LaserPointer::end()
 {
 	if(m_drawing) {
 		m_drawing = false;
-		owner.client()->sendMessage(protocol::MessagePtr(new protocol::LaserTrail(owner.client()->myId(), 0, 0)));
+
+		net::EnvelopeBuilder msgs;
+		rustpile::write_lasertrail(msgs, owner.client()->myId(), 0, 0);
+		owner.client()->sendEnvelope(msgs.toEnvelope());
 	}
 }
 

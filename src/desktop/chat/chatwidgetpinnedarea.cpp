@@ -38,10 +38,7 @@ ChatWidgetPinnedArea::ChatWidgetPinnedArea(QWidget *parent) :
 
 void ChatWidgetPinnedArea::setPinText(const QString &safetext)
 {
-	if(safetext == "-") {
-		// note: the protocol doesn't allow empty chat messages,
-		// which is why we have to use a special value like this
-		// to clear the pinning.
+	if(safetext.isEmpty()) {
 		setVisible(false);
 		setText(QString());
 	} else {

@@ -37,6 +37,9 @@ pub enum DeserializationError {
     /// Buffer does not contain the whole message (expected, actual)
     TruncatedPayload(usize, usize),
 
+    /// Unexpected payload length for this message type (expected, at least, at most)
+    PayloadLengthMismatch(usize, usize, usize),
+
     /// Unhandled message type (user, type, payload length)
     UnknownMessage(u8, u8, usize),
 
@@ -51,6 +54,7 @@ impl fmt::Display for DeserializationError {
             NoMoreMessages => write!(f, "No more messages in buffer"),
             TruncatedHeader => write!(f, "Message header truncated"),
             TruncatedPayload(expected, actual) => write!(f, "Message payload short by {} bytes", expected - actual),
+            PayloadLengthMismatch(expected, min, max) => write!(f, "Unexpected message payload length ({} <= {} <= {})", min, expected, max),
             UnknownMessage(user, msgtype, payload_len) => write!(f, "Unknown message type {} (user {}, payload length {})", msgtype, user, payload_len),
             InvalidField(msg) => write!(f, "Invalid message field: {}", msg),
         }
@@ -234,6 +238,15 @@ impl<'a> MessageReader<'a> {
         self.buf = &self.buf[HEADER_LEN..];
 
         return Ok((message_type, user_id))
+    }
+
+    /// Check that the remaining length matches what's expected
+    pub fn validate(&mut self, at_least: usize, at_most: usize) -> Result<&mut MessageReader<'a>, DeserializationError> {
+        if self.remaining < at_least || self.remaining > at_most {
+            Err(DeserializationError::PayloadLengthMismatch(self.remaining, at_least, at_most))
+        } else {
+            Ok(self)
+        }
     }
 
     pub fn read<T: DeserializableScalar>(&mut self) -> T {

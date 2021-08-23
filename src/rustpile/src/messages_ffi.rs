@@ -27,12 +27,12 @@ pub extern "C" fn messagewriter_content(mw: &MessageWriter, len: &mut usize) -> 
 pub extern "C" fn write_servercommand(
     writer: &mut MessageWriter,
     ctx: UserID,
-    msg: *const u8,
+    msg: *const u16,
     msg_len: usize,
 ) {
     ControlMessage::ServerCommand(
         ctx,
-        String::from_utf8_lossy(unsafe { slice::from_raw_parts(msg, msg_len) }).to_string(),
+        String::from_utf16_lossy(unsafe { slice::from_raw_parts(msg, msg_len) }).to_string(),
     )
     .write(writer);
 }
@@ -55,15 +55,17 @@ pub extern "C" fn write_sessionowner(
 pub extern "C" fn write_chat(
     writer: &mut MessageWriter,
     ctx: UserID,
-    flags: u8,
-    message: *const u8,
+    tflags: u8,
+    oflags: u8,
+    message: *const u16,
     message_len: usize,
 ) {
     ServerMetaMessage::Chat(
         ctx,
         ChatMessage {
-            flags: flags,
-            message: String::from_utf8_lossy(unsafe {
+            tflags: tflags,
+            oflags: oflags,
+            message: String::from_utf16_lossy(unsafe {
                 slice::from_raw_parts(message, message_len)
             })
             .to_string(),
@@ -91,16 +93,16 @@ pub extern "C" fn write_privatechat(
     writer: &mut MessageWriter,
     ctx: UserID,
     target: u8,
-    flags: u8,
-    message: *const u8,
+    oflags: u8,
+    message: *const u16,
     message_len: usize,
 ) {
     ServerMetaMessage::PrivateChat(
         ctx,
         PrivateChatMessage {
             target: target,
-            flags: flags,
-            message: String::from_utf8_lossy(unsafe {
+            oflags: oflags,
+            message: String::from_utf16_lossy(unsafe {
                 slice::from_raw_parts(message, message_len)
             })
             .to_string(),
@@ -135,12 +137,12 @@ pub extern "C" fn write_movepointer(writer: &mut MessageWriter, ctx: UserID, x: 
 pub extern "C" fn write_marker(
     writer: &mut MessageWriter,
     ctx: UserID,
-    text: *const u8,
+    text: *const u16,
     text_len: usize,
 ) {
     ClientMetaMessage::Marker(
         ctx,
-        String::from_utf8_lossy(unsafe { slice::from_raw_parts(text, text_len) }).to_string(),
+        String::from_utf16_lossy(unsafe { slice::from_raw_parts(text, text_len) }).to_string(),
     )
     .write(writer);
 }
@@ -232,7 +234,7 @@ pub extern "C" fn write_newlayer(
     source: u16,
     fill: u32,
     flags: u8,
-    name: *const u8,
+    name: *const u16,
     name_len: usize,
 ) {
     CommandMessage::LayerCreate(
@@ -242,7 +244,7 @@ pub extern "C" fn write_newlayer(
             source: source,
             fill: fill,
             flags: flags,
-            name: String::from_utf8_lossy(unsafe { slice::from_raw_parts(name, name_len) })
+            name: String::from_utf16_lossy(unsafe { slice::from_raw_parts(name, name_len) })
                 .to_string(),
         },
     )
@@ -277,14 +279,14 @@ pub extern "C" fn write_retitlelayer(
     writer: &mut MessageWriter,
     ctx: UserID,
     id: u16,
-    title: *const u8,
+    title: *const u16,
     title_len: usize,
 ) {
     CommandMessage::LayerRetitle(
         ctx,
         LayerRetitleMessage {
             id: id,
-            title: String::from_utf8_lossy(unsafe { slice::from_raw_parts(title, title_len) })
+            title: String::from_utf16_lossy(unsafe { slice::from_raw_parts(title, title_len) })
                 .to_string(),
         },
     )
@@ -420,7 +422,7 @@ pub extern "C" fn write_editannotation(
     bg: u32,
     flags: u8,
     border: u8,
-    text: *const u8,
+    text: *const u16,
     text_len: usize,
 ) {
     CommandMessage::AnnotationEdit(
@@ -430,7 +432,7 @@ pub extern "C" fn write_editannotation(
             bg: bg,
             flags: flags,
             border: border,
-            text: String::from_utf8_lossy(unsafe { slice::from_raw_parts(text, text_len) })
+            text: String::from_utf16_lossy(unsafe { slice::from_raw_parts(text, text_len) })
                 .to_string(),
         },
     )

@@ -110,7 +110,8 @@ Chat:
              (Typically a Command message is used for server announcements, but the Chat message
              is used for those messages that must be stored in the session history.)
     fields:
-        - flags flags: [bypass, shout, action, pin]
+        - tflags flags: [bypass]
+        - oflags flags: [shout, action, pin]
         - message utf8
 
 TrustedUsers:
@@ -157,7 +158,7 @@ PrivateChat:
              Private messages always bypass the session history.
     fields:
         - target u8
-        - flags flags: [action]
+        - oflags u8
         - message utf8
 
 

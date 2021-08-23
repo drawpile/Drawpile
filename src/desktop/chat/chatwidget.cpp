@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2019 Calle Laakkonen
+   Copyright (C) 2007-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,9 +23,11 @@
 #include "utils/html.h"
 #include "utils/funstuff.h"
 #include "notifications.h"
+#include "net/envelopebuilder.h"
+#include "net/envelope.h"
 
-#include "../libshared/net/meta.h"
 #include "canvas/userlist.h"
+#include "../rustpile/rustpile.h"
 
 #include <QResizeEvent>
 #include <QTextBrowser>
@@ -536,57 +538,33 @@ void ChatWidget::kicked(const QString &kickedBy)
 		d->scrollToEnd(0);
 }
 
-void ChatWidget::receiveMessage(const protocol::MessagePtr &msg)
+void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message)
 {
+	Q_UNUSED(tflags);
+
 	const bool wasAtEnd = d->isAtEnd();
-	int chatId = 0;
+	// The server echoes our PMs back to us, in which case we identify the chat box
+	// the message belongs to based on the recipient field rather than the sender (which is us)
+	const int chatId = recipient > 0 ? (recipient == d->myId ? sender : recipient) : 0;
 
-	if(msg->type() == protocol::MSG_CHAT) {
-		const protocol::Chat &chat = msg.cast<protocol::Chat>();
-		const QString safetext = chat.message().toHtmlEscaped();
-
-		if(chat.isPin()) {
-			d->pinned->setPinText(safetext);
-		} else if(chat.isAction()) {
-			d->publicChat().appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
-
-		} else {
-			if(d->compactMode)
-				d->publicChat().appendMessageCompact(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
-			else
-				d->publicChat().appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), chat.isShout());
-		}
-
-	} else if(msg->type() == protocol::MSG_PRIVATE_CHAT) {
-		const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
-		const QString safetext = chat.message().toHtmlEscaped();
-
-		if(chat.target() != d->myId && chat.contextId() != d->myId) {
-			qWarning("ChatWidget::recivePrivateMessage: message was targeted to user %d, but our ID is %d", chat.target(), d->myId);
-			return;
-		}
-
-		// The server echoes back the messages we send
-		chatId = chat.target() == d->myId ? chat.contextId() : chat.target();
-
+	if(chatId > 0) {
 		if(!d->ensurePrivateChatExists(chatId, this))
 			return;
+	}
 
-		Chat &c = d->chats[chatId];
+	const QString safetext = htmlutils::linkify(message.toHtmlEscaped());
 
-		if(chat.isAction()) {
-			c.appendAction(d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext));
+	Q_ASSERT(d->chats.contains(chatId));
+	Chat &chat = d->chats[chatId];
 
-		} else {
-			if(d->compactMode)
-				c.appendMessageCompact(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
-			else
-				c.appendMessage(msg->contextId(), d->usernameSpan(msg->contextId()), htmlutils::linkify(safetext), false);
-		}
+	if(oflags & rustpile::ChatMessage_OFLAGS_ACTION) {
+		chat.appendAction(d->usernameSpan(sender), safetext);
 
 	} else {
-		qWarning("ChatWidget::receiveMessage: got wrong message type %s!", qPrintable(msg->messageName()));
-		return;
+		if(d->compactMode)
+			chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
+		else
+			chat.appendMessage(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
 	}
 
 	if(chatId != d->currentChat) {
@@ -603,6 +581,11 @@ void ChatWidget::receiveMessage(const protocol::MessagePtr &msg)
 
 	if(wasAtEnd)
 		d->scrollToEnd(chatId);
+}
+
+void ChatWidget::setPinnedMessage(const QString &message)
+{
+	d->pinned->setPinText(message);
 }
 
 void ChatWidget::receiveMarker(int id, const QString &message)
@@ -632,6 +615,10 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 
 void ChatWidget::sendMessage(const QString &msg)
 {
+	const uint8_t tflags = d->preserveChat ? rustpile::ChatMessage_TFLAGS_BYPASS : 0;
+	uint8_t oflags = 0;
+	QString chatmsg = msg;
+
 	if(msg.at(0) == '/') {
 		// Special commands
 
@@ -639,46 +626,45 @@ void ChatWidget::sendMessage(const QString &msg)
 		if(split<0)
 			split = msg.length();
 
-		const QString cmd = msg.mid(1, split-1).toLower();
-		const QString params = msg.mid(split).trimmed();
+		const auto cmd = msg.midRef(1, split-1);
+		const auto params = msg.midRef(split).trimmed();
 
 		if(cmd == "clear") {
 			clear();
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			if(msg.length() > 2)
-				emit message(protocol::Chat::announce(d->myId, msg.mid(2)));
-			return;
+			if(msg.length() > 2) {
+				chatmsg = msg.midRef(2).toString();
+				oflags = rustpile::ChatMessage_OFLAGS_SHOUT;
+			}
 
 		} else if(cmd == "me") {
 			if(!params.isEmpty()) {
-				if(d->currentChat == 0)
-					emit message(protocol::Chat::action(d->myId, params, !d->preserveChat));
-				else
-					emit message(protocol::PrivateChat::action(d->myId, d->currentChat, params));
+				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
+				chatmsg = params.toString();
 			}
-			return;
 
 		} else if(cmd == "pin" && d->currentChat == 0) {
-			if(!params.isEmpty())
-				emit message(protocol::Chat::pin(d->myId, params));
-			return;
+			if(!params.isEmpty()) {
+				oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
+				chatmsg = params.toString();
+			}
 
 		} else if(cmd == "unpin" && d->currentChat == 0) {
-			emit message(protocol::Chat::pin(d->myId, QStringLiteral("-")));
-			return;
+			oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
+			chatmsg = QStringLiteral("-");
 
 		} else if(cmd == "roll") {
-			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6") : params);
+			// TODO this should be done serverside to prevent cheating
+			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6").midRef(0) : params);
 			if(result.number>0) {
-				if(d->currentChat == 0)
-					emit message(protocol::Chat::action(d->myId, "rolls " + result.toString(), !d->preserveChat));
-				else
-					emit message(protocol::PrivateChat::action(d->myId, d->currentChat, "rolls " + result.toString()));
-			} else
+				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
+				chatmsg = "rolls " + result.toString();
+			} else {
 				systemMessage(tr("Invalid dice roll description"));
-			return;
+				return;
+			}
 
 		} else if(cmd == "help") {
 			const QString text = QStringLiteral(
@@ -694,14 +680,17 @@ void ChatWidget::sendMessage(const QString &msg)
 			systemMessage(text);
 			return;
 		}
-
 	}
 
-	// A normal chat message
+	// Send the chat message
+	net::EnvelopeBuilder msgbuilder;
+
 	if(d->currentChat == 0)
-		emit message(protocol::Chat::regular(d->myId, msg, !d->preserveChat));
+		rustpile::write_chat(msgbuilder, d->myId, tflags, oflags, reinterpret_cast<const uint16_t*>(chatmsg.constData()), chatmsg.length());
 	else
-		emit message(protocol::PrivateChat::regular(d->myId, d->currentChat, msg));
+		rustpile::write_privatechat(msgbuilder, d->myId, d->currentChat, oflags, reinterpret_cast<const uint16_t*>(chatmsg.constData()), chatmsg.length());
+
+	emit message(msgbuilder.toEnvelope());
 }
 
 void ChatWidget::chatTabSelected(int index)

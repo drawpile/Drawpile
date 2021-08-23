@@ -628,7 +628,7 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), int32_t(point.x() * 4), int32_t(point.y() * 4))));
+	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), int32_t(point.x()), int32_t(point.y()))));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)

@@ -76,9 +76,9 @@ pub extern "C" fn write_putimage(
 
 
 def field_parameter(field):
-    if field.field_type in ('Bytes', 'String', 'Vec<u8>'):
+    if field.field_type in ('Bytes', 'Vec<u8>'):
         ff = ((field.name, '*const u8'), (f'{field.name}_len', 'usize'))
-    elif field.field_type == 'Vec<u16>':
+    elif field.field_type in ('String', 'Vec<u16>'):
         ff = ((field.name, '*const u16'), (f'{field.name}_len', 'usize'))
     elif field.field_type == 'struct':
         raise NotImplemented
@@ -94,7 +94,8 @@ def field_argument(field, named=False):
     if field.field_type in ('Bytes', 'Vec<u8>', 'Vec<u16>'):
         ff = f'unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }}.into()'
     elif field.field_type == 'String':  # TODO use Cow?
-        ff = f'String::from_utf8_lossy(unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }}).to_string()'
+        # We use UTF16 here because that's how QStrings are encoded internally
+        ff = f'String::from_utf16_lossy(unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }}).to_string()'
     elif field.field_type == 'struct':
         raise NotImplementedError
     else:

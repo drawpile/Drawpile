@@ -31,13 +31,13 @@ use dpcore::paint::{
     AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
     LayerViewOptions, Pixel, Rectangle, Size, UserID,
 };
-use dpcore::protocol::message::{CommandMessage, FillRectMessage, Message};
-use dpcore::protocol::MessageWriter;
+use dpcore::protocol::message::*;
+use dpcore::protocol::{DeserializationError, MessageReader, MessageWriter};
 
 use core::ffi::c_void;
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
-use std::{slice, thread};
+use std::{ptr, slice, thread};
 
 use tracing::{error, warn};
 
@@ -50,6 +50,35 @@ type NotifyAnnotationsCallback = extern "C" fn(ctx: *mut c_void, annotations: *m
 type NotifyCursorCallback =
     extern "C" fn(ctx: *mut c_void, user: UserID, layer: u16, x: i32, y: i32);
 
+type JoinCallback = Option<
+    extern "C" fn(
+        ctx: *mut c_void,
+        user: UserID,
+        flags: u8,
+        name: *const u8,
+        name_len: usize,
+        avatar: *const u8,
+        avatar_len: usize,
+    ),
+>;
+type LeaveCallback = Option<extern "C" fn(ctx: *mut c_void, user: UserID)>;
+type ChatCallback = Option<
+    extern "C" fn(
+        ctx: *mut c_void,
+        sender: UserID,
+        recipient: UserID,
+        tflags: u8,
+        oflags: u8,
+        message: *const u8,
+        message_len: usize,
+    ),
+>;
+type LaserCallback =
+    Option<extern "C" fn(ctx: *mut c_void, user: UserID, persistence: u8, color: u32)>;
+type MarkerCallback =
+    Option<extern "C" fn(ctx: *mut c_void, user: UserID, message: *const u8, message_len: usize)>;
+type DefaultLayerCallback = Option<extern "C" fn(ctx: *mut c_void, layer: LayerID)>;
+
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
 pub struct ViewCache {
@@ -61,7 +90,7 @@ pub struct ViewCache {
 /// changes to the canvas.
 /// Note that these callbacks are called in the *paint engine thread*.
 /// They should only be used to post events to the main thread's event loop.
-struct NotificationCallbacks {
+struct CanvasChangeCallbacks {
     context_object: *mut c_void,
     notify_changes: NotifyChangesCallback,
     notify_resize: NotifyResizeCallback,
@@ -70,8 +99,8 @@ struct NotificationCallbacks {
     notify_cursor: NotifyCursorCallback,
 }
 
-// Unsafe due to the c_void pointer
-unsafe impl Send for NotificationCallbacks {}
+// Unsafe due to the c_void pointer. We promise to be careful with it.
+unsafe impl Send for CanvasChangeCallbacks {}
 
 /// Commands sent to the paint engine
 enum PaintEngineCommand {
@@ -98,13 +127,23 @@ pub struct PaintEngine {
 
     /// View mode changes are done in the main thread
     notify_changes: NotifyChangesCallback,
+    notify_cursor: NotifyCursorCallback,
     context_object: *mut c_void,
+
+    /// Meta message notification context
+    meta_context: *mut c_void,
+    meta_notify_join: JoinCallback,
+    meta_notify_leave: LeaveCallback,
+    meta_notify_chat: ChatCallback,
+    meta_notify_laser: LaserCallback,
+    meta_notify_marker: MarkerCallback,
+    meta_notify_defaultlayer: DefaultLayerCallback,
 }
 
 fn run_paintengine(
     viewcache: Arc<Mutex<ViewCache>>,
     channel: Receiver<PaintEngineCommand>,
-    callbacks: NotificationCallbacks,
+    callbacks: CanvasChangeCallbacks,
 ) {
     let mut canvas = CanvasState::new();
 
@@ -223,7 +262,7 @@ pub extern "C" fn paintengine_new(
         unrefreshed_area: AoE::Nothing,
     }));
 
-    let callbacks = NotificationCallbacks {
+    let callbacks = CanvasChangeCallbacks {
         context_object: ctx,
         notify_changes: changes,
         notify_resize: resizes,
@@ -242,7 +281,15 @@ pub extern "C" fn paintengine_new(
             run_paintengine(viewcache, receiver, callbacks);
         }),
         notify_changes: changes,
+        notify_cursor: cursors,
         context_object: ctx,
+        meta_context: ptr::null_mut(),
+        meta_notify_join: None,
+        meta_notify_leave: None,
+        meta_notify_chat: None,
+        meta_notify_laser: None,
+        meta_notify_marker: None,
+        meta_notify_defaultlayer: None,
     });
 
     Box::into_raw(dp)
@@ -263,6 +310,27 @@ pub extern "C" fn paintengine_free(dp: *mut PaintEngine) {
     }
 }
 
+/// Register callbacks for Meta messages
+#[no_mangle]
+pub extern "C" fn paintengine_register_meta_callbacks(
+    dp: &mut PaintEngine,
+    ctx: *mut c_void,
+    join: JoinCallback,
+    leave: LeaveCallback,
+    chat: ChatCallback,
+    laser: LaserCallback,
+    markers: MarkerCallback,
+    defaultlayer: DefaultLayerCallback,
+) {
+    dp.meta_context = ctx;
+    dp.meta_notify_join = join;
+    dp.meta_notify_leave = leave;
+    dp.meta_notify_chat = chat;
+    dp.meta_notify_laser = laser;
+    dp.meta_notify_marker = markers;
+    dp.meta_notify_defaultlayer = defaultlayer;
+}
+
 /// Get the current size of the canvas.
 #[no_mangle]
 pub extern "C" fn paintengine_canvas_size(dp: &PaintEngine) -> Size {
@@ -271,7 +339,7 @@ pub extern "C" fn paintengine_canvas_size(dp: &PaintEngine) -> Size {
 }
 
 /// Receive one or more messages
-/// Only Command type messages are handled.
+/// Only Command and Meta type messages are handled.
 #[no_mangle]
 pub extern "C" fn paintengine_receive_messages(
     dp: &mut PaintEngine,
@@ -279,30 +347,43 @@ pub extern "C" fn paintengine_receive_messages(
     messages: *const u8,
     messages_len: usize,
 ) {
-    let msgs = unsafe { slice::from_raw_parts(messages, messages_len) };
+    let mut reader = MessageReader::new(unsafe { slice::from_raw_parts(messages, messages_len) });
 
-    // TODO loop and consume all messages, or specify that this function
-    // only takes one.
+    loop {
+        let msg = Message::read(&mut reader);
 
-    let msg = Message::deserialize(msgs);
-    match msg {
-        Result::Ok(Message::Command(m)) => {
-            if let Err(err) = dp.engine_channel.send(if local {
-                PaintEngineCommand::LocalMessage(m)
-            } else {
-                PaintEngineCommand::RemoteMessage(m)
-            }) {
-                warn!("Couldn't send command to paint engine thread {:?}", err);
+        match msg {
+            Result::Ok(Message::Command(m)) => {
+                if let Err(err) = dp.engine_channel.send(if local {
+                    PaintEngineCommand::LocalMessage(m)
+                } else {
+                    PaintEngineCommand::RemoteMessage(m)
+                }) {
+                    warn!("Couldn't send command to paint engine thread {:?}", err);
+                }
             }
-        }
-        Result::Ok(_) => {
-            // other messages are ignored
-        }
-        Result::Err(_e) => {
-            // TODO
-            panic!();
-        }
-    };
+            Result::Ok(Message::ServerMeta(m)) => {
+                if !local {
+                    dp.handle_servermeta(m);
+                }
+            }
+            Result::Ok(Message::ClientMeta(m)) => {
+                if !local {
+                    dp.handle_clientmeta(m);
+                }
+            }
+            Result::Ok(_) => {
+                // other messages are ignored
+            }
+            Result::Err(DeserializationError::NoMoreMessages) => {
+                return;
+            }
+            Result::Err(e) => {
+                warn!("Received invalid message: {}", e);
+                return;
+            }
+        };
+    }
 }
 
 /// Clean up the paint engine state after disconnecting from a session
@@ -757,4 +838,93 @@ pub extern "C" fn paintengine_paint_changes(
 
     FlattenedTileIterator::new(&vc.layerstack, &dp.view_opts, intersection)
         .for_each(|(x, y, t)| paint_func(ctx, x, y, t.pixels.as_ptr() as *const u8));
+}
+
+impl PaintEngine {
+    fn handle_servermeta(&mut self, msg: ServerMetaMessage) {
+        use ServerMetaMessage::*;
+        match msg {
+            Join(u, m) => {
+                if let Some(cb) = self.meta_notify_join {
+                    (cb)(
+                        self.meta_context,
+                        u,
+                        m.flags,
+                        m.name.as_ptr(),
+                        m.name.len(),
+                        m.avatar.as_ptr(),
+                        m.avatar.len(),
+                    );
+                }
+            }
+            Leave(u) => {
+                if let Some(cb) = self.meta_notify_leave {
+                    (cb)(self.meta_context, u);
+                }
+            }
+            Chat(u, m) => {
+                if let Some(cb) = self.meta_notify_chat {
+                    (cb)(
+                        self.meta_context,
+                        u,
+                        0,
+                        m.tflags,
+                        m.oflags,
+                        m.message.as_ptr(),
+                        m.message.len(),
+                    );
+                }
+            }
+            PrivateChat(u, m) => {
+                if let Some(cb) = self.meta_notify_chat {
+                    (cb)(
+                        self.meta_context,
+                        u,
+                        m.target,
+                        0,
+                        m.oflags,
+                        m.message.as_ptr(),
+                        m.message.len(),
+                    );
+                }
+            }
+            SoftReset(u) => {
+                // TODO
+                // Send truncate point
+                // Send softreset point if u is local user
+            }
+
+            // Handled by the ACL filter:
+            SessionOwner(_, _) | TrustedUsers(_, _) => (),
+        }
+    }
+
+    fn handle_clientmeta(&mut self, msg: ClientMetaMessage) {
+        use ClientMetaMessage::*;
+        match msg {
+            LaserTrail(u, m) => {
+                if let Some(cb) = self.meta_notify_laser {
+                    (cb)(self.meta_context, u, m.persistence, m.color);
+                }
+            }
+            MovePointer(u, m) => {
+                (self.notify_cursor)(self.context_object, u, 0, m.x, m.y);
+            }
+            Marker(u, m) => {
+                if let Some(cb) = self.meta_notify_marker {
+                    (cb)(self.meta_context, u, m.as_ptr(), m.len());
+                }
+            }
+            DefaultLayer(_, m) => {
+                if let Some(cb) = self.meta_notify_defaultlayer {
+                    (cb)(self.meta_context, m);
+                }
+            }
+            // Handled by the ACL filter:
+            UserACL(_, _) | LayerACL(_, _) | FeatureAccessLevels(_, _) => (),
+
+            // Recording stuff:
+            Interval(_, _) | Filtered(_, _) => (),
+        }
+    }
 }

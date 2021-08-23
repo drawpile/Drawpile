@@ -52,6 +52,8 @@ impl {{ message.name }}Message {
 
     {# (DE)SERIALIZATION FUNCTIONS #}
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate({{ message.min_len }}, {{ message.max_len }})?;
+
         {% for field in message.fields %}
         {% if field.subfields %}
         let mut {{ field.name }} = Vec::<{{ field.struct_name }}>::with_capacity(reader.remaining() / {{ field.min_len }});
@@ -249,7 +251,7 @@ impl Message {
                 {% elif message.fields|length > 1 %}
                     {{ message.name }}Message::deserialize(r)?
                 {% elif message.fields %}
-                    r.{{ read_field(message.fields[0].field_type) }}
+                    r.validate({{ message.min_len }}, {{ message.max_len }})?.{{ read_field(message.fields[0].field_type) }}
                 {% endif %})),
             {% endfor %}{# message in messages #}
             _ => {
