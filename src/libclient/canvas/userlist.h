@@ -30,6 +30,8 @@ namespace protocol { class MessagePtr; }
 
 namespace canvas {
 
+class AclState;
+
 /**
  * @brief Information about a user
  */
@@ -150,9 +152,7 @@ public:
 	protocol::MessagePtr getTrustUserCommand(int localId, int userId, bool op) const;
 
 public slots:
-	void updateOperators(const QList<uint8_t> operatorIds);
-	void updateTrustedUsers(const QList<uint8_t> trustedIds);
-	void updateLocks(const QList<uint8_t> lockedUserIds);
+	void updateAclState(const AclState *state);
 	void updateMuteList(const QJsonArray &mutedUserIds);
 
 private:

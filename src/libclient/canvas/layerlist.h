@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2019 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define DP_NET_LAYERLIST_H
 
 #include "../core/blendmodes.h"
-#include "features.h"
+#include "acl.h"
 
 #include <QAbstractListModel>
 #include <QMimeData>
@@ -37,8 +37,6 @@ namespace paintcore {
 }
 
 namespace canvas {
-
-class AclFilter;
 
 struct LayerListItem {
 	//! Layer ID
@@ -116,11 +114,8 @@ public:
 	void previewOpacityChange(uint16_t id, float opacity);
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
-	void setAclFilter(AclFilter *filter) { m_aclfilter = filter; }
+	void setAclState(AclState *state) { m_aclstate = state; }
 	const paintcore::Layer *getLayerData(uint16_t id) const;
-
-	uint8_t myId() const { return m_myId; }
-	void setMyId(uint8_t id) { m_myId = id; }
 
 	/**
 	 * Enable/disable any (not just own) layer autoselect requests
@@ -172,10 +167,9 @@ private:
 
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
-	AclFilter *m_aclfilter;
+	AclState *m_aclstate;
 	bool m_autoselectAny;
 	uint16_t m_defaultLayer;
-	uint8_t m_myId;
 };
 
 /**

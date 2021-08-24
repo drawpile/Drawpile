@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2019 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 */
 
 #include "layerlist.h"
-#include "core/layer.h"
 #include "../libshared/net/layer.h"
-#include "aclfilter.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -31,8 +29,8 @@
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent), m_aclfilter(nullptr),
-	  m_autoselectAny(true), m_defaultLayer(0), m_myId(1)
+	: QAbstractListModel(parent), m_aclstate(nullptr),
+	  m_autoselectAny(true), m_defaultLayer(0)
 {
 }
 	
@@ -54,7 +52,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		case Qt::EditRole: return item.title;
 		case IdRole: return item.id;
 		case IsDefaultRole: return item.id == m_defaultLayer;
-		case IsLockedRole: return m_aclfilter && m_aclfilter->isLayerLocked(item.id);
+		case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
 		case IsFixedRole: return item.fixed;
 		}
 	}
@@ -135,7 +133,8 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 #endif
 	}
 
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_myId, layers)));
+	Q_ASSERT(m_aclstate);
+	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_aclstate->localUserId(), layers)));
 }
 
 int LayerListModel::indexOf(uint16_t id) const
@@ -248,6 +247,8 @@ void LayerListModel::setLayers(QVector<LayerListItem> items)
 	// See if there are any new layers we should autoselect
 	int autoselect = -1;
 
+	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
+
 	if(m_items.size() < items.size()) {
 		for(const LayerListItem &newItem : items) {
 			// O(n²) loop but the number of layers is typically small enough that
@@ -269,7 +270,7 @@ void LayerListModel::setLayers(QVector<LayerListItem> items)
 			// 3. Otherwise, select any new layer that was created by us
 			// TODO implement the other rules
 			if(
-					newItem.creatorId() == m_myId ||
+					newItem.creatorId() == localUser ||
 					(m_autoselectAny && (
 						 (m_defaultLayer>0 && newItem.id == m_defaultLayer)
 						 || m_defaultLayer==0
@@ -325,9 +326,11 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 {
 	Q_UNUSED(mimeType);
 	if(type==QVariant::Image) {
+#if 0 // TODO
 		const paintcore::Layer *layer = m_source->getLayerData(m_id);
 		if(layer)
 			return layer->toCroppedImage(nullptr, nullptr);
+#endif
 	}
 
 	return QVariant();
@@ -335,7 +338,9 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 
 int LayerListModel::getAvailableLayerId() const
 {
-	const int prefix = m_myId << 8;
+	Q_ASSERT(m_aclstate);
+
+	const int prefix = int(m_aclstate->localUserId()) << 8;
 	QList<int> takenIds;
 	for(const LayerListItem &item : m_items) {
 		if((item.id & 0xff00) == prefix)

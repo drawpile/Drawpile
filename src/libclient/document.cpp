@@ -26,7 +26,6 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/selection.h"
 #include "canvas/layerlist.h"
-#include "canvas/aclfilter.h"
 #include "canvas/loader.h"
 #include "canvas/userlist.h"
 #include "canvas/canvassaverrunnable.h"
@@ -894,7 +893,7 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 		qWarning("fillArea: no canvas!");
 		return;
 	}
-	if(m_canvas->selection() && !m_canvas->aclFilter()->isLayerLocked(m_toolctrl->activeLayer())) {
+	if(m_canvas->selection() && !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer())) {
 		m_client->sendEnvelope(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
 	}
 }

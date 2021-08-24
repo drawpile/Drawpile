@@ -33,7 +33,6 @@
 #include "core/point.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
-#include "canvas/aclfilter.h"
 
 namespace tools {
 
@@ -142,7 +141,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	if(m_model != model) {
 		m_model = model;
-		connect(m_model->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
+		connect(m_model->aclState(), &canvas::AclState::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
 	}
 	emit modelChanged(model);
 }
@@ -277,7 +276,7 @@ void ToolController::finishMultipartDrawing()
 		return;
 	}
 
-	if(m_model->aclFilter()->isLayerLocked(m_activeLayer)) {
+	if(m_model->aclState()->isLayerLocked(m_activeLayer)) {
 		// It is possible for the active layer to become locked
 		// before the user has finished multipart drawing.
 		qWarning("Cannot finish multipart drawing: active layer is locked!");

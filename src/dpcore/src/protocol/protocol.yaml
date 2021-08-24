@@ -518,7 +518,7 @@ AnnotationEdit:
     fields:
         - id u16: hex
         - bg argb32
-        - flags u8
+        - flags flags: [protect, valign_center, valign_bottom]
         - border u8
         - text utf8
 

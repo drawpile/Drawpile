@@ -829,6 +829,11 @@ pub struct AnnotationEditMessage {
 }
 
 impl AnnotationEditMessage {
+    pub const FLAGS_PROTECT: u8 = 0x1;
+    pub const FLAGS_VALIGN_CENTER: u8 = 0x2;
+    pub const FLAGS_VALIGN_BOTTOM: u8 = 0x4;
+    pub const FLAGS: &'static [&'static str] = &["protect", "valign_center", "valign_bottom"];
+
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         reader.validate(8, 65535)?;
 
@@ -859,7 +864,7 @@ impl AnnotationEditMessage {
     fn to_text(&self, txt: TextMessage) -> TextMessage {
         txt.set("id", format!("0x{:04x}", self.id))
             .set_argb32("bg", self.bg)
-            .set("flags", self.flags.to_string())
+            .set_flags("flags", &Self::FLAGS, self.flags)
             .set("border", self.border.to_string())
             .set("text", self.text.clone())
     }
@@ -868,7 +873,7 @@ impl AnnotationEditMessage {
         Self {
             id: tm.get_u16("id"),
             bg: tm.get_argb32("bg"),
-            flags: tm.get_u8("flags"),
+            flags: tm.get_flags(&Self::FLAGS, "flags"),
             border: tm.get_u8("border"),
             text: tm.get_str("text").to_string(),
         }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2019 Calle Laakkonen
+   Copyright (C) 2007-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "userlist.h"
 #include "utils/icon.h"
+#include "acl.h"
 #include "../libshared/net/meta.h"
 #include "../libshared/net/meta2.h"
 
@@ -184,42 +185,34 @@ void UserListModel::reset()
 	endRemoveRows();
 }
 
-void UserListModel::updateOperators(const QList<uint8_t> ids)
+void UserListModel::updateAclState(const AclState *acl)
 {
 	for(int i=0;i<m_users.size();++i) {
 		User &u = m_users[i];
 
-		const bool op = ids.contains(u.id);
+		bool changed = false;
+
+		const bool op = acl->isOperator(u.id);
+		const bool trusted = acl->isTrusted(u.id);
+		const bool locked = acl->isLocked(u.id);
+
 		if(op != u.isOperator) {
 			u.isOperator = op;
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			changed = true;
 		}
-	}
-}
 
-void UserListModel::updateTrustedUsers(const QList<uint8_t> trustedIds)
-{
-	for(int i=0;i<m_users.size();++i) {
-		User &u = m_users[i];
-
-		const bool trusted = trustedIds.contains(u.id);
 		if(trusted != u.isTrusted) {
 			u.isTrusted = trusted;
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			changed = true;
 		}
-	}
-}
 
-void UserListModel::updateLocks(const QList<uint8_t> ids)
-{
-	for(int i=0;i<m_users.size();++i) {
-		User &u = m_users[i];
-
-		const bool lock = ids.contains(u.id);
-		if(lock != u.isLocked) {
-			u.isLocked = lock;
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+		if(locked != u.isLocked) {
+			u.isLocked = locked;
+			changed = true;
 		}
+
+		if(changed)
+			emit dataChanged(index(i, 0), index(i, columnCount()-1));
 	}
 }
 

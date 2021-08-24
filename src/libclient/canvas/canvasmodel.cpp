@@ -20,7 +20,7 @@
 #include "canvasmodel.h"
 #include "layerlist.h"
 #include "userlist.h"
-#include "aclfilter.h"
+#include "acl.h"
 #include "selection.h"
 #include "loader.h"
 #include "paintengine.h"
@@ -47,6 +47,7 @@ void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflag
 void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
 void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
 void metaDefaultLayer(void *ctx, uint16_t layerId);
+void metaAclChange(void *ctx, uint32_t changes);
 
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(1)
@@ -54,11 +55,9 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
 
-	m_aclfilter = new AclFilter(this);
+	m_aclstate = new AclState(this);
 
-	connect(m_aclfilter, &AclFilter::operatorListChanged, m_userlist, &UserListModel::updateOperators);
-	connect(m_aclfilter, &AclFilter::trustedUserListChanged, m_userlist, &UserListModel::updateTrustedUsers);
-	connect(m_aclfilter, &AclFilter::userLocksChanged, m_userlist, &UserListModel::updateLocks);
+	connect(m_aclstate, &AclState::userBitsChanged, m_userlist, &UserListModel::updateAclState);
 
 	m_paintengine = new PaintEngine(this);
 
@@ -70,13 +69,14 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 		&metaChatMessage,
 		&metaLaserTrail,
 		&metaMarkerMessage,
-		&metaDefaultLayer
+		&metaDefaultLayer,
+		&metaAclChange
 	);
 
-	m_aclfilter->reset(localUserId, true);
+	m_aclstate->setLocalUserId(localUserId);
+	rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
 
-	m_layerlist->setMyId(localUserId);
-	m_layerlist->setAclFilter(m_aclfilter);
+	m_layerlist->setAclState(m_aclstate);
 	m_layerlist->setLayerGetter([this](int id)->const paintcore::Layer* {
 #if 0 // FIXME
 		return m_layerstack->getLayer(id);
@@ -89,11 +89,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers, Qt::QueuedConnection); // queued connection needs to be set explicitly here for some reason
 
 	updateLayerViewOptions();
-}
-
-uint8_t CanvasModel::localUserId() const
-{
-	return m_localUserId;
 }
 
 QSize CanvasModel::size() const
@@ -115,13 +110,12 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 	}
 
 	m_localUserId = myUserId;
-	m_layerlist->setMyId(myUserId);
 	m_layerlist->setAutoselectAny(true);
 
+	m_aclstate->setLocalUserId(myUserId);
+
 	if(join)
-		m_aclfilter->reset(myUserId, false);
-	else
-		m_aclfilter->setOnlineMode(myUserId);
+		rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
 
 	m_userlist->reset();
 	m_mode = Mode::Online;
@@ -131,7 +125,7 @@ void CanvasModel::disconnectedFromServer()
 {
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
-	m_aclfilter->reset(m_localUserId, true);
+	rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
 	m_mode = Mode::Offline;
 }
 
@@ -156,24 +150,6 @@ void CanvasModel::endPlayback()
 void CanvasModel::handleCommand(protocol::MessagePtr cmd)
 {
 	using namespace protocol;
-
-#if 0 // FIXME
-	if(cmd->type() == protocol::MSG_INTERNAL) {
-		m_statetracker->receiveQueuedCommand(cmd);
-		return;
-	}
-#endif
-
-	// Apply ACL filter
-	if(m_mode != Mode::Playback && !m_aclfilter->filterMessage(*cmd)) {
-		qWarning("Filtered %s message from %d", qPrintable(cmd->messageName()), cmd->contextId());
-		if(m_recorder)
-			m_recorder->recordMessage(cmd->asFiltered());
-		return;
-
-	} else if(m_recorder) {
-		m_recorder->recordMessage(cmd);
-	}
 
 	// TODO use envelopes rather than MessagePtrs
 	QByteArray buf(cmd->length(), 0);
@@ -449,6 +425,21 @@ void metaDefaultLayer(void *ctx, uint16_t layerId)
 	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
 
 	canvas->m_layerlist->setDefaultLayer(layerId);
+}
+
+void metaAclChange(void *ctx, uint32_t changes)
+{
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
+
+	if(changes & 0x01)
+		canvas->m_aclstate->updateUserBits(*rustpile::paintengine_get_acl_users(canvas->paintEngine()->engine()));
+
+	if(changes & 0x02)
+		canvas->m_aclstate->updateLayers(canvas->paintEngine()->engine());
+
+	if(changes & 0x04)
+		canvas->m_aclstate->updateFeatures(*rustpile::paintengine_get_acl_features(canvas->paintEngine()->engine()));
 }
 
 }

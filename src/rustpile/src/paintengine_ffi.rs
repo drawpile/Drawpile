@@ -32,6 +32,7 @@ use dpcore::paint::{
     LayerViewOptions, Pixel, Rectangle, Size, UserID,
 };
 use dpcore::protocol::message::*;
+use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::{DeserializationError, MessageReader, MessageWriter};
 
 use core::ffi::c_void;
@@ -78,6 +79,7 @@ type LaserCallback =
 type MarkerCallback =
     Option<extern "C" fn(ctx: *mut c_void, user: UserID, message: *const u8, message_len: usize)>;
 type DefaultLayerCallback = Option<extern "C" fn(ctx: *mut c_void, layer: LayerID)>;
+type AclChangeCallback = Option<extern "C" fn(ctx: *mut c_void, changes: AclChange)>;
 
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
@@ -125,6 +127,9 @@ pub struct PaintEngine {
     /// The paint engine thread's handle
     thread_handle: thread::JoinHandle<()>,
 
+    /// Message filtering state
+    aclfilter: AclFilter,
+
     /// View mode changes are done in the main thread
     notify_changes: NotifyChangesCallback,
     notify_cursor: NotifyCursorCallback,
@@ -138,6 +143,7 @@ pub struct PaintEngine {
     meta_notify_laser: LaserCallback,
     meta_notify_marker: MarkerCallback,
     meta_notify_defaultlayer: DefaultLayerCallback,
+    meta_notify_aclchange: AclChangeCallback,
 }
 
 fn run_paintengine(
@@ -280,6 +286,7 @@ pub extern "C" fn paintengine_new(
         thread_handle: thread::spawn(move || {
             run_paintengine(viewcache, receiver, callbacks);
         }),
+        aclfilter: AclFilter::new(),
         notify_changes: changes,
         notify_cursor: cursors,
         context_object: ctx,
@@ -290,6 +297,7 @@ pub extern "C" fn paintengine_new(
         meta_notify_laser: None,
         meta_notify_marker: None,
         meta_notify_defaultlayer: None,
+        meta_notify_aclchange: None,
     });
 
     Box::into_raw(dp)
@@ -321,6 +329,7 @@ pub extern "C" fn paintengine_register_meta_callbacks(
     laser: LaserCallback,
     markers: MarkerCallback,
     defaultlayer: DefaultLayerCallback,
+    aclchange: AclChangeCallback,
 ) {
     dp.meta_context = ctx;
     dp.meta_notify_join = join;
@@ -329,6 +338,7 @@ pub extern "C" fn paintengine_register_meta_callbacks(
     dp.meta_notify_laser = laser;
     dp.meta_notify_marker = markers;
     dp.meta_notify_defaultlayer = defaultlayer;
+    dp.meta_notify_aclchange = aclchange;
 }
 
 /// Get the current size of the canvas.
@@ -348,12 +358,31 @@ pub extern "C" fn paintengine_receive_messages(
     messages_len: usize,
 ) {
     let mut reader = MessageReader::new(unsafe { slice::from_raw_parts(messages, messages_len) });
+    let mut aclchanges = 0;
 
     loop {
-        let msg = Message::read(&mut reader);
+        let msg = match Message::read(&mut reader) {
+            Result::Ok(m) => m,
+            Result::Err(DeserializationError::NoMoreMessages) => {
+                break;
+            }
+            Result::Err(e) => {
+                warn!("Received invalid message: {}", e);
+                break;
+            }
+        };
+
+        let (ok, changes) = dp.aclfilter.filter_message(&msg);
+
+        if !ok {
+            warn!("Filtered out {}", msg.as_text());
+            continue;
+        }
+
+        aclchanges |= changes;
 
         match msg {
-            Result::Ok(Message::Command(m)) => {
+            Message::Command(m) => {
                 if let Err(err) = dp.engine_channel.send(if local {
                     PaintEngineCommand::LocalMessage(m)
                 } else {
@@ -362,27 +391,24 @@ pub extern "C" fn paintengine_receive_messages(
                     warn!("Couldn't send command to paint engine thread {:?}", err);
                 }
             }
-            Result::Ok(Message::ServerMeta(m)) => {
+            Message::ServerMeta(m) => {
                 if !local {
                     dp.handle_servermeta(m);
                 }
             }
-            Result::Ok(Message::ClientMeta(m)) => {
+            Message::ClientMeta(m) => {
                 if !local {
                     dp.handle_clientmeta(m);
                 }
             }
-            Result::Ok(_) => {
-                // other messages are ignored
-            }
-            Result::Err(DeserializationError::NoMoreMessages) => {
-                return;
-            }
-            Result::Err(e) => {
-                warn!("Received invalid message: {}", e);
-                return;
-            }
+            Message::Control(_) => (),
         };
+    }
+
+    if aclchanges != 0 {
+        if let Some(cb) = dp.meta_notify_aclchange {
+            (cb)(dp.meta_context, aclchanges);
+        }
     }
 }
 
@@ -394,6 +420,16 @@ pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
             "Couldn't send cleanup command to paint engine thread {:?}",
             err
         );
+    }
+}
+
+/// Reset the ACL filter back to local (non-networked) operating mode
+#[no_mangle]
+pub extern "C" fn paintengine_reset_acl(dp: &mut PaintEngine, local_user: UserID) {
+    dp.aclfilter.reset(local_user);
+
+    if let Some(cb) = dp.meta_notify_aclchange {
+        (cb)(dp.meta_context, 0xff);
     }
 }
 
@@ -813,6 +849,27 @@ pub extern "C" fn paintengine_get_layer_content(
     }
 }
 
+#[no_mangle]
+pub extern "C" fn paintengine_get_acl_users<'a>(dp: &'a PaintEngine) -> &'a UserACLs {
+    dp.aclfilter.users()
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_get_acl_layers(
+    dp: &PaintEngine,
+    context: *mut c_void,
+    visitor: extern "C" fn(ctx: *mut c_void, id: LayerID, layer: &LayerACL)
+) {
+    for (&id, acl) in dp.aclfilter.layers().iter() {
+        (visitor)(context, id, acl)
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_get_acl_features<'a>(dp: &'a PaintEngine) -> &'a FeatureTiers {
+    dp.aclfilter.feature_tiers()
+}
+
 /// Paint all the changed tiles in the given area
 ///
 /// A paintengine instance can only have a single observer (which itself can be
@@ -829,6 +886,10 @@ pub extern "C" fn paintengine_paint_changes(
     paint_func: extern "C" fn(ctx: *mut c_void, x: i32, y: i32, pixels: *const u8),
 ) {
     let mut vc = dp.viewcache.lock().unwrap();
+
+    if vc.layerstack.width() < 1 {
+        return;
+    }
 
     let intersection = if rect.w < 0 {
         // We interpret an invalid rectangle to mean "refresh everything"

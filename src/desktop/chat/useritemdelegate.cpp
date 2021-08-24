@@ -235,8 +235,8 @@ void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &p
 
 	m_menuTitle->setText(index.data(canvas::UserListModel::NameRole).toString());
 
-	const bool amOp = m_doc->canvas()->aclFilter()->isLocalUserOperator();
-	const bool amDeputy = m_doc->canvas()->aclFilter()->isLocalUserTrusted() && m_doc->isSessionDeputies();
+	const bool amOp = m_doc->canvas()->aclState()->amOperator();
+	const bool amDeputy = m_doc->canvas()->aclState()->amTrusted() && m_doc->isSessionDeputies();
 	const bool isSelf = m_menuId == m_doc->canvas()->localUserId();
 	const bool isMod = index.data(canvas::UserListModel::IsModRole).toBool();
 

@@ -18,7 +18,6 @@
 */
 
 #include "canvas/layerlist.h"
-#include "canvas/aclfilter.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/userlist.h"
 #include "docks/layerlistdock.h"
@@ -31,6 +30,7 @@
 #include "../libshared/net/layer.h"
 #include "../libshared/net/meta2.h"
 #include "../libshared/net/undo.h"
+#include "../rustpile/rustpile.h"
 
 #include "ui_layerbox.h"
 
@@ -135,8 +135,8 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->layerlist(), &canvas::LayerListModel::layersReordered, this, &LayerList::onLayerReorder);
 	connect(canvas->layerlist(), &canvas::LayerListModel::modelReset, this, &LayerList::onLayerReorder);
 	connect(canvas->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
-	connect(canvas->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
-	connect(canvas->aclFilter(), &canvas::AclFilter::layerAclChanged, this, &LayerList::lockStatusChanged);
+	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
+	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::lockStatusChanged);
 	connect(m_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	// Init
@@ -182,8 +182,8 @@ void LayerList::onFeatureAccessChange(canvas::Feature feature, bool canUse)
 void LayerList::updateLockedControls()
 {
 	// The basic permissions
-	const bool canEdit = m_canvas && m_canvas->aclFilter()->canUseFeature(canvas::Feature::EditLayers);
-	const bool ownLayers = m_canvas && m_canvas->aclFilter()->canUseFeature(canvas::Feature::OwnLayers);
+	const bool canEdit = m_canvas && m_canvas->aclState()->canUseFeature(canvas::Feature::EditLayers);
+	const bool ownLayers = m_canvas && m_canvas->aclState()->canUseFeature(canvas::Feature::OwnLayers);
 
 	// Layer creation actions work as long as we have an editing permission
 	const bool canAdd = canEdit | ownLayers;
@@ -433,7 +433,7 @@ bool LayerList::canMergeCurrent() const
 	const QModelIndex below = index.sibling(index.row()+1, 0);
 
 	return index.isValid() && below.isValid() &&
-		   !m_canvas->aclFilter()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt())
+		   !m_canvas->aclState()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt())
 			;
 }
 
@@ -545,7 +545,7 @@ bool LayerList::isCurrentLayerLocked() const
 	if(idx.isValid()) {
 		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
 		return item.hidden
-			|| m_canvas->aclFilter()->isLayerLocked(item.id)
+			|| m_canvas->aclState()->isLayerLocked(item.id)
 			;
 			// FIXME: || (m_canvas->layerStack()->isCensored() && item.censored);
 	}
@@ -604,9 +604,9 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 void LayerList::lockStatusChanged(int layerId)
 {
 	if(m_selectedId == layerId) {
-		const canvas::AclFilter::LayerAcl acl = m_canvas->aclFilter()->layerAcl(layerId);
-		m_ui->lockButton->setChecked(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty());
-		m_aclmenu->setAcl(acl.locked, acl.tier, acl.exclusive);
+		const auto acl = m_canvas->aclState()->layerAcl(layerId);
+		m_ui->lockButton->setChecked(acl.locked || acl.tier != rustpile::Tier::Guest || !acl.exclusive.isEmpty());
+		m_aclmenu->setAcl(acl.locked, int(acl.tier), acl.exclusive);
 	}
 }
 

@@ -34,7 +34,7 @@ public:
 	explicit LayerAclMenu(QWidget *parent=nullptr);
 
 	void setUserList(QAbstractItemModel *model);
-	void setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> acl);
+	void setAcl(bool lock, int tier, const QList<uint8_t> acl);
 	void setCensored(bool censor);
 
 signals:

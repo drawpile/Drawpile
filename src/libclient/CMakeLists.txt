@@ -26,6 +26,7 @@ set (
 	canvas/retcon.cpp
 	canvas/loader.cpp
 	canvas/aclfilter.cpp
+	canvas/acl.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
 	canvas/history.cpp

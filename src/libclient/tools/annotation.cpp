@@ -19,7 +19,6 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
-#include "canvas/aclfilter.h"
 #include "net/client.h"
 
 #include "toolcontroller.h"
@@ -58,7 +57,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 		m_shape = QRect{selection.rect.x, selection.rect.y, selection.rect.w, selection.rect.h};
 
 
-		if(selection.protect && !owner.model()->aclFilter()->isLocalUserOperator() && (selection.id >> 8) != owner.client()->myId()) {
+		if(selection.protect && !owner.model()->aclState()->amOperator() && (selection.id >> 8) != owner.client()->myId()) {
 			m_handle = Handle::Outside;
 		} else {
 			m_handle = handleAt(m_shape, point.toPoint(), handleSize);
@@ -68,7 +67,7 @@ void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
 
 	} else {
 		// No annotation, start creating a new one
-		if(!owner.model()->aclFilter()->canUseFeature(canvas::Feature::CreateAnnotation)) {
+		if(!owner.model()->aclState()->canUseFeature(canvas::Feature::CreateAnnotation)) {
 			m_handle = Handle::Outside;
 			return;
 		}

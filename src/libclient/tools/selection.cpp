@@ -19,7 +19,6 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
-#include "canvas/aclfilter.h"
 #include "net/client.h"
 
 #include "tools/selection.h"
@@ -72,7 +71,7 @@ void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool c
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		if(sel->pasteImage().isNull() && !owner.model()->aclFilter()->isLayerLocked(owner.activeLayer())) {
+		if(sel->pasteImage().isNull() && !owner.model()->aclState()->isLayerLocked(owner.activeLayer())) {
 			startMove();
 		}
 

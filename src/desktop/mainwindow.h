@@ -24,7 +24,7 @@
 #include <QUrl>
 
 #include "tools/tool.h"
-#include "canvas/features.h"
+#include "canvas/acl.h"
 
 class QActionGroup;
 class QMessageBox;

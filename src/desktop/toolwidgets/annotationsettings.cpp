@@ -23,7 +23,6 @@
 #include "tools/annotation.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/userlist.h"
-#include "canvas/aclfilter.h"
 #include "scene/canvasscene.h"
 #include "scene/annotationitem.h"
 #include "net/client.h"
@@ -307,7 +306,7 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 			controller()->model()->userlist()->getUsername(a->id() >> 8)));
 		m_ui->protect->setChecked(a->protect());
 
-		const bool opOrOwner = controller()->model()->aclFilter()->isLocalUserOperator() || (a->id() >> 8) == controller()->client()->myId();
+		const bool opOrOwner = controller()->model()->aclState()->amOperator() || (a->id() >> 8) == controller()->client()->myId();
 		if(a->protect() && !opOrOwner)
 			setUiEnabled(false);
 		else if(!opOrOwner)

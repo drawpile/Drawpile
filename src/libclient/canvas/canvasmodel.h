@@ -39,7 +39,7 @@ namespace protocol {
 namespace canvas {
 
 class StateTracker;
-class AclFilter;
+class AclState;
 class UserListModel;
 class LayerListModel;
 class Selection;
@@ -65,7 +65,7 @@ public:
 
 	protocol::MessageList generateSnapshot() const;
 
-	uint8_t localUserId() const;
+	uint8_t localUserId() const { return m_localUserId; }
 
 	QImage selectionToImage(int layerId) const;
 	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
@@ -75,7 +75,7 @@ public:
 	void startPlayback();
 	void endPlayback();
 
-	AclFilter *aclFilter() const { return m_aclfilter; }
+	AclState *aclState() const { return m_aclstate; }
 	UserListModel *userlist() const { return m_userlist; }
 	LayerListModel *layerlist() const { return m_layerlist; }
 
@@ -83,6 +83,8 @@ public:
 	 * @brief Is the canvas in "online mode"?
 	 *
 	 * This mainly affects how certain access controls are checked.
+	 *
+	 * TODO remove this
 	 */
 	bool isOnline() const { return m_mode == Mode::Online; }
 
@@ -157,8 +159,9 @@ private:
 	friend void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
 	friend void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
 	friend void metaDefaultLayer(void *ctx, uint16_t layerId);
+	friend void metaAclChange(void *ctx, uint32_t changes);
 
-	AclFilter *m_aclfilter;
+	AclState *m_aclstate;
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;
 

@@ -24,6 +24,12 @@ static const uint8_t LayerCreateMessage_FLAGS_INSERT = 2;
 
 static const uint8_t JoinMessage_FLAGS_MOD = 2;
 
+static const uint8_t AnnotationEditMessage_FLAGS_PROTECT = 1;
+
+static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_BOTTOM = 4;
+
+static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_CENTER = 2;
+
 static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
 
 static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
@@ -72,6 +78,14 @@ enum class LayerViewMode {
   Normal,
   Solo,
   Onionskin,
+};
+
+/// Feature access tiers
+enum class Tier : uint8_t {
+  Operator,
+  Trusted,
+  Authenticated,
+  Guest,
 };
 
 enum class VAlign {
@@ -200,6 +214,10 @@ using MarkerCallback = void(*)(void *ctx, UserID user, const uint8_t *message, u
 
 using DefaultLayerCallback = void(*)(void *ctx, LayerID layer);
 
+using AclChange = uint32_t;
+
+using AclChangeCallback = void(*)(void *ctx, AclChange changes);
+
 /// The result of an "annotation at point" query
 struct AnnotationAt {
   /// ID of the annotation at the queried point.
@@ -209,6 +227,50 @@ struct AnnotationAt {
   Rectangle rect;
   /// The annotation's protected bit
   bool protect;
+};
+
+/// Bitfield for storing a set of users (IDs range from 0..255)
+using UserBits = uint8_t[8];
+
+/// Set of general user related permission bits
+struct UserACLs {
+  UserBits operators;
+  UserBits trusted;
+  UserBits authenticated;
+  UserBits locked;
+  bool all_locked;
+};
+
+/// Layer specific permissions
+struct LayerACL {
+  /// General layer-wide lock
+  bool locked;
+  /// Layer general access tier
+  Tier tier;
+  /// Exclusive access granted to these users
+  /// Exclusive access overrides general access tier but not the lock.
+  UserBits exclusive;
+};
+
+struct FeatureTiers {
+  /// Use of the PutImage command (covers cut&paste, move with transform, etc.)
+  Tier put_image;
+  /// Selection moving (without transformation)
+  Tier move_rect;
+  /// Canvas resize
+  Tier resize;
+  /// Canvas background changing
+  Tier background;
+  /// Permission to edit any layer's properties and to reorganize them
+  Tier edit_layers;
+  /// Permission to create and edit own layers
+  Tier own_layers;
+  /// Permission to create new annotations
+  Tier create_annotation;
+  /// Permission to use the laser pointer tool
+  Tier laser;
+  /// Permission to use undo/redo
+  Tier undo;
 };
 
 extern "C" {
@@ -444,7 +506,8 @@ void paintengine_register_meta_callbacks(PaintEngine *dp,
                                          ChatCallback chat,
                                          LaserCallback laser,
                                          MarkerCallback markers,
-                                         DefaultLayerCallback defaultlayer);
+                                         DefaultLayerCallback defaultlayer,
+                                         AclChangeCallback aclchange);
 
 /// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);
@@ -458,6 +521,9 @@ void paintengine_receive_messages(PaintEngine *dp,
 
 /// Clean up the paint engine state after disconnecting from a session
 void paintengine_cleanup(PaintEngine *dp);
+
+/// Reset the ACL filter back to local (non-networked) operating mode
+void paintengine_reset_acl(PaintEngine *dp, UserID local_user);
 
 /// Get the color of the background tile
 ///
@@ -552,6 +618,14 @@ bool paintengine_get_layer_content(const PaintEngine *dp,
                                    LayerID layer_id,
                                    Rectangle rect,
                                    uint8_t *pixels);
+
+const UserACLs *paintengine_get_acl_users(const PaintEngine *dp);
+
+void paintengine_get_acl_layers(const PaintEngine *dp,
+                                void *context,
+                                void (*visitor)(void *ctx, LayerID id, const LayerACL *layer));
+
+const FeatureTiers *paintengine_get_acl_features(const PaintEngine *dp);
 
 /// Paint all the changed tiles in the given area
 ///

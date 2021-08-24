@@ -20,7 +20,6 @@
 #include "selectionsettings.h"
 #include "canvas/selection.h"
 #include "canvas/canvasmodel.h"
-#include "canvas/aclfilter.h"
 #include "net/client.h"
 #include "scene/canvasview.h"
 #include "tools/toolcontroller.h"
@@ -174,7 +173,7 @@ void SelectionSettings::cutSelection()
 	canvas::Selection *sel = controller()->model()->selection();
 	const int layer = controller()->activeLayer();
 
-	if(sel && sel->pasteImage().isNull() && !controller()->model()->aclFilter()->isLayerLocked(layer)) {
+	if(sel && sel->pasteImage().isNull() && !controller()->model()->aclState()->isLayerLocked(layer)) {
 		static_cast<tools::SelectionTool*>(controller()->getTool(Tool::SELECTION))->startMove();
 	}
 }

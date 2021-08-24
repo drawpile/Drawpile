@@ -106,7 +106,7 @@ protocol::MessageList StateSavepoint::initCommands(uint8_t contextId, const Canv
 
 	paintcore::LayerStack stack;
 	stack.editor(0).restoreSavepoint(d->canvas);
-	SnapshotLoader loader(contextId, &stack, canvas->aclFilter());
+	SnapshotLoader loader(contextId, &stack, nullptr /*canvas->aclFilter()*/); // FIXME
 	loader.setDefaultLayer(canvas->layerlist()->defaultLayer());
 	loader.setPinnedMessage(canvas->pinnedMessage());
 	return loader.loadInitCommands();

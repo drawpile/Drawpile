@@ -20,7 +20,6 @@
 #include "loader.h"
 #include "net/client.h"
 #include "ora/orareader.h"
-#include "canvas/aclfilter.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -264,11 +263,13 @@ MessageList SnapshotLoader::loadInitCommands()
 		}
 
 		// Set layer ACLs (if found)
+#if 0 // FIXME
 		if(m_aclfilter) {
 			const canvas::AclFilter::LayerAcl acl = m_aclfilter->layerAcl(layer->id());
 			if(acl.locked || acl.tier != canvas::Tier::Guest || !acl.exclusive.isEmpty())
 				msgs << MessagePtr(new protocol::LayerACL(m_contextId, layer->id(), acl.locked, int(acl.tier), acl.exclusive));
 		}
+#endif
 	}
 
 	// Create annotations
@@ -278,6 +279,7 @@ MessageList SnapshotLoader::loadInitCommands()
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(m_contextId, a.id, a.background.rgba(), a.flags(), 0, a.text))));
 	}
 
+#if 0 // FIXME
 	// Session and user ACLs
 	if(m_aclfilter) {
 		uint8_t features[canvas::FeatureCount];
@@ -287,6 +289,7 @@ MessageList SnapshotLoader::loadInitCommands()
 		msgs.append(MessagePtr(new protocol::FeatureAccessLevels(m_contextId, features)));
 		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_aclfilter->lockedUsers())));
 	}
+#endif
 
 	return msgs;
 }

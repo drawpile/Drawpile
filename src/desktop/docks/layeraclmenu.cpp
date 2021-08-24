@@ -132,7 +132,7 @@ void LayerAclMenu::userClicked(QAction *useraction)
 	emit layerAclChange(m_lock->isChecked(), tier, exclusive);
 }
 
-void LayerAclMenu::setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> exclusive)
+void LayerAclMenu::setAcl(bool lock, int tier, const QList<uint8_t> exclusive)
 {
 	m_lock->setChecked(lock);
 
@@ -140,7 +140,7 @@ void LayerAclMenu::setAcl(bool lock, canvas::Tier tier, const QList<uint8_t> exc
 	m_tiers->setEnabled(!lock && exclusive.isEmpty());
 
 	for(QAction *t : m_tiers->actions()) {
-		if(t->property("userTier").toInt() == int(tier)) {
+		if(t->property("userTier").toInt() == tier) {
 			t->setChecked(true);
 			break;
 		}

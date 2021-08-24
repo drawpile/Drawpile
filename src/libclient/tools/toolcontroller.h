@@ -23,7 +23,7 @@
 #include "strokesmoother.h"
 #include "tool.h"
 #include "brushes/brush.h"
-#include "canvas/features.h"
+#include "canvas/acl.h"
 
 #include <QObject>
 

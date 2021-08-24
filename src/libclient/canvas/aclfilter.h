@@ -20,6 +20,7 @@
 #ifndef ACLFILTER_H
 #define ACLFILTER_H
 
+#include "acl.h"
 #include "features.h"
 
 #include <QObject>

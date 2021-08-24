@@ -26,6 +26,7 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"
+#include "../rustpile/rustpile.h"
 
 #include "ui_sessionsettings.h"
 
@@ -200,13 +201,12 @@ void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 	if(!canvas)
 		return;
 
-	canvas::AclFilter *acl = canvas->aclFilter();
+	canvas::AclState *acl = canvas->aclState();
 
-	connect(acl, &canvas::AclFilter::localOpChanged, this, &SessionSettingsDialog::onOperatorModeChanged);
-	connect(acl, &canvas::AclFilter::featureTierChanged, this, &SessionSettingsDialog::onFeatureTierChanged);
+	connect(acl, &canvas::AclState::localOpChanged, this, &SessionSettingsDialog::onOperatorModeChanged);
+	connect(acl, &canvas::AclState::featureTiersChanged, this, &SessionSettingsDialog::onFeatureTiersChanged);
 
-	for(int i=0;i<canvas::FeatureCount;++i)
-		onFeatureTierChanged(canvas::Feature(i), acl->featureTier(canvas::Feature(i)));
+	onFeatureTiersChanged(acl->featureTiers());
 }
 
 void SessionSettingsDialog::onOperatorModeChanged(bool op)
@@ -256,9 +256,17 @@ QComboBox *SessionSettingsDialog::featureBox(canvas::Feature f)
 	Q_ASSERT_X(false, "featureBox", "unhandled case");
 	return nullptr;
 }
-void SessionSettingsDialog::onFeatureTierChanged(canvas::Feature feature, canvas::Tier tier)
+void SessionSettingsDialog::onFeatureTiersChanged(const rustpile::FeatureTiers &features)
 {
-	featureBox(feature)->setCurrentIndex(int(tier));
+	m_ui->permPutImage->setCurrentIndex(int(features.put_image));
+	m_ui->permRegionMove->setCurrentIndex(int(features.move_rect));
+	m_ui->permResize->setCurrentIndex(int(features.resize));
+	m_ui->permBackground->setCurrentIndex(int(features.background));
+	m_ui->permEditLayers->setCurrentIndex(int(features.edit_layers));
+	m_ui->permOwnLayers->setCurrentIndex(int(features.own_layers));
+	m_ui->permCreateAnnotation->setCurrentIndex(int(features.create_annotation));
+	m_ui->permLaser->setCurrentIndex(int(features.laser));
+	m_ui->permUndo->setCurrentIndex(int(features.undo));
 }
 
 void SessionSettingsDialog::initPermissionComboBoxes()

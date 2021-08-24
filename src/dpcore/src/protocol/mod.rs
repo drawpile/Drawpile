@@ -21,6 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 pub mod message;
+pub mod aclfilter;
 mod protover;
 mod reader;
 mod serialization;

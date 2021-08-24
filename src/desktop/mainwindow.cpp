@@ -96,7 +96,6 @@
 #include "net/client.h"
 #include "net/login.h"
 #include "canvas/layerlist.h"
-#include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"
 
 #include "tools/toolcontroller.h"
@@ -476,9 +475,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	m_canvasscene->initCanvas(canvas);
 
-	connect(canvas->aclFilter(), &canvas::AclFilter::localOpChanged, this, &MainWindow::onOperatorModeChange);
-	connect(canvas->aclFilter(), &canvas::AclFilter::localLockChanged, this, &MainWindow::updateLockWidget);
-	connect(canvas->aclFilter(), &canvas::AclFilter::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
+	connect(canvas->aclState(), &canvas::AclState::localOpChanged, this, &MainWindow::onOperatorModeChange);
+	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &MainWindow::updateLockWidget);
+	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
@@ -513,7 +512,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_currentdoctools->setEnabled(true);
 	setDrawingToolsEnabled(true);
 	for(int i=0;i<canvas::FeatureCount;++i) {
-		onFeatureAccessChange(canvas::Feature(i), m_doc->canvas()->aclFilter()->canUseFeature(canvas::Feature(i)));
+		onFeatureAccessChange(canvas::Feature(i), m_doc->canvas()->aclState()->canUseFeature(canvas::Feature(i)));
 	}
 }
 
@@ -1692,10 +1691,10 @@ void MainWindow::onServerLogin()
 
 void MainWindow::updateLockWidget()
 {
-	bool locked = m_doc->canvas() && m_doc->canvas()->aclFilter()->isSessionLocked();
+	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->amLocked();
 	getAction("locksession")->setChecked(locked);
 
-	locked |= (m_doc->canvas() && m_doc->canvas()->aclFilter()->isLocked()) || m_dockLayers->isCurrentLayerLocked();
+	locked |= m_dockLayers->isCurrentLayerLocked();
 
 	if(locked) {
 		m_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
@@ -2053,7 +2052,7 @@ void MainWindow::pasteFile(const QUrl &url)
 
 void MainWindow::pasteImage(const QImage &image, const QPoint *point)
 {
-	if(!m_canvasscene->model()->aclFilter()->canUseFeature(canvas::Feature::PutImage))
+	if(!m_canvasscene->model()->aclState()->canUseFeature(canvas::Feature::PutImage))
 		return;
 
 	if(m_dockToolSettings->currentTool() != tools::Tool::SELECTION && m_dockToolSettings->currentTool() != tools::Tool::POLYGONSELECTION) {
@@ -2700,7 +2699,7 @@ void MainWindow::setupActions()
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
 
 	connect(m_doc, &Document::sessionOpwordChanged, this, [gainop, this](bool hasOpword) {
-		gainop->setEnabled(hasOpword && !m_doc->canvas()->aclFilter()->isLocalUserOperator());
+		gainop->setEnabled(hasOpword && !m_doc->canvas()->aclState()->amOperator());
 	});
 
 	connect(resetsession, &QAction::triggered, this, &MainWindow::resetSession);

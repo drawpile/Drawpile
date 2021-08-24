@@ -22,22 +22,6 @@
 
 namespace canvas {
 
-// Features with configurable access levels
-// See also shared/net/meta2.{cpp,h}
-enum class Feature {
-	PutImage,
-	RegionMove,
-	Resize,
-	Background,
-	EditLayers,
-	OwnLayers,
-	CreateAnnotation,
-	Laser,
-	Undo
-};
-
-static const int FeatureCount = int(Feature::Undo)+1;
-
 // Access levels
 enum class Tier : unsigned char {
 	Op,      // operators

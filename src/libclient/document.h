@@ -21,7 +21,7 @@
 #define DRAWPILE_DOCUMENT_H
 
 #include "core/blendmodes.h"
-#include "canvas/features.h"
+#include "canvas/acl.h"
 #include "../libshared/net/message.h" // TODO hide this
 
 #include <QObject>

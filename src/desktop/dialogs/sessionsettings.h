@@ -20,7 +20,7 @@
 #ifndef SESSIONSETTINGSDIALOG_H
 #define SESSIONSETTINGSDIALOG_H
 
-#include "canvas/features.h"
+#include "canvas/acl.h"
 
 #include <QDialog>
 #include <QJsonObject>
@@ -60,7 +60,7 @@ signals:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel*);
 	void onOperatorModeChanged(bool op);
-	void onFeatureTierChanged(canvas::Feature feature, canvas::Tier tier);
+	void onFeatureTiersChanged(const rustpile::FeatureTiers &features);
 
 	void permissionPresetSaving(const QString &);
 	void permissionPresetSelected(const QString &);
