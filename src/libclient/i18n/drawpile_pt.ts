@@ -6,22 +6,22 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar Novo</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover para cima</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover para baixo</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
 </context>
 <context>
@@ -44,7 +44,7 @@
     <message>
         <location filename="../../desktop/ui/abusereport.ui" line="88"/>
         <source>Entire session</source>
-        <translation>Sessão inteira</translation>
+        <translation>Denunciar a sessão inteira</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/abusereport.ui" line="96"/>
@@ -78,7 +78,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="235"/>
         <source>Square pixel brush</source>
-        <translation>Pincel Quadrado</translation>
+        <translation>Pincel quadrado</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="255"/>
@@ -88,7 +88,8 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="291"/>
         <source>Pick initial color from layer</source>
-        <translation>Pegar cor inicial da camada</translation>
+        <translatorcomment>Refere-se à cor da camada no pixel onde começa o traçado do pincel. Ao clicar na tela de pintura, a cor é automaticamente pega e usada no pincel até soltar o clique.</translatorcomment>
+        <translation>Pegar a cor do pincel na camada, onde começa o traço</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="305"/>
@@ -98,7 +99,8 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="322"/>
         <source>Direct drawing mode</source>
-        <translation>Modo de desenho direto</translation>
+        <translatorcomment>O modo de pintura direta desenha diretamente na camada, enquanto o indireto desenha antes numa camada temporária, e ao terminar de traçar, a camada temporária é copiada para a camada ativa.</translatorcomment>
+        <translation>Modo de pintura direta</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="429"/>
@@ -106,7 +108,8 @@
         <location filename="../../desktop/ui/brushdock.ui" line="477"/>
         <location filename="../../desktop/ui/brushdock.ui" line="498"/>
         <source>Pressure sensitivity</source>
-        <translation>Sensibilidade da pressão</translation>
+        <translatorcomment>O próprio Calla disse que essa tradução é correta. Pense no usuário final: esse texto aparece no Tooltip de um botão que liga e desliga a sensibilidade da pressão na opção do pincel. Sendo assim, apenas colocar &quot;Sensibilidade da pressão&quot; não ajuda.</translatorcomment>
+        <translation>Usar a sensibilidade da pressão</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="593"/>
@@ -116,12 +119,16 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="606"/>
         <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Eu coloquei Input como pressão justamente porque faz sentido. Essa opção tem a intenção de alterar como que a sensibilidade da pressão é detectada, seja com a caneta, a velocidade do traço ou a distância.
+
+Além do mais, não é comum falar &quot;entrada&quot; sem contexto no português.</translatorcomment>
+        <translation>Pressão:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="616"/>
         <source>Configure input presets</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Por favor, não traduza input para entrada.</translatorcomment>
+        <translation>Configurar opções de pressão</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="379"/>
@@ -131,6 +138,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="422"/>
         <source>Opacity:</source>
+        <translatorcomment>Transparência é uma palavra mais do cotidiano que opacidade. Por favor não altere.</translatorcomment>
         <translation>Transparência:</translation>
     </message>
     <message>
@@ -146,13 +154,14 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="386"/>
         <source>Smudging:</source>
-        <translatorcomment>Confusing word</translatorcomment>
-        <translation>Espalhamento:</translation>
+        <translatorcomment>Espalhamento ou mistura das cores na hora de pintar.</translatorcomment>
+        <translation>Mistura de cores:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="457"/>
         <source>Color pickup:</source>
-        <translation>Seletor de cores:</translation>
+        <translatorcomment>Se refere ao quanto deve-se ficar na mesma cor (quando há a mistura de cores) para ela ser aplicada no pincel totalmente.</translatorcomment>
+        <translation>Agarre da mistura:</translation>
     </message>
 </context>
 <context>
@@ -227,7 +236,6 @@
     <message>
         <location filename="../../desktop/ui/certificateview.ui" line="251"/>
         <source>Validity period</source>
-        <translatorcomment>Adapted to avoid misunderstandings</translatorcomment>
         <translation>Validade do certificado</translation>
     </message>
     <message>
@@ -361,8 +369,7 @@
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="89"/>
         <source>Sample merged</source>
-        <translatorcomment>Adapted to avoid misunderstanding.</translatorcomment>
-        <translation>Unir camadas para preencher</translation>
+        <translation>Preencher visão (ignorar camadas)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="96"/>
@@ -372,12 +379,12 @@
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="122"/>
         <source>Fill under</source>
-        <translation>Preencher em baixo</translation>
+        <translation>Preencher nas camadas de baixo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="129"/>
         <source>Size limit:</source>
-        <translation>Limite de tamanho:</translation>
+        <translation>Limite de preenchimento:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="136"/>
@@ -387,8 +394,7 @@
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="155"/>
         <source>Erase</source>
-        <translatorcomment>Adapted for less misunderstanding.</translatorcomment>
-        <translation>Apagar/Cor transparente</translation>
+        <translation>Apagar ao preencher</translation>
     </message>
 </context>
 <context>
@@ -396,7 +402,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="14"/>
         <source>Filter recording</source>
-        <translation>Gravação de filtros</translation>
+        <translation>Filtrar gravação</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="22"/>
@@ -451,8 +457,7 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="118"/>
         <source>Squish strokes</source>
-        <translatorcomment>Confusing. Leting as is.</translatorcomment>
-        <translation>Traçado mole</translation>
+        <translation>Não mostrar o caminho do traçado</translation>
     </message>
 </context>
 <context>
@@ -475,7 +480,7 @@
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="149"/>
         <source>FPS:</source>
-        <translation>QPS :</translation>
+        <translation>QPS:</translation>
     </message>
 </context>
 <context>
@@ -553,7 +558,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="88"/>
         <source>An optional user friendly ID for the session</source>
-        <translation>O ID Fácil é um ID que pode ser criado para ajudar na hora de entrar na sala. Ele é totalmente opcional</translation>
+        <translation>Um ID que pode ser criado para ajudar na hora de entrar na sala. Ele é totalmente opcional</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="98"/>
@@ -563,7 +568,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="104"/>
         <source>Announce the session at a public list</source>
-        <translation>Anunciar a sessão numa lista pública</translation>
+        <translation>Anuncia a sessão numa lista pública</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="154"/>
@@ -581,7 +586,7 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
         <source>Preset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinição:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
@@ -611,17 +616,17 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="133"/>
         <source>Preset options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opções da predefinição</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
         <source>Close</source>
-        <translation type="unfinished">Fechar</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="162"/>
         <source>Velocity range</source>
-        <translation>Extensão da velocidade</translation>
+        <translation>Velocidade máxima</translation>
     </message>
 </context>
 <context>
@@ -642,12 +647,12 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="30"/>
         <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation>Uma nova versão do Drawpile não compatível com a que você está usando foi lançada.</translation>
+        <translation>Uma nova versão do Drawpile incompatível com a que você está usando foi lançada.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Você não adicionou nenhum servidor ainda. Você pode encontrar alguns no site &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;. Você pode tentar adicionar um agora digitando pub.drawpile.net no campo de endereço e depois clicando em &lt;span style=&quot; font-style:italic;&quot;&gt;Adicionar um servidor&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Você não adicionou nenhum servidor ainda. Você pode encontrar alguns no site &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;. Você pode tentar adicionar um servidor agora digitando pub.drawpile.net no campo de endereço e depois clicando em &lt;span style=&quot; font-style:italic;&quot;&gt;Adicionar servidor&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="62"/>
@@ -672,8 +677,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="109"/>
         <source>NSFW</source>
-        <translatorcomment>This will be not translated to NSFW as some people don&apos;t know what is NSFW!</translatorcomment>
-        <translation>Conteúdo +18 anos</translation>
+        <translation>Conteúdo Adulto</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="138"/>
@@ -705,7 +709,7 @@
         <location filename="../../desktop/ui/lasersettings.ui" line="17"/>
         <source>Trail:</source>
         <translatorcomment>Even in english, this should be better explained! Non native english speakers or even non fluent ones would not understand this. I needed </translatorcomment>
-        <translation>Tempo antes de apagar:</translation>
+        <translation>Ficar por:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/lasersettings.ui" line="45"/>
@@ -720,7 +724,6 @@
     <message>
         <location filename="../../desktop/ui/lasersettings.ui" line="147"/>
         <source>Track hovering pointer</source>
-        <translatorcomment>Adapted to avoid misunderstandings.</translatorcomment>
         <translation>Fazer o apontador seguir o ponteiro</translation>
     </message>
 </context>
@@ -739,8 +742,7 @@
     <message>
         <location filename="../../desktop/ui/layerbox.ui" line="89"/>
         <source>Layer access control</source>
-        <translatorcomment>Adapted to avoid misunderstandings</translatorcomment>
-        <translation>Controle de quem pode acessar a camada</translation>
+        <translation>Controle de uso da camada</translation>
     </message>
 </context>
 <context>
@@ -748,42 +750,42 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriedades da camada</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Transparência:</translation>
+        <translation>Transparência:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de mistura:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
         <source>Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Visível</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
         <source>Fixed</source>
-        <translation type="unfinished">Fixar camada</translation>
+        <translation>Fixa</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="116"/>
         <source>Default</source>
-        <translation type="unfinished">Padrão</translation>
+        <translation>Padrão</translation>
     </message>
 </context>
 <context>
@@ -846,8 +848,7 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="317"/>
         <source>Catching up...</source>
-        <translatorcomment>Adapted to appear a bit more informal.</translatorcomment>
-        <translation>Segura aí, conectando você...</translation>
+        <translation>Tentando conectar...</translation>
     </message>
 </context>
 <context>
@@ -861,7 +862,7 @@
         <location filename="../../desktop/widgets/macmenu.cpp" line="208"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Você tem %n imagem que não foi salva ainda. Quer salvá-la antes de sair?</numerusform>
+            <numerusform>Você tem uma imagem que não foi salva ainda. Quer salvá-la antes de sair?</numerusform>
             <numerusform>Você tem %n imagens que não foram salvas ainda. Quer salvá-las antes de sair?</numerusform>
         </translation>
     </message>
@@ -1021,7 +1022,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1477"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation>Ainda existem dados não enviados, espere enquanto a transmissão de dados se completa!</translation>
+        <translation>Ainda existem dados não enviados, espere o envio terminar!</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1627"/>
@@ -1041,7 +1042,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1690"/>
         <source>Board is locked</source>
-        <translation>Mesa digitalizadora bloqueada</translation>
+        <translation>A mesa digitalizadora está bloqueada</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1990"/>
@@ -1119,13 +1120,13 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="298"/>
         <source>Server out of space</source>
-        <translation>Servidor sem espaço</translation>
+        <translation>Servidor sem memória</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="299"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>O servidor está ativo sem espaço para história e cresceu tanto que precisou reiniciar! (Limite : %1 MB)
+        <translation>O servidor está ativo sem memória para história e cresceu tanto que precisou reiniciar! (Limite : %1 MB)
 Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre acabe de novo.</translation>
     </message>
     <message>
@@ -1136,7 +1137,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1239"/>
         <source>Exporting...</source>
-        <translation>Exportando, por favor aguarde...</translation>
+        <translation>Exportando...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1507"/>
@@ -1146,7 +1147,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1508"/>
         <source>Enter operator password</source>
-        <translation>Entrar senha de Operador</translation>
+        <translation>Digite a senha de Operador</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1546"/>
@@ -1156,7 +1157,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1547"/>
         <source>Really terminate this session?</source>
-        <translation>Deseja realmente terminar da sessão?</translation>
+        <translation>Deseja realmente terminar a sessão?</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1552"/>
@@ -1235,12 +1236,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2352"/>
         <source>&amp;Copy Visible</source>
-        <translation>&amp;Copiar o que está visível</translation>
+        <translation>&amp;Copiar o que é visível</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2352"/>
         <source>Copy selected area to the clipboard</source>
-        <translation>Copiar área selecionada</translation>
+        <translation>Copia a área selecionada</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2353"/>
@@ -1250,7 +1251,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2353"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation>Copiar área selecionada sem o fundo</translation>
+        <translation>Copia a área selecionada sem o fundo</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2354"/>
@@ -1260,7 +1261,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2354"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation>Copiar a área selecionada da camada atual</translation>
+        <translation>Copia a área selecionada da camada atual</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2355"/>
@@ -1280,12 +1281,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2357"/>
         <source>&amp;Stamp</source>
-        <translation>E&amp;stampa</translation>
+        <translation>E&amp;stampar</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2359"/>
         <source>Paste &amp;From File...</source>
-        <translation>Coller depuis le &amp;fichier...</translation>
+        <translation>Colar do &amp;arquivo...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2360"/>
@@ -1471,7 +1472,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2511"/>
         <source>Show Avatars</source>
-        <translation>Mostrar avatares</translation>
+        <translation>Mostrar Avatares</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2599"/>
@@ -1516,12 +1517,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2512"/>
         <source>Show La&amp;ser Trails</source>
-        <translation>Mostrar Trilhas de La&amp;ser</translation>
+        <translation>Mostrar traçados de la&amp;ser</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2513"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation>Mostrar pixeis e &amp;grade</translation>
+        <translation>Mostrar &amp;grade de pixels</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2515"/>
@@ -1618,7 +1619,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2662"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation>Entrar usando outra sessão de desenho</translation>
+        <translation>Entrar na sessão de desenho de outro usuário</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2663"/>
@@ -1779,7 +1780,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2730"/>
         <source>Find out who did it</source>
-        <translation>Descubra quem fez aquilo ou isso</translation>
+        <translation>Descubra quem fez isso ou aquilo</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2731"/>
@@ -1835,7 +1836,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2798"/>
         <source>Tablet Tester</source>
-        <translation>Teste de toque/caneta</translation>
+        <translation>Testar mesa digitalizadora</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2799"/>
@@ -1846,7 +1847,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/mainwindow.cpp" line="2800"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
-        <translation>&amp;Sobre Drawpile</translation>
+        <translation>&amp;Sobre o Drawpile</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2801"/>
@@ -1937,7 +1938,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/newdialog.ui" line="71"/>
         <source>Background:</source>
-        <translation>Fundo do desenho:</translation>
+        <translation>Cor de fundo:</translation>
     </message>
 </context>
 <context>
@@ -1945,7 +1946,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../utils/palettelistmodel.cpp" line="171"/>
         <source>New palette</source>
-        <translation>Nova palheta</translation>
+        <translation>Nova paleta</translation>
     </message>
 </context>
 <context>
@@ -1958,7 +1959,6 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/playback.ui" line="39"/>
         <source>Rewind stroke</source>
-        <translatorcomment>Adapted to avoid misunderstandings.</translatorcomment>
         <translation>Voltar traçado</translation>
     </message>
     <message>
@@ -2033,7 +2033,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/dialogs/avatarimport.cpp" line="76"/>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="614"/>
         <source>All files (*)</source>
-        <translation>Arquivos de todos os tipos (*)</translation>
+        <translation>Todos os arquivos (*)</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="549"/>
@@ -2048,7 +2048,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="88"/>
         <source>Freehand</source>
-        <translation>À mão livre</translation>
+        <translation>Pincel</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="93"/>
@@ -2073,7 +2073,6 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="113"/>
         <source>Bezier Curve</source>
-        <translatorcomment>Bezier is the name of the curve and may not be translated!</translatorcomment>
         <translation>Curva de Bezier</translation>
     </message>
     <message>
@@ -2114,7 +2113,6 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="153"/>
         <source>Inspector</source>
-        <translatorcomment>Adapted to better understanding</translatorcomment>
         <translation>Registro</translation>
     </message>
     <message>
@@ -2134,7 +2132,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../canvas/loader.cpp" line="91"/>
         <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
 </source>
-        <translation>Drawpile não tem todas as funcionalidades usadas nesse arquivo OpenRaster. Salvar isso pode resultar numa perda de dados.
+        <translation>O Drawpile não tem todas as funcionalidades usadas nesse arquivo OpenRaster. Se você salvá-lo pode perder dados.
 </translation>
     </message>
     <message>
@@ -2145,12 +2143,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../canvas/loader.cpp" line="95"/>
         <source>Nested layers are not fully supported</source>
-        <translation>As Nested Layers não são totalmente suportadas</translation>
+        <translation>As Camadas Aninhadas não são totalmente suportadas</translation>
     </message>
     <message>
         <location filename="../canvas/loader.cpp" line="97"/>
         <source>Unsupported background tile size</source>
-        <translation>O Tamanho dos blocos do fundo não é suportado</translation>
+        <translation>O Tamanho da imagem de fundo não é suportada</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="91"/>
@@ -2160,7 +2158,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../ora/orareader.cpp" line="417"/>
         <source>Image has zero size!</source>
-        <translation>L&apos;image a une taille nulle !</translation>
+        <translation>A imagem está vazia!</translation>
     </message>
     <message>
         <location filename="../ora/orareader.cpp" line="420"/>
@@ -2191,7 +2189,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../utils/images.cpp" line="111"/>
         <source>Binary Recordings (%1)</source>
-        <translation>Gravações binárias (%1)</translation>
+        <translation>Gravações em binário (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="112"/>
@@ -2201,7 +2199,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../utils/images.cpp" line="113"/>
         <source>Compressed Binary Recordings (%1)</source>
-        <translation>Gravações binárias compactadas (%1)</translation>
+        <translation>Gravações em binário compactadas (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="114"/>
@@ -2221,7 +2219,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../utils/images.cpp" line="134"/>
         <source>All Files (*)</source>
-        <translation>Arquivos de todos os tipos (*)</translation>
+        <translation>Todos os arquivos (*)</translation>
     </message>
 </context>
 <context>
@@ -2272,17 +2270,17 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="100"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Redimensionar</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="110"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation>Girar/cortar</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="117"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Distorcer</translation>
     </message>
 </context>
 <context>
@@ -2519,7 +2517,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="289"/>
         <source>Own Layer Editing:</source>
-        <translation>Própria edição da camada:</translation>
+        <translation>Edição da própria camada:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="299"/>
@@ -2603,12 +2601,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="28"/>
         <source>Brushes</source>
-        <translation type="unfinished">Pincéis</translation>
+        <translation>Pincéis</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="33"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Roleta de cores</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="38"/>
@@ -2623,7 +2621,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="105"/>
         <source>Language:</source>
-        <translatorcomment>I&apos;ll leave the english version too because someone could choose wrong the language, and then to correct It would be easier.</translatorcomment>
+        <translatorcomment>Manter o &quot;Language&quot; por questões de praticidade</translatorcomment>
         <translation>Language (Idioma):</translation>
     </message>
     <message>
@@ -2639,7 +2637,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="129"/>
         <source>Logging:</source>
-        <translation>Logando:</translation>
+        <translation>Registrar:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="136"/>
@@ -2649,7 +2647,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="156"/>
         <source>Tablet:</source>
-        <translation>Entrada de toque/caneta:</translation>
+        <translation>Mesa digitalizadora:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="163"/>
@@ -2664,7 +2662,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="180"/>
         <source>Enable relative pen mode hack (Wintab only)</source>
-        <translation>Ativar modo de caneta relativa (Apenas pelo Wintab)</translation>
+        <translation>Ativar modo de caneta relativa (Só suportado com Wintab)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="187"/>
@@ -2709,106 +2707,106 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="347"/>
         <source>Enable this workaround if your cursor doesn&apos;t update when you move it into the canvas with the tablet pen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ative isso se o seu cursor não atualiza quando você move ele na tela de pintura com a mesa digitalizadora.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="350"/>
         <source>Enable canvas viewport entry hack</source>
-        <translation type="unfinished"></translation>
+        <translation>Ativar hack de input da tela de pintura</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="370"/>
         <source>Brush outline width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho do contorno do pincel:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="387"/>
         <location filename="../../desktop/ui/settings.ui" line="399"/>
         <location filename="../../desktop/ui/settings.ui" line="418"/>
         <source>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</source>
-        <translation type="unfinished"></translation>
+        <translation>O valor máximo para o slider do pincel. Você pode sempre colocar tamanhos maiores manualmente ou por atalhos de teclado.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="390"/>
         <source>Size Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite do slider de tamanho do pincel:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="421"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="436"/>
         <location filename="../../desktop/ui/settings.ui" line="448"/>
         <location filename="../../desktop/ui/settings.ui" line="467"/>
         <source>The maximum value for the brush spacing slider. You can always enter larger values manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>O valor máximo para o slider do espaçamento. Você pode sempre colocar tamanhos maiores manualmente~.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="439"/>
         <source>Spacing Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite do slider de espaçamento:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="470"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="498"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="506"/>
         <source>Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triângulo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="511"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrado</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="519"/>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ângulo:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="527"/>
         <source>Fixed</source>
-        <translation type="unfinished">Fixar camada</translation>
+        <translation>Fixo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="532"/>
         <source>Rotating</source>
-        <translation type="unfinished"></translation>
+        <translation>Girando</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="540"/>
         <source>Color Space:</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaço de cores:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="548"/>
         <source>HSV (Hue, Saturation, Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (Matiz, Saturação e Valor)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="553"/>
         <source>HSL (Hue, Saturation, Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (Matiz, Saturação e Luminância)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
         <source>Lch (Luminance, Chroma, Hue)</source>
-        <translation type="unfinished"></translation>
+        <translation>LCH (Luminância, Croma e Matiz)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="582"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsão:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="593"/>
@@ -2974,12 +2972,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="224"/>
         <source>Pinch to zoom</source>
-        <translation>Pincer pour zoomer</translation>
+        <translation>Fazer pinça para zoom</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="231"/>
         <source>Twist to rotate</source>
-        <translation>Se girar os dedos em pinça o desenho gira também</translation>
+        <translation>Girando os dedos em pinça gira o desenho</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="43"/>
@@ -3024,7 +3022,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1232"/>
         <source>NSFM tag words:</source>
-        <translation>Palavras que se encaixam em Não Seguro Para Mim:</translation>
+        <translation>Palavras que se encaixam em conteúdo adulto:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1242"/>
@@ -3034,8 +3032,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1249"/>
         <source>NSFM sessions:</source>
-        <translatorcomment>Adapted because of the context</translatorcomment>
-        <translation>Com relação a sessões assim:</translation>
+        <translation>Sessões de conteúdo adulto:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="48"/>
@@ -3386,13 +3383,11 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../canvas/userlist.cpp" line="82"/>
         <source>Online</source>
-        <translatorcomment>Offline and online are words that portuguese speakers understand, because of the internetization of the world.</translatorcomment>
         <translation>Online</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="82"/>
         <source>Offline</source>
-        <translatorcomment>Offline and online are words that portuguese speakers understand, because of the internetization of the world.</translatorcomment>
         <translation>Offline</translation>
     </message>
     <message>
@@ -3408,7 +3403,6 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../canvas/userlist.cpp" line="114"/>
         <source>Status</source>
-        <translatorcomment>Status is a word that portuguese speakers know, because It actually exists in portuguese.</translatorcomment>
         <translation>Status</translation>
     </message>
     <message>
@@ -3435,7 +3429,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette.cpp" line="428"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem nome</translation>
     </message>
 </context>
 <context>
@@ -3443,12 +3437,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem nome</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="144"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 cores)</translation>
     </message>
 </context>
 <context>
@@ -3456,81 +3450,81 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="59"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abre uma nova paleta de cores de um arquivo</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="71"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Cria uma nova paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="83"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica a paleta atual</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="121"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Apaga a paleta atual</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="133"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Desfaz mudanças feitas na paleta atual</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="145"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar mudanças para essa paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="170"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Coloca uma nova cor na paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="182"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover a cor selecionada da paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="186"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="201"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="187"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="202"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="228"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Paletas do GIMP (*.gpl)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="229"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagem da paleta (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="230"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Arquivos de todos os tipos (*)</translation>
+        <translation>Todos os arquivos (*)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="231"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="244"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="245"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha ao carregar o arquivo de paleta %1</translation>
     </message>
 </context>
 <context>
@@ -3538,17 +3532,17 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="335"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar cor</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="344"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover cor</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="352"/>
         <source>Edit Color...</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar cor...</translation>
     </message>
 </context>
 <context>
@@ -3556,7 +3550,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_list_model.cpp" line="231"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 cores)</translation>
     </message>
 </context>
 <context>
@@ -3564,12 +3558,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="824"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpar cor</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="833"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3668,22 +3662,22 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
         <source>New</source>
-        <translation type="unfinished">Novo</translation>
+        <translation>Novo</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
         <source>Duplicate</source>
-        <translation type="unfinished">Duplicar</translation>
+        <translation>Duplicar</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
         <source>Delete</source>
-        <translation type="unfinished">Apagar</translation>
+        <translation>Apagar</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo(a) %1</translation>
     </message>
 </context>
 <context>
@@ -3691,7 +3685,6 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="60"/>
         <source>Join</source>
-        <translatorcomment>To avoid misunderstandings, this was increased.</translatorcomment>
         <translation>Entrar em uma sessão</translation>
     </message>
     <message>
@@ -3703,8 +3696,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
         <source>Nearby</source>
-        <translatorcomment>Adapted to avoid misunderstandings.</translatorcomment>
-        <translation>Perto da minha casa</translation>
+        <translation>Perto de onde estou</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
@@ -3734,7 +3726,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="148"/>
         <source>Report...</source>
-        <translation>Signaler...</translation>
+        <translation>Denunciar...</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="212"/>
@@ -3744,7 +3736,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="425"/>
         <source>Log in with %1 credentials</source>
-        <translation>Entrar com %1 credenciais</translation>
+        <translation>Entrar com credenciais de %1</translation>
     </message>
 </context>
 <context>
@@ -3770,7 +3762,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/newdialog.cpp" line="72"/>
         <source>Size is too large</source>
-        <translation>O Tamanho é muito grande</translation>
+        <translation>O tamanho é muito grande</translation>
     </message>
 </context>
 <context>
@@ -3788,12 +3780,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="200"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
-        <translation>Esta gravação foi feita com uma versão diferente (%1) do Drawpile o que significa que a gravação pode aparecer diferente</translation>
+        <translation>Esta gravação foi feita com uma versão diferente do Drawpile (%1) o que significa que ela pode parecer diferente</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
-        <translation>Esta gravação foi feita com uma versão mais nova (%1) do Drawpile que pode não ser compatível</translation>
+        <translation>Esta gravação foi feita com uma versão mais nova do Drawpile (%1) que pode não ser compatível</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
@@ -3843,7 +3835,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="161"/>
         <location filename="../../desktop/dialogs/resetdialog.cpp" line="176"/>
         <source>Reset to Image</source>
-        <translation>Reiniciar</translation>
+        <translation>Reiniciar para imagem</translation>
     </message>
 </context>
 <context>
@@ -3851,7 +3843,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="39"/>
         <source>Resize</source>
-        <translation>Alterar tamanho</translation>
+        <translation>Redimensionar</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="41"/>
@@ -3866,7 +3858,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/resizedialog.cpp" line="84"/>
         <source>Size is too large</source>
-        <translation>O Tamanho é muito grande</translation>
+        <translation>O tamanho é muito grande</translation>
     </message>
 </context>
 <context>
@@ -3895,7 +3887,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation>sim</translation>
+        <translation>ativar</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
@@ -3907,7 +3899,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
         <source>no</source>
         <comment>password</comment>
-        <translation>não</translation>
+        <translation>desativar</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
@@ -3924,7 +3916,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="414"/>
         <source>Set a password for the session.</source>
-        <translation>Colocar uma senha na sessão.</translation>
+        <translation>Coloca uma senha na sessão.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/sessionsettings.cpp" line="419"/>
@@ -3963,7 +3955,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="229"/>
         <source>Clear all settings?</source>
-        <translation>Limpar todas as configurações?</translation>
+        <translation>Voltar com as configurações de fábrica?</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="387"/>
@@ -4047,7 +4039,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="176"/>
         <source>Downloaded %1!</source>
-        <translation>%1 baixado!</translation>
+        <translation>%1 baixado com sucesso!</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="185"/>
@@ -4163,8 +4155,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="101"/>
         <source>Write Protect</source>
-        <translatorcomment>Adapted to avoid misunderstandings.</translatorcomment>
-        <translation>Proteger contra modificações</translation>
+        <translation>Bloquear</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="105"/>
@@ -4179,27 +4170,27 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="206"/>
         <source>Import palette</source>
-        <translation>Importar uma Palheta</translation>
+        <translation>Importar uma Paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="208"/>
         <source>Palettes (%1)</source>
-        <translation>Palhetas (%1)</translation>
+        <translation>Paletas (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="209"/>
         <source>All files (*)</source>
-        <translation>Arquivos de todos os tipos (*)</translation>
+        <translation>Todos os arquivos (*)</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="229"/>
         <source>Export palette</source>
-        <translation>Exportar palheta</translation>
+        <translation>Exportar paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="231"/>
         <source>GIMP palette (%1)</source>
-        <translation>Palheta do GIMP (%1)</translation>
+        <translation>Paleta do GIMP (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="237"/>
@@ -4209,7 +4200,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/colorbox.cpp" line="270"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation>Apagar a palheta &quot;%1&quot;?</translation>
+        <translation>Apagar a paleta &quot;%1&quot;?</translation>
     </message>
 </context>
 <context>
@@ -4217,7 +4208,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="39"/>
         <source>Lock this layer</source>
-        <translation>Bloquear essa layer</translation>
+        <translation>Bloquear essa camada</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="42"/>
@@ -4227,7 +4218,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="45"/>
         <source>Access tier:</source>
-        <translation>Camada de acesso:</translation>
+        <translation>Acesso à camada:</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="47"/>
@@ -4252,7 +4243,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="54"/>
         <source>Exclusive access:</source>
-        <translation>Acesso exclusivo:</translation>
+        <translation>Acesso exclusivo para:</translation>
     </message>
 </context>
 <context>
@@ -4270,7 +4261,6 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
         <source>Hide from self</source>
-        <translatorcomment>May be confusing in the translator</translatorcomment>
         <translation>Esconder para mim</translation>
     </message>
     <message>
@@ -4286,7 +4276,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="90"/>
         <source>Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriedades...</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="385"/>
@@ -4305,7 +4295,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/docks/navigator.cpp" line="285"/>
         <source>Show Cursors</source>
-        <translation>Mostrar os cursores do mouse</translation>
+        <translation>Mostrar cursores</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/navigator.cpp" line="289"/>
@@ -4420,7 +4410,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <location filename="../net/login.cpp" line="320"/>
         <location filename="../net/login.cpp" line="326"/>
         <source>Auth server error: %1</source>
-        <translation>Erro do servidor de autenticação: %1</translation>
+        <translation>Erro no servidor de autenticação: %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="375"/>
@@ -4480,8 +4470,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../net/login.cpp" line="834"/>
         <source>Tried to send oversized message (%1 KB)</source>
-        <translatorcomment>Fuzzy. Please explain better.</translatorcomment>
-        <translation>Tentativa de enviar mensagem muito grande (%1 KB)</translation>
+        <translation>Tentou-se enviar uma mensagem muito grande (%1 KB)</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="707"/>
@@ -4611,7 +4600,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../core/blendmodes.cpp" line="48"/>
         <source>Behind</source>
-        <translation>Por atrás</translation>
+        <translation>Por trás</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="54"/>
@@ -4726,7 +4715,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="80"/>
         <source>Pick from current layer only</source>
-        <translation>Pegar somente da camada atual</translation>
+        <translation>Pegar cores somente da camada atual</translation>
     </message>
 </context>
 <context>
@@ -4760,12 +4749,11 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="198"/>
         <source>Chat (recorded)...</source>
-        <translation>Chat (Gravado)...</translation>
+        <translation>Chat (gravando)...</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="201"/>
         <source>Chat...</source>
-        <translatorcomment>Keep not translated!</translatorcomment>
         <translation>Chat...</translation>
     </message>
     <message>
@@ -4846,7 +4834,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="87"/>
         <source>Get externally visible IP address</source>
-        <translation>Obter IP visível externamente</translation>
+        <translation>Obter IP visível na internet</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="114"/>
@@ -4941,7 +4929,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="439"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation>Seu Provedor de Internet está usando NAT em larga escala (NAT444). Desse jeito fica impossível conectar até você diretamente. Veja a página de ajuda do Drawpile para ajuda.</translation>
+        <translation>Seu Provedor de Internet está usando NAT em larga escala (NAT444). Desse jeito fica impossível conectar até sua sessão diretamente. Veja a página de ajuda do Drawpile para ajuda.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="443"/>
@@ -4969,7 +4957,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location filename="../../desktop/widgets/palettewidget.cpp" line="58"/>
         <source>Set palette color</source>
-        <translation>Definir cor da palheta</translation>
+        <translation>Definir cor da paleta</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/palettewidget.cpp" line="253"/>
@@ -5078,7 +5066,6 @@ Hex: %5</translation>
     <message>
         <location filename="../../desktop/widgets/viewstatus.cpp" line="80"/>
         <source>Canvas Rotation</source>
-        <translatorcomment>&quot;Tela de pintura&quot; may not show in the entire screen!</translatorcomment>
         <translation>Rotação da tela</translation>
     </message>
 </context>
