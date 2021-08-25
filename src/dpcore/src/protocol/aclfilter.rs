@@ -1,13 +1,13 @@
-use crate::paint::{UserID, LayerID};
 use super::message::*;
+use crate::paint::{LayerID, UserID};
 
-use std::collections::{HashMap, HashSet};
-use std::convert::TryFrom;
 use num_enum::IntoPrimitive;
 use num_enum::TryFromPrimitive;
+use std::collections::{HashMap, HashSet};
+use std::convert::TryFrom;
 
 /// Bitfield for storing a set of users (IDs range from 0..255)
-pub type UserBits = [u8; 8];
+pub type UserBits = [u8; 32];
 
 /// Feature access tiers
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, IntoPrimitive, TryFromPrimitive)]
@@ -47,7 +47,7 @@ pub struct FeatureTiers {
     pub laser: Tier,
 
     /// Permission to use undo/redo
-    pub undo: Tier
+    pub undo: Tier,
 }
 
 /// Set of general user related permission bits
@@ -70,7 +70,6 @@ pub struct LayerACL {
     pub tier: Tier,
 
     /// Exclusive access granted to these users
-    /// Exclusive access overrides general access tier but not the lock.
     pub exclusive: UserBits,
 }
 
@@ -91,16 +90,22 @@ pub const ACLCHANGE_FEATURES: AclChange = 0x04;
 impl UserACLs {
     fn new() -> Self {
         Self {
-            operators: [0;8],
-            trusted: [0;8],
-            authenticated: [0;8],
-            locked: [0;8],
+            operators: [0; 32],
+            trusted: [0; 32],
+            authenticated: [0; 32],
+            locked: [0; 32],
             all_locked: false,
         }
     }
 
     fn is_op(&self, user: UserID) -> bool {
         user == 0 || is_userbit(&self.operators, user)
+    }
+}
+
+impl LayerACL {
+    pub fn flags(&self) -> u8 {
+        u8::from(self.tier) | if self.locked { 0x80 } else { 0 }
     }
 }
 
@@ -196,7 +201,7 @@ impl AclFilter {
                 return ACLCHANGE_USERBITS;
             }
             // The other commands have no effect on the filter
-            _ => ()
+            _ => (),
         };
 
         0
@@ -220,22 +225,27 @@ impl AclFilter {
             }
             LayerACL(u, m) => {
                 let tier = self.users.tier(*u);
-                if tier <= self.feature_tier.edit_layers || (tier <= self.feature_tier.own_layers && layer_creator(m.id) == *u) {
+                if tier <= self.feature_tier.edit_layers
+                    || (tier <= self.feature_tier.own_layers && layer_creator(m.id) == *u)
+                {
                     if m.flags == u8::from(Tier::Guest) && m.exclusive.is_empty() {
                         match self.layers.remove(&m.id) {
                             Some(_) => (true, ACLCHANGE_LAYERS),
-                            None => (true, 0)
+                            None => (true, 0),
                         }
                     } else {
-                        self.layers.insert(m.id, self::LayerACL {
-                            locked: m.flags & 0x80 > 0,
-                            tier: Tier::try_from(m.flags & 0x07).unwrap(),
-                            exclusive: if m.exclusive.is_empty() {
-                                [0xff;8]
-                            } else {
-                                vec_to_userbits(&m.exclusive)
-                            }
-                        });
+                        self.layers.insert(
+                            m.id,
+                            self::LayerACL {
+                                locked: m.flags & 0x80 > 0,
+                                tier: Tier::try_from(m.flags & 0x07).unwrap(),
+                                exclusive: if m.exclusive.is_empty() {
+                                    [0xff; 32]
+                                } else {
+                                    vec_to_userbits(&m.exclusive)
+                                },
+                            },
+                        );
                         (true, ACLCHANGE_LAYERS)
                     }
                 } else {
@@ -294,10 +304,19 @@ impl AclFilter {
                 ok
             }
             LayerVisibility(_, _) => true, // TODO
-            PutImage(u, m) => self.users.tier(*u) <= self.feature_tier.put_image && !self.is_layer_locked(*u, m.layer),
-            FillRect(u, m) => self.users.tier(*u) <= self.feature_tier.put_image && !self.is_layer_locked(*u, m.layer),
+            PutImage(u, m) => {
+                self.users.tier(*u) <= self.feature_tier.put_image
+                    && !self.is_layer_locked(*u, m.layer)
+            }
+            FillRect(u, m) => {
+                self.users.tier(*u) <= self.feature_tier.put_image
+                    && !self.is_layer_locked(*u, m.layer)
+            }
             PenUp(_) => true,
-            AnnotationCreate(u, m) => self.users.tier(*u) <= self.feature_tier.create_annotation && (self.users.is_op(*u) || layer_creator(m.id) == *u),
+            AnnotationCreate(u, m) => {
+                self.users.tier(*u) <= self.feature_tier.create_annotation
+                    && (self.users.is_op(*u) || layer_creator(m.id) == *u)
+            }
             AnnotationReshape(u, m) => self.users.is_op(*u) || *u == layer_creator(m.id),
             AnnotationEdit(u, m) => {
                 let ok = self.users.is_op(*u) || *u == layer_creator(m.id);
@@ -321,18 +340,24 @@ impl AclFilter {
             CanvasBackground(u, _) => self.users.tier(*u) <= self.feature_tier.background,
             DrawDabsClassic(u, m) => !self.is_layer_locked(*u, m.layer),
             DrawDabsPixel(u, m) | DrawDabsPixelSquare(u, m) => !self.is_layer_locked(*u, m.layer),
-            MoveRect(u, m) => self.users.tier(*u) <= self.feature_tier.move_rect && !self.is_layer_locked(*u, m.layer),
+            MoveRect(u, m) => {
+                self.users.tier(*u) <= self.feature_tier.move_rect
+                    && !self.is_layer_locked(*u, m.layer)
+            }
             Undo(u, _) => self.users.tier(*u) <= self.feature_tier.undo,
         }
     }
 
     fn check_layer_perms(&self, user: UserID, layer: LayerID) -> bool {
         let tier = self.users.tier(user);
-        tier <= self.feature_tier.edit_layers || (user == layer_creator(layer) && tier <= self.feature_tier.own_layers)
+        tier <= self.feature_tier.edit_layers
+            || (user == layer_creator(layer) && tier <= self.feature_tier.own_layers)
     }
 
     fn is_layer_locked(&self, user: UserID, layer: LayerID) -> bool {
-        self.layers.get(&layer).map_or(false, |l| l.locked || !is_userbit(&l.exclusive, user) || l.tier > self.users.tier(user))
+        self.layers.get(&layer).map_or(false, |l| {
+            l.locked || !is_userbit(&l.exclusive, user) || l.tier > self.users.tier(user)
+        })
     }
 }
 
@@ -361,7 +386,7 @@ fn unset_userbit(bits: &mut UserBits, user: UserID) {
 }
 
 fn vec_to_userbits(users: &[UserID]) -> UserBits {
-    let mut bits: UserBits = [0;8];
+    let mut bits: UserBits = [0; 32];
     for u in users {
         set_userbit(&mut bits, *u);
     }
@@ -375,4 +400,23 @@ fn is_userbit(bits: &UserBits, user: UserID) -> bool {
 
 fn layer_creator(id: u16) -> UserID {
     (id >> 8) as UserID
+}
+
+pub fn userbits_to_vec(users: &UserBits) -> Vec<UserID> {
+    let mut v = Vec::new();
+
+    if users.iter().all(|&b| b == 0xff) {
+        return v;
+    }
+
+    for i in 0..32 {
+        if users[i] != 0 {
+            for j in 0..8 {
+                if users[i] & (1 << j) > 0 {
+                    v.push((i * 8 + j) as u8);
+                }
+            }
+        }
+    }
+    v
 }

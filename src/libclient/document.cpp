@@ -34,7 +34,6 @@
 #include "tools/toolcontroller.h"
 #include "utils/images.h"
 
-#include "../libshared/record/writer.h"
 #include "../libshared/util/filename.h"
 
 #include <QGuiApplication>
@@ -47,7 +46,6 @@
 Document::Document(QObject *parent)
 	: QObject(parent),
 	  m_canvas(nullptr),
-	  m_recorder(nullptr),
 	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false),
@@ -90,13 +88,6 @@ Document::Document(QObject *parent)
 	connect(m_client, &net::Client::sessionResetted, this, &Document::onSessionResetted);
 }
 
-Document::~Document()
-{
-	// Cleanly shut down the recording writer if its still active
-	if(m_recorder)
-		m_recorder->close();
-}
-
 void Document::initCanvas()
 {
 	delete m_canvas;
@@ -109,6 +100,7 @@ void Document::initCanvas()
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
 	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendEnvelope);
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
+	connect(m_canvas, &canvas::CanvasModel::recorderStateChanged, this, &Document::recorderStateChanged);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
 #if 0 // FIXME
@@ -181,17 +173,11 @@ void Document::onServerLogin(bool join)
 
 	m_canvas->connectedToServer(m_client->myId(), join);
 
-#if 0 // FIXME
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;
-		startRecording(
-			m_recordOnConnect,
-			join ? protocol::MessageList() : m_canvas->generateSnapshot(),
-			nullptr
-		);
+		startRecording(m_recordOnConnect);
 		m_recordOnConnect = QString();
 	}
-#endif
 
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
@@ -515,67 +501,31 @@ bool Document::startRecording(const QString &filename, QString *error)
 		m_originalRecordingFilename += ".dprec";
 
 #if 0 // FIXME
-	return startRecording(
-		m_originalRecordingFilename,
-		m_canvas->generateSnapshot(),
-		error
-	);
-#endif
-	*error = QString("TODO");
-	return false;
-}
-
-#if 0 // FIXME
-bool Document::startRecording(const QString &filename, const protocol::MessageList &initialState, QString *error)
-{
-	Q_ASSERT(!isRecording());
-
-	m_recorder = new recording::Writer(filename, this);
-
-	if(!m_recorder->open()) {
-		qWarning("Couldn't start recording: %s", qPrintable(m_recorder->errorString()));
-		if(error)
-			*error = m_recorder->errorString();
-		delete m_recorder;
-		m_recorder = nullptr;
-		return false;
-
-	}
-
-	m_recorder->writeHeader();
-
-	for(const protocol::MessagePtr &ptr : initialState) {
-		m_recorder->recordMessage(ptr);
-	}
-
 	QSettings cfg;
 	cfg.beginGroup("settings/recording");
 	if(cfg.value("recordpause", true).toBool())
 		m_recorder->setMinimumInterval(int(1000 * cfg.value("minimumpause", 0.5).toFloat()));
 	if(cfg.value("recordtimestamp", false).toBool())
 		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
-
-	m_canvas->setRecorder(m_recorder);
-	m_recorder->setAutoflush();
-	emit recorderStateChanged(true);
-	return true;
-}
 #endif
+
+	// TODO error string
+	return m_canvas->startRecording(filename);
+}
 
 void Document::stopRecording()
 {
-	if(!isRecording())
-		return;
+	m_canvas->stopRecording();
+}
 
-	m_recorder->close();
-	delete m_recorder;
-	m_recorder = nullptr;
-
-	emit recorderStateChanged(false);
+bool Document::isRecording() const
+{
+	return m_canvas && m_canvas->isRecording();
 }
 
 bool Document::saveAsRecording(const QString &filename, QJsonObject header, QString *error) const
 {
+#if 0
 	recording::Writer writer(filename);
 
 	if(!writer.open()) {
@@ -612,7 +562,7 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 
 	// This recording will probably be used as a session template, so we need to
 	// set the session owner as well
-#if 0 // FIXME
+
 	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
 
 
@@ -627,9 +577,10 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 	for(const protocol::MessagePtr &ptr : snapshot) {
 		writer.writeMessage(*ptr);
 	}
-#endif
+
 
 	writer.close();
+#endif
 	return true;
 }
 

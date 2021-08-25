@@ -136,6 +136,13 @@ impl Tile {
         }
     }
 
+    pub fn data(&self) -> &TileData {
+        match self {
+            Tile::Bitmap(td) => td,
+            Tile::Blank => &TRANSPARENT_DATA,
+        }
+    }
+
     /// Check if all pixels of this tile are fully transparent.
     /// Shortcircuits if maybe_blank is false.
     pub fn is_blank(&self) -> bool {
@@ -320,13 +327,14 @@ impl Tile {
 
 impl PartialEq for Tile {
     fn eq(&self, other: &Tile) -> bool {
-        match self {
-            Tile::Bitmap(td) => match other {
-                Tile::Bitmap(otd) => td.pixels[..] == otd.pixels[..],
-                Tile::Blank => self.is_blank(),
-            },
-            Tile::Blank => other.is_blank(),
-        }
+        self.ptr_eq(other)
+            || match self {
+                Tile::Bitmap(td) => match other {
+                    Tile::Bitmap(otd) => td.pixels[..] == otd.pixels[..],
+                    Tile::Blank => self.is_blank(),
+                },
+                Tile::Blank => other.is_blank(),
+            }
     }
 }
 

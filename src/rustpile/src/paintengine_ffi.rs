@@ -25,6 +25,7 @@ use super::messages_ffi;
 use dpcore::brush::{BrushEngine, BrushState};
 use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
+use dpcore::canvas::snapshot::make_canvas_snapshot;
 use dpcore::paint::annotation::AnnotationID;
 use dpcore::paint::floodfill;
 use dpcore::paint::{
@@ -33,12 +34,15 @@ use dpcore::paint::{
 };
 use dpcore::protocol::message::*;
 use dpcore::protocol::aclfilter::*;
-use dpcore::protocol::{DeserializationError, MessageReader, MessageWriter};
+use dpcore::protocol::{DeserializationError, MessageReader, MessageWriter,
+    RecordingWriter, TextWriter, BinaryWriter, DRAWPILE_VERSION, PROTOCOL_VERSION};
 
 use core::ffi::c_void;
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
 use std::{ptr, slice, thread};
+use std::collections::HashMap;
+use std::fs::File;
 
 use tracing::{error, warn};
 
@@ -80,6 +84,7 @@ type MarkerCallback =
     Option<extern "C" fn(ctx: *mut c_void, user: UserID, message: *const u8, message_len: usize)>;
 type DefaultLayerCallback = Option<extern "C" fn(ctx: *mut c_void, layer: LayerID)>;
 type AclChangeCallback = Option<extern "C" fn(ctx: *mut c_void, changes: AclChange)>;
+type RecordingStateCallback = Option<extern "C" fn(ctx: *mut c_void, recording: bool)>;
 
 /// A copy of the layerstack to use in the main thread while the
 /// paint engine is busy
@@ -130,6 +135,9 @@ pub struct PaintEngine {
     /// Message filtering state
     aclfilter: AclFilter,
 
+    /// Recorder for received messages
+    recorder: Option<Box<dyn RecordingWriter>>,
+
     /// View mode changes are done in the main thread
     notify_changes: NotifyChangesCallback,
     notify_cursor: NotifyCursorCallback,
@@ -143,7 +151,8 @@ pub struct PaintEngine {
     meta_notify_laser: LaserCallback,
     meta_notify_marker: MarkerCallback,
     meta_notify_defaultlayer: DefaultLayerCallback,
-    meta_notify_aclchange: AclChangeCallback,
+    state_notify_aclchange: AclChangeCallback,
+    state_notify_recording: RecordingStateCallback,
 }
 
 fn run_paintengine(
@@ -287,6 +296,7 @@ pub extern "C" fn paintengine_new(
             run_paintengine(viewcache, receiver, callbacks);
         }),
         aclfilter: AclFilter::new(),
+        recorder: None,
         notify_changes: changes,
         notify_cursor: cursors,
         context_object: ctx,
@@ -297,7 +307,8 @@ pub extern "C" fn paintengine_new(
         meta_notify_laser: None,
         meta_notify_marker: None,
         meta_notify_defaultlayer: None,
-        meta_notify_aclchange: None,
+        state_notify_aclchange: None,
+        state_notify_recording: None,
     });
 
     Box::into_raw(dp)
@@ -330,6 +341,7 @@ pub extern "C" fn paintengine_register_meta_callbacks(
     markers: MarkerCallback,
     defaultlayer: DefaultLayerCallback,
     aclchange: AclChangeCallback,
+    recordingstate: RecordingStateCallback,
 ) {
     dp.meta_context = ctx;
     dp.meta_notify_join = join;
@@ -338,7 +350,8 @@ pub extern "C" fn paintengine_register_meta_callbacks(
     dp.meta_notify_laser = laser;
     dp.meta_notify_marker = markers;
     dp.meta_notify_defaultlayer = defaultlayer;
-    dp.meta_notify_aclchange = aclchange;
+    dp.state_notify_aclchange = aclchange;
+    dp.state_notify_recording = recordingstate;
 }
 
 /// Get the current size of the canvas.
@@ -376,7 +389,18 @@ pub extern "C" fn paintengine_receive_messages(
 
         if !ok {
             warn!("Filtered out {}", msg.as_text());
+            // TODO write in recording under the "filtered" type?
             continue;
+        }
+
+        if let Some(recorder) = &mut dp.recorder {
+            if let Err(err) = recorder.write_message(&msg) {
+                warn!("Error writing to recording: {}", err);
+                dp.recorder = None;
+                if let Some(cb) = dp.state_notify_recording {
+                    (cb)(dp.meta_context, false);
+                }
+            }
         }
 
         aclchanges |= changes;
@@ -406,7 +430,7 @@ pub extern "C" fn paintengine_receive_messages(
     }
 
     if aclchanges != 0 {
-        if let Some(cb) = dp.meta_notify_aclchange {
+        if let Some(cb) = dp.state_notify_aclchange {
             (cb)(dp.meta_context, aclchanges);
         }
     }
@@ -428,7 +452,7 @@ pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
 pub extern "C" fn paintengine_reset_acl(dp: &mut PaintEngine, local_user: UserID) {
     dp.aclfilter.reset(local_user);
 
-    if let Some(cb) = dp.meta_notify_aclchange {
+    if let Some(cb) = dp.state_notify_aclchange {
         (cb)(dp.meta_context, 0xff);
     }
 }
@@ -868,6 +892,78 @@ pub extern "C" fn paintengine_get_acl_layers(
 #[no_mangle]
 pub extern "C" fn paintengine_get_acl_features<'a>(dp: &'a PaintEngine) -> &'a FeatureTiers {
     dp.aclfilter.feature_tiers()
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_start_recording(dp: &mut PaintEngine, path: *const u16 , path_len: usize) -> bool {
+    let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
+
+    let textmode = path.ends_with(".dptxt");
+
+    // Open file
+    let file = match File::create(path) {
+        Ok(f) => f,
+        Err(e) => {
+            warn!("Couldn't open recording file: {}", e);
+            return false;
+        }
+    };
+
+    // Open the right kind of recorder
+    let mut writer: Box<dyn RecordingWriter> = if textmode {
+        Box::new(TextWriter::open(file))
+    } else {
+        Box::new(BinaryWriter::open(file))
+    };
+
+    // Write header
+    let mut header = HashMap::new();
+    header.insert("version".to_string(), PROTOCOL_VERSION.to_string());
+    header.insert("writerversion".to_string(), DRAWPILE_VERSION.to_string());
+
+    match writer.write_header(&header) {
+        Err(e) => {
+            warn!("Couldn't writer recording header: {}", e)
+        }
+        Ok(()) => ()
+    };
+
+    // TODO sync the paint engine thread to make sure we get everything
+
+    // Write current canvas content
+    let snapshot = {
+        let vc = dp.viewcache.lock().unwrap();
+        make_canvas_snapshot(1, &vc.layerstack, 0, Some(&dp.aclfilter))
+    };
+
+    for msg in snapshot {
+        if let Err(e) = writer.write_message(&msg) {
+            warn!("Couldn't write snapshot message: {}", e);
+            return false;
+        }
+    }
+
+    // Ready to record
+    dp.recorder = Some(writer);
+
+    if let Some(cb) = dp.state_notify_recording {
+        (cb)(dp.meta_context, true);
+    }
+
+    true
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_stop_recording(dp: &mut PaintEngine) {
+    dp.recorder = None;
+    if let Some(cb) = dp.state_notify_recording {
+        (cb)(dp.meta_context, false);
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_is_recording(dp: &PaintEngine) -> bool {
+    dp.recorder.is_some()
 }
 
 /// Paint all the changed tiles in the given area

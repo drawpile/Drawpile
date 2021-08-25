@@ -12,7 +12,7 @@ use super::textmessage::TextMessage;
 use std::fmt;
 use std::str::FromStr;
 
-pub static VERSION: &str = "{{ version }}";
+pub static PROTOCOL_VERSION: &str = "{{ version }}";
 pub const UNDO_DEPTH: u32 = {{ undo_depth }};
 
 {# ### STRUCTS FOR MESSAGES WITH NONTRIVIAL PAYLOADS ### #}

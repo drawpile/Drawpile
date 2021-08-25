@@ -21,10 +21,11 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 pub mod brushes;
-mod compression;
+pub mod compression;
 mod history;
 pub mod images;
 mod retcon;
+pub mod snapshot;
 mod state;
 
 pub use state::{CanvasState, CanvasStateChange};

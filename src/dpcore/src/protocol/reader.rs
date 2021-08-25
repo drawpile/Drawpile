@@ -30,7 +30,7 @@ use std::str;
 
 use crate::protocol::serialization::HEADER_LEN;
 use crate::protocol::textparser::{ParseResult, TextParser};
-use crate::protocol::{Message, ProtocolVersion, VERSION};
+use crate::protocol::{Message, ProtocolVersion, PROTOCOL_VERSION};
 
 #[derive(Debug)]
 pub enum ReadMessage {
@@ -69,7 +69,7 @@ pub trait RecordingReader {
     /// Check the recordings version number against the current protocol version
     fn check_compatibility(&self) -> Compatibility {
         if let Some(vstr) = self.get_metadata("version") {
-            let our = ProtocolVersion::from_string(VERSION).unwrap();
+            let our = ProtocolVersion::from_string(PROTOCOL_VERSION).unwrap();
             if let Some(their) = ProtocolVersion::from_string(vstr) {
                 compare_versions(&our, &their)
             } else {

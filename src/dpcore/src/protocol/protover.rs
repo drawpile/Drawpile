@@ -48,6 +48,17 @@ impl ProtocolVersion {
     }
 }
 
+impl Default for ProtocolVersion {
+    fn default() -> Self {
+        Self {
+            ns: "dp".into(),
+            server: 4,
+            major: 21,
+            minor: 2,
+        }
+    }
+}
+
 impl fmt::Display for ProtocolVersion {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

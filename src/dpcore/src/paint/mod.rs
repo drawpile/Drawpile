@@ -30,6 +30,7 @@ pub mod rasterop;
 pub mod rectiter;
 pub mod tile;
 pub mod tileiter;
+pub mod tilevec;
 
 use std::convert::TryFrom;
 use std::fmt;
@@ -38,7 +39,8 @@ pub type UserID = u8;
 
 /// Internal Layer ID is used on the layers themselves to support
 /// the extended non-protocol range of IDs for temporary layers.
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+#[repr(transparent)]
 pub struct InternalLayerID(pub i32);
 
 /// The regular layer ID type is used for layers that can be accessed
@@ -99,3 +101,4 @@ pub use layer::Layer;
 pub use layerstack::{LayerStack, LayerViewMode, LayerViewOptions};
 pub use rect::{Rectangle, Size};
 pub use tile::Tile;
+pub use tilevec::LayerTileSet;

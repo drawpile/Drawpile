@@ -293,9 +293,17 @@ impl Layer {
         }
     }
 
+    /// Get this layer's active sublayers
+    pub fn iter_sublayers(&self) -> impl Iterator<Item = &Layer> {
+        self.sublayers
+            .iter()
+            .filter(|l| !l.hidden)
+            .map(|l| l.as_ref())
+    }
+
     /// Return a list of visible sublayers this layer has
     pub fn sublayer_ids(&self) -> Vec<InternalLayerID> {
-        self.sublayers.iter().map(|sl| sl.id).collect()
+        self.iter_sublayers().map(|sl| sl.id).collect()
     }
 
     /// Check if a sublayer with the given ID exists

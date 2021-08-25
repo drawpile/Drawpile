@@ -218,6 +218,8 @@ using AclChange = uint32_t;
 
 using AclChangeCallback = void(*)(void *ctx, AclChange changes);
 
+using RecordingStateCallback = void(*)(void *ctx, bool recording);
+
 /// The result of an "annotation at point" query
 struct AnnotationAt {
   /// ID of the annotation at the queried point.
@@ -230,7 +232,7 @@ struct AnnotationAt {
 };
 
 /// Bitfield for storing a set of users (IDs range from 0..255)
-using UserBits = uint8_t[8];
+using UserBits = uint8_t[32];
 
 /// Set of general user related permission bits
 struct UserACLs {
@@ -248,7 +250,6 @@ struct LayerACL {
   /// Layer general access tier
   Tier tier;
   /// Exclusive access granted to these users
-  /// Exclusive access overrides general access tier but not the lock.
   UserBits exclusive;
 };
 
@@ -515,7 +516,8 @@ void paintengine_register_meta_callbacks(PaintEngine *dp,
                                          LaserCallback laser,
                                          MarkerCallback markers,
                                          DefaultLayerCallback defaultlayer,
-                                         AclChangeCallback aclchange);
+                                         AclChangeCallback aclchange,
+                                         RecordingStateCallback recordingstate);
 
 /// Get the current size of the canvas.
 Size paintengine_canvas_size(const PaintEngine *dp);
@@ -634,6 +636,12 @@ void paintengine_get_acl_layers(const PaintEngine *dp,
                                 void (*visitor)(void *ctx, LayerID id, const LayerACL *layer));
 
 const FeatureTiers *paintengine_get_acl_features(const PaintEngine *dp);
+
+bool paintengine_start_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+
+void paintengine_stop_recording(PaintEngine *dp);
+
+bool paintengine_is_recording(const PaintEngine *dp);
 
 /// Paint all the changed tiles in the given area
 ///

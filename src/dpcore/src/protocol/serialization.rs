@@ -53,9 +53,19 @@ impl fmt::Display for DeserializationError {
         match self {
             NoMoreMessages => write!(f, "No more messages in buffer"),
             TruncatedHeader => write!(f, "Message header truncated"),
-            TruncatedPayload(expected, actual) => write!(f, "Message payload short by {} bytes", expected - actual),
-            PayloadLengthMismatch(expected, min, max) => write!(f, "Unexpected message payload length ({} <= {} <= {})", min, expected, max),
-            UnknownMessage(user, msgtype, payload_len) => write!(f, "Unknown message type {} (user {}, payload length {})", msgtype, user, payload_len),
+            TruncatedPayload(expected, actual) => {
+                write!(f, "Message payload short by {} bytes", expected - actual)
+            }
+            PayloadLengthMismatch(expected, min, max) => write!(
+                f,
+                "Unexpected message payload length ({} <= {} <= {})",
+                min, expected, max
+            ),
+            UnknownMessage(user, msgtype, payload_len) => write!(
+                f,
+                "Unknown message type {} (user {}, payload length {})",
+                msgtype, user, payload_len
+            ),
             InvalidField(msg) => write!(f, "Invalid message field: {}", msg),
         }
     }
@@ -199,10 +209,7 @@ pub struct MessageReader<'a> {
 
 impl<'a> MessageReader<'a> {
     pub fn new(buf: &'a [u8]) -> MessageReader<'a> {
-        MessageReader {
-            buf,
-            remaining: 0
-        }
+        MessageReader { buf, remaining: 0 }
     }
 
     pub fn remaining(&self) -> usize {
@@ -223,13 +230,16 @@ impl<'a> MessageReader<'a> {
         }
 
         if self.buf.len() < HEADER_LEN {
-            return Err(DeserializationError::TruncatedHeader)
+            return Err(DeserializationError::TruncatedHeader);
         }
 
         self.remaining = u16::from_be_bytes(self.buf[0..2].try_into().unwrap()) as usize;
 
         if self.buf.len() < HEADER_LEN + self.remaining {
-            return Err(DeserializationError::TruncatedPayload(self.remaining, self.buf.len() - 4))
+            return Err(DeserializationError::TruncatedPayload(
+                self.remaining,
+                self.buf.len() - 4,
+            ));
         }
 
         let message_type = self.buf[2];
@@ -237,13 +247,21 @@ impl<'a> MessageReader<'a> {
 
         self.buf = &self.buf[HEADER_LEN..];
 
-        return Ok((message_type, user_id))
+        return Ok((message_type, user_id));
     }
 
     /// Check that the remaining length matches what's expected
-    pub fn validate(&mut self, at_least: usize, at_most: usize) -> Result<&mut MessageReader<'a>, DeserializationError> {
+    pub fn validate(
+        &mut self,
+        at_least: usize,
+        at_most: usize,
+    ) -> Result<&mut MessageReader<'a>, DeserializationError> {
         if self.remaining < at_least || self.remaining > at_most {
-            Err(DeserializationError::PayloadLengthMismatch(self.remaining, at_least, at_most))
+            Err(DeserializationError::PayloadLengthMismatch(
+                self.remaining,
+                at_least,
+                at_most,
+            ))
         } else {
             Ok(self)
         }
@@ -422,7 +440,7 @@ mod tests {
         assert_eq!(r.remaining(), 0);
         assert!(match r.read_header() {
             Err(DeserializationError::NoMoreMessages) => true,
-            _ => false
+            _ => false,
         });
     }
 }

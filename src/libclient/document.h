@@ -42,7 +42,7 @@ namespace net {
 	class BanlistModel;
 	class AnnouncementListModel;
 }
-namespace recording { class Writer; }
+
 namespace tools { class ToolController; }
 
 /**
@@ -81,7 +81,6 @@ class Document : public QObject
 	Q_OBJECT
 public:
 	explicit Document(QObject *parent=nullptr);
-	~Document();
 
 	QString title() const;
 
@@ -129,7 +128,7 @@ public:
 
 	QString currentFilename() const { return m_currentFilename; }
 
-	bool isRecording() const { return m_recorder != nullptr; }
+	bool isRecording() const;
 	bool startRecording(const QString &filename, QString *error=nullptr);
 	void stopRecording();
 
@@ -271,7 +270,6 @@ private:
 	net::AnnouncementListModel *m_announcementlist;
 	QStringListModel *m_serverLog;
 
-	recording::Writer *m_recorder;
 	QString m_originalRecordingFilename;
 	QString m_recordOnConnect;
 

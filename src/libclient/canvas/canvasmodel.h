@@ -80,12 +80,14 @@ public:
 	 */
 	bool isOnline() const { return m_mode == Mode::Online; }
 
-#if 0 // FIXME
-	/**
-	 * @brief Set the Writer to use for recording
-	 */
-	void setRecorder(recording::Writer *writer) { m_recorder = writer; }
-#endif
+	//! Open a recording file and start recording
+	bool startRecording(const QString &path);
+
+	//! Stop recording
+	void stopRecording();
+
+	//! Is recording in progress?
+	bool isRecording() const;
 
 	//! Size of the canvas
 	QSize size() const;
@@ -143,6 +145,8 @@ signals:
 
 	void canvasLocked(bool locked);
 
+	void recorderStateChanged(bool recording);
+
 private slots:
 	void onCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 
@@ -154,6 +158,7 @@ private:
 	friend void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
 	friend void metaDefaultLayer(void *ctx, uint16_t layerId);
 	friend void metaAclChange(void *ctx, uint32_t changes);
+	friend void metaRecorderStateChanged(void *ctx, bool recording);
 
 	AclState *m_aclstate;
 	UserListModel *m_userlist;

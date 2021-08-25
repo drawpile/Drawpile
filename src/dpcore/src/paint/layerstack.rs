@@ -25,9 +25,9 @@ use std::sync::Arc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
+use super::color::ALPHA_CHANNEL;
 use super::tile::{Tile, TileData, TILE_SIZE};
 use super::{Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID};
-use super::color::ALPHA_CHANNEL;
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -433,7 +433,7 @@ impl LayerStack {
 
         for layer in self.layers.iter().rev() {
             if layer.is_visible() && layer.pixel_at(x as u32, y as u32)[ALPHA_CHANNEL] > 0 {
-                return layer.id.try_into().unwrap()
+                return layer.id.try_into().unwrap();
             }
         }
 

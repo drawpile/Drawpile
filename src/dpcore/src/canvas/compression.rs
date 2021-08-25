@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::paint::tile::{Tile, TILE_LENGTH};
+use crate::paint::tile::{Tile, TileData, TILE_LENGTH};
 use crate::paint::{Color, Pixel, UserID};
 
 use std::convert::TryInto;
@@ -76,6 +76,41 @@ pub fn decompress_tile(data: &[u8], user_id: UserID) -> Option<Tile> {
         unsafe { std::slice::from_raw_parts(decompressed.as_ptr() as *const Pixel, TILE_LENGTH) };
 
     Some(Tile::from_data(pixels, user_id))
+}
+
+/// Compress a tile's content.
+///
+pub fn compress_tiledata(tiledata: &TileData) -> Vec<u8> {
+    let pixelbytes = unsafe {
+        slice::from_raw_parts(
+            tiledata.pixels.as_ptr() as *const u8,
+            TILE_LENGTH * mem::size_of::<Pixel>(),
+        )
+    };
+
+    let compressed = deflate_bytes_zlib(pixelbytes);
+
+    // For compatibility with Qt's compresssion function, add a prefix
+    // containing the expected length of the decompressed buffer.
+    // We can probably drop this in the next protocol change.
+    let prefix = u32::to_be_bytes(TILE_LENGTH as u32);
+    let mut prefixed_data = Vec::<u8>::with_capacity(prefix.len() + compressed.len());
+    prefixed_data.extend_from_slice(&prefix);
+    prefixed_data.extend_from_slice(&compressed);
+
+    prefixed_data
+}
+
+/// Compress a tile's content
+///
+/// If the tile is filled with solid color, the pixel data is not compressed
+/// but the color value is returned.
+pub fn compress_tile(tile: &Tile) -> Vec<u8> {
+    if let Some(c) = tile.solid_color() {
+        c.as_argb32().to_be_bytes().to_vec()
+    } else {
+        compress_tiledata(tile.data())
+    }
 }
 
 pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> {

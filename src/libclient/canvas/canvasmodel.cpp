@@ -42,6 +42,7 @@ void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color
 void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
 void metaDefaultLayer(void *ctx, uint16_t layerId);
 void metaAclChange(void *ctx, uint32_t changes);
+void metaRecorderStateChanged(void *ctx, bool recording);
 
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(1)
@@ -64,7 +65,8 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 		&metaLaserTrail,
 		&metaMarkerMessage,
 		&metaDefaultLayer,
-		&metaAclChange
+		&metaAclChange,
+		&metaRecorderStateChanged
 	);
 
 	m_aclstate->setLocalUserId(localUserId);
@@ -319,6 +321,21 @@ void CanvasModel::resetCanvas()
 #endif
 }
 
+bool CanvasModel::startRecording(const QString &path)
+{
+	return rustpile::paintengine_start_recording(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
+}
+
+void CanvasModel::stopRecording()
+{
+	rustpile::paintengine_stop_recording(m_paintengine->engine());
+}
+
+bool CanvasModel::isRecording() const
+{
+	return rustpile::paintengine_is_recording(m_paintengine->engine());
+}
+
 void metaUserJoin(void *ctx, uint8_t user, uint8_t flags, const uint8_t *username, uintptr_t name_len, const uint8_t *avatarbytes, uintptr_t avatar_len)
 {
 	Q_ASSERT(ctx);
@@ -426,6 +443,13 @@ void metaAclChange(void *ctx, uint32_t changes)
 
 	if(changes & 0x04)
 		canvas->m_aclstate->updateFeatures(*rustpile::paintengine_get_acl_features(canvas->paintEngine()->engine()));
+}
+
+void metaRecorderStateChanged(void *ctx, bool recording)
+{
+	Q_ASSERT(ctx);
+	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
+	emit canvas->recorderStateChanged(recording);
 }
 
 }
