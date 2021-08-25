@@ -887,11 +887,7 @@ void Document::cutLayer()
 
 void Document::pasteImage(const QImage &image, const QPoint &point, bool forcePoint)
 {
-	if(!m_canvas) {
-		canvas::QImageCanvasLoader loader(image);
-		loadCanvas(loader);
-
-	} else {
+	if(m_canvas) {
 		m_canvas->pasteFromImage(image, point, forcePoint);
 	}
 }

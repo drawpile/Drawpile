@@ -159,44 +159,6 @@ net::Envelope ImageCanvasLoader::loadInitCommands()
 	return net::Envelope();
 }
 
-net::Envelope QImageCanvasLoader::loadInitCommands()
-{
-	net::EnvelopeBuilder eb;
-	const QString layerName = QStringLiteral("Layer 1"); // TODO i18n
-
-	rustpile::write_resize(eb, 1, 0, m_image.size().width(), m_image.size().height(), 0);
-
-
-#if 0 // FIXME
-	rustpile::write_newlayer(eb, 1, 0x0101, 0, 0, 0, reinterpret_cast<const uint16_t*>(layerName.constData()), layerName.length());
-
-	const auto tileset = paintcore::LayerTileSet::fromImage(
-		m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-		);
-
-	msgs << protocol::MessagePtr(new protocol::LayerCreate(
-		1,
-		1,
-		0,
-		tileset.background.rgba(),
-		0,
-		QStringLiteral("Layer 1")
-	));
-
-	msgs << protocol::MessagePtr(new protocol::LayerAttributes(
-		1,
-		1,
-		0,
-		0,
-		255,
-		paintcore::BlendMode::MODE_NORMAL
-	));
-
-	tileset.toPutTiles(1, 1, 0, msgs);
-#endif
-	return eb.toEnvelope();
-}
-
 net::Envelope SnapshotLoader::loadInitCommands()
 {
 #if 0 // FIXME

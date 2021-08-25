@@ -130,24 +130,6 @@ private:
 	QPair<int,int> m_dpi;
 };
 
-class QImageCanvasLoader : public SessionLoader {
-public:
-	QImageCanvasLoader(const QImage &image) : m_image(image) {}
-
-	net::Envelope loadInitCommands() override;
-	QString filename() const override { return QString(); }
-	QString errorMessage() const override { return QString(); }
-	QPair<int,int> dotsPerInch() const override {
-		return QPair<int,int>(
-			int(m_image.dotsPerMeterX() * 0.0254),
-			int(m_image.dotsPerMeterY() * 0.0254)
-		);
-	}
-
-private:
-	QImage m_image;
-};
-
 /**
  * @brief A session loader that takes an existing layer stack and generates a new snapshot from it
  *
