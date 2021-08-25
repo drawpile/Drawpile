@@ -35,7 +35,3 @@ if(SERVER)
 	add_subdirectory (thinsrv)
 endif()
 
-if(TOOLS)
-	add_subdirectory(tools)
-endif()
-
