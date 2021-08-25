@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/qml">
-        <file>Canvas/AnnotationItem.qml</file>
-        <file>Canvas/Canvas.qml</file>
-        <file>Canvas/UserCursor.qml</file>
-    </qresource>
-</RCC>

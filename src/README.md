@@ -8,5 +8,4 @@ Subdirectories:
  * desktop: Widget based client application (uses libclient and libthicksrv)
  * thinsrv: Standalone thin server (uses libserver) (TO BE REWRITTEN)
  * drawpile-cli: A command line tool for converting and rendering recordings
- * mobile: Future QML based client will go here (TO BE REMOVED: outdated)
 
