@@ -46,10 +46,6 @@
 
 #include <QtColorWidgets/ColorDialog>
 
-#ifndef NDEBUG
-#include "core/tile.h"
-#endif
-
 #ifdef Q_OS_OSX
 #define CTRL_KEY "Meta"
 #include "widgets/macmenu.h"
@@ -222,20 +218,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Statusbar session size label
 	QLabel *sessionHistorySize = new QLabel(this);
 	m_viewStatusBar->addWidget(sessionHistorySize);
-
-#ifndef NDEBUG
-	// Debugging tool: show amount of memory consumed by tiles
-	{
-		QLabel *tilemem = new QLabel(this);
-		QTimer *tilememtimer = new QTimer(this);
-		connect(tilememtimer, &QTimer::timeout, [tilemem]() {
-			tilemem->setText(QStringLiteral("Tiles: %1 Mb").arg(paintcore::TileData::megabytesUsed(), 0, 'f', 2));
-		});
-		tilememtimer->setInterval(1000);
-		tilememtimer->start(1000);
-		m_viewStatusBar->addPermanentWidget(tilemem);
-	}
-#endif
 
 	m_viewStatusBar->addPermanentWidget(m_viewstatus);
 	m_viewStatusBar->addPermanentWidget(m_netstatus);
