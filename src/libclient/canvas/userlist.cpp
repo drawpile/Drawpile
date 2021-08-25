@@ -20,8 +20,9 @@
 #include "userlist.h"
 #include "utils/icon.h"
 #include "acl.h"
-#include "../libshared/net/meta.h"
-#include "../libshared/net/meta2.h"
+#include "net/envelopebuilder.h"
+
+#include "../rustpile/rustpile.h"
 
 #include <QDebug>
 #include <QJsonArray>
@@ -228,9 +229,9 @@ void UserListModel::updateMuteList(const QJsonArray &mutedUserIds)
 	}
 }
 
-QList<uint8_t> UserListModel::operatorList() const
+QVector<uint8_t> UserListModel::operatorList() const
 {
-	QList<uint8_t> ops;
+	QVector<uint8_t> ops;
 	for(int i=0;i<m_users.size();++i) {
 		const User &u = m_users.at(i);
 		if(u.isOnline && (u.isOperator || u.isMod))
@@ -239,9 +240,9 @@ QList<uint8_t> UserListModel::operatorList() const
 	return ops;
 }
 
-QList<uint8_t> UserListModel::lockList() const
+QVector<uint8_t> UserListModel::lockList() const
 {
-	QList<uint8_t> locks;
+	QVector<uint8_t> locks;
 	for(int i=0;i<m_users.size();++i) {
 		const User &u = m_users.at(i);
 		if(u.isOnline && u.isLocked)
@@ -250,9 +251,9 @@ QList<uint8_t> UserListModel::lockList() const
 	return locks;
 }
 
-QList<uint8_t> UserListModel::trustedList() const
+QVector<uint8_t> UserListModel::trustedList() const
 {
-	QList<uint8_t> ids;
+	QVector<uint8_t> ids;
 	for(int i=0;i<m_users.size();++i) {
 		const User &u = m_users.at(i);
 		if(u.isOnline && u.isTrusted)
@@ -285,11 +286,11 @@ QString UserListModel::getUsername(int id) const
 	return tr("User #%1").arg(id);
 }
 
-protocol::MessagePtr UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
+net::Envelope UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
 {
 	Q_ASSERT(userId>0 && userId<255);
 
-	QList<uint8_t> ids = lockList();
+	QVector<uint8_t> ids = lockList();
 	if(lock) {
 		if(!ids.contains(userId))
 			ids.append(userId);
@@ -297,14 +298,16 @@ protocol::MessagePtr UserListModel::getLockUserCommand(int localId, int userId, 
 		ids.removeAll(userId);
 	}
 
-	return protocol::MessagePtr(new protocol::UserACL(localId, ids));
+	net::EnvelopeBuilder eb;
+	rustpile::write_useracl(eb, localId, ids.constData(), ids.length());
+	return eb.toEnvelope();
 }
 
-protocol::MessagePtr UserListModel::getOpUserCommand(int localId, int userId, bool op) const
+net::Envelope UserListModel::getOpUserCommand(int localId, int userId, bool op) const
 {
 	Q_ASSERT(userId>0 && userId<255);
 
-	QList<uint8_t> ops = operatorList();
+	QVector<uint8_t> ops = operatorList();
 	if(op) {
 		if(!ops.contains(userId))
 			ops.append(userId);
@@ -312,14 +315,16 @@ protocol::MessagePtr UserListModel::getOpUserCommand(int localId, int userId, bo
 		ops.removeOne(userId);
 	}
 
-	return protocol::MessagePtr(new protocol::SessionOwner(localId, ops));
+	net::EnvelopeBuilder eb;
+	rustpile::write_sessionowner(eb, localId, ops.constData(), ops.length());
+	return eb.toEnvelope();
 }
 
-protocol::MessagePtr UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
+net::Envelope UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
 {
 	Q_ASSERT(userId>0 && userId<255);
 
-	QList<uint8_t> trusted = trustedList();
+	QVector<uint8_t> trusted = trustedList();
 	if(trust) {
 		if(!trusted.contains(userId))
 			trusted.append(userId);
@@ -327,7 +332,9 @@ protocol::MessagePtr UserListModel::getTrustUserCommand(int localId, int userId,
 		trusted.removeOne(userId);
 	}
 
-	return protocol::MessagePtr(new protocol::TrustedUsers(localId, trusted));
+	net::EnvelopeBuilder eb;
+	rustpile::write_trusted(eb, localId, trusted.constData(), trusted.length());
+	return eb.toEnvelope();
 }
 
 bool OnlineUserListModel::filterAcceptsRow(int source_row, const QModelIndex &parent) const

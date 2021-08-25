@@ -20,12 +20,11 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "net/client.h"
+#include "net/envelopebuilder.h"
 
 #include "toolcontroller.h"
 #include "annotation.h"
 
-#include "../libshared/net/undo.h"
-#include "../libshared/net/annotation.h"
 #include "../rustpile/rustpile.h"
 
 #include <QPixmap>
@@ -183,14 +182,18 @@ void Annotation::end()
 	if(m_selectedId == 0)
 		return;
 
-	protocol::MessageList msgs;
+	net::EnvelopeBuilder eb;
 	const uint8_t contextId = owner.client()->myId();
 
-	if(!m_isNew) {
-		if(m_p1.toPoint() != m_p2.toPoint()) {			
-			msgs << protocol::MessagePtr(new protocol::AnnotationReshape(contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height()));
+	rustpile::write_undopoint(eb, contextId);
+	bool hasMessages = false;
 
+	if(!m_isNew) {
+		if(m_p1.toPoint() != m_p2.toPoint()) {
+			rustpile::write_reshapeannotation(eb, contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height());
+			hasMessages = true;
 		}
+
 	} else if(m_handle != Handle::Outside) {
 		if(m_shape.width() < 10 && m_shape.height() < 10) {
 			// User created a tiny annotation, probably by clicking rather than dragging.
@@ -198,13 +201,12 @@ void Annotation::end()
 			m_shape.setSize(QSize(160, 60));
 		}
 
-		msgs << protocol::MessagePtr(new protocol::AnnotationCreate(contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height()));
+		rustpile::write_newannotation(eb, contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height());
+		hasMessages = true;
 	}
 
-	if(!msgs.isEmpty()) {
-		msgs.prepend(protocol::MessagePtr(new protocol::UndoPoint(contextId)));
-		owner.client()->sendMessages(msgs);
-	}
+	if(hasMessages)
+		owner.client()->sendEnvelope(eb.toEnvelope());
 }
 
 }

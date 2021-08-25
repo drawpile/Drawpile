@@ -80,4 +80,8 @@ void EnvelopeBuilder::buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y
 	);
 }
 
+void EnvelopeBuilder::buildUndo(uint8_t ctxid, uint8_t overrideId, bool redo)
+{
+	rustpile::write_undo(m_writer, ctxid, overrideId, redo);
+}
 }

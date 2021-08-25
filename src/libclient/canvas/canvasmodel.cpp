@@ -27,12 +27,6 @@
 
 #include "ora/orawriter.h"
 #include "utils/identicon.h"
-#include "net/internalmsg.h"
-
-#include "../libshared/net/meta.h"
-#include "../libshared/net/meta2.h"
-#include "../libshared/net/recording.h"
-
 #include "../rustpile/rustpile.h"
 
 #include <QSettings>
@@ -147,25 +141,16 @@ void CanvasModel::endPlayback()
 #endif
 }
 
-void CanvasModel::handleCommand(protocol::MessagePtr cmd)
+void CanvasModel::handleCommand(const net::Envelope &envelope)
 {
-	using namespace protocol;
-
-	// TODO use envelopes rather than MessagePtrs
-	QByteArray buf(cmd->length(), 0);
-	cmd->serialize(buf.data());
-	m_paintengine->receiveMessages(false, buf);
-	//m_statetracker->receiveQueuedCommand(cmd);
+	m_paintengine->receiveMessages(false, envelope);
 	emit canvasModified();
 }
 
-void CanvasModel::handleLocalCommand(protocol::MessagePtr cmd)
+void CanvasModel::handleLocalCommand(const net::Envelope &envelope)
 {
 	m_layerlist->setAutoselectAny(false);
-	QByteArray buf(cmd->length(), 0);
-	cmd->serialize(buf.data());
-	m_paintengine->receiveMessages(true, buf);
-	emit canvasModified();
+	m_paintengine->receiveMessages(true, envelope);
 }
 
 QImage CanvasModel::toImage(bool withBackground, bool withSublayers) const
@@ -177,16 +162,17 @@ QImage CanvasModel::toImage(bool withBackground, bool withSublayers) const
 	return QImage();
 }
 
+#if 0 // FIXME
 protocol::MessageList CanvasModel::generateSnapshot() const
 {
-#if 0 // FIXME
+
 	auto loader = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_aclfilter);
 	loader.setDefaultLayer(m_layerlist->defaultLayer());
 	loader.setPinnedMessage(m_pinnedMessage);
 	return loader.loadInitCommands();
-#endif
 	return protocol::MessageList();
 }
+#endif
 
 void CanvasModel::pickLayer(int x, int y)
 {

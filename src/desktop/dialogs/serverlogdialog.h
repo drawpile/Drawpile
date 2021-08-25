@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2019 Calle Laakkonen
+   Copyright (C) 2017-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ namespace canvas {
 	class UserListModel;
 }
 
-namespace protocol {
-	class MessagePtr;
+namespace net {
+	class Envelope;
 }
 
 namespace dialogs {
@@ -53,7 +53,7 @@ public slots:
 signals:
 	void inspectModeChanged(int contextId);
 	void inspectModeStopped();
-	void opCommand(const protocol::MessagePtr &msg);
+	void opCommand(const net::Envelope &msg);
 
 protected:
 	void hideEvent(QHideEvent *event) override;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,11 +20,10 @@
 #include "net/login.h"
 #include "net/loginsessions.h"
 #include "net/tcpserver.h"
-#include "commands.h"
+#include "servercmd.h"
 #include "parentalcontrols/parentalcontrols.h"
 
 #include "../libshared/net/protover.h"
-#include "../libshared/net/control.h"
 #include "../libshared/util/networkaccess.h"
 #include "../libshared/util/paths.h"
 
@@ -39,7 +38,9 @@
 #include <QImage>
 #include <QBuffer>
 
+#ifndef NDEBUG
 #define DEBUG_LOGIN
+#endif
 
 namespace {
 
@@ -88,25 +89,8 @@ void LoginHandler::serverDisconnected()
 {
 }
 
-void LoginHandler::receiveMessage(protocol::MessagePtr message)
+bool LoginHandler::receiveMessage(const ServerReply &msg)
 {
-	if(message->type() == protocol::MSG_DISCONNECT) {
-		const protocol::Disconnect &dmsg = message.cast<protocol::Disconnect>();
-		if(dmsg.reason() == protocol::Disconnect::KICK) {
-			qWarning("We are IP banned from this server!");
-			failLogin(tr("Your IP address is banned from this server"));
-		}
-		return;
-	}
-
-	if(message->type() != protocol::MSG_COMMAND) {
-		qWarning() << "Login error: got message type" << message->type() << "when expected type 0";
-		failLogin(tr("Invalid state"));
-		return;
-	}
-
-	const protocol::ServerReply msg = message.cast<protocol::Command>().reply();
-
 #ifdef DEBUG_LOGIN
 	qInfo() << "login <--" << msg.reply;
 #endif
@@ -120,14 +104,16 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	// 6. send host/join command
 	// 7. wait for OK
 
-	if(msg.type == protocol::ServerReply::ERROR) {
+	if(msg.type == ServerReply::ReplyType::Error) {
 		// The server disconnects us right after sending the error message
 		handleError(msg.reply["code"].toString(), msg.message);
-		return;
+		return true;
 
-	} else if(msg.type != protocol::ServerReply::LOGIN && msg.type != protocol::ServerReply::RESULT) {
-		qWarning() << "Login error: got reply type" << msg.type << "when expected LOGIN, RESULT or ERROR";
+	} else if(msg.type != ServerReply::ReplyType::Login && msg.type != ServerReply::ReplyType::Result) {
+		qWarning() << "Login error: got reply type" << int(msg.type) << "when expected LOGIN, RESULT or ERROR";
 		failLogin(tr("Invalid state"));
+
+		return true;
 	}
 
 	switch(m_state) {
@@ -135,27 +121,28 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	case EXPECT_STARTTLS: expectStartTls(msg); break;
 	case WAIT_FOR_LOGIN_PASSWORD:
 	case WAIT_FOR_EXTAUTH:
-		expectNothing(msg); break;
+		expectNothing(); break;
 	case EXPECT_IDENTIFIED: expectIdentified(msg); break;
 	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
 	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
 	case WAIT_FOR_JOIN_PASSWORD:
-	case EXPECT_LOGIN_OK: expectLoginOk(msg); break;
+	case EXPECT_LOGIN_OK: return expectLoginOk(msg); break;
 	case ABORT_LOGIN: /* ignore messages in this state */ break;
 	}
+
+	return true;
 }
 
-void LoginHandler::expectNothing(const protocol::ServerReply &msg)
+void LoginHandler::expectNothing()
 {
-	Q_UNUSED(msg);
 	qWarning("Got login message while not expecting anything!");
 	failLogin(tr("Incompatible server"));
 }
 
-void LoginHandler::expectHello(const protocol::ServerReply &msg)
+void LoginHandler::expectHello(const ServerReply &msg)
 {
-	if(msg.type != protocol::ServerReply::LOGIN) {
-		qWarning() << "Login error. Greeting type is not LOGIN:" << msg.type;
+	if(msg.type != ServerReply::ReplyType::Login) {
+		qWarning() << "Login error. Greeting type is not LOGIN:" << int(msg.type);
 		failLogin(tr("Incompatible server"));
 		return;
 	}
@@ -200,10 +187,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	// Start secure mode if possible
 	if(startTls) {
 		m_state = EXPECT_STARTTLS;
-
-		protocol::ServerCommand cmd;
-		cmd.cmd = "startTls";
-		send(cmd);
+		send("startTls");
 
 	} else {
 		// If this is a trusted host, it should always be in secure mode
@@ -216,7 +200,7 @@ void LoginHandler::expectHello(const protocol::ServerReply &msg)
 	}
 }
 
-void LoginHandler::expectStartTls(const protocol::ServerReply &msg)
+void LoginHandler::expectStartTls(const ServerReply &msg)
 {
 	if(msg.reply["startTls"].toBool()) {
 		startTls();
@@ -279,21 +263,22 @@ void LoginHandler::selectIdentity(const QString &username, const QString &passwo
 
 void LoginHandler::sendIdentity()
 {
-	protocol::ServerCommand cmd;
-	cmd.cmd = "ident";
-	cmd.args.append(m_address.userName());
+	QJsonArray args;
+	QJsonObject kwargs;
+
+	args << m_address.userName();
 
 	if(!m_address.password().isEmpty())
-		cmd.args.append(m_address.password());
+		args << m_address.password();
 
 	if(!m_avatar.isEmpty()) {
-		cmd.kwargs["avatar"] = QString::fromUtf8(m_avatar);
+		kwargs["avatar"] = QString::fromUtf8(m_avatar);
 		// avatar needs only be sent once
 		m_avatar = QByteArray();
 	}
 
 	m_state = EXPECT_IDENTIFIED;
-	send(cmd);
+	send("ident", args, kwargs);
 }
 
 void LoginHandler::requestExtAuth(const QString &username, const QString &password)
@@ -330,13 +315,8 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 		const QJsonObject obj = doc.object();
 		const QString status = obj["status"].toString();
 		if(status == "auth") {
-			protocol::ServerCommand cmd;
-			cmd.cmd = "ident";
-			cmd.args.append(m_address.userName());
-			cmd.kwargs["extauth"] = obj["token"];
-
 			m_state = EXPECT_IDENTIFIED;
-			send(cmd);
+			send("ident", { m_address.userName() }, {{"extauth", obj["token"]}});
 
 			emit extAuthComplete(true);
 
@@ -355,7 +335,7 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 	});
 }
 
-void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
+void LoginHandler::expectIdentified(const ServerReply &msg)
 {
 	if(msg.reply["state"] == "needPassword") {
 		// Looks like guest logins are not possible
@@ -415,11 +395,11 @@ void LoginHandler::expectIdentified(const protocol::ServerReply &msg)
 	}
 }
 
-void LoginHandler::expectSessionDescriptionHost(const protocol::ServerReply &msg)
+void LoginHandler::expectSessionDescriptionHost(const ServerReply &msg)
 {
 	Q_ASSERT(m_mode != Mode::Join);
 
-	if(msg.type == protocol::ServerReply::LOGIN) {
+	if(msg.type == ServerReply::ReplyType::Login) {
 		// We don't care about existing sessions when hosting a new one,
 		// but the reply means we can go ahead
 		sendHostCommand();
@@ -433,22 +413,21 @@ void LoginHandler::expectSessionDescriptionHost(const protocol::ServerReply &msg
 
 void LoginHandler::sendHostCommand()
 {
-	protocol::ServerCommand cmd;
-	cmd.cmd = "host";
+	QJsonObject kwargs;
 
 	if(!m_sessionAlias.isEmpty())
-		cmd.kwargs["alias"] = m_sessionAlias;
+		kwargs["alias"] = m_sessionAlias;
 
-	cmd.kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
-	cmd.kwargs["user_id"] = m_userid;
+	kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
+	kwargs["user_id"] = m_userid;
 	if(!m_sessionPassword.isEmpty())
-		cmd.kwargs["password"] = m_sessionPassword;
+		kwargs["password"] = m_sessionPassword;
 
-	send(cmd);
+	send("host", {}, kwargs);
 	m_state = EXPECT_LOGIN_OK;
 }
 
-void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg)
+void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 {
 	Q_ASSERT(m_mode != Mode::HostRemote);
 
@@ -526,20 +505,20 @@ void LoginHandler::expectSessionDescriptionJoin(const protocol::ServerReply &msg
 	}
 }
 
-void LoginHandler::expectNoErrors(const protocol::ServerReply &msg)
+void LoginHandler::expectNoErrors(const ServerReply &msg)
 {
 	// A "do nothing" handler while waiting for the user to enter a password
-	if(msg.type == protocol::ServerReply::LOGIN)
+	if(msg.type == ServerReply::ReplyType::Login)
 		return;
 
 	qWarning() << "Unexpected login message:" << msg.reply;
 }
 
-void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
+bool LoginHandler::expectLoginOk(const ServerReply &msg)
 {
-	if(msg.type == protocol::ServerReply::LOGIN) {
+	if(msg.type == ServerReply::ReplyType::Login) {
 		// We can still get session list updates here. They are safe to ignore.
-		return;
+		return true;
 	}
 
 	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
@@ -549,7 +528,7 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 		if(userid < 1 || userid > 254) {
 			qWarning() << "Login error. User ID" << userid << "out of supported range.";
 			failLogin(tr("Incompatible server"));
-			return;
+			return true;
 		}
 
 		m_userid = uint8_t(userid);
@@ -564,35 +543,36 @@ void LoginHandler::expectLoginOk(const protocol::ServerReply &msg)
 
 		// If in host mode, send initial session settings
 		if(m_mode != Mode::Join) {
-			protocol::ServerCommand conf;
-			conf.cmd = "sessionconf";
+			QJsonObject kwargs;
 
 			if(!m_title.isEmpty())
-				conf.kwargs["title"] = m_title;
+				kwargs["title"] = m_title;
 
 			if(parentalcontrols::isNsfmTitle(m_title))
-				conf.kwargs["nsfm"] = true;
+				kwargs["nsfm"] = true;
 
-			m_server->sendMessage(protocol::MessagePtr(new protocol::Command(userId(), conf)));
+			send("sessionconf", {}, kwargs);
 
 			if(!m_announceUrl.isEmpty())
-				m_server->sendMessage(command::announce(m_announceUrl, m_announcePrivate));
+				m_server->sendEnvelope(ServerCommand::makeAnnounce(m_announceUrl, m_announcePrivate));
 
 			// Upload initial session content
 			if(m_mode == Mode::HostRemote) {
-				m_server->sendMessages(m_initialState);
-
-				protocol::ServerCommand cmd;
-				cmd.cmd = "init-complete";
-				m_server->sendMessage(protocol::MessagePtr(new protocol::Command(m_userid, cmd)));
+				m_server->sendEnvelope(m_initialState);
+				send("init-complete");
 			}
 		}
+
+		// Login phase over: any remaining messages belong to the session
+		return false;
 
 	} else {
 		// Unexpected response
 		qWarning() << "Login error. Unexpected response while waiting for OK:" << msg.reply;
 		failLogin(tr("Incompatible server"));
 	}
+
+	return true;
 }
 
 void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
@@ -610,25 +590,21 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 
 void LoginHandler::sendJoinCommand()
 {
-	protocol::ServerCommand cmd;
-	cmd.cmd = "join";
-	cmd.args.append(m_selectedId);
-
+	QJsonObject kwargs;
 	if(!m_joinPassword.isEmpty()) {
-		cmd.kwargs["password"] = m_joinPassword;
+		kwargs["password"] = m_joinPassword;
 	}
 
-	send(cmd);
+	send("join", { m_selectedId }, kwargs);
 	m_state = EXPECT_LOGIN_OK;
 }
 
 void LoginHandler::reportSession(const QString &id, const QString &reason)
 {
-	protocol::ServerCommand cmd;
-	cmd.cmd = "report";
-	cmd.kwargs["session"] = id;
-	cmd.kwargs["reason"] = reason;
-	send(cmd);
+	send("report", {}, {
+		{"session", id},
+		{"reason", reason}
+	});
 }
 
 void LoginHandler::startTls()
@@ -645,6 +621,8 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	QString errorstr;
 	bool fail = false;
 
+	// TODO this was optimized for self signed certificates back end Let's Encrypt
+	// didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
 
 	for(const QSslError &e : errors) {
@@ -804,37 +782,13 @@ void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 	m_server->loginFailure(message, errorcode);
 }
 
-#ifdef DEBUG_LOGIN
-static QJsonObject redactPassword(QJsonObject cmd)
+void LoginHandler::send(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	if(cmd["cmd"] == "ident") {
-		QJsonArray args = cmd["args"].toArray();
-		if(args.size() > 1)
-			cmd["args"] = QJsonArray { args[0], "*" };
-	}
-
-	QJsonObject kwargs = cmd["kwargs"].toObject();
-	if(kwargs.contains("password")) {
-		kwargs["password"] = "*";
-		cmd["kwargs"] = kwargs;
-	}
-
-	return cmd;
-}
-#endif
-
-void LoginHandler::send(const protocol::ServerCommand &cmd)
-{
+	ServerCommand sc { cmd, args, kwargs };
 #ifdef DEBUG_LOGIN
-	qInfo() << "login -->" << redactPassword(cmd.toJson().object());
+	qInfo() << "login -->" << cmd << args << kwargs;
 #endif
-
-	auto msg = protocol::MessagePtr(new protocol::Command(0, cmd));
-	if(msg.cast<protocol::Command>().isOversize()) {
-		failLogin(tr("Tried to send oversized message (%1 KB)").arg(msg->length() / 1024.0, 0, 'f', 3));
-	} else {
-		m_server->sendMessage(msg);
-	}
+	m_server->sendEnvelope(ServerCommand::make(cmd, args, kwargs));
 }
 
 bool LoginHandler::hasUserFlag(const QString &flag) const

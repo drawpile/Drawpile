@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2019 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 */
 
 #include "messagequeue.h"
-#include "../../libshared/net/control.h"
+#include "envelopebuilder.h"
+#include "../rustpile/rustpile.h"
 
 #include <QTcpSocket>
 #include <QDateTime>
@@ -28,14 +29,18 @@
 namespace net {
 
 // Reserve enough buffer space for one complete message
-static const int MAX_BUF_LEN = 0xffff + protocol::Message::HEADER_LEN;
+static const int MAX_BUF_LEN = 0xffff + Envelope::HEADER_LEN;
+
+// Special message types handled internally by this class
+static const int MSG_TYPE_DISCONNECT = 1;
+static const int MSG_TYPE_PING = 2;
 
 MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	: QObject(parent), m_socket(socket),
 	  m_pingTimer(nullptr),
 	  m_lastRecvTime(0),
-	  m_idleTimeout(0), m_pingSent(0), m_closeWhenReady(false),
-	  m_ignoreIncoming(false)
+	  m_idleTimeout(0), m_pingSent(0),
+	  m_gracefullyDisconnecting(false)
 {
 	connect(socket, &QTcpSocket::readyRead, this, &MessageQueue::readData);
 	connect(socket, &QTcpSocket::bytesWritten, this, &MessageQueue::dataWritten);
@@ -45,10 +50,8 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	}
 
 	m_recvbuffer = new char[MAX_BUF_LEN];
-	m_sendbuffer = new char[MAX_BUF_LEN];
 	m_recvbytes = 0;
 	m_sentbytes = 0;
-	m_sendbuflen = 0;
 
 	m_idleTimer = new QTimer(this);
 	m_idleTimer->setTimerType(Qt::CoarseTimer);
@@ -96,7 +99,6 @@ void MessageQueue::setPingInterval(int msecs)
 MessageQueue::~MessageQueue()
 {
 	delete [] m_recvbuffer;
-	delete [] m_sendbuffer;
 }
 
 bool MessageQueue::isPending() const
@@ -113,30 +115,28 @@ Envelope MessageQueue::getPending()
 
 void MessageQueue::send(const Envelope &message)
 {
-	if(!m_closeWhenReady) {
+	if(!m_gracefullyDisconnecting) {
 		m_outbox.enqueue(message);
-		if(m_sendbuflen==0)
+		if(m_sendbuffer.isEmpty())
 			writeData();
 	}
 }
 
-void MessageQueue::sendNow(const Envelope &message)
+void MessageQueue::sendPingMsg(bool pong)
 {
-	if(!m_closeWhenReady) {
-		m_outbox.prepend(message);
-		if(m_sendbuflen==0)
-			writeData();
-	}
+	EnvelopeBuilder eb;
+	rustpile::write_ping(eb, 0, pong);
+
+	send(eb.toEnvelope());
 }
 
-void MessageQueue::sendDisconnect(int reason, const QString &message)
+void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &message)
 {
-	protocol::Disconnect msg(0, protocol::Disconnect::Reason(reason), message);
-	QByteArray b(msg.length(), 0); // FIXME do this better
-	msg.serialize(b.data());
+	EnvelopeBuilder eb;
+	rustpile::write_disconnect(eb, 0, uint8_t(reason), reinterpret_cast<const uint16_t*>(message.constData()), message.length());
 
-	send(b);
-	m_ignoreIncoming = true;
+	send(eb.toEnvelope());
+	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
 }
 
@@ -144,21 +144,20 @@ void MessageQueue::sendPing()
 {
 	if(m_pingSent==0) {
 		m_pingSent = QDateTime::currentMSecsSinceEpoch();
+
 	} else {
-		// This shouldn't happen, but we'll resend a ping anyway just to be safe.
+		// This can happen if the other side's upload buffer is too full
+		// for the Pong to make it through in time.
 		qWarning("sendPing(): reply to previous ping not yet received!");
 	}
 
-	protocol::Ping msg(0, false);
-	QByteArray b(msg.length(), 0);
-	msg.serialize(b.data());
+	sendPingMsg(false);
 
-	sendNow(b);
 }
 
 int MessageQueue::uploadQueueBytes() const
 {
-	int total = m_socket->bytesToWrite() + m_sendbuflen - m_sentbytes;
+	int total = m_socket->bytesToWrite() + m_sendbuffer.length() - m_sentbytes;
 	for(const Envelope &e: m_outbox)
 		total += e.length();
 	return total;
@@ -166,7 +165,7 @@ int MessageQueue::uploadQueueBytes() const
 
 bool MessageQueue::isUploading() const
 {
-	return m_sendbuflen > 0 || m_socket->bytesToWrite() > 0;
+	return !m_sendbuffer.isEmpty() || m_socket->bytesToWrite() > 0;
 }
 
 qint64 MessageQueue::idleTime() const
@@ -178,16 +177,15 @@ void MessageQueue::readData() {
 	bool gotmessage = false;
 	int read, totalread=0;
 	do {
-		// Read as much as fits in to the deserialization buffer
+		// Read as much as fits in to the message buffer
 		read = m_socket->read(m_recvbuffer+m_recvbytes, MAX_BUF_LEN-m_recvbytes);
 		if(read<0) {
 			emit socketError(m_socket->errorString());
 			return;
 		}
 
-		if(m_ignoreIncoming) {
-			// Ignore incoming data mode is used when we're shutting down the connection
-			// but want to clear the upload queue
+		if(m_gracefullyDisconnecting) {
+			// Ignore incoming data when we're in the process of disconnecting
 			if(read>0)
 				continue;
 			else
@@ -197,48 +195,50 @@ void MessageQueue::readData() {
 		m_recvbytes += read;
 
 		// Extract all complete messages
-		int len;
-		while(m_recvbytes >= protocol::Message::HEADER_LEN && m_recvbytes >= (len=protocol::Message::sniffLength(m_recvbuffer))) {
+		int messageLength;
+		while(m_recvbytes >= Envelope::HEADER_LEN && m_recvbytes >= (messageLength=Envelope::sniffLength(m_recvbuffer))) {
 			// Whole message received!
-			Envelope envelope((const uchar*)m_recvbuffer, len);
 
-			if(envelope.messageType() == protocol::MSG_PING) {
-				// Special handing for Ping messages
-				protocol::NullableMessageRef msg = protocol::Message::deserialize(envelope.data(), envelope.length(), true);
-				Q_ASSERT(!msg.isNull()); // FIXME don't use the old deserializer
-				Q_ASSERT(msg->type() == protocol::MSG_PING);
-				bool isPong = msg.cast<protocol::Ping>().isPong();
+			if(Envelope::sniffType(m_recvbuffer) == MSG_TYPE_PING) {
+				// Pings are handled internally
+				if(messageLength != Envelope::HEADER_LEN + 1) {
+					// Not a valid Ping message!
+					emit badData(messageLength, MSG_TYPE_PING, 0);
 
-				if(isPong) {
-					if(m_pingSent==0) {
-						qWarning("Received Pong, but no Ping was sent!");
-
-					} else {
-						qint64 roundtrip = QDateTime::currentMSecsSinceEpoch() - m_pingSent;
-						m_pingSent = 0;
-						emit pingPong(roundtrip);
-					}
 				} else {
-					protocol::Ping msg(0, true);
-					QByteArray b(msg.length(), 0);
-					msg.serialize(b.data());
+					handlePing(m_recvbuffer[Envelope::HEADER_LEN]);
 
-					sendNow(b);
 				}
+
+			} else if(Envelope::sniffType(m_recvbuffer) == MSG_TYPE_DISCONNECT) {
+				// Graceful disconnects are also handled internally
+				if(messageLength < Envelope::HEADER_LEN + 1) {
+					// We expected at least a reason!
+					emit badData(messageLength, MSG_TYPE_DISCONNECT, 0);
+
+				} else {
+					emit gracefulDisconnect(
+						GracefulDisconnect(m_recvbuffer[Envelope::HEADER_LEN]),
+							QString::fromUtf8(m_recvbuffer+Envelope::HEADER_LEN+1, messageLength - Envelope::HEADER_LEN - 1)
+					);
+				}
+
 			} else {
-				m_inbox.append(envelope);
+				// The rest are normal messages
+				m_inbox.append(m_recvbuffer, messageLength);
 				gotmessage = true;
 			}
 
-			if(len < m_recvbytes) {
+			if(messageLength < m_recvbytes) {
 				// Buffer contains more than one message
-				memmove(m_recvbuffer, m_recvbuffer+len, m_recvbytes-len);
+				memmove(m_recvbuffer, m_recvbuffer+messageLength, m_recvbytes-messageLength);
 			}
-			m_recvbytes -= len;
+
+			m_recvbytes -= messageLength;
 		}
 
-		// All messages extracted from buffer (if there were any):
-		// see if there are more bytes in the socket buffer
+		// All whole messages extracted from the work buffer.
+		// There can still be more bytes in the socket buffer.
 		totalread += read;
 	} while(read>0);
 
@@ -251,13 +251,32 @@ void MessageQueue::readData() {
 		emit messageAvailable();
 }
 
+void MessageQueue::handlePing(bool isPong)
+{
+	if(isPong) {
+		// We got a Pong back: measure latency
+		if(m_pingSent==0) {
+			// Lots of pings can have been queued up
+			qDebug("Received Pong, but no Ping was sent!");
+
+		} else {
+			qint64 roundtrip = QDateTime::currentMSecsSinceEpoch() - m_pingSent;
+			m_pingSent = 0;
+			emit pingPong(roundtrip);
+		}
+	} else {
+		// Reply to a Ping with a Pong
+		sendPingMsg(true);
+	}
+}
+
 void MessageQueue::dataWritten(qint64 bytes)
 {
 	emit bytesSent(bytes);
 
 	// Write more once the buffer is empty
 	if(m_socket->bytesToWrite()==0) {
-		if(m_sendbuflen==0 && m_outbox.isEmpty())
+		if(m_sendbuffer.isEmpty() && m_outbox.isEmpty())
 			emit allSent();
 		else
 			writeData();
@@ -265,36 +284,23 @@ void MessageQueue::dataWritten(qint64 bytes)
 }
 
 void MessageQueue::writeData() {
-	int sentBatch = 0;
 	bool sendMore = true;
+	int sentBatch = 0;
 
 	while(sendMore && sentBatch < 1024*64) {
 		sendMore = false;
-		if(m_sendbuflen==0 && !m_outbox.isEmpty()) {
+		if(m_sendbuffer.isEmpty() && !m_outbox.isEmpty()) {
 			// Upload buffer is empty, but there are messages in the outbox
 			Q_ASSERT(m_sentbytes == 0);
 
-			// TODO we could just use the envelope instead of the sendbuffer
-			Envelope msg = m_outbox.dequeue();
-			memcpy(m_sendbuffer, msg.data(), msg.length());
-			m_sendbuflen = msg.length();
-			Q_ASSERT(m_sendbuflen>0);
-			Q_ASSERT(m_sendbuflen <= MAX_BUF_LEN);
+			auto msgpair = m_outbox.dequeue().breakApart();
 
-			if(msg.messageType() == protocol::MSG_DISCONNECT) {
-				// Automatically disconnect after Disconnect notification is sent
-				m_closeWhenReady = true;
-				m_outbox.clear();
-			}
-
-			// An envelope can contain more than one message
-			msg = msg.next();
-			if(!msg.isEmpty())
-				m_outbox.prepend(msg);
+			m_sendbuffer = msgpair.first;
+			m_sentbytes = msgpair.second;
 		}
 
-		if(m_sentbytes < m_sendbuflen) {
-			const int sent = m_socket->write(m_sendbuffer+m_sentbytes, m_sendbuflen-m_sentbytes);
+		if(m_sentbytes < m_sendbuffer.length()) {
+			const int sent = m_socket->write(m_sendbuffer.constData()+m_sentbytes, m_sendbuffer.length() - m_sentbytes);
 			if(sent<0) {
 				// Error
 				emit socketError(m_socket->errorString());
@@ -303,12 +309,14 @@ void MessageQueue::writeData() {
 			m_sentbytes += sent;
 			sentBatch += sent;
 
-			Q_ASSERT(m_sentbytes <= m_sendbuflen);
-			if(m_sentbytes >= m_sendbuflen) {
-				// Complete message sent
-				m_sendbuflen=0;
-				m_sentbytes=0;
-				if(m_closeWhenReady) {
+			Q_ASSERT(m_sentbytes <= m_sendbuffer.length());
+
+			if(m_sentbytes >= m_sendbuffer.length()) {
+				// Complete envelope sent
+				m_sendbuffer = QByteArray();
+				m_sentbytes = 0;
+
+				if(m_gracefullyDisconnecting && m_outbox.isEmpty()) {
 					m_socket->disconnectFromHost();
 
 				} else {

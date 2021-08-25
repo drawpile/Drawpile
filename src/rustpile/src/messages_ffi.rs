@@ -27,14 +27,37 @@ pub extern "C" fn messagewriter_content(mw: &MessageWriter, len: &mut usize) -> 
 pub extern "C" fn write_servercommand(
     writer: &mut MessageWriter,
     ctx: UserID,
-    msg: *const u16,
+    msg: *const u8,
     msg_len: usize,
 ) {
-    ControlMessage::ServerCommand(
+    ControlMessage::ServerCommand(ctx, unsafe { slice::from_raw_parts(msg, msg_len) }.into())
+        .write(writer);
+}
+
+#[no_mangle]
+pub extern "C" fn write_disconnect(
+    writer: &mut MessageWriter,
+    ctx: UserID,
+    reason: u8,
+    message: *const u16,
+    message_len: usize,
+) {
+    ControlMessage::Disconnect(
         ctx,
-        String::from_utf16_lossy(unsafe { slice::from_raw_parts(msg, msg_len) }).to_string(),
+        DisconnectMessage {
+            reason: reason,
+            message: String::from_utf16_lossy(unsafe {
+                slice::from_raw_parts(message, message_len)
+            })
+            .to_string(),
+        },
     )
     .write(writer);
+}
+
+#[no_mangle]
+pub extern "C" fn write_ping(writer: &mut MessageWriter, ctx: UserID, is_pong: bool) {
+    ControlMessage::Ping(ctx, is_pong).write(writer);
 }
 
 #[no_mangle]

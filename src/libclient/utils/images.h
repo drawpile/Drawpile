@@ -24,8 +24,6 @@ class QSize;
 class QImage;
 class QColor;
 
-#include "../libshared/net/message.h"
-
 #include <QVector>
 #include <QPair>
 

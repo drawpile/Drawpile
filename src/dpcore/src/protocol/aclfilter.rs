@@ -221,7 +221,7 @@ impl AclFilter {
             LayerACL(u, m) => {
                 let tier = self.users.tier(*u);
                 if tier <= self.feature_tier.edit_layers || (tier <= self.feature_tier.own_layers && layer_creator(m.id) == *u) {
-                    if m.flags == 0 && m.exclusive.is_empty() {
+                    if m.flags == u8::from(Tier::Guest) && m.exclusive.is_empty() {
                         match self.layers.remove(&m.id) {
                             Some(_) => (true, ACLCHANGE_LAYERS),
                             None => (true, 0)

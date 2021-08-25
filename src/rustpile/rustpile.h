@@ -326,7 +326,15 @@ void messagewriter_free(MessageWriter *mw);
 
 const uint8_t *messagewriter_content(const MessageWriter *mw, uintptr_t *len);
 
-void write_servercommand(MessageWriter *writer, UserID ctx, const uint16_t *msg, uintptr_t msg_len);
+void write_servercommand(MessageWriter *writer, UserID ctx, const uint8_t *msg, uintptr_t msg_len);
+
+void write_disconnect(MessageWriter *writer,
+                      UserID ctx,
+                      uint8_t reason,
+                      const uint16_t *message,
+                      uintptr_t message_len);
+
+void write_ping(MessageWriter *writer, UserID ctx, bool is_pong);
 
 void write_sessionowner(MessageWriter *writer,
                         UserID ctx,

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2019 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,15 +21,9 @@
 #include "net/loopbackserver.h"
 #include "net/tcpserver.h"
 #include "net/login.h"
-#include "net/commands.h"
 #include "net/internalmsg.h"
 #include "net/envelope.h"
-
-#include "core/point.h"
-
-#include "../libshared/net/control.h"
-#include "../libshared/net/meta.h"
-#include "../libshared/net/meta2.h"
+#include "net/servercmd.h"
 
 #include <QDebug>
 
@@ -38,7 +32,7 @@ using protocol::MessagePtr;
 namespace net {
 
 Client::Client(QObject *parent)
-	: QObject(parent), m_myId(1), m_recordedChat(false),
+	: QObject(parent), m_myId(1),
 	  m_catchupTo(0), m_caughtUp(0), m_catchupProgress(0)
 {
 	m_loopback = new LoopbackServer(this);
@@ -47,7 +41,7 @@ Client::Client(QObject *parent)
 	m_moderator = false;
 	m_isAuthenticated = false;
 
-	connect(m_loopback, &LoopbackServer::messageReceived, this, &Client::handleMessage);
+	connect(m_loopback, &LoopbackServer::envelopeReceived, this, &Client::handleEnvelope);
 }
 
 Client::~Client()
@@ -66,11 +60,39 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);
 	connect(server, &TcpServer::serverDisconnected, loginhandler, &LoginHandler::serverDisconnected);
 	connect(server, &TcpServer::loggedIn, this, &Client::handleConnect);
-	connect(server, &TcpServer::messageReceived, this, &Client::handleMessage);
+	connect(server, &TcpServer::envelopeReceived, this, &Client::handleEnvelope);
 
 	connect(server, &TcpServer::bytesReceived, this, &Client::bytesReceived);
 	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
 	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
+
+	connect(server, &TcpServer::gracefullyDisconnecting, this, [this](MessageQueue::GracefulDisconnect reason, const QString &message)
+	{
+		if(reason == MessageQueue::GracefulDisconnect::Kick) {
+			emit youWereKicked(message);
+			return;
+		}
+
+		QString chat;
+		switch(reason) {
+		case MessageQueue::GracefulDisconnect::Kick:
+			emit youWereKicked(message);
+			return;
+		case MessageQueue::GracefulDisconnect::Error:
+			chat = tr("A server error occurred!");
+			break;
+		case MessageQueue::GracefulDisconnect::Shutdown:
+			chat = tr("The server is shutting down!");
+			break;
+		default:
+			chat = "Unknown error";
+		}
+
+		if(!message.isEmpty())
+			chat = QString("%1 (%2)").arg(chat, message);
+
+		emit serverMessage(chat, true);
+	});
 
 	if(loginhandler->mode() == LoginHandler::Mode::HostRemote)
 		loginhandler->setUserId(m_myId);
@@ -118,70 +140,35 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 	m_moderator = false;
 }
 
-bool Client::isLocalServer() const
-{
-	return m_server->isLocal();
-}
-
 int Client::uploadQueueBytes() const
 {
 	return m_server->uploadQueueBytes();
-}
-
-void Client::sendMessage(const protocol::MessagePtr &msg)
-{
-#ifndef NDEBUG
-	if(!msg->isControl() && msg->contextId()==0) {
-		qWarning("Context ID not set for message type #%d (%s)", msg->type(), qPrintable(msg->messageName()));
-	}
-#endif
-
-	// Command type messages go to the local fork too
-	if(msg->isCommand())
-		emit drawingCommandLocal(msg);
-
-	m_server->sendMessage(msg);
-}
-
-void Client::sendMessages(const protocol::MessageList &msgs)
-{
-	for(const protocol::MessagePtr &msg : msgs) {
-#ifndef NDEBUG
-		if(!msg->isControl() && msg->contextId()==0) {
-			qWarning("Context ID not set for message type #%d (%s)", msg->type(), qPrintable(msg->messageName()));
-		}
-#endif
-		if(msg->isCommand())
-			emit drawingCommandLocal(msg);
-	}
-	m_server->sendMessages(msgs);
 }
 
 void Client::sendEnvelope(const Envelope &envelope) {
 	if(envelope.isEmpty())
 		return;
 
-	Envelope e = envelope;
-	while(!e.isEmpty()) {
-		if(e.isCommand()) {
-			// FIXME we want to pass around only envelopes
-			protocol::NullableMessageRef m = protocol::Message::deserialize(e.data(), e.length(), true);
-			Q_ASSERT(!m.isNull());
-			emit drawingCommandLocal(protocol::MessagePtr::fromNullable(m));
-		}
-
-		e = e.next();
+	// When we build envelopes with Commands in them, they always start out with
+	// a command, so it's enough to check just the first message.
+	if(envelope.isCommand()) {
+		emit drawingCommandLocal(envelope);
 	}
+
 	m_server->sendEnvelope(envelope);
 }
 
-void Client::sendResetMessages(const protocol::MessageList &msgs)
+void Client::sendResetEnvelope(const net::Envelope &resetImage)
 {
-	m_server->sendMessages(msgs);
+	if(resetImage.isEmpty())
+		return;
+
+	m_server->sendEnvelope(resetImage);
 }
 
-void Client::handleMessage(const protocol::MessagePtr &msg)
+void Client::handleEnvelope(const Envelope &envelope)
 {
+#if 0 // FIXME (internal messages no longer needed for this)
 	if(m_catchupTo>0) {
 		++m_caughtUp;
 		if(m_caughtUp >= m_catchupTo) {
@@ -195,29 +182,76 @@ void Client::handleMessage(const protocol::MessagePtr &msg)
 			}
 		}
 	}
+#endif
 
-	// Handle control messages here
-	// (these are sent only by the server and are not stored in the session)
-	if(msg->isControl()) {
-		switch(msg->type()) {
-		using namespace protocol;
-		case MSG_COMMAND:
-			handleServerCommand(msg.cast<Command>());
-			break;
-		case MSG_DISCONNECT:
-			handleDisconnectMessage(msg.cast<Disconnect>());
-			break;
-		default:
-			qWarning("Received unhandled control message %d", msg->type());
+	// Catch all Control messages here
+	Envelope ctrl = envelope;
+	bool allControl = true;
+	while(!ctrl.isEmpty()) {
+		if(ctrl.messageType() == protocol::MSG_COMMAND) {
+			const ServerReply sr = ServerReply::fromEnvelope(ctrl);
+			handleServerReply(sr);
+
+		} else {
+			allControl = false;
 		}
-		return;
+
+		ctrl = ctrl.next();
 	}
 
-	// Rest of the messages are part of the session
-	emit messageReceived(msg);
+	// The paint engine will handle the rest and ignore the control messages
+	if(!allControl)
+		emit messageReceived(envelope);
 }
 
-void Client::handleResetRequest(const protocol::ServerReply &msg)
+void Client::handleServerReply(const ServerReply &reply)
+{
+	switch(reply.type) {
+	case ServerReply::ReplyType::Unknown:
+		qWarning() << "Unknown server reply:" << reply.message << reply.reply;
+		break;
+	case ServerReply::ReplyType::Login:
+		qWarning("got login message while in session!");
+		break;
+	case ServerReply::ReplyType::Message:
+	case ServerReply::ReplyType::Alert:
+	case ServerReply::ReplyType::Error:
+	case ServerReply::ReplyType::Result:
+		emit serverMessage(reply.message, reply.type == ServerReply::ReplyType::Alert);
+		break;
+	case ServerReply::ReplyType::Log: {
+		QString time = QDateTime::fromString(reply.reply["timestamp"].toString(), Qt::ISODate).toLocalTime().toString(Qt::ISODate);
+		QString user = reply.reply["user"].toString();
+		QString msg = reply.message;
+		if(user.isEmpty())
+			emit serverLog(QStringLiteral("[%1] %2").arg(time, msg));
+		else
+			emit serverLog(QStringLiteral("[%1] %2: %3").arg(time, user, msg));
+		} break;
+	case ServerReply::ReplyType::SessionConf:
+		emit sessionConfChange(reply.reply["config"].toObject());
+		break;
+	case ServerReply::ReplyType::SizeLimitWarning:
+		// No longer used since 2.1.0. Replaced by RESETREQUEST
+		break;
+	case ServerReply::ReplyType::ResetRequest:
+		emit autoresetRequested(reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
+		break;
+	case ServerReply::ReplyType::Status:
+		emit serverStatusUpdate(reply.reply["size"].toInt());
+		break;
+	case ServerReply::ReplyType::Reset:
+		handleResetRequest(reply);
+		break;
+	case ServerReply::ReplyType::Catchup:
+		m_catchupTo = reply.reply["count"].toInt();
+		m_caughtUp = 0;
+		m_catchupProgress = 0;
+		break;
+	}
+}
+
+void Client::handleResetRequest(const ServerReply &msg)
 {
 	if(msg.reply["state"] == "init") {
 		qDebug("Requested session reset");
@@ -230,80 +264,6 @@ void Client::handleResetRequest(const protocol::ServerReply &msg)
 	} else {
 		qWarning() << "Unknown reset state:" << msg.reply["state"].toString();
 		qWarning() << msg.message;
-	}
-}
-
-void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
-{
-	qDebug() << "Received disconnect notification! Reason =" << msg.reason() << "and message =" << msg.message();
-	const QString message = msg.message();
-
-	if(msg.reason() == protocol::Disconnect::KICK) {
-		emit youWereKicked(message);
-		return;
-	}
-
-	QString chat;
-	if(msg.reason() == protocol::Disconnect::ERROR)
-		chat = tr("A server error occurred!");
-	else if(msg.reason() == protocol::Disconnect::SHUTDOWN)
-		chat = tr("The server is shutting down!");
-	else
-		chat = "Unknown error";
-
-	if(!message.isEmpty())
-		chat += QString(" (%1)").arg(message);
-
-	emit serverMessage(chat, true);
-}
-
-void Client::handleServerCommand(const protocol::Command &msg)
-{
-	using protocol::ServerReply;
-	ServerReply reply = msg.reply();
-
-	switch(reply.type) {
-	case ServerReply::UNKNOWN:
-		qWarning() << "Unknown server reply:" << reply.message << reply.reply;
-		break;
-	case ServerReply::LOGIN:
-		qWarning("got login message while in session!");
-		break;
-	case ServerReply::MESSAGE:
-	case ServerReply::ALERT:
-	case ServerReply::ERROR:
-	case ServerReply::RESULT:
-		emit serverMessage(reply.message, reply.type == ServerReply::ALERT);
-		break;
-	case ServerReply::LOG: {
-		QString time = QDateTime::fromString(reply.reply["timestamp"].toString(), Qt::ISODate).toLocalTime().toString(Qt::ISODate);
-		QString user = reply.reply["user"].toString();
-		QString msg = reply.message;
-		if(user.isEmpty())
-			emit serverLog(QStringLiteral("[%1] %2").arg(time, msg));
-		else
-			emit serverLog(QStringLiteral("[%1] %2: %3").arg(time, user, msg));
-		} break;
-	case ServerReply::SESSIONCONF:
-		emit sessionConfChange(reply.reply["config"].toObject());
-		break;
-	case ServerReply::SIZELIMITWARNING:
-		// No longer used since 2.1.0. Replaced by RESETREQUEST
-		break;
-	case ServerReply::RESETREQUEST:
-		emit autoresetRequested(reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
-		break;
-	case ServerReply::STATUS:
-		emit serverStatusUpdate(reply.reply["size"].toInt());
-		break;
-	case ServerReply::RESET:
-		handleResetRequest(reply);
-		break;
-	case ServerReply::CATCHUP:
-		m_catchupTo = reply.reply["count"].toInt();
-		m_caughtUp = 0;
-		m_catchupProgress = 0;
-		break;
 	}
 }
 

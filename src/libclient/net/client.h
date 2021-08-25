@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2019 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,7 @@
 #ifndef DP_NET_CLIENT_H
 #define DP_NET_CLIENT_H
 
-#include "core/point.h"
-#include "core/blendmodes.h"
 #include "net/server.h"
-#include "../libshared/net/message.h"
 
 #include <QObject>
 #include <QSslCertificate>
@@ -31,21 +28,11 @@
 class QJsonObject;
 class QJsonArray;
 
-namespace paintcore {
-	class Point;
-}
-
-namespace protocol {
-	class Command;
-	class Disconnect;
-	struct ServerReply;
-}
-
 namespace net {
 	
 class LoopbackServer;
 class LoginHandler;
-class Envelope;
+struct ServerReply;
 
 /**
  * The client for accessing the drawing server.
@@ -79,15 +66,6 @@ public:
 	QUrl sessionUrl(bool includeUser=false) const;
 
 	/**
-	 * @brief Is the client connected to a local server?
-	 *
-	 * A local server is one that is running on this computer
-	 * and thus has minimum latency.
-	 * @return true if server is local
-	 */
-	bool isLocalServer() const;
-
-	/**
 	 * @brief Is the client connected by network?
 	 * @return true if a network connection is open
 	 */
@@ -100,7 +78,7 @@ public:
 	bool isLoggedIn() const { return m_server->isLoggedIn(); }
 
 	/**
-	 * @brief Is teh user logged in as an authenticated user?
+	 * @brief Is the user logged in as an authenticated user?
 	 */
 	bool isAuthenticated() const { return m_isAuthenticated; }
 
@@ -147,41 +125,27 @@ public:
 	//! Are we expecting more incoming data?
 	bool isFullyCaughtUp() const { return m_catchupTo == 0; }
 
-	/**
-	 * @brief Whether to use recorded chat (Chat message) by default
-	 *
-	 * If set to false, chat messages are sent with ServerCommands and delivered
-	 * only to the currently active users.
-	 * @param recordedChat if true, chat messages are recorded in session history
-	 */
-	void setRecordedChatMode(bool recordedChat) { m_recordedChat = recordedChat; }
-
-	/**
-	 * Get the last session URL the client connected to.
-	 */
-	QUrl lastUrl() const { return m_lastUrl; }
-
 public slots:
 	/**
-	 * @brief Send a message to the server
+	 * @brief Send one or more message to the server
 	 *
-	 * The context ID of the message is automatically set to the local user's ID.
-	 *
-	 * If this is a Command type message, drawingCommandLocal is emitted
-	 * before the message is sent.
-	 *
-	 * @param msg the message to send
+	 * If the envelope starts with a Command type message, drawingCommandLocal
+	 * will be emitted with a copy of the envelope before the message is sent.
 	 */
-	void sendMessage(const protocol::MessagePtr &msg);
-	void sendMessages(const protocol::MessageList &msgs);
 	void sendEnvelope(const Envelope &envelope);
 
-	//! Send messages as part of a session reset/init
-	void sendResetMessages(const protocol::MessageList &msgs);
+	/**
+	 * @brief Send the reset image to the server
+	 *
+	 * The difference between this and sendEnvelope is that drawingCommandLocal
+	 * will not be emitted, as the reset image was generate from content already
+	 * on the canvas.
+	 */
+	void sendResetEnvelope(const net::Envelope &resetImage);
 
 signals:
-	void messageReceived(protocol::MessagePtr msg);
-	void drawingCommandLocal(protocol::MessagePtr msg);
+	void messageReceived(const Envelope &e);
+	void drawingCommandLocal(const Envelope &e);
 
 	void needSnapshot();
 	void sessionResetted();
@@ -203,14 +167,13 @@ signals:
 	void serverStatusUpdate(int historySize);
 
 private slots:
-	void handleMessage(const protocol::MessagePtr &msg);
+	void handleEnvelope(const Envelope &envelope);
 	void handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
-	void handleResetRequest(const protocol::ServerReply &msg);
-	void handleServerCommand(const protocol::Command &msg);
-	void handleDisconnectMessage(const protocol::Disconnect &msg);
+	void handleServerReply(const ServerReply &msg);
+	void handleResetRequest(const ServerReply &msg);
 
 	Server *m_server;
 	LoopbackServer *m_loopback;
@@ -218,7 +181,6 @@ private:
 	QUrl m_lastUrl;
 	uint8_t m_myId;
 	bool m_isloopback;
-	bool m_recordedChat;
 	bool m_moderator;
 	bool m_isAuthenticated;
 	bool m_supportsAutoReset;

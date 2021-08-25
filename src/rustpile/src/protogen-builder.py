@@ -113,6 +113,8 @@ if __name__ == '__main__':
     # The other messages are generated solely from Rust code
     messages = set((
         'ServerCommand',
+        'Ping',
+        'Disconnect',
         'SessionOwner',
         'Chat',
         'TrustedUsers',

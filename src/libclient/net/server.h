@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2017 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #ifndef DP_NET_SERVER_H
 #define DP_NET_SERVER_H
 
-#include "../libshared/net/message.h"
 #include "envelope.h"
 
 #include <QObject>
@@ -41,25 +40,17 @@ public:
 		TRUSTED_HOST // A host we have explicitly marked as trusted
 	};
 
-	Server(bool local, QObject *parent);
+	Server(QObject *parent);
 	
 	/**
 	 * \brief Send a message to the server
 	 */
-	virtual void sendMessage(const protocol::MessagePtr &msg) = 0;
-	virtual void sendMessages(const protocol::MessageList &msgs) = 0;
 	virtual void sendEnvelope(const Envelope &e) = 0;
 
     /**
      * @brief Log out from the server
      */
     virtual void logout() = 0;
-
-    /**
-     * @brief Is this a local server?
-     * @return true if local
-     */
-	bool isLocal() const { return m_local; }
 
 	/**
 	 * @brief Is the user in a session
@@ -88,10 +79,7 @@ public:
 	virtual bool supportsAbuseReports() const = 0;
 
 signals:
-	void messageReceived(protocol::MessagePtr message);
-
-private:
-	bool m_local;
+	void envelopeReceived(const Envelope &envelope);
 };
 
 

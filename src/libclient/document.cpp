@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@
 #include "document.h"
 
 #include "net/client.h"
-#include "net/commands.h"
+#include "net/servercmd.h"
 #include "net/banlistmodel.h"
 #include "net/announcementlist.h"
+#include "net/envelopebuilder.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/selection.h"
 #include "canvas/layerlist.h"
@@ -33,13 +34,6 @@
 #include "tools/toolcontroller.h"
 #include "utils/images.h"
 
-#include "../libshared/net/control.h"
-#include "../libshared/net/meta.h"
-#include "../libshared/net/meta2.h"
-#include "../libshared/net/undo.h"
-#include "../libshared/net/layer.h"
-#include "../libshared/net/image.h"
-#include "../libshared/net/annotation.h"
 #include "../libshared/record/writer.h"
 #include "../libshared/util/filename.h"
 
@@ -113,7 +107,7 @@ void Document::initCanvas()
 	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
 	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
-	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendMessage);
+	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendEnvelope);
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
@@ -141,8 +135,9 @@ void Document::onSessionResetted()
 
 	// Clear out the canvas in preparation for the new data that is about to follow
 	m_canvas->resetCanvas();
-	m_resetstate.clear();
+	m_resetstate = net::Envelope();
 
+#if 0 // FIXME
 	if(isRecording()) {
 		// Resetting establishes a new initial state for the canvas, therefore
 		// recording must also be restarted.
@@ -153,6 +148,7 @@ void Document::onSessionResetted()
 		emit recorderStateChanged(false);
 		startRecording(newRecordingFile, protocol::MessageList(), nullptr);
 	}
+#endif
 }
 
 bool Document::loadCanvas(canvas::SessionLoader &loader)
@@ -164,12 +160,15 @@ bool Document::loadCanvas(canvas::SessionLoader &loader)
 
 	setAutosave(false);
 	initCanvas();
+
 #if 0 // FIXME
 	m_canvas->layerStack()->setDpi(loader.dotsPerInch());
 #endif
-	m_client->sendResetMessages(init);
+
+	m_client->sendResetEnvelope(init);
 	setCurrentFilename(loader.filename());
 	unmarkDirty();
+
 	return true;
 }
 
@@ -182,6 +181,7 @@ void Document::onServerLogin(bool join)
 
 	m_canvas->connectedToServer(m_client->myId(), join);
 
+#if 0 // FIXME
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;
 		startRecording(
@@ -191,6 +191,7 @@ void Document::onServerLogin(bool join)
 		);
 		m_recordOnConnect = QString();
 	}
+#endif
 
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
@@ -286,14 +287,16 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 	if(QSettings().value("settings/server/autoreset", true).toBool()) {
 		if(query) {
 			// This is just a query: send back an affirmative response
-			m_client->sendMessage(net::command::serverCommand("ready-to-autoreset"));
+			m_client->sendEnvelope(net::ServerCommand::make("ready-to-autoreset"));
 
 		} else {
 			// Autoreset on request
 			sendLockSession(true);
-			m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
 
-			sendResetSession(protocol::MessageList());
+			// FIXME
+			//m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+
+			sendResetSession(net::Envelope());
 		}
 	} else {
 		qInfo("Ignoring autoreset request as configured.");
@@ -353,7 +356,6 @@ void Document::setSessionPreserveChat(bool pc)
 {
 	if(m_sessionPreserveChat != pc) {
 		m_sessionPreserveChat = pc;
-		m_client->setRecordedChatMode(pc);
 		emit sessionPreserveChatChanged(pc);
 	}
 }
@@ -512,13 +514,18 @@ bool Document::startRecording(const QString &filename, QString *error)
 	if(info.suffix().isEmpty())
 		m_originalRecordingFilename += ".dprec";
 
+#if 0 // FIXME
 	return startRecording(
 		m_originalRecordingFilename,
 		m_canvas->generateSnapshot(),
 		error
 	);
+#endif
+	*error = QString("TODO");
+	return false;
 }
 
+#if 0 // FIXME
 bool Document::startRecording(const QString &filename, const protocol::MessageList &initialState, QString *error)
 {
 	Q_ASSERT(!isRecording());
@@ -549,11 +556,11 @@ bool Document::startRecording(const QString &filename, const protocol::MessageLi
 		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
 
 	m_canvas->setRecorder(m_recorder);
-
 	m_recorder->setAutoflush();
 	emit recorderStateChanged(true);
 	return true;
 }
+#endif
 
 void Document::stopRecording()
 {
@@ -605,9 +612,10 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 
 	// This recording will probably be used as a session template, so we need to
 	// set the session owner as well
+#if 0 // FIXME
 	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
 
-#if 0 // FIXME
+
 	auto loader =  canvas::SnapshotLoader(
 		initialUserId,
 		m_canvas->layerStack(),
@@ -627,28 +635,33 @@ bool Document::saveAsRecording(const QString &filename, QJsonObject header, QStr
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::MovePointer(m_client->myId(), int32_t(point.x()), int32_t(point.y()))));
+	net::EnvelopeBuilder eb;
+	rustpile::write_movepointer(eb, m_client->myId(), point.x(), point.y());
+	m_client->sendEnvelope(eb.toEnvelope());
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
 {
-	m_client->sendMessage(net::command::serverCommand("sessionconf", QJsonArray(), sessionconf));
+	m_client->sendEnvelope(net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
 }
 
 void Document::sendFeatureAccessLevelChange(const uint8_t tiers[canvas::FeatureCount])
 {
-	static_assert(canvas::FeatureCount == protocol::FeatureAccessLevels::FEATURES, "Feature tier count mismatch");
-	m_client->sendMessage(protocol::MessagePtr(new protocol::FeatureAccessLevels(m_client->myId(), tiers)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_featureaccess(eb, m_client->myId(), tiers, canvas::FeatureCount);
+	m_client->sendEnvelope(eb.toEnvelope());
 }
 
 void Document::sendLockSession(bool lock)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::LayerACL(m_client->myId(), 0, lock, 0, QList<uint8_t>())));
+	net::EnvelopeBuilder eb;
+	rustpile::write_layeracl(eb, m_client->myId(), 0, lock ? 0x80 : 0, nullptr, 0);
+	m_client->sendEnvelope(eb.toEnvelope());
 }
 
 void Document::sendOpword(const QString &opword)
 {
-	m_client->sendMessage(net::command::serverCommand("gain-op", QJsonArray() << opword));
+	m_client->sendEnvelope(net::ServerCommand::make("gain-op", QJsonArray() << opword));
 }
 
 /**
@@ -657,48 +670,51 @@ void Document::sendOpword(const QString &opword)
  * @param resetImage If not empty, this reset image will be used
  * @return true on success
  */
-void Document::sendResetSession(const protocol::MessageList &resetImage)
+void Document::sendResetSession(const net::Envelope &resetImage)
 {
 	if(resetImage.isEmpty()) {
 		qInfo("Sending session reset request. Reset snapshot will be prepared when ready.");
 	}
 
 	m_resetstate = resetImage;
-	m_client->sendMessage(net::command::serverCommand("reset-session"));
+	m_client->sendEnvelope(net::ServerCommand::make("reset-session"));
 }
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
-	protocol::MessageList msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
-	msgs << protocol::MessagePtr(new protocol::CanvasResize(m_client->myId(), top, right, bottom, left));
-	m_client->sendMessages(msgs);
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_client->myId());
+	rustpile::write_resize(eb, m_client->myId(), top, right, bottom, left);
+	m_client->sendEnvelope(eb.toEnvelope());
 }
 
 void Document::sendUnban(int entryId)
 {
-	m_client->sendMessage(net::command::unban(entryId));
+	m_client->sendEnvelope(net::ServerCommand::makeUnban(entryId));
 }
 
 void Document::sendAnnounce(const QString &url, bool privateMode)
 {
-	m_client->sendMessage(net::command::announce(url, privateMode));
+	m_client->sendEnvelope(net::ServerCommand::makeAnnounce(url, privateMode));
 }
 
 void Document::sendUnannounce(const QString &url)
 {
-	m_client->sendMessage(net::command::unannounce(url));
+	m_client->sendEnvelope(net::ServerCommand::makeUnannounce(url));
 }
 
 void Document::sendTerminateSession()
 {
-	m_client->sendMessage(net::command::terminateSession());
+	m_client->sendEnvelope(net::ServerCommand::make("kill-session"));
 }
 
 void Document::sendCanvasBackground(const QColor &color)
 {
-	m_client->sendMessage(protocol::MessagePtr(new protocol::UndoPoint(m_client->myId())));
-	m_client->sendMessage(net::command::setCanvasBackground(m_client->myId(), color));
+	const uint32_t c = qToBigEndian(color.rgba());
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_client->myId());
+	rustpile::write_background(eb, m_client->myId(), reinterpret_cast<const uchar*>(&c), 4);
+	m_client->sendEnvelope(eb.toEnvelope());
 }
 
 void Document::sendAbuseReport(int userId, const QString &message)
@@ -707,7 +723,7 @@ void Document::sendAbuseReport(int userId, const QString &message)
 	if(userId > 0 && userId < 256)
 		kwargs["user"] = userId;
 	kwargs["reason"] = message;
-	m_client->sendMessage(net::command::serverCommand("report", QJsonArray(), kwargs));
+	m_client->sendEnvelope(net::ServerCommand::make("report", QJsonArray(), kwargs));
 }
 
 void Document::snapshotNeeded()
@@ -735,28 +751,24 @@ void Document::snapshotNeeded()
 
 		// Size limit check. The server will kick us if we send an oversized reset.
 		if(m_sessionHistoryMaxSize>0) {
-			int resetsize = 0;
-			for(protocol::MessagePtr msg : m_resetstate)
-				resetsize += msg->length();
-
-			if(resetsize > m_sessionHistoryMaxSize) {
-				qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", resetsize, m_sessionHistoryMaxSize);
+			if(m_resetstate.length() > m_sessionHistoryMaxSize) {
+				qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
 				emit autoResetTooLarge(m_sessionHistoryMaxSize);
-				m_resetstate.clear();
-				m_client->sendMessage(net::command::serverCommand("init-cancel"));
+				m_resetstate = net::Envelope();
+				m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
 				return;
 			}
 		}
 
-		m_client->sendMessage(net::command::serverCommand("init-begin"));
-		m_client->sendResetMessages(m_resetstate);
-		m_client->sendMessage(net::command::serverCommand("init-complete"));
+		m_client->sendEnvelope(net::ServerCommand::make("init-begin"));
+		m_client->sendResetEnvelope(m_resetstate);
+		m_client->sendEnvelope(net::ServerCommand::make("init-complete"));
 
-		m_resetstate = protocol::MessageList();
+		m_resetstate = net::Envelope();
 
 	} else {
 		qWarning("Server requested snapshot, but canvas is not yet initialized!");
-		m_client->sendMessage(net::command::serverCommand("init-cancel"));
+		m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
 	}
 }
 
@@ -765,8 +777,11 @@ void Document::undo()
 	if(!m_canvas)
 		return;
 
-	if(!m_toolctrl->undoMultipartDrawing())
-		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, false)));
+	if(!m_toolctrl->undoMultipartDrawing()) {
+		net::EnvelopeBuilder eb;
+		eb.buildUndo(m_client->myId(), 0, false);
+		m_client->sendEnvelope(eb.toEnvelope());
+	}
 }
 
 void Document::redo()
@@ -775,8 +790,11 @@ void Document::redo()
 		return;
 
 	// Cannot redo while a multipart drawing action is in progress
-	if(!m_toolctrl->isMultipartDrawing())
-		m_client->sendMessage(protocol::MessagePtr(new protocol::Undo(m_client->myId(), 0, true)));
+	if(!m_toolctrl->isMultipartDrawing()) {
+		net::EnvelopeBuilder eb;
+		eb.buildUndo(m_client->myId(), 0, true);
+		m_client->sendEnvelope(eb.toEnvelope());
+	}
 }
 
 void Document::selectAll()
@@ -923,3 +941,4 @@ void Document::addServerLogEntry(const QString &log)
 	m_serverLog->insertRow(i);
 	m_serverLog->setData(m_serverLog->index(i), log);
 }
+

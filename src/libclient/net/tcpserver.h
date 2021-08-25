@@ -20,6 +20,7 @@
 #define DP_NET_TCPSERVER_H
 
 #include "server.h"
+#include "messagequeue.h"
 
 #include <QUrl>
 
@@ -28,7 +29,6 @@ class QSslSocket;
 namespace net {
 
 class LoginHandler;
-class MessageQueue;
 
 class TcpServer : public Server
 {
@@ -40,8 +40,6 @@ public:
 	void login(LoginHandler *login);
 	void logout() override;
 
-	void sendMessage(const protocol::MessagePtr &msg) override;
-	void sendMessages(const protocol::MessageList &msg) override;
 	void sendEnvelope(const Envelope &e) override;
 
 	bool isLoggedIn() const override { return m_loginstate == nullptr; }
@@ -59,6 +57,7 @@ public:
 signals:
 	void loggedIn(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool hasAutoreset);
 	void loggingOut();
+	void gracefullyDisconnecting(MessageQueue::GracefulDisconnect, const QString &message);
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 
 	void bytesReceived(int);

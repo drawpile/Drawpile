@@ -42,9 +42,9 @@ set (
 	net/sessionlistingmodel.cpp
 	net/banlistmodel.cpp
 	net/announcementlist.cpp
-	net/commands.cpp
 	net/envelopebuilder.cpp
 	net/messagequeue.cpp
+	net/servercmd.cpp
 	utils/palette.cpp
 	utils/palettelistmodel.cpp
 	utils/html.cpp

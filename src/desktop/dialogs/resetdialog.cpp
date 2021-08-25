@@ -171,6 +171,7 @@ void ResetDialog::onOpenClick()
 
 	canvas::ImageCanvasLoader loader(file);
 
+#if 0 // TODO
 	const auto initCommands = loader.loadInitCommands();
 	if(initCommands.isEmpty()) {
 		QMessageBox::warning(this, tr("Reset to Image"), loader.errorMessage());
@@ -183,6 +184,7 @@ void ResetDialog::onOpenClick()
 		loader.loadThumbnail(THUMBNAIL_SIZE),
 		info.fileName()
 	};
+#endif
 	d->selection = d->resetPoints.size() - 1;
 	d->updateSelectionTitle();
 }

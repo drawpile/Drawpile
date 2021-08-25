@@ -130,6 +130,7 @@ static void layerAclVisitor(void *ctx, rustpile::LayerID id, const rustpile::Lay
 
 	l.locked = acl->locked;
 	l.tier = acl->tier;
+	l.exclusive.clear();
 
 	bool allOnes = true;
 	for(unsigned int i=0;i<sizeof(rustpile::UserBits);++i) {
@@ -162,6 +163,13 @@ void AclState::updateLayers(rustpile::PaintEngine *pe)
 		if(i.value() != oldLayers.value(i.key())) {
 			emit layerAclChanged(i.key());
 		}
+	}
+
+	QHashIterator<int, Layer> oldi(oldLayers);
+	while(oldi.hasNext()) {
+		oldi.next();
+		if(!layers.contains(oldi.key()))
+			emit layerAclChanged(oldi.key());
 	}
 }
 

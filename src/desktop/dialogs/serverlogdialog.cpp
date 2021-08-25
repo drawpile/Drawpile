@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2019 Calle Laakkonen
+   Copyright (C) 2017-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 #include "serverlogdialog.h"
 #include "canvas/userlist.h"
-#include "net/commands.h"
-#include "../libshared/net/undo.h"
+#include "net/servercmd.h"
+#include "net/envelopebuilder.h"
 #include "ui_serverlog.h"
 
 #include <QSortFilterProxyModel>
@@ -129,28 +129,36 @@ void ServerLogDialog::kickSelected()
 {
 	auto user = selectedUserId();
 	if(user)
-		emit opCommand(net::command::kick(user, false));
+		emit opCommand(net::ServerCommand::makeKick(user, false));
 }
 
 void ServerLogDialog::banSelected()
 {
 	auto user = selectedUserId();
 	if(user)
-		emit opCommand(net::command::kick(user, true));
+		emit opCommand(net::ServerCommand::makeKick(user, true));
+}
+
+static net::Envelope makeUndo(uint8_t overrideUser, bool redo) {
+
+	net::EnvelopeBuilder eb;
+	// note: using a context id of 0 here is acceptable since the server will fix it for us
+	eb.buildUndo(0, overrideUser, redo);
+	return eb.toEnvelope();
 }
 
 void ServerLogDialog::undoSelected()
 {
 	auto user = selectedUserId();
 	if(user)
-		emit opCommand(protocol::MessagePtr(new protocol::Undo(0, user, false)));
+		emit opCommand(makeUndo(user, false));
 }
 
 void ServerLogDialog::redoSelected()
 {
 	auto user = selectedUserId();
 	if(user)
-		emit opCommand(protocol::MessagePtr(new protocol::Undo(0, user, true)));
+		emit opCommand(makeUndo(user, true));
 }
 
 }

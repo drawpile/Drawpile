@@ -21,14 +21,8 @@
 
 namespace net {
 
-Server::Server(bool local, QObject *parent)
-	: QObject(parent), m_local(local)
+Server::Server(QObject *parent)
+	: QObject(parent)
 {}
-
-void Server::sendMessages(const protocol::MessageList &msgs)
-{
-	for(const protocol::MessagePtr &m : msgs)
-		sendMessage(m);
-}
 
 }

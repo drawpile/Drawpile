@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2013-2018 Calle Laakkonen
+   Copyright (C) 2013-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,27 +19,25 @@
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
 
-#include "../libshared/net/message.h"
+#include "envelope.h"
 
 #include <QString>
 #include <QUrl>
 #include <QObject>
-#include <QPointer>
 #include <QSslError>
 #include <QFileInfo>
 #include <QByteArray>
+#include <QJsonArray>
+#include <QJsonObject>
 
 class QImage;
-
-namespace protocol {
-	struct ServerCommand;
-	struct ServerReply;
-}
 
 namespace net {
 
 class TcpServer;
 class LoginSessionModel;
+struct ServerCommand;
+struct ServerReply;
 
 /**
  * @brief Login process state machine
@@ -98,7 +96,7 @@ public:
 	 *
 	 * @param msgs
 	 */
-	void setInitialState(const protocol::MessageList &msgs) { Q_ASSERT(m_mode==Mode::HostRemote); m_initialState = msgs; }
+	void setInitialState(const Envelope &msgs) { Q_ASSERT(m_mode==Mode::HostRemote); m_initialState = msgs; }
 
 	/**
 	 * @brief Set session announcement URL
@@ -116,8 +114,9 @@ public:
 	/**
 	 * @brief Handle a received message
 	 * @param message
+	 * @return true if expecting more login messages
 	 */
-	void receiveMessage(protocol::MessagePtr message);
+	bool receiveMessage(const ServerReply &msg);
 
 	/**
 	 * @brief Login mode (host or join)
@@ -351,22 +350,23 @@ private:
 		ABORT_LOGIN
 	};
 
-	void expectNothing(const protocol::ServerReply &msg);
-	void expectHello(const protocol::ServerReply &msg);
-	void expectStartTls(const protocol::ServerReply &msg);
+	void send(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
+
+	void expectNothing();
+	void expectHello(const ServerReply &msg);
+	void expectStartTls(const ServerReply &msg);
 	void prepareToSendIdentity();
 	void sendIdentity();
-	void expectIdentified(const protocol::ServerReply &msg);
+	void expectIdentified(const ServerReply &msg);
 	void showPasswordDialog(const QString &title, const QString &text);
-	void expectSessionDescriptionHost(const protocol::ServerReply &msg);
+	void expectSessionDescriptionHost(const ServerReply &msg);
 	void sendHostCommand();
-	void expectSessionDescriptionJoin(const protocol::ServerReply &msg);
+	void expectSessionDescriptionJoin(const ServerReply &msg);
 	void sendJoinCommand();
-	void expectNoErrors(const protocol::ServerReply &msg);
-	void expectLoginOk(const protocol::ServerReply &msg);
+	void expectNoErrors(const ServerReply &msg);
+	bool expectLoginOk(const ServerReply &msg);
 	void startTls();
 	void continueTls();
-	void send(const protocol::ServerCommand &cmd);
 	void handleError(const QString &code, const QString &message);
 
 	Mode m_mode;
@@ -380,7 +380,7 @@ private:
 	QString m_title;
 	bool m_announcePrivate;
 	QString m_announceUrl;
-	protocol::MessageList m_initialState;
+	Envelope m_initialState;
 
 	// Settings for joining
 	QString m_joinPassword;

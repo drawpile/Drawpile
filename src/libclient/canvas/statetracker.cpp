@@ -24,7 +24,6 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "net/commands.h"
 #include "net/internalmsg.h"
 #include "tools/selection.h" // for selection transform utils
 
@@ -101,6 +100,7 @@ QImage StateSavepoint::thumbnail(const QSize &maxSize) const
 
 protocol::MessageList StateSavepoint::initCommands(uint8_t contextId, const CanvasModel *canvas) const
 {
+#if 0
 	if(!d)
 		return protocol::MessageList();
 
@@ -110,6 +110,8 @@ protocol::MessageList StateSavepoint::initCommands(uint8_t contextId, const Canv
 	loader.setDefaultLayer(canvas->layerlist()->defaultLayer());
 	loader.setPinnedMessage(canvas->pinnedMessage());
 	return loader.loadInitCommands();
+#endif
+	return protocol::MessageList();
 }
 
 StateSavepoint StateSavepoint::fromCanvasSavepoint(const paintcore::Savepoint &savepoint)

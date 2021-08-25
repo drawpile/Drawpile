@@ -22,7 +22,7 @@
 namespace net {
 
 LoopbackServer::LoopbackServer(QObject *parent)
-	: Server(true, parent)
+	: Server(parent)
 {
 }
 
@@ -31,27 +31,9 @@ void LoopbackServer::logout()
 	qWarning("tried to log out from the loopback server!");
 }
 
-void LoopbackServer::sendMessage(const protocol::MessagePtr &msg)
-{
-	emit messageReceived(msg);
-}
-
-void LoopbackServer::sendMessages(const protocol::MessageList &msgs)
-{
-	for(const protocol::MessagePtr &msg : msgs)
-		emit messageReceived(msg);
-}
-
 void LoopbackServer::sendEnvelope(const Envelope &envelope)
 {
-	// FIXME we want to pass around only envelopes
-	Envelope e = envelope;
-	while(!e.isEmpty()) {
-		protocol::NullableMessageRef m = protocol::Message::deserialize(e.data(), e.length(), true);
-		Q_ASSERT(!m.isNull());
-		emit messageReceived(protocol::MessagePtr::fromNullable(m));
-		e = e.next();
-	}
+	emit envelopeReceived(envelope);
 }
 
 }

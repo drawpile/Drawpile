@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2019 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,10 +26,8 @@
 #include "docks/utils.h"
 #include "core/blendmodes.h"
 #include "utils/changeflags.h"
+#include "net/envelopebuilder.h"
 
-#include "../libshared/net/layer.h"
-#include "../libshared/net/meta2.h"
-#include "../libshared/net/undo.h"
 #include "../rustpile/rustpile.h"
 
 #include "ui_layerbox.h"
@@ -263,16 +261,19 @@ void LayerList::opacityAdjusted()
 	}
 }
 
-static protocol::MessagePtr updateLayerAttributesMessage(uint8_t contextId, const canvas::LayerListItem &layer, ChangeFlags<uint8_t> flagChanges, int opacity, int blend)
+static net::Envelope updateLayerAttributesMessage(uint8_t contextId, const canvas::LayerListItem &layer, ChangeFlags<uint8_t> flagChanges, int opacity, int blend)
 {
-	return protocol::MessagePtr(new protocol::LayerAttributes(
+	net::EnvelopeBuilder eb;
+	rustpile::write_layerattr(
+		eb,
 		contextId,
 		layer.id,
 		0,
 		flagChanges.update(layer.attributeFlags()),
 		opacity>=0 ? opacity : layer.opacity*255,
-		blend >= 0 ? blend : int(layer.blend)
-	));
+		blend >= 0 ? blend : uint8_t(layer.blend)
+	);
+	return eb.toEnvelope();
 }
 
 void LayerList::sendOpacityUpdate()
@@ -315,7 +316,7 @@ void LayerList::censorSelected(bool censor)
 		emit layerCommand(updateLayerAttributesMessage(
 			m_canvas->localUserId(),
 			index.data().value<canvas::LayerListItem>(),
-			ChangeFlags<uint8_t>().set(protocol::LayerAttributes::FLAG_CENSOR, censor),
+			ChangeFlags<uint8_t>().set(rustpile::LayerAttributesMessage_FLAGS_CENSOR, censor),
 			-1,
 			-1
 		));
@@ -329,7 +330,7 @@ void LayerList::setSelectedFixed(bool fixed)
 		emit layerCommand(updateLayerAttributesMessage(
 			m_canvas->localUserId(),
 			index.data().value<canvas::LayerListItem>(),
-			ChangeFlags<uint8_t>().set(protocol::LayerAttributes::FLAG_FIXED, fixed),
+			ChangeFlags<uint8_t>().set(rustpile::LayerAttributesMessage_FLAGS_FIXED, fixed),
 			-1,
 			-1
 		));
@@ -345,21 +346,27 @@ void LayerList::hideSelected()
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerVisibility(m_canvas->localUserId(), layerId, visible)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_layervisibility(eb, m_canvas->localUserId(), layerId, visible);
+	emit layerCommand(eb.toEnvelope());
 }
 
-void LayerList::changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive)
+void LayerList::changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> exclusive)
 {
 	const QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		const int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-		emit layerCommand(protocol::MessagePtr(new protocol::LayerACL(
+		net::EnvelopeBuilder eb;
+		rustpile::write_layeracl(
+			eb,
 			m_canvas->localUserId(),
 			layerId,
-			lock,
-			int(tier),
-			exclusive
-		)));
+			(lock ? 0x80 : 0) | uint8_t(tier),
+			exclusive.constData(),
+			exclusive.length()
+
+		);
+		emit layerCommand(eb.toEnvelope());
 	}
 }
 
@@ -384,8 +391,19 @@ void LayerList::addLayer()
 
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(m_canvas->localUserId(), id, 0, 0, 0, name)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_canvas->localUserId());
+	rustpile::write_newlayer(
+		eb,
+		m_canvas->localUserId(),
+		id,
+		0,
+		0,
+		0,
+		reinterpret_cast<const uint16_t*>(name.constData()),
+		name.length()
+	);
+	emit layerCommand(eb.toEnvelope());
 }
 
 /**
@@ -405,8 +423,19 @@ void LayerList::insertLayer()
 
 	const QString name = layers->getAvailableLayerName(tr("Layer"));
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(m_canvas->localUserId(), id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT, name)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_canvas->localUserId());
+	rustpile::write_newlayer(
+		eb,
+		m_canvas->localUserId(),
+		id,
+		layer.id,
+		0,
+		rustpile::LayerCreateMessage_FLAGS_INSERT,
+		reinterpret_cast<const uint16_t*>(name.constData()),
+		name.length()
+	);
+	emit layerCommand(eb.toEnvelope());
 }
 
 void LayerList::duplicateLayer()
@@ -423,8 +452,19 @@ void LayerList::duplicateLayer()
 
 	const QString name = layers->getAvailableLayerName(layer.title);
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerCreate(m_canvas->localUserId(), id, layer.id, 0, protocol::LayerCreate::FLAG_INSERT | protocol::LayerCreate::FLAG_COPY, name)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_canvas->localUserId());
+	rustpile::write_newlayer(
+		eb,
+		m_canvas->localUserId(),
+		id,
+		layer.id,
+		0,
+		rustpile::LayerCreateMessage_FLAGS_INSERT | rustpile::LayerCreateMessage_FLAGS_COPY,
+		reinterpret_cast<const uint16_t*>(name.constData()),
+		name.length()
+	);
+	emit layerCommand(eb.toEnvelope());
 }
 
 bool LayerList::canMergeCurrent() const
@@ -443,8 +483,10 @@ void LayerList::deleteSelected()
 	if(!index.isValid())
 		return;
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, false)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_canvas->localUserId());
+	rustpile::write_deletelayer(eb, m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, false);
+	emit layerCommand(eb.toEnvelope());
 }
 
 void LayerList::setSelectedDefault()
@@ -452,8 +494,9 @@ void LayerList::setSelectedDefault()
 	QModelIndex index = currentSelection();
 	if(!index.isValid())
 		return;
-
-	emit layerCommand(protocol::MessagePtr(new protocol::DefaultLayer(m_canvas->localUserId(), index.data(canvas::LayerListModel::IdRole).toInt())));
+	net::EnvelopeBuilder eb;
+	rustpile::write_defaultlayer(eb, m_canvas->localUserId(), index.data(canvas::LayerListModel::IdRole).toInt());
+	emit layerCommand(eb.toEnvelope());
 }
 
 void LayerList::mergeSelected()
@@ -462,8 +505,10 @@ void LayerList::mergeSelected()
 	if(!index.isValid())
 		return;
 
-	emit layerCommand(protocol::MessagePtr(new protocol::UndoPoint(m_canvas->localUserId())));
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerDelete(m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, true)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_canvas->localUserId());
+	rustpile::write_deletelayer(eb, m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, true);
+	emit layerCommand(eb.toEnvelope());
 }
 
 void LayerList::showPropertiesOfSelected()
@@ -618,16 +663,17 @@ void LayerList::emitPropertyChangeCommands(const dialogs::LayerProperties::Chang
 			dialogs::LayerProperties::CHANGE_BLEND |
 			dialogs::LayerProperties::CHANGE_FIXED;
 
-	uint16_t layerId = c.id;
-	QModelIndex layerIndex = m_canvas->layerlist()->layerIndex(layerId);
+	const uint16_t layerId = c.id;
+	const QModelIndex layerIndex = m_canvas->layerlist()->layerIndex(layerId);
 	if(!m_canvas || !layerIndex.isValid()) {
 		return; // Looks like the layer was deleted from under us.
 	}
 
-	uint8_t contextId = m_canvas->localUserId();
+	const uint8_t contextId = m_canvas->localUserId();
+	net::EnvelopeBuilder eb;
+
 	if(c.changes & dialogs::LayerProperties::CHANGE_TITLE) {
-		emit layerCommand(protocol::MessagePtr(
-				new protocol::LayerRetitle(contextId, layerId, c.title)));
+		rustpile::write_retitlelayer(eb, contextId, layerId, reinterpret_cast<const uint16_t*>(c.title.constData()), c.title.length());
 	}
 
 	if(c.changes & CHANGE_LAYER_ATTRIBUTES) {
@@ -635,7 +681,7 @@ void LayerList::emitPropertyChangeCommands(const dialogs::LayerProperties::Chang
 
 		ChangeFlags<uint8_t> flags;
 		if(c.changes & dialogs::LayerProperties::CHANGE_FIXED) {
-			flags.set(protocol::LayerAttributes::FLAG_FIXED, c.fixed);
+			flags.set(rustpile::LayerAttributesMessage_FLAGS_FIXED, c.fixed);
 		}
 
 		int opacity = -1;
@@ -653,9 +699,10 @@ void LayerList::emitPropertyChangeCommands(const dialogs::LayerProperties::Chang
 	}
 
 	if((c.changes & dialogs::LayerProperties::CHANGE_DEFAULT) && c.defaultLayer) {
-		emit layerCommand(protocol::MessagePtr(
-				new protocol::DefaultLayer(contextId, layerId)));
+		rustpile::write_defaultlayer(eb, contextId, layerId);
 	}
+
+	emit layerCommand(eb.toEnvelope());
 }
 
 }

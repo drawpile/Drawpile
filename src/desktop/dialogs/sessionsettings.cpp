@@ -22,7 +22,6 @@
 #include "net/banlistmodel.h"
 #include "net/announcementlist.h"
 #include "document.h"
-#include "../libshared/net/meta2.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"

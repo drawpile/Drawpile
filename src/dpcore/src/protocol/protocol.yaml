@@ -29,7 +29,19 @@ ServerCommand:
              - setting session parameters (e.g. max user count and password)
              - sending administration commands (e.g. kick user)
     fields:
-        - msg utf8
+        - msg bytes
+
+Ping:
+    id: 2
+    comment: |
+             Ping message
+
+             This is used for latency measurement as well as a keepalive. Normally, the client
+             should be the one to send the ping messages.
+
+             The server should return a Ping with the is_pong flag set
+    fields:
+        - is_pong bool
 
 Disconnect:
     id: 1
@@ -46,18 +58,6 @@ Internal:
     id: 31
     comment: Reserved for internal use
     reserved: true
-
-Ping:
-    id: 2
-    comment: |
-             Ping message
-
-             This is used for latency measurement as well as a keepalive. Normally, the client
-             should be the one to send the ping messages.
-
-             The server should return a Ping with the is_pong flag set
-    fields:
-        - is_pong bool
 
 # Meta messages (transparent)
 

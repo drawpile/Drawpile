@@ -55,7 +55,7 @@ public:
 	struct Layer {
 		bool locked;              // layer is locked for all users
 		rustpile::Tier tier;      // layer access tier (if not exclusive)
-		QList<uint8_t> exclusive; // if not empty, only these users can draw on this layer
+		QVector<uint8_t> exclusive; // if not empty, only these users can draw on this layer
 
 		Layer();
 		bool operator!=(const Layer &other) const;

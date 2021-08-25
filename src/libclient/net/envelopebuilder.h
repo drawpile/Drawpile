@@ -21,6 +21,8 @@
 
 #include <cstdint>
 
+#include "envelope.h"
+
 class QImage;
 
 namespace rustpile {
@@ -28,8 +30,6 @@ namespace rustpile {
 }
 
 namespace net {
-
-class Envelope;
 
 /**
  * @brief A helper class for using Rustpile MessageWriter to create message envelopes
@@ -48,6 +48,9 @@ public:
 
 	/// Helper function: write a PutImage command using QImage
 	void buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode);
+
+	/// Helper function: write a Undo/Redo message
+	void buildUndo(uint8_t ctxid, uint8_t overrideId, bool redo);
 
 private:
 	rustpile::MessageWriter *m_writer;

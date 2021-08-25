@@ -31,6 +31,8 @@ namespace net {
  */
 class Envelope {
 public:
+	static const int HEADER_LEN = 4;
+
 	Envelope()
 		: m_data(QByteArray()), m_offset(0)
 	{}
@@ -48,7 +50,7 @@ public:
 		Q_ASSERT(len >= HEADER_LEN);
 	}
 
-	// Return the type of the first message in the envelope, or -1 if there is none
+	//! Return the type of the first message in the envelope, or -1 if there is none
 	int messageType() const {
 		if(m_offset >= m_data.length())
 			return -1;
@@ -57,9 +59,18 @@ public:
 		// 2: type
 		// 3: context ID
 		Q_ASSERT(length() >= HEADER_LEN);
-		return m_data[m_offset+2];
+		return sniffType(m_data.constData() + m_offset);
 	}
 
+	//! Return the length of the first message in the envelope or 0 if there is none
+	int messageLength() const {
+		if(isEmpty())
+			return 0;
+		Q_ASSERT(length() >= HEADER_LEN);
+		return sniffLength(m_data.constData() + m_offset);
+	}
+
+	//! Is the first message in the envelope a Command type?
 	bool isCommand() const { return messageType() >= 128; }
 
 	//! Return an envelope starting with the next message
@@ -76,24 +87,52 @@ public:
 		return Envelope(m_data, next);
 	}
 
+	//! Get the type of the message from its header
+	static int sniffType(const char *data) {
+		return data[2];
+	}
+
+	//! Get the length of the message from its header
+	static int sniffLength(const char *data) {
+		// extract payload length
+		quint16 len = qFromBigEndian<quint16>((uchar*)data);
+
+		// return total message length
+		return len + HEADER_LEN;
+	}
+
+	//! Get a pointer to the beginning of the first message in the envelope
 	const uchar *data() const {
 		return reinterpret_cast<const uchar*>(m_data.constData() + m_offset);
 	}
 
+	//! Get the length of the envelope
 	int length() const {
 		return m_data.length() - m_offset;
 	}
 
+	//! Does this envelope contain no more messages?
 	bool isEmpty() const {
 		return m_offset >= m_data.length();
 	}
 
+	//! Append data to the envelope. The data should contain one or more full messages.
+	void append(const char *data, int length)
+	{
+		Q_ASSERT(length >= HEADER_LEN);
+		m_data.append(data, length);
+	}
+
+	//! Append the content of another envelope  to this one
 	void append(const Envelope &other) {
 		m_data.append(other.m_data.constData() + other.m_offset, other.length());
 	}
 
+	QPair<QByteArray, int> breakApart() const {
+		return QPair<QByteArray, int>(m_data, m_offset);
+	}
+
 private:
-	static const int HEADER_LEN = 4;
 	Envelope(const QByteArray &b, int offset)
 		: m_data(b), m_offset(offset)
 	{

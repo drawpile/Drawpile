@@ -22,7 +22,7 @@
 
 #include "core/blendmodes.h"
 #include "canvas/acl.h"
-#include "../libshared/net/message.h" // TODO hide this
+#include "net/envelope.h"
 
 #include <QObject>
 #include <QStringListModel>
@@ -193,7 +193,7 @@ public slots:
 	void sendFeatureAccessLevelChange(const uint8_t[canvas::FeatureCount]);
 	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
-	void sendResetSession(const protocol::MessageList &resetImage);
+	void sendResetSession(const net::Envelope &resetImage);
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
@@ -239,7 +239,9 @@ private slots:
 
 private:
 	void saveCanvas();
+#if 0 // FIXME
 	bool startRecording(const QString &filename, const protocol::MessageList &initialState, QString *error);
+#endif
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
@@ -260,7 +262,7 @@ private:
 
 	QString m_currentFilename;
 
-	protocol::MessageList m_resetstate;
+	net::Envelope m_resetstate;
 
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;

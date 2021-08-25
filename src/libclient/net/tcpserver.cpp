@@ -21,8 +21,7 @@
 #include "tcpserver.h"
 #include "login.h"
 #include "messagequeue.h"
-
-#include "../libshared/net/control.h"
+#include "servercmd.h"
 
 #include <QDebug>
 #include <QSslSocket>
@@ -32,7 +31,7 @@
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
-	Server(false, parent), m_loginstate(nullptr), m_securityLevel(NO_SECURITY),
+	Server(parent), m_loginstate(nullptr), m_securityLevel(NO_SECURITY),
 	m_localDisconnect(false), m_supportsPersistence(false)
 {
 	m_socket = new QSslSocket(this);
@@ -62,6 +61,7 @@ TcpServer::TcpServer(QObject *parent) :
 	connect(m_msgqueue, &MessageQueue::bytesSent, this, &TcpServer::bytesSent);
 	connect(m_msgqueue, &MessageQueue::badData, this, &TcpServer::handleBadData);
 	connect(m_msgqueue, &MessageQueue::pingPong, this, &TcpServer::lagMeasured);
+	connect(m_msgqueue, &MessageQueue::gracefulDisconnect, this, &TcpServer::gracefullyDisconnecting);
 }
 
 void TcpServer::login(LoginHandler *login)
@@ -75,35 +75,12 @@ void TcpServer::login(LoginHandler *login)
 void TcpServer::logout()
 {
 	m_localDisconnect = true;
-	m_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
+	m_msgqueue->sendDisconnect(MessageQueue::GracefulDisconnect::Shutdown, QString());
 }
 
 int TcpServer::uploadQueueBytes() const
 {
 	return m_msgqueue->uploadQueueBytes();
-}
-
-void TcpServer::sendMessage(const protocol::MessagePtr &msg)
-{
-	QByteArray b(msg->length(), 0);
-	msg->serialize(b.data());
-
-	m_msgqueue->send(b);
-}
-
-void TcpServer::sendMessages(const protocol::MessageList &msgs)
-{
-	int len=0;
-	for(const auto &m : msgs)
-		len += m->length();
-	QByteArray b(len, 0);
-	char *data = b.data();
-	for(const auto &m : msgs) {
-		m->serialize(data);
-		data += m->length();
-	}
-
-	m_msgqueue->send(b);
 }
 
 void TcpServer::sendEnvelope(const Envelope &e)
@@ -115,30 +92,25 @@ void TcpServer::handleMessage()
 {
 	while(m_msgqueue->isPending()) {
 		Envelope envelope = m_msgqueue->getPending();
-		while(!envelope.isEmpty()) {
-			auto msg = protocol::Message::deserialize(envelope.data(), envelope.length(), true);
-			Q_ASSERT(!msg.isNull());
-			if(msg->type() == protocol::MSG_DISCONNECT) {
-				const auto d = msg.cast<protocol::Disconnect>();
-				switch(d.reason()) {
-				case protocol::Disconnect::KICK:
-					m_error = tr("You were kicked by %1").arg(d.message());
-					break;
-				case protocol::Disconnect::SHUTDOWN:
-					m_error = tr("The server is shutting down.");
-					break;
-				default:
-					m_error = tr("Error: %1").arg(d.message());
+
+		if(m_loginstate) {
+			// Drip feed messages one by one to the login handler,
+			// since the envelope may contain messages not belonging to
+			// the login handshake anymore.
+			while(!envelope.isEmpty()) {
+				const ServerReply sr = ServerReply::fromEnvelope(envelope);
+				const bool expectMoreLogin = m_loginstate->receiveMessage(sr);
+				envelope = envelope.next();
+
+				if(!expectMoreLogin) {
+					if(!envelope.isEmpty())
+						emit envelopeReceived(envelope);
 					break;
 				}
 			}
 
-			if(m_loginstate)
-				m_loginstate->receiveMessage(protocol::MessagePtr::fromNullable(msg));
-			else
-				emit messageReceived(protocol::MessagePtr::fromNullable(msg));
-
-			envelope = envelope.next();
+		} else {
+			emit envelopeReceived(envelope);
 		}
 	}
 }

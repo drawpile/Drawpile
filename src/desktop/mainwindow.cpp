@@ -62,7 +62,6 @@
 #include "document.h"
 #include "main.h"
 
-#include "core/layerstack.h"
 #include "canvas/loader.h"
 #include "canvas/canvasmodel.h"
 #include "scene/canvasview.h"
@@ -95,6 +94,7 @@
 
 #include "net/client.h"
 #include "net/login.h"
+#include "net/envelopebuilder.h"
 #include "canvas/layerlist.h"
 #include "parentalcontrols/parentalcontrols.h"
 
@@ -108,9 +108,6 @@
 #include "toolwidgets/inspectorsettings.h"
 
 #include "../libshared/record/reader.h"
-#include "../libshared/net/annotation.h"
-#include "../libshared/net/undo.h"
-#include "../libshared/net/recording.h"
 
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
@@ -361,8 +358,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendEnvelope);
 
-	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
-	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendMessage);
+	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendEnvelope);
+	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendEnvelope);
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
@@ -1424,7 +1421,9 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setTitle(dlg->getTitle());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
 	if(useremote) {
+#if 0 // FIXME
 		login->setInitialState(m_doc->canvas()->generateSnapshot());
+#endif
 	}
 
 	(new dialogs::LoginDialog(login, this))->show();
@@ -2092,10 +2091,10 @@ void MainWindow::clearOrDelete()
 	if(annotationtool->isChecked()) {
 		const uint16_t a = static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
 		if(a>0) {
-			protocol::MessageList msgs;
-			msgs << protocol::MessagePtr(new protocol::UndoPoint(m_doc->client()->myId()));
-			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_doc->client()->myId(), a));
-			m_doc->client()->sendMessages(msgs);
+			net::EnvelopeBuilder eb;
+			rustpile::write_undopoint(eb, m_doc->client()->myId());
+			rustpile::write_deleteannotation(eb, m_doc->client()->myId(), a);
+			m_doc->client()->sendEnvelope(eb.toEnvelope());
 			return;
 		}
 	}
@@ -2152,7 +2151,9 @@ void MainWindow::markSpotForRecording()
 	bool ok;
 	QString text = QInputDialog::getText(this, tr("Mark"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
 	if(ok) {
-		m_doc->client()->sendMessage(protocol::MessagePtr(new protocol::Marker(0, text)));
+		net::EnvelopeBuilder eb;
+		rustpile::write_marker(eb, 0, reinterpret_cast<const uint16_t*>(text.constData()), text.length());
+		m_doc->client()->sendEnvelope(eb.toEnvelope());
 	}
 }
 

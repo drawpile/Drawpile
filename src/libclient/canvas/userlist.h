@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2019 Calle Laakkonen
+   Copyright (C) 2007-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 class QJsonArray;
 
-namespace protocol { class MessagePtr; }
+namespace net { class Envelope; }
 
 namespace canvas {
 
@@ -116,13 +116,13 @@ public:
 	QString getUsername(int id) const;
 
 	//! Get a list of users with operator privileges
-	QList<uint8_t> operatorList() const;
+	QVector<uint8_t> operatorList() const;
 
 	//! Get a list of users who are locked
-	QList<uint8_t> lockList() const;
+	QVector<uint8_t> lockList() const;
 
 	//! Get a list of trusted users
-	QList<uint8_t> trustedList() const;
+	QVector<uint8_t> trustedList() const;
 
 	/**
 	 * @brief Get the command for (un)locking a single user
@@ -131,7 +131,7 @@ public:
 	 * @param lock
 	 * @return
 	 */
-	protocol::MessagePtr getLockUserCommand(int localId, int userId, bool lock) const;
+	net::Envelope getLockUserCommand(int localId, int userId, bool lock) const;
 
 	/**
 	 * @brief Get the command for granting or revoking operator privileges
@@ -140,7 +140,7 @@ public:
 	 * @param op
 	 * @return
 	 */
-	protocol::MessagePtr getOpUserCommand(int localId, int userId, bool op) const;
+	net::Envelope getOpUserCommand(int localId, int userId, bool op) const;
 
 	/**
 	 * @brief Get the command for granting or revoking trusted status
@@ -149,7 +149,7 @@ public:
 	 * @param trusted
 	 * @return
 	 */
-	protocol::MessagePtr getTrustUserCommand(int localId, int userId, bool op) const;
+	net::Envelope getTrustUserCommand(int localId, int userId, bool op) const;
 
 public slots:
 	void updateAclState(const AclState *state);

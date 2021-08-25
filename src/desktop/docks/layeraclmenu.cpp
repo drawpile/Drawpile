@@ -97,7 +97,7 @@ void LayerAclMenu::showEvent(QShowEvent *e)
 void LayerAclMenu::userClicked(QAction *useraction)
 {
 	// Get exclusive user access list
-	QList<uint8_t> exclusive;
+	QVector<uint8_t> exclusive;
 	for(const QAction *a : m_users->actions()) {
 		if(a->isChecked())
 			exclusive.append(a->property("userId").toInt());
@@ -132,7 +132,7 @@ void LayerAclMenu::userClicked(QAction *useraction)
 	emit layerAclChange(m_lock->isChecked(), tier, exclusive);
 }
 
-void LayerAclMenu::setAcl(bool lock, int tier, const QList<uint8_t> exclusive)
+void LayerAclMenu::setAcl(bool lock, int tier, const QVector<uint8_t> exclusive)
 {
 	m_lock->setChecked(lock);
 

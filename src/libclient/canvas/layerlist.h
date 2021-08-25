@@ -28,8 +28,8 @@
 
 #include <functional>
 
-namespace protocol {
-	class MessagePtr;
+namespace net {
+	class Envelope;
 
 }
 namespace paintcore {
@@ -155,7 +155,7 @@ signals:
 	void autoSelectRequest(int);
 
 	//! Emitted when layers are manually reordered
-	void layerCommand(protocol::MessagePtr msg);
+	void layerCommand(const net::Envelope &envelope);
 
 	//! Request local change of layer opacity for preview purpose
 	void layerOpacityPreview(int id, float opacity);

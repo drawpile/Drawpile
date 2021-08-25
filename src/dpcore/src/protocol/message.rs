@@ -1291,7 +1291,7 @@ pub enum ControlMessage {
     /// - setting session parameters (e.g. max user count and password)
     /// - sending administration commands (e.g. kick user)
     ///
-    ServerCommand(u8, String),
+    ServerCommand(u8, Vec<u8>),
 
     /// Disconnect notification
     ///
@@ -1696,7 +1696,7 @@ impl ControlMessage {
         use ControlMessage::*;
         match &self {
             ServerCommand(user_id, b) => {
-                TextMessage::new(*user_id, "servercommand").set("msg", b.clone())
+                TextMessage::new(*user_id, "servercommand").set_bytes("msg", &b)
             }
             Disconnect(user_id, b) => b.to_text(TextMessage::new(*user_id, "disconnect")),
             Ping(user_id, b) => TextMessage::new(*user_id, "ping").set("is_pong", b.to_string()),
@@ -1974,7 +1974,7 @@ impl Message {
         Ok(match message_type {
             0 => Control(ControlMessage::ServerCommand(
                 u,
-                r.validate(0, 65535)?.read_remaining_str(),
+                r.validate(0, 65535)?.read_remaining_vec::<u8>(),
             )),
             1 => Control(ControlMessage::Disconnect(
                 u,
@@ -2135,7 +2135,7 @@ impl Message {
         Some(match tm.name.as_ref() {
             "servercommand" => Control(ControlMessage::ServerCommand(
                 tm.user_id,
-                tm.get_str("msg").to_string(),
+                tm.get_bytes("msg"),
             )),
             "disconnect" => Control(ControlMessage::Disconnect(
                 tm.user_id,

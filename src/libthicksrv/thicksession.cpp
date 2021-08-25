@@ -171,6 +171,7 @@ void ThickSession::internalReset()
 	loader.setDefaultLayer(m_defaultLayer);
 	loader.setPinnedMessage(m_pinnedMessage);
 
+#if 0 // FIXME
 	auto messages = serverSideStateMessages() + loader.loadInitCommands();
 
 	history()->reset(messages);
@@ -179,6 +180,7 @@ void ThickSession::internalReset()
 		.about(Log::Level::Info, Log::Topic::Status)
 		.message(QStringLiteral("Performed internal reset. Image size is %1 MB").arg(history()->sizeInBytes() / 1024.0 / 1024.0, 0, 'f', 2))
 	   );
+#endif
 }
 
 }

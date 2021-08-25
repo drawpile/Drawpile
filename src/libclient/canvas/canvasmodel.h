@@ -20,25 +20,15 @@
 #ifndef CANVASMODEL_H
 #define CANVASMODEL_H
 
-#include "../libshared/net/message.h"
-#include "../libshared/record/writer.h"
-
 #include <QObject>
 #include <QPointer>
 
-namespace protocol {
-	class UserJoin;
-	class UserLeave;
-	class LaserTrail;
-	class MovePointer;
-	class Chat;
-	class Marker;
-	class DefaultLayer;
+namespace net {
+	class Envelope;
 }
 
 namespace canvas {
 
-class StateTracker;
 class AclState;
 class UserListModel;
 class LayerListModel;
@@ -63,7 +53,9 @@ public:
 
 	QImage toImage(bool withBackground=true, bool withSublayers=false) const;
 
+#if 0 // FIXME
 	protocol::MessageList generateSnapshot() const;
+#endif
 
 	uint8_t localUserId() const { return m_localUserId; }
 
@@ -88,10 +80,12 @@ public:
 	 */
 	bool isOnline() const { return m_mode == Mode::Online; }
 
+#if 0 // FIXME
 	/**
 	 * @brief Set the Writer to use for recording
 	 */
 	void setRecorder(recording::Writer *writer) { m_recorder = writer; }
+#endif
 
 	//! Size of the canvas
 	QSize size() const;
@@ -108,10 +102,10 @@ public:
 
 public slots:
 	//! Handle a meta/command message received from the server
-	void handleCommand(protocol::MessagePtr cmd);
+	void handleCommand(const net::Envelope &cmd);
 
 	//! Handle a local drawing command (will be put in the local fork)
-	void handleLocalCommand(protocol::MessagePtr cmd);
+	void handleLocalCommand(const net::Envelope &cmd);
 
 	void resetCanvas();
 
@@ -167,8 +161,6 @@ private:
 
 	PaintEngine *m_paintengine;
 	Selection *m_selection;
-
-	QPointer<recording::Writer> m_recorder;
 
 	QString m_title;
 	QString m_pinnedMessage;

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2018 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,13 +31,14 @@ class QTimer;
 
 class Ui_LayerBox;
 
-namespace protocol {
-	class MessagePtr;
+namespace net {
+	class Envelope;
 }
 
 namespace canvas {
 	struct LayerListItem;
 	class CanvasModel;
+	enum class Feature;
 }
 
 namespace docks {
@@ -70,7 +71,7 @@ signals:
 	void layerSelected(int id);
 	void activeLayerVisibilityChanged();
 
-	void layerCommand(protocol::MessagePtr msg);
+	void layerCommand(const net::Envelope &msg);
 
 private slots:
 	void onLayerCreate(const QModelIndex &parent, int first, int last);
@@ -94,7 +95,7 @@ private slots:
 	void censorSelected(bool censor);
 	void setSelectedFixed(bool fixed);
 	void setLayerVisibility(int layerId, bool visible);
-	void changeLayerAcl(bool lock, canvas::Tier tier, QList<uint8_t> exclusive);
+	void changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> exclusive);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void lockStatusChanged(int layerId);

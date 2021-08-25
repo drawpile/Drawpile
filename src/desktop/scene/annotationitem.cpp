@@ -23,7 +23,7 @@
 
 #include "core/layerstack.h"
 #include "scene/annotationitem.h"
-#include "../libshared/net/annotation.h"
+#include "../rustpile/rustpile.h"
 
 namespace drawingboard {
 
@@ -134,10 +134,10 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	m_doc.setTextWidth(m_rect.width());
 
 	QPointF offset;
-	if(m_valign == protocol::AnnotationEdit::FLAG_VALIGN_CENTER) {
+	if(m_valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER) {
 		offset.setY((m_rect.height() - m_doc.size().height()) / 2);
 
-	} else if(m_valign == protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM) {
+	} else if(m_valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM) {
 		offset.setY(m_rect.height() - m_doc.size().height());
 	}
 
@@ -179,10 +179,10 @@ static void paintAnnotation(QPainter *painter, const QRectF &paintrect, const QC
 	doc.setTextWidth(rect0.width());
 
 	QPointF offset;
-	if(valign == protocol::AnnotationEdit::FLAG_VALIGN_CENTER) {
+	if(valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER) {
 		offset.setY((rect0.height() - doc.size().height()) / 2);
 
-	} else if(valign == protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM) {
+	} else if(valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM) {
 		offset.setY(rect0.height() - doc.size().height());
 	}
 	painter->translate(offset);

@@ -20,7 +20,6 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "net/client.h"
-#include "net/commands.h"
 #include "net/envelopebuilder.h"
 
 #include "tools/toolcontroller.h"

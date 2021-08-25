@@ -19,17 +19,10 @@
 
 #include "loader.h"
 #include "net/client.h"
+#include "net/envelopebuilder.h"
 #include "ora/orareader.h"
 
-#include "core/layerstack.h"
-#include "core/layer.h"
-#include "core/tilevector.h"
-
-#include "../libshared/net/layer.h"
-#include "../libshared/net/annotation.h"
-#include "../libshared/net/meta.h"
-#include "../libshared/net/meta2.h"
-#include "../libshared/net/image.h"
+#include "../rustpile/rustpile.h"
 
 #include <QDebug>
 #include <QGuiApplication>
@@ -46,13 +39,17 @@ SessionLoader::~SessionLoader()
 {
 }
 
-MessageList BlankCanvasLoader::loadInitCommands()
+net::Envelope BlankCanvasLoader::loadInitCommands()
 {
-	return MessageList()
-		<< MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0))
-		<< MessagePtr(new protocol::CanvasBackground(1, _color.rgba()))
-		<< MessagePtr(new protocol::LayerCreate(1, 0x0102, 0, 0, 0, QStringLiteral("Layer 1")))
-		;
+	const uint32_t color = qToBigEndian(m_color.rgba());
+	const QString layerName = QStringLiteral("Layer 1"); // TODO i18n
+
+	net::EnvelopeBuilder eb;
+	rustpile::write_resize(eb, 1, 0, m_size.width(), m_size.height(), 0);
+	rustpile::write_background(eb, 1, reinterpret_cast<const uint8_t*>(&color), 4);
+	rustpile::write_newlayer(eb, 1, 0x0101, 0, 0, 0, reinterpret_cast<const uint16_t*>(layerName.constData()), layerName.length());
+
+	return eb.toEnvelope();
 }
 
 QPixmap ImageCanvasLoader::loadThumbnail(const QSize &maxSize) const
@@ -74,8 +71,9 @@ QPixmap ImageCanvasLoader::loadThumbnail(const QSize &maxSize) const
 	return QPixmap::fromImage(thumbnail);
 }
 
-MessageList ImageCanvasLoader::loadInitCommands()
+net::Envelope ImageCanvasLoader::loadInitCommands()
 {
+#if 0 // FIXME
 	if(m_filename.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Load OpenRaster image
 		// TODO identify by filetype magic?
@@ -157,13 +155,20 @@ MessageList ImageCanvasLoader::loadInitCommands()
 
 		return msgs;
 	}
+#endif
+	return net::Envelope();
 }
 
-MessageList QImageCanvasLoader::loadInitCommands()
+net::Envelope QImageCanvasLoader::loadInitCommands()
 {
-	MessageList msgs;
+	net::EnvelopeBuilder eb;
+	const QString layerName = QStringLiteral("Layer 1"); // TODO i18n
 
-	msgs << MessagePtr(new protocol::CanvasResize(1, 0, m_image.size().width(), m_image.size().height(), 0));
+	rustpile::write_resize(eb, 1, 0, m_image.size().width(), m_image.size().height(), 0);
+
+
+#if 0 // FIXME
+	rustpile::write_newlayer(eb, 1, 0x0101, 0, 0, 0, reinterpret_cast<const uint16_t*>(layerName.constData()), layerName.length());
 
 	const auto tileset = paintcore::LayerTileSet::fromImage(
 		m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
@@ -188,12 +193,13 @@ MessageList QImageCanvasLoader::loadInitCommands()
 	));
 
 	tileset.toPutTiles(1, 1, 0, msgs);
-
-	return msgs;
+#endif
+	return eb.toEnvelope();
 }
 
-MessageList SnapshotLoader::loadInitCommands()
+net::Envelope SnapshotLoader::loadInitCommands()
 {
+#if 0 // FIXME
 	MessageList msgs;
 
 	// Most important bit first: canvas initialization
@@ -290,13 +296,15 @@ MessageList SnapshotLoader::loadInitCommands()
 		msgs.append(MessagePtr(new protocol::UserACL(m_contextId, m_aclfilter->lockedUsers())));
 	}
 #endif
-
-	return msgs;
+#endif
+	return net::Envelope();
 }
 
 QPair<int,int> SnapshotLoader::dotsPerInch() const
 {
-	return m_layers->dotsPerInch();
+	// FIXME
+	return QPair<int,int>(0, 0);
+	//return m_layers->dotsPerInch();
 }
 
 }

@@ -33,9 +33,7 @@ class LoopbackServer : public Server
 	Q_OBJECT
 public:
 	explicit LoopbackServer(QObject *parent=nullptr);
-	
-	void sendMessage(const protocol::MessagePtr &msg) override;
-	void sendMessages(const protocol::MessageList &msg) override;
+
 	void sendEnvelope(const Envelope &e) override;
 	void logout() override;
 

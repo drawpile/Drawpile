@@ -26,11 +26,9 @@
 #include "scene/canvasscene.h"
 #include "scene/annotationitem.h"
 #include "net/client.h"
-#include "net/commands.h"
+#include "net/envelopebuilder.h"
 #include "utils/icon.h"
 
-#include "../libshared/net/annotation.h"
-#include "../libshared/net/undo.h"
 
 #include "ui_textsettings.h"
 
@@ -77,8 +75,8 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	// Vertical alignment options
 	QMenu *valignMenu = new QMenu;
 	valignMenu->addAction(icon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, protocol::AnnotationEdit::FLAG_VALIGN_CENTER);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM);
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER);
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM);
 	m_ui->valign->setIcon(valignMenu->actions().constFirst()->icon());
 	connect(valignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
 	m_ui->valign->setMenu(valignMenu);
@@ -237,7 +235,8 @@ void AnnotationSettings::updateFontIfUniform()
 	// Check all character formats in all blocks. If they are the same,
 	// we can reset the font for the wole document.
 	while(b.isValid()) {
-		for(const QTextLayout::FormatRange &fr : b.textFormats()) {
+		const auto textFormats = b.textFormats();
+		for(const QTextLayout::FormatRange &fr : textFormats) {
 
 			if(first) {
 				fmt1 = fr.format;
@@ -297,8 +296,8 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 
 		switch(a->valign()) {
 		case 0: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-top")); break;
-		case protocol::AnnotationEdit::FLAG_VALIGN_BOTTOM: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom")); break;
-		case protocol::AnnotationEdit::FLAG_VALIGN_CENTER: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-center")); break;
+		case rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom")); break;
+		case rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-center")); break;
 		}
 		m_ui->valign->setProperty(VALIGN_PROP, a->valign());
 
@@ -345,15 +344,21 @@ void AnnotationSettings::saveChanges()
 	m_updatetimer->stop();
 
 	if(selected()) {
-		controller()->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
+		const QString content = m_ui->content->toHtml();
+
+		net::EnvelopeBuilder eb;
+		rustpile::write_editannotation(
+			eb,
 			controller()->client()->myId(),
 			selected(),
 			m_ui->btnBackground->color().rgba(),
-			(m_ui->protect->isChecked() ? protocol::AnnotationEdit::FLAG_PROTECT : 0)
-			| uint8_t(m_ui->valign->property(VALIGN_PROP).toInt()),
+			(m_ui->protect->isChecked() ? rustpile::AnnotationEditMessage_FLAGS_PROTECT : 0)
+				| uint8_t(m_ui->valign->property(VALIGN_PROP).toInt()),
 			0,
-			m_ui->content->toHtml()
-		)));
+			reinterpret_cast<const uint16_t*>(content.constData()),
+			content.length()
+		);
+		controller()->client()->sendEnvelope(eb.toEnvelope());
 	}
 }
 
@@ -361,10 +366,10 @@ void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
 	const uint8_t contextId = controller()->client()->myId();
-	protocol::MessageList msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));
-	controller()->client()->sendMessages(msgs);
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, contextId);
+	rustpile::write_deleteannotation(eb, contextId, selected());
+	controller()->client()->sendEnvelope(eb.toEnvelope());
 }
 
 void AnnotationSettings::bake()
@@ -383,11 +388,11 @@ void AnnotationSettings::bake()
 
 	const QRect rect = a->rect().toRect();
 
-	protocol::MessageList msgs;
-	msgs << protocol::MessagePtr(new protocol::UndoPoint(contextId));
-	msgs << net::command::putQImage(contextId, layer, rect.x(), rect.y(), img, paintcore::BlendMode::MODE_NORMAL);
-	msgs << protocol::MessagePtr(new protocol::AnnotationDelete(contextId, selected()));
-	controller()->client()->sendMessages(msgs);
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, contextId);
+	rustpile::write_deleteannotation(eb, contextId, selected());
+	eb.buildPutQImage(contextId, layer, rect.x(), rect.y(), img, uint8_t(rustpile::Blendmode::Normal));
+	controller()->client()->sendEnvelope(eb.toEnvelope());
 }
 
 }

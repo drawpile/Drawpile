@@ -18,7 +18,8 @@
 */
 
 #include "layerlist.h"
-#include "../libshared/net/layer.h"
+#include "net/envelopebuilder.h"
+#include "../rustpile/rustpile.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -116,7 +117,7 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 		return;
 	}
 
-	QList<uint16_t> layers;
+	QVector<uint16_t> layers;
 	layers.reserve(count);
 	for(const LayerListItem &li : m_items)
 		layers.append(li.id);
@@ -134,7 +135,9 @@ void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
 	}
 
 	Q_ASSERT(m_aclstate);
-	emit layerCommand(protocol::MessagePtr(new protocol::LayerOrder(m_aclstate->localUserId(), layers)));
+	net::EnvelopeBuilder eb;
+	rustpile::write_layerorder(eb, m_aclstate->localUserId(), layers.constData(), layers.size());
+	emit layerCommand(eb.toEnvelope());
 }
 
 int LayerListModel::indexOf(uint16_t id) const
@@ -388,8 +391,8 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 
 uint8_t LayerListItem::attributeFlags() const
 {
-	return (censored ? protocol::LayerAttributes::FLAG_CENSOR : 0) |
-	       (fixed ? protocol::LayerAttributes::FLAG_FIXED : 0);
+	return (censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
+		   (fixed ? rustpile::LayerAttributesMessage_FLAGS_FIXED : 0);
 }
 
 }

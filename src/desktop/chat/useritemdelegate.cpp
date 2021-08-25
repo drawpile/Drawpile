@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018-2019 Calle Laakkonen
+   Copyright (C) 2018-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/aclfilter.h"
 #include "utils/icon.h"
-#include "net/commands.h"
+#include "net/servercmd.h"
+#include "net/envelopebuilder.h"
 #include "document.h"
-#include "../libshared/net/undo.h"
 
 #include <QPainter>
 #include <QModelIndex>
@@ -291,17 +291,17 @@ void UserItemDelegate::toggleLock(bool op)
 
 void UserItemDelegate::toggleMute(bool mute)
 {
-	emit opCommand(net::command::mute(m_menuId, mute));
+	emit opCommand(net::ServerCommand::makeMute(m_menuId, mute));
 }
 
 void UserItemDelegate::kickUser()
 {
-	emit opCommand(net::command::kick(m_menuId, false));
+	emit opCommand(net::ServerCommand::makeKick(m_menuId, false));
 }
 
 void UserItemDelegate::banUser()
 {
-	emit opCommand(net::command::kick(m_menuId, true));
+	emit opCommand(net::ServerCommand::makeKick(m_menuId, true));
 }
 
 void UserItemDelegate::pmUser()
@@ -311,12 +311,16 @@ void UserItemDelegate::pmUser()
 
 void UserItemDelegate::undoByUser()
 {
-	emit opCommand(protocol::MessagePtr(new protocol::Undo(m_doc->canvas()->localUserId(), m_menuId, false)));
+	net::EnvelopeBuilder eb;
+	eb.buildUndo(m_doc->canvas()->localUserId(), m_menuId, false);
+	emit opCommand(eb.toEnvelope());
 }
 
 void UserItemDelegate::redoByUser()
 {
-	emit opCommand(protocol::MessagePtr(new protocol::Undo(m_doc->canvas()->localUserId(), m_menuId, true)));
+	net::EnvelopeBuilder eb;
+	eb.buildUndo(m_doc->canvas()->localUserId(), m_menuId, true);
+	emit opCommand(eb.toEnvelope());
 }
 
 }

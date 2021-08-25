@@ -34,7 +34,7 @@ public:
 	explicit LayerAclMenu(QWidget *parent=nullptr);
 
 	void setUserList(QAbstractItemModel *model);
-	void setAcl(bool lock, int tier, const QList<uint8_t> acl);
+	void setAcl(bool lock, int tier, const QVector<uint8_t> acl);
 	void setCensored(bool censor);
 
 signals:
@@ -47,7 +47,7 @@ signals:
 	 * @param lock general layer lock
 	 * @param ids list of user IDs.
 	 */
-	void layerAclChange(bool lock, canvas::Tier tier, QList<uint8_t> ids);
+	void layerAclChange(bool lock, canvas::Tier tier, QVector<uint8_t> ids);
 
 	/**
 	 * @brief The censored checkbox was toggled
@@ -63,7 +63,7 @@ private slots:
 
 private:
 	QAbstractItemModel *m_userlist;
-	QList<uint8_t> m_exclusives;
+	QVector<uint8_t> m_exclusives;
 	QAction *m_lock;
 	QAction *m_censored;
 	QActionGroup *m_tiers;

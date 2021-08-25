@@ -36,12 +36,19 @@ namespace net {
 class MessageQueue : public QObject {
 Q_OBJECT
 public:
+	enum class GracefulDisconnect {
+		Error, // An error occurred
+		Kick, // client was kicked by the session operator
+		Shutdown, // server is shutting down
+		Other, // other unspecified error
+	};
+
 	/**
 	 * @brief Create a message queue that wraps a TCP socket.
 	 *
 	 * The MessageQueue does not take ownership of the device.
 	 */
-	explicit MessageQueue(QTcpSocket *socket, QObject *parent=0);
+	explicit MessageQueue(QTcpSocket *socket, QObject *parent=nullptr);
 	~MessageQueue();
 
 	/**
@@ -66,12 +73,13 @@ public:
 	 *
 	 * This function enqueues the disconnect notification message. The connection will
 	 * be automatically closed after the message has been sent. Additionally, it
-	 * causes all incoming messages to be ignored.
+	 * causes all incoming messages to be ignored and no more data to be accepted
+	 * for sending.
 	 *
 	 * @param reason
 	 * @param message
 	 */
-	void sendDisconnect(int reason, const QString &message);
+	void sendDisconnect(GracefulDisconnect reason, const QString &message);
 
 	/**
 	 * @brief Get the number of bytes in the upload queue
@@ -156,9 +164,14 @@ signals:
 
 	/**
 	 * @brief A reply to our Ping was just received
-	 * @param roundtripTime time now - ping sent time
+	 * @param roundtripTime milliseconds since we sent our ping
 	 */
 	void pingPong(qint64 roundtripTime);
+
+	/**
+	 * The server sent a graceful disconnect notification
+	 */
+	void gracefulDisconnect(GracefulDisconnect reason, const QString &message);
 
 private slots:
 	void readData();
@@ -167,19 +180,19 @@ private slots:
 	void checkIdleTimeout();
 
 private:
-	void sendNow(const Envelope &msg);
-
 	void writeData();
+
+	void handlePing(bool isPong);
+	void sendPingMsg(bool pong);
 
 	QTcpSocket *m_socket;
 
 	char *m_recvbuffer; // raw message reception buffer
-	char *m_sendbuffer; // raw message upload buffer
+	QByteArray m_sendbuffer; // raw message upload buffer
 	int m_recvbytes;    // number of bytes in reception buffer
 	int m_sentbytes;    // number of bytes in upload buffer already sent
-	int m_sendbuflen;   // length of the data in the upload buffer
 
-	Envelope m_inbox;   // pending messages
+	Envelope m_inbox;   // received (complete) messages
 	QQueue<Envelope> m_outbox; // messages to be sent
 
 	QTimer *m_idleTimer;
@@ -188,8 +201,7 @@ private:
 	qint64 m_idleTimeout;
 	qint64 m_pingSent;
 
-	bool m_closeWhenReady;
-	bool m_ignoreIncoming;
+	bool m_gracefullyDisconnecting;
 };
 
 }

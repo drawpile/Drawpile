@@ -168,7 +168,9 @@ void PlaybackController::nextCommands(int stepCount)
 						setPlaying(false);
 				}
 
+#if 0 // FIXME
 				m_canvas->handleCommand(protocol::MessagePtr::fromNullable(next.message));
+#endif
 			}
 			break;
 		}
@@ -189,7 +191,9 @@ void PlaybackController::expectSequencePoint(int interval)
 	// We have just queued a sequence of messages for execution.
 	// Add a trailing SequencePoint and start expecting its roundtrip.
 	m_sequenceTimer.restart();
+#if 0 // FIXME
 	m_canvas->handleCommand(protocol::ClientInternal::makeSequencePoint(interval));
+#endif
 }
 
 void PlaybackController::onSequencePoint(int interval)
@@ -223,7 +227,9 @@ void PlaybackController::nextSequence()
 		case MessageRecord::OK:
 			// skip intervals
 			if(next.message->type() != protocol::MSG_INTERVAL) {
+#if 0 // FIXME
 				m_canvas->handleCommand(protocol::MessagePtr::fromNullable(next.message));
+#endif
 				if(next.message->type() == protocol::MSG_UNDOPOINT)
 					loop = false;
 			}
@@ -287,7 +293,9 @@ void PlaybackController::jumpTo(int messageIndex)
 		case MessageRecord::OK:
 			// skip intervals
 			if(next.message->type() != protocol::MSG_INTERVAL) {
+#if 0 // FIXME
 				m_canvas->handleCommand(protocol::MessagePtr::fromNullable(next.message));
+#endif
 			}
 			break;
 		case MessageRecord::INVALID:
