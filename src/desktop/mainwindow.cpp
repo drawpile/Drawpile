@@ -128,8 +128,6 @@
 #include "export/animation.h"
 #include "export/videoexporter.h"
 
-#include "../libthicksrv/builtinserver.h"
-
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
 #endif

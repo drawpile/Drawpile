@@ -22,19 +22,13 @@
 #include <QSize>
 #include <QColor>
 #include <QString>
-#include <QImage>
-
-namespace paintcore {
-	class LayerStack;
-}
+#include <QPixmap>
 
 namespace net {
 	class Envelope;
 }
 
 namespace canvas {
-
-class AclFilter;
 
 /**
  * \brief Base class for session initializers.
@@ -128,47 +122,6 @@ private:
 	QString m_error;
 	QString m_warning;
 	QPair<int,int> m_dpi;
-};
-
-/**
- * @brief A session loader that takes an existing layer stack and generates a new snapshot from it
- *
- * If the optional canvas is given, extra data will be included.
- */
-class SnapshotLoader : public SessionLoader {
-public:
-	//SnapshotLoader() : m_layers(nullptr), m_aclfilter(nullptr), m_defaultLayer(0), m_contextId(0) { }
-
-	/**
-	 * Construct a snapshot from an existing session.
-	 *
-	 * @param context ID resetting user ID
-	 * @param layers the layer stack (required)
-	 * @param aclfilter Access controls (optional)
-	 */
-	SnapshotLoader(uint8_t contextId, const paintcore::LayerStack *layers, const AclFilter *aclfilter)
-		: m_layers(layers), m_aclfilter(aclfilter), m_defaultLayer(0), m_contextId(contextId) {}
-
-	//! Include a default layer message
-	void setDefaultLayer(int defaultLayer) { m_defaultLayer = defaultLayer; }
-
-	//! Include a pinned chat message
-	void setPinnedMessage(const QString &message) { m_pinnedMessage = message; }
-
-	net::Envelope loadInitCommands() override;
-	QString filename() const override { return QString(); }
-	QString errorMessage() const override { return QString(); }
-	QPair<int,int> dotsPerInch() const override;
-
-private:
-	const paintcore::LayerStack *m_layers;
-	const AclFilter *m_aclfilter;
-
-	QString m_pinnedMessage;
-	int m_defaultLayer;
-
-	uint8_t m_contextId;
-
 };
 
 }

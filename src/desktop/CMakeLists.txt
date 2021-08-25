@@ -318,7 +318,6 @@ add_executable (
 
 target_link_libraries(${CLIENTNAME}
 	dpclient
-	thicksrvlib
 	Qt5::Widgets
 	Qt5::Multimedia
 	Qt5::Svg

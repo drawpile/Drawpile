@@ -156,6 +156,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QRadioButton" name="uselocal">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="toolTip">
          <string>Use Drawpile's built-in server</string>
         </property>
@@ -163,7 +166,7 @@
          <string>This co&amp;mputer</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -176,6 +179,9 @@
           </property>
           <property name="text">
            <string>Re&amp;mote:</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
