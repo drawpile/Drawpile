@@ -58,7 +58,6 @@
 #include "document.h"
 #include "main.h"
 
-#include "canvas/loader.h"
 #include "canvas/canvasmodel.h"
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
@@ -493,63 +492,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	}
 }
 
-/**
- * @brief Initialize session state
- *
- * If the document in this window cannot be replaced, a new mainwindow is created.
- *
- * @return the MainWindow instance in which the document was loaded or 0 in case of error
- */
-MainWindow *MainWindow::loadDocument(canvas::SessionLoader &loader)
-{
-	if(!canReplace()) {
-		if(windowState().testFlag(Qt::WindowFullScreen))
-			toggleFullscreen();
-		getAction("hidedocks")->setChecked(false);
-		writeSettings();
-		MainWindow *win = new MainWindow(false);
-		Q_ASSERT(win->canReplace());
-		if(!win->loadDocument(loader)) {
-			// Whoops, this will delete the error dialog too. Show it again,
-			// parented to current window
-			showErrorMessage(loader.errorMessage());
-			delete win;
-			win = nullptr;
-		}
-		return win;
-	}
-
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-
-	if(!m_doc->loadCanvas(loader)) {
-		QApplication::restoreOverrideCursor();
-		showErrorMessage(loader.errorMessage());
-		return nullptr;
-	}
-
-	if(!loader.warningMessage().isEmpty()) {
-		QMessageBox::warning(nullptr, QApplication::tr("Warning"), loader.warningMessage());
-	}
-
-	QApplication::restoreOverrideCursor();
-
-	getAction("hostsession")->setEnabled(true);
-
-	return this;
-}
-
 MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 {
-	if(!canReplace()) {
-		if(windowState().testFlag(Qt::WindowFullScreen))
-			toggleFullscreen();
-		getAction("hidedocks")->setChecked(false);
-		writeSettings();
-		MainWindow *win = new MainWindow(false);
-		Q_ASSERT(win->canReplace());
-		return win->loadRecording(reader);
-	}
-
 	m_doc->initCanvas();
 
 	m_doc->canvas()->startPlayback();
@@ -589,6 +533,25 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
  */
 bool MainWindow::canReplace() const {
 	return !(m_doc->isDirty() || m_doc->client()->isConnected() || m_doc->isRecording() || m_playbackDialog);
+}
+
+/**
+ * Get either a new MainWindow or this one if replacable
+ */
+MainWindow *MainWindow::replaceableWindow()
+{
+	if(!canReplace()) {
+		if(windowState().testFlag(Qt::WindowFullScreen))
+			toggleFullscreen();
+		getAction("hidedocks")->setChecked(false);
+		writeSettings();
+		MainWindow *win = new MainWindow(false);
+		Q_ASSERT(win->canReplace());
+		return win;
+
+	} else {
+		return this;
+	}
 }
 
 /**
@@ -983,8 +946,8 @@ void MainWindow::showNew()
 
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-   canvas::BlankCanvasLoader bcl(size, background);
-   loadDocument(bcl);
+	MainWindow *w = replaceableWindow();
+	w->m_doc->loadCanvas(size, background);
 }
 
 /**
@@ -994,21 +957,41 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
  */
 void MainWindow::open(const QUrl& url)
 {
+	MainWindow *w = replaceableWindow();
+	if(w != this) {
+		w->open(url);
+		return;
+	}
+
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
 		if(recording::Reader::isRecordingExtension(file)) {
 			auto reader = dialogs::PlaybackDialog::openRecording(file, this);
-			if(reader) {
-				if(loadRecording(reader))
-					addRecentFile(file);
-				else
-					delete reader;
-			}
+			if(!reader)
+				return;
+
+			loadRecording(reader);
+
 		} else {
-			canvas::ImageCanvasLoader icl(file);
-			if(loadDocument(icl))
-				addRecentFile(file);
+			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+			if(!m_doc->loadCanvas(file)) {
+				QApplication::restoreOverrideCursor();
+				showErrorMessage("Couldn't load file"); // FIXME proper error message
+				return;
+			}
+
+#if 0 // FIXME
+			if(!loader.warningMessage().isEmpty()) {
+				QMessageBox::warning(nullptr, QApplication::tr("Warning"), loader.warningMessage());
+			}
+#endif
+
+			QApplication::restoreOverrideCursor();
+			getAction("hostsession")->setEnabled(true);
 		}
+
+		addRecentFile(file);
+
 	} else {
 		auto *filedownload = new networkaccess::FileDownload(this);
 
@@ -1050,7 +1033,6 @@ void MainWindow::open()
 		utils::fileFormatFilter(utils::FileFormatOption::OpenEverything)
 	);
 
-	// Open the file if it was selected
 	const QUrl url = QUrl::fromLocalFile(file);
 	if(url.isValid()) {
 		setLastPath(file);
@@ -1096,12 +1078,7 @@ void MainWindow::save()
 {
 	QString filename = m_doc->currentFilename();
 
-	if(filename.isEmpty()) {
-		saveas();
-		return;
-	}
-
-	if(!utils::isWritableFormat(filename)) {
+	if(filename.isEmpty() || !utils::isWritableFormat(filename)) {
 		saveas();
 		return;
 	}

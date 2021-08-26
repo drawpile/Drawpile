@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2019 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,13 +29,9 @@
 
 class QString;
 class QTimer;
-class QJsonValue;
-class QJsonObject;
 
 namespace canvas {
 	class CanvasModel;
-	class SessionLoader;
-	class StateSavepoint;
 }
 namespace net {
 	class Client;
@@ -98,15 +94,8 @@ public:
 	 */
 	void initCanvas();
 
-	/**
-	 * @brief Initialize the canvas from a session loader
-	 *
-	 * In case of error, check the loader's error and warning messages.
-	 *
-	 * @param loader
-	 * @return false in case of error
-	 */
-	bool loadCanvas(canvas::SessionLoader &loader);
+	bool loadCanvas(const QSize &size, const QColor &background);
+	bool loadCanvas(const QString &path);
 
 	/**
 	 * @brief Save the canvas content

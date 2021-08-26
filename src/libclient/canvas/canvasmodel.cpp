@@ -22,7 +22,6 @@
 #include "userlist.h"
 #include "acl.h"
 #include "selection.h"
-#include "loader.h"
 #include "paintengine.h"
 
 #include "ora/orawriter.h"
@@ -85,6 +84,26 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers, Qt::QueuedConnection); // queued connection needs to be set explicitly here for some reason
 
 	updateLayerViewOptions();
+}
+
+bool CanvasModel::load(const QSize &size, const QColor &background)
+{
+	return rustpile::paintengine_load_blank(
+		m_paintengine->engine(),
+		size.width(),
+		size.height(),
+		rustpile::Color {
+			float(background.redF()),
+			float(background.greenF()),
+			float(background.blueF()),
+			float(background.alphaF())
+		}
+	);
+}
+
+bool CanvasModel::load(const QString &path)
+{
+	return rustpile::paintengine_load_file(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
 }
 
 QSize CanvasModel::size() const

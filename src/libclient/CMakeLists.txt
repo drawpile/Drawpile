@@ -24,7 +24,6 @@ set (
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp
 	canvas/retcon.cpp
-	canvas/loader.cpp
 	canvas/aclfilter.cpp
 	canvas/acl.cpp
 	canvas/userlist.cpp

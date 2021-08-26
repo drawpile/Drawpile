@@ -496,15 +496,6 @@ void write_putimage(MessageWriter *writer,
                     Blendmode mode,
                     const uint8_t *pixels);
 
-void write_newlayer_from_image(MessageWriter *writer,
-                               UserID user,
-                               LayerID layer,
-                               uint32_t w,
-                               uint32_t h,
-                               const uint8_t *pixels,
-                               const uint16_t *title,
-                               uintptr_t title_len);
-
 /// Construct a new paint engine with an empty canvas.
 PaintEngine *paintengine_new(void *ctx,
                              NotifyChangesCallback changes,
@@ -646,6 +637,10 @@ void paintengine_get_acl_layers(const PaintEngine *dp,
                                 void (*visitor)(void *ctx, LayerID id, const LayerACL *layer));
 
 const FeatureTiers *paintengine_get_acl_features(const PaintEngine *dp);
+
+bool paintengine_load_blank(PaintEngine *dp, uint32_t width, uint32_t height, Color background);
+
+bool paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
 bool paintengine_start_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 

@@ -27,10 +27,8 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/selection.h"
 #include "canvas/layerlist.h"
-#include "canvas/loader.h"
 #include "canvas/userlist.h"
 #include "canvas/canvassaverrunnable.h"
-#include "canvas/loader.h"
 #include "tools/toolcontroller.h"
 #include "utils/images.h"
 
@@ -143,22 +141,23 @@ void Document::onSessionResetted()
 #endif
 }
 
-bool Document::loadCanvas(canvas::SessionLoader &loader)
+bool Document::loadCanvas(const QSize &size, const QColor &background)
 {
-	const auto init = loader.loadInitCommands();
-
-	if(init.isEmpty())
-		return false;
-
 	setAutosave(false);
 	initCanvas();
+	m_canvas->load(size, background);
+	setCurrentFilename(QString());
+	unmarkDirty();
 
-#if 0 // FIXME
-	m_canvas->layerStack()->setDpi(loader.dotsPerInch());
-#endif
+	return true;
+}
 
-	m_client->sendResetEnvelope(init);
-	setCurrentFilename(loader.filename());
+bool Document::loadCanvas(const QString &path)
+{
+	setAutosave(false);
+	initCanvas();
+	m_canvas->load(path);
+	setCurrentFilename(path);
 	unmarkDirty();
 
 	return true;

@@ -19,7 +19,6 @@
 
 #include "resetdialog.h"
 #include "canvas/statetracker.h"
-#include "canvas/loader.h"
 #include "core/layerstack.h"
 #include "utils/images.h"
 
@@ -169,9 +168,10 @@ void ResetDialog::onOpenClick()
 	const QFileInfo info(file);
 	cfg.setValue("lastpath", info.absolutePath());
 
+#if 0 // FIXME
 	canvas::ImageCanvasLoader loader(file);
 
-#if 0 // TODO
+
 	const auto initCommands = loader.loadInitCommands();
 	if(initCommands.isEmpty()) {
 		QMessageBox::warning(this, tr("Reset to Image"), loader.errorMessage());

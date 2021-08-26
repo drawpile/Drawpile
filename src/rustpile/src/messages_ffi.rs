@@ -1,6 +1,6 @@
 // Generated with protogen-builder.py
 
-use dpcore::canvas::images::{make_newlayer_from_image, make_putimage};
+use dpcore::canvas::images::make_putimage;
 use dpcore::paint::{Blendmode, Image, LayerID, Pixel, UserID};
 use dpcore::protocol::message::*;
 use dpcore::protocol::MessageWriter;
@@ -576,32 +576,6 @@ pub extern "C" fn write_putimage(
     });
 
     make_putimage(user, layer, x, y, &image, mode)
-        .iter()
-        .for_each(|cmd| cmd.write(writer));
-}
-
-// A combined newlayer/puttiles that creates a new layer from an image
-#[no_mangle]
-pub extern "C" fn write_newlayer_from_image(
-    writer: &mut MessageWriter,
-    user: UserID,
-    layer: LayerID,
-    w: u32,
-    h: u32,
-    pixels: *const u8,
-    title: *const u16,
-    title_len: usize,
-) {
-    // TODO ImageRef type so we don't need to make copies
-    let mut image = Image::new(w as usize, h as usize);
-
-    image.pixels[..].copy_from_slice(unsafe {
-        slice::from_raw_parts_mut(pixels as *mut Pixel, (w * h) as usize)
-    });
-
-    let title = String::from_utf16_lossy(unsafe { slice::from_raw_parts(title, title_len) });
-
-    make_newlayer_from_image(user, layer, title, &image)
         .iter()
         .for_each(|cmd| cmd.write(writer));
 }

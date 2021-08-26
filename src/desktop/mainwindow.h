@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2017 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,7 +65,6 @@ namespace drawingboard {
 }
 namespace canvas {
 	class CanvasModel;
-	class SessionLoader;
 }
 
 namespace net {
@@ -91,7 +90,6 @@ public:
 	MainWindow(bool restoreWindowPosition=true);
 	~MainWindow();
 
-	MainWindow *loadDocument(canvas::SessionLoader &loader);
 	MainWindow *loadRecording(recording::Reader *reader);
 
 	//! Host a session using the settings from the given dialog
@@ -191,6 +189,8 @@ protected:
 	bool event(QEvent *event);
 
 private:
+	MainWindow *replaceableWindow();
+
 	//! Confirm saving of image in a format that doesn't support all required features
 	bool confirmFlatten(QString& file) const;
 

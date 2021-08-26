@@ -28,7 +28,7 @@ use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use crate::paint::{
     editlayer, AoE, Blendmode, ClassicBrushCache, Color, InternalLayerID, LayerID, Rectangle,
-    UserID,
+    Size, UserID,
 };
 use crate::protocol::message::*;
 
@@ -72,6 +72,17 @@ impl CanvasStateChange {
             aoe: AoE::Nothing,
             layers_changed: false,
             annotations_changed: false,
+            user: 0,
+            layer: 0,
+            cursor: (0, 0),
+        }
+    }
+
+    pub fn everything() -> Self {
+        Self {
+            aoe: AoE::Resize(0, 0, Size::new(0, 0)),
+            layers_changed: true,
+            annotations_changed: true,
             user: 0,
             layer: 0,
             cursor: (0, 0),
@@ -153,6 +164,15 @@ impl CanvasState {
     pub fn new() -> CanvasState {
         CanvasState {
             layerstack: Arc::new(LayerStack::new(0, 0)),
+            history: History::new(),
+            brushcache: ClassicBrushCache::new(),
+            localfork: LocalFork::new().set_fallbehind(1000),
+        }
+    }
+
+    pub fn new_with_layerstack(layerstack: LayerStack) -> Self {
+        CanvasState {
+            layerstack: Arc::new(layerstack),
             history: History::new(),
             brushcache: ClassicBrushCache::new(),
             localfork: LocalFork::new().set_fallbehind(1000),

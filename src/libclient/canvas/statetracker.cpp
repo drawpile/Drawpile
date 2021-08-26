@@ -20,7 +20,6 @@
 #include "statetracker.h"
 #include "canvasmodel.h"
 #include "layerlist.h"
-#include "loader.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"

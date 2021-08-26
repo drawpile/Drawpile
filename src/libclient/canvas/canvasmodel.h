@@ -43,6 +43,12 @@ public:
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 
+	//! Load canvas content from file
+	bool load(const QString &path);
+
+	//! Load an empty canvas
+	bool load(const QSize &size, const QColor &background);
+
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
 

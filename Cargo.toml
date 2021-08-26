@@ -3,6 +3,7 @@
 members = [
 	"src/rustpile",
 	"src/dpcore",
+	"src/dpimpex",
 	"src/drawpile-cli",
 ]
 

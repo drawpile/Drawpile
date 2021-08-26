@@ -27,15 +27,18 @@ use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::canvas::snapshot::make_canvas_snapshot;
 use dpcore::paint::annotation::AnnotationID;
+use dpcore::paint::layerstack::{LayerInsertion, LayerFill};
 use dpcore::paint::floodfill;
 use dpcore::paint::{
     AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
-    LayerViewOptions, Pixel, Rectangle, Size, UserID,
+    LayerViewOptions, Pixel, Rectangle, Size, UserID, Tile
 };
 use dpcore::protocol::message::*;
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::{DeserializationError, MessageReader, MessageWriter,
     RecordingWriter, TextWriter, BinaryWriter, DRAWPILE_VERSION, PROTOCOL_VERSION};
+
+use dpimpex;
 
 use core::ffi::c_void;
 use std::sync::mpsc::{Receiver, Sender};
@@ -115,6 +118,7 @@ enum PaintEngineCommand {
     RemoteMessage(CommandMessage),
     BrushPreview(LayerID, Vec<CommandMessage>),
     RemovePreview(LayerID),
+    ReplaceCanvas(Box<LayerStack>),
     Cleanup,
 }
 
@@ -188,6 +192,10 @@ fn run_paintengine(
                 }
                 RemovePreview(layer) => {
                     changes |= canvas.remove_preview(layer);
+                }
+                ReplaceCanvas(layerstack) => {
+                    canvas = CanvasState::new_with_layerstack(*layerstack);
+                    changes = CanvasStateChange::everything();
                 }
                 Cleanup => {
                     canvas.cleanup();
@@ -899,6 +907,52 @@ pub extern "C" fn paintengine_get_acl_layers(
 #[no_mangle]
 pub extern "C" fn paintengine_get_acl_features<'a>(dp: &'a PaintEngine) -> &'a FeatureTiers {
     dp.aclfilter.feature_tiers()
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_load_blank(dp: &mut PaintEngine, width: u32, height: u32, background: Color) -> bool {
+    let mut ls = Box::new(LayerStack::new(width, height));
+
+    ls.background = Tile::new(&background, 0);
+    let mut l = ls.add_layer(
+        0x0101,
+        LayerFill::Solid(Color::TRANSPARENT),
+        LayerInsertion::Top
+    ).unwrap();
+    l.title = "Layer 1".into();
+
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::ReplaceCanvas(ls)) {
+        warn!(
+            "Couldn't send replace command to paint engine thread {:?}",
+            err
+        );
+        return false;
+    }
+
+    true
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_load_file(dp: &mut PaintEngine, path: *const u16 , path_len: usize) -> bool {
+    let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
+
+    let ls = match dpimpex::load_image(&path) {
+        Ok(ls) => Box::new(ls),
+        Err(err) => {
+            warn!("Couldn't load: {:?}", err);
+            return false;
+        }
+    };
+
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::ReplaceCanvas(ls)) {
+        warn!(
+            "Couldn't send replace command to paint engine thread {:?}",
+            err
+        );
+        return false;
+    }
+
+    true
 }
 
 #[no_mangle]
