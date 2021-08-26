@@ -103,6 +103,9 @@ signals:
 	void annotationsChanged(rustpile::Annotations *annotations);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
 
+	//! Paint engine has panicked and died
+	void enginePanicked();
+
 private:
 	rustpile::PaintEngine *m_pe;
 	QPixmap m_cache;

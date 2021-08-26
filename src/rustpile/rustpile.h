@@ -524,13 +524,14 @@ Size paintengine_canvas_size(const PaintEngine *dp);
 
 /// Receive one or more messages
 /// Only Command and Meta type messages are handled.
-void paintengine_receive_messages(PaintEngine *dp,
+/// Returns false if the paint engine thread has panicked
+bool paintengine_receive_messages(PaintEngine *dp,
                                   bool local,
                                   const uint8_t *messages,
                                   uintptr_t messages_len);
 
 /// Clean up the paint engine state after disconnecting from a session
-void paintengine_cleanup(PaintEngine *dp);
+bool paintengine_cleanup(PaintEngine *dp);
 
 /// Reset the ACL filter back to local (non-networked) operating mode
 void paintengine_reset_acl(PaintEngine *dp, UserID local_user);

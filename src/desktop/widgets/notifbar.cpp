@@ -48,10 +48,10 @@ NotificationBar::NotificationBar(QWidget *parent)
 	connect(m_actionButton, &QPushButton::clicked, this, &NotificationBar::actionButtonClicked);
 	connect(m_actionButton, &QPushButton::clicked, this, &NotificationBar::hide);
 
-	QPushButton *closeBtn = new QPushButton(this);
-	closeBtn->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
-	layout->addWidget(closeBtn);
-	connect(closeBtn, &QPushButton::clicked, this, &NotificationBar::hide);
+	m_closeButton = new QPushButton(this);
+	m_closeButton->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
+	layout->addWidget(m_closeButton);
+	connect(m_closeButton, &QPushButton::clicked, this, &NotificationBar::hide);
 
 	auto *dropshadow = new QGraphicsDropShadowEffect(this);
 	dropshadow->setOffset(0, 2);
@@ -66,12 +66,17 @@ void NotificationBar::show(const QString &text, const QString &actionButtonLabel
 	Q_ASSERT(parentWidget());
 
 	switch(color) {
-	case RoleColor::Warning: setColor("#ed1515");
+	case RoleColor::Warning:
+	case RoleColor::Fatal: setColor(0xed1515);//"#ed1515");
 	}
 
 	m_label->setText(text);
 	m_actionButton->setHidden(actionButtonLabel.isEmpty());
 	m_actionButton->setText(actionButtonLabel);
+
+	if(color == RoleColor::Fatal) {
+		m_closeButton->hide();
+	}
 	QWidget::show();
 }
 

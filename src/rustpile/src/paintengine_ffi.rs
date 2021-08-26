@@ -363,13 +363,14 @@ pub extern "C" fn paintengine_canvas_size(dp: &PaintEngine) -> Size {
 
 /// Receive one or more messages
 /// Only Command and Meta type messages are handled.
+/// Returns false if the paint engine thread has panicked
 #[no_mangle]
 pub extern "C" fn paintengine_receive_messages(
     dp: &mut PaintEngine,
     local: bool,
     messages: *const u8,
     messages_len: usize,
-) {
+) -> bool {
     let mut reader = MessageReader::new(unsafe { slice::from_raw_parts(messages, messages_len) });
     let mut aclchanges = 0;
 
@@ -413,6 +414,7 @@ pub extern "C" fn paintengine_receive_messages(
                     PaintEngineCommand::RemoteMessage(m)
                 }) {
                     warn!("Couldn't send command to paint engine thread {:?}", err);
+                    return false;
                 }
             }
             Message::ServerMeta(m) => {
@@ -434,17 +436,22 @@ pub extern "C" fn paintengine_receive_messages(
             (cb)(dp.meta_context, aclchanges);
         }
     }
+
+    true
 }
 
 /// Clean up the paint engine state after disconnecting from a session
 #[no_mangle]
-pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) {
+pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) -> bool {
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::Cleanup) {
         warn!(
             "Couldn't send cleanup command to paint engine thread {:?}",
             err
         );
+        return false;
     }
+
+    true
 }
 
 /// Reset the ACL filter back to local (non-networked) operating mode

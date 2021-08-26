@@ -119,7 +119,8 @@ void PaintEngine::reset()
 
 void PaintEngine::receiveMessages(bool local, const net::Envelope &msgs)
 {
-	rustpile::paintengine_receive_messages(m_pe, local, msgs.data(), msgs.length());
+	if(!rustpile::paintengine_receive_messages(m_pe, local, msgs.data(), msgs.length()))
+		emit enginePanicked();
 }
 
 void PaintEngine::cleanup()

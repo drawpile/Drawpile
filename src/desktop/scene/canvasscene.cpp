@@ -75,6 +75,8 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	connect(m_model, &canvas::CanvasModel::laserTrail, this, &CanvasScene::laserTrail);
 	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
 
+	connect(m_model->paintEngine(), &canvas::PaintEngine::enginePanicked, this, &CanvasScene::paintEngineCrashed);
+
 	const auto items = this->items();
 	for(QGraphicsItem *item : items) {
 		if(item->type() == AnnotationItem::Type || item->type() == UserMarkerItem::Type || item->type() == LaserTrailItem::Type) {

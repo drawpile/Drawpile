@@ -114,6 +114,15 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		}
 		viewRectChanged();
 	});
+
+	connect(m_scene, &drawingboard::CanvasScene::paintEngineCrashed, this, [this]() {
+		m_notificationBar->show(
+			tr("Paint engine has crashed! Save your work and restart the application."),
+			QString(),
+			NotificationBar::RoleColor::Fatal
+		);
+	});
+
 	viewRectChanged();
 }
 

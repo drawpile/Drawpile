@@ -29,7 +29,8 @@ class NotificationBar : public QWidget
 	Q_OBJECT
 public:
 	enum class RoleColor {
-		Warning
+		Warning,
+		Fatal
 	};
 
 	NotificationBar(QWidget *parent);
@@ -52,6 +53,7 @@ private:
 	QColor m_color;
 	QLabel *m_label;
 	QPushButton *m_actionButton;
+	QPushButton *m_closeButton;
 };
 
 }
