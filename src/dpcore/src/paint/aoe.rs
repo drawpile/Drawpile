@@ -110,6 +110,10 @@ impl AoE {
             ),
 
             Bounds(s) => {
+                if rect.contains(&s) {
+                    return (Nothing, s.into());
+                }
+
                 let i = s.intersected(&rect);
                 match i {
                     // Rectangle intersection can produce a non-convex shape so we just turn

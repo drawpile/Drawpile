@@ -238,7 +238,7 @@ pub fn put_tile(
         aoe.tiles[start..=end].set_all(true);
         aoe.into()
     } else {
-        Rectangle::tile(col as i32, row as i32, xtiles as i32).into()
+        Rectangle::tile(col as i32, row as i32, TILE_SIZEI).into()
     }
 }
 

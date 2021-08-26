@@ -93,7 +93,7 @@ pub fn compress_tiledata(tiledata: &TileData) -> Vec<u8> {
     // For compatibility with Qt's compresssion function, add a prefix
     // containing the expected length of the decompressed buffer.
     // We can probably drop this in the next protocol change.
-    let prefix = u32::to_be_bytes(TILE_LENGTH as u32);
+    let prefix = u32::to_be_bytes(4 * TILE_LENGTH as u32);
     let mut prefixed_data = Vec::<u8>::with_capacity(prefix.len() + compressed.len());
     prefixed_data.extend_from_slice(&prefix);
     prefixed_data.extend_from_slice(&compressed);

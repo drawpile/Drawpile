@@ -335,7 +335,6 @@ impl CanvasState {
     }
 
     fn handle_message(&mut self, msg: &CommandMessage) -> CanvasStateChange {
-        println!("Handling {:?}", msg);
         use CommandMessage::*;
         match &msg {
             UndoPoint(user) => self.handle_undopoint(*user).into(),
@@ -606,6 +605,7 @@ impl CanvasState {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             if let Some(tile) = compression::decompress_tile(&msg.image, user_id) {
+
                 return editlayer::put_tile(
                     layer,
                     msg.sublayer.into(),
@@ -624,6 +624,10 @@ impl CanvasState {
     fn handle_putimage(&mut self, user_id: UserID, msg: &PutImageMessage) -> AoE {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
+            if layer.width() == 0 {
+                warn!("Layer has zero size!");
+                return AoE::Nothing;
+            }
             if msg.w == 0 || msg.h == 0 {
                 warn!("PutImage: zero size!");
                 return AoE::Nothing;

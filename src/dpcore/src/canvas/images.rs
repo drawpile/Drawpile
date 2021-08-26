@@ -21,8 +21,8 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::compression::compress_image;
-use crate::paint::{Blendmode, Image, Rectangle, UserID};
-use crate::protocol::message::{CommandMessage, PutImageMessage};
+use crate::paint::{Blendmode, Image, Rectangle, UserID, LayerID, InternalLayerID, Layer, Tile, LayerTileSet, editlayer};
+use crate::protocol::message::{Message, CommandMessage, PutImageMessage, LayerCreateMessage};
 
 const MAX_IMAGE_LEN: usize = 0xffff - 19;
 
@@ -32,7 +32,7 @@ const MAX_IMAGE_LEN: usize = 0xffff - 19;
 /// multiple PutImages will be written.
 pub fn make_putimage(
     user: UserID,
-    layer: u16,
+    layer: LayerID,
     x: u32,
     y: u32,
     image: &Image,
@@ -113,4 +113,41 @@ pub fn make_putimage(
             },
         )]
     }
+}
+
+
+pub fn make_newlayer_from_image(
+    user: UserID,
+    layer_id: LayerID,
+    layer_title: String,
+    image: &Image,
+) -> Vec<Message> {
+    let mut layer = Layer::new(InternalLayerID(0), image.width as u32, image.height as u32, Tile::Blank);
+
+    editlayer::draw_image(
+        &mut layer,
+        0,
+        &image.pixels,
+        &Rectangle::new(0, 0, image.width as i32, image.height as i32),
+        1.0,
+        Blendmode::Replace
+    );
+
+    let mut cmds = Vec::new();
+    let tileset = LayerTileSet::from(&layer);
+
+    cmds.push(Message::Command(CommandMessage::LayerCreate(
+        user,
+        LayerCreateMessage {
+            id: layer_id,
+            source: 0,
+            fill: tileset.background,
+            flags: 0,
+            name: layer_title,
+        },
+    )));
+
+    tileset.to_puttiles(user, layer_id, 0, &mut cmds);
+
+    cmds
 }

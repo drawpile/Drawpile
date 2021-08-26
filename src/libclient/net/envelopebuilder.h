@@ -46,7 +46,7 @@ public:
 
 	operator rustpile::MessageWriter*() const { return m_writer; }
 
-	/// Helper function: write a PutImage command using QImage
+	/// Helper function: write a PutImage command using a QImage
 	void buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode);
 
 	/// Helper function: write a Undo/Redo message

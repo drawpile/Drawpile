@@ -496,6 +496,15 @@ void write_putimage(MessageWriter *writer,
                     Blendmode mode,
                     const uint8_t *pixels);
 
+void write_newlayer_from_image(MessageWriter *writer,
+                               UserID user,
+                               LayerID layer,
+                               uint32_t w,
+                               uint32_t h,
+                               const uint8_t *pixels,
+                               const uint16_t *title,
+                               uintptr_t title_len);
+
 /// Construct a new paint engine with an empty canvas.
 PaintEngine *paintengine_new(void *ctx,
                              NotifyChangesCallback changes,

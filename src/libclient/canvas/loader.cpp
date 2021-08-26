@@ -73,8 +73,10 @@ QPixmap ImageCanvasLoader::loadThumbnail(const QSize &maxSize) const
 
 net::Envelope ImageCanvasLoader::loadInitCommands()
 {
-#if 0 // FIXME
+	net::EnvelopeBuilder eb;
+
 	if(m_filename.endsWith(".ora", Qt::CaseInsensitive)) {
+#if 0 // FIXME
 		// Load OpenRaster image
 		// TODO identify by filetype magic?
 		openraster::OraResult ora = openraster::loadOpenRaster(m_filename);
@@ -97,54 +99,44 @@ net::Envelope ImageCanvasLoader::loadInitCommands()
 		}
 		m_dpi = QPair<int,int>(ora.dpiX, ora.dpiY);
 		return ora.commands;
-
+#endif
 	} else {
 		// Load an image using Qt's image loader.
 		// If the image is animated, each frame is loaded as a layer
-		MessageList msgs;
 		QImageReader ir(m_filename);
-		int layerId = 1;
+		int layerId = 0x0100;
 
-		while(true) {
+		while(++layerId < 0x0200) {
 			QImage image = ir.read();
 
 			if(image.isNull()) {
-				if(layerId>1)
+				if(layerId > 0x0101)
 					break;
 				m_error = ir.errorString();
-				return MessageList();
+				return net::Envelope();
 			}
 
-			if(layerId==1) {
+			image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+			// First (or only) frame: initialize canvas
+			if(layerId==0x0101) {
 				m_dpi = QPair<int,int>(int(image.dotsPerMeterX() * 0.0254), int(image.dotsPerMeterY() * 0.0254));
-				msgs << MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0));
+
+				rustpile::write_resize(eb, 1, 0, image.size().width(), image.size().height(), 0);
 			}
 
-			const auto tileset = paintcore::LayerTileSet::fromImage(
-				image.convertToFormat(QImage::Format_ARGB32_Premultiplied)
-				);
-
-			msgs << protocol::MessagePtr(new protocol::LayerCreate(
+			// Create layer
+			const QString layerTitle = QStringLiteral("Layer %1").arg(layerId - 0x0100); // TODO i18n
+			rustpile::write_newlayer_from_image(
+				eb,
 				1,
 				layerId,
-				0,
-				tileset.background.rgba(),
-				0,
-				QStringLiteral("Layer %1").arg(layerId)
-			));
-
-			msgs << protocol::MessagePtr(new protocol::LayerAttributes(
-				1,
-				layerId,
-				0,
-				0,
-				255,
-				paintcore::BlendMode::MODE_NORMAL
-			));
-
-			tileset.toPutTiles(1, layerId, 0, msgs);
-
-			++layerId;
+				image.width(),
+				image.height(),
+				image.constBits(),
+				reinterpret_cast<const uint16_t*>(layerTitle.constData()),
+				layerTitle.length()
+			);
 
 			if(!ir.supportsAnimation()) {
 				// Don't try to read any more frames if this format
@@ -152,11 +144,8 @@ net::Envelope ImageCanvasLoader::loadInitCommands()
 				break;
 			}
 		}
-
-		return msgs;
 	}
-#endif
-	return net::Envelope();
+	return eb.toEnvelope();
 }
 
 }
