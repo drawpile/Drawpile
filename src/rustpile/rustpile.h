@@ -642,6 +642,11 @@ bool paintengine_load_blank(PaintEngine *dp, uint32_t width, uint32_t height, Co
 
 bool paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
+/// Save the currently visible layerstack.
+///
+/// It is safe to call this function in a separate thread.
+bool paintengine_save_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+
 bool paintengine_start_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
 void paintengine_stop_recording(PaintEngine *dp);

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,13 +22,9 @@
 #include <QObject>
 #include <QRunnable>
 
-namespace paintcore {
-    class LayerStack;
-}
-
 namespace canvas {
 
-class CanvasModel;
+class PaintEngine;
 
 /**
  * @brief A runnable for saving a canvas in a background thread
@@ -39,7 +35,7 @@ class CanvasSaverRunnable : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:
-	CanvasSaverRunnable(const CanvasModel *canvas, const QString &filename, QObject *parent = nullptr);
+	CanvasSaverRunnable(const PaintEngine *pe, const QString &filename, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -51,7 +47,7 @@ signals:
 	void saveComplete(const QString &error);
 
 private:
-	paintcore::LayerStack *m_layerstack;
+	const canvas::PaintEngine *m_pe;
 	QString m_filename;
 };
 

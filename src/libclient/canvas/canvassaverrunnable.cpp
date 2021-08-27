@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018 Calle Laakkonen
+   Copyright (C) 2018-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,46 +17,26 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "canvassaverrunnable.h"
-#include "canvasmodel.h"
-#include "ora/orawriter.h"
-
-#include <QImageWriter>
+#include "paintengine.h"
+#include "../rustpile/rustpile.h"
 
 namespace canvas {
 
-CanvasSaverRunnable::CanvasSaverRunnable(const CanvasModel *canvas, const QString &filename, QObject *parent)
+CanvasSaverRunnable::CanvasSaverRunnable(const PaintEngine *pe, const QString &filename, QObject *parent)
 	: QObject(parent),
-	  m_layerstack(nullptr), // FIXME: canvas->layerStack()->clone(this)),
+	  m_pe(pe),
 	  m_filename(filename)
 {
 }
 
 void CanvasSaverRunnable::run()
 {
-#if 0 // FIXME
-	bool ok;
-	QString errorMessage;
-
-	if(m_filename.endsWith(".ora", Qt::CaseInsensitive)) {
-		// Special case: Save as OpenRaster with all the layers intact.
-		ok = openraster::saveOpenRaster(m_filename, m_layerstack, &errorMessage);
-
+	if(rustpile::paintengine_save_file(m_pe->engine(), reinterpret_cast<const uint16_t*>(m_filename.constData()), m_filename.length())) {
+		emit saveComplete(QString());
 	} else {
-		// Regular image formats: flatten the image first.
-		QImageWriter writer(m_filename);
-		if(!writer.write(m_layerstack->toFlatImage(false, true, false))) {
-			errorMessage = writer.errorString();
-			ok = false;
-
-		} else
-			ok = true;
+		// TODO a more descriptive error message
+		emit saveComplete(tr("An error occurred while saving"));
 	}
-
-	if(!ok && errorMessage.isEmpty())
-		errorMessage = "Unknown Error";
-
-	emit saveComplete(errorMessage);
-#endif
 }
 
 }

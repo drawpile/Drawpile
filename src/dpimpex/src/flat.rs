@@ -27,13 +27,13 @@ use image::gif::GifDecoder;
 use image::io::Reader as ImageReader;
 use image::{AnimationDecoder, ImageDecoder};
 
-use super::conv::to_dpimage;
-use crate::ImageImportError;
+use super::conv::{to_dpimage, from_dpimage};
+use crate::{ImageImportResult, ImageExportResult};
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
 use dpcore::paint::{editlayer, Blendmode, Color, LayerStack, Rectangle};
 
 /// Load a flat image (an image that does not have layers)
-pub fn load_flat_image(path: &Path) -> Result<LayerStack, ImageImportError> {
+pub fn load_flat_image(path: &Path) -> ImageImportResult {
     let img = ImageReader::open(path)?.decode()?;
     let img = to_dpimage(&img.into_rgba8());
 
@@ -63,7 +63,7 @@ pub fn load_flat_image(path: &Path) -> Result<LayerStack, ImageImportError> {
 /// Load a (possibly) animated GIF
 ///
 /// A layer will be created for each frame
-pub fn load_gif_animation(path: &Path) -> Result<LayerStack, ImageImportError> {
+pub fn load_gif_animation(path: &Path) -> ImageImportResult {
     let decoder = GifDecoder::new(File::open(path)?)?;
     let (w, h) = decoder.dimensions();
     let mut ls = LayerStack::new(w, h);
@@ -97,6 +97,13 @@ pub fn load_gif_animation(path: &Path) -> Result<LayerStack, ImageImportError> {
     }
 
     Ok(ls)
+}
+
+pub fn save_flat_image(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
+    let img = from_dpimage(&layerstack.to_image());
+
+    img.save(path)?;
+    Ok(())
 }
 
 #[cfg(test)]

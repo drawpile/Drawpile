@@ -22,7 +22,7 @@
 
 use super::conv::to_dpimage;
 use super::ora_utils::{DP_NAMESPACE, MYPAINT_NAMESPACE};
-use super::{ImageImportError, ImportResult};
+use super::{ImpexError, ImageImportResult};
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
 use dpcore::paint::{editlayer, Blendmode, Color, Image, LayerStack, Rectangle, Size, Tile};
@@ -38,7 +38,7 @@ use xml::attribute::OwnedAttribute;
 use xml::reader::{EventReader, XmlEvent};
 use zip::ZipArchive;
 
-pub fn load_openraster_image(path: &Path) -> ImportResult {
+pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     let mut archive = ZipArchive::new(File::open(path)?)?;
 
     check_mimetype(&mut archive)?;
@@ -116,12 +116,12 @@ pub fn load_openraster_image(path: &Path) -> ImportResult {
 }
 
 /// OpenRaster files are identified by the presence of a "mimetype" file
-fn check_mimetype<R: Read + Seek>(archive: &mut ZipArchive<R>) -> Result<(), ImageImportError> {
+fn check_mimetype<R: Read + Seek>(archive: &mut ZipArchive<R>) -> Result<(), ImpexError> {
     let expected_mimetype = b"image/openraster";
 
     let mut mtfile = archive.by_name("mimetype")?;
     if mtfile.size() != expected_mimetype.len() as u64 {
-        return Err(ImageImportError::UnsupportedFormat);
+        return Err(ImpexError::UnsupportedFormat);
     }
 
     let mut mimetype = Vec::new();
@@ -130,14 +130,14 @@ fn check_mimetype<R: Read + Seek>(archive: &mut ZipArchive<R>) -> Result<(), Ima
     if mimetype == expected_mimetype {
         Ok(())
     } else {
-        Err(ImageImportError::UnsupportedFormat)
+        Err(ImpexError::UnsupportedFormat)
     }
 }
 
 fn get_image_file<R: Read + Seek>(
     archive: &mut ZipArchive<R>,
     filename: &str,
-) -> Result<Image, ImageImportError> {
+) -> Result<Image, ImpexError> {
     let mut filecontent = Vec::new();
     archive.by_name(filename)?.read_to_end(&mut filecontent)?;
     let img = ImageReader::new(Cursor::new(filecontent))
@@ -179,7 +179,7 @@ struct OraAnnotation {
     content: String,
 }
 
-fn parse_stack_xml<R: Read>(file: R) -> Result<OraCanvas, ImageImportError> {
+fn parse_stack_xml<R: Read>(file: R) -> Result<OraCanvas, ImpexError> {
     let mut parser = EventReader::new(file);
 
     // Expect <image> root element
@@ -193,18 +193,18 @@ fn parse_stack_xml<R: Read>(file: R) -> Result<OraCanvas, ImageImportError> {
                         "Error reading OpenRaster stack: expected <image>, got <{}>",
                         name
                     );
-                    return Err(ImageImportError::UnsupportedFormat);
+                    return Err(ImpexError::UnsupportedFormat);
                 }
 
                 return parse_stack_image(attributes, &mut parser);
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster stack: Unexpected end of document");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Err(e) => {
                 warn!("Error reading OpenRaster stack: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => {}
         }
@@ -214,7 +214,7 @@ fn parse_stack_xml<R: Read>(file: R) -> Result<OraCanvas, ImageImportError> {
 fn parse_stack_image<R: Read>(
     mut attributes: Vec<OwnedAttribute>,
     parser: &mut EventReader<R>,
-) -> Result<OraCanvas, ImageImportError> {
+) -> Result<OraCanvas, ImpexError> {
     let mut canvas = OraCanvas {
         size: Size::new(
             take_attribute(&mut attributes, "w", None)
@@ -239,7 +239,7 @@ fn parse_stack_image<R: Read>(
 
     if canvas.size.width <= 0 || canvas.size.height <= 0 {
         warn!("OpenRaster file has invalid image size");
-        return Err(ImageImportError::UnsupportedFormat);
+        return Err(ImpexError::UnsupportedFormat);
     }
     loop {
         match parser.next() {
@@ -263,11 +263,11 @@ fn parse_stack_image<R: Read>(
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster stack: Unexpected end of document while parsing <image>");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Err(e) => {
                 warn!("Error reading OpenRaster stack: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => {}
         }
@@ -279,7 +279,7 @@ fn parse_stack_stack<R: Read>(
     mut attributes: Vec<OwnedAttribute>,
     offset: (i32, i32),
     parser: &mut EventReader<R>,
-) -> Result<(), ImageImportError> {
+) -> Result<(), ImpexError> {
     let offset = (
         offset.0
             + take_attribute(&mut attributes, "x", None)
@@ -321,11 +321,11 @@ fn parse_stack_stack<R: Read>(
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster stack: Unexpected end of document while parsing <image>");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Err(e) => {
                 warn!("Error reading OpenRaster stack: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => (),
         }
@@ -335,11 +335,11 @@ fn parse_stack_layer<R: Read>(
     mut attributes: Vec<OwnedAttribute>,
     offset: (i32, i32),
     parser: &mut EventReader<R>,
-) -> Result<OraLayer, ImageImportError> {
+) -> Result<OraLayer, ImpexError> {
     let mut layer = OraLayer {
         name: take_attribute(&mut attributes, "name", None).unwrap_or(String::new()),
         filename: take_attribute(&mut attributes, "src", None)
-            .ok_or(ImageImportError::UnsupportedFormat)?,
+            .ok_or(ImpexError::UnsupportedFormat)?,
         bgtile: take_attribute(&mut attributes, "background-tile", Some(MYPAINT_NAMESPACE))
             .unwrap_or(String::new()),
         offset: (
@@ -386,11 +386,11 @@ fn parse_stack_layer<R: Read>(
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster stack: Unexpected end of document while parsing <image>");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Err(e) => {
                 warn!("Error reading OpenRaster stack: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => (),
         }
@@ -399,7 +399,7 @@ fn parse_stack_layer<R: Read>(
 
 fn parse_annotations<R: Read>(
     parser: &mut EventReader<R>,
-) -> Result<Vec<OraAnnotation>, ImageImportError> {
+) -> Result<Vec<OraAnnotation>, ImpexError> {
     let mut annotations = Vec::new();
 
     loop {
@@ -423,11 +423,11 @@ fn parse_annotations<R: Read>(
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster annotations: Unexpected end of document while parsing <image>");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Err(e) => {
                 warn!("Error reading OpenRaster annotations: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => (),
         }
@@ -437,7 +437,7 @@ fn parse_annotations<R: Read>(
 fn parse_annotation<R: Read>(
     mut attributes: Vec<OwnedAttribute>,
     parser: &mut EventReader<R>,
-) -> Result<OraAnnotation, ImageImportError> {
+) -> Result<OraAnnotation, ImpexError> {
     let mut annotation = OraAnnotation {
         rect: Rectangle::new(
             take_attribute(&mut attributes, "x", None)
@@ -473,20 +473,20 @@ fn parse_annotation<R: Read>(
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster annotation: Unexpected end of document while parsing <image>");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Ok(XmlEvent::CData(s)) => annotation.content.push_str(&s),
             Ok(XmlEvent::Characters(s)) => annotation.content.push_str(&s),
             Err(e) => {
                 warn!("Error reading OpenRaster annotation: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => (),
         }
     }
 }
 
-fn skip_element<R: Read>(parser: &mut EventReader<R>) -> Result<(), ImageImportError> {
+fn skip_element<R: Read>(parser: &mut EventReader<R>) -> Result<(), ImpexError> {
     let mut depth = 1;
     loop {
         match parser.next() {
@@ -501,11 +501,11 @@ fn skip_element<R: Read>(parser: &mut EventReader<R>) -> Result<(), ImageImportE
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster stack: Unexpected end of document");
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             Err(e) => {
                 warn!("Error reading OpenRaster stack: {}", e);
-                return Err(ImageImportError::UnsupportedFormat);
+                return Err(ImpexError::UnsupportedFormat);
             }
             _ => (),
         }

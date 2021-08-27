@@ -474,7 +474,7 @@ void Document::saveCanvas()
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	auto *saver = new canvas::CanvasSaverRunnable(m_canvas, m_currentFilename);
+	auto *saver = new canvas::CanvasSaverRunnable(m_canvas->paintEngine(), m_currentFilename);
 	unmarkDirty();
 	connect(saver, &canvas::CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
 	emit canvasSaveStarted();

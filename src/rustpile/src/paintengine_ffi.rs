@@ -955,6 +955,28 @@ pub extern "C" fn paintengine_load_file(dp: &mut PaintEngine, path: *const u16 ,
     true
 }
 
+/// Save the currently visible layerstack.
+///
+/// It is safe to call this function in a separate thread.
+#[no_mangle]
+pub extern "C" fn paintengine_save_file(dp: &PaintEngine, path: *const u16 , path_len: usize) -> bool {
+    let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
+
+    // Grab a copy of the layerstack so we don't block the paint engine thread
+    // or the main thread if this is being run as a background process.
+    let layerstack = {
+        let vc = dp.viewcache.lock().unwrap();
+        vc.layerstack.clone()
+    };
+
+    if let Err(e) = dpimpex::save_image(&path, &layerstack) {
+        warn!("An error occurred while writing \"{}\": {}", path, e);
+        return false;
+    }
+
+    true
+}
+
 #[no_mangle]
 pub extern "C" fn paintengine_start_recording(dp: &mut PaintEngine, path: *const u16 , path_len: usize) -> bool {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });

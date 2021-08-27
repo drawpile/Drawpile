@@ -22,7 +22,7 @@
 
 use dpcore::paint::LayerStack;
 use image::error::ImageError;
-use std::io;
+use std::{io, fmt};
 use std::path::Path;
 use zip::result::ZipError;
 
@@ -32,26 +32,37 @@ mod ora_reader;
 mod ora_utils;
 
 #[derive(Debug)]
-pub enum ImageImportError {
+pub enum ImpexError {
     IoError(io::Error),
-    DecodeError(ImageError),
+    CodecError(ImageError),
     UnsupportedFormat,
     NoContent,
 }
 
-impl From<io::Error> for ImageImportError {
+impl fmt::Display for ImpexError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ImpexError::IoError(e) => e.fmt(f),
+            ImpexError::CodecError(e) => e.fmt(f),
+            ImpexError::UnsupportedFormat => write!(f, "unsupported format"),
+            ImpexError::NoContent => write!(f, "no content"),
+        }
+    }
+}
+
+impl From<io::Error> for ImpexError {
     fn from(err: io::Error) -> Self {
         Self::IoError(err)
     }
 }
 
-impl From<ImageError> for ImageImportError {
+impl From<ImageError> for ImpexError {
     fn from(err: ImageError) -> Self {
-        Self::DecodeError(err)
+        Self::CodecError(err)
     }
 }
 
-impl From<ZipError> for ImageImportError {
+impl From<ZipError> for ImpexError {
     fn from(err: ZipError) -> Self {
         match err {
             ZipError::Io(io) => Self::IoError(io),
@@ -60,13 +71,14 @@ impl From<ZipError> for ImageImportError {
     }
 }
 
-pub type ImportResult = Result<LayerStack, ImageImportError>;
+pub type ImageImportResult = Result<LayerStack, ImpexError>;
+pub type ImageExportResult = Result<(), ImpexError>;
 
-pub fn load_image<P>(path: P) -> ImportResult
+pub fn load_image<P>(path: P) -> ImageImportResult
 where
     P: AsRef<Path>,
 {
-    fn inner(path: &Path) -> ImportResult {
+    fn inner(path: &Path) -> ImageImportResult {
         let ext = path
             .extension()
             .and_then(|s| s.to_str())
@@ -75,8 +87,26 @@ where
             Some("ora") => ora_reader::load_openraster_image(path),
             Some("gif") => flat::load_gif_animation(path),
             Some(_) => flat::load_flat_image(path),
-            None => Err(ImageImportError::UnsupportedFormat),
+            None => Err(ImpexError::UnsupportedFormat),
         }
     }
     inner(path.as_ref())
+}
+
+pub fn save_image<P>(path: P, layerstack: &LayerStack) -> ImageExportResult
+where
+    P: AsRef<Path>,
+{
+    fn inner(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
+        let ext = path
+            .extension()
+            .and_then(|s| s.to_str())
+            .and_then(|s| Some(s.to_ascii_lowercase()));
+        match ext.as_deref() {
+            //Some("ora") => ora_writer::save_openraster_image(path, layerstack),
+            Some(_) => flat::save_flat_image(path, layerstack),
+            None => Err(ImpexError::UnsupportedFormat),
+        }
+    }
+    inner(path.as_ref(), layerstack)
 }
