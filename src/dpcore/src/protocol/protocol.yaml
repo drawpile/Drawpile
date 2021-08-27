@@ -1,4 +1,4 @@
-# Copyright 2020 Calle Laakkonen
+# Copyright 2020-2021 Calle Laakkonen
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -355,7 +355,7 @@ LayerAttributes:
         - sublayer u8
         - flags flags: [censor, fixed]
         - opacity u8
-        - blend u8
+        - blend blendmode
 
 LayerRetitle:
     id: 132
@@ -439,7 +439,7 @@ PutImage:
              commands.
     fields:
         - layer u16: hex
-        - mode u8
+        - mode blendmode
         - x u32
         - y u32
         - w u32
@@ -451,7 +451,7 @@ FillRect:
     comment: Fill a rectangle with solid color
     fields:
         - layer u16: hex
-        - mode u8
+        - mode blendmode
         - x u32
         - y u32
         - w u32
@@ -599,7 +599,7 @@ DrawDabsClassic:
         - x i32: div4
         - y i32: div4
         - color argb32
-        - mode u8
+        - mode blendmode
         - dabs struct:
           name: ClassicDab
           fields:
@@ -622,7 +622,7 @@ DrawDabsPixel:
         - x i32
         - y i32
         - color argb32
-        - mode u8
+        - mode blendmode
         - dabs struct:
           name: PixelDab
           fields:

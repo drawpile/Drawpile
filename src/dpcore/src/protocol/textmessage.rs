@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 
 use base64;
 use std::collections::BTreeMap;
+use std::convert::TryFrom;
 use std::{fmt, str};
+use crate::paint::Blendmode;
 
 #[derive(PartialEq, Debug)]
 pub struct TextMessage {
@@ -170,6 +172,15 @@ impl TextMessage {
                 }
             })
             .collect()
+    }
+
+    pub fn set_blendmode<T: Into<String>>(mut self, key: T, mode: u8) -> Self {
+        self.args.insert(key.into(), Blendmode::try_from(mode).unwrap_or_default().svg_name().to_string());
+        self
+    }
+
+    pub fn get_blendmode(&self, key: &str) -> u8 {
+        Blendmode::from_svg_name(self.get_str(key)).unwrap_or_default().into()
     }
 
     pub fn set_argb32<T: Into<String>>(mut self, key: T, color: u32) -> Self {

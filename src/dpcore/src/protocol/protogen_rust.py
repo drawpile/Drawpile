@@ -307,6 +307,8 @@ def field_rust_type(field):
         return 'Vec<u8>'
     elif field.field_type == 'struct':
         return f'Vec<{field.struct_name}>'
+    elif field.field_type == 'blendmode':
+        return 'u8'
     elif field.field_type == 'argb32':
         return 'u32'
 
@@ -329,6 +331,9 @@ def read_field(ftype, length=None):
             return f"read_remaining_vec::<{ftype}>()"
 
         return f"read_vec::<{ftype}>({length})"
+
+    elif ftype == 'blendmode':
+        ftype = 'u8'
 
     elif ftype == 'argb32':
         ftype = 'u32'
@@ -364,6 +369,8 @@ def textmessage_setfield(field, name):
         name = '&' + name + (", true" if field.format == 'hex' else ", false")
     elif field.field_type == 'argb32':
         setter = 'set_argb32'
+    elif field.field_type == 'blendmode':
+        setter = 'set_blendmode'
     elif hasattr(field, 'flags'):
         return f'set_flags("{field.name}", &Self::{field.name.upper()}, {name})'
     else:
@@ -390,6 +397,8 @@ def textmessage_getfield(var, field):
         getter = 'get_vec_u16'
     elif field.field_type == 'argb32':
         getter = 'get_argb32'
+    elif field.field_type == 'blendmode':
+        getter = 'get_blendmode'
     elif field.field_type == 'bool':
         return f'{var}.get_str("{field.name}") == "true"'
     elif hasattr(field, 'flags'):

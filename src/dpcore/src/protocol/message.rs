@@ -464,7 +464,7 @@ impl LayerAttributesMessage {
             .set("sublayer", self.sublayer.to_string())
             .set_flags("flags", &Self::FLAGS, self.flags)
             .set("opacity", self.opacity.to_string())
-            .set("blend", self.blend.to_string())
+            .set_blendmode("blend", self.blend)
     }
 
     fn from_text(tm: &TextMessage) -> Self {
@@ -473,7 +473,7 @@ impl LayerAttributesMessage {
             sublayer: tm.get_u8("sublayer"),
             flags: tm.get_flags(&Self::FLAGS, "flags"),
             opacity: tm.get_u8("opacity"),
-            blend: tm.get_u8("blend"),
+            blend: tm.get_blendmode("blend"),
         }
     }
 }
@@ -630,7 +630,7 @@ impl PutImageMessage {
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
         txt.set("layer", format!("0x{:04x}", self.layer))
-            .set("mode", self.mode.to_string())
+            .set_blendmode("mode", self.mode)
             .set("x", self.x.to_string())
             .set("y", self.y.to_string())
             .set("w", self.w.to_string())
@@ -641,7 +641,7 @@ impl PutImageMessage {
     fn from_text(tm: &TextMessage) -> Self {
         Self {
             layer: tm.get_u16("layer"),
-            mode: tm.get_u8("mode"),
+            mode: tm.get_blendmode("mode"),
             x: tm.get_u32("x"),
             y: tm.get_u32("y"),
             w: tm.get_u32("w"),
@@ -698,7 +698,7 @@ impl FillRectMessage {
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
         txt.set("layer", format!("0x{:04x}", self.layer))
-            .set("mode", self.mode.to_string())
+            .set_blendmode("mode", self.mode)
             .set("x", self.x.to_string())
             .set("y", self.y.to_string())
             .set("w", self.w.to_string())
@@ -709,7 +709,7 @@ impl FillRectMessage {
     fn from_text(tm: &TextMessage) -> Self {
         Self {
             layer: tm.get_u16("layer"),
-            mode: tm.get_u8("mode"),
+            mode: tm.get_blendmode("mode"),
             x: tm.get_u32("x"),
             y: tm.get_u32("y"),
             w: tm.get_u32("w"),
@@ -1028,7 +1028,7 @@ impl DrawDabsClassicMessage {
             .set("x", (self.x as f64 / 4.0).to_string())
             .set("y", (self.y as f64 / 4.0).to_string())
             .set_argb32("color", self.color)
-            .set("mode", self.mode.to_string())
+            .set_blendmode("mode", self.mode)
             .set_dabs(dabs)
     }
 
@@ -1052,7 +1052,7 @@ impl DrawDabsClassicMessage {
             x: (tm.get_f64("x") * 4.0) as i32,
             y: (tm.get_f64("y") * 4.0) as i32,
             color: tm.get_argb32("color"),
-            mode: tm.get_u8("mode"),
+            mode: tm.get_blendmode("mode"),
             dabs: dab_structs,
         }
     }
@@ -1139,7 +1139,7 @@ impl DrawDabsPixelMessage {
             .set("x", self.x.to_string())
             .set("y", self.y.to_string())
             .set_argb32("color", self.color)
-            .set("mode", self.mode.to_string())
+            .set_blendmode("mode", self.mode)
             .set_dabs(dabs)
     }
 
@@ -1162,7 +1162,7 @@ impl DrawDabsPixelMessage {
             x: i32::from_str(tm.get_str("x")).unwrap_or_default(),
             y: i32::from_str(tm.get_str("y")).unwrap_or_default(),
             color: tm.get_argb32("color"),
-            mode: tm.get_u8("mode"),
+            mode: tm.get_blendmode("mode"),
             dabs: dab_structs,
         }
     }

@@ -201,6 +201,7 @@ FieldU8 = IntegerField.F('u8', 1)
 FieldU16 = IntegerField.F('u16', 2)
 FieldU32 = IntegerField.F('u32', 4)
 FieldArgb32 = IntegerField.F('argb32', 4)
+FieldBlendmode = IntegerField.F('blendmode', 1)
 
 FieldBool = IntegerField.F('bool', 1)
 
