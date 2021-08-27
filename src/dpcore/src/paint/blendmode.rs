@@ -56,6 +56,53 @@ impl Blendmode {
             _ => false,
         }
     }
+
+    pub fn svg_name(self) -> &'static str {
+        use Blendmode::*;
+        match self {
+            Erase => "-dp-erase",
+            Normal => "src-over",
+            Multiply => "multiply",
+            Divide => "screen",
+            Burn => "color-burn",
+            Dodge => "color-dodge",
+            Darken => "darken",
+            Lighten => "lighten",
+            Subtract => "-dp-minus", // not in SVG spec
+            Add => "plus",
+            Recolor => "src-atop",
+            Behind => "dst-over",
+            ColorErase => "-dp-cerase",
+            Replace => "-dp-replace",
+        }
+    }
+
+    pub fn from_svg_name(name: &str) -> Option<Self> {
+        let name = if name.starts_with("svg:") {
+            &name[4..]
+        } else {
+            name
+        };
+
+        use Blendmode::*;
+        Some(match name {
+            "-dp-erase" => Erase,
+            "src-over" => Normal,
+            "multiply" => Multiply,
+            "screen" => Divide,
+            "color-burn" => Burn,
+            "color-dodge" => Dodge,
+            "darken" => Darken,
+            "lighten" => Lighten,
+            "-dp-minus" => Subtract,
+            "plus" => Add,
+            "src-atop" => Recolor,
+            "dst-over" => Behind,
+            "-dp-cerase" => ColorErase,
+            "-dp-replace" => Replace,
+            _ => { return None; }
+        })
+    }
 }
 
 impl Default for Blendmode {

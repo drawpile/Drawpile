@@ -20,6 +20,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use std::str::FromStr;
+
 pub type Pixel = [u8; 4];
 
 pub const BLUE_CHANNEL: usize = 0;
@@ -191,6 +193,29 @@ impl PartialEq for Color {
     }
 }
 
+impl FromStr for Color {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.is_empty() {
+            return Err("empty color string");
+        }
+        if !s.starts_with('#') || (s.len() != 7 && s.len() != 9) {
+            return Err("doesn't look like a color string");
+        }
+
+        if let Ok(v) = u32::from_str_radix(&s[1..], 16) {
+            Ok(if s.len() == 7 {
+                Color::from_argb32(v | 0xff_000000)
+            } else {
+                Color::from_argb32(v)
+            })
+        } else {
+            Err("not a valid color")
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -213,5 +238,14 @@ mod tests {
                 a: 1.0
             }
         );
+    }
+
+    #[test]
+    fn test_string_parsing() {
+        assert_eq!(Color::TRANSPARENT, Color::from_str("#00000000").unwrap());
+        assert_eq!(Color::rgb8(0, 0, 0), Color::from_str("#000000").unwrap());
+        assert_eq!(Color::rgb8(255, 0, 0), Color::from_str("#ff0000").unwrap());
+        assert_eq!(Color{r: 1.0, g: 0.0, b: 0.0, a: 0.49804}, Color::from_str("#7fff0000").unwrap());
+
     }
 }

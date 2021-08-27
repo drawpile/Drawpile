@@ -11,6 +11,6 @@ crate-type = ["staticlib"]
 [dependencies]
 dpcore = { path = "../dpcore" }
 dpimpex = { path = "../dpimpex" }
-tracing-subscriber = "0.1.6"
-tracing = "0.1.5"
+tracing-subscriber = "0.2.20"
+tracing = "0.1.22"
 

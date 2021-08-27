@@ -24,9 +24,12 @@ use dpcore::paint::LayerStack;
 use image::error::ImageError;
 use std::io;
 use std::path::Path;
+use zip::result::ZipError;
 
 mod conv;
 mod flat;
+mod ora_reader;
+mod ora_utils;
 
 #[derive(Debug)]
 pub enum ImageImportError {
@@ -48,6 +51,15 @@ impl From<ImageError> for ImageImportError {
     }
 }
 
+impl From<ZipError> for ImageImportError {
+    fn from(err: ZipError) -> Self {
+        match err {
+            ZipError::Io(io) => Self::IoError(io),
+            _ => Self::UnsupportedFormat,
+        }
+    }
+}
+
 pub type ImportResult = Result<LayerStack, ImageImportError>;
 
 pub fn load_image<P>(path: P) -> ImportResult
@@ -60,8 +72,8 @@ where
             .and_then(|s| s.to_str())
             .and_then(|s| Some(s.to_ascii_lowercase()));
         match ext.as_deref() {
+            Some("ora") => ora_reader::load_openraster_image(path),
             Some("gif") => flat::load_gif_animation(path),
-            // TODO OpenRaster
             Some(_) => flat::load_flat_image(path),
             None => Err(ImageImportError::UnsupportedFormat),
         }

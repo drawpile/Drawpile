@@ -48,11 +48,12 @@ fn test_message_serialization() {
             )),
         ),
         (
-            b"\x00\x06\x23\x0a\x05hello".to_vec(),
+            b"\x00\x07\x23\x0a\x01\x02hello".to_vec(),
             Message::from(ServerMetaMessage::Chat(
                 10,
                 ChatMessage {
-                    flags: 0x05,
+                    tflags: 0x01,
+                    oflags: 0x02,
                     message: "hello".to_string(),
                 },
             )),
