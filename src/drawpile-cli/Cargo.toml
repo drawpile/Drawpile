@@ -5,6 +5,7 @@ edition = "2018"
 
 [dependencies]
 dpcore = { path = "../dpcore" }
+dpimpex = { path = "../dpimpex" }
 clap = "2.33.0"
 image = "0.22.3"
 tracing-subscriber = "0.1.6"

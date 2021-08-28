@@ -23,19 +23,12 @@
 pub mod aclfilter;
 pub mod message;
 mod protover;
-mod reader;
 mod serialization;
 mod textmessage;
-mod textparser;
-mod writer;
+pub mod textparser;
 
 pub const DRAWPILE_VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 pub use message::{Message, PROTOCOL_VERSION};
 pub use protover::ProtocolVersion;
-pub use reader::{
-    open_recording, BinaryReader, Compatibility, ReadMessage, RecordingReader, TextReader,
-};
-pub use serialization::{DeserializationError, MessageReader, MessageWriter};
-pub use textparser::TextParser;
-pub use writer::{BinaryWriter, RecordingWriter, TextWriter};
+pub use serialization::{DeserializationError, MessageReader, MessageWriter, HEADER_LEN};

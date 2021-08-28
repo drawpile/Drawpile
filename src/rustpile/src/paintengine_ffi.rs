@@ -36,9 +36,10 @@ use dpcore::paint::{
 use dpcore::protocol::message::*;
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::{DeserializationError, MessageReader, MessageWriter,
-    RecordingWriter, TextWriter, BinaryWriter, DRAWPILE_VERSION, PROTOCOL_VERSION};
+    DRAWPILE_VERSION, PROTOCOL_VERSION};
 
 use dpimpex;
+use dpimpex::rec_writer;
 
 use core::ffi::c_void;
 use std::sync::mpsc::{Receiver, Sender};
@@ -140,7 +141,7 @@ pub struct PaintEngine {
     aclfilter: AclFilter,
 
     /// Recorder for received messages
-    recorder: Option<Box<dyn RecordingWriter>>,
+    recorder: Option<Box<dyn rec_writer::RecordingWriter>>,
 
     /// View mode changes are done in the main thread
     notify_changes: NotifyChangesCallback,
@@ -993,10 +994,10 @@ pub extern "C" fn paintengine_start_recording(dp: &mut PaintEngine, path: *const
     };
 
     // Open the right kind of recorder
-    let mut writer: Box<dyn RecordingWriter> = if textmode {
-        Box::new(TextWriter::open(file))
+    let mut writer: Box<dyn rec_writer::RecordingWriter> = if textmode {
+        Box::new(rec_writer::TextWriter::open(file))
     } else {
-        Box::new(BinaryWriter::open(file))
+        Box::new(rec_writer::BinaryWriter::open(file))
     };
 
     // Write header

@@ -20,9 +20,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::protocol::{
-    open_recording, BinaryWriter, Compatibility, ReadMessage, RecordingWriter, TextWriter,
-};
+use dpimpex::rec_reader::{open_recording, Compatibility, ReadMessage};
+use dpimpex::rec_writer::{BinaryWriter, RecordingWriter, TextWriter};
 
 use std::error::Error;
 use std::fmt;

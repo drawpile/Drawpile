@@ -32,6 +32,8 @@ mod flat;
 mod ora_reader;
 mod ora_utils;
 mod ora_writer;
+pub mod rec_reader;
+pub mod rec_writer;
 
 #[derive(Debug)]
 pub enum ImpexError {

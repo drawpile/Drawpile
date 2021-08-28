@@ -23,7 +23,7 @@
 use dpcore::canvas::CanvasState;
 use dpcore::paint::color::*;
 use dpcore::protocol::message::{CommandMessage, Message};
-use dpcore::protocol::{open_recording, Compatibility, ReadMessage};
+use dpimpex::rec_reader::{open_recording, Compatibility, ReadMessage};
 
 use tracing::{info, warn};
 

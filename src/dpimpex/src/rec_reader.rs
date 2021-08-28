@@ -28,9 +28,8 @@ use std::io;
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::str;
 
-use crate::protocol::serialization::HEADER_LEN;
-use crate::protocol::textparser::{ParseResult, TextParser};
-use crate::protocol::{Message, ProtocolVersion, PROTOCOL_VERSION};
+use dpcore::protocol::textparser::{ParseResult, TextParser};
+use dpcore::protocol::{Message, ProtocolVersion, PROTOCOL_VERSION, HEADER_LEN};
 
 #[derive(Debug)]
 pub enum ReadMessage {
@@ -336,7 +335,7 @@ impl<R: BufRead> RecordingReader for TextReader<R> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::protocol::message::*;
+    use dpcore::protocol::message::*;
     use std::io::Cursor;
 
     fn test_reader(reader: &mut dyn RecordingReader) {

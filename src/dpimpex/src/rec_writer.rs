@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::protocol::Message;
+use dpcore::protocol::Message;
 use std::collections::HashMap;
 use std::io;
 use std::io::Write;
@@ -98,7 +98,7 @@ impl<W: Write> RecordingWriter for TextWriter<W> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::protocol::message::*;
+    use dpcore::protocol::message::*;
     use std::io::Cursor;
     use std::str;
 
