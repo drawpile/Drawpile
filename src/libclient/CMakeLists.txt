@@ -78,8 +78,6 @@ set (
 	brushes/brushpresetmodel.cpp
 	brushes/classicbrushpainter.cpp
 	brushes/pixelbrushpainter.cpp
-	ora/orawriter.cpp
-	ora/orareader.cpp
 	recording/index.cpp
 	recording/indexbuilder.cpp
 	recording/indexloader.cpp

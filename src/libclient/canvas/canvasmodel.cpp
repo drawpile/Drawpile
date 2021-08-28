@@ -24,7 +24,6 @@
 #include "selection.h"
 #include "paintengine.h"
 
-#include "ora/orawriter.h"
 #include "utils/identicon.h"
 #include "../rustpile/rustpile.h"
 
