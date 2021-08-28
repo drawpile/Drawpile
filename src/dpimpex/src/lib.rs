@@ -22,20 +22,23 @@
 
 use dpcore::paint::LayerStack;
 use image::error::ImageError;
-use std::{io, fmt};
 use std::path::Path;
+use std::{fmt, io};
 use zip::result::ZipError;
+use xml::writer::Error as XmlError;
 
 mod conv;
 mod flat;
 mod ora_reader;
 mod ora_utils;
+mod ora_writer;
 
 #[derive(Debug)]
 pub enum ImpexError {
     IoError(io::Error),
     CodecError(ImageError),
     UnsupportedFormat,
+    XmlError(XmlError),
     NoContent,
 }
 
@@ -46,6 +49,7 @@ impl fmt::Display for ImpexError {
             ImpexError::CodecError(e) => e.fmt(f),
             ImpexError::UnsupportedFormat => write!(f, "unsupported format"),
             ImpexError::NoContent => write!(f, "no content"),
+            ImpexError::XmlError(e) => e.fmt(f),
         }
     }
 }
@@ -68,6 +72,12 @@ impl From<ZipError> for ImpexError {
             ZipError::Io(io) => Self::IoError(io),
             _ => Self::UnsupportedFormat,
         }
+    }
+}
+
+impl From<XmlError> for ImpexError {
+    fn from(err: XmlError) -> Self {
+        Self::XmlError(err)
     }
 }
 
@@ -103,7 +113,7 @@ where
             .and_then(|s| s.to_str())
             .and_then(|s| Some(s.to_ascii_lowercase()));
         match ext.as_deref() {
-            //Some("ora") => ora_writer::save_openraster_image(path, layerstack),
+            Some("ora") => ora_writer::save_openraster_image(path, layerstack),
             Some(_) => flat::save_flat_image(path, layerstack),
             None => Err(ImpexError::UnsupportedFormat),
         }

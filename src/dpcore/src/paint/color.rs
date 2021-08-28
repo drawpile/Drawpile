@@ -21,6 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use std::str::FromStr;
+use std::fmt;
 
 pub type Pixel = [u8; 4];
 
@@ -187,6 +188,15 @@ impl Color {
     }
 }
 
+impl fmt::Display for Color {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.a < 1.0 {
+            write!(f, "#{:08x}", self.as_argb32())
+        } else {
+            write!(f, "#{:06x}", self.as_argb32() & 0x00_ffffff)
+        }
+    }
+}
 impl PartialEq for Color {
     fn eq(&self, other: &Self) -> bool {
         self.as_pixel() == other.as_pixel()

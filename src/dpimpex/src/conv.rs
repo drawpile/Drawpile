@@ -51,24 +51,20 @@ pub fn to_dpimage(img: &RgbaImage) -> Image {
 }
 
 pub fn from_dpimage(img: &Image) -> RgbaImage {
-    let mut pixels = Vec::with_capacity(img.width * img.height * 4);
+    let mut rgba = Vec::with_capacity(img.width * img.height * 4);
 
     // Unpremultiply pixel values
     for px in img.pixels.iter() {
         let a = px[ALPHA_CHANNEL] as u32;
-        let a = if a > 0 {
-            (255*255 + a / 2) / a
-        } else {
-            0
-        };
+        let a = if a > 0 { (255 * 255 + a / 2) / a } else { 0 };
 
-        pixels.push(u8_mult(px[RED_CHANNEL] as u32, a));
-        pixels.push(u8_mult(px[GREEN_CHANNEL] as u32, a));
-        pixels.push(u8_mult(px[BLUE_CHANNEL] as u32, a));
-        pixels.push(px[ALPHA_CHANNEL]);
+        rgba.push(u8_mult(px[RED_CHANNEL] as u32, a));
+        rgba.push(u8_mult(px[GREEN_CHANNEL] as u32, a));
+        rgba.push(u8_mult(px[BLUE_CHANNEL] as u32, a));
+        rgba.push(px[ALPHA_CHANNEL]);
     }
 
-    image::RgbaImage::from_raw(img.width as u32, img.height as u32, pixels).unwrap()
+    image::RgbaImage::from_raw(img.width as u32, img.height as u32, rgba).unwrap()
 }
 
 fn u8_mult(a: u32, b: u32) -> u8 {

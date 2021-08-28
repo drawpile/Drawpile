@@ -22,7 +22,7 @@
 
 use super::conv::to_dpimage;
 use super::ora_utils::{DP_NAMESPACE, MYPAINT_NAMESPACE};
-use super::{ImpexError, ImageImportResult};
+use super::{ImageImportResult, ImpexError};
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
 use dpcore::paint::{editlayer, Blendmode, Color, Image, LayerStack, Rectangle, Size, Tile};

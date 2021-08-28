@@ -27,8 +27,8 @@ use image::gif::GifDecoder;
 use image::io::Reader as ImageReader;
 use image::{AnimationDecoder, ImageDecoder};
 
-use super::conv::{to_dpimage, from_dpimage};
-use crate::{ImageImportResult, ImageExportResult};
+use super::conv::{from_dpimage, to_dpimage};
+use crate::{ImageExportResult, ImageImportResult};
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
 use dpcore::paint::{editlayer, Blendmode, Color, LayerStack, Rectangle};
 

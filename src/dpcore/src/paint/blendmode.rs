@@ -61,17 +61,17 @@ impl Blendmode {
         use Blendmode::*;
         match self {
             Erase => "-dp-erase",
-            Normal => "src-over",
-            Multiply => "multiply",
-            Divide => "screen",
-            Burn => "color-burn",
-            Dodge => "color-dodge",
-            Darken => "darken",
-            Lighten => "lighten",
+            Normal => "svg:src-over",
+            Multiply => "svg:multiply",
+            Divide => "svg:screen",
+            Burn => "svg:color-burn",
+            Dodge => "svg:color-dodge",
+            Darken => "svg:darken",
+            Lighten => "svg:lighten",
             Subtract => "-dp-minus", // not in SVG spec
-            Add => "plus",
-            Recolor => "src-atop",
-            Behind => "dst-over",
+            Add => "svg:plus",
+            Recolor => "svg:src-atop",
+            Behind => "svg:dst-over",
             ColorErase => "-dp-cerase",
             Replace => "-dp-replace",
         }
