@@ -915,7 +915,7 @@ pub extern "C" fn paintengine_load_blank(dp: &mut PaintEngine, width: u32, heigh
 
     ls.background = Tile::new(&background, 0);
     let mut l = ls.add_layer(
-        0x0101,
+        0x0100,
         LayerFill::Solid(Color::TRANSPARENT),
         LayerInsertion::Top
     ).unwrap();

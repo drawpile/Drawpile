@@ -41,7 +41,7 @@ pub fn load_flat_image(path: &Path) -> ImageImportResult {
 
     let mut layer = ls
         .add_layer(
-            0x0101,
+            0x0100,
             LayerFill::Solid(Color::TRANSPARENT),
             LayerInsertion::Top,
         )
@@ -71,7 +71,7 @@ pub fn load_gif_animation(path: &Path) -> ImageImportResult {
     for (i, frame) in decoder.into_frames().enumerate() {
         let mut layer = ls
             .add_layer(
-                0x0101 + i as u16,
+                0x0100 + i as u16,
                 LayerFill::Solid(Color::TRANSPARENT),
                 LayerInsertion::Top,
             )
@@ -117,7 +117,7 @@ mod tests {
             .iter()
             .collect();
         let ls = load_flat_image(path.as_ref()).unwrap();
-        let layer = ls.get_layer(0x0101).unwrap();
+        let layer = ls.get_layer(0x0100).unwrap();
 
         assert_eq!(
             layer.sample_color(32, 32, 0,),

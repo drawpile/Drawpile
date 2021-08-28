@@ -49,7 +49,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     // TODO dpi
 
     // Create layers
-    let mut layer_id = 0x0101;
+    let mut layer_id = 0x0100;
     for oralayer in canvas.layers {
         if !oralayer.bgtile.is_empty() {
             let tile_image = get_image_file(&mut archive, &oralayer.bgtile)?;
@@ -71,7 +71,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
             )
             .unwrap();
 
-        layer.title = format!("Layer {}", layer_id - 0x0100);
+        layer.title = format!("Layer {}", layer_id - 0x00ff);
         layer.opacity = oralayer.opacity.clamp(0.0, 1.0);
         layer.hidden = !oralayer.visibility;
         layer.censored = oralayer.censored;
@@ -98,7 +98,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     }
 
     // Create annotations
-    let annotation_id = 0x0101;
+    let annotation_id = 0x0100;
     for ora_ann in canvas.annotations {
         ls.add_annotation(annotation_id, ora_ann.rect);
         let mut a = ls.get_annotation_mut(annotation_id).unwrap();
