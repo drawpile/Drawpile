@@ -39,7 +39,6 @@ set (
 	dialogs/resizedialog.cpp
 	dialogs/playbackdialog.cpp
 	dialogs/videoexportdialog.cpp
-	dialogs/recfilterdialog.cpp
 	dialogs/netstats.cpp
 	dialogs/flipbook.cpp
 	dialogs/resetdialog.cpp
@@ -158,7 +157,6 @@ set (
 	ui/resizedialog.ui
 	ui/videoexport.ui
 	ui/inputcfg.ui
-	ui/recfilter.ui
 	ui/logindialog.ui
 	ui/colorbox.ui
 	ui/netstats.ui

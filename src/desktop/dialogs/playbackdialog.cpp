@@ -19,7 +19,6 @@
 
 #include "dialogs/playbackdialog.h"
 #include "dialogs/videoexportdialog.h"
-#include "dialogs/recfilterdialog.h"
 
 #include "recording/playbackcontroller.h"
 
@@ -57,7 +56,6 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 	m_ui->noIndexReason->hide();
 
 	connect(m_ui->buildIndexButton, &QAbstractButton::clicked, this, &PlaybackDialog::onBuildIndexClicked);
-	connect(m_ui->filterButton, &QAbstractButton::clicked, this, &PlaybackDialog::onFilterRecordingClicked);
 	connect(m_ui->configureExportButton, &QAbstractButton::clicked, this, &PlaybackDialog::onVideoExportClicked);
 
 	m_markers = new QMenu(this);
@@ -280,20 +278,6 @@ void PlaybackDialog::onMarkerMenuTriggered(QAction *a)
 	QVariant idx = a->property("markeridx");
 	if(idx.isValid())
 		m_ctrl->jumpToMarker(idx.toInt());
-}
-
-void PlaybackDialog::onFilterRecordingClicked()
-{
-	dialogs::FilterRecordingDialog dlg(this);
-
-	if(dlg.exec() == QDialog::Accepted) {
-		QString filename = dlg.filterRecording(m_ctrl->recordingFilename());
-
-		if(!filename.isEmpty()) {
-			MainWindow *win = new MainWindow(false);
-			win->open(QUrl::fromLocalFile(filename));
-		}
-	}
 }
 
 void PlaybackDialog::onVideoExportClicked()

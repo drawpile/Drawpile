@@ -463,20 +463,6 @@
        </widget>
       </widget>
      </item>
-     <item>
-      <widget class="QToolButton" name="filterButton">
-       <property name="toolTip">
-        <string>Filter recording</string>
-       </property>
-       <property name="text">
-        <string notr="true">...</string>
-       </property>
-       <property name="icon">
-        <iconset theme="view-filter">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>

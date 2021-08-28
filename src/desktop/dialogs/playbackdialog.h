@@ -69,7 +69,6 @@ private slots:
 	void onIndexLoadError(const QString&, bool);
 	void onBuildIndexClicked();
 	void onMarkerMenuTriggered(QAction *a);
-	void onFilterRecordingClicked();
 	void onVideoExportClicked();
 	void onVideoExportStarted();
 	void onVideoExportEnded();

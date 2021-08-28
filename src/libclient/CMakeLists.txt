@@ -81,7 +81,6 @@ set (
 	recording/index.cpp
 	recording/indexbuilder.cpp
 	recording/indexloader.cpp
-	recording/filter.cpp
 	recording/playbackcontroller.cpp
 	export/animation.cpp
 	export/videoexporter.cpp
