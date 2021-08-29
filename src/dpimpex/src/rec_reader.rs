@@ -85,6 +85,9 @@ pub trait RecordingReader {
 
     /// Return the index of the last read message (first message is at zero)
     fn current_index(&self) -> usize;
+
+    /// Return the progress in the file in range 0..1
+    fn current_progress(&self) -> f64;
 }
 
 fn compare_versions(our: &ProtocolVersion, their: &ProtocolVersion) -> Compatibility {
@@ -121,9 +124,11 @@ pub fn open_recording(filename: &str) -> io::Result<Box<dyn RecordingReader>> {
 
     file.seek(io::SeekFrom::Start(0))?;
 
+    let metadata = file.metadata()?;
+
     if &sample[0..6] == b"DPREC\0" {
         // This looks like a binary recording
-        return Ok(Box::new(BinaryReader::open(file)?));
+        return Ok(Box::new(BinaryReader::open(BufReader::new(file), metadata.len())?));
     }
 
     // Check if this looks like a text recording
@@ -134,21 +139,25 @@ pub fn open_recording(filename: &str) -> io::Result<Box<dyn RecordingReader>> {
         )
     })?;
 
-    Ok(Box::new(TextReader::open(BufReader::new(file))?))
+    Ok(Box::new(TextReader::open(BufReader::new(file), metadata.len())?))
 }
 
 pub struct BinaryReader<R> {
     file: R,
     last_read_index: usize,
+    file_size: u64,
+    pos: u64,
     metadata: HashMap<String, String>,
     read_buffer: [u8; 0xffff + HEADER_LEN],
 }
 
-impl<R: Read> BinaryReader<R> {
-    pub fn open(file: R) -> io::Result<BinaryReader<R>> {
+impl<R: Read+Seek> BinaryReader<R> {
+    pub fn open(file: R, file_size: u64) -> io::Result<BinaryReader<R>> {
         let mut br = BinaryReader {
             file,
             last_read_index: 0,
+            file_size,
+            pos: 0,
             metadata: HashMap::new(),
             read_buffer: [0; 0xffff + HEADER_LEN],
         };
@@ -187,31 +196,29 @@ impl<R: Read> BinaryReader<R> {
                 "Header did not contain a JSON object!",
             ));
         }
+
+        br.pos = br.file.stream_position()?;
+
         Ok(br)
     }
 
-    fn read_message(reader: &mut R, buf: &mut [u8]) -> io::Result<usize> {
-        reader.read_exact(&mut buf[..HEADER_LEN])?;
-        let payload_len = u16::from_be_bytes(buf[..2].try_into().unwrap()) as usize;
+    fn read_next_raw(&mut self) -> io::Result<usize> {
+        self.file.read_exact(&mut self.read_buffer[..HEADER_LEN])?;
+        let payload_len = u16::from_be_bytes(self.read_buffer[..2].try_into().unwrap()) as usize;
         if payload_len > 0 {
-            reader.read_exact(&mut buf[HEADER_LEN..HEADER_LEN + payload_len])?;
+            self.file.read_exact(&mut self.read_buffer[HEADER_LEN..HEADER_LEN + payload_len])?;
         }
 
+        self.last_read_index += 1;
+        self.pos += (payload_len + HEADER_LEN) as u64;
         Ok(payload_len + HEADER_LEN)
-    }
-
-    pub fn read_next_raw(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        Self::read_message(&mut self.file, buf).and_then(|v| {
-            self.last_read_index += 1;
-            Ok(v)
-        })
     }
 }
 
-impl<R: Read> RecordingReader for BinaryReader<R> {
+impl<R: Read+Seek> RecordingReader for BinaryReader<R> {
     fn read_next(&mut self) -> ReadMessage {
         let msg_len;
-        match Self::read_message(&mut self.file, &mut self.read_buffer) {
+        match self.read_next_raw() {
             Ok(size) => {
                 msg_len = size;
             }
@@ -225,16 +232,17 @@ impl<R: Read> RecordingReader for BinaryReader<R> {
         }
 
         match Message::deserialize(&self.read_buffer[..msg_len]) {
-            Ok(m) => {
-                self.last_read_index += 1;
-                ReadMessage::Ok(m)
-            }
+            Ok(m) => ReadMessage::Ok(m),
             Err(e) => ReadMessage::Invalid(format!("Deserialization error: {:?}", e)),
         }
     }
 
     fn current_index(&self) -> usize {
         self.last_read_index - 1
+    }
+
+    fn current_progress(&self) -> f64 {
+        self.pos as f64 / self.file_size as f64
     }
 
     fn get_metadata(&self, key: &str) -> Option<&String> {
@@ -249,16 +257,20 @@ impl<R: Read> RecordingReader for BinaryReader<R> {
 pub struct TextReader<R> {
     file: R,
     last_read_index: usize,
+    file_size: u64,
+    pos: u64,
     metadata: HashMap<String, String>,
     parser: TextParser,
     line_buf: String,
 }
 
 impl<R: BufRead + Seek> TextReader<R> {
-    pub fn open(file: R) -> io::Result<TextReader<R>> {
+    pub fn open(file: R, file_size: u64) -> io::Result<TextReader<R>> {
         let mut br = TextReader {
             file,
             last_read_index: 0,
+            file_size,
+            pos: 0,
             metadata: HashMap::new(),
             parser: TextParser::new(),
             line_buf: String::new(),
@@ -288,7 +300,7 @@ impl<R: BufRead + Seek> TextReader<R> {
     }
 }
 
-impl<R: BufRead> RecordingReader for TextReader<R> {
+impl<R: BufRead+Seek> RecordingReader for TextReader<R> {
     fn read_next(&mut self) -> ReadMessage {
         loop {
             self.line_buf.truncate(0);
@@ -297,6 +309,7 @@ impl<R: BufRead> RecordingReader for TextReader<R> {
                     if n == 0 {
                         return ReadMessage::Eof;
                     }
+                    self.pos += n as u64;
                 }
                 Err(e) => {
                     return ReadMessage::IoError(e);
@@ -321,6 +334,10 @@ impl<R: BufRead> RecordingReader for TextReader<R> {
 
     fn current_index(&self) -> usize {
         self.last_read_index - 1
+    }
+
+    fn current_progress(&self) -> f64 {
+        self.pos as f64 / self.file_size as f64
     }
 
     fn get_metadata(&self, key: &str) -> Option<&String> {

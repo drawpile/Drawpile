@@ -202,6 +202,8 @@ using NotifyAnnotationsCallback = void(*)(void *ctx, Annotations *annotations);
 
 using NotifyCursorCallback = void(*)(void *ctx, UserID user, uint16_t layer, int32_t x, int32_t y);
 
+using NotifyPlaybackCallback = void(*)(void *ctx, int64_t pos, uint32_t interval);
+
 using JoinCallback = void(*)(void *ctx, UserID user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
 
 using LeaveCallback = void(*)(void *ctx, UserID user);
@@ -502,7 +504,8 @@ PaintEngine *paintengine_new(void *ctx,
                              NotifyResizeCallback resizes,
                              NotifyLayerListCallback layers,
                              NotifyAnnotationsCallback annotations,
-                             NotifyCursorCallback cursors);
+                             NotifyCursorCallback cursors,
+                             NotifyPlaybackCallback playback);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);
@@ -523,7 +526,6 @@ void paintengine_register_meta_callbacks(PaintEngine *dp,
 Size paintengine_canvas_size(const PaintEngine *dp);
 
 /// Receive one or more messages
-/// Only Command and Meta type messages are handled.
 /// Returns false if the paint engine thread has panicked
 bool paintengine_receive_messages(PaintEngine *dp,
                                   bool local,
@@ -642,16 +644,29 @@ bool paintengine_load_blank(PaintEngine *dp, uint32_t width, uint32_t height, Co
 
 bool paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
+/// Open a recording for playback
+///
+/// This clears the existing canvas, just as loading any other file would.
+bool paintengine_load_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+
 /// Save the currently visible layerstack.
 ///
 /// It is safe to call this function in a separate thread.
-bool paintengine_save_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+bool paintengine_save_file(const PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
 bool paintengine_start_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
 void paintengine_stop_recording(PaintEngine *dp);
 
+/// Play back one or more messages from the recording under playback.
+///
+/// If "sequences" is true, whole undo sequences are stepped instead of
+/// single messages. The playback callback will be called at the end.
+void paintengine_playback_step(PaintEngine *dp, int32_t steps, bool sequences);
+
 bool paintengine_is_recording(const PaintEngine *dp);
+
+bool paintengine_is_playing(const PaintEngine *dp);
 
 /// Paint all the changed tiles in the given area
 ///

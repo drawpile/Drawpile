@@ -105,6 +105,11 @@ bool CanvasModel::load(const QString &path)
 	return rustpile::paintengine_load_file(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
 }
 
+bool CanvasModel::loadRecording(const QString &path)
+{
+	return rustpile::paintengine_load_recording(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
+}
+
 QSize CanvasModel::size() const
 {
 	return m_paintengine->size();

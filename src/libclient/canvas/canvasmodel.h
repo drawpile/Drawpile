@@ -49,6 +49,9 @@ public:
 	//! Load an empty canvas
 	bool load(const QSize &size, const QColor &background);
 
+	//! Load a recording and prepare to start playback
+	bool loadRecording(const QString &path);
+
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
 

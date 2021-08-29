@@ -91,6 +91,11 @@ void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32
 	emit reinterpret_cast<PaintEngine*>(pe)->cursorMoved(user, layer, x, y);
 }
 
+void paintEnginePlayback(void *pe, int64_t pos, uint32_t interval)
+{
+	emit reinterpret_cast<PaintEngine*>(pe)->playbackAt(pos, interval);
+}
+
 PaintEngine::PaintEngine(QObject *parent)
 	: QObject(parent), m_pe(nullptr)
 {
@@ -111,7 +116,8 @@ void PaintEngine::reset()
 		paintEngineResized,
 		paintEngineLayersChanged,
 		paintEngineAnnotationsChanged,
-		paintEngineCursors
+		paintEngineCursors,
+		paintEnginePlayback
 	);
 
 	m_cache = QPixmap();
@@ -167,7 +173,7 @@ void PaintEngine::setViewLayer(int id)
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 {
 	const auto size = this->size();
-	if(!size.isValid())
+	if(size.isEmpty())
 		return m_cache;
 
 	if(m_cache.isNull() || m_cache.size() != size) {

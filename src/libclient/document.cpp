@@ -145,10 +145,10 @@ bool Document::loadCanvas(const QSize &size, const QColor &background)
 {
 	setAutosave(false);
 	initCanvas();
-	m_canvas->load(size, background);
-	setCurrentFilename(QString());
 	unmarkDirty();
 
+	m_canvas->load(size, background);
+	setCurrentFilename(QString());
 	return true;
 }
 
@@ -156,10 +156,25 @@ bool Document::loadCanvas(const QString &path)
 {
 	setAutosave(false);
 	initCanvas();
-	m_canvas->load(path);
-	setCurrentFilename(path);
 	unmarkDirty();
 
+	if(!m_canvas->load(path))
+		return false;
+
+	setCurrentFilename(path);
+	return true;
+}
+
+bool Document::loadRecording(const QString &path)
+{
+	setAutosave(false);
+	initCanvas();
+	unmarkDirty();
+
+	if(!m_canvas->loadRecording(path))
+		return false;
+
+	setCurrentFilename(path);
 	return true;
 }
 

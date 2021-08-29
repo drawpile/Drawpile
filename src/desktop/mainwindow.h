@@ -22,18 +22,15 @@
 #include <QMainWindow>
 #include <QElapsedTimer>
 #include <QUrl>
+#include <QPointer>
 
 #include "tools/tool.h"
 #include "canvas/acl.h"
 
 class QActionGroup;
-class QMessageBox;
-class QUrl;
 class QLabel;
 class QSplitter;
-class QTimer;
 class QToolButton;
-class QListView;
 
 class Document;
 class ActionBuilder;
@@ -42,7 +39,6 @@ namespace widgets {
 	class CanvasView;
 	class NetStatus;
 	class ChatBox;
-	class UserItemDelegate;
 	class ViewStatus;
 }
 namespace docks {
@@ -67,20 +63,6 @@ namespace canvas {
 	class CanvasModel;
 }
 
-namespace net {
-	class Client;
-	class LoginHandler;
-}
-
-namespace recording {
-	class Writer;
-	class Reader;
-}
-
-namespace tools {
-	class ToolController;
-}
-
 class ShortcutDetector;
 
 //! The application main window
@@ -90,7 +72,7 @@ public:
 	MainWindow(bool restoreWindowPosition=true);
 	~MainWindow();
 
-	MainWindow *loadRecording(recording::Reader *reader);
+	MainWindow *loadRecording(const QString &path);
 
 	//! Host a session using the settings from the given dialog
 	void hostSession(dialogs::HostDialog *dlg);
@@ -230,7 +212,7 @@ private:
 	widgets::ViewStatus *m_viewstatus;
 	QToolButton *m_statusChatButton;
 
-	dialogs::PlaybackDialog *m_playbackDialog;
+	QPointer<dialogs::PlaybackDialog> m_playbackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 

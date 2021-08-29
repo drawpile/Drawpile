@@ -492,6 +492,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	}
 }
 
+#if 0
 MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 {
 	m_doc->initCanvas();
@@ -518,6 +519,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 
 	return this;
 }
+#endif
 
 /**
  * This function is used to check if the current board can be replaced
@@ -965,12 +967,18 @@ void MainWindow::open(const QUrl& url)
 
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
+		qInfo() << "opening" << file;
 		if(recording::Reader::isRecordingExtension(file)) {
-			auto reader = dialogs::PlaybackDialog::openRecording(file, this);
-			if(!reader)
-				return;
+			if(m_doc->loadRecording(file)) {
+				QFileInfo fileinfo(file);
 
-			loadRecording(reader);
+				qInfo("OPening rec");
+				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
+				m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
+				m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
+				m_playbackDialog->show();
+				m_playbackDialog->centerOnParent();
+			}
 
 		} else {
 			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));

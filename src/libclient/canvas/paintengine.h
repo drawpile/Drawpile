@@ -102,6 +102,7 @@ signals:
 	void layersChanged(QVector<LayerListItem> layers);
 	void annotationsChanged(rustpile::Annotations *annotations);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
+	void playbackAt(qint64 pos, qint32 interval);
 
 	//! Paint engine has panicked and died
 	void enginePanicked();
@@ -116,6 +117,7 @@ private:
 	friend void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layers, uintptr_t count);
 	friend void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations);
 	friend void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32_t y);
+	friend void paintEnginePlayback(void *pe, int64_t pos, uint32_t interval);
 };
 
 }

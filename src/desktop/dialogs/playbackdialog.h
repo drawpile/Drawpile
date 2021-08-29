@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,20 +19,13 @@
 #ifndef PLAYBACKDIALOG_H
 #define PLAYBACKDIALOG_H
 
-#include "../../libshared/net/message.h"
-
 #include <QDialog>
 #include <QPointer>
-
-namespace recording {
-	class Reader;
-	class IndexLoader;
-	class IndexBuilder;
-	class PlaybackController;
-}
+#include <QElapsedTimer>
 
 namespace canvas {
 	class CanvasModel;
+	class PaintEngine;
 }
 
 class Ui_PlaybackDialog;
@@ -44,18 +37,13 @@ class PlaybackDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *reader, QWidget *parent=nullptr);
+	explicit PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent=nullptr);
 	~PlaybackDialog();
-
-	static recording::Reader *openRecording(const QString &filename, QWidget *msgboxparent=nullptr);
 
 	void centerOnParent();
 
 	bool isPlaying() const;
 	void setPlaying(bool playing);
-
-public slots:
-	void done(int r);
 
 signals:
 	void playbackToggled(bool play);
@@ -65,6 +53,9 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 
 private slots:
+	void onPlaybackAt(qint64 pos, qint32 interval);
+	void stepNext();
+
 	void onIndexLoaded();
 	void onIndexLoadError(const QString&, bool);
 	void onBuildIndexClicked();
@@ -75,14 +66,20 @@ private slots:
 
 
 private:
-	bool exitCleanup();
 	void rebuildMarkerMenu();
 
 	Ui_PlaybackDialog *m_ui;
-	recording::PlaybackController *m_ctrl;
+	canvas::PaintEngine *m_paintengine;
+
+	QTimer *m_autoStepTimer;
+	QElapsedTimer m_lastInterval;
+	float m_speedFactor;
+
 	QMenu *m_markers;
 
-	bool m_closing;
+	bool m_autoplay;
+	bool m_awaiting;
+
 };
 
 }

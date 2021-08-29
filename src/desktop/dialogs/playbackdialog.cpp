@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 #include "dialogs/videoexportdialog.h"
 
 #include "recording/playbackcontroller.h"
+#include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 
 #include "mainwindow.h"
-
-#include "../libshared/record/reader.h"
-#include "../libshared/net/recording.h"
+#include "../rustpile/rustpile.h"
 
 #include "ui_playback.h"
 
@@ -41,8 +41,11 @@ using recording::PlaybackController;
 
 namespace dialogs {
 
-PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *reader, QWidget *parent) :
-	QDialog(parent), m_ui(new Ui_PlaybackDialog), m_closing(false)
+PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
+	QDialog(parent), m_ui(new Ui_PlaybackDialog),
+	m_paintengine(canvas->paintEngine()),
+	m_speedFactor(1.0),
+	m_autoplay(false), m_awaiting(false)
 {
 	setWindowTitle(tr("Playback"));
 	setWindowFlags(Qt::Tool);
@@ -53,26 +56,21 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 	m_ui->setupUi(this);
 
 	m_ui->buildIndexProgress->hide();
-	m_ui->noIndexReason->hide();
 
 	connect(m_ui->buildIndexButton, &QAbstractButton::clicked, this, &PlaybackDialog::onBuildIndexClicked);
 	connect(m_ui->configureExportButton, &QAbstractButton::clicked, this, &PlaybackDialog::onVideoExportClicked);
 
+	// Markers (bookmarks) are enabled when playing back a recording
 	m_markers = new QMenu(this);
 	m_ui->markers->setMenu(m_markers);
+	m_ui->markers->setEnabled(false);
 	connect(m_markers, &QMenu::triggered, this, &PlaybackDialog::onMarkerMenuTriggered);
 
-	// Connect the UI to the controller
-	m_ctrl = new PlaybackController(canvas, reader, this);
+	// Step timer is used to limit playback speed
+	m_autoStepTimer = new QTimer(this);
+	m_autoStepTimer->setSingleShot(true);
+	connect(m_autoStepTimer, &QTimer::timeout, this, &PlaybackDialog::stepNext);
 
-	connect(m_ctrl, &PlaybackController::playbackToggled, this, &PlaybackDialog::playbackToggled);
-
-	connect(m_ui->play, &QAbstractButton::clicked, m_ctrl, &PlaybackController::setPlaying);
-	connect(m_ctrl, &PlaybackController::playbackToggled, m_ui->play, &QAbstractButton::setChecked);
-
-	connect(m_ui->skipBackward, &QAbstractButton::clicked, m_ctrl, &PlaybackController::prevSequence);
-	connect(m_ui->skipForward, &QAbstractButton::clicked, m_ctrl, &PlaybackController::nextSequence);
-	connect(m_ui->stepForward, &QAbstractButton::clicked, m_ctrl, &PlaybackController::nextCommand);
 	connect(m_ui->speedcontrol, &QAbstractSlider::valueChanged, [this](int speed) {
 		qreal s;
 		if(speed<=100)
@@ -80,10 +78,38 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 		else
 			s = 1.0 + ((speed-100) / 100.0) * 8.0;
 
-		m_ctrl->setSpeedFactor(s);
+		m_speedFactor = 1.0 / s;
 		m_ui->speedLabel->setText(QString("x %1").arg(s, 0, 'f', 1));
 	});
 
+	// The paint engine's playback callback lets us know when the step/sequence
+	// has been rendered and we're free to take another one.
+	connect(canvas->paintEngine(), &canvas::PaintEngine::playbackAt, this, &PlaybackDialog::onPlaybackAt);
+
+	// |<< button skips backwards. This needs an index to work
+	connect(m_ui->skipBackward, &QAbstractButton::clicked, this, [this]() {
+		if(!m_awaiting) {
+			m_awaiting = true;
+			rustpile::paintengine_playback_step(m_paintengine->engine(), -1, true);
+		}
+	});
+
+	// >>| button skips forward a whole stroke
+	connect(m_ui->skipForward, &QAbstractButton::clicked, this, [this]() {
+		if(!m_awaiting) {
+			m_awaiting = true;
+			rustpile::paintengine_playback_step(m_paintengine->engine(), 1, true);
+		}
+	});
+
+	// >> button steps forward a single message
+	connect(m_ui->stepForward, &QAbstractButton::clicked, this, &PlaybackDialog::stepNext);
+
+	// play button toggles automatic step mode
+	connect(m_ui->play, &QAbstractButton::toggled, this, &PlaybackDialog::setPlaying);
+
+#if 0
+	// Connect the UI to the controller
 	connect(m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, m_ctrl, &PlaybackController::jumpTo);
 
 	connect(m_ctrl, &PlaybackController::indexLoaded, this, &PlaybackDialog::onIndexLoaded);
@@ -106,15 +132,11 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, recording::Reader *r
 
 	connect(m_ctrl, &PlaybackController::canSaveFrameChanged, m_ui->saveFrame, &QPushButton::setEnabled);
 
-	// Connections for non-indexed recordings. These will be changed when/if the index is loaded
-	m_ui->filmStrip->setLength(reader->filesize());
-	m_ui->filmStrip->setFrames(qMax(1, int(reader->filesize() / 100000)));
-	connect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &widgets::Filmstrip::setCursor);
-
 	rebuildMarkerMenu();
 
 	// Automatically try to load the index
 	QTimer::singleShot(0, m_ctrl, &PlaybackController::loadIndex);
+#endif
 }
 
 PlaybackDialog::~PlaybackDialog()
@@ -122,16 +144,61 @@ PlaybackDialog::~PlaybackDialog()
 	delete m_ui;
 }
 
+/**
+ * @brief The paint engine has finished rendering the sequence
+ *
+ * We can now automatically step forward again
+ */
+void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
+{
+	qInfo() << "playback at" << pos;
+	m_awaiting = false;
+	if(pos < 0) {
+		// Negative number means we've reached the end of the recording
+		setPlaying(false);
+		m_ui->play->setEnabled(false);
+		m_ui->skipForward->setEnabled(false);
+		m_ui->stepForward->setEnabled(false);
+	} else {
+		m_ui->play->setEnabled(true);
+		m_ui->skipForward->setEnabled(true);
+		m_ui->stepForward->setEnabled(true);
+		m_ui->playbackProgress->setValue(pos);
+	}
+
+	if(pos >=0 && m_autoplay) {
+
+		if(interval > 0) {
+			const auto elapsed = m_lastInterval.elapsed();
+			m_lastInterval.restart();
+
+			m_autoStepTimer->start(qMax(0.0f, interval * m_speedFactor - elapsed));
+		} else {
+			m_autoStepTimer->start(33.0 * m_speedFactor);
+		}
+	}
+}
+
+void PlaybackDialog::stepNext() {
+	if(!m_awaiting) {
+		m_awaiting = true;
+		rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+	}
+}
+
 void PlaybackDialog::onBuildIndexClicked()
 {
-	m_ui->noIndexReason->hide();
+	m_ui->noIndexReason->setText(tr("Building index..."));
 	m_ui->buildIndexProgress->show();
 	m_ui->buildIndexButton->setEnabled(false);
+#if 0
 	m_ctrl->buildIndex();
+#endif
 }
 
 void PlaybackDialog::onIndexLoaded()
 {
+#if 0
 	disconnect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &widgets::Filmstrip::setCursor);
 	connect(m_ctrl, &PlaybackController::indexPositionChanged,m_ui->filmStrip, &widgets::Filmstrip::setCursor);
 
@@ -149,13 +216,13 @@ void PlaybackDialog::onIndexLoaded()
 	m_ui->filmStrip->setLoadImageFn(std::bind(&PlaybackController::getIndexThumbnail, m_ctrl, std::placeholders::_1));
 
 	rebuildMarkerMenu();
+#endif
 }
 
 void PlaybackDialog::onIndexLoadError(const QString &msg, bool canRetry)
 {
 	m_ui->buildIndexProgress->hide();
 	m_ui->noIndexReason->setText(msg);
-	m_ui->noIndexReason->show();
 	m_ui->buildIndexButton->setEnabled(canRetry);
 }
 
@@ -174,14 +241,25 @@ void PlaybackDialog::centerOnParent()
 
 bool PlaybackDialog::isPlaying() const
 {
-	return m_ctrl->isPlaying();
+	return m_ui->play->isChecked();
 }
 
 void PlaybackDialog::setPlaying(bool playing)
 {
-	m_ctrl->setPlaying(playing);
+	m_ui->play->setChecked(playing);
+	if(playing)
+		m_lastInterval.restart();
+	else
+		m_autoStepTimer->stop();
+
+	m_autoplay = playing;
+	if(playing && !m_awaiting) {
+		m_awaiting = true;
+		rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+	}
 }
 
+#if 0 // FIXME REPLACE WITH RUST
 recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)
 {
 	QScopedPointer<recording::Reader> reader(new recording::Reader(filename));
@@ -227,13 +305,12 @@ recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidge
 
 	return reader.take();
 }
+#endif
 
 void PlaybackDialog::closeEvent(QCloseEvent *event)
 {
-	if(!exitCleanup())
-		event->ignore();
-	else
-		QDialog::closeEvent(event);
+	// TODO call rustpile end playback
+	QDialog::closeEvent(event);
 }
 
 void PlaybackDialog::keyPressEvent(QKeyEvent *event)
@@ -244,14 +321,9 @@ void PlaybackDialog::keyPressEvent(QKeyEvent *event)
 	event->ignore();
 }
 
-void PlaybackDialog::done(int r)
-{
-	if(exitCleanup())
-		QDialog::done(r);
-}
-
 void PlaybackDialog::rebuildMarkerMenu()
 {
+#if 0
 	m_markers->clear();
 	QAction *stopOnMarkers = m_markers->addAction(tr("Stop on markers"));
 	stopOnMarkers->setCheckable(true);
@@ -271,17 +343,21 @@ void PlaybackDialog::rebuildMarkerMenu()
 			a->setProperty("markeridx", i);
 		}
 	}
+#endif
 }
 
 void PlaybackDialog::onMarkerMenuTriggered(QAction *a)
 {
+#if 0
 	QVariant idx = a->property("markeridx");
 	if(idx.isValid())
 		m_ctrl->jumpToMarker(idx.toInt());
+#endif
 }
 
 void PlaybackDialog::onVideoExportClicked()
 {
+#if 0
 	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
 
 	VideoExporter *ve=0;
@@ -293,6 +369,7 @@ void PlaybackDialog::onVideoExportClicked()
 	}
 
 	m_ctrl->startVideoExport(ve);
+#endif
 }
 
 void PlaybackDialog::onVideoExportStarted()
@@ -303,24 +380,6 @@ void PlaybackDialog::onVideoExportStarted()
 void PlaybackDialog::onVideoExportEnded()
 {
 	m_ui->exportStack->setCurrentIndex(1);
-}
-
-
-bool PlaybackDialog::exitCleanup()
-{
-	if(m_ctrl->isExporting()) {
-		if(!m_closing) {
-			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-			m_closing = true;
-			connect(m_ctrl, &recording::PlaybackController::exportEnded, this, &QDialog::close);
-			m_ctrl->stopExporter();
-		}
-		return false;
-	} else {
-		if(m_closing)
-			QApplication::restoreOverrideCursor();
-		return true;
-	}
 }
 
 }

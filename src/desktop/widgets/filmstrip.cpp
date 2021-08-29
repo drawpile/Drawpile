@@ -36,7 +36,7 @@ Filmstrip::Filmstrip(QWidget *parent)
 	setMinimumHeight(MARGIN*4);
 	m_scrollbar = new QScrollBar(Qt::Horizontal, this);
 	m_scrollbar->resize(width(), 16);
-	setFrames(10);
+	setFrames(1);
 	connect(m_scrollbar, &QScrollBar::valueChanged, [this]() { this->update(); });
 }
 
@@ -125,12 +125,14 @@ void Filmstrip::paintEvent(QPaintEvent *event)
 	}
 
 	// Paint position indicator
-	x = cursorPos() - m_scrollbar->value();
-	painter.setRenderHint(QPainter::Antialiasing, false);
-	painter.setPen(Qt::black);
-	painter.drawLine(x, MARGIN, x, h-MARGIN);
-	painter.setPen(Qt::white);
-	painter.drawLine(x+1, MARGIN, x+1, h-MARGIN);
+	if(m_length > 0) {
+		x = cursorPos() - m_scrollbar->value();
+		painter.setRenderHint(QPainter::Antialiasing, false);
+		painter.setPen(Qt::black);
+		painter.drawLine(x, MARGIN, x, h-MARGIN);
+		painter.setPen(Qt::white);
+		painter.drawLine(x+1, MARGIN, x+1, h-MARGIN);
+	}
 }
 
 QSize Filmstrip::frameSize() const

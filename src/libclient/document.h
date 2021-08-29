@@ -96,6 +96,7 @@ public:
 
 	bool loadCanvas(const QSize &size, const QColor &background);
 	bool loadCanvas(const QString &path);
+	bool loadRecording(const QString &path);
 
 	/**
 	 * @brief Save the canvas content
