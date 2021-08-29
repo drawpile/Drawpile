@@ -1,3 +1,5 @@
+find_package(Qt5Gui REQUIRED)
+
 set (
 	DPRECTOOL_SOURCES
 	dprectool.cpp
@@ -16,7 +18,7 @@ set (
 
 #include_directories("../client")
 add_executable( drawpile-cmd ${DPCMDTOOL_SOURCES} )
-target_link_libraries( drawpile-cmd dpclient Qt5::Core)
+target_link_libraries( drawpile-cmd dpclient Qt5::Core Qt5::Gui )
 
 if ( UNIX AND NOT APPLE )
 	install ( TARGETS dprectool DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
