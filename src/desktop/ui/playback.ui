@@ -36,7 +36,7 @@
           <bool>false</bool>
          </property>
          <property name="toolTip">
-          <string>Rewind stroke</string>
+          <string>Skip backward</string>
          </property>
          <property name="icon">
           <iconset theme="media-skip-backward">
@@ -110,26 +110,6 @@
            <width>32</width>
            <height>32</height>
           </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="markers">
-         <property name="icon">
-          <iconset theme="flag">
-           <normaloff>theme:media-skip-forward.svg</normaloff>theme:media-skip-forward.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
          </property>
          <property name="autoRaise">
           <bool>true</bool>

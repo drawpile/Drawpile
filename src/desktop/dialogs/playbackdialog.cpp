@@ -20,7 +20,6 @@
 #include "dialogs/playbackdialog.h"
 #include "dialogs/videoexportdialog.h"
 
-#include "recording/playbackcontroller.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 
@@ -30,14 +29,9 @@
 #include "ui_playback.h"
 
 #include <QDebug>
-#include <QMessageBox>
 #include <QInputDialog>
 #include <QCloseEvent>
-#include <QApplication>
 #include <QTimer>
-#include <QMenu>
-
-using recording::PlaybackController;
 
 namespace dialogs {
 
@@ -60,21 +54,15 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	connect(m_ui->buildIndexButton, &QAbstractButton::clicked, this, &PlaybackDialog::onBuildIndexClicked);
 	connect(m_ui->configureExportButton, &QAbstractButton::clicked, this, &PlaybackDialog::onVideoExportClicked);
 
-	// Markers (bookmarks) are enabled when playing back a recording
-	m_markers = new QMenu(this);
-	m_ui->markers->setMenu(m_markers);
-	m_ui->markers->setEnabled(false);
-	connect(m_markers, &QMenu::triggered, this, &PlaybackDialog::onMarkerMenuTriggered);
-
 	// Step timer is used to limit playback speed
 	m_autoStepTimer = new QTimer(this);
 	m_autoStepTimer->setSingleShot(true);
 	connect(m_autoStepTimer, &QTimer::timeout, this, &PlaybackDialog::stepNext);
 
-	connect(m_ui->speedcontrol, &QAbstractSlider::valueChanged, [this](int speed) {
+	connect(m_ui->speedcontrol, &QAbstractSlider::valueChanged, this, [this](int speed) {
 		qreal s;
 		if(speed<=100)
-			s = speed / 100.0;
+			s = qMax(1, speed) / 100.0;
 		else
 			s = 1.0 + ((speed-100) / 100.0) * 8.0;
 
@@ -132,8 +120,6 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 
 	connect(m_ctrl, &PlaybackController::canSaveFrameChanged, m_ui->saveFrame, &QPushButton::setEnabled);
 
-	rebuildMarkerMenu();
-
 	// Automatically try to load the index
 	QTimer::singleShot(0, m_ctrl, &PlaybackController::loadIndex);
 #endif
@@ -151,7 +137,7 @@ PlaybackDialog::~PlaybackDialog()
  */
 void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 {
-	qInfo() << "playback at" << pos;
+	qDebug() << "playback at" << pos << "interval" << interval;
 	m_awaiting = false;
 	if(pos < 0) {
 		// Negative number means we've reached the end of the recording
@@ -167,7 +153,6 @@ void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 	}
 
 	if(pos >=0 && m_autoplay) {
-
 		if(interval > 0) {
 			const auto elapsed = m_lastInterval.elapsed();
 			m_lastInterval.restart();
@@ -214,8 +199,6 @@ void PlaybackDialog::onIndexLoaded()
 	m_ui->noIndexReason->hide();
 
 	m_ui->filmStrip->setLoadImageFn(std::bind(&PlaybackController::getIndexThumbnail, m_ctrl, std::placeholders::_1));
-
-	rebuildMarkerMenu();
 #endif
 }
 
@@ -321,46 +304,11 @@ void PlaybackDialog::keyPressEvent(QKeyEvent *event)
 	event->ignore();
 }
 
-void PlaybackDialog::rebuildMarkerMenu()
-{
-#if 0
-	m_markers->clear();
-	QAction *stopOnMarkers = m_markers->addAction(tr("Stop on markers"));
-	stopOnMarkers->setCheckable(true);
-	stopOnMarkers->setChecked(true);
-	connect(stopOnMarkers, &QAction::triggered, m_ctrl, &PlaybackController::setStopOnMarkers);
-
-	m_markers->addSeparator();
-
-	QStringList markers = m_ctrl->getMarkers();
-	if(markers.isEmpty()) {
-		QAction *a = m_markers->addAction(tr("No indexed markers"));
-		a->setEnabled(false);
-
-	} else {
-		for(int i=0;i<markers.size();++i) {
-			QAction *a = m_markers->addAction(markers.at(i));
-			a->setProperty("markeridx", i);
-		}
-	}
-#endif
-}
-
-void PlaybackDialog::onMarkerMenuTriggered(QAction *a)
-{
-#if 0
-	QVariant idx = a->property("markeridx");
-	if(idx.isValid())
-		m_ctrl->jumpToMarker(idx.toInt());
-#endif
-}
-
 void PlaybackDialog::onVideoExportClicked()
 {
 #if 0
 	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
-
-	VideoExporter *ve=0;
+	VideoExporter *ve=nullptr;
 	while(!ve) {
 		if(dialog->exec() != QDialog::Accepted)
 			return;
@@ -371,6 +319,7 @@ void PlaybackDialog::onVideoExportClicked()
 	m_ctrl->startVideoExport(ve);
 #endif
 }
+
 
 void PlaybackDialog::onVideoExportStarted()
 {

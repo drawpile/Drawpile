@@ -1267,8 +1267,6 @@ void MainWindow::setRecorderStatus(bool on)
 			recordAction->setText(tr("Record..."));
 			recordAction->setIcon(icon::fromTheme("media-record"));
 		}
-
-		getAction("toolmarker")->setEnabled(on);
 	}
 }
 
@@ -2111,17 +2109,6 @@ void MainWindow::changeCanvasBackground()
 	dlg->show();
 }
 
-void MainWindow::markSpotForRecording()
-{
-	bool ok;
-	QString text = QInputDialog::getText(this, tr("Mark"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
-	if(ok) {
-		net::EnvelopeBuilder eb;
-		rustpile::write_marker(eb, 0, reinterpret_cast<const uint16_t*>(text.constData()), text.length());
-		m_doc->client()->sendEnvelope(eb.toEnvelope());
-	}
-}
-
 void MainWindow::about()
 {
 #ifdef BUILD_LABEL
@@ -2706,9 +2693,6 @@ void MainWindow::setupActions()
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Select (Free-Form)")).icon("edit-select-lasso").statusTip(tr("Select a free-form area for copying")).shortcut("D").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("zoom-select").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
-	QAction *markertool = makeAction("toolmarker", tr("&Mark")).icon("flag-red").statusTip(tr("Leave a marker to find this spot on the recording")).shortcut("Ctrl+M");
-
-	connect(markertool, &QAction::triggered, this, &MainWindow::markSpotForRecording);
 
 	m_drawingtools->addAction(freehandtool);
 	m_drawingtools->addAction(erasertool);
@@ -2727,7 +2711,6 @@ void MainWindow::setupActions()
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(m_drawingtools->actions());
-	toolsmenu->addAction(markertool);
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 

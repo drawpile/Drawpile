@@ -149,7 +149,6 @@ private slots:
 
 	void resizeCanvas();
 	void changeCanvasBackground();
-	void markSpotForRecording();
 
 	void toolChanged(tools::Tool::Type tool);
 

@@ -59,23 +59,17 @@ private slots:
 	void onIndexLoaded();
 	void onIndexLoadError(const QString&, bool);
 	void onBuildIndexClicked();
-	void onMarkerMenuTriggered(QAction *a);
 	void onVideoExportClicked();
 	void onVideoExportStarted();
 	void onVideoExportEnded();
 
-
 private:
-	void rebuildMarkerMenu();
-
 	Ui_PlaybackDialog *m_ui;
 	canvas::PaintEngine *m_paintengine;
 
 	QTimer *m_autoStepTimer;
 	QElapsedTimer m_lastInterval;
 	float m_speedFactor;
-
-	QMenu *m_markers;
 
 	bool m_autoplay;
 	bool m_awaiting;
