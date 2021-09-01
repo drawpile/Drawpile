@@ -90,8 +90,6 @@ type ChatCallback = Option<
 >;
 type LaserCallback =
     Option<extern "C" fn(ctx: *mut c_void, user: UserID, persistence: u8, color: u32)>;
-type MarkerCallback =
-    Option<extern "C" fn(ctx: *mut c_void, user: UserID, message: *const u8, message_len: usize)>;
 type DefaultLayerCallback = Option<extern "C" fn(ctx: *mut c_void, layer: LayerID)>;
 type AclChangeCallback = Option<extern "C" fn(ctx: *mut c_void, changes: AclChange)>;
 type RecordingStateCallback = Option<extern "C" fn(ctx: *mut c_void, recording: bool)>;
@@ -171,7 +169,6 @@ pub struct PaintEngine {
     meta_notify_leave: LeaveCallback,
     meta_notify_chat: ChatCallback,
     meta_notify_laser: LaserCallback,
-    meta_notify_marker: MarkerCallback,
     meta_notify_defaultlayer: DefaultLayerCallback,
     state_notify_aclchange: AclChangeCallback,
     state_notify_recording: RecordingStateCallback,
@@ -341,7 +338,6 @@ pub extern "C" fn paintengine_new(
         meta_notify_leave: None,
         meta_notify_chat: None,
         meta_notify_laser: None,
-        meta_notify_marker: None,
         meta_notify_defaultlayer: None,
         state_notify_aclchange: None,
         state_notify_recording: None,
@@ -374,7 +370,6 @@ pub extern "C" fn paintengine_register_meta_callbacks(
     leave: LeaveCallback,
     chat: ChatCallback,
     laser: LaserCallback,
-    markers: MarkerCallback,
     defaultlayer: DefaultLayerCallback,
     aclchange: AclChangeCallback,
     recordingstate: RecordingStateCallback,
@@ -384,7 +379,6 @@ pub extern "C" fn paintengine_register_meta_callbacks(
     dp.meta_notify_leave = leave;
     dp.meta_notify_chat = chat;
     dp.meta_notify_laser = laser;
-    dp.meta_notify_marker = markers;
     dp.meta_notify_defaultlayer = defaultlayer;
     dp.state_notify_aclchange = aclchange;
     dp.state_notify_recording = recordingstate;
@@ -1404,11 +1398,6 @@ impl PaintEngine {
             MovePointer(u, m) => {
                 (self.notify_cursor)(self.context_object, u, 0, m.x, m.y);
             }
-            Marker(u, m) => {
-                if let Some(cb) = self.meta_notify_marker {
-                    (cb)(self.meta_context, u, m.as_ptr(), m.len());
-                }
-            }
             DefaultLayer(_, m) => {
                 if let Some(cb) = self.meta_notify_defaultlayer {
                     (cb)(self.meta_context, m);
@@ -1419,6 +1408,7 @@ impl PaintEngine {
 
             // Recording stuff:
             Interval(_, _) | Filtered(_, _) => (),
+            Marker(_, _) => (), // removed feature
         }
     }
 }

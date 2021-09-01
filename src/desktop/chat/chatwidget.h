@@ -55,9 +55,6 @@ public slots:
 	//! Display a received message
 	void receiveMessage(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message);
 
-	//! Display a received marker
-	void receiveMarker(int id, const QString &message);
-
 	//! Display a system message
 	void systemMessage(const QString& message, bool isAlert=false);
 

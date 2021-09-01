@@ -60,8 +60,6 @@ public:
 	Selection *selection() const { return m_selection; }
 	void setSelection(Selection *selection);
 
-	QImage toImage(bool withBackground=true, bool withSublayers=false) const;
-
 #if 0 // FIXME
 	protocol::MessageList generateSnapshot() const;
 #endif
@@ -79,15 +77,6 @@ public:
 	AclState *aclState() const { return m_aclstate; }
 	UserListModel *userlist() const { return m_userlist; }
 	LayerListModel *layerlist() const { return m_layerlist; }
-
-	/**
-	 * @brief Is the canvas in "online mode"?
-	 *
-	 * This mainly affects how certain access controls are checked.
-	 *
-	 * TODO remove this
-	 */
-	bool isOnline() const { return m_mode == Mode::Online; }
 
 	//! Open a recording file and start recording
 	bool startRecording(const QString &path);
@@ -145,14 +134,11 @@ signals:
 	void canvasInspectionEnded();
 
 	void chatMessageReceived(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message);
-	void markerMessageReceived(int id, const QString &message);
 
 	void laserTrail(uint8_t userId, int persistence, const QColor &color);
 
 	void userJoined(int id, const QString &name);
 	void userLeft(int id, const QString &name);
-
-	void canvasLocked(bool locked);
 
 	void recorderStateChanged(bool recording);
 
@@ -164,7 +150,6 @@ private:
 	friend void metaUserLeave(void *ctx, uint8_t user);
 	friend void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len);
 	friend void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
-	friend void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
 	friend void metaDefaultLayer(void *ctx, uint16_t layerId);
 	friend void metaAclChange(void *ctx, uint32_t changes);
 	friend void metaRecorderStateChanged(void *ctx, bool recording);
@@ -178,8 +163,6 @@ private:
 
 	QString m_title;
 	QString m_pinnedMessage;
-
-	enum class Mode { Offline, Online, Playback } m_mode;
 
 	uint8_t m_localUserId;
 };

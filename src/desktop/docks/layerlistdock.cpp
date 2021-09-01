@@ -194,7 +194,7 @@ void LayerList::updateLockedControls()
 	// Rest of the controls need a selection to work.
 	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
-	m_ui->lockButton->setEnabled(enabled || (m_canvas && !m_canvas->isOnline())); // layer lock is available in offline mode
+	m_ui->lockButton->setEnabled(enabled);
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
 		m_deleteLayerAction->setEnabled(enabled);

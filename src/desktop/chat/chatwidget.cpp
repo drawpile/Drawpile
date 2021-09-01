@@ -588,22 +588,6 @@ void ChatWidget::setPinnedMessage(const QString &message)
 	d->pinned->setPinText(message);
 }
 
-void ChatWidget::receiveMarker(int id, const QString &message)
-{
-	const bool wasAtEnd = d->isAtEnd();
-
-	d->publicChat().appendNotification(QStringLiteral(
-		"<img src=\"theme:flag-red.svg\"> %1: %2"
-		).arg(
-			d->usernameSpan(id),
-			htmlutils::linkify(message.toHtmlEscaped())
-		)
-	);
-
-	if(wasAtEnd)
-		d->scrollToEnd(0);
-}
-
 void ChatWidget::systemMessage(const QString& message, bool alert)
 {
 	Q_UNUSED(alert);

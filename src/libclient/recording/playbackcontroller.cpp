@@ -549,6 +549,7 @@ void PlaybackController::exportFrame(int count)
 		count = 1;
 
 	if(m_exporter) {
+#if 0 // FIXME
 		const QImage img = m_canvas->toImage(true, true);
 		if(!img.isNull()) {
 			Q_ASSERT(m_exporterReady);
@@ -556,6 +557,7 @@ void PlaybackController::exportFrame(int count)
 			emit canSaveFrameChanged(canSaveFrame());
 			m_exporter->saveFrame(img, count);
 		}
+#endif
 	} else {
 		qWarning("exportFrame(%d): exported not active!", count);
 	}

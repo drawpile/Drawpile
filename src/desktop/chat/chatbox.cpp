@@ -78,7 +78,6 @@ void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatWidget, &ChatWidget::receiveMessage);
 	connect(canvas, &canvas::CanvasModel::pinnedMessageChanged, m_chatWidget, &ChatWidget::setPinnedMessage);
-	connect(canvas, &canvas::CanvasModel::markerMessageReceived, m_chatWidget, &ChatWidget::receiveMarker);
 	connect(canvas, &canvas::CanvasModel::userJoined, m_chatWidget, &ChatWidget::userJoined);
 	connect(canvas, &canvas::CanvasModel::userLeft, m_chatWidget, &ChatWidget::userParted);
 }

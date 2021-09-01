@@ -212,8 +212,6 @@ using ChatCallback = void(*)(void *ctx, UserID sender, UserID recipient, uint8_t
 
 using LaserCallback = void(*)(void *ctx, UserID user, uint8_t persistence, uint32_t color);
 
-using MarkerCallback = void(*)(void *ctx, UserID user, const uint8_t *message, uintptr_t message_len);
-
 using DefaultLayerCallback = void(*)(void *ctx, LayerID layer);
 
 using AclChange = uint32_t;
@@ -517,7 +515,6 @@ void paintengine_register_meta_callbacks(PaintEngine *dp,
                                          LeaveCallback leave,
                                          ChatCallback chat,
                                          LaserCallback laser,
-                                         MarkerCallback markers,
                                          DefaultLayerCallback defaultlayer,
                                          AclChangeCallback aclchange,
                                          RecordingStateCallback recordingstate);
@@ -635,7 +632,9 @@ bool paintengine_get_layer_content(const PaintEngine *dp,
 /// Get the number of frames in the layerstack
 ///
 /// When the layerstack is treated as an animation,
-/// each non-fixed layer is treated as a frame
+/// each non-fixed layer is treated as a frame, therefore
+/// the number of frames can be less than the number of layers
+/// in the stack.
 uintptr_t paintengine_get_frame_count(const PaintEngine *dp);
 
 /// Copy frame pixel data to the given buffer

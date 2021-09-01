@@ -37,18 +37,16 @@ void metaUserJoin(void *ctx, uint8_t user, uint8_t flags, const uint8_t *usernam
 void metaUserLeave(void *ctx, uint8_t user);
 void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len);
 void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
-void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len);
 void metaDefaultLayer(void *ctx, uint16_t layerId);
 void metaAclChange(void *ctx, uint32_t changes);
 void metaRecorderStateChanged(void *ctx, bool recording);
 
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
-	: QObject(parent), m_selection(nullptr), m_mode(Mode::Offline), m_localUserId(1)
+	: QObject(parent), m_selection(nullptr), m_localUserId(1)
 {
+	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
-
-	m_aclstate = new AclState(this);
 
 	connect(m_aclstate, &AclState::userBitsChanged, m_userlist, &UserListModel::updateAclState);
 
@@ -61,7 +59,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 		&metaUserLeave,
 		&metaChatMessage,
 		&metaLaserTrail,
-		&metaMarkerMessage,
 		&metaDefaultLayer,
 		&metaAclChange,
 		&metaRecorderStateChanged
@@ -122,7 +119,6 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 
 void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 {
-	Q_ASSERT(m_mode == Mode::Offline);
 	if(myUserId == 0) {
 		// Zero is a reserved "null" user ID
 		qWarning("connectedToServer: local user ID is zero!");
@@ -137,7 +133,6 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 		rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
 
 	m_userlist->reset();
-	m_mode = Mode::Online;
 }
 
 void CanvasModel::disconnectedFromServer()
@@ -145,13 +140,10 @@ void CanvasModel::disconnectedFromServer()
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
 	rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
-	m_mode = Mode::Offline;
 }
 
 void CanvasModel::startPlayback()
 {
-	Q_ASSERT(m_mode == Mode::Offline);
-	m_mode = Mode::Playback;
 #if 0 // FIXME
 	m_statetracker->setShowAllUserMarkers(true);
 #endif
@@ -159,7 +151,6 @@ void CanvasModel::startPlayback()
 
 void CanvasModel::endPlayback()
 {
-	Q_ASSERT(m_mode == Mode::Playback);
 #if 0 // FIXME
 	m_statetracker->setShowAllUserMarkers(false);
 	m_statetracker->endPlayback();
@@ -176,15 +167,6 @@ void CanvasModel::handleLocalCommand(const net::Envelope &envelope)
 {
 	m_layerlist->setAutoselectAny(false);
 	m_paintengine->receiveMessages(true, envelope);
-}
-
-QImage CanvasModel::toImage(bool withBackground, bool withSublayers) const
-{
-	// TODO include annotations or not?
-#if 0 // FIXME
-	return m_layerstack->toFlatImage(false, withBackground, withSublayers);
-#endif
-	return QImage();
 }
 
 #if 0 // FIXME
@@ -435,14 +417,6 @@ void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color
 	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
 
 	emit canvas->laserTrail(user, persistence, QColor::fromRgb(color));
-}
-
-void metaMarkerMessage(void *ctx, uint8_t user, const uint8_t *message, uintptr_t message_len)
-{
-	Q_ASSERT(ctx);
-	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
-
-	emit canvas->markerMessageReceived(user, QString::fromUtf8(reinterpret_cast<const char*>(message), message_len));
 }
 
 void metaDefaultLayer(void *ctx, uint16_t layerId)
