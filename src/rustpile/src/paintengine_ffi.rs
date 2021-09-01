@@ -40,7 +40,8 @@ use dpcore::protocol::{
 };
 
 use dpimpex;
-use dpimpex::{rec_reader, rec_writer};
+use dpimpex::rec::reader as rec_reader;
+use dpimpex::rec::writer as rec_writer;
 
 use core::ffi::c_void;
 use std::collections::HashMap;
