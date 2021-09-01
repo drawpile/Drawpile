@@ -82,11 +82,14 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->addSpacing(4);
 	layout->addWidget(m_angleBox);
 
+	m_angleBox->addItem(QStringLiteral("-135°"));
 	m_angleBox->addItem(QStringLiteral("-90°"));
 	m_angleBox->addItem(QStringLiteral("-45°"));
 	m_angleBox->addItem(QStringLiteral("0°"));
 	m_angleBox->addItem(QStringLiteral("45°"));
 	m_angleBox->addItem(QStringLiteral("90°"));
+	m_angleBox->addItem(QStringLiteral("135°"));
+	m_angleBox->addItem(QStringLiteral("180°"));
 	m_angleBox->setEditText(QStringLiteral("0°"));
 
 	m_angleBox->lineEdit()->setValidator(
