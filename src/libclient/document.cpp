@@ -768,9 +768,7 @@ void Document::selectAll()
 		return;
 
 	canvas::Selection *selection = new canvas::Selection;
-#if 0 // FIXME
-	selection->setShapeRect(QRect(QPoint(), m_canvas->layerStack()->size()));
-#endif
+	selection->setShapeRect(QRect(QPoint(), m_canvas->size()));
 	selection->closeShape();
 	m_canvas->setSelection(selection);
 }
@@ -810,10 +808,8 @@ void Document::copyFromLayer(int layer)
 		};
 
 	} else {
-#if 0 // FIXME
-		QSize s = m_canvas->layerStack()->size();
+		const QSize s = m_canvas->size();
 		srcpos = QPoint(s.width()/2, s.height()/2);
-#endif
 	}
 
 	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());

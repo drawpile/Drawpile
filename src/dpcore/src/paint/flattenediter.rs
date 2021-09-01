@@ -22,7 +22,7 @@
 
 use super::aoe::{AoE, TileMap};
 use super::layerstack::{LayerStack, LayerViewOptions};
-use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
+use super::tile::{Tile, TileData, TILE_SIZE};
 
 pub struct FlattenedTileIterator<'a> {
     layerstack: &'a LayerStack,
@@ -102,8 +102,8 @@ impl<'a> Iterator for FlattenedTileIterator<'a> {
 
             if self.tilemap.as_ref().map_or(true, |tm| tm.is_set(i, j)) {
                 return Some((
-                    i as i32 * TILE_SIZEI,
-                    j as i32 * TILE_SIZEI,
+                    i as i32,
+                    j as i32,
                     self.layerstack.flatten_tile(i, j, self.opts),
                 ));
             }

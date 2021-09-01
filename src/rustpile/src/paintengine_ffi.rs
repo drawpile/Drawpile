@@ -29,6 +29,7 @@ use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
 use dpcore::paint::floodfill;
 use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
+use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
     AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
     LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID,
@@ -1321,7 +1322,7 @@ pub extern "C" fn paintengine_paint_changes(
     };
 
     FlattenedTileIterator::new(&vc.layerstack, &dp.view_opts, intersection)
-        .for_each(|(x, y, t)| paint_func(ctx, x, y, t.pixels.as_ptr() as *const u8));
+        .for_each(|(i, j, t)| paint_func(ctx, i * TILE_SIZEI, j * TILE_SIZEI, t.pixels.as_ptr() as *const u8));
 }
 
 impl PaintEngine {

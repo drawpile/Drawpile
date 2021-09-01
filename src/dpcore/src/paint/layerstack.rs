@@ -496,7 +496,7 @@ impl LayerStack {
             rect.into()
         ) {
             // This tile's bounding rectangle
-            let tilerect = Rectangle::new(i, j, TILE_SIZEI, TILE_SIZEI);
+            let tilerect = Rectangle::tile(i, j, TILE_SIZEI);
 
             // The rectangle of interest in the canvas
             let canvasrect = rect.intersected(&tilerect).unwrap();

@@ -215,7 +215,7 @@ impl Layer {
             };
 
             // This tile's bounding rectangle
-            let tilerect = Rectangle::new(i, j, TILE_SIZEI, TILE_SIZEI);
+            let tilerect = Rectangle::tile(i, j, TILE_SIZEI);
 
             // The rectangle of interest in the layer
             let layerrect = rect.intersected(&tilerect).unwrap();
