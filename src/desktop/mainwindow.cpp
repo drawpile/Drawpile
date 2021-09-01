@@ -967,7 +967,6 @@ void MainWindow::open(const QUrl& url)
 
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
-		qInfo() << "opening" << file;
 		if(recording::Reader::isRecordingExtension(file)) {
 			if(m_doc->loadRecording(file)) {
 				QFileInfo fileinfo(file);
@@ -1541,7 +1540,6 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 		return;
 	}
 
-	qInfo() << "logging back in to" << url;
 	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::Mode::Join, url, this);
 	auto *dlg = new dialogs::LoginDialog(login, this);
 	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);

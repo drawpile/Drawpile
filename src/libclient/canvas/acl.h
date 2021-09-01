@@ -21,6 +21,7 @@
 #define CANVAS_ACL_STATE_H
 
 #include <QObject>
+#include <QVector>
 
 namespace rustpile {
 	struct PaintEngine;

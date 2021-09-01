@@ -21,6 +21,7 @@
 
 #include <QByteArray>
 #include <QtEndian>
+#include <QPair>
 
 namespace net {
 
