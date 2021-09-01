@@ -32,9 +32,6 @@ namespace net {
 	class Envelope;
 
 }
-namespace paintcore {
-	class Layer;
-}
 
 namespace canvas {
 
@@ -76,7 +73,7 @@ Q_DECLARE_TYPEINFO(canvas::LayerListItem, Q_MOVABLE_TYPE);
 
 namespace canvas {
 
-typedef std::function<const paintcore::Layer*(int id)> GetLayerFunction;
+typedef std::function<QImage(int id)> GetLayerFunction;
 
 class LayerListModel : public QAbstractListModel {
 	Q_OBJECT
@@ -115,7 +112,8 @@ public:
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
 	void setAclState(AclState *state) { m_aclstate = state; }
-	const paintcore::Layer *getLayerData(uint16_t id) const;
+
+	QImage getLayerImage(uint16_t id) const;
 
 	/**
 	 * Enable/disable any (not just own) layer autoselect requests

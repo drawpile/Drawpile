@@ -201,6 +201,28 @@ int PaintEngine::frameCount() const
 	return rustpile::paintengine_get_frame_count(m_pe);
 }
 
+QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
+{
+	rustpile::Rectangle r;
+	if(rect.isEmpty()) {
+		r = rustpile::paintengine_get_layer_bounds(m_pe, id);
+		if(r.w <= 0)
+			return QImage();
+
+	} else {
+		r = {rect.x(), rect.y(), rect.width(), rect.height()};
+	}
+
+	QImage img(r.w, r.h, QImage::Format_ARGB32_Premultiplied);
+	img.fill(0);
+
+	if(!rustpile::paintengine_get_layer_content(m_pe, id, r, img.bits())) {
+		return QImage();
+	}
+
+	return img;
+}
+
 QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 {
 	rustpile::Rectangle r;

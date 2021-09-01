@@ -122,7 +122,7 @@ mod tests {
         let opts = LayerViewOptions::default();
         let mut i = FlattenedTileIterator::new(&ls, &opts, AoE::Everything);
 
-        let expected = [(0, 0), (64, 0), (0, 64), (64, 64)];
+        let expected = [(0, 0), (1, 0), (0, 1), (1, 1)];
 
         for ex in &expected {
             let r = i.next().unwrap();
@@ -138,7 +138,7 @@ mod tests {
         let mut i =
             FlattenedTileIterator::new(&ls, &opts, AoE::Bounds(Rectangle::new(100, 100, 64, 64)));
 
-        let expected = [(64, 64), (128, 64), (64, 128), (128, 128)];
+        let expected = [(1, 1), (2, 1), (1, 2), (2, 2)];
 
         for ex in &expected {
             let r = i.next().unwrap();
@@ -157,7 +157,7 @@ mod tests {
         tm.tiles.set(12, true);
         let mut i = FlattenedTileIterator::new(&ls, &opts, AoE::Bitmap(tm));
 
-        let expected = [(0, 0), (64, 64), (128, 128)];
+        let expected = [(0, 0), (1, 1), (2, 2)];
 
         for ex in &expected {
             let r = i.next().unwrap();

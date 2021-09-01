@@ -622,6 +622,11 @@ Color paintengine_sample_color(const PaintEngine *dp,
 ///
 LayerID paintengine_pick_layer(const PaintEngine *dp, int32_t x, int32_t y);
 
+/// Find the bounding rectangle of the layer's content
+///
+/// Returns a zero rectangle if entire layer is blank
+Rectangle paintengine_get_layer_bounds(const PaintEngine *dp, LayerID layer_id);
+
 /// Copy layer pixel data to the given buffer
 ///
 /// The rectangle must be contained within the layer bounds.

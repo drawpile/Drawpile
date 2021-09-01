@@ -65,6 +65,9 @@ public:
 	//! Get the number of frames in an animated canvas
 	int frameCount() const;
 
+	//! Get a layer as an image
+	QImage getLayerImage(int id, const QRect &rect=QRect()) const;
+
 	//! Render a frame
 	QImage getFrameImage(int index, const QRect &rect=QRect()) const;
 

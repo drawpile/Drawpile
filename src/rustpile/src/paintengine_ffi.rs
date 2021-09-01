@@ -903,6 +903,23 @@ pub extern "C" fn paintengine_pick_layer(dp: &PaintEngine, x: i32, y: i32) -> La
     vc.layerstack.pick_layer(x, y)
 }
 
+/// Find the bounding rectangle of the layer's content
+///
+/// Returns a zero rectangle if entire layer is blank
+#[no_mangle]
+pub extern "C" fn paintengine_get_layer_bounds(dp: &PaintEngine, layer_id: LayerID) -> Rectangle {
+    let vc = dp.viewcache.lock().unwrap();
+
+    if let Some(layer) = vc.layerstack.get_layer(layer_id) {
+        if let Some(r) = layer.find_bounds() {
+            return r;
+        }
+    }
+
+    Rectangle{x: 0, y: 0, w: 0, h: 0}
+}
+
+
 /// Copy layer pixel data to the given buffer
 ///
 /// The rectangle must be contained within the layer bounds.

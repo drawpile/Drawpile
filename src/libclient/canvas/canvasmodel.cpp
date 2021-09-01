@@ -69,12 +69,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
 
 	m_layerlist->setAclState(m_aclstate);
-	m_layerlist->setLayerGetter([this](int id)->const paintcore::Layer* {
-#if 0 // FIXME
-		return m_layerstack->getLayer(id);
-#endif
-		return nullptr;
-	});
+	m_layerlist->setLayerGetter([this](int id)->QImage { return m_paintengine->getLayerImage(id); });
 
 	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
 	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);

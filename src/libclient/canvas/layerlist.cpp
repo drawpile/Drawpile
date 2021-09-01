@@ -308,11 +308,11 @@ void LayerListModel::setDefaultLayer(uint16_t id)
 	}
 }
 
-const paintcore::Layer *LayerListModel::getLayerData(uint16_t id) const
+QImage LayerListModel::getLayerImage(uint16_t id) const
 {
 	if(m_getlayerfn)
 		return m_getlayerfn(id);
-	return nullptr;
+	return QImage();
 }
 
 void LayerListModel::previewOpacityChange(uint16_t id, float opacity)
@@ -329,11 +329,7 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 {
 	Q_UNUSED(mimeType);
 	if(type==QVariant::Image) {
-#if 0 // TODO
-		const paintcore::Layer *layer = m_source->getLayerData(m_id);
-		if(layer)
-			return layer->toCroppedImage(nullptr, nullptr);
-#endif
+		return m_source->getLayerImage(m_id);
 	}
 
 	return QVariant();

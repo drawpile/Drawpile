@@ -27,7 +27,7 @@ use std::sync::Arc;
 use super::aoe::{AoE, TileMap};
 use super::blendmode::Blendmode;
 use super::brushmask::BrushMask;
-use super::color::{Color, Pixel, ZERO_PIXEL};
+use super::color::{Color, Pixel};
 use super::rasterop::tint_pixels;
 use super::rect::{Rectangle, Size};
 use super::rectiter::{MutableRectIterator, RectIterator};
@@ -131,11 +131,12 @@ impl Layer {
         layer
     }
 
-    /// Get a cropped image
+    /// Find the bounding rectangle of the tile content
     ///
-    /// For efficiency, the image is cropped at tile boundaries.
-    /// Returns: (image, x coordinate, y coordinate)
-    pub fn to_cropped_image(&self) -> (Image, i32, i32) {
+    /// Note: presently this is done at tile boundary resolution
+    /// for simplicity. May be updated to find the tight bounds
+    /// in the future.
+    pub fn find_bounds(&self) -> Option<Rectangle> {
         // Find bounding rectangle of non-blank tiles
         let xtiles = Tile::div_up(self.width) as usize;
         let ytiles = Tile::div_up(self.height) as usize;
@@ -156,40 +157,15 @@ impl Layer {
         }
 
         if top == ytiles {
-            return (Image::default(), 0, 0);
+            None
+        } else {
+            Rectangle::new(
+                left as i32 * TILE_SIZEI,
+                top as i32 * TILE_SIZEI,
+                (right-left+1) as i32 * TILE_SIZEI,
+                (btm-top+1) as i32 * TILE_SIZEI,
+            ).cropped(self.size())
         }
-
-        // Copy tiles to image
-        let tw = TILE_SIZE as usize;
-        let width = (right - left + 1) * tw;
-        let height = (btm - top + 1) * tw;
-        let mut image = vec![ZERO_PIXEL; width * height];
-        for y in top..=btm {
-            for x in left..=right {
-                match &self.tiles[y * xtiles + x] {
-                    Tile::Bitmap(td) => {
-                        for line in 0..tw {
-                            let dest_offset = ((y - top) * tw + line) * width + (x - left) * tw;
-                            let src_offset = line * tw;
-
-                            image[dest_offset..dest_offset + tw]
-                                .copy_from_slice(&td.pixels[src_offset..src_offset + tw]);
-                        }
-                    }
-                    Tile::Blank => {}
-                }
-            }
-        }
-
-        (
-            Image {
-                pixels: image,
-                width,
-                height,
-            },
-            (left * tw) as i32,
-            (top * tw) as i32,
-        )
     }
 
     /// Copy pixels from the given rectangle to the pixel slice
@@ -257,6 +233,22 @@ impl Layer {
 
         self.to_pixels(rect, &mut img.pixels).unwrap();
         Ok(img)
+    }
+
+    /// Get an automatically cropped copy of the layer content
+    pub fn to_cropped_image(&self) -> (Image, i32, i32) {
+        let crop = match self.find_bounds() {
+            Some(r) => r,
+            None => {
+                return (Image::default(), 0, 0)
+            }
+        };
+
+        (
+            self.to_image(crop).unwrap(),
+            crop.x,
+            crop.y,
+        )
     }
 
     /// Get mutable access to a sublayer with the given ID
