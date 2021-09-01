@@ -23,6 +23,7 @@
 #include "acl.h"
 #include "selection.h"
 #include "paintengine.h"
+#include "net/envelopebuilder.h"
 
 #include "utils/identicon.h"
 #include "../rustpile/rustpile.h"
@@ -169,17 +170,21 @@ void CanvasModel::handleLocalCommand(const net::Envelope &envelope)
 	m_paintengine->receiveMessages(true, envelope);
 }
 
-#if 0 // FIXME
-protocol::MessageList CanvasModel::generateSnapshot() const
+net::Envelope CanvasModel::generateSnapshot() const
 {
+	net::EnvelopeBuilder eb;
 
-	auto loader = SnapshotLoader(m_statetracker->localId(), m_layerstack, m_aclfilter);
-	loader.setDefaultLayer(m_layerlist->defaultLayer());
-	loader.setPinnedMessage(m_pinnedMessage);
-	return loader.loadInitCommands();
-	return protocol::MessageList();
+	if(!m_pinnedMessage.isEmpty()) {
+		rustpile::write_chat(eb, m_localUserId, 0, rustpile::ChatMessage_OFLAGS_PIN, reinterpret_cast<const uint16_t*>(m_pinnedMessage.constData()), m_pinnedMessage.length());
+	}
+
+	if(m_layerlist->defaultLayer() > 0)
+		rustpile::write_defaultlayer(eb, 0, m_layerlist->defaultLayer());
+
+	rustpile::paintengine_get_reset_snapshot(m_paintengine->engine(), eb);
+
+	return eb.toEnvelope();
 }
-#endif
 
 void CanvasModel::pickLayer(int x, int y)
 {
@@ -319,11 +324,7 @@ void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
 void CanvasModel::resetCanvas()
 {
 	setTitle(QString());
-#if 0 // FIXME
-	m_layerstack->editor(0).reset();
-	m_statetracker->reset();
-	m_aclfilter->reset(m_statetracker->localId(), false);
-#endif
+	rustpile::paintengine_reset_canvas(m_paintengine->engine());
 }
 
 bool CanvasModel::startRecording(const QString &path)

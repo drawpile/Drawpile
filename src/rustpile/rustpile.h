@@ -532,6 +532,9 @@ bool paintengine_receive_messages(PaintEngine *dp,
 /// Clean up the paint engine state after disconnecting from a session
 bool paintengine_cleanup(PaintEngine *dp);
 
+/// Reset the canvas in preparation of receiving a reset image
+void paintengine_reset_canvas(PaintEngine *dp);
+
 /// Reset the ACL filter back to local (non-networked) operating mode
 void paintengine_reset_acl(PaintEngine *dp, UserID local_user);
 
@@ -649,6 +652,9 @@ bool paintengine_get_frame_content(const PaintEngine *dp,
                                    uintptr_t index,
                                    Rectangle rect,
                                    uint8_t *pixels);
+
+/// Get a snapshot of the canvas state to use as a reset image
+void paintengine_get_reset_snapshot(PaintEngine *dp, MessageWriter *writer);
 
 const UserACLs *paintengine_get_acl_users(const PaintEngine *dp);
 

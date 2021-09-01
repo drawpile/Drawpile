@@ -1382,9 +1382,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setTitle(dlg->getTitle());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
 	if(useremote) {
-#if 0 // FIXME
 		login->setInitialState(m_doc->canvas()->generateSnapshot());
-#endif
 	}
 
 	(new dialogs::LoginDialog(login, this))->show();

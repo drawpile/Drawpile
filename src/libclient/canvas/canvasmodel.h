@@ -60,9 +60,7 @@ public:
 	Selection *selection() const { return m_selection; }
 	void setSelection(Selection *selection);
 
-#if 0 // FIXME
-	protocol::MessageList generateSnapshot() const;
-#endif
+	net::Envelope generateSnapshot() const;
 
 	uint8_t localUserId() const { return m_localUserId; }
 
@@ -100,14 +98,19 @@ public:
 	 */
 	void previewAnnotation(int id, const QRect &shape);
 
+	/**
+	 * Reset the canvas to a blank state, as if the client had just joined a session.
+	 *
+	 * This is used to prepare the canvas to receive session reset data.
+	 */
+	void resetCanvas();
+
 public slots:
 	//! Handle a meta/command message received from the server
 	void handleCommand(const net::Envelope &cmd);
 
 	//! Handle a local drawing command (will be put in the local fork)
 	void handleLocalCommand(const net::Envelope &cmd);
-
-	void resetCanvas();
 
 	void pickLayer(int x, int y);
 	void pickColor(int x, int y, int layer, int diameter=0);

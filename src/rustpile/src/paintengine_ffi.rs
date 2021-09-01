@@ -492,6 +492,24 @@ pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) -> bool {
     true
 }
 
+/// Reset the canvas in preparation of receiving a reset image
+#[no_mangle]
+pub extern "C" fn paintengine_reset_canvas(dp: &mut PaintEngine) {
+    dp.aclfilter = AclFilter::new();
+
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::ReplaceCanvas(Box::new(LayerStack::new(0, 0))))
+    {
+        warn!(
+            "Couldn't send reset canvas command to paint engine thread {:?}",
+            err
+        );
+    }
+
+    if let Some(cb) = dp.state_notify_aclchange {
+        (cb)(dp.meta_context, 0xff);
+    }
+}
+
 /// Reset the ACL filter back to local (non-networked) operating mode
 #[no_mangle]
 pub extern "C" fn paintengine_reset_acl(dp: &mut PaintEngine, local_user: UserID) {
@@ -967,6 +985,21 @@ pub extern "C" fn paintengine_get_frame_content(
     vc.layerstack.to_pixels(rect, &opts, pixel_slice).is_ok()
 }
 
+/// Get a snapshot of the canvas state to use as a reset image
+#[no_mangle]
+pub extern "C" fn paintengine_get_reset_snapshot(
+    dp: &mut PaintEngine,
+    writer: &mut MessageWriter,
+) {
+    let snapshot = {
+        let vc = dp.viewcache.lock().unwrap();
+        make_canvas_snapshot(1, &vc.layerstack, 0, Some(&dp.aclfilter))
+    };
+
+    for msg in snapshot {
+        msg.write(writer);
+    }
+}
 
 #[no_mangle]
 pub extern "C" fn paintengine_get_acl_users<'a>(dp: &'a PaintEngine) -> &'a UserACLs {

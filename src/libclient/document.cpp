@@ -632,13 +632,15 @@ void Document::sendOpword(const QString &opword)
 /**
  * @brief Generate a reset snapshot and send a reset request
  *
- * @param resetImage If not empty, this reset image will be used
- * @return true on success
+ * The reset image will be sent when the server acknowledges the request.
+ * If an empty reset image is given here, one will be generated just in time.
  */
 void Document::sendResetSession(const net::Envelope &resetImage)
 {
 	if(resetImage.isEmpty()) {
-		qInfo("Sending session reset request. Reset snapshot will be prepared when ready.");
+		qInfo("Sending session reset request. (Just in time snapshot)");
+	} else {
+		qInfo("Sending session reset request. (Snapshot size is %d bytes)", resetImage.length());
 	}
 
 	m_resetstate = resetImage;
@@ -696,38 +698,29 @@ void Document::snapshotNeeded()
 	// (We) requested a session reset and the server is now ready for it.
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
-			qInfo("Generating snapshot for session reset...");
-#if 0 // FIXME
-			if(m_canvas->layerStack()->size().isEmpty()) {
-				qWarning("Canvas has no size! Cannot generate reset snapshot!");
-				m_client->sendMessage(net::command::serverCommand("init-cancel"));
-				return;
-			}
-			 auto loader = canvas::SnapshotLoader(
-				m_client->myId(),
-				m_canvas->layerStack(),
-				m_canvas->aclFilter());
-			 loader.setDefaultLayer(m_canvas->layerlist()->defaultLayer());
-			 loader.setPinnedMessage(m_canvas->pinnedMessage());
+			qInfo("Generating a just-in-time snapshot for session reset...");
+			m_resetstate = m_canvas->generateSnapshot();
 
-			 m_resetstate = loader.loadInitCommands();
-#endif
-		}
-
-		// Size limit check. The server will kick us if we send an oversized reset.
-		if(m_sessionHistoryMaxSize>0) {
-			if(m_resetstate.length() > m_sessionHistoryMaxSize) {
-				qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
-				emit autoResetTooLarge(m_sessionHistoryMaxSize);
-				m_resetstate = net::Envelope();
+			if(m_resetstate.isEmpty()) {
+				qWarning("Just-in-time snapshot has zero size!");
 				m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
 				return;
 			}
 		}
 
-		m_client->sendEnvelope(net::ServerCommand::make("init-begin"));
+		// Size limit check. The server will kick us if we send an oversized reset.
+		if(m_sessionHistoryMaxSize>0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
+			qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
+			emit autoResetTooLarge(m_sessionHistoryMaxSize);
+			m_resetstate = net::Envelope();
+			m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
+			return;
+		}
+
+		// Send the reset command+image
+		m_client->sendResetEnvelope(net::ServerCommand::make("init-begin"));
 		m_client->sendResetEnvelope(m_resetstate);
-		m_client->sendEnvelope(net::ServerCommand::make("init-complete"));
+		m_client->sendResetEnvelope(net::ServerCommand::make("init-complete"));
 
 		m_resetstate = net::Envelope();
 
