@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -352,6 +352,16 @@ impl CanvasState {
             .fold(AoE::Nothing, |aoe, l| {
                 aoe.merge(editlayer::merge_all_sublayers(Arc::make_mut(l)))
             })
+    }
+
+    /// Clear out all undo history
+    ///
+    /// This is used when soft resetting to synchronize a common
+    /// new starting point for session history. Without this, a new
+    /// client's session state can get out of sync with the rest if
+    /// an undo is used that passes the soft reset snapshot point.
+    pub fn truncate_history(&mut self) {
+        self.history.truncate();
     }
 
     fn handle_message(&mut self, msg: &CommandMessage) -> CanvasStateChange {

@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -260,6 +260,12 @@ impl History {
     /// Return the sequence number of the last message
     pub fn end(&self) -> u32 {
         self.sequence
+    }
+
+    // Clear out undo history
+    pub fn truncate(&mut self) {
+        self.history.clear();
+        self.savepoints.clear();
     }
 }
 

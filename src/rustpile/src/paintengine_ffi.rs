@@ -128,6 +128,7 @@ enum PaintEngineCommand {
     RemovePreview(LayerID),
     ReplaceCanvas(Box<LayerStack>),
     PlaybackPaused(i64, u32), // triggers PlaybackCallback
+    TruncateHistory,
     Cleanup,
 }
 
@@ -216,6 +217,9 @@ fn run_paintengine(
                 }
                 PlaybackPaused(pos, interval) => {
                     (callbacks.notify_playback)(callbacks.context_object, pos, interval);
+                }
+                TruncateHistory => {
+                    canvas.truncate_history();
                 }
                 Cleanup => {
                     canvas.cleanup();
@@ -1320,10 +1324,14 @@ impl PaintEngine {
                     );
                 }
             }
-            SoftReset(u) => {
-                // TODO
-                // Send truncate point
-                // Send softreset point if u is local user
+            SoftReset(_) => {
+                // The (soft) reset point is the beginning of the new history
+                if let Err(err) = self.engine_channel.send(PaintEngineCommand::TruncateHistory) {
+                    warn!("Couldn't send command to paint engine thread {:?}", err);
+                }
+
+                // TODO support Thick Server. Send a soft reset trigger command
+                // if this user is the resetter.
             }
 
             // Handled by the ACL filter:
