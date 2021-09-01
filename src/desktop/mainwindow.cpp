@@ -1238,12 +1238,10 @@ void MainWindow::exportTemplate()
 
 void MainWindow::showFlipbook()
 {
-#if 0 // FIXME
 	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
 	fp->setAttribute(Qt::WA_DeleteOnClose);
-	fp->setLayers(m_doc->canvas()->layerStack());
+	fp->setPaintEngine(m_doc->canvas()->paintEngine());
 	fp->show();
-#endif
 }
 
 void MainWindow::setRecorderStatus(bool on)

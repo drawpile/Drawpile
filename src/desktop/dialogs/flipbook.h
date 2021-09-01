@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ class Ui_Flipbook;
 
 class QTimer;
 
-namespace paintcore {
-	class LayerStack;
+namespace canvas {
+	class PaintEngine;
 }
 
 namespace dialogs {
@@ -41,7 +41,7 @@ public:
 	explicit Flipbook(QWidget *parent=nullptr);
 	~Flipbook();
 
-	void setLayers(paintcore::LayerStack *layers);
+	void setPaintEngine(canvas::PaintEngine *pe);
 
 private slots:
 	void loadFrame();
@@ -57,7 +57,7 @@ private:
 
 	Ui_Flipbook *m_ui;
 
-	paintcore::LayerStack *m_layers;
+	canvas::PaintEngine *m_paintengine;
 	QList<QPixmap> m_frames;
 	QTimer *m_timer;
 	QRect m_crop;

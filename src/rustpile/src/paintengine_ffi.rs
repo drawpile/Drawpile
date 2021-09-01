@@ -910,14 +910,68 @@ pub extern "C" fn paintengine_get_layer_content(
     if let Some(layer) = vc.layerstack.get_layer(layer_id) {
         let pixel_slice =
             unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
-        match layer.to_pixels(rect, pixel_slice) {
-            Ok(_) => true,
-            Err(_) => false,
-        }
+        layer.to_pixels(rect, pixel_slice).is_ok()
+
     } else {
         false
     }
 }
+
+/// Get the number of frames in the layerstack
+///
+/// When the layerstack is treated as an animation,
+/// each non-fixed layer is treated as a frame, therefore
+/// the number of frames can be less than the number of layers
+/// in the stack.
+#[no_mangle]
+pub extern "C" fn paintengine_get_frame_count(
+    dp: &PaintEngine
+) -> usize {
+    let vc = dp.viewcache.lock().unwrap();
+
+    vc.layerstack.iter_layers().filter(|l| !l.fixed).count()
+}
+
+/// Copy frame pixel data to the given buffer
+///
+/// This works like paintengine_get_layer_content, with two
+/// differences:
+///
+///  * frame index is used instead of layer ID
+///  * background is composited
+///  * fixed layers are composited
+#[no_mangle]
+pub extern "C" fn paintengine_get_frame_content(
+    dp: &PaintEngine,
+    index: usize,
+    rect: Rectangle,
+    pixels: *mut u8,
+) -> bool {
+    let vc = dp.viewcache.lock().unwrap();
+    if !rect.in_bounds(vc.layerstack.size()) {
+        return false;
+    }
+
+    let pixel_slice =
+            unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
+
+    let mut frames = index + 1;
+    let mut frame_index = 0;
+    for (idx, layer) in vc.layerstack.iter_layers().enumerate() {
+        if !layer.fixed {
+            frames -= 1;
+            if frames == 0 {
+                frame_index = idx;
+                break;
+            }
+        }
+    }
+
+    let opts = LayerViewOptions::solo(frame_index);
+
+    vc.layerstack.to_pixels(rect, &opts, pixel_slice).is_ok()
+}
+
 
 #[no_mangle]
 pub extern "C" fn paintengine_get_acl_users<'a>(dp: &'a PaintEngine) -> &'a UserACLs {

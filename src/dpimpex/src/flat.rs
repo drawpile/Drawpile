@@ -29,7 +29,7 @@ use image::{AnimationDecoder, ImageDecoder};
 
 use super::conv::{from_dpimage, to_dpimage};
 use crate::{ImageExportResult, ImageImportResult};
-use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
+use dpcore::paint::layerstack::{LayerFill, LayerInsertion, LayerViewOptions};
 use dpcore::paint::{editlayer, Blendmode, Color, LayerStack, Rectangle};
 
 /// Load a flat image (an image that does not have layers)
@@ -100,7 +100,7 @@ pub fn load_gif_animation(path: &Path) -> ImageImportResult {
 }
 
 pub fn save_flat_image(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
-    let img = from_dpimage(&layerstack.to_image());
+    let img = from_dpimage(&layerstack.to_image(&LayerViewOptions::default()));
 
     img.save(path)?;
     Ok(())

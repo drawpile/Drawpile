@@ -632,6 +632,25 @@ bool paintengine_get_layer_content(const PaintEngine *dp,
                                    Rectangle rect,
                                    uint8_t *pixels);
 
+/// Get the number of frames in the layerstack
+///
+/// When the layerstack is treated as an animation,
+/// each non-fixed layer is treated as a frame
+uintptr_t paintengine_get_frame_count(const PaintEngine *dp);
+
+/// Copy frame pixel data to the given buffer
+///
+/// This works like paintengine_get_layer_content, with two
+/// differences:
+///
+///  * frame index is used instead of layer ID
+///  * background is composited
+///  * fixed layers are composited
+bool paintengine_get_frame_content(const PaintEngine *dp,
+                                   uintptr_t index,
+                                   Rectangle rect,
+                                   uint8_t *pixels);
+
 const UserACLs *paintengine_get_acl_users(const PaintEngine *dp);
 
 void paintengine_get_acl_layers(const PaintEngine *dp,

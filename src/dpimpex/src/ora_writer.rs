@@ -24,7 +24,7 @@ use super::conv::from_dpimage;
 use super::ora_utils::{DP_NAMESPACE, MYPAINT_NAMESPACE};
 use super::{ImageExportResult, ImpexError};
 use dpcore::paint::tile::TILE_SIZEI;
-use dpcore::paint::{Image, InternalLayerID, Layer, LayerID, LayerStack, Rectangle, Blendmode};
+use dpcore::paint::{Image, InternalLayerID, Layer, LayerID, LayerStack, Rectangle, Blendmode, LayerViewOptions};
 use dpcore::paint::annotation::VAlign;
 
 use image::codecs::png::PngEncoder;
@@ -55,7 +55,7 @@ pub fn save_openraster_image(path: &Path, layerstack: &LayerStack) -> ImageExpor
 
     // Write the merged image and thumbnail
     {
-        let flattened = from_dpimage(&layerstack.to_image());
+        let flattened = from_dpimage(&layerstack.to_image(&LayerViewOptions::default()));
         write_png(&mut archive, "mergedimage.png", &flattened)?;
         let thumb = imageops::thumbnail(&flattened, 256, 256);
         write_png(&mut archive, "Thumbnails/thumbnail.png", &thumb)?;

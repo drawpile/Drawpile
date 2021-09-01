@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2018 Calle Laakkonen
+   Copyright (C) 2015-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
 */
 
 #include "flipbook.h"
-#include "core/layerstack.h"
-#include "core/layer.h"
+#include "canvas/paintengine.h"
 #include "utils/icon.h"
 
 #include "ui_flipbook.h"
@@ -33,7 +32,7 @@
 namespace dialogs {
 
 Flipbook::Flipbook(QWidget *parent)
-	: QDialog(parent), m_ui(new Ui_Flipbook), m_layers(nullptr)
+	: QDialog(parent), m_ui(new Ui_Flipbook), m_paintengine(nullptr)
 {
 	m_ui->setupUi(this);
 
@@ -111,18 +110,19 @@ void Flipbook::updateFps(int newFps)
 	}
 }
 
-void Flipbook::setLayers(paintcore::LayerStack *layers)
+void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 {
-	Q_ASSERT(layers);
-	m_layers = layers;
-	const int max = m_layers->layerCount();
+	Q_ASSERT(pe);
+
+	m_paintengine = pe;
+	const int max = m_paintengine->frameCount();
 	m_ui->loopStart->setMaximum(max);
 	m_ui->loopEnd->setMaximum(max);
 	m_ui->layerIndex->setMaximum(max);
 	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
 	m_ui->loopEnd->setValue(max);
 
-	m_crop = QRect(QPoint(), m_layers->size());
+	m_crop = QRect(QPoint(), pe->size());
 
 	const QRect crop = QSettings().value("flipbook/crop").toRect();
 	if(m_crop.contains(crop, true)) {
@@ -142,7 +142,7 @@ void Flipbook::setCrop(const QRectF &rect)
 	const int h = m_crop.height();
 
 	if(rect.width()*w<=5 || rect.height()*h<=5) {
-		m_crop = QRect(QPoint(), m_layers->size());
+		m_crop = QRect(QPoint(), m_paintengine->size());
 		m_ui->zoomButton->setEnabled(false);
 	} else {
 		m_crop = QRect(
@@ -166,8 +166,9 @@ void Flipbook::resetCrop()
 void Flipbook::resetFrameCache()
 {
 	m_frames.clear();
-	if(m_layers) {
-		for(int i=0;i<m_layers->layerCount();++i)
+	if(m_paintengine) {
+		const int frames = m_paintengine->frameCount();
+		for(int i=0;i<frames;++i)
 			m_frames.append(QPixmap());
 	}
 }
@@ -175,27 +176,14 @@ void Flipbook::resetFrameCache()
 void Flipbook::loadFrame()
 {
 	const int f = m_ui->layerIndex->value() - 1;
-	if(m_layers && f>=0 && f < m_frames.size()) {
-
-		if(m_layers->getLayerByIndex(f)->isFixed()) {
-			int next = f;
-			do {
-				next = (next + 1) % m_frames.size();
-			} while(next != f && m_layers->getLayerByIndex(next)->isFixed());
-			m_ui->layerIndex->setValue(next + 1);
-			return;
-		}
-
+	if(m_paintengine && f>=0 && f < m_frames.size()) {
 		if(m_frames.at(f).isNull()) {
-			QImage img = m_layers->flatLayerImage(f);
-
-			if(!m_crop.isEmpty())
-				img = img.copy(m_crop);
+			QImage img = m_paintengine->getFrameImage(f, m_crop);
 
 			// Scale down the image if it is too big
-			QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;
+			const QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;
 			if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
-				QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);
+				const QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);
 				img = img.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 			}
 

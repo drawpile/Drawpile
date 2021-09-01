@@ -26,8 +26,10 @@ use std::sync::Arc;
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::color::ALPHA_CHANNEL;
-use super::tile::{Tile, TileData, TILE_SIZE};
-use super::{Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID};
+use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
+use super::{Pixel, Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID};
+use super::flattenediter::FlattenedTileIterator;
+use super::rectiter::{RectIterator, MutableRectIterator};
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -92,6 +94,20 @@ impl Default for LayerViewOptions {
             onionskins_above: 1,
             onionskins_below: 1,
             active_layer_idx: 0,
+        }
+    }
+}
+
+impl LayerViewOptions {
+    pub fn solo(index: usize) -> Self {
+        Self {
+            censor: false,
+            highlight: 0,
+            viewmode: LayerViewMode::Solo,
+            onionskin_tint: false,
+            onionskins_above: 1,
+            onionskins_below: 1,
+            active_layer_idx: index,
         }
     }
 }
@@ -462,32 +478,63 @@ impl LayerStack {
         0
     }
 
-    // Convert to a flat image
-    pub fn to_image(&self) -> Image {
-        let xtiles = Tile::div_up(self.width) as usize;
-        let ytiles = Tile::div_up(self.height) as usize;
-
-        let tw = TILE_SIZE as usize;
-        let width = self.width as usize;
-        let height = self.height as usize;
-
-        let opts = LayerViewOptions::default();
-        let mut image = Image::new(width, height);
-
-        for j in 0..ytiles {
-            let h = tw.min(height - (j * tw));
-            for i in 0..xtiles {
-                let td = self.flatten_tile(i as u32, j as u32, &opts);
-                let w = tw.min(width - (i * tw));
-                for y in 0..h {
-                    let dest_offset = (j * tw + y) * width + i * tw;
-                    let src_offset = y * tw;
-
-                    image.pixels[dest_offset..dest_offset + w]
-                        .copy_from_slice(&td.pixels[src_offset..src_offset + w]);
-                }
-            }
+    /// Render a flattened layerstack (or a subregion) to the given pixel array
+    ///
+    /// The rectangle must be fully within the layer bounds.
+    /// The length of the pixel slice must be rect width*height.
+    pub fn to_pixels(&self, rect: Rectangle, opts: &LayerViewOptions, pixels: &mut [Pixel]) -> Result<(), &str> {
+        if !rect.in_bounds(self.size()) {
+            return Err("source rectangle out of bounds");
         }
+        if pixels.len() != (rect.w * rect.h) as usize {
+            return Err("pixel slice length does not match source rectangle size");
+        }
+
+        for (i, j, tile) in FlattenedTileIterator::new(
+            self,
+            opts,
+            rect.into()
+        ) {
+            // This tile's bounding rectangle
+            let tilerect = Rectangle::new(i, j, TILE_SIZEI, TILE_SIZEI);
+
+            // The rectangle of interest in the canvas
+            let canvasrect = rect.intersected(&tilerect).unwrap();
+
+            // The source rectangle in the tile
+            let srcrect = canvasrect.offset(-tilerect.x, -tilerect.y);
+
+            // The destination rectangle in the pixel buffer
+            let pixelrect = canvasrect.offset(-rect.x, -rect.y);
+
+            // Copy pixels from tile to image
+            let srciter = RectIterator::from_rectangle(&tile.pixels, TILE_SIZE as usize, &srcrect);
+            let destiter = MutableRectIterator::new(
+                pixels,
+                rect.w as usize,
+                pixelrect.x as usize,
+                pixelrect.y as usize,
+                pixelrect.w as usize,
+                pixelrect.h as usize,
+            );
+
+            destiter
+                .zip(srciter)
+                .for_each(|(d, s)| d.copy_from_slice(s));
+        }
+
+        Ok(())
+    }
+
+    /// Convert whole layerstack to a flat image
+    pub fn to_image(&self, opts: &LayerViewOptions) -> Image {
+        let mut image = Image::new(self.width as usize, self.height as usize);
+
+        self.to_pixels(
+            Rectangle::new(0, 0, self.width() as i32, self.height() as i32),
+            opts,
+            &mut image.pixels
+        ).unwrap();
 
         image
     }

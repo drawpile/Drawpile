@@ -62,6 +62,12 @@ public:
 	//! Get a reference to the view cache pixmap while making sure the whole pixmap is refreshed
 	const QPixmap &getPixmap() { return getPixmap(QRect{-1, -1, -1, -1}); }
 
+	//! Get the number of frames in an animated canvas
+	int frameCount() const;
+
+	//! Render a frame
+	QImage getFrameImage(int index, const QRect &rect=QRect()) const;
+
 	//! Get the current size of the canvas
 	QSize size() const;
 

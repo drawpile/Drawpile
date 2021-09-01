@@ -196,6 +196,30 @@ const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 	return m_cache;
 }
 
+int PaintEngine::frameCount() const
+{
+	return rustpile::paintengine_get_frame_count(m_pe);
+}
+
+QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
+{
+	rustpile::Rectangle r;
+	if(rect.isEmpty()) {
+		const auto size = rustpile::paintengine_canvas_size(m_pe);
+		r = {0, 0, size.width, size.height};
+	} else {
+		r = {rect.x(), rect.y(), rect.width(), rect.height()};
+	}
+
+	QImage img(r.w, r.h, QImage::Format_ARGB32_Premultiplied);
+
+	if(!rustpile::paintengine_get_frame_content(m_pe, index, r, img.bits())) {
+		return QImage();
+	}
+
+	return img;
+}
+
 QSize PaintEngine::size() const
 {
 	const auto size = rustpile::paintengine_canvas_size(m_pe);

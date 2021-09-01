@@ -215,7 +215,7 @@ impl Layer {
             };
 
             // This tile's bounding rectangle
-            let tilerect = Rectangle::tile(i, j, TILE_SIZEI);
+            let tilerect = Rectangle::new(i, j, TILE_SIZEI, TILE_SIZEI);
 
             // The rectangle of interest in the layer
             let layerrect = rect.intersected(&tilerect).unwrap();
@@ -255,7 +255,7 @@ impl Layer {
 
         let mut img = Image::new(rect.w as usize, rect.h as usize);
 
-        self.to_pixels(rect, &mut img.pixels)?;
+        self.to_pixels(rect, &mut img.pixels).unwrap();
         Ok(img)
     }
 
