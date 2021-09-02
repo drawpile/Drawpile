@@ -22,8 +22,8 @@
 
 use super::brushpreview::{BrushPreview, BrushPreviewShape};
 use dpcore::brush::ClassicBrush;
-use dpcore::paint::{AoE, Color, FlattenedTileIterator, LayerViewOptions};
 use dpcore::paint::tile::TILE_SIZEI;
+use dpcore::paint::{AoE, Color, FlattenedTileIterator, LayerViewOptions};
 
 use core::ffi::c_void;
 
@@ -66,6 +66,12 @@ pub extern "C" fn brushpreview_paint(
     paint_func: extern "C" fn(ctx: *mut c_void, x: i32, y: i32, pixels: *const u8),
 ) {
     let opts = LayerViewOptions::default();
-    FlattenedTileIterator::new(&bp.layerstack, &opts, AoE::Everything)
-        .for_each(|(i, j, t)| paint_func(ctx, i * TILE_SIZEI, j * TILE_SIZEI, t.pixels.as_ptr() as *const u8));
+    FlattenedTileIterator::new(&bp.layerstack, &opts, AoE::Everything).for_each(|(i, j, t)| {
+        paint_func(
+            ctx,
+            i * TILE_SIZEI,
+            j * TILE_SIZEI,
+            t.pixels.as_ptr() as *const u8,
+        )
+    });
 }

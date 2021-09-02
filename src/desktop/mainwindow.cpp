@@ -1480,31 +1480,31 @@ void MainWindow::tryToGainOp()
 
 void MainWindow::resetSession()
 {
-#if 0 // FIXME
-	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->stateTracker(), this);
+	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->paintEngine(), this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
-	// Automatically lock the session while we are preparing to reset
-	const bool wasLocked = m_doc->canvas()->aclFilter()->isSessionLocked();
-	if(!wasLocked) {
-		m_doc->sendLockSession(true);
+	// It's always possible to create a new document from a snapshot
+	connect(dlg, &dialogs::ResetDialog::newSelected, this, [dlg]() {
+		MainWindow *w = new MainWindow(false);
+		w->m_doc->sendResetSession(dlg->getResetImage());
+		dlg->deleteLater();
+	});
+
+	// Session resetting is available only to session operators
+	if(m_doc->canvas()->aclState()->amOperator()) {
+		connect(dlg, &dialogs::ResetDialog::resetSelected, this, [this, dlg]() {
+			if(m_doc->canvas()->aclState()->amOperator()) {
+				m_doc->sendResetSession(dlg->getResetImage());
+			}
+			dlg->deleteLater();
+		});
+
+	} else {
+		dlg->setCanReset(false);
 	}
 
-	connect(dlg, &dialogs::ResetDialog::accepted, this, [this, dlg]() {
-		// Send request for reset. No need to unlock the session,
-		// since the reset itself will do that for us.
-		m_doc->sendResetSession(dlg->resetImage(m_doc->client()->myId(), m_doc->canvas()));
-	});
-
-	connect(dlg, &dialogs::ResetDialog::rejected, this, [this, wasLocked]() {
-		// Reset cancelled: unlock the session (if locked by as)
-		if(!wasLocked)
-			m_doc->sendLockSession(false);
-	});
-
 	dlg->show();
-#endif
 }
 
 void MainWindow::terminateSession()
@@ -2625,14 +2625,13 @@ void MainWindow::setupActions()
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
-	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
+	QAction *resetsession = makeAction("resetsession", tr("&History..."));
 	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
 	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
 
 	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the drawing board")).shortcut("F12").checkable();
 
 	m_admintools->addAction(locksession);
-	m_admintools->addAction(resetsession);
 	m_modtools->addAction(terminatesession);
 	m_admintools->setEnabled(false);
 
@@ -2660,10 +2659,10 @@ void MainWindow::setupActions()
 
 	QMenu *modmenu = sessionmenu->addMenu(tr("Moderation"));
 	modmenu->addAction(gainop);
-	modmenu->addAction(resetsession);
 	modmenu->addAction(terminatesession);
 	modmenu->addAction(reportabuse);
 
+	sessionmenu->addAction(resetsession);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(sessionSettings);

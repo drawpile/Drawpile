@@ -22,6 +22,7 @@
 
 use super::adapters::{AnnotationAt, Annotations, LayerInfo};
 use super::messages_ffi;
+use super::snapshots::SnapshotQueue;
 use dpcore::brush::{BrushEngine, BrushState};
 use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::snapshot::make_canvas_snapshot;
@@ -49,8 +50,8 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
+use std::time::{Duration, Instant};
 use std::{ptr, slice, thread};
-use std::time::Instant;
 
 use tracing::{error, warn};
 
@@ -99,6 +100,7 @@ type RecordingStateCallback = Option<extern "C" fn(ctx: *mut c_void, recording: 
 /// paint engine is busy
 pub struct ViewCache {
     pub layerstack: Arc<LayerStack>,
+    snapshots: SnapshotQueue,
     unrefreshed_area: AoE,
 }
 
@@ -239,7 +241,9 @@ fn run_paintengine(
         if changes.has_any() {
             {
                 let mut vc = viewcache.lock().unwrap();
-                vc.layerstack = canvas.arc_layerstack();
+                let new_layerstack = canvas.arc_layerstack();
+                vc.snapshots.add(&new_layerstack);
+                vc.layerstack = new_layerstack;
 
                 match changes.aoe {
                     AoE::Nothing => {}
@@ -305,6 +309,7 @@ pub extern "C" fn paintengine_new(
 ) -> *mut PaintEngine {
     let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
+        snapshots: SnapshotQueue::new(Duration::from_secs(10), 6),
         unrefreshed_area: AoE::Nothing,
     }));
 
@@ -434,7 +439,9 @@ pub extern "C" fn paintengine_receive_messages(
             } else {
                 let interval = dp.last_recorded_interval.elapsed().as_millis();
                 if interval > 500 {
-                    if let Err(err) = recorder.write_message(&Message::ClientMeta(ClientMetaMessage::Interval(0, interval.min(0xffff) as u16))) {
+                    if let Err(err) = recorder.write_message(&Message::ClientMeta(
+                        ClientMetaMessage::Interval(0, interval.min(0xffff) as u16),
+                    )) {
                         warn!("Error writing interval to recording: {}", err);
                     }
                     dp.last_recorded_interval = Instant::now();
@@ -497,7 +504,11 @@ pub extern "C" fn paintengine_cleanup(dp: &mut PaintEngine) -> bool {
 pub extern "C" fn paintengine_reset_canvas(dp: &mut PaintEngine) {
     dp.aclfilter = AclFilter::new();
 
-    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::ReplaceCanvas(Box::new(LayerStack::new(0, 0))))
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::ReplaceCanvas(Box::new(
+            LayerStack::new(0, 0),
+        )))
     {
         warn!(
             "Couldn't send reset canvas command to paint engine thread {:?}",
@@ -916,9 +927,13 @@ pub extern "C" fn paintengine_get_layer_bounds(dp: &PaintEngine, layer_id: Layer
         }
     }
 
-    Rectangle{x: 0, y: 0, w: 0, h: 0}
+    Rectangle {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0,
+    }
 }
-
 
 /// Copy layer pixel data to the given buffer
 ///
@@ -941,7 +956,6 @@ pub extern "C" fn paintengine_get_layer_content(
         let pixel_slice =
             unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
         layer.to_pixels(rect, pixel_slice).is_ok()
-
     } else {
         false
     }
@@ -954,9 +968,7 @@ pub extern "C" fn paintengine_get_layer_content(
 /// the number of frames can be less than the number of layers
 /// in the stack.
 #[no_mangle]
-pub extern "C" fn paintengine_get_frame_count(
-    dp: &PaintEngine
-) -> usize {
+pub extern "C" fn paintengine_get_frame_count(dp: &PaintEngine) -> usize {
     let vc = dp.viewcache.lock().unwrap();
 
     vc.layerstack.iter_layers().filter(|l| !l.fixed).count()
@@ -983,7 +995,7 @@ pub extern "C" fn paintengine_get_frame_content(
     }
 
     let pixel_slice =
-            unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
+        unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
 
     let mut frames = index + 1;
     let mut frame_index = 0;
@@ -1004,10 +1016,7 @@ pub extern "C" fn paintengine_get_frame_content(
 
 /// Get a snapshot of the canvas state to use as a reset image
 #[no_mangle]
-pub extern "C" fn paintengine_get_reset_snapshot(
-    dp: &mut PaintEngine,
-    writer: &mut MessageWriter,
-) {
+pub extern "C" fn paintengine_get_reset_snapshot(dp: &mut PaintEngine, writer: &mut MessageWriter) {
     let snapshot = {
         let vc = dp.viewcache.lock().unwrap();
         make_canvas_snapshot(1, &vc.layerstack, 0, Some(&dp.aclfilter))
@@ -1015,6 +1024,23 @@ pub extern "C" fn paintengine_get_reset_snapshot(
 
     for msg in snapshot {
         msg.write(writer);
+    }
+}
+
+/// Get a snapshot of a past canvas state to use as a reset image
+#[no_mangle]
+pub extern "C" fn paintengine_get_historical_reset_snapshot(dp: &PaintEngine, snapshots: &SnapshotQueue, index: usize, writer: &mut MessageWriter) -> bool {
+    if let Some(snapshot) = snapshots.get(index) {
+
+        let msgs = make_canvas_snapshot(1, &snapshot, 0, Some(&dp.aclfilter));
+
+        for msg in msgs {
+            msg.write(writer);
+        }
+
+        true
+    } else {
+        false
     }
 }
 
@@ -1037,6 +1063,25 @@ pub extern "C" fn paintengine_get_acl_layers(
 #[no_mangle]
 pub extern "C" fn paintengine_get_acl_features<'a>(dp: &'a PaintEngine) -> &'a FeatureTiers {
     dp.aclfilter.feature_tiers()
+}
+
+/// Get a (shallow) copy of the snapshot buffer
+///
+/// This is used when opening an UI for picking a snapshot to restore/export/etc
+/// so that ongoing canvas activity won't change the buffer while the view is open.
+/// The buffer must be released with paintengine_release_snapshots.
+#[no_mangle]
+pub extern "C" fn paintengine_get_snapshots(dp: &PaintEngine) -> *mut SnapshotQueue {
+    let s = {
+        let vc = dp.viewcache.lock().unwrap();
+        Box::new(vc.snapshots.clone())
+    };
+    Box::into_raw(s)
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_release_snapshots(snapshots: *mut SnapshotQueue) {
+    unsafe { Box::from_raw(snapshots) };
 }
 
 #[no_mangle]
@@ -1272,10 +1317,10 @@ pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32
                 return;
             }
             rec_reader::ReadMessage::Eof => {
-                if let Err(err) = dp.engine_channel.send(PaintEngineCommand::PlaybackPaused(
-                    -1,
-                    0
-                )) {
+                if let Err(err) = dp
+                    .engine_channel
+                    .send(PaintEngineCommand::PlaybackPaused(-1, 0))
+                {
                     warn!("Couldn't send command to paint engine thread {:?}", err);
                     return;
                 }
@@ -1284,9 +1329,18 @@ pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32
         };
 
         match msg {
-            Message::Command(CommandMessage::UndoPoint(_)) => { steps -= 1; }
-            Message::ClientMeta(ClientMetaMessage::Interval(_, i)) => { interval += i as u32; steps -= 1; }
-            Message::Command(_) => { if !sequences { steps -= 1; }}
+            Message::Command(CommandMessage::UndoPoint(_)) => {
+                steps -= 1;
+            }
+            Message::ClientMeta(ClientMetaMessage::Interval(_, i)) => {
+                interval += i as u32;
+                steps -= 1;
+            }
+            Message::Command(_) => {
+                if !sequences {
+                    steps -= 1;
+                }
+            }
             _ => (),
         }
 
@@ -1371,8 +1425,16 @@ pub extern "C" fn paintengine_paint_changes(
         intersection
     };
 
-    FlattenedTileIterator::new(&vc.layerstack, &dp.view_opts, intersection)
-        .for_each(|(i, j, t)| paint_func(ctx, i * TILE_SIZEI, j * TILE_SIZEI, t.pixels.as_ptr() as *const u8));
+    FlattenedTileIterator::new(&vc.layerstack, &dp.view_opts, intersection).for_each(
+        |(i, j, t)| {
+            paint_func(
+                ctx,
+                i * TILE_SIZEI,
+                j * TILE_SIZEI,
+                t.pixels.as_ptr() as *const u8,
+            )
+        },
+    );
 }
 
 impl PaintEngine {
@@ -1425,7 +1487,10 @@ impl PaintEngine {
             }
             SoftReset(_) => {
                 // The (soft) reset point is the beginning of the new history
-                if let Err(err) = self.engine_channel.send(PaintEngineCommand::TruncateHistory) {
+                if let Err(err) = self
+                    .engine_channel
+                    .send(PaintEngineCommand::TruncateHistory)
+                {
                     warn!("Couldn't send command to paint engine thread {:?}", err);
                 }
 

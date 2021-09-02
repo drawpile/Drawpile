@@ -109,6 +109,8 @@ struct MessageWriter;
 /// The paint engine
 struct PaintEngine;
 
+struct SnapshotQueue;
+
 using AnnotationID = uint16_t;
 
 struct Rectangle {
@@ -661,6 +663,12 @@ bool paintengine_get_frame_content(const PaintEngine *dp,
 /// Get a snapshot of the canvas state to use as a reset image
 void paintengine_get_reset_snapshot(PaintEngine *dp, MessageWriter *writer);
 
+/// Get a snapshot of a past canvas state to use as a reset image
+bool paintengine_get_historical_reset_snapshot(const PaintEngine *dp,
+                                               const SnapshotQueue *snapshots,
+                                               uintptr_t index,
+                                               MessageWriter *writer);
+
 const UserACLs *paintengine_get_acl_users(const PaintEngine *dp);
 
 void paintengine_get_acl_layers(const PaintEngine *dp,
@@ -668,6 +676,15 @@ void paintengine_get_acl_layers(const PaintEngine *dp,
                                 void (*visitor)(void *ctx, LayerID id, const LayerACL *layer));
 
 const FeatureTiers *paintengine_get_acl_features(const PaintEngine *dp);
+
+/// Get a (shallow) copy of the snapshot buffer
+///
+/// This is used when opening an UI for picking a snapshot to restore/export/etc
+/// so that ongoing canvas activity won't change the buffer while the view is open.
+/// The buffer must be released with paintengine_release_snapshots.
+SnapshotQueue *paintengine_get_snapshots(const PaintEngine *dp);
+
+void paintengine_release_snapshots(SnapshotQueue *snapshots);
 
 bool paintengine_load_blank(PaintEngine *dp, uint32_t width, uint32_t height, Color background);
 
@@ -709,6 +726,12 @@ void paintengine_paint_changes(PaintEngine *dp,
                                void *ctx,
                                Rectangle rect,
                                void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
+
+uint32_t snapshots_count(const SnapshotQueue *snapshots);
+
+Size snapshots_size(const SnapshotQueue *snapshots, uintptr_t index);
+
+bool snapshots_get_content(const SnapshotQueue *snapshots, uintptr_t index, uint8_t *pixels);
 
 } // extern "C"
 

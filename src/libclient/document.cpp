@@ -634,9 +634,22 @@ void Document::sendOpword(const QString &opword)
  *
  * The reset image will be sent when the server acknowledges the request.
  * If an empty reset image is given here, one will be generated just in time.
+ *
+ * If the document is in offline mode, this will immediately reset the current canvas.
  */
 void Document::sendResetSession(const net::Envelope &resetImage)
 {
+	if(!m_client->isConnected()) {
+		if(resetImage.isEmpty()) {
+			qWarning("Tried to do an offline session reset with a blank reset image");
+			return;
+		}
+		// Not connected? Do a local reset
+		initCanvas();
+		m_client->sendEnvelope(resetImage);
+		return;
+	}
+
 	if(resetImage.isEmpty()) {
 		qInfo("Sending session reset request. (Just in time snapshot)");
 	} else {
