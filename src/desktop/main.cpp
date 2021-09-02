@@ -259,18 +259,15 @@ static QStringList initApp(DrawpileApp &app)
 	// Continue initialization (can use QSettings from now on)
 	utils::initLogging();
 
-#ifdef Q_OS_WIN
-	// The Vista style does not work with customized palettes very well
-	// and the "fusion" style tends to look a bit better anyway.
-	// For consistency we'll use it always.
-	app.setStyle("fusion");
-#endif
+	// Override widget theme
+	const int theme = QSettings().value("settings/theme", 0).toInt();
+	if(theme != 0) // choice 0: system theme
+		app.setStyle("fusion");
 
-	if(QSettings().value("settings/nightmode").toBool())
+	if(theme==2) // choice 2: dark theme
 		app.setDarkTheme(true);
 	else
 		icon::selectThemeVariant();
-
 
 #ifdef Q_OS_MAC
 	// Mac specific settings
