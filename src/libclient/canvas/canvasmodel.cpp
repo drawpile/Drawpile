@@ -93,12 +93,12 @@ bool CanvasModel::load(const QSize &size, const QColor &background)
 	);
 }
 
-bool CanvasModel::load(const QString &path)
+rustpile::CanvasIoError CanvasModel::load(const QString &path)
 {
 	return rustpile::paintengine_load_file(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
 }
 
-bool CanvasModel::loadRecording(const QString &path)
+rustpile::CanvasIoError CanvasModel::loadRecording(const QString &path)
 {
 	return rustpile::paintengine_load_recording(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
 }
@@ -322,9 +322,13 @@ void CanvasModel::resetCanvas()
 	rustpile::paintengine_reset_canvas(m_paintengine->engine());
 }
 
-bool CanvasModel::startRecording(const QString &path)
+rustpile::CanvasIoError CanvasModel::startRecording(const QString &path)
 {
-	return rustpile::paintengine_start_recording(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
+	return rustpile::paintengine_start_recording(
+		m_paintengine->engine(),
+		reinterpret_cast<const uint16_t*>(path.constData()),
+		path.length()
+	);
 }
 
 void CanvasModel::stopRecording()

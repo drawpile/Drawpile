@@ -41,6 +41,10 @@ namespace net {
 
 namespace tools { class ToolController; }
 
+namespace rustpile {
+	enum class CanvasIoError;
+}
+
 /**
  * @brief An active document and its associated data, including the network connection
  *
@@ -95,8 +99,8 @@ public:
 	void initCanvas();
 
 	bool loadCanvas(const QSize &size, const QColor &background);
-	bool loadCanvas(const QString &path);
-	bool loadRecording(const QString &path);
+	rustpile::CanvasIoError loadCanvas(const QString &path);
+	rustpile::CanvasIoError loadRecording(const QString &path);
 
 	/**
 	 * @brief Save the canvas content
@@ -119,7 +123,7 @@ public:
 	QString currentFilename() const { return m_currentFilename; }
 
 	bool isRecording() const;
-	bool startRecording(const QString &filename, QString *error=nullptr);
+	rustpile::CanvasIoError startRecording(const QString &filename);
 	void stopRecording();
 
 	bool saveAsRecording(const QString &filename, QJsonObject header, QString *error=nullptr) const;
@@ -228,9 +232,6 @@ private slots:
 
 private:
 	void saveCanvas();
-#if 0 // FIXME
-	bool startRecording(const QString &filename, const protocol::MessageList &initialState, QString *error);
-#endif
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);

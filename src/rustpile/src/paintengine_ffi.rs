@@ -1117,19 +1117,49 @@ pub extern "C" fn paintengine_load_blank(
     true
 }
 
+#[repr(C)]
+pub enum CanvasIoError {
+    NoError,
+    FileOpenError,
+    FileIoError,
+    UnsupportedFormat,
+    PartiallySupportedFormat, // file was loaded but incompletely
+    UnknownRecordingVersion, // recording was opened, but degree of compatibility is unknown
+    CodecError,
+    PaintEngineCrashed,
+}
+
+impl From<dpimpex::ImpexError> for CanvasIoError {
+    fn from(err: dpimpex::ImpexError) -> Self {
+        match err {
+            dpimpex::ImpexError::IoError(e) => (
+                match e.kind() {
+                    std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => Self::FileOpenError,
+                    _ => Self::FileIoError,
+                }
+            ),
+            dpimpex::ImpexError::UnsupportedFormat => Self::UnsupportedFormat,
+            dpimpex::ImpexError::CodecError(_) |
+            dpimpex::ImpexError::XmlError(_) |
+            dpimpex::ImpexError::NoContent => Self::CodecError,
+        }
+    }
+}
+
+/// Load canvas content from a file
 #[no_mangle]
 pub extern "C" fn paintengine_load_file(
     dp: &mut PaintEngine,
     path: *const u16,
     path_len: usize,
-) -> bool {
+) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
     let ls = match dpimpex::load_image(&path) {
         Ok(ls) => Box::new(ls),
         Err(err) => {
             warn!("Couldn't load: {:?}", err);
-            return false;
+            return err.into();
         }
     };
 
@@ -1141,10 +1171,10 @@ pub extern "C" fn paintengine_load_file(
             "Couldn't send replace command to paint engine thread {:?}",
             err
         );
-        return false;
+        return CanvasIoError::PaintEngineCrashed;
     }
 
-    true
+    CanvasIoError::NoError
 }
 
 /// Open a recording for playback
@@ -1155,27 +1185,30 @@ pub extern "C" fn paintengine_load_recording(
     dp: &mut PaintEngine,
     path: *const u16,
     path_len: usize,
-) -> bool {
+) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
     let player = match rec_reader::open_recording(&path) {
         Ok(p) => p,
         Err(e) => {
             warn!("Couldn't open recording: {}", e);
-            return false;
+            return match e.kind() {
+                std::io::ErrorKind::NotFound |
+                std::io::ErrorKind::PermissionDenied => CanvasIoError::FileOpenError,
+                _ => CanvasIoError::FileIoError
+            };
         }
     };
 
-    match player.check_compatibility() {
+    let compatibility = match player.check_compatibility() {
+        rec_reader::Compatibility::Compatible => CanvasIoError::NoError,
+        rec_reader::Compatibility::MinorDifferences => CanvasIoError::PartiallySupportedFormat,
+        rec_reader::Compatibility::Unknown => CanvasIoError::UnknownRecordingVersion,
         rec_reader::Compatibility::Incompatible => {
-            // TODO report back status
             warn!("Recording not compatible");
-            return false;
+            return CanvasIoError::UnsupportedFormat;
         }
-        _ => (),
-    }
-
-    // TODO check if we need to perform ACL filtering
+    };
 
     if let Err(err) = dp
         .engine_channel
@@ -1187,12 +1220,12 @@ pub extern "C" fn paintengine_load_recording(
             "Couldn't send replace command to paint engine thread {:?}",
             err
         );
-        return false;
+        return CanvasIoError::PaintEngineCrashed;
     }
 
     dp.player = Some(player);
 
-    true
+    compatibility
 }
 
 /// Save the currently visible layerstack.
@@ -1203,7 +1236,7 @@ pub extern "C" fn paintengine_save_file(
     dp: &PaintEngine,
     path: *const u16,
     path_len: usize,
-) -> bool {
+) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
     // Grab a copy of the layerstack so we don't block the paint engine thread
@@ -1215,10 +1248,10 @@ pub extern "C" fn paintengine_save_file(
 
     if let Err(e) = dpimpex::save_image(&path, &layerstack) {
         warn!("An error occurred while writing \"{}\": {}", path, e);
-        return false;
+        return e.into();
     }
 
-    true
+    CanvasIoError::NoError
 }
 
 #[no_mangle]
@@ -1226,7 +1259,7 @@ pub extern "C" fn paintengine_start_recording(
     dp: &mut PaintEngine,
     path: *const u16,
     path_len: usize,
-) -> bool {
+) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
     let textmode = path.ends_with(".dptxt");
@@ -1236,7 +1269,11 @@ pub extern "C" fn paintengine_start_recording(
         Ok(f) => f,
         Err(e) => {
             warn!("Couldn't open recording file: {}", e);
-            return false;
+            return match e.kind() {
+                std::io::ErrorKind::NotFound |
+                std::io::ErrorKind::PermissionDenied => CanvasIoError::FileOpenError,
+                _ => CanvasIoError::FileIoError
+            };
         }
     };
 
@@ -1254,7 +1291,8 @@ pub extern "C" fn paintengine_start_recording(
 
     match writer.write_header(&header) {
         Err(e) => {
-            warn!("Couldn't writer recording header: {}", e)
+            warn!("Couldn't writer recording header: {}", e);
+            return CanvasIoError::FileIoError;
         }
         Ok(()) => (),
     };
@@ -1270,7 +1308,7 @@ pub extern "C" fn paintengine_start_recording(
     for msg in snapshot {
         if let Err(e) = writer.write_message(&msg) {
             warn!("Couldn't write snapshot message: {}", e);
-            return false;
+            return CanvasIoError::FileIoError;
         }
     }
 
@@ -1282,7 +1320,7 @@ pub extern "C" fn paintengine_start_recording(
         (cb)(dp.meta_context, true);
     }
 
-    true
+    CanvasIoError::NoError
 }
 
 #[no_mangle]

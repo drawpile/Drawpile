@@ -68,6 +68,17 @@ enum class BrushPreviewShape {
   FloodErase,
 };
 
+enum class CanvasIoError {
+  NoError,
+  FileOpenError,
+  FileIoError,
+  UnsupportedFormat,
+  PartiallySupportedFormat,
+  UnknownRecordingVersion,
+  CodecError,
+  PaintEngineCrashed,
+};
+
 enum class ClassicBrushShape : uint8_t {
   RoundPixel,
   SquarePixel,
@@ -688,19 +699,24 @@ void paintengine_release_snapshots(SnapshotQueue *snapshots);
 
 bool paintengine_load_blank(PaintEngine *dp, uint32_t width, uint32_t height, Color background);
 
-bool paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+/// Load canvas content from a file
+CanvasIoError paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
 /// Open a recording for playback
 ///
 /// This clears the existing canvas, just as loading any other file would.
-bool paintengine_load_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+CanvasIoError paintengine_load_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
 /// Save the currently visible layerstack.
 ///
 /// It is safe to call this function in a separate thread.
-bool paintengine_save_file(const PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+CanvasIoError paintengine_save_file(const PaintEngine *dp,
+                                    const uint16_t *path,
+                                    uintptr_t path_len);
 
-bool paintengine_start_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
+CanvasIoError paintengine_start_recording(PaintEngine *dp,
+                                          const uint16_t *path,
+                                          uintptr_t path_len);
 
 void paintengine_stop_recording(PaintEngine *dp);
 

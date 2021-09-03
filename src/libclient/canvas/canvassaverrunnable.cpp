@@ -31,11 +31,16 @@ CanvasSaverRunnable::CanvasSaverRunnable(const PaintEngine *pe, const QString &f
 
 void CanvasSaverRunnable::run()
 {
-	if(rustpile::paintengine_save_file(m_pe->engine(), reinterpret_cast<const uint16_t*>(m_filename.constData()), m_filename.length())) {
-		emit saveComplete(QString());
-	} else {
-		// TODO a more descriptive error message
-		emit saveComplete(tr("An error occurred while saving"));
+	const auto result = rustpile::paintengine_save_file(
+		m_pe->engine(),
+		reinterpret_cast<const uint16_t*>(m_filename.constData()),
+		m_filename.length()
+	);
+
+	switch(result) {
+	case rustpile::CanvasIoError::NoError: emit saveComplete(QString()); break;
+	case rustpile::CanvasIoError::FileOpenError: emit saveComplete(tr("Couldn't open file for writing")); break;
+	default: emit saveComplete(tr("An error occurred while saving image"));
 	}
 }
 

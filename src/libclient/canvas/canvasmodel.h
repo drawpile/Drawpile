@@ -27,6 +27,10 @@ namespace net {
 	class Envelope;
 }
 
+namespace rustpile {
+	enum class CanvasIoError;
+}
+
 namespace canvas {
 
 class AclState;
@@ -44,13 +48,13 @@ public:
 	PaintEngine *paintEngine() const { return m_paintengine; }
 
 	//! Load canvas content from file
-	bool load(const QString &path);
+	rustpile::CanvasIoError load(const QString &path);
 
 	//! Load an empty canvas
 	bool load(const QSize &size, const QColor &background);
 
 	//! Load a recording and prepare to start playback
-	bool loadRecording(const QString &path);
+	rustpile::CanvasIoError loadRecording(const QString &path);
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
@@ -77,7 +81,7 @@ public:
 	LayerListModel *layerlist() const { return m_layerlist; }
 
 	//! Open a recording file and start recording
-	bool startRecording(const QString &path);
+	rustpile::CanvasIoError startRecording(const QString &path);
 
 	//! Stop recording
 	void stopRecording();

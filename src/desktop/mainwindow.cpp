@@ -968,10 +968,10 @@ void MainWindow::open(const QUrl& url)
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
 		if(recording::Reader::isRecordingExtension(file)) {
-			if(m_doc->loadRecording(file)) {
+			const auto result = m_doc->loadRecording(file);
+			showErrorMessage(result);
+			if(result == rustpile::CanvasIoError::NoError || result == rustpile::CanvasIoError::PartiallySupportedFormat || result == rustpile::CanvasIoError::UnknownRecordingVersion) {
 				QFileInfo fileinfo(file);
-
-				qInfo("OPening rec");
 				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
 				m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
 				m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -981,17 +981,12 @@ void MainWindow::open(const QUrl& url)
 
 		} else {
 			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-			if(!m_doc->loadCanvas(file)) {
+			const auto result = m_doc->loadCanvas(file);
+			showErrorMessage(result);
+			if(result != rustpile::CanvasIoError::NoError && result != rustpile::CanvasIoError::PartiallySupportedFormat) {
 				QApplication::restoreOverrideCursor();
-				showErrorMessage("Couldn't load file"); // FIXME proper error message
 				return;
 			}
-
-#if 0 // FIXME
-			if(!loader.warningMessage().isEmpty()) {
-				QMessageBox::warning(nullptr, QApplication::tr("Warning"), loader.warningMessage());
-			}
-#endif
 
 			QApplication::restoreOverrideCursor();
 			getAction("hostsession")->setEnabled(true);
@@ -1288,9 +1283,8 @@ void MainWindow::toggleRecording()
 	);
 
 	if(!file.isEmpty()) {
-		QString error;
-		if(!m_doc->startRecording(file, &error))
-			showErrorMessage(error);
+		const auto result = m_doc->startRecording(file);
+		showErrorMessage(result);
 	}
 }
 
@@ -1730,6 +1724,37 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 	msgbox->setWindowModality(Qt::WindowModal);
 	msgbox->setInformativeText(details);
 	msgbox->show();
+}
+
+void MainWindow::showErrorMessage(rustpile::CanvasIoError error)
+{
+	QString msg;
+	switch(error) {
+	case rustpile::CanvasIoError::NoError: return;
+	case rustpile::CanvasIoError::FileOpenError:
+		msg = tr("Couldn't open file");
+		break;
+	case rustpile::CanvasIoError::FileIoError:
+		msg = tr("Something went wrong with the file");
+		break;
+	case rustpile::CanvasIoError::UnsupportedFormat:
+		msg = tr("This file format is not supported");
+		break;
+	case rustpile::CanvasIoError::PartiallySupportedFormat:
+		msg = tr("This file is only partially supported. It may not appear as it should.");
+		break;
+	case rustpile::CanvasIoError::UnknownRecordingVersion:
+		msg = tr("This recording was made with an unknown version. It may not appear as it should.");
+		break;
+	case rustpile::CanvasIoError::CodecError:
+		msg = tr("Couldn't decode image");
+		break;
+	case rustpile::CanvasIoError::PaintEngineCrashed:
+		msg = tr("Paint engine has crashed! Save your work and restart the application.");
+		break;
+	}
+
+	showErrorMessage(msg);
 }
 
 void MainWindow::setShowAnnotations(bool show)

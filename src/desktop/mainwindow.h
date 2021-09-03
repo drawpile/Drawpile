@@ -62,6 +62,9 @@ namespace drawingboard {
 namespace canvas {
 	class CanvasModel;
 }
+namespace rustpile {
+	enum class CanvasIoError;
+}
 
 class ShortcutDetector;
 
@@ -186,6 +189,7 @@ private:
 
 	//! Display an error message
 	void showErrorMessage(const QString& message, const QString& details=QString());
+	void showErrorMessage(rustpile::CanvasIoError error);
 
 	void readSettings(bool windowpos=true);
 	void writeSettings();

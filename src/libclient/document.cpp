@@ -152,30 +152,31 @@ bool Document::loadCanvas(const QSize &size, const QColor &background)
 	return true;
 }
 
-bool Document::loadCanvas(const QString &path)
+rustpile::CanvasIoError Document::loadCanvas(const QString &path)
 {
 	setAutosave(false);
 	initCanvas();
 	unmarkDirty();
 
-	if(!m_canvas->load(path))
-		return false;
+	const auto result = m_canvas->load(path);
+	if(result == rustpile::CanvasIoError::NoError)
+		setCurrentFilename(path);
 
-	setCurrentFilename(path);
-	return true;
+	return result;
 }
 
-bool Document::loadRecording(const QString &path)
+rustpile::CanvasIoError Document::loadRecording(const QString &path)
 {
 	setAutosave(false);
 	initCanvas();
 	unmarkDirty();
 
-	if(!m_canvas->loadRecording(path))
-		return false;
+	const auto result = m_canvas->loadRecording(path);
+	if(result == rustpile::CanvasIoError::NoError)
+		setCurrentFilename(path);
 
 	setCurrentFilename(path);
-	return true;
+	return result;
 }
 
 void Document::onServerLogin(bool join)
@@ -506,22 +507,13 @@ void Document::onCanvasSaved(const QString &errorMessage)
 	emit canvasSaved(errorMessage);
 }
 
-bool Document::startRecording(const QString &filename, QString *error)
+rustpile::CanvasIoError Document::startRecording(const QString &filename)
 {
 	// Set file suffix if missing
 	m_originalRecordingFilename = filename;
 	const QFileInfo info(filename);
 	if(info.suffix().isEmpty())
 		m_originalRecordingFilename += ".dprec";
-
-#if 0 // FIXME
-	QSettings cfg;
-	cfg.beginGroup("settings/recording");
-	if(cfg.value("recordpause", true).toBool())
-		m_recorder->setMinimumInterval(int(1000 * cfg.value("minimumpause", 0.5).toFloat()));
-	if(cfg.value("recordtimestamp", false).toBool())
-		m_recorder->setTimestampInterval(1000 * 60 * cfg.value("timestampinterval", 15).toInt());
-#endif
 
 	// TODO error string
 	return m_canvas->startRecording(filename);
