@@ -5,6 +5,8 @@ use std::slice;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+use tracing::warn;
+
 #[derive(Clone)]
 pub struct Snapshot {
     pub layerstack: Arc<LayerStack>,
@@ -93,4 +95,28 @@ pub extern "C" fn snapshots_get_content(
     } else {
         false
     }
+}
+
+#[no_mangle]
+pub extern "C" fn snapshots_import_file(
+    snapshots: &mut SnapshotQueue,
+    path: *const u16,
+    path_len: usize,
+) -> bool {
+    let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
+
+    let ls = match dpimpex::load_image(&path) {
+        Ok(ls) => Arc::new(ls),
+        Err(err) => {
+            warn!("Couldn't load: {:?}", err);
+            return false;
+        }
+    };
+
+    Arc::make_mut(&mut snapshots.snapshots).push_back(Snapshot {
+        layerstack: ls,
+        timestamp: Instant::now(),
+    });
+
+    true
 }

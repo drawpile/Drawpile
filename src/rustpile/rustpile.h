@@ -749,6 +749,8 @@ Size snapshots_size(const SnapshotQueue *snapshots, uintptr_t index);
 
 bool snapshots_get_content(const SnapshotQueue *snapshots, uintptr_t index, uint8_t *pixels);
 
+bool snapshots_import_file(SnapshotQueue *snapshots, const uint16_t *path, uintptr_t path_len);
+
 } // extern "C"
 
 } // namespace rustpile

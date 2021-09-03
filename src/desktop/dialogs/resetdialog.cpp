@@ -22,12 +22,17 @@
 #include "../rustpile/rustpile.h"
 #include "utils/icon.h"
 #include "net/envelopebuilder.h"
+#include "utils/images.h"
 
 #include "ui_resetsession.h"
 
 #include <QPushButton>
 #include <QPainter>
 #include <QVector>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QSettings>
+#include <QApplication>
 
 namespace dialogs {
 
@@ -104,12 +109,16 @@ ResetDialog::ResetDialog(const canvas::PaintEngine *pe, QWidget *parent)
 
 	d->resetButton = d->ui->buttonBox->addButton(tr("Reset Session"), QDialogButtonBox::DestructiveRole);
 	auto *newButton = d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
+	auto *openButton = d->ui->buttonBox->addButton(tr("Open..."), QDialogButtonBox::ActionRole);
 
 	d->resetButton->setIcon(icon::fromTheme("edit-undo"));
 	connect(d->resetButton, &QPushButton::clicked, this, &ResetDialog::resetSelected);
 
 	newButton->setIcon(icon::fromTheme("document-new"));
 	connect(newButton, &QPushButton::clicked, this, &ResetDialog::newSelected);
+
+	openButton->setIcon(icon::fromTheme("document-open"));
+	connect(openButton, &QPushButton::clicked, this, &ResetDialog::onOpenClicked);
 
 	d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
 	connect(d->ui->snapshotSlider, &QSlider::valueChanged, this, &ResetDialog::onSelectionChanged);
@@ -132,6 +141,34 @@ void ResetDialog::onSelectionChanged(int pos)
 	d->selection = d->resetPoints.size() - pos;
 	qInfo("sliderMoved(%d) selection=%d", pos, d->selection);
 	d->updateSelection();
+}
+
+void ResetDialog::onOpenClicked()
+{
+	const QString file = QFileDialog::getOpenFileName(
+		this,
+		tr("Open Image"),
+		QSettings().value("window/lastpath").toString(),
+		utils::fileFormatFilter(utils::FileFormatOption::OpenImages)
+	);
+
+	if(file.isEmpty())
+		return;
+
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+	if(rustpile::snapshots_import_file(d->snapshots, reinterpret_cast<const uint16_t*>(file.constData()), file.length())) {
+		d->resetPoints.append(QPixmap());
+		d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
+		d->ui->snapshotSlider->setValue(0);
+		d->selection = d->resetPoints.size() - 1;
+		d->updateSelection();
+		QApplication::restoreOverrideCursor();
+
+	} else {
+		QApplication::restoreOverrideCursor();
+		QMessageBox::warning(this, tr("Reset"), tr("Couldn't open file"));
+	}
 }
 
 net::Envelope ResetDialog::getResetImage() const

@@ -42,14 +42,13 @@ public:
 
 	net::Envelope getResetImage() const;
 
-	//protocol::MessageList resetImage(int myId, const canvas::CanvasModel *canvas);
-
 signals:
 	void resetSelected();
 	void newSelected();
 
 private slots:
 	void onSelectionChanged(int pos);
+	void onOpenClicked();
 
 private:
 	struct Private;
