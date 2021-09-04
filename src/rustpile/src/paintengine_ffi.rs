@@ -971,7 +971,7 @@ pub extern "C" fn paintengine_get_layer_content(
 pub extern "C" fn paintengine_get_frame_count(dp: &PaintEngine) -> usize {
     let vc = dp.viewcache.lock().unwrap();
 
-    vc.layerstack.iter_layers().filter(|l| !l.fixed).count()
+    vc.layerstack.frame_count()
 }
 
 /// Copy frame pixel data to the given buffer
@@ -985,7 +985,7 @@ pub extern "C" fn paintengine_get_frame_count(dp: &PaintEngine) -> usize {
 #[no_mangle]
 pub extern "C" fn paintengine_get_frame_content(
     dp: &PaintEngine,
-    index: usize,
+    frame: usize,
     rect: Rectangle,
     pixels: *mut u8,
 ) -> bool {
@@ -994,20 +994,13 @@ pub extern "C" fn paintengine_get_frame_content(
         return false;
     }
 
+    let frame_index = match vc.layerstack.find_frame_index(frame) {
+        Some(i) => i,
+        None => { return false; }
+    };
+
     let pixel_slice =
         unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
-
-    let mut frames = index + 1;
-    let mut frame_index = 0;
-    for (idx, layer) in vc.layerstack.iter_layers().enumerate() {
-        if !layer.fixed {
-            frames -= 1;
-            if frames == 0 {
-                frame_index = idx;
-                break;
-            }
-        }
-    }
 
     let opts = LayerViewOptions::solo(frame_index);
 
@@ -1252,6 +1245,42 @@ pub extern "C" fn paintengine_save_file(
     }
 
     CanvasIoError::NoError
+}
+
+#[repr(C)]
+pub enum AnimationExportMode {
+    Gif,
+    Frames,
+}
+
+/// Save the layerstack as an animation.
+///
+/// It is safe to call this function in a separate thread.
+#[no_mangle]
+pub extern "C" fn paintengine_save_animation(
+    dp: &PaintEngine,
+    path: *const u16,
+    path_len: usize,
+    mode: AnimationExportMode,
+) -> CanvasIoError {
+    let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
+
+    let layerstack = {
+        let vc = dp.viewcache.lock().unwrap();
+        vc.layerstack.clone()
+    };
+
+    let res = match mode {
+        AnimationExportMode::Gif => dpimpex::animation::save_gif_animation(path.as_ref(), &layerstack),
+        AnimationExportMode::Frames => dpimpex::animation::save_frames_animation(path.as_ref(), &layerstack),
+    };
+
+    if let Err(e) = res {
+        warn!("An error occurred while writing \"{}\": {}", path, e);
+        e.into()
+    } else {
+        CanvasIoError::NoError
+    }
 }
 
 #[no_mangle]

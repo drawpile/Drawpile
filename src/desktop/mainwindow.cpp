@@ -112,16 +112,12 @@
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
 #include "dialogs/flipbook.h"
-#include "dialogs/videoexportdialog.h"
 #include "dialogs/resetdialog.h"
 #include "dialogs/sessionsettings.h"
 #include "dialogs/serverlogdialog.h"
 #include "dialogs/tablettester.h"
 #include "dialogs/abusereport.h"
 #include "dialogs/versioncheckdialog.h"
-
-#include "export/animation.h"
-#include "export/videoexporter.h"
 
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
@@ -491,35 +487,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		onFeatureAccessChange(canvas::Feature(i), m_doc->canvas()->aclState()->canUseFeature(canvas::Feature(i)));
 	}
 }
-
-#if 0
-MainWindow *MainWindow::loadRecording(recording::Reader *reader)
-{
-	m_doc->initCanvas();
-
-	m_doc->canvas()->startPlayback();
-
-	QFileInfo fileinfo(reader->filename());
-
-	m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), reader, this);
-	m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
-	m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
-
-	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
-	connect(m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this, [this]() {
-		m_playbackDialog = nullptr;
-		setRecorderStatus(false);
-		m_doc->canvas()->endPlayback();
-	});
-
-	m_playbackDialog->show();
-	m_playbackDialog->centerOnParent();
-
-	setRecorderStatus(false);
-
-	return this;
-}
-#endif
 
 /**
  * This function is used to check if the current board can be replaced
@@ -1175,43 +1142,45 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 }
 
-void MainWindow::exportAnimation()
+void MainWindow::exportGifAnimation()
 {
-#if 0 // FIXME
-	auto *dlg = new dialogs::VideoExportDialog(this);
-	dlg->showAnimationSettings(m_doc->canvas()->layerStack()->layerCount());
+	const QString file = QFileDialog::getSaveFileName(
+		this,
+		tr("Export Animated GIF"),
+		getLastPath(),
+		"GIF (*.gif)"
+	);
 
-	connect(dlg, &QDialog::finished, this, [dlg, this](int result) {
-		if(result == QDialog::Accepted) {
-			VideoExporter *vexp = dlg->getExporter();
-			if(vexp) {
-				auto *exporter = new AnimationExporter(m_doc->canvas()->layerStack(), vexp, this);
-				vexp->setParent(exporter);
+	if(!file.isEmpty()) {
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		const auto result = rustpile::paintengine_save_animation(
+			m_doc->canvas()->paintEngine()->engine(),
+			reinterpret_cast<const uint16_t*>(file.constData()),
+			file.length()
+		);
+		QApplication::restoreOverrideCursor();
+		showErrorMessage(result);
+	}
+}
 
-				connect(exporter, &AnimationExporter::done, exporter, &AnimationExporter::deleteLater);
-				connect(exporter, &AnimationExporter::error, this, [this](const QString &msg) {
-						QMessageBox::warning(this, tr("Export error"), msg);
-				});
+void MainWindow::exportAnimationFrames()
+{
+	const QString path = QFileDialog::getExistingDirectory(
+		this,
+		tr("Choose folder to save frames in"),
+		getLastPath()
+	);
 
-				exporter->setStartFrame(dlg->getFirstLayer());
-				exporter->setEndFrame(dlg->getLastLayer());
-
-				auto *pdlg = new QProgressDialog(tr("Exporting..."), tr("Cancel"), 1, dlg->getLastLayer(), this);
-				pdlg->setWindowModality(Qt::WindowModal);
-				pdlg->setAttribute(Qt::WA_DeleteOnClose);
-
-				connect(exporter, &AnimationExporter::progress, pdlg, &QProgressDialog::setValue);
-				connect(exporter, &AnimationExporter::done, pdlg, &QProgressDialog::close);
-
-				pdlg->show();
-				exporter->start();
-			}
-		}
-		dlg->deleteLater();
-	});
-
-	dlg->show();
-#endif
+	if(!path.isEmpty()) {
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		const auto result = rustpile::paintengine_save_animation(
+			m_doc->canvas()->paintEngine()->engine(),
+			reinterpret_cast<const uint16_t*>(path.constData()),
+			path.length()
+		);
+		QApplication::restoreOverrideCursor();
+		showErrorMessage(result);
+	}
 }
 
 void MainWindow::exportTemplate()
@@ -2258,7 +2227,8 @@ void MainWindow::setupActions()
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
-	QAction *exportAnimation = makeAction("exportanim", tr("&Animation...")).statusTip(tr("Export layers as animation frames"));
+	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
+	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
 	QAction *exportTemplate = makeAction("exporttpl", tr("Session Template...")).statusTip(tr("Export current session as a template recording for use with the dedicated server"));
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
@@ -2269,7 +2239,8 @@ void MainWindow::setupActions()
 #endif
 	m_currentdoctools->addAction(save);
 	m_currentdoctools->addAction(saveas);
-	m_currentdoctools->addAction(exportAnimation);
+	m_currentdoctools->addAction(exportGifAnimation);
+	m_currentdoctools->addAction(exportAnimationFrames);
 	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(record);
 
@@ -2282,7 +2253,8 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::autosaveChanged, autosave, &QAction::setChecked);
 	connect(m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
 
-	connect(exportAnimation, &QAction::triggered, this, &MainWindow::exportAnimation);
+	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
+	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #ifdef Q_OS_MAC
@@ -2308,7 +2280,9 @@ void MainWindow::setupActions()
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(icon::fromTheme("document-export"));
-	exportMenu->addAction(exportAnimation);
+	exportMenu->addAction(exportGifAnimation);
+	exportMenu->addAction(exportAnimationFrames);
+	exportMenu->addSeparator();
 	exportMenu->addAction(exportTemplate);
 	filemenu->addAction(record);
 	filemenu->addSeparator();

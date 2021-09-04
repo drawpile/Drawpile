@@ -96,7 +96,6 @@ public slots:
 	void open(const QUrl &url);
 	void save();
 	void saveas();
-	void exportAnimation();
 	void exportTemplate();
 	void showFlipbook();
 
@@ -124,6 +123,9 @@ public slots:
 
 private slots:
 	void toggleRecording();
+
+	void exportGifAnimation();
+	void exportAnimationFrames();
 
 	void onOperatorModeChange(bool op);
 	void onFeatureAccessChange(canvas::Feature feature, bool canUse);

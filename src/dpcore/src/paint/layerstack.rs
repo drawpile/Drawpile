@@ -224,6 +224,27 @@ impl LayerStack {
         self.layers.iter().position(|l| l.id == id)
     }
 
+    /// Find the layer index corresponding to this frame index
+    /// Fixed and hidden layers are not considered frames.
+    pub fn find_frame_index(&self, frame: usize) -> Option<usize> {
+        let mut frames = frame + 1;
+        for (idx, layer) in self.layers.iter().enumerate() {
+            if !layer.fixed && layer.is_visible() {
+                frames -= 1;
+                if frames == 0 {
+                    return Some(idx);
+                }
+            }
+        }
+        None
+    }
+
+    /// Get the number of animation frames in the layerstack
+    /// A layer represents a frame, but fixed and hidden layers are skipped.
+    pub fn frame_count(&self) -> usize {
+        self.layers.iter().filter(|l| !l.fixed && l.is_visible()).count()
+    }
+
     /// Return a copy of the layerstack with the layers in the given order.
     /// The new order vector is sanitized. Duplicate and nonexistent layers
     /// are dropped and missing layers are appended.

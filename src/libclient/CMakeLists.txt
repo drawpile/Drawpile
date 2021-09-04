@@ -82,7 +82,6 @@ set (
 	recording/indexbuilder.cpp
 	recording/indexloader.cpp
 	recording/playbackcontroller.cpp
-	export/animation.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	parentalcontrols/parentalcontrols.cpp

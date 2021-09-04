@@ -667,7 +667,7 @@ uintptr_t paintengine_get_frame_count(const PaintEngine *dp);
 ///  * background is composited
 ///  * fixed layers are composited
 bool paintengine_get_frame_content(const PaintEngine *dp,
-                                   uintptr_t index,
+                                   uintptr_t frame,
                                    Rectangle rect,
                                    uint8_t *pixels);
 
@@ -713,6 +713,13 @@ CanvasIoError paintengine_load_recording(PaintEngine *dp, const uint16_t *path, 
 CanvasIoError paintengine_save_file(const PaintEngine *dp,
                                     const uint16_t *path,
                                     uintptr_t path_len);
+
+/// Save the layerstack as an animation.
+///
+/// It is safe to call this function in a separate thread.
+CanvasIoError paintengine_save_animation(const PaintEngine *dp,
+                                         const uint16_t *path,
+                                         uintptr_t path_len);
 
 CanvasIoError paintengine_start_recording(PaintEngine *dp,
                                           const uint16_t *path,
