@@ -86,7 +86,11 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
 	QHashIterator<QRgb, int> i(colorfreq);
 	while(i.hasNext()) {
 		i.next();
-		if(i.value() > freq) {
+		int value = i.value();
+		// In the unlikely case of two colors being equally frequent, pick the
+		// smaller one just for consistency. Otherwise the random ordering of
+		// QHash might lead to users getting different results from this.
+		if(value > freq || (value == freq && i.key() < color)) {
 			freq = i.value();
 			color = i.key();
 		}
