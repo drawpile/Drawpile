@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 
 #include "videoexportdialog.h"
 #include "export/imageseriesexporter.h"
-#include "export/webmexporter.h"
-#include "export/gifexporter.h"
+#include "export/ffmpegexporter.h"
 
 #include "ui_videoexport.h"
 
@@ -30,8 +29,6 @@
 #include <QImageWriter>
 #include <QFileDialog>
 #include <QSettings>
-#include <QMessageBox>
-#include <QMenu>
 #include <QStandardItemModel>
 
 namespace dialogs {
@@ -43,35 +40,14 @@ static QStandardItem *sizeItem(const QString &title, const QVariant &userdata) {
 }
 
 VideoExportDialog::VideoExportDialog(QWidget *parent) :
-	QDialog(parent)
+	QDialog(parent), m_ui(new Ui_VideoExport)
 {
-	_ui = new Ui_VideoExport;
-	_ui->setupUi(this);
+	m_ui->setupUi(this);
 
 #ifdef Q_OS_MAC
 	// Flat style doesn't look good on Mac
 	for(QGroupBox *box : findChildren<QGroupBox*>()) {
 		box->setFlat(false);
-	}
-#endif
-
-#ifndef HAVE_GIFLIB
-	// Disable GIF format choice if GIFLIB was not linked
-	{
-		QStandardItemModel *model = qobject_cast<QStandardItemModel*>(_ui->exportFormatChoice->model());
-		Q_ASSERT(model);
-		QStandardItem *item = model->item(2);
-		item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
-	}
-#endif
-
-#ifndef HAVE_WEBM
-	// Disable webm format choice if libvpx was not linked
-	{
-		QStandardItemModel *model = qobject_cast<QStandardItemModel*>(_ui->exportFormatChoice->model());
-		Q_ASSERT(model);
-		QStandardItem *item = model->item(1);
-		item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
 	}
 #endif
 
@@ -82,41 +58,43 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	sizes->appendRow(sizeItem("480p", QSize(640, 480)));
 	sizes->appendRow(sizeItem("720p", QSize(1280, 720)));
 	sizes->appendRow(sizeItem("1080p", QSize(1920, 1080)));
-	_ui->sizeChoice->setModel(sizes);
+	m_ui->sizeChoice->setModel(sizes);
 
 	// make sure currentIndexChanged gets called if saved setting was something other than Custom
-	_ui->sizeChoice->setCurrentIndex(1);
+	m_ui->sizeChoice->setCurrentIndex(1);
 
-	connect(_ui->sizeChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), [this]() {
-		QVariant isCustom = _ui->sizeChoice->currentData(Qt::UserRole);
+	connect(m_ui->sizeChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {
+		QVariant isCustom = m_ui->sizeChoice->currentData(Qt::UserRole);
 		bool e = isCustom.type() == QVariant::Bool && isCustom.toBool();
 
-		_ui->framewidth->setVisible(e);
-		_ui->frameheight->setVisible(e);
-		_ui->sizeXlabel->setVisible(e);
+		m_ui->framewidth->setVisible(e);
+		m_ui->frameheight->setVisible(e);
+		m_ui->sizeXlabel->setVisible(e);
 	});
 
 	// Fill file format box
-	for(const QByteArray &fmt : QImageWriter::supportedImageFormats())
-		_ui->imageFormatChoice->addItem(fmt);
-	_ui->imageFormatChoice->setCurrentText("png");
+	const auto formats = QImageWriter::supportedImageFormats();
+	for(const QByteArray &fmt : formats)
+		m_ui->imageFormatChoice->addItem(fmt);
+	m_ui->imageFormatChoice->setCurrentText("png");
 
 	// Load settings
 	QSettings cfg;
 	cfg.beginGroup("videoexport");
-	_ui->fps->setValue(cfg.value("fps", 25).toInt());
-	_ui->framewidth->setValue(cfg.value("framewidth", 1280).toInt());
-	_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
-	_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
+	m_ui->fps->setValue(cfg.value("fps", 25).toInt());
+	m_ui->framewidth->setValue(cfg.value("framewidth", 1280).toInt());
+	m_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
+	m_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
 
-	_ui->ditheringMethod->setCurrentIndex(cfg.value("dithering", 0).toInt());
-	_ui->optimizeGif->setChecked(cfg.value("optimizegif", true).toBool());
+	m_ui->ffmpegUseCustom->setChecked(cfg.value("usecustomffmpeg").toBool());
+	m_ui->ffmpegCustom->setPlainText(cfg.value("customffmpeg").toString());
 
-	_lastpath = cfg.value("lastpath", "").toString();
+	// Check for ffmpeg
+	m_ui->ffmpegNotFoundWarning->setHidden(FfmpegExporter::checkIsFfmpegAvailable());
 
-	// Animation settings are shown only when we ask for them
-	_ui->animOpts->setVisible(false);
-
+	connect(m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &VideoExportDialog::updateFfmpegArgumentPreview);
+	connect(m_ui->ffmpegUseCustom, &QCheckBox::toggled, this, &VideoExportDialog::updateFfmpegArgumentPreview);
+	updateFfmpegArgumentPreview();
 }
 
 VideoExportDialog::~VideoExportDialog()
@@ -124,24 +102,28 @@ VideoExportDialog::~VideoExportDialog()
 	// Remember settings
 	QSettings cfg;
 	cfg.beginGroup("videoexport");
-	cfg.setValue("fps", _ui->fps->value());
-	cfg.setValue("framewidth", _ui->framewidth->value());
-	cfg.setValue("frameheight", _ui->frameheight->value());
-	cfg.setValue("sizeChoice", _ui->sizeChoice->currentIndex());
-	cfg.setValue("lastpath", _lastpath);
-	cfg.setValue("dithering", _ui->ditheringMethod->currentIndex());
-	cfg.setValue("optimizegif", _ui->optimizeGif->isChecked());
+	cfg.setValue("fps", m_ui->fps->value());
+	cfg.setValue("framewidth", m_ui->framewidth->value());
+	cfg.setValue("frameheight", m_ui->frameheight->value());
+	cfg.setValue("sizeChoice", m_ui->sizeChoice->currentIndex());
+	cfg.setValue("usecustomffmpeg", m_ui->ffmpegUseCustom->isChecked());
+	cfg.setValue("customffmpeg", m_ui->ffmpegCustom->toPlainText());
 
-	delete _ui;
+	delete m_ui;
 }
 
-void VideoExportDialog::showAnimationSettings(int layercount)
+void VideoExportDialog::updateFfmpegArgumentPreview()
 {
-	_ui->animFirstLayer->setMaximum(layercount);
-	_ui->animLastLayer->setMaximum(layercount);
-	_ui->animFirstLayer->setValue(1);
-	_ui->animLastLayer->setValue(layercount);
-	_ui->animOpts->setVisible(true);
+	QStringList args = FfmpegExporter::getCommonArguments(m_ui->fps->value());
+	if(!m_ui->ffmpegUseCustom->isChecked())
+		args << FfmpegExporter::getDefaultArguments();
+	else
+		args << "<CUSTOM ARGS>";
+
+	args << "-y" << "<FILENAME>";
+
+	m_ui->ffmpegBasics->setText("ffmpeg " + args.join(QChar(' ')));
+	m_ui->ffmpegCustom->setEnabled(m_ui->ffmpegUseCustom->isChecked());
 }
 
 VideoExporter *VideoExportDialog::getExporter()
@@ -150,24 +132,23 @@ VideoExporter *VideoExportDialog::getExporter()
 		return 0;
 
 	// Return appropriate exporter based on exporter format box selection
-	VideoExporter *ve = 0;
-	switch(_ui->exportFormatChoice->currentIndex()) {
+	VideoExporter *ve = nullptr;
+	switch(m_ui->exportFormatChoice->currentIndex()) {
 	case 0: ve = getImageSeriesExporter(); break;
-	case 1: ve = getWebmExporter(); break;
-	case 2: ve = getGifExporter(); break;
+	case 1: ve = getFfmpegExporter(); break;
 	}
 
 	if(!ve)
-		return 0;
+		return nullptr;
 
 	// Set common settings
-	ve->setFps(_ui->fps->value());
+	ve->setFps(m_ui->fps->value());
 
-	QVariant sizechoice = _ui->sizeChoice->currentData(Qt::UserRole);
+	QVariant sizechoice = m_ui->sizeChoice->currentData(Qt::UserRole);
 	if(sizechoice.type() == QVariant::Bool) {
 		if(sizechoice.toBool()) {
 			// custom (fixed) size
-			ve->setFrameSize(QSize(_ui->framewidth->value(), _ui->frameheight->value()));
+			ve->setFrameSize(QSize(m_ui->framewidth->value(), m_ui->frameheight->value()));
 		} else {
 			// keep original size
 			ve->setVariableSize(true);
@@ -183,79 +164,46 @@ VideoExporter *VideoExportDialog::getExporter()
 VideoExporter *VideoExportDialog::getImageSeriesExporter()
 {
 
-	const QString dir = QFileDialog::getExistingDirectory(this, tr("Select output directory"), _lastpath);
-	if(dir.isEmpty())
-		return 0;
+	const QString dir = QFileDialog::getExistingDirectory(
+		this,
+		tr("Select output directory"),
+		QSettings().value("window/lastpath").toString()
+	);
 
-	_lastpath = dir;
+	if(dir.isEmpty())
+		return nullptr;
+
+	QSettings().setValue("window/lastpath", dir);
 
 	ImageSeriesExporter *exporter = new ImageSeriesExporter;
 
-	exporter->setFilePattern(_ui->filenamePattern->text());
+	exporter->setFilePattern(m_ui->filenamePattern->text());
 	exporter->setOutputPath(dir);
-	exporter->setFormat(_ui->imageFormatChoice->currentText());
+	exporter->setFormat(m_ui->imageFormatChoice->currentText());
 
 	return exporter;
 }
 
-VideoExporter *VideoExportDialog::getWebmExporter()
+VideoExporter *VideoExportDialog::getFfmpegExporter()
 {
-#ifdef HAVE_WEBM
-	QString outfile = QFileDialog::getSaveFileName(this, tr("Export video"), _lastpath, tr("%1 files (*%2)").arg("WebM").arg("*.webm"));
+	const QString outfile = QFileDialog::getSaveFileName(
+		this,
+		tr("Export video"),
+		QSettings().value("window/lastpath").toString(),
+		"MKV (*.mkv);;WebM (*.webm);;AVI (*.avi);;All files (*)"
+	);
 	if(outfile.isEmpty())
 		return nullptr;
 
-	if(!outfile.endsWith(".webm", Qt::CaseInsensitive))
-		outfile.append(".webm");
-
-	_lastpath = QFileInfo(outfile).dir().absolutePath();
+	QSettings().setValue("window/lastpath", QFileInfo(outfile).dir().absolutePath());
 
 	// Set exporter settings
-	WebmExporter *exporter = new WebmExporter;
+	FfmpegExporter *exporter = new FfmpegExporter;
 	exporter->setFilename(outfile);
+	if(m_ui->ffmpegUseCustom)
+		exporter->setCustomArguments(m_ui->ffmpegCustom->toPlainText());
 
 	return exporter;
-#else
-	qWarning("Trying to export a WebM without libvpx!");
-	return nullptr;
-#endif
-}
-
-VideoExporter *VideoExportDialog::getGifExporter()
-{
-#ifdef HAVE_GIFLIB
-	QString outfile = QFileDialog::getSaveFileName(this, tr("Export video"), _lastpath, tr("%1 files (*%2)").arg("GIF").arg(".gif"));
-	if(outfile.isEmpty())
-		return 0;
-
-	_lastpath = QFileInfo(outfile).dir().absolutePath();
-
-	GifExporter *exporter = new GifExporter;
-	exporter->setFilename(outfile);
-
-	GifExporter::DitheringMode dither;
-	switch(_ui->ditheringMethod->currentIndex()) {
-		case 0: dither = GifExporter::DIFFUSE; break;
-		case 1: dither = GifExporter::ORDERED; break;
-		case 2:
-		default: dither = GifExporter::THRESHOLD; break;
-	}
-	exporter->setDithering(dither);
-	exporter->setOptimize(_ui->optimizeGif->isChecked());
-
-	return exporter;
-#else
-	qWarning("Trying to export a GIF without GIFLIB!");
-	return nullptr;
-#endif
-}
-
-int VideoExportDialog::getFirstLayer() const {
-	return qMin(_ui->animFirstLayer->value(), _ui->animLastLayer->value());
-}
-
-int VideoExportDialog::getLastLayer() const {
-	return qMax(_ui->animFirstLayer->value(), _ui->animLastLayer->value());
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,35 +30,23 @@ class VideoExportDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit VideoExportDialog(QWidget *parent = 0);
+	explicit VideoExportDialog(QWidget *parent=nullptr);
 	~VideoExportDialog();
 
 	/**
-	 * @brief Show the settings related to animation export
-	 */
-	void showAnimationSettings(int layers);
-
-	/**
 	 * @brief Get the new video exporter configured in this dialog
-	 * @return exporter or 0 if non was configured
+	 * @return exporter or nullptr if none was configured
 	 */
 	VideoExporter *getExporter();
 
-	// Animation settings
-
-	//! Get the starting layer (animation)
-	int getFirstLayer() const;
-
-	//! Get the ending layer (animation)
-	int getLastLayer() const;
+private slots:
+	void updateFfmpegArgumentPreview();
 
 private:
 	VideoExporter *getImageSeriesExporter();
-	VideoExporter *getWebmExporter();
-	VideoExporter *getGifExporter();
+	VideoExporter *getFfmpegExporter();
 
-	Ui_VideoExport *_ui;
-	QString _lastpath;
+	Ui_VideoExport *m_ui;
 };
 
 }

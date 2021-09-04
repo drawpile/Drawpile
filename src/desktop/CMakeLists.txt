@@ -113,10 +113,6 @@ IF(KIS_TABLET)
 	endif()
 ENDIF(KIS_TABLET)
 
-if(GIF_FOUND)
-	add_definitions(-DHAVE_GIFLIB)
-endif()
-
 if(LIBMINIUPNPC_FOUND)
 	add_definitions(-DHAVE_UPNP)
 endif()
@@ -127,10 +123,6 @@ if(KF5DNSSD_FOUND)
 	if("${KF5DNSSD_VERSION}" VERSION_LESS "5.84.0")
 		add_definitions(-DHAVE_DNSSD_BEFORE_5_84_0)
 	endif()
-endif()
-
-if(LIBVPX_FOUND)
-	add_definitions(-DHAVE_WEBM)
 endif()
 
 if(QTKEYCHAIN_LIBRARIES)

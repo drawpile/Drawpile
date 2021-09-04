@@ -30,6 +30,7 @@ namespace canvas {
 
 class Ui_PlaybackDialog;
 class QMenu;
+class VideoExporter;
 
 namespace dialogs {
 
@@ -55,25 +56,27 @@ protected:
 private slots:
 	void onPlaybackAt(qint64 pos, qint32 interval);
 	void stepNext();
+	void autoStepNext(qint32 interval);
 
 	void onIndexLoaded();
 	void onIndexLoadError(const QString&, bool);
 	void onBuildIndexClicked();
 	void onVideoExportClicked();
-	void onVideoExportStarted();
-	void onVideoExportEnded();
+
+	void exportFrame(int count=1);
 
 private:
 	Ui_PlaybackDialog *m_ui;
 	canvas::PaintEngine *m_paintengine;
+	QPointer<VideoExporter> m_exporter;
 
 	QTimer *m_autoStepTimer;
 	QElapsedTimer m_lastInterval;
 	float m_speedFactor;
 
+	qint32 m_intervalAfterExport;
 	bool m_autoplay;
 	bool m_awaiting;
-
 };
 
 }

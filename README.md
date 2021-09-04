@@ -32,8 +32,6 @@ Client specific dependencies:
 * [QtKeyChain]: optional, enables password storage
 * KF5 KDNSSD: optional, local server discovery with Zeroconf
 * MiniUPnP: optional, automatic port forwarding setup
-* GIFLIB: optional, animated GIF export
-* LibVPX: optional, WebM video export
 
 Server specific dependencies (you can also take a look at [Docker build](pkg/docker/Dockerfile) script):
 

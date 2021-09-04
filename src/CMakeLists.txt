@@ -4,7 +4,6 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(KF5Archive REQUIRED NO_MODULE)
 find_package(KF5DNSSD NO_MODULE)
-find_package(GIF)
 find_package(Miniupnpc)
 
 if(LIBMINIUPNPC_FOUND)

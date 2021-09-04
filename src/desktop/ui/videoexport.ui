@@ -7,87 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>456</height>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Export video</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Export format:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="exportFormatChoice">
-       <item>
-        <property name="text">
-         <string>Image series</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>WebM video</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Animated GIF</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="animOpts">
-     <property name="title">
-      <string>Animation Options</string>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-     <layout class="QFormLayout" name="formLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Layers:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QSpinBox" name="animFirstLayer">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string notr="true">–</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="animLastLayer">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
@@ -100,14 +26,7 @@
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Framerate:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QSpinBox" name="fps">
@@ -137,14 +56,42 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
          <string>Size:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Framerate:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Format:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="exportFormatChoice">
+        <item>
+         <property name="text">
+          <string>Image series</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string notr="true">FFmpeg</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
          <widget class="QComboBox" name="sizeChoice"/>
@@ -271,29 +218,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>10</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="filenamePattern">
             <property name="sizePolicy">
@@ -303,47 +227,55 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string notr="true">video_{F}.{E}</string>
+             <string notr="true">video-{F}.{E}</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
         <widget class="QWidget" name="page_2">
-         <layout class="QFormLayout" name="formLayout_3"/>
-        </widget>
-        <widget class="QWidget" name="page_3">
-         <layout class="QFormLayout" name="formLayout_5">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_14">
-            <property name="text">
-             <string>Dithering:</string>
+         <layout class="QFormLayout" name="formLayout_3">
+          <item row="1" column="0" colspan="2">
+           <widget class="QLineEdit" name="ffmpegBasics">
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="ditheringMethod">
-            <item>
-             <property name="text">
-              <string>Diffuse</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Ordered</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Threshold</string>
-             </property>
-            </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="ffmpegUseCustom">
+            <property name="text">
+             <string>Use custom arguments:</string>
+            </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="optimizeGif">
+          <item row="3" column="0" colspan="2">
+           <widget class="QPlainTextEdit" name="ffmpegCustom">
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="ffmpegNotFoundWarning">
+            <property name="styleSheet">
+             <string notr="true">color: red</string>
+            </property>
             <property name="text">
-             <string>Optimize frame difference</string>
+             <string>ffmpeg executable not found</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -375,8 +307,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>606</y>
+     <x>268</x>
+     <y>375</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -391,8 +323,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>330</x>
-     <y>606</y>
+     <x>336</x>
+     <y>375</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -407,12 +339,12 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>296</x>
-     <y>23</y>
+     <x>379</x>
+     <y>59</y>
     </hint>
     <hint type="destinationlabel">
-     <x>43</x>
-     <y>565</y>
+     <x>51</x>
+     <y>335</y>
     </hint>
    </hints>
   </connection>

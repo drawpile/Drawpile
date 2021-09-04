@@ -23,6 +23,8 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 
+#include "export/videoexporter.h"
+
 #include "mainwindow.h"
 #include "../rustpile/rustpile.h"
 
@@ -30,6 +32,7 @@
 
 #include <QDebug>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QCloseEvent>
 #include <QTimer>
 
@@ -39,6 +42,7 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	QDialog(parent), m_ui(new Ui_PlaybackDialog),
 	m_paintengine(canvas->paintEngine()),
 	m_speedFactor(1.0),
+	m_intervalAfterExport(0),
 	m_autoplay(false), m_awaiting(false)
 {
 	setWindowTitle(tr("Playback"));
@@ -96,29 +100,13 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	// play button toggles automatic step mode
 	connect(m_ui->play, &QAbstractButton::toggled, this, &PlaybackDialog::setPlaying);
 
-#if 0
+#if 0 // FIXME
 	// Connect the UI to the controller
 	connect(m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, m_ctrl, &PlaybackController::jumpTo);
 
 	connect(m_ctrl, &PlaybackController::indexLoaded, this, &PlaybackDialog::onIndexLoaded);
 	connect(m_ctrl, &PlaybackController::indexLoadError, this, &PlaybackDialog::onIndexLoadError);
 	connect(m_ctrl, &PlaybackController::indexBuildProgressed, [this](qreal p) { m_ui->buildIndexProgress->setValue(p * m_ui->buildIndexProgress->maximum()); });
-
-	connect(m_ctrl, &PlaybackController::exportStarted, this, &PlaybackDialog::onVideoExportStarted);
-	connect(m_ctrl, &PlaybackController::exportEnded, this, &PlaybackDialog::onVideoExportEnded);
-	connect(m_ctrl, &PlaybackController::exportError, [this](const QString &msg) {
-		QMessageBox::warning(this, tr("Video error"), msg);
-	});
-
-	connect(m_ui->saveFrame, &QAbstractButton::clicked, m_ctrl, &PlaybackController::exportFrame);
-	connect(m_ui->stopExport, &QAbstractButton::clicked, m_ctrl, &PlaybackController::stopExporter);
-	connect(m_ui->autoSaveFrame, &QCheckBox::toggled, m_ctrl, &PlaybackController::setAutosave);
-	connect(m_ctrl, &PlaybackController::exportedFrame, [this]() {
-		m_ui->frameLabel->setText(QString::number(m_ctrl->currentExportFrame()));
-		m_ui->timeLabel->setText(m_ctrl->currentExportTime());
-	});
-
-	connect(m_ctrl, &PlaybackController::canSaveFrameChanged, m_ui->saveFrame, &QPushButton::setEnabled);
 
 	// Automatically try to load the index
 	QTimer::singleShot(0, m_ctrl, &PlaybackController::loadIndex);
@@ -137,7 +125,6 @@ PlaybackDialog::~PlaybackDialog()
  */
 void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 {
-	qDebug() << "playback at" << pos << "interval" << interval;
 	m_awaiting = false;
 	if(pos < 0) {
 		// Negative number means we've reached the end of the recording
@@ -145,6 +132,8 @@ void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 		m_ui->play->setEnabled(false);
 		m_ui->skipForward->setEnabled(false);
 		m_ui->stepForward->setEnabled(false);
+		m_ui->playbackProgress->setValue(m_ui->playbackProgress->maximum());
+
 	} else {
 		m_ui->play->setEnabled(true);
 		m_ui->skipForward->setEnabled(true);
@@ -152,15 +141,27 @@ void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 		m_ui->playbackProgress->setValue(pos);
 	}
 
-	if(pos >=0 && m_autoplay) {
-		if(interval > 0) {
-			const auto elapsed = m_lastInterval.elapsed();
-			m_lastInterval.restart();
+	if(pos>=0 && m_exporter && m_ui->autoSaveFrame->isChecked()) {
+		const int writeFrames = qBound(1, int(interval / 1000.0 * m_exporter->fps()), m_exporter->fps());
+		m_intervalAfterExport = interval;
+		exportFrame(writeFrames);
 
-			m_autoStepTimer->start(qMax(0.0f, interval * m_speedFactor - elapsed));
-		} else {
-			m_autoStepTimer->start(33.0 * m_speedFactor);
-		}
+		// Note: autoStepNext will be called  when the exporter becomes ready again.
+
+	} else if(pos>=0 && m_autoplay) {
+		autoStepNext(interval);
+	}
+}
+
+void PlaybackDialog::autoStepNext(qint32 interval)
+{
+	if(interval > 0) {
+		const auto elapsed = m_lastInterval.elapsed();
+		m_lastInterval.restart();
+
+		m_autoStepTimer->start(qMax(0.0f, interval * m_speedFactor - elapsed));
+	} else {
+		m_autoStepTimer->start(33.0 * m_speedFactor);
 	}
 }
 
@@ -176,14 +177,14 @@ void PlaybackDialog::onBuildIndexClicked()
 	m_ui->noIndexReason->setText(tr("Building index..."));
 	m_ui->buildIndexProgress->show();
 	m_ui->buildIndexButton->setEnabled(false);
-#if 0
+#if 0 // FIXME
 	m_ctrl->buildIndex();
 #endif
 }
 
 void PlaybackDialog::onIndexLoaded()
 {
-#if 0
+#if 0 // FIXME
 	disconnect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &widgets::Filmstrip::setCursor);
 	connect(m_ctrl, &PlaybackController::indexPositionChanged,m_ui->filmStrip, &widgets::Filmstrip::setCursor);
 
@@ -242,57 +243,17 @@ void PlaybackDialog::setPlaying(bool playing)
 	}
 }
 
-#if 0 // FIXME REPLACE WITH RUST
-recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)
-{
-	QScopedPointer<recording::Reader> reader(new recording::Reader(filename));
-
-	recording::Compatibility result = reader->open();
-
-	QString warning;
-	bool fatal=false;
-
-	switch(result) {
-	using namespace recording;
-	case COMPATIBLE: break;
-	case MINOR_INCOMPATIBILITY:
-		warning = tr("This recording was made with a different Drawpile version (%1) and may appear differently").arg(reader->writerVersion());
-		break;
-	case UNKNOWN_COMPATIBILITY:
-		warning = tr("This recording was made with a newer Drawpile version (%1) which might not be compatible").arg(reader->writerVersion());
-		break;
-	case INCOMPATIBLE:
-		warning = tr("Recording is incompatible. This recording was made with Drawpile version %1.").arg(reader->writerVersion());
-		fatal = true;
-		break;
-	case NOT_DPREC:
-		warning = tr("Selected file is not a Drawpile recording");
-		fatal = true;
-		break;
-	case CANNOT_READ:
-		warning = tr("Cannot read file: %1").arg(reader->errorString());
-		fatal = true;
-		break;
-	}
-
-	if(!warning.isNull()) {
-		if(fatal) {
-			QMessageBox::warning(msgboxparent, tr("Open Recording"), warning);
-			return 0;
-		} else {
-			int res = QMessageBox::warning(msgboxparent, tr("Open Recording"), warning, QMessageBox::Ok, QMessageBox::Cancel);
-			if(res != QMessageBox::Ok)
-				return 0;
-		}
-	}
-
-	return reader.take();
-}
-#endif
-
 void PlaybackDialog::closeEvent(QCloseEvent *event)
 {
 	// TODO call rustpile end playback
+
+	if(m_exporter) {
+		// Exporter still working? Disown it and let it finish.
+		// It will delete itself once done.
+		m_exporter->setParent(nullptr);
+		m_exporter->finish();
+	}
+
 	QDialog::closeEvent(event);
 }
 
@@ -306,9 +267,12 @@ void PlaybackDialog::keyPressEvent(QKeyEvent *event)
 
 void PlaybackDialog::onVideoExportClicked()
 {
-#if 0
+
 	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
 	VideoExporter *ve=nullptr;
+
+	// Loop until the user has selected a valid exporter
+	// configuration or cancelled.
 	while(!ve) {
 		if(dialog->exec() != QDialog::Accepted)
 			return;
@@ -316,19 +280,49 @@ void PlaybackDialog::onVideoExportClicked()
 		ve = dialog->getExporter();
 	}
 
-	m_ctrl->startVideoExport(ve);
-#endif
-}
+	m_exporter = ve;
+	m_exporter->setParent(this);
+	m_exporter->start();
 
-
-void PlaybackDialog::onVideoExportStarted()
-{
 	m_ui->exportStack->setCurrentIndex(0);
+	m_ui->saveFrame->setEnabled(true);
+	connect(m_exporter, &VideoExporter::exporterFinished, this, [this]() {
+		m_ui->exportStack->setCurrentIndex(1);
+	});
+	connect(m_exporter, &VideoExporter::exporterFinished, m_exporter, &VideoExporter::deleteLater);
+
+	connect(m_exporter, &VideoExporter::exporterError, this, [this](const QString &msg) {
+		QMessageBox::warning(this, tr("Video error"), msg);
+	});
+
+	connect(m_ui->saveFrame, &QAbstractButton::clicked, this, &PlaybackDialog::exportFrame);
+	connect(m_ui->stopExport, &QAbstractButton::clicked, m_exporter, &VideoExporter::finish);
+
+	connect(m_exporter, &VideoExporter::exporterReady, this, [this]() {
+		m_ui->saveFrame->setEnabled(true);
+		m_ui->frameLabel->setText(QString::number(m_exporter->frame()));
+
+		// When exporter is active, autoplay step isn't taken immediately when
+		// the sequence point is received, because exporting is/can be asynchronous.
+		// We must wait for the exporter to become ready again until taking the next step.
+		if(m_autoplay)
+			autoStepNext(m_intervalAfterExport);
+	});
 }
 
-void PlaybackDialog::onVideoExportEnded()
+void PlaybackDialog::exportFrame(int count)
 {
-	m_ui->exportStack->setCurrentIndex(1);
+	Q_ASSERT(m_exporter);
+	count = qMax(1, count);
+
+	const QImage image = m_paintengine->getPixmap().toImage();
+	if(image.isNull()) {
+		qWarning("exportFrame: image is null!");
+		return;
+	}
+
+	m_ui->saveFrame->setEnabled(false);
+	m_exporter->saveFrame(image, count);
 }
 
 }

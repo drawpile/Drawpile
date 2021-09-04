@@ -84,6 +84,7 @@ set (
 	recording/playbackcontroller.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
+	export/ffmpegexporter.cpp
 	parentalcontrols/parentalcontrols.cpp
 )
 
@@ -94,22 +95,6 @@ if(WIN32)
 else()
 	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_dummy.cpp)
 endif()
-
-if(GIF_FOUND)
-	set ( SOURCES ${SOURCES} export/gifexporter.cpp )
-	add_definitions(-DHAVE_GIFLIB)
-	include_directories(SYSTEM "${GIF_INCLUDE_DIR}")
-endif()
-
-if(LIBVPX_FOUND)
-	set(
-		SOURCES ${SOURCES}
-		bundled/mkvmuxer/mkvmuxer.cc
-		bundled/mkvmuxer/mkvmuxerutil.cc
-		export/webmexporter.cpp
-		export/webmencoder.cpp
-	)
-endif(LIBVPX_FOUND)
 
 if( Qt5LinguistTools_FOUND)
 	set(TRANSLATIONS
@@ -138,14 +123,6 @@ add_library (
 
 target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network)
 target_link_libraries(dpclient rustpile pthread dl)
-
-if(GIF_FOUND)
-	target_link_libraries(dpclient ${GIF_LIBRARIES})
-endif()
-
-if(LIBVPX_FOUND)
-	target_link_libraries(dpclient ${LIBVPX_LIBRARIES})
-endif(LIBVPX_FOUND)
 
 if ( WIN32 )
 	target_link_libraries (dpclient ws2_32)
