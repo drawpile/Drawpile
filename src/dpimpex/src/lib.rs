@@ -27,11 +27,11 @@ use std::{fmt, io};
 use zip::result::ZipError;
 use xml::writer::Error as XmlError;
 
-mod conv;
 mod flat;
 mod ora_reader;
 mod ora_utils;
 mod ora_writer;
+pub mod conv;
 pub mod rec;
 pub mod animation;
 

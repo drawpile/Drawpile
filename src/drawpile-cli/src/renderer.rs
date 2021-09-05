@@ -21,9 +21,10 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::canvas::CanvasState;
-use dpcore::paint::color::*;
 use dpcore::protocol::message::{CommandMessage, Message};
+use dpcore::paint::LayerViewOptions;
 use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
+use dpimpex::conv::from_dpimage;
 
 use tracing::{info, warn};
 
@@ -173,31 +174,29 @@ fn save_canvas(
 
     let filename = make_filename(opts, state.image_num);
 
-    let img = canvas.layerstack().to_image();
-    let mut rgba = Vec::<u8>::with_capacity(img.width * img.height * 4);
-    for px in img.pixels.iter() {
-        rgba.push(px[RED_CHANNEL]);
-        rgba.push(px[GREEN_CHANNEL]);
-        rgba.push(px[BLUE_CHANNEL]);
-        rgba.push(px[ALPHA_CHANNEL]);
-    }
-    let mut ib = image::RgbaImage::from_raw(img.width as u32, img.height as u32, rgba).unwrap();
+    let mut img = from_dpimage(&canvas.layerstack().to_image(&LayerViewOptions::default()));
 
-    let size = Size(img.width as u32, img.height as u32);
+    let size = Size(img.width(), img.height());
 
     if let Some(resize) = state.resize {
         if size != resize {
-            ib = image::imageops::resize(&ib, resize.0, resize.1, image::FilterType::CatmullRom);
+            img = image::imageops::resize(&img, resize.0, resize.1, image::imageops::FilterType::CatmullRom);
         }
     } else if state.same_size {
         state.resize = Some(size);
     }
 
-    ib.save(&filename)?;
-    info!("Saved {}", filename);
-
+    info!("Saving {}", filename);
     state.image_num += 1;
-    Ok(now.elapsed())
+
+    match img.save(&filename) {
+        Err(image::ImageError::IoError(e)) => Err(e),
+        Err(e) => {
+            warn!("Image encoding error: {}", e);
+            Err(io::Error::new(io::ErrorKind::Other, "image encoding error"))
+        }
+        Ok(_) => Ok(now.elapsed())
+    }
 }
 
 fn make_filename(opts: &RenderOpts, index: u32) -> String {
