@@ -32,6 +32,7 @@ set (
 	canvas/canvassaverrunnable.cpp
 	canvas/inputpresetmodel.cpp
 	canvas/paintengine.cpp
+	canvas/indexbuilderrunnable.cpp
 	net/client.cpp
 	net/server.cpp
 	net/loopbackserver.cpp
@@ -78,10 +79,6 @@ set (
 	brushes/brushpresetmodel.cpp
 	brushes/classicbrushpainter.cpp
 	brushes/pixelbrushpainter.cpp
-	recording/index.cpp
-	recording/indexbuilder.cpp
-	recording/indexloader.cpp
-	recording/playbackcontroller.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp

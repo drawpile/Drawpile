@@ -93,6 +93,22 @@ impl Layer {
         }
     }
 
+    pub fn from_parts(id: InternalLayerID, width: u32, height: u32, tiles: Arc<Vec<Tile>>, sublayers: Vec<Arc<Layer>>) -> Layer {
+        Layer {
+            id,
+            title: String::new(),
+            opacity: 1.0,
+            hidden: false,
+            censored: false,
+            fixed: false,
+            blendmode: Blendmode::Normal,
+            width,
+            height,
+            tiles,
+            sublayers,
+        }
+    }
+
     /// Build a layer from raw pixel data
     /// This is typically used for scratch layers as a part of some
     /// larger image manipulation process.
@@ -283,6 +299,12 @@ impl Layer {
         } else {
             None
         }
+    }
+
+    /// Get the sublayer vector
+    /// Note: you typically shouldn't use this directly
+    pub fn sublayervec(&self) -> &Vec<Arc<Layer>> {
+        &self.sublayers
     }
 
     /// Get this layer's active sublayers

@@ -22,6 +22,7 @@
 
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
+#include "canvas/indexbuilderrunnable.h"
 
 #include "export/videoexporter.h"
 
@@ -35,12 +36,14 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QTimer>
+#include <QThreadPool>
 
 namespace dialogs {
 
 PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	QDialog(parent), m_ui(new Ui_PlaybackDialog),
 	m_paintengine(canvas->paintEngine()),
+	m_index(nullptr),
 	m_speedFactor(1.0),
 	m_intervalAfterExport(0),
 	m_autoplay(false), m_awaiting(false)
@@ -100,17 +103,10 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	// play button toggles automatic step mode
 	connect(m_ui->play, &QAbstractButton::toggled, this, &PlaybackDialog::setPlaying);
 
-#if 0 // FIXME
-	// Connect the UI to the controller
-	connect(m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, m_ctrl, &PlaybackController::jumpTo);
+	// jump to a position in the recording from the film strip
+	connect(m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, this, &PlaybackDialog::jumpTo);
 
-	connect(m_ctrl, &PlaybackController::indexLoaded, this, &PlaybackDialog::onIndexLoaded);
-	connect(m_ctrl, &PlaybackController::indexLoadError, this, &PlaybackDialog::onIndexLoadError);
-	connect(m_ctrl, &PlaybackController::indexBuildProgressed, [this](qreal p) { m_ui->buildIndexProgress->setValue(p * m_ui->buildIndexProgress->maximum()); });
-
-	// Automatically try to load the index
-	QTimer::singleShot(0, m_ctrl, &PlaybackController::loadIndex);
-#endif
+	loadIndex();
 }
 
 PlaybackDialog::~PlaybackDialog()
@@ -132,13 +128,17 @@ void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 		m_ui->play->setEnabled(false);
 		m_ui->skipForward->setEnabled(false);
 		m_ui->stepForward->setEnabled(false);
+
 		m_ui->playbackProgress->setValue(m_ui->playbackProgress->maximum());
+		m_ui->filmStrip->setCursor(m_ui->filmStrip->length());
 
 	} else {
 		m_ui->play->setEnabled(true);
 		m_ui->skipForward->setEnabled(true);
 		m_ui->stepForward->setEnabled(true);
+
 		m_ui->playbackProgress->setValue(pos);
+		m_ui->filmStrip->setCursor(pos);
 	}
 
 	if(pos>=0 && m_exporter && m_ui->autoSaveFrame->isChecked()) {
@@ -159,16 +159,25 @@ void PlaybackDialog::autoStepNext(qint32 interval)
 		const auto elapsed = m_lastInterval.elapsed();
 		m_lastInterval.restart();
 
-		m_autoStepTimer->start(qMax(0.0f, interval * m_speedFactor - elapsed));
+		m_autoStepTimer->start(qMax(0.0f, qMin(interval, 5000) * m_speedFactor - elapsed));
 	} else {
 		m_autoStepTimer->start(33.0 * m_speedFactor);
 	}
 }
 
-void PlaybackDialog::stepNext() {
+void PlaybackDialog::stepNext()
+{
 	if(!m_awaiting) {
 		m_awaiting = true;
 		rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+	}
+}
+
+void PlaybackDialog::jumpTo(int pos)
+{
+	if(!m_awaiting) {
+		m_awaiting = true;
+		rustpile::paintengine_playback_jump(m_paintengine->engine(), pos, true);
 	}
 }
 
@@ -177,21 +186,29 @@ void PlaybackDialog::onBuildIndexClicked()
 	m_ui->noIndexReason->setText(tr("Building index..."));
 	m_ui->buildIndexProgress->show();
 	m_ui->buildIndexButton->setEnabled(false);
-#if 0 // FIXME
-	m_ctrl->buildIndex();
-#endif
+
+	auto *indexer = new canvas::IndexBuilderRunnable(m_paintengine);
+	connect(indexer, &canvas::IndexBuilderRunnable::progress, m_ui->buildIndexProgress, &QProgressBar::setValue);
+	connect(indexer, &canvas::IndexBuilderRunnable::indexingComplete, this, [this](bool success) {
+		m_ui->buildIndexProgress->hide();
+		if(success) {
+			loadIndex();
+		} else {
+			m_ui->noIndexReason->setText(tr("Index building failed."));
+		}
+	});
+
+	QThreadPool::globalInstance()->start(indexer);
 }
 
-void PlaybackDialog::onIndexLoaded()
+void PlaybackDialog::loadIndex()
 {
-#if 0 // FIXME
-	disconnect(m_ctrl, &PlaybackController::progressChanged, m_ui->filmStrip, &widgets::Filmstrip::setCursor);
-	connect(m_ctrl, &PlaybackController::indexPositionChanged,m_ui->filmStrip, &widgets::Filmstrip::setCursor);
+	auto rp = m_paintengine->engine();
+	if(!rustpile::paintengine_load_recording_index(rp))
+		return;
 
-	m_ui->filmStrip->setLength(m_ctrl->maxIndexPosition());
-	m_ui->filmStrip->setFrames(m_ctrl->indexThumbnailCount());
-	m_ui->filmStrip->setCursor(m_ctrl->indexPosition());
-
+	m_ui->filmStrip->setLength(rustpile::paintengine_recording_index_messages(rp));
+	m_ui->filmStrip->setFrames(rustpile::paintengine_recording_index_thumbnails(rp));
 
 	m_ui->skipBackward->setEnabled(true);
 
@@ -199,15 +216,19 @@ void PlaybackDialog::onIndexLoaded()
 	m_ui->buildIndexProgress->hide();
 	m_ui->noIndexReason->hide();
 
-	m_ui->filmStrip->setLoadImageFn(std::bind(&PlaybackController::getIndexThumbnail, m_ctrl, std::placeholders::_1));
-#endif
-}
+	m_ui->filmStrip->setLoadImageFn([rp](int frame) -> QImage {
+		uintptr_t len;
+		const uint8_t *dataptr = rustpile::paintengine_get_recording_index_thumbnail(rp, frame, &len);
+		if(dataptr == nullptr) {
+			return QImage();
 
-void PlaybackDialog::onIndexLoadError(const QString &msg, bool canRetry)
-{
-	m_ui->buildIndexProgress->hide();
-	m_ui->noIndexReason->setText(msg);
-	m_ui->buildIndexButton->setEnabled(canRetry);
+		} else {
+			const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(dataptr), len);
+			return QImage::fromData(data, "PNG");
+		}
+	});
+
+	m_ui->indexStack->setCurrentIndex(1);
 }
 
 void PlaybackDialog::centerOnParent()

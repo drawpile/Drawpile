@@ -26,10 +26,11 @@ use std::convert::TryInto;
 use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
+use std::path::Path;
 use std::str;
 
 use dpcore::protocol::textparser::{ParseResult, TextParser};
-use dpcore::protocol::{Message, ProtocolVersion, PROTOCOL_VERSION, HEADER_LEN};
+use dpcore::protocol::{Message, ProtocolVersion, HEADER_LEN, PROTOCOL_VERSION};
 
 #[derive(Debug)]
 pub enum ReadMessage {
@@ -86,8 +87,17 @@ pub trait RecordingReader {
     /// Return the index of the last read message (first message is at zero)
     fn current_index(&self) -> usize;
 
+    /// Return the offset of the next message to be read
+    fn current_offset(&self) -> u64;
+
     /// Return the progress in the file in range 0..1
     fn current_progress(&self) -> f64;
+
+    /// Change reader position
+    /// 
+    /// Note: if index is 0, offset should be set to the actual message
+    /// zero offset regardless of the argument.
+    fn seek_to(&mut self, index: u32, offset: u64);
 }
 
 fn compare_versions(our: &ProtocolVersion, their: &ProtocolVersion) -> Compatibility {
@@ -109,7 +119,7 @@ fn compare_versions(our: &ProtocolVersion, their: &ProtocolVersion) -> Compatibi
 }
 
 /// Open a recording file, guessing its type based on the contents
-pub fn open_recording(filename: &str) -> io::Result<Box<dyn RecordingReader>> {
+pub fn open_recording(filename: &Path) -> io::Result<Box<dyn RecordingReader>> {
     let mut file = File::open(filename)?;
 
     let mut sample = [0; 512];
@@ -128,7 +138,10 @@ pub fn open_recording(filename: &str) -> io::Result<Box<dyn RecordingReader>> {
 
     if &sample[0..6] == b"DPREC\0" {
         // This looks like a binary recording
-        return Ok(Box::new(BinaryReader::open(BufReader::new(file), metadata.len())?));
+        return Ok(Box::new(BinaryReader::open(
+            BufReader::new(file),
+            metadata.len(),
+        )?));
     }
 
     // Check if this looks like a text recording
@@ -139,25 +152,39 @@ pub fn open_recording(filename: &str) -> io::Result<Box<dyn RecordingReader>> {
         )
     })?;
 
-    Ok(Box::new(TextReader::open(BufReader::new(file), metadata.len())?))
+    Ok(Box::new(TextReader::open(
+        BufReader::new(file),
+        metadata.len(),
+    )?))
 }
 
 pub struct BinaryReader<R> {
     file: R,
-    last_read_index: usize,
+
+    /// Size of the file
     file_size: u64,
-    pos: u64,
+
+    /// Offset of the first message in the file
+    zero_message_offset: u64,
+
+    /// Index of the next message to be read
+    current_index: usize,
+
+    /// Offset of the next message to be read
+    current_offset: u64,
+
     metadata: HashMap<String, String>,
     read_buffer: [u8; 0xffff + HEADER_LEN],
 }
 
-impl<R: Read+Seek> BinaryReader<R> {
+impl<R: Read + Seek> BinaryReader<R> {
     pub fn open(file: R, file_size: u64) -> io::Result<BinaryReader<R>> {
         let mut br = BinaryReader {
             file,
-            last_read_index: 0,
             file_size,
-            pos: 0,
+            zero_message_offset: 0,
+            current_index: 0,
+            current_offset: 0,
             metadata: HashMap::new(),
             read_buffer: [0; 0xffff + HEADER_LEN],
         };
@@ -197,7 +224,8 @@ impl<R: Read+Seek> BinaryReader<R> {
             ));
         }
 
-        br.pos = br.file.stream_position()?;
+        br.current_offset = br.file.stream_position()?;
+        br.zero_message_offset = br.current_offset;
 
         Ok(br)
     }
@@ -206,16 +234,17 @@ impl<R: Read+Seek> BinaryReader<R> {
         self.file.read_exact(&mut self.read_buffer[..HEADER_LEN])?;
         let payload_len = u16::from_be_bytes(self.read_buffer[..2].try_into().unwrap()) as usize;
         if payload_len > 0 {
-            self.file.read_exact(&mut self.read_buffer[HEADER_LEN..HEADER_LEN + payload_len])?;
+            self.file
+                .read_exact(&mut self.read_buffer[HEADER_LEN..HEADER_LEN + payload_len])?;
         }
 
-        self.last_read_index += 1;
-        self.pos += (payload_len + HEADER_LEN) as u64;
+        self.current_index += 1;
+        self.current_offset += (payload_len + HEADER_LEN) as u64;
         Ok(payload_len + HEADER_LEN)
     }
 }
 
-impl<R: Read+Seek> RecordingReader for BinaryReader<R> {
+impl<R: Read + Seek> RecordingReader for BinaryReader<R> {
     fn read_next(&mut self) -> ReadMessage {
         let msg_len;
         match self.read_next_raw() {
@@ -238,11 +267,28 @@ impl<R: Read+Seek> RecordingReader for BinaryReader<R> {
     }
 
     fn current_index(&self) -> usize {
-        self.last_read_index - 1
+        self.current_index
+    }
+
+    fn current_offset(&self) -> u64 {
+        self.current_offset
     }
 
     fn current_progress(&self) -> f64 {
-        self.pos as f64 / self.file_size as f64
+        self.current_offset as f64 / self.file_size as f64
+    }
+
+    fn seek_to(&mut self, index: u32, offset: u64) {
+        let seek = if index == 0 {
+            self.current_offset = self.zero_message_offset;
+            self.current_index = 0;
+            self.zero_message_offset
+        } else {
+            self.current_offset = offset;
+            self.current_index = index as usize;
+            offset
+        };
+        let _ = self.file.seek(SeekFrom::Start(seek));
     }
 
     fn get_metadata(&self, key: &str) -> Option<&String> {
@@ -256,9 +302,9 @@ impl<R: Read+Seek> RecordingReader for BinaryReader<R> {
 
 pub struct TextReader<R> {
     file: R,
-    last_read_index: usize,
     file_size: u64,
-    pos: u64,
+    current_index: usize,
+    current_offset: u64,
     metadata: HashMap<String, String>,
     parser: TextParser,
     line_buf: String,
@@ -268,9 +314,9 @@ impl<R: BufRead + Seek> TextReader<R> {
     pub fn open(file: R, file_size: u64) -> io::Result<TextReader<R>> {
         let mut br = TextReader {
             file,
-            last_read_index: 0,
+            current_index: 0,
             file_size,
-            pos: 0,
+            current_offset: 0,
             metadata: HashMap::new(),
             parser: TextParser::new(),
             line_buf: String::new(),
@@ -300,7 +346,7 @@ impl<R: BufRead + Seek> TextReader<R> {
     }
 }
 
-impl<R: BufRead+Seek> RecordingReader for TextReader<R> {
+impl<R: BufRead + Seek> RecordingReader for TextReader<R> {
     fn read_next(&mut self) -> ReadMessage {
         loop {
             self.line_buf.truncate(0);
@@ -309,7 +355,7 @@ impl<R: BufRead+Seek> RecordingReader for TextReader<R> {
                     if n == 0 {
                         return ReadMessage::Eof;
                     }
-                    self.pos += n as u64;
+                    self.current_offset += n as u64;
                 }
                 Err(e) => {
                     return ReadMessage::IoError(e);
@@ -319,7 +365,7 @@ impl<R: BufRead+Seek> RecordingReader for TextReader<R> {
             match self.parser.parse_line(&self.line_buf.trim()) {
                 ParseResult::Ok(tm) => match Message::from_text(&tm) {
                     Some(m) => {
-                        self.last_read_index += 1;
+                        self.current_index += 1;
                         return ReadMessage::Ok(m);
                     }
                     None => return ReadMessage::Invalid(format!("Unknown message: {}", tm.name)),
@@ -333,11 +379,21 @@ impl<R: BufRead+Seek> RecordingReader for TextReader<R> {
     }
 
     fn current_index(&self) -> usize {
-        self.last_read_index - 1
+        self.current_index
+    }
+
+    fn current_offset(&self) -> u64 {
+        self.current_offset
     }
 
     fn current_progress(&self) -> f64 {
-        self.pos as f64 / self.file_size as f64
+        self.current_offset() as f64 / self.file_size as f64
+    }
+
+    fn seek_to(&mut self, index: u32, offset: u64) {
+        self.current_offset = offset;
+        self.current_index = index as usize;
+        let _ = self.file.seek(SeekFrom::Start(offset));
     }
 
     fn get_metadata(&self, key: &str) -> Option<&String> {
@@ -379,14 +435,14 @@ mod tests {
             panic!("Message deserialization failed!");
         }
 
-        assert_eq!(reader.current_index(), 0);
+        assert_eq!(reader.current_index(), 1);
 
         assert!(match reader.read_next() {
             ReadMessage::Eof => true,
             x => panic!("Got: {:?}", x),
         });
 
-        assert_eq!(reader.current_index(), 0);
+        assert_eq!(reader.current_index(), 1);
     }
 
     #[test]
@@ -394,7 +450,7 @@ mod tests {
         let testdata =
             b"DPREC\0\0\x24{\"hello\": \"world\", \"version\": \"1.0\"}\0\x05\x20\x01\x01\x03ABC";
 
-        test_reader(&mut BinaryReader::open(&testdata[..]).unwrap());
+        test_reader(&mut BinaryReader::open(Cursor::new(&testdata), testdata.len() as u64).unwrap());
     }
 
     #[test]
@@ -406,6 +462,6 @@ mod tests {
         1 join name=ABC flags=auth
         "#;
 
-        test_reader(&mut TextReader::open(Cursor::new(&testdata[..])).unwrap());
+        test_reader(&mut TextReader::open(Cursor::new(&testdata[..]), testdata.len() as u64).unwrap());
     }
 }

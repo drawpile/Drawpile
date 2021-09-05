@@ -23,6 +23,7 @@
 use super::adapters::{AnnotationAt, Annotations, LayerInfo};
 use super::messages_ffi;
 use super::snapshots::SnapshotQueue;
+use super::recindex::{IndexReader, IndexBuildProgressNoticationFn, build_index};
 use dpcore::brush::{BrushEngine, BrushState};
 use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::snapshot::make_canvas_snapshot;
@@ -51,9 +52,10 @@ use std::fs::File;
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
 use std::time::{Duration, Instant};
+use std::path::{Path, PathBuf};
 use std::{ptr, slice, thread};
 
-use tracing::{error, warn};
+use tracing::{error, warn, info};
 
 // Paint thread callbacks:
 type NotifyChangesCallback = extern "C" fn(ctx: *mut c_void, area: Rectangle);
@@ -160,6 +162,8 @@ pub struct PaintEngine {
 
     /// Player for playing back a recording
     player: Option<Box<dyn rec_reader::RecordingReader>>,
+    player_index: Option<IndexReader>,
+    player_path: PathBuf,
 
     /// View mode changes are done in the main thread
     notify_changes: NotifyChangesCallback,
@@ -336,6 +340,8 @@ pub extern "C" fn paintengine_new(
         recorder: None,
         last_recorded_interval: Instant::now(),
         player: None,
+        player_index: None,
+        player_path: PathBuf::new(),
         notify_changes: changes,
         notify_cursor: cursors,
         context_object: ctx,
@@ -1181,7 +1187,7 @@ pub extern "C" fn paintengine_load_recording(
 ) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
-    let player = match rec_reader::open_recording(&path) {
+    let player = match rec_reader::open_recording(Path::new(&path)) {
         Ok(p) => p,
         Err(e) => {
             warn!("Couldn't open recording: {}", e);
@@ -1217,8 +1223,106 @@ pub extern "C" fn paintengine_load_recording(
     }
 
     dp.player = Some(player);
+    dp.player_index = None;
+    dp.player_path = path.into();
 
     compatibility
+}
+
+/// Try opening the index file for the currently open recording.
+#[no_mangle]
+pub extern "C" fn paintengine_load_recording_index(
+    dp: &mut PaintEngine,
+) -> bool {
+    if dp.player.is_none() {
+        return false;
+    }
+
+    let idx_path = dp.player_path.with_extension("dpidx");
+    dp.player_index = match IndexReader::open(&idx_path) {
+        Ok(r) => Some(r),
+        Err(e) => {
+            warn!("couldn't load index: {}", e);
+            return false;
+        }
+    };
+
+    true
+}
+
+/// Get the number of indexed messages in the recording
+#[no_mangle]
+pub extern "C" fn paintengine_recording_index_messages(
+    dp: &PaintEngine,
+) -> u32 {
+    if let Some(i) = &dp.player_index {
+        i.message_count()
+    } else {
+        0
+    }
+}
+
+/// Get the number of thumbnails in the recording index
+#[no_mangle]
+pub extern "C" fn paintengine_recording_index_thumbnails(
+    dp: &PaintEngine,
+) -> u32 {
+    if let Some(i) = &dp.player_index {
+        i.thumbnail_count()
+    } else {
+        0
+    }
+}
+
+/// Get the number of thumbnails in the recording index
+#[no_mangle]
+pub extern "C" fn paintengine_get_recording_index_thumbnail(
+    dp: &mut PaintEngine,
+    index: u32,
+    length: &mut usize,
+) -> *const u8 {
+    if let Some(i) = &mut dp.player_index {
+        let t = match i.read_thumbnail(index as usize) {
+            Ok(t) => t,
+            Err(e) => {
+                warn!("Couldn't load thumbnail: {}", e);
+                *length = 0;
+                return ptr::null();
+            }
+        };
+
+        *length = t.len();
+        t.as_ptr()
+
+    } else {
+        *length = 0;
+        ptr::null()
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_build_index(
+    dp: &PaintEngine,
+    ctx: *mut c_void,
+    progress_notification_func: IndexBuildProgressNoticationFn,
+) -> bool {
+    
+    info!("Building index for {}", dp.player_path.display());
+
+    let started = Instant::now();
+
+    if let Err(err) = build_index(
+        &dp.player_path,
+        ctx,
+        progress_notification_func
+    ) {
+        warn!("Index building error: {}", err);
+        return false;
+    }
+
+    info!("Index built in {} seconds", started.elapsed().as_secs());
+
+    true
 }
 
 /// Save the currently visible layerstack.
@@ -1367,7 +1471,11 @@ pub extern "C" fn paintengine_stop_recording(dp: &mut PaintEngine) {
 #[no_mangle]
 pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32, sequences: bool) {
     if steps < 0 {
-        // TODO index needed to step backwards
+        let pos = dp.player.as_deref().unwrap().current_index();
+        if pos > 0 {
+            paintengine_playback_jump(dp, (pos - 1) as u32, false);
+        }
+
         return;
     }
 
@@ -1433,12 +1541,73 @@ pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32
     // Notify end-of-step so the playback controller GUI can re-enable the
     // play button (or autoplay the next sequence)
     let player = dp.player.as_deref().unwrap();
+
+    let pos = if dp.player_index.is_some() {
+        player.current_index() as i64
+    } else {
+        // without an index, we don't know how many messages there
+        // are in the recording, so we just report the position
+        // as a percentage.
+        (player.current_progress() * 100.0) as i64
+    };
+
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::PlaybackPaused(
-        (player.current_progress() * 100.0) as i64, // TODO this is used as the range when not indexed
+        pos,
         interval,
     )) {
         warn!("Couldn't send command to paint engine thread {:?}", err);
         return;
+    }
+}
+
+/// Jump to a position in the recording.
+///
+/// The recording must have been indexed.
+#[no_mangle]
+pub extern "C" fn paintengine_playback_jump(dp: &mut PaintEngine, pos: u32, exact: bool) {
+    if let Some(index) = &mut dp.player_index {
+        let (msg_idx, msg_offset, layerstack) = match index.load_snapshot(pos) {
+            Ok(s) => s,
+            Err(e) => {
+                warn!("Couldn't jump to index {} in recording: {}", pos, e);
+                return;
+            }
+        };
+
+        assert!(pos >= msg_idx);
+
+        let current_index = dp.player.as_deref().unwrap().current_index() as u32;
+        if current_index >= msg_idx && current_index < pos {
+            // No need to reset if we're already within the snapshot
+            paintengine_playback_step(dp, (pos - current_index) as i32, false);
+            return;
+        }
+
+        if let Err(err) = dp
+            .engine_channel
+            .send(PaintEngineCommand::ReplaceCanvas(Box::new(layerstack)))
+        {
+            warn!(
+                "Couldn't send reset canvas command to paint engine thread {:?}",
+                err
+            );
+            return;
+        }
+
+        dp.player.as_deref_mut().unwrap().seek_to(msg_idx, msg_offset);
+
+        if exact && pos > msg_idx {
+            paintengine_playback_step(dp, (pos - msg_idx) as i32, false);
+
+        } else {
+            if let Err(err) = dp.engine_channel.send(PaintEngineCommand::PlaybackPaused(
+                msg_idx as i64,
+                0,
+            )) {
+                warn!("Couldn't send command to paint engine thread {:?}", err);
+                return;
+            }
+        }
     }
 }
 

@@ -21,6 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::{Color, Rectangle};
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 pub type AnnotationID = u16;
 
@@ -43,8 +44,8 @@ pub struct Annotation {
     pub valign: VAlign,
 }
 
-#[derive(Clone, Copy)]
-#[repr(C)]
+#[derive(Clone, Copy, IntoPrimitive, TryFromPrimitive)]
+#[repr(u8)]
 pub enum VAlign {
     Top,
     Center,

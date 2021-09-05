@@ -26,7 +26,6 @@
 #include <QMetaType>
 
 class QJsonObject;
-class QDataStream;
 
 namespace brushes {
 
@@ -134,11 +133,6 @@ public:
 
 	const rustpile::ClassicBrush &brush() const { return m_brush; }
 
-#if 0
-	friend QDataStream &operator<<(QDataStream &out, const ClassicBrush &myObj);
-	friend QDataStream &operator>>(QDataStream &in, ClassicBrush &myObj);
-#endif
-
 private:
 	static inline qreal lerp(qreal a, qreal b, qreal alpha) {
 		Q_ASSERT(alpha >=0 && alpha<=1);
@@ -146,27 +140,6 @@ private:
 	}
 
 	rustpile::ClassicBrush m_brush;
-#if 0
-	Shape m_shape = ROUND_PIXEL;
-	paintcore::BlendMode::Mode m_blend = paintcore::BlendMode::MODE_NORMAL;
-
-	int m_size1 = 10, m_size2 = 1;
-	int m_resmudge = 0;
-
-	qreal m_hardness1 = 1, m_hardness2 = 0;
-	qreal m_opacity1 = 1, m_opacity2 = 0;
-	qreal m_smudge1 = 0, m_smudge2 = 0;
-	qreal m_spacing = 0.1;
-
-	QColor m_color;
-
-	bool m_incremental = true;
-	bool m_colorpick = false;
-	bool m_sizePressure = false;
-	bool m_hardnessPressure = false;
-	bool m_opacityPressure = false;
-	bool m_smudgePressure = false;
-#endif
 };
 
 }

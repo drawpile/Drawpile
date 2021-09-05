@@ -1156,7 +1156,8 @@ void MainWindow::exportGifAnimation()
 		const auto result = rustpile::paintengine_save_animation(
 			m_doc->canvas()->paintEngine()->engine(),
 			reinterpret_cast<const uint16_t*>(file.constData()),
-			file.length()
+			file.length(),
+			rustpile::AnimationExportMode::Gif
 		);
 		QApplication::restoreOverrideCursor();
 		showErrorMessage(result);
@@ -1176,7 +1177,8 @@ void MainWindow::exportAnimationFrames()
 		const auto result = rustpile::paintengine_save_animation(
 			m_doc->canvas()->paintEngine()->engine(),
 			reinterpret_cast<const uint16_t*>(path.constData()),
-			path.length()
+			path.length(),
+			rustpile::AnimationExportMode::Frames
 		);
 		QApplication::restoreOverrideCursor();
 		showErrorMessage(result);

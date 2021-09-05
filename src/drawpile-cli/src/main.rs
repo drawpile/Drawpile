@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ use tracing_subscriber;
 
 use drawpile_cli::converter::*;
 use drawpile_cli::renderer::*;
+use drawpile_cli::indexer::{index_recording, decode_index, extract_snapshot};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::Subscriber::builder()
@@ -77,6 +78,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .help("Resize subsequent images to the original size"),
                 ),
         )
+        .subcommand(
+            App::new("index")
+                .arg(Arg::with_name("INPUT").help("Input file").required(true))
+        )
+        .subcommand(
+            App::new("decode-index")
+                .arg(Arg::with_name("INPUT").help("Input file").required(true))
+                .arg(
+                    Arg::with_name("entry")
+                        .long("extract")
+                        .short("x")
+                        .takes_value(true)
+                        .help("Extract snapshot at index")
+                )
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -111,6 +127,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             };
 
             render_recording(&opts)
+        }
+        ("index", Some(m)) => {
+            index_recording(m.value_of("INPUT").unwrap())
+        }
+        ("decode-index", Some(m)) => {
+            if m.is_present("entry") {
+                extract_snapshot(
+                    m.value_of("INPUT").unwrap(),
+                    m.value_of("entry").unwrap().parse::<usize>()?
+                )
+            } else {
+                decode_index(m.value_of("INPUT").unwrap())
+            }
         }
         ("", None) => {
             println!("Use: drawpile-cli convert or drawpile-cli render");

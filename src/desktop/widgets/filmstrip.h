@@ -49,6 +49,7 @@ public:
 
 	//! Set the length of the recording (in arbitrary units)
 	void setLength(int len);
+	int length() const { return m_length; }
 
 	//! Set cursor position (in the same units as the length)
 	void setCursor(int c);

@@ -24,16 +24,17 @@ use dpcore::paint::LayerStack;
 use image::error::ImageError;
 use std::path::Path;
 use std::{fmt, io};
-use zip::result::ZipError;
 use xml::writer::Error as XmlError;
+use zip::result::ZipError;
 
+pub mod animation;
+pub mod conv;
 mod flat;
 mod ora_reader;
 mod ora_utils;
 mod ora_writer;
-pub mod conv;
 pub mod rec;
-pub mod animation;
+pub mod rec_index;
 
 #[derive(Debug)]
 pub enum ImpexError {
@@ -52,6 +53,17 @@ impl fmt::Display for ImpexError {
             ImpexError::UnsupportedFormat => write!(f, "unsupported format"),
             ImpexError::NoContent => write!(f, "no content"),
             ImpexError::XmlError(e) => e.fmt(f),
+        }
+    }
+}
+
+impl std::error::Error for ImpexError {
+    fn cause(&self) -> Option<&dyn std::error::Error> {
+        match self {
+            ImpexError::IoError(e) => Some(e),
+            ImpexError::CodecError(e) => Some(e),
+            ImpexError::XmlError(e) => Some(e),
+            _ => None,
         }
     }
 }

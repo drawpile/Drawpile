@@ -33,6 +33,7 @@ use std::fmt;
 use std::io;
 use std::num::ParseIntError;
 use std::str::FromStr;
+use std::path::Path;
 use std::time::{Duration, Instant};
 
 use image;
@@ -94,7 +95,7 @@ impl Error for RenderError {
 }
 
 pub fn render_recording(opts: &RenderOpts) -> Result<(), Box<dyn std::error::Error>> {
-    let mut reader = open_recording(opts.input_file)?;
+    let mut reader = open_recording(Path::new(opts.input_file))?;
 
     if reader.check_compatibility() == Compatibility::Incompatible {
         return Err(Box::new(RenderError {

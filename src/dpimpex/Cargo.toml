@@ -10,11 +10,12 @@ dpcore = { path = "../dpcore" }
 xml-rs = "0.8.4"
 tracing = "0.1.22"
 serde_json = "1.0.51"
+byteorder = "1.4.3"
 
 [dependencies.image]
 version = "0.23.14"
 default-features = false
-features = ["png", "jpeg", "tiff", "gif"]
+features = ["png", "jpeg", "gif"]
 
 [dependencies.zip]
 version = "0.5.13"

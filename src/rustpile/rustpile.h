@@ -42,6 +42,11 @@ static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
 
 static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
 
+enum class AnimationExportMode {
+  Gif,
+  Frames,
+};
+
 enum class Blendmode : uint8_t {
   Erase = 0,
   Normal,
@@ -99,7 +104,7 @@ enum class Tier : uint8_t {
   Guest,
 };
 
-enum class VAlign {
+enum class VAlign : uint8_t {
   Top,
   Center,
   Bottom,
@@ -286,6 +291,8 @@ struct FeatureTiers {
   /// Permission to use undo/redo
   Tier undo;
 };
+
+using IndexBuildProgressNoticationFn = void(*)(void *ctx, uint32_t progress);
 
 extern "C" {
 
@@ -707,6 +714,24 @@ CanvasIoError paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintp
 /// This clears the existing canvas, just as loading any other file would.
 CanvasIoError paintengine_load_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
+/// Try opening the index file for the currently open recording.
+bool paintengine_load_recording_index(PaintEngine *dp);
+
+/// Get the number of indexed messages in the recording
+uint32_t paintengine_recording_index_messages(const PaintEngine *dp);
+
+/// Get the number of thumbnails in the recording index
+uint32_t paintengine_recording_index_thumbnails(const PaintEngine *dp);
+
+/// Get the number of thumbnails in the recording index
+const uint8_t *paintengine_get_recording_index_thumbnail(PaintEngine *dp,
+                                                         uint32_t index,
+                                                         uintptr_t *length);
+
+bool paintengine_build_index(const PaintEngine *dp,
+                             void *ctx,
+                             IndexBuildProgressNoticationFn progress_notification_func);
+
 /// Save the currently visible layerstack.
 ///
 /// It is safe to call this function in a separate thread.
@@ -719,7 +744,8 @@ CanvasIoError paintengine_save_file(const PaintEngine *dp,
 /// It is safe to call this function in a separate thread.
 CanvasIoError paintengine_save_animation(const PaintEngine *dp,
                                          const uint16_t *path,
-                                         uintptr_t path_len);
+                                         uintptr_t path_len,
+                                         AnimationExportMode mode);
 
 CanvasIoError paintengine_start_recording(PaintEngine *dp,
                                           const uint16_t *path,
@@ -732,6 +758,11 @@ void paintengine_stop_recording(PaintEngine *dp);
 /// If "sequences" is true, whole undo sequences are stepped instead of
 /// single messages. The playback callback will be called at the end.
 void paintengine_playback_step(PaintEngine *dp, int32_t steps, bool sequences);
+
+/// Jump to a position in the recording.
+///
+/// The recording must have been indexed.
+void paintengine_playback_jump(PaintEngine *dp, uint32_t pos, bool exact);
 
 bool paintengine_is_recording(const PaintEngine *dp);
 

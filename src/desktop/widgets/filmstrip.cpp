@@ -57,7 +57,7 @@ void Filmstrip::setFrames(int f)
 }
 
 void Filmstrip::setCursor(int c) {
-	if(c != m_cursor) {
+	if(c != m_cursor && c>=0 && c <= m_length) {
 		m_cursor = c;
 		m_scrollbar->setValue(cursorPos() - width()/2);
 		update();

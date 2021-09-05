@@ -23,9 +23,11 @@
 use super::conv::from_dpimage;
 use super::ora_utils::{DP_NAMESPACE, MYPAINT_NAMESPACE};
 use super::{ImageExportResult, ImpexError};
-use dpcore::paint::tile::TILE_SIZEI;
-use dpcore::paint::{Image, InternalLayerID, Layer, LayerID, LayerStack, Rectangle, Blendmode, LayerViewOptions};
 use dpcore::paint::annotation::VAlign;
+use dpcore::paint::tile::TILE_SIZEI;
+use dpcore::paint::{
+    Blendmode, Image, InternalLayerID, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle,
+};
 
 use image::codecs::png::PngEncoder;
 use image::{imageops, ColorType, EncodableLayout, ImageEncoder, RgbaImage};
@@ -33,9 +35,9 @@ use std::convert::TryInto;
 use std::fs::File;
 use std::io::{Seek, Write};
 use std::path::Path;
-use xml::EmitterConfig;
-use xml::writer::XmlEvent;
 use xml::common::XmlVersion;
+use xml::writer::XmlEvent;
+use xml::EmitterConfig;
 use zip::ZipWriter;
 
 pub fn save_openraster_image(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
@@ -182,10 +184,10 @@ fn write_stack_xml<W: Write + Seek>(
         .perform_indent(true)
         .create_writer(archive);
 
-    writer.write(XmlEvent::StartDocument{
+    writer.write(XmlEvent::StartDocument {
         version: XmlVersion::Version10,
         encoding: None,
-        standalone: None
+        standalone: None,
     })?;
 
     // Document root
@@ -224,8 +226,12 @@ fn write_stack_xml<W: Write + Seek>(
 
             match a.valign {
                 VAlign::Top => (),
-                VAlign::Center => { e = e.attr("valign", "center"); }
-                VAlign::Bottom => { e = e.attr("valign", "bottom"); }
+                VAlign::Center => {
+                    e = e.attr("valign", "center");
+                }
+                VAlign::Bottom => {
+                    e = e.attr("valign", "bottom");
+                }
             };
 
             writer.write(e)?;
@@ -265,14 +271,15 @@ fn write_stack_xml<W: Write + Seek>(
             }
             writer.write(e)?;
             writer.write(XmlEvent::end_element())?;
-
         } else {
             // must be the background layer
             assert!(!wl.bg_tile.is_empty());
-            writer.write(XmlEvent::start_element("layer")
-                .attr("src", &wl.filename)
-                .attr("mypaint:background-tile", &wl.bg_tile)
-                .attr("name", "Background"))?;
+            writer.write(
+                XmlEvent::start_element("layer")
+                    .attr("src", &wl.filename)
+                    .attr("mypaint:background-tile", &wl.bg_tile)
+                    .attr("name", "Background"),
+            )?;
             writer.write(XmlEvent::end_element())?;
         }
     }

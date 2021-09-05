@@ -1,12 +1,12 @@
-use std::path::{Path, PathBuf};
 use std::fs::File;
+use std::path::{Path, PathBuf};
 
 use super::conv::from_dpimage;
 use crate::ImageExportResult;
 use dpcore::paint::{LayerStack, LayerViewOptions};
 
 use image::codecs::gif::{GifEncoder, Repeat};
-use image::{Frame, Delay};
+use image::{Delay, Frame};
 
 pub fn save_gif_animation(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
     let mut encoder = GifEncoder::new(File::create(path)?);
@@ -17,14 +17,12 @@ pub fn save_gif_animation(path: &Path, layerstack: &LayerStack) -> ImageExportRe
         if !layer.fixed && layer.is_visible() {
             let image = layerstack.to_image(&LayerViewOptions::solo(idx));
             // TODO subframe delta
-            encoder.encode_frame(
-                Frame::from_parts(
-                    from_dpimage(&image),
-                    0,
-                    0,
-                    Delay::from_numer_denom_ms(41, 1), // TODO adjustable FPS
-                )
-            )?;
+            encoder.encode_frame(Frame::from_parts(
+                from_dpimage(&image),
+                0,
+                0,
+                Delay::from_numer_denom_ms(41, 1), // TODO adjustable FPS
+            ))?;
         }
     }
     Ok(())

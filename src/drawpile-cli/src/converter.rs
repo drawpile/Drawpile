@@ -28,6 +28,7 @@ use std::fmt;
 use std::fs::File;
 use std::io;
 use std::io::Write;
+use std::path::Path;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum Format {
@@ -43,8 +44,8 @@ pub struct ConvertRecOpts<'a> {
 }
 
 #[derive(Debug)]
-struct ConversionError {
-    message: &'static str,
+pub struct ConversionError {
+    pub message: &'static str,
 }
 
 impl fmt::Display for ConversionError {
@@ -60,7 +61,7 @@ impl Error for ConversionError {
 }
 
 pub fn convert_recording(opts: &ConvertRecOpts) -> Result<(), Box<dyn std::error::Error>> {
-    let mut reader = open_recording(opts.input_file)?;
+    let mut reader = open_recording(Path::new(opts.input_file))?;
 
     if reader.check_compatibility() == Compatibility::Incompatible {
         return Err(Box::new(ConversionError {

@@ -123,6 +123,16 @@ impl LayerStack {
         }
     }
 
+    pub fn from_parts(width: u32, height: u32, background: Tile, layers: Arc<Vec<Arc<Layer>>>, annotations: Arc<Vec<Arc<Annotation>>>) -> LayerStack {
+        LayerStack {
+            layers,
+            annotations,
+            background,
+            width,
+            height,
+        }
+    }
+
     pub fn width(&self) -> u32 {
         self.width
     }
@@ -172,6 +182,12 @@ impl LayerStack {
         let layers = Arc::make_mut(&mut self.layers);
         layers.insert(insert_idx, new_layer);
         Some(Arc::make_mut(layers.last_mut().unwrap()))
+    }
+
+    /// Get the layer vector
+    /// Note: you typically shouldn't need to use this directly
+    pub fn layersvec(&self) -> &Vec<Arc<Layer>> {
+        &self.layers
     }
 
     /// Find a layer with the given ID and return a reference to it
