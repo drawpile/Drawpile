@@ -20,7 +20,6 @@
 #include "tools/toolcontroller.h"
 #include "tools/floodfill.h"
 
-#include "core/floodfill.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "net/client.h"

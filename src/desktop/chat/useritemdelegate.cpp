@@ -19,7 +19,6 @@
 #include "useritemdelegate.h"
 #include "canvas/userlist.h"
 #include "canvas/canvasmodel.h"
-#include "canvas/aclfilter.h"
 #include "utils/icon.h"
 #include "net/servercmd.h"
 #include "net/envelopebuilder.h"

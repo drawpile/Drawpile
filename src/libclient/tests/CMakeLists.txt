@@ -12,8 +12,6 @@ set(
 	)
 
 AddUnitTest(html)
-AddUnitTest(retcon)
-AddUnitTest(aclfilter)
 AddUnitTest(listingfiltering)
 AddUnitTest(newversion)
 

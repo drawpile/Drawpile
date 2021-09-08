@@ -23,7 +23,6 @@
 #include "net/announcementlist.h"
 #include "document.h"
 #include "canvas/canvasmodel.h"
-#include "canvas/aclfilter.h"
 #include "parentalcontrols/parentalcontrols.h"
 #include "../rustpile/rustpile.h"
 

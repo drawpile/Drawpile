@@ -21,13 +21,10 @@
 #include "net/loopbackserver.h"
 #include "net/tcpserver.h"
 #include "net/login.h"
-#include "net/internalmsg.h"
 #include "net/envelope.h"
 #include "net/servercmd.h"
 
 #include <QDebug>
-
-using protocol::MessagePtr;
 
 namespace net {
 
@@ -188,7 +185,7 @@ void Client::handleEnvelope(const Envelope &envelope)
 	Envelope ctrl = envelope;
 	bool allControl = true;
 	while(!ctrl.isEmpty()) {
-		if(ctrl.messageType() == protocol::MSG_COMMAND) {
+		if(ctrl.messageType() == 0) {
 			const ServerReply sr = ServerReply::fromEnvelope(ctrl);
 			handleServerReply(sr);
 

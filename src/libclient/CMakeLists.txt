@@ -20,15 +20,11 @@ set (
 	tools/strokesmoother.cpp
 	tools/zoom.cpp
 	tools/inspector.cpp
-	canvas/statetracker.cpp
 	canvas/canvasmodel.cpp
 	canvas/selection.cpp
-	canvas/retcon.cpp
-	canvas/aclfilter.cpp
 	canvas/acl.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
-	canvas/history.cpp
 	canvas/canvassaverrunnable.cpp
 	canvas/inputpresetmodel.cpp
 	canvas/paintengine.cpp
@@ -63,17 +59,8 @@ set (
 	utils/avatarlistmodel.cpp
 	utils/sessionfilterproxymodel.cpp
 	utils/newversion.cpp
-	core/annotationmodel.cpp
-	core/tile.cpp
-	core/layer.cpp
-	core/layerstack.cpp
-	core/layerstackobserver.cpp
-	core/layerstackpixmapcacheobserver.cpp
 	core/brushmask.cpp
 	core/blendmodes.cpp
-	core/rasterop.cpp
-	core/floodfill.cpp
-	core/tilevector.cpp
 	brushes/brush.cpp
 	brushes/shapes.cpp
 	brushes/brushpresetmodel.cpp

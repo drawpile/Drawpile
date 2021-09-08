@@ -21,7 +21,6 @@
 #include <QPalette>
 #include <QPainter>
 
-#include "core/layerstack.h"
 #include "scene/annotationitem.h"
 #include "../rustpile/rustpile.h"
 

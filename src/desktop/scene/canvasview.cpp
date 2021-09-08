@@ -21,7 +21,6 @@
 #include "canvasscene.h"
 #include "canvas/canvasmodel.h"
 
-#include "core/layerstack.h"
 #include "core/point.h"
 #include "notifications.h"
 
