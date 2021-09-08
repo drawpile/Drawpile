@@ -136,21 +136,7 @@ void CanvasModel::disconnectedFromServer()
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
 	rustpile::paintengine_reset_acl(m_paintengine->engine(), m_localUserId);
-}
-
-void CanvasModel::startPlayback()
-{
-#if 0 // FIXME
-	m_statetracker->setShowAllUserMarkers(true);
-#endif
-}
-
-void CanvasModel::endPlayback()
-{
-#if 0 // FIXME
-	m_statetracker->setShowAllUserMarkers(false);
-	m_statetracker->endPlayback();
-#endif
+	rustpile::paintengine_cleanup(m_paintengine->engine());
 }
 
 void CanvasModel::handleCommand(const net::Envelope &envelope)

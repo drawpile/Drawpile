@@ -1229,6 +1229,20 @@ pub extern "C" fn paintengine_load_recording(
     compatibility
 }
 
+/// Stop recording playback
+#[no_mangle]
+pub extern "C" fn paintengine_close_recording(
+    dp: &mut PaintEngine,
+) {
+    dp.player = None;
+    dp.player_index = None;
+
+    // Stopping a recording is similar to logging out of an
+    // online session, so do the same cleanup to ensure there
+    // are no dangling temporary layers etc.
+    paintengine_cleanup(dp);
+}
+
 /// Try opening the index file for the currently open recording.
 #[no_mangle]
 pub extern "C" fn paintengine_load_recording_index(
@@ -1306,7 +1320,7 @@ pub extern "C" fn paintengine_build_index(
     ctx: *mut c_void,
     progress_notification_func: IndexBuildProgressNoticationFn,
 ) -> bool {
-    
+
     info!("Building index for {}", dp.player_path.display());
 
     let started = Instant::now();
@@ -1485,7 +1499,7 @@ pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32
             rec_reader::ReadMessage::Ok(m) => m,
             rec_reader::ReadMessage::Invalid(m) => {
                 warn!("Read an invalid message: {}", m);
-                return;
+                continue;
             }
             rec_reader::ReadMessage::IoError(e) => {
                 warn!("An IO error occurred while playing back recording: {}", e);

@@ -266,7 +266,7 @@ void PlaybackDialog::setPlaying(bool playing)
 
 void PlaybackDialog::closeEvent(QCloseEvent *event)
 {
-	// TODO call rustpile end playback
+	rustpile::paintengine_close_recording(m_paintengine->engine());
 
 	if(m_exporter) {
 		// Exporter still working? Disown it and let it finish.

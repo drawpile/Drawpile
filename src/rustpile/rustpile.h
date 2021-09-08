@@ -714,6 +714,9 @@ CanvasIoError paintengine_load_file(PaintEngine *dp, const uint16_t *path, uintp
 /// This clears the existing canvas, just as loading any other file would.
 CanvasIoError paintengine_load_recording(PaintEngine *dp, const uint16_t *path, uintptr_t path_len);
 
+/// Stop recording playback
+void paintengine_close_recording(PaintEngine *dp);
+
 /// Try opening the index file for the currently open recording.
 bool paintengine_load_recording_index(PaintEngine *dp);
 

@@ -73,8 +73,6 @@ public:
 
 	void connectedToServer(uint8_t myUserId, bool join);
 	void disconnectedFromServer();
-	void startPlayback();
-	void endPlayback();
 
 	AclState *aclState() const { return m_aclstate; }
 	UserListModel *userlist() const { return m_userlist; }
