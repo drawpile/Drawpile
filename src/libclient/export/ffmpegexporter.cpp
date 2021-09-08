@@ -53,6 +53,54 @@ QStringList FfmpegExporter::getDefaultArguments()
 	return args;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+// Copied from Qt source code (LGPL licensed):
+static QStringList splitCommand(QStringView command)
+{
+	QStringList args;
+	QString tmp;
+	int quoteCount = 0;
+	bool inQuote = false;
+
+	// handle quoting. tokens can be surrounded by double quotes
+	// "hello world". three consecutive double quotes represent
+	// the quote character itself.
+	for (int i = 0; i < command.size(); ++i) {
+		if (command.at(i) == QLatin1Char('"')) {
+			++quoteCount;
+			if (quoteCount == 3) {
+				// third consecutive quote
+				quoteCount = 0;
+				tmp += command.at(i);
+			}
+			continue;
+		}
+		if (quoteCount) {
+			if (quoteCount == 1)
+				inQuote = !inQuote;
+			quoteCount = 0;
+		}
+		if (!inQuote && command.at(i).isSpace()) {
+			if (!tmp.isEmpty()) {
+				args += tmp;
+				tmp.clear();
+			}
+		} else {
+			tmp += command.at(i);
+		}
+	}
+	if (!tmp.isEmpty())
+		args += tmp;
+
+	return args;
+}
+#else
+static inline QStringList splitCommand(QStringView command)
+{
+	return QProcess::splitCommand(command);
+}
+#endif
+
 void FfmpegExporter::initExporter()
 {
 	Q_ASSERT(m_encoder == nullptr);
@@ -64,7 +112,7 @@ void FfmpegExporter::initExporter()
 	if(m_customArguments.isEmpty())
 		args << getDefaultArguments();
 	else
-		args << QProcess::splitCommand(m_customArguments);
+		args << splitCommand(m_customArguments);
 
 	// Output file (overwrite)
 	args << "-y" << m_filename;
