@@ -810,25 +810,6 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 	}
 }
 
-void Document::removeEmptyAnnotations()
-{
-	if(!m_canvas) {
-		qWarning("removeEmptyAnnotations(): no canvas");
-		return;
-	}
-
-#if 0 // FIXME
-	QList<uint16_t> ids = m_canvas->layerStack()->annotations()->getEmptyIds();
-	if(!ids.isEmpty()) {
-		protocol::MessageList msgs;
-		msgs << protocol::MessagePtr(new protocol::UndoPoint(m_client->myId()));
-		for(auto id : ids)
-			msgs << protocol::MessagePtr(new protocol::AnnotationDelete(m_client->myId(), id));
-		m_client->sendMessages(msgs);
-	}
-#endif
-}
-
 void Document::addServerLogEntry(const QString &log)
 {
 	int i = m_serverLog->rowCount();

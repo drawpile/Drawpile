@@ -2296,7 +2296,6 @@ void MainWindow::setupActions()
 	QAction *stamp = makeAction("stamp", tr("&Stamp")).shortcut("Ctrl+T");
 
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
-	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations"));
 	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas..."));
 	QAction *canvasBackground = makeAction("canvas-background", tr("Set Background..."));
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
@@ -2322,7 +2321,6 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(copy);
 	m_currentdoctools->addAction(copylayer);
-	m_currentdoctools->addAction(deleteAnnotations);
 	m_currentdoctools->addAction(selectall);
 	m_currentdoctools->addAction(selectnone);
 
@@ -2361,7 +2359,6 @@ void MainWindow::setupActions()
 		m_doc->selectAll();
 	});
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
-	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
 	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_NORMAL); });
 	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
@@ -2402,7 +2399,6 @@ void MainWindow::setupActions()
 	editmenu->addAction(canvasBackground);
 
 	editmenu->addSeparator();
-	editmenu->addAction(deleteAnnotations);
 	editmenu->addAction(cleararea);
 	editmenu->addAction(fillfgarea);
 	editmenu->addAction(recolorarea);
