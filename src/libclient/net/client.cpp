@@ -18,7 +18,6 @@
 */
 
 #include "net/client.h"
-#include "net/loopbackserver.h"
 #include "net/tcpserver.h"
 #include "net/login.h"
 #include "net/envelope.h"
@@ -29,29 +28,16 @@
 namespace net {
 
 Client::Client(QObject *parent)
-	: QObject(parent), m_myId(1),
-	  m_catchupTo(0), m_caughtUp(0), m_catchupProgress(0)
-{
-	m_loopback = new LoopbackServer(this);
-	m_server = m_loopback;
-	m_isloopback = true;
-	m_moderator = false;
-	m_isAuthenticated = false;
-
-	connect(m_loopback, &LoopbackServer::envelopeReceived, this, &Client::handleEnvelope);
-}
-
-Client::~Client()
+	: QObject(parent)
 {
 }
 
 void Client::connectToServer(LoginHandler *loginhandler)
 {
-	Q_ASSERT(m_isloopback);
+	Q_ASSERT(!isConnected());
 
 	TcpServer *server = new TcpServer(this);
 	m_server = server;
-	m_isloopback = false;
 
 	connect(server, &TcpServer::loggingOut, this, &Client::serverDisconnecting);
 	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);
@@ -104,7 +90,8 @@ void Client::connectToServer(LoginHandler *loginhandler)
 
 void Client::disconnectFromServer()
 {
-	m_server->logout();
+	if(m_server)
+		m_server->logout();
 }
 
 QUrl Client::sessionUrl(bool includeUser) const
@@ -128,18 +115,19 @@ void Client::handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth
 
 void Client::handleDisconnect(const QString &message,const QString &errorcode, bool localDisconnect)
 {
-	Q_ASSERT(m_server != m_loopback);
+	Q_ASSERT(isConnected());
 
 	emit serverDisconnected(message, errorcode, localDisconnect);
 	m_server->deleteLater();
-	m_server = m_loopback;
-	m_isloopback = true;
+	m_server = nullptr;
 	m_moderator = false;
 }
 
 int Client::uploadQueueBytes() const
 {
-	return m_server->uploadQueueBytes();
+	if(m_server)
+		return m_server->uploadQueueBytes();
+	return 0;
 }
 
 void Client::sendEnvelope(const Envelope &envelope) {
@@ -152,7 +140,13 @@ void Client::sendEnvelope(const Envelope &envelope) {
 		emit drawingCommandLocal(envelope);
 	}
 
-	m_server->sendEnvelope(envelope);
+	// Note: we could emit drawingCommandLocal only in connected mode,
+	// but it's good to exercise the code path in local mode too
+	// to make potential bugs more obvious.
+	if(m_server)
+		m_server->sendEnvelope(envelope);
+	else
+		emit messageReceived(envelope);
 }
 
 void Client::sendResetEnvelope(const net::Envelope &resetImage)
@@ -160,7 +154,10 @@ void Client::sendResetEnvelope(const net::Envelope &resetImage)
 	if(resetImage.isEmpty())
 		return;
 
-	m_server->sendEnvelope(resetImage);
+	if(m_server)
+		m_server->sendEnvelope(resetImage);
+	else
+		emit messageReceived(resetImage);
 }
 
 void Client::handleEnvelope(const Envelope &envelope)

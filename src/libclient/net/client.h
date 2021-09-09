@@ -30,7 +30,6 @@ class QJsonArray;
 
 namespace net {
 	
-class LoopbackServer;
 class LoginHandler;
 struct ServerReply;
 
@@ -38,10 +37,9 @@ struct ServerReply;
  * The client for accessing the drawing server.
  */
 class Client : public QObject {
-Q_OBJECT
+	Q_OBJECT
 public:
-	Client(QObject *parent=nullptr);
-	~Client();
+	explicit Client(QObject *parent=nullptr);
 
 	/**
 	 * @brief Connect to a remote server
@@ -69,13 +67,13 @@ public:
 	 * @brief Is the client connected by network?
 	 * @return true if a network connection is open
 	 */
-	bool isConnected() const { return !m_isloopback; }
+	bool isConnected() const { return m_server != nullptr; }
 
 	/**
 	 * @brief Is the user connected and logged in?
 	 * @return true if there is an active network connection and login process has completed
 	 */
-	bool isLoggedIn() const { return m_server->isLoggedIn(); }
+	bool isLoggedIn() const { return m_server && m_server->isLoggedIn(); }
 
 	/**
 	 * @brief Is the user logged in as an authenticated user?
@@ -93,26 +91,26 @@ public:
 	/**
 	 * @brief Get connection security level
 	 */
-	Server::Security securityLevel() const { return m_server->securityLevel(); }
+	Server::Security securityLevel() const { return m_server ? m_server->securityLevel() : Server::Security::NO_SECURITY; }
 
 	/**
 	 * @brief Get host certificate
 	 *
 	 * This is meaningful only if securityLevel != NO_SECURITY
 	 */
-	QSslCertificate hostCertificate() const { return m_server->hostCertificate(); }
+	QSslCertificate hostCertificate() const { return m_server ? m_server->hostCertificate() : QSslCertificate(); }
 
 	/**
 	 * @brief Does the server support persistent sessions?
 	 *
 	 * TODO for version 3.0: Change this to sessionSupportsPersistence
 	 */
-	bool serverSuppotsPersistence() const { return m_server->supportsPersistence(); }
+	bool serverSuppotsPersistence() const { return m_server && m_server->supportsPersistence(); }
 
 	/**
 	 * @brief Can the server receive abuse reports?
 	 */
-	bool serverSupportsReports() const { return m_server->supportsAbuseReports(); }
+	bool serverSupportsReports() const { return m_server && m_server->supportsAbuseReports(); }
 
 	bool sessionSupportsAutoReset() const { return m_supportsAutoReset; }
 
@@ -176,19 +174,17 @@ private:
 	void handleServerReply(const ServerReply &msg);
 	void handleResetRequest(const ServerReply &msg);
 
-	Server *m_server;
-	LoopbackServer *m_loopback;
+	Server *m_server = nullptr;
 
 	QUrl m_lastUrl;
-	uint8_t m_myId;
-	bool m_isloopback;
-	bool m_moderator;
-	bool m_isAuthenticated;
-	bool m_supportsAutoReset;
+	uint8_t m_myId = 1;
+	bool m_moderator = false;
+	bool m_isAuthenticated = false;
+	bool m_supportsAutoReset = false;
 
-	int m_catchupTo;
-	int m_caughtUp;
-	int m_catchupProgress;
+	int m_catchupTo = 0;
+	int m_caughtUp = 0;
+	int m_catchupProgress = 0;
 };
 
 }
