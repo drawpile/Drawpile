@@ -529,67 +529,6 @@ bool Document::isRecording() const
 	return m_canvas && m_canvas->isRecording();
 }
 
-bool Document::saveAsRecording(const QString &filename, QJsonObject header, QString *error) const
-{
-#if 0
-	recording::Writer writer(filename);
-
-	if(!writer.open()) {
-		qWarning("Couldn't open writer: %s", qPrintable(writer.errorString()));
-		if(error)
-			*error = writer.errorString();
-		return false;
-	}
-
-	const int initialUserId = 1;
-
-	if(!header.contains("maxUserCount") && sessionMaxUserCount() > 1)
-		header["maxUserCount"] = sessionMaxUserCount();
-
-	if(!header.contains("founder"))
-		header["founder"] = m_canvas->userlist()->getUsername(m_canvas->localUserId());
-
-	if(!header.contains("title") && !sessionTitle().isEmpty())
-		header["title"] = sessionTitle();
-
-	if(!header.contains("nsfm") && isSessionNsfm())
-		header["nsfm"] = true;
-
-	if(!header.contains("deputies") && isSessionDeputies())
-		header["deputies"] = true;
-
-	if(!header.contains("persistent") && isSessionPersistent())
-		header["persistent"] = true;
-
-	if(!header.contains("preserveChat") && isSessionPreserveChat())
-		header["preserveChat"] = true;
-
-	writer.writeHeader(header);
-
-	// This recording will probably be used as a session template, so we need to
-	// set the session owner as well
-
-	writer.writeMessage(protocol::SessionOwner(0, QList<uint8_t> { initialUserId }));
-
-
-	auto loader =  canvas::SnapshotLoader(
-		initialUserId,
-		m_canvas->layerStack(),
-		m_canvas->aclFilter());
-	loader.setDefaultLayer(m_canvas->layerlist()->defaultLayer());
-	loader.setPinnedMessage(m_canvas->pinnedMessage());
-
-	const auto snapshot = loader.loadInitCommands();
-	for(const protocol::MessagePtr &ptr : snapshot) {
-		writer.writeMessage(*ptr);
-	}
-
-
-	writer.close();
-#endif
-	return true;
-}
-
 void Document::sendPointerMove(const QPointF &point)
 {
 	net::EnvelopeBuilder eb;

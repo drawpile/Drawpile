@@ -126,8 +126,6 @@ public:
 	rustpile::CanvasIoError startRecording(const QString &filename);
 	void stopRecording();
 
-	bool saveAsRecording(const QString &filename, QJsonObject header, QString *error=nullptr) const;
-
 	bool isDirty() const { return m_dirty; }
 
 	bool isSessionPersistent() const { return m_sessionPersistent; }

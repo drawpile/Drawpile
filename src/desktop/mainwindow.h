@@ -96,7 +96,6 @@ public slots:
 	void open(const QUrl &url);
 	void save();
 	void saveas();
-	void exportTemplate();
 	void showFlipbook();
 
 	static void showSettings();

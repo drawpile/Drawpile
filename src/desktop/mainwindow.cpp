@@ -1185,22 +1185,6 @@ void MainWindow::exportAnimationFrames()
 	}
 }
 
-void MainWindow::exportTemplate()
-{
-	QString file = QFileDialog::getSaveFileName(
-		this,
-		tr("Export Session Template"),
-		getLastPath(),
-		utils::fileFormatFilter(utils::FileFormatOption::SaveRecordings)
-	);
-
-	if(!file.isEmpty()) {
-		QString error;
-		if(!m_doc->saveAsRecording(file, QJsonObject(), &error))
-			showErrorMessage(error);
-	}
-}
-
 void MainWindow::showFlipbook()
 {
 	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
@@ -2231,7 +2215,6 @@ void MainWindow::setupActions()
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
-	QAction *exportTemplate = makeAction("exporttpl", tr("Session Template...")).statusTip(tr("Export current session as a template recording for use with the dedicated server"));
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
@@ -2243,7 +2226,6 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(saveas);
 	m_currentdoctools->addAction(exportGifAnimation);
 	m_currentdoctools->addAction(exportAnimationFrames);
-	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(record);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
@@ -2257,7 +2239,6 @@ void MainWindow::setupActions()
 
 	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
-	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
@@ -2284,8 +2265,6 @@ void MainWindow::setupActions()
 	exportMenu->setIcon(icon::fromTheme("document-export"));
 	exportMenu->addAction(exportGifAnimation);
 	exportMenu->addAction(exportAnimationFrames);
-	exportMenu->addSeparator();
-	exportMenu->addAction(exportTemplate);
 	filemenu->addAction(record);
 	filemenu->addSeparator();
 
