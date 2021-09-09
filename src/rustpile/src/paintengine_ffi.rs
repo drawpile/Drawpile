@@ -339,7 +339,7 @@ pub extern "C" fn paintengine_new(
 
     let dp = Box::new(PaintEngine {
         viewcache: viewcache.clone(),
-        view_opts: LayerViewOptions::default(),
+        view_opts: LayerViewOptions::default().with_background(Tile::new_checkerboard(&Color::WHITE, &Color{r: 0.5, g: 0.5, b: 0.5, a: 1.0})),
         engine_channel: sender,
         thread_handle: thread::spawn(move || {
             run_paintengine(viewcache, receiver, callbacks);

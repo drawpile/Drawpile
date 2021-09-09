@@ -22,12 +22,13 @@
 
 use std::convert::TryInto;
 use std::sync::Arc;
+use std::cell::RefCell;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::color::ALPHA_CHANNEL;
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
-use super::{Pixel, Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID};
+use super::{Pixel, Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID, Blendmode};
 use super::flattenediter::FlattenedTileIterator;
 use super::rectiter::{RectIterator, MutableRectIterator};
 
@@ -82,6 +83,13 @@ pub struct LayerViewOptions {
 
     /// Index of the active layer for solo and onionskin mode
     pub active_layer_idx: usize,
+
+    /// The background to use. This can be used to add (for example)
+    /// a checkerboard texture to transparent areas.
+    background: Tile,
+
+    /// Cached version of the composited background (layerstack bg, composited bg)
+    background_cache: RefCell<(Tile, Tile)>
 }
 
 impl Default for LayerViewOptions {
@@ -94,6 +102,8 @@ impl Default for LayerViewOptions {
             onionskins_above: 1,
             onionskins_below: 1,
             active_layer_idx: 0,
+            background: Tile::Blank,
+            background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
     }
 }
@@ -108,7 +118,16 @@ impl LayerViewOptions {
             onionskins_above: 1,
             onionskins_below: 1,
             active_layer_idx: index,
+            background: Tile::Blank,
+            background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
+    }
+
+    pub fn with_background(mut self, background: Tile) -> Self {
+        self.background = background.clone();
+        self.background_cache.replace((Tile::Blank, background));
+
+        self
     }
 }
 
@@ -366,7 +385,23 @@ impl LayerStack {
 
     /// Flatten layer stack content
     pub fn flatten_tile(&self, i: u32, j: u32, opts: &LayerViewOptions) -> TileData {
-        let mut destination = self.background.clone_data();
+        // Cache the composited background tile
+        let mut destination = {
+            if matches!(opts.background, Tile::Blank) {
+                self.background.clone_data()
+            } else {
+                let cache = opts.background_cache.borrow();
+                if cache.0.ptr_eq(&self.background) {
+                    cache.1.clone_data()
+                } else {
+                    drop(cache);
+                    let mut composited = opts.background.clone();
+                    composited.merge(&self.background, 1.0, Blendmode::Normal);
+                    opts.background_cache.replace((self.background.clone(), composited.clone()));
+                    composited.clone_data()
+                }
+            }
+        };
 
         if (i * TILE_SIZE) < self.width && (j * TILE_SIZE) < self.height {
             for (idx, layer) in self.layers.iter().enumerate() {

@@ -103,6 +103,19 @@ impl Tile {
         Tile::Bitmap(Arc::new(TileData::new(color.as_pixel(), user)))
     }
 
+    pub fn new_checkerboard(color1: &Color, color2: &Color) -> Tile {
+        let mut td = TileData::new(color1.as_pixel(), 0);
+        let p2 = color2.as_pixel();
+        let s = TILE_SIZE as usize;
+        let s2 = TILE_SIZE as usize / 2;
+        for y in 0..s2 {
+            td.pixels[y * s..y*s+s2].fill(p2);
+            td.pixels[(y+s2) * s + s2..(y+s2)*s + s].fill(p2);
+        }
+
+        Tile::Bitmap(Arc::new(td))
+    }
+
     pub fn from_data(data: &[Pixel], user: UserID) -> Tile {
         assert_eq!(data.len(), TILE_LENGTH, "Wrong tile data length");
         let mut td = Arc::new(TileData::new(ZERO_PIXEL, user));
