@@ -550,6 +550,11 @@ pub extern "C" fn paintengine_reset_canvas(dp: &mut PaintEngine) {
     if let Some(cb) = dp.state_notify_aclchange {
         (cb)(dp.meta_context, 0xff);
     }
+
+    if dp.recorder.is_some() {
+        paintengine_stop_recording(dp);
+        // TODO automatically start a new recording?
+    }
 }
 
 /// Reset the ACL filter back to local (non-networked) operating mode

@@ -33,8 +33,6 @@
 #include "tools/toolcontroller.h"
 #include "utils/images.h"
 
-#include "../libshared/util/filename.h"
-
 #include <QGuiApplication>
 #include <QSettings>
 #include <QTimer>
@@ -126,19 +124,6 @@ void Document::onSessionResetted()
 	// Clear out the canvas in preparation for the new data that is about to follow
 	m_canvas->resetCanvas();
 	m_resetstate = net::Envelope();
-
-#if 0 // FIXME
-	if(isRecording()) {
-		// Resetting establishes a new initial state for the canvas, therefore
-		// recording must also be restarted.
-		const QString newRecordingFile = utils::makeFilenameUnique(m_originalRecordingFilename, ".dprec");
-		m_recorder->close();
-		delete m_recorder;
-		m_recorder = nullptr;
-		emit recorderStateChanged(false);
-		startRecording(newRecordingFile, protocol::MessageList(), nullptr);
-	}
-#endif
 }
 
 bool Document::loadCanvas(const QSize &size, const QColor &background)
