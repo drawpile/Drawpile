@@ -222,6 +222,8 @@ using NotifyCursorCallback = void(*)(void *ctx, UserID user, uint16_t layer, int
 
 using NotifyPlaybackCallback = void(*)(void *ctx, int64_t pos, uint32_t interval);
 
+using NotifyCatchupCallback = void(*)(void *ctx, uint32_t progress);
+
 using JoinCallback = void(*)(void *ctx, UserID user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
 
 using LeaveCallback = void(*)(void *ctx, UserID user);
@@ -523,7 +525,8 @@ PaintEngine *paintengine_new(void *ctx,
                              NotifyLayerListCallback layers,
                              NotifyAnnotationsCallback annotations,
                              NotifyCursorCallback cursors,
-                             NotifyPlaybackCallback playback);
+                             NotifyPlaybackCallback playback,
+                             NotifyCatchupCallback catchup);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);
@@ -548,6 +551,12 @@ bool paintengine_receive_messages(PaintEngine *dp,
                                   bool local,
                                   const uint8_t *messages,
                                   uintptr_t messages_len);
+
+/// Enqueue a "catch up" progress marker
+///
+/// This is used to synchronize a progress bar to the
+/// progress of the message queue
+bool paintengine_enqueue_catchup(PaintEngine *dp, uint32_t progress);
 
 /// Clean up the paint engine state after disconnecting from a session
 bool paintengine_cleanup(PaintEngine *dp);

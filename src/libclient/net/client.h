@@ -146,6 +146,7 @@ public slots:
 signals:
 	void messageReceived(const Envelope &e);
 	void drawingCommandLocal(const Envelope &e);
+	void catchupProgress(int percentage);
 
 	void needSnapshot();
 	void sessionResetted();

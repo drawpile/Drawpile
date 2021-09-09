@@ -67,6 +67,7 @@ type NotifyAnnotationsCallback = extern "C" fn(ctx: *mut c_void, annotations: *m
 type NotifyCursorCallback =
     extern "C" fn(ctx: *mut c_void, user: UserID, layer: u16, x: i32, y: i32);
 type NotifyPlaybackCallback = extern "C" fn(ctx: *mut c_void, pos: i64, interval: u32);
+type NotifyCatchupCallback = extern "C" fn(ctx: *mut c_void, progress: u32);
 
 // Main thread callbacks:
 type JoinCallback = Option<
@@ -118,6 +119,7 @@ struct CanvasChangeCallbacks {
     notify_annotations: NotifyAnnotationsCallback,
     notify_cursor: NotifyCursorCallback,
     notify_playback: NotifyPlaybackCallback,
+    notify_catchup: NotifyCatchupCallback,
 }
 
 // Unsafe due to the c_void pointer. We promise to be careful with it.
@@ -133,6 +135,7 @@ enum PaintEngineCommand {
     PlaybackPaused(i64, u32), // triggers PlaybackCallback
     TruncateHistory,
     Cleanup,
+    Catchup(u32),
 }
 
 /// The paint engine
@@ -228,6 +231,9 @@ fn run_paintengine(
                 Cleanup => {
                     canvas.cleanup();
                 }
+                Catchup(progress) => {
+                    (callbacks.notify_catchup)(callbacks.context_object, progress);
+                }
             };
 
             cmd = match channel.try_recv() {
@@ -310,6 +316,7 @@ pub extern "C" fn paintengine_new(
     annotations: NotifyAnnotationsCallback,
     cursors: NotifyCursorCallback,
     playback: NotifyPlaybackCallback,
+    catchup: NotifyCatchupCallback,
 ) -> *mut PaintEngine {
     let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
@@ -325,6 +332,7 @@ pub extern "C" fn paintengine_new(
         notify_annotations: annotations,
         notify_cursor: cursors,
         notify_playback: playback,
+        notify_catchup: catchup,
     };
 
     let (sender, receiver) = mpsc::channel::<PaintEngineCommand>();
@@ -486,6 +494,23 @@ pub extern "C" fn paintengine_receive_messages(
         if let Some(cb) = dp.state_notify_aclchange {
             (cb)(dp.meta_context, aclchanges);
         }
+    }
+
+    true
+}
+
+/// Enqueue a "catch up" progress marker
+///
+/// This is used to synchronize a progress bar to the
+/// progress of the message queue
+#[no_mangle]
+pub extern "C" fn paintengine_enqueue_catchup(dp: &mut PaintEngine, progress: u32) -> bool {
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::Catchup(progress)) {
+        warn!(
+            "Couldn't send catchup command to paint engine thread {:?}",
+            err
+        );
+        return false;
     }
 
     true

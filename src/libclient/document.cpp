@@ -25,6 +25,7 @@
 #include "net/announcementlist.h"
 #include "net/envelopebuilder.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/paintengine.h"
 #include "canvas/selection.h"
 #include "canvas/layerlist.h"
 #include "canvas/userlist.h"
@@ -101,9 +102,8 @@ void Document::initCanvas()
 	connect(m_canvas, &canvas::CanvasModel::recorderStateChanged, this, &Document::recorderStateChanged);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
-#if 0 // FIXME
-	connect(m_canvas->stateTracker(), &canvas::StateTracker::catchupProgress, this, &Document::catchupProgress);
-#endif
+	connect(m_client, &net::Client::catchupProgress, m_canvas->paintEngine(), &canvas::PaintEngine::enqueueCatchupProgress);
+	connect(m_canvas->paintEngine(), &canvas::PaintEngine::caughtUpTo, this, &Document::catchupProgress, Qt::QueuedConnection);
 
 	emit canvasChanged(m_canvas);
 

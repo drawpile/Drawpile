@@ -165,26 +165,12 @@ void Client::sendResetEnvelope(const net::Envelope &resetImage)
 
 void Client::handleEnvelope(const Envelope &envelope)
 {
-#if 0 // FIXME (internal messages no longer needed for this)
-	if(m_catchupTo>0) {
-		++m_caughtUp;
-		if(m_caughtUp >= m_catchupTo) {
-			emit messageReceived(protocol::ClientInternal::makeCatchup(100));
-			m_catchupTo = 0;
-		} else {
-			int progress = 100 * m_caughtUp / m_catchupTo;
-			if(progress != m_catchupProgress) {
-				m_catchupProgress = progress;
-				emit messageReceived(protocol::ClientInternal::makeCatchup(progress));
-			}
-		}
-	}
-#endif
-
 	// Catch all Control messages here
-	Envelope ctrl = envelope;
 	bool allControl = true;
+	int messageCount = 0;
+	Envelope ctrl = envelope;
 	while(!ctrl.isEmpty()) {
+		messageCount++;
 		if(ctrl.messageType() == 0) {
 			const ServerReply sr = ServerReply::fromEnvelope(ctrl);
 			handleServerReply(sr);
@@ -199,6 +185,24 @@ void Client::handleEnvelope(const Envelope &envelope)
 	// The paint engine will handle the rest and ignore the control messages
 	if(!allControl)
 		emit messageReceived(envelope);
+
+	// The server can send a "catchup" message when there is a significant number
+	// of messages queued. During login, we can show a progress bar and hide the canvas
+	// to speed up the initial catchup phase.
+	if(m_catchupTo>0) {
+		m_caughtUp += messageCount;
+		if(m_caughtUp >= m_catchupTo) {
+			qInfo("Catchup: caught up to %d messages", m_caughtUp);
+			emit catchupProgress(100);
+			m_catchupTo = 0;
+		} else {
+			int progress = 100 * m_caughtUp / m_catchupTo;
+			if(progress != m_catchupProgress) {
+				m_catchupProgress = progress;
+				emit catchupProgress(progress);
+			}
+		}
+	}
 }
 
 void Client::handleServerReply(const ServerReply &reply)

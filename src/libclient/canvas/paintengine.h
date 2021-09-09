@@ -77,6 +77,11 @@ public:
 	//! Receive and handle messages
 	void receiveMessages(bool local, const net::Envelope &msgs);
 
+	//! Enqueue a "catchup progress" marker.
+	//! Will trigger the emission of caughtUpTo signal once the marker
+	//! has been processed by the paint engine.
+	void enqueueCatchupProgress(int progress);
+
 	//! Clean up dangling state after disconnecting from a remote session
 	void cleanup();
 
@@ -112,6 +117,7 @@ signals:
 	void annotationsChanged(rustpile::Annotations *annotations);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
 	void playbackAt(qint64 pos, qint32 interval);
+	void caughtUpTo(int progress);
 
 	//! Paint engine has panicked and died
 	void enginePanicked();
@@ -119,14 +125,6 @@ signals:
 private:
 	rustpile::PaintEngine *m_pe;
 	QPixmap m_cache;
-
-	// Callbacks:
-	friend void paintEngineAreaChanged(void *pe, rustpile::Rectangle area);
-	friend void paintEngineResized(void *pe, int xoffset, int yoffset, rustpile::Size oldSize);
-	friend void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layers, uintptr_t count);
-	friend void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations);
-	friend void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32_t y);
-	friend void paintEnginePlayback(void *pe, int64_t pos, uint32_t interval);
 };
 
 }
