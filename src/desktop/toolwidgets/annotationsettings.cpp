@@ -343,6 +343,9 @@ void AnnotationSettings::saveChanges()
 	m_updatetimer->stop();
 
 	if(selected()) {
+		QString content;
+		if(!_ui->content->document()->isEmpty())
+			content = _ui->content->toHtml();
 		controller()->client()->sendMessage(protocol::MessagePtr(new protocol::AnnotationEdit(
 			controller()->client()->myId(),
 			selected(),
@@ -350,7 +353,7 @@ void AnnotationSettings::saveChanges()
 			(_ui->protect->isChecked() ? protocol::AnnotationEdit::FLAG_PROTECT : 0)
 			| uint8_t(_ui->valign->property(VALIGN_PROP).toInt()),
 			0,
-			_ui->content->toHtml()
+			content
 		)));
 	}
 }
