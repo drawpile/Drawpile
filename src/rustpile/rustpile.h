@@ -638,6 +638,12 @@ bool paintengine_floodfill(PaintEngine *dp,
                            int32_t expansion,
                            bool fill_under);
 
+/// Generate the commands for deleting all the empty
+/// annotations presently on the canvas
+void paintengine_make_delete_empty_annotations(PaintEngine *dp,
+                                               MessageWriter *writer,
+                                               UserID user_id);
+
 /// Pick a color from the canvas
 ///
 /// If the given layer ID is 0, color is taken from merged layers

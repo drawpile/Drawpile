@@ -795,6 +795,23 @@ void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
 	}
 }
 
+void Document::removeEmptyAnnotations()
+{
+	if(!m_canvas) {
+		qWarning("removeEmptyAnnotations(): no canvas");
+		return;
+	}
+
+	net::EnvelopeBuilder eb;
+	rustpile::paintengine_make_delete_empty_annotations(
+		m_canvas->paintEngine()->engine(),
+		eb,
+		m_canvas->localUserId()
+	);
+
+	m_client->sendEnvelope(eb.toEnvelope());
+}
+
 void Document::addServerLogEntry(const QString &log)
 {
 	int i = m_serverLog->rowCount();

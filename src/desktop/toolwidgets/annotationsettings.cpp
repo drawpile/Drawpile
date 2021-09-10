@@ -344,7 +344,11 @@ void AnnotationSettings::saveChanges()
 	m_updatetimer->stop();
 
 	if(selected()) {
-		const QString content = m_ui->content->toHtml();
+		QString content;
+		if(m_ui->content->document()->isEmpty())
+			content = QString();
+		else
+			content = m_ui->content->toHtml();
 
 		net::EnvelopeBuilder eb;
 		rustpile::write_editannotation(

@@ -917,6 +917,22 @@ pub extern "C" fn paintengine_floodfill(
     true
 }
 
+/// Generate the commands for deleting all the empty
+/// annotations presently on the canvas
+#[no_mangle]
+pub extern "C" fn paintengine_make_delete_empty_annotations(
+    dp: &mut PaintEngine,
+    writer: &mut MessageWriter,
+    user_id: UserID,
+) {
+    let vc = dp.viewcache.lock().unwrap();
+    for a in vc.layerstack.get_annotations().iter() {
+        if a.text.is_empty() {
+            messages_ffi::write_deleteannotation(writer, user_id, a.id);
+        }
+    }
+}
+
 /// Pick a color from the canvas
 ///
 /// If the given layer ID is 0, color is taken from merged layers

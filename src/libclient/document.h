@@ -208,6 +208,7 @@ public slots:
 	void pasteImage(const QImage &image, const QPoint &point, bool forcePoint); // Note: selection tool should be activated before calling this
 	void stamp();
 
+	void removeEmptyAnnotations();
 	void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
 
 	void addServerLogEntry(const QString &log);
