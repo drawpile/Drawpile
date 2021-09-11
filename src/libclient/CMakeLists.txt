@@ -29,6 +29,7 @@ set (
 	canvas/inputpresetmodel.cpp
 	canvas/paintengine.cpp
 	canvas/indexbuilderrunnable.cpp
+	canvas/blendmodes.cpp
 	net/client.cpp
 	net/server.cpp
 	net/tcpserver.cpp
@@ -59,7 +60,6 @@ set (
 	utils/sessionfilterproxymodel.cpp
 	utils/newversion.cpp
 	core/brushmask.cpp
-	core/blendmodes.cpp
 	brushes/brush.cpp
 	brushes/brushpresetmodel.cpp
 	brushes/classicbrushpainter.cpp

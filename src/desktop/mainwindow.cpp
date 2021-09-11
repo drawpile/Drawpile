@@ -2037,7 +2037,7 @@ void MainWindow::clearOrDelete()
 	}
 
 	// No annotation selected: clear seleted area as usual
-	m_doc->fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
+	m_doc->fillArea(Qt::white, rustpile::Blendmode::Erase);
 }
 
 void MainWindow::resizeCanvas()
@@ -2363,9 +2363,9 @@ void MainWindow::setupActions()
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_NORMAL); });
-	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_RECOLOR); });
-	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), paintcore::BlendMode::MODE_COLORERASE); });
+	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), rustpile::Blendmode::Normal); });
+	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), rustpile::Blendmode::Recolor); });
+	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), rustpile::Blendmode::ColorErase); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));

@@ -19,7 +19,6 @@
 #ifndef DP_NET_LAYERLIST_H
 #define DP_NET_LAYERLIST_H
 
-#include "../core/blendmodes.h"
 #include "acl.h"
 
 #include <QAbstractListModel>
@@ -30,7 +29,10 @@
 
 namespace net {
 	class Envelope;
+}
 
+namespace rustpile {
+	enum class Blendmode : uint8_t;
 }
 
 namespace canvas {
@@ -49,7 +51,7 @@ struct LayerListItem {
 	float opacity;
 	
 	//! Blending mode
-	paintcore::BlendMode::Mode blend;
+	rustpile::Blendmode blend;
 
 	//! Layer hidden flag (local only)
 	bool hidden;
@@ -101,7 +103,7 @@ public:
 	void clear();
 	void createLayer(uint16_t id, int index, const QString &title);
 	void deleteLayer(uint16_t id);
-	void changeLayer(uint16_t id, bool censored, bool fixed, float opacity, paintcore::BlendMode::Mode blend);
+	void changeLayer(uint16_t id, bool censored, bool fixed, float opacity, rustpile::Blendmode blend);
 	void retitleLayer(uint16_t id, const QString &title);
 	void setLayerHidden(uint16_t id, bool hidden);
 	void reorderLayers(QList<uint16_t> neworder);

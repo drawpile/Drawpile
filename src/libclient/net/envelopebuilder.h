@@ -27,6 +27,7 @@ class QImage;
 
 namespace rustpile {
 	struct MessageWriter;
+	enum class Blendmode : uint8_t;
 }
 
 namespace net {
@@ -47,7 +48,7 @@ public:
 	operator rustpile::MessageWriter*() const { return m_writer; }
 
 	/// Helper function: write a PutImage command using a QImage
-	void buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode);
+	void buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, rustpile::Blendmode mode);
 
 	/// Helper function: write a Undo/Redo message
 	void buildUndo(uint8_t ctxid, uint8_t overrideId, bool redo);

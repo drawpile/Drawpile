@@ -20,14 +20,16 @@
 #ifndef SELECTION_H
 #define SELECTION_H
 
-#include "core/blendmodes.h"
-
 #include <QObject>
 #include <QImage>
 #include <QPolygonF>
 
 namespace net {
 	class Envelope;
+}
+
+namespace rustpile {
+	enum class Blendmode : uint8_t;
 }
 
 namespace canvas {
@@ -184,7 +186,7 @@ public:
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	net::Envelope fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const;
+	net::Envelope fillCanvas(uint8_t contextId, const QColor &color, rustpile::Blendmode mode, int layer) const;
 
 	/**
 	 * @brief Get the size of the adjustment handles in pixels at 1:1 zoom level

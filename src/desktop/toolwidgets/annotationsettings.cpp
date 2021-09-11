@@ -395,7 +395,7 @@ void AnnotationSettings::bake()
 	net::EnvelopeBuilder eb;
 	rustpile::write_undopoint(eb, contextId);
 	rustpile::write_deleteannotation(eb, contextId, selected());
-	eb.buildPutQImage(contextId, layer, rect.x(), rect.y(), img, uint8_t(rustpile::Blendmode::Normal));
+	eb.buildPutQImage(contextId, layer, rect.x(), rect.y(), img, rustpile::Blendmode::Normal);
 	controller()->client()->sendEnvelope(eb.toEnvelope());
 }
 

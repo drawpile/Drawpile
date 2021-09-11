@@ -18,9 +18,9 @@
 */
 
 #include "brush.h"
+#include "canvas/blendmodes.h"
 
 #include <QJsonObject>
-#include <QDataStream>
 
 namespace brushes {
 
@@ -76,7 +76,7 @@ QJsonObject ClassicBrush::toJson() const
 	if(useOpacityPressure()) o["opacityp"] = true;
 	if(useSmudgePressure()) o["smudgep"] = true;
 
-	o["blend"] = paintcore::findBlendMode(blendingMode()).svgname;
+	o["blend"] = canvas::blendmode::svgName(blendingMode());
 
 	// Note: color is intentionally omitted
 
@@ -126,7 +126,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.setOpacityPressure(o["opacityp"].toBool());
 	b.setSmudgePressure(o["smudgep"].toBool());
 
-	b.setBlendingMode(paintcore::findBlendModeByName(o["blend"].toString(), nullptr).id);
+	b.setBlendingMode(canvas::blendmode::fromSvgName(o["blend"].toString()));
 
 	return b;
 }

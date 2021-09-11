@@ -559,12 +559,12 @@ net::Envelope Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 			const QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
 
 			if(mask.isNull()) {
-				rustpile::write_fillrect(writer, contextId, layer, paintcore::BlendMode::MODE_ERASE, moveBounds.x(), moveBounds.y(), moveBounds.width(), moveBounds.height(), 0xffffffff);
+				rustpile::write_fillrect(writer, contextId, layer, rustpile::Blendmode::Erase, moveBounds.x(), moveBounds.y(), moveBounds.width(), moveBounds.height(), 0xffffffff);
 			} else {
-				writer.buildPutQImage(contextId, layer, moveBounds.x(), moveBounds.y(), mask, uint8_t(rustpile::Blendmode::Erase));
+				writer.buildPutQImage(contextId, layer, moveBounds.x(), moveBounds.y(), mask, rustpile::Blendmode::Erase);
 			}
 
-			writer.buildPutQImage(contextId, layer, offset.x(), offset.y(), image, uint8_t(rustpile::Blendmode::Normal));
+			writer.buildPutQImage(contextId, layer, offset.x(), offset.y(), image, rustpile::Blendmode::Normal);
 		}
 
 	} else {
@@ -572,7 +572,7 @@ net::Envelope Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 		QPoint offset;
 		const QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
 
-		writer.buildPutQImage(contextId, layer, offset.x(), offset.y(), image, uint8_t(rustpile::Blendmode::Normal));
+		writer.buildPutQImage(contextId, layer, offset.x(), offset.y(), image, rustpile::Blendmode::Normal);
 	}
 
 	return writer.toEnvelope();
@@ -583,7 +583,7 @@ QImage Selection::transformedPasteImage() const
 	return tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), nullptr);
 }
 
-net::Envelope Selection::fillCanvas(uint8_t contextId, const QColor &color, paintcore::BlendMode::Mode mode, int layer) const
+net::Envelope Selection::fillCanvas(uint8_t contextId, const QColor &color, rustpile::Blendmode mode, int layer) const
 {
 	QRect area;
 	QImage mask;
@@ -599,7 +599,7 @@ net::Envelope Selection::fillCanvas(uint8_t contextId, const QColor &color, pain
 		rustpile::write_undopoint(writer, contextId);
 
 		if(mask.isNull())
-			rustpile::write_fillrect(writer, contextId, layer, paintcore::BlendMode::MODE_ERASE, area.x(), area.y(), area.width(), area.height(), color.rgba());
+			rustpile::write_fillrect(writer, contextId, layer, rustpile::Blendmode::Erase, area.x(), area.y(), area.width(), area.height(), color.rgba());
 		else
 			writer.buildPutQImage(contextId, layer, maskBounds.left(), maskBounds.top(), mask, mode);
 

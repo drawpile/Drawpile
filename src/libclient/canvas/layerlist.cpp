@@ -153,7 +153,7 @@ QModelIndex LayerListModel::layerIndex(uint16_t id)
 void LayerListModel::createLayer(uint16_t id, int index, const QString &title)
 {
 	beginInsertRows(QModelIndex(), index, index);
-	m_items.insert(index, LayerListItem { id, title, 1.0, paintcore::BlendMode::MODE_NORMAL, false, false, false });
+	m_items.insert(index, LayerListItem { id, title, 1.0, rustpile::Blendmode::Normal, false, false, false });
 	endInsertRows();
 }
 
@@ -178,7 +178,7 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(uint16_t id, bool censored, bool fixed, float opacity, paintcore::BlendMode::Mode blend)
+void LayerListModel::changeLayer(uint16_t id, bool censored, bool fixed, float opacity, rustpile::Blendmode blend)
 {
 	int row = indexOf(id);
 	if(row<0)

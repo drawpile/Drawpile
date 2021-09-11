@@ -19,7 +19,6 @@
 #ifndef DP_BRUSHES_BRUSH_H
 #define DP_BRUSHES_BRUSH_H
 
-#include "../core/blendmodes.h"
 #include "../../rustpile/rustpile.h"
 
 #include <QColor>
@@ -100,9 +99,9 @@ public:
 	void setIncremental(bool incremental) { m_brush.incremental = incremental; }
 	bool incremental() const { return m_brush.incremental; }
 
-	void setBlendingMode(paintcore::BlendMode::Mode mode) { m_brush.mode = rustpile::Blendmode(mode); }
-	paintcore::BlendMode::Mode blendingMode() const { return paintcore::BlendMode::Mode(m_brush.mode); }
-	bool isEraser() const { return blendingMode() == paintcore::BlendMode::MODE_ERASE || blendingMode() == paintcore::BlendMode::MODE_COLORERASE; }
+	void setBlendingMode(rustpile::Blendmode mode) { m_brush.mode = mode; }
+	rustpile::Blendmode blendingMode() const { return m_brush.mode; }
+	bool isEraser() const { return blendingMode() == rustpile::Blendmode::Erase || blendingMode() == rustpile::Blendmode::ColorErase; }
 
 	void setShape(rustpile::ClassicBrushShape shape) { m_brush.shape = shape; }
 	rustpile::ClassicBrushShape shape() const { return m_brush.shape; }

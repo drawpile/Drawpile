@@ -84,6 +84,8 @@ def field_parameter(field):
         raise NotImplemented
     elif field.field_type == 'argb32':
         ff = ((field.name, 'u32'),)
+    elif field.field_type == 'blendmode':
+        ff = ((field.name, 'Blendmode'),)
     else:
         ff = ((field.name, field.field_type),)
 
@@ -98,6 +100,8 @@ def field_argument(field, named=False):
         ff = f'String::from_utf16_lossy(unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }}).to_string()'
     elif field.field_type == 'struct':
         raise NotImplementedError
+    elif field.field_type == 'blendmode':
+        ff = f'{field.name} as u8'
     else:
         ff = f'{field.name}'
 

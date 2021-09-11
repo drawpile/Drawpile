@@ -20,7 +20,6 @@
 #ifndef DRAWPILE_DOCUMENT_H
 #define DRAWPILE_DOCUMENT_H
 
-#include "core/blendmodes.h"
 #include "canvas/acl.h"
 #include "net/envelope.h"
 
@@ -43,6 +42,7 @@ namespace tools { class ToolController; }
 
 namespace rustpile {
 	enum class CanvasIoError;
+	enum class Blendmode : uint8_t;
 }
 
 /**
@@ -209,7 +209,7 @@ public slots:
 	void stamp();
 
 	void removeEmptyAnnotations();
-	void fillArea(const QColor &color, paintcore::BlendMode::Mode mode);
+	void fillArea(const QColor &color, rustpile::Blendmode mode);
 
 	void addServerLogEntry(const QString &log);
 

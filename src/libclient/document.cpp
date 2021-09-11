@@ -763,7 +763,7 @@ void Document::cutLayer()
 		if(m_canvas->selection() && m_canvas->selection()->isMovedFromCanvas())
 			m_canvas->selection()->setShape(m_canvas->selection()->moveSourceRegion());
 
-		fillArea(Qt::white, paintcore::BlendMode::MODE_ERASE);
+		fillArea(Qt::white, rustpile::Blendmode::Erase);
 		m_canvas->setSelection(nullptr);
 	}
 }
@@ -784,7 +784,7 @@ void Document::stamp()
 	}
 }
 
-void Document::fillArea(const QColor &color, paintcore::BlendMode::Mode mode)
+void Document::fillArea(const QColor &color, rustpile::Blendmode mode)
 {
 	if(!m_canvas) {
 		qWarning("fillArea: no canvas!");

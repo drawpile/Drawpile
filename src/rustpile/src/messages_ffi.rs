@@ -282,7 +282,7 @@ pub extern "C" fn write_layerattr(
     sublayer: u8,
     flags: u8,
     opacity: u8,
-    blend: u8,
+    blend: Blendmode,
 ) {
     CommandMessage::LayerAttributes(
         ctx,
@@ -291,7 +291,7 @@ pub extern "C" fn write_layerattr(
             sublayer: sublayer,
             flags: flags,
             opacity: opacity,
-            blend: blend,
+            blend: blend as u8,
         },
     )
     .write(writer);
@@ -364,7 +364,7 @@ pub extern "C" fn write_fillrect(
     writer: &mut MessageWriter,
     ctx: UserID,
     layer: u16,
-    mode: u8,
+    mode: Blendmode,
     x: u32,
     y: u32,
     w: u32,
@@ -375,7 +375,7 @@ pub extern "C" fn write_fillrect(
         ctx,
         FillRectMessage {
             layer: layer,
-            mode: mode,
+            mode: mode as u8,
             x: x,
             y: y,
             w: w,

@@ -19,12 +19,12 @@
 
 #include "canvas/layerlist.h"
 #include "canvas/canvasmodel.h"
+#include "canvas/blendmodes.h"
 #include "canvas/userlist.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
 #include "docks/utils.h"
-#include "core/blendmodes.h"
 #include "utils/changeflags.h"
 #include "net/envelopebuilder.h"
 
@@ -59,8 +59,8 @@ LayerList::LayerList(QWidget *parent)
 	m_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Populate blend mode combobox
-	for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::LayerMode))
-		m_ui->blendmode->addItem(bm.second, bm.first);
+	for(auto bm : canvas::blendmode::layerModeNames())
+		m_ui->blendmode->addItem(bm.second, int(bm.first));
 
 	m_layerProperties = new dialogs::LayerProperties(this);
 	connect(m_layerProperties, &dialogs::LayerProperties::propertiesChanged,
@@ -271,7 +271,7 @@ static net::Envelope updateLayerAttributesMessage(uint8_t contextId, const canva
 		0,
 		flagChanges.update(layer.attributeFlags()),
 		opacity>=0 ? opacity : layer.opacity*255,
-		blend >= 0 ? blend : uint8_t(layer.blend)
+		blend >= 0 ? rustpile::Blendmode(blend) : layer.blend
 	);
 	return eb.toEnvelope();
 }
@@ -628,9 +628,9 @@ void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		m_ui->opacity->setValue(layer.opacity * 255);
 
 		int blendmode = m_ui->blendmode->currentData().toInt();
-		if(blendmode != layer.blend) {
+		if(blendmode != int(layer.blend)) {
 			for(int i=0;i<m_ui->blendmode->count();++i) {
-				if(m_ui->blendmode->itemData(i).toInt() == layer.blend) {
+				if(m_ui->blendmode->itemData(i).toInt() == int(layer.blend)) {
 				m_ui->blendmode->setCurrentIndex(i);
 				break;
 				}
@@ -691,7 +691,7 @@ void LayerList::emitPropertyChangeCommands(const dialogs::LayerProperties::Chang
 
 		int blend = -1;
 		if(c.changes & dialogs::LayerProperties::CHANGE_BLEND) {
-			blend = c.blend;
+			blend = int(c.blend);
 		}
 
 		emit layerCommand(updateLayerAttributesMessage(

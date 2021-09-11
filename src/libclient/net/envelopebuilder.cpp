@@ -47,7 +47,7 @@ Envelope EnvelopeBuilder::toEnvelope()
 	return Envelope(data, len);
 }
 
-void EnvelopeBuilder::buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, uint8_t mode)
+void EnvelopeBuilder::buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y, const QImage &image, rustpile::Blendmode mode)
 {
 	// Crop image if target coordinates are negative, since the protocol
 	// does not support negative coordites.
@@ -75,7 +75,7 @@ void EnvelopeBuilder::buildPutQImage(uint8_t ctxid, uint16_t layer, int x, int y
 		y,
 		img.width(),
 		img.height(),
-		rustpile::Blendmode(mode),
+		mode,
 		img.constBits()
 	);
 }

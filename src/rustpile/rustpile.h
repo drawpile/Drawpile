@@ -424,7 +424,7 @@ void write_layerattr(MessageWriter *writer,
                      uint8_t sublayer,
                      uint8_t flags,
                      uint8_t opacity,
-                     uint8_t blend);
+                     Blendmode blend);
 
 void write_retitlelayer(MessageWriter *writer,
                         UserID ctx,
@@ -444,7 +444,7 @@ void write_layervisibility(MessageWriter *writer, UserID ctx, uint16_t id, bool 
 void write_fillrect(MessageWriter *writer,
                     UserID ctx,
                     uint16_t layer,
-                    uint8_t mode,
+                    Blendmode mode,
                     uint32_t x,
                     uint32_t y,
                     uint32_t w,
@@ -806,6 +806,13 @@ bool snapshots_get_content(const SnapshotQueue *snapshots, uintptr_t index, uint
 bool snapshots_import_file(SnapshotQueue *snapshots, const uint16_t *path, uintptr_t path_len);
 
 void rustpile_init_logging(ExtLogFn log_writer);
+
+/// Find a blending mode matching the given SVG name
+///
+/// If no match is found, the default (normal) mode is returned.
+Blendmode blendmode_from_svgname(const uint16_t *name, uintptr_t name_len);
+
+const uint8_t *blendmode_svgname(Blendmode mode, uintptr_t *name_len);
 
 } // extern "C"
 

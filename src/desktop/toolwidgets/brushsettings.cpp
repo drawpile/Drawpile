@@ -25,7 +25,10 @@
 #include "dialogs/inputsettings.h"
 
 #include "canvas/inputpresetmodel.h"
+#include "canvas/blendmodes.h"
 #include "ui_brushdock.h"
+
+#include "../rustpile/rustpile.h"
 
 #include <QKeyEvent>
 #include <QPainter>
@@ -49,9 +52,9 @@ namespace {
 	struct ToolSlot {
 		ClassicBrush brush;
 
-		// For remembering previuous selection when switching between normal/erase mode
-		paintcore::BlendMode::Mode normalMode = paintcore::BlendMode::MODE_NORMAL;
-		paintcore::BlendMode::Mode eraserMode = paintcore::BlendMode::MODE_ERASE;
+		// For remembering previous selection when switching between normal/erase mode
+		rustpile::Blendmode normalMode = rustpile::Blendmode::Normal;
+		rustpile::Blendmode eraserMode = rustpile::Blendmode::Erase;
 
 		QString inputPresetId;
 	};
@@ -88,19 +91,19 @@ struct BrushSettings::Private {
 		presetModel = input::PresetModel::getSharedInstance();
 
 		blendModes = new QStandardItemModel(0, 1, b);
-		for(const auto &bm : paintcore::getBlendModeNames(paintcore::BlendMode::BrushMode)) {
+		for(const auto &bm : canvas::blendmode::brushModeNames()) {
 			auto item = new QStandardItem(bm.second);
-			item->setData(bm.first, Qt::UserRole);
+			item->setData(int(bm.first), Qt::UserRole);
 			blendModes->appendRow(item);
 		}
 
 		eraseModes = new QStandardItemModel(0, 1, b);
 		auto erase1 = new QStandardItem(QApplication::tr("Erase"));
-		erase1->setData(QVariant(paintcore::BlendMode::MODE_ERASE), Qt::UserRole);
+		erase1->setData(QVariant(int(rustpile::Blendmode::Erase)), Qt::UserRole);
 		eraseModes->appendRow(erase1);
 
 		auto erase2 = new QStandardItem(QApplication::tr("Color Erase"));
-		erase2->setData(QVariant(paintcore::BlendMode::MODE_COLORERASE), Qt::UserRole);
+		erase2->setData(QVariant(int(rustpile::Blendmode::ColorErase)), Qt::UserRole);
 		eraseModes->appendRow(erase2);
 	}
 
@@ -301,11 +304,11 @@ void BrushSettings::setEraserMode(bool erase)
 	if(tool.brush.isEraser() != erase) {
 		// Uh oh, an inconsistency. Try to fix it.
 		// This can happen if the settings data was broken
-		qWarning("setEraserMode(%d): wrong mode %d", erase, tool.brush.blendingMode());
+		qWarning("setEraserMode(%d): wrong mode %d", erase, int(tool.brush.blendingMode()));
 		if(erase)
-			tool.brush.setBlendingMode(paintcore::BlendMode::MODE_ERASE);
+			tool.brush.setBlendingMode(rustpile::Blendmode::Erase);
 		else
-			tool.brush.setBlendingMode(paintcore::BlendMode::MODE_NORMAL);
+			tool.brush.setBlendingMode(rustpile::Blendmode::Normal);
 	}
 
 	updateUi();
@@ -332,7 +335,7 @@ bool BrushSettings::isCurrentEraserSlot() const
 
 void BrushSettings::selectBlendMode(int modeIndex)
 {
-	const auto mode = paintcore::BlendMode::Mode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
+	const auto mode = rustpile::Blendmode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	auto &tool = d->currentTool();
 
 	tool.brush.setBlendingMode(mode);
@@ -451,7 +454,7 @@ void BrushSettings::updateFromUi()
 	brush.setSpacing(d->ui.brushspacingBox->value() / 100.0);
 	brush.setIncremental(d->ui.modeIncremental->isChecked());
 	brush.setColorPickMode(d->ui.modeColorpick->isChecked());
-	brush.setBlendingMode(paintcore::BlendMode::Mode(d->ui.blendmode->currentData(Qt::UserRole).toInt()));
+	brush.setBlendingMode(rustpile::Blendmode(d->ui.blendmode->currentData(Qt::UserRole).toInt()));
 
 	chooseInputPreset(d->ui.inputPreset->currentIndex());
 
@@ -535,8 +538,8 @@ ToolProperties BrushSettings::saveToolSettings()
 		QJsonObject b = tool.brush.toJson();
 
 		b["_slot"] = QJsonObject {
-			{"normalMode", tool.normalMode},
-			{"eraserMode", tool.eraserMode},
+			{"normalMode", int(tool.normalMode)},
+			{"eraserMode", int(tool.eraserMode)},
 			{"color", tool.brush.color().name()},
 			{"inputPresetId", tool.inputPresetId}
 		};
@@ -570,8 +573,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		tool.brush = ClassicBrush::fromJson(o);
 		const auto color = QColor(s["color"].toString());
 		tool.brush.setColor(color.isValid() ? color : Qt::black);
-		tool.normalMode = paintcore::BlendMode::Mode(s["normalMode"].toInt());
-		tool.eraserMode = paintcore::BlendMode::Mode(s["eraserMode"].toInt());
+		tool.normalMode = rustpile::Blendmode(s["normalMode"].toInt());
+		tool.eraserMode = rustpile::Blendmode(s["eraserMode"].toInt());
 		tool.inputPresetId = s["inputPresetId"].toString();
 		d->updateInputPresetUuid(tool);
 
@@ -580,7 +583,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 
 	if(!d->toolSlots[ERASER_SLOT].brush.isEraser())
-		d->toolSlots[ERASER_SLOT].brush.setBlendingMode(paintcore::BlendMode::MODE_ERASE);
+		d->toolSlots[ERASER_SLOT].brush.setBlendingMode(rustpile::Blendmode::Erase);
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
 	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;

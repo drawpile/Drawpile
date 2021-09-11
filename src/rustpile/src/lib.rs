@@ -7,3 +7,4 @@ pub mod paintengine_ffi;
 mod recindex;
 mod snapshots;
 pub mod logging;
+pub mod blendmode_ffi;

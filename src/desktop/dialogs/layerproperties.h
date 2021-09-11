@@ -22,12 +22,15 @@
 
 #include <qobjectdefs.h>
 #include <qdialog.h>
-#include "core/blendmodes.h"
 
 class Ui_LayerProperties;
 
 namespace canvas {
     class CanvasModel;
+}
+
+namespace rustpile {
+	enum class Blendmode : uint8_t;
 }
 
 namespace dialogs {
@@ -40,7 +43,7 @@ public:
         int id;
         QString title;
         float opacity;
-        paintcore::BlendMode::Mode blend;
+		rustpile::Blendmode blend;
         bool hidden;
         bool fixed;
         bool defaultLayer;
@@ -77,7 +80,7 @@ private slots:
 private:
     void applyLayerDataToUi();
     int layerDataOpacity();
-    int searchBlendModeIndex(paintcore::BlendMode::Mode mode);
+	int searchBlendModeIndex(rustpile::Blendmode mode);
 
     Ui_LayerProperties *m_ui;
     canvas::CanvasModel *m_canvas;

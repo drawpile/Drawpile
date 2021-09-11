@@ -20,7 +20,7 @@
 #include "layerproperties.h"
 #include "ui_layerproperties.h"
 
-#include "core/blendmodes.h"
+#include "canvas/blendmodes.h"
 #include "canvas/layerlist.h"
 
 namespace dialogs {
@@ -31,8 +31,8 @@ LayerProperties::LayerProperties(QWidget *parent)
     m_ui = new Ui_LayerProperties;
     m_ui->setupUi(this);
 
-	for(auto bm : paintcore::getBlendModeNames(paintcore::BlendMode::LayerMode)) {
-		m_ui->blendMode->addItem(bm.second, bm.first);
+	for(auto bm : canvas::blendmode::layerModeNames()) {
+		m_ui->blendMode->addItem(bm.second, int(bm.first));
     }
 
     connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
@@ -72,7 +72,7 @@ void LayerProperties::emitChanges()
     }
 
     if(m_ui->blendMode->isEnabled()) {
-        c.blend = static_cast<paintcore::BlendMode::Mode>(
+		c.blend = static_cast<rustpile::Blendmode>(
                 m_ui->blendMode->currentData().toInt());
         if(c.blend != m_layerData.blend) {
             c.changes |= CHANGE_BLEND;
@@ -124,11 +124,11 @@ int LayerProperties::layerDataOpacity()
     return qRound(m_layerData.opacity * 100.0f);
 }
 
-int LayerProperties::searchBlendModeIndex(paintcore::BlendMode::Mode mode)
+int LayerProperties::searchBlendModeIndex(rustpile::Blendmode mode)
 {
     int blendModeCount = m_ui->blendMode->count();
     for(int i = 0; i < blendModeCount; ++i) {
-        if(m_ui->blendMode->itemData(i).toInt() == mode) {
+		if(m_ui->blendMode->itemData(i).toInt() == static_cast<int>(mode)) {
             return i;
         }
     }
