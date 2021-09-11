@@ -41,7 +41,7 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
-	const QColor color = owner.activeBrush().color();
+	const QColor color = owner.activeBrush().qColor();
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 

@@ -182,7 +182,7 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 #endif
 
 	if(!m_activebrush.isEraser())
-		emit colorUsed(m_activebrush.color());
+		emit colorUsed(m_activebrush.qColor());
 }
 
 void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)

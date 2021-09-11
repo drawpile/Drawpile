@@ -105,8 +105,8 @@ ToolProperties FillSettings::saveToolSettings()
 void FillSettings::setForeground(const QColor &color)
 {
 	brushes::ClassicBrush b;
-	b.setSize(1);
-	b.setColor(color);
+	b.size.max = 1;
+	b.setQColor(color);
 	_ui->preview->setBrush(b);
 	controller()->setActiveBrush(b);
 }

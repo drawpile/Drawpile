@@ -25,7 +25,7 @@
 namespace brushes {
 
 ClassicBrush::ClassicBrush()
-	: m_brush(rustpile::ClassicBrush {
+	: rustpile::ClassicBrush{
 		{1.0, 10.0},
 		{0, 1},
 		{0, 1},
@@ -41,42 +41,43 @@ ClassicBrush::ClassicBrush()
 		false,
 		false,
 		false
-	})
+	}
 {
 }
+
 
 QJsonObject ClassicBrush::toJson() const
 {
 	QJsonObject o;
-	switch(shape()) {
+	switch(shape) {
 	case rustpile::ClassicBrushShape::RoundPixel: o["shape"] = "round-pixel"; break;
 	case rustpile::ClassicBrushShape::SquarePixel: o["shape"] = "square-pixel"; break;
 	case rustpile::ClassicBrushShape::RoundSoft: o["shape"] = "round-soft"; break;
 	}
 
-	o["size"] = size1();
-	if(size2()>1) o["size2"] = size2();
+	o["size"] = size.max;
+	if(size.min>1) o["size2"] = size.min;
 
-	o["opacity"] = opacity1();
-	if(opacity2()>0) o["opacity2"] = opacity2();
+	o["opacity"] = opacity.max;
+	if(opacity.min>0) o["opacity2"] = opacity.min;
 
-	o["hard"] = hardness1();
-	if(opacity2()>0) o["hard2"] = hardness2();
+	o["hard"] = hardness.max;
+	if(hardness.min>0) o["hard2"] = hardness.min;
 
-	if(smudge1()>0) o["smudge"] = smudge1();
-	if(smudge2()>0) o["smudge2"] = smudge2();
+	if(smudge.max > 0) o["smudge"] = smudge.max;
+	if(smudge.min > 0) o["smudge2"] = smudge.min;
 
-	o["spacing"] = spacing();
-	if(resmudge()>0) o["resmudge"] = resmudge();
+	o["spacing"] = spacing;
+	if(resmudge>0) o["resmudge"] = resmudge;
 
-	if(incremental()) o["inc"] = true;
-	if(isColorPickMode()) o["colorpick"] = true;
-	if(useSizePressure()) o["sizep"] = true;
-	if(useHardnessPressure()) o["hardp"] = true;
-	if(useOpacityPressure()) o["opacityp"] = true;
-	if(useSmudgePressure()) o["smudgep"] = true;
+	if(incremental) o["inc"] = true;
+	if(colorpick) o["colorpick"] = true;
+	if(size_pressure) o["sizep"] = true;
+	if(hardness_pressure) o["hardp"] = true;
+	if(opacity_pressure) o["opacityp"] = true;
+	if(smudge_pressure) o["smudgep"] = true;
 
-	o["blend"] = canvas::blendmode::svgName(blendingMode());
+	o["blend"] = canvas::blendmode::svgName(mode);
 
 	// Note: color is intentionally omitted
 
@@ -98,35 +99,35 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	const QJsonObject o = json["settings"].toObject();
 
 	if(o["shape"] == "round-pixel")
-		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
 	else if(o["shape"] == "square-pixel")
-		b.setShape(rustpile::ClassicBrushShape::SquarePixel);
+		b.shape = rustpile::ClassicBrushShape::SquarePixel;
 	else
-		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
 
-	b.setSize(o["size"].toInt());
-	b.setSize2(o["size2"].toInt());
+	b.size.max = o["size"].toDouble();
+	b.size.min = o["size2"].toDouble();
 
-	b.setOpacity(o["opacity"].toDouble());
-	b.setOpacity2(o["opacity2"].toDouble());
+	b.opacity.max = o["opacity"].toDouble();
+	b.opacity.min= o["opacity2"].toDouble();
 
-	b.setHardness(o["hard"].toDouble());
-	b.setHardness2(o["hard2"].toDouble());
+	b.hardness.max = o["hard"].toDouble();
+	b.hardness.min = o["hard2"].toDouble();
 
-	b.setSmudge(o["smudge"].toDouble());
-	b.setSmudge2(o["smudge2"].toDouble());
-	b.setResmudge(o["resmudge"].toInt());
+	b.smudge.max = o["smudge"].toDouble();
+	b.smudge.min = o["smudge2"].toDouble();
+	b.resmudge = o["resmudge"].toInt();
 
-	b.setSpacing(o["spacing"].toDouble());
+	b.spacing = o["spacing"].toDouble();
 
-	b.setIncremental(o["inc"].toBool());
-	b.setColorPickMode(o["colorpick"].toBool());
-	b.setSizePressure(o["sizep"].toBool());
-	b.setHardnessPressure(o["hardp"].toBool());
-	b.setOpacityPressure(o["opacityp"].toBool());
-	b.setSmudgePressure(o["smudgep"].toBool());
+	b.incremental = o["inc"].toBool();
+	b.colorpick = o["colorpick"].toBool();
+	b.size_pressure = o["sizep"].toBool();
+	b.hardness_pressure = o["hardp"].toBool();
+	b.opacity_pressure = o["opacityp"].toBool();
+	b.smudge_pressure = o["smudgep"].toBool();
 
-	b.setBlendingMode(canvas::blendmode::fromSvgName(o["blend"].toString()));
+	b.mode = canvas::blendmode::fromSvgName(o["blend"].toString());
 
 	return b;
 }

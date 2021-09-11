@@ -112,7 +112,7 @@ void BezierTool::finishMultipart()
 		m_points.pop_back();
 
 		auto brushengine = rustpile::brushengine_new();
-		rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
+		rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
 
 		const uint8_t contextId = owner.client()->myId();
 		auto engine = owner.model()->paintEngine()->engine();
@@ -205,7 +205,7 @@ void BezierTool::updatePreview()
 		return;
 
 	auto brushengine = rustpile::brushengine_new();
-	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
+	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
 
 	auto engine = owner.model()->paintEngine()->engine();
 

@@ -124,9 +124,9 @@ void BrushPreview::updatePreview()
 		m_preview = QPixmap(size);
 	}
 
-	rustpile::brushpreview_render(m_previewcanvas, &m_brush.brush(), m_shape);
+	rustpile::brushpreview_render(m_previewcanvas, &m_brush, m_shape);
 	if(m_shape == rustpile::BrushPreviewShape::FloodFill || m_shape == rustpile::BrushPreviewShape::FloodErase) {
-		auto color = m_brush.rpColor();
+		auto color = m_brush.color;
 		if(m_shape == rustpile::BrushPreviewShape::FloodErase) {
 			color.a = 0;
 		}

@@ -235,17 +235,17 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 	d->shareBrushSlotColor = sameColor;
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		d->brushSlotButton(i)->setColorSwatch(
-			sameColor ? QColor() : d->toolSlots[i].brush.color()
+			sameColor ? QColor() : d->toolSlots[i].brush.qColor()
 		);
 	}
 }
 
 void BrushSettings::setCurrentBrush(ClassicBrush brush)
 {
-	brush.setColor(d->currentBrush().color());
+	brush.setQColor(d->currentBrush().qColor());
 
 	if(d->current == ERASER_SLOT && !brush.isEraser())
-		brush.setBlendingMode(d->currentBrush().blendingMode());
+		brush.mode = d->currentBrush().mode;
 
 	d->currentBrush() = brush;
 	updateUi();
@@ -273,7 +273,7 @@ void BrushSettings::selectBrushSlot(int i)
 	d->current = i;
 
 	if(!d->shareBrushSlotColor)
-		emit colorChanged(d->currentBrush().color());
+		emit colorChanged(d->currentBrush().qColor());
 
 	d->updateInputPresetUuid(d->currentTool());
 
@@ -297,18 +297,18 @@ void BrushSettings::setEraserMode(bool erase)
 
 	auto &tool = d->currentTool();
 	if(erase)
-		tool.brush.setBlendingMode(tool.eraserMode);
+		tool.brush.mode = tool.eraserMode;
 	else
-		tool.brush.setBlendingMode(tool.normalMode);
+		tool.brush.mode = tool.normalMode;
 
 	if(tool.brush.isEraser() != erase) {
 		// Uh oh, an inconsistency. Try to fix it.
 		// This can happen if the settings data was broken
-		qWarning("setEraserMode(%d): wrong mode %d", erase, int(tool.brush.blendingMode()));
+		qWarning("setEraserMode(%d): wrong mode %d", erase, int(tool.brush.mode));
 		if(erase)
-			tool.brush.setBlendingMode(rustpile::Blendmode::Erase);
+			tool.brush.mode = rustpile::Blendmode::Erase;
 		else
-			tool.brush.setBlendingMode(rustpile::Blendmode::Normal);
+			tool.brush.mode = rustpile::Blendmode::Normal;
 	}
 
 	updateUi();
@@ -338,7 +338,7 @@ void BrushSettings::selectBlendMode(int modeIndex)
 	const auto mode = rustpile::Blendmode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	auto &tool = d->currentTool();
 
-	tool.brush.setBlendingMode(mode);
+	tool.brush.mode = mode;
 	if(tool.brush.isEraser())
 		tool.eraserMode = mode;
 	else
@@ -359,9 +359,9 @@ void BrushSettings::updateUi()
 	const ClassicBrush &brush = tool.brush;
 
 	// Select brush type
-	const bool softmode = brush.shape() == rustpile::ClassicBrushShape::RoundSoft;
+	const bool softmode = brush.shape == rustpile::ClassicBrushShape::RoundSoft;
 
-	switch(brush.shape()) {
+	switch(brush.shape) {
 	case rustpile::ClassicBrushShape::RoundPixel: d->ui.hardedgeMode->setChecked(true); break;
 	case rustpile::ClassicBrushShape::SquarePixel: d->ui.squareMode->setChecked(true); break;
 	case rustpile::ClassicBrushShape::RoundSoft: d->ui.softedgeMode->setChecked(true); break;
@@ -376,7 +376,7 @@ void BrushSettings::updateUi()
 	d->ui.hardnessBox->setVisible(softmode);
 
 	// Smudging only works right in incremental mode
-	d->ui.modeIncremental->setEnabled(brush.smudge1() == 0.0);
+	d->ui.modeIncremental->setEnabled(brush.smudge.max == 0.0);
 
 	// Show correct blending mode
 	if(brush.isEraser())
@@ -387,30 +387,30 @@ void BrushSettings::updateUi()
 	d->ui.modeEraser->setEnabled(d->current != ERASER_SLOT);
 
 	for(int i=0;i<d->ui.blendmode->model()->rowCount();++i) {
-		if(d->ui.blendmode->model()->index(i,0).data(Qt::UserRole) == int(brush.blendingMode())) {
+		if(d->ui.blendmode->model()->index(i,0).data(Qt::UserRole) == int(brush.mode)) {
 			d->ui.blendmode->setCurrentIndex(i);
 			break;
 		}
 	}
 
 	// Set values
-	d->ui.brushsizeBox->setValue(brush.size1());
-	d->ui.pressureSize->setChecked(brush.useSizePressure());
+	d->ui.brushsizeBox->setValue(brush.size.max);
+	d->ui.pressureSize->setChecked(brush.size_pressure);
 
-	d->ui.brushopacity->setValue(brush.opacity1() * 100);
-	d->ui.pressureOpacity->setChecked(brush.useOpacityPressure());
+	d->ui.brushopacity->setValue(brush.opacity.max * 100);
+	d->ui.pressureOpacity->setChecked(brush.opacity_pressure);
 
-	d->ui.brushhardness->setValue(brush.hardness1() * 100);
-	d->ui.pressureHardness->setChecked(softmode && brush.useHardnessPressure());
+	d->ui.brushhardness->setValue(brush.hardness.max * 100);
+	d->ui.pressureHardness->setChecked(softmode && brush.hardness_pressure);
 
-	d->ui.brushsmudging->setValue(brush.smudge1() * 100);
-	d->ui.pressureSmudging->setChecked(brush.useSmudgePressure());
+	d->ui.brushsmudging->setValue(brush.smudge.max * 100);
+	d->ui.pressureSmudging->setChecked(brush.smudge_pressure);
 
-	d->ui.colorpickup->setValue(brush.resmudge());
+	d->ui.colorpickup->setValue(brush.resmudge);
 
-	d->ui.brushspacingBox->setValue(brush.spacing() * 100);
-	d->ui.modeIncremental->setChecked(brush.incremental());
-	d->ui.modeColorpick->setChecked(brush.isColorPickMode());
+	d->ui.brushspacingBox->setValue(brush.spacing * 100);
+	d->ui.modeIncremental->setChecked(brush.incremental);
+	d->ui.modeColorpick->setChecked(brush.colorpick);
 
 	const int presetIndex = d->presetModel->searchIndexById(tool.inputPresetId);
 	if(presetIndex >= 0) {
@@ -432,35 +432,35 @@ void BrushSettings::updateFromUi()
 	auto &brush = d->currentBrush();
 
 	if(d->ui.hardedgeMode->isChecked())
-		brush.setShape(rustpile::ClassicBrushShape::RoundPixel);
+		brush.shape = rustpile::ClassicBrushShape::RoundPixel;
 	else if(d->ui.squareMode->isChecked())
-		brush.setShape(rustpile::ClassicBrushShape::SquarePixel);
+		brush.shape = rustpile::ClassicBrushShape::SquarePixel;
 	else 
-		brush.setShape(rustpile::ClassicBrushShape::RoundSoft);
+		brush.shape = rustpile::ClassicBrushShape::RoundSoft;
 
-	brush.setSize(d->ui.brushsizeBox->value());
-	brush.setSizePressure(d->ui.pressureSize->isChecked());
+	brush.size.max = d->ui.brushsizeBox->value();
+	brush.size_pressure = d->ui.pressureSize->isChecked();
 
-	brush.setOpacity(d->ui.brushopacity->value() / 100.0);
-	brush.setOpacityPressure(d->ui.pressureOpacity->isChecked());
+	brush.opacity.max = d->ui.brushopacity->value() / 100.0;
+	brush.opacity_pressure = d->ui.pressureOpacity->isChecked();
 
-	brush.setHardness(d->ui.brushhardness->value() / 100.0);
-	brush.setHardnessPressure(d->ui.pressureHardness->isChecked());
+	brush.hardness.max = d->ui.brushhardness->value() / 100.0;
+	brush.hardness_pressure = d->ui.pressureHardness->isChecked();
 
-	brush.setSmudge(d->ui.brushsmudging->value() / 100.0);
-	brush.setSmudgePressure(d->ui.pressureSmudging->isChecked());
-	brush.setResmudge(d->ui.colorpickup->value());
+	brush.smudge.max = d->ui.brushsmudging->value() / 100.0;
+	brush.smudge_pressure = d->ui.pressureSmudging->isChecked();
+	brush.resmudge = d->ui.colorpickup->value();
 
-	brush.setSpacing(d->ui.brushspacingBox->value() / 100.0);
-	brush.setIncremental(d->ui.modeIncremental->isChecked());
-	brush.setColorPickMode(d->ui.modeColorpick->isChecked());
-	brush.setBlendingMode(rustpile::Blendmode(d->ui.blendmode->currentData(Qt::UserRole).toInt()));
+	brush.spacing = d->ui.brushspacingBox->value() / 100.0;
+	brush.incremental = d->ui.modeIncremental->isChecked();
+	brush.colorpick = d->ui.modeColorpick->isChecked();
+	brush.mode = rustpile::Blendmode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
 
 	chooseInputPreset(d->ui.inputPreset->currentIndex());
 
 	d->ui.preview->setBrush(brush);
 
-	d->ui.modeIncremental->setEnabled(brush.smudge1() == 0.0);
+	d->ui.modeIncremental->setEnabled(brush.smudge.max == 0.0);
 
 	pushSettings();
 }
@@ -540,7 +540,7 @@ ToolProperties BrushSettings::saveToolSettings()
 		b["_slot"] = QJsonObject {
 			{"normalMode", int(tool.normalMode)},
 			{"eraserMode", int(tool.eraserMode)},
-			{"color", tool.brush.color().name()},
+			{"color", tool.brush.qColor().name()},
 			{"inputPresetId", tool.inputPresetId}
 		};
 
@@ -572,18 +572,18 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 		tool.brush = ClassicBrush::fromJson(o);
 		const auto color = QColor(s["color"].toString());
-		tool.brush.setColor(color.isValid() ? color : Qt::black);
+		tool.brush.setQColor(color.isValid() ? color : Qt::black);
 		tool.normalMode = rustpile::Blendmode(s["normalMode"].toInt());
 		tool.eraserMode = rustpile::Blendmode(s["eraserMode"].toInt());
 		tool.inputPresetId = s["inputPresetId"].toString();
 		d->updateInputPresetUuid(tool);
 
 		if(!d->shareBrushSlotColor)
-			d->brushSlotButton(i)->setColorSwatch(tool.brush.color());
+			d->brushSlotButton(i)->setColorSwatch(tool.brush.qColor());
 	}
 
 	if(!d->toolSlots[ERASER_SLOT].brush.isEraser())
-		d->toolSlots[ERASER_SLOT].brush.setBlendingMode(rustpile::Blendmode::Erase);
+		d->toolSlots[ERASER_SLOT].brush.mode = rustpile::Blendmode::Erase;
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
 	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;
@@ -612,13 +612,13 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	if(color != d->currentBrush().color()) {
+	if(color != d->currentBrush().qColor()) {
 		if(d->shareBrushSlotColor) {
 			for(int i=0;i<BRUSH_COUNT;++i)
-				d->toolSlots[i].brush.setColor(color);
+				d->toolSlots[i].brush.setQColor(color);
 
 		} else {
-			d->currentBrush().setColor(color);
+			d->currentBrush().setQColor(color);
 			d->brushSlotButton(d->current)->setColorSwatch(color);
 		}
 
@@ -645,12 +645,12 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().shape() == rustpile::ClassicBrushShape::RoundSoft;
+	return d->currentBrush().shape == rustpile::ClassicBrushShape::RoundSoft;
 }
 
 bool BrushSettings::isSquare() const
 {
-	return d->currentBrush().shape() == rustpile::ClassicBrushShape::SquarePixel;
+	return d->currentBrush().shape == rustpile::ClassicBrushShape::SquarePixel;
 }
 
 }

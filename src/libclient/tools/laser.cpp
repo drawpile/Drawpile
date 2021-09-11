@@ -44,7 +44,7 @@ void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
 
 	net::EnvelopeBuilder msgs;
 
-	rustpile::write_lasertrail(msgs, owner.client()->myId(), owner.activeBrush().color().rgb(), m_persistence);
+	rustpile::write_lasertrail(msgs, owner.client()->myId(), owner.activeBrush().qColor().rgb(), m_persistence);
 	rustpile::write_movepointer(msgs, owner.client()->myId(), point.x(), point.y());
 	owner.client()->sendEnvelope(msgs.toEnvelope());
 

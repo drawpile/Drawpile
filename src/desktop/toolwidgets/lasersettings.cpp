@@ -62,7 +62,7 @@ void LaserPointerSettings::pushSettings()
 		c = _ui->color3->color();
 
 	brushes::ClassicBrush b;
-	b.setColor(c);
+	b.setQColor(c);
 	controller()->setActiveBrush(b);
 }
 

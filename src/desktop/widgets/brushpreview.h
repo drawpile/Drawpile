@@ -50,7 +50,7 @@ public:
 
 	rustpile::BrushPreviewShape previewShape() const { return m_shape; }
 
-	QColor brushColor() const { return m_brush.color(); }
+	QColor brushColor() const { return m_brush.qColor(); }
 	const brushes::ClassicBrush &brush() const { return m_brush; }
 
 public slots:

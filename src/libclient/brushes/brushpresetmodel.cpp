@@ -65,8 +65,9 @@ bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &file
 
 static QImage makePreviewIcon(const ClassicBrush &brush)
 {
+#if 0 // FIXME
 	paintcore::BrushMask mask;
-	switch(brush.shape()) {
+	switch(brush.shape) {
 	case rustpile::ClassicBrushShape::RoundPixel:
 		mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
 		break;
@@ -109,6 +110,8 @@ static QImage makePreviewIcon(const ClassicBrush &brush)
 	}
 
 	return icon;
+#endif
+	return QImage();
 }
 
 struct BrushPreset {
@@ -235,72 +238,72 @@ static void makeDefaultBrushes()
 {
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
-		b.setSize(16);
-		b.setOpacity(1.0);
-		b.setSpacing(0.15);
-		b.setSizePressure(true);
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.size.max = 16;
+		b.opacity.max = 1.0;
+		b.spacing = 0.15;
+		b.size_pressure = true;
 		BrushPresetModel::writeBrush(b, "default-1.dpbrush");
 	}
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
-		b.setSize(10);
-		b.setOpacity(1.0);
-		b.setHardness(0.8);
-		b.setSpacing(0.15);
-		b.setSizePressure(true);
-		b.setOpacityPressure(true);
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 10;
+		b.opacity.max = 1.0;
+		b.hardness.max = 0.8;
+		b.spacing = 0.15;
+		b.size_pressure = true;
+		b.opacity_pressure = true;
 		BrushPresetModel::writeBrush(b, "default-2.dpbrush");
 	}
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
-		b.setSize(30);
-		b.setOpacity(0.34);
-		b.setHardness(1.0);
-		b.setSpacing(0.18);
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 30;
+		b.opacity.max = 0.34;
+		b.hardness.max = 1.0;
+		b.spacing = 0.18;
 		BrushPresetModel::writeBrush(b, "default-3.dpbrush");
 	}
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
-		b.setIncremental(false);
-		b.setSize(32);
-		b.setOpacity(0.65);
-		b.setSpacing(0.15);
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.incremental = false;
+		b.size.max = 32;
+		b.opacity.max = 0.65;
+		b.spacing = 0.15;
 		BrushPresetModel::writeBrush(b, "default-4.dpbrush");
 	}
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundPixel);
-		b.setIncremental(false);
-		b.setSize(70);
-		b.setOpacity(0.42);
-		b.setSpacing(0.15);
-		b.setOpacityPressure(true);
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.incremental = false;
+		b.size.max = 70;
+		b.opacity.max = 0.42;
+		b.spacing = 0.15;
+		b.opacity_pressure = true;
 		BrushPresetModel::writeBrush(b, "default-5.dpbrush");
 	}
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
-		b.setSize(113);
-		b.setOpacity(0.6);
-		b.setHardness(1.0);
-		b.setSpacing(0.19);
-		b.setOpacityPressure(true);
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 113;
+		b.opacity.max = 0.6;
+		b.hardness.max = 1.0;
+		b.spacing = 0.19;
+		b.opacity_pressure = true;
 		BrushPresetModel::writeBrush(b, "default-6.dpbrush");
 	}
 	{
 		ClassicBrush b;
-		b.setShape(rustpile::ClassicBrushShape::RoundSoft);
-		b.setSize(43);
-		b.setOpacity(0.3);
-		b.setHardness(1.0);
-		b.setSpacing(0.25);
-		b.setSmudge(1.0);
-		b.setResmudge(1);
-		b.setOpacityPressure(true);
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 43;
+		b.opacity.max = 0.3;
+		b.hardness.max = 1.0;
+		b.spacing = 0.25;
+		b.smudge.max = 1.0;
+		b.resmudge = 1;
+		b.opacity_pressure = true;
 		BrushPresetModel::writeBrush(b, "default-7.dpbrush");
 	}
 }

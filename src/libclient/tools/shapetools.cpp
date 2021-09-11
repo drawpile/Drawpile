@@ -83,7 +83,7 @@ void ShapeTool::end()
 
 	auto brushengine = rustpile::brushengine_new();
 
-	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
+	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
 
 	const auto pv = pointVector();
 	for(const auto &p : pv) {
@@ -106,7 +106,7 @@ void ShapeTool::updatePreview()
 {
 	auto brushengine = rustpile::brushengine_new();
 
-	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush().brush(), owner.activeLayer());
+	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
 
 	auto engine = owner.model()->paintEngine()->engine();
 
