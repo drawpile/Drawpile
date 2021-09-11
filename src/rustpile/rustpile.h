@@ -296,11 +296,9 @@ struct FeatureTiers {
 
 using IndexBuildProgressNoticationFn = void(*)(void *ctx, uint32_t progress);
 
+using ExtLogFn = void(*)(int32_t level, const char *file, uint32_t line, const char *logmsg);
+
 extern "C" {
-
-void rustpile_init();
-
-void qt_log_handler(int32_t loglevel, const uint16_t *message, uintptr_t message_len);
 
 void annotations_get_all(const Annotations *annotations,
                          void *ctx,
@@ -806,6 +804,8 @@ Size snapshots_size(const SnapshotQueue *snapshots, uintptr_t index);
 bool snapshots_get_content(const SnapshotQueue *snapshots, uintptr_t index, uint8_t *pixels);
 
 bool snapshots_import_file(SnapshotQueue *snapshots, const uint16_t *path, uintptr_t path_len);
+
+void rustpile_init_logging(ExtLogFn log_writer);
 
 } // extern "C"
 

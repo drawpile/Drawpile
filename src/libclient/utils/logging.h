@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017 Calle Laakkonen
+   Copyright (C) 2017-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #ifndef DRAWPILE_LOGGING_H
 #define DRAWPILE_LOGGING_H
 
+#include <cstdint>
+
 class QByteArray;
 
 namespace utils {
@@ -27,6 +29,8 @@ namespace utils {
 QByteArray logFilePath();
 
 void initLogging();
+
+void logMessage(int level, const char *file, uint32_t line, const char *msg);
 
 }
 

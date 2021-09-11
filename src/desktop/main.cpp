@@ -343,12 +343,12 @@ int main(int argc, char *argv[]) {
 	// (Scale factor must be taken in account when zooming)
 	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-	rustpile::rustpile_init();
-
 	DrawpileApp app(argc, argv);
 
 	{
 		const auto files = initApp(app);
+
+		rustpile::rustpile_init_logging(&utils::logMessage);
 
 		if(files.isEmpty()) {
 			app.openBlankDocument();

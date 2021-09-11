@@ -20,7 +20,6 @@
 #include "logging.h"
 #include "config.h"
 #include "../libshared/util/paths.h"
-#include "../rustpile/rustpile.h"
 
 #include <QMessageLogContext>
 #include <QDateTime>
@@ -48,10 +47,10 @@ void logToFile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg
 			fprintf(logfile, "[%s WARNING] %s\n", ts.constData(), m.constData());
 			break;
 		case QtCriticalMsg:
-			fprintf(logfile, "[%s CRITICAL] %s\n", ts.constData(), m.constData());
+			fprintf(logfile, "[%s CRITICAL] %s:%u %s\n", ts.constData(), ctx.file, ctx.line, m.constData());
 			break;
 		case QtFatalMsg:
-			fprintf(logfile, "[%s FATAL] %s\n", ts.constData(), m.constData());
+			fprintf(logfile, "[%s FATAL] %s:%u %s\n", ts.constData(), ctx.file, ctx.line, m.constData());
 			break;
 	}
 	fflush(logfile);
@@ -67,28 +66,19 @@ QByteArray logFilePath()
 			).toLocal8Bit();
 }
 
-void logToRustpile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
+void logMessage(int level, const char *file, uint32_t line, const char *msg)
 {
-	Q_UNUSED(ctx); // TODO
-
-	int level;
-	switch(type) {
-	case QtCriticalMsg:
-	case QtFatalMsg: level = 0; break;
-	case QtWarningMsg: level = 1; break;
-	case QtInfoMsg: level = 2; break;
-	default: level = 3; break;
+	QMessageLogger l(file ? file : "", line, "");
+	switch(level) {
+	case 0: l.debug("%s", msg); break;
+	case 1: l.info("%s", msg); break;
+	case 2: l.warning("%s", msg); break;
+	case 3: l.critical("%s", msg); break;
 	}
-
-	rustpile::qt_log_handler(level, reinterpret_cast<const ushort*>(msg.constData()), msg.size());
 }
 
 void initLogging()
 {
-	// Use Rustpile logging
-	qInstallMessageHandler(logToRustpile);
-
-	// TODO log to file on Rustpile side
 	if(!QSettings().value("settings/logfile", true).toBool()) {
 		qInfo("Logfile disabled");
 		return;
