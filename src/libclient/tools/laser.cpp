@@ -34,7 +34,7 @@ LaserPointer::LaserPointer(ToolController &owner)
 	m_persistence(1), m_drawing(false)
 {}
 
-void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
+void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
@@ -50,7 +50,7 @@ void LaserPointer::begin(const paintcore::Point &point, bool right, float zoom)
 
 }
 
-void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool center)
+void LaserPointer::motion(const canvas::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);

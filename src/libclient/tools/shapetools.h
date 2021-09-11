@@ -32,13 +32,13 @@ class ShapeTool : public Tool {
 public:
 	ShapeTool(ToolController &owner, Type type, QCursor cursor) : Tool(owner, type, cursor), m_drawing(false) {}
 
-	void begin(const paintcore::Point& point, bool right, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point& point, bool right, float zoom) override;
+	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
 	void cancelMultipart() override;
 
 protected:
-	virtual paintcore::PointVector pointVector() const = 0;
+	virtual canvas::PointVector pointVector() const = 0;
 	void updatePreview();
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
 
@@ -57,10 +57,10 @@ class Line : public ShapeTool {
 public:
 	Line(ToolController &owner);
 
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void motion(const canvas::Point& point, bool constrain, bool center) override;
 
 protected:
-	paintcore::PointVector pointVector() const override;
+	canvas::PointVector pointVector() const override;
 };
 
 /**
@@ -73,7 +73,7 @@ public:
 	Rectangle(ToolController &owner);
 
 protected:
-	paintcore::PointVector pointVector() const override;
+	canvas::PointVector pointVector() const override;
 };
 
 /**
@@ -86,7 +86,7 @@ public:
 	Ellipse(ToolController &owner);
 
 protected:
-	paintcore::PointVector pointVector() const override;
+	canvas::PointVector pointVector() const override;
 };
 
 }

@@ -34,7 +34,7 @@
 
 namespace tools {
 
-void ShapeTool::begin(const paintcore::Point& point, bool right, float zoom)
+void ShapeTool::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
@@ -48,7 +48,7 @@ void ShapeTool::begin(const paintcore::Point& point, bool right, float zoom)
 	updatePreview();
 }
 
-void ShapeTool::motion(const paintcore::Point& point, bool constrain, bool center)
+void ShapeTool::motion(const canvas::Point& point, bool constrain, bool center)
 {
 	if(!m_drawing)
 		return;
@@ -111,7 +111,7 @@ void ShapeTool::updatePreview()
 
 	auto engine = owner.model()->paintEngine()->engine();
 
-	const paintcore::PointVector pv = pointVector();
+	const canvas::PointVector pv = pointVector();
 	Q_ASSERT(pv.size()>1);
 
 	for(const auto &p : pv) {
@@ -128,7 +128,7 @@ Line::Line(ToolController &owner)
 {
 }
 
-void Line::motion(const paintcore::Point& point, bool constrain, bool center)
+void Line::motion(const canvas::Point& point, bool constrain, bool center)
 {
 	if(constrain)
 		m_p2 = constraints::angle(m_start, point);
@@ -143,11 +143,11 @@ void Line::motion(const paintcore::Point& point, bool constrain, bool center)
 	updatePreview();
 }
 
-paintcore::PointVector Line::pointVector() const
+canvas::PointVector Line::pointVector() const
 {
-	paintcore::PointVector pv;
+	canvas::PointVector pv;
 	pv.reserve(2);
-	pv << paintcore::Point(m_p1, 1) << paintcore::Point(m_p2, 1);
+	pv << canvas::Point(m_p1, 1) << canvas::Point(m_p2, 1);
 	return pv;
 }
 
@@ -156,7 +156,7 @@ Rectangle::Rectangle(ToolController &owner)
 {
 }
 
-paintcore::PointVector Rectangle::pointVector() const
+canvas::PointVector Rectangle::pointVector() const
 {
 	return brushes::shapes::rectangle(rect());
 }
@@ -166,7 +166,7 @@ Ellipse::Ellipse(ToolController &owner)
 {
 }
 
-paintcore::PointVector Ellipse::pointVector() const
+canvas::PointVector Ellipse::pointVector() const
 {
 	return brushes::shapes::ellipse(rect());
 }

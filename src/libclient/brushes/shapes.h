@@ -20,21 +20,18 @@
 #ifndef DP_BRUSHES_SHAPES_H
 #define DP_BRUSHES_SHAPES_H
 
-#include "core/point.h"
+#include "canvas/point.h"
 
 #include <QRectF>
 
 namespace brushes {
 namespace shapes {
 
-paintcore::PointVector rectangle(const QRectF &rect);
-paintcore::PointVector ellipse(const QRectF &rect);
+canvas::PointVector rectangle(const QRectF &rect);
+canvas::PointVector ellipse(const QRectF &rect);
 
-paintcore::PointVector cubicBezierCurve(const QPointF p[4]);
+canvas::PointVector cubicBezierCurve(const QPointF p[4]);
 
-// These are used for brush previews
-paintcore::PointVector sampleStroke(const QRectF &rect);
-paintcore::PointVector sampleBlob(const QRectF &rect);
 
 }
 }

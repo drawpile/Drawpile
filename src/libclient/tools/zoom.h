@@ -32,8 +32,8 @@ class ZoomTool : public Tool {
 public:
 	ZoomTool(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point& point, bool right, float zoom) override;
+	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
 
 private:

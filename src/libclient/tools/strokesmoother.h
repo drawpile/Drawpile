@@ -21,7 +21,7 @@
 
 #include <QVector>
 
-#include "core/point.h"
+#include "canvas/point.h"
 
 class StrokeSmoother
 {
@@ -46,7 +46,7 @@ public:
 	 * @brief Add a point to the smoother
 	 * @param point
 	 */
-	void addPoint(const paintcore::Point &point);
+	void addPoint(const canvas::Point &point);
 
 	/**
 	 * @brief Is a smoothed point available?
@@ -61,7 +61,7 @@ public:
 	 * @return smoothed point
 	 * @pre hasSmoothPoint() == true
 	 */
-	paintcore::Point smoothPoint() const;
+	canvas::Point smoothPoint() const;
 
 	/**
 	 * @brief Remove one point from the buffer, for ending a line
@@ -74,7 +74,7 @@ public:
 	 * @brief Get the last point added to the smoother
 	 * @return
 	 */
-	paintcore::Point latestPoint() const { return at(0); }
+	canvas::Point latestPoint() const { return at(0); }
 
 	/**
 	 * Add an offset to all stored points
@@ -85,9 +85,9 @@ public:
 	void addOffset(const QPointF &offset);
 
 private:
-	paintcore::Point at(int i) const;
+	canvas::Point at(int i) const;
 
-	QVector<paintcore::Point> _points;
+	canvas::PointVector _points;
 	int _pos;
 	int _count; ///< Number of actually sampled points in the buffer
 };

@@ -25,8 +25,8 @@
 namespace brushes {
 namespace shapes {
 
-using paintcore::Point;
-using paintcore::PointVector;
+using canvas::Point;
+using canvas::PointVector;
 
 PointVector rectangle(const QRectF &rect)
 {
@@ -86,55 +86,6 @@ PointVector cubicBezierCurve(const QPointF p[4])
 	for(float t=0;t<1;t+=0.05) {
 		pv << _cubicBezierPoint(p, t);
 	}
-	return pv;
-}
-
-PointVector sampleStroke(const QRectF &rect)
-{
-	const int strokew = rect.width();
-	const qreal strokeh = rect.height() * 0.6;
-	const qreal offy = rect.top() + rect.height()/2;
-	const qreal dphase = (2*M_PI)/qreal(strokew);
-	qreal phase = 0;
-
-	PointVector pointvector;
-	pointvector.reserve(strokew);
-	pointvector << paintcore::Point(rect.left(), offy, 0.0);
-	for(int x=0;x<strokew;++x, phase += dphase) {
-
-		const qreal fx = x/qreal(strokew);
-		const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
-		const qreal y = sin(phase) * strokeh;
-		pointvector << Point(rect.left()+x, offy+y, pressure);
-	}
-	return pointvector;
-}
-
-// this is used to demonstrate the flood fill
-PointVector sampleBlob(const QRectF &rect)
-{
-	PointVector pv;
-
-	const float mid = rect.top() + rect.height()/2;
-	const float h = rect.height() * 0.8;
-
-	for(float a=0;a<M_PI;a+=0.1) {
-		float x = rect.left() + (a / M_PI * rect.width());
-		float y = pow(sin(a), 0.5)*0.7 + sin(a*3)*0.3;
-
-		pv << Point(x, mid-y*h, 1);
-	}
-	pv << Point(rect.right(), mid, 1);
-
-	for(float a=0.1;a<M_PI;a+=0.1) {
-		float x = rect.right() - (a / M_PI * rect.width());
-		float y = pow(sin(a), 0.5)*0.7 + sin(a*2.8)*0.2;
-
-		pv << Point(x, mid+y*h, 1);
-	}
-
-	pv << pv[0];
-
 	return pv;
 }
 

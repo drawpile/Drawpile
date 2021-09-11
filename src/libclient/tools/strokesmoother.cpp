@@ -37,7 +37,7 @@ void StrokeSmoother::addOffset(const QPointF &offset)
 		_points[i] += offset;
 }
 
-void StrokeSmoother::addPoint(const paintcore::Point &point)
+void StrokeSmoother::addPoint(const canvas::Point &point)
 {
 	Q_ASSERT(_points.size()>0);
 
@@ -57,7 +57,7 @@ void StrokeSmoother::addPoint(const paintcore::Point &point)
 		++_count;
 }
 
-paintcore::Point StrokeSmoother::at(int i) const
+canvas::Point StrokeSmoother::at(int i) const
 {
 	return _points.at((_pos+i) % _points.size());
 }
@@ -73,16 +73,16 @@ bool StrokeSmoother::hasSmoothPoint() const
 	return _count > 0;
 }
 
-paintcore::Point StrokeSmoother::smoothPoint() const
+canvas::Point StrokeSmoother::smoothPoint() const
 {
 	Q_ASSERT(hasSmoothPoint());
 
 	// A simple unweighted sliding-average smoother
-	paintcore::Point p = at(0);
+	auto p = at(0);
 
 	qreal pressure = p.pressure();
 	for(int i=1;i<_points.size();++i) {
-		paintcore::Point pi = at(i);
+		const auto pi = at(i);
 		p.rx() += pi.x();
 		p.ry() += pi.y();
 		pressure += pi.pressure();

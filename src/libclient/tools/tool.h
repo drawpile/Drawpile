@@ -19,7 +19,7 @@
 #ifndef TOOLS_TOOL_H
 #define TOOLS_TOOL_H
 
-#include "core/point.h"
+#include "canvas/point.h"
 
 #include <QCursor>
 
@@ -63,7 +63,7 @@ public:
 	 * @param right is the right mouse/pen button pressed instead of the left one
 	 * @param zoom the current view zoom factor
 	 */
-	virtual void begin(const paintcore::Point& point, bool right, float zoom) = 0;
+	virtual void begin(const canvas::Point& point, bool right, float zoom) = 0;
 
 	/**
 	 * @brief Continue a stroke
@@ -71,7 +71,7 @@ public:
 	 * @param constrain is the "constrain motion" button pressed
 	 * @param cener is the "center on start point" button pressed
 	 */
-	virtual void motion(const paintcore::Point& point, bool constrain, bool center) = 0;
+	virtual void motion(const canvas::Point& point, bool constrain, bool center) = 0;
 
 	/**
 	 * @brief Tool hovering over the canvas

@@ -30,8 +30,8 @@ class BezierTool : public Tool {
 public:
 	BezierTool(ToolController &owner);
 
-	void begin(const paintcore::Point& point, bool right, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point& point, bool right, float zoom) override;
+	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void hover(const QPointF& point) override;
 	void end() override;
 	void finishMultipart() override;
@@ -41,7 +41,7 @@ public:
 
 private:
 	void updatePreview();
-	paintcore::PointVector calculateBezierCurve() const;
+	canvas::PointVector calculateBezierCurve() const;
 
 	struct ControlPoint {
 		QPointF point;

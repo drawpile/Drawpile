@@ -37,7 +37,7 @@ FloodFill::FloodFill(ToolController &owner)
 {
 }
 
-void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
+void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
@@ -72,7 +72,7 @@ void FloodFill::begin(const paintcore::Point &point, bool right, float zoom)
 	QGuiApplication::restoreOverrideCursor();
 }
 
-void FloodFill::motion(const paintcore::Point &point, bool constrain, bool center)
+void FloodFill::motion(const canvas::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(point);
 	Q_UNUSED(constrain);

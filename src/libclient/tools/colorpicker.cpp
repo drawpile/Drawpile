@@ -33,7 +33,7 @@ ColorPicker::ColorPicker(ToolController &owner)
 {
 }
 
-void ColorPicker::begin(const paintcore::Point& point, bool right, float zoom)
+void ColorPicker::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
@@ -41,7 +41,7 @@ void ColorPicker::begin(const paintcore::Point& point, bool right, float zoom)
 	motion(point, false, false);
 }
 
-void ColorPicker::motion(const paintcore::Point& point, bool constrain, bool center)
+void ColorPicker::motion(const canvas::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);

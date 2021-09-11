@@ -40,7 +40,7 @@ Annotation::Annotation(ToolController &owner)
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const paintcore::Point& point, bool right, float zoom)
+void Annotation::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(right);
 
@@ -117,7 +117,7 @@ Annotation::Handle Annotation::handleAt(const QRect &rect, const QPoint &point, 
 /**
  * Change the shape of the selected annotation.
  */
-void Annotation::motion(const paintcore::Point& point, bool constrain, bool center)
+void Annotation::motion(const canvas::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);

@@ -30,7 +30,7 @@
 #include "zoom.h"
 #include "inspector.h"
 
-#include "core/point.h"
+#include "canvas/point.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 
@@ -174,7 +174,7 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 	}
 
 	m_smoother.reset();
-	m_activeTool->begin(paintcore::Point(point, pressure), right, zoom);
+	m_activeTool->begin(canvas::Point(point, pressure), right, zoom);
 
 #if 0 // FIXME
 	if(!m_activeTool->isMultipart())
@@ -195,14 +195,14 @@ void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool 
 	}
 
 	if(m_smoothing>0 && m_activeTool->allowSmoothing()) {
-		m_smoother.addPoint(paintcore::Point(point, pressure));
+		m_smoother.addPoint(canvas::Point(point, pressure));
 
 		if(m_smoother.hasSmoothPoint()) {
 			m_activeTool->motion(m_smoother.smoothPoint(), shift, alt);
 		}
 
 	} else {
-		m_activeTool->motion(paintcore::Point(point, pressure), shift, alt);
+		m_activeTool->motion(canvas::Point(point, pressure), shift, alt);
 	}
 
 	m_prevShift = shift;

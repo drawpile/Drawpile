@@ -38,8 +38,8 @@ public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(owner, type,  cursor), m_allowTransform(true) { }
 
-	void begin(const paintcore::Point& point, bool right, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point& point, bool right, float zoom) override;
+	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
 
 	void finishMultipart() override;
@@ -58,7 +58,7 @@ public:
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;
-	virtual void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center) = 0;
+	virtual void newSelectionMotion(const canvas::Point &point, bool constrain, bool center) = 0;
 
 	QPointF m_start, m_p1, m_end;
 	canvas::Selection::Handle m_handle;
@@ -74,7 +74,7 @@ public:
 
 protected:
 	void initSelection(canvas::Selection *selection);
-	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
+	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center);
 };
 
 
@@ -84,7 +84,7 @@ public:
 
 protected:
 	void initSelection(canvas::Selection *selection);
-	void newSelectionMotion(const paintcore::Point &point, bool constrain, bool center);
+	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center);
 };
 
 }

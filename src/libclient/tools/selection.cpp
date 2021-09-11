@@ -33,7 +33,7 @@
 
 namespace tools {
 
-void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
+void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(right);
 
@@ -59,7 +59,7 @@ void SelectionTool::begin(const paintcore::Point &point, bool right, float zoom)
 	}
 }
 
-void SelectionTool::motion(const paintcore::Point &point, bool constrain, bool center)
+void SelectionTool::motion(const canvas::Point &point, bool constrain, bool center)
 {
 	canvas::Selection *sel = owner.model()->selection();
 	if(!sel)
@@ -183,7 +183,7 @@ void RectangleSelection::initSelection(canvas::Selection *selection)
 	selection->setShapeRect(QRect(p, p));
 }
 
-void RectangleSelection::newSelectionMotion(const paintcore::Point& point, bool constrain, bool center)
+void RectangleSelection::newSelectionMotion(const canvas::Point& point, bool constrain, bool center)
 {
 	QPointF p;
 	if(constrain)
@@ -209,7 +209,7 @@ void PolygonSelection::initSelection(canvas::Selection *selection)
 	selection->setShape(QPolygonF({ m_start }));
 }
 
-void PolygonSelection::newSelectionMotion(const paintcore::Point &point, bool constrain, bool center)
+void PolygonSelection::newSelectionMotion(const canvas::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);

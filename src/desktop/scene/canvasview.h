@@ -20,9 +20,9 @@
 #define EDITORVIEW_H
 
 #include "canvasviewmodifiers.h"
-#include "core/point.h"
-#include "tools/tool.h"
 #include "canvas/pressure.h"
+#include "canvas/point.h"
+#include "tools/tool.h"
 
 #include <QGraphicsView>
 
@@ -60,8 +60,8 @@ public:
 	qreal rotation() const { return m_rotate; }
 
 	using QGraphicsView::mapToScene;
-	paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
-	paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
+	canvas::Point mapToScene(const QPoint &point, qreal pressure) const;
+	canvas::Point mapToScene(const QPointF &point, qreal pressure) const;
 
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
@@ -209,11 +209,11 @@ private:
 	void moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers);
 
 	//! Redraw the scene around the outline cursor if necesasry
-	void updateOutline(paintcore::Point point);
+	void updateOutline(canvas::Point point);
 	void updateOutline();
 
-	void onPenDown(const paintcore::Point &p, bool right);
-	void onPenMove(const paintcore::Point &p, bool right, bool constrain1, bool constrain2);
+	void onPenDown(const canvas::Point &p, bool right);
+	void onPenMove(const canvas::Point &p, bool right, bool constrain1, bool constrain2);
 	void onPenUp();
 
 	void gestureEvent(QGestureEvent *event);
@@ -248,8 +248,8 @@ private:
 	bool m_spacebar = false;
 
 	//! Previous pointer location
-	paintcore::Point m_prevpoint;
-	paintcore::Point m_prevoutlinepoint;
+	canvas::Point m_prevpoint;
+	canvas::Point m_prevoutlinepoint;
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
 

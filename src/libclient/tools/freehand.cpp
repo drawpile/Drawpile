@@ -41,7 +41,7 @@ Freehand::~Freehand()
 	rustpile::brushengine_free(m_brushengine);
 }
 
-void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
+void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
@@ -58,7 +58,7 @@ void Freehand::begin(const paintcore::Point& point, bool right, float zoom)
 	m_start = point;
 }
 
-void Freehand::motion(const paintcore::Point& point, bool constrain, bool center)
+void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);

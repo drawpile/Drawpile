@@ -23,7 +23,7 @@
 #include <QVector>
 #include <QtMath>
 
-namespace paintcore {
+namespace canvas {
 
 /**
  * @brief An extended point class that includes pressure information.
@@ -102,7 +102,7 @@ typedef QVector<Point> PointVector;
 
 }
 
-Q_DECLARE_TYPEINFO(paintcore::Point, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(canvas::Point, Q_MOVABLE_TYPE);
 
 
 #endif

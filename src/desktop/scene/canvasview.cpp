@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include "canvasscene.h"
 #include "canvas/canvasmodel.h"
 
-#include "core/point.h"
 #include "notifications.h"
 
 #include "widgets/notifbar.h"
@@ -416,12 +415,12 @@ void CanvasView::leaveEvent(QEvent *event)
 	updateOutline();
 }
 
-paintcore::Point CanvasView::mapToScene(const QPoint &point, qreal pressure) const
+canvas::Point CanvasView::mapToScene(const QPoint &point, qreal pressure) const
 {
-	return paintcore::Point(mapToScene(point), pressure);
+	return canvas::Point(mapToScene(point), pressure);
 }
 
-paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) const
+canvas::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) const
 {
 	// QGraphicsView API lacks mapToScene(QPointF), even though
 	// the QPoint is converted to QPointF internally...
@@ -440,7 +439,7 @@ paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) co
 		(p1.y()-p2.y()) * yf + p2.y()
 	);
 
-	return paintcore::Point(mapped, pressure);
+	return canvas::Point(mapped, pressure);
 }
 
 void CanvasView::setPointerTracking(bool tracking)
@@ -457,7 +456,7 @@ void CanvasView::setPressureMapping(const PressureMapping &mapping)
 	m_pressuremapping = mapping;
 }
 
-void CanvasView::onPenDown(const paintcore::Point &p, bool right)
+void CanvasView::onPenDown(const canvas::Point &p, bool right)
 {
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
@@ -475,7 +474,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 	}
 }
 
-void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool constrain1, bool constrain2)
+void CanvasView::onPenMove(const canvas::Point &p, bool right, bool constrain1, bool constrain2)
 {
 	Q_UNUSED(right)
 
@@ -553,7 +552,7 @@ void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButto
 		moveDrag(pos.toPoint(), modifiers);
 
 	} else {
-		paintcore::Point point = mapToScene(pos, pressure);
+		canvas::Point point = mapToScene(pos, pressure);
 		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
@@ -907,7 +906,7 @@ qreal CanvasView::mapPressure(qreal pressure, bool stylus)
 	return 0;
 }
 
-void CanvasView::updateOutline(paintcore::Point point) {
+void CanvasView::updateOutline(canvas::Point point) {
 	if(!m_subpixeloutline) {
 		point.setX(qFloor(point.x()) + 0.5);
 		point.setY(qFloor(point.y()) + 0.5);

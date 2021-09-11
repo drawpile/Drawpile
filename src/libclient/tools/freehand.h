@@ -34,8 +34,8 @@ public:
 	Freehand(ToolController &owner, bool isEraser);
 	~Freehand();
 
-	void begin(const paintcore::Point& point, bool right, float zoom) override;
-	void motion(const paintcore::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point& point, bool right, float zoom) override;
+	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
 
 	bool allowSmoothing() const override { return true; }
@@ -46,7 +46,7 @@ private:
 	rustpile::BrushEngine *m_brushengine;
 	bool m_drawing;
 	bool m_firstPoint;
-	paintcore::Point m_start;
+	canvas::Point m_start;
 };
 
 }

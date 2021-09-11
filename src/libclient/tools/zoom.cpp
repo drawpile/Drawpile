@@ -32,7 +32,7 @@ ZoomTool::ZoomTool(ToolController &owner)
 	: Tool(owner, ZOOM, QCursor(QPixmap(":cursors/zoom.png"), 8, 8))
 { }
 
-void ZoomTool::begin(const paintcore::Point &point, bool right, float zoom)
+void ZoomTool::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	m_start = point.toPoint();
@@ -47,7 +47,7 @@ void ZoomTool::begin(const paintcore::Point &point, bool right, float zoom)
 	owner.model()->setSelection(sel);
 }
 
-void ZoomTool::motion(const paintcore::Point &point, bool constrain, bool center)
+void ZoomTool::motion(const canvas::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
