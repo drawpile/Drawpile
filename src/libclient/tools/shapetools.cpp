@@ -20,7 +20,6 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 
-#include "brushes/shapes.h"
 #include "net/client.h"
 #include "net/envelopebuilder.h"
 
@@ -158,7 +157,14 @@ Rectangle::Rectangle(ToolController &owner)
 
 canvas::PointVector Rectangle::pointVector() const
 {
-	return brushes::shapes::rectangle(rect());
+	canvas::PointVector pv;
+	pv.reserve(5);
+	pv << canvas::Point(m_p1, 1);
+	pv << canvas::Point(m_p1.x(), m_p2.y(), 1);
+	pv << canvas::Point(m_p2, 1);
+	pv << canvas::Point(m_p2.x(), m_p1.y(), 1);
+	pv << canvas::Point(m_p1.x(), m_p1.y(), 1);
+	return pv;
 }
 
 Ellipse::Ellipse(ToolController &owner)
@@ -168,7 +174,20 @@ Ellipse::Ellipse(ToolController &owner)
 
 canvas::PointVector Ellipse::pointVector() const
 {
-	return brushes::shapes::ellipse(rect());
+	const auto r = rect();
+	const qreal a = r.width() / 2.0;
+	const qreal b = r.height() / 2.0;
+	const qreal cx = r.x() + a;
+	const qreal cy = r.y() + b;
+
+	canvas::PointVector pv;
+
+	// TODO smart step size selection
+	for(qreal t=0;t<2*M_PI;t+=M_PI/20) {
+		pv << canvas::Point(cx + a*cos(t), cy + b*sin(t), 1.0);
+	}
+	pv << canvas::Point(cx+a, cy, 1);
+	return pv;
 }
 
 }

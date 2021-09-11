@@ -20,7 +20,6 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 
-#include "brushes/shapes.h"
 #include "net/client.h"
 #include "net/envelopebuilder.h"
 
@@ -153,6 +152,24 @@ void BezierTool::undoMultipart()
 	}
 }
 
+static Point _cubicBezierPoint(const QPointF p[4], float t)
+{
+	const float t1 = 1-t;
+	const float Ax = t1*p[0].x() + t*p[1].x();
+	const float Ay = t1*p[0].y() + t*p[1].y();
+	const float Bx = t1*p[1].x() + t*p[2].x();
+	const float By = t1*p[1].y() + t*p[2].y();
+	const float Cx = t1*p[2].x() + t*p[3].x();
+	const float Cy = t1*p[2].y() + t*p[3].y();
+
+	const float Dx = t1*Ax + t*Bx;
+	const float Dy = t1*Ay + t*By;
+	const float Ex = t1*Bx + t*Cx;
+	const float Ey = t1*By + t*Cy;
+
+	return Point(t1*Dx + t*Ex, t1*Dy + t*Ey, 1);;
+}
+
 PointVector BezierTool::calculateBezierCurve() const
 {
 	PointVector pv;
@@ -171,7 +188,10 @@ PointVector BezierTool::calculateBezierCurve() const
 			m_points[i].point
 		};
 
-		pv << brushes::shapes::cubicBezierCurve(points);
+		// TODO smart step size selection
+		for(float t=0;t<1;t+=0.05) {
+			pv << _cubicBezierPoint(points, t);
+		}
 	}
 
 	return pv;

@@ -61,7 +61,6 @@ set (
 	core/brushmask.cpp
 	core/blendmodes.cpp
 	brushes/brush.cpp
-	brushes/shapes.cpp
 	brushes/brushpresetmodel.cpp
 	brushes/classicbrushpainter.cpp
 	brushes/pixelbrushpainter.cpp
