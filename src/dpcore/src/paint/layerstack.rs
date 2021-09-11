@@ -20,17 +20,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use std::cell::RefCell;
 use std::convert::TryInto;
 use std::sync::Arc;
-use std::cell::RefCell;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
 use super::color::ALPHA_CHANNEL;
-use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
-use super::{Pixel, Color, Image, InternalLayerID, Layer, LayerID, Rectangle, Size, UserID, Blendmode};
 use super::flattenediter::FlattenedTileIterator;
-use super::rectiter::{RectIterator, MutableRectIterator};
+use super::rectiter::{MutableRectIterator, RectIterator};
+use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
+use super::{
+    Blendmode, Color, Image, InternalLayerID, Layer, LayerID, Pixel, Rectangle, Size, UserID,
+};
 
 #[derive(Clone)]
 pub struct LayerStack {
@@ -89,7 +91,7 @@ pub struct LayerViewOptions {
     background: Tile,
 
     /// Cached version of the composited background (layerstack bg, composited bg)
-    background_cache: RefCell<(Tile, Tile)>
+    background_cache: RefCell<(Tile, Tile)>,
 }
 
 impl Default for LayerViewOptions {
@@ -142,7 +144,13 @@ impl LayerStack {
         }
     }
 
-    pub fn from_parts(width: u32, height: u32, background: Tile, layers: Arc<Vec<Arc<Layer>>>, annotations: Arc<Vec<Arc<Annotation>>>) -> LayerStack {
+    pub fn from_parts(
+        width: u32,
+        height: u32,
+        background: Tile,
+        layers: Arc<Vec<Arc<Layer>>>,
+        annotations: Arc<Vec<Arc<Annotation>>>,
+    ) -> LayerStack {
         LayerStack {
             layers,
             annotations,
@@ -277,7 +285,10 @@ impl LayerStack {
     /// Get the number of animation frames in the layerstack
     /// A layer represents a frame, but fixed and hidden layers are skipped.
     pub fn frame_count(&self) -> usize {
-        self.layers.iter().filter(|l| !l.fixed && l.is_visible()).count()
+        self.layers
+            .iter()
+            .filter(|l| !l.fixed && l.is_visible())
+            .count()
     }
 
     /// Return a copy of the layerstack with the layers in the given order.
@@ -397,7 +408,8 @@ impl LayerStack {
                     drop(cache);
                     let mut composited = opts.background.clone();
                     composited.merge(&self.background, 1.0, Blendmode::Normal);
-                    opts.background_cache.replace((self.background.clone(), composited.clone()));
+                    opts.background_cache
+                        .replace((self.background.clone(), composited.clone()));
                     composited.clone_data()
                 }
             }
@@ -554,7 +566,12 @@ impl LayerStack {
     ///
     /// The rectangle must be fully within the layer bounds.
     /// The length of the pixel slice must be rect width*height.
-    pub fn to_pixels(&self, rect: Rectangle, opts: &LayerViewOptions, pixels: &mut [Pixel]) -> Result<(), &str> {
+    pub fn to_pixels(
+        &self,
+        rect: Rectangle,
+        opts: &LayerViewOptions,
+        pixels: &mut [Pixel],
+    ) -> Result<(), &str> {
         if !rect.in_bounds(self.size()) {
             return Err("source rectangle out of bounds");
         }
@@ -562,11 +579,7 @@ impl LayerStack {
             return Err("pixel slice length does not match source rectangle size");
         }
 
-        for (i, j, tile) in FlattenedTileIterator::new(
-            self,
-            opts,
-            rect.into()
-        ) {
+        for (i, j, tile) in FlattenedTileIterator::new(self, opts, rect.into()) {
             // This tile's bounding rectangle
             let tilerect = Rectangle::tile(i, j, TILE_SIZEI);
 
@@ -605,8 +618,9 @@ impl LayerStack {
         self.to_pixels(
             Rectangle::new(0, 0, self.width() as i32, self.height() as i32),
             opts,
-            &mut image.pixels
-        ).unwrap();
+            &mut image.pixels,
+        )
+        .unwrap();
 
         image
     }

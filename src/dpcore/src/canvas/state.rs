@@ -27,8 +27,8 @@ use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use crate::paint::{
-    editlayer, AoE, Blendmode, ClassicBrushCache, Color, InternalLayerID, LayerID, Rectangle,
-    Size, UserID,
+    editlayer, AoE, Blendmode, ClassicBrushCache, Color, InternalLayerID, LayerID, Rectangle, Size,
+    UserID,
 };
 use crate::protocol::message::*;
 
@@ -635,7 +635,6 @@ impl CanvasState {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
             if let Some(tile) = compression::decompress_tile(&msg.image, user_id) {
-
                 return editlayer::put_tile(
                     layer,
                     msg.sublayer.into(),
@@ -738,72 +737,30 @@ impl CanvasState {
             return CanvasStateChange::nothing();
         }
 
-        if let Some(mut layer) =
-            Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        let source_rect = Rectangle::new(msg.sx, msg.sy, msg.w, msg.h);
+
+        let mask = if msg.mask.is_empty() {
+            None
+        } else {
+            compression::decompress_image(&msg.mask, (msg.w * msg.h) as usize)
+        };
+
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
         {
-            let src_rect = match Rectangle::new(msg.sx, msg.sy, msg.w, msg.h).cropped(layer.size())
-            {
-                Some(r) => r,
-                None => {
-                    warn!(
-                        "MoveRect(user {}): source rectangle outside the canvas!",
-                        user
-                    );
-                    return CanvasStateChange::nothing();
-                }
-            };
+            if !source_rect.in_bounds(layer.size()) {
+                warn!(
+                    "MoveRect(user {}): source rectangle ({:?}) not in canvas bounds!",
+                    user, source_rect
+                );
+                return CanvasStateChange::nothing();
+            }
 
-            let target_rect = match Rectangle::new(msg.tx, msg.ty, src_rect.w, src_rect.h)
-                .cropped(layer.size())
-            {
-                Some(r) => r,
-                None => {
-                    warn!(
-                        "MoveRect(user {}): target rectangle outside the canvas!",
-                        user
-                    );
-                    return CanvasStateChange::nothing();
-                }
-            };
-
-            // Both rectangles must be the same size
-            let src_rect = Rectangle::new(
-                src_rect.x,
-                src_rect.y,
-                src_rect.w.min(target_rect.w),
-                src_rect.h.min(target_rect.h),
-            );
-
-            let source_image = match layer.to_image(src_rect) {
-                Ok(i) => i,
-                Err(e) => {
-                    warn!("MoveRect failed: {}", e);
-                    return CanvasStateChange::nothing();
-                }
-            };
-
-            // TODO mask
-
-            // Clear out the source area
-            let mut aoe = editlayer::fill_rect(
-                layer,
+            CanvasStateChange::aoe(
+                editlayer::move_rect(layer, user, source_rect, msg.tx, msg.ty, mask.as_deref()),
                 user,
-                &Color::TRANSPARENT,
-                Blendmode::Replace,
-                &src_rect,
-            );
-
-            // Draw pixels to target area
-            aoe = aoe.merge(editlayer::draw_image(
-                &mut layer,
-                user,
-                &source_image.pixels,
-                &target_rect,
-                1.0,
-                Blendmode::Normal,
-            ));
-
-            CanvasStateChange::aoe(aoe, user, msg.layer, target_rect.center())
+                msg.layer,
+                (msg.tx + msg.w / 2, msg.ty + msg.h / 2),
+            )
         } else {
             warn!("MoveRect: Layer {:04x} not found!", msg.layer);
             CanvasStateChange::nothing()

@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::compression::compress_image;
-use crate::paint::{Blendmode, Image, Rectangle, UserID, LayerID};
+use crate::paint::{Blendmode, Image, LayerID, Rectangle, UserID};
 use crate::protocol::message::{CommandMessage, PutImageMessage};
 
 const MAX_IMAGE_LEN: usize = 0xffff - 19;

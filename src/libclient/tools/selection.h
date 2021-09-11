@@ -54,7 +54,7 @@ public:
 	void setTransformEnabled(bool enable) { m_allowTransform = enable; }
 
 	static QImage transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset);
-	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono=false);
+	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds);
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;

@@ -20,8 +20,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::str::FromStr;
 use std::fmt;
+use std::str::FromStr;
 
 pub type Pixel = [u8; 4];
 
@@ -255,7 +255,14 @@ mod tests {
         assert_eq!(Color::TRANSPARENT, Color::from_str("#00000000").unwrap());
         assert_eq!(Color::rgb8(0, 0, 0), Color::from_str("#000000").unwrap());
         assert_eq!(Color::rgb8(255, 0, 0), Color::from_str("#ff0000").unwrap());
-        assert_eq!(Color{r: 1.0, g: 0.0, b: 0.0, a: 0.49804}, Color::from_str("#7fff0000").unwrap());
-
+        assert_eq!(
+            Color {
+                r: 1.0,
+                g: 0.0,
+                b: 0.0,
+                a: 0.49804
+            },
+            Color::from_str("#7fff0000").unwrap()
+        );
     }
 }

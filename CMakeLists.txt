@@ -25,7 +25,7 @@ set ( DRAWPILE_VERSION "2.1.19" )
 ### protocol versions
 # see doc/protocol.md for protocol version history
 set ( DRAWPILE_PROTO_SERVER_VERSION 4 )
-set ( DRAWPILE_PROTO_MAJOR_VERSION 21 )
+set ( DRAWPILE_PROTO_MAJOR_VERSION 22 )
 set ( DRAWPILE_PROTO_MINOR_VERSION 2 )
 set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
 

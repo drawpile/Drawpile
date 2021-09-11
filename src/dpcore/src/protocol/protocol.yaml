@@ -13,7 +13,7 @@
 # PERFORMANCE OF THIS SOFTWARE.
 
 _protocol:
-    version: dp:4.21.2
+    version: dp:4.22.2
     undo_depth: 30
 
 # Control messages (transparent)

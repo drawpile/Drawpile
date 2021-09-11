@@ -100,7 +100,9 @@ impl Blendmode {
             "dst-over" => Behind,
             "-dp-cerase" => ColorErase,
             "-dp-replace" => Replace,
-            _ => { return None; }
+            _ => {
+                return None;
+            }
         })
     }
 }

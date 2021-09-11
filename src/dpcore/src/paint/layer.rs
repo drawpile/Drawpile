@@ -93,7 +93,13 @@ impl Layer {
         }
     }
 
-    pub fn from_parts(id: InternalLayerID, width: u32, height: u32, tiles: Arc<Vec<Tile>>, sublayers: Vec<Arc<Layer>>) -> Layer {
+    pub fn from_parts(
+        id: InternalLayerID,
+        width: u32,
+        height: u32,
+        tiles: Arc<Vec<Tile>>,
+        sublayers: Vec<Arc<Layer>>,
+    ) -> Layer {
         Layer {
             id,
             title: String::new(),
@@ -178,9 +184,10 @@ impl Layer {
             Rectangle::new(
                 left as i32 * TILE_SIZEI,
                 top as i32 * TILE_SIZEI,
-                (right-left+1) as i32 * TILE_SIZEI,
-                (btm-top+1) as i32 * TILE_SIZEI,
-            ).cropped(self.size())
+                (right - left + 1) as i32 * TILE_SIZEI,
+                (btm - top + 1) as i32 * TILE_SIZEI,
+            )
+            .cropped(self.size())
         }
     }
 
@@ -255,16 +262,10 @@ impl Layer {
     pub fn to_cropped_image(&self) -> (Image, i32, i32) {
         let crop = match self.find_bounds() {
             Some(r) => r,
-            None => {
-                return (Image::default(), 0, 0)
-            }
+            None => return (Image::default(), 0, 0),
         };
 
-        (
-            self.to_image(crop).unwrap(),
-            crop.x,
-            crop.y,
-        )
+        (self.to_image(crop).unwrap(), crop.x, crop.y)
     }
 
     /// Get mutable access to a sublayer with the given ID

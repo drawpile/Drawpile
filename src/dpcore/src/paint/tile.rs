@@ -109,8 +109,8 @@ impl Tile {
         let s = TILE_SIZE as usize;
         let s2 = TILE_SIZE as usize / 2;
         for y in 0..s2 {
-            td.pixels[y * s..y*s+s2].fill(p2);
-            td.pixels[(y+s2) * s + s2..(y+s2)*s + s].fill(p2);
+            td.pixels[y * s..y * s + s2].fill(p2);
+            td.pixels[(y + s2) * s + s2..(y + s2) * s + s].fill(p2);
         }
 
         Tile::Bitmap(Arc::new(td))

@@ -226,6 +226,8 @@ private:
 
 	void saveShape();
 
+	bool isOnlyTranslated() const;
+
 	QPolygonF m_shape;
 	QPolygonF m_originalShape;
 	QPolygonF m_preAdjustmentShape;

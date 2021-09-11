@@ -251,18 +251,15 @@ QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolyg
 	return out;
 }
 
-QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono)
+QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds)
 {
 	const QRectF bf = selection.boundingRect();
 	const QRect b = bf.toRect();
 	const QPolygonF p = selection.translated(-bf.topLeft());
 
-	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32_Premultiplied);
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-	memset(mask.bits(), 0, mask.byteCount()); // note: apparently image.fill() does not set every byte for monochrome images
-#else
-	memset(mask.bits(), 0, mask.sizeInBytes()); // note: apparently image.fill() does not set every byte for monochrome images
-#endif
+	QImage mask(b.size(), QImage::Format_ARGB32_Premultiplied);
+	mask.fill(0);
+
 	QPainter painter(&mask);
 	painter.setPen(Qt::NoPen);
 	painter.setBrush(color);

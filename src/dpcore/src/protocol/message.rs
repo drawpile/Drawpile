@@ -5,7 +5,7 @@ use super::textmessage::TextMessage;
 use std::fmt;
 use std::str::FromStr;
 
-pub static PROTOCOL_VERSION: &str = "dp:4.21.2";
+pub static PROTOCOL_VERSION: &str = "dp:4.22.2";
 pub const UNDO_DEPTH: u32 = 30;
 
 #[derive(Clone, Debug, PartialEq)]

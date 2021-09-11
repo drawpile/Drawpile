@@ -21,6 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::aoe::{AoE, TileMap};
+use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
@@ -316,6 +317,63 @@ pub fn change_attributes(
 
         layer.nonblank_tilemap().into()
     }
+}
+
+/// Move pixels from the source rectangle to the target position
+///
+/// Source rectangle must be within layer bounds.
+/// Target rectangle may be (partially) out of bounds and
+/// may overlap with the source
+/// If a mask is given, it's length must be source width*height.
+pub fn move_rect(
+    layer: &mut Layer,
+    user: UserID,
+    source_rect: Rectangle,
+    dest_x: i32,
+    dest_y: i32,
+    mask: Option<&[Pixel]>,
+) -> AoE {
+    // Copy the existing pixels.
+    let mut src_image = match layer.to_image(source_rect) {
+        Ok(i) => i,
+        Err(_) => {
+            return AoE::Nothing;
+        }
+    };
+
+    // Clear out the existing pixels
+    let aoe = if let Some(m) = mask {
+        src_image
+            .pixels
+            .iter_mut()
+            .zip(m.iter())
+            .for_each(|(s, m)| {
+                if m[ALPHA_CHANNEL] == 0 {
+                    *s = ZERO_PIXEL
+                }
+            });
+
+        draw_image(layer, user, m, &source_rect, 1.0, Blendmode::Erase)
+
+    } else {
+        fill_rect(
+            layer,
+            user,
+            &Color::TRANSPARENT,
+            Blendmode::Replace,
+            &source_rect,
+        )
+    };
+
+    // Draw the image onto the destination
+    aoe.merge(draw_image(
+        layer,
+        user,
+        &src_image.pixels,
+        &Rectangle::new(dest_x, dest_y, source_rect.w, source_rect.h),
+        1.0,
+        Blendmode::Normal,
+    ))
 }
 
 #[cfg(test)]

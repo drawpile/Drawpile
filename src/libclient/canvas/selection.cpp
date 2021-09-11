@@ -46,6 +46,23 @@ bool Selection::isTransformed() const
 	return m_shape != m_originalShape;
 }
 
+bool Selection::isOnlyTranslated() const
+{
+	if(m_shape.isEmpty() || m_shape.length() != m_originalShape.length())
+		return false;
+
+	const QPointF delta = m_shape.first() - m_originalShape.first();
+	for(int i=1;i<m_shape.size();++i) {
+		const QPointF d = m_shape[i] - m_originalShape[i];
+
+		if(!qFuzzyCompare(d.x(), delta.x()) || !qFuzzyCompare(d.y(), delta.y()))
+			return false;
+	}
+
+	return true;
+}
+
+
 void Selection::reset()
 {
 	m_shape = m_originalShape;
@@ -505,9 +522,21 @@ net::Envelope Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 		}
 
 		// Send move command
-		if(false) {
-			// FIXME new message type, we need to get rid of MessagePtrs in
-			// the client before we can test this.
+		if(isOnlyTranslated()) {
+			// If we've only moved the selection without scaling, rotating or distorting it,
+			// we can use the fast MoveRect command.
+			QByteArray compressedMask;
+			if(!mask.isNull()) {
+				compressedMask = qCompress(
+					mask.constBits(),
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
+					mask.byteCount()
+#else
+					mask.sizeInBytes()
+#endif
+				);
+			}
+
 			rustpile::write_moverect(
 				writer,
 				contextId,
@@ -518,8 +547,8 @@ net::Envelope Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 				m_shape.at(0).y(),
 				moveBounds.width(),
 				moveBounds.height(),
-				nullptr,
-				0
+				reinterpret_cast<const uint8_t*>(compressedMask.constData()),
+				compressedMask.length()
 			);
 		} else {
 			// Version 2.1 MoveRegion is presently not implemented in the Rustpile
