@@ -23,6 +23,42 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.1.20" date="2021-09-12">
+      <url>https://drawpile.net/news/release-2.1.20/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Updated Portugese translations</li>
+          <li>Added more angles to canvas rotation dropdown menu</li>
+          <li>Fixed inconsistency in classic brush rendering</li>
+          <li>Fixed inconsistency in layer resize color sampling</li>
+          <li>Theme (Windows Vista style / Fusion / Fusion Dark mode) is now selectable</li>
+          <li>Fixed that a cleared annotation would not count as empty for the "delete mpty annotations" command</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.20-setup.exe</location>
+          <checksum type="sha256">878a47414d5209e784a415d507aac864827490f106ed0290802a333d641a7ac4</checksum>
+          <size type="download">16615428</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.20-setup-w32.exe</location>
+          <checksum type="sha256">ffb20217c890f3c874df40bb9c43fe1ec843ba76eb2fc636c16ce45d3a0f05df</checksum>
+          <size type="download">15682839</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.20.dmg</location>
+          <checksum type="sha256">fe7f93c2f3ec9505b8a4f044093b67bae0c80fc8d6613ba2d0dfad5243cfdf44</checksum>
+          <size type="download">14363397</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.20.tar.gz</location>
+          <checksum type="sha256">a2f45e8b7482854288eb7b7f9db0961c79f0129ab92216280fdb94457e0d0fa9</checksum>
+          <size type="download">2631090</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.1.19" date="2021-08-06">
       <url>https://drawpile.net/news/release-2.1.19/</url>
       <description>

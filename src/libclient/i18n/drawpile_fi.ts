@@ -6,22 +6,22 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirrä ylös</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Siirrä alas</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
         <source>Remove</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
 </context>
 <context>
@@ -116,12 +116,12 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="606"/>
         <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ohjaus:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="616"/>
         <source>Configure input presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Muokkaa esiasetuksia</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="379"/>
@@ -335,7 +335,7 @@ Valitse väri</translation>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="99"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Vaihtoehtoinen</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="100"/>
@@ -570,7 +570,7 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
         <source>Preset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Esiasetus:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
@@ -600,12 +600,12 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="133"/>
         <source>Preset options</source>
-        <translation type="unfinished"></translation>
+        <translation>Asetukset</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
         <source>Close</source>
-        <translation type="unfinished">Sulje</translation>
+        <translation>Sulje</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="162"/>
@@ -733,42 +733,42 @@ Valitse väri</translation>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Tason asetukset</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nimi:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Peittävyys:</translation>
+        <translation>Peittävyys:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Värien sekoitus:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
         <source>Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Näkyvä</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
         <source>Fixed</source>
-        <translation type="unfinished">Kiinteä</translation>
+        <translation>Kiinteä</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="116"/>
         <source>Default</source>
-        <translation type="unfinished">Oletus</translation>
+        <translation>Oletus</translation>
     </message>
 </context>
 <context>
@@ -2250,17 +2250,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="100"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skaalaa</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="110"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation>Pyöritä</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="117"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Vääristä</translation>
     </message>
 </context>
 <context>
@@ -2573,7 +2573,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Asetukset</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="687"/>
+        <location filename="../../desktop/ui/settings.ui" line="699"/>
         <source>s</source>
         <translation>s</translation>
     </message>
@@ -2583,7 +2583,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Verkko</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="880"/>
+        <location filename="../../desktop/ui/settings.ui" line="892"/>
         <source>Session history:</source>
         <translation>Istunnon historia:</translation>
     </message>
@@ -2619,417 +2619,427 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="122"/>
-        <source>Night mode (requires restart)</source>
-        <translation>Yötila (vaatii uudelleenkäynnistyksen)</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="129"/>
         <source>Logging:</source>
         <translation>Lokitus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="136"/>
+        <location filename="../../desktop/ui/settings.ui" line="129"/>
         <source>Write log file</source>
         <translation>Kirjoita lokitiedosto</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="156"/>
+        <location filename="../../desktop/ui/settings.ui" line="149"/>
         <source>Tablet:</source>
         <translation>Piirtopöytä:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="163"/>
+        <location filename="../../desktop/ui/settings.ui" line="156"/>
         <source>Enable pressure sensitivity</source>
         <translation>Tunnista kynän paine</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="173"/>
+        <location filename="../../desktop/ui/settings.ui" line="166"/>
         <source>Use Windows Ink (requires restart)</source>
         <translation>Käytä Windows Ink:iä (vaatii uudelleenkäynnistyksen)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="180"/>
+        <location filename="../../desktop/ui/settings.ui" line="173"/>
         <source>Enable relative pen mode hack (Wintab only)</source>
         <translation>Yritä tukea suhteellista kynä moodia</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="187"/>
+        <location filename="../../desktop/ui/settings.ui" line="180"/>
         <source>Detect eraser tip</source>
         <translation>Tunnista pyyhekumikärki</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="287"/>
+        <location filename="../../desktop/ui/settings.ui" line="280"/>
         <source>Brush cursor:</source>
         <translation>Sudin kursori:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="295"/>
+        <location filename="../../desktop/ui/settings.ui" line="288"/>
         <source>Dot</source>
         <translation>Piste</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="300"/>
+        <location filename="../../desktop/ui/settings.ui" line="293"/>
         <source>Crosshair</source>
         <translation>Ristikko</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="305"/>
+        <location filename="../../desktop/ui/settings.ui" line="298"/>
         <source>Arrow</source>
         <translation>Nuoli</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="326"/>
+        <location filename="../../desktop/ui/settings.ui" line="319"/>
         <source>Tools:</source>
         <translation>Työkalut</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="333"/>
+        <location filename="../../desktop/ui/settings.ui" line="326"/>
         <source>Shortcut toggles last selection</source>
         <translation>Pikanäppäin vaihtaa edelliseen</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="340"/>
+        <location filename="../../desktop/ui/settings.ui" line="333"/>
         <source>Share color across brush slots</source>
         <translation>Sama väri kaikissa sudeissa</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="593"/>
+        <location filename="../../desktop/ui/settings.ui" line="605"/>
         <source>Notification volume:</source>
         <translation>Ilmoitusten voimakkuus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="640"/>
+        <location filename="../../desktop/ui/settings.ui" line="652"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="647"/>
+        <location filename="../../desktop/ui/settings.ui" line="659"/>
         <source>Recording marker</source>
         <translation>Kirjanmerkit</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="654"/>
+        <location filename="../../desktop/ui/settings.ui" line="666"/>
         <source>User login and logout</source>
         <translation>Käyttäjien sisään- ja uloskirjaus</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="661"/>
+        <location filename="../../desktop/ui/settings.ui" line="673"/>
         <source>Canvas lock</source>
         <translation>Tason lukitus</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="633"/>
+        <location filename="../../desktop/ui/settings.ui" line="645"/>
         <source>Notifications:</source>
         <translation>Merkkiäänet:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="28"/>
         <source>Brushes</source>
-        <translation type="unfinished">Sudit</translation>
+        <translation>Sudit</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="33"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Väripyörä</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="347"/>
+        <location filename="../../desktop/ui/settings.ui" line="340"/>
         <source>Enable this workaround if your cursor doesn&apos;t update when you move it into the canvas with the tablet pen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kokeile tätä jos kursori ei vaihdu piirtoalustan päällä tabletin kynää käyttäessä</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="350"/>
+        <location filename="../../desktop/ui/settings.ui" line="343"/>
         <source>Enable canvas viewport entry hack</source>
-        <translation type="unfinished"></translation>
+        <translation>Yritä korjata kursorin vaihto piirtotasolla</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="370"/>
+        <location filename="../../desktop/ui/settings.ui" line="363"/>
         <source>Brush outline width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sudin ääriviiva:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="387"/>
+        <location filename="../../desktop/ui/settings.ui" line="371"/>
+        <source>System</source>
+        <translation>Järjestelmän oma</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="376"/>
+        <source>Fusion</source>
+        <translation>Fusion</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="381"/>
+        <source>Fusion Dark</source>
+        <translation>Fusion (Tumma)</translation>
+    </message>
+    <message>
         <location filename="../../desktop/ui/settings.ui" line="399"/>
-        <location filename="../../desktop/ui/settings.ui" line="418"/>
+        <location filename="../../desktop/ui/settings.ui" line="411"/>
+        <location filename="../../desktop/ui/settings.ui" line="430"/>
         <source>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sudin koko säätimen maksimikoko. Voit syöttää suurempia arvoja tekstilaatikon kautta.</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="390"/>
+        <location filename="../../desktop/ui/settings.ui" line="402"/>
         <source>Size Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sudin kokosäädin:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="421"/>
+        <location filename="../../desktop/ui/settings.ui" line="433"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="436"/>
         <location filename="../../desktop/ui/settings.ui" line="448"/>
-        <location filename="../../desktop/ui/settings.ui" line="467"/>
+        <location filename="../../desktop/ui/settings.ui" line="460"/>
+        <location filename="../../desktop/ui/settings.ui" line="479"/>
         <source>The maximum value for the brush spacing slider. You can always enter larger values manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Suurin arvo välistys-säätimelle. Voit syöttää suurempia arvoja tekstilaatikon kautta.</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="439"/>
+        <location filename="../../desktop/ui/settings.ui" line="451"/>
         <source>Spacing Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Välistys säädin:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="470"/>
+        <location filename="../../desktop/ui/settings.ui" line="482"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="498"/>
+        <location filename="../../desktop/ui/settings.ui" line="510"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>Muoto</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="506"/>
+        <location filename="../../desktop/ui/settings.ui" line="518"/>
         <source>Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolmio</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="511"/>
+        <location filename="../../desktop/ui/settings.ui" line="523"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Neliö</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="519"/>
+        <location filename="../../desktop/ui/settings.ui" line="531"/>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kulma:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="527"/>
+        <location filename="../../desktop/ui/settings.ui" line="539"/>
         <source>Fixed</source>
-        <translation type="unfinished">Kiinteä</translation>
+        <translation>Kiinteä</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="532"/>
+        <location filename="../../desktop/ui/settings.ui" line="544"/>
         <source>Rotating</source>
-        <translation type="unfinished"></translation>
+        <translation>Pyörivä</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="540"/>
+        <location filename="../../desktop/ui/settings.ui" line="552"/>
         <source>Color Space:</source>
-        <translation type="unfinished"></translation>
+        <translation>Väriavaruus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="548"/>
+        <location filename="../../desktop/ui/settings.ui" line="560"/>
         <source>HSV (Hue, Saturation, Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (Sävy, Kylläisyys, Kirkkaus)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="553"/>
+        <location filename="../../desktop/ui/settings.ui" line="565"/>
         <source>HSL (Hue, Saturation, Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (Sävy, Kylläisyys, Valoisuus)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="558"/>
+        <location filename="../../desktop/ui/settings.ui" line="570"/>
         <source>Lch (Luminance, Chroma, Hue)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lch (Luminanssi, Chroma, Sävy)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="582"/>
+        <location filename="../../desktop/ui/settings.ui" line="594"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Esikatselu:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="684"/>
+        <location filename="../../desktop/ui/settings.ui" line="696"/>
         <source>shortest: </source>
         <translation>lyhin: </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="721"/>
+        <location filename="../../desktop/ui/settings.ui" line="733"/>
         <source>Add timestamp markers</source>
         <translation>Lisää aikaleima merkit:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="730"/>
+        <location filename="../../desktop/ui/settings.ui" line="742"/>
         <source> minutes</source>
         <translation>minuutin välein</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="733"/>
+        <location filename="../../desktop/ui/settings.ui" line="745"/>
         <source>every </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="894"/>
+        <location filename="../../desktop/ui/settings.ui" line="906"/>
         <source>Account passwords:</source>
         <translation>Salasanat:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="901"/>
+        <location filename="../../desktop/ui/settings.ui" line="913"/>
         <source>Permit insecure storage</source>
         <translation>Salli suojaamaton tallennus</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="933"/>
+        <location filename="../../desktop/ui/settings.ui" line="945"/>
         <source>Drag mode:</source>
         <translation>Raahaus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="940"/>
+        <location filename="../../desktop/ui/settings.ui" line="952"/>
         <source>Spacebar / middle mouse button</source>
         <translation>Välilyönti / keskimmäinen hiiren nappi</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="947"/>
+        <location filename="../../desktop/ui/settings.ui" line="959"/>
         <source>Drag rotate view:</source>
         <translation>Pyöritys raahamalla:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="957"/>
+        <location filename="../../desktop/ui/settings.ui" line="969"/>
         <source>Drag zoom view:</source>
         <translation>Zoomaus raahaamalla:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="967"/>
+        <location filename="../../desktop/ui/settings.ui" line="979"/>
         <source>Drag tool adjust:</source>
         <translation>Sudin säätö raahamalla:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="977"/>
+        <location filename="../../desktop/ui/settings.ui" line="989"/>
         <source>Scroll zoom view:</source>
         <translation>Zoomaus rullaamalla:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="987"/>
+        <location filename="../../desktop/ui/settings.ui" line="999"/>
         <source>Scroll tool adjust:</source>
         <translation>Sudin säätö rullaamalla:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="997"/>
+        <location filename="../../desktop/ui/settings.ui" line="1009"/>
         <source>Color picker mode:</source>
         <translation>Värin poiminta:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1007"/>
+        <location filename="../../desktop/ui/settings.ui" line="1019"/>
         <source>Layer picker mode:</source>
         <translation>Tason poiminta:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1017"/>
+        <location filename="../../desktop/ui/settings.ui" line="1029"/>
         <source>Tool constrain mode:</source>
         <translation>Työkalun rajaus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1027"/>
+        <location filename="../../desktop/ui/settings.ui" line="1039"/>
         <source>Tool center mode:</source>
         <translation>Työkalun keskitys:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1089"/>
+        <location filename="../../desktop/ui/settings.ui" line="1101"/>
         <source>Scroll rotate view:</source>
         <translation>Pyöritys rullaamalla:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1190"/>
+        <location filename="../../desktop/ui/settings.ui" line="1202"/>
         <source>Move up</source>
         <translation>Siirrä ylös</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1201"/>
+        <location filename="../../desktop/ui/settings.ui" line="1213"/>
         <source>Move down</source>
         <translation>Siirrä alas</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1232"/>
+        <location filename="../../desktop/ui/settings.ui" line="1244"/>
         <source>NSFM tag words:</source>
         <translation>K18 tagi sanat:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1242"/>
+        <location filename="../../desktop/ui/settings.ui" line="1254"/>
         <source>Automatically add NSFM tag based on title</source>
         <translation>Lisää K18 tagi automaattisesti otsikon perusteella</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1249"/>
+        <location filename="../../desktop/ui/settings.ui" line="1261"/>
         <source>NSFM sessions:</source>
         <translation>K18 istunnot:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1256"/>
+        <location filename="../../desktop/ui/settings.ui" line="1268"/>
         <source>&amp;Unrestricted</source>
         <translation>Ei rajoitettu</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1263"/>
+        <location filename="../../desktop/ui/settings.ui" line="1275"/>
         <source>Hide fro&amp;m listings</source>
         <translation>Piilota listauksista</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1270"/>
+        <location filename="../../desktop/ui/settings.ui" line="1282"/>
         <source>Disallow &amp;joining</source>
         <translation>Estä liittyminen</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1277"/>
+        <location filename="../../desktop/ui/settings.ui" line="1289"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
         <translation>Katkaise yhteys kun ikärajoite lisätään</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1284"/>
+        <location filename="../../desktop/ui/settings.ui" line="1296"/>
         <source>Lock</source>
         <translation>Lukitse</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1304"/>
+        <location filename="../../desktop/ui/settings.ui" line="1316"/>
         <source>Block layer uncensoring</source>
         <translation>Sensuroi aina</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1212"/>
-        <location filename="../../desktop/ui/settings.ui" line="1337"/>
+        <location filename="../../desktop/ui/settings.ui" line="1224"/>
+        <location filename="../../desktop/ui/settings.ui" line="1349"/>
         <source>Add...</source>
         <translation>Lisää...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1344"/>
+        <location filename="../../desktop/ui/settings.ui" line="1356"/>
         <source>Delete</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="672"/>
+        <location filename="../../desktop/ui/settings.ui" line="684"/>
         <source>Record pauses</source>
         <translation>Nauhoita tauot</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="845"/>
+        <location filename="../../desktop/ui/settings.ui" line="857"/>
         <source>Default server port:</source>
         <translation>Oletus palvelimen portti:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="261"/>
-        <location filename="../../desktop/ui/settings.ui" line="829"/>
+        <location filename="../../desktop/ui/settings.ui" line="254"/>
+        <location filename="../../desktop/ui/settings.ui" line="841"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="254"/>
+        <location filename="../../desktop/ui/settings.ui" line="247"/>
         <source>Autosave interval:</source>
         <translation>Automaattitallennus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="217"/>
+        <location filename="../../desktop/ui/settings.ui" line="210"/>
         <source>Scroll with finger</source>
         <translation>Vieritä sormella</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="210"/>
+        <location filename="../../desktop/ui/settings.ui" line="203"/>
         <source>Touch:</source>
         <translation>Kosketus:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="224"/>
+        <location filename="../../desktop/ui/settings.ui" line="217"/>
         <source>Pinch to zoom</source>
         <translation>Zoomaa nipistämällä</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="231"/>
+        <location filename="../../desktop/ui/settings.ui" line="224"/>
         <source>Twist to rotate</source>
         <translation>Käännä kiertämällä</translation>
     </message>
@@ -3039,22 +3049,22 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Animaatio</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="776"/>
+        <location filename="../../desktop/ui/settings.ui" line="788"/>
         <source> below</source>
         <translation> alapuolella</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="783"/>
+        <location filename="../../desktop/ui/settings.ui" line="795"/>
         <source> above</source>
         <translation> yläpuolella</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="767"/>
+        <location filename="../../desktop/ui/settings.ui" line="779"/>
         <source>Onionskin layers:</source>
         <translation>Onionskin tasot:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="808"/>
+        <location filename="../../desktop/ui/settings.ui" line="820"/>
         <source>Tint layers</source>
         <translation>Värjää tasot</translation>
     </message>
@@ -3064,7 +3074,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Pikanäppäimet</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="912"/>
+        <location filename="../../desktop/ui/settings.ui" line="924"/>
         <source>Filter</source>
         <translation>Suodata</translation>
     </message>
@@ -3079,12 +3089,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Listauspalvelimet</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1115"/>
+        <location filename="../../desktop/ui/settings.ui" line="1127"/>
         <source>Import trusted...</source>
         <translation>Tuo luotettu...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="822"/>
+        <location filename="../../desktop/ui/settings.ui" line="834"/>
         <source>Connection timeout:</source>
         <translation>Yhteyden aikakatkaisu:</translation>
     </message>
@@ -3094,33 +3104,33 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Erikoisnäppäimet</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="859"/>
+        <location filename="../../desktop/ui/settings.ui" line="871"/>
         <source>Announce with Zeroconf</source>
         <translation>Kuuluta Zeroconfilla</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="866"/>
+        <location filename="../../desktop/ui/settings.ui" line="878"/>
         <source>Automatically set up port forwarding with UPnP</source>
         <translation>UPnP porttiohjaus</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="873"/>
+        <location filename="../../desktop/ui/settings.ui" line="885"/>
         <source>Never publish user list</source>
         <translation>Älä koskaan julkaise käyttäjälistaa</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="887"/>
+        <location filename="../../desktop/ui/settings.ui" line="899"/>
         <source>Automatically reset when space is low</source>
         <translation>Resetoi automaattisesti kun tila vähissä</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1138"/>
+        <location filename="../../desktop/ui/settings.ui" line="1150"/>
         <source>Mark as trusted</source>
         <translation>Merkitse luotetuksi</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1152"/>
-        <location filename="../../desktop/ui/settings.ui" line="1219"/>
+        <location filename="../../desktop/ui/settings.ui" line="1164"/>
+        <location filename="../../desktop/ui/settings.ui" line="1231"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
@@ -3407,7 +3417,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette.cpp" line="428"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Nimetön</translation>
     </message>
 </context>
 <context>
@@ -3415,12 +3425,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Nimetön</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="144"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 väriä)</translation>
     </message>
 </context>
 <context>
@@ -3557,12 +3567,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/dialogs/addserverdialog.cpp" line="32"/>
         <source>Add Server</source>
-        <translation type="unfinished">Lisää palvelin</translation>
+        <translation>Lisää palvelin</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/addserverdialog.cpp" line="71"/>
         <source>Add</source>
-        <translation type="unfinished">Lisää</translation>
+        <translation>Lisää</translation>
     </message>
 </context>
 <context>
@@ -3640,22 +3650,22 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
         <source>New</source>
-        <translation type="unfinished">Uusi</translation>
+        <translation>Uusi</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
         <source>Duplicate</source>
-        <translation type="unfinished">Kopioi</translation>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
         <source>Delete</source>
-        <translation type="unfinished">Poista</translation>
+        <translation>Poista</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Uusi %1</translation>
     </message>
 </context>
 <context>
@@ -4253,7 +4263,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="90"/>
         <source>Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Asetukset...</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="385"/>
