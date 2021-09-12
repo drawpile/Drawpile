@@ -1,14 +1,14 @@
-use dpimpex::rec_index::reader::{Index, read_index, read_thumbnail, read_snapshot};
-use dpimpex::rec_index::writer::IndexBuilder;
-use dpimpex::rec_index::{IndexEntry, IndexResult, IndexError};
-use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
-use dpcore::protocol::message::Message;
 use dpcore::paint::LayerStack;
+use dpcore::protocol::message::Message;
+use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
+use dpimpex::rec_index::reader::{read_index, read_snapshot, read_thumbnail, Index};
+use dpimpex::rec_index::writer::IndexBuilder;
+use dpimpex::rec_index::{IndexEntry, IndexError, IndexResult};
 
+use core::ffi::c_void;
 use std::fs::File;
 use std::path::Path;
-use std::time::{Instant, Duration};
-use core::ffi::c_void;
+use std::time::{Duration, Instant};
 use tracing::warn;
 
 pub struct IndexReader {
@@ -21,15 +21,17 @@ pub struct IndexReader {
 impl IndexReader {
     pub fn open(path: &Path) -> IndexResult<IndexReader> {
         let mut reader = File::open(&path)?;
-    
+
         let read_index = read_index(&mut reader)?;
-    
-        let thumbnails = read_index.entries.iter()
+
+        let thumbnails = read_index
+            .entries
+            .iter()
             .filter(|e| e.thumbnail_offset > 0)
             .map(|e| e.thumbnail_offset)
             .collect();
-    
-        Ok(IndexReader{
+
+        Ok(IndexReader {
             reader,
             read_index,
             thumbnails,
@@ -87,9 +89,7 @@ pub fn build_index(
         return Err(IndexError::IncompatibleVersion);
     }
 
-    let mut indexer = IndexBuilder::new(
-        File::create(input_path.with_extension("dpidx"))?
-    );
+    let mut indexer = IndexBuilder::new(File::create(input_path.with_extension("dpidx"))?);
 
     indexer.write_header()?;
     let mut last_snapshot = Instant::now();

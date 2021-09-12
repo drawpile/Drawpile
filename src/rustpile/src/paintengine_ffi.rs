@@ -22,8 +22,8 @@
 
 use super::adapters::{AnnotationAt, Annotations, LayerInfo};
 use super::messages_ffi;
+use super::recindex::{build_index, IndexBuildProgressNoticationFn, IndexReader};
 use super::snapshots::SnapshotQueue;
-use super::recindex::{IndexReader, IndexBuildProgressNoticationFn, build_index};
 use dpcore::brush::{BrushEngine, BrushState};
 use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::snapshot::make_canvas_snapshot;
@@ -49,13 +49,13 @@ use dpimpex::rec::writer as rec_writer;
 use core::ffi::c_void;
 use std::collections::HashMap;
 use std::fs::File;
+use std::path::{Path, PathBuf};
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
 use std::time::{Duration, Instant};
-use std::path::{Path, PathBuf};
 use std::{ptr, slice, thread};
 
-use tracing::{error, warn, info};
+use tracing::{error, info, warn};
 
 // Paint thread callbacks:
 type NotifyChangesCallback = extern "C" fn(ctx: *mut c_void, area: Rectangle);
@@ -339,7 +339,15 @@ pub extern "C" fn paintengine_new(
 
     let dp = Box::new(PaintEngine {
         viewcache: viewcache.clone(),
-        view_opts: LayerViewOptions::default().with_background(Tile::new_checkerboard(&Color::WHITE, &Color{r: 0.5, g: 0.5, b: 0.5, a: 1.0})),
+        view_opts: LayerViewOptions::default().with_background(Tile::new_checkerboard(
+            &Color::WHITE,
+            &Color {
+                r: 0.5,
+                g: 0.5,
+                b: 0.5,
+                a: 1.0,
+            },
+        )),
         engine_channel: sender,
         thread_handle: thread::spawn(move || {
             run_paintengine(viewcache, receiver, callbacks);
@@ -505,7 +513,10 @@ pub extern "C" fn paintengine_receive_messages(
 /// progress of the message queue
 #[no_mangle]
 pub extern "C" fn paintengine_enqueue_catchup(dp: &mut PaintEngine, progress: u32) -> bool {
-    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::Catchup(progress)) {
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::Catchup(progress))
+    {
         warn!(
             "Couldn't send catchup command to paint engine thread {:?}",
             err
@@ -1048,7 +1059,9 @@ pub extern "C" fn paintengine_get_frame_content(
 
     let frame_index = match vc.layerstack.find_frame_index(frame) {
         Some(i) => i,
-        None => { return false; }
+        None => {
+            return false;
+        }
     };
 
     let pixel_slice =
@@ -1074,9 +1087,13 @@ pub extern "C" fn paintengine_get_reset_snapshot(dp: &mut PaintEngine, writer: &
 
 /// Get a snapshot of a past canvas state to use as a reset image
 #[no_mangle]
-pub extern "C" fn paintengine_get_historical_reset_snapshot(dp: &PaintEngine, snapshots: &SnapshotQueue, index: usize, writer: &mut MessageWriter) -> bool {
+pub extern "C" fn paintengine_get_historical_reset_snapshot(
+    dp: &PaintEngine,
+    snapshots: &SnapshotQueue,
+    index: usize,
+    writer: &mut MessageWriter,
+) -> bool {
     if let Some(snapshot) = snapshots.get(index) {
-
         let msgs = make_canvas_snapshot(1, &snapshot, 0, Some(&dp.aclfilter));
 
         for msg in msgs {
@@ -1169,7 +1186,7 @@ pub enum CanvasIoError {
     FileIoError,
     UnsupportedFormat,
     PartiallySupportedFormat, // file was loaded but incompletely
-    UnknownRecordingVersion, // recording was opened, but degree of compatibility is unknown
+    UnknownRecordingVersion,  // recording was opened, but degree of compatibility is unknown
     CodecError,
     PaintEngineCrashed,
 }
@@ -1177,16 +1194,18 @@ pub enum CanvasIoError {
 impl From<dpimpex::ImpexError> for CanvasIoError {
     fn from(err: dpimpex::ImpexError) -> Self {
         match err {
-            dpimpex::ImpexError::IoError(e) => (
-                match e.kind() {
-                    std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => Self::FileOpenError,
+            dpimpex::ImpexError::IoError(e) => {
+                (match e.kind() {
+                    std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => {
+                        Self::FileOpenError
+                    }
                     _ => Self::FileIoError,
-                }
-            ),
+                })
+            }
             dpimpex::ImpexError::UnsupportedFormat => Self::UnsupportedFormat,
-            dpimpex::ImpexError::CodecError(_) |
-            dpimpex::ImpexError::XmlError(_) |
-            dpimpex::ImpexError::NoContent => Self::CodecError,
+            dpimpex::ImpexError::CodecError(_)
+            | dpimpex::ImpexError::XmlError(_)
+            | dpimpex::ImpexError::NoContent => Self::CodecError,
         }
     }
 }
@@ -1238,9 +1257,10 @@ pub extern "C" fn paintengine_load_recording(
         Err(e) => {
             warn!("Couldn't open recording: {}", e);
             return match e.kind() {
-                std::io::ErrorKind::NotFound |
-                std::io::ErrorKind::PermissionDenied => CanvasIoError::FileOpenError,
-                _ => CanvasIoError::FileIoError
+                std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => {
+                    CanvasIoError::FileOpenError
+                }
+                _ => CanvasIoError::FileIoError,
             };
         }
     };
@@ -1277,9 +1297,7 @@ pub extern "C" fn paintengine_load_recording(
 
 /// Stop recording playback
 #[no_mangle]
-pub extern "C" fn paintengine_close_recording(
-    dp: &mut PaintEngine,
-) {
+pub extern "C" fn paintengine_close_recording(dp: &mut PaintEngine) {
     dp.player = None;
     dp.player_index = None;
 
@@ -1291,9 +1309,7 @@ pub extern "C" fn paintengine_close_recording(
 
 /// Try opening the index file for the currently open recording.
 #[no_mangle]
-pub extern "C" fn paintengine_load_recording_index(
-    dp: &mut PaintEngine,
-) -> bool {
+pub extern "C" fn paintengine_load_recording_index(dp: &mut PaintEngine) -> bool {
     if dp.player.is_none() {
         return false;
     }
@@ -1312,9 +1328,7 @@ pub extern "C" fn paintengine_load_recording_index(
 
 /// Get the number of indexed messages in the recording
 #[no_mangle]
-pub extern "C" fn paintengine_recording_index_messages(
-    dp: &PaintEngine,
-) -> u32 {
+pub extern "C" fn paintengine_recording_index_messages(dp: &PaintEngine) -> u32 {
     if let Some(i) = &dp.player_index {
         i.message_count()
     } else {
@@ -1324,9 +1338,7 @@ pub extern "C" fn paintengine_recording_index_messages(
 
 /// Get the number of thumbnails in the recording index
 #[no_mangle]
-pub extern "C" fn paintengine_recording_index_thumbnails(
-    dp: &PaintEngine,
-) -> u32 {
+pub extern "C" fn paintengine_recording_index_thumbnails(dp: &PaintEngine) -> u32 {
     if let Some(i) = &dp.player_index {
         i.thumbnail_count()
     } else {
@@ -1353,7 +1365,6 @@ pub extern "C" fn paintengine_get_recording_index_thumbnail(
 
         *length = t.len();
         t.as_ptr()
-
     } else {
         *length = 0;
         ptr::null()
@@ -1366,16 +1377,11 @@ pub extern "C" fn paintengine_build_index(
     ctx: *mut c_void,
     progress_notification_func: IndexBuildProgressNoticationFn,
 ) -> bool {
-
     info!("Building index for {}", dp.player_path.display());
 
     let started = Instant::now();
 
-    if let Err(err) = build_index(
-        &dp.player_path,
-        ctx,
-        progress_notification_func
-    ) {
+    if let Err(err) = build_index(&dp.player_path, ctx, progress_notification_func) {
         warn!("Index building error: {}", err);
         return false;
     }
@@ -1435,8 +1441,12 @@ pub extern "C" fn paintengine_save_animation(
     };
 
     let res = match mode {
-        AnimationExportMode::Gif => dpimpex::animation::save_gif_animation(path.as_ref(), &layerstack),
-        AnimationExportMode::Frames => dpimpex::animation::save_frames_animation(path.as_ref(), &layerstack),
+        AnimationExportMode::Gif => {
+            dpimpex::animation::save_gif_animation(path.as_ref(), &layerstack)
+        }
+        AnimationExportMode::Frames => {
+            dpimpex::animation::save_frames_animation(path.as_ref(), &layerstack)
+        }
     };
 
     if let Err(e) = res {
@@ -1463,9 +1473,10 @@ pub extern "C" fn paintengine_start_recording(
         Err(e) => {
             warn!("Couldn't open recording file: {}", e);
             return match e.kind() {
-                std::io::ErrorKind::NotFound |
-                std::io::ErrorKind::PermissionDenied => CanvasIoError::FileOpenError,
-                _ => CanvasIoError::FileIoError
+                std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => {
+                    CanvasIoError::FileOpenError
+                }
+                _ => CanvasIoError::FileIoError,
             };
         }
     };
@@ -1611,10 +1622,10 @@ pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32
         (player.current_progress() * 100.0) as i64
     };
 
-    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::PlaybackPaused(
-        pos,
-        interval,
-    )) {
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::PlaybackPaused(pos, interval))
+    {
         warn!("Couldn't send command to paint engine thread {:?}", err);
         return;
     }
@@ -1654,16 +1665,18 @@ pub extern "C" fn paintengine_playback_jump(dp: &mut PaintEngine, pos: u32, exac
             return;
         }
 
-        dp.player.as_deref_mut().unwrap().seek_to(msg_idx, msg_offset);
+        dp.player
+            .as_deref_mut()
+            .unwrap()
+            .seek_to(msg_idx, msg_offset);
 
         if exact && pos > msg_idx {
             paintengine_playback_step(dp, (pos - msg_idx) as i32, false);
-
         } else {
-            if let Err(err) = dp.engine_channel.send(PaintEngineCommand::PlaybackPaused(
-                msg_idx as i64,
-                0,
-            )) {
+            if let Err(err) = dp
+                .engine_channel
+                .send(PaintEngineCommand::PlaybackPaused(msg_idx as i64, 0))
+            {
                 warn!("Couldn't send command to paint engine thread {:?}", err);
                 return;
             }

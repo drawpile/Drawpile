@@ -1,10 +1,10 @@
 mod adapters;
+pub mod blendmode_ffi;
 pub mod brushes_ffi;
 mod brushpreview;
 pub mod brushpreview_ffi;
+pub mod logging;
 pub mod messages_ffi;
 pub mod paintengine_ffi;
 mod recindex;
 mod snapshots;
-pub mod logging;
-pub mod blendmode_ffi;

@@ -1,15 +1,10 @@
 use tracing::{debug, Level, Metadata};
-use tracing_subscriber::fmt::{Subscriber, MakeWriter};
+use tracing_subscriber::fmt::{MakeWriter, Subscriber};
 
-use std::{
-    io::Write,
-    io::Result,
-    ffi::CString,
-    os::raw::c_char,
-    ptr,
-};
+use std::{ffi::CString, io::Result, io::Write, os::raw::c_char, ptr};
 
-pub type ExtLogFn = extern "C" fn(level: i32, file: *const c_char, line: u32, logmsg: *const c_char);
+pub type ExtLogFn =
+    extern "C" fn(level: i32, file: *const c_char, line: u32, logmsg: *const c_char);
 
 struct ExtLogWriter {
     log_fn: ExtLogFn,
@@ -23,7 +18,7 @@ impl Write for ExtLogWriter {
         // Strip newline character since Qt's logger will
         // insert it itself.
         let msg = if buf.ends_with(&['\n' as u8]) {
-            &buf[..buf.len()-1]
+            &buf[..buf.len() - 1]
         } else {
             &buf[..]
         };
@@ -41,9 +36,13 @@ impl Write for ExtLogWriter {
 
         (self.log_fn)(
             self.level,
-            self.file.as_ref().map(|s| s.as_ptr()).unwrap_or(ptr::null()),
+            self.file
+                .as_ref()
+                .map(|s| s.as_ptr())
+                .unwrap_or(ptr::null()),
             self.line.unwrap_or(0),
-            cstr.as_ptr());
+            cstr.as_ptr(),
+        );
         Ok(buf.len())
     }
 
@@ -57,11 +56,11 @@ struct ExtLogger(ExtLogFn);
 impl MakeWriter for ExtLogger {
     type Writer = ExtLogWriter;
     fn make_writer(&self) -> Self::Writer {
-        ExtLogWriter{
+        ExtLogWriter {
             log_fn: self.0,
             file: None,
             line: None,
-            level: 0
+            level: 0,
         }
     }
 
@@ -82,7 +81,6 @@ impl MakeWriter for ExtLogger {
 
 #[no_mangle]
 pub extern "C" fn rustpile_init_logging(log_writer: ExtLogFn) {
-
     Subscriber::builder()
         .with_max_level(Level::DEBUG)
         .with_level(false)

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2019-2020 Calle Laakkonen
+   Copyright (C) 2019-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,8 @@
 */
 
 #include "brushpresetmodel.h"
-#include "pixelbrushpainter.h"
-#include "classicbrushpainter.h"
 #include "brush.h"
 
-#include "../core/brushmask.h"
 #include "../utils/icon.h"
 #include "../libshared/util/paths.h"
 
@@ -65,53 +62,20 @@ bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &file
 
 static QImage makePreviewIcon(const ClassicBrush &brush)
 {
-#if 0 // FIXME
-	paintcore::BrushMask mask;
-	switch(brush.shape) {
-	case rustpile::ClassicBrushShape::RoundPixel:
-		mask = brushes::makeRoundPixelBrushMask(brush.size1(), brush.opacity1()*255);
-		break;
-	case rustpile::ClassicBrushShape::SquarePixel:
-		mask = brushes::makeSquarePixelBrushMask(brush.size1(), brush.opacity1()*255);
-		break;
-	case rustpile::ClassicBrushShape::RoundSoft:
-		mask = brushes::makeGimpStyleBrushStamp(QPointF(), brush.size1(), brush.hardness1(), brush.opacity1()).mask;
-		break;
-	}
-
-	const int maskdia = mask.diameter();
 	QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
+	icon.fill(0);
 
-	const QRgb color = (brush.smudge1()>0) ? 0x001d99f3 : (icon::isDarkThemeSelected() ? 0x00ffffff : 0);
+	rustpile::Color c;
+	if(brush.smudge.max > 0.0f)
+		c = rustpile::Color{0.1f, 0.6f, 0.9f, 1.0};
+	else if(icon::isDarkThemeSelected())
+		c = rustpile::Color{1.0, 1.0, 1.0, 1.0};
+	else
+		c = rustpile::Color{0.0, 0.0, 0.0, 1.0};
 
-	if(maskdia > BRUSH_ICON_SIZE) {
-		// Clip to fit
-		const int clip = (maskdia - BRUSH_ICON_SIZE);
-		const uchar *m = mask.data() + (clip/2*maskdia) + clip/2;
-		for(int y=0;y<BRUSH_ICON_SIZE;++y) {
-			quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y));
-			for(int x=0;x<BRUSH_ICON_SIZE;++x,++m) {
-				*(scanline++) = qPremultiply((*m << 24) | color);
-			}
-			m += clip;
-		}
-
-	} else {
-		// Center the icon
-		icon.fill(Qt::transparent);
-		const uchar *m = mask.data();
-		const int offset = (BRUSH_ICON_SIZE - maskdia)/2;
-		for(int y=0;y<maskdia;++y) {
-			quint32 *scanline = reinterpret_cast<quint32*>(icon.scanLine(y+offset)) + offset;
-			for(int x=0;x<maskdia;++x,++m) {
-				*(scanline++) = qPremultiply((*m << 24) | color);
-			}
-		}
-	}
+	rustpile::brush_preview_dab(&brush, icon.bits(), icon.width(), icon.height(), &c);
 
 	return icon;
-#endif
-	return QImage();
 }
 
 struct BrushPreset {
@@ -143,18 +107,6 @@ struct PresetFolder {
 	QVector<BrushPreset> presets;
 };
 
-#if 0
-QDataStream &operator<<(QDataStream &out, const BrushPreset &bp)
-{
-	return out << bp.brush << bp.filename << bp.icon << bp.saved;
-}
-
-QDataStream &operator>>(QDataStream &in, BrushPreset &bp)
-{
-	return in >> bp.brush >> bp.filename >> bp.icon >> bp.saved;
-}
-#endif
-
 }
 
 Q_DECLARE_METATYPE(brushes::BrushPreset)
@@ -171,7 +123,6 @@ BrushPresetModel::BrushPresetModel(QObject *parent)
 	: QAbstractItemModel(parent), d(new Private)
 {
 	qRegisterMetaType<BrushPreset>();
-	//qRegisterMetaTypeStreamOperators<BrushPreset>("BrushPreset");
 
 	// A timer is used to delay the saving of changes to disk.
 	// This serves two purpose:

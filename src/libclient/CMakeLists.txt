@@ -59,11 +59,8 @@ set (
 	utils/avatarlistmodel.cpp
 	utils/sessionfilterproxymodel.cpp
 	utils/newversion.cpp
-	core/brushmask.cpp
 	brushes/brush.cpp
 	brushes/brushpresetmodel.cpp
-	brushes/classicbrushpainter.cpp
-	brushes/pixelbrushpainter.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp

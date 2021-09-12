@@ -1,7 +1,10 @@
 use super::paintengine_ffi::PaintEngine;
-use dpcore::brush::{BrushEngine, BrushState, ClassicBrush};
-use dpcore::paint::LayerID;
+use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, ClassicBrushShape};
+use dpcore::paint::rectiter::{MutableRectIterator, RectIterator};
+use dpcore::paint::{BrushMask, ClassicBrushCache, LayerID, Pixel, Color, Rectangle, Size};
 use dpcore::protocol::MessageWriter;
+
+use std::slice;
 
 #[no_mangle]
 pub extern "C" fn brushengine_new() -> *mut BrushEngine {
@@ -59,4 +62,56 @@ pub extern "C" fn brushengine_write_dabs(
     writer: &mut MessageWriter,
 ) {
     be.write_dabs(user_id, writer)
+}
+
+#[no_mangle]
+pub extern "C" fn brush_preview_dab(brush: &ClassicBrush, image: *mut u8, width: i32, height: i32, color: &Color) {
+    let pixel_slice =
+        unsafe { slice::from_raw_parts_mut(image as *mut Pixel, (width * height) as usize) };
+
+    let mask = match brush.shape {
+        ClassicBrushShape::RoundPixel => {
+            BrushMask::new_round_pixel(brush.size.1 as u32, brush.opacity.1)
+        }
+        ClassicBrushShape::SquarePixel => {
+            BrushMask::new_square_pixel(brush.size.1 as u32, brush.opacity.1)
+        }
+        ClassicBrushShape::RoundSoft => {
+            let mut cache = ClassicBrushCache::new();
+            BrushMask::new_gimp_style_v2(
+                0.0,
+                0.0,
+                brush.size.1,
+                brush.hardness.1,
+                brush.opacity.1,
+                &mut cache,
+            )
+            .2
+        }
+    };
+
+    let d = mask.diameter as i32;
+
+    let dest_rect = Rectangle::new(width / 2 - d / 2, height / 2 - d / 2, d, d)
+        .cropped(Size { width, height })
+        .unwrap();
+
+    let source_rect = Rectangle::new(
+        d / 2 - dest_rect.w / 2,
+        d / 2 - dest_rect.h / 2,
+        dest_rect.w,
+        dest_rect.h,
+    );
+
+    MutableRectIterator::from_rectangle(pixel_slice, width as usize, &dest_rect)
+        .zip(RectIterator::from_rectangle(
+            &mask.mask,
+            mask.diameter as usize,
+            &source_rect,
+        ))
+        .for_each(|(d, s)| {
+            d.iter_mut()
+                .zip(s)
+                .for_each(|(pix, &val)| *pix = Color{r: color.r, g: color.g, b: color.b, a: val as f32 / 255.0}.as_pixel());
+        });
 }

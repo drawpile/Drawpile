@@ -30,7 +30,7 @@ use std::slice;
 pub extern "C" fn blendmode_from_svgname(name: *const u16, name_len: usize) -> Blendmode {
     let name = String::from_utf16_lossy(unsafe { slice::from_raw_parts(name, name_len) });
 
-    return Blendmode::from_svg_name(&name).unwrap_or_default()
+    return Blendmode::from_svg_name(&name).unwrap_or_default();
 }
 
 #[no_mangle]

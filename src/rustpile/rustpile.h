@@ -191,6 +191,8 @@ struct ClassicBrush {
 /// via the protocol.
 using LayerID = uint16_t;
 
+using ExtLogFn = void(*)(int32_t level, const char *file, uint32_t line, const char *logmsg);
+
 using UserID = uint8_t;
 
 using NotifyChangesCallback = void(*)(void *ctx, Rectangle area);
@@ -296,8 +298,6 @@ struct FeatureTiers {
 
 using IndexBuildProgressNoticationFn = void(*)(void *ctx, uint32_t progress);
 
-using ExtLogFn = void(*)(int32_t level, const char *file, uint32_t line, const char *logmsg);
-
 extern "C" {
 
 void annotations_get_all(const Annotations *annotations,
@@ -305,6 +305,13 @@ void annotations_get_all(const Annotations *annotations,
                          UpdateAnnotationCallback callback);
 
 void annotations_free(Annotations *annotations);
+
+/// Find a blending mode matching the given SVG name
+///
+/// If no match is found, the default (normal) mode is returned.
+Blendmode blendmode_from_svgname(const uint16_t *name, uintptr_t name_len);
+
+const uint8_t *blendmode_svgname(Blendmode mode, uintptr_t *name_len);
 
 BrushEngine *brushengine_new();
 
@@ -325,6 +332,12 @@ void brushengine_add_offset(BrushEngine *be, float x, float y);
 
 void brushengine_write_dabs(BrushEngine *be, uint8_t user_id, MessageWriter *writer);
 
+void brush_preview_dab(const ClassicBrush *brush,
+                       uint8_t *image,
+                       int32_t width,
+                       int32_t height,
+                       const Color *color);
+
 BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
 
 void brushpreview_free(BrushPreview *bp);
@@ -340,6 +353,8 @@ void brushpreview_floodfill(BrushPreview *bp,
 void brushpreview_paint(const BrushPreview *bp,
                         void *ctx,
                         void (*paint_func)(void *ctx, int32_t x, int32_t y, const uint8_t *pixels));
+
+void rustpile_init_logging(ExtLogFn log_writer);
 
 MessageWriter *messagewriter_new();
 
@@ -804,15 +819,6 @@ Size snapshots_size(const SnapshotQueue *snapshots, uintptr_t index);
 bool snapshots_get_content(const SnapshotQueue *snapshots, uintptr_t index, uint8_t *pixels);
 
 bool snapshots_import_file(SnapshotQueue *snapshots, const uint16_t *path, uintptr_t path_len);
-
-void rustpile_init_logging(ExtLogFn log_writer);
-
-/// Find a blending mode matching the given SVG name
-///
-/// If no match is found, the default (normal) mode is returned.
-Blendmode blendmode_from_svgname(const uint16_t *name, uintptr_t name_len);
-
-const uint8_t *blendmode_svgname(Blendmode mode, uintptr_t *name_len);
 
 } // extern "C"
 
