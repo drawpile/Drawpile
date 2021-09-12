@@ -27,7 +27,6 @@
 #include <QtEndian>
 #include <QVarLengthArray>
 #include <QFile>
-#include <KCompressionDevice>
 #include <QRegularExpression>
 
 namespace recording {
@@ -69,22 +68,7 @@ Reader::Reader(const QString &filename, Encoding encoding, QObject *parent)
 	d->autoclose = true;
 	d->eof = false;
 	d->opaque = false;
-
-	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
-	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive) || filename.endsWith(".dptxtz", Qt::CaseInsensitive))
-		ct = KCompressionDevice::GZip;
-	else if(filename.endsWith(".bz2", Qt::CaseInsensitive))
-		ct = KCompressionDevice::BZip2;
-	else if(filename.endsWith(".xz", Qt::CaseInsensitive))
-		ct = KCompressionDevice::Xz;
-
-	if(ct == KCompressionDevice::None) {
-		d->file = new QFile(filename);
-		d->isCompressed = false;
-	} else {
-		d->file = new KCompressionDevice(filename, ct);
-		d->isCompressed = true;
-	}
+	d->file = new QFile(filename);
 }
 
 Reader::Reader(const QString &filename, QIODevice *file, bool autoclose, Encoding encoding, QObject *parent)
@@ -110,11 +94,6 @@ Reader::~Reader()
 bool Reader::isEof() const
 {
 	return d->eof;
-}
-
-bool Reader::isCompressed() const
-{
-	return d->isCompressed;
 }
 
 protocol::ProtocolVersion Reader::formatVersion() const

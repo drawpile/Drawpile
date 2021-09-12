@@ -122,9 +122,6 @@ public:
 	//! Did the last read hit the end of the file?
 	bool isEof() const;
 
-	//! Is this recording compressed?
-	bool isCompressed() const;
-
 	//! Get the last error message
 	QString errorString() const;
 

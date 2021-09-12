@@ -23,7 +23,6 @@ Some feature highlights:
 Common dependencies:
  * Qt 5.9 or newer (QtGui not required for headless server)
  * KF5 Extra CMake Modules
- * [KF5 KArchive]
  * Rust compiler (tested with rustc 1.40)
 
 Client specific dependencies:
@@ -73,7 +72,6 @@ Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug -DKIS_TABLET=on`
 
 For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
 
-[KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive  
 [QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets  
 [QtKeyChain]: https://github.com/frankosterfeld/qtkeychain  
 [Building from sources]: https://github.com/callaa/Drawpile/wiki/Building-from-sources  

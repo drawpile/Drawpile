@@ -2,7 +2,6 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(QtColorWidgets)
-find_package(Vpx)
 find_package(Qt5Keychain)
 
 include_directories("../libclient")

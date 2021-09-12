@@ -1,7 +1,6 @@
 find_package(Qt5Test REQUIRED)
 find_package(Sodium)
 #find_package(Qt5Network REQUIRED)
-#find_package(KF5Archive REQUIRED NO_MODULE)
 
 set(TEST_PREFIX shared)
 

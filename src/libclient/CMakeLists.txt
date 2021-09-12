@@ -1,7 +1,6 @@
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
-find_package(Vpx)
 
 set (
 	SOURCES

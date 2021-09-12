@@ -16,13 +16,12 @@ ADD qtbase-2-disable-wintab.patch qtbase-3-disable-winink.patch /usr/src/mxe/src
 RUN make -j$(nproc) qt5
 
 # Patch and build other MXE dependencies
-RUN make download-miniupnpc download-giflib download-libsodium download-libvpx download-qtkeychain
-ADD libvpx.mk /usr/src/mxe/src/
-RUN make -j$(nproc) miniupnpc giflib libsodium libvpx qtkeychain
+RUN make download-miniupnpc download-giflib download-libsodium download-qtkeychain
+RUN make -j$(nproc) miniupnpc giflib libsodium qtkeychain
 
 # Add our own deps
-ADD extra-cmake-modules.mk karchive.mk dnssd_shim.mk kdnssd.mk kdnssd-1-qtendian.patch kdnssd-2-shim.patch /usr/src/mxe/src/
-RUN make extra-cmake-modules karchive kdnssd
+ADD extra-cmake-modules.mk dnssd_shim.mk kdnssd.mk kdnssd-1-qtendian.patch kdnssd-2-shim.patch /usr/src/mxe/src/
+RUN make extra-cmake-modules kdnssd
 
 # Create the app build directory
 RUN mkdir /Build && chmod a+w /Build

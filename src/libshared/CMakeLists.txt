@@ -1,5 +1,4 @@
 find_package(Qt5Network REQUIRED)
-find_package(KF5Archive REQUIRED NO_MODULE)
 find_package(Sodium)
 
 set (
@@ -57,7 +56,6 @@ endif()
 add_library(dpshared STATIC ${SOURCES})
 
 target_link_libraries(dpshared Qt5::Network)
-target_link_libraries(dpshared KF5::Archive)
 
 if( Sodium_FOUND )
 	target_link_libraries(dpshared ${SODIUM_LIBRARY})

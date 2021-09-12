@@ -26,8 +26,6 @@
 #include <QFile>
 #include <QTimer>
 
-#include <KCompressionDevice>
-
 #include <memory>
 
 namespace recording {
@@ -35,17 +33,6 @@ namespace recording {
 Writer::Writer(const QString &filename, QObject *parent)
 	: Writer(new QFile(filename), true, parent)
 {
-	KCompressionDevice::CompressionType ct = KCompressionDevice::None;
-	if(filename.endsWith(".gz", Qt::CaseInsensitive) || filename.endsWith(".dprecz", Qt::CaseInsensitive) || filename.endsWith(".dptxtz", Qt::CaseInsensitive))
-		ct = KCompressionDevice::GZip;
-	else if(filename.endsWith(".bz2", Qt::CaseInsensitive))
-		ct = KCompressionDevice::BZip2;
-	else if(filename.endsWith(".xz", Qt::CaseInsensitive))
-		ct = KCompressionDevice::Xz;
-
-	if(ct != KCompressionDevice::None)
-		m_file = new KCompressionDevice(m_file, true, ct);
-
 	if(filename.contains(".dptxt", Qt::CaseInsensitive) && !filename.contains(".dprec", Qt::CaseInsensitive))
 		m_encoding = Encoding::Text;
 }
