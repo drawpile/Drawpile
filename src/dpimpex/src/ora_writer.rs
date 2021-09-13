@@ -261,7 +261,7 @@ fn write_stack_xml<W: Write + Seek>(
                 e = e.attr("visibility", "hidden");
             }
             if layer.blendmode != Blendmode::Normal {
-                e = e.attr("blendmode", layer.blendmode.svg_name());
+                e = e.attr("composite-op", layer.blendmode.svg_name());
             }
             if layer.censored {
                 e = e.attr("drawpile:censored", "true")
