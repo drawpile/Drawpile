@@ -61,6 +61,7 @@ enum class Blendmode : uint8_t {
   Recolor,
   Behind,
   ColorErase,
+  Screen,
   Replace = 255,
 };
 

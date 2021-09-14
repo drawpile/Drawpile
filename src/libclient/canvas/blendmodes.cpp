@@ -70,6 +70,11 @@ static const BlendModeInfo BLEND_MODE[] = {
 		UniversalMode
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "Screen"),
+		Blendmode::Screen,
+		UniversalMode
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Divide"),
 		Blendmode::Divide,
 		UniversalMode

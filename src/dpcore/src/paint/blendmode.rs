@@ -39,6 +39,7 @@ pub enum Blendmode {
     Recolor,
     Behind,
     ColorErase,
+    Screen,
     Replace = 255,
 }
 
@@ -63,7 +64,7 @@ impl Blendmode {
             Erase => "-dp-erase",
             Normal => "svg:src-over",
             Multiply => "svg:multiply",
-            Divide => "svg:screen",
+            Divide => "-dp-divide",
             Burn => "svg:color-burn",
             Dodge => "svg:color-dodge",
             Darken => "svg:darken",
@@ -73,6 +74,7 @@ impl Blendmode {
             Recolor => "svg:src-atop",
             Behind => "svg:dst-over",
             ColorErase => "-dp-cerase",
+            Screen => "svg:screen",
             Replace => "-dp-replace",
         }
     }
@@ -89,7 +91,7 @@ impl Blendmode {
             "-dp-erase" => Erase,
             "src-over" => Normal,
             "multiply" => Multiply,
-            "screen" => Divide,
+            "-dp-divide" => Divide,
             "color-burn" => Burn,
             "color-dodge" => Dodge,
             "darken" => Darken,
@@ -99,6 +101,7 @@ impl Blendmode {
             "src-atop" => Recolor,
             "dst-over" => Behind,
             "-dp-cerase" => ColorErase,
+            "screen" => Screen,
             "-dp-replace" => Replace,
             _ => {
                 return None;

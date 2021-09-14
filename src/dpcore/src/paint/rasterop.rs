@@ -38,6 +38,7 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::Recolor => pixel_composite(comp_op_recolor, base, over, opacity),
         Blendmode::Behind => alpha_pixel_under(base, over, opacity),
         Blendmode::ColorErase => pixel_color_erase(base, over, opacity),
+        Blendmode::Screen => pixel_composite(comp_op_screen, base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
     }
 }
@@ -56,6 +57,7 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask),
         Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask),
         Blendmode::Behind => alpha_mask_under(base, color, mask),
+        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask),
         Blendmode::ColorErase => mask_color_erase(base, color, mask),
         m => panic!("TODO unimplemented mask blend mode {:?}", m),
     }
@@ -286,6 +288,10 @@ fn blend(a: f32, b: f32, alpha: f32) -> f32 {
 
 fn comp_op_multiply(a: f32, b: f32) -> f32 {
     a * b
+}
+
+fn comp_op_screen(a: f32, b: f32) -> f32 {
+    1.0f32 - (1.0f32 - a) * (1.0f32 - b)
 }
 
 fn comp_op_divide(a: f32, b: f32) -> f32 {
