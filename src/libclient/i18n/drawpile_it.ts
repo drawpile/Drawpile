@@ -6,22 +6,22 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Nuovo</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta su</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Muovi giù</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
 </context>
 <context>
@@ -116,12 +116,12 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="606"/>
         <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Input:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="616"/>
         <source>Configure input presets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Configura input preselezionati</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="379"/>
@@ -334,7 +334,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="99"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alternato</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="100"/>
@@ -569,7 +569,7 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
         <source>Preset:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Preselezionato:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
@@ -599,7 +599,7 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="133"/>
         <source>Preset options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opzioni preselezionati</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
@@ -732,12 +732,12 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Proprietà del livello</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nome:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
@@ -747,17 +747,17 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modalità di fusione:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
         <source>Visible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Visibile</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
@@ -856,7 +856,7 @@
     <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="210"/>
         <source>Review changes...</source>
-        <translation>Rivedi modifiche ...</translation>
+        <translation>Rivedi modifiche...</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="212"/>
@@ -1164,7 +1164,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2277"/>
         <source>&amp;Animation...</source>
-        <translation>&amp;Аnimazione…</translation>
+        <translation>&amp;Аnimazione...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2277"/>
@@ -1282,7 +1282,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2361"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation>Ridimensio&amp;na Tela…</translation>
+        <translation>Ridimensio&amp;na Tela...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2362"/>
@@ -2249,17 +2249,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="100"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scala</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="110"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ruota/Taglia</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="117"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Distorcere</translation>
     </message>
 </context>
 <context>
@@ -2584,7 +2584,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="33"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ruota dei colori</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="38"/>
@@ -2755,12 +2755,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="350"/>
         <source>Enable canvas viewport entry hack</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abilita modifica alla voce della finestra di tela</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="370"/>
         <source>Brush outline width:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Larghezza contorno pennello:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="387"/>
@@ -2772,7 +2772,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="390"/>
         <source>Size Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Limite dimensione cursore</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="421"/>
@@ -2784,72 +2784,72 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/ui/settings.ui" line="448"/>
         <location filename="../../desktop/ui/settings.ui" line="467"/>
         <source>The maximum value for the brush spacing slider. You can always enter larger values manually.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Il valore massimo per il cursore della spaziatura del pennello. Puoi sempre inserire valori più grandi manualmente.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="439"/>
         <source>Spacing Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Limite del cursore di spaziatura:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="470"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="498"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forma:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="506"/>
         <source>Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Triangolo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="511"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Quadrato</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="519"/>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Angolo</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="527"/>
         <source>Fixed</source>
-        <translation type="unfinished">Aggiustato</translation>
+        <translation type="unfinished">Fisso</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="532"/>
         <source>Rotating</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotazione</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="540"/>
         <source>Color Space:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spazio colore:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="548"/>
         <source>HSV (Hue, Saturation, Value)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HSV (tonalità, saturazione, valore)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="553"/>
         <source>HSL (Hue, Saturation, Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HSL (tonalità, saturazione, luminosità)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
         <source>Lch (Luminance, Chroma, Hue)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lch (luminanza, crominanza, tonalità)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="582"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anteprima:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="593"/>
@@ -3406,7 +3406,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette.cpp" line="428"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Senza nome</translation>
     </message>
 </context>
 <context>
@@ -3414,12 +3414,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Senza nome</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="144"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2 colori)</translation>
     </message>
 </context>
 <context>
@@ -3427,64 +3427,64 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="59"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apri una nuova tavolozza da file</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="71"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crea una nuova tavolozza</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="83"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Duplica la tavolozza corrente</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="121"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Elimina la tavolozza corrente</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="133"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ripristina le modifiche alla tavolozza corrente</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="145"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salva le modifiche alla tavolozza corrente</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="170"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aggiungi un colore alla tavolozza</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="182"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rimuovi il colore selezionato dalla tavolozza</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="186"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="201"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nuova tavolozza</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="187"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="202"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nome</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="228"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tavolozze GIMP (*.gpl)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="229"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Immagine tavolozza (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="230"/>
@@ -3495,7 +3495,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="231"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="244"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apri tavolozza</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="245"/>
@@ -3509,7 +3509,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="335"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aggiungi colore</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="344"/>
