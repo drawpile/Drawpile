@@ -20,13 +20,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use dpcore::paint::tile::Tile;
-use dpcore::paint::{editlayer, Blendmode, BrushMask, Color, Layer};
+use dpcore::paint::{
+    editlayer, BitmapLayer, Blendmode, BrushMask, Color, LayerInsertion, LayerStack,
+};
 
 mod utils;
 
-fn brush_stroke(layer: &mut Layer, y: i32, color: &Color) {
+fn brush_stroke(layer: &mut BitmapLayer, y: i32, color: &Color) {
     for x in (10..246).step_by(5) {
         let w = 16 + ((x as f32 / 40.0 * 3.14).sin() * 15.0) as i32;
         let brush = BrushMask::new_round_pixel(w as u32, 0.4);
@@ -45,20 +46,57 @@ fn brush_stroke(layer: &mut Layer, y: i32, color: &Color) {
 fn main() {
     let mut layerstack = LayerStack::new(256, 256);
     layerstack.background = Tile::new_solid(&Color::rgb8(255, 255, 255), 0);
-    layerstack.add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
-    layerstack.add_layer(2, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
 
-    layerstack.get_layer_mut(2).unwrap().opacity = 0.5;
+    layerstack
+        .root_mut()
+        .add_bitmap_layer(1, Color::TRANSPARENT, LayerInsertion::Top);
+    layerstack
+        .root_mut()
+        .add_bitmap_layer(2, Color::TRANSPARENT, LayerInsertion::Top);
+
+    layerstack
+        .root_mut()
+        .add_group_layer(3, LayerInsertion::Top);
+    layerstack
+        .root_mut()
+        .add_bitmap_layer(4, Color::TRANSPARENT, LayerInsertion::Into(3));
+
+    // Second stroke layer opacity to 50%
+    layerstack
+        .root_mut()
+        .get_bitmaplayer_mut(2)
+        .unwrap()
+        .metadata_mut()
+        .opacity = 0.5;
+
+    // Third stroke layer and parent group opacity to 50% (so effective opacity is 25%)
+    layerstack
+        .root_mut()
+        .get_layer_mut(3)
+        .unwrap()
+        .metadata_mut()
+        .opacity = 0.5;
+    layerstack
+        .root_mut()
+        .get_layer_mut(4)
+        .unwrap()
+        .metadata_mut()
+        .opacity = 0.5;
 
     brush_stroke(
-        layerstack.get_layer_mut(1).unwrap(),
+        layerstack.root_mut().get_bitmaplayer_mut(1).unwrap(),
         60,
         &Color::rgb8(255, 0, 0),
     );
     brush_stroke(
-        layerstack.get_layer_mut(2).unwrap(),
+        layerstack.root_mut().get_bitmaplayer_mut(2).unwrap(),
         80,
-        &Color::rgb8(0, 255, 0),
+        &Color::rgb8(255, 0, 0),
+    );
+    brush_stroke(
+        layerstack.root_mut().get_bitmaplayer_mut(4).unwrap(),
+        100,
+        &Color::rgb8(255, 0, 0),
     );
 
     utils::save_layerstack(&layerstack, "example_layerstack.png");

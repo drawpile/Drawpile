@@ -22,7 +22,7 @@
 
 use super::brushstate::BrushState;
 use super::classicbrush::{ClassicBrush, ClassicBrushShape};
-use crate::paint::{Blendmode, Color, Layer};
+use crate::paint::{BitmapLayer, Blendmode, Color};
 use crate::protocol::message::{CommandMessage, DrawDabsPixelMessage, PixelDab};
 use crate::protocol::MessageWriter;
 
@@ -87,7 +87,7 @@ impl PixelBrushState {
         self.smudge_color = color;
     }
 
-    fn add_dab(&mut self, x: i32, y: i32, p: f32, source: Option<&Layer>) {
+    fn add_dab(&mut self, x: i32, y: i32, p: f32, source: Option<&BitmapLayer>) {
         let smudge = self.brush.smudge_at(p);
         let dia = self.brush.size_at(p).max(1.0).min(255.0) as u8;
 
@@ -150,7 +150,7 @@ impl BrushState for PixelBrushState {
         self.layer_id = layer_id;
     }
 
-    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&Layer>) {
+    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&BitmapLayer>) {
         if self.in_progress {
             let dp = (p - self.last_p) / (x - self.last_x).hypot(y - self.last_y);
 

@@ -95,8 +95,18 @@ fn main() {
         color: Color::rgb8(0, 0, 255),
         ..ClassicBrush::default()
     });
-    painter.stroke_to(30.0, 10.0, 1.0, canvas.layerstack().get_layer(0x0101));
-    painter.stroke_to(30.0, 200.0, 1.0, canvas.layerstack().get_layer(0x0101));
+    painter.stroke_to(
+        30.0,
+        10.0,
+        1.0,
+        canvas.layerstack().root().get_bitmaplayer(0x0101),
+    );
+    painter.stroke_to(
+        30.0,
+        200.0,
+        1.0,
+        canvas.layerstack().root().get_bitmaplayer(0x0101),
+    );
     painter.end_stroke();
     painter.take_dabs(1).iter().for_each(|d| {
         canvas.receive_message(d);
@@ -169,8 +179,18 @@ fn main() {
         shape: ClassicBrushShape::RoundSoft,
         ..ClassicBrush::default()
     });
-    painter.stroke_to(542.0, 10.0, 1.0, canvas.layerstack().get_layer(0x0101));
-    painter.stroke_to(542.0, 200.0, 1.0, canvas.layerstack().get_layer(0x0101));
+    painter.stroke_to(
+        542.0,
+        10.0,
+        1.0,
+        canvas.layerstack().root().get_bitmaplayer(0x0101),
+    );
+    painter.stroke_to(
+        542.0,
+        200.0,
+        1.0,
+        canvas.layerstack().root().get_bitmaplayer(0x0101),
+    );
     painter.end_stroke();
     painter.take_dabs(1).iter().for_each(|d| {
         canvas.receive_message(d);

@@ -24,7 +24,7 @@ use super::brushstate::BrushState;
 use super::classicbrush::ClassicBrush;
 use super::pixelbrushstate::PixelBrushState;
 use super::softbrushstate::SoftBrushState;
-use crate::paint::Layer;
+use crate::paint::BitmapLayer;
 use crate::protocol::message::CommandMessage;
 use crate::protocol::MessageWriter;
 
@@ -72,7 +72,7 @@ impl BrushState for BrushEngine {
         self.soft.set_layer(layer_id);
     }
 
-    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&Layer>) {
+    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&BitmapLayer>) {
         self.state().stroke_to(x, y, p, source);
     }
 

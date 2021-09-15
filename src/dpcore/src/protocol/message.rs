@@ -362,21 +362,23 @@ impl CanvasResizeMessage {
 pub struct LayerCreateMessage {
     pub id: u16,
     pub source: u16,
+    pub target: u16,
     pub fill: u32,
     pub flags: u8,
     pub name: String,
 }
 
 impl LayerCreateMessage {
-    pub const FLAGS_COPY: u8 = 0x1;
-    pub const FLAGS_INSERT: u8 = 0x2;
-    pub const FLAGS: &'static [&'static str] = &["copy", "insert"];
+    pub const FLAGS_GROUP: u8 = 0x1;
+    pub const FLAGS_INTO: u8 = 0x2;
+    pub const FLAGS: &'static [&'static str] = &["group", "into"];
 
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
-        reader.validate(9, 65535)?;
+        reader.validate(11, 65535)?;
 
         let id = reader.read::<u16>();
         let source = reader.read::<u16>();
+        let target = reader.read::<u16>();
         let fill = reader.read::<u32>();
         let flags = reader.read::<u8>();
         let name = reader.read_remaining_str();
@@ -384,6 +386,7 @@ impl LayerCreateMessage {
         Ok(Self {
             id,
             source,
+            target,
             fill,
             flags,
             name,
@@ -391,9 +394,10 @@ impl LayerCreateMessage {
     }
 
     fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(130, user_id, 9 + self.name.len());
+        w.write_header(130, user_id, 11 + self.name.len());
         w.write(self.id);
         w.write(self.source);
+        w.write(self.target);
         w.write(self.fill);
         w.write(self.flags);
         w.write(&self.name);
@@ -402,6 +406,7 @@ impl LayerCreateMessage {
     fn to_text(&self, txt: TextMessage) -> TextMessage {
         txt.set("id", format!("0x{:04x}", self.id))
             .set("source", format!("0x{:04x}", self.source))
+            .set("target", format!("0x{:04x}", self.target))
             .set_argb32("fill", self.fill)
             .set_flags("flags", &Self::FLAGS, self.flags)
             .set("name", self.name.clone())
@@ -411,6 +416,7 @@ impl LayerCreateMessage {
         Self {
             id: tm.get_u16("id"),
             source: tm.get_u16("source"),
+            target: tm.get_u16("target"),
             fill: tm.get_argb32("fill"),
             flags: tm.get_flags(&Self::FLAGS, "flags"),
             name: tm.get_str("name").to_string(),
@@ -516,34 +522,34 @@ impl LayerRetitleMessage {
 #[derive(Clone, Debug, PartialEq)]
 pub struct LayerDeleteMessage {
     pub id: u16,
-    pub merge: bool,
+    pub merge_to: u16,
 }
 
 impl LayerDeleteMessage {
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
-        reader.validate(3, 3)?;
+        reader.validate(4, 4)?;
 
         let id = reader.read::<u16>();
-        let merge = reader.read::<bool>();
+        let merge_to = reader.read::<u16>();
 
-        Ok(Self { id, merge })
+        Ok(Self { id, merge_to })
     }
 
     fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(134, user_id, 3);
+        w.write_header(134, user_id, 4);
         w.write(self.id);
-        w.write(self.merge);
+        w.write(self.merge_to);
     }
 
     fn to_text(&self, txt: TextMessage) -> TextMessage {
         txt.set("id", format!("0x{:04x}", self.id))
-            .set("merge", self.merge.to_string())
+            .set("merge_to", format!("0x{:04x}", self.merge_to))
     }
 
     fn from_text(tm: &TextMessage) -> Self {
         Self {
             id: tm.get_u16("id"),
-            merge: tm.get_str("merge") == "true",
+            merge_to: tm.get_u16("merge_to"),
         }
     }
 }
@@ -1492,16 +1498,19 @@ pub enum CommandMessage {
     /// This allows the client to choose the layer ID without worrying about
     /// clashes. In multiuser mode the ACL filter validates the prefix for all new layers.
     ///
-    /// The following flags can be used with layer creation:
-    /// - COPY: a copy of the Source layer is made, rather than a blank layer
-    /// - INSERT: the new layer is inserted above the Source layer. Source 0 means
-    ///           the layer will be placed bottom-most on the stack
+    /// If the `source` field is nonzero, a copy of the source layer is made.
+    /// Otherwise, either a blank new bitmap or a group layer is created.
+    /// When copying a group, the group's layers are assigned new IDs sequentally,
+    /// starting from the group ID, using the group IDs user prefix.
     ///
-    /// The Source layer ID should be zero when COPY or INSERT flags are not used.
-    /// When COPY is used, it should refer to an existing layer. Copy commands
-    /// referring to missing layers are dropped.
-    /// When INSERT is used, referring to 0 or a nonexistent layer places
-    /// the new layer at the bottom of the stack.
+    /// If the `target` field is nonzero, the newly created layer will be
+    /// insert above that layer or group, or into that group. If zero,
+    /// the layer will be added to the top of the root group.
+    ///
+    /// The following flags can be used with layer creation:
+    /// - GROUP: a group layer is created (ignored if `source` is set)
+    /// - INTO: the new layer will be added to the top to the `target` group.
+    ///         The target must be nonzero.
     ///
     /// If layer controls are locked, this command requires session operator privileges.
     ///
@@ -1519,33 +1528,17 @@ pub enum CommandMessage {
     /// Change a layer's title
     LayerRetitle(u8, LayerRetitleMessage),
 
-    /// Reorder layers
-    ///
-    /// New layers are always added to the top of the stack.
-    /// This command includes a list of layer IDs that define the new stacking order.
-    ///
-    /// An order change should list all layers in the stack, but due to synchronization issues, that
-    /// is not always possible.
-    /// The layer order should therefore be sanitized by removing all layers not in the current layer stack
-    /// and adding all missing layers to the end in their current relative order.
-    ///
-    /// For example: if the current stack is [1,2,3,4,5] and the client receives
-    /// a reordering command [3,4,1], the missing layers are appended: [3,4,1,2,5].
-    ///
-    /// If layer controls are locked, this command requires session operator privileges.
+    /// Reorder layers (TODO explain new encoding)
     ///
     LayerOrder(u8, Vec<u16>),
 
     /// Delete a layer
     ///
-    /// If the merge attribute is set, the contents of the layer is merged
-    /// to the layer below it. Merging the bottom-most layer does nothing.
+    /// If the merge attribute is nonzero, the contents of the layer is merged
+    /// to the layer with the given ID.
     ///
     /// If the current layer or layer controls in general are locked, this command
     /// requires session operator privileges.
-    ///
-    /// TODO protocol change: replace merge boolean with a destination layer ID
-    /// so knowledge of layer stack state is not needed to interpret it.
     ///
     LayerDelete(u8, LayerDeleteMessage),
 
@@ -1657,7 +1650,7 @@ pub enum CommandMessage {
 
     /// Move a rectangular area on a layer.
     ///
-    /// A 1-bpp mask can be given to mask out part of the region
+    /// A mask image can be given to mask out part of the region
     /// to support non-rectangular selections.
     ///
     /// Source and target rects may be (partially) outside the canvas.

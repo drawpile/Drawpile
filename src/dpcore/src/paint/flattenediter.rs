@@ -37,8 +37,8 @@ pub struct FlattenedTileIterator<'a> {
 
 impl<'a> FlattenedTileIterator<'a> {
     pub fn new(layerstack: &'a LayerStack, opts: &'a LayerViewOptions, area: AoE) -> Self {
-        let right = Tile::div_up(layerstack.width());
-        let bottom = Tile::div_up(layerstack.height());
+        let right = Tile::div_up(layerstack.root().width());
+        let bottom = Tile::div_up(layerstack.root().height());
         match area {
             AoE::Resize(_, _, _) | AoE::Everything => FlattenedTileIterator {
                 layerstack,
@@ -151,7 +151,7 @@ mod tests {
     fn test_tilemap() {
         let ls = LayerStack::new(5 * TILE_SIZE, 5 * TILE_SIZE);
         let opts = LayerViewOptions::default();
-        let mut tm = TileMap::new(ls.width(), ls.height());
+        let mut tm = TileMap::new(ls.root().width(), ls.root().height());
         tm.tiles.set(0, true);
         tm.tiles.set(6, true);
         tm.tiles.set(12, true);

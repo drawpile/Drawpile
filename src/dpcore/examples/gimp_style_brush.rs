@@ -21,14 +21,14 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::paint::{
-    editlayer, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, Layer, Tile,
+    editlayer, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, Tile,
 };
 
 mod utils;
 
 fn main() {
     let mut cache = ClassicBrushCache::new();
-    let mut layer = Layer::new(
+    let mut layer = BitmapLayer::new(
         InternalLayerID(0),
         512,
         256,
@@ -73,7 +73,7 @@ fn main() {
 }
 
 fn draw_stroke(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     x1: f32,
     y1: f32,
     x2: f32,
@@ -100,7 +100,7 @@ fn draw_stroke(
 }
 
 fn draw_dab(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     x: f32,
     y: f32,
     dia: f32,

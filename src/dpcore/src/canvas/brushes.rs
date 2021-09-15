@@ -20,13 +20,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::paint::{editlayer, AoE, Blendmode, BrushMask, ClassicBrushCache, Color, Layer, UserID};
+use crate::paint::{
+    editlayer, AoE, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, UserID,
+};
 use crate::protocol::message::{DrawDabsClassicMessage, DrawDabsPixelMessage};
 
 use std::convert::TryFrom;
 
 pub fn drawdabs_classic(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     dabs: &DrawDabsClassicMessage,
     cache: &mut ClassicBrushCache,
@@ -37,8 +39,8 @@ pub fn drawdabs_classic(
     let result = if color.a > 0.0 && user != 0 {
         // If alpha is given, these dabs will be drawn in indirect mode
         let sublayer = layer.get_or_create_sublayer(user.into());
-        sublayer.opacity = color.a;
-        sublayer.blendmode = mode;
+        sublayer.metadata.opacity = color.a;
+        sublayer.metadata.blendmode = mode;
         color.a = 1.0;
         drawdabs_classic_draw(sublayer, user, color, Blendmode::Normal, &dabs, cache)
     } else {
@@ -54,7 +56,7 @@ pub fn drawdabs_classic(
 }
 
 fn drawdabs_classic_draw(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     color: Color,
     mode: Blendmode,
@@ -88,7 +90,7 @@ fn drawdabs_classic_draw(
 }
 
 pub fn drawdabs_pixel(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     dabs: &DrawDabsPixelMessage,
     square: bool,
@@ -99,8 +101,8 @@ pub fn drawdabs_pixel(
     let result = if color.a > 0.0 && user != 0 {
         // If alpha is given, these dabs will be drawn in indirect mode
         let sublayer = layer.get_or_create_sublayer(user.into());
-        sublayer.opacity = color.a;
-        sublayer.blendmode = mode;
+        sublayer.metadata.opacity = color.a;
+        sublayer.metadata.blendmode = mode;
         color.a = 1.0;
         drawdabs_pixel_draw(sublayer, user, color, Blendmode::Normal, &dabs, square)
     } else {
@@ -116,7 +118,7 @@ pub fn drawdabs_pixel(
 }
 
 fn drawdabs_pixel_draw(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     color: Color,
     mode: Blendmode,

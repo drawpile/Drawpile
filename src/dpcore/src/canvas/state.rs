@@ -25,10 +25,9 @@ use super::compression;
 use super::history::History;
 use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
-use crate::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use crate::paint::{
-    editlayer, AoE, Blendmode, ClassicBrushCache, Color, InternalLayerID, LayerID, Rectangle, Size,
-    UserID,
+    editlayer, AoE, Blendmode, ClassicBrushCache, Color, GroupLayer, InternalLayerID, Layer,
+    LayerID, LayerInsertion, LayerStack, Rectangle, Size, UserID,
 };
 use crate::protocol::message::*;
 
@@ -212,7 +211,9 @@ impl CanvasState {
 
                     CanvasStateChange {
                         aoe: aoe,
-                        layers_changed: old_layerstack.compare_layer_structure(&self.layerstack),
+                        layers_changed: old_layerstack
+                            .root()
+                            .compare_structure(&self.layerstack.root()),
                         annotations_changed: old_layerstack.compare_annotations(&self.layerstack),
                         user: 0,
                         layer: 0,
@@ -253,7 +254,10 @@ impl CanvasState {
         layer_id: LayerID,
         msgs: &[CommandMessage],
     ) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(layer_id)
+        {
             let mut layer = layer.get_or_create_sublayer(InternalLayerID(-1));
 
             let mut aoe = editlayer::clear_layer(&mut layer);
@@ -319,21 +323,34 @@ impl CanvasState {
     /// Remove a preview layer or all preview layers if id is 0
     pub fn remove_preview(&mut self, layer_id: LayerID) -> CanvasStateChange {
         if layer_id == 0 {
-            Arc::make_mut(&mut self.layerstack)
-                .iter_layers_mut()
-                .fold(AoE::Nothing, |aoe, layer| {
-                    aoe.merge(editlayer::remove_sublayer(
-                        Arc::make_mut(layer),
-                        InternalLayerID(-1),
-                    ))
-                })
+            Self::remove_all_previews(Arc::make_mut(&mut self.layerstack).root_mut().inner_mut())
                 .into()
-        } else if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(layer_id) {
+        } else if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(layer_id)
+        {
             editlayer::remove_sublayer(layer, InternalLayerID(-1)).into()
         } else {
             warn!("remove_preview: Layer {} not found!", layer_id);
             CanvasStateChange::nothing()
         }
+    }
+
+    fn remove_all_previews(group: &mut GroupLayer) -> AoE {
+        let mut aoe = AoE::Nothing;
+        // TODO check if sublayer exists before calling arc::make_mut?
+        for l in group.iter_layers_mut() {
+            let l = Arc::make_mut(l);
+            if let Some(g) = l.as_group_mut() {
+                aoe = aoe.merge(Self::remove_all_previews(g));
+            } else if let Some(b) = l.as_bitmap_mut() {
+                aoe = aoe.merge(editlayer::remove_sublayer(b, InternalLayerID(-1)));
+            } else {
+                unreachable!();
+            }
+        }
+
+        aoe
     }
 
     /// Clean up the state after disconnecting from a remote session
@@ -348,9 +365,14 @@ impl CanvasState {
         self.localfork.clear();
 
         Arc::make_mut(&mut self.layerstack)
+            .root_mut()
             .iter_layers_mut()
+            .filter_map(|l| match l.as_ref() {
+                Layer::Bitmap(_) => Arc::make_mut(l).as_bitmap_mut(),
+                _ => None,
+            })
             .fold(AoE::Nothing, |aoe, l| {
-                aoe.merge(editlayer::merge_all_sublayers(Arc::make_mut(l)))
+                aoe.merge(editlayer::merge_all_sublayers(l))
             })
     }
 
@@ -439,15 +461,25 @@ impl CanvasState {
         // not send unnecessary PenUps.
 
         Arc::make_mut(&mut self.layerstack)
+            .root_mut()
             .iter_layers_mut()
-            .filter(|l| l.has_sublayer(sublayer_id)) // avoid unnecessary clones
+            .filter_map(|l| match l.as_ref() {
+                Layer::Bitmap(b) => {
+                    if b.has_sublayer(sublayer_id) {
+                        Arc::make_mut(l).as_bitmap_mut()
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            })
             .fold(AoE::Nothing, |aoe, l| {
-                aoe.merge(editlayer::merge_sublayer(Arc::make_mut(l), sublayer_id))
+                aoe.merge(editlayer::merge_sublayer(l, sublayer_id))
             })
     }
 
     fn handle_canvas_resize(&mut self, msg: &CanvasResizeMessage) -> AoE {
-        let original_size = self.layerstack.size();
+        let original_size = self.layerstack.root().size();
 
         if let Some(ls) = self
             .layerstack
@@ -462,47 +494,48 @@ impl CanvasState {
     }
 
     fn handle_layer_create(&mut self, msg: &LayerCreateMessage) -> CanvasStateChange {
-        let pos = match (
-            msg.flags & LayerCreateMessage::FLAGS_INSERT != 0,
-            msg.source,
-        ) {
-            (true, 0) => LayerInsertion::Bottom,
-            (true, source) => LayerInsertion::Above(source as LayerID),
-            (false, _) => LayerInsertion::Top,
+        if msg.id == 0 {
+            warn!("Cannot create layer with zero ID");
+            return CanvasStateChange::nothing();
+        }
+
+        let pos = match (msg.flags & LayerCreateMessage::FLAGS_INTO != 0, msg.target) {
+            (true, source) => LayerInsertion::Into(source.into()),
+            (false, source) if source > 0 => LayerInsertion::Above(source),
+            _ => LayerInsertion::Top,
         };
 
-        let fill = if msg.flags & LayerCreateMessage::FLAGS_COPY != 0 {
-            LayerFill::Copy(msg.source as LayerID)
+        let root = Arc::make_mut(&mut self.layerstack).root_mut();
+
+        let new_layer = if msg.source > 0 {
+            root.add_layer_copy(msg.id.into(), msg.source, pos)
+        } else if msg.flags & LayerCreateMessage::FLAGS_GROUP != 0 {
+            root.add_group_layer(msg.id.into(), pos)
         } else {
-            LayerFill::Solid(Color::from_argb32(msg.fill))
+            root.add_bitmap_layer(msg.id.into(), Color::from_argb32(msg.fill), pos)
         };
 
-        if let Some(layer) =
-            Arc::make_mut(&mut self.layerstack).add_layer(msg.id as LayerID, fill.clone(), pos)
-        {
-            layer.title = msg.name.clone();
+        if let Some(new_layer) = new_layer {
+            new_layer.metadata_mut().title = msg.name.clone();
 
-            let aoe = match fill {
-                LayerFill::Copy(_) => layer.nonblank_tilemap().into(),
-                LayerFill::Solid(c) => {
-                    if c.is_transparent() {
-                        AoE::Nothing
-                    } else {
-                        AoE::Everything
-                    }
-                }
-            };
-
-            CanvasStateChange::layers(aoe)
+            CanvasStateChange::layers(if msg.source > 0 {
+                new_layer.nonblank_tilemap().into()
+            } else if msg.fill != 0 && msg.flags & LayerCreateMessage::FLAGS_GROUP == 0 {
+                AoE::Everything
+            } else {
+                AoE::Nothing
+            })
         } else {
-            // todo add_layer could return Result instead with a better error message
-            warn!("LayerCreate: layer {:04x} could not be created", msg.id);
+            warn!("Couldn't create layer {:04x}", msg.id);
             CanvasStateChange::nothing()
         }
     }
 
     fn handle_layer_attributes(&mut self, msg: &LayerAttributesMessage) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_layer_mut(msg.id as LayerID)
+        {
             let aoe = editlayer::change_attributes(
                 layer,
                 msg.sublayer.into(),
@@ -520,8 +553,11 @@ impl CanvasState {
     }
 
     fn handle_layer_retitle(&mut self, msg: &LayerRetitleMessage) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
-            layer.title = msg.title.clone();
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_layer_mut(msg.id as LayerID)
+        {
+            layer.metadata_mut().title = msg.title.clone();
             CanvasStateChange::layers(AoE::Nothing)
         } else {
             warn!("LayerRetitle: Layer {:04x} not found!", msg.id);
@@ -531,18 +567,38 @@ impl CanvasState {
 
     fn handle_layer_order(&mut self, new_order: &[u16]) -> CanvasStateChange {
         let order: Vec<LayerID> = new_order.iter().map(|i| *i as LayerID).collect();
-        self.layerstack = Arc::new(self.layerstack.reordered(&order));
-
-        CanvasStateChange::layers(AoE::Everything)
+        match self.layerstack.reordered(&order) {
+            Ok(ls) => {
+                self.layerstack = Arc::new(ls);
+                return CanvasStateChange::layers(AoE::Everything);
+            }
+            Err(e) => {
+                warn!("LayerOrder: Invalid order! ({})", e);
+                return CanvasStateChange::nothing();
+            }
+        }
     }
 
     fn handle_layer_delete(&mut self, msg: &LayerDeleteMessage) -> CanvasStateChange {
         let stack = Arc::make_mut(&mut self.layerstack);
         let id = msg.id as LayerID;
-        let aoe = if msg.merge {
-            if let Some(below) = stack.find_layer_below(id) {
-                let above = stack.get_layer_rc(id).unwrap();
-                editlayer::merge(stack.get_layer_mut(below).unwrap(), &above);
+
+        let aoe = if msg.merge_to > 0 {
+            if let Some(src) = stack.root().get_layer_rc(id) {
+                if let Some(src) = src.as_bitmap() {
+                    if let Some(target) = stack.root_mut().get_bitmaplayer_mut(msg.merge_to) {
+                        editlayer::merge(target, src);
+                    } else {
+                        warn!(
+                            "LayerDelete: Cannot merge {:04x} to missing layer {:04x}",
+                            id, msg.merge_to
+                        );
+                        return CanvasStateChange::nothing();
+                    }
+                } else {
+                    warn!("LayerDelete: Cannot merge non-bitmap layer {:04x}", id);
+                    return CanvasStateChange::nothing();
+                }
             } else {
                 warn!("LayerDelete: Cannot merge {:04x}", id);
                 return CanvasStateChange::nothing();
@@ -552,18 +608,23 @@ impl CanvasState {
             AoE::Nothing
         } else {
             stack
+                .root()
                 .get_layer(id)
                 .map(|l| l.nonblank_tilemap().into())
                 .unwrap_or(AoE::Nothing)
         };
 
-        stack.remove_layer(id);
+        stack.root_mut().remove_layer(id);
         CanvasStateChange::layers(aoe)
     }
 
+    // TODO this needs rethinking
     fn handle_layer_visibility(&mut self, msg: &LayerVisibilityMessage) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.id as LayerID) {
-            layer.hidden = !msg.visible;
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.id as LayerID)
+        {
+            layer.metadata.hidden = !msg.visible;
             CanvasStateChange::layers(layer.nonblank_tilemap().into())
         } else {
             CanvasStateChange::nothing()
@@ -632,7 +693,9 @@ impl CanvasState {
     }
 
     fn handle_puttile(&mut self, user_id: UserID, msg: &PutTileMessage) -> AoE {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
         {
             if let Some(tile) = compression::decompress_tile(&msg.image, user_id) {
                 return editlayer::put_tile(
@@ -651,7 +714,9 @@ impl CanvasState {
     }
 
     fn handle_putimage(&mut self, user_id: UserID, msg: &PutImageMessage) -> AoE {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
         {
             if layer.width() == 0 {
                 warn!("Layer has zero size!");
@@ -704,7 +769,9 @@ impl CanvasState {
             return CanvasStateChange::nothing();
         }
 
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
         {
             let mode = Blendmode::try_from(msg.mode).unwrap_or_default();
             let aoe = editlayer::fill_rect(
@@ -745,7 +812,9 @@ impl CanvasState {
             compression::decompress_image(&msg.mask, (msg.w * msg.h) as usize)
         };
 
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
         {
             if !source_rect.in_bounds(layer.size()) {
                 warn!(
@@ -772,7 +841,9 @@ impl CanvasState {
         user: UserID,
         msg: &DrawDabsClassicMessage,
     ) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
         {
             let (aoe, pos) = brushes::drawdabs_classic(layer, user, &msg, &mut self.brushcache);
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)
@@ -788,7 +859,9 @@ impl CanvasState {
         msg: &DrawDabsPixelMessage,
         square: bool,
     ) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack).get_layer_mut(msg.layer as LayerID)
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
         {
             let (aoe, pos) = brushes::drawdabs_pixel(layer, user, &msg, square);
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)

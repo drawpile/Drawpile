@@ -22,9 +22,10 @@
 
 use super::compression::compress_tile;
 use crate::paint::annotation::VAlign;
-use crate::paint::{LayerID, LayerStack, LayerTileSet, UserID};
+use crate::paint::{BitmapLayer, GroupLayer, LayerID, LayerStack, LayerTileSet, UserID};
 use crate::protocol::aclfilter::{userbits_to_vec, AclFilter};
 use crate::protocol::message::*;
+
 use std::convert::TryInto;
 
 /// Create a sequence of commands that reproduces the current state of the canvas
@@ -41,8 +42,8 @@ pub fn make_canvas_snapshot(
         user,
         CanvasResizeMessage {
             top: 0,
-            right: layerstack.width() as i32,
-            bottom: layerstack.height() as i32,
+            right: layerstack.root().width() as i32,
+            bottom: layerstack.root().height() as i32,
             left: 0,
         },
     )));
@@ -59,66 +60,8 @@ pub fn make_canvas_snapshot(
         )));
     }
 
-    // TODO pinned message
-
-    // Create layers
-    for layer in layerstack.iter_layers() {
-        let tileset = LayerTileSet::from(layer);
-        let layer_id: u16 = layer.id.try_into().unwrap();
-
-        msgs.push(Message::Command(CommandMessage::LayerCreate(
-            user,
-            LayerCreateMessage {
-                id: layer_id,
-                source: 0,
-                fill: tileset.background,
-                flags: 0,
-                name: layer.title.clone(),
-            },
-        )));
-
-        msgs.push(Message::Command(CommandMessage::LayerAttributes(
-            user,
-            LayerAttributesMessage {
-                id: layer_id,
-                sublayer: 0,
-                flags: if layer.censored {
-                    LayerAttributesMessage::FLAGS_CENSOR
-                } else {
-                    0
-                } | if layer.fixed {
-                    LayerAttributesMessage::FLAGS_FIXED
-                } else {
-                    0
-                },
-                opacity: (layer.opacity * 255.0) as u8,
-                blend: layer.blendmode.into(),
-            },
-        )));
-
-        tileset.to_puttiles(user, layer_id, 0, &mut msgs);
-
-        // Put active sublayer content (if any)
-        for sl in layer.iter_sublayers() {
-            if sl.id.0 > 0 && sl.id.0 < 256 {
-                LayerTileSet::from(sl).to_puttiles(user, layer_id, sl.id.0 as u8, &mut msgs);
-            }
-        }
-
-        // Set Layer ACLs (if found)
-        if let Some(acl) = aclfilter {
-            if let Some(layeracl) = acl.layers().get(&layer_id) {
-                msgs.push(Message::ClientMeta(ClientMetaMessage::LayerACL(
-                    user,
-                    LayerACLMessage {
-                        id: layer_id,
-                        flags: layeracl.flags(),
-                        exclusive: userbits_to_vec(&layeracl.exclusive),
-                    },
-                )))
-            }
-        }
-    }
+    // Create layers (recursive)
+    create_layers(user, layerstack.root().inner_ref(), aclfilter, &mut msgs);
 
     // Create annotations
     for a in layerstack.get_annotations().iter() {
@@ -177,4 +120,127 @@ pub fn make_canvas_snapshot(
     }
 
     msgs
+}
+
+fn create_layers(
+    user: UserID,
+    group: &GroupLayer,
+    aclfilter: Option<&AclFilter>,
+    msgs: &mut Vec<Message>,
+) {
+    for layer in group.iter_layers() {
+        if let Some(b) = layer.as_bitmap() {
+            create_layer(user, b, group.metadata().id.try_into().unwrap(), msgs);
+        } else if let Some(g) = layer.as_group() {
+            create_group(user, g, group.metadata().id.try_into().unwrap(), msgs);
+            create_layers(user, g, aclfilter, msgs);
+        } else {
+            unreachable!();
+        }
+
+        // Set Layer ACLs (if found)
+        if let Some(acl) = aclfilter {
+            if let Some(layeracl) = acl.layers().get(&layer.id().try_into().unwrap()) {
+                msgs.push(Message::ClientMeta(ClientMetaMessage::LayerACL(
+                    user,
+                    LayerACLMessage {
+                        id: layer.id().try_into().unwrap(),
+                        flags: layeracl.flags(),
+                        exclusive: userbits_to_vec(&layeracl.exclusive),
+                    },
+                )))
+            }
+        }
+    }
+}
+
+fn create_group(user: UserID, layer: &GroupLayer, into: LayerID, msgs: &mut Vec<Message>) {
+    let metadata = layer.metadata();
+    let layer_id: u16 = metadata.id.try_into().unwrap();
+
+    msgs.push(Message::Command(CommandMessage::LayerCreate(
+        user,
+        LayerCreateMessage {
+            id: layer_id,
+            source: 0,
+            target: into,
+            flags: LayerCreateMessage::FLAGS_GROUP
+                | if into > 0 {
+                    LayerCreateMessage::FLAGS_INTO
+                } else {
+                    0
+                },
+            fill: 0,
+            name: metadata.title.clone(),
+        },
+    )));
+
+    msgs.push(Message::Command(CommandMessage::LayerAttributes(
+        user,
+        LayerAttributesMessage {
+            id: layer_id,
+            sublayer: 0,
+            flags: if metadata.censored {
+                LayerAttributesMessage::FLAGS_CENSOR
+            } else {
+                0
+            } | if metadata.fixed {
+                LayerAttributesMessage::FLAGS_FIXED
+            } else {
+                0
+            },
+            opacity: (metadata.opacity * 255.0) as u8,
+            blend: metadata.blendmode.into(),
+        },
+    )));
+}
+
+fn create_layer(user: UserID, layer: &BitmapLayer, into: LayerID, msgs: &mut Vec<Message>) {
+    let tileset = LayerTileSet::from(layer);
+    let metadata = layer.metadata();
+    let layer_id: u16 = metadata.id.try_into().unwrap();
+
+    msgs.push(Message::Command(CommandMessage::LayerCreate(
+        user,
+        LayerCreateMessage {
+            id: layer_id,
+            source: 0,
+            target: into,
+            flags: if into > 0 {
+                LayerCreateMessage::FLAGS_INTO
+            } else {
+                0
+            },
+            fill: tileset.background,
+            name: metadata.title.clone(),
+        },
+    )));
+
+    msgs.push(Message::Command(CommandMessage::LayerAttributes(
+        user,
+        LayerAttributesMessage {
+            id: layer_id,
+            sublayer: 0,
+            flags: if metadata.censored {
+                LayerAttributesMessage::FLAGS_CENSOR
+            } else {
+                0
+            } | if metadata.fixed {
+                LayerAttributesMessage::FLAGS_FIXED
+            } else {
+                0
+            },
+            opacity: (metadata.opacity * 255.0) as u8,
+            blend: metadata.blendmode.into(),
+        },
+    )));
+
+    tileset.to_puttiles(user, layer_id, 0, msgs);
+
+    // Put active sublayer content (if any)
+    for sl in layer.iter_sublayers() {
+        if sl.metadata().id.0 > 0 && sl.metadata().id.0 < 256 {
+            LayerTileSet::from(sl).to_puttiles(user, layer_id, sl.metadata().id.0 as u8, msgs);
+        }
+    }
 }
