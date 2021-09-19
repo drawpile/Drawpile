@@ -20,5 +20,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-pub static MYPAINT_NAMESPACE: &str = "http://mypaint.org/ns/openraster";
-pub static DP_NAMESPACE: &str = "http://drawpile.net/";
+use std::env;
+
+use dpimpex;
+
+// A sample program that can read an OpenRaster file (or any other supported file)
+// and save it again (as a PNG, for example.)
+// This can be used to compare Drawpile's interpretation of the OpenRaster file
+// with the original.
+fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 3 {
+        println!("Usage: ora_render <source.ora> <target.png>");
+    } else {
+        let source = dpimpex::load_image(&args[1]).unwrap();
+        dpimpex::save_image(&args[2], &source).unwrap();
+    }
+}

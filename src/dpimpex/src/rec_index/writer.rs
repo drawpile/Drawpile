@@ -23,7 +23,7 @@
 use dpcore::canvas::compression::compress_tile;
 use dpcore::canvas::CanvasState;
 use dpcore::paint::annotation::Annotation;
-use dpcore::paint::{Layer, Tile, LayerViewOptions};
+use dpcore::paint::{Layer, BitmapLayer, Tile, LayerViewOptions};
 use dpcore::protocol::message::CommandMessage;
 
 use super::{IndexEntry, IndexResult};
@@ -240,6 +240,8 @@ impl<W: Write + Seek> IndexBuilder<W> {
     ) -> IndexResult<u64> {
         let ls = self.canvas.layerstack().clone(); // clone here to avoid borrow
 
+        todo!(); // FIXME
+        /*
         let mut layers: Vec<u64> = Vec::with_capacity(ls.layer_count());
 
         // First write the layers used in this layerstack
@@ -265,6 +267,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
                 stats.changed_layers += 1;
             }
         }
+        */
 
         // Write annotations
         let annotations = ls.get_annotations();
@@ -304,14 +307,16 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
         // Now we can write the actual layerstack subblock
         let offset = self.writer.stream_position()?;
-        self.writer.write_u32::<LittleEndian>(ls.width())?;
-        self.writer.write_u32::<LittleEndian>(ls.height())?;
+        self.writer.write_u32::<LittleEndian>(ls.root().width())?;
+        self.writer.write_u32::<LittleEndian>(ls.root().height())?;
         self.writer.write_u64::<LittleEndian>(bgtile_offset)?;
         self.writer
-            .write_u16::<LittleEndian>(ls.layer_count().try_into()?)?;
+            .write_u16::<LittleEndian>(ls.root().layer_count().try_into()?)?;
+        /* FIXME
         for l in layers {
             self.writer.write_u64::<LittleEndian>(l)?;
         }
+        */
         self.writer
             .write_u16::<LittleEndian>(annotations.len().try_into()?)?;
         for a in annotation_offsets {
@@ -344,6 +349,8 @@ impl<W: Write + Seek> IndexBuilder<W> {
         layermap: &mut LayerMap,
         stats: &mut Stats,
     ) -> IndexResult<u64> {
+        todo!(); // FIXME
+        /*
         let mut sublayers: Vec<u64> = Vec::new();
         let mut tiles: Vec<u64> = Vec::with_capacity(layer.tilevec().len());
 
@@ -412,6 +419,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
         self.writer.write_u8(layer.fixed as u8)?;
 
         Ok(offset)
+        */
     }
 
     fn write_tile(&mut self, tile: &Tile) -> IndexResult<u64> {
@@ -426,7 +434,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
 }
 
 /// Remember the last used tiles of this layer in the next generation.
-fn copy_last_tile_offsets(layer: &Layer, last_tiles: &TileMap, new_tiles: &mut TileMap) {
+fn copy_last_tile_offsets(layer: &BitmapLayer, last_tiles: &TileMap, new_tiles: &mut TileMap) {
     for t in layer.tilevec() {
         // Note: this function is used to pass along the tile data offsets of the
         // previously written layer. Therefore, it is safe to assume that

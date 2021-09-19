@@ -29,12 +29,10 @@ use zip::result::ZipError;
 
 pub mod animation;
 pub mod conv;
-mod flat;
-mod ora_reader;
-mod ora_utils;
-mod ora_writer;
 pub mod rec;
 pub mod rec_index;
+mod flat;
+mod ora;
 
 #[derive(Debug)]
 pub enum ImpexError {
@@ -108,7 +106,7 @@ where
             .and_then(|s| s.to_str())
             .and_then(|s| Some(s.to_ascii_lowercase()));
         match ext.as_deref() {
-            Some("ora") => ora_reader::load_openraster_image(path),
+            Some("ora") => ora::load_openraster_image(path),
             Some("gif") => flat::load_gif_animation(path),
             Some(_) => flat::load_flat_image(path),
             None => Err(ImpexError::UnsupportedFormat),
@@ -127,7 +125,7 @@ where
             .and_then(|s| s.to_str())
             .and_then(|s| Some(s.to_ascii_lowercase()));
         match ext.as_deref() {
-            Some("ora") => ora_writer::save_openraster_image(path, layerstack),
+            Some("ora") => ora::save_openraster_image(path, layerstack),
             Some(_) => flat::save_flat_image(path, layerstack),
             None => Err(ImpexError::UnsupportedFormat),
         }

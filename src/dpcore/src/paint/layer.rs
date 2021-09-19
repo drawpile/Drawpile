@@ -44,6 +44,7 @@ pub struct LayerMetadata {
     pub censored: bool,
     pub fixed: bool,
     pub blendmode: Blendmode,
+    pub isolated: bool, // applies to group layers only
 }
 
 impl LayerMetadata {

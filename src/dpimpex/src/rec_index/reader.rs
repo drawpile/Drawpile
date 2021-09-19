@@ -88,7 +88,7 @@ pub fn read_index<R: Read+Seek>(reader: &mut R) -> IndexResult<Index> {
 }
 
 /// Read a snapshot from the index
-/// 
+///
 /// Returns message index, message offset and the layer stack.
 pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexResult<LayerStack> {
     reader.seek(SeekFrom::Start(entry.snapshot_offset))?;
@@ -112,6 +112,8 @@ pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexR
         annotations.push(read_annotation(reader, offset)?);
     }
 
+    todo!(); // FIXME
+    /*
     Ok(LayerStack::from_parts(
         width,
         height,
@@ -119,6 +121,7 @@ pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexR
         Arc::new(layers),
         Arc::new(annotations)
     ))
+    */
 }
 
 pub fn read_thumbnail<R: Read+Seek>(reader: &mut R, offset: u64) -> IndexResult<Vec<u8>> {
@@ -186,6 +189,8 @@ fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32
         }
     }
 
+    todo!(); // FIXME
+    /*
     let mut layer = Layer::from_parts(
         InternalLayerID(id),
         width,
@@ -201,6 +206,7 @@ fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32
     layer.fixed = fixed != 0;
 
     Ok(Arc::new(layer))
+    */
 }
 
 fn read_tile<R: Read+Seek>(reader: &mut R, tile_cache: &mut HashMap<u64, Tile>, offset: u64) -> IndexResult<Tile> {

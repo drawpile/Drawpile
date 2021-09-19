@@ -357,7 +357,7 @@ LayerAttributes:
     fields:
         - id u16: hex
         - sublayer u8
-        - flags flags: [censor, fixed]
+        - flags flags: [censor, fixed, isolated]
         - opacity u8
         - blend blendmode
 

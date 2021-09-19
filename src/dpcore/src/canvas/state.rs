@@ -543,6 +543,7 @@ impl CanvasState {
                 Blendmode::try_from(msg.blend).unwrap_or(Blendmode::Normal),
                 (msg.flags & LayerAttributesMessage::FLAGS_CENSOR) != 0,
                 (msg.flags & LayerAttributesMessage::FLAGS_FIXED) != 0,
+                (msg.flags & LayerAttributesMessage::FLAGS_ISOLATED) != 0,
             );
 
             CanvasStateChange::layers(aoe)

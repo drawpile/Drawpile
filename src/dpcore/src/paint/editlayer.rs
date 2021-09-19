@@ -311,6 +311,7 @@ pub fn change_attributes(
     blend: Blendmode,
     censored: bool,
     fixed: bool,
+    isolated: bool,
 ) -> AoE {
     if sublayer != 0 {
         if let Layer::Bitmap(bl) = layer {
@@ -328,6 +329,7 @@ pub fn change_attributes(
         md.opacity = opacity;
         md.censored = censored;
         md.fixed = fixed;
+        md.isolated = isolated;
 
         layer.nonblank_tilemap().into()
     }

@@ -20,12 +20,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::conv::to_dpimage;
-use super::ora_utils::{DP_NAMESPACE, MYPAINT_NAMESPACE};
-use super::{ImageImportResult, ImpexError};
+use crate::conv::to_dpimage;
+use crate::{ImageImportResult, ImpexError};
+use super::{DP_NAMESPACE, MYPAINT_NAMESPACE,
+    OraCanvas, Isolation, OraStackElement, OraCommon, OraStack, OraLayer, OraAnnotation};
+
 use dpcore::paint::annotation::VAlign;
-use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
-use dpcore::paint::{editlayer, Blendmode, Color, Image, LayerStack, Rectangle, Size, Tile};
+use dpcore::paint::{editlayer, Blendmode, Color, Image,
+    LayerStack, LayerInsertion, LayerID,
+    Rectangle, Size, Tile};
 
 use std::fs::File;
 use std::io::{Cursor, Read, Seek};
@@ -49,53 +52,8 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     // TODO dpi
 
     // Create layers
-    let mut layer_id = 0x0100;
-    for oralayer in canvas.layers {
-        if !oralayer.bgtile.is_empty() {
-            let tile_image = get_image_file(&mut archive, &oralayer.bgtile)?;
-            if tile_image.width == 64 || tile_image.height == 64 {
-                // If we have a valid tile, this is a background layer
-                // that we don't need to represent as an actual layer
-                ls.background = Tile::from_data(&tile_image.pixels, 0);
-                continue;
-            }
-        }
-
-        let img = get_image_file(&mut archive, &oralayer.filename)?;
-
-        let mut layer = ls
-            .add_layer(
-                layer_id,
-                LayerFill::Solid(Color::TRANSPARENT),
-                LayerInsertion::Top,
-            )
-            .unwrap();
-
-        layer.title = format!("Layer {}", layer_id - 0x00ff);
-        layer.opacity = oralayer.opacity.clamp(0.0, 1.0);
-        layer.hidden = !oralayer.visibility;
-        layer.censored = oralayer.censored;
-        layer.fixed = oralayer.fixed;
-        layer.blendmode = Blendmode::from_svg_name(&oralayer.composite_op).unwrap_or_default();
-
-        // TODO layer lock status
-
-        editlayer::draw_image(
-            &mut layer,
-            1,
-            &img.pixels,
-            &Rectangle::new(
-                oralayer.offset.0,
-                oralayer.offset.1,
-                img.width as i32,
-                img.height as i32,
-            ),
-            1.0,
-            Blendmode::Replace,
-        );
-
-        layer_id += 1;
-    }
+    let mut next_layer_id = 0x0100;
+    create_stack(&mut archive, &mut ls, &mut next_layer_id, 0, &canvas.root)?;
 
     // Create annotations
     let annotation_id = 0x0100;
@@ -113,6 +71,79 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
 
     // TODO warn about unsupported features
     Ok(ls)
+}
+
+fn create_stack<R: Read+Seek>(archive: &mut ZipArchive<R>, layerstack: &mut LayerStack, next_layer_id: &mut LayerID, parent_id: LayerID, stack: &OraStack) -> Result<(), ImpexError> {
+    for layer in &stack.layers {
+        match layer {
+            OraStackElement::Stack(substack) => {
+                let layer_id = *next_layer_id;
+                let subgroup = layerstack.root_mut().add_group_layer(layer_id, LayerInsertion::Into(parent_id)).unwrap().as_group_mut().unwrap();
+                *next_layer_id += 1;
+                let metadata = subgroup.metadata_mut();
+
+                metadata.title = substack.common.name.clone();
+                metadata.opacity = substack.common.opacity.clamp(0.0, 1.0);
+                metadata.hidden = !substack.common.visibility;
+                metadata.censored = substack.common.censored;
+                metadata.fixed = substack.common.fixed;
+                metadata.blendmode = substack.common.composite_op;
+                metadata.isolated = matches!(substack.isolation, Isolation::Isolate);
+
+                create_stack(archive, layerstack, next_layer_id, layer_id, &substack)?;
+            }
+            OraStackElement::Layer(oralayer) => {
+                if !oralayer.bgtile.is_empty() {
+                    let tile_image = get_image_file(archive, &oralayer.bgtile)?;
+                    if tile_image.width == 64 || tile_image.height == 64 {
+                        // If we have a valid tile, this is a background layer
+                        // that we don't need to represent as an actual layer
+                        layerstack.background = Tile::from_data(&tile_image.pixels, 0);
+                        continue;
+                    }
+                }
+
+                let img = get_image_file(archive, &oralayer.filename)?;
+                let mut layer = layerstack
+                    .root_mut()
+                    .add_bitmap_layer(
+                        *next_layer_id,
+                        Color::TRANSPARENT,
+                        LayerInsertion::Into(parent_id),
+                    )
+                    .unwrap()
+                    .as_bitmap_mut()
+                    .unwrap();
+                *next_layer_id += 1;
+
+                let mut metadata = layer.metadata_mut();
+                metadata.title = oralayer.common.name.clone();
+                metadata.opacity = oralayer.common.opacity.clamp(0.0, 1.0);
+                metadata.hidden = !oralayer.common.visibility;
+                metadata.censored = oralayer.common.censored;
+                metadata.fixed = oralayer.common.fixed;
+                metadata.blendmode = oralayer.common.composite_op;
+
+                // TODO layer lock status
+
+                editlayer::draw_image(
+                    &mut layer,
+                    1,
+                    &img.pixels,
+                    &Rectangle::new(
+                        oralayer.common.offset.0,
+                        oralayer.common.offset.1,
+                        img.width as i32,
+                        img.height as i32,
+                    ),
+                    1.0,
+                    Blendmode::Replace,
+                );
+            }
+        }
+    }
+
+    Ok(())
 }
 
 /// OpenRaster files are identified by the presence of a "mimetype" file
@@ -145,38 +176,6 @@ fn get_image_file<R: Read + Seek>(
         .decode()?;
 
     Ok(to_dpimage(&img.into_rgba8()))
-}
-
-#[derive(Debug)]
-struct OraCanvas {
-    size: Size,
-    unsupported_features: bool,
-    dpi: (i32, i32),
-    layers: Vec<OraLayer>,           // note: nested stacks not yet supported
-    annotations: Vec<OraAnnotation>, // our extension
-}
-
-#[derive(Debug)]
-struct OraLayer {
-    name: String,
-    filename: String,
-    bgtile: String, // MyPaint extension
-    offset: (i32, i32),
-    opacity: f32,
-    visibility: bool,
-    locked: bool,
-    censored: bool, // our extension
-    fixed: bool,    // our extension
-    composite_op: String,
-    unsupported_features: bool, // this layer makes use of unsupported features
-}
-
-#[derive(Debug)]
-struct OraAnnotation {
-    rect: Rectangle,
-    bg: String,
-    valign: String,
-    content: String,
 }
 
 fn parse_stack_xml<R: Read>(file: R) -> Result<OraCanvas, ImpexError> {
@@ -233,7 +232,22 @@ fn parse_stack_image<R: Read>(
                 .and_then(|a| a.parse::<i32>().ok())
                 .unwrap_or(72),
         ),
-        layers: Vec::new(),
+        root: OraStack {
+            common: OraCommon {
+                name: String::new(),
+                offset: (0, 0),
+                opacity: 1.0,
+                visibility: true,
+                locked: false,
+                censored: false,
+                fixed: false,
+                composite_op: Blendmode::Normal,
+                unsupported_features: false,
+            },
+            isolation: Isolation::Auto,
+            layers: Vec::new(),
+            annotations: Vec::new(),
+        },
         annotations: Vec::new(),
     };
 
@@ -247,7 +261,15 @@ fn parse_stack_image<R: Read>(
                 name, attributes, ..
             }) => {
                 if name.local_name == "stack" {
-                    parse_stack_stack(&mut canvas, attributes, (0, 0), parser)?;
+                    canvas.root = parse_stack_stack(attributes, (0, 0), parser)?;
+                    canvas.annotations.append(&mut canvas.root.annotations);
+                    canvas.unsupported_features |= canvas.root.common.unsupported_features;
+
+                } else if name.local_name == "annotations"
+                    && name.namespace.as_deref() == Some(DP_NAMESPACE)
+                {
+                    canvas.annotations.append(&mut parse_annotations(parser)?);
+
                 } else {
                     warn!("Unsupported openraster <image> element <{}>", name);
                     canvas.unsupported_features = true;
@@ -256,9 +278,6 @@ fn parse_stack_image<R: Read>(
             }
             Ok(XmlEvent::EndElement { name, .. }) => {
                 assert_eq!(name.local_name, "image");
-                // Note: layers are listed top-to-bottom in the XML,
-                // but are stored bottom-to-top inside Drawpile
-                canvas.layers.reverse();
                 return Ok(canvas);
             }
             Ok(XmlEvent::EndDocument) => {
@@ -274,22 +293,50 @@ fn parse_stack_image<R: Read>(
     }
 }
 
+fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32)) -> OraCommon {
+    OraCommon {
+        name: take_attribute(attributes, "name", None).unwrap_or(String::new()),
+        offset: (
+            offset.0
+                + take_attribute(attributes, "x", None)
+                    .and_then(|a| a.parse::<i32>().ok())
+                    .unwrap_or(0),
+            offset.1
+                + take_attribute(attributes, "y", None)
+                    .and_then(|a| a.parse::<i32>().ok())
+                    .unwrap_or(0)
+        ),
+        opacity: take_attribute(attributes, "opacity", None)
+            .and_then(|a| a.parse::<f32>().ok())
+            .unwrap_or(1.0),
+        visibility: take_attribute(attributes, "visibility", None)
+            .map_or(true, |a| a == "visible"),
+        locked: take_attribute(attributes, "edit-locked", None).map_or(false, |a| a == "true"),
+        censored: take_attribute(attributes, "censored", Some(DP_NAMESPACE))
+            .map_or(false, |a| a == "true"),
+        fixed: take_attribute(attributes, "fixed", Some(DP_NAMESPACE))
+            .map_or(false, |a| a == "true"),
+        composite_op: take_attribute(attributes, "composite-op", None)
+            .and_then(|s| Blendmode::from_svg_name(&s))
+            .unwrap_or(Blendmode::Normal),
+            unsupported_features: false,
+    }
+}
+
 fn parse_stack_stack<R: Read>(
-    canvas: &mut OraCanvas,
     mut attributes: Vec<OwnedAttribute>,
     offset: (i32, i32),
     parser: &mut EventReader<R>,
-) -> Result<(), ImpexError> {
-    let offset = (
-        offset.0
-            + take_attribute(&mut attributes, "x", None)
-                .and_then(|a| a.parse::<i32>().ok())
-                .unwrap_or(0),
-        offset.1
-            + take_attribute(&mut attributes, "y", None)
-                .and_then(|a| a.parse::<i32>().ok())
-                .unwrap_or(0),
-    );
+) -> Result<OraStack, ImpexError> {
+    let mut stack = OraStack {
+        common: take_common(&mut attributes, offset),
+        isolation: match &take_attribute(&mut attributes, "isolation", None).as_deref() {
+            Some("isolate") => Isolation::Isolate,
+            _ => Isolation::Auto,
+        },
+        layers: Vec::new(),
+        annotations: Vec::new(),
+    };
 
     loop {
         match parser.next() {
@@ -297,27 +344,38 @@ fn parse_stack_stack<R: Read>(
                 name, attributes, ..
             }) => {
                 if name.local_name == "stack" {
-                    // Nested stacks aren't supported at the moment, but we can
-                    // still get the layers out of  them.
-                    canvas.unsupported_features = true;
-                    parse_stack_stack(canvas, attributes, offset, parser)?;
+                    let substack = parse_stack_stack(
+                        attributes,
+                        stack.common.offset,
+                        parser)?;
+                    stack.common.unsupported_features |= substack.common.unsupported_features;
+
+                    stack.layers.push(OraStackElement::Stack(substack));
+
                 } else if name.local_name == "layer" {
-                    canvas
-                        .layers
-                        .push(parse_stack_layer(attributes, offset, parser)?);
+                    let layer = parse_stack_layer(attributes, stack.common.offset, parser)?;
+                    stack.common.unsupported_features |= layer.common.unsupported_features;
+                    stack.layers.push(OraStackElement::Layer(layer));
+
                 } else if name.local_name == "annotations"
                     && name.namespace.as_deref() == Some(DP_NAMESPACE)
                 {
-                    canvas.annotations.append(&mut parse_annotations(parser)?);
+                    // Backward compatibility.
+                    // Drawpile versions <2.2 put the annotations element
+                    // under the stack element.
+                    stack.annotations.append(&mut parse_annotations(parser)?);
                 } else {
                     warn!("Unsupported OpenRaster stack element <{}>", name.local_name);
-                    canvas.unsupported_features = true;
+                    stack.common.unsupported_features = true;
                     skip_element(parser)?;
                 }
             }
             Ok(XmlEvent::EndElement { name, .. }) => {
                 assert_eq!(name.local_name, "stack");
-                return Ok(());
+                // Note: layers are listed top-to-bottom in the XML,
+                // but are stored bottom-to-top inside Drawpile
+                stack.layers.reverse();
+                return Ok(stack);
             }
             Ok(XmlEvent::EndDocument) => {
                 warn!("Error reading OpenRaster stack: Unexpected end of document while parsing <image>");
@@ -337,39 +395,16 @@ fn parse_stack_layer<R: Read>(
     parser: &mut EventReader<R>,
 ) -> Result<OraLayer, ImpexError> {
     let mut layer = OraLayer {
-        name: take_attribute(&mut attributes, "name", None).unwrap_or(String::new()),
+        common: take_common(&mut attributes, offset),
         filename: take_attribute(&mut attributes, "src", None)
             .ok_or(ImpexError::UnsupportedFormat)?,
         bgtile: take_attribute(&mut attributes, "background-tile", Some(MYPAINT_NAMESPACE))
             .unwrap_or(String::new()),
-        offset: (
-            offset.0
-                + take_attribute(&mut attributes, "x", None)
-                    .and_then(|a| a.parse::<i32>().ok())
-                    .unwrap_or(0),
-            offset.1
-                + take_attribute(&mut attributes, "y", None)
-                    .and_then(|a| a.parse::<i32>().ok())
-                    .unwrap_or(0),
-        ),
-        opacity: take_attribute(&mut attributes, "opacity", None)
-            .and_then(|a| a.parse::<f32>().ok())
-            .unwrap_or(1.0),
-        visibility: take_attribute(&mut attributes, "visibility", None)
-            .map_or(true, |a| a == "visibile"),
-        locked: take_attribute(&mut attributes, "edit-locked", None).map_or(false, |a| a == "true"),
-        censored: take_attribute(&mut attributes, "censored", Some(DP_NAMESPACE))
-            .map_or(false, |a| a == "true"),
-        fixed: take_attribute(&mut attributes, "fixed", Some(DP_NAMESPACE))
-            .map_or(false, |a| a == "true"),
-        composite_op: take_attribute(&mut attributes, "composite-op", None)
-            .unwrap_or("src-over".into()),
-        unsupported_features: false,
     };
 
     if !attributes.is_empty() {
         warn!("Unsupported OpenRaster layer attributes: {:?}", attributes);
-        layer.unsupported_features = true;
+        layer.common.unsupported_features = true;
     }
 
     // Layer element shouldn't have any child elements
@@ -377,7 +412,7 @@ fn parse_stack_layer<R: Read>(
         match parser.next() {
             Ok(XmlEvent::StartElement { name, .. }) => {
                 warn!("Unsupported OpenRaster layer element <{}>", name.local_name);
-                layer.unsupported_features = true;
+                layer.common.unsupported_features = true;
                 skip_element(parser)?;
             }
             Ok(XmlEvent::EndElement { name, .. }) => {
@@ -540,7 +575,7 @@ mod tests {
         let ls = load_openraster_image(path.as_ref()).unwrap();
         let annotations = ls.get_annotations();
 
-        assert_eq!(ls.layer_count(), 3);
+        assert_eq!(ls.root().layer_count(), 3);
         assert_eq!(annotations.len(), 1);
 
         assert!(matches!(annotations[0].valign, VAlign::Center));

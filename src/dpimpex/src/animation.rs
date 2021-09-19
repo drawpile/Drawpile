@@ -13,8 +13,8 @@ pub fn save_gif_animation(path: &Path, layerstack: &LayerStack) -> ImageExportRe
 
     encoder.set_repeat(Repeat::Infinite)?;
 
-    for (idx, layer) in layerstack.iter_layers().enumerate() {
-        if !layer.fixed && layer.is_visible() {
+    for (idx, layer) in layerstack.root().iter_layers().enumerate() {
+        if !layer.metadata().fixed && layer.is_visible() {
             let image = layerstack.to_image(&LayerViewOptions::solo(idx));
             // TODO subframe delta
             encoder.encode_frame(Frame::from_parts(
@@ -30,8 +30,8 @@ pub fn save_gif_animation(path: &Path, layerstack: &LayerStack) -> ImageExportRe
 
 pub fn save_frames_animation(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
     let mut framenum = 1;
-    for (idx, layer) in layerstack.iter_layers().enumerate() {
-        if !layer.fixed && layer.is_visible() {
+    for (idx, layer) in layerstack.root().iter_layers().enumerate() {
+        if !layer.metadata().fixed && layer.is_visible() {
             let mut pb = PathBuf::new();
             pb.push(path);
             pb.push(format!("frame-{:03}.png", framenum));

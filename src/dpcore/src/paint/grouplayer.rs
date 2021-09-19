@@ -144,6 +144,7 @@ impl GroupLayer {
                 censored: false,
                 fixed: false,
                 blendmode: Blendmode::Normal,
+                isolated: true,
             },
             width,
             height,
@@ -166,6 +167,10 @@ impl GroupLayer {
 
     pub fn metadata(&self) -> &LayerMetadata {
         &self.metadata
+    }
+
+    pub fn metadata_mut(&mut self) -> &mut LayerMetadata {
+        &mut self.metadata
     }
 
     /// Recursively find a layer with the given ID and return a reference to it
@@ -249,7 +254,8 @@ impl GroupLayer {
         debug_assert!(self.get_layer(id).is_none());
 
         let insert_idx = match pos {
-            LayerInsertion::Top => self.layer_count(),
+            LayerInsertion::Top |
+            LayerInsertion::Into(0) => self.layer_count(),
             LayerInsertion::Above(layer_id) => {
                 if let Some(subgroup_idx) = self.routes.get(layer_id) {
                     let newlayer = Arc::make_mut(&mut self.layers[subgroup_idx])
@@ -457,15 +463,13 @@ impl GroupLayer {
             return;
         }
 
-        let isolated = true; // TODO
-
         let flatten = |dest: &mut TileData| {
             for l in self.layers.iter() {
                 l.flatten_tile(dest, i, j, opacity, censor, highlight_id);
             }
         };
 
-        if isolated {
+        if self.metadata.isolated {
             let mut tmp = TileData::new(ZERO_PIXEL, 0);
             flatten(&mut tmp);
             destination.merge_data(&tmp, 1.0, self.metadata.blendmode);

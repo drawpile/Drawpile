@@ -436,7 +436,8 @@ pub struct LayerAttributesMessage {
 impl LayerAttributesMessage {
     pub const FLAGS_CENSOR: u8 = 0x1;
     pub const FLAGS_FIXED: u8 = 0x2;
-    pub const FLAGS: &'static [&'static str] = &["censor", "fixed"];
+    pub const FLAGS_ISOLATED: u8 = 0x4;
+    pub const FLAGS: &'static [&'static str] = &["censor", "fixed", "isolated"];
 
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         reader.validate(6, 6)?;
