@@ -247,6 +247,23 @@ impl CanvasState {
         self.handle_message(msg)
     }
 
+    /// Set a layer's local visibility flag
+    pub fn set_local_visibility(
+        &mut self,
+        layer_id: LayerID,
+        visible: bool
+    ) -> CanvasStateChange {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_layer_mut(layer_id)
+        {
+            layer.metadata_mut().hidden = !visible;
+            CanvasStateChange::layers(layer.nonblank_tilemap().into())
+        } else {
+            CanvasStateChange::nothing()
+        }
+    }
+
     /// Apply commands to a preview layer. This is used to preview
     /// shape tools and selection cutouts.
     pub fn apply_preview(
@@ -396,7 +413,6 @@ impl CanvasState {
             LayerRetitle(_, m) => self.handle_layer_retitle(m),
             LayerOrder(_, order) => self.handle_layer_order(order),
             LayerDelete(_, m) => self.handle_layer_delete(m),
-            LayerVisibility(_, m) => self.handle_layer_visibility(m),
             PutImage(u, m) => self.handle_putimage(*u, m).into(),
             FillRect(user, m) => self.handle_fillrect(*user, m),
             PenUp(user) => self.handle_penup(*user).into(),
@@ -617,19 +633,6 @@ impl CanvasState {
 
         stack.root_mut().remove_layer(id);
         CanvasStateChange::layers(aoe)
-    }
-
-    // TODO this needs rethinking
-    fn handle_layer_visibility(&mut self, msg: &LayerVisibilityMessage) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
-            .root_mut()
-            .get_bitmaplayer_mut(msg.id as LayerID)
-        {
-            layer.metadata.hidden = !msg.visible;
-            CanvasStateChange::layers(layer.nonblank_tilemap().into())
-        } else {
-            CanvasStateChange::nothing()
-        }
     }
 
     fn handle_annotation_create(

@@ -232,7 +232,6 @@ impl LocalFork {
             LayerRetitle(_, m) => AffectedArea::LayerAttrs(m.id as LayerID),
             LayerOrder(_, _) => AffectedArea::LayerAttrs(0),
             LayerDelete(_, m) => AffectedArea::LayerAttrs(m.id as LayerID), // TODO this can affect the layer below as well
-            LayerVisibility(_, _) => AffectedArea::UserAttrs,
             PutImage(_, m) => {
                 AffectedArea::Pixels(m.layer as LayerID, make_rect(m.x, m.y, m.w, m.h))
             }

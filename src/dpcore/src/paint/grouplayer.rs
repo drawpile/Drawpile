@@ -504,12 +504,12 @@ impl GroupLayer {
     }
 
     /// Return an interator to the direct children of this group
-    pub fn iter_layers(&self) -> impl Iterator<Item = &Layer> {
+    pub fn iter_layers(&self) -> impl Iterator+DoubleEndedIterator<Item = &Layer> {
         self.layers.iter().map(|l| l.as_ref())
     }
 
     /// Return a mutable iterator to the direct children of this group
-    pub fn iter_layers_mut(&mut self) -> impl Iterator<Item = &mut Arc<Layer>> {
+    pub fn iter_layers_mut(&mut self) -> impl Iterator+DoubleEndedIterator<Item = &mut Arc<Layer>> {
         self.layers.iter_mut()
     }
 

@@ -137,7 +137,6 @@ if __name__ == '__main__':
         'LayerRetitle',
         'LayerOrder',
         'LayerDelete',
-        'LayerVisibility',
         # 'PutImage', custom implementation
         'FillRect',
         'PenUp',

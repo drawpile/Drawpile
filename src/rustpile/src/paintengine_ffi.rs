@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::adapters::{AnnotationAt, Annotations, LayerInfo};
+use super::adapters::{AnnotationAt, Annotations, LayerInfo, flatten_layerinfo};
 use super::messages_ffi;
 use super::recindex::{build_index, IndexBuildProgressNoticationFn, IndexReader};
 use super::snapshots::SnapshotQueue;
@@ -30,11 +30,10 @@ use dpcore::canvas::snapshot::make_canvas_snapshot;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
 use dpcore::paint::floodfill;
-use dpcore::paint::layerstack::{LayerFill, LayerInsertion};
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
     AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
-    LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID,
+    LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID, LayerInsertion
 };
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::message::*;
@@ -133,6 +132,7 @@ enum PaintEngineCommand {
     RemovePreview(LayerID),
     ReplaceCanvas(Box<LayerStack>),
     PlaybackPaused(i64, u32), // triggers PlaybackCallback
+    SetLocalVisibility(LayerID, bool),
     TruncateHistory,
     Cleanup,
     Catchup(u32),
@@ -234,6 +234,9 @@ fn run_paintengine(
                 Catchup(progress) => {
                     (callbacks.notify_catchup)(callbacks.context_object, progress);
                 }
+                SetLocalVisibility(layer, visible) => {
+                    changes |= canvas.set_local_visibility(layer, visible);
+                }
             };
 
             cmd = match channel.try_recv() {
@@ -262,7 +265,7 @@ fn run_paintengine(
                         (callbacks.notify_resize)(callbacks.context_object, rx, ry, original_size);
                     }
                     _ => {
-                        let canvas_size = canvas.layerstack().size();
+                        let canvas_size = canvas.layerstack().root().size();
                         if let Some(bounds) = changes.aoe.bounds(canvas_size) {
                             let unrefreshed_area =
                                 std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing);
@@ -274,11 +277,7 @@ fn run_paintengine(
             }
 
             if changes.layers_changed {
-                let layers: Vec<LayerInfo> = canvas
-                    .layerstack()
-                    .iter_layers()
-                    .map(|l| l.into())
-                    .collect();
+                let layers = flatten_layerinfo(canvas.layerstack().root());
                 (callbacks.notify_layerlist)(
                     callbacks.context_object,
                     layers.as_ptr(),
@@ -416,7 +415,7 @@ pub extern "C" fn paintengine_register_meta_callbacks(
 #[no_mangle]
 pub extern "C" fn paintengine_canvas_size(dp: &PaintEngine) -> Size {
     let vc = dp.viewcache.lock().unwrap();
-    vc.layerstack.size()
+    vc.layerstack.root().size()
 }
 
 /// Receive one or more messages
@@ -634,7 +633,7 @@ pub extern "C" fn paintengine_get_annotation_at(
 #[no_mangle]
 pub extern "C" fn paintengine_is_simple(dp: &PaintEngine) -> bool {
     let vc = dp.viewcache.lock().unwrap();
-    vc.layerstack.layer_count() <= 1
+    vc.layerstack.root().layer_count() <= 1
         && vc.layerstack.get_annotations().len() == 0
         && vc.layerstack.background.is_blank()
 }
@@ -650,11 +649,11 @@ pub extern "C" fn paintengine_set_view_mode(
         dp.view_opts.censor = censor;
         let aoe_bounds = {
             let mut vc = dp.viewcache.lock().unwrap();
-            if vc.layerstack.width() == 0 {
+            if vc.layerstack.root().width() == 0 {
                 None
             } else {
                 vc.unrefreshed_area = AoE::Everything;
-                vc.unrefreshed_area.bounds(vc.layerstack.size())
+                vc.unrefreshed_area.bounds(vc.layerstack.root().size())
             }
         };
 
@@ -685,11 +684,11 @@ pub extern "C" fn paintengine_set_onionskin_opts(
 
         let aoe_bounds = {
             let mut vc = dp.viewcache.lock().unwrap();
-            if vc.layerstack.width() == 0 {
+            if vc.layerstack.root().width() == 0 {
                 None
             } else {
                 vc.unrefreshed_area = AoE::Everything;
-                vc.unrefreshed_area.bounds(vc.layerstack.size())
+                vc.unrefreshed_area.bounds(vc.layerstack.root().size())
             }
         };
 
@@ -701,6 +700,7 @@ pub extern "C" fn paintengine_set_onionskin_opts(
 
 #[no_mangle]
 pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: LayerID) {
+    /* FIXME
     let aoe_bounds = {
         let mut vc = dp.viewcache.lock().unwrap();
         let idx = match vc.layerstack.find_layer_index(layer_id) {
@@ -727,6 +727,7 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
     if let Some(r) = aoe_bounds {
         (dp.notify_changes)(dp.context_object, r);
     }
+    */
 }
 
 /// Check the given coordinates and return the ID of the user
@@ -736,12 +737,12 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
 pub extern "C" fn paintengine_inspect_canvas(dp: &mut PaintEngine, x: i32, y: i32) -> UserID {
     let (user, aoe_bounds) = {
         let mut vc = dp.viewcache.lock().unwrap();
-        let user = vc.layerstack.last_edited_by(x, y);
+        let user = vc.layerstack.root().last_edited_by(x, y);
 
         if dp.view_opts.highlight != user {
             dp.view_opts.highlight = user;
             vc.unrefreshed_area = AoE::Everything;
-            (user, vc.unrefreshed_area.bounds(vc.layerstack.size()))
+            (user, vc.unrefreshed_area.bounds(vc.layerstack.root().size()))
         } else {
             (user, None)
         }
@@ -763,11 +764,11 @@ pub extern "C" fn paintengine_set_highlight_user(dp: &mut PaintEngine, user: Use
         dp.view_opts.highlight = user;
         let aoe_bounds = {
             let mut vc = dp.viewcache.lock().unwrap();
-            if vc.layerstack.width() == 0 {
+            if vc.layerstack.root().width() == 0 {
                 None
             } else {
                 vc.unrefreshed_area = AoE::Everything;
-                vc.unrefreshed_area.bounds(vc.layerstack.size())
+                vc.unrefreshed_area.bounds(vc.layerstack.root().size())
             }
         };
 
@@ -776,6 +777,22 @@ pub extern "C" fn paintengine_set_highlight_user(dp: &mut PaintEngine, user: Use
         }
     }
 }
+
+/// Set a layer's local visibility flag
+#[no_mangle]
+pub extern "C" fn paintengine_set_layer_visibility(
+    dp: &mut PaintEngine,
+    layer_id: LayerID,
+    visible: bool,
+) {
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::SetLocalVisibility(
+        layer_id,
+        visible
+    )) {
+        warn!("Couldn't send visibility command to paint engine: {:?}", err);
+    }
+}
+
 
 /// Draw a preview brush stroke onto the given layer
 ///
@@ -958,7 +975,7 @@ pub extern "C" fn paintengine_sample_color(
     let vc = dp.viewcache.lock().unwrap();
 
     if layer_id > 0 {
-        if let Some(layer) = vc.layerstack.get_layer(layer_id) {
+        if let Some(layer) = vc.layerstack.root().get_bitmaplayer(layer_id) {
             layer.sample_color(x, y, dia)
         } else {
             Color::TRANSPARENT
@@ -974,7 +991,7 @@ pub extern "C" fn paintengine_sample_color(
 pub extern "C" fn paintengine_pick_layer(dp: &PaintEngine, x: i32, y: i32) -> LayerID {
     let vc = dp.viewcache.lock().unwrap();
 
-    vc.layerstack.pick_layer(x, y)
+    vc.layerstack.root().pick_layer(x, y)
 }
 
 /// Find the bounding rectangle of the layer's content
@@ -984,7 +1001,7 @@ pub extern "C" fn paintengine_pick_layer(dp: &PaintEngine, x: i32, y: i32) -> La
 pub extern "C" fn paintengine_get_layer_bounds(dp: &PaintEngine, layer_id: LayerID) -> Rectangle {
     let vc = dp.viewcache.lock().unwrap();
 
-    if let Some(layer) = vc.layerstack.get_layer(layer_id) {
+    if let Some(layer) = vc.layerstack.root().get_bitmaplayer(layer_id) {
         if let Some(r) = layer.find_bounds() {
             return r;
         }
@@ -1011,11 +1028,11 @@ pub extern "C" fn paintengine_get_layer_content(
     pixels: *mut u8,
 ) -> bool {
     let vc = dp.viewcache.lock().unwrap();
-    if !rect.in_bounds(vc.layerstack.size()) {
+    if !rect.in_bounds(vc.layerstack.root().size()) {
         return false;
     }
 
-    if let Some(layer) = vc.layerstack.get_layer(layer_id) {
+    if let Some(layer) = vc.layerstack.root().get_bitmaplayer(layer_id) {
         let pixel_slice =
             unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
         layer.to_pixels(rect, pixel_slice).is_ok()
@@ -1053,7 +1070,7 @@ pub extern "C" fn paintengine_get_frame_content(
     pixels: *mut u8,
 ) -> bool {
     let vc = dp.viewcache.lock().unwrap();
-    if !rect.in_bounds(vc.layerstack.size()) {
+    if !rect.in_bounds(vc.layerstack.root().size()) {
         return false;
     }
 
@@ -1156,14 +1173,15 @@ pub extern "C" fn paintengine_load_blank(
     let mut ls = Box::new(LayerStack::new(width, height));
 
     ls.background = Tile::new(&background, 0);
-    let mut l = ls
-        .add_layer(
+    let l = ls
+        .root_mut()
+        .add_bitmap_layer(
             0x0100,
-            LayerFill::Solid(Color::TRANSPARENT),
+            Color::TRANSPARENT,
             LayerInsertion::Top,
         )
         .unwrap();
-    l.title = "Layer 1".into();
+    l.metadata_mut().title = "Layer 1".into();
 
     if let Err(err) = dp
         .engine_channel
@@ -1195,12 +1213,12 @@ impl From<dpimpex::ImpexError> for CanvasIoError {
     fn from(err: dpimpex::ImpexError) -> Self {
         match err {
             dpimpex::ImpexError::IoError(e) => {
-                (match e.kind() {
+                match e.kind() {
                     std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => {
                         Self::FileOpenError
                     }
                     _ => Self::FileIoError,
-                })
+                }
             }
             dpimpex::ImpexError::UnsupportedFormat => Self::UnsupportedFormat,
             dpimpex::ImpexError::CodecError(_)
@@ -1711,7 +1729,7 @@ pub extern "C" fn paintengine_paint_changes(
 ) {
     let mut vc = dp.viewcache.lock().unwrap();
 
-    if vc.layerstack.width() < 1 {
+    if vc.layerstack.root().width() < 1 {
         return;
     }
 
@@ -1719,7 +1737,7 @@ pub extern "C" fn paintengine_paint_changes(
         // We interpret an invalid rectangle to mean "refresh everything"
         std::mem::replace(&mut vc.unrefreshed_area, AoE::Nothing)
     } else {
-        let ls = vc.layerstack.size();
+        let ls = vc.layerstack.root().size();
         let rect = match rect.cropped(ls) {
             Some(r) => r,
             None => {

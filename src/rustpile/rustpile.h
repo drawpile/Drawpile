@@ -16,11 +16,13 @@ static const uint8_t JoinMessage_FLAGS_BOT = 4;
 
 static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
 
-static const uint8_t LayerCreateMessage_FLAGS_COPY = 1;
-
 static const uint8_t LayerAttributesMessage_FLAGS_FIXED = 2;
 
-static const uint8_t LayerCreateMessage_FLAGS_INSERT = 2;
+static const uint8_t LayerCreateMessage_FLAGS_GROUP = 1;
+
+static const uint8_t LayerCreateMessage_FLAGS_INTO = 2;
+
+static const uint8_t LayerAttributesMessage_FLAGS_ISOLATED = 4;
 
 static const uint8_t JoinMessage_FLAGS_MOD = 2;
 
@@ -214,7 +216,13 @@ struct LayerInfo {
   bool hidden;
   bool censored;
   bool fixed;
+  bool isolated;
+  bool group;
   Blendmode blendmode;
+  uint16_t children;
+  uint16_t rel_index;
+  int32_t left;
+  int32_t right;
 };
 
 using NotifyLayerListCallback = void(*)(void *ctx, const LayerInfo *layers, uintptr_t count);
@@ -429,6 +437,7 @@ void write_newlayer(MessageWriter *writer,
                     UserID ctx,
                     uint16_t id,
                     uint16_t source,
+                    uint16_t target,
                     uint32_t fill,
                     uint8_t flags,
                     const uint16_t *name,
@@ -453,9 +462,7 @@ void write_layerorder(MessageWriter *writer,
                       const uint16_t *layers,
                       uintptr_t layers_len);
 
-void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, bool merge);
-
-void write_layervisibility(MessageWriter *writer, UserID ctx, uint16_t id, bool visible);
+void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, uint16_t merge_to);
 
 void write_fillrect(MessageWriter *writer,
                     UserID ctx,
@@ -620,6 +627,9 @@ UserID paintengine_inspect_canvas(PaintEngine *dp, int32_t x, int32_t y);
 /// When set, all tiles last  touched by this use will be highlighted.
 /// Setting this to zero switches off inspection mode.
 void paintengine_set_highlight_user(PaintEngine *dp, UserID user);
+
+/// Set a layer's local visibility flag
+void paintengine_set_layer_visibility(PaintEngine *dp, LayerID layer_id, bool visible);
 
 /// Draw a preview brush stroke onto the given layer
 ///

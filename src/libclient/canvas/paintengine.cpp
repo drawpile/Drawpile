@@ -60,11 +60,8 @@ void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, u
 	QVector<LayerListItem> layers;
 	layers.reserve(count);
 
-	// Note: in the layer list model, layers are listed topmost first,
-	// whereas in the actual layerstack, they're bottom-most first so we need
-	// to swap the order here.
-	for(auto i=count;i>0;--i) {
-		const rustpile::LayerInfo &li = layerInfos[i-1];
+	for(uintptr_t i=0;i<count;++i) {
+		const rustpile::LayerInfo &li = layerInfos[i];
 		layers << LayerListItem {
 			uint16_t(li.id), // only internal (non-visible) layers have IDs outside the u16 range
 			QString::fromUtf8(reinterpret_cast<const char*>(li.title), li.titlelen),
@@ -72,7 +69,13 @@ void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, u
 			li.blendmode,
 			li.hidden,
 			li.censored,
-			li.fixed
+			li.fixed,
+			li.isolated,
+			li.group,
+			li.children,
+			li.rel_index,
+			li.left,
+			li.right
 		};
 	}
 

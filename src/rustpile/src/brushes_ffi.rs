@@ -39,7 +39,7 @@ pub extern "C" fn brushengine_stroke_to(
 ) {
     if let Some(paintengine) = pe {
         let vc = paintengine.viewcache.lock().unwrap();
-        be.stroke_to(x, y, p, vc.layerstack.get_layer(layer_id));
+        be.stroke_to(x, y, p, vc.layerstack.root().get_bitmaplayer(layer_id));
     } else {
         be.stroke_to(x, y, p, None);
     }
