@@ -31,6 +31,7 @@ use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
 use dpcore::paint::floodfill;
 use dpcore::paint::tile::TILE_SIZEI;
+use dpcore::paint::editstack;
 use dpcore::paint::{
     AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
     LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID, LayerInsertion
@@ -944,6 +945,35 @@ pub extern "C" fn paintengine_floodfill(
 
     true
 }
+
+/// Generate the layer reordering command for moving layer A to
+/// a position above layer B (or into it, if it is a group)
+///
+/// Returns false if a move command couldn't be generated
+#[no_mangle]
+pub extern "C" fn paintengine_make_movelayer(
+    dp: &mut PaintEngine,
+    writer: &mut MessageWriter,
+    user_id: UserID,
+    source_layer: LayerID,
+    target_layer: LayerID,
+    into_group: bool,
+    below: bool,
+) -> bool {
+
+    let new_ordering = {
+        let vc = dp.viewcache.lock().unwrap();
+        editstack::move_ordering(vc.layerstack.root(), source_layer, target_layer, into_group, below)
+    };
+
+    if let Some(o) = new_ordering {
+        CommandMessage::LayerOrder(user_id, o).write(writer);
+        return true;
+    }
+
+    false
+}
+
 
 /// Generate the commands for deleting all the empty
 /// annotations presently on the canvas

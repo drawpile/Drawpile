@@ -141,18 +141,21 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	updateLockedControls();
 }
 
-void LayerList::setLayerEditActions(QAction *add, QAction *duplicate, QAction *merge, QAction *del)
+void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *del)
 {
-	Q_ASSERT(add);
+	Q_ASSERT(addLayer);
+	Q_ASSERT(addGroup);
 	Q_ASSERT(duplicate);
 	Q_ASSERT(merge);
 	Q_ASSERT(del);
-	m_addLayerAction = add;
+	m_addLayerAction = addLayer;
+	m_addGroupAction = addGroup;
 	m_duplicateLayerAction = duplicate;
 	m_mergeLayerAction = merge;
 	m_deleteLayerAction = del;
 
 	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
+	connect(m_addGroupAction, &QAction::triggered, this, &LayerList::addGroup);
 	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
 	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
 	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
@@ -412,6 +415,35 @@ void LayerList::addLayer()
 		m_selectedId, // target
 		0, // fill
 		0, // flags
+		reinterpret_cast<const uint16_t*>(name.constData()),
+		name.length()
+	);
+	emit layerCommand(eb.toEnvelope());
+}
+
+void LayerList::addGroup()
+{
+	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	Q_ASSERT(layers);
+
+	const int id = layers->getAvailableLayerId();
+	if(id==0) {
+		qWarning("Couldn't find a free ID for a new group!");
+		return;
+	}
+
+	const QString name = layers->getAvailableLayerName(tr("Group"));
+
+	net::EnvelopeBuilder eb;
+	rustpile::write_undopoint(eb, m_canvas->localUserId());
+	rustpile::write_newlayer(
+		eb,
+		m_canvas->localUserId(),
+		id,
+		0, // source
+		m_selectedId, // target (place above this)
+		0, // fill (not used for groups)
+		rustpile::LayerCreateMessage_FLAGS_GROUP,
 		reinterpret_cast<const uint16_t*>(name.constData()),
 		name.length()
 	);

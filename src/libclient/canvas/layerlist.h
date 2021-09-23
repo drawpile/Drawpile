@@ -160,22 +160,16 @@ public slots:
 	void setLayers(const QVector<LayerListItem> &items);
 
 signals:
-	void layersReordered();
-
 	//! A new layer was created that should be automatically selected
 	void autoSelectRequest(int);
 
 	//! Emitted when layers are manually reordered
-	void layerCommand(const net::Envelope &envelope);
+	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
 
 	//! Request local change of layer opacity for preview purpose
 	void layerOpacityPreview(int id, float opacity);
 
 private:
-	void handleMoveLayer(int idx, int afterIdx);
-
-	int indexOf(uint16_t id) const;
-
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
 	AclState *m_aclstate;

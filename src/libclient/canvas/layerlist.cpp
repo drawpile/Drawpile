@@ -56,10 +56,12 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags LayerListModel::flags(const QModelIndex& index) const
 {
-	if(!index.isValid())
-		return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
+	if(index.isValid()) {
+		const bool isGroup = m_items.at(index.internalId()).group;
 
-	return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+		return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | (isGroup ? Qt::ItemIsDropEnabled : Qt::NoItemFlags);
+	}
+	return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
 }
 
 Qt::DropActions LayerListModel::supportedDropActions() const
@@ -84,9 +86,44 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
 	if(ldata && ldata->source() == this) {
-		// note: if row is -1, the item was dropped on the parent element, which in the
-		// case of the list view means the empty area below the items.
-		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? m_items.count() : row);
+		if(m_items.size() < 2)
+			return false;
+
+		int targetId;
+		bool intoGroup = false;
+		bool below = false;
+		if(row < 0) {
+			if(parent.isValid()) {
+				// row<0, valid parent: move into the group
+				targetId = m_items.at(parent.internalId()).id;
+				intoGroup = true;
+			} else {
+				// row<0, no parent: the empty area below the layer list (move to root/bottom)
+				targetId = m_items.at(index(rowCount()-1, 0).internalId()).id;
+				below = true;
+			}
+		} else {
+			const int children = rowCount(parent);
+			if(row >= children) {
+				// row >= number of children in group (or root): move below the last item in the group
+				targetId = m_items.at(index(children-1, 0, parent).internalId()).id;
+				below = true;
+			} else {
+				// the standard case: move above this layer
+				targetId = m_items.at(index(row, 0, parent).internalId()).id;
+			}
+		}
+
+#if 0
+		qInfo("Drop row=%d (parent row=%d, id=%d, rowCount=%d)", row, parent.row(), parent.internalId(), rowCount(parent));
+		for(int i=0;i<m_items.size();++i) {
+			qInfo("[%d] id=%d, children=%d", i, m_items.at(i).id, m_items.at(i).children);
+		}
+		qInfo("Requesting move of %d to %s %d, into=%d", ldata->layerId(), below ? "below" : "above", targetId, intoGroup);
+#endif
+
+		emit moveRequested(ldata->layerId(), targetId, intoGroup, below);
+
 	} else {
 		// TODO support new layer drops
 		qWarning("External layer drag&drop not supported");
@@ -94,63 +131,14 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 	return false;
 }
 
-void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
-{
-	// Need at least two layers for this to make sense
-	const int count = m_items.count();
-	if(count < 2)
-		return;
-
-	// If we're moving the layer to a higher index, take into
-	// account that all previous indexes shift down by one.
-	int adjustedNewIdx = newIdx > oldIdx ? newIdx - 1 : newIdx;
-
-	if(oldIdx < 0 || oldIdx >= count || adjustedNewIdx < 0 || adjustedNewIdx >= count) {
-		// This can happen when a layer is deleted while someone is drag&dropping it
-		qWarning("Whoops, can't move layer from %d to %d because it was just deleted!", oldIdx, newIdx);
-		return;
-	}
-
-	QVector<uint16_t> layers;
-	layers.reserve(count * 2);
-	for(const LayerListItem &li : qAsConst(m_items)) {
-		layers.append(li.id);
-		layers.append(0);
-	}
-
-	qInfo() << "old order" << layers;
-
-	layers.move(2*oldIdx, 2*adjustedNewIdx);
-	layers.move(2*oldIdx+1, 2*adjustedNewIdx+1);
-
-	qInfo() << "new order" << layers;
-
-	// Layers are shown topmost first in the list but
-	// are sent bottom first in the protocol.
-	std::reverse(layers.begin(), layers.end());
-
-
-
-	Q_ASSERT(m_aclstate);
-	net::EnvelopeBuilder eb;
-	rustpile::write_layerorder(eb, m_aclstate->localUserId(), layers.constData(), layers.size());
-	emit layerCommand(eb.toEnvelope());
-}
-
-int LayerListModel::indexOf(uint16_t id) const
-{
-	for(int i=0;i<m_items.size();++i)
-		if(m_items.at(i).id == id)
-			return i;
-	return -1;
-}
-
 QModelIndex LayerListModel::layerIndex(uint16_t id)
 {
-	int i = indexOf(id);
-	if(i>=0) {
-		return createIndex(m_items.at(i).relIndex, 0, i);
+	for(int i=0;i<m_items.size();++i) {
+		if(m_items.at(i).id == id) {
+			return createIndex(m_items.at(i).relIndex, 0, i);
+		}
 	}
+
 	return QModelIndex();
 }
 
@@ -194,6 +182,7 @@ QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent
 	int cursor;
 
 	if(parent.isValid()) {
+		Q_ASSERT(m_items.at(parent.internalId()).group);
 		cursor = parent.internalId();
 		if(row >= m_items.at(cursor).children)
 			return QModelIndex();
@@ -222,9 +211,9 @@ QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent
 	}
 
 #if 0
-	qInfo("index(row=%d), parent=%d (%d), relIndex=%d, cursor=%d, left=%d, right=%d",
+	qInfo("index(row=%d), parent row=%d (id=%d, children=%d, group=%d), relIndex=%d, cursor=%d, left=%d, right=%d",
 		  row,
-		  parent.row(), int(parent.internalId()),
+		  parent.row(), int(parent.internalId()), m_items.at(parent.internalId()).children, m_items.at(parent.internalId()).group,
 		  m_items.at(cursor).relIndex, cursor,
 		  m_items.at(cursor).left, m_items.at(cursor).right
 		  );
@@ -300,6 +289,7 @@ void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 
 void LayerListModel::setDefaultLayer(uint16_t id)
 {
+	qWarning("TODO: setDefaultLayer(%d)", id);
 #if 0 // FIXME
 	const int oldIdx = indexOf(m_defaultLayer);
 	if(oldIdx >= 0) {

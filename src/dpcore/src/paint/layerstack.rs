@@ -288,7 +288,7 @@ impl LayerStack {
         // Onionskin, solo and other animation features only apply to
         // the root, as only root level layers are treated as frames.
         if (i * TILE_SIZE) < self.root.width() && (j * TILE_SIZE) < self.root.height() {
-            for (idx, layer) in self.root.iter_layers().enumerate() {
+            for (idx, layer) in self.root.iter_layers().rev().enumerate() {
                 let metadata = layer.metadata();
                 // Don't render hidden layers
                 if metadata.hidden {

@@ -2555,11 +2555,12 @@ void MainWindow::setupActions()
 	// Layer menu
 	//
 	QAction *layerAdd = makeAction("layeradd", tr("New Layer")).shortcut("Shift+Ctrl+Insert");
+	QAction *groupAdd = makeAction("groupadd", tr("New Group"));
 	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer"));
 	QAction *layerMerge = makeAction("layermerge", tr("Merge with Layer Below"));
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer"));
 
-	m_dockLayers->setLayerEditActions(layerAdd, layerDupe, layerMerge, layerDelete);
+	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerDelete);
 
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
 	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).shortcut("Shift+Ctrl+O").checkable();
@@ -2578,6 +2579,7 @@ void MainWindow::setupActions()
 
 	QMenu *layerMenu = menuBar()->addMenu(tr("Layer"));
 	layerMenu->addAction(layerAdd);
+	layerMenu->addAction(groupAdd);
 	layerMenu->addAction(layerDupe);
 	layerMenu->addAction(layerMerge);
 	layerMenu->addAction(layerDelete);

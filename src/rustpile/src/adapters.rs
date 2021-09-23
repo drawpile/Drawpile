@@ -1,6 +1,9 @@
 use core::ffi::c_void;
 use dpcore::paint::annotation::{Annotation, AnnotationID, VAlign};
-use dpcore::paint::{Blendmode, Color, Layer, LayerMetadata, GroupLayer, RootGroup, Rectangle};
+use dpcore::paint::{Blendmode, Color,
+    Layer, LayerMetadata, GroupLayer, RootGroup,
+    Rectangle};
+
 use std::os::raw::c_char;
 use std::sync::Arc;
 
@@ -35,13 +38,13 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
 
     fn flatten(list: &mut Vec<LayerInfo>, index: &mut i32, group: &GroupLayer) {
         // Note: layers are listed top-to-bottom in the GUI
-        for (i, l) in group.iter_layers().rev().enumerate() {
+        for (i, l) in group.iter_layers().enumerate() {
             match l {
                 Layer::Group(g) => {
                     let info = LayerInfo::new(
                         g.metadata(),
                         true,
-                        group.layer_count() as u16,
+                        g.layer_count() as u16,
                         i as u16,
                         *index,
                         -1

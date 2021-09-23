@@ -662,6 +662,18 @@ bool paintengine_floodfill(PaintEngine *dp,
                            int32_t expansion,
                            bool fill_under);
 
+/// Generate the layer reordering command for moving layer A to
+/// a position above layer B (or into it, if it is a group)
+///
+/// Returns false if a move command couldn't be generated
+bool paintengine_make_movelayer(PaintEngine *dp,
+                                MessageWriter *writer,
+                                UserID user_id,
+                                LayerID source_layer,
+                                LayerID target_layer,
+                                bool into_group,
+                                bool below);
+
 /// Generate the commands for deleting all the empty
 /// annotations presently on the canvas
 void paintengine_make_delete_empty_annotations(PaintEngine *dp,

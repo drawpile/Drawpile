@@ -74,7 +74,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
 }
 
 fn create_stack<R: Read+Seek>(archive: &mut ZipArchive<R>, layerstack: &mut LayerStack, next_layer_id: &mut LayerID, parent_id: LayerID, stack: &OraStack) -> Result<(), ImpexError> {
-    for layer in &stack.layers {
+    for layer in stack.layers.iter().rev() {
         match layer {
             OraStackElement::Stack(substack) => {
                 let layer_id = *next_layer_id;
@@ -372,9 +372,6 @@ fn parse_stack_stack<R: Read>(
             }
             Ok(XmlEvent::EndElement { name, .. }) => {
                 assert_eq!(name.local_name, "stack");
-                // Note: layers are listed top-to-bottom in the XML,
-                // but are stored bottom-to-top inside Drawpile
-                stack.layers.reverse();
                 return Ok(stack);
             }
             Ok(XmlEvent::EndDocument) => {

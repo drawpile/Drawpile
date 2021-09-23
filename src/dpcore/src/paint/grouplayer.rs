@@ -255,7 +255,7 @@ impl GroupLayer {
 
         let insert_idx = match pos {
             LayerInsertion::Top |
-            LayerInsertion::Into(0) => self.layer_count(),
+            LayerInsertion::Into(0) => 0,
             LayerInsertion::Above(layer_id) => {
                 if let Some(subgroup_idx) = self.routes.get(layer_id) {
                     let newlayer = Arc::make_mut(&mut self.layers[subgroup_idx])
@@ -270,13 +270,13 @@ impl GroupLayer {
                     self.layers
                         .iter()
                         .position(|l| l.id() == layer_id)
-                        .map_or(self.layer_count(), |idx| idx + 1)
+                        .unwrap_or(0)
                 }
             }
             LayerInsertion::Into(group_id) => {
                 if self.metadata.id == group_id {
                     // Target group is this group
-                    self.layer_count()
+                    0
                 } else if let Some(subgroup_idx) = self.routes.get(group_id) {
                     // Target group is inside one of this group's subgroups
                     let newlayer = Arc::make_mut(&mut self.layers[subgroup_idx])
@@ -464,7 +464,7 @@ impl GroupLayer {
         }
 
         let flatten = |dest: &mut TileData| {
-            for l in self.layers.iter() {
+            for l in self.layers.iter().rev() {
                 l.flatten_tile(dest, i, j, opacity, censor, highlight_id);
             }
         };
@@ -526,7 +526,7 @@ impl GroupLayer {
             return 0;
         }
 
-        for layer in self.layers.iter().rev() {
+        for layer in self.layers.iter() {
             if layer.is_visible() {
                 match layer.as_ref() {
                     Layer::Group(g) => {
@@ -552,7 +552,7 @@ impl GroupLayer {
             return 0;
         }
 
-        for layer in self.layers.iter().rev() {
+        for layer in self.layers.iter() {
             if layer.is_visible() {
                 match layer.as_ref() {
                     Layer::Group(g) => {
@@ -848,11 +848,11 @@ impl RootGroup {
         Some(Self(self.0.resized(top, right, bottom, left)?))
     }
 
-    pub fn iter_layers(&self) -> impl Iterator<Item = &Layer> {
+    pub fn iter_layers(&self) -> impl Iterator+DoubleEndedIterator<Item = &Layer> {
         self.0.iter_layers()
     }
 
-    pub fn iter_layers_mut(&mut self) -> impl Iterator<Item = &mut Arc<Layer>> {
+    pub fn iter_layers_mut(&mut self) -> impl Iterator+DoubleEndedIterator<Item = &mut Arc<Layer>> {
         self.0.iter_layers_mut()
     }
 
@@ -915,11 +915,11 @@ mod tests {
 
         assert_eq!(root.layer_count(), 5);
         assert!(root.get_layer(0).is_none());
-        assert_eq!(root.0.layers[0].metadata().id, 1);
-        assert_eq!(root.0.layers[1].metadata().id, 4);
+        assert_eq!(root.0.layers[4].metadata().id, 1);
+        assert_eq!(root.0.layers[3].metadata().id, 4);
         assert_eq!(root.0.layers[2].metadata().id, 2);
-        assert_eq!(root.0.layers[3].metadata().id, 3);
-        assert_eq!(root.0.layers[4].metadata().id, 6);
+        assert_eq!(root.0.layers[1].metadata().id, 3);
+        assert_eq!(root.0.layers[0].metadata().id, 6);
     }
 
     #[test]
@@ -995,20 +995,20 @@ mod tests {
             .is_none());
 
         assert_eq!(group.layer_count(), 4);
-        assert!(matches!(group.layers[0].as_ref(), Layer::Bitmap(_)));
-        assert!(matches!(group.layers[1].as_ref(), Layer::Group(_)));
-        assert!(matches!(group.layers[2].as_ref(), Layer::Bitmap(_)));
         assert!(matches!(group.layers[3].as_ref(), Layer::Bitmap(_)));
+        assert!(matches!(group.layers[2].as_ref(), Layer::Group(_)));
+        assert!(matches!(group.layers[1].as_ref(), Layer::Bitmap(_)));
+        assert!(matches!(group.layers[0].as_ref(), Layer::Bitmap(_)));
 
-        assert_eq!(group.layers[0].id(), 1);
-        assert_eq!(group.layers[1].id(), 2);
-        assert_eq!(group.layers[2].id(), 10);
-        assert_eq!(group.layers[3].id(), 3);
+        assert_eq!(group.layers[3].id(), 1);
+        assert_eq!(group.layers[2].id(), 2);
+        assert_eq!(group.layers[1].id(), 10);
+        assert_eq!(group.layers[0].id(), 3);
 
         let g2 = group.get_layer(2).unwrap().as_group().unwrap();
         assert_eq!(g2.layer_count(), 2);
-        assert_eq!(g2.layers[0].id(), 20);
-        assert_eq!(g2.layers[1].id(), 21);
+        assert_eq!(g2.layers[1].id(), 20);
+        assert_eq!(g2.layers[0].id(), 21);
 
         assert_eq!(group.get_layer(20).unwrap().id(), 20);
     }
@@ -1036,16 +1036,16 @@ mod tests {
         //  ↳ 0x0103 - layer copy
 
         assert_eq!(root.layer_count(), 2);
-        assert_eq!(root.0.layers[0].id(), 0x0101);
-        assert_eq!(root.0.layers[1].id(), 0x0102);
+        assert_eq!(root.0.layers[1].id(), 0x0101);
+        assert_eq!(root.0.layers[0].id(), 0x0102);
 
         // original group
-        let og = root.0.layers[0].as_group().unwrap();
+        let og = root.0.layers[1].as_group().unwrap();
         assert_eq!(og.layer_count(), 1);
         assert_eq!(og.layers[0].id(), 0x0201);
 
         // copied group
-        let cg = root.0.layers[1].as_group().unwrap();
+        let cg = root.0.layers[0].as_group().unwrap();
         assert_eq!(cg.layer_count(), 1);
         assert_eq!(cg.layers[0].id(), 0x0103);
 
@@ -1103,13 +1103,13 @@ mod tests {
         assert!(root.add_group_layer(7, LayerInsertion::Top).is_some());
 
         assert_eq!(root.0.layers.len(), 6);
-        assert_eq!(root.0.layers[0].id(), 1);
-        assert_eq!(root.0.layers[1].id(), 2);
-        assert_eq!(root.0.layers[2].id(), 3);
-        assert_eq!(root.0.layers[3].id(), 4);
-        assert_eq!(root.0.layers[4].id(), 5);
-        assert_eq!(root.0.layers[4].as_group().unwrap().layers[0].id(), 6);
-        assert_eq!(root.0.layers[5].id(), 7);
+        assert_eq!(root.0.layers[5].id(), 1);
+        assert_eq!(root.0.layers[4].id(), 2);
+        assert_eq!(root.0.layers[3].id(), 3);
+        assert_eq!(root.0.layers[2].id(), 4);
+        assert_eq!(root.0.layers[1].id(), 5);
+        assert_eq!(root.0.layers[1].as_group().unwrap().layers[0].id(), 6);
+        assert_eq!(root.0.layers[0].id(), 7);
 
         assert_eq!(root.get_layer(6).unwrap().id(), 6);
 

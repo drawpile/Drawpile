@@ -95,7 +95,21 @@ void Document::initCanvas()
 	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
 	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
-	connect(m_canvas->layerlist(), &canvas::LayerListModel::layerCommand, m_client, &net::Client::sendEnvelope);
+	connect(m_canvas->layerlist(), &canvas::LayerListModel::moveRequested, this, [this](int sourceId, int targetId, bool intoGroup, bool below) {
+		net::EnvelopeBuilder eb;
+		rustpile::write_undopoint(eb, m_client->myId());
+		rustpile::paintengine_make_movelayer(
+			m_canvas->paintEngine()->engine(),
+			eb,
+			m_client->myId(),
+			sourceId,
+			targetId,
+			intoGroup,
+			below
+		);
+		m_client->sendEnvelope(eb.toEnvelope());
+	});
+
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
 	connect(m_canvas, &canvas::CanvasModel::recorderStateChanged, this, &Document::recorderStateChanged);
 	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));

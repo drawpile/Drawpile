@@ -24,6 +24,7 @@ pub mod annotation;
 pub mod aoe;
 pub mod color;
 pub mod editlayer;
+pub mod editstack;
 pub mod floodfill;
 pub mod layerstack;
 pub mod rasterop;

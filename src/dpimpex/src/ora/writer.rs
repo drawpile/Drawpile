@@ -193,10 +193,6 @@ fn write_stack<W: Write + Seek>(
         };
     }
 
-    // In OpenRaster, the layers are listed from top-to-bottom,
-    // while in Drawpile they're stored bottom-to-top.
-    stack.layers.reverse();
-
     Ok(stack)
 }
 

@@ -55,7 +55,7 @@ public:
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	//! These actions are shown in a menu outside this dock
-	void setLayerEditActions(QAction *add, QAction *duplicate, QAction *merge, QAction *del);
+	void setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *del);
 
 	/**
 	 * Is the currently selected layer locked for editing?
@@ -86,6 +86,7 @@ private slots:
 	void onFeatureAccessChange(canvas::Feature feature, bool canuse);
 
 	void addLayer();
+	void addGroup();
 	void duplicateLayer();
 	void deleteSelected();
 	void setSelectedDefault();
@@ -134,6 +135,7 @@ private:
 	QMenu *m_layermenu;
 
 	QAction *m_addLayerAction;
+	QAction *m_addGroupAction;
 	QAction *m_duplicateLayerAction;
 	QAction *m_mergeLayerAction;
 	QAction *m_deleteLayerAction;
