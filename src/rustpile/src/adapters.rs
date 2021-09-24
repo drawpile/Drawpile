@@ -1,8 +1,6 @@
 use core::ffi::c_void;
 use dpcore::paint::annotation::{Annotation, AnnotationID, VAlign};
-use dpcore::paint::{Blendmode, Color,
-    Layer, LayerMetadata, GroupLayer, RootGroup,
-    Rectangle};
+use dpcore::paint::{Blendmode, Color, GroupLayer, Layer, LayerMetadata, Rectangle, RootGroup};
 
 use std::os::raw::c_char;
 use std::sync::Arc;
@@ -47,7 +45,7 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
                         g.layer_count() as u16,
                         i as u16,
                         *index,
-                        -1
+                        -1,
                     );
                     *index += 1;
                     let pos = list.len();
@@ -63,7 +61,7 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
                         0,
                         i as u16,
                         *index,
-                        *index+1,
+                        *index + 1,
                     ));
                     *index += 2;
                 }
@@ -78,7 +76,14 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
 }
 
 impl LayerInfo {
-    fn new(md: &LayerMetadata, group: bool, children: u16, rel_index: u16, left: i32, right: i32) -> Self {
+    fn new(
+        md: &LayerMetadata,
+        group: bool,
+        children: u16,
+        rel_index: u16,
+        left: i32,
+        right: i32,
+    ) -> Self {
         Self {
             title: md.title.as_ptr(),
             titlelen: md.title.len() as i32,

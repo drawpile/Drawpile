@@ -1,7 +1,7 @@
 use super::paintengine_ffi::PaintEngine;
 use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, ClassicBrushShape};
 use dpcore::paint::rectiter::{MutableRectIterator, RectIterator};
-use dpcore::paint::{BrushMask, ClassicBrushCache, LayerID, Pixel, Color, Rectangle, Size};
+use dpcore::paint::{BrushMask, ClassicBrushCache, Color, LayerID, Pixel, Rectangle, Size};
 use dpcore::protocol::MessageWriter;
 
 use std::slice;
@@ -65,7 +65,13 @@ pub extern "C" fn brushengine_write_dabs(
 }
 
 #[no_mangle]
-pub extern "C" fn brush_preview_dab(brush: &ClassicBrush, image: *mut u8, width: i32, height: i32, color: &Color) {
+pub extern "C" fn brush_preview_dab(
+    brush: &ClassicBrush,
+    image: *mut u8,
+    width: i32,
+    height: i32,
+    color: &Color,
+) {
     let pixel_slice =
         unsafe { slice::from_raw_parts_mut(image as *mut Pixel, (width * height) as usize) };
 
@@ -110,8 +116,14 @@ pub extern "C" fn brush_preview_dab(brush: &ClassicBrush, image: *mut u8, width:
             &source_rect,
         ))
         .for_each(|(d, s)| {
-            d.iter_mut()
-                .zip(s)
-                .for_each(|(pix, &val)| *pix = Color{r: color.r, g: color.g, b: color.b, a: val as f32 / 255.0}.as_pixel());
+            d.iter_mut().zip(s).for_each(|(pix, &val)| {
+                *pix = Color {
+                    r: color.r,
+                    g: color.g,
+                    b: color.b,
+                    a: val as f32 / 255.0,
+                }
+                .as_pixel()
+            });
         });
 }

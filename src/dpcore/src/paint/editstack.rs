@@ -1,4 +1,4 @@
-use super::{LayerID, Layer, RootGroup, GroupLayer};
+use super::{GroupLayer, Layer, LayerID, RootGroup};
 
 use std::convert::TryInto;
 
@@ -6,7 +6,13 @@ use std::convert::TryInto;
 /// If into_group is set to true, the source will be moved into the top of the target group.
 ///
 /// Returns a layer reordering vector or None if move is not possible
-pub fn move_ordering(root: &RootGroup, source_layer_id: LayerID, target_layer_id: LayerID, into_group: bool, below: bool) -> Option<Vec<u16>> {
+pub fn move_ordering(
+    root: &RootGroup,
+    source_layer_id: LayerID,
+    target_layer_id: LayerID,
+    into_group: bool,
+    below: bool,
+) -> Option<Vec<u16>> {
     if source_layer_id == target_layer_id {
         return None;
     }
@@ -32,7 +38,14 @@ pub fn move_ordering(root: &RootGroup, source_layer_id: LayerID, target_layer_id
         }
     }
 
-    fn order(ordering: &mut Vec<u16>, group: &GroupLayer, source: &Layer, target_layer_id: LayerID, into_group: bool, below: bool) -> u16 {
+    fn order(
+        ordering: &mut Vec<u16>,
+        group: &GroupLayer,
+        source: &Layer,
+        target_layer_id: LayerID,
+        into_group: bool,
+        below: bool,
+    ) -> u16 {
         // group layer count may change due to insertion or removal of source layer
         let mut children = group.layer_count() as u16;
 
@@ -87,14 +100,21 @@ pub fn move_ordering(root: &RootGroup, source_layer_id: LayerID, target_layer_id
     }
 
     let mut ordering = Vec::new();
-    order(&mut ordering, root.inner_ref(), source_layer, target_layer_id, into_group, below);
+    order(
+        &mut ordering,
+        root.inner_ref(),
+        source_layer,
+        target_layer_id,
+        into_group,
+        below,
+    );
     Some(ordering)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::paint::{RootGroup, LayerInsertion, Color};
+    use crate::paint::{Color, LayerInsertion, RootGroup};
 
     #[test]
     fn test_reordering_flat() {
@@ -103,15 +123,9 @@ mod tests {
         root.add_bitmap_layer(2, Color::TRANSPARENT, LayerInsertion::Top);
         root.add_bitmap_layer(3, Color::TRANSPARENT, LayerInsertion::Top);
 
-        assert_eq!(
-            move_ordering(&root, 0, 1, false, false),
-            None
-        );
+        assert_eq!(move_ordering(&root, 0, 1, false, false), None);
 
-        assert_eq!(
-            move_ordering(&root, 1, 1, false, false),
-            None
-        );
+        assert_eq!(move_ordering(&root, 1, 1, false, false), None);
 
         #[rustfmt::skip] // move bottom-most to the top
         assert_eq!(

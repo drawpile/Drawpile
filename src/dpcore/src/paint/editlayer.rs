@@ -25,10 +25,8 @@ use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
-    rasterop, Blendmode, BrushMask,
-    Layer, BitmapLayer, GroupLayer,
-    Color, Pixel, Rectangle,
-    InternalLayerID, UserID,
+    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, InternalLayerID, Layer, Pixel,
+    Rectangle, UserID,
 };
 
 /// Fills a rectangle with a solid color using the given blending mode
@@ -287,14 +285,23 @@ pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) ->
     let mut aoe = AoE::Nothing;
 
     if source_group.metadata().isolated {
-        let mut tmp = BitmapLayer::new(InternalLayerID(0), source_group.width(), source_group.height(), Tile::Blank);
+        let mut tmp = BitmapLayer::new(
+            InternalLayerID(0),
+            source_group.width(),
+            source_group.height(),
+            Tile::Blank,
+        );
         tmp.metadata_mut().opacity = source_group.metadata().opacity;
         tmp.metadata_mut().blendmode = source_group.metadata().blendmode;
 
         for layer in source_group.iter_layers().rev() {
             match layer {
-                Layer::Group(g) => { aoe = aoe.merge(merge_group(&mut tmp, g)); }
-                Layer::Bitmap(b) => { aoe = aoe.merge(merge_bitmap(&mut tmp, b)); }
+                Layer::Group(g) => {
+                    aoe = aoe.merge(merge_group(&mut tmp, g));
+                }
+                Layer::Bitmap(b) => {
+                    aoe = aoe.merge(merge_bitmap(&mut tmp, b));
+                }
             }
         }
 
@@ -302,8 +309,12 @@ pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) ->
     } else {
         for layer in source_group.iter_layers().rev() {
             match layer {
-                Layer::Group(g) => { aoe = aoe.merge(merge_group(target_layer, g)); }
-                Layer::Bitmap(b) => { aoe = aoe.merge(merge_bitmap(target_layer, b)); }
+                Layer::Group(g) => {
+                    aoe = aoe.merge(merge_group(target_layer, g));
+                }
+                Layer::Bitmap(b) => {
+                    aoe = aoe.merge(merge_bitmap(target_layer, b));
+                }
             }
         }
     }
@@ -538,7 +549,7 @@ mod tests {
             Tile::new(&Color::rgb8(255, 0, 0), 0),
         )));
         let grp = GroupLayer::from_parts(
-            LayerMetadata{
+            LayerMetadata {
                 id: InternalLayerID(0),
                 title: String::new(),
                 opacity: 0.5,
@@ -546,11 +557,11 @@ mod tests {
                 censored: false,
                 fixed: false,
                 blendmode: Blendmode::Normal,
-                isolated: true
+                isolated: true,
             },
             128,
             128,
-            vec![top]
+            vec![top],
         );
 
         merge_group(&mut btm, &grp);

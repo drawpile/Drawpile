@@ -26,8 +26,8 @@ use super::history::History;
 use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::{
-    editlayer, AoE, Blendmode, ClassicBrushCache, Color, GroupLayer, InternalLayerID, Layer,
-    LayerID, LayerInsertion, LayerStack, Rectangle, Size, UserID,
+    editlayer, AoE, BitmapLayer, Blendmode, ClassicBrushCache, Color, GroupLayer, InternalLayerID,
+    Layer, LayerID, LayerInsertion, LayerStack, Rectangle, Size, UserID,
 };
 use crate::protocol::message::*;
 
@@ -248,11 +248,7 @@ impl CanvasState {
     }
 
     /// Set a layer's local visibility flag
-    pub fn set_local_visibility(
-        &mut self,
-        layer_id: LayerID,
-        visible: bool
-    ) -> CanvasStateChange {
+    pub fn set_local_visibility(&mut self, layer_id: LayerID, visible: bool) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack)
             .root_mut()
             .get_layer_mut(layer_id)
@@ -340,7 +336,12 @@ impl CanvasState {
     /// Remove a preview layer or all preview layers if id is 0
     pub fn remove_preview(&mut self, layer_id: LayerID) -> CanvasStateChange {
         if layer_id == 0 {
-            Self::remove_all_previews(Arc::make_mut(&mut self.layerstack).root_mut().inner_mut())
+            Arc::make_mut(&mut self.layerstack)
+                .root_mut()
+                .inner_mut()
+                .visit_bitmaps_mut(|layer: &mut BitmapLayer| {
+                    editlayer::remove_sublayer(layer, InternalLayerID(-1))
+                })
                 .into()
         } else if let Some(layer) = Arc::make_mut(&mut self.layerstack)
             .root_mut()
@@ -351,23 +352,6 @@ impl CanvasState {
             warn!("remove_preview: Layer {} not found!", layer_id);
             CanvasStateChange::nothing()
         }
-    }
-
-    fn remove_all_previews(group: &mut GroupLayer) -> AoE {
-        let mut aoe = AoE::Nothing;
-        // TODO check if sublayer exists before calling arc::make_mut?
-        for l in group.iter_layers_mut() {
-            let l = Arc::make_mut(l);
-            if let Some(g) = l.as_group_mut() {
-                aoe = aoe.merge(Self::remove_all_previews(g));
-            } else if let Some(b) = l.as_bitmap_mut() {
-                aoe = aoe.merge(editlayer::remove_sublayer(b, InternalLayerID(-1)));
-            } else {
-                unreachable!();
-            }
-        }
-
-        aoe
     }
 
     /// Clean up the state after disconnecting from a remote session
@@ -383,14 +367,8 @@ impl CanvasState {
 
         Arc::make_mut(&mut self.layerstack)
             .root_mut()
-            .iter_layers_mut()
-            .filter_map(|l| match l.as_ref() {
-                Layer::Bitmap(_) => Arc::make_mut(l).as_bitmap_mut(),
-                _ => None,
-            })
-            .fold(AoE::Nothing, |aoe, l| {
-                aoe.merge(editlayer::merge_all_sublayers(l))
-            })
+            .inner_mut()
+            .visit_bitmaps_mut(|layer: &mut BitmapLayer| editlayer::merge_all_sublayers(layer))
     }
 
     /// Clear out all undo history
@@ -467,31 +445,68 @@ impl CanvasState {
         AoE::Nothing
     }
 
-    /// Penup does nothing but end indirect strokes.
-    /// This is done by merging this user's sublayers.
+    /// Penup ends indirect strokes by merging the user's sublayers.
     fn handle_penup(&mut self, user_id: UserID) -> AoE {
-        let sublayer_id = InternalLayerID::from(user_id);
-
-        // Note: we could do a read-only pass first to check if
-        // this is necesary at all, but we can just as well simply
-        // not send unnecessary PenUps.
-
-        Arc::make_mut(&mut self.layerstack)
-            .root_mut()
-            .iter_layers_mut()
-            .filter_map(|l| match l.as_ref() {
-                Layer::Bitmap(b) => {
-                    if b.has_sublayer(sublayer_id) {
-                        Arc::make_mut(l).as_bitmap_mut()
-                    } else {
-                        None
+        // find the ID of the layer that contains the sublayer
+        // or 0 if none exists
+        fn find_sublayer(group: &GroupLayer, sublayer_id: InternalLayerID) -> InternalLayerID {
+            for l in group.iter_layers() {
+                match l {
+                    Layer::Group(g) => {
+                        if find_sublayer(g, sublayer_id).0 != 0 {
+                            return g.metadata().id;
+                        }
+                    }
+                    Layer::Bitmap(b) => {
+                        if b.has_sublayer(sublayer_id) {
+                            return b.metadata().id;
+                        }
                     }
                 }
-                _ => None,
-            })
-            .fold(AoE::Nothing, |aoe, l| {
-                aoe.merge(editlayer::merge_sublayer(l, sublayer_id))
-            })
+            }
+            InternalLayerID(0)
+        }
+
+        // Merge the sublayer
+        fn merge_sublayer(
+            group: &mut GroupLayer,
+            sublayer_in: InternalLayerID,
+            sublayer_id: InternalLayerID,
+        ) {
+            for l in group.iter_layers_mut() {
+                if l.metadata().id == sublayer_in {
+                    match Arc::make_mut(l) {
+                        Layer::Group(g) => {
+                            merge_sublayer(g, find_sublayer(g, sublayer_id), sublayer_id);
+                        }
+                        Layer::Bitmap(b) => {
+                            editlayer::merge_sublayer(b, sublayer_id);
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
+        // Typically, there is only one sublayer that needs to be merged,
+        // so this loop only runs twice.
+        // We do the read-only search phase to avoid detaching unrelated layers.
+        let sublayer_id = InternalLayerID::from(user_id);
+        loop {
+            let sublayer_in = find_sublayer(self.layerstack.root().inner_ref(), sublayer_id);
+            if sublayer_in.0 != 0 {
+                merge_sublayer(
+                    Arc::make_mut(&mut self.layerstack).root_mut().inner_mut(),
+                    sublayer_in,
+                    sublayer_id,
+                );
+            } else {
+                break;
+            }
+        }
+
+        // Merging a sublayer shouldn't have any visual effect
+        return AoE::Nothing;
     }
 
     fn handle_canvas_resize(&mut self, msg: &CanvasResizeMessage) -> AoE {

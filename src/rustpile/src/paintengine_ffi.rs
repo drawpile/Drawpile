@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::adapters::{AnnotationAt, Annotations, LayerInfo, flatten_layerinfo};
+use super::adapters::{flatten_layerinfo, AnnotationAt, Annotations, LayerInfo};
 use super::messages_ffi;
 use super::recindex::{build_index, IndexBuildProgressNoticationFn, IndexReader};
 use super::snapshots::SnapshotQueue;
@@ -29,12 +29,12 @@ use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::snapshot::make_canvas_snapshot;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
+use dpcore::paint::editstack;
 use dpcore::paint::floodfill;
 use dpcore::paint::tile::TILE_SIZEI;
-use dpcore::paint::editstack;
 use dpcore::paint::{
-    AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerStack, LayerViewMode,
-    LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID, LayerInsertion
+    AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerInsertion, LayerStack,
+    LayerViewMode, LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID,
 };
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::message::*;
@@ -743,7 +743,10 @@ pub extern "C" fn paintengine_inspect_canvas(dp: &mut PaintEngine, x: i32, y: i3
         if dp.view_opts.highlight != user {
             dp.view_opts.highlight = user;
             vc.unrefreshed_area = AoE::Everything;
-            (user, vc.unrefreshed_area.bounds(vc.layerstack.root().size()))
+            (
+                user,
+                vc.unrefreshed_area.bounds(vc.layerstack.root().size()),
+            )
         } else {
             (user, None)
         }
@@ -786,14 +789,16 @@ pub extern "C" fn paintengine_set_layer_visibility(
     layer_id: LayerID,
     visible: bool,
 ) {
-    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::SetLocalVisibility(
-        layer_id,
-        visible
-    )) {
-        warn!("Couldn't send visibility command to paint engine: {:?}", err);
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::SetLocalVisibility(layer_id, visible))
+    {
+        warn!(
+            "Couldn't send visibility command to paint engine: {:?}",
+            err
+        );
     }
 }
-
 
 /// Draw a preview brush stroke onto the given layer
 ///
@@ -960,10 +965,15 @@ pub extern "C" fn paintengine_make_movelayer(
     into_group: bool,
     below: bool,
 ) -> bool {
-
     let new_ordering = {
         let vc = dp.viewcache.lock().unwrap();
-        editstack::move_ordering(vc.layerstack.root(), source_layer, target_layer, into_group, below)
+        editstack::move_ordering(
+            vc.layerstack.root(),
+            source_layer,
+            target_layer,
+            into_group,
+            below,
+        )
     };
 
     if let Some(o) = new_ordering {
@@ -973,7 +983,6 @@ pub extern "C" fn paintengine_make_movelayer(
 
     false
 }
-
 
 /// Generate the commands for deleting all the empty
 /// annotations presently on the canvas
@@ -1205,11 +1214,7 @@ pub extern "C" fn paintengine_load_blank(
     ls.background = Tile::new(&background, 0);
     let l = ls
         .root_mut()
-        .add_bitmap_layer(
-            0x0100,
-            Color::TRANSPARENT,
-            LayerInsertion::Top,
-        )
+        .add_bitmap_layer(0x0100, Color::TRANSPARENT, LayerInsertion::Top)
         .unwrap();
     l.metadata_mut().title = "Layer 1".into();
 
@@ -1242,14 +1247,12 @@ pub enum CanvasIoError {
 impl From<dpimpex::ImpexError> for CanvasIoError {
     fn from(err: dpimpex::ImpexError) -> Self {
         match err {
-            dpimpex::ImpexError::IoError(e) => {
-                match e.kind() {
-                    std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => {
-                        Self::FileOpenError
-                    }
-                    _ => Self::FileIoError,
+            dpimpex::ImpexError::IoError(e) => match e.kind() {
+                std::io::ErrorKind::NotFound | std::io::ErrorKind::PermissionDenied => {
+                    Self::FileOpenError
                 }
-            }
+                _ => Self::FileIoError,
+            },
             dpimpex::ImpexError::UnsupportedFormat => Self::UnsupportedFormat,
             dpimpex::ImpexError::CodecError(_)
             | dpimpex::ImpexError::XmlError(_)

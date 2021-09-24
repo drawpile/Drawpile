@@ -162,7 +162,7 @@ impl GroupLayer {
         let mut routes = LayerRoutes::new();
         for (i, l) in layers.iter().map(|l| l.as_ref()).enumerate() {
             match l {
-                Layer::Group(g) => { routes.extend_from(g, i) }
+                Layer::Group(g) => routes.extend_from(g, i),
                 _ => (),
             }
         }
@@ -172,7 +172,7 @@ impl GroupLayer {
             width,
             height,
             layers,
-            routes
+            routes,
         }
     }
 
@@ -257,6 +257,20 @@ impl GroupLayer {
         self.get_layer_mut(id).and_then(|l| l.as_bitmap_mut())
     }
 
+    /// Recursively visit each bitmap layer to make changes
+    pub fn visit_bitmaps_mut(&mut self, visitor: fn(&mut BitmapLayer) -> AoE) -> AoE {
+        let mut aoe = AoE::Nothing;
+
+        for l in self.iter_layers_mut() {
+            aoe = aoe.merge(match Arc::make_mut(l) {
+                Layer::Group(g) => g.visit_bitmaps_mut(visitor),
+                Layer::Bitmap(b) => visitor(b),
+            });
+        }
+
+        aoe
+    }
+
     /// Add a new layer and return a mutable reference to it
     ///
     /// Note: this function should only be called via the layerstack,
@@ -277,8 +291,7 @@ impl GroupLayer {
         debug_assert!(self.get_layer(id).is_none());
 
         let insert_idx = match pos {
-            LayerInsertion::Top |
-            LayerInsertion::Into(0) => 0,
+            LayerInsertion::Top | LayerInsertion::Into(0) => 0,
             LayerInsertion::Above(layer_id) => {
                 if let Some(subgroup_idx) = self.routes.get(layer_id) {
                     let newlayer = Arc::make_mut(&mut self.layers[subgroup_idx])
@@ -533,12 +546,14 @@ impl GroupLayer {
     }
 
     /// Return an interator to the direct children of this group
-    pub fn iter_layers(&self) -> impl Iterator+DoubleEndedIterator<Item = &Layer> {
+    pub fn iter_layers(&self) -> impl Iterator + DoubleEndedIterator<Item = &Layer> {
         self.layers.iter().map(|l| l.as_ref())
     }
 
     /// Return a mutable iterator to the direct children of this group
-    pub fn iter_layers_mut(&mut self) -> impl Iterator+DoubleEndedIterator<Item = &mut Arc<Layer>> {
+    pub fn iter_layers_mut(
+        &mut self,
+    ) -> impl Iterator + DoubleEndedIterator<Item = &mut Arc<Layer>> {
         self.layers.iter_mut()
     }
 
@@ -877,11 +892,13 @@ impl RootGroup {
         Some(Self(self.0.resized(top, right, bottom, left)?))
     }
 
-    pub fn iter_layers(&self) -> impl Iterator+DoubleEndedIterator<Item = &Layer> {
+    pub fn iter_layers(&self) -> impl Iterator + DoubleEndedIterator<Item = &Layer> {
         self.0.iter_layers()
     }
 
-    pub fn iter_layers_mut(&mut self) -> impl Iterator+DoubleEndedIterator<Item = &mut Arc<Layer>> {
+    pub fn iter_layers_mut(
+        &mut self,
+    ) -> impl Iterator + DoubleEndedIterator<Item = &mut Arc<Layer>> {
         self.0.iter_layers_mut()
     }
 

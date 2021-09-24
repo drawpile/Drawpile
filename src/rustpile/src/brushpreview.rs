@@ -25,7 +25,7 @@ use dpcore::canvas::brushes;
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
     editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, LayerID,
-    Rectangle, LayerInsertion, LayerStack
+    LayerInsertion, LayerStack, Rectangle,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -114,7 +114,11 @@ impl BrushPreview {
 
         // Draw the background
         self.layerstack.background = Tile::new(&background_color, 1);
-        let layer = self.layerstack.root_mut().get_bitmaplayer_mut(LAYER_ID).unwrap();
+        let layer = self
+            .layerstack
+            .root_mut()
+            .get_bitmaplayer_mut(LAYER_ID)
+            .unwrap();
         editlayer::put_tile(
             layer,
             InternalLayerID(0),
@@ -267,7 +271,10 @@ impl BrushPreview {
         }
 
         editlayer::draw_image(
-            self.layerstack.root_mut().get_bitmaplayer_mut(LAYER_ID).unwrap(),
+            self.layerstack
+                .root_mut()
+                .get_bitmaplayer_mut(LAYER_ID)
+                .unwrap(),
             1,
             &result.image.pixels,
             &Rectangle::new(

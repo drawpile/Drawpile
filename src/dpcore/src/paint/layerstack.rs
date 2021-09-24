@@ -32,8 +32,7 @@ use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::{
-    BitmapLayer, Blendmode, Color, Image, InternalLayerID, LayerID, Pixel, Rectangle,
-    UserID,
+    BitmapLayer, Blendmode, Color, Image, InternalLayerID, LayerID, Pixel, Rectangle, UserID,
 };
 
 /// A layer stack wraps together the parts that make up the canvas
