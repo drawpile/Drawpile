@@ -62,7 +62,7 @@ pub fn save_openraster_image(path: &Path, layerstack: &LayerStack) -> ImageExpor
     if !layerstack.background.is_blank() {
         let bg = write_background(&mut archive, &layerstack)?;
 
-        written_layers.layers.insert(0, OraStackElement::Layer(bg));
+        written_layers.layers.push(OraStackElement::Layer(bg));
     }
 
     // Write the merged image and thumbnail
