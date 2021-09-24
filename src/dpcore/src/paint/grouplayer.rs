@@ -153,6 +153,29 @@ impl GroupLayer {
         }
     }
 
+    pub fn from_parts(
+        metadata: LayerMetadata,
+        width: u32,
+        height: u32,
+        layers: Vec<Arc<Layer>>,
+    ) -> Self {
+        let mut routes = LayerRoutes::new();
+        for (i, l) in layers.iter().map(|l| l.as_ref()).enumerate() {
+            match l {
+                Layer::Group(g) => { routes.extend_from(g, i) }
+                _ => (),
+            }
+        }
+
+        Self {
+            metadata,
+            width,
+            height,
+            layers,
+            routes
+        }
+    }
+
     pub fn width(&self) -> u32 {
         self.width
     }
@@ -501,6 +524,12 @@ impl GroupLayer {
                 .collect(),
             routes: self.routes.clone(),
         })
+    }
+
+    /// Get the layer vector
+    /// Note: you typically want to use iter_layers() instead
+    pub fn layervec(&self) -> &Vec<Arc<Layer>> {
+        &self.layers
     }
 
     /// Return an interator to the direct children of this group

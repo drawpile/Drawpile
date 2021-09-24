@@ -32,7 +32,7 @@ use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::{
-    BitmapLayer, Blendmode, Color, GroupLayer, Image, InternalLayerID, LayerID, Pixel, Rectangle,
+    BitmapLayer, Blendmode, Color, Image, InternalLayerID, LayerID, Pixel, Rectangle,
     UserID,
 };
 
@@ -132,12 +132,12 @@ impl LayerStack {
     }
 
     pub fn from_parts(
-        root: GroupLayer,
+        root: Arc<RootGroup>,
         annotations: Arc<Vec<Arc<Annotation>>>,
         background: Tile,
     ) -> LayerStack {
         LayerStack {
-            root: Arc::new(root.into()),
+            root: root,
             annotations,
             background,
         }

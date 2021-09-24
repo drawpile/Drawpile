@@ -74,24 +74,14 @@ impl BitmapLayer {
     }
 
     pub fn from_parts(
-        id: InternalLayerID,
+        metadata: LayerMetadata,
         width: u32,
         height: u32,
         tiles: Arc<Vec<Tile>>,
         sublayers: Vec<Arc<BitmapLayer>>,
     ) -> BitmapLayer {
         BitmapLayer {
-            metadata: LayerMetadata {
-                // TODO take this as an argument
-                id,
-                title: String::new(),
-                opacity: 1.0,
-                hidden: false,
-                censored: false,
-                fixed: false,
-                blendmode: Blendmode::Normal,
-                isolated: false,
-            },
+            metadata,
             width,
             height,
             tiles,
