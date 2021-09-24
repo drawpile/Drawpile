@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
-use dpimpex::rec_index::writer::IndexBuilder;
+use dpimpex::rec_index::writer::{IndexBuilder, Stats};
 use dpimpex::rec_index::reader as index_reader;
 use dpimpex::save_image;
 use dpcore::protocol::message::Message;
@@ -59,20 +59,7 @@ pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error
                 thumbnail_counter -= 1;
                 if last_snapshot.elapsed() > Duration::from_millis(100) {
                     let stats = indexer.make_entry(thumbnail_counter <= 0)?;
-
-                    println!(
-                        "{}: tiles(new: {}, reused: {} [{:.1}%), null: {}], layers(new: {}, reused: {}), annotations(new: {}, reused: {}), thumbnail {}",
-                        stats.index,
-                        stats.new_tiles,
-                        stats.reused_tiles,
-                        if stats.new_tiles > 0 || stats.reused_tiles > 0 { stats.reused_tiles as f32 / (stats.reused_tiles + stats.new_tiles) as f32 * 100.0 } else { 0.0 },
-                        stats.null_tiles,
-                        stats.changed_layers,
-                        stats.reused_layers,
-                        stats.changed_annotations,
-                        stats.reused_annotations,
-                        thumbnail_counter <= 0,
-                    );
+                    print_stats(&stats, thumbnail_counter);
 
                     if thumbnail_counter <= 0 {
                         thumbnail_counter = 1000;
@@ -89,6 +76,8 @@ pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error
                 return Err(Box::new(e));
             }
             ReadMessage::Eof => {
+                let stats = indexer.make_entry(thumbnail_counter <= 0)?;
+                print_stats(&stats, thumbnail_counter);
                 break;
             }
         }
@@ -97,6 +86,24 @@ pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error
     indexer.finalize()?;
     Ok(())
 }
+
+fn print_stats(stats: &Stats, thumbnail_counter: i32) {
+    println!(
+        "{}: tiles(new: {}, reused: {} [{:.1}%), null: {}], layers(new: {}, reused: {}), annotations(new: {}, reused: {}), thumbnail {}",
+        stats.index,
+        stats.new_tiles,
+        stats.reused_tiles,
+        if stats.new_tiles > 0 || stats.reused_tiles > 0 { stats.reused_tiles as f32 / (stats.reused_tiles + stats.new_tiles) as f32 * 100.0 } else { 0.0 },
+        stats.null_tiles,
+        stats.changed_layers,
+        stats.reused_layers,
+        stats.changed_annotations,
+        stats.reused_annotations,
+        thumbnail_counter <= 0,
+    );
+
+}
+
 
 pub fn decode_index(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     let index = index_reader::read_index(&mut File::open(input_file)?)?;

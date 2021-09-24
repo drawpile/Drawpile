@@ -22,7 +22,7 @@
 
 use super::brushstate::BrushState;
 use super::classicbrush::ClassicBrush;
-use crate::paint::{Blendmode, Color, Layer};
+use crate::paint::{BitmapLayer, Blendmode, Color};
 use crate::protocol::message::{ClassicDab, CommandMessage, DrawDabsClassicMessage};
 use crate::protocol::MessageWriter;
 
@@ -142,7 +142,7 @@ impl BrushState for SoftBrushState {
         self.layer_id = layer_id;
     }
 
-    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&Layer>) {
+    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&BitmapLayer>) {
         if self.in_progress {
             let dx = x - self.last_x;
             let dy = y - self.last_y;

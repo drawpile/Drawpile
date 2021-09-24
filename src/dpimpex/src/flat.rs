@@ -29,8 +29,8 @@ use image::{AnimationDecoder, ImageDecoder};
 
 use super::conv::{from_dpimage, to_dpimage};
 use crate::{ImageExportResult, ImageImportResult};
-use dpcore::paint::layerstack::{LayerFill, LayerInsertion, LayerViewOptions};
-use dpcore::paint::{editlayer, Blendmode, Color, LayerStack, Rectangle};
+use dpcore::paint::{editlayer, Blendmode, Color, LayerStack, Rectangle,
+    LayerViewOptions, LayerInsertion};
 
 /// Load a flat image (an image that does not have layers)
 pub fn load_flat_image(path: &Path) -> ImageImportResult {
@@ -38,18 +38,19 @@ pub fn load_flat_image(path: &Path) -> ImageImportResult {
     let img = to_dpimage(&img.into_rgba8());
 
     let mut ls = LayerStack::new(img.width as u32, img.height as u32);
+    let root = ls.root_mut();
 
-    let mut layer = ls
-        .add_layer(
+    let layer = root
+        .add_bitmap_layer(
             0x0100,
-            LayerFill::Solid(Color::TRANSPARENT),
+            Color::TRANSPARENT,
             LayerInsertion::Top,
         )
         .unwrap();
-    layer.title = "Layer 1".into();
+    layer.metadata_mut().title = "Layer 1".into();
 
     editlayer::draw_image(
-        &mut layer,
+        layer.as_bitmap_mut().unwrap(),
         1,
         &img.pixels,
         &Rectangle::new(0, 0, img.width as i32, img.height as i32),
@@ -69,20 +70,24 @@ pub fn load_gif_animation(path: &Path) -> ImageImportResult {
     let mut ls = LayerStack::new(w, h);
 
     for (i, frame) in decoder.into_frames().enumerate() {
-        let mut layer = ls
-            .add_layer(
+        let layer = ls
+            .root_mut()
+            .add_bitmap_layer(
                 0x0100 + i as u16,
-                LayerFill::Solid(Color::TRANSPARENT),
+                Color::TRANSPARENT,
                 LayerInsertion::Top,
             )
+            .unwrap()
+            .as_bitmap_mut()
             .unwrap();
-        layer.title = format!("Layer {}", i + 1);
+
+        layer.metadata_mut().title = format!("Layer {}", i + 1);
 
         let frame = frame?;
         let img = to_dpimage(frame.buffer());
 
         editlayer::draw_image(
-            &mut layer,
+            layer,
             1,
             &img.pixels,
             &Rectangle::new(
@@ -117,7 +122,7 @@ mod tests {
             .iter()
             .collect();
         let ls = load_flat_image(path.as_ref()).unwrap();
-        let layer = ls.get_layer(0x0100).unwrap();
+        let layer = ls.root().get_bitmaplayer(0x0100).unwrap();
 
         assert_eq!(
             layer.sample_color(32, 32, 0,),

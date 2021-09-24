@@ -67,7 +67,7 @@ pub extern "C" fn snapshots_size(snapshots: &SnapshotQueue, index: usize) -> Siz
             width: 0,
             height: 0,
         },
-        |s| s.layerstack.size(),
+        |s| s.layerstack.root().size(),
     )
 }
 
@@ -78,7 +78,7 @@ pub extern "C" fn snapshots_get_content(
     pixels: *mut u8,
 ) -> bool {
     if let Some(s) = snapshots.snapshots.get(index) {
-        let size = s.layerstack.size();
+        let size = s.layerstack.root().size();
         let pixel_slice = unsafe {
             slice::from_raw_parts_mut(pixels as *mut Pixel, (size.width * size.height) as usize)
         };

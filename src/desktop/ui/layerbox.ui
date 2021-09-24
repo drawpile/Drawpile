@@ -103,13 +103,16 @@
     </layout>
    </item>
    <item>
-    <widget class="QListView" name="layerlist">
+    <widget class="QTreeView" name="layerlist">
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
     </widget>
    </item>
   </layout>

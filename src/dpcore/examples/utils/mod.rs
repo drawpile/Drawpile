@@ -22,7 +22,7 @@
 
 use dpcore::paint::color::*;
 use dpcore::paint::tile::{Tile, TileData, TILE_SIZE};
-use dpcore::paint::{Layer, LayerStack, LayerViewOptions};
+use dpcore::paint::{AoE, BitmapLayer, FlattenedTileIterator, LayerStack, LayerViewOptions};
 use image;
 use image::{ImageBuffer, RgbaImage};
 
@@ -66,7 +66,7 @@ pub fn load_image(filename: &str) -> (Vec<Pixel>, i32, i32) {
 }
 
 #[allow(dead_code)]
-pub fn save_layer(layer: &Layer, filename: &str) {
+pub fn save_layer(layer: &BitmapLayer, filename: &str) {
     // This is just to make copy_tile_to simpler:
     assert!(layer.width() % TILE_SIZE == 0);
     assert!(layer.height() % TILE_SIZE == 0);
@@ -90,21 +90,26 @@ pub fn save_layer(layer: &Layer, filename: &str) {
 #[allow(dead_code)]
 pub fn save_layerstack(layerstack: &LayerStack, filename: &str) {
     // This is just to make copy_tile_to simpler:
-    assert!(layerstack.width() % TILE_SIZE == 0);
-    assert!(layerstack.height() % TILE_SIZE == 0);
+    let w = layerstack.root().width();
+    let h = layerstack.root().height();
+    assert!(w % TILE_SIZE == 0);
+    assert!(h % TILE_SIZE == 0);
 
-    let mut rgba = vec![0u8; (layerstack.width() * layerstack.height() * 4) as usize];
-    let opts = LayerViewOptions::default();
+    let mut rgba = vec![0u8; (w * h * 4) as usize];
 
-    for ty in 0..(layerstack.height() / TILE_SIZE) {
-        for tx in 0..(layerstack.width() / TILE_SIZE) {
-            let td = layerstack.flatten_tile(tx, ty, &opts);
-            copy_tile_to(&mut rgba, layerstack.width(), &td, tx, ty);
-        }
+    for (i, j, tile) in
+        FlattenedTileIterator::new(layerstack, &LayerViewOptions::default(), AoE::Everything)
+    {
+        copy_tile_to(
+            &mut rgba,
+            layerstack.root().width(),
+            &tile,
+            i as u32,
+            j as u32,
+        );
     }
 
-    let img: RgbaImage =
-        ImageBuffer::from_vec(layerstack.width(), layerstack.height(), rgba).unwrap();
+    let img: RgbaImage = ImageBuffer::from_vec(w, h, rgba).unwrap();
 
     println!("Writing {}", filename);
     img.save(filename).unwrap();

@@ -20,10 +20,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{LayerStack, InternalLayerID, Layer, Tile, Rectangle, Color};
+use dpcore::paint::{
+    InternalLayerID, LayerMetadata, Blendmode,
+    LayerStack, Layer, GroupLayer, BitmapLayer,
+    Tile, Rectangle, Color,};
 use dpcore::paint::annotation::{Annotation, VAlign};
 use dpcore::canvas::compression::decompress_tile;
-use super::{IndexEntry, IndexResult, IndexError};
+use super::{IndexEntry, IndexResult, IndexError, INDEX_FORMAT_VERSION};
 
 use std::io::{Read, Seek, SeekFrom};
 use std::collections::HashMap;
@@ -46,7 +49,7 @@ pub fn read_index<R: Read+Seek>(reader: &mut R) -> IndexResult<Index> {
     }
 
     let version = reader.read_u16::<LittleEndian>()?;
-    if version != 8 {
+    if version != INDEX_FORMAT_VERSION {
         return Err(IndexError::IncompatibleVersion);
     }
 
@@ -88,24 +91,24 @@ pub fn read_index<R: Read+Seek>(reader: &mut R) -> IndexResult<Index> {
 }
 
 /// Read a snapshot from the index
-/// 
+///
 /// Returns message index, message offset and the layer stack.
 pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexResult<LayerStack> {
     reader.seek(SeekFrom::Start(entry.snapshot_offset))?;
     let width = reader.read_u32::<LittleEndian>()?;
     let height = reader.read_u32::<LittleEndian>()?;
     let bgtile_offset = reader.read_u64::<LittleEndian>()?;
-    let layer_count = reader.read_u16::<LittleEndian>()?;
-    let layer_offsets = read_offset_vector(reader, layer_count as usize)?;
+    let root_offset = reader.read_u64::<LittleEndian>()?;
     let annotation_count = reader.read_u16::<LittleEndian>()?;
     let annotation_offsets = read_offset_vector(reader, annotation_count as usize)?;
 
     let background = read_tile(reader, &mut HashMap::new(), bgtile_offset)?;
 
-    let mut layers: Vec<Arc<Layer>> = Vec::with_capacity(layer_count as usize);
-    for offset in layer_offsets {
-        layers.push(read_layer(reader, offset, width, height, true)?);
-    }
+    let root = match read_layer(reader, root_offset, width, height, false) {
+        Ok(Layer::Group(g)) => g,
+        Ok(_) => { return Err(IndexError::CorruptFile); }
+        Err(e) => { return Err(e); }
+    };
 
     let mut annotations: Vec<Arc<Annotation>> = Vec::with_capacity(annotation_count as usize);
     for offset in annotation_offsets {
@@ -113,11 +116,9 @@ pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexR
     }
 
     Ok(LayerStack::from_parts(
-        width,
-        height,
+        Arc::new(root.into()),
+        Arc::new(annotations),
         background,
-        Arc::new(layers),
-        Arc::new(annotations)
     ))
 }
 
@@ -155,52 +156,82 @@ fn read_annotation<R: Read+Seek>(reader: &mut R, offset: u64) -> IndexResult<Arc
     }))
 }
 
-fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32, read_sublayers: bool) -> IndexResult<Arc<Layer>> {
+fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32, read_sublayers: bool) -> IndexResult<Layer> {
     let mut tilemap: HashMap<u64, Tile> = HashMap::new();
 
     reader.seek(SeekFrom::Start(offset))?;
 
-    let id = reader.read_i32::<LittleEndian>()?;
-    let sublayer_count = reader.read_u16::<LittleEndian>()?;
-    let sublayer_offsets = read_offset_vector(reader, sublayer_count as usize)?;
-    let tile_count = Tile::div_up(width) * Tile::div_up(height);
-    let tile_offsets = read_offset_vector(reader, tile_count as usize)?;
+    let id = InternalLayerID(reader.read_i32::<LittleEndian>()?);
     let title_len = reader.read_u16::<LittleEndian>()?;
     let mut title = vec![0;title_len as usize];
     reader.read_exact(&mut title)?;
     let title = String::from_utf8(title)?;
-    let opacity = reader.read_u8()?;
-    let hidden = reader.read_u8()?;
-    let censored = reader.read_u8()?;
-    let fixed = reader.read_u8()?;
+    let opacity = reader.read_u8()? as f32 / 255.0;
+    let blendmode  = Blendmode::try_from(reader.read_u8()?).unwrap_or_default();
+    let hidden = reader.read_u8()? != 0;
+    let censored = reader.read_u8()? != 0;
+    let fixed = reader.read_u8()? != 0;
+    let isolated = reader.read_u8()? != 0;
+    let group = reader.read_u8()? != 0;
 
-    let mut tiles: Vec<Tile> = Vec::with_capacity(tile_offsets.len());
-    for offset in tile_offsets {
-        tiles.push(read_tile(reader, &mut tilemap, offset)?);
-    }
+    let metadata = LayerMetadata {
+        id,
+        title,
+        opacity,
+        hidden,
+        censored,
+        fixed,
+        blendmode,
+        isolated,
+    };
 
-    let mut sublayers: Vec<Arc<Layer>> = Vec::with_capacity(sublayer_count as usize);
-    if read_sublayers {
+    let sublayer_count = reader.read_u16::<LittleEndian>()?;
+    let sublayer_offsets = read_offset_vector(reader, sublayer_count as usize)?;
+
+    Ok(if group {
+        // Read group layer
+        // TODO cycle check to avoid infinite loops
+        let mut layers: Vec<Arc<Layer>> = Vec::with_capacity(sublayer_count as usize);
         for sl in sublayer_offsets {
-            sublayers.push(read_layer(reader, sl, width, height, false)?);
+            layers.push(Arc::new(read_layer(reader, sl, width, height, true)?));
         }
-    }
 
-    let mut layer = Layer::from_parts(
-        InternalLayerID(id),
-        width,
-        height,
-        Arc::new(tiles),
-        sublayers,
-    );
+        Layer::Group(GroupLayer::from_parts(
+            metadata,
+            width,
+            height,
+            layers
+        ))
 
-    layer.opacity = opacity as f32 / 255.0;
-    layer.title = title;
-    layer.hidden = hidden != 0;
-    layer.censored = censored != 0;
-    layer.fixed = fixed != 0;
+    } else {
+        // Read layer
+        let tile_count = Tile::div_up(width) * Tile::div_up(height);
+        let tile_offsets = read_offset_vector(reader, tile_count as usize)?;
 
-    Ok(Arc::new(layer))
+        let mut tiles: Vec<Tile> = Vec::with_capacity(tile_offsets.len());
+        for offset in tile_offsets {
+            tiles.push(read_tile(reader, &mut tilemap, offset)?);
+        }
+
+        let mut sublayers: Vec<Arc<BitmapLayer>> = Vec::with_capacity(sublayer_count as usize);
+        if read_sublayers {
+            for sl in sublayer_offsets {
+                if let Layer::Bitmap(b) = read_layer(reader, sl, width, height, false)? {
+                    sublayers.push(Arc::new(b))
+                } else {
+                    return Err(IndexError::CorruptFile);
+                }
+            }
+        }
+
+        Layer::Bitmap(BitmapLayer::from_parts(
+            metadata,
+            width,
+            height,
+            Arc::new(tiles),
+            sublayers,
+        ))
+    })
 }
 
 fn read_tile<R: Read+Seek>(reader: &mut R, tile_cache: &mut HashMap<u64, Tile>, offset: u64) -> IndexResult<Tile> {

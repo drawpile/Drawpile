@@ -303,7 +303,6 @@ impl AclFilter {
                 }
                 ok
             }
-            LayerVisibility(_, _) => true, // TODO
             PutImage(u, m) => {
                 self.users.tier(*u) <= self.feature_tier.put_image
                     && !self.is_layer_locked(*u, m.layer)

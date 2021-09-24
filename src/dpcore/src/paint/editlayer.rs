@@ -25,7 +25,8 @@ use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
-    rasterop, Blendmode, BrushMask, Color, InternalLayerID, Layer, Pixel, Rectangle, UserID,
+    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, InternalLayerID, Layer, Pixel,
+    Rectangle, UserID,
 };
 
 /// Fills a rectangle with a solid color using the given blending mode
@@ -38,7 +39,7 @@ use super::{
 /// * `mode` - Fill blending mode
 /// * `rect` - Rectangle to fill
 pub fn fill_rect(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     color: &Color,
     mode: Blendmode,
@@ -73,7 +74,7 @@ pub fn fill_rect(
 }
 
 /// Clear a layer
-pub fn clear_layer(layer: &mut Layer) -> AoE {
+pub fn clear_layer(layer: &mut BitmapLayer) -> AoE {
     let old_content = layer.nonblank_tilemap();
     layer
         .tilevec_mut()
@@ -97,7 +98,7 @@ pub fn clear_layer(layer: &mut Layer) -> AoE {
 /// * `color` - The brush color
 /// * `mode` - Brush blending mode
 pub fn draw_brush_dab(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     x: i32,
     y: i32,
@@ -150,7 +151,7 @@ pub fn draw_brush_dab(
 /// of the rectangle must match the image dimensions. The rectangle may be
 /// outside the layer boundaries; it will be cropped as needed.
 pub fn draw_image(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     image: &[Pixel],
     rect: &Rectangle,
@@ -199,7 +200,7 @@ pub fn draw_image(
 /// This is typically used to set the initial canvas content
 /// at the start of a session.
 pub fn put_tile(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     sublayer: InternalLayerID,
     col: u32,
     row: u32,
@@ -248,7 +249,7 @@ pub fn put_tile(
 /// The other layer's opacity and blending mode are used.
 ///
 /// The returned area of effect contains all the visible tiles of the source layer
-pub fn merge(target_layer: &mut Layer, source_layer: &Layer) -> AoE {
+pub fn merge_bitmap(target_layer: &mut BitmapLayer, source_layer: &BitmapLayer) -> AoE {
     assert_eq!(target_layer.size(), source_layer.size());
 
     let target_tiles = target_layer.tilevec_mut();
@@ -258,26 +259,80 @@ pub fn merge(target_layer: &mut Layer, source_layer: &Layer) -> AoE {
     target_tiles
         .iter_mut()
         .zip(source_tiles.iter())
-        .for_each(|(d, s)| d.merge(s, source_layer.opacity, source_layer.blendmode));
+        .for_each(|(d, s)| {
+            d.merge(
+                s,
+                source_layer.metadata.opacity,
+                source_layer.metadata.blendmode,
+            )
+        });
 
-    if source_layer.is_visible() {
+    if source_layer.metadata.is_visible() {
         source_layer.nonblank_tilemap().into()
     } else {
         AoE::Nothing
     }
 }
 
+/// Merge a group layer to a bitmap layer
+///
+/// This action flattens the group, then merges the flattened layer using
+/// the group's blending mode.
+/// If the group is non-isolated, each sublayer will be merged individually.
+///
+/// The returned area of effect contains all the visible tiles of the source group
+pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) -> AoE {
+    let mut aoe = AoE::Nothing;
+
+    if source_group.metadata().isolated {
+        let mut tmp = BitmapLayer::new(
+            InternalLayerID(0),
+            source_group.width(),
+            source_group.height(),
+            Tile::Blank,
+        );
+        tmp.metadata_mut().opacity = source_group.metadata().opacity;
+        tmp.metadata_mut().blendmode = source_group.metadata().blendmode;
+
+        for layer in source_group.iter_layers().rev() {
+            match layer {
+                Layer::Group(g) => {
+                    aoe = aoe.merge(merge_group(&mut tmp, g));
+                }
+                Layer::Bitmap(b) => {
+                    aoe = aoe.merge(merge_bitmap(&mut tmp, b));
+                }
+            }
+        }
+
+        aoe = aoe.merge(merge_bitmap(target_layer, &tmp));
+    } else {
+        for layer in source_group.iter_layers().rev() {
+            match layer {
+                Layer::Group(g) => {
+                    aoe = aoe.merge(merge_group(target_layer, g));
+                }
+                Layer::Bitmap(b) => {
+                    aoe = aoe.merge(merge_bitmap(target_layer, b));
+                }
+            }
+        }
+    }
+
+    aoe
+}
+
 /// Merge a sublayer
-pub fn merge_sublayer(layer: &mut Layer, sublayer_id: InternalLayerID) -> AoE {
+pub fn merge_sublayer(layer: &mut BitmapLayer, sublayer_id: InternalLayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
-        merge(layer, &sublayer)
+        merge_bitmap(layer, &sublayer)
     } else {
         AoE::Nothing
     }
 }
 
 /// Remove a sublayer without merging it
-pub fn remove_sublayer(layer: &mut Layer, sublayer_id: InternalLayerID) -> AoE {
+pub fn remove_sublayer(layer: &mut BitmapLayer, sublayer_id: InternalLayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
         sublayer.nonblank_tilemap().into()
     } else {
@@ -285,7 +340,7 @@ pub fn remove_sublayer(layer: &mut Layer, sublayer_id: InternalLayerID) -> AoE {
     }
 }
 
-pub fn merge_all_sublayers(layer: &mut Layer) -> AoE {
+pub fn merge_all_sublayers(layer: &mut BitmapLayer) -> AoE {
     let mut aoe = AoE::Nothing;
     let sublayers = layer.sublayer_ids();
     for id in sublayers {
@@ -302,18 +357,25 @@ pub fn change_attributes(
     blend: Blendmode,
     censored: bool,
     fixed: bool,
+    isolated: bool,
 ) -> AoE {
     if sublayer != 0 {
-        let sl = layer.get_or_create_sublayer(sublayer);
-        sl.blendmode = blend;
-        sl.opacity = opacity;
+        if let Layer::Bitmap(bl) = layer {
+            let sl = bl.get_or_create_sublayer(sublayer);
+            sl.metadata.blendmode = blend;
+            sl.metadata.opacity = opacity;
 
-        sl.nonblank_tilemap().into()
+            sl.nonblank_tilemap().into()
+        } else {
+            AoE::Nothing
+        }
     } else {
-        layer.blendmode = blend;
-        layer.opacity = opacity;
-        layer.censored = censored;
-        layer.fixed = fixed;
+        let md = layer.metadata_mut();
+        md.blendmode = blend;
+        md.opacity = opacity;
+        md.censored = censored;
+        md.fixed = fixed;
+        md.isolated = isolated;
 
         layer.nonblank_tilemap().into()
     }
@@ -326,7 +388,7 @@ pub fn change_attributes(
 /// may overlap with the source
 /// If a mask is given, it's length must be source width*height.
 pub fn move_rect(
-    layer: &mut Layer,
+    layer: &mut BitmapLayer,
     user: UserID,
     source_rect: Rectangle,
     dest_x: i32,
@@ -354,7 +416,6 @@ pub fn move_rect(
             });
 
         draw_image(layer, user, m, &source_rect, 1.0, Blendmode::Erase)
-
     } else {
         fill_rect(
             layer,
@@ -379,12 +440,14 @@ pub fn move_rect(
 #[cfg(test)]
 mod tests {
     use super::super::color::{WHITE_PIXEL, ZERO_PIXEL};
-    use super::super::BrushMask;
+    use super::super::LayerMetadata;
     use super::*;
+
+    use std::sync::Arc;
 
     #[test]
     fn test_fill_rect() {
-        let mut layer = Layer::new(InternalLayerID(0), 200, 200, Tile::Blank);
+        let mut layer = BitmapLayer::new(InternalLayerID(0), 200, 200, Tile::Blank);
 
         fill_rect(
             &mut layer,
@@ -410,7 +473,7 @@ mod tests {
 
     #[test]
     fn test_draw_brush_dab() {
-        let mut layer = Layer::new(InternalLayerID(0), 128, 128, Tile::Blank);
+        let mut layer = BitmapLayer::new(InternalLayerID(0), 128, 128, Tile::Blank);
         let brush = BrushMask::new_round_pixel(4, 1.0);
         // Shape should look like this:
         // 0110
@@ -452,21 +515,56 @@ mod tests {
 
     #[test]
     fn test_layer_merge() {
-        let mut btm = Layer::new(
+        let mut btm = BitmapLayer::new(
             InternalLayerID(0),
             128,
             128,
             Tile::new(&Color::rgb8(0, 0, 0), 0),
         );
-        let mut top = Layer::new(
+        let mut top = BitmapLayer::new(
             InternalLayerID(0),
             128,
             128,
             Tile::new(&Color::rgb8(255, 0, 0), 0),
         );
-        top.opacity = 0.5;
+        top.metadata_mut().opacity = 0.5;
 
-        merge(&mut btm, &top);
+        merge_bitmap(&mut btm, &top);
+
+        assert_eq!(btm.pixel_at(0, 0), Color::rgb8(127, 0, 0).as_pixel());
+    }
+
+    #[test]
+    fn test_group_merge() {
+        let mut btm = BitmapLayer::new(
+            InternalLayerID(0),
+            128,
+            128,
+            Tile::new(&Color::rgb8(0, 0, 0), 0),
+        );
+        let top = Arc::new(Layer::Bitmap(BitmapLayer::new(
+            InternalLayerID(0),
+            128,
+            128,
+            Tile::new(&Color::rgb8(255, 0, 0), 0),
+        )));
+        let grp = GroupLayer::from_parts(
+            LayerMetadata {
+                id: InternalLayerID(0),
+                title: String::new(),
+                opacity: 0.5,
+                hidden: false,
+                censored: false,
+                fixed: false,
+                blendmode: Blendmode::Normal,
+                isolated: true,
+            },
+            128,
+            128,
+            vec![top],
+        );
+
+        merge_group(&mut btm, &grp);
 
         assert_eq!(btm.pixel_at(0, 0), Color::rgb8(127, 0, 0).as_pixel());
     }

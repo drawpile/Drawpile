@@ -22,50 +22,47 @@
 #include "../rustpile/rustpile.h"
 
 #include <QDebug>
-#include <QStringList>
-#include <QBuffer>
 #include <QImage>
+#include <QStringList>
 #include <QRegularExpression>
 
 namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
-	: QAbstractListModel(parent), m_aclstate(nullptr),
-	  m_autoselectAny(true), m_defaultLayer(0)
+	: QAbstractItemModel(parent), m_aclstate(nullptr),
+	  m_rootLayerCount(0), m_defaultLayer(0), m_autoselectAny(true)
 {
-}
-	
-int LayerListModel::rowCount(const QModelIndex &parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return m_items.size();
 }
 
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row() >= 0 && index.row() < m_items.size()) {
-		const LayerListItem &item = m_items.at(index.row());
+	if(!index.isValid())
+		return QVariant();
 
-		switch(role) {
-		case Qt::DisplayRole: return QVariant::fromValue(item);
-		case TitleRole:
-		case Qt::EditRole: return item.title;
-		case IdRole: return item.id;
-		case IsDefaultRole: return item.id == m_defaultLayer;
-		case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
-		case IsFixedRole: return item.fixed;
-		}
+	const LayerListItem &item = m_items.at(index.internalId());
+
+	switch(role) {
+	case Qt::DisplayRole: return QVariant::fromValue(item);
+	case TitleRole:
+	case Qt::EditRole: return item.title;
+	case IdRole: return item.id;
+	case IsDefaultRole: return item.id == m_defaultLayer;
+	case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
+	case IsFixedRole: return item.fixed;
+	case IsGroupRole: return item.group;
 	}
+
 	return QVariant();
 }
 
 Qt::ItemFlags LayerListModel::flags(const QModelIndex& index) const
 {
-	if(!index.isValid())
-		return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
+	if(index.isValid()) {
+		const bool isGroup = m_items.at(index.internalId()).group;
 
-	return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+		return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | (isGroup ? Qt::ItemIsDropEnabled : Qt::NoItemFlags);
+	}
+	return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
 }
 
 Qt::DropActions LayerListModel::supportedDropActions() const
@@ -90,156 +87,145 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
 	if(ldata && ldata->source() == this) {
-		// note: if row is -1, the item was dropped on the parent element, which in the
-		// case of the list view means the empty area below the items.
-		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? m_items.count() : row);
+		if(m_items.size() < 2)
+			return false;
+
+		int targetId;
+		bool intoGroup = false;
+		bool below = false;
+		if(row < 0) {
+			if(parent.isValid()) {
+				// row<0, valid parent: move into the group
+				targetId = m_items.at(parent.internalId()).id;
+				intoGroup = true;
+			} else {
+				// row<0, no parent: the empty area below the layer list (move to root/bottom)
+				targetId = m_items.at(index(rowCount()-1, 0).internalId()).id;
+				below = true;
+			}
+		} else {
+			const int children = rowCount(parent);
+			if(row >= children) {
+				// row >= number of children in group (or root): move below the last item in the group
+				targetId = m_items.at(index(children-1, 0, parent).internalId()).id;
+				below = true;
+			} else {
+				// the standard case: move above this layer
+				targetId = m_items.at(index(row, 0, parent).internalId()).id;
+			}
+		}
+
+#if 0
+		qInfo("Drop row=%d (parent row=%d, id=%d, rowCount=%d)", row, parent.row(), parent.internalId(), rowCount(parent));
+		for(int i=0;i<m_items.size();++i) {
+			qInfo("[%d] id=%d, children=%d", i, m_items.at(i).id, m_items.at(i).children);
+		}
+		qInfo("Requesting move of %d to %s %d, into=%d", ldata->layerId(), below ? "below" : "above", targetId, intoGroup);
+#endif
+
+		emit moveRequested(ldata->layerId(), targetId, intoGroup, below);
+
 	} else {
 		// TODO support new layer drops
-		qWarning() << "External layer drag&drop not supported";
+		qWarning("External layer drag&drop not supported");
 	}
 	return false;
 }
 
-void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
-{
-	// Need at least two layers for this to make sense
-	const int count = m_items.count();
-	if(count < 2)
-		return;
-
-	// If we're moving the layer to a higher index, take into
-	// account that all previous indexes shift down by one.
-	int adjustedNewIdx = newIdx > oldIdx ? newIdx - 1 : newIdx;
-
-	if(oldIdx < 0 || oldIdx >= count || adjustedNewIdx < 0 || adjustedNewIdx >= count) {
-		// This can happen when a layer is deleted while someone is drag&dropping it
-		qWarning("Whoops, can't move layer from %d to %d because it was just deleted!", oldIdx, newIdx);
-		return;
-	}
-
-	QVector<uint16_t> layers;
-	layers.reserve(count);
-	for(const LayerListItem &li : m_items)
-		layers.append(li.id);
-
-	layers.move(oldIdx, adjustedNewIdx);
-
-	// Layers are shown topmost first in the list but
-	// are sent bottom first in the protocol.
-	std::reverse(layers.begin(), layers.end());
-
-	Q_ASSERT(m_aclstate);
-	net::EnvelopeBuilder eb;
-	rustpile::write_layerorder(eb, m_aclstate->localUserId(), layers.constData(), layers.size());
-	emit layerCommand(eb.toEnvelope());
-}
-
-int LayerListModel::indexOf(uint16_t id) const
-{
-	for(int i=0;i<m_items.size();++i)
-		if(m_items.at(i).id == id)
-			return i;
-	return -1;
-}
-
 QModelIndex LayerListModel::layerIndex(uint16_t id)
 {
-	int i = indexOf(id);
-	if(i>=0)
-		return index(i);
+	for(int i=0;i<m_items.size();++i) {
+		if(m_items.at(i).id == id) {
+			return createIndex(m_items.at(i).relIndex, 0, i);
+		}
+	}
+
 	return QModelIndex();
 }
 
-void LayerListModel::createLayer(uint16_t id, int index, const QString &title)
+int LayerListModel::rowCount(const QModelIndex &parent) const
 {
-	beginInsertRows(QModelIndex(), index, index);
-	m_items.insert(index, LayerListItem { id, title, 1.0, rustpile::Blendmode::Normal, false, false, false });
-	endInsertRows();
-}
-
-void LayerListModel::deleteLayer(uint16_t id)
-{
-	int row = indexOf(id);
-	if(row<0)
-		return;
-
-	beginRemoveRows(QModelIndex(), row, row);
-	if(m_defaultLayer == id)
-		m_defaultLayer = 0;
-	m_items.remove(row);
-	endRemoveRows();
-}
-
-void LayerListModel::clear()
-{
-	beginRemoveRows(QModelIndex(), 0, m_items.size());
-	m_items.clear();
-	m_defaultLayer = 0;
-	endRemoveRows();
-}
-
-void LayerListModel::changeLayer(uint16_t id, bool censored, bool fixed, float opacity, rustpile::Blendmode blend)
-{
-	int row = indexOf(id);
-	if(row<0)
-		return;
-
-	LayerListItem &item = m_items[row];
-	item.opacity = opacity;
-	item.blend = blend;
-	item.censored = censored;
-	item.fixed = fixed;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::retitleLayer(uint16_t id, const QString &title)
-{
-	int row = indexOf(id);
-	if(row<0)
-		return;
-
-	LayerListItem &item = m_items[row];
-	item.title = title;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::setLayerHidden(uint16_t id, bool hidden)
-{
-	int row = indexOf(id);
-	if(row<0)
-		return;
-
-	LayerListItem &item = m_items[row];
-	item.hidden = hidden;
-	const QModelIndex qmi = index(row);
-	emit dataChanged(qmi, qmi);
-}
-
-void LayerListModel::reorderLayers(QList<uint16_t> neworder)
-{
-	if(neworder.isEmpty()) {
-		qWarning("reorderLayers(): empty layer list!");
-		return;
+	if(parent.isValid()) {
+		return m_items.at(parent.internalId()).children;
 	}
 
-	QVector<LayerListItem> newitems;
-	for(int j=neworder.size()-1;j>=0;--j) {
-		const uint16_t id=neworder[j];
-		for(int i=0;i<m_items.size();++i) {
-			if(m_items[i].id == id) {
-				newitems << m_items[i];
-				break;
-			}
+	return m_rootLayerCount;
+}
+
+int LayerListModel::columnCount(const QModelIndex &parent) const
+{
+	Q_UNUSED(parent);
+	return 1;
+}
+
+QModelIndex LayerListModel::parent(const QModelIndex &index) const
+{
+	if(!index.isValid())
+		return QModelIndex();
+
+	int seek = index.internalId();
+
+	const int right = m_items.at(seek).right;
+	while(--seek >= 0) {
+		if(m_items.at(seek).right > right) {
+			return createIndex(m_items.at(seek).relIndex, 0, seek);
 		}
 	}
-	m_items = newitems;
-	emit dataChanged(index(0), index(m_items.size()-1));
-	emit layersReordered();
+
+	return QModelIndex();
 }
 
-void LayerListModel::setLayers(QVector<LayerListItem> items)
+QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent) const
+{
+	if(m_items.isEmpty() || row < 0 || column != 0)
+		return QModelIndex();
+
+	int cursor;
+
+	if(parent.isValid()) {
+		Q_ASSERT(m_items.at(parent.internalId()).group);
+		cursor = parent.internalId();
+		if(row >= m_items.at(cursor).children)
+			return QModelIndex();
+
+		cursor += 1; // point to the first child element
+
+	} else {
+		if(row >= m_rootLayerCount)
+			return QModelIndex();
+
+		cursor = 0;
+	}
+
+	int next = m_items.at(cursor).right + 1;
+
+	int i = 0;
+	while(i < row) {
+		while(cursor < m_items.size() && m_items.at(cursor).left < next)
+			++cursor;
+
+		if(cursor == m_items.size() || m_items.at(cursor).left > next)
+			return QModelIndex();
+
+		next = m_items.at(cursor).right + 1;
+		++i;
+	}
+
+#if 0
+	qInfo("index(row=%d), parent row=%d (id=%d, children=%d, group=%d), relIndex=%d, cursor=%d, left=%d, right=%d",
+		  row,
+		  parent.row(), int(parent.internalId()), m_items.at(parent.internalId()).children, m_items.at(parent.internalId()).group,
+		  m_items.at(cursor).relIndex, cursor,
+		  m_items.at(cursor).left, m_items.at(cursor).right
+		  );
+#endif
+
+	Q_ASSERT(m_items.at(cursor).relIndex == row);
+
+	return createIndex(row, column, cursor);
+}
+
+void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 {
 	// See if there are any new layers we should autoselect
 	int autoselect = -1;
@@ -280,7 +266,21 @@ void LayerListModel::setLayers(QVector<LayerListItem> items)
 		}
 	}
 
+	// Count root layers
+	int rootLayers = 0;
+	if(!items.isEmpty()) {
+		++rootLayers;
+		int next = items[0].right + 1;
+		for(int i=1;i<items.length();++i) {
+			if(items[i].left == next) {
+				++rootLayers;
+				next = items[i].right + 1;
+			}
+		}
+	}
+
 	beginResetModel();
+	m_rootLayerCount = rootLayers;
 	m_items = items;
 	endResetModel();
 
@@ -290,6 +290,8 @@ void LayerListModel::setLayers(QVector<LayerListItem> items)
 
 void LayerListModel::setDefaultLayer(uint16_t id)
 {
+	qWarning("TODO: setDefaultLayer(%d)", id);
+#if 0 // FIXME
 	const int oldIdx = indexOf(m_defaultLayer);
 	if(oldIdx >= 0) {
 		emit dataChanged(index(oldIdx), index(oldIdx), QVector<int>() << IsDefaultRole);
@@ -300,18 +302,7 @@ void LayerListModel::setDefaultLayer(uint16_t id)
 	if(newIdx >= 0) {
 		emit dataChanged(index(newIdx), index(newIdx), QVector<int>() << IsDefaultRole);
 	}
-}
-
-QImage LayerListModel::getLayerImage(uint16_t id) const
-{
-	if(m_getlayerfn)
-		return m_getlayerfn(id);
-	return QImage();
-}
-
-void LayerListModel::previewOpacityChange(uint16_t id, float opacity)
-{
-	emit layerOpacityPreview(id, opacity);
+#endif
 }
 
 QStringList LayerMimeData::formats() const
@@ -323,7 +314,9 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 {
 	Q_UNUSED(mimeType);
 	if(type==QVariant::Image) {
-		return m_source->getLayerImage(m_id);
+		if(m_source->m_getlayerfn) {
+			return m_source->m_getlayerfn(m_id);
+		}
 	}
 
 	return QVariant();
@@ -382,7 +375,9 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 uint8_t LayerListItem::attributeFlags() const
 {
 	return (censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
-		   (fixed ? rustpile::LayerAttributesMessage_FLAGS_FIXED : 0);
+		   (fixed ? rustpile::LayerAttributesMessage_FLAGS_FIXED : 0) |
+			(isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0)
+			;
 }
 
 }

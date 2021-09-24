@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2019 Calle Laakkonen
+   Copyright (C) 2008-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -94,7 +94,12 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
 		if(me->button() == Qt::LeftButton) {
-			if(me->x() < 24) {
+			const QRect stylerect{
+				option.rect.topLeft() + QPoint(0, option.rect.height()/2-12),
+				QSize(24,24)
+			};
+
+			if(stylerect.contains(me->pos())) {
 				// Clicked on opacity glyph: toggle visibility
 				emit toggleVisibility(layer.id, layer.hidden);
 				return true;

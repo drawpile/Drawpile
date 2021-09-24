@@ -22,7 +22,9 @@
 
 use super::color::{Color, Pixel, ALPHA_CHANNEL};
 use super::tile::{Tile, TILE_SIZE};
-use super::{Image, InternalLayerID, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle};
+use super::{
+    BitmapLayer, Image, InternalLayerID, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle,
+};
 
 use std::sync::Arc;
 
@@ -58,27 +60,27 @@ pub fn floodfill(
     sample_merged: bool,
     size_limit: u32,
 ) -> FloodFillResult {
-    let layer = match image.get_layer(layer_id) {
-        Some(l) => l,
-        None => {
+    let layer = match image.root().get_layer(layer_id) {
+        Some(Layer::Bitmap(l)) => l,
+        _ => {
             return FloodFillResult::empty();
         }
     };
 
-    if x < 0 || y < 0 || x as u32 >= image.width() || y as u32 >= image.height() {
+    if x < 0 || y < 0 || x as u32 >= layer.width() || y as u32 >= layer.height() {
         return FloodFillResult::empty();
     }
 
     // The scratch layer is used for two things: for flattening the layerstack in sample_merged mode
     // and to keep track of filled pixels.
     let mut scratch = ScratchLayer {
-        layer: Layer::new(
+        layer: BitmapLayer::new(
             InternalLayerID(0),
             layer.width(),
             layer.height(),
             Tile::Blank,
         ),
-        fill_layer: Layer::new(
+        fill_layer: BitmapLayer::new(
             InternalLayerID(0),
             layer.width(),
             layer.height(),
@@ -173,11 +175,11 @@ pub fn floodfill(
 
 struct ScratchLayer<'a> {
     /// this is the actual scratch layer
-    layer: Layer,
+    layer: BitmapLayer,
     /// filled pixels are put here too. This becomes the final result
-    fill_layer: Layer,
+    fill_layer: BitmapLayer,
     /// the target/source layer
-    source_layer: &'a Layer,
+    source_layer: &'a BitmapLayer,
     /// the layer stack is used in sample_merged mode
     image: &'a LayerStack,
     /// in sample merged mode, the entire layerstack is flattened into the scratch layer

@@ -21,45 +21,42 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use std::cell::RefCell;
-use std::convert::TryInto;
 use std::sync::Arc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
-use super::color::ALPHA_CHANNEL;
+use super::color::ZERO_PIXEL;
 use super::flattenediter::FlattenedTileIterator;
+use super::grouplayer::RootGroup;
+use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::{
-    Blendmode, Color, Image, InternalLayerID, Layer, LayerID, Pixel, Rectangle, Size, UserID,
+    BitmapLayer, Blendmode, Color, Image, InternalLayerID, LayerID, Pixel, Rectangle, UserID,
 };
 
+/// A layer stack wraps together the parts that make up the canvas
 #[derive(Clone)]
 pub struct LayerStack {
-    layers: Arc<Vec<Arc<Layer>>>,
+    root: Arc<RootGroup>,
     annotations: Arc<Vec<Arc<Annotation>>>,
     pub background: Tile,
-    width: u32,
-    height: u32,
-}
-
-#[derive(Clone)]
-pub enum LayerFill {
-    Solid(Color),
-    Copy(LayerID),
-}
-
-pub enum LayerInsertion {
-    Top,
-    Above(LayerID),
-    Bottom,
 }
 
 #[derive(PartialEq)]
 #[repr(C)]
 pub enum LayerViewMode {
+    /// The normal rendering mode (all visible layers rendered)
     Normal,
+
+    /// Render only the selected layer
     Solo,
+
+    /// Render only the selected frame (root level layer) + fixed layers
+    Frame,
+
+    /// Render selected frame + few layers above and below with decreased
+    /// opacity and optional color tint.
     Onionskin,
 }
 
@@ -83,8 +80,11 @@ pub struct LayerViewOptions {
     /// Number of onionskin layers to show below the active one
     pub onionskins_below: i32,
 
-    /// Index of the active layer for solo and onionskin mode
-    pub active_layer_idx: usize,
+    /// Index of the active frame for frame and onionskin mode
+    pub active_frame_idx: usize,
+
+    /// Index of the active frame for Solo mode
+    pub active_layer_id: LayerID,
 
     /// The background to use. This can be used to add (for example)
     /// a checkerboard texture to transparent areas.
@@ -103,7 +103,8 @@ impl Default for LayerViewOptions {
             onionskin_tint: false,
             onionskins_above: 1,
             onionskins_below: 1,
-            active_layer_idx: 0,
+            active_frame_idx: 0,
+            active_layer_id: 0,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
@@ -111,15 +112,16 @@ impl Default for LayerViewOptions {
 }
 
 impl LayerViewOptions {
-    pub fn solo(index: usize) -> Self {
+    pub fn frame(index: usize) -> Self {
         Self {
             censor: false,
             highlight: 0,
-            viewmode: LayerViewMode::Solo,
+            viewmode: LayerViewMode::Frame,
             onionskin_tint: false,
             onionskins_above: 1,
             onionskins_below: 1,
-            active_layer_idx: index,
+            active_frame_idx: index,
+            active_layer_id: 0,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
@@ -136,143 +138,39 @@ impl LayerViewOptions {
 impl LayerStack {
     pub fn new(width: u32, height: u32) -> LayerStack {
         LayerStack {
-            layers: Arc::new(Vec::<Arc<Layer>>::new()),
+            root: Arc::new(RootGroup::new(width, height)),
             annotations: Arc::new(Vec::<Arc<Annotation>>::new()),
             background: Tile::Blank,
-            width,
-            height,
         }
     }
 
     pub fn from_parts(
-        width: u32,
-        height: u32,
-        background: Tile,
-        layers: Arc<Vec<Arc<Layer>>>,
+        root: Arc<RootGroup>,
         annotations: Arc<Vec<Arc<Annotation>>>,
+        background: Tile,
     ) -> LayerStack {
         LayerStack {
-            layers,
+            root: root,
             annotations,
             background,
-            width,
-            height,
         }
     }
 
-    pub fn width(&self) -> u32 {
-        self.width
+    /// Get the root of the layer stack
+    pub fn root(&self) -> &RootGroup {
+        &self.root
     }
 
-    pub fn height(&self) -> u32 {
-        self.height
-    }
-
-    pub fn size(&self) -> Size {
-        Size::new(self.width as i32, self.height as i32)
-    }
-
-    /// Add a new layer and return a mutable reference to it
-    ///
-    /// If a layer with the given ID exists already, None will be returned.
-    /// If fill is Copy and the source layer does not exist, None will be returned.
-    pub fn add_layer(
-        &mut self,
-        id: LayerID,
-        fill: LayerFill,
-        pos: LayerInsertion,
-    ) -> Option<&mut Layer> {
-        if self.find_layer_index(id).is_some() {
-            return None;
-        }
-
-        let insert_idx = match pos {
-            LayerInsertion::Top => self.layers.len(),
-            LayerInsertion::Above(layer_id) => self.find_layer_index(layer_id)? + 1,
-            LayerInsertion::Bottom => 0,
-        };
-
-        let new_layer = match fill {
-            LayerFill::Solid(c) => Arc::new(Layer::new(
-                id.into(),
-                self.width,
-                self.height,
-                Tile::new(&c, 0),
-            )),
-            LayerFill::Copy(src_id) => {
-                let mut l = self.layers[self.find_layer_index(src_id)?].clone();
-                Arc::make_mut(&mut l).id = id.into();
-                l
-            }
-        };
-
-        let layers = Arc::make_mut(&mut self.layers);
-        layers.insert(insert_idx, new_layer);
-        Some(Arc::make_mut(layers.last_mut().unwrap()))
-    }
-
-    /// Get the layer vector
-    /// Note: you typically shouldn't need to use this directly
-    pub fn layersvec(&self) -> &Vec<Arc<Layer>> {
-        &self.layers
-    }
-
-    /// Find a layer with the given ID and return a reference to it
-    pub fn get_layer(&self, id: LayerID) -> Option<&Layer> {
-        for l in self.layers.iter() {
-            if l.id == id {
-                return Some(l);
-            }
-        }
-        None
-    }
-
-    /// Find a layer with the given ID and return a reference counted pointer to it
-    pub fn get_layer_rc(&self, id: LayerID) -> Option<Arc<Layer>> {
-        for l in self.layers.iter() {
-            if l.id == id {
-                return Some(l.clone());
-            }
-        }
-        None
-    }
-
-    /// Find a layer with the given ID
-    pub fn get_layer_mut(&mut self, id: LayerID) -> Option<&mut Layer> {
-        if let Some(idx) = self.find_layer_index(id) {
-            Some(Arc::make_mut(&mut Arc::make_mut(&mut self.layers)[idx]))
-        } else {
-            None
-        }
-    }
-
-    /// Remove a layer with the given ID
-    pub fn remove_layer(&mut self, id: LayerID) {
-        if let Some(idx) = self.find_layer_index(id) {
-            Arc::make_mut(&mut self.layers).remove(idx);
-        }
-    }
-
-    /// Find the ID of the layer below this layer
-    pub fn find_layer_below(&self, id: LayerID) -> Option<LayerID> {
-        if let Some(idx) = self.find_layer_index(id) {
-            if idx > 0 {
-                return Some(self.layers[idx - 1].id.try_into().unwrap());
-            }
-        }
-        None
-    }
-
-    pub fn find_layer_index(&self, id: LayerID) -> Option<usize> {
-        self.layers.iter().position(|l| l.id == id)
+    pub fn root_mut(&mut self) -> &mut RootGroup {
+        Arc::make_mut(&mut self.root)
     }
 
     /// Find the layer index corresponding to this frame index
     /// Fixed and hidden layers are not considered frames.
     pub fn find_frame_index(&self, frame: usize) -> Option<usize> {
         let mut frames = frame + 1;
-        for (idx, layer) in self.layers.iter().enumerate() {
-            if !layer.fixed && layer.is_visible() {
+        for (idx, layer) in self.root.iter_layers().enumerate() {
+            if !layer.metadata().fixed && layer.is_visible() {
                 frames -= 1;
                 if frames == 0 {
                     return Some(idx);
@@ -283,37 +181,21 @@ impl LayerStack {
     }
 
     /// Get the number of animation frames in the layerstack
-    /// A layer represents a frame, but fixed and hidden layers are skipped.
+    ///
+    /// A frame is represented by a toplevel layer that is not fixed or hidden.
     pub fn frame_count(&self) -> usize {
-        self.layers
-            .iter()
-            .filter(|l| !l.fixed && l.is_visible())
+        self.root
+            .iter_layers()
+            .filter(|l| !l.metadata().fixed && l.is_visible())
             .count()
     }
 
-    /// Return a copy of the layerstack with the layers in the given order.
-    /// The new order vector is sanitized. Duplicate and nonexistent layers
-    /// are dropped and missing layers are appended.
-    pub fn reordered(&self, new_order: &[LayerID]) -> LayerStack {
-        let mut ordered = Vec::<Arc<Layer>>::new();
-        let mut oldorder = (*self.layers).clone();
-
-        // Take layers from the old list and add them in the specified order.
-        for &layer_id in new_order {
-            if let Some(pos) = oldorder.iter().position(|l| l.id == layer_id) {
-                ordered.push(oldorder.remove(pos));
-            }
-        }
-
-        // Add any remaining layers in the existing order
-        ordered.extend_from_slice(&oldorder);
-
-        LayerStack {
-            layers: Arc::new(ordered),
+    pub fn reordered(&self, new_order: &[LayerID]) -> Result<LayerStack, &'static str> {
+        Ok(Self {
+            root: Arc::new(self.root.reordered(new_order)?),
             annotations: self.annotations.clone(),
             background: self.background.clone(),
-            ..*self
-        }
+        })
     }
 
     /// Create a new (blank) annotation
@@ -415,29 +297,45 @@ impl LayerStack {
             }
         };
 
-        if (i * TILE_SIZE) < self.width && (j * TILE_SIZE) < self.height {
-            for (idx, layer) in self.layers.iter().enumerate() {
+        // The root group is special.
+        // Onionskin, solo and other animation features only apply to
+        // the root, as only root level layers are treated as frames.
+        if (i * TILE_SIZE) < self.root.width() && (j * TILE_SIZE) < self.root.height() {
+
+            if matches!(opts.viewmode, LayerViewMode::Solo) {
+                if let Some(l) = self.root().get_layer(opts.active_layer_id) {
+                    l.flatten_tile(&mut destination, i, j, 1.0, opts.censor, opts.highlight);
+                }
+                return destination;
+            }
+
+            let layercount = self.root.layer_count();
+            for (idx, layer) in self.root.iter_layers().rev().enumerate() {
+                let idx = layercount - idx - 1;
+                let metadata = layer.metadata();
                 // Don't render hidden layers
-                if layer.hidden {
+                if metadata.hidden {
                     continue;
                 }
 
-                // Layer opacity can be overridden be special view modes
+                // Virtual parent opacity is set by special view modes
+                // to hide or fade out layers (solo/onionskin)
                 let (opacity, tint) = match opts.viewmode {
-                    LayerViewMode::Normal => (layer.opacity, 0),
-                    LayerViewMode::Solo => (
-                        if idx == opts.active_layer_idx || layer.fixed {
-                            layer.opacity
+                    LayerViewMode::Normal => (1.0, 0),
+                    LayerViewMode::Solo => unreachable!(),
+                    LayerViewMode::Frame => (
+                        if idx == opts.active_frame_idx || metadata.fixed {
+                            1.0
                         } else {
                             0.0
                         },
                         0,
                     ),
                     LayerViewMode::Onionskin => {
-                        if layer.fixed {
-                            (layer.opacity, 0)
+                        if metadata.fixed {
+                            (1.0, 0)
                         } else {
-                            let d = opts.active_layer_idx as i32 - idx as i32;
+                            let d = opts.active_frame_idx as i32 - idx as i32;
                             let rd = if d == 0 {
                                 0.0
                             } else if d < 0 && d >= -opts.onionskins_above {
@@ -448,7 +346,7 @@ impl LayerStack {
                                 1.0
                             };
                             (
-                                layer.opacity * (1.0 - rd).powi(2),
+                                (1.0 - rd).powi(2),
                                 if d == 0 || !opts.onionskin_tint {
                                     0
                                 } else if d < 0 {
@@ -466,15 +364,22 @@ impl LayerStack {
                     continue;
                 }
 
-                layer.flatten_tile(
-                    &mut destination,
-                    i,
-                    j,
-                    opacity,
-                    opts.censor,
-                    opts.highlight,
-                    tint,
-                );
+                // Tinting only works right in Normal blend mode
+                if tint != 0 && layer.metadata().blendmode == Blendmode::Normal {
+                    let mut tmp = TileData::new(ZERO_PIXEL, 0);
+                    layer.flatten_tile(&mut tmp, i, j, opacity, opts.censor, opts.highlight);
+                    tint_pixels(&mut tmp.pixels, Color::from_argb32(tint));
+                    destination.merge_data(&mut tmp, 1.0, layer.metadata().blendmode);
+                } else {
+                    layer.flatten_tile(
+                        &mut destination,
+                        i,
+                        j,
+                        opacity,
+                        opts.censor,
+                        opts.highlight,
+                    );
+                }
             }
         }
 
@@ -483,7 +388,7 @@ impl LayerStack {
 
     /// Get a weighted average of a color
     pub fn sample_color(&self, x: i32, y: i32, dia: i32) -> Color {
-        if x < 0 || y < 0 || x as u32 >= self.width || y as u32 >= self.height {
+        if x < 0 || y < 0 || x as u32 >= self.root.width() || y as u32 >= self.root.height() {
             return Color::TRANSPARENT;
         }
 
@@ -500,10 +405,10 @@ impl LayerStack {
         } else {
             let r = (dia / 2).min(1) as i32;
 
-            let mut tmp = Layer::new(
+            let mut tmp = BitmapLayer::new(
                 InternalLayerID(0),
-                self.width,
-                self.height,
+                self.root.width(),
+                self.root.height(),
                 self.background.clone(),
             );
 
@@ -523,45 +428,6 @@ impl LayerStack {
         }
     }
 
-    /// Find the topmost layer with a non-transparent pixel at the given point
-    ///
-    /// Returns 0 if no layer was found
-    pub fn pick_layer(&self, x: i32, y: i32) -> LayerID {
-        if x < 0 || y < 0 || x as u32 >= self.width || y as u32 >= self.height {
-            return 0;
-        }
-
-        for layer in self.layers.iter().rev() {
-            if layer.is_visible() && layer.pixel_at(x as u32, y as u32)[ALPHA_CHANNEL] > 0 {
-                return layer.id.try_into().unwrap();
-            }
-        }
-
-        return 0;
-    }
-
-    pub fn last_edited_by(&self, x: i32, y: i32) -> UserID {
-        if x < 0 || y < 0 || x as u32 >= self.width || y as u32 >= self.height {
-            return 0;
-        }
-
-        let tx = x as u32 / TILE_SIZE;
-        let ty = y as u32 / TILE_SIZE;
-
-        for layer in self.layers.iter().rev() {
-            if layer.is_visible() {
-                match layer.tile(tx, ty) {
-                    Tile::Bitmap(td) => {
-                        return td.last_touched_by;
-                    }
-                    _ => (),
-                }
-            }
-        }
-
-        0
-    }
-
     /// Render a flattened layerstack (or a subregion) to the given pixel array
     ///
     /// The rectangle must be fully within the layer bounds.
@@ -572,7 +438,7 @@ impl LayerStack {
         opts: &LayerViewOptions,
         pixels: &mut [Pixel],
     ) -> Result<(), &str> {
-        if !rect.in_bounds(self.size()) {
+        if !rect.in_bounds(self.root.size()) {
             return Err("source rectangle out of bounds");
         }
         if pixels.len() != (rect.w * rect.h) as usize {
@@ -613,10 +479,10 @@ impl LayerStack {
 
     /// Convert whole layerstack to a flat image
     pub fn to_image(&self, opts: &LayerViewOptions) -> Image {
-        let mut image = Image::new(self.width as usize, self.height as usize);
+        let mut image = Image::new(self.root.width() as usize, self.root.height() as usize);
 
         self.to_pixels(
-            Rectangle::new(0, 0, self.width() as i32, self.height() as i32),
+            Rectangle::new(0, 0, self.root.width() as i32, self.root.height() as i32),
             opts,
             &mut image.pixels,
         )
@@ -627,19 +493,8 @@ impl LayerStack {
 
     /// Return a resized copy of this stack
     pub fn resized(&self, top: i32, right: i32, bottom: i32, left: i32) -> Option<LayerStack> {
-        let new_width = left + self.width as i32 + right;
-        let new_height = top + self.height as i32 + bottom;
-        if new_width <= 0 || new_height <= 0 {
-            return None;
-        }
-
         Some(LayerStack {
-            layers: Arc::new(
-                self.layers
-                    .iter()
-                    .map(|l| Arc::new(l.resized(top, right, bottom, left)))
-                    .collect(),
-            ),
+            root: Arc::new(self.root.resized(top, right, bottom, left)?),
             annotations: Arc::new(
                 self.annotations
                     .iter()
@@ -653,21 +508,7 @@ impl LayerStack {
                     .collect(),
             ),
             background: self.background.clone(),
-            width: new_width as u32,
-            height: new_height as u32,
         })
-    }
-
-    pub fn iter_layers(&self) -> impl Iterator<Item = &Layer> {
-        return self.layers.iter().map(|l| l.as_ref());
-    }
-
-    pub fn iter_layers_mut(&mut self) -> impl Iterator<Item = &mut Arc<Layer>> {
-        return Arc::make_mut(&mut self.layers).iter_mut();
-    }
-
-    pub fn layer_count(&self) -> usize {
-        return self.layers.len();
     }
 
     /// Compare this layer stack with the other and return an Area Of Effect.
@@ -675,46 +516,11 @@ impl LayerStack {
     /// resetting to an earlier state as a part of an undo operation.
     /// For performance reasons, shallow comparison is used.
     pub fn compare(&self, other: &LayerStack) -> AoE {
-        if self.width != other.width || self.height != other.height {
-            return AoE::Resize(0, 0, self.size());
-        }
-        if Arc::ptr_eq(&self.layers, &other.layers) {
+        if Arc::ptr_eq(&self.root, &other.root) {
             return AoE::Nothing;
         }
-        if self.layers.len() != other.layers.len() {
-            return AoE::Everything;
-        }
 
-        self.layers
-            .iter()
-            .zip(other.layers.iter())
-            .fold(AoE::Nothing, |aoe, (a, b)| aoe.merge(a.compare(b)))
-    }
-
-    /// Compare this layer stack with the other and return true if they
-    /// differ structurally (different number of layers, different order,
-    /// or different layer attributes.)
-    pub fn compare_layer_structure(&self, other: &LayerStack) -> bool {
-        if self.layers.len() != other.layers.len() {
-            return true;
-        }
-
-        for (a, b) in self.layers.iter().zip(other.layers.iter()) {
-            if !Arc::ptr_eq(a, b) {
-                if a.id != b.id
-                    || a.title != b.title
-                    || a.opacity != b.opacity
-                    || a.hidden != b.hidden
-                    || a.censored != b.censored
-                    || a.fixed != b.fixed
-                    || a.blendmode != b.blendmode
-                {
-                    return true;
-                }
-            }
-        }
-
-        false
+        self.root.compare(&other.root)
     }
 
     /// Return true if the annotations differ between the two layer stacks
@@ -725,122 +531,24 @@ impl LayerStack {
 
 #[cfg(test)]
 mod tests {
+    use super::super::grouplayer::*;
     use super::*;
-
-    #[test]
-    fn test_layer_addition() {
-        let mut stack = LayerStack::new(256, 256);
-        assert!(stack
-            .add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top)
-            .is_some());
-
-        // Adding a layer with an existing ID does nothing
-        assert!(stack
-            .add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top)
-            .is_none());
-
-        // One more layer on top
-        assert!(stack
-            .add_layer(
-                2,
-                LayerFill::Solid(Color::rgb8(255, 0, 0)),
-                LayerInsertion::Top
-            )
-            .is_some());
-
-        // Duplicate layer on top
-        assert!(stack
-            .add_layer(3, LayerFill::Copy(1), LayerInsertion::Top)
-            .is_some());
-
-        // Insert layer above the bottom-most
-        assert!(stack
-            .add_layer(
-                4,
-                LayerFill::Solid(Color::rgb8(0, 255, 0)),
-                LayerInsertion::Above(1)
-            )
-            .is_some());
-
-        // Insert layer at the bottom
-        assert!(stack
-            .add_layer(
-                5,
-                LayerFill::Solid(Color::rgb8(0, 0, 255)),
-                LayerInsertion::Bottom
-            )
-            .is_some());
-
-        // Insert layer above the topmost
-        assert!(stack
-            .add_layer(
-                6,
-                LayerFill::Solid(Color::rgb8(0, 0, 255)),
-                LayerInsertion::Above(3)
-            )
-            .is_some());
-
-        assert!(stack.get_layer(0).is_none());
-        assert_eq!(stack.layers[0].id, 5);
-        assert_eq!(stack.layers[1].id, 1);
-        assert_eq!(stack.layers[2].id, 4);
-        assert_eq!(stack.layers[3].id, 2);
-        assert_eq!(stack.layers[4].id, 3);
-        assert_eq!(stack.layers[5].id, 6);
-    }
-
-    #[test]
-    fn test_layer_removal() {
-        let mut stack = LayerStack::new(256, 256);
-        stack.add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
-        stack.add_layer(2, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
-        stack.add_layer(3, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
-
-        assert_eq!(stack.layers.len(), 3);
-        stack.remove_layer(2);
-        assert_eq!(stack.layers.len(), 2);
-        assert!(stack.get_layer(1).is_some());
-        assert!(stack.get_layer(2).is_none());
-        assert!(stack.get_layer(3).is_some());
-    }
-
-    #[test]
-    fn test_layer_reordering() {
-        let mut stack = LayerStack::new(64, 64);
-        assert!(stack
-            .add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top)
-            .is_some());
-        assert!(stack
-            .add_layer(2, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top)
-            .is_some());
-        assert!(stack
-            .add_layer(3, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top)
-            .is_some());
-        assert!(stack
-            .add_layer(4, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top)
-            .is_some());
-
-        // duplicates are silently dropped and missing layers appended in the original order
-        let new_order = [3, 2, 2, 3];
-        let reordered = stack.reordered(&new_order);
-
-        assert_eq!(reordered.layers[0].id, 3);
-        assert_eq!(reordered.layers[1].id, 2);
-        assert_eq!(reordered.layers[2].id, 1);
-        assert_eq!(reordered.layers[3].id, 4);
-    }
 
     #[test]
     fn test_flattening() {
         let mut stack = LayerStack::new(128, 64);
         let opts = LayerViewOptions::default();
         stack.background = Tile::new_solid(&Color::rgb8(255, 255, 255), 0);
-        stack.add_layer(1, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
-        stack.add_layer(2, LayerFill::Solid(Color::TRANSPARENT), LayerInsertion::Top);
+        stack
+            .root_mut()
+            .add_bitmap_layer(1, Color::TRANSPARENT, LayerInsertion::Top);
+        stack
+            .root_mut()
+            .add_bitmap_layer(2, Color::TRANSPARENT, LayerInsertion::Top);
 
-        let layer = stack.get_layer_mut(1).unwrap();
+        let layer = stack.root_mut().get_bitmaplayer_mut(1).unwrap();
         *layer.tile_mut(0, 0) = Tile::new_solid(&Color::rgb8(255, 0, 0), 0);
-        layer.opacity = 0.5;
+        layer.metadata_mut().opacity = 0.5;
 
         let t1 = stack.flatten_tile(0, 0, &opts);
         assert_eq!(t1.pixels[0], Color::rgb8(255, 128, 128).as_pixel());

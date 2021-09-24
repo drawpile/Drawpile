@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::{Layer, LayerID, Tile, UserID};
+use super::{BitmapLayer, LayerID, Tile, UserID};
 use crate::canvas::compression::compress_tiledata;
 use crate::protocol::message::{CommandMessage, Message, PutTileMessage};
 use std::collections::HashMap;
@@ -53,8 +53,8 @@ pub struct LayerTileSet {
     pub background: u32,
 }
 
-impl From<&Layer> for LayerTileSet {
-    fn from(layer: &Layer) -> Self {
+impl From<&BitmapLayer> for LayerTileSet {
+    fn from(layer: &BitmapLayer) -> Self {
         let tiles = layer.tilevec();
         assert!(!tiles.is_empty());
 

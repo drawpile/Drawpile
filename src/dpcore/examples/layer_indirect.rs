@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, Blendmode, BrushMask, Color, InternalLayerID, Layer, Tile};
+use dpcore::paint::{editlayer, BitmapLayer, Blendmode, BrushMask, Color, InternalLayerID, Tile};
 
 mod utils;
 
-fn brush_stroke(layer: &mut Layer, y: i32) {
+fn brush_stroke(layer: &mut BitmapLayer, y: i32) {
     let black = Color {
         r: 0.0,
         g: 0.0,
@@ -48,7 +48,7 @@ fn brush_stroke(layer: &mut Layer, y: i32) {
 }
 
 fn main() {
-    let mut layer = Layer::new(
+    let mut layer = BitmapLayer::new(
         InternalLayerID(0),
         256,
         256,
@@ -60,7 +60,7 @@ fn main() {
 
     // Indirect mode using a sublayer
     let mut sublayer = layer.get_or_create_sublayer(InternalLayerID(1));
-    sublayer.opacity = 0.5;
+    sublayer.metadata_mut().opacity = 0.5;
     brush_stroke(&mut sublayer, 120);
     editlayer::merge_sublayer(&mut layer, InternalLayerID(1));
 

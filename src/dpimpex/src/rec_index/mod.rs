@@ -3,6 +3,8 @@ use std::{fmt, error};
 pub mod writer;
 pub mod reader;
 
+pub const INDEX_FORMAT_VERSION: u16 = 9;
+
 pub struct IndexEntry {
     /// Number of the message this entry points to
     pub message_index: u32,
@@ -23,6 +25,7 @@ pub enum IndexError {
     ConversionError(std::num::TryFromIntError),
     IncompatibleVersion,
     BadTile,
+    CorruptFile,
     BadString(std::string::FromUtf8Error),
     BadImage(image::ImageError),
 }
@@ -58,6 +61,7 @@ impl fmt::Display for IndexError {
             IndexError::ConversionError(e) => write!(f, "Number too big! ({})", e),
             IndexError::IncompatibleVersion => write!(f, "Index version is not compatible"),
             IndexError::BadTile => write!(f, "Corrupt tile data"),
+            IndexError::CorruptFile => write!(f, "Corrupt file"),
             IndexError::BadImage(e) => write!(f, "Corrupt image: {}", e),
             IndexError::BadString(e) => write!(f, "Corrupt string: {}", e),
         }

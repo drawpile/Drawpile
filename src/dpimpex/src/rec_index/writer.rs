@@ -23,10 +23,10 @@
 use dpcore::canvas::compression::compress_tile;
 use dpcore::canvas::CanvasState;
 use dpcore::paint::annotation::Annotation;
-use dpcore::paint::{Layer, Tile, LayerViewOptions};
+use dpcore::paint::{Layer, LayerMetadata, BitmapLayer, GroupLayer, Tile, LayerViewOptions};
 use dpcore::protocol::message::CommandMessage;
 
-use super::{IndexEntry, IndexResult};
+use super::{IndexEntry, IndexResult, INDEX_FORMAT_VERSION};
 use crate::conv::from_dpimage;
 
 use byteorder::{LittleEndian, WriteBytesExt};
@@ -113,7 +113,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
         self.writer.write_all(b"DPIDX\0")?;
 
         // Index format version number
-        self.writer.write_u16::<LittleEndian>(8)?;
+        self.writer.write_u16::<LittleEndian>(INDEX_FORMAT_VERSION)?;
 
         // Placeholders for message count and index entry vector offset
         self.writer.write_u32::<LittleEndian>(0)?;
@@ -238,33 +238,10 @@ impl<W: Write + Seek> IndexBuilder<W> {
         annotationmap: &mut AnnotationMap,
         stats: &mut Stats,
     ) -> IndexResult<u64> {
-        let ls = self.canvas.layerstack().clone(); // clone here to avoid borrow
-
-        let mut layers: Vec<u64> = Vec::with_capacity(ls.layer_count());
+        let ls = self.canvas.layerstack().clone(); // avoid borrow
 
         // First write the layers used in this layerstack
-        for layer in ls.layersvec() {
-            let layer_p = Arc::as_ptr(layer) as usize;
-
-            if let Some((layer, offset)) = self.last_layers.get(&layer_p) {
-                // If layer is unchanged, reuse previous. Copy
-                // tile offsets too, so that we don't have to rewrite
-                // the whole layer when something changes.
-                layermap.insert(layer_p, (layer.clone(), *offset));
-                copy_last_tile_offsets(layer, &self.last_tiles, tilemap);
-                layers.push(*offset);
-                stats.reused_layers += 1;
-            } else {
-                // Layer has changed! Layer's content is still likely
-                // *mostly* unchanged, so we can make use of last_tiles.
-
-                let offset = self.write_layer(layer, tilemap, layermap, stats)?;
-
-                layermap.insert(layer_p, (layer.clone(), offset));
-                layers.push(offset);
-                stats.changed_layers += 1;
-            }
-        }
+        let root_offset = self.write_grouplayer(ls.root().inner_ref(), tilemap, layermap, stats)?;
 
         // Write annotations
         let annotations = ls.get_annotations();
@@ -304,14 +281,10 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
         // Now we can write the actual layerstack subblock
         let offset = self.writer.stream_position()?;
-        self.writer.write_u32::<LittleEndian>(ls.width())?;
-        self.writer.write_u32::<LittleEndian>(ls.height())?;
+        self.writer.write_u32::<LittleEndian>(ls.root().width())?;
+        self.writer.write_u32::<LittleEndian>(ls.root().height())?;
         self.writer.write_u64::<LittleEndian>(bgtile_offset)?;
-        self.writer
-            .write_u16::<LittleEndian>(ls.layer_count().try_into()?)?;
-        for l in layers {
-            self.writer.write_u64::<LittleEndian>(l)?;
-        }
+        self.writer.write_u64::<LittleEndian>(root_offset)?;
         self.writer
             .write_u16::<LittleEndian>(annotations.len().try_into()?)?;
         for a in annotation_offsets {
@@ -337,9 +310,62 @@ impl<W: Write + Seek> IndexBuilder<W> {
         Ok(offset)
     }
 
-    fn write_layer(
+    fn write_grouplayer(
         &mut self,
-        layer: &Layer,
+        group: &GroupLayer,
+        tilemap: &mut TileMap,
+        layermap: &mut LayerMap,
+        stats: &mut Stats,
+    ) -> IndexResult<u64> {
+        let mut layers: Vec<u64> = Vec::new();
+
+        // First, write the group's layers
+        for grouplayer in group.layervec().iter() {
+            let layer_p = Arc::as_ptr(grouplayer) as usize;
+
+            if let Some((_, offset)) = self.last_layers.get(&layer_p) {
+                // If layer is unchanged, reuse previous. Copy
+                // tile offsets too, so that we don't have to rewrite
+                // the whole layer when something changes.
+                stats.reused_layers += 1;
+                layermap.insert(layer_p, (grouplayer.clone(), *offset));
+                if let Layer::Bitmap(b) = grouplayer.as_ref() {
+                    copy_last_tile_offsets(b, &self.last_tiles, tilemap);
+                }
+                layers.push(*offset);
+
+            } else {
+                // Layer has changed! Layer's content is still likely
+                // *mostly* unchanged, so we can make use of last_tiles.
+                stats.changed_layers += 1;
+
+                let offset = match grouplayer.as_ref() {
+                    Layer::Group(g) => self.write_grouplayer(g, tilemap, layermap, stats)?,
+                    Layer::Bitmap(b) => self.write_bitmaplayer(b, tilemap, layermap, stats)?,
+                };
+
+                layermap.insert(layer_p, (grouplayer.clone(), offset));
+                layers.push(offset);
+            }
+        }
+
+        // Write layer subblock
+        let offset = self.writer.stream_position()?;
+        self.write_layer_metadata(group.metadata())?;
+        self.writer.write_u8(1)?; // this is a group
+
+        self.writer
+            .write_u16::<LittleEndian>(layers.len().try_into()?)?;
+        for l in layers {
+            self.writer.write_u64::<LittleEndian>(l)?;
+        }
+
+        Ok(offset)
+    }
+
+    fn write_bitmaplayer(
+        &mut self,
+        layer: &BitmapLayer,
         tilemap: &mut TileMap,
         layermap: &mut LayerMap,
         stats: &mut Stats,
@@ -348,27 +374,11 @@ impl<W: Write + Seek> IndexBuilder<W> {
         let mut tiles: Vec<u64> = Vec::with_capacity(layer.tilevec().len());
 
         // First, write the sublayers (if any)
-        for sublayer in layer.sublayervec().iter().filter(|sl| sl.is_visible()) {
-            let sublayer_p = Arc::as_ptr(sublayer) as usize;
-
-            if let Some((_, offset)) = self.last_layers.get(&sublayer_p) {
-                // If layer is unchanged, reuse previous. Copy
-                // tile offsets too, so that we don't have to rewrite
-                // the whole layer when something changes.
-                stats.reused_layers += 1;
-                layermap.insert(sublayer_p, (sublayer.clone(), *offset));
-                copy_last_tile_offsets(sublayer, &self.last_tiles, tilemap);
-                sublayers.push(*offset);
-            } else {
-                // Layer has changed! Layer's content is still likely
-                // *mostly* unchanged, so we can make use of last_tiles.
-                stats.changed_layers += 1;
-
-                let offset = self.write_layer(sublayer, tilemap, layermap, stats)?;
-
-                layermap.insert(sublayer_p, (sublayer.clone(), offset));
-                sublayers.push(offset);
-            }
+        // Sublayers are very short lived, so we don't bother trying to reuse them
+        for sublayer in layer.sublayervec().iter().filter(|sl| sl.metadata().is_visible() && sl.metadata().id.0 > 0) {
+            stats.changed_layers += 1;
+            let offset = self.write_bitmaplayer(sublayer, tilemap, layermap, stats)?;
+            sublayers.push(offset);
         }
 
         // Write the changed tiles
@@ -394,24 +404,35 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
         // Write layer subblock
         let offset = self.writer.stream_position()?;
-        self.writer.write_i32::<LittleEndian>(layer.id.0)?;
+        self.write_layer_metadata(layer.metadata())?;
+        self.writer.write_u8(0)?; // not a group
+
         self.writer
             .write_u16::<LittleEndian>(sublayers.len().try_into()?)?;
         for sl in sublayers {
             self.writer.write_u64::<LittleEndian>(sl)?;
         }
+
         for t in tiles {
             self.writer.write_u64::<LittleEndian>(t)?;
         }
-        self.writer
-            .write_u16::<LittleEndian>(layer.title.len().try_into()?)?;
-        self.writer.write_all(&layer.title.as_bytes())?;
-        self.writer.write_u8((layer.opacity * 255.0) as u8)?;
-        self.writer.write_u8(layer.hidden as u8)?;
-        self.writer.write_u8(layer.censored as u8)?;
-        self.writer.write_u8(layer.fixed as u8)?;
 
         Ok(offset)
+    }
+
+    fn write_layer_metadata(&mut self, metadata: &LayerMetadata) -> IndexResult<()> {
+        self.writer.write_i32::<LittleEndian>(metadata.id.0)?;
+        self.writer
+            .write_u16::<LittleEndian>(metadata.title.len().try_into()?)?;
+        self.writer.write_all(&metadata.title.as_bytes())?;
+        self.writer.write_u8((metadata.opacity * 255.0) as u8)?;
+        self.writer.write_u8(metadata.blendmode.into())?;
+        self.writer.write_u8(metadata.hidden as u8)?;
+        self.writer.write_u8(metadata.censored as u8)?;
+        self.writer.write_u8(metadata.fixed as u8)?;
+        self.writer.write_u8(metadata.isolated as u8)?;
+
+        Ok(())
     }
 
     fn write_tile(&mut self, tile: &Tile) -> IndexResult<u64> {
@@ -426,7 +447,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
 }
 
 /// Remember the last used tiles of this layer in the next generation.
-fn copy_last_tile_offsets(layer: &Layer, last_tiles: &TileMap, new_tiles: &mut TileMap) {
+fn copy_last_tile_offsets(layer: &BitmapLayer, last_tiles: &TileMap, new_tiles: &mut TileMap) {
     for t in layer.tilevec() {
         // Note: this function is used to pass along the tile data offsets of the
         // previously written layer. Therefore, it is safe to assume that

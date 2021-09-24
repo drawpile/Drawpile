@@ -24,6 +24,7 @@ pub mod annotation;
 pub mod aoe;
 pub mod color;
 pub mod editlayer;
+pub mod editstack;
 pub mod floodfill;
 pub mod layerstack;
 pub mod rasterop;
@@ -31,6 +32,8 @@ pub mod rectiter;
 pub mod tile;
 pub mod tileiter;
 pub mod tilevec;
+
+mod idgenerator;
 
 use std::convert::TryFrom;
 use std::fmt;
@@ -84,20 +87,24 @@ impl TryFrom<InternalLayerID> for LayerID {
 }
 
 // Re-export types most commonly used from the outside
+mod bitmaplayer;
 mod blendmode;
 mod brushmask;
 mod flattenediter;
+mod grouplayer;
 mod image;
 mod layer;
 mod rect;
 
 pub use self::image::Image;
 pub use aoe::AoE;
+pub use bitmaplayer::BitmapLayer;
 pub use blendmode::Blendmode;
 pub use brushmask::{BrushMask, ClassicBrushCache};
 pub use color::{Color, Pixel};
 pub use flattenediter::FlattenedTileIterator;
-pub use layer::Layer;
+pub use grouplayer::{GroupLayer, LayerInsertion, RootGroup};
+pub use layer::{Layer, LayerMetadata};
 pub use layerstack::{LayerStack, LayerViewMode, LayerViewOptions};
 pub use rect::{Rectangle, Size};
 pub use tile::Tile;

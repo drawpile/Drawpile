@@ -20,6 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use lazy_static::lazy_static;
 use std::fmt;
 use std::sync::Arc;
 
@@ -30,6 +31,22 @@ use super::{rasterop, Blendmode, Rectangle, UserID};
 pub const TILE_SIZE: u32 = 64;
 pub const TILE_SIZEI: i32 = TILE_SIZE as i32;
 pub const TILE_LENGTH: usize = (TILE_SIZE * TILE_SIZE) as usize;
+
+lazy_static! {
+    pub(super) static ref ZEBRA_TILE: TileData = {
+        let mut z = TileData::new(Color::TRANSPARENT.as_pixel(), 0);
+        let colors = [
+            Color::rgb8(35, 38, 41).as_pixel(),
+            Color::rgb8(239, 240, 241).as_pixel(),
+        ];
+
+        z.pixels
+            .iter_mut()
+            .enumerate()
+            .for_each(|(i, p)| *p = colors[(i / 64 + i % 64) / 16 % colors.len()]);
+        z
+    };
+}
 
 #[derive(Clone)]
 pub struct TileData {

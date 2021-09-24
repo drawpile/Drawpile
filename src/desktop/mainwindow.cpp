@@ -684,15 +684,15 @@ void MainWindow::updateLayerViewMode()
 	if(!m_doc->canvas())
 		return;
 
-	const bool solo = getAction("layerviewsolo")->isChecked();
-	const bool onionskin = getAction("layerviewonionskin")->isChecked();
 	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
 	rustpile::LayerViewMode mode = rustpile::LayerViewMode::Normal;
 
-	if(solo)
+	if(getAction("layerviewsolo")->isChecked())
 		mode = rustpile::LayerViewMode::Solo;
-	else if(onionskin)
+	else if(getAction("layerviewframe")->isChecked())
+		mode = rustpile::LayerViewMode::Frame;
+	else if(getAction("layerviewonionskin")->isChecked())
 		mode = rustpile::LayerViewMode::Onionskin;
 
 	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
@@ -2555,13 +2555,15 @@ void MainWindow::setupActions()
 	// Layer menu
 	//
 	QAction *layerAdd = makeAction("layeradd", tr("New Layer")).shortcut("Shift+Ctrl+Insert");
+	QAction *groupAdd = makeAction("groupadd", tr("New Group"));
 	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer"));
 	QAction *layerMerge = makeAction("layermerge", tr("Merge with Layer Below"));
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer"));
 
-	m_dockLayers->setLayerEditActions(layerAdd, layerDupe, layerMerge, layerDelete);
+	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerDelete);
 
-	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Home").checkable();
+	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Shift+Home").checkable();
+	QAction *layerFrame = makeAction("layerviewframe", tr("Frame")).shortcut("Home").checkable();
 	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).shortcut("Shift+Ctrl+O").checkable();
 	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable().remembered();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
@@ -2570,6 +2572,7 @@ void MainWindow::setupActions()
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
 
 	connect(layerSolo, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
+	connect(layerFrame, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerOnionskin, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerNumbers, &QAction::toggled, m_dockLayers, &docks::LayerList::showLayerNumbers);
@@ -2578,11 +2581,13 @@ void MainWindow::setupActions()
 
 	QMenu *layerMenu = menuBar()->addMenu(tr("Layer"));
 	layerMenu->addAction(layerAdd);
+	layerMenu->addAction(groupAdd);
 	layerMenu->addAction(layerDupe);
 	layerMenu->addAction(layerMerge);
 	layerMenu->addAction(layerDelete);
 
 	layerMenu->addSeparator();
+	layerMenu->addAction(layerFrame);
 	layerMenu->addAction(layerSolo);
 	layerMenu->addAction(layerOnionskin);
 	layerMenu->addAction(layerNumbers);

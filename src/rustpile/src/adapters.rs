@@ -1,6 +1,7 @@
 use core::ffi::c_void;
 use dpcore::paint::annotation::{Annotation, AnnotationID, VAlign};
-use dpcore::paint::{Blendmode, Color, Layer, Rectangle};
+use dpcore::paint::{Blendmode, Color, GroupLayer, Layer, LayerMetadata, Rectangle, RootGroup};
+
 use std::os::raw::c_char;
 use std::sync::Arc;
 
@@ -14,20 +15,90 @@ pub struct LayerInfo {
     pub hidden: bool,
     pub censored: bool,
     pub fixed: bool,
+    pub isolated: bool,
+    pub group: bool,
     pub blendmode: Blendmode,
+
+    // number of child items this layer has. Zero for all non-group layers.
+    pub children: u16,
+
+    // index in parent group
+    pub rel_index: u16,
+
+    // left and right indices (modified preorder tree traversal)
+    pub left: i32,
+    pub right: i32,
 }
 
-impl From<&Layer> for LayerInfo {
-    fn from(item: &Layer) -> Self {
+/// Return a flat list describing a depth-first traveresal of the layer tree
+pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
+    let mut list: Vec<LayerInfo> = Vec::new();
+
+    fn flatten(list: &mut Vec<LayerInfo>, index: &mut i32, group: &GroupLayer) {
+        // Note: layers are listed top-to-bottom in the GUI
+        for (i, l) in group.iter_layers().enumerate() {
+            match l {
+                Layer::Group(g) => {
+                    let info = LayerInfo::new(
+                        g.metadata(),
+                        true,
+                        g.layer_count() as u16,
+                        i as u16,
+                        *index,
+                        -1,
+                    );
+                    *index += 1;
+                    let pos = list.len();
+                    list.push(info);
+                    flatten(list, index, g);
+                    list[pos].right = *index;
+                    *index += 1;
+                }
+                Layer::Bitmap(l) => {
+                    list.push(LayerInfo::new(
+                        l.metadata(),
+                        false,
+                        0,
+                        i as u16,
+                        *index,
+                        *index + 1,
+                    ));
+                    *index += 2;
+                }
+            }
+        }
+    }
+
+    let mut index = 0;
+    flatten(&mut list, &mut index, root.inner_ref());
+
+    return list;
+}
+
+impl LayerInfo {
+    fn new(
+        md: &LayerMetadata,
+        group: bool,
+        children: u16,
+        rel_index: u16,
+        left: i32,
+        right: i32,
+    ) -> Self {
         Self {
-            title: item.title.as_ptr(),
-            titlelen: item.title.len() as i32,
-            opacity: item.opacity,
-            id: item.id.0,
-            hidden: item.hidden,
-            censored: item.censored,
-            fixed: item.fixed,
-            blendmode: item.blendmode,
+            title: md.title.as_ptr(),
+            titlelen: md.title.len() as i32,
+            opacity: md.opacity,
+            id: md.id.0,
+            hidden: md.hidden,
+            censored: md.censored,
+            fixed: md.fixed,
+            blendmode: md.blendmode,
+            isolated: md.isolated,
+            group,
+            children,
+            rel_index,
+            left,
+            right,
         }
     }
 }

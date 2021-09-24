@@ -255,6 +255,7 @@ pub extern "C" fn write_newlayer(
     ctx: UserID,
     id: u16,
     source: u16,
+    target: u16,
     fill: u32,
     flags: u8,
     name: *const u16,
@@ -265,6 +266,7 @@ pub extern "C" fn write_newlayer(
         LayerCreateMessage {
             id: id,
             source: source,
+            target: target,
             fill: fill,
             flags: flags,
             name: String::from_utf16_lossy(unsafe { slice::from_raw_parts(name, name_len) })
@@ -331,29 +333,17 @@ pub extern "C" fn write_layerorder(
 }
 
 #[no_mangle]
-pub extern "C" fn write_deletelayer(writer: &mut MessageWriter, ctx: UserID, id: u16, merge: bool) {
+pub extern "C" fn write_deletelayer(
+    writer: &mut MessageWriter,
+    ctx: UserID,
+    id: u16,
+    merge_to: u16,
+) {
     CommandMessage::LayerDelete(
         ctx,
         LayerDeleteMessage {
             id: id,
-            merge: merge,
-        },
-    )
-    .write(writer);
-}
-
-#[no_mangle]
-pub extern "C" fn write_layervisibility(
-    writer: &mut MessageWriter,
-    ctx: UserID,
-    id: u16,
-    visible: bool,
-) {
-    CommandMessage::LayerVisibility(
-        ctx,
-        LayerVisibilityMessage {
-            id: id,
-            visible: visible,
+            merge_to: merge_to,
         },
     )
     .write(writer);

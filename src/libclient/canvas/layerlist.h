@@ -21,7 +21,7 @@
 
 #include "acl.h"
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 #include <QMimeData>
 #include <QVector>
 
@@ -62,6 +62,24 @@ struct LayerListItem {
 	//! This is a fixed background/foreground layer
 	bool fixed;
 
+	//! Isolated (not pass-through) group?
+	bool isolated;
+
+	//! Is this a layer group?
+	bool group;
+
+	//! Number of child layers
+	uint16_t children;
+
+	//! Index in parent group
+	uint16_t relIndex;
+
+	//! Left index (MPTT)
+	int left;
+
+	//! Right index (MPTT)
+	int right;
+
 	//! Get the LayerAttributes flags as a bitfield
 	uint8_t attributeFlags() const;
 
@@ -77,45 +95,39 @@ namespace canvas {
 
 typedef std::function<QImage(int id)> GetLayerFunction;
 
-class LayerListModel : public QAbstractListModel {
+class LayerListModel : public QAbstractItemModel {
 	Q_OBJECT
+	friend class LayerMimeData;
 public:
 	enum LayerListRoles {
 		IdRole = Qt::UserRole + 1,
 		TitleRole,
 		IsDefaultRole,
 		IsLockedRole,
-		IsFixedRole
+		IsFixedRole,
+		IsGroupRole,
 	};
 
 	LayerListModel(QObject *parent=nullptr);
 	
-	int rowCount(const QModelIndex &parent=QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
-	Qt::ItemFlags flags(const QModelIndex& index) const;
-	Qt::DropActions supportedDropActions() const;
-	QStringList mimeTypes() const;
-	QMimeData *mimeData(const QModelIndexList& indexes) const;
-	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
+	Qt::ItemFlags flags(const QModelIndex& index) const override;
+	Qt::DropActions supportedDropActions() const override;
+	QStringList mimeTypes() const override;
+	QMimeData *mimeData(const QModelIndexList& indexes) const override;
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+	QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const override;
+	QModelIndex parent(const QModelIndex &index) const override;
 
 	QModelIndex layerIndex(uint16_t id);
-	
-	void clear();
-	void createLayer(uint16_t id, int index, const QString &title);
-	void deleteLayer(uint16_t id);
-	void changeLayer(uint16_t id, bool censored, bool fixed, float opacity, rustpile::Blendmode blend);
-	void retitleLayer(uint16_t id, const QString &title);
-	void setLayerHidden(uint16_t id, bool hidden);
-	void reorderLayers(QList<uint16_t> neworder);
-	
-	QVector<LayerListItem> getLayers() const { return m_items; }
+	const QVector<LayerListItem> &layerItems() const { return m_items; }
 
-	void previewOpacityChange(uint16_t id, float opacity);
+	void previewOpacityChange(uint16_t id, float opacity) { emit layerOpacityPreview(id, opacity); }
 
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
 	void setAclState(AclState *state) { m_aclstate = state; }
-
-	QImage getLayerImage(uint16_t id) const;
 
 	/**
 	 * Enable/disable any (not just own) layer autoselect requests
@@ -146,30 +158,25 @@ public:
 	QString getAvailableLayerName(QString basename) const;
 
 public slots:
-	void setLayers(QVector<LayerListItem> items);
+	void setLayers(const QVector<LayerListItem> &items);
 
 signals:
-	void layersReordered();
-
 	//! A new layer was created that should be automatically selected
 	void autoSelectRequest(int);
 
 	//! Emitted when layers are manually reordered
-	void layerCommand(const net::Envelope &envelope);
+	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
 
 	//! Request local change of layer opacity for preview purpose
 	void layerOpacityPreview(int id, float opacity);
 
 private:
-	void handleMoveLayer(int idx, int afterIdx);
-
-	int indexOf(uint16_t id) const;
-
 	QVector<LayerListItem> m_items;
 	GetLayerFunction m_getlayerfn;
 	AclState *m_aclstate;
-	bool m_autoselectAny;
+	int m_rootLayerCount;
 	uint16_t m_defaultLayer;
+	bool m_autoselectAny;
 };
 
 /**

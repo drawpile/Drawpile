@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,11 +22,10 @@
 
 use dpcore::brush::{BrushEngine, BrushState, ClassicBrush};
 use dpcore::canvas::brushes;
-use dpcore::paint::layerstack::{LayerFill, LayerInsertion, LayerStack};
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
     editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, LayerID,
-    Rectangle,
+    LayerInsertion, LayerStack, Rectangle,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -58,9 +57,9 @@ impl BrushPreview {
             layerstack: LayerStack::new(width, height),
         };
 
-        bp.layerstack.add_layer(
+        bp.layerstack.root_mut().add_bitmap_layer(
             LAYER_ID,
-            LayerFill::Solid(Color::TRANSPARENT),
+            Color::TRANSPARENT,
             LayerInsertion::Top,
         );
         bp
@@ -115,7 +114,11 @@ impl BrushPreview {
 
         // Draw the background
         self.layerstack.background = Tile::new(&background_color, 1);
-        let layer = self.layerstack.get_layer_mut(LAYER_ID).unwrap();
+        let layer = self
+            .layerstack
+            .root_mut()
+            .get_bitmaplayer_mut(LAYER_ID)
+            .unwrap();
         editlayer::put_tile(
             layer,
             InternalLayerID(0),
@@ -251,8 +254,8 @@ impl BrushPreview {
     pub fn floodfill(&mut self, color: Color, tolerance: f32, expansion: i32, fill_under: bool) {
         let mut result = floodfill::floodfill(
             &self.layerstack,
-            self.layerstack.width() as i32 / 2,
-            self.layerstack.height() as i32 / 2,
+            self.layerstack.root().width() as i32 / 2,
+            self.layerstack.root().height() as i32 / 2,
             color,
             tolerance,
             LAYER_ID,
@@ -268,7 +271,10 @@ impl BrushPreview {
         }
 
         editlayer::draw_image(
-            self.layerstack.get_layer_mut(LAYER_ID).unwrap(),
+            self.layerstack
+                .root_mut()
+                .get_bitmaplayer_mut(LAYER_ID)
+                .unwrap(),
             1,
             &result.image.pixels,
             &Rectangle::new(

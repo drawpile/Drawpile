@@ -58,5 +58,10 @@ fn m(msg: &str) -> CommandMessage {
 }
 
 fn lc(canvas: &CanvasState) -> Option<Color> {
-    canvas.layerstack().get_layer(0x0101).unwrap().solid_color()
+    canvas
+        .layerstack()
+        .root()
+        .get_bitmaplayer(0x0101)
+        .unwrap()
+        .solid_color()
 }

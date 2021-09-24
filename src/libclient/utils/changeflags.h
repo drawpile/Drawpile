@@ -22,7 +22,7 @@
 
 /**
  * A set of changes to a bitfield
- */ 
+ */
 template<typename Flags>
 class ChangeFlags {
 public:
@@ -39,6 +39,9 @@ public:
 		return *this;
 	}
 
+	/**
+	 * Return the given bitfield with the changes applied
+	 */
 	Flags update(Flags oldFlags) const
 	{
 		return (oldFlags & ~m_mask) | m_changes;

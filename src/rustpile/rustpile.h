@@ -16,11 +16,13 @@ static const uint8_t JoinMessage_FLAGS_BOT = 4;
 
 static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
 
-static const uint8_t LayerCreateMessage_FLAGS_COPY = 1;
-
 static const uint8_t LayerAttributesMessage_FLAGS_FIXED = 2;
 
-static const uint8_t LayerCreateMessage_FLAGS_INSERT = 2;
+static const uint8_t LayerCreateMessage_FLAGS_GROUP = 1;
+
+static const uint8_t LayerCreateMessage_FLAGS_INTO = 2;
+
+static const uint8_t LayerAttributesMessage_FLAGS_ISOLATED = 4;
 
 static const uint8_t JoinMessage_FLAGS_MOD = 2;
 
@@ -92,8 +94,14 @@ enum class ClassicBrushShape : uint8_t {
 };
 
 enum class LayerViewMode {
+  /// The normal rendering mode (all visible layers rendered)
   Normal,
+  /// Render only the selected layer
   Solo,
+  /// Render only the selected frame (root level layer) + fixed layers
+  Frame,
+  /// Render selected frame + few layers above and below with decreased
+  /// opacity and optional color tint.
   Onionskin,
 };
 
@@ -214,7 +222,13 @@ struct LayerInfo {
   bool hidden;
   bool censored;
   bool fixed;
+  bool isolated;
+  bool group;
   Blendmode blendmode;
+  uint16_t children;
+  uint16_t rel_index;
+  int32_t left;
+  int32_t right;
 };
 
 using NotifyLayerListCallback = void(*)(void *ctx, const LayerInfo *layers, uintptr_t count);
@@ -429,6 +443,7 @@ void write_newlayer(MessageWriter *writer,
                     UserID ctx,
                     uint16_t id,
                     uint16_t source,
+                    uint16_t target,
                     uint32_t fill,
                     uint8_t flags,
                     const uint16_t *name,
@@ -453,9 +468,7 @@ void write_layerorder(MessageWriter *writer,
                       const uint16_t *layers,
                       uintptr_t layers_len);
 
-void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, bool merge);
-
-void write_layervisibility(MessageWriter *writer, UserID ctx, uint16_t id, bool visible);
+void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, uint16_t merge_to);
 
 void write_fillrect(MessageWriter *writer,
                     UserID ctx,
@@ -621,6 +634,9 @@ UserID paintengine_inspect_canvas(PaintEngine *dp, int32_t x, int32_t y);
 /// Setting this to zero switches off inspection mode.
 void paintengine_set_highlight_user(PaintEngine *dp, UserID user);
 
+/// Set a layer's local visibility flag
+void paintengine_set_layer_visibility(PaintEngine *dp, LayerID layer_id, bool visible);
+
 /// Draw a preview brush stroke onto the given layer
 ///
 /// This consumes the content of the brush engine.
@@ -651,6 +667,18 @@ bool paintengine_floodfill(PaintEngine *dp,
                            uint32_t size_limit,
                            int32_t expansion,
                            bool fill_under);
+
+/// Generate the layer reordering command for moving layer A to
+/// a position above layer B (or into it, if it is a group)
+///
+/// Returns false if a move command couldn't be generated
+bool paintengine_make_movelayer(PaintEngine *dp,
+                                MessageWriter *writer,
+                                UserID user_id,
+                                LayerID source_layer,
+                                LayerID target_layer,
+                                bool into_group,
+                                bool below);
 
 /// Generate the commands for deleting all the empty
 /// annotations presently on the canvas
