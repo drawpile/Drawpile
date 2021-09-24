@@ -804,6 +804,20 @@ impl RootGroup {
         self.0.add_layer(id, NewLayerType::Copy(source), pos)
     }
 
+    /// Find the index of the top-level layer or group that contains this frame
+    pub fn find_frame_index_by_id(&self, layer_id: LayerID) -> Option<usize> {
+        self.0.routes
+            .get(layer_id)
+            .or_else(|| {
+                for (i, l) in self.iter_layers().enumerate() {
+                    if l.metadata().id == layer_id {
+                        return Some(i)
+                    }
+                }
+                None
+            })
+    }
+
     /// Return a new group root whose layers have been reordered
     pub fn reordered(&self, new_order: &[LayerID]) -> Result<Self, &'static str> {
         // A valid layer list consists of pairs of numbers

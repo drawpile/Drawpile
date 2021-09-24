@@ -701,34 +701,35 @@ pub extern "C" fn paintengine_set_onionskin_opts(
 
 #[no_mangle]
 pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: LayerID) {
-    /* FIXME
     let aoe_bounds = {
         let mut vc = dp.viewcache.lock().unwrap();
-        let idx = match vc.layerstack.find_layer_index(layer_id) {
+        let frame_idx = match vc.layerstack.root().find_frame_index_by_id(layer_id) {
             Some(i) => i,
             None => {
                 return;
             }
         };
 
-        if dp.view_opts.active_layer_idx == idx {
-            return;
-        }
+        let changed = match dp.view_opts.viewmode {
+            LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
+            LayerViewMode::Frame => dp.view_opts.active_frame_idx != frame_idx,
+            _ => false,
+        };
 
-        dp.view_opts.active_layer_idx = idx;
+        dp.view_opts.active_frame_idx = frame_idx;
+        dp.view_opts.active_layer_id = layer_id;
 
-        if vc.layerstack.width() == 0 || dp.view_opts.viewmode == LayerViewMode::Normal {
+        if !changed || vc.layerstack.root().width() == 0 {
             None
         } else {
             vc.unrefreshed_area = AoE::Everything;
-            vc.unrefreshed_area.bounds(vc.layerstack.size())
+            vc.unrefreshed_area.bounds(vc.layerstack.root().size())
         }
     };
 
     if let Some(r) = aoe_bounds {
         (dp.notify_changes)(dp.context_object, r);
     }
-    */
 }
 
 /// Check the given coordinates and return the ID of the user
@@ -1123,7 +1124,7 @@ pub extern "C" fn paintengine_get_frame_content(
     let pixel_slice =
         unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
 
-    let opts = LayerViewOptions::solo(frame_index);
+    let opts = LayerViewOptions::frame(frame_index);
 
     vc.layerstack.to_pixels(rect, &opts, pixel_slice).is_ok()
 }

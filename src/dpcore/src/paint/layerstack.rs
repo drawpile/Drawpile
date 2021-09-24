@@ -46,8 +46,17 @@ pub struct LayerStack {
 #[derive(PartialEq)]
 #[repr(C)]
 pub enum LayerViewMode {
+    /// The normal rendering mode (all visible layers rendered)
     Normal,
+
+    /// Render only the selected layer
     Solo,
+
+    /// Render only the selected frame (root level layer) + fixed layers
+    Frame,
+
+    /// Render selected frame + few layers above and below with decreased
+    /// opacity and optional color tint.
     Onionskin,
 }
 
@@ -71,8 +80,11 @@ pub struct LayerViewOptions {
     /// Number of onionskin layers to show below the active one
     pub onionskins_below: i32,
 
-    /// Index of the active layer for solo and onionskin mode
-    pub active_layer_idx: usize,
+    /// Index of the active frame for frame and onionskin mode
+    pub active_frame_idx: usize,
+
+    /// Index of the active frame for Solo mode
+    pub active_layer_id: LayerID,
 
     /// The background to use. This can be used to add (for example)
     /// a checkerboard texture to transparent areas.
@@ -91,7 +103,8 @@ impl Default for LayerViewOptions {
             onionskin_tint: false,
             onionskins_above: 1,
             onionskins_below: 1,
-            active_layer_idx: 0,
+            active_frame_idx: 0,
+            active_layer_id: 0,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
@@ -99,15 +112,16 @@ impl Default for LayerViewOptions {
 }
 
 impl LayerViewOptions {
-    pub fn solo(index: usize) -> Self {
+    pub fn frame(index: usize) -> Self {
         Self {
             censor: false,
             highlight: 0,
-            viewmode: LayerViewMode::Solo,
+            viewmode: LayerViewMode::Frame,
             onionskin_tint: false,
             onionskins_above: 1,
             onionskins_below: 1,
-            active_layer_idx: index,
+            active_frame_idx: index,
+            active_layer_id: 0,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
@@ -287,7 +301,17 @@ impl LayerStack {
         // Onionskin, solo and other animation features only apply to
         // the root, as only root level layers are treated as frames.
         if (i * TILE_SIZE) < self.root.width() && (j * TILE_SIZE) < self.root.height() {
+
+            if matches!(opts.viewmode, LayerViewMode::Solo) {
+                if let Some(l) = self.root().get_layer(opts.active_layer_id) {
+                    l.flatten_tile(&mut destination, i, j, 1.0, opts.censor, opts.highlight);
+                }
+                return destination;
+            }
+
+            let layercount = self.root.layer_count();
             for (idx, layer) in self.root.iter_layers().rev().enumerate() {
+                let idx = layercount - idx - 1;
                 let metadata = layer.metadata();
                 // Don't render hidden layers
                 if metadata.hidden {
@@ -298,8 +322,9 @@ impl LayerStack {
                 // to hide or fade out layers (solo/onionskin)
                 let (opacity, tint) = match opts.viewmode {
                     LayerViewMode::Normal => (1.0, 0),
-                    LayerViewMode::Solo => (
-                        if idx == opts.active_layer_idx || metadata.fixed {
+                    LayerViewMode::Solo => unreachable!(),
+                    LayerViewMode::Frame => (
+                        if idx == opts.active_frame_idx || metadata.fixed {
                             1.0
                         } else {
                             0.0
@@ -310,7 +335,7 @@ impl LayerStack {
                         if metadata.fixed {
                             (1.0, 0)
                         } else {
-                            let d = opts.active_layer_idx as i32 - idx as i32;
+                            let d = opts.active_frame_idx as i32 - idx as i32;
                             let rd = if d == 0 {
                                 0.0
                             } else if d < 0 && d >= -opts.onionskins_above {

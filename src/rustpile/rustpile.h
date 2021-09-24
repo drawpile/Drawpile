@@ -94,8 +94,14 @@ enum class ClassicBrushShape : uint8_t {
 };
 
 enum class LayerViewMode {
+  /// The normal rendering mode (all visible layers rendered)
   Normal,
+  /// Render only the selected layer
   Solo,
+  /// Render only the selected frame (root level layer) + fixed layers
+  Frame,
+  /// Render selected frame + few layers above and below with decreased
+  /// opacity and optional color tint.
   Onionskin,
 };
 
