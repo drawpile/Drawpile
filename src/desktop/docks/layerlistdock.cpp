@@ -486,7 +486,8 @@ bool LayerList::canMergeCurrent() const
 	const QModelIndex below = index.sibling(index.row()+1, 0);
 
 	return index.isValid() && below.isValid() &&
-		   !m_canvas->aclState()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt())
+			!below.data(canvas::LayerListModel::IsGroupRole).toBool() &&
+			!m_canvas->aclState()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt())
 			;
 }
 
@@ -518,9 +519,18 @@ void LayerList::mergeSelected()
 	if(!index.isValid())
 		return;
 
+	QModelIndex below = index.sibling(index.row()+1, 0);
+	if(!below.isValid())
+		return;
+
 	net::EnvelopeBuilder eb;
 	rustpile::write_undopoint(eb, m_canvas->localUserId());
-	rustpile::write_deletelayer(eb, m_canvas->localUserId(), index.data().value<canvas::LayerListItem>().id, true);
+	rustpile::write_deletelayer(
+		eb,
+		m_canvas->localUserId(),
+		index.data(canvas::LayerListModel::IdRole).value<uint16_t>(),
+		below.data(canvas::LayerListModel::IdRole).value<uint16_t>()
+	);
 	emit layerCommand(eb.toEnvelope());
 }
 

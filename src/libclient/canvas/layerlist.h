@@ -104,7 +104,8 @@ public:
 		TitleRole,
 		IsDefaultRole,
 		IsLockedRole,
-		IsFixedRole
+		IsFixedRole,
+		IsGroupRole,
 	};
 
 	LayerListModel(QObject *parent=nullptr);

@@ -25,8 +25,10 @@ use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
-    rasterop, BitmapLayer, Blendmode, BrushMask, Color, InternalLayerID, Layer, Pixel, Rectangle,
-    UserID,
+    rasterop, Blendmode, BrushMask,
+    Layer, BitmapLayer, GroupLayer,
+    Color, Pixel, Rectangle,
+    InternalLayerID, UserID,
 };
 
 /// Fills a rectangle with a solid color using the given blending mode
@@ -248,10 +250,8 @@ pub fn put_tile(
 ///
 /// The other layer's opacity and blending mode are used.
 ///
-/// TODO support merging groups
-///
 /// The returned area of effect contains all the visible tiles of the source layer
-pub fn merge(target_layer: &mut BitmapLayer, source_layer: &BitmapLayer) -> AoE {
+pub fn merge_bitmap(target_layer: &mut BitmapLayer, source_layer: &BitmapLayer) -> AoE {
     assert_eq!(target_layer.size(), source_layer.size());
 
     let target_tiles = target_layer.tilevec_mut();
@@ -276,10 +276,45 @@ pub fn merge(target_layer: &mut BitmapLayer, source_layer: &BitmapLayer) -> AoE 
     }
 }
 
+/// Merge a group layer to a bitmap layer
+///
+/// This action flattens the group, then merges the flattened layer using
+/// the group's blending mode.
+/// If the group is non-isolated, each sublayer will be merged individually.
+///
+/// The returned area of effect contains all the visible tiles of the source group
+pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) -> AoE {
+    let mut aoe = AoE::Nothing;
+
+    if source_group.metadata().isolated {
+        let mut tmp = BitmapLayer::new(InternalLayerID(0), source_group.width(), source_group.height(), Tile::Blank);
+        tmp.metadata_mut().opacity = source_group.metadata().opacity;
+        tmp.metadata_mut().blendmode = source_group.metadata().blendmode;
+
+        for layer in source_group.iter_layers().rev() {
+            match layer {
+                Layer::Group(g) => { aoe = aoe.merge(merge_group(&mut tmp, g)); }
+                Layer::Bitmap(b) => { aoe = aoe.merge(merge_bitmap(&mut tmp, b)); }
+            }
+        }
+
+        aoe = aoe.merge(merge_bitmap(target_layer, &tmp));
+    } else {
+        for layer in source_group.iter_layers().rev() {
+            match layer {
+                Layer::Group(g) => { aoe = aoe.merge(merge_group(target_layer, g)); }
+                Layer::Bitmap(b) => { aoe = aoe.merge(merge_bitmap(target_layer, b)); }
+            }
+        }
+    }
+
+    aoe
+}
+
 /// Merge a sublayer
 pub fn merge_sublayer(layer: &mut BitmapLayer, sublayer_id: InternalLayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
-        merge(layer, &sublayer)
+        merge_bitmap(layer, &sublayer)
     } else {
         AoE::Nothing
     }
@@ -394,8 +429,10 @@ pub fn move_rect(
 #[cfg(test)]
 mod tests {
     use super::super::color::{WHITE_PIXEL, ZERO_PIXEL};
-    use super::super::BrushMask;
+    use super::super::LayerMetadata;
     use super::*;
+
+    use std::sync::Arc;
 
     #[test]
     fn test_fill_rect() {
@@ -481,7 +518,42 @@ mod tests {
         );
         top.metadata_mut().opacity = 0.5;
 
-        merge(&mut btm, &top);
+        merge_bitmap(&mut btm, &top);
+
+        assert_eq!(btm.pixel_at(0, 0), Color::rgb8(127, 0, 0).as_pixel());
+    }
+
+    #[test]
+    fn test_group_merge() {
+        let mut btm = BitmapLayer::new(
+            InternalLayerID(0),
+            128,
+            128,
+            Tile::new(&Color::rgb8(0, 0, 0), 0),
+        );
+        let top = Arc::new(Layer::Bitmap(BitmapLayer::new(
+            InternalLayerID(0),
+            128,
+            128,
+            Tile::new(&Color::rgb8(255, 0, 0), 0),
+        )));
+        let grp = GroupLayer::from_parts(
+            LayerMetadata{
+                id: InternalLayerID(0),
+                title: String::new(),
+                opacity: 0.5,
+                hidden: false,
+                censored: false,
+                fixed: false,
+                blendmode: Blendmode::Normal,
+                isolated: true
+            },
+            128,
+            128,
+            vec![top]
+        );
+
+        merge_group(&mut btm, &grp);
 
         assert_eq!(btm.pixel_at(0, 0), Color::rgb8(127, 0, 0).as_pixel());
     }

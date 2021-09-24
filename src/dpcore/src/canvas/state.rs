@@ -600,24 +600,27 @@ impl CanvasState {
         let stack = Arc::make_mut(&mut self.layerstack);
         let id = msg.id as LayerID;
 
+        if msg.id == msg.merge_to {
+            warn!("LayerDelete: cannot merge {:04x} to itself!", msg.id);
+            return CanvasStateChange::nothing();
+        }
+
         let aoe = if msg.merge_to > 0 {
             if let Some(src) = stack.root().get_layer_rc(id) {
-                if let Some(src) = src.as_bitmap() {
-                    if let Some(target) = stack.root_mut().get_bitmaplayer_mut(msg.merge_to) {
-                        editlayer::merge(target, src);
-                    } else {
-                        warn!(
-                            "LayerDelete: Cannot merge {:04x} to missing layer {:04x}",
-                            id, msg.merge_to
-                        );
-                        return CanvasStateChange::nothing();
-                    }
+                if let Some(target) = stack.root_mut().get_bitmaplayer_mut(msg.merge_to) {
+                    match src.as_ref() {
+                        Layer::Group(g) => editlayer::merge_group(target, g),
+                        Layer::Bitmap(b) => editlayer::merge_bitmap(target, b),
+                    };
                 } else {
-                    warn!("LayerDelete: Cannot merge non-bitmap layer {:04x}", id);
+                    warn!(
+                        "LayerDelete: Cannot merge {:04x} to missing layer {:04x}",
+                        id, msg.merge_to
+                    );
                     return CanvasStateChange::nothing();
                 }
             } else {
-                warn!("LayerDelete: Cannot merge {:04x}", id);
+                warn!("LayerDelete: Cannot merge missing layer {:04x}", id);
                 return CanvasStateChange::nothing();
             }
 
