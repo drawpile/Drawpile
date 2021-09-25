@@ -26,7 +26,7 @@ use super::blendmode::Blendmode;
 use super::grouplayer::GroupLayer;
 
 use super::tile::TileData;
-use super::{InternalLayerID, UserID};
+use super::{LayerID, UserID};
 
 #[derive(Clone)]
 pub enum Layer {
@@ -37,7 +37,7 @@ pub enum Layer {
 /// Common layer properties
 #[derive(Clone, PartialEq)]
 pub struct LayerMetadata {
-    pub id: InternalLayerID,
+    pub id: LayerID,
     pub title: String,
     pub opacity: f32,
     pub hidden: bool,
@@ -93,7 +93,7 @@ impl Layer {
         }
     }
 
-    pub fn id(&self) -> InternalLayerID {
+    pub fn id(&self) -> LayerID {
         match self {
             Layer::Group(g) => g.metadata.id,
             Layer::Bitmap(b) => b.metadata.id,

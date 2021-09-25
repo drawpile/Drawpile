@@ -25,7 +25,7 @@ use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
-    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, InternalLayerID, Layer, Pixel,
+    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, LayerID, Layer, Pixel,
     Rectangle, UserID,
 };
 
@@ -201,7 +201,7 @@ pub fn draw_image(
 /// at the start of a session.
 pub fn put_tile(
     layer: &mut BitmapLayer,
-    sublayer: InternalLayerID,
+    sublayer: LayerID,
     col: u32,
     row: u32,
     repeat: u32,
@@ -210,7 +210,7 @@ pub fn put_tile(
     if sublayer != 0 {
         return put_tile(
             layer.get_or_create_sublayer(sublayer),
-            InternalLayerID(0),
+            0,
             col,
             row,
             repeat,
@@ -286,7 +286,7 @@ pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) ->
 
     if source_group.metadata().isolated {
         let mut tmp = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             source_group.width(),
             source_group.height(),
             Tile::Blank,
@@ -323,7 +323,7 @@ pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) ->
 }
 
 /// Merge a sublayer
-pub fn merge_sublayer(layer: &mut BitmapLayer, sublayer_id: InternalLayerID) -> AoE {
+pub fn merge_sublayer(layer: &mut BitmapLayer, sublayer_id: LayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
         merge_bitmap(layer, &sublayer)
     } else {
@@ -332,7 +332,7 @@ pub fn merge_sublayer(layer: &mut BitmapLayer, sublayer_id: InternalLayerID) -> 
 }
 
 /// Remove a sublayer without merging it
-pub fn remove_sublayer(layer: &mut BitmapLayer, sublayer_id: InternalLayerID) -> AoE {
+pub fn remove_sublayer(layer: &mut BitmapLayer, sublayer_id: LayerID) -> AoE {
     if let Some(sublayer) = layer.take_sublayer(sublayer_id) {
         sublayer.nonblank_tilemap().into()
     } else {
@@ -352,7 +352,7 @@ pub fn merge_all_sublayers(layer: &mut BitmapLayer) -> AoE {
 
 pub fn change_attributes(
     layer: &mut Layer,
-    sublayer: InternalLayerID,
+    sublayer: LayerID,
     opacity: f32,
     blend: Blendmode,
     censored: bool,
@@ -447,7 +447,7 @@ mod tests {
 
     #[test]
     fn test_fill_rect() {
-        let mut layer = BitmapLayer::new(InternalLayerID(0), 200, 200, Tile::Blank);
+        let mut layer = BitmapLayer::new(0, 200, 200, Tile::Blank);
 
         fill_rect(
             &mut layer,
@@ -473,7 +473,7 @@ mod tests {
 
     #[test]
     fn test_draw_brush_dab() {
-        let mut layer = BitmapLayer::new(InternalLayerID(0), 128, 128, Tile::Blank);
+        let mut layer = BitmapLayer::new(0, 128, 128, Tile::Blank);
         let brush = BrushMask::new_round_pixel(4, 1.0);
         // Shape should look like this:
         // 0110
@@ -516,13 +516,13 @@ mod tests {
     #[test]
     fn test_layer_merge() {
         let mut btm = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             128,
             128,
             Tile::new(&Color::rgb8(0, 0, 0), 0),
         );
         let mut top = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             128,
             128,
             Tile::new(&Color::rgb8(255, 0, 0), 0),
@@ -537,20 +537,20 @@ mod tests {
     #[test]
     fn test_group_merge() {
         let mut btm = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             128,
             128,
             Tile::new(&Color::rgb8(0, 0, 0), 0),
         );
         let top = Arc::new(Layer::Bitmap(BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             128,
             128,
             Tile::new(&Color::rgb8(255, 0, 0), 0),
         )));
         let grp = GroupLayer::from_parts(
             LayerMetadata {
-                id: InternalLayerID(0),
+                id: 0,
                 title: String::new(),
                 opacity: 0.5,
                 hidden: false,

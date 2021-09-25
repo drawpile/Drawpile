@@ -239,8 +239,8 @@ fn create_layer(user: UserID, layer: &BitmapLayer, into: LayerID, msgs: &mut Vec
 
     // Put active sublayer content (if any)
     for sl in layer.iter_sublayers() {
-        if sl.metadata().id.0 > 0 && sl.metadata().id.0 < 256 {
-            LayerTileSet::from(sl).to_puttiles(user, layer_id, sl.metadata().id.0 as u8, msgs);
+        if sl.metadata().id > 0 && sl.metadata().id < 256 {
+            LayerTileSet::from(sl).to_puttiles(user, layer_id, sl.metadata().id as u8, msgs);
         }
     }
 }

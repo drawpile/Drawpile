@@ -375,7 +375,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
         // First, write the sublayers (if any)
         // Sublayers are very short lived, so we don't bother trying to reuse them
-        for sublayer in layer.sublayervec().iter().filter(|sl| sl.metadata().is_visible() && sl.metadata().id.0 > 0) {
+        for sublayer in layer.sublayervec().iter().filter(|sl| sl.metadata().is_visible() && sl.metadata().id < 256) {
             stats.changed_layers += 1;
             let offset = self.write_bitmaplayer(sublayer, tilemap, layermap, stats)?;
             sublayers.push(offset);
@@ -421,7 +421,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
     }
 
     fn write_layer_metadata(&mut self, metadata: &LayerMetadata) -> IndexResult<()> {
-        self.writer.write_i32::<LittleEndian>(metadata.id.0)?;
+        self.writer.write_u16::<LittleEndian>(metadata.id)?;
         self.writer
             .write_u16::<LittleEndian>(metadata.title.len().try_into()?)?;
         self.writer.write_all(&metadata.title.as_bytes())?;

@@ -23,7 +23,7 @@
 use super::color::{Color, Pixel, ALPHA_CHANNEL};
 use super::tile::{Tile, TILE_SIZE};
 use super::{
-    BitmapLayer, Image, InternalLayerID, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle,
+    BitmapLayer, Image, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle,
 };
 
 use std::sync::Arc;
@@ -75,13 +75,13 @@ pub fn floodfill(
     // and to keep track of filled pixels.
     let mut scratch = ScratchLayer {
         layer: BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             layer.width(),
             layer.height(),
             Tile::Blank,
         ),
         fill_layer: BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             layer.width(),
             layer.height(),
             Tile::Blank,

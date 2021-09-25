@@ -21,14 +21,14 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::paint::{
-    editlayer, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, Tile,
+    editlayer, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, Tile,
 };
 
 mod utils;
 
 fn main() {
     let mut layer = BitmapLayer::new(
-        InternalLayerID(0),
+        0,
         256,
         256,
         Tile::new(&Color::rgb8(255, 255, 255), 0),

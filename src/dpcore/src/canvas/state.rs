@@ -26,8 +26,10 @@ use super::history::History;
 use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::{
-    editlayer, AoE, BitmapLayer, Blendmode, ClassicBrushCache, Color, GroupLayer, InternalLayerID,
-    Layer, LayerID, LayerInsertion, LayerStack, Rectangle, Size, UserID,
+    editlayer, AoE, Blendmode, ClassicBrushCache, Color,
+    LayerStack, Layer, GroupLayer, BitmapLayer, LayerInsertion,
+    UserID, LayerID, PREVIEW_SUBLAYER_ID,
+    Rectangle, Size,
 };
 use crate::protocol::message::*;
 
@@ -271,7 +273,7 @@ impl CanvasState {
             .root_mut()
             .get_bitmaplayer_mut(layer_id)
         {
-            let mut layer = layer.get_or_create_sublayer(InternalLayerID(-1));
+            let mut layer = layer.get_or_create_sublayer(PREVIEW_SUBLAYER_ID);
 
             let mut aoe = editlayer::clear_layer(&mut layer);
 
@@ -340,14 +342,14 @@ impl CanvasState {
                 .root_mut()
                 .inner_mut()
                 .visit_bitmaps_mut(|layer: &mut BitmapLayer| {
-                    editlayer::remove_sublayer(layer, InternalLayerID(-1))
+                    editlayer::remove_sublayer(layer, PREVIEW_SUBLAYER_ID)
                 })
                 .into()
         } else if let Some(layer) = Arc::make_mut(&mut self.layerstack)
             .root_mut()
             .get_bitmaplayer_mut(layer_id)
         {
-            editlayer::remove_sublayer(layer, InternalLayerID(-1)).into()
+            editlayer::remove_sublayer(layer, PREVIEW_SUBLAYER_ID).into()
         } else {
             warn!("remove_preview: Layer {} not found!", layer_id);
             CanvasStateChange::nothing()
@@ -449,11 +451,11 @@ impl CanvasState {
     fn handle_penup(&mut self, user_id: UserID) -> AoE {
         // find the ID of the layer that contains the sublayer
         // or 0 if none exists
-        fn find_sublayer(group: &GroupLayer, sublayer_id: InternalLayerID) -> InternalLayerID {
+        fn find_sublayer(group: &GroupLayer, sublayer_id: LayerID) -> LayerID {
             for l in group.iter_layers() {
                 match l {
                     Layer::Group(g) => {
-                        if find_sublayer(g, sublayer_id).0 != 0 {
+                        if find_sublayer(g, sublayer_id) != 0 {
                             return g.metadata().id;
                         }
                     }
@@ -464,14 +466,14 @@ impl CanvasState {
                     }
                 }
             }
-            InternalLayerID(0)
+            0
         }
 
         // Merge the sublayer
         fn merge_sublayer(
             group: &mut GroupLayer,
-            sublayer_in: InternalLayerID,
-            sublayer_id: InternalLayerID,
+            sublayer_in: LayerID,
+            sublayer_id: LayerID,
         ) {
             for l in group.iter_layers_mut() {
                 if l.metadata().id == sublayer_in {
@@ -491,10 +493,10 @@ impl CanvasState {
         // Typically, there is only one sublayer that needs to be merged,
         // so this loop only runs twice.
         // We do the read-only search phase to avoid detaching unrelated layers.
-        let sublayer_id = InternalLayerID::from(user_id);
+        let sublayer_id = user_id as LayerID;
         loop {
             let sublayer_in = find_sublayer(self.layerstack.root().inner_ref(), sublayer_id);
-            if sublayer_in.0 != 0 {
+            if sublayer_in != 0 {
                 merge_sublayer(
                     Arc::make_mut(&mut self.layerstack).root_mut().inner_mut(),
                     sublayer_in,

@@ -24,7 +24,7 @@ use dpcore::brush::{BrushEngine, BrushState, ClassicBrush};
 use dpcore::canvas::brushes;
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
-    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, InternalLayerID, LayerID,
+    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID,
     LayerInsertion, LayerStack, Rectangle,
 };
 use dpcore::protocol::message::CommandMessage;
@@ -121,7 +121,7 @@ impl BrushPreview {
             .unwrap();
         editlayer::put_tile(
             layer,
-            InternalLayerID(0),
+            0,
             0,
             0,
             9999,
@@ -248,7 +248,7 @@ impl BrushPreview {
             };
         }
 
-        editlayer::merge_sublayer(layer, InternalLayerID(1));
+        editlayer::merge_sublayer(layer, 1);
     }
 
     pub fn floodfill(&mut self, color: Color, tolerance: f32, expansion: i32, fill_under: bool) {

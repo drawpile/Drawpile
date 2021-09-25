@@ -196,8 +196,6 @@ struct ClassicBrush {
   bool smudge_pressure;
 };
 
-/// The regular layer ID type is used for layers that can be accessed
-/// via the protocol.
 using LayerID = uint16_t;
 
 using ExtLogFn = void(*)(int32_t level, const char *file, uint32_t line, const char *logmsg);
@@ -218,7 +216,7 @@ struct LayerInfo {
   const uint8_t *title;
   int32_t titlelen;
   float opacity;
-  int32_t id;
+  uint16_t id;
   bool hidden;
   bool censored;
   bool fixed;

@@ -32,7 +32,7 @@ use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::{
-    BitmapLayer, Blendmode, Color, Image, InternalLayerID, LayerID, Pixel, Rectangle, UserID,
+    BitmapLayer, Blendmode, Color, Image, LayerID, Pixel, Rectangle, UserID,
 };
 
 /// A layer stack wraps together the parts that make up the canvas
@@ -406,7 +406,7 @@ impl LayerStack {
             let r = (dia / 2).min(1) as i32;
 
             let mut tmp = BitmapLayer::new(
-                InternalLayerID(0),
+                0,
                 self.root.width(),
                 self.root.height(),
                 self.background.clone(),

@@ -30,7 +30,7 @@ use super::rect::{Rectangle, Size};
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI, ZEBRA_TILE};
 use super::tileiter::{MutableTileIterator, TileIterator};
-use super::{InternalLayerID, UserID};
+use super::{LayerID, UserID};
 
 use std::sync::Arc;
 
@@ -51,7 +51,7 @@ pub struct BitmapLayer {
 
 impl BitmapLayer {
     /// Construct a new layer filled with the given color
-    pub fn new(id: InternalLayerID, width: u32, height: u32, fill: Tile) -> BitmapLayer {
+    pub fn new(id: LayerID, width: u32, height: u32, fill: Tile) -> BitmapLayer {
         BitmapLayer {
             metadata: LayerMetadata {
                 id,
@@ -96,7 +96,7 @@ impl BitmapLayer {
         let xtiles = Tile::div_up(width);
         let ytiles = Tile::div_up(height);
 
-        let mut layer = BitmapLayer::new(InternalLayerID(0), width, height, Tile::Blank);
+        let mut layer = BitmapLayer::new(0, width, height, Tile::Blank);
 
         let imagerect = Rectangle::new(0, 0, width as i32, height as i32);
 
@@ -248,7 +248,7 @@ impl BitmapLayer {
     ///
     /// By convention, ID 0 is not used. Sublayers with positive IDs are used for indirect
     /// drawing (matching user IDs) and sublayers with negative IDs are for local previews.
-    pub fn get_or_create_sublayer(&mut self, id: InternalLayerID) -> &mut BitmapLayer {
+    pub fn get_or_create_sublayer(&mut self, id: LayerID) -> &mut BitmapLayer {
         assert!(id != 0, "Sublayer ID 0 is not allowed");
 
         if let Some(i) = self.sublayers.iter().position(|sl| sl.metadata.id == id) {
@@ -268,7 +268,7 @@ impl BitmapLayer {
     ///
     /// Note: you should not typically need to call this directly.
     /// Instead, use `merge_sublayer` or `remove_sublayer` from `editlayer` module
-    pub fn take_sublayer(&mut self, id: InternalLayerID) -> Option<Arc<BitmapLayer>> {
+    pub fn take_sublayer(&mut self, id: LayerID) -> Option<Arc<BitmapLayer>> {
         if let Some(i) = self.sublayers.iter().position(|sl| sl.metadata.id == id) {
             Some(self.sublayers.remove(i))
         } else {
@@ -291,12 +291,12 @@ impl BitmapLayer {
     }
 
     /// Return a list of visible sublayers this layer has
-    pub fn sublayer_ids(&self) -> Vec<InternalLayerID> {
+    pub fn sublayer_ids(&self) -> Vec<LayerID> {
         self.iter_sublayers().map(|sl| sl.metadata.id).collect()
     }
 
     /// Check if a sublayer with the given ID exists
-    pub fn has_sublayer(&self, id: InternalLayerID) -> bool {
+    pub fn has_sublayer(&self, id: LayerID) -> bool {
         self.sublayers.iter().any(|sl| sl.metadata.id == id)
     }
 
@@ -762,7 +762,7 @@ mod tests {
     #[test]
     fn test_tilevector_cow() {
         let mut layer = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             100,
             64,
             Tile::new(
@@ -820,7 +820,7 @@ mod tests {
     #[test]
     fn test_solid_expand() {
         let r = Color::rgb8(255, 0, 0);
-        let layer = BitmapLayer::new(InternalLayerID(0), TILE_SIZE, TILE_SIZE, Tile::new(&r, 0));
+        let layer = BitmapLayer::new(0, TILE_SIZE, TILE_SIZE, Tile::new(&r, 0));
         let layer2 = layer.resized(10, 10, 0, 0).unwrap();
         for t in layer2.tiles.iter() {
             assert_eq!(t.solid_color(), Some(r));
@@ -831,7 +831,7 @@ mod tests {
     fn test_fast_expand() {
         let t = Color::TRANSPARENT;
 
-        let mut layer = BitmapLayer::new(InternalLayerID(0), TILE_SIZE, TILE_SIZE, Tile::Blank);
+        let mut layer = BitmapLayer::new(0, TILE_SIZE, TILE_SIZE, Tile::Blank);
         // Change a pixel so the whole layer won't be of uniform color
         layer
             .tile_mut(0, 0)
@@ -871,7 +871,7 @@ mod tests {
     #[test]
     fn test_fast_contract() {
         let mut layer = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             TILE_SIZE * 3,
             TILE_SIZE * 3,
             Tile::Blank,
@@ -907,7 +907,7 @@ mod tests {
     #[test]
     fn test_slow_expand() {
         let mut layer = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             TILE_SIZE,
             TILE_SIZE,
             Tile::new(&Color::rgb8(0, 0, 0), 0),
@@ -929,7 +929,7 @@ mod tests {
 
     #[test]
     fn test_slow_contract() {
-        let mut layer = BitmapLayer::new(InternalLayerID(0), TILE_SIZE, TILE_SIZE, Tile::Blank);
+        let mut layer = BitmapLayer::new(0, TILE_SIZE, TILE_SIZE, Tile::Blank);
         layer
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(5, 10, 1, 1), false)
@@ -948,7 +948,7 @@ mod tests {
     #[test]
     fn test_sample_dab() {
         let mut layer = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             TILE_SIZE * 2,
             TILE_SIZE * 2,
             Tile::Blank,
@@ -974,7 +974,7 @@ mod tests {
     #[test]
     fn test_cropped_image() {
         let mut layer = BitmapLayer::new(
-            InternalLayerID(0),
+            0,
             TILE_SIZE * 4,
             TILE_SIZE * 4,
             Tile::Blank,

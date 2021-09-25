@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::paint::{
-    InternalLayerID, LayerMetadata, Blendmode,
+    LayerMetadata, Blendmode,
     LayerStack, Layer, GroupLayer, BitmapLayer,
     Tile, Rectangle, Color,};
 use dpcore::paint::annotation::{Annotation, VAlign};
@@ -161,7 +161,7 @@ fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32
 
     reader.seek(SeekFrom::Start(offset))?;
 
-    let id = InternalLayerID(reader.read_i32::<LittleEndian>()?);
+    let id = reader.read_u16::<LittleEndian>()?;
     let title_len = reader.read_u16::<LittleEndian>()?;
     let mut title = vec![0;title_len as usize];
     reader.read_exact(&mut title)?;

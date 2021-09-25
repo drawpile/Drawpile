@@ -21,13 +21,13 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::paint::{
-    editlayer, BitmapLayer, Blendmode, BrushMask, Color, InternalLayerID, Rectangle, Tile,
+    editlayer, BitmapLayer, Blendmode, BrushMask, Color, Rectangle, Tile,
 };
 
 mod utils;
 
 fn main() {
-    let mut layer = BitmapLayer::new(InternalLayerID(0), 256, 256, Tile::Blank);
+    let mut layer = BitmapLayer::new(0, 256, 256, Tile::Blank);
 
     // Draw a nice background
     let colors = [

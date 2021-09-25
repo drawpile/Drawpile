@@ -27,7 +27,7 @@ use super::{DP_NAMESPACE, MYPAINT_NAMESPACE,
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
-    Blendmode, Image, InternalLayerID,
+    Blendmode, Image,
     LayerStack, LayerViewOptions,
     Rectangle,
     Layer, GroupLayer, BitmapLayer
@@ -82,7 +82,7 @@ fn write_background<W: Write + Seek>(
     layerstack: &LayerStack,
 ) -> Result<OraLayer, ImpexError> {
     let bgl = BitmapLayer::new(
-        InternalLayerID(0),
+        0,
         layerstack.root().width(),
         layerstack.root().height(),
         layerstack.background.clone(),
@@ -145,7 +145,7 @@ fn write_layer<W: Write + Seek>(
             composite_op: md.blendmode,
             unsupported_features: false,
         },
-        filename: format!("data/layer-{:04x}.png", layer.metadata().id.0),
+        filename: format!("data/layer-{:04x}.png", layer.metadata().id),
         bgtile: String::new(),
     };
 
