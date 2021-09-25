@@ -295,9 +295,12 @@ impl AclFilter {
             }
             LayerAttributes(u, m) => self.check_layer_perms(*u, m.id),
             LayerRetitle(u, m) => self.check_layer_perms(*u, m.id),
-            LayerOrder(u, _) => self.users.tier(*u) <= self.feature_tier.edit_layers,
+            LayerOrder(u, m) => self.check_layer_perms(*u, m.root),
             LayerDelete(u, m) => {
-                let ok = self.check_layer_perms(*u, m.id);
+                let mut ok = self.check_layer_perms(*u, m.id);
+                if m.merge_to > 0 {
+                    ok = ok && !self.is_layer_locked(*u, m.merge_to);
+                }
                 if ok {
                     self.layers.remove(&m.id);
                 }
@@ -347,6 +350,8 @@ impl AclFilter {
         }
     }
 
+    /// Check if this user has edit permissions on the given layer
+    /// Editing here means changing properties, deleting or reordering group layers.
     fn check_layer_perms(&self, user: UserID, layer: LayerID) -> bool {
         let tier = self.users.tier(user);
         tier <= self.feature_tier.edit_layers
@@ -418,4 +423,68 @@ pub fn userbits_to_vec(users: &UserBits) -> Vec<UserID> {
         }
     }
     v
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_layer_edit() {
+        let mut acl = AclFilter::new();
+        join(&mut acl, 1);
+        join(&mut acl, 2);
+        assert!(set_op(&mut acl, 0, 1));
+
+        // Operators can always create layers
+        assert!(create_layer(&mut acl, 1, 0x0101, 0));
+
+        // Even for other users
+        assert!(create_layer(&mut acl, 1, 0x0201, 0));
+
+        // By default, guest users can also create layers
+        assert!(create_layer(&mut acl, 2, 0x0202, 0));
+
+        // But only for themselves
+        assert_eq!(create_layer(&mut acl, 2, 0x0302, 0), false);
+    }
+
+    fn join(acl: &mut AclFilter, user: UserID) {
+        let (ok, c) = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::Join(
+            user,
+            JoinMessage{
+                flags: 0,
+                name: String::new(),
+                avatar: Vec::new(),
+            }
+        )));
+
+        assert!(ok);
+        assert_eq!(c, 0);
+    }
+
+    fn set_op(acl: &mut AclFilter, by_user: UserID, user: UserID) -> bool {
+        let (ok, _) = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(
+            by_user,
+            vec![user]
+        )));
+
+        ok
+    }
+
+    fn create_layer(acl: &mut AclFilter, user: UserID, layer: LayerID, target: LayerID) -> bool {
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::LayerCreate(
+            user,
+            LayerCreateMessage{
+                id: layer,
+                source: 0,
+                target,
+                fill: 0,
+                flags: 0,
+                name: String::new(),
+            }
+        )));
+
+        ok
+    }
 }
