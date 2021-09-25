@@ -319,20 +319,6 @@ pub extern "C" fn write_retitlelayer(
 }
 
 #[no_mangle]
-pub extern "C" fn write_layerorder(
-    writer: &mut MessageWriter,
-    ctx: UserID,
-    layers: *const u16,
-    layers_len: usize,
-) {
-    CommandMessage::LayerOrder(
-        ctx,
-        unsafe { slice::from_raw_parts(layers, layers_len) }.into(),
-    )
-    .write(writer);
-}
-
-#[no_mangle]
 pub extern "C" fn write_deletelayer(
     writer: &mut MessageWriter,
     ctx: UserID,

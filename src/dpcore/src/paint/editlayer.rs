@@ -25,7 +25,7 @@ use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
-    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, LayerID, Layer, Pixel,
+    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, Layer, LayerID, Pixel,
     Rectangle, UserID,
 };
 
@@ -285,12 +285,7 @@ pub fn merge_group(target_layer: &mut BitmapLayer, source_group: &GroupLayer) ->
     let mut aoe = AoE::Nothing;
 
     if source_group.metadata().isolated {
-        let mut tmp = BitmapLayer::new(
-            0,
-            source_group.width(),
-            source_group.height(),
-            Tile::Blank,
-        );
+        let mut tmp = BitmapLayer::new(0, source_group.width(), source_group.height(), Tile::Blank);
         tmp.metadata_mut().opacity = source_group.metadata().opacity;
         tmp.metadata_mut().blendmode = source_group.metadata().blendmode;
 
@@ -515,18 +510,8 @@ mod tests {
 
     #[test]
     fn test_layer_merge() {
-        let mut btm = BitmapLayer::new(
-            0,
-            128,
-            128,
-            Tile::new(&Color::rgb8(0, 0, 0), 0),
-        );
-        let mut top = BitmapLayer::new(
-            0,
-            128,
-            128,
-            Tile::new(&Color::rgb8(255, 0, 0), 0),
-        );
+        let mut btm = BitmapLayer::new(0, 128, 128, Tile::new(&Color::rgb8(0, 0, 0), 0));
+        let mut top = BitmapLayer::new(0, 128, 128, Tile::new(&Color::rgb8(255, 0, 0), 0));
         top.metadata_mut().opacity = 0.5;
 
         merge_bitmap(&mut btm, &top);
@@ -536,12 +521,7 @@ mod tests {
 
     #[test]
     fn test_group_merge() {
-        let mut btm = BitmapLayer::new(
-            0,
-            128,
-            128,
-            Tile::new(&Color::rgb8(0, 0, 0), 0),
-        );
+        let mut btm = BitmapLayer::new(0, 128, 128, Tile::new(&Color::rgb8(0, 0, 0), 0));
         let top = Arc::new(Layer::Bitmap(BitmapLayer::new(
             0,
             128,

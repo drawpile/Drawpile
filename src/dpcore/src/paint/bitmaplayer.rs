@@ -870,12 +870,7 @@ mod tests {
 
     #[test]
     fn test_fast_contract() {
-        let mut layer = BitmapLayer::new(
-            0,
-            TILE_SIZE * 3,
-            TILE_SIZE * 3,
-            Tile::Blank,
-        );
+        let mut layer = BitmapLayer::new(0, TILE_SIZE * 3, TILE_SIZE * 3, Tile::Blank);
         // Change a pixel so the whole layer won't be of uniform color
         // and so we can distinguish the tiles from the new fully transparent ones.
         for y in 0..3 {
@@ -906,12 +901,8 @@ mod tests {
 
     #[test]
     fn test_slow_expand() {
-        let mut layer = BitmapLayer::new(
-            0,
-            TILE_SIZE,
-            TILE_SIZE,
-            Tile::new(&Color::rgb8(0, 0, 0), 0),
-        );
+        let mut layer =
+            BitmapLayer::new(0, TILE_SIZE, TILE_SIZE, Tile::new(&Color::rgb8(0, 0, 0), 0));
         layer
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(0, 0, 1, 1), false)
@@ -947,12 +938,7 @@ mod tests {
 
     #[test]
     fn test_sample_dab() {
-        let mut layer = BitmapLayer::new(
-            0,
-            TILE_SIZE * 2,
-            TILE_SIZE * 2,
-            Tile::Blank,
-        );
+        let mut layer = BitmapLayer::new(0, TILE_SIZE * 2, TILE_SIZE * 2, Tile::Blank);
         layer.tile_mut(0, 0).fill(&Color::rgb8(255, 0, 0), 0);
         layer.tile_mut(1, 0).fill(&Color::rgb8(0, 255, 0), 0);
         layer.tile_mut(0, 1).fill(&Color::rgb8(0, 0, 255), 0);
@@ -973,12 +959,7 @@ mod tests {
 
     #[test]
     fn test_cropped_image() {
-        let mut layer = BitmapLayer::new(
-            0,
-            TILE_SIZE * 4,
-            TILE_SIZE * 4,
-            Tile::Blank,
-        );
+        let mut layer = BitmapLayer::new(0, TILE_SIZE * 4, TILE_SIZE * 4, Tile::Blank);
         layer.tile_mut(1, 1).set_pixel_at(0, 0, 0, WHITE_PIXEL);
         layer.tile_mut(2, 1).set_pixel_at(0, 1, 0, WHITE_PIXEL);
 

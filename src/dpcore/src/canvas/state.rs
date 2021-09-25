@@ -26,10 +26,8 @@ use super::history::History;
 use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::{
-    editlayer, AoE, Blendmode, ClassicBrushCache, Color,
-    LayerStack, Layer, GroupLayer, BitmapLayer, LayerInsertion,
-    UserID, LayerID, PREVIEW_SUBLAYER_ID,
-    Rectangle, Size,
+    editlayer, AoE, BitmapLayer, Blendmode, ClassicBrushCache, Color, GroupLayer, Layer, LayerID,
+    LayerInsertion, LayerStack, Rectangle, Size, UserID, PREVIEW_SUBLAYER_ID,
 };
 use crate::protocol::message::*;
 
@@ -391,7 +389,7 @@ impl CanvasState {
             LayerCreate(_, m) => self.handle_layer_create(m),
             LayerAttributes(_, m) => self.handle_layer_attributes(m),
             LayerRetitle(_, m) => self.handle_layer_retitle(m),
-            LayerOrder(_, order) => self.handle_layer_order(order),
+            LayerOrder(_, m) => self.handle_layer_order(m),
             LayerDelete(_, m) => self.handle_layer_delete(m),
             PutImage(u, m) => self.handle_putimage(*u, m).into(),
             FillRect(user, m) => self.handle_fillrect(*user, m),
@@ -470,11 +468,7 @@ impl CanvasState {
         }
 
         // Merge the sublayer
-        fn merge_sublayer(
-            group: &mut GroupLayer,
-            sublayer_in: LayerID,
-            sublayer_id: LayerID,
-        ) {
+        fn merge_sublayer(group: &mut GroupLayer, sublayer_in: LayerID, sublayer_id: LayerID) {
             for l in group.iter_layers_mut() {
                 if l.metadata().id == sublayer_in {
                     match Arc::make_mut(l) {
@@ -599,9 +593,8 @@ impl CanvasState {
         }
     }
 
-    fn handle_layer_order(&mut self, new_order: &[u16]) -> CanvasStateChange {
-        let order: Vec<LayerID> = new_order.iter().map(|i| *i as LayerID).collect();
-        match self.layerstack.reordered(&order) {
+    fn handle_layer_order(&mut self, msg: &LayerOrderMessage) -> CanvasStateChange {
+        match self.layerstack.reordered(msg.root, &msg.layers) {
             Ok(ls) => {
                 self.layerstack = Arc::new(ls);
                 return CanvasStateChange::layers(AoE::Everything);

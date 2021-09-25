@@ -521,6 +521,41 @@ impl LayerRetitleMessage {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct LayerOrderMessage {
+    pub root: u16,
+    pub layers: Vec<u16>,
+}
+
+impl LayerOrderMessage {
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate(2, 65535)?;
+
+        let root = reader.read::<u16>();
+        let layers = reader.read_remaining_vec();
+
+        Ok(Self { root, layers })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(133, user_id, 2 + (self.layers.len() * 2));
+        w.write(self.root);
+        w.write(&self.layers);
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        txt.set("root", format!("0x{:04x}", self.root))
+            .set_vec_u16("layers", &self.layers, true)
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        Self {
+            root: tm.get_u16("root"),
+            layers: tm.get_vec_u16("layers"),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct LayerDeleteMessage {
     pub id: u16,
     pub merge_to: u16,
@@ -1494,9 +1529,27 @@ pub enum CommandMessage {
     /// Change a layer's title
     LayerRetitle(u8, LayerRetitleMessage),
 
-    /// Reorder layers (TODO explain new encoding)
+    /// Reorder layers
     ///
-    LayerOrder(u8, Vec<u16>),
+    /// The layer tree of the given group (0 means whole tree) will be reordered
+    /// according to the given order.
+    /// The order should describe a tree using (child count, layer ID) pairs.
+    ///
+    /// For example (indented for clarity):
+    ///
+    ///   2, 1,
+    ///     0, 10,
+    ///     0, 11,
+    ///   0, 2,
+    ///   2, 3,
+    ///     1, 30,
+    ///       0, 31
+    ///     0, 32
+    ///
+    ///  Each layer in the group must be listed exactly once in the new order,
+    ///  or the command will be rejected.
+    ///
+    LayerOrder(u8, LayerOrderMessage),
 
     /// Delete a layer
     ///
@@ -1802,7 +1855,7 @@ impl CommandMessage {
             LayerCreate(user_id, b) => b.serialize(w, *user_id),
             LayerAttributes(user_id, b) => b.serialize(w, *user_id),
             LayerRetitle(user_id, b) => b.serialize(w, *user_id),
-            LayerOrder(user_id, b) => w.single(133, *user_id, b),
+            LayerOrder(user_id, b) => b.serialize(w, *user_id),
             LayerDelete(user_id, b) => b.serialize(w, *user_id),
             PutImage(user_id, b) => b.serialize(w, *user_id),
             FillRect(user_id, b) => b.serialize(w, *user_id),
@@ -1829,9 +1882,7 @@ impl CommandMessage {
             LayerCreate(user_id, b) => b.to_text(TextMessage::new(*user_id, "newlayer")),
             LayerAttributes(user_id, b) => b.to_text(TextMessage::new(*user_id, "layerattr")),
             LayerRetitle(user_id, b) => b.to_text(TextMessage::new(*user_id, "retitlelayer")),
-            LayerOrder(user_id, b) => {
-                TextMessage::new(*user_id, "layerorder").set_vec_u16("layers", &b, true)
-            }
+            LayerOrder(user_id, b) => b.to_text(TextMessage::new(*user_id, "layerorder")),
             LayerDelete(user_id, b) => b.to_text(TextMessage::new(*user_id, "deletelayer")),
             PutImage(user_id, b) => b.to_text(TextMessage::new(*user_id, "putimage")),
             FillRect(user_id, b) => b.to_text(TextMessage::new(*user_id, "fillrect")),
@@ -1995,7 +2046,7 @@ impl Message {
             )),
             133 => Command(CommandMessage::LayerOrder(
                 u,
-                r.validate(0, 65535)?.read_remaining_vec(),
+                LayerOrderMessage::deserialize(r)?,
             )),
             134 => Command(CommandMessage::LayerDelete(
                 u,
@@ -2158,7 +2209,7 @@ impl Message {
             )),
             "layerorder" => Command(CommandMessage::LayerOrder(
                 tm.user_id,
-                tm.get_vec_u16("layers"),
+                LayerOrderMessage::from_text(&tm),
             )),
             "deletelayer" => Command(CommandMessage::LayerDelete(
                 tm.user_id,

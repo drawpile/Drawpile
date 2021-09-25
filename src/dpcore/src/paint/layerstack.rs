@@ -31,9 +31,7 @@ use super::grouplayer::RootGroup;
 use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
-use super::{
-    BitmapLayer, Blendmode, Color, Image, LayerID, Pixel, Rectangle, UserID,
-};
+use super::{BitmapLayer, Blendmode, Color, Image, LayerID, Pixel, Rectangle, UserID};
 
 /// A layer stack wraps together the parts that make up the canvas
 #[derive(Clone)]
@@ -190,9 +188,13 @@ impl LayerStack {
             .count()
     }
 
-    pub fn reordered(&self, new_order: &[LayerID]) -> Result<LayerStack, &'static str> {
+    pub fn reordered(
+        &self,
+        root_group: LayerID,
+        new_order: &[LayerID],
+    ) -> Result<LayerStack, &'static str> {
         Ok(Self {
-            root: Arc::new(self.root.reordered(new_order)?),
+            root: Arc::new(self.root.reordered(root_group, new_order)?),
             annotations: self.annotations.clone(),
             background: self.background.clone(),
         })
@@ -301,7 +303,6 @@ impl LayerStack {
         // Onionskin, solo and other animation features only apply to
         // the root, as only root level layers are treated as frames.
         if (i * TILE_SIZE) < self.root.width() && (j * TILE_SIZE) < self.root.height() {
-
             if matches!(opts.viewmode, LayerViewMode::Solo) {
                 if let Some(l) = self.root().get_layer(opts.active_layer_id) {
                     l.flatten_tile(&mut destination, i, j, 1.0, opts.censor, opts.highlight);

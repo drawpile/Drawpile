@@ -372,9 +372,29 @@ LayerRetitle:
 LayerOrder:
     id: 133
     comment: |
-             Reorder layers (TODO explain new encoding)
+             Reorder layers
+
+             The layer tree of the given group (0 means whole tree) will be reordered
+             according to the given order.
+             The order should describe a tree using (child count, layer ID) pairs.
+
+             For example (indented for clarity):
+
+               2, 1,
+                 0, 10,
+                 0, 11,
+               0, 2,
+               2, 3,
+                 1, 30,
+                   0, 31
+                 0, 32
+
+              Each layer in the group must be listed exactly once in the new order,
+              or the command will be rejected.
+
     fields:
-        - layers vec_u16: hex
+      - root u16: hex
+      - layers vec_u16: hex
 
 LayerDelete:
     id: 134

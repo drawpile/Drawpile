@@ -22,9 +22,7 @@
 
 use super::color::{Color, Pixel, ALPHA_CHANNEL};
 use super::tile::{Tile, TILE_SIZE};
-use super::{
-    BitmapLayer, Image, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle,
-};
+use super::{BitmapLayer, Image, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle};
 
 use std::sync::Arc;
 
@@ -74,18 +72,8 @@ pub fn floodfill(
     // The scratch layer is used for two things: for flattening the layerstack in sample_merged mode
     // and to keep track of filled pixels.
     let mut scratch = ScratchLayer {
-        layer: BitmapLayer::new(
-            0,
-            layer.width(),
-            layer.height(),
-            Tile::Blank,
-        ),
-        fill_layer: BitmapLayer::new(
-            0,
-            layer.width(),
-            layer.height(),
-            Tile::Blank,
-        ),
+        layer: BitmapLayer::new(0, layer.width(), layer.height(), Tile::Blank),
+        fill_layer: BitmapLayer::new(0, layer.width(), layer.height(), Tile::Blank),
         source_layer: layer,
         image,
         sample_merged,

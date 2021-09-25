@@ -99,6 +99,13 @@ impl LayerRoutes {
         LayerRoutes { routes: Vec::new() }
     }
 
+    /// Return the number of routes
+    /// This is the same as the sum number of layers contained by all
+    /// of the parent group's subgroups
+    fn len(&self) -> usize {
+        self.routes.len()
+    }
+
     /// Add a route to a layer within one of the owning layer group's
     /// subgroups.
     fn add(&mut self, target: LayerID, subgroup_index: usize) {
@@ -257,6 +264,19 @@ impl GroupLayer {
         self.get_layer_mut(id).and_then(|l| l.as_bitmap_mut())
     }
 
+    // Recursively visit each layer without mutating them
+    pub fn visit_layers<F>(&self, visitor: &mut F)
+    where
+        F: FnMut(&Arc<Layer>),
+    {
+        for l in &self.layers {
+            visitor(l);
+            if let Layer::Group(g) = l.as_ref() {
+                g.visit_layers(visitor);
+            }
+        }
+    }
+
     /// Recursively visit each bitmap layer to make changes
     pub fn visit_bitmaps_mut(&mut self, visitor: fn(&mut BitmapLayer) -> AoE) -> AoE {
         let mut aoe = AoE::Nothing;
@@ -272,9 +292,6 @@ impl GroupLayer {
     }
 
     /// Add a new layer and return a mutable reference to it
-    ///
-    /// Note: this function should only be called via the layerstack,
-    /// as it must be called on the root group to ensure all invariants hold.
     ///
     /// The following checks must be made to ensure the layerstack
     /// remains in a valid state:
@@ -562,6 +579,11 @@ impl GroupLayer {
         self.layers.len()
     }
 
+    /// Return the total number of layers contained by this group
+    pub fn total_layer_count(&self) -> usize {
+        self.layers.len() + self.routes.len()
+    }
+
     /// Find the topmost layer with a non-transparent pixel at the given point
     ///
     /// Returns 0 if no layer was found
@@ -617,17 +639,7 @@ impl GroupLayer {
         0
     }
 
-    /// Recursively collect a list of layers in this group or its subgroups
-    fn collect_layers(&self, map: &mut HashMap<LayerID, Arc<Layer>>) {
-        for l in &self.layers {
-            map.insert(l.id().try_into().unwrap(), l.clone());
-            if let Some(g) = l.as_group() {
-                g.collect_layers(map);
-            }
-        }
-    }
-
-    fn reordered<'a>(
+    fn reordered_inner<'a>(
         &self,
         mut expecting: i32,
         new_order: &'a [LayerID],
@@ -675,7 +687,7 @@ impl GroupLayer {
                 let group = layer.as_group().ok_or("non-group used as group")?;
 
                 let (reordered, new_slice) =
-                    group.reordered(order_slice[0] as i32, &order_slice[2..], all_layers)?;
+                    group.reordered_inner(order_slice[0] as i32, &order_slice[2..], all_layers)?;
 
                 routes.extend_from(&reordered, layers.len());
                 layers.push(Arc::new(Layer::Group(reordered)));
@@ -695,6 +707,36 @@ impl GroupLayer {
             },
             order_slice,
         ));
+    }
+
+    /// Return a new group whose layers have been reordered
+    /// The new order should contain just the layers of this group
+    /// and its descendents.
+    fn reordered(&self, new_order: &[LayerID]) -> Result<Self, &'static str> {
+        // A valid layer list consists of pairs of numbers
+        if new_order.is_empty() {
+            return Err("empty ordering");
+        }
+        if new_order.len() % 2 != 0 {
+            return Err("ordering length is not even");
+        }
+
+        // First we gather up a flattened map of all the layers
+        let mut layermap: HashMap<LayerID, Arc<Layer>> = HashMap::new();
+        self.visit_layers(&mut |layer| {
+            layermap.insert(layer.id(), layer.clone());
+        });
+
+        // Recursively build the new group tree
+        let (reordered, _) = self.reordered_inner(-1, new_order, &mut layermap)?;
+
+        // If the reordering command used every layer exactly once,
+        // the map should be empty again.
+        if !layermap.is_empty() {
+            return Err("not all layers were included");
+        }
+
+        Ok(reordered)
     }
 
     pub fn nonblank_tilemap(&self) -> TileMap {
@@ -779,23 +821,14 @@ impl RootGroup {
         let mut source = self.0.get_layer_rc(source)?;
 
         if let Some(g) = source.as_group() {
-            // Gather up a list of used layer IDs (with the same user prefix)
-            let mut existing_layers = HashMap::new();
-            self.0.collect_layers(&mut existing_layers);
-            let mut idgen = IDGenerator::new(
-                (id & 0xff) as u8,
-                existing_layers
-                    .iter()
-                    .filter_map(|(k, _)| {
-                        if k & 0xff00 == id & 0xff00 {
-                            Some((k & 0xff) as u8)
-                        } else {
-                            None
-                        }
-                    })
-                    .collect(),
-            );
-
+            let mut existing_layers: Vec<u8> = Vec::new();
+            self.0.visit_layers(&mut |layer| {
+                let layer_id = layer.id();
+                if layer_id & 0xff00 == id & 0xff00 {
+                    existing_layers.push((layer_id & 0xff) as u8);
+                }
+            });
+            let mut idgen = IDGenerator::new((id & 0xff) as u8, existing_layers);
             source = Arc::new(Layer::Group(g.make_unique(id & 0xff00, &mut idgen)?));
         } else {
             Arc::make_mut(&mut source).metadata_mut().id = id.into();
@@ -806,42 +839,38 @@ impl RootGroup {
 
     /// Find the index of the top-level layer or group that contains this frame
     pub fn find_frame_index_by_id(&self, layer_id: LayerID) -> Option<usize> {
-        self.0.routes
-            .get(layer_id)
-            .or_else(|| {
-                for (i, l) in self.iter_layers().enumerate() {
-                    if l.metadata().id == layer_id {
-                        return Some(i)
-                    }
+        self.0.routes.get(layer_id).or_else(|| {
+            for (i, l) in self.iter_layers().enumerate() {
+                if l.metadata().id == layer_id {
+                    return Some(i);
                 }
-                None
-            })
+            }
+            None
+        })
     }
 
-    /// Return a new group root whose layers have been reordered
-    pub fn reordered(&self, new_order: &[LayerID]) -> Result<Self, &'static str> {
-        // A valid layer list consists of pairs of numbers
-        if new_order.is_empty() {
-            return Err("empty ordering");
-        }
-        if new_order.len() % 2 != 0 {
-            return Err("ordering length is not even");
-        }
-
-        // First we gather up a flattened map of all the layers
-        let mut layermap = HashMap::new();
-        self.0.collect_layers(&mut layermap);
-
-        // Recursively build the new group tree
-        let (reordered, _) = self.0.reordered(-1, new_order, &mut layermap)?;
-
-        // If the reordering command used every layer exactly once,
-        // the map should be empty again.
-        if !layermap.is_empty() {
-            return Err("not all layers were included");
+    /// Return a new group with layers under root_group reordered.
+    ///
+    /// root_group 0 refers to the whole layer tree.
+    pub fn reordered(
+        &self,
+        root_group: LayerID,
+        new_order: &[LayerID],
+    ) -> Result<Self, &'static str> {
+        if root_group == 0 {
+            return Ok(Self(self.0.reordered(new_order)?));
         }
 
-        Ok(RootGroup(reordered))
+        let mut root = self.clone();
+
+        let group = root
+            .get_layer_mut(root_group)
+            .and_then(|g| g.as_group_mut())
+            .ok_or("root group not found")?;
+
+        *group = group.reordered(new_order)?;
+
+        Ok(root)
     }
 
     pub fn width(&self) -> u32 {
@@ -1055,6 +1084,7 @@ mod tests {
             .is_none());
 
         assert_eq!(group.layer_count(), 4);
+        assert_eq!(group.total_layer_count(), 6);
         assert!(matches!(group.layers[3].as_ref(), Layer::Bitmap(_)));
         assert!(matches!(group.layers[2].as_ref(), Layer::Group(_)));
         assert!(matches!(group.layers[1].as_ref(), Layer::Bitmap(_)));
@@ -1184,7 +1214,7 @@ mod tests {
             0, 6,
         ];
 
-        let reordered = root.reordered(&new_order).unwrap();
+        let reordered = root.reordered(0, &new_order).unwrap();
 
         assert_eq!(reordered.0.layers.len(), 4);
         assert_eq!(reordered.0.layers[0].id(), 5);
@@ -1230,7 +1260,7 @@ mod tests {
             0, 2,
             0, 3,
         ];
-        let reordered = group.reordered(&new_order).unwrap();
+        let reordered = group.reordered(0, &new_order).unwrap();
 
         assert_eq!(reordered.0.layers.len(), 3);
         assert_eq!(reordered.0.layers[0].id(), 1);
@@ -1247,6 +1277,34 @@ mod tests {
         assert!(group.add_group_layer(2, LayerInsertion::Top).is_some());
 
         // should fail: not all layers included
-        assert!(group.reordered(&[0, 1]).is_err());
+        assert!(group.reordered(0, &[0, 1]).is_err());
+    }
+
+    #[test]
+    fn test_subgroup_reordering() {
+        let mut root = RootGroup::new(64, 64);
+        root.add_group_layer(1, LayerInsertion::Top);
+        root.add_group_layer(2, LayerInsertion::Top);
+
+        root.add_bitmap_layer(10, Color::TRANSPARENT, LayerInsertion::Into(1));
+        root.add_bitmap_layer(11, Color::TRANSPARENT, LayerInsertion::Into(1));
+
+        root.add_bitmap_layer(20, Color::TRANSPARENT, LayerInsertion::Into(2));
+        root.add_bitmap_layer(21, Color::TRANSPARENT, LayerInsertion::Into(2));
+        root.add_bitmap_layer(22, Color::TRANSPARENT, LayerInsertion::Into(2));
+
+        let reordered = root.reordered(2, &vec![0, 21, 0, 20, 0, 22]).unwrap();
+
+        assert_eq!(reordered.0.layervec()[0].id(), 2);
+        assert_eq!(reordered.0.layervec()[1].id(), 1);
+
+        let g1 = reordered.get_layer(1).unwrap().as_group().unwrap();
+        assert_eq!(g1.layervec()[0].id(), 11);
+        assert_eq!(g1.layervec()[1].id(), 10);
+
+        let g2 = reordered.get_layer(2).unwrap().as_group().unwrap();
+        assert_eq!(g2.layervec()[0].id(), 21);
+        assert_eq!(g2.layervec()[1].id(), 20);
+        assert_eq!(g2.layervec()[2].id(), 22);
     }
 }

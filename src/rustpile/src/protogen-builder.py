@@ -135,7 +135,7 @@ if __name__ == '__main__':
         'LayerCreate',
         'LayerAttributes',
         'LayerRetitle',
-        'LayerOrder',
+        #'LayerOrder', # used via make_movelayer
         'LayerDelete',
         # 'PutImage', custom implementation
         'FillRect',

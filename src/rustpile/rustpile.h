@@ -463,6 +463,7 @@ void write_retitlelayer(MessageWriter *writer,
 
 void write_layerorder(MessageWriter *writer,
                       UserID ctx,
+                      uint16_t root,
                       const uint16_t *layers,
                       uintptr_t layers_len);
 

@@ -966,6 +966,8 @@ pub extern "C" fn paintengine_make_movelayer(
     into_group: bool,
     below: bool,
 ) -> bool {
+    // TODO find closest common root to generate minimal
+    // re-ordering and permit reordering of limited access groups.
     let new_ordering = {
         let vc = dp.viewcache.lock().unwrap();
         editstack::move_ordering(
@@ -977,8 +979,11 @@ pub extern "C" fn paintengine_make_movelayer(
         )
     };
 
-    if let Some(o) = new_ordering {
-        CommandMessage::LayerOrder(user_id, o).write(writer);
+    if let Some(layers) = new_ordering {
+        CommandMessage::LayerOrder(user_id, LayerOrderMessage{
+            root: 0,
+            layers,
+        }).write(writer);
         return true;
     }
 

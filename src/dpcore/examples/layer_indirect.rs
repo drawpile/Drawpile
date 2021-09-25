@@ -48,12 +48,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32) {
 }
 
 fn main() {
-    let mut layer = BitmapLayer::new(
-        0,
-        256,
-        256,
-        Tile::new(&Color::rgb8(255, 255, 255), 0),
-    );
+    let mut layer = BitmapLayer::new(0, 256, 256, Tile::new(&Color::rgb8(255, 255, 255), 0));
 
     // The brush stroke drawn in direct mode
     brush_stroke(&mut layer, 60);
