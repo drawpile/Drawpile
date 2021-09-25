@@ -47,7 +47,8 @@ namespace docks {
 
 LayerList::LayerList(QWidget *parent)
 	: QDockWidget(tr("Layers"), parent),
-	  m_canvas(nullptr), m_selectedId(0), m_noupdate(false),
+	  m_canvas(nullptr), m_selectedId(0), m_nearestToDeletedId(0),
+	  m_noupdate(false),
 	  m_addLayerAction(nullptr), m_duplicateLayerAction(nullptr),
 	  m_mergeLayerAction(nullptr), m_deleteLayerAction(nullptr)
 {
@@ -355,7 +356,6 @@ void LayerList::hideSelected()
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
-	qInfo("Toggling %d visibility %d", layerId, visible);
 	rustpile::paintengine_set_layer_visibility(
 		m_canvas->paintEngine()->engine(),
 		layerId,
@@ -558,10 +558,8 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 
 void LayerList::beforeLayerReset()
 {
-#if 0
-	const QModelIndex cursel = currentSelection();
-	m_lastSelectedRow = cursel.isValid() ? cursel.row() : 0;
-#endif
+	m_nearestToDeletedId = m_canvas->layerlist()->findNearestLayer(m_selectedId);
+
 	m_expandedGroups.clear();
 	for(const auto &item : m_canvas->layerlist()->layerItems()) {
 		if(m_ui->layerlist->isExpanded(m_canvas->layerlist()->layerIndex(item.id)))
@@ -574,20 +572,17 @@ void LayerList::afterLayerReset()
 {
 	const bool wasAnimated = m_ui->layerlist->isAnimated();
 	m_ui->layerlist->setAnimated(false);
-	if(m_selectedId)
-		selectLayer(m_selectedId);
+	if(m_selectedId) {
+		const auto selectedIndex = m_canvas->layerlist()->layerIndex(m_selectedId);
+		if(selectedIndex.isValid()) {
+			selectLayerIndex(selectedIndex);
+		} else {
+			selectLayer(m_nearestToDeletedId);
+		}
+	}
 
 	for(const int id : m_expandedGroups)
 		m_ui->layerlist->setExpanded(m_canvas->layerlist()->layerIndex(id), true);
-
-#if 0
-	// Automatically select closest layer if deleted
-	if(row >= first && row <= last) {
-		row = qBound(0, row, m_canvas->layerlist()->rowCount()-1);
-		// FIXME
-		//selectLayerIndex(m_canvas->layerlist()->index(row), true);
-	}
-#endif
 
 	m_ui->layerlist->verticalScrollBar()->setValue(m_lastScrollPosition);
 	m_ui->layerlist->setAnimated(wasAnimated);

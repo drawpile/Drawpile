@@ -122,7 +122,7 @@ private:
 	canvas::CanvasModel *m_canvas;
 
 	int m_selectedId;
-	//int m_lastSelectedRow;
+	int m_nearestToDeletedId;
 
 	// try to retain view status across model resets
 	QVector<int> m_expandedGroups;

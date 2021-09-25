@@ -121,7 +121,7 @@ public:
 	QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 
-	QModelIndex layerIndex(uint16_t id);
+	QModelIndex layerIndex(uint16_t id) const;
 	const QVector<LayerListItem> &layerItems() const { return m_items; }
 
 	void previewOpacityChange(uint16_t id, float opacity) { emit layerOpacityPreview(id, opacity); }
@@ -156,6 +156,16 @@ public:
 	 * @return unique name
 	 */
 	QString getAvailableLayerName(QString basename) const;
+
+	/**
+	 * Find the nearest layer to the one given.
+	 *
+	 * This is used to find a layer to auto-select when the
+	 * current selection is deleted.
+	 *
+	 * @returns layer ID or 0 if there are no layers
+	 */
+	int findNearestLayer(int layerId) const;
 
 public slots:
 	void setLayers(const QVector<LayerListItem> &items);

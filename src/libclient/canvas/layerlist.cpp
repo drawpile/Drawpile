@@ -132,7 +132,7 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 	return false;
 }
 
-QModelIndex LayerListModel::layerIndex(uint16_t id)
+QModelIndex LayerListModel::layerIndex(uint16_t id) const
 {
 	for(int i=0;i<m_items.size();++i) {
 		if(m_items.at(i).id == id) {
@@ -141,6 +141,26 @@ QModelIndex LayerListModel::layerIndex(uint16_t id)
 	}
 
 	return QModelIndex();
+}
+
+int LayerListModel::findNearestLayer(int layerId) const
+{
+	const auto i = layerIndex(layerId);
+	const int row = i.row();
+
+	auto nearest = i.sibling(row+1, 0);
+	if(nearest.isValid())
+		return m_items.at(nearest.internalId()).id;
+
+	nearest = i.sibling(row-1, 0);
+	if(nearest.isValid())
+		return m_items.at(nearest.internalId()).id;
+
+	nearest = i.parent();
+	if(nearest.isValid())
+		return m_items.at(nearest.internalId()).id;
+
+	return 0;
 }
 
 int LayerListModel::rowCount(const QModelIndex &parent) const
