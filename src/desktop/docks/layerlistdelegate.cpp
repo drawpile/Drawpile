@@ -33,6 +33,7 @@ static const QSize ICON_SIZE { 16, 16 };
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
 	  m_visibleIcon(icon::fromTheme("layer-visible-on")),
+	  m_groupIcon(icon::fromTheme("folder")),
 	  m_censoredIcon(QIcon(":/icons/censored.svg")),
 	  m_hiddenIcon(icon::fromTheme("layer-visible-off")),
 	  m_fixedIcon(icon::fromTheme("window-pin")),
@@ -56,7 +57,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw layer opacity glyph
 	QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
-	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden, layer.censored);
+	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden, layer.censored, layer.group);
 
 	// Draw layer name
 	textrect.setLeft(stylerect.right());
@@ -136,7 +137,7 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 	editor->setGeometry(option.rect.adjusted(btnwidth, 0, -btnwidth, 0));
 }
 
-void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const
+void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored, bool group) const
 {
 	const QRect r {
 		int(rect.left() + rect.width() / 2 - ICON_SIZE.width()/2),
@@ -153,6 +154,8 @@ void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, 
 		painter->setOpacity(value);
 		if(censored)
 			m_censoredIcon.paint(painter, r);
+		else if(group)
+			m_groupIcon.paint(painter, r);
 		else
 			m_visibleIcon.paint(painter, r);
 		painter->restore();

@@ -47,9 +47,10 @@ signals:
 	void editProperties(QModelIndex index);
 
 private:
-	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored) const;
+	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden, bool censored, bool group) const;
 
 	QIcon m_visibleIcon;
+	QIcon m_groupIcon;
 	QIcon m_censoredIcon;
 	QIcon m_hiddenIcon;
 	QIcon m_fixedIcon;
