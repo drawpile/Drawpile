@@ -310,19 +310,20 @@ void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 
 void LayerListModel::setDefaultLayer(uint16_t id)
 {
-	qWarning("TODO: setDefaultLayer(%d)", id);
-#if 0 // FIXME
-	const int oldIdx = indexOf(m_defaultLayer);
-	if(oldIdx >= 0) {
-		emit dataChanged(index(oldIdx), index(oldIdx), QVector<int>() << IsDefaultRole);
-	}
+	if(id == m_defaultLayer)
+		return;
+
+	const QVector<int> role { IsDefaultRole };
+
+	const auto oldIdx = layerIndex(m_defaultLayer);
+	if(oldIdx.isValid())
+		emit dataChanged(oldIdx, oldIdx, role);
 
 	m_defaultLayer = id;
-	const int newIdx = indexOf(id);
-	if(newIdx >= 0) {
-		emit dataChanged(index(newIdx), index(newIdx), QVector<int>() << IsDefaultRole);
-	}
-#endif
+
+	const auto newIdx = layerIndex(m_defaultLayer);
+	if(newIdx.isValid())
+		emit dataChanged(newIdx, newIdx, role);
 }
 
 QStringList LayerMimeData::formats() const
