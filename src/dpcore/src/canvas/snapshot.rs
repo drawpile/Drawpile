@@ -22,11 +22,9 @@
 
 use super::compression::compress_tile;
 use crate::paint::annotation::VAlign;
-use crate::paint::{BitmapLayer, GroupLayer, LayerID, LayerStack, LayerTileSet, UserID};
+use crate::paint::{Layer, BitmapLayer, GroupLayer, LayerID, LayerStack, LayerTileSet, UserID};
 use crate::protocol::aclfilter::{userbits_to_vec, AclFilter};
 use crate::protocol::message::*;
-
-use std::convert::TryInto;
 
 /// Create a sequence of commands that reproduces the current state of the canvas
 pub fn make_canvas_snapshot(
@@ -128,23 +126,24 @@ fn create_layers(
     aclfilter: Option<&AclFilter>,
     msgs: &mut Vec<Message>,
 ) {
-    for layer in group.iter_layers() {
-        if let Some(b) = layer.as_bitmap() {
-            create_layer(user, b, group.metadata().id.try_into().unwrap(), msgs);
-        } else if let Some(g) = layer.as_group() {
-            create_group(user, g, group.metadata().id.try_into().unwrap(), msgs);
-            create_layers(user, g, aclfilter, msgs);
-        } else {
-            unreachable!();
+    for layer in group.iter_layers().rev() {
+        match layer {
+            Layer::Group(g) => {
+                create_group(user, g, group.metadata().id, msgs);
+                create_layers(user, g, aclfilter, msgs);
+            }
+            Layer::Bitmap(b) => {
+                create_layer(user, b, group.metadata().id, msgs);
+            }
         }
 
         // Set Layer ACLs (if found)
         if let Some(acl) = aclfilter {
-            if let Some(layeracl) = acl.layers().get(&layer.id().try_into().unwrap()) {
+            if let Some(layeracl) = acl.layers().get(&layer.id()) {
                 msgs.push(Message::ClientMeta(ClientMetaMessage::LayerACL(
                     user,
                     LayerACLMessage {
-                        id: layer.id().try_into().unwrap(),
+                        id: layer.id(),
                         flags: layeracl.flags(),
                         exclusive: userbits_to_vec(&layeracl.exclusive),
                     },
@@ -156,12 +155,11 @@ fn create_layers(
 
 fn create_group(user: UserID, layer: &GroupLayer, into: LayerID, msgs: &mut Vec<Message>) {
     let metadata = layer.metadata();
-    let layer_id: u16 = metadata.id.try_into().unwrap();
 
     msgs.push(Message::Command(CommandMessage::LayerCreate(
         user,
         LayerCreateMessage {
-            id: layer_id,
+            id: metadata.id,
             source: 0,
             target: into,
             flags: LayerCreateMessage::FLAGS_GROUP
@@ -178,7 +176,7 @@ fn create_group(user: UserID, layer: &GroupLayer, into: LayerID, msgs: &mut Vec<
     msgs.push(Message::Command(CommandMessage::LayerAttributes(
         user,
         LayerAttributesMessage {
-            id: layer_id,
+            id: metadata.id,
             sublayer: 0,
             flags: if metadata.censored {
                 LayerAttributesMessage::FLAGS_CENSOR
@@ -198,12 +196,11 @@ fn create_group(user: UserID, layer: &GroupLayer, into: LayerID, msgs: &mut Vec<
 fn create_layer(user: UserID, layer: &BitmapLayer, into: LayerID, msgs: &mut Vec<Message>) {
     let tileset = LayerTileSet::from(layer);
     let metadata = layer.metadata();
-    let layer_id: u16 = metadata.id.try_into().unwrap();
 
     msgs.push(Message::Command(CommandMessage::LayerCreate(
         user,
         LayerCreateMessage {
-            id: layer_id,
+            id: metadata.id,
             source: 0,
             target: into,
             flags: if into > 0 {
@@ -219,7 +216,7 @@ fn create_layer(user: UserID, layer: &BitmapLayer, into: LayerID, msgs: &mut Vec
     msgs.push(Message::Command(CommandMessage::LayerAttributes(
         user,
         LayerAttributesMessage {
-            id: layer_id,
+            id: metadata.id,
             sublayer: 0,
             flags: if metadata.censored {
                 LayerAttributesMessage::FLAGS_CENSOR
@@ -235,12 +232,12 @@ fn create_layer(user: UserID, layer: &BitmapLayer, into: LayerID, msgs: &mut Vec
         },
     )));
 
-    tileset.to_puttiles(user, layer_id, 0, msgs);
+    tileset.to_puttiles(user, metadata.id, 0, msgs);
 
     // Put active sublayer content (if any)
     for sl in layer.iter_sublayers() {
         if sl.metadata().id > 0 && sl.metadata().id < 256 {
-            LayerTileSet::from(sl).to_puttiles(user, layer_id, sl.metadata().id as u8, msgs);
+            LayerTileSet::from(sl).to_puttiles(user, metadata.id, sl.metadata().id as u8, msgs);
         }
     }
 }
