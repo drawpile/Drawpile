@@ -130,6 +130,11 @@ void TitleWidget::addSpace(int space)
 	m_layout->insertSpacing(m_layout->count()-2, space);
 }
 
+void TitleWidget::addStretch(int stretch)
+{
+	m_layout->insertStretch(m_layout->count()-2, stretch);
+}
+
 void TitleWidget::addCenteringSpacer()
 {
 	m_layout->insertStretch(0);

@@ -33,6 +33,7 @@ public:
 
 	void addCustomWidget(QWidget *widget, bool stretch=false);
 	void addSpace(int space);
+	void addStretch(int stretch=0);
 
 	/// Add a spacer to the left side to center the custom widgets
 	void addCenteringSpacer();

@@ -20,7 +20,6 @@
 #define LAYERLISTDOCK_H
 
 #include "canvas/features.h"
-#include "dialogs/layerproperties.h"
 
 #include <QDockWidget>
 
@@ -28,6 +27,7 @@ class QModelIndex;
 class QItemSelection;
 class QMenu;
 class QTimer;
+class QTreeView;
 
 class Ui_LayerBox;
 
@@ -36,11 +36,13 @@ namespace net {
 }
 
 namespace canvas {
-	struct LayerListItem;
 	class CanvasModel;
 	enum class Feature;
 }
 
+namespace widgets {
+	class GroupedToolButton;
+}
 namespace docks {
 
 class LayerAclMenu;
@@ -50,7 +52,6 @@ class LayerList : public QDockWidget
 Q_OBJECT
 public:
 	LayerList(QWidget *parent=nullptr);
-	~LayerList();
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
@@ -89,25 +90,15 @@ private slots:
 	void addGroup();
 	void duplicateLayer();
 	void deleteSelected();
-	void setSelectedDefault();
 	void mergeSelected();
-	void showPropertiesOfSelected();
+
 	void showPropertiesOfIndex(QModelIndex index);
-	void opacityAdjusted();
-	void blendModeChanged();
-	void hideSelected();
 	void censorSelected(bool censor);
-	void setSelectedFixed(bool fixed);
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> exclusive);
 
 	void lockStatusChanged(int layerId);
 	void selectionChanged(const QItemSelection &selected);
-	void layerContextMenu(const QPoint &pos);
-
-	void sendOpacityUpdate();
-
-	void emitPropertyChangeCommands(const dialogs::LayerProperties::ChangedLayerData &c);
 
 private:
 	void updateLockedControls();
@@ -118,9 +109,11 @@ private:
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo=false);
 
-	Ui_LayerBox *m_ui;
+	QString layerCreatorName(uint16_t layerId) const;
+
 	canvas::CanvasModel *m_canvas;
 
+	// cache selection and remember it across model resets
 	int m_selectedId;
 	int m_nearestToDeletedId;
 
@@ -130,23 +123,16 @@ private:
 
 	bool m_noupdate;
 
-	dialogs::LayerProperties *m_layerProperties;
 	LayerAclMenu *m_aclmenu;
-	QMenu *m_layermenu;
+
+	widgets::GroupedToolButton *m_lockButton;
+	QTreeView *m_view;
 
 	QAction *m_addLayerAction;
 	QAction *m_addGroupAction;
 	QAction *m_duplicateLayerAction;
 	QAction *m_mergeLayerAction;
 	QAction *m_deleteLayerAction;
-
-	QAction *m_menuSeparator;
-	QAction *m_menuHideAction;
-	QAction *m_menuPropertiesAction;
-	QAction *m_menuDefaultAction;
-	QAction *m_menuFixedAction;
-
-	QTimer *m_opacityUpdateTimer;
 };
 
 }

@@ -9,118 +9,180 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
-    <height>222</height>
+    <width>314</width>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Layer Properties</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>5</number>
-   </property>
-   <property name="leftMargin">
-    <number>9</number>
-   </property>
-   <property name="topMargin">
-    <number>9</number>
-   </property>
-   <property name="rightMargin">
-    <number>9</number>
-   </property>
-   <property name="bottomMargin">
-    <number>9</number>
-   </property>
-   <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="titleLabel">
+     <property name="text">
+      <string>Name:</string>
      </property>
-     <property name="horizontalSpacing">
-      <number>3</number>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="title"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="opacityLabel">
+     <property name="text">
+      <string>Opacity:</string>
      </property>
-     <property name="verticalSpacing">
-      <number>5</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="titleLabel">
-       <property name="text">
-        <string>Name:</string>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QSlider" name="opacitySlider">
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="title"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="opacityLabel">
-       <property name="text">
-        <string>Opacity:</string>
+     <item>
+      <widget class="QSpinBox" name="opacitySpinner">
+       <property name="suffix">
+        <string>%</string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
-     </item>
-     <item row="1" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QSlider" name="opacitySlider">
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="opacitySpinner">
-         <property name="suffix">
-          <string>%</string>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="blendModeLabel">
-       <property name="text">
-        <string>Blend Mode:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="blendMode"/>
      </item>
     </layout>
    </item>
-   <item>
-    <widget class="QCheckBox" name="visible">
+   <item row="4" column="0">
+    <widget class="QLabel" name="blendModeLabel">
      <property name="text">
-      <string>Visible</string>
+      <string>Blending Mode:</string>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QCheckBox" name="fixed">
+   <item row="4" column="1">
+    <widget class="QComboBox" name="blendMode"/>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="isolated">
      <property name="text">
-      <string>Fixed</string>
+      <string>Isolated group</string>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QCheckBox" name="defaultLayer">
+   <item row="14" column="0">
+    <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Default</string>
+      <string>Created by:</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="17" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="1">
+    <widget class="QLabel" name="createdBy">
+     <property name="text">
+      <string notr="true">#0</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QCheckBox" name="visible">
+     <property name="text">
+      <string>Visible to you</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="fixed">
+     <property name="text">
+      <string>Visible on all animation frames</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Collaboration:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QCheckBox" name="defaultLayer">
+     <property name="text">
+      <string>Default for new users</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Visibility:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="1">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="16" column="0">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="1">
+    <widget class="QCheckBox" name="censored">
+     <property name="text">
+      <string>Censor content</string>
      </property>
     </widget>
    </item>
@@ -135,12 +197,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>154</x>
-     <y>77</y>
+     <x>170</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel">
-     <x>259</x>
-     <y>77</y>
+     <x>247</x>
+     <y>71</y>
     </hint>
    </hints>
   </connection>
@@ -151,12 +213,28 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>77</y>
+     <x>247</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
-     <x>154</x>
-     <y>77</y>
+     <x>170</x>
+     <y>67</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isolated</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>blendMode</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>

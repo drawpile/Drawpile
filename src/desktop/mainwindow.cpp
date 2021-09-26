@@ -2554,11 +2554,11 @@ void MainWindow::setupActions()
 	//
 	// Layer menu
 	//
-	QAction *layerAdd = makeAction("layeradd", tr("New Layer")).shortcut("Shift+Ctrl+Insert");
-	QAction *groupAdd = makeAction("groupadd", tr("New Group"));
-	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer"));
-	QAction *layerMerge = makeAction("layermerge", tr("Merge with Layer Below"));
-	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer"));
+	QAction *layerAdd = makeAction("layeradd", tr("New Layer")).shortcut("Shift+Ctrl+Insert").icon("list-add");
+	QAction *groupAdd = makeAction("groupadd", tr("New Group")).icon("folder-add");
+	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy");
+	QAction *layerMerge = makeAction("layermerge", tr("Merge with Layer Below")).icon("arrow-down-double");
+	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("list-remove");
 
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerDelete);
 

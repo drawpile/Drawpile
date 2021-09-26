@@ -17,20 +17,21 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "widgets/groupedtoolbutton.h"
 #include "canvas/layerlist.h"
 #include "canvas/canvasmodel.h"
-#include "canvas/blendmodes.h"
 #include "canvas/userlist.h"
 #include "canvas/paintengine.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
+#include "docks/titlewidget.h"
+#include "dialogs/layerproperties.h"
 #include "utils/changeflags.h"
+#include "utils/icon.h"
 #include "net/envelopebuilder.h"
 
 #include "../rustpile/rustpile.h"
-
-#include "ui_layerbox.h"
 
 #include <QDebug>
 #include <QItemSelection>
@@ -41,6 +42,7 @@
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QScrollBar>
+#include <QTreeView>
 
 namespace docks {
 
@@ -51,79 +53,46 @@ LayerList::LayerList(QWidget *parent)
 	  m_addLayerAction(nullptr), m_duplicateLayerAction(nullptr),
 	  m_mergeLayerAction(nullptr), m_deleteLayerAction(nullptr)
 {
-	m_ui = new Ui_LayerBox;
-	QWidget *w = new QWidget(this);
-	setWidget(w);
-	m_ui->setupUi(w);
+	auto *titlebar = new TitleWidget(this);
+	setTitleBarWidget(titlebar);
 
-	m_ui->layerlist->setDragEnabled(true);
-	m_ui->layerlist->viewport()->setAcceptDrops(true);
-	m_ui->layerlist->setEnabled(false);
-	m_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_lockButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped, titlebar);
+	m_lockButton->setIcon(icon::fromTheme("object-locked"));
+	m_lockButton->setCheckable(true);
+	m_lockButton->setPopupMode(QToolButton::InstantPopup);
+	titlebar->addCustomWidget(m_lockButton);
+	titlebar->addStretch();
 
-	// Populate blend mode combobox
-	for(const auto &bm : canvas::blendmode::layerModeNames())
-		m_ui->blendmode->addItem(bm.second, int(bm.first));
-	m_ui->blendmode->addItem(tr("Pass-through"), -1);
+	m_view = new QTreeView;
+	m_view->setHeaderHidden(true);
+	setWidget(m_view);
 
-	m_layerProperties = new dialogs::LayerProperties(this);
-	connect(m_layerProperties, &dialogs::LayerProperties::propertiesChanged,
-			this, &LayerList::emitPropertyChangeCommands);
-
-	// Layer menu
-
-	m_layermenu = new QMenu(this);
-	m_menuHideAction = m_layermenu->addAction(tr("Hide from self"), this, SLOT(hideSelected()));
-	m_menuHideAction->setCheckable(true);
-
-	m_menuFixedAction = m_layermenu->addAction(tr("Fixed"), this, SLOT(setSelectedFixed(bool)));
-	m_menuFixedAction->setCheckable(true);
-
-	QActionGroup *makeDefault = new QActionGroup(this);
-	makeDefault->setExclusive(true);
-	m_menuDefaultAction = m_layermenu->addAction(tr("Default"), this, SLOT(setSelectedDefault()));
-	m_menuDefaultAction->setCheckable(true);
-	m_menuDefaultAction->setActionGroup(makeDefault);
-
-	m_menuPropertiesAction = m_layermenu->addAction(tr("Properties..."),
-			this, &LayerList::showPropertiesOfSelected);
+	m_view->setDragEnabled(true);
+	m_view->viewport()->setAcceptDrops(true);
+	m_view->setEnabled(false);
+	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
-	m_ui->lockButton->setMenu(m_aclmenu);
+	m_lockButton->setMenu(m_aclmenu);
 
-	connect(m_ui->layerlist, &QTreeView::customContextMenuRequested, this, &LayerList::layerContextMenu);
-
-	connect(m_ui->opacity, &QSlider::valueChanged, this, &LayerList::opacityAdjusted);
-	connect(m_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(m_aclmenu, &LayerAclMenu::layerAclChange, this, &LayerList::changeLayerAcl);
 	connect(m_aclmenu, &LayerAclMenu::layerCensoredChange, this, &LayerList::censorSelected);
 
 	selectionChanged(QItemSelection());
 
-	// The opacity update timer is used to limit the rate of layer
-	// update messages sent over the network when the user drags or scrolls
-	// on the opacity slider.
-	m_opacityUpdateTimer = new QTimer(this);
-	m_opacityUpdateTimer->setSingleShot(true);
-	connect(m_opacityUpdateTimer, &QTimer::timeout, this, &LayerList::sendOpacityUpdate);
-
 	// Custom layer list item delegate
 	LayerListDelegate *del = new LayerListDelegate(this);
 	connect(del, &LayerListDelegate::toggleVisibility, this, &LayerList::setLayerVisibility);
 	connect(del, &LayerListDelegate::editProperties, this, &LayerList::showPropertiesOfIndex);
-	m_ui->layerlist->setItemDelegate(del);
+	m_view->setItemDelegate(del);
 }
 
-LayerList::~LayerList()
-{
-	delete m_ui;
-}
 
 void LayerList::setCanvas(canvas::CanvasModel *canvas)
 {
 	m_canvas = canvas;
-	m_ui->layerlist->setModel(canvas->layerlist());
+	m_view->setModel(canvas->layerlist());
 
 	m_aclmenu->setUserList(canvas->userlist()->onlineUsers());
 
@@ -132,10 +101,10 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 
 	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
 	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::lockStatusChanged);
-	connect(m_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
+	connect(m_view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	// Init
-	m_ui->layerlist->setEnabled(true);
+	m_view->setEnabled(true);
 	updateLockedControls();
 }
 
@@ -152,16 +121,38 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_mergeLayerAction = merge;
 	m_deleteLayerAction = del;
 
+	// Add the actions to the header bar
+	TitleWidget *titlebar = qobject_cast<TitleWidget*>(titleBarWidget());
+	Q_ASSERT(titlebar);
+
+	auto *addLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, titlebar);
+	addLayerButton->setDefaultAction(addLayer);
+	titlebar->addCustomWidget(addLayerButton);
+
+	auto *addGroupButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
+	addGroupButton->setDefaultAction(addGroup);
+	titlebar->addCustomWidget(addGroupButton);
+
+	auto *dupplicateLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
+	dupplicateLayerButton->setDefaultAction(m_duplicateLayerAction);
+	titlebar->addCustomWidget(dupplicateLayerButton);
+
+	auto *mergeLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
+	mergeLayerButton->setDefaultAction(m_mergeLayerAction);
+	titlebar->addCustomWidget(mergeLayerButton);
+
+	auto *deleteLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, titlebar);
+	deleteLayerButton->setDefaultAction(m_deleteLayerAction);
+	titlebar->addCustomWidget(deleteLayerButton);
+
+	titlebar->addStretch();
+
+	// Action functionality
 	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
 	connect(m_addGroupAction, &QAction::triggered, this, &LayerList::addGroup);
 	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
 	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
 	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
-
-	// Insert some actions to the context menu too
-	m_layermenu->insertAction(m_menuSeparator, duplicate);
-	m_layermenu->insertAction(m_menuSeparator, del);
-	m_layermenu->insertAction(m_menuSeparator, merge);
 
 	updateLockedControls();
 }
@@ -193,27 +184,14 @@ void LayerList::updateLockedControls()
 	// Rest of the controls need a selection to work.
 	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
-	m_ui->lockButton->setEnabled(enabled);
+	m_lockButton->setEnabled(enabled);
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	}
-	m_ui->opacity->setEnabled(enabled);
-	m_ui->blendmode->setEnabled(enabled);
 
-	m_ui->layerlist->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
-	m_menuPropertiesAction->setEnabled(enabled);
-	m_menuDefaultAction->setEnabled(enabled);
-	m_menuFixedAction->setEnabled(enabled);
-}
-
-void LayerList::layerContextMenu(const QPoint &pos)
-{
-	QModelIndex index = m_ui->layerlist->indexAt(pos);
-	if(index.isValid()) {
-		m_layermenu->popup(m_ui->layerlist->mapToGlobal(pos));
-	}
+	m_view->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
 }
 
 void LayerList::selectLayer(int id)
@@ -224,12 +202,17 @@ void LayerList::selectLayer(int id)
 void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 {
 	if(index.isValid()) {
-		m_ui->layerlist->selectionModel()->select(
+		m_view->selectionModel()->select(
 			index, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 		if(scrollTo) {
-			m_ui->layerlist->scrollTo(index);
+			m_view->scrollTo(index);
 		}
 	}
+}
+
+QString LayerList::layerCreatorName(uint16_t layerId) const
+{
+	return m_canvas->userlist()->getUsername((layerId >> 8) & 0xff);
 }
 
 void LayerList::selectAbove()
@@ -242,22 +225,6 @@ void LayerList::selectBelow()
 {
 	QModelIndex current = currentSelection();
 	selectLayerIndex(current.sibling(current.row() + 1, 0), true);
-}
-
-void LayerList::opacityAdjusted()
-{
-	// Avoid infinite loop
-	if(m_noupdate)
-		return;
-
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		float opacity = m_ui->opacity->value() / 255.0;
-
-		m_canvas->layerlist()->previewOpacityChange(layer.id, opacity);
-		m_opacityUpdateTimer->start(500);
-	}
 }
 
 static net::Envelope updateLayerAttributesMessage(uint8_t contextId, const canvas::LayerListItem &layer, ChangeFlags<uint8_t> flagChanges, int opacity, int blend)
@@ -275,47 +242,6 @@ static net::Envelope updateLayerAttributesMessage(uint8_t contextId, const canva
 	return eb.toEnvelope();
 }
 
-void LayerList::sendOpacityUpdate()
-{
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
-		emit layerCommand(updateLayerAttributesMessage(
-			m_canvas->localUserId(),
-			index.data().value<canvas::LayerListItem>(),
-			ChangeFlags<uint8_t>{},
-			m_ui->opacity->value(),
-			-1
-		));
-	}
-}
-
-void LayerList::blendModeChanged()
-{
-	// Avoid infinite loop
-	if(m_noupdate)
-		return;
-
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		const auto item = index.data().value<canvas::LayerListItem>();
-		int blendmode = m_ui->blendmode->currentData().toInt();
-
-		ChangeFlags<uint8_t> changes;
-		changes.set(rustpile::LayerAttributesMessage_FLAGS_ISOLATED, blendmode != -1);
-		if(blendmode == -1)
-			blendmode = int(item.blend);
-
-		emit layerCommand(updateLayerAttributesMessage(
-			m_canvas->localUserId(),
-			item,
-			changes,
-			-1,
-			blendmode
-		));
-	}
-}
-
 void LayerList::censorSelected(bool censor)
 {
 	QModelIndex index = currentSelection();
@@ -328,27 +254,6 @@ void LayerList::censorSelected(bool censor)
 			-1
 		));
 	}
-}
-
-void LayerList::setSelectedFixed(bool fixed)
-{
-	QModelIndex index = currentSelection();
-	if(index.isValid()) {
-		emit layerCommand(updateLayerAttributesMessage(
-			m_canvas->localUserId(),
-			index.data().value<canvas::LayerListItem>(),
-			ChangeFlags<uint8_t>().set(rustpile::LayerAttributesMessage_FLAGS_FIXED, fixed),
-			-1,
-			-1
-		));
-	}
-}
-
-void LayerList::hideSelected()
-{
-	QModelIndex index = currentSelection();
-	if(index.isValid())
-		setLayerVisibility(index.data().value<canvas::LayerListItem>().id, !m_menuHideAction->isChecked());
 }
 
 void LayerList::setLayerVisibility(int layerId, bool visible)
@@ -381,7 +286,7 @@ void LayerList::changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> ex
 
 void LayerList::showLayerNumbers(bool show)
 {
-	LayerListDelegate *del = qobject_cast<LayerListDelegate*>(m_ui->layerlist->itemDelegate());
+	LayerListDelegate *del = qobject_cast<LayerListDelegate*>(m_view->itemDelegate());
 	Q_ASSERT(del);
 	del->setShowNumbers(show);
 }
@@ -391,7 +296,7 @@ void LayerList::showLayerNumbers(bool show)
  */
 void LayerList::addLayer()
 {
-	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	const canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
@@ -420,7 +325,7 @@ void LayerList::addLayer()
 
 void LayerList::addGroup()
 {
-	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	const canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
@@ -452,7 +357,7 @@ void LayerList::duplicateLayer()
 	const QModelIndex index = currentSelection();
 	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const canvas::LayerListModel *layers = qobject_cast<canvas::LayerListModel*>(m_ui->layerlist->model());
+	const canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
@@ -500,16 +405,6 @@ void LayerList::deleteSelected()
 	emit layerCommand(eb.toEnvelope());
 }
 
-void LayerList::setSelectedDefault()
-{
-	QModelIndex index = currentSelection();
-	if(!index.isValid())
-		return;
-	net::EnvelopeBuilder eb;
-	rustpile::write_defaultlayer(eb, m_canvas->localUserId(), index.data(canvas::LayerListModel::IdRole).toInt());
-	emit layerCommand(eb.toEnvelope());
-}
-
 void LayerList::mergeSelected()
 {
 	QModelIndex index = currentSelection();
@@ -531,25 +426,46 @@ void LayerList::mergeSelected()
 	emit layerCommand(eb.toEnvelope());
 }
 
-void LayerList::showPropertiesOfSelected()
-{
-	showPropertiesOfIndex(currentSelection());
-}
-
 void LayerList::showPropertiesOfIndex(QModelIndex index)
 {
 	if(index.isValid()) {
-		const canvas::LayerListItem &item = index.data().value<canvas::LayerListItem>();
-		m_layerProperties->setLayerData(dialogs::LayerProperties::LayerData {
-			item.id,
-			item.title,
-			item.opacity,
-			item.blend,
-			item.hidden,
-			item.fixed,
-			index.data(canvas::LayerListModel::IsDefaultRole).toBool(),
+		auto *dlg = new dialogs::LayerProperties(m_canvas->localUserId(), this);
+		dlg->setWindowFlag(Qt::Tool);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setModal(false);
+
+		connect(dlg, &dialogs::LayerProperties::layerCommand, this, &LayerList::layerCommand);
+		connect(dlg, &dialogs::LayerProperties::visibilityChanged, this, &LayerList::setLayerVisibility);
+		connect(m_canvas->layerlist(), &canvas::LayerListModel::modelReset, dlg, [this, dlg]() {
+			const auto index = m_canvas->layerlist()->layerIndex(dlg->layerId());
+			if(index.isValid()) {
+				dlg->setLayerItem(
+					index.data().value<canvas::LayerListItem>(),
+					layerCreatorName(dlg->layerId()),
+					index.data(canvas::LayerListModel::IsDefaultRole).toBool()
+				);
+			} else {
+				dlg->deleteLater();
+			}
 		});
-		m_layerProperties->show();
+
+		const int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+		dlg->setLayerItem(
+			index.data().value<canvas::LayerListItem>(),
+			layerCreatorName(layerId),
+			index.data(canvas::LayerListModel::IsDefaultRole).toBool()
+		);
+
+		const bool canEditAll = m_canvas->aclState()->canUseFeature(canvas::Feature::EditLayers);
+		const bool canEdit = canEditAll ||
+			(
+				m_canvas->aclState()->canUseFeature(canvas::Feature::OwnLayers) &&
+				(layerId & 0xff00) >> 8 == m_canvas->localUserId()
+			);
+		dlg->setControlsEnabled(canEdit);
+		dlg->setOpControlsEnabled(canEditAll);
+
+		dlg->show();
 	}
 }
 
@@ -559,16 +475,16 @@ void LayerList::beforeLayerReset()
 
 	m_expandedGroups.clear();
 	for(const auto &item : m_canvas->layerlist()->layerItems()) {
-		if(m_ui->layerlist->isExpanded(m_canvas->layerlist()->layerIndex(item.id)))
+		if(m_view->isExpanded(m_canvas->layerlist()->layerIndex(item.id)))
 			m_expandedGroups << item.id;
 	}
-	m_lastScrollPosition = m_ui->layerlist->verticalScrollBar()->value();
+	m_lastScrollPosition = m_view->verticalScrollBar()->value();
 }
 
 void LayerList::afterLayerReset()
 {
-	const bool wasAnimated = m_ui->layerlist->isAnimated();
-	m_ui->layerlist->setAnimated(false);
+	const bool wasAnimated = m_view->isAnimated();
+	m_view->setAnimated(false);
 	if(m_selectedId) {
 		const auto selectedIndex = m_canvas->layerlist()->layerIndex(m_selectedId);
 		if(selectedIndex.isValid()) {
@@ -579,15 +495,15 @@ void LayerList::afterLayerReset()
 	}
 
 	for(const int id : m_expandedGroups)
-		m_ui->layerlist->setExpanded(m_canvas->layerlist()->layerIndex(id), true);
+		m_view->setExpanded(m_canvas->layerlist()->layerIndex(id), true);
 
-	m_ui->layerlist->verticalScrollBar()->setValue(m_lastScrollPosition);
-	m_ui->layerlist->setAnimated(wasAnimated);
+	m_view->verticalScrollBar()->setValue(m_lastScrollPosition);
+	m_view->setAnimated(wasAnimated);
 }
 
 QModelIndex LayerList::currentSelection() const
 {
-	QModelIndexList sel = m_ui->layerlist->selectionModel()->selectedIndexes();
+	QModelIndexList sel = m_view->selectionModel()->selectedIndexes();
 	if(sel.isEmpty())
 		return QModelIndex();
 	return sel.first();
@@ -630,27 +546,8 @@ void LayerList::updateUiFromSelection()
 	const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
 	m_noupdate = true;
 	m_selectedId = layer.id;
-	m_menuHideAction->setChecked(layer.hidden);
+
 	m_aclmenu->setCensored(layer.censored);
-	m_menuDefaultAction->setChecked(currentSelection().data(canvas::LayerListModel::IsDefaultRole).toBool());
-	m_menuFixedAction->setChecked(layer.fixed);
-	m_ui->opacity->setValue(layer.opacity * 255);
-
-	const int currentBlendmode = m_ui->blendmode->currentData().toInt();
-
-	// "pass-through" is a pseudo-blendmode for layer groups
-	const int layerBlendmode = layer.isolated || !layer.group ? int(layer.blend) : -1;
-
-	static_cast<QStandardItemModel*>(m_ui->blendmode->model())->item(m_ui->blendmode->count()-1)->setEnabled(layer.group);
-
-	if(currentBlendmode != layerBlendmode) {
-		for(int i=0;i<m_ui->blendmode->count();++i) {
-			if(m_ui->blendmode->itemData(i).toInt() == layerBlendmode) {
-			m_ui->blendmode->setCurrentIndex(i);
-			break;
-			}
-		}
-	}
 
 	lockStatusChanged(layer.id);
 	updateLockedControls();
@@ -664,59 +561,9 @@ void LayerList::lockStatusChanged(int layerId)
 {
 	if(m_selectedId == layerId) {
 		const auto acl = m_canvas->aclState()->layerAcl(layerId);
-		m_ui->lockButton->setChecked(acl.locked || acl.tier != rustpile::Tier::Guest || !acl.exclusive.isEmpty());
+		m_lockButton->setChecked(acl.locked || acl.tier != rustpile::Tier::Guest || !acl.exclusive.isEmpty());
 		m_aclmenu->setAcl(acl.locked, int(acl.tier), acl.exclusive);
 	}
-}
-
-void LayerList::emitPropertyChangeCommands(const dialogs::LayerProperties::ChangedLayerData &c)
-{
-	// Changes that get grouped together into a single layer attribute change message.
-	static const unsigned int CHANGE_LAYER_ATTRIBUTES =
-			dialogs::LayerProperties::CHANGE_OPACITY |
-			dialogs::LayerProperties::CHANGE_BLEND |
-			dialogs::LayerProperties::CHANGE_FIXED;
-
-	const uint16_t layerId = c.id;
-	const QModelIndex layerIndex = m_canvas->layerlist()->layerIndex(layerId);
-	if(!m_canvas || !layerIndex.isValid()) {
-		return; // Looks like the layer was deleted from under us.
-	}
-
-	const uint8_t contextId = m_canvas->localUserId();
-	net::EnvelopeBuilder eb;
-
-	if(c.changes & dialogs::LayerProperties::CHANGE_TITLE) {
-		rustpile::write_retitlelayer(eb, contextId, layerId, reinterpret_cast<const uint16_t*>(c.title.constData()), c.title.length());
-	}
-
-	if(c.changes & CHANGE_LAYER_ATTRIBUTES) {
-		canvas::LayerListItem layer = layerIndex.data().value<canvas::LayerListItem>();
-
-		ChangeFlags<uint8_t> flags;
-		if(c.changes & dialogs::LayerProperties::CHANGE_FIXED) {
-			flags.set(rustpile::LayerAttributesMessage_FLAGS_FIXED, c.fixed);
-		}
-
-		int opacity = -1;
-		if(c.changes & dialogs::LayerProperties::CHANGE_OPACITY) {
-			opacity = c.opacity * 255;
-		}
-
-		int blend = -1;
-		if(c.changes & dialogs::LayerProperties::CHANGE_BLEND) {
-			blend = int(c.blend);
-		}
-
-		emit layerCommand(updateLayerAttributesMessage(
-				contextId, layer, flags, opacity, blend));
-	}
-
-	if((c.changes & dialogs::LayerProperties::CHANGE_DEFAULT) && c.defaultLayer) {
-		rustpile::write_defaultlayer(eb, contextId, layerId);
-	}
-
-	emit layerCommand(eb.toEnvelope());
 }
 
 }

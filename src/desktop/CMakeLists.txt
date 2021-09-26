@@ -142,7 +142,6 @@ set (
 	ui/fillsettings.ui
 	ui/lasersettings.ui
 	ui/inspectorsettings.ui
-	ui/layerbox.ui
 	ui/newdialog.ui
 	ui/resizedialog.ui
 	ui/videoexport.ui

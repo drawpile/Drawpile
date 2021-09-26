@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2021 Calle Laakkonen
+   Copyright (C) 2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,33 +18,88 @@
 */
 
 #include "layerproperties.h"
+#include "canvas/blendmodes.h"
+#include "net/envelopebuilder.h"
+
+#include "../rustpile/rustpile.h"
+
 #include "ui_layerproperties.h"
 
-#include "canvas/blendmodes.h"
-#include "canvas/layerlist.h"
 
 namespace dialogs {
 
-LayerProperties::LayerProperties(QWidget *parent)
-    : QDialog(parent)
+LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
+	: QDialog(parent), m_user(localUser)
 {
     m_ui = new Ui_LayerProperties;
     m_ui->setupUi(this);
 
-	for(auto bm : canvas::blendmode::layerModeNames()) {
+	const auto modes = canvas::blendmode::layerModeNames();
+	for(const auto &bm : modes) {
 		m_ui->blendMode->addItem(bm.second, int(bm.first));
     }
 
     connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
     connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(m_ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(this, &QDialog::accepted, this, &LayerProperties::emitChanges);
+	connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, [this](QAbstractButton *b) {
+		if(m_ui->buttonBox->buttonRole(b) == QDialogButtonBox::ApplyRole)
+			emitChanges();
+	});
+	connect(this, &QDialog::accepted, this, &LayerProperties::emitChanges);
 }
 
-void LayerProperties::setLayerData(const LayerData &data)
+LayerProperties::~LayerProperties()
 {
-    m_layerData = data;
-    applyLayerDataToUi();
+	delete m_ui;
+}
+
+void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QString &creator, bool isDefault)
+{
+	m_item = item;
+
+	m_ui->title->setText(item.title);
+	m_ui->opacitySpinner->setValue(qRound(item.opacity * 100.0f));
+	m_ui->visible->setChecked(!item.hidden);
+	m_ui->fixed->setChecked(item.fixed);
+	m_ui->censored->setChecked(item.censored);
+	m_ui->defaultLayer->setChecked(isDefault);
+	m_ui->defaultLayer->setEnabled(!isDefault);
+
+	int blendModeIndex = searchBlendModeIndex(item.blend);
+	if(blendModeIndex == -1) {
+		// Apparently we don't know this blend mode, probably because
+		// this client is outdated. Disable the control to avoid damage.
+		m_ui->blendMode->setCurrentIndex(-1);
+		m_ui->blendMode->setEnabled(false);
+
+	} else {
+		m_ui->blendMode->setCurrentIndex(blendModeIndex);
+		m_ui->blendMode->setEnabled(true);
+	}
+
+	m_ui->isolated->setChecked(!item.group || item.isolated);
+	m_ui->isolated->setVisible(item.group);
+	m_ui->createdBy->setText(creator);
+}
+
+void LayerProperties::setControlsEnabled(bool enabled) {
+	QWidget *w[] = {
+		m_ui->title,
+		m_ui->opacitySlider,
+		m_ui->opacitySpinner,
+		m_ui->blendMode,
+		m_ui->fixed,
+		m_ui->isolated,
+		m_ui->censored
+	};
+	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
+		w[i]->setEnabled(enabled);
+}
+
+void LayerProperties::setOpControlsEnabled(bool enabled)
+{
+	m_ui->defaultLayer->setEnabled(enabled);
 }
 
 void LayerProperties::showEvent(QShowEvent *event)
@@ -56,77 +111,58 @@ void LayerProperties::showEvent(QShowEvent *event)
 
 void LayerProperties::emitChanges()
 {
-    ChangedLayerData c;
-    c.id = m_layerData.id;
-    c.changes = CHANGE_NOTHING;
+	net::EnvelopeBuilder eb;
 
-    c.title = m_ui->title->text();
-    if(c.title != m_layerData.title) {
-        c.changes |= CHANGE_TITLE;
+	if(m_item.title != m_ui->title->text()) {
+		rustpile::write_retitlelayer(
+			eb,
+			m_user,
+			m_item.id,
+			reinterpret_cast<const uint16_t*>(m_ui->title->text().constData()),
+			m_ui->title->text().length()
+		);
+	}
+
+	const int oldOpacity = qRound(m_item.opacity * 100.0);
+	const rustpile::Blendmode newBlendmode = static_cast<rustpile::Blendmode>(m_ui->blendMode->currentData().toInt());
+	const bool censored = m_ui->censored->isChecked();
+	const bool isolated = m_ui->isolated->isChecked();
+	const bool fixed = m_ui->fixed->isChecked();
+
+	if(
+		m_ui->opacitySpinner->value() != oldOpacity ||
+		newBlendmode != m_item.blend ||
+		censored != m_item.censored ||
+		isolated != m_item.isolated ||
+		fixed != m_item.fixed
+	) {
+		rustpile::write_layerattr(
+			eb,
+			m_user,
+			m_item.id,
+			0,
+			(censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
+			(isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0) |
+			(fixed ? rustpile::LayerAttributesMessage_FLAGS_FIXED : 0),
+			qRound(m_ui->opacitySpinner->value() / 100.0 * 255),
+			newBlendmode
+		);
     }
 
-    int opacity = m_ui->opacitySpinner->value();
-    if(opacity != layerDataOpacity()) {
-        c.opacity = opacity / 100.0f;
-        c.changes |= CHANGE_OPACITY;
-    }
-
-    if(m_ui->blendMode->isEnabled()) {
-		c.blend = static_cast<rustpile::Blendmode>(
-                m_ui->blendMode->currentData().toInt());
-        if(c.blend != m_layerData.blend) {
-            c.changes |= CHANGE_BLEND;
-        }
-    }
-
-    c.hidden = !m_ui->visible->isChecked();
-    if(c.hidden != m_layerData.hidden) {
-        c.changes |= CHANGE_HIDDEN;
-    }
-
-    c.fixed = m_ui->fixed->isChecked();
-    if(c.fixed != m_layerData.fixed) {
-        c.changes |= CHANGE_FIXED;
+	if(m_ui->visible->isChecked() != (!m_item.hidden)) {
+		emit visibilityChanged(m_item.id, m_ui->visible->isChecked());
     }
 
     if(m_ui->defaultLayer->isEnabled() && m_ui->defaultLayer->isChecked()) {
-        c.changes |= CHANGE_DEFAULT;
-        c.defaultLayer = true;
+		rustpile::write_defaultlayer(eb, m_user, m_item.id);
     }
 
-    if(c.changes != CHANGE_NOTHING) {
-        emit propertiesChanged(c);
-    }
-}
-
-void LayerProperties::applyLayerDataToUi()
-{
-    m_ui->title->setText(m_layerData.title);
-    m_ui->opacitySpinner->setValue(layerDataOpacity());
-    m_ui->visible->setChecked(!m_layerData.hidden);
-    m_ui->fixed->setChecked(m_layerData.fixed);
-    m_ui->defaultLayer->setChecked(m_layerData.defaultLayer);
-    m_ui->defaultLayer->setEnabled(!m_layerData.defaultLayer);
-    int blendModeIndex = searchBlendModeIndex(m_layerData.blend);
-    if(blendModeIndex == -1) {
-        // Apparently we don't know this blend mode, probably because
-        // this client is outdated. Disable the control to avoid damage.
-        m_ui->blendMode->setCurrentIndex(-1);
-        m_ui->blendMode->setEnabled(false);
-    } else {
-        m_ui->blendMode->setCurrentIndex(blendModeIndex);
-        m_ui->blendMode->setEnabled(true);
-    }
-}
-
-int LayerProperties::layerDataOpacity()
-{
-    return qRound(m_layerData.opacity * 100.0f);
+	emit layerCommand(eb.toEnvelope());
 }
 
 int LayerProperties::searchBlendModeIndex(rustpile::Blendmode mode)
 {
-    int blendModeCount = m_ui->blendMode->count();
+	const int blendModeCount = m_ui->blendMode->count();
     for(int i = 0; i < blendModeCount; ++i) {
 		if(m_ui->blendMode->itemData(i).toInt() == static_cast<int>(mode)) {
             return i;

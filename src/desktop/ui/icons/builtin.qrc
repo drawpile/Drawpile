@@ -1,9 +1,5 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>colorbox-hsv.png</file>
-        <file>colorbox-pal.png</file>
-        <file>colorbox-wheel.png</file>
-        <file>dock-close.svg</file>
         <file>drawpile.png</file>
         <file>censored.svg</file>
     </qresource>
