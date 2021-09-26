@@ -4,7 +4,6 @@
         <file>colorbox-pal.png</file>
         <file>colorbox-wheel.png</file>
         <file>dock-close.svg</file>
-        <file>dock-detach.svg</file>
         <file>drawpile.png</file>
         <file>censored.svg</file>
     </qresource>

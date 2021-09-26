@@ -37,6 +37,9 @@ public:
 	//! Get the ID number of this annotation
 	int id() const { return m_id; }
 
+	//! Get the user part of the ID
+	int userId() const { return (m_id >> 8) & 0xff; }
+
 	//! Set the text box position and size
 	void setGeometry(const QRect &rect);
 

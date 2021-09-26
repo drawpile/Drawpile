@@ -18,64 +18,88 @@
 */
 
 #include "docks/brushpalettedock.h"
-#include "docks/utils.h"
+#include "widgets/groupedtoolbutton.h"
 #include "toolwidgets/brushsettings.h"
 #include "brushes/brushpresetmodel.h"
 #include "brushes/brush.h"
 #include "utils/icon.h"
-
-#include "ui_brushpalette.h"
+#include "titlewidget.h"
 
 #include <QMenu>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QListView>
+#include <QComboBox>
 
 namespace docks {
 
 struct BrushPalette::Private {
-	Ui_BrushPalette ui;
+	QComboBox *folder;
+	widgets::GroupedToolButton *menuButton;
+	QListView *view;
+
 	brushes::BrushPresetModel *presets;
+
 	tools::BrushSettings *brushSettings;
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
 	: QDockWidget(parent), d(new Private)
 {
-	setStyleSheet(defaultDockStylesheet());
-
 	d->presets = brushes::BrushPresetModel::getSharedInstance();
 
 	// Create UI
 	setWindowTitle(tr("Brushes"));
 
-	QWidget *w = new QWidget(this);
-	d->ui.setupUi(w);
-	setWidget(w);
+	auto *titleWidget = new TitleWidget(this);
+	setTitleBarWidget(titleWidget);
+
+	d->menuButton = new widgets::GroupedToolButton;
+	d->menuButton->setIcon(icon::fromTheme("application-menu"));
+	d->menuButton->setPopupMode(QToolButton::InstantPopup);
+	titleWidget->addCustomWidget(d->menuButton);
+
+	d->folder = new QComboBox;
+	d->folder->setEditable(true);
+	d->folder->setInsertPolicy(QComboBox::NoInsert);
+	titleWidget->addSpace(16);
+	titleWidget->addCustomWidget(d->folder, true);
+	titleWidget->addSpace(16);
+
+	d->menuButton->setMaximumHeight(d->folder->height());
+
+	d->view = new QListView;
+	d->view->setUniformItemSizes(true);
+	d->view->setFlow(QListView::LeftToRight);
+	d->view->setWrapping(true);
+	d->view->setResizeMode(QListView::Adjust);
+
+	setWidget(d->view);
 
 	// Folder selection
-	d->ui.folder->setModel(d->presets);
-	d->ui.folder->setCompleter(nullptr);
+	d->folder->setModel(d->presets);
+	d->folder->setCompleter(nullptr);
 
-	connect(d->ui.folder, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this](int index) {
+	connect(d->folder, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this](int index) {
 		const auto i = d->presets->index(index);
-		d->ui.brushPaletteView->setRootIndex(i);
+		d->view->setRootIndex(i);
 		// The first folder is always the built-in "Default" folder
-		d->ui.folder->lineEdit()->setReadOnly(index == 0);
+		d->folder->lineEdit()->setReadOnly(index == 0);
 	});
-	connect(d->ui.folder, &QComboBox::editTextChanged, this, [this](const QString &text) {
-		d->ui.folder->setItemData(d->ui.folder->currentIndex(), text, Qt::EditRole);
+	connect(d->folder, &QComboBox::editTextChanged, this, [this](const QString &text) {
+		d->folder->setItemData(d->folder->currentIndex(), text, Qt::EditRole);
 	});
 
-	d->ui.folder->setCurrentIndex(0);
-	d->ui.folder->lineEdit()->setReadOnly(true);
+	d->folder->setCurrentIndex(0);
+	d->folder->lineEdit()->setReadOnly(true);
 
 	// Brush preset list
-	d->ui.brushPaletteView->setModel(d->presets);
-	d->ui.brushPaletteView->setRootIndex(d->presets->index(0));
-	d->ui.brushPaletteView->setDragEnabled(true);
-	d->ui.brushPaletteView->viewport()->setAcceptDrops(true);
+	d->view->setModel(d->presets);
+	d->view->setRootIndex(d->presets->index(0));
+	d->view->setDragEnabled(true);
+	d->view->viewport()->setAcceptDrops(true);
 
-	connect(d->ui.brushPaletteView, &QAbstractItemView::clicked, this, [this](const QModelIndex &index) {
+	connect(d->view, &QAbstractItemView::clicked, this, [this](const QModelIndex &index) {
 		if(!d->brushSettings) {
 			qWarning("BrushSettings not connected to BrushPalette");
 			return;
@@ -102,23 +126,23 @@ BrushPalette::BrushPalette(QWidget *parent)
 
 	// Default folder cannot be deleted
 	deleteFolderAction->setEnabled(false);
-	connect(d->ui.folder, QOverload<int>::of(&QComboBox::currentIndexChanged), deleteFolderAction, [=](int index) {
+	connect(d->folder, QOverload<int>::of(&QComboBox::currentIndexChanged), deleteFolderAction, [=](int index) {
 		deleteFolderAction->setEnabled(index != 0);
 	});
 
-	d->ui.menuButton->setMenu(hamburgerMenu);
+	d->menuButton->setMenu(hamburgerMenu);
 
-	d->ui.brushPaletteView->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(d->ui.brushPaletteView, &QWidget::customContextMenuRequested, this, [hamburgerMenu, this](const QPoint &point) {
-		const auto idx = d->ui.brushPaletteView->indexAt(point);
+	d->view->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(d->view, &QWidget::customContextMenuRequested, this, [hamburgerMenu, this](const QPoint &point) {
+		const auto idx = d->view->indexAt(point);
 		if(!idx.isValid()) {
-			hamburgerMenu->popup(d->ui.brushPaletteView->mapToGlobal(point));
+			hamburgerMenu->popup(d->view->mapToGlobal(point));
 			return;
 		}
 
 		QMenu menu;
 		auto *moveMenu = menu.addMenu(tr("Move to"));
-		const int currentFolder = d->ui.folder->currentIndex();
+		const int currentFolder = d->folder->currentIndex();
 		for(int i=0;i<d->presets->rowCount();++i) {
 			auto *a = moveMenu->addAction(d->presets->index(i).data(Qt::DisplayRole).toString());
 			a->setEnabled(i != currentFolder);
@@ -128,7 +152,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 		auto *overwriteAction = menu.addAction(tr("Overwrite brush"));
 		auto *deleteAction = menu.addAction(tr("Delete brush"));
 
-		QAction *choice = menu.exec(d->ui.brushPaletteView->mapToGlobal(point));
+		QAction *choice = menu.exec(d->view->mapToGlobal(point));
 
 		if(choice == deleteAction)
 			deleteBrush();
@@ -165,9 +189,9 @@ void BrushPalette::addBrush()
 		qWarning("Cannot add preset: BrushSettings not connected to BrushPalette");
 		return;
 	}
-	const auto folder = d->ui.brushPaletteView->rootIndex();
+	const auto folder = d->view->rootIndex();
 	d->presets->addBrush(folder.row(), d->brushSettings->currentBrush());
-	d->ui.brushPaletteView->selectionModel()->select(
+	d->view->selectionModel()->select(
 		d->presets->index(d->presets->rowCount(folder)-1, 0, folder),
 		QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current
 	);
@@ -179,7 +203,7 @@ void BrushPalette::overwriteBrush()
 		qWarning("Cannot overwrite preset: BrushSettings not connected to BrushPalette");
 		return;
 	}
-	auto sel = d->ui.brushPaletteView->selectionModel()->selectedIndexes();
+	auto sel = d->view->selectionModel()->selectedIndexes();
 	if(sel.isEmpty()) {
 		qWarning("Cannot save brush preset: no selection!");
 		return;
@@ -193,24 +217,24 @@ void BrushPalette::overwriteBrush()
 
 void BrushPalette::deleteBrush()
 {
-	auto sel = d->ui.brushPaletteView->selectionModel()->selectedIndexes();
+	auto sel = d->view->selectionModel()->selectedIndexes();
 	if(sel.isEmpty()) {
 		qWarning("No brush preset selection to delete!");
 		return;
 	}
-	d->presets->removeRow(sel.first().row(), d->ui.brushPaletteView->rootIndex());
-	d->ui.brushPaletteView->selectionModel()->clear();
+	d->presets->removeRow(sel.first().row(), d->view->rootIndex());
+	d->view->selectionModel()->clear();
 }
 
 void BrushPalette::addFolder()
 {
 	d->presets->addFolder(tr("New folder"));
-	d->ui.folder->setCurrentIndex(d->presets->rowCount()-1);
+	d->folder->setCurrentIndex(d->presets->rowCount()-1);
 }
 
 void BrushPalette::deleteFolder()
 {
-	const auto index = d->ui.folder->currentIndex();
+	const auto index = d->folder->currentIndex();
 	if(index == 0){
 		qWarning("Cannot delete Default folder");
 		return;

@@ -71,6 +71,8 @@ public:
 	int getSmoothing() const;
 	PressureMapping getPressureMapping() const;
 
+	QWidget *getHeaderWidget() override;
+
 	static const int MAX_BRUSH_SIZE;
 	static const int MAX_BRUSH_SPACING;
 	static const int DEFAULT_BRUSH_SIZE;

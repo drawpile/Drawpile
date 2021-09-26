@@ -28,6 +28,7 @@
 #include "net/client.h"
 #include "net/envelopebuilder.h"
 #include "utils/icon.h"
+#include "widgets/groupedtoolbutton.h"
 
 
 #include "ui_textsettings.h"
@@ -35,6 +36,7 @@
 #include <QTimer>
 #include <QTextBlock>
 #include <QMenu>
+#include <QLabel>
 
 namespace tools {
 
@@ -42,8 +44,8 @@ static const char *HALIGN_PROP = "HALIGN";
 static const char *VALIGN_PROP = "VALIGN";
 
 AnnotationSettings::AnnotationSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), m_ui(nullptr), m_selectionId(0), m_noupdate(false),
-	  m_scene(nullptr)
+	: ToolSettings(ctrl, parent), m_ui(nullptr), m_headerWidget(nullptr),
+	  m_selectionId(0), m_noupdate(false)
 {
 }
 
@@ -58,6 +60,38 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_ui = new Ui_TextSettings;
 	m_ui->setupUi(widget);
 
+	// Set up the header widget
+	m_headerWidget = new QWidget(parent);
+	auto headerLayout = new QHBoxLayout;
+	headerLayout->setSpacing(0);
+	headerLayout->setMargin(0);
+	m_headerWidget->setLayout(headerLayout);
+
+	auto *headerButton = new widgets::GroupedToolButton(m_headerWidget);
+	headerButton->setIcon(icon::fromTheme("application-menu"));
+	headerButton->setPopupMode(QToolButton::InstantPopup);
+	headerLayout->addWidget(headerButton);
+
+	auto *headerLabel = new QLabel(tr("Annotation"), m_headerWidget);
+	headerLabel->setAlignment(Qt::AlignCenter);
+	headerLayout->addWidget(headerLabel, 1);
+
+	// Set up the hamburger menu with edit actions
+	auto *hamburgerMenu = new QMenu;
+	auto *mergeAction = hamburgerMenu->addAction(tr("Merge"));
+	auto *deleteAction = hamburgerMenu->addAction(tr("Delete"));
+	hamburgerMenu->addSeparator();
+	m_protectedAction = hamburgerMenu->addAction(tr("Protected (%1)").arg("#"));
+	m_protectedAction->setCheckable(true);
+	m_editActions = new QActionGroup(this);
+	m_editActions->addAction(mergeAction);
+	m_editActions->addAction(deleteAction);
+	m_editActions->addAction(m_protectedAction);
+	m_editActions->setExclusive(false);
+
+	headerButton->setMenu(hamburgerMenu);
+
+	// Set up the dock
 	m_updatetimer = new QTimer(this);
 	m_updatetimer->setInterval(500);
 	m_updatetimer->setSingleShot(true);
@@ -88,14 +122,13 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(m_ui->btnBackground, &widgets::ColorButton::colorChanged, this, &AnnotationSettings::setEditorBackgroundColor);
 	connect(m_ui->btnBackground, &widgets::ColorButton::colorChanged, this, &AnnotationSettings::applyChanges);
 
-
-	connect(m_ui->btnRemove, &QPushButton::clicked, this, &AnnotationSettings::removeAnnotation);
-	connect(m_ui->btnBake, &QPushButton::clicked, this, &AnnotationSettings::bake);
+	connect(deleteAction, &QAction::triggered, this, &AnnotationSettings::removeAnnotation);
+	connect(mergeAction, &QAction::triggered, this, &AnnotationSettings::bake);
+	connect(m_protectedAction, &QAction::triggered, this, &AnnotationSettings::saveChanges);
 
 	connect(m_ui->font, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFontIfUniform()));
 	connect(m_ui->size, SIGNAL(valueChanged(double)), this, SLOT(updateFontIfUniform()));
 	connect(m_ui->btnTextColor, &widgets::ColorButton::colorChanged, this, &AnnotationSettings::updateFontIfUniform);
-	connect(m_ui->protect, &QCheckBox::clicked, this, &AnnotationSettings::saveChanges);
 
 	// Intra-editor connections that couldn't be made in the UI designer
 	connect(m_ui->bold, &QToolButton::toggled, this, &AnnotationSettings::toggleBold);
@@ -126,15 +159,17 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
+QWidget *AnnotationSettings::getHeaderWidget()
+{
+	return m_headerWidget;
+}
+
 void AnnotationSettings::setUiEnabled(bool enabled)
 {
 	QWidget *w[] = {
 		m_ui->content,
-		m_ui->btnBake,
-		m_ui->btnRemove,
 		m_ui->btnBackground,
 		m_ui->btnTextColor,
-		m_ui->protect,
 		m_ui->halign,
 		m_ui->valign,
 		m_ui->bold,
@@ -146,6 +181,7 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 	};
 	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
 		w[i]->setEnabled(enabled);
+	m_editActions->setEnabled(enabled);
 }
 
 void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
@@ -244,7 +280,7 @@ void AnnotationSettings::updateFontIfUniform()
 
 			} else {
 				uniformFontFamily &= fr.format.fontFamily() == fmt1.fontFamily();
-				uniformSize &= fr.format.fontPointSize() == fmt1.fontPointSize();
+				uniformSize &= qFuzzyCompare(fr.format.fontPointSize(), fmt1.fontPointSize());
 				uniformColor &= fr.format.foreground() == fmt1.foreground();
 			}
 		}
@@ -301,15 +337,16 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		}
 		m_ui->valign->setProperty(VALIGN_PROP, a->valign());
 
-		m_ui->ownerLabel->setText(QString("(%1)").arg(
-			controller()->model()->userlist()->getUsername(a->id() >> 8)));
-		m_ui->protect->setChecked(a->protect());
+		m_protectedAction->setText(tr("Protected (%1)").arg(
+			controller()->model()->userlist()->getUsername(a->userId()))
+		);
+		m_protectedAction->setChecked(a->protect());
 
 		const bool opOrOwner = controller()->model()->aclState()->amOperator() || (a->id() >> 8) == controller()->client()->myId();
 		if(a->protect() && !opOrOwner)
 			setUiEnabled(false);
 		else if(!opOrOwner)
-			m_ui->protect->setEnabled(false);
+			m_protectedAction->setEnabled(false);
 	}
 	m_noupdate = false;
 }
@@ -356,8 +393,8 @@ void AnnotationSettings::saveChanges()
 			controller()->client()->myId(),
 			selected(),
 			m_ui->btnBackground->color().rgba(),
-			(m_ui->protect->isChecked() ? rustpile::AnnotationEditMessage_FLAGS_PROTECT : 0)
-				| uint8_t(m_ui->valign->property(VALIGN_PROP).toInt()),
+			(m_protectedAction->isChecked() ? rustpile::AnnotationEditMessage_FLAGS_PROTECT : 0)
+			| uint8_t(m_ui->valign->property(VALIGN_PROP).toInt()),
 			0,
 			reinterpret_cast<const uint16_t*>(content.constData()),
 			content.length()

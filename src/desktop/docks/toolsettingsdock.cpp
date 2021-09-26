@@ -18,7 +18,7 @@
 */
 
 #include "docks/toolsettingsdock.h"
-#include "docks/utils.h"
+#include "docks/titlewidget.h"
 
 #include "toolwidgets/brushsettings.h"
 #include "toolwidgets/colorpickersettings.h"
@@ -36,6 +36,7 @@
 #include <QStackedWidget>
 #include <QApplication>
 #include <QSettings>
+#include <QLabel>
 
 namespace docks {
 
@@ -43,6 +44,7 @@ struct ToolPage {
 	// Note: multiple different tools (e.g. Freehand and Line) can share the same settings
 	QSharedPointer<tools::ToolSettings> settings;
 	QString name;
+	QIcon icon;
 	QString title;
 };
 
@@ -51,15 +53,17 @@ struct ToolSettings::Private {
 	QVector<QSharedPointer<tools::ToolSettings>> toolSettings;
 	tools::ToolController *ctrl;
 
-	QStackedWidget *widgetStack;
-	color_widgets::ColorDialog *colorDialog;
+	QStackedWidget *widgetStack = nullptr;
+	QStackedWidget *headerStack = nullptr;
+	QLabel *headerLabel = nullptr;
+	color_widgets::ColorDialog *colorDialog = nullptr;
 
-	tools::Tool::Type currentTool;
-	tools::Tool::Type previousTool;
-	int previousToolSlot;
-	QColor color;
+	tools::Tool::Type currentTool = tools::Tool::FREEHAND;
+	tools::Tool::Type previousTool = tools::Tool::FREEHAND;
+	int previousToolSlot = 0;
+	QColor color = Qt::black;
 
-	bool switchedWithStylusEraser;
+	bool switchedWithStylusEraser = false;
 
 	tools::ToolSettings *currentSettings() {
 		Q_ASSERT(currentTool>=0 && currentTool <= tools::Tool::_LASTTOOL);
@@ -67,14 +71,7 @@ struct ToolSettings::Private {
 	}
 
 	Private(tools::ToolController *ctrl)
-		: ctrl(ctrl),
-		  widgetStack(nullptr),
-		  colorDialog(nullptr),
-		  currentTool(tools::Tool::FREEHAND),
-		  previousTool(tools::Tool::FREEHAND),
-		  previousToolSlot(0),
-		  color(Qt::black),
-		  switchedWithStylusEraser(false)
+		: ctrl(ctrl)
 	{
 		Q_ASSERT(ctrl);
 
@@ -85,72 +82,86 @@ struct ToolSettings::Private {
 		pages[tools::Tool::FREEHAND] = {
 				brush,
 				"freehand",
+				icon::fromTheme("draw-brush"),
 				QApplication::tr("Freehand")
 			};
 		pages[tools::Tool::ERASER] = {
 				brush,
 				"eraser",
+			icon::fromTheme("draw-eraser"),
 				QApplication::tr("Eraser")
 			};
 		pages[tools::Tool::LINE] = {
 				brush,
 				"line",
+				icon::fromTheme("draw-line"),
 				QApplication::tr("Line")
 			};
 		pages[tools::Tool::RECTANGLE] = {
 				brush,
 				"rectangle",
+				icon::fromTheme("draw-rectangle"),
 				QApplication::tr("Rectangle")
 			};
 		pages[tools::Tool::ELLIPSE] = {
 				brush,
 				"ellipse",
+				icon::fromTheme("draw-ellipse"),
 				QApplication::tr("Ellipse")
 			};
 		pages[tools::Tool::BEZIER] = {
 				brush,
 				"bezier",
+				icon::fromTheme("draw-bezier-curves"),
 				QApplication::tr("Bezier Curve")
 			};
 		pages[tools::Tool::FLOODFILL] = {
 				QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
 				"fill",
+				icon::fromTheme("fill-color"),
 				QApplication::tr("Flood Fill")
 			};
 		pages[tools::Tool::ANNOTATION] = {
 				QSharedPointer<tools::ToolSettings>(new tools::AnnotationSettings(ctrl)),
 				"annotation",
+				icon::fromTheme("draw-text"),
 				QApplication::tr("Annotation")
 			};
 		pages[tools::Tool::PICKER] = {
 				QSharedPointer<tools::ToolSettings>(new tools::ColorPickerSettings(ctrl)),
 				"picker",
+				icon::fromTheme("color-picker"),
 				QApplication::tr("Color Picker")
 			};
 		pages[tools::Tool::LASERPOINTER] = {
 				QSharedPointer<tools::ToolSettings>(new tools::LaserPointerSettings(ctrl)),
 				"laser",
+				icon::fromTheme("cursor-arrow"),
 				QApplication::tr("Laser Pointer")
 			};
 		pages[tools::Tool::SELECTION] = {
 				sel,
 				"selection",
+				icon::fromTheme("select-rectangular"),
 				QApplication::tr("Selection (Rectangular)")
 			};
 		pages[tools::Tool::POLYGONSELECTION] = {
 				sel,
 				"selection",
+				icon::fromTheme("edit-select-lasso"),
 				QApplication::tr("Selection (Free-Form)")
 			};
 		pages[tools::Tool::ZOOM] = {
-			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
-			"zoom",
-			QApplication::tr("Zoom")
+				QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
+				"zoom",
+				icon::fromTheme("zoom-select"),
+				QApplication::tr("Zoom")
 			};
 		pages[tools::Tool::INSPECTOR] = {
-			QSharedPointer<tools::ToolSettings>(new tools::InspectorSettings(ctrl)),
-			"inspector",
-			QApplication::tr("Inspector")
+				QSharedPointer<tools::ToolSettings>(new tools::InspectorSettings(ctrl)),
+				"inspector",
+				icon::fromTheme("help-whatsthis"),
+				QApplication::tr("Inspector")
 			};
 
 		for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
@@ -163,18 +174,31 @@ struct ToolSettings::Private {
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	: QDockWidget(parent), d(new Private(ctrl))
 {
-	setStyleSheet(defaultDockStylesheet());
+	setWindowTitle(tr("Tool"));
+
+	auto titleWidget = new TitleWidget(this);
+	setTitleBarWidget(titleWidget);
 
 	// Create a widget stack
 	d->widgetStack = new QStackedWidget(this);
+	d->headerStack = new QStackedWidget(this);
+
+	// Label widget for pages without a custom header
+	d->headerLabel = new QLabel;
+	d->headerLabel->setAlignment(Qt::AlignCenter);
+	d->headerStack->addWidget(d->headerLabel);
+
 	setWidget(d->widgetStack);
+	titleWidget->addCustomWidget(d->headerStack, true);
 
 	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
-		if(!d->pages[i].settings->getUi())
+		if(!d->pages[i].settings->getUi()) {
 			d->widgetStack->addWidget(d->pages[i].settings->createUi(this));
+			auto *headerWidget = d->pages[i].settings->getHeaderWidget();
+			if(headerWidget)
+				d->headerStack->addWidget(headerWidget);
+		}
 	}
-
-	setWindowTitle(d->pages[d->currentTool].title);
 
 	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::colorChanged,
 			this, &ToolSettings::setForegroundColor);
@@ -296,7 +320,7 @@ void ToolSettings::setPreviousTool()
 
 void ToolSettings::selectTool(tools::Tool::Type tool)
 {
-	if(tool<0 || tool >= tools::Tool::_LASTTOOL) {
+	if(tool >= tools::Tool::_LASTTOOL) {
 		qWarning("selectTool(%d): no such tool!", tool);
 		tool = tools::Tool::FREEHAND;
 	}
@@ -313,8 +337,13 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	ts->setForeground(d->color);
 	ts->pushSettings();
 
-	setWindowTitle(d->pages[tool].title);
 	d->widgetStack->setCurrentWidget(ts->getUi());
+	if(ts->getHeaderWidget()) {
+		d->headerStack->setCurrentWidget(ts->getHeaderWidget());
+	} else {
+		d->headerLabel->setText(d->pages[tool].title);
+		d->headerStack->setCurrentWidget(d->headerLabel);
+	}
 
 	emit toolChanged(tool);
 	emit sizeChanged(ts->getSize());

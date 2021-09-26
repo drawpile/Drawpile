@@ -25,7 +25,6 @@
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
 #include "docks/layeraclmenu.h"
-#include "docks/utils.h"
 #include "utils/changeflags.h"
 #include "net/envelopebuilder.h"
 
@@ -56,8 +55,6 @@ LayerList::LayerList(QWidget *parent)
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	m_ui->setupUi(w);
-
-	setStyleSheet(defaultDockStylesheet());
 
 	m_ui->layerlist->setDragEnabled(true);
 	m_ui->layerlist->viewport()->setAcceptDrops(true);

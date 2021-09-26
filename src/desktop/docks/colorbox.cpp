@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include "main.h"
 #include "docks/colorbox.h"
-#include "docks/utils.h"
+#include "docks/titlewidget.h"
 #include "utils/palettelistmodel.h"
 #include "utils/palette.h"
 
@@ -34,63 +34,72 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
+#include <QButtonGroup>
 
 using color_widgets::ColorWheel;
 
 namespace docks {
 
 ColorBox::ColorBox(const QString& title, QWidget *parent)
-	: QDockWidget(title, parent), _ui(new Ui_ColorBox), _updating(false)
+	: QDockWidget(title, parent), m_ui(new Ui_ColorBox), _updating(false)
 {
 	QWidget *w = new QWidget(this);
 	w->resize(167, 95);
 	setWidget(w);
 
-	QColor highlight = palette().color(QPalette::Highlight);
-	QColor hover = highlight; hover.setAlphaF(0.5);
+	auto *titlebar = new TitleWidget(this);
+	setTitleBarWidget(titlebar);
 
-	setStyleSheet(defaultDockStylesheet() + QStringLiteral(
-		"QTabBar {"
-			"alignment: middle;"
-		"}"
-		"QTabWidget::pane {"
-			"border: none;"
-		"}"
-		"QTabBar::tab {"
-			"padding: 15px 5px 0 2px;"
-			"margin: 0 2px 0 0;"
-			"border: none;"
-			"border-left: 3px solid transparent;"
-			"background: %3;"
-		"}"
-		"QTabBar::tab:hover {"
-			"border-left: 3px solid %2;"
-		"}"
-		"QTabBar::tab:selected {"
-			"border-left: 3px solid %1;"
-		"}"
-	).arg(
-		highlight.name(),
-		QString("rgba(%1, %2, %3, %4)").arg(hover.red()).arg(hover.green()).arg(hover.blue()).arg(hover.alphaF()),
-		palette().color(QPalette::Window).name() // this is needed OSX. TODO how to set the whole tabbar background?
-	));
+	auto *paletteBtn = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, titlebar);
+	paletteBtn->setCheckable(true);
+	paletteBtn->setAutoExclusive(true);
+	paletteBtn->setText(tr("Palette"));
 
-	_ui->setupUi(w);
+	auto *slidersBtn = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
+	slidersBtn->setCheckable(true);
+	slidersBtn->setAutoExclusive(true);
+	slidersBtn->setText(tr("Sliders"));
+
+	auto *wheelBtn = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, titlebar);
+	wheelBtn->setCheckable(true);
+	wheelBtn->setAutoExclusive(true);
+	wheelBtn->setText(tr("Wheel"));
+
+	titlebar->addCustomWidget(paletteBtn, false);
+	titlebar->addCustomWidget(slidersBtn, false);
+	titlebar->addCustomWidget(wheelBtn, false);
+	titlebar->addCenteringSpacer();
+
+	m_tabButtons = new QButtonGroup(this);
+	m_tabButtons->addButton(paletteBtn, 0);
+	m_tabButtons->addButton(slidersBtn, 1);
+	m_tabButtons->addButton(wheelBtn, 2);
+	connect(m_tabButtons, QOverload<QAbstractButton*,bool>::of(&QButtonGroup::buttonToggled), this, [this](QAbstractButton *b, bool checked) {
+		if(!checked)
+			return;
+		const int id = m_tabButtons->id(b);
+		m_ui->stackedWidget->setCurrentIndex(id);
+	});
+
+	m_ui->setupUi(w);
 
 	QSettings cfg;
 
 	int lastTab = cfg.value("history/lastcolortab", 0).toInt();
-	_ui->tabWidget->setCurrentIndex(lastTab);
-	_ui->tabWidget->setUsesScrollButtons(false);
+	switch(lastTab) {
+	case 1: slidersBtn->setChecked(true); break;
+	case 2: wheelBtn->setChecked(true); break;
+	default: paletteBtn->setChecked(true); break;
+	}
 
 	//
 	// Palette box tab
 	//
-	_ui->palettelist->setCompleter(nullptr);
-	_ui->palettelist->setModel(PaletteListModel::getSharedInstance());
+	m_ui->palettelist->setCompleter(nullptr);
+	m_ui->palettelist->setModel(PaletteListModel::getSharedInstance());
 
-	connect(_ui->palette, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
-	connect(_ui->palette, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
+	connect(m_ui->palette, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
+	connect(m_ui->palette, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 
 	QMenu *paletteMenu = new QMenu(this);
 	paletteMenu->addAction(tr("New"), this, SLOT(addPalette()));
@@ -105,45 +114,45 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	m_importPalette = paletteMenu->addAction(tr("Import..."), this, SLOT(importPalette()));
 	m_exportPalette = paletteMenu->addAction(tr("Export..."), this, SLOT(exportPalette()));
 
-	_ui->paletteMenuButton->setMenu(paletteMenu);
-	_ui->paletteMenuButton->setStyleSheet("QToolButton::menu-indicator { image: none }");
+	m_ui->paletteMenuButton->setMenu(paletteMenu);
+	m_ui->paletteMenuButton->setStyleSheet("QToolButton::menu-indicator { image: none }");
 
-	connect(_ui->palettelist, SIGNAL(currentIndexChanged(int)), this, SLOT(paletteChanged(int)));
-	connect(_ui->palettelist, SIGNAL(editTextChanged(QString)), this, SLOT(paletteNameChanged(QString)));
+	connect(m_ui->palettelist, SIGNAL(currentIndexChanged(int)), this, SLOT(paletteChanged(int)));
+	connect(m_ui->palettelist, SIGNAL(editTextChanged(QString)), this, SLOT(paletteNameChanged(QString)));
 
 	// Restore last used palette
 	int lastPalette = cfg.value("history/lastpalette", 0).toInt();
-	lastPalette = qBound(0, lastPalette, _ui->palettelist->model()->rowCount());
+	lastPalette = qBound(0, lastPalette, m_ui->palettelist->model()->rowCount());
 
 	if(lastPalette>0)
-		_ui->palettelist->setCurrentIndex(lastPalette);
+		m_ui->palettelist->setCurrentIndex(lastPalette);
 	else
 		paletteChanged(0);
 
 	//
 	// Color slider tab
 	//
-	connect(_ui->hue, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
-	connect(_ui->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
-	connect(_ui->value, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
+	connect(m_ui->hue, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
+	connect(m_ui->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
+	connect(m_ui->value, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
 
-	connect(_ui->huebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
-	connect(_ui->saturationbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
-	connect(_ui->valuebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
+	connect(m_ui->huebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
+	connect(m_ui->saturationbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
+	connect(m_ui->valuebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
 
-	connect(_ui->red, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
-	connect(_ui->green, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
-	connect(_ui->blue, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
+	connect(m_ui->red, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
+	connect(m_ui->green, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
+	connect(m_ui->blue, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
 
-	connect(_ui->redbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
-	connect(_ui->greenbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
-	connect(_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
+	connect(m_ui->redbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
+	connect(m_ui->greenbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
+	connect(m_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
 
 	//
 	// Color wheel tab
 	//
-	connect(_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
-	connect(_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
+	connect(m_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
+	connect(m_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 
 	//
 	// Last used colors
@@ -154,12 +163,12 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	m_lastusedAlt = new Palette(this);
 	m_lastusedAlt->setWriteProtected(true);
 
-	_ui->lastused->setPalette(m_lastused);
-	_ui->lastused->setEnableScrolling(false);
-	_ui->lastused->setMaxRows(1);
+	m_ui->lastused->setPalette(m_lastused);
+	m_ui->lastused->setEnableScrolling(false);
+	m_ui->lastused->setMaxRows(1);
 
-	connect(_ui->lastused, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
-	connect(_ui->lastused, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
+	connect(m_ui->lastused, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
+	connect(m_ui->lastused, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 
 	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
 			this, &ColorBox::updateSettings);
@@ -168,21 +177,21 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 
 ColorBox::~ColorBox()
 {
-	static_cast<PaletteListModel*>(_ui->palettelist->model())->saveChanged();
+	static_cast<PaletteListModel*>(m_ui->palettelist->model())->saveChanged();
 
 	QSettings cfg;
-	cfg.setValue("history/lastpalette", _ui->palettelist->currentIndex());
-	cfg.setValue("history/lastcolortab", _ui->tabWidget->currentIndex());
-	delete _ui;
+	cfg.setValue("history/lastpalette", m_ui->palettelist->currentIndex());
+	cfg.setValue("history/lastcolortab", m_ui->stackedWidget->currentIndex());
+	delete m_ui;
 }
 
 void ColorBox::paletteChanged(int index)
 {
-	if(index<0 || index >= _ui->palettelist->model()->rowCount()) {
-		_ui->palette->setPalette(nullptr);
+	if(index<0 || index >= m_ui->palettelist->model()->rowCount()) {
+		m_ui->palette->setPalette(nullptr);
 	} else {
-		Palette *pal = static_cast<PaletteListModel*>(_ui->palettelist->model())->getPalette(index);
-		_ui->palette->setPalette(pal);
+		Palette *pal = static_cast<PaletteListModel*>(m_ui->palettelist->model())->getPalette(index);
+		m_ui->palette->setPalette(pal);
 		m_deletePalette->setEnabled(!pal->isReadonly());
 		m_writeprotectPalette->setEnabled(!pal->isReadonly());
 		m_writeprotectPalette->setChecked(pal->isWriteProtected());
@@ -191,11 +200,11 @@ void ColorBox::paletteChanged(int index)
 
 void ColorBox::toggleWriteProtect()
 {
-	Palette *pal = _ui->palette->palette();
+	Palette *pal = m_ui->palette->palette();
 	if(pal) {
 		pal->setWriteProtected(!pal->isWriteProtected());
 		m_writeprotectPalette->setChecked(pal->isWriteProtected());
-		_ui->palette->update();
+		m_ui->palette->update();
 	}
 }
 
@@ -213,12 +222,12 @@ void ColorBox::importPalette()
 		QScopedPointer<Palette> imported {Palette::fromFile(filename)};
 		QScopedPointer<Palette> pal {Palette::copy(imported.data(), imported->name())};
 
-		auto *palettelist = static_cast<PaletteListModel*>(_ui->palettelist->model());
+		auto *palettelist = static_cast<PaletteListModel*>(m_ui->palettelist->model());
 		palettelist->saveChanged();
 		pal->save();
 		palettelist->loadPalettes();
 
-		_ui->palettelist->setCurrentIndex(palettelist->findPalette(pal->name()));
+		m_ui->palettelist->setCurrentIndex(palettelist->findPalette(pal->name()));
 	}
 }
 
@@ -233,7 +242,7 @@ void ColorBox::exportPalette()
 
 	if(!filename.isEmpty()) {
 		QString err;
-		if(!_ui->palette->palette()->exportPalette(filename, &err))
+		if(!m_ui->palette->palette()->exportPalette(filename, &err))
 			QMessageBox::warning(this, tr("Error"), err);
 	}
 }
@@ -244,79 +253,79 @@ void ColorBox::exportPalette()
  */
 void ColorBox::paletteNameChanged(const QString& name)
 {
-	QAbstractItemModel *m = _ui->palettelist->model();
-	m->setData(m->index(_ui->palettelist->currentIndex(), 0), name);
+	QAbstractItemModel *m = m_ui->palettelist->model();
+	m->setData(m->index(m_ui->palettelist->currentIndex(), 0), name);
 }
 
 void ColorBox::addPalette()
 {
-	static_cast<PaletteListModel*>(_ui->palettelist->model())->addNewPalette();
-	_ui->palettelist->setCurrentIndex(_ui->palettelist->count()-1);
+	static_cast<PaletteListModel*>(m_ui->palettelist->model())->addNewPalette();
+	m_ui->palettelist->setCurrentIndex(m_ui->palettelist->count()-1);
 }
 
 void ColorBox::copyPalette()
 {
-	int current = _ui->palettelist->currentIndex();
-	static_cast<PaletteListModel*>(_ui->palettelist->model())->copyPalette(current);
-	_ui->palettelist->setCurrentIndex(current);
+	int current = m_ui->palettelist->currentIndex();
+	static_cast<PaletteListModel*>(m_ui->palettelist->model())->copyPalette(current);
+	m_ui->palettelist->setCurrentIndex(current);
 }
 
 void ColorBox::deletePalette()
 {
-	const int index = _ui->palettelist->currentIndex();
+	const int index = m_ui->palettelist->currentIndex();
 	const int ret = QMessageBox::question(
 			this,
 			tr("Delete"),
-			tr("Delete palette \"%1\"?").arg(_ui->palettelist->currentText()),
+			tr("Delete palette \"%1\"?").arg(m_ui->palettelist->currentText()),
 			QMessageBox::Yes|QMessageBox::No);
 
 	if(ret == QMessageBox::Yes) {
-		_ui->palettelist->model()->removeRow(index);
+		m_ui->palettelist->model()->removeRow(index);
 	}
 }
 
 void ColorBox::setColor(const QColor& color)
 {
 	_updating = true;
-	_ui->red->setFirstColor(QColor(0, color.green(), color.blue()));
-	_ui->red->setLastColor(QColor(255, color.green(), color.blue()));
-	_ui->red->setValue(color.red());
-	_ui->redbox->setValue(color.red());
+	m_ui->red->setFirstColor(QColor(0, color.green(), color.blue()));
+	m_ui->red->setLastColor(QColor(255, color.green(), color.blue()));
+	m_ui->red->setValue(color.red());
+	m_ui->redbox->setValue(color.red());
 
-	_ui->green->setFirstColor(QColor(color.red(), 0, color.blue()));
-	_ui->green->setLastColor(QColor(color.red(), 255, color.blue()));
-	_ui->green->setValue(color.green());
-	_ui->greenbox->setValue(color.green());
+	m_ui->green->setFirstColor(QColor(color.red(), 0, color.blue()));
+	m_ui->green->setLastColor(QColor(color.red(), 255, color.blue()));
+	m_ui->green->setValue(color.green());
+	m_ui->greenbox->setValue(color.green());
 
-	_ui->blue->setFirstColor(QColor(color.red(), color.green(), 0));
-	_ui->blue->setLastColor(QColor(color.red(), color.green(), 255));
-	_ui->blue->setValue(color.blue());
-	_ui->bluebox->setValue(color.blue());
+	m_ui->blue->setFirstColor(QColor(color.red(), color.green(), 0));
+	m_ui->blue->setLastColor(QColor(color.red(), color.green(), 255));
+	m_ui->blue->setValue(color.blue());
+	m_ui->bluebox->setValue(color.blue());
 
 
-	_ui->hue->setColorSaturation(color.saturationF());
-	_ui->hue->setColorValue(color.valueF());
-	_ui->hue->setValue(color.hue());
-	_ui->huebox->setValue(color.hue());
+	m_ui->hue->setColorSaturation(color.saturationF());
+	m_ui->hue->setColorValue(color.valueF());
+	m_ui->hue->setValue(color.hue());
+	m_ui->huebox->setValue(color.hue());
 
-	_ui->saturation->setFirstColor(QColor::fromHsv(color.hue(), 0, color.value()));
-	_ui->saturation->setLastColor(QColor::fromHsv(color.hue(), 255, color.value()));
-	_ui->saturation->setValue(color.saturation());
-	_ui->saturationbox->setValue(color.saturation());
+	m_ui->saturation->setFirstColor(QColor::fromHsv(color.hue(), 0, color.value()));
+	m_ui->saturation->setLastColor(QColor::fromHsv(color.hue(), 255, color.value()));
+	m_ui->saturation->setValue(color.saturation());
+	m_ui->saturationbox->setValue(color.saturation());
 
-	_ui->value->setFirstColor(QColor::fromHsv(color.hue(), color.saturation(), 0));
-	_ui->value->setLastColor(QColor::fromHsv(color.hue(), color.saturation(), 255));
-	_ui->value->setValue(color.value());
-	_ui->valuebox->setValue(color.value());
+	m_ui->value->setFirstColor(QColor::fromHsv(color.hue(), color.saturation(), 0));
+	m_ui->value->setLastColor(QColor::fromHsv(color.hue(), color.saturation(), 255));
+	m_ui->value->setValue(color.value());
+	m_ui->valuebox->setValue(color.value());
 
-	_ui->colorwheel->setColor(color);
+	m_ui->colorwheel->setColor(color);
 	_updating = false;
 }
 
 void ColorBox::updateFromRgbSliders()
 {
 	if(!_updating) {
-		QColor color(_ui->red->value(), _ui->green->value(), _ui->blue->value());
+		QColor color(m_ui->red->value(), m_ui->green->value(), m_ui->blue->value());
 
 		setColor(color);
 		emit colorChanged(color);
@@ -326,7 +335,7 @@ void ColorBox::updateFromRgbSliders()
 void ColorBox::updateFromRgbSpinbox()
 {
 	if(!_updating) {
-		QColor color(_ui->redbox->value(), _ui->greenbox->value(), _ui->bluebox->value());
+		QColor color(m_ui->redbox->value(), m_ui->greenbox->value(), m_ui->bluebox->value());
 		setColor(color);
 		emit colorChanged(color);
 	}
@@ -335,7 +344,7 @@ void ColorBox::updateFromRgbSpinbox()
 void ColorBox::updateFromHsvSliders()
 {
 	if(!_updating) {
-		QColor color = QColor::fromHsv(_ui->hue->value(), _ui->saturation->value(), _ui->value->value());
+		QColor color = QColor::fromHsv(m_ui->hue->value(), m_ui->saturation->value(), m_ui->value->value());
 
 		setColor(color);
 		emit colorChanged(color);
@@ -345,7 +354,7 @@ void ColorBox::updateFromHsvSliders()
 void ColorBox::updateFromHsvSpinbox()
 {
 	if(!_updating) {
-		QColor color = QColor::fromHsv(_ui->huebox->value(), _ui->saturationbox->value(), _ui->valuebox->value());
+		QColor color = QColor::fromHsv(m_ui->huebox->value(), m_ui->saturationbox->value(), m_ui->valuebox->value());
 
 		setColor(color);
 		emit colorChanged(color);
@@ -380,11 +389,11 @@ void ColorBox::swapLastUsedColors()
 	Palette *swap = m_lastused;
 	m_lastused = m_lastusedAlt;
 	m_lastusedAlt = swap;
-	_ui->lastused->setPalette(m_lastused);
+	m_ui->lastused->setPalette(m_lastused);
 
 	// Select last used color
 	const QColor altColor = m_altColor;
-	m_altColor = _ui->colorwheel->color();
+	m_altColor = m_ui->colorwheel->color();
 
 	setColor(altColor);
 	emit colorChanged(altColor);
@@ -394,11 +403,11 @@ void ColorBox::updateSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/colorwheel");
-	_ui->colorwheel->setSelectorShape(
+	m_ui->colorwheel->setSelectorShape(
 			static_cast<ColorWheel::ShapeEnum>(cfg.value("shape").toInt()));
-	_ui->colorwheel->setRotatingSelector(
+	m_ui->colorwheel->setRotatingSelector(
 			static_cast<ColorWheel::AngleEnum>(cfg.value("rotate").toInt()));
-	_ui->colorwheel->setColorSpace(
+	m_ui->colorwheel->setColorSpace(
 			static_cast<ColorWheel::ColorSpaceEnum>(cfg.value("space").toInt()));
 	cfg.endGroup();
 }

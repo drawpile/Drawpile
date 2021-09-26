@@ -16,13 +16,11 @@
 */
 
 #include "navigator.h"
-using docks::NavigatorView;
-#include "ui_navigator.h"
-#include "docks/utils.h"
-
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "canvas/userlist.h"
+#include "docks/titlewidget.h"
+#include "utils/icon.h"
 
 #include <QMouseEvent>
 #include <QTimer>
@@ -31,6 +29,9 @@ using docks::NavigatorView;
 #include <QAction>
 #include <QSettings>
 #include <QDateTime>
+#include <QSlider>
+#include <QToolButton>
+#include <QBoxLayout>
 
 namespace docks {
 
@@ -308,63 +309,76 @@ void NavigatorView::onCursorMove(uint8_t userId, uint16_t layer, int x, int y)
  * Construct the navigator dock widget.
  */
 Navigator::Navigator(QWidget *parent)
-	: QDockWidget(tr("Navigator"), parent), m_ui(new Ui_Navigator), m_updating(false)
+	: QDockWidget(tr("Navigator"), parent), m_updating(false)
 {
 	setObjectName("navigatordock");
-	setStyleSheet(defaultDockStylesheet());
 
-	auto w = new QWidget(this);
-	m_ui->setupUi(w);
-	setWidget(w);
+	auto *titlebar = new TitleWidget(this);
+	setTitleBarWidget(titlebar);
 
-	connect(m_ui->view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
-	connect(m_ui->view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
-	connect(m_ui->zoomReset, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
-	connect(m_ui->zoom, &QSlider::valueChanged, this, &Navigator::updateZoom);
+	m_view = new NavigatorView(this);
+	setWidget(m_view);
 
-	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_ui->view);
+	m_resetZoomButton = new QToolButton;
+	m_resetZoomButton->setIcon(icon::fromTheme("zoom-original"));
+	titlebar->addCustomWidget(m_resetZoomButton);
+
+	m_zoomSlider = new QSlider;
+	m_zoomSlider->setMinimum(50);
+	m_zoomSlider->setMaximum(1600);
+	m_zoomSlider->setPageStep(50);
+	m_zoomSlider->setValue(100);
+	m_zoomSlider->setOrientation(Qt::Horizontal);
+	titlebar->addSpace(16);
+	titlebar->addCustomWidget(m_zoomSlider, true);
+	titlebar->addSpace(16);
+
+	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
+	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
+	connect(m_resetZoomButton, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
+	connect(m_zoomSlider, &QSlider::valueChanged, this, &Navigator::updateZoom);
+
+	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_view);
 	showCursorsAction->setCheckable(true);
-	m_ui->view->addAction(showCursorsAction);
+	m_view->addAction(showCursorsAction);
 
-	QAction *realtimeUpdateAction = new QAction(tr("Realtime Update"), m_ui->view);
+	QAction *realtimeUpdateAction = new QAction(tr("Realtime Update"), m_view);
 	realtimeUpdateAction->setCheckable(true);
-	m_ui->view->addAction(realtimeUpdateAction);
+	m_view->addAction(realtimeUpdateAction);
 
-	m_ui->view->setContextMenuPolicy(Qt::ActionsContextMenu);
+	m_view->setContextMenuPolicy(Qt::ActionsContextMenu);
 
 	QSettings cfg;
 	cfg.beginGroup("navigator");
 
 	showCursorsAction->setChecked(cfg.value("showcursors", true).toBool());
-	m_ui->view->setShowCursors(showCursorsAction->isChecked());
+	m_view->setShowCursors(showCursorsAction->isChecked());
 
 	realtimeUpdateAction->setChecked(cfg.value("realtime", false).toBool());
-	m_ui->view->setRealtimeUpdate(realtimeUpdateAction->isChecked());
+	m_view->setRealtimeUpdate(realtimeUpdateAction->isChecked());
 
 	connect(showCursorsAction, &QAction::triggered, this, [this](bool show) {
 		QSettings().setValue("navigator/showcursors", show);
-		m_ui->view->setShowCursors(show);
+		m_view->setShowCursors(show);
 	});
 	connect(realtimeUpdateAction, &QAction::triggered, this, [this](bool realtime) {
 		QSettings().setValue("navigator/realtime", realtime);
-		m_ui->view->setRealtimeUpdate(realtime);
+		m_view->setRealtimeUpdate(realtime);
 	});
 }
 
 Navigator::~Navigator()
 {
-	QSettings cfg;
-	delete m_ui;
 }
 
 void Navigator::setCanvasModel(canvas::CanvasModel *model)
 {
-	m_ui->view->setCanvasModel(model);
+	m_view->setCanvasModel(model);
 }
 
 void Navigator::setViewFocus(const QPolygonF& rect)
 {
-	m_ui->view->setViewFocus(rect);
+	m_view->setViewFocus(rect);
 }
 
 void Navigator::updateZoom(int value)
@@ -377,14 +391,14 @@ void Navigator::setViewTransformation(qreal zoom, qreal angle)
 {
 	Q_UNUSED(angle)
 	m_updating = true;
-	m_ui->zoom->setValue(int(zoom));
+	m_zoomSlider->setValue(int(zoom));
 	m_updating = false;
 }
 
 void Navigator::setMinimumZoom(int zoom)
 {
 	m_updating = true;
-	m_ui->zoom->setMinimum(qMax(1, zoom));
+	m_zoomSlider->setMinimum(qMax(1, zoom));
 	m_updating = false;
 }
 

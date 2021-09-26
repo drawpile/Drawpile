@@ -68,13 +68,16 @@ struct BrushSettings::Private {
 	QStandardItemModel *blendModes, *eraseModes;
 
 	ToolSlot toolSlots[BRUSH_COUNT];
+	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
+	QWidget *brushSlotWidget = nullptr;
+
 	int current = 0;
 	int previousNonEraser = 0;
 
+	qreal quickAdjust1 = 0.0;
+
 	bool shareBrushSlotColor = false;
 	bool updateInProgress = false;
-
-	qreal quickAdjust1 = 0.0;
 
 	inline ClassicBrush &currentBrush() {
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
@@ -105,20 +108,6 @@ struct BrushSettings::Private {
 		auto erase2 = new QStandardItem(QApplication::tr("Color Erase"));
 		erase2->setData(QVariant(int(rustpile::Blendmode::ColorErase)), Qt::UserRole);
 		eraseModes->appendRow(erase2);
-	}
-
-	widgets::GroupedToolButton *brushSlotButton(int i)
-	{
-		static_assert (BRUSH_COUNT == 6, "update brushSlottButton");
-		switch(i) {
-		case 0: return ui.slot1;
-		case 1: return ui.slot2;
-		case 2: return ui.slot3;
-		case 3: return ui.slot4;
-		case 4: return ui.slot5;
-		case 5: return ui.slotEraser;
-		default: qFatal("brushSlotButton(%d): no such button", i);
-		}
 	}
 
 	void updateInputPresetUuid(ToolSlot &tool)
@@ -166,6 +155,42 @@ BrushSettings::~BrushSettings()
 
 QWidget *BrushSettings::createUiWidget(QWidget *parent)
 {
+	d->brushSlotWidget = new QWidget(parent);
+	auto brushSlotWidgetLayout = new QHBoxLayout;
+	brushSlotWidgetLayout->setSpacing(0);
+	brushSlotWidgetLayout->setMargin(0);
+
+	d->brushSlotWidget->setLayout(brushSlotWidgetLayout);
+
+	// A spacer for centering the tool slots in the title bar
+	{
+		const int iconSize = parent->style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, parent);
+		int marginSize = parent->style()->pixelMetric(QStyle::PM_DockWidgetTitleBarButtonMargin, nullptr, parent);
+		brushSlotWidgetLayout->addSpacing(marginSize+iconSize);
+	}
+
+	brushSlotWidgetLayout->addStretch();
+
+	for(int i=0;i<BRUSH_COUNT;++i) {
+		d->brushSlotButton[i] = new widgets::GroupedToolButton(
+			widgets::GroupedToolButton::GroupCenter,
+			d->brushSlotWidget
+			);
+		d->brushSlotButton[i]->setCheckable(true);
+		d->brushSlotButton[i]->setAutoExclusive(true);
+		d->brushSlotButton[i]->setText(QString::number(i+1));
+		brushSlotWidgetLayout->addWidget(d->brushSlotButton[i]);
+
+		connect(d->brushSlotButton[i], &QToolButton::clicked,
+			this, [this, i]() { selectBrushSlot(i); });
+	}
+
+	brushSlotWidgetLayout->addStretch();
+
+	d->brushSlotButton[0]->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
+	d->brushSlotButton[BRUSH_COUNT-1]->setGroupPosition(widgets::GroupedToolButton::GroupRight);
+	d->brushSlotButton[ERASER_SLOT]->setIcon(icon::fromTheme("draw-eraser"));
+
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
 	d->ui.inputPreset->setModel(d->presetModel);
@@ -215,26 +240,19 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
-	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &BrushSettings::chooseInputPreset);
-	connect(d->presetModel, &input::PresetModel::presetChanged, this, &BrushSettings::inputPresetChanged);
-
-	// Brush slot buttons
-	for(int i=0;i<BRUSH_COUNT;++i) {
-		connect(d->brushSlotButton(i), &QToolButton::clicked, this, [this, i]() { selectBrushSlot(i); });
-	}
-
-	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
-			this, &BrushSettings::updateSettings);
-	updateSettings();
-
 	return widget;
+}
+
+QWidget *BrushSettings::getHeaderWidget()
+{
+	return d->brushSlotWidget;
 }
 
 void BrushSettings::setShareBrushSlotColor(bool sameColor)
 {
 	d->shareBrushSlotColor = sameColor;
 	for(int i=0;i<BRUSH_COUNT;++i) {
-		d->brushSlotButton(i)->setColorSwatch(
+		d->brushSlotButton[i]->setColorSwatch(
 			sameColor ? QColor() : d->toolSlots[i].brush.qColor()
 		);
 	}
@@ -269,7 +287,7 @@ void BrushSettings::selectBrushSlot(int i)
 	}
 	const int previousSlot = d->current;
 
-	d->brushSlotButton(i)->setChecked(true);
+	d->brushSlotButton[i]->setChecked(true);
 	d->current = i;
 
 	if(!d->shareBrushSlotColor)
@@ -579,7 +597,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		d->updateInputPresetUuid(tool);
 
 		if(!d->shareBrushSlotColor)
-			d->brushSlotButton(i)->setColorSwatch(tool.brush.qColor());
+			d->brushSlotButton[i]->setColorSwatch(tool.brush.qColor());
 	}
 
 	if(!d->toolSlots[ERASER_SLOT].brush.isEraser())
@@ -601,10 +619,10 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 	if(tool == tools::Tool::ERASER) {
 		selectEraserSlot(true);
 		for(int i=0;i<BRUSH_COUNT-1;++i)
-			d->brushSlotButton(i)->setEnabled(false);
+			d->brushSlotButton[i]->setEnabled(false);
 	} else {
 		for(int i=0;i<BRUSH_COUNT-1;++i)
-			d->brushSlotButton(i)->setEnabled(true);
+			d->brushSlotButton[i]->setEnabled(true);
 
 		selectEraserSlot(false);
 	}
@@ -618,8 +636,9 @@ void BrushSettings::setForeground(const QColor& color)
 				d->toolSlots[i].brush.setQColor(color);
 
 		} else {
+			Q_ASSERT(d->current>=0 && d->current < BRUSH_COUNT);
 			d->currentBrush().setQColor(color);
-			d->brushSlotButton(d->current)->setColorSwatch(color);
+			d->brushSlotButton[d->current]->setColorSwatch(color);
 		}
 
 		d->ui.preview->setBrush(d->currentBrush());

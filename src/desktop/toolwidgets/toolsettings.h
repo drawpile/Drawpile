@@ -63,6 +63,9 @@ public:
 	//! Get the UI widget
 	QWidget *getUi() { return m_widget; }
 
+	//! Get the header bar UI widget (if any)
+	virtual QWidget *getHeaderWidget() { return nullptr; }
+
 	/**
 	 * @brief Get the type of tool these settings are meant for.
 	 *

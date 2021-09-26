@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2018 Calle Laakkonen
+   Copyright (C) 2007-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 class Ui_ColorBox;
 class Palette;
+
+class QButtonGroup;
 
 namespace docks {
 
@@ -58,7 +60,8 @@ private slots:
 	void updateSettings();
 
 private:
-	Ui_ColorBox *_ui;
+	Ui_ColorBox *m_ui;
+	QButtonGroup *m_tabButtons;
 	Palette *m_lastused;
 	Palette *m_lastusedAlt;
 	QColor m_altColor;

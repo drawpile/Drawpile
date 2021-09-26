@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014 Calle Laakkonen
+   Copyright (C) 2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,16 +16,38 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DOCK_UTILS_H
-#define DOCK_UTILS_H
+#ifndef TITLEWIDGET_H
+#define TITLEWIDGET_H
 
-class QString;
+#include <QDockWidget>
+
+class QBoxLayout;
 
 namespace docks {
 
-	//! Get the default stylesheet for docks
-	QString defaultDockStylesheet();
+class TitleWidget : public QWidget
+{
+	Q_OBJECT
+public:
+	explicit TitleWidget(QDockWidget *parent = nullptr);
+
+	void addCustomWidget(QWidget *widget, bool stretch=false);
+	void addSpace(int space);
+
+	/// Add a spacer to the left side to center the custom widgets
+	void addCenteringSpacer();
+
+private slots:
+	void onFeaturesChanged(QDockWidget::DockWidgetFeatures features);
+
+private:
+	class Button;
+
+	QBoxLayout *m_layout;
+	Button *m_dockButton;
+	Button *m_closeButton;
+};
+
 }
 
-#endif
-
+#endif // TITLEWIDGET_H

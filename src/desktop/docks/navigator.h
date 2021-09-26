@@ -20,7 +20,8 @@
 
 #include <QDockWidget>
 
-class Ui_Navigator;
+class QSlider;
+class QToolButton;
 
 namespace canvas {
 	class CanvasModel;
@@ -107,7 +108,9 @@ signals:
 	void zoomChanged(qreal newZoom);
 	
 private:
-	Ui_Navigator *m_ui;
+	QSlider *m_zoomSlider;
+	QToolButton *m_resetZoomButton;
+	NavigatorView *m_view;
 	bool m_updating;
 };
 

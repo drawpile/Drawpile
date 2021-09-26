@@ -67,7 +67,6 @@ set (
 	widgets/modifierkeys.cpp
 	widgets/notifbar.cpp
 	widgets/KisAngleGauge.cpp
-	docks/utils.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
 	docks/navigator.cpp 
@@ -75,6 +74,7 @@ set (
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
+	docks/titlewidget.cpp
 	chat/chatlineedit.cpp
 	chat/chatwidgetpinnedarea.cpp
 	chat/chatwidget.cpp 
@@ -133,7 +133,6 @@ endif()
 set (
 	UIs
 	ui/brushdock.ui
-	ui/brushpalette.ui
 	ui/certificateview.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
@@ -159,7 +158,6 @@ set (
 	ui/tablettest.ui
 	ui/abusereport.ui
 	ui/avatarimport.ui
-	ui/navigator.ui
 	ui/versioncheck.ui
 	ui/layerproperties.ui
 )

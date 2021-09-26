@@ -24,6 +24,7 @@
 class Ui_TextSettings;
 class QTimer;
 class QAction;
+class QActionGroup;
 
 namespace drawingboard {
 	class CanvasScene;
@@ -62,6 +63,7 @@ public:
 	bool getSubpixelMode() const override { return false; }
 
 	void setScene(drawingboard::CanvasScene *scene) { m_scene = scene; }
+	QWidget *getHeaderWidget() override;
 
 public slots:
 	//! Set the currently selected annotation item
@@ -92,6 +94,9 @@ private:
 	void setUiEnabled(bool enabled);
 
 	Ui_TextSettings *m_ui;
+	QWidget *m_headerWidget;
+	QActionGroup *m_editActions;
+	QAction *m_protectedAction;
 
 	uint16_t m_selectionId;
 
