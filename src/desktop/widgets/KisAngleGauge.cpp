@@ -8,7 +8,7 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-#include <cmath>
+#include <QtMath>
 
 #include "KisAngleGauge.h"
 

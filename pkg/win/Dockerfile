@@ -23,6 +23,16 @@ RUN make -j$(nproc) miniupnpc giflib libsodium qtkeychain
 ADD extra-cmake-modules.mk dnssd_shim.mk kdnssd.mk kdnssd-1-qtendian.patch kdnssd-2-shim.patch /usr/src/mxe/src/
 RUN make extra-cmake-modules kdnssd
 
+# Add Rust compiler
+# See: https://github.com/mxe/mxe/pull/2514/
+ADD rust/* /usr/src/mxe/src/
+RUN make download-rust-std
+# Need to run this twice for the target std package to download for some reason
+RUN make rust-std || make rust-std
+
+# Needed by Rust:
+RUN make dlfcn-win32
+
 # Create the app build directory
 RUN mkdir /Build && chmod a+w /Build
 

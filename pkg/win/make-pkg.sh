@@ -52,7 +52,6 @@ cp "$MBIN/libssl-1_1-x64.dll" .
 cp "$MBIN/libgif-7.dll" .
 cp "$MBIN/libminiupnpc.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
-cp "$MBIN/libKF5Archive.dll" .
 cp "$MBIN/libKF5DNSSD.dll" .
 cp "$MBIN/libsodium-23.dll" .
 cp "$MBIN/libqt5keychain.dll" .
@@ -90,7 +89,6 @@ done
 # Copy Drawpile binaries
 cp "$(readlink -f /Build/bin/drawpile.exe)" drawpile.exe
 cp /Build/bin/drawpile-srv.exe .
-cp /Build/bin/dprectool.exe .
 
 # Copy Drawpile resources
 cp -r /Drawpile/desktop/theme .
