@@ -32,7 +32,7 @@ namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29)),
-	m_tolerance(1), m_expansion(0), m_sizelimit(1000*1000), m_sampleMerged(true), m_underFill(true),
+	m_tolerance(0.01), m_expansion(0), m_sizelimit(1000*1000), m_sampleMerged(true), m_underFill(true),
 	m_eraseMode(false)
 {
 }

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2018 Calle Laakkonen
+   Copyright (C) 2006-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@ namespace tools {
 
 namespace props {
 	static const ToolProperties::RangedValue<int>
-		tolerance { QStringLiteral("tolerance"), 0, 0, 100 },
 		expand { QStringLiteral("expand"), 0, 0, 100 }
 		;
 	static const ToolProperties::RangedValue<double>
+		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 },
 		sizelimit { QStringLiteral("sizelimit"), 50.0, 0.0, 1000.0 }
 		;
 	static const ToolProperties::Value<bool>
@@ -78,7 +78,7 @@ void FillSettings::pushSettings()
 {
 	const bool erase = _ui->erasermode->isChecked();
 	auto *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
-	tool->setTolerance(_ui->tolerance->value());
+	tool->setTolerance(_ui->tolerance->value() / qreal(_ui->tolerance->maximum()));
 	tool->setExpansion(_ui->expand->value());
 	tool->setSizeLimit(_ui->sizelimit->value() * _ui->sizelimit->value() * 10 * 10);
 	tool->setSampleMerged(erase ? false : _ui->samplemerged->isChecked());
@@ -94,7 +94,7 @@ void FillSettings::toggleEraserMode()
 ToolProperties FillSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue(props::tolerance, _ui->tolerance->value());
+	cfg.setValue(props::tolerance, _ui->tolerance->value() / qreal(_ui->tolerance->maximum()));
 	cfg.setValue(props::expand, _ui->expand->value());
 	cfg.setValue(props::samplemerged, _ui->samplemerged->isChecked());
 	cfg.setValue(props::underfill, _ui->fillunder->isChecked());
@@ -113,7 +113,7 @@ void FillSettings::setForeground(const QColor &color)
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->tolerance->setValue(cfg.value(props::tolerance));
+	_ui->tolerance->setValue(cfg.value(props::tolerance) * _ui->tolerance->maximum());
 	_ui->expand->setValue(cfg.value(props::expand));
 	_ui->sizelimit->setValue(cfg.value(props::sizelimit));
 	_ui->samplemerged->setChecked(cfg.value(props::samplemerged));
