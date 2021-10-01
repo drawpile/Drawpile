@@ -599,7 +599,7 @@ net::Envelope Selection::fillCanvas(uint8_t contextId, const QColor &color, rust
 		rustpile::write_undopoint(writer, contextId);
 
 		if(mask.isNull())
-			rustpile::write_fillrect(writer, contextId, layer, rustpile::Blendmode::Erase, area.x(), area.y(), area.width(), area.height(), color.rgba());
+			rustpile::write_fillrect(writer, contextId, layer, mode, area.x(), area.y(), area.width(), area.height(), color.rgba());
 		else
 			writer.buildPutQImage(contextId, layer, maskBounds.left(), maskBounds.top(), mask, mode);
 
