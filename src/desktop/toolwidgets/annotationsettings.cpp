@@ -67,29 +67,32 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	headerLayout->setMargin(0);
 	m_headerWidget->setLayout(headerLayout);
 
-	auto *headerButton = new widgets::GroupedToolButton(m_headerWidget);
-	headerButton->setIcon(icon::fromTheme("application-menu"));
-	headerButton->setPopupMode(QToolButton::InstantPopup);
-	headerLayout->addWidget(headerButton);
-
-	auto *headerLabel = new QLabel(tr("Annotation"), m_headerWidget);
-	headerLabel->setAlignment(Qt::AlignCenter);
-	headerLayout->addWidget(headerLabel, 1);
-
-	// Set up the hamburger menu with edit actions
-	auto *hamburgerMenu = new QMenu;
-	auto *mergeAction = hamburgerMenu->addAction(tr("Merge"));
-	auto *deleteAction = hamburgerMenu->addAction(tr("Delete"));
-	hamburgerMenu->addSeparator();
-	m_protectedAction = hamburgerMenu->addAction(tr("Protected (%1)").arg("#"));
+	m_protectedAction = new QAction(this);
+	m_protectedAction->setIcon(icon::fromTheme("object-locked"));
 	m_protectedAction->setCheckable(true);
+	auto *protectedButton = new widgets::GroupedToolButton(m_headerWidget);
+	protectedButton->setDefaultAction(m_protectedAction);
+	headerLayout->addWidget(protectedButton);
+
+	headerLayout->addStretch(0);
+
+	auto *mergeButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, m_headerWidget);
+	QAction *mergeAction = new QAction(icon::fromTheme("arrow-down-double"), tr("Merge"), this);
+	mergeButton->setDefaultAction(mergeAction);
+	headerLayout->addWidget(mergeButton);
+
+	auto *deleteButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, m_headerWidget);
+	QAction *deleteAction = new QAction(icon::fromTheme("list-remove"), tr("Delete"), this);
+	deleteButton->setDefaultAction(deleteAction);
+	headerLayout->addWidget(deleteButton);
+
+	headerLayout->addStretch(0);
+
 	m_editActions = new QActionGroup(this);
 	m_editActions->addAction(mergeAction);
 	m_editActions->addAction(deleteAction);
 	m_editActions->addAction(m_protectedAction);
 	m_editActions->setExclusive(false);
-
-	headerButton->setMenu(hamburgerMenu);
 
 	// Set up the dock
 	m_updatetimer = new QTimer(this);
