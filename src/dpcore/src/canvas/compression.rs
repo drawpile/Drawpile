@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,9 +25,10 @@ use crate::paint::{Color, Pixel, UserID};
 
 use std::convert::TryInto;
 use std::{mem, slice};
+use std::io::Write;
 use tracing::warn;
 
-use deflate::deflate_bytes_zlib;
+use deflate::{deflate_bytes_zlib, Compression, write::ZlibEncoder};
 use inflate::inflate_bytes_zlib;
 
 /// Decompress a Tile.
@@ -154,8 +155,6 @@ pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> 
 }
 
 pub fn compress_image(pixels: &[Pixel]) -> Vec<u8> {
-    // TODO this could take an iterator of slices so we could compress
-    // cropped image regions without having to make copies
     let pixelbytes = unsafe {
         slice::from_raw_parts(
             pixels.as_ptr() as *const u8,
@@ -174,4 +173,46 @@ pub fn compress_image(pixels: &[Pixel]) -> Vec<u8> {
     prefixed_data.extend_from_slice(&compressed);
 
     prefixed_data
+}
+
+pub struct ImageCompressor {
+    encoder: ZlibEncoder<Vec<u8>>,
+    uncompressed_len: usize,
+}
+
+impl ImageCompressor {
+    fn reserve_header() -> Vec<u8> {
+        vec![0, 0, 0, 0]
+    }
+
+    pub fn new() -> Self {
+        Self {
+            encoder: ZlibEncoder::new(Self::reserve_header(), Compression::Default),
+            uncompressed_len: 0,
+        }
+    }
+
+    pub fn add(&mut self, data: &[Pixel]) {
+        let data = unsafe {
+            slice::from_raw_parts(
+                data.as_ptr() as *const u8,
+                data.len() * mem::size_of::<Pixel>(),
+            )
+        };
+
+        // encoding shouldn't fail in normal conditions
+        self.encoder.write_all(data).expect("Zlib Encoder failed!");
+        self.uncompressed_len += data.len();
+    }
+
+    pub fn finish(self) -> Vec<u8> {
+        let mut vec = self.encoder.finish().expect("Zlib Encoder failed!");
+
+        // For compatibility with Qt's compresssion function, add a prefix
+        // containing the expected length of the decompressed buffer.
+        // We can probably drop this in the next protocol change.
+        vec[..4].copy_from_slice(&u32::to_be_bytes(self.uncompressed_len as u32));
+
+        vec
+    }
 }
