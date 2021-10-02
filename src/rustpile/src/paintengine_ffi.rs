@@ -129,7 +129,7 @@ unsafe impl Send for CanvasChangeCallbacks {}
 enum PaintEngineCommand {
     LocalMessage(CommandMessage),
     RemoteMessage(CommandMessage),
-    BrushPreview(LayerID, Vec<CommandMessage>),
+    BrushPreview(LayerID, Vec<CommandMessage>, Blendmode),
     RemovePreview(LayerID),
     ReplaceCanvas(Box<LayerStack>),
     PlaybackPaused(i64, u32), // triggers PlaybackCallback
@@ -213,8 +213,8 @@ fn run_paintengine(
                 RemoteMessage(m) => {
                     changes |= canvas.receive_message(&m);
                 }
-                BrushPreview(layer, commands) => {
-                    changes |= canvas.apply_preview(layer, &commands);
+                BrushPreview(layer, commands, mode) => {
+                    changes |= canvas.apply_preview(layer, &commands, mode);
                 }
                 RemovePreview(layer) => {
                     changes |= canvas.remove_preview(layer);
@@ -813,6 +813,7 @@ pub extern "C" fn paintengine_preview_brush(
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
         layer_id,
         brushengine.take_dabs(0),
+        Blendmode::Normal
     )) {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
@@ -856,9 +857,8 @@ pub extern "C" fn paintengine_preview_cut(
         )
     };
 
-    if let Err(err) = dp
-        .engine_channel
-        .send(PaintEngineCommand::BrushPreview(layer_id, cmd))
+    if let Err(err) = dp.engine_channel
+        .send(PaintEngineCommand::BrushPreview(layer_id, cmd, Blendmode::Erase))
     {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }

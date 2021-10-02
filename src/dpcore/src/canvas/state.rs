@@ -266,6 +266,7 @@ impl CanvasState {
         &mut self,
         layer_id: LayerID,
         msgs: &[CommandMessage],
+        mode: Blendmode,
     ) -> CanvasStateChange {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack)
             .root_mut()
@@ -274,6 +275,8 @@ impl CanvasState {
             let mut layer = layer.get_or_create_sublayer(PREVIEW_SUBLAYER_ID);
 
             let mut aoe = editlayer::clear_layer(&mut layer);
+
+            layer.metadata_mut().blendmode = mode;
 
             for msg in msgs {
                 aoe = aoe.merge(match msg {
