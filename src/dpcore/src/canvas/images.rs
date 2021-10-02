@@ -92,7 +92,7 @@ pub fn make_putimage(
             y + splity as u32,
             &image.cropped(&Rectangle::new(
                 splitx,
-                0,
+                splity,
                 image.width as i32 - splitx,
                 image.height as i32 - splity,
             )),
