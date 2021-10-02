@@ -78,8 +78,8 @@ pub struct LayerViewOptions {
     /// Number of onionskin layers to show below the active one
     pub onionskins_below: i32,
 
-    /// Index of the active frame for frame and onionskin mode
-    pub active_frame_idx: usize,
+    /// Index of the active root group layer for frame and onionskin mode
+    pub active_root_idx: usize,
 
     /// Index of the active frame for Solo mode
     pub active_layer_id: LayerID,
@@ -101,7 +101,7 @@ impl Default for LayerViewOptions {
             onionskin_tint: false,
             onionskins_above: 1,
             onionskins_below: 1,
-            active_frame_idx: 0,
+            active_root_idx: 0,
             active_layer_id: 0,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
@@ -110,6 +110,12 @@ impl Default for LayerViewOptions {
 }
 
 impl LayerViewOptions {
+    /// Make an option set for showing a single frame
+    ///
+    /// Note: Since layers are ordered from top-to-bottom,
+    /// the index numbers are reversed. The first frame is
+    /// the bottom-most layer, thefore its index number
+    /// is actually `layer_count() - 1`
     pub fn frame(index: usize) -> Self {
         Self {
             censor: false,
@@ -118,7 +124,7 @@ impl LayerViewOptions {
             onionskin_tint: false,
             onionskins_above: 1,
             onionskins_below: 1,
-            active_frame_idx: index,
+            active_root_idx: index,
             active_layer_id: 0,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
@@ -325,7 +331,7 @@ impl LayerStack {
                     LayerViewMode::Normal => (1.0, 0),
                     LayerViewMode::Solo => unreachable!(),
                     LayerViewMode::Frame => (
-                        if idx == opts.active_frame_idx || metadata.fixed {
+                        if idx == opts.active_root_idx || metadata.fixed {
                             1.0
                         } else {
                             0.0
@@ -336,7 +342,7 @@ impl LayerStack {
                         if metadata.fixed {
                             (1.0, 0)
                         } else {
-                            let d = opts.active_frame_idx as i32 - idx as i32;
+                            let d = opts.active_root_idx as i32 - idx as i32;
                             let rd = if d == 0 {
                                 0.0
                             } else if d < 0 && d >= -opts.onionskins_above {

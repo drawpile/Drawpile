@@ -838,7 +838,7 @@ impl RootGroup {
     }
 
     /// Find the index of the top-level layer or group that contains this frame
-    pub fn find_frame_index_by_id(&self, layer_id: LayerID) -> Option<usize> {
+    pub fn find_root_index_by_id(&self, layer_id: LayerID) -> Option<usize> {
         self.0.routes.get(layer_id).or_else(|| {
             for (i, l) in self.iter_layers().enumerate() {
                 if l.metadata().id == layer_id {

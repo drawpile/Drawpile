@@ -703,7 +703,7 @@ pub extern "C" fn paintengine_set_onionskin_opts(
 pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: LayerID) {
     let aoe_bounds = {
         let mut vc = dp.viewcache.lock().unwrap();
-        let frame_idx = match vc.layerstack.root().find_frame_index_by_id(layer_id) {
+        let frame_idx = match vc.layerstack.root().find_root_index_by_id(layer_id) {
             Some(i) => i,
             None => {
                 return;
@@ -712,11 +712,11 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
 
         let changed = match dp.view_opts.viewmode {
             LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
-            LayerViewMode::Frame => dp.view_opts.active_frame_idx != frame_idx,
+            LayerViewMode::Frame => dp.view_opts.active_root_idx != frame_idx,
             _ => false,
         };
 
-        dp.view_opts.active_frame_idx = frame_idx;
+        dp.view_opts.active_root_idx = frame_idx;
         dp.view_opts.active_layer_id = layer_id;
 
         if !changed || vc.layerstack.root().width() == 0 {
@@ -1129,7 +1129,7 @@ pub extern "C" fn paintengine_get_frame_content(
     let pixel_slice =
         unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
 
-    let opts = LayerViewOptions::frame(frame_index);
+    let opts = LayerViewOptions::frame(vc.layerstack.frame_count() - frame_index - 1);
 
     vc.layerstack.to_pixels(rect, &opts, pixel_slice).is_ok()
 }
