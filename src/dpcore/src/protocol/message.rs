@@ -1117,8 +1117,8 @@ impl DrawDabsPixelMessage {
         })
     }
 
-    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(149, user_id, 15 + (self.dabs.len() * 4));
+    fn serialize(&self, w: &mut MessageWriter, msg_id: u8, user_id: u8) {
+        w.write_header(msg_id, user_id, 15 + (self.dabs.len() * 4));
         w.write(self.layer);
         w.write(self.x);
         w.write(self.y);
@@ -1867,8 +1867,8 @@ impl CommandMessage {
             PutTile(user_id, b) => b.serialize(w, *user_id),
             CanvasBackground(user_id, b) => w.single(147, *user_id, b),
             DrawDabsClassic(user_id, b) => b.serialize(w, *user_id),
-            DrawDabsPixel(user_id, b) => b.serialize(w, *user_id),
-            DrawDabsPixelSquare(user_id, b) => b.serialize(w, *user_id),
+            DrawDabsPixel(user_id, b) => b.serialize(w, 149, *user_id),
+            DrawDabsPixelSquare(user_id, b) => b.serialize(w, 150, *user_id),
             MoveRect(user_id, b) => b.serialize(w, *user_id),
             Undo(user_id, b) => b.serialize(w, *user_id),
         }

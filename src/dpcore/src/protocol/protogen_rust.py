@@ -80,8 +80,8 @@ impl {{ message.name }}Message {
         })
     }
 
-    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header({{ message.id }}, user_id, {{ payload_len(message) }});
+    fn serialize(&self, w: &mut MessageWriter, {% if message.is_aliased %}msg_id: u8,{%endif %} user_id: u8) {
+        w.write_header({% if message.is_aliased %}msg_id{% else %}{{ message.id }}{% endif %}, user_id, {{ payload_len(message) }});
         {% for field in message.fields %}
         {% if field.subfields %}
         for item in self.{{ field.name }}.iter() {
@@ -174,7 +174,7 @@ impl {{ message_type }}Message {
         match &self {
             {% for message in messages %}{% if message.message_type == message_type %}
             {% if message.alias or message.fields|length > 1 %}
-            {{ message.name }}(user_id, b) => b.serialize(w, *user_id),
+            {{ message.name }}(user_id, b) => b.serialize(w, {% if message.is_aliased %}{{ message.id }},{% endif %} *user_id),
             {% elif message.fields %}
             {{ message.name }}(user_id, b) => w.single({{ message.id }}, *user_id, {{ deref_primitive(message.fields[0]) }}b),
             {% else %}

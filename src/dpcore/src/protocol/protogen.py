@@ -27,11 +27,13 @@ class Message:
         self.reserved = False
 
         if 'alias' in desc:
+            self.alias = desc['alias']
+            self.is_aliased = True
+            self.fields = []
             try:
-                self.alias = desc['alias']
+                messages[self.alias].is_aliased = True
             except KeyError:
                 raise BadDefinition(f"Message {alias} not found!")
-            self.fields = []
 
         else:
             if desc.get('reserved', False):
@@ -41,6 +43,7 @@ class Message:
                 fields = _required(name, desc, 'fields', list)
 
             self.alias = None
+            self.is_aliased = False
             self.fields = []
             self.min_len = 0
             self.max_len = 0
