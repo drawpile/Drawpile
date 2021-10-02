@@ -78,7 +78,7 @@ bool LaserTrailItem::animationStep(float dt)
 	bool retain = true;
 	if(m_fadeout) {
 		setOpacity(qMax(0.0, opacity() - dt));
-		retain = opacity() == 0.0;
+		retain = opacity() > 0.0;
 	} else if(m_lastModified < QDateTime::currentMSecsSinceEpoch() - 3000) {
 		m_fadeout = true;
 	}
