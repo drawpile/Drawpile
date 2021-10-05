@@ -280,7 +280,7 @@ fn write_stack_xml<W: Write + Seek>(
             writer.write(XmlEvent::end_element())?;
         }
 
-        writer.write(XmlEvent::end_element().name("annotations"))?;
+        writer.write(XmlEvent::end_element().name("drawpile:annotations"))?;
     }
 
     writer.write(XmlEvent::end_element().name("image"))?;
