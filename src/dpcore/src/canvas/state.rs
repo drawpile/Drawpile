@@ -407,7 +407,7 @@ impl CanvasState {
             DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
             DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true),
             MoveRect(user, m) => self.handle_moverect(*user, m),
-            Undo(user, m) => self.handle_undo(*user, m).into(),
+            Undo(user, m) => self.handle_undo(*user, m),
         }
     }
 
@@ -417,7 +417,7 @@ impl CanvasState {
         AoE::Nothing
     }
 
-    fn handle_undo(&mut self, user_id: UserID, msg: &UndoMessage) -> AoE {
+    fn handle_undo(&mut self, user_id: UserID, msg: &UndoMessage) -> CanvasStateChange {
         // Session operators are allowed to undo/redo other users' work
         let user = if msg.override_user > 0 {
             msg.override_user
@@ -443,9 +443,20 @@ impl CanvasState {
                 self.handle_message(&msg);
             }
 
-            return old_layerstack.compare(&self.layerstack);
+            let aoe = old_layerstack.compare(&self.layerstack);
+
+            return CanvasStateChange {
+                aoe: aoe,
+                layers_changed: old_layerstack
+                    .root()
+                    .compare_structure(&self.layerstack.root()),
+                annotations_changed: old_layerstack.compare_annotations(&self.layerstack),
+                user: 0,
+                layer: 0,
+                cursor: (0, 0),
+            }
         }
-        AoE::Nothing
+        CanvasStateChange::nothing()
     }
 
     /// Penup ends indirect strokes by merging the user's sublayers.
