@@ -35,7 +35,7 @@ use std::convert::TryFrom;
 use std::mem;
 use std::ops::BitOrAssign;
 use std::sync::Arc;
-use tracing::{error, warn};
+use tracing::{error, warn, info};
 
 pub struct CanvasState {
     layerstack: Arc<LayerStack>,
@@ -121,6 +121,19 @@ impl CanvasStateChange {
         }
     }
 
+    fn compare(s1: &LayerStack, s2: &LayerStack) -> Self {
+        Self {
+            aoe: s1.compare(s2),
+            layers_changed: s1
+                .root()
+                .compare_structure(s2.root()),
+            annotations_changed: s1.compare_annotations(s2),
+            user: 0,
+            layer: 0,
+            cursor: (0, 0),
+        }
+    }
+
     pub fn has_any(&self) -> bool {
         match &self.aoe {
             AoE::Nothing => {}
@@ -196,6 +209,7 @@ impl CanvasState {
             RetconAction::Concurrent => self.handle_message(msg),
             RetconAction::AlreadyDone => CanvasStateChange::nothing(),
             RetconAction::Rollback(pos) => {
+                info!("History conflict with {:?}, (local fork tail at {}, history at {}).", msg, pos, self.history.end());
                 let replay = self.history.reset_before(pos);
 
                 // If the local fork still exists, move it to the end of the history
@@ -204,21 +218,13 @@ impl CanvasState {
                 if let Some((savepoint, messages)) = replay {
                     let old_layerstack = mem::replace(&mut self.layerstack, savepoint);
                     let localfork = self.localfork.messages();
+                    info!("Rolling back {} history + {} localfork messages.", messages.len(), localfork.len());
+
                     for m in messages.iter().chain(localfork.iter()) {
                         self.handle_message(m);
                     }
-                    let aoe = old_layerstack.compare(&self.layerstack);
 
-                    CanvasStateChange {
-                        aoe: aoe,
-                        layers_changed: old_layerstack
-                            .root()
-                            .compare_structure(&self.layerstack.root()),
-                        annotations_changed: old_layerstack.compare_annotations(&self.layerstack),
-                        user: 0,
-                        layer: 0,
-                        cursor: (0, 0),
-                    }
+                    CanvasStateChange::compare(&old_layerstack, &self.layerstack)
                 } else {
                     error!("Retcon failed! No savepoint found before {}", pos);
                     CanvasStateChange::nothing()
@@ -443,20 +449,11 @@ impl CanvasState {
                 self.handle_message(&msg);
             }
 
-            let aoe = old_layerstack.compare(&self.layerstack);
+            CanvasStateChange::compare(&old_layerstack, &self.layerstack)
 
-            return CanvasStateChange {
-                aoe: aoe,
-                layers_changed: old_layerstack
-                    .root()
-                    .compare_structure(&self.layerstack.root()),
-                annotations_changed: old_layerstack.compare_annotations(&self.layerstack),
-                user: 0,
-                layer: 0,
-                cursor: (0, 0),
-            }
+        } else {
+            CanvasStateChange::nothing()
         }
-        CanvasStateChange::nothing()
     }
 
     /// Penup ends indirect strokes by merging the user's sublayers.

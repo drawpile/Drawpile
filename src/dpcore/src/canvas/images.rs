@@ -26,7 +26,6 @@ use crate::protocol::message::{CommandMessage, PutImageMessage};
 
 const MAX_IMAGE_LEN: usize = 0xffff - 19;
 
-use std::convert::TryInto;
 
 /// Make a PutImage command.
 ///
