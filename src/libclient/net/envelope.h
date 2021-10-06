@@ -90,7 +90,7 @@ public:
 
 	//! Get the type of the message from its header
 	static int sniffType(const char *data) {
-		return data[2];
+		return static_cast<unsigned char>(data[2]);
 	}
 
 	//! Get the length of the message from its header
