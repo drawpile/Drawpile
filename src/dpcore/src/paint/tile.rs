@@ -92,6 +92,7 @@ impl TileData {
             mode,
         );
         self.maybe_blank = mode.can_decrease_opacity();
+        self.last_touched_by = other.last_touched_by;
     }
 
     pub fn merge_tile(&mut self, other: &Tile, opacity: f32, mode: Blendmode) {
