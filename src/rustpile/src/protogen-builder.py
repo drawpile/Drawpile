@@ -145,7 +145,7 @@ if __name__ == '__main__':
         'AnnotationEdit',
         'AnnotationDelete',
         #'MoveRegion',
-        'PutTile',
+        #'PutTile',
         'CanvasBackground',
         'MoveRect',
         'Undo',

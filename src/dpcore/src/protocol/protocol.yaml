@@ -549,6 +549,7 @@ PutTile:
     fields:
         - layer u16: hex
         - sublayer u8
+        - last_touch u8
         - col u16
         - row u16
         - repeat u16

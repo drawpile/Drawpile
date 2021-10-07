@@ -136,6 +136,7 @@ impl LayerTileSet {
                 PutTileMessage {
                     layer,
                     sublayer,
+                    last_touch: tr.tile.last_touched_by(),
                     col: tr.col as u16,
                     row: tr.row as u16,
                     repeat: (tr.len - 1) as u16,

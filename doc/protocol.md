@@ -106,6 +106,8 @@ Protocol stability promises:
  * Changed LayerDelete message's merge attribute from a boolean to a layer ID.
    This makes the command less stateful, as the structure of the layer stack no
    longer affects the interpretation of the command.
+ * Changed LayerCreate's to support group layers
+ * Added last touched by field to PutTile
 
 ### Protocol dp:4.21.2 (2.1.9)
  * User 0 (server) is now always treated as Operator tier. (Change for experimental smart server)

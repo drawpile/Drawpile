@@ -407,7 +407,7 @@ impl CanvasState {
             AnnotationReshape(user, m) => self.handle_annotation_reshape(*user, m),
             AnnotationEdit(user, m) => self.handle_annotation_edit(*user, m),
             AnnotationDelete(_, id) => self.handle_annotation_delete(*id),
-            PutTile(user, m) => self.handle_puttile(*user, m).into(),
+            PutTile(_, m) => self.handle_puttile(m).into(),
             CanvasBackground(_, m) => self.handle_background(m).into(),
             DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m),
             DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
@@ -720,12 +720,12 @@ impl CanvasState {
         CanvasStateChange::annotations(0, (0, 0))
     }
 
-    fn handle_puttile(&mut self, user_id: UserID, msg: &PutTileMessage) -> AoE {
+    fn handle_puttile(&mut self, msg: &PutTileMessage) -> AoE {
         if let Some(layer) = Arc::make_mut(&mut self.layerstack)
             .root_mut()
             .get_bitmaplayer_mut(msg.layer as LayerID)
         {
-            if let Some(tile) = compression::decompress_tile(&msg.image, user_id) {
+            if let Some(tile) = compression::decompress_tile(&msg.image, msg.last_touch) {
                 return editlayer::put_tile(
                     layer,
                     msg.sublayer.into(),

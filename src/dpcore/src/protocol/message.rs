@@ -891,6 +891,7 @@ impl AnnotationEditMessage {
 pub struct PutTileMessage {
     pub layer: u16,
     pub sublayer: u8,
+    pub last_touch: u8,
     pub col: u16,
     pub row: u16,
     pub repeat: u16,
@@ -899,10 +900,11 @@ pub struct PutTileMessage {
 
 impl PutTileMessage {
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
-        reader.validate(9, 65535)?;
+        reader.validate(10, 65535)?;
 
         let layer = reader.read::<u16>();
         let sublayer = reader.read::<u8>();
+        let last_touch = reader.read::<u8>();
         let col = reader.read::<u16>();
         let row = reader.read::<u16>();
         let repeat = reader.read::<u16>();
@@ -911,6 +913,7 @@ impl PutTileMessage {
         Ok(Self {
             layer,
             sublayer,
+            last_touch,
             col,
             row,
             repeat,
@@ -919,9 +922,10 @@ impl PutTileMessage {
     }
 
     fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(146, user_id, 9 + self.image.len());
+        w.write_header(146, user_id, 10 + self.image.len());
         w.write(self.layer);
         w.write(self.sublayer);
+        w.write(self.last_touch);
         w.write(self.col);
         w.write(self.row);
         w.write(self.repeat);
@@ -931,6 +935,7 @@ impl PutTileMessage {
     fn to_text(&self, txt: TextMessage) -> TextMessage {
         txt.set("layer", format!("0x{:04x}", self.layer))
             .set("sublayer", self.sublayer.to_string())
+            .set("last_touch", self.last_touch.to_string())
             .set("col", self.col.to_string())
             .set("row", self.row.to_string())
             .set("repeat", self.repeat.to_string())
@@ -941,6 +946,7 @@ impl PutTileMessage {
         Self {
             layer: tm.get_u16("layer"),
             sublayer: tm.get_u8("sublayer"),
+            last_touch: tm.get_u8("last_touch"),
             col: tm.get_u16("col"),
             row: tm.get_u16("row"),
             repeat: tm.get_u16("repeat"),

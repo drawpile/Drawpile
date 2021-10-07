@@ -444,32 +444,6 @@ pub extern "C" fn write_deleteannotation(writer: &mut MessageWriter, ctx: UserID
 }
 
 #[no_mangle]
-pub extern "C" fn write_puttile(
-    writer: &mut MessageWriter,
-    ctx: UserID,
-    layer: u16,
-    sublayer: u8,
-    col: u16,
-    row: u16,
-    repeat: u16,
-    image: *const u8,
-    image_len: usize,
-) {
-    CommandMessage::PutTile(
-        ctx,
-        PutTileMessage {
-            layer: layer,
-            sublayer: sublayer,
-            col: col,
-            row: row,
-            repeat: repeat,
-            image: unsafe { slice::from_raw_parts(image, image_len) }.into(),
-        },
-    )
-    .write(writer);
-}
-
-#[no_mangle]
 pub extern "C" fn write_background(
     writer: &mut MessageWriter,
     ctx: UserID,
