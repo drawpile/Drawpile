@@ -430,7 +430,6 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 {
 	if(index.isValid()) {
 		auto *dlg = new dialogs::LayerProperties(m_canvas->localUserId(), this);
-		dlg->setWindowFlag(Qt::Tool);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->setModal(false);
 
