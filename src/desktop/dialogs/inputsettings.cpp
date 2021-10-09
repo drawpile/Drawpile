@@ -171,6 +171,7 @@ void InputSettings::applyUiToPreset()
 			}
 		);
 		updateModeUi(current->curve.mode);
+		emit activePresetModified(current);
 	}
 }
 

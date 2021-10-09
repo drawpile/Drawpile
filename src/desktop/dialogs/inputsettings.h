@@ -45,6 +45,7 @@ public:
 
 signals:
 	void currentIndexChanged(int index);
+	void activePresetModified(const input::Preset *preset);
 
 public slots:
 	void setCurrentIndex(int index);

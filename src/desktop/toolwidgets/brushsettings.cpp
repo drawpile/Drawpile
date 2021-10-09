@@ -199,6 +199,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		if(!d->inputSettingsDialog) {
 			d->inputSettingsDialog = new dialogs::InputSettings(parent);
 			d->inputSettingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+			connect(d->inputSettingsDialog, &dialogs::InputSettings::activePresetModified,
+					this, &BrushSettings::emitPresetChanges);
 			connect(d->inputSettingsDialog, &dialogs::InputSettings::currentIndexChanged,
 					d->ui.inputPreset, &QComboBox::setCurrentIndex);
 			connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged),
