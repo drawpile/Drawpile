@@ -81,7 +81,7 @@ QString fileFormatFilter(FileFormatOptions formats)
 		if(formats.testFlag(FileFormatOption::Save)) {
 			if(formats.testFlag(FileFormatOption::QtImagesOnly)) {
 				for(const QByteArray &fmt : QImageWriter::supportedImageFormats()) {
-					filter << QStringLiteral("%1 (*.%2)").arg(fmt.toUpper(), fmt);
+					filter << QStringLiteral("%1 (*.%2)").arg(QString::fromLatin1(fmt.toUpper()), QString::fromLatin1(fmt));
 				}
 
 			} else {
