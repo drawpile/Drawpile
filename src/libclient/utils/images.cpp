@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 #include <QSize>
 #include <QImageReader>
 #include <QImageWriter>
-#include <QImage>
-#include <QColor>
 #include <QGuiApplication>
 
 namespace utils {
@@ -40,6 +38,24 @@ bool checkImageSize(const QSize &size)
 		size.height() <= MAX_SIZE;
 }
 
+static QVector<QPair<QString,QByteArray>> writableImageFormats()
+{
+	static QVector<QPair<QString,QByteArray>> formats;
+
+	if(formats.isEmpty()) {
+		// List of formats supported by Rustpile
+		// (See the image crate's features in dpimpex/Cargo.toml)
+		formats
+			<< QPair<QString,QByteArray>("OpenRaster", "ora")
+			<< QPair<QString,QByteArray>("JPEG", "jpeg")
+			<< QPair<QString,QByteArray>("PNG", "png")
+			<< QPair<QString,QByteArray>("GIF", "gif")
+			;
+	}
+
+	return formats;
+}
+
 bool isWritableFormat(const QString &filename)
 {
 	const int dot = filename.lastIndexOf('.');
@@ -47,36 +63,13 @@ bool isWritableFormat(const QString &filename)
 		return false;
 	const QByteArray suffix = filename.mid(dot+1).toLower().toLatin1();
 
-	// Formats we support
-	if(suffix == "ora")
-		return true;
-
-	// All formats supported by Qt
-	for(const QByteArray &fmt : QImageWriter::supportedImageFormats()) {
-		if(suffix == fmt)
+	const auto writableFormats = writableImageFormats();
+	for(const auto &pair : writableFormats) {
+		if(suffix == pair.second)
 			return true;
 	}
 
 	return false;
-}
-
-QVector<QPair<QString,QByteArray>> writableImageFormats()
-{
-	QVector<QPair<QString,QByteArray>> formats;
-
-	// We support ORA ourselves
-	formats.append(QPair<QString,QByteArray>("OpenRaster", "ora"));
-
-	// Get list of available formats
-	for(const QByteArray &fmt : QImageWriter::supportedImageFormats())
-	{
-		// only offer a reasonable subset
-		if(fmt == "png" || fmt=="jpeg" || fmt=="bmp" || fmt=="gif" || fmt=="tiff")
-			formats.append(QPair<QString,QByteArray>(QString(fmt).toUpper(), fmt));
-		else if(fmt=="jp2")
-			formats.append(QPair<QString,QByteArray>("JPEG2000", fmt));
-	}
-	return formats;
 }
 
 QString fileFormatFilter(FileFormatOptions formats)
@@ -86,18 +79,26 @@ QString fileFormatFilter(FileFormatOptions formats)
 
 	if(formats.testFlag(FileFormatOption::Images)) {
 		if(formats.testFlag(FileFormatOption::Save)) {
-			// List all image formats for saving
-			for(const auto &format : utils::writableImageFormats()) {
-				filter << QStringLiteral("%1 (*.%2)").arg(format.first, QString::fromLatin1(format.second));
+			if(formats.testFlag(FileFormatOption::QtImagesOnly)) {
+				for(const QByteArray &fmt : QImageWriter::supportedImageFormats()) {
+					filter << QStringLiteral("%1 (*.%2)").arg(fmt.toUpper(), fmt);
+				}
+
+			} else {
+				for(const auto &format : utils::writableImageFormats()) {
+					filter << QStringLiteral("%1 (*.%2)").arg(format.first, QString::fromLatin1(format.second));
+				}
 			}
 
 		} else {
 			// A single Images filter for loading
-			if(!formats.testFlag(FileFormatOption::QtImagesOnly))
-				readImages = "*.ora ";
-
-			for(QByteArray format : QImageReader::supportedImageFormats()) {
-				readImages += "*." + format + " ";
+			if(formats.testFlag(FileFormatOption::QtImagesOnly)) {
+				for(QByteArray format : QImageReader::supportedImageFormats()) {
+					readImages += "*." + format + " ";
+				}
+			} else {
+				// Formats supported by Rustpile
+				readImages = "*.ora *.png *.jpeg *.gif";
 			}
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
@@ -110,13 +111,11 @@ QString fileFormatFilter(FileFormatOptions formats)
 			filter
 				<< QGuiApplication::tr("Binary Recordings (%1)").arg("*.dprec")
 				<< QGuiApplication::tr("Text Recordings (%1)").arg("*.dptxt")
-				<< QGuiApplication::tr("Compressed Binary Recordings (%1)").arg("*.dprecz")
-				<< QGuiApplication::tr("Compressed Text Recordings (%1)").arg("*.dptxtz")
 				;
 
 		} else {
 			// A single Recordings filter for loading
-			recordings = "*.dprec *.dptxt *.dprecz *.dptxtz *.dprec.gz *.dptxt.gz";
+			recordings = "*.dprec *.dptxt";
 			filter
 				<< QGuiApplication::tr("Recordings (%1)").arg(recordings)
 				;
@@ -135,25 +134,6 @@ QString fileFormatFilter(FileFormatOptions formats)
 	}
 
 	return filter.join(";;");
-}
-
-QColor isSolidColorImage(const QImage &image)
-{
-	Q_ASSERT(image.format() == QImage::Format_ARGB32_Premultiplied);
-	if(image.format() != QImage::Format_ARGB32_Premultiplied) {
-		qWarning("isSolidColorImage: not a premultiplied ARGB32 image!");
-		return QColor();
-	}
-
-	const quint32 c = *reinterpret_cast<const quint32*>(image.bits());
-	const quint32 *p = reinterpret_cast<const quint32*>(image.bits());
-
-	int len = image.width() * image.height();
-	while(--len) {
-		if(*(++p) != c)
-			return QColor();
-	}
-	return QColor::fromRgba(c);
 }
 
 }

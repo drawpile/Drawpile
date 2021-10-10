@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2014-2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,24 +36,17 @@ bool checkImageSize(const QSize &size);
  * @brief Check if we support writing an image file with this format
  *
  * The the format is identified from the filename suffix.
- * Note that this function may return true even if the format is not found
- * in the writableImageFormats list, since that list is restricted to just
- * a reasonable set of commonly used formats. 
- *
- * @param filename
- * @return
+ * Note: only formats supported by the Rustpile library are included
+ * in the list.
  */
 bool isWritableFormat(const QString &filename);
-
-//! Get a whitelisted set of writable image formats
-QVector<QPair<QString,QByteArray>> writableImageFormats();
 
 enum FileFormatOption {
 	Images = 0x01,
 	Recordings = 0x02,
 	AllFiles = 0x04,
 	Save = 0x08,
-	QtImagesOnly = 0x10,
+	QtImagesOnly = 0x10,  // return images supported by Qt, rather than Rustpile
 
 	OpenImages = Images | AllFiles,
 	OpenEverything = Images | Recordings | AllFiles,
@@ -65,8 +58,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)
 
 //! Get a filter string to use in an Open or Save dialog
 QString fileFormatFilter(FileFormatOptions formats);
-
-QColor isSolidColorImage(const QImage &image);
 
 }
 
