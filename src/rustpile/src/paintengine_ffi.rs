@@ -814,7 +814,7 @@ pub extern "C" fn paintengine_preview_brush(
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
         layer_id,
         brushengine.take_dabs(0),
-        Blendmode::Normal
+        Blendmode::Normal,
     )) {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
@@ -858,9 +858,11 @@ pub extern "C" fn paintengine_preview_cut(
         )
     };
 
-    if let Err(err) = dp.engine_channel
-        .send(PaintEngineCommand::BrushPreview(layer_id, cmd, Blendmode::Erase))
-    {
+    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
+        layer_id,
+        cmd,
+        Blendmode::Erase,
+    )) {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
 }
@@ -981,10 +983,7 @@ pub extern "C" fn paintengine_make_movelayer(
     };
 
     if let Some(layers) = new_ordering {
-        CommandMessage::LayerOrder(user_id, LayerOrderMessage{
-            root: 0,
-            layers,
-        }).write(writer);
+        CommandMessage::LayerOrder(user_id, LayerOrderMessage { root: 0, layers }).write(writer);
         return true;
     }
 
@@ -1083,28 +1082,29 @@ pub extern "C" fn paintengine_get_layer_content(
         return false;
     }
 
-    let pixel_slice = unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
+    let pixel_slice =
+        unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
 
     if layer_id < 0 {
-        vc.layerstack.to_pixels(
-            rect,
-            &LayerViewOptions::default(),
-            pixel_slice
-        ).is_ok()
-
+        let mut vopts = LayerViewOptions::default();
+        vopts.no_canvas_background = true;
+        vc.layerstack
+            .to_pixels(rect, &vopts, pixel_slice)
+            .is_ok()
     } else if layer_id == 0 {
-        vc.layerstack.to_pixels(
-            rect,
-            &LayerViewOptions::default().with_background(vc.layerstack.background.clone()),
-            pixel_slice
-        ).is_ok()
 
+        vc.layerstack
+            .to_pixels(
+                rect,
+                &LayerViewOptions::default(),
+                pixel_slice,
+            )
+            .is_ok()
     } else if let Ok(layer_id) = LayerID::try_from(layer_id) {
-        if let Some(layer) = vc.layerstack.root().get_bitmaplayer(layer_id) {
-            layer.to_pixels(rect, pixel_slice).is_ok()
-        } else {
-            false
-        }
+        vc.layerstack.root()
+            .get_bitmaplayer(layer_id)
+            .and_then(|l| l.to_pixels(rect, pixel_slice).ok())
+            .is_some()
     } else {
         false
     }

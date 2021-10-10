@@ -84,6 +84,9 @@ pub struct LayerViewOptions {
     /// Index of the active frame for Solo mode
     pub active_layer_id: LayerID,
 
+    /// Don't render the canvas background
+    pub no_canvas_background: bool,
+
     /// The background to use. This can be used to add (for example)
     /// a checkerboard texture to transparent areas.
     background: Tile,
@@ -103,6 +106,7 @@ impl Default for LayerViewOptions {
             onionskins_below: 1,
             active_root_idx: 0,
             active_layer_id: 0,
+            no_canvas_background: false,
             background: Tile::Blank,
             background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
@@ -118,16 +122,9 @@ impl LayerViewOptions {
     /// is actually `layer_count() - 1`
     pub fn frame(index: usize) -> Self {
         Self {
-            censor: false,
-            highlight: 0,
             viewmode: LayerViewMode::Frame,
-            onionskin_tint: false,
-            onionskins_above: 1,
-            onionskins_below: 1,
             active_root_idx: index,
-            active_layer_id: 0,
-            background: Tile::Blank,
-            background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
+            ..Self::default()
         }
     }
 
@@ -288,7 +285,9 @@ impl LayerStack {
     pub fn flatten_tile(&self, i: u32, j: u32, opts: &LayerViewOptions) -> TileData {
         // Cache the composited background tile
         let mut destination = {
-            if matches!(opts.background, Tile::Blank) {
+            if opts.no_canvas_background {
+                opts.background.clone_data()
+            } else if matches!(opts.background, Tile::Blank) {
                 self.background.clone_data()
             } else {
                 let cache = opts.background_cache.borrow();

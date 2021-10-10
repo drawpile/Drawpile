@@ -112,6 +112,7 @@ public:
 	 * @param errorMessage if not null, error message is stored here
 	 */
 	void saveCanvas(const QString &filename);
+	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
 
 	void setAutosave(bool autosave);

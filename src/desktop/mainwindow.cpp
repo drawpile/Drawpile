@@ -1111,6 +1111,37 @@ void MainWindow::saveas()
 	}
 }
 
+void MainWindow::saveSelection()
+{
+	QString selfilter = "PNG (*.png)";
+
+	QString file = QFileDialog::getSaveFileName(
+			this,
+			tr("Save Image"),
+			getLastPath(),
+			utils::fileFormatFilter(utils::FileFormatOption::SaveImages | utils::FileFormatOption::QtImagesOnly),
+			&selfilter);
+
+	if(!file.isEmpty()) {
+		// Set file suffix if missing
+		const QFileInfo info(file);
+		if(info.suffix().isEmpty()) {
+			if(selfilter.isEmpty()) {
+				file += ".png";
+			} else {
+				// Use the currently selected filter
+				int i = selfilter.indexOf("*.")+1;
+				int i2 = selfilter.indexOf(')', i);
+				file += selfilter.midRef(i, i2-i);
+			}
+		}
+
+		// Save the image
+		setLastPath(file);
+		m_doc->saveSelection(file);
+	}
+}
+
 void MainWindow::onCanvasSaveStarted()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -2212,6 +2243,7 @@ void MainWindow::setupActions()
 #endif
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
+	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as");
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
@@ -2224,6 +2256,7 @@ void MainWindow::setupActions()
 #endif
 	m_currentdoctools->addAction(save);
 	m_currentdoctools->addAction(saveas);
+	m_currentdoctools->addAction(savesel);
 	m_currentdoctools->addAction(exportGifAnimation);
 	m_currentdoctools->addAction(exportAnimationFrames);
 	m_currentdoctools->addAction(record);
@@ -2232,6 +2265,7 @@ void MainWindow::setupActions()
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
 	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
 	connect(m_doc, &Document::autosaveChanged, autosave, &QAction::setChecked);
@@ -2258,6 +2292,7 @@ void MainWindow::setupActions()
 #endif
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
+	filemenu->addAction(savesel);
 	filemenu->addAction(autosave);
 	filemenu->addSeparator();
 

@@ -461,12 +461,6 @@ void write_retitlelayer(MessageWriter *writer,
                         const uint16_t *title,
                         uintptr_t title_len);
 
-void write_layerorder(MessageWriter *writer,
-                      UserID ctx,
-                      uint16_t root,
-                      const uint16_t *layers,
-                      uintptr_t layers_len);
-
 void write_deletelayer(MessageWriter *writer, UserID ctx, uint16_t id, uint16_t merge_to);
 
 void write_fillrect(MessageWriter *writer,
@@ -507,16 +501,6 @@ void write_editannotation(MessageWriter *writer,
                           uintptr_t text_len);
 
 void write_deleteannotation(MessageWriter *writer, UserID ctx, uint16_t id);
-
-void write_puttile(MessageWriter *writer,
-                   UserID ctx,
-                   uint16_t layer,
-                   uint8_t sublayer,
-                   uint16_t col,
-                   uint16_t row,
-                   uint16_t repeat,
-                   const uint8_t *image,
-                   uintptr_t image_len);
 
 void write_background(MessageWriter *writer, UserID ctx, const uint8_t *image, uintptr_t image_len);
 
@@ -708,8 +692,13 @@ Rectangle paintengine_get_layer_bounds(const PaintEngine *dp, LayerID layer_id);
 /// The rectangle must be contained within the layer bounds.
 /// The size if the buffer must be rect.w * rect.h * 4 bytes.
 /// If the copy operation fails, false will be returned.
+///
+/// If the layer ID is 0, the layers (background included)
+/// will be flattened
+/// Layer ID if -1 will flatten the layers but not include the
+/// canvas background.
 bool paintengine_get_layer_content(const PaintEngine *dp,
-                                   LayerID layer_id,
+                                   int32_t layer_id,
                                    Rectangle rect,
                                    uint8_t *pixels);
 

@@ -39,6 +39,7 @@
 #include <QDir>
 #include <QClipboard>
 #include <QThreadPool>
+#include <QPainter>
 
 Document::Document(QObject *parent)
 	: QObject(parent),
@@ -752,6 +753,23 @@ void Document::copyFromLayer(int layer)
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
 	QGuiApplication::clipboard()->setMimeData(data);
+}
+
+bool Document::saveSelection(const QString &path)
+{
+	QImage img = m_canvas->selectionToImage(0);
+
+	// Fill transparent pixels (i.e. area outside the selection)
+	// with the canvas background color.
+	// TODO background pattern support
+	const auto bg = m_canvas->paintEngine()->backgroundColor();
+	if(bg.isValid()) {
+		QPainter p(&img);
+		p.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+		p.fillRect(0, 0, img.width(), img.height(), bg);
+	}
+
+	return img.save(path);
 }
 
 void Document::copyVisible()
