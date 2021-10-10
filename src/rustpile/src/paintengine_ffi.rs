@@ -48,6 +48,7 @@ use dpimpex::rec::writer as rec_writer;
 
 use core::ffi::c_void;
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::fs::File;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{Receiver, Sender};
@@ -1065,10 +1066,15 @@ pub extern "C" fn paintengine_get_layer_bounds(dp: &PaintEngine, layer_id: Layer
 /// The rectangle must be contained within the layer bounds.
 /// The size if the buffer must be rect.w * rect.h * 4 bytes.
 /// If the copy operation fails, false will be returned.
+///
+/// If the layer ID is 0, the layers (background included)
+/// will be flattened
+/// Layer ID if -1 will flatten the layers but not include the
+/// canvas background.
 #[no_mangle]
 pub extern "C" fn paintengine_get_layer_content(
     dp: &PaintEngine,
-    layer_id: LayerID,
+    layer_id: i32,
     rect: Rectangle,
     pixels: *mut u8,
 ) -> bool {
@@ -1077,10 +1083,28 @@ pub extern "C" fn paintengine_get_layer_content(
         return false;
     }
 
-    if let Some(layer) = vc.layerstack.root().get_bitmaplayer(layer_id) {
-        let pixel_slice =
-            unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
-        layer.to_pixels(rect, pixel_slice).is_ok()
+    let pixel_slice = unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
+
+    if layer_id < 0 {
+        vc.layerstack.to_pixels(
+            rect,
+            &LayerViewOptions::default(),
+            pixel_slice
+        ).is_ok()
+
+    } else if layer_id == 0 {
+        vc.layerstack.to_pixels(
+            rect,
+            &LayerViewOptions::default().with_background(vc.layerstack.background.clone()),
+            pixel_slice
+        ).is_ok()
+
+    } else if let Ok(layer_id) = LayerID::try_from(layer_id) {
+        if let Some(layer) = vc.layerstack.root().get_bitmaplayer(layer_id) {
+            layer.to_pixels(rect, pixel_slice).is_ok()
+        } else {
+            false
+        }
     } else {
         false
     }
