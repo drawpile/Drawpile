@@ -25,11 +25,11 @@
 class QAction;
 
 namespace brushes {
-	class ClassicBrush;
+	struct ClassicBrush;
 }
 
 namespace input {
-	class Preset;
+	struct Preset;
 }
 
 namespace tools {

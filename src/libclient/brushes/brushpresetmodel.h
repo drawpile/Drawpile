@@ -24,7 +24,7 @@
 
 namespace brushes {
 
-class ClassicBrush;
+struct ClassicBrush;
 
 /**
  * List of brush presets

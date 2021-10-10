@@ -28,7 +28,7 @@ class Ui_InputSettings;
 
 namespace input {
 	class PresetModel;
-	class Preset;
+	struct Preset;
 }
 
 namespace dialogs {
