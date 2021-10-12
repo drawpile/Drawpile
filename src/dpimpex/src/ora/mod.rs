@@ -1,4 +1,4 @@
-use dpcore::paint::{Size, Rectangle, Blendmode};
+use dpcore::paint::{Blendmode, Rectangle, Size};
 
 mod reader;
 mod writer;
@@ -13,6 +13,7 @@ struct OraCanvas {
     size: Size,
     unsupported_features: bool,
     dpi: (i32, i32),
+    framerate: i32, // our extension
     root: OraStack,
     annotations: Vec<OraAnnotation>, // our extension
 }

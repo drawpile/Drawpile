@@ -242,6 +242,22 @@ class FieldFlags(Field):
         return super().__repr__() + ' ' + str(self.flags)
 
 
+class FieldEnum(Field):
+    def __init__(self, name, attributes, **kwargs):
+        super().__init__(name)
+        self.variants = attributes['variants']
+        self.enum_name = attributes['name']
+        self.min_len = 1
+        self.max_len = self.min_len
+
+    @property
+    def field_type(self):
+        return 'u8'
+
+    def __repr__(self):
+        return super().__repr__() + ' ' + str(self.variants)
+
+
 class FieldBytes(Field):
     field_type = 'Bytes'
     item_len = 1

@@ -26,7 +26,6 @@ use crate::protocol::message::{CommandMessage, PutImageMessage};
 
 const MAX_IMAGE_LEN: usize = 0xffff - 19;
 
-
 /// Make a PutImage command.
 ///
 /// If the image is too big to fit into a single command,
@@ -48,7 +47,7 @@ pub fn make_putimage(
         y,
         image,
         mode,
-        &Rectangle::new(0, 0, image.width as i32, image.height as i32)
+        &Rectangle::new(0, 0, image.width as i32, image.height as i32),
     );
     messages
 }
@@ -111,12 +110,7 @@ fn make_putimage_crop(
         y,
         image,
         mode,
-        &Rectangle::new(
-            rect.x + splitx,
-            rect.y,
-            rect.w - splitx,
-            splity,
-        ),
+        &Rectangle::new(rect.x + splitx, rect.y, rect.w - splitx, splity),
     );
     make_putimage_crop(
         messages,
@@ -126,12 +120,7 @@ fn make_putimage_crop(
         y,
         image,
         mode,
-        &Rectangle::new(
-            rect.x,
-            rect.y + splity,
-            splitx,
-            rect.h - splity,
-        ),
+        &Rectangle::new(rect.x, rect.y + splity, splitx, rect.h - splity),
     );
     make_putimage_crop(
         messages,

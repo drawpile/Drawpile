@@ -69,6 +69,7 @@ type NotifyCursorCallback =
     extern "C" fn(ctx: *mut c_void, user: UserID, layer: u16, x: i32, y: i32);
 type NotifyPlaybackCallback = extern "C" fn(ctx: *mut c_void, pos: i64, interval: u32);
 type NotifyCatchupCallback = extern "C" fn(ctx: *mut c_void, progress: u32);
+type NotifyMetadataCallback = extern "C" fn(ctx: *mut c_void);
 
 // Main thread callbacks:
 type JoinCallback = Option<
@@ -121,6 +122,7 @@ struct CanvasChangeCallbacks {
     notify_cursor: NotifyCursorCallback,
     notify_playback: NotifyPlaybackCallback,
     notify_catchup: NotifyCatchupCallback,
+    notify_metadata: NotifyMetadataCallback,
 }
 
 // Unsafe due to the c_void pointer. We promise to be careful with it.
@@ -294,6 +296,10 @@ fn run_paintengine(
                 (callbacks.notify_annotations)(callbacks.context_object, Box::leak(annotations));
             }
 
+            if changes.metadata_changed {
+                (callbacks.notify_metadata)(callbacks.context_object);
+            }
+
             if changes.user > 0 {
                 (callbacks.notify_cursor)(
                     callbacks.context_object,
@@ -318,6 +324,7 @@ pub extern "C" fn paintengine_new(
     cursors: NotifyCursorCallback,
     playback: NotifyPlaybackCallback,
     catchup: NotifyCatchupCallback,
+    metadata: NotifyMetadataCallback,
 ) -> *mut PaintEngine {
     let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
@@ -334,6 +341,7 @@ pub extern "C" fn paintengine_new(
         notify_cursor: cursors,
         notify_playback: playback,
         notify_catchup: catchup,
+        notify_metadata: metadata,
     };
 
     let (sender, receiver) = mpsc::channel::<PaintEngineCommand>();
@@ -1088,20 +1096,14 @@ pub extern "C" fn paintengine_get_layer_content(
     if layer_id < 0 {
         let mut vopts = LayerViewOptions::default();
         vopts.no_canvas_background = true;
-        vc.layerstack
-            .to_pixels(rect, &vopts, pixel_slice)
-            .is_ok()
+        vc.layerstack.to_pixels(rect, &vopts, pixel_slice).is_ok()
     } else if layer_id == 0 {
-
         vc.layerstack
-            .to_pixels(
-                rect,
-                &LayerViewOptions::default(),
-                pixel_slice,
-            )
+            .to_pixels(rect, &LayerViewOptions::default(), pixel_slice)
             .is_ok()
     } else if let Ok(layer_id) = LayerID::try_from(layer_id) {
-        vc.layerstack.root()
+        vc.layerstack
+            .root()
             .get_bitmaplayer(layer_id)
             .and_then(|l| l.to_pixels(rect, pixel_slice).ok())
             .is_some()

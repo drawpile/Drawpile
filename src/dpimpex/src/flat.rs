@@ -29,8 +29,9 @@ use image::{AnimationDecoder, ImageDecoder};
 
 use super::conv::{from_dpimage, to_dpimage};
 use crate::{ImageExportResult, ImageImportResult};
-use dpcore::paint::{editlayer, Blendmode, Color, LayerStack, Rectangle,
-    LayerViewOptions, LayerInsertion};
+use dpcore::paint::{
+    editlayer, Blendmode, Color, LayerInsertion, LayerStack, LayerViewOptions, Rectangle,
+};
 
 /// Load a flat image (an image that does not have layers)
 pub fn load_flat_image(path: &Path) -> ImageImportResult {
@@ -41,11 +42,7 @@ pub fn load_flat_image(path: &Path) -> ImageImportResult {
     let root = ls.root_mut();
 
     let layer = root
-        .add_bitmap_layer(
-            0x0100,
-            Color::TRANSPARENT,
-            LayerInsertion::Top,
-        )
+        .add_bitmap_layer(0x0100, Color::TRANSPARENT, LayerInsertion::Top)
         .unwrap();
     layer.metadata_mut().title = "Layer 1".into();
 
@@ -72,11 +69,7 @@ pub fn load_gif_animation(path: &Path) -> ImageImportResult {
     for (i, frame) in decoder.into_frames().enumerate() {
         let layer = ls
             .root_mut()
-            .add_bitmap_layer(
-                0x0100 + i as u16,
-                Color::TRANSPARENT,
-                LayerInsertion::Top,
-            )
+            .add_bitmap_layer(0x0100 + i as u16, Color::TRANSPARENT, LayerInsertion::Top)
             .unwrap()
             .as_bitmap_mut()
             .unwrap();

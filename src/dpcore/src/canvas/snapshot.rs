@@ -22,7 +22,7 @@
 
 use super::compression::compress_tile;
 use crate::paint::annotation::VAlign;
-use crate::paint::{Layer, BitmapLayer, GroupLayer, LayerID, LayerStack, LayerTileSet, UserID};
+use crate::paint::{BitmapLayer, GroupLayer, Layer, LayerID, LayerStack, LayerTileSet, UserID};
 use crate::protocol::aclfilter::{userbits_to_vec, AclFilter};
 use crate::protocol::message::*;
 
@@ -94,6 +94,21 @@ pub fn make_canvas_snapshot(
         )));
     }
 
+    // Metadata
+    let md = layerstack.metadata();
+    msgs.push(Message::Command(CommandMessage::SetMetadataInt(
+        user,
+        SetMetadataIntMessage { field: u8::from(MetadataInt::Dpix), value: md.dpix }
+    )));
+    msgs.push(Message::Command(CommandMessage::SetMetadataInt(
+        user,
+        SetMetadataIntMessage { field: u8::from(MetadataInt::Dpiy), value: md.dpiy }
+    )));
+    msgs.push(Message::Command(CommandMessage::SetMetadataInt(
+        user,
+        SetMetadataIntMessage { field: u8::from(MetadataInt::Framerate), value: md.framerate }
+    )));
+
     // ACLs
     if let Some(acl) = aclfilter {
         msgs.push(Message::ClientMeta(ClientMetaMessage::FeatureAccessLevels(
@@ -108,6 +123,7 @@ pub fn make_canvas_snapshot(
                 acl.feature_tiers().create_annotation.into(),
                 acl.feature_tiers().laser.into(),
                 acl.feature_tiers().undo.into(),
+                acl.feature_tiers().metadata.into(),
             ],
         )));
 

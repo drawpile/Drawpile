@@ -42,10 +42,11 @@ enum class Feature {
 	OwnLayers,
 	CreateAnnotation,
 	Laser,
-	Undo
+	Undo,
+	Metadata
 };
 
-static const int FeatureCount = int(Feature::Undo)+1;
+static const int FeatureCount = int(Feature::Metadata)+1;
 
 /**
  * Access control list state that is relevant to the UI.

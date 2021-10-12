@@ -23,7 +23,9 @@
 use dpcore::canvas::compression::compress_tile;
 use dpcore::canvas::CanvasState;
 use dpcore::paint::annotation::Annotation;
-use dpcore::paint::{Layer, LayerMetadata, BitmapLayer, GroupLayer, Tile, LayerViewOptions};
+use dpcore::paint::{
+    BitmapLayer, DocumentMetadata, GroupLayer, Layer, LayerMetadata, LayerViewOptions, Tile,
+};
 use dpcore::protocol::message::CommandMessage;
 
 use super::{IndexEntry, IndexResult, INDEX_FORMAT_VERSION};
@@ -31,10 +33,10 @@ use crate::conv::from_dpimage;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use image::codecs::png::PngEncoder;
-use image::{EncodableLayout, ImageEncoder, imageops};
+use image::{imageops, EncodableLayout, ImageEncoder};
 use std::collections::HashMap;
 use std::convert::TryInto;
-use std::io::{Seek, Write, SeekFrom};
+use std::io::{Seek, SeekFrom, Write};
 use std::sync::Arc;
 
 // Caches for sharing subblocks.
@@ -78,6 +80,7 @@ pub struct IndexBuilder<W: Write + Seek> {
     last_tiles: TileMap,
     last_layers: LayerMap,
     last_annotations: AnnotationMap,
+    last_metadata: (u64, DocumentMetadata),
 }
 
 /// Statistics. Mainly for tuning and debugging purposes.
@@ -91,6 +94,7 @@ pub struct Stats {
     pub reused_layers: u32,
     pub changed_annotations: u32,
     pub reused_annotations: u32,
+    pub metadata_changes: u32,
 }
 
 impl<W: Write + Seek> IndexBuilder<W> {
@@ -104,6 +108,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
             last_tiles: TileMap::new(),
             last_layers: LayerMap::new(),
             last_annotations: AnnotationMap::new(),
+            last_metadata: (0, DocumentMetadata::default()),
         }
     }
 
@@ -113,7 +118,8 @@ impl<W: Write + Seek> IndexBuilder<W> {
         self.writer.write_all(b"DPIDX\0")?;
 
         // Index format version number
-        self.writer.write_u16::<LittleEndian>(INDEX_FORMAT_VERSION)?;
+        self.writer
+            .write_u16::<LittleEndian>(INDEX_FORMAT_VERSION)?;
 
         // Placeholders for message count and index entry vector offset
         self.writer.write_u32::<LittleEndian>(0)?;
@@ -160,7 +166,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
             message_index: self.messages - 1,
             message_offset: self.last_message_offset,
             snapshot_offset,
-            thumbnail_offset
+            thumbnail_offset,
         });
 
         // Remember only the subblocks used in the last entry.
@@ -203,7 +209,10 @@ impl<W: Write + Seek> IndexBuilder<W> {
     fn write_thumbnail(&mut self) -> IndexResult<u64> {
         let offset = self.writer.stream_position()?;
 
-        let image = self.canvas.layerstack().to_image(&LayerViewOptions::default());
+        let image = self
+            .canvas
+            .layerstack()
+            .to_image(&LayerViewOptions::default());
         let image = from_dpimage(&image);
 
         let image = if image.width() > 256 || image.height() > 256 {
@@ -279,11 +288,18 @@ impl<W: Write + Seek> IndexBuilder<W> {
             tile_offset
         };
 
+        // Write metadata
+        if self.last_metadata.0 == 0 || self.last_metadata.1 != *ls.metadata() {
+            self.last_metadata = (self.write_metadata(ls.metadata())?, ls.metadata().clone());
+        }
+        let metadata_offset = self.last_metadata.0;
+
         // Now we can write the actual layerstack subblock
         let offset = self.writer.stream_position()?;
         self.writer.write_u32::<LittleEndian>(ls.root().width())?;
         self.writer.write_u32::<LittleEndian>(ls.root().height())?;
         self.writer.write_u64::<LittleEndian>(bgtile_offset)?;
+        self.writer.write_u64::<LittleEndian>(metadata_offset)?;
         self.writer.write_u64::<LittleEndian>(root_offset)?;
         self.writer
             .write_u16::<LittleEndian>(annotations.len().try_into()?)?;
@@ -291,6 +307,14 @@ impl<W: Write + Seek> IndexBuilder<W> {
             self.writer.write_u64::<LittleEndian>(a)?;
         }
 
+        Ok(offset)
+    }
+
+    fn write_metadata(&mut self, md: &DocumentMetadata) -> IndexResult<u64> {
+        let offset = self.writer.stream_position()?;
+        self.writer.write_i32::<LittleEndian>(md.dpix)?;
+        self.writer.write_i32::<LittleEndian>(md.dpiy)?;
+        self.writer.write_i32::<LittleEndian>(md.framerate)?;
         Ok(offset)
     }
 
@@ -333,7 +357,6 @@ impl<W: Write + Seek> IndexBuilder<W> {
                     copy_last_tile_offsets(b, &self.last_tiles, tilemap);
                 }
                 layers.push(*offset);
-
             } else {
                 // Layer has changed! Layer's content is still likely
                 // *mostly* unchanged, so we can make use of last_tiles.
@@ -375,7 +398,11 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
         // First, write the sublayers (if any)
         // Sublayers are very short lived, so we don't bother trying to reuse them
-        for sublayer in layer.sublayervec().iter().filter(|sl| sl.metadata().is_visible() && sl.metadata().id < 256) {
+        for sublayer in layer
+            .sublayervec()
+            .iter()
+            .filter(|sl| sl.metadata().is_visible() && sl.metadata().id < 256)
+        {
             stats.changed_layers += 1;
             let offset = self.write_bitmaplayer(sublayer, tilemap, layermap, stats)?;
             sublayers.push(offset);

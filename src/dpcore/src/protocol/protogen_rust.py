@@ -11,6 +11,8 @@ use super::serialization::{MessageReader, MessageWriter, DeserializationError};
 use super::textmessage::TextMessage;
 use std::fmt;
 use std::str::FromStr;
+use num_enum::IntoPrimitive;
+use num_enum::TryFromPrimitive;
 
 pub static PROTOCOL_VERSION: &str = "{{ version }}";
 pub const UNDO_DEPTH: u32 = {{ undo_depth }};
@@ -27,6 +29,17 @@ pub struct {{ sfield.struct_name }} {
     {% endfor %}
 }
 {% endif %}
+
+{# ENUM TYPE #}
+{% for f in message.fields %}
+{% if f.variants %}
+#[derive(Copy, Clone, Debug, PartialEq, IntoPrimitive, TryFromPrimitive)]
+#[repr(u8)]
+pub enum {{ f.enum_name }} {
+{% for v in f.variants %}{{ v }},{% endfor %}
+}
+{% endif %}
+{% endfor %}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct {{ message.name }}Message {

@@ -252,8 +252,8 @@ FeatureAccessLevels:
     comment: Change feature access tiers
     fields:
         - feature_tiers vec_u8:
-          min_len: 9
-          max_len: 9
+          min_len: 10
+          max_len: 10
 
 DefaultLayer:
     id: 71
@@ -644,6 +644,30 @@ MoveRect:
       - w i32
       - h i32
       - mask bytes
+
+SetMetadataInt:
+    id: 161
+    comment: |
+             Set a document metadata field (integer type)
+
+             These typically don't have an immediate visual effect,
+             but these fields are part of the document, like the pixel content
+             or the annotations.
+    fields:
+        - field enum:
+          name: MetadataInt
+          variants:
+              - Dpix
+              - Dpiy
+              - Framerate
+        - value i32
+
+SetMetadataStr:
+    id: 162
+    comment: Set a document metadata field (string type)
+    fields:
+        - field u8
+        - value utf8
 
 Undo:
     id: 255

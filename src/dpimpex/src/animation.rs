@@ -15,16 +15,13 @@ pub fn save_gif_animation(path: &Path, layerstack: &LayerStack) -> ImageExportRe
 
     let last = layerstack.root().layer_count() - 1;
 
+    let delay = Delay::from_numer_denom_ms(1000, layerstack.metadata().framerate.max(1) as u32);
+
     for (idx, layer) in layerstack.root().iter_layers().rev().enumerate() {
         if !layer.metadata().fixed && layer.is_visible() {
             let image = layerstack.to_image(&LayerViewOptions::frame(last - idx));
             // TODO subframe delta
-            encoder.encode_frame(Frame::from_parts(
-                from_dpimage(&image),
-                0,
-                0,
-                Delay::from_numer_denom_ms(41, 1), // TODO adjustable FPS
-            ))?;
+            encoder.encode_frame(Frame::from_parts(from_dpimage(&image), 0, 0, delay))?;
         }
     }
     Ok(())

@@ -24,11 +24,11 @@ use crate::paint::tile::{Tile, TileData, TILE_LENGTH};
 use crate::paint::{Color, Pixel, UserID};
 
 use std::convert::TryInto;
-use std::{mem, slice};
 use std::io::Write;
+use std::{mem, slice};
 use tracing::warn;
 
-use deflate::{deflate_bytes_zlib, Compression, write::ZlibEncoder};
+use deflate::{deflate_bytes_zlib, write::ZlibEncoder, Compression};
 use inflate::inflate_bytes_zlib;
 
 /// Decompress a Tile.

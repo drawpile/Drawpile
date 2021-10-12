@@ -239,6 +239,8 @@ using NotifyPlaybackCallback = void(*)(void *ctx, int64_t pos, uint32_t interval
 
 using NotifyCatchupCallback = void(*)(void *ctx, uint32_t progress);
 
+using NotifyMetadataCallback = void(*)(void *ctx);
+
 using JoinCallback = void(*)(void *ctx, UserID user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
 
 using LeaveCallback = void(*)(void *ctx, UserID user);
@@ -307,6 +309,8 @@ struct FeatureTiers {
   Tier laser;
   /// Permission to use undo/redo
   Tier undo;
+  /// Permission to edit document metadata
+  Tier metadata;
 };
 
 using IndexBuildProgressNoticationFn = void(*)(void *ctx, uint32_t progress);
@@ -536,7 +540,8 @@ PaintEngine *paintengine_new(void *ctx,
                              NotifyAnnotationsCallback annotations,
                              NotifyCursorCallback cursors,
                              NotifyPlaybackCallback playback,
-                             NotifyCatchupCallback catchup);
+                             NotifyCatchupCallback catchup,
+                             NotifyMetadataCallback metadata);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);

@@ -2,6 +2,8 @@
 
 use super::serialization::{DeserializationError, MessageReader, MessageWriter};
 use super::textmessage::TextMessage;
+use num_enum::IntoPrimitive;
+use num_enum::TryFromPrimitive;
 use std::fmt;
 use std::str::FromStr;
 
@@ -1255,6 +1257,84 @@ impl MoveRectMessage {
     }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, IntoPrimitive, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MetadataInt {
+    Dpix,
+    Dpiy,
+    Framerate,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SetMetadataIntMessage {
+    pub field: u8,
+    pub value: i32,
+}
+
+impl SetMetadataIntMessage {
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate(5, 5)?;
+
+        let field = reader.read::<u8>();
+        let value = reader.read::<i32>();
+
+        Ok(Self { field, value })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(161, user_id, 5);
+        w.write(self.field);
+        w.write(self.value);
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        txt.set("field", self.field.to_string())
+            .set("value", self.value.to_string())
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        Self {
+            field: tm.get_u8("field"),
+            value: i32::from_str(tm.get_str("value")).unwrap_or_default(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SetMetadataStrMessage {
+    pub field: u8,
+    pub value: String,
+}
+
+impl SetMetadataStrMessage {
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate(1, 65535)?;
+
+        let field = reader.read::<u8>();
+        let value = reader.read_remaining_str();
+
+        Ok(Self { field, value })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(162, user_id, 1 + self.value.len());
+        w.write(self.field);
+        w.write(&self.value);
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        txt.set("field", self.field.to_string())
+            .set("value", self.value.clone())
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        Self {
+            field: tm.get_u8("field"),
+            value: tm.get_str("value").to_string(),
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct UndoMessage {
     pub override_user: u8,
@@ -1675,6 +1755,17 @@ pub enum CommandMessage {
     ///
     MoveRect(u8, MoveRectMessage),
 
+    /// Set a document metadata field (integer type)
+    ///
+    /// These typically don't have an immediate visual effect,
+    /// but these fields are part of the document, like the pixel content
+    /// or the annotations.
+    ///
+    SetMetadataInt(u8, SetMetadataIntMessage),
+
+    /// Set a document metadata field (string type)
+    SetMetadataStr(u8, SetMetadataStrMessage),
+
     /// Undo or redo actions
     Undo(u8, UndoMessage),
 }
@@ -1876,6 +1967,8 @@ impl CommandMessage {
             DrawDabsPixel(user_id, b) => b.serialize(w, 149, *user_id),
             DrawDabsPixelSquare(user_id, b) => b.serialize(w, 150, *user_id),
             MoveRect(user_id, b) => b.serialize(w, *user_id),
+            SetMetadataInt(user_id, b) => b.serialize(w, *user_id),
+            SetMetadataStr(user_id, b) => b.serialize(w, *user_id),
             Undo(user_id, b) => b.serialize(w, *user_id),
         }
     }
@@ -1911,6 +2004,8 @@ impl CommandMessage {
                 b.to_text(TextMessage::new(*user_id, "squarepixeldabs"))
             }
             MoveRect(user_id, b) => b.to_text(TextMessage::new(*user_id, "moverect")),
+            SetMetadataInt(user_id, b) => b.to_text(TextMessage::new(*user_id, "setmetadataint")),
+            SetMetadataStr(user_id, b) => b.to_text(TextMessage::new(*user_id, "setmetadatastr")),
             Undo(user_id, b) => b.to_text(TextMessage::new(*user_id, "undo")),
         }
     }
@@ -1938,6 +2033,8 @@ impl CommandMessage {
             DrawDabsPixel(user_id, _) => *user_id,
             DrawDabsPixelSquare(user_id, _) => *user_id,
             MoveRect(user_id, _) => *user_id,
+            SetMetadataInt(user_id, _) => *user_id,
+            SetMetadataStr(user_id, _) => *user_id,
             Undo(user_id, _) => *user_id,
         }
     }
@@ -2023,7 +2120,7 @@ impl Message {
             )),
             70 => ClientMeta(ClientMetaMessage::FeatureAccessLevels(
                 u,
-                r.validate(9, 9)?.read_remaining_vec(),
+                r.validate(10, 10)?.read_remaining_vec(),
             )),
             71 => ClientMeta(ClientMetaMessage::DefaultLayer(
                 u,
@@ -2103,6 +2200,14 @@ impl Message {
             160 => Command(CommandMessage::MoveRect(
                 u,
                 MoveRectMessage::deserialize(r)?,
+            )),
+            161 => Command(CommandMessage::SetMetadataInt(
+                u,
+                SetMetadataIntMessage::deserialize(r)?,
+            )),
+            162 => Command(CommandMessage::SetMetadataStr(
+                u,
+                SetMetadataStrMessage::deserialize(r)?,
             )),
             255 => Command(CommandMessage::Undo(u, UndoMessage::deserialize(r)?)),
             _ => {
@@ -2269,6 +2374,14 @@ impl Message {
             "moverect" => Command(CommandMessage::MoveRect(
                 tm.user_id,
                 MoveRectMessage::from_text(&tm),
+            )),
+            "setmetadataint" => Command(CommandMessage::SetMetadataInt(
+                tm.user_id,
+                SetMetadataIntMessage::from_text(&tm),
+            )),
+            "setmetadatastr" => Command(CommandMessage::SetMetadataStr(
+                tm.user_id,
+                SetMetadataStrMessage::from_text(&tm),
             )),
             "undo" => Command(CommandMessage::Undo(
                 tm.user_id,

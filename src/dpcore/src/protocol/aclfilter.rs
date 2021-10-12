@@ -48,6 +48,9 @@ pub struct FeatureTiers {
 
     /// Permission to use undo/redo
     pub undo: Tier,
+
+    /// Permission to edit document metadata
+    pub metadata: Tier,
 }
 
 /// Set of general user related permission bits
@@ -128,6 +131,7 @@ impl AclFilter {
                 create_annotation: Tier::Guest,
                 laser: Tier::Guest,
                 undo: Tier::Guest,
+                metadata: Tier::Operator,
             },
         }
     }
@@ -264,6 +268,7 @@ impl AclFilter {
                         create_annotation: Tier::try_from(f[6]).unwrap(),
                         laser: Tier::try_from(f[7]).unwrap(),
                         undo: Tier::try_from(f[8]).unwrap(),
+                        metadata: Tier::try_from(f[9]).unwrap(),
                     };
                     (true, ACLCHANGE_FEATURES)
                 } else {
@@ -347,6 +352,7 @@ impl AclFilter {
                     && !self.is_layer_locked(*u, m.layer)
             }
             Undo(u, _) => self.users.tier(*u) <= self.feature_tier.undo,
+            SetMetadataInt(u, _) | SetMetadataStr(u, _) => self.users.tier(*u) <= self.feature_tier.metadata,
         }
     }
 
@@ -452,11 +458,11 @@ mod tests {
     fn join(acl: &mut AclFilter, user: UserID) {
         let (ok, c) = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::Join(
             user,
-            JoinMessage{
+            JoinMessage {
                 flags: 0,
                 name: String::new(),
                 avatar: Vec::new(),
-            }
+            },
         )));
 
         assert!(ok);
@@ -466,7 +472,7 @@ mod tests {
     fn set_op(acl: &mut AclFilter, by_user: UserID, user: UserID) -> bool {
         let (ok, _) = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(
             by_user,
-            vec![user]
+            vec![user],
         )));
 
         ok
@@ -475,14 +481,14 @@ mod tests {
     fn create_layer(acl: &mut AclFilter, user: UserID, layer: LayerID, target: LayerID) -> bool {
         let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::LayerCreate(
             user,
-            LayerCreateMessage{
+            LayerCreateMessage {
                 id: layer,
                 source: 0,
                 target,
                 fill: 0,
                 flags: 0,
                 name: String::new(),
-            }
+            },
         )));
 
         ok

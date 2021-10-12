@@ -20,15 +20,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use super::{
+    Isolation, OraAnnotation, OraCanvas, OraCommon, OraLayer, OraStack, OraStackElement,
+    DP_NAMESPACE, MYPAINT_NAMESPACE,
+};
 use crate::conv::to_dpimage;
 use crate::{ImageImportResult, ImpexError};
-use super::{DP_NAMESPACE, MYPAINT_NAMESPACE,
-    OraCanvas, Isolation, OraStackElement, OraCommon, OraStack, OraLayer, OraAnnotation};
 
 use dpcore::paint::annotation::VAlign;
-use dpcore::paint::{editlayer, Blendmode, Color, Image,
-    LayerStack, LayerInsertion, LayerID,
-    Rectangle, Size, Tile};
+use dpcore::paint::{
+    editlayer, Blendmode, Color, Image, LayerID, LayerInsertion, LayerStack, Rectangle, Size, Tile,
+};
 
 use std::fs::File;
 use std::io::{Cursor, Read, Seek};
@@ -49,7 +51,9 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
 
     let mut ls = LayerStack::new(canvas.size.width as u32, canvas.size.height as u32);
 
-    // TODO dpi
+    ls.metadata_mut().dpix = canvas.dpi.0;
+    ls.metadata_mut().dpiy = canvas.dpi.1;
+    ls.metadata_mut().framerate = canvas.framerate;
 
     // Create layers
     let mut next_layer_id = 0x0100;
@@ -73,12 +77,23 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     Ok(ls)
 }
 
-fn create_stack<R: Read+Seek>(archive: &mut ZipArchive<R>, layerstack: &mut LayerStack, next_layer_id: &mut LayerID, parent_id: LayerID, stack: &OraStack) -> Result<(), ImpexError> {
+fn create_stack<R: Read + Seek>(
+    archive: &mut ZipArchive<R>,
+    layerstack: &mut LayerStack,
+    next_layer_id: &mut LayerID,
+    parent_id: LayerID,
+    stack: &OraStack,
+) -> Result<(), ImpexError> {
     for layer in stack.layers.iter().rev() {
         match layer {
             OraStackElement::Stack(substack) => {
                 let layer_id = *next_layer_id;
-                let subgroup = layerstack.root_mut().add_group_layer(layer_id, LayerInsertion::Into(parent_id)).unwrap().as_group_mut().unwrap();
+                let subgroup = layerstack
+                    .root_mut()
+                    .add_group_layer(layer_id, LayerInsertion::Into(parent_id))
+                    .unwrap()
+                    .as_group_mut()
+                    .unwrap();
                 *next_layer_id += 1;
                 let metadata = subgroup.metadata_mut();
 
@@ -232,6 +247,9 @@ fn parse_stack_image<R: Read>(
                 .and_then(|a| a.parse::<i32>().ok())
                 .unwrap_or(72),
         ),
+        framerate: take_attribute(&mut attributes, "framerate", None)
+            .and_then(|a| a.parse::<i32>().ok())
+            .unwrap_or(24),
         root: OraStack {
             common: OraCommon {
                 name: String::new(),
@@ -264,12 +282,10 @@ fn parse_stack_image<R: Read>(
                     canvas.root = parse_stack_stack(attributes, (0, 0), parser)?;
                     canvas.annotations.append(&mut canvas.root.annotations);
                     canvas.unsupported_features |= canvas.root.common.unsupported_features;
-
                 } else if name.local_name == "annotations"
                     && name.namespace.as_deref() == Some(DP_NAMESPACE)
                 {
                     canvas.annotations.append(&mut parse_annotations(parser)?);
-
                 } else {
                     warn!("Unsupported openraster <image> element <{}>", name);
                     canvas.unsupported_features = true;
@@ -304,13 +320,12 @@ fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32)) -> OraC
             offset.1
                 + take_attribute(attributes, "y", None)
                     .and_then(|a| a.parse::<i32>().ok())
-                    .unwrap_or(0)
+                    .unwrap_or(0),
         ),
         opacity: take_attribute(attributes, "opacity", None)
             .and_then(|a| a.parse::<f32>().ok())
             .unwrap_or(1.0),
-        visibility: take_attribute(attributes, "visibility", None)
-            .map_or(true, |a| a == "visible"),
+        visibility: take_attribute(attributes, "visibility", None).map_or(true, |a| a == "visible"),
         locked: take_attribute(attributes, "edit-locked", None).map_or(false, |a| a == "true"),
         censored: take_attribute(attributes, "censored", Some(DP_NAMESPACE))
             .map_or(false, |a| a == "true"),
@@ -319,7 +334,7 @@ fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32)) -> OraC
         composite_op: take_attribute(attributes, "composite-op", None)
             .and_then(|s| Blendmode::from_svg_name(&s))
             .unwrap_or(Blendmode::Normal),
-            unsupported_features: false,
+        unsupported_features: false,
     }
 }
 
@@ -344,19 +359,14 @@ fn parse_stack_stack<R: Read>(
                 name, attributes, ..
             }) => {
                 if name.local_name == "stack" {
-                    let substack = parse_stack_stack(
-                        attributes,
-                        stack.common.offset,
-                        parser)?;
+                    let substack = parse_stack_stack(attributes, stack.common.offset, parser)?;
                     stack.common.unsupported_features |= substack.common.unsupported_features;
 
                     stack.layers.push(OraStackElement::Stack(substack));
-
                 } else if name.local_name == "layer" {
                     let layer = parse_stack_layer(attributes, stack.common.offset, parser)?;
                     stack.common.unsupported_features |= layer.common.unsupported_features;
                     stack.layers.push(OraStackElement::Layer(layer));
-
                 } else if name.local_name == "annotations"
                     && name.namespace.as_deref() == Some(DP_NAMESPACE)
                 {

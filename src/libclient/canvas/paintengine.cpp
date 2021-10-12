@@ -88,6 +88,12 @@ void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations)
 	emit reinterpret_cast<PaintEngine*>(pe)->annotationsChanged(annotations);
 }
 
+void paintEngineMetadataChanged(void *pe)
+{
+	// Note: rustpile::Annotations is thread safe
+	emit reinterpret_cast<PaintEngine*>(pe)->metadataChanged();
+}
+
 void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32_t y)
 {
 	// This may be emitted from either the main thread or the paint engine thread
@@ -126,7 +132,8 @@ void PaintEngine::reset()
 		paintEngineAnnotationsChanged,
 		paintEngineCursors,
 		paintEnginePlayback,
-		paintEngineCatchup
+		paintEngineCatchup,
+		paintEngineMetadataChanged
 	);
 
 	m_cache = QPixmap();

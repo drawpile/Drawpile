@@ -20,17 +20,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use super::{
+    Isolation, OraCommon, OraLayer, OraStack, OraStackElement, DP_NAMESPACE, MYPAINT_NAMESPACE,
+};
 use crate::conv::from_dpimage;
 use crate::{ImageExportResult, ImpexError};
-use super::{DP_NAMESPACE, MYPAINT_NAMESPACE,
-    OraCommon, Isolation, OraStackElement, OraStack, OraLayer};
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
-    Blendmode, Image,
-    LayerStack, LayerViewOptions,
-    Rectangle,
-    Layer, GroupLayer, BitmapLayer
+    BitmapLayer, Blendmode, GroupLayer, Image, Layer, LayerStack, LayerViewOptions, Rectangle,
 };
 
 use image::codecs::png::PngEncoder;
@@ -39,8 +37,8 @@ use std::fs::File;
 use std::io::{Seek, Write};
 use std::path::Path;
 use xml::common::XmlVersion;
-use xml::writer::{XmlEvent, EventWriter};
 use xml::writer::events::StartElementBuilder;
+use xml::writer::{EventWriter, XmlEvent};
 use xml::EmitterConfig;
 use zip::ZipWriter;
 
@@ -109,7 +107,7 @@ fn write_background<W: Write + Seek>(
         .unwrap();
     write_png(archive, &tilename, &from_dpimage(&bgt))?;
 
-    Ok(OraLayer{
+    Ok(OraLayer {
         common: OraCommon {
             name: "Background".into(),
             offset: (0, 0),
@@ -119,7 +117,7 @@ fn write_background<W: Write + Seek>(
             censored: false,
             fixed: false,
             composite_op: Blendmode::Normal,
-            unsupported_features: false
+            unsupported_features: false,
         },
         filename,
         bgtile: tilename,
@@ -151,9 +149,15 @@ fn write_layer<W: Write + Seek>(
 
     if image.width > 0 {
         write_png(archive, &ol.filename, &from_dpimage(&image))?;
-
     } else {
-        let blank = layer.to_image(Rectangle::new(0, 0, layer.width() as i32, layer.height() as i32)).unwrap();
+        let blank = layer
+            .to_image(Rectangle::new(
+                0,
+                0,
+                layer.width() as i32,
+                layer.height() as i32,
+            ))
+            .unwrap();
         write_png(archive, &ol.filename, &from_dpimage(&blank))?;
     }
 
@@ -177,7 +181,11 @@ fn write_stack<W: Write + Seek>(
             composite_op: md.blendmode,
             unsupported_features: false,
         },
-        isolation: if group.metadata().isolated { Isolation::Isolate } else { Isolation::Auto },
+        isolation: if group.metadata().isolated {
+            Isolation::Isolate
+        } else {
+            Isolation::Auto
+        },
         layers: Vec::new(),
         annotations: Vec::new(), // unused here
     };
@@ -185,10 +193,14 @@ fn write_stack<W: Write + Seek>(
     for layer in group.iter_layers() {
         match layer {
             Layer::Bitmap(b) => {
-                stack.layers.push(OraStackElement::Layer(write_layer(archive, b)?));
+                stack
+                    .layers
+                    .push(OraStackElement::Layer(write_layer(archive, b)?));
             }
             Layer::Group(g) => {
-                stack.layers.push(OraStackElement::Stack(write_stack(archive, g)?));
+                stack
+                    .layers
+                    .push(OraStackElement::Stack(write_stack(archive, g)?));
             }
         };
     }
@@ -235,13 +247,18 @@ fn write_stack_xml<W: Write + Seek>(
     {
         let w = layerstack.root().width().to_string();
         let h = layerstack.root().height().to_string();
+        let xres = layerstack.metadata().dpix.to_string();
+        let yres = layerstack.metadata().dpiy.to_string();
+        let fps = layerstack.metadata().framerate.to_string();
         let e = XmlEvent::start_element("image")
             .ns("mypaint", MYPAINT_NAMESPACE)
             .ns("drawpile", DP_NAMESPACE)
             .attr("w", &w)
             .attr("h", &h)
-            .attr("version", "0.0.3");
-        // TODO DPI
+            .attr("version", "0.0.3")
+            .attr("xres", &xres)
+            .attr("yres", &yres)
+            .attr("drawpile:framerate", &fps);
         writer.write(e)?;
     }
 
@@ -288,11 +305,13 @@ fn write_stack_xml<W: Write + Seek>(
     Ok(())
 }
 
-fn write_stack_xml_stack<W: Write>(writer: &mut EventWriter<W>, stack: &OraStack) -> ImageExportResult {
+fn write_stack_xml_stack<W: Write>(
+    writer: &mut EventWriter<W>,
+    stack: &OraStack,
+) -> ImageExportResult {
     // Root stack
     let opacity = format!("{:.4}", stack.common.opacity);
-    let mut stack_element = XmlEvent::start_element("stack")
-        .attr("opacity", &opacity);
+    let mut stack_element = XmlEvent::start_element("stack").attr("opacity", &opacity);
 
     stack_element = stack_common_attrs(stack_element, &stack.common);
 
@@ -333,7 +352,10 @@ fn write_stack_xml_stack<W: Write>(writer: &mut EventWriter<W>, stack: &OraStack
     Ok(())
 }
 
-fn stack_common_attrs<'a>(mut el: StartElementBuilder<'a>, common: &'a OraCommon) -> StartElementBuilder<'a> {
+fn stack_common_attrs<'a>(
+    mut el: StartElementBuilder<'a>,
+    common: &'a OraCommon,
+) -> StartElementBuilder<'a> {
     el = el.attr("name", &common.name);
 
     if !common.visibility {

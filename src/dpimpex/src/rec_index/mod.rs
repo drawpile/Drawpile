@@ -1,7 +1,7 @@
-use std::{fmt, error};
+use std::{error, fmt};
 
-pub mod writer;
 pub mod reader;
+pub mod writer;
 
 pub const INDEX_FORMAT_VERSION: u16 = 9;
 
@@ -80,4 +80,3 @@ impl error::Error for IndexError {
 }
 
 pub type IndexResult<T> = Result<T, IndexError>;
-

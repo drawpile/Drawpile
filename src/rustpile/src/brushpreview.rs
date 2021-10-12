@@ -24,8 +24,8 @@ use dpcore::brush::{BrushEngine, BrushState, ClassicBrush};
 use dpcore::canvas::brushes;
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
-    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID,
-    LayerInsertion, LayerStack, Rectangle,
+    editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID, LayerInsertion,
+    LayerStack, Rectangle,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -119,14 +119,7 @@ impl BrushPreview {
             .root_mut()
             .get_bitmaplayer_mut(LAYER_ID)
             .unwrap();
-        editlayer::put_tile(
-            layer,
-            0,
-            0,
-            0,
-            9999,
-            &Tile::new(&layer_color, 1),
-        );
+        editlayer::put_tile(layer, 0, 0, 0, 9999, &Tile::new(&layer_color, 1));
 
         match foreground_style {
             ForegroundStyle::Solid => {

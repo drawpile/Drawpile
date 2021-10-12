@@ -93,6 +93,9 @@ enum AffectedArea {
     /// Layer content changed
     Pixels(LayerID, Rectangle),
 
+    /// Document metadata field change
+    DocumentMetadata(u8),
+
     /// Fallback
     Everything,
 }
@@ -273,6 +276,8 @@ impl LocalFork {
                 Rectangle::new(m.sx, m.sy, m.w, m.h).union(&Rectangle::new(m.tx, m.ty, m.w, m.h)),
             ),
             Undo(_, _) => AffectedArea::UserAttrs, // These are never put in the local fork
+            SetMetadataInt(_, m) => AffectedArea::DocumentMetadata(m.field),
+            SetMetadataStr(_, m) => AffectedArea::DocumentMetadata(m.field),
         }
     }
 

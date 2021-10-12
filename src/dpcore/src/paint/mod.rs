@@ -60,7 +60,7 @@ pub use color::{Color, Pixel};
 pub use flattenediter::FlattenedTileIterator;
 pub use grouplayer::{GroupLayer, LayerInsertion, RootGroup};
 pub use layer::{Layer, LayerMetadata};
-pub use layerstack::{LayerStack, LayerViewMode, LayerViewOptions};
+pub use layerstack::{DocumentMetadata, LayerStack, LayerViewMode, LayerViewOptions};
 pub use rect::{Rectangle, Size};
 pub use tile::Tile;
 pub use tilevec::LayerTileSet;

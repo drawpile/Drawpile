@@ -118,6 +118,7 @@ signals:
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
 	void playbackAt(qint64 pos, qint32 interval);
 	void caughtUpTo(int progress);
+	void metadataChanged();
 
 	//! Paint engine has panicked and died
 	void enginePanicked();

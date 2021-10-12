@@ -20,26 +20,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{
-    LayerMetadata, Blendmode,
-    LayerStack, Layer, GroupLayer, BitmapLayer,
-    Tile, Rectangle, Color,};
-use dpcore::paint::annotation::{Annotation, VAlign};
+use super::{IndexEntry, IndexError, IndexResult, INDEX_FORMAT_VERSION};
 use dpcore::canvas::compression::decompress_tile;
-use super::{IndexEntry, IndexResult, IndexError, INDEX_FORMAT_VERSION};
+use dpcore::paint::annotation::{Annotation, VAlign};
+use dpcore::paint::{
+    BitmapLayer, Blendmode, Color, DocumentMetadata, GroupLayer, Layer, LayerMetadata, LayerStack,
+    Rectangle, Tile,
+};
 
-use std::io::{Read, Seek, SeekFrom};
+use byteorder::{LittleEndian, ReadBytesExt};
 use std::collections::HashMap;
 use std::convert::TryFrom;
+use std::io::{Read, Seek, SeekFrom};
 use std::sync::Arc;
-use byteorder::{LittleEndian, ReadBytesExt};
 
 pub struct Index {
     pub messages: u32,
     pub entries: Vec<IndexEntry>,
 }
 
-pub fn read_index<R: Read+Seek>(reader: &mut R) -> IndexResult<Index> {
+pub fn read_index<R: Read + Seek>(reader: &mut R) -> IndexResult<Index> {
     let mut magic: Vec<u8> = vec![0; 6];
 
     reader.read_exact(&mut magic)?;
@@ -84,30 +84,37 @@ pub fn read_index<R: Read+Seek>(reader: &mut R) -> IndexResult<Index> {
         });
     }
 
-    Ok(Index {
-        messages,
-        entries,
-    })
+    Ok(Index { messages, entries })
 }
 
 /// Read a snapshot from the index
 ///
 /// Returns message index, message offset and the layer stack.
-pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexResult<LayerStack> {
+pub fn read_snapshot<R: Read + Seek>(
+    reader: &mut R,
+    entry: &IndexEntry,
+) -> IndexResult<LayerStack> {
     reader.seek(SeekFrom::Start(entry.snapshot_offset))?;
     let width = reader.read_u32::<LittleEndian>()?;
     let height = reader.read_u32::<LittleEndian>()?;
     let bgtile_offset = reader.read_u64::<LittleEndian>()?;
+    let metadata_offset = reader.read_u64::<LittleEndian>()?;
     let root_offset = reader.read_u64::<LittleEndian>()?;
     let annotation_count = reader.read_u16::<LittleEndian>()?;
     let annotation_offsets = read_offset_vector(reader, annotation_count as usize)?;
 
     let background = read_tile(reader, &mut HashMap::new(), bgtile_offset)?;
 
+    let metadata = read_metadata(reader, metadata_offset)?;
+
     let root = match read_layer(reader, root_offset, width, height, false) {
         Ok(Layer::Group(g)) => g,
-        Ok(_) => { return Err(IndexError::CorruptFile); }
-        Err(e) => { return Err(e); }
+        Ok(_) => {
+            return Err(IndexError::CorruptFile);
+        }
+        Err(e) => {
+            return Err(e);
+        }
     };
 
     let mut annotations: Vec<Arc<Annotation>> = Vec::with_capacity(annotation_count as usize);
@@ -115,23 +122,38 @@ pub fn read_snapshot<R: Read+Seek>(reader: &mut R, entry: &IndexEntry) -> IndexR
         annotations.push(read_annotation(reader, offset)?);
     }
 
+    // TODO caching for annotations, layers and metadata
     Ok(LayerStack::from_parts(
         Arc::new(root.into()),
         Arc::new(annotations),
+        Arc::new(metadata),
         background,
     ))
 }
 
-pub fn read_thumbnail<R: Read+Seek>(reader: &mut R, offset: u64) -> IndexResult<Vec<u8>> {
+pub fn read_metadata<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult<DocumentMetadata> {
+    reader.seek(SeekFrom::Start(offset))?;
+    let dpix = reader.read_i32::<LittleEndian>()?;
+    let dpiy = reader.read_i32::<LittleEndian>()?;
+    let framerate = reader.read_i32::<LittleEndian>()?;
+
+    Ok(DocumentMetadata {
+        dpix,
+        dpiy,
+        framerate,
+    })
+}
+
+pub fn read_thumbnail<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult<Vec<u8>> {
     reader.seek(SeekFrom::Start(offset))?;
     let len = reader.read_u32::<LittleEndian>()?;
-    let mut img = vec![0;len as usize];
+    let mut img = vec![0; len as usize];
     reader.read_exact(&mut img)?;
 
     Ok(img)
 }
 
-fn read_annotation<R: Read+Seek>(reader: &mut R, offset: u64) -> IndexResult<Arc<Annotation>> {
+fn read_annotation<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult<Arc<Annotation>> {
     reader.seek(SeekFrom::Start(offset))?;
 
     let id = reader.read_u16::<LittleEndian>()?;
@@ -142,7 +164,7 @@ fn read_annotation<R: Read+Seek>(reader: &mut R, offset: u64) -> IndexResult<Arc
     let bg = reader.read_u32::<LittleEndian>()?;
     let valign = VAlign::try_from(reader.read_u8()?).unwrap_or(VAlign::Top);
     let text_len = reader.read_u16::<LittleEndian>()?;
-    let mut text = vec![0;text_len as usize];
+    let mut text = vec![0; text_len as usize];
     reader.read_exact(&mut text)?;
     let text = String::from_utf8(text)?;
 
@@ -156,18 +178,24 @@ fn read_annotation<R: Read+Seek>(reader: &mut R, offset: u64) -> IndexResult<Arc
     }))
 }
 
-fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32, read_sublayers: bool) -> IndexResult<Layer> {
+fn read_layer<R: Read + Seek>(
+    reader: &mut R,
+    offset: u64,
+    width: u32,
+    height: u32,
+    read_sublayers: bool,
+) -> IndexResult<Layer> {
     let mut tilemap: HashMap<u64, Tile> = HashMap::new();
 
     reader.seek(SeekFrom::Start(offset))?;
 
     let id = reader.read_u16::<LittleEndian>()?;
     let title_len = reader.read_u16::<LittleEndian>()?;
-    let mut title = vec![0;title_len as usize];
+    let mut title = vec![0; title_len as usize];
     reader.read_exact(&mut title)?;
     let title = String::from_utf8(title)?;
     let opacity = reader.read_u8()? as f32 / 255.0;
-    let blendmode  = Blendmode::try_from(reader.read_u8()?).unwrap_or_default();
+    let blendmode = Blendmode::try_from(reader.read_u8()?).unwrap_or_default();
     let hidden = reader.read_u8()? != 0;
     let censored = reader.read_u8()? != 0;
     let fixed = reader.read_u8()? != 0;
@@ -196,13 +224,7 @@ fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32
             layers.push(Arc::new(read_layer(reader, sl, width, height, true)?));
         }
 
-        Layer::Group(GroupLayer::from_parts(
-            metadata,
-            width,
-            height,
-            layers
-        ))
-
+        Layer::Group(GroupLayer::from_parts(metadata, width, height, layers))
     } else {
         // Read layer
         let tile_count = Tile::div_up(width) * Tile::div_up(height);
@@ -234,7 +256,11 @@ fn read_layer<R: Read+Seek>(reader: &mut R, offset: u64, width: u32, height: u32
     })
 }
 
-fn read_tile<R: Read+Seek>(reader: &mut R, tile_cache: &mut HashMap<u64, Tile>, offset: u64) -> IndexResult<Tile> {
+fn read_tile<R: Read + Seek>(
+    reader: &mut R,
+    tile_cache: &mut HashMap<u64, Tile>,
+    offset: u64,
+) -> IndexResult<Tile> {
     if offset == 0 {
         Ok(Tile::Blank)
     } else if let Some(t) = tile_cache.get(&offset) {
@@ -242,7 +268,7 @@ fn read_tile<R: Read+Seek>(reader: &mut R, tile_cache: &mut HashMap<u64, Tile>, 
     } else {
         reader.seek(SeekFrom::Start(offset))?;
         let data_len = reader.read_u16::<LittleEndian>()?;
-        let mut data = vec![0;data_len as usize];
+        let mut data = vec![0; data_len as usize];
         reader.read_exact(&mut data)?;
         let tile = decompress_tile(&data, 0).ok_or(IndexError::BadTile)?;
         tile_cache.insert(offset, tile.clone());

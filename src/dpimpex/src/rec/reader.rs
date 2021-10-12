@@ -94,7 +94,7 @@ pub trait RecordingReader {
     fn current_progress(&self) -> f64;
 
     /// Change reader position
-    /// 
+    ///
     /// Note: if index is 0, offset should be set to the actual message
     /// zero offset regardless of the argument.
     fn seek_to(&mut self, index: u32, offset: u64);
@@ -450,7 +450,9 @@ mod tests {
         let testdata =
             b"DPREC\0\0\x24{\"hello\": \"world\", \"version\": \"1.0\"}\0\x05\x20\x01\x01\x03ABC";
 
-        test_reader(&mut BinaryReader::open(Cursor::new(&testdata), testdata.len() as u64).unwrap());
+        test_reader(
+            &mut BinaryReader::open(Cursor::new(&testdata), testdata.len() as u64).unwrap(),
+        );
     }
 
     #[test]
@@ -462,6 +464,8 @@ mod tests {
         1 join name=ABC flags=auth
         "#;
 
-        test_reader(&mut TextReader::open(Cursor::new(&testdata[..]), testdata.len() as u64).unwrap());
+        test_reader(
+            &mut TextReader::open(Cursor::new(&testdata[..]), testdata.len() as u64).unwrap(),
+        );
     }
 }

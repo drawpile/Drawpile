@@ -29,10 +29,10 @@ use zip::result::ZipError;
 
 pub mod animation;
 pub mod conv;
-pub mod rec;
-pub mod rec_index;
 mod flat;
 mod ora;
+pub mod rec;
+pub mod rec_index;
 
 #[derive(Debug)]
 pub enum ImpexError {

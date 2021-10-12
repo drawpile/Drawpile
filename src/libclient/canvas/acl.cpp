@@ -69,6 +69,7 @@ static int featureFlags(const rustpile::FeatureTiers &features, rustpile::Tier t
 	if(t <= features.create_annotation) f |= 1<<int(Feature::CreateAnnotation);
 	if(t <= features.laser) f |= 1<<int(Feature::Laser);
 	if(t <= features.undo) f |= 1<<int(Feature::Undo);
+	if(t <= features.metadata) f |= 1<<int(Feature::Metadata);
 
 	return f;
 }
@@ -234,6 +235,7 @@ bool AclState::canUseFeature(Feature f) const
 	case Feature::CreateAnnotation: return t <= d->features.create_annotation;
 	case Feature::Laser: return t <= d->features.laser;
 	case Feature::Undo: return t <= d->features.undo;
+	case Feature::Metadata: return t <= d->features.metadata;
 	}
 
 	return false;

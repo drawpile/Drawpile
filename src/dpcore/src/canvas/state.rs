@@ -35,7 +35,7 @@ use std::convert::TryFrom;
 use std::mem;
 use std::ops::BitOrAssign;
 use std::sync::Arc;
-use tracing::{error, warn, info};
+use tracing::{error, info, warn};
 
 pub struct CanvasState {
     layerstack: Arc<LayerStack>,
@@ -54,6 +54,7 @@ pub struct CanvasStateChange {
     pub aoe: AoE,
     pub layers_changed: bool,
     pub annotations_changed: bool,
+    pub metadata_changed: bool,
 
     /// This user's cursor moved while doing this change
     pub user: UserID,
@@ -71,6 +72,7 @@ impl CanvasStateChange {
             aoe: AoE::Nothing,
             layers_changed: false,
             annotations_changed: false,
+            metadata_changed: false,
             user: 0,
             layer: 0,
             cursor: (0, 0),
@@ -82,52 +84,51 @@ impl CanvasStateChange {
             aoe: AoE::Resize(0, 0, Size::new(0, 0)),
             layers_changed: true,
             annotations_changed: true,
-            user: 0,
-            layer: 0,
-            cursor: (0, 0),
+            metadata_changed: true,
+            ..Self::nothing()
         }
     }
 
     fn layers(aoe: AoE) -> Self {
-        CanvasStateChange {
+        Self {
             aoe,
             layers_changed: true,
-            annotations_changed: false,
-            user: 0,
-            layer: 0,
-            cursor: (0, 0),
+            ..Self::nothing()
         }
     }
 
     fn annotations(user: UserID, cursor: (i32, i32)) -> Self {
         CanvasStateChange {
-            aoe: AoE::Nothing,
-            layers_changed: false,
             annotations_changed: true,
             user,
-            layer: 0,
             cursor,
+            ..Self::nothing()
+        }
+    }
+
+    fn metadata() -> Self {
+        Self {
+            metadata_changed: false,
+            ..Self::nothing()
         }
     }
 
     fn aoe(aoe: AoE, user: UserID, layer: u16, cursor: (i32, i32)) -> Self {
         Self {
             aoe,
-            layers_changed: false,
-            annotations_changed: false,
             user,
             layer,
             cursor,
+            ..Self::nothing()
         }
     }
 
     fn compare(s1: &LayerStack, s2: &LayerStack) -> Self {
         Self {
             aoe: s1.compare(s2),
-            layers_changed: s1
-                .root()
-                .compare_structure(s2.root()),
+            layers_changed: s1.root().compare_structure(s2.root()),
             annotations_changed: s1.compare_annotations(s2),
+            metadata_changed: s1.compare_metadata(s2),
             user: 0,
             layer: 0,
             cursor: (0, 0),
@@ -141,19 +142,15 @@ impl CanvasStateChange {
                 return true;
             }
         };
-        return self.layers_changed | self.annotations_changed;
+        return self.layers_changed | self.annotations_changed | self.metadata_changed;
     }
 }
 
 impl From<AoE> for CanvasStateChange {
-    fn from(item: AoE) -> Self {
+    fn from(aoe: AoE) -> Self {
         Self {
-            aoe: item,
-            layers_changed: false,
-            annotations_changed: false,
-            user: 0,
-            layer: 0,
-            cursor: (0, 0),
+            aoe,
+            ..Self::nothing()
         }
     }
 }
@@ -164,6 +161,7 @@ impl BitOrAssign for CanvasStateChange {
         self.aoe = aoe.merge(rhs.aoe);
         self.layers_changed |= rhs.layers_changed;
         self.annotations_changed |= rhs.annotations_changed;
+        self.metadata_changed |= rhs.metadata_changed;
         if rhs.user > 0 {
             self.user = rhs.user;
             self.layer = rhs.layer;
@@ -209,7 +207,12 @@ impl CanvasState {
             RetconAction::Concurrent => self.handle_message(msg),
             RetconAction::AlreadyDone => CanvasStateChange::nothing(),
             RetconAction::Rollback(pos) => {
-                info!("History conflict with {:?}, (local fork tail at {}, history at {}).", msg, pos, self.history.end());
+                info!(
+                    "History conflict with {:?}, (local fork tail at {}, history at {}).",
+                    msg,
+                    pos,
+                    self.history.end()
+                );
                 let replay = self.history.reset_before(pos);
 
                 // If the local fork still exists, move it to the end of the history
@@ -218,7 +221,11 @@ impl CanvasState {
                 if let Some((savepoint, messages)) = replay {
                     let old_layerstack = mem::replace(&mut self.layerstack, savepoint);
                     let localfork = self.localfork.messages();
-                    info!("Rolling back {} history + {} localfork messages.", messages.len(), localfork.len());
+                    info!(
+                        "Rolling back {} history + {} localfork messages.",
+                        messages.len(),
+                        localfork.len()
+                    );
 
                     for m in messages.iter().chain(localfork.iter()) {
                         self.handle_message(m);
@@ -413,6 +420,8 @@ impl CanvasState {
             DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
             DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true),
             MoveRect(user, m) => self.handle_moverect(*user, m),
+            SetMetadataInt(_, m) => self.handle_metadata_int(m),
+            SetMetadataStr(_, _) => CanvasStateChange::nothing(), // no string keys yet
             Undo(user, m) => self.handle_undo(*user, m),
         }
     }
@@ -450,10 +459,24 @@ impl CanvasState {
             }
 
             CanvasStateChange::compare(&old_layerstack, &self.layerstack)
-
         } else {
             CanvasStateChange::nothing()
         }
+    }
+
+    pub fn handle_metadata_int(&mut self, msg: &SetMetadataIntMessage) -> CanvasStateChange {
+        let md = Arc::make_mut(&mut self.layerstack).metadata_mut();
+
+        match MetadataInt::try_from(msg.field) {
+            Ok(MetadataInt::Dpix) => md.dpix = msg.value,
+            Ok(MetadataInt::Dpiy) => md.dpiy = msg.value,
+            Ok(MetadataInt::Framerate) => md.framerate = msg.value,
+            Err(_) => {
+                warn!("Unknown int metadata key {}", msg.field);
+                return CanvasStateChange::nothing();
+            }
+        }
+        CanvasStateChange::metadata()
     }
 
     /// Penup ends indirect strokes by merging the user's sublayers.

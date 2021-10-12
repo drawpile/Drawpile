@@ -38,7 +38,27 @@ use super::{BitmapLayer, Blendmode, Color, Image, LayerID, Pixel, Rectangle, Use
 pub struct LayerStack {
     root: Arc<RootGroup>,
     annotations: Arc<Vec<Arc<Annotation>>>,
+    metadata: Arc<DocumentMetadata>,
     pub background: Tile,
+}
+
+/// Properties related to the whole document
+#[derive(Clone, PartialEq)]
+#[repr(C)]
+pub struct DocumentMetadata {
+    pub dpix: i32,
+    pub dpiy: i32,
+    pub framerate: i32,
+}
+
+impl Default for DocumentMetadata {
+    fn default() -> Self {
+        Self {
+            dpix: 72,
+            dpiy: 72,
+            framerate: 24,
+        }
+    }
 }
 
 #[derive(PartialEq)]
@@ -141,6 +161,7 @@ impl LayerStack {
         LayerStack {
             root: Arc::new(RootGroup::new(width, height)),
             annotations: Arc::new(Vec::<Arc<Annotation>>::new()),
+            metadata: Arc::new(DocumentMetadata::default()),
             background: Tile::Blank,
         }
     }
@@ -148,11 +169,13 @@ impl LayerStack {
     pub fn from_parts(
         root: Arc<RootGroup>,
         annotations: Arc<Vec<Arc<Annotation>>>,
+        metadata: Arc<DocumentMetadata>,
         background: Tile,
     ) -> LayerStack {
         LayerStack {
             root: root,
             annotations,
+            metadata,
             background,
         }
     }
@@ -164,6 +187,15 @@ impl LayerStack {
 
     pub fn root_mut(&mut self) -> &mut RootGroup {
         Arc::make_mut(&mut self.root)
+    }
+
+    /// Get the whole document metadata
+    pub fn metadata(&self) -> &DocumentMetadata {
+        &self.metadata
+    }
+
+    pub fn metadata_mut(&mut self) -> &mut DocumentMetadata {
+        Arc::make_mut(&mut self.metadata)
     }
 
     /// Find the layer index corresponding to this frame index
@@ -199,6 +231,7 @@ impl LayerStack {
         Ok(Self {
             root: Arc::new(self.root.reordered(root_group, new_order)?),
             annotations: self.annotations.clone(),
+            metadata: self.metadata.clone(),
             background: self.background.clone(),
         })
     }
@@ -513,6 +546,7 @@ impl LayerStack {
                     })
                     .collect(),
             ),
+            metadata: self.metadata.clone(),
             background: self.background.clone(),
         })
     }
@@ -532,6 +566,12 @@ impl LayerStack {
     /// Return true if the annotations differ between the two layer stacks
     pub fn compare_annotations(&self, other: &LayerStack) -> bool {
         !Arc::ptr_eq(&self.annotations, &other.annotations)
+    }
+
+    /// Return true if the metadata differs between the two layer stacks
+    pub fn compare_metadata(&self, other: &LayerStack) -> bool {
+        // metadata changes so rarely that a shallow comparison is close enough here
+        !Arc::ptr_eq(&self.metadata, &other.metadata)
     }
 }
 
