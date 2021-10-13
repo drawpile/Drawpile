@@ -120,6 +120,12 @@ impl LayerRoutes {
         self.routes.retain(|r| r.0 != target);
     }
 
+    // Remove all routes through the given group
+    fn remove_all(&mut self, via_idx: usize) {
+        let via_idx = via_idx as u16;
+        self.routes.retain(|r| r.1 != via_idx);
+    }
+
     /// Find a route to the the given layer, if it exists in oen of
     /// the owning layer group's subgroups.
     fn get(&self, target: LayerID) -> Option<usize> {
@@ -406,6 +412,10 @@ impl GroupLayer {
         } else {
             if let Some(idx) = self.layers.iter().position(|l| l.id() == id) {
                 self.layers.remove(idx);
+
+                // if this is a group, we must remove all routes to its
+                // child layers as well
+                self.routes.remove_all(idx);
             }
         }
     }
@@ -1168,6 +1178,20 @@ mod tests {
         assert!(group.get_layer(1).is_some());
         assert!(group.get_layer(2).is_none());
         assert!(group.get_layer(3).is_some());
+    }
+
+    #[test]
+    fn test_group_removal() {
+        let mut root = RootGroup::new(64, 64);
+        root.add_group_layer(1, LayerInsertion::Top);
+        root.add_bitmap_layer(2, Color::TRANSPARENT, LayerInsertion::Into(1));
+        root.add_bitmap_layer(3, Color::TRANSPARENT, LayerInsertion::Top);
+
+        root.remove_layer(1);
+
+        assert!(root.get_layer(1).is_none());
+        assert!(root.get_layer(2).is_none());
+        assert!(root.get_layer(3).is_some());
     }
 
     #[test]
