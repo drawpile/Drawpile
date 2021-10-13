@@ -193,6 +193,17 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	}
 }
 
+static QStringList jsonArrayToStringList(const QJsonArray &a)
+{
+	QStringList sl;
+	for(const auto &v : a) {
+		const auto s = v.toString();
+		if(!s.isEmpty())
+			sl << s;
+	}
+	return sl;
+}
+
 void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 {
 	if(cmd.args.size()!=1 && cmd.args.size()!=2) {
