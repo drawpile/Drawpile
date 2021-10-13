@@ -90,28 +90,26 @@ void TcpServer::sendEnvelope(const Envelope &e)
 
 void TcpServer::handleMessage()
 {
-	while(m_msgqueue->isPending()) {
-		Envelope envelope = m_msgqueue->getPending();
+	Envelope envelope = m_msgqueue->getPending();
 
-		if(m_loginstate) {
-			// Drip feed messages one by one to the login handler,
-			// since the envelope may contain messages not belonging to
-			// the login handshake anymore.
-			while(!envelope.isEmpty()) {
-				const ServerReply sr = ServerReply::fromEnvelope(envelope);
-				const bool expectMoreLogin = m_loginstate->receiveMessage(sr);
-				envelope = envelope.next();
+	if(m_loginstate) {
+		// Drip feed messages one by one to the login handler,
+		// since the envelope may contain messages not belonging to
+		// the login handshake anymore.
+		while(!envelope.isEmpty()) {
+			const ServerReply sr = ServerReply::fromEnvelope(envelope);
+			const bool expectMoreLogin = m_loginstate->receiveMessage(sr);
+			envelope = envelope.next();
 
-				if(!expectMoreLogin) {
-					if(!envelope.isEmpty())
-						emit envelopeReceived(envelope);
-					break;
-				}
+			if(!expectMoreLogin) {
+				if(!envelope.isEmpty())
+					emit envelopeReceived(envelope);
+				break;
 			}
-
-		} else {
-			emit envelopeReceived(envelope);
 		}
+
+	} else {
+		emit envelopeReceived(envelope);
 	}
 }
 

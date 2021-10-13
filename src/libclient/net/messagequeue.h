@@ -58,8 +58,7 @@ public:
 	bool isPending() const;
 
 	/**
-	 * Get the next message in the queue.
-	 * @return message
+	 * Get an envelope containing all queued messages
 	 */
 	Envelope getPending();
 
@@ -146,11 +145,6 @@ signals:
 	 * New message(s) are available. Get them with getPending().
 	 */
 	void messageAvailable();
-
-	/**
-	 * All queued messages have been sent
-	 */
-	void allSent();
 
 	/**
 	 * An unrecognized message was received

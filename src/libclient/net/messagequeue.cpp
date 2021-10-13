@@ -132,9 +132,13 @@ void MessageQueue::sendPingMsg(bool pong)
 
 void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &message)
 {
+	if(m_gracefullyDisconnecting)
+		qWarning("sendDisconnect: already disconnecting.");
+
 	EnvelopeBuilder eb;
 	rustpile::write_disconnect(eb, 0, uint8_t(reason), reinterpret_cast<const uint16_t*>(message.constData()), message.length());
 
+	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%d messages) is empty.", reason, m_outbox.size());
 	send(eb.toEnvelope());
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
@@ -276,10 +280,13 @@ void MessageQueue::dataWritten(qint64 bytes)
 
 	// Write more once the buffer is empty
 	if(m_socket->bytesToWrite()==0) {
-		if(m_sendbuffer.isEmpty() && m_outbox.isEmpty())
-			emit allSent();
-		else
+		if(m_sendbuffer.isEmpty() && m_outbox.isEmpty() && m_gracefullyDisconnecting) {
+			qInfo("All sent, gracefully disconnecting.");
+			m_socket->disconnectFromHost();
+
+		} else {
 			writeData();
+		}
 	}
 }
 
@@ -315,13 +322,7 @@ void MessageQueue::writeData() {
 				// Complete envelope sent
 				m_sendbuffer = QByteArray();
 				m_sentbytes = 0;
-
-				if(m_gracefullyDisconnecting && m_outbox.isEmpty()) {
-					m_socket->disconnectFromHost();
-
-				} else {
-					sendMore = true;
-				}
+				sendMore = !m_outbox.isEmpty();
 			}
 		}
 	}
