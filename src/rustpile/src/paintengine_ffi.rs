@@ -206,7 +206,7 @@ fn run_paintengine(
 
         let mut changes = CanvasStateChange::nothing();
 
-        // Execute the received command and see if there are more queued
+        // Execute all queued commands
         loop {
             use PaintEngineCommand::*;
             match cmd {
@@ -218,6 +218,12 @@ fn run_paintengine(
                 }
                 BrushPreview(layer, commands, mode) => {
                     changes |= canvas.apply_preview(layer, &commands, mode);
+
+                    // Break out early to keep the UI up to date.
+                    // Otherwise, when a preview stroke gets too large (e.g.
+                    // when using the bezier tool,) it can effectively clog up
+                    // the paint engine message queue.
+                    break;
                 }
                 RemovePreview(layer) => {
                     changes |= canvas.remove_preview(layer);
