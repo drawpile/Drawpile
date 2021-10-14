@@ -729,7 +729,7 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
 
         let changed = match dp.view_opts.viewmode {
             LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
-            LayerViewMode::Frame => dp.view_opts.active_root_idx != frame_idx,
+            LayerViewMode::Frame | LayerViewMode::Onionskin => dp.view_opts.active_root_idx != frame_idx,
             _ => false,
         };
 
