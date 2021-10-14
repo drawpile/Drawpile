@@ -16,7 +16,7 @@ lazy_static = "1.4.0"
 
 [dev-dependencies]
 itertools = "0.8.2"
-image = "0.22.3"
+image = { version = "0.23.14", default-features = false, features = ["png"] }
 criterion = "0.3"
 
 [[bench]]
