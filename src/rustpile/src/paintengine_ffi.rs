@@ -195,6 +195,8 @@ fn run_paintengine(
 ) {
     let mut canvas = CanvasState::new();
 
+    // only the last preview command needs to be executed
+    let mut preview: (LayerID, Vec<CommandMessage>) = (0, Vec::new());
     loop {
         // Wait for a command
         let mut cmd = match channel.recv() {
@@ -217,13 +219,7 @@ fn run_paintengine(
                     changes |= canvas.receive_message(&m);
                 }
                 BrushPreview(layer, commands) => {
-                    changes |= canvas.apply_preview(layer, &commands);
-
-                    // Break out early to keep the UI up to date.
-                    // Otherwise, when a preview stroke gets too large (e.g.
-                    // when using the bezier tool,) it can effectively clog up
-                    // the paint engine message queue.
-                    break;
+                    preview = (layer, commands);
                 }
                 RemovePreview(layer) => {
                     changes |= canvas.remove_preview(layer);
@@ -258,6 +254,13 @@ fn run_paintengine(
                     return;
                 }
             };
+        }
+
+        // Execute the last issue preview command (if any)
+        // Every preview command overwrites the preview layer,
+        // so only the last one needs to be rendered.
+        if !preview.1.is_empty() {
+            changes |= canvas.apply_preview(preview.0, &preview.1);
         }
 
         // Notify changes
