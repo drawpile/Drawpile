@@ -91,8 +91,8 @@ impl Image {
         Some(Rectangle {
             x: left as i32,
             y: top as i32,
-            w: (right - left) as i32,
-            h: (btm - top) as i32,
+            w: (right - left + 1) as i32,
+            h: (btm - top + 1) as i32,
         })
     }
 

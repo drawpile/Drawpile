@@ -237,73 +237,75 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
         return input;
     }
 
+    let image_area = Rectangle::new(0, 0, input.image.width as i32, input.image.height as i32);
+
     // Step 1. Make sure there is enough room for expansion
-    // There should be at least *dia* pixels around the content rectangle
-    // to accommodate the convolution kernel
+    // There should enough room around the content to accommodate the
+    // convolution kernel.
     let content_bounds = match input.image.opaque_bounds() {
         Some(b) => b,
         None => {
             return input;
         }
     };
-
-    let image_area = Rectangle::new(0, 0, input.image.width as i32, input.image.height as i32);
-    let dia = expansion * 2 + 1;
+    let kernel_diameter = expansion * 2 + 1;
+    let kernel_radius = expansion;
 
     let padded_area = Rectangle::new(
-        content_bounds.x - dia,
-        content_bounds.y - dia,
-        content_bounds.w + dia * 2,
-        content_bounds.h + dia * 2,
+        content_bounds.x - kernel_diameter,
+        content_bounds.y - kernel_diameter,
+        content_bounds.w + kernel_diameter * 2 + 1,
+        content_bounds.h + kernel_diameter * 2 + 1,
     );
-    let (image, xoffset, yoffset, expansion_area) = if image_area.contains(&padded_area) {
-        // There is enough room
+    let (image, xoffset, yoffset, work_area) = if image_area.contains(&padded_area) {
+        // There is already enough padding around the content
         (
             input.image,
             input.x,
             input.y,
             Rectangle::new(
-                content_bounds.x - expansion,
-                content_bounds.y - expansion,
-                content_bounds.w + expansion * 2,
-                content_bounds.h + expansion * 2,
+                content_bounds.x - kernel_radius,
+                content_bounds.y - kernel_radius,
+                content_bounds.w + kernel_diameter,
+                content_bounds.h + kernel_diameter,
             ),
         )
     } else {
-        // Not enough room! Image must be padded.
+        // Not enough room!
+        // Create a new image with enough padding and copy the content to it.
         let mut new_image = Image::new(padded_area.w as usize, padded_area.h as usize);
         input
             .image
             .rect_iter(&content_bounds)
             .zip(new_image.rect_iter_mut(&Rectangle::new(
-                dia,
-                dia,
+                kernel_diameter,
+                kernel_diameter,
                 content_bounds.w,
                 content_bounds.h,
             )))
             .for_each(|(src, dest)| dest.copy_from_slice(src));
         (
             new_image,
-            input.x + padded_area.x,
-            input.y + padded_area.y,
+            input.x + content_bounds.x - kernel_diameter,
+            input.y + content_bounds.y - kernel_diameter,
             Rectangle::new(
-                expansion,
-                expansion,
-                content_bounds.w + expansion * 2,
-                content_bounds.h + expansion * 2,
+                kernel_radius,
+                kernel_radius,
+                content_bounds.w + kernel_diameter,
+                content_bounds.h + kernel_diameter,
             ),
         )
     };
 
     // Step 2. Generate the convolution kernel
     let kernel = {
-        let mut kernel = vec![false; (dia * dia) as usize];
+        let mut kernel = vec![false; (kernel_diameter * kernel_diameter) as usize];
         let rr = expansion * expansion;
-        for y in 0..dia {
-            let y0 = y - expansion;
-            for x in 0..dia {
-                let x0 = x - expansion;
-                kernel[(y * dia + x) as usize] = (y0 * y0 + x0 * x0) <= rr;
+        for y in 0..kernel_diameter {
+            let y0 = y - kernel_radius;
+            for x in 0..kernel_diameter {
+                let x0 = x - kernel_radius;
+                kernel[(y * kernel_diameter + x) as usize] = (y0 * y0 + x0 * x0) <= rr;
             }
         }
         kernel
@@ -313,13 +315,13 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
     let mut new_image = Image::new(image.width, image.height);
 
     let fill_pixel = input.fill_color.as_pixel();
-    for y in expansion_area.y..expansion_area.bottom() {
-        for x in expansion_area.x..expansion_area.right() {
-            'outer: for ky in 0..dia {
-                for kx in 0..dia {
-                    if kernel[(ky * dia + kx) as usize]
-                        && image.pixels[(y + ky - expansion) as usize * image.width
-                            + (x + kx - expansion) as usize][ALPHA_CHANNEL]
+    for y in work_area.y..=work_area.bottom() {
+        for x in work_area.x..=work_area.right() {
+            'outer: for ky in 0..kernel_diameter {
+                for kx in 0..kernel_diameter {
+                    if kernel[(ky * kernel_diameter + kx) as usize]
+                        && image.pixels[(y + ky - kernel_radius) as usize * image.width
+                            + (x + kx - kernel_radius) as usize][ALPHA_CHANNEL]
                             > 0
                     {
                         new_image.pixels[y as usize * image.width + x as usize] = fill_pixel;
@@ -344,14 +346,8 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
             new_image.height as i32 - yshift,
         );
 
-        let mut crop_image = Image::new(crop_rect.w as usize, crop_rect.h as usize);
-        new_image
-            .rect_iter(&crop_rect)
-            .zip(crop_image.rect_iter_mut(&Rectangle::new(0, 0, crop_rect.w, crop_rect.h)))
-            .for_each(|(src, dest)| dest.copy_from_slice(src));
-
         FloodFillResult {
-            image: crop_image,
+            image: new_image.cropped(&crop_rect),
             x: xoffset + xshift,
             y: yoffset + yshift,
             ..input
