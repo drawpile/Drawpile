@@ -466,22 +466,24 @@ pub extern "C" fn paintengine_receive_messages(
             continue;
         }
 
-        if let Some(recorder) = &mut dp.recorder {
-            if let Err(err) = recorder.write_message(&msg) {
-                warn!("Error writing to recording: {}", err);
-                dp.recorder = None;
-                if let Some(cb) = dp.state_notify_recording {
-                    (cb)(dp.meta_context, false);
-                }
-            } else {
-                let interval = dp.last_recorded_interval.elapsed().as_millis();
-                if interval > 500 {
-                    if let Err(err) = recorder.write_message(&Message::ClientMeta(
-                        ClientMetaMessage::Interval(0, interval.min(0xffff) as u16),
-                    )) {
-                        warn!("Error writing interval to recording: {}", err);
+        if !local {
+            if let Some(recorder) = &mut dp.recorder {
+                if let Err(err) = recorder.write_message(&msg) {
+                    warn!("Error writing to recording: {}", err);
+                    dp.recorder = None;
+                    if let Some(cb) = dp.state_notify_recording {
+                        (cb)(dp.meta_context, false);
                     }
-                    dp.last_recorded_interval = Instant::now();
+                } else {
+                    let interval = dp.last_recorded_interval.elapsed().as_millis();
+                    if interval > 500 {
+                        if let Err(err) = recorder.write_message(&Message::ClientMeta(
+                            ClientMetaMessage::Interval(0, interval.min(0xffff) as u16),
+                        )) {
+                            warn!("Error writing interval to recording: {}", err);
+                        }
+                        dp.last_recorded_interval = Instant::now();
+                    }
                 }
             }
         }
