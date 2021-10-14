@@ -27,13 +27,25 @@ use crate::protocol::message::{DrawDabsClassicMessage, DrawDabsPixelMessage};
 
 use std::convert::TryFrom;
 
+/// Draw dabs using a Classic brush
+///
+/// If the color has a non-zero alpha component, the dabs will be drawn
+/// to a sublayer
+///
+/// If the user ID is zero, the dabs will always be drawn directly
+/// onto the layer with Normal blend mode
 pub fn drawdabs_classic(
     layer: &mut BitmapLayer,
     user: UserID,
     dabs: &DrawDabsClassicMessage,
     cache: &mut ClassicBrushCache,
 ) -> (AoE, (i32, i32)) {
-    let mode = Blendmode::try_from(dabs.mode).unwrap_or(Blendmode::Normal);
+    let mode = if user != 0 {
+        Blendmode::try_from(dabs.mode).unwrap_or_default()
+    } else {
+        Blendmode::Normal
+    };
+
     let mut color = Color::from_argb32(dabs.color);
 
     let result = if color.a > 0.0 && user != 0 {
@@ -89,13 +101,25 @@ fn drawdabs_classic_draw(
     (aoe, (last_x / 4, last_y / 4))
 }
 
+/// Draw dabs using a Pixel brush
+///
+/// If the color has a non-zero alpha component, the dabs will be drawn
+/// to a sublayer
+///
+/// If the user ID is zero, the dabs will always be drawn directly
+/// onto the layer with Normal blend mode
 pub fn drawdabs_pixel(
     layer: &mut BitmapLayer,
     user: UserID,
     dabs: &DrawDabsPixelMessage,
     square: bool,
 ) -> (AoE, (i32, i32)) {
-    let mode = Blendmode::try_from(dabs.mode).unwrap_or(Blendmode::Normal);
+    let mode = if user != 0 {
+        Blendmode::try_from(dabs.mode).unwrap_or_default()
+    } else {
+        Blendmode::Normal
+    };
+
     let mut color = Color::from_argb32(dabs.color);
 
     let result = if color.a > 0.0 && user != 0 {

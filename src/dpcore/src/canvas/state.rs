@@ -279,17 +279,47 @@ impl CanvasState {
         &mut self,
         layer_id: LayerID,
         msgs: &[CommandMessage],
-        mode: Blendmode,
     ) -> CanvasStateChange {
+        if msgs.is_empty() {
+            return CanvasStateChange::nothing();
+        }
+
         if let Some(layer) = Arc::make_mut(&mut self.layerstack)
             .root_mut()
             .get_bitmaplayer_mut(layer_id)
         {
             let mut layer = layer.get_or_create_sublayer(PREVIEW_SUBLAYER_ID);
-
             let mut aoe = editlayer::clear_layer(&mut layer);
 
-            layer.metadata_mut().blendmode = mode;
+            match msgs.first().unwrap() {
+                CommandMessage::DrawDabsClassic(_, m) => {
+                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    let color = Color::from_argb32(m.color);
+                    layer.metadata_mut().opacity = if color.a > 0.0 {
+                        color.a
+                    } else {
+                        1.0
+                    };
+                }
+                CommandMessage::DrawDabsPixel(_, m) | CommandMessage::DrawDabsPixelSquare(_, m) => {
+                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    let color = Color::from_argb32(m.color);
+                    layer.metadata_mut().opacity = if color.a > 0.0 {
+                        color.a
+                    } else {
+                        1.0
+                    };
+                }
+                CommandMessage::FillRect(_, m) => {
+                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    layer.metadata_mut().opacity = 1.0;
+                }
+                CommandMessage::PutImage(_, m) => {
+                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    layer.metadata_mut().opacity = 1.0;
+                }
+                _ => (),
+            };
 
             for msg in msgs {
                 aoe = aoe.merge(match msg {
@@ -315,30 +345,31 @@ impl CanvasState {
                         } else if let Some(imagedata) =
                             compression::decompress_image(&m.image, (m.w * m.h) as usize)
                         {
-                            let mode = Blendmode::try_from(m.mode).unwrap_or_default();
                             editlayer::draw_image(
                                 layer,
                                 0,
                                 &imagedata,
                                 &Rectangle::new(m.x as i32, m.y as i32, m.w as i32, m.h as i32),
                                 1.0,
-                                mode,
+                                Blendmode::Normal,
                             )
                         } else {
                             AoE::Nothing
                         }
                     }
                     CommandMessage::FillRect(_, m) => {
-                        let mode = Blendmode::try_from(m.mode).unwrap_or_default();
                         editlayer::fill_rect(
                             layer,
                             0,
                             &Color::from_argb32(m.color),
-                            mode,
+                            Blendmode::Normal,
                             &Rectangle::new(m.x as i32, m.y as i32, m.w as i32, m.h as i32),
                         )
                     }
-                    _ => AoE::Nothing,
+                    m => {
+                        warn!("Unhandled preview command {:?}", m);
+                        AoE::Nothing
+                    }
                 });
             }
 

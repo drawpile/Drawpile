@@ -132,7 +132,7 @@ unsafe impl Send for CanvasChangeCallbacks {}
 enum PaintEngineCommand {
     LocalMessage(CommandMessage),
     RemoteMessage(CommandMessage),
-    BrushPreview(LayerID, Vec<CommandMessage>, Blendmode),
+    BrushPreview(LayerID, Vec<CommandMessage>),
     RemovePreview(LayerID),
     ReplaceCanvas(Box<LayerStack>),
     PlaybackPaused(i64, u32), // triggers PlaybackCallback
@@ -216,8 +216,8 @@ fn run_paintengine(
                 RemoteMessage(m) => {
                     changes |= canvas.receive_message(&m);
                 }
-                BrushPreview(layer, commands, mode) => {
-                    changes |= canvas.apply_preview(layer, &commands, mode);
+                BrushPreview(layer, commands) => {
+                    changes |= canvas.apply_preview(layer, &commands);
 
                     // Break out early to keep the UI up to date.
                     // Otherwise, when a preview stroke gets too large (e.g.
@@ -829,8 +829,7 @@ pub extern "C" fn paintengine_preview_brush(
 ) {
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
         layer_id,
-        brushengine.take_dabs(0),
-        Blendmode::Normal,
+        brushengine.take_dabs(0)
     )) {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
@@ -849,7 +848,7 @@ pub extern "C" fn paintengine_preview_cut(
             0,
             FillRectMessage {
                 layer: 0,
-                mode: Blendmode::Replace.into(),
+                mode: Blendmode::Erase.into(),
                 x: rect.x as u32,
                 y: rect.y as u32,
                 w: rect.w as u32,
@@ -870,14 +869,13 @@ pub extern "C" fn paintengine_preview_cut(
             rect.x as u32,
             rect.y as u32,
             &maskimg,
-            Blendmode::Replace,
+            Blendmode::Erase,
         )
     };
 
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
         layer_id,
-        cmd,
-        Blendmode::Erase,
+        cmd
     )) {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
