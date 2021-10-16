@@ -222,6 +222,7 @@ fn run_paintengine(
                     preview = (layer, commands);
                 }
                 RemovePreview(layer) => {
+                    preview = (0, Vec::new());
                     changes |= canvas.remove_preview(layer);
                 }
                 ReplaceCanvas(layerstack) => {
