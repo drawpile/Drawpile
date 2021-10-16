@@ -115,11 +115,6 @@ impl LayerRoutes {
         self.routes.push((target, subgroup_index as u16));
     }
 
-    /// Remove route to the given layer
-    fn remove(&mut self, target: LayerID) {
-        self.routes.retain(|r| r.0 != target);
-    }
-
     // Remove all routes through the given group
     fn remove_all(&mut self, via_idx: usize) {
         let via_idx = via_idx as u16;
@@ -408,7 +403,19 @@ impl GroupLayer {
                 .as_group_mut()
                 .unwrap()
                 .remove_layer(id);
-            self.routes.remove(id);
+
+            // rebuild routes
+            let mut routes = LayerRoutes::new();
+            for (i, l) in self.layers.iter().enumerate() {
+                match l.as_ref() {
+                    Layer::Group(g) => {
+                        routes.extend_from(g, i);
+                    }
+                    _ => (),
+                }
+            }
+            self.routes = routes;
+
         } else {
             if let Some(idx) = self.layers.iter().position(|l| l.id() == id) {
                 self.layers.remove(idx);
@@ -1192,6 +1199,26 @@ mod tests {
         assert!(root.get_layer(1).is_none());
         assert!(root.get_layer(2).is_none());
         assert!(root.get_layer(3).is_some());
+    }
+
+    #[test]
+    fn test_subgroup_removal() {
+        let mut root = RootGroup::new(64, 64);
+        root.add_group_layer(1, LayerInsertion::Top);
+        root.add_group_layer(2, LayerInsertion::Into(1));
+        root.add_group_layer(3, LayerInsertion::Into(2));
+        root.add_bitmap_layer(4, Color::TRANSPARENT, LayerInsertion::Into(3));
+        root.add_bitmap_layer(5, Color::TRANSPARENT, LayerInsertion::Into(3));
+
+        root.remove_layer(3);
+
+        assert_eq!(root.0.routes.len(), 1);
+
+        assert!(root.get_layer(1).is_some());
+        assert!(root.get_layer(2).is_some());
+        assert!(root.get_layer(3).is_none());
+        assert!(root.get_layer(4).is_none());
+        assert!(root.get_layer(5).is_none());
     }
 
     #[test]
