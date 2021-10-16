@@ -50,7 +50,6 @@ set (
 	dialogs/inputsettings.cpp
 	dialogs/layerproperties.cpp
 	widgets/viewstatus.cpp
-	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp 
 	widgets/colorbutton.cpp

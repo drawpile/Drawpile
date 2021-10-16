@@ -20,10 +20,9 @@
 #define TOOLSETTINGS_COLORPICKER_H
 
 #include "toolsettings.h"
-#include "utils/palette.h"
 
-namespace widgets {
-	class PaletteWidget;
+namespace color_widgets {
+	class Swatch;
 }
 class QCheckBox;
 class QSpinBox;
@@ -61,8 +60,7 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
-	Palette m_palette;
-	widgets::PaletteWidget *m_palettewidget;
+	color_widgets::Swatch *m_palettewidget;
 	QCheckBox *m_layerpick;
 	QSpinBox *m_size;
 	qreal m_quickAdjust1 = 0.0;

@@ -21,15 +21,10 @@
 
 #include <QDockWidget>
 
-class Ui_ColorBox;
-class Palette;
-
-class QButtonGroup;
-
 namespace docks {
 
 class ColorBox : public QDockWidget {
-Q_OBJECT
+	Q_OBJECT
 public:
 	ColorBox(const QString& title, QWidget *parent);
 	~ColorBox();
@@ -44,13 +39,17 @@ signals:
 
 private slots:
 	void paletteChanged(int index);
-	void paletteNameChanged(const QString& name);
 	void addPalette();
 	void copyPalette();
 	void deletePalette();
-	void toggleWriteProtect();
+	void renamePalette();
+	void paletteRenamed();
 	void exportPalette();
 	void importPalette();
+
+	void paletteClicked(int index);
+	void paletteDoubleClicked(int index);
+	void paletteRightClicked(int index);
 
 	void updateFromRgbSliders();
 	void updateFromRgbSpinbox();
@@ -60,17 +59,14 @@ private slots:
 	void updateSettings();
 
 private:
-	Ui_ColorBox *m_ui;
-	QButtonGroup *m_tabButtons;
-	Palette *m_lastused;
-	Palette *m_lastusedAlt;
-	QColor m_altColor;
+	QWidget *createPalettePage();
+	QWidget *createSlidersPage();
+	QWidget *createWheelPage();
+	void createSliderPage();
+	void createSpinnerPage();
 
-	QAction *m_deletePalette;
-	QAction *m_writeprotectPalette;
-	QAction *m_exportPalette;
-	QAction *m_importPalette;
-	bool _updating;
+	struct Private;
+	Private *d;
 };
 
 }

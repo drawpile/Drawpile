@@ -17,194 +17,373 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "widgets/palettewidget.h"
-#include "widgets/groupedtoolbutton.h"
-#include <QtColorWidgets/ColorWheel>
-#include <QtColorWidgets/HueSlider>
+#include <QtColorWidgets/color_wheel.hpp>
+#include <QtColorWidgets/hue_slider.hpp>
+#include <QtColorWidgets/swatch.hpp>
+#include <QtColorWidgets/color_palette_model.hpp>
+#include <QtColorWidgets/color_dialog.hpp>
 
 #include "main.h"
-#include "docks/colorbox.h"
-#include "docks/titlewidget.h"
-#include "utils/palettelistmodel.h"
-#include "utils/palette.h"
-
-#include "ui_colorbox.h"
+#include "colorbox.h"
+#include "titlewidget.h"
+#include "widgets/groupedtoolbutton.h"
+#include "utils/icon.h"
+#include "../libshared/util/paths.h"
 
 #include <QSettings>
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
-#include <QButtonGroup>
-
-using color_widgets::ColorWheel;
+#include <QBoxLayout>
+#include <QGridLayout>
+#include <QTabWidget>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QCursor>
 
 namespace docks {
 
-ColorBox::ColorBox(const QString& title, QWidget *parent)
-	: QDockWidget(title, parent), m_ui(new Ui_ColorBox), _updating(false)
+static const int LASTUSED_COLOR_COUNT = 8;
+
+static color_widgets::ColorPaletteModel *getSharedPaletteModel()
 {
-	QWidget *w = new QWidget(this);
-	w->resize(167, 95);
+	static color_widgets::ColorPaletteModel *model;
+	if(!model) {
+		model = new color_widgets::ColorPaletteModel;
+		QString localPalettePath = utils::paths::writablePath(QString()) + "/palettes/";
+
+		QDir localPaletteDir(localPalettePath);
+		localPaletteDir.mkpath(".");
+
+		model->setSearchPaths(QStringList() << localPalettePath);
+		model->setSavePath(localPalettePath);
+		model->load();
+
+		// If the user palette directory is empty, copy default palettes in
+		if(model->rowCount() == 0) {
+			const auto datapaths = utils::paths::dataPaths();
+			for(const auto &path : datapaths) {
+				const QString systemPalettePath = path + "/palettes/";
+				if(systemPalettePath == localPalettePath)
+					continue;
+
+				const QDir pd(systemPalettePath);
+				const auto palettes = pd.entryList(QStringList() << "*.gpl", QDir::Files);
+				for(const auto &p : palettes) {
+					QFile::copy(pd.filePath(p), localPaletteDir.filePath(p));
+				}
+			}
+		}
+
+		model->load();
+	}
+
+	return model;
+}
+
+struct ColorBox::Private {
+	// Alternate color history
+	color_widgets::ColorPalette lastusedAlt;
+	color_widgets::Swatch *lastUsedSwatch;
+    QColor altColor;
+
+	// Palette page
+	QComboBox *paletteChoiceBox = nullptr;
+	color_widgets::Swatch *paletteSwatch = nullptr;
+	QMenu *palettePopupMenu = nullptr;
+
+	// Sliders page
+	color_widgets::HueSlider *hue = nullptr;
+	color_widgets::GradientSlider *saturation = nullptr;
+	color_widgets::GradientSlider *value = nullptr;
+	color_widgets::GradientSlider *red = nullptr;
+	color_widgets::GradientSlider *green = nullptr;
+	color_widgets::GradientSlider *blue = nullptr;
+
+	QSpinBox *huebox = nullptr;
+	QSpinBox *saturationbox = nullptr;
+	QSpinBox *valuebox = nullptr;
+	QSpinBox *redbox = nullptr;
+	QSpinBox *greenbox = nullptr;
+	QSpinBox *bluebox = nullptr;
+
+	// Color wheel page
+	color_widgets::ColorWheel *colorwheel = nullptr;
+
+    bool updating = false;
+
+	void saveCurrentPalette()
+	{
+		if(paletteSwatch->palette().dirty()) {
+			auto *pm = getSharedPaletteModel();
+			int index = -1;
+			for(int i=0;i<pm->rowCount();++i) {
+				if(pm->palette(i).name() == paletteSwatch->palette().name()) {
+					index = i;
+					break;
+				}
+			}
+			if(index >= 0) {
+				pm->updatePalette(index, paletteSwatch->palette());
+			}
+		}
+	}
+};
+
+ColorBox::ColorBox(const QString& title, QWidget *parent)
+	: QDockWidget(title, parent), d(new Private)
+{
+	// Create main UI widget
+	auto *w = new QTabWidget(this);
+	w->setTabPosition(QTabWidget::East);
+	w->setDocumentMode(true);
+	w->setIconSize(QSize(32, 32));
+	w->setUsesScrollButtons(false);
+	
+	QColor highlight = palette().color(QPalette::Highlight);
+	QColor hover = highlight; hover.setAlphaF(0.5);
+
+	w->setStyleSheet(QStringLiteral(
+		"QTabBar {"
+			"alignment: middle;"
+		"}"
+		"QTabWidget::pane {"
+			"border: none;"
+		"}"
+		"QTabBar::tab {"
+			"padding: 15px 5px 0 2px;"
+			"margin: 0 2px 0 0;"
+			"border: none;"
+			"border-left: 3px solid transparent;"
+			"background: %3;"
+		"}"
+		"QTabBar::tab:hover {"
+			"border-left: 3px solid %2;"
+		"}"
+		"QTabBar::tab:selected {"
+			"border-left: 3px solid %1;"
+		"}"
+	).arg(
+		highlight.name(),
+		QString("rgba(%1, %2, %3, %4)").arg(hover.red()).arg(hover.green()).arg(hover.blue()).arg(hover.alphaF()),
+		palette().color(QPalette::Window).name() // this is needed OSX. TODO how to set the whole tabbar background?
+	));
+
 	setWidget(w);
 
+	w->addTab(createPalettePage(), QIcon(":/icons/colorbox-pal.png"), QString());
+	w->addTab(createSlidersPage(), QIcon(":/icons/colorbox-hsv.png"), QString());
+	w->addTab(createWheelPage(), QIcon(":/icons/colorbox-wheel.png"), QString());
+
+	// Create title bar widget
+	// The last used colors palette lives here
 	auto *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
-	auto *paletteBtn = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, titlebar);
-	paletteBtn->setCheckable(true);
-	paletteBtn->setAutoExclusive(true);
-	paletteBtn->setText(tr("Palette"));
+	d->lastUsedSwatch = new color_widgets::Swatch(titlebar);
+	d->lastUsedSwatch->setForcedRows(1);
+	d->lastUsedSwatch->setForcedColumns(LASTUSED_COLOR_COUNT);
+	d->lastUsedSwatch->setReadOnly(true);
+	d->lastUsedSwatch->setBorder(Qt::NoPen);
 
-	auto *slidersBtn = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
-	slidersBtn->setCheckable(true);
-	slidersBtn->setAutoExclusive(true);
-	slidersBtn->setText(tr("Sliders"));
+	titlebar->addSpace(16);
+	titlebar->addCustomWidget(d->lastUsedSwatch, true);
+	titlebar->addSpace(16);
 
-	auto *wheelBtn = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, titlebar);
-	wheelBtn->setCheckable(true);
-	wheelBtn->setAutoExclusive(true);
-	wheelBtn->setText(tr("Wheel"));
+	connect(d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this, &ColorBox::colorChanged);
+	connect(d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this, &ColorBox::setColor);
 
-	titlebar->addCustomWidget(paletteBtn, false);
-	titlebar->addCustomWidget(slidersBtn, false);
-	titlebar->addCustomWidget(wheelBtn, false);
-	titlebar->addCenteringSpacer();
-
-	m_tabButtons = new QButtonGroup(this);
-	m_tabButtons->addButton(paletteBtn, 0);
-	m_tabButtons->addButton(slidersBtn, 1);
-	m_tabButtons->addButton(wheelBtn, 2);
-	connect(m_tabButtons, QOverload<QAbstractButton*,bool>::of(&QButtonGroup::buttonToggled), this, [this](QAbstractButton *b, bool checked) {
-		if(!checked)
-			return;
-		const int id = m_tabButtons->id(b);
-		m_ui->stackedWidget->setCurrentIndex(id);
-	});
-
-	m_ui->setupUi(w);
-
+	// Restore UI state
 	QSettings cfg;
-
-	int lastTab = cfg.value("history/lastcolortab", 0).toInt();
-	switch(lastTab) {
-	case 1: slidersBtn->setChecked(true); break;
-	case 2: wheelBtn->setChecked(true); break;
-	default: paletteBtn->setChecked(true); break;
-	}
-
-	//
-	// Palette box tab
-	//
-	m_ui->palettelist->setCompleter(nullptr);
-	m_ui->palettelist->setModel(PaletteListModel::getSharedInstance());
-
-	connect(m_ui->palette, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
-	connect(m_ui->palette, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
-
-	QMenu *paletteMenu = new QMenu(this);
-	paletteMenu->addAction(tr("New"), this, SLOT(addPalette()));
-	paletteMenu->addAction(tr("Duplicate"), this, SLOT(copyPalette()));
-	m_deletePalette = paletteMenu->addAction(tr("Delete"), this, SLOT(deletePalette()));
-
-	paletteMenu->addSeparator();
-	m_writeprotectPalette = paletteMenu->addAction(tr("Write Protect"), this, SLOT(toggleWriteProtect()));
-	m_writeprotectPalette->setCheckable(true);
-
-	paletteMenu->addSeparator();
-	m_importPalette = paletteMenu->addAction(tr("Import..."), this, SLOT(importPalette()));
-	m_exportPalette = paletteMenu->addAction(tr("Export..."), this, SLOT(exportPalette()));
-
-	m_ui->paletteMenuButton->setMenu(paletteMenu);
-	m_ui->paletteMenuButton->setStyleSheet("QToolButton::menu-indicator { image: none }");
-
-	connect(m_ui->palettelist, SIGNAL(currentIndexChanged(int)), this, SLOT(paletteChanged(int)));
-	connect(m_ui->palettelist, SIGNAL(editTextChanged(QString)), this, SLOT(paletteNameChanged(QString)));
-
-	// Restore last used palette
+	w->setCurrentIndex(cfg.value("history/lastcolortab", 0).toInt());
 	int lastPalette = cfg.value("history/lastpalette", 0).toInt();
-	lastPalette = qBound(0, lastPalette, m_ui->palettelist->model()->rowCount());
+	lastPalette = qBound(0, lastPalette, d->paletteChoiceBox->model()->rowCount());
 
 	if(lastPalette>0)
-		m_ui->palettelist->setCurrentIndex(lastPalette);
+		d->paletteChoiceBox->setCurrentIndex(lastPalette);
 	else
 		paletteChanged(0);
-
-	//
-	// Color slider tab
-	//
-	connect(m_ui->hue, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
-	connect(m_ui->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
-	connect(m_ui->value, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSliders()));
-
-	connect(m_ui->huebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
-	connect(m_ui->saturationbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
-	connect(m_ui->valuebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromHsvSpinbox()));
-
-	connect(m_ui->red, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
-	connect(m_ui->green, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
-	connect(m_ui->blue, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSliders()));
-
-	connect(m_ui->redbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
-	connect(m_ui->greenbox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
-	connect(m_ui->bluebox, SIGNAL(valueChanged(int)), this, SLOT(updateFromRgbSpinbox()));
-
-	//
-	// Color wheel tab
-	//
-	connect(m_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
-	connect(m_ui->colorwheel, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
-
-	//
-	// Last used colors
-	//
-	m_lastused = new Palette(this);
-	m_lastused->setWriteProtected(true);
-
-	m_lastusedAlt = new Palette(this);
-	m_lastusedAlt->setWriteProtected(true);
-
-	m_ui->lastused->setPalette(m_lastused);
-	m_ui->lastused->setEnableScrolling(false);
-	m_ui->lastused->setMaxRows(1);
-
-	connect(m_ui->lastused, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorChanged(QColor)));
-	connect(m_ui->lastused, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
 
 	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
 			this, &ColorBox::updateSettings);
 	updateSettings();
 }
 
+QWidget *ColorBox::createPalettePage()
+{
+	auto *w = new QWidget(this);
+	auto *layout = new QGridLayout;
+	layout->setSpacing(3);
+	w->setLayout(layout);
+
+	d->paletteChoiceBox = new QComboBox(w);
+	d->paletteChoiceBox->setCompleter(nullptr);
+	d->paletteChoiceBox->setInsertPolicy(QComboBox::NoInsert); // we want to handle editingFinished signal ourselves
+	d->paletteChoiceBox->setModel(getSharedPaletteModel());
+	layout->addWidget(d->paletteChoiceBox, 0, 0);
+
+	auto *menuButton = new widgets::GroupedToolButton(w);
+	menuButton->setIcon(icon::fromTheme("application-menu"));
+	layout->addWidget(menuButton, 0, 1);
+	layout->setColumnStretch(0, 1);
+
+	d->paletteSwatch = new color_widgets::Swatch(w);
+	layout->addWidget(d->paletteSwatch, 1, 0, 1, 2);
+
+	QMenu *paletteMenu = new QMenu(this);
+	paletteMenu->addAction(tr("New"), this, &ColorBox::addPalette);
+	paletteMenu->addAction(tr("Duplicate"), this, &ColorBox::copyPalette);
+	paletteMenu->addAction(tr("Delete"), this, &ColorBox::deletePalette);
+	paletteMenu->addAction(tr("Rename"), this, &ColorBox::renamePalette);
+
+	paletteMenu->addSeparator();
+	paletteMenu->addAction(tr("Import..."), this, &ColorBox::importPalette);
+	paletteMenu->addAction(tr("Export..."), this, &ColorBox::exportPalette);
+
+	menuButton->setMenu(paletteMenu);
+	menuButton->setPopupMode(QToolButton::InstantPopup);
+	menuButton->setStyleSheet("QToolButton::menu-indicator { image: none }");
+
+	d->palettePopupMenu = new QMenu(this);
+	d->palettePopupMenu->addAction(tr("Add"))->setProperty("menuIdx", 0);
+	d->palettePopupMenu->addAction(tr("Remove"))->setProperty("menuIdx", 1);
+	d->palettePopupMenu->addSeparator();
+	d->palettePopupMenu->addAction(tr("Less columns"))->setProperty("menuIdx", 2);;
+	d->palettePopupMenu->addAction(tr("More columns"))->setProperty("menuIdx", 3);
+
+	connect(d->paletteSwatch, &color_widgets::Swatch::clicked, this, &ColorBox::paletteClicked);
+	connect(d->paletteSwatch, &color_widgets::Swatch::doubleClicked, this, &ColorBox::paletteDoubleClicked);
+	connect(d->paletteSwatch, &color_widgets::Swatch::rightClicked, this, &ColorBox::paletteRightClicked);
+	connect(d->paletteChoiceBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ColorBox::paletteChanged);
+	return w;
+}
+
+QWidget *ColorBox::createSlidersPage()
+{
+	Q_ASSERT(d->hue == nullptr);
+	QWidget *w = new QWidget;
+	auto *layout = new QGridLayout;
+	w->setLayout(layout);
+
+	int row = 0;
+
+	d->hue = new color_widgets::HueSlider(w);
+	d->hue->setMaximum(359);
+	d->huebox = new QSpinBox(w);
+	d->huebox->setMaximum(359);
+	d->hue->setFixedHeight(d->huebox->height());
+	layout->addWidget(d->hue, row, 0);
+	layout->addWidget(d->huebox, row, 1);
+
+	++row;
+
+	d->saturation = new color_widgets::GradientSlider(w);
+	d->saturation->setMaximum(255);
+	d->saturationbox = new QSpinBox(w);
+	d->saturationbox->setMaximum(255);
+	d->saturation->setFixedHeight(d->saturationbox->height());
+	layout->addWidget(d->saturation, row, 0);
+	layout->addWidget(d->saturationbox, row, 1);
+
+	++row;
+
+	d->value = new color_widgets::GradientSlider(w);
+	d->value->setMaximum(255);
+	d->valuebox = new QSpinBox(w);
+	d->valuebox->setMaximum(255);
+	d->value->setFixedHeight(d->valuebox->height());
+	layout->addWidget(d->value, row, 0);
+	layout->addWidget(d->valuebox, row, 1);
+
+	++row;
+
+	d->red = new color_widgets::GradientSlider(w);
+	d->red->setMaximum(255);
+	d->redbox = new QSpinBox(w);
+	d->redbox->setMaximum(255);
+	d->red->setFixedHeight(d->redbox->height());
+	layout->addWidget(d->red, row, 0);
+	layout->addWidget(d->redbox, row, 1);
+
+	++row;
+
+	d->green = new color_widgets::GradientSlider(w);
+	d->green->setMaximum(255);
+	d->greenbox = new QSpinBox(w);
+	d->greenbox->setMaximum(255);
+	d->green->setFixedHeight(d->greenbox->height());
+	layout->addWidget(d->green, row, 0);
+	layout->addWidget(d->greenbox, row, 1);
+
+	++row;
+
+	d->blue = new color_widgets::GradientSlider(w);
+	d->blue->setMaximum(255);
+	d->bluebox = new QSpinBox(w);
+	d->bluebox->setMaximum(255);
+	d->blue->setFixedHeight(d->bluebox->height());
+	layout->addWidget(d->blue, row, 0);
+	layout->addWidget(d->bluebox, row, 1);
+
+	++row;
+
+	layout->setSpacing(3);
+	layout->setRowStretch(row, 1);
+
+	connect(d->hue, QOverload<int>::of(&color_widgets::HueSlider::valueChanged), this, &ColorBox::updateFromHsvSliders);
+	connect(d->huebox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorBox::updateFromHsvSpinbox);
+
+	connect(d->saturation, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorBox::updateFromHsvSliders);
+	connect(d->saturationbox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorBox::updateFromHsvSpinbox);
+
+	connect(d->value, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorBox::updateFromHsvSliders);
+	connect(d->valuebox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorBox::updateFromHsvSpinbox);
+
+	connect(d->red, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorBox::updateFromRgbSliders);
+	connect(d->redbox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorBox::updateFromRgbSpinbox);
+
+	connect(d->green, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorBox::updateFromRgbSliders);
+	connect(d->greenbox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorBox::updateFromRgbSpinbox);
+
+	connect(d->blue, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorBox::updateFromRgbSliders);
+	connect(d->bluebox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorBox::updateFromRgbSpinbox);
+
+	return w;
+}
+
+QWidget *ColorBox::createWheelPage()
+{
+	Q_ASSERT(d->colorwheel == nullptr);
+	d->colorwheel = new color_widgets::ColorWheel(this);
+
+	connect(d->colorwheel, &color_widgets::ColorWheel::colorSelected, this, &ColorBox::colorChanged);
+	connect(d->colorwheel, &color_widgets::ColorWheel::colorSelected, this, &ColorBox::setColor);
+
+	return d->colorwheel;
+}
+
 ColorBox::~ColorBox()
 {
-	static_cast<PaletteListModel*>(m_ui->palettelist->model())->saveChanged();
+	d->saveCurrentPalette();
 
 	QSettings cfg;
-	cfg.setValue("history/lastpalette", m_ui->palettelist->currentIndex());
-	cfg.setValue("history/lastcolortab", m_ui->stackedWidget->currentIndex());
-	delete m_ui;
+	cfg.setValue("history/lastpalette", d->paletteChoiceBox->currentIndex());
+	cfg.setValue("history/lastcolortab", static_cast<QTabWidget*>(widget())->currentIndex());
+
+	delete d;
 }
 
 void ColorBox::paletteChanged(int index)
 {
-	if(index<0 || index >= m_ui->palettelist->model()->rowCount()) {
-		m_ui->palette->setPalette(nullptr);
-	} else {
-		Palette *pal = static_cast<PaletteListModel*>(m_ui->palettelist->model())->getPalette(index);
-		m_ui->palette->setPalette(pal);
-		m_deletePalette->setEnabled(!pal->isReadonly());
-		m_writeprotectPalette->setEnabled(!pal->isReadonly());
-		m_writeprotectPalette->setChecked(pal->isWriteProtected());
-	}
-}
+	if(index>=0) {
+		// switching palettes cancels rename operation (if in progress)
+		d->paletteChoiceBox->setEditable(false);
 
-void ColorBox::toggleWriteProtect()
-{
-	Palette *pal = m_ui->palette->palette();
-	if(pal) {
-		pal->setWriteProtected(!pal->isWriteProtected());
-		m_writeprotectPalette->setChecked(pal->isWriteProtected());
-		m_ui->palette->update();
+		// Save current palette if it has any changes before switching to another one
+		d->saveCurrentPalette();
+
+		d->paletteSwatch->setPalette(getSharedPaletteModel()->palette(index));
 	}
 }
 
@@ -219,15 +398,13 @@ void ColorBox::importPalette()
 	);
 
 	if(!filename.isEmpty()) {
-		QScopedPointer<Palette> imported {Palette::fromFile(filename)};
-		QScopedPointer<Palette> pal {Palette::copy(imported.data(), imported->name())};
+		auto pal = color_widgets::ColorPalette::fromFile(filename);
+		if(pal.count()==0)
+			return;
+		pal.setFileName(QString());
 
-		auto *palettelist = static_cast<PaletteListModel*>(m_ui->palettelist->model());
-		palettelist->saveChanged();
-		pal->save();
-		palettelist->loadPalettes();
-
-		m_ui->palettelist->setCurrentIndex(palettelist->findPalette(pal->name()));
+		getSharedPaletteModel()->addPalette(pal);
+		d->paletteChoiceBox->setCurrentIndex(getSharedPaletteModel()->rowCount()-1);
 	}
 }
 
@@ -241,9 +418,10 @@ void ColorBox::exportPalette()
 	);
 
 	if(!filename.isEmpty()) {
-		QString err;
-		if(!m_ui->palette->palette()->exportPalette(filename, &err))
-			QMessageBox::warning(this, tr("Error"), err);
+		auto pal = d->paletteSwatch->palette();
+
+		if(!pal.save(filename))
+			QMessageBox::warning(this, tr("Error"), tr("Couldn't save file"));
 	}
 }
 
@@ -251,81 +429,160 @@ void ColorBox::exportPalette()
  * The user has changed the name of a palette. Update the palette
  * and rename the file if it has one.
  */
-void ColorBox::paletteNameChanged(const QString& name)
+void ColorBox::paletteRenamed()
 {
-	QAbstractItemModel *m = m_ui->palettelist->model();
-	m->setData(m->index(m_ui->palettelist->currentIndex(), 0), name);
+	const QString newName = d->paletteChoiceBox->currentText();
+	if(!newName.isEmpty() && d->paletteSwatch->palette().name() != newName) {
+		auto *pm = getSharedPaletteModel();
+		d->paletteSwatch->palette().setName(newName);
+		pm->updatePalette(d->paletteChoiceBox->currentIndex(), d->paletteSwatch->palette());
+		d->paletteSwatch->setPalette(pm->palette(d->paletteChoiceBox->currentIndex()));
+	}
+
+	d->paletteChoiceBox->setEditable(false);
+}
+
+void ColorBox::renamePalette()
+{
+	d->paletteChoiceBox->setEditable(true);
+	connect(d->paletteChoiceBox->lineEdit(), &QLineEdit::editingFinished, this, &ColorBox::paletteRenamed, Qt::UniqueConnection);
 }
 
 void ColorBox::addPalette()
 {
-	static_cast<PaletteListModel*>(m_ui->palettelist->model())->addNewPalette();
-	m_ui->palettelist->setCurrentIndex(m_ui->palettelist->count()-1);
+	auto pal = color_widgets::ColorPalette();
+	pal.appendColor(d->colorwheel->color());
+	getSharedPaletteModel()->addPalette(pal, false);
+	d->paletteChoiceBox->setCurrentIndex(d->paletteChoiceBox->model()->rowCount()-1);
+	renamePalette();
 }
 
 void ColorBox::copyPalette()
 {
-	int current = m_ui->palettelist->currentIndex();
-	static_cast<PaletteListModel*>(m_ui->palettelist->model())->copyPalette(current);
-	m_ui->palettelist->setCurrentIndex(current);
+
+	const int current = d->paletteChoiceBox->currentIndex();
+	if(current >= 0) {
+		auto *pm = getSharedPaletteModel();
+		auto pal = pm->palette(current);
+		pal.setFileName(QString());
+		pal.setName(QString());
+		pm->addPalette(pal, false);
+		d->paletteChoiceBox->setCurrentIndex(pm->rowCount()-1);
+		renamePalette();
+	}
 }
 
 void ColorBox::deletePalette()
 {
-	const int index = m_ui->palettelist->currentIndex();
+	const int current = d->paletteChoiceBox->currentIndex();
+	if(current >= 0) {
 	const int ret = QMessageBox::question(
 			this,
 			tr("Delete"),
-			tr("Delete palette \"%1\"?").arg(m_ui->palettelist->currentText()),
+			tr("Delete palette \"%1\"?").arg(d->paletteChoiceBox->currentText()),
 			QMessageBox::Yes|QMessageBox::No);
 
-	if(ret == QMessageBox::Yes) {
-		m_ui->palettelist->model()->removeRow(index);
+		if(ret == QMessageBox::Yes) {
+			getSharedPaletteModel()->removePalette(current);
+		}
+	}
+}
+
+void ColorBox::paletteClicked(int index)
+{
+	if(index >= 0) {
+		const auto c = d->paletteSwatch->palette().colorAt(index);
+		setColor(c);
+		emit colorChanged(c);
+	 }
+}
+
+void ColorBox::paletteDoubleClicked(int index)
+{
+	color_widgets::ColorDialog dlg;
+	dlg.setAlphaEnabled(false);
+	dlg.setButtonMode(color_widgets::ColorDialog::OkCancel);
+	dlg.setColor(d->paletteSwatch->palette().colorAt(index));
+	if(dlg.exec() == QDialog::Accepted) {
+		if(index < 0)
+			d->paletteSwatch->palette().appendColor(dlg.color());
+		else
+			d->paletteSwatch->palette().setColorAt(index, dlg.color());
+		setColor(dlg.color());
+		emit colorChanged(dlg.color());
+	}
+}
+
+void ColorBox::paletteRightClicked(int index)
+{
+	const QAction *act = d->palettePopupMenu->exec(QCursor::pos());
+	if(!act)
+		return;
+
+	int columns = d->paletteSwatch->palette().columns();
+	if(columns == 0)
+		columns = d->paletteSwatch->palette().count();
+
+	switch(act->property("menuIdx").toInt()) {
+	case 0:
+		d->paletteSwatch->palette().insertColor(index+1, d->colorwheel->color());
+		break;
+	case 1:
+		if(d->paletteSwatch->palette().count() > 1)
+			d->paletteSwatch->palette().eraseColor(index);
+		break;
+	case 2:
+		if(columns > 1)
+			d->paletteSwatch->palette().setColumns(columns - 1);
+		break;
+	case 3:
+		d->paletteSwatch->palette().setColumns(columns + 1);
+		break;
 	}
 }
 
 void ColorBox::setColor(const QColor& color)
 {
-	_updating = true;
-	m_ui->red->setFirstColor(QColor(0, color.green(), color.blue()));
-	m_ui->red->setLastColor(QColor(255, color.green(), color.blue()));
-	m_ui->red->setValue(color.red());
-	m_ui->redbox->setValue(color.red());
+	d->updating = true;
 
-	m_ui->green->setFirstColor(QColor(color.red(), 0, color.blue()));
-	m_ui->green->setLastColor(QColor(color.red(), 255, color.blue()));
-	m_ui->green->setValue(color.green());
-	m_ui->greenbox->setValue(color.green());
+	d->hue->setColorSaturation(color.saturationF());
+	d->hue->setColorValue(color.valueF());
+	d->hue->setValue(color.hue());
+	d->huebox->setValue(color.hue());
 
-	m_ui->blue->setFirstColor(QColor(color.red(), color.green(), 0));
-	m_ui->blue->setLastColor(QColor(color.red(), color.green(), 255));
-	m_ui->blue->setValue(color.blue());
-	m_ui->bluebox->setValue(color.blue());
+	d->saturation->setFirstColor(QColor::fromHsv(color.hue(), 0, color.value()));
+	d->saturation->setLastColor(QColor::fromHsv(color.hue(), 255, color.value()));
+	d->saturation->setValue(color.saturation());
+	d->saturationbox->setValue(color.saturation());
 
+	d->value->setFirstColor(QColor::fromHsv(color.hue(), color.saturation(), 0));
+	d->value->setLastColor(QColor::fromHsv(color.hue(), color.saturation(), 255));
+	d->value->setValue(color.value());
+	d->valuebox->setValue(color.value());
 
-	m_ui->hue->setColorSaturation(color.saturationF());
-	m_ui->hue->setColorValue(color.valueF());
-	m_ui->hue->setValue(color.hue());
-	m_ui->huebox->setValue(color.hue());
+	d->red->setFirstColor(QColor(0, color.green(), color.blue()));
+	d->red->setLastColor(QColor(255, color.green(), color.blue()));
+	d->red->setValue(color.red());
+	d->redbox->setValue(color.red());
 
-	m_ui->saturation->setFirstColor(QColor::fromHsv(color.hue(), 0, color.value()));
-	m_ui->saturation->setLastColor(QColor::fromHsv(color.hue(), 255, color.value()));
-	m_ui->saturation->setValue(color.saturation());
-	m_ui->saturationbox->setValue(color.saturation());
+	d->green->setFirstColor(QColor(color.red(), 0, color.blue()));
+	d->green->setLastColor(QColor(color.red(), 255, color.blue()));
+	d->green->setValue(color.green());
+	d->greenbox->setValue(color.green());
 
-	m_ui->value->setFirstColor(QColor::fromHsv(color.hue(), color.saturation(), 0));
-	m_ui->value->setLastColor(QColor::fromHsv(color.hue(), color.saturation(), 255));
-	m_ui->value->setValue(color.value());
-	m_ui->valuebox->setValue(color.value());
+	d->blue->setFirstColor(QColor(color.red(), color.green(), 0));
+	d->blue->setLastColor(QColor(color.red(), color.green(), 255));
+	d->blue->setValue(color.blue());
+	d->bluebox->setValue(color.blue());
 
-	m_ui->colorwheel->setColor(color);
-	_updating = false;
+	d->colorwheel->setColor(color);
+	d->updating = false;
 }
 
 void ColorBox::updateFromRgbSliders()
 {
-	if(!_updating) {
-		QColor color(m_ui->red->value(), m_ui->green->value(), m_ui->blue->value());
+	if(!d->updating) {
+		QColor color(d->red->value(), d->green->value(), d->blue->value());
 
 		setColor(color);
 		emit colorChanged(color);
@@ -334,8 +591,8 @@ void ColorBox::updateFromRgbSliders()
 
 void ColorBox::updateFromRgbSpinbox()
 {
-	if(!_updating) {
-		QColor color(m_ui->redbox->value(), m_ui->greenbox->value(), m_ui->bluebox->value());
+	if(!d->updating) {
+		QColor color(d->redbox->value(), d->greenbox->value(), d->bluebox->value());
 		setColor(color);
 		emit colorChanged(color);
 	}
@@ -343,8 +600,8 @@ void ColorBox::updateFromRgbSpinbox()
 
 void ColorBox::updateFromHsvSliders()
 {
-	if(!_updating) {
-		QColor color = QColor::fromHsv(m_ui->hue->value(), m_ui->saturation->value(), m_ui->value->value());
+	if(!d->updating) {
+		QColor color = QColor::fromHsv(d->hue->value(), d->saturation->value(), d->value->value());
 
 		setColor(color);
 		emit colorChanged(color);
@@ -353,8 +610,8 @@ void ColorBox::updateFromHsvSliders()
 
 void ColorBox::updateFromHsvSpinbox()
 {
-	if(!_updating) {
-		QColor color = QColor::fromHsv(m_ui->huebox->value(), m_ui->saturationbox->value(), m_ui->valuebox->value());
+	if(!d->updating) {
+		QColor color = QColor::fromHsv(d->huebox->value(), d->saturationbox->value(), d->valuebox->value());
 
 		setColor(color);
 		emit colorChanged(color);
@@ -363,53 +620,50 @@ void ColorBox::updateFromHsvSpinbox()
 
 void ColorBox::addLastUsedColor(const QColor &color)
 {
-	if(m_lastused->count()>0 && m_lastused->color(0).color.rgb() == color.rgb())
-		return;
-
-	m_lastused->setWriteProtected(false);
+	color_widgets::ColorPalette &pal = d->lastUsedSwatch->palette();
+	{
+		const auto c = pal.colorAt(0);
+		if(c.isValid() && c.rgb() == color.rgb())
+			return;
+	}
 
 	// Move color to the front of the palette
-	m_lastused->insertColor(0, color);
-	for(int i=1;i<m_lastused->count();++i) {
-		if(m_lastused->color(i).color.rgb() == color.rgb()) {
-			m_lastused->removeColor(i);
+	pal.insertColor(0, color);
+	for(int i=1;i<pal.count();++i) {
+		if(pal.colorAt(i).rgb() == color.rgb()) {
+			pal.eraseColor(i);
 			break;
 		}
 	}
 
-	// Limit maximum number of remembered colors
-	if(m_lastused->count() > 24)
-		m_lastused->removeColor(24);
-	m_lastused->setWriteProtected(true);
+	// Limit number of remembered colors
+	if(pal.count() > LASTUSED_COLOR_COUNT)
+		pal.eraseColor(LASTUSED_COLOR_COUNT);
 }
 
 void ColorBox::swapLastUsedColors()
 {
-	// Swap last-used palettes
-	Palette *swap = m_lastused;
-	m_lastused = m_lastusedAlt;
-	m_lastusedAlt = swap;
-	m_ui->lastused->setPalette(m_lastused);
+	auto lastUsedPal = d->lastUsedSwatch->palette();
+	auto lastUsedCol = d->colorwheel->color();
 
-	// Select last used color
-	const QColor altColor = m_altColor;
-	m_altColor = m_ui->colorwheel->color();
+	d->lastUsedSwatch->setPalette(d->lastusedAlt);
+	setColor(d->altColor);
+	emit colorChanged(d->altColor);
 
-	setColor(altColor);
-	emit colorChanged(altColor);
+	d->lastusedAlt = lastUsedPal;
+	d->altColor = lastUsedCol;
 }
 
 void ColorBox::updateSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/colorwheel");
-	m_ui->colorwheel->setSelectorShape(
-			static_cast<ColorWheel::ShapeEnum>(cfg.value("shape").toInt()));
-	m_ui->colorwheel->setRotatingSelector(
-			static_cast<ColorWheel::AngleEnum>(cfg.value("rotate").toInt()));
-	m_ui->colorwheel->setColorSpace(
-			static_cast<ColorWheel::ColorSpaceEnum>(cfg.value("space").toInt()));
-	cfg.endGroup();
+	d->colorwheel->setSelectorShape(
+			static_cast<color_widgets::ColorWheel::ShapeEnum>(cfg.value("shape").toInt()));
+	d->colorwheel->setRotatingSelector(
+			static_cast<color_widgets::ColorWheel::AngleEnum>(cfg.value("rotate").toInt()));
+	d->colorwheel->setColorSpace(
+			static_cast<color_widgets::ColorWheel::ColorSpaceEnum>(cfg.value("space").toInt()));
 }
 
 }

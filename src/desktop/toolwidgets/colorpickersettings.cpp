@@ -21,8 +21,8 @@
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "tools/colorpicker.h"
-#include "widgets/palettewidget.h"
 
+#include <QtColorWidgets/swatch.hpp>
 
 #include <QBoxLayout>
 #include <QLabel>
@@ -44,7 +44,6 @@ namespace props {
 ColorPickerSettings::ColorPickerSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
 {
-	m_palette.setColumns(8);
 }
 
 ColorPickerSettings::~ColorPickerSettings()
@@ -80,11 +79,12 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	m_layerpick = new QCheckBox(tr("Pick from current layer only"), widget);
 	layout->addWidget(m_layerpick);
 
-	m_palettewidget = new widgets::PaletteWidget(widget);
-	m_palettewidget->setPalette(&m_palette);
+	m_palettewidget = new color_widgets::Swatch(widget);
+	m_palettewidget->palette().setColumns(16);
+	m_palettewidget->setReadOnly(true);
 	layout->addWidget(m_palettewidget);
 
-	connect(m_palettewidget, &widgets::PaletteWidget::colorSelected, this, &ColorPickerSettings::colorSelected);
+	connect(m_palettewidget, &color_widgets::Swatch::colorSelected, this, &ColorPickerSettings::colorSelected);
 	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(slider, &QSlider::valueChanged, m_size, &QSpinBox::setValue);
 	connect(m_size, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
@@ -133,15 +133,14 @@ void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 
 void ColorPickerSettings::addColor(const QColor &color)
 {
-	if(m_palette.count() && m_palette.color(0).color == color)
+	auto &palette = m_palettewidget->palette();
+	if(palette.count() > 0 && palette.colorAt(0).rgb() == color.rgb())
 		return;
 
-	m_palette.insertColor(0, color);
+	palette.insertColor(0, color);
 
-	if(m_palette.count() > 80)
-		m_palette.removeColor(m_palette.count()-1);
-
-	m_palettewidget->update();
+	if(palette.count() > 80)
+		palette.eraseColor(palette.count()-1);
 }
 
 }

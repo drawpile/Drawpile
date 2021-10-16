@@ -40,8 +40,6 @@ set (
 	net/envelopebuilder.cpp
 	net/messagequeue.cpp
 	net/servercmd.cpp
-	utils/palette.cpp
-	utils/palettelistmodel.cpp
 	utils/html.cpp
 	utils/usernamevalidator.cpp
 	utils/sessionidvalidator.cpp
