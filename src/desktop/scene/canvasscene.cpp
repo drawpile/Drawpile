@@ -267,7 +267,7 @@ void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &colo
 {
 	if(persistence == 0) {
 		m_activeLaserTrail.remove(userId);
-	} else {
+	} else if(m_showLaserTrails) {
 		LaserTrailItem *item = new LaserTrailItem(userId, color);
 		m_activeLaserTrail[userId] = item;
 		addItem(item);
@@ -276,14 +276,14 @@ void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &colo
 
 void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y)
 {
-	if(!m_showUserMarkers)
-		return;
-
 	// User cursor motion is used to update the laser trail, if one exists
 	if(m_activeLaserTrail.contains(userId)) {
 		LaserTrailItem *laser = m_activeLaserTrail[userId];
 		laser->addPoint(QPointF(x, y));
 	}
+
+	if(!m_showUserMarkers)
+		return;
 
 	// TODO in some cases (playback, laser pointer) we want to show our cursor as well.
 	if(userId == m_model->localUserId())
