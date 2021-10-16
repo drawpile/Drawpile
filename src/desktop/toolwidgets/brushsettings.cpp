@@ -242,6 +242,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
+	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &BrushSettings::updateFromUi);
+
 	return widget;
 }
 
@@ -435,6 +437,7 @@ void BrushSettings::updateUi()
 	const int presetIndex = d->presetModel->searchIndexById(tool.inputPresetId);
 	if(presetIndex >= 0) {
 		d->ui.inputPreset->setCurrentIndex(presetIndex);
+		emitPresetChanges(d->presetModel->at(presetIndex));
 	}
 
 	d->updateInProgress = false;
@@ -496,14 +499,7 @@ void BrushSettings::chooseInputPreset(int index)
 	const input::Preset *preset = d->presetModel->at(index);
 	if(preset && tool.inputPresetId != preset->id) {
 		tool.inputPresetId = preset->id;
-	}
-	emitPresetChanges(preset);
-}
-
-void BrushSettings::inputPresetChanged(const QString &id)
-{
-	if(d->currentTool().inputPresetId == id) {
-		emitPresetChanges(d->presetModel->searchPresetById(id));
+		emitPresetChanges(preset);
 	}
 }
 

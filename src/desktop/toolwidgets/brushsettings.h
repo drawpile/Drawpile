@@ -99,7 +99,6 @@ private slots:
 	void updateUi();
 	void updateFromUi();
 	void chooseInputPreset(int index);
-	void inputPresetChanged(const QString &id);
 	void updateSettings();
 
 private:
