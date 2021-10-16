@@ -146,7 +146,6 @@ set (
 	ui/videoexport.ui
 	ui/inputcfg.ui
 	ui/logindialog.ui
-	ui/colorbox.ui
 	ui/netstats.ui
 	ui/flipbook.ui
 	ui/playback.ui
