@@ -364,9 +364,18 @@ impl AclFilter {
             || (user == layer_creator(layer) && tier <= self.feature_tier.own_layers)
     }
 
+    /// Check if the layer is locked for the given user
+    ///
+    /// A layer can be off-limits because of an insufficient access tier,
+    /// because exclusive access has been assigned, or because the whole layer is locked.
+    /// Note! There is also a canvas-wide lock, but that is checked elsewhere as it
+    /// affects all Command messages equally.
+    ///
+    /// If ACLs haven't been explicitly assigned to a layer, the default is
+    /// Guest tier access and no locks.
     fn is_layer_locked(&self, user: UserID, layer: LayerID) -> bool {
         self.layers.get(&layer).map_or(false, |l| {
-            l.locked || !is_userbit(&l.exclusive, user) || l.tier > self.users.tier(user)
+            l.locked || !is_userbit(&l.exclusive, user) || l.tier < self.users.tier(user)
         })
     }
 }
@@ -438,8 +447,8 @@ mod tests {
     #[test]
     fn test_layer_edit() {
         let mut acl = AclFilter::new();
-        join(&mut acl, 1);
-        join(&mut acl, 2);
+        join(&mut acl, 1, 0);
+        join(&mut acl, 2, 0);
         assert!(set_op(&mut acl, 0, 1));
 
         // Operators can always create layers
@@ -455,18 +464,214 @@ mod tests {
         assert_eq!(create_layer(&mut acl, 2, 0x0302, 0), false);
     }
 
-    fn join(acl: &mut AclFilter, user: UserID) {
-        let (ok, c) = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::Join(
+    #[test]
+    fn test_access_tiers() {
+        let mut acl = AclFilter::new();
+
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::FeatureAccessLevels(0, vec![
+            u8::from(Tier::Operator), // put image
+            u8::from(Tier::Trusted), // move rect
+            u8::from(Tier::Authenticated), // resize
+            u8::from(Tier::Guest), // background
+            u8::from(Tier::Guest), // layer edit
+            u8::from(Tier::Guest), // own layers
+            u8::from(Tier::Operator), // create annotations
+            u8::from(Tier::Trusted), // laser
+            u8::from(Tier::Authenticated), // undo
+            u8::from(Tier::Guest), // metadata
+        ])));
+        assert!(ok.0);
+        assert_eq!(ok.1, ACLCHANGE_FEATURES);
+
+        join(&mut acl, 1, 0); // this will become the operator
+        join(&mut acl, 2, 0); // this will become trusted
+        join(&mut acl, 3, JoinMessage::FLAGS_AUTH); // authenticated user
+        join(&mut acl, 4, 0); // guest user
+
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(0, vec![1])));
+        assert!(ok.0);
+        assert_eq!(ok.1, ACLCHANGE_USERBITS);
+
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::TrustedUsers(0, vec![2])));
+        assert!(ok.0);
+        assert_eq!(ok.1, ACLCHANGE_USERBITS);
+
+        // ACL filter is now set up and ready for testing
+
+        // Check that each user got their tiers assigned properly
+        assert_eq!(acl.users().tier(1), Tier::Operator);
+        assert_eq!(acl.users().tier(2), Tier::Trusted);
+        assert_eq!(acl.users().tier(3), Tier::Authenticated);
+        assert_eq!(acl.users().tier(4), Tier::Guest);
+
+        // Create annotations: operator tier
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(1, AnnotationCreateMessage{
+            id: 0x0101,
+            x: 1,
+            y: 1,
+            w: 1,
+            h: 1,
+        })));
+        assert!(ok);
+
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(2, AnnotationCreateMessage{
+            id: 0x0201,
+            x: 1,
+            y: 1,
+            w: 1,
+            h: 1,
+        })));
+        assert!(!ok);
+
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(3, AnnotationCreateMessage{
+            id: 0x0301,
+            x: 1,
+            y: 1,
+            w: 1,
+            h: 1,
+        })));
+        assert!(!ok);
+
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(4, AnnotationCreateMessage{
+            id: 0x0401,
+            x: 1,
+            y: 1,
+            w: 1,
+            h: 1,
+        })));
+        assert!(!ok);
+
+        // User laser pointer: Trusted tier
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(1, LaserTrailMessage{
+            color: 1,
+            persistence: 1,
+        })));
+        assert!(ok);
+
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(2, LaserTrailMessage{
+            color: 1,
+            persistence: 1,
+        })));
+        assert!(ok);
+
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(3, LaserTrailMessage{
+            color: 1,
+            persistence: 1,
+        })));
+        assert!(!ok);
+
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(4, LaserTrailMessage{
+            color: 1,
+            persistence: 1,
+        })));
+        assert!(!ok);
+    }
+
+    #[test]
+    fn test_layer_locks() {
+        let mut acl = AclFilter::new();
+
+        // Add users
+        join(&mut acl, 1, 0); // this will become the operator
+        join(&mut acl, 2, 0); // this will become trusted
+        join(&mut acl, 3, JoinMessage::FLAGS_AUTH); // authenticated user
+        join(&mut acl, 4, 0); // guest user
+
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(0, vec![1])));
+        assert_eq!(ok, (true, ACLCHANGE_USERBITS));
+
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::TrustedUsers(0, vec![2])));
+        assert_eq!(ok, (true, ACLCHANGE_USERBITS));
+
+        // Create tiered layers
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
+            id: 1,
+            flags: u8::from(Tier::Operator),
+            exclusive: vec![],
+        })));
+        assert_eq!(ok, (true, ACLCHANGE_LAYERS));
+
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
+            id: 2,
+            flags: u8::from(Tier::Trusted),
+            exclusive: vec![],
+        })));
+        assert_eq!(ok, (true, ACLCHANGE_LAYERS));
+
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
+            id: 3,
+            flags: u8::from(Tier::Authenticated),
+            exclusive: vec![],
+        })));
+        assert_eq!(ok, (true, ACLCHANGE_LAYERS));
+
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
+            id: 4,
+            flags: u8::from(Tier::Guest),
+            exclusive: vec![],
+        })));
+        assert_eq!(ok, (true, 0)); // no change: guest tier + no locks is the default
+
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
+            id: 5,
+            flags: u8::from(Tier::Guest),
+            exclusive: vec![4], // exclusive to user 4
+        })));
+        assert_eq!(ok, (true, ACLCHANGE_LAYERS));
+
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
+            id: 6,
+            flags: u8::from(Tier::Guest) | 0x80, // general layer lock
+            exclusive: vec![],
+        })));
+        assert_eq!(ok, (true, ACLCHANGE_LAYERS));
+
+        // ACL filter is now set up and ready for testing
+
+        // owner should be able to drawn on any layer, except the ones explicitly locked
+        assert!(fillrect(&mut acl, 1, 1));
+        assert!(fillrect(&mut acl, 1, 2));
+        assert!(fillrect(&mut acl, 1, 3));
+        assert!(fillrect(&mut acl, 1, 4));
+        assert!(!fillrect(&mut acl, 1, 5)); // user 4's exclusive
+        assert!(!fillrect(&mut acl, 1, 6)); // locked
+
+        // trusted user
+        assert!(!fillrect(&mut acl, 2, 1));
+        assert!(fillrect(&mut acl, 2, 2));
+        assert!(fillrect(&mut acl, 2, 3));
+        assert!(fillrect(&mut acl, 2, 4));
+        assert!(!fillrect(&mut acl, 2, 5)); // user 4's exclusive
+        assert!(!fillrect(&mut acl, 2, 6)); // locked
+
+        // authenticated user
+        assert!(!fillrect(&mut acl, 3, 1));
+        assert!(!fillrect(&mut acl, 3, 2));
+        assert!(fillrect(&mut acl, 3, 3));
+        assert!(fillrect(&mut acl, 3, 4));
+        assert!(!fillrect(&mut acl, 3, 5)); // user 4's exclusive
+        assert!(!fillrect(&mut acl, 3, 6)); // locked
+
+        // guest user
+        assert!(!fillrect(&mut acl, 4, 1));
+        assert!(!fillrect(&mut acl, 4, 2));
+        assert!(!fillrect(&mut acl, 4, 3));
+        assert!(fillrect(&mut acl, 4, 4));
+        assert!(fillrect(&mut acl, 4, 5)); // user 4's exclusive
+        assert!(!fillrect(&mut acl, 4, 6)); // locked
+    }
+
+    fn join(acl: &mut AclFilter, user: UserID, flags: u8) {
+        let (ok, _) = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::Join(
             user,
             JoinMessage {
-                flags: 0,
+                flags,
                 name: String::new(),
                 avatar: Vec::new(),
             },
         )));
 
         assert!(ok);
-        assert_eq!(c, 0);
     }
 
     fn set_op(acl: &mut AclFilter, by_user: UserID, user: UserID) -> bool {
@@ -491,6 +696,21 @@ mod tests {
             },
         )));
 
+        ok
+    }
+
+    fn fillrect(acl: &mut AclFilter, user: UserID, layer: LayerID) -> bool {
+        let (ok, bits) = acl.filter_message(&Message::Command(CommandMessage::FillRect(user, FillRectMessage{
+            layer,
+            mode: 0,
+            x: 0,
+            y: 0,
+            w: 1,
+            h: 1,
+            color: 0,
+        })));
+
+        assert_eq!(bits, 0);
         ok
     }
 }
