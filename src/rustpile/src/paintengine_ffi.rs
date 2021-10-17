@@ -1516,6 +1516,16 @@ pub enum AnimationExportMode {
     Frames,
 }
 
+/// Callback for animation saving progress
+///
+/// This can be used to report back the progress when the save function
+/// is run in a separate thread.
+///
+/// The function should return `false` if the user has requested the cancellation
+/// of the export process.
+type AnimationExportProgressCallback =
+    Option<extern "C" fn(ctx: *mut c_void, progress: f32) -> bool>;
+
 /// Save the layerstack as an animation.
 ///
 /// It is safe to call this function in a separate thread.
@@ -1525,6 +1535,8 @@ pub extern "C" fn paintengine_save_animation(
     path: *const u16,
     path_len: usize,
     mode: AnimationExportMode,
+    callback_ctx: *mut c_void,
+    callback: AnimationExportProgressCallback,
 ) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
@@ -1533,21 +1545,52 @@ pub extern "C" fn paintengine_save_animation(
         vc.layerstack.clone()
     };
 
-    let res = match mode {
-        AnimationExportMode::Gif => {
-            dpimpex::animation::save_gif_animation(path.as_ref(), &layerstack)
-        }
-        AnimationExportMode::Frames => {
-            dpimpex::animation::save_frames_animation(path.as_ref(), &layerstack)
-        }
+    let expected_frames = layerstack.root().layer_count();
+
+    if expected_frames == 0 {
+        warn!("No frames to export!");
+        return CanvasIoError::NoError;
+    }
+
+    let mut saver: Box<dyn dpimpex::animation::AnimationWriter> = match mode {
+        AnimationExportMode::Gif => match dpimpex::animation::GifWriter::new(path.as_ref()) {
+            Ok(w) => Box::new(dpimpex::animation::AnimationSaver::new(layerstack, w)),
+            Err(e) => {
+                warn!("An error occurred while opening \"{}\": {}", path, e);
+                return e.into();
+            }
+        },
+        AnimationExportMode::Frames => Box::new(dpimpex::animation::AnimationSaver::new(
+            layerstack,
+            dpimpex::animation::FrameImagesWriter::new(path.as_ref()),
+        )),
     };
 
-    if let Err(e) = res {
-        warn!("An error occurred while writing \"{}\": {}", path, e);
-        e.into()
-    } else {
-        CanvasIoError::NoError
+    let mut written_frames = 0.0;
+    loop {
+        written_frames += 1.0;
+        match saver.save_next_frame() {
+            Ok(true) => {
+                if let Some(cb) = callback {
+                    if !(cb)(callback_ctx, written_frames / expected_frames as f32) {
+                        break;
+                    }
+                }
+            }
+            Ok(false) => {
+                if let Some(cb) = callback {
+                    (cb)(callback_ctx, written_frames / expected_frames as f32);
+                }
+                break;
+            }
+            Err(e) => {
+                warn!("An error occurred while writing \"{}\": {}", path, e);
+                return e.into();
+            }
+        }
     }
+
+    CanvasIoError::NoError
 }
 
 #[no_mangle]

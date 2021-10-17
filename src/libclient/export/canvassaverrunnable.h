@@ -22,9 +22,7 @@
 #include <QObject>
 #include <QRunnable>
 
-namespace canvas {
-
-class PaintEngine;
+namespace canvas { class PaintEngine; }
 
 /**
  * @brief A runnable for saving a canvas in a background thread
@@ -35,7 +33,7 @@ class CanvasSaverRunnable : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:
-	CanvasSaverRunnable(const PaintEngine *pe, const QString &filename, QObject *parent = nullptr);
+        CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -50,7 +48,5 @@ private:
 	const canvas::PaintEngine *m_pe;
 	QString m_filename;
 };
-
-}
 
 #endif

@@ -64,6 +64,7 @@ namespace canvas {
 }
 namespace rustpile {
 	enum class CanvasIoError;
+	enum class AnimationExportMode;
 }
 
 class ShortcutDetector;
@@ -179,6 +180,8 @@ private:
 
 	//! Confirm saving of image in a format that doesn't support all required features
 	bool confirmFlatten(QString& file) const;
+
+	void exportAnimation(const QString &path, rustpile::AnimationExportMode mode);
 
 	ActionBuilder makeAction(const char *name, const QString &text);
 	QAction *getAction(const QString &name);

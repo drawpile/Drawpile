@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2018-2021 Calle Laakkonen
+   Copyright (C) 2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,12 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "canvassaverrunnable.h"
-#include "paintengine.h"
+#include "canvas/paintengine.h"
 #include "../rustpile/rustpile.h"
 
-namespace canvas {
-
-CanvasSaverRunnable::CanvasSaverRunnable(const PaintEngine *pe, const QString &filename, QObject *parent)
+CanvasSaverRunnable::CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent)
 	: QObject(parent),
 	  m_pe(pe),
 	  m_filename(filename)
@@ -42,6 +40,4 @@ void CanvasSaverRunnable::run()
 	case rustpile::CanvasIoError::FileOpenError: emit saveComplete(tr("Couldn't open file for writing")); break;
 	default: emit saveComplete(tr("An error occurred while saving image"));
 	}
-}
-
 }

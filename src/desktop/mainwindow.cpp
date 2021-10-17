@@ -43,6 +43,7 @@
 #include <QTimer>
 #include <QListView>
 #include <QTextEdit>
+#include <QThreadPool>
 
 #include <QtColorWidgets/ColorDialog>
 
@@ -102,6 +103,7 @@
 #include "toolwidgets/zoomsettings.h"
 #include "toolwidgets/inspectorsettings.h"
 
+#include "export/animationsaverrunnable.h"
 #include "../libshared/record/reader.h"
 
 #include "dialogs/newdialog.h"
@@ -1175,24 +1177,14 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 void MainWindow::exportGifAnimation()
 {
-	const QString file = QFileDialog::getSaveFileName(
+	const QString path = QFileDialog::getSaveFileName(
 		this,
 		tr("Export Animated GIF"),
 		getLastPath(),
 		"GIF (*.gif)"
 	);
 
-	if(!file.isEmpty()) {
-		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		const auto result = rustpile::paintengine_save_animation(
-			m_doc->canvas()->paintEngine()->engine(),
-			reinterpret_cast<const uint16_t*>(file.constData()),
-			file.length(),
-			rustpile::AnimationExportMode::Gif
-		);
-		QApplication::restoreOverrideCursor();
-		showErrorMessage(result);
-	}
+	exportAnimation(path, rustpile::AnimationExportMode::Gif);
 }
 
 void MainWindow::exportAnimationFrames()
@@ -1203,17 +1195,33 @@ void MainWindow::exportAnimationFrames()
 		getLastPath()
 	);
 
-	if(!path.isEmpty()) {
-		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		const auto result = rustpile::paintengine_save_animation(
-			m_doc->canvas()->paintEngine()->engine(),
-			reinterpret_cast<const uint16_t*>(path.constData()),
-			path.length(),
-			rustpile::AnimationExportMode::Frames
-		);
-		QApplication::restoreOverrideCursor();
-		showErrorMessage(result);
-	}
+	exportAnimation(path, rustpile::AnimationExportMode::Frames);
+}
+
+void MainWindow::exportAnimation(const QString &path, rustpile::AnimationExportMode mode)
+{
+	if(path.isEmpty())
+		return;
+
+	auto *progressDialog = new QProgressDialog(
+		tr("Saving animation..."),
+		tr("Cancel"),
+		0,
+		100,
+		this);
+	progressDialog->setMinimumDuration(500);
+
+	auto *saver = new AnimationSaverRunnable(
+		m_doc->canvas()->paintEngine(),
+		mode,
+		path);
+
+	connect(saver, &AnimationSaverRunnable::progress, progressDialog, &QProgressDialog::setValue);
+	connect(saver, &AnimationSaverRunnable::saveComplete, this, QOverload<const QString&, const QString&>::of(&MainWindow::showErrorMessage));
+	connect(progressDialog, &QProgressDialog::canceled, saver, &AnimationSaverRunnable::cancelExport);
+
+	progressDialog->setValue(0);
+	QThreadPool::globalInstance()->start(saver);
 }
 
 void MainWindow::showFlipbook()
@@ -1699,6 +1707,9 @@ void MainWindow::exit()
  */
 void MainWindow::showErrorMessage(const QString& message, const QString& details)
 {
+	if(message.isEmpty())
+		return;
+
 	QMessageBox *msgbox = new QMessageBox(
 		QMessageBox::Warning,
 		QString(),

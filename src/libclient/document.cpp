@@ -29,7 +29,7 @@
 #include "canvas/selection.h"
 #include "canvas/layerlist.h"
 #include "canvas/userlist.h"
-#include "canvas/canvassaverrunnable.h"
+#include "export/canvassaverrunnable.h"
 #include "tools/toolcontroller.h"
 #include "utils/images.h"
 
@@ -490,9 +490,9 @@ void Document::saveCanvas()
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	auto *saver = new canvas::CanvasSaverRunnable(m_canvas->paintEngine(), m_currentFilename);
+	auto *saver = new CanvasSaverRunnable(m_canvas->paintEngine(), m_currentFilename);
 	unmarkDirty();
-	connect(saver, &canvas::CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
+	connect(saver, &CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
 	emit canvasSaveStarted();
 	QThreadPool::globalInstance()->start(saver);
 }

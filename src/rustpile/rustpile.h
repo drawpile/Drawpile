@@ -315,6 +315,15 @@ struct FeatureTiers {
 
 using IndexBuildProgressNoticationFn = void(*)(void *ctx, uint32_t progress);
 
+/// Callback for animation saving progress
+///
+/// This can be used to report back the progress when the save function
+/// is run in a separate thread.
+///
+/// The function should return `false` if the user has requested the cancellation
+/// of the export process.
+using AnimationExportProgressCallback = bool(*)(void *ctx, float progress);
+
 extern "C" {
 
 void annotations_get_all(const Annotations *annotations,
@@ -798,7 +807,9 @@ CanvasIoError paintengine_save_file(const PaintEngine *dp,
 CanvasIoError paintengine_save_animation(const PaintEngine *dp,
                                          const uint16_t *path,
                                          uintptr_t path_len,
-                                         AnimationExportMode mode);
+                                         AnimationExportMode mode,
+                                         void *callback_ctx,
+                                         AnimationExportProgressCallback callback);
 
 CanvasIoError paintengine_start_recording(PaintEngine *dp,
                                           const uint16_t *path,

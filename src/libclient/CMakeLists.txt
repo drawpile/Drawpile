@@ -24,7 +24,6 @@ set (
 	canvas/acl.cpp
 	canvas/userlist.cpp
 	canvas/layerlist.cpp
-	canvas/canvassaverrunnable.cpp
 	canvas/inputpresetmodel.cpp
 	canvas/paintengine.cpp
 	canvas/indexbuilderrunnable.cpp
@@ -61,6 +60,8 @@ set (
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp
+	export/canvassaverrunnable.cpp
+	export/animationsaverrunnable.cpp
 	parentalcontrols/parentalcontrols.cpp
 )
 

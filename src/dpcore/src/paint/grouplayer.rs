@@ -579,6 +579,10 @@ impl GroupLayer {
         &self.layers
     }
 
+    pub fn layer_at(&self, index: usize) -> &Layer {
+        &self.layers[index]
+    }
+
     /// Return an interator to the direct children of this group
     pub fn iter_layers(&self) -> impl Iterator + DoubleEndedIterator<Item = &Layer> {
         self.layers.iter().map(|l| l.as_ref())
