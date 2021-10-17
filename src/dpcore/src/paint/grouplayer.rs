@@ -415,7 +415,6 @@ impl GroupLayer {
                 }
             }
             self.routes = routes;
-
         } else {
             if let Some(idx) = self.layers.iter().position(|l| l.id() == id) {
                 self.layers.remove(idx);

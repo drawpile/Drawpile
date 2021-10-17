@@ -98,15 +98,24 @@ pub fn make_canvas_snapshot(
     let md = layerstack.metadata();
     msgs.push(Message::Command(CommandMessage::SetMetadataInt(
         user,
-        SetMetadataIntMessage { field: u8::from(MetadataInt::Dpix), value: md.dpix }
+        SetMetadataIntMessage {
+            field: u8::from(MetadataInt::Dpix),
+            value: md.dpix,
+        },
     )));
     msgs.push(Message::Command(CommandMessage::SetMetadataInt(
         user,
-        SetMetadataIntMessage { field: u8::from(MetadataInt::Dpiy), value: md.dpiy }
+        SetMetadataIntMessage {
+            field: u8::from(MetadataInt::Dpiy),
+            value: md.dpiy,
+        },
     )));
     msgs.push(Message::Command(CommandMessage::SetMetadataInt(
         user,
-        SetMetadataIntMessage { field: u8::from(MetadataInt::Framerate), value: md.framerate }
+        SetMetadataIntMessage {
+            field: u8::from(MetadataInt::Framerate),
+            value: md.framerate,
+        },
     )));
 
     // ACLs

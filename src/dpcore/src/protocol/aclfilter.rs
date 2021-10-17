@@ -311,6 +311,7 @@ impl AclFilter {
                 }
                 ok
             }
+            LayerVisibility(_, _) => false, // internal use only
             PutImage(u, m) => {
                 self.users.tier(*u) <= self.feature_tier.put_image
                     && !self.is_layer_locked(*u, m.layer)
@@ -352,7 +353,9 @@ impl AclFilter {
                     && !self.is_layer_locked(*u, m.layer)
             }
             Undo(u, _) => self.users.tier(*u) <= self.feature_tier.undo,
-            SetMetadataInt(u, _) | SetMetadataStr(u, _) => self.users.tier(*u) <= self.feature_tier.metadata,
+            SetMetadataInt(u, _) | SetMetadataStr(u, _) => {
+                self.users.tier(*u) <= self.feature_tier.metadata
+            }
         }
     }
 
@@ -468,18 +471,23 @@ mod tests {
     fn test_access_tiers() {
         let mut acl = AclFilter::new();
 
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::FeatureAccessLevels(0, vec![
-            u8::from(Tier::Operator), // put image
-            u8::from(Tier::Trusted), // move rect
-            u8::from(Tier::Authenticated), // resize
-            u8::from(Tier::Guest), // background
-            u8::from(Tier::Guest), // layer edit
-            u8::from(Tier::Guest), // own layers
-            u8::from(Tier::Operator), // create annotations
-            u8::from(Tier::Trusted), // laser
-            u8::from(Tier::Authenticated), // undo
-            u8::from(Tier::Guest), // metadata
-        ])));
+        let ok = acl.filter_message(&Message::ClientMeta(
+            ClientMetaMessage::FeatureAccessLevels(
+                0,
+                vec![
+                    u8::from(Tier::Operator),      // put image
+                    u8::from(Tier::Trusted),       // move rect
+                    u8::from(Tier::Authenticated), // resize
+                    u8::from(Tier::Guest),         // background
+                    u8::from(Tier::Guest),         // layer edit
+                    u8::from(Tier::Guest),         // own layers
+                    u8::from(Tier::Operator),      // create annotations
+                    u8::from(Tier::Trusted),       // laser
+                    u8::from(Tier::Authenticated), // undo
+                    u8::from(Tier::Guest),         // metadata
+                ],
+            ),
+        ));
         assert!(ok.0);
         assert_eq!(ok.1, ACLCHANGE_FEATURES);
 
@@ -488,11 +496,17 @@ mod tests {
         join(&mut acl, 3, JoinMessage::FLAGS_AUTH); // authenticated user
         join(&mut acl, 4, 0); // guest user
 
-        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(0, vec![1])));
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(
+            0,
+            vec![1],
+        )));
         assert!(ok.0);
         assert_eq!(ok.1, ACLCHANGE_USERBITS);
 
-        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::TrustedUsers(0, vec![2])));
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::TrustedUsers(
+            0,
+            vec![2],
+        )));
         assert!(ok.0);
         assert_eq!(ok.1, ACLCHANGE_USERBITS);
 
@@ -505,65 +519,89 @@ mod tests {
         assert_eq!(acl.users().tier(4), Tier::Guest);
 
         // Create annotations: operator tier
-        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(1, AnnotationCreateMessage{
-            id: 0x0101,
-            x: 1,
-            y: 1,
-            w: 1,
-            h: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(
+            1,
+            AnnotationCreateMessage {
+                id: 0x0101,
+                x: 1,
+                y: 1,
+                w: 1,
+                h: 1,
+            },
+        )));
         assert!(ok);
 
-        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(2, AnnotationCreateMessage{
-            id: 0x0201,
-            x: 1,
-            y: 1,
-            w: 1,
-            h: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(
+            2,
+            AnnotationCreateMessage {
+                id: 0x0201,
+                x: 1,
+                y: 1,
+                w: 1,
+                h: 1,
+            },
+        )));
         assert!(!ok);
 
-        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(3, AnnotationCreateMessage{
-            id: 0x0301,
-            x: 1,
-            y: 1,
-            w: 1,
-            h: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(
+            3,
+            AnnotationCreateMessage {
+                id: 0x0301,
+                x: 1,
+                y: 1,
+                w: 1,
+                h: 1,
+            },
+        )));
         assert!(!ok);
 
-        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(4, AnnotationCreateMessage{
-            id: 0x0401,
-            x: 1,
-            y: 1,
-            w: 1,
-            h: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::Command(CommandMessage::AnnotationCreate(
+            4,
+            AnnotationCreateMessage {
+                id: 0x0401,
+                x: 1,
+                y: 1,
+                w: 1,
+                h: 1,
+            },
+        )));
         assert!(!ok);
 
         // User laser pointer: Trusted tier
-        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(1, LaserTrailMessage{
-            color: 1,
-            persistence: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(
+            1,
+            LaserTrailMessage {
+                color: 1,
+                persistence: 1,
+            },
+        )));
         assert!(ok);
 
-        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(2, LaserTrailMessage{
-            color: 1,
-            persistence: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(
+            2,
+            LaserTrailMessage {
+                color: 1,
+                persistence: 1,
+            },
+        )));
         assert!(ok);
 
-        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(3, LaserTrailMessage{
-            color: 1,
-            persistence: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(
+            3,
+            LaserTrailMessage {
+                color: 1,
+                persistence: 1,
+            },
+        )));
         assert!(!ok);
 
-        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(4, LaserTrailMessage{
-            color: 1,
-            persistence: 1,
-        })));
+        let (ok, _) = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LaserTrail(
+            4,
+            LaserTrailMessage {
+                color: 1,
+                persistence: 1,
+            },
+        )));
         assert!(!ok);
     }
 
@@ -577,53 +615,77 @@ mod tests {
         join(&mut acl, 3, JoinMessage::FLAGS_AUTH); // authenticated user
         join(&mut acl, 4, 0); // guest user
 
-        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(0, vec![1])));
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::SessionOwner(
+            0,
+            vec![1],
+        )));
         assert_eq!(ok, (true, ACLCHANGE_USERBITS));
 
-        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::TrustedUsers(0, vec![2])));
+        let ok = acl.filter_message(&Message::ServerMeta(ServerMetaMessage::TrustedUsers(
+            0,
+            vec![2],
+        )));
         assert_eq!(ok, (true, ACLCHANGE_USERBITS));
 
         // Create tiered layers
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
-            id: 1,
-            flags: u8::from(Tier::Operator),
-            exclusive: vec![],
-        })));
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(
+            0,
+            LayerACLMessage {
+                id: 1,
+                flags: u8::from(Tier::Operator),
+                exclusive: vec![],
+            },
+        )));
         assert_eq!(ok, (true, ACLCHANGE_LAYERS));
 
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
-            id: 2,
-            flags: u8::from(Tier::Trusted),
-            exclusive: vec![],
-        })));
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(
+            0,
+            LayerACLMessage {
+                id: 2,
+                flags: u8::from(Tier::Trusted),
+                exclusive: vec![],
+            },
+        )));
         assert_eq!(ok, (true, ACLCHANGE_LAYERS));
 
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
-            id: 3,
-            flags: u8::from(Tier::Authenticated),
-            exclusive: vec![],
-        })));
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(
+            0,
+            LayerACLMessage {
+                id: 3,
+                flags: u8::from(Tier::Authenticated),
+                exclusive: vec![],
+            },
+        )));
         assert_eq!(ok, (true, ACLCHANGE_LAYERS));
 
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
-            id: 4,
-            flags: u8::from(Tier::Guest),
-            exclusive: vec![],
-        })));
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(
+            0,
+            LayerACLMessage {
+                id: 4,
+                flags: u8::from(Tier::Guest),
+                exclusive: vec![],
+            },
+        )));
         assert_eq!(ok, (true, 0)); // no change: guest tier + no locks is the default
 
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
-            id: 5,
-            flags: u8::from(Tier::Guest),
-            exclusive: vec![4], // exclusive to user 4
-        })));
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(
+            0,
+            LayerACLMessage {
+                id: 5,
+                flags: u8::from(Tier::Guest),
+                exclusive: vec![4], // exclusive to user 4
+            },
+        )));
         assert_eq!(ok, (true, ACLCHANGE_LAYERS));
 
-        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(0, LayerACLMessage{
-            id: 6,
-            flags: u8::from(Tier::Guest) | 0x80, // general layer lock
-            exclusive: vec![],
-        })));
+        let ok = acl.filter_message(&Message::ClientMeta(ClientMetaMessage::LayerACL(
+            0,
+            LayerACLMessage {
+                id: 6,
+                flags: u8::from(Tier::Guest) | 0x80, // general layer lock
+                exclusive: vec![],
+            },
+        )));
         assert_eq!(ok, (true, ACLCHANGE_LAYERS));
 
         // ACL filter is now set up and ready for testing
@@ -700,15 +762,18 @@ mod tests {
     }
 
     fn fillrect(acl: &mut AclFilter, user: UserID, layer: LayerID) -> bool {
-        let (ok, bits) = acl.filter_message(&Message::Command(CommandMessage::FillRect(user, FillRectMessage{
-            layer,
-            mode: 0,
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
-            color: 0,
-        })));
+        let (ok, bits) = acl.filter_message(&Message::Command(CommandMessage::FillRect(
+            user,
+            FillRectMessage {
+                layer,
+                mode: 0,
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1,
+                color: 0,
+            },
+        )));
 
         assert_eq!(bits, 0);
         ok

@@ -593,6 +593,41 @@ impl LayerDeleteMessage {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct LayerVisibilityMessage {
+    pub id: u16,
+    pub visible: bool,
+}
+
+impl LayerVisibilityMessage {
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate(3, 3)?;
+
+        let id = reader.read::<u16>();
+        let visible = reader.read::<bool>();
+
+        Ok(Self { id, visible })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(135, user_id, 3);
+        w.write(self.id);
+        w.write(self.visible);
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        txt.set("id", self.id.to_string())
+            .set("visible", self.visible.to_string())
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        Self {
+            id: tm.get_u16("id"),
+            visible: tm.get_str("visible") == "true",
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct PutImageMessage {
     pub layer: u16,
     pub mode: u8,
@@ -1647,6 +1682,9 @@ pub enum CommandMessage {
     ///
     LayerDelete(u8, LayerDeleteMessage),
 
+    /// Toggle layer local visibility (this is used internally only and never sent over the network)
+    LayerVisibility(u8, LayerVisibilityMessage),
+
     /// Draw a bitmap onto a layer
     ///
     /// This is used for pasting images, floodfill, merging annotations and
@@ -1954,6 +1992,7 @@ impl CommandMessage {
             LayerRetitle(user_id, b) => b.serialize(w, *user_id),
             LayerOrder(user_id, b) => b.serialize(w, *user_id),
             LayerDelete(user_id, b) => b.serialize(w, *user_id),
+            LayerVisibility(user_id, b) => b.serialize(w, *user_id),
             PutImage(user_id, b) => b.serialize(w, *user_id),
             FillRect(user_id, b) => b.serialize(w, *user_id),
             PenUp(user_id) => w.write_header(140, *user_id, 0),
@@ -1983,6 +2022,7 @@ impl CommandMessage {
             LayerRetitle(user_id, b) => b.to_text(TextMessage::new(*user_id, "retitlelayer")),
             LayerOrder(user_id, b) => b.to_text(TextMessage::new(*user_id, "layerorder")),
             LayerDelete(user_id, b) => b.to_text(TextMessage::new(*user_id, "deletelayer")),
+            LayerVisibility(user_id, b) => b.to_text(TextMessage::new(*user_id, "layervisibility")),
             PutImage(user_id, b) => b.to_text(TextMessage::new(*user_id, "putimage")),
             FillRect(user_id, b) => b.to_text(TextMessage::new(*user_id, "fillrect")),
             PenUp(user_id) => TextMessage::new(*user_id, "penup"),
@@ -2020,6 +2060,7 @@ impl CommandMessage {
             LayerRetitle(user_id, _) => *user_id,
             LayerOrder(user_id, _) => *user_id,
             LayerDelete(user_id, _) => *user_id,
+            LayerVisibility(user_id, _) => *user_id,
             PutImage(user_id, _) => *user_id,
             FillRect(user_id, _) => *user_id,
             PenUp(user_id) => *user_id,
@@ -2154,6 +2195,10 @@ impl Message {
             134 => Command(CommandMessage::LayerDelete(
                 u,
                 LayerDeleteMessage::deserialize(r)?,
+            )),
+            135 => Command(CommandMessage::LayerVisibility(
+                u,
+                LayerVisibilityMessage::deserialize(r)?,
             )),
             136 => Command(CommandMessage::PutImage(
                 u,
@@ -2325,6 +2370,10 @@ impl Message {
             "deletelayer" => Command(CommandMessage::LayerDelete(
                 tm.user_id,
                 LayerDeleteMessage::from_text(&tm),
+            )),
+            "layervisibility" => Command(CommandMessage::LayerVisibility(
+                tm.user_id,
+                LayerVisibilityMessage::from_text(&tm),
             )),
             "putimage" => Command(CommandMessage::PutImage(
                 tm.user_id,

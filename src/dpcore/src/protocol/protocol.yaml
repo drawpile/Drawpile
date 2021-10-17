@@ -413,8 +413,10 @@ LayerDelete:
 
 LayerVisibility:
     id: 135
-    comment: Toggle layer local visibility (removed in 2.2) 
-    reserved: true
+    comment: Toggle layer local visibility (this is used internally only and never sent over the network)
+    fields:
+      - id u16
+      - visible bool
 
 PutImage:
     id: 136

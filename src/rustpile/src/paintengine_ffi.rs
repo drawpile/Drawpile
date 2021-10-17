@@ -241,8 +241,11 @@ fn run_paintengine(
                 Catchup(progress) => {
                     (callbacks.notify_catchup)(callbacks.context_object, progress);
                 }
-                SetLocalVisibility(layer, visible) => {
-                    changes |= canvas.set_local_visibility(layer, visible);
+                SetLocalVisibility(id, visible) => {
+                    changes |= canvas.receive_message(&CommandMessage::LayerVisibility(
+                        0,
+                        LayerVisibilityMessage { id, visible },
+                    ));
                 }
             };
 
@@ -733,7 +736,9 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
 
         let changed = match dp.view_opts.viewmode {
             LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
-            LayerViewMode::Frame | LayerViewMode::Onionskin => dp.view_opts.active_root_idx != frame_idx,
+            LayerViewMode::Frame | LayerViewMode::Onionskin => {
+                dp.view_opts.active_root_idx != frame_idx
+            }
             _ => false,
         };
 
@@ -833,7 +838,7 @@ pub extern "C" fn paintengine_preview_brush(
 ) {
     if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
         layer_id,
-        brushengine.take_dabs(0)
+        brushengine.take_dabs(0),
     )) {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
@@ -877,10 +882,10 @@ pub extern "C" fn paintengine_preview_cut(
         )
     };
 
-    if let Err(err) = dp.engine_channel.send(PaintEngineCommand::BrushPreview(
-        layer_id,
-        cmd
-    )) {
+    if let Err(err) = dp
+        .engine_channel
+        .send(PaintEngineCommand::BrushPreview(layer_id, cmd))
+    {
         warn!("Couldn't send preview strokes to paint engine: {:?}", err);
     }
 }

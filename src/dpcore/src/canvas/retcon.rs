@@ -230,30 +230,27 @@ impl LocalFork {
         match msg {
             UndoPoint(_) => AffectedArea::UserAttrs,
             CanvasResize(_, _) => AffectedArea::Everything,
-            LayerCreate(_, m) => AffectedArea::LayerAttrs(m.id as LayerID),
-            LayerAttributes(_, m) => AffectedArea::LayerAttrs(m.id as LayerID),
-            LayerRetitle(_, m) => AffectedArea::LayerAttrs(m.id as LayerID),
+            LayerCreate(_, m) => AffectedArea::LayerAttrs(m.id),
+            LayerAttributes(_, m) => AffectedArea::LayerAttrs(m.id),
+            LayerRetitle(_, m) => AffectedArea::LayerAttrs(m.id),
             LayerOrder(_, _) => AffectedArea::LayerAttrs(0),
-            LayerDelete(_, m) => AffectedArea::LayerAttrs(m.id as LayerID), // TODO this can affect the layer below as well
-            PutImage(_, m) => {
-                AffectedArea::Pixels(m.layer as LayerID, make_rect(m.x, m.y, m.w, m.h))
-            }
-            FillRect(_, m) => {
-                AffectedArea::Pixels(m.layer as LayerID, make_rect(m.x, m.y, m.w, m.h))
-            }
+            LayerDelete(_, m) => AffectedArea::LayerAttrs(m.id), // TODO this can affect the layer below as well
+            LayerVisibility(_, m) => AffectedArea::LayerAttrs(m.id),
+            PutImage(_, m) => AffectedArea::Pixels(m.layer, make_rect(m.x, m.y, m.w, m.h)),
+            FillRect(_, m) => AffectedArea::Pixels(m.layer, make_rect(m.x, m.y, m.w, m.h)),
             PenUp(u) => self
                 .indirect_area
                 .remove(u)
                 .unwrap_or(AffectedArea::UserAttrs),
-            AnnotationCreate(_, m) => AffectedArea::Annotation(m.id as LayerID),
-            AnnotationReshape(_, m) => AffectedArea::Annotation(m.id as LayerID),
-            AnnotationEdit(_, m) => AffectedArea::Annotation(m.id as LayerID),
-            AnnotationDelete(_, id) => AffectedArea::Annotation(*id as LayerID),
+            AnnotationCreate(_, m) => AffectedArea::Annotation(m.id),
+            AnnotationReshape(_, m) => AffectedArea::Annotation(m.id),
+            AnnotationEdit(_, m) => AffectedArea::Annotation(m.id),
+            AnnotationDelete(_, id) => AffectedArea::Annotation(*id),
             PutTile(_, m) => {
                 if m.sublayer > 0 {
                     self.update_indirect_area(m.sublayer, m.layer, puttile_rect(m))
                 } else {
-                    AffectedArea::Pixels(m.layer as LayerID, puttile_rect(m))
+                    AffectedArea::Pixels(m.layer, puttile_rect(m))
                 }
             }
             CanvasBackground(_, _) => AffectedArea::LayerAttrs(0),
@@ -261,18 +258,18 @@ impl LocalFork {
                 if Color::argb32_alpha(m.color) > 0 {
                     self.update_indirect_area(*u, m.layer, classicdabs_area(m))
                 } else {
-                    AffectedArea::Pixels(m.layer as LayerID, classicdabs_area(m))
+                    AffectedArea::Pixels(m.layer, classicdabs_area(m))
                 }
             }
             DrawDabsPixel(u, m) | DrawDabsPixelSquare(u, m) => {
                 if Color::argb32_alpha(m.color) > 0 {
                     self.update_indirect_area(*u, m.layer, pixeldabs_area(m))
                 } else {
-                    AffectedArea::Pixels(m.layer as LayerID, pixeldabs_area(m))
+                    AffectedArea::Pixels(m.layer, pixeldabs_area(m))
                 }
             }
             MoveRect(_, m) => AffectedArea::Pixels(
-                m.layer as LayerID,
+                m.layer,
                 Rectangle::new(m.sx, m.sy, m.w, m.h).union(&Rectangle::new(m.tx, m.ty, m.w, m.h)),
             ),
             Undo(_, _) => AffectedArea::UserAttrs, // These are never put in the local fork
@@ -284,7 +281,7 @@ impl LocalFork {
     fn update_indirect_area(&mut self, user: u8, layer: u16, bounds: Rectangle) -> AffectedArea {
         let area = match self.indirect_area.get(&user) {
             Some(AffectedArea::Pixels(l, a)) => AffectedArea::Pixels(*l, a.union(&bounds)),
-            _ => AffectedArea::Pixels(layer as LayerID, bounds),
+            _ => AffectedArea::Pixels(layer, bounds),
         };
         self.indirect_area.insert(user, area);
         AffectedArea::UserAttrs

@@ -260,19 +260,6 @@ impl CanvasState {
         self.handle_message(msg)
     }
 
-    /// Set a layer's local visibility flag
-    pub fn set_local_visibility(&mut self, layer_id: LayerID, visible: bool) -> CanvasStateChange {
-        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
-            .root_mut()
-            .get_layer_mut(layer_id)
-        {
-            layer.metadata_mut().hidden = !visible;
-            CanvasStateChange::layers(layer.nonblank_tilemap().into())
-        } else {
-            CanvasStateChange::nothing()
-        }
-    }
-
     /// Apply commands to a preview layer. This is used to preview
     /// shape tools and selection cutouts.
     pub fn apply_preview(
@@ -293,29 +280,25 @@ impl CanvasState {
 
             match msgs.first().unwrap() {
                 CommandMessage::DrawDabsClassic(_, m) => {
-                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    layer.metadata_mut().blendmode =
+                        Blendmode::try_from(m.mode).unwrap_or_default();
                     let color = Color::from_argb32(m.color);
-                    layer.metadata_mut().opacity = if color.a > 0.0 {
-                        color.a
-                    } else {
-                        1.0
-                    };
+                    layer.metadata_mut().opacity = if color.a > 0.0 { color.a } else { 1.0 };
                 }
                 CommandMessage::DrawDabsPixel(_, m) | CommandMessage::DrawDabsPixelSquare(_, m) => {
-                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    layer.metadata_mut().blendmode =
+                        Blendmode::try_from(m.mode).unwrap_or_default();
                     let color = Color::from_argb32(m.color);
-                    layer.metadata_mut().opacity = if color.a > 0.0 {
-                        color.a
-                    } else {
-                        1.0
-                    };
+                    layer.metadata_mut().opacity = if color.a > 0.0 { color.a } else { 1.0 };
                 }
                 CommandMessage::FillRect(_, m) => {
-                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    layer.metadata_mut().blendmode =
+                        Blendmode::try_from(m.mode).unwrap_or_default();
                     layer.metadata_mut().opacity = 1.0;
                 }
                 CommandMessage::PutImage(_, m) => {
-                    layer.metadata_mut().blendmode = Blendmode::try_from(m.mode).unwrap_or_default();
+                    layer.metadata_mut().blendmode =
+                        Blendmode::try_from(m.mode).unwrap_or_default();
                     layer.metadata_mut().opacity = 1.0;
                 }
                 _ => (),
@@ -357,15 +340,13 @@ impl CanvasState {
                             AoE::Nothing
                         }
                     }
-                    CommandMessage::FillRect(_, m) => {
-                        editlayer::fill_rect(
-                            layer,
-                            0,
-                            &Color::from_argb32(m.color),
-                            Blendmode::Normal,
-                            &Rectangle::new(m.x as i32, m.y as i32, m.w as i32, m.h as i32),
-                        )
-                    }
+                    CommandMessage::FillRect(_, m) => editlayer::fill_rect(
+                        layer,
+                        0,
+                        &Color::from_argb32(m.color),
+                        Blendmode::Normal,
+                        &Rectangle::new(m.x as i32, m.y as i32, m.w as i32, m.h as i32),
+                    ),
                     m => {
                         warn!("Unhandled preview command {:?}", m);
                         AoE::Nothing
@@ -438,6 +419,7 @@ impl CanvasState {
             LayerRetitle(_, m) => self.handle_layer_retitle(m),
             LayerOrder(_, m) => self.handle_layer_order(m),
             LayerDelete(_, m) => self.handle_layer_delete(m),
+            LayerVisibility(_, m) => self.handle_layer_visibility(m.id, m.visible),
             PutImage(u, m) => self.handle_putimage(*u, m).into(),
             FillRect(user, m) => self.handle_fillrect(*user, m),
             PenUp(user) => self.handle_penup(*user).into(),
@@ -711,6 +693,23 @@ impl CanvasState {
 
         stack.root_mut().remove_layer(id);
         CanvasStateChange::layers(aoe)
+    }
+
+    /// Set a layer's local visibility flag
+    pub fn handle_layer_visibility(
+        &mut self,
+        layer_id: LayerID,
+        visible: bool,
+    ) -> CanvasStateChange {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_layer_mut(layer_id)
+        {
+            layer.metadata_mut().hidden = !visible;
+            CanvasStateChange::layers(layer.nonblank_tilemap().into())
+        } else {
+            CanvasStateChange::nothing()
+        }
     }
 
     fn handle_annotation_create(
