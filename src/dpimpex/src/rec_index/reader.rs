@@ -25,7 +25,7 @@ use dpcore::canvas::compression::decompress_tile;
 use dpcore::paint::annotation::{Annotation, VAlign};
 use dpcore::paint::{
     BitmapLayer, Blendmode, Color, DocumentMetadata, GroupLayer, Layer, LayerMetadata, LayerStack,
-    Rectangle, Tile,
+    Rectangle, Tile, Timeline,
 };
 
 use byteorder::{LittleEndian, ReadBytesExt};
@@ -127,6 +127,7 @@ pub fn read_snapshot<R: Read + Seek>(
         Arc::new(root.into()),
         Arc::new(annotations),
         Arc::new(metadata),
+        Arc::new(Timeline::new()), // FIXME
         background,
     ))
 }
@@ -136,11 +137,12 @@ pub fn read_metadata<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult
     let dpix = reader.read_i32::<LittleEndian>()?;
     let dpiy = reader.read_i32::<LittleEndian>()?;
     let framerate = reader.read_i32::<LittleEndian>()?;
-
+    let use_timeline = false; // FIXME
     Ok(DocumentMetadata {
         dpix,
         dpiy,
         framerate,
+        use_timeline,
     })
 }
 

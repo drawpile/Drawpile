@@ -90,8 +90,12 @@ void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations)
 
 void paintEngineMetadataChanged(void *pe)
 {
-	// Note: rustpile::Annotations is thread safe
 	emit reinterpret_cast<PaintEngine*>(pe)->metadataChanged();
+}
+
+void paintEngineTimelineChanged(void *pe)
+{
+	emit reinterpret_cast<PaintEngine*>(pe)->timelineChanged();
 }
 
 void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32_t y)
@@ -133,7 +137,8 @@ void PaintEngine::reset()
 		paintEngineCursors,
 		paintEnginePlayback,
 		paintEngineCatchup,
-		paintEngineMetadataChanged
+		paintEngineMetadataChanged,
+		paintEngineTimelineChanged
 	);
 
 	m_cache = QPixmap();

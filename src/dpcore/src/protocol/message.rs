@@ -1298,6 +1298,7 @@ pub enum MetadataInt {
     Dpix,
     Dpiy,
     Framerate,
+    UseTimeline,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1366,6 +1367,50 @@ impl SetMetadataStrMessage {
         Self {
             field: tm.get_u8("field"),
             value: tm.get_str("value").to_string(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SetTimelineFrameMessage {
+    pub frame: u16,
+    pub insert: bool,
+    pub layers: Vec<u16>,
+}
+
+impl SetTimelineFrameMessage {
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate(27, 27)?;
+
+        let frame = reader.read::<u16>();
+        let insert = reader.read::<bool>();
+        let layers = reader.read_remaining_vec();
+
+        Ok(Self {
+            frame,
+            insert,
+            layers,
+        })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(163, user_id, 27);
+        w.write(self.frame);
+        w.write(self.insert);
+        w.write(&self.layers);
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        txt.set("frame", self.frame.to_string())
+            .set("insert", self.insert.to_string())
+            .set_vec_u16("layers", &self.layers, true)
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        Self {
+            frame: tm.get_u16("frame"),
+            insert: tm.get_str("insert") == "true",
+            layers: tm.get_vec_u16("layers"),
         }
     }
 }
@@ -1804,6 +1849,18 @@ pub enum CommandMessage {
     /// Set a document metadata field (string type)
     SetMetadataStr(u8, SetMetadataStrMessage),
 
+    /// Set the layers included in the given animation frame
+    ///
+    /// The frame number must be between zero and last frame number + 1.
+    ///
+    /// If the `insert` flag is true, the frame will be inserted at the given
+    /// position rather than replacing the existing frame.
+    ///
+    SetTimelineFrame(u8, SetTimelineFrameMessage),
+
+    /// Remove a frame from the timeline
+    RemoveTimelineFrame(u8, u16),
+
     /// Undo or redo actions
     Undo(u8, UndoMessage),
 }
@@ -2008,6 +2065,8 @@ impl CommandMessage {
             MoveRect(user_id, b) => b.serialize(w, *user_id),
             SetMetadataInt(user_id, b) => b.serialize(w, *user_id),
             SetMetadataStr(user_id, b) => b.serialize(w, *user_id),
+            SetTimelineFrame(user_id, b) => b.serialize(w, *user_id),
+            RemoveTimelineFrame(user_id, b) => w.single(164, *user_id, *b),
             Undo(user_id, b) => b.serialize(w, *user_id),
         }
     }
@@ -2046,6 +2105,12 @@ impl CommandMessage {
             MoveRect(user_id, b) => b.to_text(TextMessage::new(*user_id, "moverect")),
             SetMetadataInt(user_id, b) => b.to_text(TextMessage::new(*user_id, "setmetadataint")),
             SetMetadataStr(user_id, b) => b.to_text(TextMessage::new(*user_id, "setmetadatastr")),
+            SetTimelineFrame(user_id, b) => {
+                b.to_text(TextMessage::new(*user_id, "settimelineframe"))
+            }
+            RemoveTimelineFrame(user_id, b) => {
+                TextMessage::new(*user_id, "removetimelineframe").set("frame", b.to_string())
+            }
             Undo(user_id, b) => b.to_text(TextMessage::new(*user_id, "undo")),
         }
     }
@@ -2076,6 +2141,8 @@ impl CommandMessage {
             MoveRect(user_id, _) => *user_id,
             SetMetadataInt(user_id, _) => *user_id,
             SetMetadataStr(user_id, _) => *user_id,
+            SetTimelineFrame(user_id, _) => *user_id,
+            RemoveTimelineFrame(user_id, _) => *user_id,
             Undo(user_id, _) => *user_id,
         }
     }
@@ -2161,7 +2228,7 @@ impl Message {
             )),
             70 => ClientMeta(ClientMetaMessage::FeatureAccessLevels(
                 u,
-                r.validate(10, 10)?.read_remaining_vec(),
+                r.validate(11, 11)?.read_remaining_vec(),
             )),
             71 => ClientMeta(ClientMetaMessage::DefaultLayer(
                 u,
@@ -2253,6 +2320,14 @@ impl Message {
             162 => Command(CommandMessage::SetMetadataStr(
                 u,
                 SetMetadataStrMessage::deserialize(r)?,
+            )),
+            163 => Command(CommandMessage::SetTimelineFrame(
+                u,
+                SetTimelineFrameMessage::deserialize(r)?,
+            )),
+            164 => Command(CommandMessage::RemoveTimelineFrame(
+                u,
+                r.validate(2, 2)?.read::<u16>(),
             )),
             255 => Command(CommandMessage::Undo(u, UndoMessage::deserialize(r)?)),
             _ => {
@@ -2431,6 +2506,14 @@ impl Message {
             "setmetadatastr" => Command(CommandMessage::SetMetadataStr(
                 tm.user_id,
                 SetMetadataStrMessage::from_text(&tm),
+            )),
+            "settimelineframe" => Command(CommandMessage::SetTimelineFrame(
+                tm.user_id,
+                SetTimelineFrameMessage::from_text(&tm),
+            )),
+            "removetimelineframe" => Command(CommandMessage::RemoveTimelineFrame(
+                tm.user_id,
+                tm.get_u16("frame"),
             )),
             "undo" => Command(CommandMessage::Undo(
                 tm.user_id,

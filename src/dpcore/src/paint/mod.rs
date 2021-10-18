@@ -50,6 +50,7 @@ mod grouplayer;
 mod image;
 mod layer;
 mod rect;
+mod timeline;
 
 pub use self::image::Image;
 pub use aoe::AoE;
@@ -64,3 +65,4 @@ pub use layerstack::{DocumentMetadata, LayerStack, LayerViewMode, LayerViewOptio
 pub use rect::{Rectangle, Size};
 pub use tile::Tile;
 pub use tilevec::LayerTileSet;
+pub use timeline::{Frame, Timeline};

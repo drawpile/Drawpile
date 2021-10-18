@@ -34,7 +34,7 @@ use dpcore::paint::floodfill;
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
     AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerInsertion, LayerStack,
-    LayerViewMode, LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID,
+    LayerViewMode, LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID, Frame,
 };
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::message::*;
@@ -70,6 +70,7 @@ type NotifyCursorCallback =
 type NotifyPlaybackCallback = extern "C" fn(ctx: *mut c_void, pos: i64, interval: u32);
 type NotifyCatchupCallback = extern "C" fn(ctx: *mut c_void, progress: u32);
 type NotifyMetadataCallback = extern "C" fn(ctx: *mut c_void);
+type NotifyTimelineCallback = extern "C" fn(ctx: *mut c_void);
 
 // Main thread callbacks:
 type JoinCallback = Option<
@@ -123,6 +124,7 @@ struct CanvasChangeCallbacks {
     notify_playback: NotifyPlaybackCallback,
     notify_catchup: NotifyCatchupCallback,
     notify_metadata: NotifyMetadataCallback,
+    notify_timeline: NotifyTimelineCallback,
 }
 
 // Unsafe due to the c_void pointer. We promise to be careful with it.
@@ -313,6 +315,10 @@ fn run_paintengine(
                 (callbacks.notify_metadata)(callbacks.context_object);
             }
 
+            if changes.timeline_changed {
+                (callbacks.notify_timeline)(callbacks.context_object);
+            }
+
             if changes.user > 0 {
                 (callbacks.notify_cursor)(
                     callbacks.context_object,
@@ -338,6 +344,7 @@ pub extern "C" fn paintengine_new(
     playback: NotifyPlaybackCallback,
     catchup: NotifyCatchupCallback,
     metadata: NotifyMetadataCallback,
+    timeline: NotifyTimelineCallback,
 ) -> *mut PaintEngine {
     let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
@@ -355,6 +362,7 @@ pub extern "C" fn paintengine_new(
         notify_playback: playback,
         notify_catchup: catchup,
         notify_metadata: metadata,
+        notify_timeline: timeline,
     };
 
     let (sender, receiver) = mpsc::channel::<PaintEngineCommand>();
@@ -663,6 +671,23 @@ pub extern "C" fn paintengine_is_simple(dp: &PaintEngine) -> bool {
         && vc.layerstack.background.is_blank()
 }
 
+/// Get an integer type metadata field
+#[no_mangle]
+pub extern "C" fn paintengine_get_metadata_int(
+    dp: &PaintEngine,
+    field: MetadataInt,
+) -> i32 {
+    let vc = dp.viewcache.lock().unwrap();
+    let md = vc.layerstack.metadata();
+
+    match field {
+        MetadataInt::Dpix => md.dpix,
+        MetadataInt::Dpiy => md.dpiy,
+        MetadataInt::Framerate => md.framerate,
+        MetadataInt::UseTimeline => md.use_timeline.into(),
+    }
+}
+
 #[no_mangle]
 pub extern "C" fn paintengine_set_view_mode(
     dp: &mut PaintEngine,
@@ -674,12 +699,8 @@ pub extern "C" fn paintengine_set_view_mode(
         dp.view_opts.censor = censor;
         let aoe_bounds = {
             let mut vc = dp.viewcache.lock().unwrap();
-            if vc.layerstack.root().width() == 0 {
-                None
-            } else {
-                vc.unrefreshed_area = AoE::Everything;
-                vc.unrefreshed_area.bounds(vc.layerstack.root().size())
-            }
+            vc.unrefreshed_area = AoE::Everything;
+            vc.unrefreshed_area.bounds(vc.layerstack.root().size())
         };
 
         if let Some(r) = aoe_bounds {
@@ -691,16 +712,16 @@ pub extern "C" fn paintengine_set_view_mode(
 #[no_mangle]
 pub extern "C" fn paintengine_set_onionskin_opts(
     dp: &mut PaintEngine,
-    skins_below: i32,
-    skins_above: i32,
+    skins_below: usize,
+    skins_above: usize,
     tint: bool,
 ) {
-    if skins_below != dp.view_opts.onionskins_below
-        || skins_above != dp.view_opts.onionskins_above
+    if skins_below != dp.view_opts.frames_below.len()
+        || skins_above != dp.view_opts.frames_above.len()
         || tint != dp.view_opts.onionskin_tint
     {
-        dp.view_opts.onionskins_below = skins_below;
-        dp.view_opts.onionskins_above = skins_above;
+        dp.view_opts.frames_below = vec![Frame::empty();skins_below];
+        dp.view_opts.frames_above = vec![Frame::empty();skins_above];
         dp.view_opts.onionskin_tint = tint;
 
         if dp.view_opts.viewmode != LayerViewMode::Onionskin {
@@ -709,12 +730,8 @@ pub extern "C" fn paintengine_set_onionskin_opts(
 
         let aoe_bounds = {
             let mut vc = dp.viewcache.lock().unwrap();
-            if vc.layerstack.root().width() == 0 {
-                None
-            } else {
-                vc.unrefreshed_area = AoE::Everything;
-                vc.unrefreshed_area.bounds(vc.layerstack.root().size())
-            }
+            vc.unrefreshed_area = AoE::Everything;
+            vc.unrefreshed_area.bounds(vc.layerstack.root().size())
         };
 
         if let Some(r) = aoe_bounds {
@@ -727,22 +744,34 @@ pub extern "C" fn paintengine_set_onionskin_opts(
 pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: LayerID) {
     let aoe_bounds = {
         let mut vc = dp.viewcache.lock().unwrap();
+
+        // TODO this should be set by a set_active_frame function
         let frame_idx = match vc.layerstack.root().find_root_index_by_id(layer_id) {
-            Some(i) => i,
+            Some(i) => (vc.layerstack.root().layer_count() - i - 1) as isize,
             None => {
                 return;
             }
         };
 
+        let frame = vc.layerstack.frame_at(frame_idx);
+        let frames_below = dp.view_opts.frames_below.len() as isize;
+        for i in 0..frames_below {
+            dp.view_opts.frames_below[i as usize] = vc.layerstack.frame_at(frame_idx - i - 1);
+        }
+        let frames_above = dp.view_opts.frames_above.len() as isize;
+        for i in 0..frames_above {
+            dp.view_opts.frames_above[i as usize] = vc.layerstack.frame_at(frame_idx + i + 1);
+        }
+
         let changed = match dp.view_opts.viewmode {
             LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
             LayerViewMode::Frame | LayerViewMode::Onionskin => {
-                dp.view_opts.active_root_idx != frame_idx
+                dp.view_opts.active_frame != frame
             }
             _ => false,
         };
 
-        dp.view_opts.active_root_idx = frame_idx;
+        dp.view_opts.active_frame = frame;
         dp.view_opts.active_layer_id = layer_id;
 
         if !changed || vc.layerstack.root().width() == 0 {
@@ -1140,6 +1169,26 @@ pub extern "C" fn paintengine_get_frame_count(dp: &PaintEngine) -> usize {
     vc.layerstack.frame_count()
 }
 
+type GetTimelineCallback = extern "C" fn(
+    ctx: *mut c_void,
+    frames: *const Frame,
+    count: usize
+);
+
+/// Get the animation timeline
+#[no_mangle]
+pub extern "C" fn paintengine_get_timeline(
+    dp: &PaintEngine,
+    ctx: *mut c_void,
+    cb: GetTimelineCallback,
+) {
+    let vc = dp.viewcache.lock().unwrap();
+    let timeline = vc.layerstack.timeline();
+
+    (cb)(ctx, timeline.frames.as_ptr(),  timeline.frames.len());
+}
+
+
 /// Copy frame pixel data to the given buffer
 ///
 /// This works like paintengine_get_layer_content, with two
@@ -1151,7 +1200,7 @@ pub extern "C" fn paintengine_get_frame_count(dp: &PaintEngine) -> usize {
 #[no_mangle]
 pub extern "C" fn paintengine_get_frame_content(
     dp: &PaintEngine,
-    frame: usize,
+    frame: isize,
     rect: Rectangle,
     pixels: *mut u8,
 ) -> bool {
@@ -1160,17 +1209,10 @@ pub extern "C" fn paintengine_get_frame_content(
         return false;
     }
 
-    let frame_index = match vc.layerstack.find_frame_index(frame) {
-        Some(i) => i,
-        None => {
-            return false;
-        }
-    };
-
     let pixel_slice =
         unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
 
-    let opts = LayerViewOptions::frame(vc.layerstack.frame_count() - frame_index - 1);
+    let opts = LayerViewOptions::frame(vc.layerstack.frame_at(frame));
 
     vc.layerstack.to_pixels(rect, &opts, pixel_slice).is_ok()
 }

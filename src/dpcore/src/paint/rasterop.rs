@@ -88,7 +88,7 @@ fn u8_mult(a: u32, b: u32) -> u32 {
 }
 
 fn u8_blend(a: i32, b: i32, alpha: i32) -> i32 {
-    let c = (a - b) * alpha + (b<<8) - b + 0x80;
+    let c = (a - b) * alpha + (b << 8) - b + 0x80;
     ((c >> 8) + c) >> 8
 }
 
@@ -296,7 +296,7 @@ fn comp_op_screen(a: u32, b: u32) -> u32 {
 }
 
 fn comp_op_divide(a: u32, b: u32) -> u32 {
-    255.min((a*256 + b/2) / (1+b))
+    255.min((a * 256 + b / 2) / (1 + b))
 }
 
 fn comp_op_darken(a: u32, b: u32) -> u32 {
@@ -312,11 +312,11 @@ fn comp_op_dodge(a: u32, b: u32) -> u32 {
 }
 
 fn comp_op_burn(a: u32, b: u32) -> u32 {
-    (255 - ((255-a)*256 / (b+1)) as i32).clamp(0, 255) as u32
+    (255 - ((255 - a) * 256 / (b + 1)) as i32).clamp(0, 255) as u32
 }
 
 fn comp_op_add(a: u32, b: u32) -> u32 {
-    255.min(a+b)
+    255.min(a + b)
 }
 
 fn comp_op_subtract(a: u32, b: u32) -> u32 {
@@ -336,10 +336,22 @@ fn pixel_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], over: &[Pix
         let alpha = u8_mult(sc[ALPHA_CHANNEL] as u32, opacity as u32) as i32;
 
         *dp = premultiply_pixel([
-            u8_blend(comp_op(dc[0] as u32, sc[0] as u32) as i32, dc[0] as i32, alpha) as u8,
-            u8_blend(comp_op(dc[1] as u32, sc[1] as u32) as i32, dc[1] as i32, alpha) as u8,
-            u8_blend(comp_op(dc[2] as u32, sc[2] as u32) as i32, dc[2] as i32, alpha) as u8,
-            dc[3]
+            u8_blend(
+                comp_op(dc[0] as u32, sc[0] as u32) as i32,
+                dc[0] as i32,
+                alpha,
+            ) as u8,
+            u8_blend(
+                comp_op(dc[1] as u32, sc[1] as u32) as i32,
+                dc[1] as i32,
+                alpha,
+            ) as u8,
+            u8_blend(
+                comp_op(dc[2] as u32, sc[2] as u32) as i32,
+                dc[2] as i32,
+                alpha,
+            ) as u8,
+            dc[3],
         ]);
     }
 }
@@ -356,7 +368,7 @@ fn mask_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], color: Pixel
             u8_blend(comp_op(d[0] as u32, c[0] as u32) as i32, d[0] as i32, mask) as u8,
             u8_blend(comp_op(d[1] as u32, c[1] as u32) as i32, d[1] as i32, mask) as u8,
             u8_blend(comp_op(d[2] as u32, c[2] as u32) as i32, d[2] as i32, mask) as u8,
-            d[3]
+            d[3],
         ]);
     }
 }
@@ -370,7 +382,7 @@ pub fn tint_pixels(pixels: &mut [Pixel], tint: Color) {
             u8_blend(tint[0] as i32, p[0] as i32, a) as u8,
             u8_blend(tint[1] as i32, p[1] as i32, a) as u8,
             u8_blend(tint[2] as i32, p[2] as i32, a) as u8,
-            p[3]
+            p[3],
         ]);
     }
 }

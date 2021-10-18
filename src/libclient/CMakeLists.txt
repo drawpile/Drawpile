@@ -28,6 +28,8 @@ set (
 	canvas/paintengine.cpp
 	canvas/indexbuilderrunnable.cpp
 	canvas/blendmodes.cpp
+	canvas/timelinemodel.cpp
+	canvas/documentmetadata.cpp
 	net/client.cpp
 	net/server.cpp
 	net/tcpserver.cpp

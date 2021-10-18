@@ -269,8 +269,8 @@ class FieldBytes(Field):
 
         if is_last:
             self.prefix_type = None
-            self.min_len = int(attributes.get('min_len', 0))
-            self.max_len = min(0xffff - prev_minlen, int(attributes.get('max_len', 0xffff)))
+            self.min_len = int(attributes.get('min_len', 0)) * self.item_len
+            self.max_len = min(0xffff - prev_minlen, int(attributes.get('max_len', 0xffff) * self.item_len))
 
         else:
             self.prefix_type = attributes.get('prefix_type', 'u8')

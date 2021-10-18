@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,15 @@
 
 use super::{
     Isolation, OraAnnotation, OraCanvas, OraCommon, OraLayer, OraStack, OraStackElement,
-    DP_NAMESPACE, MYPAINT_NAMESPACE,
+    OraTimeline, DP_NAMESPACE, MYPAINT_NAMESPACE,
 };
 use crate::conv::to_dpimage;
 use crate::{ImageImportResult, ImpexError};
 
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::{
-    editlayer, Blendmode, Color, Image, LayerID, LayerInsertion, LayerStack, Rectangle, Size, Tile,
+    editlayer, Blendmode, Color, Frame, Image, LayerID, LayerInsertion, LayerStack, Rectangle,
+    Size, Tile,
 };
 
 use std::fs::File;
@@ -56,8 +57,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     ls.metadata_mut().framerate = canvas.framerate;
 
     // Create layers
-    let mut next_layer_id = 0x0100;
-    create_stack(&mut archive, &mut ls, &mut next_layer_id, 0, &canvas.root)?;
+    create_stack(&mut archive, &mut ls, 0, &canvas.root)?;
 
     // Create annotations
     let annotation_id = 0x0100;
@@ -73,6 +73,23 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
         };
     }
 
+    // Set timeline
+    ls.metadata_mut().use_timeline = canvas.timeline.enabled;
+    if canvas.timeline.frames.len() > 0 {
+        let layer_ids = make_idlist(&canvas.root);
+        let lst = ls.timeline_mut();
+        for frame in canvas.timeline.frames.iter() {
+            let mut f = Frame::empty();
+            frame
+                .into_iter()
+                .filter_map(|&layer_idx| layer_ids.get(layer_idx as usize))
+                .take(f.0.len())
+                .enumerate()
+                .for_each(|(i, &l)| f.0[i] = l);
+            lst.frames.push(f);
+        }
+    }
+
     // TODO warn about unsupported features
     Ok(ls)
 }
@@ -80,21 +97,18 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
 fn create_stack<R: Read + Seek>(
     archive: &mut ZipArchive<R>,
     layerstack: &mut LayerStack,
-    next_layer_id: &mut LayerID,
     parent_id: LayerID,
     stack: &OraStack,
 ) -> Result<(), ImpexError> {
     for layer in stack.layers.iter().rev() {
         match layer {
             OraStackElement::Stack(substack) => {
-                let layer_id = *next_layer_id;
                 let subgroup = layerstack
                     .root_mut()
-                    .add_group_layer(layer_id, LayerInsertion::Into(parent_id))
+                    .add_group_layer(substack.common.id, LayerInsertion::Into(parent_id))
                     .unwrap()
                     .as_group_mut()
                     .unwrap();
-                *next_layer_id += 1;
                 let metadata = subgroup.metadata_mut();
 
                 metadata.title = substack.common.name.clone();
@@ -105,7 +119,7 @@ fn create_stack<R: Read + Seek>(
                 metadata.blendmode = substack.common.composite_op;
                 metadata.isolated = matches!(substack.isolation, Isolation::Isolate);
 
-                create_stack(archive, layerstack, next_layer_id, layer_id, &substack)?;
+                create_stack(archive, layerstack, substack.common.id, &substack)?;
             }
             OraStackElement::Layer(oralayer) => {
                 if !oralayer.bgtile.is_empty() {
@@ -122,14 +136,13 @@ fn create_stack<R: Read + Seek>(
                 let mut layer = layerstack
                     .root_mut()
                     .add_bitmap_layer(
-                        *next_layer_id,
+                        oralayer.common.id,
                         Color::TRANSPARENT,
                         LayerInsertion::Into(parent_id),
                     )
                     .unwrap()
                     .as_bitmap_mut()
                     .unwrap();
-                *next_layer_id += 1;
 
                 let mut metadata = layer.metadata_mut();
                 metadata.title = oralayer.common.name.clone();
@@ -261,12 +274,17 @@ fn parse_stack_image<R: Read>(
                 fixed: false,
                 composite_op: Blendmode::Normal,
                 unsupported_features: false,
+                id: 0, // TODO
             },
             isolation: Isolation::Auto,
             layers: Vec::new(),
             annotations: Vec::new(),
         },
         annotations: Vec::new(),
+        timeline: OraTimeline {
+            frames: Vec::new(),
+            enabled: false,
+        },
     };
 
     if canvas.size.width <= 0 || canvas.size.height <= 0 {
@@ -279,13 +297,19 @@ fn parse_stack_image<R: Read>(
                 name, attributes, ..
             }) => {
                 if name.local_name == "stack" {
-                    canvas.root = parse_stack_stack(attributes, (0, 0), parser)?;
+                    let mut next_layer_id = 0x0100;
+                    canvas.root =
+                        parse_stack_stack(attributes, &mut next_layer_id, (0, 0), parser)?;
                     canvas.annotations.append(&mut canvas.root.annotations);
                     canvas.unsupported_features |= canvas.root.common.unsupported_features;
                 } else if name.local_name == "annotations"
                     && name.namespace.as_deref() == Some(DP_NAMESPACE)
                 {
                     canvas.annotations.append(&mut parse_annotations(parser)?);
+                } else if name.local_name == "timeline"
+                    && name.namespace.as_deref() == Some(DP_NAMESPACE)
+                {
+                    canvas.timeline = parse_timeline(attributes, parser)?;
                 } else {
                     warn!("Unsupported openraster <image> element <{}>", name);
                     canvas.unsupported_features = true;
@@ -309,7 +333,7 @@ fn parse_stack_image<R: Read>(
     }
 }
 
-fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32)) -> OraCommon {
+fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32), id: LayerID) -> OraCommon {
     OraCommon {
         name: take_attribute(attributes, "name", None).unwrap_or(String::new()),
         offset: (
@@ -335,16 +359,18 @@ fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32)) -> OraC
             .and_then(|s| Blendmode::from_svg_name(&s))
             .unwrap_or(Blendmode::Normal),
         unsupported_features: false,
+        id: id,
     }
 }
 
 fn parse_stack_stack<R: Read>(
     mut attributes: Vec<OwnedAttribute>,
+    next_layer_id: &mut LayerID,
     offset: (i32, i32),
     parser: &mut EventReader<R>,
 ) -> Result<OraStack, ImpexError> {
     let mut stack = OraStack {
-        common: take_common(&mut attributes, offset),
+        common: take_common(&mut attributes, offset, *next_layer_id),
         isolation: match &take_attribute(&mut attributes, "isolation", None).as_deref() {
             Some("isolate") => Isolation::Isolate,
             _ => Isolation::Auto,
@@ -353,18 +379,23 @@ fn parse_stack_stack<R: Read>(
         annotations: Vec::new(),
     };
 
+    *next_layer_id += 1;
+
     loop {
         match parser.next() {
             Ok(XmlEvent::StartElement {
                 name, attributes, ..
             }) => {
                 if name.local_name == "stack" {
-                    let substack = parse_stack_stack(attributes, stack.common.offset, parser)?;
+                    let substack =
+                        parse_stack_stack(attributes, next_layer_id, stack.common.offset, parser)?;
                     stack.common.unsupported_features |= substack.common.unsupported_features;
 
                     stack.layers.push(OraStackElement::Stack(substack));
                 } else if name.local_name == "layer" {
-                    let layer = parse_stack_layer(attributes, stack.common.offset, parser)?;
+                    let layer =
+                        parse_stack_layer(attributes, *next_layer_id, stack.common.offset, parser)?;
+                    *next_layer_id += 1;
                     stack.common.unsupported_features |= layer.common.unsupported_features;
                     stack.layers.push(OraStackElement::Layer(layer));
                 } else if name.local_name == "annotations"
@@ -398,11 +429,12 @@ fn parse_stack_stack<R: Read>(
 }
 fn parse_stack_layer<R: Read>(
     mut attributes: Vec<OwnedAttribute>,
+    layer_id: LayerID,
     offset: (i32, i32),
     parser: &mut EventReader<R>,
 ) -> Result<OraLayer, ImpexError> {
     let mut layer = OraLayer {
-        common: take_common(&mut attributes, offset),
+        common: take_common(&mut attributes, offset, layer_id),
         filename: take_attribute(&mut attributes, "src", None)
             .ok_or(ImpexError::UnsupportedFormat)?,
         bgtile: take_attribute(&mut attributes, "background-tile", Some(MYPAINT_NAMESPACE))
@@ -528,6 +560,73 @@ fn parse_annotation<R: Read>(
     }
 }
 
+fn parse_timeline<R: Read>(
+    mut attributes: Vec<OwnedAttribute>,
+    parser: &mut EventReader<R>,
+) -> Result<OraTimeline, ImpexError> {
+    let mut timeline = OraTimeline {
+        frames: Vec::new(),
+        enabled: take_attribute(&mut attributes, "enabled", None).map_or(true, |a| a == "true"),
+    };
+
+    loop {
+        match parser.next() {
+            Ok(XmlEvent::StartElement { name, .. }) => {
+                if name.local_name == "frame" {
+                    timeline.frames.push(parse_frame(parser)?);
+                } else {
+                    warn!("Unsupported timeline element <{}>", name.local_name);
+                    skip_element(parser)?;
+                }
+            }
+            Ok(XmlEvent::EndElement { name, .. }) => {
+                assert_eq!(name.local_name, "timeline");
+                return Ok(timeline);
+            }
+            Ok(XmlEvent::EndDocument) => {
+                warn!(
+                    "Error reading timeline: Unexpected end of document while parsing <timeline>"
+                );
+                return Err(ImpexError::UnsupportedFormat);
+            }
+            Err(e) => {
+                warn!("Error reading timeline: {}", e);
+                return Err(ImpexError::UnsupportedFormat);
+            }
+            _ => (),
+        }
+    }
+}
+
+fn parse_frame<R: Read>(parser: &mut EventReader<R>) -> Result<Vec<i32>, ImpexError> {
+    let mut content = String::new();
+
+    loop {
+        match parser.next() {
+            Ok(XmlEvent::StartElement { name, .. }) => {
+                warn!("Unsupported frame element <{}>", name.local_name);
+                skip_element(parser)?;
+            }
+            Ok(XmlEvent::EndElement { name, .. }) => {
+                assert_eq!(name.local_name, "frame");
+
+                return Ok(content.split(' ').filter_map(|s| s.parse().ok()).collect());
+            }
+            Ok(XmlEvent::EndDocument) => {
+                warn!("Error reading timeline: Unexpected end of document while parsing <frame>");
+                return Err(ImpexError::UnsupportedFormat);
+            }
+            Ok(XmlEvent::CData(s)) => content.push_str(&s),
+            Ok(XmlEvent::Characters(s)) => content.push_str(&s),
+            Err(e) => {
+                warn!("Error reading frame: {}", e);
+                return Err(ImpexError::UnsupportedFormat);
+            }
+            _ => (),
+        }
+    }
+}
+
 fn skip_element<R: Read>(parser: &mut EventReader<R>) -> Result<(), ImpexError> {
     let mut depth = 1;
     loop {
@@ -567,6 +666,22 @@ fn take_attribute(
     } else {
         None
     }
+}
+
+fn make_idlist(stack: &OraStack) -> Vec<LayerID> {
+    let mut ids = Vec::new();
+    for layer in stack.layers.iter() {
+        match layer {
+            OraStackElement::Stack(s) => {
+                ids.push(s.common.id);
+                ids.append(&mut make_idlist(s));
+            }
+            OraStackElement::Layer(l) => {
+                ids.push(l.common.id);
+            }
+        }
+    }
+    ids
 }
 
 #[cfg(test)]

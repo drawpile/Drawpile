@@ -26,12 +26,13 @@ use super::history::History;
 use super::retcon::{LocalFork, RetconAction};
 use crate::paint::annotation::{AnnotationID, VAlign};
 use crate::paint::{
-    editlayer, AoE, BitmapLayer, Blendmode, ClassicBrushCache, Color, GroupLayer, Layer, LayerID,
-    LayerInsertion, LayerStack, Rectangle, Size, UserID, PREVIEW_SUBLAYER_ID,
+    editlayer, AoE, BitmapLayer, Blendmode, ClassicBrushCache, Color, Frame, GroupLayer, Layer,
+    LayerID, LayerInsertion, LayerStack, Rectangle, Size, UserID, PREVIEW_SUBLAYER_ID,
 };
 use crate::protocol::message::*;
 
 use std::convert::TryFrom;
+use std::convert::TryInto;
 use std::mem;
 use std::ops::BitOrAssign;
 use std::sync::Arc;
@@ -44,7 +45,8 @@ pub struct CanvasState {
     localfork: LocalFork,
 }
 
-/// A structure describing what parts of the canvas was changed.
+/// A structure describing which parts of the canvas were changed
+/// and are in need of refresh in the UI.
 /// In addition to the usual layerstack area of effect,
 /// we're interested in whether layer structure or annotations
 /// were changed as well.
@@ -55,6 +57,7 @@ pub struct CanvasStateChange {
     pub layers_changed: bool,
     pub annotations_changed: bool,
     pub metadata_changed: bool,
+    pub timeline_changed: bool,
 
     /// This user's cursor moved while doing this change
     pub user: UserID,
@@ -73,6 +76,7 @@ impl CanvasStateChange {
             layers_changed: false,
             annotations_changed: false,
             metadata_changed: false,
+            timeline_changed: false,
             user: 0,
             layer: 0,
             cursor: (0, 0),
@@ -85,7 +89,10 @@ impl CanvasStateChange {
             layers_changed: true,
             annotations_changed: true,
             metadata_changed: true,
-            ..Self::nothing()
+            timeline_changed: true,
+            user: 0,
+            layer: 0,
+            cursor: (0, 0),
         }
     }
 
@@ -108,7 +115,14 @@ impl CanvasStateChange {
 
     fn metadata() -> Self {
         Self {
-            metadata_changed: false,
+            metadata_changed: true,
+            ..Self::nothing()
+        }
+    }
+
+    fn timeline() -> Self {
+        Self {
+            timeline_changed: true,
             ..Self::nothing()
         }
     }
@@ -129,6 +143,7 @@ impl CanvasStateChange {
             layers_changed: s1.root().compare_structure(s2.root()),
             annotations_changed: s1.compare_annotations(s2),
             metadata_changed: s1.compare_metadata(s2),
+            timeline_changed: s1.compare_timeline(s2),
             user: 0,
             layer: 0,
             cursor: (0, 0),
@@ -142,7 +157,10 @@ impl CanvasStateChange {
                 return true;
             }
         };
-        return self.layers_changed | self.annotations_changed | self.metadata_changed;
+        return self.layers_changed
+            | self.annotations_changed
+            | self.metadata_changed
+            | self.timeline_changed;
     }
 }
 
@@ -162,6 +180,7 @@ impl BitOrAssign for CanvasStateChange {
         self.layers_changed |= rhs.layers_changed;
         self.annotations_changed |= rhs.annotations_changed;
         self.metadata_changed |= rhs.metadata_changed;
+        self.timeline_changed |= rhs.timeline_changed;
         if rhs.user > 0 {
             self.user = rhs.user;
             self.layer = rhs.layer;
@@ -435,6 +454,8 @@ impl CanvasState {
             MoveRect(user, m) => self.handle_moverect(*user, m),
             SetMetadataInt(_, m) => self.handle_metadata_int(m),
             SetMetadataStr(_, _) => CanvasStateChange::nothing(), // no string keys yet
+            SetTimelineFrame(_, m) => self.handle_settimeline(m),
+            RemoveTimelineFrame(_, m) => self.handle_removetimelineframe(*m),
             Undo(user, m) => self.handle_undo(*user, m),
         }
     }
@@ -477,19 +498,54 @@ impl CanvasState {
         }
     }
 
-    pub fn handle_metadata_int(&mut self, msg: &SetMetadataIntMessage) -> CanvasStateChange {
+    fn handle_metadata_int(&mut self, msg: &SetMetadataIntMessage) -> CanvasStateChange {
         let md = Arc::make_mut(&mut self.layerstack).metadata_mut();
 
         match MetadataInt::try_from(msg.field) {
             Ok(MetadataInt::Dpix) => md.dpix = msg.value,
             Ok(MetadataInt::Dpiy) => md.dpiy = msg.value,
             Ok(MetadataInt::Framerate) => md.framerate = msg.value,
+            Ok(MetadataInt::UseTimeline) => md.use_timeline = msg.value != 0,
             Err(_) => {
                 warn!("Unknown int metadata key {}", msg.field);
                 return CanvasStateChange::nothing();
             }
         }
         CanvasStateChange::metadata()
+    }
+
+    fn handle_settimeline(&mut self, msg: &SetTimelineFrameMessage) -> CanvasStateChange {
+        let frame = msg.frame as usize;
+        if frame > self.layerstack.timeline().frames.len() {
+            // New frames can only be added one at a time
+            return CanvasStateChange::nothing();
+        }
+
+        let f = Frame(msg.layers.clone().try_into().unwrap());
+
+        let timeline = Arc::make_mut(&mut self.layerstack).timeline_mut();
+        if frame == timeline.frames.len() {
+            timeline.frames.push(f);
+        } else {
+            if msg.insert {
+                timeline.frames.insert(frame, f);
+            } else {
+                timeline.frames[frame] = f;
+            }
+        }
+        CanvasStateChange::timeline()
+    }
+
+    fn handle_removetimelineframe(&mut self, frame: u16) -> CanvasStateChange {
+        let frame = frame as usize;
+        if frame >= self.layerstack.timeline().frames.len() {
+            return CanvasStateChange::nothing();
+        }
+
+        let timeline = Arc::make_mut(&mut self.layerstack).timeline_mut();
+        timeline.frames.remove(frame);
+
+        CanvasStateChange::timeline()
     }
 
     /// Penup ends indirect strokes by merging the user's sublayers.

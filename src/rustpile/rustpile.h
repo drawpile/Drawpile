@@ -105,6 +105,13 @@ enum class LayerViewMode {
   Onionskin,
 };
 
+enum class MetadataInt : uint8_t {
+  Dpix,
+  Dpiy,
+  Framerate,
+  UseTimeline,
+};
+
 /// Feature access tiers
 enum class Tier : uint8_t {
   Operator,
@@ -241,6 +248,8 @@ using NotifyCatchupCallback = void(*)(void *ctx, uint32_t progress);
 
 using NotifyMetadataCallback = void(*)(void *ctx);
 
+using NotifyTimelineCallback = void(*)(void *ctx);
+
 using JoinCallback = void(*)(void *ctx, UserID user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
 
 using LeaveCallback = void(*)(void *ctx, UserID user);
@@ -267,6 +276,17 @@ struct AnnotationAt {
   /// The annotation's protected bit
   bool protect;
 };
+
+/// The number of layers that can be included in a frame is fixed.
+/// This is done purely for efficiency: a Vec is 24 bytes long
+/// (assuming 64bit OS,) so we can fit 12 layer IDs in the same
+/// space without using any allocations.
+///
+/// Unused indices should be zerod. No more layers should be listed
+/// after the first zero.
+using Frame = LayerID[12];
+
+using GetTimelineCallback = void(*)(void *ctx, const Frame *frames, uintptr_t count);
 
 /// Bitfield for storing a set of users (IDs range from 0..255)
 using UserBits = uint8_t[32];
@@ -311,6 +331,7 @@ struct FeatureTiers {
   Tier undo;
   /// Permission to edit document metadata
   Tier metadata;
+  Tier timeline;
 };
 
 using IndexBuildProgressNoticationFn = void(*)(void *ctx, uint32_t progress);
@@ -529,6 +550,15 @@ void write_moverect(MessageWriter *writer,
                     const uint8_t *mask,
                     uintptr_t mask_len);
 
+void write_setmetadataint(MessageWriter *writer, UserID ctx, uint8_t field, int32_t value);
+
+void write_settimelineframe(MessageWriter *writer,
+                            UserID ctx,
+                            uint16_t frame,
+                            bool insert,
+                            const uint16_t *layers,
+                            uintptr_t layers_len);
+
 void write_undo(MessageWriter *writer, UserID ctx, uint8_t override_user, bool redo);
 
 void write_putimage(MessageWriter *writer,
@@ -550,7 +580,8 @@ PaintEngine *paintengine_new(void *ctx,
                              NotifyCursorCallback cursors,
                              NotifyPlaybackCallback playback,
                              NotifyCatchupCallback catchup,
-                             NotifyMetadataCallback metadata);
+                             NotifyMetadataCallback metadata,
+                             NotifyTimelineCallback timeline);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);
@@ -612,11 +643,14 @@ AnnotationAt paintengine_get_annotation_at(const PaintEngine *dp,
 /// are used, this will return false.
 bool paintengine_is_simple(const PaintEngine *dp);
 
+/// Get an integer type metadata field
+int32_t paintengine_get_metadata_int(const PaintEngine *dp, MetadataInt field);
+
 void paintengine_set_view_mode(PaintEngine *dp, LayerViewMode mode, bool censor);
 
 void paintengine_set_onionskin_opts(PaintEngine *dp,
-                                    int32_t skins_below,
-                                    int32_t skins_above,
+                                    uintptr_t skins_below,
+                                    uintptr_t skins_above,
                                     bool tint);
 
 void paintengine_set_active_layer(PaintEngine *dp, LayerID layer_id);
@@ -724,6 +758,9 @@ bool paintengine_get_layer_content(const PaintEngine *dp,
 /// in the stack.
 uintptr_t paintengine_get_frame_count(const PaintEngine *dp);
 
+/// Get the animation timeline
+void paintengine_get_timeline(const PaintEngine *dp, void *ctx, GetTimelineCallback cb);
+
 /// Copy frame pixel data to the given buffer
 ///
 /// This works like paintengine_get_layer_content, with two
@@ -733,7 +770,7 @@ uintptr_t paintengine_get_frame_count(const PaintEngine *dp);
 ///  * background is composited
 ///  * fixed layers are composited
 bool paintengine_get_frame_content(const PaintEngine *dp,
-                                   uintptr_t frame,
+                                   intptr_t frame,
                                    Rectangle rect,
                                    uint8_t *pixels);
 

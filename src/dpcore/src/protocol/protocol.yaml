@@ -252,8 +252,8 @@ FeatureAccessLevels:
     comment: Change feature access tiers
     fields:
         - feature_tiers vec_u8:
-          min_len: 10
-          max_len: 10
+          min_len: 11
+          max_len: 11
 
 DefaultLayer:
     id: 71
@@ -662,6 +662,7 @@ SetMetadataInt:
               - Dpix
               - Dpiy
               - Framerate
+              - UseTimeline
         - value i32
 
 SetMetadataStr:
@@ -670,6 +671,28 @@ SetMetadataStr:
     fields:
         - field u8
         - value utf8
+
+SetTimelineFrame:
+    id: 163
+    comment: |
+             Set the layers included in the given animation frame
+
+             The frame number must be between zero and last frame number + 1.
+
+             If the `insert` flag is true, the frame will be inserted at the given
+             position rather than replacing the existing frame.
+    fields:
+        - frame u16
+        - insert bool
+        - layers vec_u16: hex
+          min_len: 12
+          max_len: 12
+
+RemoveTimelineFrame:
+  id: 164
+  comment: Remove a frame from the timeline
+  fields:
+    - frame u16
 
 Undo:
     id: 255

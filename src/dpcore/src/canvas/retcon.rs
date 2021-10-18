@@ -96,6 +96,9 @@ enum AffectedArea {
     /// Document metadata field change
     DocumentMetadata(u8),
 
+    /// Timeline change
+    Timeline(u16),
+
     /// Fallback
     Everything,
 }
@@ -275,6 +278,8 @@ impl LocalFork {
             Undo(_, _) => AffectedArea::UserAttrs, // These are never put in the local fork
             SetMetadataInt(_, m) => AffectedArea::DocumentMetadata(m.field),
             SetMetadataStr(_, m) => AffectedArea::DocumentMetadata(m.field),
+            SetTimelineFrame(_, m) => AffectedArea::Timeline(m.frame),
+            RemoveTimelineFrame(_, m) => AffectedArea::Timeline(*m),
         }
     }
 

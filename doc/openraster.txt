@@ -19,6 +19,9 @@ and the background tile is 64x64 pixels in size, that layer is ignored and the b
 image is set as the canvas background. When saving an ORA image and the canvas background is non-transparent,
 a filled background layer is generated with the `background-tile` attribute set.
 
+The animation timeline (if used) is saved under a Drawpile specific element `<drawpile:timeline>`.
+It contains `<frame>` elements, which again contain a list of layer indexes, where 0 is the topmost layer.
+
 Compatability has been tested with the following programs:
  * MyPaint
  * GIMP

@@ -85,7 +85,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Layer:</string>
+        <string>Frame:</string>
        </property>
       </widget>
      </item>
@@ -127,6 +127,29 @@
       <widget class="QSpinBox" name="loopEnd">
        <property name="minimum">
         <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>10</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="timelineModeLabel">
+       <property name="text">
+        <string notr="true">Timeline: mode</string>
        </property>
       </widget>
      </item>

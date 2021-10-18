@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2021 Calle Laakkonen
+   Copyright (C) 2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,54 +16,37 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef DOCUMENTMETADATA_H
+#define DOCUMENTMETADATA_H
 
-#ifndef FLIPBOOK_H
-#define FLIPBOOK_H
-
-#include <QDialog>
-#include <QList>
-#include <QPixmap>
-
-class Ui_Flipbook;
-
-class QTimer;
+#include <QObject>
 
 namespace canvas {
-	class PaintEngine;
-}
 
-namespace dialogs {
+class PaintEngine;
 
-class Flipbook : public QDialog
+class DocumentMetadata : public QObject
 {
 	Q_OBJECT
 public:
-	explicit Flipbook(QWidget *parent=nullptr);
-	~Flipbook();
+	explicit DocumentMetadata(PaintEngine *engine, QObject *parent = nullptr);
 
-	void setPaintEngine(canvas::PaintEngine *pe);
+	int framerate() const { return m_framerate; }
+	bool useTimeline() const { return m_useTimeline; }
+
+signals:
+	void framerateChanged(int fps);
+	void useTimelineChanged(bool useTimeline);
 
 private slots:
-	void loadFrame();
-	void playPause();
-	void rewind();
-	void updateFps(int newFps);
-	void updateRange();
-	void setCrop(const QRectF &rect);
-	void resetCrop();
+	void refreshMetadata();
 
 private:
-	void resetFrameCache();
-
-	Ui_Flipbook *m_ui;
-
-	canvas::PaintEngine *m_paintengine;
-	QList<QPixmap> m_frames;
-	QTimer *m_timer;
-	QRect m_crop;
-	int m_realFps;
+	PaintEngine *m_engine;
+	int m_framerate;
+	bool m_useTimeline;
 };
 
 }
 
-#endif // FLIPBOOK_H
+#endif // DOCUMENTMETADATA_H

@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,11 +28,13 @@ use crate::{ImageExportResult, ImpexError};
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
-    BitmapLayer, Blendmode, GroupLayer, Image, Layer, LayerStack, LayerViewOptions, Rectangle,
+    BitmapLayer, Blendmode, GroupLayer, Image, Layer, LayerID, LayerStack, LayerViewOptions,
+    Rectangle,
 };
 
 use image::codecs::png::PngEncoder;
 use image::{imageops, ColorType, EncodableLayout, ImageEncoder, RgbaImage};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Seek, Write};
 use std::path::Path;
@@ -118,6 +120,7 @@ fn write_background<W: Write + Seek>(
             fixed: false,
             composite_op: Blendmode::Normal,
             unsupported_features: false,
+            id: 0,
         },
         filename,
         bgtile: tilename,
@@ -142,6 +145,7 @@ fn write_layer<W: Write + Seek>(
             fixed: md.fixed,
             composite_op: md.blendmode,
             unsupported_features: false,
+            id: layer.metadata().id,
         },
         filename: format!("data/layer-{:04x}.png", layer.metadata().id),
         bgtile: String::new(),
@@ -180,6 +184,7 @@ fn write_stack<W: Write + Seek>(
             fixed: md.fixed,
             composite_op: md.blendmode,
             unsupported_features: false,
+            id: group.metadata().id,
         },
         isolation: if group.metadata().isolated {
             Isolation::Isolate
@@ -300,6 +305,33 @@ fn write_stack_xml<W: Write + Seek>(
         writer.write(XmlEvent::end_element().name("drawpile:annotations"))?;
     }
 
+    // Timeline (drawpile extension)
+    if layerstack.timeline().frames.len() > 0 {
+        let mut idmap = HashMap::new();
+        make_idmap(root, 0, &mut idmap);
+
+        writer.write(XmlEvent::start_element("drawpile:timeline").attr(
+            "enabled",
+            if layerstack.metadata().use_timeline {
+                "true"
+            } else {
+                "false"
+            },
+        ))?;
+
+        for frame in layerstack.timeline().frames.iter() {
+            writer.write(XmlEvent::start_element("frame"))?;
+            let s = IntoIterator::into_iter(frame.0)
+                .take_while(|&id| id > 0)
+                .filter_map(|id| idmap.get(&id))
+                .fold(String::new(), |s, i| format!("{} {}", s, i));
+            writer.write(XmlEvent::Characters(&s))?;
+            writer.write(XmlEvent::end_element())?;
+        }
+
+        writer.write(XmlEvent::end_element().name("drawpile:timeline"))?;
+    }
+
     writer.write(XmlEvent::end_element().name("image"))?;
 
     Ok(())
@@ -375,4 +407,22 @@ fn stack_common_attrs<'a>(
     }
 
     el
+}
+
+fn make_idmap(stack: &OraStack, last_idx: i32, map: &mut HashMap<LayerID, i32>) -> i32 {
+    let mut last_idx = last_idx;
+
+    for layer in stack.layers.iter() {
+        match layer {
+            OraStackElement::Layer(l) => {
+                map.insert(l.common.id, last_idx);
+                last_idx += 1;
+            }
+            OraStackElement::Stack(s) => {
+                map.insert(s.common.id, last_idx);
+                last_idx = make_idmap(s, last_idx + 1, map);
+            }
+        }
+    }
+    last_idx
 }

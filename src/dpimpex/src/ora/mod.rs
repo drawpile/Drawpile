@@ -1,4 +1,4 @@
-use dpcore::paint::{Blendmode, Rectangle, Size};
+use dpcore::paint::{Blendmode, LayerID, Rectangle, Size};
 
 mod reader;
 mod writer;
@@ -16,6 +16,7 @@ struct OraCanvas {
     framerate: i32, // our extension
     root: OraStack,
     annotations: Vec<OraAnnotation>, // our extension
+    timeline: OraTimeline,           // our extension
 }
 
 enum Isolation {
@@ -33,6 +34,7 @@ struct OraCommon {
     fixed: bool,    // our extension
     composite_op: Blendmode,
     unsupported_features: bool, // this layer makes use of unsupported features
+    id: LayerID,                // used internally
 }
 
 struct OraLayer {
@@ -68,4 +70,9 @@ struct OraAnnotation {
     bg: String,
     valign: String,
     content: String,
+}
+
+struct OraTimeline {
+    frames: Vec<Vec<i32>>,
+    enabled: bool,
 }

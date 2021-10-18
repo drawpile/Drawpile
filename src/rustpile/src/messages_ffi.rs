@@ -488,6 +488,43 @@ pub extern "C" fn write_moverect(
 }
 
 #[no_mangle]
+pub extern "C" fn write_setmetadataint(
+    writer: &mut MessageWriter,
+    ctx: UserID,
+    field: u8,
+    value: i32,
+) {
+    CommandMessage::SetMetadataInt(
+        ctx,
+        SetMetadataIntMessage {
+            field: field,
+            value: value,
+        },
+    )
+    .write(writer);
+}
+
+#[no_mangle]
+pub extern "C" fn write_settimelineframe(
+    writer: &mut MessageWriter,
+    ctx: UserID,
+    frame: u16,
+    insert: bool,
+    layers: *const u16,
+    layers_len: usize,
+) {
+    CommandMessage::SetTimelineFrame(
+        ctx,
+        SetTimelineFrameMessage {
+            frame: frame,
+            insert: insert,
+            layers: unsafe { slice::from_raw_parts(layers, layers_len) }.into(),
+        },
+    )
+    .write(writer);
+}
+
+#[no_mangle]
 pub extern "C" fn write_undo(
     writer: &mut MessageWriter,
     ctx: UserID,

@@ -49,6 +49,7 @@ namespace docks {
 	class PaletteBox;
 	class ColorBox;
 	class Navigator;
+	class Timeline;
 }
 namespace dialogs {
 	class PlaybackDialog;
@@ -210,6 +211,7 @@ private:
 	docks::LayerList *m_dockLayers;
 	docks::ColorBox *m_dockColors;
 	docks::Navigator *m_dockNavigator;
+	docks::Timeline *m_dockTimeline;
 	widgets::ChatBox *m_chatbox;
 
 	widgets::CanvasView *m_view;

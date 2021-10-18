@@ -955,6 +955,10 @@ impl RootGroup {
         Some(Self(self.0.resized(top, right, bottom, left)?))
     }
 
+    pub fn layer_at(&self, index: usize) -> &Layer {
+        return self.0.layer_at(index);
+    }
+
     pub fn iter_layers(&self) -> impl Iterator + DoubleEndedIterator<Item = &Layer> {
         self.0.iter_layers()
     }

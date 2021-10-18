@@ -72,6 +72,13 @@ impl Layer {
         }
     }
 
+    pub fn is_group(&self) -> bool {
+        match self {
+            Self::Group(_) => true,
+            _ => false,
+        }
+    }
+
     pub fn as_bitmap(&self) -> Option<&BitmapLayer> {
         match self {
             Self::Bitmap(b) => Some(&b),

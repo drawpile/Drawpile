@@ -65,6 +65,7 @@
 #include "scene/selectionitem.h"
 #include "canvas/userlist.h"
 #include "canvas/paintengine.h"
+#include "canvas/documentmetadata.h"
 
 #include "utils/recentfiles.h"
 #include "../libshared/util/whatismyip.h"
@@ -87,6 +88,7 @@
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/layerlistdock.h"
+#include "docks/timeline.h"
 
 #include "net/client.h"
 #include "net/login.h"
@@ -138,6 +140,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_dockLayers(nullptr),
 	  m_dockColors(nullptr),
 	  m_dockNavigator(nullptr),
+	  m_dockTimeline(nullptr),
 	  m_chatbox(nullptr),
 	  m_view(nullptr),
 	  m_viewStatusBar(nullptr),
@@ -334,6 +337,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	});
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendEnvelope);
+	connect(m_dockTimeline, &docks::Timeline::timelineEditCommand, m_doc->client(), &net::Client::sendEnvelope);
 
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendEnvelope);
 	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendEnvelope);
@@ -424,6 +428,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Show self
 	updateTitle();
 	show();
+
+	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+	setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
+	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+	setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
 }
 
 MainWindow::~MainWindow()
@@ -479,6 +488,12 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockLayers->setCanvas(canvas);
 	m_serverLogDialog->setUserList(canvas->userlist());
 	m_dockNavigator->setCanvasModel(canvas);
+	m_dockTimeline->setTimeline(canvas->timeline());
+
+	m_dockTimeline->setFps(canvas->metadata()->framerate());
+	m_dockTimeline->setUseTimeline(canvas->metadata()->useTimeline());
+	connect(canvas->metadata(), &canvas::DocumentMetadata::framerateChanged, m_dockTimeline, &docks::Timeline::setFps);
+	connect(canvas->metadata(), &canvas::DocumentMetadata::useTimelineChanged, m_dockTimeline, &docks::Timeline::setUseTimeline);
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 
@@ -690,12 +705,16 @@ void MainWindow::updateLayerViewMode()
 
 	rustpile::LayerViewMode mode = rustpile::LayerViewMode::Normal;
 
-	if(getAction("layerviewsolo")->isChecked())
+	if(getAction("layerviewsolo")->isChecked()) {
 		mode = rustpile::LayerViewMode::Solo;
-	else if(getAction("layerviewframe")->isChecked())
-		mode = rustpile::LayerViewMode::Frame;
-	else if(getAction("layerviewonionskin")->isChecked())
-		mode = rustpile::LayerViewMode::Onionskin;
+
+	} else if(getAction("layerviewframe")->isChecked()) {
+		if(getAction("layerviewonionskin")->isChecked())
+			mode = rustpile::LayerViewMode::Onionskin;
+		else
+			mode = rustpile::LayerViewMode::Frame;
+	}
+
 
 	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
 	updateLockWidget();
@@ -2901,4 +2920,10 @@ void MainWindow::createDocks()
 	m_dockNavigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default
+
+	// Create timeline
+	m_dockTimeline = new docks::Timeline(this);
+	m_dockTimeline->setObjectName("Timeline");
+	m_dockTimeline->setAllowedAreas(Qt::AllDockWidgetAreas);
+	addDockWidget(Qt::TopDockWidgetArea, m_dockTimeline);
 }

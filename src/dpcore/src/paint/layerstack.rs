@@ -31,7 +31,10 @@ use super::grouplayer::RootGroup;
 use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
-use super::{BitmapLayer, Blendmode, Color, Image, LayerID, Pixel, Rectangle, UserID};
+use super::{
+    BitmapLayer, Blendmode, Color, Frame, GroupLayer, Image, LayerID, Pixel, Rectangle, Timeline,
+    UserID,
+};
 
 /// A layer stack wraps together the parts that make up the canvas
 #[derive(Clone)]
@@ -39,6 +42,7 @@ pub struct LayerStack {
     root: Arc<RootGroup>,
     annotations: Arc<Vec<Arc<Annotation>>>,
     metadata: Arc<DocumentMetadata>,
+    timeline: Arc<Timeline>,
     pub background: Tile,
 }
 
@@ -46,9 +50,18 @@ pub struct LayerStack {
 #[derive(Clone, PartialEq)]
 #[repr(C)]
 pub struct DocumentMetadata {
+    /// Horizontal resolution (not used by Drawpile)
     pub dpix: i32,
+
+    /// Vertical resolution (not used by Drawpile)
     pub dpiy: i32,
+
+    /// Framerate for animation export
     pub framerate: i32,
+
+    /// Is the animation timeline enabled
+    /// (if not, a simple automatic timeline is used.)
+    pub use_timeline: bool,
 }
 
 impl Default for DocumentMetadata {
@@ -57,6 +70,7 @@ impl Default for DocumentMetadata {
             dpix: 72,
             dpiy: 72,
             framerate: 24,
+            use_timeline: false,
         }
     }
 }
@@ -92,14 +106,14 @@ pub struct LayerViewOptions {
     /// Add a color tint to onionskin layers
     pub onionskin_tint: bool,
 
-    /// Number of onionskin layers to show above the active one
-    pub onionskins_above: i32,
+    /// The frame to render in Frame mode
+    pub active_frame: Frame,
 
-    /// Number of onionskin layers to show below the active one
-    pub onionskins_below: i32,
+    /// Frames to render below the active one in onionskin mode
+    pub frames_below: Vec<Frame>,
 
-    /// Index of the active root group layer for frame and onionskin mode
-    pub active_root_idx: usize,
+    /// Frames to render above the active one in onionskin mode
+    pub frames_above: Vec<Frame>,
 
     /// Index of the active frame for Solo mode
     pub active_layer_id: LayerID,
@@ -122,9 +136,9 @@ impl Default for LayerViewOptions {
             highlight: 0,
             viewmode: LayerViewMode::Normal,
             onionskin_tint: false,
-            onionskins_above: 1,
-            onionskins_below: 1,
-            active_root_idx: 0,
+            active_frame: Frame::empty(),
+            frames_below: Vec::new(),
+            frames_above: Vec::new(),
             active_layer_id: 0,
             no_canvas_background: false,
             background: Tile::Blank,
@@ -140,10 +154,10 @@ impl LayerViewOptions {
     /// the index numbers are reversed. The first frame is
     /// the bottom-most layer, thefore its index number
     /// is actually `layer_count() - 1`
-    pub fn frame(index: usize) -> Self {
+    pub fn frame(frame: Frame) -> Self {
         Self {
             viewmode: LayerViewMode::Frame,
-            active_root_idx: index,
+            active_frame: frame,
             ..Self::default()
         }
     }
@@ -162,6 +176,7 @@ impl LayerStack {
             root: Arc::new(RootGroup::new(width, height)),
             annotations: Arc::new(Vec::<Arc<Annotation>>::new()),
             metadata: Arc::new(DocumentMetadata::default()),
+            timeline: Arc::new(Timeline::new()),
             background: Tile::Blank,
         }
     }
@@ -170,12 +185,14 @@ impl LayerStack {
         root: Arc<RootGroup>,
         annotations: Arc<Vec<Arc<Annotation>>>,
         metadata: Arc<DocumentMetadata>,
+        timeline: Arc<Timeline>,
         background: Tile,
-    ) -> LayerStack {
-        LayerStack {
+    ) -> Self {
+        Self {
             root: root,
             annotations,
             metadata,
+            timeline,
             background,
         }
     }
@@ -198,29 +215,43 @@ impl LayerStack {
         Arc::make_mut(&mut self.metadata)
     }
 
-    /// Find the layer index corresponding to this frame index
-    /// Fixed and hidden layers are not considered frames.
-    pub fn find_frame_index(&self, frame: usize) -> Option<usize> {
-        let mut frames = frame + 1;
-        for (idx, layer) in self.root.iter_layers().enumerate() {
-            if !layer.metadata().fixed && layer.is_visible() {
-                frames -= 1;
-                if frames == 0 {
-                    return Some(idx);
-                }
-            }
-        }
-        None
+    /// Get the animation timeline
+    pub fn timeline(&self) -> &Timeline {
+        &self.timeline
     }
 
-    /// Get the number of animation frames in the layerstack
+    pub fn timeline_mut(&mut self) -> &mut Timeline {
+        Arc::make_mut(&mut self.timeline)
+    }
+
+    /// Get the frame at the given index
     ///
-    /// A frame is represented by a toplevel layer that is not fixed or hidden.
+    /// If the timeline is not enabled, a simple automatic one
+    /// is generated where each root-level layer correspond to a frame.
+    pub fn frame_at(&self, index: isize) -> Frame {
+        if index < 0 {
+            return Frame::empty();
+        }
+
+        let index = index as usize;
+
+        if self.metadata().use_timeline {
+            *self.timeline.frames.get(index).unwrap_or(&Frame::empty())
+        } else if index < self.root.layer_count() {
+            // Note: first layer is at the bottom of the stack
+            Frame::single(self.root.layer_at(self.root.layer_count() - index - 1).id())
+        } else {
+            Frame::empty()
+        }
+    }
+
+    /// Get the number of animation frames in this layerstack
     pub fn frame_count(&self) -> usize {
-        self.root
-            .iter_layers()
-            .filter(|l| !l.metadata().fixed && l.is_visible())
-            .count()
+        if self.metadata.use_timeline {
+            self.timeline.frames.len()
+        } else {
+            self.root.layer_count()
+        }
     }
 
     pub fn reordered(
@@ -232,6 +263,7 @@ impl LayerStack {
             root: Arc::new(self.root.reordered(root_group, new_order)?),
             annotations: self.annotations.clone(),
             metadata: self.metadata.clone(),
+            timeline: self.timeline.clone(),
             background: self.background.clone(),
         })
     }
@@ -337,92 +369,86 @@ impl LayerStack {
             }
         };
 
-        // The root group is special.
-        // Onionskin, solo and other animation features only apply to
-        // the root, as only root level layers are treated as frames.
         if (i * TILE_SIZE) < self.root.width() && (j * TILE_SIZE) < self.root.height() {
-            if matches!(opts.viewmode, LayerViewMode::Solo) {
-                if let Some(l) = self.root().get_layer(opts.active_layer_id) {
-                    l.flatten_tile(&mut destination, i, j, 1.0, opts.censor, opts.highlight);
-                }
-                return destination;
-            }
-
-            let layercount = self.root.layer_count();
-            for (idx, layer) in self.root.iter_layers().rev().enumerate() {
-                let idx = layercount - idx - 1;
-                let metadata = layer.metadata();
-                // Don't render hidden layers
-                if metadata.hidden {
-                    continue;
-                }
-
-                // Virtual parent opacity is set by special view modes
-                // to hide or fade out layers (solo/onionskin)
-                let (opacity, tint) = match opts.viewmode {
-                    LayerViewMode::Normal => (1.0, 0),
-                    LayerViewMode::Solo => unreachable!(),
-                    LayerViewMode::Frame => (
-                        if idx == opts.active_root_idx || metadata.fixed {
-                            1.0
-                        } else {
-                            0.0
-                        },
-                        0,
-                    ),
-                    LayerViewMode::Onionskin => {
-                        if metadata.fixed {
-                            (1.0, 0)
-                        } else {
-                            let d = opts.active_root_idx as i32 - idx as i32;
-                            let rd = if d == 0 {
-                                0.0
-                            } else if d < 0 && d >= -opts.onionskins_above {
-                                -d as f32 / (opts.onionskins_above + 1) as f32
-                            } else if d > 0 && d <= opts.onionskins_below {
-                                d as f32 / (opts.onionskins_below + 1) as f32
-                            } else {
-                                1.0
-                            };
-                            (
-                                (1.0 - rd).powi(2),
-                                if d == 0 || !opts.onionskin_tint {
-                                    0
-                                } else if d < 0 {
-                                    0x80_3333ff
-                                } else {
-                                    0x80_ff3333
-                                },
-                            )
-                        }
+            match opts.viewmode {
+                LayerViewMode::Solo => {
+                    if let Some(l) = self.root().get_layer(opts.active_layer_id) {
+                        l.flatten_tile(&mut destination, i, j, 1.0, opts.censor, opts.highlight);
                     }
-                };
-
-                // No need to render fully transparent layers
-                if opacity < 1.0 / 256.0 {
-                    continue;
                 }
-
-                // Tinting only works right in Normal blend mode
-                if tint != 0 && layer.metadata().blendmode == Blendmode::Normal {
-                    let mut tmp = TileData::new(ZERO_PIXEL, 0);
-                    layer.flatten_tile(&mut tmp, i, j, opacity, opts.censor, opts.highlight);
-                    tint_pixels(&mut tmp.pixels, Color::from_argb32(tint));
-                    destination.merge_data(&mut tmp, 1.0, layer.metadata().blendmode);
-                } else {
-                    layer.flatten_tile(
-                        &mut destination,
-                        i,
-                        j,
-                        opacity,
-                        opts.censor,
-                        opts.highlight,
-                    );
+                _ => {
+                    self.inner_flatten_tile(&mut destination, self.root.inner_ref(), i, j, opts);
                 }
             }
         }
 
         destination
+    }
+
+    fn inner_flatten_tile(
+        &self,
+        destination: &mut TileData,
+        root: &GroupLayer,
+        i: u32,
+        j: u32,
+        opts: &LayerViewOptions,
+    ) {
+        for layer in root.iter_layers().rev() {
+            let metadata = layer.metadata();
+            // Don't render hidden layers
+            if metadata.hidden {
+                continue;
+            }
+
+            // Virtual parent opacity is set by special view modes
+            // to hide or fade out layers (solo/onionskin)
+            let (opacity, tint) = match opts.viewmode {
+                LayerViewMode::Normal => (1.0, 0),
+                LayerViewMode::Solo => unreachable!(),
+                LayerViewMode::Frame | LayerViewMode::Onionskin => {
+                    if !metadata.isolated && layer.is_group() {
+                        // descend into non-isolated groups.
+                        // this allows related layer frames to be kept side by side,
+                        // rather than interspersed along the layerstack root
+                        self.inner_flatten_tile(destination, layer.as_group().unwrap(), i, j, opts);
+                        (0.0, 0)
+                    } else if opts.active_frame.contains(metadata.id) {
+                        (1.0, 0)
+                    } else if matches!(opts.viewmode, LayerViewMode::Onionskin) {
+                        if let Some(below) = Frame::find(metadata.id, &opts.frames_below) {
+                            (
+                                (1.0 - below as f32 / (opts.frames_below.len() + 1) as f32).powi(2),
+                                if opts.onionskin_tint { 0x80_ff3333 } else { 0 },
+                            )
+                        } else if let Some(above) = Frame::find(metadata.id, &opts.frames_above) {
+                            (
+                                (1.0 - above as f32 / (opts.frames_above.len() + 1) as f32).powi(2),
+                                if opts.onionskin_tint { 0x80_3333ff } else { 0 },
+                            )
+                        } else {
+                            (0.0, 0)
+                        }
+                    } else {
+                        (0.0, 0)
+                    }
+                }
+            };
+
+            // No need to render fully transparent layers
+            if opacity < 1.0 / 256.0 {
+                continue;
+            }
+
+            // Tinting only works right in Normal blend mode
+            if tint != 0 && layer.metadata().blendmode == Blendmode::Normal {
+                let mut tmp = TileData::new(ZERO_PIXEL, 0);
+                layer.flatten_tile(&mut tmp, i, j, opacity, opts.censor, opts.highlight);
+                tint_pixels(&mut tmp.pixels, Color::from_argb32(tint));
+                destination.merge_data(&mut tmp, 1.0, layer.metadata().blendmode);
+            } else {
+                layer.flatten_tile(destination, i, j, opacity, opts.censor, opts.highlight);
+            }
+        }
     }
 
     /// Get a weighted average of a color
@@ -547,6 +573,7 @@ impl LayerStack {
                     .collect(),
             ),
             metadata: self.metadata.clone(),
+            timeline: self.timeline.clone(),
             background: self.background.clone(),
         })
     }
@@ -572,6 +599,11 @@ impl LayerStack {
     pub fn compare_metadata(&self, other: &LayerStack) -> bool {
         // metadata changes so rarely that a shallow comparison is close enough here
         !Arc::ptr_eq(&self.metadata, &other.metadata)
+    }
+
+    pub fn compare_timeline(&self, other: &LayerStack) -> bool {
+        // timeline changes so rarely that a shallow comparison is close enough here
+        !Arc::ptr_eq(&self.timeline, &other.timeline)
     }
 }
 

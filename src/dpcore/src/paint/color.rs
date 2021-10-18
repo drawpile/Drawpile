@@ -243,7 +243,7 @@ pub fn unpremultiply_pixel(p: Pixel) -> Pixel {
         ((p[0] as i32 * ia + 0x8000) >> 16) as u8,
         ((p[1] as i32 * ia + 0x8000) >> 16) as u8,
         ((p[2] as i32 * ia + 0x8000) >> 16) as u8,
-        p[3]
+        p[3],
     ]
 }
 
@@ -262,7 +262,7 @@ pub fn premultiply_pixel(p: Pixel) -> Pixel {
         mult(p[0] as u32, a) as u8,
         mult(p[1] as u32, a) as u8,
         mult(p[2] as u32, a) as u8,
-        p[3]
+        p[3],
     ]
 }
 
@@ -309,7 +309,7 @@ mod tests {
     #[test]
     fn test_premultiplication() {
         for i in 1..=255 {
-            let p:Pixel = [i, i, i, i];
+            let p: Pixel = [i, i, i, i];
 
             let up = unpremultiply_pixel(p);
             assert_eq!(up, [255, 255, 255, i]);

@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use super::conv::from_dpimage;
 use crate::{ImageExportResult, ImpexError};
-use dpcore::paint::{LayerStack, LayerViewOptions, Image};
+use dpcore::paint::{Image, LayerStack, LayerViewOptions};
 
 use image::codecs::gif::{GifEncoder, Repeat};
 use image::{Delay, Frame};
@@ -21,22 +21,24 @@ pub trait FrameWriter {
 pub struct AnimationSaver<W: FrameWriter> {
     layerstack: Arc<LayerStack>,
     writer: W,
-    pos: usize,
+    pos: isize,
     default_frame_duration: Duration,
 }
 
-impl <W: FrameWriter> AnimationSaver<W> {
+impl<W: FrameWriter> AnimationSaver<W> {
     pub fn new(layerstack: Arc<LayerStack>, writer: W) -> Self {
-        // The bottom-most layer is the first frame, which at the end of the list
-        assert!(layerstack.root().layer_count() > 0 );
-        let pos = layerstack.root().layer_count() - 1;
-        let default_frame_duration = Duration::from_millis(1000 / layerstack.metadata().framerate.max(1) as u64);
-        Self { layerstack, writer, pos, default_frame_duration }
+        let default_frame_duration =
+            Duration::from_millis(1000 / layerstack.metadata().framerate.max(1) as u64);
+        Self {
+            layerstack,
+            writer,
+            pos: 0,
+            default_frame_duration,
+        }
     }
-
 }
 
-impl <W: FrameWriter> AnimationWriter for AnimationSaver<W> {
+impl<W: FrameWriter> AnimationWriter for AnimationSaver<W> {
     /// Write the next frame
     ///
     /// Note: this might not actually write anything if the next frame to be written is
@@ -44,17 +46,16 @@ impl <W: FrameWriter> AnimationWriter for AnimationSaver<W> {
     ///
     /// Returns false when there are no more frames left to write
     fn save_next_frame(&mut self) -> Result<bool, ImpexError> {
-        let layer = self.layerstack.root().inner_ref().layer_at(self.pos);
-        // Fixed layers' content is drawn on all frames
-        if !layer.metadata().fixed && layer.is_visible() {
-            let image = self.layerstack.to_image(&LayerViewOptions::frame(self.pos));
-            self.writer.write_frame(&image, self.default_frame_duration)?;
-        }
+        let image = self
+            .layerstack
+            .to_image(&LayerViewOptions::frame(self.layerstack.frame_at(self.pos)));
+        self.writer
+            .write_frame(&image, self.default_frame_duration)?;
 
-        if self.pos == 0 {
+        if self.pos >= self.layerstack.frame_count() as isize - 1 {
             Ok(false)
         } else {
-            self.pos -= 1;
+            self.pos += 1;
             Ok(true)
         }
     }
@@ -97,7 +98,7 @@ impl FrameImagesWriter {
         dir.push(path);
         Self {
             dir,
-            next_number: 1
+            next_number: 1,
         }
     }
 }

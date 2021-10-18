@@ -51,6 +51,9 @@ pub struct FeatureTiers {
 
     /// Permission to edit document metadata
     pub metadata: Tier,
+
+    // Permission to edit animation timeline
+    pub timeline: Tier,
 }
 
 /// Set of general user related permission bits
@@ -132,6 +135,7 @@ impl AclFilter {
                 laser: Tier::Guest,
                 undo: Tier::Guest,
                 metadata: Tier::Operator,
+                timeline: Tier::Guest,
             },
         }
     }
@@ -269,6 +273,7 @@ impl AclFilter {
                         laser: Tier::try_from(f[7]).unwrap(),
                         undo: Tier::try_from(f[8]).unwrap(),
                         metadata: Tier::try_from(f[9]).unwrap(),
+                        timeline: Tier::try_from(f[10]).unwrap(),
                     };
                     (true, ACLCHANGE_FEATURES)
                 } else {
@@ -353,9 +358,20 @@ impl AclFilter {
                     && !self.is_layer_locked(*u, m.layer)
             }
             Undo(u, _) => self.users.tier(*u) <= self.feature_tier.undo,
-            SetMetadataInt(u, _) | SetMetadataStr(u, _) => {
-                self.users.tier(*u) <= self.feature_tier.metadata
+            SetMetadataInt(u, SetMetadataIntMessage { field, .. }) => {
+                // Certain metadata fields belong to specific features
+                let tier = match MetadataInt::try_from(*field) {
+                    Ok(MetadataInt::Framerate) | Ok(MetadataInt::UseTimeline) => {
+                        self.feature_tier.timeline
+                    }
+                    _ => self.feature_tier.metadata,
+                };
+
+                self.users.tier(*u) <= tier
             }
+            SetMetadataStr(u, _) => self.users.tier(*u) <= self.feature_tier.metadata,
+            SetTimelineFrame(u, _) => self.users.tier(*u) <= self.feature_tier.timeline,
+            RemoveTimelineFrame(u, _) => self.users.tier(*u) <= self.feature_tier.timeline,
         }
     }
 
@@ -485,6 +501,7 @@ mod tests {
                     u8::from(Tier::Trusted),       // laser
                     u8::from(Tier::Authenticated), // undo
                     u8::from(Tier::Guest),         // metadata
+                    u8::from(Tier::Trusted),       // timeline
                 ],
             ),
         ));

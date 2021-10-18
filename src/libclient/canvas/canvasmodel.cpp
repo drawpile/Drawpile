@@ -20,9 +20,11 @@
 #include "canvasmodel.h"
 #include "layerlist.h"
 #include "userlist.h"
+#include "timelinemodel.h"
 #include "acl.h"
 #include "selection.h"
 #include "paintengine.h"
+#include "documentmetadata.h"
 #include "net/envelopebuilder.h"
 
 #include "utils/identicon.h"
@@ -45,13 +47,15 @@ void metaRecorderStateChanged(void *ctx, bool recording);
 CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_localUserId(1)
 {
+	m_paintengine = new PaintEngine(this);
+
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
+	m_timeline = new TimelineModel(this);
+	m_metadata = new DocumentMetadata(m_paintengine, this);
 
-	connect(m_aclstate, &AclState::userBitsChanged, m_userlist, &UserListModel::updateAclState);
-
-	m_paintengine = new PaintEngine(this);
+	connect(m_aclstate, &AclState::userBitsChanged, m_userlist, &UserListModel::updateAclState);	
 
 	rustpile::paintengine_register_meta_callbacks(
 		m_paintengine->engine(),
@@ -74,6 +78,10 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
 	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers, Qt::QueuedConnection); // queued connection needs to be set explicitly here for some reason
+	connect(m_paintengine, &PaintEngine::layersChanged, m_timeline, &TimelineModel::setLayers, Qt::QueuedConnection);
+	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, [this]() {
+		rustpile::paintengine_get_timeline(m_paintengine->engine(), m_timeline, timelineUpdateFrames);
+	}, Qt::QueuedConnection);
 
 	updateLayerViewOptions();
 }

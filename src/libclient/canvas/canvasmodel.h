@@ -36,7 +36,9 @@ namespace canvas {
 class AclState;
 class UserListModel;
 class LayerListModel;
+class TimelineModel;
 class Selection;
+class DocumentMetadata;
 class PaintEngine;
 
 class CanvasModel : public QObject
@@ -77,6 +79,8 @@ public:
 	AclState *aclState() const { return m_aclstate; }
 	UserListModel *userlist() const { return m_userlist; }
 	LayerListModel *layerlist() const { return m_layerlist; }
+	TimelineModel *timeline() const { return m_timeline; }
+	DocumentMetadata *metadata() const { return m_metadata; }
 
 	//! Open a recording file and start recording
 	rustpile::CanvasIoError startRecording(const QString &path);
@@ -162,6 +166,8 @@ private:
 	AclState *m_aclstate;
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;
+	TimelineModel *m_timeline;
+	DocumentMetadata *m_metadata;
 
 	PaintEngine *m_paintengine;
 	Selection *m_selection;

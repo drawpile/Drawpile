@@ -66,6 +66,7 @@ set (
 	widgets/modifierkeys.cpp
 	widgets/notifbar.cpp
 	widgets/KisAngleGauge.cpp
+	widgets/timelinewidget.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
 	docks/navigator.cpp 
@@ -73,6 +74,7 @@ set (
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
+	docks/timeline.cpp
 	docks/titlewidget.cpp
 	chat/chatlineedit.cpp
 	chat/chatwidgetpinnedarea.cpp

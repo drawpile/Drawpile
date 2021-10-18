@@ -139,8 +139,6 @@ impl AoE {
     }
 
     pub fn bounds(&self, bounds: Size) -> Option<Rectangle> {
-
-
         use AoE::*;
         match self {
             Nothing => None,

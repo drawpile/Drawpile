@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2021 Calle Laakkonen
+   Copyright (C) 2021 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,54 +16,52 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef TIMELINE_DOCK_H
+#define TIMELINE_DOCK_H
 
-#ifndef FLIPBOOK_H
-#define FLIPBOOK_H
+#include <QDockWidget>
+#include <QModelIndex>
 
-#include <QDialog>
-#include <QList>
-#include <QPixmap>
+class QCheckBox;
+class QSpinBox;
 
-class Ui_Flipbook;
-
-class QTimer;
-
-namespace canvas {
-	class PaintEngine;
+namespace net {
+	class Envelope;
 }
 
-namespace dialogs {
+namespace canvas {
+	class TimelineModel;
+}
 
-class Flipbook : public QDialog
-{
+namespace widgets {
+    class TimelineWidget;
+}
+
+namespace docks {
+
+class Timeline : public QDockWidget {
 	Q_OBJECT
 public:
-	explicit Flipbook(QWidget *parent=nullptr);
-	~Flipbook();
+	Timeline(QWidget *parent);
 
-	void setPaintEngine(canvas::PaintEngine *pe);
+	void setTimeline(canvas::TimelineModel *model);
+
+	void setFps(int fps);
+	void setUseTimeline(bool useTimeline);
+
+signals:
+	void timelineEditCommand(const net::Envelope &e);
 
 private slots:
-	void loadFrame();
-	void playPause();
-	void rewind();
-	void updateFps(int newFps);
-	void updateRange();
-	void setCrop(const QRectF &rect);
-	void resetCrop();
+	void onUseTimelineClicked();
+	void onFpsChanged();
 
 private:
-	void resetFrameCache();
-
-	Ui_Flipbook *m_ui;
-
-	canvas::PaintEngine *m_paintengine;
-	QList<QPixmap> m_frames;
-	QTimer *m_timer;
-	QRect m_crop;
-	int m_realFps;
+	widgets::TimelineWidget *m_widget;
+	QCheckBox *m_useTimeline;
+	QSpinBox *m_fps;
 };
 
 }
 
-#endif // FLIPBOOK_H
+#endif

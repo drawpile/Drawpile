@@ -148,6 +148,8 @@ if __name__ == '__main__':
         #'PutTile',
         'CanvasBackground',
         'MoveRect',
+        'SetMetadataInt',
+        'SetTimelineFrame',
         'Undo',
     ))
 

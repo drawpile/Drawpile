@@ -119,6 +119,7 @@ signals:
 	void playbackAt(qint64 pos, qint32 interval);
 	void caughtUpTo(int progress);
 	void metadataChanged();
+	void timelineChanged();
 
 	//! Paint engine has panicked and died
 	void enginePanicked();

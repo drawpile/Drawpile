@@ -20,6 +20,7 @@
 #include "flipbook.h"
 #include "canvas/paintengine.h"
 #include "utils/icon.h"
+#include "../rustpile/rustpile.h"
 
 #include "ui_flipbook.h"
 
@@ -108,6 +109,10 @@ void Flipbook::updateFps(int newFps)
 	if(m_timer->isActive()) {
 		m_timer->setInterval(1000 / newFps);
 	}
+	QPalette pal = palette();
+	if(newFps != m_realFps)
+		pal.setColor(QPalette::Text, Qt::red);
+	m_ui->fps->setPalette(pal);
 }
 
 void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
@@ -132,6 +137,15 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 		m_ui->zoomButton->setEnabled(false);
 	}
 
+	m_realFps = rustpile::paintengine_get_metadata_int(pe->engine(), rustpile::MetadataInt::Framerate);
+
+	m_ui->timelineModeLabel->setText(
+		rustpile::paintengine_get_metadata_int(pe->engine(), rustpile::MetadataInt::UseTimeline)
+		? tr("Timeline: manual")
+		: tr("Timeline: automatic")
+	);
+
+	updateFps(m_ui->fps->value());
 	resetFrameCache();
 	loadFrame();
 }
