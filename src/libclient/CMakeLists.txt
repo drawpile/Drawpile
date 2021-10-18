@@ -132,6 +132,7 @@ if( Qt5LinguistTools_FOUND)
 		i18n/drawpile_it.ts
 		i18n/drawpile_fr.ts
 		i18n/drawpile_pt.ts
+		i18n/drawpile_es.ts
 	)
 
 	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})

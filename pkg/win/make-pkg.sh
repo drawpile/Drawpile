@@ -100,7 +100,7 @@ cp /Drawpile/desktop/nightmode.colors .
 
 # Copy translations
 mkdir -p i18n
-for tr in cs de fi fr it ja pt ru uk vi zh
+for tr in cs de fi fr it ja pt ru uk vi zh es
 do
 	cp "$QROOT/translations/qt_$tr.qm" i18n/ || true
 	cp "/Build/src/libclient/drawpile_$tr.qm" i18n/
