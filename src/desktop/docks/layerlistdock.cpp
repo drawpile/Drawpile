@@ -196,7 +196,7 @@ void LayerList::updateLockedControls()
 
 void LayerList::selectLayer(int id)
 {
-	selectLayerIndex(m_canvas->layerlist()->layerIndex(id));
+	selectLayerIndex(m_canvas->layerlist()->layerIndex(id), true);
 }
 
 void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
@@ -205,6 +205,7 @@ void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 		m_view->selectionModel()->select(
 			index, QItemSelectionModel::SelectCurrent|QItemSelectionModel::Clear);
 		if(scrollTo) {
+			m_view->setExpanded(index, true);
 			m_view->scrollTo(index);
 		}
 	}
