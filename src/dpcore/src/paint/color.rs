@@ -146,18 +146,18 @@ impl Color {
         if p[ALPHA_CHANNEL] == 0 {
             return Color::TRANSPARENT;
         }
-        let af = 1.0 / p[ALPHA_CHANNEL] as f32;
+        let p = unpremultiply_pixel(p);
 
         Color {
-            r: p[RED_CHANNEL] as f32 * af,
-            g: p[GREEN_CHANNEL] as f32 * af,
-            b: p[BLUE_CHANNEL] as f32 * af,
+            r: p[RED_CHANNEL] as f32 / 255.0,
+            g: p[GREEN_CHANNEL] as f32 / 255.0,
+            b: p[BLUE_CHANNEL] as f32 / 255.0,
             a: p[ALPHA_CHANNEL] as f32 / 255.0,
         }
     }
 
-    // Get the color values as is, premultiplication included
-    pub fn from_premultiplied_pixel(p: Pixel) -> Color {
+    // Get the color values as is, without unpremultiplying
+    pub fn from_unpremultiplied_pixel(p: Pixel) -> Color {
         Color {
             r: p[RED_CHANNEL] as f32 / 255.0,
             g: p[GREEN_CHANNEL] as f32 / 255.0,
@@ -168,11 +168,15 @@ impl Color {
 
     // Get a premultiplied pixel value from this color
     pub fn as_pixel(&self) -> Pixel {
-        let af = self.a * 255.0;
+        premultiply_pixel(self.as_unpremultiplied_pixel())
+    }
+
+    // Get a non-premultiplied pixel value from this color
+    pub fn as_unpremultiplied_pixel(&self) -> Pixel {
         [
-            (self.b * af) as u8,
-            (self.g * af) as u8,
-            (self.r * af) as u8,
+            (self.b * 255.0) as u8,
+            (self.g * 255.0) as u8,
+            (self.r * 255.0) as u8,
             (self.a * 255.0) as u8,
         ]
     }
@@ -197,9 +201,10 @@ impl fmt::Display for Color {
         }
     }
 }
+
 impl PartialEq for Color {
     fn eq(&self, other: &Self) -> bool {
-        self.as_pixel() == other.as_pixel()
+        self.as_argb32() == other.as_argb32()
     }
 }
 
@@ -224,6 +229,41 @@ impl FromStr for Color {
             Err("not a valid color")
         }
     }
+}
+
+pub fn unpremultiply_pixel(p: Pixel) -> Pixel {
+    if p[ALPHA_CHANNEL] == 255 {
+        return p;
+    } else if p[ALPHA_CHANNEL] == 0 {
+        return ZERO_PIXEL;
+    }
+
+    let ia = 0xff00ff / p[ALPHA_CHANNEL] as i32;
+    [
+        ((p[0] as i32 * ia + 0x8000) >> 16) as u8,
+        ((p[1] as i32 * ia + 0x8000) >> 16) as u8,
+        ((p[2] as i32 * ia + 0x8000) >> 16) as u8,
+        p[3]
+    ]
+}
+
+pub fn premultiply_pixel(p: Pixel) -> Pixel {
+    if p[ALPHA_CHANNEL] == 255 {
+        return p;
+    } else if p[ALPHA_CHANNEL] == 0 {
+        return ZERO_PIXEL;
+    }
+    fn mult(a: u32, b: u32) -> u32 {
+        let c = a * b + 0x80;
+        ((c >> 8) + c) >> 8
+    }
+    let a = p[ALPHA_CHANNEL] as u32;
+    [
+        mult(p[0] as u32, a) as u8,
+        mult(p[1] as u32, a) as u8,
+        mult(p[2] as u32, a) as u8,
+        p[3]
+    ]
 }
 
 #[cfg(test)]
@@ -264,5 +304,18 @@ mod tests {
             },
             Color::from_str("#7fff0000").unwrap()
         );
+    }
+
+    #[test]
+    fn test_premultiplication() {
+        for i in 1..=255 {
+            let p:Pixel = [i, i, i, i];
+
+            let up = unpremultiply_pixel(p);
+            assert_eq!(up, [255, 255, 255, i]);
+            let p2 = premultiply_pixel(up);
+
+            assert_eq!(p, p2);
+        }
     }
 }

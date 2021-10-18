@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2021 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,6 +84,11 @@ impl ScratchArray for Pixel {
 
 fn u8_mult(a: u32, b: u32) -> u32 {
     let c = a * b + 0x80;
+    ((c >> 8) + c) >> 8
+}
+
+fn u8_blend(a: i32, b: i32, alpha: i32) -> i32 {
+    let c = (a - b) * alpha + (b<<8) - b + 0x80;
     ((c >> 8) + c) >> 8
 }
 
@@ -282,92 +287,91 @@ fn alpha_pixel_erase(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
     }
 }
 
-fn blend(a: f32, b: f32, alpha: f32) -> f32 {
-    (a - b) * alpha + b
+fn comp_op_multiply(a: u32, b: u32) -> u32 {
+    u8_mult(a, b)
 }
 
-fn comp_op_multiply(a: f32, b: f32) -> f32 {
-    a * b
+fn comp_op_screen(a: u32, b: u32) -> u32 {
+    255 - u8_mult(255 - a, 255 - b)
 }
 
-fn comp_op_screen(a: f32, b: f32) -> f32 {
-    1.0f32 - (1.0f32 - a) * (1.0f32 - b)
+fn comp_op_divide(a: u32, b: u32) -> u32 {
+    255.min((a*256 + b/2) / (1+b))
 }
 
-fn comp_op_divide(a: f32, b: f32) -> f32 {
-    1.0f32.min(a / ((1.0 / 256.0) + b))
-}
-
-fn comp_op_darken(a: f32, b: f32) -> f32 {
+fn comp_op_darken(a: u32, b: u32) -> u32 {
     a.min(b)
 }
 
-fn comp_op_lighten(a: f32, b: f32) -> f32 {
+fn comp_op_lighten(a: u32, b: u32) -> u32 {
     a.max(b)
 }
 
-fn comp_op_dodge(a: f32, b: f32) -> f32 {
-    1.0f32.min(a / (1.001 - b))
+fn comp_op_dodge(a: u32, b: u32) -> u32 {
+    255.min(a * 256 / (256 - b))
 }
 
-fn comp_op_burn(a: f32, b: f32) -> f32 {
-    0.0f32.max(1.0f32.min(1.0 - ((1.0 - a) / (b + 0.001))))
+fn comp_op_burn(a: u32, b: u32) -> u32 {
+    (255 - (255-a)*256 / (b+1)).clamp(0, 255)
 }
 
-fn comp_op_add(a: f32, b: f32) -> f32 {
-    1.0f32.min(a + b)
+fn comp_op_add(a: u32, b: u32) -> u32 {
+    255.min(a+b)
 }
 
-fn comp_op_subtract(a: f32, b: f32) -> f32 {
-    0.0f32.max(a - b)
+fn comp_op_subtract(a: u32, b: u32) -> u32 {
+    0.max(a-b)
 }
 
-fn comp_op_recolor(_: f32, b: f32) -> f32 {
+fn comp_op_recolor(_: u32, b: u32) -> u32 {
     b
 }
 
 /// Generic alpha-preserving compositing operations
-fn pixel_composite(comp_op: fn(f32, f32) -> f32, base: &mut [Pixel], over: &[Pixel], opacity: u8) {
-    let of = opacity as f32 / 255.0;
+fn pixel_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], over: &[Pixel], opacity: u8) {
     for (dp, sp) in base.iter_mut().zip(over.iter()) {
-        // TODO optimize this. These operations need non-premultiplied color
-        let mut dc = Color::from_pixel(*dp);
-        let sc = Color::from_pixel(*sp);
+        let dc = unpremultiply_pixel(*dp);
+        let sc = unpremultiply_pixel(*sp);
 
-        let alpha = sc.a * of;
+        let alpha = u8_mult(sc[ALPHA_CHANNEL] as u32, opacity as u32) as i32;
 
-        dc.r = blend(comp_op(dc.r, sc.r), dc.r, alpha);
-        dc.g = blend(comp_op(dc.g, sc.g), dc.g, alpha);
-        dc.b = blend(comp_op(dc.b, sc.b), dc.b, alpha);
-
-        *dp = dc.as_pixel();
+        *dp = premultiply_pixel([
+            u8_blend(comp_op(dc[0] as u32, sc[0] as u32) as i32, dc[0] as i32, alpha) as u8,
+            u8_blend(comp_op(dc[1] as u32, sc[1] as u32) as i32, dc[1] as i32, alpha) as u8,
+            u8_blend(comp_op(dc[2] as u32, sc[2] as u32) as i32, dc[2] as i32, alpha) as u8,
+            dc[3]
+        ]);
     }
 }
 
-fn mask_composite(comp_op: fn(f32, f32) -> f32, base: &mut [Pixel], color: Pixel, mask: &[u8]) {
+fn mask_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], color: Pixel, mask: &[u8]) {
     debug_assert!(base.len() == mask.len());
-    let c = Color::from_pixel(color);
+    let c = unpremultiply_pixel(color);
+
     for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
-        let mut d = Color::from_pixel(*dp);
-        let m = mask as f32 / 255.0;
+        let d = unpremultiply_pixel(*dp);
+        let mask = mask as i32;
 
-        d.r = blend(comp_op(d.r, c.r), d.r, m);
-        d.g = blend(comp_op(d.g, c.g), d.g, m);
-        d.b = blend(comp_op(d.b, c.b), d.b, m);
-
-        *dp = d.as_pixel();
+        *dp = premultiply_pixel([
+            u8_blend(comp_op(d[0] as u32, c[0] as u32) as i32, d[0] as i32, mask) as u8,
+            u8_blend(comp_op(d[1] as u32, c[1] as u32) as i32, d[1] as i32, mask) as u8,
+            u8_blend(comp_op(d[2] as u32, c[2] as u32) as i32, d[2] as i32, mask) as u8,
+            d[3]
+        ]);
     }
 }
 
 pub fn tint_pixels(pixels: &mut [Pixel], tint: Color) {
+    let tint = tint.as_unpremultiplied_pixel();
+    let a = tint[ALPHA_CHANNEL] as i32;
     for px in pixels {
-        // TODO optimize this. This operation works on non-premultiplied color
-        let mut p = Color::from_pixel(*px);
-        p.r = blend(tint.r, p.r, tint.a);
-        p.g = blend(tint.g, p.g, tint.a);
-        p.b = blend(tint.b, p.b, tint.a);
-
-        *px = p.as_pixel();
+        let p = unpremultiply_pixel(*px);
+        *px = premultiply_pixel([
+            u8_blend(tint[0] as i32, p[0] as i32, a) as u8,
+            u8_blend(tint[1] as i32, p[1] as i32, a) as u8,
+            u8_blend(tint[2] as i32, p[2] as i32, a) as u8,
+            p[3]
+        ]);
     }
 }
 

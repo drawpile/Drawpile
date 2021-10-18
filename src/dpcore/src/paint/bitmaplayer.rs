@@ -374,7 +374,7 @@ impl BitmapLayer {
                     .zip(dab.rect_iter(&rect_in_dab).flatten())
                 {
                     let m = *mask as f32 / 255.0;
-                    let c = Color::from_premultiplied_pixel(*pix);
+                    let c = Color::from_unpremultiplied_pixel(*pix);
                     sum_weight += m;
                     sum_color.r += c.r * m;
                     sum_color.g += c.g * m;
@@ -949,9 +949,9 @@ mod tests {
         assert_eq!(
             sampled,
             Color {
-                r: 0.333,
-                g: 0.333,
-                b: 0.333,
+                r: 0.33333334,
+                g: 0.33333334,
+                b: 0.33333334,
                 a: 0.75
             }
         );
