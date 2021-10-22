@@ -124,7 +124,7 @@ QString fileFormatFilter(FileFormatOptions formats)
 
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
-			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + recordings)
+			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)
 		);
 	}
 
