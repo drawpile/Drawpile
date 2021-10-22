@@ -139,10 +139,18 @@ impl AoE {
     }
 
     pub fn bounds(&self, bounds: Size) -> Option<Rectangle> {
+
+
         use AoE::*;
         match self {
             Nothing => None,
-            Everything | Resize(_, _, _) => Some(Rectangle::new(0, 0, bounds.width, bounds.height)),
+            Everything | Resize(_, _, _) => {
+                if bounds.width <= 0 || bounds.height <= 0 {
+                    None
+                } else {
+                    Some(Rectangle::new(0, 0, bounds.width, bounds.height))
+                }
+            }
             Bounds(b) => Some(*b),
             Bitmap(b) => b.bounds(),
         }
