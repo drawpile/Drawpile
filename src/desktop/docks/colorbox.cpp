@@ -541,9 +541,24 @@ void ColorBox::paletteRightClicked(int index)
 	}
 }
 
+static int findPaletteColor(const color_widgets::ColorPalette &pal, const QColor &color)
+{
+	const auto colors = pal.colors();
+	const auto rgb = color.rgb();
+	for(int i=0;i<colors.length();++i)
+		if(colors.at(i).first.rgb() == rgb) {
+			return i;
+	}
+
+	return -1;
+}
+
 void ColorBox::setColor(const QColor& color)
 {
 	d->updating = true;
+
+	d->lastUsedSwatch->setSelected(findPaletteColor(d->lastUsedSwatch->palette(), color));
+	d->paletteSwatch->setSelected(findPaletteColor(d->paletteSwatch->palette(), color));
 
 	d->hue->setColorSaturation(color.saturationF());
 	d->hue->setColorValue(color.valueF());
