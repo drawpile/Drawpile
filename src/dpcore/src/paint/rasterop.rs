@@ -312,7 +312,7 @@ fn comp_op_dodge(a: u32, b: u32) -> u32 {
 }
 
 fn comp_op_burn(a: u32, b: u32) -> u32 {
-    (255 - (255-a)*256 / (b+1)).clamp(0, 255)
+    (255 - ((255-a)*256 / (b+1)) as i32).clamp(0, 255) as u32
 }
 
 fn comp_op_add(a: u32, b: u32) -> u32 {
