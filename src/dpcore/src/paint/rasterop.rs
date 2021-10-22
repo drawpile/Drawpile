@@ -320,7 +320,7 @@ fn comp_op_add(a: u32, b: u32) -> u32 {
 }
 
 fn comp_op_subtract(a: u32, b: u32) -> u32 {
-    0.max(a-b)
+    0.max(a as i32 - b as i32) as u32
 }
 
 fn comp_op_recolor(_: u32, b: u32) -> u32 {
