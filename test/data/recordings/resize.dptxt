@@ -1,0 +1,6791 @@
+!version=dp:4.21.2
+!writerversion=2.1.19
+
+1 resize bottom=600 right=800
+1 background color=#ffffff
+1 newlayer id=0x0102 {
+	title=Layer 1
+}
+1 layerattr blend=1 layer=0x0102 opacity=100.00
+1 featureaccess createannotation=guest laser=guest ownlayers=guest putimage=guest regionmove=guest undo=guest
+1 useracl
+0 interval msecs=8238
+1 undopoint
+
+1 squarepixeldabs layer=0x0102 x=-3 y=5 color=#000058ff mode=1 {
+	0 0 4 22
+	-1 -1 4 22
+	0 -1 4 90
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=2 color=#000058ff mode=1 {
+	0 0 4 125
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=1 color=#000058ff mode=1 {
+	0 0 4 127
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=0 color=#000058ff mode=1 {
+	0 0 4 128
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=-1 color=#000058ff mode=1 {
+	0 0 4 129
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=-2 color=#000058ff mode=1 {
+	0 0 4 130
+	}
+1 squarepixeldabs layer=0x0102 x=1 y=-3 color=#000058ff mode=1 {
+	0 0 4 131
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=-4 color=#000058ff mode=1 {
+	0 0 4 132
+	}
+1 squarepixeldabs layer=0x0102 x=3 y=-5 color=#000058ff mode=1 {
+	0 0 4 133
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=-6 color=#000058ff mode=1 {
+	0 0 4 135
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=-7 color=#000058ff mode=1 {
+	0 0 4 136
+	}
+1 squarepixeldabs layer=0x0102 x=6 y=-7 color=#000058ff mode=1 {
+	0 0 4 144
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=-6 color=#000058ff mode=1 {
+	0 0 4 156
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=-5 color=#000058ff mode=1 {
+	0 0 4 160
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=-4 color=#000058ff mode=1 {
+	0 0 4 164
+	}
+1 squarepixeldabs layer=0x0102 x=3 y=-3 color=#000058ff mode=1 {
+	0 0 4 169
+	0 1 4 170
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=-1 color=#000058ff mode=1 {
+	0 0 4 172
+	-1 1 4 174
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=1 color=#000058ff mode=1 {
+	0 0 4 176
+	0 1 4 176
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=3 color=#000058ff mode=1 {
+	0 0 4 177
+	-1 1 4 177
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=5 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 178
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=7 color=#000058ff mode=1 {
+	0 0 4 178
+	0 1 4 179
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=9 color=#000058ff mode=1 {
+	0 0 4 180
+	}
+1 squarepixeldabs layer=0x0102 x=-6 y=10 color=#000058ff mode=1 {
+	0 0 4 181
+	0 1 4 183
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=10 color=#000058ff mode=1 {
+	0 0 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=9 color=#000058ff mode=1 {
+	0 0 4 189
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=8 color=#000058ff mode=1 {
+	0 0 4 190
+	1 -1 4 191
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=6 color=#000058ff mode=1 {
+	0 0 4 192
+	0 -1 4 193
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=4 color=#000058ff mode=1 {
+	0 0 4 193
+	1 -1 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=2 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=0 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=6 y=-2 color=#000058ff mode=1 {
+	0 0 4 194
+	0 -1 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=-4 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=-6 color=#000058ff mode=1 {
+	0 0 4 195
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=-7 color=#000058ff mode=1 {
+	0 0 4 195
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=-8 color=#000058ff mode=1 {
+	0 0 4 195
+	}
+1 squarepixeldabs layer=0x0102 x=12 y=-8 color=#000058ff mode=1 {
+	0 0 4 195
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=-7 color=#000058ff mode=1 {
+	0 0 4 197
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=-6 color=#000058ff mode=1 {
+	0 0 4 197
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=-5 color=#000058ff mode=1 {
+	0 0 4 198
+	0 1 4 198
+	}
+1 squarepixeldabs layer=0x0102 x=8 y=-3 color=#000058ff mode=1 {
+	0 0 4 198
+	0 1 4 199
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=-1 color=#000058ff mode=1 {
+	0 0 4 199
+	-1 1 4 199
+	}
+1 squarepixeldabs layer=0x0102 x=6 y=1 color=#000058ff mode=1 {
+	0 0 4 199
+	-1 1 4 200
+	0 1 4 200
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=4 color=#000058ff mode=1 {
+	0 0 4 200
+	-1 1 4 200
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=6 color=#000058ff mode=1 {
+	0 0 4 200
+	0 1 4 200
+	}
+1 squarepixeldabs layer=0x0102 x=1 y=8 color=#000058ff mode=1 {
+	0 0 4 200
+	-1 1 4 200
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=10 color=#000058ff mode=1 {
+	0 0 4 201
+	0 1 4 201
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=12 color=#000058ff mode=1 {
+	0 0 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=13 color=#000058ff mode=1 {
+	0 0 4 203
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=14 color=#000058ff mode=1 {
+	0 0 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=13 color=#000058ff mode=1 {
+	0 0 4 206
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=12 color=#000058ff mode=1 {
+	0 0 4 207
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=11 color=#000058ff mode=1 {
+	0 0 4 207
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=10 color=#000058ff mode=1 {
+	0 0 4 208
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=9 color=#000058ff mode=1 {
+	0 0 4 209
+	0 -1 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=6 color=#000058ff mode=1 {
+	0 0 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=4 color=#000058ff mode=1 {
+	0 0 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=6 y=2 color=#000058ff mode=1 {
+	0 0 4 210
+	0 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=0 color=#000058ff mode=1 {
+	0 0 4 210
+	0 -1 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=-3 color=#000058ff mode=1 {
+	0 0 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=-5 color=#000058ff mode=1 {
+	0 0 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=13 y=-7 color=#000058ff mode=1 {
+	0 0 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=14 y=-8 color=#000058ff mode=1 {
+	0 0 4 211
+	0 -1 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=15 y=-10 color=#000058ff mode=1 {
+	0 0 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=14 y=-9 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=13 y=-8 color=#000058ff mode=1 {
+	0 0 4 212
+	0 1 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=12 y=-6 color=#000058ff mode=1 {
+	0 0 4 213
+	0 1 4 213
+	-1 1 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=-3 color=#000058ff mode=1 {
+	0 0 4 213
+	-1 1 4 213
+	-1 1 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=0 color=#000058ff mode=1 {
+	0 0 4 213
+	0 1 4 213
+	-1 1 4 213
+	0 1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=4 color=#000058ff mode=1 {
+	0 0 4 214
+	-1 1 4 214
+	0 1 4 214
+	-1 1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=8 color=#000058ff mode=1 {
+	0 0 4 214
+	0 1 4 214
+	-1 1 4 214
+	0 1 4 214
+	-1 1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=13 color=#000058ff mode=1 {
+	0 0 4 214
+	-1 1 4 214
+	0 1 4 214
+	-1 1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=17 color=#000058ff mode=1 {
+	0 0 4 214
+	-1 1 4 214
+	-1 1 4 214
+	-1 1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=-7 y=21 color=#000058ff mode=1 {
+	0 0 4 214
+	-1 1 4 214
+	0 1 4 214
+	-1 1 4 214
+	0 1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=-10 y=26 color=#000058ff mode=1 {
+	0 0 4 214
+	-1 1 4 214
+	0 1 4 213
+	-1 1 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=-13 y=30 color=#000058ff mode=1 {
+	0 0 4 213
+	-1 1 4 212
+	-1 1 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=-15 y=33 color=#000058ff mode=1 {
+	0 0 4 210
+	-1 1 4 209
+	0 1 4 207
+	}
+1 squarepixeldabs layer=0x0102 x=-17 y=36 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=-19 y=38 color=#000058ff mode=1 {
+	0 0 4 196
+	0 1 4 187
+	}
+1 squarepixeldabs layer=0x0102 x=-20 y=40 color=#000058ff mode=1 {
+	0 0 4 176
+	0 1 4 165
+	}
+1 squarepixeldabs layer=0x0102 x=-21 y=42 color=#000058ff mode=1 {
+	0 0 4 156
+	}
+1 squarepixeldabs layer=0x0102 x=-22 y=43 color=#000058ff mode=1 {
+	0 0 4 136
+	}
+1 squarepixeldabs layer=0x0102 x=-22 y=44 color=#000058ff mode=1 {
+	0 0 4 116
+	}
+1 squarepixeldabs layer=0x0102 x=-23 y=45 color=#000058ff mode=1 {
+	0 0 4 95
+	}
+1 penup
+0 interval msecs=1142
+1 undopoint
+
+1 squarepixeldabs layer=0x0102 x=794 y=-1 color=#000058ff mode=1 {
+	0 0 4 22
+	-1 -1 4 22
+	}
+1 squarepixeldabs layer=0x0102 x=792 y=-2 color=#000058ff mode=1 {
+	0 0 4 101
+	}
+1 squarepixeldabs layer=0x0102 x=792 y=-3 color=#000058ff mode=1 {
+	0 0 4 116
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=-2 color=#000058ff mode=1 {
+	0 0 4 179
+	}
+1 squarepixeldabs layer=0x0102 x=794 y=-1 color=#000058ff mode=1 {
+	0 0 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=0 color=#000058ff mode=1 {
+	0 0 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=1 color=#000058ff mode=1 {
+	0 0 4 199
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=2 color=#000058ff mode=1 {
+	0 0 4 201
+	1 0 4 201
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=3 color=#000058ff mode=1 {
+	0 0 4 201
+	0 1 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=5 color=#000058ff mode=1 {
+	0 0 4 202
+	1 0 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=802 y=6 color=#000058ff mode=1 {
+	0 0 4 202
+	1 1 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=8 color=#000058ff mode=1 {
+	0 0 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=9 color=#000058ff mode=1 {
+	0 0 4 203
+	1 0 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=807 y=10 color=#000058ff mode=1 {
+	0 0 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=807 y=11 color=#000058ff mode=1 {
+	0 0 4 206
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=11 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=10 color=#000058ff mode=1 {
+	0 0 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=9 color=#000058ff mode=1 {
+	0 0 4 216
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=8 color=#000058ff mode=1 {
+	0 0 4 218
+	-1 0 4 219
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=7 color=#000058ff mode=1 {
+	0 0 4 220
+	0 -1 4 221
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=5 color=#000058ff mode=1 {
+	0 0 4 222
+	-1 0 4 222
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=4 color=#000058ff mode=1 {
+	0 0 4 222
+	-1 -1 4 222
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=2 color=#000058ff mode=1 {
+	0 0 4 222
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=1 color=#000058ff mode=1 {
+	0 0 4 221
+	-1 0 4 220
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=0 color=#000058ff mode=1 {
+	0 0 4 220
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=-1 color=#000058ff mode=1 {
+	0 0 4 219
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=-2 color=#000058ff mode=1 {
+	0 0 4 217
+	}
+1 squarepixeldabs layer=0x0102 x=794 y=-1 color=#000058ff mode=1 {
+	0 0 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=0 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=1 color=#000058ff mode=1 {
+	0 0 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=2 color=#000058ff mode=1 {
+	0 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=3 color=#000058ff mode=1 {
+	0 0 4 209
+	1 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=4 color=#000058ff mode=1 {
+	0 0 4 209
+	0 1 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=6 color=#000058ff mode=1 {
+	0 0 4 209
+	1 1 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=8 color=#000058ff mode=1 {
+	0 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=9 color=#000058ff mode=1 {
+	0 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=10 color=#000058ff mode=1 {
+	0 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=11 color=#000058ff mode=1 {
+	0 0 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=807 y=12 color=#000058ff mode=1 {
+	0 0 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=11 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=11 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=10 color=#000058ff mode=1 {
+	0 0 4 212
+	0 -1 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=8 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=802 y=7 color=#000058ff mode=1 {
+	0 0 4 213
+	0 -1 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=5 color=#000058ff mode=1 {
+	0 0 4 213
+	-1 -1 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=3 color=#000058ff mode=1 {
+	0 0 4 213
+	0 -1 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=1 color=#000058ff mode=1 {
+	0 0 4 212
+	0 -1 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=-1 color=#000058ff mode=1 {
+	0 0 4 212
+	-1 -1 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=-3 color=#000058ff mode=1 {
+	0 0 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=-4 color=#000058ff mode=1 {
+	0 0 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=-5 color=#000058ff mode=1 {
+	0 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=-4 color=#000058ff mode=1 {
+	0 0 4 208
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=-4 color=#000058ff mode=1 {
+	0 0 4 207
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=-3 color=#000058ff mode=1 {
+	0 0 4 207
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=-2 color=#000058ff mode=1 {
+	0 0 4 206
+	0 1 4 206
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=0 color=#000058ff mode=1 {
+	0 0 4 205
+	0 1 4 205
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=2 color=#000058ff mode=1 {
+	0 0 4 205
+	1 0 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=802 y=3 color=#000058ff mode=1 {
+	0 0 4 204
+	1 1 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=5 color=#000058ff mode=1 {
+	0 0 4 204
+	0 1 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=7 color=#000058ff mode=1 {
+	0 0 4 204
+	1 1 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=807 y=9 color=#000058ff mode=1 {
+	0 0 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=10 color=#000058ff mode=1 {
+	0 0 4 205
+	}
+1 squarepixeldabs layer=0x0102 x=809 y=11 color=#000058ff mode=1 {
+	0 0 4 206
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=10 color=#000058ff mode=1 {
+	0 0 4 208
+	}
+1 squarepixeldabs layer=0x0102 x=807 y=9 color=#000058ff mode=1 {
+	0 0 4 210
+	-1 0 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=8 color=#000058ff mode=1 {
+	0 0 4 210
+	0 -1 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=6 color=#000058ff mode=1 {
+	0 0 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=5 color=#000058ff mode=1 {
+	0 0 4 211
+	-1 -1 4 211
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=3 color=#000058ff mode=1 {
+	0 0 4 211
+	-1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=1 color=#000058ff mode=1 {
+	0 0 4 209
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=0 color=#000058ff mode=1 {
+	0 0 4 206
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=1 color=#000058ff mode=1 {
+	0 0 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=2 color=#000058ff mode=1 {
+	0 0 4 173
+	0 1 4 162
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=4 color=#000058ff mode=1 {
+	0 0 4 153
+	1 0 4 144
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=5 color=#000058ff mode=1 {
+	0 0 4 132
+	1 1 4 124
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=7 color=#000058ff mode=1 {
+	0 0 4 111
+	0 1 4 103
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=9 color=#000058ff mode=1 {
+	0 0 4 91
+	1 1 4 83
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=11 color=#000058ff mode=1 {
+	0 0 4 72
+	}
+1 squarepixeldabs layer=0x0102 x=809 y=12 color=#000058ff mode=1 {
+	0 0 4 54
+	0 1 4 44
+	}
+1 squarepixeldabs layer=0x0102 x=810 y=14 color=#000058ff mode=1 {
+	0 0 4 36
+	}
+1 squarepixeldabs layer=0x0102 x=811 y=15 color=#000058ff mode=1 {
+	0 0 4 20
+	}
+1 squarepixeldabs layer=0x0102 x=812 y=15 color=#000058ff mode=1 {
+	0 0 4 7
+	}
+1 penup
+0 interval msecs=1374
+1 undopoint
+
+1 squarepixeldabs layer=0x0102 x=12 y=621 color=#000058ff mode=1 {
+	0 0 4 20
+	0 -1 4 20
+	}
+1 squarepixeldabs layer=0x0102 x=12 y=619 color=#000058ff mode=1 {
+	0 0 4 60
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=619 color=#000058ff mode=1 {
+	0 0 4 76
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=618 color=#000058ff mode=1 {
+	0 0 4 84
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=617 color=#000058ff mode=1 {
+	0 0 4 92
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=616 color=#000058ff mode=1 {
+	0 0 4 102
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=615 color=#000058ff mode=1 {
+	0 0 4 111
+	}
+1 squarepixeldabs layer=0x0102 x=8 y=614 color=#000058ff mode=1 {
+	0 0 4 122
+	0 -1 4 128
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=612 color=#000058ff mode=1 {
+	0 0 4 132
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=611 color=#000058ff mode=1 {
+	0 0 4 143
+	-1 -1 4 146
+	0 -1 4 149
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=608 color=#000058ff mode=1 {
+	0 0 4 151
+	0 -1 4 153
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=606 color=#000058ff mode=1 {
+	0 0 4 157
+	-1 -1 4 158
+	}
+1 squarepixeldabs layer=0x0102 x=3 y=604 color=#000058ff mode=1 {
+	0 0 4 162
+	-1 -1 4 163
+	0 -1 4 165
+	}
+1 squarepixeldabs layer=0x0102 x=1 y=601 color=#000058ff mode=1 {
+	0 0 4 166
+	-1 -1 4 167
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=599 color=#000058ff mode=1 {
+	0 0 4 170
+	-1 -1 4 171
+	0 -1 4 172
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=596 color=#000058ff mode=1 {
+	0 0 4 173
+	-1 -1 4 173
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=594 color=#000058ff mode=1 {
+	0 0 4 175
+	0 -1 4 176
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=592 color=#000058ff mode=1 {
+	0 0 4 177
+	0 -1 4 177
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=590 color=#000058ff mode=1 {
+	0 0 4 177
+	}
+1 squarepixeldabs layer=0x0102 x=-6 y=589 color=#000058ff mode=1 {
+	0 0 4 177
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=589 color=#000058ff mode=1 {
+	0 0 4 176
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=590 color=#000058ff mode=1 {
+	0 0 4 175
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=591 color=#000058ff mode=1 {
+	0 0 4 174
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=592 color=#000058ff mode=1 {
+	0 0 4 173
+	1 0 4 173
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=593 color=#000058ff mode=1 {
+	0 0 4 172
+	1 1 4 172
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=595 color=#000058ff mode=1 {
+	0 0 4 171
+	0 1 4 172
+	}
+1 squarepixeldabs layer=0x0102 x=3 y=597 color=#000058ff mode=1 {
+	0 0 4 172
+	1 1 4 172
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=599 color=#000058ff mode=1 {
+	0 0 4 172
+	1 0 4 172
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=600 color=#000058ff mode=1 {
+	0 0 4 173
+	1 1 4 173
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=602 color=#000058ff mode=1 {
+	0 0 4 173
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=603 color=#000058ff mode=1 {
+	0 0 4 176
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=604 color=#000058ff mode=1 {
+	0 0 4 180
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=604 color=#000058ff mode=1 {
+	0 0 4 189
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=603 color=#000058ff mode=1 {
+	0 0 4 192
+	}
+1 squarepixeldabs layer=0x0102 x=8 y=602 color=#000058ff mode=1 {
+	0 0 4 195
+	0 -1 4 197
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=600 color=#000058ff mode=1 {
+	0 0 4 198
+	}
+1 squarepixeldabs layer=0x0102 x=6 y=599 color=#000058ff mode=1 {
+	0 0 4 201
+	-1 -1 4 201
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=597 color=#000058ff mode=1 {
+	0 0 4 203
+	-1 -1 4 203
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=595 color=#000058ff mode=1 {
+	0 0 4 202
+	0 -1 4 202
+	-1 -1 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=592 color=#000058ff mode=1 {
+	0 0 4 202
+	-1 -1 4 202
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=590 color=#000058ff mode=1 {
+	0 0 4 201
+	-1 -1 4 201
+	0 -1 4 201
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=587 color=#000058ff mode=1 {
+	0 0 4 201
+	-1 0 4 200
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=586 color=#000058ff mode=1 {
+	0 0 4 198
+	0 -1 4 197
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=584 color=#000058ff mode=1 {
+	0 0 4 196
+	}
+1 squarepixeldabs layer=0x0102 x=-6 y=583 color=#000058ff mode=1 {
+	0 0 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=583 color=#000058ff mode=1 {
+	0 0 4 192
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=584 color=#000058ff mode=1 {
+	0 0 4 190
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=585 color=#000058ff mode=1 {
+	0 0 4 189
+	1 0 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=586 color=#000058ff mode=1 {
+	0 0 4 187
+	0 1 4 187
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=588 color=#000058ff mode=1 {
+	0 0 4 186
+	1 1 4 185
+	}
+1 squarepixeldabs layer=0x0102 x=1 y=590 color=#000058ff mode=1 {
+	0 0 4 184
+	1 1 4 184
+	}
+1 squarepixeldabs layer=0x0102 x=3 y=592 color=#000058ff mode=1 {
+	0 0 4 183
+	0 1 4 183
+	1 1 4 183
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=595 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	}
+1 squarepixeldabs layer=0x0102 x=7 y=597 color=#000058ff mode=1 {
+	0 0 4 184
+	1 1 4 184
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=599 color=#000058ff mode=1 {
+	0 0 4 184
+	0 1 4 184
+	1 1 4 184
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=602 color=#000058ff mode=1 {
+	0 0 4 185
+	}
+1 squarepixeldabs layer=0x0102 x=12 y=603 color=#000058ff mode=1 {
+	0 0 4 187
+	0 1 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=603 color=#000058ff mode=1 {
+	0 0 4 196
+	}
+1 squarepixeldabs layer=0x0102 x=10 y=602 color=#000058ff mode=1 {
+	0 0 4 198
+	0 -1 4 199
+	}
+1 squarepixeldabs layer=0x0102 x=9 y=600 color=#000058ff mode=1 {
+	0 0 4 200
+	-1 -1 4 201
+	}
+1 squarepixeldabs layer=0x0102 x=8 y=598 color=#000058ff mode=1 {
+	0 0 4 202
+	-1 -1 4 203
+	0 -1 4 203
+	}
+1 squarepixeldabs layer=0x0102 x=6 y=595 color=#000058ff mode=1 {
+	0 0 4 204
+	0 -1 4 204
+	-1 -1 4 205
+	}
+1 squarepixeldabs layer=0x0102 x=4 y=592 color=#000058ff mode=1 {
+	0 0 4 206
+	0 -1 4 206
+	-1 -1 4 206
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=589 color=#000058ff mode=1 {
+	0 0 4 206
+	0 -1 4 205
+	-1 -1 4 205
+	}
+1 squarepixeldabs layer=0x0102 x=1 y=586 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 -1 4 205
+	0 -1 4 205
+	}
+1 squarepixeldabs layer=0x0102 x=-1 y=583 color=#000058ff mode=1 {
+	0 0 4 204
+	0 -1 4 204
+	-1 -1 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=-3 y=580 color=#000058ff mode=1 {
+	0 0 4 204
+	0 -1 4 203
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=578 color=#000058ff mode=1 {
+	0 0 4 203
+	-1 -1 4 203
+	}
+1 squarepixeldabs layer=0x0102 x=-6 y=576 color=#000058ff mode=1 {
+	0 0 4 202
+	0 -1 4 200
+	}
+1 squarepixeldabs layer=0x0102 x=-7 y=574 color=#000058ff mode=1 {
+	0 0 4 198
+	0 -1 4 196
+	}
+1 squarepixeldabs layer=0x0102 x=-6 y=573 color=#000058ff mode=1 {
+	0 0 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=-5 y=574 color=#000058ff mode=1 {
+	0 0 4 185
+	0 1 4 184
+	}
+1 squarepixeldabs layer=0x0102 x=-4 y=576 color=#000058ff mode=1 {
+	0 0 4 183
+	0 1 4 183
+	1 1 4 182
+	}
+1 squarepixeldabs layer=0x0102 x=-2 y=579 color=#000058ff mode=1 {
+	0 0 4 182
+	0 1 4 181
+	1 1 4 181
+	}
+1 squarepixeldabs layer=0x0102 x=0 y=582 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	}
+1 squarepixeldabs layer=0x0102 x=2 y=586 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	0 1 4 179
+	1 1 4 179
+	}
+1 squarepixeldabs layer=0x0102 x=5 y=590 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	1 1 4 180
+	0 1 4 181
+	1 1 4 181
+	}
+1 squarepixeldabs layer=0x0102 x=8 y=595 color=#000058ff mode=1 {
+	0 0 4 182
+	1 1 4 183
+	0 1 4 183
+	1 1 4 184
+	}
+1 squarepixeldabs layer=0x0102 x=11 y=599 color=#000058ff mode=1 {
+	0 0 4 185
+	0 1 4 186
+	1 1 4 186
+	0 1 4 187
+	1 1 4 187
+	}
+1 squarepixeldabs layer=0x0102 x=14 y=604 color=#000058ff mode=1 {
+	0 0 4 188
+	1 1 4 189
+	0 1 4 189
+	1 1 4 189
+	}
+1 squarepixeldabs layer=0x0102 x=17 y=608 color=#000058ff mode=1 {
+	0 0 4 190
+	0 1 4 191
+	1 1 4 191
+	0 1 4 191
+	}
+1 squarepixeldabs layer=0x0102 x=19 y=612 color=#000058ff mode=1 {
+	0 0 4 192
+	1 1 4 192
+	1 1 4 193
+	}
+1 squarepixeldabs layer=0x0102 x=21 y=615 color=#000058ff mode=1 {
+	0 0 4 193
+	1 1 4 193
+	0 1 4 193
+	}
+1 squarepixeldabs layer=0x0102 x=23 y=618 color=#000058ff mode=1 {
+	0 0 4 193
+	1 1 4 191
+	}
+1 squarepixeldabs layer=0x0102 x=25 y=620 color=#000058ff mode=1 {
+	0 0 4 188
+	0 1 4 186
+	}
+1 squarepixeldabs layer=0x0102 x=26 y=622 color=#000058ff mode=1 {
+	0 0 4 183
+	0 1 4 180
+	}
+1 squarepixeldabs layer=0x0102 x=27 y=624 color=#000058ff mode=1 {
+	0 0 4 178
+	}
+1 squarepixeldabs layer=0x0102 x=28 y=625 color=#000058ff mode=1 {
+	0 0 4 172
+	}
+1 squarepixeldabs layer=0x0102 x=28 y=626 color=#000058ff mode=1 {
+	0 0 4 166
+	}
+1 squarepixeldabs layer=0x0102 x=29 y=626 color=#000058ff mode=1 {
+	0 0 4 161
+	}
+1 squarepixeldabs layer=0x0102 x=29 y=627 color=#000058ff mode=1 {
+	0 0 4 155
+	}
+1 penup
+0 interval msecs=848
+1 undopoint
+
+1 squarepixeldabs layer=0x0102 x=775 y=611 color=#000058ff mode=1 {
+	0 0 4 30
+	-1 0 4 30
+	}
+1 squarepixeldabs layer=0x0102 x=775 y=610 color=#000058ff mode=1 {
+	0 0 4 156
+	}
+1 squarepixeldabs layer=0x0102 x=776 y=609 color=#000058ff mode=1 {
+	0 0 4 170
+	}
+1 squarepixeldabs layer=0x0102 x=777 y=608 color=#000058ff mode=1 {
+	0 0 4 177
+	1 0 4 181
+	}
+1 squarepixeldabs layer=0x0102 x=779 y=607 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 188
+	}
+1 squarepixeldabs layer=0x0102 x=781 y=605 color=#000058ff mode=1 {
+	0 0 4 192
+	1 -1 4 194
+	}
+1 squarepixeldabs layer=0x0102 x=783 y=603 color=#000058ff mode=1 {
+	0 0 4 199
+	1 0 4 202
+	1 -1 4 204
+	}
+1 squarepixeldabs layer=0x0102 x=786 y=601 color=#000058ff mode=1 {
+	0 0 4 207
+	1 -1 4 207
+	}
+1 squarepixeldabs layer=0x0102 x=788 y=599 color=#000058ff mode=1 {
+	0 0 4 209
+	1 -1 4 209
+	1 0 4 209
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=792 y=596 color=#000058ff mode=1 {
+	0 0 4 210
+	1 -1 4 210
+	1 -1 4 210
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=593 color=#000058ff mode=1 {
+	0 0 4 211
+	1 -1 4 211
+	1 0 4 211
+	1 -1 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=590 color=#000058ff mode=1 {
+	0 0 4 212
+	1 -1 4 212
+	1 -1 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=802 y=587 color=#000058ff mode=1 {
+	0 0 4 213
+	1 -1 4 213
+	1 0 4 213
+	1 -1 4 213
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=584 color=#000058ff mode=1 {
+	0 0 4 213
+	1 0 4 214
+	1 -1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=809 y=582 color=#000058ff mode=1 {
+	0 0 4 214
+	1 -1 4 214
+	}
+1 squarepixeldabs layer=0x0102 x=811 y=580 color=#000058ff mode=1 {
+	0 0 4 215
+	1 -1 4 215
+	}
+1 squarepixeldabs layer=0x0102 x=813 y=578 color=#000058ff mode=1 {
+	0 0 4 216
+	1 0 4 217
+	}
+1 squarepixeldabs layer=0x0102 x=814 y=577 color=#000058ff mode=1 {
+	0 0 4 217
+	}
+1 squarepixeldabs layer=0x0102 x=813 y=578 color=#000058ff mode=1 {
+	0 0 4 220
+	}
+1 squarepixeldabs layer=0x0102 x=812 y=579 color=#000058ff mode=1 {
+	0 0 4 222
+	-1 1 4 223
+	}
+1 squarepixeldabs layer=0x0102 x=810 y=581 color=#000058ff mode=1 {
+	0 0 4 224
+	0 1 4 224
+	-1 1 4 225
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=584 color=#000058ff mode=1 {
+	0 0 4 226
+	-1 0 4 226
+	-1 1 4 227
+	-1 0 4 227
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=586 color=#000058ff mode=1 {
+	0 0 4 228
+	-1 1 4 228
+	0 1 4 229
+	-1 1 4 229
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=590 color=#000058ff mode=1 {
+	0 0 4 230
+	-1 1 4 231
+	-1 0 4 231
+	-1 1 4 231
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=593 color=#000058ff mode=1 {
+	0 0 4 232
+	-1 1 4 232
+	-1 1 4 232
+	-1 1 4 233
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=597 color=#000058ff mode=1 {
+	0 0 4 233
+	-1 1 4 233
+	-1 1 4 234
+	}
+1 squarepixeldabs layer=0x0102 x=790 y=600 color=#000058ff mode=1 {
+	0 0 4 234
+	-1 1 4 235
+	-1 1 4 235
+	}
+1 squarepixeldabs layer=0x0102 x=787 y=603 color=#000058ff mode=1 {
+	0 0 4 236
+	-1 1 4 236
+	}
+1 squarepixeldabs layer=0x0102 x=785 y=605 color=#000058ff mode=1 {
+	0 0 4 237
+	-1 1 4 237
+	}
+1 squarepixeldabs layer=0x0102 x=783 y=607 color=#000058ff mode=1 {
+	0 0 4 238
+	0 1 4 238
+	}
+1 squarepixeldabs layer=0x0102 x=782 y=608 color=#000058ff mode=1 {
+	0 0 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=783 y=608 color=#000058ff mode=1 {
+	0 0 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=784 y=607 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=785 y=606 color=#000058ff mode=1 {
+	0 0 4 240
+	0 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=786 y=604 color=#000058ff mode=1 {
+	0 0 4 240
+	1 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=788 y=603 color=#000058ff mode=1 {
+	0 0 4 240
+	1 -1 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=791 y=600 color=#000058ff mode=1 {
+	0 0 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=598 color=#000058ff mode=1 {
+	0 0 4 241
+	1 -1 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=595 color=#000058ff mode=1 {
+	0 0 4 241
+	1 -1 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=592 color=#000058ff mode=1 {
+	0 0 4 241
+	1 -1 4 241
+	1 0 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=589 color=#000058ff mode=1 {
+	0 0 4 241
+	1 0 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=587 color=#000058ff mode=1 {
+	0 0 4 241
+	1 -1 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=809 y=584 color=#000058ff mode=1 {
+	0 0 4 241
+	1 -1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=811 y=582 color=#000058ff mode=1 {
+	0 0 4 241
+	1 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=813 y=581 color=#000058ff mode=1 {
+	0 0 4 241
+	1 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=813 y=582 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=812 y=583 color=#000058ff mode=1 {
+	0 0 4 239
+	-1 1 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=810 y=585 color=#000058ff mode=1 {
+	0 0 4 239
+	-1 1 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=587 color=#000058ff mode=1 {
+	0 0 4 239
+	0 1 4 239
+	-1 1 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=590 color=#000058ff mode=1 {
+	0 0 4 239
+	-1 1 4 239
+	-1 1 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=593 color=#000058ff mode=1 {
+	0 0 4 239
+	-1 1 4 239
+	-1 1 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=596 color=#000058ff mode=1 {
+	0 0 4 240
+	-1 1 4 240
+	-1 1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=599 color=#000058ff mode=1 {
+	0 0 4 240
+	0 1 4 240
+	-1 1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=795 y=602 color=#000058ff mode=1 {
+	0 0 4 240
+	-1 1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=604 color=#000058ff mode=1 {
+	0 0 4 240
+	-1 1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=791 y=606 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=791 y=607 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=792 y=606 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=605 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=794 y=604 color=#000058ff mode=1 {
+	0 0 4 240
+	1 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=603 color=#000058ff mode=1 {
+	0 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=601 color=#000058ff mode=1 {
+	0 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=599 color=#000058ff mode=1 {
+	0 0 4 240
+	1 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=597 color=#000058ff mode=1 {
+	0 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=595 color=#000058ff mode=1 {
+	0 0 4 240
+	1 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=593 color=#000058ff mode=1 {
+	0 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=810 y=591 color=#000058ff mode=1 {
+	0 0 4 240
+	1 -1 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=812 y=589 color=#000058ff mode=1 {
+	0 0 4 240
+	1 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=814 y=588 color=#000058ff mode=1 {
+	0 0 4 240
+	1 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=815 y=587 color=#000058ff mode=1 {
+	0 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=816 y=587 color=#000058ff mode=1 {
+	0 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=815 y=587 color=#000058ff mode=1 {
+	0 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=815 y=588 color=#000058ff mode=1 {
+	0 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=814 y=589 color=#000058ff mode=1 {
+	0 0 4 241
+	-1 1 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=812 y=591 color=#000058ff mode=1 {
+	0 0 4 242
+	-1 1 4 242
+	}
+1 squarepixeldabs layer=0x0102 x=810 y=593 color=#000058ff mode=1 {
+	0 0 4 242
+	-1 1 4 242
+	}
+1 squarepixeldabs layer=0x0102 x=808 y=595 color=#000058ff mode=1 {
+	0 0 4 242
+	-1 0 4 242
+	-1 1 4 242
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=597 color=#000058ff mode=1 {
+	0 0 4 242
+	0 1 4 243
+	-1 1 4 243
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=600 color=#000058ff mode=1 {
+	0 0 4 243
+	-1 1 4 243
+	-1 1 4 243
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=603 color=#000058ff mode=1 {
+	0 0 4 243
+	-1 1 4 243
+	-1 1 4 243
+	}
+1 squarepixeldabs layer=0x0102 x=797 y=606 color=#000058ff mode=1 {
+	0 0 4 243
+	-1 0 4 243
+	-1 1 4 243
+	}
+1 squarepixeldabs layer=0x0102 x=794 y=608 color=#000058ff mode=1 {
+	0 0 4 243
+	0 1 4 243
+	-1 1 4 243
+	}
+1 squarepixeldabs layer=0x0102 x=792 y=611 color=#000058ff mode=1 {
+	0 0 4 242
+	-1 1 4 242
+	}
+1 squarepixeldabs layer=0x0102 x=790 y=613 color=#000058ff mode=1 {
+	0 0 4 241
+	}
+1 squarepixeldabs layer=0x0102 x=789 y=614 color=#000058ff mode=1 {
+	0 0 4 240
+	}
+1 squarepixeldabs layer=0x0102 x=789 y=615 color=#000058ff mode=1 {
+	0 0 4 239
+	}
+1 squarepixeldabs layer=0x0102 x=789 y=614 color=#000058ff mode=1 {
+	0 0 4 237
+	}
+1 squarepixeldabs layer=0x0102 x=790 y=613 color=#000058ff mode=1 {
+	0 0 4 236
+	}
+1 squarepixeldabs layer=0x0102 x=791 y=612 color=#000058ff mode=1 {
+	0 0 4 235
+	1 -1 4 235
+	}
+1 squarepixeldabs layer=0x0102 x=793 y=610 color=#000058ff mode=1 {
+	0 0 4 234
+	0 -1 4 234
+	}
+1 squarepixeldabs layer=0x0102 x=794 y=608 color=#000058ff mode=1 {
+	0 0 4 234
+	1 -1 4 234
+	}
+1 squarepixeldabs layer=0x0102 x=796 y=606 color=#000058ff mode=1 {
+	0 0 4 233
+	0 -1 4 233
+	1 -1 4 233
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=603 color=#000058ff mode=1 {
+	0 0 4 233
+	1 -1 4 233
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=601 color=#000058ff mode=1 {
+	0 0 4 232
+	0 -1 4 232
+	1 -1 4 232
+	}
+1 squarepixeldabs layer=0x0102 x=802 y=598 color=#000058ff mode=1 {
+	0 0 4 232
+	1 -1 4 231
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=596 color=#000058ff mode=1 {
+	0 0 4 231
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=595 color=#000058ff mode=1 {
+	0 0 4 230
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=595 color=#000058ff mode=1 {
+	0 0 4 229
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=596 color=#000058ff mode=1 {
+	0 0 4 221
+	}
+1 squarepixeldabs layer=0x0102 x=806 y=597 color=#000058ff mode=1 {
+	0 0 4 212
+	}
+1 squarepixeldabs layer=0x0102 x=805 y=598 color=#000058ff mode=1 {
+	0 0 4 198
+	0 1 4 187
+	}
+1 squarepixeldabs layer=0x0102 x=804 y=600 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 168
+	}
+1 squarepixeldabs layer=0x0102 x=803 y=602 color=#000058ff mode=1 {
+	0 0 4 156
+	0 1 4 146
+	}
+1 squarepixeldabs layer=0x0102 x=802 y=604 color=#000058ff mode=1 {
+	0 0 4 133
+	0 1 4 123
+	}
+1 squarepixeldabs layer=0x0102 x=801 y=606 color=#000058ff mode=1 {
+	0 0 4 110
+	}
+1 squarepixeldabs layer=0x0102 x=800 y=607 color=#000058ff mode=1 {
+	0 0 4 88
+	0 1 4 75
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=609 color=#000058ff mode=1 {
+	0 0 4 66
+	}
+1 squarepixeldabs layer=0x0102 x=799 y=610 color=#000058ff mode=1 {
+	0 0 4 45
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=611 color=#000058ff mode=1 {
+	0 0 4 27
+	}
+1 squarepixeldabs layer=0x0102 x=798 y=612 color=#000058ff mode=1 {
+	0 0 4 13
+	}
+1 penup
+0 interval msecs=3340
+1 undopoint
+
+1 pixeldabs layer=0x0102 x=116 y=360 color=#000058ff mode=1 {
+	0 0 4 13
+	-1 -1 4 13
+	}
+1 pixeldabs layer=0x0102 x=115 y=358 color=#000058ff mode=1 {
+	0 0 4 27
+	}
+1 pixeldabs layer=0x0102 x=114 y=357 color=#000058ff mode=1 {
+	0 0 4 28
+	}
+1 pixeldabs layer=0x0102 x=114 y=356 color=#000058ff mode=1 {
+	0 0 4 29
+	}
+1 pixeldabs layer=0x0102 x=114 y=355 color=#000058ff mode=1 {
+	0 0 4 30
+	0 -1 4 31
+	}
+1 pixeldabs layer=0x0102 x=115 y=353 color=#000058ff mode=1 {
+	0 0 4 31
+	0 -1 4 31
+	}
+1 pixeldabs layer=0x0102 x=115 y=351 color=#000058ff mode=1 {
+	0 0 4 32
+	0 -1 4 32
+	0 -1 4 33
+	}
+1 pixeldabs layer=0x0102 x=115 y=348 color=#000058ff mode=1 {
+	0 0 4 33
+	1 -1 4 33
+	0 -1 4 33
+	0 -1 4 34
+	}
+1 pixeldabs layer=0x0102 x=116 y=344 color=#000058ff mode=1 {
+	0 0 4 34
+	0 -1 4 34
+	1 -1 4 34
+	0 -1 4 35
+	0 -1 4 35
+	}
+1 pixeldabs layer=0x0102 x=117 y=339 color=#000058ff mode=1 {
+	0 0 4 35
+	0 -1 4 35
+	1 -1 4 35
+	0 -1 4 35
+	0 -1 4 35
+	0 -1 4 35
+	}
+1 pixeldabs layer=0x0102 x=118 y=333 color=#000058ff mode=1 {
+	0 0 4 35
+	1 -1 4 35
+	0 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=120 y=327 color=#000058ff mode=1 {
+	0 0 4 36
+	1 -1 4 36
+	0 -1 4 36
+	0 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=122 y=320 color=#000058ff mode=1 {
+	0 0 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=125 y=312 color=#000058ff mode=1 {
+	0 0 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=128 y=304 color=#000058ff mode=1 {
+	0 0 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=131 y=296 color=#000058ff mode=1 {
+	0 0 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 37
+	0 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=135 y=287 color=#000058ff mode=1 {
+	0 0 4 37
+	1 -1 4 37
+	0 -1 4 37
+	1 -1 4 37
+	0 -1 4 37
+	0 -1 4 37
+	1 -1 4 37
+	0 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=139 y=279 color=#000058ff mode=1 {
+	0 0 4 37
+	0 -1 4 37
+	1 -1 4 37
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=143 y=271 color=#000058ff mode=1 {
+	0 0 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=147 y=264 color=#000058ff mode=1 {
+	0 0 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	1 -1 4 36
+	0 -1 4 36
+	}
+1 pixeldabs layer=0x0102 x=150 y=258 color=#000058ff mode=1 {
+	0 0 4 37
+	1 -1 4 37
+	0 -1 4 37
+	1 -1 4 37
+	1 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=154 y=253 color=#000058ff mode=1 {
+	0 0 4 37
+	0 -1 4 37
+	1 -1 4 37
+	0 -1 4 37
+	1 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=157 y=248 color=#000058ff mode=1 {
+	0 0 4 37
+	1 -1 4 37
+	0 -1 4 37
+	1 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=160 y=244 color=#000058ff mode=1 {
+	0 0 4 37
+	1 -1 4 37
+	1 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=163 y=241 color=#000058ff mode=1 {
+	0 0 4 37
+	1 -1 4 37
+	1 -1 4 37
+	}
+1 pixeldabs layer=0x0102 x=166 y=239 color=#000058ff mode=1 {
+	0 0 4 38
+	1 -1 4 38
+	1 0 4 39
+	}
+1 pixeldabs layer=0x0102 x=169 y=237 color=#000058ff mode=1 {
+	0 0 4 39
+	1 0 4 40
+	}
+1 pixeldabs layer=0x0102 x=171 y=237 color=#000058ff mode=1 {
+	0 0 4 42
+	1 0 4 43
+	1 0 4 45
+	}
+1 pixeldabs layer=0x0102 x=174 y=237 color=#000058ff mode=1 {
+	0 0 4 46
+	1 1 4 48
+	1 0 4 49
+	}
+1 pixeldabs layer=0x0102 x=177 y=239 color=#000058ff mode=1 {
+	0 0 4 51
+	1 0 4 53
+	1 1 4 55
+	}
+1 pixeldabs layer=0x0102 x=180 y=241 color=#000058ff mode=1 {
+	0 0 4 58
+	1 1 4 59
+	1 1 4 61
+	}
+1 pixeldabs layer=0x0102 x=183 y=244 color=#000058ff mode=1 {
+	0 0 4 65
+	1 1 4 67
+	0 1 4 69
+	1 1 4 71
+	}
+1 pixeldabs layer=0x0102 x=186 y=248 color=#000058ff mode=1 {
+	0 0 4 74
+	0 1 4 76
+	1 1 4 78
+	0 1 4 79
+	1 1 4 81
+	}
+1 pixeldabs layer=0x0102 x=188 y=253 color=#000058ff mode=1 {
+	0 0 4 84
+	1 1 4 86
+	0 1 4 87
+	0 1 4 89
+	0 1 4 90
+	1 1 4 92
+	0 1 4 94
+	}
+1 pixeldabs layer=0x0102 x=190 y=260 color=#000058ff mode=1 {
+	0 0 4 95
+	1 1 4 96
+	0 1 4 98
+	1 1 4 99
+	0 1 4 101
+	1 1 4 102
+	0 1 4 103
+	}
+1 pixeldabs layer=0x0102 x=193 y=267 color=#000058ff mode=1 {
+	0 0 4 106
+	1 1 4 107
+	0 1 4 108
+	1 1 4 110
+	0 1 4 111
+	0 1 4 112
+	1 1 4 113
+	0 1 4 115
+	}
+1 pixeldabs layer=0x0102 x=196 y=275 color=#000058ff mode=1 {
+	0 0 4 117
+	1 1 4 118
+	0 1 4 119
+	0 1 4 120
+	1 1 4 121
+	0 1 4 122
+	0 1 4 123
+	1 1 4 124
+	0 1 4 125
+	}
+1 pixeldabs layer=0x0102 x=199 y=284 color=#000058ff mode=1 {
+	0 0 4 127
+	0 1 4 128
+	1 1 4 129
+	0 1 4 130
+	0 1 4 131
+	0 1 4 132
+	0 1 4 133
+	1 1 4 134
+	0 1 4 135
+	0 1 4 136
+	}
+1 pixeldabs layer=0x0102 x=201 y=294 color=#000058ff mode=1 {
+	0 0 4 136
+	1 1 4 137
+	0 1 4 138
+	0 1 4 139
+	1 1 4 140
+	0 1 4 141
+	0 1 4 142
+	0 1 4 143
+	1 1 4 144
+	0 1 4 144
+	}
+1 pixeldabs layer=0x0102 x=204 y=304 color=#000058ff mode=1 {
+	0 0 4 146
+	0 1 4 146
+	1 1 4 147
+	0 1 4 148
+	0 1 4 149
+	0 1 4 150
+	0 1 4 151
+	1 1 4 152
+	0 1 4 152
+	0 1 4 153
+	}
+1 pixeldabs layer=0x0102 x=206 y=314 color=#000058ff mode=1 {
+	0 0 4 155
+	1 1 4 155
+	0 1 4 156
+	0 1 4 157
+	1 1 4 158
+	0 1 4 159
+	0 1 4 160
+	0 1 4 160
+	1 1 4 161
+	0 1 4 162
+	}
+1 pixeldabs layer=0x0102 x=209 y=324 color=#000058ff mode=1 {
+	0 0 4 163
+	1 1 4 164
+	0 1 4 165
+	0 1 4 166
+	1 1 4 166
+	0 1 4 167
+	0 1 4 168
+	0 1 4 169
+	1 1 4 170
+	0 1 4 170
+	}
+1 pixeldabs layer=0x0102 x=212 y=334 color=#000058ff mode=1 {
+	0 0 4 172
+	1 1 4 172
+	0 1 4 173
+	0 1 4 174
+	0 1 4 175
+	1 1 4 175
+	0 1 4 176
+	0 1 4 177
+	0 1 4 177
+	1 1 4 178
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=215 y=345 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 180
+	0 1 4 181
+	1 1 4 182
+	0 1 4 182
+	0 1 4 183
+	1 1 4 184
+	0 1 4 184
+	1 1 4 185
+	0 1 4 186
+	}
+1 pixeldabs layer=0x0102 x=219 y=355 color=#000058ff mode=1 {
+	0 0 4 187
+	1 1 4 187
+	0 1 4 188
+	1 1 4 189
+	0 1 4 189
+	0 1 4 190
+	1 1 4 191
+	0 1 4 191
+	1 1 4 192
+	0 1 4 193
+	}
+1 pixeldabs layer=0x0102 x=223 y=365 color=#000058ff mode=1 {
+	0 0 4 194
+	1 1 4 194
+	0 1 4 195
+	1 1 4 196
+	0 1 4 196
+	1 1 4 197
+	0 1 4 198
+	1 1 4 198
+	0 1 4 199
+	}
+1 pixeldabs layer=0x0102 x=227 y=374 color=#000058ff mode=1 {
+	0 0 4 200
+	1 1 4 201
+	0 1 4 202
+	1 1 4 202
+	0 1 4 203
+	1 1 4 204
+	0 1 4 204
+	1 1 4 205
+	0 1 4 206
+	}
+1 pixeldabs layer=0x0102 x=232 y=383 color=#000058ff mode=1 {
+	0 0 4 207
+	0 1 4 208
+	1 1 4 208
+	1 1 4 209
+	0 1 4 210
+	1 1 4 210
+	0 1 4 211
+	1 1 4 212
+	}
+1 pixeldabs layer=0x0102 x=237 y=391 color=#000058ff mode=1 {
+	0 0 4 213
+	0 1 4 214
+	1 1 4 214
+	1 1 4 215
+	0 1 4 216
+	1 1 4 216
+	0 1 4 217
+	1 1 4 218
+	}
+1 pixeldabs layer=0x0102 x=242 y=399 color=#000058ff mode=1 {
+	0 0 4 219
+	0 1 4 220
+	1 1 4 220
+	1 1 4 221
+	1 1 4 221
+	0 1 4 222
+	1 1 4 222
+	}
+1 pixeldabs layer=0x0102 x=247 y=406 color=#000058ff mode=1 {
+	0 0 4 224
+	1 1 4 224
+	1 1 4 225
+	1 1 4 225
+	1 1 4 226
+	1 1 4 226
+	}
+1 pixeldabs layer=0x0102 x=253 y=412 color=#000058ff mode=1 {
+	0 0 4 228
+	1 1 4 229
+	1 1 4 229
+	1 0 4 230
+	1 1 4 230
+	1 1 4 231
+	}
+1 pixeldabs layer=0x0102 x=259 y=417 color=#000058ff mode=1 {
+	0 0 4 232
+	1 0 4 232
+	1 1 4 233
+	1 1 4 233
+	1 0 4 234
+	1 1 4 234
+	}
+1 pixeldabs layer=0x0102 x=265 y=421 color=#000058ff mode=1 {
+	0 0 4 235
+	1 0 4 236
+	1 1 4 236
+	1 1 4 237
+	1 0 4 237
+	1 1 4 238
+	}
+1 pixeldabs layer=0x0102 x=271 y=424 color=#000058ff mode=1 {
+	0 0 4 239
+	1 1 4 239
+	1 0 4 240
+	1 0 4 240
+	1 0 4 241
+	1 1 4 241
+	1 0 4 242
+	}
+1 pixeldabs layer=0x0102 x=278 y=426 color=#000058ff mode=1 {
+	0 0 4 242
+	1 1 4 243
+	1 0 4 243
+	1 0 4 243
+	1 0 4 244
+	1 1 4 244
+	1 0 4 245
+	}
+1 pixeldabs layer=0x0102 x=285 y=428 color=#000058ff mode=1 {
+	0 0 4 245
+	1 0 4 245
+	1 0 4 246
+	1 1 4 246
+	1 0 4 246
+	1 0 4 247
+	1 0 4 247
+	}
+1 pixeldabs layer=0x0102 x=292 y=429 color=#000058ff mode=1 {
+	0 0 4 247
+	1 0 4 248
+	1 0 4 248
+	1 -1 4 248
+	1 0 4 249
+	1 0 4 249
+	1 0 4 249
+	}
+1 pixeldabs layer=0x0102 x=299 y=428 color=#000058ff mode=1 {
+	0 0 4 249
+	1 -1 4 250
+	1 0 4 250
+	1 0 4 250
+	1 -1 4 250
+	1 0 4 250
+	}
+1 pixeldabs layer=0x0102 x=305 y=426 color=#000058ff mode=1 {
+	0 0 4 251
+	1 -1 4 251
+	1 0 4 251
+	1 0 4 251
+	1 -1 4 252
+	1 0 4 252
+	}
+1 pixeldabs layer=0x0102 x=311 y=423 color=#000058ff mode=1 {
+	0 0 4 252
+	1 0 4 252
+	1 -1 4 252
+	1 -1 4 253
+	1 0 4 253
+	1 -1 4 253
+	}
+1 pixeldabs layer=0x0102 x=317 y=419 color=#000058ff mode=1 {
+	0 0 4 253
+	1 -1 4 253
+	1 -1 4 253
+	1 -1 4 254
+	1 -1 4 254
+	}
+1 pixeldabs layer=0x0102 x=322 y=414 color=#000058ff mode=1 {
+	0 0 4 254
+	1 -1 4 254
+	1 -1 4 254
+	0 -1 4 254
+	1 -1 4 254
+	1 -1 4 254
+	}
+1 pixeldabs layer=0x0102 x=327 y=408 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=332 y=401 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=335 y=393 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=339 y=384 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=342 y=375 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=346 y=365 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=348 y=354 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=351 y=344 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=354 y=332 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=357 y=321 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=360 y=310 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=363 y=299 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=367 y=288 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=371 y=278 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=376 y=268 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=381 y=258 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=386 y=248 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=391 y=239 color=#000058ff mode=1 {
+	0 0 4 255
+	0 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=396 y=231 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=402 y=224 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	1 -1 4 255
+	0 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=408 y=217 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	1 -1 4 255
+	1 0 4 255
+	1 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=414 y=212 color=#000058ff mode=1 {
+	0 0 4 255
+	1 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	1 -1 4 255
+	}
+1 pixeldabs layer=0x0102 x=419 y=207 color=#000058ff mode=1 {
+	0 0 4 255
+	1 0 4 255
+	1 -1 4 255
+	1 0 4 255
+	1 -1 4 255
+	1 0 4 255
+	}
+1 pixeldabs layer=0x0102 x=425 y=204 color=#000058ff mode=1 {
+	0 0 4 255
+	1 0 4 255
+	1 -1 4 255
+	1 0 4 255
+	1 -1 4 255
+	1 0 4 255
+	}
+1 pixeldabs layer=0x0102 x=431 y=202 color=#000058ff mode=1 {
+	0 0 4 255
+	1 0 4 255
+	1 -1 4 255
+	1 0 4 255
+	1 0 4 255
+	}
+1 pixeldabs layer=0x0102 x=436 y=201 color=#000058ff mode=1 {
+	0 0 4 255
+	1 0 4 255
+	1 0 4 255
+	1 0 4 255
+	1 0 4 255
+	}
+1 pixeldabs layer=0x0102 x=441 y=201 color=#000058ff mode=1 {
+	0 0 4 255
+	1 1 4 255
+	1 0 4 255
+	1 0 4 255
+	1 1 4 255
+	1 0 4 255
+	}
+1 pixeldabs layer=0x0102 x=447 y=204 color=#000058ff mode=1 {
+	0 0 4 255
+	1 0 4 255
+	1 1 4 255
+	1 0 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=452 y=207 color=#000058ff mode=1 {
+	0 0 4 255
+	1 0 4 255
+	1 1 4 255
+	1 0 4 255
+	1 1 4 255
+	1 0 4 255
+	}
+1 pixeldabs layer=0x0102 x=458 y=210 color=#000058ff mode=1 {
+	0 0 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=463 y=215 color=#000058ff mode=1 {
+	0 0 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=468 y=220 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=473 y=227 color=#000058ff mode=1 {
+	0 0 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=479 y=233 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=484 y=240 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	1 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=489 y=247 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=493 y=254 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=497 y=261 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=501 y=267 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 255
+	1 1 4 255
+	0 1 4 255
+	1 1 4 255
+	0 1 4 255
+	}
+1 pixeldabs layer=0x0102 x=504 y=273 color=#000058ff mode=1 {
+	0 0 4 255
+	0 1 4 254
+	1 1 4 254
+	0 1 4 254
+	1 1 4 253
+	}
+1 pixeldabs layer=0x0102 x=507 y=278 color=#000058ff mode=1 {
+	0 0 4 253
+	1 1 4 250
+	0 1 4 248
+	1 1 4 246
+	}
+1 pixeldabs layer=0x0102 x=509 y=282 color=#000058ff mode=1 {
+	0 0 4 239
+	1 1 4 235
+	0 1 4 230
+	1 1 4 226
+	0 1 4 221
+	}
+1 pixeldabs layer=0x0102 x=512 y=287 color=#000058ff mode=1 {
+	0 0 4 218
+	1 1 4 212
+	1 1 4 206
+	}
+1 pixeldabs layer=0x0102 x=515 y=290 color=#000058ff mode=1 {
+	0 0 4 192
+	0 1 4 185
+	1 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=517 y=293 color=#000058ff mode=1 {
+	0 0 4 167
+	0 1 4 158
+	}
+1 pixeldabs layer=0x0102 x=518 y=295 color=#000058ff mode=1 {
+	0 0 4 141
+	1 1 4 131
+	}
+1 pixeldabs layer=0x0102 x=520 y=297 color=#000058ff mode=1 {
+	0 0 4 116
+	0 1 4 102
+	}
+1 pixeldabs layer=0x0102 x=521 y=299 color=#000058ff mode=1 {
+	0 0 4 90
+	}
+1 pixeldabs layer=0x0102 x=522 y=299 color=#000058ff mode=1 {
+	0 0 4 65
+	}
+1 pixeldabs layer=0x0102 x=523 y=300 color=#000058ff mode=1 {
+	0 0 4 39
+	}
+1 penup
+0 interval msecs=27889
+1 undopoint
+
+1 resize bottom=25 left=25 right=25 top=25
+0 interval msecs=9362
+1 undopoint
+
+1 pixeldabs layer=0x0102 x=-10 y=24 color=#000058ff mode=1 {
+	0 0 4 26
+	0 -1 4 26
+	1 0 4 90
+	}
+1 pixeldabs layer=0x0102 x=-8 y=22 color=#000058ff mode=1 {
+	0 0 4 137
+	}
+1 pixeldabs layer=0x0102 x=-7 y=22 color=#000058ff mode=1 {
+	0 0 4 140
+	1 0 4 142
+	}
+1 pixeldabs layer=0x0102 x=-5 y=21 color=#000058ff mode=1 {
+	0 0 4 143
+	1 -1 4 144
+	}
+1 pixeldabs layer=0x0102 x=-3 y=20 color=#000058ff mode=1 {
+	0 0 4 146
+	1 -1 4 148
+	1 0 4 149
+	}
+1 pixeldabs layer=0x0102 x=0 y=18 color=#000058ff mode=1 {
+	0 0 4 150
+	1 -1 4 151
+	1 -1 4 152
+	}
+1 pixeldabs layer=0x0102 x=3 y=16 color=#000058ff mode=1 {
+	0 0 4 155
+	1 -1 4 155
+	1 0 4 156
+	1 -1 4 157
+	1 0 4 158
+	}
+1 pixeldabs layer=0x0102 x=8 y=13 color=#000058ff mode=1 {
+	0 0 4 159
+	1 0 4 160
+	1 -1 4 160
+	1 0 4 161
+	1 -1 4 162
+	}
+1 pixeldabs layer=0x0102 x=13 y=10 color=#000058ff mode=1 {
+	0 0 4 163
+	1 0 4 164
+	1 -1 4 165
+	1 0 4 165
+	1 -1 4 166
+	1 0 4 167
+	}
+1 pixeldabs layer=0x0102 x=19 y=7 color=#000058ff mode=1 {
+	0 0 4 168
+	1 0 4 168
+	1 -1 4 169
+	1 0 4 169
+	1 -1 4 170
+	1 0 4 170
+	1 -1 4 171
+	}
+1 pixeldabs layer=0x0102 x=26 y=3 color=#000058ff mode=1 {
+	0 0 4 171
+	1 0 4 172
+	1 -1 4 172
+	1 0 4 172
+	1 -1 4 173
+	1 0 4 173
+	}
+1 pixeldabs layer=0x0102 x=32 y=1 color=#000058ff mode=1 {
+	0 0 4 174
+	1 -1 4 174
+	1 0 4 175
+	1 -1 4 175
+	1 0 4 175
+	1 -1 4 175
+	1 0 4 176
+	}
+1 pixeldabs layer=0x0102 x=39 y=-2 color=#000058ff mode=1 {
+	0 0 4 176
+	1 -1 4 176
+	1 0 4 176
+	1 -1 4 177
+	1 0 4 177
+	1 0 4 177
+	1 -1 4 177
+	1 0 4 177
+	}
+1 pixeldabs layer=0x0102 x=47 y=-6 color=#000058ff mode=1 {
+	0 0 4 177
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=53 y=-8 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=60 y=-10 color=#000058ff mode=1 {
+	0 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=67 y=-12 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=73 y=-12 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=79 y=-13 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=84 y=-13 color=#000058ff mode=1 {
+	0 0 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 182
+	}
+1 pixeldabs layer=0x0102 x=89 y=-13 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 1 4 182
+	1 0 4 182
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=94 y=-12 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=98 y=-11 color=#000058ff mode=1 {
+	0 0 4 184
+	1 1 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=101 y=-9 color=#000058ff mode=1 {
+	0 0 4 185
+	1 0 4 185
+	1 1 4 186
+	1 0 4 186
+	}
+1 pixeldabs layer=0x0102 x=105 y=-7 color=#000058ff mode=1 {
+	0 0 4 187
+	1 0 4 187
+	1 1 4 187
+	}
+1 pixeldabs layer=0x0102 x=108 y=-5 color=#000058ff mode=1 {
+	0 0 4 188
+	1 0 4 189
+	1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=111 y=-3 color=#000058ff mode=1 {
+	0 0 4 190
+	0 1 4 190
+	1 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=113 y=0 color=#000058ff mode=1 {
+	0 0 4 192
+	0 1 4 192
+	1 1 4 193
+	}
+1 pixeldabs layer=0x0102 x=115 y=3 color=#000058ff mode=1 {
+	0 0 4 193
+	0 1 4 194
+	1 1 4 194
+	}
+1 pixeldabs layer=0x0102 x=116 y=6 color=#000058ff mode=1 {
+	0 0 4 195
+	1 1 4 195
+	0 1 4 196
+	}
+1 pixeldabs layer=0x0102 x=117 y=9 color=#000058ff mode=1 {
+	0 0 4 196
+	1 1 4 197
+	0 1 4 197
+	0 1 4 198
+	}
+1 pixeldabs layer=0x0102 x=118 y=13 color=#000058ff mode=1 {
+	0 0 4 198
+	0 1 4 198
+	0 1 4 199
+	0 1 4 199
+	0 1 4 199
+	}
+1 pixeldabs layer=0x0102 x=118 y=18 color=#000058ff mode=1 {
+	0 0 4 199
+	-1 1 4 199
+	0 1 4 200
+	0 1 4 200
+	}
+1 pixeldabs layer=0x0102 x=117 y=22 color=#000058ff mode=1 {
+	0 0 4 200
+	0 1 4 201
+	-1 1 4 201
+	0 1 4 201
+	0 1 4 201
+	}
+1 pixeldabs layer=0x0102 x=116 y=27 color=#000058ff mode=1 {
+	0 0 4 202
+	-1 1 4 202
+	0 1 4 202
+	-1 1 4 202
+	0 1 4 202
+	}
+1 pixeldabs layer=0x0102 x=113 y=32 color=#000058ff mode=1 {
+	0 0 4 202
+	0 1 4 203
+	-1 1 4 203
+	0 1 4 203
+	-1 1 4 203
+	}
+1 pixeldabs layer=0x0102 x=110 y=37 color=#000058ff mode=1 {
+	0 0 4 203
+	-1 1 4 203
+	0 1 4 203
+	-1 1 4 203
+	-1 1 4 203
+	}
+1 pixeldabs layer=0x0102 x=106 y=42 color=#000058ff mode=1 {
+	0 0 4 204
+	0 1 4 204
+	-1 1 4 204
+	0 1 4 204
+	-1 1 4 204
+	}
+1 pixeldabs layer=0x0102 x=103 y=47 color=#000058ff mode=1 {
+	0 0 4 204
+	-1 1 4 204
+	0 1 4 204
+	-1 1 4 204
+	-1 1 4 204
+	}
+1 pixeldabs layer=0x0102 x=99 y=52 color=#000058ff mode=1 {
+	0 0 4 204
+	-1 1 4 204
+	-1 1 4 204
+	-1 1 4 204
+	-1 1 4 204
+	}
+1 pixeldabs layer=0x0102 x=94 y=57 color=#000058ff mode=1 {
+	0 0 4 204
+	-1 1 4 204
+	0 1 4 204
+	-1 1 4 204
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=90 y=62 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=85 y=66 color=#000058ff mode=1 {
+	0 0 4 204
+	-1 1 4 205
+	0 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=81 y=71 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=76 y=75 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=71 y=80 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=67 y=84 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=62 y=89 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=58 y=93 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=53 y=98 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=49 y=102 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=45 y=106 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	0 1 4 205
+	-1 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=41 y=111 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	0 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=38 y=115 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	0 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=35 y=119 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	0 1 4 205
+	-1 1 4 205
+	}
+1 pixeldabs layer=0x0102 x=32 y=123 color=#000058ff mode=1 {
+	0 0 4 205
+	-1 1 4 205
+	0 1 4 204
+	-1 1 4 204
+	}
+1 pixeldabs layer=0x0102 x=29 y=127 color=#000058ff mode=1 {
+	0 0 4 204
+	0 1 4 204
+	-1 1 4 204
+	0 1 4 204
+	}
+1 pixeldabs layer=0x0102 x=27 y=131 color=#000058ff mode=1 {
+	0 0 4 204
+	0 1 4 204
+	-1 1 4 204
+	}
+1 pixeldabs layer=0x0102 x=25 y=134 color=#000058ff mode=1 {
+	0 0 4 203
+	0 1 4 203
+	-1 1 4 203
+	0 1 4 203
+	}
+1 pixeldabs layer=0x0102 x=23 y=138 color=#000058ff mode=1 {
+	0 0 4 203
+	0 1 4 203
+	-1 1 4 203
+	0 1 4 203
+	}
+1 pixeldabs layer=0x0102 x=22 y=142 color=#000058ff mode=1 {
+	0 0 4 202
+	-1 1 4 202
+	0 1 4 202
+	0 1 4 202
+	}
+1 pixeldabs layer=0x0102 x=21 y=146 color=#000058ff mode=1 {
+	0 0 4 202
+	-1 1 4 202
+	0 1 4 202
+	0 1 4 202
+	}
+1 pixeldabs layer=0x0102 x=20 y=150 color=#000058ff mode=1 {
+	0 0 4 202
+	-1 1 4 202
+	0 1 4 202
+	0 1 4 202
+	}
+1 pixeldabs layer=0x0102 x=19 y=154 color=#000058ff mode=1 {
+	0 0 4 202
+	0 1 4 201
+	-1 1 4 201
+	0 1 4 201
+	0 1 4 201
+	}
+1 pixeldabs layer=0x0102 x=18 y=159 color=#000058ff mode=1 {
+	0 0 4 201
+	0 1 4 201
+	0 1 4 201
+	0 1 4 201
+	0 1 4 201
+	}
+1 pixeldabs layer=0x0102 x=18 y=164 color=#000058ff mode=1 {
+	0 0 4 201
+	0 1 4 201
+	-1 1 4 200
+	0 1 4 200
+	0 1 4 200
+	}
+1 pixeldabs layer=0x0102 x=17 y=169 color=#000058ff mode=1 {
+	0 0 4 200
+	0 1 4 200
+	0 1 4 200
+	0 1 4 200
+	0 1 4 200
+	}
+1 pixeldabs layer=0x0102 x=17 y=174 color=#000058ff mode=1 {
+	0 0 4 200
+	0 1 4 200
+	0 1 4 200
+	0 1 4 199
+	0 1 4 199
+	}
+1 pixeldabs layer=0x0102 x=17 y=179 color=#000058ff mode=1 {
+	0 0 4 199
+	0 1 4 199
+	1 1 4 199
+	0 1 4 199
+	0 1 4 199
+	}
+1 pixeldabs layer=0x0102 x=18 y=184 color=#000058ff mode=1 {
+	0 0 4 198
+	0 1 4 198
+	0 1 4 198
+	0 1 4 198
+	}
+1 pixeldabs layer=0x0102 x=18 y=188 color=#000058ff mode=1 {
+	0 0 4 198
+	1 1 4 198
+	0 1 4 197
+	0 1 4 197
+	}
+1 pixeldabs layer=0x0102 x=19 y=192 color=#000058ff mode=1 {
+	0 0 4 197
+	1 1 4 197
+	0 1 4 196
+	0 1 4 196
+	}
+1 pixeldabs layer=0x0102 x=20 y=196 color=#000058ff mode=1 {
+	0 0 4 196
+	1 1 4 196
+	0 1 4 195
+	0 1 4 195
+	}
+1 pixeldabs layer=0x0102 x=22 y=200 color=#000058ff mode=1 {
+	0 0 4 195
+	0 1 4 195
+	1 1 4 195
+	}
+1 pixeldabs layer=0x0102 x=24 y=203 color=#000058ff mode=1 {
+	0 0 4 194
+	0 1 4 194
+	1 1 4 194
+	}
+1 pixeldabs layer=0x0102 x=26 y=206 color=#000058ff mode=1 {
+	0 0 4 193
+	0 1 4 193
+	1 1 4 193
+	}
+1 pixeldabs layer=0x0102 x=28 y=209 color=#000058ff mode=1 {
+	0 0 4 192
+	1 1 4 192
+	1 1 4 192
+	}
+1 pixeldabs layer=0x0102 x=31 y=212 color=#000058ff mode=1 {
+	0 0 4 192
+	1 1 4 191
+	1 0 4 191
+	1 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=35 y=215 color=#000058ff mode=1 {
+	0 0 4 191
+	1 0 4 191
+	1 1 4 191
+	1 0 4 191
+	}
+1 pixeldabs layer=0x0102 x=39 y=216 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	1 0 4 190
+	1 1 4 190
+	1 0 4 190
+	}
+1 pixeldabs layer=0x0102 x=44 y=218 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	1 0 4 190
+	1 0 4 189
+	1 1 4 189
+	1 0 4 189
+	}
+1 pixeldabs layer=0x0102 x=50 y=220 color=#000058ff mode=1 {
+	0 0 4 189
+	1 0 4 189
+	1 1 4 189
+	1 0 4 189
+	1 0 4 189
+	1 0 4 189
+	}
+1 pixeldabs layer=0x0102 x=56 y=221 color=#000058ff mode=1 {
+	0 0 4 189
+	1 0 4 189
+	1 0 4 189
+	1 0 4 189
+	1 0 4 189
+	1 0 4 189
+	1 0 4 188
+	}
+1 pixeldabs layer=0x0102 x=63 y=221 color=#000058ff mode=1 {
+	0 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 1 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	}
+1 pixeldabs layer=0x0102 x=70 y=222 color=#000058ff mode=1 {
+	0 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 -1 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	}
+1 pixeldabs layer=0x0102 x=78 y=221 color=#000058ff mode=1 {
+	0 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 -1 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	}
+1 pixeldabs layer=0x0102 x=86 y=220 color=#000058ff mode=1 {
+	0 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 -1 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	}
+1 pixeldabs layer=0x0102 x=94 y=219 color=#000058ff mode=1 {
+	0 0 4 188
+	1 -1 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 188
+	1 -1 4 188
+	1 0 4 188
+	1 0 4 188
+	}
+1 pixeldabs layer=0x0102 x=102 y=217 color=#000058ff mode=1 {
+	0 0 4 188
+	1 -1 4 188
+	1 0 4 188
+	1 0 4 188
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=110 y=215 color=#000058ff mode=1 {
+	0 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=119 y=213 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=128 y=210 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=137 y=207 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=147 y=204 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=156 y=201 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=166 y=197 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=177 y=194 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=187 y=190 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=197 y=186 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=208 y=183 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=218 y=179 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=229 y=176 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	1 -1 4 187
+	1 0 4 187
+	}
+1 pixeldabs layer=0x0102 x=239 y=172 color=#000058ff mode=1 {
+	0 0 4 187
+	1 -1 4 187
+	1 0 4 186
+	1 0 4 186
+	1 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	1 0 4 186
+	1 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	}
+1 pixeldabs layer=0x0102 x=250 y=169 color=#000058ff mode=1 {
+	0 0 4 186
+	1 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	1 0 4 186
+	1 0 4 186
+	1 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	1 0 4 186
+	}
+1 pixeldabs layer=0x0102 x=260 y=167 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	1 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	1 0 4 186
+	1 0 4 186
+	1 -1 4 186
+	1 0 4 186
+	}
+1 pixeldabs layer=0x0102 x=270 y=164 color=#000058ff mode=1 {
+	0 0 4 186
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 0 4 185
+	1 0 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 0 4 185
+	}
+1 pixeldabs layer=0x0102 x=280 y=162 color=#000058ff mode=1 {
+	0 0 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 0 4 185
+	1 0 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 0 4 185
+	}
+1 pixeldabs layer=0x0102 x=290 y=160 color=#000058ff mode=1 {
+	0 0 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 0 4 184
+	1 0 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=300 y=158 color=#000058ff mode=1 {
+	0 0 4 184
+	1 0 4 184
+	1 0 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 0 4 184
+	1 0 4 184
+	1 0 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=310 y=157 color=#000058ff mode=1 {
+	0 0 4 184
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=319 y=156 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=328 y=156 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	}
+1 pixeldabs layer=0x0102 x=338 y=156 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	}
+1 pixeldabs layer=0x0102 x=346 y=156 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 0 4 182
+	}
+1 pixeldabs layer=0x0102 x=354 y=156 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 0 4 182
+	1 1 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=362 y=157 color=#000058ff mode=1 {
+	0 0 4 181
+	1 0 4 181
+	1 0 4 181
+	1 1 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=370 y=158 color=#000058ff mode=1 {
+	0 0 4 181
+	1 0 4 181
+	1 1 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=376 y=159 color=#000058ff mode=1 {
+	0 0 4 181
+	1 1 4 181
+	1 0 4 181
+	1 0 4 181
+	1 0 4 181
+	1 1 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=383 y=161 color=#000058ff mode=1 {
+	0 0 4 181
+	1 0 4 181
+	1 1 4 181
+	1 0 4 181
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=388 y=162 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	1 0 4 180
+	1 1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=393 y=165 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=397 y=167 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	1 0 4 180
+	1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=401 y=170 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=405 y=172 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	1 1 4 179
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=407 y=176 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	0 1 4 178
+	1 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=409 y=180 color=#000058ff mode=1 {
+	0 0 4 178
+	1 1 4 178
+	0 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=410 y=184 color=#000058ff mode=1 {
+	0 0 4 178
+	1 1 4 178
+	0 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=411 y=188 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	1 1 4 177
+	0 1 4 177
+	0 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=412 y=193 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	0 1 4 177
+	0 1 4 177
+	0 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=412 y=198 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	0 1 4 177
+	0 1 4 177
+	0 1 4 177
+	0 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=412 y=204 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	-1 1 4 177
+	0 1 4 177
+	0 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=411 y=209 color=#000058ff mode=1 {
+	0 0 4 178
+	-1 1 4 178
+	0 1 4 178
+	0 1 4 178
+	-1 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=409 y=215 color=#000058ff mode=1 {
+	0 0 4 178
+	-1 1 4 178
+	0 1 4 178
+	0 1 4 178
+	-1 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=406 y=221 color=#000058ff mode=1 {
+	0 0 4 178
+	0 1 4 178
+	-1 1 4 178
+	0 1 4 178
+	-1 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=403 y=227 color=#000058ff mode=1 {
+	0 0 4 178
+	0 1 4 178
+	-1 1 4 178
+	0 1 4 178
+	-1 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=400 y=232 color=#000058ff mode=1 {
+	0 0 4 178
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=396 y=239 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=393 y=245 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=389 y=251 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=385 y=258 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=380 y=265 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=376 y=271 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=371 y=278 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=367 y=285 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=362 y=292 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=357 y=299 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	-1 1 4 179
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=352 y=306 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=347 y=314 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=342 y=321 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=337 y=328 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=332 y=336 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=327 y=344 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=322 y=352 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=317 y=359 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=312 y=368 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=308 y=375 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=304 y=383 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=301 y=391 color=#000058ff mode=1 {
+	0 0 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=298 y=399 color=#000058ff mode=1 {
+	0 0 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=295 y=406 color=#000058ff mode=1 {
+	0 0 4 180
+	-1 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=292 y=414 color=#000058ff mode=1 {
+	0 0 4 180
+	-1 1 4 180
+	0 1 4 179
+	0 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=290 y=421 color=#000058ff mode=1 {
+	0 0 4 179
+	-1 1 4 179
+	0 1 4 179
+	0 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=288 y=428 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	0 1 4 179
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=287 y=435 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	0 1 4 179
+	-1 1 4 179
+	0 1 4 179
+	0 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=286 y=442 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=286 y=449 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=286 y=455 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=287 y=462 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=287 y=468 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=289 y=474 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=291 y=480 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=293 y=486 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	0 1 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=296 y=492 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=299 y=498 color=#000058ff mode=1 {
+	0 0 4 180
+	1 1 4 180
+	0 1 4 180
+	1 1 4 180
+	1 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=303 y=503 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	1 1 4 180
+	0 1 4 179
+	1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=306 y=508 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	0 1 4 179
+	1 1 4 179
+	1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=310 y=513 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	1 1 4 179
+	1 1 4 179
+	1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=315 y=518 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 1 4 179
+	1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=320 y=522 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=325 y=525 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 1 4 179
+	1 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=330 y=529 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=336 y=531 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=342 y=534 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=348 y=536 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=355 y=537 color=#000058ff mode=1 {
+	0 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=362 y=539 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=370 y=540 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=378 y=540 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=385 y=541 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=394 y=541 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=402 y=540 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=411 y=539 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=421 y=538 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=430 y=537 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=440 y=535 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=450 y=533 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 177
+	1 0 4 177
+	1 -1 4 177
+	1 0 4 177
+	}
+1 pixeldabs layer=0x0102 x=461 y=530 color=#000058ff mode=1 {
+	0 0 4 177
+	1 0 4 177
+	1 -1 4 177
+	1 0 4 177
+	1 0 4 177
+	1 0 4 177
+	1 0 4 177
+	1 -1 4 177
+	1 0 4 177
+	1 0 4 177
+	}
+1 pixeldabs layer=0x0102 x=471 y=528 color=#000058ff mode=1 {
+	0 0 4 177
+	1 -1 4 177
+	1 0 4 177
+	1 0 4 177
+	1 0 4 177
+	1 -1 4 177
+	1 0 4 177
+	1 0 4 177
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=482 y=525 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=493 y=522 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=504 y=519 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=515 y=516 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=526 y=513 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=537 y=510 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=548 y=507 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=559 y=505 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=570 y=502 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=580 y=499 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=591 y=496 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=602 y=494 color=#000058ff mode=1 {
+	0 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=612 y=491 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=623 y=489 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=633 y=487 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=643 y=485 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=653 y=483 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=663 y=481 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=673 y=480 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=683 y=479 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=692 y=478 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=701 y=478 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=710 y=478 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 -1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=718 y=477 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=726 y=477 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=734 y=478 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=741 y=478 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=748 y=479 color=#000058ff mode=1 {
+	0 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=754 y=481 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=759 y=482 color=#000058ff mode=1 {
+	0 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=764 y=485 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=768 y=487 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 177
+	}
+1 pixeldabs layer=0x0102 x=772 y=489 color=#000058ff mode=1 {
+	0 0 4 177
+	1 0 4 177
+	1 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=775 y=491 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	1 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=777 y=494 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	1 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=779 y=497 color=#000058ff mode=1 {
+	0 0 4 177
+	0 1 4 177
+	1 1 4 177
+	0 1 4 177
+	}
+1 pixeldabs layer=0x0102 x=780 y=501 color=#000058ff mode=1 {
+	0 0 4 178
+	1 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=781 y=504 color=#000058ff mode=1 {
+	0 0 4 178
+	0 1 4 178
+	0 1 4 178
+	0 1 4 178
+	}
+1 pixeldabs layer=0x0102 x=781 y=508 color=#000058ff mode=1 {
+	0 0 4 178
+	0 1 4 178
+	0 1 4 179
+	0 1 4 179
+	0 1 4 179
+	}
+1 pixeldabs layer=0x0102 x=781 y=513 color=#000058ff mode=1 {
+	0 0 4 179
+	0 1 4 179
+	0 1 4 179
+	0 1 4 180
+	}
+1 pixeldabs layer=0x0102 x=781 y=517 color=#000058ff mode=1 {
+	0 0 4 180
+	0 1 4 180
+	-1 1 4 180
+	0 1 4 181
+	0 1 4 181
+	}
+1 pixeldabs layer=0x0102 x=780 y=522 color=#000058ff mode=1 {
+	0 0 4 181
+	-1 1 4 181
+	0 1 4 182
+	-1 1 4 182
+	0 1 4 182
+	}
+1 pixeldabs layer=0x0102 x=778 y=527 color=#000058ff mode=1 {
+	0 0 4 182
+	0 1 4 182
+	-1 1 4 183
+	0 1 4 183
+	0 1 4 183
+	}
+1 pixeldabs layer=0x0102 x=776 y=532 color=#000058ff mode=1 {
+	0 0 4 183
+	0 1 4 183
+	-1 1 4 184
+	0 1 4 184
+	-1 1 4 184
+	}
+1 pixeldabs layer=0x0102 x=773 y=537 color=#000058ff mode=1 {
+	0 0 4 184
+	0 1 4 184
+	-1 1 4 185
+	0 1 4 185
+	}
+1 pixeldabs layer=0x0102 x=771 y=541 color=#000058ff mode=1 {
+	0 0 4 185
+	0 1 4 185
+	-1 1 4 186
+	0 1 4 186
+	-1 1 4 186
+	}
+1 pixeldabs layer=0x0102 x=768 y=546 color=#000058ff mode=1 {
+	0 0 4 186
+	0 1 4 186
+	-1 1 4 187
+	0 1 4 187
+	-1 1 4 187
+	}
+1 pixeldabs layer=0x0102 x=765 y=551 color=#000058ff mode=1 {
+	0 0 4 187
+	0 1 4 187
+	-1 1 4 187
+	0 1 4 187
+	-1 1 4 188
+	}
+1 pixeldabs layer=0x0102 x=762 y=556 color=#000058ff mode=1 {
+	0 0 4 188
+	-1 1 4 188
+	0 1 4 188
+	-1 1 4 188
+	}
+1 pixeldabs layer=0x0102 x=759 y=560 color=#000058ff mode=1 {
+	0 0 4 188
+	0 1 4 188
+	-1 1 4 188
+	}
+1 pixeldabs layer=0x0102 x=757 y=563 color=#000058ff mode=1 {
+	0 0 4 189
+	-1 1 4 189
+	0 1 4 189
+	-1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=754 y=567 color=#000058ff mode=1 {
+	0 0 4 189
+	0 1 4 189
+	-1 1 4 189
+	0 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=752 y=571 color=#000058ff mode=1 {
+	0 0 4 189
+	0 1 4 189
+	-1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=750 y=574 color=#000058ff mode=1 {
+	0 0 4 189
+	0 1 4 189
+	-1 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=749 y=577 color=#000058ff mode=1 {
+	0 0 4 190
+	-1 1 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=748 y=580 color=#000058ff mode=1 {
+	0 0 4 190
+	-1 1 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=747 y=583 color=#000058ff mode=1 {
+	0 0 4 190
+	-1 1 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=746 y=586 color=#000058ff mode=1 {
+	0 0 4 190
+	-1 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=744 y=589 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=744 y=591 color=#000058ff mode=1 {
+	0 0 4 191
+	-1 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=743 y=594 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=743 y=597 color=#000058ff mode=1 {
+	0 0 4 191
+	-1 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=600 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=603 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=605 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=608 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=611 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=613 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=742 y=615 color=#000058ff mode=1 {
+	0 0 4 191
+	1 1 4 191
+	0 1 4 191
+	}
+1 pixeldabs layer=0x0102 x=743 y=618 color=#000058ff mode=1 {
+	0 0 4 191
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=743 y=620 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=745 y=623 color=#000058ff mode=1 {
+	0 0 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=745 y=625 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=747 y=628 color=#000058ff mode=1 {
+	0 0 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=748 y=630 color=#000058ff mode=1 {
+	0 0 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=748 y=632 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	0 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=750 y=635 color=#000058ff mode=1 {
+	0 0 4 189
+	1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=752 y=637 color=#000058ff mode=1 {
+	0 0 4 189
+	0 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=753 y=639 color=#000058ff mode=1 {
+	0 0 4 189
+	0 1 4 189
+	1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=755 y=642 color=#000058ff mode=1 {
+	0 0 4 189
+	1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=757 y=644 color=#000058ff mode=1 {
+	0 0 4 189
+	1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=759 y=646 color=#000058ff mode=1 {
+	0 0 4 189
+	1 0 4 189
+	1 1 4 189
+	}
+1 pixeldabs layer=0x0102 x=762 y=648 color=#000058ff mode=1 {
+	0 0 4 189
+	1 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=764 y=650 color=#000058ff mode=1 {
+	0 0 4 190
+	1 0 4 190
+	1 1 4 190
+	1 0 4 190
+	}
+1 pixeldabs layer=0x0102 x=768 y=652 color=#000058ff mode=1 {
+	0 0 4 190
+	1 0 4 190
+	1 1 4 190
+	}
+1 pixeldabs layer=0x0102 x=771 y=653 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	1 0 4 190
+	1 0 4 190
+	}
+1 pixeldabs layer=0x0102 x=775 y=654 color=#000058ff mode=1 {
+	0 0 4 190
+	1 1 4 190
+	1 0 4 190
+	1 1 4 190
+	1 0 4 190
+	}
+1 pixeldabs layer=0x0102 x=780 y=656 color=#000058ff mode=1 {
+	0 0 4 191
+	1 0 4 191
+	1 1 4 191
+	1 0 4 191
+	1 0 4 191
+	}
+1 pixeldabs layer=0x0102 x=785 y=657 color=#000058ff mode=1 {
+	0 0 4 191
+	1 1 4 191
+	1 0 4 191
+	1 1 4 191
+	1 0 4 191
+	}
+1 pixeldabs layer=0x0102 x=790 y=659 color=#000058ff mode=1 {
+	0 0 4 191
+	1 0 4 191
+	1 1 4 191
+	1 0 4 191
+	1 0 4 191
+	1 0 4 192
+	}
+1 pixeldabs layer=0x0102 x=796 y=660 color=#000058ff mode=1 {
+	0 0 4 192
+	1 0 4 192
+	1 0 4 192
+	1 1 4 192
+	1 0 4 192
+	1 0 4 192
+	1 0 4 192
+	}
+1 pixeldabs layer=0x0102 x=803 y=661 color=#000058ff mode=1 {
+	0 0 4 192
+	1 0 4 192
+	1 1 4 192
+	1 0 4 192
+	1 0 4 192
+	1 0 4 193
+	}
+1 pixeldabs layer=0x0102 x=809 y=662 color=#000058ff mode=1 {
+	0 0 4 193
+	1 0 4 193
+	1 0 4 193
+	1 1 4 193
+	1 0 4 193
+	1 0 4 193
+	1 0 4 193
+	}
+1 pixeldabs layer=0x0102 x=816 y=663 color=#000058ff mode=1 {
+	0 0 4 193
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=824 y=663 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 1 4 194
+	1 0 4 194
+	1 0 4 195
+	1 0 4 195
+	}
+1 pixeldabs layer=0x0102 x=831 y=664 color=#000058ff mode=1 {
+	0 0 4 195
+	1 0 4 195
+	1 0 4 195
+	1 0 4 195
+	1 0 4 195
+	1 0 4 195
+	1 0 4 195
+	1 0 4 196
+	}
+1 pixeldabs layer=0x0102 x=839 y=664 color=#000058ff mode=1 {
+	0 0 4 196
+	1 0 4 196
+	1 0 4 196
+	1 1 4 196
+	1 0 4 196
+	1 0 4 196
+	1 0 4 196
+	1 0 4 197
+	}
+1 pixeldabs layer=0x0102 x=847 y=665 color=#000058ff mode=1 {
+	0 0 4 197
+	1 0 4 197
+	1 0 4 197
+	1 0 4 197
+	1 0 4 197
+	1 0 4 197
+	1 0 4 197
+	1 0 4 198
+	1 0 4 198
+	}
+1 pixeldabs layer=0x0102 x=856 y=665 color=#000058ff mode=1 {
+	0 0 4 198
+	1 0 4 198
+	1 0 4 198
+	1 0 4 198
+	1 0 4 198
+	1 0 4 199
+	1 0 4 199
+	1 0 4 199
+	1 0 4 199
+	}
+1 pixeldabs layer=0x0102 x=865 y=665 color=#000058ff mode=1 {
+	0 0 4 199
+	1 0 4 199
+	1 0 4 200
+	1 0 4 200
+	1 0 4 200
+	1 0 4 200
+	1 0 4 200
+	1 0 4 200
+	1 0 4 201
+	}
+1 pixeldabs layer=0x0102 x=874 y=665 color=#000058ff mode=1 {
+	0 0 4 201
+	1 0 4 201
+	1 0 4 201
+	1 0 4 201
+	1 0 4 201
+	1 0 4 201
+	1 0 4 202
+	1 0 4 202
+	1 0 4 202
+	1 0 4 202
+	}
+1 pixeldabs layer=0x0102 x=884 y=665 color=#000058ff mode=1 {
+	0 0 4 202
+	1 0 4 202
+	1 0 4 202
+	1 0 4 203
+	1 0 4 203
+	1 0 4 203
+	1 0 4 203
+	1 0 4 203
+	1 0 4 203
+	1 0 4 203
+	}
+1 pixeldabs layer=0x0102 x=894 y=665 color=#000058ff mode=1 {
+	0 0 4 203
+	1 0 4 203
+	1 0 4 204
+	1 0 4 204
+	1 0 4 204
+	1 0 4 204
+	1 0 4 204
+	1 0 4 204
+	1 0 4 204
+	1 0 4 204
+	}
+1 pixeldabs layer=0x0102 x=904 y=665 color=#000058ff mode=1 {
+	0 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	1 0 4 206
+	1 0 4 206
+	}
+1 pixeldabs layer=0x0102 x=915 y=665 color=#000058ff mode=1 {
+	0 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 207
+	1 0 4 207
+	}
+1 pixeldabs layer=0x0102 x=925 y=665 color=#000058ff mode=1 {
+	0 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	1 0 4 207
+	}
+1 pixeldabs layer=0x0102 x=935 y=665 color=#000058ff mode=1 {
+	0 0 4 207
+	1 0 4 207
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 206
+	1 0 4 205
+	1 0 4 205
+	1 0 4 205
+	}
+1 pixeldabs layer=0x0102 x=944 y=665 color=#000058ff mode=1 {
+	0 0 4 205
+	1 0 4 203
+	1 0 4 202
+	1 0 4 201
+	1 0 4 199
+	1 0 4 198
+	1 0 4 197
+	1 0 4 195
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=953 y=665 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 192
+	1 0 4 190
+	1 0 4 189
+	1 0 4 187
+	1 0 4 186
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=960 y=665 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 180
+	1 0 4 178
+	1 0 4 177
+	1 0 4 175
+	1 0 4 173
+	}
+1 pixeldabs layer=0x0102 x=966 y=665 color=#000058ff mode=1 {
+	0 0 4 171
+	1 0 4 169
+	1 0 4 166
+	1 0 4 164
+	1 0 4 162
+	}
+1 pixeldabs layer=0x0102 x=971 y=665 color=#000058ff mode=1 {
+	0 0 4 159
+	1 0 4 157
+	1 0 4 154
+	}
+1 pixeldabs layer=0x0102 x=974 y=665 color=#000058ff mode=1 {
+	0 0 4 148
+	1 1 4 144
+	1 0 4 140
+	}
+1 pixeldabs layer=0x0102 x=977 y=666 color=#000058ff mode=1 {
+	0 0 4 137
+	1 0 4 131
+	}
+1 pixeldabs layer=0x0102 x=979 y=666 color=#000058ff mode=1 {
+	0 0 4 125
+	}
+1 pixeldabs layer=0x0102 x=980 y=666 color=#000058ff mode=1 {
+	0 0 4 114
+	}
+1 penup
+0 interval msecs=1044
+1 undopoint
+
+1 pixeldabs layer=0x0102 x=34 y=667 color=#000058ff mode=1 {
+	0 0 4 1
+	-1 0 4 1
+	}
+1 pixeldabs layer=0x0102 x=32 y=667 color=#000058ff mode=1 {
+	0 0 4 71
+	}
+1 pixeldabs layer=0x0102 x=32 y=666 color=#000058ff mode=1 {
+	0 0 4 82
+	}
+1 pixeldabs layer=0x0102 x=31 y=666 color=#000058ff mode=1 {
+	0 0 4 90
+	}
+1 pixeldabs layer=0x0102 x=31 y=665 color=#000058ff mode=1 {
+	0 0 4 98
+	}
+1 pixeldabs layer=0x0102 x=30 y=664 color=#000058ff mode=1 {
+	0 0 4 107
+	}
+1 pixeldabs layer=0x0102 x=29 y=663 color=#000058ff mode=1 {
+	0 0 4 116
+	}
+1 pixeldabs layer=0x0102 x=28 y=662 color=#000058ff mode=1 {
+	0 0 4 126
+	}
+1 pixeldabs layer=0x0102 x=27 y=661 color=#000058ff mode=1 {
+	0 0 4 136
+	-1 -1 4 140
+	}
+1 pixeldabs layer=0x0102 x=25 y=659 color=#000058ff mode=1 {
+	0 0 4 144
+	-1 -1 4 146
+	}
+1 pixeldabs layer=0x0102 x=23 y=657 color=#000058ff mode=1 {
+	0 0 4 150
+	0 -1 4 152
+	}
+1 pixeldabs layer=0x0102 x=22 y=655 color=#000058ff mode=1 {
+	0 0 4 156
+	-1 -1 4 157
+	}
+1 pixeldabs layer=0x0102 x=20 y=653 color=#000058ff mode=1 {
+	0 0 4 160
+	0 -1 4 162
+	-1 -1 4 163
+	}
+1 pixeldabs layer=0x0102 x=18 y=650 color=#000058ff mode=1 {
+	0 0 4 164
+	0 -1 4 165
+	-1 -1 4 166
+	}
+1 pixeldabs layer=0x0102 x=16 y=647 color=#000058ff mode=1 {
+	0 0 4 167
+	0 -1 4 168
+	-1 -1 4 169
+	}
+1 pixeldabs layer=0x0102 x=14 y=644 color=#000058ff mode=1 {
+	0 0 4 169
+	0 -1 4 170
+	-1 -1 4 171
+	}
+1 pixeldabs layer=0x0102 x=12 y=641 color=#000058ff mode=1 {
+	0 0 4 172
+	0 -1 4 172
+	-1 -1 4 173
+	}
+1 pixeldabs layer=0x0102 x=11 y=638 color=#000058ff mode=1 {
+	0 0 4 173
+	-1 -1 4 174
+	0 -1 4 174
+	}
+1 pixeldabs layer=0x0102 x=9 y=635 color=#000058ff mode=1 {
+	0 0 4 175
+	0 -1 4 175
+	-1 -1 4 176
+	0 -1 4 176
+	}
+1 pixeldabs layer=0x0102 x=7 y=631 color=#000058ff mode=1 {
+	0 0 4 176
+	0 -1 4 176
+	-1 -1 4 177
+	}
+1 pixeldabs layer=0x0102 x=6 y=628 color=#000058ff mode=1 {
+	0 0 4 177
+	-1 -1 4 178
+	0 -1 4 178
+	-1 -1 4 178
+	0 -1 4 178
+	}
+1 pixeldabs layer=0x0102 x=4 y=623 color=#000058ff mode=1 {
+	0 0 4 178
+	-1 -1 4 179
+	0 -1 4 179
+	0 -1 4 179
+	}
+1 pixeldabs layer=0x0102 x=3 y=619 color=#000058ff mode=1 {
+	0 0 4 179
+	0 -1 4 179
+	-1 -1 4 179
+	0 -1 4 180
+	0 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=2 y=614 color=#000058ff mode=1 {
+	0 0 4 180
+	-1 -1 4 180
+	0 -1 4 180
+	0 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=1 y=610 color=#000058ff mode=1 {
+	0 0 4 180
+	-1 -1 4 180
+	0 -1 4 180
+	0 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=0 y=606 color=#000058ff mode=1 {
+	0 0 4 180
+	0 -1 4 181
+	-1 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=-1 y=601 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=-1 y=597 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=-1 y=593 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=-1 y=589 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=-1 y=584 color=#000058ff mode=1 {
+	0 0 4 181
+	1 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=1 y=580 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=2 y=576 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=4 y=571 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=6 y=567 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=7 y=563 color=#000058ff mode=1 {
+	0 0 4 181
+	1 -1 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=10 y=558 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=12 y=554 color=#000058ff mode=1 {
+	0 0 4 181
+	0 -1 4 181
+	1 -1 4 181
+	0 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=14 y=550 color=#000058ff mode=1 {
+	0 0 4 181
+	1 -1 4 181
+	0 -1 4 181
+	1 -1 4 181
+	}
+1 pixeldabs layer=0x0102 x=17 y=546 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=20 y=543 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=23 y=540 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=26 y=538 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 -1 4 180
+	}
+1 pixeldabs layer=0x0102 x=29 y=535 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=33 y=533 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=37 y=532 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=42 y=530 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=47 y=529 color=#000058ff mode=1 {
+	0 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=53 y=527 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=59 y=526 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=65 y=526 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=71 y=526 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=77 y=526 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=84 y=526 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=91 y=527 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=97 y=528 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=104 y=529 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=112 y=530 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=119 y=531 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=126 y=532 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 1 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=134 y=533 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	1 0 4 178
+	}
+1 pixeldabs layer=0x0102 x=142 y=533 color=#000058ff mode=1 {
+	0 0 4 178
+	1 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=150 y=534 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=157 y=534 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=165 y=535 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=172 y=535 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=180 y=535 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=187 y=535 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=194 y=535 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=201 y=534 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=208 y=534 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=215 y=533 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 -1 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	}
+1 pixeldabs layer=0x0102 x=222 y=532 color=#000058ff mode=1 {
+	0 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 179
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=228 y=532 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=235 y=531 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=241 y=529 color=#000058ff mode=1 {
+	0 0 4 180
+	1 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=248 y=528 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=254 y=526 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	}
+1 pixeldabs layer=0x0102 x=261 y=524 color=#000058ff mode=1 {
+	0 0 4 180
+	1 -1 4 180
+	1 0 4 180
+	1 0 4 180
+	1 -1 4 180
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=267 y=522 color=#000058ff mode=1 {
+	0 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=274 y=519 color=#000058ff mode=1 {
+	0 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	1 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=280 y=516 color=#000058ff mode=1 {
+	0 0 4 181
+	1 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	1 -1 4 181
+	1 0 4 181
+	}
+1 pixeldabs layer=0x0102 x=286 y=513 color=#000058ff mode=1 {
+	0 0 4 181
+	1 0 4 181
+	1 -1 4 181
+	1 -1 4 181
+	1 0 4 182
+	1 -1 4 182
+	}
+1 pixeldabs layer=0x0102 x=292 y=509 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 -1 4 182
+	1 0 4 182
+	1 -1 4 182
+	1 0 4 182
+	}
+1 pixeldabs layer=0x0102 x=298 y=506 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 182
+	1 -1 4 182
+	1 0 4 182
+	1 -1 4 182
+	1 0 4 182
+	1 -1 4 182
+	}
+1 pixeldabs layer=0x0102 x=305 y=502 color=#000058ff mode=1 {
+	0 0 4 182
+	1 -1 4 182
+	1 -1 4 182
+	1 -1 4 182
+	1 -1 4 182
+	}
+1 pixeldabs layer=0x0102 x=310 y=497 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 -1 4 183
+	}
+1 pixeldabs layer=0x0102 x=316 y=493 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 -1 4 183
+	}
+1 pixeldabs layer=0x0102 x=321 y=489 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 -1 4 183
+	1 -1 4 183
+	1 -1 4 183
+	}
+1 pixeldabs layer=0x0102 x=326 y=484 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=330 y=479 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=334 y=474 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=338 y=469 color=#000058ff mode=1 {
+	0 0 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=341 y=463 color=#000058ff mode=1 {
+	0 0 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=343 y=458 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=345 y=452 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	0 -1 4 185
+	1 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=347 y=446 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	1 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=348 y=440 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	0 -1 4 185
+	1 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=349 y=433 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	0 -1 4 185
+	1 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=350 y=426 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=350 y=419 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=412 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=405 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=398 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=391 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=383 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=376 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=369 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=362 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=350 y=356 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=351 y=349 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=352 y=342 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=352 y=335 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=354 y=329 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=355 y=322 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=357 y=315 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=359 y=309 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=361 y=302 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=365 y=295 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	1 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=369 y=289 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=372 y=283 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	1 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=376 y=277 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=380 y=270 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	1 -1 4 186
+	1 -1 4 186
+	1 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=385 y=265 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	1 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=390 y=259 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	1 -1 4 186
+	1 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=395 y=253 color=#000058ff mode=1 {
+	0 0 4 186
+	1 -1 4 186
+	1 -1 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=401 y=248 color=#000058ff mode=1 {
+	0 0 4 185
+	1 -1 4 185
+	1 -1 4 185
+	1 -1 4 185
+	1 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=406 y=243 color=#000058ff mode=1 {
+	0 0 4 185
+	1 -1 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=412 y=238 color=#000058ff mode=1 {
+	0 0 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 -1 4 185
+	1 0 4 185
+	1 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=419 y=234 color=#000058ff mode=1 {
+	0 0 4 185
+	1 0 4 184
+	1 -1 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=425 y=230 color=#000058ff mode=1 {
+	0 0 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=432 y=227 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=439 y=224 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=446 y=221 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=454 y=219 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=461 y=217 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=469 y=216 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=476 y=215 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=484 y=215 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=492 y=215 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=500 y=216 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=508 y=217 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=516 y=218 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=524 y=220 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=533 y=222 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=541 y=224 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=549 y=226 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=558 y=228 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=566 y=231 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=575 y=233 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=583 y=236 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=592 y=238 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=600 y=240 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=609 y=241 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=617 y=243 color=#000058ff mode=1 {
+	0 0 4 182
+	1 0 4 183
+	1 0 4 183
+	1 1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=625 y=244 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=633 y=244 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=641 y=244 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=649 y=244 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=656 y=244 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=664 y=243 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=671 y=242 color=#000058ff mode=1 {
+	0 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=678 y=241 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=684 y=239 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=691 y=237 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=697 y=235 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=703 y=233 color=#000058ff mode=1 {
+	0 0 4 183
+	1 -1 4 183
+	1 0 4 183
+	1 -1 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=708 y=230 color=#000058ff mode=1 {
+	0 0 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=713 y=227 color=#000058ff mode=1 {
+	0 0 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	}
+1 pixeldabs layer=0x0102 x=717 y=225 color=#000058ff mode=1 {
+	0 0 4 184
+	1 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=722 y=222 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	1 0 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=726 y=219 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	1 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=730 y=215 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	1 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=734 y=211 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=737 y=207 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 183
+	1 -1 4 183
+	1 -1 4 183
+	}
+1 pixeldabs layer=0x0102 x=741 y=203 color=#000058ff mode=1 {
+	0 0 4 183
+	0 -1 4 183
+	1 -1 4 183
+	0 -1 4 183
+	1 -1 4 183
+	}
+1 pixeldabs layer=0x0102 x=744 y=198 color=#000058ff mode=1 {
+	0 0 4 183
+	0 -1 4 183
+	1 -1 4 183
+	0 -1 4 183
+	1 -1 4 183
+	}
+1 pixeldabs layer=0x0102 x=747 y=193 color=#000058ff mode=1 {
+	0 0 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=750 y=188 color=#000058ff mode=1 {
+	0 0 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=753 y=182 color=#000058ff mode=1 {
+	0 0 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=755 y=177 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=757 y=171 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=759 y=165 color=#000058ff mode=1 {
+	0 0 4 184
+	1 -1 4 184
+	0 -1 4 184
+	1 -1 4 184
+	0 -1 4 184
+	}
+1 pixeldabs layer=0x0102 x=761 y=160 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	1 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=762 y=154 color=#000058ff mode=1 {
+	0 0 4 185
+	1 -1 4 185
+	0 -1 4 185
+	1 -1 4 185
+	0 -1 4 185
+	}
+1 pixeldabs layer=0x0102 x=764 y=149 color=#000058ff mode=1 {
+	0 0 4 185
+	0 -1 4 185
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=765 y=143 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	0 -1 4 186
+	}
+1 pixeldabs layer=0x0102 x=766 y=137 color=#000058ff mode=1 {
+	0 0 4 186
+	0 -1 4 186
+	1 -1 4 186
+	0 -1 4 186
+	0 -1 4 187
+	}
+1 pixeldabs layer=0x0102 x=767 y=132 color=#000058ff mode=1 {
+	0 0 4 187
+	0 -1 4 187
+	1 -1 4 187
+	0 -1 4 187
+	0 -1 4 187
+	0 -1 4 187
+	}
+1 pixeldabs layer=0x0102 x=768 y=126 color=#000058ff mode=1 {
+	0 0 4 187
+	0 -1 4 187
+	0 -1 4 187
+	0 -1 4 187
+	0 -1 4 188
+	0 -1 4 188
+	}
+1 pixeldabs layer=0x0102 x=768 y=120 color=#000058ff mode=1 {
+	0 0 4 188
+	0 -1 4 188
+	1 -1 4 188
+	0 -1 4 188
+	0 -1 4 188
+	0 -1 4 188
+	}
+1 pixeldabs layer=0x0102 x=769 y=114 color=#000058ff mode=1 {
+	0 0 4 188
+	0 -1 4 188
+	0 -1 4 188
+	0 -1 4 188
+	0 -1 4 188
+	0 -1 4 188
+	}
+1 pixeldabs layer=0x0102 x=769 y=108 color=#000058ff mode=1 {
+	0 0 4 189
+	0 -1 4 189
+	1 -1 4 189
+	0 -1 4 189
+	0 -1 4 189
+	0 -1 4 189
+	}
+1 pixeldabs layer=0x0102 x=770 y=102 color=#000058ff mode=1 {
+	0 0 4 189
+	0 -1 4 189
+	0 -1 4 189
+	0 -1 4 189
+	0 -1 4 189
+	}
+1 pixeldabs layer=0x0102 x=770 y=97 color=#000058ff mode=1 {
+	0 0 4 189
+	0 -1 4 189
+	1 -1 4 189
+	0 -1 4 189
+	0 -1 4 189
+	0 -1 4 189
+	}
+1 pixeldabs layer=0x0102 x=771 y=91 color=#000058ff mode=1 {
+	0 0 4 189
+	0 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	}
+1 pixeldabs layer=0x0102 x=771 y=85 color=#000058ff mode=1 {
+	0 0 4 190
+	0 -1 4 190
+	1 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	}
+1 pixeldabs layer=0x0102 x=772 y=80 color=#000058ff mode=1 {
+	0 0 4 190
+	0 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	0 -1 4 190
+	}
+1 pixeldabs layer=0x0102 x=772 y=74 color=#000058ff mode=1 {
+	0 0 4 190
+	0 -1 4 190
+	1 -1 4 191
+	0 -1 4 191
+	0 -1 4 191
+	}
+1 pixeldabs layer=0x0102 x=773 y=69 color=#000058ff mode=1 {
+	0 0 4 191
+	0 -1 4 191
+	1 -1 4 191
+	0 -1 4 191
+	0 -1 4 191
+	}
+1 pixeldabs layer=0x0102 x=774 y=64 color=#000058ff mode=1 {
+	0 0 4 191
+	0 -1 4 191
+	1 -1 4 191
+	0 -1 4 191
+	0 -1 4 191
+	0 -1 4 191
+	}
+1 pixeldabs layer=0x0102 x=775 y=58 color=#000058ff mode=1 {
+	0 0 4 192
+	1 -1 4 192
+	0 -1 4 192
+	1 -1 4 192
+	0 -1 4 192
+	}
+1 pixeldabs layer=0x0102 x=777 y=53 color=#000058ff mode=1 {
+	0 0 4 192
+	0 -1 4 192
+	1 -1 4 192
+	0 -1 4 192
+	0 -1 4 192
+	}
+1 pixeldabs layer=0x0102 x=779 y=48 color=#000058ff mode=1 {
+	0 0 4 192
+	0 -1 4 192
+	1 -1 4 192
+	0 -1 4 192
+	}
+1 pixeldabs layer=0x0102 x=780 y=44 color=#000058ff mode=1 {
+	0 0 4 192
+	0 -1 4 193
+	1 -1 4 193
+	0 -1 4 193
+	0 -1 4 193
+	}
+1 pixeldabs layer=0x0102 x=782 y=39 color=#000058ff mode=1 {
+	0 0 4 193
+	0 -1 4 193
+	1 -1 4 193
+	0 -1 4 193
+	}
+1 pixeldabs layer=0x0102 x=784 y=35 color=#000058ff mode=1 {
+	0 0 4 193
+	0 -1 4 193
+	1 -1 4 193
+	0 -1 4 193
+	}
+1 pixeldabs layer=0x0102 x=786 y=31 color=#000058ff mode=1 {
+	0 0 4 193
+	0 -1 4 193
+	1 -1 4 193
+	0 -1 4 193
+	}
+1 pixeldabs layer=0x0102 x=788 y=27 color=#000058ff mode=1 {
+	0 0 4 193
+	0 -1 4 193
+	1 -1 4 193
+	}
+1 pixeldabs layer=0x0102 x=790 y=24 color=#000058ff mode=1 {
+	0 0 4 193
+	0 -1 4 193
+	1 -1 4 193
+	0 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=792 y=20 color=#000058ff mode=1 {
+	0 0 4 194
+	0 -1 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=794 y=17 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	0 -1 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=797 y=13 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=800 y=10 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 -1 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=804 y=6 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=808 y=3 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=812 y=0 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 -1 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=817 y=-4 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 -1 4 194
+	}
+1 pixeldabs layer=0x0102 x=822 y=-6 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=827 y=-8 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=833 y=-10 color=#000058ff mode=1 {
+	0 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=838 y=-12 color=#000058ff mode=1 {
+	0 0 4 193
+	1 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=844 y=-13 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 194
+	1 -1 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=850 y=-14 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 194
+	1 1 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=856 y=-13 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=861 y=-13 color=#000058ff mode=1 {
+	0 0 4 194
+	1 0 4 194
+	1 1 4 194
+	1 0 4 194
+	1 0 4 194
+	1 0 4 194
+	}
+1 pixeldabs layer=0x0102 x=867 y=-12 color=#000058ff mode=1 {
+	0 0 4 194
+	1 1 4 195
+	1 0 4 195
+	1 0 4 195
+	1 1 4 195
+	1 0 4 195
+	}
+1 pixeldabs layer=0x0102 x=873 y=-10 color=#000058ff mode=1 {
+	0 0 4 195
+	1 1 4 195
+	1 0 4 195
+	1 0 4 195
+	1 1 4 195
+	1 0 4 195
+	}
+1 pixeldabs layer=0x0102 x=879 y=-7 color=#000058ff mode=1 {
+	0 0 4 195
+	1 0 4 195
+	1 1 4 195
+	1 0 4 196
+	1 1 4 196
+	1 0 4 196
+	}
+1 pixeldabs layer=0x0102 x=885 y=-4 color=#000058ff mode=1 {
+	0 0 4 196
+	1 0 4 196
+	1 1 4 196
+	1 0 4 196
+	1 1 4 196
+	1 0 4 196
+	}
+1 pixeldabs layer=0x0102 x=891 y=-2 color=#000058ff mode=1 {
+	0 0 4 196
+	1 1 4 196
+	1 0 4 196
+	1 0 4 196
+	1 1 4 196
+	1 0 4 197
+	}
+1 pixeldabs layer=0x0102 x=897 y=1 color=#000058ff mode=1 {
+	0 0 4 197
+	1 0 4 197
+	1 1 4 197
+	1 0 4 197
+	1 1 4 197
+	1 0 4 197
+	}
+1 pixeldabs layer=0x0102 x=903 y=4 color=#000058ff mode=1 {
+	0 0 4 197
+	1 0 4 197
+	1 1 4 197
+	1 0 4 197
+	1 1 4 197
+	1 0 4 198
+	}
+1 pixeldabs layer=0x0102 x=909 y=7 color=#000058ff mode=1 {
+	0 0 4 198
+	1 0 4 198
+	1 1 4 198
+	1 0 4 198
+	1 1 4 198
+	1 0 4 198
+	}
+1 pixeldabs layer=0x0102 x=915 y=9 color=#000058ff mode=1 {
+	0 0 4 198
+	1 1 4 198
+	1 0 4 198
+	1 0 4 198
+	1 1 4 198
+	1 0 4 198
+	}
+1 pixeldabs layer=0x0102 x=921 y=11 color=#000058ff mode=1 {
+	0 0 4 198
+	1 1 4 197
+	1 0 4 197
+	1 1 4 197
+	1 0 4 197
+	}
+1 pixeldabs layer=0x0102 x=926 y=13 color=#000058ff mode=1 {
+	0 0 4 196
+	1 1 4 195
+	1 0 4 195
+	1 1 4 194
+	1 0 4 193
+	}
+1 pixeldabs layer=0x0102 x=931 y=15 color=#000058ff mode=1 {
+	0 0 4 192
+	1 0 4 190
+	1 1 4 188
+	1 0 4 187
+	1 0 4 185
+	1 0 4 183
+	}
+1 pixeldabs layer=0x0102 x=937 y=16 color=#000058ff mode=1 {
+	0 0 4 183
+	1 1 4 179
+	1 0 4 176
+	1 0 4 173
+	}
+1 pixeldabs layer=0x0102 x=941 y=17 color=#000058ff mode=1 {
+	0 0 4 167
+	1 0 4 163
+	1 0 4 158
+	1 0 4 154
+	1 0 4 150
+	}
+1 pixeldabs layer=0x0102 x=946 y=17 color=#000058ff mode=1 {
+	0 0 4 147
+	1 0 4 142
+	1 0 4 137
+	1 0 4 132
+	}
+1 pixeldabs layer=0x0102 x=950 y=17 color=#000058ff mode=1 {
+	0 0 4 127
+	1 0 4 122
+	1 0 4 116
+	}
+1 pixeldabs layer=0x0102 x=953 y=17 color=#000058ff mode=1 {
+	0 0 4 107
+	1 0 4 100
+	1 0 4 93
+	}
+1 pixeldabs layer=0x0102 x=956 y=16 color=#000058ff mode=1 {
+	0 0 4 87
+	1 0 4 78
+	}
+1 pixeldabs layer=0x0102 x=958 y=16 color=#000058ff mode=1 {
+	0 0 4 67
+	1 0 4 56
+	}
+1 pixeldabs layer=0x0102 x=960 y=16 color=#000058ff mode=1 {
+	0 0 4 48
+	}
+1 pixeldabs layer=0x0102 x=961 y=15 color=#000058ff mode=1 {
+	0 0 4 30
+	}
+1 pixeldabs layer=0x0102 x=962 y=15 color=#000058ff mode=1 {
+	0 0 4 15
+	}
+1 penup

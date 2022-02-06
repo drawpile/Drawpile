@@ -1,0 +1,3 @@
+# This check warns about *_s versions of various functions.
+# Those aren't available on many systems, so we turn off this check.
+Checks: '-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling'

@@ -1,0 +1,616 @@
+/*
+ * Copyright (c) 2022 askmeaboutloom
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+#include "lua_bindings.h"
+#include "../drawdance/app.h"
+#include <dpclient/client.h>
+#include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
+#include <dpcommon/queue.h>
+#include <dpcommon/threading.h>
+#include <dpengine/canvas_state.h>
+#include <dpmsg/message.h>
+#include <lauxlib.h>
+#include <lua.h>
+#include <lualib.h>
+
+typedef struct DP_Document DP_Document;
+
+int ImGuiLua_InitImGui(lua_State *L);
+int ImGuiLua_NewImVec2(lua_State *L);
+
+
+#ifdef _WIN32
+#    define PATH_SEPARATOR "\\"
+#else
+#    define PATH_SEPARATOR "/"
+#endif
+
+#define CLIENT_EVENT_MESSAGE (-1)
+
+
+typedef struct DP_LuaAppState {
+    DP_App *app;
+    DP_Mutex *mutex_client_event_queue;
+    DP_Queue client_event_queue;
+} DP_LuaAppState;
+
+typedef struct DP_LuaClientEvent {
+    int client_id;
+    int type;
+    void *data;
+} DP_LuaClientEvent;
+
+static void lua_client_event_dispose(void *element)
+{
+    DP_LuaClientEvent *lce = element;
+    if (lce->type != CLIENT_EVENT_MESSAGE) {
+        DP_free(lce->data);
+    }
+    else if (lce->data) { // Moving to Lua sets this to null.
+        DP_message_decref(lce->data);
+    }
+}
+
+static int lua_app_state_gc(lua_State *L)
+{
+    DP_LuaAppState *state = lua_touserdata(L, 1);
+    DP_queue_clear(&state->client_event_queue, sizeof(DP_LuaClientEvent),
+                   lua_client_event_dispose);
+    DP_queue_dispose(&state->client_event_queue);
+    DP_mutex_free(state->mutex_client_event_queue);
+    return 0;
+}
+
+static int init_lua_app_state(lua_State *L)
+{
+    luaL_newmetatable(L, "DP_LuaAppState");
+    lua_pushcfunction(L, lua_app_state_gc);
+    lua_setfield(L, -2, "__gc");
+    lua_pop(L, 1);
+
+    DP_App *app = lua_touserdata(L, 1);
+    DP_LuaAppState *state = lua_newuserdatauv(L, sizeof(*state), 0);
+    *state = (DP_LuaAppState){app, NULL, DP_QUEUE_NULL};
+    luaL_setmetatable(L, "DP_LuaAppState");
+
+    if (!(state->mutex_client_event_queue = DP_mutex_new())) {
+        return luaL_error(L, "Can't create client event queue mutex: %s",
+                          DP_error());
+    }
+
+    DP_queue_init(&state->client_event_queue, 8, sizeof(DP_LuaClientEvent));
+
+    luaL_ref(L, LUA_REGISTRYINDEX);
+    *(DP_LuaAppState **)lua_getextraspace(L) = state;
+    return 0;
+}
+
+static int init_lua_libs(lua_State *L)
+{
+    static const luaL_Reg libraries[] = {
+        {LUA_GNAME, luaopen_base},
+        {LUA_COLIBNAME, luaopen_coroutine},
+        {LUA_TABLIBNAME, luaopen_table},
+        {LUA_STRLIBNAME, luaopen_string},
+        {LUA_MATHLIBNAME, luaopen_math},
+        {LUA_UTF8LIBNAME, luaopen_utf8},
+        {NULL, NULL},
+    };
+    for (const luaL_Reg *lib = libraries; lib->func; lib++) {
+        luaL_requiref(L, lib->name, lib->func, 1);
+        lua_pop(L, 1);
+    }
+    return 0;
+}
+
+static int open_url(lua_State *L)
+{
+    const char *url = luaL_checkstring(L, 1);
+    if (SDL_OpenURL(url) == 0) {
+        return 0;
+    }
+    else {
+        return luaL_error(L, "Error opening '%s': %s", url, SDL_GetError());
+    }
+}
+
+static int slurp(lua_State *L)
+{
+    const char *path = luaL_checkstring(L, 1);
+    size_t length;
+    char *content = DP_slurp(path, &length);
+    if (content) {
+        lua_pushlstring(L, content, length);
+        DP_free(content);
+        return 1;
+    }
+    else {
+        return luaL_error(L, "%s", DP_error());
+    }
+}
+
+static int app_quit(DP_UNUSED lua_State *L)
+{
+    SDL_Event event;
+    event.type = SDL_QUIT;
+    if (SDL_PushEvent(&event) < 0) {
+        luaL_error(L, "Error sending quit event: %s", SDL_GetError());
+    }
+    return 0;
+}
+
+static int app_current_canvas_state(lua_State *L)
+{
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    DP_CanvasState *cs = DP_app_current_canvas_state_noinc(state->app);
+    if (cs) {
+        DP_CanvasState **pp = lua_newuserdatauv(L, sizeof(cs), 0);
+        *pp = DP_canvas_state_incref(cs);
+        luaL_setmetatable(L, "DP_CanvasState");
+    }
+    else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int app_document_set(lua_State *L)
+{
+    luaL_checkany(L, 1);
+    DP_Document *doc;
+    if (lua_isnil(L, 1)) {
+        doc = NULL;
+    }
+    else {
+        DP_Document **pp = luaL_checkudata(L, 1, "DP_Document");
+        doc = pp ? *pp : NULL;
+    }
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    DP_app_document_set(state->app, doc);
+    return 0;
+}
+
+static int app_canvas_renderer_transform(lua_State *L)
+{
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    double x, y, scale, rotation_in_radians;
+    DP_app_canvas_renderer_transform(state->app, &x, &y, &scale,
+                                     &rotation_in_radians);
+    lua_pushnumber(L, x);
+    lua_pushnumber(L, y);
+    lua_pushnumber(L, scale);
+    lua_pushnumber(L, rotation_in_radians);
+    return 4;
+}
+
+static int app_canvas_renderer_transform_set(lua_State *L)
+{
+    double x = luaL_checknumber(L, 1);
+    double y = luaL_checknumber(L, 2);
+    double scale = luaL_checknumber(L, 3);
+    double rotation_in_radians = luaL_checknumber(L, 4);
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    DP_app_canvas_renderer_transform_set(state->app, x, y, scale,
+                                         rotation_in_radians);
+    return 0;
+}
+
+static int init_app_funcs(lua_State *L)
+{
+    lua_pushglobaltable(L);
+    luaL_getsubtable(L, -1, "DP");
+
+    lua_pushcfunction(L, open_url);
+    lua_setfield(L, -2, "open_url");
+    lua_pushcfunction(L, slurp);
+    lua_setfield(L, -2, "slurp");
+
+    luaL_getsubtable(L, -1, "App");
+    lua_pushcfunction(L, app_quit);
+    lua_setfield(L, -2, "quit");
+    lua_pushcfunction(L, app_current_canvas_state);
+    lua_setfield(L, -2, "current_canvas_state");
+    lua_pushcfunction(L, app_document_set);
+    lua_setfield(L, -2, "document_set");
+    lua_pushcfunction(L, app_canvas_renderer_transform);
+    lua_setfield(L, -2, "canvas_renderer_transform");
+    lua_pushcfunction(L, app_canvas_renderer_transform_set);
+    lua_setfield(L, -2, "canvas_renderer_transform_set");
+
+    return 0;
+}
+
+static int init_imgui(lua_State *L)
+{
+    lua_pushcfunction(L, ImGuiLua_InitImGui);
+    lua_pushglobaltable(L);
+    lua_call(L, 1, 0);
+
+    lua_newtable(L);
+    lua_pushcfunction(L, ImGuiLua_NewImVec2);
+    lua_setfield(L, -2, "new");
+    lua_setglobal(L, "ImVec2");
+
+    return 0;
+}
+
+static int require_load_file(lua_State *L)
+{
+    lua_concat(L, 3);
+    DP_debug("Load '%s'", lua_tostring(L, 1));
+    if (luaL_loadfilex(L, lua_tostring(L, 1), "t") != LUA_OK) {
+        return lua_error(L);
+    }
+    int prev = lua_gettop(L);
+    lua_call(L, 0, LUA_MULTRET);
+    int count = lua_gettop(L) - prev + 1;
+    lua_createtable(L, count, 0);
+    for (int i = 0; i < count; ++i) {
+        lua_pushvalue(L, prev + i);
+        lua_seti(L, -2, i + 1);
+    }
+    return 1;
+}
+
+static int require(lua_State *L)
+{
+    const char *package = luaL_checkstring(L, 1);
+    lua_getfield(L, LUA_REGISTRYINDEX, "DP_loaded_packages");
+    int loaded = lua_gettop(L);
+    int state = lua_getfield(L, loaded, package);
+    if (state == LUA_TNIL) {
+        // Remove the nil.
+        lua_pop(L, 1);
+        // Set package state to 0.
+        lua_pushinteger(L, 0);
+        lua_setfield(L, loaded, package);
+        // Run the actual file. TODO: prefix and handle this path properly.
+        lua_pushcfunction(L, require_load_file);
+        lua_pushliteral(L, "appdrawdance/lua/");
+        luaL_gsub(L, package, ".", PATH_SEPARATOR);
+        lua_pushliteral(L, ".lua");
+        if (lua_pcall(L, 3, 1, 0) == LUA_OK) {
+            // Set package state to returned packed table.
+            lua_pushvalue(L, -1);
+            lua_setfield(L, loaded, package);
+        }
+        else {
+            // Set package state to nil.
+            lua_pushnil(L);
+            lua_setfield(L, loaded, package);
+            return lua_error(L);
+        }
+    }
+    else if (state == LUA_TNUMBER) {
+        return luaL_error(L, "Circular require of '%s'", package);
+    }
+    // Unpack the table.
+    int table = lua_gettop(L);
+    int count = (int)luaL_len(L, table);
+    for (int i = 1; i <= count; ++i) {
+        lua_geti(L, table, i);
+    }
+    return count;
+}
+
+static int unrequire(lua_State *L)
+{
+    luaL_checkany(L, 1);
+    lua_getfield(L, LUA_REGISTRYINDEX, "DP_loaded_packages");
+    int removed_count = 0;
+
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        lua_pop(L, 1); // Don't care about the value, only the key matters.
+
+        // If we were given a string, compare it to the package.
+        // Otherwise try to call it and use the result.
+        bool should_remove;
+        if (lua_isstring(L, 1)) {
+            should_remove = lua_compare(L, 1, -1, LUA_OPEQ);
+        }
+        else {
+            lua_pushvalue(L, 1);
+            lua_pushvalue(L, -2);
+            lua_call(L, 1, 1);
+            should_remove = lua_toboolean(L, -1);
+            lua_pop(L, 1);
+        }
+
+        if (should_remove) {
+            lua_pushvalue(L, -1);
+            lua_pushnil(L);
+            lua_settable(L, -4);
+            ++removed_count;
+        }
+    }
+
+    lua_pushinteger(L, removed_count);
+    return 1;
+}
+
+static int init_package(lua_State *L)
+{
+    lua_newtable(L);
+    lua_setfield(L, LUA_REGISTRYINDEX, "DP_loaded_packages");
+    lua_pushcfunction(L, require);
+    lua_setglobal(L, "require");
+    lua_pushcfunction(L, unrequire);
+    lua_setglobal(L, "unrequire");
+    return 0;
+}
+
+static int global_index(lua_State *L)
+{
+    lua_pushliteral(L, "Reference to undeclared global '");
+    lua_pushvalue(L, 2);
+    lua_pushliteral(L, "'");
+    lua_concat(L, 3);
+    return lua_error(L);
+}
+
+static int global_newindex(lua_State *L)
+{
+    lua_pushliteral(L, "Attempt to declare global '");
+    lua_pushvalue(L, 2);
+    lua_pushliteral(L, "'");
+    lua_concat(L, 3);
+    return lua_error(L);
+}
+
+static int init_global_environment(lua_State *L)
+{
+    lua_pushglobaltable(L);
+    lua_newtable(L);
+    lua_pushcfunction(L, global_index);
+    lua_setfield(L, -2, "__index");
+    lua_pushcfunction(L, global_newindex);
+    lua_setfield(L, -2, "__newindex");
+    lua_setmetatable(L, -2);
+    return 0;
+}
+
+int DP_lua_canvas_state_init(lua_State *L);
+int DP_lua_client_init(lua_State *L);
+int DP_lua_document_init(lua_State *L);
+int DP_lua_message_init(lua_State *L);
+
+static int init_bindings(lua_State *L)
+{
+    static const lua_CFunction init_funcs[] = {
+        init_lua_libs,        init_app_funcs,           init_imgui,
+        init_package,         DP_lua_canvas_state_init, DP_lua_client_init,
+        DP_lua_document_init, DP_lua_message_init,      init_global_environment,
+    };
+    lua_pushcfunction(L, init_lua_app_state);
+    lua_pushvalue(L, 1);
+    lua_call(L, 1, 0);
+    for (size_t i = 0; i < DP_ARRAY_LENGTH(init_funcs); ++i) {
+        lua_pushcfunction(L, init_funcs[i]);
+        lua_call(L, 0, 0);
+    }
+    return 0;
+}
+
+static void handle_warn(void *user, const char *msg, int tocont)
+{
+    DP_LuaWarnBuffer *wb = user;
+    size_t used = wb->used;
+    if (tocont) {
+        size_t length = strlen(msg);
+        size_t needed = used + length;
+        if (wb->capacity < needed) {
+            wb->buffer = DP_realloc(wb->buffer, needed);
+            wb->capacity = needed;
+        }
+        memcpy(wb->buffer + used, msg, length);
+        wb->used += length;
+    }
+    else if (used == 0) {
+        DP_warn("Lua: %s", msg);
+    }
+    else {
+        DP_warn("Lua: %.*s%s", DP_size_to_int(used), wb->buffer, msg);
+        wb->used = 0;
+    }
+}
+
+
+bool DP_lua_bindings_init(lua_State *L, DP_App *app, DP_LuaWarnBuffer *wb)
+{
+    DP_ASSERT(L);
+    DP_ASSERT(app);
+    DP_ASSERT(wb);
+    lua_setwarnf(L, handle_warn, wb);
+    lua_pushcfunction(L, init_bindings);
+    lua_pushlightuserdata(L, app);
+    if (lua_pcall(L, 1, 0, 0) == LUA_OK) {
+        return true;
+    }
+    else {
+        DP_error_set("Error loading Lua bindings: %s", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return false;
+    }
+}
+
+
+DP_LuaAppState *DP_lua_app_state(lua_State *L)
+{
+    return *(DP_LuaAppState **)lua_getextraspace(L);
+}
+
+DP_App *DP_lua_app(lua_State *L)
+{
+    return DP_lua_app_state(L)->app;
+}
+
+
+static void push_client_event(DP_LuaAppState *state, int client_id, int type,
+                              void *data)
+{
+    DP_ASSERT(state);
+    DP_Mutex *mutex_client_event_queue = state->mutex_client_event_queue;
+    DP_MUTEX_MUST_LOCK(mutex_client_event_queue);
+    DP_LuaClientEvent *lce =
+        DP_queue_push(&state->client_event_queue, sizeof(DP_LuaClientEvent));
+    *lce = (DP_LuaClientEvent){client_id, type, data};
+    DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
+}
+
+void DP_lua_app_state_client_event_push(DP_LuaAppState *state, int client_id,
+                                        DP_ClientEventType type,
+                                        const char *message_or_null)
+{
+    push_client_event(state, client_id, (int)type, DP_strdup(message_or_null));
+}
+
+void DP_lua_app_state_client_message_push(DP_LuaAppState *state, int client_id,
+                                          DP_Message *msg)
+{
+    push_client_event(state, client_id, CLIENT_EVENT_MESSAGE,
+                      DP_message_incref(msg));
+}
+
+void DP_lua_message_push_noinc(lua_State *L, DP_Message *msg);
+
+static int publish_client_events(lua_State *L)
+{
+    DP_Queue *client_event_queue = lua_touserdata(L, 1);
+    lua_getfield(L, -1, "publish");
+    DP_LuaClientEvent *lce;
+    while ((lce = DP_queue_peek(client_event_queue, sizeof(*lce)))) {
+        int type = lce->type;
+        lua_pushvalue(L, -1);
+        lua_pushvalue(L, 2);
+        if (type == CLIENT_EVENT_MESSAGE) {
+            lua_pushliteral(L, "CLIENT_MESSAGE");
+            lua_createtable(L, 0, 2);
+            lua_pushinteger(L, lce->client_id);
+            lua_setfield(L, -2, "client_id");
+            // Steal the reference to avoid messing with the refcount.
+            DP_lua_message_push_noinc(L, lce->data);
+            lce->data = NULL; // Stolen.
+            lua_setfield(L, -2, "message");
+        }
+        else {
+            lua_pushliteral(L, "CLIENT_EVENT");
+            lua_createtable(L, 0, 3);
+            lua_pushinteger(L, lce->client_id);
+            lua_setfield(L, -2, "client_id");
+            lua_pushinteger(L, type);
+            lua_setfield(L, -2, "type");
+            lua_pushstring(L, lce->data);
+            lua_setfield(L, -2, "message");
+        }
+        lua_call(L, 3, 0);
+        lua_client_event_dispose(lce);
+        DP_queue_shift(client_event_queue);
+    }
+    return 0;
+}
+
+static void move_client_events_to_lua(lua_State *L, int ref)
+{
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    DP_Mutex *mutex_client_event_queue = state->mutex_client_event_queue;
+    lua_pushcfunction(L, publish_client_events);
+    lua_pushlightuserdata(L, &state->client_event_queue);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+    DP_MUTEX_MUST_LOCK(mutex_client_event_queue);
+    int result = lua_pcall(L, 2, 0, 0);
+    DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
+    if (result != LUA_OK) {
+        DP_warn("Error publishing client events: %s", lua_tostring(L, -1));
+        lua_pop(L, 1);
+    }
+}
+
+
+static int call_lua_app_new(lua_State *L)
+{
+    lua_getglobal(L, "require");
+    lua_pushstring(L, "app");
+    lua_call(L, 1, 1);
+    lua_getfield(L, -1, "new");
+    lua_pushvalue(L, -2);
+    lua_call(L, 1, 1);
+    return 1;
+}
+
+int DP_lua_app_new(lua_State *L)
+{
+    lua_pushcfunction(L, call_lua_app_new);
+    if (lua_pcall(L, 0, 1, 0) == LUA_OK) {
+        return luaL_ref(L, LUA_REGISTRYINDEX);
+    }
+    else {
+        DP_error_set("Error loading Lua app: %s", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return LUA_NOREF;
+    }
+}
+
+static void call_app_method(lua_State *L, int ref, const char *method)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+    lua_getfield(L, -1, method);
+    lua_pushvalue(L, -2);
+    if (lua_pcall(L, 1, 0, 0) == LUA_OK) {
+        lua_pop(L, 1);
+    }
+    else {
+        DP_warn("Error in Lua %s: %s", method, lua_tostring(L, -1));
+        lua_pop(L, 2);
+    }
+}
+
+void DP_lua_app_free(lua_State *L, int ref)
+{
+    if (ref != LUA_NOREF) {
+        call_app_method(L, ref, "dispose");
+        lua_setwarnf(L, NULL, NULL);
+        luaL_unref(L, LUA_REGISTRYINDEX, ref);
+    }
+}
+
+void DP_lua_app_handle_events(lua_State *L, int ref)
+{
+    move_client_events_to_lua(L, ref);
+    call_app_method(L, ref, "handle_events");
+}
+
+void DP_lua_imgui_stack_clear(void);
+
+void DP_lua_app_prepare_gui(lua_State *L, int ref)
+{
+    call_app_method(L, ref, "prepare_gui");
+    DP_lua_imgui_stack_clear();
+}
+
+
+void DP_lua_warn_buffer_dispose(DP_LuaWarnBuffer *wb)
+{
+    if (wb) {
+        DP_free(wb->buffer);
+    }
+}

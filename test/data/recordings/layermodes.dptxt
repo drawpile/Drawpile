@@ -1,0 +1,5511 @@
+!version=dp:4.21.2
+!writerversion=2.1.19_UNOFFICIAL_FORK_V1
+
+1 resize bottom=600 right=800
+1 background color=#ffffff
+1 newlayer id=0x0102 {
+	title=Layer 1
+}
+1 layerattr blend=1 layer=0x0102 opacity=100.00
+1 featureaccess createannotation=guest laser=guest ownlayers=guest putimage=guest regionmove=guest undo=guest
+1 useracl
+0 interval msecs=1484
+1 undopoint
+
+1 classicdabs layer=0x0102 x=50.0 y=47.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=47.5 y=52.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=46.0 y=57.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=47.0 y=63.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=48.3 y=68.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=53.8 y=70.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=2917
+1 undopoint
+
+1 classicdabs layer=0x0102 x=143.0 y=46.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=139.0 y=49.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=135.8 y=54.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=135.5 y=60.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=136.5 y=65.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=139.8 y=70.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=145.5 y=71.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1633
+1 undopoint
+
+1 classicdabs layer=0x0102 x=221.0 y=43.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=216.0 y=45.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=212.8 y=50.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=212.3 y=56.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=212.3 y=61.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=215.3 y=66.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=220.3 y=69.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1279
+1 undopoint
+
+1 classicdabs layer=0x0102 x=300.0 y=44.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=294.5 y=45.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=290.8 y=50.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=290.0 y=55.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=292.0 y=61.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=296.0 y=65.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=301.5 y=67.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1024
+1 undopoint
+
+1 classicdabs layer=0x0102 x=382.0 y=45.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=377.0 y=47.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=374.3 y=52.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=372.5 y=57.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=373.0 y=63.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=375.5 y=68.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=380.0 y=71.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=385.5 y=73.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1055
+1 undopoint
+
+1 classicdabs layer=0x0102 x=466.0 y=43.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=460.5 y=44.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=455.0 y=46.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=450.5 y=49.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=448.0 y=54.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=450.5 y=59.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=452.8 y=65.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=457.0 y=68.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1091
+1 undopoint
+
+1 classicdabs layer=0x0102 x=537.0 y=40.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=531.0 y=40.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=525.3 y=40.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=519.5 y=41.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=515.5 y=44.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=515.0 y=50.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=514.3 y=55.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=517.3 y=60.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=522.0 y=63.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=527.0 y=66.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=532.5 y=68.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=913
+1 undopoint
+
+1 classicdabs layer=0x0102 x=616.0 y=42.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=610.3 y=41.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=605.0 y=43.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=600.5 y=47.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=597.0 y=51.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=596.8 y=57.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=598.8 y=62.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=603.3 y=66.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=608.5 y=68.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=614.3 y=69.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=4900
+1 undopoint
+
+1 classicdabs layer=0x0102 x=60.3 y=61.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=65.0 y=64.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=68.0 y=69.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=68.8 y=75.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=69.8 y=81.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=737
+1 undopoint
+
+1 classicdabs layer=0x0102 x=147.0 y=65.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=152.8 y=65.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=158.0 y=68.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=161.5 y=72.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1056
+1 undopoint
+
+1 classicdabs layer=0x0102 x=218.8 y=62.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=223.8 y=64.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=228.5 y=68.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=232.3 y=72.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=234.0 y=77.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=234.0 y=83.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=925
+1 undopoint
+
+1 classicdabs layer=0x0102 x=300.3 y=61.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=305.3 y=64.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=309.8 y=68.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=314.3 y=71.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=318.0 y=76.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=319.8 y=81.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=828
+1 undopoint
+
+1 classicdabs layer=0x0102 x=384.0 y=62.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=388.5 y=65.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=392.5 y=69.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=395.0 y=74.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=395.3 y=80.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=394.8 y=86.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=763
+1 undopoint
+
+1 classicdabs layer=0x0102 x=462.8 y=59.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=467.3 y=62.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=470.0 y=67.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=470.5 y=73.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=468.5 y=78.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=464.8 y=82.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=932
+1 undopoint
+
+1 classicdabs layer=0x0102 x=529.5 y=59.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=534.5 y=61.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=539.3 y=64.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=543.5 y=69.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=545.5 y=74.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=543.0 y=79.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=819
+1 undopoint
+
+1 classicdabs layer=0x0102 x=608.0 y=61.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=613.0 y=63.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=617.3 y=67.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=620.0 y=72.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=621.3 y=78.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=620.5 y=83.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=15626
+1 undopoint
+
+1 classicdabs layer=0x0102 x=689.0 y=36.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=683.0 y=36.3 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=677.5 y=37.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=672.0 y=39.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=667.3 y=42.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=663.0 y=47.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=660.5 y=52.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=660.8 y=57.8 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=663.8 y=62.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=668.5 y=66.0 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=673.8 y=68.5 color=#00ff1500 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1712
+1 undopoint
+
+1 classicdabs layer=0x0102 x=681.5 y=59.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=686.5 y=61.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=691.3 y=65.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=694.8 y=69.8 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=696.0 y=75.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=695.3 y=81.0 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=693.5 y=86.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=690.0 y=91.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=685.3 y=94.5 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=679.5 y=95.3 color=#004957c1 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=4031
+1 undopoint
+
+1 classicdabs layer=0x0102 x=42.0 y=88.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=47.5 y=88.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=53.0 y=90.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=52.5 y=87.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=672
+1 undopoint
+
+1 classicdabs layer=0x0102 x=135.5 y=83.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=140.8 y=85.3 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=146.3 y=86.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=676
+1 undopoint
+
+1 classicdabs layer=0x0102 x=209.0 y=82.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=212.3 y=87.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=216.3 y=91.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=654
+1 undopoint
+
+1 classicdabs layer=0x0102 x=291.5 y=79.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=296.5 y=81.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=301.5 y=84.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=306.3 y=88.3 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=309.8 y=92.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=984
+1 undopoint
+
+1 classicdabs layer=0x0102 x=372.0 y=83.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=373.8 y=88.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=376.8 y=93.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=700
+1 undopoint
+
+1 classicdabs layer=0x0102 x=450.5 y=76.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=452.5 y=81.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=454.5 y=87.3 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=456.0 y=92.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=537
+1 undopoint
+
+1 classicdabs layer=0x0102 x=522.5 y=80.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=525.8 y=85.3 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=529.0 y=89.8 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1189
+1 undopoint
+
+1 classicdabs layer=0x0102 x=600.0 y=83.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=604.3 y=86.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=608.3 y=91.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=723
+1 undopoint
+
+1 classicdabs layer=0x0102 x=663.5 y=80.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=668.5 y=82.5 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=673.0 y=86.0 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 classicdabs layer=0x0102 x=677.8 y=89.3 color=#00b6b6b6 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=5490
+1 undopoint
+
+1 classicdabs layer=0x0102 x=30.3 y=74.0 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1319
+1 undopoint
+
+1 classicdabs layer=0x0102 x=121.5 y=73.5 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=775
+1 undopoint
+
+1 classicdabs layer=0x0102 x=199.0 y=71.5 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=736
+1 undopoint
+
+1 classicdabs layer=0x0102 x=281.0 y=68.8 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1099
+1 undopoint
+
+1 classicdabs layer=0x0102 x=359.0 y=75.0 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1011
+1 undopoint
+
+1 classicdabs layer=0x0102 x=434.0 y=70.3 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1188
+1 undopoint
+
+1 classicdabs layer=0x0102 x=510.8 y=72.3 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=840
+1 undopoint
+
+1 classicdabs layer=0x0102 x=587.5 y=72.3 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=1960
+1 undopoint
+
+1 classicdabs layer=0x0102 x=653.5 y=70.8 color=#00000000 mode=1 {
+	0.0 0.0 7424 165 255
+	}
+1 penup
+0 interval msecs=9513
+1 undopoint
+
+1 newlayer flags=insert id=0x0100 source=0x0102 {
+	title=Layer 2
+}
+0 interval msecs=1348
+1 layerattr blend=2 layer=0x0100 opacity=100.00
+0 interval msecs=14548
+1 undopoint
+
+1 classicdabs layer=0x0100 x=26.5 y=103.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=27.5 y=100.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=29.0 y=98.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=30.5 y=95.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=32.0 y=93.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=34.0 y=90.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=36.0 y=88.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=37.8 y=86.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=39.8 y=83.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=41.5 y=81.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=43.3 y=78.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=44.8 y=76.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=46.5 y=74.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=48.3 y=71.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=50.0 y=69.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=51.8 y=66.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=53.3 y=64.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=54.8 y=61.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=56.0 y=58.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=57.8 y=56.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=59.3 y=53.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=60.8 y=51.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=62.5 y=48.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=64.0 y=46.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=65.8 y=43.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=67.0 y=41.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=68.3 y=38.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=69.5 y=35.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=71.5 y=33.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=73.3 y=30.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=75.0 y=28.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0100 x=76.5 y=25.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=1715
+1 undopoint
+
+1 newlayer flags=insert id=0x0101 source=0x0100 {
+	title=Layer 3
+}
+0 interval msecs=2707
+1 layerattr blend=3 layer=0x0101 opacity=100.00
+0 interval msecs=905
+1 undopoint
+
+1 classicdabs layer=0x0101 x=113.0 y=107.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=114.8 y=105.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=116.3 y=102.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=117.8 y=100.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=119.3 y=97.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=121.0 y=95.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=122.5 y=92.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=124.3 y=90.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=126.0 y=87.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=127.8 y=85.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=129.5 y=82.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=131.0 y=80.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=132.8 y=77.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=134.5 y=75.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=136.5 y=73.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=138.3 y=70.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=139.8 y=67.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=141.3 y=65.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=142.8 y=62.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=144.3 y=60.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=146.0 y=57.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=147.5 y=55.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=149.3 y=52.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=151.0 y=50.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=152.8 y=47.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=154.5 y=45.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=156.5 y=43.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=158.5 y=41.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=160.8 y=38.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=162.8 y=36.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=164.3 y=34.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=165.8 y=31.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=167.0 y=28.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=168.3 y=26.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0101 x=169.5 y=23.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=4753
+1 undopoint
+
+1 newlayer flags=insert id=0x0103 source=0x0101 {
+	title=Layer 4
+}
+0 interval msecs=1693
+1 layerattr blend=4 layer=0x0103 opacity=100.00
+0 interval msecs=934
+1 undopoint
+
+1 classicdabs layer=0x0103 x=194.0 y=110.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=195.3 y=107.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=196.8 y=105.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=198.3 y=102.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=200.0 y=100.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=201.5 y=97.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=203.3 y=95.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=204.5 y=92.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=205.8 y=89.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=207.3 y=87.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=208.8 y=84.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=210.5 y=82.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=212.3 y=79.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=213.8 y=77.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=215.5 y=74.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=216.8 y=71.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=217.8 y=69.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=219.0 y=66.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=220.5 y=63.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=221.5 y=60.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=222.5 y=58.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=223.5 y=55.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=224.8 y=52.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=226.0 y=49.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=227.3 y=47.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=228.5 y=44.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=229.5 y=41.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=230.8 y=38.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=231.8 y=35.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=233.0 y=33.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=234.3 y=30.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=235.8 y=27.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=237.0 y=25.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=238.0 y=22.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=239.3 y=19.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=240.3 y=16.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=241.5 y=14.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=242.8 y=11.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0103 x=244.3 y=8.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=3011
+1 undopoint
+
+1 newlayer flags=insert id=0x0104 source=0x0103 {
+	title=Layer 5
+}
+0 interval msecs=2011
+1 layerattr blend=5 layer=0x0104 opacity=100.00
+0 interval msecs=1459
+1 undopoint
+
+1 classicdabs layer=0x0104 x=283.5 y=108.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=283.0 y=105.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=282.8 y=102.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=282.5 y=99.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=282.8 y=96.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=283.3 y=93.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=283.5 y=90.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=283.5 y=87.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=284.0 y=84.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=284.5 y=81.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=285.8 y=78.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=287.0 y=75.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=287.8 y=72.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=288.5 y=69.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=289.0 y=67.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=290.3 y=64.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=291.5 y=61.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=293.0 y=58.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=294.3 y=56.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=295.5 y=53.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=296.5 y=50.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=297.5 y=47.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=298.3 y=44.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=299.0 y=41.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=299.0 y=38.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=299.8 y=36.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=301.0 y=33.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=302.5 y=30.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=303.5 y=27.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=304.3 y=25.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=305.0 y=22.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=305.5 y=19.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=305.8 y=16.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=306.0 y=13.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=306.3 y=10.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0104 x=306.8 y=7.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=3759
+1 undopoint
+
+1 newlayer flags=insert id=0x0105 source=0x0104 {
+	title=Layer 6
+}
+0 interval msecs=3469
+1 layerattr blend=6 layer=0x0105 opacity=100.00
+0 interval msecs=1359
+1 undopoint
+
+1 classicdabs layer=0x0105 x=359.5 y=114.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=360.3 y=111.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=361.5 y=108.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=362.5 y=105.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=363.3 y=102.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=364.0 y=99.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=364.8 y=97.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=366.0 y=94.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=367.0 y=91.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=367.8 y=88.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=368.8 y=85.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=369.5 y=82.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=371.0 y=80.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=372.8 y=77.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=374.3 y=75.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=375.5 y=72.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=376.0 y=69.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=376.8 y=66.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=377.5 y=63.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=378.0 y=60.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=378.5 y=57.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=378.8 y=54.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=379.3 y=51.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=379.5 y=48.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=380.0 y=45.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=380.8 y=42.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=381.3 y=39.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=382.0 y=37.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=382.5 y=34.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=383.3 y=31.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=383.8 y=28.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=384.0 y=25.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=384.3 y=22.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=384.8 y=19.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=385.5 y=16.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=386.5 y=13.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=387.3 y=10.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=388.0 y=7.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=388.5 y=4.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=388.8 y=1.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0105 x=388.5 y=-1.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=2922
+1 undopoint
+
+1 newlayer flags=insert id=0x0106 source=0x0105 {
+	title=Layer 7
+}
+0 interval msecs=2056
+1 layerattr blend=7 layer=0x0106 opacity=100.00
+0 interval msecs=1459
+1 undopoint
+
+1 classicdabs layer=0x0106 x=439.0 y=105.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=440.5 y=102.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=441.8 y=99.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=443.3 y=97.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=444.5 y=94.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=445.8 y=91.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=446.3 y=88.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=446.5 y=85.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=447.0 y=82.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=447.5 y=79.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=448.3 y=77.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=449.3 y=74.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=450.5 y=71.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=452.0 y=68.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=454.0 y=66.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=455.3 y=63.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=456.0 y=61.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=456.5 y=58.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=457.0 y=55.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=457.3 y=52.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=457.8 y=49.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=458.3 y=46.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=459.0 y=43.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=459.8 y=40.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=460.8 y=37.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=462.0 y=34.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=462.5 y=31.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=462.5 y=28.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=462.5 y=25.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=463.3 y=23.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=464.3 y=20.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=465.0 y=17.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=465.5 y=14.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=466.5 y=11.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=467.3 y=8.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0106 x=468.3 y=5.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=2908
+1 undopoint
+
+1 newlayer flags=insert id=0x0107 source=0x0106 {
+	title=Layer 8
+}
+0 interval msecs=2189
+1 layerattr blend=8 layer=0x0107 opacity=100.00
+0 interval msecs=2929
+1 undopoint
+
+1 classicdabs layer=0x0107 x=511.5 y=105.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=511.0 y=102.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=511.0 y=99.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=511.5 y=96.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=511.3 y=93.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=511.3 y=90.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=511.5 y=87.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=512.0 y=84.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=513.3 y=81.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=514.8 y=78.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=516.8 y=76.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=518.8 y=74.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=521.0 y=72.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=522.8 y=70.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=523.8 y=67.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=525.0 y=64.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=526.0 y=61.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=526.3 y=58.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=526.0 y=55.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=525.8 y=52.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=525.5 y=49.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=525.5 y=46.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=525.5 y=43.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=525.8 y=40.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=526.3 y=37.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=526.8 y=34.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=527.0 y=31.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=527.5 y=28.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=527.5 y=25.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=527.5 y=22.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=527.5 y=19.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0107 x=527.5 y=16.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=2022
+1 undopoint
+
+1 newlayer flags=insert id=0x0108 source=0x0107 {
+	title=Layer 9
+}
+0 interval msecs=2041
+1 layerattr blend=9 layer=0x0108 opacity=100.00
+0 interval msecs=1708
+1 undopoint
+
+1 classicdabs layer=0x0108 x=590.5 y=107.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=591.0 y=104.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=592.3 y=101.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=593.5 y=98.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=594.8 y=95.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=596.0 y=93.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=597.0 y=90.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=598.3 y=87.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=599.5 y=84.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=600.8 y=82.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=601.8 y=79.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=602.5 y=76.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=603.3 y=73.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=603.5 y=70.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=603.8 y=67.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.0 y=64.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.0 y=61.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.3 y=58.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.3 y=55.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.8 y=52.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.8 y=49.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.5 y=46.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=604.8 y=43.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=606.3 y=41.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=607.5 y=38.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=607.5 y=35.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=6343
+1 undopoint
+
+1 classicdabs layer=0x0108 x=607.0 y=36.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=607.3 y=33.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=608.0 y=30.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=608.5 y=27.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=609.0 y=24.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=609.3 y=21.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=609.5 y=18.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0108 x=609.8 y=15.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=2254
+1 undopoint
+
+1 newlayer flags=insert id=0x0109 source=0x0108 {
+	title=Layer 10
+}
+0 interval msecs=2265
+1 undopoint
+
+1 classicdabs layer=0x0109 x=657.0 y=109.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=657.8 y=106.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=659.3 y=104.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=660.3 y=101.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=661.3 y=98.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=662.3 y=95.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=663.5 y=92.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=664.5 y=90.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=665.8 y=87.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=666.5 y=84.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=667.0 y=81.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=667.5 y=78.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=668.0 y=75.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=668.5 y=72.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=669.0 y=69.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=669.5 y=66.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=670.0 y=63.5 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=670.5 y=60.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=670.5 y=57.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=670.8 y=54.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=670.8 y=51.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=671.3 y=48.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=671.8 y=45.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=672.3 y=42.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=672.8 y=39.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=673.0 y=36.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=673.0 y=33.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=673.0 y=30.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=673.3 y=27.8 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=673.8 y=25.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=674.8 y=22.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=675.3 y=19.0 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=676.3 y=16.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 classicdabs layer=0x0109 x=677.0 y=13.3 color=#0055aa72 mode=1 {
+	0.0 0.0 3840 165 255
+	}
+1 penup
+0 interval msecs=19637
+1 undopoint
+
+1 classicdabs layer=0x0102 x=657.5 y=136.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 12
+	-0.3 -1.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=657.3 y=134.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=657.3 y=133.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=657.3 y=132.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=657.5 y=131.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=657.5 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=657.5 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=657.5 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=657.5 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=657.5 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=657.8 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=658.3 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=659.0 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=659.3 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=659.8 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=660.0 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=660.5 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	0.3 1.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=661.3 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=661.5 y=131.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=662.0 y=132.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=662.8 y=133.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=663.5 y=133.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=663.8 y=132.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=664.0 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	0.0 -1.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=664.0 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=663.8 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=663.8 y=127.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	0.0 -1.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=663.8 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=663.8 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=663.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=663.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=663.5 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 penup
+0 interval msecs=518
+1 undopoint
+
+1 classicdabs layer=0x0102 x=670.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	-0.5 -0.8 768 165 110
+	}
+1 classicdabs layer=0x0102 x=669.3 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=668.8 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=668.3 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=668.0 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=667.8 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=667.8 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=667.8 y=130.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=668.3 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=668.8 y=132.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=669.3 y=132.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=670.3 y=133.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=671.0 y=133.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=672.0 y=133.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=673.0 y=133.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=673.8 y=132.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=674.3 y=131.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=674.5 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=674.8 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=674.5 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=674.3 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=674.0 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=673.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=672.8 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=671.8 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=670.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 87
+	}
+1 classicdabs layer=0x0102 x=669.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 73
+	}
+1 classicdabs layer=0x0102 x=668.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 57
+	}
+1 classicdabs layer=0x0102 x=667.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 38
+	}
+1 classicdabs layer=0x0102 x=666.8 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 14
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=676.0 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 21
+	0.3 1.0 768 165 67
+	}
+1 classicdabs layer=0x0102 x=676.5 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 90
+	}
+1 classicdabs layer=0x0102 x=676.5 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 95
+	}
+1 classicdabs layer=0x0102 x=676.8 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=676.8 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 105
+	}
+1 classicdabs layer=0x0102 x=677.0 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 109
+	0.0 1.0 768 165 105
+	}
+1 classicdabs layer=0x0102 x=677.3 y=131.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 97
+	}
+1 classicdabs layer=0x0102 x=677.3 y=132.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 89
+	}
+1 classicdabs layer=0x0102 x=677.5 y=133.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 76
+	}
+1 classicdabs layer=0x0102 x=677.8 y=134.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 56
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=674.3 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 11
+	0.3 -1.0 768 165 87
+	}
+1 classicdabs layer=0x0102 x=675.3 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 98
+	}
+1 classicdabs layer=0x0102 x=676.3 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=677.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 104
+	}
+1 classicdabs layer=0x0102 x=678.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	}
+1 classicdabs layer=0x0102 x=679.3 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=680.0 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=680.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=680.5 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=680.0 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=679.5 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=679.3 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=679.3 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=679.8 y=130.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=680.5 y=130.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 104
+	}
+1 classicdabs layer=0x0102 x=681.3 y=131.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 90
+	}
+1 classicdabs layer=0x0102 x=682.0 y=132.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 78
+	}
+1 classicdabs layer=0x0102 x=682.8 y=132.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 66
+	}
+1 classicdabs layer=0x0102 x=683.8 y=133.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 49
+	}
+1 classicdabs layer=0x0102 x=684.5 y=133.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 27
+	}
+1 penup
+0 interval msecs=632
+1 undopoint
+
+1 classicdabs layer=0x0102 x=686.5 y=133.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 22
+	-0.3 -1.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=686.0 y=131.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=686.0 y=130.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=686.0 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=686.0 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=685.8 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=685.8 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=686.0 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=686.0 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=686.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=687.5 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=688.0 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=688.8 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=689.8 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=690.5 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=691.3 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=691.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=692.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=693.0 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=693.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=693.3 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=693.3 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=693.3 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=693.3 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=693.3 y=128.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=693.3 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=693.0 y=130.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=693.0 y=131.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=693.0 y=132.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=696.3 y=133.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 17
+	0.3 -1.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=697.0 y=131.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=697.3 y=130.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=697.8 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=698.3 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=698.5 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	0.5 -1.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=699.5 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=700.0 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=700.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=701.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=702.0 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=702.3 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=702.5 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=703.0 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	0.0 1.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=703.3 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=703.5 y=131.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 109
+	}
+1 classicdabs layer=0x0102 x=703.8 y=132.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 99
+	}
+1 classicdabs layer=0x0102 x=704.0 y=133.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 85
+	}
+1 classicdabs layer=0x0102 x=704.5 y=134.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 64
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=697.8 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 33
+	1.0 -0.3 768 165 93
+	}
+1 classicdabs layer=0x0102 x=699.8 y=130.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=700.8 y=130.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 83
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=710.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 18
+	-0.5 1.0 768 165 95
+	}
+1 classicdabs layer=0x0102 x=709.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=709.0 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=708.8 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=708.5 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=708.3 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=708.0 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=708.0 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=708.0 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=708.5 y=131.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=708.8 y=132.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=709.5 y=133.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=710.5 y=133.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=711.5 y=133.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=712.3 y=134.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=713.3 y=134.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=714.3 y=134.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=715.3 y=134.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 80
+	}
+1 classicdabs layer=0x0102 x=716.3 y=134.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 56
+	}
+1 penup
+0 interval msecs=2568
+1 undopoint
+
+1 classicdabs layer=0x0102 x=15.8 y=135.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 29
+	-0.3 -0.8 768 165 81
+	}
+1 classicdabs layer=0x0102 x=15.5 y=133.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=15.5 y=132.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 classicdabs layer=0x0102 x=15.5 y=131.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 106
+	}
+1 classicdabs layer=0x0102 x=15.5 y=130.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	0.0 -1.0 768 165 103
+	}
+1 classicdabs layer=0x0102 x=15.5 y=128.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=15.3 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 89
+	}
+1 classicdabs layer=0x0102 x=15.3 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 80
+	}
+1 classicdabs layer=0x0102 x=15.0 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 69
+	}
+1 classicdabs layer=0x0102 x=15.0 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 54
+	}
+1 classicdabs layer=0x0102 x=14.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 34
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=14.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 26
+	0.3 1.0 768 165 102
+	}
+1 classicdabs layer=0x0102 x=15.3 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=15.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=16.3 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=16.8 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=17.3 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 97
+	}
+1 classicdabs layer=0x0102 x=18.0 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 72
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=17.3 y=128.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 11
+	0.8 -0.8 768 165 84
+	}
+1 classicdabs layer=0x0102 x=18.8 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 106
+	}
+1 classicdabs layer=0x0102 x=19.3 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=20.0 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	}
+1 classicdabs layer=0x0102 x=20.5 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=22.0 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 9
+	0.5 -0.8 768 165 77
+	}
+1 classicdabs layer=0x0102 x=22.5 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 99
+	}
+1 classicdabs layer=0x0102 x=22.5 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	}
+1 classicdabs layer=0x0102 x=22.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=22.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=22.5 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=22.5 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=22.5 y=128.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=22.5 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=22.5 y=130.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 104
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=27.3 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 17
+	-0.5 0.8 768 165 64
+	}
+1 classicdabs layer=0x0102 x=26.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 68
+	}
+1 classicdabs layer=0x0102 x=26.0 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 70
+	}
+1 classicdabs layer=0x0102 x=25.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 72
+	}
+1 classicdabs layer=0x0102 x=25.8 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 74
+	-0.3 1.0 768 165 76
+	}
+1 classicdabs layer=0x0102 x=25.5 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 80
+	}
+1 classicdabs layer=0x0102 x=25.5 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 83
+	}
+1 classicdabs layer=0x0102 x=25.5 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 87
+	}
+1 classicdabs layer=0x0102 x=25.8 y=130.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 92
+	0.3 1.0 768 165 97
+	}
+1 classicdabs layer=0x0102 x=26.5 y=132.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 102
+	}
+1 classicdabs layer=0x0102 x=27.5 y=132.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 109
+	}
+1 classicdabs layer=0x0102 x=28.5 y=132.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=29.3 y=131.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=29.8 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	0.5 -1.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=30.5 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=30.8 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	0.3 -1.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=31.3 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=31.3 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=31.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=31.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=31.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=31.5 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=36.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 21
+	-0.3 0.8 768 165 67
+	}
+1 classicdabs layer=0x0102 x=35.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 89
+	}
+1 classicdabs layer=0x0102 x=35.8 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=35.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 classicdabs layer=0x0102 x=35.8 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=36.0 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=36.3 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=36.8 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=37.5 y=130.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=38.5 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=39.3 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=40.3 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 105
+	}
+1 classicdabs layer=0x0102 x=41.3 y=131.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 93
+	}
+1 classicdabs layer=0x0102 x=42.3 y=130.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 75
+	}
+1 classicdabs layer=0x0102 x=43.3 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 43
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=44.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 26
+	0.0 1.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=44.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=44.8 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=45.0 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=45.0 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=45.0 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=45.0 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=39.8 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 23
+	1.0 0.0 768 165 95
+	}
+1 classicdabs layer=0x0102 x=41.8 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=42.8 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 165
+	}
+1 classicdabs layer=0x0102 x=43.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=44.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=45.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=46.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	1.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=48.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=49.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	1.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=51.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=52.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 81
+	}
+1 classicdabs layer=0x0102 x=53.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 53
+	}
+1 penup
+0 interval msecs=669
+1 undopoint
+
+1 classicdabs layer=0x0102 x=52.0 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 32
+	-0.3 1.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=51.8 y=127.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=52.0 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=52.3 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=52.5 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 62
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=57.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 25
+	0.0 1.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=57.8 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=57.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=57.5 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=57.3 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=57.3 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=57.3 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=57.3 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 101
+	}
+1 classicdabs layer=0x0102 x=57.3 y=130.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 76
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=55.0 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 28
+	1.0 -0.5 768 165 93
+	}
+1 classicdabs layer=0x0102 x=56.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=57.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=58.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=59.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=60.5 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=61.3 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=61.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=61.3 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=60.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=59.5 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 94
+	}
+1 classicdabs layer=0x0102 x=58.5 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 69
+	}
+1 classicdabs layer=0x0102 x=57.8 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 31
+	}
+1 penup
+0 interval msecs=1014
+1 undopoint
+
+1 classicdabs layer=0x0102 x=67.0 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 17
+	0.0 1.0 768 165 97
+	}
+1 classicdabs layer=0x0102 x=66.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=66.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=65.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=65.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=65.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=65.5 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=65.8 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=66.3 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=67.0 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=68.0 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=68.8 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=69.8 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=70.8 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=71.8 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=72.8 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 penup
+0 interval msecs=676
+1 undopoint
+
+1 classicdabs layer=0x0102 x=73.5 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	-0.3 0.8 768 165 113
+	}
+1 classicdabs layer=0x0102 x=73.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=74.0 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=74.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=75.3 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=76.3 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=77.3 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=78.0 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=78.8 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=79.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=79.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=80.3 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=80.5 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=80.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=81.0 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=78.0 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 21
+	-0.5 1.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=77.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=77.5 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=77.5 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 penup
+0 interval msecs=1360
+1 undopoint
+
+1 classicdabs layer=0x0102 x=117.3 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 24
+	-0.3 0.8 768 165 87
+	}
+1 classicdabs layer=0x0102 x=117.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=117.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=117.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=117.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	0.0 1.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=117.0 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=117.0 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=117.0 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=117.0 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 92
+	}
+1 classicdabs layer=0x0102 x=117.0 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 82
+	}
+1 classicdabs layer=0x0102 x=117.0 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 68
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=113.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 22
+	-0.8 -0.8 768 165 96
+	}
+1 classicdabs layer=0x0102 x=113.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 105
+	}
+1 classicdabs layer=0x0102 x=114.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 109
+	}
+1 classicdabs layer=0x0102 x=115.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=116.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=117.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=118.0 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=119.0 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=119.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=120.5 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 classicdabs layer=0x0102 x=121.0 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=121.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=121.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=121.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=121.3 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	-0.3 1.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=120.3 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=119.5 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=118.8 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=117.8 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=116.8 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 99
+	}
+1 classicdabs layer=0x0102 x=115.8 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 80
+	}
+1 classicdabs layer=0x0102 x=114.8 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 59
+	}
+1 classicdabs layer=0x0102 x=114.0 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 32
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=125.5 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	-0.5 1.0 768 165 94
+	}
+1 classicdabs layer=0x0102 x=125.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=125.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=125.0 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=124.8 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=124.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=124.8 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=129.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 8
+	0.0 1.0 768 165 83
+	}
+1 classicdabs layer=0x0102 x=129.0 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=129.3 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=129.3 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=129.5 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=129.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=130.3 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 classicdabs layer=0x0102 x=130.8 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=131.5 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=131.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=132.3 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=132.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=132.5 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=132.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=132.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=132.8 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=135.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 28
+	-0.3 1.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=135.5 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=135.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=135.5 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=135.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=140.3 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 24
+	-0.3 0.8 768 165 96
+	}
+1 classicdabs layer=0x0102 x=140.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=139.8 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=139.8 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=139.8 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=139.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=139.8 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=139.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 105
+	}
+1 classicdabs layer=0x0102 x=140.0 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 86
+	}
+1 classicdabs layer=0x0102 x=140.0 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 56
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=138.5 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 39
+	0.3 -1.0 768 165 100
+	}
+1 classicdabs layer=0x0102 x=139.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=140.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=141.5 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=142.5 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=143.0 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=143.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=143.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=143.5 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=143.3 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=142.8 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=142.3 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=141.5 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 classicdabs layer=0x0102 x=140.8 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 89
+	}
+1 classicdabs layer=0x0102 x=139.8 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 67
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=148.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 29
+	0.0 1.0 768 165 102
+	}
+1 classicdabs layer=0x0102 x=148.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=147.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=147.5 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=147.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=147.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=148.0 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=148.5 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=149.3 y=127.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=150.0 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=151.0 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 104
+	}
+1 classicdabs layer=0x0102 x=152.0 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 86
+	}
+1 classicdabs layer=0x0102 x=153.0 y=127.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 59
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=147.0 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 38
+	0.8 -0.3 768 165 106
+	}
+1 classicdabs layer=0x0102 x=148.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 classicdabs layer=0x0102 x=149.8 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 98
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=147.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 50
+	0.8 -0.3 768 165 103
+	}
+1 classicdabs layer=0x0102 x=148.8 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=149.8 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=150.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=151.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 95
+	}
+1 classicdabs layer=0x0102 x=152.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 67
+	}
+1 penup
+0 interval msecs=1810
+1 layerattr blend=4 layer=0x0102 opacity=100.00
+0 interval msecs=2588
+1 layerattr blend=1 layer=0x0102 opacity=100.00
+0 interval msecs=8899
+1 undopoint
+
+1 classicdabs layer=0x0102 x=194.8 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 3
+	-0.3 1.0 768 165 69
+	}
+1 classicdabs layer=0x0102 x=194.3 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=194.0 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=194.0 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=194.0 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=194.0 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=194.0 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=194.0 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=194.0 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=194.0 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 104
+	}
+1 classicdabs layer=0x0102 x=194.0 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 79
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=190.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 1
+	0.5 -1.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=191.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=192.0 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=193.0 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=194.0 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=195.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=196.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=197.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=198.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=198.8 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=199.5 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=200.0 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=200.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=199.8 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=199.3 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=198.8 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=198.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=199.3 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=199.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=199.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=198.5 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=197.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=196.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 168
+	}
+1 classicdabs layer=0x0102 x=195.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=194.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=193.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=192.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 classicdabs layer=0x0102 x=192.0 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 100
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=205.5 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 26
+	-0.8 0.5 768 165 103
+	}
+1 classicdabs layer=0x0102 x=204.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=203.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=203.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=204.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=204.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=204.5 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=205.3 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=206.0 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=207.0 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=208.0 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=208.5 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=209.0 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=209.3 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=209.3 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=209.3 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=209.3 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=209.0 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=208.8 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=213.0 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	-0.5 -1.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=212.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=212.5 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=212.5 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=212.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=213.0 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=213.3 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=213.8 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	}
+1 classicdabs layer=0x0102 x=214.3 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=215.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	}
+1 classicdabs layer=0x0102 x=216.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	}
+1 classicdabs layer=0x0102 x=217.0 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 183
+	}
+1 classicdabs layer=0x0102 x=217.8 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 183
+	}
+1 classicdabs layer=0x0102 x=218.0 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	}
+1 classicdabs layer=0x0102 x=217.8 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	}
+1 classicdabs layer=0x0102 x=217.3 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=216.3 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=215.5 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=214.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=215.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=215.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=216.3 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=217.0 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 186
+	}
+1 classicdabs layer=0x0102 x=218.0 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=218.8 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 191
+	}
+1 classicdabs layer=0x0102 x=219.5 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 192
+	}
+1 penup
+0 interval msecs=594
+1 undopoint
+
+1 classicdabs layer=0x0102 x=224.5 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 23
+	0.0 -1.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=224.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=224.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=224.5 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=224.5 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 179
+	}
+1 classicdabs layer=0x0102 x=224.5 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	}
+1 classicdabs layer=0x0102 x=224.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=224.8 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 188
+	}
+1 classicdabs layer=0x0102 x=225.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=226.3 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=226.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=227.3 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=227.8 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=228.3 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=229.0 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=229.8 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 193
+	}
+1 classicdabs layer=0x0102 x=230.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 195
+	}
+1 classicdabs layer=0x0102 x=230.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 197
+	}
+1 classicdabs layer=0x0102 x=231.0 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 196
+	}
+1 classicdabs layer=0x0102 x=231.3 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 191
+	}
+1 classicdabs layer=0x0102 x=231.3 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	0.0 -1.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=231.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=231.3 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=231.5 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=231.5 y=113.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 110
+	}
+1 penup
+0 interval msecs=1112
+1 undopoint
+
+1 classicdabs layer=0x0102 x=275.8 y=112.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 12
+	-0.3 1.0 768 165 68
+	}
+1 classicdabs layer=0x0102 x=275.3 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=275.0 y=115.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=275.0 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=275.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=274.8 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=274.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=274.5 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=274.5 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=274.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 95
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=271.0 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 13
+	-1.0 -0.5 768 165 79
+	}
+1 classicdabs layer=0x0102 x=270.0 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=270.8 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=271.8 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=272.5 y=113.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=273.5 y=113.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=274.5 y=113.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=275.5 y=113.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=276.5 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=277.3 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=278.0 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=278.5 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	0.5 0.8 768 165 155
+	}
+1 classicdabs layer=0x0102 x=279.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=279.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=278.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=278.5 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=277.8 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=277.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=276.3 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=275.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=274.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=273.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=272.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 classicdabs layer=0x0102 x=271.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 79
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=285.5 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 5
+	-0.8 -0.5 768 165 80
+	}
+1 classicdabs layer=0x0102 x=283.8 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 105
+	}
+1 classicdabs layer=0x0102 x=283.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=282.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=282.0 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=282.0 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=282.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=282.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=283.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=284.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=285.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=286.0 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=286.5 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=286.8 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=286.8 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=286.8 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=286.3 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=285.8 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=285.0 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=284.3 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 101
+	}
+1 classicdabs layer=0x0102 x=283.3 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 69
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=291.0 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 29
+	-0.5 0.8 768 165 121
+	}
+1 classicdabs layer=0x0102 x=290.5 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=290.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=290.5 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=290.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=290.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=291.0 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 82
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=287.8 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 23
+	1.0 -0.3 768 165 123
+	}
+1 classicdabs layer=0x0102 x=289.8 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 classicdabs layer=0x0102 x=290.8 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=291.5 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=292.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=293.0 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=293.5 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=293.8 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=293.8 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=293.3 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=292.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=292.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=291.0 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=290.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 95
+	}
+1 classicdabs layer=0x0102 x=289.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 68
+	}
+1 classicdabs layer=0x0102 x=288.5 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 35
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=303.3 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 24
+	-0.3 -1.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=302.3 y=113.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=301.3 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=300.5 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=299.8 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	-0.8 0.8 768 165 160
+	}
+1 classicdabs layer=0x0102 x=298.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=297.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=297.5 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=297.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=297.5 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=298.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=298.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=299.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=300.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=301.5 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=302.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=301.8 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=301.3 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 106
+	}
+1 classicdabs layer=0x0102 x=300.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 76
+	}
+1 classicdabs layer=0x0102 x=299.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 39
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=307.5 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 10
+	-1.0 0.5 768 165 104
+	}
+1 classicdabs layer=0x0102 x=306.0 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 138
+	}
+1 classicdabs layer=0x0102 x=305.8 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=305.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=305.5 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=305.8 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=306.0 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=306.5 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=307.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=308.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=309.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=310.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=311.3 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=312.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=306.3 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 28
+	0.8 0.3 768 165 169
+	}
+1 classicdabs layer=0x0102 x=308.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=309.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=310.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=306.8 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 18
+	1.0 0.0 768 165 87
+	}
+1 classicdabs layer=0x0102 x=308.8 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=309.8 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=310.8 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 121
+	}
+1 classicdabs layer=0x0102 x=311.8 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 99
+	}
+1 classicdabs layer=0x0102 x=312.8 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 70
+	}
+1 penup
+0 interval msecs=6772
+1 undopoint
+
+1 classicdabs layer=0x0102 x=371.8 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	-0.8 0.8 768 165 111
+	}
+1 classicdabs layer=0x0102 x=371.0 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=371.0 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=371.3 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 classicdabs layer=0x0102 x=371.3 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=371.5 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 94
+	}
+1 classicdabs layer=0x0102 x=371.8 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 63
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=368.3 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 32
+	0.8 -0.3 768 165 113
+	}
+1 classicdabs layer=0x0102 x=370.0 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=371.0 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=372.0 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=373.0 y=113.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=374.0 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=374.8 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=375.5 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=376.0 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=376.3 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=376.3 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=375.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=375.3 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=374.5 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=373.5 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=372.5 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=371.8 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=370.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 65
+	}
+1 classicdabs layer=0x0102 x=370.0 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=375.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 34
+	0.8 -0.8 768 165 116
+	}
+1 classicdabs layer=0x0102 x=376.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=377.3 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=377.8 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=378.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=378.5 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=379.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	0.3 -0.8 768 165 165
+	}
+1 classicdabs layer=0x0102 x=379.8 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=380.5 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=381.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=381.8 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=382.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=382.3 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=382.5 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=383.0 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=383.3 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=383.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=376.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 40
+	1.0 -0.3 768 165 144
+	}
+1 classicdabs layer=0x0102 x=378.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=379.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=380.8 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=381.8 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 78
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=388.8 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 26
+	-0.3 1.0 768 165 88
+	0.0 1.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=388.3 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=388.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=388.5 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=388.5 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=388.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=385.0 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 28
+	-0.5 -0.8 768 165 110
+	}
+1 classicdabs layer=0x0102 x=385.3 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=386.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=387.0 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=388.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=389.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=390.0 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 138
+	}
+1 classicdabs layer=0x0102 x=390.5 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=390.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=390.5 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=390.5 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=391.0 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=391.5 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=392.3 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=393.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=393.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 98
+	}
+1 classicdabs layer=0x0102 x=394.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 74
+	}
+1 classicdabs layer=0x0102 x=395.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 40
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=397.8 y=112.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 25
+	-0.5 1.0 768 165 106
+	}
+1 classicdabs layer=0x0102 x=397.0 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=397.0 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=396.8 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=396.8 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=396.5 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=396.5 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=396.5 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=402.5 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 32
+	-0.8 -0.8 768 165 94
+	}
+1 classicdabs layer=0x0102 x=401.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=400.3 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=399.8 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=399.8 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=399.8 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=400.3 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=400.8 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 124
+	}
+1 classicdabs layer=0x0102 x=401.5 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=402.0 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 89
+	}
+1 classicdabs layer=0x0102 x=403.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 68
+	}
+1 classicdabs layer=0x0102 x=403.8 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 38
+	}
+1 penup
+0 interval msecs=565
+1 undopoint
+
+1 classicdabs layer=0x0102 x=407.8 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 18
+	-0.8 0.5 768 165 162
+	}
+1 classicdabs layer=0x0102 x=406.3 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=405.8 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 165
+	}
+1 classicdabs layer=0x0102 x=405.3 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=405.3 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=405.5 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=406.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=406.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=407.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=408.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=409.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=410.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 98
+	}
+1 classicdabs layer=0x0102 x=411.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 75
+	}
+1 classicdabs layer=0x0102 x=412.3 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 35
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=404.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 28
+	1.0 -0.3 768 165 170
+	}
+1 classicdabs layer=0x0102 x=406.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=407.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=408.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=409.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=405.5 y=115.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 22
+	1.0 -0.3 768 165 141
+	}
+1 classicdabs layer=0x0102 x=407.5 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=408.5 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=409.5 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=410.5 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 98
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=414.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 12
+	-0.3 -1.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=414.3 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=414.3 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=414.3 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=414.0 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=414.0 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=414.3 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=414.8 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=415.5 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=416.0 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=416.5 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	0.5 1.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=417.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=418.3 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=419.3 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=419.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=420.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 191
+	}
+1 classicdabs layer=0x0102 x=420.3 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 193
+	}
+1 classicdabs layer=0x0102 x=420.3 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 194
+	}
+1 classicdabs layer=0x0102 x=420.3 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 191
+	0.0 -1.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=420.3 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=420.3 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=420.3 y=112.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=420.3 y=111.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 109
+	}
+1 classicdabs layer=0x0102 x=420.3 y=110.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 84
+	}
+1 classicdabs layer=0x0102 x=420.3 y=109.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 45
+	}
+1 penup
+0 interval msecs=1192
+1 undopoint
+
+1 classicdabs layer=0x0102 x=438.8 y=111.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 23
+	-0.5 0.8 768 165 108
+	}
+1 classicdabs layer=0x0102 x=437.8 y=113.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=437.5 y=114.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=437.3 y=115.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=437.0 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=436.8 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=436.8 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=437.0 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=437.5 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=438.3 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=439.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=440.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=441.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 classicdabs layer=0x0102 x=442.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=445.8 y=113.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 29
+	-0.3 1.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=445.3 y=115.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=445.3 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=445.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=445.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=445.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=445.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=452.5 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 18
+	0.3 -1.0 768 165 116
+	}
+1 classicdabs layer=0x0102 x=452.0 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=451.0 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=450.5 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=449.8 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=449.3 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	}
+1 classicdabs layer=0x0102 x=449.0 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=448.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=448.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=449.3 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=450.0 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=450.8 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=451.8 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=452.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 137
+	}
+1 classicdabs layer=0x0102 x=452.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 138
+	}
+1 classicdabs layer=0x0102 x=452.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=457.3 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 22
+	0.0 -1.0 768 165 79
+	}
+1 classicdabs layer=0x0102 x=457.3 y=114.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 111
+	}
+1 classicdabs layer=0x0102 x=457.3 y=115.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=457.0 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=457.0 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=456.8 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=456.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=456.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=456.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	}
+1 classicdabs layer=0x0102 x=456.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 88
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=462.3 y=113.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 37
+	0.0 1.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=462.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=462.0 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=462.0 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=461.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=461.8 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=461.8 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 106
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=456.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 54
+	1.0 -0.5 768 165 147
+	}
+1 classicdabs layer=0x0102 x=458.3 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=467.0 y=114.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	-0.3 0.8 768 165 76
+	-0.5 1.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=466.3 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=466.0 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=466.0 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=466.0 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=466.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=463.5 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 14
+	0.8 -0.5 768 165 171
+	}
+1 classicdabs layer=0x0102 x=465.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=466.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=467.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=468.3 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=474.3 y=114.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 22
+	-0.8 0.5 768 165 137
+	}
+1 classicdabs layer=0x0102 x=473.0 y=116.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 146
+	}
+1 classicdabs layer=0x0102 x=472.5 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 151
+	}
+1 classicdabs layer=0x0102 x=472.0 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=471.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=471.5 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=471.8 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=472.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=472.8 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 179
+	}
+1 classicdabs layer=0x0102 x=473.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=474.5 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=475.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=476.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=477.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=478.5 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 87
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=472.3 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 35
+	1.0 -0.3 768 165 139
+	}
+1 classicdabs layer=0x0102 x=474.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 185
+	}
+1 classicdabs layer=0x0102 x=475.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=476.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=474.8 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 24
+	1.0 -0.3 768 165 133
+	}
+1 classicdabs layer=0x0102 x=476.8 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=477.8 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 120
+	}
+1 penup
+0 interval msecs=594
+1 undopoint
+
+1 classicdabs layer=0x0102 x=480.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 14
+	0.8 -0.8 768 165 140
+	}
+1 classicdabs layer=0x0102 x=481.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	}
+1 classicdabs layer=0x0102 x=481.8 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=481.8 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 186
+	}
+1 classicdabs layer=0x0102 x=482.0 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 186
+	}
+1 classicdabs layer=0x0102 x=482.5 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 186
+	}
+1 classicdabs layer=0x0102 x=483.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 183
+	}
+1 classicdabs layer=0x0102 x=483.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=484.3 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 179
+	}
+1 classicdabs layer=0x0102 x=484.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=485.5 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=486.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=487.0 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=487.3 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=487.5 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=487.8 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=487.8 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=487.8 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=487.8 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=487.5 y=115.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 penup
+0 interval msecs=4259
+1 undopoint
+
+1 classicdabs layer=0x0102 x=515.0 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 23
+	-1.0 -0.3 768 165 93
+	}
+1 classicdabs layer=0x0102 x=513.0 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=512.0 y=117.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=511.8 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=512.0 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=512.3 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 130
+	}
+1 classicdabs layer=0x0102 x=512.8 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 135
+	}
+1 classicdabs layer=0x0102 x=513.3 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=513.5 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=513.3 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=512.5 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=511.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=510.8 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=509.8 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=508.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 107
+	}
+1 classicdabs layer=0x0102 x=507.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 83
+	}
+1 classicdabs layer=0x0102 x=506.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 52
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=517.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 21
+	-1.0 0.3 768 165 118
+	}
+1 classicdabs layer=0x0102 x=516.5 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=516.5 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 138
+	}
+1 classicdabs layer=0x0102 x=516.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=517.3 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=518.0 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=518.8 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=519.8 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=520.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=520.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=521.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=521.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=521.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=520.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=523.5 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 20
+	0.0 1.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=523.5 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=523.5 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=523.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=524.0 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 154
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=520.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 34
+	0.8 -0.8 768 165 149
+	}
+1 classicdabs layer=0x0102 x=522.0 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=523.0 y=116.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=524.0 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=525.0 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=525.8 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=526.3 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=526.8 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=527.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=527.8 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=528.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=528.3 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=528.0 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=527.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=526.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 classicdabs layer=0x0102 x=525.3 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 94
+	}
+1 classicdabs layer=0x0102 x=524.3 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 59
+	}
+1 classicdabs layer=0x0102 x=523.8 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 11
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=532.0 y=115.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 13
+	-0.3 1.0 768 165 86
+	}
+1 classicdabs layer=0x0102 x=531.8 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 126
+	}
+1 classicdabs layer=0x0102 x=532.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=532.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=532.3 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 138
+	}
+1 classicdabs layer=0x0102 x=532.5 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 classicdabs layer=0x0102 x=532.5 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 103
+	}
+1 classicdabs layer=0x0102 x=532.8 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 55
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=527.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 22
+	1.0 0.0 768 165 96
+	1.0 0.3 768 165 170
+	}
+1 classicdabs layer=0x0102 x=530.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=531.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 153
+	}
+1 classicdabs layer=0x0102 x=532.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 129
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=538.0 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 27
+	-0.5 -0.8 768 165 97
+	}
+1 classicdabs layer=0x0102 x=537.0 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=536.8 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=536.5 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=536.3 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=536.3 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=536.5 y=118.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=536.8 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	}
+1 classicdabs layer=0x0102 x=537.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=538.5 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=539.5 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=540.5 y=116.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=541.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=541.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=540.3 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 160
+	}
+1 classicdabs layer=0x0102 x=539.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=539.3 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=539.5 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=540.3 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 122
+	}
+1 classicdabs layer=0x0102 x=541.0 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 108
+	}
+1 classicdabs layer=0x0102 x=541.8 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 91
+	}
+1 classicdabs layer=0x0102 x=542.8 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 64
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=546.5 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 21
+	0.5 -1.0 768 165 113
+	}
+1 classicdabs layer=0x0102 x=547.3 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=547.5 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=547.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 161
+	}
+1 classicdabs layer=0x0102 x=547.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 166
+	}
+1 classicdabs layer=0x0102 x=547.8 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=548.3 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=548.5 y=118.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 179
+	}
+1 classicdabs layer=0x0102 x=549.3 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=550.0 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	}
+1 classicdabs layer=0x0102 x=550.5 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=551.0 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 168
+	}
+1 classicdabs layer=0x0102 x=551.5 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 162
+	}
+1 classicdabs layer=0x0102 x=552.0 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=552.5 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=553.0 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 142
+	}
+1 classicdabs layer=0x0102 x=553.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=554.0 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=546.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 35
+	1.0 0.0 768 165 117
+	}
+1 classicdabs layer=0x0102 x=548.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 149
+	}
+1 classicdabs layer=0x0102 x=549.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 123
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=558.5 y=117.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 29
+	-1.0 0.3 768 165 114
+	}
+1 classicdabs layer=0x0102 x=556.8 y=117.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=556.3 y=118.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 164
+	}
+1 classicdabs layer=0x0102 x=556.0 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=556.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=556.3 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=556.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=557.3 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=558.0 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 classicdabs layer=0x0102 x=559.0 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 140
+	}
+1 classicdabs layer=0x0102 x=560.0 y=123.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=561.0 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 96
+	}
+1 classicdabs layer=0x0102 x=562.0 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 68
+	}
+1 classicdabs layer=0x0102 x=562.8 y=122.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 34
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=564.0 y=117.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 25
+	0.3 1.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=564.3 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=564.3 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=564.3 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 163
+	}
+1 classicdabs layer=0x0102 x=564.3 y=122.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 144
+	}
+1 classicdabs layer=0x0102 x=564.3 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 117
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=558.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 57
+	1.0 0.0 768 165 148
+	}
+1 classicdabs layer=0x0102 x=560.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 207
+	}
+1 classicdabs layer=0x0102 x=561.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 207
+	}
+1 classicdabs layer=0x0102 x=562.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 202
+	}
+1 classicdabs layer=0x0102 x=563.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=564.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 173
+	}
+1 classicdabs layer=0x0102 x=565.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 156
+	}
+1 classicdabs layer=0x0102 x=566.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 134
+	}
+1 classicdabs layer=0x0102 x=567.3 y=116.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 98
+	}
+1 penup
+0 interval msecs=909
+1 undopoint
+
+1 classicdabs layer=0x0102 x=590.5 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 30
+	0.3 -0.8 768 165 132
+	}
+1 classicdabs layer=0x0102 x=591.0 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 176
+	}
+1 classicdabs layer=0x0102 x=591.3 y=126.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=591.5 y=125.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 179
+	}
+1 classicdabs layer=0x0102 x=591.8 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	}
+1 classicdabs layer=0x0102 x=592.0 y=123.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	0.3 -1.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=592.8 y=121.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=593.0 y=120.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 180
+	}
+1 classicdabs layer=0x0102 x=593.3 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 178
+	}
+1 classicdabs layer=0x0102 x=593.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 174
+	}
+1 classicdabs layer=0x0102 x=594.5 y=119.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=595.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 167
+	}
+1 classicdabs layer=0x0102 x=595.3 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 165
+	}
+1 classicdabs layer=0x0102 x=595.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=595.8 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 152
+	0.0 1.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=596.0 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 138
+	}
+1 classicdabs layer=0x0102 x=596.3 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 132
+	}
+1 classicdabs layer=0x0102 x=596.5 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 125
+	}
+1 classicdabs layer=0x0102 x=596.8 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=597.0 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 101
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=590.5 y=124.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 29
+	1.0 0.3 768 165 98
+	}
+1 classicdabs layer=0x0102 x=592.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 128
+	}
+1 classicdabs layer=0x0102 x=593.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 114
+	}
+1 classicdabs layer=0x0102 x=594.5 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 85
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=600.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 23
+	0.0 1.0 768 165 110
+	}
+1 classicdabs layer=0x0102 x=600.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 133
+	}
+1 classicdabs layer=0x0102 x=600.8 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 139
+	}
+1 classicdabs layer=0x0102 x=600.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 143
+	}
+1 classicdabs layer=0x0102 x=600.8 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 147
+	}
+1 classicdabs layer=0x0102 x=600.8 y=125.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 145
+	}
+1 classicdabs layer=0x0102 x=600.8 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=600.8 y=127.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 127
+	}
+1 classicdabs layer=0x0102 x=601.0 y=128.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 112
+	}
+1 classicdabs layer=0x0102 x=601.0 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 89
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=598.3 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 1
+	0.8 -0.8 768 165 96
+	}
+1 classicdabs layer=0x0102 x=599.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=600.8 y=118.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=601.8 y=119.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=602.8 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=603.5 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=604.3 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=605.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=605.5 y=122.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=605.8 y=123.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=605.8 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	-0.3 1.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=605.3 y=126.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=604.5 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 170
+	}
+1 classicdabs layer=0x0102 x=604.0 y=127.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 165
+	}
+1 classicdabs layer=0x0102 x=603.3 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 158
+	}
+1 classicdabs layer=0x0102 x=602.3 y=128.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 150
+	}
+1 classicdabs layer=0x0102 x=601.5 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 141
+	}
+1 classicdabs layer=0x0102 x=600.5 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 131
+	}
+1 classicdabs layer=0x0102 x=599.5 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 119
+	}
+1 classicdabs layer=0x0102 x=598.5 y=129.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 101
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=609.8 y=119.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 17
+	-0.5 1.0 768 165 118
+	}
+1 classicdabs layer=0x0102 x=609.0 y=121.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 171
+	}
+1 classicdabs layer=0x0102 x=609.0 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 177
+	}
+1 classicdabs layer=0x0102 x=608.8 y=123.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 181
+	}
+1 classicdabs layer=0x0102 x=608.8 y=124.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 179
+	}
+1 classicdabs layer=0x0102 x=608.8 y=125.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 175
+	}
+1 classicdabs layer=0x0102 x=608.8 y=126.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 169
+	}
+1 classicdabs layer=0x0102 x=608.8 y=127.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 157
+	}
+1 penup
+1 undopoint
+
+1 classicdabs layer=0x0102 x=607.8 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 18
+	0.5 -1.0 768 165 159
+	}
+1 classicdabs layer=0x0102 x=609.3 y=119.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 182
+	}
+1 classicdabs layer=0x0102 x=610.3 y=120.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=611.3 y=120.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 185
+	}
+1 classicdabs layer=0x0102 x=612.0 y=120.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 186
+	}
+1 classicdabs layer=0x0102 x=613.0 y=121.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 187
+	}
+1 classicdabs layer=0x0102 x=613.8 y=121.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 188
+	}
+1 classicdabs layer=0x0102 x=614.5 y=122.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	0.8 0.8 768 165 189
+	}
+1 classicdabs layer=0x0102 x=615.5 y=124.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=615.8 y=124.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=615.8 y=125.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=615.3 y=126.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=614.8 y=127.8 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=614.0 y=128.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 190
+	}
+1 classicdabs layer=0x0102 x=613.3 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 189
+	}
+1 classicdabs layer=0x0102 x=612.5 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 184
+	}
+1 classicdabs layer=0x0102 x=611.5 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 172
+	}
+1 classicdabs layer=0x0102 x=610.5 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 155
+	}
+1 classicdabs layer=0x0102 x=609.5 y=129.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 136
+	}
+1 classicdabs layer=0x0102 x=608.5 y=129.3 color=#00000000 mode=1 {
+	0.0 0.0 768 165 115
+	}
+1 classicdabs layer=0x0102 x=607.5 y=129.0 color=#00000000 mode=1 {
+	0.0 0.0 768 165 90
+	}
+1 classicdabs layer=0x0102 x=606.5 y=128.5 color=#00000000 mode=1 {
+	0.0 0.0 768 165 56
+	}
+1 penup

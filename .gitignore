@@ -1,0 +1,10 @@
+/.cache/
+/.vscode/
+/compile_commands.json
+/build*/
+/test/tmp/
+/libcommon/dpcommon/conversions.h
+/libengine/dpengine/classic_lut.c
+/libengine/dpengine/classic_lut.h
+*_git/
+/server/drawdance-server-proxy
