@@ -31,6 +31,18 @@
 #include <string.h>   // IWYU pragma: export
 
 
+#if defined(__EMSCRIPTEN__)
+#    define DP_PLATFORM "emscripten"
+#elif defined(_WIN32)
+#    define DP_PLATFORM "windows"
+#elif defined(__APPLE__)
+#    define DP_PLATFORM "darwin"
+#elif defined(__linux__)
+#    define DP_PLATFORM "linux"
+#else
+#    error "unknown platform"
+#endif
+
 #ifdef __GNUC__
 #    define DP_TRAP()        __builtin_trap()
 #    define DP_UNUSED        __attribute__((__unused__))

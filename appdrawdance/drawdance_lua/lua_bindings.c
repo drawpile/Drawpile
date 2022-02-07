@@ -122,6 +122,12 @@ static int init_lua_libs(lua_State *L)
     return 0;
 }
 
+static int platform(lua_State *L)
+{
+    lua_pushliteral(L, DP_PLATFORM);
+    return 1;
+}
+
 static int open_url(lua_State *L)
 {
     const char *url = luaL_checkstring(L, 1);
@@ -219,6 +225,8 @@ static int init_app_funcs(lua_State *L)
     lua_pushglobaltable(L);
     luaL_getsubtable(L, -1, "DP");
 
+    lua_pushcfunction(L, platform);
+    lua_setfield(L, -2, "platform");
     lua_pushcfunction(L, open_url);
     lua_setfield(L, -2, "open_url");
     lua_pushcfunction(L, slurp);
