@@ -32,6 +32,12 @@
 #include <lua.h>
 #include <lualib.h>
 
+#ifdef __EMSCRIPTEN__
+#    include <emscripten.h>
+#    include <emscripten/threading.h>
+#endif
+
+
 typedef struct DP_Document DP_Document;
 
 int ImGuiLua_InitImGui(lua_State *L);
@@ -45,6 +51,9 @@ int ImGuiLua_NewImVec2(lua_State *L);
 #endif
 
 #define CLIENT_EVENT_MESSAGE (-1)
+#ifdef __EMSCRIPTEN__
+#    define BROWSER_EVENTS (-2)
+#endif
 
 
 typedef struct DP_LuaAppState {
@@ -62,13 +71,116 @@ typedef struct DP_LuaClientEvent {
 static void lua_client_event_dispose(void *element)
 {
     DP_LuaClientEvent *lce = element;
-    if (lce->type != CLIENT_EVENT_MESSAGE) {
+    switch (lce->type) {
+    case CLIENT_EVENT_MESSAGE:
+        if (lce->data) { // Moving to Lua sets this to null.
+            DP_message_decref(lce->data);
+        }
+        break;
+#ifdef __EMSCRIPTEN__
+    case BROWSER_EVENTS:
+        free(lce->data);
+        break;
+#endif
+    default:
         DP_free(lce->data);
-    }
-    else if (lce->data) { // Moving to Lua sets this to null.
-        DP_message_decref(lce->data);
+        break;
     }
 }
+
+static void push_client_event(DP_LuaAppState *state, int client_id, int type,
+                              void *data)
+{
+    DP_ASSERT(state);
+    DP_Mutex *mutex_client_event_queue = state->mutex_client_event_queue;
+    DP_MUTEX_MUST_LOCK(mutex_client_event_queue);
+    DP_LuaClientEvent *lce =
+        DP_queue_push(&state->client_event_queue, sizeof(DP_LuaClientEvent));
+    *lce = (DP_LuaClientEvent){client_id, type, data};
+    DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
+}
+
+void DP_lua_app_state_client_event_push(DP_LuaAppState *state, int client_id,
+                                        DP_ClientEventType type,
+                                        const char *message_or_null)
+{
+    push_client_event(state, client_id, (int)type, DP_strdup(message_or_null));
+}
+
+void DP_lua_app_state_client_message_push(DP_LuaAppState *state, int client_id,
+                                          DP_Message *msg)
+{
+    push_client_event(state, client_id, CLIENT_EVENT_MESSAGE,
+                      DP_message_incref(msg));
+}
+
+void DP_lua_message_push_noinc(lua_State *L, DP_Message *msg);
+
+static int publish_client_events(lua_State *L)
+{
+    DP_ASSERT(lua_gettop(L) == 2);
+    DP_ASSERT(lua_type(L, 2) == LUA_TTABLE); // The Lua App instance.
+    DP_Queue *client_event_queue = lua_touserdata(L, 1);
+    lua_getfield(L, 2, "publish"); // Grab the method, we'll need it.
+    DP_LuaClientEvent *lce;
+    while ((lce = DP_queue_peek(client_event_queue, sizeof(*lce)))) {
+        int type = lce->type;
+        if (type == CLIENT_EVENT_MESSAGE) {
+            lua_pushvalue(L, 3); // The publish method.
+            lua_pushvalue(L, 2); // The Lua App instance (self).
+            lua_pushliteral(L, "CLIENT_MESSAGE");
+            lua_createtable(L, 0, 2);
+            lua_pushinteger(L, lce->client_id);
+            lua_setfield(L, -2, "client_id");
+            // Steal the reference to avoid messing with the refcount.
+            DP_lua_message_push_noinc(L, lce->data);
+            lce->data = NULL; // Stolen.
+            lua_setfield(L, -2, "message");
+            lua_call(L, 3, 0);
+        }
+#ifdef __EMSCRIPTEN__
+        else if (type == BROWSER_EVENTS) {
+            lua_getfield(L, 2, "publish_browser_events");
+            lua_pushvalue(L, 2); // The Lua App instance (self).
+            lua_pushstring(L, lce->data);
+            lua_call(L, 2, 0);
+        }
+#endif
+        else {
+            lua_pushvalue(L, 3); // The publish method.
+            lua_pushvalue(L, 2); // The Lua App instance (self).
+            lua_pushliteral(L, "CLIENT_EVENT");
+            lua_createtable(L, 0, 3);
+            lua_pushinteger(L, lce->client_id);
+            lua_setfield(L, -2, "client_id");
+            lua_pushinteger(L, type);
+            lua_setfield(L, -2, "type");
+            lua_pushstring(L, lce->data);
+            lua_setfield(L, -2, "message");
+            lua_call(L, 3, 0);
+        }
+        lua_client_event_dispose(lce);
+        DP_queue_shift(client_event_queue);
+    }
+    return 0;
+}
+
+static void move_client_events_to_lua(lua_State *L, int ref)
+{
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    DP_Mutex *mutex_client_event_queue = state->mutex_client_event_queue;
+    lua_pushcfunction(L, publish_client_events);
+    lua_pushlightuserdata(L, &state->client_event_queue);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+    DP_MUTEX_MUST_LOCK(mutex_client_event_queue);
+    int result = lua_pcall(L, 2, 0, 0);
+    DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
+    if (result != LUA_OK) {
+        DP_warn("Error publishing client events: %s", lua_tostring(L, -1));
+        lua_pop(L, 1);
+    }
+}
+
 
 static int lua_app_state_gc(lua_State *L)
 {
@@ -154,6 +266,47 @@ static int slurp(lua_State *L)
     }
 }
 
+#ifdef __EMSCRIPTEN__
+EM_JS(void, dispatch_custom_event, (lua_State * L, const char *payload), {
+    try {
+        window.dispatchEvent(new CustomEvent("dpevents", {
+            detail : {
+                handle : L,
+                payload : UTF8ToString(payload),
+            },
+        }));
+    }
+    catch (e) {
+        console.error("Error dispatching dpevents: " + e);
+    }
+})
+
+static void send_to_browser_in_main_thread(lua_State *L, char *payload)
+{
+    dispatch_custom_event(L, payload);
+    DP_free(payload);
+}
+
+static int send_to_browser(lua_State *L)
+{
+    size_t length;
+    const char *events = luaL_checklstring(L, 1, &length);
+    char *payload = DP_malloc(length + 1);
+    memcpy(payload, events, length);
+    payload[length] = '\0';
+    emscripten_async_run_in_main_runtime_thread(
+        EM_FUNC_SIG_VII, send_to_browser_in_main_thread, L, payload);
+    return 0;
+}
+
+// Exported function called from JavaScript.
+void DP_send_from_browser(lua_State *L, char *payload)
+{
+    DP_LuaAppState *state = DP_lua_app_state(L);
+    push_client_event(state, 0, BROWSER_EVENTS, payload);
+}
+#endif
+
 static int app_quit(DP_UNUSED lua_State *L)
 {
     SDL_Event event;
@@ -231,6 +384,10 @@ static int init_app_funcs(lua_State *L)
     lua_setfield(L, -2, "open_url");
     lua_pushcfunction(L, slurp);
     lua_setfield(L, -2, "slurp");
+#ifdef __EMSCRIPTEN__
+    lua_pushcfunction(L, send_to_browser);
+    lua_setfield(L, -2, "send_to_browser");
+#endif
 
     luaL_getsubtable(L, -1, "App");
     lua_pushcfunction(L, app_quit);
@@ -470,87 +627,6 @@ DP_LuaAppState *DP_lua_app_state(lua_State *L)
 DP_App *DP_lua_app(lua_State *L)
 {
     return DP_lua_app_state(L)->app;
-}
-
-
-static void push_client_event(DP_LuaAppState *state, int client_id, int type,
-                              void *data)
-{
-    DP_ASSERT(state);
-    DP_Mutex *mutex_client_event_queue = state->mutex_client_event_queue;
-    DP_MUTEX_MUST_LOCK(mutex_client_event_queue);
-    DP_LuaClientEvent *lce =
-        DP_queue_push(&state->client_event_queue, sizeof(DP_LuaClientEvent));
-    *lce = (DP_LuaClientEvent){client_id, type, data};
-    DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
-}
-
-void DP_lua_app_state_client_event_push(DP_LuaAppState *state, int client_id,
-                                        DP_ClientEventType type,
-                                        const char *message_or_null)
-{
-    push_client_event(state, client_id, (int)type, DP_strdup(message_or_null));
-}
-
-void DP_lua_app_state_client_message_push(DP_LuaAppState *state, int client_id,
-                                          DP_Message *msg)
-{
-    push_client_event(state, client_id, CLIENT_EVENT_MESSAGE,
-                      DP_message_incref(msg));
-}
-
-void DP_lua_message_push_noinc(lua_State *L, DP_Message *msg);
-
-static int publish_client_events(lua_State *L)
-{
-    DP_Queue *client_event_queue = lua_touserdata(L, 1);
-    lua_getfield(L, -1, "publish");
-    DP_LuaClientEvent *lce;
-    while ((lce = DP_queue_peek(client_event_queue, sizeof(*lce)))) {
-        int type = lce->type;
-        lua_pushvalue(L, -1);
-        lua_pushvalue(L, 2);
-        if (type == CLIENT_EVENT_MESSAGE) {
-            lua_pushliteral(L, "CLIENT_MESSAGE");
-            lua_createtable(L, 0, 2);
-            lua_pushinteger(L, lce->client_id);
-            lua_setfield(L, -2, "client_id");
-            // Steal the reference to avoid messing with the refcount.
-            DP_lua_message_push_noinc(L, lce->data);
-            lce->data = NULL; // Stolen.
-            lua_setfield(L, -2, "message");
-        }
-        else {
-            lua_pushliteral(L, "CLIENT_EVENT");
-            lua_createtable(L, 0, 3);
-            lua_pushinteger(L, lce->client_id);
-            lua_setfield(L, -2, "client_id");
-            lua_pushinteger(L, type);
-            lua_setfield(L, -2, "type");
-            lua_pushstring(L, lce->data);
-            lua_setfield(L, -2, "message");
-        }
-        lua_call(L, 3, 0);
-        lua_client_event_dispose(lce);
-        DP_queue_shift(client_event_queue);
-    }
-    return 0;
-}
-
-static void move_client_events_to_lua(lua_State *L, int ref)
-{
-    DP_LuaAppState *state = DP_lua_app_state(L);
-    DP_Mutex *mutex_client_event_queue = state->mutex_client_event_queue;
-    lua_pushcfunction(L, publish_client_events);
-    lua_pushlightuserdata(L, &state->client_event_queue);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-    DP_MUTEX_MUST_LOCK(mutex_client_event_queue);
-    int result = lua_pcall(L, 2, 0, 0);
-    DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
-    if (result != LUA_OK) {
-        DP_warn("Error publishing client events: %s", lua_tostring(L, -1));
-        lua_pop(L, 1);
-    }
 }
 
 

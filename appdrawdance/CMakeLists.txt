@@ -81,5 +81,6 @@ target_link_libraries(drawdance PUBLIC drawdance_lua drawdance_gui
 
 if(DRAWDANCE_EMSCRIPTEN)
     target_link_options(drawdance PRIVATE
+        "SHELL:-s EXPORTED_FUNCTIONS=_main,_DP_send_from_browser"
         "SHELL:--preload-file '${CMAKE_SOURCE_DIR}/appdrawdance/lua@appdrawdance/lua'")
 endif()

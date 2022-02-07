@@ -23,6 +23,8 @@ local LoginHandler <const> = require("session.login_handler")
 local StateHandler <const> = require("session.state_handler")
 local View <const> = require("view")
 
+local IS_EMSCRIPTEN <const> = DP.platform() == "emscripten"
+
 local App <const> = require("class")("App")
 
 function App:init()
@@ -34,10 +36,21 @@ function App:init()
     self._reload_gui = false
     self:subscribe_method(EventTypes.REQUEST_APP_QUIT, self)
     self:subscribe_method(EventTypes.REQUEST_GUI_RELOAD, self)
+    if IS_EMSCRIPTEN then
+        local BrowserEvents <const> = require("event.browser_events")
+        self._browser_events = BrowserEvents:new(self)
+        DP.send_to_browser("[[\"DP_APP_INIT\"]]")
+    end
 end
 
 function App:publish(type, data)
     return self._event_bus:publish(type, data)
+end
+
+if IS_EMSCRIPTEN then
+    function App:publish_browser_events(payload)
+        self._browser_events:publish_browser_events(self, payload)
+    end
 end
 
 function App:subscribe(type, handler)
@@ -59,6 +72,9 @@ end
 
 function App:handle_events()
     self._event_bus:handle_events()
+    if self._browser_events then
+        self._browser_events:send_to_browser()
+    end
     local state = self:get_current_state()
     if state then
         self._view:handle_inputs(state.view_state)
@@ -90,6 +106,9 @@ function App:prepare_gui()
 end
 
 function App:dispose()
+    if IS_EMSCRIPTEN then
+        DP.send_to_browser("[[\"DP_APP_DISPOSE\"]]")
+    end
     self._main_window:dispose()
 end
 
