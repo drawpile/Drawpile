@@ -341,6 +341,10 @@ function LoginHandler:_select_room(session, event)
         if room.password and not session.mod then
             self._app:publish(EventTypes.LOGIN_REQUIRE_ROOM_PASSWORD, {
                 client_id = session.client_id,
+                id = room.id,
+                alias = room.alias,
+                title = room.title,
+                founder = room.founder,
             })
         else
             self:_join_room(session, {})

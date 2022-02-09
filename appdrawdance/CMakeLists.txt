@@ -93,6 +93,7 @@ endif()
 if(DRAWDANCE_EMSCRIPTEN)
     target_link_options(drawdance PRIVATE
         "SHELL:-s EXPORTED_FUNCTIONS=_main,_DP_send_from_browser"
+        "SHELL:-s EXPORTED_RUNTIME_METHODS=ALLOC_NORMAL,allocate,intArrayFromString"
         "SHELL:--preload-file '${CMAKE_SOURCE_DIR}/appdrawdance/lua@appdrawdance/lua'")
 else()
     target_compile_definitions(drawdance PRIVATE DRAWDANCE_IMGUI)

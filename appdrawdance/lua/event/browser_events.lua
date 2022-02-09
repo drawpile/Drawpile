@@ -22,15 +22,33 @@ local Json <const> = require("3rdparty.json.json")
 
 local BrowserEvents <const> = require("class")("BrowserEvents")
 
+function BrowserEvents:_ignore(app, type)
+    -- Don't send this kind of event to the browser.
+end
+
+function BrowserEvents:_subscribe_session_create(app, type)
+    app:subscribe(type, function (event)
+        -- Don't include the client, it can't be turned into JSON.
+        table.insert(self._events, {type, {
+            client_id = event.client_id,
+            server_flags = event.server_flags,
+            user_flags = event.user_flags,
+            room_flags = event.room_flags,
+        }})
+    end)
+end
+
 function BrowserEvents:init(app)
     self._events = {}
-    -- Some messages contain userdata, so they don't go to the browser.
-    local excluded_event_types = {
-        [EventTypes.CLIENT_MESSAGE] = true,
-        [EventTypes.SESSION_CREATE] = true,
+    local special_handlers = {
+        [EventTypes.CLIENT_MESSAGE] = "_ignore",
+        [EventTypes.SESSION_CREATE] = "_subscribe_session_create",
     }
     for _, type in ipairs(EventTypes.types) do
-        if not excluded_event_types[type] then
+        local handler = special_handlers[type]
+        if handler then
+            self[handler](self, app, type)
+        else
             app:subscribe(type, function (event)
                 table.insert(self._events, {type, event})
             end)

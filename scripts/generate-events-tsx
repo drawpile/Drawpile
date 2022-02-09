@@ -1,0 +1,72 @@
+#!/usr/bin/env perl
+# Copyright (c) 2022 askmeaboutloom
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+use 5.020;
+use warnings;
+use experimental qw(signatures);
+use File::Basename qw(dirname);
+use FindBin;
+
+
+sub generate_lua_events ($out, $path) {
+    my @events;
+    open my $fh, '<:encoding(UTF-8)', "$path" or die "Can't open '$path': $!";
+    while (<$fh>) {
+        if (/^EventTypes\.types\s*=/ .. /\}/) {
+            push @events, $2 if /^\s*(["'])(\w+)\1/;
+        }
+    }
+    close $fh or die "Can't close '$path': $!";
+    print {$out} "export type DrawdanceEventType = ";
+    print {$out} join("\n                               | ", map { "'$_'" } @events);
+    print {$out} ";\n";
+    print {$out} "\n";
+}
+
+sub generate_client_events ($out, $path) {
+    my @events;
+    open my $fh, '<:encoding(UTF-8)', "$path" or die "Can't open '$path': $!";
+    while (<$fh>) {
+        if (/enum\s+DP_ClientEventType\b/ .. /\}/) {
+            push @events, $1 if /\A\s+DP_CLIENT_EVENT_(\w+)\s*,?\s*\z/;
+        }
+    }
+    close $fh or die "Can't close '$path': $!";
+    print {$out} "export enum DrawdanceClientEvent {\n";
+    print {$out} "  $_,\n" for @events;
+    print {$out} "}\n";
+    print {$out} "\n";
+}
+
+
+chdir dirname($FindBin::Bin) or die "Can't chdir: $!";
+
+my $out_path = 'appdrawdance/drawdance_web/src/DrawdanceEvents.tsx';
+open my $out, '>:encoding(UTF-8)', $out_path or die "Can't open '$out_path': $!";
+
+print {$out} "// This is an auto-generated file, don't edit it directly.\n";
+print {$out} "// Look for the generator in scripts/generate-events-tsx.\n";
+print {$out} "\n";
+
+generate_lua_events($out, 'appdrawdance/lua/event/types.lua');
+generate_client_events($out, 'libclient/dpclient/client.h');
+print {$out} "export type DrawdanceEvent = [DrawdanceEventType] | [DrawdanceEventType, any];\n";
+
+close $out or die "Can't close '$out_path': $!";

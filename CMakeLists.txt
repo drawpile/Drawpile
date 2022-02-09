@@ -63,10 +63,13 @@ function(set_dp_target_properties target)
         target_link_options("${target}" PRIVATE
                             "-pthread" "SHELL:-s PROXY_TO_PTHREAD"
                             "SHELL:-s ALLOW_BLOCKING_ON_MAIN_THREAD=0"
-                            "SHELL:-s ALLOW_MEMORY_GROWTH=1" "SHELL:-s FETCH=1")
+                            "SHELL:-s ALLOW_MEMORY_GROWTH=1" "SHELL:-s FETCH=1"
+                            "SHELL:-s MODULARIZE=1"
+                            "SHELL:-s EXPORT_NAME=createModule"
+                            "SHELL:-s DYNAMIC_EXECUTION=0")
         get_target_property(target_type "${target}" TYPE)
         if("${target_type}" STREQUAL "EXECUTABLE")
-            set_property(TARGET "${target}" PROPERTY SUFFIX ".html")
+            set_property(TARGET "${target}" PROPERTY SUFFIX ".js")
         endif()
     endif()
 

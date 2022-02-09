@@ -28,8 +28,8 @@ use FindBin;
 sub want_file {
     my ($path) = @_;
     return -f $path
-        && $path !~ m{[/\\](?:build\w*|\w+_git|imgui|emsdl2)[/\\]}
-        && $path =~ /(?:\.(?:c|cpp|h|pl|lua|cmake|go)|CMakeLists\.txt)\z/;
+        && $path !~ m{[/\\](?:build\w*|\w+_git|imgui|emsdl2|node_modules)[/\\]}
+        && $path =~ /(?:\.(?:c|cpp|h|pl|lua|cmake|go|css|tsx?)|CMakeLists\.txt)\z/;
 }
 
 sub is_missing_copyright {

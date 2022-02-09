@@ -132,6 +132,37 @@ sub write_lua($licenses, $texts, $json, $path) {
     close $fh or die "Can't close '$path': $!";
 }
 
+sub write_ts_license($license, $json, $fh) {
+    print {$fh} "  {\n";
+    print {$fh} '    ident: ', $json->encode($license->{ident}), ",\n";
+    print {$fh} '    name: ', $json->encode($license->{name}), ",\n";
+    print {$fh} "    text: license$license->{text_id},\n";
+    print {$fh} '    url: ', $json->encode($license->{url}), ",\n";
+    print {$fh} "  },\n",
+}
+
+sub write_ts($licenses, $texts, $json, $path) {
+    open my $fh, '>', $path or die "Can't open '$path': $!";
+    print {$fh} "// This is an auto-generated file with the contents of the licenses modal.\n";
+    print {$fh} "// Don't edit it directly, look for the generator in scripts/package-licenses.\n\n";
+    for my $t (sort { $a->{id} <=> $b->{id} } values %$texts) {
+        print {$fh} 'const license', $t->{id}, ': string = ', $json->encode($t->{text}), ";\n\n";
+    }
+    print {$fh} "export interface License {\n";
+    print {$fh} "  ident: string;\n";
+    print {$fh} "  name: string;\n";
+    print {$fh} "  text: string;\n";
+    print {$fh} "  url: string;\n";
+    print {$fh} "}\n\n";
+
+    print {$fh} "export const DRAWDANCE_LICENSES: readonly License[] = Object.freeze([\n";
+    for my $license (@$licenses) {
+        write_ts_license($license, $json, $fh);
+    }
+    print {$fh} "]);\n";
+    close $fh or die "Can't close '$path': $!";
+}
+
 chdir "$FindBin::Bin/.." or die "Can't chdir: $!";
 
 my @licenses = sort {
@@ -147,3 +178,4 @@ my %texts = assemble_texts(\@licenses);
 
 my $json = JSON::PP->new->canonical->utf8;
 write_lua(\@licenses, \%texts, $json, 'appdrawdance/lua/licenses.lua');
+write_ts(\@licenses, \%texts, $json, 'appdrawdance/drawdance_web/src/sidebar/Licenses.ts');
