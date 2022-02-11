@@ -60,6 +60,7 @@ end
 function StateHandler:on_session_create(event)
     local state = self:_get_state(event.client_id)
     state:attach_client(event.client)
+    self:_show_session(event.client_id)
 end
 
 function StateHandler:on_request_session_leave(event)

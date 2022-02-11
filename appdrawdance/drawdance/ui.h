@@ -19,50 +19,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef DRAWDANCE_LUA_BINDINGS_H
-#define DRAWDANCE_LUA_BINDINGS_H
-#include <dpclient/client.h>
+#ifndef DRAWDANCE_UI_H
+#define DRAWDANCE_UI_H
 #include <dpcommon/common.h>
-#include <lua.h>
+#include <SDL.h>
+#include <SDL_mouse.h>
 
-typedef struct DP_App DP_App;
-typedef struct DP_Message DP_Message;
+#define DP_UI_MOUSE_BUTTON_MIN SDL_BUTTON_LEFT
+#define DP_UI_MOUSE_BUTTON_MAX SDL_BUTTON_X2
+#define DP_UI_MOUSE_BUTTON_COUNT \
+    (DP_UI_MOUSE_BUTTON_MAX - DP_UI_MOUSE_BUTTON_MIN + 1)
 
-typedef struct DP_LuaWarnBuffer {
-    size_t capacity;
-    size_t used;
-    char *buffer;
-} DP_LuaWarnBuffer;
-
-typedef struct DP_LuaAppState DP_LuaAppState;
-
-
-bool DP_lua_bindings_init(lua_State *L, DP_App *app, DP_LuaWarnBuffer *wb);
+#define DP_UI_HELD     (1 << 1)
+#define DP_UI_PRESSED  (1 << 2)
+#define DP_UI_RELEASED (1 << 3)
 
 
-DP_LuaAppState *DP_lua_app_state(lua_State *L);
+typedef struct DP_UserInputs {
+    unsigned long long frequency;
+    unsigned long long last_frame_time;
+    double delta_time;
+    int mouse_delta_x, mouse_delta_y;
+    int mouse_wheel_x, mouse_wheel_y;
+    SDL_SystemCursor next_cursor_id;
+    SDL_Cursor *cursors[SDL_NUM_SYSTEM_CURSORS];
+    uint8_t scan_codes[SDL_NUM_SCANCODES];
+    uint8_t mouse_buttons[DP_UI_MOUSE_BUTTON_COUNT];
+} DP_UserInputs;
 
-DP_App *DP_lua_app(lua_State *L);
+void DP_user_inputs_init(DP_UserInputs *inputs);
 
-void DP_lua_app_state_client_event_push(DP_LuaAppState *state, int client_id,
-                                        DP_ClientEventType type,
-                                        const char *message_or_null);
+void DP_user_inputs_dispose(DP_UserInputs *inputs);
 
-void DP_lua_app_state_client_message_push(DP_LuaAppState *state, int client_id,
-                                          DP_Message *msg);
+void DP_user_inputs_next_frame(DP_UserInputs *inputs);
 
+void DP_user_inputs_handle(DP_UserInputs *inputs, SDL_Event *event);
 
-int DP_lua_app_new(lua_State *L);
+void DP_user_inputs_cursor_set(DP_UserInputs *inputs, SDL_SystemCursor id);
 
-void DP_lua_app_free(lua_State *L, int ref);
+void DP_user_inputs_render(DP_UserInputs *inputs);
 
-void DP_lua_app_handle_events(lua_State *L, int ref);
-
-#ifdef DRAWDANCE_IMGUI
-void DP_lua_app_prepare_gui(lua_State *L, int ref);
-#endif
-
-
-void DP_lua_warn_buffer_dispose(DP_LuaWarnBuffer *wb);
 
 #endif

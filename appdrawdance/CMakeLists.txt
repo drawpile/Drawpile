@@ -45,7 +45,8 @@ set(drawdance_lua_sources
     drawdance_lua/client.c
     drawdance_lua/document.c
     drawdance_lua/lua_bindings.c
-    drawdance_lua/message.c)
+    drawdance_lua/message.c
+    drawdance_lua/ui.c)
 
 set(drawdance_lua_headers
     drawdance_lua/lua_bindings.h
@@ -57,30 +58,39 @@ add_library(drawdance_lua STATIC "${drawdance_lua_sources}"
                                  "${drawdance_lua_headers}")
 set_dp_target_properties(drawdance_lua)
 target_include_directories(drawdance_lua INTERFACE drawdance_lua)
-target_link_libraries(drawdance_lua PUBLIC drawdance_lua_cxx dpclient)
+target_link_libraries(drawdance_lua PUBLIC dpclient lua)
+
+if(NOT DRAWDANCE_EMSCRIPTEN)
+    target_compile_definitions(drawdance_lua PRIVATE DRAWDANCE_IMGUI)
+    target_link_libraries(drawdance_lua PUBLIC drawdance_lua_cxx)
+endif()
 
 
 set(drawdance_sources
     drawdance/app.c
     drawdance/canvas_renderer.c
     drawdance/gl.c
-    drawdance/main.c)
+    drawdance/main.c
+    drawdance/ui.c)
 
 set(drawdance_headers
     drawdance/app.h
     drawdance/canvas_renderer.h
     drawdance/emproxy.h
-    drawdance/gl.h)
+    drawdance/gl.h
+    drawdance/ui.h)
 
 add_clang_format_files("${drawdance_sources}" "${drawdance_headers}")
 
 add_executable(drawdance "${drawdance_sources}" "${drawdance_headers}")
 set_dp_target_properties(drawdance)
-target_link_libraries(drawdance PUBLIC drawdance_lua drawdance_gui
-                                       dpclient dpengine)
+target_link_libraries(drawdance PUBLIC drawdance_lua dpclient dpengine dpgles2)
 
 if(DRAWDANCE_EMSCRIPTEN)
     target_link_options(drawdance PRIVATE
         "SHELL:-s EXPORTED_FUNCTIONS=_main,_DP_send_from_browser"
         "SHELL:--preload-file '${CMAKE_SOURCE_DIR}/appdrawdance/lua@appdrawdance/lua'")
+else()
+    target_compile_definitions(drawdance PRIVATE DRAWDANCE_IMGUI)
+    target_link_libraries(drawdance PUBLIC drawdance_gui)
 endif()

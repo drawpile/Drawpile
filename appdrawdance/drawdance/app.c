@@ -24,6 +24,7 @@
 #include "dpclient/client.h"
 #include "emproxy.h"
 #include "gl.h"
+#include "ui.h"
 #include <dpclient/document.h>
 #include <dpcommon/common.h>
 #include <dpcommon/input.h>
@@ -36,11 +37,14 @@
 #include <dpmsg/message.h>
 #include <dpmsg/messages/command.h>
 #include <SDL.h>
-#include <gui.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lua_bindings.h>
 #include <lualib.h>
+
+#ifdef DRAWDANCE_IMGUI
+#    include <gui.h>
+#endif
 
 #ifdef __EMSCRIPTEN__
 #    include <emscripten.h>
@@ -64,13 +68,14 @@ typedef struct DP_App {
     DP_LuaWarnBuffer lua_warn_buffer;
     lua_State *L;
     int lua_app_ref;
-#ifndef __EMSCRIPTEN__
+#if defined(DRAWDANCE_IMGUI) && !defined(__EMSCRIPTEN__)
     // Don't parallelize this in the browser, it's way slower than in serial.
     DP_Semaphore *sem_gui_prepare;
     DP_Semaphore *sem_gui_render;
     DP_Thread *thread_gui;
 #endif
     DP_Worker *worker;
+    DP_UserInputs inputs;
 } DP_App;
 
 
@@ -114,12 +119,7 @@ static bool init_lua(DP_App *app)
 }
 
 
-#ifdef __EMSCRIPTEN__
-static bool init_gui_thread(DP_UNUSED DP_App *app)
-{
-    return true; // no separate GUI thread on Emscripten
-}
-#else
+#if defined(DRAWDANCE_IMGUI) && !defined(__EMSCRIPTEN__)
 static void run_gui_thread(void *arg)
 {
     DP_App *app = arg;
@@ -145,6 +145,11 @@ static bool init_gui_thread(DP_App *app)
         && (app->sem_gui_render = DP_semaphore_new(0))
         && (app->thread_gui = DP_thread_new(run_gui_thread, app));
 }
+#else
+static bool init_gui_thread(DP_UNUSED DP_App *app)
+{
+    return true; // ImGui disabled or not in a separate thread.
+}
 #endif
 
 static bool init_worker(DP_App *app)
@@ -155,9 +160,13 @@ static bool init_worker(DP_App *app)
 
 static int handle_events(DP_App *app)
 {
+    DP_user_inputs_next_frame(&app->inputs);
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        DP_user_inputs_handle(&app->inputs, &event);
+#ifdef DRAWDANCE_IMGUI
         DP_imgui_handle_event(&event);
+#endif
         if (event.type == SDL_QUIT) {
             DP_debug("Ate SDL_QUIT event, exiting");
             return HANDLE_EVENTS_QUIT;
@@ -167,6 +176,7 @@ static int handle_events(DP_App *app)
     return HANDLE_EVENTS_KEEP_RUNNING;
 }
 
+#ifdef DRAWDANCE_IMGUI
 void new_imgui_frame_gl(void)
 {
     DP_imgui_new_frame_gl();
@@ -177,12 +187,13 @@ static void prepare_gui(DP_App *app)
 {
     DP_EMPROXY_V(new_imgui_frame_gl);
     DP_imgui_new_frame();
-#ifdef __EMSCRIPTEN__
+#    ifdef __EMSCRIPTEN__
     DP_lua_app_prepare_gui(app->L, app->lua_app_ref);
-#else
+#    else
     DP_SEMAPHORE_MUST_POST(app->sem_gui_prepare);
-#endif
+#    endif
 }
+#endif
 
 static DP_CanvasDiff *prepare_canvas(DP_App *app)
 {
@@ -220,24 +231,31 @@ static void render_canvas(DP_App *app, DP_CanvasDiff *diff_or_null)
                               view_width, view_height, diff_or_null);
 }
 
+#ifdef DRAWDANCE_IMGUI
 static void render_gui(DP_App *app)
 {
     DP_imgui_render(app->window, app->gl_context);
     DP_GL_CLEAR_ERROR();
 }
+#endif
 
 
 DP_App *DP_app_new(SDL_Window *window, SDL_GLContext gl_context)
 {
     DP_App *app = DP_malloc(sizeof(*app));
-    *app = (DP_App){
-        true, window, gl_context, NULL,         NULL, NULL,      NULL,
-        NULL, NULL,   NULL,       {0, 0, NULL}, NULL, LUA_NOREF,
-#ifndef __EMSCRIPTEN__
-        NULL, NULL,   NULL,
+    *app = (DP_App)
+    {
+        true, window, gl_context, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+            {0, 0, NULL}, NULL, LUA_NOREF,
+#if defined(DRAWDANCE_IMGUI) && !defined(__EMSCRIPTEN__)
+            NULL, NULL, NULL,
 #endif
-        NULL,
+            NULL,
+        {
+            0
+        }
     };
+    DP_user_inputs_init(&app->inputs);
 
     bool ok = init_canvas_renderer(app) //
            && init_lua(app)             //
@@ -260,7 +278,7 @@ void DP_app_free(DP_App *app)
         DP_Worker *worker = app->worker;
         app->worker = NULL;
         DP_worker_free(worker);
-#ifndef __EMSCRIPTEN__
+#if defined(DRAWDANCE_IMGUI) && !defined(__EMSCRIPTEN__)
         if (app->thread_gui) {
             DP_SEMAPHORE_MUST_POST(app->sem_gui_prepare);
             DP_thread_free_join(app->thread_gui);
@@ -284,6 +302,7 @@ void DP_app_free(DP_App *app)
         if (app->blank_state) {
             DP_canvas_state_decref(app->blank_state);
         }
+        DP_user_inputs_dispose(&app->inputs);
         DP_free(app);
     }
 }
@@ -293,7 +312,10 @@ static void em_render_gl(DP_App *app, DP_CanvasDiff *diff_or_null)
 {
     clear_screen();
     render_canvas(app, diff_or_null);
+#    ifdef DRAWDANCE_IMGUI
     render_gui(app);
+#    endif
+    DP_user_inputs_render(&app->inputs);
     SDL_GL_SwapWindow(app->window);
 }
 
@@ -301,7 +323,9 @@ static void em_main_loop(void *arg)
 {
     DP_App *app = arg;
     if (handle_events(app) != HANDLE_EVENTS_QUIT) {
+#    ifdef DRAWDANCE_IMGUI
         prepare_gui(app);
+#    endif
         DP_CanvasDiff *diff_or_null = prepare_canvas(app);
         DP_EMPROXY_VII(em_render_gl, app, diff_or_null);
         DP_canvas_state_decref(app->current_state);
@@ -325,14 +349,21 @@ void DP_app_run(DP_App *app)
     app->current_state = DP_canvas_state_incref(app->blank_state);
     while (handle_events(app) != HANDLE_EVENTS_QUIT) {
         DP_GL_CLEAR_ERROR();
+#    ifdef DRAWDANCE_IMGUI
         prepare_gui(app);
+#    endif
         DP_CanvasDiff *diff_or_null = prepare_canvas(app);
         clear_screen();
         render_canvas(app, diff_or_null);
+#    ifdef DRAWDANCE_IMGUI
         DP_SEMAPHORE_MUST_WAIT(app->sem_gui_render);
+#    endif
         DP_canvas_state_decref(app->current_state);
         app->current_state = DP_canvas_state_incref(app->previous_state);
+#    ifdef DRAWDANCE_IMGUI
         render_gui(app);
+#    endif
+        DP_user_inputs_render(&app->inputs);
         SDL_GL_SwapWindow(app->window);
     }
     DP_canvas_state_decref(app->current_state);
@@ -376,4 +407,10 @@ DP_Worker *DP_app_worker(DP_App *app)
 {
     DP_ASSERT(app);
     return app->worker;
+}
+
+DP_UserInputs *DP_app_inputs(DP_App *app)
+{
+    DP_ASSERT(app);
+    return &app->inputs;
 }

@@ -40,9 +40,6 @@
 
 typedef struct DP_Document DP_Document;
 
-int ImGuiLua_InitImGui(lua_State *L);
-int ImGuiLua_NewImVec2(lua_State *L);
-
 
 #ifdef _WIN32
 #    define PATH_SEPARATOR "\\"
@@ -413,8 +410,25 @@ static int init_app_funcs(lua_State *L)
     return 0;
 }
 
+
+#ifdef DRAWDANCE_IMGUI
+int ImGuiLua_InitImGui(lua_State *L);
+int ImGuiLua_NewImVec2(lua_State *L);
+#endif
+
 static int init_imgui(lua_State *L)
 {
+    lua_pushglobaltable(L);
+    luaL_getsubtable(L, -1, "DP");
+#ifdef DRAWDANCE_IMGUI
+    lua_pushboolean(L, true);
+#else
+    lua_pushboolean(L, false);
+#endif
+    lua_setfield(L, -2, "ImGui");
+    lua_pop(L, 2);
+
+#ifdef DRAWDANCE_IMGUI
     lua_pushcfunction(L, ImGuiLua_InitImGui);
     lua_pushglobaltable(L);
     lua_call(L, 1, 0);
@@ -423,6 +437,7 @@ static int init_imgui(lua_State *L)
     lua_pushcfunction(L, ImGuiLua_NewImVec2);
     lua_setfield(L, -2, "new");
     lua_setglobal(L, "ImVec2");
+#endif
 
     return 0;
 }
@@ -567,6 +582,7 @@ int DP_lua_canvas_state_init(lua_State *L);
 int DP_lua_client_init(lua_State *L);
 int DP_lua_document_init(lua_State *L);
 int DP_lua_message_init(lua_State *L);
+int DP_lua_ui_init(lua_State *L);
 
 static int init_bindings(lua_State *L)
 {
@@ -574,6 +590,7 @@ static int init_bindings(lua_State *L)
         init_lua_libs,        init_app_funcs,           init_imgui,
         init_package,         DP_lua_canvas_state_init, DP_lua_client_init,
         DP_lua_document_init, DP_lua_message_init,      init_global_environment,
+        DP_lua_ui_init,
     };
     lua_pushcfunction(L, init_lua_app_state);
     lua_pushvalue(L, 1);
@@ -694,6 +711,7 @@ void DP_lua_app_handle_events(lua_State *L, int ref)
     call_app_method(L, ref, "handle_events");
 }
 
+#ifdef DRAWDANCE_IMGUI
 void DP_lua_imgui_stack_clear(void);
 
 void DP_lua_app_prepare_gui(lua_State *L, int ref)
@@ -701,6 +719,7 @@ void DP_lua_app_prepare_gui(lua_State *L, int ref)
     call_app_method(L, ref, "prepare_gui");
     DP_lua_imgui_stack_clear();
 }
+#endif
 
 
 void DP_lua_warn_buffer_dispose(DP_LuaWarnBuffer *wb)

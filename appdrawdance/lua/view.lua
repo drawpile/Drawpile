@@ -36,17 +36,14 @@ function View:init()
     self._dragging_middle_mouse = false
     self._mouse_delta_x = 0.0
     self._mouse_delta_y = 0.0
-    self._wheel = 0.0
     self._last_view_state = nil
 end
 
-function View:_handle_mouse_inputs(io, op)
-    local mouse_delta = io.MouseDelta
-    self._mouse_delta_x = mouse_delta.x
-    self._mouse_delta_y = mouse_delta.y
+function View:_handle_mouse_inputs(mouse_captured, op)
+    self._mouse_delta_x, self._mouse_delta_y = DP.UI.get_mouse_delta_xy()
 
-    if not io.WantCaptureMouse then
-        local wheel = self._wheel
+    if not mouse_captured then
+        local wheel = DP.UI.get_mouse_wheel_y()
         if wheel < 0.0 then
             op.zoom = op.zoom - 1
         elseif wheel > 0.0 then
@@ -56,47 +53,49 @@ function View:_handle_mouse_inputs(io, op)
         op.draggable = true
 
         local function check_drag(key, button)
-            self[key] = ImGui.IsMouseClicked(button) or (
-                    self[key] and ImGui.IsMouseDown(button))
+            self[key] = DP.UI.mouse_pressed(button) or (
+                    self[key] and DP.UI.mouse_held(button))
             if self[key] then
                 op.drag = true
             end
         end
-        check_drag("_dragging_left_mouse", ImGuiMouseButton.Left)
-        check_drag("_dragging_middle_mouse", ImGuiMouseButton.Middle)
+        check_drag("_dragging_left_mouse", DP.UI.MouseButton.LEFT)
+        check_drag("_dragging_middle_mouse", DP.UI.MouseButton.MIDDLE)
     end
 end
 
-function View:_handle_keyboard_inputs(io, op)
-    if not io.WantCaptureKeyboard then
-        local key_mods = io.KeyMods
-        if key_mods == ImGuiKeyModFlags.None then
-            if ImGui.IsKeyPressed(ImGuiKey.LeftArrow) then
+function View:_handle_keyboard_inputs(keyboard_captured, op)
+    if not keyboard_captured then
+        local key_mods = DP.UI.get_key_mods()
+        if key_mods == DP.UI.KeyMod.NONE then
+            if DP.UI.scan_pressed(DP.UI.Scancode.LEFT) then
                 op.move_x = op.move_x + 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.RightArrow) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.RIGHT) then
                 op.move_x = op.move_x - 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.UpArrow) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.UP) then
                 op.move_y = op.move_y + 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.DownArrow) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.DOWN) then
                 op.move_y = op.move_y - 1
             end
-        elseif key_mods == ImGuiKeyModFlags.Ctrl then
-            if ImGui.IsKeyPressed(ImGuiKey.LeftArrow) then
+        elseif key_mods == DP.UI.KeyMod.CTRL then
+            if DP.UI.scan_pressed(DP.UI.Scancode.LEFT) then
                 op.rotate = op.rotate - 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.RightArrow) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.RIGHT) then
                 op.rotate = op.rotate + 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.UpArrow) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.UP)
+                    or DP.UI.scan_pressed(DP.UI.Scancode.EQUALS) then
                 op.zoom = op.zoom + 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.DownArrow) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.DOWN)
+                    or DP.UI.scan_pressed(DP.UI.Scancode.MINUS) then
                 op.zoom = op.zoom - 1
             end
-            if ImGui.IsKeyPressed(ImGuiKey.R) then
+            if DP.UI.scan_pressed(DP.UI.Scancode.R) then
                 op.reset_move = true
                 op.reset_zoom = true
                 op.reset_rotate = true
@@ -104,21 +103,29 @@ function View:_handle_keyboard_inputs(io, op)
         end
 
         self._dragging_space =
-                (op.draggable and ImGui.IsKeyPressed(ImGuiKey.Space)) or
-                (self._dragging_space and ImGui.IsKeyDown(ImGuiKey.Space))
+                (op.draggable and DP.UI.scan_pressed(DP.UI.Scancode.SPACE)) or
+                (self._dragging_space and DP.UI.scan_held(DP.UI.Scancode.SPACE))
         if self._dragging_space then
             op.drag = true
         end
     end
 end
 
-function View:_handle_drag(op)
+function View:_handle_drag(use_imgui_cursor, op)
     if op.drag then
         op.drag_x = op.drag_x + self._mouse_delta_x
         op.drag_y = op.drag_y + self._mouse_delta_y
-        ImGui.SetMouseCursor(ImGuiMouseCursor.ResizeAll)
+        if use_imgui_cursor then
+            ImGui.SetMouseCursor(ImGuiMouseCursor.ResizeAll)
+        else
+            DP.UI.set_cursor(DP.UI.SystemCursor.SIZEALL)
+        end
     elseif op.draggable then
-        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand)
+        if use_imgui_cursor then
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand)
+        else
+            DP.UI.set_cursor(DP.UI.SystemCursor.HAND)
+        end
     end
 end
 
@@ -162,14 +169,14 @@ function View:_apply_inputs(view_state, move_x, move_y, drag_x, drag_y, zoom,
     view_state.rotation_in_degrees = r
 end
 
-function View:_apply_transform(view_state, io)
+function View:_apply_transform(view_state)
     local x, y, scale, rotation_in_radians = DP.App.canvas_renderer_transform()
     local interp
     if view_state == self._last_view_state then
         -- This should make it framerate-independent? The idea is that it
         -- interpolates by 0.5 every frame at 60 fps, adjusting according
         -- to the actual delta time and clamping to a value between 0 and 1.
-        local delta_time = io.DeltaTime
+        local delta_time = DP.UI.get_delta_time()
         interp = clamp(0.0, REF_INTERP * (REF_DELTA_TIME / delta_time), 1.0)
     else
         interp = 1.0
@@ -204,8 +211,8 @@ function View:_apply_transform(view_state, io)
     DP.App.canvas_renderer_transform_set(x, y, scale, rotation_in_radians)
 end
 
-function View:handle_inputs(view_state)
-    local io = ImGui.GetIO()
+function View:handle_inputs(keyboard_captured, mouse_captured, use_imgui_cursor,
+            view_state)
     local op = {
         move_x = 0,
         move_y = 0,
@@ -219,18 +226,14 @@ function View:handle_inputs(view_state)
         draggable = false,
         drag = false,
     }
-    self:_handle_mouse_inputs(io, op)
-    self:_handle_keyboard_inputs(io, op)
-    self:_handle_drag(op)
+    self:_handle_mouse_inputs(mouse_captured, op)
+    self:_handle_keyboard_inputs(keyboard_captured, op)
+    self:_handle_drag(use_imgui_cursor, op)
     self:_apply_inputs(view_state, op.move_x, op.move_y, op.drag_x, op.drag_y,
                        op.zoom, op.rotate, op.reset_move, op.reset_zoom,
                        op.reset_rotate)
-    self:_apply_transform(view_state, io)
+    self:_apply_transform(view_state)
     self._last_view_state = view_state
-end
-
-function View:update_frame_inputs()
-    self._wheel = ImGui.GetIO().MouseWheel
 end
 
 return View

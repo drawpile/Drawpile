@@ -24,6 +24,7 @@
 #include <dpcommon/common.h>
 #include <SDL.h>
 
+typedef struct DP_UserInputs DP_UserInputs;
 typedef struct DP_Worker DP_Worker;
 
 
@@ -50,6 +51,8 @@ void DP_app_canvas_renderer_transform_set(DP_App *app, double x, double y,
                                           double rotation_in_radians);
 
 DP_Worker *DP_app_worker(DP_App *app);
+
+DP_UserInputs *DP_app_inputs(DP_App *app);
 
 
 #endif

@@ -24,10 +24,13 @@
 #include "gl.h"
 #include <dpcommon/common.h>
 #include <SDL.h>
-#include <gui.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
+
+#ifdef DRAWDANCE_IMGUI
+#    include <gui.h>
+#endif
 
 
 static void show_init_error(const char *fmt, ...) DP_FORMAT(1, 2);
@@ -160,6 +163,7 @@ static SDL_GLContext create_gl_context(SDL_Window *window)
 }
 
 
+#ifdef DRAWDANCE_IMGUI
 static bool init_imgui_sdl_gl(SDL_Window *window, SDL_GLContext gl_context)
 {
     if (DP_imgui_init_sdl(window, gl_context)) {
@@ -188,6 +192,7 @@ static void quit_imgui_sdl_gl(void)
     DP_imgui_quit_gl();
     DP_imgui_quit_sdl();
 }
+#endif
 
 static DP_App *init_app(SDL_Window *window, SDL_GLContext gl_context)
 {
@@ -203,16 +208,20 @@ int main(void)
     bool sdl_initialized = false;
     SDL_Window *window = NULL;
     SDL_GLContext gl_context = NULL;
+#ifdef DRAWDANCE_IMGUI
     bool imgui_initialized = false;
+#endif
     DP_App *app = NULL;
 
-    bool ok = (sdl_initialized = init_sdl())                       //
-           && load_config()                                        //
-           && (window = open_window())                             //
-           && (gl_context = create_gl_context(window))             //
-           && DP_EMPROXY_I(DP_gl_init)                             //
+    bool ok = (sdl_initialized = init_sdl())           //
+           && load_config()                            //
+           && (window = open_window())                 //
+           && (gl_context = create_gl_context(window)) //
+           && DP_EMPROXY_I(DP_gl_init)                 //
+#ifdef DRAWDANCE_IMGUI
            && (imgui_initialized = init_imgui(window, gl_context)) //
-           && (app = init_app(window, gl_context));                //
+#endif
+           && (app = init_app(window, gl_context)); //
 
     if (ok) {
         DP_app_run(app);
@@ -225,10 +234,12 @@ int main(void)
     if (app) {
         DP_app_free(app);
     }
+#ifdef DRAWDANCE_IMGUI
     if (imgui_initialized) {
         DP_EMPROXY_V(quit_imgui_sdl_gl);
         DP_imgui_quit();
     }
+#endif
     if (gl_context) {
         SDL_GL_DeleteContext(gl_context);
     }

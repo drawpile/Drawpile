@@ -23,6 +23,7 @@ local LoginHandler <const> = require("session.login_handler")
 local StateHandler <const> = require("session.state_handler")
 local View <const> = require("view")
 
+local HAVE_IMGUI <const> = DP.ImGui
 local IS_EMSCRIPTEN <const> = DP.platform() == "emscripten"
 
 local App <const> = require("class")("App")
@@ -32,10 +33,14 @@ function App:init()
     self._view = View:new()
     self._login_handler = LoginHandler:new(self)
     self._state_handler = StateHandler:new(self)
-    self._main_window = require("gui.main_window"):new(self)
-    self._reload_gui = false
     self:subscribe_method(EventTypes.REQUEST_APP_QUIT, self)
-    self:subscribe_method(EventTypes.REQUEST_GUI_RELOAD, self)
+
+    if HAVE_IMGUI then
+        self._main_window = require("gui.main_window"):new(self)
+        self._reload_gui = false
+        self:subscribe_method(EventTypes.REQUEST_GUI_RELOAD, self)
+    end
+
     if IS_EMSCRIPTEN then
         local BrowserEvents <const> = require("event.browser_events")
         self._browser_events = BrowserEvents:new(self)
@@ -77,39 +82,52 @@ function App:handle_events()
     end
     local state = self:get_current_state()
     if state then
-        self._view:handle_inputs(state.view_state)
-    end
-end
-
-function App:_reload_main_window()
-    unrequire(function (package)
-        return string.find(package, "^gui%.")
-            or string.find(package, "^translations%.")
-            or package == "translations"
-    end)
-    local new_main_window = require("gui.main_window"):new(self)
-    local old_main_window = self._main_window
-    self._main_window = new_main_window
-    old_main_window:dispose()
-end
-
-function App:prepare_gui()
-    if self._reload_gui then
-        self._reload_gui = false
-        local ok, err = pcall(self._reload_main_window, self)
-        if not ok then
-            warn("Error in GUI reload: ", tostring(err))
+        local keyboard_captured, mouse_captured
+        if HAVE_IMGUI then
+            local io = ImGui.GetIO()
+            keyboard_captured = io.WantCaptureKeyboard
+            mouse_captured = io.WantCaptureMouse
+        else
+            keyboard_captured = false
+            mouse_captured = false
         end
+        self._view:handle_inputs(
+                keyboard_captured, mouse_captured, HAVE_IMGUI, state.view_state)
     end
-    self._main_window:prepare()
-    self._view:update_frame_inputs()
+end
+
+if HAVE_IMGUI then
+    function App:_reload_main_window()
+        unrequire(function (package)
+            return string.find(package, "^gui%.")
+                or string.find(package, "^translations%.")
+                or package == "translations"
+        end)
+        local new_main_window = require("gui.main_window"):new(self)
+        local old_main_window = self._main_window
+        self._main_window = new_main_window
+        old_main_window:dispose()
+    end
+
+    function App:prepare_gui()
+        if self._reload_gui then
+            self._reload_gui = false
+            local ok, err = pcall(self._reload_main_window, self)
+            if not ok then
+                warn("Error in GUI reload: ", tostring(err))
+            end
+        end
+        self._main_window:prepare()
+    end
 end
 
 function App:dispose()
     if IS_EMSCRIPTEN then
         DP.send_to_browser("[[\"DP_APP_DISPOSE\"]]")
     end
-    self._main_window:dispose()
+    if HAVE_IMGUI then
+        self._main_window:dispose()
+    end
 end
 
 function App:on_request_app_quit()
