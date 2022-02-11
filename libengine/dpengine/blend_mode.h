@@ -26,8 +26,7 @@
 
 #define DP_BLEND_MODE_MAX 255
 
-typedef enum DP_BlendMode
-{
+typedef enum DP_BlendMode {
     DP_BLEND_MODE_ERASE = 0,
     DP_BLEND_MODE_NORMAL,
     DP_BLEND_MODE_MULTIPLY,
@@ -45,8 +44,7 @@ typedef enum DP_BlendMode
     DP_BLEND_MODE_COUNT,
 } DP_BlendMode;
 
-typedef enum DP_BlendModeBlankTileBehavior
-{
+typedef enum DP_BlendModeBlankTileBehavior {
     DP_BLEND_MODE_BLANK_TILE_SKIP,
     DP_BLEND_MODE_BLANK_TILE_BLEND,
 } DP_BlendModeBlankTileBehavior;

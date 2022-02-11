@@ -34,8 +34,7 @@
 
 #define UNDO_DEPTH_LIMIT 30
 
-typedef enum DP_Undo
-{
+typedef enum DP_Undo {
     DP_UNDO_DONE,
     DP_UNDO_UNDONE,
     DP_UNDO_GONE,

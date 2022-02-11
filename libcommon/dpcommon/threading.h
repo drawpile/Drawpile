@@ -34,15 +34,13 @@ typedef struct DP_Thread DP_Thread;
 
 typedef void (*DP_ThreadFn)(void *data);
 
-typedef enum DP_MutexResult
-{
+typedef enum DP_MutexResult {
     DP_MUTEX_OK,
     DP_MUTEX_BLOCKED,
     DP_MUTEX_ERROR,
 } DP_MutexResult;
 
-typedef enum DP_SemaphoreResult
-{
+typedef enum DP_SemaphoreResult {
     DP_SEMAPHORE_OK,
     DP_SEMAPHORE_BLOCKED,
     DP_SEMAPHORE_INTERRUPTED,

@@ -26,8 +26,7 @@
 typedef struct DP_Message DP_Message;
 
 
-typedef enum DP_DisconnectReason
-{
+typedef enum DP_DisconnectReason {
     DP_MSG_DISCONNECT_REASON_ERROR,
     DP_MSG_DISCONNECT_REASON_KICK,
     DP_MSG_DISCONNECT_REASON_SHUTDOWN,

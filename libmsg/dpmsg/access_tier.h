@@ -22,8 +22,7 @@
 #ifndef DPMSG_ACCESS_TIER_H
 #define DPMSG_ACCESS_TIER_H
 
-typedef enum DP_AccessTier
-{
+typedef enum DP_AccessTier {
     DP_ACCESS_TIER_OPERATOR = 0,
     DP_ACCESS_TIER_TRUSTED = 1,
     DP_ACCESS_TIER_AUTHENTICATED = 2,

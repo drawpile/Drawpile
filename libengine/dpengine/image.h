@@ -30,8 +30,7 @@ typedef struct DP_Output DP_Output;
 typedef struct DP_Quad DP_Quad;
 
 
-typedef enum DP_ImageFileType
-{
+typedef enum DP_ImageFileType {
     DP_IMAGE_FILE_TYPE_GUESS,
     DP_IMAGE_FILE_TYPE_PNG,
 } DP_ImageFileType;

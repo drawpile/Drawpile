@@ -29,16 +29,14 @@ typedef struct DP_Worker DP_Worker;
 
 #define DP_CLIENT_PING_INTERVAL_MS (15000u)
 
-typedef enum DP_ClientUrlValidationResult
-{
+typedef enum DP_ClientUrlValidationResult {
     DP_CLIENT_URL_VALID,
     DP_CLIENT_URL_PARSE_ERROR,
     DP_CLIENT_URL_SCHEME_UNSUPPORTED,
     DP_CLIENT_URL_HOST_MISSING,
 } DP_ClientUrlValidationResult;
 
-typedef enum DP_ClientEventType
-{
+typedef enum DP_ClientEventType {
     DP_CLIENT_EVENT_RESOLVE_ADDRESS_START,
     DP_CLIENT_EVENT_RESOLVE_ADDRESS_SUCCESS,
     DP_CLIENT_EVENT_RESOLVE_ADDRESS_ERROR,

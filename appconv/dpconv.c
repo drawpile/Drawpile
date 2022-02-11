@@ -34,8 +34,7 @@
 #include <string.h>
 
 
-typedef enum DP_ConvFormat
-{
+typedef enum DP_ConvFormat {
     DP_CONV_FORMAT_GUESS,
     DP_CONV_FORMAT_DPREC,
     DP_CONV_FORMAT_DPTXT,

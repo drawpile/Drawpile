@@ -29,8 +29,7 @@ typedef struct DP_TextWriter DP_TextWriter;
 #define DP_MESSAGE_MAX           255
 #define DP_MESSAGE_HEADER_LENGTH 4
 
-typedef enum DP_MessageType
-{
+typedef enum DP_MessageType {
     DP_MSG_COMMAND = 0,
     DP_MSG_DISCONNECT,
     DP_MSG_PING,
