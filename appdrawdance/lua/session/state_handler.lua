@@ -31,6 +31,7 @@ function StateHandler:init(app)
     app:subscribe_method(EventTypes.REQUEST_SESSION_CLOSE, self)
     app:subscribe_method(EventTypes.CLIENT_EVENT, self)
     app:subscribe_method(EventTypes.CLIENT_MESSAGE, self)
+    app:subscribe_method(EventTypes.REQUEST_CHAT_MESSAGE_SEND, self)
 end
 
 function StateHandler:_show_session(client_id)
@@ -101,6 +102,13 @@ function StateHandler:on_client_message(event)
     local state = self:_get_state(event.client_id)
     if state then
         state:handle_message(event.message)
+    end
+end
+
+function StateHandler:on_request_chat_message_send(event)
+    local state = self._states[event.client_id]
+    if state then
+        state:send_chat_message(event.text)
     end
 end
 

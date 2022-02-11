@@ -28,6 +28,7 @@ EventTypes.types = {
     "REQUEST_SESSION_CANCEL",
     "REQUEST_SESSION_SHOW",
     "REQUEST_SESSION_CLOSE",
+    "REQUEST_CHAT_MESSAGE_SEND",
     "LOGIN_ERROR",
     "LOGIN_REQUIRE_CREDENTIALS",
     "LOGIN_PROVIDE_CREDENTIALS",
@@ -42,6 +43,9 @@ EventTypes.types = {
     "SESSION_DETACH",
     "SESSION_SHOW",
     "SESSION_REMOVE",
+    "USER_JOIN",
+    "USER_LEAVE",
+    "CHAT_MESSAGE_RECEIVE",
 }
 
 for _, type in ipairs(EventTypes.types) do
