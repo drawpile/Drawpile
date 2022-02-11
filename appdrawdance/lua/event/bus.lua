@@ -42,7 +42,7 @@ function EventBus:handle_events()
             self._handlers_in_progress = handlers
             local data = event.data
             for _, handler in ipairs(handlers) do
-                local ok, err = pcall(handler, data)
+                local ok, err = xpcall(handler, DP.error_to_trace, data)
                 if not ok then
                     warn(string.format("Error handling %s event: %s", type, err))
                 end

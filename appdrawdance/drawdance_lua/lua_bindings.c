@@ -307,6 +307,13 @@ void DP_send_from_browser(lua_State *L, char *payload)
 }
 #endif
 
+static int error_to_trace(lua_State *L)
+{
+    const char *err = lua_tostring(L, 1);
+    luaL_traceback(L, L, err, 0);
+    return 1;
+}
+
 static int app_quit(DP_UNUSED lua_State *L)
 {
     SDL_Event event;
@@ -378,6 +385,8 @@ static int init_app_funcs(lua_State *L)
     lua_pushglobaltable(L);
     luaL_getsubtable(L, -1, "DP");
 
+    lua_pushcfunction(L, error_to_trace);
+    lua_setfield(L, -2, "error_to_trace");
     lua_pushcfunction(L, platform);
     lua_setfield(L, -2, "platform");
     lua_pushcfunction(L, open_url);
@@ -656,15 +665,17 @@ int DP_lua_app_new(lua_State *L)
 
 static void call_app_method(lua_State *L, int ref, const char *method)
 {
+    lua_pushcfunction(L, error_to_trace);
+    int msgh = lua_gettop(L);
     lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
     lua_getfield(L, -1, method);
     lua_pushvalue(L, -2);
-    if (lua_pcall(L, 1, 0, 0) == LUA_OK) {
-        lua_pop(L, 1);
+    if (lua_pcall(L, 1, 0, msgh) == LUA_OK) {
+        lua_pop(L, 2);
     }
     else {
         DP_warn("Error in Lua %s: %s", method, lua_tostring(L, -1));
-        lua_pop(L, 2);
+        lua_pop(L, 3);
     }
 }
 
