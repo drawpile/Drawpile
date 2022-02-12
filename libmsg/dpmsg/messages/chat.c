@@ -106,7 +106,7 @@ DP_Message *DP_msg_chat_new(unsigned int context_id,
     DP_MsgChat *mc = DP_message_internal(msg);
     mc->transparent_flags = DP_uint_to_uint8(transparent_flags);
     mc->opaque_flags = DP_uint_to_uint8(opaque_flags);
-    mc->text_length = DP_size_to_uint8(text_length);
+    mc->text_length = text_length;
     memcpy(mc->text, text, text_length);
     mc->text[text_length] = '\0';
     return msg;
