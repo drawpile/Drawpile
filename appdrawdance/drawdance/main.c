@@ -142,7 +142,7 @@ static bool load_config(void)
 static SDL_Window *open_window(void)
 {
     SDL_Window *window = SDL_CreateWindow(
-        "drawdance", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280,
+        "Drawdance", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280,
         720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!window) {
         show_init_error("Error opening window: %s", SDL_GetError());
