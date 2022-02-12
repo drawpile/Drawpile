@@ -125,7 +125,7 @@ return {
                 bad_password = "incorrect password",
                 bad_username = "invalid username",
                 banned_name = "username has been locked",
-                name_in_use = "username is already taken",
+                name_inuse = "username is already taken",
                 closed = "session is closed",
                 banned = "you have been banned from this session",
                 id_in_use = "session alias is reserved",
