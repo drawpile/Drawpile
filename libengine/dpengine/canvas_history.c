@@ -165,14 +165,33 @@ static void set_current_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *next)
 }
 
 
-static void handle_reset(DP_CanvasHistory *ch)
+static void reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs)
 {
-    DP_CanvasState *cs = DP_canvas_state_new();
     set_current_state_noinc(ch, cs);
     truncate_history(ch, ch->used);
     set_initial_entry(ch, cs);
     ch->used = 1;
     validate_history(ch);
+}
+
+static void handle_reset(DP_CanvasHistory *ch)
+{
+    // Hard reset: erase history and start from an empty canvas state. Is used
+    // when the history gets too large. After the reset, there will usually be
+    // a canvas resize command followed by layer creation and put tile commands
+    // to restore the canvas as it was before the reset. Kinda like git squash.
+    reset_to_state_noinc(ch, DP_canvas_state_new());
+}
+
+static void handle_soft_reset(DP_CanvasHistory *ch)
+{
+    // Soft reset: erase history, but keep the current canvas state.
+    // Is used to avoid resetting the whole session when a new user joins and
+    // the server doesn't have the history available, which is the case for the
+    // built-in, non-dedicated Drawpile server. It sends a hard reset only to
+    // the newly joined client, all the other clients get a soft reset so that
+    // they can't undo beyond the point that the new client joined at.
+    reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
 }
 
 static bool handle_internal(DP_CanvasHistory *ch, DP_MsgInternal *mi)
@@ -181,6 +200,9 @@ static bool handle_internal(DP_CanvasHistory *ch, DP_MsgInternal *mi)
     switch (internal_type) {
     case DP_MSG_INTERNAL_TYPE_RESET:
         handle_reset(ch);
+        return true;
+    case DP_MSG_INTERNAL_TYPE_SOFT_RESET:
+        handle_soft_reset(ch);
         return true;
     default:
         DP_error_set("Unhandled internal message type: %d", (int)internal_type);

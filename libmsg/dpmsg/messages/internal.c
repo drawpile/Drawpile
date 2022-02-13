@@ -62,14 +62,25 @@ static const DP_MessageMethods methods = {
     payload_length, serialize_payload, write_payload_text, equals, NULL,
 };
 
-DP_Message *DP_msg_internal_reset_new(unsigned int context_id)
+static DP_Message *msg_internal_new(unsigned int context_id,
+                                    DP_MsgInternalType internal_type)
 {
     DP_MsgInternal *mi;
     DP_Message *msg =
         DP_message_new(DP_MSG_INTERNAL, context_id, &methods, sizeof(*mi));
     mi = DP_message_internal(msg);
-    mi->type = DP_MSG_INTERNAL_TYPE_RESET;
+    mi->type = internal_type;
     return msg;
+}
+
+DP_Message *DP_msg_internal_reset_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RESET);
+}
+
+DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_SOFT_RESET);
 }
 
 

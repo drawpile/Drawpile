@@ -115,17 +115,20 @@ static void push_drawing_command(DP_LuaClientData *lcd, DP_Message *msg,
     }
 }
 
-static void push_reset_command(DP_LuaClientData *lcd, DP_Message *msg)
+static void push_reset_command(DP_LuaClientData *lcd, DP_Message *msg,
+                               bool soft)
 {
     unsigned int context_id = DP_message_context_id(msg);
-    push_drawing_command(lcd, DP_msg_internal_reset_new(context_id),
-                         DP_document_command_push_noinc);
+    DP_Message *reset_msg = soft ? DP_msg_internal_soft_reset_new(context_id)
+                                 : DP_msg_internal_reset_new(context_id);
+    push_drawing_command(lcd, reset_msg, DP_document_command_push_noinc);
 }
 
 static void handle_command(DP_LuaClientData *lcd, DP_Message *msg)
 {
     DP_MsgCommand *mc = DP_msg_command_cast(msg);
     const char *string = DP_msg_command_message(mc, NULL);
+    DP_debug("Handling command %s", string);
     JSON_Value *value = json_parse_string(string);
     if (!value) {
         DP_warn("Parsing command body failed: %s", string);
@@ -141,7 +144,7 @@ static void handle_command(DP_LuaClientData *lcd, DP_Message *msg)
 
     const char *type = json_object_get_string(object, "type");
     if (type && strcmp(type, "reset") == 0) {
-        push_reset_command(lcd, msg);
+        push_reset_command(lcd, msg, false);
     }
 
     json_value_free(value);
@@ -155,7 +158,7 @@ static void on_message(void *data, DP_Client *client, DP_Message *msg)
         push_drawing_command(lcd, msg, DP_document_command_push_inc);
     }
     else if (type == DP_MSG_SOFT_RESET) {
-        push_reset_command(lcd, msg);
+        push_reset_command(lcd, msg, true);
     }
     else {
         if (type == DP_MSG_COMMAND) {
