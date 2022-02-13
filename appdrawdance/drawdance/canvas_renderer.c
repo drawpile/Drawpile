@@ -32,17 +32,14 @@
 #include <math.h>
 
 
-#define VERTEX_LENGTH 8
-#define VERTEX_SIZE   (VERTEX_LENGTH * sizeof(float))
-
 struct DP_CanvasRenderer {
     int width, height;
     bool recalculate_vertices;
     unsigned int program;
     unsigned int buffers[2];
     struct {
-        float vertices[VERTEX_LENGTH];
-        float uvs[VERTEX_LENGTH];
+        float vertices[8];
+        float uvs[8];
     } attributes;
     struct {
         int view;
@@ -77,7 +74,7 @@ static unsigned int init_program(void)
 {
     static const char *vert =
         "#version 100\n"
-        "uniform vec2 u_view;"
+        "uniform vec2 u_view;\n"
         "attribute mediump vec2 v_pos;\n"
         "attribute mediump vec2 v_uv;\n"
         "varying vec2 f_uv;\n"
@@ -107,7 +104,7 @@ DP_CanvasRenderer *DP_canvas_renderer_new(void)
                                 0,      {0, 0},    {{0}, {0}},
                                 {0, 0}, {0, 0, 0}, {0.0, 0.0, 1.0, 0.0}};
     cr->program = init_program();
-    DP_GL(glGenBuffers, 2, cr->buffers);
+    DP_GL(glGenBuffers, DP_ARRAY_LENGTH(cr->buffers), cr->buffers);
     cr->uniforms.view = glGetUniformLocation(cr->program, "u_view");
     DP_GL_CLEAR_ERROR();
     cr->uniforms.sampler = glGetUniformLocation(cr->program, "u_sampler");
@@ -119,7 +116,7 @@ DP_CanvasRenderer *DP_canvas_renderer_new(void)
 void DP_canvas_renderer_free(DP_CanvasRenderer *cr)
 {
     if (cr) {
-        DP_GL(glDeleteBuffers, 2, cr->buffers);
+        DP_GL(glDeleteBuffers, DP_ARRAY_LENGTH(cr->buffers), cr->buffers);
         DP_GL(glDeleteProgram, cr->program);
         DP_GL(glDeleteTextures, 1, &cr->texture.id);
         DP_free(cr);
@@ -304,14 +301,14 @@ static void render_texture(DP_CanvasRenderer *cr, int view_height,
 
     DP_GL(glEnableVertexAttribArray, 0);
     DP_GL(glBindBuffer, GL_ARRAY_BUFFER, cr->buffers[0]);
-    DP_GL(glBufferData, GL_ARRAY_BUFFER, VERTEX_SIZE, cr->attributes.vertices,
-          GL_STATIC_DRAW);
+    DP_GL(glBufferData, GL_ARRAY_BUFFER, sizeof(cr->attributes.vertices),
+          cr->attributes.vertices, GL_STATIC_DRAW);
     DP_GL(glVertexAttribPointer, 0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     DP_GL(glEnableVertexAttribArray, 1);
     DP_GL(glBindBuffer, GL_ARRAY_BUFFER, cr->buffers[1]);
-    DP_GL(glBufferData, GL_ARRAY_BUFFER, VERTEX_SIZE, cr->attributes.uvs,
-          GL_STATIC_DRAW);
+    DP_GL(glBufferData, GL_ARRAY_BUFFER, sizeof(cr->attributes.uvs),
+          cr->attributes.uvs, GL_STATIC_DRAW);
     DP_GL(glVertexAttribPointer, 1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     DP_GL(glDrawArrays, GL_TRIANGLE_STRIP, 0, 4);
