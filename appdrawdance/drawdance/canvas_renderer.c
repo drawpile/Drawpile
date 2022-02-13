@@ -83,10 +83,10 @@ static unsigned int init_program(void)
         "varying vec2 f_uv;\n"
         "void main()\n"
         "{\n"
-        "    f_uv = v_uv;\n"
         "    gl_Position = vec4(2.0 * v_pos.x / u_view.x,\n"
         "                       -2.0 * v_pos.y / u_view.y,\n"
         "                       0.0, 1.0);\n"
+        "    f_uv = v_uv;\n"
         "}\n";
     static const char *frag =
         "#version 100\n"
