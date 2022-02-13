@@ -1171,7 +1171,7 @@ static void resize_layer_content_aligned(DP_LayerData *ld,
 {
     DP_TileCounts new_counts = DP_tile_counts_round(tld->width, tld->height);
     DP_TileCounts old_counts = DP_tile_counts_round(ld->width, ld->height);
-    DP_TileCounts offsets = DP_tile_counts_round(-top, -left);
+    DP_TileCounts offsets = DP_tile_counts_round(-left, -top);
     for (int y = 0; y < new_counts.y; ++y) {
         for (int x = 0; x < new_counts.x; ++x) {
             int old_x = offsets.x + x;
