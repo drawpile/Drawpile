@@ -223,3 +223,41 @@ unsigned int DP_gl_program_new(const char *vert, const char *frag)
         return 0;
     }
 }
+
+
+unsigned int DP_gl_get_error(void)
+{
+    return glGetError();
+}
+
+const char *DP_gl_strerror(unsigned int err)
+{
+    switch (err) {
+    case GL_NO_ERROR:
+        return "GL_NO_ERROR";
+    case GL_INVALID_ENUM:
+        return "GL_INVALID_ENUM";
+    case GL_INVALID_VALUE:
+        return "GL_INVALID_VALUE";
+    case GL_INVALID_OPERATION:
+        return "GL_INVALID_OPERATION";
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        return "GL_INVALID_FRAMEBUFFER_OPERATION";
+    case GL_OUT_OF_MEMORY:
+        return "GL_OUT_OF_MEMORY";
+    default:
+        return "unknown GL error";
+    }
+}
+
+void DP_gl_warn(unsigned int err, const char *where)
+{
+    DP_warn("OpenGL error %d (%s) in %s", err, DP_gl_strerror(err),
+            where ? where : "");
+}
+
+void DP_gl_panic(unsigned int err, const char *where)
+{
+    DP_panic("OpenGL error %d (%s) in %s", err, DP_gl_strerror(err),
+             where ? where : "");
+}

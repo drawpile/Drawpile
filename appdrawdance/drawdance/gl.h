@@ -36,12 +36,23 @@
  * these warnings, it should mean you (or something else) did an unchecked call
  * somewhere, which failed but nobody collected its reported error.
  */
-#    define DP_GL_CLEAR_ERROR()                               \
-        do {                                                  \
-            unsigned int glerror;                             \
-            while ((glerror = glGetError()) != GL_NO_ERROR) { \
-                DP_gl_warn(glerror, "DP_GL_CLEAR_ERROR");     \
-            }                                                 \
+#    define DP_GL_CLEAR_ERROR()                           \
+        do {                                              \
+            unsigned int glerror;                         \
+            while ((glerror = DP_gl_get_error()) != 0) {  \
+                DP_gl_warn(glerror, "DP_GL_CLEAR_ERROR"); \
+            }                                             \
+        } while (0)
+/*
+ * Check if there was an OpenGL error and if so call DP_panic() to abort
+ * execution. Used by the DP_GL and DP_GL_0 macros below.
+ */
+#    define DP_GL_CHECK_ERROR(FUNC)                   \
+        do {                                          \
+            unsigned int glerror;                     \
+            if ((glerror = DP_gl_get_error()) != 0) { \
+                DP_gl_panic(glerror, FUNC);           \
+            }                                         \
         } while (0)
 /*
  * Run the given OpenGL function and check for errors. So for example, instead
@@ -54,7 +65,7 @@
 #    define DP_GL(FUNC, ...)          \
         do {                          \
             FUNC(__VA_ARGS__);        \
-            DP_GL_CLEAR_ERROR(#FUNC); \
+            DP_GL_CHECK_ERROR(#FUNC); \
         } while (0)
 /*
  * Same as `DP_GL`, but for functions without arguments.
@@ -62,7 +73,7 @@
 #    define DP_GL_0(FUNC)             \
         do {                          \
             FUNC();                   \
-            DP_GL_CLEAR_ERROR(#FUNC); \
+            DP_GL_CHECK_ERROR(#FUNC); \
         } while (0)
 #else
 #    define DP_GL_CLEAR_ERROR() ((void)0)
@@ -78,6 +89,14 @@ void DP_gl_clear(float r, float g, float b, float a, float depth, int stencil);
 unsigned int DP_gl_shader_new(unsigned int type, const char *source);
 
 unsigned int DP_gl_program_new(const char *vert, const char *frag);
+
+unsigned int DP_gl_get_error(void);
+
+const char *DP_gl_strerror(unsigned int err);
+
+void DP_gl_warn(unsigned int err, const char *where);
+
+void DP_gl_panic(unsigned int err, const char *where);
 
 
 #endif

@@ -86,6 +86,10 @@ add_executable(drawdance "${drawdance_sources}" "${drawdance_headers}")
 set_dp_target_properties(drawdance)
 target_link_libraries(drawdance PUBLIC drawdance_lua dpclient dpengine dpgles2)
 
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    target_compile_definitions(drawdance PRIVATE DP_GL_CHECKS)
+endif()
+
 if(DRAWDANCE_EMSCRIPTEN)
     target_link_options(drawdance PRIVATE
         "SHELL:-s EXPORTED_FUNCTIONS=_main,_DP_send_from_browser"
