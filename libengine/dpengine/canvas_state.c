@@ -723,7 +723,8 @@ DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index)
 static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
                         DP_CanvasDiff *diff)
 {
-    if (cs->background_tile != prev->background_tile) {
+    if (cs->background_tile != prev->background_tile || cs->width != prev->width
+        || cs->height != prev->height) {
         DP_canvas_diff_check_all(diff);
     }
     else {
