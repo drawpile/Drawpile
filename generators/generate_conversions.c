@@ -61,6 +61,10 @@ static bool generate_c_file(const char *path)
         return false;
     }
 
+    fprintf(fp, "// This is an auto-generated file, don't edit it directly.\n");
+    fprintf(
+        fp,
+        "// Look for the generator in generators/generate_conversions.c.\n");
     fprintf(fp, "#ifndef DPCOMMON_CONVERSIONS_H\n");
     fprintf(fp, "#define DPCOMMON_CONVERSIONS_H\n");
     fprintf(fp, "#include \"common.h\"\n");
