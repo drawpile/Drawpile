@@ -227,6 +227,7 @@ static void render_canvas(DP_App *app, DP_CanvasDiff *diff_or_null)
 {
     int view_width, view_height;
     SDL_GL_GetDrawableSize(app->window, &view_width, &view_height);
+    DP_user_input_view_dimensions_set(&app->inputs, view_width, view_height);
     DP_canvas_renderer_render(app->canvas_renderer, (DP_Layer *)app->layer,
                               view_width, view_height, diff_or_null);
 }

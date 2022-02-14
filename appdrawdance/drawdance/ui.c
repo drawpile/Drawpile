@@ -23,7 +23,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <SDL.h>
-#include <SDL_mouse.h>
+#include <limits.h>
 
 static_assert(SDL_BUTTON_LEFT == 1, "SDL_BUTTON_LEFT == 1");
 static_assert(SDL_BUTTON_MIDDLE == 2, "SDL_BUTTON_MIDDLE == 2");
@@ -50,9 +50,24 @@ static void init_cursors(SDL_Cursor **cursors)
 
 void DP_user_inputs_init(DP_UserInputs *inputs)
 {
-    *inputs =
-        (DP_UserInputs){SDL_GetPerformanceFrequency(), 0,   0.0, 0,  0, 0, 0,
-                        SDL_NUM_SYSTEM_CURSORS,        {0}, {0}, {0}};
+    *inputs = (DP_UserInputs){SDL_GetPerformanceFrequency(),
+                              0,
+                              0.0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              LLONG_MIN,
+                              false,
+                              0.0f,
+                              0.0f,
+                              0.0f,
+                              SDL_NUM_SYSTEM_CURSORS,
+                              {0},
+                              {0},
+                              {0}};
     init_cursors(inputs->cursors);
 }
 
@@ -82,12 +97,16 @@ static void calculate_delta_time(DP_UserInputs *inputs)
     inputs->last_frame_time = now;
 }
 
-static void clear_mouse_deltas(DP_UserInputs *inputs)
+static void clear_deltas(DP_UserInputs *inputs)
 {
     inputs->mouse_delta_x = 0;
     inputs->mouse_delta_y = 0;
     inputs->mouse_wheel_x = 0;
     inputs->mouse_wheel_y = 0;
+    inputs->have_current_finger_id = false;
+    inputs->finger_delta_x = 0.0f;
+    inputs->finger_delta_y = 0.0f;
+    inputs->finger_pinch = 0.0f;
 }
 
 static void clear_presses_and_releases(DP_UserInputs *inputs)
@@ -106,7 +125,7 @@ void DP_user_inputs_next_frame(DP_UserInputs *inputs)
 {
     DP_ASSERT(inputs);
     calculate_delta_time(inputs);
-    clear_mouse_deltas(inputs);
+    clear_deltas(inputs);
     clear_presses_and_releases(inputs);
 }
 
@@ -156,6 +175,27 @@ static void on_mouse_wheel(DP_UserInputs *inputs, SDL_MouseWheelEvent *mwe)
     inputs->mouse_wheel_y += mwe->y * multiplier;
 }
 
+static void on_finger_motion(DP_UserInputs *inputs, SDL_TouchFingerEvent *tfe)
+{
+    // Don't accumulate the motion from multiple fingers, just use the first.
+    SDL_FingerID finger_id = tfe->fingerId;
+    if (!inputs->have_current_finger_id) {
+        inputs->have_current_finger_id = true;
+        inputs->current_finger_id = finger_id;
+        inputs->finger_delta_x = tfe->dx;
+        inputs->finger_delta_y = tfe->dy;
+    }
+    else if (inputs->current_finger_id == finger_id) {
+        inputs->finger_delta_x += tfe->dx;
+        inputs->finger_delta_y += tfe->dy;
+    }
+}
+
+static void on_multigesture(DP_UserInputs *inputs, SDL_MultiGestureEvent *mge)
+{
+    inputs->finger_pinch += mge->dDist;
+}
+
 void DP_user_inputs_handle(DP_UserInputs *inputs, SDL_Event *event)
 {
     DP_ASSERT(inputs);
@@ -179,9 +219,23 @@ void DP_user_inputs_handle(DP_UserInputs *inputs, SDL_Event *event)
     case SDL_MOUSEWHEEL:
         on_mouse_wheel(inputs, &event->wheel);
         break;
+    case SDL_FINGERMOTION:
+        on_finger_motion(inputs, &event->tfinger);
+        break;
+    case SDL_MULTIGESTURE:
+        on_multigesture(inputs, &event->mgesture);
+        break;
     default:
         break;
     }
+}
+
+void DP_user_input_view_dimensions_set(DP_UserInputs *inputs, int view_width,
+                                       int view_height)
+{
+    DP_ASSERT(inputs);
+    inputs->view_width = view_width;
+    inputs->view_height = view_height;
 }
 
 void DP_user_inputs_cursor_set(DP_UserInputs *inputs, SDL_SystemCursor id)

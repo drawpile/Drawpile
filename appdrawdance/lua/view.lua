@@ -36,11 +36,14 @@ function View:init()
     self._dragging_middle_mouse = false
     self._mouse_delta_x = 0.0
     self._mouse_delta_y = 0.0
+    self._finger_delta_x = 0.0
+    self._finger_delta_y = 0.0
     self._last_view_state = nil
 end
 
 function View:_handle_mouse_inputs(mouse_captured, op)
     self._mouse_delta_x, self._mouse_delta_y = DP.UI.get_mouse_delta_xy()
+    self._finger_delta_x, self._finger_delta_y = DP.UI.get_finger_delta_xy()
 
     if not mouse_captured then
         local wheel = DP.UI.get_mouse_wheel_y()
@@ -52,8 +55,9 @@ function View:_handle_mouse_inputs(mouse_captured, op)
 
         op.draggable = true
 
+        local finger = self._finger_delta_x ~= 0 or self._finger_delta_y ~= 0
         local function check_drag(key, button)
-            self[key] = DP.UI.mouse_pressed(button) or (
+            self[key] = (not finger and DP.UI.mouse_pressed(button)) or (
                     self[key] and DP.UI.mouse_held(button))
             if self[key] then
                 op.drag = true
@@ -129,8 +133,23 @@ function View:_handle_drag(use_imgui_cursor, op)
     end
 end
 
+function View:_handle_finger_inputs(mouse_captured, op)
+    if not mouse_captured then
+        local fx, fy = self._finger_delta_x, self._finger_delta_y
+        local fp = DP.UI.get_finger_pinch()
+        if fx ~= 0 or fy ~= 0 or fp ~= 0 then
+            local w, h = DP.UI.get_view_width_height()
+            -- These multiplications are just guesses that seem to work.
+            -- There's probably a proper way to translate these?
+            op.drag_x = op.drag_x + fx * w * 0.25
+            op.drag_y = op.drag_y + fy * h * 0.25
+            op.pinch = fp * (w + h) * 0.25
+        end
+    end
+end
+
 function View:_apply_inputs(view_state, move_x, move_y, drag_x, drag_y, zoom,
-                            rotate, reset_move, reset_zoom, reset_rotate)
+                            pinch, rotate, reset_move, reset_zoom, reset_rotate)
     local x, y = view_state.x, view_state.y
     local zp = view_state.zoom_percent
     local r = view_state.rotation_in_degrees
@@ -145,7 +164,7 @@ function View:_apply_inputs(view_state, move_x, move_y, drag_x, drag_y, zoom,
         else
             zoom_scale = 10
         end
-        zp = zp + zoom * zoom_scale
+        zp = zp + zoom * zoom_scale + pinch
         zp = clamp(MIN_ZOOM_PERCENT, zp, MAX_ZOOM_PERCENT)
     end
 
@@ -220,6 +239,7 @@ function View:handle_inputs(keyboard_captured, mouse_captured, use_imgui_cursor,
         drag_y = 0.0,
         rotate = 0,
         zoom = 0,
+        pinch = 0.0,
         reset_move = false,
         reset_zoom = false,
         reset_rotate = false,
@@ -229,9 +249,10 @@ function View:handle_inputs(keyboard_captured, mouse_captured, use_imgui_cursor,
     self:_handle_mouse_inputs(mouse_captured, op)
     self:_handle_keyboard_inputs(keyboard_captured, op)
     self:_handle_drag(use_imgui_cursor, op)
+    self:_handle_finger_inputs(mouse_captured, op)
     self:_apply_inputs(view_state, op.move_x, op.move_y, op.drag_x, op.drag_y,
-                       op.zoom, op.rotate, op.reset_move, op.reset_zoom,
-                       op.reset_rotate)
+                       op.zoom, op.pinch, op.rotate, op.reset_move,
+                       op.reset_zoom, op.reset_rotate)
     self:_apply_transform(view_state)
     self._last_view_state = view_state
 end

@@ -40,6 +40,31 @@ static int get_delta_time(lua_State *L)
     return 1;
 }
 
+static int get_view_width_height(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushinteger(L, inputs->view_width);
+    lua_pushinteger(L, inputs->view_height);
+    return 2;
+}
+
+static int get_view_width(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushinteger(L, inputs->view_width);
+    return 1;
+}
+
+static int get_view_height(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushinteger(L, inputs->view_height);
+    return 1;
+}
+
 static int scan_masked(lua_State *L, uint8_t mask)
 {
     lua_Integer index = luaL_checkinteger(L, 1);
@@ -168,6 +193,39 @@ static int get_mouse_wheel_y(lua_State *L)
     return 1;
 }
 
+static int get_finger_delta_xy(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushnumber(L, inputs->finger_delta_x);
+    lua_pushnumber(L, inputs->finger_delta_y);
+    return 2;
+}
+
+static int get_finger_delta_x(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushnumber(L, inputs->finger_delta_x);
+    return 1;
+}
+
+static int get_finger_delta_y(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushnumber(L, inputs->finger_delta_y);
+    return 1;
+}
+
+static int get_finger_pinch(lua_State *L)
+{
+    DP_App *app = DP_lua_app(L);
+    DP_UserInputs *inputs = DP_app_inputs(app);
+    lua_pushnumber(L, inputs->finger_pinch);
+    return 1;
+}
+
 static int set_cursor(lua_State *L)
 {
     DP_App *app = DP_lua_app(L);
@@ -184,6 +242,9 @@ static int set_cursor(lua_State *L)
 
 static luaL_Reg ui_funcs[] = {
     {"get_delta_time", get_delta_time},
+    {"get_view_width_height", get_view_width_height},
+    {"get_view_width", get_view_width},
+    {"get_view_height", get_view_height},
     {"scan_held", scan_held},
     {"scan_pressed", scan_pressed},
     {"scan_released", scan_released},
@@ -197,6 +258,10 @@ static luaL_Reg ui_funcs[] = {
     {"get_mouse_wheel_xy", get_mouse_wheel_xy},
     {"get_mouse_wheel_x", get_mouse_wheel_x},
     {"get_mouse_wheel_y", get_mouse_wheel_y},
+    {"get_finger_delta_xy", get_finger_delta_xy},
+    {"get_finger_delta_x", get_finger_delta_x},
+    {"get_finger_delta_y", get_finger_delta_y},
+    {"get_finger_pinch", get_finger_pinch},
     {"set_cursor", set_cursor},
     {NULL, NULL},
 };
