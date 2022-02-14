@@ -38,6 +38,7 @@ sub is_missing_copyright {
     my $found = 0;
     while (<$fh>) {
         return 0 if m{\A.*copyright}i;
+        return 0 if m{auto-generated}i;
         return 1 if $. == 9;
     }
     return 1;
