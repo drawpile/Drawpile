@@ -207,6 +207,15 @@ func main() {
 		log.Err(err).Str("level", *logLevel).Msg("Invalid log level, using info")
 	}
 
+	if len(flag.Args()) != 0 {
+		excessArgs := zerolog.Arr()
+		for _, arg := range flag.Args() {
+			excessArgs.Str(arg)
+		}
+		log.Fatal().Array("excessArgs", excessArgs).Msg(
+			"Excess arguments (missing '=' somewhere?)")
+	}
+
 	if *dir == "" {
 		log.Fatal().Msg("Missing required argument 'dir'")
 	}
