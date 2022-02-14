@@ -32,6 +32,8 @@ Drawdance is free software: you can redistribute it and/or modify it under the t
 
 You may also use original Drawdance code not based on other sources under the MIT license. You **cannot** relicense non-original parts! Therefore the software as a whole remains GPLv3 or later. See documentation in the source code itself for which parts are original and which are based on other sources. See the [LICENSE-FOR-ORIGINAL-CODE file](LICENSE-FOR-ORIGINAL-CODE) for the full license text.
 
+The Drawdance logo is Copyright 2022 askmeaboutloom and licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+
 # SEE ALSO
 
 <https://drawpile.net/> - the official Drawpile website.
