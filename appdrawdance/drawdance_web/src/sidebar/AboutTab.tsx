@@ -41,7 +41,9 @@ function AboutTab(props: AboutTabProps): React.ReactElement {
   return (
     <div className={active ? "overflow-auto" : "d-none"}>
       <h2>About</h2>
-      <p className="fw-bold">Drawdance 0.0.1 - A Drawpile Client</p>
+      <p className="fw-bold">
+        Drawdance {process.env.NPM_PACKAGE_VERSION} - A Drawpile Client
+      </p>
       <p>Copyright 2022 askmeaboutloom.</p>
       <p>
         Drawdance is free software: you can redistribute it and/or modify it
