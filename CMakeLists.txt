@@ -50,6 +50,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_format.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_tidy.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/compile_flags.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/dpconfig.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/language_standards.cmake")
 
 function(set_dp_target_properties target)
