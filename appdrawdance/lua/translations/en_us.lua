@@ -44,7 +44,7 @@ return {
     about_window = {
         title = "About",
         txt_about = Template:new_strip_margin[[
-            |Drawdance {version} - A Drawpile Client
+            |Drawdance {version} ({build_type}) - A Drawpile Client
             |
             |Copyright {copyright_years} askmeaboutloom.
             |

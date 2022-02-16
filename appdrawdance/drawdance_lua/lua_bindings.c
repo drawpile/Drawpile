@@ -28,6 +28,7 @@
 #include <dpcommon/threading.h>
 #include <dpengine/canvas_state.h>
 #include <dpmsg/message.h>
+#include <dpconfig.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
@@ -231,6 +232,18 @@ static int init_lua_libs(lua_State *L)
     return 0;
 }
 
+static int version(lua_State *L)
+{
+    lua_pushliteral(L, DP_VERSION);
+    return 1;
+}
+
+static int build_type(lua_State *L)
+{
+    lua_pushliteral(L, DP_BUILD_TYPE);
+    return 1;
+}
+
 static int platform(lua_State *L)
 {
     lua_pushliteral(L, DP_PLATFORM);
@@ -384,6 +397,10 @@ static int init_app_funcs(lua_State *L)
 
     lua_pushcfunction(L, error_to_trace);
     lua_setfield(L, -2, "error_to_trace");
+    lua_pushcfunction(L, version);
+    lua_setfield(L, -2, "version");
+    lua_pushcfunction(L, build_type);
+    lua_setfield(L, -2, "build_type");
     lua_pushcfunction(L, platform);
     lua_setfield(L, -2, "platform");
     lua_pushcfunction(L, open_url);

@@ -41,7 +41,8 @@ function AboutWindow:show()
     Utils.begin_dialog(T"title##about_window", self.open)
     ImGui.TextWrapped(T{
         key = "txt_about",
-        version = "0.0.1-dev",
+        build_type = DP.build_type(),
+        version = DP.version(),
         copyright_years = "2022",
     })
     ImGui.Spacing()

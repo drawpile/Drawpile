@@ -57,6 +57,7 @@ add_clang_format_files("${drawdance_lua_sources}" "${drawdance_lua_headers}")
 add_library(drawdance_lua STATIC "${drawdance_lua_sources}"
                                  "${drawdance_lua_headers}")
 set_dp_target_properties(drawdance_lua)
+target_include_directories(drawdance_lua PRIVATE "${CMAKE_BINARY_DIR}/config")
 target_include_directories(drawdance_lua INTERFACE drawdance_lua)
 target_link_libraries(drawdance_lua PUBLIC dpclient lua)
 
