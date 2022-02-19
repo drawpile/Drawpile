@@ -83,6 +83,7 @@ function getUsernameInput(
           placeholder="Username"
           value={usernameInput}
           onChange={changeInput(setUsernameInput)}
+          maxLength={22}
         />
       </div>
     );
