@@ -28,6 +28,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -50,6 +51,8 @@ type Client struct {
 var listen = flag.String("listen", "0.0.0.0:27751", "http server address")
 var proxy = flag.String("proxy", "127.0.0.1:27750", "address to proxy to")
 var dir = flag.String("dir", "", "directory to serve static files from")
+var filesRoot = flag.String("files-root", "/", "path to serve static files from")
+var wsRoot = flag.String("ws-root", "/ws", "path to serve the WebSocket connection from")
 var checkOrigin = flag.Bool("check-origin", false, "toggle cross-origin check")
 var logLevel = flag.String("log", "info", "log level (info, debug, warn, error)")
 var color = flag.Bool("color", false, "enable colorful terminal logging")
@@ -227,20 +230,23 @@ func main() {
 	if !*checkOrigin {
 		server.upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	}
+	http.HandleFunc(*wsRoot, server.handle)
 
 	fileServer := http.FileServer(http.Dir(*dir))
+	var handler http.HandlerFunc = func(writer http.ResponseWriter, request *http.Request) {
+		log.Debug().Str("path", request.URL.Path).Msg("New request")
+		header := writer.Header()
+		header.Add("Cross-Origin-Resource-Policy", "same-site")
+		header.Add("Cross-Origin-Opener-Policy", "same-origin")
+		header.Add("Cross-Origin-Embedder-Policy", "require-corp")
+		fileServer.ServeHTTP(writer, request)
+	}
 
-	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		if request.URL.Path == "/" && request.Header.Get("Upgrade") != "" {
-			server.handle(writer, request)
-		} else {
-			header := writer.Header()
-			header.Add("Cross-Origin-Resource-Policy", "same-site")
-			header.Add("Cross-Origin-Opener-Policy", "same-origin")
-			header.Add("Cross-Origin-Embedder-Policy", "require-corp")
-			fileServer.ServeHTTP(writer, request)
-		}
-	})
+	root := *filesRoot
+	if !strings.HasSuffix(root, "/") {
+		root += "/" // The file server really wants a slash suffix.
+	}
+	http.Handle(root, http.StripPrefix(root, handler))
 
 	log.Info().Str("address", *listen).Str("proxy", *proxy).Msg("Listening")
 	if *tls {

@@ -1,13 +1,14 @@
 // Drawdance's config file - https://github.com/drawpile/Drawdance
 window.DRAWDANCE_CONFIG = {
   // Which WebSocket URL to connect to. The default is to just use the URL of
-  // this page, with the protocol replaced by wss://. You need to point this at
-  // the URL where your Drawdance WebSocket proxy is running. The proxy probably
-  // needs to be TLS-secured, otherwise the browser will refuse to connect. If
-  // you want to connect to a different server, the proxy needs to be set to
-  // allow cross-origin requests.
+  // this page, with the protocol replaced by wss:// and /ws appended. You need
+  // to point this at the URL where your Drawdance WebSocket proxy is running
+  // and use the correct path as configured by the -ws-path option (or /ws by
+  // default). The proxy probably needs to be TLS-secured, otherwise the browser
+  // will refuse to connect. If you want to connect to a different server, the
+  // proxy needs to be set to allow cross-origin requests.
   targetUrl: (function () {
-    return `wss://${window.location.host}/`;
+    return `wss://${window.location.host}/ws`;
   })(),
   // The title for the initial dialog presented to the user.
   initialDialogTitle: `Join a Drawpile`,

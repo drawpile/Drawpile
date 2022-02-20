@@ -30,6 +30,7 @@ declare const DRAWDANCE_CONFIG: {
 interface EmscriptenCreateModuleParams {
   canvas?: HTMLCanvasElement;
   setStatus?: (string) => void;
+  locateFile?: (string) => string;
 }
 
 interface DrawdanceInstance {

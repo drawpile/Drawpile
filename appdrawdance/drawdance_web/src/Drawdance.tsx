@@ -272,8 +272,11 @@ export class Drawdance {
         new CustomEvent("DRAWDANCE_MODULE_LOAD_STATUS", { detail: [text] })
       );
     };
+    const locateFile = (path: string): string => {
+      return `${process.env.PUBLIC_URL}/${path}`;
+    };
 
-    createModule({ canvas, setStatus })
+    createModule({ canvas, setStatus, locateFile })
       .then((instance) => {
         (window as any).dpinstance = instance;
         this.state.instance = instance;
