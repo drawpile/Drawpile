@@ -26,7 +26,8 @@
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
-typedef struct DP_LayerList DP_LayerList;
+typedef struct DP_LayerContentList DP_LayerContentList;
+typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Tile DP_Tile;
 
@@ -35,14 +36,18 @@ typedef struct DP_Tile DP_Tile;
 #define DP_FLAT_IMAGE_INCLUDE_FIXED_LAYERS (1 << 1)
 #define DP_FLAT_IMAGE_INCLUDE_SUBLAYERS    (1 << 2)
 
+typedef struct DP_CanvasState DP_CanvasState;
+
 #ifdef DP_NO_STRICT_ALIASING
-typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_TransientCanvasState DP_TransientCanvasState;
-typedef struct DP_TransientLayer DP_TransientLayer;
+typedef struct DP_TransientLayerContent DP_TransientLayerContent;
+typedef struct DP_TransientLayerContentList DP_TransientLayerContentList;
+typedef struct DP_TransientLayerPropsList DP_TransientLayerPropsList;
 #else
-typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_CanvasState DP_TransientCanvasState;
-typedef struct DP_Layer DP_TransientLayer;
+typedef struct DP_LayerContent DP_TransientLayerContent;
+typedef struct DP_LayerContentList DP_TransientLayerContentList;
+typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
 #endif
 
 DP_CanvasState *DP_canvas_state_new(void);
@@ -55,6 +60,14 @@ int DP_canvas_state_refcount(DP_CanvasState *cs);
 
 bool DP_canvas_state_transient(DP_CanvasState *cs);
 
+int DP_canvas_state_width(DP_CanvasState *cs);
+
+int DP_canvas_state_height(DP_CanvasState *cs);
+
+DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs);
+
+DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs);
+
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_Message *msg);
 
@@ -65,13 +78,16 @@ DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index);
 void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
                           DP_CanvasDiff *diff);
 
-void DP_canvas_state_render(DP_CanvasState *cs, DP_TransientLayer *target,
-                            DP_CanvasDiff *diff);
-
-DP_LayerList *DP_canvas_state_layers_noinc(DP_CanvasState *cs);
+DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
+                                                 DP_TransientLayerContent *lc,
+                                                 DP_CanvasDiff *diff);
 
 
 DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs);
+
+DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
+    DP_CanvasState *cs, DP_TransientLayerContentList *tlcl,
+    DP_TransientLayerPropsList *tlpl);
 
 DP_TransientCanvasState *
 DP_transient_canvas_state_incref(DP_TransientCanvasState *cs);
@@ -82,10 +98,28 @@ int DP_transient_canvas_state_refcount(DP_TransientCanvasState *cs);
 
 DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs);
 
+void DP_transient_canvas_state_width_set(DP_TransientCanvasState *tcs,
+                                         int width);
 
-bool DP_transient_canvas_state_resize(DP_TransientCanvasState *tcs,
-                                      unsigned int context_id, int top,
-                                      int right, int bottom, int left);
+void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
+                                          int height);
+
+DP_LayerContentList *
+DP_transient_canvas_state_layer_contents_noinc(DP_TransientCanvasState *tcs);
+
+DP_LayerPropsList *
+DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs);
+
+void DP_transient_canvas_state_transient_layer_contents_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientLayerContentList *tlcl);
+
+DP_TransientLayerContentList *
+DP_transient_canvas_state_transient_layer_contents(DP_TransientCanvasState *tcs,
+                                                   int reserve);
+
+DP_TransientLayerPropsList *
+DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
+                                                int reserve);
 
 
 #endif

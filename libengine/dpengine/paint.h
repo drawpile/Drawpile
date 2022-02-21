@@ -28,9 +28,9 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_PixelBrushDab DP_PixelBrushDab;
 
 #ifdef DP_NO_STRICT_ALIASING
-typedef struct DP_TransientLayerData DP_TransientLayerData;
+typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 #else
-typedef struct DP_LayerData DP_TransientLayerData;
+typedef struct DP_LayerContent DP_TransientLayerContent;
 #endif
 
 
@@ -58,8 +58,8 @@ int DP_brush_stamp_diameter(DP_BrushStamp *stamp);
 uint8_t *DP_brush_stamp_data(DP_BrushStamp *stamp);
 
 
-bool DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
-                        DP_TransientLayerData *tld) DP_MUST_CHECK;
+void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
+                        DP_TransientLayerContent *tlc);
 
 
 #endif

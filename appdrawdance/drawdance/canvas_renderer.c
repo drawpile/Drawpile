@@ -25,7 +25,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpengine/canvas_diff.h>
-#include <dpengine/layer.h>
+#include <dpengine/layer_content.h>
 #include <dpengine/pixels.h>
 #include <dpengine/tile.h>
 #include <gles2_inc.h>
@@ -233,20 +233,20 @@ static bool resize(DP_CanvasRenderer *cr, int layer_width, int layer_height)
 static void write_tile_to_texture(void *layer, int tile_x, int tile_y)
 {
     static const DP_Pixel BLANK_PIXELS[DP_TILE_LENGTH];
-    DP_Tile *tile = DP_layer_tile_at(layer, tile_x, tile_y);
+    DP_Tile *tile = DP_layer_content_tile_at_noinc(layer, tile_x, tile_y);
     const DP_Pixel *pixels = tile ? DP_tile_pixels(tile) : BLANK_PIXELS;
     DP_GL(glTexSubImage2D, GL_TEXTURE_2D, 0, tile_x * DP_TILE_SIZE,
           tile_y * DP_TILE_SIZE, DP_TILE_SIZE, DP_TILE_SIZE, GL_RGBA,
           GL_UNSIGNED_BYTE, pixels);
 }
 
-static void write_all_tiles_to_texture(DP_Layer *layer, int layer_width,
+static void write_all_tiles_to_texture(DP_LayerContent *lc, int layer_width,
                                        int layer_height)
 {
     DP_TileCounts counts = DP_tile_counts_round(layer_width, layer_height);
     for (int tile_y = 0; tile_y < counts.y; ++tile_y) {
         for (int tile_x = 0; tile_x < counts.x; ++tile_x) {
-            write_tile_to_texture(layer, tile_x, tile_y);
+            write_tile_to_texture(lc, tile_x, tile_y);
         }
     }
 }
@@ -314,7 +314,7 @@ static void render_texture(DP_CanvasRenderer *cr, int view_height,
     DP_GL(glDrawArrays, GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_Layer *layer,
+void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_LayerContent *lc,
                                int view_width, int view_height,
                                DP_CanvasDiff *diff_or_null)
 {
@@ -323,8 +323,8 @@ void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_Layer *layer,
         return; // No view to render to, bail out.
     }
 
-    int layer_width = DP_layer_width(layer);
-    int layer_height = DP_layer_height(layer);
+    int layer_width = DP_layer_content_width(lc);
+    int layer_height = DP_layer_content_height(lc);
     if (layer_width <= 0 || layer_height <= 0) {
         return; // Layer with zero dimension(s), bail out.
     }
@@ -332,10 +332,10 @@ void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_Layer *layer,
     DP_GL(glActiveTexture, GL_TEXTURE0);
     DP_GL(glBindTexture, GL_TEXTURE_2D, cr->texture.id);
     if (resize(cr, layer_width, layer_height)) {
-        write_all_tiles_to_texture(layer, layer_width, layer_height);
+        write_all_tiles_to_texture(lc, layer_width, layer_height);
     }
     else if (diff_or_null) {
-        DP_canvas_diff_each_pos(diff_or_null, write_tile_to_texture, layer);
+        DP_canvas_diff_each_pos(diff_or_null, write_tile_to_texture, lc);
     }
 
     if (cr->recalculate_vertices) {

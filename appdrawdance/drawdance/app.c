@@ -32,7 +32,7 @@
 #include <dpcommon/worker.h>
 #include <dpengine/canvas_diff.h>
 #include <dpengine/canvas_state.h>
-#include <dpengine/layer.h>
+#include <dpengine/layer_content.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/message.h>
 #include <dpmsg/messages/command.h>
@@ -62,7 +62,7 @@ typedef struct DP_App {
     DP_CanvasState *blank_state;
     DP_CanvasState *previous_state;
     DP_CanvasState *current_state;
-    DP_TransientLayer *layer;
+    DP_TransientLayerContent *tlc;
     DP_CanvasDiff *diff;
     DP_CanvasRenderer *canvas_renderer;
     DP_LuaWarnBuffer lua_warn_buffer;
@@ -85,7 +85,7 @@ static bool init_canvas_renderer(DP_App *app)
     if (cr) {
         app->canvas_renderer = cr;
         app->diff = DP_canvas_diff_new();
-        app->layer = DP_transient_layer_new_init(0, 0, 0, NULL);
+        app->tlc = DP_transient_layer_content_new_init(0, 0, NULL);
         app->blank_state = DP_canvas_state_new();
         return true;
     }
@@ -209,7 +209,7 @@ static DP_CanvasDiff *prepare_canvas(DP_App *app)
             DP_canvas_state_decref(prev);
         }
         app->previous_state = next;
-        DP_canvas_state_render(next, app->layer, diff);
+        app->tlc = DP_canvas_state_render(next, app->tlc, diff);
         return diff;
     }
     else {
@@ -228,7 +228,7 @@ static void render_canvas(DP_App *app, DP_CanvasDiff *diff_or_null)
     int view_width, view_height;
     SDL_GL_GetDrawableSize(app->window, &view_width, &view_height);
     DP_user_input_view_dimensions_set(&app->inputs, view_width, view_height);
-    DP_canvas_renderer_render(app->canvas_renderer, (DP_Layer *)app->layer,
+    DP_canvas_renderer_render(app->canvas_renderer, (DP_LayerContent *)app->tlc,
                               view_width, view_height, diff_or_null);
 }
 
@@ -294,8 +294,8 @@ void DP_app_free(DP_App *app)
         DP_lua_warn_buffer_dispose(&app->lua_warn_buffer);
         DP_canvas_renderer_free(app->canvas_renderer);
         DP_canvas_diff_free(app->diff);
-        if (app->layer) {
-            DP_transient_layer_decref(app->layer);
+        if (app->tlc) {
+            DP_transient_layer_content_decref(app->tlc);
         }
         if (app->previous_state) {
             DP_canvas_state_decref(app->previous_state);

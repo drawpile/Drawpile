@@ -23,49 +23,49 @@
 #include "lua_util.h"
 #include <dpcommon/common.h>
 #include <dpengine/canvas_state.h>
-#include <dpengine/layer.h>
-#include <dpengine/layer_list.h>
+#include <dpengine/layer_props.h>
+#include <dpengine/layer_props_list.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
 
 
-static int layer_push(lua_State *L, DP_Layer *l)
+static int layer_props_push(lua_State *L, DP_LayerProps *lp)
 {
-    DP_Layer **pp = lua_newuserdatauv(L, sizeof(l), 0);
-    *pp = DP_layer_incref(l);
-    luaL_setmetatable(L, "DP_Layer");
+    DP_LayerProps **pp = lua_newuserdatauv(L, sizeof(lp), 0);
+    *pp = DP_layer_props_incref(lp);
+    luaL_setmetatable(L, "DP_LayerProps");
     return 1;
 }
 
-DP_LUA_DEFINE_CHECK(DP_Layer, check_layer)
-DP_LUA_DEFINE_GC(DP_Layer, layer_gc, DP_layer_decref)
+DP_LUA_DEFINE_CHECK(DP_LayerProps, check_layer_props)
+DP_LUA_DEFINE_GC(DP_LayerProps, layer_props_gc, DP_layer_props_decref)
 
 
-static int layer_index(lua_State *L)
+static int layer_props_index(lua_State *L)
 {
-    DP_Layer *l = check_layer(L, 1);
+    DP_LayerProps *l = check_layer_props(L, 1);
     if (lua_type(L, 2) == LUA_TSTRING) {
         const char *key = lua_tostring(L, 2);
         if (strcmp(key, "id") == 0) {
-            lua_pushinteger(L, DP_layer_id(l));
+            lua_pushinteger(L, DP_layer_props_id(l));
             return 1;
         }
         else if (strcmp(key, "opacity") == 0) {
-            lua_pushinteger(L, DP_layer_opacity(l));
+            lua_pushinteger(L, DP_layer_props_opacity(l));
             return 1;
         }
         else if (strcmp(key, "hidden") == 0) {
-            lua_pushboolean(L, DP_layer_hidden(l));
+            lua_pushboolean(L, DP_layer_props_hidden(l));
             return 1;
         }
         else if (strcmp(key, "fixed") == 0) {
-            lua_pushboolean(L, DP_layer_fixed(l));
+            lua_pushboolean(L, DP_layer_props_fixed(l));
             return 1;
         }
         else if (strcmp(key, "title") == 0) {
             size_t length;
-            const char *title = DP_layer_title(l, &length);
+            const char *title = DP_layer_props_title(l, &length);
             if (title) {
                 lua_pushlstring(L, title, length);
             }
@@ -81,42 +81,43 @@ static int layer_index(lua_State *L)
     return 1;
 }
 
-static const luaL_Reg layer_methods[] = {
-    {"__gc", layer_gc},
-    {"__index", layer_index},
+static const luaL_Reg layer_props_methods[] = {
+    {"__gc", layer_props_gc},
+    {"__index", layer_props_index},
     {NULL, NULL},
 };
 
 
-static int layer_list_push(lua_State *L, DP_LayerList *ll)
+static int layer_props_list_push(lua_State *L, DP_LayerPropsList *lpl)
 {
-    DP_LayerList **pp = lua_newuserdatauv(L, sizeof(ll), 0);
-    *pp = DP_layer_list_incref(ll);
-    luaL_setmetatable(L, "DP_LayerList");
+    DP_LayerPropsList **pp = lua_newuserdatauv(L, sizeof(lpl), 0);
+    *pp = DP_layer_props_list_incref(lpl);
+    luaL_setmetatable(L, "DP_LayerPropsList");
     return 1;
 }
 
-DP_LUA_DEFINE_CHECK(DP_LayerList, check_layer_list)
-DP_LUA_DEFINE_GC(DP_LayerList, layer_list_gc, DP_layer_list_decref)
+DP_LUA_DEFINE_CHECK(DP_LayerPropsList, check_layer_props_list)
+DP_LUA_DEFINE_GC(DP_LayerPropsList, layer_props_list_gc,
+                 DP_layer_props_list_decref)
 
 static int layer_list_len(lua_State *L)
 {
-    DP_LayerList *ll = check_layer_list(L, 1);
-    lua_pushinteger(L, DP_layer_list_layer_count(ll));
+    DP_LayerPropsList *lpl = check_layer_props_list(L, 1);
+    lua_pushinteger(L, DP_layer_props_list_count(lpl));
     return 1;
 }
 
 static int layer_list_index(lua_State *L)
 {
-    DP_LayerList *ll = check_layer_list(L, 1);
+    DP_LayerPropsList *lpl = check_layer_props_list(L, 1);
     if (lua_type(L, 2) == LUA_TNUMBER) {
         lua_Integer index = luaL_checkinteger(L, 2);
         if (index >= 1) {
-            int count = DP_layer_list_layer_count(ll);
+            int count = DP_layer_props_list_count(lpl);
             int i = (int)index - 1;
             if (i < count) {
-                DP_Layer *l = DP_layer_list_at_noinc(ll, i);
-                return layer_push(L, l);
+                DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+                return layer_props_push(L, lp);
             }
         }
         lua_pushnil(L);
@@ -128,8 +129,8 @@ static int layer_list_index(lua_State *L)
     return 1;
 }
 
-static const luaL_Reg layer_list_methods[] = {
-    {"__gc", layer_list_gc},
+static const luaL_Reg layer_props_list_methods[] = {
+    {"__gc", layer_props_list_gc},
     {"__len", layer_list_len},
     {"__index", layer_list_index},
     {NULL, NULL},
@@ -144,9 +145,9 @@ static int canvas_state_index(lua_State *L)
     DP_CanvasState *cs = check_canvas_state(L, 1);
     if (lua_type(L, 2) == LUA_TSTRING) {
         const char *key = lua_tostring(L, 2);
-        if (strcmp(key, "layers") == 0) {
-            DP_LayerList *ll = DP_canvas_state_layers_noinc(cs);
-            return layer_list_push(L, ll);
+        if (strcmp(key, "layer_props") == 0) {
+            DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+            return layer_props_list_push(L, lpl);
         }
     }
     lua_getmetatable(L, 1);
@@ -164,11 +165,11 @@ static const luaL_Reg canvas_state_methods[] = {
 
 int DP_lua_canvas_state_init(lua_State *L)
 {
-    luaL_newmetatable(L, "DP_Layer");
-    luaL_setfuncs(L, layer_methods, 0);
+    luaL_newmetatable(L, "DP_LayerProps");
+    luaL_setfuncs(L, layer_props_methods, 0);
     lua_pop(L, 1);
-    luaL_newmetatable(L, "DP_LayerList");
-    luaL_setfuncs(L, layer_list_methods, 0);
+    luaL_newmetatable(L, "DP_LayerPropsList");
+    luaL_setfuncs(L, layer_props_list_methods, 0);
     lua_pop(L, 1);
     luaL_newmetatable(L, "DP_CanvasState");
     luaL_setfuncs(L, canvas_state_methods, 0);

@@ -24,8 +24,11 @@
 #include "canvas_diff.h"
 #include "compress.h"
 #include "image.h"
-#include "layer.h"
-#include "layer_list.h"
+#include "layer_content.h"
+#include "layer_content_list.h"
+#include "layer_props.h"
+#include "layer_props_list.h"
+#include "ops.h"
 #include "paint.h"
 #include "tile.h"
 #include <dpcommon/common.h>
@@ -55,7 +58,8 @@ struct DP_CanvasState {
     const bool transient;
     const int width, height;
     DP_Tile *const background_tile;
-    DP_LayerList *const layers;
+    DP_LayerContentList *const layer_contents;
+    DP_LayerPropsList *const layer_props;
 };
 
 struct DP_TransientCanvasState {
@@ -64,8 +68,12 @@ struct DP_TransientCanvasState {
     int width, height;
     DP_Tile *background_tile;
     union {
-        DP_LayerList *layers;
-        DP_TransientLayerList *transient_layers;
+        DP_LayerContentList *layer_contents;
+        DP_TransientLayerContentList *transient_layer_contents;
+    };
+    union {
+        DP_LayerPropsList *layer_props;
+        DP_TransientLayerPropsList *transient_layer_props;
     };
 };
 
@@ -77,8 +85,12 @@ struct DP_CanvasState {
     const int width, height;
     DP_Tile *background_tile;
     union {
-        DP_LayerList *layers;
-        DP_TransientLayerList *transient_layers;
+        DP_LayerContentList *layer_contents;
+        DP_TransientLayerContentList *transient_layer_contents;
+    };
+    union {
+        DP_LayerPropsList *layer_props;
+        DP_TransientLayerPropsList *transient_layer_props;
     };
 };
 
@@ -89,8 +101,8 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                                       int height)
 {
     DP_TransientCanvasState *cs = DP_malloc(sizeof(*cs));
-    *cs =
-        (DP_TransientCanvasState){{-1}, transient, width, height, NULL, {NULL}};
+    *cs = (DP_TransientCanvasState){{-1}, transient, width, height,
+                                    NULL, {NULL},    {NULL}};
     SDL_AtomicSet(&cs->refcount, 1);
     return cs;
 }
@@ -98,7 +110,8 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
 DP_CanvasState *DP_canvas_state_new(void)
 {
     DP_TransientCanvasState *tcs = allocate_canvas_state(false, 0, 0);
-    tcs->layers = DP_layer_list_new();
+    tcs->layer_contents = DP_layer_content_list_new();
+    tcs->layer_props = DP_layer_props_list_new();
     return (DP_CanvasState *)tcs;
 }
 
@@ -116,7 +129,8 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
     DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
     if (SDL_AtomicDecRef(&cs->refcount)) {
         DP_tile_decref_nullable(cs->background_tile);
-        DP_layer_list_decref(cs->layers);
+        DP_layer_content_list_decref(cs->layer_contents);
+        DP_layer_props_list_decref(cs->layer_props);
         DP_free(cs);
     }
 }
@@ -135,24 +149,32 @@ bool DP_canvas_state_transient(DP_CanvasState *cs)
     return cs->transient;
 }
 
-
-static DP_TransientLayerList *
-get_transient_layer_list(DP_TransientCanvasState *tcs, int reserve)
+int DP_canvas_state_width(DP_CanvasState *cs)
 {
-    DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
-    DP_ASSERT(tcs->transient);
-    DP_ASSERT(reserve >= 0);
-    DP_LayerList *ll = tcs->layers;
-    if (!DP_layer_list_transient(ll)) {
-        tcs->transient_layers = DP_transient_layer_list_new(ll, reserve);
-        DP_layer_list_decref(ll);
-    }
-    else if (reserve > 0) {
-        tcs->transient_layers =
-            DP_transient_layer_list_reserve(tcs->transient_layers, reserve);
-    }
-    return tcs->transient_layers;
+    DP_ASSERT(cs);
+    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    return cs->width;
+}
+
+int DP_canvas_state_height(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    return cs->height;
+}
+
+DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    return cs->layer_contents;
+}
+
+DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    return cs->layer_props;
 }
 
 
@@ -160,25 +182,15 @@ static DP_CanvasState *handle_canvas_resize(DP_CanvasState *cs,
                                             unsigned int context_id,
                                             DP_MsgCanvasResize *mcr)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     int top, right, bottom, left;
     DP_msg_canvas_resize_dimensions(mcr, &top, &right, &bottom, &left);
-    if (DP_transient_canvas_state_resize(tcs, context_id, top, right, bottom,
-                                         left)) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_canvas_resize(cs, context_id, top, right, bottom, left);
 }
 
 static DP_CanvasState *handle_layer_create(DP_CanvasState *cs,
                                            unsigned int context_id,
                                            DP_MsgLayerCreate *mlc)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-
     unsigned int flags = DP_msg_layer_create_flags(mlc);
     bool insert = flags & DP_MSG_LAYER_CREATE_FLAG_INSERT;
     bool copy = flags & DP_MSG_LAYER_CREATE_FLAG_COPY;
@@ -189,113 +201,59 @@ static DP_CanvasState *handle_layer_create(DP_CanvasState *cs,
     size_t title_length;
     const char *title = DP_msg_layer_create_title(mlc, &title_length);
 
-    bool ok = DP_transient_layer_list_layer_create(
-        get_transient_layer_list(tcs, 1), DP_msg_layer_create_layer_id(mlc),
-        DP_msg_layer_create_source_id(mlc), tile, insert, copy, tcs->width,
-        tcs->height, title, title_length);
+    DP_CanvasState *next =
+        DP_ops_layer_create(cs, DP_msg_layer_create_layer_id(mlc),
+                            DP_msg_layer_create_source_id(mlc), tile, insert,
+                            copy, title, title_length);
 
     DP_tile_decref_nullable(tile);
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return next;
 }
 
 static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
                                          DP_MsgLayerAttr *mla)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-
     unsigned int flags = DP_msg_layer_attr_flags(mla);
     bool censored = flags & DP_MSG_LAYER_ATTR_FLAG_CENSORED;
     bool fixed = flags & DP_MSG_LAYER_ATTR_FLAG_FIXED;
-
-    bool ok = DP_transient_layer_list_layer_attr(
-        get_transient_layer_list(tcs, 0), DP_msg_layer_attr_layer_id(mla),
-        DP_msg_layer_attr_sublayer_id(mla), DP_msg_layer_attr_opacity(mla),
-        DP_msg_layer_attr_blend_mode(mla), censored, fixed);
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_layer_attr(
+        cs, DP_msg_layer_attr_layer_id(mla), DP_msg_layer_attr_sublayer_id(mla),
+        DP_msg_layer_attr_opacity(mla), DP_msg_layer_attr_blend_mode(mla),
+        censored, fixed);
 }
+
 
 static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
                                           DP_MsgLayerOrder *mlo)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     int layer_id_count;
     const int *layer_ids = DP_msg_layer_order_layer_ids(mlo, &layer_id_count);
-    DP_layer_list_decref(tcs->layers);
-    tcs->transient_layers =
-        DP_layer_list_layer_reorder(cs->layers, layer_ids, layer_id_count);
-    return DP_transient_canvas_state_persist(tcs);
+    return DP_ops_layer_reorder(cs, layer_ids, layer_id_count);
 }
 
 static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,
                                             DP_MsgLayerRetitle *mlr)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-
     size_t title_length;
     const char *title = DP_msg_layer_retitle_title(mlr, &title_length);
-
-    bool ok = DP_transient_layer_list_layer_retitle(
-        get_transient_layer_list(tcs, 0), DP_msg_layer_retitle_layer_id(mlr),
-        title, title_length);
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_layer_retitle(cs, DP_msg_layer_retitle_layer_id(mlr), title,
+                                title_length);
 }
 
 static DP_CanvasState *handle_layer_delete(DP_CanvasState *cs,
                                            unsigned int context_id,
                                            DP_MsgLayerDelete *mld)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-
-    bool ok = DP_transient_layer_list_layer_delete(
-        get_transient_layer_list(tcs, 0), context_id,
-        DP_msg_layer_delete_layer_id(mld), DP_msg_layer_delete_merge(mld));
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_layer_delete(cs, context_id,
+                               DP_msg_layer_delete_layer_id(mld),
+                               DP_msg_layer_delete_merge(mld));
 }
 
 static DP_CanvasState *handle_layer_visibility(DP_CanvasState *cs,
                                                DP_MsgLayerVisibility *mlv)
 {
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-
-    bool ok = DP_transient_layer_list_layer_visibility(
-        get_transient_layer_list(tcs, 0), DP_msg_layer_visibility_layer_id(mlv),
-        DP_msg_layer_visibility_visible(mlv));
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_layer_visibility(cs, DP_msg_layer_visibility_layer_id(mlv),
+                                   DP_msg_layer_visibility_visible(mlv));
 }
 
 static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
@@ -308,22 +266,13 @@ static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
         return NULL;
     }
 
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     size_t image_size;
     const unsigned char *image = DP_msg_put_image_image(mpi, &image_size);
-    bool ok = DP_transient_layer_list_put_image(
-        get_transient_layer_list(tcs, 0), context_id,
-        DP_msg_put_image_layer_id(mpi), blend_mode, DP_msg_put_image_x(mpi),
-        DP_msg_put_image_y(mpi), DP_msg_put_image_width(mpi),
-        DP_msg_put_image_height(mpi), image, image_size);
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_put_image(cs, context_id, DP_msg_put_image_layer_id(mpi),
+                            blend_mode, DP_msg_put_image_x(mpi),
+                            DP_msg_put_image_y(mpi),
+                            DP_msg_put_image_width(mpi),
+                            DP_msg_put_image_height(mpi), image, image_size);
 }
 
 static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
@@ -354,19 +303,9 @@ static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
         return NULL;
     }
 
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    bool ok = DP_transient_layer_list_fill_rect(
-        get_transient_layer_list(tcs, 0), context_id,
-        DP_msg_fill_rect_layer_id(mfr), blend_mode, left, top, right, bottom,
-        DP_msg_fill_rect_color(mfr));
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_fill_rect(cs, context_id, DP_msg_fill_rect_layer_id(mfr),
+                            blend_mode, left, top, right, bottom,
+                            DP_msg_fill_rect_color(mfr));
 }
 
 static DP_CanvasState *handle_region_move(DP_CanvasState *cs,
@@ -378,6 +317,18 @@ static DP_CanvasState *handle_region_move(DP_CanvasState *cs,
     DP_msg_region_move_src_rect(mrm, &src_x, &src_y, &src_width, &src_height);
     if (src_width <= 0 || src_height <= 0) {
         DP_error_set("Region move: selection is empty");
+        return NULL;
+    }
+
+    int x1, y1, x2, y2, x3, y3, x4, y4;
+    DP_msg_region_move_dst_quad(mrm, &x1, &y1, &x2, &y2, &x3, &y3, &x4, &y4);
+    DP_Quad dst_quad = DP_quad_make(x1, y1, x2, y2, x3, y3, x4, y4);
+
+    long long canvas_width = cs->width;
+    long long canvas_height = cs->height;
+    long long max_size = (canvas_width + 1LL) * (canvas_height + 1LL);
+    if (DP_rect_size(DP_quad_bounds(dst_quad)) > max_size) {
+        DP_error_set("Region move: attempt to scale beyond image size");
         return NULL;
     }
 
@@ -395,38 +346,28 @@ static DP_CanvasState *handle_region_move(DP_CanvasState *cs,
         mask = NULL;
     }
 
-    int x1, y1, x2, y2, x3, y3, x4, y4;
-    DP_msg_region_move_dst_quad(mrm, &x1, &y1, &x2, &y2, &x3, &y3, &x4, &y4);
-    DP_Quad dst_quad = DP_quad_make(x1, y1, x2, y2, x3, y3, x4, y4);
-
-    long long canvas_width = cs->width;
-    long long canvas_height = cs->height;
-    long long max_size = (canvas_width + 1LL) * (canvas_height + 1LL);
-    if (DP_rect_size(DP_quad_bounds(dst_quad)) > max_size) {
-        DP_error_set("Region move: attempt to scale beyond image size");
-        return NULL;
-    }
-
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_Rect src_rect = DP_rect_make(src_x, src_y, src_width, src_height);
-    bool ok = DP_transient_layer_list_region_move(
-        get_transient_layer_list(tcs, 0), dc, context_id,
-        DP_msg_region_move_layer_id(mrm), &src_rect, &dst_quad, mask);
-
+    DP_CanvasState *next =
+        DP_ops_region_move(cs, dc, context_id, DP_msg_region_move_layer_id(mrm),
+                           &src_rect, &dst_quad, mask);
     DP_free(mask);
-
-    if (ok) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return next;
 }
 
 static DP_CanvasState *
 handle_put_tile(DP_CanvasState *cs, unsigned int context_id, DP_MsgPutTile *mpt)
 {
+    DP_TileCounts tile_counts = DP_tile_counts_round(cs->width, cs->height);
+    int tile_total = tile_counts.x * tile_counts.y;
+    int x = DP_msg_put_tile_x(mpt);
+    int y = DP_msg_put_tile_y(mpt);
+    int start = y * tile_counts.x + x;
+    if (start >= tile_total) {
+        DP_error_set("Put tile: starting index %d beyond total %d", start,
+                     tile_total);
+        return NULL;
+    }
+
     DP_Tile *tile;
     uint32_t color;
     if (DP_msg_put_tile_color(mpt, &color)) {
@@ -436,29 +377,17 @@ handle_put_tile(DP_CanvasState *cs, unsigned int context_id, DP_MsgPutTile *mpt)
         size_t image_size;
         const unsigned char *image = DP_msg_put_tile_image(mpt, &image_size);
         tile = DP_tile_new_from_compressed(context_id, image, image_size);
-    }
-
-    if (tile) {
-        DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-        bool ok = DP_transient_layer_list_put_tile(
-            get_transient_layer_list(tcs, 0), tile,
-            DP_msg_put_tile_layer_id(mpt), DP_msg_put_tile_sublayer_id(mpt),
-            DP_msg_put_tile_x(mpt), DP_msg_put_tile_y(mpt),
-            DP_msg_put_tile_repeat(mpt));
-
-        DP_tile_decref(tile);
-
-        if (ok) {
-            return DP_transient_canvas_state_persist(tcs);
-        }
-        else {
-            DP_transient_canvas_state_decref(tcs);
+        if (!tile) {
             return NULL;
         }
     }
-    else {
-        return NULL;
-    }
+
+    DP_CanvasState *next = DP_ops_put_tile(
+        cs, tile, DP_msg_put_tile_layer_id(mpt),
+        DP_msg_put_tile_sublayer_id(mpt), x, y, DP_msg_put_tile_repeat(mpt));
+
+    DP_tile_decref(tile);
+    return next;
 }
 
 static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
@@ -491,61 +420,7 @@ static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
 static DP_CanvasState *handle_pen_up(DP_CanvasState *cs,
                                      unsigned int context_id)
 {
-    // We only need to do any work here if the user was drawing in indirect mode
-    // and now there's sublayers with their id that need to be merged. So we
-    // don't do any transient business right away, but instead put it off until
-    // we actually find something to do. This makes the algorithm complicated,
-    // but it avoids doing a bunch of pointless allocations in direct draw mode.
-    DP_TransientCanvasState *tcs = NULL;
-    int sublayer_id = DP_uint_to_int(context_id);
-    DP_LayerList *ll = cs->layers;
-
-    int layer_count = DP_layer_list_layer_count(ll);
-    for (int i = 0; i < layer_count; ++i) {
-        DP_LayerList *sll =
-            DP_layer_sublayers_noinc(DP_layer_list_at_noinc(ll, i));
-        DP_TransientLayer *tl = NULL;
-
-        int sublayer_count = DP_layer_list_layer_count(sll);
-        for (int j = 0; j < sublayer_count; ++j) {
-            if (DP_layer_id(DP_layer_list_at_noinc(sll, j)) == sublayer_id) {
-                // We found something to merge.
-                if (tl) {
-                    // Everything is already transient, just merge the sublayer.
-                    DP_transient_layer_merge_sublayer_at(tl, context_id, j);
-                }
-                else {
-                    // Something isn't transient yet, so we take care of that.
-                    DP_TransientLayerList *tll;
-                    if (tcs) {
-                        // Canvas state and layer list are already transient.
-                        tll = (DP_TransientLayerList *)ll;
-                    }
-                    else {
-                        // Nothing is transient yet.
-                        tcs = DP_transient_canvas_state_new(cs);
-                        tll = get_transient_layer_list(tcs, 0);
-                        ll = (DP_LayerList *)ll;
-                    }
-                    // Make the layer transient so we can merge.
-                    tl = DP_transient_layer_list_transient_at(tll, i);
-                    DP_transient_layer_merge_sublayer_at(tl, context_id, j);
-                    // Use the transient layer's sublayers from now on.
-                    sll = DP_transient_layer_sublayers(tl);
-                }
-                // The merged sublayer is gone, so take that into account.
-                --sublayer_count;
-                --j;
-            }
-        }
-    }
-
-    if (tcs) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        return DP_canvas_state_incref(cs);
-    }
+    return DP_ops_pen_up(cs, context_id);
 }
 
 static void *get_classic_dabs(DP_MsgDrawDabs *mdd, int *out_dab_count)
@@ -609,17 +484,8 @@ handle_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc, DP_MessageType type,
         dabs,
     };
 
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    int layer_id = DP_msg_draw_dabs_layer_id(mdd);
-    if (DP_transient_layer_list_draw_dabs(
-            get_transient_layer_list(tcs, 0), layer_id, sublayer_id,
-            sublayer_blend_mode, sublayer_opacity, &params)) {
-        return DP_transient_canvas_state_persist(tcs);
-    }
-    else {
-        DP_transient_canvas_state_decref(tcs);
-        return NULL;
-    }
+    return DP_ops_draw_dabs(cs, DP_msg_draw_dabs_layer_id(mdd), sublayer_id,
+                            sublayer_blend_mode, sublayer_opacity, &params);
 }
 
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
@@ -693,16 +559,17 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags)
     // background tile if requested, otherwise leave it transparent.
     bool include_background = flags & DP_FLAT_IMAGE_INCLUDE_BACKGROUND;
     DP_Tile *background_tile = include_background ? cs->background_tile : NULL;
-    DP_TransientLayer *tl =
-        DP_transient_layer_new_init(0, width, height, background_tile);
+    DP_TransientLayerContent *tlc =
+        DP_transient_layer_content_new_init(width, height, background_tile);
 
     // Merge the other layers into the flattening layer.
-    DP_layer_list_merge_to_flat_image(cs->layers, tl, flags);
+    DP_layer_content_list_merge_to_flat_image(cs->layer_contents,
+                                              cs->layer_props, tlc, flags);
 
     // Write it all to an image and toss the flattening layer.
-    DP_Layer *l = DP_transient_layer_persist(tl);
-    DP_Image *img = DP_layer_to_image(l);
-    DP_layer_decref(l);
+    DP_LayerContent *lc = DP_transient_layer_content_persist(tlc);
+    DP_Image *img = DP_layer_content_to_image(lc);
+    DP_layer_content_decref(lc);
     return img;
 }
 
@@ -715,7 +582,8 @@ DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index)
     DP_TransientTile *tt = background_tile
                              ? DP_transient_tile_new(background_tile, 0)
                              : DP_transient_tile_new_blank(0);
-    DP_layer_list_flatten_tile_to(cs->layers, tile_index, tt);
+    DP_layer_content_list_flatten_tile_to(cs->layer_contents, cs->layer_props,
+                                          tile_index, tt);
     return DP_transient_tile_persist(tt);
 }
 
@@ -723,12 +591,15 @@ DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index)
 static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
                         DP_CanvasDiff *diff)
 {
-    if (cs->background_tile != prev->background_tile || cs->width != prev->width
-        || cs->height != prev->height) {
+    bool check_all = cs->background_tile != prev->background_tile
+                  || cs->width != prev->width || cs->height != prev->height;
+    if (check_all) {
         DP_canvas_diff_check_all(diff);
     }
     else {
-        DP_layer_list_diff(cs->layers, prev->layers, diff);
+        DP_layer_content_list_diff(cs->layer_contents, cs->layer_props,
+                                   prev->layer_contents, prev->layer_props,
+                                   diff);
     }
 }
 
@@ -754,30 +625,25 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
 static void render_tile(void *data, int tile_index)
 {
     DP_CanvasState *cs = ((void **)data)[0];
-    DP_TransientLayer *target = ((void **)data)[1];
-    DP_transient_layer_render_tile(target, cs, tile_index);
+    DP_TransientLayerContent *target = ((void **)data)[1];
+    DP_transient_layer_content_render_tile(target, cs, tile_index);
 }
 
-void DP_canvas_state_render(DP_CanvasState *cs, DP_TransientLayer *target,
-                            DP_CanvasDiff *diff)
+DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
+                                                 DP_TransientLayerContent *lc,
+                                                 DP_CanvasDiff *diff)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(target);
+    DP_ASSERT(lc);
     DP_ASSERT(diff);
-    DP_transient_layer_resize_to(target, 0, cs->width, cs->height);
+    DP_TransientLayerContent *target =
+        DP_transient_layer_content_resize_to(lc, 0, cs->width, cs->height);
     DP_canvas_diff_each_index(diff, render_tile, (void *[]){cs, target});
+    return target;
 }
 
 
-DP_LayerList *DP_canvas_state_layers_noinc(DP_CanvasState *cs)
-{
-    DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
-    return cs->layers;
-}
-
-
-DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
+static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
     DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
@@ -786,7 +652,24 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
     DP_TransientCanvasState *tcs =
         allocate_canvas_state(true, cs->width, cs->height);
     tcs->background_tile = DP_tile_incref_nullable(cs->background_tile);
-    tcs->layers = DP_layer_list_incref(cs->layers);
+    return tcs;
+}
+
+DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
+{
+    DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
+    tcs->layer_contents = DP_layer_content_list_incref(cs->layer_contents);
+    tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
+    return tcs;
+}
+
+DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
+    DP_CanvasState *cs, DP_TransientLayerContentList *tlcl,
+    DP_TransientLayerPropsList *tlpl)
+{
+    DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
+    tcs->transient_layer_contents = tlcl;
+    tcs->transient_layer_props = tlpl;
     return tcs;
 }
 
@@ -812,46 +695,100 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
     DP_ASSERT(tcs);
     DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
-    if (DP_layer_list_transient(tcs->layers)) {
-        DP_transient_layer_list_persist(tcs->transient_layers);
+    if (DP_layer_content_list_transient(tcs->layer_contents)) {
+        DP_transient_layer_content_list_persist(tcs->transient_layer_contents);
+    }
+    if (DP_layer_props_list_transient(tcs->layer_props)) {
+        DP_transient_layer_props_list_persist(tcs->transient_layer_props);
     }
     tcs->transient = false;
     return (DP_CanvasState *)tcs;
 }
 
-
-bool DP_transient_canvas_state_resize(DP_TransientCanvasState *tcs,
-                                      unsigned int context_id, int top,
-                                      int right, int bottom, int left)
+void DP_transient_canvas_state_width_set(DP_TransientCanvasState *tcs,
+                                         int width)
 {
     DP_ASSERT(tcs);
     DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
-
-    int north = -top;
-    int west = -left;
-    int east = tcs->width + right;
-    int south = tcs->height + bottom;
-    if (north >= south || west >= east) {
-        DP_error_set("Invalid resize: borders are reversed");
-        return false;
-    }
-
-    int width = east + left;
-    int height = south + top;
-    if (width < 1 || height < 1 || width > INT16_MAX || height > INT16_MAX) {
-        DP_error_set("Invalid resize: %dx%d", width, height);
-        return false;
-    }
-
-    DP_debug("Resize: width %d, height %d", width, height);
     tcs->width = width;
+}
+
+void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
+                                          int height)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
     tcs->height = height;
+}
 
-    if (DP_layer_list_layer_count(tcs->layers) > 0) {
-        DP_transient_layer_list_resize(get_transient_layer_list(tcs, 0),
-                                       context_id, top, right, bottom, left);
+DP_LayerContentList *
+DP_transient_canvas_state_layer_contents_noinc(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    return DP_canvas_state_layer_contents_noinc((DP_CanvasState *)tcs);
+}
+
+DP_LayerPropsList *
+DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    return DP_canvas_state_layer_props_noinc((DP_CanvasState *)tcs);
+}
+
+void DP_transient_canvas_state_transient_layer_contents_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientLayerContentList *tlcl)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_layer_content_list_decref(tcs->layer_contents);
+    tcs->transient_layer_contents = tlcl;
+}
+
+DP_TransientLayerContentList *
+DP_transient_canvas_state_transient_layer_contents(DP_TransientCanvasState *tcs,
+                                                   int reserve)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_ASSERT(reserve >= 0);
+    DP_LayerContentList *lcl = tcs->layer_contents;
+    if (!DP_layer_content_list_transient(lcl)) {
+        tcs->transient_layer_contents =
+            DP_transient_layer_content_list_new(lcl, reserve);
+        DP_layer_content_list_decref(lcl);
     }
+    else if (reserve > 0) {
+        tcs->transient_layer_contents = DP_transient_layer_content_list_reserve(
+            tcs->transient_layer_contents, reserve);
+    }
+    return tcs->transient_layer_contents;
+}
 
-    return true;
+DP_TransientLayerPropsList *
+DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
+                                                int reserve)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_ASSERT(reserve >= 0);
+    DP_LayerPropsList *lpl = tcs->layer_props;
+    if (!DP_layer_props_list_transient(lpl)) {
+        tcs->transient_layer_props =
+            DP_transient_layer_props_list_new(lpl, reserve);
+        DP_layer_props_list_decref(lpl);
+    }
+    else if (reserve > 0) {
+        tcs->transient_layer_props = DP_transient_layer_props_list_reserve(
+            tcs->transient_layer_props, reserve);
+    }
+    return tcs->transient_layer_props;
 }

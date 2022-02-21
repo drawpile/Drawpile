@@ -28,8 +28,11 @@ set(dpengine_sources
     dpengine/image.c
     dpengine/image_png.c
     dpengine/image_transform.c
-    dpengine/layer.c
-    dpengine/layer_list.c
+    dpengine/layer_content.c
+    dpengine/layer_content_list.c
+    dpengine/layer_props.c
+    dpengine/layer_props_list.c
+    dpengine/ops.c
     dpengine/paint.c
     dpengine/pixels.c
     dpengine/tile.c)
@@ -44,8 +47,11 @@ set(dpengine_headers
     dpengine/image.h
     dpengine/image_png.h
     dpengine/image_transform.h
-    dpengine/layer.h
-    dpengine/layer_list.h
+    dpengine/layer_content.h
+    dpengine/layer_content_list.h
+    dpengine/layer_props.h
+    dpengine/layer_props_list.h
+    dpengine/ops.h
     dpengine/paint.h
     dpengine/pixels.h
     dpengine/tile.h)

@@ -28,7 +28,7 @@
  */
 #include "paint.h"
 #include "draw_context.h"
-#include "layer.h"
+#include "layer_content.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpmsg/message.h>
@@ -313,11 +313,11 @@ static void get_classic_offset_stamp(DP_BrushStamp *offset_stamp,
 }
 
 static void draw_dabs_classic(DP_PaintDrawDabsParams *params,
-                              DP_TransientLayerData *tld)
+                              DP_TransientLayerContent *tlc)
 {
     DP_DrawContext *dc = params->draw_context;
     unsigned int context_id = params->context_id;
-    DP_Pixel src = (DP_Pixel){params->color};
+    uint32_t color = params->color;
     int blend_mode = params->blend_mode;
     int dab_count = params->dab_count;
     DP_ClassicBrushDab *dabs = params->dabs;
@@ -338,8 +338,8 @@ static void draw_dabs_classic(DP_PaintDrawDabsParams *params,
         int y = last_y + DP_classic_brush_dab_y(dab);
         get_classic_offset_stamp(&offset_stamp, &mask_stamp, x / 4.0, y / 4.0);
 
-        DP_transient_layer_data_brush_stamp_apply(tld, context_id, src,
-                                                  blend_mode, &offset_stamp);
+        DP_transient_layer_content_brush_stamp_apply(tlc, context_id, color,
+                                                     blend_mode, &offset_stamp);
         last_x = x;
         last_y = y;
     }
@@ -377,11 +377,11 @@ static void get_square_pixel_mask_stamp(DP_BrushStamp *stamp, int diameter,
 }
 
 static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
-                            DP_TransientLayerData *tld,
+                            DP_TransientLayerContent *tlc,
                             void (*get_stamp)(DP_BrushStamp *, int, uint8_t))
 {
     unsigned int context_id = params->context_id;
-    DP_Pixel src = (DP_Pixel){params->color};
+    uint32_t color = params->color;
     int blend_mode = params->blend_mode;
     int dab_count = params->dab_count;
     DP_PixelBrushDab *dabs = params->dabs;
@@ -409,33 +409,32 @@ static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
         stamp.left = x - offset;
         stamp.top = y - offset;
 
-        DP_transient_layer_data_brush_stamp_apply(tld, context_id, src,
-                                                  blend_mode, &stamp);
+        DP_transient_layer_content_brush_stamp_apply(tlc, context_id, color,
+                                                     blend_mode, &stamp);
         last_x = x;
         last_y = y;
     }
 }
 
 
-bool DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
-                        DP_TransientLayerData *tld)
+void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
+                        DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(params);
-    DP_ASSERT(tld);
+    DP_ASSERT(tlc);
     DP_ASSERT(params->dab_count > 0); // This should be checked beforehand.
     int type = params->type;
     switch (type) {
     case DP_MSG_DRAW_DABS_CLASSIC:
-        draw_dabs_classic(params, tld);
-        return true;
+        draw_dabs_classic(params, tlc);
+        break;
     case DP_MSG_DRAW_DABS_PIXEL:
-        draw_dabs_pixel(params, tld, get_round_pixel_mask_stamp);
-        return true;
+        draw_dabs_pixel(params, tlc, get_round_pixel_mask_stamp);
+        break;
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        draw_dabs_pixel(params, tld, get_square_pixel_mask_stamp);
-        return true;
+        draw_dabs_pixel(params, tlc, get_square_pixel_mask_stamp);
+        break;
     default:
-        DP_error_set("Unknown paint type %d", type);
-        return false;
+        DP_panic("Unknown paint type %d", type);
     }
 }

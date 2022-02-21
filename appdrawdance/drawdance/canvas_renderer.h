@@ -24,7 +24,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;
-typedef struct DP_Layer DP_Layer;
+typedef struct DP_LayerContent DP_LayerContent;
 
 
 typedef struct DP_CanvasRenderer DP_CanvasRenderer;
@@ -42,7 +42,7 @@ void DP_canvas_renderer_transform_set(DP_CanvasRenderer *cr, double x, double y,
                                       double scale, double rotation_in_radians);
 
 
-void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_Layer *layer,
+void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_LayerContent *lc,
                                int view_width, int view_height,
                                DP_CanvasDiff *diff_or_null);
 
