@@ -6,21 +6,25 @@
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">新增</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">上移</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">下移</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
         <source>Remove</source>
+        <translatorcomment>where is it???</translatorcomment>
         <translation type="unfinished">移除</translation>
     </message>
 </context>
@@ -29,7 +33,7 @@
     <message>
         <location filename="../../desktop/ui/abusereport.ui" line="14"/>
         <source>Report Abuse</source>
-        <translation>Report Abuse</translation>
+        <translation>报告违规行为</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/abusereport.ui" line="20"/>
@@ -57,7 +61,7 @@
     <message>
         <location filename="../../desktop/ui/avatarimport.ui" line="14"/>
         <source>Crop Avatar</source>
-        <translation>Crop Avatar</translation>
+        <translation>裁剪头像</translation>
     </message>
 </context>
 <context>
@@ -116,12 +120,12 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="606"/>
         <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>输入:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="616"/>
         <source>Configure input presets</source>
-        <translation type="unfinished"></translation>
+        <translation>输入预设与配置</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="379"/>
@@ -334,7 +338,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="99"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>备用快捷键</translation>
     </message>
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="100"/>
@@ -440,7 +444,8 @@
     <message>
         <location filename="../../desktop/ui/recfilter.ui" line="118"/>
         <source>Squish strokes</source>
-        <translation>Squish strokes</translation>
+        <translatorcomment>meaning maybe worng???</translatorcomment>
+        <translation type="unfinished">压缩笔画</translation>
     </message>
 </context>
 <context>
@@ -501,7 +506,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="107"/>
         <source>List at:</source>
-        <translation>List at:</translation>
+        <translation>列出在:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="127"/>
@@ -511,12 +516,12 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="134"/>
         <source>P&amp;ublic</source>
-        <translation>P&amp;ublic</translation>
+        <translation>&amp;公开</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Use Drawpile&apos;s built-in server</translation>
+        <translation>使用Drawpile内置的服务器</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="163"/>
@@ -526,7 +531,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="175"/>
         <source>Use an external dedicated server</source>
-        <translation>Use an external dedicated server</translation>
+        <translation>使用第三方专用服务器</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="62"/>
@@ -546,7 +551,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="144"/>
         <source>Private (room code onl&amp;y)</source>
-        <translation>Private (room code onl&amp;y)</translation>
+        <translation>私密 (仅限房间代&amp;码)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="154"/>
@@ -561,7 +566,7 @@
     <message>
         <location filename="../../desktop/ui/hostdialog.ui" line="88"/>
         <source>An optional user friendly ID for the session</source>
-        <translation>An optional user friendly ID for the session</translation>
+        <translation>自定义房间后缀ID</translation>
     </message>
 </context>
 <context>
@@ -569,7 +574,7 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
         <source>Preset:</source>
-        <translation type="unfinished"></translation>
+        <translation>预设：</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
@@ -599,12 +604,12 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="133"/>
         <source>Preset options</source>
-        <translation type="unfinished"></translation>
+        <translation>预设选项</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
         <source>Close</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="162"/>
@@ -630,7 +635,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="62"/>
         <source>Filter</source>
-        <translation>筛选</translation>
+        <translation>关键词筛选</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="30"/>
@@ -641,17 +646,18 @@
         <location filename="../../desktop/ui/joindialog.ui" line="47"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;你还没有添加任何列表服务器. 你可以在这里查看到一些 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;请在最下面的地址栏填上  pub.drawpile.net 然后点击
- &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+ &lt;span style=&quot; font-style:italic;&quot;&gt;添加服务器&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="88"/>
         <source>Show:</source>
-        <translation>显示:</translation>
+        <translation>筛选显示:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="95"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>what different between passworded and closed???</translatorcomment>
+        <translation type="unfinished">非公开</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="102"/>
@@ -666,7 +672,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="138"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation>Enter a host address, session URL or room code to join a session:</translation>
+        <translation>输入一个服务器地址、房间链接或者房间代码以加入房间：</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="169"/>
@@ -733,12 +739,12 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">图层属性</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">名称：</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
@@ -748,22 +754,22 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">混合模式：</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
         <source>Visible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">可视</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
         <source>Fixed</source>
-        <translation type="unfinished">Fixed</translation>
+        <translation type="unfinished">固定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="116"/>
@@ -816,17 +822,20 @@
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="364"/>
         <source>View old</source>
-        <translation>View old</translation>
+        <translatorcomment>where it is???</translatorcomment>
+        <translation type="unfinished">回顾以往</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="371"/>
         <source>View new</source>
-        <translation>View new</translation>
+        <translatorcomment>where it is???</translatorcomment>
+        <translation type="unfinished">查看最新</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="378"/>
         <source>Replace pinned certificate</source>
-        <translation>Replace pinned certificate</translation>
+        <translatorcomment>where it is???</translatorcomment>
+        <translation type="unfinished">替换固定的证书</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/logindialog.ui" line="317"/>
@@ -913,7 +922,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1096"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation>The selected format does not support layers or annotations.</translation>
+        <translation type="unfinished">所选格式不支持图层或批注.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1098"/>
@@ -983,7 +992,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1639"/>
         <source>Would you like to join the session instead?</source>
-        <translation>Would you like to join the session instead?</translation>
+        <translation type="unfinished">你想加入这个房间吗?</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1641"/>
@@ -1013,7 +1022,7 @@
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2156"/>
         <source>A collaborative drawing program.</source>
-        <translation>A collaborative drawing program.</translation>
+        <translation>Drawpile是一个自由协作绘图程序.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2269"/>
@@ -1109,7 +1118,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1702"/>
         <source>Session blocked by parental controls</source>
-        <translation>Session blocked by parental controls</translation>
+        <translation type="unfinished">房间被家长控制屏蔽</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2258"/>
@@ -1134,7 +1143,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2278"/>
         <source>Export current session as a template recording for use with the dedicated server</source>
-        <translation>Export current session as a template recording for use with the dedicated server</translation>
+        <translation>将当前房间导出为房间模板，以便在专用服务器中使用</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2281"/>
@@ -1376,7 +1385,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2671"/>
         <source>Report...</source>
-        <translation>Report...</translation>
+        <translation>报告...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2673"/>
@@ -1682,7 +1691,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2716"/>
         <source>Freehand brush tool</source>
-        <translation>Freehand brush tool</translation>
+        <translation>笔刷面板</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2717"/>
@@ -1692,7 +1701,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2717"/>
         <source>Freehand eraser brush</source>
-        <translation>Freehand eraser brush</translation>
+        <translation>橡皮</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2718"/>
@@ -2129,7 +2138,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/loader.cpp" line="97"/>
         <source>Unsupported background tile size</source>
-        <translation>Unsupported background tile size</translation>
+        <translation type="unfinished">不支持的背景平铺大小</translation>
     </message>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="91"/>
@@ -2249,17 +2258,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="100"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="110"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation>选择/拉伸</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="117"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>扭曲</translation>
     </message>
 </context>
 <context>
@@ -2385,7 +2394,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="59"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation>Session history size at which autoreset triggers</translation>
+        <translation>触发自动重置的房间历史大小</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="62"/>
@@ -2654,7 +2663,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="187"/>
         <source>Detect eraser tip</source>
-        <translation>检测 eraser tip</translation>
+        <translation type="unfinished">检测 eraser tip</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="287"/>
@@ -2724,121 +2733,122 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="28"/>
         <source>Brushes</source>
-        <translation type="unfinished">笔刷预设</translation>
+        <translation>笔刷设定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="33"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>色轮设定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="347"/>
         <source>Enable this workaround if your cursor doesn&apos;t update when you move it into the canvas with the tablet pen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">如果数位笔指针在画布窗口内不能移动，请尝试启用此选项。</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="350"/>
         <source>Enable canvas viewport entry hack</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>fix up maybe better than hack?</translatorcomment>
+        <translation type="unfinished">启用画布窗口输入修复</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="370"/>
         <source>Brush outline width:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷轮廓描边：</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="387"/>
         <location filename="../../desktop/ui/settings.ui" line="399"/>
         <location filename="../../desktop/ui/settings.ui" line="418"/>
         <source>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">笔刷大小滑动条的最大值,您始终可以手动或通过键盘快捷键使用更大的笔刷大小.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="390"/>
         <source>Size Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">笔刷大小滑动条最大值:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="421"/>
         <source>px</source>
-        <translation type="unfinished">像素</translation>
+        <translation>像素</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="436"/>
         <location filename="../../desktop/ui/settings.ui" line="448"/>
         <location filename="../../desktop/ui/settings.ui" line="467"/>
         <source>The maximum value for the brush spacing slider. You can always enter larger values manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷间距滑动条的最大值,您始终可以手动输入更大的笔刷间距数值.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="439"/>
         <source>Spacing Slider Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">笔刷间距滑动条最大值:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="470"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="498"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>形状:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="506"/>
         <source>Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>三角形</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="511"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>矩形</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="519"/>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation>角度:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="527"/>
         <source>Fixed</source>
-        <translation type="unfinished">Fixed</translation>
+        <translation>固定的</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="532"/>
         <source>Rotating</source>
-        <translation type="unfinished"></translation>
+        <translation>可旋转的</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="540"/>
         <source>Color Space:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">颜色模型:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="548"/>
         <source>HSV (Hue, Saturation, Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (色相, 饱和度, 明度)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="553"/>
         <source>HSL (Hue, Saturation, Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (色相, 饱和度, 亮度)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="558"/>
         <source>Lch (Luminance, Chroma, Hue)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lch (明度, 色度, 色调)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="582"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>预览:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="684"/>
         <source>shortest: </source>
-        <translation>shortest: </translation>
+        <translation type="unfinished">shortest: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="721"/>
@@ -2868,72 +2878,72 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="933"/>
         <source>Drag mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">拖拽键模式:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="940"/>
         <source>Spacebar / middle mouse button</source>
-        <translation type="unfinished"></translation>
+        <translation>空格键 / 鼠标中键</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="947"/>
         <source>Drag rotate view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">拖拽旋转组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="957"/>
         <source>Drag zoom view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">拖拽缩放组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="967"/>
         <source>Drag tool adjust:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">拖拽工具大小组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="977"/>
         <source>Scroll zoom view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">滚轮缩放组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="987"/>
         <source>Scroll tool adjust:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">滚轮工具大小组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="997"/>
         <source>Color picker mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">拾取颜色组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1007"/>
         <source>Layer picker mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">拾取图层组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1017"/>
         <source>Tool constrain mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">工具约束模式组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1027"/>
         <source>Tool center mode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">工具居中模式组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1089"/>
         <source>Scroll rotate view:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">滚轮视图组合键:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1190"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>上移</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1201"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>下移</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1232"/>
@@ -2978,7 +2988,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1304"/>
         <source>Block layer uncensoring</source>
-        <translation>Block layer uncensoring</translation>
+        <translation>封锁图层打码选项</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1212"/>
@@ -3340,17 +3350,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/userlist.cpp" line="72"/>
         <source>Moderator</source>
-        <translation>Moderator</translation>
+        <translation>服务器管理员</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="74"/>
         <source>Operator</source>
-        <translation>Operator</translation>
+        <translation>管理员</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="76"/>
         <source>Trusted</source>
-        <translation>Trusted</translation>
+        <translation>信任用户</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="78"/>
@@ -3360,12 +3370,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../canvas/userlist.cpp" line="82"/>
         <source>Online</source>
-        <translation>Online</translation>
+        <translation>在线</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="82"/>
         <source>Offline</source>
-        <translation>Offline</translation>
+        <translation>离线</translation>
     </message>
     <message>
         <location filename="../canvas/userlist.cpp" line="112"/>
@@ -3406,7 +3416,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette.cpp" line="428"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>未命名</translation>
     </message>
 </context>
 <context>
@@ -3414,12 +3424,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>未命名</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_model.cpp" line="144"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">%1 (%2 色)</translation>
     </message>
 </context>
 <context>
@@ -3427,81 +3438,96 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="59"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">从文件中打开一个新调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="71"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">创建一个新的调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="83"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">复制当前调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="121"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">删除当前调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="133"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">还原更改到当前调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="145"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">保存变更到当前调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="170"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">增加一个颜色到当前调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.ui" line="182"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">从调色板中移除选中颜色</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="186"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="201"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">新调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="187"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="202"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">名称</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="228"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation>GIMP 调色板 (*.gpl)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="229"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">调色板图片 (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="230"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">所有文件(*)</translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation>所有文件(*)</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="231"/>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="244"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">打开调色板</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_palette_widget.cpp" line="245"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">打开以下调色板文件失败\n%1</translation>
     </message>
 </context>
 <context>
@@ -3509,17 +3535,20 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="335"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">添加颜色</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="344"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">移除颜色</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="352"/>
         <source>Edit Color...</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">编辑颜色...</translation>
     </message>
 </context>
 <context>
@@ -3527,7 +3556,8 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/gradient_list_model.cpp" line="231"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>not so sure</translatorcomment>
+        <translation type="unfinished">%1 (%2 色)</translation>
     </message>
 </context>
 <context>
@@ -3535,12 +3565,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="824"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>where is it?</translatorcomment>
+        <translation type="unfinished">清除颜色</translation>
     </message>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="833"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3548,7 +3579,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/abusereport.cpp" line="34"/>
         <source>Report</source>
-        <translation>Report</translation>
+        <translation>报告</translation>
     </message>
 </context>
 <context>
@@ -3556,12 +3587,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/addserverdialog.cpp" line="32"/>
         <source>Add Server</source>
-        <translation type="unfinished">Add Server</translation>
+        <translatorcomment>little ambiguity???</translatorcomment>
+        <translation type="unfinished">添加服务器</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/addserverdialog.cpp" line="71"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>加入</translation>
     </message>
 </context>
 <context>
@@ -3639,22 +3671,23 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
         <source>New</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
         <source>Duplicate</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
         <source>New %1</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Where is it???</translatorcomment>
+        <translation type="unfinished">新建 %1</translation>
     </message>
 </context>
 <context>
@@ -3667,13 +3700,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="63"/>
         <source>Add Server</source>
-        <translation>Add Server</translation>
+        <translation>添加服务器</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="84"/>
         <source>Nearby</source>
-        <translation>Nearby</translation>
+        <translation>附近的</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/joindialog.cpp" line="82"/>
@@ -3703,7 +3736,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="148"/>
         <source>Report...</source>
-        <translation>Report...</translation>
+        <translation>报告...</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="212"/>
@@ -3713,7 +3746,8 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/logindialog.cpp" line="425"/>
         <source>Log in with %1 credentials</source>
-        <translation>Log in with %1 credentials</translation>
+        <translatorcomment>where is it?</translatorcomment>
+        <translation type="unfinished">使用凭证 %1 登录</translation>
     </message>
 </context>
 <context>
@@ -3757,17 +3791,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="200"/>
         <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
-        <translation>This recording was made with a different Drawpile version (%1) and may appear differently</translation>
+        <translation type="unfinished">这份录像是由不同的drawpile版本: (%1) 所创建的，可能会有差异</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
         <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
-        <translation>This recording was made with a newer Drawpile version (%1) which might not be compatible</translation>
+        <translation type="unfinished">这份录像是由一个较新的drawpile版本: (%1) 所创建的，可能会不兼容</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
         <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
-        <translation>Recording is incompatible. This recording was made with Drawpile version %1.</translation>
+        <translation type="unfinished">录像不兼容。这份录像是由Drawpile版本:%1 创建的。</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/playbackdialog.cpp" line="210"/>
@@ -4012,17 +4046,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="120"/>
         <source>Download %1 (%2 MB)</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Althought IDK where is it???but i think it should be right.</translatorcomment>
+        <translation type="unfinished">下载 %1 (%2 MB)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="176"/>
         <source>Downloaded %1!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 已下载！</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="185"/>
         <source>Downloading %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>下载中 %1...</translation>
     </message>
 </context>
 <context>
@@ -4030,7 +4065,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="79"/>
         <source>Original</source>
-        <translation></translation>
+        <translation>原始</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="80"/>
@@ -4189,12 +4224,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="42"/>
         <source>Censor</source>
-        <translation>Censor</translation>
+        <translation>打码</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="45"/>
         <source>Access tier:</source>
-        <translation>Access tier:</translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">访问等级:</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="47"/>
@@ -4219,7 +4255,8 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="54"/>
         <source>Exclusive access:</source>
-        <translation></translation>
+        <translatorcomment>where is it???</translatorcomment>
+        <translation type="unfinished">额外访问:</translation>
     </message>
 </context>
 <context>
@@ -4242,7 +4279,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="81"/>
         <source>Fixed</source>
-        <translation>Fixed</translation>
+        <translation>固定</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="86"/>
@@ -4252,7 +4289,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="90"/>
         <source>Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>属性...</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="385"/>
@@ -4312,17 +4349,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/banlistmodel.cpp" line="76"/>
         <source>User</source>
-        <translation>User</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="77"/>
         <source>IP address</source>
-        <translation>IP address</translation>
+        <translation>IP地址</translation>
     </message>
     <message>
         <location filename="../net/banlistmodel.cpp" line="78"/>
         <source>Banned by</source>
-        <translation>Banned by</translation>
+        <translation>封禁操作人</translation>
     </message>
 </context>
 <context>
@@ -4360,7 +4397,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="166"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation>Server is for a different Drawpile version!</translation>
+        <translation type="unfinished">服务器运行不同版本的Drawpile!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="211"/>
@@ -4391,7 +4428,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../net/login.cpp" line="320"/>
         <location filename="../net/login.cpp" line="326"/>
         <source>Auth server error: %1</source>
-        <translation>Auth server error: %1</translation>
+        <translation type="unfinished">认证服务器错误: %1</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="375"/>
@@ -4401,7 +4438,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="380"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation>Unsupported ext-auth URL scheme</translation>
+        <translation type="unfinished">不支持的 ext-auth URL 配置</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="470"/>
@@ -4416,17 +4453,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="515"/>
         <source>Session not yet started!</source>
-        <translation>Session not yet started!</translation>
+        <translation type="unfinished">房间尚未开启!</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="518"/>
         <source>Blocked by parental controls</source>
-        <translation>Blocked by parental controls</translation>
+        <translation type="unfinished">被家长控制屏蔽</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="521"/>
         <source>Session for a different Drawpile version (%s) in progress!</source>
-        <translation>Session for a different Drawpile version (%s) in progress!</translation>
+        <translation type="unfinished">房间正在运行不同的Drawpile版本 (%s) !</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="707"/>
@@ -4462,7 +4499,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="834"/>
         <source>Tried to send oversized message (%1 KB)</source>
-        <translation>Tried to send oversized message (%1 KB)</translation>
+        <translation type="unfinished">试图发送过大的消息 (%1 KB)</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="768"/>
@@ -4472,7 +4509,8 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="350"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>same meaning;paraphrase</translatorcomment>
+        <translation type="unfinished">需要成为组成员</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="353"/>
@@ -4538,17 +4576,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/tcpserver.cpp" line="105"/>
         <source>You were kicked by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>你被 %1 踢出</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="108"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器正在关闭。</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="111"/>
         <source>Error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>错误： %1</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="128"/>
@@ -4571,7 +4609,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../core/blendmodes.cpp" line="42"/>
         <source>Recolor</source>
-        <translation>Recolor</translation>
+        <translation>重新着色</translation>
     </message>
     <message>
         <location filename="../core/blendmodes.cpp" line="48"/>
@@ -4745,7 +4783,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="534"/>
         <source>You have been kicked by %1</source>
-        <translation>You have been kicked by %1</translation>
+        <translation>你被 %1 踢出房间</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="680"/>
@@ -4755,22 +4793,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="741"/>
         <source>Clear</source>
-        <translation type="unfinished">清除</translation>
+        <translation>清除</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="743"/>
         <source>Compact mode</source>
-        <translation type="unfinished">Compact mode</translation>
+        <translation>紧凑模式</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="748"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>浮动</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="754"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>吸附</translation>
     </message>
 </context>
 <context>
@@ -4879,7 +4917,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="368"/>
         <source>You have been kicked by %1</source>
-        <translation>You have been kicked by %1</translation>
+        <translation>你已被 %1 踢出</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/netstatus.cpp" line="392"/>
@@ -4977,13 +5015,13 @@ Hex: %5</source>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="47"/>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="160"/>
         <source>Operator</source>
-        <translation></translation>
+        <translation>管理员</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="48"/>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="162"/>
         <source>Trusted</source>
-        <translation></translation>
+        <translation>信任用户</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="51"/>
@@ -5023,7 +5061,7 @@ Hex: %5</source>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="156"/>
         <source>Moderator</source>
-        <translation></translation>
+        <translation>服务器管理员</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="167"/>
@@ -5033,7 +5071,7 @@ Hex: %5</source>
     <message>
         <location filename="../../desktop/chat/useritemdelegate.cpp" line="172"/>
         <source>Registered</source>
-        <translation></translation>
+        <translation>注册用户</translation>
     </message>
 </context>
 <context>
