@@ -574,7 +574,7 @@
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
         <source>Preset:</source>
-        <translation>预设：</translation>
+        <translation type="unfinished">预设:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
@@ -672,7 +672,7 @@
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="138"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation>输入一个服务器地址、房间链接或者房间代码以加入房间：</translation>
+        <translation>输入一个服务器地址、房间链接或者房间代码以加入房间:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/joindialog.ui" line="169"/>
@@ -739,17 +739,17 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished">图层属性</translation>
+        <translation>图层属性</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
         <source>Name:</source>
-        <translation type="unfinished">名称：</translation>
+        <translation>名称:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
         <source>Opacity:</source>
-        <translation type="unfinished">透明度:</translation>
+        <translation>透明度:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
@@ -759,22 +759,22 @@
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">混合模式：</translation>
+        <translation>混合模式:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
         <source>Visible</source>
-        <translation type="unfinished">可视</translation>
+        <translation>可视</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
         <source>Fixed</source>
-        <translation type="unfinished">固定</translation>
+        <translation>固定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="116"/>
         <source>Default</source>
-        <translation type="unfinished">默认</translation>
+        <translation>默认</translation>
     </message>
 </context>
 <context>
@@ -2754,7 +2754,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="370"/>
         <source>Brush outline width:</source>
-        <translation>笔刷轮廓描边：</translation>
+        <translation type="unfinished">笔刷轮廓描边:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="387"/>
@@ -4433,7 +4433,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/login.cpp" line="375"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation>服务器配置错误：ext-auth URL无效</translation>
+        <translation type="unfinished">服务器配置错误: ext-auth URL无效</translation>
     </message>
     <message>
         <location filename="../net/login.cpp" line="380"/>
@@ -4586,7 +4586,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../net/tcpserver.cpp" line="111"/>
         <source>Error: %1</source>
-        <translation>错误： %1</translation>
+        <translation type="unfinished">错误: %1</translation>
     </message>
     <message>
         <location filename="../net/tcpserver.cpp" line="128"/>
