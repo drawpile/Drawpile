@@ -41,7 +41,6 @@ set_dp_target_properties(drawdance_lua_cxx CXX)
 target_link_libraries(drawdance_lua_cxx PUBLIC dpcommon lua imgui dpgles2)
 
 set(drawdance_lua_sources
-    drawdance_lua/canvas_state.c
     drawdance_lua/client.c
     drawdance_lua/document.c
     drawdance_lua/lua_bindings.c

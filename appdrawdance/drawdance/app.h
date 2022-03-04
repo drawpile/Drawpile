@@ -38,8 +38,6 @@ void DP_app_free(DP_App *app);
 
 void DP_app_run(DP_App *app);
 
-DP_CanvasState *DP_app_current_canvas_state_noinc(DP_App *app);
-
 void DP_app_document_set(DP_App *app, DP_Document *doc_or_null);
 
 void DP_app_canvas_renderer_transform(DP_App *app, double *out_x, double *out_y,

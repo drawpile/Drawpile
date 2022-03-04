@@ -26,7 +26,8 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
-#include <dpengine/canvas_state.h>
+#include <dpengine/layer_props.h>
+#include <dpengine/layer_props_list.h>
 #include <dpmsg/message.h>
 #include <dpconfig.h>
 #include <lauxlib.h>
@@ -175,6 +176,56 @@ static void move_client_events_to_lua(lua_State *L, int ref)
     DP_MUTEX_MUST_UNLOCK(mutex_client_event_queue);
     if (result != LUA_OK) {
         DP_warn("Error publishing client events: %s", lua_tostring(L, -1));
+        lua_pop(L, 1);
+    }
+}
+
+static int publish_layer_props_event(lua_State *L)
+{
+    DP_ASSERT(lua_gettop(L) == 2);
+    DP_ASSERT(lua_type(L, 1) == LUA_TLIGHTUSERDATA); // Layer props list.
+    DP_ASSERT(lua_type(L, 2) == LUA_TTABLE);         // The Lua App instance.
+    DP_LayerPropsList *lpl = lua_touserdata(L, 1);
+    int count = DP_layer_props_list_count(lpl);
+    lua_getfield(L, 2, "publish");
+    lua_pushvalue(L, 2);
+    lua_pushliteral(L, "LAYER_PROPS");
+    lua_createtable(L, count, 0);
+    for (int i = 0; i < count; ++i) {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        lua_createtable(L, 0, 7);
+        lua_pushinteger(L, DP_layer_props_id(lp));
+        lua_setfield(L, 7, "id");
+        lua_pushinteger(L, DP_layer_props_opacity(lp));
+        lua_setfield(L, 7, "opacity");
+        lua_pushinteger(L, DP_layer_props_blend_mode(lp));
+        lua_setfield(L, 7, "blend_mode");
+        lua_pushboolean(L, DP_layer_props_hidden(lp));
+        lua_setfield(L, 7, "hidden");
+        lua_pushboolean(L, DP_layer_props_censored(lp));
+        lua_setfield(L, 7, "censored");
+        lua_pushboolean(L, DP_layer_props_fixed(lp));
+        lua_setfield(L, 7, "fixed");
+        size_t title_length;
+        const char *title = DP_layer_props_title(lp, &title_length);
+        lua_pushlstring(L, title, title_length);
+        lua_setfield(L, 7, "title");
+        lua_seti(L, 6, i + 1);
+    }
+    lua_call(L, 3, 0);
+    return 0;
+}
+
+static void create_layer_props_event(lua_State *L, int ref,
+                                     DP_LayerPropsList *lpl)
+{
+    DP_debug("Publishing layer props event");
+    lua_pushcfunction(L, publish_layer_props_event);
+    lua_pushlightuserdata(L, lpl);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+    int result = lua_pcall(L, 2, 0, 0);
+    if (result != LUA_OK) {
+        DP_warn("Error publishing layer props event: %s", lua_tostring(L, -1));
         lua_pop(L, 1);
     }
 }
@@ -334,21 +385,6 @@ static int app_quit(DP_UNUSED lua_State *L)
     return 0;
 }
 
-static int app_current_canvas_state(lua_State *L)
-{
-    DP_LuaAppState *state = DP_lua_app_state(L);
-    DP_CanvasState *cs = DP_app_current_canvas_state_noinc(state->app);
-    if (cs) {
-        DP_CanvasState **pp = lua_newuserdatauv(L, sizeof(cs), 0);
-        *pp = DP_canvas_state_incref(cs);
-        luaL_setmetatable(L, "DP_CanvasState");
-    }
-    else {
-        lua_pushnil(L);
-    }
-    return 1;
-}
-
 static int app_document_set(lua_State *L)
 {
     luaL_checkany(L, 1);
@@ -415,8 +451,6 @@ static int init_app_funcs(lua_State *L)
     luaL_getsubtable(L, -1, "App");
     lua_pushcfunction(L, app_quit);
     lua_setfield(L, -2, "quit");
-    lua_pushcfunction(L, app_current_canvas_state);
-    lua_setfield(L, -2, "current_canvas_state");
     lua_pushcfunction(L, app_document_set);
     lua_setfield(L, -2, "document_set");
     lua_pushcfunction(L, app_canvas_renderer_transform);
@@ -595,7 +629,6 @@ static int init_global_environment(lua_State *L)
     return 0;
 }
 
-int DP_lua_canvas_state_init(lua_State *L);
 int DP_lua_client_init(lua_State *L);
 int DP_lua_document_init(lua_State *L);
 int DP_lua_message_init(lua_State *L);
@@ -604,10 +637,9 @@ int DP_lua_ui_init(lua_State *L);
 static int init_bindings(lua_State *L)
 {
     static const lua_CFunction init_funcs[] = {
-        init_lua_libs,        init_app_funcs,           init_imgui,
-        init_package,         DP_lua_canvas_state_init, DP_lua_client_init,
-        DP_lua_document_init, DP_lua_message_init,      init_global_environment,
-        DP_lua_ui_init,
+        init_lua_libs,       init_app_funcs,          init_imgui,
+        init_package,        DP_lua_client_init,      DP_lua_document_init,
+        DP_lua_message_init, init_global_environment, DP_lua_ui_init,
     };
     lua_pushcfunction(L, init_lua_app_state);
     lua_pushvalue(L, 1);
@@ -722,9 +754,12 @@ void DP_lua_app_free(lua_State *L, int ref)
     }
 }
 
-void DP_lua_app_handle_events(lua_State *L, int ref)
+void DP_lua_app_handle_events(lua_State *L, int ref, DP_LayerPropsList *lpl)
 {
     move_client_events_to_lua(L, ref);
+    if (lpl) {
+        create_layer_props_event(L, ref, lpl);
+    }
     call_app_method(L, ref, "handle_events");
 }
 

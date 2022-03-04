@@ -34,7 +34,8 @@ DP_CanvasDiff *DP_canvas_diff_new(void);
 void DP_canvas_diff_free(DP_CanvasDiff *diff);
 
 void DP_canvas_diff_begin(DP_CanvasDiff *diff, int old_width, int old_height,
-                          int current_width, int current_height);
+                          int current_width, int current_height,
+                          bool layer_props_changed);
 
 void DP_canvas_diff_check(DP_CanvasDiff *diff, DP_CanvasDiffCheckFn fn,
                           void *data);
@@ -46,6 +47,8 @@ void DP_canvas_diff_each_index(DP_CanvasDiff *diff, DP_CanvasDiffEachIndexFn fn,
 
 void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
                              void *data);
+
+bool DP_canvas_diff_layer_props_changed_reset(DP_CanvasDiff *diff);
 
 
 #endif

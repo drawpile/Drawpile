@@ -61,7 +61,6 @@ typedef struct DP_App {
     DP_Document *doc;
     DP_CanvasState *blank_state;
     DP_CanvasState *previous_state;
-    DP_CanvasState *current_state;
     DP_TransientLayerContent *tlc;
     DP_CanvasDiff *diff;
     DP_CanvasRenderer *canvas_renderer;
@@ -172,7 +171,13 @@ static int handle_events(DP_App *app)
             return HANDLE_EVENTS_QUIT;
         }
     }
-    DP_lua_app_handle_events(app->L, app->lua_app_ref);
+
+    DP_LayerPropsList *lpl =
+        DP_canvas_diff_layer_props_changed_reset(app->diff)
+            ? DP_canvas_state_layer_props_noinc(app->previous_state)
+            : NULL;
+
+    DP_lua_app_handle_events(app->L, app->lua_app_ref, lpl);
     return HANDLE_EVENTS_KEEP_RUNNING;
 }
 
@@ -246,7 +251,7 @@ DP_App *DP_app_new(SDL_Window *window, SDL_GLContext gl_context)
     DP_App *app = DP_malloc(sizeof(*app));
     *app = (DP_App)
     {
-        true, window, gl_context, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        true, window, gl_context, NULL, NULL, NULL, NULL, NULL, NULL,
             {0, 0, NULL}, NULL, LUA_NOREF,
 #if defined(DRAWDANCE_IMGUI) && !defined(__EMSCRIPTEN__)
             NULL, NULL, NULL,
@@ -329,12 +334,8 @@ static void em_main_loop(void *arg)
 #    endif
         DP_CanvasDiff *diff_or_null = prepare_canvas(app);
         DP_EMPROXY_VII(em_render_gl, app, diff_or_null);
-        DP_canvas_state_decref(app->current_state);
-        app->current_state = DP_canvas_state_incref(app->previous_state);
     }
     else {
-        DP_canvas_state_decref(app->current_state);
-        app->current_state = NULL;
         DP_app_free(app);
         emscripten_cancel_main_loop();
     }
@@ -344,10 +345,8 @@ static void em_main_loop(void *arg)
 void DP_app_run(DP_App *app)
 {
 #ifdef __EMSCRIPTEN__
-    app->current_state = DP_canvas_state_incref(app->blank_state);
     emscripten_set_main_loop_arg(em_main_loop, app, 0, false);
 #else
-    app->current_state = DP_canvas_state_incref(app->blank_state);
     while (handle_events(app) != HANDLE_EVENTS_QUIT) {
         DP_GL_CLEAR_ERROR();
 #    ifdef DRAWDANCE_IMGUI
@@ -359,24 +358,13 @@ void DP_app_run(DP_App *app)
 #    ifdef DRAWDANCE_IMGUI
         DP_SEMAPHORE_MUST_WAIT(app->sem_gui_render);
 #    endif
-        DP_canvas_state_decref(app->current_state);
-        app->current_state = DP_canvas_state_incref(app->previous_state);
 #    ifdef DRAWDANCE_IMGUI
         render_gui(app);
 #    endif
         DP_user_inputs_render(&app->inputs);
         SDL_GL_SwapWindow(app->window);
     }
-    DP_canvas_state_decref(app->current_state);
-    app->current_state = NULL;
 #endif
-}
-
-DP_CanvasState *DP_app_current_canvas_state_noinc(DP_App *app)
-{
-    DP_ASSERT(app);
-    DP_CanvasState *current_state = app->current_state;
-    return current_state == app->blank_state ? NULL : current_state;
 }
 
 void DP_app_document_set(DP_App *app, DP_Document *doc_or_null)

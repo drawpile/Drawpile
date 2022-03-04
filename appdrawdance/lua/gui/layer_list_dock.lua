@@ -25,6 +25,12 @@ local LayerListDock <const> = require("class")("LayerListDock", "gui.widget")
 
 function LayerListDock:init(app)
     LayerListDock.__parent.init(self, app)
+    self._layer_props = {}
+    self:subscribe_method(EventTypes.LAYER_PROPS)
+end
+
+function LayerListDock:on_layer_props(event)
+    self._layer_props = event
 end
 
 function LayerListDock:show()
@@ -32,18 +38,18 @@ function LayerListDock:show()
     Utils.set_next_window_size_once(500.0, 100.0)
     Utils.begin_dialog(T"title##layer_list_dock")
 
-    local cs = DP.App.current_canvas_state()
-    if cs then
-        local ll = cs.layers
-        for i = #ll, 1, -1 do
-            local l = ll[i]
+    local layer_props = self._layer_props
+    local layer_count = #layer_props
+    if layer_count ~= 0 then
+        for i = layer_count, 1, -1 do
+            local l = layer_props[i]
             ImGui.Text(string.format("%s %d: %s %d%%%s",
                     l.hidden and "X" or "O", l.id, l.title or "(nil)",
                     math.floor(l.opacity / 255.0 * 100.0 + 0.5),
                     l.fixed and "*" or ""))
         end
     else
-        ImGui.Text("No canvas state")
+        ImGui.Text("No Layers")
     end
 
     ImGui.End()

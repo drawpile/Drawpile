@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 #include "canvas_diff.h"
+#include "layer_props_list.h"
 #include "tile.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -30,12 +31,13 @@ struct DP_CanvasDiff {
     int xtiles, ytiles;
     int tile_changes_reserved;
     bool *tile_changes;
+    bool layer_props_changed;
 };
 
 DP_CanvasDiff *DP_canvas_diff_new(void)
 {
     DP_CanvasDiff *diff = DP_malloc(sizeof(*diff));
-    *diff = (DP_CanvasDiff){0, 0, 0, 0, NULL};
+    *diff = (DP_CanvasDiff){0, 0, 0, 0, NULL, false};
     return diff;
 }
 
@@ -49,7 +51,8 @@ void DP_canvas_diff_free(DP_CanvasDiff *diff)
 
 
 void DP_canvas_diff_begin(DP_CanvasDiff *diff, int old_width, int old_height,
-                          int current_width, int current_height)
+                          int current_width, int current_height,
+                          bool layer_props_changed)
 {
     DP_ASSERT(diff);
     DP_ASSERT(old_width >= 0);
@@ -73,6 +76,7 @@ void DP_canvas_diff_begin(DP_CanvasDiff *diff, int old_width, int old_height,
     for (int i = 0; i < count; ++i) {
         tile_changes[i] = init;
     }
+    diff->layer_props_changed = layer_props_changed;
 }
 
 void DP_canvas_diff_check(DP_CanvasDiff *diff, DP_CanvasDiffCheckFn fn,
@@ -130,4 +134,12 @@ void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
             }
         }
     }
+}
+
+bool DP_canvas_diff_layer_props_changed_reset(DP_CanvasDiff *diff)
+{
+    DP_ASSERT(diff);
+    bool layer_props_changed = diff->layer_props_changed;
+    diff->layer_props_changed = false;
+    return layer_props_changed;
 }

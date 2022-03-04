@@ -611,14 +611,16 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
     DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
     if (prev_or_null) {
         DP_ASSERT(SDL_AtomicGet(&prev_or_null->refcount) > 0);
-        DP_canvas_diff_begin(diff, prev_or_null->width, prev_or_null->height,
-                             cs->width, cs->height);
-        if (cs != prev_or_null) {
+        bool change = cs != prev_or_null;
+        DP_canvas_diff_begin(
+            diff, prev_or_null->width, prev_or_null->height, cs->width,
+            cs->height, change && cs->layer_props != prev_or_null->layer_props);
+        if (change) {
             diff_states(cs, prev_or_null, diff);
         }
     }
     else {
-        DP_canvas_diff_begin(diff, 0, 0, cs->width, cs->height);
+        DP_canvas_diff_begin(diff, 0, 0, cs->width, cs->height, true);
     }
 }
 

@@ -39,6 +39,7 @@ EventTypes.types = {
     "CLIENT_CREATE",
     "CLIENT_EVENT",
     "CLIENT_MESSAGE",
+    "LAYER_PROPS",
     "SESSION_CREATE",
     "SESSION_DETACH",
     "SESSION_SHOW",

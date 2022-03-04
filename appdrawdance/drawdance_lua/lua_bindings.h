@@ -27,6 +27,7 @@
 
 typedef struct DP_App DP_App;
 typedef struct DP_Message DP_Message;
+typedef struct DP_LayerPropsList DP_LayerPropsList;
 
 typedef struct DP_LuaWarnBuffer {
     size_t capacity;
@@ -56,7 +57,7 @@ int DP_lua_app_new(lua_State *L);
 
 void DP_lua_app_free(lua_State *L, int ref);
 
-void DP_lua_app_handle_events(lua_State *L, int ref);
+void DP_lua_app_handle_events(lua_State *L, int ref, DP_LayerPropsList *lpl);
 
 #ifdef DRAWDANCE_IMGUI
 void DP_lua_app_prepare_gui(lua_State *L, int ref);
