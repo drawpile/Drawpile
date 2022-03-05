@@ -98,8 +98,9 @@ int main(void)
 {
     const struct CMUnitTest tests[] = {
         recording_unit_test("brushmodes"), recording_unit_test("layermodes"),
-        recording_unit_test("persp"),      recording_unit_test("rect"),
-        recording_unit_test("resize"),     recording_unit_test("transform"),
+        recording_unit_test("layerops"),   recording_unit_test("persp"),
+        recording_unit_test("rect"),       recording_unit_test("resize"),
+        recording_unit_test("transform"),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
