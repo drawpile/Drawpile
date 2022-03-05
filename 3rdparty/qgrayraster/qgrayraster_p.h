@@ -1,3 +1,8 @@
+/*
+ * Modifications made 2022 by askmeaboutloom in accordance to the license:
+ * using DP_ as a prefix instead of QT_, qt_ or q_ to avoid name clashes.
+ */
+
 /****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
@@ -54,8 +59,8 @@
 /***************************************************************************/
 
 
-#ifndef __FTGRAYS_H__
-#define __FTGRAYS_H__
+#ifndef __DP_FTGRAYS_H__
+#define __DP_FTGRAYS_H__
 
 /*
 //  W A R N I N G
@@ -78,26 +83,26 @@
   /*************************************************************************/
   /*                                                                       */
   /* To make ftgrays.h independent from configuration files we check       */
-  /* whether QT_FT_EXPORT_VAR has been defined already.                    */
+  /* whether DP_FT_EXPORT_VAR has been defined already.                    */
   /*                                                                       */
   /* On some systems and compilers (Win32 mostly), an extra keyword is     */
   /* necessary to compile the library as a DLL.                            */
   /*                                                                       */
-#ifndef QT_FT_EXPORT_VAR
-#define QT_FT_EXPORT_VAR( x )  extern  x
+#ifndef DP_FT_EXPORT_VAR
+#define DP_FT_EXPORT_VAR( x )  extern  x
 #endif
 
 /* Minimum buffer size for raster object, that accounts
    for TWorker and TCell sizes.*/
 #define MINIMUM_POOL_SIZE 8192
 
-  QT_FT_EXPORT_VAR( const QT_FT_Raster_Funcs )  qt_ft_grays_raster;
+  DP_FT_EXPORT_VAR( const DP_FT_Raster_Funcs )  DP_ft_grays_raster;
 
 
 #ifdef __cplusplus
   }
 #endif
 
-#endif /* __FTGRAYS_H__ */
+#endif /* __DP_FTGRAYS_H__ */
 
 /* END */

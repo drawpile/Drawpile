@@ -20,10 +20,10 @@
  * implementation, using it under the GNU General Public License, version 3.
  * See 3rdparty/licenses/qt/license.GPL3 for details.
  */
-#define QT_FT_BEGIN_HEADER
-#define QT_FT_END_HEADER
+#define DP_FT_BEGIN_HEADER
+#define DP_FT_END_HEADER
 #include "qgrayraster_p.h"
 
 #define ErrRaster_OutOfMemory (-6)
 
-int q_gray_rendered_spans(QT_FT_Raster raster);
+int DP_gray_rendered_spans(DP_FT_Raster raster);

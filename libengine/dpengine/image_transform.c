@@ -140,7 +140,7 @@ static void process_span(int len, int coverage, DP_Pixel *src, DP_Pixel *dst)
                         DP_BLEND_MODE_NORMAL);
 }
 
-static void render_spans(int count, const QT_FT_Span *spans, void *user)
+static void render_spans(int count, const DP_FT_Span *spans, void *user)
 {
     struct DP_RenderSpansData *rsd = user;
     int src_width = rsd->src_width;
@@ -199,10 +199,10 @@ static void render_spans(int count, const QT_FT_Span *spans, void *user)
 }
 
 
-static QT_FT_Vector transform_outline_point(DP_Transform tf, double x, double y)
+static DP_FT_Vector transform_outline_point(DP_Transform tf, double x, double y)
 {
     DP_Vec2 v = DP_transform_xy(tf, x, y);
-    return (QT_FT_Vector){DP_double_to_int(v.x * 64.0 + 0.5),
+    return (DP_FT_Vector){DP_double_to_int(v.x * 64.0 + 0.5),
                           DP_double_to_int(v.y * 64.0 + 0.5)};
 }
 
@@ -217,8 +217,8 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
         return false;
     }
 
-    QT_FT_Raster gray_raster;
-    if (qt_ft_grays_raster.raster_new(&gray_raster) != 0) {
+    DP_FT_Raster gray_raster;
+    if (DP_ft_grays_raster.raster_new(&gray_raster) != 0) {
         DP_error_set("Failed to initialize transform rasterer");
         return false;
     }
@@ -236,7 +236,7 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
                                      DP_transform_transpose(mtf.tf),
                                      DP_draw_context_transform_buffer(dc)};
 
-    QT_FT_Vector points[5];
+    DP_FT_Vector points[5];
     double w = DP_int_to_double(src_width);
     double h = DP_int_to_double(src_height);
     points[0] = transform_outline_point(tf, 0.0, 0.0);
@@ -245,11 +245,11 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
     points[3] = transform_outline_point(tf, 0.0, h);
     points[4] = points[0];
 
-    char tags[5] = {QT_FT_CURVE_TAG_ON, QT_FT_CURVE_TAG_ON, QT_FT_CURVE_TAG_ON,
-                    QT_FT_CURVE_TAG_ON, QT_FT_CURVE_TAG_ON};
+    char tags[5] = {DP_FT_CURVE_TAG_ON, DP_FT_CURVE_TAG_ON, DP_FT_CURVE_TAG_ON,
+                    DP_FT_CURVE_TAG_ON, DP_FT_CURVE_TAG_ON};
     int contours[1] = {4};
-    QT_FT_Outline outline = {1, 5, points, tags, contours, 0};
-    QT_FT_BBox clip_box = {0, 0, dst_width, dst_height};
+    DP_FT_Outline outline = {1, 5, points, tags, contours, 0};
+    DP_FT_BBox clip_box = {0, 0, dst_width, dst_height};
 
     size_t raster_pool_size;
     unsigned char *raster_pool =
@@ -258,11 +258,11 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
     // do that, since we always allocate with malloc, which is guaranteed to
     // return something with maximum alignment, while Qt uses a stack buffer.
 
-    qt_ft_grays_raster.raster_reset(gray_raster, raster_pool, raster_pool_size);
+    DP_ft_grays_raster.raster_reset(gray_raster, raster_pool, raster_pool_size);
 
-    QT_FT_Raster_Params params = {0};
+    DP_FT_Raster_Params params = {0};
     params.source = &outline;
-    params.flags = QT_FT_RASTER_FLAG_CLIP;
+    params.flags = DP_FT_RASTER_FLAG_CLIP;
     params.user = &rsd;
     params.clip_box = clip_box;
 
@@ -270,10 +270,10 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
     int rendered_spans = 0;
 
     while (!done) {
-        params.flags |= (QT_FT_RASTER_FLAG_AA | QT_FT_RASTER_FLAG_DIRECT);
+        params.flags |= (DP_FT_RASTER_FLAG_AA | DP_FT_RASTER_FLAG_DIRECT);
         params.gray_spans = render_spans;
         params.skip_spans = rendered_spans;
-        int error = qt_ft_grays_raster.raster_render(gray_raster, &params);
+        int error = DP_ft_grays_raster.raster_render(gray_raster, &params);
 
         if (error == ErrRaster_OutOfMemory) {
             // Try again with more memory, skipping already rendered spans.
@@ -283,21 +283,21 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
                 break;
             }
 
-            rendered_spans += q_gray_rendered_spans(gray_raster);
+            rendered_spans += DP_gray_rendered_spans(gray_raster);
 
             raster_pool =
                 DP_draw_context_raster_pool_resize(dc, raster_pool_size);
 
-            qt_ft_grays_raster.raster_done(gray_raster);
-            if (qt_ft_grays_raster.raster_new(&gray_raster) != 0) {
+            DP_ft_grays_raster.raster_done(gray_raster);
+            if (DP_ft_grays_raster.raster_new(&gray_raster) != 0) {
                 DP_error_set("Failed to reinitialize transform rasterer");
                 break;
             }
-            qt_ft_grays_raster.raster_reset(gray_raster, raster_pool,
+            DP_ft_grays_raster.raster_reset(gray_raster, raster_pool,
                                             raster_pool_size);
         }
         else {
-            qt_ft_grays_raster.raster_done(gray_raster);
+            DP_ft_grays_raster.raster_done(gray_raster);
             done = true;
         }
     }
