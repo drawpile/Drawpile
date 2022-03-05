@@ -22,6 +22,7 @@
 #include "client.h"
 #include "client_internal.h"
 #include "ext_auth.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
@@ -29,7 +30,6 @@
 #include <dpcommon/worker.h>
 #include <dpmsg/message.h>
 #include <dpmsg/messages/ping.h>
-#include <SDL_atomic.h>
 #include <SDL_timer.h>
 
 #ifdef __EMSCRIPTEN__
@@ -70,7 +70,7 @@ typedef struct DP_ClientExtAuth {
 } DP_ClientExtAuth;
 
 struct DP_Client {
-    SDL_atomic_t running;
+    DP_Atomic running;
     int id;
     char *url;
     const DP_ClientCallbacks *callbacks;
@@ -106,9 +106,9 @@ DP_Client *DP_client_new(int id, const char *url,
 
     DP_Client *client = DP_malloc(sizeof(*client));
     *client = (DP_Client){
-        {0}, id, DP_strdup(url), callbacks, callback_data, 0, INNER_NULL,
+        DP_ATOMIC_INIT(1), id, DP_strdup(url), callbacks,
+        callback_data,     0,  INNER_NULL,
     };
-    SDL_AtomicSet(&client->running, 1);
 
     if (!INNER_INIT(client)) {
         DP_client_free(client);
@@ -121,7 +121,7 @@ DP_Client *DP_client_new(int id, const char *url,
 void DP_client_free(DP_Client *client)
 {
     if (client) {
-        SDL_AtomicSet(&client->running, 0);
+        DP_atomic_set(&client->running, 0);
         if (client->ping_timer != 0) {
             SDL_RemoveTimer(client->ping_timer);
         }
@@ -162,13 +162,13 @@ void DP_client_send_inc(DP_Client *client, DP_Message *msg)
 bool DP_client_running(DP_Client *client)
 {
     DP_ASSERT(client);
-    return SDL_AtomicGet(&client->running);
+    return DP_atomic_get(&client->running);
 }
 
 void DP_client_stop(DP_Client *client)
 {
     DP_ASSERT(client);
-    if (SDL_AtomicSet(&client->running, 0)) {
+    if (DP_atomic_xch(&client->running, 0)) {
         INNER_STOP(client);
         DP_client_report_event(client, DP_CLIENT_EVENT_CONNECTION_CLOSING,
                                NULL);

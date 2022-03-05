@@ -31,6 +31,7 @@
 #include "ops.h"
 #include "paint.h"
 #include "tile.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
@@ -48,13 +49,12 @@
 #include <dpmsg/messages/put_image.h>
 #include <dpmsg/messages/put_tile.h>
 #include <dpmsg/messages/region_move.h>
-#include <SDL_atomic.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
 
 struct DP_CanvasState {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     const bool transient;
     const int width, height;
     DP_Tile *const background_tile;
@@ -63,7 +63,7 @@ struct DP_CanvasState {
 };
 
 struct DP_TransientCanvasState {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     int width, height;
     DP_Tile *background_tile;
@@ -80,7 +80,7 @@ struct DP_TransientCanvasState {
 #else
 
 struct DP_CanvasState {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     const int width, height;
     DP_Tile *background_tile;
@@ -101,9 +101,8 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                                       int height)
 {
     DP_TransientCanvasState *cs = DP_malloc(sizeof(*cs));
-    *cs = (DP_TransientCanvasState){{-1}, transient, width, height,
-                                    NULL, {NULL},    {NULL}};
-    SDL_AtomicSet(&cs->refcount, 1);
+    *cs = (DP_TransientCanvasState){
+        DP_ATOMIC_INIT(1), transient, width, height, NULL, {NULL}, {NULL}};
     return cs;
 }
 
@@ -118,16 +117,16 @@ DP_CanvasState *DP_canvas_state_new(void)
 DP_CanvasState *DP_canvas_state_incref(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
-    SDL_AtomicIncRef(&cs->refcount);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    DP_atomic_inc(&cs->refcount);
     return cs;
 }
 
 void DP_canvas_state_decref(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
-    if (SDL_AtomicDecRef(&cs->refcount)) {
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    if (DP_atomic_dec(&cs->refcount)) {
         DP_tile_decref_nullable(cs->background_tile);
         DP_layer_content_list_decref(cs->layer_contents);
         DP_layer_props_list_decref(cs->layer_props);
@@ -138,42 +137,42 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
 int DP_canvas_state_refcount(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
-    return SDL_AtomicGet(&cs->refcount);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_atomic_get(&cs->refcount);
 }
 
 bool DP_canvas_state_transient(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->transient;
 }
 
 int DP_canvas_state_width(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->width;
 }
 
 int DP_canvas_state_height(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->height;
 }
 
 DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->layer_contents;
 }
 
 DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->layer_props;
 }
 
@@ -493,7 +492,7 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
 {
     DP_ASSERT(cs);
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     DP_ASSERT(!cs->transient);
     DP_MessageType type = DP_message_type(msg);
     DP_debug("Draw command %d %s", (int)type, DP_message_type_enum_name(type));
@@ -608,9 +607,9 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
 {
     DP_ASSERT(cs);
     DP_ASSERT(diff);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     if (prev_or_null) {
-        DP_ASSERT(SDL_AtomicGet(&prev_or_null->refcount) > 0);
+        DP_ASSERT(DP_atomic_get(&prev_or_null->refcount) > 0);
         bool change = cs != prev_or_null;
         DP_canvas_diff_begin(
             diff, prev_or_null->width, prev_or_null->height, cs->width,
@@ -648,7 +647,7 @@ DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
 static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(SDL_AtomicGet(&cs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     DP_ASSERT(!cs->transient);
     DP_debug("New transient canvas state");
     DP_TransientCanvasState *tcs =
@@ -695,7 +694,7 @@ int DP_transient_canvas_state_refcount(DP_TransientCanvasState *tcs)
 DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     if (DP_layer_content_list_transient(tcs->layer_contents)) {
         DP_transient_layer_content_list_persist(tcs->transient_layer_contents);
@@ -711,7 +710,7 @@ void DP_transient_canvas_state_width_set(DP_TransientCanvasState *tcs,
                                          int width)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     tcs->width = width;
 }
@@ -720,7 +719,7 @@ void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
                                           int height)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     tcs->height = height;
 }
@@ -729,7 +728,7 @@ DP_LayerContentList *
 DP_transient_canvas_state_layer_contents_noinc(DP_TransientCanvasState *tcs)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     return DP_canvas_state_layer_contents_noinc((DP_CanvasState *)tcs);
 }
@@ -738,7 +737,7 @@ DP_LayerPropsList *
 DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     return DP_canvas_state_layer_props_noinc((DP_CanvasState *)tcs);
 }
@@ -747,7 +746,7 @@ void DP_transient_canvas_state_transient_layer_contents_set_noinc(
     DP_TransientCanvasState *tcs, DP_TransientLayerContentList *tlcl)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     DP_layer_content_list_decref(tcs->layer_contents);
     tcs->transient_layer_contents = tlcl;
@@ -758,7 +757,7 @@ DP_transient_canvas_state_transient_layer_contents(DP_TransientCanvasState *tcs,
                                                    int reserve)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     DP_ASSERT(reserve >= 0);
     DP_LayerContentList *lcl = tcs->layer_contents;
@@ -779,7 +778,7 @@ DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
                                                 int reserve)
 {
     DP_ASSERT(tcs);
-    DP_ASSERT(SDL_AtomicGet(&tcs->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     DP_ASSERT(reserve >= 0);
     DP_LayerPropsList *lpl = tcs->layer_props;

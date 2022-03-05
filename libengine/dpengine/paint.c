@@ -29,11 +29,11 @@
 #include "paint.h"
 #include "draw_context.h"
 #include "layer_content.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpmsg/message.h>
 #include <dpmsg/messages/draw_dabs.h>
-#include <SDL_atomic.h>
 #include <math.h>
 
 
@@ -62,7 +62,7 @@ static float *generate_classic_lut(int index)
 
 static const float *get_classic_lut(double hardness)
 {
-    static SDL_SpinLock lock;
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
     static float *classic_luts[CLASSIC_LUT_COUNT];
     int index = DP_double_to_int(hardness * 100.0);
     DP_ASSERT(index >= CLASSIC_LUT_MIN_HARDNESS);
@@ -72,13 +72,13 @@ static const float *get_classic_lut(double hardness)
         return cl;
     }
     else {
-        SDL_AtomicLock(&lock);
+        DP_atomic_lock(&lock);
         cl = classic_luts[index];
         if (!cl) {
             cl = generate_classic_lut(index);
             classic_luts[index] = cl;
         }
-        SDL_AtomicUnlock(&lock);
+        DP_atomic_unlock(&lock);
         return cl;
     }
 }

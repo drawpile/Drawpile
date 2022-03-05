@@ -26,6 +26,7 @@ if(USE_GENERATORS)
 endif()
 
 set(dpcommon_sources
+    dpcommon/atomic.c
     dpcommon/base64.c
     dpcommon/binary.c
     dpcommon/common.c
@@ -36,6 +37,7 @@ set(dpcommon_sources
     dpcommon/worker.c)
 
 set(dpcommon_headers
+    dpcommon/atomic.h
     dpcommon/base64.h
     dpcommon/binary.h
     dpcommon/common.h
@@ -62,7 +64,7 @@ add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
 add_library(dpcommon STATIC "${dpcommon_sources}" "${dpcommon_headers}")
 set_dp_target_properties(dpcommon)
 target_include_directories(dpcommon INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpcommon PUBLIC SDL2::SDL2 Threads::Threads)
+target_link_libraries(dpcommon PUBLIC Threads::Threads)
 
 if(BUILD_TESTS)
     add_library(dpcommon_test STATIC "${dpcommon_test_sources}"

@@ -21,15 +21,15 @@
  */
 #include "layer_props_list.h"
 #include "layer_props.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
-#include <SDL_atomic.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
 
 struct DP_LayerPropsList {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     const bool transient;
     const int count;
     struct {
@@ -38,7 +38,7 @@ struct DP_LayerPropsList {
 };
 
 struct DP_TransientLayerPropsList {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     int count;
     union {
@@ -50,7 +50,7 @@ struct DP_TransientLayerPropsList {
 #else
 
 struct DP_LayerPropsList {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     int count;
     union {
@@ -70,7 +70,7 @@ static size_t layer_props_list_size(int count)
 static void *allocate_layer_props_list(bool transient, int count)
 {
     DP_TransientLayerPropsList *tlpl = DP_malloc(layer_props_list_size(count));
-    SDL_AtomicSet(&tlpl->refcount, 1);
+    DP_atomic_set(&tlpl->refcount, 1);
     tlpl->transient = transient;
     tlpl->count = count;
     return tlpl;
@@ -85,16 +85,16 @@ DP_LayerPropsList *DP_layer_props_list_new(void)
 DP_LayerPropsList *DP_layer_props_list_incref(DP_LayerPropsList *lpl)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
-    SDL_AtomicIncRef(&lpl->refcount);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
+    DP_atomic_inc(&lpl->refcount);
     return lpl;
 }
 
 void DP_layer_props_list_decref(DP_LayerPropsList *lpl)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
-    if (SDL_AtomicDecRef(&lpl->refcount)) {
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
+    if (DP_atomic_dec(&lpl->refcount)) {
         int count = lpl->count;
         for (int i = 0; i < count; ++i) {
             DP_layer_props_decref(lpl->elements[i].layer_props);
@@ -106,28 +106,28 @@ void DP_layer_props_list_decref(DP_LayerPropsList *lpl)
 int DP_layer_props_list_refcount(DP_LayerPropsList *lpl)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
-    return SDL_AtomicGet(&lpl->refcount);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
+    return DP_atomic_get(&lpl->refcount);
 }
 
 bool DP_layer_props_list_transient(DP_LayerPropsList *lpl)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
     return lpl->transient;
 }
 
 int DP_layer_props_list_count(DP_LayerPropsList *lpl)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
     return lpl->count;
 }
 
 DP_LayerProps *DP_layer_props_list_at_noinc(DP_LayerPropsList *lpl, int index)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < lpl->count);
     return lpl->elements[index].layer_props;
@@ -136,7 +136,7 @@ DP_LayerProps *DP_layer_props_list_at_noinc(DP_LayerPropsList *lpl, int index)
 int DP_layer_props_list_index_by_id(DP_LayerPropsList *lpl, int layer_id)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
     int count = lpl->count;
     for (int i = 0; i < count; ++i) {
         // Transient layer lists may have null layers allocated in reserve.
@@ -162,7 +162,7 @@ DP_TransientLayerPropsList *
 DP_transient_layer_props_list_new(DP_LayerPropsList *lpl, int reserve)
 {
     DP_ASSERT(lpl);
-    DP_ASSERT(SDL_AtomicGet(&lpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
     DP_ASSERT(!lpl->transient);
     DP_ASSERT(reserve >= 0);
     DP_debug("New transient layer props list");
@@ -184,7 +184,7 @@ DP_transient_layer_props_list_reserve(DP_TransientLayerPropsList *tlpl,
                                       int reserve)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_ASSERT(reserve >= 0);
     DP_debug("Reserve %d elements in layer props list", reserve);
@@ -204,7 +204,7 @@ DP_TransientLayerPropsList *
 DP_transient_layer_props_list_incref(DP_TransientLayerPropsList *tlpl)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     return (DP_TransientLayerPropsList *)DP_layer_props_list_incref(
         (DP_LayerPropsList *)tlpl);
@@ -213,7 +213,7 @@ DP_transient_layer_props_list_incref(DP_TransientLayerPropsList *tlpl)
 void DP_transient_layer_props_list_decref(DP_TransientLayerPropsList *tlpl)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_layer_props_list_decref((DP_LayerPropsList *)tlpl);
 }
@@ -221,7 +221,7 @@ void DP_transient_layer_props_list_decref(DP_TransientLayerPropsList *tlpl)
 int DP_transient_layer_props_list_refcount(DP_TransientLayerPropsList *tlpl)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     return DP_layer_props_list_refcount((DP_LayerPropsList *)tlpl);
 }
@@ -230,7 +230,7 @@ DP_LayerPropsList *
 DP_transient_layer_props_list_persist(DP_TransientLayerPropsList *tlpl)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     tlpl->transient = false;
     int count = tlpl->count;
@@ -247,7 +247,7 @@ DP_transient_layer_props_list_persist(DP_TransientLayerPropsList *tlpl)
 int DP_transient_layer_props_list_count(DP_TransientLayerPropsList *tlpl)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     return DP_layer_props_list_count((DP_LayerPropsList *)tlpl);
 }
@@ -257,7 +257,7 @@ DP_transient_layer_props_list_at_noinc(DP_TransientLayerPropsList *tlpl,
                                        int index)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     return DP_layer_props_list_at_noinc((DP_LayerPropsList *)tlpl, index);
 }
@@ -266,7 +266,7 @@ DP_TransientLayerProps *DP_transient_layer_props_list_transient_at_noinc(
     DP_TransientLayerPropsList *tlpl, int index)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < tlpl->count);
@@ -283,7 +283,7 @@ int DP_transient_layer_props_list_index_by_id(DP_TransientLayerPropsList *tlpl,
                                               int layer_id)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     return DP_layer_props_list_index_by_id((DP_LayerPropsList *)tlpl, layer_id);
 }
@@ -292,7 +292,7 @@ void DP_transient_layer_props_list_insert_inc(DP_TransientLayerPropsList *tlpl,
                                               DP_LayerProps *lp, int index)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_ASSERT(!tlpl->elements[tlpl->count - 1].layer_props);
     DP_ASSERT(lp);
@@ -307,7 +307,7 @@ void DP_transient_layer_props_list_insert_transient_noinc(
     DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_ASSERT(!tlpl->elements[tlpl->count - 1].layer_props);
     DP_ASSERT(tlp);
@@ -322,7 +322,7 @@ void DP_transient_layer_props_list_delete_at(DP_TransientLayerPropsList *tlpl,
                                              int index)
 {
     DP_ASSERT(tlpl);
-    DP_ASSERT(SDL_AtomicGet(&tlpl->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < tlpl->count);

@@ -47,7 +47,7 @@ endif()
 add_library(dpclient STATIC "${dpclient_sources}" "${dpclient_headers}")
 set_dp_target_properties(dpclient)
 target_include_directories(dpclient INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpclient PUBLIC dpengine uriparser)
+target_link_libraries(dpclient PUBLIC dpengine SDL2::SDL2 uriparser)
 
 if(DRAWDANCE_EMSCRIPTEN)
     target_link_options(dpclient PUBLIC "-lwebsocket.js")

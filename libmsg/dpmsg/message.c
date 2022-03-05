@@ -51,9 +51,9 @@
 #include "messages/user_join.h"
 #include "messages/user_leave.h"
 #include "text_writer.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
-#include <SDL_atomic.h>
 
 
 #define CONTROL      (1 << 0)
@@ -377,7 +377,7 @@ const char *DP_message_type_enum_name_unprefixed(DP_MessageType type)
 
 
 struct DP_Message {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     DP_MessageType type;
     unsigned int context_id;
     const DP_MessageMethods *methods;
@@ -397,7 +397,7 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
     DP_ASSERT(methods->equals);
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Message));
     DP_Message *msg = DP_malloc(sizeof(*msg) + internal_size);
-    SDL_AtomicSet(&msg->refcount, 1);
+    DP_atomic_set(&msg->refcount, 1);
     msg->type = type;
     msg->context_id = context_id;
     msg->methods = methods;
@@ -408,16 +408,16 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
 DP_Message *DP_message_incref(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
-    SDL_AtomicIncRef(&msg->refcount);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    DP_atomic_inc(&msg->refcount);
     return msg;
 }
 
 void DP_message_decref(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
-    if (SDL_AtomicDecRef(&msg->refcount)) {
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    if (DP_atomic_dec(&msg->refcount)) {
         void (*dispose)(DP_Message *) = msg->methods->dispose;
         if (dispose) {
             dispose(msg);
@@ -429,7 +429,7 @@ void DP_message_decref(DP_Message *msg)
 int DP_message_refcount(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    int refcount = SDL_AtomicGet(&msg->refcount);
+    int refcount = DP_atomic_get(&msg->refcount);
     DP_ASSERT(refcount > 0);
     return refcount;
 }
@@ -438,14 +438,14 @@ int DP_message_refcount(DP_Message *msg)
 DP_MessageType DP_message_type(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     return msg->type;
 }
 
 const char *DP_message_name(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     const DP_MessageTypeAttributes *attrs = get_attributes(msg->type);
     return attrs->flags & DYNAMIC_NAME ? attrs->get_name(msg) : attrs->name;
 }
@@ -453,14 +453,14 @@ const char *DP_message_name(DP_Message *msg)
 unsigned int DP_message_context_id(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     return msg->context_id;
 }
 
 void *DP_message_internal(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     return msg->internal;
 }
 
@@ -520,7 +520,7 @@ void *DP_message_cast3(DP_Message *msg, DP_MessageType type1,
 size_t DP_message_length(DP_Message *msg)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     return DP_MESSAGE_HEADER_LENGTH + msg->methods->payload_length(msg);
 }
 
@@ -528,7 +528,7 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
                             DP_GetMessageBufferFn get_buffer, void *user)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     DP_ASSERT(get_buffer);
 
     DP_MessageType type = msg->type;
@@ -571,7 +571,7 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
 bool DP_message_write_text(DP_Message *msg, DP_TextWriter *writer)
 {
     DP_ASSERT(msg);
-    DP_ASSERT(SDL_AtomicGet(&msg->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     DP_ASSERT(writer);
     return DP_text_writer_start_message(writer, msg)
         && msg->methods->write_payload_text(msg, writer)

@@ -23,12 +23,12 @@
 #include "client.h"
 #include "client_internal.h"
 #include "uri_utils.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
-#include <SDL_atomic.h>
 #include <uriparser/Uri.h>
 
 #if defined(_WIN32)
@@ -179,7 +179,7 @@ static void run_recv(void *data)
 {
     DP_Client *client = data;
     DP_TcpSocketClient *tsc = DP_client_inner(client);
-    int sockfd = SDL_AtomicGet(&tsc->socket);
+    int sockfd = DP_atomic_get(&tsc->socket);
     size_t reserved = DP_CLIENT_INITIAL_RECV_BUFFER_SIZE;
     unsigned char *buffer = DP_malloc(reserved);
 
@@ -218,7 +218,7 @@ static bool establish_connection(DP_Client *client, DP_TcpSocketClient *tsc)
         return false;
     }
 
-    SDL_AtomicSet(&tsc->socket, sockfd);
+    DP_atomic_set(&tsc->socket, sockfd);
     if (!DP_client_running(client)) {
         return false;
     }
@@ -243,7 +243,7 @@ static void run_send(void *data)
     DP_client_report_event(client, DP_CLIENT_EVENT_CONNECTION_ESTABLISHED,
                            NULL);
 
-    int sockfd = SDL_AtomicGet(&tsc->socket);
+    int sockfd = DP_atomic_get(&tsc->socket);
     DP_Queue *queue = &tsc->queue;
     DP_Mutex *mutex_queue = tsc->mutex_queue;
     DP_Semaphore *sem_queue = tsc->sem_queue;
@@ -342,7 +342,7 @@ void DP_tcp_socket_client_stop(DP_Client *client)
 {
     DP_ASSERT(client);
     DP_TcpSocketClient *tsc = DP_client_inner(client);
-    int socket = SDL_AtomicSet(&tsc->socket, -1);
+    int socket = DP_atomic_xch(&tsc->socket, -1);
     if (socket != -1) {
         shutdown(socket, SHUT_RDWR);
         close(socket);

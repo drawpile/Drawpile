@@ -23,9 +23,9 @@
 #    error "Use ext_auth_em.c on Emscripten"
 #endif
 #include "ext_auth.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/output.h>
-#include <SDL_atomic.h>
 #include <curl/curl.h>
 
 
@@ -37,15 +37,15 @@ static const char *get_curl_error(CURLcode code)
 
 static bool init_curl(void)
 {
-    static SDL_SpinLock global_init_lock;
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(global_init_lock);
     static bool global_init = false;
     static CURLcode code;
     if (!global_init) {
-        SDL_AtomicLock(&global_init_lock);
+        DP_atomic_lock(&global_init_lock);
         if (!global_init) {
             code = curl_global_init(CURL_GLOBAL_DEFAULT);
         }
-        SDL_AtomicUnlock(&global_init_lock);
+        DP_atomic_unlock(&global_init_lock);
     }
 
     if (code == CURLE_OK) {

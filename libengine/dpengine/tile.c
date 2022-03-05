@@ -23,23 +23,23 @@
 #include "compress.h"
 #include "image.h"
 #include "pixels.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
-#include <SDL_atomic.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
 
 struct DP_Tile {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     const bool transient;
     const unsigned int context_id;
     DP_Pixel pixels[DP_TILE_LENGTH];
 };
 
 struct DP_TransientTile {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     unsigned int context_id;
     DP_Pixel pixels[DP_TILE_LENGTH];
@@ -48,7 +48,7 @@ struct DP_TransientTile {
 #else
 
 struct DP_Tile {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     unsigned int context_id;
     DP_Pixel pixels[DP_TILE_LENGTH];
@@ -60,7 +60,7 @@ struct DP_Tile {
 static void *alloc_tile(bool transient, unsigned int context_id)
 {
     DP_TransientTile *tt = DP_malloc(sizeof(*tt));
-    SDL_AtomicSet(&tt->refcount, 1);
+    DP_atomic_set(&tt->refcount, 1);
     tt->transient = transient;
     tt->context_id = context_id;
     return tt;
@@ -130,8 +130,8 @@ DP_Tile *DP_tile_new_from_compressed(unsigned int context_id,
 DP_Tile *DP_tile_incref(DP_Tile *tile)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
-    SDL_AtomicIncRef(&tile->refcount);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    DP_atomic_inc(&tile->refcount);
     return tile;
 }
 
@@ -143,9 +143,9 @@ DP_Tile *DP_tile_incref_nullable(DP_Tile *tile_or_null)
 DP_Tile *DP_tile_incref_by(DP_Tile *tile, int refcount)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     DP_ASSERT(refcount >= 0);
-    SDL_AtomicAdd(&tile->refcount, refcount);
+    DP_atomic_add(&tile->refcount, refcount);
     return tile;
 }
 
@@ -157,8 +157,8 @@ DP_Tile *DP_tile_incref_by_nullable(DP_Tile *tile_or_null, int refcount)
 void DP_tile_decref(DP_Tile *tile)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
-    if (SDL_AtomicDecRef(&tile->refcount)) {
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    if (DP_atomic_dec(&tile->refcount)) {
         DP_free(tile);
     }
 }
@@ -173,7 +173,7 @@ void DP_tile_decref_nullable(DP_Tile *tile_or_null)
 bool DP_tile_transient(DP_Tile *tile)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     return tile->transient;
 }
 
@@ -181,14 +181,14 @@ bool DP_tile_transient(DP_Tile *tile)
 DP_Pixel *DP_tile_pixels(DP_Tile *tile)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     return tile->pixels;
 }
 
 DP_Pixel DP_tile_pixel_at(DP_Tile *tile, int x, int y)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     DP_ASSERT(x >= 0);
     DP_ASSERT(y >= 0);
     DP_ASSERT(x < DP_TILE_SIZE);
@@ -219,7 +219,7 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
     size_t bytes = DP_int_to_size(width) * sizeof(*dst);
 
     if (tile_or_null) {
-        DP_ASSERT(SDL_AtomicGet(&tile_or_null->refcount) > 0);
+        DP_ASSERT(DP_atomic_get(&tile_or_null->refcount) > 0);
         DP_Pixel *src = tile_or_null->pixels;
         for (int i = 0; i < height; ++i) {
             memcpy(dst + i * img_width, src + i * DP_TILE_SIZE, bytes);
@@ -236,7 +236,7 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
 DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
 {
     DP_ASSERT(tile);
-    DP_ASSERT(SDL_AtomicGet(&tile->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     DP_ASSERT(!tile->transient);
     DP_debug("New transient tile");
     DP_TransientTile *tt = alloc_tile(true, context_id);
@@ -261,7 +261,7 @@ DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
 DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt)
 {
     DP_ASSERT(tt);
-    DP_ASSERT(SDL_AtomicGet(&tt->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
     DP_ASSERT(tt->transient);
     tt->transient = false;
     return (DP_Tile *)tt;
@@ -272,7 +272,7 @@ void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                                     int y, DP_Pixel pixel)
 {
     DP_ASSERT(tt);
-    DP_ASSERT(SDL_AtomicGet(&tt->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
     DP_ASSERT(tt->transient);
     DP_ASSERT(x >= 0);
     DP_ASSERT(y >= 0);
@@ -296,7 +296,7 @@ void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel src,
                                    int w, int h, int skip)
 {
     DP_ASSERT(tt);
-    DP_ASSERT(SDL_AtomicGet(&tt->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
     DP_ASSERT(tt->transient);
     DP_ASSERT(mask);
     DP_ASSERT(x >= 0);

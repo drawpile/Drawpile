@@ -23,11 +23,11 @@
 #include "client.h"
 #include "client_internal.h"
 #include "uri_utils.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
-#include <SDL_atomic.h>
 #include <emscripten/websocket.h>
 #include <uriparser/Uri.h>
 
@@ -134,7 +134,7 @@ static bool establish_connection(DP_Client *client, DP_WebSocketClient *wsc)
         return false;
     }
 
-    SDL_AtomicSet(&wsc->socket, socket);
+    DP_atomic_set(&wsc->socket, socket);
 
     DP_WebSocketCallbackData *cbd = DP_malloc(sizeof(*wsc->callback_data));
     *cbd = (DP_WebSocketCallbackData){client};
@@ -190,7 +190,7 @@ static void run_send(void *data)
     DP_client_report_event(client, DP_CLIENT_EVENT_CONNECTION_ESTABLISHED,
                            NULL);
 
-    int socket = SDL_AtomicGet(&wsc->socket);
+    int socket = DP_atomic_get(&wsc->socket);
     DP_Queue *queue = &wsc->queue;
     DP_Mutex *mutex_queue = wsc->mutex_queue;
     size_t reserved = DP_CLIENT_INITIAL_SEND_BUFFER_SIZE;
@@ -272,7 +272,7 @@ void DP_web_socket_client_stop(DP_Client *client)
 {
     DP_ASSERT(client);
     DP_WebSocketClient *wsc = DP_client_inner(client);
-    int socket = SDL_AtomicSet(&wsc->socket, 0);
+    int socket = DP_atomic_xch(&wsc->socket, 0);
     if (socket > 0) {
         unsigned short ready_state;
         int result = emscripten_websocket_get_ready_state(socket, &ready_state);

@@ -20,24 +20,23 @@
  * SOFTWARE.
  */
 #include "common.h"
+#include "atomic.h"
 #include "conversions.h"
 #include "threading.h"
-#include <SDL_atomic.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 
-
-static SDL_SpinLock log_lock;
+DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(log_lock);
 
 static void log_message(const char *file, int line, const char *level,
                         const char *fmt, va_list ap)
 {
-    SDL_AtomicLock(&log_lock);
+    DP_atomic_lock(&log_lock);
     fprintf(stderr, "[%s] %s:%d - ", level, file ? file : "?", line);
     vfprintf(stderr, fmt, ap);
     fputc('\n', stderr);
-    SDL_AtomicUnlock(&log_lock);
+    DP_atomic_unlock(&log_lock);
 }
 
 #define DO_LOG(FILE, LINE, LEVEL, FMT, AP)       \
@@ -185,7 +184,7 @@ slurp_close:
 }
 
 
-static SDL_SpinLock error_tls_lock;
+DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(error_tls_lock);
 static DP_TlsKey error_tls = DP_TLS_UNDEFINED;
 
 typedef struct DP_ErrorState {
@@ -199,7 +198,7 @@ static DP_ErrorState *get_error_state(void)
     return error_tls == DP_TLS_UNDEFINED ? NULL : DP_tls_get(error_tls);
 }
 
-static void SDLCALL free_error_buffer(void *arg)
+static void free_error_buffer(void *arg)
 {
     DP_ErrorState *error = arg;
     DP_free(error->buffer);
@@ -212,11 +211,11 @@ static DP_ErrorState *init_error_buffer(void)
     *error = (DP_ErrorState){0, 0, NULL};
 
     if (error_tls == DP_TLS_UNDEFINED) {
-        SDL_AtomicLock(&error_tls_lock);
+        DP_atomic_lock(&error_tls_lock);
         if (error_tls == DP_TLS_UNDEFINED) {
             error_tls = DP_tls_create(free_error_buffer);
         }
-        SDL_AtomicUnlock(&error_tls_lock);
+        DP_atomic_unlock(&error_tls_lock);
     }
     DP_tls_set(error_tls, error);
 

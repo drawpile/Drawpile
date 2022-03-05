@@ -27,9 +27,9 @@
 #endif
 
 #include "client.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/queue.h>
-#include <SDL_atomic.h>
 #include <uriparser/Uri.h>
 
 typedef struct DP_Client DP_Client;
@@ -42,13 +42,10 @@ typedef struct DP_Thread DP_Thread;
 #define DP_TCP_SOCKET_CLIENT_SCHEME       "drawpile"
 #define DP_TCP_SOCKET_CLIENT_DEFAULT_PORT "27750"
 
-#define DP_TCP_SOCKET_CLIENT_NULL                   \
-    (DP_TcpSocketClient)                            \
-    {                                               \
-        {0}, DP_QUEUE_NULL, NULL, NULL, NULL, NULL, \
-        {                                           \
-            -1                                      \
-        }                                           \
+#define DP_TCP_SOCKET_CLIENT_NULL                                      \
+    (DP_TcpSocketClient)                                               \
+    {                                                                  \
+        {0}, DP_QUEUE_NULL, NULL, NULL, NULL, NULL, DP_ATOMIC_INIT(-1) \
     }
 
 typedef struct DP_TcpSocketClient {
@@ -58,7 +55,7 @@ typedef struct DP_TcpSocketClient {
     DP_Semaphore *sem_queue;
     DP_Thread *thread_send;
     DP_Thread *thread_recv;
-    SDL_atomic_t socket;
+    DP_Atomic socket;
 } DP_TcpSocketClient;
 
 

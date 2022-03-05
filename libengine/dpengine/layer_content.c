@@ -28,16 +28,16 @@
 #include "layer_props_list.h"
 #include "paint.h"
 #include "tile.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
-#include <SDL_atomic.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
 
 struct DP_LayerContent {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     const bool transient;
     const int width, height;
     struct {
@@ -50,7 +50,7 @@ struct DP_LayerContent {
 };
 
 struct DP_TransientLayerContent {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     int width, height;
     struct {
@@ -72,7 +72,7 @@ struct DP_TransientLayerContent {
 #else
 
 struct DP_LayerContent {
-    SDL_atomic_t refcount;
+    DP_Atomic refcount;
     bool transient;
     int width, height;
     struct {
@@ -97,16 +97,16 @@ struct DP_LayerContent {
 DP_LayerContent *DP_layer_content_incref(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
-    SDL_AtomicIncRef(&lc->refcount);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_atomic_inc(&lc->refcount);
     return lc;
 }
 
 void DP_layer_content_decref(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
-    if (SDL_AtomicDecRef(&lc->refcount)) {
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    if (DP_atomic_dec(&lc->refcount)) {
         int count = DP_tile_total_round(lc->width, lc->height);
         for (int i = 0; i < count; ++i) {
             DP_tile_decref_nullable(lc->elements[i].tile);
@@ -120,14 +120,14 @@ void DP_layer_content_decref(DP_LayerContent *lc)
 int DP_layer_content_refcount(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
-    return SDL_AtomicGet(&lc->refcount);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    return DP_atomic_get(&lc->refcount);
 }
 
 bool DP_layer_content_transient(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     return lc->transient;
 }
 
@@ -160,8 +160,8 @@ static void layer_content_diff_mark_both(DP_LayerContent *lc,
     DP_ASSERT(lc);
     DP_ASSERT(prev_lc);
     DP_ASSERT(diff);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
-    DP_ASSERT(SDL_AtomicGet(&prev_lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&prev_lc->refcount) > 0);
     DP_ASSERT(lc->width == prev_lc->width);   // Different sizes could be
     DP_ASSERT(lc->height == prev_lc->height); // supported, but aren't yet.
     DP_canvas_diff_check(diff, mark_both, (DP_LayerContent *[]){lc, prev_lc});
@@ -184,8 +184,8 @@ static void layer_content_diff(DP_LayerContent *lc, DP_LayerContent *prev_lc,
     DP_ASSERT(lc);
     DP_ASSERT(prev_lc);
     DP_ASSERT(diff);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
-    DP_ASSERT(SDL_AtomicGet(&prev_lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&prev_lc->refcount) > 0);
     DP_ASSERT(lc->width == prev_lc->width);   // Different sizes could be
     DP_ASSERT(lc->height == prev_lc->height); // supported, but aren't yet.
     DP_canvas_diff_check(diff, diff_tile, (DP_LayerContent *[]){lc, prev_lc});
@@ -223,7 +223,7 @@ static void layer_content_diff_mark(DP_LayerContent *lc, DP_CanvasDiff *diff)
 {
     DP_ASSERT(lc);
     DP_ASSERT(diff);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_canvas_diff_check(diff, mark, lc);
 }
 
@@ -239,21 +239,21 @@ void DP_layer_content_diff_mark(DP_LayerContent *lc, DP_CanvasDiff *diff)
 int DP_layer_content_width(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     return lc->width;
 }
 
 int DP_layer_content_height(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     return lc->height;
 }
 
 DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_ASSERT(x >= 0);
     DP_ASSERT(y >= 0);
     DP_ASSERT(x < DP_tile_count_round(lc->width));
@@ -264,21 +264,21 @@ DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y)
 DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     return lc->sub.contents;
 }
 
 DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     return lc->sub.props;
 }
 
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     int width = lc->width;
     int height = lc->height;
     if (width <= 0 || height <= 0) {
@@ -301,7 +301,7 @@ DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
 static DP_Pixel layer_content_pixel_at(DP_LayerContent *lc, int x, int y)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_ASSERT(x >= 0);
     DP_ASSERT(y >= 0);
     DP_ASSERT(x < lc->width);
@@ -372,7 +372,7 @@ void DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
                                       int blend_mode)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_Tile *t = flatten_tile(lc, tile_index);
     if (t) {
         DP_transient_tile_merge(tt, t, opacity, blend_mode);
@@ -384,7 +384,7 @@ void DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
 static bool has_content(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     int count = DP_tile_total_round(lc->width, lc->height);
     for (int i = 0; i < count; ++i) {
         DP_Tile *tile = lc->elements[i].tile;
@@ -400,7 +400,7 @@ static DP_TransientLayerContent *alloc_layer_content(int width, int height)
     size_t count = DP_int_to_size(DP_tile_total_round(width, height));
     DP_TransientLayerContent *tlc =
         DP_malloc(DP_FLEX_SIZEOF(DP_TransientLayerContent, elements, count));
-    SDL_AtomicSet(&tlc->refcount, 1);
+    DP_atomic_set(&tlc->refcount, 1);
     tlc->transient = true;
     tlc->width = width;
     tlc->height = height;
@@ -412,7 +412,7 @@ get_or_create_transient_tile(DP_TransientLayerContent *tlc,
                              unsigned int context_id, int i)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(i >= 0);
     DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
@@ -435,7 +435,7 @@ static void transient_layer_content_pixel_at_put(DP_TransientLayerContent *tlc,
                                                  DP_Pixel pixel)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(x >= 0);
     DP_ASSERT(y >= 0);
@@ -456,7 +456,7 @@ static void transient_layer_content_put_image(DP_TransientLayerContent *tlc,
                                               int blend_mode, int left, int top)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(img);
 
@@ -576,7 +576,7 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
                                                   int bottom, int left)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
 
     int width = lc->width + left + right;
     int height = lc->height + top + bottom;
@@ -602,7 +602,7 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
 DP_LayerContent *DP_layer_content_merge_to_flat_image(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_LayerContentList *lcl = lc->sub.contents;
     int count = DP_layer_content_list_count(lcl);
     if (count > 0) {
@@ -619,7 +619,7 @@ DP_LayerContent *DP_layer_content_merge_to_flat_image(DP_LayerContent *lc)
 DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_ASSERT(!lc->transient);
     DP_debug("New transient layer content");
     int width = lc->width;
@@ -654,7 +654,7 @@ DP_TransientLayerContent *
 DP_transient_layer_content_incref(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return (DP_TransientLayerContent *)DP_layer_content_incref(
         (DP_LayerContent *)tlc);
@@ -663,7 +663,7 @@ DP_transient_layer_content_incref(DP_TransientLayerContent *tlc)
 void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_layer_content_decref((DP_LayerContent *)tlc);
 }
@@ -671,7 +671,7 @@ void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc)
 int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_refcount((DP_LayerContent *)tlc);
 }
@@ -680,7 +680,7 @@ DP_LayerContent *
 DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     tlc->transient = false;
     int count = DP_tile_total_round(tlc->width, tlc->height);
@@ -702,7 +702,7 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
 int DP_transient_layer_content_width(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_width((DP_LayerContent *)tlc);
 }
@@ -710,7 +710,7 @@ int DP_transient_layer_content_width(DP_TransientLayerContent *tlc)
 int DP_transient_layer_content_height(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_height((DP_LayerContent *)tlc);
 }
@@ -719,7 +719,7 @@ DP_LayerContentList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_sub_contents_noinc((DP_LayerContent *)tlc);
 }
@@ -728,7 +728,7 @@ DP_LayerPropsList *
 DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     return DP_layer_content_sub_props_noinc((DP_LayerContent *)tlc);
 }
@@ -740,7 +740,7 @@ DP_transient_layer_content_resize_to(DP_TransientLayerContent *tlc,
                                      int height)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     int layer_width = tlc->width;
     int layer_height = tlc->height;
@@ -761,7 +761,7 @@ static DP_TransientTile *create_transient_tile(DP_TransientLayerContent *tlc,
                                                unsigned int context_id, int i)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(i >= 0);
     DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
@@ -775,7 +775,7 @@ static DP_TransientTile *get_transient_tile(DP_TransientLayerContent *tlc,
                                             unsigned int context_id, int i)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(i >= 0);
     DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
@@ -795,10 +795,10 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                                       int blend_mode)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(lc);
-    DP_ASSERT(SDL_AtomicGet(&lc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_ASSERT(tlc->width == lc->width);
     DP_ASSERT(tlc->height == lc->height);
     int count = DP_tile_total_round(lc->width, lc->height);
@@ -896,7 +896,7 @@ void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
                                           DP_Image *img)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(img);
 
@@ -992,7 +992,7 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
                                           int right, int bottom, uint32_t color)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_Pixel pixel = {color};
     if (left == 0 && top == 0 && right == tlc->width && bottom == tlc->height) {
@@ -1033,7 +1033,7 @@ void DP_transient_layer_content_brush_stamp_apply(DP_TransientLayerContent *tlc,
                                                   DP_BrushStamp *stamp)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(stamp);
 
@@ -1087,7 +1087,7 @@ void DP_transient_layer_content_list_transient_sublayer_at(
     DP_TransientLayerContent **out_tlc, DP_TransientLayerProps **out_tlp)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     if (out_tlc) {
         DP_TransientLayerContentList *tlcl = get_transient_sub_contents(tlc, 0);
@@ -1106,7 +1106,7 @@ void DP_transient_layer_content_list_transient_sublayer(
     DP_TransientLayerContent **out_tlc, DP_TransientLayerProps **out_tlp)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     int index = DP_layer_props_list_index_by_id(tlc->sub.props, sublayer_id);
     if (index < 0) {
@@ -1123,7 +1123,7 @@ void DP_transient_layer_content_merge_sublayer_at(DP_TransientLayerContent *tlc,
                                                   int index)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_TransientLayerContentList *tlcl = get_transient_sub_contents(tlc, 0);
     DP_TransientLayerPropsList *tlpl = get_transient_sub_props(tlc, 0);
@@ -1140,7 +1140,7 @@ void DP_transient_layer_content_merge_all_sublayers(
     DP_TransientLayerContent *tlc, unsigned int context_id)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_LayerContentList *lcl = tlc->sub.contents;
     DP_LayerPropsList *lpl = tlc->sub.props;
@@ -1162,7 +1162,7 @@ void DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
                                             DP_CanvasState *cs, int tile_index)
 {
     DP_ASSERT(tlc);
-    DP_ASSERT(SDL_AtomicGet(&tlc->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(cs);
     DP_ASSERT(tile_index >= 0);

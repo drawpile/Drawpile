@@ -27,9 +27,9 @@
 #endif
 
 #include "client.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/queue.h>
-#include <SDL_atomic.h>
 
 typedef struct DP_Client DP_Client;
 typedef struct DP_Message DP_Message;
@@ -38,10 +38,10 @@ typedef struct DP_Semaphore DP_Semaphore;
 typedef struct DP_Thread DP_Thread;
 
 
-#define DP_WEB_SOCKET_CLIENT_NULL                  \
-    (DP_WebSocketClient)                           \
-    {                                              \
-        DP_QUEUE_NULL, NULL, NULL, NULL, {0}, NULL \
+#define DP_WEB_SOCKET_CLIENT_NULL                                \
+    (DP_WebSocketClient)                                         \
+    {                                                            \
+        DP_QUEUE_NULL, NULL, NULL, NULL, DP_ATOMIC_INIT(0), NULL \
     }
 
 typedef struct DP_WebSocketCallbackData {
@@ -53,7 +53,7 @@ typedef struct DP_WebSocketClient {
     DP_Mutex *mutex_queue;
     DP_Semaphore *sem_queue;
     DP_Thread *thread_send;
-    SDL_atomic_t socket;
+    DP_Atomic socket;
     DP_WebSocketCallbackData *callback_data;
 } DP_WebSocketClient;
 
