@@ -33,7 +33,7 @@ set(dpcommon_sources
     dpcommon/input.c
     dpcommon/output.c
     dpcommon/queue.c
-    dpcommon/threading.c
+    dpcommon/threading_common.c
     dpcommon/worker.c)
 
 set(dpcommon_headers
@@ -59,12 +59,26 @@ set(dpcommon_tests
 
 add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
                        "${dpcommon_test_sources}" "${dpcommon_test_headers}"
-                       "${dpcommon_tests}")
+                       "${dpcommon_tests}" dpcommon/threading_pthread.c
+                       dpcommon/threading_sdl.c)
+
+if("${THREAD_IMPL}" STREQUAL "PTHREAD")
+    list(APPEND dpcommon_sources dpcommon/threading_pthread.c)
+elseif("${THREAD_IMPL}" STREQUAL "SDL")
+    list(APPEND dpcommon_sources dpcommon/threading_sdl.c)
+else()
+    message(SEND_ERROR "Unknown THREAD_IMPL '${THREAD_IMPL}'")
+endif()
 
 add_library(dpcommon STATIC "${dpcommon_sources}" "${dpcommon_headers}")
 set_dp_target_properties(dpcommon)
 target_include_directories(dpcommon INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpcommon PUBLIC Threads::Threads)
+
+if("${THREAD_IMPL}" STREQUAL "PTHREAD")
+    target_link_libraries(dpcommon PUBLIC Threads::Threads)
+elseif("${THREAD_IMPL}" STREQUAL "SDL")
+    target_link_libraries(dpcommon PUBLIC SDL2::SDL2)
+endif()
 
 if(BUILD_TESTS)
     add_library(dpcommon_test STATIC "${dpcommon_test_sources}"

@@ -19,8 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "threading.h"
 #include "common.h"
+#include "threading.h"
 #include <errno.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -116,27 +116,6 @@ bool DP_mutex_unlock(DP_Mutex *mutex)
     }
 }
 
-void DP_mutex_must_lock_at(const char *file, int line, DP_Mutex *mutex)
-{
-    if (!DP_mutex_lock(mutex)) {
-        DP_panic_at(file, line, "%s", DP_error());
-    }
-}
-
-bool DP_mutex_must_try_lock_at(const char *file, int line, DP_Mutex *mutex)
-{
-    while (true) {
-        switch (DP_mutex_try_lock(mutex)) {
-        case DP_MUTEX_OK:
-            return true;
-        case DP_MUTEX_BLOCKED:
-            return false;
-        default:
-            DP_panic_at(file, line, "%s", DP_error());
-        }
-    }
-}
-
 
 DP_Semaphore *DP_semaphore_new(unsigned int initial_value)
 {
@@ -207,37 +186,6 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
         default:
             DP_error_set("Can't try wait for semaphore: %s", strerror(error));
             return DP_SEMAPHORE_ERROR;
-        }
-    }
-}
-
-void DP_semaphore_must_wait_at(const char *file, int line, DP_Semaphore *sem)
-{
-    while (true) {
-        switch (DP_semaphore_wait(sem)) {
-        case DP_SEMAPHORE_OK:
-            return;
-        case DP_SEMAPHORE_INTERRUPTED:
-            break;
-        default:
-            DP_panic_at(file, line, "%s", DP_error());
-        }
-    }
-}
-
-bool DP_semaphore_must_try_wait_at(const char *file, int line,
-                                   DP_Semaphore *sem)
-{
-    while (true) {
-        switch (DP_semaphore_try_wait(sem)) {
-        case DP_SEMAPHORE_OK:
-            return true;
-        case DP_SEMAPHORE_BLOCKED:
-            return false;
-        case DP_SEMAPHORE_INTERRUPTED:
-            break;
-        default:
-            DP_panic_at(file, line, "%s", DP_error());
         }
     }
 }

@@ -38,12 +38,18 @@ if(DRAWDANCE_EMSCRIPTEN)
     # Need to compile and link all targets with -pthreads so that they actually
     # link together in the end, so this target does nothing on Emscripten.
     # The set_dp_target_properties function sets the flag on all targets.
+
+    if(NOT ("${THREAD_IMPL}" STREQUAL "PTHREAD"))
+        message(SEND_ERROR "Emscripten supports only THREAD_IMPL PTHREAD")
+    endif()
 else()
     find_package(PNG MODULE REQUIRED)
 
-    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-    find_package(Threads REQUIRED)
+    if("${THREAD_IMPL}" STREQUAL "PTHREAD")
+        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+        set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+        find_package(Threads REQUIRED)
+    endif()
 
     find_package(SDL2 REQUIRED)
 
