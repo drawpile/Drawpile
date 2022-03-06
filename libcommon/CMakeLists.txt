@@ -60,10 +60,14 @@ set(dpcommon_tests
 add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
                        "${dpcommon_test_sources}" "${dpcommon_test_headers}"
                        "${dpcommon_tests}" dpcommon/threading_pthread.c
-                       dpcommon/threading_sdl.c)
+                       dpcommon/threading_qt.cpp dpcommon/threading_sdl.c)
 
 if("${THREAD_IMPL}" STREQUAL "PTHREAD")
     list(APPEND dpcommon_sources dpcommon/threading_pthread.c)
+elseif("${THREAD_IMPL}" STREQUAL "QT")
+    add_library(dpcommon_qt_threads STATIC dpcommon/threading_qt.cpp)
+    set_dp_target_properties(dpcommon_qt_threads CXX)
+    target_link_libraries(dpcommon_qt_threads PUBLIC Qt5::Core)
 elseif("${THREAD_IMPL}" STREQUAL "SDL")
     list(APPEND dpcommon_sources dpcommon/threading_sdl.c)
 else()
@@ -76,6 +80,8 @@ target_include_directories(dpcommon INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
 
 if("${THREAD_IMPL}" STREQUAL "PTHREAD")
     target_link_libraries(dpcommon PUBLIC Threads::Threads)
+elseif("${THREAD_IMPL}" STREQUAL "QT")
+    target_link_libraries(dpcommon PUBLIC dpcommon_qt_threads)
 elseif("${THREAD_IMPL}" STREQUAL "SDL")
     target_link_libraries(dpcommon PUBLIC SDL2::SDL2)
 endif()

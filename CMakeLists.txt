@@ -32,7 +32,8 @@ option(USE_STRICT_ALIASING "Enable strict aliasing optimizations" OFF)
 option(LINK_WITH_LIBM "Link with libm when using math" ON)
 option(BUILD_TESTS "Build tests with CMocka" ON)
 
-set(THREAD_IMPL PTHREAD CACHE STRING "Threading implementation (PTHREAD, SDL)")
+set(THREAD_IMPL PTHREAD CACHE STRING
+    "Threading implementation (PTHREAD, QT, SDL)")
 
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross-compiling for platform '${CMAKE_SYSTEM_NAME}'")

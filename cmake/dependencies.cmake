@@ -49,6 +49,8 @@ else()
         set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
         set(THREADS_PREFER_PTHREAD_FLAG TRUE)
         find_package(Threads REQUIRED)
+    elseif("${THREAD_IMPL}" STREQUAL "QT")
+        find_package(Qt5 COMPONENTS Core REQUIRED)
     endif()
 
     find_package(SDL2 REQUIRED)
