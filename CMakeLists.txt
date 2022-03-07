@@ -55,14 +55,10 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_tidy.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/compile_flags.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/dpconfig.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/export.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/language_standards.cmake")
 
 function(set_dp_target_properties target)
-    set_language_standards("${target}")
-    add_address_sanitizer("${target}")
-
-    target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600")
-
     if(DRAWDANCE_EMSCRIPTEN)
         target_compile_options("${target}" PRIVATE "-pthread")
         target_link_options("${target}" PRIVATE
@@ -78,25 +74,37 @@ function(set_dp_target_properties target)
         endif()
     endif()
 
-    if(NOT "NO_CLANG_TIDY" IN_LIST ARGN)
-        add_clang_tidy("${target}")
+    if(NOT "NO_EXPORT" IN_LIST ARGN)
+        add_dp_export_target("${target}")
     endif()
 
-    if(NOT "NO_WARNINGS" IN_LIST ARGN)
-        if("CXX" IN_LIST ARGN)
-            target_compile_options("${target}" PRIVATE "${dp_cxxflags}")
-        else()
-            target_compile_options("${target}" PRIVATE "${dp_cflags}")
+    get_target_property(target_type "${target}" TYPE)
+    if (NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
+        set_language_standards("${target}")
+        add_address_sanitizer("${target}")
+        target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600")
+
+        if(NOT "NO_CLANG_TIDY" IN_LIST ARGN)
+            add_clang_tidy("${target}")
         endif()
-    endif()
 
-    if(NOT USE_STRICT_ALIASING)
-        target_compile_definitions("${target}" PRIVATE "DP_NO_STRICT_ALIASING")
-    endif()
+        if(NOT "NO_WARNINGS" IN_LIST ARGN)
+            if("CXX" IN_LIST ARGN)
+                target_compile_options("${target}" PRIVATE "${dp_cxxflags}")
+            else()
+                target_compile_options("${target}" PRIVATE "${dp_cflags}")
+            endif()
+        endif()
 
-    string(LENGTH "${PROJECT_SOURCE_DIR}/" project_dir_length)
-    target_compile_definitions(
-        "${target}" PRIVATE "DP_PROJECT_DIR_LENGTH=${project_dir_length}")
+        if(NOT USE_STRICT_ALIASING)
+            target_compile_definitions(
+                "${target}" PRIVATE "DP_NO_STRICT_ALIASING")
+        endif()
+
+        string(LENGTH "${PROJECT_SOURCE_DIR}/" project_dir_length)
+        target_compile_definitions(
+            "${target}" PRIVATE "DP_PROJECT_DIR_LENGTH=${project_dir_length}")
+    endif()
 endfunction()
 
 function(add_dp_test_targets type tests)
@@ -105,7 +113,7 @@ function(add_dp_test_targets type tests)
         set(test_name "dp${type}_test_${test_file_name}")
 
         add_executable("${test_name}" "${test_file}")
-        set_dp_target_properties("${test_name}")
+        set_dp_target_properties("${test_name}" NO_EXPORT)
         target_link_libraries("${test_name}" PUBLIC "dp${type}_test")
 
         add_test(NAME "${test_name}" COMMAND "${test_name}"
@@ -127,3 +135,6 @@ define_clang_format_target()
 
 report_address_sanitizer_targets()
 report_clang_tidy_targets()
+report_dp_export_targets()
+
+export_dp_export_targets()

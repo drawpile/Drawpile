@@ -40,6 +40,7 @@ target_include_directories(parson INTERFACE "${CMAKE_CURRENT_LIST_DIR}/parson")
 
 add_clang_format_files(dpgles2/gles2_inc.h)
 add_library(dpgles2 INTERFACE)
+set_dp_target_properties(dpgles2 NO_ASAN NO_CLANG_TIDY NO_WARNINGS)
 target_include_directories(dpgles2 INTERFACE "${CMAKE_CURRENT_LIST_DIR}/dpgles2")
 
 add_library(imgui STATIC imgui/imconfig.h imgui/imgui.cpp imgui/imgui_demo.cpp

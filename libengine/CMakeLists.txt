@@ -77,7 +77,7 @@ target_link_libraries(dpengine PUBLIC dpmsg_interface PNG::PNG qgrayraster)
 if(BUILD_TESTS)
     add_library(dpengine_test STATIC "${dpengine_test_sources}"
                                      "${dpengine_test_headers}")
-    set_dp_target_properties(dpengine_test)
+    set_dp_target_properties(dpengine_test NO_EXPORT)
     target_include_directories(dpengine_test INTERFACE
                                "${CMAKE_CURRENT_LIST_DIR}/test/lib")
     target_link_libraries(dpengine_test PUBLIC dpmsg_test dpengine dpmsg)

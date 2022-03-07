@@ -89,7 +89,7 @@ endif()
 if(BUILD_TESTS)
     add_library(dpcommon_test STATIC "${dpcommon_test_sources}"
                                      "${dpcommon_test_headers}")
-    set_dp_target_properties(dpcommon_test)
+    set_dp_target_properties(dpcommon_test NO_EXPORT)
     target_include_directories(dpcommon_test INTERFACE
                                "${CMAKE_CURRENT_LIST_DIR}/test/lib")
     target_link_libraries(dpcommon_test PUBLIC cmocka-static dpcommon)

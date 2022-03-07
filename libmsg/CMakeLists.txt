@@ -111,6 +111,7 @@ add_clang_format_files("${dpmsg_sources}" "${dpmsg_headers}"
                        "${dpmsg_tests}")
 
 add_library(dpmsg_interface INTERFACE)
+set_dp_target_properties(dpmsg_interface)
 target_link_libraries(dpmsg_interface INTERFACE dpcommon)
 target_include_directories(dpmsg_interface INTERFACE
                            "${CMAKE_CURRENT_LIST_DIR}")
@@ -126,7 +127,7 @@ endif()
 if(BUILD_TESTS)
     add_library(dpmsg_test STATIC "${dpmsg_test_sources}"
                                   "${dpmsg_test_headers}")
-    set_dp_target_properties(dpmsg_test)
+    set_dp_target_properties(dpmsg_test NO_EXPORT)
     target_include_directories(dpmsg_test INTERFACE
                                "${CMAKE_CURRENT_LIST_DIR}/test/lib")
     target_link_libraries(dpmsg_test PUBLIC dpcommon_test dpmsg)
