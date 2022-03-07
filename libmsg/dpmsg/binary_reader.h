@@ -22,10 +22,10 @@
 #ifndef DPMSG_BINARY_READER_H
 #define DPMSG_BINARY_READER_H
 #include <dpcommon/common.h>
-#include <parson.h>
 
 typedef struct DP_Input DP_Input;
 typedef struct DP_Message DP_Message;
+typedef struct json_object_t JSON_Object;
 
 #define DP_DPREC_MAGIC        "DPREC"
 #define DP_DPREC_MAGIC_LENGTH 6
