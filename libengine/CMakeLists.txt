@@ -72,7 +72,7 @@ add_clang_format_files("${dpengine_clang_format_files}")
 add_library(dpengine STATIC "${dpengine_sources}" "${dpengine_headers}")
 set_dp_target_properties(dpengine)
 target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpengine PUBLIC dpmsg PNG::PNG qgrayraster)
+target_link_libraries(dpengine PUBLIC dpmsg_interface PNG::PNG qgrayraster)
 
 if(BUILD_TESTS)
     add_library(dpengine_test STATIC "${dpengine_test_sources}"
@@ -80,7 +80,7 @@ if(BUILD_TESTS)
     set_dp_target_properties(dpengine_test)
     target_include_directories(dpengine_test INTERFACE
                                "${CMAKE_CURRENT_LIST_DIR}/test/lib")
-    target_link_libraries(dpengine_test PUBLIC dpmsg_test dpengine)
+    target_link_libraries(dpengine_test PUBLIC dpmsg_test dpengine dpmsg)
 
     add_dp_test_targets(engine dpengine_tests)
 endif()

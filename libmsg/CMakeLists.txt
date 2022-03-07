@@ -110,10 +110,14 @@ add_clang_format_files("${dpmsg_sources}" "${dpmsg_headers}"
                        "${dpmsg_test_sources}" "${dpmsg_test_headers}"
                        "${dpmsg_tests}")
 
+add_library(dpmsg_interface INTERFACE)
+target_link_libraries(dpmsg_interface INTERFACE dpcommon)
+target_include_directories(dpmsg_interface INTERFACE
+                           "${CMAKE_CURRENT_LIST_DIR}")
+
 add_library(dpmsg STATIC "${dpmsg_sources}" "${dpmsg_headers}")
 set_dp_target_properties(dpmsg)
-target_include_directories(dpmsg INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpmsg PUBLIC parson dpcommon)
+target_link_libraries(dpmsg PUBLIC dpmsg_interface parson)
 
 if(LINK_WITH_LIBM)
     target_link_libraries(dpmsg PUBLIC m)

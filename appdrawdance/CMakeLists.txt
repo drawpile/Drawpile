@@ -58,7 +58,7 @@ add_library(drawdance_lua STATIC "${drawdance_lua_sources}"
 set_dp_target_properties(drawdance_lua)
 target_include_directories(drawdance_lua PRIVATE "${CMAKE_BINARY_DIR}/config")
 target_include_directories(drawdance_lua INTERFACE drawdance_lua)
-target_link_libraries(drawdance_lua PUBLIC dpclient lua)
+target_link_libraries(drawdance_lua PUBLIC dpclient dpmsg lua)
 
 if(NOT DRAWDANCE_EMSCRIPTEN)
     target_compile_definitions(drawdance_lua PRIVATE DRAWDANCE_IMGUI)

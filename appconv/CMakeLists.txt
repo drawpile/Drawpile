@@ -24,4 +24,4 @@ add_clang_format_files("${dpconv_sources}")
 
 add_executable(dpconv "${dpconv_sources}")
 set_dp_target_properties(dpconv)
-target_link_libraries(dpconv PUBLIC dpengine)
+target_link_libraries(dpconv PUBLIC dpengine dpmsg)
