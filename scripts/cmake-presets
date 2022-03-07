@@ -78,6 +78,28 @@ preset_emscripten_release() {
           -B buildemrelease
 }
 
+preset_drawpile_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DBUILD_APPS=OFF \
+          -DTHREAD_IMPL=QT \
+          -G Ninja \
+          -B builddp
+}
+
+preset_drawpile_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=OFF \
+          -DBUILD_APPS=OFF \
+          -DTHREAD_IMPL=QT \
+          -G Ninja \
+          -B builddprelease
+}
+
 if [ "$#" -ne 1 ] || [ "$(type -t "preset_$1")" != 'function' ]; then
     echo "Usage: $0 debug|release|emscripten_debug|emscripten_release" 1>&2
     exit 2
