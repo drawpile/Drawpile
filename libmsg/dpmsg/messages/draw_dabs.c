@@ -90,7 +90,7 @@ uint8_t DP_brush_dab_opacity(DP_BrushDab *dab)
     return dab->opacity;
 }
 
-static bool dab_equals(DP_BrushDab *restrict a, DP_BrushDab *restrict b)
+static bool dab_equals(DP_BrushDab *DP_RESTRICT a, DP_BrushDab *DP_RESTRICT b)
 {
     DP_ASSERT(a);
     DP_ASSERT(b);
@@ -191,7 +191,8 @@ static size_t base_serialize(DP_MsgDrawDabs *mdd, unsigned char *data)
     return written;
 }
 
-static bool base_equals(DP_MsgDrawDabs *restrict a, DP_MsgDrawDabs *restrict b)
+static bool base_equals(DP_MsgDrawDabs *DP_RESTRICT a,
+                        DP_MsgDrawDabs *DP_RESTRICT b)
 {
     DP_ASSERT(a);
     DP_ASSERT(b);
@@ -363,15 +364,15 @@ static bool classic_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
     return true;
 }
 
-static bool classic_dab_equals(DP_ClassicBrushDab *restrict a,
-                               DP_ClassicBrushDab *restrict b)
+static bool classic_dab_equals(DP_ClassicBrushDab *DP_RESTRICT a,
+                               DP_ClassicBrushDab *DP_RESTRICT b)
 {
     return dab_equals(&a->base, &b->base) && a->size == b->size
         && a->hardness == b->hardness;
 }
 
-static bool classic_dabs_equal(int dab_count, DP_ClassicBrushDab *restrict a,
-                               DP_ClassicBrushDab *restrict b)
+static bool classic_dabs_equal(int dab_count, DP_ClassicBrushDab *DP_RESTRICT a,
+                               DP_ClassicBrushDab *DP_RESTRICT b)
 {
     for (int i = 0; i < dab_count; ++i) {
         if (!classic_dab_equals(&a[i], &b[i])) {
@@ -381,7 +382,8 @@ static bool classic_dabs_equal(int dab_count, DP_ClassicBrushDab *restrict a,
     return true;
 }
 
-static bool classic_equals(DP_Message *restrict msg, DP_Message *restrict other)
+static bool classic_equals(DP_Message *DP_RESTRICT msg,
+                           DP_Message *DP_RESTRICT other)
 {
     DP_MsgDrawDabsClassic *a = DP_msg_draw_dabs_classic_cast(msg);
     DP_MsgDrawDabsClassic *b = DP_msg_draw_dabs_classic_cast(other);
@@ -572,14 +574,14 @@ static bool pixel_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
     return true;
 }
 
-static bool pixel_dab_equals(DP_PixelBrushDab *restrict a,
-                             DP_PixelBrushDab *restrict b)
+static bool pixel_dab_equals(DP_PixelBrushDab *DP_RESTRICT a,
+                             DP_PixelBrushDab *DP_RESTRICT b)
 {
     return dab_equals(&a->base, &b->base) && a->size == b->size;
 }
 
-static bool pixel_dabs_equal(int dab_count, DP_PixelBrushDab *restrict a,
-                             DP_PixelBrushDab *restrict b)
+static bool pixel_dabs_equal(int dab_count, DP_PixelBrushDab *DP_RESTRICT a,
+                             DP_PixelBrushDab *DP_RESTRICT b)
 {
     for (int i = 0; i < dab_count; ++i) {
         if (!pixel_dab_equals(&a[i], &b[i])) {
@@ -589,7 +591,8 @@ static bool pixel_dabs_equal(int dab_count, DP_PixelBrushDab *restrict a,
     return true;
 }
 
-static bool pixel_equals(DP_Message *restrict msg, DP_Message *restrict other)
+static bool pixel_equals(DP_Message *DP_RESTRICT msg,
+                         DP_Message *DP_RESTRICT other)
 {
     DP_MsgDrawDabsPixel *a = DP_msg_draw_dabs_pixel_cast(msg);
     DP_MsgDrawDabsPixel *b = DP_msg_draw_dabs_pixel_cast(other);

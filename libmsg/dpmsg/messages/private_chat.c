@@ -74,7 +74,7 @@ static bool write_payload_text(DP_Message *msg, DP_TextWriter *writer)
     return true;
 }
 
-static bool equals(DP_Message *restrict msg, DP_Message *restrict other)
+static bool equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
 {
     DP_MsgPrivateChat *a = DP_msg_private_chat_cast(msg);
     DP_MsgPrivateChat *b = DP_msg_private_chat_cast(other);

@@ -110,7 +110,7 @@ static bool exclusive_ids_equal(unsigned int *a, unsigned int *b, int count)
     return true;
 }
 
-static bool equals(DP_Message *restrict msg, DP_Message *restrict other)
+static bool equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
 {
     DP_MsgLayerAcl *a = DP_msg_layer_acl_cast(msg);
     DP_MsgLayerAcl *b = DP_msg_layer_acl_cast(other);

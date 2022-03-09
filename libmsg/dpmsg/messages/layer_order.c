@@ -74,7 +74,7 @@ static bool layer_ids_equal(int *a, int *b, int count)
     return true;
 }
 
-static bool equals(DP_Message *restrict msg, DP_Message *restrict other)
+static bool equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
 {
     DP_MsgLayerOrder *a = DP_msg_layer_order_cast(msg);
     DP_MsgLayerOrder *b = DP_msg_layer_order_cast(other);

@@ -87,7 +87,7 @@ static bool write_payload_text(DP_Message *msg, DP_TextWriter *writer)
     return true;
 }
 
-static bool equals(DP_Message *restrict msg, DP_Message *restrict other)
+static bool equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
 {
     DP_MsgUserJoin *a = DP_msg_user_join_cast(msg);
     DP_MsgUserJoin *b = DP_msg_user_join_cast(other);

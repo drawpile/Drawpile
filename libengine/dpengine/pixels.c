@@ -48,8 +48,8 @@ static_assert(sizeof(uint32_t) == 4, "uint32_t is 4 bytes long");
 typedef void (*DP_CompositeBrushFn)(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
                                     int w, int h, int mask_skip, int dst_skip);
 
-typedef void (*DP_CompositeLayerFn)(DP_Pixel *restrict dst,
-                                    DP_Pixel *restrict src, int pixel_count,
+typedef void (*DP_CompositeLayerFn)(DP_Pixel *DP_RESTRICT dst,
+                                    DP_Pixel *DP_RESTRICT src, int pixel_count,
                                     uint8_t opacity);
 
 
@@ -500,22 +500,23 @@ void DP_pixels_composite_mask(DP_Pixel *dst, DP_Pixel src, int blend_mode,
         }                                                     \
     } while (0)
 
-static void composite_unknown(DP_UNUSED DP_Pixel *restrict dst,
-                              DP_UNUSED DP_Pixel *restrict src,
+static void composite_unknown(DP_UNUSED DP_Pixel *DP_RESTRICT dst,
+                              DP_UNUSED DP_Pixel *DP_RESTRICT src,
                               DP_UNUSED int pixel_count,
                               DP_UNUSED uint8_t opacity)
 {
     // Nothing, unknown blend mode.
 }
 
-static void composite_copy(DP_Pixel *restrict dst, DP_Pixel *restrict src,
+static void composite_copy(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
                            int pixel_count, DP_UNUSED uint8_t opacity)
 {
     FOR_PIXEL(dst, src, pixel_count, i, { *dst = *src; });
 }
 
-static void composite_erase(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                            int pixel_count, uint8_t opacity)
+static void composite_erase(DP_Pixel *DP_RESTRICT dst,
+                            DP_Pixel *DP_RESTRICT src, int pixel_count,
+                            uint8_t opacity)
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
         unsigned int a1 = 255 - mul(src->a, opacity);
@@ -526,8 +527,8 @@ static void composite_erase(DP_Pixel *restrict dst, DP_Pixel *restrict src,
     });
 }
 
-static void composite_color_erase(DP_Pixel *restrict dst,
-                                  DP_Pixel *restrict src, int pixel_count,
+static void composite_color_erase(DP_Pixel *DP_RESTRICT dst,
+                                  DP_Pixel *DP_RESTRICT src, int pixel_count,
                                   uint8_t opacity)
 {
     double o = opacity / 255.0;
@@ -540,8 +541,8 @@ static void composite_color_erase(DP_Pixel *restrict dst,
     });
 }
 
-static void composite_alpha_blend(DP_Pixel *restrict dst,
-                                  DP_Pixel *restrict src, int pixel_count,
+static void composite_alpha_blend(DP_Pixel *DP_RESTRICT dst,
+                                  DP_Pixel *DP_RESTRICT src, int pixel_count,
                                   uint8_t opacity)
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
@@ -556,8 +557,8 @@ static void composite_alpha_blend(DP_Pixel *restrict dst,
     });
 }
 
-static void composite_alpha_under(DP_Pixel *restrict dst,
-                                  DP_Pixel *restrict src, int pixel_count,
+static void composite_alpha_under(DP_Pixel *DP_RESTRICT dst,
+                                  DP_Pixel *DP_RESTRICT src, int pixel_count,
                                   uint8_t opacity)
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
@@ -573,7 +574,7 @@ static void composite_alpha_under(DP_Pixel *restrict dst,
     });
 }
 
-static void composite_with(DP_Pixel *restrict dst, DP_Pixel *restrict src,
+static void composite_with(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
                            int pixel_count, uint8_t opacity,
                            uint8_t (*blend_op)(uint8_t, uint8_t))
 {
@@ -592,56 +593,63 @@ static void composite_with(DP_Pixel *restrict dst, DP_Pixel *restrict src,
     });
 }
 
-static void composite_multiply(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                               int pixel_count, uint8_t opacity)
+static void composite_multiply(DP_Pixel *DP_RESTRICT dst,
+                               DP_Pixel *DP_RESTRICT src, int pixel_count,
+                               uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_multiply);
 }
 
-static void composite_divide(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                             int pixel_count, uint8_t opacity)
+static void composite_divide(DP_Pixel *DP_RESTRICT dst,
+                             DP_Pixel *DP_RESTRICT src, int pixel_count,
+                             uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_divide);
 }
 
-static void composite_burn(DP_Pixel *restrict dst, DP_Pixel *restrict src,
+static void composite_burn(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
                            int pixel_count, uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_burn);
 }
 
-static void composite_dodge(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                            int pixel_count, uint8_t opacity)
+static void composite_dodge(DP_Pixel *DP_RESTRICT dst,
+                            DP_Pixel *DP_RESTRICT src, int pixel_count,
+                            uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_dodge);
 }
 
-static void composite_darken(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                             int pixel_count, uint8_t opacity)
+static void composite_darken(DP_Pixel *DP_RESTRICT dst,
+                             DP_Pixel *DP_RESTRICT src, int pixel_count,
+                             uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_darken);
 }
 
-static void composite_lighten(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                              int pixel_count, uint8_t opacity)
+static void composite_lighten(DP_Pixel *DP_RESTRICT dst,
+                              DP_Pixel *DP_RESTRICT src, int pixel_count,
+                              uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_lighten);
 }
 
-static void composite_subtract(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                               int pixel_count, uint8_t opacity)
+static void composite_subtract(DP_Pixel *DP_RESTRICT dst,
+                               DP_Pixel *DP_RESTRICT src, int pixel_count,
+                               uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_subtract);
 }
 
-static void composite_add(DP_Pixel *restrict dst, DP_Pixel *restrict src,
+static void composite_add(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
                           int pixel_count, uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_add);
 }
 
-static void composite_blend(DP_Pixel *restrict dst, DP_Pixel *restrict src,
-                            int pixel_count, uint8_t opacity)
+static void composite_blend(DP_Pixel *DP_RESTRICT dst,
+                            DP_Pixel *DP_RESTRICT src, int pixel_count,
+                            uint8_t opacity)
 {
     composite_with(dst, src, pixel_count, opacity, blend_blend);
 }

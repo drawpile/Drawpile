@@ -200,7 +200,7 @@ DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
 }
 
 
-static void copy_pixels(DP_Image *restrict dst, DP_Image *restrict src,
+static void copy_pixels(DP_Image *DP_RESTRICT dst, DP_Image *DP_RESTRICT src,
                         int dst_x, int dst_y, int src_x, int src_y,
                         int copy_width, int copy_height)
 {
@@ -218,8 +218,8 @@ static void copy_pixels(DP_Image *restrict dst, DP_Image *restrict src,
     DP_ASSERT(src_y + copy_height <= src->height);
     int dst_width = dst->width;
     int src_width = src->width;
-    DP_Pixel *restrict dst_pixels = dst->pixels;
-    DP_Pixel *restrict src_pixels = src->pixels;
+    DP_Pixel *DP_RESTRICT dst_pixels = dst->pixels;
+    DP_Pixel *DP_RESTRICT src_pixels = src->pixels;
     size_t row_size = sizeof(uint32_t) * DP_int_to_size(copy_width);
     for (int y = 0; y < copy_height; ++y) {
         int d = (y + dst_y) * dst_width + dst_x;

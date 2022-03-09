@@ -123,8 +123,9 @@ DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt);
 void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                                     int y, DP_Pixel pixel);
 
-void DP_transient_tile_merge(DP_TransientTile *restrict tt, DP_Tile *restrict t,
-                             uint8_t opacity, int blend_mode);
+void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
+                             DP_Tile *DP_RESTRICT t, uint8_t opacity,
+                             int blend_mode);
 
 void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel src,
                                    int blend_mode, uint8_t *mask, int x, int y,

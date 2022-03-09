@@ -79,7 +79,8 @@
         return true;                                                           \
     }                                                                          \
                                                                                \
-    static bool equals(DP_Message *restrict msg, DP_Message *restrict other)   \
+    static bool equals(DP_Message *DP_RESTRICT msg,                            \
+                       DP_Message *DP_RESTRICT other)                          \
     {                                                                          \
         STRUCT *a = DP_msg_##NAME##_cast(msg);                                 \
         STRUCT *b = DP_msg_##NAME##_cast(other);                               \

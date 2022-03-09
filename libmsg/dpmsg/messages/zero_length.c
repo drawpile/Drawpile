@@ -41,8 +41,8 @@ static bool write_payload_text(DP_UNUSED DP_Message *msg,
     return true;
 }
 
-static bool equals(DP_UNUSED DP_Message *restrict msg,
-                   DP_UNUSED DP_Message *restrict other)
+static bool equals(DP_UNUSED DP_Message *DP_RESTRICT msg,
+                   DP_UNUSED DP_Message *DP_RESTRICT other)
 {
     return true;
 }

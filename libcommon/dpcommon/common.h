@@ -75,8 +75,14 @@
 #endif
 
 #ifdef __cplusplus
+#    ifdef __GNUC__
+#        define DP_RESTRICT __restrict__
+#    else
+#        define DP_RESTRICT // nothing
+#    endif
 #    define DP_NORETURN [[noreturn]]
 #else
+#    define DP_RESTRICT restrict
 #    define DP_NORETURN _Noreturn
 #endif
 

@@ -99,7 +99,7 @@ typedef struct DP_MessageMethods {
     size_t (*payload_length)(DP_Message *msg);
     size_t (*serialize_payload)(DP_Message *msg, unsigned char *data);
     bool (*write_payload_text)(DP_Message *msg, DP_TextWriter *writer);
-    bool (*equals)(DP_Message *restrict msg, DP_Message *restrict other);
+    bool (*equals)(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other);
     void (*dispose)(DP_Message *msg);
 } DP_MessageMethods;
 
