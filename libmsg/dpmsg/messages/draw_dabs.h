@@ -65,8 +65,6 @@ int DP_pixel_brush_dab_y(DP_PixelBrushDab *dab);
 
 int DP_pixel_brush_dab_size(DP_PixelBrushDab *dab);
 
-uint8_t DP_pixel_brush_dab_hardness(DP_PixelBrushDab *dab);
-
 uint8_t DP_pixel_brush_dab_opacity(DP_PixelBrushDab *dab);
 
 DP_PixelBrushDab *DP_pixel_brush_dab_at(DP_PixelBrushDab *dabs, int i);
