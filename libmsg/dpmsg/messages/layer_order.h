@@ -39,7 +39,9 @@ DP_Message *DP_msg_layer_order_deserialize(unsigned int context_id,
 DP_MsgLayerOrder *DP_msg_layer_order_cast(DP_Message *msg);
 
 
-const int *DP_msg_layer_order_layer_ids(DP_MsgLayerOrder *mlo, int *out_count);
+int DP_msg_layer_order_layer_id_count(DP_MsgLayerOrder *mlo);
+
+int DP_msg_layer_order_layer_id_at(DP_MsgLayerOrder *mlo, int index);
 
 
 #endif

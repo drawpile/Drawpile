@@ -174,8 +174,9 @@ DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
 }
 
 
-DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, const int *layer_ids,
-                                     int layer_id_count)
+DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, int layer_id_count,
+                                     int (*get_layer_id)(void *, int),
+                                     void *user)
 {
     DP_LayerContentList *lcl = DP_canvas_state_layer_contents_noinc(cs);
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
@@ -191,7 +192,7 @@ DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, const int *layer_ids,
 
     int fill = 0;
     for (int i = 0; i < layer_id_count; ++i) {
-        int layer_id = layer_ids[i];
+        int layer_id = get_layer_id(user, i);
         if (DP_transient_layer_props_list_index_by_id(tlpl, layer_id) == -1) {
             int from_index = DP_layer_props_list_index_by_id(lpl, layer_id);
             if (from_index != -1) {

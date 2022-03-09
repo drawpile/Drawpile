@@ -132,11 +132,16 @@ DP_MsgLayerOrder *DP_msg_layer_order_cast(DP_Message *msg)
 }
 
 
-const int *DP_msg_layer_order_layer_ids(DP_MsgLayerOrder *mlo, int *out_count)
+int DP_msg_layer_order_layer_id_count(DP_MsgLayerOrder *mlo)
 {
     DP_ASSERT(mlo);
-    if (out_count) {
-        *out_count = mlo->count;
-    }
-    return mlo->layer_ids;
+    return mlo->count;
+}
+
+int DP_msg_layer_order_layer_id_at(DP_MsgLayerOrder *mlo, int index)
+{
+    DP_ASSERT(mlo);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < mlo->count);
+    return mlo->layer_ids[index];
 }

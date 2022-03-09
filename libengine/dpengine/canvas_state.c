@@ -222,12 +222,16 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
 }
 
 
+static int get_layer_order_id(void *mlo, int index)
+{
+    return DP_msg_layer_order_layer_id_at(mlo, index);
+}
+
 static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
                                           DP_MsgLayerOrder *mlo)
 {
-    int layer_id_count;
-    const int *layer_ids = DP_msg_layer_order_layer_ids(mlo, &layer_id_count);
-    return DP_ops_layer_reorder(cs, layer_ids, layer_id_count);
+    return DP_ops_layer_reorder(cs, DP_msg_layer_order_layer_id_count(mlo),
+                                get_layer_order_id, mlo);
 }
 
 static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,

@@ -45,8 +45,9 @@ DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
                                   int sublayer_id, uint8_t opacity,
                                   int blend_mode, bool censored, bool fixed);
 
-DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, const int *layer_ids,
-                                     int layer_id_count);
+DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, int layer_id_count,
+                                     int (*get_layer_id)(void *, int),
+                                     void *user);
 
 DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, int layer_id,
                                      const char *title, size_t title_length);
