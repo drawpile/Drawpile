@@ -575,7 +575,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	QFileInfo fileinfo(reader->filename());
 
 	m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), reader, this);
-	m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
+	m_playbackDialog->setWindowTitle(fileinfo.completeBaseName() + " - " + m_playbackDialog->windowTitle());
 	m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 
 	connect(m_playbackDialog, SIGNAL(playbackToggled(bool)), this, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
@@ -638,7 +638,7 @@ void MainWindow::updateTitle()
 
 	} else {
 		const QFileInfo info(m_doc->currentFilename());
-		name = info.baseName();
+		name = info.completeBaseName();
 	}
 
 	if(m_doc->sessionTitle().isEmpty())
