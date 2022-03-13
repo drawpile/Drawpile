@@ -136,6 +136,19 @@ void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
     }
 }
 
+bool DP_canvas_diff_tiles_changed(DP_CanvasDiff *diff)
+{
+    DP_ASSERT(diff);
+    int count = diff->count;
+    bool *tile_changes = diff->tile_changes;
+    for (int i = 0; i < count; ++i) {
+        if (tile_changes[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool DP_canvas_diff_layer_props_changed_reset(DP_CanvasDiff *diff)
 {
     DP_ASSERT(diff);

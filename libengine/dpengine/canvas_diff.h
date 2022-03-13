@@ -48,6 +48,8 @@ void DP_canvas_diff_each_index(DP_CanvasDiff *diff, DP_CanvasDiffEachIndexFn fn,
 void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
                              void *data);
 
+bool DP_canvas_diff_tiles_changed(DP_CanvasDiff *diff);
+
 bool DP_canvas_diff_layer_props_changed_reset(DP_CanvasDiff *diff);
 
 
