@@ -727,6 +727,15 @@ int DP_transient_layer_content_height(DP_TransientLayerContent *tlc)
     return DP_layer_content_height((DP_LayerContent *)tlc);
 }
 
+DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
+                                                  int x, int y)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return DP_layer_content_tile_at_noinc((DP_LayerContent *)tlc, x, y);
+}
+
 DP_LayerContentList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc)
 {
