@@ -41,7 +41,12 @@ DP_LayerPropsList *DP_layer_props_list_new(void);
 
 DP_LayerPropsList *DP_layer_props_list_incref(DP_LayerPropsList *lpl);
 
+DP_LayerPropsList *
+DP_layer_props_list_incref_nullable(DP_LayerPropsList *lpl_or_null);
+
 void DP_layer_props_list_decref(DP_LayerPropsList *lpl);
+
+void DP_layer_props_list_decref_nullable(DP_LayerPropsList *lpl_or_null);
 
 int DP_layer_props_list_refcount(DP_LayerPropsList *lpl);
 

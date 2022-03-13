@@ -45,7 +45,12 @@ DP_LayerContentList *DP_layer_content_list_new(void);
 
 DP_LayerContentList *DP_layer_content_list_incref(DP_LayerContentList *lcl);
 
+DP_LayerContentList *
+DP_layer_content_list_incref_nullable(DP_LayerContentList *lcl_or_null);
+
 void DP_layer_content_list_decref(DP_LayerContentList *lcl);
+
+void DP_layer_content_list_decref_nullable(DP_LayerContentList *lcl_or_null);
 
 int DP_layer_content_list_refcount(DP_LayerContentList *lcl);
 

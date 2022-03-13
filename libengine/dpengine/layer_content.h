@@ -55,7 +55,11 @@ typedef struct DP_Tile DP_TransientTile;
 
 DP_LayerContent *DP_layer_content_incref(DP_LayerContent *lc);
 
+DP_LayerContent *DP_layer_content_incref_nullable(DP_LayerContent *lc_or_null);
+
 void DP_layer_content_decref(DP_LayerContent *lc);
+
+void DP_layer_content_decref_nullable(DP_LayerContent *lc_or_null);
 
 int DP_layer_content_refcount(DP_LayerContent *lc);
 

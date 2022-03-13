@@ -129,6 +129,11 @@ DP_LayerProps *DP_layer_props_incref(DP_LayerProps *lp)
     return lp;
 }
 
+DP_LayerProps *DP_layer_props_incref_nullable(DP_LayerProps *lp_or_null)
+{
+    return lp_or_null ? DP_layer_props_incref(lp_or_null) : NULL;
+}
+
 void DP_layer_props_decref(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
@@ -136,6 +141,13 @@ void DP_layer_props_decref(DP_LayerProps *lp)
     if (DP_atomic_dec(&lp->refcount)) {
         layer_title_decref_nullable(lp->title);
         DP_free(lp);
+    }
+}
+
+void DP_layer_props_decref_nullable(DP_LayerProps *lp_or_null)
+{
+    if (lp_or_null) {
+        DP_layer_props_decref(lp_or_null);
     }
 }
 

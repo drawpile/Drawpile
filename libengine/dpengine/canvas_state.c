@@ -122,6 +122,11 @@ DP_CanvasState *DP_canvas_state_incref(DP_CanvasState *cs)
     return cs;
 }
 
+DP_CanvasState *DP_canvas_state_incref_nullable(DP_CanvasState *cs_or_null)
+{
+    return cs_or_null ? DP_canvas_state_incref(cs_or_null) : NULL;
+}
+
 void DP_canvas_state_decref(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
@@ -131,6 +136,13 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
         DP_layer_content_list_decref(cs->layer_contents);
         DP_layer_props_list_decref(cs->layer_props);
         DP_free(cs);
+    }
+}
+
+void DP_canvas_state_decref_nullable(DP_CanvasState *cs_or_null)
+{
+    if (cs_or_null) {
+        DP_canvas_state_decref(cs_or_null);
     }
 }
 

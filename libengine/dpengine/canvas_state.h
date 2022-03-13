@@ -54,7 +54,11 @@ DP_CanvasState *DP_canvas_state_new(void);
 
 DP_CanvasState *DP_canvas_state_incref(DP_CanvasState *cs);
 
+DP_CanvasState *DP_canvas_state_incref_nullable(DP_CanvasState *cs_or_null);
+
 void DP_canvas_state_decref(DP_CanvasState *cs);
+
+void DP_canvas_state_decref_nullable(DP_CanvasState *cs_or_null);
 
 int DP_canvas_state_refcount(DP_CanvasState *cs);
 

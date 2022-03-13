@@ -94,6 +94,12 @@ DP_LayerContentList *DP_layer_content_list_incref(DP_LayerContentList *lcl)
     return lcl;
 }
 
+DP_LayerContentList *
+DP_layer_content_list_incref_nullable(DP_LayerContentList *lcl_or_null)
+{
+    return lcl_or_null ? DP_layer_content_list_incref(lcl_or_null) : NULL;
+}
+
 void DP_layer_content_list_decref(DP_LayerContentList *lcl)
 {
     DP_ASSERT(lcl);
@@ -104,6 +110,13 @@ void DP_layer_content_list_decref(DP_LayerContentList *lcl)
             DP_layer_content_decref(lcl->elements[i].layer_content);
         }
         DP_free(lcl);
+    }
+}
+
+void DP_layer_content_list_decref_nullable(DP_LayerContentList *lcl_or_null)
+{
+    if (lcl_or_null) {
+        DP_layer_content_list_decref(lcl_or_null);
     }
 }
 

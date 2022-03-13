@@ -39,7 +39,11 @@ typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
 
 DP_LayerProps *DP_layer_props_incref(DP_LayerProps *lp);
 
+DP_LayerProps *DP_layer_props_incref_nullable(DP_LayerProps *lp_or_null);
+
 void DP_layer_props_decref(DP_LayerProps *lp);
+
+void DP_layer_props_decref_nullable(DP_LayerProps *lp_or_null);
 
 int DP_layer_props_refcount(DP_LayerProps *lp);
 

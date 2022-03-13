@@ -102,6 +102,11 @@ DP_LayerContent *DP_layer_content_incref(DP_LayerContent *lc)
     return lc;
 }
 
+DP_LayerContent *DP_layer_content_incref_nullable(DP_LayerContent *lc_or_null)
+{
+    return lc_or_null ? DP_layer_content_incref(lc_or_null) : NULL;
+}
+
 void DP_layer_content_decref(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
@@ -114,6 +119,13 @@ void DP_layer_content_decref(DP_LayerContent *lc)
         DP_layer_props_list_decref(lc->sub.props);
         DP_layer_content_list_decref(lc->sub.contents);
         DP_free(lc);
+    }
+}
+
+void DP_layer_content_decref_nullable(DP_LayerContent *lc_or_null)
+{
+    if (lc_or_null) {
+        DP_layer_content_decref(lc_or_null);
     }
 }
 

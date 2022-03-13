@@ -90,6 +90,12 @@ DP_LayerPropsList *DP_layer_props_list_incref(DP_LayerPropsList *lpl)
     return lpl;
 }
 
+DP_LayerPropsList *
+DP_layer_props_list_incref_nullable(DP_LayerPropsList *lpl_or_null)
+{
+    return lpl_or_null ? DP_layer_props_list_incref(lpl_or_null) : NULL;
+}
+
 void DP_layer_props_list_decref(DP_LayerPropsList *lpl)
 {
     DP_ASSERT(lpl);
@@ -100,6 +106,13 @@ void DP_layer_props_list_decref(DP_LayerPropsList *lpl)
             DP_layer_props_decref(lpl->elements[i].layer_props);
         }
         DP_free(lpl);
+    }
+}
+
+void DP_layer_props_list_decref_nullable(DP_LayerPropsList *lpl_or_null)
+{
+    if (lpl_or_null) {
+        DP_layer_props_list_decref(lpl_or_null);
     }
 }
 
