@@ -659,6 +659,15 @@ DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
 }
 
 
+
+DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
+{
+    DP_TransientCanvasState *tcs = allocate_canvas_state(true, 0, 0);
+    tcs->layer_contents = DP_layer_content_list_new();
+    tcs->layer_props = DP_layer_props_list_new();
+    return tcs;
+}
+
 static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
