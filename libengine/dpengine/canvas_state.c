@@ -423,8 +423,7 @@ static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
 
     if (tile) {
         DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-        DP_tile_decref_nullable(tcs->background_tile);
-        tcs->background_tile = tile;
+        DP_transient_canvas_state_background_tile_set_noinc(tcs, tile);
         return DP_transient_canvas_state_persist(tcs);
     }
     else {
@@ -738,6 +737,16 @@ void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     tcs->height = height;
+}
+
+void DP_transient_canvas_state_background_tile_set_noinc(
+    DP_TransientCanvasState *tcs, DP_Tile *tile)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_tile_decref_nullable(tcs->background_tile);
+    tcs->background_tile = tile;
 }
 
 DP_LayerContentList *
