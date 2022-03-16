@@ -21,11 +21,13 @@
  */
 #include <imgui.h>
 extern "C" {
+#define DP_INSIDE_EXTERN_C
 #include "lua_util.h"
 #include <dpcommon/common.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
+#undef DP_INSIDE_EXTERN_C
 }
 
 

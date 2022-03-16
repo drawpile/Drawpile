@@ -20,8 +20,10 @@
  * SOFTWARE.
  */
 extern "C" {
+#define DP_INSIDE_EXTERN_C
 #include "common.h"
 #include "threading.h"
+#undef DP_INSIDE_EXTERN_C
 }
 #include <QAtomicInteger>
 #include <QHash>
