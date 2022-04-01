@@ -140,7 +140,7 @@ function ChatTab(props: ChatTabProps): React.ReactElement {
     };
   });
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (mounted.current && ul.current && entryCount !== chatEntries.length) {
       setEntryCount(chatEntries.length);
       const lastEntry = ul.current.lastChild as HTMLLIElement;
