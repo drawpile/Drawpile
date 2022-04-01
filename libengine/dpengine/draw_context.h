@@ -41,6 +41,8 @@ typedef union DP_Pixel DP_Pixel;
 #define DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE  8192
 #define DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE  (1024 * 1024)
 
+typedef uint8_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
+
 typedef struct DP_DrawContext DP_DrawContext;
 
 DP_DrawContext *DP_draw_context_new(void);

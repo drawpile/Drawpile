@@ -37,8 +37,8 @@ struct DP_DrawContext {
     union {
         // Brush stamp masks. Pixel brushes need one, classic brush needs two.
         struct {
-            uint8_t stamp_buffer1[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
-            uint8_t stamp_buffer2[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
+            DP_BrushStampBuffer stamp_buffer1;
+            DP_BrushStampBuffer stamp_buffer2;
         };
         // Pixel buffer for image transformation. Used by region move transform.
         DP_Pixel transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
