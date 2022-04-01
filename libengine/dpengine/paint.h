@@ -34,7 +34,12 @@ typedef struct DP_LayerContent DP_TransientLayerContent;
 #endif
 
 
-typedef struct DP_BrushStamp DP_BrushStamp;
+typedef struct DP_BrushStamp {
+    int top;
+    int left;
+    int diameter;
+    uint8_t *data;
+} DP_BrushStamp;
 
 typedef struct DP_PaintDrawDabsParams {
     int type;
@@ -47,15 +52,6 @@ typedef struct DP_PaintDrawDabsParams {
     int dab_count;
     void *dabs;
 } DP_PaintDrawDabsParams;
-
-
-int DP_brush_stamp_top(DP_BrushStamp *stamp);
-
-int DP_brush_stamp_left(DP_BrushStamp *stamp);
-
-int DP_brush_stamp_diameter(DP_BrushStamp *stamp);
-
-uint8_t *DP_brush_stamp_data(DP_BrushStamp *stamp);
 
 
 void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,

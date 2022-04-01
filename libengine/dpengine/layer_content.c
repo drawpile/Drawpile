@@ -1060,9 +1060,9 @@ void DP_transient_layer_content_brush_stamp_apply(DP_TransientLayerContent *tlc,
 
     int width = tlc->width;
     int height = tlc->height;
-    int top = DP_brush_stamp_top(stamp);
-    int left = DP_brush_stamp_left(stamp);
-    int d = DP_brush_stamp_diameter(stamp);
+    int top = stamp->top;
+    int left = stamp->left;
+    int d = stamp->diameter;
     if (left + d <= 0 || top + d <= 0 || left >= width || top >= height) {
         return; // Out of bounds, nothing to do.
     }
@@ -1070,7 +1070,7 @@ void DP_transient_layer_content_brush_stamp_apply(DP_TransientLayerContent *tlc,
     int bottom = DP_min_int(top + d, height);
     int right = DP_min_int(left + d, width);
     int xtiles = DP_tile_count_round(width);
-    uint8_t *mask = DP_brush_stamp_data(stamp);
+    uint8_t *mask = stamp->data;
 
     int y = top < 0 ? 0 : top;
     int yb = top < 0 ? -top : 0;

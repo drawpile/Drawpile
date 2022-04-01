@@ -84,13 +84,6 @@ static const float *get_classic_lut(double hardness)
 }
 
 
-struct DP_BrushStamp {
-    int top;
-    int left;
-    int diameter;
-    uint8_t *data;
-};
-
 static DP_BrushStamp make_brush_stamp1(DP_DrawContext *dc)
 {
     return (DP_BrushStamp){0, 0, 0, DP_draw_context_stamp_buffer1(dc)};
@@ -99,30 +92,6 @@ static DP_BrushStamp make_brush_stamp1(DP_DrawContext *dc)
 static DP_BrushStamp make_brush_stamp2(DP_DrawContext *dc)
 {
     return (DP_BrushStamp){0, 0, 0, DP_draw_context_stamp_buffer2(dc)};
-}
-
-int DP_brush_stamp_top(DP_BrushStamp *stamp)
-{
-    DP_ASSERT(stamp);
-    return stamp->top;
-}
-
-int DP_brush_stamp_left(DP_BrushStamp *stamp)
-{
-    DP_ASSERT(stamp);
-    return stamp->left;
-}
-
-int DP_brush_stamp_diameter(DP_BrushStamp *stamp)
-{
-    DP_ASSERT(stamp);
-    return stamp->diameter;
-}
-
-uint8_t *DP_brush_stamp_data(DP_BrushStamp *stamp)
-{
-    DP_ASSERT(stamp);
-    return stamp->data;
 }
 
 
