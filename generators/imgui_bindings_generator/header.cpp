@@ -200,6 +200,7 @@ static int ImGuiLua_String(lua_State *L)
         lua_pushliteral(L, "");
     }
     else {
+        luaL_checkstring(L, 1);
         lua_pushvalue(L, 1);
     }
     lua_setiuservalue(L, -2, 1);
