@@ -602,6 +602,19 @@ DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,
     return tt;
 }
 
+DP_TransientTile *DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x,
+                                                  int y)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(x < cs->width);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(y < cs->height);
+    int i = y * DP_tile_count_round(cs->width) + x;
+    return DP_canvas_state_flatten_tile(cs, i);
+}
+
 
 static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
                         DP_CanvasDiff *diff)
