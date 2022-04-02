@@ -138,6 +138,16 @@ DP_INLINE int DP_max_int(int x, int y)
     return x < y ? y : x;
 }
 
+DP_INLINE double DP_min_double(double x, double y)
+{
+    return x < y ? x : y;
+}
+
+DP_INLINE double DP_max_double(double x, double y)
+{
+    return x < y ? y : x;
+}
+
 DP_INLINE size_t DP_min_size(size_t x, size_t y)
 {
     return x < y ? x : y;
