@@ -427,6 +427,64 @@ DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
     return img;
 }
 
+DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,
+                                            int *out_offset_x,
+                                            int *out_offset_y)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_TileCounts tile_counts = DP_tile_counts_round(lc->width, lc->height);
+    int left = tile_counts.x;
+    int top = tile_counts.y;
+    int right = 0;
+    int bottom = 0;
+
+    // TODO: Crop pixel-perfect instead of only to the nearest tile.
+    for (int y = 0; y < tile_counts.y; ++y) {
+        for (int x = 0; x < tile_counts.x; ++x) {
+            DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
+            if (t && !DP_tile_blank(t)) {
+                if (x < left) {
+                    left = x;
+                }
+                if (x > right) {
+                    right = x;
+                }
+                if (y < top) {
+                    top = y;
+                }
+                if (y > bottom) {
+                    bottom = y;
+                }
+            }
+        }
+    }
+
+    if (top == tile_counts.y) {
+        return NULL; // Whole layer seems to be blank.
+    }
+
+    int width = (right - left + 1) * DP_TILE_SIZE;
+    int height = (bottom - top + 1) * DP_TILE_SIZE;
+    DP_Image *img = DP_image_new(width, height);
+    for (int y = top; y <= bottom; ++y) {
+        int target_y = (y - top) * DP_TILE_SIZE;
+        for (int x = left; x <= right; ++x) {
+            DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
+            int target_x = (x - left) * DP_TILE_SIZE;
+            DP_tile_copy_to_image(t, img, target_x, target_y);
+        }
+    }
+
+    if (out_offset_x) {
+        *out_offset_x = left * DP_TILE_SIZE;
+    }
+    if (out_offset_y) {
+        *out_offset_y = top * DP_TILE_SIZE;
+    }
+    return img;
+}
+
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                                   DP_Image *mask)
 {

@@ -87,6 +87,10 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc);
 
+DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,
+                                            int *out_offset_x,
+                                            int *out_offset_y);
+
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                                   DP_Image *mask);
 
