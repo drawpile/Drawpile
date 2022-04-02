@@ -124,6 +124,9 @@ int DP_transient_layer_content_height(DP_TransientLayerContent *tlc);
 DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
                                                   int x, int y);
 
+void DP_transient_layer_content_transient_tile_at_set_noinc(
+    DP_TransientLayerContent *tlc, int x, int y, DP_TransientTile *tt);
+
 DP_LayerContentList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc);
 

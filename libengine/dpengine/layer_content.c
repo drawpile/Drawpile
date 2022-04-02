@@ -832,6 +832,18 @@ DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
     return DP_layer_content_tile_at_noinc((DP_LayerContent *)tlc, x, y);
 }
 
+void DP_transient_layer_content_transient_tile_at_set_noinc(
+    DP_TransientLayerContent *tlc, int x, int y, DP_TransientTile *tt)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    int i = y * DP_tile_count_round(tlc->width) + x;
+    DP_tile_decref_nullable(tlc->elements[i].tile);
+    tlc->elements[i].transient_tile = tt;
+}
+
+
 DP_LayerContentList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc)
 {
