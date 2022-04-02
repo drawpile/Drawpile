@@ -53,4 +53,10 @@ void DP_pixels_composite(DP_Pixel *dst, DP_Pixel *src, int pixel_count,
                          uint8_t opacity, int blend_mode);
 
 
+void DP_pixels_sample_mask(DP_Pixel *src, uint8_t *mask, int w, int h,
+                           int mask_skip, int base_skip, uint32_t *out_weight,
+                           uint32_t *out_red, uint32_t *out_green,
+                           uint32_t *out_blue, uint32_t *out_alpha);
+
+
 #endif

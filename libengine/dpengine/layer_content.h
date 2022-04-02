@@ -77,6 +77,10 @@ int DP_layer_content_height(DP_LayerContent *lc);
 
 DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y);
 
+uint32_t DP_layer_content_sample_color_at(DP_LayerContent *lc,
+                                          uint8_t *stamp_buffer, int x, int y,
+                                          int diameter, int last_diameter);
+
 DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
 
 DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);

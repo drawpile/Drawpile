@@ -273,6 +273,123 @@ DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y)
     return lc->elements[y * DP_tile_count_round(lc->width) + x].tile;
 }
 
+static DP_Pixel layer_content_pixel_at(DP_LayerContent *lc, int x, int y)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < lc->width);
+    DP_ASSERT(y < lc->height);
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int wt = DP_tile_count_round(lc->width);
+    DP_Tile *t = lc->elements[yt * wt + xt].tile;
+    if (t) {
+        return DP_tile_pixel_at(t, x - xt * DP_TILE_SIZE,
+                                y - yt * DP_TILE_SIZE);
+    }
+    else {
+        return (DP_Pixel){0};
+    }
+}
+
+static uint32_t sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
+{
+    uint8_t *weights = stamp.data;
+    int diameter = stamp.diameter;
+    int right = DP_min_int(stamp.left + diameter, lc->width);
+    int bottom = DP_min_int(stamp.top + diameter, lc->height);
+
+    int y = DP_max_int(0, stamp.top);
+    int yb = stamp.top < 0 ? -stamp.top : 0; // y in relation to brush origin
+    int x0 = DP_max_int(0, stamp.left);
+    int xb0 = stamp.left < 0 ? -stamp.left : 0;
+    int xtiles = DP_tile_count_round(lc->width);
+
+    double weight = 0.0;
+    double red = 0.0;
+    double green = 0.0;
+    double blue = 0.0;
+    double alpha = 0.0;
+
+    // collect weighted color sums
+    while (y < bottom) {
+        int yindex = y / DP_TILE_SIZE;
+        int yt = y - yindex * DP_TILE_SIZE;
+        int hb = yt + diameter - yb < DP_TILE_SIZE ? diameter - yb
+                                                   : DP_TILE_SIZE - yt;
+        int x = x0;
+        int xb = xb0; // x in relation to brush origin
+        while (x < right) {
+            const int xindex = x / DP_TILE_SIZE;
+            const int xt = x - xindex * DP_TILE_SIZE;
+            const int wb = xt + diameter - xb < DP_TILE_SIZE
+                             ? diameter - xb
+                             : DP_TILE_SIZE - xt;
+            const int i = xtiles * yindex + xindex;
+
+            DP_TileWeightedAverage twa = DP_tile_weighted_average(
+                lc->elements[i].tile, weights + yb * diameter + xb, xt, yt, wb,
+                hb, diameter - wb);
+            weight += DP_uint32_to_double(twa.weight);
+            red += DP_uint32_to_double(twa.red);
+            green += DP_uint32_to_double(twa.green);
+            blue += DP_uint32_to_double(twa.blue);
+            alpha += DP_uint32_to_double(twa.alpha);
+
+            x = (xindex + 1) * DP_TILE_SIZE;
+            xb = xb + wb;
+        }
+        y = (yindex + 1) * DP_TILE_SIZE;
+        yb = yb + hb;
+    }
+
+    // There must be at least some alpha for the results to make sense
+    if (alpha < DP_square_int(diameter) * 30) {
+        return 0;
+    }
+
+    // Calculate final average
+    red /= weight;
+    green /= weight;
+    blue /= weight;
+    alpha /= weight;
+
+    // Unpremultiply
+    red = DP_min_double(1.0, red / alpha);
+    green = DP_min_double(1.0, green / alpha);
+    blue = DP_min_double(1.0, blue / alpha);
+
+    return (DP_Pixel){
+        .r = DP_double_to_uint8(red * 255.0),
+        .g = DP_double_to_uint8(green * 255.0),
+        .b = DP_double_to_uint8(blue * 255.0),
+        .a = DP_double_to_uint8(alpha),
+    }
+        .color;
+}
+
+uint32_t DP_layer_content_sample_color_at(DP_LayerContent *lc,
+                                          uint8_t *stamp_buffer, int x, int y,
+                                          int diameter, int last_diameter)
+{
+    if (x >= 0 && y >= 0 && x < lc->width && y < lc->height) {
+        if (diameter < 2) {
+            DP_Pixel pixel = layer_content_pixel_at(lc, x, y);
+            return DP_pixel_unpremultiply(pixel).color;
+        }
+        else {
+            return sample_dab_color(
+                lc, DP_paint_color_sampling_stamp_make(stamp_buffer, diameter,
+                                                       x, y, last_diameter));
+        }
+    }
+    else {
+        return 0;
+    }
+}
+
 DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
@@ -308,27 +425,6 @@ DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
         }
     }
     return img;
-}
-
-static DP_Pixel layer_content_pixel_at(DP_LayerContent *lc, int x, int y)
-{
-    DP_ASSERT(lc);
-    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_ASSERT(x >= 0);
-    DP_ASSERT(y >= 0);
-    DP_ASSERT(x < lc->width);
-    DP_ASSERT(y < lc->height);
-    int xt = x / DP_TILE_SIZE;
-    int yt = y / DP_TILE_SIZE;
-    int wt = DP_tile_count_round(lc->width);
-    DP_Tile *t = lc->elements[yt * wt + xt].tile;
-    if (t) {
-        return DP_tile_pixel_at(t, x - xt * DP_TILE_SIZE,
-                                y - yt * DP_TILE_SIZE);
-    }
-    else {
-        return (DP_Pixel){0};
-    }
 }
 
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,

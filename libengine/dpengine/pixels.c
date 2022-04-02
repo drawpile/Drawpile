@@ -698,3 +698,42 @@ void DP_pixels_composite(DP_Pixel *dst, DP_Pixel *src, int pixel_count,
     DP_CompositeLayerFn op = get_composite_operation(blend_mode);
     op(dst, src, pixel_count, opacity);
 }
+
+
+void DP_pixels_sample_mask(DP_Pixel *src, uint8_t *mask, int w, int h,
+                           int mask_skip, int base_skip, uint32_t *out_weight,
+                           uint32_t *out_red, uint32_t *out_green,
+                           uint32_t *out_blue, uint32_t *out_alpha)
+{
+    DP_ASSERT(out_weight);
+    DP_ASSERT(out_red);
+    DP_ASSERT(out_green);
+    DP_ASSERT(out_blue);
+    DP_ASSERT(out_alpha);
+    uint32_t weight = 0;
+    uint32_t red = 0;
+    uint32_t green = 0;
+    uint32_t blue = 0;
+    uint32_t alpha = 0;
+
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, ++mask) {
+            uint8_t m = *mask;
+            DP_Pixel p = *src;
+            weight += m;
+            red += mul(p.r, m);
+            green += mul(p.g, m);
+            blue += mul(p.b, m);
+            alpha += mul(p.a, m);
+            ++src;
+        }
+        src += base_skip;
+        mask += mask_skip;
+    }
+
+    *out_weight = weight;
+    *out_red = red;
+    *out_green = green;
+    *out_blue = blue;
+    *out_alpha = alpha;
+}

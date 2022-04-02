@@ -35,6 +35,14 @@ typedef struct DP_TileCounts {
     int x, y;
 } DP_TileCounts;
 
+typedef struct DP_TileWeightedAverage {
+    uint32_t weight;
+    uint32_t red;
+    uint32_t green;
+    uint32_t blue;
+    uint32_t alpha;
+} DP_TileWeightedAverage;
+
 #ifdef DP_NO_STRICT_ALIASING
 
 typedef struct DP_Tile DP_Tile;
@@ -108,6 +116,12 @@ bool DP_tile_blank(DP_Tile *tile);
 
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);
+
+
+DP_TileWeightedAverage DP_tile_weighted_average(DP_Tile *tile_or_null,
+                                                uint8_t *mask, int x, int y,
+                                                int width, int height,
+                                                int skip);
 
 
 DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id);

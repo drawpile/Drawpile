@@ -407,3 +407,36 @@ void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
         DP_panic("Unknown paint type %d", type);
     }
 }
+
+
+DP_BrushStamp DP_paint_color_sampling_stamp_make(uint8_t *data, int diameter,
+                                                 int left, int top,
+                                                 int last_diameter)
+{
+    DP_ASSERT(data);
+    DP_ASSERT(diameter > 0);
+    DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
+
+    const float *lut = get_classic_lut(0.5);
+    int radius = diameter / 2;
+
+    // Optimization, no need to recalculate the mask for the same diameter.
+    if (diameter != last_diameter) {
+        float lut_scale = DP_double_to_float(
+            DP_square_double((CLASSIC_LUT_RADIUS - 1.0) / radius));
+        uint8_t *d = data;
+
+        for (int y = 0; y < diameter; ++y) {
+            int yy = DP_double_to_int(DP_square_double(y - radius));
+            for (int x = 0; x < diameter; ++x) {
+                double dist = (DP_square_double(x - radius) + yy) * lut_scale;
+                int i = DP_double_to_int(dist);
+                *d = i < CLASSIC_LUT_SIZE ? DP_float_to_uint8(255.0f * lut[i])
+                                          : 0;
+                ++d;
+            }
+        }
+    }
+
+    return (DP_BrushStamp){top - radius, left - radius, diameter, data};
+}

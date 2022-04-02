@@ -233,6 +233,37 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
 }
 
 
+static DP_TileWeightedAverage sample_empty(uint8_t *mask, int width, int height,
+                                           int skip)
+{
+    uint32_t sum = 0;
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            sum += mask[y * width + x];
+        }
+        mask += skip;
+    }
+    return (DP_TileWeightedAverage){sum, 0, 0, 0, 0};
+}
+
+DP_TileWeightedAverage DP_tile_weighted_average(DP_Tile *tile_or_null,
+                                                uint8_t *mask, int x, int y,
+                                                int width, int height, int skip)
+{
+    if (tile_or_null) {
+        DP_TileWeightedAverage twa;
+        DP_Pixel *src = tile_or_null->pixels + y * DP_TILE_SIZE + x;
+        DP_pixels_sample_mask(src, mask, width, height, skip,
+                              DP_TILE_SIZE - width, &twa.weight, &twa.red,
+                              &twa.green, &twa.blue, &twa.alpha);
+        return twa;
+    }
+    else {
+        return sample_empty(mask, width, height, skip);
+    }
+}
+
+
 DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
 {
     DP_ASSERT(tile);
