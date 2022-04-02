@@ -298,6 +298,27 @@ DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt)
 }
 
 
+DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    return DP_tile_pixel_at((DP_Tile *)tt, x, y);
+}
+
+void DP_transient_tile_pixel_at_set(DP_TransientTile *tt, int x, int y,
+                                    DP_Pixel pixel)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < DP_TILE_SIZE);
+    DP_ASSERT(y < DP_TILE_SIZE);
+    tt->pixels[y * DP_TILE_SIZE + x] = pixel;
+}
+
 void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                                     int y, DP_Pixel pixel)
 {

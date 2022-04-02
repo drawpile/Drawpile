@@ -134,6 +134,11 @@ DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
 DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt);
 
 
+DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y);
+
+void DP_transient_tile_pixel_at_set(DP_TransientTile *tt, int x, int y,
+                                    DP_Pixel pixel);
+
 void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                                     int y, DP_Pixel pixel);
 
