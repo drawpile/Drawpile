@@ -659,7 +659,6 @@ DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
 }
 
 
-
 DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
 {
     DP_TransientCanvasState *tcs = allocate_canvas_state(true, 0, 0);
