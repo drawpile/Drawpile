@@ -1286,5 +1286,6 @@ void DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
     DP_ASSERT(tile_index < DP_tile_total_round(tlc->width, tlc->height));
     DP_Tile **pp = &tlc->elements[tile_index].tile;
     DP_tile_decref_nullable(*pp);
-    *pp = DP_canvas_state_flatten_tile(cs, tile_index);
+    *pp =
+        DP_transient_tile_persist(DP_canvas_state_flatten_tile(cs, tile_index));
 }

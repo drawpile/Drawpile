@@ -587,7 +587,8 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags)
     return img;
 }
 
-DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index)
+DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,
+                                               int tile_index)
 {
     DP_ASSERT(cs);
     DP_ASSERT(tile_index >= 0);
@@ -598,7 +599,7 @@ DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index)
                              : DP_transient_tile_new_blank(0);
     DP_layer_content_list_flatten_tile_to(cs->layer_contents, cs->layer_props,
                                           tile_index, tt);
-    return DP_transient_tile_persist(tt);
+    return tt;
 }
 
 

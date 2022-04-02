@@ -43,11 +43,13 @@ typedef struct DP_TransientCanvasState DP_TransientCanvasState;
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 typedef struct DP_TransientLayerContentList DP_TransientLayerContentList;
 typedef struct DP_TransientLayerPropsList DP_TransientLayerPropsList;
+typedef struct DP_TransientTile DP_TransientTile;
 #else
 typedef struct DP_CanvasState DP_TransientCanvasState;
 typedef struct DP_LayerContent DP_TransientLayerContent;
 typedef struct DP_LayerContentList DP_TransientLayerContentList;
 typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
+typedef struct DP_Tile DP_TransientTile;
 #endif
 
 DP_CanvasState *DP_canvas_state_new(void);
@@ -77,7 +79,8 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
 
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags);
 
-DP_Tile *DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index);
+DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,
+                                               int tile_index);
 
 void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
                           DP_CanvasDiff *diff);
