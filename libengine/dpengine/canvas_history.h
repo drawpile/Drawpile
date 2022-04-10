@@ -34,11 +34,21 @@ DP_CanvasHistory *DP_canvas_history_new(void);
 
 void DP_canvas_history_free(DP_CanvasHistory *ch);
 
+void DP_canvas_history_local_pen_down_set(DP_CanvasHistory *ch,
+                                          bool local_pen_down);
+
 DP_CanvasState *DP_canvas_history_compare_and_get(DP_CanvasHistory *ch,
                                                   DP_CanvasState *prev);
 
+void DP_canvas_history_reset(DP_CanvasHistory *ch);
+
+void DP_canvas_history_soft_reset(DP_CanvasHistory *ch);
+
 bool DP_canvas_history_handle(DP_CanvasHistory *ch, DP_DrawContext *dc,
                               DP_Message *msg);
+
+bool DP_canvas_history_handle_local(DP_CanvasHistory *ch, DP_DrawContext *dc,
+                                    DP_Message *msg);
 
 
 #endif

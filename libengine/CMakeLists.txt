@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 set(dpengine_sources
+    dpengine/affected_area.c
     dpengine/annotation.c
     dpengine/annotation_list.c
     dpengine/blend_mode.c
@@ -40,6 +41,7 @@ set(dpengine_sources
     dpengine/tile.c)
 
 set(dpengine_headers
+    dpengine/affected_area.h
     dpengine/annotation.h
     dpengine/annotation_list.h
     dpengine/blend_mode.h
