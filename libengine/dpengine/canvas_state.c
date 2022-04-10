@@ -175,6 +175,13 @@ int DP_canvas_state_height(DP_CanvasState *cs)
     return cs->height;
 }
 
+DP_Tile *DP_canvas_state_background_tile(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->background_tile;
+}
+
 DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
