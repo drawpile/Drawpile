@@ -284,6 +284,27 @@ bool DP_msg_draw_dabs_indirect(DP_MsgDrawDabs *mdd)
     return mdd->color & 0xff000000;
 }
 
+void DP_msg_draw_dabs_bounds(DP_MsgDrawDabs *mdd, int *out_x, int *out_y,
+                             int *out_width, int *out_height)
+{
+    DP_ASSERT(mdd);
+    DP_MessageType type = DP_message_type(DP_message_from_internal(mdd));
+    switch (type) {
+    case DP_MSG_DRAW_DABS_CLASSIC:
+        DP_msg_draw_dabs_classic_bounds(DP_msg_draw_dabs_cast_classic(mdd),
+                                        out_x, out_y, out_width, out_height);
+        break;
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+        DP_msg_draw_dabs_pixel_bounds(DP_msg_draw_dabs_cast_pixel(mdd), out_x,
+                                      out_y, out_width, out_height);
+        break;
+    default:
+        DP_panic("DP_msg_draw_dabs_bounds: invalid type %d (%s)", (int)type,
+                 DP_message_type_enum_name(type));
+    }
+}
+
 static bool dabs_check_count(size_t dab_length, size_t length,
                              int *out_dab_count)
 {
@@ -515,6 +536,60 @@ bool DP_msg_draw_dabs_classic_indirect(DP_MsgDrawDabsClassic *mddc)
     return DP_msg_draw_dabs_indirect(&mddc->base);
 }
 
+void DP_msg_draw_dabs_classic_bounds(DP_MsgDrawDabsClassic *mddc, int *out_x,
+                                     int *out_y, int *out_width,
+                                     int *out_height)
+{
+    DP_ASSERT(mddc);
+    int x = mddc->base.origin_x;
+    int y = mddc->base.origin_y;
+    int min_x = x;
+    int max_x = x;
+    int min_y = y;
+    int max_y = y;
+
+    int count = mddc->base.dab_count;
+    for (int i = 0; i < count; ++i) {
+        DP_ClassicBrushDab dab = mddc->dabs[i];
+        int r = dab.size / (256 * 2) * 4 + 1;
+        x += dab.base.x;
+        y += dab.base.y;
+
+        int x1 = x - r;
+        if (x1 < min_x) {
+            min_x = x1;
+        }
+
+        int x2 = x + r;
+        if (x2 > max_x) {
+            max_x = x2;
+        }
+
+        int y1 = y - r;
+        if (y1 < min_y) {
+            min_y = y1;
+        }
+
+        int y2 = y + r;
+        if (y2 > max_y) {
+            max_y = y2;
+        }
+    }
+
+    if (out_x) {
+        *out_x = x / 4;
+    }
+    if (out_y) {
+        *out_y = y / 4;
+    }
+    if (out_width) {
+        *out_width = (max_x - min_x) / 4;
+    }
+    if (out_height) {
+        *out_height = (max_y - min_y) / 4;
+    }
+}
+
 
 static size_t pixel_payload_length(DP_Message *msg)
 {
@@ -739,4 +814,57 @@ bool DP_msg_draw_dabs_pixel_indirect(DP_MsgDrawDabsPixel *mddp)
 {
     DP_ASSERT(mddp);
     return DP_msg_draw_dabs_indirect(&mddp->base);
+}
+
+void DP_msg_draw_dabs_pixel_bounds(DP_MsgDrawDabsPixel *mddp, int *out_x,
+                                   int *out_y, int *out_width, int *out_height)
+{
+    DP_ASSERT(mddp);
+    int x = mddp->base.origin_x;
+    int y = mddp->base.origin_y;
+    int min_x = x;
+    int max_x = x;
+    int min_y = y;
+    int max_y = y;
+
+    int count = mddp->base.dab_count;
+    for (int i = 0; i < count; ++i) {
+        DP_PixelBrushDab dab = mddp->dabs[i];
+        int r = dab.size / 2 + 1;
+        x += dab.base.x;
+        y += dab.base.y;
+
+        int x1 = x - r;
+        if (x1 < min_x) {
+            min_x = x1;
+        }
+
+        int x2 = x + r;
+        if (x2 > max_x) {
+            max_x = x2;
+        }
+
+        int y1 = y - r;
+        if (y1 < min_y) {
+            min_y = y1;
+        }
+
+        int y2 = y + r;
+        if (y2 > max_y) {
+            max_y = y2;
+        }
+    }
+
+    if (out_x) {
+        *out_x = x;
+    }
+    if (out_y) {
+        *out_y = y;
+    }
+    if (out_width) {
+        *out_width = max_x - min_x;
+    }
+    if (out_height) {
+        *out_height = max_y - min_y;
+    }
 }

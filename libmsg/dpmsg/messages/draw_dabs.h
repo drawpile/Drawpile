@@ -88,6 +88,9 @@ int DP_msg_draw_dabs_blend_mode(DP_MsgDrawDabs *mdd);
 
 bool DP_msg_draw_dabs_indirect(DP_MsgDrawDabs *mdd);
 
+void DP_msg_draw_dabs_bounds(DP_MsgDrawDabs *mdd, int *out_x, int *out_y,
+                             int *out_width, int *out_height);
+
 
 DP_Message *DP_msg_draw_dabs_classic_new(unsigned int context_id, int layer_id,
                                          int origin_x, int origin_y,
@@ -117,6 +120,10 @@ DP_ClassicBrushDab *DP_msg_draw_dabs_classic_dabs(DP_MsgDrawDabsClassic *mddc,
                                                   int *out_count);
 
 bool DP_msg_draw_dabs_classic_indirect(DP_MsgDrawDabsClassic *mddc);
+
+void DP_msg_draw_dabs_classic_bounds(DP_MsgDrawDabsClassic *mddc, int *out_x,
+                                     int *out_y, int *out_width,
+                                     int *out_height);
 
 
 DP_Message *DP_msg_draw_dabs_pixel_new(int type, unsigned int context_id,
@@ -151,6 +158,9 @@ DP_PixelBrushDab *DP_msg_draw_dabs_pixel_dabs(DP_MsgDrawDabsPixel *mddp,
                                               int *out_count);
 
 bool DP_msg_draw_dabs_pixel_indirect(DP_MsgDrawDabsPixel *mddp);
+
+void DP_msg_draw_dabs_pixel_bounds(DP_MsgDrawDabsPixel *mddp, int *out_x,
+                                   int *out_y, int *out_width, int *out_height);
 
 
 #endif
