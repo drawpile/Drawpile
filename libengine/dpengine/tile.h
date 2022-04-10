@@ -114,6 +114,8 @@ DP_Pixel DP_tile_pixel_at(DP_Tile *tile, int x, int y);
 
 bool DP_tile_blank(DP_Tile *tile);
 
+bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel *out_pixel);
+
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);
 

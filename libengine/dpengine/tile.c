@@ -208,6 +208,28 @@ bool DP_tile_blank(DP_Tile *tile)
     return true;
 }
 
+bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel *out_pixel)
+{
+    DP_Pixel pixel;
+    if (tile_or_null) {
+        DP_Pixel *pixels = DP_tile_pixels(tile_or_null);
+        pixel = pixels[0];
+        for (int i = 1; i < DP_TILE_LENGTH; ++i) {
+            if (pixels[i].color != pixel.color) {
+                return false;
+            }
+        }
+    }
+    else {
+        pixel.color = 0;
+    }
+
+    if (out_pixel) {
+        *out_pixel = pixel;
+    }
+    return true;
+}
+
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
 {
