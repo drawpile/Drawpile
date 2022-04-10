@@ -49,6 +49,7 @@
 #include <dpmsg/messages/put_image.h>
 #include <dpmsg/messages/put_tile.h>
 #include <dpmsg/messages/region_move.h>
+#include <limits.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -557,6 +558,28 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;
     }
+}
+
+int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
+                                         unsigned int context_id, int *out_x,
+                                         int *out_y, int *out_width,
+                                         int *out_height)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(context_id != 0);
+    DP_ASSERT(context_id <= INT_MAX);
+    DP_LayerContentList *lcl = DP_canvas_state_layer_contents_noinc(cs);
+    int count = DP_layer_content_list_count(cs->layer_contents);
+    for (int i = 0; i < count; ++i) {
+        DP_LayerContent *lc = DP_layer_content_list_at_noinc(lcl, i);
+        if (DP_layer_content_search_change_bounds(lc, context_id, out_x, out_y,
+                                                  out_width, out_height)) {
+            DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+            DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+            return DP_layer_props_id(lp);
+        }
+    }
+    return 0;
 }
 
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags)

@@ -77,6 +77,11 @@ DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs);
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_Message *msg);
 
+int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
+                                         unsigned int context_id, int *out_x,
+                                         int *out_y, int *out_width,
+                                         int *out_height);
+
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags);
 
 DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,

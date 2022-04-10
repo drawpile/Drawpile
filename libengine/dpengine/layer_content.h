@@ -85,6 +85,11 @@ DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
 
 DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
+bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
+                                           unsigned int context_id, int *out_x,
+                                           int *out_y, int *out_width,
+                                           int *out_height);
+
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc);
 
 DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,

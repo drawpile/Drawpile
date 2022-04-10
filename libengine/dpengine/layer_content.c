@@ -404,6 +404,96 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc)
     return lc->sub.props;
 }
 
+static bool layer_content_tile_bounds(DP_LayerContent *lc, int *out_left,
+                                      int *out_top, int *out_right,
+                                      int *out_bottom)
+{
+    DP_TileCounts tile_counts = DP_tile_counts_round(lc->width, lc->height);
+    int left = tile_counts.x;
+    int top = tile_counts.y;
+    int right = 0;
+    int bottom = 0;
+
+    // TODO: Crop pixel-perfect instead of only to the nearest tile.
+    for (int y = 0; y < tile_counts.y; ++y) {
+        for (int x = 0; x < tile_counts.x; ++x) {
+            DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
+            if (t && !DP_tile_blank(t)) {
+                if (x < left) {
+                    left = x;
+                }
+                if (x > right) {
+                    right = x;
+                }
+                if (y < top) {
+                    top = y;
+                }
+                if (y > bottom) {
+                    bottom = y;
+                }
+            }
+        }
+    }
+
+    if (top != tile_counts.y) {
+        *out_left = left;
+        *out_top = top;
+        *out_right = right;
+        *out_bottom = bottom;
+        return true;
+    }
+    else {
+        return false; // Whole layer seems to be blank.
+    }
+}
+
+static bool get_sublayer_change_bounds(DP_LayerContent *lc, int i, int *out_x,
+                                       int *out_y, int *out_width,
+                                       int *out_height)
+{
+    DP_LayerContentList *lcl = DP_layer_content_sub_contents_noinc(lc);
+    DP_LayerContent *slc = DP_layer_content_list_at_noinc(lcl, i);
+    int left, top, right, bottom;
+    if (layer_content_tile_bounds(slc, &left, &top, &right, &bottom)) {
+        if (out_x) {
+            *out_x = left * DP_TILE_SIZE;
+        }
+        if (out_y) {
+            *out_y = top * DP_TILE_SIZE;
+        }
+        if (out_width) {
+            *out_width = (right - left + 1) * DP_TILE_SIZE;
+        }
+        if (out_height) {
+            *out_height = (bottom - top + 1) * DP_TILE_SIZE;
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
+                                           unsigned int context_id, int *out_x,
+                                           int *out_y, int *out_width,
+                                           int *out_height)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_LayerPropsList *lpl = DP_layer_content_sub_props_noinc(lc);
+    int count = DP_layer_props_list_count(lpl);
+    for (int i = 0; i < count; ++i) {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        int sublayer_id = DP_layer_props_id(lp);
+        if (sublayer_id > 0 && DP_int_to_uint(sublayer_id) == context_id) {
+            return get_sublayer_change_bounds(lc, i, out_x, out_y, out_width,
+                                              out_height);
+        }
+    }
+    return false;
+}
+
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
@@ -433,34 +523,9 @@ DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_TileCounts tile_counts = DP_tile_counts_round(lc->width, lc->height);
-    int left = tile_counts.x;
-    int top = tile_counts.y;
-    int right = 0;
-    int bottom = 0;
 
-    // TODO: Crop pixel-perfect instead of only to the nearest tile.
-    for (int y = 0; y < tile_counts.y; ++y) {
-        for (int x = 0; x < tile_counts.x; ++x) {
-            DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
-            if (t && !DP_tile_blank(t)) {
-                if (x < left) {
-                    left = x;
-                }
-                if (x > right) {
-                    right = x;
-                }
-                if (y < top) {
-                    top = y;
-                }
-                if (y > bottom) {
-                    bottom = y;
-                }
-            }
-        }
-    }
-
-    if (top == tile_counts.y) {
+    int left, top, right, bottom;
+    if (!layer_content_tile_bounds(lc, &left, &top, &right, &bottom)) {
         return NULL; // Whole layer seems to be blank.
     }
 
