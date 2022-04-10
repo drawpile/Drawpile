@@ -117,3 +117,34 @@ void DP_queue_shift(DP_Queue *queue)
         --queue->used;
     }
 }
+
+void DP_queue_each(DP_Queue *queue, size_t element_size,
+                   void (*fn)(void *element, void *user), void *user)
+{
+    DP_ASSERT(queue);
+    DP_ASSERT(fn);
+    size_t capacity = queue->capacity;
+    size_t used = queue->used;
+    size_t head = queue->head;
+    for (size_t i = 0; i < used; ++i) {
+        void *element = element_at(queue, (head + i) % capacity, element_size);
+        fn(element, user);
+    }
+}
+
+bool DP_queue_all(DP_Queue *queue, size_t element_size,
+                  bool (*predicate)(void *element, void *user), void *user)
+{
+    DP_ASSERT(queue);
+    DP_ASSERT(predicate);
+    size_t capacity = queue->capacity;
+    size_t used = queue->used;
+    size_t head = queue->head;
+    for (size_t i = 0; i < used; ++i) {
+        void *element = element_at(queue, (head + i) % capacity, element_size);
+        if (!predicate(element, user)) {
+            return false;
+        }
+    }
+    return true;
+}

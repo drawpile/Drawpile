@@ -21,6 +21,7 @@
  */
 #ifndef DPCOMMON_QUEUE_H
 #define DPCOMMON_QUEUE_H
+#include <stdbool.h>
 #include <stdlib.h>
 
 
@@ -50,6 +51,15 @@ void *DP_queue_push(DP_Queue *queue, size_t element_size);
 void *DP_queue_peek(DP_Queue *queue, size_t element_size);
 
 void DP_queue_shift(DP_Queue *queue);
+
+void DP_queue_each(DP_Queue *queue, size_t element_size,
+                   void (*fn)(void *element, void *user), void *user);
+
+// Returns false if there's any elements in the queue that don't satisfy the
+// predicate, otherwise returns true. Stops calling the predicate on the first
+// false returned. An empty queue will return true.
+bool DP_queue_all(DP_Queue *queue, size_t element_size,
+                  bool (*predicate)(void *element, void *user), void *user);
 
 
 #endif
