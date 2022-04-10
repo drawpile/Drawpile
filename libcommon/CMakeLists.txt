@@ -55,7 +55,8 @@ set(dpcommon_test_headers test/lib/dpcommon_test.h)
 
 set(dpcommon_tests
     test/base64_encode.c
-    test/queue.c)
+    test/queue.c
+    test/rect.c)
 
 add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
                        "${dpcommon_test_sources}" "${dpcommon_test_headers}"

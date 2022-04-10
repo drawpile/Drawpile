@@ -87,56 +87,69 @@ DP_INLINE DP_Quad DP_quad_translate(DP_Quad quad, int dx, int dy)
 }
 
 
-DP_INLINE void DP_rect_check(DP_Rect rect)
-{
-#ifdef NDEBUG
-    (void)rect; // unused
-#else
-    DP_ASSERT(rect.x1 <= rect.x2);
-    DP_ASSERT(rect.y1 <= rect.y2);
-#endif
-}
-
 DP_INLINE DP_Rect DP_rect_make(int x, int y, int width, int height)
 {
-    // FIXME inverted width or height
     DP_ASSERT(width >= 0);
     DP_ASSERT(height >= 0);
     DP_Rect rect = {x, y, x + width - 1, y + height - 1};
-    DP_rect_check(rect);
     return rect;
+}
+
+DP_INLINE bool DP_rect_valid(DP_Rect rect)
+{
+    return rect.x1 <= rect.x2 && rect.y1 <= rect.y2;
 }
 
 DP_INLINE int DP_rect_x(DP_Rect rect)
 {
-    DP_rect_check(rect);
+    DP_ASSERT(DP_rect_valid(rect));
     return rect.x1;
 }
 
 DP_INLINE int DP_rect_y(DP_Rect rect)
 {
-    DP_rect_check(rect);
+    DP_ASSERT(DP_rect_valid(rect));
     return rect.y1;
 }
 
 DP_INLINE int DP_rect_width(DP_Rect rect)
 {
-    DP_rect_check(rect);
+    DP_ASSERT(DP_rect_valid(rect));
     return rect.x2 - rect.x1 + 1;
 }
 
 DP_INLINE int DP_rect_height(DP_Rect rect)
 {
-    DP_rect_check(rect);
+    DP_ASSERT(DP_rect_valid(rect));
     return rect.y2 - rect.y1 + 1;
 }
 
 DP_INLINE long long DP_rect_size(DP_Rect rect)
 {
-    DP_rect_check(rect);
+    DP_ASSERT(DP_rect_valid(rect));
     long long width = DP_rect_width(rect);
     long long height = DP_rect_height(rect);
     return width * height;
+}
+
+DP_INLINE DP_Rect DP_rect_union(DP_Rect a, DP_Rect b)
+{
+    DP_ASSERT(DP_rect_valid(a));
+    DP_ASSERT(DP_rect_valid(b));
+    DP_Rect result;
+    result.x1 = DP_min_int(a.x1, b.x1);
+    result.x2 = DP_max_int(a.x2, b.x2);
+    result.y1 = DP_min_int(a.y1, b.y1);
+    result.y2 = DP_max_int(a.y2, b.y2);
+    return result;
+}
+
+DP_INLINE bool DP_rect_intersects(DP_Rect a, DP_Rect b)
+{
+    DP_ASSERT(DP_rect_valid(a));
+    DP_ASSERT(DP_rect_valid(b));
+    return ((a.x1 <= b.x1 && b.x1 <= a.x2) || (b.x1 <= a.x1 && a.x1 <= b.x2))
+        && ((a.y1 <= b.y1 && b.y1 <= a.y2) || (b.y1 <= a.y1 && a.y1 <= b.y2));
 }
 
 
