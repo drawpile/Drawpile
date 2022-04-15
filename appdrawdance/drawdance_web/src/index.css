@@ -118,3 +118,11 @@ body {
 .overflow-y-scroll {
   overflow-y: scroll;
 }
+
+#chat-input {
+  resize: none;
+}
+
+.chat-message {
+  white-space: pre-line;
+}

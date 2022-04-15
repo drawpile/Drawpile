@@ -51,9 +51,9 @@ function getChatMessageClass({ username }: ChatTabProps, name: string): string {
     // Mark own messages with a different background color to make them easier
     // to spot when scrolling. Can be handy when returning after some time away
     // and wanting to figure out what happened in the meantime, for example.
-    return "list-group-item list-group-item-secondary";
+    return "chat-message list-group-item list-group-item-secondary";
   } else {
-    return "list-group-item";
+    return "chat-message list-group-item";
   }
 }
 
@@ -130,8 +130,10 @@ function ChatTab(props: ChatTabProps): React.ReactElement {
 
   const [entryCount, setEntryCount] = React.useState(-1);
   const [chatInput, setChatInput] = React.useState("");
+  const [scrolledUp, setScrolledUp] = React.useState(false); // Don't scroll to new messages if user is scrolling up through messages
   const mounted = React.useRef(false);
   const ul = React.useRef<HTMLUListElement>(null);
+  const textarea = React.useRef<HTMLTextAreaElement>(null);
 
   React.useEffect(() => {
     mounted.current = true;
@@ -141,45 +143,80 @@ function ChatTab(props: ChatTabProps): React.ReactElement {
   });
 
   React.useLayoutEffect(() => {
-    if (mounted.current && ul.current && entryCount !== chatEntries.length) {
+    if (
+      mounted.current &&
+      ul.current &&
+      entryCount !== chatEntries.length &&
+      !scrolledUp
+    ) {
       setEntryCount(chatEntries.length);
       const lastEntry = ul.current.lastChild as HTMLLIElement;
       lastEntry.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatEntries, entryCount, mounted, ul]);
+  }, [chatEntries, entryCount, mounted, ul, scrolledUp]);
+
+  React.useLayoutEffect(() => {
+    if (textarea.current == null) return;
+
+    // autosize
+    textarea.current.style.height = "5px"; // force back to small height, so that when input is cleared, "scrollHeight" resets to the smallest possible size. Otherwise input keeps same size it had
+    textarea.current.style.height = `${textarea.current.scrollHeight + 2}px`; // +2 to stop the scroll bar from appearing
+  }, [chatInput]);
 
   const sendDisabled = !connected || isBlank(chatInput);
 
-  function submit(event: React.FormEvent): void {
-    event.preventDefault();
+  function submit(): void {
     if (!sendDisabled) {
       drawdance!.publish("REQUEST_CHAT_MESSAGE_SEND", {
         client_id: currentClientId,
         text: chatInput.trim(),
       });
       setChatInput("");
+      setScrolledUp(false); // Force scroll to bottom when sending a message
     }
   }
 
   return (
     <div className={active ? "d-flex flex-column h-100" : "d-none"}>
-      <ul className="list-group flex-grow-1 overflow-y-scroll" ref={ul}>
+      <ul
+        className="list-group flex-grow-1 overflow-y-scroll"
+        ref={ul}
+        onScroll={(e) =>
+          setScrolledUp(
+            e.currentTarget.scrollTop !==
+              e.currentTarget.scrollHeight - e.currentTarget.offsetHeight
+          )
+        }
+      >
         {getChatListItems(props)}
       </ul>
-      <form onSubmit={submit}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+      >
         <div className="input-group">
-          <input
-            type="text"
+          <textarea
+            rows={1}
+            id="chat-input"
             className="form-control"
+            ref={textarea}
             placeholder="Chat Message"
             disabled={!connected}
             autoFocus={connected}
             value={chatInput}
             onChange={changeInput(setChatInput)}
             onKeyPress={stopPropagation}
-            onKeyDown={stopPropagation}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                submit();
+              }
+            }}
             onKeyUp={stopPropagation}
-          ></input>
+          />
           <button
             type="submit"
             className="btn btn-primary"

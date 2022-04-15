@@ -55,8 +55,8 @@ export function isBlank(value: string | undefined | null): boolean {
 
 export function changeInput(
   setter: (newValue: string) => void
-): React.ChangeEventHandler<HTMLInputElement> {
-  return (event: React.ChangeEvent<HTMLInputElement>) => {
+): React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> {
+  return (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setter(event.target.value);
   };
 }
