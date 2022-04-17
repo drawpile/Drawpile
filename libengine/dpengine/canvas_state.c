@@ -93,7 +93,7 @@ struct DP_TransientCanvasState {
 struct DP_CanvasState {
     DP_Atomic refcount;
     bool transient;
-    const int width, height;
+    int width, height;
     DP_Tile *background_tile;
     union {
         DP_LayerContentList *layer_contents;
