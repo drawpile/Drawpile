@@ -80,10 +80,13 @@ set_dp_target_properties(dpcommon)
 target_include_directories(dpcommon INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
 
 if("${THREAD_IMPL}" STREQUAL "PTHREAD")
+    target_compile_definitions(dpcommon PUBLIC DRAWDANCE_THREADING_PTHREAD)
     target_link_libraries(dpcommon PUBLIC Threads::Threads)
 elseif("${THREAD_IMPL}" STREQUAL "QT")
+    target_compile_definitions(dpcommon PUBLIC DRAWDANCE_THREADING_QT)
     target_link_libraries(dpcommon PUBLIC dpcommon_qt_threads)
 elseif("${THREAD_IMPL}" STREQUAL "SDL")
+    target_compile_definitions(dpcommon PUBLIC DRAWDANCE_THREADING_SDL)
     target_link_libraries(dpcommon PUBLIC SDL2::SDL2)
 endif()
 

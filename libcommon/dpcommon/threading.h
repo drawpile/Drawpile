@@ -24,7 +24,11 @@
 #include "common.h"
 
 
-#define DP_TLS_UNDEFINED 0u
+#ifdef DRAWDANCE_THREADING_PTHREAD
+#    define DP_TLS_UNDEFINED ((unsigned int)-1)
+#else
+#    define DP_TLS_UNDEFINED 0u
+#endif
 
 typedef unsigned int DP_TlsKey;
 
