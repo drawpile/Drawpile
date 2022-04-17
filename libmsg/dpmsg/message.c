@@ -21,6 +21,7 @@
  */
 #include "message.h"
 #include "messages/annotation_create.h"
+#include "messages/annotation_reshape.h"
 #include "messages/canvas_background.h"
 #include "messages/canvas_resize.h"
 #include "messages/chat.h"
@@ -282,6 +283,13 @@ static const DP_MessageTypeAttributes type_attributes[DP_MSG_COUNT] = {
             "DP_MSG_ANNOTATION_CREATE",
             {"newannotation"},
             DP_msg_annotation_create_deserialize,
+        },
+    [DP_MSG_ANNOTATION_RESHAPE] =
+        {
+            COMMAND | OPAQUE | RECORDABLE,
+            "DP_MSG_ANNOTATION_RESHAPE",
+            {"reshapeannotation"},
+            DP_msg_annotation_reshape_deserialize,
         },
     [DP_MSG_REGION_MOVE] =
         {
