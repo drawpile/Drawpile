@@ -25,6 +25,7 @@ set(dpmsg_sources
     dpmsg/message.c
     dpmsg/message_queue.c
     dpmsg/messages/annotation_create.c
+    dpmsg/messages/annotation_delete.c
     dpmsg/messages/annotation_edit.c
     dpmsg/messages/annotation_reshape.c
     dpmsg/messages/canvas_background.c
@@ -69,6 +70,7 @@ set(dpmsg_headers
     dpmsg/message.h
     dpmsg/message_queue.h
     dpmsg/messages/annotation_create.h
+    dpmsg/messages/annotation_delete.h
     dpmsg/messages/annotation_edit.h
     dpmsg/messages/annotation_reshape.h
     dpmsg/messages/canvas_background.h
