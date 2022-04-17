@@ -19,6 +19,8 @@
 # SOFTWARE.
 
 set(dpengine_sources
+    dpengine/annotation.c
+    dpengine/annotation_list.c
     dpengine/blend_mode.c
     dpengine/canvas_diff.c
     dpengine/canvas_history.c
@@ -38,6 +40,8 @@ set(dpengine_sources
     dpengine/tile.c)
 
 set(dpengine_headers
+    dpengine/annotation.h
+    dpengine/annotation_list.h
     dpengine/blend_mode.h
     dpengine/canvas_diff.h
     dpengine/canvas_history.h

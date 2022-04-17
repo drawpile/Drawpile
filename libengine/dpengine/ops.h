@@ -78,6 +78,19 @@ DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_Tile *tile, int layer_id,
 
 DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, unsigned int context_id);
 
+DP_CanvasState *DP_ops_annotation_create(DP_CanvasState *cs, int annotation_id,
+                                         int x, int y, int width, int height);
+
+DP_CanvasState *DP_ops_annotation_reshape(DP_CanvasState *cs, int annotation_id,
+                                          int x, int y, int width, int height);
+
+DP_CanvasState *DP_ops_annotation_edit(DP_CanvasState *cs, int annotation_id,
+                                       uint32_t background_color, bool protect,
+                                       int valign, const char *text,
+                                       size_t text_length);
+
+DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id);
+
 DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, int layer_id,
                                  int sublayer_id, int sublayer_blend_mode,
                                  int sublayer_opacity,

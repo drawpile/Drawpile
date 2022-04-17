@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "canvas_state.h"
+#include "annotation_list.h"
 #include "blend_mode.h"
 #include "canvas_diff.h"
 #include "compress.h"
@@ -36,6 +37,10 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/message.h>
+#include <dpmsg/messages/annotation_create.h>
+#include <dpmsg/messages/annotation_delete.h>
+#include <dpmsg/messages/annotation_edit.h>
+#include <dpmsg/messages/annotation_reshape.h>
 #include <dpmsg/messages/canvas_background.h>
 #include <dpmsg/messages/canvas_resize.h>
 #include <dpmsg/messages/draw_dabs.h>
@@ -61,6 +66,7 @@ struct DP_CanvasState {
     DP_Tile *const background_tile;
     DP_LayerContentList *const layer_contents;
     DP_LayerPropsList *const layer_props;
+    DP_AnnotationList *const annotations;
 };
 
 struct DP_TransientCanvasState {
@@ -75,6 +81,10 @@ struct DP_TransientCanvasState {
     union {
         DP_LayerPropsList *layer_props;
         DP_TransientLayerPropsList *transient_layer_props;
+    };
+    union {
+        DP_AnnotationList *annotations;
+        DP_TransientAnnotationList *transient_annotations;
     };
 };
 
@@ -93,6 +103,10 @@ struct DP_CanvasState {
         DP_LayerPropsList *layer_props;
         DP_TransientLayerPropsList *transient_layer_props;
     };
+    union {
+        DP_AnnotationList *annotations;
+        DP_TransientAnnotationList *transient_annotations;
+    };
 };
 
 #endif
@@ -102,8 +116,14 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                                       int height)
 {
     DP_TransientCanvasState *cs = DP_malloc(sizeof(*cs));
-    *cs = (DP_TransientCanvasState){
-        DP_ATOMIC_INIT(1), transient, width, height, NULL, {NULL}, {NULL}};
+    *cs = (DP_TransientCanvasState){DP_ATOMIC_INIT(1),
+                                    transient,
+                                    width,
+                                    height,
+                                    NULL,
+                                    {NULL},
+                                    {NULL},
+                                    {NULL}};
     return cs;
 }
 
@@ -112,6 +132,7 @@ DP_CanvasState *DP_canvas_state_new(void)
     DP_TransientCanvasState *tcs = allocate_canvas_state(false, 0, 0);
     tcs->layer_contents = DP_layer_content_list_new();
     tcs->layer_props = DP_layer_props_list_new();
+    tcs->annotations = DP_annotation_list_new();
     return (DP_CanvasState *)tcs;
 }
 
@@ -133,9 +154,10 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     if (DP_atomic_dec(&cs->refcount)) {
-        DP_tile_decref_nullable(cs->background_tile);
-        DP_layer_content_list_decref(cs->layer_contents);
+        DP_annotation_list_decref(cs->annotations);
         DP_layer_props_list_decref(cs->layer_props);
+        DP_layer_content_list_decref(cs->layer_contents);
+        DP_tile_decref_nullable(cs->background_tile);
         DP_free(cs);
     }
 }
@@ -194,6 +216,13 @@ DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->layer_props;
+}
+
+DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->annotations;
 }
 
 
@@ -445,6 +474,45 @@ static DP_CanvasState *handle_pen_up(DP_CanvasState *cs,
     return DP_ops_pen_up(cs, context_id);
 }
 
+static DP_CanvasState *handle_annotation_create(DP_CanvasState *cs,
+                                                DP_MsgAnnotationCreate *mac)
+{
+    return DP_ops_annotation_create(
+        cs, DP_msg_annotation_create_annotation_id(mac),
+        DP_msg_annotation_create_x(mac), DP_msg_annotation_create_y(mac),
+        DP_msg_annotation_create_width(mac),
+        DP_msg_annotation_create_height(mac));
+}
+
+static DP_CanvasState *handle_annotation_reshape(DP_CanvasState *cs,
+                                                 DP_MsgAnnotationReshape *mar)
+{
+    return DP_ops_annotation_reshape(
+        cs, DP_msg_annotation_reshape_annotation_id(mar),
+        DP_msg_annotation_reshape_x(mar), DP_msg_annotation_reshape_y(mar),
+        DP_msg_annotation_reshape_width(mar),
+        DP_msg_annotation_reshape_height(mar));
+}
+
+static DP_CanvasState *handle_annotation_edit(DP_CanvasState *cs,
+                                              DP_MsgAnnotationEdit *mae)
+{
+    size_t text_length;
+    const char *text = DP_msg_annotation_edit_text(mae, &text_length);
+    return DP_ops_annotation_edit(cs, DP_msg_annotation_edit_annotation_id(mae),
+                                  DP_msg_annotation_edit_background_color(mae),
+                                  DP_msg_annotation_edit_protect(mae),
+                                  DP_msg_annotation_edit_valign(mae), text,
+                                  text_length);
+}
+
+static DP_CanvasState *handle_annotation_delete(DP_CanvasState *cs,
+                                                DP_MsgAnnotationDelete *mad)
+{
+    return DP_ops_annotation_delete(
+        cs, DP_msg_annotation_delete_annotation_id(mad));
+}
+
 static void *get_classic_dabs(DP_MsgDrawDabs *mdd, int *out_dab_count)
 {
     DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_cast_classic(mdd);
@@ -554,6 +622,15 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                         DP_msg_canvas_background_cast(msg));
     case DP_MSG_PEN_UP:
         return handle_pen_up(cs, DP_message_context_id(msg));
+    case DP_MSG_ANNOTATION_CREATE:
+        return handle_annotation_create(cs, DP_msg_annotation_create_cast(msg));
+    case DP_MSG_ANNOTATION_RESHAPE:
+        return handle_annotation_reshape(cs,
+                                         DP_msg_annotation_reshape_cast(msg));
+    case DP_MSG_ANNOTATION_EDIT:
+        return handle_annotation_edit(cs, DP_msg_annotation_edit_cast(msg));
+    case DP_MSG_ANNOTATION_DELETE:
+        return handle_annotation_delete(cs, DP_msg_annotation_delete_cast(msg));
     case DP_MSG_DRAW_DABS_CLASSIC:
         return handle_draw_dabs(cs, dc, type, DP_message_context_id(msg),
                                 DP_msg_draw_dabs_cast(msg), get_classic_dabs);
@@ -708,6 +785,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
     DP_TransientCanvasState *tcs = allocate_canvas_state(true, 0, 0);
     tcs->layer_contents = DP_layer_content_list_new();
     tcs->layer_props = DP_layer_props_list_new();
+    tcs->annotations = DP_annotation_list_new();
     return tcs;
 }
 
@@ -728,6 +806,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
     DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
     tcs->layer_contents = DP_layer_content_list_incref(cs->layer_contents);
     tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
+    tcs->annotations = DP_annotation_list_incref(cs->annotations);
     return tcs;
 }
 
@@ -738,6 +817,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
     DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
     tcs->transient_layer_contents = tlcl;
     tcs->transient_layer_props = tlpl;
+    tcs->annotations = DP_annotation_list_incref(cs->annotations);
     return tcs;
 }
 
@@ -768,6 +848,9 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
     }
     if (DP_layer_props_list_transient(tcs->layer_props)) {
         DP_transient_layer_props_list_persist(tcs->transient_layer_props);
+    }
+    if (DP_annotation_list_transient(tcs->annotations)) {
+        DP_transient_annotation_list_persist(tcs->transient_annotations);
     }
     tcs->transient = false;
     return (DP_CanvasState *)tcs;
@@ -869,4 +952,25 @@ DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
             tcs->transient_layer_props, reserve);
     }
     return tcs->transient_layer_props;
+}
+
+DP_TransientAnnotationList *
+DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
+                                                int reserve)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_ASSERT(reserve >= 0);
+    DP_AnnotationList *al = tcs->annotations;
+    if (!DP_annotation_list_transient(al)) {
+        tcs->transient_annotations =
+            DP_transient_annotation_list_new(al, reserve);
+        DP_annotation_list_decref(al);
+    }
+    else if (reserve > 0) {
+        tcs->transient_annotations = DP_transient_annotation_list_reserve(
+            tcs->transient_annotations, reserve);
+    }
+    return tcs->transient_annotations;
 }

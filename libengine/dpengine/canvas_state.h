@@ -21,8 +21,10 @@
  */
 #ifndef DPENGINE_CANVAS_STATE_H
 #define DPENGINE_CANVAS_STATE_H
+#include "annotation_list.h"
 #include <dpcommon/common.h>
 
+typedef struct DP_AnnotationList DP_AnnotationList;
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
@@ -75,6 +77,8 @@ DP_Tile *DP_canvas_state_background_tile(DP_CanvasState *cs);
 DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs);
 
 DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs);
+
+DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs);
 
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_Message *msg);
@@ -141,6 +145,10 @@ DP_transient_canvas_state_transient_layer_contents(DP_TransientCanvasState *tcs,
 
 DP_TransientLayerPropsList *
 DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
+                                                int reserve);
+
+DP_TransientAnnotationList *
+DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
                                                 int reserve);
 
 

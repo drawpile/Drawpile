@@ -20,6 +20,8 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "ops.h"
+#include "annotation.h"
+#include "annotation_list.h"
 #include "blend_mode.h"
 #include "canvas_state.h"
 #include "image.h"
@@ -551,6 +553,93 @@ DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, unsigned int context_id)
     else {
         return DP_canvas_state_incref(cs);
     }
+}
+
+
+DP_CanvasState *DP_ops_annotation_create(DP_CanvasState *cs, int annotation_id,
+                                         int x, int y, int width, int height)
+{
+    DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
+    if (DP_annotation_list_index_by_id(al, annotation_id) != -1) {
+        DP_error_set("Annotation create: id %d already exists", annotation_id);
+        return NULL;
+    }
+
+    int index = DP_annotation_list_count(al);
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientAnnotationList *tal =
+        DP_transient_canvas_state_transient_annotations(tcs, 1);
+    DP_Annotation *a = DP_annotation_new(annotation_id, x, y, width, height);
+    DP_transient_annotation_list_insert_noinc(tal, a, index);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_annotation_reshape(DP_CanvasState *cs, int annotation_id,
+                                          int x, int y, int width, int height)
+{
+    DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
+    int index = DP_annotation_list_index_by_id(al, annotation_id);
+    if (index < 0) {
+        DP_error_set("Annotation reshape: id %d not found", annotation_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientAnnotationList *tal =
+        DP_transient_canvas_state_transient_annotations(tcs, 0);
+    DP_TransientAnnotation *ta =
+        DP_transient_annotation_list_transient_at_noinc(tal, index);
+
+    DP_transient_annotation_x_set(ta, x);
+    DP_transient_annotation_y_set(ta, y);
+    DP_transient_annotation_width_set(ta, width);
+    DP_transient_annotation_height_set(ta, height);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_annotation_edit(DP_CanvasState *cs, int annotation_id,
+                                       uint32_t background_color, bool protect,
+                                       int valign, const char *text,
+                                       size_t text_length)
+{
+    DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
+    int index = DP_annotation_list_index_by_id(al, annotation_id);
+    if (index < 0) {
+        DP_error_set("Annotation edit: id %d not found", annotation_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientAnnotationList *tal =
+        DP_transient_canvas_state_transient_annotations(tcs, 0);
+    DP_TransientAnnotation *ta =
+        DP_transient_annotation_list_transient_at_noinc(tal, index);
+
+    DP_transient_annotation_background_color_set(ta, background_color);
+    DP_transient_annotation_protect_set(ta, protect);
+    DP_transient_annotation_valign_set(ta, valign);
+    DP_transient_annotation_text_set(ta, text, text_length);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id)
+{
+    DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
+    int index = DP_annotation_list_index_by_id(al, annotation_id);
+    if (index < 0) {
+        DP_error_set("Annotation delete: id %d not found", annotation_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientAnnotationList *tal =
+        DP_transient_canvas_state_transient_annotations(tcs, 0);
+    DP_transient_annotation_list_delete_at(tal, index);
+
+    return DP_transient_canvas_state_persist(tcs);
 }
 
 
