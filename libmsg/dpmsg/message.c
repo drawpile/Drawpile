@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "message.h"
+#include "messages/annotation_create.h"
 #include "messages/canvas_background.h"
 #include "messages/canvas_resize.h"
 #include "messages/chat.h"
@@ -274,6 +275,13 @@ static const DP_MessageTypeAttributes type_attributes[DP_MSG_COUNT] = {
             "DP_MSG_PEN_UP",
             {"penup"},
             DP_msg_pen_up_deserialize,
+        },
+    [DP_MSG_ANNOTATION_CREATE] =
+        {
+            COMMAND | OPAQUE | RECORDABLE,
+            "DP_MSG_ANNOTATION_CREATE",
+            {"newannotation"},
+            DP_msg_annotation_create_deserialize,
         },
     [DP_MSG_REGION_MOVE] =
         {

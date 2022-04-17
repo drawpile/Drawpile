@@ -24,6 +24,7 @@ set(dpmsg_sources
     dpmsg/binary_writer.c
     dpmsg/message.c
     dpmsg/message_queue.c
+    dpmsg/messages/annotation_create.c
     dpmsg/messages/canvas_background.c
     dpmsg/messages/canvas_resize.c
     dpmsg/messages/chat.c
@@ -65,6 +66,7 @@ set(dpmsg_headers
     dpmsg/binary_writer.h
     dpmsg/message.h
     dpmsg/message_queue.h
+    dpmsg/messages/annotation_create.h
     dpmsg/messages/canvas_background.h
     dpmsg/messages/canvas_resize.h
     dpmsg/messages/chat.h
