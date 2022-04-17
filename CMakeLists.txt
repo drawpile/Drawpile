@@ -84,15 +84,21 @@ function(set_dp_target_properties target)
         add_address_sanitizer("${target}")
         target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600")
 
+        if("CXX" IN_LIST ARGN)
+            target_compile_options("${target}" PRIVATE "${dp_cxxflags}")
+        else()
+            target_compile_options("${target}" PRIVATE "${dp_cflags}")
+        endif()
+
         if(NOT "NO_CLANG_TIDY" IN_LIST ARGN)
             add_clang_tidy("${target}")
         endif()
 
         if(NOT "NO_WARNINGS" IN_LIST ARGN)
             if("CXX" IN_LIST ARGN)
-                target_compile_options("${target}" PRIVATE "${dp_cxxflags}")
+                target_compile_options("${target}" PRIVATE "${dp_cxxwarnings}")
             else()
-                target_compile_options("${target}" PRIVATE "${dp_cflags}")
+                target_compile_options("${target}" PRIVATE "${dp_cwarnings}")
             endif()
         endif()
 

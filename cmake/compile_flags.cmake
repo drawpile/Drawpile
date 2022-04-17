@@ -19,19 +19,22 @@
 # SOFTWARE.
 
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(dp_common_cflags -pedantic -pedantic-errors -Wall -Wextra -Wshadow
-                         -Wmissing-include-dirs -Wconversion -Werror
-                         -Wno-error=unused-parameter)
+    unset(dp_common_cflags)
+    set(dp_common_warnings -pedantic -pedantic-errors -Wall -Wextra -Wshadow
+                           -Wmissing-include-dirs -Wconversion -Werror
+                           -Wno-error=unused-parameter)
 
     # MinGW doesn't have %z printf specifiers, so it needs MS-specific formats.
     if(CMAKE_C_COMPILER MATCHES "mingw")
-        list(APPEND dp_common_cflagss -Wno-pedantic-ms-format)
+        list(APPEND dp_common_warnings -Wno-pedantic-ms-format)
     endif()
 
     if(NOT USE_STRICT_ALIASING)
         list(APPEND dp_common_cflags -fno-strict-aliasing)
     endif()
 
-    set(dp_cflags ${dp_common_cflags} -Wstrict-prototypes)
+    set(dp_cflags ${dp_common_cflags})
     set(dp_cxxflags ${dp_common_cflags} -fno-exceptions)
+    set(dp_cwarnings ${dp_common_warnings} -Wstrict-prototypes)
+    set(dp_cxxwarnings ${dp_common_warnings})
 endif()
