@@ -33,7 +33,7 @@ preset_release() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
-          -DUSE_STRICT_ALIASING=OFF \
+          -DUSE_STRICT_ALIASING=ON \
           -G Ninja \
           -B buildrelease
 }
@@ -64,7 +64,7 @@ preset_emscripten_release() {
           -DUSE_GENERATORS=OFF \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_CLANG_TIDY=OFF \
-          -DUSE_STRICT_ALIASING=OFF \
+          -DUSE_STRICT_ALIASING=ON \
           -DLINK_WITH_LIBM=OFF \
           -DBUILD_TESTS=OFF \
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
@@ -93,7 +93,7 @@ preset_drawpile_release() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
-          -DUSE_STRICT_ALIASING=OFF \
+          -DUSE_STRICT_ALIASING=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -G Ninja \
