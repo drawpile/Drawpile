@@ -75,7 +75,6 @@ struct DP_LayerProps {
 #endif
 
 
-DP_UNUSED
 static DP_LayerTitle *layer_title_new(const char *title, size_t length)
 {
     DP_ASSERT(length < SIZE_MAX);
@@ -98,7 +97,6 @@ static DP_LayerTitle *layer_title_incref(DP_LayerTitle *lt)
     return lt;
 }
 
-DP_UNUSED
 static DP_LayerTitle *layer_title_incref_nullable(DP_LayerTitle *lt)
 {
     return lt ? layer_title_incref(lt) : NULL;
