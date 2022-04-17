@@ -64,6 +64,7 @@ set(dpengine_test_sources test/lib/dpengine_test.c)
 set(dpengine_test_headers test/lib/dpengine_test.h)
 
 set(dpengine_tests
+    test/handle_annotations.c
     test/render_recording.c
     test/resize_image.c)
 
