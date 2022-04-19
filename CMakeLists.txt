@@ -53,22 +53,26 @@ include("${CMAKE_CURRENT_LIST_DIR}/cmake/address_sanitizer.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_format.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_tidy.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/compile_flags.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/dpconfig.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/export.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/language_standards.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/export.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake")
 
 function(set_dp_target_properties target)
+    get_target_property(target_type "${target}" TYPE)
+
     if(DRAWDANCE_EMSCRIPTEN)
-        target_compile_options("${target}" PRIVATE "-pthread")
-        target_link_options("${target}" PRIVATE
-                            "-pthread" "SHELL:-s PROXY_TO_PTHREAD"
-                            "SHELL:-s ALLOW_BLOCKING_ON_MAIN_THREAD=0"
-                            "SHELL:-s ALLOW_MEMORY_GROWTH=1" "SHELL:-s FETCH=1"
-                            "SHELL:-s MODULARIZE=1"
-                            "SHELL:-s EXPORT_NAME=createModule"
-                            "SHELL:-s DYNAMIC_EXECUTION=0")
-        get_target_property(target_type "${target}" TYPE)
+        if(NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
+            target_compile_options("${target}" PRIVATE "-pthread")
+            target_link_options("${target}" PRIVATE
+                                "-pthread" "SHELL:-s PROXY_TO_PTHREAD"
+                                "SHELL:-s ALLOW_BLOCKING_ON_MAIN_THREAD=0"
+                                "SHELL:-s ALLOW_MEMORY_GROWTH=1" "SHELL:-s FETCH=1"
+                                "SHELL:-s MODULARIZE=1"
+                                "SHELL:-s EXPORT_NAME=createModule"
+                                "SHELL:-s DYNAMIC_EXECUTION=0")
+        endif()
+
         if("${target_type}" STREQUAL "EXECUTABLE")
             set_property(TARGET "${target}" PROPERTY SUFFIX ".js")
         endif()
@@ -78,8 +82,7 @@ function(set_dp_target_properties target)
         add_dp_export_target("${target}")
     endif()
 
-    get_target_property(target_type "${target}" TYPE)
-    if (NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
+    if(NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
         set_language_standards("${target}")
         add_address_sanitizer("${target}")
         target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600")

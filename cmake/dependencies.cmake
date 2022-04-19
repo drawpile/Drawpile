@@ -25,6 +25,7 @@ if(DRAWDANCE_EMSCRIPTEN)
                                            "SHELL:-sUSE_ZLIB=1")
     target_link_options(empng INTERFACE "SHELL:-s USE_LIBPNG=1"
                                         "SHELL:-s USE_ZLIB=1")
+    add_dp_export_target(empng)
 
     add_library(emsdl2 INTERFACE)
     add_library(SDL2::SDL2 ALIAS emsdl2)
@@ -32,9 +33,11 @@ if(DRAWDANCE_EMSCRIPTEN)
     target_link_options(emsdl2 INTERFACE "SHELL:-s USE_SDL=2")
     target_include_directories(emsdl2 INTERFACE
                                "${CMAKE_SOURCE_DIR}/cmake/emsdl2")
+    add_dp_export_target(emsdl2)
 
     add_library(emthreads INTERFACE)
     add_library(Threads::Threads ALIAS emthreads)
+    add_dp_export_target(emthreads)
     # Need to compile and link all targets with -pthreads so that they actually
     # link together in the end, so this target does nothing on Emscripten.
     # The set_dp_target_properties function sets the flag on all targets.
