@@ -300,9 +300,21 @@ DP_transient_annotation_incref(DP_TransientAnnotation *ta)
     return (DP_TransientAnnotation *)DP_annotation_incref((DP_Annotation *)ta);
 }
 
+DP_TransientAnnotation *
+DP_transient_annotation_incref_nullable(DP_TransientAnnotation *ta_or_null)
+{
+    return (DP_TransientAnnotation *)DP_annotation_incref_nullable(
+        (DP_Annotation *)ta_or_null);
+}
+
 void DP_transient_annotation_decref(DP_TransientAnnotation *ta)
 {
     DP_annotation_decref((DP_Annotation *)ta);
+}
+
+void DP_transient_annotation_decref_nullable(DP_TransientAnnotation *ta_or_null)
+{
+    DP_annotation_decref_nullable((DP_Annotation *)ta_or_null);
 }
 
 int DP_transient_annotation_refcount(DP_TransientAnnotation *ta)

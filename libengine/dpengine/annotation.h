@@ -75,7 +75,13 @@ DP_TransientAnnotation *DP_transient_annotation_new_init(int id, int x, int y,
 DP_TransientAnnotation *
 DP_transient_annotation_incref(DP_TransientAnnotation *ta);
 
+DP_TransientAnnotation *
+DP_transient_annotation_incref_nullable(DP_TransientAnnotation *ta_or_null);
+
 void DP_transient_annotation_decref(DP_TransientAnnotation *ta);
+
+void DP_transient_annotation_decref_nullable(
+    DP_TransientAnnotation *ta_or_null);
 
 int DP_transient_annotation_refcount(DP_TransientAnnotation *ta);
 
