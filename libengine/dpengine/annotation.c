@@ -124,12 +124,19 @@ static void annotation_text_decref_nullable(DP_AnnotationText *at_or_null)
 }
 
 
-DP_Annotation *DP_annotation_new(int id, int x, int y, int width, int height)
+
+static DP_TransientAnnotation *
+allocate_annotation(bool transient, int id, int x, int y, int width, int height)
 {
     DP_TransientAnnotation *ta = DP_malloc(sizeof(*ta));
     *ta = (DP_TransientAnnotation){
-        DP_ATOMIC_INIT(1), false, id, x, y, width, height, 0, 0, 0, NULL};
-    return (DP_Annotation *)ta;
+        DP_ATOMIC_INIT(1), transient, id, x, y, width, height, 0, 0, 0, NULL};
+    return ta;
+}
+
+DP_Annotation *DP_annotation_new(int id, int x, int y, int width, int height)
+{
+    return (DP_Annotation *)allocate_annotation(false, id, x, y, width, height);
 }
 
 DP_Annotation *DP_annotation_incref(DP_Annotation *a)
@@ -274,6 +281,12 @@ DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a)
                                    a->valign,
                                    annotation_text_incref_nullable(a->text)};
     return ta;
+}
+
+DP_TransientAnnotation *DP_transient_annotation_new_init(int id, int x, int y,
+                                                         int width, int height)
+{
+    return allocate_annotation(true, id, x, y, width, height);
 }
 
 DP_TransientAnnotation *

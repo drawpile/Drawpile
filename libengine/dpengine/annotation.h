@@ -67,6 +67,9 @@ const char *DP_annotation_text(DP_Annotation *a, size_t *out_length);
 
 DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a);
 
+DP_TransientAnnotation *DP_transient_annotation_new_init(int id, int x, int y,
+                                                         int width, int height);
+
 DP_TransientAnnotation *
 DP_transient_annotation_incref(DP_TransientAnnotation *ta);
 
