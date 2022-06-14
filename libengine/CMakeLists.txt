@@ -35,6 +35,7 @@ set(dpengine_sources
     dpengine/layer_content_list.c
     dpengine/layer_props.c
     dpengine/layer_props_list.c
+    dpengine/model_changes.c
     dpengine/ops.c
     dpengine/paint.c
     dpengine/pixels.c
@@ -57,6 +58,7 @@ set(dpengine_headers
     dpengine/layer_content_list.h
     dpengine/layer_props.h
     dpengine/layer_props_list.h
+    dpengine/model_changes.c
     dpengine/ops.h
     dpengine/paint.h
     dpengine/pixels.h
@@ -67,6 +69,7 @@ set(dpengine_test_headers test/lib/dpengine_test.h)
 
 set(dpengine_tests
     test/handle_annotations.c
+    test/model_changes.c
     test/render_recording.c
     test/resize_image.c)
 

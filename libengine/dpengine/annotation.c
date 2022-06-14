@@ -123,6 +123,12 @@ static void annotation_text_decref_nullable(DP_AnnotationText *at_or_null)
     }
 }
 
+static bool annotation_text_equal(DP_AnnotationText *a, DP_AnnotationText *b)
+{
+    return a == b
+        || (a && b && a->length == b->length
+            && memcmp(a->text, b->text, a->length) == 0);
+}
 
 
 static DP_TransientAnnotation *
@@ -265,6 +271,16 @@ const char *DP_annotation_text(DP_Annotation *a, size_t *out_length)
 int DP_annotation_user_id(DP_Annotation *a)
 {
     return (DP_annotation_id(a) >> 8) & 0xff;
+}
+
+bool DP_annotation_equal(DP_Annotation *a, DP_Annotation *b)
+{
+    return a == b
+        || (a && b && a->id == b->id && a->x == b->x && a->y == b->y
+            && a->width == b->width && a->height == b->height
+            && a->background_color == b->background_color
+            && a->protect == b->protect && a->valign == b->valign
+            && annotation_text_equal(a->text, b->text));
 }
 
 

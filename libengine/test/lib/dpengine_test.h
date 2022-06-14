@@ -27,6 +27,7 @@ typedef struct DP_CanvasHistory DP_CanvasHistory;
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct DP_ModelChanges DP_ModelChanges;
 
 
 void push_canvas_history(void **state, DP_CanvasHistory *value);
@@ -36,6 +37,8 @@ void push_canvas_state(void **state, DP_CanvasState *value);
 void push_draw_context(void **state, DP_DrawContext *value);
 
 void push_image(void **state, DP_Image *value);
+
+void push_model_changes(void **state, DP_ModelChanges *value);
 
 
 #define assert_image_files_equal(state, a, b) \

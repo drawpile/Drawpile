@@ -22,6 +22,7 @@
 #include "dpengine_test.h"
 #include "dpcommon_test.h"
 #include "dpengine/draw_context.h"
+#include "dpengine/model_changes.h"
 #include <dpcommon/input.h>
 #include <dpengine/canvas_history.h>
 #include <dpengine/canvas_state.h>
@@ -67,6 +68,16 @@ static void destroy_image(void *value)
 void push_image(void **state, DP_Image *value)
 {
     destructor_push(state, value, destroy_image);
+}
+
+static void destroy_model_changes(void *value)
+{
+    DP_model_changes_free(value);
+}
+
+void push_model_changes(void **state, DP_ModelChanges *value)
+{
+    destructor_push(state, value, destroy_model_changes);
 }
 
 
