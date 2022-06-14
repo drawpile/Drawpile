@@ -64,6 +64,8 @@ int DP_annotation_valign(DP_Annotation *a);
 
 const char *DP_annotation_text(DP_Annotation *a, size_t *out_length);
 
+int DP_annotation_user_id(DP_Annotation *a);
+
 
 DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a);
 

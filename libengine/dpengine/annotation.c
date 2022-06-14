@@ -262,6 +262,11 @@ const char *DP_annotation_text(DP_Annotation *a, size_t *out_length)
     return text;
 }
 
+int DP_annotation_user_id(DP_Annotation *a)
+{
+    return (DP_annotation_id(a) >> 8) & 0xff;
+}
+
 
 DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a)
 {
