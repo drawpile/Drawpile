@@ -70,6 +70,8 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
                              int *out_offset_y);
 
 
+DP_Image *DP_image_read_png(DP_Input *input);
+
 bool DP_image_write_png(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 
 

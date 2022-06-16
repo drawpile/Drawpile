@@ -332,6 +332,12 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 }
 
 
+DP_Image *DP_image_read_png(DP_Input *input)
+{
+    DP_ASSERT(input);
+    return DP_image_png_read(input);
+}
+
 bool DP_image_write_png(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
