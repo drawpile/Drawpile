@@ -138,12 +138,14 @@ DP_Image *DP_image_png_read(DP_Input *input)
         png_bytep row = row_pointers[y];
         for (png_uint_32 x = 0; x < width; ++x) {
             png_uint_32 offset = x * 4;
-            pixels[y * width + x] = (DP_Pixel){
+            DP_Pixel pixel = {
                 .b = row[offset],
                 .g = row[offset + 1],
                 .r = row[offset + 2],
                 .a = row[offset + 3],
             };
+            // PNG stores pixels unpremultiplied, fix them up.
+            pixels[y * width + x] = DP_pixel_premultiply(pixel);
         }
     }
 
