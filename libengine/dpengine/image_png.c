@@ -172,16 +172,31 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
         return false;
     }
 
+    // Unpremultiply all pixels and stuff them into a temporary buffer.
+    // This could probably be solved without allocating said buffer and instead
+    // using the low-level libpng write interface with a custom transformation
+    // function, but that adds a lot of complexity for a bit of memory saveage.
     size_t stride = DP_int_to_size(width);
     size_t row_count = DP_int_to_size(height);
+    size_t pixel_count = stride * row_count;
+    png_bytep bytes = png_malloc(png_ptr, pixel_count * 4);
+    for (size_t pixel_index = 0; pixel_index < pixel_count; ++pixel_index) {
+        DP_Pixel pixel = DP_pixel_unpremultiply(pixels[pixel_index]);
+        size_t byte_index = pixel_index * 4u;
+        bytes[byte_index + 0u] = pixel.r;
+        bytes[byte_index + 1u] = pixel.g;
+        bytes[byte_index + 2u] = pixel.b;
+        bytes[byte_index + 3u] = pixel.a;
+    }
+
     png_bytepp row_pointers =
         png_malloc(png_ptr, row_count * sizeof(*row_pointers));
-    png_bytep bytes = (png_bytep)pixels;
     for (size_t i = 0; i < row_count; ++i) {
         row_pointers[i] = bytes + i * stride * sizeof(*pixels);
     }
 
     if (setjmp(png_jmpbuf(png_ptr))) {
+        png_free(png_ptr, bytes);
         png_free(png_ptr, row_pointers);
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return false;
@@ -195,8 +210,9 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
                  PNG_FILTER_TYPE_DEFAULT);
 
     png_set_rows(png_ptr, info_ptr, row_pointers);
-    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR, NULL);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
 
+    png_free(png_ptr, bytes);
     png_free(png_ptr, row_pointers);
     png_destroy_write_struct(&png_ptr, &info_ptr);
     return true;
