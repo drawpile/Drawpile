@@ -70,6 +70,7 @@ set(dpengine_test_headers test/lib/dpengine_test.h)
 set(dpengine_tests
     test/handle_annotations.c
     test/model_changes.c
+    test/read_write_image.c
     test/render_recording.c
     test/resize_image.c)
 
