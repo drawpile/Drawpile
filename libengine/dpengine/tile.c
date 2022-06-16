@@ -201,7 +201,7 @@ bool DP_tile_blank(DP_Tile *tile)
     DP_Pixel *pixels = DP_tile_pixels(tile);
     for (int i = 0; i < DP_TILE_LENGTH; ++i) {
         // Colors should be premultiplied.
-        if (pixels[i].color == 0) {
+        if (pixels[i].color != 0) {
             return false;
         }
     }
