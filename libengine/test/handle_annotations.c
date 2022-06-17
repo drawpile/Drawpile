@@ -152,7 +152,7 @@ static void handle_annotations(void **state)
     push_output(state, output);
     DP_output_print(output, "begin testing\n");
 
-    DP_CanvasHistory *ch = DP_canvas_history_new();
+    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
     push_canvas_history(state, ch);
     DP_DrawContext *dc = DP_draw_context_new();
     push_draw_context(state, dc);

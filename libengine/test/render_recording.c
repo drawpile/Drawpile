@@ -48,7 +48,7 @@ static void test_render_recording(void **state)
     assert_non_null(reader);
     push_binary_reader(state, reader, input);
 
-    DP_CanvasHistory *ch = DP_canvas_history_new();
+    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
     assert_non_null(ch);
     push_canvas_history(state, ch);
 

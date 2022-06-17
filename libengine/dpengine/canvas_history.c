@@ -74,6 +74,10 @@ struct DP_CanvasHistory {
         int fallbehind;
         DP_Queue queue;
     } fork;
+    struct {
+        DP_CanvasHistorySavePointFn fn;
+        void *user;
+    } save_point;
     DP_Atomic local_pen_down;
 };
 
@@ -138,10 +142,20 @@ static bool fork_entries_concurrent_with(DP_CanvasHistory *ch, DP_Message *msg)
 }
 
 
+static void call_save_point_fn(DP_CanvasHistory *ch, int history_index,
+                               DP_CanvasState *cs)
+{
+    DP_CanvasHistorySavePointFn save_point_fn = ch->save_point.fn;
+    if (save_point_fn) {
+        save_point_fn(cs, history_index, ch->save_point.user);
+    }
+}
+
 static void set_initial_entry(DP_CanvasHistory *ch, DP_CanvasState *cs)
 {
     ch->entries[0] = (DP_CanvasHistoryEntry){
         DP_UNDO_DONE, DP_msg_undo_point_new(0), DP_canvas_state_incref(cs)};
+    call_save_point_fn(ch, 0, cs);
 }
 
 static bool is_undo_point_entry(DP_CanvasHistoryEntry *entry)
@@ -182,7 +196,9 @@ static void validate_history(DP_CanvasHistory *ch)
 }
 
 
-DP_CanvasHistory *DP_canvas_history_new(void)
+DP_CanvasHistory *
+DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
+                      void *save_point_user)
 {
     DP_Mutex *mutex = DP_mutex_new();
     if (!mutex) {
@@ -200,6 +216,7 @@ DP_CanvasHistory *DP_canvas_history_new(void)
                              1,
                              DP_malloc(entries_size),
                              {0, 0, DP_QUEUE_NULL},
+                             {save_point_fn, save_point_user},
                              DP_ATOMIC_INIT(0)};
 
     DP_queue_init(&ch->fork.queue, INITIAL_CAPACITY, sizeof(DP_ForkEntry));
@@ -360,7 +377,9 @@ static void make_savepoint(DP_CanvasHistory *ch, int index)
     // Don't make savepoints while a local fork is present, since the local
     // state may be incongruent with what the server thinks is happening.
     if (ch->fork.queue.used == 0) {
-        ch->entries[index].state = DP_canvas_state_incref(ch->current_state);
+        DP_CanvasState *cs = ch->current_state;
+        ch->entries[index].state = DP_canvas_state_incref(cs);
+        call_save_point_fn(ch, ch->offset + index, cs);
     }
 }
 

@@ -86,7 +86,7 @@ DP_Document *DP_document_new(void)
         DP_document_free(doc);
         return NULL;
     }
-    if (!(doc->canvas_history = DP_canvas_history_new())) {
+    if (!(doc->canvas_history = DP_canvas_history_new(NULL, NULL))) {
         DP_document_free(doc);
         return NULL;
     }

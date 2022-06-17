@@ -30,7 +30,12 @@ typedef struct DP_Message DP_Message;
 
 typedef struct DP_CanvasHistory DP_CanvasHistory;
 
-DP_CanvasHistory *DP_canvas_history_new(void);
+typedef void (*DP_CanvasHistorySavePointFn)(DP_CanvasState *cs,
+                                            int history_index, void *user);
+
+DP_CanvasHistory *
+DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
+                      void *save_point_user);
 
 void DP_canvas_history_free(DP_CanvasHistory *ch);
 

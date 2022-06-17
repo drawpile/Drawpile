@@ -237,7 +237,7 @@ int main(int argc, char **argv)
     }
 
     DP_BinaryReader *reader = DP_binary_reader_new(input);
-    DP_CanvasHistory *ch = DP_canvas_history_new();
+    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
     DP_DrawContext *dc = DP_draw_context_new();
 
     while (DP_binary_reader_has_next(reader)) {
