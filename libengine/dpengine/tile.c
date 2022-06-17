@@ -290,7 +290,6 @@ DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
 {
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
-    DP_debug("New transient tile");
     DP_TransientTile *tt = alloc_tile(true, context_id);
     memcpy(tt->pixels, tile->pixels, DP_TILE_BYTES);
     return tt;

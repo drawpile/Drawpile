@@ -242,7 +242,6 @@ DP_TransientLayerProps *DP_transient_layer_props_new(DP_LayerProps *lp)
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
     DP_ASSERT(!lp->transient);
-    DP_debug("New transient layer props %d", lp->id);
     DP_TransientLayerProps *tlp = DP_malloc(sizeof(*tlp));
     *tlp = (DP_TransientLayerProps){
         DP_ATOMIC_INIT(1),

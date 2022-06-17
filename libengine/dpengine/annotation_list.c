@@ -168,7 +168,6 @@ DP_transient_annotation_list_new(DP_AnnotationList *al, int reserve)
 {
     DP_ASSERT(al);
     DP_ASSERT(reserve >= 0);
-    DP_debug("New transient annotation list with reserve %d", reserve);
     int old_count = al->count;
     int new_count = old_count + reserve;
     DP_TransientAnnotationList *tal = alloc_annotation_list(true, new_count);

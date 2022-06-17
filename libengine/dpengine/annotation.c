@@ -288,7 +288,6 @@ DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a)
 {
     DP_ASSERT(a);
     DP_ASSERT(DP_atomic_get(&a->refcount) > 0);
-    DP_debug("New transient annotation");
     DP_TransientAnnotation *ta = DP_malloc(sizeof(*ta));
     *ta = (DP_TransientAnnotation){DP_ATOMIC_INIT(1),
                                    true,

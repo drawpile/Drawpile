@@ -794,7 +794,6 @@ static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     DP_ASSERT(!cs->transient);
-    DP_debug("New transient canvas state");
     DP_TransientCanvasState *tcs =
         allocate_canvas_state(true, cs->width, cs->height);
     tcs->background_tile = DP_tile_incref_nullable(cs->background_tile);

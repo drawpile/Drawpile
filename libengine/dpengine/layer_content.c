@@ -852,7 +852,6 @@ DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_ASSERT(!lc->transient);
-    DP_debug("New transient layer content");
     int width = lc->width;
     int height = lc->height;
     DP_TransientLayerContent *tlc = alloc_layer_content(width, height);

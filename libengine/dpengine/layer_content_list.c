@@ -306,7 +306,6 @@ DP_transient_layer_content_list_new(DP_LayerContentList *lcl, int reserve)
     DP_ASSERT(DP_atomic_get(&lcl->refcount) > 0);
     DP_ASSERT(!lcl->transient);
     DP_ASSERT(reserve >= 0);
-    DP_debug("New transient layer content list");
     int count = lcl->count;
     DP_TransientLayerContentList *tlcl =
         allocate_layer_content_list(true, count + reserve);

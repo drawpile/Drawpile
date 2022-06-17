@@ -178,7 +178,6 @@ DP_transient_layer_props_list_new(DP_LayerPropsList *lpl, int reserve)
     DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
     DP_ASSERT(!lpl->transient);
     DP_ASSERT(reserve >= 0);
-    DP_debug("New transient layer props list");
     int count = lpl->count;
     DP_TransientLayerPropsList *tlpl =
         allocate_layer_props_list(true, count + reserve);
