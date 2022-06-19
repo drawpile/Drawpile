@@ -69,6 +69,17 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
                              const DP_Quad *dst_quad, int *out_offset_x,
                              int *out_offset_y);
 
+// Creates a scaled-down thumbnail of the given `img` if it doesn't fit into the
+// given maximum dimensions. Return value and the value filled into `out_thumb`
+// will be as follows:
+// | return value | *out_thumb | meaning                          |
+// |--------------|------------|----------------------------------|
+// | true         | NULL       | img is already thumbnail-sized   |
+// | true         | non-NULL   | thumbnail generated successfully |
+// | false        | NULL       | thumbnail generation failed      |
+bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
+                        int max_height, DP_Image **out_thumb) DP_MUST_CHECK;
+
 
 DP_Image *DP_image_read_png(DP_Input *input);
 

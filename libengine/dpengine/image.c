@@ -331,6 +331,57 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
     return dst_img;
 }
 
+static void thumbnail_scale(int width, int height, int max_width,
+                            int max_height, int *out_width, int *out_height)
+{
+    int w = max_height * width / height;
+    if (w <= max_width) {
+        *out_width = DP_max_int(w, 1);
+        *out_height = DP_max_int(max_height, 1);
+    }
+    else {
+        *out_width = DP_max_int(max_width, 1);
+        *out_height = DP_max_int(max_width * height / width, 1);
+    }
+}
+
+bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
+                        int max_height, DP_Image **out_thumb)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(out_thumb);
+    DP_ASSERT(dc);
+    DP_ASSERT(max_width > 0);
+    DP_ASSERT(max_height > 0);
+    int width = img->width;
+    int height = img->height;
+    if (width > max_width || height > max_height) {
+        int thumb_width, thumb_height;
+        thumbnail_scale(width, height, max_width, max_height, &thumb_width,
+                        &thumb_height);
+        DP_Image *thumb = DP_image_new(thumb_width, thumb_height);
+
+        DP_Transform tf = DP_transform_scale(
+            DP_transform_identity(),
+            DP_int_to_double(thumb_width) / DP_int_to_double(width),
+            DP_int_to_double(thumb_height) / DP_int_to_double(height));
+
+        if (DP_image_transform_draw(img, dc, thumb, tf)) {
+            *out_thumb = thumb;
+            return true;
+        }
+        else {
+            DP_image_free(thumb);
+            *out_thumb = NULL;
+            return false;
+        }
+    }
+    else {
+        *out_thumb = NULL;
+        return true;
+    }
+}
+
 
 DP_Image *DP_image_read_png(DP_Input *input)
 {
