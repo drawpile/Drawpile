@@ -108,6 +108,8 @@ void DP_tile_decref_nullable(DP_Tile *tile_or_null);
 bool DP_tile_transient(DP_Tile *tile);
 
 
+unsigned int DP_tile_context_id(DP_Tile *tile);
+
 DP_Pixel *DP_tile_pixels(DP_Tile *tile);
 
 DP_Pixel DP_tile_pixel_at(DP_Tile *tile, int x, int y);
@@ -135,6 +137,10 @@ DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
 
 DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt);
 
+
+unsigned int DP_transient_tile_context_id(DP_Tile *tt);
+
+DP_Pixel *DP_transient_tile_pixels(DP_Tile *tt);
 
 DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y);
 

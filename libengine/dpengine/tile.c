@@ -178,6 +178,13 @@ bool DP_tile_transient(DP_Tile *tile)
 }
 
 
+unsigned int DP_tile_context_id(DP_Tile *tile)
+{
+    DP_ASSERT(tile);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    return tile->context_id;
+}
+
 DP_Pixel *DP_tile_pixels(DP_Tile *tile)
 {
     DP_ASSERT(tile);
@@ -318,6 +325,22 @@ DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt)
     return (DP_Tile *)tt;
 }
 
+
+unsigned int DP_transient_tile_context_id(DP_Tile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    return tt->context_id;
+}
+
+DP_Pixel *DP_transient_tile_pixels(DP_Tile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    return tt->pixels;
+}
 
 DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y)
 {
