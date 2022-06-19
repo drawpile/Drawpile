@@ -72,7 +72,7 @@ int DP_canvas_state_width(DP_CanvasState *cs);
 
 int DP_canvas_state_height(DP_CanvasState *cs);
 
-DP_Tile *DP_canvas_state_background_tile(DP_CanvasState *cs);
+DP_Tile *DP_canvas_state_background_tile_noinc(DP_CanvasState *cs);
 
 DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs);
 
