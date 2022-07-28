@@ -104,7 +104,7 @@ download_package "$GIFLIB_URL" giflib.tar.gz
 download_package "$LIBVPX_URL" libvpx.zip
 download_package "$ECM_URL" extra-cmake-modules.tar.xz
 download_package "$KARCHIVE_URL" karchive.tar.xz
-download_package "$KDNSSD_URL" kdnssd.tar.xz
+#download_package "$KDNSSD_URL" kdnssd.tar.xz
 download_package "$KEYCHAIN_URL" qtkeychain.zip
 
 # Make sure we have the right versions (and they haven't been tampered with)
@@ -116,6 +116,6 @@ install_package miniupnpc justmakeinstall
 install_package libvpx autoconf_libvpx
 install_package extra-cmake-modules cmake
 install_package karchive cmake
-install_package kdnssd cmake
+#install_package kdnssd cmake
 install_package qtkeychain cmake
 

@@ -20,8 +20,8 @@ RUN make download-giflib download-libsodium download-qtkeychain
 RUN make -j$(nproc) giflib libsodium qtkeychain
 
 # Add our own deps
-ADD extra-cmake-modules.mk dnssd_shim.mk kdnssd.mk kdnssd-1-qtendian.patch kdnssd-2-shim.patch /usr/src/mxe/src/
-RUN make extra-cmake-modules kdnssd
+#ADD extra-cmake-modules.mk dnssd_shim.mk kdnssd.mk kdnssd-1-qtendian.patch kdnssd-2-shim.patch /usr/src/mxe/src/
+#RUN make extra-cmake-modules kdnssd
 
 # Add Rust compiler
 # See: https://github.com/mxe/mxe/pull/2514/
