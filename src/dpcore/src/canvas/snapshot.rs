@@ -207,8 +207,8 @@ fn create_group(user: UserID, layer: &GroupLayer, into: LayerID, msgs: &mut Vec<
                 LayerAttributesMessage::FLAGS_CENSOR
             } else {
                 0
-            } | if metadata.fixed {
-                LayerAttributesMessage::FLAGS_FIXED
+            } | if metadata.isolated {
+                LayerAttributesMessage::FLAGS_ISOLATED
             } else {
                 0
             },
@@ -245,10 +245,6 @@ fn create_layer(user: UserID, layer: &BitmapLayer, into: LayerID, msgs: &mut Vec
             sublayer: 0,
             flags: if metadata.censored {
                 LayerAttributesMessage::FLAGS_CENSOR
-            } else {
-                0
-            } | if metadata.fixed {
-                LayerAttributesMessage::FLAGS_FIXED
             } else {
                 0
             },

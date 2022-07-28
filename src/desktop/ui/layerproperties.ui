@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>314</width>
-    <height>356</height>
+    <width>317</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,65 +75,6 @@
      </property>
     </widget>
    </item>
-   <item row="14" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Created by:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="17" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="1">
-    <widget class="QLabel" name="createdBy">
-     <property name="text">
-      <string notr="true">#0</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QCheckBox" name="visible">
-     <property name="text">
-      <string>Visible to you</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1">
-    <widget class="QCheckBox" name="fixed">
-     <property name="text">
-      <string>Visible on all animation frames</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Collaboration:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
-    <widget class="QCheckBox" name="defaultLayer">
-     <property name="text">
-      <string>Default for new users</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Visibility:</string>
-     </property>
-    </widget>
-   </item>
    <item row="7" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
@@ -150,7 +91,28 @@
      </property>
     </spacer>
    </item>
-   <item row="11" column="1">
+   <item row="8" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Visibility:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QCheckBox" name="visible">
+     <property name="text">
+      <string>Visible to you</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="censored">
+     <property name="text">
+      <string>Censor content</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
     <spacer name="verticalSpacer_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -166,7 +128,38 @@
      </property>
     </spacer>
    </item>
-   <item row="16" column="0">
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Collaboration:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QCheckBox" name="defaultLayer">
+     <property name="text">
+      <string>Default for new users</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Created by:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <widget class="QLabel" name="createdBy">
+     <property name="text">
+      <string notr="true">#0</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0">
     <spacer name="verticalSpacer_3">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -179,10 +172,10 @@
      </property>
     </spacer>
    </item>
-   <item row="10" column="1">
-    <widget class="QCheckBox" name="censored">
-     <property name="text">
-      <string>Censor content</string>
+   <item row="16" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

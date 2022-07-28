@@ -672,7 +672,6 @@ impl CanvasState {
                 msg.opacity as f32 / 255.0,
                 Blendmode::try_from(msg.blend).unwrap_or(Blendmode::Normal),
                 (msg.flags & LayerAttributesMessage::FLAGS_CENSOR) != 0,
-                (msg.flags & LayerAttributesMessage::FLAGS_FIXED) != 0,
                 (msg.flags & LayerAttributesMessage::FLAGS_ISOLATED) != 0,
             );
 

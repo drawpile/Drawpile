@@ -456,7 +456,6 @@ impl<W: Write + Seek> IndexBuilder<W> {
         self.writer.write_u8(metadata.blendmode.into())?;
         self.writer.write_u8(metadata.hidden as u8)?;
         self.writer.write_u8(metadata.censored as u8)?;
-        self.writer.write_u8(metadata.fixed as u8)?;
         self.writer.write_u8(metadata.isolated as u8)?;
 
         Ok(())

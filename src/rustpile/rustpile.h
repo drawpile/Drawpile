@@ -226,7 +226,6 @@ struct LayerInfo {
   uint16_t id;
   bool hidden;
   bool censored;
-  bool fixed;
   bool isolated;
   bool group;
   Blendmode blendmode;

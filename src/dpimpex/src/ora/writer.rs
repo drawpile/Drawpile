@@ -117,7 +117,6 @@ fn write_background<W: Write + Seek>(
             visibility: true,
             locked: false,
             censored: false,
-            fixed: false,
             composite_op: Blendmode::Normal,
             unsupported_features: false,
             id: 0,
@@ -142,7 +141,6 @@ fn write_layer<W: Write + Seek>(
             visibility: !md.hidden,
             locked: false, // TODO
             censored: md.censored,
-            fixed: md.fixed,
             composite_op: md.blendmode,
             unsupported_features: false,
             id: layer.metadata().id,
@@ -181,7 +179,6 @@ fn write_stack<W: Write + Seek>(
             visibility: !md.hidden,
             locked: false, // TODO
             censored: md.censored,
-            fixed: md.fixed,
             composite_op: md.blendmode,
             unsupported_features: false,
             id: group.metadata().id,
@@ -398,9 +395,6 @@ fn stack_common_attrs<'a>(
     }
     if common.censored {
         el = el.attr("drawpile:censored", "true")
-    }
-    if common.fixed {
-        el = el.attr("drawpile:fixed", "true")
     }
     if common.locked {
         el = el.attr("edit-locked", "true");

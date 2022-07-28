@@ -36,7 +36,6 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	  m_groupIcon(icon::fromTheme("folder")),
 	  m_censoredIcon(QIcon(":/icons/censored.svg")),
 	  m_hiddenIcon(icon::fromTheme("layer-visible-off")),
-	  m_fixedIcon(icon::fromTheme("window-pin")),
 	  m_showNumbers(false)
 {
 }
@@ -73,16 +72,6 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	}
 
 	drawDisplay(painter, opt, textrect, title);
-
-	// Draw fixed icon
-	if(layer.fixed) {
-		m_fixedIcon.paint(painter,
-			opt.rect.right() - ICON_SIZE.width(),
-			opt.rect.top() + opt.rect.height()/2 - ICON_SIZE.height()/2,
-			ICON_SIZE.width(),
-			ICON_SIZE.height()
-		);
-	}
 
 	painter->restore();
 }

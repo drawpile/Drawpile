@@ -59,9 +59,6 @@ struct LayerListItem {
 	//! Layer is flagged for censoring
 	bool censored;
 
-	//! This is a fixed background/foreground layer
-	bool fixed;
-
 	//! Isolated (not pass-through) group?
 	bool isolated;
 
@@ -104,7 +101,6 @@ public:
 		TitleRole,
 		IsDefaultRole,
 		IsLockedRole,
-		IsFixedRole,
 		IsGroupRole,
 	};
 

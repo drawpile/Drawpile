@@ -150,7 +150,6 @@ impl GroupLayer {
                 opacity: 1.0,
                 hidden: false,
                 censored: false,
-                fixed: false,
                 blendmode: Blendmode::Normal,
                 isolated: true,
             },

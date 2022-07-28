@@ -200,7 +200,6 @@ fn read_layer<R: Read + Seek>(
     let blendmode = Blendmode::try_from(reader.read_u8()?).unwrap_or_default();
     let hidden = reader.read_u8()? != 0;
     let censored = reader.read_u8()? != 0;
-    let fixed = reader.read_u8()? != 0;
     let isolated = reader.read_u8()? != 0;
     let group = reader.read_u8()? != 0;
 
@@ -210,7 +209,6 @@ fn read_layer<R: Read + Seek>(
         opacity,
         hidden,
         censored,
-        fixed,
         blendmode,
         isolated,
     };

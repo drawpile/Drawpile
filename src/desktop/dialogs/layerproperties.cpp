@@ -61,7 +61,6 @@ void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QStr
 	m_ui->title->setText(item.title);
 	m_ui->opacitySpinner->setValue(qRound(item.opacity * 100.0f));
 	m_ui->visible->setChecked(!item.hidden);
-	m_ui->fixed->setChecked(item.fixed);
 	m_ui->censored->setChecked(item.censored);
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->defaultLayer->setEnabled(!isDefault);
@@ -89,7 +88,6 @@ void LayerProperties::setControlsEnabled(bool enabled) {
 		m_ui->opacitySlider,
 		m_ui->opacitySpinner,
 		m_ui->blendMode,
-		m_ui->fixed,
 		m_ui->isolated,
 		m_ui->censored
 	};
@@ -127,14 +125,12 @@ void LayerProperties::emitChanges()
 	const rustpile::Blendmode newBlendmode = static_cast<rustpile::Blendmode>(m_ui->blendMode->currentData().toInt());
 	const bool censored = m_ui->censored->isChecked();
 	const bool isolated = m_ui->isolated->isChecked();
-	const bool fixed = m_ui->fixed->isChecked();
 
 	if(
 		m_ui->opacitySpinner->value() != oldOpacity ||
 		newBlendmode != m_item.blend ||
 		censored != m_item.censored ||
-		isolated != m_item.isolated ||
-		fixed != m_item.fixed
+	    isolated != m_item.isolated
 	) {
 		rustpile::write_layerattr(
 			eb,
@@ -142,8 +138,7 @@ void LayerProperties::emitChanges()
 			m_item.id,
 			0,
 			(censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
-			(isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0) |
-			(fixed ? rustpile::LayerAttributesMessage_FLAGS_FIXED : 0),
+		    (isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0),
 			qRound(m_ui->opacitySpinner->value() / 100.0 * 255),
 			newBlendmode
 		);

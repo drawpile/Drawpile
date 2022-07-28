@@ -115,7 +115,6 @@ fn create_stack<R: Read + Seek>(
                 metadata.opacity = substack.common.opacity.clamp(0.0, 1.0);
                 metadata.hidden = !substack.common.visibility;
                 metadata.censored = substack.common.censored;
-                metadata.fixed = substack.common.fixed;
                 metadata.blendmode = substack.common.composite_op;
                 metadata.isolated = matches!(substack.isolation, Isolation::Isolate);
 
@@ -149,7 +148,6 @@ fn create_stack<R: Read + Seek>(
                 metadata.opacity = oralayer.common.opacity.clamp(0.0, 1.0);
                 metadata.hidden = !oralayer.common.visibility;
                 metadata.censored = oralayer.common.censored;
-                metadata.fixed = oralayer.common.fixed;
                 metadata.blendmode = oralayer.common.composite_op;
 
                 // TODO layer lock status
@@ -271,7 +269,6 @@ fn parse_stack_image<R: Read>(
                 visibility: true,
                 locked: false,
                 censored: false,
-                fixed: false,
                 composite_op: Blendmode::Normal,
                 unsupported_features: false,
                 id: 0, // TODO
@@ -352,8 +349,6 @@ fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32), id: Lay
         visibility: take_attribute(attributes, "visibility", None).map_or(true, |a| a == "visible"),
         locked: take_attribute(attributes, "edit-locked", None).map_or(false, |a| a == "true"),
         censored: take_attribute(attributes, "censored", Some(DP_NAMESPACE))
-            .map_or(false, |a| a == "true"),
-        fixed: take_attribute(attributes, "fixed", Some(DP_NAMESPACE))
             .map_or(false, |a| a == "true"),
         composite_op: take_attribute(attributes, "composite-op", None)
             .and_then(|s| Blendmode::from_svg_name(&s))

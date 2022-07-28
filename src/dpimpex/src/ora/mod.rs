@@ -31,7 +31,6 @@ struct OraCommon {
     visibility: bool,
     locked: bool,
     censored: bool, // our extension
-    fixed: bool,    // our extension
     composite_op: Blendmode,
     unsupported_features: bool, // this layer makes use of unsupported features
     id: LayerID,                // used internally

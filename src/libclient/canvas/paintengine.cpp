@@ -69,7 +69,6 @@ void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, u
 			li.blendmode,
 			li.hidden,
 			li.censored,
-			li.fixed,
 			li.isolated,
 			li.group,
 			li.children,

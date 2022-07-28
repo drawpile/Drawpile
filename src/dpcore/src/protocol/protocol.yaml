@@ -354,6 +354,9 @@ LayerAttributes:
 
              Specifying a sublayer requires session operator privileges. Currently, it is used
              only when sublayers are needed at canvas initialization.
+
+             Note: the `fixed` flag is unused since version 2.2. It's functionality is replaced
+             by the custom timeline feature.
     fields:
         - id u16: hex
         - sublayer u8

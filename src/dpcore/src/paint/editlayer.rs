@@ -351,7 +351,6 @@ pub fn change_attributes(
     opacity: f32,
     blend: Blendmode,
     censored: bool,
-    fixed: bool,
     isolated: bool,
 ) -> AoE {
     if sublayer != 0 {
@@ -369,7 +368,6 @@ pub fn change_attributes(
         md.blendmode = blend;
         md.opacity = opacity;
         md.censored = censored;
-        md.fixed = fixed;
         md.isolated = isolated;
 
         layer.nonblank_tilemap().into()
@@ -535,7 +533,6 @@ mod tests {
                 opacity: 0.5,
                 hidden: false,
                 censored: false,
-                fixed: false,
                 blendmode: Blendmode::Normal,
                 isolated: true,
             },

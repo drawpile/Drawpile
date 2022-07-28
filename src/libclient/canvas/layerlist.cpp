@@ -48,7 +48,6 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case IdRole: return item.id;
 	case IsDefaultRole: return item.id == m_defaultLayer;
 	case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
-	case IsFixedRole: return item.fixed;
 	case IsGroupRole: return item.group;
 	}
 
@@ -396,7 +395,6 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 uint8_t LayerListItem::attributeFlags() const
 {
 	return (censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
-		   (fixed ? rustpile::LayerAttributesMessage_FLAGS_FIXED : 0) |
 			(isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0)
 			;
 }

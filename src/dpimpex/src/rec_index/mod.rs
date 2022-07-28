@@ -3,7 +3,7 @@ use std::{error, fmt};
 pub mod reader;
 pub mod writer;
 
-pub const INDEX_FORMAT_VERSION: u16 = 9;
+pub const INDEX_FORMAT_VERSION: u16 = 10;
 
 pub struct IndexEntry {
     /// Number of the message this entry points to
