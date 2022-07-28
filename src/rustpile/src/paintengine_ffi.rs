@@ -1592,7 +1592,7 @@ pub extern "C" fn paintengine_save_animation(
         vc.layerstack.clone()
     };
 
-    let expected_frames = layerstack.root().layer_count();
+    let expected_frames = layerstack.frame_count();
 
     if expected_frames == 0 {
         warn!("No frames to export!");
