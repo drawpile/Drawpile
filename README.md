@@ -30,7 +30,6 @@ Client specific dependencies:
 * [QtColorPicker]: optional, bundled copy is included
 * [QtKeyChain]: optional, enables password storage
 * KF5 KDNSSD: optional, local server discovery with Zeroconf
-* MiniUPnP: optional, automatic port forwarding setup
 
 Server specific dependencies (you can also take a look at [Docker build](pkg/docker/Dockerfile) script):
 

@@ -50,7 +50,6 @@ cp "$MBIN/libiconv-2.dll" .
 cp "$MBIN/libcrypto-1_1-x64.dll" .
 cp "$MBIN/libssl-1_1-x64.dll" .
 cp "$MBIN/libgif-7.dll" .
-cp "$MBIN/libminiupnpc.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
 cp "$MBIN/libKF5DNSSD.dll" .
 cp "$MBIN/libsodium-23.dll" .

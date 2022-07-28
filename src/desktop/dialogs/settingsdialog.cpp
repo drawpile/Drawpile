@@ -323,11 +323,7 @@ void SettingsDialog::restoreSettings()
 #else
 	m_ui->dnssd->setEnabled(false);
 #endif
-#ifdef HAVE_UPNP
-	m_ui->useupnp->setChecked(cfg.value("upnp", true).toBool());
-#else
 	m_ui->useupnp->setEnabled(false);
-#endif
 	m_ui->privateUserList->setChecked(cfg.value("privateUserList", false).toBool());
 	cfg.endGroup();
 

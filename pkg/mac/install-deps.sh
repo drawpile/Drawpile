@@ -4,7 +4,6 @@ set -e
 
 ### VERSIONS TO DOWNLOAD
 GIFLIB_URL=https://sourceforge.net/projects/giflib/files/giflib-5.1.4.tar.gz/download
-MINIUPNPC_URL=http://miniupnp.free.fr/files/download.php?file=miniupnpc-2.1.tar.gz
 LIBVPX_URL=https://github.com/webmproject/libvpx/archive/v1.8.0.zip
 ECM_URL=https://download.kde.org/stable/frameworks/5.64/extra-cmake-modules-5.64.0.tar.xz
 KARCHIVE_URL=https://download.kde.org/stable/frameworks/5.64/karchive-5.64.0.tar.xz
@@ -102,7 +101,6 @@ cd deps
 
 # Download dependencies
 download_package "$GIFLIB_URL" giflib.tar.gz
-download_package "$MINIUPNPC_URL" miniupnpc.tar.gz
 download_package "$LIBVPX_URL" libvpx.zip
 download_package "$ECM_URL" extra-cmake-modules.tar.xz
 download_package "$KARCHIVE_URL" karchive.tar.xz

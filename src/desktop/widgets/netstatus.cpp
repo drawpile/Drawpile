@@ -24,10 +24,6 @@
 #include "utils/icon.h"
 #include "../libshared/util/whatismyip.h"
 
-#ifdef HAVE_UPNP
-#include "../libshared/util/upnp.h"
-#endif
-
 #include <QAction>
 #include <QLabel>
 #include <QApplication>
@@ -89,10 +85,6 @@ NetStatus::NetStatus(QWidget *parent)
 	m_label->addAction(_discoverIp);
 	connect(_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
 	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
-
-#ifdef HAVE_UPNP
-	connect(UPnPClient::instance(), &UPnPClient::externalIp, this, &NetStatus::externalIpDiscovered);
-#endif
 
 	// Option to hide the server address
 	// (useful when livestreaming)
