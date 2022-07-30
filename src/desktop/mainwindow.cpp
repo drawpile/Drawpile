@@ -495,6 +495,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->metadata(), &canvas::DocumentMetadata::framerateChanged, m_dockTimeline, &docks::Timeline::setFps);
 	connect(canvas->metadata(), &canvas::DocumentMetadata::useTimelineChanged, m_dockTimeline, &docks::Timeline::setUseTimeline);
 
+	connect(m_dockTimeline, &docks::Timeline::currentFrameChanged, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
+
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 
 	// Make sure the UI matches the default feature access level
@@ -2633,16 +2635,16 @@ void MainWindow::setupActions()
 	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable().remembered();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 
-	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
-	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
+	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Shift+X");
+	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Shift+Z");
 
 	connect(layerSolo, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerFrame, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerOnionskin, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerNumbers, &QAction::toggled, m_dockLayers, &docks::LayerList::showLayerNumbers);
-	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
-	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
+	connect(nextFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setNextFrame);
+	connect(prevFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setPreviousFrame);
 
 	QMenu *layerMenu = menuBar()->addMenu(tr("Layer"));
 	layerMenu->addAction(layerAdd);
@@ -2659,8 +2661,8 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerUncensor);
 
 	layerMenu->addSeparator();
-	layerMenu->addAction(layerUpAct);
-	layerMenu->addAction(layerDownAct);
+	layerMenu->addAction(nextFrameAct);
+	layerMenu->addAction(prevFrameAct);
 
 
 

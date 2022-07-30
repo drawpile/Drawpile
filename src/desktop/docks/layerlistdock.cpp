@@ -216,18 +216,6 @@ QString LayerList::layerCreatorName(uint16_t layerId) const
 	return m_canvas->userlist()->getUsername((layerId >> 8) & 0xff);
 }
 
-void LayerList::selectAbove()
-{
-	QModelIndex current = currentSelection();
-	selectLayerIndex(current.sibling(current.row() - 1, 0), true);
-}
-
-void LayerList::selectBelow()
-{
-	QModelIndex current = currentSelection();
-	selectLayerIndex(current.sibling(current.row() + 1, 0), true);
-}
-
 static net::Envelope updateLayerAttributesMessage(uint8_t contextId, const canvas::LayerListItem &layer, ChangeFlags<uint8_t> flagChanges, int opacity, int blend)
 {
 	net::EnvelopeBuilder eb;

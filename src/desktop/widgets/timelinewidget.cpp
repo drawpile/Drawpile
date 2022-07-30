@@ -41,6 +41,7 @@ struct TimelineWidget::Private {
 	int rowHeight=10;
 	int xScroll=0;
 	int yScroll=0;
+	int currentFrame=1;
 
 	QScrollBar *verticalScroll;
 	QScrollBar *horizontalScroll;
@@ -65,8 +66,20 @@ TimelineWidget::~TimelineWidget()
 void TimelineWidget::setModel(canvas::TimelineModel *model)
 {
 	d->model = model;
-	connect(model, &canvas::TimelineModel::framesChanged, this, QOverload<>::of(&TimelineWidget::update));
-	connect(model, &canvas::TimelineModel::layersChanged, this, &TimelineWidget::onLayersChanged);
+	connect(model, &canvas::TimelineModel::framesChanged, this, QOverload<>::of(&TimelineWidget::update), Qt::QueuedConnection);
+	connect(model, &canvas::TimelineModel::layersChanged, this, &TimelineWidget::onLayersChanged, Qt::QueuedConnection);
+}
+
+canvas::TimelineModel *TimelineWidget::model() const {
+	return d->model;
+}
+
+void TimelineWidget::setCurrentFrame(int frame)
+{
+	if(frame != d->currentFrame) {
+		d->currentFrame = frame;
+		update();
+	}
 }
 
 void TimelineWidget::onLayersChanged()
@@ -150,10 +163,15 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	// Frame columns
 	int x = d->headerWidth - d->xScroll;
 	painter.setClipRect(d->headerWidth, 0, w, h);
+	int frameNum = 1;
 	for(const auto &col : d->model->frames()) {
 		if(x+d->columnWidth > d->headerWidth) {
 			if(x > w)
 				break;
+
+			if(frameNum == d->currentFrame) {
+				painter.fillRect(x, 0, d->columnWidth, h, Qt::blue);
+			}
 
 			for(int i=0;i<MAX_LAYERS_PER_FRAME;++i) {
 				if(col.frame[i] == 0)
@@ -165,6 +183,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 			painter.drawLine(x, 0, x, vLine);
 		}
 		x += d->columnWidth;
+		++frameNum;
 	}
 	painter.drawLine(x, 0, x, vLine);
 

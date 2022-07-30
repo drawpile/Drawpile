@@ -47,6 +47,16 @@ Timeline::Timeline(QWidget *parent)
 
 	titlebar->addCustomWidget(m_useTimeline);
 	titlebar->addStretch();
+
+	titlebar->addCustomWidget(new QLabel(tr("Frame:")));
+	m_currentFrame = new QSpinBox;
+	m_currentFrame->setWrapping(true);
+	m_currentFrame->setMinimum(1);
+	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), this, &Timeline::currentFrameChanged);
+	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), m_widget, &widgets::TimelineWidget::setCurrentFrame);
+	titlebar->addCustomWidget(m_currentFrame);
+
+	titlebar->addSpace(12);
 	titlebar->addCustomWidget(new QLabel(tr("FPS:")));
 
 	m_fps = new QSpinBox;
@@ -60,6 +70,7 @@ Timeline::Timeline(QWidget *parent)
 void Timeline::setTimeline(canvas::TimelineModel *model)
 {
 	m_widget->setModel(model);
+	connect(model, &canvas::TimelineModel::framesChanged, this, &Timeline::onFramesChanged, Qt::QueuedConnection);
 }
 
 void Timeline::setUseTimeline(bool useTimeline)
@@ -72,6 +83,31 @@ void Timeline::setFps(int fps)
 	m_fps->blockSignals(true);
 	m_fps->setValue(fps);
 	m_fps->blockSignals(false);
+}
+
+void Timeline::setCurrentFrame(int frame)
+{
+	m_currentFrame->setValue(frame);
+}
+
+void Timeline::setNextFrame()
+{
+	m_currentFrame->setValue(m_currentFrame->value() + 1);
+}
+
+void Timeline::setPreviousFrame()
+{
+	m_currentFrame->setValue(m_currentFrame->value() - 1);
+}
+
+int Timeline::currentFrame() const
+{
+	return m_currentFrame->value();
+}
+
+void Timeline::onFramesChanged()
+{
+	m_currentFrame->setMaximum(qMax(1, m_widget->model()->frames().size()));
 }
 
 void Timeline::onUseTimelineClicked()

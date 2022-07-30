@@ -97,11 +97,14 @@ public:
 	//! Is OpenRaster file format needed to save the canvas losslessly?
 	bool needsOpenRaster() const;
 
-	//! Set layerstack rendering mode (normal, solo, onionskin)
+	//! Set layerstack rendering mode (normal, solo, frame, onionskin)
 	void setViewMode(rustpile::LayerViewMode mode, bool censor);
 
-	//! Set the active view layer (for solo and onionskin modes)
+	//! Set the active view layer (for solo mode)
 	void setViewLayer(int id);
+
+	//! Set the active view frame (for frame and onionskin modes)
+	void setViewFrame(int frame);
 
 	//! Set options to use with onion skin layer rendering mode
 	void setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint);

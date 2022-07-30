@@ -49,16 +49,26 @@ public:
 	void setFps(int fps);
 	void setUseTimeline(bool useTimeline);
 
+	int currentFrame() const;
+	void setCurrentFrame(int frame);
+
+public slots:
+	void setNextFrame();
+	void setPreviousFrame();
+
 signals:
 	void timelineEditCommand(const net::Envelope &e);
+	void currentFrameChanged(int frame);
 
 private slots:
 	void onUseTimelineClicked();
 	void onFpsChanged();
+	void onFramesChanged();
 
 private:
 	widgets::TimelineWidget *m_widget;
 	QCheckBox *m_useTimeline;
+	QSpinBox *m_currentFrame;
 	QSpinBox *m_fps;
 };
 

@@ -654,6 +654,8 @@ void paintengine_set_onionskin_opts(PaintEngine *dp,
 
 void paintengine_set_active_layer(PaintEngine *dp, LayerID layer_id);
 
+void paintengine_set_active_frame(PaintEngine *dp, intptr_t frame_idx);
+
 /// Check the given coordinates and return the ID of the user
 /// who last touched the tile under it.
 /// This will also set that user ID as the canvas highlight ID.

@@ -70,9 +70,6 @@ public slots:
 	void selectLayer(int id);
 	void showLayerNumbers(bool show);
 
-	void selectAbove();
-	void selectBelow();
-
 signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);

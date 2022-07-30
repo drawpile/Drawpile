@@ -40,9 +40,9 @@ public:
 	~TimelineWidget();
 
 	void setModel(canvas::TimelineModel *model);
-	void setLayers();
-	void setFrames();
+	void setCurrentFrame(int frame);
 
+	canvas::TimelineModel *model() const;
 signals:
 	void timelineEditCommand(const net::Envelope &e);
 

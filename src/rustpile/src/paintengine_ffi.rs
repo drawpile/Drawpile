@@ -745,15 +745,35 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
     let aoe_bounds = {
         let mut vc = dp.viewcache.lock().unwrap();
 
-        // TODO this should be set by a set_active_frame function
-        let frame_idx = match vc.layerstack.root().find_root_index_by_id(layer_id) {
-            Some(i) => (vc.layerstack.root().layer_count() - i - 1) as isize,
-            None => {
-                return;
-            }
+        let changed = match dp.view_opts.viewmode {
+            LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
+            _ => false,
         };
 
+        dp.view_opts.active_layer_id = layer_id;
+
+        if !changed || vc.layerstack.root().width() == 0 {
+            None
+        } else {
+            vc.unrefreshed_area = AoE::Everything;
+            vc.unrefreshed_area.bounds(vc.layerstack.root().size())
+        }
+    };
+
+    if let Some(r) = aoe_bounds {
+        (dp.notify_changes)(dp.context_object, r);
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn paintengine_set_active_frame(dp: &mut PaintEngine, frame_idx: isize) {
+    let aoe_bounds = {
+        let mut vc = dp.viewcache.lock().unwrap();
+
+        let frame_idx = frame_idx.min(vc.layerstack.frame_count() as isize).max(1) - 1;
+
         let frame = vc.layerstack.frame_at(frame_idx);
+
         let frames_below = dp.view_opts.frames_below.len() as isize;
         for i in 0..frames_below {
             dp.view_opts.frames_below[i as usize] = vc.layerstack.frame_at(frame_idx - i - 1);
@@ -764,7 +784,6 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
         }
 
         let changed = match dp.view_opts.viewmode {
-            LayerViewMode::Solo => dp.view_opts.active_layer_id != layer_id,
             LayerViewMode::Frame | LayerViewMode::Onionskin => {
                 dp.view_opts.active_frame != frame
             }
@@ -772,7 +791,6 @@ pub extern "C" fn paintengine_set_active_layer(dp: &mut PaintEngine, layer_id: L
         };
 
         dp.view_opts.active_frame = frame;
-        dp.view_opts.active_layer_id = layer_id;
 
         if !changed || vc.layerstack.root().width() == 0 {
             None

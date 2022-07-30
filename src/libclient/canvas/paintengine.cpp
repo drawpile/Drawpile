@@ -196,6 +196,11 @@ void PaintEngine::setViewLayer(int id)
 	rustpile::paintengine_set_active_layer(m_pe, id);
 }
 
+void PaintEngine::setViewFrame(int frame)
+{
+	rustpile::paintengine_set_active_frame(m_pe, frame);
+}
+
 const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
 {
 	const auto size = this->size();
