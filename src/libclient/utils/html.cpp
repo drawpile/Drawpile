@@ -25,11 +25,12 @@ namespace htmlutils {
 
 QString newlineToBr(const QString &input)
 {
+	QStringView in{input};
 	QString out;
 	int pos=0;
 	int last=0;
-	while((pos=input.indexOf('\n', last))>=0) {
-		out.append(input.midRef(last, pos-last));
+	while((pos=in.indexOf('\n', last))>=0) {
+		out.append(in.mid(last, pos-last));
 		out.append("<br>");
 		last=pos+1;
 	}
@@ -37,12 +38,14 @@ QString newlineToBr(const QString &input)
 	if(last==0)
 		return input;
 
-	out.append(input.midRef(last));
+	out.append(in.mid(last));
 	return out;
 }
 
 QString linkify(const QString &input, const QString &extra)
 {
+	QStringView in{input};
+
 	// This regular expression is from: http://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without-the
 	static const QRegularExpression linkre(
 		"((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[\\-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9\\.\\-]+|(?:www\\.|[\\-;:&=\\+\\$,\\w]+@)[A-Za-z0-9\\.\\-]+)(?::\\d+)?((?:\\/[\\+~%\\/\\.\\w\\-_]*)?\\?" "?(?:[\\-\\+=&;%@\\.\\w_]*)(?:#[^ ]*)?)?)"
@@ -50,14 +53,14 @@ QString linkify(const QString &input, const QString &extra)
 
 	static const QRegularExpression protore("^[a-zA-Z]{3,}:");
 
-	auto matches = linkre.globalMatch(input);
+	auto matches = linkre.globalMatch(in);
 	QString out;
 	int pos=0;
 
 	while(matches.hasNext()) {
 		auto m = matches.next();
 		QString url = m.captured();
-		out.append(input.midRef(pos, m.capturedStart() - pos));
+		out.append(in.mid(pos, m.capturedStart() - pos));
 		pos = m.capturedEnd();
 
 		out.append("<a href=\"");
@@ -78,7 +81,7 @@ QString linkify(const QString &input, const QString &extra)
 	if(pos==0)
 		return input;
 
-	out.append(input.midRef(pos));
+	out.append(in.mid(pos));
 
 	return out;
 }

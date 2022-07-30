@@ -601,47 +601,48 @@ void ChatWidget::sendMessage(const QString &msg)
 {
 	const uint8_t tflags = d->preserveChat ? rustpile::ChatMessage_TFLAGS_BYPASS : 0;
 	uint8_t oflags = 0;
-	QString chatmsg = msg;
+	auto chatmsg = msg;
 
-	if(msg.at(0) == '/') {
+	QStringView mv{msg};
+	if(mv.at(0) == '/') {
 		// Special commands
 
-		int split = msg.indexOf(' ');
+		int split = mv.indexOf(' ');
 		if(split<0)
-			split = msg.length();
+			split = mv.length();
 
-		const auto cmd = msg.midRef(1, split-1);
-		const auto params = msg.midRef(split).trimmed();
+		const auto cmd = mv.mid(1, split-1);
+		const auto params = mv.mid(split).trimmed();
 
-		if(cmd == "clear") {
+		if(cmd == QStringLiteral("clear")) {
 			clear();
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			if(msg.length() > 2) {
-				chatmsg = msg.midRef(2).toString();
+			if(mv.length() > 2) {
+				chatmsg = mv.mid(2).toString();
 				oflags = rustpile::ChatMessage_OFLAGS_SHOUT;
 			}
 
-		} else if(cmd == "me") {
+		} else if(cmd == QStringLiteral("me")) {
 			if(!params.isEmpty()) {
 				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
 				chatmsg = params.toString();
 			}
 
-		} else if(cmd == "pin" && d->currentChat == 0) {
+		} else if(cmd == QStringLiteral("pin") && d->currentChat == 0) {
 			if(!params.isEmpty()) {
 				oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
 				chatmsg = params.toString();
 			}
 
-		} else if(cmd == "unpin" && d->currentChat == 0) {
+		} else if(cmd == QStringLiteral("unpin") && d->currentChat == 0) {
 			oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
 			chatmsg = QStringLiteral("-");
 
-		} else if(cmd == "roll") {
+		} else if(cmd == QStringLiteral("roll")) {
 			// TODO this should be done serverside to prevent cheating
-			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6").midRef(0) : params);
+			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6") : params);
 			if(result.number>0) {
 				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
 				chatmsg = "rolls " + result.toString();
@@ -650,7 +651,7 @@ void ChatWidget::sendMessage(const QString &msg)
 				return;
 			}
 
-		} else if(cmd == "help") {
+		} else if(cmd == QStringLiteral("help")) {
 			const QString text = QStringLiteral(
 				"Available client commands:\n"
 				"/help - show this message\n"

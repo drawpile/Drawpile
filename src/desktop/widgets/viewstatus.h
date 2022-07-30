@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2008-2019 Calle Laakkonen
+   Copyright (C) 2008-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,9 +49,9 @@ protected:
 	void changeEvent(QEvent *event) override;
 
 private slots:
-	void zoomBoxChanged(const QString &text);
+	void zoomBoxChanged(QStringView text);
 	void zoomSliderChanged(int value);
-	void angleBoxChanged(const QString &text);
+	void angleBoxChanged(QStringView text);
 
 private:
 	void updatePalette();

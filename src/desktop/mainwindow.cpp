@@ -1153,7 +1153,7 @@ void MainWindow::saveSelection()
 				// Use the currently selected filter
 				int i = selfilter.indexOf("*.")+1;
 				int i2 = selfilter.indexOf(')', i);
-				file += selfilter.midRef(i, i2-i);
+				file += QStringView{selfilter}.mid(i, i2-i);
 			}
 		}
 

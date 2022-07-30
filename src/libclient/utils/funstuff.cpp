@@ -21,9 +21,7 @@
 
 #include <QRegularExpression>
 #include <QVector>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 #include <QRandomGenerator>
-#endif
 
 #include <cstdlib>
 
@@ -37,17 +35,13 @@ int diceRoll(int number, int faces)
 
 	int result = 0;
 	while(number-->0) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-		result += qrand() / double(RAND_MAX) * (faces) + 1;
-#else
 		result += QRandomGenerator::global()->generateDouble() * faces + 1;
-#endif
 	}
 
 	return result;
 }
 
-DiceRoll diceRoll(const QStringRef &rolltype)
+DiceRoll diceRoll(QStringView rolltype)
 {
 	DiceRoll result;
 	static QRegularExpression re("^([1-9]\\d*)?[dD]([1-9]\\d*)?([+-]\\d+)?$");
@@ -78,7 +72,7 @@ QList<float> diceRollDistribution(const QString &rolltype)
 	const int ROLLS = 1000;
 
 	for(int i=0;i<ROLLS;++i) {
-		DiceRoll r = diceRoll(rolltype.midRef(0));
+		DiceRoll r = diceRoll(rolltype);
 		if(r.number==0)
 			return QList<float>();
 		if(rolls.isEmpty())
