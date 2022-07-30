@@ -64,7 +64,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_headerWidget = new QWidget(parent);
 	auto headerLayout = new QHBoxLayout;
 	headerLayout->setSpacing(0);
-	headerLayout->setMargin(0);
+	headerLayout->setContentsMargins(0, 0, 0, 0);
 	m_headerWidget->setLayout(headerLayout);
 
 	m_protectedAction = new QAction(this);

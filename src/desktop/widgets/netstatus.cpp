@@ -44,7 +44,7 @@ NetStatus::NetStatus(QWidget *parent)
 	setMinimumHeight(16+2);
 
 	QHBoxLayout *layout = new QHBoxLayout(this);
-	layout->setMargin(1);
+	layout->setContentsMargins(1, 1, 1, 1);
 	layout->setSpacing(4);
 
 	m_hideServer = QSettings().value("settings/hideServerIp", false).toBool();

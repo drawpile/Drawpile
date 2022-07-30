@@ -54,7 +54,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 
 	auto *layout = new QVBoxLayout;
 	layout->addWidget(chatsplitter);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 
 	connect(m_chatWidget, &ChatWidget::message, this, &ChatBox::message);

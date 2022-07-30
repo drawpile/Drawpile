@@ -37,7 +37,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	setMinimumHeight(22);
 	QHBoxLayout *layout = new QHBoxLayout(this);
 
-	layout->setMargin(1);
+	layout->setContentsMargins(1, 1, 1, 1);
 	layout->setSpacing(0);
 
 	// View flipping

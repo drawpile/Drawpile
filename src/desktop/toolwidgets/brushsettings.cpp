@@ -158,7 +158,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->brushSlotWidget = new QWidget(parent);
 	auto brushSlotWidgetLayout = new QHBoxLayout;
 	brushSlotWidgetLayout->setSpacing(0);
-	brushSlotWidgetLayout->setMargin(0);
+	brushSlotWidgetLayout->setContentsMargins(0, 0, 0, 0);
 
 	d->brushSlotWidget->setLayout(brushSlotWidgetLayout);
 

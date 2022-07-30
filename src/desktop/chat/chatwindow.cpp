@@ -30,7 +30,7 @@ ChatWindow::ChatWindow(QWidget *content)
 
 	setAttribute(Qt::WA_DeleteOnClose);
 	auto *layout = new QVBoxLayout;
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 	layout->addWidget(content);
 }

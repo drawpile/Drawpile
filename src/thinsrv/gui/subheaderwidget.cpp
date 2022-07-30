@@ -36,7 +36,7 @@ SubheaderWidget::SubheaderWidget(const QString &text, int level, QWidget *parent
 		f.setPointSizeF(f.pointSizeF()*1.3);
 
 	setFont(f);
-	setMargin(5);
+	setContentsMargins(5, 5, 5, 5);
 }
 
 void SubheaderWidget::paintEvent(QPaintEvent *e)

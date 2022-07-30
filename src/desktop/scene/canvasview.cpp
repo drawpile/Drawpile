@@ -509,7 +509,7 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButt
 	if(m_pendown != NOTDOWN)
 		return;
 
-	if((button == Qt::MidButton && m_dragmode != ViewDragMode::Started) || m_dragmode == ViewDragMode::Prepared) {
+	if((button == Qt::MiddleButton && m_dragmode != ViewDragMode::Started) || m_dragmode == ViewDragMode::Prepared) {
 		m_dragLastPoint = pos.toPoint();
 		m_dragmode = ViewDragMode::Started;
 

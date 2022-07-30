@@ -130,7 +130,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	layout->setSpacing(0);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 
 	d->tabs = new QTabBar(this);
 	d->tabs->addTab(QString());

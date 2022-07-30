@@ -34,7 +34,7 @@ ModifierKeys::ModifierKeys(QWidget *parent)
 	: QWidget(parent)
 {
 	auto *layout = new QHBoxLayout;
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 
 	m_buttons[0] = new QCheckBox(MAC_OR_PC("⇧", "Shift"), this);

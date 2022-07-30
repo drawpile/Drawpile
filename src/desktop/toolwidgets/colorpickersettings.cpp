@@ -54,7 +54,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
 	QVBoxLayout *layout = new QVBoxLayout(widget);
-	layout->setMargin(3);
+	layout->setContentsMargins(3, 3, 3, 3);
 	widget->setLayout(layout);
 
 	QHBoxLayout *sizelayout = new QHBoxLayout;
