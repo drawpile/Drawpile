@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2015-2021 Calle Laakkonen
+   Copyright (C) 2015-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include <QSettings>
 #include <QRect>
 #include <QTimer>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QApplication>
 
 namespace dialogs {
@@ -195,7 +195,12 @@ void Flipbook::loadFrame()
 			QImage img = m_paintengine->getFrameImage(f, m_crop);
 
 			// Scale down the image if it is too big
-			const QSize maxSize = qApp->desktop()->availableGeometry(this).size() * 0.7;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+			const QSize maxSize = screen()->availableSize() * 0.7;
+#else
+			const QSize maxSize = qApp->primaryScreen()->availableSize() * 0.7;
+#endif
+
 			if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
 				const QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);
 				img = img.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);

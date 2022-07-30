@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <QBitmap>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QTextDocument>
 #include <QTextCursor>
 #include <QTimer>
@@ -83,7 +83,12 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 	resize(m_doc->size().toSize() + QSize(PADDING*2, PADDING*2 + ARROW_H));
 
 	QRect rect(point - QPoint(width() - width()/6,height()), size());
-	const QRect screen = qApp->desktop()->availableGeometry(m_parentWidget);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+	const QRect screen = m_parentWidget->screen()->availableGeometry();
+#else
+	const QRect screen = qApp->primaryScreen()->availableGeometry();
+#endif
 
 	// Make sure the popup fits horizontally
 	if(rect.x() + rect.width() > screen.x() + screen.width()) {
