@@ -43,10 +43,11 @@ enum class Feature {
 	CreateAnnotation,
 	Laser,
 	Undo,
-	Metadata
+	Metadata,
+	Timeline
 };
 
-static const int FeatureCount = int(Feature::Metadata)+1;
+static const int FeatureCount = int(Feature::Timeline)+1;
 
 /**
  * Access control list state that is relevant to the UI.

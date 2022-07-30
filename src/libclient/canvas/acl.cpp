@@ -70,6 +70,7 @@ static int featureFlags(const rustpile::FeatureTiers &features, rustpile::Tier t
 	if(t <= features.laser) f |= 1<<int(Feature::Laser);
 	if(t <= features.undo) f |= 1<<int(Feature::Undo);
 	if(t <= features.metadata) f |= 1<<int(Feature::Metadata);
+	if(t <= features.timeline) f |= 1<<int(Feature::Timeline);
 
 	return f;
 }
@@ -236,6 +237,7 @@ bool AclState::canUseFeature(Feature f) const
 	case Feature::Laser: return t <= d->features.laser;
 	case Feature::Undo: return t <= d->features.undo;
 	case Feature::Metadata: return t <= d->features.metadata;
+	case Feature::Timeline: return t <= d->features.timeline;
 	}
 
 	return false;

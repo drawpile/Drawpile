@@ -133,6 +133,7 @@ pub fn make_canvas_snapshot(
                 acl.feature_tiers().laser.into(),
                 acl.feature_tiers().undo.into(),
                 acl.feature_tiers().metadata.into(),
+                acl.feature_tiers().timeline.into(),
             ],
         )));
 

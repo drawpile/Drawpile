@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2021 Calle Laakkonen
+   Copyright (C) 2017-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -251,6 +251,7 @@ QComboBox *SessionSettingsDialog::featureBox(canvas::Feature f)
 	case Feature::Laser: return m_ui->permLaser;
 	case Feature::Undo: return m_ui->permUndo;
 	case Feature::Metadata: return m_ui->permMetadata;
+	case Feature::Timeline: return m_ui->permTimeline;
 	}
 	Q_ASSERT_X(false, "featureBox", "unhandled case");
 	return nullptr;
@@ -267,6 +268,7 @@ void SessionSettingsDialog::onFeatureTiersChanged(const rustpile::FeatureTiers &
 	m_ui->permLaser->setCurrentIndex(int(features.laser));
 	m_ui->permUndo->setCurrentIndex(int(features.undo));
 	m_ui->permMetadata->setCurrentIndex(int(features.metadata));
+	m_ui->permTimeline->setCurrentIndex(int(features.timeline));
 }
 
 void SessionSettingsDialog::initPermissionComboBoxes()
