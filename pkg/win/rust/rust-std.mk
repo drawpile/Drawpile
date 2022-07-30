@@ -2,7 +2,7 @@
 
 PKG                     := rust-std
 $(PKG)_WEBSITE          := https://www.rust-lang.org/
-$(PKG)_VERSION          := 1.55.0
+$(PKG)_VERSION          := 1.62.0
 
 $(PKG)_DEPS             := cc $(BUILD)~cargo $(BUILD)~rustc $(BUILD)~rust-std-bootstrap get-target-triplet
 
@@ -22,8 +22,7 @@ endef
 
 TARGET_TRIPLET          = $(firstword $(call split,-,$(DEP_TARGET)))-pc-windows-gnu
 
-CHECKSUM_rust-std-1.55.0-x86_64-pc-windows-gnu      := 8dfab5489b485417d76a7d266fc795608ba61f9c423f8a71616e01f33e146487
-#CHECKSUM_rust-std-1.37.0-i686-pc-windows-gnu        := 0667452dcca5c08dc6c4a3d5f38852b9a883489793d035dea6fcccd2b9a219f9
+CHECKSUM_rust-std-1.62.0-x86_64-pc-windows-gnu      := 47a4f6091d1212cc19b17a3267e8ad55aadc0881de7cc438899d262bbdc07030
 
 $(PKG)_FILE             := $(PKG)-$($(PKG)_VERSION)-$(TARGET_TRIPLET).tar.gz
 $(PKG)_URL              := https://static.rust-lang.org/dist/$($(PKG)_FILE)

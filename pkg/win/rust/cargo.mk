@@ -2,7 +2,7 @@
 
 PKG                     := cargo
 $(PKG)_WEBSITE          := https://www.rust-lang.org/
-$(PKG)_VERSION          := 1.55.0
+$(PKG)_VERSION          := 1.62.0
 $(PKG)_DEPS_$(BUILD)    := cc
 
 ifneq (, $(findstring darwin,$(BUILD)))
@@ -20,7 +20,7 @@ $(PKG)_FILE             := $(PKG)-$($(PKG)_VERSION)-$(BUILD_TRIPLET).tar.gz
 $(PKG)_URL              := https://static.rust-lang.org/dist/$($(PKG)_FILE)
 
 # CHECKSUMS
-CHECKSUM_cargo-1.55.0-x86_64-unknown-linux-gnu      :=  bb18c74aea07fa29c7169ce78756dfd08c07da08c584874e09fa6929c8267ec1
+CHECKSUM_cargo-1.62.0-x86_64-unknown-linux-gnu      :=  fb0141db9fdea4606beb106ca10494548f24866b39a10bde8d1e162f653e94d8
 
 $(PKG)_CHECKSUM         := $(CHECKSUM_$(PKG)-$($(PKG)_VERSION)-$(BUILD_TRIPLET))
 $(PKG)_TARGETS          := $(BUILD)

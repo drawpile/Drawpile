@@ -49,9 +49,7 @@ cp "$MBIN/libintl-8.dll" .
 cp "$MBIN/libiconv-2.dll" .
 cp "$MBIN/libcrypto-1_1-x64.dll" .
 cp "$MBIN/libssl-1_1-x64.dll" .
-cp "$MBIN/libgif-7.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
-cp "$MBIN/libKF5DNSSD.dll" .
 cp "$MBIN/libsodium-23.dll" .
 cp "$MBIN/libqt5keychain.dll" .
 

@@ -104,7 +104,7 @@ target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network)
 target_link_libraries(dpclient rustpile pthread dl)
 
 if ( WIN32 )
-	target_link_libraries (dpclient ws2_32 userenv)
+	target_link_libraries (dpclient ws2_32 userenv bcrypt)
 endif ()
 
 if( QM_TRANSLATIONS )

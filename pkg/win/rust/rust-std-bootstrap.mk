@@ -3,7 +3,7 @@
 PKG                     := rust-std-bootstrap
 $(PKG)_BASE             := $(subst -bootstrap,,$(PKG))
 $(PKG)_WEBSITE          := https://www.rust-lang.org/
-$(PKG)_VERSION          := 1.55.0
+$(PKG)_VERSION          := 1.62.0
 $(PKG)_DEPS_$(BUILD)    := cc
 
 ifneq (, $(findstring darwin,$(BUILD)))
@@ -21,7 +21,7 @@ $(PKG)_FILE             := $($(PKG)_BASE)-$($(PKG)_VERSION)-$(BUILD_TRIPLET).tar
 $(PKG)_URL              := https://static.rust-lang.org/dist/$($(PKG)_FILE)
 
 # CHECKSUMS
-CHECKSUM_rust-std-1.55.0-x86_64-unknown-linux-gnu       :=  c07c5ce96b86364601c0c471bb85105e80a5e345b3e4b3e2674e541cc2fdefcf
+CHECKSUM_rust-std-1.62.0-x86_64-unknown-linux-gnu       :=  80c3a88c8a972d20b2ac59adc789495c508d6b70d1fad2aa12e419ab683638dc
 
 $(PKG)_CHECKSUM         := $(CHECKSUM_$($(PKG)_BASE)-$($(PKG)_VERSION)-$(BUILD_TRIPLET))
 $(PKG)_TARGETS          := $(BUILD)

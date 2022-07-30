@@ -2,7 +2,7 @@
 
 PKG                     := rustc
 $(PKG)_WEBSITE          := https://www.rust-lang.org/
-$(PKG)_VERSION          := 1.55.0
+$(PKG)_VERSION          := 1.62.0
 $(PKG)_DEPS_$(BUILD)    := cc
 
 ifneq (, $(findstring darwin,$(BUILD)))
@@ -20,7 +20,7 @@ $(PKG)_FILE             := $(PKG)-$($(PKG)_VERSION)-$(BUILD_TRIPLET).tar.gz
 $(PKG)_URL              := https://static.rust-lang.org/dist/$($(PKG)_FILE)
 
 # CHECKSUMS
-CHECKSUM_rustc-1.55.0-x86_64-unknown-linux-gnu      :=  9da098b2df01124f2c4b9789767151521f4bab98f50befdc75a691cece0c0d00
+CHECKSUM_rustc-1.62.0-x86_64-unknown-linux-gnu      :=  892752484043f7a129f7c80fb5b71c7745fbfd8542d4ed4c7c7f18898a7add16
 
 $(PKG)_CHECKSUM         := $(CHECKSUM_$(PKG)-$($(PKG)_VERSION)-$(BUILD_TRIPLET))
 $(PKG)_TARGETS          := $(BUILD)
