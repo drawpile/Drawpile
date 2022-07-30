@@ -20,16 +20,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
-use dpimpex::rec_index::writer::{IndexBuilder, Stats};
-use dpimpex::rec_index::reader as index_reader;
-use dpimpex::save_image;
-use dpcore::protocol::message::Message;
 use crate::converter::ConversionError;
+use dpcore::protocol::message::Message;
+use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
+use dpimpex::rec_index::reader as index_reader;
+use dpimpex::rec_index::writer::{IndexBuilder, Stats};
+use dpimpex::save_image;
 
 use std::fs::File;
 use std::path::Path;
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
 
 pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     let input_path = Path::new(input_file);
@@ -41,9 +41,7 @@ pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error
         }));
     }
 
-    let mut indexer = IndexBuilder::new(
-        File::create(input_path.with_extension("dpidx"))?
-    );
+    let mut indexer = IndexBuilder::new(File::create(input_path.with_extension("dpidx"))?);
 
     indexer.write_header()?;
     let mut last_snapshot = Instant::now();
@@ -89,7 +87,7 @@ pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error
 
 fn print_stats(stats: &Stats, thumbnail_counter: i32) {
     println!(
-        "{}: tiles(new: {}, reused: {} [{:.1}%), null: {}], layers(new: {}, reused: {}), annotations(new: {}, reused: {}), thumbnail {}",
+        "{}: tiles(new: {}, reused: {} [{:.1}%], null: {}), layers(new: {}, reused: {}), annotations(new: {}, reused: {}){}{}{}",
         stats.index,
         stats.new_tiles,
         stats.reused_tiles,
@@ -99,11 +97,11 @@ fn print_stats(stats: &Stats, thumbnail_counter: i32) {
         stats.reused_layers,
         stats.changed_annotations,
         stats.reused_annotations,
-        thumbnail_counter <= 0,
+        if stats.metadata_changed { ", metadata changed" } else { "" },
+        if stats.timeline_changed { ", timeline changed" } else { "" },
+        if thumbnail_counter <= 0 { ", thumbnail" } else { "" },
     );
-
 }
-
 
 pub fn decode_index(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     let index = index_reader::read_index(&mut File::open(input_file)?)?;
@@ -123,7 +121,10 @@ pub fn decode_index(input_file: &str) -> Result<(), Box<dyn std::error::Error>> 
     Ok(())
 }
 
-pub fn extract_snapshot(input_file: &str, index_entry: usize) -> Result<(), Box<dyn std::error::Error>> {
+pub fn extract_snapshot(
+    input_file: &str,
+    index_entry: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
     let mut reader = File::open(input_file)?;
 
     let index = index_reader::read_index(&mut reader)?;

@@ -21,10 +21,10 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::canvas::CanvasState;
-use dpcore::protocol::message::{CommandMessage, Message};
 use dpcore::paint::LayerViewOptions;
-use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
+use dpcore::protocol::message::{CommandMessage, Message};
 use dpimpex::conv::from_dpimage;
+use dpimpex::rec::reader::{open_recording, Compatibility, ReadMessage};
 
 use tracing::{info, warn};
 
@@ -32,8 +32,8 @@ use std::error::Error;
 use std::fmt;
 use std::io;
 use std::num::ParseIntError;
-use std::str::FromStr;
 use std::path::Path;
+use std::str::FromStr;
 use std::time::{Duration, Instant};
 
 use image;
@@ -181,7 +181,12 @@ fn save_canvas(
 
     if let Some(resize) = state.resize {
         if size != resize {
-            img = image::imageops::resize(&img, resize.0, resize.1, image::imageops::FilterType::CatmullRom);
+            img = image::imageops::resize(
+                &img,
+                resize.0,
+                resize.1,
+                image::imageops::FilterType::CatmullRom,
+            );
         }
     } else if state.same_size {
         state.resize = Some(size);
@@ -196,7 +201,7 @@ fn save_canvas(
             warn!("Image encoding error: {}", e);
             Err(io::Error::new(io::ErrorKind::Other, "image encoding error"))
         }
-        Ok(_) => Ok(now.elapsed())
+        Ok(_) => Ok(now.elapsed()),
     }
 }
 

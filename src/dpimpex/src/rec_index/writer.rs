@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ use dpcore::canvas::CanvasState;
 use dpcore::paint::annotation::Annotation;
 use dpcore::paint::{
     BitmapLayer, DocumentMetadata, GroupLayer, Layer, LayerMetadata, LayerViewOptions, Tile,
+    Timeline,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -81,6 +82,7 @@ pub struct IndexBuilder<W: Write + Seek> {
     last_layers: LayerMap,
     last_annotations: AnnotationMap,
     last_metadata: (u64, DocumentMetadata),
+    last_timeline: (usize, u64, Arc<Timeline>),
 }
 
 /// Statistics. Mainly for tuning and debugging purposes.
@@ -94,7 +96,8 @@ pub struct Stats {
     pub reused_layers: u32,
     pub changed_annotations: u32,
     pub reused_annotations: u32,
-    pub metadata_changes: u32,
+    pub metadata_changed: bool,
+    pub timeline_changed: bool,
 }
 
 impl<W: Write + Seek> IndexBuilder<W> {
@@ -109,6 +112,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
             last_layers: LayerMap::new(),
             last_annotations: AnnotationMap::new(),
             last_metadata: (0, DocumentMetadata::default()),
+            last_timeline: (0, 0, Arc::new(Timeline::new())),
         }
     }
 
@@ -288,9 +292,27 @@ impl<W: Write + Seek> IndexBuilder<W> {
             tile_offset
         };
 
+        // Write timeline if changed
+        let timeline = ls.timeline();
+        let timeline_ptr = Arc::as_ptr(timeline) as usize;
+        if timeline_ptr != self.last_timeline.0 {
+            let offset = self.writer.stream_position()?;
+            self.writer
+                .write_u16::<LittleEndian>(timeline.frames.len() as u16)?;
+            for frame in timeline.frames.iter() {
+                for l in frame.0 {
+                    self.writer.write_u16::<LittleEndian>(l)?;
+                }
+            }
+
+            self.last_timeline = (timeline_ptr, offset, timeline.clone());
+            stats.timeline_changed = true;
+        }
+
         // Write metadata
         if self.last_metadata.0 == 0 || self.last_metadata.1 != *ls.metadata() {
             self.last_metadata = (self.write_metadata(ls.metadata())?, ls.metadata().clone());
+            stats.metadata_changed = true;
         }
         let metadata_offset = self.last_metadata.0;
 
@@ -299,6 +321,8 @@ impl<W: Write + Seek> IndexBuilder<W> {
         self.writer.write_u32::<LittleEndian>(ls.root().width())?;
         self.writer.write_u32::<LittleEndian>(ls.root().height())?;
         self.writer.write_u64::<LittleEndian>(bgtile_offset)?;
+        self.writer
+            .write_u64::<LittleEndian>(self.last_timeline.1)?;
         self.writer.write_u64::<LittleEndian>(metadata_offset)?;
         self.writer.write_u64::<LittleEndian>(root_offset)?;
         self.writer

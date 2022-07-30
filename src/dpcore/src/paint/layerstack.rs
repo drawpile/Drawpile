@@ -216,7 +216,7 @@ impl LayerStack {
     }
 
     /// Get the animation timeline
-    pub fn timeline(&self) -> &Timeline {
+    pub fn timeline(&self) -> &Arc<Timeline> {
         &self.timeline
     }
 

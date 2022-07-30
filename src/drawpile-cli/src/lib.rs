@@ -21,6 +21,5 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 pub mod converter;
-pub mod renderer;
 pub mod indexer;
-
+pub mod renderer;

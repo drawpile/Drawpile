@@ -25,8 +25,8 @@ use tracing::Level;
 use tracing_subscriber;
 
 use drawpile_cli::converter::*;
+use drawpile_cli::indexer::{decode_index, extract_snapshot, index_recording};
 use drawpile_cli::renderer::*;
-use drawpile_cli::indexer::{index_recording, decode_index, extract_snapshot};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::Subscriber::builder()
@@ -79,8 +79,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ),
         )
         .subcommand(
-            App::new("index")
-                .arg(Arg::with_name("INPUT").help("Input file").required(true))
+            App::new("index").arg(Arg::with_name("INPUT").help("Input file").required(true)),
         )
         .subcommand(
             App::new("decode-index")
@@ -90,8 +89,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .long("extract")
                         .short("x")
                         .takes_value(true)
-                        .help("Extract snapshot at index")
-                )
+                        .help("Extract snapshot at index"),
+                ),
         )
         .get_matches();
 
@@ -128,14 +127,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             render_recording(&opts)
         }
-        ("index", Some(m)) => {
-            index_recording(m.value_of("INPUT").unwrap())
-        }
+        ("index", Some(m)) => index_recording(m.value_of("INPUT").unwrap()),
         ("decode-index", Some(m)) => {
             if m.is_present("entry") {
                 extract_snapshot(
                     m.value_of("INPUT").unwrap(),
-                    m.value_of("entry").unwrap().parse::<usize>()?
+                    m.value_of("entry").unwrap().parse::<usize>()?,
                 )
             } else {
                 decode_index(m.value_of("INPUT").unwrap())

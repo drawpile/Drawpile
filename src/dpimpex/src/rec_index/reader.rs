@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@ use super::{IndexEntry, IndexError, IndexResult, INDEX_FORMAT_VERSION};
 use dpcore::canvas::compression::decompress_tile;
 use dpcore::paint::annotation::{Annotation, VAlign};
 use dpcore::paint::{
-    BitmapLayer, Blendmode, Color, DocumentMetadata, GroupLayer, Layer, LayerMetadata, LayerStack,
-    Rectangle, Tile, Timeline,
+    BitmapLayer, Blendmode, Color, DocumentMetadata, Frame, GroupLayer, Layer, LayerMetadata,
+    LayerStack, Rectangle, Tile, Timeline,
 };
 
 use byteorder::{LittleEndian, ReadBytesExt};
@@ -98,13 +98,14 @@ pub fn read_snapshot<R: Read + Seek>(
     let width = reader.read_u32::<LittleEndian>()?;
     let height = reader.read_u32::<LittleEndian>()?;
     let bgtile_offset = reader.read_u64::<LittleEndian>()?;
+    let timeline_offset = reader.read_u64::<LittleEndian>()?;
     let metadata_offset = reader.read_u64::<LittleEndian>()?;
     let root_offset = reader.read_u64::<LittleEndian>()?;
     let annotation_count = reader.read_u16::<LittleEndian>()?;
     let annotation_offsets = read_offset_vector(reader, annotation_count as usize)?;
 
     let background = read_tile(reader, &mut HashMap::new(), bgtile_offset)?;
-
+    let timeline = read_timeline(reader, timeline_offset)?;
     let metadata = read_metadata(reader, metadata_offset)?;
 
     let root = match read_layer(reader, root_offset, width, height, false) {
@@ -127,7 +128,7 @@ pub fn read_snapshot<R: Read + Seek>(
         Arc::new(root.into()),
         Arc::new(annotations),
         Arc::new(metadata),
-        Arc::new(Timeline::new()), // FIXME
+        Arc::new(timeline),
         background,
     ))
 }
@@ -144,6 +145,21 @@ pub fn read_metadata<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult
         framerate,
         use_timeline,
     })
+}
+
+pub fn read_timeline<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult<Timeline> {
+    reader.seek(SeekFrom::Start(offset))?;
+    let count = reader.read_u16::<LittleEndian>()?;
+    let mut frames: Vec<Frame> = Vec::with_capacity(count as usize);
+    for _ in 0..count {
+        let mut f = Frame::empty();
+        for l in 0..f.0.len() {
+            f.0[l] = reader.read_u16::<LittleEndian>()?;
+        }
+        frames.push(f);
+    }
+
+    Ok(Timeline { frames })
 }
 
 pub fn read_thumbnail<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult<Vec<u8>> {
