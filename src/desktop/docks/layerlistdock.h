@@ -68,7 +68,6 @@ public:
 
 public slots:
 	void selectLayer(int id);
-	void showLayerNumbers(bool show);
 
 signals:
 	//! A layer was selected by the user

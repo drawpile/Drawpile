@@ -2632,7 +2632,6 @@ void MainWindow::setupActions()
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Shift+Home").checkable();
 	QAction *layerFrame = makeAction("layerviewframe", tr("Frame")).shortcut("Home").checkable();
 	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).shortcut("Shift+Ctrl+O").checkable();
-	QAction *layerNumbers = makeAction("layernumbers", tr("Show Numbers")).checkable().remembered();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 
 	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Shift+X");
@@ -2642,7 +2641,6 @@ void MainWindow::setupActions()
 	connect(layerFrame, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerOnionskin, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
-	connect(layerNumbers, &QAction::toggled, m_dockLayers, &docks::LayerList::showLayerNumbers);
 	connect(nextFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setNextFrame);
 	connect(prevFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setPreviousFrame);
 
@@ -2657,7 +2655,6 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerFrame);
 	layerMenu->addAction(layerSolo);
 	layerMenu->addAction(layerOnionskin);
-	layerMenu->addAction(layerNumbers);
 	layerMenu->addAction(layerUncensor);
 
 	layerMenu->addSeparator();

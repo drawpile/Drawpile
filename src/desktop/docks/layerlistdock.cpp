@@ -273,13 +273,6 @@ void LayerList::changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> ex
 	}
 }
 
-void LayerList::showLayerNumbers(bool show)
-{
-	LayerListDelegate *del = qobject_cast<LayerListDelegate*>(m_view->itemDelegate());
-	Q_ASSERT(del);
-	del->setShowNumbers(show);
-}
-
 /**
  * @brief Layer add button pressed
  */

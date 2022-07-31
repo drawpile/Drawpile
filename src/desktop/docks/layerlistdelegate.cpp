@@ -35,8 +35,7 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	  m_visibleIcon(icon::fromTheme("layer-visible-on")),
 	  m_groupIcon(icon::fromTheme("folder")),
 	  m_censoredIcon(QIcon(":/icons/censored.svg")),
-	  m_hiddenIcon(icon::fromTheme("layer-visible-off")),
-	  m_showNumbers(false)
+      m_hiddenIcon(icon::fromTheme("layer-visible-off"))
 {
 }
 
@@ -61,17 +60,11 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	// Draw layer name
 	textrect.setLeft(stylerect.right());
 
-	QString title;
-	if(m_showNumbers)
-		title = QString("%1 - %2").arg(index.model()->rowCount() - index.row() - 1).arg(layer.title);
-	else
-		title = layer.title;
-
 	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
 		opt.font.setUnderline(true);
 	}
 
-	drawDisplay(painter, opt, textrect, title);
+	drawDisplay(painter, opt, textrect, layer.title);
 
 	painter->restore();
 }
@@ -156,11 +149,6 @@ void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, 
 			m_visibleIcon.paint(painter, r);
 		painter->restore();
 	}
-}
-
-void LayerListDelegate::setShowNumbers(bool show) {
-	m_showNumbers = show;
-	emit sizeHintChanged(QModelIndex()); // trigger repaint
 }
 
 }

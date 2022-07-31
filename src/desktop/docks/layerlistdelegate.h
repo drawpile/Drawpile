@@ -53,8 +53,6 @@ private:
 	QIcon m_groupIcon;
 	QIcon m_censoredIcon;
 	QIcon m_hiddenIcon;
-
-	bool m_showNumbers;
 };
 
 }
