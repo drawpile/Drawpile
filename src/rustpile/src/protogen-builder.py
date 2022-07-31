@@ -150,6 +150,7 @@ if __name__ == '__main__':
         'MoveRect',
         'SetMetadataInt',
         'SetTimelineFrame',
+        'RemoveTimelineFrame',
         'Undo',
     ))
 

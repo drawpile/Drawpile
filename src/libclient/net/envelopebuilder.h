@@ -53,6 +53,9 @@ public:
 	/// Helper function: write a Undo/Redo message
 	void buildUndo(uint8_t ctxid, uint8_t overrideId, bool redo);
 
+	/// Helper function: write an undopoint
+	void buildUndoPoint(uint8_t ctxid);
+
 private:
 	rustpile::MessageWriter *m_writer;
 };

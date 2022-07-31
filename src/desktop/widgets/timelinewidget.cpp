@@ -160,9 +160,16 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 	QPainter painter(this);
 
+	const QPalette &pal = this->palette();
+	const QColor selectedColor = d->model->isManualMode() ? pal.windowText().color() : pal.color(QPalette::Disabled, QPalette::WindowText);
+	const QColor gridColor = pal.color(QPalette::Button);
+
 	// Frame columns
 	int x = d->headerWidth - d->xScroll;
 	painter.setClipRect(d->headerWidth, 0, w, h);
+
+	painter.setPen(gridColor);
+
 	int frameNum = 1;
 	for(const auto &col : d->model->frames()) {
 		if(x+d->columnWidth > d->headerWidth) {
@@ -170,14 +177,15 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				break;
 
 			if(frameNum == d->currentFrame) {
-				painter.fillRect(x, 0, d->columnWidth, h, Qt::blue);
+				QColor c = pal.highlight().color();
+				painter.fillRect(x, 0, d->columnWidth, vLine, c);
 			}
 
 			for(int i=0;i<MAX_LAYERS_PER_FRAME;++i) {
 				if(col.frame[i] == 0)
 					break;
 				const int y = d->model->layerRow(col.frame[i]) * d->rowHeight - d->yScroll;
-				painter.fillRect(x, y, d->columnWidth, d->rowHeight, Qt::red);
+				painter.fillRect(x, y, d->columnWidth, d->rowHeight, selectedColor);
 			}
 
 			painter.drawLine(x, 0, x, vLine);
@@ -192,11 +200,14 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	// Layer row labels
 	int y = -d->yScroll;
 	for(const auto &row : d->model->layers()) {
+		painter.setPen(pal.windowText().color());
 		painter.drawText(0, y, d->headerWidth - 5, d->rowHeight, Qt::AlignVCenter | Qt::AlignRight, row.name);
 		if(x < w)
 			painter.drawText(x, y, d->columnWidth, d->rowHeight, Qt::AlignVCenter | Qt::AlignCenter, QStringLiteral("+"));
 
 		y += d->rowHeight;
+
+		painter.setPen(gridColor);
 		painter.drawLine(0, y, hLine, y);
 	}
 }
@@ -222,8 +233,30 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 	    d->model->frames().size()
 	);
 
+	if(event->button() == Qt::LeftButton) {
+		if(d->model->isManualMode()) {
+			net::EnvelopeBuilder eb;
+			d->model->makeToggleCommand(eb, col, row);
+			emit timelineEditCommand(eb.toEnvelope());
+		}
+	} else if(event->button() == Qt::MiddleButton) {
+		emit selectFrameRequest(qMin(col+1, d->model->frames().size()));
+	}
+}
+
+void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	if(!d->model || !d->model->isManualMode() || event->button() != Qt::RightButton)
+		return;
+
+	const int col = qMin(
+	    (event->x() - d->headerWidth + d->xScroll) / d->columnWidth,
+	    d->model->frames().size() - 1
+	);
+
 	net::EnvelopeBuilder eb;
-	d->model->makeToggleCommand(eb, col, row);
+	eb.buildUndoPoint(0);
+	d->model->makeRemoveCommand(eb, col);
 	emit timelineEditCommand(eb.toEnvelope());
 }
 

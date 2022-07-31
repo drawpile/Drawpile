@@ -109,6 +109,8 @@ Protocol stability promises:
  * Changed LayerCreate's flags to support group layers
  * Added "last touched by" field to PutTile
  * Added SetMetadataInt and SetMetadataString commands
+ * Added SetTimelineFrame and RemoveTimelineFrame commands
+ * Removed `fixed` layer attribute (replaced by the timeline feature)
 
 ### Protocol dp:4.21.2 (2.1.9)
  * User 0 (server) is now always treated as Operator tier. (Change for experimental smart server)
@@ -118,7 +120,7 @@ Protocol stability promises:
 
 ### Protocol dp:4.21.2 (2.1.0)
 
- * Changed PutImage pixel format to ARGB32_Premultiplied
+ * Changed PutImage pixel format to `ARGB32_Premultiplied`
  * Added PutTile command
  * Removed ToolChange and PenMove commands
  * Added DrawDabsClassic and DrawDabsPixel commands

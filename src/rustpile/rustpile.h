@@ -558,6 +558,8 @@ void write_settimelineframe(MessageWriter *writer,
                             const uint16_t *layers,
                             uintptr_t layers_len);
 
+void write_removetimelineframe(MessageWriter *writer, UserID ctx, uint16_t frame);
+
 void write_undo(MessageWriter *writer, UserID ctx, uint8_t override_user, bool redo);
 
 void write_putimage(MessageWriter *writer,

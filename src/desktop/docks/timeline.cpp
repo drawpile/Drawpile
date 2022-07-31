@@ -35,6 +35,7 @@ Timeline::Timeline(QWidget *parent)
 {
 	m_widget = new widgets::TimelineWidget(this);
 	connect(m_widget, &widgets::TimelineWidget::timelineEditCommand, this, &Timeline::timelineEditCommand);
+	connect(m_widget, &widgets::TimelineWidget::selectFrameRequest, this, &Timeline::setCurrentFrame);
 	m_widget->setMinimumHeight(40);
 	setWidget(m_widget);
 
@@ -76,6 +77,7 @@ void Timeline::setTimeline(canvas::TimelineModel *model)
 void Timeline::setUseTimeline(bool useTimeline)
 {
 	m_useTimeline->setChecked(useTimeline);
+	m_widget->model()->setManualMode(useTimeline);
 }
 
 void Timeline::setFps(int fps)

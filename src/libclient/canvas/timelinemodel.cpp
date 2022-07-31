@@ -63,7 +63,7 @@ namespace {
 }
 
 TimelineModel::TimelineModel(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_manualMode(true)
 {
 }
 
@@ -96,12 +96,17 @@ void TimelineModel::setLayers(const QVector<LayerListItem> &layers)
 
 		m_layers << TimelineLayer {
 		    l.id,
+		    l.left < prefixUntil ? prefixUntil : 0,
 		    l.left < prefixUntil ? QStringLiteral("%1 / %2").arg(prefix, l.title) : l.title
 	    };
 		m_layerIdsToRows[l.id] = m_layers.size() - 1;
 	}
 
 	emit layersChanged();
+	if(!m_manualMode) {
+		updateAutoFrames();
+		emit framesChanged();
+	}
 }
 
 void timelineUpdateFrames(void *ctx, const rustpile::Frame *frames, uintptr_t count)
@@ -110,6 +115,27 @@ void timelineUpdateFrames(void *ctx, const rustpile::Frame *frames, uintptr_t co
 	model->m_frames.resize(count);
 	memcpy(model->m_frames.data(), frames, sizeof(rustpile::Frame) * count);
 	emit model->framesChanged();
+}
+
+void TimelineModel::updateAutoFrames()
+{
+	m_autoFrames.clear();
+	int lastGroup = 0;
+	// This odd ruleset reflects the way the paint engine handles non-isolated
+	// groups in auto-timeline mode.
+	// TODO: treat non-isolated groups the same as isolated groups in auto-mode.
+	// This could be represented in the UI by showing all the layers in the group as
+	// selected.
+	for(auto i=m_layers.rbegin();i!=m_layers.rend();++i) {
+		if(i->group != 0 && i->group != lastGroup) {
+			m_autoFrames.append(TimelineFrame{{0}});
+			lastGroup = i->group;
+		} else if(i->group != 0) {
+			// skip
+		} else {
+			m_autoFrames.append(TimelineFrame{{i->id}});
+		}
+	}
 }
 
 void TimelineModel::makeToggleCommand(net::EnvelopeBuilder &eb, int frameCol, int layerRow) const
@@ -144,6 +170,23 @@ void TimelineModel::makeToggleCommand(net::EnvelopeBuilder &eb, int frameCol, in
 	}
 
 	rustpile::write_settimelineframe(eb, 0, frameCol, false, reinterpret_cast<const uint16_t*>(&frame.frame), MAX_LAYERS_PER_FRAME);
+}
+
+void TimelineModel::makeRemoveCommand(net::EnvelopeBuilder &eb, int frameCol) const
+{
+	if(frameCol < 0 || frameCol > m_frames.size())
+		return;
+	rustpile::write_removetimelineframe(eb, 0, frameCol);
+}
+
+void TimelineModel::setManualMode(bool manual)
+{
+	if(m_manualMode != manual) {
+		m_manualMode = manual;
+		if(!manual)
+			updateAutoFrames();
+		emit framesChanged();
+	}
 }
 
 }

@@ -525,6 +525,11 @@ pub extern "C" fn write_settimelineframe(
 }
 
 #[no_mangle]
+pub extern "C" fn write_removetimelineframe(writer: &mut MessageWriter, ctx: UserID, frame: u16) {
+    CommandMessage::RemoveTimelineFrame(ctx, frame).write(writer);
+}
+
+#[no_mangle]
 pub extern "C" fn write_undo(
     writer: &mut MessageWriter,
     ctx: UserID,

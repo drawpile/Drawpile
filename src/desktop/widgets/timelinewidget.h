@@ -43,12 +43,15 @@ public:
 	void setCurrentFrame(int frame);
 
 	canvas::TimelineModel *model() const;
+
 signals:
 	void timelineEditCommand(const net::Envelope &e);
+	void selectFrameRequest(int frame);
 
 protected:
 	void paintEvent(QPaintEvent *);
 	void mousePressEvent(QMouseEvent *event);
+	void mouseDoubleClickEvent(QMouseEvent *event);
 	void resizeEvent(QResizeEvent *event);
 	void wheelEvent(QWheelEvent *event);
 

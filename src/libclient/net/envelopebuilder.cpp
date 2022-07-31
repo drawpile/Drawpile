@@ -84,4 +84,10 @@ void EnvelopeBuilder::buildUndo(uint8_t ctxid, uint8_t overrideId, bool redo)
 {
 	rustpile::write_undo(m_writer, ctxid, overrideId, redo);
 }
+
+void EnvelopeBuilder::buildUndoPoint(uint8_t ctxid)
+{
+	rustpile::write_undopoint(m_writer, ctxid);
+}
+
 }

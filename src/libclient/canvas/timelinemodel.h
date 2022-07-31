@@ -42,16 +42,21 @@ public:
 
 	struct TimelineLayer {
 		rustpile::LayerID id;
+		int group;
 		QString name;
 	};
 
 	explicit TimelineModel(QObject *parent=nullptr);
 
-	const QVector<TimelineFrame> &frames() const { return m_frames; }
+	const QVector<TimelineFrame> &frames() const { return m_manualMode ? m_frames : m_autoFrames; }
 	const QVector<TimelineLayer> &layers() const { return m_layers; }
 	int layerRow(rustpile::LayerID id) const { return m_layerIdsToRows[id]; }
 
 	void makeToggleCommand(net::EnvelopeBuilder &eb, int frameCol, int layerRow) const;
+	void makeRemoveCommand(net::EnvelopeBuilder &eb, int frameCol) const;
+
+	void setManualMode(bool manual);
+	bool isManualMode() const { return m_manualMode; }
 
 public slots:
 	void setLayers(const QVector<LayerListItem> &layers);
@@ -61,9 +66,12 @@ signals:
 	void framesChanged();
 
 private:
+	void updateAutoFrames();
 	QVector<TimelineFrame> m_frames;
+	QVector<TimelineFrame> m_autoFrames;
 	QVector<TimelineLayer> m_layers;
 	QHash<rustpile::LayerID, int> m_layerIdsToRows;
+	bool m_manualMode;
 };
 
 void timelineUpdateFrames(void *ctx, const rustpile::Frame *frames, uintptr_t count);
