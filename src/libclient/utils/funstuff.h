@@ -53,7 +53,7 @@ int diceRoll(int number, int faces);
  * @param rolltype
  * @return dice roll result (with all values set to 0 on error)
  */
-DiceRoll diceRoll(QStringView rolltype);
+DiceRoll diceRoll(const QString &rolltype);
 
 #ifndef NDEBUG
 QList<float> diceRollDistribution(const QString &rolltype);

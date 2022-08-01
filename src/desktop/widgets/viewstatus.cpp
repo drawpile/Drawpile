@@ -190,13 +190,17 @@ void ViewStatus::setMinimumZoom(int zoom)
 	m_zoomSlider->setMinimum(qMax(1, zoom));
 }
 
-void ViewStatus::zoomBoxChanged(QStringView text)
+void ViewStatus::zoomBoxChanged(const QString &text)
 {
 	if(m_updating)
 		return;
 
-	const int suffix = text.indexOf('%');
+	const int suffix = text.indexOf(QChar('%'));
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
 	const auto num = suffix>0 ? text.left(suffix) : text;
+#else
+	const auto num = suffix>0 ? QStringView{text}.left(suffix) : QStringView{text};
+#endif
 
 	bool ok;
 	const int number = num.toInt(&ok);
@@ -211,13 +215,17 @@ void ViewStatus::zoomSliderChanged(int value)
 	emit zoomChanged(value);
 }
 
-void ViewStatus::angleBoxChanged(QStringView text)
+void ViewStatus::angleBoxChanged(const QString &text)
 {
 	if(m_updating)
 		return;
 
-	const int suffix = text.indexOf(0x00b0);
+	const int suffix = text.indexOf(QChar(0x00b0));
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
 	const auto num = suffix>0 ? text.left(suffix) : text;
+#else
+	const auto num = suffix>0 ? QStringView{text}.left(suffix) : QStringView{text};
+#endif
 
 	bool ok;
 	const int number = num.toInt(&ok);

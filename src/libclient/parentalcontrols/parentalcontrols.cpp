@@ -57,7 +57,7 @@ bool isNsfmTitle(const QString &title)
 
 	QString wordlist = cfg.value("tagwords").toString();
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-	const auto words = wordlist.split(QRegularExpression("[\\s,]", QString::SkipEmptyParts);
+	const auto words = wordlist.split(QRegularExpression("[\\s,]"), QString::SkipEmptyParts);
 #else
 	const auto words = QStringView{wordlist}.split(QRegularExpression("[\\s,]"), Qt::SkipEmptyParts);
 #endif

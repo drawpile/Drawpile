@@ -1155,7 +1155,11 @@ void MainWindow::saveSelection()
 				// Use the currently selected filter
 				int i = selfilter.indexOf("*.")+1;
 				int i2 = selfilter.indexOf(')', i);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
+				file += selfilter.mid(i, i2-i);
+#else
 				file += QStringView{selfilter}.mid(i, i2-i);
+#endif
 			}
 		}
 

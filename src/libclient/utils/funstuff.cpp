@@ -41,7 +41,7 @@ int diceRoll(int number, int faces)
 	return result;
 }
 
-DiceRoll diceRoll(QStringView rolltype)
+DiceRoll diceRoll(const QString &rolltype)
 {
 	DiceRoll result;
 	static QRegularExpression re("^([1-9]\\d*)?[dD]([1-9]\\d*)?([+-]\\d+)?$");

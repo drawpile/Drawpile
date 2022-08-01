@@ -49,9 +49,9 @@ protected:
 	void changeEvent(QEvent *event) override;
 
 private slots:
-	void zoomBoxChanged(QStringView text);
+	void zoomBoxChanged(const QString &text);
 	void zoomSliderChanged(int value);
-	void angleBoxChanged(QStringView text);
+	void angleBoxChanged(const QString &text);
 
 private:
 	void updatePalette();

@@ -603,37 +603,36 @@ void ChatWidget::sendMessage(const QString &msg)
 	uint8_t oflags = 0;
 	auto chatmsg = msg;
 
-	QStringView mv{msg};
-	if(mv.at(0) == '/') {
+	if(msg.at(0) == '/') {
 		// Special commands
 
-		int split = mv.indexOf(' ');
+		int split = msg.indexOf(' ');
 		if(split<0)
-			split = mv.length();
+			split = msg.length();
 
-		const auto cmd = mv.mid(1, split-1);
-		const auto params = mv.mid(split).trimmed();
+		const auto cmd = msg.mid(1, split-1);
+		const auto params = msg.mid(split).trimmed();
 
 		if(cmd == QStringLiteral("clear")) {
 			clear();
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			if(mv.length() > 2) {
-				chatmsg = mv.mid(2).toString();
+			if(msg.length() > 2) {
+				chatmsg = msg.mid(2);
 				oflags = rustpile::ChatMessage_OFLAGS_SHOUT;
 			}
 
 		} else if(cmd == QStringLiteral("me")) {
 			if(!params.isEmpty()) {
 				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
-				chatmsg = params.toString();
+				chatmsg = params;
 			}
 
 		} else if(cmd == QStringLiteral("pin") && d->currentChat == 0) {
 			if(!params.isEmpty()) {
 				oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
-				chatmsg = params.toString();
+				chatmsg = params;
 			}
 
 		} else if(cmd == QStringLiteral("unpin") && d->currentChat == 0) {
