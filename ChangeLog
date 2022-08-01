@@ -1,3 +1,10 @@
+2022-08-?? Version 2.2 beta
+ * New paint engine written in Rust
+ * Added support for layer groups
+ * Added animation timeline editor
+ * Added screen blend mode
+ * Disabled built-in server pending rewrite
+
 2021-09-12 Version 2.1.20
  * Updated Portugese translations
  * Added more angles to canvas rotation dropdown menu
