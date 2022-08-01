@@ -597,7 +597,7 @@ void MainWindow::loadShortcuts()
 	QSettings cfg;
 	cfg.beginGroup("settings/shortcuts");
 
-	const QRegularExpression shortcutAmpersand { "&([^&])" };
+	static const QRegularExpression shortcutAmpersand { "&([^&])" };
 
 	disconnect(m_textCopyConnection);
 	const QKeySequence standardCopyShortcut { QKeySequence::Copy };

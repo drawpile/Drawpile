@@ -67,7 +67,7 @@ QImage AvatarImport::croppedAvatar() const
 void AvatarImport::importAvatar(AvatarListModel *avatarList, QPointer<QWidget> parentWindow)
 {
 	QString formats;
-	for(QByteArray format : QImageReader::supportedImageFormats()) {
+	for(const auto &format : QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
 

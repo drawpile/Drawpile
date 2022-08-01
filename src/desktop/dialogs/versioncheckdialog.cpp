@@ -98,8 +98,6 @@ void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> 
 		m_ui->textBrowser->setHtml("<h1>You're up to date!</h1><p>No new versions found.</p>");
 
 	} else {
-		QTextCursor cursor(m_ui->textBrowser->document());
-
 		QString content = "<h1>A new version of Drawpile is available!</h1>";
 
 		for(const auto &version : versions) {

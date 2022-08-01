@@ -475,7 +475,7 @@ void LayerList::afterLayerReset()
 		}
 	}
 
-	for(const int id : m_expandedGroups)
+	for(const int id : qAsConst(m_expandedGroups))
 		m_view->setExpanded(m_canvas->layerlist()->layerIndex(id), true);
 
 	m_view->verticalScrollBar()->setValue(m_lastScrollPosition);

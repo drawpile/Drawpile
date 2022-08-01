@@ -59,7 +59,7 @@ void MandatoryFields::collectFields(QObject *parent)
 void MandatoryFields::update()
 {
 	bool enable = true;
-	for(QObject *obj : m_widgets) {
+	for(QObject *obj : qAsConst(m_widgets)) {
 		if(!obj->property("mandatoryfield").toBool())
 			continue;
 

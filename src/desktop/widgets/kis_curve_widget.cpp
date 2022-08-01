@@ -82,7 +82,6 @@ KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
 	setMinimumSize(50, 50);
 
     d->setCurveModified();
-	emit curveChanged(curve());
 
     setFocusPolicy(Qt::StrongFocus);
 }

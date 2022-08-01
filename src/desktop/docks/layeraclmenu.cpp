@@ -74,7 +74,7 @@ void LayerAclMenu::setUserList(QAbstractItemModel *model)
 void LayerAclMenu::showEvent(QShowEvent *e)
 {
 	// Rebuild user list when menu is shown
-	QList<QAction*> actions = m_users->actions();
+	const QList<QAction*> actions = m_users->actions();
 	for(auto *a : actions)
 		delete a;
 

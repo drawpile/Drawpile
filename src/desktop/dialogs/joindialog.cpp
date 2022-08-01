@@ -273,7 +273,7 @@ void JoinDialog::refreshListing()
 		return;
 	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
 
-	auto listservers = sessionlisting::ListServerModel::listServers(true);
+	const auto listservers = sessionlisting::ListServerModel::listServers(true);
 	for(const sessionlisting::ListServer &ls : listservers) {
 		if(!ls.publicListings)
 			continue;

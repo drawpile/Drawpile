@@ -222,7 +222,7 @@ void ToolSettings::readSettings()
 	QSettings cfg;
 	cfg.beginGroup("tools");
 	cfg.beginGroup("toolset");
-	for(auto ts : d->toolSettings) {
+	for(auto ts : qAsConst(d->toolSettings)) {
 		ts->restoreToolSettings(tools::ToolProperties::load(cfg, ts->toolType()));
 	}
 	cfg.endGroup();
@@ -238,7 +238,7 @@ void ToolSettings::saveSettings()
 	cfg.setValue("color", d->color);
 
 	cfg.beginGroup("toolset");
-	for(auto ts : d->toolSettings) {
+	for(auto ts : qAsConst(d->toolSettings)) {
 		ts->saveToolSettings().save(cfg);
 	}
 }

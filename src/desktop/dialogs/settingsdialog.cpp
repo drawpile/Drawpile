@@ -99,7 +99,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	const QLocale localeC = QLocale::c();
 	QStringList locales;
 	for(const QString &datapath : utils::paths::dataPaths()) {
-		QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
+		const QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
 		for(const QString &file : files) {
 			QString localename = file.mid(9, file.length() - 3 - 9);
 			QLocale locale(localename);
@@ -507,20 +507,20 @@ void SettingsDialog::rememberPcLevel()
 void SettingsDialog::saveCertTrustChanges()
 {
 	// Delete removed certificates
-	for(const QString &certfile : m_removeCerts) {
+	for(const QString &certfile : qAsConst(m_removeCerts)) {
 		QFile(certfile).remove();
 	}
 
 	// Move selected certs to trusted certs
 	const auto trustedDir = utils::paths::writablePath("trusted-hosts/", ".");
 
-	for(const QString &certfile : m_trustCerts) {
+	for(const QString &certfile : qAsConst(m_trustCerts)) {
 		QString certname = certfile.mid(certfile.lastIndexOf('/')+1);
 		QFile{certfile}.rename(trustedDir + certname);
 	}
 
 	// Save imported certificates
-	for(const QSslCertificate &cert : m_importCerts) {
+	for(const QSslCertificate &cert : qAsConst(m_importCerts)) {
 		QString hostname = cert.subjectInfo(QSslCertificate::CommonName).at(0);
 
 		QFile f{trustedDir + hostname + ".pem"};
