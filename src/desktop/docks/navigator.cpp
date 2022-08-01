@@ -233,13 +233,16 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	painter.scale(xscale, yscale);
 	painter.drawPolygon(m_focusRect);
 
-	// Draw a short line to indicate the righthand side
+	// Draw top-side marker line
 	if(qAbs(m_focusRect[0].y() - m_focusRect[1].y()) >= 1.0 || m_focusRect[0].x() > m_focusRect[1].x()) {
-		const QLineF right { m_focusRect[1], m_focusRect[2] };
-		const QLineF unitVector = right.unitVector().translated(-right.p1());
-		QLineF normal = unitVector.normalVector().translated(right.center());
-		normal.setLength(10 / xscale);
-		painter.drawLine(normal);
+		const QLineF normal { m_focusRect[3], m_focusRect[0] };
+		QLineF top {m_focusRect[0], m_focusRect[1]};
+		const auto s = (5.0 / xscale) / normal.length();
+		top.translate(
+		    (normal.x2() - normal.x1()) * s,
+		    (normal.y2() - normal.y1()) * s
+		);
+		painter.drawLine(top);
 	}
 
 	painter.restore();
