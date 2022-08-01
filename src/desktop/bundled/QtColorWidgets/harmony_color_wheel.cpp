@@ -22,6 +22,7 @@
  */
 #include "QtColorWidgets/color_wheel_private.hpp"
 #include "QtColorWidgets/harmony_color_wheel.hpp"
+#include <stdexcept>
 
 namespace color_widgets {
 

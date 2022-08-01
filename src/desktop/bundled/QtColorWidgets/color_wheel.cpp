@@ -142,7 +142,7 @@ void ColorWheel::paintEvent(QPaintEvent * )
     painter.setClipping(false);
 
     // lum-sat selector
-    // we define the color of the selecto based on the background color of the widget
+    // we define the color of the selection based on the background color of the widget
     // in order to improve to contrast
     if (p->backgroundIsDark)
     {
