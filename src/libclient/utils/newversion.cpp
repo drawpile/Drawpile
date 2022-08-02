@@ -111,7 +111,7 @@ bool NewVersionCheck::parseAppDataFile(QXmlStreamReader &reader)
 		case QXmlStreamReader::Invalid:
 			return false;
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "component" && reader.attributes().value("type") == "desktop") {
+			if(reader.name() == QStringLiteral("component") && reader.attributes().value("type") == QStringLiteral("desktop")) {
 				if(!parseDesktopElement(reader))
 					return false;
 
@@ -149,7 +149,7 @@ bool NewVersionCheck::parseDesktopElement(QXmlStreamReader &reader)
 		case QXmlStreamReader::Invalid:
 			return false;
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "releases") {
+			if(reader.name() == QStringLiteral("releases")) {
 				if(!parseReleasesElement(reader))
 					return false;
 
@@ -177,7 +177,7 @@ static QStringList readList(QXmlStreamReader &reader)
 			return QStringList();
 
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "li") {
+			if(reader.name() == QStringLiteral("li")) {
 				text << "<li>" << reader.readElementText(QXmlStreamReader::IncludeChildElements) << "</li>";
 
 			} else {
@@ -209,10 +209,10 @@ static QString parseDescriptionElement(QXmlStreamReader &reader)
 
 		case QXmlStreamReader::StartElement:
 			// See https://www.freedesktop.org/software/appstream/docs/chap-Metadata.html#tag-description
-			if(reader.name() == "p") {
+			if(reader.name() == QStringLiteral("p")) {
 				text << "<p>" << reader.readElementText(QXmlStreamReader::IncludeChildElements) << "</p>";
 
-			} else if(reader.name() == "ol" || reader.name() == "ul") {
+			} else if(reader.name() == QStringLiteral("ol") || reader.name() == QStringLiteral("ul")) {
 				const QString tag = reader.name().toString();
 				text
 					<< "<" << tag << ">"
@@ -243,14 +243,14 @@ static void parseArtifactElement(QXmlStreamReader &reader, NewVersionCheck::Vers
 
 		switch(tokentype) {
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "location") {
+			if(reader.name() == QStringLiteral("location")) {
 				release.downloadUrl = reader.readElementText();
 
-			} else if(reader.name() == "checksum") {
+			} else if(reader.name() == QStringLiteral("checksum")) {
 				release.downloadChecksumType = reader.attributes().value("type").toString();
 				release.downloadChecksum = reader.readElementText();
 
-			} else if(reader.name() == "size" && reader.attributes().value("type") == "download") {
+			} else if(reader.name() == QStringLiteral("size") && reader.attributes().value("type") == QStringLiteral("download")) {
 				release.downloadSize = reader.readElementText().toInt();
 
 			} else {
@@ -275,7 +275,7 @@ static void parseArtifactsElement(QXmlStreamReader &reader, NewVersionCheck::Ver
 
 		switch(tokentype) {
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "artifact" && reader.attributes().value("type") == "binary" && reader.attributes().value("platform") == platform) {
+			if(reader.name() == QStringLiteral("artifact") && reader.attributes().value("type") == QStringLiteral("binary") && reader.attributes().value("platform") == platform) {
 				parseArtifactElement(reader, release);
 
 			} else {
@@ -307,13 +307,13 @@ static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader, co
 			return NewVersionCheck::Version {};
 
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "url") {
+			if(reader.name() == QStringLiteral("url")) {
 				release.announcementUrl = reader.readElementText();
 
-			} else if(reader.name() == "description") {
+			} else if(reader.name() == QStringLiteral("description")) {
 				release.description = parseDescriptionElement(reader);
 
-			} else if(reader.name() == "artifacts" && !platform.isEmpty()) {
+			} else if(reader.name() == QStringLiteral("artifacts") && !platform.isEmpty()) {
 				parseArtifactsElement(reader, release, platform);
 
 			} else {
@@ -343,10 +343,10 @@ bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 		case QXmlStreamReader::Invalid:
 			return false;
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "release") {
+			if(reader.name() == QStringLiteral("release")) {
 				const auto releaseType = reader.attributes().value("type");
 
-				if(!m_showBetas && !releaseType.isEmpty() && releaseType != "stable") {
+				if(!m_showBetas && !releaseType.isEmpty() && releaseType != QStringLiteral("stable")) {
 					// Skip unstable releases, unless in Beta mode
 					skipElement(reader);
 					break;

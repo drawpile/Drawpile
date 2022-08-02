@@ -47,7 +47,7 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 	const User &u = m_users.at(index.row());
 
 	if(role == Qt::ForegroundRole && !u.isOnline) {
-		return QPalette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Foreground);
+		return QPalette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText);
 	}
 
 	if(index.column() == 0) {

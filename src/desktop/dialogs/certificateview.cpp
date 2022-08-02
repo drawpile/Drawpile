@@ -29,7 +29,7 @@ namespace {
 	QString first(const QStringList &sl)
 	{
 		if(sl.isEmpty())
-			return QLatin1String("(not set)");
+			return QStringLiteral("(not set)");
 		return sl.at(0);
 	}
 }

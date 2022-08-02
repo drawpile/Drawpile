@@ -203,7 +203,7 @@ public:
 	QStringList formats() const;
 
 protected:
-	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
+	QVariant retrieveData(const QString& mimeType, QMetaType::Type type) const;
 
 private:
 	const LayerListModel *m_source;

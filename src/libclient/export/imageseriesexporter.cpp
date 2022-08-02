@@ -32,8 +32,8 @@ void ImageSeriesExporter::writeFrame(const QImage &image, int repeat)
 {
 	for(int f=1;f<=repeat;++f) {
 		QString filename = _filepattern;
-		filename.replace(QLatin1Literal("{F}"), QString("%1").arg(frame() + f, 5, 10, QLatin1Char('0')));
-		filename.replace(QLatin1Literal("{E}"), _format);
+		filename.replace(QStringLiteral("{F}"), QString("%1").arg(frame() + f, 5, 10, QChar('0')));
+		filename.replace(QStringLiteral("{E}"), _format);
 
 		QString fullpath = QFileInfo(QDir(_path), filename).absoluteFilePath();
 

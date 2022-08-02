@@ -22,6 +22,7 @@
 #include "parentalcontrols/parentalcontrols.h"
 
 #include <QApplication>
+#include <QActionGroup>
 
 namespace docks {
 

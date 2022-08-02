@@ -18,6 +18,7 @@
 */
 
 #include <QApplication>
+#include <QActionGroup>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QStatusBar>
@@ -41,7 +42,6 @@
 #include <QWindow>
 #include <QVBoxLayout>
 #include <QTimer>
-#include <QListView>
 #include <QTextEdit>
 #include <QThreadPool>
 

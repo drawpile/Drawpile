@@ -330,10 +330,10 @@ QStringList LayerMimeData::formats() const
 	return QStringList() << "application/x-qt-image";
 }
 
-QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
+QVariant LayerMimeData::retrieveData(const QString &mimeType, QMetaType::Type type) const
 {
 	Q_UNUSED(mimeType);
-	if(type==QVariant::Image) {
+	if(type==QMetaType::QImage) {
 		if(m_source->m_getlayerfn) {
 			return m_source->m_getlayerfn(m_id);
 		}

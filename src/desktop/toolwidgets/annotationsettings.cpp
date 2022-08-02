@@ -33,6 +33,7 @@
 
 #include "ui_textsettings.h"
 
+#include <QActionGroup>
 #include <QTimer>
 #include <QTextBlock>
 #include <QMenu>

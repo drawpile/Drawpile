@@ -31,13 +31,13 @@ static QString parseHead(QXmlStreamReader &reader, const QString &metaHeaderName
 		case QXmlStreamReader::Invalid:
 			return QByteArray();
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "meta") {
+			if(reader.name() == QStringLiteral("meta")) {
 				if(reader.attributes().value("name") == metaHeaderName)
 					return reader.attributes().value("content").toString();
 			}
 			break;
 		case QXmlStreamReader::EndElement:
-			if(reader.name() == "head")
+			if(reader.name() == QStringLiteral("head"))
 				return QByteArray();
 		default: break;
 		}
@@ -55,9 +55,9 @@ static QString parseHtml(QXmlStreamReader &reader, const QString &metaHeaderName
 		case QXmlStreamReader::Invalid:
 			return QByteArray();
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == "head")
+			if(reader.name() == QStringLiteral("head"))
 				return parseHead(reader, metaHeaderName);
-			else if(reader.name() == "body")
+			else if(reader.name() == QStringLiteral("body"))
 				return QByteArray(); // we went too far!
 		default: break;
 		}

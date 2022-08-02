@@ -30,16 +30,14 @@ namespace passwordhash {
 
 enum Algorithm {
 	PLAINTEXT,
-	SALTED_SHA1,
-	PBKDF2, // needs Qt >= 5.12
+	SALTED_SHA1, // deprecated
+	PBKDF2,
 	SODIUM, // the best algorithm offered by libsodium
 
 #if defined(HAVE_LIBSODIUM)
 	BEST_ALGORITHM = SODIUM
-#elif QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-	BEST_ALGORITHM = PBKDF2
 #else
-	BEST_ALGORITHM = SALTED_SHA1
+	BEST_ALGORITHM = PBKDF2
 #endif
 };
 

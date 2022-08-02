@@ -35,7 +35,6 @@ class KisCubicCurve
 public:
     KisCubicCurve();
     KisCubicCurve(const QList<QPointF>& points);
-    KisCubicCurve(const QVector<QPointF>& points);
     KisCubicCurve(const KisCubicCurve& curve);
     ~KisCubicCurve();
     KisCubicCurve& operator=(const KisCubicCurve& curve);

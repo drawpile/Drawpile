@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2019 Calle Laakkonen
+   Copyright (C) 2014-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,13 +19,11 @@
 
 #include "passwordhash.h"
 
+#include <QList>
 #include <QString>
 #include <QCryptographicHash>
-#include <QList>
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 #include <qpassworddigestor.h>
-#endif
+#include <QRandomGenerator>
 
 #ifdef HAVE_LIBSODIUM
 #include <sodium.h>
@@ -34,16 +32,11 @@
 namespace server {
 namespace passwordhash {
 
-static QByteArray makesalt(int len)
+static QByteArray makesalt()
 {
-	QByteArray salt(len, 0);
-#ifdef HAVE_LIBSODIUM
-	randombytes_buf(salt.data(), len);
-#else
-	for(int i=0;i<len;++i)
-		salt[i] = qrand() % 255;
-#endif
-	return salt;
+	quint32 buf[8];
+	QRandomGenerator::global()->fillRange(buf);
+	return QByteArray(reinterpret_cast<const char*>(buf), sizeof buf);
 }
 
 static QByteArray saltedSha1(const QString &password, const QByteArray &salt)
@@ -66,12 +59,7 @@ bool isValidHash(const QByteArray &hash)
 		return hash.count(';') == 2;
 
 	} else if(hash.startsWith("pbkdf2;")) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 		return hash.count(';') == 3;
-#else
-		qWarning("Qt 5.12 needed to support PBKDF2 hashes!");
-		return false;
-#endif
 
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
@@ -107,7 +95,6 @@ bool check(const QString &password, const QByteArray &hash)
 		return hp == QByteArray::fromHex(parts.at(2));
 
 	} else if(hash.startsWith("pbkdf2;")) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 		const auto parts = hash.split(';');
 		const auto salt = QByteArray::fromBase64(parts.at(2));
 		const auto expectedHash = QByteArray::fromBase64(parts.at(3));
@@ -115,7 +102,6 @@ bool check(const QString &password, const QByteArray &hash)
 			const auto hash = QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64);
 			return hash == expectedHash;
 		}
-#endif
 
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
@@ -142,21 +128,16 @@ QByteArray hash(const QString &password, Algorithm algorithm)
 
 	case SALTED_SHA1: {
 		// Note: no longer generate this type of hash when minimum supported Qt version is 5.12
-		const QByteArray salt = makesalt(16);
+		const QByteArray salt = makesalt();
 		return "s+sha1;" + salt.toHex() + ";" + saltedSha1(password, salt).toHex();
 		}
 
 	case PBKDF2: {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-		// TODO
-		const QByteArray salt = makesalt(16);
+		const QByteArray salt = makesalt();
 		return "pbkdf2;1;" +
 			salt.toBase64() + ";" +
 			QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64).toBase64()
 			;
-#else
-		break;
-#endif
 		}
 
 	case SODIUM: {
