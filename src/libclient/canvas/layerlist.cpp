@@ -18,7 +18,6 @@
 */
 
 #include "layerlist.h"
-#include "net/envelopebuilder.h"
 #include "../rustpile/rustpile.h"
 
 #include <QDebug>

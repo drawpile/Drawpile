@@ -120,8 +120,6 @@ public:
 	QModelIndex layerIndex(uint16_t id) const;
 	const QVector<LayerListItem> &layerItems() const { return m_items; }
 
-	void previewOpacityChange(uint16_t id, float opacity) { emit layerOpacityPreview(id, opacity); }
-
 	void setLayerGetter(GetLayerFunction fn) { m_getlayerfn = fn; }
 	void setAclState(AclState *state) { m_aclstate = state; }
 
@@ -172,9 +170,6 @@ signals:
 
 	//! Emitted when layers are manually reordered
 	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
-
-	//! Request local change of layer opacity for preview purpose
-	void layerOpacityPreview(int id, float opacity);
 
 private:
 	QVector<LayerListItem> m_items;
