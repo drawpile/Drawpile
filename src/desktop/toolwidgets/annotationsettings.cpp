@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2021 Calle Laakkonen
+   Copyright (C) 2006-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 
 #include "annotationsettings.h"
 #include "tools/toolcontroller.h"
-#include "tools/toolproperties.h"
-#include "tools/annotation.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/userlist.h"
 #include "scene/canvasscene.h"
@@ -356,10 +354,10 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		m_protectedAction->setChecked(a->protect());
 
 		const bool opOrOwner = controller()->model()->aclState()->amOperator() || (a->id() >> 8) == controller()->client()->myId();
+		m_protectedAction->setEnabled(opOrOwner);
+
 		if(a->protect() && !opOrOwner)
 			setUiEnabled(false);
-		else if(!opOrOwner)
-			m_protectedAction->setEnabled(false);
 	}
 	m_noupdate = false;
 }

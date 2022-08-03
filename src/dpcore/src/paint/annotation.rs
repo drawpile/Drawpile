@@ -42,6 +42,7 @@ pub struct Annotation {
     pub background: Color,
     pub protect: bool,
     pub valign: VAlign,
+    pub border: u8,
 }
 
 #[derive(Clone, Copy, IntoPrimitive, TryFromPrimitive)]

@@ -280,6 +280,7 @@ impl LayerStack {
             background: Color::TRANSPARENT,
             protect: false,
             valign: VAlign::Top,
+            border: 0,
         }));
     }
 

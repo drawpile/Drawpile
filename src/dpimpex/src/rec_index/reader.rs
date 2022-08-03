@@ -193,6 +193,7 @@ fn read_annotation<R: Read + Seek>(reader: &mut R, offset: u64) -> IndexResult<A
         background: Color::from_argb32(bg),
         protect: false,
         valign,
+        border: 0, // border not fully implemented yet
     }))
 }
 

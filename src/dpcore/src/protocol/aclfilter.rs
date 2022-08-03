@@ -330,20 +330,27 @@ impl AclFilter {
                 self.users.tier(*u) <= self.feature_tier.create_annotation
                     && (self.users.is_op(*u) || layer_creator(m.id) == *u)
             }
-            AnnotationReshape(u, m) => self.users.is_op(*u) || *u == layer_creator(m.id),
+            AnnotationReshape(u, m) => {
+                self.users.is_op(*u)
+                    || *u == layer_creator(m.id)
+                    || !self.locked_annotations.contains(&m.id)
+            }
             AnnotationEdit(u, m) => {
-                let ok = self.users.is_op(*u) || *u == layer_creator(m.id);
-                if ok {
+                if self.users.is_op(*u) || *u == layer_creator(m.id) {
                     if m.flags & AnnotationEditMessage::FLAGS_PROTECT > 0 {
                         self.locked_annotations.insert(m.id);
                     } else {
                         self.locked_annotations.remove(&m.id);
                     }
+                    true
+                } else {
+                    !self.locked_annotations.contains(&m.id)
                 }
-                ok
             }
             AnnotationDelete(u, id) => {
-                let ok = self.users.is_op(*u) || *u == layer_creator(*id);
+                let ok = self.users.is_op(*u)
+                    || *u == layer_creator(*id)
+                    || !self.locked_annotations.contains(id);
                 if ok {
                     self.locked_annotations.remove(id);
                 }

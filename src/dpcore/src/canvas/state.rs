@@ -805,13 +805,13 @@ impl CanvasState {
     ) -> CanvasStateChange {
         if let Some(a) = Arc::make_mut(&mut self.layerstack).get_annotation_mut(msg.id) {
             a.background = Color::from_argb32(msg.bg);
-            a.protect = (msg.flags & 0x01) != 0;
+            a.protect = (msg.flags & AnnotationEditMessage::FLAGS_PROTECT) != 0;
             a.valign = match msg.flags & 0x06 {
                 AnnotationEditMessage::FLAGS_VALIGN_CENTER => VAlign::Center,
                 AnnotationEditMessage::FLAGS_VALIGN_BOTTOM => VAlign::Bottom,
                 _ => VAlign::Top,
             };
-            // border not implemented yet
+            a.border = msg.border;
             a.text = msg.text.clone();
 
             CanvasStateChange::annotations(
