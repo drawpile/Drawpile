@@ -807,8 +807,8 @@ impl CanvasState {
             a.background = Color::from_argb32(msg.bg);
             a.protect = (msg.flags & 0x01) != 0;
             a.valign = match msg.flags & 0x06 {
-                0x02 => VAlign::Center,
-                0x06 => VAlign::Bottom,
+                AnnotationEditMessage::FLAGS_VALIGN_CENTER => VAlign::Center,
+                AnnotationEditMessage::FLAGS_VALIGN_BOTTOM => VAlign::Bottom,
                 _ => VAlign::Top,
             };
             // border not implemented yet

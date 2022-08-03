@@ -22,7 +22,6 @@
 #include <QPainter>
 
 #include "scene/annotationitem.h"
-#include "../rustpile/rustpile.h"
 
 namespace drawingboard {
 
@@ -133,11 +132,9 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	m_doc.setTextWidth(m_rect.width());
 
 	QPointF offset;
-	if(m_valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER) {
-		offset.setY((m_rect.height() - m_doc.size().height()) / 2);
-
-	} else if(m_valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM) {
-		offset.setY(m_rect.height() - m_doc.size().height());
+	switch(m_valign) {
+		case 1: offset.setY((m_rect.height() - m_doc.size().height()) / 2); break;
+		case 2: offset.setY(m_rect.height() - m_doc.size().height()); break;
 	}
 
 	painter->translate(m_rect.topLeft() + offset);
@@ -178,11 +175,9 @@ static void paintAnnotation(QPainter *painter, const QRectF &paintrect, const QC
 	doc.setTextWidth(rect0.width());
 
 	QPointF offset;
-	if(valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER) {
-		offset.setY((rect0.height() - doc.size().height()) / 2);
-
-	} else if(valign == rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM) {
-		offset.setY(rect0.height() - doc.size().height());
+	switch(valign) {
+		case 1: offset.setY((rect0.height() - doc.size().height()) / 2); break;
+		case 2: offset.setY(rect0.height() - doc.size().height()); break;
 	}
 	painter->translate(offset);
 

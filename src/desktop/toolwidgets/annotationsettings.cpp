@@ -334,12 +334,21 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		if(text.isEmpty())
 			resetContentFont(true, true, true);
 
+		int align = 0;
 		switch(a->valign()) {
-		case 0: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-top")); break;
-		case rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom")); break;
-		case rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER: m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-center")); break;
+		case 0:
+			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-top"));
+			break;
+		case 1:
+			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-center"));
+			align = rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER;
+			break;
+		case 2:
+			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom"));
+			align = rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM;
+			break;
 		}
-		m_ui->valign->setProperty(VALIGN_PROP, a->valign());
+		m_ui->valign->setProperty(VALIGN_PROP, align);
 
 		m_protectedAction->setText(tr("Protected (%1)").arg(
 			controller()->model()->userlist()->getUsername(a->userId()))
