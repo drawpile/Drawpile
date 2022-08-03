@@ -59,6 +59,11 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 
 	connect(m_chatWidget, &ChatWidget::message, this, &ChatBox::message);
 	connect(m_chatWidget, &ChatWidget::detachRequested, this, &ChatBox::detachFromParent);
+	connect(m_chatWidget, &ChatWidget::expandRequested, this, [this]() {
+		if(m_state == State::Collapsed) {
+			emit expandPlease();
+		}
+	});
 
 	connect(doc, &Document::canvasChanged, this, &ChatBox::onCanvasChanged);
 	connect(doc, &Document::serverLoggedIn, this, &ChatBox::onServerLogin);

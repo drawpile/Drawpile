@@ -110,7 +110,8 @@ pub struct ChatMessage {
 
 impl ChatMessage {
     pub const TFLAGS_BYPASS: u8 = 0x1;
-    pub const TFLAGS: &'static [&'static str] = &["bypass"];
+    pub const TFLAGS_ALERT: u8 = 0x2;
+    pub const TFLAGS: &'static [&'static str] = &["bypass", "alert"];
     pub const OFLAGS_SHOUT: u8 = 0x1;
     pub const OFLAGS_ACTION: u8 = 0x2;
     pub const OFLAGS_PIN: u8 = 0x4;
@@ -1689,6 +1690,9 @@ pub enum CommandMessage {
     ///
     /// Specifying a sublayer requires session operator privileges. Currently, it is used
     /// only when sublayers are needed at canvas initialization.
+    ///
+    /// Note: the `fixed` flag is unused since version 2.2. It's functionality is replaced
+    /// by the custom timeline feature.
     ///
     LayerAttributes(u8, LayerAttributesMessage),
 

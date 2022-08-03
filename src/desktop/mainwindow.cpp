@@ -2539,6 +2539,7 @@ void MainWindow::setupActions()
 
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, toggleChat, &QAction::setChecked);
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton, &QToolButton::hide);
+	connect(m_chatbox, &widgets::ChatBox::expandPlease, toggleChat, &QAction::trigger);
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		QList<int> sizes;
 		if(show) {

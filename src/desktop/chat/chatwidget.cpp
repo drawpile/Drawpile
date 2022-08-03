@@ -62,6 +62,7 @@ struct Chat {
 				"color: #eff0f1;"
 				"margin: 1px 0 1px 0"
 			"}"
+		    ".alert { background: #da4453 }"
 			".shout { background: #34292c }"
 			".shout .tab { background: #da4453 }"
 			".action { font-style: italic }"
@@ -71,6 +72,7 @@ struct Chat {
 			".op { color: #f47750 }"
 			".mod { color: #ed1515 }"
 			".timestamp { color: #8d8d8d }"
+		    ".alert .timestamp { color: #eff0f1 }"
 			"a:link { color: #1d99f3 }"
 		);
 	}
@@ -79,6 +81,7 @@ struct Chat {
 	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout);
 	void appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout);
 	void appendAction(const QString &usernameSpan, const QString &message);
+	void appendAlert(const QString &usernameSpan, const QString &message);
 	void appendNotification(const QString &message);
 };
 
@@ -418,6 +421,32 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 	lastMessageTs = ts;
 }
 
+void Chat::appendAlert(const QString &usernameSpan, const QString &message)
+{
+	QTextCursor cursor(doc);
+	cursor.movePosition(QTextCursor::End);
+
+	lastAppendedId = -2;
+
+	cursor.insertHtml(QStringLiteral(
+	    "<table width=\"100%\" class=\"message alert\">"
+	    "<tr>"
+	        "<td width=3 rowspan=2 class=tab></td>"
+	        "<td>%1</td>"
+	        "<td class=timestamp align=right>%2</td>"
+	    "</tr>"
+	    "<tr>"
+	        "<td colspan=2>%3</td>"
+	    "</tr>"
+	    "</table>"
+	    ).arg(
+	        usernameSpan,
+	        timestamp(),
+	        htmlutils::newlineToBr(message)
+	    )
+	);
+}
+
 void Chat::appendAction(const QString &usernameSpan, const QString &message)
 {
 	QTextCursor cursor(doc);
@@ -557,15 +586,15 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
 
-	if(oflags & rustpile::ChatMessage_OFLAGS_ACTION) {
+	if(tflags & rustpile::ChatMessage_TFLAGS_ALERT) {
+		chat.appendAlert(d->usernameSpan(sender), safetext);
+		emit expandRequested();
+	} else if(oflags & rustpile::ChatMessage_OFLAGS_ACTION)
 		chat.appendAction(d->usernameSpan(sender), safetext);
-
-	} else {
-		if(d->compactMode)
-			chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
-		else
-			chat.appendMessage(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
-	}
+	else if(d->compactMode)
+		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
+	else
+		chat.appendMessage(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
 
 	if(chatId != d->currentChat) {
 		for(int i=0;i<d->tabs->count();++i) {
@@ -590,16 +619,20 @@ void ChatWidget::setPinnedMessage(const QString &message)
 
 void ChatWidget::systemMessage(const QString& message, bool alert)
 {
-	Q_UNUSED(alert);
 	const bool wasAtEnd = d->isAtEnd();
-	d->publicChat().appendNotification(message.toHtmlEscaped());
+	if(alert) {
+		d->publicChat().appendAlert(QString(), message);
+		emit expandRequested();
+	} else
+		d->publicChat().appendNotification(message.toHtmlEscaped());
+
 	if(wasAtEnd)
 		d->scrollToEnd(0);
 }
 
 void ChatWidget::sendMessage(const QString &msg)
 {
-	const uint8_t tflags = d->preserveChat ? rustpile::ChatMessage_TFLAGS_BYPASS : 0;
+	uint8_t tflags = d->preserveChat ? rustpile::ChatMessage_TFLAGS_BYPASS : 0;
 	uint8_t oflags = 0;
 	auto chatmsg = msg;
 
@@ -621,6 +654,12 @@ void ChatWidget::sendMessage(const QString &msg)
 			if(msg.length() > 2) {
 				chatmsg = msg.mid(2);
 				oflags = rustpile::ChatMessage_OFLAGS_SHOUT;
+			}
+
+		} else if(cmd == QStringLiteral("alert")) {
+			if(msg.length() > 2) {
+				chatmsg = params;
+				tflags |= rustpile::ChatMessage_TFLAGS_ALERT;
 			}
 
 		} else if(cmd == QStringLiteral("me")) {
@@ -656,6 +695,7 @@ void ChatWidget::sendMessage(const QString &msg)
 				"/help - show this message\n"
 				"/clear - clear chat window\n"
 				"/! <text> - make an announcement (recorded in session history)\n"
+			    "/alert <text> - send a high priority alert\n"
 				"/me <text> - send action type message\n"
 				"/pin <text> - pin a message to the top of the chat box (Ops only)\n"
 				"/unpin - remove pinned message\n"

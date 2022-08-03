@@ -84,6 +84,7 @@ private slots:
 signals:
 	void message(const net::Envelope &msg);
 	void detachRequested();
+	void expandRequested();
 
 private:
 	struct Private;

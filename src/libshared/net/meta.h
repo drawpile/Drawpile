@@ -160,6 +160,7 @@ class Chat : public Message {
 public:
 	// Transparent flags: these affect serverside behavior
 	static const uint8_t FLAG_BYPASS = 0x01; // bypass session history and send directly to logged in users
+	static const uint8_t FLAG_ALERT = 0x02; // high priority alert (can be send by operators only)
 
 	// Opaque flags: the server doesn't know anything about these
 	static const uint8_t FLAG_SHOUT = 0x01;  // public announcement
@@ -196,6 +197,11 @@ public:
 	 * in the session history.
 	 */
 	bool isBypass() const { return m_tflags & FLAG_BYPASS; }
+
+	/**
+	 * @brief Is this an alert message?
+	 */
+	bool isAlert() const { return m_tflags & FLAG_ALERT; }
 
 	/**
 	 * @brief Is this a shout?

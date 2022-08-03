@@ -60,6 +60,9 @@ signals:
 	//! The chatbox was either expanded or collapsed
 	void expandedChanged(bool isExpanded);
 
+	//! Request that the chatbox be expanded
+	void expandPlease();
+
 	//! Detached chat box should be re-attached and reparented (or it will be destroyed)
 	void reattachNowPlease();
 

@@ -4,6 +4,7 @@
  * Added animation timeline editor
  * Added screen blend mode
  * Disabled built-in server pending rewrite
+ * Added `/alert` chat command
 
 2021-09-12 Version 2.1.20
  * Updated Portugese translations
