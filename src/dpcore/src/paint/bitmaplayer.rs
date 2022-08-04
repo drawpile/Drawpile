@@ -345,12 +345,14 @@ impl BitmapLayer {
 
     /// Get a weighted average of the color under the dab mask
     pub fn sample_dab_color(&self, x: i32, y: i32, dab: &BrushMask) -> Color {
-        let sample_rect = match Rectangle::new(x, y, dab.diameter as i32, dab.diameter as i32)
-            .cropped(self.size())
-        {
-            Some(r) => r,
-            None => return Color::TRANSPARENT,
-        };
+        let rad = dab.diameter as i32 / 2;
+        let sample_rect =
+            match Rectangle::new(x - rad, y - rad, dab.diameter as i32, dab.diameter as i32)
+                .cropped(self.size())
+            {
+                Some(r) => r,
+                None => return Color::TRANSPARENT,
+            };
 
         let tx0 = sample_rect.x / TILE_SIZEI;
         let ty0 = sample_rect.y / TILE_SIZEI;
