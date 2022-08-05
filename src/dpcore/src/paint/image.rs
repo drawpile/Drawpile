@@ -42,7 +42,7 @@ impl Image {
     }
 
     pub fn is_null(&self) -> bool {
-        assert!(self.width * self.height == 0);
+        assert!(self.pixels.len() == self.width * self.height);
         self.pixels.is_empty()
     }
 
