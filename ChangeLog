@@ -1,5 +1,6 @@
 2022-08-?? Version 2.2 beta2
  * Fixed smudge color sampling mask offset
+ * Fixed annotation loading
 
 2022-08-?? Version 2.2 beta
  * New paint engine written in Rust

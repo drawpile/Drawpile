@@ -60,7 +60,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
     create_stack(&mut archive, &mut ls, 0, &canvas.root)?;
 
     // Create annotations
-    let annotation_id = 0x0100;
+    let mut annotation_id = 0x0100;
     for ora_ann in canvas.annotations {
         ls.add_annotation(annotation_id, ora_ann.rect);
         let mut a = ls.get_annotation_mut(annotation_id).unwrap();
@@ -71,6 +71,7 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
             "bottom" => VAlign::Bottom,
             _ => VAlign::Top,
         };
+        annotation_id += 1;
     }
 
     // Set timeline
