@@ -1,7 +1,5 @@
 use super::{GroupLayer, Layer, LayerID, RootGroup};
 
-use std::convert::TryInto;
-
 /// Make a new layer ordering with the source layer moved on top (or below) of the target layer.
 /// If into_group is set to true, the source will be moved into the top of the target group.
 ///
@@ -18,22 +16,20 @@ pub fn move_ordering(
     }
 
     let source_layer = root.get_layer(source_layer_id)?;
-    if root.get_layer(target_layer_id).is_none() {
-        return None;
-    }
+    root.get_layer(target_layer_id)?; // check that target exists
 
     fn order_source(ordering: &mut Vec<u16>, source: &Layer) {
         match source {
             Layer::Group(g) => {
                 ordering.push(g.layer_count() as u16);
-                ordering.push(g.metadata().id.try_into().unwrap());
+                ordering.push(g.metadata().id);
                 for gl in g.iter_layers() {
                     order_source(ordering, gl)
                 }
             }
             _ => {
                 ordering.push(0);
-                ordering.push(source.metadata().id.try_into().unwrap());
+                ordering.push(source.metadata().id);
             }
         }
     }
@@ -68,7 +64,7 @@ pub fn move_ordering(
                 Layer::Group(g) => {
                     let pos = ordering.len();
                     ordering.push(0xffff); // placeholder for real child count,
-                    ordering.push(g.metadata().id.try_into().unwrap());
+                    ordering.push(g.metadata().id);
 
                     // Insert source layer to target group (in into_group mode)
                     let mut gc = 0;
@@ -86,7 +82,7 @@ pub fn move_ordering(
 
                 Layer::Bitmap(l) => {
                     ordering.push(0);
-                    ordering.push(l.metadata().id.try_into().unwrap());
+                    ordering.push(l.metadata().id);
                 }
             }
 

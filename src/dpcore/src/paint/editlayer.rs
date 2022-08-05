@@ -184,7 +184,7 @@ pub fn draw_image(
         for (destrow, imagerow) in
             tile.rect_iter_mut(user, &tilerect, can_erase)
                 .zip(RectIterator::from_rectangle(
-                    &image,
+                    image,
                     rect.w as usize,
                     &srcrect,
                 ))
@@ -214,7 +214,7 @@ pub fn put_tile(
             col,
             row,
             repeat,
-            &tile,
+            tile,
         );
     }
 

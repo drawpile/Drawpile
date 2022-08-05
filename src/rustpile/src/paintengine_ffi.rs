@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ use dpcore::paint::editstack;
 use dpcore::paint::floodfill;
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
-    AoE, Blendmode, Color, FlattenedTileIterator, Image, LayerID, LayerInsertion, LayerStack,
-    LayerViewMode, LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID, Frame,
+    AoE, Blendmode, Color, FlattenedTileIterator, Frame, Image, LayerID, LayerInsertion,
+    LayerStack, LayerViewMode, LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID,
 };
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::message::*;
@@ -673,10 +673,7 @@ pub extern "C" fn paintengine_is_simple(dp: &PaintEngine) -> bool {
 
 /// Get an integer type metadata field
 #[no_mangle]
-pub extern "C" fn paintengine_get_metadata_int(
-    dp: &PaintEngine,
-    field: MetadataInt,
-) -> i32 {
+pub extern "C" fn paintengine_get_metadata_int(dp: &PaintEngine, field: MetadataInt) -> i32 {
     let vc = dp.viewcache.lock().unwrap();
     let md = vc.layerstack.metadata();
 
@@ -720,8 +717,8 @@ pub extern "C" fn paintengine_set_onionskin_opts(
         || skins_above != dp.view_opts.frames_above.len()
         || tint != dp.view_opts.onionskin_tint
     {
-        dp.view_opts.frames_below = vec![Frame::empty();skins_below];
-        dp.view_opts.frames_above = vec![Frame::empty();skins_above];
+        dp.view_opts.frames_below = vec![Frame::empty(); skins_below];
+        dp.view_opts.frames_above = vec![Frame::empty(); skins_above];
         dp.view_opts.onionskin_tint = tint;
 
         if dp.view_opts.viewmode != LayerViewMode::Onionskin {
@@ -784,9 +781,7 @@ pub extern "C" fn paintengine_set_active_frame(dp: &mut PaintEngine, frame_idx: 
         }
 
         let changed = match dp.view_opts.viewmode {
-            LayerViewMode::Frame | LayerViewMode::Onionskin => {
-                dp.view_opts.active_frame != frame
-            }
+            LayerViewMode::Frame | LayerViewMode::Onionskin => dp.view_opts.active_frame != frame,
             _ => false,
         };
 
@@ -1187,11 +1182,7 @@ pub extern "C" fn paintengine_get_frame_count(dp: &PaintEngine) -> usize {
     vc.layerstack.frame_count()
 }
 
-type GetTimelineCallback = extern "C" fn(
-    ctx: *mut c_void,
-    frames: *const Frame,
-    count: usize
-);
+type GetTimelineCallback = extern "C" fn(ctx: *mut c_void, frames: *const Frame, count: usize);
 
 /// Get the animation timeline
 #[no_mangle]
@@ -1203,9 +1194,8 @@ pub extern "C" fn paintengine_get_timeline(
     let vc = dp.viewcache.lock().unwrap();
     let timeline = vc.layerstack.timeline();
 
-    (cb)(ctx, timeline.frames.as_ptr(),  timeline.frames.len());
+    (cb)(ctx, timeline.frames.as_ptr(), timeline.frames.len());
 }
-
 
 /// Copy frame pixel data to the given buffer
 ///
@@ -1257,7 +1247,7 @@ pub extern "C" fn paintengine_get_historical_reset_snapshot(
     writer: &mut MessageWriter,
 ) -> bool {
     if let Some(snapshot) = snapshots.get(index) {
-        let msgs = make_canvas_snapshot(1, &snapshot, 0, Some(&dp.aclfilter));
+        let msgs = make_canvas_snapshot(1, snapshot, 0, Some(&dp.aclfilter));
 
         for msg in msgs {
             msg.write(writer);
@@ -1270,7 +1260,7 @@ pub extern "C" fn paintengine_get_historical_reset_snapshot(
 }
 
 #[no_mangle]
-pub extern "C" fn paintengine_get_acl_users<'a>(dp: &'a PaintEngine) -> &'a UserACLs {
+pub extern "C" fn paintengine_get_acl_users(dp: &PaintEngine) -> &UserACLs {
     dp.aclfilter.users()
 }
 
@@ -1286,7 +1276,7 @@ pub extern "C" fn paintengine_get_acl_layers(
 }
 
 #[no_mangle]
-pub extern "C" fn paintengine_get_acl_features<'a>(dp: &'a PaintEngine) -> &'a FeatureTiers {
+pub extern "C" fn paintengine_get_acl_features(dp: &PaintEngine) -> &FeatureTiers {
     dp.aclfilter.feature_tiers()
 }
 
@@ -1694,13 +1684,10 @@ pub extern "C" fn paintengine_start_recording(
     header.insert("version".to_string(), PROTOCOL_VERSION.to_string());
     header.insert("writerversion".to_string(), DRAWPILE_VERSION.to_string());
 
-    match writer.write_header(&header) {
-        Err(e) => {
-            warn!("Couldn't writer recording header: {}", e);
-            return CanvasIoError::FileIoError;
-        }
-        Ok(()) => (),
-    };
+    if let Err(e) = writer.write_header(&header) {
+        warn!("Couldn't writer recording header: {}", e);
+        return CanvasIoError::FileIoError;
+    }
 
     // TODO sync the paint engine thread to make sure we get everything
 
@@ -1828,7 +1815,6 @@ pub extern "C" fn paintengine_playback_step(dp: &mut PaintEngine, mut steps: i32
         .send(PaintEngineCommand::PlaybackPaused(pos, interval))
     {
         warn!("Couldn't send command to paint engine thread {:?}", err);
-        return;
     }
 }
 
@@ -1873,14 +1859,11 @@ pub extern "C" fn paintengine_playback_jump(dp: &mut PaintEngine, pos: u32, exac
 
         if exact && pos > msg_idx {
             paintengine_playback_step(dp, (pos - msg_idx) as i32, false);
-        } else {
-            if let Err(err) = dp
-                .engine_channel
-                .send(PaintEngineCommand::PlaybackPaused(msg_idx as i64, 0))
-            {
-                warn!("Couldn't send command to paint engine thread {:?}", err);
-                return;
-            }
+        } else if let Err(err) = dp
+            .engine_channel
+            .send(PaintEngineCommand::PlaybackPaused(msg_idx as i64, 0))
+        {
+            warn!("Couldn't send command to paint engine thread {:?}", err);
         }
     }
 }

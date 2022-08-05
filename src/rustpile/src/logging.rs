@@ -17,11 +17,7 @@ impl Write for ExtLogWriter {
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
         // Strip newline character since Qt's logger will
         // insert it itself.
-        let msg = if buf.ends_with(&['\n' as u8]) {
-            &buf[..buf.len() - 1]
-        } else {
-            &buf[..]
-        };
+        let msg = buf.strip_suffix(&[b'\n']).unwrap_or(buf);
 
         let cstr = match CString::new(msg) {
             Ok(s) => s,
@@ -69,10 +65,10 @@ impl MakeWriter for ExtLogger {
             log_fn: self.0,
             file: meta.file().and_then(|s| CString::new(s).ok()),
             line: meta.line(),
-            level: match meta.level() {
-                &Level::INFO => 1,
-                &Level::WARN => 2,
-                &Level::ERROR => 3,
+            level: match *meta.level() {
+                Level::INFO => 1,
+                Level::WARN => 2,
+                Level::ERROR => 3,
                 _ => 0,
             },
         }

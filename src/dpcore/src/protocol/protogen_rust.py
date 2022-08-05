@@ -7,6 +7,9 @@ from protogen import load_protocol_definition, MSG_TYPES
 template = Template("""
 // Message definitions generated with protogen-rust.py
 
+// allow some stylistic errors that make code generations simpler
+#![allow(clippy::needless_borrow)]
+
 use super::serialization::{MessageReader, MessageWriter, DeserializationError};
 use super::textmessage::TextMessage;
 use std::fmt;
@@ -287,7 +290,7 @@ impl Message {
             {% for message in messages %}
             "{{ message.cmd_name }}" => {{ message.message_type }}({{ message.message_type }}Message::{{ message.name }}(tm.user_id,
             {% if message.alias or message.fields|length > 1%}
-                {{ message.alias or message.name }}Message::from_text(&tm)
+                {{ message.alias or message.name }}Message::from_text(tm)
             {% elif message.fields %}
                 {{ textmessage_getfield('tm', message.fields[0]) }}
             {% endif %})),

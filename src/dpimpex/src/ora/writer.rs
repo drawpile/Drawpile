@@ -53,14 +53,14 @@ pub fn save_openraster_image(path: &Path, layerstack: &LayerStack) -> ImageExpor
         "mimetype",
         zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored),
     )?;
-    archive.write(b"image/openraster")?;
+    archive.write_all(b"image/openraster")?;
 
     // Write layer images. We need to do this first because the layers are automatically
     // cropped and we need the offsets in stack.xml.
     let mut written_layers = write_stack(&mut archive, layerstack.root().inner_ref())?;
 
     if !layerstack.background.is_blank() {
-        let bg = write_background(&mut archive, &layerstack)?;
+        let bg = write_background(&mut archive, layerstack)?;
 
         written_layers.layers.push(OraStackElement::Layer(bg));
     }
@@ -74,7 +74,7 @@ pub fn save_openraster_image(path: &Path, layerstack: &LayerStack) -> ImageExpor
     }
 
     // Write the stack XML
-    write_stack_xml(&mut archive, &written_layers, &layerstack)
+    write_stack_xml(&mut archive, &written_layers, layerstack)
 }
 
 fn write_background<W: Write + Seek>(
@@ -303,7 +303,7 @@ fn write_stack_xml<W: Write + Seek>(
     }
 
     // Timeline (drawpile extension)
-    if layerstack.timeline().frames.len() > 0 {
+    if !layerstack.timeline().frames.is_empty() {
         let mut idmap = HashMap::new();
         make_idmap(root, 0, &mut idmap);
 

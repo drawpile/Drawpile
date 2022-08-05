@@ -1,5 +1,7 @@
 // Generated with protogen-builder.py
 
+#![allow(clippy::redundant_field_names)]
+
 use dpcore::canvas::images::make_putimage;
 use dpcore::paint::{Blendmode, Image, LayerID, Pixel, UserID};
 use dpcore::protocol::message::*;
@@ -48,8 +50,7 @@ pub extern "C" fn write_disconnect(
             reason: reason,
             message: String::from_utf16_lossy(unsafe {
                 slice::from_raw_parts(message, message_len)
-            })
-            .to_string(),
+            }),
         },
     )
     .write(writer);
@@ -90,8 +91,7 @@ pub extern "C" fn write_chat(
             oflags: oflags,
             message: String::from_utf16_lossy(unsafe {
                 slice::from_raw_parts(message, message_len)
-            })
-            .to_string(),
+            }),
         },
     )
     .write(writer);
@@ -127,8 +127,7 @@ pub extern "C" fn write_privatechat(
             oflags: oflags,
             message: String::from_utf16_lossy(unsafe {
                 slice::from_raw_parts(message, message_len)
-            })
-            .to_string(),
+            }),
         },
     )
     .write(writer);
@@ -165,7 +164,7 @@ pub extern "C" fn write_marker(
 ) {
     ClientMetaMessage::Marker(
         ctx,
-        String::from_utf16_lossy(unsafe { slice::from_raw_parts(text, text_len) }).to_string(),
+        String::from_utf16_lossy(unsafe { slice::from_raw_parts(text, text_len) }),
     )
     .write(writer);
 }
@@ -269,8 +268,7 @@ pub extern "C" fn write_newlayer(
             target: target,
             fill: fill,
             flags: flags,
-            name: String::from_utf16_lossy(unsafe { slice::from_raw_parts(name, name_len) })
-                .to_string(),
+            name: String::from_utf16_lossy(unsafe { slice::from_raw_parts(name, name_len) }),
         },
     )
     .write(writer);
@@ -311,8 +309,7 @@ pub extern "C" fn write_retitlelayer(
         ctx,
         LayerRetitleMessage {
             id: id,
-            title: String::from_utf16_lossy(unsafe { slice::from_raw_parts(title, title_len) })
-                .to_string(),
+            title: String::from_utf16_lossy(unsafe { slice::from_raw_parts(title, title_len) }),
         },
     )
     .write(writer);
@@ -431,8 +428,7 @@ pub extern "C" fn write_editannotation(
             bg: bg,
             flags: flags,
             border: border,
-            text: String::from_utf16_lossy(unsafe { slice::from_raw_parts(text, text_len) })
-                .to_string(),
+            text: String::from_utf16_lossy(unsafe { slice::from_raw_parts(text, text_len) }),
         },
     )
     .write(writer);

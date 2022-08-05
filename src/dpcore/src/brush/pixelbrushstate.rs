@@ -236,7 +236,7 @@ impl BrushState for PixelBrushState {
     }
 
     fn take_dabs(&mut self, user_id: u8) -> Vec<CommandMessage> {
-        let dabs = mem::replace(&mut self.dabs, Vec::new());
+        let dabs = mem::take(&mut self.dabs);
         match self.brush.shape {
             ClassicBrushShape::RoundPixel => dabs
                 .into_iter()
@@ -250,7 +250,7 @@ impl BrushState for PixelBrushState {
     }
 
     fn write_dabs(&mut self, user_id: u8, writer: &mut MessageWriter) {
-        let dabs = mem::replace(&mut self.dabs, Vec::new());
+        let dabs = mem::take(&mut self.dabs);
         match self.brush.shape {
             ClassicBrushShape::RoundPixel => {
                 for d in dabs {
@@ -268,5 +268,11 @@ impl BrushState for PixelBrushState {
     fn add_offset(&mut self, x: f32, y: f32) {
         self.last_x += x;
         self.last_y += y;
+    }
+}
+
+impl Default for PixelBrushState {
+    fn default() -> Self {
+        Self::new()
     }
 }

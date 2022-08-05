@@ -119,16 +119,13 @@ impl History {
         let mut ups = 0;
         let mut oldest: Option<u32> = None;
         for entry in self.history.iter().rev() {
-            match entry.msg {
-                CommandMessage::UndoPoint(_) => {
-                    ups += 1;
-                    oldest = Some(entry.seq_num);
+            if let CommandMessage::UndoPoint(_) = entry.msg {
+                ups += 1;
+                oldest = Some(entry.seq_num);
 
-                    if ups >= UNDO_DEPTH {
-                        break;
-                    }
+                if ups >= UNDO_DEPTH {
+                    break;
                 }
-                _ => (),
             }
         }
 
@@ -270,10 +267,7 @@ impl History {
 }
 
 fn is_any_undopoint(msg: &CommandMessage) -> bool {
-    match msg {
-        CommandMessage::UndoPoint(_) => true,
-        _ => false,
-    }
+    matches!(msg, CommandMessage::UndoPoint(_))
 }
 
 /// Check that the given message is an undopoint with the given user ID

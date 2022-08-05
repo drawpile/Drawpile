@@ -58,6 +58,12 @@ impl ClassicBrushCache {
     }
 }
 
+impl Default for ClassicBrushCache {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 fn square(v: f32) -> f32 {
     v * v
 }
@@ -65,14 +71,14 @@ fn square(v: f32) -> f32 {
 fn fast_sqrt(x: f32) -> f32 {
     let mut i = x.to_bits();
     i = i.wrapping_sub(1 << 23);
-    i = i >> 1;
+    i >>= 1;
     i = i.wrapping_add(1 << 29);
     f32::from_bits(i)
 }
 
 impl BrushMask {
     pub fn new_round_pixel(diameter: u32, opacity: f32) -> BrushMask {
-        debug_assert!(opacity >= 0.0 && opacity <= 1.0);
+        debug_assert!((0.0..=1.0).contains(&opacity));
         let radius = diameter as f32 / 2.0;
         let rr = square(radius);
         let offset = 0.5_f32;

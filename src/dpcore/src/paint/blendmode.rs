@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,17 +45,11 @@ pub enum Blendmode {
 
 impl Blendmode {
     pub fn can_decrease_opacity(self) -> bool {
-        match self {
-            Blendmode::Erase | Blendmode::ColorErase | Blendmode::Replace => true,
-            _ => false,
-        }
+        matches!(self, Blendmode::Erase | Blendmode::ColorErase | Blendmode::Replace)
     }
 
     pub fn can_increase_opacity(self) -> bool {
-        match self {
-            Blendmode::Normal | Blendmode::Behind | Blendmode::Replace => true,
-            _ => false,
-        }
+        matches!(self, Blendmode::Normal | Blendmode::Behind | Blendmode::Replace)
     }
 
     pub fn svg_name(self) -> &'static str {
@@ -80,11 +74,7 @@ impl Blendmode {
     }
 
     pub fn from_svg_name(name: &str) -> Option<Self> {
-        let name = if name.starts_with("svg:") {
-            &name[4..]
-        } else {
-            name
-        };
+        let name = name.strip_prefix("svg:").unwrap_or(name);
 
         use Blendmode::*;
         Some(match name {

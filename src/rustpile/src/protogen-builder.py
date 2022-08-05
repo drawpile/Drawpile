@@ -5,6 +5,8 @@ from jinja2 import Template
 template = Template("""
 // Generated with protogen-builder.py
 
+#![allow(clippy::redundant_field_names)]
+
 use dpcore::protocol::message::*;
 use dpcore::paint::{Image, UserID, LayerID, Blendmode, Pixel};
 use dpcore::canvas::images::make_putimage;
@@ -97,7 +99,7 @@ def field_argument(field, named=False):
         ff = f'unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }}.into()'
     elif field.field_type == 'String':  # TODO use Cow?
         # We use UTF16 here because that's how QStrings are encoded internally
-        ff = f'String::from_utf16_lossy(unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }}).to_string()'
+        ff = f'String::from_utf16_lossy(unsafe {{ slice::from_raw_parts({field.name}, {field.name}_len) }})'
     elif field.field_type == 'struct':
         raise NotImplementedError
     elif field.field_type == 'blendmode':

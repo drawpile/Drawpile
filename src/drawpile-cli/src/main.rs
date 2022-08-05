@@ -22,7 +22,6 @@
 
 use clap::{value_t, App, Arg, Error as ClapError};
 use tracing::Level;
-use tracing_subscriber;
 
 use drawpile_cli::converter::*;
 use drawpile_cli::indexer::{decode_index, extract_snapshot, index_recording};
@@ -108,14 +107,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let opts = RenderOpts {
                 input_file: m.value_of("INPUT").unwrap(),
                 output_file: m.value_of("OUTPUT").unwrap_or(""),
-                output_every: m.value_of("every-msg").or(m.value_of("every-up")).map(|v| {
-                    match v.parse::<u32>() {
+                output_every: m
+                    .value_of("every-msg")
+                    .or_else(|| m.value_of("every-up"))
+                    .map(|v| match v.parse::<u32>() {
                         Ok(val) => val,
                         Err(_) => {
                             ClapError::value_validation_auto(format!("{}: Not a number", v)).exit()
                         }
-                    }
-                }),
+                    }),
                 every_up: m.value_of("every-up").is_some(),
                 resize: if m.is_present("resize") {
                     Some(value_t!(m, "resize", Size).unwrap_or_else(|e| e.exit()))

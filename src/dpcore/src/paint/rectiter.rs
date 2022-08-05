@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ impl<'a, T> Iterator for MutableRectIterator<'a, T> {
     fn next(&mut self) -> Option<Self::Item> {
         if self.rows > 0 {
             self.rows -= 1;
-            let tmp = std::mem::replace(&mut self.buf, &mut []);
+            let tmp = std::mem::take(&mut self.buf);
             let (slice, rest) = tmp.split_at_mut(self.stride);
             self.buf = rest;
             Some(&mut slice[self.x0..self.x1])

@@ -201,11 +201,11 @@ impl AclFilter {
                 return ACLCHANGE_USERBITS;
             }
             SessionOwner(_, users) => {
-                self.users.operators = vec_to_userbits(&users);
+                self.users.operators = vec_to_userbits(users);
                 return ACLCHANGE_USERBITS;
             }
             TrustedUsers(_, users) => {
-                self.users.trusted = vec_to_userbits(&users);
+                self.users.trusted = vec_to_userbits(users);
                 return ACLCHANGE_USERBITS;
             }
             // The other commands have no effect on the filter
@@ -422,6 +422,12 @@ impl UserACLs {
     }
 }
 
+impl Default for AclFilter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 fn set_userbit(bits: &mut UserBits, user: UserID) {
     bits[user as usize / 8] |= 1 << (user % 8);
 }
@@ -454,10 +460,10 @@ pub fn userbits_to_vec(users: &UserBits) -> Vec<UserID> {
         return v;
     }
 
-    for i in 0..32 {
-        if users[i] != 0 {
+    for (i, &user) in users.iter().enumerate() {
+        if user != 0 {
             for j in 0..8 {
-                if users[i] & (1 << j) > 0 {
+                if user & (1 << j) > 0 {
                     v.push((i * 8 + j) as u8);
                 }
             }

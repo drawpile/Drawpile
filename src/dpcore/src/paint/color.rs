@@ -92,7 +92,7 @@ impl Color {
         let r;
         let g;
         let b;
-        if 0.0 <= hp && hp < 1.0 {
+        if (0.0..1.0).contains(&hp) {
             r = c;
             g = x;
             b = 0.0;

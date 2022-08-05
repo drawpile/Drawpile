@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,20 +25,11 @@ use super::rectiter::{MutableRectIterator, RectIterator};
 use super::{Rectangle, Size};
 
 /// A flat image buffer
+#[derive(Default)]
 pub struct Image {
     pub pixels: Vec<Pixel>,
     pub width: usize,
     pub height: usize,
-}
-
-impl Default for Image {
-    fn default() -> Self {
-        Image {
-            pixels: Vec::new(),
-            width: 0,
-            height: 0,
-        }
-    }
 }
 
 impl Image {
@@ -51,8 +42,8 @@ impl Image {
     }
 
     pub fn is_null(&self) -> bool {
-        assert!(self.pixels.len() == self.width * self.height);
-        self.pixels.len() == 0
+        assert!(self.width * self.height == 0);
+        self.pixels.is_empty()
     }
 
     pub fn size(&self) -> Size {
@@ -63,7 +54,7 @@ impl Image {
     /// If the image is entirely transparent, None is returned.
     pub fn opaque_bounds(&self) -> Option<Rectangle> {
         assert!(self.pixels.len() == self.width * self.height);
-        if self.pixels.len() == 0 {
+        if self.pixels.is_empty() {
             return None;
         }
 

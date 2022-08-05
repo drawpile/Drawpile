@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,6 +55,12 @@ pub struct Frame(pub [LayerID; 12]);
 impl Timeline {
     pub fn new() -> Self {
         Self { frames: Vec::new() }
+    }
+}
+
+impl Default for Timeline {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

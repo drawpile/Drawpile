@@ -54,10 +54,10 @@ pub fn drawdabs_classic(
         sublayer.metadata.opacity = color.a;
         sublayer.metadata.blendmode = mode;
         color.a = 1.0;
-        drawdabs_classic_draw(sublayer, user, color, Blendmode::Normal, &dabs, cache)
+        drawdabs_classic_draw(sublayer, user, color, Blendmode::Normal, dabs, cache)
     } else {
         color.a = 1.0; // needed because as_pixel returns premultiplied pixel values
-        drawdabs_classic_draw(layer, user, color, mode, &dabs, cache)
+        drawdabs_classic_draw(layer, user, color, mode, dabs, cache)
     };
 
     if mode.can_decrease_opacity() {
@@ -128,10 +128,10 @@ pub fn drawdabs_pixel(
         sublayer.metadata.opacity = color.a;
         sublayer.metadata.blendmode = mode;
         color.a = 1.0;
-        drawdabs_pixel_draw(sublayer, user, color, Blendmode::Normal, &dabs, square)
+        drawdabs_pixel_draw(sublayer, user, color, Blendmode::Normal, dabs, square)
     } else {
         color.a = 1.0; // needed because as_pixel returns premultiplied pixel values
-        drawdabs_pixel_draw(layer, user, color, mode, &dabs, square)
+        drawdabs_pixel_draw(layer, user, color, mode, dabs, square)
     };
 
     if mode.can_decrease_opacity() {

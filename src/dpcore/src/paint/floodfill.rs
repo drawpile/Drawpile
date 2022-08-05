@@ -48,6 +48,7 @@ impl FloodFillResult {
     }
 }
 
+#[allow(clippy::too_many_arguments)] // TODO maybe create a FloodFillOpts struct?
 pub fn floodfill(
     image: &LayerStack,
     x: i32,
@@ -204,7 +205,7 @@ impl<'a> ScratchLayer<'a> {
             );
         }
 
-        return self.layer.pixel_at(x, y);
+        self.layer.pixel_at(x, y)
     }
 
     fn is_ref_color_at(&mut self, x: i32, y: i32) -> bool {

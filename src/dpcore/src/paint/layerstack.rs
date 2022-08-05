@@ -189,7 +189,7 @@ impl LayerStack {
         background: Tile,
     ) -> Self {
         Self {
-            root: root,
+            root,
             annotations,
             metadata,
             timeline,
@@ -276,7 +276,7 @@ impl LayerStack {
         Arc::make_mut(&mut self.annotations).push(Arc::new(Annotation {
             id,
             text: String::new(),
-            rect: rect,
+            rect,
             background: Color::TRANSPARENT,
             protect: false,
             valign: VAlign::Top,
@@ -331,6 +331,7 @@ impl LayerStack {
     pub fn find_available_annotation_id(&self, for_user: UserID) -> AnnotationID {
         let prefix = (for_user as AnnotationID) << 8;
 
+        #[allow(clippy::needless_collect)] // clippy is wrong, iterator would be used inside a loop
         let taken_ids: Vec<AnnotationID> = self
             .annotations
             .iter()
@@ -344,7 +345,7 @@ impl LayerStack {
             }
         }
 
-        return 0;
+        0
     }
 
     /// Flatten layer stack content
@@ -445,7 +446,7 @@ impl LayerStack {
                 let mut tmp = TileData::new(ZERO_PIXEL, 0);
                 layer.flatten_tile(&mut tmp, i, j, opacity, opts.censor, opts.highlight);
                 tint_pixels(&mut tmp.pixels, Color::from_argb32(tint));
-                destination.merge_data(&mut tmp, 1.0, layer.metadata().blendmode);
+                destination.merge_data(&tmp, 1.0, layer.metadata().blendmode);
             } else {
                 layer.flatten_tile(destination, i, j, opacity, opts.censor, opts.highlight);
             }

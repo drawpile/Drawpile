@@ -157,10 +157,10 @@ impl CanvasStateChange {
                 return true;
             }
         };
-        return self.layers_changed
+        self.layers_changed
             | self.annotations_changed
             | self.metadata_changed
-            | self.timeline_changed;
+            | self.timeline_changed
     }
 }
 
@@ -294,8 +294,8 @@ impl CanvasState {
             .root_mut()
             .get_bitmaplayer_mut(layer_id)
         {
-            let mut layer = layer.get_or_create_sublayer(PREVIEW_SUBLAYER_ID);
-            let mut aoe = editlayer::clear_layer(&mut layer);
+            let layer = layer.get_or_create_sublayer(PREVIEW_SUBLAYER_ID);
+            let mut aoe = editlayer::clear_layer(layer);
 
             match msgs.first().unwrap() {
                 CommandMessage::DrawDabsClassic(_, m) => {
@@ -326,15 +326,15 @@ impl CanvasState {
             for msg in msgs {
                 aoe = aoe.merge(match msg {
                     CommandMessage::DrawDabsClassic(_, m) => {
-                        let (a, _) = brushes::drawdabs_classic(layer, 0, &m, &mut self.brushcache);
+                        let (a, _) = brushes::drawdabs_classic(layer, 0, m, &mut self.brushcache);
                         a
                     }
                     CommandMessage::DrawDabsPixel(_, m) => {
-                        let (a, _) = brushes::drawdabs_pixel(layer, 0, &m, false);
+                        let (a, _) = brushes::drawdabs_pixel(layer, 0, m, false);
                         a
                     }
                     CommandMessage::DrawDabsPixelSquare(_, m) => {
-                        let (a, _) = brushes::drawdabs_pixel(layer, 0, &m, true);
+                        let (a, _) = brushes::drawdabs_pixel(layer, 0, m, true);
                         a
                     }
                     CommandMessage::PutImage(_, m) => {
@@ -415,7 +415,7 @@ impl CanvasState {
         Arc::make_mut(&mut self.layerstack)
             .root_mut()
             .inner_mut()
-            .visit_bitmaps_mut(|layer: &mut BitmapLayer| editlayer::merge_all_sublayers(layer))
+            .visit_bitmaps_mut(editlayer::merge_all_sublayers)
     }
 
     /// Clear out all undo history
@@ -489,7 +489,7 @@ impl CanvasState {
             self.localfork.set_seqnum(self.history.end());
             let localfork = self.localfork.messages();
             for msg in messages.iter().chain(localfork.iter()) {
-                self.handle_message(&msg);
+                self.handle_message(msg);
             }
 
             CanvasStateChange::compare(&old_layerstack, &self.layerstack)
@@ -526,12 +526,10 @@ impl CanvasState {
         let timeline = Arc::make_mut(&mut self.layerstack).timeline_mut();
         if frame == timeline.frames.len() {
             timeline.frames.push(f);
+        } else if msg.insert {
+            timeline.frames.insert(frame, f);
         } else {
-            if msg.insert {
-                timeline.frames.insert(frame, f);
-            } else {
-                timeline.frames[frame] = f;
-            }
+            timeline.frames[frame] = f;
         }
         CanvasStateChange::timeline()
     }
@@ -605,7 +603,7 @@ impl CanvasState {
         }
 
         // Merging a sublayer shouldn't have any visual effect
-        return AoE::Nothing;
+        AoE::Nothing
     }
 
     fn handle_canvas_resize(&mut self, msg: &CanvasResizeMessage) -> AoE {
@@ -630,7 +628,7 @@ impl CanvasState {
         }
 
         let pos = match (msg.flags & LayerCreateMessage::FLAGS_INTO != 0, msg.target) {
-            (true, source) => LayerInsertion::Into(source.into()),
+            (true, source) => LayerInsertion::Into(source),
             (false, source) if source > 0 => LayerInsertion::Above(source),
             _ => LayerInsertion::Top,
         };
@@ -638,11 +636,11 @@ impl CanvasState {
         let root = Arc::make_mut(&mut self.layerstack).root_mut();
 
         let new_layer = if msg.source > 0 {
-            root.add_layer_copy(msg.id.into(), msg.source, pos)
+            root.add_layer_copy(msg.id, msg.source, pos)
         } else if msg.flags & LayerCreateMessage::FLAGS_GROUP != 0 {
-            root.add_group_layer(msg.id.into(), pos)
+            root.add_group_layer(msg.id, pos)
         } else {
-            root.add_bitmap_layer(msg.id.into(), Color::from_argb32(msg.fill), pos)
+            root.add_bitmap_layer(msg.id, Color::from_argb32(msg.fill), pos)
         };
 
         if let Some(new_layer) = new_layer {
@@ -699,11 +697,11 @@ impl CanvasState {
         match self.layerstack.reordered(msg.root, &msg.layers) {
             Ok(ls) => {
                 self.layerstack = Arc::new(ls);
-                return CanvasStateChange::layers(AoE::Everything);
+                CanvasStateChange::layers(AoE::Everything)
             }
             Err(e) => {
                 warn!("LayerOrder: Invalid order! ({})", e);
-                return CanvasStateChange::nothing();
+                CanvasStateChange::nothing()
             }
         }
     }
@@ -981,7 +979,7 @@ impl CanvasState {
             .root_mut()
             .get_bitmaplayer_mut(msg.layer as LayerID)
         {
-            let (aoe, pos) = brushes::drawdabs_classic(layer, user, &msg, &mut self.brushcache);
+            let (aoe, pos) = brushes::drawdabs_classic(layer, user, msg, &mut self.brushcache);
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)
         } else {
             warn!("DrawDabsClassic: Layer {:04x} not found!", msg.layer);
@@ -999,7 +997,7 @@ impl CanvasState {
             .root_mut()
             .get_bitmaplayer_mut(msg.layer as LayerID)
         {
-            let (aoe, pos) = brushes::drawdabs_pixel(layer, user, &msg, square);
+            let (aoe, pos) = brushes::drawdabs_pixel(layer, user, msg, square);
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)
         } else {
             warn!("DrawDabsPixel: Layer {:04x} not found!", msg.layer);
@@ -1014,5 +1012,11 @@ impl CanvasState {
         if self.localfork.is_empty() {
             self.history.add_savepoint(self.layerstack.clone());
         }
+    }
+}
+
+impl Default for CanvasState {
+    fn default() -> Self {
+        Self::new()
     }
 }

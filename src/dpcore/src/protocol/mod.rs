@@ -27,7 +27,7 @@ mod serialization;
 mod textmessage;
 pub mod textparser;
 
-pub const DRAWPILE_VERSION: &'static str = env!("CARGO_PKG_VERSION");
+pub const DRAWPILE_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub use message::{Message, PROTOCOL_VERSION};
 pub use protover::ProtocolVersion;

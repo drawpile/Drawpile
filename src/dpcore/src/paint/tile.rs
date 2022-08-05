@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -378,7 +378,7 @@ impl fmt::Debug for Tile {
                 d.pixels[0],
                 d.pixels[TILE_LENGTH - 1],
                 d.last_touched_by,
-                Arc::strong_count(&d)
+                Arc::strong_count(d)
             ),
             Tile::Blank => write!(f, "Tile(blank)"),
         }

@@ -172,21 +172,21 @@ impl DeserializableScalar for i32 {
 
 impl Serializable for &String {
     fn write(&self, v: &mut Vec<u8>) {
-        v.extend_from_slice(&self.as_bytes());
+        v.extend_from_slice(self.as_bytes());
     }
 
     fn len(&self) -> usize {
-        String::len(&self)
+        String::len(self)
     }
 }
 
 impl Serializable for &Vec<u8> {
     fn write(&self, v: &mut Vec<u8>) {
-        v.extend_from_slice(&self);
+        v.extend_from_slice(self);
     }
 
     fn len(&self) -> usize {
-        Vec::<u8>::len(&self)
+        Vec::<u8>::len(self)
     }
 }
 
@@ -198,7 +198,7 @@ impl Serializable for &Vec<u16> {
     }
 
     fn len(&self) -> usize {
-        Vec::<u16>::len(&self) * 2
+        Vec::<u16>::len(self) * 2
     }
 }
 
@@ -225,7 +225,7 @@ impl<'a> MessageReader<'a> {
     pub fn read_header(&mut self) -> Result<(u8, u8), DeserializationError> {
         assert!(self.remaining == 0);
 
-        if self.buf.len() == 0 {
+        if self.buf.is_empty() {
             return Err(DeserializationError::NoMoreMessages);
         }
 
@@ -247,7 +247,7 @@ impl<'a> MessageReader<'a> {
 
         self.buf = &self.buf[HEADER_LEN..];
 
-        return Ok((message_type, user_id));
+        Ok((message_type, user_id))
     }
 
     /// Check that the remaining length matches what's expected
@@ -269,7 +269,7 @@ impl<'a> MessageReader<'a> {
 
     pub fn read<T: DeserializableScalar>(&mut self) -> T {
         debug_assert!(self.remaining >= mem::size_of::<T>());
-        let value = T::read(&self.buf);
+        let value = T::read(self.buf);
         self.buf = &self.buf[mem::size_of::<T>()..];
         self.remaining -= mem::size_of::<T>();
         value
@@ -347,10 +347,16 @@ impl MessageWriter {
     }
 }
 
-impl Into<Vec<u8>> for MessageWriter {
-    fn into(self) -> Vec<u8> {
-        assert!(self.expecting == 0);
-        self.buf
+impl Default for MessageWriter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl From<MessageWriter> for Vec<u8> {
+    fn from(w: MessageWriter) -> Vec<u8> {
+        assert!(w.expecting == 0);
+        w.buf
     }
 }
 

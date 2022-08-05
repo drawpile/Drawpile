@@ -179,12 +179,9 @@ impl BitmapLayer {
         }
 
         for (i, j, tile) in self.tile_rect(&rect) {
-            match tile {
-                Tile::Blank => {
-                    continue;
-                }
-                _ => (),
-            };
+            if let Tile::Blank = tile {
+                continue;
+            }
 
             // This tile's bounding rectangle
             let tilerect = Rectangle::tile(i, j, TILE_SIZEI);
@@ -945,7 +942,7 @@ mod tests {
         layer.tile_mut(0, 1).fill(&Color::rgb8(0, 0, 255), 0);
 
         let dab_mask = BrushMask::new_round_pixel(32, 1.0);
-        let sampled = layer.sample_dab_color(64 - 16, 64 - 16, &dab_mask);
+        let sampled = layer.sample_dab_color(64, 64, &dab_mask);
 
         assert_eq!(
             sampled,

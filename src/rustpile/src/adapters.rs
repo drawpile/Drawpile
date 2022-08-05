@@ -71,7 +71,7 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
     let mut index = 0;
     flatten(&mut list, &mut index, root.inner_ref());
 
-    return list;
+    list
 }
 
 impl LayerInfo {

@@ -52,6 +52,7 @@ pub fn make_putimage(
     messages
 }
 
+#[allow(clippy::too_many_arguments)]
 fn make_putimage_crop(
     messages: &mut Vec<CommandMessage>,
     user: UserID,

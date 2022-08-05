@@ -20,6 +20,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+// lint: We often want to group hex color constants like "AA_RRGGBB"
+#![allow(clippy::unusual_byte_groupings)]
+
 pub mod brush;
 pub mod canvas;
 pub mod paint;

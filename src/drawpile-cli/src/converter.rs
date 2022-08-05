@@ -56,7 +56,7 @@ impl fmt::Display for ConversionError {
 
 impl Error for ConversionError {
     fn description(&self) -> &str {
-        &self.message
+        self.message
     }
 }
 

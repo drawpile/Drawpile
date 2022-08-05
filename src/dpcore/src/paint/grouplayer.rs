@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020-2021 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ use super::tile::{Tile, TileData, TILE_SIZE};
 use super::{LayerID, UserID};
 
 use std::collections::HashMap;
-use std::convert::TryInto;
 use std::sync::Arc;
 
 #[derive(Clone)]
@@ -109,7 +108,7 @@ impl LayerRoutes {
     /// Add a route to a layer within one of the owning layer group's
     /// subgroups.
     fn add(&mut self, target: LayerID, subgroup_index: usize) {
-        debug_assert!(self.routes.iter().find(|r| r.0 == target).is_none());
+        debug_assert!(!self.routes.iter().any(|r| r.0 == target));
         debug_assert!(subgroup_index <= 0xffff);
 
         self.routes.push((target, subgroup_index as u16));
@@ -133,7 +132,7 @@ impl LayerRoutes {
 
     fn extend_from(&mut self, group: &GroupLayer, index: usize) {
         for l in &group.layers {
-            self.add(l.id().try_into().unwrap(), index);
+            self.add(l.id(), index);
         }
         for (id, _) in &group.routes.routes {
             self.add(*id, index);
@@ -145,7 +144,7 @@ impl GroupLayer {
     pub fn new(id: LayerID, width: u32, height: u32) -> Self {
         Self {
             metadata: LayerMetadata {
-                id: id.into(),
+                id,
                 title: String::new(),
                 opacity: 1.0,
                 hidden: false,
@@ -168,9 +167,8 @@ impl GroupLayer {
     ) -> Self {
         let mut routes = LayerRoutes::new();
         for (i, l) in layers.iter().map(|l| l.as_ref()).enumerate() {
-            match l {
-                Layer::Group(g) => routes.extend_from(g, i),
-                _ => (),
+            if let Layer::Group(g) = l {
+                routes.extend_from(g, i);
             }
         }
 
@@ -360,13 +358,13 @@ impl GroupLayer {
 
         let new_layer = match new_type {
             NewLayerType::Solid(c) => Arc::new(Layer::Bitmap(BitmapLayer::new(
-                id.into(),
+                id,
                 self.width,
                 self.height,
                 Tile::new(&c, 0),
             ))),
             NewLayerType::Copy(mut source) => {
-                Arc::make_mut(&mut source).metadata_mut().id = id.into();
+                Arc::make_mut(&mut source).metadata_mut().id = id;
                 source
             }
             NewLayerType::Group => {
@@ -379,11 +377,8 @@ impl GroupLayer {
         // Layer order may have changed so we need to rebuild the routes
         let mut routes = LayerRoutes::new();
         for (i, l) in self.layers.iter().enumerate() {
-            match l.as_ref() {
-                Layer::Group(g) => {
-                    routes.extend_from(g, i);
-                }
-                _ => (),
+            if let Layer::Group(g) = l.as_ref() {
+                routes.extend_from(g, i);
             }
         }
         self.routes = routes;
@@ -406,22 +401,17 @@ impl GroupLayer {
             // rebuild routes
             let mut routes = LayerRoutes::new();
             for (i, l) in self.layers.iter().enumerate() {
-                match l.as_ref() {
-                    Layer::Group(g) => {
-                        routes.extend_from(g, i);
-                    }
-                    _ => (),
+                if let Layer::Group(g) = l.as_ref() {
+                    routes.extend_from(g, i);
                 }
             }
             self.routes = routes;
-        } else {
-            if let Some(idx) = self.layers.iter().position(|l| l.id() == id) {
-                self.layers.remove(idx);
+        } else if let Some(idx) = self.layers.iter().position(|l| l.id() == id) {
+            self.layers.remove(idx);
 
-                // if this is a group, we must remove all routes to its
-                // child layers as well
-                self.routes.remove_all(idx);
-            }
+            // if this is a group, we must remove all routes to its
+            // child layers as well
+            self.routes.remove_all(idx);
         }
     }
 
@@ -436,7 +426,7 @@ impl GroupLayer {
     /// On success, returns the new group layer and the last used ID.
     fn make_unique(&self, prefix: u16, ids: &mut IDGenerator) -> Option<GroupLayer> {
         let mut metadata = self.metadata.clone();
-        metadata.id = (prefix | ids.take_next()? as u16).into();
+        metadata.id = prefix | ids.take_next()? as u16;
 
         let mut layers = Vec::with_capacity(self.layers.len());
         let mut routes = LayerRoutes::new();
@@ -450,8 +440,7 @@ impl GroupLayer {
                 }
                 _ => {
                     let mut layer = l.clone();
-                    Arc::make_mut(&mut layer).metadata_mut().id =
-                        (prefix | ids.take_next()? as u16).into();
+                    Arc::make_mut(&mut layer).metadata_mut().id = prefix | ids.take_next()? as u16;
                     layers.push(layer);
                 }
             }
@@ -622,14 +611,14 @@ impl GroupLayer {
                     }
                     Layer::Bitmap(b) => {
                         if b.pixel_at(x as u32, y as u32)[ALPHA_CHANNEL] > 0 {
-                            return layer.metadata().id.try_into().unwrap();
+                            return layer.metadata().id;
                         }
                     }
                 }
             }
         }
 
-        return 0;
+        0
     }
 
     pub fn last_edited_by(&self, x: i32, y: i32) -> UserID {
@@ -646,12 +635,12 @@ impl GroupLayer {
                             return id;
                         }
                     }
-                    Layer::Bitmap(b) => match b.tile(x as u32 / TILE_SIZE, y as u32 / TILE_SIZE) {
-                        Tile::Bitmap(td) => {
+                    Layer::Bitmap(b) => {
+                        if let Tile::Bitmap(td) = b.tile(x as u32 / TILE_SIZE, y as u32 / TILE_SIZE)
+                        {
                             return td.last_touched_by;
                         }
-                        _ => (),
-                    },
+                    }
                 }
             }
         }
@@ -685,7 +674,7 @@ impl GroupLayer {
         let mut order_slice = new_order;
         let mut routes = LayerRoutes::new();
 
-        while order_slice.len() > 0 && expecting != 0 {
+        while !order_slice.is_empty() && expecting != 0 {
             let layer = all_layers.remove(&order_slice[1]).ok_or("missing layer")?;
 
             if order_slice[0] == 0 {
@@ -716,7 +705,7 @@ impl GroupLayer {
             expecting -= 1;
         }
 
-        return Ok((
+        Ok((
             GroupLayer {
                 metadata: self.metadata.clone(),
                 width: self.width,
@@ -725,7 +714,7 @@ impl GroupLayer {
                 routes,
             },
             order_slice,
-        ));
+        ))
     }
 
     /// Return a new group whose layers have been reordered
@@ -850,7 +839,7 @@ impl RootGroup {
             let mut idgen = IDGenerator::new((id & 0xff) as u8, existing_layers);
             source = Arc::new(Layer::Group(g.make_unique(id & 0xff00, &mut idgen)?));
         } else {
-            Arc::make_mut(&mut source).metadata_mut().id = id.into();
+            Arc::make_mut(&mut source).metadata_mut().id = id;
         }
 
         self.0.add_layer(id, NewLayerType::Copy(source), pos)
@@ -955,7 +944,7 @@ impl RootGroup {
     }
 
     pub fn layer_at(&self, index: usize) -> &Layer {
-        return self.0.layer_at(index);
+        self.0.layer_at(index)
     }
 
     pub fn iter_layers(&self) -> impl Iterator + DoubleEndedIterator<Item = &Layer> {
@@ -987,7 +976,7 @@ impl RootGroup {
 
 impl From<GroupLayer> for RootGroup {
     fn from(root: GroupLayer) -> Self {
-        return Self(root);
+        Self(root)
     }
 }
 

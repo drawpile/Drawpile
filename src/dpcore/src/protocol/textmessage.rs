@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020-2021 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,13 +55,13 @@ impl TextMessage {
     }
 
     pub fn get_str(&self, key: &str) -> &str {
-        self.args.get(key).map(String::as_str).unwrap_or(&"")
+        self.args.get(key).map(String::as_str).unwrap_or("")
     }
 
     pub fn get_u8(&self, key: &str) -> u8 {
         let v = self.get_str(key);
-        (if v.starts_with("0x") {
-            u8::from_str_radix(&v[2..], 16)
+        (if let Some(hex) = v.strip_prefix("0x") {
+            u8::from_str_radix(hex, 16)
         } else {
             v.parse()
         })
@@ -70,8 +70,8 @@ impl TextMessage {
 
     pub fn get_u16(&self, key: &str) -> u16 {
         let v = self.get_str(key);
-        (if v.starts_with("0x") {
-            u16::from_str_radix(&v[2..], 16)
+        (if let Some(hex) = v.strip_prefix("0x") {
+            u16::from_str_radix(hex, 16)
         } else {
             v.parse()
         })
@@ -80,8 +80,8 @@ impl TextMessage {
 
     pub fn get_u32(&self, key: &str) -> u32 {
         let v = self.get_str(key);
-        (if v.starts_with("0x") {
-            u32::from_str_radix(&v[2..], 16)
+        (if let Some(hex) = v.strip_prefix("0x") {
+            u32::from_str_radix(hex, 16)
         } else {
             v.parse()
         })
@@ -131,8 +131,8 @@ impl TextMessage {
         self.get_str(key)
             .split(',')
             .filter_map(|v| {
-                if v.starts_with("0x") {
-                    u8::from_str_radix(&v[2..], 16).ok()
+                if let Some(hex) = v.strip_prefix("0x") {
+                    u8::from_str_radix(hex, 16).ok()
                 } else {
                     v.parse::<u8>().ok()
                 }
@@ -165,8 +165,8 @@ impl TextMessage {
         self.get_str(key)
             .split(',')
             .filter_map(|v| {
-                if v.starts_with("0x") {
-                    u16::from_str_radix(&v[2..], 16).ok()
+                if let Some(hex) = v.strip_prefix("0x") {
+                    u16::from_str_radix(hex, 16).ok()
                 } else {
                     v.parse::<u16>().ok()
                 }

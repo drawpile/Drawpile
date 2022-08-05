@@ -114,19 +114,16 @@ impl ClassicBrush {
     }
 
     pub fn is_pixelbrush(&self) -> bool {
-        match self.shape {
-            ClassicBrushShape::RoundSoft => false,
-            _ => true,
-        }
+        !matches!(self.shape, ClassicBrushShape::RoundSoft)
     }
 
     pub fn spacing_at(&self, p: f32) -> f32 {
-        debug_assert!(p >= 0.0 && p <= 1.0);
+        debug_assert!((0.0..=1.0).contains(&p));
         self.spacing * self.size_at(p)
     }
 
     pub fn size_at(&self, p: f32) -> f32 {
-        debug_assert!(p >= 0.0 && p <= 1.0);
+        debug_assert!((0.0..=1.0).contains(&p));
         if self.size_pressure {
             self.size.lerp(p)
         } else {
@@ -135,7 +132,7 @@ impl ClassicBrush {
     }
 
     pub fn hardness_at(&self, p: f32) -> f32 {
-        debug_assert!(p >= 0.0 && p <= 1.0);
+        debug_assert!((0.0..=1.0).contains(&p));
         if self.hardness_pressure {
             self.hardness.lerp(p)
         } else {
@@ -144,7 +141,7 @@ impl ClassicBrush {
     }
 
     pub fn opacity_at(&self, p: f32) -> f32 {
-        debug_assert!(p >= 0.0 && p <= 1.0);
+        debug_assert!((0.0..=1.0).contains(&p));
         if self.opacity_pressure {
             self.opacity.lerp(p)
         } else {
@@ -153,7 +150,7 @@ impl ClassicBrush {
     }
 
     pub fn smudge_at(&self, p: f32) -> f32 {
-        debug_assert!(p >= 0.0 && p <= 1.0);
+        debug_assert!((0.0..=1.0).contains(&p));
         if self.smudge_pressure {
             self.smudge.lerp(p)
         } else {

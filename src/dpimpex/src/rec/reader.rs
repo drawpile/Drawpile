@@ -330,7 +330,7 @@ impl<R: BufRead + Seek> TextReader<R> {
                 break;
             }
 
-            match metadata_parser.parse_line(&br.line_buf.trim()) {
+            match metadata_parser.parse_line(br.line_buf.trim()) {
                 ParseResult::Ok(_) | ParseResult::NeedMore | ParseResult::Error(_) => {
                     break;
                 }
@@ -362,7 +362,7 @@ impl<R: BufRead + Seek> RecordingReader for TextReader<R> {
                 }
             }
 
-            match self.parser.parse_line(&self.line_buf.trim()) {
+            match self.parser.parse_line(self.line_buf.trim()) {
                 ParseResult::Ok(tm) => match Message::from_text(&tm) {
                     Some(m) => {
                         self.current_index += 1;

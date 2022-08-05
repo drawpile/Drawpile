@@ -92,3 +92,9 @@ impl BrushState for BrushEngine {
         self.state().add_offset(x, y);
     }
 }
+
+impl Default for BrushEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}

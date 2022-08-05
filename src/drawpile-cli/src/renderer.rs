@@ -90,7 +90,7 @@ impl fmt::Display for RenderError {
 
 impl Error for RenderError {
     fn description(&self) -> &str {
-        &self.message
+        self.message
     }
 }
 
@@ -118,25 +118,21 @@ pub fn render_recording(opts: &RenderOpts) -> Result<(), Box<dyn std::error::Err
         match reader.read_next() {
             ReadMessage::Ok(m) => {
                 let now = Instant::now();
-                match &m {
-                    Message::Command(c) => {
-                        match (opts.every_up, c) {
-                            (true, CommandMessage::UndoPoint(_)) | (false, _) => {
-                                message_counter += 1;
-                            }
-                            _ => (),
+                if let Message::Command(c) = &m {
+                    match (opts.every_up, c) {
+                        (true, CommandMessage::UndoPoint(_)) | (false, _) => {
+                            message_counter += 1;
                         }
-
-                        canvas.receive_message(c);
+                        _ => (),
                     }
-                    _ => (),
+                    canvas.receive_message(c);
                 }
                 total_render_time += now.elapsed();
 
                 if let Some(e) = opts.output_every {
                     if message_counter >= e {
                         message_counter = 0;
-                        total_save_time += save_canvas(&opts, &mut state, &canvas)?;
+                        total_save_time += save_canvas(opts, &mut state, &canvas)?;
                     }
                 }
             }
@@ -152,7 +148,7 @@ pub fn render_recording(opts: &RenderOpts) -> Result<(), Box<dyn std::error::Err
         }
     }
 
-    total_save_time += save_canvas(&opts, &mut state, &canvas)?;
+    total_save_time += save_canvas(opts, &mut state, &canvas)?;
 
     let total_time = start.elapsed();
 
@@ -206,7 +202,7 @@ fn save_canvas(
 }
 
 fn make_filename(opts: &RenderOpts, index: u32) -> String {
-    if opts.output_file == "" {
+    if opts.output_file.is_empty() {
         let end = opts.input_file.rfind('.').unwrap_or(opts.input_file.len());
 
         if index != 0 {
@@ -214,20 +210,18 @@ fn make_filename(opts: &RenderOpts, index: u32) -> String {
         } else {
             format!("{}.png", &opts.input_file[..end])
         }
+    } else if index != 0 {
+        let suffix = opts
+            .output_file
+            .rfind('.')
+            .unwrap_or(opts.output_file.len());
+        format!(
+            "{}-{}{}",
+            &opts.input_file[..suffix],
+            index,
+            &opts.output_file[suffix..]
+        )
     } else {
-        if index != 0 {
-            let suffix = opts
-                .output_file
-                .rfind('.')
-                .unwrap_or(opts.output_file.len());
-            format!(
-                "{}-{}{}",
-                &opts.input_file[..suffix],
-                index,
-                &opts.output_file[suffix..]
-            )
-        } else {
-            opts.output_file.to_string()
-        }
+        opts.output_file.to_string()
     }
 }

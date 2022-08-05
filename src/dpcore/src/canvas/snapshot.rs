@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,23 +33,22 @@ pub fn make_canvas_snapshot(
     default_layer: LayerID,
     aclfilter: Option<&AclFilter>,
 ) -> Vec<Message> {
-    let mut msgs: Vec<Message> = Vec::new();
-
     // First, initialize the canvas
-    msgs.push(Message::Command(CommandMessage::CanvasResize(
-        user,
-        CanvasResizeMessage {
-            top: 0,
-            right: layerstack.root().width() as i32,
-            bottom: layerstack.root().height() as i32,
-            left: 0,
-        },
-    )));
-
-    msgs.push(Message::Command(CommandMessage::CanvasBackground(
-        user,
-        compress_tile(&layerstack.background),
-    )));
+    let mut msgs = vec![
+        Message::Command(CommandMessage::CanvasResize(
+            user,
+            CanvasResizeMessage {
+                top: 0,
+                right: layerstack.root().width() as i32,
+                bottom: layerstack.root().height() as i32,
+                left: 0,
+            },
+        )),
+        Message::Command(CommandMessage::CanvasBackground(
+            user,
+            compress_tile(&layerstack.background),
+        )),
+    ];
 
     if default_layer > 0 {
         msgs.push(Message::ClientMeta(ClientMetaMessage::DefaultLayer(

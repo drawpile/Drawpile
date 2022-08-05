@@ -148,7 +148,7 @@ impl<'a, T> Iterator for MutableTileIterator<'a, T> {
                 skip = 1usize;
             }
 
-            let tmp = std::mem::replace(&mut self.buf, &mut []);
+            let tmp = std::mem::take(&mut self.buf);
             let (head, tail) = tmp.split_at_mut(skip);
             self.buf = tail;
 

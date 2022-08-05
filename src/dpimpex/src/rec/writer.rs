@@ -58,7 +58,7 @@ impl<W: Write> RecordingWriter for BinaryWriter<W> {
         assert!(metadata.len() <= 0xffff);
         let metadata_len = (metadata.len() as u16).to_be_bytes();
         self.file.write_all(&metadata_len)?;
-        self.file.write_all(&metadata.as_bytes())?;
+        self.file.write_all(metadata.as_bytes())?;
 
         Ok(())
     }

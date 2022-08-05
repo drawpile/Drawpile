@@ -75,13 +75,13 @@ pub fn load_openraster_image(path: &Path) -> ImageImportResult {
 
     // Set timeline
     ls.metadata_mut().use_timeline = canvas.timeline.enabled;
-    if canvas.timeline.frames.len() > 0 {
+    if !canvas.timeline.frames.is_empty() {
         let layer_ids = make_idlist(&canvas.root);
         let lst = ls.timeline_mut();
         for frame in canvas.timeline.frames.iter() {
             let mut f = Frame::empty();
             frame
-                .into_iter()
+                .iter()
                 .filter_map(|&layer_idx| layer_ids.get(layer_idx as usize))
                 .take(f.0.len())
                 .enumerate()
@@ -118,7 +118,7 @@ fn create_stack<R: Read + Seek>(
                 metadata.blendmode = substack.common.composite_op;
                 metadata.isolated = matches!(substack.isolation, Isolation::Isolate);
 
-                create_stack(archive, layerstack, substack.common.id, &substack)?;
+                create_stack(archive, layerstack, substack.common.id, substack)?;
             }
             OraStackElement::Layer(oralayer) => {
                 if !oralayer.bgtile.is_empty() {
@@ -132,7 +132,7 @@ fn create_stack<R: Read + Seek>(
                 }
 
                 let img = get_image_file(archive, &oralayer.filename)?;
-                let mut layer = layerstack
+                let layer = layerstack
                     .root_mut()
                     .add_bitmap_layer(
                         oralayer.common.id,
@@ -153,7 +153,7 @@ fn create_stack<R: Read + Seek>(
                 // TODO layer lock status
 
                 editlayer::draw_image(
-                    &mut layer,
+                    layer,
                     1,
                     &img.pixels,
                     &Rectangle::new(
@@ -332,7 +332,7 @@ fn parse_stack_image<R: Read>(
 
 fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32), id: LayerID) -> OraCommon {
     OraCommon {
-        name: take_attribute(attributes, "name", None).unwrap_or(String::new()),
+        name: take_attribute(attributes, "name", None).unwrap_or_default(),
         offset: (
             offset.0
                 + take_attribute(attributes, "x", None)
@@ -354,7 +354,7 @@ fn take_common(attributes: &mut Vec<OwnedAttribute>, offset: (i32, i32), id: Lay
             .and_then(|s| Blendmode::from_svg_name(&s))
             .unwrap_or(Blendmode::Normal),
         unsupported_features: false,
-        id: id,
+        id,
     }
 }
 
@@ -433,7 +433,7 @@ fn parse_stack_layer<R: Read>(
         filename: take_attribute(&mut attributes, "src", None)
             .ok_or(ImpexError::UnsupportedFormat)?,
         bgtile: take_attribute(&mut attributes, "background-tile", Some(MYPAINT_NAMESPACE))
-            .unwrap_or(String::new()),
+            .unwrap_or_default(),
     };
 
     if !attributes.is_empty() {
@@ -522,8 +522,8 @@ fn parse_annotation<R: Read>(
                 .and_then(|a| a.parse::<i32>().ok())
                 .unwrap_or(0),
         ),
-        bg: take_attribute(&mut attributes, "bg", None).unwrap_or(String::new()),
-        valign: take_attribute(&mut attributes, "valign", None).unwrap_or(String::new()),
+        bg: take_attribute(&mut attributes, "bg", None).unwrap_or_default(),
+        valign: take_attribute(&mut attributes, "valign", None).unwrap_or_default(),
         content: String::new(),
     };
 
@@ -653,14 +653,10 @@ fn take_attribute(
     name: &str,
     namespace: Option<&str>,
 ) -> Option<String> {
-    if let Some(idx) = attrs
+    attrs
         .iter()
         .position(|a| a.name.local_name == name && a.name.namespace.as_deref() == namespace)
-    {
-        Some(attrs.remove(idx).value)
-    } else {
-        None
-    }
+        .map(|idx| attrs.remove(idx).value)
 }
 
 fn make_idlist(stack: &OraStack) -> Vec<LayerID> {

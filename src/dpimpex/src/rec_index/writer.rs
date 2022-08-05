@@ -150,8 +150,10 @@ impl<W: Write + Seek> IndexBuilder<W> {
         let mut used_layers = LayerMap::new();
         let mut used_annotations = AnnotationMap::new();
 
-        let mut stats = Stats::default();
-        stats.index = self.messages - 1;
+        let mut stats = Stats {
+            index: self.messages - 1,
+            ..Stats::default()
+        };
 
         let snapshot_offset = self.write_layerstack(
             &mut used_tiles,
@@ -266,7 +268,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
                 annotation_offsets.push(a.1);
                 stats.reused_annotations += 1;
             } else {
-                let offset = self.write_annotation(&annotation)?;
+                let offset = self.write_annotation(annotation)?;
                 annotationmap.insert(annotatation_p, (annotation.clone(), offset));
                 annotation_offsets.push(offset);
                 stats.changed_annotations += 1;
@@ -475,7 +477,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
         self.writer.write_u16::<LittleEndian>(metadata.id)?;
         self.writer
             .write_u16::<LittleEndian>(metadata.title.len().try_into()?)?;
-        self.writer.write_all(&metadata.title.as_bytes())?;
+        self.writer.write_all(metadata.title.as_bytes())?;
         self.writer.write_u8((metadata.opacity * 255.0) as u8)?;
         self.writer.write_u8(metadata.blendmode.into())?;
         self.writer.write_u8(metadata.hidden as u8)?;

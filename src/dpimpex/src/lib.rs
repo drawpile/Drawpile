@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2021 Calle Laakkonen
+// Copyright (C) 2021-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,8 +103,7 @@ where
     fn inner(path: &Path) -> ImageImportResult {
         let ext = path
             .extension()
-            .and_then(|s| s.to_str())
-            .and_then(|s| Some(s.to_ascii_lowercase()));
+            .and_then(|s| s.to_str().map(|s| s.to_ascii_lowercase()));
         match ext.as_deref() {
             Some("ora") => ora::load_openraster_image(path),
             Some("gif") => flat::load_gif_animation(path),
@@ -122,8 +121,7 @@ where
     fn inner(path: &Path, layerstack: &LayerStack) -> ImageExportResult {
         let ext = path
             .extension()
-            .and_then(|s| s.to_str())
-            .and_then(|s| Some(s.to_ascii_lowercase()));
+            .and_then(|s| s.to_str().map(|s| s.to_ascii_lowercase()));
         match ext.as_deref() {
             Some("ora") => ora::save_openraster_image(path, layerstack),
             Some(_) => flat::save_flat_image(path, layerstack),

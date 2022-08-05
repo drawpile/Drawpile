@@ -47,10 +47,7 @@ pub enum ParseResult {
 
 impl ParseResult {
     pub fn is_error(&self) -> bool {
-        match self {
-            ParseResult::Error(_) => true,
-            _ => false,
-        }
+        matches!(self, ParseResult::Error(_))
     }
 }
 
@@ -200,6 +197,12 @@ impl TextParser {
             ExpectKwargLine => ParseResult::NeedMore,
             ExpectCommand => ParseResult::Ok(mem::replace(&mut self.msg, None).unwrap()),
         }
+    }
+}
+
+impl Default for TextParser {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

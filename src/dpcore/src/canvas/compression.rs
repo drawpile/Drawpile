@@ -151,7 +151,8 @@ pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> 
         .chunks_exact(4)
         .map(|p| p.try_into().unwrap())
         .collect();
-    return Some(pixels);
+
+    Some(pixels)
 }
 
 pub fn compress_image(pixels: &[Pixel]) -> Vec<u8> {
@@ -214,5 +215,11 @@ impl ImageCompressor {
         vec[..4].copy_from_slice(&u32::to_be_bytes(self.uncompressed_len as u32));
 
         vec
+    }
+}
+
+impl Default for ImageCompressor {
+    fn default() -> Self {
+        Self::new()
     }
 }

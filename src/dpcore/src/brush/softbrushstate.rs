@@ -1,5 +1,5 @@
 // This file is part of Drawpile.
-// Copyright (C) 2020 Calle Laakkonen
+// Copyright (C) 2020-2022 Calle Laakkonen
 //
 // Drawpile is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ impl BrushState for SoftBrushState {
     }
 
     fn take_dabs(&mut self, user_id: u8) -> Vec<CommandMessage> {
-        let dabs = mem::replace(&mut self.dabs, Vec::new());
+        let dabs = mem::take(&mut self.dabs);
         dabs.into_iter()
             .map(|d| CommandMessage::DrawDabsClassic(user_id, d))
             .collect()
@@ -239,7 +239,7 @@ impl BrushState for SoftBrushState {
         // TODO excessive copying. We should be able to preserve
         // the vector and not make temporary copies of the individual
         // messages.
-        let dabs = mem::replace(&mut self.dabs, Vec::new());
+        let dabs = mem::take(&mut self.dabs);
         for d in dabs {
             CommandMessage::DrawDabsClassic(user_id, d).write(writer);
         }

@@ -1,5 +1,8 @@
 // Message definitions generated with protogen-rust.py
 
+// allow some stylistic errors that make code generations simpler
+#![allow(clippy::needless_borrow)]
+
 use super::serialization::{DeserializationError, MessageReader, MessageWriter};
 use super::textmessage::TextMessage;
 use num_enum::IntoPrimitive;
@@ -2364,7 +2367,7 @@ impl Message {
             )),
             "disconnect" => Control(ControlMessage::Disconnect(
                 tm.user_id,
-                DisconnectMessage::from_text(&tm),
+                DisconnectMessage::from_text(tm),
             )),
             "ping" => Control(ControlMessage::Ping(
                 tm.user_id,
@@ -2372,7 +2375,7 @@ impl Message {
             )),
             "join" => ServerMeta(ServerMetaMessage::Join(
                 tm.user_id,
-                JoinMessage::from_text(&tm),
+                JoinMessage::from_text(tm),
             )),
             "leave" => ServerMeta(ServerMetaMessage::Leave(tm.user_id)),
             "sessionowner" => ServerMeta(ServerMetaMessage::SessionOwner(
@@ -2381,7 +2384,7 @@ impl Message {
             )),
             "chat" => ServerMeta(ServerMetaMessage::Chat(
                 tm.user_id,
-                ChatMessage::from_text(&tm),
+                ChatMessage::from_text(tm),
             )),
             "trusted" => ServerMeta(ServerMetaMessage::TrustedUsers(
                 tm.user_id,
@@ -2390,16 +2393,16 @@ impl Message {
             "softreset" => ServerMeta(ServerMetaMessage::SoftReset(tm.user_id)),
             "privatechat" => ServerMeta(ServerMetaMessage::PrivateChat(
                 tm.user_id,
-                PrivateChatMessage::from_text(&tm),
+                PrivateChatMessage::from_text(tm),
             )),
             "interval" => ClientMeta(ClientMetaMessage::Interval(tm.user_id, tm.get_u16("msecs"))),
             "lasertrail" => ClientMeta(ClientMetaMessage::LaserTrail(
                 tm.user_id,
-                LaserTrailMessage::from_text(&tm),
+                LaserTrailMessage::from_text(tm),
             )),
             "movepointer" => ClientMeta(ClientMetaMessage::MovePointer(
                 tm.user_id,
-                MovePointerMessage::from_text(&tm),
+                MovePointerMessage::from_text(tm),
             )),
             "marker" => ClientMeta(ClientMetaMessage::Marker(
                 tm.user_id,
@@ -2411,7 +2414,7 @@ impl Message {
             )),
             "layeracl" => ClientMeta(ClientMetaMessage::LayerACL(
                 tm.user_id,
-                LayerACLMessage::from_text(&tm),
+                LayerACLMessage::from_text(tm),
             )),
             "featureaccess" => ClientMeta(ClientMetaMessage::FeatureAccessLevels(
                 tm.user_id,
@@ -2428,52 +2431,52 @@ impl Message {
             "undopoint" => Command(CommandMessage::UndoPoint(tm.user_id)),
             "resize" => Command(CommandMessage::CanvasResize(
                 tm.user_id,
-                CanvasResizeMessage::from_text(&tm),
+                CanvasResizeMessage::from_text(tm),
             )),
             "newlayer" => Command(CommandMessage::LayerCreate(
                 tm.user_id,
-                LayerCreateMessage::from_text(&tm),
+                LayerCreateMessage::from_text(tm),
             )),
             "layerattr" => Command(CommandMessage::LayerAttributes(
                 tm.user_id,
-                LayerAttributesMessage::from_text(&tm),
+                LayerAttributesMessage::from_text(tm),
             )),
             "retitlelayer" => Command(CommandMessage::LayerRetitle(
                 tm.user_id,
-                LayerRetitleMessage::from_text(&tm),
+                LayerRetitleMessage::from_text(tm),
             )),
             "layerorder" => Command(CommandMessage::LayerOrder(
                 tm.user_id,
-                LayerOrderMessage::from_text(&tm),
+                LayerOrderMessage::from_text(tm),
             )),
             "deletelayer" => Command(CommandMessage::LayerDelete(
                 tm.user_id,
-                LayerDeleteMessage::from_text(&tm),
+                LayerDeleteMessage::from_text(tm),
             )),
             "layervisibility" => Command(CommandMessage::LayerVisibility(
                 tm.user_id,
-                LayerVisibilityMessage::from_text(&tm),
+                LayerVisibilityMessage::from_text(tm),
             )),
             "putimage" => Command(CommandMessage::PutImage(
                 tm.user_id,
-                PutImageMessage::from_text(&tm),
+                PutImageMessage::from_text(tm),
             )),
             "fillrect" => Command(CommandMessage::FillRect(
                 tm.user_id,
-                FillRectMessage::from_text(&tm),
+                FillRectMessage::from_text(tm),
             )),
             "penup" => Command(CommandMessage::PenUp(tm.user_id)),
             "newannotation" => Command(CommandMessage::AnnotationCreate(
                 tm.user_id,
-                AnnotationCreateMessage::from_text(&tm),
+                AnnotationCreateMessage::from_text(tm),
             )),
             "reshapeannotation" => Command(CommandMessage::AnnotationReshape(
                 tm.user_id,
-                AnnotationReshapeMessage::from_text(&tm),
+                AnnotationReshapeMessage::from_text(tm),
             )),
             "editannotation" => Command(CommandMessage::AnnotationEdit(
                 tm.user_id,
-                AnnotationEditMessage::from_text(&tm),
+                AnnotationEditMessage::from_text(tm),
             )),
             "deleteannotation" => Command(CommandMessage::AnnotationDelete(
                 tm.user_id,
@@ -2481,7 +2484,7 @@ impl Message {
             )),
             "puttile" => Command(CommandMessage::PutTile(
                 tm.user_id,
-                PutTileMessage::from_text(&tm),
+                PutTileMessage::from_text(tm),
             )),
             "background" => Command(CommandMessage::CanvasBackground(
                 tm.user_id,
@@ -2489,40 +2492,37 @@ impl Message {
             )),
             "classicdabs" => Command(CommandMessage::DrawDabsClassic(
                 tm.user_id,
-                DrawDabsClassicMessage::from_text(&tm),
+                DrawDabsClassicMessage::from_text(tm),
             )),
             "pixeldabs" => Command(CommandMessage::DrawDabsPixel(
                 tm.user_id,
-                DrawDabsPixelMessage::from_text(&tm),
+                DrawDabsPixelMessage::from_text(tm),
             )),
             "squarepixeldabs" => Command(CommandMessage::DrawDabsPixelSquare(
                 tm.user_id,
-                DrawDabsPixelMessage::from_text(&tm),
+                DrawDabsPixelMessage::from_text(tm),
             )),
             "moverect" => Command(CommandMessage::MoveRect(
                 tm.user_id,
-                MoveRectMessage::from_text(&tm),
+                MoveRectMessage::from_text(tm),
             )),
             "setmetadataint" => Command(CommandMessage::SetMetadataInt(
                 tm.user_id,
-                SetMetadataIntMessage::from_text(&tm),
+                SetMetadataIntMessage::from_text(tm),
             )),
             "setmetadatastr" => Command(CommandMessage::SetMetadataStr(
                 tm.user_id,
-                SetMetadataStrMessage::from_text(&tm),
+                SetMetadataStrMessage::from_text(tm),
             )),
             "settimelineframe" => Command(CommandMessage::SetTimelineFrame(
                 tm.user_id,
-                SetTimelineFrameMessage::from_text(&tm),
+                SetTimelineFrameMessage::from_text(tm),
             )),
             "removetimelineframe" => Command(CommandMessage::RemoveTimelineFrame(
                 tm.user_id,
                 tm.get_u16("frame"),
             )),
-            "undo" => Command(CommandMessage::Undo(
-                tm.user_id,
-                UndoMessage::from_text(&tm),
-            )),
+            "undo" => Command(CommandMessage::Undo(tm.user_id, UndoMessage::from_text(tm))),
             _ => {
                 return None;
             }
