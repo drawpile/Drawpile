@@ -2630,9 +2630,10 @@ void MainWindow::setupActions()
 	QAction *groupAdd = makeAction("groupadd", tr("New Group")).icon("folder-new");
 	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy");
 	QAction *layerMerge = makeAction("layermerge", tr("Merge with Layer Below")).icon("arrow-down-double");
+	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure");
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("list-remove");
 
-	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerDelete);
+	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete);
 
 	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Shift+Home").checkable();
 	QAction *layerFrame = makeAction("layerviewframe", tr("Frame")).shortcut("Home").checkable();

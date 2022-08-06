@@ -109,7 +109,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	updateLockedControls();
 }
 
-void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *del)
+void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del)
 {
 	Q_ASSERT(addLayer);
 	Q_ASSERT(addGroup);
@@ -120,6 +120,7 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_addGroupAction = addGroup;
 	m_duplicateLayerAction = duplicate;
 	m_mergeLayerAction = merge;
+	m_propertiesAction = properties;
 	m_deleteLayerAction = del;
 
 	// Add the actions to the header bar
@@ -142,6 +143,10 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	mergeLayerButton->setDefaultAction(m_mergeLayerAction);
 	titlebar->addCustomWidget(mergeLayerButton);
 
+	auto *propertiesButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
+	propertiesButton->setDefaultAction(m_propertiesAction);
+	titlebar->addCustomWidget(propertiesButton);
+
 	auto *deleteLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, titlebar);
 	deleteLayerButton->setDefaultAction(m_deleteLayerAction);
 	titlebar->addCustomWidget(deleteLayerButton);
@@ -153,6 +158,7 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	connect(m_addGroupAction, &QAction::triggered, this, &LayerList::addGroup);
 	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
 	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
+	connect(m_propertiesAction, &QAction::triggered, this, &LayerList::showPropertiesOfSelected);
 	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
 
 	updateLockedControls();
@@ -188,6 +194,7 @@ void LayerList::updateLockedControls()
 	m_lockButton->setEnabled(enabled);
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
+		m_propertiesAction->setEnabled(enabled);
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	}
