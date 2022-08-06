@@ -88,7 +88,9 @@ private slots:
 	void deleteSelected();
 	void mergeSelected();
 
+	void showPropertiesOfSelected();
 	void showPropertiesOfIndex(QModelIndex index);
+	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> exclusive);
@@ -119,6 +121,7 @@ private:
 
 	bool m_noupdate;
 
+	QMenu *m_contextMenu;
 	LayerAclMenu *m_aclmenu;
 
 	widgets::GroupedToolButton *m_lockButton;

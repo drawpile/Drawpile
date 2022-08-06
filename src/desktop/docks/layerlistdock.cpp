@@ -72,6 +72,10 @@ LayerList::LayerList(QWidget *parent)
 	m_view->setEnabled(false);
 	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+	m_contextMenu = new QMenu(this);
+	connect(m_view, &QTreeView::customContextMenuRequested, this, &LayerList::showContextMenu);
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
@@ -153,6 +157,15 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 
 	titlebar->addStretch();
 
+	// Add the actions to the context menu
+	m_contextMenu->addAction(m_propertiesAction);
+	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(m_addLayerAction);
+	m_contextMenu->addAction(m_addGroupAction);
+	m_contextMenu->addAction(m_duplicateLayerAction);
+	m_contextMenu->addAction(m_mergeLayerAction);
+	m_contextMenu->addAction(m_deleteLayerAction);
+
 	// Action functionality
 	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
 	connect(m_addGroupAction, &QAction::triggered, this, &LayerList::addGroup);
@@ -192,6 +205,7 @@ void LayerList::updateLockedControls()
 	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
 	m_lockButton->setEnabled(enabled);
+
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
 		m_propertiesAction->setEnabled(enabled);
@@ -414,6 +428,11 @@ void LayerList::mergeSelected()
 	emit layerCommand(eb.toEnvelope());
 }
 
+void LayerList::showPropertiesOfSelected()
+{
+	showPropertiesOfIndex(currentSelection());
+}
+
 void LayerList::showPropertiesOfIndex(QModelIndex index)
 {
 	if(index.isValid()) {
@@ -453,6 +472,14 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 		dlg->setOpControlsEnabled(canEditAll);
 
 		dlg->show();
+	}
+}
+
+void LayerList::showContextMenu(const QPoint &pos)
+{
+	QModelIndex index = m_view->indexAt(pos);
+	if(index.isValid()) {
+		m_contextMenu->popup(m_view->mapToGlobal(pos));
 	}
 }
 
