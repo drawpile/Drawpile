@@ -20,7 +20,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::cell::RefCell;
 use std::sync::Arc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
@@ -124,9 +123,6 @@ pub struct LayerViewOptions {
     /// The background to use. This can be used to add (for example)
     /// a checkerboard texture to transparent areas.
     background: Tile,
-
-    /// Cached version of the composited background (layerstack bg, composited bg)
-    background_cache: RefCell<(Tile, Tile)>,
 }
 
 impl Default for LayerViewOptions {
@@ -142,7 +138,6 @@ impl Default for LayerViewOptions {
             active_layer_id: 0,
             no_canvas_background: false,
             background: Tile::Blank,
-            background_cache: RefCell::new((Tile::Blank, Tile::Blank)),
         }
     }
 }
@@ -164,7 +159,6 @@ impl LayerViewOptions {
 
     pub fn with_background(mut self, background: Tile) -> Self {
         self.background = background.clone();
-        self.background_cache.replace((Tile::Blank, background));
 
         self
     }
@@ -350,25 +344,10 @@ impl LayerStack {
 
     /// Flatten layer stack content
     pub fn flatten_tile(&self, i: u32, j: u32, opts: &LayerViewOptions) -> TileData {
-        // Cache the composited background tile
-        let mut destination = {
-            if opts.no_canvas_background {
-                opts.background.clone_data()
-            } else if matches!(opts.background, Tile::Blank) {
-                self.background.clone_data()
-            } else {
-                let cache = opts.background_cache.borrow();
-                if cache.0.ptr_eq(&self.background) {
-                    cache.1.clone_data()
-                } else {
-                    drop(cache);
-                    let mut composited = opts.background.clone();
-                    composited.merge(&self.background, 1.0, Blendmode::Normal);
-                    opts.background_cache
-                        .replace((self.background.clone(), composited.clone()));
-                    composited.clone_data()
-                }
-            }
+        let mut destination = if opts.no_canvas_background {
+            Tile::Blank.clone_data()
+        } else {
+            self.background.clone_data()
         };
 
         if (i * TILE_SIZE) < self.root.width() && (j * TILE_SIZE) < self.root.height() {
@@ -384,7 +363,13 @@ impl LayerStack {
             }
         }
 
-        destination
+        if matches!(opts.background, Tile::Blank) {
+            destination
+        } else {
+            let mut result = opts.background.clone_data();
+            result.merge_data(&destination, 1.0, Blendmode::Normal);
+            result
+        }
     }
 
     fn inner_flatten_tile(
