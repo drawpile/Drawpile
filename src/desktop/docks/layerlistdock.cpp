@@ -71,6 +71,7 @@ LayerList::LayerList(QWidget *parent)
 	m_view->viewport()->setAcceptDrops(true);
 	m_view->setEnabled(false);
 	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
@@ -190,8 +191,6 @@ void LayerList::updateLockedControls()
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	}
-
-	m_view->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
 }
 
 void LayerList::selectLayer(int id)
