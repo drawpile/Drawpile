@@ -108,7 +108,12 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Add"),
 		Blendmode::Add,
 		UniversalMode
-	}
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Erase"),
+		Blendmode::Erase,
+		LayerMode
+	},
 };
 
 static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);
