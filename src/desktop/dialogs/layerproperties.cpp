@@ -77,8 +77,8 @@ void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QStr
 		m_ui->blendMode->setEnabled(true);
 	}
 
-	m_ui->isolated->setChecked(!item.group || item.isolated);
-	m_ui->isolated->setVisible(item.group);
+	m_ui->passThrough->setChecked(!item.group || !item.isolated);
+	m_ui->passThrough->setVisible(item.group);
 	m_ui->createdBy->setText(creator);
 }
 
@@ -88,7 +88,7 @@ void LayerProperties::setControlsEnabled(bool enabled) {
 		m_ui->opacitySlider,
 		m_ui->opacitySpinner,
 		m_ui->blendMode,
-		m_ui->isolated,
+		m_ui->passThrough,
 		m_ui->censored
 	};
 	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
@@ -124,7 +124,7 @@ void LayerProperties::emitChanges()
 	const int oldOpacity = qRound(m_item.opacity * 100.0);
 	const rustpile::Blendmode newBlendmode = static_cast<rustpile::Blendmode>(m_ui->blendMode->currentData().toInt());
 	const bool censored = m_ui->censored->isChecked();
-	const bool isolated = m_ui->isolated->isChecked();
+	const bool isolated = !m_ui->passThrough->isChecked();
 
 	if(
 		m_ui->opacitySpinner->value() != oldOpacity ||

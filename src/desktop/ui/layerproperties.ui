@@ -69,9 +69,9 @@
     <widget class="QComboBox" name="blendMode"/>
    </item>
    <item row="6" column="1">
-    <widget class="QCheckBox" name="isolated">
+    <widget class="QCheckBox" name="passThrough">
      <property name="text">
-      <string>Isolated group</string>
+      <string>Pass through</string>
      </property>
     </widget>
    </item>
@@ -216,7 +216,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>isolated</sender>
+   <sender>passThrough</sender>
    <signal>toggled(bool)</signal>
    <receiver>blendMode</receiver>
    <slot>setEnabled(bool)</slot>
