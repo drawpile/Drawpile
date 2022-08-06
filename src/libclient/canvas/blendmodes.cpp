@@ -57,7 +57,7 @@ static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Recolor"),
 		Blendmode::Recolor,
-		BrushMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Behind"),
