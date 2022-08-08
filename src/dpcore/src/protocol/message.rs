@@ -113,12 +113,12 @@ pub struct ChatMessage {
 
 impl ChatMessage {
     pub const TFLAGS_BYPASS: u8 = 0x1;
-    pub const TFLAGS_ALERT: u8 = 0x2;
-    pub const TFLAGS: &'static [&'static str] = &["bypass", "alert"];
+    pub const TFLAGS: &'static [&'static str] = &["bypass"];
     pub const OFLAGS_SHOUT: u8 = 0x1;
     pub const OFLAGS_ACTION: u8 = 0x2;
     pub const OFLAGS_PIN: u8 = 0x4;
-    pub const OFLAGS: &'static [&'static str] = &["shout", "action", "pin"];
+    pub const OFLAGS_ALERT: u8 = 0x8;
+    pub const OFLAGS: &'static [&'static str] = &["shout", "action", "pin", "alert"];
 
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
         reader.validate(2, 65535)?;

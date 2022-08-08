@@ -646,8 +646,6 @@ void Session::handleClientMessage(Client &client, protocol::MessagePtr msg)
 		case protocol::MSG_CHAT: {
 			if(client.isMuted())
 				return;
-			if(!client.isOperator() && msg.cast<protocol::Chat>().isAlert())
-				return;
 			if(msg.cast<protocol::Chat>().isBypass()) {
 				directToAll(msg);
 				return;

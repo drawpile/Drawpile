@@ -38,11 +38,11 @@ static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
 
 static const uint8_t ChatMessage_OFLAGS_ACTION = 2;
 
+static const uint8_t ChatMessage_OFLAGS_ALERT = 8;
+
 static const uint8_t ChatMessage_OFLAGS_PIN = 4;
 
 static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
-
-static const uint8_t ChatMessage_TFLAGS_ALERT = 2;
 
 static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
 

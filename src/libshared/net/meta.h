@@ -160,12 +160,12 @@ class Chat : public Message {
 public:
 	// Transparent flags: these affect serverside behavior
 	static const uint8_t FLAG_BYPASS = 0x01; // bypass session history and send directly to logged in users
-	static const uint8_t FLAG_ALERT = 0x02; // high priority alert (can be send by operators only)
 
 	// Opaque flags: the server doesn't know anything about these
 	static const uint8_t FLAG_SHOUT = 0x01;  // public announcement
 	static const uint8_t FLAG_ACTION = 0x02; // this is an "action message" (like /me in IRC)
 	static const uint8_t FLAG_PIN = 0x04;    // pin this message
+	static const uint8_t FLAG_ALERT = 0x08;  // high priority alert (can be send by operators only)
 
 	Chat(uint8_t ctx, uint8_t tflags, uint8_t oflags, const QByteArray &msg) : Message(MSG_CHAT, ctx), m_tflags(tflags), m_oflags(oflags), m_msg(msg) {}
 	Chat(uint8_t ctx, uint8_t tflags, uint8_t oflags, const QString &msg) : Chat(ctx, tflags, oflags, msg.toUtf8()) {}
@@ -197,11 +197,6 @@ public:
 	 * in the session history.
 	 */
 	bool isBypass() const { return m_tflags & FLAG_BYPASS; }
-
-	/**
-	 * @brief Is this an alert message?
-	 */
-	bool isAlert() const { return m_tflags & FLAG_ALERT; }
 
 	/**
 	 * @brief Is this a shout?

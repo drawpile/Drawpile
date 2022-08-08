@@ -110,8 +110,8 @@ Chat:
              (Typically a Command message is used for server announcements, but the Chat message
              is used for those messages that must be stored in the session history.)
     fields:
-        - tflags flags: [bypass, alert]
-        - oflags flags: [shout, action, pin]
+        - tflags flags: [bypass]
+        - oflags flags: [shout, action, pin, alert]
         - message utf8
 
 TrustedUsers:

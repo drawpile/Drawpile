@@ -272,6 +272,16 @@ User UserListModel::getUserById(int id) const
 	return User();
 }
 
+bool UserListModel::isOperator(int userId) const
+{
+	for(const User &u : m_users) {
+		if(u.id == userId) {
+			return u.isOperator;
+		}
+	}
+	return false;
+}
+
 QString UserListModel::getUsername(int id) const
 {
 	// Special case: id 0 is reserved for the server

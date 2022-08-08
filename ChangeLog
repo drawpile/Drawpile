@@ -1,8 +1,9 @@
 2022-08-?? Version 2.2 beta2
  * Fixed smudge color sampling mask offset
  * Fixed annotation loading
+ * Added support for `/alert` chat command in private chats
 
-2022-08-?? Version 2.2 beta
+2022-08-03 Version 2.2 beta
  * New paint engine written in Rust
  * Added support for layer groups
  * Added animation timeline editor

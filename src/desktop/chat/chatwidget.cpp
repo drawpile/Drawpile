@@ -586,8 +586,16 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
 
-	if(tflags & rustpile::ChatMessage_TFLAGS_ALERT) {
+	if(oflags & rustpile::ChatMessage_OFLAGS_ALERT && d->userlist && d->userlist->isOperator(sender)) {
 		chat.appendAlert(d->usernameSpan(sender), safetext);
+
+		for(int i=0;i<d->tabs->count();++i) {
+			if(d->tabs->tabData(i).toInt() == chatId) {
+				d->tabs->setCurrentIndex(i);
+				break;
+			}
+		}
+
 		emit expandRequested();
 	} else if(oflags & rustpile::ChatMessage_OFLAGS_ACTION)
 		chat.appendAction(d->usernameSpan(sender), safetext);
@@ -659,7 +667,7 @@ void ChatWidget::sendMessage(const QString &msg)
 		} else if(cmd == QStringLiteral("alert")) {
 			if(msg.length() > 2) {
 				chatmsg = params;
-				tflags |= rustpile::ChatMessage_TFLAGS_ALERT;
+				oflags |= rustpile::ChatMessage_OFLAGS_ALERT;
 			}
 
 		} else if(cmd == QStringLiteral("me")) {
