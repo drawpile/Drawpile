@@ -186,6 +186,7 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	d->lastUsedSwatch->setForcedColumns(LASTUSED_COLOR_COUNT);
 	d->lastUsedSwatch->setReadOnly(true);
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
+	d->lastUsedSwatch->setMinimumHeight(24);
 
 	titlebar->addSpace(16);
 	titlebar->addCustomWidget(d->lastUsedSwatch, true);
@@ -654,6 +655,8 @@ void ColorBox::addLastUsedColor(const QColor &color)
 	// Limit number of remembered colors
 	if(pal.count() > LASTUSED_COLOR_COUNT)
 		pal.eraseColor(LASTUSED_COLOR_COUNT);
+
+	d->lastUsedSwatch->setSelected(0);
 }
 
 void ColorBox::swapLastUsedColors()
