@@ -2,6 +2,7 @@
  * Fixed smudge color sampling mask offset
  * Fixed annotation loading
  * Added support for `/alert` chat command in private chats
+ * Fixed crash if a group layer was moved by layer deletion
 
 2022-08-03 Version 2.2 beta
  * New paint engine written in Rust

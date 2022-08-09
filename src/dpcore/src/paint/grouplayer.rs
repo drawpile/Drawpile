@@ -114,12 +114,6 @@ impl LayerRoutes {
         self.routes.push((target, subgroup_index as u16));
     }
 
-    // Remove all routes through the given group
-    fn remove_all(&mut self, via_idx: usize) {
-        let via_idx = via_idx as u16;
-        self.routes.retain(|r| r.1 != via_idx);
-    }
-
     /// Find a route to the the given layer, if it exists in oen of
     /// the owning layer group's subgroups.
     fn get(&self, target: LayerID) -> Option<usize> {
@@ -397,22 +391,18 @@ impl GroupLayer {
                 .as_group_mut()
                 .unwrap()
                 .remove_layer(id);
-
-            // rebuild routes
-            let mut routes = LayerRoutes::new();
-            for (i, l) in self.layers.iter().enumerate() {
-                if let Layer::Group(g) = l.as_ref() {
-                    routes.extend_from(g, i);
-                }
-            }
-            self.routes = routes;
-        } else if let Some(idx) = self.layers.iter().position(|l| l.id() == id) {
-            self.layers.remove(idx);
-
-            // if this is a group, we must remove all routes to its
-            // child layers as well
-            self.routes.remove_all(idx);
+        } else {
+            self.layers.retain(|l| l.id() != id);
         }
+
+        // rebuild routes
+        let mut routes = LayerRoutes::new();
+        for (i, l) in self.layers.iter().enumerate() {
+            if let Layer::Group(g) = l.as_ref() {
+                routes.extend_from(g, i);
+            }
+        }
+        self.routes = routes;
     }
 
     /// Make a copy of this group with a new ID and the IDs
@@ -1188,9 +1178,17 @@ mod tests {
         root.add_group_layer(1, LayerInsertion::Top);
         root.add_bitmap_layer(2, Color::TRANSPARENT, LayerInsertion::Into(1));
         root.add_bitmap_layer(3, Color::TRANSPARENT, LayerInsertion::Top);
+        root.add_bitmap_layer(4, Color::TRANSPARENT, LayerInsertion::Top);
 
+        // Remove the topmost layer. Layer routes should still work
+        root.remove_layer(4);
+        assert!(root.get_layer(4).is_none());
+        assert!(root.get_layer(1).is_some());
+        assert!(root.get_layer(2).is_some());
+        assert!(root.get_layer(3).is_some());
+
+        // Remove the group (and its contents)
         root.remove_layer(1);
-
         assert!(root.get_layer(1).is_none());
         assert!(root.get_layer(2).is_none());
         assert!(root.get_layer(3).is_some());
