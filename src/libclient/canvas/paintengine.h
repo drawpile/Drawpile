@@ -100,6 +100,9 @@ public:
 	//! Set layerstack rendering mode (normal, solo, frame, onionskin)
 	void setViewMode(rustpile::LayerViewMode mode, bool censor);
 
+	//! Is the "censor" view mode flag set?
+	bool isCensored() const;
+
 	//! Set the active view layer (for solo mode)
 	void setViewLayer(int id);
 

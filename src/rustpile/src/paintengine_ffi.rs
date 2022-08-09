@@ -707,6 +707,11 @@ pub extern "C" fn paintengine_set_view_mode(
 }
 
 #[no_mangle]
+pub extern "C" fn paintengine_is_censored(dp: &PaintEngine) -> bool {
+    dp.view_opts.censor
+}
+
+#[no_mangle]
 pub extern "C" fn paintengine_set_onionskin_opts(
     dp: &mut PaintEngine,
     skins_below: usize,

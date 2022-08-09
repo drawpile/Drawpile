@@ -501,8 +501,8 @@ bool LayerList::isCurrentLayerLocked() const
 		return item.hidden
 			|| item.group // group layers have no pixel content to edit
 			|| m_canvas->aclState()->isLayerLocked(item.id)
+			|| (item.censored && m_canvas->paintEngine()->isCensored())
 			;
-			// FIXME: || (m_canvas->layerStack()->isCensored() && item.censored);
 	}
 	return false;
 }
@@ -544,6 +544,8 @@ void LayerList::lockStatusChanged(int layerId)
 		const auto acl = m_canvas->aclState()->layerAcl(layerId);
 		m_lockButton->setChecked(acl.locked || acl.tier != rustpile::Tier::Guest || !acl.exclusive.isEmpty());
 		m_aclmenu->setAcl(acl.locked, int(acl.tier), acl.exclusive);
+
+		emit activeLayerVisibilityChanged();
 	}
 }
 

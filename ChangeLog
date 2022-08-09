@@ -3,6 +3,7 @@
  * Fixed annotation loading
  * Added support for `/alert` chat command in private chats
  * Fixed crash if a group layer was moved by layer deletion
+ * Fixed layer lock status updating
 
 2022-08-03 Version 2.2 beta
  * New paint engine written in Rust

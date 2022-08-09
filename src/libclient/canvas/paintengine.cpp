@@ -186,6 +186,11 @@ void PaintEngine::setViewMode(rustpile::LayerViewMode mode, bool censor)
 	rustpile::paintengine_set_view_mode(m_pe, mode, censor);
 }
 
+bool PaintEngine::isCensored() const
+{
+	return rustpile::paintengine_is_censored(m_pe);
+}
+
 void PaintEngine::setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint)
 {
 	rustpile::paintengine_set_onionskin_opts(m_pe, skinsBelow, skinsAbove, tint);

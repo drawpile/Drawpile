@@ -651,6 +651,8 @@ int32_t paintengine_get_metadata_int(const PaintEngine *dp, MetadataInt field);
 
 void paintengine_set_view_mode(PaintEngine *dp, LayerViewMode mode, bool censor);
 
+bool paintengine_is_censored(const PaintEngine *dp);
+
 void paintengine_set_onionskin_opts(PaintEngine *dp,
                                     uintptr_t skins_below,
                                     uintptr_t skins_above,

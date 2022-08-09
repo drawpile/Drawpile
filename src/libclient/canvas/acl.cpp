@@ -220,7 +220,7 @@ bool AclState::isLayerLocked(uint16_t layerId) const
 	if(!d->layers.contains(layerId))
 		return false;
 	const Layer &l = d->layers[layerId];
-	return l.locked || (!l.exclusive.isEmpty() && l.exclusive.contains(d->localUser));
+	return l.locked || (!l.exclusive.isEmpty() && !l.exclusive.contains(d->localUser));
 }
 
 bool AclState::canUseFeature(Feature f) const
