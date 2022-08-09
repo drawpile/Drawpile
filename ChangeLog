@@ -5,6 +5,7 @@
  * Fixed crash if a group layer was moved by layer deletion
  * Fixed layer lock status updating
  * Fixed preserved chat mode
+ * Annotation creator name is now shown in the dock titlebar
 
 2022-08-03 Version 2.2 beta
  * New paint engine written in Rust

@@ -66,16 +66,13 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	headerLayout->setContentsMargins(0, 0, 0, 0);
 	m_headerWidget->setLayout(headerLayout);
 
-	m_protectedAction = new QAction(this);
-	m_protectedAction->setIcon(icon::fromTheme("object-locked"));
+	m_protectedAction = new QAction(icon::fromTheme("object-locked"), tr("Protect"), this);
 	m_protectedAction->setCheckable(true);
-	auto *protectedButton = new widgets::GroupedToolButton(m_headerWidget);
+	auto *protectedButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, m_headerWidget);
 	protectedButton->setDefaultAction(m_protectedAction);
 	headerLayout->addWidget(protectedButton);
 
-	headerLayout->addStretch(0);
-
-	auto *mergeButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, m_headerWidget);
+	auto *mergeButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, m_headerWidget);
 	QAction *mergeAction = new QAction(icon::fromTheme("arrow-down-double"), tr("Merge"), this);
 	mergeButton->setDefaultAction(mergeAction);
 	headerLayout->addWidget(mergeButton);
@@ -86,6 +83,10 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	headerLayout->addWidget(deleteButton);
 
 	headerLayout->addStretch(0);
+
+	m_creatorLabel = new QLabel(m_headerWidget);
+	m_creatorLabel->setAlignment(Qt::AlignRight);
+	headerLayout->addWidget(m_creatorLabel);
 
 	m_editActions = new QActionGroup(this);
 	m_editActions->addAction(mergeAction);
@@ -348,9 +349,7 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		}
 		m_ui->valign->setProperty(VALIGN_PROP, align);
 
-		m_protectedAction->setText(tr("Protected (%1)").arg(
-			controller()->model()->userlist()->getUsername(a->userId()))
-		);
+		m_creatorLabel->setText(controller()->model()->userlist()->getUsername(a->userId()));
 		m_protectedAction->setChecked(a->protect());
 
 		const bool opOrOwner = controller()->model()->aclState()->amOperator() || (a->id() >> 8) == controller()->client()->myId();
