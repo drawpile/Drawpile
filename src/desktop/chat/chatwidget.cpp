@@ -640,7 +640,7 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 
 void ChatWidget::sendMessage(const QString &msg)
 {
-	uint8_t tflags = d->preserveChat ? rustpile::ChatMessage_TFLAGS_BYPASS : 0;
+	uint8_t tflags = d->preserveChat ? 0 : rustpile::ChatMessage_TFLAGS_BYPASS;
 	uint8_t oflags = 0;
 	auto chatmsg = msg;
 
