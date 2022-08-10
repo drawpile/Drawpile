@@ -244,6 +244,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &BrushSettings::updateFromUi);
 
+	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
+			this, &BrushSettings::updateSettings);
+	updateSettings();
+
 	return widget;
 }
 
