@@ -56,7 +56,7 @@ public:
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	//! These actions are shown in a menu outside this dock
-	void setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *del);
+	void setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del);
 
 	/**
 	 * Is the currently selected layer locked for editing?
@@ -88,7 +88,9 @@ private slots:
 	void deleteSelected();
 	void mergeSelected();
 
+	void showPropertiesOfSelected();
 	void showPropertiesOfIndex(QModelIndex index);
+	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> exclusive);
@@ -119,6 +121,7 @@ private:
 
 	bool m_noupdate;
 
+	QMenu *m_contextMenu;
 	LayerAclMenu *m_aclmenu;
 
 	widgets::GroupedToolButton *m_lockButton;
@@ -128,6 +131,7 @@ private:
 	QAction *m_addGroupAction;
 	QAction *m_duplicateLayerAction;
 	QAction *m_mergeLayerAction;
+	QAction *m_propertiesAction;
 	QAction *m_deleteLayerAction;
 };
 

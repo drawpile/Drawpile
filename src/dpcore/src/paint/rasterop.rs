@@ -22,8 +22,11 @@
 
 use super::color::*;
 use super::Blendmode;
+#[cfg(debug_assertions)]
+use tracing::warn;
 
 pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendmode) {
+    #[allow(unreachable_patterns)]
     match mode {
         Blendmode::Normal => alpha_pixel_blend(base, over, opacity),
         Blendmode::Erase => alpha_pixel_erase(base, over, opacity),
@@ -40,10 +43,15 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::ColorErase => pixel_color_erase(base, over, opacity),
         Blendmode::Screen => pixel_composite(comp_op_screen, base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
+        _m => {
+            #[cfg(debug_assertions)]
+            warn!("Unknown pixel blend mode {:?}", _m);
+        }
     }
 }
 
 pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode) {
+    #[allow(unreachable_patterns)]
     match mode {
         Blendmode::Normal => alpha_mask_blend(base, color, mask),
         Blendmode::Erase => alpha_mask_erase(base, mask),
@@ -59,7 +67,10 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::Behind => alpha_mask_under(base, color, mask),
         Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask),
         Blendmode::ColorErase => mask_color_erase(base, color, mask),
-        m => panic!("TODO unimplemented mask blend mode {:?}", m),
+        _m => {
+            #[cfg(debug_assertions)]
+            warn!("Unknown mask blend mode {:?}", _m);
+        }
     }
 }
 

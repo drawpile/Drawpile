@@ -71,6 +71,11 @@ LayerList::LayerList(QWidget *parent)
 	m_view->viewport()->setAcceptDrops(true);
 	m_view->setEnabled(false);
 	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+	m_contextMenu = new QMenu(this);
+	connect(m_view, &QTreeView::customContextMenuRequested, this, &LayerList::showContextMenu);
 
 	// Layer ACL menu
 	m_aclmenu = new LayerAclMenu(this);
@@ -108,7 +113,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	updateLockedControls();
 }
 
-void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *del)
+void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del)
 {
 	Q_ASSERT(addLayer);
 	Q_ASSERT(addGroup);
@@ -119,6 +124,7 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_addGroupAction = addGroup;
 	m_duplicateLayerAction = duplicate;
 	m_mergeLayerAction = merge;
+	m_propertiesAction = properties;
 	m_deleteLayerAction = del;
 
 	// Add the actions to the header bar
@@ -141,17 +147,31 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	mergeLayerButton->setDefaultAction(m_mergeLayerAction);
 	titlebar->addCustomWidget(mergeLayerButton);
 
+	auto *propertiesButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
+	propertiesButton->setDefaultAction(m_propertiesAction);
+	titlebar->addCustomWidget(propertiesButton);
+
 	auto *deleteLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, titlebar);
 	deleteLayerButton->setDefaultAction(m_deleteLayerAction);
 	titlebar->addCustomWidget(deleteLayerButton);
 
 	titlebar->addStretch();
 
+	// Add the actions to the context menu
+	m_contextMenu->addAction(m_propertiesAction);
+	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(m_addLayerAction);
+	m_contextMenu->addAction(m_addGroupAction);
+	m_contextMenu->addAction(m_duplicateLayerAction);
+	m_contextMenu->addAction(m_mergeLayerAction);
+	m_contextMenu->addAction(m_deleteLayerAction);
+
 	// Action functionality
 	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
 	connect(m_addGroupAction, &QAction::triggered, this, &LayerList::addGroup);
 	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
 	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
+	connect(m_propertiesAction, &QAction::triggered, this, &LayerList::showPropertiesOfSelected);
 	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
 
 	updateLockedControls();
@@ -185,13 +205,13 @@ void LayerList::updateLockedControls()
 	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
 	m_lockButton->setEnabled(enabled);
+
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
+		m_propertiesAction->setEnabled(enabled);
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	}
-
-	m_view->setEditTriggers(enabled ? QAbstractItemView::DoubleClicked : QAbstractItemView::NoEditTriggers);
 }
 
 void LayerList::selectLayer(int id)
@@ -408,6 +428,11 @@ void LayerList::mergeSelected()
 	emit layerCommand(eb.toEnvelope());
 }
 
+void LayerList::showPropertiesOfSelected()
+{
+	showPropertiesOfIndex(currentSelection());
+}
+
 void LayerList::showPropertiesOfIndex(QModelIndex index)
 {
 	if(index.isValid()) {
@@ -447,6 +472,14 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 		dlg->setOpControlsEnabled(canEditAll);
 
 		dlg->show();
+	}
+}
+
+void LayerList::showContextMenu(const QPoint &pos)
+{
+	QModelIndex index = m_view->indexAt(pos);
+	if(index.isValid()) {
+		m_contextMenu->popup(m_view->mapToGlobal(pos));
 	}
 }
 
