@@ -44,6 +44,7 @@ private slots:
 	void deletePalette();
 	void renamePalette();
 	void paletteRenamed();
+	void setPaletteReadonly(bool readonly);
 	void exportPalette();
 	void importPalette();
 

@@ -578,7 +578,7 @@ void Swatch::mousePressEvent(QMouseEvent *event)
         p->drag_index = index;
         if ( index == -2 )
             Q_EMIT clicked(-1, event->modifiers());
-        else if ( index != -1 )
+		else if ( index != -1 )
             Q_EMIT clicked(index, event->modifiers());
     }
     else if ( event->button() == Qt::RightButton )
@@ -586,8 +586,8 @@ void Swatch::mousePressEvent(QMouseEvent *event)
         int index = p->indexAt(event->pos(), true);
 
         if ( index == -2 )
-            Q_EMIT rightClicked(-1, event->modifiers());
-        else if ( index != -1 )
+			Q_EMIT rightClicked(-1, event->modifiers());
+		else
             Q_EMIT rightClicked(index, event->modifiers());
     }
 }
@@ -632,7 +632,7 @@ void Swatch::mouseDoubleClickEvent(QMouseEvent *event)
 
         if ( index == -2 )
             Q_EMIT doubleClicked(-1, event->modifiers());
-        else if ( index != -1 )
+		else
             Q_EMIT doubleClicked(index, event->modifiers());
     }
 }

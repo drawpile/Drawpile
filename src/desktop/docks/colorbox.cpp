@@ -92,6 +92,7 @@ struct ColorBox::Private {
 	QComboBox *paletteChoiceBox = nullptr;
 	color_widgets::Swatch *paletteSwatch = nullptr;
 	QMenu *palettePopupMenu = nullptr;
+	QToolButton *readonlyPalette = nullptr;
 
 	// Sliders page
 	color_widgets::HueSlider *hue = nullptr;
@@ -188,9 +189,11 @@ ColorBox::ColorBox(const QString& title, QWidget *parent)
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
 
-	titlebar->addSpace(16);
+	const auto margins = this->layout()->contentsMargins();
+	const int btnWidth = d->readonlyPalette->width() + margins.left() + this->layout()->spacing();
+	titlebar->addSpace(btnWidth);
 	titlebar->addCustomWidget(d->lastUsedSwatch, true);
-	titlebar->addSpace(16);
+	titlebar->addSpace(btnWidth);
 
 	connect(d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this, &ColorBox::colorChanged);
 	connect(d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this, &ColorBox::setColor);
@@ -218,19 +221,25 @@ QWidget *ColorBox::createPalettePage()
 	layout->setSpacing(3);
 	w->setLayout(layout);
 
+	d->readonlyPalette = new widgets::GroupedToolButton(w);
+	d->readonlyPalette->setToolTip("Write protect");
+	d->readonlyPalette->setIcon(icon::fromTheme("object-locked"));
+	d->readonlyPalette->setCheckable(true);
+	layout->addWidget(d->readonlyPalette, 0, 0);
+
 	d->paletteChoiceBox = new QComboBox(w);
 	d->paletteChoiceBox->setCompleter(nullptr);
 	d->paletteChoiceBox->setInsertPolicy(QComboBox::NoInsert); // we want to handle editingFinished signal ourselves
 	d->paletteChoiceBox->setModel(getSharedPaletteModel());
-	layout->addWidget(d->paletteChoiceBox, 0, 0);
+	layout->addWidget(d->paletteChoiceBox, 0, 1);
+	layout->setColumnStretch(1, 1);
 
 	auto *menuButton = new widgets::GroupedToolButton(w);
 	menuButton->setIcon(icon::fromTheme("application-menu"));
-	layout->addWidget(menuButton, 0, 1);
-	layout->setColumnStretch(0, 1);
+	layout->addWidget(menuButton, 0, 2);
 
 	d->paletteSwatch = new color_widgets::Swatch(w);
-	layout->addWidget(d->paletteSwatch, 1, 0, 1, 2);
+	layout->addWidget(d->paletteSwatch, 1, 0, 1, 3);
 
 	QMenu *paletteMenu = new QMenu(this);
 	paletteMenu->addAction(tr("New"), this, &ColorBox::addPalette);
@@ -257,6 +266,16 @@ QWidget *ColorBox::createPalettePage()
 	connect(d->paletteSwatch, &color_widgets::Swatch::doubleClicked, this, &ColorBox::paletteDoubleClicked);
 	connect(d->paletteSwatch, &color_widgets::Swatch::rightClicked, this, &ColorBox::paletteRightClicked);
 	connect(d->paletteChoiceBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ColorBox::paletteChanged);
+	connect(d->readonlyPalette, &QToolButton::clicked, this, [this](bool checked) {
+		int idx = d->paletteChoiceBox->currentIndex();
+		if(idx >= 0) {
+			auto *pm = getSharedPaletteModel();
+			auto pal = pm->palette(idx);
+			pal.setProperty("editable", !checked);
+			pm->updatePalette(idx, pal, false);
+			setPaletteReadonly(checked);
+		}
+	});
 	return w;
 }
 
@@ -385,6 +404,7 @@ void ColorBox::paletteChanged(int index)
 		d->saveCurrentPalette();
 
 		d->paletteSwatch->setPalette(getSharedPaletteModel()->palette(index));
+		setPaletteReadonly(!d->paletteSwatch->palette().property("editable").toBool());
 	}
 }
 
@@ -443,6 +463,13 @@ void ColorBox::paletteRenamed()
 	d->paletteChoiceBox->setEditable(false);
 }
 
+void ColorBox::setPaletteReadonly(bool readonly)
+{
+	d->readonlyPalette->setChecked(readonly);
+	d->paletteSwatch->setReadOnly(readonly);
+	d->palettePopupMenu->setEnabled(!readonly);
+}
+
 void ColorBox::renamePalette()
 {
 	d->paletteChoiceBox->setEditable(true);
@@ -452,25 +479,26 @@ void ColorBox::renamePalette()
 void ColorBox::addPalette()
 {
 	auto pal = color_widgets::ColorPalette();
+	pal.setProperty("editable", true);
 	pal.appendColor(d->colorwheel->color());
 	getSharedPaletteModel()->addPalette(pal, false);
 	d->paletteChoiceBox->setCurrentIndex(d->paletteChoiceBox->model()->rowCount()-1);
 	renamePalette();
+	setPaletteReadonly(false);
 }
 
 void ColorBox::copyPalette()
 {
+	color_widgets::ColorPalette pal = d->paletteSwatch->palette();
+	pal.setFileName(QString());
+	pal.setName(QString());
+	pal.setProperty("editable", true);
 
-	const int current = d->paletteChoiceBox->currentIndex();
-	if(current >= 0) {
-		auto *pm = getSharedPaletteModel();
-		auto pal = pm->palette(current);
-		pal.setFileName(QString());
-		pal.setName(QString());
-		pm->addPalette(pal, false);
-		d->paletteChoiceBox->setCurrentIndex(pm->rowCount()-1);
-		renamePalette();
-	}
+	auto *pm = getSharedPaletteModel();
+	pm->addPalette(pal, false);
+	d->paletteChoiceBox->setCurrentIndex(pm->rowCount()-1);
+	renamePalette();
+	setPaletteReadonly(false);
 }
 
 void ColorBox::deletePalette()
@@ -500,6 +528,9 @@ void ColorBox::paletteClicked(int index)
 
 void ColorBox::paletteDoubleClicked(int index)
 {
+	if(d->readonlyPalette->isChecked())
+		return;
+
 	color_widgets::ColorDialog dlg;
 	dlg.setAlphaEnabled(false);
 	dlg.setButtonMode(color_widgets::ColorDialog::OkCancel);
@@ -526,10 +557,10 @@ void ColorBox::paletteRightClicked(int index)
 
 	switch(act->property("menuIdx").toInt()) {
 	case 0:
-		d->paletteSwatch->palette().insertColor(index+1, d->colorwheel->color());
+		d->paletteSwatch->palette().insertColor(index < 0 ? d->paletteSwatch->palette().count() : index+1, d->colorwheel->color());
 		break;
 	case 1:
-		if(d->paletteSwatch->palette().count() > 1)
+		if(d->paletteSwatch->palette().count() > 1 && index >= 0)
 			d->paletteSwatch->palette().eraseColor(index);
 		break;
 	case 2:

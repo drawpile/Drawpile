@@ -6,6 +6,7 @@
  * Fixed layer lock status updating
  * Fixed preserved chat mode
  * Annotation creator name is now shown in the dock titlebar
+ * Restored palette write-protect feature
 
 2022-08-03 Version 2.2 beta
  * New paint engine written in Rust
