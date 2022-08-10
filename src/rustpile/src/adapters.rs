@@ -12,6 +12,7 @@ pub struct LayerInfo {
     pub titlelen: i32,
     pub opacity: f32,
     pub id: u16,
+    pub frame_id: u16,
     pub hidden: bool,
     pub censored: bool,
     pub isolated: bool,
@@ -33,13 +34,16 @@ pub struct LayerInfo {
 pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
     let mut list: Vec<LayerInfo> = Vec::new();
 
-    fn flatten(list: &mut Vec<LayerInfo>, index: &mut i32, group: &GroupLayer) {
+    fn flatten(list: &mut Vec<LayerInfo>, index: &mut i32, group: &GroupLayer, frame_id: u16) {
         // Note: layers are listed top-to-bottom in the GUI
         for (i, l) in group.iter_layers().enumerate() {
+            let metadata = l.metadata();
             match l {
                 Layer::Group(g) => {
+                    let frame_id = if frame_id == 0 && metadata.isolated { metadata.id } else { frame_id };
                     let info = LayerInfo::new(
-                        g.metadata(),
+                        metadata,
+                        frame_id,
                         true,
                         g.layer_count() as u16,
                         i as u16,
@@ -49,13 +53,14 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
                     *index += 1;
                     let pos = list.len();
                     list.push(info);
-                    flatten(list, index, g);
+                    flatten(list, index, g, frame_id);
                     list[pos].right = *index;
                     *index += 1;
                 }
-                Layer::Bitmap(l) => {
+                Layer::Bitmap(_) => {
                     list.push(LayerInfo::new(
-                        l.metadata(),
+                        metadata,
+                        if frame_id == 0 { metadata.id } else { frame_id },
                         false,
                         0,
                         i as u16,
@@ -69,7 +74,7 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
     }
 
     let mut index = 0;
-    flatten(&mut list, &mut index, root.inner_ref());
+    flatten(&mut list, &mut index, root.inner_ref(), 0);
 
     list
 }
@@ -77,6 +82,7 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
 impl LayerInfo {
     fn new(
         md: &LayerMetadata,
+        frame_id: u16,
         group: bool,
         children: u16,
         rel_index: u16,
@@ -88,6 +94,7 @@ impl LayerInfo {
             titlelen: md.title.len() as i32,
             opacity: md.opacity,
             id: md.id,
+            frame_id,
             hidden: md.hidden,
             censored: md.censored,
             blendmode: md.blendmode,

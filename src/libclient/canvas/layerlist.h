@@ -43,6 +43,9 @@ struct LayerListItem {
 	// layers use values outside that range. However, internal layers are not
 	// shown in the layer list.
 	uint16_t id;
+
+	//! ID of the frame layer this layer belongs to
+	uint16_t frameId;
 	
 	//! Layer title
 	QString title;
@@ -163,6 +166,7 @@ public:
 
 public slots:
 	void setLayers(const QVector<LayerListItem> &items);
+	void setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode);
 
 signals:
 	//! A new layer was created that should be automatically selected
@@ -173,11 +177,13 @@ signals:
 
 private:
 	QVector<LayerListItem> m_items;
+	QVector<int> m_frameLayers;
 	GetLayerFunction m_getlayerfn;
 	AclState *m_aclstate;
 	int m_rootLayerCount;
 	uint16_t m_defaultLayer;
 	bool m_autoselectAny;
+	bool m_frameMode;
 };
 
 /**

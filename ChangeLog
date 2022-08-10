@@ -8,6 +8,8 @@
  * Annotation creator name is now shown in the dock titlebar
  * Restored palette write-protect feature
  * Fixed brush slider limit preferences
+ * Layers hidden in frame/onionskin mode are now grayed out in the layer box
+ * Modifying the timeline now updates the view immediately
 
 2022-08-03 Version 2.2 beta
  * New paint engine written in Rust

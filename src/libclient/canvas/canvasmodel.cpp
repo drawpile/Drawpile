@@ -82,6 +82,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, [this]() {
 		rustpile::paintengine_get_timeline(m_paintengine->engine(), m_timeline, timelineUpdateFrames);
 	}, Qt::QueuedConnection);
+	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);
 
 	updateLayerViewOptions();
 }

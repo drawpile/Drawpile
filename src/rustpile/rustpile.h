@@ -226,6 +226,7 @@ struct LayerInfo {
   int32_t titlelen;
   float opacity;
   uint16_t id;
+  uint16_t frame_id;
   bool hidden;
   bool censored;
   bool isolated;
@@ -250,6 +251,17 @@ using NotifyCatchupCallback = void(*)(void *ctx, uint32_t progress);
 using NotifyMetadataCallback = void(*)(void *ctx);
 
 using NotifyTimelineCallback = void(*)(void *ctx);
+
+/// The number of layers that can be included in a frame is fixed.
+/// This is done purely for efficiency: a Vec is 24 bytes long
+/// (assuming 64bit OS,) so we can fit 12 layer IDs in the same
+/// space without using any allocations.
+///
+/// Unused indices should be zerod. No more layers should be listed
+/// after the first zero.
+using Frame = LayerID[12];
+
+using NotifyFrameVisibilityCallback = void(*)(void *ctx, const Frame *Frame, bool frame_mode);
 
 using JoinCallback = void(*)(void *ctx, UserID user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
 
@@ -277,15 +289,6 @@ struct AnnotationAt {
   /// The annotation's protected bit
   bool protect;
 };
-
-/// The number of layers that can be included in a frame is fixed.
-/// This is done purely for efficiency: a Vec is 24 bytes long
-/// (assuming 64bit OS,) so we can fit 12 layer IDs in the same
-/// space without using any allocations.
-///
-/// Unused indices should be zerod. No more layers should be listed
-/// after the first zero.
-using Frame = LayerID[12];
 
 using GetTimelineCallback = void(*)(void *ctx, const Frame *frames, uintptr_t count);
 
@@ -584,7 +587,8 @@ PaintEngine *paintengine_new(void *ctx,
                              NotifyPlaybackCallback playback,
                              NotifyCatchupCallback catchup,
                              NotifyMetadataCallback metadata,
-                             NotifyTimelineCallback timeline);
+                             NotifyTimelineCallback timeline,
+                             NotifyFrameVisibilityCallback framevis);
 
 /// Delete a paint engine instance and wait for its thread to finish
 void paintengine_free(PaintEngine *dp);

@@ -46,7 +46,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case Qt::EditRole: return item.title;
 	case IdRole: return item.id;
 	case IsDefaultRole: return item.id == m_defaultLayer;
-	case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
+	case IsLockedRole: return (m_frameMode && !m_frameLayers.contains(item.frameId)) || (m_aclstate && m_aclstate->isLayerLocked(item.id));
 	case IsGroupRole: return item.group;
 	}
 
@@ -304,6 +304,14 @@ void LayerListModel::setLayers(const QVector<LayerListItem> &items)
 
 	if(autoselect>=0)
 		emit autoSelectRequest(autoselect);
+}
+
+void LayerListModel::setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode)
+{
+	beginResetModel(); //FIXME don't reset the whole model
+	m_frameLayers = layers;
+	m_frameMode = frameMode;
+	endResetModel();
 }
 
 void LayerListModel::setDefaultLayer(uint16_t id)

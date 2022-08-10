@@ -110,6 +110,7 @@ int Timeline::currentFrame() const
 void Timeline::onFramesChanged()
 {
 	m_currentFrame->setMaximum(qMax(1, m_widget->model()->frames().size()));
+	emit currentFrameChanged(m_currentFrame->value());
 }
 
 void Timeline::onUseTimelineClicked()

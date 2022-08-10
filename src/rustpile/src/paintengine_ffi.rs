@@ -71,6 +71,8 @@ type NotifyPlaybackCallback = extern "C" fn(ctx: *mut c_void, pos: i64, interval
 type NotifyCatchupCallback = extern "C" fn(ctx: *mut c_void, progress: u32);
 type NotifyMetadataCallback = extern "C" fn(ctx: *mut c_void);
 type NotifyTimelineCallback = extern "C" fn(ctx: *mut c_void);
+type NotifyFrameVisibilityCallback =
+    extern "C" fn(ctx: *mut c_void, Frame: *const Frame, frame_mode: bool);
 
 // Main thread callbacks:
 type JoinCallback = Option<
@@ -177,6 +179,7 @@ pub struct PaintEngine {
     /// View mode changes are done in the main thread
     notify_changes: NotifyChangesCallback,
     notify_cursor: NotifyCursorCallback,
+    notify_frame_visibility: NotifyFrameVisibilityCallback,
     context_object: *mut c_void,
 
     /// Meta message notification context
@@ -345,6 +348,7 @@ pub extern "C" fn paintengine_new(
     catchup: NotifyCatchupCallback,
     metadata: NotifyMetadataCallback,
     timeline: NotifyTimelineCallback,
+    framevis: NotifyFrameVisibilityCallback,
 ) -> *mut PaintEngine {
     let viewcache = Arc::new(Mutex::new(ViewCache {
         layerstack: Arc::new(LayerStack::new(0, 0)),
@@ -390,6 +394,7 @@ pub extern "C" fn paintengine_new(
         player_path: PathBuf::new(),
         notify_changes: changes,
         notify_cursor: cursors,
+        notify_frame_visibility: framevis,
         context_object: ctx,
         meta_context: ptr::null_mut(),
         meta_notify_join: None,
@@ -703,6 +708,15 @@ pub extern "C" fn paintengine_set_view_mode(
         if let Some(r) = aoe_bounds {
             (dp.notify_changes)(dp.context_object, r);
         }
+
+        (dp.notify_frame_visibility)(
+            dp.context_object,
+            &dp.view_opts.active_frame,
+            matches!(
+                dp.view_opts.viewmode,
+                LayerViewMode::Frame | LayerViewMode::Onionskin
+            ),
+        );
     }
 }
 
@@ -802,6 +816,14 @@ pub extern "C" fn paintengine_set_active_frame(dp: &mut PaintEngine, frame_idx: 
 
     if let Some(r) = aoe_bounds {
         (dp.notify_changes)(dp.context_object, r);
+        (dp.notify_frame_visibility)(
+            dp.context_object,
+            &dp.view_opts.active_frame,
+            matches!(
+                dp.view_opts.viewmode,
+                LayerViewMode::Frame | LayerViewMode::Onionskin
+            ),
+        );
     }
 }
 

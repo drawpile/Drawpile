@@ -126,6 +126,7 @@ signals:
 	void caughtUpTo(int progress);
 	void metadataChanged();
 	void timelineChanged();
+	void frameVisibilityChanged(const QVector<int> layers, bool frameMode);
 
 	//! Paint engine has panicked and died
 	void enginePanicked();

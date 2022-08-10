@@ -64,6 +64,7 @@ void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, u
 		const rustpile::LayerInfo &li = layerInfos[i];
 		layers << LayerListItem {
 			uint16_t(li.id), // only internal (non-visible) layers have IDs outside the u16 range
+			uint16_t(li.frame_id),
 			QString::fromUtf8(reinterpret_cast<const char*>(li.title), li.titlelen),
 			li.opacity,
 			li.blendmode,
@@ -95,6 +96,20 @@ void paintEngineMetadataChanged(void *pe)
 void paintEngineTimelineChanged(void *pe)
 {
 	emit reinterpret_cast<PaintEngine*>(pe)->timelineChanged();
+}
+
+void paintEngineFrameVisbilityChanged(void *pe, const rustpile::Frame *frame, bool frameMode)
+{
+	QVector<int> layers;
+	if(frameMode) {
+		for(unsigned long i=0;i<sizeof(rustpile::Frame)/sizeof(rustpile::LayerID);++i) {
+			if((*frame)[i] != 0)
+				layers << (*frame)[i];
+			else
+				break;
+		}
+	}
+	emit reinterpret_cast<PaintEngine*>(pe)->frameVisibilityChanged(layers, frameMode);
 }
 
 void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32_t y)
@@ -137,7 +152,8 @@ void PaintEngine::reset()
 		paintEnginePlayback,
 		paintEngineCatchup,
 		paintEngineMetadataChanged,
-		paintEngineTimelineChanged
+		paintEngineTimelineChanged,
+		paintEngineFrameVisbilityChanged
 	);
 
 	m_cache = QPixmap();
