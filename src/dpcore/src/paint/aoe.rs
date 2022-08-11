@@ -235,7 +235,7 @@ impl TileMap {
         let y1 = bound(0, r.bottom() / TILE_SIZEI, h - 1) as usize;
 
         for y in y0..=y1 {
-            self.tiles[y * self.w as usize + x0..=y * w as usize + x1].set_all(value);
+            self.tiles[y * self.w as usize + x0..=y * w as usize + x1].fill(value);
         }
 
         self

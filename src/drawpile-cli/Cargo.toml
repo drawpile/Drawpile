@@ -1,15 +1,15 @@
 [package]
 name = "drawpile-cli"
-version = "0.1.0"
-edition = "2018"
+version = "2.2.0"
+edition = "2021"
 
 [dependencies]
 dpcore = { path = "../dpcore" }
 dpimpex = { path = "../dpimpex" }
-clap = "2.33.0"
-tracing-subscriber = "0.1.6"
-tracing = "0.1.5"
+clap = { version = "3.2.16", features=["derive"] }
+tracing-subscriber = "0.3.15"
+tracing = "0.1.36"
 
 [dependencies.image]
-version = "0.23.14"
+version = "0.24.3"
 default-features = false

@@ -2,22 +2,22 @@
 name = "dpcore"
 version = "2.2.0"
 publish = false
-edition = "2018"
+edition = "2021"
 license = "GPLv3"
 
 [dependencies]
-base64 = "0.11.0"
-tracing = "0.1.22"
-num_enum = "0.5.4"
-bitvec = "0.22.3"
+base64 = "0.13.0"
+tracing = "0.1.36"
+num_enum = "0.5.7"
+bitvec = "1.0.1"
 inflate = "0.4.5"
-deflate = "0.8.4"
+deflate = "1.0.0"
 lazy_static = "1.4.0"
 
 [dev-dependencies]
-itertools = "0.8.2"
-image = { version = "0.23.14", default-features = false, features = ["png"] }
-criterion = "0.3"
+itertools = "0.10.3"
+image = { version = "0.24.3", default-features = false, features = ["png"] }
+criterion = "0.3.6"
 
 [[bench]]
 name = "rasterops"

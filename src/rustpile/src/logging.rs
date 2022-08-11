@@ -49,7 +49,7 @@ impl Write for ExtLogWriter {
 
 struct ExtLogger(ExtLogFn);
 
-impl MakeWriter for ExtLogger {
+impl MakeWriter<'_> for ExtLogger {
     type Writer = ExtLogWriter;
     fn make_writer(&self) -> Self::Writer {
         ExtLogWriter {

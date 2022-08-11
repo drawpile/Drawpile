@@ -23,7 +23,7 @@
 use std::fs::File;
 use std::path::Path;
 
-use image::gif::GifDecoder;
+use image::codecs::gif::GifDecoder;
 use image::io::Reader as ImageReader;
 use image::{AnimationDecoder, ImageDecoder};
 

@@ -158,7 +158,7 @@ impl LayerViewOptions {
     }
 
     pub fn with_background(mut self, background: Tile) -> Self {
-        self.background = background.clone();
+        self.background = background;
 
         self
     }

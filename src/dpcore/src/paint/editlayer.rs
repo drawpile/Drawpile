@@ -237,7 +237,7 @@ pub fn put_tile(
 
     if end > start {
         let mut aoe = TileMap::new(layer.width(), layer.height());
-        aoe.tiles[start..=end].set_all(true);
+        aoe.tiles[start..=end].fill(true);
         aoe.into()
     } else {
         Rectangle::tile(col as i32, row as i32, TILE_SIZEI).into()

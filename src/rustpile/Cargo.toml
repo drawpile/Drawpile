@@ -1,8 +1,8 @@
 [package]
 name = "rustpile"
-version = "0.1.0"
+version = "2.2.0"
 publish = false
-edition = "2018"
+edition = "2021"
 license = "GPLv3"
 
 [lib]
@@ -11,6 +11,6 @@ crate-type = ["staticlib"]
 [dependencies]
 dpcore = { path = "../dpcore" }
 dpimpex = { path = "../dpimpex" }
-tracing-subscriber = { version = "0.2.20", default-features=false, features = ["fmt"] }
-tracing = "0.1.22"
+tracing-subscriber = { version = "0.3.15", default-features=false, features = ["fmt"] }
+tracing = "0.1.36"
 
