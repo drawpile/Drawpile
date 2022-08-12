@@ -343,18 +343,6 @@ QString NetStatus::fullAddress() const
 	return addr;
 }
 
-void NetStatus::join(int id, const QString& user)
-{
-	Q_UNUSED(id);
-	message(tr("<b>%1</b> joined").arg(user.toHtmlEscaped()));
-}
-
-void NetStatus::leave(int id, const QString& user)
-{
-	Q_UNUSED(id);
-	message(tr("<b>%1</b> left").arg(user.toHtmlEscaped()));
-}
-
 void NetStatus::kicked(const QString& user)
 {
 	message(tr("You have been kicked by %1").arg(user.toHtmlEscaped()));
@@ -365,13 +353,6 @@ void NetStatus::message(const QString &msg)
 	m_popup->showMessage(
 				mapToGlobal(m_label->pos() + QPoint(m_label->width()/2, 2)),
 				msg);
-	emit statusMessage(msg);
-}
-
-void NetStatus::alertMessage(const QString &msg, bool alert)
-{
-	if(alert)
-		message(msg);
 }
 
 void NetStatus::updateLabel()

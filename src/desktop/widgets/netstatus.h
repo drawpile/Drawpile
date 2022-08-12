@@ -64,9 +64,6 @@ public slots:
 
 	void lagMeasured(qint64 lag);
 
-	//! Show the message in the balloon popup if alert is true
-	void alertMessage(const QString &msg, bool alert);
-
 	//! Update the download progress bar with message catchup progress (0-100)
 	void setCatchupProgress(int progress);
 
@@ -76,18 +73,11 @@ public slots:
 	//! Download over, hide the progress bar
 	void hideDownloadProgress();
 
-	void join(int id, const QString& user);
-	void leave(int id, const QString& user);
-
 	//! This user was kicked off the session
 	void kicked(const QString& user);
 
 	void copyAddress();
 	void copyUrl();
-
-signals:
-	//! A status message
-	void statusMessage(const QString& message);
 
 private slots:
 	void discoverAddress();

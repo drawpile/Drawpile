@@ -1,3 +1,6 @@
+2022-08-?? Version 2.2 beta3
+ * Removed popup notifications for join and leave events
+
 2022-08-11 Version 2.2 beta2
  * Fixed smudge color sampling mask offset
  * Fixed annotation loading
