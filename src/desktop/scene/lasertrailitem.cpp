@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2014-2021 Calle Laakkonen
+   Copyright (C) 2014-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(uint8_t owner, const QColor &color, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_blink(false), m_fadeout(false), m_owner(owner), m_lastModified(0)
+LaserTrailItem::LaserTrailItem(uint8_t owner, int persistenceMs, const QColor &color, QGraphicsItem *parent)
+	: QGraphicsItem(parent), m_blink(false), m_fadeout(false), m_owner(owner), m_lastModified(0), m_persistence(persistenceMs)
 {
 	m_pen.setWidth(qApp->devicePixelRatio() * 3);
 	m_pen.setCapStyle(Qt::RoundCap);
@@ -79,7 +79,7 @@ bool LaserTrailItem::animationStep(float dt)
 	if(m_fadeout) {
 		setOpacity(qMax(0.0, opacity() - dt));
 		retain = opacity() > 0.0;
-	} else if(m_lastModified < QDateTime::currentMSecsSinceEpoch() - 3000) {
+	} else if(m_lastModified < QDateTime::currentMSecsSinceEpoch() - m_persistence) {
 		m_fadeout = true;
 	}
 

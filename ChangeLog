@@ -2,6 +2,7 @@
  * Removed popup notifications for join and leave events
  * Fixed skew when scaling a selection from the top-right handle
  * Fixed mouse droppings when for large brush outline widths
+ * Fixed laser trail persistence selection
 
 2022-08-11 Version 2.2 beta2
  * Fixed smudge color sampling mask offset

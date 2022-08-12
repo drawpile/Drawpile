@@ -411,7 +411,7 @@ void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color
 	Q_ASSERT(ctx);
 	CanvasModel *canvas = static_cast<CanvasModel*>(ctx);
 
-	emit canvas->laserTrail(user, persistence, QColor::fromRgb(color));
+	emit canvas->laserTrail(user, qMin(15, int(persistence)) * 1000, QColor::fromRgb(color));
 }
 
 void metaDefaultLayer(void *ctx, uint16_t layerId)

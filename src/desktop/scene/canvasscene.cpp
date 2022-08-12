@@ -268,7 +268,7 @@ void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &colo
 	if(persistence == 0) {
 		m_activeLaserTrail.remove(userId);
 	} else if(m_showLaserTrails) {
-		LaserTrailItem *item = new LaserTrailItem(userId, color);
+		LaserTrailItem *item = new LaserTrailItem(userId, persistence, color);
 		m_activeLaserTrail[userId] = item;
 		addItem(item);
 	}
