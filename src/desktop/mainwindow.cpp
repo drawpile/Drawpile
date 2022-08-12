@@ -2680,7 +2680,7 @@ void MainWindow::setupActions()
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
-	QAction *resetsession = makeAction("resetsession", tr("&History..."));
+	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
 	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
 	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
 
