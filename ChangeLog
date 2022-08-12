@@ -1,5 +1,6 @@
 2022-08-?? Version 2.2 beta3
  * Removed popup notifications for join and leave events
+ * Fixed skew when scaling a selection from the top-right handle
 
 2022-08-11 Version 2.2 beta2
  * Fixed smudge color sampling mask offset

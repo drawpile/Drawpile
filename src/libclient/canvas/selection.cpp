@@ -197,7 +197,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		case Handle::Center: adjustTranslation(delta); break;
 
 		case Handle::TopLeft: adjustScale(dx, dy, 0, 0); break;
-		case Handle::TopRight: adjustScale(0, -dx, dy, 0); break;
+		case Handle::TopRight: adjustScale(0, -dy, dx, 0); break;
 		case Handle::BottomRight: adjustScale(0, 0, dx, dy); break;
 		case Handle::BottomLeft: adjustScale(dx, 0, 0, -dy); break;
 
