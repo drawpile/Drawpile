@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2019-2021 Calle Laakkonen
+   Copyright (C) 2019-2022 Calle Laakkonen, askmeaboutloom
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,491 +23,592 @@
 #include "../utils/icon.h"
 #include "../libshared/util/paths.h"
 
-#include <QVector>
-#include <QPixmap>
+#include <QBuffer>
+#include <QDebug>
 #include <QDirIterator>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QTextStream>
-#include <QUuid>
-#include <QSet>
-#include <QTimer>
-#include <QDebug>
+#include <QPixmap>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QVector>
 
 namespace brushes {
 
-static constexpr int BRUSH_ICON_SIZE = 48;
+static constexpr int THUMBNAIL_SIZE = 64;
+static constexpr int ALL_ROW = 0;
+static constexpr int UNTAGGED_ROW = 1;
+static constexpr int TAG_OFFSET = 2;
+static constexpr int ALL_ID = -1;
+static constexpr int UNTAGGED_ID = -2;
 
-static QString randomBrushName()
-{
-	const auto uuid = QUuid::createUuid().toString();
-	return uuid.mid(1, uuid.length()-2) + ".dpbrush";
-}
+typedef QVector<QPair<QString, QStringList>> OldMetadata;
 
-bool BrushPresetModel::writeBrush(const ClassicBrush &brush, const QString &filename)
-{
-	Q_ASSERT(!filename.isEmpty());
-
-	const auto path = utils::paths::writablePath("brushes/", filename);
-
-	QFile f(path);
-	if(!f.open(QFile::WriteOnly)) {
-		qWarning() << path << f.errorString();
-		return false;
-	}
-
-	const auto json = QJsonDocument(brush.toJson()).toJson(QJsonDocument::Indented);
-	return f.write(json) == json.length();
-}
-
-static QImage makePreviewIcon(const ClassicBrush &brush)
-{
-	QImage icon(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE, QImage::Format_ARGB32_Premultiplied);
-	icon.fill(0);
-
-	rustpile::Color c;
-	if(brush.smudge.max > 0.0f)
-		c = rustpile::Color{0.1f, 0.6f, 0.9f, 1.0};
-	else if(icon::isDarkThemeSelected())
-		c = rustpile::Color{1.0, 1.0, 1.0, 1.0};
-	else
-		c = rustpile::Color{0.0, 0.0, 0.0, 1.0};
-
-	rustpile::brush_preview_dab(&brush, icon.bits(), icon.width(), icon.height(), &c);
-
-	return icon;
-}
-
-struct BrushPreset {
+struct OldBrushPreset {
 	ClassicBrush brush;
 	QString filename;
-	QPixmap icon;
-	bool saved;
+};
 
-	QPixmap getIcon() {
-		if(!icon.isNull())
-			return icon;
+struct OldPresetFolder {
+	QString title;
+	QVector<OldBrushPreset> presets;
+};
 
-		// See if there is a (MyPaint style) preview image
-		const QString name = filename.mid(0, filename.lastIndexOf('.'));
-		QImage prevImage;
-		if(prevImage.load(utils::paths::writablePath("brushes/", name + "_prev.png"))) {
-			icon = QPixmap::fromImage(prevImage.scaled(BRUSH_ICON_SIZE, BRUSH_ICON_SIZE));
+class BrushPresetTagModel::Private {
+public:
+	Private()
+		: m_db(QSqlDatabase::addDatabase("QSQLITE"))
+	{
+		QString databasePath = createDb();
+		m_db.setDatabaseName(databasePath);
+		if(m_db.open()) {
+			QSqlQuery query(m_db);
+			initDb(query);
 		} else {
-			// If not, generate a preview image
-			icon = QPixmap::fromImage(makePreviewIcon(brush));
+			qWarning("Can't open brush preset model database at '%s'",
+				qPrintable(m_db.databaseName()));
+		}
+	}
+
+	int createTag(const QString &name)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, "insert into tag (name) values (?)", {name})) {
+			return query.lastInsertId().toInt();
+		} else {
+			return 0;
+		}
+	}
+
+	int readTagCount()
+	{
+		return readInt("select count(*) from tag");
+	}
+
+	int readTagIdAtIndex(int index)
+	{
+		return readInt("select id from tag order by id limit 1 offset ?", {index});
+	}
+
+	Tag readTagAtIndex(int index)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"select id, name from tag order by id limit 1 offset ?");
+		if(exec(query, sql, {index}) && query.next()) {
+			return Tag{query.value(0).toInt(), query.value(1).toString(), true};
+		} else {
+			return Tag{0, "", false};
+		}
+	}
+
+	QString readTagNameById(int id)
+	{
+		return readString("select name from tag where id = ?", {id});
+	}
+
+	int readTagIndexById(int id)
+	{
+		QString sql = QStringLiteral(
+			"select n - 1 from (\n"
+			"	select row_number() over(order by id) as n, id from tag)\n"
+			"where id = ?");
+		return readInt(sql, {id}, -1);
+	}
+
+	bool updateTagName(int id, const QString &name)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, "update tag set name = ? where id = ?", {name, id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	bool deleteTagById(int id)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, "delete from tag where id = ?", {id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	int createPreset(const QString &type, const QString &name, const QString &description,
+		const QByteArray &thumbnail, const QByteArray &data)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"insert into preset (type, name, description, thumbnail, data)\n"
+			"	values (?, ?, ?, ?, ?)");
+		if(exec(query, sql, {type, name, description, thumbnail, data})) {
+			return query.lastInsertId().toInt();
+		} else {
+			return 0;
+		}
+	}
+
+	int createPresetFromId(int id)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"insert into preset (type, name, description, thumbnail, data)\n"
+			"	select type, name, description, thumbnail, data from preset where id = ?");
+		if(exec(query, sql, {id})) {
+			return query.lastInsertId().toInt();
+		} else {
+			return 0;
+		}
+	}
+
+	int readPresetCountAll()
+	{
+		return readInt("select count(*) from preset");
+	}
+
+	int readPresetCountByUntagged()
+	{
+		QString sql = QStringLiteral(
+			"select count(*) from preset p where not exists(\n"
+			"	select 1 from preset_tag pt where pt.preset_id = p.id)");
+		return readInt(sql);
+	}
+
+	int readPresetCountByTagId(int tagId)
+	{
+		QString sql = QStringLiteral(
+			"select count(*) from preset p\n"
+			"	join preset_tag pt on pt.preset_id = p.id\n"
+			"	where pt.tag_id = ?");
+		return readInt(sql, {tagId});
+	}
+
+	int readPresetIdAtIndexAll(int index)
+	{
+		return readInt("select id from preset order by id limit 1 offset ?", {index});
+	}
+
+	int readPresetIdAtIndexByUntagged(int index)
+	{
+		QString sql = QStringLiteral(
+			"select p.id from preset p\n"
+			"	where not exists(select 1 from preset_tag pt where pt.preset_id = p.id)\n"
+			"	order by p.id limit 1 offset ?");
+		return readInt(sql, {index});
+	}
+
+	int readPresetIdAtIndexByTagId(int index, int tagId)
+	{
+		QString sql = QStringLiteral(
+			"select p.id from preset p\n"
+			"	join preset_tag pt on pt.preset_id = p.id\n"
+			"	where pt.tag_id = ?"
+			"	order by p.id limit 1 offset ?");
+		return readInt(sql, {tagId, index});
+	}
+
+	QString readPresetNameById(int id)
+	{
+		return readString("select name from preset where id = ?", {id});
+	}
+
+	QByteArray readPresetThumbnailById(int id)
+	{
+		return readByteArray("select thumbnail from preset where id = ?", {id});
+	}
+
+	QByteArray readPresetDataById(int id)
+	{
+		return readByteArray("select data from preset where id = ?", {id});
+	}
+
+	PresetMetadata readPresetMetadataById(int id)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"select id, name, description, thumbnail from preset where id = ?");
+		if(exec(query, sql, {id}) && query.next()) {
+			return PresetMetadata{query.value(0).toInt(), query.value(1).toString(),
+				query.value(2).toString(), query.value(3).toByteArray()};
+		} else {
+			return PresetMetadata{0, QString(), QString(), QByteArray()};
+		}
+	}
+
+	bool updatePresetData(int id, const QString &type, const QByteArray &data)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, "update preset set type = ?, data = ? where id = ?", {type, data, id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	bool updatePresetMetadata(int id, const QString &name, const QString &description,
+		const QByteArray &thumbnail)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"update preset set name = ?, description = ?, thumbnail = ? where id = ?");
+		if(exec(query, sql, {name, description, thumbnail, id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	bool deletePresetById(int id)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, "delete from preset where id = ?", {id})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	QList<TagAssignment> readTagAssignmentsByPresetId(int presetId)
+	{
+		QList<TagAssignment> tagAssignments;
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"select t.id, t.name, pt.preset_id is not null from tag t\n"
+			"	left outer join preset_tag pt\n"
+			"		on pt.tag_id = t.id and pt.preset_id = ?\n"
+			"	order by t.id");
+		if(exec(query, sql, {presetId})) {
+			while(query.next()) {
+				tagAssignments.append(TagAssignment{query.value(0).toInt(),
+					query.value(1).toString(), query.value(2).toBool()});
+			}
+		}
+		return tagAssignments;
+	}
+
+	bool createPresetTag(int presetId, int tagId)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"insert into preset_tag (preset_id, tag_id) values (?, ?)");
+		return exec(query, sql, {presetId, tagId});
+	}
+
+	bool createPresetTagsFromPresetId(int targetPresetId, int sourcePresetId)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"insert into preset_tag (preset_id, tag_id)\n"
+			"	select ?, tag_id from preset_tag where preset_id = ?");
+		return exec(query, sql, {targetPresetId, sourcePresetId});
+	}
+
+	bool deletePresetTag(int presetId, int tagId)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"delete from preset_tag where preset_id = ? and tag_id = ?");
+		if(exec(query, sql, {presetId, tagId})) {
+			return query.numRowsAffected() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	bool createOrUpdateState(const QString &key, const QVariant &value)
+	{
+		QSqlQuery query(m_db);
+		QString sql = QStringLiteral(
+			"insert into state (key, value) values (?, ?)\n"
+			"	on conflict (key) do update set value = ?");
+		return exec(query, sql, {key, value, value});
+	}
+
+	QVariant readState(const QString &key)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, "select value from state where key = ?", {key}) && query.next()) {
+			return query.value(0);
+		} else {
+			return QVariant();
+		}
+	}
+
+private:
+	QSqlDatabase m_db;
+
+	int readInt(const QString &sql,const QList<QVariant> &params = {}, int defaultValue = 0)
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, sql, params) && query.next()) {
+			return query.value(0).toInt();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	QString readString(const QString &sql, const QList<QVariant> &params = {})
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, sql, params) && query.next()) {
+			return query.value(0).toString();
+		} else {
+			return QString();
+		}
+	}
+
+	QByteArray readByteArray(const QByteArray &sql, const QList<QVariant> &params = {})
+	{
+		QSqlQuery query(m_db);
+		if(exec(query, sql, params) && query.next()) {
+			return query.value(0).toByteArray();
+		} else {
+			return QByteArray();
+		}
+	}
+
+	bool exec(QSqlQuery &query, const QString &sql, const QList<QVariant> &params = {})
+	{
+		if(!query.prepare(sql)) {
+			qWarning("Error preparing statement '%s': %s", qPrintable(sql),
+				qPrintable(query.lastError().text()));
+			return false;
 		}
 
-		return icon;
+		for (const QVariant &param : params) {
+			query.addBindValue(param);
+		}
+
+		if(!query.exec()) {
+			qWarning("Error executing statement '%s': %s", qPrintable(sql),
+				qPrintable(query.lastError().text()));
+			return false;
+		}
+		return true;
+	}
+
+	QString createDb()
+	{
+		QString databasePath = utils::paths::writablePath("brushpresets.db");
+		if(!QFileInfo(databasePath).exists()) {
+			QString initialPath = utils::paths::locateDataFile("initialbrushpresets.db");
+			if(initialPath.isEmpty()) {
+				qWarning("No initial brush preset database found");
+			} else if(QFile::copy(initialPath, databasePath)) {
+				qDebug("Created brush databse '%s' from '%s'",
+					qPrintable(databasePath), qPrintable(initialPath));
+			} else {
+				qWarning("Could not create brush database '%s' from '%s'",
+					qPrintable(databasePath), qPrintable(initialPath));
+			}
+		}
+		return databasePath;
+	}
+
+	void initDb(QSqlQuery &query)
+	{
+		exec(query, "pragma foreign_keys = on");
+		exec(query,
+			"create table if not exists state (\n"
+			"	key text primary key not null,\n"
+			"	value)");
+		exec(query,
+			"create table if not exists preset (\n"
+			"	id integer primary key not null,\n"
+			"	type text not null,\n"
+			"	name text not null,\n"
+			"	description text not null,\n"
+			"	thumbnail blob,\n"
+			"	data blob not null)");
+		exec(query,
+			"create table if not exists tag (\n"
+			"	id integer primary key not null,\n"
+			"	name text not null)\n");
+		exec(query,
+			"create table if not exists preset_tag (\n"
+			"	preset_id integer not null\n"
+			"		references preset (id) on delete cascade,\n"
+			"	tag_id integer not null\n"
+			"		references tag (id) on delete cascade,\n"
+			"	primary key (preset_id, tag_id))");
 	}
 };
 
-struct PresetFolder {
-	QString title;
-	QVector<BrushPreset> presets;
-};
-
-}
-
-Q_DECLARE_METATYPE(brushes::BrushPreset)
-
-namespace brushes {
-
-struct BrushPresetModel::Private {
-	QVector<PresetFolder> folders;
-	QSet<QString> deleted;
-	QTimer *saveTimer;
-};
-
-BrushPresetModel::BrushPresetModel(QObject *parent)
-	: QAbstractItemModel(parent), d(new Private)
+BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
+	: QAbstractItemModel(parent)
+	, d(new Private)
+	, m_presetModel(new BrushPresetModel(this))
 {
-	qRegisterMetaType<BrushPreset>();
-
-	// A timer is used to delay the saving of changes to disk.
-	// This serves two purpose:
-	// First: reordering brushes is a three step process:
-	//  1. a new empty brush is added
-	//  2. its content is set
-	//  3. the old brush is deleted
-	// We shouldn't write anything until the whole process has completed
-	// Second: users often perform multiple operations in succession (especially when renaming a folder.)
-	// We can avoid some churn by not writing out the changes immediately.
-	d->saveTimer = new QTimer(this);
-	d->saveTimer->setInterval(1000);
-	d->saveTimer->setSingleShot(true);
-	connect(d->saveTimer, &QTimer::timeout, this, &BrushPresetModel::saveBrushes);
+	convertOrCreateClassicPresets();
+	connect(this, &QAbstractItemModel::modelAboutToBeReset,
+		m_presetModel, &BrushPresetModel::tagsAboutToBeReset);
+	connect(this, &QAbstractItemModel::modelReset,
+		m_presetModel, &BrushPresetModel::tagsReset);
 }
 
-BrushPresetModel::~BrushPresetModel()
+BrushPresetTagModel::~BrushPresetTagModel()
 {
 	delete d;
 }
 
-void BrushPresetModel::saveBrushes()
+int BrushPresetTagModel::rowCount(const QModelIndex &) const
 {
-	const auto basepath = utils::paths::writablePath("brushes/", ".");
-
-	// First, delete all to-be-deleted brushes
-	for(const auto &filename : d->deleted) {
-		const auto filepath = basepath + filename;
-		qDebug() << "Deleting brush" << filepath;
-		QFile(filepath).remove();
-	}
-	d->deleted.clear();
-
-	// Then save all the unsaved brushes
-	for(auto &folder : d->folders) {
-		for(auto &bp : folder.presets) {
-			if(!bp.saved) {
-				BrushPresetModel::writeBrush(bp.brush, bp.filename);
-				bp.saved = true;
-			}
-		}
-	}
-
-	// Save brush folder metadata
-	QFile meta {basepath + "index.txt"};
-	if(!meta.open(QFile::WriteOnly)) {
-		qWarning("Couldn't open brush metadata file for writing");
-		return;
-	}
-	QTextStream out(&meta);
-
-	for(int i=0;i<d->folders.size();++i) {
-		// The first folder is always the implicit "Default" folder
-		if(i>0)
-			out << '\\' << d->folders.at(i).title << '\n';
-
-		for(const auto &bp : d->folders.at(i).presets) {
-			out << bp.filename << '\n';
-		}
-	}
+	return d->readTagCount() + TAG_OFFSET;
 }
 
-static void makeDefaultBrushes()
-{
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundPixel;
-		b.size.max = 16;
-		b.opacity.max = 1.0;
-		b.spacing = 0.15;
-		b.size_pressure = true;
-		BrushPresetModel::writeBrush(b, "default-1.dpbrush");
-	}
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundSoft;
-		b.size.max = 10;
-		b.opacity.max = 1.0;
-		b.hardness.max = 0.8;
-		b.spacing = 0.15;
-		b.size_pressure = true;
-		b.opacity_pressure = true;
-		BrushPresetModel::writeBrush(b, "default-2.dpbrush");
-	}
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundSoft;
-		b.size.max = 30;
-		b.opacity.max = 0.34;
-		b.hardness.max = 1.0;
-		b.spacing = 0.18;
-		BrushPresetModel::writeBrush(b, "default-3.dpbrush");
-	}
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundPixel;
-		b.incremental = false;
-		b.size.max = 32;
-		b.opacity.max = 0.65;
-		b.spacing = 0.15;
-		BrushPresetModel::writeBrush(b, "default-4.dpbrush");
-	}
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundPixel;
-		b.incremental = false;
-		b.size.max = 70;
-		b.opacity.max = 0.42;
-		b.spacing = 0.15;
-		b.opacity_pressure = true;
-		BrushPresetModel::writeBrush(b, "default-5.dpbrush");
-	}
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundSoft;
-		b.size.max = 113;
-		b.opacity.max = 0.6;
-		b.hardness.max = 1.0;
-		b.spacing = 0.19;
-		b.opacity_pressure = true;
-		BrushPresetModel::writeBrush(b, "default-6.dpbrush");
-	}
-	{
-		ClassicBrush b;
-		b.shape = rustpile::ClassicBrushShape::RoundSoft;
-		b.size.max = 43;
-		b.opacity.max = 0.3;
-		b.hardness.max = 1.0;
-		b.spacing = 0.25;
-		b.smudge.max = 1.0;
-		b.resmudge = 1;
-		b.opacity_pressure = true;
-		BrushPresetModel::writeBrush(b, "default-7.dpbrush");
-	}
-}
-
-BrushPresetModel *BrushPresetModel::getSharedInstance()
-{
-	static BrushPresetModel *m;
-	if(!m) {
-		m = new BrushPresetModel;
-		m->loadBrushes();
-		if(m->d->folders.size()==1 && m->d->folders.first().presets.isEmpty()) {
-			makeDefaultBrushes();
-			m->loadBrushes();
-		}
-	}
-	return m;
-}
-
-QModelIndex BrushPresetModel::parent(const QModelIndex &index) const
-{
-	if(index.internalId() < 1 || index.internalId() > quintptr(d->folders.size()))
-		return QModelIndex();
-	return createIndex(int(index.internalId() - 1), 0, quintptr(0));
-}
-
-QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &parent) const
-{
-	if(column != 0 || parent.internalId() != 0)
-		return QModelIndex();
-
-	if(parent.isValid()) {
-		const int f = parent.row();
-		if(f < 0 || f >= d->folders.size() || row < 0 || row >= d->folders.at(f).presets.size())
-			return QModelIndex();
-
-		if(row < 0 || row >= d->folders.at(f).presets.size())
-			return QModelIndex();
-
-		return createIndex(row, 0, parent.row()+1);
-	}
-
-	if(row < 0 || row >= d->folders.size())
-		return QModelIndex();
-
-	return createIndex(row, 0, quintptr(0));
-}
-
-
-int BrushPresetModel::rowCount(const QModelIndex &parent) const
-{
-	if(parent.isValid() && parent.internalId() == 0)
-		return d->folders.at(parent.row()).presets.size();
-	else if(!parent.isValid())
-		return d->folders.size();
-	return 0;
-}
-
-int BrushPresetModel::columnCount(const QModelIndex &) const
+int BrushPresetTagModel::columnCount(const QModelIndex &) const
 {
 	return 1;
 }
 
-QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
+QModelIndex BrushPresetTagModel::parent(const QModelIndex &) const
 {
-	if(index.isValid()) {
-		if(index.internalId() > 0) {
-			auto& folder = d->folders[index.internalId()-1];
-			switch(role) {
-			case Qt::DecorationRole: return folder.presets[index.row()].getIcon();
-			case Qt::SizeHintRole: return QSize(BRUSH_ICON_SIZE + 7, BRUSH_ICON_SIZE + 7);
-			//case Qt::ToolTipRole: return d->presets.at(index.row()).value(brushprop::label);
-			case BrushPresetRole: return QVariant::fromValue(folder.presets.at(index.row()));
-			case BrushRole: return QVariant::fromValue(folder.presets.at(index.row()).brush);
-			}
+	return QModelIndex();
+}
 
+QModelIndex BrushPresetTagModel::index(int row, int column, const QModelIndex &) const
+{
+	if(isBuiltInTag(row)) {
+		return createIndex(row, column);
+	} else {
+		int tagId = d->readTagIdAtIndex(row - TAG_OFFSET);
+		if(tagId > 0) {
+			return createIndex(row, column, quintptr(tagId));
 		} else {
-			switch(role) {
-			case Qt::EditRole:
-			case Qt::DisplayRole: return d->folders.at(index.row()).title;
-			}
+			return QModelIndex();
 		}
 	}
-	return QVariant();
 }
 
-Qt::ItemFlags BrushPresetModel::flags(const QModelIndex &index) const
+QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 {
-	Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-
-	if(index.isValid() && index.internalId() > 0)
-		flags |= Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren;
-	else
-		flags |= Qt::ItemIsDropEnabled;
-
-	return flags;
-}
-
-QMap<int,QVariant> BrushPresetModel::itemData(const QModelIndex &index) const
-{
-	QMap<int,QVariant> roles;
-	if(index.isValid() && index.internalId() > 0) {
-		const auto &folder = d->folders.at(index.internalId()-1);
-		roles[BrushPresetRole] = QVariant::fromValue(folder.presets.at(index.row()));
-	}
-	return roles;
-}
-
-bool BrushPresetModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-	if(!index.isValid())
-		return false;
-
-	if(index.internalId() > 0) {
-		auto &preset = d->folders[index.internalId()-1].presets[index.row()];
-		switch(role) {
-			case BrushPresetRole:
-				preset = value.value<BrushPreset>();
-				break;
-			case BrushRole:
-				preset.brush = value.value<ClassicBrush>();
-				preset.icon = QPixmap();
-				break;
-			default: return false;
+	switch(role) {
+	case Qt::DecorationRole:
+		switch(index.row()) {
+		case ALL_ROW:
+			return icon::fromTheme("folder");
+		case UNTAGGED_ROW:
+			return icon::fromTheme("folder-new");
+		default:
+			return QVariant();
 		}
-		d->deleted.remove(preset.filename);
-		preset.saved = false;
+	case Qt::DisplayRole:
+	case Qt::EditRole:
+		switch(index.row()) {
+		case ALL_ROW:
+			return tr("All");
+		case UNTAGGED_ROW:
+			return tr("Untagged");
+		default:
+			return d->readTagNameById(index.internalId());
+		}
+	case Qt::ToolTipRole:
+		switch(index.row()) {
+		case ALL_ROW:
+			return tr("Show all brushes, regardless of tagging.");
+		case UNTAGGED_ROW:
+			return tr("Show brushes not assigned to any tag.");
+		default:
+			return QVariant();
+		}
+	case SortRole:
+		switch(index.row()) {
+		case ALL_ROW:
+			return QStringLiteral("1");
+		case UNTAGGED_ROW:
+			return QStringLiteral("2");
+		default:
+			return QString("3") + d->readTagNameById(index.internalId());
+		}
+	default:
+		return QVariant();
+	}
+}
 
-	} else {
-		auto &folder = d->folders[index.row()];
-		switch(role) {
-			case Qt::EditRole:
-			case Qt::DisplayRole: {
-				const auto text = value.toString();
-				if(text.isEmpty() || text == folder.title)
-					return false;
-				folder.title = text;
-				break;
-			}
-			default: return false;
+Tag BrushPresetTagModel::getTagAt(int row) const
+{
+	switch(row) {
+	case ALL_ROW:
+		return Tag{ALL_ID, data(createIndex(row, 0)).toString(), false};
+	case UNTAGGED_ROW:
+		return Tag{UNTAGGED_ID, data(createIndex(row, 0)).toString(), false};
+	default:
+		return d->readTagAtIndex(row - TAG_OFFSET);
+	}
+}
+
+int BrushPresetTagModel::getTagRowById(int tagId) const
+{
+	switch(tagId) {
+	case ALL_ID:
+		return ALL_ROW;
+	case UNTAGGED_ID:
+		return UNTAGGED_ROW;
+	default:
+		int index = d->readTagIndexById(tagId);
+		return index < 0 ? -1 : index + TAG_OFFSET;
+	}
+}
+
+void BrushPresetTagModel::setState(const QString &key, const QVariant &value)
+{
+	d->createOrUpdateState(key, value);
+}
+
+QVariant BrushPresetTagModel::getState(const QString &key) const
+{
+	return d->readState(key);
+}
+
+int BrushPresetTagModel::newTag(const QString& name)
+{
+	beginResetModel();
+	int tagId = d->createTag(name);
+	endResetModel();
+	return tagId;
+}
+
+int BrushPresetTagModel::editTag(int tagId, const QString &name)
+{
+	beginResetModel();
+	d->updateTagName(tagId, name);
+	endResetModel();
+	return getTagRowById(tagId);
+}
+
+void BrushPresetTagModel::deleteTag(int tagId)
+{
+	beginResetModel();
+	d->deleteTagById(tagId);
+	endResetModel();
+}
+
+bool BrushPresetTagModel::isBuiltInTag(int row)
+{
+	return row == ALL_ROW || row == UNTAGGED_ROW;
+}
+
+void BrushPresetTagModel::convertOrCreateClassicPresets()
+{
+	if(!d->readState("classic_presets_loaded").toBool() &&
+			d->createOrUpdateState("classic_presets_loaded", true)) {
+		if(!convertOldPresets()) {
+			createDefaultClassicPresets();
 		}
 	}
-
-	emit dataChanged(index, index);
-	d->saveTimer->start();
-
-	return true;
 }
 
-bool BrushPresetModel::insertRows(int row, int count, const QModelIndex &parent)
-{
-	if(!parent.isValid() || parent.internalId() != 0)
-		return false;
-
-	auto &folder = d->folders[parent.row()];
-	if(row<0 || count<=0 || row > folder.presets.size())
-		return false;
-
-	beginInsertRows(parent, row, row+count-1);
-	for(int i=0;i<count;++i) {
-		const BrushPreset bp {ClassicBrush{}, randomBrushName(), QPixmap(), false };
-		folder.presets.insert(row, bp);
-	}
-	endInsertRows();
-	d->saveTimer->start();
-	return true;
-}
-
-bool BrushPresetModel::removeRows(int row, int count, const QModelIndex &parent)
-{
-	if(!parent.isValid()) {
-		beginRemoveRows(QModelIndex(), row, row+count-1);
-		for(int i=row;i<row+count;++i) {
-			const auto &folder = d->folders.at(i);
-			for(const auto &bp : folder.presets)
-				d->deleted << bp.filename;
-		}
-		d->folders.erase(d->folders.begin()+row, d->folders.begin()+row+count);
-		endRemoveRows();
-
-	} else {
-		auto &folder = d->folders[parent.row()];
-		if(row<0 || count<=0 || row+count > folder.presets.size())
-			return false;
-
-		beginRemoveRows(parent, row, row+count-1);
-		for(int i=row;i<row+count;++i)
-			d->deleted << folder.presets.at(i).filename;
-		folder.presets.erase(folder.presets.begin()+row, folder.presets.begin()+row+count);
-		endRemoveRows();
-	}
-
-	d->saveTimer->start();
-
-	return true;
-}
-
-Qt::DropActions BrushPresetModel::supportedDropActions() const
-{
-	return Qt::MoveAction;
-}
-
-void BrushPresetModel::addBrush(int folderIndex, const ClassicBrush &brush)
-{
-	const auto p = index(folderIndex);
-	Q_ASSERT(p.isValid());
-
-	BrushPreset bp { brush, randomBrushName(), QPixmap(), false };
-	auto& folder = d->folders[folderIndex];
-	beginInsertRows(p, folder.presets.size(), folder.presets.size());
-	folder.presets.append(bp);
-	endInsertRows();
-	d->saveTimer->start();
-}
-
-void BrushPresetModel::addFolder(const QString &title)
-{
-	beginInsertRows(QModelIndex(), d->folders.size(), d->folders.size());
-	d->folders << PresetFolder { title, QVector<BrushPreset>() };
-	endInsertRows();
-}
-
-bool BrushPresetModel::moveBrush(const QModelIndex &brushIndex, int targetFolder)
-{
-	if(!brushIndex.isValid() || brushIndex.internalId()==0)
-		return false;
-
-	auto targetIdx = index(targetFolder);
-	if(!targetIdx.isValid())
-		return false;
-
-	const auto bp = d->folders[brushIndex.internalId()-1].presets[brushIndex.row()];
-	beginRemoveRows(brushIndex.parent(), brushIndex.row(), brushIndex.row());
-	d->folders[brushIndex.internalId()-1].presets.remove(brushIndex.row());
-	endRemoveRows();
-	beginInsertRows(targetIdx, rowCount(targetIdx), rowCount(targetIdx));
-	d->folders[targetFolder].presets << bp;
-	endInsertRows();
-
-	d->saveTimer->start();
-
-	return true;
-}
-
-typedef QVector<QPair<QString,QStringList>> Metadata;
-
-static Metadata loadMetadata(QFile &metadataFile)
+static OldMetadata loadOldMetadata(QFile &metadataFile)
 {
 	QTextStream in(&metadataFile);
-	Metadata metadata;
+	OldMetadata metadata;
 	QString line;
 
 	// The first folder is always the "Default" folder
-	metadata << QPair<QString,QStringList> { BrushPresetModel::tr("Default"), QStringList() };
+	metadata << QPair<QString, QStringList> { BrushPresetModel::tr("Default"), QStringList() };
 
 	while(!(line=in.readLine()).isNull()) {
 		// # is reserved for comments for now, but might be used for extra metadata fields later
@@ -516,7 +617,7 @@ static Metadata loadMetadata(QFile &metadataFile)
 
 		// Lines starting with \ start new folders. Nested folders are not supported currently.
 		if(line.at(0) == '\\') {
-			metadata << QPair<QString,QStringList> { line.mid(1), QStringList() };
+			metadata << QPair<QString, QStringList> { line.mid(1), QStringList() };
 			continue;
 		}
 
@@ -526,11 +627,11 @@ static Metadata loadMetadata(QFile &metadataFile)
 	return metadata;
 }
 
-void BrushPresetModel::loadBrushes()
+bool BrushPresetTagModel::convertOldPresets()
 {
-	const auto brushDir = utils::paths::writablePath("brushes/");
+	QString brushDir = utils::paths::writablePath("brushes/");
 
-	QMap<QString, BrushPreset> brushes;
+	QMap<QString, OldBrushPreset> brushes;
 
 	QDirIterator entries{
 		brushDir,
@@ -541,7 +642,7 @@ void BrushPresetModel::loadBrushes()
 
 	while(entries.hasNext()) {
 		QFile f{entries.next()};
-		const auto filename = entries.filePath().mid(brushDir.length());
+		QString filename = entries.filePath().mid(brushDir.length());
 
 		if(!f.open(QFile::ReadOnly)) {
 			qWarning() << "Couldn't open" << filename << "due to:" << f.errorString();
@@ -555,49 +656,385 @@ void BrushPresetModel::loadBrushes()
 			continue;
 		}
 
-		brushes[filename] = BrushPreset {
+		brushes[filename] = OldBrushPreset {
 			ClassicBrush::fromJson(doc.object()),
 			filename,
-			QPixmap(),
-			true
 		};
 	}
 
 	// Load metadata file (if present)
-	Metadata metadata;
+	OldMetadata metadata;
 
 	QFile metadataFile{brushDir + "index.txt"};
 	if(metadataFile.open(QFile::ReadOnly)) {
-		metadata = loadMetadata(metadataFile);
+		metadata = loadOldMetadata(metadataFile);
 	}
 
 	// Apply ordering
-	QVector<PresetFolder> folders;
+	QVector<OldPresetFolder> folders;
 
-	for(const auto &metaFolder : metadata) {
-		folders << PresetFolder { metaFolder.first, QVector<BrushPreset>() };
-		auto& folder = folders.last();
+	for(const QPair<QString, QStringList>  &metaFolder : metadata) {
+		folders << OldPresetFolder { metaFolder.first, QVector<OldBrushPreset>() };
+		OldPresetFolder& folder = folders.last();
 
-		for(const auto &filename : metaFolder.second) {
-			const auto b = brushes.take(filename);
-			if(!b.filename.isEmpty())
+		for(const QString &filename : metaFolder.second) {
+			const OldBrushPreset b = brushes.take(filename);
+			if(!b.filename.isEmpty()) {
 				folder.presets << b;
+			}
 		}
 	}
 
 	// Add any remaining unsorted presets to a default folder
-	if(folders.isEmpty())
-		folders.push_front(PresetFolder { tr("Default"), QVector<BrushPreset>() });
+	if(folders.isEmpty()) {
+		folders.push_front(OldPresetFolder { tr("Default"), QVector<OldBrushPreset>() });
+	}
 
-	auto& defaultFolder = folders.first();
+	OldPresetFolder& defaultFolder = folders.first();
 
-	QMapIterator<QString,BrushPreset> i{brushes};
-	while(i.hasNext())
+	QMapIterator<QString, OldBrushPreset> i{brushes};
+	while(i.hasNext()) {
 		defaultFolder.presets << i.next().value();
+	}
 
+	if(folders.size() == 1 && folders.first().presets.isEmpty()) {
+		return false;
+	} else {
+		ActiveBrush brush(ActiveBrush::CLASSIC);
+		int brushCount = 0;
+
+		for (const OldPresetFolder &folder : folders) {
+			int tagId = newTag(folder.title);
+			for(const OldBrushPreset &preset : folder.presets) {
+				++brushCount;
+				QString name = tr("Classic Brush %1").arg(brushCount);
+				QString description = tr("Converted from %1.").arg(preset.filename);
+				brush.setClassic(preset.brush);
+				newClassicPreset(tagId, name, description, brush);
+			}
+		}
+		return true;
+	}
+}
+
+void BrushPresetTagModel::createDefaultClassicPresets()
+{
+	int tagId = newTag(tr("Default"));
+	ActiveBrush brush(ActiveBrush::CLASSIC);
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.size.max = 16;
+		b.opacity.max = 1.0;
+		b.spacing = 0.15;
+		b.size_pressure = true;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(1),
+			tr("Default brush %1.").arg(1), brush);
+	}
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 10;
+		b.opacity.max = 1.0;
+		b.hardness.max = 0.8;
+		b.spacing = 0.15;
+		b.size_pressure = true;
+		b.opacity_pressure = true;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Soft Brush %1").arg(1),
+			tr("Default brush %1.").arg(2), brush);
+	}
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 30;
+		b.opacity.max = 0.34;
+		b.hardness.max = 1.0;
+		b.spacing = 0.18;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Soft Brush %1").arg(2),
+			tr("Default brush %1.").arg(3), brush);
+	}
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.incremental = false;
+		b.size.max = 32;
+		b.opacity.max = 0.65;
+		b.spacing = 0.15;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(2),
+			tr("Default brush %1.").arg(4), brush);
+	}
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.incremental = false;
+		b.size.max = 70;
+		b.opacity.max = 0.42;
+		b.spacing = 0.15;
+		b.opacity_pressure = true;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(3),
+			tr("Default brush %1.").arg(5), brush);
+	}
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 113;
+		b.opacity.max = 0.6;
+		b.hardness.max = 1.0;
+		b.spacing = 0.19;
+		b.opacity_pressure = true;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Soft Brush %1").arg(3),
+			tr("Default brush %1.").arg(6), brush);
+	}
+	{
+		ClassicBrush b;
+		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.size.max = 43;
+		b.opacity.max = 0.3;
+		b.hardness.max = 1.0;
+		b.spacing = 0.25;
+		b.smudge.max = 1.0;
+		b.resmudge = 1;
+		b.opacity_pressure = true;
+		brush.setClassic(b);
+		newClassicPreset(tagId, tr("Soft Brush %1").arg(4),
+			tr("Default brush %1.").arg(7), brush);
+	}
+}
+
+void BrushPresetTagModel::newClassicPreset(int tagId, const QString &name,
+	const QString &description, const ActiveBrush &brush)
+{
+	int presetId = m_presetModel->newPreset(brush.presetType(), name, description,
+		brush.presetThumbnail(), brush.presetData());
+	if(tagId > 0 && presetId > 0) {
+		m_presetModel->changeTagAssignment(presetId, tagId, true);
+	}
+}
+
+
+BrushPresetModel::BrushPresetModel(BrushPresetTagModel *tagModel)
+	: QAbstractItemModel(tagModel)
+	, d(tagModel->d)
+	, m_tagIdToFilter(-1)
+{}
+
+BrushPresetModel::~BrushPresetModel() {}
+
+int BrushPresetModel::rowCount(const QModelIndex &) const
+{
+	switch(m_tagIdToFilter) {
+	case ALL_ID:
+		return d->readPresetCountAll();
+	case UNTAGGED_ID:
+		return d->readPresetCountByUntagged();
+	default:
+		return d->readPresetCountByTagId(m_tagIdToFilter);
+	}
+}
+
+int BrushPresetModel::columnCount(const QModelIndex &) const
+{
+	return 1;
+}
+
+QModelIndex BrushPresetModel::parent(const QModelIndex &) const
+{
+	return QModelIndex();
+}
+
+QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &) const
+{
+	int presetId;
+	switch(m_tagIdToFilter) {
+	case ALL_ID:
+		presetId = d->readPresetIdAtIndexAll(row);
+		break;
+	case UNTAGGED_ID:
+		presetId = d->readPresetIdAtIndexByUntagged(row);
+		break;
+	default:
+		presetId = d->readPresetIdAtIndexByTagId(row, m_tagIdToFilter);
+		break;
+	}
+	if(presetId > 0) {
+		return createIndex(row, column, quintptr(presetId));
+	} else {
+		return QModelIndex();
+	}
+}
+
+QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
+{
+	switch(role) {
+	case Qt::ToolTipRole:
+	case SortRole:
+	case FilterRole:
+		return d->readPresetNameById(index.internalId());
+	case Qt::DecorationRole: {
+		QImage img;
+		img.loadFromData(d->readPresetThumbnailById(index.internalId()));
+		return img;
+	}
+	case Qt::SizeHintRole:
+		return QSize(THUMBNAIL_SIZE + 7, THUMBNAIL_SIZE + 7);
+	case BrushRole: {
+		QByteArray data = d->readPresetDataById(index.internalId());
+		ActiveBrush brush = ActiveBrush::fromJson(QJsonDocument::fromJson(data).object());
+		return QVariant::fromValue(brush);
+	}
+	default:
+		break;
+	}
+	return QVariant();
+}
+
+void BrushPresetModel::setTagIdToFilter(int tagId)
+{
 	beginResetModel();
-	d->folders = folders;
+	m_tagIdToFilter = tagId;
 	endResetModel();
+}
+
+QList<TagAssignment> BrushPresetModel::getTagAssignments(int presetId)
+{
+	return d->readTagAssignmentsByPresetId(presetId);
+}
+
+PresetMetadata BrushPresetModel::getPresetMetadata(int presetId)
+{
+	return d->readPresetMetadataById(presetId);
+}
+
+bool BrushPresetModel::changeTagAssignment(int presetId, int tagId, bool assigned)
+{
+	beginResetModel();
+	bool ok;
+	if(assigned) {
+		ok = d->createPresetTag(presetId, tagId);
+	} else {
+		ok =  d->deletePresetTag(presetId, tagId);
+	}
+	endResetModel();
+	return ok;
+}
+
+int BrushPresetModel::newPreset(const QString &type, const QString &name, const QString description,
+	const QPixmap &thumbnail, const QByteArray &data)
+{
+	beginResetModel();
+	int presetId = d->createPreset(type, name, description, toPng(thumbnail), data);
+	endResetModel();
+	return presetId;
+}
+
+int BrushPresetModel::duplicatePreset(int presetId)
+{
+	beginResetModel();
+	int newPresetId = d->createPresetFromId(presetId);
+	if(newPresetId > 0) {
+		d->createPresetTagsFromPresetId(newPresetId, presetId);
+	}
+	endResetModel();
+	return presetId;
+}
+
+bool BrushPresetModel::updatePresetData(int presetId, const QString &type, const QByteArray &data)
+{
+	return d->updatePresetData(presetId, type, data);
+}
+
+bool BrushPresetModel::updatePresetMetadata(int presetId, const QString &name,
+	const QString &description, const QPixmap &thumbnail)
+{
+	beginResetModel();
+	bool ok = d->updatePresetMetadata(presetId, name, description, toPng(thumbnail));
+	endResetModel();
+	return ok;
+}
+
+bool BrushPresetModel::deletePreset(int presetId)
+{
+	beginResetModel();
+	bool ok = d->deletePresetById(presetId);
+	endResetModel();
+	return ok;
+}
+
+int BrushPresetModel::importMyPaintBrush(const QString &file)
+{
+	QFile f(file);
+	if(!f.open(QFile::ReadOnly)) {
+		qWarning() << file << f.errorString();
+		return false;
+	}
+
+	QJsonParseError error;
+	QJsonDocument json = QJsonDocument::fromJson(f.readAll(), &error);
+	if(error.error != QJsonParseError::NoError) {
+		qWarning() << file << error.errorString();
+		return false;
+	}
+
+	ActiveBrush brush(ActiveBrush::MYPAINT);
+	QJsonObject object = json.object();
+	if(!brush.myPaint().loadMyPaintJson(object)) {
+		return false;
+	}
+
+	QFileInfo fileInfo(file);
+	QString name = fileInfo.completeBaseName();
+
+	QString description = object["notes"].toString();
+	if (description.isNull()) {
+		description = object["description"].toString();
+		if (description.isNull()) {
+			description = "";
+		}
+	}
+
+	QPixmap thumbnail = loadBrushPreview(fileInfo);
+	if(thumbnail.isNull()) {
+		thumbnail = brush.presetThumbnail();
+	}
+
+	return newPreset(brush.presetType(), name, description, thumbnail, brush.presetData());
+}
+
+void BrushPresetModel::tagsAboutToBeReset()
+{
+	beginResetModel();
+}
+
+void BrushPresetModel::tagsReset()
+{
+	endResetModel();
+}
+
+QPixmap BrushPresetModel::loadBrushPreview(const QFileInfo &fileInfo)
+{
+	QString file = fileInfo.path() + QDir::separator() + fileInfo.completeBaseName() + "_prev.png";
+	QPixmap pixmap;
+	if(pixmap.load(file)) {
+		return pixmap.scaled(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+	} else {
+		return QPixmap();
+	}
+}
+
+QByteArray BrushPresetModel::toPng(const QPixmap &pixmap)
+{
+	QByteArray bytes;
+	QBuffer buffer(&bytes);
+	buffer.open(QIODevice::WriteOnly);
+	pixmap.save(&buffer, "PNG");
+	buffer.close();
+	return bytes;
 }
 
 }

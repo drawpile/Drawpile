@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2019 Calle Laakkonen
+   Copyright (C) 2019 - 2022 Calle Laakkonen, askmeaboutloom
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,60 +22,130 @@
 
 #include <QAbstractItemModel>
 
+class QFile;
+class QFileInfo;
+
 namespace brushes {
 
+struct ActiveBrush;
 struct ClassicBrush;
+struct MyPaintBrush;
 
-/**
- * List of brush presets
- *
- * Brush presets are grouped into non-nestable folders. The first
- * folder is always named "Default". All unsorted brushes are put into
- * this folder. Note that folders do not necessarily correspond to any actual
- * filesystem directories, they are defined in the index file only.
- */
+struct Tag {
+	int id;
+	QString name;
+	bool editable;
+};
+
+struct TagAssignment {
+	int id;
+	QString name;
+	bool assigned;
+};
+
+struct PresetMetadata {
+	int id;
+	QString name;
+	QString description;
+	QByteArray thumbnail;
+};
+
+class BrushPresetModel;
+
+class BrushPresetTagModel : public QAbstractItemModel {
+	Q_OBJECT
+	friend class BrushPresetModel;
+public:
+	enum Roles {
+		SortRole = Qt::UserRole + 1,
+	};
+
+	explicit BrushPresetTagModel(QObject *parent = nullptr);
+	virtual ~BrushPresetTagModel();
+
+	BrushPresetModel *presetModel() { return m_presetModel; }
+
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	QModelIndex parent(const QModelIndex &index) const override;
+	QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+	Tag getTagAt(int row) const;
+	int getTagRowById(int tagId) const;
+
+	int newTag(const QString& name);
+	int editTag(int tagId, const QString &name);
+	void deleteTag(int tagId);
+
+	void setState(const QString &key, const QVariant &value);
+	QVariant getState(const QString &key) const;
+
+private:
+	class Private;
+	Private *d;
+	BrushPresetModel *m_presetModel;
+
+	static bool isBuiltInTag(int row);
+
+	void convertOrCreateClassicPresets();
+	bool convertOldPresets();
+	void createDefaultClassicPresets();
+	void newClassicPreset(int tagId, const QString &name,
+		const QString &description, const ActiveBrush &brush);
+};
+
 class BrushPresetModel : public QAbstractItemModel {
 	Q_OBJECT
 public:
-	enum BrushPresetRoles {
-		BrushPresetRole = Qt::UserRole + 1,
-		BrushRole
+	enum Roles {
+		SortRole = Qt::UserRole + 1,
+		FilterRole,
+		BrushRole,
 	};
 
-	static BrushPresetModel *getSharedInstance();
+	explicit BrushPresetModel(BrushPresetTagModel *tagModel);
+	virtual ~BrushPresetModel();
 
-	explicit BrushPresetModel(QObject *parent=nullptr);
-	~BrushPresetModel();
-
-	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 	QModelIndex parent(const QModelIndex &index) const override;
-	QModelIndex index(int row, int column=0, const QModelIndex &parent=QModelIndex()) const override;
+	QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
 
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
-	Qt::ItemFlags flags(const QModelIndex &index) const override;
-	QMap<int,QVariant> itemData(const QModelIndex &index) const override;
-	bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
-	bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex()) override;
-	bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex()) override;
-	Qt::DropActions supportedDropActions() const override;
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	void addBrush(int folderIndex, const ClassicBrush &brush);
-	void addFolder(const QString &title);
-	bool moveBrush(const QModelIndex &brushIndex, int targetFolder);
+	int getIdFromIndex(const QModelIndex &index) { return index.isValid() ? index.internalId() : 0; };
 
-	// This should be private. Remove from here once brush migration support is removed.
-	static bool writeBrush(const ClassicBrush &brush, const QString &filename);
+	void setTagIdToFilter(int tagId);
 
-private slots:
-	void saveBrushes();
+	QList<TagAssignment> getTagAssignments(int presetId);
+	bool changeTagAssignment(int presetId, int tagId, bool assigned);
+
+	PresetMetadata getPresetMetadata(int presetId);
+
+	int newPreset(const QString &type, const QString &name, const QString description,
+		const QPixmap &thumbnail, const QByteArray &data);
+	int duplicatePreset(int presetId);
+	bool updatePresetData(int presetId, const QString &type, const QByteArray &data);
+	bool updatePresetMetadata(int presetId, const QString &name, const QString &description,
+		const QPixmap &thumbnail);
+	bool deletePreset(int presetId);
+
+	int importMyPaintBrush(const QString &file);
+
+public slots:
+	void tagsAboutToBeReset();
+	void tagsReset();
 
 private:
-	void loadBrushes();
+	BrushPresetTagModel::Private *d;
+	int m_tagIdToFilter;
 
-	struct Private;
-	Private *d;
+	static QPixmap loadBrushPreview(const QFileInfo &fileInfo);
+	static QByteArray toPng(const QPixmap &pixmap);
 };
 
 }
