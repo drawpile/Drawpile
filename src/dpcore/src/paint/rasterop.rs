@@ -67,6 +67,7 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::Behind => alpha_mask_under(base, color, mask, opacity as u32),
         Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, opacity as u32),
         Blendmode::ColorErase => mask_color_erase(base, color, mask, opacity as u32),
+        Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, opacity as u32),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -278,6 +279,29 @@ fn alpha_mask_erase(base: &mut [Pixel], mask: &[u8], opacity: u32) {
             *d = u8_mult(*d, a);
         }
         *dp = Pixel::from_work(dest);
+    }
+}
+
+// Like normal alpha blending, but taking the alpha of the color into account.
+// See also MyPaint's draw_dab_pixels_BlendMode_Normal_and_Eraser.
+fn alpha_mask_blend_erase(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
+    debug_assert!(base.len() == mask.len());
+    let c = color.into_work();
+
+    for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
+        let bp = dp.into_work();
+        let m = u8_mult(mask as u32, opacity);
+        let a = 255 - m;
+        let n = m * c[3] / 256; // Take the color alpha into account.
+
+        let result = [
+            u8_mult(c[0], n) + u8_mult(bp[0], a),
+            u8_mult(c[1], n) + u8_mult(bp[1], a),
+            u8_mult(c[2], n) + u8_mult(bp[2], a),
+            n + u8_mult(bp[3], a),
+        ];
+
+        *dp = Pixel::from_work(result);
     }
 }
 

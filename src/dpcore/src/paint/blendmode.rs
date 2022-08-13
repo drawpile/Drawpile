@@ -40,6 +40,7 @@ pub enum Blendmode {
     Behind,
     ColorErase,
     Screen,
+    NormalAndEraser,
     Replace = 255,
 }
 
@@ -47,14 +48,17 @@ impl Blendmode {
     pub fn can_decrease_opacity(self) -> bool {
         matches!(
             self,
-            Blendmode::Erase | Blendmode::ColorErase | Blendmode::Replace
+            Blendmode::Erase
+                | Blendmode::ColorErase
+                | Blendmode::NormalAndEraser
+                | Blendmode::Replace
         )
     }
 
     pub fn can_increase_opacity(self) -> bool {
         matches!(
             self,
-            Blendmode::Normal | Blendmode::Behind | Blendmode::Replace
+            Blendmode::Normal | Blendmode::Behind | Blendmode::NormalAndEraser | Blendmode::Replace
         )
     }
 
@@ -75,6 +79,7 @@ impl Blendmode {
             Behind => "svg:dst-over",
             ColorErase => "-dp-cerase",
             Screen => "svg:screen",
+            NormalAndEraser => "-dp-normal-and-eraser",
             Replace => "-dp-replace",
         }
     }
@@ -99,6 +104,7 @@ impl Blendmode {
             "-dp-cerase" => ColorErase,
             "screen" => Screen,
             "-dp-replace" => Replace,
+            "-dp-normal-and-eraser" => NormalAndEraser,
             _ => {
                 return None;
             }
