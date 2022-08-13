@@ -20,6 +20,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use std::cmp::Ordering;
+use std::cmp::{max_by, min_by};
 use std::fmt;
 use std::str::FromStr;
 
@@ -33,6 +35,12 @@ pub const ALPHA_CHANNEL: usize = 3;
 pub const RGB_CHANNELS: std::ops::RangeInclusive<usize> = 0..=2;
 pub const ZERO_PIXEL: Pixel = [0, 0, 0, 0];
 pub const WHITE_PIXEL: Pixel = [255, 255, 255, 255];
+
+// Rust doesn't define an ordering on floats because it wants to be overly
+// correct about NaN and such. So we have to define our own comparison.
+fn compare_floats(a: &f32, b: &f32) -> Ordering {
+    a.partial_cmp(b).unwrap_or(Ordering::Equal)
+}
 
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
@@ -139,6 +147,29 @@ impl Color {
             | ((self.g * 255.0) as u32) << 8
             | ((self.b * 255.0) as u32)
             | ((self.a * 255.0) as u32) << 24
+    }
+
+    pub fn as_hsv(&self) -> (f32, f32, f32) {
+        let r = self.r;
+        let g = self.g;
+        let b = self.b;
+        let m = min_by(r, min_by(g, b, compare_floats), compare_floats);
+        let v = max_by(r, max_by(g, b, compare_floats), compare_floats);
+        let d = v - m;
+        if d == 0.0 {
+            (0.0, 0.0, v)
+        } else {
+            let raw_h = if r == v {
+                (g - b) / d
+            } else if g == v {
+                (b - r) / d + 2.0
+            } else {
+                (r - g) / d + 4.0
+            } * 60.0;
+            let h = if raw_h < 0.0 { raw_h + 360.0 } else { raw_h } / 360.0;
+            let s = d / v;
+            (h, s, v)
+        }
     }
 
     // Get a color from a premultiplied pixel value
