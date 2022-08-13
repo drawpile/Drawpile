@@ -17,4 +17,6 @@ example_*.png
 # Hidden files
 .*
 
-
+# Python venv directories
+env/
+venv/
