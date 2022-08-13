@@ -27,21 +27,21 @@ fn gimp_style_dab_benchmark(c: &mut Criterion) {
     c.bench_function("tiny v2 GIMP style dab", |b| {
         let mut cache = ClassicBrushCache::new(); // note: this produces a single outlier when the LUT is generated
         b.iter(|| {
-            BrushMask::new_gimp_style_v2(0.0, 0.0, 1.0, 0.5, 1.0, &mut cache);
+            BrushMask::new_gimp_style_v2(0.0, 0.0, 1.0, 0.5, &mut cache);
         })
     });
 
     c.bench_function("small v2 GIMP style dab", |b| {
         let mut cache = ClassicBrushCache::new(); // note: this produces a single outlier when the LUT is generated
         b.iter(|| {
-            BrushMask::new_gimp_style_v2(0.0, 0.0, 15.0, 0.5, 1.0, &mut cache);
+            BrushMask::new_gimp_style_v2(0.0, 0.0, 15.0, 0.5, &mut cache);
         })
     });
 
     c.bench_function("big v2 GIMP style dab", |b| {
         let mut cache = ClassicBrushCache::new(); // note: this produces a single outlier when the LUT is generated
         b.iter(|| {
-            BrushMask::new_gimp_style_v2(0.0, 0.0, 30.0, 0.5, 1.0, &mut cache);
+            BrushMask::new_gimp_style_v2(0.0, 0.0, 30.0, 0.5, &mut cache);
         })
     });
 }
@@ -49,7 +49,7 @@ fn gimp_style_dab_benchmark(c: &mut Criterion) {
 fn round_pixel_dab_benchmark(c: &mut Criterion) {
     c.bench_function("round pixel dab", |b| {
         b.iter(|| {
-            BrushMask::new_round_pixel(15, 1.0);
+            BrushMask::new_round_pixel(15);
         })
     });
 }

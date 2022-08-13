@@ -97,6 +97,7 @@ pub fn clear_layer(layer: &mut BitmapLayer) -> AoE {
 /// * `mask` - The brush mask
 /// * `color` - The brush color
 /// * `mode` - Brush blending mode
+/// * `opacity` - Opacity to multiply into the mask
 pub fn draw_brush_dab(
     layer: &mut BitmapLayer,
     user: UserID,
@@ -105,6 +106,7 @@ pub fn draw_brush_dab(
     mask: &BrushMask,
     color: &Color,
     mode: Blendmode,
+    opacity: u8,
 ) -> AoE {
     let d = mask.diameter as i32;
     let rect = match Rectangle::new(x, y, d, d).cropped(layer.size()) {
@@ -137,7 +139,7 @@ pub fn draw_brush_dab(
                     &maskrect,
                 ))
         {
-            rasterop::mask_blend(destrow, colorpix, maskrow, mode);
+            rasterop::mask_blend(destrow, colorpix, maskrow, mode, opacity);
         }
     }
 
@@ -467,7 +469,7 @@ mod tests {
     #[test]
     fn test_draw_brush_dab() {
         let mut layer = BitmapLayer::new(0, 128, 128, Tile::Blank);
-        let brush = BrushMask::new_round_pixel(4, 1.0);
+        let brush = BrushMask::new_round_pixel(4);
         // Shape should look like this:
         // 0110
         // 1111
@@ -483,6 +485,7 @@ mod tests {
             &brush,
             &Color::rgb8(255, 255, 255),
             Blendmode::Normal,
+            255u8,
         );
 
         assert_eq!(layer.pixel_at(62, 62), ZERO_PIXEL);

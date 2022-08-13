@@ -77,22 +77,20 @@ fn fast_sqrt(x: f32) -> f32 {
 }
 
 impl BrushMask {
-    pub fn new_round_pixel(diameter: u32, opacity: f32) -> BrushMask {
-        debug_assert!((0.0..=1.0).contains(&opacity));
+    pub fn new_round_pixel(diameter: u32) -> BrushMask {
         let radius = diameter as f32 / 2.0;
         let rr = square(radius);
         let offset = 0.5_f32;
 
         let mut mask = vec![0u8; (diameter * diameter) as usize];
         let mut i = 0;
-        let op_u8 = (opacity * 255.0) as u8;
 
         for y in 0..diameter {
             let yy = square(y as f32 - radius + offset);
             for x in 0..diameter {
                 let xx = square(x as f32 - radius + offset);
                 if (yy + xx) < rr {
-                    mask[i] = op_u8;
+                    mask[i] = 255u8;
                 }
                 i += 1;
             }
@@ -100,10 +98,10 @@ impl BrushMask {
         BrushMask { diameter, mask }
     }
 
-    pub fn new_square_pixel(diameter: u32, opacity: f32) -> BrushMask {
+    pub fn new_square_pixel(diameter: u32) -> BrushMask {
         BrushMask {
             diameter,
-            mask: vec![(opacity * 255.0) as u8; (diameter * diameter) as usize],
+            mask: vec![255u8; (diameter * diameter) as usize],
         }
     }
 
@@ -112,13 +110,12 @@ impl BrushMask {
         y: f32,
         diameter: f32,
         hardness: f32,
-        opacity: f32,
         cache: &mut ClassicBrushCache,
     ) -> (i32, i32, BrushMask) {
         let mask = if diameter <= 3.0 {
-            BrushMask::new_gimp_style_v2_oversampled(x, y, diameter, hardness, opacity, cache)
+            BrushMask::new_gimp_style_v2_oversampled(x, y, diameter, hardness, cache)
         } else {
-            BrushMask::new_gimp_style_v2_simple(x, y, diameter, hardness, opacity, cache)
+            BrushMask::new_gimp_style_v2_simple(x, y, diameter, hardness, cache)
         };
 
         let r = diameter as i32 / 2 + 1;
@@ -130,7 +127,6 @@ impl BrushMask {
         y: f32,
         diameter: f32,
         hardness: f32,
-        opacity: f32,
         cache: &mut ClassicBrushCache,
     ) -> BrushMask {
         let idia = diameter.ceil().max(1.0) as usize + 2;
@@ -147,7 +143,7 @@ impl BrushMask {
         let xoffset = 0.5 - xfrac * 2.0 - radius - diameter_offset;
         let yoffset = 0.5 - yfrac * 2.0 - radius - diameter_offset;
 
-        let opacity_scale = 255.0 * opacity / 4.0; // 4 samples
+        const OPACITY_SCALE: f32 = 255.0 / 4.0; // 4 samples
 
         let lut = cache.get_cached_lut(hardness);
         let lut_scale = LUT_RADIUS / radius;
@@ -171,7 +167,7 @@ impl BrushMask {
                             0.0
                         }
                     },
-                ) * opacity_scale;
+                ) * OPACITY_SCALE;
 
                 mask[y * idia + x] = value as u8;
             }
@@ -188,7 +184,6 @@ impl BrushMask {
         y: f32,
         diameter: f32,
         hardness: f32,
-        opacity: f32,
         cache: &mut ClassicBrushCache,
     ) -> BrushMask {
         let idia = diameter.ceil().max(1.0) as usize + 2;
@@ -205,7 +200,7 @@ impl BrushMask {
         let xoffset = 0.5 - xfrac - radius - diameter_offset;
         let yoffset = 0.5 - yfrac - radius - diameter_offset;
 
-        let opacity_scale = 255.0 * opacity;
+        const OPACITY_SCALE: f32 = 255.0;
 
         let lut = cache.get_cached_lut(hardness);
         let lut_scale = LUT_RADIUS / radius;
@@ -219,7 +214,7 @@ impl BrushMask {
                 let dist_scaled = (dist * lut_scale) as usize;
                 let value = if dist_scaled < lut.len() {
                     let cover = (radius - dist).max(0.0).min(1.0);
-                    lut[dist_scaled] * cover * opacity_scale
+                    lut[dist_scaled] * cover * OPACITY_SCALE
                 } else {
                     0.0
                 };
@@ -274,15 +269,17 @@ mod tests {
 
     #[test]
     fn test_round_pixel() {
-        let mask = BrushMask::new_round_pixel(4, 1.0 / 255.0);
-        let expected: [u8; 4 * 4] = [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0];
+        let mask = BrushMask::new_round_pixel(4);
+        let expected: [u8; 4 * 4] = [
+            0, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 0,
+        ];
         assert_eq!(mask.mask, expected);
     }
 
     #[test]
     fn test_square_pixel() {
-        let mask = BrushMask::new_square_pixel(2, 1.0 / 255.0);
-        let expected: [u8; 4] = [1, 1, 1, 1];
+        let mask = BrushMask::new_square_pixel(2);
+        let expected: [u8; 4] = [255, 255, 255, 255];
         assert_eq!(mask.mask, expected);
     }
 }

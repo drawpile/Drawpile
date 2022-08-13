@@ -50,23 +50,23 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
     }
 }
 
-pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode) {
+pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode, opacity: u8) {
     #[allow(unreachable_patterns)]
     match mode {
-        Blendmode::Normal => alpha_mask_blend(base, color, mask),
-        Blendmode::Erase => alpha_mask_erase(base, mask),
-        Blendmode::Multiply => mask_composite(comp_op_multiply, base, color, mask),
-        Blendmode::Divide => mask_composite(comp_op_divide, base, color, mask),
-        Blendmode::Darken => mask_composite(comp_op_darken, base, color, mask),
-        Blendmode::Lighten => mask_composite(comp_op_lighten, base, color, mask),
-        Blendmode::Dodge => mask_composite(comp_op_dodge, base, color, mask),
-        Blendmode::Burn => mask_composite(comp_op_burn, base, color, mask),
-        Blendmode::Add => mask_composite(comp_op_add, base, color, mask),
-        Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask),
-        Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask),
-        Blendmode::Behind => alpha_mask_under(base, color, mask),
-        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask),
-        Blendmode::ColorErase => mask_color_erase(base, color, mask),
+        Blendmode::Normal => alpha_mask_blend(base, color, mask, opacity as u32),
+        Blendmode::Erase => alpha_mask_erase(base, mask, opacity as u32),
+        Blendmode::Multiply => mask_composite(comp_op_multiply, base, color, mask, opacity as u32),
+        Blendmode::Divide => mask_composite(comp_op_divide, base, color, mask, opacity as u32),
+        Blendmode::Darken => mask_composite(comp_op_darken, base, color, mask, opacity as u32),
+        Blendmode::Lighten => mask_composite(comp_op_lighten, base, color, mask, opacity as u32),
+        Blendmode::Dodge => mask_composite(comp_op_dodge, base, color, mask, opacity as u32),
+        Blendmode::Burn => mask_composite(comp_op_burn, base, color, mask, opacity as u32),
+        Blendmode::Add => mask_composite(comp_op_add, base, color, mask, opacity as u32),
+        Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask, opacity as u32),
+        Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask, opacity as u32),
+        Blendmode::Behind => alpha_mask_under(base, color, mask, opacity as u32),
+        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, opacity as u32),
+        Blendmode::ColorErase => mask_color_erase(base, color, mask, opacity as u32),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -145,13 +145,13 @@ fn alpha_pixel_under(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
 
 /// Perform a premultiplied alpha blend on a slice of 32 bit ARGB pixels
 /// and a color + alpha mask vector.
-fn alpha_mask_under(base: &mut [Pixel], color: Pixel, mask: &[u8]) {
+fn alpha_mask_under(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
     debug_assert!(base.len() == mask.len());
     let c = color.into_work();
 
     for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
         let bp = dp.into_work();
-        let m = mask as u32;
+        let m = u8_mult(mask as u32, opacity);
         let a = u8_mult(255 - bp[ALPHA_CHANNEL], m);
 
         let result = [
@@ -218,12 +218,12 @@ fn pixel_color_erase(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
     }
 }
 
-fn mask_color_erase(base: &mut [Pixel], color: Pixel, mask: &[u8]) {
+fn mask_color_erase(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
     let mut c = Color::from_pixel(color);
     for (dp, &mp) in base.iter_mut().zip(mask.iter()) {
         // TODO optimize this?
         let mut dc = Color::from_pixel(*dp);
-        c.a = mp as f32 / 255.0;
+        c.a = u8_mult(mp as u32, opacity) as f32 / 255.0;
         color_erase(&mut dc, &c);
         *dp = dc.as_pixel();
     }
@@ -245,13 +245,13 @@ fn pixel_replace(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
 
 /// Perform a premultiplied alpha blend on a slice of 32 bit ARGB pixels
 /// and a color + alpha mask vector.
-fn alpha_mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8]) {
+fn alpha_mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
     debug_assert!(base.len() == mask.len());
     let c = color.into_work();
 
     for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
         let bp = dp.into_work();
-        let m = mask as u32;
+        let m = u8_mult(mask as u32, opacity);
         let a = 255 - m;
 
         let result = [
@@ -266,12 +266,12 @@ fn alpha_mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8]) {
 }
 
 /// Erase alpha channel
-fn alpha_mask_erase(base: &mut [Pixel], mask: &[u8]) {
+fn alpha_mask_erase(base: &mut [Pixel], mask: &[u8], opacity: u32) {
     debug_assert!(base.len() == mask.len());
 
     for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
         let mut dest = dp.into_work();
-        let m = mask as u32;
+        let m = u8_mult(mask as u32, opacity);
         let a = 255 - m;
 
         for d in dest.iter_mut() {
@@ -367,13 +367,19 @@ fn pixel_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], over: &[Pix
     }
 }
 
-fn mask_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], color: Pixel, mask: &[u8]) {
+fn mask_composite(
+    comp_op: fn(u32, u32) -> u32,
+    base: &mut [Pixel],
+    color: Pixel,
+    mask: &[u8],
+    opacity: u32,
+) {
     debug_assert!(base.len() == mask.len());
     let c = unpremultiply_pixel(color);
 
     for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
         let d = unpremultiply_pixel(*dp);
-        let mask = mask as i32;
+        let mask = u8_mult(mask as u32, opacity) as i32;
 
         *dp = premultiply_pixel([
             u8_blend(comp_op(d[0] as u32, c[0] as u32) as i32, d[0] as i32, mask) as u8,
@@ -420,7 +426,7 @@ mod tests {
         let mut base = [Color::rgb8(255, 0, 0).as_pixel(); 3];
         let mask = [0xff, 0x80, 0x40];
 
-        alpha_mask_blend(&mut base, Color::rgb8(0, 0, 255).as_pixel(), &mask);
+        alpha_mask_blend(&mut base, Color::rgb8(0, 0, 255).as_pixel(), &mask, 255);
         assert_eq!(
             base,
             [
@@ -455,7 +461,7 @@ mod tests {
         ];
         let mask = [0xff, 0x80, 0x00];
 
-        alpha_mask_erase(&mut base, &mask);
+        alpha_mask_erase(&mut base, &mask, 255);
         assert_eq!(
             base,
             [[0, 0, 0, 0], [127, 127, 127, 127], [255, 255, 255, 255]]

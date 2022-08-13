@@ -87,11 +87,10 @@ fn drawdabs_classic_draw(
             y as f32 / 4.0,
             dab.size as f32 / 256.0,
             dab.hardness as f32 / 255.0,
-            dab.opacity as f32 / 255.0,
             cache,
         );
         aoe = aoe.merge(editlayer::draw_brush_dab(
-            layer, user, mx, my, &mask, &color, mode,
+            layer, user, mx, my, &mask, &color, mode, dab.opacity,
         ));
 
         last_x = x;
@@ -157,20 +156,18 @@ fn drawdabs_pixel_draw(
     let mut last_x = dabs.x;
     let mut last_y = dabs.y;
     let mut last_size = 0;
-    let mut last_opacity = 0;
     let mut aoe = AoE::Nothing;
 
     for dab in dabs.dabs.iter() {
         let x = last_x + dab.x as i32;
         let y = last_y + dab.y as i32;
 
-        if dab.size != last_size || dab.opacity != last_opacity {
+        if dab.size != last_size {
             last_size = dab.size;
-            last_opacity = dab.opacity;
             mask = if square {
-                BrushMask::new_square_pixel(dab.size as u32, dab.opacity as f32 / 255.0)
+                BrushMask::new_square_pixel(dab.size as u32)
             } else {
-                BrushMask::new_round_pixel(dab.size as u32, dab.opacity as f32 / 255.0)
+                BrushMask::new_round_pixel(dab.size as u32)
             };
         }
 
@@ -183,6 +180,7 @@ fn drawdabs_pixel_draw(
             &mask,
             &color,
             mode,
+            dab.opacity,
         ));
 
         last_x = x;

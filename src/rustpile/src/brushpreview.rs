@@ -160,7 +160,7 @@ impl BrushPreview {
                 let step = d * 70 / 100;
                 let huestep = 359.0 / ((x1 - x0) as f32 / step as f32);
                 let mut hue = 0.0;
-                let dabmask = BrushMask::new_round_pixel(d as u32, 1.0);
+                let dabmask = BrushMask::new_round_pixel(d as u32);
                 for x in (x0..x1).step_by(step as usize) {
                     let color = Color::from_hsv(hue, 0.62, 0.86);
                     editlayer::draw_brush_dab(
@@ -171,6 +171,7 @@ impl BrushPreview {
                         &dabmask,
                         &color,
                         Blendmode::Normal,
+                        255u8,
                     );
                     hue += huestep;
                 }

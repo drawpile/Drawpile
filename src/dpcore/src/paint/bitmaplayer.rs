@@ -335,7 +335,7 @@ impl BitmapLayer {
                 Color::from_pixel(self.pixel_at(x as u32, y as u32))
             }
         } else {
-            let mask = BrushMask::new_round_pixel(dia as u32, 1.0);
+            let mask = BrushMask::new_round_pixel(dia as u32);
             self.sample_dab_color(x, y, &mask)
         }
     }
@@ -941,7 +941,7 @@ mod tests {
         layer.tile_mut(1, 0).fill(&Color::rgb8(0, 255, 0), 0);
         layer.tile_mut(0, 1).fill(&Color::rgb8(0, 0, 255), 0);
 
-        let dab_mask = BrushMask::new_round_pixel(32, 1.0);
+        let dab_mask = BrushMask::new_round_pixel(32);
         let sampled = layer.sample_dab_color(64, 64, &dab_mask);
 
         assert_eq!(

@@ -25,7 +25,7 @@ use dpcore::paint::{rasterop, Blendmode, BrushMask, Pixel};
 
 fn mask_blend(mask: &[u8], mode: Blendmode) {
     let mut base = [[128, 128, 128, 128]; 64 * 64];
-    rasterop::mask_blend(&mut base, [255, 255, 255, 255], mask, mode);
+    rasterop::mask_blend(&mut base, [255, 255, 255, 255], mask, mode, 127);
 }
 
 fn pixel_blend(over: &[Pixel], mode: Blendmode) {
@@ -34,7 +34,7 @@ fn pixel_blend(over: &[Pixel], mode: Blendmode) {
 }
 
 fn mask_blend_benchmark(c: &mut Criterion) {
-    let mask = BrushMask::new_round_pixel(64, 0.5);
+    let mask = BrushMask::new_round_pixel(64);
 
     c.bench_function("mask normal", |b| {
         b.iter(|| mask_blend(&mask.mask, Blendmode::Normal))

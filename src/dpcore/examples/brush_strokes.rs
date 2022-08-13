@@ -67,8 +67,8 @@ fn main() {
 
     // Pixel brush straight line
     painter.set_classicbrush(ClassicBrush::default());
-    painter.stroke_to(10.0, 140.0, 1.0, None);
-    painter.stroke_to(512.0 - 20.0, 150.0, 1.0, None);
+    painter.stroke_to(10.0, 140.0, 1.0, 0, None);
+    painter.stroke_to(512.0 - 20.0, 150.0, 1.0, 0, None);
     painter.end_stroke();
     painter.take_dabs(1).iter().for_each(|d| {
         canvas.receive_message(d);
@@ -99,12 +99,14 @@ fn main() {
         30.0,
         10.0,
         1.0,
+        0,
         canvas.layerstack().root().get_bitmaplayer(0x0101),
     );
     painter.stroke_to(
         30.0,
         200.0,
         1.0,
+        0,
         canvas.layerstack().root().get_bitmaplayer(0x0101),
     );
     painter.end_stroke();
@@ -149,8 +151,8 @@ fn main() {
         shape: ClassicBrushShape::RoundSoft,
         ..ClassicBrush::default()
     });
-    painter.stroke_to(522.0, 140.0, 1.0, None);
-    painter.stroke_to(1024.0 - 20.0, 150.0, 1.0, None);
+    painter.stroke_to(522.0, 140.0, 1.0, 0, None);
+    painter.stroke_to(1024.0 - 20.0, 150.0, 1.0, 0, None);
     painter.end_stroke();
     painter.take_dabs(1).iter().for_each(|d| {
         canvas.receive_message(d);
@@ -183,12 +185,14 @@ fn main() {
         542.0,
         10.0,
         1.0,
+        0,
         canvas.layerstack().root().get_bitmaplayer(0x0101),
     );
     painter.stroke_to(
         542.0,
         200.0,
         1.0,
+        0,
         canvas.layerstack().root().get_bitmaplayer(0x0101),
     );
     painter.end_stroke();
@@ -210,7 +214,7 @@ fn draw_wavy_line(
     while x < width {
         let y = (x / width * 3.141 * 4.0).sin() * amplitude;
         let p = (x / width * 3.141).sin();
-        brush.stroke_to(start_x + x, start_y + y, p, None);
+        brush.stroke_to(start_x + x, start_y + y, p, 0, None);
         x += 1.0;
     }
     brush.end_stroke();
