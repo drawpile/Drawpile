@@ -92,6 +92,7 @@ cp -r /Drawpile/desktop/theme .
 cp -r /Drawpile/desktop/sounds .
 cp -r /Drawpile/desktop/palettes .
 cp /Drawpile/desktop/nightmode.colors .
+cp /Drawpile/desktop/initialbrushpresets.db .
 
 # Copy translations
 mkdir -p i18n
