@@ -20,3 +20,6 @@ example_*.png
 # Python venv directories
 env/
 venv/
+
+# clangd compile commands file when using -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+compile_commands.json
