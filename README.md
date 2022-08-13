@@ -17,6 +17,7 @@ Some feature highlights:
 * Supports OpenRaster file format
 * Encrypted connections using SSL
 * Automatic port forwarding with UPnP
+* MyPaint brush support
 
 ## Building with cmake
 
