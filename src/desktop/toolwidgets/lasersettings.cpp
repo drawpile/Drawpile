@@ -61,7 +61,7 @@ void LaserPointerSettings::pushSettings()
 	else if(_ui->color3->isChecked())
 		c = _ui->color3->color();
 
-	brushes::ClassicBrush b;
+	brushes::ActiveBrush b;
 	b.setQColor(c);
 	controller()->setActiveBrush(b);
 }

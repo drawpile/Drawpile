@@ -1,5 +1,7 @@
 use super::paintengine_ffi::PaintEngine;
-use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, ClassicBrushShape};
+use dpcore::brush::{
+    BrushEngine, BrushState, ClassicBrush, ClassicBrushShape, MyPaintBrush, MyPaintSettings,
+};
 use dpcore::paint::rectiter::{MutableRectIterator, RectIterator};
 use dpcore::paint::{BrushMask, ClassicBrushCache, Color, LayerID, Pixel, Rectangle, Size};
 use dpcore::protocol::MessageWriter;

@@ -62,6 +62,10 @@ impl Blendmode {
         )
     }
 
+    pub fn is_eraser_mode(self) -> bool {
+        matches!(self, Blendmode::Erase | Blendmode::ColorErase)
+    }
+
     pub fn svg_name(self) -> &'static str {
         use Blendmode::*;
         match self {

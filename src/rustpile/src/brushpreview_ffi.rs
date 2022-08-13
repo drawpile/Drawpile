@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::brushpreview::{BrushPreview, BrushPreviewShape};
-use dpcore::brush::ClassicBrush;
+use dpcore::brush::{ClassicBrush, MyPaintBrush, MyPaintSettings};
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{AoE, Color, FlattenedTileIterator, LayerViewOptions};
 
@@ -40,12 +40,22 @@ pub unsafe extern "C" fn brushpreview_free(bp: *mut BrushPreview) {
 }
 
 #[no_mangle]
-pub extern "C" fn brushpreview_render(
+pub extern "C" fn brushpreview_render_classic(
     bp: &mut BrushPreview,
     brush: &ClassicBrush,
     shape: BrushPreviewShape,
 ) {
-    bp.render(brush, shape);
+    bp.render_classic(brush, shape);
+}
+
+#[no_mangle]
+pub extern "C" fn brushpreview_render_mypaint(
+    bp: &mut BrushPreview,
+    brush: &MyPaintBrush,
+    settings: &MyPaintSettings,
+    shape: BrushPreviewShape,
+) {
+    bp.render_mypaint(brush, settings, shape);
 }
 
 #[no_mangle]

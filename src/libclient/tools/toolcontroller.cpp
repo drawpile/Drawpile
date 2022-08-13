@@ -131,7 +131,7 @@ void ToolController::setActiveLayer(uint16_t id)
 	}
 }
 
-void ToolController::setActiveBrush(const brushes::ClassicBrush &b)
+void ToolController::setActiveBrush(const brushes::ActiveBrush &b)
 {
 	m_activebrush = b;
 	emit activeBrushChanged(b);
@@ -305,6 +305,11 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 	Q_ASSERT(m_activeTool);
 	m_activeTool->offsetActiveTool(xOffset, yOffset);
 	m_smoother.addOffset(QPointF(xOffset, yOffset));
+}
+
+void ToolController::setBrushEngineBrush(rustpile::BrushEngine *be, bool freehand)
+{
+	activeBrush().setInBrushEngine(be, activeLayer(), freehand);
 }
 
 }

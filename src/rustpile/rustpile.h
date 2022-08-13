@@ -209,6 +209,27 @@ struct ClassicBrush {
   bool smudge_pressure;
 };
 
+struct MyPaintBrush {
+  Color color;
+  bool lock_alpha;
+  bool erase;
+};
+
+struct ControlPoints {
+  float xvalues[64];
+  float yvalues[64];
+  int32_t n;
+};
+
+struct MyPaintMapping {
+  float base_value;
+  ControlPoints inputs[18];
+};
+
+struct MyPaintSettings {
+  MyPaintMapping mappings[64];
+};
+
 using LayerID = uint16_t;
 
 using ExtLogFn = void(*)(int32_t level, const char *file, uint32_t line, const char *logmsg);
@@ -374,6 +395,12 @@ void brushengine_free(BrushEngine *be);
 
 void brushengine_set_classicbrush(BrushEngine *be, const ClassicBrush *brush, uint16_t layer);
 
+void brushengine_set_mypaintbrush(BrushEngine *be,
+                                  const MyPaintBrush *brush,
+                                  const MyPaintSettings *settings,
+                                  uint16_t layer,
+                                  bool freehand);
+
 void brushengine_stroke_to(BrushEngine *be,
                            float x,
                            float y,
@@ -398,7 +425,14 @@ BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
 
 void brushpreview_free(BrushPreview *bp);
 
-void brushpreview_render(BrushPreview *bp, const ClassicBrush *brush, BrushPreviewShape shape);
+void brushpreview_render_classic(BrushPreview *bp,
+                                 const ClassicBrush *brush,
+                                 BrushPreviewShape shape);
+
+void brushpreview_render_mypaint(BrushPreview *bp,
+                                 const MyPaintBrush *brush,
+                                 const MyPaintSettings *settings,
+                                 BrushPreviewShape shape);
 
 void brushpreview_floodfill(BrushPreview *bp,
                             const Color *color,

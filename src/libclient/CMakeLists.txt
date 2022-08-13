@@ -102,6 +102,7 @@ add_library (
 
 target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network)
 target_link_libraries(dpclient rustpile pthread dl)
+target_link_libraries(dpclient libmypaint)
 
 if ( WIN32 )
 	target_link_libraries (dpclient ws2_32 userenv bcrypt)

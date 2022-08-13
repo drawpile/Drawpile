@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::brush::{BrushEngine, BrushState, ClassicBrush};
+use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, MyPaintBrush, MyPaintSettings};
 use dpcore::canvas::brushes;
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
@@ -65,52 +65,60 @@ impl BrushPreview {
         bp
     }
 
-    pub fn render(&mut self, brush: &ClassicBrush, shape: BrushPreviewShape) {
-        let mut brush = brush.clone();
-
+    fn render<SetEngineBrushFn>(
+        &mut self,
+        shape: BrushPreviewShape,
+        color: Color,
+        smudge: bool,
+        mode: Blendmode,
+        set_engine_brush: SetEngineBrushFn,
+    ) where
+        SetEngineBrushFn: FnOnce(&mut BrushEngine, Option<Color>),
+    {
         // Prepare background and foreground colors
-        let mut background_color = if brush.color.is_dark() {
+        let mut background_color = if color.is_dark() {
             Color::rgb8(250, 250, 250)
         } else {
             Color::rgb8(32, 32, 32)
         };
 
         let mut layer_color = Color::TRANSPARENT;
-        let mut foreground_style = if brush.smudge.1 > 0.0 {
+        let mut foreground_style = if smudge {
             ForegroundStyle::RainbowBars
         } else {
             ForegroundStyle::Solid
         };
 
-        match brush.mode {
+        match mode {
             Blendmode::Erase => {
                 layer_color = background_color;
                 background_color = Color::TRANSPARENT;
             }
             Blendmode::ColorErase => {
                 background_color = Color::TRANSPARENT;
-                layer_color = brush.color;
+                layer_color = color;
             }
             m => {
-                if !m.can_increase_opacity() {
+                if !m.can_increase_opacity() || m == Blendmode::NormalAndEraser {
                     foreground_style = ForegroundStyle::RainbowDabs;
                     background_color = Color::TRANSPARENT;
                 }
             }
         }
 
-        match shape {
+        let brush_color = match shape {
             BrushPreviewShape::FloodFill => {
-                brush.color = background_color;
                 background_color = Color::TRANSPARENT;
+                Option::from(background_color)
             }
             BrushPreviewShape::FloodErase => {
-                layer_color = brush.color;
-                brush.color = background_color;
+                layer_color = color;
+                let temp_color = background_color;
                 background_color = Color::TRANSPARENT;
+                Option::from(temp_color)
             }
-            _ => {}
-        }
+            _ => Option::None,
+        };
 
         // Draw the background
         self.layerstack.background = Tile::new(&background_color, 1);
@@ -124,7 +132,7 @@ impl BrushPreview {
         match foreground_style {
             ForegroundStyle::Solid => {
                 // When using the "behind" mode, draw something in the foreground to show off the effect
-                if brush.mode == Blendmode::Behind {
+                if mode == Blendmode::Behind {
                     let w = layer.width() as i32;
                     let h = layer.height() as i32;
                     let b = (w / 20).max(2) as i32;
@@ -238,11 +246,57 @@ impl BrushPreview {
                 CommandMessage::DrawDabsPixelSquare(_, m) => {
                     brushes::drawdabs_pixel(layer, 1, &m, true)
                 }
+                CommandMessage::DrawDabsMyPaint(_, m) => brushes::drawdabs_mypaint(layer, 1, &m),
                 _ => unimplemented!(),
             };
         }
 
         editlayer::merge_sublayer(layer, 1);
+    }
+
+    pub fn render_classic(&mut self, brush: &ClassicBrush, shape: BrushPreviewShape) {
+        self.render(
+            shape,
+            brush.color,
+            brush.smudge.1 > 0.0,
+            brush.mode,
+            |painter, optional_color| {
+                let mut cloned_brush = brush.clone();
+                match optional_color {
+                    Some(color) => cloned_brush.color = color,
+                    None => {}
+                }
+                painter.set_classicbrush(cloned_brush);
+            },
+        );
+    }
+
+    pub fn render_mypaint(
+        &mut self,
+        brush: &MyPaintBrush,
+        settings: &MyPaintSettings,
+        shape: BrushPreviewShape,
+    ) {
+        self.render(
+            shape,
+            brush.color,
+            false,
+            if brush.erase {
+                Blendmode::Erase
+            } else if brush.lock_alpha {
+                Blendmode::Recolor
+            } else {
+                Blendmode::NormalAndEraser
+            },
+            |painter, optional_color| {
+                let mut cloned_brush = brush.clone();
+                match optional_color {
+                    Some(color) => cloned_brush.color = color,
+                    None => {}
+                }
+                painter.set_mypaintbrush(&cloned_brush, settings, false);
+            },
+        )
     }
 
     pub fn floodfill(&mut self, color: Color, tolerance: f32, expansion: i32, fill_under: bool) {

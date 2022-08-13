@@ -50,7 +50,7 @@ void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 	m_drawing = true;
 	m_firstPoint = true;
 
-	rustpile::brushengine_set_classicbrush(m_brushengine, &owner.activeBrush(), owner.activeLayer());
+	owner.setBrushEngineBrush(m_brushengine);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event

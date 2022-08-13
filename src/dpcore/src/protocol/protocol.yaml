@@ -624,6 +624,27 @@ DrawDabsPixelSquare:
     comment: Draw square pixel brush dabs
     alias: DrawDabsPixel
 
+DrawDabsMyPaint:
+    id: 151
+    name: mypaintdabs
+    comment: Draw MyPaint brush dabs
+    fields:
+        - layer u16: hex
+        - x i32: div4
+        - y i32: div4
+        - color argb32
+        - lock_alpha u8
+        - dabs struct:
+          name: MyPaintDab
+          fields:
+            - x i8: div4
+            - y i8: div4
+            - size u16: div256
+            - hardness u8
+            - opacity u8
+            - angle u8
+            - aspect_ratio u8
+
 MoveRect:
     id: 160
     comment: |
