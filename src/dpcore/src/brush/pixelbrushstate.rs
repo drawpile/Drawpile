@@ -150,7 +150,14 @@ impl BrushState for PixelBrushState {
         self.layer_id = layer_id;
     }
 
-    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&BitmapLayer>) {
+    fn stroke_to(
+        &mut self,
+        x: f32,
+        y: f32,
+        p: f32,
+        _delta_msec: i64,
+        source: Option<&BitmapLayer>,
+    ) {
         if self.in_progress {
             let dp = (p - self.last_p) / (x - self.last_x).hypot(y - self.last_y);
 

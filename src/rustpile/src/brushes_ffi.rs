@@ -29,19 +29,38 @@ pub extern "C" fn brushengine_set_classicbrush(
 }
 
 #[no_mangle]
+pub extern "C" fn brushengine_set_mypaintbrush(
+    be: &mut BrushEngine,
+    brush: &MyPaintBrush,
+    settings: &MyPaintSettings,
+    layer: u16,
+    freehand: bool,
+) {
+    be.set_mypaintbrush(brush, settings, freehand);
+    be.set_layer(layer);
+}
+
+#[no_mangle]
 pub extern "C" fn brushengine_stroke_to(
     be: &mut BrushEngine,
     x: f32,
     y: f32,
     p: f32,
+    delta_msec: i64,
     pe: Option<&PaintEngine>,
     layer_id: LayerID,
 ) {
     if let Some(paintengine) = pe {
         let vc = paintengine.viewcache.lock().unwrap();
-        be.stroke_to(x, y, p, vc.layerstack.root().get_bitmaplayer(layer_id));
+        be.stroke_to(
+            x,
+            y,
+            p,
+            delta_msec,
+            vc.layerstack.root().get_bitmaplayer(layer_id),
+        );
     } else {
-        be.stroke_to(x, y, p, None);
+        be.stroke_to(x, y, p, delta_msec, None);
     }
 }
 

@@ -69,6 +69,7 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
+		m_lastTimestamp = 0;
 
 		rustpile::write_undopoint(writer, owner.client()->myId());
 
@@ -77,15 +78,22 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 			m_start.x(),
 			m_start.y(),
 			qMin(m_start.pressure(), point.pressure()),
+			0,
 			owner.model()->paintEngine()->engine(),
 			owner.activeLayer()
 		);
 	}
+
+	qint64 now = QDateTime::currentMSecsSinceEpoch();
+	qint64 deltaMsec = now - m_lastTimestamp;
+	m_lastTimestamp = now;
+
 	rustpile::brushengine_stroke_to(
 		m_brushengine,
 		point.x(),
 		point.y(),
 		point.pressure(),
+		deltaMsec,
 		owner.model()->paintEngine()->engine(),
 		owner.activeLayer()
 	);
@@ -112,6 +120,7 @@ void Freehand::end()
 				m_start.x(),
 				m_start.y(),
 				m_start.pressure(),
+				QDateTime::currentMSecsSinceEpoch(),
 				nullptr,
 				0
 			);
