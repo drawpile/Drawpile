@@ -6,45 +6,48 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstdlib>
+#include <ostream>
 #include <new>
 
 namespace rustpile {
 
-static const uint8_t JoinMessage_FLAGS_AUTH = 1;
+constexpr static const uint8_t JoinMessage_FLAGS_AUTH = 1;
 
-static const uint8_t JoinMessage_FLAGS_BOT = 4;
+constexpr static const uint8_t JoinMessage_FLAGS_MOD = 2;
 
-static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
+constexpr static const uint8_t JoinMessage_FLAGS_BOT = 4;
 
-static const uint8_t LayerAttributesMessage_FLAGS_FIXED = 2;
+constexpr static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
 
-static const uint8_t LayerCreateMessage_FLAGS_GROUP = 1;
+constexpr static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
 
-static const uint8_t LayerCreateMessage_FLAGS_INTO = 2;
+constexpr static const uint8_t ChatMessage_OFLAGS_ACTION = 2;
 
-static const uint8_t LayerAttributesMessage_FLAGS_ISOLATED = 4;
+constexpr static const uint8_t ChatMessage_OFLAGS_PIN = 4;
 
-static const uint8_t JoinMessage_FLAGS_MOD = 2;
+constexpr static const uint8_t ChatMessage_OFLAGS_ALERT = 8;
 
-static const uint8_t AnnotationEditMessage_FLAGS_PROTECT = 1;
+constexpr static const uint8_t LayerCreateMessage_FLAGS_GROUP = 1;
 
-static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_BOTTOM = 4;
+constexpr static const uint8_t LayerCreateMessage_FLAGS_INTO = 2;
 
-static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_CENTER = 2;
+constexpr static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
 
-static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
+constexpr static const uint8_t LayerAttributesMessage_FLAGS_FIXED = 2;
 
-static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
+constexpr static const uint8_t LayerAttributesMessage_FLAGS_ISOLATED = 4;
 
-static const uint8_t ChatMessage_OFLAGS_ACTION = 2;
+constexpr static const uint8_t AnnotationEditMessage_FLAGS_PROTECT = 1;
 
-static const uint8_t ChatMessage_OFLAGS_ALERT = 8;
+constexpr static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_CENTER = 2;
 
-static const uint8_t ChatMessage_OFLAGS_PIN = 4;
+constexpr static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_BOTTOM = 4;
 
-static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
+constexpr static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
 
-static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
+constexpr static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
+
+constexpr static const uintptr_t DrawDabsMyPaintMessage_MAX_MYPAINTDABS = 8190;
 
 enum class AnimationExportMode {
   Gif,
@@ -161,9 +164,9 @@ struct Color {
   float b;
   float a;
 };
-static const Color Color_TRANSPARENT = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 0.0 };
-static const Color Color_BLACK = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 1.0 };
-static const Color Color_WHITE = Color{ /* .r = */ 1.0, /* .g = */ 1.0, /* .b = */ 1.0, /* .a = */ 1.0 };
+constexpr static const Color Color_TRANSPARENT = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 0.0 };
+constexpr static const Color Color_BLACK = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 1.0 };
+constexpr static const Color Color_WHITE = Color{ /* .r = */ 1.0, /* .g = */ 1.0, /* .b = */ 1.0, /* .a = */ 1.0 };
 
 using UpdateAnnotationCallback = void(*)(void *ctx, AnnotationID id, const char *text, uintptr_t textlen, Rectangle rect, Color background, bool protect, VAlign valign);
 
