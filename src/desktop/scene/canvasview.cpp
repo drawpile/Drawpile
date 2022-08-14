@@ -329,13 +329,14 @@ void CanvasView::setPixelGrid(bool enable)
 void CanvasView::setOutlineSize(int newSize)
 {
 	if(m_showoutline && (m_outlineSize>0 || newSize>0)) {
-		const int maxSize = qMax(m_outlineSize, newSize);
+		const qreal maxSize = qMax(m_outlineSize, newSize) + m_brushOutlineWidth;
+		const qreal maxRad = maxSize / 2.0;
 		QList<QRectF> rect;
 		rect.append(QRectF {
-					m_prevoutlinepoint.x() - maxSize/2.0f - 0.5f,
-					m_prevoutlinepoint.y() - maxSize/2.0f - 0.5f,
-					maxSize + 1.0,
-					maxSize + 1.0
+					m_prevoutlinepoint.x() - maxRad,
+					m_prevoutlinepoint.y() - maxRad,
+					maxSize,
+					maxSize
 					});
 		updateScene(rect);
 	}
@@ -913,18 +914,19 @@ void CanvasView::updateOutline(canvas::Point point) {
 	}
 	if(m_showoutline && !m_locked && !point.roughlySame(m_prevoutlinepoint)) {
 		QList<QRectF> rect;
-		const float oR = m_outlineSize / 2.0f + 0.5;
+		const qreal owidth = m_outlineSize + m_brushOutlineWidth;
+		const qreal orad = owidth / 2.0;
 		rect.append(QRectF(
-					m_prevoutlinepoint.x() - oR,
-					m_prevoutlinepoint.y() - oR,
-					m_outlineSize + 1,
-					m_outlineSize + 1
+					m_prevoutlinepoint.x() - orad,
+					m_prevoutlinepoint.y() - orad,
+					owidth,
+					owidth
 				));
 		rect.append(QRectF(
-						point.x() - oR,
-						point.y() - oR,
-						m_outlineSize + 1,
-						m_outlineSize + 1
+						point.x() - orad,
+						point.y() - orad,
+						owidth,
+						owidth
 					));
 		updateScene(rect);
 		m_prevoutlinepoint = point;
@@ -934,9 +936,15 @@ void CanvasView::updateOutline(canvas::Point point) {
 void CanvasView::updateOutline()
 {
 	QList<QRectF> rect;
-	rect.append(QRectF(m_prevoutlinepoint.x() - m_outlineSize/2.0 - 0.5,
-				m_prevoutlinepoint.y() - m_outlineSize/2.0 - 0.5,
-				m_outlineSize + 1, m_outlineSize + 1));
+	const qreal owidth = m_outlineSize + m_brushOutlineWidth;
+	const qreal orad = owidth / 2.0;
+
+	rect.append(QRectF(
+		m_prevoutlinepoint.x() - orad,
+		m_prevoutlinepoint.y() - orad,
+		owidth,
+		owidth
+	));
 	updateScene(rect);
 
 }
