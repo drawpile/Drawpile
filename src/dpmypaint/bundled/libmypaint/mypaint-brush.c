@@ -6,6 +6,9 @@
  * avoid the dependency on the json-c library. The patches are marked with
  * DRAWPILE_UNWANTED_MYPAINT_FEATURES.
  *
+ * There's also a fix for an off by one error when clearing smudge buckets.
+ * That has been marked with "Drawpile Patch".
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -168,7 +171,10 @@ brush_reset(MyPaintBrush *self)
       int min_index = self->min_bucket_used;
       if (min_index != -1) {
         int max_index = self->max_bucket_used;
-        size_t num_bytes = (max_index - min_index) * sizeof(self->smudge_buckets[0]) * SMUDGE_BUCKET_SIZE;
+        // Drawpile Patch: fix off by one error when clearing smudge buckets.
+        // We added the + 1 here, since max_index is *inclusive*. See also
+        // https://github.com/mypaint/libmypaint/pull/186
+        size_t num_bytes = (max_index - min_index + 1) * sizeof(self->smudge_buckets[0]) * SMUDGE_BUCKET_SIZE;
         memset(self->smudge_buckets + min_index, 0, num_bytes);
         self->min_bucket_used = -1;
         self->max_bucket_used = -1;

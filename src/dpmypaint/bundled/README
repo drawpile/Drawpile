@@ -3,7 +3,7 @@ Notes on bundled libraries:
 libmypaint
 ----------
 
-MyPaint brush support. Slight patches to remove a pointless include and
+MyPaint brush support. Slight patches to remove a pointless include and the dependency on json-c, as well as an off by one error when clearing smudge buckets. They have been documented in the respective source files, grep for "Drawpile".
 
 Homepage: http://mypaint.org/ and https://github.com/mypaint/libmypaint/tree/v1.6.1
 
