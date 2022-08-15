@@ -48,7 +48,7 @@ private:
     QPixmap m_thumbnail;
     Ui_BrushPresetProperties *m_ui;
 
-    void showThumbnail();
+    void showThumbnail(const QPixmap &thumbnail);
 };
 
 }

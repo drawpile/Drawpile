@@ -30,7 +30,7 @@ BrushPresetProperties::BrushPresetProperties(int id, const QString &name,
 		const QString &description, const QPixmap &thumbnail, QWidget *parent)
 	: QDialog(parent)
 	, m_id(id)
-	, m_thumbnail(thumbnail)
+	, m_thumbnail()
 {
     m_ui = new Ui_BrushPresetProperties;
     m_ui->setupUi(this);
@@ -40,7 +40,7 @@ BrushPresetProperties::BrushPresetProperties(int id, const QString &name,
 
 	QGraphicsScene *scene = new QGraphicsScene(this);
 	m_ui->thumbnail->setScene(scene);
-	showThumbnail();
+	showThumbnail(thumbnail);
 
     connect(m_ui->name, &QLineEdit::returnPressed, this, &QDialog::accept);
 	connect(m_ui->chooseThumbnailButton, &QPushButton::pressed,
@@ -63,8 +63,7 @@ void BrushPresetProperties::chooseThumbnailFile()
 
 	QPixmap pixmap;
 	if(!file.isEmpty() && pixmap.load(file)) {
-		m_thumbnail = pixmap.scaled(64, 64);
-		showThumbnail();
+		showThumbnail(pixmap);
 	}
 }
 
@@ -74,8 +73,10 @@ void BrushPresetProperties::emitChanges()
 		m_id, m_ui->name->text(), m_ui->description->toPlainText(), m_thumbnail);
 }
 
-void BrushPresetProperties::showThumbnail()
+void BrushPresetProperties::showThumbnail(const QPixmap &thumbnail)
 {
+	m_thumbnail = thumbnail.scaled(
+		64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	QGraphicsScene *scene = m_ui->thumbnail->scene();
 	scene->clear();
 	scene->setSceneRect(QRect(0, 0, 64, 64));

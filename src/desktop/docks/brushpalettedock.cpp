@@ -57,6 +57,7 @@ struct BrushPalette::Private {
 	QAction *overwriteBrushAction;
 	QAction *editBrushAction;
 	QAction *deleteBrushAction;
+	QMenu *iconSizeMenu;
 	QMenu *menu;
 	QAction *newTagAction;
 	QAction *editTagAction;
@@ -120,9 +121,19 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->editBrushAction = d->menu->addAction(icon::fromTheme("configure"), tr("Edit Brush"));
 	d->deleteBrushAction = d->menu->addAction(icon::fromTheme("list-remove"), tr("Delete Brush"));
 	d->assignmentMenu = d->menu->addMenu(tr("Brush Tags"));
+	d->iconSizeMenu = d->menu->addMenu(tr("Icon Size"));
 	d->menu->addSeparator();
 	d->importMyPaintBrushesAction = d->menu->addAction(tr("Import MyPaint Brushes..."));
 	d->menuButton->setMenu(d->menu);
+
+	for(int dimension = 16; dimension <= 128; dimension += 16) {
+		QAction *sizeAction = d->iconSizeMenu->addAction(tr("%1x%1").arg(dimension));
+		sizeAction->setCheckable(true);
+		sizeAction->setData(dimension);
+		connect(sizeAction, &QAction::triggered, [=](){
+			d->presetModel->setIconDimension(dimension);
+		});
+	}
 
 	d->presetListView = new QListView(this);
 	d->presetListView->setUniformItemSizes(true);
@@ -186,6 +197,10 @@ void BrushPalette::tagIndexChanged(int proxyRow)
 void BrushPalette::presetsReset()
 {
 	presetSelectionChanged(d->presetListView->currentIndex(), QModelIndex());
+	int iconDimension = d->presetModel->iconDimension();
+	for(QAction *action : d->iconSizeMenu->actions()) {
+		action->setChecked(action->data().toInt() == iconDimension);
+	}
 }
 
 void BrushPalette::presetSelectionChanged(const QModelIndex &current, const QModelIndex &)

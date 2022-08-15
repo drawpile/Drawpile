@@ -877,12 +877,16 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 	case FilterRole:
 		return d->readPresetNameById(index.internalId());
 	case Qt::DecorationRole: {
-		QImage img;
-		img.loadFromData(d->readPresetThumbnailById(index.internalId()));
-		return img;
+		QPixmap pixmap;
+		if(pixmap.loadFromData(d->readPresetThumbnailById(index.internalId()))) {
+			return pixmap.scaled(iconSize(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+		} else {
+			return QPixmap();
+		}
 	}
-	case Qt::SizeHintRole:
-		return QSize(THUMBNAIL_SIZE + 7, THUMBNAIL_SIZE + 7);
+	case Qt::SizeHintRole: {
+		return iconSize() + QSize(7, 7);
+	}
 	case BrushRole: {
 		QByteArray data = d->readPresetDataById(index.internalId());
 		ActiveBrush brush = ActiveBrush::fromJson(QJsonDocument::fromJson(data).object());
@@ -966,6 +970,25 @@ bool BrushPresetModel::deletePreset(int presetId)
 	return ok;
 }
 
+QSize BrushPresetModel::iconSize() const
+{
+	int dimension = iconDimension();
+	return QSize(dimension, dimension);
+}
+
+int BrushPresetModel::iconDimension() const
+{
+	int dimension = d->readState(QStringLiteral("preset_icon_size")).toInt();
+	return dimension <= 0 ? THUMBNAIL_SIZE : dimension;
+}
+
+void BrushPresetModel::setIconDimension(int dimension)
+{
+	beginResetModel();
+	d->createOrUpdateState(QStringLiteral("preset_icon_size"), dimension);
+	endResetModel();
+}
+
 int BrushPresetModel::importMyPaintBrush(const QString &file)
 {
 	QFile f(file);
@@ -1002,6 +1025,10 @@ int BrushPresetModel::importMyPaintBrush(const QString &file)
 	if(thumbnail.isNull()) {
 		thumbnail = brush.presetThumbnail();
 	}
+	if(thumbnail.width() != THUMBNAIL_SIZE || thumbnail.height() != THUMBNAIL_SIZE) {
+		thumbnail = thumbnail.scaled(THUMBNAIL_SIZE, THUMBNAIL_SIZE,
+			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	}
 
 	return newPreset(brush.presetType(), name, description, thumbnail, brush.presetData());
 }
@@ -1021,7 +1048,7 @@ QPixmap BrushPresetModel::loadBrushPreview(const QFileInfo &fileInfo)
 	QString file = fileInfo.path() + QDir::separator() + fileInfo.completeBaseName() + "_prev.png";
 	QPixmap pixmap;
 	if(pixmap.load(file)) {
-		return pixmap.scaled(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+		return pixmap;
 	} else {
 		return QPixmap();
 	}

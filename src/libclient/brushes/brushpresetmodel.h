@@ -134,6 +134,10 @@ public:
 		const QPixmap &thumbnail);
 	bool deletePreset(int presetId);
 
+	QSize iconSize() const;
+	int iconDimension() const;
+	void setIconDimension(int dimension);
+
 	int importMyPaintBrush(const QString &file);
 
 public slots:
