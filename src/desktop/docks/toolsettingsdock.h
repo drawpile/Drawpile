@@ -30,6 +30,10 @@ namespace tools {
 	class ToolController;
 }
 
+namespace color_widgets {
+	class ColorPalette;
+}
+
 namespace docks {
 
 /**
@@ -83,6 +87,12 @@ public slots:
 	//! Switch tool when eraser is brought near the tablet
 	void eraserNear(bool near);
 
+	//! Swap between the active colors and color history
+	void swapLastUsedColors();
+
+	//! Add a color to the active last used colors palette
+	void addLastUsedColor(const QColor &color);
+
 signals:
 	//! This signal is emitted when the current tool changes its size
 	void sizeChanged(int size);
@@ -92,6 +102,9 @@ signals:
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);
+
+	//! Last used color palette changed
+	void lastUsedColorsChanged(const color_widgets::ColorPalette &pal);
 
 	//! Currently active tool was changed
 	void toolChanged(tools::Tool::Type tool);

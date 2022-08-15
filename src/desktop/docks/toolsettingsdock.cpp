@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@
 
 #include "tools/toolproperties.h"
 
-#include <QtColorWidgets/ColorDialog>
+#include <QtColorWidgets/color_dialog.hpp>
+#include <QtColorWidgets/color_palette.hpp>
 
 #include <QStackedWidget>
 #include <QApplication>
@@ -39,6 +40,8 @@
 #include <QLabel>
 
 namespace docks {
+
+static const int LASTUSED_COLOR_COUNT = 8;
 
 struct ToolPage {
 	// Note: multiple different tools (e.g. Freehand and Line) can share the same settings
@@ -62,6 +65,10 @@ struct ToolSettings::Private {
 	tools::Tool::Type previousTool = tools::Tool::FREEHAND;
 	int previousToolSlot = 0;
 	QColor color = Qt::black;
+	QColor colorAlt = Qt::black;
+
+	color_widgets::ColorPalette lastUsedColors;
+	color_widgets::ColorPalette lastUsedColorsAlt;
 
 	bool switchedWithStylusEraser = false;
 
@@ -308,6 +315,40 @@ void ToolSettings::eraserNear(bool near)
 			bs->selectEraserSlot(false);
 		}
 	}
+}
+
+void ToolSettings::swapLastUsedColors()
+{
+	std::swap(d->lastUsedColors, d->lastUsedColorsAlt);
+	const QColor c = d->colorAlt;
+	d->colorAlt = d->color;
+	setForegroundColor(c);
+
+	emit lastUsedColorsChanged(d->lastUsedColors);
+}
+
+void ToolSettings::addLastUsedColor(const QColor &color)
+{
+	{
+		const auto c = d->lastUsedColors.colorAt(0);
+		if(c.isValid() && c.rgb() == color.rgb())
+			return;
+	}
+
+	// Move color to the front of the palette
+	d->lastUsedColors.insertColor(0, color);
+	for(int i=1;i<d->lastUsedColors.count();++i) {
+		if(d->lastUsedColors.colorAt(i).rgb() == color.rgb()) {
+			d->lastUsedColors.eraseColor(i);
+			break;
+		}
+	}
+
+	// Limit number of remembered colors
+	if(d->lastUsedColors.count() > LASTUSED_COLOR_COUNT)
+		d->lastUsedColors.eraseColor(LASTUSED_COLOR_COUNT);
+
+	emit lastUsedColorsChanged(d->lastUsedColors);
 }
 
 void ToolSettings::setPreviousTool()

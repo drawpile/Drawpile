@@ -47,7 +47,9 @@ namespace docks {
 	class InputSettings;
 	class LayerList;
 	class PaletteBox;
-	class ColorBox;
+	class ColorPaletteDock;
+	class ColorSpinnerDock;
+	class ColorSliderDock;
 	class Navigator;
 	class Timeline;
 }
@@ -209,7 +211,9 @@ private:
 	docks::BrushPalette *m_dockBrushPalette;
 	docks::InputSettings *m_dockInput;
 	docks::LayerList *m_dockLayers;
-	docks::ColorBox *m_dockColors;
+	docks::ColorPaletteDock *m_dockColorPalette;
+	docks::ColorSpinnerDock *m_dockColorSpinner;
+	docks::ColorSliderDock *m_dockColorSliders;
 	docks::Navigator *m_dockNavigator;
 	docks::Timeline *m_dockTimeline;
 	widgets::ChatBox *m_chatbox;

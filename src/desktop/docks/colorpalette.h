@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2007-2021 Calle Laakkonen
+   Copyright (C) 2007-2022 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,26 +16,28 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COLORBOX_H
-#define COLORBOX_H
+#ifndef COLORPALETTEDOCK_H
+#define COLORPALETTEDOCK_H
 
 #include <QDockWidget>
 
+namespace color_widgets {
+	class ColorPalette;
+}
+
 namespace docks {
 
-class ColorBox : public QDockWidget {
+class ColorPaletteDock : public QDockWidget {
 	Q_OBJECT
 public:
-	ColorBox(const QString& title, QWidget *parent);
-	~ColorBox();
+	ColorPaletteDock(const QString& title, QWidget *parent);
+	~ColorPaletteDock();
 
 public slots:
 	void setColor(const QColor& color);
-	void addLastUsedColor(const QColor &color);
-	void swapLastUsedColors();
 
 signals:
-	void colorChanged(const QColor& color);
+	void colorSelected(const QColor& color);
 
 private slots:
 	void paletteChanged(int index);
@@ -52,23 +54,12 @@ private slots:
 	void paletteDoubleClicked(int index);
 	void paletteRightClicked(int index);
 
-	void updateFromRgbSliders();
-	void updateFromRgbSpinbox();
-	void updateFromHsvSliders();
-	void updateFromHsvSpinbox();
-
-	void updateSettings();
-
 private:
-	QWidget *createPalettePage();
-	QWidget *createSlidersPage();
-	QWidget *createWheelPage();
-	void createSliderPage();
-	void createSpinnerPage();
-
 	struct Private;
 	Private *d;
 };
+
+int findPaletteColor(const color_widgets::ColorPalette &pal, const QColor &color);
 
 }
 

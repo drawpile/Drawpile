@@ -70,7 +70,9 @@ set (
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
 	docks/navigator.cpp 
-	docks/colorbox.cpp
+	docks/colorspinner.cpp
+	docks/colorsliders.cpp
+	docks/colorpalette.cpp
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp

@@ -86,7 +86,9 @@
 #include "docks/toolsettingsdock.h"
 #include "docks/brushpalettedock.h"
 #include "docks/navigator.h"
-#include "docks/colorbox.h"
+#include "docks/colorpalette.h"
+#include "docks/colorspinner.h"
+#include "docks/colorsliders.h"
 #include "docks/layerlistdock.h"
 #include "docks/timeline.h"
 
@@ -138,7 +140,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_dockBrushPalette(nullptr),
 	  m_dockInput(nullptr),
 	  m_dockLayers(nullptr),
-	  m_dockColors(nullptr),
+	  m_dockColorPalette(nullptr),
 	  m_dockNavigator(nullptr),
 	  m_dockTimeline(nullptr),
 	  m_chatbox(nullptr),
@@ -317,8 +319,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 
 	// Color docks
-	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColors, &docks::ColorBox::setColor);
-	connect(m_dockColors, &docks::ColorBox::colorChanged, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorPalette, &docks::ColorPaletteDock::setColor);
+	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorSpinner, &docks::ColorSpinnerDock::setColor);
+	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorSliders, &docks::ColorSliderDock::setColor);
+	connect(m_dockToolSettings, &docks::ToolSettings::lastUsedColorsChanged, m_dockColorSpinner, &docks::ColorSpinnerDock::setLastUsedColors);
+	connect(m_dockToolSettings, &docks::ToolSettings::lastUsedColorsChanged, m_dockColorSliders, &docks::ColorSliderDock::setLastUsedColors);
+	connect(m_dockColorPalette, &docks::ColorPaletteDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_dockColorSpinner, &docks::ColorSpinnerDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+	connect(m_dockColorSliders, &docks::ColorSliderDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 
 	// Navigator <-> View
 	connect(m_dockNavigator, &docks::Navigator::focusMoved, m_view, &widgets::CanvasView::scrollTo);
@@ -343,7 +351,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
-	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockColors, &docks::ColorBox::addLastUsedColor);
+	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
 
 	connect(m_canvasscene, &drawingboard::CanvasScene::annotationDeleted, this, [this](int id) {
@@ -2771,7 +2779,8 @@ void MainWindow::setupActions()
 	biggerbrush->setAutoRepeat(true);
 
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
-	connect(swapcolors, &QAction::triggered, m_dockColors, &docks::ColorBox::swapLastUsedColors);
+	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapLastUsedColors);
+
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->quickAdjustCurrent1(-1); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->quickAdjustCurrent1(1); });
 
@@ -2908,11 +2917,21 @@ void MainWindow::createDocks()
 	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
 	m_dockBrushPalette->connectBrushSettings(brushSettings);
 
-	// Create color box
-	m_dockColors = new docks::ColorBox(tr("Color"), this);
-	m_dockColors->setObjectName("colordock");
+	// Create color docks
+	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Color Wheel"), this);
+	m_dockColorSpinner->setObjectName("colorspinnerdock");
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSpinner);
 
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColors);
+	m_dockColorPalette = new docks::ColorPaletteDock(tr("Palette"), this);
+	m_dockColorPalette->setObjectName("colorpalettedock");
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorPalette);
+
+	m_dockColorSliders = new docks::ColorSliderDock(tr("Color Sliders"), this);
+	m_dockColorSliders->setObjectName("colorsliderdock");
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
+
+	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
+	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);
 
 	// Create layer list
 	m_dockLayers = new docks::LayerList(this);
