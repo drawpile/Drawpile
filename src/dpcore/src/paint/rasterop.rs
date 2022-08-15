@@ -286,7 +286,7 @@ fn alpha_mask_erase(base: &mut [Pixel], mask: &[u8], opacity: u32) {
 // See also MyPaint's draw_dab_pixels_BlendMode_Normal_and_Eraser.
 fn alpha_mask_blend_erase(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
     debug_assert!(base.len() == mask.len());
-    let c = color.into_work();
+    let c = unpremultiply_pixel(color).into_work();
 
     for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
         let bp = dp.into_work();
