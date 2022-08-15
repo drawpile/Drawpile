@@ -249,14 +249,23 @@ impl BrushState for MyPaintBrushState {
     }
 
     fn stroke_to(&mut self, x: f32, y: f32, p: f32, delta_msec: i64, source: Option<&BitmapLayer>) {
+        let mut surface = MyPaintSurface::new(source, &mut self.target);
         if !self.in_progress {
             self.in_progress = true;
             unsafe {
-                c::mypaint_brush_reset(self.brush);
                 c::mypaint_brush_new_stroke(self.brush);
+                // Generate a phantom stroke point with zero pressure and a
+                // really high delta time to separate this stroke from the last.
+                // This is because libmypaint actually expects you to transmit
+                // strokes even when the pen is in the air, which is not how
+                // Drawpile works. Generating this singular pen-in-air event
+                // makes it behave properly though. Or arguably better than in
+                // MyPaint, since when you crank up the smoothing really high
+                // there and move the pen really fast, you can get strokes from
+                // when your pen wasn't on the tablet, which is just weird.
+                c::mypaint_brush_stroke_to(self.brush, surface.get_raw(), x, y, 0.0, 0.0, 0.0, 1000.0);
             }
         }
-        let mut surface = MyPaintSurface::new(source, &mut self.target);
         let delta_sec = (delta_msec as f64) / 1000.0f64;
         unsafe {
             c::mypaint_brush_stroke_to(self.brush, surface.get_raw(), x, y, p, 0.0, 0.0, delta_sec);
@@ -265,6 +274,7 @@ impl BrushState for MyPaintBrushState {
 
     fn end_stroke(&mut self) {
         self.in_progress = false;
+        unsafe { c::mypaint_brush_reset(self.brush) }
     }
 
     fn write_dabs(&mut self, user_id: u8, writer: &mut MessageWriter) {

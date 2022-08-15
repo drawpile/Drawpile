@@ -49,6 +49,7 @@ void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 
 	m_drawing = true;
 	m_firstPoint = true;
+	m_lastTimestamp = QDateTime::currentMSecsSinceEpoch();
 
 	owner.setBrushEngineBrush(m_brushengine);
 
@@ -69,7 +70,6 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
-		m_lastTimestamp = 0;
 
 		rustpile::write_undopoint(writer, owner.client()->myId());
 
