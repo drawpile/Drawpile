@@ -4,6 +4,7 @@
  * Fixed mouse droppings when for large brush outline widths
  * Fixed laser trail persistence selection
  * Split color wheel, sliders and palette into separate docks
+ * Fixed "no guest logins" checkbox eanbled state
 
 2022-08-11 Version 2.2 beta2
  * Fixed smudge color sampling mask offset

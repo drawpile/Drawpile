@@ -153,7 +153,6 @@ void SessionSettingsDialog::showEvent(QShowEvent *event)
 
 void SessionSettingsDialog::reloadSettings()
 {
-	qInfo("Realoding settings");
 	const auto listservers = sessionlisting::ListServerModel::listServers(false);
 	auto *addAnnouncementMenu = m_ui->addAnnouncement->menu();
 	auto *addPrivateAnnouncementMenu = m_ui->addPrivateAnnouncement->menu();
@@ -192,6 +191,9 @@ void SessionSettingsDialog::setAutoResetEnabled(bool enable)
 void SessionSettingsDialog::setAuthenticated(bool auth)
 {
 	m_isAuth = auth;
+	// auth-only can only be enabled if the current user is authenticated,
+	// otherwise it's possible to accidentally lock yourself out.
+	m_ui->authOnly->setEnabled(m_op && (m_isAuth || m_ui->authOnly->isChecked()));
 }
 
 void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
@@ -204,7 +206,9 @@ void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(acl, &canvas::AclState::localOpChanged, this, &SessionSettingsDialog::onOperatorModeChanged);
 	connect(acl, &canvas::AclState::featureTiersChanged, this, &SessionSettingsDialog::onFeatureTiersChanged);
 
+	onOperatorModeChanged(acl->amOperator());
 	onFeatureTiersChanged(acl->featureTiers());
+
 }
 
 void SessionSettingsDialog::onOperatorModeChanged(bool op)
@@ -402,12 +406,7 @@ void SessionSettingsDialog::changeSesionConf(const QString &key, const QJsonValu
 void SessionSettingsDialog::titleChanged(const QString &title) { changeSesionConf("title", title); }
 void SessionSettingsDialog::maxUsersChanged() { changeSesionConf("maxUserCount", m_ui->maxUsers->value()); }
 void SessionSettingsDialog::denyJoinsChanged(bool set) { changeSesionConf("closed", set); }
-void SessionSettingsDialog::authOnlyChanged(bool set)
-{
-	changeSesionConf("authOnly", set);
-	if(!set && !m_isAuth)
-		m_ui->authOnly->setEnabled(false);
-}
+void SessionSettingsDialog::authOnlyChanged(bool set) { changeSesionConf("authOnly", set); }
 
 void SessionSettingsDialog::autoresetThresholdChanged() { changeSesionConf("resetThreshold", int(m_ui->autoresetThreshold->value()* 1024 * 1024)); }
 void SessionSettingsDialog::keepChatChanged(bool set) { changeSesionConf("preserveChat", set); }
