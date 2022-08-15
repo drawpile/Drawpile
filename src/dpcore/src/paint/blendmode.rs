@@ -45,11 +45,17 @@ pub enum Blendmode {
 
 impl Blendmode {
     pub fn can_decrease_opacity(self) -> bool {
-        matches!(self, Blendmode::Erase | Blendmode::ColorErase | Blendmode::Replace)
+        matches!(
+            self,
+            Blendmode::Erase | Blendmode::ColorErase | Blendmode::Replace
+        )
     }
 
     pub fn can_increase_opacity(self) -> bool {
-        matches!(self, Blendmode::Normal | Blendmode::Behind | Blendmode::Replace)
+        matches!(
+            self,
+            Blendmode::Normal | Blendmode::Behind | Blendmode::Replace
+        )
     }
 
     pub fn svg_name(self) -> &'static str {

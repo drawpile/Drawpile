@@ -688,7 +688,6 @@ SetTimelineFrame:
         - frame u16
         - insert bool
         - layers vec_u16: hex
-          min_len: 12
           max_len: 12
 
 RemoveTimelineFrame:

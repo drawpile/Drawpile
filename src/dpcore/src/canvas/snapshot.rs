@@ -116,6 +116,27 @@ pub fn make_canvas_snapshot(
             value: md.framerate,
         },
     )));
+    if md.use_timeline {
+        msgs.push(Message::Command(CommandMessage::SetMetadataInt(
+            user,
+            SetMetadataIntMessage {
+                field: u8::from(MetadataInt::UseTimeline),
+                value: 1,
+            },
+        )));
+    }
+
+    // Timeline
+    for (i, f) in layerstack.timeline().frames.iter().enumerate() {
+        msgs.push(Message::Command(CommandMessage::SetTimelineFrame(
+            user,
+            SetTimelineFrameMessage {
+                frame: i as u16,
+                insert: false,
+                layers: f.iter().collect(),
+            },
+        )));
+    }
 
     // ACLs
     if let Some(acl) = aclfilter {

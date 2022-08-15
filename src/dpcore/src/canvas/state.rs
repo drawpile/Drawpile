@@ -32,7 +32,6 @@ use crate::paint::{
 use crate::protocol::message::*;
 
 use std::convert::TryFrom;
-use std::convert::TryInto;
 use std::mem;
 use std::ops::BitOrAssign;
 use std::sync::Arc;
@@ -521,7 +520,7 @@ impl CanvasState {
             return CanvasStateChange::nothing();
         }
 
-        let f = Frame(msg.layers.clone().try_into().unwrap());
+        let f = Frame::try_from(&msg.layers[..]).unwrap_or_default();
 
         let timeline = Arc::make_mut(&mut self.layerstack).timeline_mut();
         if frame == timeline.frames.len() {

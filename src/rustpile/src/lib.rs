@@ -1,5 +1,9 @@
 // lint: allow unsafe pointer dereference since this is a FFI crate
-#![allow(clippy::not_unsafe_ptr_arg_deref, clippy::missing_safety_doc, clippy::unusual_byte_groupings)]
+#![allow(
+    clippy::not_unsafe_ptr_arg_deref,
+    clippy::missing_safety_doc,
+    clippy::unusual_byte_groupings
+)]
 
 mod adapters;
 pub mod blendmode_ffi;

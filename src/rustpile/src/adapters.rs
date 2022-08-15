@@ -40,7 +40,11 @@ pub fn flatten_layerinfo(root: &RootGroup) -> Vec<LayerInfo> {
             let metadata = l.metadata();
             match l {
                 Layer::Group(g) => {
-                    let frame_id = if frame_id == 0 && metadata.isolated { metadata.id } else { frame_id };
+                    let frame_id = if frame_id == 0 && metadata.isolated {
+                        metadata.id
+                    } else {
+                        frame_id
+                    };
                     let info = LayerInfo::new(
                         metadata,
                         frame_id,

@@ -93,9 +93,9 @@ enum Commands {
         input: String,
 
         /// Extract snapshot at the given index
-        #[clap(short='x', long, value_name="INDEX")]
+        #[clap(short = 'x', long, value_name = "INDEX")]
         extract: Option<usize>,
-    }
+    },
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::Subscriber::builder()
@@ -137,9 +137,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             render_recording(&opts)
         }
-        Commands::Index { input } => {
-            index_recording(&input)
-        }
+        Commands::Index { input } => index_recording(&input),
         Commands::DecodeIndex { input, extract } => {
             if let Some(idx) = extract {
                 extract_snapshot(&input, idx)

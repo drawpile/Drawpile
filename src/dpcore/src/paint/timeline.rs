@@ -64,6 +64,20 @@ impl Default for Timeline {
     }
 }
 
+impl TryFrom<&[LayerID]> for Frame {
+    type Error = ();
+
+    fn try_from(layers: &[LayerID]) -> Result<Self, Self::Error> {
+        if layers.len() > 12 {
+            Err(())
+        } else {
+            let mut f = Frame::empty();
+            f.0[..layers.len()].copy_from_slice(layers);
+            Ok(f)
+        }
+    }
+}
+
 impl Frame {
     pub fn single(layer: LayerID) -> Self {
         Self([layer, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
@@ -74,14 +88,11 @@ impl Frame {
     }
 
     pub fn contains(&self, layer: LayerID) -> bool {
-        for l in self.0 {
-            if layer == l {
-                return true;
-            } else if l == 0 {
-                break;
-            }
-        }
-        false
+        self.iter().any(|l| l == layer)
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = LayerID> + '_ {
+        self.0.iter().copied().take_while(|&f| f != 0)
     }
 
     /// Find the given layer in the list of frames
@@ -93,6 +104,12 @@ impl Frame {
             }
         }
         None
+    }
+}
+
+impl Default for Frame {
+    fn default() -> Self {
+        Self::empty()
     }
 }
 

@@ -1384,7 +1384,7 @@ pub struct SetTimelineFrameMessage {
 
 impl SetTimelineFrameMessage {
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
-        reader.validate(27, 27)?;
+        reader.validate(3, 27)?;
 
         let frame = reader.read::<u16>();
         let insert = reader.read::<bool>();
@@ -1398,7 +1398,7 @@ impl SetTimelineFrameMessage {
     }
 
     fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(163, user_id, 27);
+        w.write_header(163, user_id, 3 + (self.layers.len() * 2));
         w.write(self.frame);
         w.write(self.insert);
         w.write(&self.layers);
