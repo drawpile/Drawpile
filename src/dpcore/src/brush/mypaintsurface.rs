@@ -103,7 +103,9 @@ unsafe extern "C" fn get_color(
     *color_r = color.r;
     *color_g = color.g;
     *color_b = color.b;
-    *color_a = color.a;
+    // Fudge the alpha a small amount to account for rounding errors so that
+    // transparency errors don't accumulate quite as fast when blending.
+    *color_a = (color.a + (0.5 / 256.0)).min(1.0);
 }
 
 unsafe extern "C" fn begin_atomic(_parent: *mut c::MyPaintSurface) {
