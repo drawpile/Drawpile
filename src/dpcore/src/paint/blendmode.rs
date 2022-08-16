@@ -44,6 +44,7 @@ pub enum Blendmode {
     LuminosityShineSai,
     Overlay,
     HardLight,
+    SoftLight,
     Replace = 255,
 }
 
@@ -90,6 +91,7 @@ impl Blendmode {
             LuminosityShineSai => "krita:luminosity_sai",
             Overlay => "svg:overlay",
             HardLight => "svg:hard-light",
+            SoftLight => "svg:soft-light",
             Replace => "-dp-replace",
         }
     }
@@ -118,6 +120,7 @@ impl Blendmode {
             "krita:luminosity_sai" => LuminosityShineSai,
             "overlay" => Overlay,
             "hard-light" => HardLight,
+            "soft-light" => SoftLight,
             _ => {
                 return None;
             }

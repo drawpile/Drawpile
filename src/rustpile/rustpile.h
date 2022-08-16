@@ -73,6 +73,7 @@ enum class Blendmode : uint8_t {
   LuminosityShineSai,
   Overlay,
   HardLight,
+  SoftLight,
   Replace = 255,
 };
 
