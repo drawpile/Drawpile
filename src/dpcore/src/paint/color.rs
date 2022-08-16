@@ -174,7 +174,7 @@ impl Color {
             } else {
                 (r - g) / d + 4.0
             } * 60.0;
-            let h = if raw_h < 0.0 { raw_h + 360.0 } else { raw_h } / 360.0;
+            let h = if raw_h < 0.0 { raw_h + 360.0 } else { raw_h };
             let s = d / v;
             (h, s, v)
         }
