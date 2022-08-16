@@ -111,9 +111,9 @@ impl MyPaintTarget for MyPaintBrushStateTarget {
         let mut dab = MyPaintDab {
             x: 0i8,
             y: 0i8,
-            size: (radius * 512.0).clamp(0.0, 65535.0) as u16,
-            hardness: (hardness * 255.0).clamp(0.0, 255.0) as u8,
-            opacity: (opacity * 255.0).clamp(0.0, 255.0) as u8,
+            size: (radius * 512.0 + 0.5).clamp(0.0, 65535.0) as u16,
+            hardness: (hardness * 255.0 + 0.5).clamp(0.0, 255.0) as u8,
+            opacity: (opacity * 255.0 + 0.5).clamp(0.0, 255.0) as u8,
             angle: angle_to_u8(angle),
             aspect_ratio: aspect_ratio_to_u8(aspect_ratio),
         };
@@ -125,7 +125,7 @@ impl MyPaintTarget for MyPaintBrushStateTarget {
         self.last_dab_x = dab_x;
         self.last_dab_y = dab_y;
 
-        let dab_color = color.as_argb32();
+        let dab_color = color.as_rounded_argb32();
         let dab_lock_alpha = if self.erase {
             0u8 // Erasing and locking alpha are at odds with each other.
         } else if self.lock_alpha {

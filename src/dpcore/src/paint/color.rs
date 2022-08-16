@@ -149,6 +149,14 @@ impl Color {
             | ((self.a * 255.0) as u32) << 24
     }
 
+    // Like as_argb32, but the value is rounded instead of floored.
+    pub fn as_rounded_argb32(&self) -> u32 {
+        ((self.r * 255.0 + 0.5) as u32) << 16
+            | ((self.g * 255.0 + 0.5) as u32) << 8
+            | ((self.b * 255.0 + 0.5) as u32)
+            | ((self.a * 255.0 + 0.5) as u32) << 24
+    }
+
     pub fn as_hsv(&self) -> (f32, f32, f32) {
         let r = self.r;
         let g = self.g;
