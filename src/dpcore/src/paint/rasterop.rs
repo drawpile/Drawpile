@@ -51,23 +51,24 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
 }
 
 pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode, opacity: u8) {
+    let o = opacity as u32;
     #[allow(unreachable_patterns)]
     match mode {
-        Blendmode::Normal => alpha_mask_blend(base, color, mask, opacity as u32),
-        Blendmode::Erase => alpha_mask_erase(base, mask, opacity as u32),
-        Blendmode::Multiply => mask_composite(comp_op_multiply, base, color, mask, opacity as u32),
-        Blendmode::Divide => mask_composite(comp_op_divide, base, color, mask, opacity as u32),
-        Blendmode::Darken => mask_composite(comp_op_darken, base, color, mask, opacity as u32),
-        Blendmode::Lighten => mask_composite(comp_op_lighten, base, color, mask, opacity as u32),
-        Blendmode::Dodge => mask_composite(comp_op_dodge, base, color, mask, opacity as u32),
-        Blendmode::Burn => mask_composite(comp_op_burn, base, color, mask, opacity as u32),
-        Blendmode::Add => mask_composite(comp_op_add, base, color, mask, opacity as u32),
-        Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask, opacity as u32),
-        Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask, opacity as u32),
-        Blendmode::Behind => alpha_mask_under(base, color, mask, opacity as u32),
-        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, opacity as u32),
-        Blendmode::ColorErase => mask_color_erase(base, color, mask, opacity as u32),
-        Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, opacity as u32),
+        Blendmode::Normal => alpha_mask_blend(base, color, mask, o),
+        Blendmode::Erase => alpha_mask_erase(base, mask, o),
+        Blendmode::Multiply => mask_composite(comp_op_multiply, base, color, mask, o),
+        Blendmode::Divide => mask_composite(comp_op_divide, base, color, mask, o),
+        Blendmode::Darken => mask_composite(comp_op_darken, base, color, mask, o),
+        Blendmode::Lighten => mask_composite(comp_op_lighten, base, color, mask, o),
+        Blendmode::Dodge => mask_composite(comp_op_dodge, base, color, mask, o),
+        Blendmode::Burn => mask_composite(comp_op_burn, base, color, mask, o),
+        Blendmode::Add => mask_composite(comp_op_add, base, color, mask, o),
+        Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask, o),
+        Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask, o),
+        Blendmode::Behind => alpha_mask_under(base, color, mask, o),
+        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, o),
+        Blendmode::ColorErase => mask_color_erase(base, color, mask, o),
+        Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, o),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
