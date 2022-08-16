@@ -43,6 +43,8 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::ColorErase => pixel_color_erase(base, over, opacity),
         Blendmode::Screen => pixel_composite(comp_op_screen, base, over, opacity),
         Blendmode::LuminosityShineSai => pixel_luminosity_shine_sai(base, over, opacity),
+        Blendmode::Overlay => pixel_composite(comp_op_overlay, base, over, opacity),
+        Blendmode::HardLight => pixel_composite(comp_op_hard_light, base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
         _m => {
             #[cfg(debug_assertions)]
@@ -71,6 +73,8 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::ColorErase => mask_color_erase(base, color, mask, o),
         Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, o),
         Blendmode::LuminosityShineSai => mask_luminosity_shine_sai(base, color, mask, o),
+        Blendmode::Overlay => mask_composite(comp_op_overlay, base, color, mask, o),
+        Blendmode::HardLight => mask_composite(comp_op_hard_light, base, color, mask, o),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -373,6 +377,19 @@ fn comp_op_multiply(a: u32, b: u32) -> u32 {
 
 fn comp_op_screen(a: u32, b: u32) -> u32 {
     255 - u8_mult(255 - a, 255 - b)
+}
+
+fn comp_op_overlay(a: u32, b: u32) -> u32 {
+    comp_op_hard_light(b, a)
+}
+
+fn comp_op_hard_light(a: u32, b: u32) -> u32 {
+    let b2 = b * 2;
+    if b2 <= 255 {
+        comp_op_multiply(a, b2)
+    } else {
+        comp_op_screen(a, b2 - 255)
+    }
 }
 
 fn comp_op_divide(a: u32, b: u32) -> u32 {

@@ -75,6 +75,11 @@ static const BlendModeInfo BLEND_MODE[] = {
 		UniversalMode
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "Overlay"),
+		Blendmode::Overlay,
+		UniversalMode
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Divide"),
 		Blendmode::Divide,
 		UniversalMode
@@ -113,6 +118,11 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
 		Blendmode::Erase,
 		LayerMode
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
+		Blendmode::HardLight,
+		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Luminosity/Shine (SAI)"),

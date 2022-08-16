@@ -42,6 +42,8 @@ pub enum Blendmode {
     Screen,
     NormalAndEraser,
     LuminosityShineSai,
+    Overlay,
+    HardLight,
     Replace = 255,
 }
 
@@ -86,6 +88,8 @@ impl Blendmode {
             Screen => "svg:screen",
             NormalAndEraser => "-dp-normal-and-eraser",
             LuminosityShineSai => "krita:luminosity_sai",
+            Overlay => "svg:overlay",
+            HardLight => "svg:hard-light",
             Replace => "-dp-replace",
         }
     }
@@ -112,6 +116,8 @@ impl Blendmode {
             "-dp-replace" => Replace,
             "-dp-normal-and-eraser" => NormalAndEraser,
             "krita:luminosity_sai" => LuminosityShineSai,
+            "overlay" => Overlay,
+            "hard-light" => HardLight,
             _ => {
                 return None;
             }
