@@ -70,6 +70,7 @@ enum class Blendmode : uint8_t {
   ColorErase,
   Screen,
   NormalAndEraser,
+  LuminosityShineSai,
   Replace = 255,
 };
 

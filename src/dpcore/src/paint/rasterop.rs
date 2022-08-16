@@ -42,6 +42,7 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::Behind => alpha_pixel_under(base, over, opacity),
         Blendmode::ColorErase => pixel_color_erase(base, over, opacity),
         Blendmode::Screen => pixel_composite(comp_op_screen, base, over, opacity),
+        Blendmode::LuminosityShineSai => pixel_luminosity_shine_sai(base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
         _m => {
             #[cfg(debug_assertions)]
@@ -69,6 +70,7 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, o),
         Blendmode::ColorErase => mask_color_erase(base, color, mask, o),
         Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, o),
+        Blendmode::LuminosityShineSai => mask_luminosity_shine_sai(base, color, mask, o),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -229,6 +231,48 @@ fn mask_color_erase(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32)
         color_erase(&mut dc, &c);
         *dp = dc.as_pixel();
     }
+}
+
+// This blend mode is from Paint Tool SAI, version 1 calls it "Luminosity",
+// version 2 calls it "Shine". Krita calls it "Luminosity/Shine (SAI)", so we
+// do too. It works by Normal blending the new pixel with a fully opaque black
+// pixel and then compositing the result via Addition.
+
+fn pixel_luminosity_shine_sai(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
+    let o = opacity as u32;
+    for (dp, sp) in base.iter_mut().zip(over.iter()) {
+        *dp = apply_luminosity_shine(*dp, [sp[0] as u32, sp[1] as u32, sp[2] as u32], o);
+    }
+}
+
+fn mask_luminosity_shine_sai(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
+    debug_assert!(base.len() == mask.len());
+    let c = [color[0] as u32, color[1] as u32, color[2] as u32];
+    for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
+        *dp = apply_luminosity_shine(*dp, c, u8_mult(mask as u32, opacity));
+    }
+}
+
+fn apply_luminosity_shine(dp: Pixel, sp: [u32; 3], o: u32) -> Pixel {
+    let dc = unpremultiply_pixel(dp);
+    premultiply_pixel([
+        u8_blend(
+            comp_op_add(dc[0] as u32, u8_mult(sp[0], o)) as i32,
+            dc[0] as i32,
+            o as i32,
+        ) as u8,
+        u8_blend(
+            comp_op_add(dc[1] as u32, u8_mult(sp[1], o)) as i32,
+            dc[1] as i32,
+            o as i32,
+        ) as u8,
+        u8_blend(
+            comp_op_add(dc[2] as u32, u8_mult(sp[2], o)) as i32,
+            dc[2] as i32,
+            o as i32,
+        ) as u8,
+        dc[3],
+    ])
 }
 
 fn pixel_replace(base: &mut [Pixel], over: &[Pixel], opacity: u8) {

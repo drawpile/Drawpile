@@ -114,6 +114,11 @@ static const BlendModeInfo BLEND_MODE[] = {
 		Blendmode::Erase,
 		LayerMode
 	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Luminosity/Shine (SAI)"),
+		Blendmode::LuminosityShineSai,
+		UniversalMode
+	},
 };
 
 static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);
