@@ -157,12 +157,20 @@ impl Color {
             | ((self.a * 255.0 + 0.5) as u32) << 24
     }
 
+    pub fn min_component(&self) -> f32 {
+        min_by(self.r, min_by(self.g, self.b, compare_floats), compare_floats)
+    }
+
+    pub fn max_component(&self) -> f32 {
+        max_by(self.r, max_by(self.g, self.b, compare_floats), compare_floats)
+    }
+
     pub fn as_hsv(&self) -> (f32, f32, f32) {
         let r = self.r;
         let g = self.g;
         let b = self.b;
-        let m = min_by(r, min_by(g, b, compare_floats), compare_floats);
-        let v = max_by(r, max_by(g, b, compare_floats), compare_floats);
+        let m = self.min_component();
+        let v = self.max_component();
         let d = v - m;
         if d == 0.0 {
             (0.0, 0.0, v)

@@ -48,6 +48,10 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::SoftLight => pixel_composite(comp_op_soft_light, base, over, opacity),
         Blendmode::LinearBurn => pixel_composite(comp_op_linear_burn, base, over, opacity),
         Blendmode::LinearLight => pixel_composite(comp_op_linear_light, base, over, opacity),
+        Blendmode::Hue => pixel_composite_nonseparable(comp_op_hue, base, over, opacity),
+        Blendmode::Saturation => pixel_composite_nonseparable(comp_op_sat, base, over, opacity),
+        Blendmode::Luminosity => pixel_composite_nonseparable(comp_op_lum, base, over, opacity),
+        Blendmode::Color => pixel_composite_nonseparable(comp_op_color, base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
         _m => {
             #[cfg(debug_assertions)]
@@ -81,6 +85,10 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::SoftLight => mask_composite(comp_op_soft_light, base, color, mask, o),
         Blendmode::LinearBurn => mask_composite(comp_op_linear_burn, base, color, mask, o),
         Blendmode::LinearLight => mask_composite(comp_op_linear_light, base, color, mask, o),
+        Blendmode::Hue => mask_composite_nonseparable(comp_op_hue, base, color, mask, o),
+        Blendmode::Saturation => mask_composite_nonseparable(comp_op_sat, base, color, mask, o),
+        Blendmode::Luminosity => mask_composite_nonseparable(comp_op_lum, base, color, mask, o),
+        Blendmode::Color => mask_composite_nonseparable(comp_op_color, base, color, mask, o),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -138,6 +146,67 @@ const U8_SQRT_LOOKUP: [u32; 256] = [
 
 fn u8_sqrt(a: u32) -> u32 {
     U8_SQRT_LOOKUP[a as usize]
+}
+
+// These functions are as according to https://www.w3.org/TR/compositing/#blendingnonseparable
+
+fn lum(c: Color) -> f32 {
+    0.3 * c.r + 0.59 * c.g + 0.11 * c.b
+}
+
+fn clip_color(c: &mut Color) {
+    let l = lum(*c);
+    let n = c.min_component();
+    let x = c.max_component();
+    if n < 0.0 {
+        c.r = l + (((c.r - l) * l) / (l - n));
+        c.g = l + (((c.g - l) * l) / (l - n));
+        c.b = l + (((c.b - l) * l) / (l - n));
+    }
+    if x > 1.0 {
+        c.r = l + (((c.r - l) * (1.0 - l)) / (x - l));
+        c.g = l + (((c.g - l) * (1.0 - l)) / (x - l));
+        c.b = l + (((c.b - l) * (1.0 - l)) / (x - l));
+    }
+}
+
+fn set_lum(c: &mut Color, l: f32) {
+    let d = l - lum(*c);
+    c.r = c.r + d;
+    c.g = c.g + d;
+    c.b = c.b + d;
+    clip_color(c);
+}
+
+fn sat(c: Color) -> f32 {
+    return c.max_component() - c.min_component();
+}
+
+fn set_sat(c: &mut Color, s: f32) {
+    let mut rgb = [c.r, c.g, c.b];
+    let mut min = 0usize;
+    let mut mid = 1usize;
+    let mut max = 2usize;
+    if rgb[max] < rgb[mid] {
+        (max, mid) = (mid, max);
+    }
+    if rgb[max] < rgb[min] {
+        (max, min) = (min, max);
+    }
+    if rgb[mid] < rgb[min] {
+        (mid, min) = (min, mid);
+    }
+
+    if rgb[max] > rgb[min] {
+        rgb[mid] = ((rgb[mid] - rgb[min]) * s) / (rgb[max] - rgb[min]);
+        rgb[max] = s;
+    } else {
+        rgb[mid] = 0.0;
+        rgb[max] = 0.0;
+    }
+    rgb[min] = 0.0;
+
+    (c.r, c.g, c.b) = (rgb[0], rgb[1], rgb[2]);
 }
 
 /// Perform a premultiplied alpha blend operation on a slice of 32 bit ARGB pixels
@@ -477,6 +546,37 @@ fn comp_op_recolor(_: u32, b: u32) -> u32 {
     b
 }
 
+fn comp_op_hue(dc: Pixel, sc: Pixel) -> Pixel {
+    let cb = Color::from_unpremultiplied_pixel(dc);
+    let mut cr = Color::from_unpremultiplied_pixel(sc);
+    set_sat(&mut cr, sat(cb));
+    set_lum(&mut cr, lum(cb));
+    cr.as_unpremultiplied_pixel()
+}
+
+fn comp_op_sat(dc: Pixel, sc: Pixel) -> Pixel {
+    let cb = Color::from_unpremultiplied_pixel(dc);
+    let cs = Color::from_unpremultiplied_pixel(sc);
+    let mut cr = cb;
+    set_sat(&mut cr, sat(cs));
+    set_lum(&mut cr, lum(cb));
+    cr.as_unpremultiplied_pixel()
+}
+
+fn comp_op_lum(dc: Pixel, sc: Pixel) -> Pixel {
+    let cs = Color::from_unpremultiplied_pixel(sc);
+    let mut cr = Color::from_unpremultiplied_pixel(dc);
+    set_lum(&mut cr, lum(cs));
+    cr.as_unpremultiplied_pixel()
+}
+
+fn comp_op_color(dc: Pixel, sc: Pixel) -> Pixel {
+    let cb = Color::from_unpremultiplied_pixel(dc);
+    let mut cr = Color::from_unpremultiplied_pixel(sc);
+    set_lum(&mut cr, lum(cb));
+    cr.as_unpremultiplied_pixel()
+}
+
 /// Generic alpha-preserving compositing operations
 fn pixel_composite(comp_op: fn(u32, u32) -> u32, base: &mut [Pixel], over: &[Pixel], opacity: u8) {
     for (dp, sp) in base.iter_mut().zip(over.iter()) {
@@ -524,6 +624,50 @@ fn mask_composite(
             u8_blend(comp_op(d[0] as u32, c[0] as u32) as i32, d[0] as i32, mask) as u8,
             u8_blend(comp_op(d[1] as u32, c[1] as u32) as i32, d[1] as i32, mask) as u8,
             u8_blend(comp_op(d[2] as u32, c[2] as u32) as i32, d[2] as i32, mask) as u8,
+            d[3],
+        ]);
+    }
+}
+
+fn pixel_composite_nonseparable(
+    comp_op: fn(Pixel, Pixel) -> Pixel,
+    base: &mut [Pixel],
+    over: &[Pixel],
+    opacity: u8,
+) {
+    for (dp, sp) in base.iter_mut().zip(over.iter()) {
+        let dc = unpremultiply_pixel(*dp);
+        let rc = comp_op(dc, unpremultiply_pixel(*sp));
+        let alpha = u8_mult(sp[ALPHA_CHANNEL] as u32, opacity as u32) as i32;
+
+        *dp = premultiply_pixel([
+            u8_blend(rc[0] as i32, dc[0] as i32, alpha) as u8,
+            u8_blend(rc[1] as i32, dc[1] as i32, alpha) as u8,
+            u8_blend(rc[2] as i32, dc[2] as i32, alpha) as u8,
+            dc[3],
+        ]);
+    }
+}
+
+fn mask_composite_nonseparable(
+    comp_op: fn(Pixel, Pixel) -> Pixel,
+    base: &mut [Pixel],
+    color: Pixel,
+    mask: &[u8],
+    opacity: u32,
+) {
+    debug_assert!(base.len() == mask.len());
+    let c = unpremultiply_pixel(color);
+
+    for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
+        let d = unpremultiply_pixel(*dp);
+        let r = comp_op(d, c);
+        let mask = u8_mult(mask as u32, opacity) as i32;
+
+        *dp = premultiply_pixel([
+            u8_blend(r[0] as i32, d[0] as i32, mask) as u8,
+            u8_blend(r[1] as i32, d[1] as i32, mask) as u8,
+            u8_blend(r[2] as i32, d[2] as i32, mask) as u8,
             d[3],
         ]);
     }

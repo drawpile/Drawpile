@@ -144,6 +144,26 @@ static const BlendModeInfo BLEND_MODE[] = {
 		Blendmode::LuminosityShineSai,
 		UniversalMode
 	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Hue"),
+		Blendmode::Hue,
+		UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Saturation"),
+		Blendmode::Saturation,
+		UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Luminosity"),
+		Blendmode::Luminosity,
+		UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Color"),
+		Blendmode::Color,
+		UniversalMode
+	},
 };
 
 static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);

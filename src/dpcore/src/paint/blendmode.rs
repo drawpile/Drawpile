@@ -47,6 +47,10 @@ pub enum Blendmode {
     SoftLight,
     LinearBurn,
     LinearLight,
+    Hue,
+    Saturation,
+    Luminosity,
+    Color,
     Replace = 255,
 }
 
@@ -96,6 +100,10 @@ impl Blendmode {
             SoftLight => "svg:soft-light",
             LinearBurn => "krita:linear_burn",
             LinearLight => "krita:linear light",
+            Hue => "hue",
+            Saturation => "saturation",
+            Luminosity => "luminosity",
+            Color => "color",
             Replace => "-dp-replace",
         }
     }
@@ -127,6 +135,10 @@ impl Blendmode {
             "soft-light" => SoftLight,
             "krita:linear_burn" => LinearBurn,
             "krita:linear light" => LinearLight,
+            "hue" => Hue,
+            "saturation" => Saturation,
+            "luminosity" => Luminosity,
+            "color" => Color,
             _ => {
                 return None;
             }

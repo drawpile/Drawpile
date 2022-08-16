@@ -76,6 +76,10 @@ enum class Blendmode : uint8_t {
   SoftLight,
   LinearBurn,
   LinearLight,
+  Hue,
+  Saturation,
+  Luminosity,
+  Color,
   Replace = 255,
 };
 
