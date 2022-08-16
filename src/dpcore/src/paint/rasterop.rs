@@ -46,6 +46,8 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::Overlay => pixel_composite(comp_op_overlay, base, over, opacity),
         Blendmode::HardLight => pixel_composite(comp_op_hard_light, base, over, opacity),
         Blendmode::SoftLight => pixel_composite(comp_op_soft_light, base, over, opacity),
+        Blendmode::LinearBurn => pixel_composite(comp_op_linear_burn, base, over, opacity),
+        Blendmode::LinearLight => pixel_composite(comp_op_linear_light, base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
         _m => {
             #[cfg(debug_assertions)]
@@ -77,6 +79,8 @@ pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode
         Blendmode::Overlay => mask_composite(comp_op_overlay, base, color, mask, o),
         Blendmode::HardLight => mask_composite(comp_op_hard_light, base, color, mask, o),
         Blendmode::SoftLight => mask_composite(comp_op_soft_light, base, color, mask, o),
+        Blendmode::LinearBurn => mask_composite(comp_op_linear_burn, base, color, mask, o),
+        Blendmode::LinearLight => mask_composite(comp_op_linear_light, base, color, mask, o),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -459,6 +463,14 @@ fn comp_op_add(a: u32, b: u32) -> u32 {
 
 fn comp_op_subtract(a: u32, b: u32) -> u32 {
     0.max(a as i32 - b as i32) as u32
+}
+
+fn comp_op_linear_burn(a: u32, b: u32) -> u32 {
+    255.max(a + b) - 255
+}
+
+fn comp_op_linear_light(a: u32, b: u32) -> u32 {
+    ((a + 2 * b) as i32 - 255).clamp(0, 255) as u32
 }
 
 fn comp_op_recolor(_: u32, b: u32) -> u32 {

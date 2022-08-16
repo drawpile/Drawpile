@@ -130,6 +130,16 @@ static const BlendModeInfo BLEND_MODE[] = {
 		UniversalMode
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "Linear Burn"),
+		Blendmode::LinearBurn,
+		UniversalMode
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Linear Light"),
+		Blendmode::LinearLight,
+		UniversalMode
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Luminosity/Shine (SAI)"),
 		Blendmode::LuminosityShineSai,
 		UniversalMode

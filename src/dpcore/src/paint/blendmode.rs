@@ -45,6 +45,8 @@ pub enum Blendmode {
     Overlay,
     HardLight,
     SoftLight,
+    LinearBurn,
+    LinearLight,
     Replace = 255,
 }
 
@@ -92,6 +94,8 @@ impl Blendmode {
             Overlay => "svg:overlay",
             HardLight => "svg:hard-light",
             SoftLight => "svg:soft-light",
+            LinearBurn => "krita:linear_burn",
+            LinearLight => "krita:linear light",
             Replace => "-dp-replace",
         }
     }
@@ -121,6 +125,8 @@ impl Blendmode {
             "overlay" => Overlay,
             "hard-light" => HardLight,
             "soft-light" => SoftLight,
+            "krita:linear_burn" => LinearBurn,
+            "krita:linear light" => LinearLight,
             _ => {
                 return None;
             }

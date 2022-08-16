@@ -74,6 +74,8 @@ enum class Blendmode : uint8_t {
   Overlay,
   HardLight,
   SoftLight,
+  LinearBurn,
+  LinearLight,
   Replace = 255,
 };
 
