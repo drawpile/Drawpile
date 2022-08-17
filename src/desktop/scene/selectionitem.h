@@ -35,7 +35,7 @@ public:
 	QRectF boundingRect() const;
 	int type() const { return Type; }
 
-	void marchingAnts();
+	void marchingAnts(double dt);
 
 private slots:
 	void onShapeChanged();

@@ -1223,6 +1223,134 @@ impl DrawDabsPixelMessage {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct MyPaintDab {
+    pub x: i8,
+    pub y: i8,
+    pub size: u16,
+    pub hardness: u8,
+    pub opacity: u8,
+    pub angle: u8,
+    pub aspect_ratio: u8,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DrawDabsMyPaintMessage {
+    pub layer: u16,
+    pub x: i32,
+    pub y: i32,
+    pub color: u32,
+    pub lock_alpha: u8,
+    pub dabs: Vec<MyPaintDab>,
+}
+
+impl DrawDabsMyPaintMessage {
+    pub const MAX_MYPAINTDABS: usize = 8190;
+
+    fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
+        reader.validate(23, 65535)?;
+
+        let layer = reader.read::<u16>();
+        let x = reader.read::<i32>();
+        let y = reader.read::<i32>();
+        let color = reader.read::<u32>();
+        let lock_alpha = reader.read::<u8>();
+        let mut dabs = Vec::<MyPaintDab>::with_capacity(reader.remaining() / 8);
+        while reader.remaining() > 0 {
+            let x = reader.read::<i8>();
+            let y = reader.read::<i8>();
+            let size = reader.read::<u16>();
+            let hardness = reader.read::<u8>();
+            let opacity = reader.read::<u8>();
+            let angle = reader.read::<u8>();
+            let aspect_ratio = reader.read::<u8>();
+            dabs.push(MyPaintDab {
+                x,
+                y,
+                size,
+                hardness,
+                opacity,
+                angle,
+                aspect_ratio,
+            });
+        }
+        Ok(Self {
+            layer,
+            x,
+            y,
+            color,
+            lock_alpha,
+            dabs,
+        })
+    }
+
+    fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
+        w.write_header(151, user_id, 15 + (self.dabs.len() * 8));
+        w.write(self.layer);
+        w.write(self.x);
+        w.write(self.y);
+        w.write(self.color);
+        w.write(self.lock_alpha);
+        for item in self.dabs.iter() {
+            w.write(item.x);
+            w.write(item.y);
+            w.write(item.size);
+            w.write(item.hardness);
+            w.write(item.opacity);
+            w.write(item.angle);
+            w.write(item.aspect_ratio);
+        }
+    }
+
+    fn to_text(&self, txt: TextMessage) -> TextMessage {
+        let mut dabs: Vec<Vec<f64>> = Vec::with_capacity(self.dabs.len());
+        for dab in self.dabs.iter() {
+            dabs.push(vec![
+                dab.x as f64 / 4.0,
+                dab.y as f64 / 4.0,
+                dab.size as f64 / 256.0,
+                dab.hardness as f64,
+                dab.opacity as f64,
+                dab.angle as f64,
+                dab.aspect_ratio as f64,
+            ]);
+        }
+        txt.set("layer", format!("0x{:04x}", self.layer))
+            .set("x", (self.x as f64 / 4.0).to_string())
+            .set("y", (self.y as f64 / 4.0).to_string())
+            .set_argb32("color", self.color)
+            .set("lock_alpha", self.lock_alpha.to_string())
+            .set_dabs(dabs)
+    }
+
+    fn from_text(tm: &TextMessage) -> Self {
+        let mut dab_structs: Vec<MyPaintDab> = Vec::with_capacity(tm.dabs.len());
+        for dab in tm.dabs.iter() {
+            if dab.len() != 7 {
+                continue;
+            }
+            dab_structs.push(MyPaintDab {
+                x: (dab[0] * 4.0) as i8,
+                y: (dab[1] * 4.0) as i8,
+                size: (dab[2] * 256.0) as u16,
+                hardness: (dab[3]) as u8,
+                opacity: (dab[4]) as u8,
+                angle: (dab[5]) as u8,
+                aspect_ratio: (dab[6]) as u8,
+            });
+        }
+
+        Self {
+            layer: tm.get_u16("layer"),
+            x: (tm.get_f64("x") * 4.0) as i32,
+            y: (tm.get_f64("y") * 4.0) as i32,
+            color: tm.get_argb32("color"),
+            lock_alpha: tm.get_u8("lock_alpha"),
+            dabs: dab_structs,
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct MoveRectMessage {
     pub layer: u16,
     pub sx: i32,
@@ -1830,6 +1958,9 @@ pub enum CommandMessage {
     /// Draw square pixel brush dabs
     DrawDabsPixelSquare(u8, DrawDabsPixelMessage),
 
+    /// Draw MyPaint brush dabs
+    DrawDabsMyPaint(u8, DrawDabsMyPaintMessage),
+
     /// Move a rectangular area on a layer.
     ///
     /// A mask image can be given to mask out part of the region
@@ -2069,6 +2200,7 @@ impl CommandMessage {
             DrawDabsClassic(user_id, b) => b.serialize(w, *user_id),
             DrawDabsPixel(user_id, b) => b.serialize(w, 149, *user_id),
             DrawDabsPixelSquare(user_id, b) => b.serialize(w, 150, *user_id),
+            DrawDabsMyPaint(user_id, b) => b.serialize(w, *user_id),
             MoveRect(user_id, b) => b.serialize(w, *user_id),
             SetMetadataInt(user_id, b) => b.serialize(w, *user_id),
             SetMetadataStr(user_id, b) => b.serialize(w, *user_id),
@@ -2109,6 +2241,7 @@ impl CommandMessage {
             DrawDabsPixelSquare(user_id, b) => {
                 b.to_text(TextMessage::new(*user_id, "squarepixeldabs"))
             }
+            DrawDabsMyPaint(user_id, b) => b.to_text(TextMessage::new(*user_id, "mypaintdabs")),
             MoveRect(user_id, b) => b.to_text(TextMessage::new(*user_id, "moverect")),
             SetMetadataInt(user_id, b) => b.to_text(TextMessage::new(*user_id, "setmetadataint")),
             SetMetadataStr(user_id, b) => b.to_text(TextMessage::new(*user_id, "setmetadatastr")),
@@ -2145,6 +2278,7 @@ impl CommandMessage {
             DrawDabsClassic(user_id, _) => *user_id,
             DrawDabsPixel(user_id, _) => *user_id,
             DrawDabsPixelSquare(user_id, _) => *user_id,
+            DrawDabsMyPaint(user_id, _) => *user_id,
             MoveRect(user_id, _) => *user_id,
             SetMetadataInt(user_id, _) => *user_id,
             SetMetadataStr(user_id, _) => *user_id,
@@ -2315,6 +2449,10 @@ impl Message {
             150 => Command(CommandMessage::DrawDabsPixelSquare(
                 u,
                 DrawDabsPixelMessage::deserialize(r)?,
+            )),
+            151 => Command(CommandMessage::DrawDabsMyPaint(
+                u,
+                DrawDabsMyPaintMessage::deserialize(r)?,
             )),
             160 => Command(CommandMessage::MoveRect(
                 u,
@@ -2501,6 +2639,10 @@ impl Message {
             "squarepixeldabs" => Command(CommandMessage::DrawDabsPixelSquare(
                 tm.user_id,
                 DrawDabsPixelMessage::from_text(tm),
+            )),
+            "mypaintdabs" => Command(CommandMessage::DrawDabsMyPaint(
+                tm.user_id,
+                DrawDabsMyPaintMessage::from_text(tm),
             )),
             "moverect" => Command(CommandMessage::MoveRect(
                 tm.user_id,

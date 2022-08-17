@@ -53,6 +53,8 @@ public:
 	void fadein();
 	void fadeout();
 
+	void setTargetPos(qreal x, qreal y, bool force);
+
 	void animationStep(double dt);
 
 protected:
@@ -62,6 +64,7 @@ private:
 	void updateFullText();
 	int m_id;
 
+	QPointF m_targetPos;
 	QRectF m_bounds;
 	QBrush m_bgbrush;
 	QPen m_textpen;

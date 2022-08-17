@@ -100,7 +100,7 @@ fn draw_dab(
     hardness: f32,
     cache: &mut ClassicBrushCache,
 ) {
-    let (bx, by, brush) = BrushMask::new_gimp_style_v2(x, y, dia, hardness, 1.0, cache);
+    let (bx, by, brush) = BrushMask::new_gimp_style_v2(x, y, dia, hardness, cache);
     editlayer::draw_brush_dab(
         layer,
         0,
@@ -109,5 +109,6 @@ fn draw_dab(
         &brush,
         &Color::rgb8(0, 0, 0),
         Blendmode::Normal,
+        255u8,
     );
 }

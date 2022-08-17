@@ -1,4 +1,5 @@
 find_package(Qt5Gui REQUIRED)
+find_package(Qt5Sql REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5LinguistTools)
 
@@ -100,8 +101,9 @@ add_library (
 	${QM_TRANSLATIONS}
 )
 
-target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network)
+target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network Qt5::Sql)
 target_link_libraries(dpclient rustpile pthread dl)
+target_link_libraries(dpclient libmypaint)
 
 if ( WIN32 )
 	target_link_libraries (dpclient ws2_32 userenv bcrypt)

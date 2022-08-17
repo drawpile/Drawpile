@@ -52,8 +52,8 @@ CanvasScene::CanvasScene(QObject *parent)
 	// animation system.
 	auto animationTimer = new QTimer(this);
 	connect(animationTimer, &QTimer::timeout, this, &CanvasScene::advanceAnimations);
-	animationTimer->setInterval(200);
-	animationTimer->start(200);
+	animationTimer->setInterval(20);
+	animationTimer->start(20);
 }
 
 /**
@@ -85,7 +85,7 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	}
 	m_usermarkers.clear();
 	m_activeLaserTrail.clear();
-	
+
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
@@ -243,7 +243,7 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
  */
 void CanvasScene::advanceAnimations()
 {
-	const double STEP = 0.2; // time delta in seconds
+	const double STEP = 0.02; // time delta in seconds
 
 	const auto items = this->items();
 	for(QGraphicsItem *item : items) {
@@ -260,7 +260,7 @@ void CanvasScene::advanceAnimations()
 	}
 
 	if(m_selection)
-		m_selection->marchingAnts();
+		m_selection->marchingAnts(STEP);
 }
 
 void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &color)
@@ -277,7 +277,8 @@ void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &colo
 void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y)
 {
 	// User cursor motion is used to update the laser trail, if one exists
-	if(m_activeLaserTrail.contains(userId)) {
+	bool isLaserPointer = m_activeLaserTrail.contains(userId);
+	if(isLaserPointer) {
 		LaserTrailItem *laser = m_activeLaserTrail[userId];
 		laser->addPoint(QPointF(x, y));
 	}
@@ -298,6 +299,7 @@ void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y
 		item->setShowSubtext(m_showUserLayers);
 		item->setAvatar(user.avatar);
 		item->setShowAvatar(m_showUserAvatars);
+		item->setTargetPos(x, y, true);
 		addItem(item);
 		m_usermarkers[userId] = item;
 	}
@@ -305,7 +307,10 @@ void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y
 	if(m_showUserLayers)
 		item->setSubtext(m_model->layerlist()->layerIndex(layerId).data(canvas::LayerListModel::TitleRole).toString());
 
-	item->setPos(x, y);
+	// Smooth the movement by default so that the curser doesn't jump around
+	// like crazy when using MyPaint brushes with spread out dabs. If this is
+	// a laser being pointed, set the position directly, without interpolation.
+	item->setTargetPos(x, y, isLaserPointer);
 	item->fadein();
 }
 

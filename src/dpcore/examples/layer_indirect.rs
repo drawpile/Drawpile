@@ -34,7 +34,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32) {
 
     for x in (10..246).step_by(5) {
         let w = 16 + ((x as f32 / 40.0 * 3.14).sin() * 15.0) as i32;
-        let brush = BrushMask::new_round_pixel(w as u32, 0.4);
+        let brush = BrushMask::new_round_pixel(w as u32);
         editlayer::draw_brush_dab(
             layer,
             0,
@@ -43,6 +43,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32) {
             &brush,
             &black,
             Blendmode::Normal,
+            (0.4 * 255.0) as u8,
         );
     }
 }

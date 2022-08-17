@@ -142,7 +142,14 @@ impl BrushState for SoftBrushState {
         self.layer_id = layer_id;
     }
 
-    fn stroke_to(&mut self, x: f32, y: f32, p: f32, source: Option<&BitmapLayer>) {
+    fn stroke_to(
+        &mut self,
+        x: f32,
+        y: f32,
+        p: f32,
+        _delta_msec: i64,
+        source: Option<&BitmapLayer>,
+    ) {
         if self.in_progress {
             let dx = x - self.last_x;
             let dy = y - self.last_y;

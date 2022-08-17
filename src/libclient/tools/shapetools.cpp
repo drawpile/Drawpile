@@ -83,11 +83,11 @@ void ShapeTool::end()
 
 	auto brushengine = rustpile::brushengine_new();
 
-	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
+	owner.setBrushEngineBrush(brushengine, false);
 
 	const auto pv = pointVector();
 	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 
@@ -106,7 +106,7 @@ void ShapeTool::updatePreview()
 {
 	auto brushengine = rustpile::brushengine_new();
 
-	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
+	owner.setBrushEngineBrush(brushengine, false);
 
 	auto engine = owner.model()->paintEngine()->engine();
 
@@ -114,7 +114,7 @@ void ShapeTool::updatePreview()
 	Q_ASSERT(pv.size()>1);
 
 	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2017-2019 Calle Laakkonen
+   Copyright (C) 2017-2022 Calle Laakkonen, askmeaboutloom
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ namespace docks {
 
 /**
  * @brief A brush palette dock
- * 
+ *
  * This dock displays a list of brush presets to choose from.
  */
 class BrushPalette : public QDockWidget
@@ -45,15 +45,41 @@ public:
 	void connectBrushSettings(tools::ToolSettings *toolSettings);
 
 private slots:
-	void addBrush();
-	void overwriteBrush();
-	void deleteBrush();
-	void addFolder();
-	void deleteFolder();
+   void tagIndexChanged(int proxyRow);
+   void presetsReset();
+   void presetSelectionChanged(const QModelIndex &current, const QModelIndex &previous);
+   void newTag();
+   void editCurrentTag();
+   void deleteCurrentTag();
+   void newPreset();
+   void duplicateCurrentPreset();
+   void overwriteCurrentPreset();
+   void editCurrentPreset();
+   void deleteCurrentPreset();
+   void importMyPaintBrushes();
+   void applyPresetProperties(int id, const QString &name, const QString &description,
+        const QPixmap &thumbnail);
+   void applyToBrushSettings(const QModelIndex &index);
+   void showPresetContextMenu(const QPoint &pos);
 
 private:
 	struct Private;
 	Private *d;
+
+   void changeTagAssignment(int tagId, bool assigned);
+
+   int tagRowToSource(int proxyRow);
+   int tagRowToProxy(int sourceRow);
+   QModelIndex tagIndexToSource(const QModelIndex &proxyIndex);
+   QModelIndex tagIndexToProxy(const QModelIndex &sourceIndex);
+   int tagIdToProxyRow(int tagId);
+
+   int presetRowToSource(int proxyRow);
+   int presetRowToProxy(int sourceRow);
+   QModelIndex presetIndexToSource(const QModelIndex &proxyIndex);
+   QModelIndex presetIndexToProxy(const QModelIndex &sourceIndex);
+   int presetProxyIndexToId(const QModelIndex &proxyIndex);
+   int currentPresetId();
 };
 
 }

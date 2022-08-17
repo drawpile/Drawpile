@@ -45,7 +45,7 @@ class ToolController : public QObject
 	Q_PROPERTY(int smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
 	Q_PROPERTY(uint16_t activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
 	Q_PROPERTY(uint16_t activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
-	Q_PROPERTY(brushes::ClassicBrush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
+	Q_PROPERTY(brushes::ActiveBrush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
 	Q_PROPERTY(canvas::CanvasModel* model READ model WRITE setModel NOTIFY modelChanged)
 
 	Q_OBJECT
@@ -64,8 +64,8 @@ public:
 	void setActiveAnnotation(uint16_t id);
 	uint16_t activeAnnotation() const { return m_activeAnnotation; }
 
-	void setActiveBrush(const brushes::ClassicBrush &b);
-	const brushes::ClassicBrush &activeBrush() const { return m_activebrush; }
+	void setActiveBrush(const brushes::ActiveBrush &b);
+	const brushes::ActiveBrush &activeBrush() const { return m_activebrush; }
 
 	void setModel(canvas::CanvasModel *model);
 	canvas::CanvasModel *model() const { return m_model; }
@@ -88,6 +88,14 @@ public:
 	 * resized while the local user is still drawing.
 	 */
 	void offsetActiveTool(int xOffset, int yOffset);
+
+	/**
+	 * Set the active brush in the Rustpile brush engine.
+	 *
+	 * The freehand parameter can be used to turn off stabilizer
+	 * interference when drawing previews, shapes, lines and curves.
+	 */
+	void setBrushEngineBrush(rustpile::BrushEngine *be, bool freehand = true);
 
 public slots:
 	//! Start a new stroke
@@ -123,7 +131,7 @@ signals:
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(uint16_t annotationId);
-	void activeBrushChanged(const brushes::ClassicBrush&);
+	void activeBrushChanged(const brushes::ActiveBrush&);
 	void modelChanged(canvas::CanvasModel *model);
 	void smoothingChanged(int smoothing);
 
@@ -141,7 +149,7 @@ private:
 
 	canvas::CanvasModel *m_model;
 
-	brushes::ClassicBrush m_activebrush;
+	brushes::ActiveBrush m_activebrush;
 	Tool *m_activeTool;
 	uint16_t m_activeLayer;
 	uint16_t m_activeAnnotation;

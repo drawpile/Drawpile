@@ -34,7 +34,7 @@ fn main() {
     let mut cache = ClassicBrushCache::new();
 
     while x < layer.width() as i32 - w {
-        let brush = BrushMask::new_square_pixel(w as u32, 1.0);
+        let brush = BrushMask::new_square_pixel(w as u32);
         editlayer::draw_brush_dab(
             &mut layer,
             0,
@@ -43,9 +43,10 @@ fn main() {
             &brush,
             &black,
             Blendmode::Normal,
+            255u8,
         );
 
-        let brush = BrushMask::new_round_pixel(w as u32, 1.0);
+        let brush = BrushMask::new_round_pixel(w as u32);
         editlayer::draw_brush_dab(
             &mut layer,
             0,
@@ -54,15 +55,34 @@ fn main() {
             &brush,
             &black,
             Blendmode::Normal,
+            255u8,
         );
 
         let (bx, by, brush) =
-            BrushMask::new_gimp_style_v2(x as f32, 90.0, w as f32, 0.0, 1.0, &mut cache);
-        editlayer::draw_brush_dab(&mut layer, 0, bx, by, &brush, &black, Blendmode::Normal);
+            BrushMask::new_gimp_style_v2(x as f32, 90.0, w as f32, 0.0, &mut cache);
+        editlayer::draw_brush_dab(
+            &mut layer,
+            0,
+            bx,
+            by,
+            &brush,
+            &black,
+            Blendmode::Normal,
+            255u8,
+        );
 
         let (bx, by, brush) =
-            BrushMask::new_gimp_style_v2(x as f32, 120.0, w as f32, 1.0, 1.0, &mut cache);
-        editlayer::draw_brush_dab(&mut layer, 0, bx, by, &brush, &black, Blendmode::Normal);
+            BrushMask::new_gimp_style_v2(x as f32, 120.0, w as f32, 1.0, &mut cache);
+        editlayer::draw_brush_dab(
+            &mut layer,
+            0,
+            bx,
+            by,
+            &brush,
+            &black,
+            Blendmode::Normal,
+            255u8,
+        );
 
         w += 1;
         x += w + 2;

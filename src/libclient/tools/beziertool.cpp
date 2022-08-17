@@ -112,14 +112,14 @@ void BezierTool::finishMultipart()
 		m_points.pop_back();
 
 		auto brushengine = rustpile::brushengine_new();
-		rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
+		owner.setBrushEngineBrush(brushengine, false);
 
 		const uint8_t contextId = owner.client()->myId();
 		auto engine = owner.model()->paintEngine()->engine();
 
 		const auto pv = calculateBezierCurve();
 		for(const auto &p : pv) {
-			rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+			rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
 		}
 		rustpile::brushengine_end_stroke(brushengine);
 
@@ -205,12 +205,12 @@ void BezierTool::updatePreview()
 		return;
 
 	auto brushengine = rustpile::brushengine_new();
-	rustpile::brushengine_set_classicbrush(brushengine, &owner.activeBrush(), owner.activeLayer());
+	owner.setBrushEngineBrush(brushengine, false);
 
 	auto engine = owner.model()->paintEngine()->engine();
 
 	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), engine, owner.activeLayer());
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 

@@ -23,9 +23,10 @@
 #include "toolsettings.h"
 
 class QAction;
+class QSpinBox;
 
 namespace brushes {
-	struct ClassicBrush;
+	struct ActiveBrush;
 }
 
 namespace input {
@@ -60,8 +61,8 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
-	void setCurrentBrush(brushes::ClassicBrush brush);
-	brushes::ClassicBrush currentBrush() const;
+	void setCurrentBrush(brushes::ActiveBrush brush);
+	brushes::ActiveBrush currentBrush() const;
 
 	int currentBrushSlot() const;
 	bool isCurrentEraserSlot() const;
@@ -89,19 +90,25 @@ signals:
 	void subpixelModeChanged(bool subpixel, bool square);
 	void smoothingChanged(int smoothing);
 	void pressureMappingChanged(const PressureMapping &pressureMapping);
+	void pixelSizeChanged(int size);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private slots:
+	void changeBrushType();
+	void changeSizeSetting(int size);
+	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
 	void selectBlendMode(int);
 	void setEraserMode(bool erase);
 	void updateUi();
 	void updateFromUi();
 	void chooseInputPreset(int index);
 	void updateSettings();
+	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:
+	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
 	void emitPresetChanges(const input::Preset *preset);
 
 	struct Private;

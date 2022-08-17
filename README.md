@@ -17,6 +17,7 @@ Some feature highlights:
 * Supports OpenRaster file format
 * Encrypted connections using SSL
 * Automatic port forwarding with UPnP
+* MyPaint brush support
 
 ## Building with cmake
 
@@ -71,7 +72,7 @@ Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug -DKIS_TABLET=on`
 
 For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
 
-[QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets  
-[QtKeyChain]: https://github.com/frankosterfeld/qtkeychain  
-[Building from sources]: https://github.com/callaa/Drawpile/wiki/Building-from-sources  
+[QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets
+[QtKeyChain]: https://github.com/frankosterfeld/qtkeychain
+[Building from sources]: https://github.com/drawpile/Drawpile/wiki/Building-from-sources
 

@@ -45,7 +45,7 @@ BrushPreview::~BrushPreview() {
 #endif
 }
 
-void BrushPreview::setBrush(const brushes::ClassicBrush &brush)
+void BrushPreview::setBrush(const brushes::ActiveBrush &brush)
 {
 	m_brush = brush;
 	m_needUpdate = true;
@@ -89,7 +89,7 @@ void BrushPreview::setUnderFill(bool underfill)
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)
-{ 
+{
 	m_needUpdate = true;
 }
 
@@ -124,9 +124,9 @@ void BrushPreview::updatePreview()
 		m_preview = QPixmap(size);
 	}
 
-	rustpile::brushpreview_render(m_previewcanvas, &m_brush, m_shape);
+	m_brush.renderPreview(m_previewcanvas, m_shape);
 	if(m_shape == rustpile::BrushPreviewShape::FloodFill || m_shape == rustpile::BrushPreviewShape::FloodErase) {
-		auto color = m_brush.color;
+		rustpile::Color color = m_brush.color();
 		if(m_shape == rustpile::BrushPreviewShape::FloodErase) {
 			color.a = 0;
 		}

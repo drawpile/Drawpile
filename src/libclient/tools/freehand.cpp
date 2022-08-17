@@ -49,8 +49,9 @@ void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 
 	m_drawing = true;
 	m_firstPoint = true;
+	m_lastTimestamp = QDateTime::currentMSecsSinceEpoch();
 
-	rustpile::brushengine_set_classicbrush(m_brushengine, &owner.activeBrush(), owner.activeLayer());
+	owner.setBrushEngineBrush(m_brushengine);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
@@ -77,15 +78,22 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 			m_start.x(),
 			m_start.y(),
 			qMin(m_start.pressure(), point.pressure()),
+			0,
 			owner.model()->paintEngine()->engine(),
 			owner.activeLayer()
 		);
 	}
+
+	qint64 now = QDateTime::currentMSecsSinceEpoch();
+	qint64 deltaMsec = now - m_lastTimestamp;
+	m_lastTimestamp = now;
+
 	rustpile::brushengine_stroke_to(
 		m_brushengine,
 		point.x(),
 		point.y(),
 		point.pressure(),
+		deltaMsec,
 		owner.model()->paintEngine()->engine(),
 		owner.activeLayer()
 	);
@@ -112,6 +120,7 @@ void Freehand::end()
 				m_start.x(),
 				m_start.y(),
 				m_start.pressure(),
+				QDateTime::currentMSecsSinceEpoch(),
 				nullptr,
 				0
 			);

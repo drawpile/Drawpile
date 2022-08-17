@@ -360,6 +360,7 @@ impl AclFilter {
             CanvasBackground(u, _) => self.users.tier(*u) <= self.feature_tier.background,
             DrawDabsClassic(u, m) => !self.is_layer_locked(*u, m.layer),
             DrawDabsPixel(u, m) | DrawDabsPixelSquare(u, m) => !self.is_layer_locked(*u, m.layer),
+            DrawDabsMyPaint(u, m) => !self.is_layer_locked(*u, m.layer),
             MoveRect(u, m) => {
                 self.users.tier(*u) <= self.feature_tier.move_rect
                     && !self.is_layer_locked(*u, m.layer)

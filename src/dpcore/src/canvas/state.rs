@@ -336,6 +336,10 @@ impl CanvasState {
                         let (a, _) = brushes::drawdabs_pixel(layer, 0, m, true);
                         a
                     }
+                    CommandMessage::DrawDabsMyPaint(_, m) => {
+                        let (a, _) = brushes::drawdabs_mypaint(layer, 0, m);
+                        a
+                    }
                     CommandMessage::PutImage(_, m) => {
                         if m.w == 0 || m.h == 0 {
                             warn!("Preview PutImage: zero size!");
@@ -450,6 +454,7 @@ impl CanvasState {
             DrawDabsClassic(user, m) => self.handle_drawdabs_classic(*user, m),
             DrawDabsPixel(user, m) => self.handle_drawdabs_pixel(*user, m, false),
             DrawDabsPixelSquare(user, m) => self.handle_drawdabs_pixel(*user, m, true),
+            DrawDabsMyPaint(user, m) => self.handle_drawdabs_mypaint(*user, m),
             MoveRect(user, m) => self.handle_moverect(*user, m),
             SetMetadataInt(_, m) => self.handle_metadata_int(m),
             SetMetadataStr(_, _) => CanvasStateChange::nothing(), // no string keys yet
@@ -982,6 +987,23 @@ impl CanvasState {
             CanvasStateChange::aoe(aoe, user, msg.layer, pos)
         } else {
             warn!("DrawDabsClassic: Layer {:04x} not found!", msg.layer);
+            CanvasStateChange::nothing()
+        }
+    }
+
+    fn handle_drawdabs_mypaint(
+        &mut self,
+        user: UserID,
+        msg: &DrawDabsMyPaintMessage,
+    ) -> CanvasStateChange {
+        if let Some(layer) = Arc::make_mut(&mut self.layerstack)
+            .root_mut()
+            .get_bitmaplayer_mut(msg.layer as LayerID)
+        {
+            let (aoe, pos) = brushes::drawdabs_mypaint(layer, user, msg);
+            CanvasStateChange::aoe(aoe, user, msg.layer, pos)
+        } else {
+            warn!("DrawDabsMyPaint: Layer {:04x} not found!", msg.layer);
             CanvasStateChange::nothing()
         }
     }

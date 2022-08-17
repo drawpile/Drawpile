@@ -17,4 +17,9 @@ example_*.png
 # Hidden files
 .*
 
+# Python venv directories
+env/
+venv/
 
+# clangd compile commands file when using -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+compile_commands.json

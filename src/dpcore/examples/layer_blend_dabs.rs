@@ -60,7 +60,7 @@ fn main() {
         // Blendmode::Replace,
     ];
 
-    let brush = BrushMask::new_round_pixel(10, 1.0);
+    let brush = BrushMask::new_round_pixel(10);
     let dabcolor = Color::rgb8(255, 0, 0);
 
     for (i, &mode) in modes.iter().enumerate() {
@@ -74,6 +74,7 @@ fn main() {
                 &brush,
                 &dabcolor,
                 mode,
+                255u8,
             );
         }
     }

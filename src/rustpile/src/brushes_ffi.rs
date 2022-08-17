@@ -1,5 +1,7 @@
 use super::paintengine_ffi::PaintEngine;
-use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, ClassicBrushShape};
+use dpcore::brush::{
+    BrushEngine, BrushState, ClassicBrush, ClassicBrushShape, MyPaintBrush, MyPaintSettings,
+};
 use dpcore::paint::rectiter::{MutableRectIterator, RectIterator};
 use dpcore::paint::{BrushMask, ClassicBrushCache, Color, LayerID, Pixel, Rectangle, Size};
 use dpcore::protocol::MessageWriter;
@@ -29,19 +31,38 @@ pub extern "C" fn brushengine_set_classicbrush(
 }
 
 #[no_mangle]
+pub extern "C" fn brushengine_set_mypaintbrush(
+    be: &mut BrushEngine,
+    brush: &MyPaintBrush,
+    settings: &MyPaintSettings,
+    layer: u16,
+    freehand: bool,
+) {
+    be.set_mypaintbrush(brush, settings, freehand);
+    be.set_layer(layer);
+}
+
+#[no_mangle]
 pub extern "C" fn brushengine_stroke_to(
     be: &mut BrushEngine,
     x: f32,
     y: f32,
     p: f32,
+    delta_msec: i64,
     pe: Option<&PaintEngine>,
     layer_id: LayerID,
 ) {
     if let Some(paintengine) = pe {
         let vc = paintengine.viewcache.lock().unwrap();
-        be.stroke_to(x, y, p, vc.layerstack.root().get_bitmaplayer(layer_id));
+        be.stroke_to(
+            x,
+            y,
+            p,
+            delta_msec,
+            vc.layerstack.root().get_bitmaplayer(layer_id),
+        );
     } else {
-        be.stroke_to(x, y, p, None);
+        be.stroke_to(x, y, p, delta_msec, None);
     }
 }
 
@@ -76,23 +97,11 @@ pub extern "C" fn brush_preview_dab(
         unsafe { slice::from_raw_parts_mut(image as *mut Pixel, (width * height) as usize) };
 
     let mask = match brush.shape {
-        ClassicBrushShape::RoundPixel => {
-            BrushMask::new_round_pixel(brush.size.1 as u32, brush.opacity.1)
-        }
-        ClassicBrushShape::SquarePixel => {
-            BrushMask::new_square_pixel(brush.size.1 as u32, brush.opacity.1)
-        }
+        ClassicBrushShape::RoundPixel => BrushMask::new_round_pixel(brush.size.1 as u32),
+        ClassicBrushShape::SquarePixel => BrushMask::new_square_pixel(brush.size.1 as u32),
         ClassicBrushShape::RoundSoft => {
             let mut cache = ClassicBrushCache::new();
-            BrushMask::new_gimp_style_v2(
-                0.0,
-                0.0,
-                brush.size.1,
-                brush.hardness.1,
-                brush.opacity.1,
-                &mut cache,
-            )
-            .2
+            BrushMask::new_gimp_style_v2(0.0, 0.0, brush.size.1, brush.hardness.1, &mut cache).2
         }
     };
 
@@ -121,7 +130,7 @@ pub extern "C" fn brush_preview_dab(
                     r: color.r,
                     g: color.g,
                     b: color.b,
-                    a: val as f32 / 255.0,
+                    a: val as f32 / 255.0 * brush.opacity.1,
                 }
                 .as_pixel()
             });

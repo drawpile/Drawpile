@@ -271,6 +271,7 @@ impl LocalFork {
                     AffectedArea::Pixels(m.layer, pixeldabs_area(m))
                 }
             }
+            DrawDabsMyPaint(_, m) => AffectedArea::Pixels(m.layer, mypaintdabs_area(m)),
             MoveRect(_, m) => AffectedArea::Pixels(
                 m.layer,
                 Rectangle::new(m.sx, m.sy, m.w, m.h).union(&Rectangle::new(m.tx, m.ty, m.w, m.h)),
@@ -345,6 +346,22 @@ fn pixeldabs_area(dabs: &DrawDabsPixelMessage) -> Rectangle {
         let d = dab.size as i32 + 1;
         let r = d / 2;
         bounds = bounds.union(&Rectangle::new(x - r, y - r, d, d));
+        last_x = x;
+        last_y = y;
+    }
+    bounds
+}
+
+fn mypaintdabs_area(dabs: &DrawDabsMyPaintMessage) -> Rectangle {
+    let mut last_x = dabs.x as f32 / 4.0;
+    let mut last_y = dabs.y as f32 / 4.0;
+    let mut bounds = Rectangle::new(last_x as i32, last_y as i32, 1, 1);
+    for dab in dabs.dabs.iter() {
+        let x = last_x + dab.x as f32 / 4.0;
+        let y = last_y + dab.y as f32 / 4.0;
+        let r = dab.size as f32 / 256.0 / 2.0;
+        let d = (r * 2.0) as i32 + 1;
+        bounds = bounds.union(&Rectangle::new((x - r) as i32, (y - r) as i32, d, d));
         last_x = x;
         last_y = y;
     }

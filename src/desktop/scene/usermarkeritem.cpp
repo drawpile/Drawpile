@@ -200,9 +200,19 @@ void UserMarkerItem::fadeout()
 	m_fadeout = 1.0;
 }
 
+void UserMarkerItem::setTargetPos(qreal x, qreal y, bool force)
+{
+	m_targetPos = QPointF(x, y);
+	if(force || !isVisible()) {
+		setPos(x, y);
+	}
+}
+
 void UserMarkerItem::animationStep(double dt)
 {
 	if(isVisible()) {
+		// Smoothing to avoid crazy jerking with spread out MyPaint brushes.
+		setPos(QLineF(pos(), m_targetPos).pointAt(dt * 10.0));
 		if(m_fadeout>0) {
 			m_fadeout -= dt;
 			if(m_fadeout <= 0.0) {

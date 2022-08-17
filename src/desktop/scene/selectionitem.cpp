@@ -249,9 +249,9 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 	}
 }
 
-void SelectionItem::marchingAnts()
+void SelectionItem::marchingAnts(double dt)
 {
-	m_marchingants += 1;
+	m_marchingants += dt / 0.2;
 	update();
 }
 

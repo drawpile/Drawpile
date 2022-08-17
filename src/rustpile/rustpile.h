@@ -6,45 +6,48 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstdlib>
+#include <ostream>
 #include <new>
 
 namespace rustpile {
 
-static const uint8_t JoinMessage_FLAGS_AUTH = 1;
+constexpr static const uint8_t JoinMessage_FLAGS_AUTH = 1;
 
-static const uint8_t JoinMessage_FLAGS_BOT = 4;
+constexpr static const uint8_t JoinMessage_FLAGS_MOD = 2;
 
-static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
+constexpr static const uint8_t JoinMessage_FLAGS_BOT = 4;
 
-static const uint8_t LayerAttributesMessage_FLAGS_FIXED = 2;
+constexpr static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
 
-static const uint8_t LayerCreateMessage_FLAGS_GROUP = 1;
+constexpr static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
 
-static const uint8_t LayerCreateMessage_FLAGS_INTO = 2;
+constexpr static const uint8_t ChatMessage_OFLAGS_ACTION = 2;
 
-static const uint8_t LayerAttributesMessage_FLAGS_ISOLATED = 4;
+constexpr static const uint8_t ChatMessage_OFLAGS_PIN = 4;
 
-static const uint8_t JoinMessage_FLAGS_MOD = 2;
+constexpr static const uint8_t ChatMessage_OFLAGS_ALERT = 8;
 
-static const uint8_t AnnotationEditMessage_FLAGS_PROTECT = 1;
+constexpr static const uint8_t LayerCreateMessage_FLAGS_GROUP = 1;
 
-static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_BOTTOM = 4;
+constexpr static const uint8_t LayerCreateMessage_FLAGS_INTO = 2;
 
-static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_CENTER = 2;
+constexpr static const uint8_t LayerAttributesMessage_FLAGS_CENSOR = 1;
 
-static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
+constexpr static const uint8_t LayerAttributesMessage_FLAGS_FIXED = 2;
 
-static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
+constexpr static const uint8_t LayerAttributesMessage_FLAGS_ISOLATED = 4;
 
-static const uint8_t ChatMessage_OFLAGS_ACTION = 2;
+constexpr static const uint8_t AnnotationEditMessage_FLAGS_PROTECT = 1;
 
-static const uint8_t ChatMessage_OFLAGS_ALERT = 8;
+constexpr static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_CENTER = 2;
 
-static const uint8_t ChatMessage_OFLAGS_PIN = 4;
+constexpr static const uint8_t AnnotationEditMessage_FLAGS_VALIGN_BOTTOM = 4;
 
-static const uint8_t ChatMessage_OFLAGS_SHOUT = 1;
+constexpr static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
 
-static const uint8_t ChatMessage_TFLAGS_BYPASS = 1;
+constexpr static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
+
+constexpr static const uintptr_t DrawDabsMyPaintMessage_MAX_MYPAINTDABS = 8190;
 
 enum class AnimationExportMode {
   Gif,
@@ -66,6 +69,7 @@ enum class Blendmode : uint8_t {
   Behind,
   ColorErase,
   Screen,
+  NormalAndEraser,
   Replace = 255,
 };
 
@@ -160,9 +164,9 @@ struct Color {
   float b;
   float a;
 };
-static const Color Color_TRANSPARENT = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 0.0 };
-static const Color Color_BLACK = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 1.0 };
-static const Color Color_WHITE = Color{ /* .r = */ 1.0, /* .g = */ 1.0, /* .b = */ 1.0, /* .a = */ 1.0 };
+constexpr static const Color Color_TRANSPARENT = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 0.0 };
+constexpr static const Color Color_BLACK = Color{ /* .r = */ 0.0, /* .g = */ 0.0, /* .b = */ 0.0, /* .a = */ 1.0 };
+constexpr static const Color Color_WHITE = Color{ /* .r = */ 1.0, /* .g = */ 1.0, /* .b = */ 1.0, /* .a = */ 1.0 };
 
 using UpdateAnnotationCallback = void(*)(void *ctx, AnnotationID id, const char *text, uintptr_t textlen, Rectangle rect, Color background, bool protect, VAlign valign);
 
@@ -203,6 +207,27 @@ struct ClassicBrush {
   bool opacity_pressure;
   /// Apply pressure to smudging
   bool smudge_pressure;
+};
+
+struct MyPaintBrush {
+  Color color;
+  bool lock_alpha;
+  bool erase;
+};
+
+struct ControlPoints {
+  float xvalues[64];
+  float yvalues[64];
+  int32_t n;
+};
+
+struct MyPaintMapping {
+  float base_value;
+  ControlPoints inputs[18];
+};
+
+struct MyPaintSettings {
+  MyPaintMapping mappings[64];
 };
 
 using LayerID = uint16_t;
@@ -370,10 +395,17 @@ void brushengine_free(BrushEngine *be);
 
 void brushengine_set_classicbrush(BrushEngine *be, const ClassicBrush *brush, uint16_t layer);
 
+void brushengine_set_mypaintbrush(BrushEngine *be,
+                                  const MyPaintBrush *brush,
+                                  const MyPaintSettings *settings,
+                                  uint16_t layer,
+                                  bool freehand);
+
 void brushengine_stroke_to(BrushEngine *be,
                            float x,
                            float y,
                            float p,
+                           int64_t delta_msec,
                            const PaintEngine *pe,
                            LayerID layer_id);
 
@@ -393,7 +425,14 @@ BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
 
 void brushpreview_free(BrushPreview *bp);
 
-void brushpreview_render(BrushPreview *bp, const ClassicBrush *brush, BrushPreviewShape shape);
+void brushpreview_render_classic(BrushPreview *bp,
+                                 const ClassicBrush *brush,
+                                 BrushPreviewShape shape);
+
+void brushpreview_render_mypaint(BrushPreview *bp,
+                                 const MyPaintBrush *brush,
+                                 const MyPaintSettings *settings,
+                                 BrushPreviewShape shape);
 
 void brushpreview_floodfill(BrushPreview *bp,
                             const Color *color,

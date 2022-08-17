@@ -6,6 +6,7 @@ edition = "2021"
 license = "GPLv3"
 
 [dependencies]
+dpmypaint = { path = "../dpmypaint" }
 base64 = "0.13.0"
 tracing = "0.1.36"
 num_enum = "0.5.7"

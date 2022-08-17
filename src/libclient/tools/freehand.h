@@ -46,6 +46,7 @@ private:
 	rustpile::BrushEngine *m_brushengine;
 	bool m_drawing;
 	bool m_firstPoint;
+	qint64 m_lastTimestamp;
 	canvas::Point m_start;
 };
 

@@ -51,11 +51,11 @@ public:
 	rustpile::BrushPreviewShape previewShape() const { return m_shape; }
 
 	QColor brushColor() const { return m_brush.qColor(); }
-	const brushes::ClassicBrush &brush() const { return m_brush; }
+	const brushes::ActiveBrush &brush() const { return m_brush; }
 
 public slots:
 	//! Set the brush to preview
-	void setBrush(const brushes::ClassicBrush& brush);
+	void setBrush(const brushes::ActiveBrush& brush);
 
 	//! This is used for flood fill preview only
 	void setFloodFillTolerance(int tolerance);
@@ -80,7 +80,7 @@ private:
 	void updateBackground();
 
 	QPixmap m_background;
-	brushes::ClassicBrush m_brush;
+	brushes::ActiveBrush m_brush;
 
 	rustpile::BrushPreview *m_previewcanvas = nullptr;
 	QPixmap m_preview;

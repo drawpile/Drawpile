@@ -23,7 +23,9 @@
 use crate::paint::{
     editlayer, AoE, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, UserID,
 };
-use crate::protocol::message::{DrawDabsClassicMessage, DrawDabsPixelMessage};
+use crate::protocol::message::{
+    DrawDabsClassicMessage, DrawDabsMyPaintMessage, DrawDabsPixelMessage,
+};
 
 use std::convert::TryFrom;
 
@@ -87,11 +89,10 @@ fn drawdabs_classic_draw(
             y as f32 / 4.0,
             dab.size as f32 / 256.0,
             dab.hardness as f32 / 255.0,
-            dab.opacity as f32 / 255.0,
             cache,
         );
         aoe = aoe.merge(editlayer::draw_brush_dab(
-            layer, user, mx, my, &mask, &color, mode,
+            layer, user, mx, my, &mask, &color, mode, dab.opacity,
         ));
 
         last_x = x;
@@ -157,20 +158,18 @@ fn drawdabs_pixel_draw(
     let mut last_x = dabs.x;
     let mut last_y = dabs.y;
     let mut last_size = 0;
-    let mut last_opacity = 0;
     let mut aoe = AoE::Nothing;
 
     for dab in dabs.dabs.iter() {
         let x = last_x + dab.x as i32;
         let y = last_y + dab.y as i32;
 
-        if dab.size != last_size || dab.opacity != last_opacity {
+        if dab.size != last_size {
             last_size = dab.size;
-            last_opacity = dab.opacity;
             mask = if square {
-                BrushMask::new_square_pixel(dab.size as u32, dab.opacity as f32 / 255.0)
+                BrushMask::new_square_pixel(dab.size as u32)
             } else {
-                BrushMask::new_round_pixel(dab.size as u32, dab.opacity as f32 / 255.0)
+                BrushMask::new_round_pixel(dab.size as u32)
             };
         }
 
@@ -183,6 +182,7 @@ fn drawdabs_pixel_draw(
             &mask,
             &color,
             mode,
+            dab.opacity,
         ));
 
         last_x = x;
@@ -190,4 +190,95 @@ fn drawdabs_pixel_draw(
     }
 
     (aoe, (last_x, last_y))
+}
+
+pub fn drawdabs_mypaint(
+    layer: &mut BitmapLayer,
+    user: UserID,
+    dabs: &DrawDabsMyPaintMessage,
+) -> (AoE, (i32, i32)) {
+    let (result, may_have_decreased_opacity) = drawdabs_mypaint_draw(layer, user, dabs);
+
+    if may_have_decreased_opacity {
+        layer.optimize(&result.0);
+    }
+
+    result
+}
+
+fn drawdabs_mypaint_draw(
+    layer: &mut BitmapLayer,
+    user: UserID,
+    dabs: &DrawDabsMyPaintMessage,
+) -> ((AoE, (i32, i32)), bool) {
+    let mut aoe = AoE::Nothing;
+    let color = Color::from_argb32(dabs.color);
+
+    let lock_alpha = dabs.lock_alpha as f32 / 255.0f32;
+    let normal = 1.0f32 * (1.0f32 - lock_alpha);
+
+    let mut last_x = dabs.x;
+    let mut last_y = dabs.y;
+    let mut may_have_decreased_opacity = false;
+
+    for dab in dabs.dabs.iter() {
+        let x = last_x + dab.x as i32;
+        let y = last_y + dab.y as i32;
+        last_x = x;
+        last_y = y;
+
+        let (mx, my, mask) = BrushMask::new_mypaint_brush_mask(
+            x as f32 / 4.0f32,
+            y as f32 / 4.0f32,
+            dab.size as f32 / 256.0f32,
+            dab.hardness as f32 / 255.0f32,
+            // See aspect_ratio_to_u8 in mypaintbrushstate.
+            if dab.aspect_ratio == 23 {
+                1.0f32 // Fudge this to be a perfectly round dab.
+            } else {
+                dab.aspect_ratio as f32 / 25.755f32 + 0.1f32
+            },
+            dab.angle as f32 / 255.0f32 * 360.0f32,
+        );
+
+        let opacity = dab.opacity as f32 / 255.0f32;
+
+        if normal > 0.0f32 {
+            let mode = if color.a == 1.0 {
+                Blendmode::Normal
+            } else {
+                may_have_decreased_opacity = true;
+                Blendmode::NormalAndEraser
+            };
+            aoe = aoe.merge(editlayer::draw_brush_dab(
+                layer,
+                user,
+                mx,
+                my,
+                &mask,
+                &color,
+                mode,
+                (normal * opacity * 255.0) as u8,
+            ));
+        }
+
+        if lock_alpha > 0.0f32 && color.a != 0.0 {
+            aoe = aoe.merge(editlayer::draw_brush_dab(
+                layer,
+                user,
+                mx,
+                my,
+                &mask,
+                &color,
+                Blendmode::Recolor,
+                (lock_alpha * opacity * 255.0) as u8,
+            ));
+        }
+
+        // Colorize, posterize and spectral painting isn't supported while we
+        // still only have 8 bits to work with. If we end up expanding that to
+        // 15 bits like MyPaint does it, it'd be worth implementing.
+    }
+
+    ((aoe, (last_x / 4, last_y / 4)), may_have_decreased_opacity)
 }

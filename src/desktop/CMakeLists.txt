@@ -49,6 +49,7 @@ set (
 	dialogs/addserverdialog.cpp
 	dialogs/inputsettings.cpp
 	dialogs/layerproperties.cpp
+	dialogs/brushpresetproperties.cpp
 	widgets/viewstatus.cpp
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp 
@@ -157,6 +158,7 @@ set (
 	ui/avatarimport.ui
 	ui/versioncheck.ui
 	ui/layerproperties.ui
+	ui/brushpresetproperties.ui
 )
 
 # Use bundled QtColorWidgets widgets if library not found
