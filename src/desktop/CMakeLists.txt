@@ -288,6 +288,7 @@ IF ( APPLE )
 		COMMAND mkdir -p "${ResourcesDir}/sounds"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/sounds/*.wav" "${ResourcesDir}/sounds"
 		COMMAND cp -r "${CMAKE_SOURCE_DIR}/desktop/theme" "${ResourcesDir}"
+		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/initialbrushpresets.db" "${ResourcesDir}"
 	)
 ENDIF()
 
