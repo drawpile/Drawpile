@@ -42,6 +42,16 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
         Blendmode::Behind => alpha_pixel_under(base, over, opacity),
         Blendmode::ColorErase => pixel_color_erase(base, over, opacity),
         Blendmode::Screen => pixel_composite(comp_op_screen, base, over, opacity),
+        Blendmode::LuminosityShineSai => pixel_luminosity_shine_sai(base, over, opacity),
+        Blendmode::Overlay => pixel_composite(comp_op_overlay, base, over, opacity),
+        Blendmode::HardLight => pixel_composite(comp_op_hard_light, base, over, opacity),
+        Blendmode::SoftLight => pixel_composite(comp_op_soft_light, base, over, opacity),
+        Blendmode::LinearBurn => pixel_composite(comp_op_linear_burn, base, over, opacity),
+        Blendmode::LinearLight => pixel_composite(comp_op_linear_light, base, over, opacity),
+        Blendmode::Hue => pixel_composite_nonseparable(comp_op_hue, base, over, opacity),
+        Blendmode::Saturation => pixel_composite_nonseparable(comp_op_sat, base, over, opacity),
+        Blendmode::Luminosity => pixel_composite_nonseparable(comp_op_lum, base, over, opacity),
+        Blendmode::Color => pixel_composite_nonseparable(comp_op_color, base, over, opacity),
         Blendmode::Replace => pixel_replace(base, over, opacity),
         _m => {
             #[cfg(debug_assertions)]
@@ -51,23 +61,34 @@ pub fn pixel_blend(base: &mut [Pixel], over: &[Pixel], opacity: u8, mode: Blendm
 }
 
 pub fn mask_blend(base: &mut [Pixel], color: Pixel, mask: &[u8], mode: Blendmode, opacity: u8) {
+    let o = opacity as u32;
     #[allow(unreachable_patterns)]
     match mode {
-        Blendmode::Normal => alpha_mask_blend(base, color, mask, opacity as u32),
-        Blendmode::Erase => alpha_mask_erase(base, mask, opacity as u32),
-        Blendmode::Multiply => mask_composite(comp_op_multiply, base, color, mask, opacity as u32),
-        Blendmode::Divide => mask_composite(comp_op_divide, base, color, mask, opacity as u32),
-        Blendmode::Darken => mask_composite(comp_op_darken, base, color, mask, opacity as u32),
-        Blendmode::Lighten => mask_composite(comp_op_lighten, base, color, mask, opacity as u32),
-        Blendmode::Dodge => mask_composite(comp_op_dodge, base, color, mask, opacity as u32),
-        Blendmode::Burn => mask_composite(comp_op_burn, base, color, mask, opacity as u32),
-        Blendmode::Add => mask_composite(comp_op_add, base, color, mask, opacity as u32),
-        Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask, opacity as u32),
-        Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask, opacity as u32),
-        Blendmode::Behind => alpha_mask_under(base, color, mask, opacity as u32),
-        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, opacity as u32),
-        Blendmode::ColorErase => mask_color_erase(base, color, mask, opacity as u32),
-        Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, opacity as u32),
+        Blendmode::Normal => alpha_mask_blend(base, color, mask, o),
+        Blendmode::Erase => alpha_mask_erase(base, mask, o),
+        Blendmode::Multiply => mask_composite(comp_op_multiply, base, color, mask, o),
+        Blendmode::Divide => mask_composite(comp_op_divide, base, color, mask, o),
+        Blendmode::Darken => mask_composite(comp_op_darken, base, color, mask, o),
+        Blendmode::Lighten => mask_composite(comp_op_lighten, base, color, mask, o),
+        Blendmode::Dodge => mask_composite(comp_op_dodge, base, color, mask, o),
+        Blendmode::Burn => mask_composite(comp_op_burn, base, color, mask, o),
+        Blendmode::Add => mask_composite(comp_op_add, base, color, mask, o),
+        Blendmode::Subtract => mask_composite(comp_op_subtract, base, color, mask, o),
+        Blendmode::Recolor => mask_composite(comp_op_recolor, base, color, mask, o),
+        Blendmode::Behind => alpha_mask_under(base, color, mask, o),
+        Blendmode::Screen => mask_composite(comp_op_screen, base, color, mask, o),
+        Blendmode::ColorErase => mask_color_erase(base, color, mask, o),
+        Blendmode::NormalAndEraser => alpha_mask_blend_erase(base, color, mask, o),
+        Blendmode::LuminosityShineSai => mask_luminosity_shine_sai(base, color, mask, o),
+        Blendmode::Overlay => mask_composite(comp_op_overlay, base, color, mask, o),
+        Blendmode::HardLight => mask_composite(comp_op_hard_light, base, color, mask, o),
+        Blendmode::SoftLight => mask_composite(comp_op_soft_light, base, color, mask, o),
+        Blendmode::LinearBurn => mask_composite(comp_op_linear_burn, base, color, mask, o),
+        Blendmode::LinearLight => mask_composite(comp_op_linear_light, base, color, mask, o),
+        Blendmode::Hue => mask_composite_nonseparable(comp_op_hue, base, color, mask, o),
+        Blendmode::Saturation => mask_composite_nonseparable(comp_op_sat, base, color, mask, o),
+        Blendmode::Luminosity => mask_composite_nonseparable(comp_op_lum, base, color, mask, o),
+        Blendmode::Color => mask_composite_nonseparable(comp_op_color, base, color, mask, o),
         _m => {
             #[cfg(debug_assertions)]
             warn!("Unknown mask blend mode {:?}", _m);
@@ -102,6 +123,90 @@ fn u8_mult(a: u32, b: u32) -> u32 {
 fn u8_blend(a: i32, b: i32, alpha: i32) -> i32 {
     let c = (a - b) * alpha + (b << 8) - b + 0x80;
     ((c >> 8) + c) >> 8
+}
+
+// 8 bit square root lookup table. The values are floored, so the math is
+// floor(sqrt(i / 255.0) * 255.0) for i in 0 .. 255.
+const U8_SQRT_LOOKUP: [u32; 256] = [
+    0, 15, 22, 27, 31, 35, 39, 42, 45, 47, 50, 52, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 74, 76,
+    78, 79, 81, 82, 84, 85, 87, 88, 90, 91, 93, 94, 95, 97, 98, 99, 100, 102, 103, 104, 105, 107,
+    108, 109, 110, 111, 112, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
+    128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 141, 142, 143, 144, 145,
+    146, 147, 148, 148, 149, 150, 151, 152, 153, 153, 154, 155, 156, 157, 158, 158, 159, 160, 161,
+    162, 162, 163, 164, 165, 165, 166, 167, 168, 168, 169, 170, 171, 171, 172, 173, 174, 174, 175,
+    176, 177, 177, 178, 179, 179, 180, 181, 182, 182, 183, 184, 184, 185, 186, 186, 187, 188, 188,
+    189, 190, 190, 191, 192, 192, 193, 194, 194, 195, 196, 196, 197, 198, 198, 199, 200, 200, 201,
+    201, 202, 203, 203, 204, 205, 205, 206, 206, 207, 208, 208, 209, 210, 210, 211, 211, 212, 213,
+    213, 214, 214, 215, 216, 216, 217, 217, 218, 218, 219, 220, 220, 221, 221, 222, 222, 223, 224,
+    224, 225, 225, 226, 226, 227, 228, 228, 229, 229, 230, 230, 231, 231, 232, 233, 233, 234, 234,
+    235, 235, 236, 236, 237, 237, 238, 238, 239, 240, 240, 241, 241, 242, 242, 243, 243, 244, 244,
+    245, 245, 246, 246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 252, 252, 253, 253, 254,
+    255,
+];
+
+fn u8_sqrt(a: u32) -> u32 {
+    U8_SQRT_LOOKUP[a as usize]
+}
+
+// These functions are as according to https://www.w3.org/TR/compositing/#blendingnonseparable
+
+fn lum(c: Color) -> f32 {
+    0.3 * c.r + 0.59 * c.g + 0.11 * c.b
+}
+
+fn clip_color(c: &mut Color) {
+    let l = lum(*c);
+    let n = c.min_component();
+    let x = c.max_component();
+    if n < 0.0 {
+        c.r = l + (((c.r - l) * l) / (l - n));
+        c.g = l + (((c.g - l) * l) / (l - n));
+        c.b = l + (((c.b - l) * l) / (l - n));
+    }
+    if x > 1.0 {
+        c.r = l + (((c.r - l) * (1.0 - l)) / (x - l));
+        c.g = l + (((c.g - l) * (1.0 - l)) / (x - l));
+        c.b = l + (((c.b - l) * (1.0 - l)) / (x - l));
+    }
+}
+
+fn set_lum(c: &mut Color, l: f32) {
+    let d = l - lum(*c);
+    c.r = c.r + d;
+    c.g = c.g + d;
+    c.b = c.b + d;
+    clip_color(c);
+}
+
+fn sat(c: Color) -> f32 {
+    return c.max_component() - c.min_component();
+}
+
+fn set_sat(c: &mut Color, s: f32) {
+    let mut rgb = [c.r, c.g, c.b];
+    let mut min = 0usize;
+    let mut mid = 1usize;
+    let mut max = 2usize;
+    if rgb[max] < rgb[mid] {
+        (max, mid) = (mid, max);
+    }
+    if rgb[max] < rgb[min] {
+        (max, min) = (min, max);
+    }
+    if rgb[mid] < rgb[min] {
+        (mid, min) = (min, mid);
+    }
+
+    if rgb[max] > rgb[min] {
+        rgb[mid] = ((rgb[mid] - rgb[min]) * s) / (rgb[max] - rgb[min]);
+        rgb[max] = s;
+    } else {
+        rgb[mid] = 0.0;
+        rgb[max] = 0.0;
+    }
+    rgb[min] = 0.0;
+
+    (c.r, c.g, c.b) = (rgb[0], rgb[1], rgb[2]);
 }
 
 /// Perform a premultiplied alpha blend operation on a slice of 32 bit ARGB pixels
@@ -230,6 +335,48 @@ fn mask_color_erase(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32)
     }
 }
 
+// This blend mode is from Paint Tool SAI, version 1 calls it "Luminosity",
+// version 2 calls it "Shine". Krita calls it "Luminosity/Shine (SAI)", so we
+// do too. It works by Normal blending the new pixel with a fully opaque black
+// pixel and then compositing the result via Addition.
+
+fn pixel_luminosity_shine_sai(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
+    let o = opacity as u32;
+    for (dp, sp) in base.iter_mut().zip(over.iter()) {
+        *dp = apply_luminosity_shine(*dp, [sp[0] as u32, sp[1] as u32, sp[2] as u32], o);
+    }
+}
+
+fn mask_luminosity_shine_sai(base: &mut [Pixel], color: Pixel, mask: &[u8], opacity: u32) {
+    debug_assert!(base.len() == mask.len());
+    let c = [color[0] as u32, color[1] as u32, color[2] as u32];
+    for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
+        *dp = apply_luminosity_shine(*dp, c, u8_mult(mask as u32, opacity));
+    }
+}
+
+fn apply_luminosity_shine(dp: Pixel, sp: [u32; 3], o: u32) -> Pixel {
+    let dc = unpremultiply_pixel(dp);
+    premultiply_pixel([
+        u8_blend(
+            comp_op_add(dc[0] as u32, u8_mult(sp[0], o)) as i32,
+            dc[0] as i32,
+            o as i32,
+        ) as u8,
+        u8_blend(
+            comp_op_add(dc[1] as u32, u8_mult(sp[1], o)) as i32,
+            dc[1] as i32,
+            o as i32,
+        ) as u8,
+        u8_blend(
+            comp_op_add(dc[2] as u32, u8_mult(sp[2], o)) as i32,
+            dc[2] as i32,
+            o as i32,
+        ) as u8,
+        dc[3],
+    ])
+}
+
 fn pixel_replace(base: &mut [Pixel], over: &[Pixel], opacity: u8) {
     let o = opacity as u32;
 
@@ -330,6 +477,35 @@ fn comp_op_screen(a: u32, b: u32) -> u32 {
     255 - u8_mult(255 - a, 255 - b)
 }
 
+fn comp_op_overlay(a: u32, b: u32) -> u32 {
+    comp_op_hard_light(b, a)
+}
+
+fn comp_op_hard_light(a: u32, b: u32) -> u32 {
+    let b2 = b * 2;
+    if b2 <= 255 {
+        comp_op_multiply(a, b2)
+    } else {
+        comp_op_screen(a, b2 - 255)
+    }
+}
+
+fn comp_op_soft_light(a: u32, b: u32) -> u32 {
+    let b2 = b * 2;
+    if b2 <= 255 {
+        a - u8_mult(u8_mult(255 - b2, a), 255 - a)
+    } else {
+        let a4 = a * 4;
+        let d = if a4 <= 255 {
+            let squared = u8_mult(a, a);
+            a4 + 16 * u8_mult(squared, a) - 12 * squared
+        } else {
+            u8_sqrt(a)
+        };
+        a + u8_mult(b2 - 255, d - a)
+    }
+}
+
 fn comp_op_divide(a: u32, b: u32) -> u32 {
     255.min((a * 256 + b / 2) / (1 + b))
 }
@@ -358,8 +534,47 @@ fn comp_op_subtract(a: u32, b: u32) -> u32 {
     0.max(a as i32 - b as i32) as u32
 }
 
+fn comp_op_linear_burn(a: u32, b: u32) -> u32 {
+    255.max(a + b) - 255
+}
+
+fn comp_op_linear_light(a: u32, b: u32) -> u32 {
+    ((a + 2 * b) as i32 - 255).clamp(0, 255) as u32
+}
+
 fn comp_op_recolor(_: u32, b: u32) -> u32 {
     b
+}
+
+fn comp_op_hue(dc: Pixel, sc: Pixel) -> Pixel {
+    let cb = Color::from_unpremultiplied_pixel(dc);
+    let mut cr = Color::from_unpremultiplied_pixel(sc);
+    set_sat(&mut cr, sat(cb));
+    set_lum(&mut cr, lum(cb));
+    cr.as_unpremultiplied_pixel()
+}
+
+fn comp_op_sat(dc: Pixel, sc: Pixel) -> Pixel {
+    let cb = Color::from_unpremultiplied_pixel(dc);
+    let cs = Color::from_unpremultiplied_pixel(sc);
+    let mut cr = cb;
+    set_sat(&mut cr, sat(cs));
+    set_lum(&mut cr, lum(cb));
+    cr.as_unpremultiplied_pixel()
+}
+
+fn comp_op_lum(dc: Pixel, sc: Pixel) -> Pixel {
+    let cs = Color::from_unpremultiplied_pixel(sc);
+    let mut cr = Color::from_unpremultiplied_pixel(dc);
+    set_lum(&mut cr, lum(cs));
+    cr.as_unpremultiplied_pixel()
+}
+
+fn comp_op_color(dc: Pixel, sc: Pixel) -> Pixel {
+    let cb = Color::from_unpremultiplied_pixel(dc);
+    let mut cr = Color::from_unpremultiplied_pixel(sc);
+    set_lum(&mut cr, lum(cb));
+    cr.as_unpremultiplied_pixel()
 }
 
 /// Generic alpha-preserving compositing operations
@@ -409,6 +624,50 @@ fn mask_composite(
             u8_blend(comp_op(d[0] as u32, c[0] as u32) as i32, d[0] as i32, mask) as u8,
             u8_blend(comp_op(d[1] as u32, c[1] as u32) as i32, d[1] as i32, mask) as u8,
             u8_blend(comp_op(d[2] as u32, c[2] as u32) as i32, d[2] as i32, mask) as u8,
+            d[3],
+        ]);
+    }
+}
+
+fn pixel_composite_nonseparable(
+    comp_op: fn(Pixel, Pixel) -> Pixel,
+    base: &mut [Pixel],
+    over: &[Pixel],
+    opacity: u8,
+) {
+    for (dp, sp) in base.iter_mut().zip(over.iter()) {
+        let dc = unpremultiply_pixel(*dp);
+        let rc = comp_op(dc, unpremultiply_pixel(*sp));
+        let alpha = u8_mult(sp[ALPHA_CHANNEL] as u32, opacity as u32) as i32;
+
+        *dp = premultiply_pixel([
+            u8_blend(rc[0] as i32, dc[0] as i32, alpha) as u8,
+            u8_blend(rc[1] as i32, dc[1] as i32, alpha) as u8,
+            u8_blend(rc[2] as i32, dc[2] as i32, alpha) as u8,
+            dc[3],
+        ]);
+    }
+}
+
+fn mask_composite_nonseparable(
+    comp_op: fn(Pixel, Pixel) -> Pixel,
+    base: &mut [Pixel],
+    color: Pixel,
+    mask: &[u8],
+    opacity: u32,
+) {
+    debug_assert!(base.len() == mask.len());
+    let c = unpremultiply_pixel(color);
+
+    for (dp, &mask) in base.iter_mut().zip(mask.iter()) {
+        let d = unpremultiply_pixel(*dp);
+        let r = comp_op(d, c);
+        let mask = u8_mult(mask as u32, opacity) as i32;
+
+        *dp = premultiply_pixel([
+            u8_blend(r[0] as i32, d[0] as i32, mask) as u8,
+            u8_blend(r[1] as i32, d[1] as i32, mask) as u8,
+            u8_blend(r[2] as i32, d[2] as i32, mask) as u8,
             d[3],
         ]);
     }

@@ -225,7 +225,7 @@ impl MyPaintBrushState {
         }
 
         let (h, s, v) = brush.color.as_hsv();
-        self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_H, h);
+        self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_H, h / 360.0);
         self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_S, s);
         self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_V, v);
 
