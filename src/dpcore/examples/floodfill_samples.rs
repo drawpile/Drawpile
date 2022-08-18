@@ -47,7 +47,7 @@ fn main() {
 
     let (bgimage, w, h) = utils::load_image("testdata/filltest.png");
 
-    editlayer::draw_image(
+    editlayer::draw_image8(
         layerstack.root_mut().get_bitmaplayer_mut(1).unwrap(),
         0,
         &bgimage,
@@ -55,7 +55,7 @@ fn main() {
         1.0,
         Blendmode::Replace,
     );
-    editlayer::draw_image(
+    editlayer::draw_image8(
         layerstack.root_mut().get_bitmaplayer_mut(1).unwrap(),
         0,
         &bgimage,
@@ -311,7 +311,7 @@ fn do_floodfill(
 
     let result = expand_floodfill(result, expansion);
 
-    editlayer::draw_image(
+    editlayer::draw_image8(
         image.root_mut().get_bitmaplayer_mut(1).unwrap(),
         0,
         &result.image.pixels,

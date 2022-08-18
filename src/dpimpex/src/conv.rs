@@ -21,15 +21,15 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::paint::color::*;
-use dpcore::paint::Image;
+use dpcore::paint::Image8;
 use image::RgbaImage;
 
-pub fn to_dpimage(img: &RgbaImage) -> Image {
-    let mut dpimg = Image::new(img.width() as usize, img.height() as usize);
+pub fn to_dpimage(img: &RgbaImage) -> Image8 {
+    let mut dpimg = Image8::new(img.width() as usize, img.height() as usize);
 
     let pixels = unsafe {
         std::slice::from_raw_parts(
-            img.as_raw().as_ptr() as *const Pixel,
+            img.as_raw().as_ptr() as *const Pixel8,
             dpimg.width * dpimg.height,
         )
     };
@@ -50,7 +50,7 @@ pub fn to_dpimage(img: &RgbaImage) -> Image {
     dpimg
 }
 
-pub fn from_dpimage(img: &Image) -> RgbaImage {
+pub fn from_dpimage(img: &Image8) -> RgbaImage {
     let mut rgba = Vec::with_capacity(img.width * img.height * 4);
 
     // Unpremultiply pixel values

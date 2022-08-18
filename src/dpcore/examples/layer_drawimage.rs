@@ -29,7 +29,7 @@ fn main() {
 
     let (image, w, h) = utils::load_image("testdata/logo.png");
 
-    editlayer::draw_image(
+    editlayer::draw_image8(
         &mut layer,
         0,
         &image,
@@ -38,7 +38,7 @@ fn main() {
         Blendmode::Replace,
     );
 
-    editlayer::draw_image(
+    editlayer::draw_image8(
         &mut layer,
         0,
         &image,
@@ -47,7 +47,7 @@ fn main() {
         Blendmode::Normal,
     );
 
-    editlayer::draw_image(
+    editlayer::draw_image8(
         &mut layer,
         0,
         &image,

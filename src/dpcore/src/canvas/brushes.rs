@@ -21,7 +21,8 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::paint::{
-    editlayer, AoE, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, UserID,
+    channel8_to_15, editlayer, AoE, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color,
+    UserID, BIT15_F32,
 };
 use crate::protocol::message::{
     DrawDabsClassicMessage, DrawDabsMyPaintMessage, DrawDabsPixelMessage,
@@ -92,7 +93,14 @@ fn drawdabs_classic_draw(
             cache,
         );
         aoe = aoe.merge(editlayer::draw_brush_dab(
-            layer, user, mx, my, &mask, &color, mode, dab.opacity,
+            layer,
+            user,
+            mx,
+            my,
+            &mask,
+            &color,
+            mode,
+            channel8_to_15(dab.opacity),
         ));
 
         last_x = x;
@@ -182,7 +190,7 @@ fn drawdabs_pixel_draw(
             &mask,
             &color,
             mode,
-            dab.opacity,
+            channel8_to_15(dab.opacity),
         ));
 
         last_x = x;
@@ -258,7 +266,7 @@ fn drawdabs_mypaint_draw(
                 &mask,
                 &color,
                 mode,
-                (normal * opacity * 255.0) as u8,
+                (normal * opacity * BIT15_F32) as u16,
             ));
         }
 
@@ -271,7 +279,7 @@ fn drawdabs_mypaint_draw(
                 &mask,
                 &color,
                 Blendmode::Recolor,
-                (lock_alpha * opacity * 255.0) as u8,
+                (lock_alpha * opacity * BIT15_F32) as u16,
             ));
         }
 

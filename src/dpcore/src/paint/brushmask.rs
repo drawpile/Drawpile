@@ -20,6 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
+use super::color::{BIT15_F32, BIT15_U16};
 use super::rect::Rectangle;
 use super::rectiter::RectIterator;
 use std::iter::FromIterator;
@@ -29,11 +30,11 @@ pub struct BrushMask {
     pub diameter: u32,
 
     /// Brush mask (length is diameter^2)
-    pub mask: Vec<u8>,
+    pub mask: Vec<u16>,
 }
 
 impl BrushMask {
-    pub fn rect_iter(&self, r: &Rectangle) -> RectIterator<u8> {
+    pub fn rect_iter(&self, r: &Rectangle) -> RectIterator<u16> {
         RectIterator::from_rectangle(&self.mask, self.diameter as usize, r)
     }
 }
@@ -194,7 +195,7 @@ impl BrushMask {
         let rr = square(radius);
         let offset = 0.5_f32;
 
-        let mut mask = vec![0u8; (diameter * diameter) as usize];
+        let mut mask = vec![0u16; (diameter * diameter) as usize];
         let mut i = 0;
 
         for y in 0..diameter {
@@ -202,7 +203,7 @@ impl BrushMask {
             for x in 0..diameter {
                 let xx = square(x as f32 - radius + offset);
                 if (yy + xx) < rr {
-                    mask[i] = 255u8;
+                    mask[i] = BIT15_U16;
                 }
                 i += 1;
             }
@@ -213,7 +214,7 @@ impl BrushMask {
     pub fn new_square_pixel(diameter: u32) -> BrushMask {
         BrushMask {
             diameter,
-            mask: vec![255u8; (diameter * diameter) as usize],
+            mask: vec![BIT15_U16; (diameter * diameter) as usize],
         }
     }
 
@@ -243,7 +244,7 @@ impl BrushMask {
     ) -> BrushMask {
         let idia = diameter.ceil().max(1.0) as usize + 2;
 
-        let mut mask = vec![0u8; idia * idia];
+        let mut mask = vec![0u16; idia * idia];
 
         let fx = x.floor();
         let fy = y.floor();
@@ -255,7 +256,7 @@ impl BrushMask {
         let xoffset = 0.5 - xfrac * 2.0 - radius - diameter_offset;
         let yoffset = 0.5 - yfrac * 2.0 - radius - diameter_offset;
 
-        const OPACITY_SCALE: f32 = 255.0 / 4.0; // 4 samples
+        const OPACITY_SCALE: f32 = BIT15_F32 / 4.0; // 4 samples
 
         let lut = cache.get_cached_lut(hardness);
         let lut_scale = LUT_RADIUS / radius;
@@ -281,7 +282,7 @@ impl BrushMask {
                     },
                 ) * OPACITY_SCALE;
 
-                mask[y * idia + x] = value as u8;
+                mask[y * idia + x] = value as u16;
             }
         }
 
@@ -300,7 +301,7 @@ impl BrushMask {
     ) -> BrushMask {
         let idia = diameter.ceil().max(1.0) as usize + 2;
 
-        let mut mask = vec![0u8; idia * idia];
+        let mut mask = vec![0u16; idia * idia];
 
         let fx = x.floor();
         let fy = y.floor();
@@ -312,7 +313,7 @@ impl BrushMask {
         let xoffset = 0.5 - xfrac - radius - diameter_offset;
         let yoffset = 0.5 - yfrac - radius - diameter_offset;
 
-        const OPACITY_SCALE: f32 = 255.0;
+        const OPACITY_SCALE: f32 = BIT15_F32;
 
         let lut = cache.get_cached_lut(hardness);
         let lut_scale = LUT_RADIUS / radius;
@@ -331,7 +332,7 @@ impl BrushMask {
                     0.0
                 };
 
-                mask[y * idia + x] = value as u8;
+                mask[y * idia + x] = value as u16;
             }
         }
 
@@ -408,7 +409,7 @@ impl BrushMask {
             }
         }
 
-        let mut mask = vec![0u8; mask_length];
+        let mut mask = vec![0u16; mask_length];
         for yp in y0..=y1 {
             for xp in x0..=x1 {
                 let rr = rr_mask[yp * idia + xp];
@@ -420,7 +421,7 @@ impl BrushMask {
                     segment2_offset,
                     segment2_slope,
                 );
-                let opa_ = (opa * 255.0f32) as u8;
+                let opa_ = (opa * BIT15_F32) as u16;
                 mask[yp * idia + xp] = opa_;
             }
         }
@@ -476,8 +477,9 @@ mod tests {
     #[test]
     fn test_round_pixel() {
         let mask = BrushMask::new_round_pixel(4);
-        let expected: [u8; 4 * 4] = [
-            0, 255, 255, 0, 255, 255, 255, 255, 255, 255, 255, 255, 0, 255, 255, 0,
+        let expected: [u16; 4 * 4] = [
+            0, BIT15_U16, BIT15_U16, 0, BIT15_U16, BIT15_U16, BIT15_U16, BIT15_U16, BIT15_U16,
+            BIT15_U16, BIT15_U16, BIT15_U16, 0, BIT15_U16, BIT15_U16, 0,
         ];
         assert_eq!(mask.mask, expected);
     }
@@ -485,7 +487,7 @@ mod tests {
     #[test]
     fn test_square_pixel() {
         let mask = BrushMask::new_square_pixel(2);
-        let expected: [u8; 4] = [255, 255, 255, 255];
+        let expected: [u16; 4] = [BIT15_U16; 4];
         assert_eq!(mask.mask, expected);
     }
 }

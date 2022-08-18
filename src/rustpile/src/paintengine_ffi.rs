@@ -29,12 +29,13 @@ use dpcore::canvas::images::make_putimage;
 use dpcore::canvas::snapshot::make_canvas_snapshot;
 use dpcore::canvas::{CanvasState, CanvasStateChange};
 use dpcore::paint::annotation::AnnotationID;
+use dpcore::paint::color::{pixels15_to_8, ZERO_PIXEL8};
 use dpcore::paint::editstack;
 use dpcore::paint::floodfill;
-use dpcore::paint::tile::TILE_SIZEI;
+use dpcore::paint::tile::{TILE_LENGTH, TILE_SIZEI};
 use dpcore::paint::{
-    AoE, Blendmode, Color, FlattenedTileIterator, Frame, Image, LayerID, LayerInsertion,
-    LayerStack, LayerViewMode, LayerViewOptions, Pixel, Rectangle, Size, Tile, UserID,
+    AoE, Blendmode, Color, FlattenedTileIterator, Frame, Image8, LayerID, LayerInsertion,
+    LayerStack, LayerViewMode, LayerViewOptions, Pixel8, Rectangle, Size, Tile, UserID,
 };
 use dpcore::protocol::aclfilter::*;
 use dpcore::protocol::message::*;
@@ -936,9 +937,9 @@ pub extern "C" fn paintengine_preview_cut(
         )]
     } else {
         // TODO an ImageRef struct so we could do this without copying
-        let mut maskimg = Image::new(rect.w as usize, rect.h as usize);
+        let mut maskimg = Image8::new(rect.w as usize, rect.h as usize);
         maskimg.pixels[..].copy_from_slice(unsafe {
-            slice::from_raw_parts_mut(mask as *mut Pixel, (rect.w * rect.h) as usize)
+            slice::from_raw_parts_mut(mask as *mut Pixel8, (rect.w * rect.h) as usize)
         });
 
         make_putimage(
@@ -1175,21 +1176,21 @@ pub extern "C" fn paintengine_get_layer_content(
     }
 
     let pixel_slice =
-        unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
+        unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel8, (rect.w * rect.h) as usize) };
 
     if layer_id < 0 {
         let mut vopts = LayerViewOptions::default();
         vopts.no_canvas_background = true;
-        vc.layerstack.to_pixels(rect, &vopts, pixel_slice).is_ok()
+        vc.layerstack.to_pixels8(rect, &vopts, pixel_slice).is_ok()
     } else if layer_id == 0 {
         vc.layerstack
-            .to_pixels(rect, &LayerViewOptions::default(), pixel_slice)
+            .to_pixels8(rect, &LayerViewOptions::default(), pixel_slice)
             .is_ok()
     } else if let Ok(layer_id) = LayerID::try_from(layer_id) {
         vc.layerstack
             .root()
             .get_bitmaplayer(layer_id)
-            .and_then(|l| l.to_pixels(rect, pixel_slice).ok())
+            .and_then(|l| l.to_pixels8(rect, pixel_slice).ok())
             .is_some()
     } else {
         false
@@ -1245,11 +1246,11 @@ pub extern "C" fn paintengine_get_frame_content(
     }
 
     let pixel_slice =
-        unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel, (rect.w * rect.h) as usize) };
+        unsafe { slice::from_raw_parts_mut(pixels as *mut Pixel8, (rect.w * rect.h) as usize) };
 
     let opts = LayerViewOptions::frame(vc.layerstack.frame_at(frame));
 
-    vc.layerstack.to_pixels(rect, &opts, pixel_slice).is_ok()
+    vc.layerstack.to_pixels8(rect, &opts, pixel_slice).is_ok()
 }
 
 /// Get a snapshot of the canvas state to use as a reset image
@@ -1945,13 +1946,15 @@ pub extern "C" fn paintengine_paint_changes(
         intersection
     };
 
+    let mut pixels = [ZERO_PIXEL8; TILE_LENGTH];
     FlattenedTileIterator::new(&vc.layerstack, &dp.view_opts, intersection).for_each(
         |(i, j, t)| {
+            pixels15_to_8(&mut pixels, &t.pixels);
             paint_func(
                 ctx,
                 i * TILE_SIZEI,
                 j * TILE_SIZEI,
-                t.pixels.as_ptr() as *const u8,
+                pixels.as_ptr() as *const u8,
             )
         },
     );

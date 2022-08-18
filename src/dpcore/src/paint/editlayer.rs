@@ -21,12 +21,12 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::aoe::{AoE, TileMap};
-use super::color::{ALPHA_CHANNEL, ZERO_PIXEL};
+use super::color::{pixels8_to_15, ALPHA_CHANNEL, BIT15_F32, BIT15_U16, ZERO_PIXEL15};
 use super::rectiter::RectIterator;
 use super::tile::{Tile, TILE_SIZE, TILE_SIZEI};
 use super::{
-    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, Layer, LayerID, Pixel,
-    Rectangle, UserID,
+    rasterop, BitmapLayer, Blendmode, BrushMask, Color, GroupLayer, Layer, LayerID, Pixel15,
+    Pixel8, Rectangle, UserID,
 };
 
 /// Fills a rectangle with a solid color using the given blending mode
@@ -50,7 +50,7 @@ pub fn fill_rect(
         None => return AoE::Nothing,
     };
 
-    let pixels = [color.as_pixel(); TILE_SIZE as usize];
+    let pixels = [color.as_pixel15(); TILE_SIZE as usize];
     let can_paint = mode.can_increase_opacity();
     let can_erase = mode.can_decrease_opacity();
 
@@ -66,7 +66,7 @@ pub fn fill_rect(
             .unwrap()
             .offset(-x, -y);
         for row in tile.rect_iter_mut(user, &subrect, can_erase) {
-            rasterop::pixel_blend(row, &pixels, 0xff, mode);
+            rasterop::pixel_blend(row, &pixels, BIT15_U16, mode);
         }
     }
 
@@ -106,7 +106,7 @@ pub fn draw_brush_dab(
     mask: &BrushMask,
     color: &Color,
     mode: Blendmode,
-    opacity: u8,
+    opacity: u16,
 ) -> AoE {
     let d = mask.diameter as i32;
     let rect = match Rectangle::new(x, y, d, d).cropped(layer.size()) {
@@ -114,7 +114,7 @@ pub fn draw_brush_dab(
         None => return AoE::Nothing,
     };
 
-    let colorpix = color.as_pixel();
+    let colorpix = color.as_pixel15();
     let can_paint = mode.can_increase_opacity();
     let can_erase = mode.can_decrease_opacity();
 
@@ -146,27 +146,26 @@ pub fn draw_brush_dab(
     rect.into()
 }
 
-/// Draw an image onto the layer
-///
-/// The given image must be in premultiplied ARGB format.
-/// The image will be drawn onto the given rectangle. The width and height
-/// of the rectangle must match the image dimensions. The rectangle may be
-/// outside the layer boundaries; it will be cropped as needed.
-pub fn draw_image(
+fn draw_image<T, PixelBlendFn>(
     layer: &mut BitmapLayer,
     user: UserID,
-    image: &[Pixel],
+    image: &[T],
     rect: &Rectangle,
     opacity: f32,
     blendmode: Blendmode,
-) -> AoE {
+    pixel_blend: &mut PixelBlendFn,
+) -> AoE
+where
+    T: Clone + Default + Eq,
+    PixelBlendFn: FnMut(&mut [Pixel15], &[T], u16, Blendmode),
+{
     assert_eq!(image.len(), (rect.w * rect.h) as usize);
     let destrect = match rect.cropped(layer.size()) {
         Some(r) => r,
         None => return AoE::Nothing,
     };
 
-    let o = (opacity * 255.0) as u8;
+    let o = (opacity * BIT15_F32) as u16;
     let can_paint = blendmode.can_increase_opacity();
     let can_erase = blendmode.can_decrease_opacity();
 
@@ -191,11 +190,59 @@ pub fn draw_image(
                     &srcrect,
                 ))
         {
-            rasterop::pixel_blend(destrow, imagerow, o, blendmode);
+            pixel_blend(destrow, imagerow, o, blendmode);
         }
     }
 
     destrect.into()
+}
+
+/// Draw an image onto the layer
+///
+/// The given image must be in premultiplied ARGB format.
+/// The image will be drawn onto the given rectangle. The width and height
+/// of the rectangle must match the image dimensions. The rectangle may be
+/// outside the layer boundaries; it will be cropped as needed.
+pub fn draw_image8(
+    layer: &mut BitmapLayer,
+    user: UserID,
+    image: &[Pixel8],
+    rect: &Rectangle,
+    opacity: f32,
+    blendmode: Blendmode,
+) -> AoE {
+    let mut srcrow = [ZERO_PIXEL15; TILE_SIZE as usize];
+    draw_image(
+        layer,
+        user,
+        image,
+        rect,
+        opacity,
+        blendmode,
+        &mut |destrow, imagerow, o, blendmode| {
+            pixels8_to_15(&mut srcrow, imagerow);
+            rasterop::pixel_blend(destrow, &srcrow, o, blendmode);
+        },
+    )
+}
+
+pub fn draw_image15(
+    layer: &mut BitmapLayer,
+    user: UserID,
+    image: &[Pixel15],
+    rect: &Rectangle,
+    opacity: f32,
+    blendmode: Blendmode,
+) -> AoE {
+    draw_image(
+        layer,
+        user,
+        image,
+        rect,
+        opacity,
+        blendmode,
+        &mut rasterop::pixel_blend,
+    )
 }
 
 /// Replace a tile or a stretch of tiles.
@@ -388,10 +435,10 @@ pub fn move_rect(
     source_rect: Rectangle,
     dest_x: i32,
     dest_y: i32,
-    mask: Option<&[Pixel]>,
+    mask: Option<&[Pixel8]>,
 ) -> AoE {
     // Copy the existing pixels.
-    let mut src_image = match layer.to_image(source_rect) {
+    let mut src_image = match layer.to_image15(source_rect) {
         Ok(i) => i,
         Err(_) => {
             return AoE::Nothing;
@@ -406,11 +453,11 @@ pub fn move_rect(
             .zip(m.iter())
             .for_each(|(s, m)| {
                 if m[ALPHA_CHANNEL] == 0 {
-                    *s = ZERO_PIXEL
+                    *s = ZERO_PIXEL15
                 }
             });
 
-        draw_image(layer, user, m, &source_rect, 1.0, Blendmode::Erase)
+        draw_image8(layer, user, m, &source_rect, 1.0, Blendmode::Erase)
     } else {
         fill_rect(
             layer,
@@ -422,7 +469,7 @@ pub fn move_rect(
     };
 
     // Draw the image onto the destination
-    aoe.merge(draw_image(
+    aoe.merge(draw_image15(
         layer,
         user,
         &src_image.pixels,
@@ -434,7 +481,7 @@ pub fn move_rect(
 
 #[cfg(test)]
 mod tests {
-    use super::super::color::{WHITE_PIXEL, ZERO_PIXEL};
+    use super::super::color::{BIT15_U16, WHITE_PIXEL15, ZERO_PIXEL15};
     use super::super::LayerMetadata;
     use super::*;
 
@@ -447,23 +494,23 @@ mod tests {
         fill_rect(
             &mut layer,
             0,
-            &Color::from_pixel(WHITE_PIXEL),
+            &Color::from_pixel15(WHITE_PIXEL15),
             Blendmode::Normal,
             &Rectangle::new(1, 1, 198, 198),
         );
 
-        assert_eq!(layer.pixel_at(100, 0), ZERO_PIXEL);
+        assert_eq!(layer.pixel_at(100, 0), ZERO_PIXEL15);
 
-        assert_eq!(layer.pixel_at(0, 1), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(1, 1), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(198, 1), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(199, 1), ZERO_PIXEL);
+        assert_eq!(layer.pixel_at(0, 1), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(1, 1), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(198, 1), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(199, 1), ZERO_PIXEL15);
 
-        assert_eq!(layer.pixel_at(0, 198), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(1, 198), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(198, 198), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(199, 198), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(1, 199), ZERO_PIXEL);
+        assert_eq!(layer.pixel_at(0, 198), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(1, 198), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(198, 198), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(199, 198), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(1, 199), ZERO_PIXEL15);
     }
 
     #[test]
@@ -485,28 +532,28 @@ mod tests {
             &brush,
             &Color::rgb8(255, 255, 255),
             Blendmode::Normal,
-            255u8,
+            BIT15_U16,
         );
 
-        assert_eq!(layer.pixel_at(62, 62), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(63, 62), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(64, 62), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(65, 62), ZERO_PIXEL);
+        assert_eq!(layer.pixel_at(62, 62), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(63, 62), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(64, 62), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(65, 62), ZERO_PIXEL15);
 
-        assert_eq!(layer.pixel_at(62, 63), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(63, 63), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(64, 63), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(65, 63), WHITE_PIXEL);
+        assert_eq!(layer.pixel_at(62, 63), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(63, 63), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(64, 63), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(65, 63), WHITE_PIXEL15);
 
-        assert_eq!(layer.pixel_at(62, 64), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(63, 64), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(64, 64), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(65, 64), WHITE_PIXEL);
+        assert_eq!(layer.pixel_at(62, 64), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(63, 64), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(64, 64), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(65, 64), WHITE_PIXEL15);
 
-        assert_eq!(layer.pixel_at(62, 65), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(63, 65), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(64, 65), WHITE_PIXEL);
-        assert_eq!(layer.pixel_at(65, 65), ZERO_PIXEL);
+        assert_eq!(layer.pixel_at(62, 65), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(63, 65), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(64, 65), WHITE_PIXEL15);
+        assert_eq!(layer.pixel_at(65, 65), ZERO_PIXEL15);
     }
 
     #[test]
@@ -517,7 +564,7 @@ mod tests {
 
         merge_bitmap(&mut btm, &top);
 
-        assert_eq!(btm.pixel_at(0, 0), Color::rgb8(127, 0, 0).as_pixel());
+        assert_eq!(btm.pixel_at(0, 0), [0, 0, BIT15_U16 / 2, BIT15_U16]);
     }
 
     #[test]
@@ -546,6 +593,6 @@ mod tests {
 
         merge_group(&mut btm, &grp);
 
-        assert_eq!(btm.pixel_at(0, 0), Color::rgb8(127, 0, 0).as_pixel());
+        assert_eq!(btm.pixel_at(0, 0), [0, 0, BIT15_U16 / 2, BIT15_U16]);
     }
 }

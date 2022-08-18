@@ -22,10 +22,9 @@
 
 use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, MyPaintBrush, MyPaintSettings};
 use dpcore::canvas::brushes;
-use dpcore::paint::tile::Tile;
 use dpcore::paint::{
     editlayer, floodfill, Blendmode, BrushMask, ClassicBrushCache, Color, LayerID, LayerInsertion,
-    LayerStack, Rectangle,
+    LayerStack, Rectangle, Tile, BIT15_U16,
 };
 use dpcore::protocol::message::CommandMessage;
 
@@ -179,7 +178,7 @@ impl BrushPreview {
                         &dabmask,
                         &color,
                         Blendmode::Normal,
-                        255u8,
+                        BIT15_U16,
                     );
                     hue += huestep;
                 }
@@ -318,7 +317,7 @@ impl BrushPreview {
             result = floodfill::expand_floodfill(result, expansion);
         }
 
-        editlayer::draw_image(
+        editlayer::draw_image8(
             self.layerstack
                 .root_mut()
                 .get_bitmaplayer_mut(LAYER_ID)

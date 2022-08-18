@@ -3,7 +3,7 @@
 #![allow(clippy::redundant_field_names)]
 
 use dpcore::canvas::images::make_putimage;
-use dpcore::paint::{Blendmode, Image, LayerID, Pixel, UserID};
+use dpcore::paint::{Blendmode, Image8, LayerID, Pixel8, UserID};
 use dpcore::protocol::message::*;
 use dpcore::protocol::MessageWriter;
 use std::slice;
@@ -557,10 +557,10 @@ pub extern "C" fn write_putimage(
     pixels: *const u8,
 ) {
     // TODO ImageRef type so we don't need to make copies
-    let mut image = Image::new(w as usize, h as usize);
+    let mut image = Image8::new(w as usize, h as usize);
 
     image.pixels[..].copy_from_slice(unsafe {
-        slice::from_raw_parts_mut(pixels as *mut Pixel, (w * h) as usize)
+        slice::from_raw_parts_mut(pixels as *mut Pixel8, (w * h) as usize)
     });
 
     make_putimage(user, layer, x, y, &image, mode)

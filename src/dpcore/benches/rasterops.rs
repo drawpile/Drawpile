@@ -21,14 +21,14 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use dpcore::paint::{rasterop, Blendmode, BrushMask, Pixel};
+use dpcore::paint::{rasterop, Blendmode, BrushMask, Pixel15};
 
-fn mask_blend(mask: &[u8], mode: Blendmode) {
+fn mask_blend(mask: &[u16], mode: Blendmode) {
     let mut base = [[128, 128, 128, 128]; 64 * 64];
     rasterop::mask_blend(&mut base, [255, 255, 255, 255], mask, mode, 127);
 }
 
-fn pixel_blend(over: &[Pixel], mode: Blendmode) {
+fn pixel_blend(over: &[Pixel15], mode: Blendmode) {
     let mut base = [[128, 128, 128, 128]; 64 * 64];
     rasterop::pixel_blend(&mut base, over, 128, mode);
 }

@@ -23,8 +23,8 @@
 use super::aoe::{AoE, TileMap};
 use super::blendmode::Blendmode;
 use super::brushmask::BrushMask;
-use super::color::{Color, Pixel};
-use super::image::Image;
+use super::color::{pixels15_to_8, pixels8_to_15, Color, Pixel15, Pixel8, BIT15_F32};
+use super::image::{Image, Image15, Image8};
 use super::layer::LayerMetadata;
 use super::rect::{Rectangle, Size};
 use super::rectiter::{MutableRectIterator, RectIterator};
@@ -91,7 +91,7 @@ impl BitmapLayer {
     /// Build a layer from raw pixel data
     /// This is typically used for scratch layers as a part of some
     /// larger image manipulation process.
-    pub fn from_image(pixels: &[Pixel], width: u32, height: u32) -> BitmapLayer {
+    pub fn from_image(pixels: &[Pixel8], width: u32, height: u32) -> BitmapLayer {
         let xtiles = Tile::div_up(width);
         let ytiles = Tile::div_up(height);
 
@@ -117,7 +117,7 @@ impl BitmapLayer {
                 let src = RectIterator::from_rectangle(pixels, width as usize, &srcrect);
 
                 for (destrow, srcrow) in tile.zip(src) {
-                    destrow.copy_from_slice(srcrow);
+                    pixels8_to_15(destrow, srcrow);
                 }
             }
         }
@@ -164,13 +164,15 @@ impl BitmapLayer {
         }
     }
 
-    /// Copy pixels from the given rectangle to the pixel slice
-    ///
-    /// Note: the destination should be initialized to zero, as this function
-    /// skips blank tiles.
-    /// The rectangle must be fully within the layer bounds.
-    /// The length of the pixel slice must be rect width*height.
-    pub fn to_pixels(&self, rect: Rectangle, pixels: &mut [Pixel]) -> Result<(), &str> {
+    fn to_pixels<T, CopyFn>(
+        &self,
+        rect: Rectangle,
+        pixels: &mut [T],
+        copy: CopyFn,
+    ) -> Result<(), &'static str>
+    where
+        CopyFn: Fn(&mut [T], &[Pixel15]),
+    {
         if !rect.in_bounds(self.size()) {
             return Err("source rectangle out of bounds");
         }
@@ -206,36 +208,76 @@ impl BitmapLayer {
                 pixelrect.h as usize,
             );
 
-            destiter
-                .zip(srciter)
-                .for_each(|(d, s)| d.copy_from_slice(s));
+            for (destrow, srcrow) in destiter.zip(srciter) {
+                copy(destrow, srcrow);
+            }
         }
 
         Ok(())
     }
 
-    pub fn to_image(&self, rect: Rectangle) -> Result<Image, &str> {
+    /// Copy pixels from the given rectangle to the pixel slice
+    ///
+    /// Note: the destination should be initialized to zero, as this function
+    /// skips blank tiles.
+    /// The rectangle must be fully within the layer bounds.
+    /// The length of the pixel slice must be rect width*height.
+    pub fn to_pixels8(&self, rect: Rectangle, pixels: &mut [Pixel8]) -> Result<(), &'static str> {
+        self.to_pixels(rect, pixels, pixels15_to_8)
+    }
+
+    /// Like to_pixels, but into a 15 bit pixel slice
+    pub fn to_pixels15(&self, rect: Rectangle, pixels: &mut [Pixel15]) -> Result<(), &'static str> {
+        self.to_pixels(rect, pixels, <[Pixel15]>::copy_from_slice)
+    }
+
+    fn to_image<T, ToPixelsFn>(
+        &self,
+        rect: Rectangle,
+        to_pixels: ToPixelsFn,
+    ) -> Result<Image<T>, &'static str>
+    where
+        T: Clone + Default + Eq,
+        ToPixelsFn: FnOnce(&Self, Rectangle, &mut [T]) -> Result<(), &'static str>,
+    {
         let rect = match rect.cropped(self.size()) {
             Some(r) => r,
             None => {
                 return Err("source rectangle out of bounds");
             }
         };
-
         let mut img = Image::new(rect.w as usize, rect.h as usize);
-
-        self.to_pixels(rect, &mut img.pixels).unwrap();
+        to_pixels(self, rect, &mut img.pixels).unwrap();
         Ok(img)
     }
 
+    pub fn to_image8(&self, rect: Rectangle) -> Result<Image8, &'static str> {
+        self.to_image(rect, Self::to_pixels8)
+    }
+
+    pub fn to_image15(&self, rect: Rectangle) -> Result<Image15, &'static str> {
+        self.to_image(rect, Self::to_pixels15)
+    }
+
     /// Get an automatically cropped copy of the layer content
-    pub fn to_cropped_image(&self) -> (Image, i32, i32) {
+    fn to_cropped_image<T, ToImageFn>(&self, to_image: ToImageFn) -> (Image<T>, i32, i32)
+    where
+        T: Clone + Default + Eq,
+        ToImageFn: FnOnce(&Self, Rectangle) -> Result<Image<T>, &'static str>,
+    {
         let crop = match self.find_bounds() {
             Some(r) => r,
             None => return (Image::default(), 0, 0),
         };
+        (to_image(self, crop).unwrap(), crop.x, crop.y)
+    }
 
-        (self.to_image(crop).unwrap(), crop.x, crop.y)
+    pub fn to_cropped_image8(&self) -> (Image8, i32, i32) {
+        self.to_cropped_image(Self::to_image8)
+    }
+
+    pub fn to_cropped_image15(&self) -> (Image15, i32, i32) {
+        self.to_cropped_image(Self::to_image15)
     }
 
     /// Get mutable access to a sublayer with the given ID
@@ -317,7 +359,7 @@ impl BitmapLayer {
     }
 
     /// Return the pixel at the given coordinates
-    pub fn pixel_at(&self, x: u32, y: u32) -> Pixel {
+    pub fn pixel_at(&self, x: u32, y: u32) -> Pixel15 {
         let ti = x / TILE_SIZE;
         let tj = y / TILE_SIZE;
         let tx = x - ti * TILE_SIZE;
@@ -332,7 +374,7 @@ impl BitmapLayer {
             if x < 0 || y < 0 || x as u32 > self.width || y as u32 > self.height {
                 Color::TRANSPARENT
             } else {
-                Color::from_pixel(self.pixel_at(x as u32, y as u32))
+                Color::from_pixel15(self.pixel_at(x as u32, y as u32))
             }
         } else {
             let mask = BrushMask::new_round_pixel(dia as u32);
@@ -371,8 +413,8 @@ impl BitmapLayer {
                     .flatten()
                     .zip(dab.rect_iter(&rect_in_dab).flatten())
                 {
-                    let m = *mask as f32 / 255.0;
-                    let c = Color::from_unpremultiplied_pixel(*pix);
+                    let m = *mask as f32 / BIT15_F32;
+                    let c = Color::from_unpremultiplied_pixel15(*pix);
                     sum_weight += m;
                     sum_color.r += c.r * m;
                     sum_color.g += c.g * m;
@@ -753,7 +795,7 @@ impl BitmapLayer {
 
 #[cfg(test)]
 mod tests {
-    use super::super::color::{WHITE_PIXEL, ZERO_PIXEL};
+    use super::super::color::{WHITE_PIXEL15, WHITE_PIXEL8, ZERO_PIXEL15};
     use super::*;
     use bitvec::prelude::*;
 
@@ -804,13 +846,14 @@ mod tests {
             [0, 0, 1, 1], [0, 0, 1, 2], [0, 0, 1, 3],
         ];
         let layer = BitmapLayer::from_image(&image, 3, 2);
-        assert_eq!(layer.pixel_at(0, 0), [0, 0, 0, 1]);
-        assert_eq!(layer.pixel_at(1, 0), [0, 0, 0, 2]);
-        assert_eq!(layer.pixel_at(2, 0), [0, 0, 0, 3]);
+        // 8 bit to 15 bit, so 1 -> 128.5, 2 -> 257.0, 3 -> 385.5
+        assert_eq!(layer.pixel_at(0, 0), [0, 0, 0, 128]);
+        assert_eq!(layer.pixel_at(1, 0), [0, 0, 0, 257]);
+        assert_eq!(layer.pixel_at(2, 0), [0, 0, 0, 385]);
         assert_eq!(layer.pixel_at(3, 0), [0, 0, 0, 0]);
-        assert_eq!(layer.pixel_at(0, 1), [0, 0, 1, 1]);
-        assert_eq!(layer.pixel_at(1, 1), [0, 0, 1, 2]);
-        assert_eq!(layer.pixel_at(2, 1), [0, 0, 1, 3]);
+        assert_eq!(layer.pixel_at(0, 1), [0, 0, 128, 128]);
+        assert_eq!(layer.pixel_at(1, 1), [0, 0, 128, 257]);
+        assert_eq!(layer.pixel_at(2, 1), [0, 0, 128, 385]);
         assert_eq!(layer.pixel_at(3, 1), [0, 0, 0, 0]);
         assert_eq!(layer.pixel_at(0, 2), [0, 0, 0, 0]);
     }
@@ -835,7 +878,7 @@ mod tests {
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(1, 1, 1, 1), false)
             .next()
-            .unwrap()[0] = WHITE_PIXEL;
+            .unwrap()[0] = WHITE_PIXEL15;
 
         let layer2 = layer
             .resized(TILE_SIZEI, TILE_SIZEI, 2 * TILE_SIZEI, TILE_SIZEI)
@@ -877,7 +920,7 @@ mod tests {
                     .tile_mut(x, y)
                     .rect_iter_mut(0, &Rectangle::new(0, 0, 1, 1), false)
                     .next()
-                    .unwrap()[0] = WHITE_PIXEL;
+                    .unwrap()[0] = WHITE_PIXEL15;
             }
         }
 
@@ -905,15 +948,15 @@ mod tests {
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(0, 0, 1, 1), false)
             .next()
-            .unwrap()[0] = WHITE_PIXEL;
+            .unwrap()[0] = WHITE_PIXEL15;
 
         let layer = layer.resized(10, 0, 0, 5).unwrap();
 
         assert_eq!(layer.width, TILE_SIZE + 5);
         assert_eq!(layer.height, TILE_SIZE + 10);
 
-        assert_eq!(layer.pixel_at(0, 0), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(5, 10), WHITE_PIXEL);
+        assert_eq!(layer.pixel_at(0, 0), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(5, 10), WHITE_PIXEL15);
     }
 
     #[test]
@@ -923,15 +966,15 @@ mod tests {
             .tile_mut(0, 0)
             .rect_iter_mut(0, &Rectangle::new(5, 10, 1, 1), false)
             .next()
-            .unwrap()[0] = WHITE_PIXEL;
+            .unwrap()[0] = WHITE_PIXEL15;
 
         let layer = layer.resized(-10, 0, 0, -5).unwrap();
 
         assert_eq!(layer.width, TILE_SIZE - 5);
         assert_eq!(layer.height, TILE_SIZE - 10);
 
-        assert_eq!(layer.pixel_at(5, 10), ZERO_PIXEL);
-        assert_eq!(layer.pixel_at(0, 0), WHITE_PIXEL);
+        assert_eq!(layer.pixel_at(5, 10), ZERO_PIXEL15);
+        assert_eq!(layer.pixel_at(0, 0), WHITE_PIXEL15);
     }
 
     #[test]
@@ -958,16 +1001,16 @@ mod tests {
     #[test]
     fn test_cropped_image() {
         let mut layer = BitmapLayer::new(0, TILE_SIZE * 4, TILE_SIZE * 4, Tile::Blank);
-        layer.tile_mut(1, 1).set_pixel_at(0, 0, 0, WHITE_PIXEL);
-        layer.tile_mut(2, 1).set_pixel_at(0, 1, 0, WHITE_PIXEL);
+        layer.tile_mut(1, 1).set_pixel_at(0, 0, 0, WHITE_PIXEL15);
+        layer.tile_mut(2, 1).set_pixel_at(0, 1, 0, WHITE_PIXEL15);
 
-        let (img, x, y) = layer.to_cropped_image();
+        let (img, x, y) = layer.to_cropped_image8();
         assert_eq!(x, TILE_SIZEI);
         assert_eq!(y, TILE_SIZEI);
         assert_eq!(img.width, TILE_SIZE as usize * 2);
         assert_eq!(img.height, TILE_SIZE as usize);
         assert_eq!(img.pixels.len(), (TILE_SIZE * 2 * TILE_SIZE) as usize);
-        assert_eq!(img.pixels[0], WHITE_PIXEL);
-        assert_eq!(img.pixels[TILE_SIZE as usize + 1], WHITE_PIXEL);
+        assert_eq!(img.pixels[0], WHITE_PIXEL8);
+        assert_eq!(img.pixels[TILE_SIZE as usize + 1], WHITE_PIXEL8);
     }
 }

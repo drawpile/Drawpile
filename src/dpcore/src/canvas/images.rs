@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use super::compression::ImageCompressor;
-use crate::paint::{Blendmode, Image, LayerID, Rectangle, UserID};
+use crate::paint::{Blendmode, Image8, LayerID, Rectangle, UserID};
 use crate::protocol::message::{CommandMessage, PutImageMessage};
 
 const MAX_IMAGE_LEN: usize = 0xffff - 19;
@@ -35,7 +35,7 @@ pub fn make_putimage(
     layer: LayerID,
     x: u32,
     y: u32,
-    image: &Image,
+    image: &Image8,
     mode: Blendmode,
 ) -> Vec<CommandMessage> {
     let mut messages = Vec::new();
@@ -59,7 +59,7 @@ fn make_putimage_crop(
     layer: LayerID,
     x: u32,
     y: u32,
-    image: &Image,
+    image: &Image8,
     mode: Blendmode,
     rect: &Rectangle,
 ) {

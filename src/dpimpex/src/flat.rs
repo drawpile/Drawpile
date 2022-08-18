@@ -46,7 +46,7 @@ pub fn load_flat_image(path: &Path) -> ImageImportResult {
         .unwrap();
     layer.metadata_mut().title = "Layer 1".into();
 
-    editlayer::draw_image(
+    editlayer::draw_image8(
         layer.as_bitmap_mut().unwrap(),
         1,
         &img.pixels,
@@ -79,7 +79,7 @@ pub fn load_gif_animation(path: &Path) -> ImageImportResult {
         let frame = frame?;
         let img = to_dpimage(frame.buffer());
 
-        editlayer::draw_image(
+        editlayer::draw_image8(
             layer,
             1,
             &img.pixels,
@@ -150,7 +150,7 @@ mod tests {
                 r: 1.0,
                 g: 1.0,
                 b: 1.0,
-                a: 0.502
+                a: 0.5019531
             }
         );
     }

@@ -34,10 +34,10 @@ pub const TILE_LENGTH: usize = (TILE_SIZE * TILE_SIZE) as usize;
 
 lazy_static! {
     pub(super) static ref ZEBRA_TILE: TileData = {
-        let mut z = TileData::new(Color::TRANSPARENT.as_pixel(), 0);
+        let mut z = TileData::new(Color::TRANSPARENT.as_pixel15(), 0);
         let colors = [
-            Color::rgb8(35, 38, 41).as_pixel(),
-            Color::rgb8(239, 240, 241).as_pixel(),
+            Color::rgb8(35, 38, 41).as_pixel15(),
+            Color::rgb8(239, 240, 241).as_pixel15(),
         ];
 
         z.pixels
@@ -51,7 +51,7 @@ lazy_static! {
 #[derive(Clone)]
 pub struct TileData {
     /// The pixel content
-    pub pixels: [Pixel; TILE_LENGTH],
+    pub pixels: [Pixel15; TILE_LENGTH],
 
     /// ID of the user who last touched this tile
     pub last_touched_by: UserID,
@@ -70,17 +70,17 @@ pub enum Tile {
 }
 
 static TRANSPARENT_DATA: TileData = TileData {
-    pixels: [ZERO_PIXEL; TILE_LENGTH],
+    pixels: [ZERO_PIXEL15; TILE_LENGTH],
     last_touched_by: 0,
     maybe_blank: true,
 };
 
 impl TileData {
-    pub fn new(pixel: Pixel, user: UserID) -> TileData {
+    pub fn new(pixel: Pixel15, user: UserID) -> TileData {
         TileData {
             pixels: [pixel; TILE_LENGTH],
             last_touched_by: user,
-            maybe_blank: pixel == ZERO_PIXEL,
+            maybe_blank: pixel == ZERO_PIXEL15,
         }
     }
 
@@ -88,7 +88,7 @@ impl TileData {
         rasterop::pixel_blend(
             &mut self.pixels,
             &other.pixels,
-            (opacity * 255.0) as u8,
+            (opacity * BIT15_F32) as u16,
             mode,
         );
         self.maybe_blank = mode.can_decrease_opacity();
@@ -107,7 +107,7 @@ impl Tile {
     // Construct a new tile filled with the given color.
     // If the color is transparent, a Blank tile is returned.
     pub fn new(color: &Color, user: UserID) -> Tile {
-        let p = color.as_pixel();
+        let p = color.as_pixel15();
         if p[ALPHA_CHANNEL] == 0 {
             Tile::Blank
         } else {
@@ -118,12 +118,12 @@ impl Tile {
     // Construct a new tile filled with the given color.
     // A bitmap tile is constructed even if the color is transparent.
     pub fn new_solid(color: &Color, user: UserID) -> Tile {
-        Tile::Bitmap(Arc::new(TileData::new(color.as_pixel(), user)))
+        Tile::Bitmap(Arc::new(TileData::new(color.as_pixel15(), user)))
     }
 
     pub fn new_checkerboard(color1: &Color, color2: &Color) -> Tile {
-        let mut td = TileData::new(color1.as_pixel(), 0);
-        let p2 = color2.as_pixel();
+        let mut td = TileData::new(color1.as_pixel15(), 0);
+        let p2 = color2.as_pixel15();
         let s = TILE_SIZE as usize;
         let s2 = TILE_SIZE as usize / 2;
         for y in 0..s2 {
@@ -134,10 +134,10 @@ impl Tile {
         Tile::Bitmap(Arc::new(td))
     }
 
-    pub fn from_data(data: &[Pixel], user: UserID) -> Tile {
+    pub fn from_data(data: &[Pixel8], user: UserID) -> Tile {
         assert_eq!(data.len(), TILE_LENGTH, "Wrong tile data length");
-        let mut td = Arc::new(TileData::new(ZERO_PIXEL, user));
-        Arc::make_mut(&mut td).pixels.copy_from_slice(data);
+        let mut td = Arc::new(TileData::new(ZERO_PIXEL15, user));
+        pixels8_to_15(&mut Arc::make_mut(&mut td).pixels, data);
         Tile::Bitmap(td)
     }
 
@@ -151,7 +151,7 @@ impl Tile {
             Tile::Bitmap(td) => {
                 let pix = td.pixels[0];
                 if td.pixels.iter().all(|&p| p == pix) {
-                    Some(Color::from_pixel(pix))
+                    Some(Color::from_pixel15(pix))
                 } else {
                     None
                 }
@@ -163,7 +163,7 @@ impl Tile {
     pub fn clone_data(&self) -> TileData {
         match self {
             Tile::Bitmap(td) => TileData::clone(td),
-            Tile::Blank => TileData::new(ZERO_PIXEL, 0),
+            Tile::Blank => TileData::new(ZERO_PIXEL15, 0),
         }
     }
 
@@ -215,7 +215,7 @@ impl Tile {
         } else {
             match self {
                 Tile::Bitmap(td) => {
-                    let pixel = color.as_pixel();
+                    let pixel = color.as_pixel15();
                     let data = Arc::make_mut(td);
                     data.last_touched_by = user;
                     data.maybe_blank = false;
@@ -251,7 +251,7 @@ impl Tile {
 
     // Return a rect iterator to this tile's content
     // Note: you may want to check if this is a Blank tile first for optimization purposes
-    pub fn rect_iter(&self, r: &Rectangle) -> RectIterator<Pixel> {
+    pub fn rect_iter(&self, r: &Rectangle) -> RectIterator<Pixel15> {
         debug_assert!(r.x >= 0 && r.y >= 0);
         debug_assert!(r.right() < TILE_SIZEI && r.bottom() < TILE_SIZEI);
 
@@ -272,7 +272,7 @@ impl Tile {
         user: UserID,
         r: &Rectangle,
         maybe_erase: bool,
-    ) -> MutableRectIterator<Pixel> {
+    ) -> MutableRectIterator<Pixel15> {
         debug_assert!(r.x >= 0 && r.y >= 0);
         debug_assert!(r.right() < TILE_SIZEI && r.bottom() < TILE_SIZEI);
 
@@ -289,23 +289,23 @@ impl Tile {
         }
     }
 
-    pub fn pixel_at(&self, x: u32, y: u32) -> Pixel {
+    pub fn pixel_at(&self, x: u32, y: u32) -> Pixel15 {
         debug_assert!(x < TILE_SIZE);
         debug_assert!(y < TILE_SIZE);
         match self {
             Tile::Bitmap(td) => td.pixels[(y * TILE_SIZE + x) as usize],
-            Tile::Blank => ZERO_PIXEL,
+            Tile::Blank => ZERO_PIXEL15,
         }
     }
 
-    pub fn set_pixel_at(&mut self, user: UserID, x: u32, y: u32, px: Pixel) {
+    pub fn set_pixel_at(&mut self, user: UserID, x: u32, y: u32, px: Pixel15) {
         debug_assert!(x < TILE_SIZE);
         debug_assert!(y < TILE_SIZE);
         match self {
             Tile::Bitmap(td) => {
                 let data = Arc::make_mut(td);
                 data.pixels[(y * TILE_SIZE + x) as usize] = px;
-                data.maybe_blank |= px == ZERO_PIXEL;
+                data.maybe_blank |= px == ZERO_PIXEL15;
             }
             Tile::Blank => {
                 *self = Tile::new_solid(&Color::TRANSPARENT, user);
@@ -442,7 +442,7 @@ mod tests {
 
         tile.rect_iter_mut(1, &Rectangle::new(0, 0, 3, 3), false)
             .flatten()
-            .for_each(|p| *p = WHITE_PIXEL);
+            .for_each(|p| *p = WHITE_PIXEL15);
         assert_eq!(tile.solid_color(), None);
         assert!(!tile.is_blank());
     }
@@ -484,8 +484,8 @@ mod tests {
     #[test]
     fn test_pixels() {
         let mut t = Tile::Blank;
-        t.set_pixel_at(0, 0, 0, WHITE_PIXEL);
-        assert_eq!(t.pixel_at(0, 0), WHITE_PIXEL);
-        assert_eq!(t.pixel_at(1, 0), ZERO_PIXEL);
+        t.set_pixel_at(0, 0, 0, WHITE_PIXEL15);
+        assert_eq!(t.pixel_at(0, 0), WHITE_PIXEL15);
+        assert_eq!(t.pixel_at(1, 0), ZERO_PIXEL15);
     }
 }

@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::paint::tile::{Tile, TileData, TILE_LENGTH};
-use crate::paint::{Color, Pixel, UserID};
+use crate::paint::{Color, Pixel8, UserID};
 
 use std::convert::TryInto;
 use std::io::Write;
@@ -49,7 +49,7 @@ pub fn decompress_tile(data: &[u8], user_id: UserID) -> Option<Tile> {
         return Some(Tile::new(&Color::from_argb32(prefix), user_id));
     }
 
-    if prefix as usize != TILE_LENGTH * mem::size_of::<Pixel>() {
+    if prefix as usize != TILE_LENGTH * mem::size_of::<Pixel8>() {
         warn!(
             "decompress_tile: wrong expected output length (was {})",
             prefix
@@ -74,7 +74,7 @@ pub fn decompress_tile(data: &[u8], user_id: UserID) -> Option<Tile> {
     }
 
     let pixels =
-        unsafe { std::slice::from_raw_parts(decompressed.as_ptr() as *const Pixel, TILE_LENGTH) };
+        unsafe { std::slice::from_raw_parts(decompressed.as_ptr() as *const Pixel8, TILE_LENGTH) };
 
     Some(Tile::from_data(pixels, user_id))
 }
@@ -85,7 +85,7 @@ pub fn compress_tiledata(tiledata: &TileData) -> Vec<u8> {
     let pixelbytes = unsafe {
         slice::from_raw_parts(
             tiledata.pixels.as_ptr() as *const u8,
-            TILE_LENGTH * mem::size_of::<Pixel>(),
+            TILE_LENGTH * mem::size_of::<Pixel8>(),
         )
     };
 
@@ -114,13 +114,13 @@ pub fn compress_tile(tile: &Tile) -> Vec<u8> {
     }
 }
 
-pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> {
+pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel8>> {
     if data.len() < 4 {
         warn!("decompress_image: data too short!");
         return None;
     }
 
-    let expected_bytes_len = expected_len * mem::size_of::<Pixel>();
+    let expected_bytes_len = expected_len * mem::size_of::<Pixel8>();
     let prefix = u32::from_be_bytes(data[..4].try_into().unwrap());
     if prefix as usize != expected_bytes_len {
         warn!(
@@ -147,7 +147,7 @@ pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> 
         return None;
     }
 
-    let pixels: Vec<Pixel> = decompressed
+    let pixels: Vec<Pixel8> = decompressed
         .chunks_exact(4)
         .map(|p| p.try_into().unwrap())
         .collect();
@@ -155,11 +155,11 @@ pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel>> 
     Some(pixels)
 }
 
-pub fn compress_image(pixels: &[Pixel]) -> Vec<u8> {
+pub fn compress_image(pixels: &[Pixel8]) -> Vec<u8> {
     let pixelbytes = unsafe {
         slice::from_raw_parts(
             pixels.as_ptr() as *const u8,
-            pixels.len() * mem::size_of::<Pixel>(),
+            pixels.len() * mem::size_of::<Pixel8>(),
         )
     };
 
@@ -193,11 +193,11 @@ impl ImageCompressor {
         }
     }
 
-    pub fn add(&mut self, data: &[Pixel]) {
+    pub fn add(&mut self, data: &[Pixel8]) {
         let data = unsafe {
             slice::from_raw_parts(
                 data.as_ptr() as *const u8,
-                data.len() * mem::size_of::<Pixel>(),
+                data.len() * mem::size_of::<Pixel8>(),
             )
         };
 

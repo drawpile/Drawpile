@@ -32,10 +32,10 @@ fn copy_tile_to(dest: &mut Vec<u8>, stride: u32, tile: &TileData, tx: u32, ty: u
     for y in 0..TILE_SIZE {
         for x in 0..TILE_SIZE {
             let px = tile.pixels[(y * TILE_SIZE + x) as usize];
-            dest[(dest_offset + x * 4 + 0) as usize] = px[RED_CHANNEL];
-            dest[(dest_offset + x * 4 + 1) as usize] = px[GREEN_CHANNEL];
-            dest[(dest_offset + x * 4 + 2) as usize] = px[BLUE_CHANNEL];
-            dest[(dest_offset + x * 4 + 3) as usize] = px[ALPHA_CHANNEL];
+            dest[(dest_offset + x * 4 + 0) as usize] = channel15_to_8(px[RED_CHANNEL]);
+            dest[(dest_offset + x * 4 + 1) as usize] = channel15_to_8(px[GREEN_CHANNEL]);
+            dest[(dest_offset + x * 4 + 2) as usize] = channel15_to_8(px[BLUE_CHANNEL]);
+            dest[(dest_offset + x * 4 + 3) as usize] = channel15_to_8(px[ALPHA_CHANNEL]);
         }
         dest_offset += stride * 4;
     }
@@ -47,11 +47,11 @@ fn u8_mult(a: u8, b: u8) -> u8 {
 }
 
 #[allow(dead_code)]
-pub fn load_image(filename: &str) -> (Vec<Pixel>, i32, i32) {
+pub fn load_image(filename: &str) -> (Vec<Pixel8>, i32, i32) {
     let img = image::open(filename).expect("couldn't load image");
     let rgba = img.as_rgba8().unwrap();
 
-    let mut argb_data = Vec::<Pixel>::with_capacity((rgba.width() * rgba.height()) as usize);
+    let mut argb_data = Vec::<Pixel8>::with_capacity((rgba.width() * rgba.height()) as usize);
 
     for p in rgba.pixels() {
         argb_data.push([

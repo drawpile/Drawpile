@@ -20,7 +20,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, BitmapLayer, Blendmode, BrushMask, Color, Rectangle, Tile};
+use dpcore::paint::{
+    editlayer, BitmapLayer, Blendmode, BrushMask, Color, Rectangle, Tile, BIT15_U16,
+};
 
 mod utils;
 
@@ -86,7 +88,7 @@ fn main() {
                 &brush,
                 &dabcolor,
                 mode,
-                255u8,
+                BIT15_U16,
             );
         }
     }
