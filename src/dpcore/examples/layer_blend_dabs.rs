@@ -25,7 +25,7 @@ use dpcore::paint::{editlayer, BitmapLayer, Blendmode, BrushMask, Color, Rectang
 mod utils;
 
 fn main() {
-    let mut layer = BitmapLayer::new(0, 256, 256, Tile::Blank);
+    let mut layer = BitmapLayer::new(0, 256, 512, Tile::Blank);
 
     // Draw a nice background
     let colors = [
@@ -38,7 +38,7 @@ fn main() {
             0,
             &Color::from_argb32(c),
             Blendmode::Normal,
-            &Rectangle::new(i as i32 * 40, 0, 40, 256),
+            &Rectangle::new(i as i32 * 40, 0, 40, 512),
         );
     }
 
@@ -57,6 +57,18 @@ fn main() {
         Blendmode::Recolor,
         Blendmode::Behind,
         Blendmode::ColorErase,
+        Blendmode::Screen,
+        Blendmode::NormalAndEraser,
+        Blendmode::LuminosityShineSai,
+        Blendmode::Overlay,
+        Blendmode::HardLight,
+        Blendmode::SoftLight,
+        Blendmode::LinearBurn,
+        Blendmode::LinearLight,
+        Blendmode::Hue,
+        Blendmode::Saturation,
+        Blendmode::Luminosity,
+        Blendmode::Color,
         // Blendmode::Replace,
     ];
 
