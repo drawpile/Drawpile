@@ -42,6 +42,7 @@ struct TimelineWidget::Private {
 	int xScroll=0;
 	int yScroll=0;
 	int currentFrame=1;
+	bool editable=true;
 
 	QScrollBar *verticalScroll;
 	QScrollBar *horizontalScroll;
@@ -68,6 +69,12 @@ void TimelineWidget::setModel(canvas::TimelineModel *model)
 	d->model = model;
 	connect(model, &canvas::TimelineModel::framesChanged, this, QOverload<>::of(&TimelineWidget::update), Qt::QueuedConnection);
 	connect(model, &canvas::TimelineModel::layersChanged, this, &TimelineWidget::onLayersChanged, Qt::QueuedConnection);
+}
+
+void TimelineWidget::setEditable(bool editable)
+{
+	d->editable = editable;
+	update();
 }
 
 canvas::TimelineModel *TimelineWidget::model() const {
@@ -161,7 +168,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	QPainter painter(this);
 
 	const QPalette &pal = this->palette();
-	const QColor selectedColor = d->model->isManualMode() ? pal.windowText().color() : pal.color(QPalette::Disabled, QPalette::WindowText);
+	const QColor selectedColor = d->model->isManualMode() && d->editable ? pal.windowText().color() : pal.color(QPalette::Disabled, QPalette::WindowText);
 	const QColor gridColor = pal.color(QPalette::Button);
 
 	// Frame columns
@@ -234,7 +241,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 	);
 
 	if(event->button() == Qt::LeftButton) {
-		if(d->model->isManualMode()) {
+		if(d->model->isManualMode() && d->editable) {
 			net::EnvelopeBuilder eb;
 			d->model->makeToggleCommand(eb, col, row);
 			emit timelineEditCommand(eb.toEnvelope());
@@ -246,7 +253,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 
 void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-	if(!d->model || !d->model->isManualMode() || event->button() != Qt::RightButton)
+	if(!d->model || !d->model->isManualMode() || event->button() != Qt::RightButton || !d->editable)
 		return;
 
 	const int col = qMin(

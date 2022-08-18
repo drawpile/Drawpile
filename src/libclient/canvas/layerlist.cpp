@@ -29,7 +29,7 @@ namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent), m_aclstate(nullptr),
-	  m_rootLayerCount(0), m_defaultLayer(0), m_autoselectAny(true)
+	  m_rootLayerCount(0), m_defaultLayer(0), m_autoselectAny(true), m_frameMode(false)
 {
 }
 

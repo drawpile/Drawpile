@@ -55,6 +55,7 @@ public:
 public slots:
 	void setNextFrame();
 	void setPreviousFrame();
+	void setFeatureAccess(bool access);
 
 signals:
 	void timelineEditCommand(const net::Envelope &e);

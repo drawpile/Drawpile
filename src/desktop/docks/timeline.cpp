@@ -74,6 +74,12 @@ void Timeline::setTimeline(canvas::TimelineModel *model)
 	connect(model, &canvas::TimelineModel::framesChanged, this, &Timeline::onFramesChanged, Qt::QueuedConnection);
 }
 
+void Timeline::setFeatureAccess(bool access)
+{
+	m_useTimeline->setEnabled(access);
+	m_widget->setEditable(access);
+}
+
 void Timeline::setUseTimeline(bool useTimeline)
 {
 	m_useTimeline->setChecked(useTimeline);

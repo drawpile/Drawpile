@@ -6,6 +6,7 @@
  * Split color wheel, sliders and palette into separate docks
  * Fixed "no guest logins" checkbox eanbled state
  * Fixed session snapshot missing the timeline
+ * Enable timeline editor only when given permission
  * Added support for MyPaint brushes
 
 2022-08-11 Version 2.2 beta2

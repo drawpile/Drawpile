@@ -41,6 +41,7 @@ public:
 
 	void setModel(canvas::TimelineModel *model);
 	void setCurrentFrame(int frame);
+	void setEditable(bool editable);
 
 	canvas::TimelineModel *model() const;
 

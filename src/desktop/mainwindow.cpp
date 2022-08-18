@@ -1717,6 +1717,9 @@ void MainWindow::onFeatureAccessChange(canvas::Feature feature, bool canUse)
 	case canvas::Feature::Undo:
 		m_undotools->setEnabled(canUse);
 		break;
+	case canvas::Feature::Timeline:
+		m_dockTimeline->setFeatureAccess(canUse);
+		break;
 	default: break;
 	}
 }
