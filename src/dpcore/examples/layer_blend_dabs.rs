@@ -71,7 +71,7 @@ fn main() {
         Blendmode::Saturation,
         Blendmode::Luminosity,
         Blendmode::Color,
-        // Blendmode::Replace,
+        Blendmode::Replace,
     ];
 
     let brush = BrushMask::new_round_pixel(10);
