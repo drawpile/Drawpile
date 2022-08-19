@@ -21,11 +21,11 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use dpcore::canvas::CanvasState;
-use dpcore::paint::color::ZERO_PIXEL;
+use dpcore::paint::color::ZERO_PIXEL8;
 use dpcore::paint::*;
 use dpcore::protocol::message::{CommandMessage, Message};
 
-const BLACK_PIXEL: Pixel = [0, 0, 0, 255];
+const BLACK_PIXEL8: Pixel8 = [0, 0, 0, 255];
 
 #[test]
 fn test_timeline() {
@@ -63,25 +63,25 @@ fn test_timeline() {
 
     // The canvas starts out in auto-timeline mode where each
     // frame corresponds to a top-level layer
-    assert_eq!(color_at(&canvas, t1, 0), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 0), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 0), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 0), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 1), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 1), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 1), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 1), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 2), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 2), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 2), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 2), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 3), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 3), BLACK_PIXEL8);
 
     // Now, let's active the custom timeline
     // The frames will be:
@@ -107,59 +107,59 @@ fn test_timeline() {
         "1 settimelineframe frame=4 layers=0x0101,0,0,0,0,0,0,0,0,0,0,0",
     ));
 
-    assert_eq!(color_at(&canvas, t1, 0), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 0), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 0), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 0), BLACK_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 1), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 1), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 1), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 1), BLACK_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 2), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 2), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 2), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 2), BLACK_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 3), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 3), BLACK_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 4), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 4), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 4), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 4), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 4), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 4), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 4), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 4), ZERO_PIXEL8);
 
     // Frames outside the assigned range are blank
-    assert_eq!(color_at(&canvas, t1, 5), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 5), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 5), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 5), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 5), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 5), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 5), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 5), ZERO_PIXEL8);
 
     // Let's try deleting the first frame
     canvas.receive_message(&m("1 removetimelineframe frame=0"));
 
-    assert_eq!(color_at(&canvas, t1, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 0), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 0), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 0), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 0), BLACK_PIXEL8);
 
     // Then insert a new one in its place
     canvas.receive_message(&m(
         "1 settimelineframe frame=0 insert=true layers=0x0101,0,0,0,0,0,0,0,0,0,0,0",
     ));
 
-    assert_eq!(color_at(&canvas, t1, 0), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 0), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 0), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 0), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, t1, 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t2, 1), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, t3, 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, t4, 1), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, t1, 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t2, 1), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, t3, 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, t4, 1), BLACK_PIXEL8);
 }
 
 #[test]
@@ -228,35 +228,35 @@ fn test_timeline_groups() {
 
     // Enable custom timeline
     canvas.receive_message(&m("1 setmetadataint field=3 value=1"));
-    assert_eq!(color_at(&canvas, (1, 1), 0), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 2), 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (2, 2), 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 3), 0), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 4), 0), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, (1, 1), 0), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 2), 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (2, 2), 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 3), 0), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 4), 0), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, (1, 1), 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 2), 1), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, (2, 2), 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 3), 1), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 4), 1), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, (1, 1), 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 2), 1), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, (2, 2), 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 3), 1), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 4), 1), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, (1, 1), 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 2), 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (2, 2), 2), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 3), 2), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 4), 2), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, (1, 1), 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 2), 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (2, 2), 2), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 3), 2), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 4), 2), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, (1, 1), 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 2), 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (2, 2), 3), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 3), 3), BLACK_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 4), 3), ZERO_PIXEL);
+    assert_eq!(color_at(&canvas, (1, 1), 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 2), 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (2, 2), 3), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 3), 3), BLACK_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 4), 3), ZERO_PIXEL8);
 
-    assert_eq!(color_at(&canvas, (1, 1), 4), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 2), 4), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (2, 2), 4), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 3), 4), ZERO_PIXEL);
-    assert_eq!(color_at(&canvas, (1, 4), 4), BLACK_PIXEL);
+    assert_eq!(color_at(&canvas, (1, 1), 4), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 2), 4), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (2, 2), 4), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 3), 4), ZERO_PIXEL8);
+    assert_eq!(color_at(&canvas, (1, 4), 4), BLACK_PIXEL8);
 }
 
 fn m(msg: &str) -> CommandMessage {
@@ -266,7 +266,7 @@ fn m(msg: &str) -> CommandMessage {
     }
 }
 
-fn color_at(canvas: &CanvasState, pos: (usize, usize), frame: isize) -> Pixel {
+fn color_at(canvas: &CanvasState, pos: (usize, usize), frame: isize) -> Pixel8 {
     let img = canvas.layerstack().to_image(&LayerViewOptions::frame(
         canvas.layerstack().frame_at(frame),
     ));

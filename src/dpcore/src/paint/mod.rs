@@ -52,12 +52,15 @@ mod layer;
 mod rect;
 mod timeline;
 
-pub use self::image::Image;
+pub use self::image::{Image15, Image8};
 pub use aoe::AoE;
 pub use bitmaplayer::BitmapLayer;
 pub use blendmode::Blendmode;
 pub use brushmask::{BrushMask, ClassicBrushCache};
-pub use color::{Color, Pixel};
+pub use color::{
+    channel15_to_8, channel8_to_15, pixel15_to_8, pixel8_to_15, pixels15_to_8, pixels8_to_15,
+    Color, Pixel15, Pixel8, BIT15_F32, BIT15_U16,
+};
 pub use flattenediter::FlattenedTileIterator;
 pub use grouplayer::{GroupLayer, LayerInsertion, RootGroup};
 pub use layer::{Layer, LayerMetadata};

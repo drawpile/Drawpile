@@ -1,4 +1,4 @@
-use dpcore::paint::{LayerStack, LayerViewOptions, Pixel, Rectangle, Size};
+use dpcore::paint::{LayerStack, LayerViewOptions, Pixel8, Rectangle, Size};
 
 use std::collections::VecDeque;
 use std::slice;
@@ -80,11 +80,11 @@ pub extern "C" fn snapshots_get_content(
     if let Some(s) = snapshots.snapshots.get(index) {
         let size = s.layerstack.root().size();
         let pixel_slice = unsafe {
-            slice::from_raw_parts_mut(pixels as *mut Pixel, (size.width * size.height) as usize)
+            slice::from_raw_parts_mut(pixels as *mut Pixel8, (size.width * size.height) as usize)
         };
 
         s.layerstack
-            .to_pixels(
+            .to_pixels8(
                 Rectangle::new(0, 0, size.width, size.height),
                 &LayerViewOptions::default(),
                 pixel_slice,

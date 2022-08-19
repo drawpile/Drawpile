@@ -23,7 +23,7 @@
 use super::aoe::{AoE, TileMap};
 use super::bitmaplayer::BitmapLayer;
 use super::blendmode::Blendmode;
-use super::color::{Color, ALPHA_CHANNEL, ZERO_PIXEL};
+use super::color::{Color, ALPHA_CHANNEL, ZERO_PIXEL15};
 use super::idgenerator::IDGenerator;
 use super::layer::{Layer, LayerMetadata};
 use super::rect::Size;
@@ -517,7 +517,7 @@ impl GroupLayer {
         };
 
         if self.metadata.isolated {
-            let mut tmp = TileData::new(ZERO_PIXEL, 0);
+            let mut tmp = TileData::new(ZERO_PIXEL15, 0);
             flatten(&mut tmp);
             destination.merge_data(&tmp, 1.0, self.metadata.blendmode);
         } else {

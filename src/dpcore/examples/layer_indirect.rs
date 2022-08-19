@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, BitmapLayer, Blendmode, BrushMask, Color, Tile};
+use dpcore::paint::{editlayer, BitmapLayer, Blendmode, BrushMask, Color, Tile, BIT15_F32};
 
 mod utils;
 
@@ -43,7 +43,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32) {
             &brush,
             &black,
             Blendmode::Normal,
-            (0.4 * 255.0) as u8,
+            (0.4 * BIT15_F32) as u16,
         );
     }
 }

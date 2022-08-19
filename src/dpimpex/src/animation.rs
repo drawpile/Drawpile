@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use super::conv::from_dpimage;
 use crate::{ImageExportResult, ImpexError};
-use dpcore::paint::{Image, LayerStack, LayerViewOptions};
+use dpcore::paint::{Image8, LayerStack, LayerViewOptions};
 
 use image::codecs::gif::{GifEncoder, Repeat};
 use image::{Delay, Frame};
@@ -15,7 +15,7 @@ pub trait AnimationWriter {
 }
 
 pub trait FrameWriter {
-    fn write_frame(&mut self, frame: &Image, duration: Duration) -> ImageExportResult;
+    fn write_frame(&mut self, frame: &Image8, duration: Duration) -> ImageExportResult;
 }
 
 pub struct AnimationSaver<W: FrameWriter> {
@@ -75,7 +75,7 @@ impl GifWriter {
 }
 
 impl FrameWriter for GifWriter {
-    fn write_frame(&mut self, frame: &Image, duration: Duration) -> ImageExportResult {
+    fn write_frame(&mut self, frame: &Image8, duration: Duration) -> ImageExportResult {
         // TODO subframe delta
         self.encoder.encode_frame(Frame::from_parts(
             from_dpimage(frame),
@@ -104,7 +104,7 @@ impl FrameImagesWriter {
 }
 
 impl FrameWriter for FrameImagesWriter {
-    fn write_frame(&mut self, frame: &Image, _duration: Duration) -> ImageExportResult {
+    fn write_frame(&mut self, frame: &Image8, _duration: Duration) -> ImageExportResult {
         let mut pb = self.dir.clone();
         pb.push(format!("frame-{:03}.png", self.next_number));
 

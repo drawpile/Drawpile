@@ -20,22 +20,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::color::{Pixel, ZERO_PIXEL};
+use super::color::{Pixel8, Pixel15};
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::{Rectangle, Size};
 
 /// A flat image buffer
 #[derive(Default)]
-pub struct Image {
-    pub pixels: Vec<Pixel>,
+pub struct Image<T>
+where
+    T: Clone + Default + Eq,
+{
+    pub pixels: Vec<T>,
     pub width: usize,
     pub height: usize,
 }
 
-impl Image {
-    pub fn new(width: usize, height: usize) -> Image {
+pub type Image8 = Image<Pixel8>;
+pub type Image15 = Image<Pixel15>;
+
+impl<T> Image<T>
+where
+    T: Clone + Default + Eq,
+{
+    pub fn new(width: usize, height: usize) -> Image<T> {
         Image {
-            pixels: vec![ZERO_PIXEL; width * height],
+            pixels: vec![T::default(); width * height],
             width,
             height,
         }
@@ -63,10 +72,11 @@ impl Image {
         let mut left = self.width;
         let mut right = 0;
 
+        let zero_pixel = T::default();
         for y in 0..self.height {
             let row = y * self.width;
             for (x, px) in self.pixels[row..row + self.width].iter().enumerate() {
-                if *px != ZERO_PIXEL {
+                if *px != zero_pixel {
                     left = left.min(x);
                     right = right.max(x);
                     top = top.min(y);
@@ -87,22 +97,22 @@ impl Image {
         })
     }
 
-    pub fn rect_iter(&self, rect: &Rectangle) -> RectIterator<Pixel> {
+    pub fn rect_iter(&self, rect: &Rectangle) -> RectIterator<T> {
         RectIterator::from_rectangle(&self.pixels, self.width, rect)
     }
 
-    pub fn rect_iter_mut(&mut self, rect: &Rectangle) -> MutableRectIterator<Pixel> {
+    pub fn rect_iter_mut(&mut self, rect: &Rectangle) -> MutableRectIterator<T> {
         MutableRectIterator::from_rectangle(&mut self.pixels, self.width, rect)
     }
 
     /// Return a cropped version of the image
-    pub fn cropped(&self, rect: &Rectangle) -> Image {
+    pub fn cropped(&self, rect: &Rectangle) -> Image<T> {
         let rect = match rect.cropped(self.size()) {
             Some(r) => r,
             None => return Image::default(),
         };
 
-        let mut cropped_pixels: Vec<Pixel> = Vec::with_capacity((rect.w * rect.h) as usize);
+        let mut cropped_pixels: Vec<T> = Vec::with_capacity((rect.w * rect.h) as usize);
         self.rect_iter(&rect)
             .for_each(|p| cropped_pixels.extend_from_slice(p));
 

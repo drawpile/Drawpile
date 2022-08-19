@@ -20,14 +20,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::color::{Color, Pixel, ALPHA_CHANNEL};
+use super::color::{Color, Pixel15, ALPHA_CHANNEL};
 use super::tile::{Tile, TILE_SIZE};
-use super::{BitmapLayer, Image, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle};
+use super::{BitmapLayer, Image8, Layer, LayerID, LayerStack, LayerViewOptions, Rectangle};
 
 use std::sync::Arc;
 
 pub struct FloodFillResult {
-    pub image: Image,
+    pub image: Image8,
     pub x: i32,
     pub y: i32,
     pub layer_seed_color: Color,
@@ -38,7 +38,7 @@ pub struct FloodFillResult {
 impl FloodFillResult {
     fn empty() -> FloodFillResult {
         FloodFillResult {
-            image: Image::default(),
+            image: Image8::default(),
             x: 0,
             y: 0,
             layer_seed_color: Color::TRANSPARENT,
@@ -80,12 +80,12 @@ pub fn floodfill(
         sample_merged,
         reference_color: Color::TRANSPARENT,
         tolerance_squared: tolerance * tolerance,
-        fill_pixel: fill_color.as_pixel(),
+        fill_pixel: fill_color.as_pixel15(),
     };
 
     // First, get the color at the starting coordinates.
-    let layer_seed_color = Color::from_pixel(layer.pixel_at(x as u32, y as u32));
-    scratch.reference_color = Color::from_pixel(scratch.pixel_at(x, y));
+    let layer_seed_color = Color::from_pixel15(layer.pixel_at(x as u32, y as u32));
+    scratch.reference_color = Color::from_pixel15(scratch.pixel_at(x, y));
 
     // If the fill color is transparent (i.e. we're doing a flood erase)
     // we have to pick some target color other than the reference color.
@@ -150,7 +150,7 @@ pub fn floodfill(
     }
 
     // Return the results
-    let (result_image, x, y) = scratch.fill_layer.to_cropped_image();
+    let (result_image, x, y) = scratch.fill_layer.to_cropped_image8();
 
     FloodFillResult {
         image: result_image,
@@ -178,11 +178,11 @@ struct ScratchLayer<'a> {
     /// max allowed color distance (squared)
     tolerance_squared: f32,
     /// the pixel value to fill with
-    fill_pixel: Pixel,
+    fill_pixel: Pixel15,
 }
 
 impl<'a> ScratchLayer<'a> {
-    fn pixel_at(&mut self, x: i32, y: i32) -> Pixel {
+    fn pixel_at(&mut self, x: i32, y: i32) -> Pixel15 {
         let x = x as u32;
         let y = y as u32;
         // If this tile doesn't exist yet in the scratch layer,
@@ -209,7 +209,7 @@ impl<'a> ScratchLayer<'a> {
     }
 
     fn is_ref_color_at(&mut self, x: i32, y: i32) -> bool {
-        let c = Color::from_pixel(self.pixel_at(x, y));
+        let c = Color::from_pixel15(self.pixel_at(x, y));
         // TODO better color distance function
         let r = c.r - self.reference_color.r;
         let g = c.g - self.reference_color.g;
@@ -274,7 +274,7 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
     } else {
         // Not enough room!
         // Create a new image with enough padding and copy the content to it.
-        let mut new_image = Image::new(padded_area.w as usize, padded_area.h as usize);
+        let mut new_image = Image8::new(padded_area.w as usize, padded_area.h as usize);
         input
             .image
             .rect_iter(&content_bounds)
@@ -313,9 +313,9 @@ pub fn expand_floodfill(input: FloodFillResult, expansion: i32) -> FloodFillResu
     };
 
     // Step 3. Apply the kernel to produce an expanded image
-    let mut new_image = Image::new(image.width, image.height);
+    let mut new_image = Image8::new(image.width, image.height);
 
-    let fill_pixel = input.fill_color.as_pixel();
+    let fill_pixel = input.fill_color.as_pixel8();
     for y in work_area.y..=work_area.bottom() {
         for x in work_area.x..=work_area.right() {
             'outer: for ky in 0..kernel_diameter {

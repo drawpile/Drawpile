@@ -24,14 +24,14 @@ use std::sync::Arc;
 
 use super::annotation::{Annotation, AnnotationID, VAlign};
 use super::aoe::AoE;
-use super::color::ZERO_PIXEL;
+use super::color::{pixels15_to_8, ZERO_PIXEL15};
 use super::flattenediter::FlattenedTileIterator;
 use super::grouplayer::RootGroup;
 use super::rasterop::tint_pixels;
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::tile::{Tile, TileData, TILE_SIZE, TILE_SIZEI};
 use super::{
-    BitmapLayer, Blendmode, Color, Frame, GroupLayer, Image, LayerID, Pixel, Rectangle, Timeline,
+    BitmapLayer, Blendmode, Color, Frame, GroupLayer, Image8, LayerID, Pixel8, Rectangle, Timeline,
     UserID,
 };
 
@@ -428,7 +428,7 @@ impl LayerStack {
 
             // Tinting only works right in Normal blend mode
             if tint != 0 && layer.metadata().blendmode == Blendmode::Normal {
-                let mut tmp = TileData::new(ZERO_PIXEL, 0);
+                let mut tmp = TileData::new(ZERO_PIXEL15, 0);
                 layer.flatten_tile(&mut tmp, i, j, opacity, opts.censor, opts.highlight);
                 tint_pixels(&mut tmp.pixels, Color::from_argb32(tint));
                 destination.merge_data(&tmp, 1.0, layer.metadata().blendmode);
@@ -453,7 +453,7 @@ impl LayerStack {
             let tx = x as u32 - ti * TILE_SIZE;
             let ty = y as u32 - tj * TILE_SIZE;
 
-            Color::from_pixel(tile.pixels[(ty * TILE_SIZE + tx) as usize])
+            Color::from_pixel15(tile.pixels[(ty * TILE_SIZE + tx) as usize])
         } else {
             let r = (dia / 2).min(1) as i32;
 
@@ -484,11 +484,11 @@ impl LayerStack {
     ///
     /// The rectangle must be fully within the layer bounds.
     /// The length of the pixel slice must be rect width*height.
-    pub fn to_pixels(
+    pub fn to_pixels8(
         &self,
         rect: Rectangle,
         opts: &LayerViewOptions,
-        pixels: &mut [Pixel],
+        pixels: &mut [Pixel8],
     ) -> Result<(), &str> {
         if !rect.in_bounds(self.root.size()) {
             return Err("source rectangle out of bounds");
@@ -521,19 +521,19 @@ impl LayerStack {
                 pixelrect.h as usize,
             );
 
-            destiter
-                .zip(srciter)
-                .for_each(|(d, s)| d.copy_from_slice(s));
+            for (destrow, srcrow) in destiter.zip(srciter) {
+                pixels15_to_8(destrow, srcrow);
+            }
         }
 
         Ok(())
     }
 
     /// Convert whole layerstack to a flat image
-    pub fn to_image(&self, opts: &LayerViewOptions) -> Image {
-        let mut image = Image::new(self.root.width() as usize, self.root.height() as usize);
+    pub fn to_image(&self, opts: &LayerViewOptions) -> Image8 {
+        let mut image = Image8::new(self.root.width() as usize, self.root.height() as usize);
 
-        self.to_pixels(
+        self.to_pixels8(
             Rectangle::new(0, 0, self.root.width() as i32, self.root.height() as i32),
             opts,
             &mut image.pixels,
@@ -597,6 +597,7 @@ impl LayerStack {
 #[cfg(test)]
 mod tests {
     use super::super::grouplayer::*;
+    use super::super::BIT15_U16;
     use super::*;
 
     #[test]
@@ -616,9 +617,12 @@ mod tests {
         layer.metadata_mut().opacity = 0.5;
 
         let t1 = stack.flatten_tile(0, 0, &opts);
-        assert_eq!(t1.pixels[0], Color::rgb8(255, 128, 128).as_pixel());
+        assert_eq!(
+            t1.pixels[0],
+            [BIT15_U16 / 2, BIT15_U16 / 2, BIT15_U16, BIT15_U16]
+        );
 
         let t2 = stack.flatten_tile(1, 0, &opts);
-        assert_eq!(t2.pixels[0], Color::rgb8(255, 255, 255).as_pixel());
+        assert_eq!(t2.pixels[0], Color::rgb8(255, 255, 255).as_pixel15());
     }
 }

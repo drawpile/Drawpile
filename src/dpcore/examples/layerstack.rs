@@ -22,7 +22,7 @@
 
 use dpcore::paint::tile::Tile;
 use dpcore::paint::{
-    editlayer, BitmapLayer, Blendmode, BrushMask, Color, LayerInsertion, LayerStack,
+    editlayer, BitmapLayer, Blendmode, BrushMask, Color, LayerInsertion, LayerStack, BIT15_F32,
 };
 
 mod utils;
@@ -39,7 +39,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32, color: &Color) {
             &brush,
             &color,
             Blendmode::Normal,
-            (0.4 * 255.0) as u8,
+            (0.4 * BIT15_F32) as u16,
         );
     }
 }

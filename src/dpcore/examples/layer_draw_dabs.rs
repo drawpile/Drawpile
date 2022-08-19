@@ -20,7 +20,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use dpcore::paint::{editlayer, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, Tile};
+use dpcore::paint::{
+    editlayer, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, Tile, BIT15_U16,
+};
 
 mod utils;
 
@@ -43,7 +45,7 @@ fn main() {
             &brush,
             &black,
             Blendmode::Normal,
-            255u8,
+            BIT15_U16,
         );
 
         let brush = BrushMask::new_round_pixel(w as u32);
@@ -55,7 +57,7 @@ fn main() {
             &brush,
             &black,
             Blendmode::Normal,
-            255u8,
+            BIT15_U16,
         );
 
         let (bx, by, brush) =
@@ -68,7 +70,7 @@ fn main() {
             &brush,
             &black,
             Blendmode::Normal,
-            255u8,
+            BIT15_U16,
         );
 
         let (bx, by, brush) =
@@ -81,7 +83,7 @@ fn main() {
             &brush,
             &black,
             Blendmode::Normal,
-            255u8,
+            BIT15_U16,
         );
 
         w += 1;

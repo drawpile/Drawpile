@@ -350,7 +350,7 @@ impl CanvasState {
                         } else if let Some(imagedata) =
                             compression::decompress_image(&m.image, (m.w * m.h) as usize)
                         {
-                            editlayer::draw_image(
+                            editlayer::draw_image8(
                                 layer,
                                 0,
                                 &imagedata,
@@ -872,7 +872,7 @@ impl CanvasState {
                 compression::decompress_image(&msg.image, (msg.w * msg.h) as usize)
             {
                 let mode = Blendmode::try_from(msg.mode).unwrap_or_default();
-                let aoe = editlayer::draw_image(
+                let aoe = editlayer::draw_image8(
                     layer,
                     user_id,
                     &imagedata,

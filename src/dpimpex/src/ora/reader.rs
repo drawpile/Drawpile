@@ -29,7 +29,7 @@ use crate::{ImageImportResult, ImpexError};
 
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::{
-    editlayer, Blendmode, Color, Frame, Image, LayerID, LayerInsertion, LayerStack, Rectangle,
+    editlayer, Blendmode, Color, Frame, Image8, LayerID, LayerInsertion, LayerStack, Rectangle,
     Size, Tile,
 };
 
@@ -153,7 +153,7 @@ fn create_stack<R: Read + Seek>(
 
                 // TODO layer lock status
 
-                editlayer::draw_image(
+                editlayer::draw_image8(
                     layer,
                     1,
                     &img.pixels,
@@ -195,7 +195,7 @@ fn check_mimetype<R: Read + Seek>(archive: &mut ZipArchive<R>) -> Result<(), Imp
 fn get_image_file<R: Read + Seek>(
     archive: &mut ZipArchive<R>,
     filename: &str,
-) -> Result<Image, ImpexError> {
+) -> Result<Image8, ImpexError> {
     let mut filecontent = Vec::new();
     archive.by_name(filename)?.read_to_end(&mut filecontent)?;
     let img = ImageReader::new(Cursor::new(filecontent))

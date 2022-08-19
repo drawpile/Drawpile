@@ -25,7 +25,13 @@ use std::cmp::{max_by, min_by};
 use std::fmt;
 use std::str::FromStr;
 
-pub type Pixel = [u8; 4];
+pub type Pixel8 = [u8; 4];
+pub type Pixel15 = [u16; 4];
+
+pub const BIT15_U16: u16 = 1u16 << 15u16;
+pub const BIT15_F32: f32 = BIT15_U16 as f32;
+pub const BIT15_I32: i32 = BIT15_U16 as i32;
+pub const BIT15_U32: u32 = BIT15_U16 as u32;
 
 pub const BLUE_CHANNEL: usize = 0;
 pub const GREEN_CHANNEL: usize = 1;
@@ -33,13 +39,53 @@ pub const RED_CHANNEL: usize = 2;
 pub const ALPHA_CHANNEL: usize = 3;
 
 pub const RGB_CHANNELS: std::ops::RangeInclusive<usize> = 0..=2;
-pub const ZERO_PIXEL: Pixel = [0, 0, 0, 0];
-pub const WHITE_PIXEL: Pixel = [255, 255, 255, 255];
+pub const ZERO_PIXEL8: Pixel8 = [0; 4];
+pub const ZERO_PIXEL15: Pixel15 = [0; 4];
+pub const WHITE_PIXEL8: Pixel8 = [255; 4];
+pub const WHITE_PIXEL15: Pixel15 = [BIT15_U16; 4];
 
 // Rust doesn't define an ordering on floats because it wants to be overly
 // correct about NaN and such. So we have to define our own comparison.
 fn compare_floats(a: &f32, b: &f32) -> Ordering {
     a.partial_cmp(b).unwrap_or(Ordering::Equal)
+}
+
+pub fn channel8_to_15(c: u8) -> u16 {
+    (c as f32 / 255.0 * BIT15_F32) as u16
+}
+
+pub fn channel15_to_8(c: u16) -> u8 {
+    (c as f32 / BIT15_F32 * 255.0) as u8
+}
+
+pub fn pixel8_to_15(p: Pixel8) -> Pixel15 {
+    [
+        channel8_to_15(p[0]),
+        channel8_to_15(p[1]),
+        channel8_to_15(p[2]),
+        channel8_to_15(p[3]),
+    ]
+}
+
+pub fn pixel15_to_8(p: Pixel15) -> Pixel8 {
+    [
+        channel15_to_8(p[0]),
+        channel15_to_8(p[1]),
+        channel15_to_8(p[2]),
+        channel15_to_8(p[3]),
+    ]
+}
+
+pub fn pixels8_to_15(dest: &mut [Pixel15], src: &[Pixel8]) {
+    for (d, s) in dest.iter_mut().zip(src.iter()) {
+        *d = pixel8_to_15(*s);
+    }
+}
+
+pub fn pixels15_to_8(dest: &mut [Pixel8], src: &[Pixel15]) {
+    for (d, s) in dest.iter_mut().zip(src.iter()) {
+        *d = pixel15_to_8(*s);
+    }
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -188,43 +234,55 @@ impl Color {
         }
     }
 
-    // Get a color from a premultiplied pixel value
-    pub fn from_pixel(p: Pixel) -> Color {
+    pub fn from_pixel15(p: Pixel15) -> Color {
         if p[ALPHA_CHANNEL] == 0 {
             return Color::TRANSPARENT;
         }
-        let p = unpremultiply_pixel(p);
+        let p = unpremultiply_pixel15(p);
 
         Color {
-            r: p[RED_CHANNEL] as f32 / 255.0,
-            g: p[GREEN_CHANNEL] as f32 / 255.0,
-            b: p[BLUE_CHANNEL] as f32 / 255.0,
-            a: p[ALPHA_CHANNEL] as f32 / 255.0,
+            r: p[RED_CHANNEL] as f32 / BIT15_F32,
+            g: p[GREEN_CHANNEL] as f32 / BIT15_F32,
+            b: p[BLUE_CHANNEL] as f32 / BIT15_F32,
+            a: p[ALPHA_CHANNEL] as f32 / BIT15_F32,
         }
     }
 
     // Get the color values as is, without unpremultiplying
-    pub fn from_unpremultiplied_pixel(p: Pixel) -> Color {
+    pub fn from_unpremultiplied_pixel15(p: Pixel15) -> Color {
         Color {
-            r: p[RED_CHANNEL] as f32 / 255.0,
-            g: p[GREEN_CHANNEL] as f32 / 255.0,
-            b: p[BLUE_CHANNEL] as f32 / 255.0,
-            a: p[ALPHA_CHANNEL] as f32 / 255.0,
+            r: p[RED_CHANNEL] as f32 / BIT15_F32,
+            g: p[GREEN_CHANNEL] as f32 / BIT15_F32,
+            b: p[BLUE_CHANNEL] as f32 / BIT15_F32,
+            a: p[ALPHA_CHANNEL] as f32 / BIT15_F32,
         }
     }
 
     // Get a premultiplied pixel value from this color
-    pub fn as_pixel(&self) -> Pixel {
-        premultiply_pixel(self.as_unpremultiplied_pixel())
+    pub fn as_pixel8(&self) -> Pixel8 {
+        premultiply_pixel8(self.as_unpremultiplied_pixel8())
+    }
+
+    pub fn as_pixel15(&self) -> Pixel15 {
+        premultiply_pixel15(self.as_unpremultiplied_pixel15())
     }
 
     // Get a non-premultiplied pixel value from this color
-    pub fn as_unpremultiplied_pixel(&self) -> Pixel {
+    pub fn as_unpremultiplied_pixel8(&self) -> Pixel8 {
         [
             (self.b * 255.0) as u8,
             (self.g * 255.0) as u8,
             (self.r * 255.0) as u8,
             (self.a * 255.0) as u8,
+        ]
+    }
+
+    pub fn as_unpremultiplied_pixel15(&self) -> Pixel15 {
+        [
+            (self.b * BIT15_F32) as u16,
+            (self.g * BIT15_F32) as u16,
+            (self.r * BIT15_F32) as u16,
+            (self.a * BIT15_F32) as u16,
         ]
     }
 
@@ -278,11 +336,11 @@ impl FromStr for Color {
     }
 }
 
-pub fn unpremultiply_pixel(p: Pixel) -> Pixel {
+pub fn unpremultiply_pixel8(p: Pixel8) -> Pixel8 {
     if p[ALPHA_CHANNEL] == 255 {
         return p;
     } else if p[ALPHA_CHANNEL] == 0 {
-        return ZERO_PIXEL;
+        return ZERO_PIXEL8;
     }
 
     let ia = 0xff00ff / p[ALPHA_CHANNEL] as i32;
@@ -294,11 +352,26 @@ pub fn unpremultiply_pixel(p: Pixel) -> Pixel {
     ]
 }
 
-pub fn premultiply_pixel(p: Pixel) -> Pixel {
+pub fn unpremultiply_pixel15(p: Pixel15) -> Pixel15 {
+    if p[ALPHA_CHANNEL] == BIT15_U16 {
+        return p;
+    } else if p[ALPHA_CHANNEL] == 0 {
+        return ZERO_PIXEL15;
+    }
+    let a = p[ALPHA_CHANNEL] as u32;
+    [
+        ((p[0] as u32 * BIT15_U32) / a) as u16,
+        ((p[1] as u32 * BIT15_U32) / a) as u16,
+        ((p[2] as u32 * BIT15_U32) / a) as u16,
+        p[3],
+    ]
+}
+
+pub fn premultiply_pixel8(p: Pixel8) -> Pixel8 {
     if p[ALPHA_CHANNEL] == 255 {
         return p;
     } else if p[ALPHA_CHANNEL] == 0 {
-        return ZERO_PIXEL;
+        return ZERO_PIXEL8;
     }
     fn mult(a: u32, b: u32) -> u32 {
         let c = a * b + 0x80;
@@ -309,6 +382,21 @@ pub fn premultiply_pixel(p: Pixel) -> Pixel {
         mult(p[0] as u32, a) as u8,
         mult(p[1] as u32, a) as u8,
         mult(p[2] as u32, a) as u8,
+        p[3],
+    ]
+}
+
+pub fn premultiply_pixel15(p: Pixel15) -> Pixel15 {
+    if p[ALPHA_CHANNEL] == BIT15_U16 {
+        return p;
+    } else if p[ALPHA_CHANNEL] == 0 {
+        return ZERO_PIXEL15;
+    }
+    let a = p[ALPHA_CHANNEL] as u32;
+    [
+        (p[0] as u32 * a / BIT15_U32) as u16,
+        (p[1] as u32 * a / BIT15_U32) as u16,
+        (p[2] as u32 * a / BIT15_U32) as u16,
         p[3],
     ]
 }
@@ -356,11 +444,24 @@ mod tests {
     #[test]
     fn test_premultiplication() {
         for i in 1..=255 {
-            let p: Pixel = [i, i, i, i];
+            let p: Pixel8 = [i, i, i, i];
 
-            let up = unpremultiply_pixel(p);
+            let up = unpremultiply_pixel8(p);
             assert_eq!(up, [255, 255, 255, i]);
-            let p2 = premultiply_pixel(up);
+            let p2 = premultiply_pixel8(up);
+
+            assert_eq!(p, p2);
+        }
+    }
+
+    #[test]
+    fn test_premultiplication15() {
+        for i in 1..=BIT15_U16 {
+            let p: Pixel15 = [i, i, i, i];
+
+            let up = unpremultiply_pixel15(p);
+            assert_eq!(up, [BIT15_U16, BIT15_U16, BIT15_U16, i]);
+            let p2 = premultiply_pixel15(up);
 
             assert_eq!(p, p2);
         }

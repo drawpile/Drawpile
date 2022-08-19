@@ -28,7 +28,7 @@ use crate::{ImageExportResult, ImpexError};
 use dpcore::paint::annotation::VAlign;
 use dpcore::paint::tile::TILE_SIZEI;
 use dpcore::paint::{
-    BitmapLayer, Blendmode, GroupLayer, Image, Layer, LayerID, LayerStack, LayerViewOptions,
+    BitmapLayer, Blendmode, GroupLayer, Image8, Layer, LayerID, LayerStack, LayerViewOptions,
     Rectangle,
 };
 
@@ -94,7 +94,7 @@ fn write_background<W: Write + Seek>(
         archive,
         &filename,
         &from_dpimage(
-            &bgl.to_image(Rectangle::new(
+            &bgl.to_image8(Rectangle::new(
                 0,
                 0,
                 bgl.width() as i32,
@@ -104,8 +104,8 @@ fn write_background<W: Write + Seek>(
         ),
     )?;
 
-    let mut bgt = Image::new(TILE_SIZEI as usize, TILE_SIZEI as usize);
-    bgl.to_pixels(Rectangle::tile(0, 0, TILE_SIZEI), &mut bgt.pixels)
+    let mut bgt = Image8::new(TILE_SIZEI as usize, TILE_SIZEI as usize);
+    bgl.to_pixels8(Rectangle::tile(0, 0, TILE_SIZEI), &mut bgt.pixels)
         .unwrap();
     write_png(archive, &tilename, &from_dpimage(&bgt))?;
 
@@ -130,7 +130,7 @@ fn write_layer<W: Write + Seek>(
     archive: &mut ZipWriter<W>,
     layer: &BitmapLayer,
 ) -> Result<OraLayer, ImpexError> {
-    let (image, x, y) = layer.to_cropped_image();
+    let (image, x, y) = layer.to_cropped_image8();
     let md = layer.metadata();
 
     let ol = OraLayer {
@@ -153,7 +153,7 @@ fn write_layer<W: Write + Seek>(
         write_png(archive, &ol.filename, &from_dpimage(&image))?;
     } else {
         let blank = layer
-            .to_image(Rectangle::new(
+            .to_image8(Rectangle::new(
                 0,
                 0,
                 layer.width() as i32,
