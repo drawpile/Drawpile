@@ -93,19 +93,40 @@ void Timeline::setFps(int fps)
 	m_fps->blockSignals(false);
 }
 
-void Timeline::setCurrentFrame(int frame)
+void Timeline::setCurrentFrame(int frame, int layerId)
 {
 	m_currentFrame->setValue(frame);
+
+	if(layerId > 0)
+		emit layerSelectRequested(layerId);
+}
+
+void Timeline::setCurrentLayer(int layerId)
+{
+	m_widget->setCurrentLayer(layerId);
 }
 
 void Timeline::setNextFrame()
 {
 	m_currentFrame->setValue(m_currentFrame->value() + 1);
+	autoSelectLayer();
 }
 
 void Timeline::setPreviousFrame()
 {
 	m_currentFrame->setValue(m_currentFrame->value() - 1);
+	autoSelectLayer();
+}
+
+void Timeline::autoSelectLayer()
+{
+	const auto layerId = m_widget->model()->nearestLayerTo(
+		m_widget->currentFrame(),
+		m_widget->currentLayerId()
+	);
+
+	if(layerId > 0)
+		emit layerSelectRequested(layerId);
 }
 
 int Timeline::currentFrame() const

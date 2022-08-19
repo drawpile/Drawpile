@@ -51,6 +51,14 @@ public:
 	const QVector<TimelineFrame> &frames() const { return m_manualMode ? m_frames : m_autoFrames; }
 	const QVector<TimelineLayer> &layers() const { return m_layers; }
 	int layerRow(rustpile::LayerID id) const { return m_layerIdsToRows[id]; }
+	rustpile::LayerID layerRowId(int row) const {
+		if(row >= 0 && row < m_layers.size()) {
+			return m_layers[row].id;
+		} else {
+			return 0;
+		}
+	}
+        rustpile::LayerID nearestLayerTo(int frame, rustpile::LayerID nearet) const;
 
 	void makeToggleCommand(net::EnvelopeBuilder &eb, int frameCol, int layerRow) const;
 	void makeRemoveCommand(net::EnvelopeBuilder &eb, int frameCol) const;

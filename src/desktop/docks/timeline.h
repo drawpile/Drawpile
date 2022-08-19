@@ -50,21 +50,24 @@ public:
 	void setUseTimeline(bool useTimeline);
 
 	int currentFrame() const;
-	void setCurrentFrame(int frame);
+	void setCurrentFrame(int frame, int layerId);
 
 public slots:
 	void setNextFrame();
+	void setCurrentLayer(int layerId);
 	void setPreviousFrame();
 	void setFeatureAccess(bool access);
 
 signals:
 	void timelineEditCommand(const net::Envelope &e);
 	void currentFrameChanged(int frame);
+	void layerSelectRequested(int layerId);
 
 private slots:
 	void onUseTimelineClicked();
 	void onFpsChanged();
 	void onFramesChanged();
+	void autoSelectLayer();
 
 private:
 	widgets::TimelineWidget *m_widget;

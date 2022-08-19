@@ -371,6 +371,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_view, &widgets::CanvasView::quickAdjust, m_dockToolSettings, &docks::ToolSettings::quickAdjustCurrent1);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
+	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION)), &tools::AnnotationSettings::setSelectionId);
 
@@ -504,6 +505,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->metadata(), &canvas::DocumentMetadata::useTimelineChanged, m_dockTimeline, &docks::Timeline::setUseTimeline);
 
 	connect(m_dockTimeline, &docks::Timeline::currentFrameChanged, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
+	connect(m_dockTimeline, &docks::Timeline::layerSelectRequested, m_dockLayers, &docks::LayerList::selectLayer);
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 

@@ -42,6 +42,7 @@ struct TimelineWidget::Private {
 	int xScroll=0;
 	int yScroll=0;
 	int currentFrame=1;
+	int currentLayerId=0;
 	bool editable=true;
 
 	QScrollBar *verticalScroll;
@@ -87,6 +88,24 @@ void TimelineWidget::setCurrentFrame(int frame)
 		d->currentFrame = frame;
 		update();
 	}
+}
+
+void TimelineWidget::setCurrentLayer(int layerId)
+{
+	if(layerId != d->currentLayerId) {
+		d->currentLayerId = layerId;
+		update();
+	}
+}
+
+int TimelineWidget::currentFrame() const
+{
+	return d->currentFrame;
+}
+
+int TimelineWidget::currentLayerId() const
+{
+	return d->currentLayerId;
 }
 
 void TimelineWidget::onLayersChanged()
@@ -170,6 +189,20 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	const QPalette &pal = this->palette();
 	const QColor selectedColor = d->model->isManualMode() && d->editable ? pal.windowText().color() : pal.color(QPalette::Disabled, QPalette::WindowText);
 	const QColor gridColor = pal.color(QPalette::Button);
+	const QColor highlightColor = pal.highlight().color();
+
+	const int selectedRow = d->model->layerRow(d->currentLayerId);
+
+	// Selected layer background
+	QColor layerHighlightColor = highlightColor;
+	layerHighlightColor.setAlphaF(0.25);
+	painter.fillRect(
+		0,
+		-d->yScroll + selectedRow * d->rowHeight,
+		d->headerWidth + d->model->frames().size() * d->columnWidth,
+		d->rowHeight,
+		layerHighlightColor
+	);
 
 	// Frame columns
 	int x = d->headerWidth - d->xScroll;
@@ -184,8 +217,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				break;
 
 			if(frameNum == d->currentFrame) {
-				QColor c = pal.highlight().color();
-				painter.fillRect(x, 0, d->columnWidth, vLine, c);
+				painter.fillRect(x, 0, d->columnWidth, vLine, highlightColor);
 			}
 
 			for(int i=0;i<MAX_LAYERS_PER_FRAME;++i) {
@@ -247,7 +279,10 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			emit timelineEditCommand(eb.toEnvelope());
 		}
 	} else if(event->button() == Qt::MiddleButton) {
-		emit selectFrameRequest(qMin(col+1, d->model->frames().size()));
+		emit selectFrameRequest(
+			qMin(col+1, d->model->frames().size()),
+			d->model->layerRowId(row)
+		);
 	}
 }
 

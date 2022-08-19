@@ -189,4 +189,38 @@ void TimelineModel::setManualMode(bool manual)
 	}
 }
 
+rustpile::LayerID TimelineModel::nearestLayerTo(int frameIdx, rustpile::LayerID originalLayer) const
+{
+	const auto &frames = m_manualMode ? m_frames : m_autoFrames;
+	if(frameIdx < 1 || frameIdx > frames.size())
+		return 0;
+
+	frameIdx--;
+
+	if(!m_layerIdsToRows.contains(originalLayer))
+		return 0;
+
+	const int originalLayerRow = m_layerIdsToRows[originalLayer];
+	const rustpile::Frame &frame = frames[frameIdx].frame;
+
+	int nearestRow = -1;
+	int nearestDist = 999;
+
+	for(unsigned int i=0;i<sizeof(rustpile::Frame)/sizeof(rustpile::LayerID);++i) {
+		if(frame[i] == 0)
+			break;
+		if(frame[i] == originalLayer)
+			continue;
+
+		const int r = layerRow(frame[i]);
+		const int dist = qAbs(r-originalLayerRow);
+		if(dist < nearestDist) {
+			nearestRow = r;
+			nearestDist = dist;
+		}
+	}
+
+	return layerRowId(nearestRow);
+}
+
 }

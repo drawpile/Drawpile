@@ -41,13 +41,17 @@ public:
 
 	void setModel(canvas::TimelineModel *model);
 	void setCurrentFrame(int frame);
+	void setCurrentLayer(int layerId);
 	void setEditable(bool editable);
 
 	canvas::TimelineModel *model() const;
 
+	int currentFrame() const;
+	int currentLayerId() const;
+
 signals:
 	void timelineEditCommand(const net::Envelope &e);
-	void selectFrameRequest(int frame);
+	void selectFrameRequest(int frame, int layerId);
 
 protected:
 	void paintEvent(QPaintEvent *);

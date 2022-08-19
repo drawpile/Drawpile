@@ -1,4 +1,5 @@
 2022-08-?? Version 2.2 beta3
+ * Added support for MyPaint brushes
  * Removed popup notifications for join and leave events
  * Fixed skew when scaling a selection from the top-right handle
  * Fixed mouse droppings when for large brush outline widths
@@ -7,7 +8,8 @@
  * Fixed "no guest logins" checkbox eanbled state
  * Fixed session snapshot missing the timeline
  * Enable timeline editor only when given permission
- * Added support for MyPaint brushes
+ * Active layer is now shown in the timeline editor
+ * Next/previous frame action also autoselects layer
 
 2022-08-11 Version 2.2 beta2
  * Fixed smudge color sampling mask offset
