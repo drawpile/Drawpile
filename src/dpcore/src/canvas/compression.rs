@@ -21,7 +21,7 @@
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::paint::tile::{Tile, TileData, TILE_LENGTH};
-use crate::paint::{Color, Pixel8, UserID};
+use crate::paint::{pixels15_to_8, Color, Pixel8, UserID};
 
 use std::convert::TryInto;
 use std::io::Write;
@@ -82,9 +82,12 @@ pub fn decompress_tile(data: &[u8], user_id: UserID) -> Option<Tile> {
 /// Compress a tile's content.
 ///
 pub fn compress_tiledata(tiledata: &TileData) -> Vec<u8> {
+    let mut pixels8: [Pixel8; TILE_LENGTH] =
+        unsafe { mem::MaybeUninit::<[Pixel8; TILE_LENGTH]>::uninit().assume_init() };
+    pixels15_to_8(&mut pixels8, &tiledata.pixels);
     let pixelbytes = unsafe {
         slice::from_raw_parts(
-            tiledata.pixels.as_ptr() as *const u8,
+            pixels8.as_ptr() as *const u8,
             TILE_LENGTH * mem::size_of::<Pixel8>(),
         )
     };
