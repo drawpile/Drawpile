@@ -193,22 +193,29 @@ impl<'a> MyPaintSurface<'a> {
         lock_alpha: f32,
         colorize: f32,
     ) -> bool {
-        self.target.add_dab(
-            x,
-            y,
-            radius,
-            hardness,
-            opaque,
-            color_r,
-            color_g,
-            color_b,
-            alpha_eraser,
-            aspect_ratio,
-            angle,
-            lock_alpha,
-            colorize,
-        );
-        true
+        // A radius less than 0.1 pixels is infinitesimally small. A hardness or
+        // opacity of zero means the mask is completely blank. Disregard the dab
+        // in those cases. MyPaint uses the same logic for this.
+        if radius >= 0.1 && hardness > 0.0 && opaque > 0.0 {
+            self.target.add_dab(
+                x,
+                y,
+                radius,
+                hardness,
+                opaque,
+                color_r,
+                color_g,
+                color_b,
+                alpha_eraser,
+                aspect_ratio,
+                angle,
+                lock_alpha,
+                colorize,
+            );
+            true
+        } else {
+            false
+        }
     }
 
     fn get_color(&mut self, x: f32, y: f32, radius: f32) -> Color {
