@@ -1,5 +1,6 @@
-2022-08-?? Version 2.2 beta3
+2022-08-20 Version 2.2 beta3
  * Added support for MyPaint brushes
+ * MyPaint style 15 bit color channels
  * Removed popup notifications for join and leave events
  * Fixed skew when scaling a selection from the top-right handle
  * Fixed mouse droppings when for large brush outline widths

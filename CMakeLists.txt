@@ -20,7 +20,7 @@ include(CMakeCargo)
 
 ### generic info
 set ( WEBSITE "https://drawpile.net/" )
-set ( DRAWPILE_VERSION "2.2.0b2" )
+set ( DRAWPILE_VERSION "2.2.0b3" )
 
 ### protocol versions
 # see doc/protocol.md for protocol version history
