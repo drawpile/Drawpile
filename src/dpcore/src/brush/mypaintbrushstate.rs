@@ -240,6 +240,11 @@ impl MyPaintBrushState {
                 0.0,
             );
         }
+
+        // We don't support spectral painting (aka Pigment mode), so we'll turn
+        // that off at the source here. It's like turning the Pigment slider in
+        // MyPaint all the way to zero.
+        self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_PAINT_MODE, 0.0);
     }
 }
 
