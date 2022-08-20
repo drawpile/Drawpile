@@ -298,19 +298,6 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="2">
-      <widget class="QSpinBox" name="paintModeBox">
-       <property name="suffix">
-        <string>%</string>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="hardnessLabel">
        <property name="text">
@@ -476,13 +463,6 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="paintModeLabel">
-       <property name="text">
-        <string>Pigment:</string>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="3">
       <widget class="widgets::GroupedToolButton" name="pressureOpacity">
        <property name="toolTip">
@@ -536,19 +516,6 @@
        </property>
        <property name="value">
         <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QSlider" name="paintModeSlider">
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>100</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -887,38 +854,6 @@
     <hint type="destinationlabel">
      <x>154</x>
      <y>275</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>paintModeBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>paintModeSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>301</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>154</x>
-     <y>301</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>paintModeSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>paintModeBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>301</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>301</y>
     </hint>
    </hints>
   </connection>

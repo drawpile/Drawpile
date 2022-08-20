@@ -243,7 +243,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
 	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.gainBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
-	connect(d->ui.paintModeBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.slowTrackingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
@@ -476,8 +475,6 @@ void BrushSettings::updateUi()
 		(myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value + 2.0) * 100.0);
 	d->ui.gainBox->setValue(qRound(
 		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value * 100.0));
-	d->ui.paintModeBox->setValue(qRound(
-		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PAINT_MODE].base_value * 100.0));
 	d->ui.slowTrackingBox->setValue(qRound(
 		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value * 10.0));
 	d->ui.modeLockAlpha->setChecked(myPaint.constBrush().lock_alpha);
@@ -551,8 +548,6 @@ void BrushSettings::updateFromUi()
 		d->ui.brushhardness->value() / 100.0;
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value =
 		d->ui.gainBox->value() / 100.0;
-	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PAINT_MODE].base_value =
-		d->ui.paintModeBox->value() / 100.0;
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value =
 		d->ui.slowTrackingBox->value() / 10.0;
 	myPaint.brush().lock_alpha = d->ui.modeLockAlpha->isChecked();
@@ -599,9 +594,6 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.gainLabel, mypaintmode},
 		{d->ui.gainSlider, mypaintmode},
 		{d->ui.gainBox, mypaintmode},
-		{d->ui.paintModeLabel, mypaintmode},
-		{d->ui.paintModeSlider, mypaintmode},
-		{d->ui.paintModeBox, mypaintmode},
 		{d->ui.slowTrackingLabel, mypaintmode},
 		{d->ui.slowTrackingSlider, mypaintmode},
 		{d->ui.slowTrackingBox, mypaintmode},
