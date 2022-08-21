@@ -33,12 +33,7 @@ enum Algorithm {
 	SALTED_SHA1, // deprecated
 	PBKDF2,
 	SODIUM, // the best algorithm offered by libsodium
-
-#if defined(HAVE_LIBSODIUM)
-	BEST_ALGORITHM = SODIUM
-#else
-	BEST_ALGORITHM = PBKDF2
-#endif
+	BEST_ALGORITHM = 255,
 };
 
 

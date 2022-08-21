@@ -118,51 +118,78 @@ bool check(const QString &password, const QByteArray &hash)
 	return false;
 }
 
+namespace {
+
+QByteArray hashPlaintext(const QString &password)
+{
+	return ("plain;" + password).toUtf8();
+}
+
+QByteArray hashSaltedSha1(const QString &password)
+{
+	// Note: no longer generate this type of hash when minimum supported Qt version is 5.12
+	const QByteArray salt = makesalt();
+	return "s+sha1;" + salt.toHex() + ";" + saltedSha1(password, salt).toHex();
+}
+
+QByteArray hashPbkdf2(const QString &password)
+{
+	const QByteArray salt = makesalt();
+	return "pbkdf2;1;" +
+		salt.toBase64() + ";" +
+		QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64).toBase64()
+		;
+}
+
+#ifdef HAVE_LIBSODIUM
+QByteArray hashSodium(const QString &password)
+{
+	const QByteArray passwd = password.toUtf8();
+	QByteArray hashed(crypto_pwhash_STRBYTES, 0);
+	if(crypto_pwhash_str(
+		hashed.data(),
+		passwd.constData(),
+		passwd.length(),
+		crypto_pwhash_OPSLIMIT_INTERACTIVE,
+		crypto_pwhash_MEMLIMIT_INTERACTIVE
+		))
+	{
+		qWarning("crypto_pwhash_str out of memory!");
+		return QByteArray();
+	}
+	const int nullbyte = hashed.indexOf('\0');
+	if(nullbyte>=0)
+		hashed.truncate(nullbyte);
+	return "sodium;" + hashed;
+}
+#endif
+
+}
+
 QByteArray hash(const QString &password, Algorithm algorithm)
 {
 	if(password.isEmpty())
 		return QByteArray();
 
 	switch(algorithm) {
-	case PLAINTEXT: return ("plain;" + password).toUtf8();
-
-	case SALTED_SHA1: {
-		// Note: no longer generate this type of hash when minimum supported Qt version is 5.12
-		const QByteArray salt = makesalt();
-		return "s+sha1;" + salt.toHex() + ";" + saltedSha1(password, salt).toHex();
-		}
-
-	case PBKDF2: {
-		const QByteArray salt = makesalt();
-		return "pbkdf2;1;" +
-			salt.toBase64() + ";" +
-			QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64).toBase64()
-			;
-		}
-
-	case SODIUM: {
+	case BEST_ALGORITHM:
 #ifdef HAVE_LIBSODIUM
-		const QByteArray passwd = password.toUtf8();
-		QByteArray hashed(crypto_pwhash_STRBYTES, 0);
-		if(crypto_pwhash_str(
-			hashed.data(),
-			passwd.constData(),
-			passwd.length(),
-			crypto_pwhash_OPSLIMIT_INTERACTIVE,
-			crypto_pwhash_MEMLIMIT_INTERACTIVE
-			))
-		{
-			qWarning("crypto_pwhash_str out of memory!");
-			return QByteArray();
-		}
-		const int nullbyte = hashed.indexOf('\0');
-		if(nullbyte>=0)
-			hashed.truncate(nullbyte);
-		return "sodium;" + hashed;
+		return hashSodium(password);
+#else
+		return hashPbkdf2(password);
+#endif
+	case PLAINTEXT:
+		return hashPlaintext(password);
+	case SALTED_SHA1:
+		return hashSaltedSha1(password);
+	case PBKDF2:
+		return hashPbkdf2(password);
+	case SODIUM:
+#ifdef HAVE_LIBSODIUM
+		return hashSodium(password);
 #else
 		break;
 #endif
-		}
 	}
 
 	return QByteArray();
