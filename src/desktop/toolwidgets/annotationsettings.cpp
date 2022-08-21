@@ -100,7 +100,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_updatetimer->setSingleShot(true);
 
 	// Horizontal alignment options
-	QMenu *halignMenu = new QMenu;
+	QMenu *halignMenu = new QMenu(parent);
 	halignMenu->addAction(icon::fromTheme("format-justify-left"), tr("Left"))->setProperty(HALIGN_PROP, Qt::AlignLeft);
 	halignMenu->addAction(icon::fromTheme("format-justify-center"), tr("Center"))->setProperty(HALIGN_PROP, Qt::AlignCenter);
 	halignMenu->addAction(icon::fromTheme("format-justify-fill"), tr("Justify"))->setProperty(HALIGN_PROP, Qt::AlignJustify);
@@ -110,7 +110,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_ui->halign->setMenu(halignMenu);
 
 	// Vertical alignment options
-	QMenu *valignMenu = new QMenu;
+	QMenu *valignMenu = new QMenu(parent);
 	valignMenu->addAction(icon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
 	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER);
 	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM);
