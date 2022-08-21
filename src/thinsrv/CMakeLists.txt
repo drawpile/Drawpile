@@ -1,99 +1,98 @@
-# src/server/CMakeLists.txt
-
-find_package( Qt5Sql REQUIRED)
-find_package( Libmicrohttpd )
-find_package(Sodium)
-
-set (
-	SOURCES
-	multiserver.cpp
+set(thinsrv_sources
 	database.cpp
 	dblog.cpp
-	templatefiles.cpp
-	headless/headless.cpp
 	headless/configfile.cpp
-	)
+	headless/headless.cpp
+	multiserver.cpp
+	templatefiles.cpp
+)
+
+set(thinsrv_gui_sources
+	gui/accountlistmodel.cpp
+	gui/accountlistpage.cpp
+	gui/authdialog.cpp
+	gui/banlistmodel.cpp
+	gui/banlistpage.cpp
+	gui/gui.cpp
+	gui/jsonlistmodel.cpp
+	gui/localserver.cpp
+	gui/mainwindow.cpp
+	gui/remoteserver.cpp
+	gui/server.cpp
+	gui/serverlogmodel.cpp
+	gui/serverlogpage.cpp
+	gui/serversummarypage.cpp
+	gui/sessionlistmodel.cpp
+	gui/sessionlistpage.cpp
+	gui/sessionpage.cpp
+	gui/sidebaritemdelegate.cpp
+	gui/sidebarmodel.cpp
+	gui/singleinstance.cpp
+	gui/subheaderwidget.cpp
+	gui/trayicon.cpp
+	gui/userlistmodel.cpp
+	gui/userlistpage.cpp
+)
+
+set(thinsrv_gui_uis
+	gui/accountdialog.ui
+	gui/authdialog.ui
+	gui/ipbandialog.ui
+	gui/settings.ui
+)
+
+add_library("${SRVNAME}lib" STATIC ${thinsrv_sources})
+set_drawpile_target_properties(dpshared)
+target_include_directories("${SRVNAME}lib" PUBLIC
+	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+target_link_libraries("${SRVNAME}lib" PUBLIC dpserver Qt5::Network Qt5::Sql)
 
 if(SERVERGUI)
-	find_package(Qt5Widgets REQUIRED)
-
-	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui gui/accountdialog.ui gui/settings.ui gui/authdialog.ui )
-	qt5_add_resources( QtResource gui/res/resources.qrc )
-
-	set(SOURCES ${SOURCES} ${UI_Headers}
-		gui/gui.cpp
-		gui/singleinstance.cpp
-		gui/trayicon.cpp
-		gui/authdialog.cpp
-		gui/mainwindow.cpp
-		gui/server.cpp
-		gui/localserver.cpp
-		gui/remoteserver.cpp
-		gui/sidebarmodel.cpp
-		gui/sidebaritemdelegate.cpp
-		gui/serversummarypage.cpp
-		gui/sessionlistpage.cpp
-		gui/userlistpage.cpp
-		gui/banlistpage.cpp
-		gui/accountlistpage.cpp
-		gui/sessionpage.cpp
-		gui/subheaderwidget.cpp
-		gui/jsonlistmodel.cpp
-		gui/userlistmodel.cpp
-		gui/sessionlistmodel.cpp
-		gui/banlistmodel.cpp
-		gui/accountlistmodel.cpp
-		gui/serverlogmodel.cpp
-		gui/serverlogpage.cpp
-		)
-	add_definitions(-DHAVE_SERVERGUI)
-
-endif(SERVERGUI)
-
-# Unix specific features
-if ( UNIX )
-	set ( SOURCES ${SOURCES} headless/unixsignals.cpp )
-endif ( UNIX )
-
-# Select init system integration backend
-if ( INITSYS STREQUAL "systemd" AND SYSTEMD_FOUND )
-	set ( SOURCES ${SOURCES} initsys_systemd.cpp )
-	set ( INITSYS_LIB ${SYSTEMD_LIBRARIES} )
-else ()
-	set ( SOURCES ${SOURCES} initsys_dummy.cpp )
-endif ()
-
-# Enable HTTP admin API if libmicrohttpd was found
-if( MHD_FOUND )
-	set( SOURCES ${SOURCES}
-		webadmin/qmhttp.cpp
-		webadmin/webadmin.cpp
-	)
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_WEBADMIN" )
-else( MHD_FOUND )
-	message(WARNING "Libmicrohttpd not found: web-admin not enabled" )
-endif( MHD_FOUND )
-
-# Enable ext-auth if libsodium is available
-if( Sodium_FOUND )
-    add_definitions(-DHAVE_LIBSODIUM)
-endif( Sodium_FOUND )
-
-
-add_library( "${SRVNAME}lib" STATIC ${SOURCES} )
-target_link_libraries( "${SRVNAME}lib"  dpserver Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
-if(SERVERGUI)
-	target_link_libraries( "${SRVNAME}lib"  Qt5::Widgets )
+	qt5_wrap_ui(thinsrv_ui_headers ${thinsrv_gui_uis})
+	qt5_add_resources(thinsrv_qt_resources gui/res/resources.qrc)
+	message(STATUS "thinsrv_ui_headers ${thinsrv_ui_headers}")
+	target_sources("${SRVNAME}lib" PRIVATE
+		${thinsrv_gui_sources}
+		${thinsrv_ui_headers})
+	target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_SERVERGUI)
+	target_link_libraries("${SRVNAME}lib" PUBLIC Qt5::Widgets)
 endif()
 
-add_executable(${SRVNAME} main.cpp ${QtResource})
-target_link_libraries(${SRVNAME} "${SRVNAME}lib")
+if(UNIX)
+	target_sources("${SRVNAME}lib" PRIVATE headless/unixsignals.cpp)
+endif()
 
-if ( UNIX AND NOT APPLE )
-	install ( TARGETS ${SRVNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
-endif ()
+# Select init system integration backend
+if(INITSYS STREQUAL "systemd" AND SYSTEMD_FOUND)
+	target_sources("${SRVNAME}lib" PRIVATE initsys_systemd.cpp)
+	target_link_libraries("${SRVNAME}lib" PUBLIC ${SYSTEMD_LIBRARIES})
+else()
+	target_sources("${SRVNAME}lib" PRIVATE initsys_dummy.cpp)
+endif()
+
+# Enable HTTP admin API if libmicrohttpd was found
+if(MHD_FOUND)
+	target_sources("${SRVNAME}lib" PRIVATE webadmin/qmhttp.cpp webadmin/webadmin.cpp)
+    target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_WEBADMIN)
+	target_link_libraries("${SRVNAME}lib" PUBLIC ${MHD_LIBRARIES})
+else()
+	message(WARNING "Libmicrohttpd not found: web-admin not enabled" )
+endif()
+
+# Enable ext-auth if libsodium is available
+if(Sodium_FOUND)
+    target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_LIBSODIUM)
+endif()
+
+add_executable(${SRVNAME} main.cpp ${thinsrv_qt_resources})
+set_drawpile_target_properties(${SRVNAME})
+target_link_libraries(${SRVNAME} PUBLIC "${SRVNAME}lib")
+
+if(UNIX AND NOT APPLE)
+	install(TARGETS ${SRVNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+endif()
 
 if(TESTS)
 	add_subdirectory(tests)
-endif(TESTS)
+endif()
 

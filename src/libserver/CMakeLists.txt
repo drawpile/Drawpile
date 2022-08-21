@@ -1,36 +1,26 @@
-find_package(Qt5Network REQUIRED)
-find_package(Sodium)
-
-set (
-	SOURCES
+set(libserver_sources
+	announcements.cpp
 	client.cpp
-	thinserverclient.cpp
-	session.cpp
-	thinsession.cpp
-	sessionserver.cpp
-	sessionban.cpp
-	sessionhistory.cpp
-	inmemoryhistory.cpp
 	filedhistory.cpp
+	idqueue.cpp
+	inmemoryconfig.cpp
+	inmemoryhistory.cpp
+	jsonapi.cpp
 	loginhandler.cpp
 	opcommands.cpp
 	serverconfig.cpp
-	inmemoryconfig.cpp
-	jsonapi.cpp
-	idqueue.cpp
 	serverlog.cpp
+	session.cpp
+	sessionban.cpp
+	sessionhistory.cpp
+	sessionserver.cpp
 	sslserver.cpp
-	announcements.cpp
-	)
+	thinserverclient.cpp
+	thinsession.cpp
+)
 
-if( Sodium_FOUND )
-	add_definitions(-DHAVE_LIBSODIUM)
-	include_directories(system "${SODIUM_INCLUDE_DIR}")
-else( Sodium_FOUND )
-	message(WARNING "Libsodium not found: Ext-auth support not enabled" )
-endif( Sodium_FOUND )
-
-add_library(dpserver STATIC ${SOURCES})
+add_library(dpserver STATIC ${libserver_sources})
+set_drawpile_target_properties(dpserver)
 target_link_libraries(dpserver dpshared Qt5::Network)
 
 if(TESTS)

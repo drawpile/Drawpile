@@ -1,13 +1,4 @@
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Multimedia REQUIRED)
-find_package(Qt5Svg REQUIRED)
-find_package(QtColorWidgets)
-find_package(Qt5Keychain)
-
-include_directories("../libclient")
-
-set (
-	SOURCES
+set(desktop_sources
 	main.cpp
 	mainwindow.cpp
 	notifications.cpp
@@ -30,7 +21,7 @@ set (
 	scene/lasertrailitem.cpp
 	dialogs/abusereport.cpp
 	dialogs/certificateview.cpp
-	dialogs/newdialog.cpp 
+	dialogs/newdialog.cpp
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
 	dialogs/logindialog.cpp
@@ -52,13 +43,13 @@ set (
 	dialogs/brushpresetproperties.cpp
 	widgets/viewstatus.cpp
 	widgets/popupmessage.cpp
-	widgets/netstatus.cpp 
+	widgets/netstatus.cpp
 	widgets/colorbutton.cpp
 	widgets/brushpreview.cpp
 	widgets/kis_curve_widget.cpp
 	widgets/keysequenceedit.cpp
 	widgets/groupedtoolbutton.cpp
-	widgets/filmstrip.cpp 
+	widgets/filmstrip.cpp
 	widgets/resizerwidget.cpp
 	widgets/tablettest.cpp
 	widgets/flipbookview.cpp
@@ -70,7 +61,7 @@ set (
 	widgets/timelinewidget.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
-	docks/navigator.cpp 
+	docks/navigator.cpp
 	docks/colorspinner.cpp
 	docks/colorsliders.cpp
 	docks/colorpalette.cpp
@@ -81,7 +72,7 @@ set (
 	docks/titlewidget.cpp
 	chat/chatlineedit.cpp
 	chat/chatwidgetpinnedarea.cpp
-	chat/chatwidget.cpp 
+	chat/chatwidget.cpp
 	chat/useritemdelegate.cpp
 	chat/chatbox.cpp
 	chat/chatwindow.cpp
@@ -91,194 +82,188 @@ set (
 	utils/hotbordereventfilter.cpp
 )
 
-IF ( APPLE )
-	set ( SOURCES ${SOURCES} widgets/macmenu.cpp )
-ENDIF ( APPLE )
+set(desktop_uis
+	ui/abusereport.ui
+	ui/avatarimport.ui
+	ui/brushdock.ui
+	ui/brushpresetproperties.ui
+	ui/certificateview.ui
+	ui/fillsettings.ui
+	ui/flipbook.ui
+	ui/hostdialog.ui
+	ui/inputcfg.ui
+	ui/inspectorsettings.ui
+	ui/joindialog.ui
+	ui/lasersettings.ui
+	ui/layerproperties.ui
+	ui/logindialog.ui
+	ui/netstats.ui
+	ui/newdialog.ui
+	ui/playback.ui
+	ui/resetsession.ui
+	ui/resizedialog.ui
+	ui/selectsettings.ui
+	ui/serverlog.ui
+	ui/sessionsettings.ui
+	ui/settings.ui
+	ui/tablettest.ui
+	ui/textsettings.ui
+	ui/versioncheck.ui
+	ui/videoexport.ui
+)
+
+set(bundled_qtcolorwidgets_sources
+	bundled/QtColorWidgets/abstract_widget_list.cpp
+	bundled/QtColorWidgets/bound_color_selector.cpp
+	bundled/QtColorWidgets/color_2d_slider.cpp
+	bundled/QtColorWidgets/color_delegate.cpp
+	bundled/QtColorWidgets/color_dialog.cpp
+	bundled/QtColorWidgets/color_line_edit.cpp
+	bundled/QtColorWidgets/color_list_widget.cpp
+	bundled/QtColorWidgets/color_names.cpp
+	bundled/QtColorWidgets/color_palette.cpp
+	bundled/QtColorWidgets/color_palette_model.cpp
+	bundled/QtColorWidgets/color_palette_widget.cpp
+	bundled/QtColorWidgets/color_preview.cpp
+	bundled/QtColorWidgets/color_selector.cpp
+	bundled/QtColorWidgets/color_utils.cpp
+	bundled/QtColorWidgets/color_wheel.cpp
+	bundled/QtColorWidgets/color_widgets.qrc
+	bundled/QtColorWidgets/gradient_editor.cpp
+	bundled/QtColorWidgets/gradient_list_model.cpp
+	bundled/QtColorWidgets/gradient_slider.cpp
+	bundled/QtColorWidgets/harmony_color_wheel.cpp
+	bundled/QtColorWidgets/hue_slider.cpp
+	bundled/QtColorWidgets/swatch.cpp
+	bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
+	bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/BoundColorSelector
+	bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/CMakeLists.txt
+	bundled/QtColorWidgets/include/QtColorWidgets/color_2d_slider.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/ColorDelegate
+	bundled/QtColorWidgets/include/QtColorWidgets/color_delegate.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/ColorDialog
+	bundled/QtColorWidgets/include/QtColorWidgets/color_dialog.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_line_edit.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/ColorListWidget
+	bundled/QtColorWidgets/include/QtColorWidgets/color_list_widget.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_names.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_palette.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_palette_model.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_palette_widget.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/ColorPreview
+	bundled/QtColorWidgets/include/QtColorWidgets/color_preview.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/ColorSelector
+	bundled/QtColorWidgets/include/QtColorWidgets/color_selector.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_utils.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/ColorWheel
+	bundled/QtColorWidgets/include/QtColorWidgets/color_wheel.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/color_wheel_private.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/colorwidgets_global.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/gradient_delegate.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/GradientEditor
+	bundled/QtColorWidgets/include/QtColorWidgets/gradient_editor.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/gradient_helper.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/GradientListModel
+	bundled/QtColorWidgets/include/QtColorWidgets/gradient_list_model.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/GradientSlider
+	bundled/QtColorWidgets/include/QtColorWidgets/gradient_slider.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/HarmonyColorWheel
+	bundled/QtColorWidgets/include/QtColorWidgets/harmony_color_wheel.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/HueSlider
+	bundled/QtColorWidgets/include/QtColorWidgets/hue_slider.hpp
+	bundled/QtColorWidgets/include/QtColorWidgets/swatch.hpp
+)
+
+add_executable(${CLIENTNAME} ${desktop_sources})
+set_drawpile_target_properties(${CLIENTNAME})
+target_include_directories("${CLIENTNAME}" PUBLIC
+	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+target_link_libraries(${CLIENTNAME} PUBLIC dpclient
+	Qt5::Widgets Qt5::Multimedia Qt5::Svg)
+
+set_target_properties(${CLIENTNAME} PROPERTIES
+	VERSION ${DRAWPILE_VERSION}
+	PROJECT_LABEL drawpile-client)
+
+if(WIN32 AND NOT (CMAKE_BUILD_TYPE STREQUAL DEBUG))
+	# Don't show a console window in Windows in release mode.
+	set_property(TARGET ${CLIENTNAME} PROPERTY WIN32_EXECUTABLE)
+endif()
+
+IF(APPLE)
+	set_property(TARGET ${CLIENTNAME} PROPERTY MACOSX_BUNDLE)
+	target_sources(${CLIENTNAME} PRIVATE widgets/macmenu.cpp)
+ENDIF()
 
 IF(KIS_TABLET)
 	if(WIN32)
-		set (SOURCES ${SOURCES}
+		target_sources(${CLIENTNAME} PRIVATE
 			bundled/kis_tablet/kis_tablet_support_win8.cpp
-			bundled/kis_tablet/kis_tablet_support_win.cpp
-		)
-	elseif (NOT APPLE)
-		set (SOURCES ${SOURCES}
+			bundled/kis_tablet/kis_tablet_support_win.cpp)
+	elseif(NOT APPLE)
+		target_sources(${CLIENTNAME} PRIVATE
 			bundled/kis_tablet/kis_xi2_event_filter.cpp
 			bundled/kis_tablet/qxcbconnection.cpp
-			bundled/kis_tablet/qxcbconnection_xi2.cpp
-		)
-
-		find_package(X11 REQUIRED COMPONENTS Xinput)
-		find_package(XCB REQUIRED COMPONENTS XCB)
-		find_package(Qt5X11Extras REQUIRED)
-
-		set (EXTRALIBS Qt5::X11Extras ${X11_Xinput_LIB} ${XCB_LIBRARIES} ${X11_LIBRARIES} )
+			bundled/kis_tablet/qxcbconnection_xi2.cpp)
+		target_link_libraries(${CLIENTNAME} PUBLIC
+			Qt5::X11Extras ${X11_Xinput_LIB} ${XCB_LIBRARIES} ${X11_LIBRARIES})
 	endif()
-ENDIF(KIS_TABLET)
-
-if(KF5DNSSD_FOUND)
-	add_definitions(-DHAVE_DNSSD)
-	# KF5DNSSD 8.84.0 moves a bunch of headers to a different place.
-	if("${KF5DNSSD_VERSION}" VERSION_LESS "5.84.0")
-		add_definitions(-DHAVE_DNSSD_BEFORE_5_84_0)
-	endif()
-endif()
+ENDIF()
 
 if(QTKEYCHAIN_LIBRARIES)
-	add_definitions(-DHAVE_QTKEYCHAIN)
+	target_compile_definitions(${CLIENTNAME} PUBLIC HAVE_QTKEYCHAIN)
+	target_link_libraries(${CLIENTNAME} PUBLIC ${QTKEYCHAIN_LIBRARIES})
 else ()
 	message(WARNING "QtKeyChain not found: password remembering not enabled")
 endif()
 
-set (
-	UIs
-	ui/brushdock.ui
-	ui/certificateview.ui
-	ui/hostdialog.ui
-	ui/joindialog.ui
-	ui/settings.ui
-	ui/textsettings.ui
-	ui/selectsettings.ui
-	ui/fillsettings.ui
-	ui/lasersettings.ui
-	ui/inspectorsettings.ui
-	ui/newdialog.ui
-	ui/resizedialog.ui
-	ui/videoexport.ui
-	ui/inputcfg.ui
-	ui/logindialog.ui
-	ui/netstats.ui
-	ui/flipbook.ui
-	ui/playback.ui
-	ui/resetsession.ui
-	ui/sessionsettings.ui
-	ui/serverlog.ui
-	ui/tablettest.ui
-	ui/abusereport.ui
-	ui/avatarimport.ui
-	ui/versioncheck.ui
-	ui/layerproperties.ui
-	ui/brushpresetproperties.ui
-)
-
 # Use bundled QtColorWidgets widgets if library not found
 if(QTCOLORWIDGETS_FOUND)
-	include_directories(${LIBQTCOLORWIDGETS_INCLUDE_DIRS})
+	target_include_directories(${CLIENTNAME} PUBLIC ${LIBQTCOLORWIDGETS_INCLUDE_DIRS})
+	target_link_libraries(${CLIENTNAME} PUBLIC ${LIBQTCOLORWIDGETS_LIBRARIES})
 else()
 	message(WARNING "QtColorWidgets not found: using bundled copy!")
-	set(
-		SOURCES ${SOURCES}
-		bundled/QtColorWidgets/abstract_widget_list.cpp
-		bundled/QtColorWidgets/bound_color_selector.cpp
-		bundled/QtColorWidgets/color_2d_slider.cpp
-		bundled/QtColorWidgets/color_delegate.cpp
-		bundled/QtColorWidgets/color_dialog.cpp
-		bundled/QtColorWidgets/color_line_edit.cpp
-		bundled/QtColorWidgets/color_list_widget.cpp
-		bundled/QtColorWidgets/color_names.cpp
-		bundled/QtColorWidgets/color_palette.cpp
-		bundled/QtColorWidgets/color_palette_model.cpp
-		bundled/QtColorWidgets/color_palette_widget.cpp
-		bundled/QtColorWidgets/color_preview.cpp
-		bundled/QtColorWidgets/color_selector.cpp
-		bundled/QtColorWidgets/color_utils.cpp
-		bundled/QtColorWidgets/color_wheel.cpp
-		bundled/QtColorWidgets/color_widgets.qrc
-		bundled/QtColorWidgets/gradient_editor.cpp
-		bundled/QtColorWidgets/gradient_list_model.cpp
-		bundled/QtColorWidgets/gradient_slider.cpp
-		bundled/QtColorWidgets/harmony_color_wheel.cpp
-		bundled/QtColorWidgets/hue_slider.cpp
-		bundled/QtColorWidgets/swatch.cpp
-		bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
-		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/BoundColorSelector
-		bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/CMakeLists.txt
-		bundled/QtColorWidgets/include/QtColorWidgets/color_2d_slider.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/ColorDelegate
-		bundled/QtColorWidgets/include/QtColorWidgets/color_delegate.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/ColorDialog
-		bundled/QtColorWidgets/include/QtColorWidgets/color_dialog.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_line_edit.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/ColorListWidget
-		bundled/QtColorWidgets/include/QtColorWidgets/color_list_widget.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_names.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_palette.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_palette_model.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_palette_widget.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/ColorPreview
-		bundled/QtColorWidgets/include/QtColorWidgets/color_preview.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/ColorSelector
-		bundled/QtColorWidgets/include/QtColorWidgets/color_selector.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_utils.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/ColorWheel
-		bundled/QtColorWidgets/include/QtColorWidgets/color_wheel.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/color_wheel_private.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/colorwidgets_global.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/gradient_delegate.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/GradientEditor
-		bundled/QtColorWidgets/include/QtColorWidgets/gradient_editor.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/gradient_helper.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/GradientListModel
-		bundled/QtColorWidgets/include/QtColorWidgets/gradient_list_model.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/GradientSlider
-		bundled/QtColorWidgets/include/QtColorWidgets/gradient_slider.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/HarmonyColorWheel
-		bundled/QtColorWidgets/include/QtColorWidgets/harmony_color_wheel.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/HueSlider
-		bundled/QtColorWidgets/include/QtColorWidgets/hue_slider.hpp
-		bundled/QtColorWidgets/include/QtColorWidgets/swatch.hpp
-	)
-	qt5_add_resources( QtResource bundled/QtColorWidgets/color_widgets.qrc )
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include")
-	add_definitions(-DQTCOLORPICKER_STATICALLY_LINKED)
-	set (
-		UIs ${UIs}
+	qt5_add_resources(desktop_resources bundled/QtColorWidgets/color_widgets.qrc)
+	qt5_wrap_ui(bundled_qtcolorwidgets_ui_headers
 		bundled/QtColorWidgets/color_dialog.ui
-		bundled/QtColorWidgets/color_palette_widget.ui
-	)
+		bundled/QtColorWidgets/color_palette_widget.ui)
+	target_compile_definitions(${CLIENTNAME} PUBLIC QTCOLORPICKER_STATICALLY_LINKED)
+	target_include_directories(${CLIENTNAME} PUBLIC
+		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include")
+	target_sources(${CLIENTNAME} PRIVATE
+		${bundled_qtcolorwidgets_sources} ${bundled_qtcolorwidgets_ui_headers})
 endif()
 
-qt5_wrap_ui( UI_Headers ${UIs} )
+qt5_add_resources(desktop_resources ui/cursors/cursors.qrc)
+qt5_add_resources(desktop_resources ui/icons/builtin.qrc)
+qt5_wrap_ui(desktop_ui_headers ${desktop_uis} )
+target_sources(${CLIENTNAME} PRIVATE ${desktop_ui_headers} ${desktop_resources})
 
-qt5_add_resources( QtResource ui/cursors/cursors.qrc )
-qt5_add_resources( QtResource ui/icons/builtin.qrc )
-
-# non-qt stuff
-
-set ( EXETYPE "" )
-set ( RES "" )
-if ( WIN32 )
-	if ( NOT CMAKE_BUILD_TYPE STREQUAL Debug )
-		set ( EXETYPE WIN32 )
-	endif ( )
-	
-	generate_win32_resource (
+if(WIN32)
+	generate_win32_resource(
 		Win32Resource
 		"Drawpile client" # full name
 		${CLIENTNAME} # internal name
 		"Drawpile client"
-		${WEBSITE}
-		"2006-2017 Calle Laakkonen"
+		${DRAWPILE_HOMEPAGE_URL}
+		"2006-2022 Calle Laakkonen"
 		${DRAWPILE_VERSION}
-		"${CMAKE_SOURCE_DIR}/desktop/drawpile.ico"
-	)
-endif ( WIN32 )
+		"${CMAKE_SOURCE_DIR}/desktop/drawpile.ico")
+endif()
 
-IF ( APPLE )
-	SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
+if(APPLE)
+	set(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
 	# set how it shows up in the Info.plist file
-	SET(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
+	set(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
 	# set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
-	SET(MACOSX_BUNDLE_GUI_IDENTIFIER "net.drawpile.DrawpileClient")
-	#SET(MACOSX_BUNDLE_INFO_STRING "${CLIENTNAME}")
-	#SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${CLIENTNAME}")
-	SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${DRAWPILE_VERSION}")
-	SET(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
-	SET(MACOSX_BUNDLE_COPYRIGHT "Copyright Drawpile team")
+	set(MACOSX_BUNDLE_GUI_IDENTIFIER "net.drawpile.DrawpileClient")
+	set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${DRAWPILE_VERSION}")
+	set(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
+	set(MACOSX_BUNDLE_COPYRIGHT "Copyright Drawpile team")
 
-	SET(ResourcesDir "${CMAKE_BINARY_DIR}/bin/${CLIENTNAME}.app/Contents/Resources")
+	set(ResourcesDir "${CMAKE_BINARY_DIR}/bin/${CLIENTNAME}.app/Contents/Resources")
 	add_custom_target( appbundle ALL
 		COMMAND mkdir -p "${ResourcesDir}/i18n"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
@@ -288,47 +273,12 @@ IF ( APPLE )
 		COMMAND mkdir -p "${ResourcesDir}/sounds"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/sounds/*.wav" "${ResourcesDir}/sounds"
 		COMMAND cp -r "${CMAKE_SOURCE_DIR}/desktop/theme" "${ResourcesDir}"
-		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/initialbrushpresets.db" "${ResourcesDir}"
-	)
-ENDIF()
-
-add_executable (
-	${CLIENTNAME}
-	${EXETYPE}
-	MACOSX_BUNDLE
-	${SOURCES}
-	${QtResource}
-	${QM_TRANSLATIONS}
-	${Win32Resource}
-	${UI_Headers} # required here for ui_*.h generation
-)
-
-target_link_libraries(${CLIENTNAME}
-	dpclient
-	Qt5::Widgets
-	Qt5::Multimedia
-	Qt5::Svg
-	${EXTRALIBS}
-)
-
-if(QTCOLORWIDGETS_FOUND)
-	target_link_libraries(${CLIENTNAME} ${LIBQTCOLORWIDGETS_LIBRARIES})
+		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/initialbrushpresets.db" "${ResourcesDir}")
 endif()
 
-if(QTKEYCHAIN_LIBRARIES)
-	target_link_libraries(${CLIENTNAME} ${QTKEYCHAIN_LIBRARIES})
+install(TARGETS ${CLIENTNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL Debug)
+	strip_exe(${CLIENTNAME})
 endif()
-
-set_target_properties (
-	${CLIENTNAME}
-	PROPERTIES
-        VERSION ${DRAWPILE_VERSION}
-	PROJECT_LABEL drawpile-client
-)
-
-install ( TARGETS ${CLIENTNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
-
-if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
-	strip_exe ( ${CLIENTNAME} )
-endif ( )
 

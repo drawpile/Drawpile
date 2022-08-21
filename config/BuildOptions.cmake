@@ -1,0 +1,18 @@
+option(CLIENT "Compile client" ON)
+option(SERVER "Compile dedicated server" ON)
+option(SERVERGUI "Enable server GUI" ON)
+option(THICKSRV "Compile dedicated thick server (EXPERIMENTAL)" OFF)
+option(TOOLS "Compile extra tools" OFF)
+option(INSTALL_DOC "Install documents" ON)
+option(INITSYS "Init system integration" "systemd")
+option(TESTS "Build unit tests" OFF)
+option(KIS_TABLET "Enable customized Windows tablet support code" OFF)
+option(BUILD_LABEL "A custom label to add to the version")
+
+if(NOT CMAKE_BUILD_TYPE)
+	message(STATUS "No build type selected, default to Release")
+	message(STATUS "Use -DCMAKE_BUILD_TYPE=Debug to enable debugging")
+	set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
