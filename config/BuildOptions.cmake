@@ -7,6 +7,7 @@ option(INSTALL_DOC "Install documents" ON)
 option(INITSYS "Init system integration" "systemd")
 option(TESTS "Build unit tests" OFF)
 option(KIS_TABLET "Enable customized Windows tablet support code" OFF)
+option(ADDRESS_SANITIZER "Enable address sanitizer" OFF)
 option(BUILD_LABEL "A custom label to add to the version")
 
 if(NOT CMAKE_BUILD_TYPE)

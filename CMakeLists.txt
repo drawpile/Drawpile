@@ -28,6 +28,7 @@ include(CMakeCargo)
 include(KDEInstallDirs)
 
 include("config/BuildOptions.cmake")
+include("config/AddressSanitizer.cmake")
 include("config/Macros.cmake")
 include("config/Paths.cmake")
 include("config/Dependencies.cmake")
@@ -47,6 +48,7 @@ function(set_drawpile_target_properties target)
 	set_target_properties("${target}" PROPERTIES
 		C_STANDARD 11 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF
 		CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+	add_address_sanitizer("${target}")
 endfunction()
 
 configure_file(config/config.h.cmake "${CMAKE_BINARY_DIR}/config.h")
