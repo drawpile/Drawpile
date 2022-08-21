@@ -243,6 +243,12 @@ impl MyPaintBrushState {
     }
 }
 
+impl Drop for MyPaintBrushState {
+    fn drop(&mut self) {
+        unsafe { c::mypaint_brush_unref(self.brush) }
+    }
+}
+
 impl BrushState for MyPaintBrushState {
     fn set_layer(&mut self, layer_id: u16) {
         self.target.layer_id = layer_id;
