@@ -184,7 +184,7 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
-static void initTranslations(const QLocale &locale)
+static void initTranslations(DrawpileApp &app, const QLocale &locale)
 {
 	const auto preferredLangs = locale.uiLanguages();
 	if(preferredLangs.size()==0)
@@ -203,12 +203,12 @@ static void initTranslations(const QLocale &locale)
 		return;
 
 	// Qt's own translations
-	QTranslator *qtTranslator = new QTranslator;
+	QTranslator *qtTranslator = new QTranslator(&app);
 	qtTranslator->load("qt_" + preferredLang, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 	qApp->installTranslator(qtTranslator);
 
 	// Our translations
-	QTranslator *myTranslator = new QTranslator;
+	QTranslator *myTranslator = new QTranslator(&app);
 
 	for(const QString &datapath : utils::paths::dataPaths()) {
 		if(myTranslator->load("drawpile_" + preferredLang,  datapath + "/i18n"))
@@ -327,7 +327,7 @@ static QStringList initApp(DrawpileApp &app)
 	if(locale == QLocale::c())
 		locale = QLocale::system();
 
-	initTranslations(locale);
+	initTranslations(app, locale);
 
 	return parser.positionalArguments();
 }
