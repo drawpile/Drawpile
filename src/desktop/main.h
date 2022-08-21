@@ -20,9 +20,14 @@
 #define DRAWPILEAPP_H
 
 #include <QApplication>
+#include <QMap>
+#include "notifications.h"
+
+class QSoundEffect;
 
 class DrawpileApp : public QApplication {
 Q_OBJECT
+   friend void notification::playSound(notification::Event);
 public:
 	DrawpileApp(int & argc, char ** argv );
 
@@ -39,6 +44,9 @@ signals:
 
 protected:
 	bool event(QEvent *e);
+
+private:
+	QMap<notification::Event, QSoundEffect*> m_sounds;
 };
 
 #endif

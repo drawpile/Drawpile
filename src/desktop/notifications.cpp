@@ -19,6 +19,7 @@
 
 #include "notifications.h"
 #include "../libshared/util/paths.h"
+#include "main.h"
 
 #include <QSoundEffect>
 #include <QMap>
@@ -30,7 +31,6 @@
 
 namespace notification {
 
-static QMap<Event,QSoundEffect*> sounds;
 static qint64 lasttime = 0;
 
 void playSound(Event event)
@@ -65,7 +65,8 @@ void playSound(Event event)
 		return;
 
 	// Lazily load the sound effect
-	if(!sounds.contains(event)) {
+	DrawpileApp *app = static_cast<DrawpileApp *>(qApp);
+	if(!app->m_sounds.contains(event)) {
 		QString filename;
 		switch(event) {
 		case Event::CHAT: filename = QStringLiteral("sounds/chat.wav"); break;
@@ -87,15 +88,15 @@ void playSound(Event event)
 			qWarning() << filename << "not found!";
 			return;
 		}
-		
-		QSoundEffect *fx = new QSoundEffect;
+
+		QSoundEffect *fx = new QSoundEffect(qApp);
 		fx->setSource(QUrl::fromLocalFile(fullpath));
-		sounds[event] = fx;
+		app->m_sounds[event] = fx;
 	}
 
 	// We have a sound effect... play it now
-	sounds[event]->setVolume(volume / 100.0);
-	sounds[event]->play();
+	app->m_sounds[event]->setVolume(volume / 100.0);
+	app->m_sounds[event]->play();
 }
 
 }
