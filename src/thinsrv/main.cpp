@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
-	QCoreApplication *app;
+	QScopedPointer<QCoreApplication> app;
 
 	qRegisterMetaType<server::JsonApiMethod>("JsonApiMethod");
 	qRegisterMetaType<server::JsonApiResult>("JsonApiResult");
@@ -71,10 +71,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	if(useGui)
-		app = new QApplication(argc, argv);
+		app.reset(new QApplication(argc, argv));
 	else
 #endif
-		app = new QCoreApplication(argc, argv);
+		app.reset(new QCoreApplication(argc, argv));
 
 
 	// Set common settings
