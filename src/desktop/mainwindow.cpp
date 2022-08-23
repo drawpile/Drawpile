@@ -1644,7 +1644,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 		// Work around Qt macOS bug(?): if a window has more than two modal dialogs (sheets)
 		// open at the same time (in this case, the login dialog that hasn't closed yet)
 		// the main window will still be stuck after the dialogs close.
-		QTimer::singleShot(1, msgbox, &QMessageBox::show);
+		QTimer::singleShot(1, msgbox, &QMessageBox::show); // NOLINT clang-tidy thinks this leaks
 	}
 	// If logged in but disconnected unexpectedly, show notification bar
 	else if(m_doc->client()->isLoggedIn() && !localDisconnect) {
