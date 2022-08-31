@@ -110,6 +110,7 @@ private slots:
 private:
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
 	void emitPresetChanges(const input::Preset *preset);
+	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
 	struct Private;
 	Private *d;

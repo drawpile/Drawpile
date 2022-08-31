@@ -391,7 +391,7 @@ void BrushSettings::changeSizeSetting(int size)
 void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 {
 	if(d->ui.radiusLogarithmicBox->isVisible()) {
-		emit pixelSizeChanged(std::exp(radiusLogarithmic / 100.0 - 2.0));
+		emit pixelSizeChanged(radiusLogarithmicToPixelSize(radiusLogarithmic));
 	}
 }
 
@@ -790,7 +790,11 @@ void BrushSettings::quickAdjustOn(QSpinBox *box, qreal adjustment)
 
 int BrushSettings::getSize() const
 {
-	return d->ui.brushsizeBox->value();
+	if(d->ui.brushsizeBox->isVisible()) {
+		return d->ui.brushsizeBox->value();
+	} else {
+		return radiusLogarithmicToPixelSize(d->ui.radiusLogarithmicBox->value());
+	}
 }
 
 bool BrushSettings::getSubpixelMode() const
@@ -801,6 +805,11 @@ bool BrushSettings::getSubpixelMode() const
 bool BrushSettings::isSquare() const
 {
 	return d->currentBrush().classic().shape == rustpile::ClassicBrushShape::SquarePixel;
+}
+
+double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
+{
+	return std::exp(radiusLogarithmic / 100.0 - 2.0);
 }
 
 }
