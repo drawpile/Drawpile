@@ -42,7 +42,8 @@ public:
 
     void strokeTo(
         float x, float y, float pressure, float xtilt, float ytilt,
-        long long deltaMsec, const drawdance::CanvasState &cs);
+        float rotation, long long deltaMsec,
+        const drawdance::CanvasState &cs);
 
     void endStroke(bool pushPenUp = true);
 

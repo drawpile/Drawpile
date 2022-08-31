@@ -30,22 +30,22 @@ namespace canvas {
  */
 class Point : public QPointF {
 public:
-	Point() : QPointF(), m_p(1), m_xt(0), m_yt(0) {}
+	Point() : QPointF(), m_p(1), m_xt(0), m_yt(0), m_r(0) {}
 
-	Point(qreal x, qreal y, qreal p, qreal xt = 0.0, qreal yt = 0.0)
-		: QPointF(x, y), m_p(p), m_xt(xt), m_yt(yt)
+	Point(qreal x, qreal y, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
+		: QPointF(x, y), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
-	Point(const QPointF& point, qreal p, qreal xt = 0.0, qreal yt = 0.0)
-		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt)
+	Point(const QPointF& point, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
+		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
-	Point(const QPoint& point, qreal p, qreal xt = 0.0, qreal yt = 0.0)
-		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt)
+	Point(const QPoint& point, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
+		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
@@ -67,6 +67,12 @@ public:
 
 	//! Set this point's y axis tilt value in degrees
 	void setYtilt(qreal yt) { m_yt = yt; }
+
+	//! Get pen barrel rotation in degrees for this point
+	qreal rotation() const { return m_r; }
+
+	//! Set this point's barrel rotation value in degrees
+	void setRotation(qreal r) { m_r = r; }
 
 	//! Compare two points at subpixel resolution
 	static bool roughlySame(const QPointF& p1, const QPointF &p2) {
@@ -96,6 +102,7 @@ private:
 	qreal m_p;
 	qreal m_xt;
 	qreal m_yt;
+	qreal m_r;
 };
 
 typedef QVector<Point> PointVector;

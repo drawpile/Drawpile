@@ -83,6 +83,7 @@ canvas::Point StrokeSmoother::smoothPoint() const
 	qreal pressure = p.pressure();
 	qreal xtilt = p.xtilt();
 	qreal ytilt = p.ytilt();
+	qreal rotation = p.rotation();
 	for(int i=1;i<_points.size();++i) {
 		const auto pi = at(i);
 		p.rx() += pi.x();
@@ -90,6 +91,7 @@ canvas::Point StrokeSmoother::smoothPoint() const
 		pressure += pi.pressure();
 		xtilt += pi.xtilt();
 		ytilt += pi.ytilt();
+		rotation += pi.rotation();
 	}
 
 	const qreal c = _points.size();
@@ -98,6 +100,7 @@ canvas::Point StrokeSmoother::smoothPoint() const
 	p.setPressure(pressure / c);
 	p.setXtilt(xtilt / c);
 	p.setYtilt(ytilt / c);
+	p.setRotation(rotation / c);
 
 	return p;
 }

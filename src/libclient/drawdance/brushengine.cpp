@@ -45,9 +45,10 @@ void BrushEngine::beginStroke(unsigned int contextId, bool pushUndoPoint)
 
 void BrushEngine::strokeTo(
     float x, float y, float pressure, float xtilt, float ytilt,
-    long long deltaMsec, const drawdance::CanvasState &cs)
+    float rotation, long long deltaMsec,
+    const drawdance::CanvasState &cs)
 {
-    DP_brush_engine_stroke_to(m_data, x, y, pressure, xtilt, ytilt, deltaMsec, cs.get());
+    DP_brush_engine_stroke_to(m_data, x, y, pressure, xtilt, ytilt, rotation, deltaMsec, cs.get());
 }
 
 void BrushEngine::endStroke(bool pushPenUp)

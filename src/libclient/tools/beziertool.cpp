@@ -118,7 +118,7 @@ void BezierTool::finishMultipart()
 		const PointVector pv = calculateBezierCurve();
 		m_brushEngine.beginStroke(contextId);
 		for(const canvas::Point &p : pv) {
-			m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, canvasState);
+			m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), 10, canvasState);
 		}
 		m_brushEngine.endStroke();
 
@@ -202,7 +202,7 @@ void BezierTool::updatePreview()
 	drawdance::CanvasState canvasState = paintEngine->viewCanvasState();
 	m_brushEngine.beginStroke(0);
 	for(const canvas::Point &p : pv) {
-		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, canvasState);
+		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), 10, canvasState);
 	}
 	m_brushEngine.endStroke();
 
