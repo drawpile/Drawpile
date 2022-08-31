@@ -228,7 +228,7 @@ impl BrushPreview {
         let mut painter = BrushEngine::new();
         set_engine_brush(&mut painter, brush_color);
         for p in points {
-            painter.stroke_to(p.0, p.1, p.2, 20, Some(layer));
+            painter.stroke_to(p.0, p.1, p.2, 0.0, 0.0, 20, Some(layer));
         }
         painter.end_stroke();
 

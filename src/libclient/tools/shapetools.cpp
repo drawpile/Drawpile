@@ -87,7 +87,7 @@ void ShapeTool::end()
 
 	const auto pv = pointVector();
 	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, engine, owner.activeLayer());
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 
@@ -114,7 +114,7 @@ void ShapeTool::updatePreview()
 	Q_ASSERT(pv.size()>1);
 
 	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, engine, owner.activeLayer());
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 

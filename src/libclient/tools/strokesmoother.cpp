@@ -81,17 +81,23 @@ canvas::Point StrokeSmoother::smoothPoint() const
 	auto p = at(0);
 
 	qreal pressure = p.pressure();
+	qreal xtilt = p.xtilt();
+	qreal ytilt = p.ytilt();
 	for(int i=1;i<_points.size();++i) {
 		const auto pi = at(i);
 		p.rx() += pi.x();
 		p.ry() += pi.y();
 		pressure += pi.pressure();
+		xtilt += pi.xtilt();
+		ytilt += pi.ytilt();
 	}
 
 	const qreal c = _points.size();
 	p.rx() /= c;
 	p.ry() /= c;
 	p.setPressure(pressure / c);
+	p.setXtilt(xtilt / c);
+	p.setYtilt(ytilt / c);
 
 	return p;
 }

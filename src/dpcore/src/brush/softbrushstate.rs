@@ -147,6 +147,8 @@ impl BrushState for SoftBrushState {
         x: f32,
         y: f32,
         p: f32,
+        _xt: f32,
+        _yt: f32,
         _delta_msec: i64,
         source: Option<&BitmapLayer>,
     ) {

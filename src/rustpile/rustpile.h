@@ -415,6 +415,8 @@ void brushengine_stroke_to(BrushEngine *be,
                            float x,
                            float y,
                            float p,
+                           float xt,
+                           float yt,
                            int64_t delta_msec,
                            const PaintEngine *pe,
                            LayerID layer_id);

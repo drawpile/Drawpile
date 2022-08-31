@@ -26,26 +26,26 @@
 namespace canvas {
 
 /**
- * @brief An extended point class that includes pressure information.
+ * @brief An extended point class that includes pressure and tilt information.
  */
 class Point : public QPointF {
 public:
-	Point() : QPointF(), m_p(1) {}
+	Point() : QPointF(), m_p(1), m_xt(0), m_yt(0) {}
 
-	Point(qreal x, qreal y, qreal p)
-		: QPointF(x, y), m_p(p)
+	Point(qreal x, qreal y, qreal p, qreal xt = 0.0, qreal yt = 0.0)
+		: QPointF(x, y), m_p(p), m_xt(xt), m_yt(yt)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
-	Point(const QPointF& point, qreal p)
-		: QPointF(point), m_p(p)
+	Point(const QPointF& point, qreal p, qreal xt = 0.0, qreal yt = 0.0)
+		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
-	Point(const QPoint& point, qreal p)
-		: QPointF(point), m_p(p)
+	Point(const QPoint& point, qreal p, qreal xt = 0.0, qreal yt = 0.0)
+		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
@@ -53,11 +53,20 @@ public:
 	//! Get the pressure value for this point
 	qreal pressure() const { return m_p; }
 
-	//! Get a reference to the pressure value of this point
-	qreal &rpressure() { return m_p; }
-
 	//! Set this point's pressure value
 	void setPressure(qreal p) { Q_ASSERT(p>=0 && p<=1); m_p = p; }
+
+	//! Get pen x axis tilt in degrees for this point
+	qreal xtilt() const { return m_xt; }
+
+	//! Set this point's x axis tilt value in degrees
+	void setXtilt(qreal xt) { m_xt = xt; }
+
+	//! Get pen y axis tilt in degrees for this point
+	qreal ytilt() const { return m_yt; }
+
+	//! Set this point's y axis tilt value in degrees
+	void setYtilt(qreal yt) { m_yt = yt; }
 
 	//! Compare two points at subpixel resolution
 	static bool roughlySame(const QPointF& p1, const QPointF &p2) {
@@ -85,18 +94,9 @@ public:
 
 private:
 	qreal m_p;
+	qreal m_xt;
+	qreal m_yt;
 };
-
-static inline Point operator-(const Point& p1, const QPointF& p2)
-{
-	return Point(p1.x()-p2.x(), p1.y()-p2.y(), p1.pressure());
-}
-
-static inline Point operator+(const Point& p1, const QPointF& p2)
-{
-	return Point(p1.x()+p2.x(), p1.y()+p2.y(), p1.pressure());
-}
-
 
 typedef QVector<Point> PointVector;
 

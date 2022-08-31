@@ -288,7 +288,16 @@ impl BrushState for MyPaintBrushState {
         self.target.layer_id = layer_id;
     }
 
-    fn stroke_to(&mut self, x: f32, y: f32, p: f32, delta_msec: i64, source: Option<&BitmapLayer>) {
+    fn stroke_to(
+        &mut self,
+        x: f32,
+        y: f32,
+        p: f32,
+        xt: f32,
+        yt: f32,
+        delta_msec: i64,
+        source: Option<&BitmapLayer>,
+    ) {
         let mut surface = MyPaintSurface::new(source, &mut self.target);
         if !self.in_progress {
             self.in_progress = true;
@@ -326,8 +335,8 @@ impl BrushState for MyPaintBrushState {
                 x,
                 y,
                 p,
-                0.0,
-                0.0,
+                xt,
+                yt,
                 delta_sec,
                 1.0,
                 0.0,
