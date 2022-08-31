@@ -96,10 +96,11 @@ impl BrushState for BrushEngine {
         p: f32,
         xt: f32,
         yt: f32,
+        r: f32,
         delta_msec: i64,
         source: Option<&BitmapLayer>,
     ) {
-        self.state().stroke_to(x, y, p, xt, yt, delta_msec, source);
+        self.state().stroke_to(x, y, p, xt, yt, r, delta_msec, source);
     }
 
     fn end_stroke(&mut self) {

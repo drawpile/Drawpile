@@ -50,6 +50,7 @@ pub extern "C" fn brushengine_stroke_to(
     p: f32,
     xt: f32,
     yt: f32,
+    r: f32,
     delta_msec: i64,
     pe: Option<&PaintEngine>,
     layer_id: LayerID,
@@ -62,11 +63,12 @@ pub extern "C" fn brushengine_stroke_to(
             p,
             xt,
             yt,
+            r,
             delta_msec,
             vc.layerstack.root().get_bitmaplayer(layer_id),
         );
     } else {
-        be.stroke_to(x, y, p, xt, yt, delta_msec, None);
+        be.stroke_to(x, y, p, xt, yt, r, delta_msec, None);
     }
 }
 

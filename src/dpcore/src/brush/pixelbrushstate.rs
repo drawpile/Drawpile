@@ -157,6 +157,7 @@ impl BrushState for PixelBrushState {
         p: f32,
         _xt: f32,
         _yt: f32,
+        _r: f32,
         _delta_msec: i64,
         source: Option<&BitmapLayer>,
     ) {

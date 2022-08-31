@@ -80,6 +80,7 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 			qMin(m_start.pressure(), point.pressure()),
 			m_start.xtilt(),
 			m_start.ytilt(),
+			m_start.rotation(),
 			0,
 			owner.model()->paintEngine()->engine(),
 			owner.activeLayer()
@@ -97,6 +98,7 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 		point.pressure(),
 		point.xtilt(),
 		point.ytilt(),
+		point.rotation(),
 		deltaMsec,
 		owner.model()->paintEngine()->engine(),
 		owner.activeLayer()
@@ -126,6 +128,7 @@ void Freehand::end()
 				m_start.pressure(),
 				m_start.xtilt(),
 				m_start.ytilt(),
+				m_start.rotation(),
 				QDateTime::currentMSecsSinceEpoch(),
 				nullptr,
 				0

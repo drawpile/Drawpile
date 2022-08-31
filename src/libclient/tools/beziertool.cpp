@@ -119,7 +119,7 @@ void BezierTool::finishMultipart()
 
 		const auto pv = calculateBezierCurve();
 		for(const auto &p : pv) {
-			rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, engine, owner.activeLayer());
+			rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), 10, engine, owner.activeLayer());
 		}
 		rustpile::brushengine_end_stroke(brushengine);
 
@@ -210,7 +210,7 @@ void BezierTool::updatePreview()
 	auto engine = owner.model()->paintEngine()->engine();
 
 	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, engine, owner.activeLayer());
+		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), 10, engine, owner.activeLayer());
 	}
 	rustpile::brushengine_end_stroke(brushengine);
 

@@ -295,6 +295,7 @@ impl BrushState for MyPaintBrushState {
         p: f32,
         xt: f32,
         yt: f32,
+        r: f32,
         delta_msec: i64,
         source: Option<&BitmapLayer>,
     ) {
@@ -340,7 +341,7 @@ impl BrushState for MyPaintBrushState {
                 delta_sec,
                 1.0,
                 0.0,
-                0.0,
+                r,
             );
         }
     }
