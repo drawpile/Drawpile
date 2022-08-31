@@ -83,40 +83,24 @@ pub fn clear_layer(layer: &mut BitmapLayer) -> AoE {
     old_content.into()
 }
 
-/// Draw a brush mask onto the layer
-///
-/// Note: When drawing in "indirect" mode, the brush dabs should be
-/// drawn to to a sublayer. The sublayer is then merged at the end of the stroke.
-///
-/// # Arguments
-///
-/// * `layer` - The target layer
-/// * `user` - User ID tag to attach to the changed tiles
-/// * `x` - Left edge of the mask
-/// * `y` - Top edge of the mask
-/// * `mask` - The brush mask
-/// * `color` - The brush color
-/// * `mode` - Brush blending mode
-/// * `opacity` - Opacity to multiply into the mask
-pub fn draw_brush_dab(
+fn apply_brush<ApplyFn>(
     layer: &mut BitmapLayer,
     user: UserID,
     x: i32,
     y: i32,
     mask: &BrushMask,
-    color: &Color,
-    mode: Blendmode,
-    opacity: u16,
-) -> AoE {
+    can_paint: bool,
+    can_erase: bool,
+    apply: ApplyFn,
+) -> AoE
+where
+    ApplyFn: Fn(&mut [Pixel15], &[u16]),
+{
     let d = mask.diameter as i32;
     let rect = match Rectangle::new(x, y, d, d).cropped(layer.size()) {
         Some(r) => r,
         None => return AoE::Nothing,
     };
-
-    let colorpix = color.as_pixel15();
-    let can_paint = mode.can_increase_opacity();
-    let can_erase = mode.can_decrease_opacity();
 
     for (i, j, tile) in layer.tile_rect_mut(&rect) {
         if !can_paint && *tile == Tile::Blank {
@@ -139,11 +123,62 @@ pub fn draw_brush_dab(
                     &maskrect,
                 ))
         {
-            rasterop::mask_blend(destrow, colorpix, maskrow, mode, opacity);
+            apply(destrow, maskrow);
         }
     }
 
     rect.into()
+}
+
+/// Draw a brush mask onto the layer
+///
+/// Note: When drawing in "indirect" mode, the brush dabs should be
+/// drawn to to a sublayer. The sublayer is then merged at the end of the stroke.
+///
+/// # Arguments
+///
+/// * `layer` - The target layer
+/// * `user` - User ID tag to attach to the changed tiles
+/// * `x` - Left edge of the mask
+/// * `y` - Top edge of the mask
+/// * `mask` - The brush mask
+/// * `colorpix` - The brush color
+/// * `mode` - Brush blending mode
+/// * `opacity` - Opacity to multiply into the mask
+pub fn draw_brush_dab(
+    layer: &mut BitmapLayer,
+    user: UserID,
+    x: i32,
+    y: i32,
+    mask: &BrushMask,
+    colorpix: Pixel15,
+    mode: Blendmode,
+    opacity: u16,
+) -> AoE {
+    apply_brush(
+        layer,
+        user,
+        x,
+        y,
+        mask,
+        mode.can_increase_opacity(),
+        mode.can_decrease_opacity(),
+        |destrow, maskrow| rasterop::mask_blend(destrow, colorpix, maskrow, mode, opacity),
+    )
+}
+
+pub fn posterize_brush_dab(
+    layer: &mut BitmapLayer,
+    user: UserID,
+    x: i32,
+    y: i32,
+    mask: &BrushMask,
+    opacity: u16,
+    posterize_num: u8,
+) -> AoE {
+    apply_brush(layer, user, x, y, mask, false, false, |destrow, maskrow| {
+        rasterop::mask_posterize(destrow, maskrow, opacity, posterize_num)
+    })
 }
 
 fn draw_image<T, PixelBlendFn>(
@@ -530,7 +565,7 @@ mod tests {
             62,
             62,
             &brush,
-            &Color::rgb8(255, 255, 255),
+            Color::rgb8(255, 255, 255).as_pixel15(),
             Blendmode::Normal,
             BIT15_U16,
         );

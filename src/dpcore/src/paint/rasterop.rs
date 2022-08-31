@@ -658,6 +658,28 @@ fn mask_composite_nonseparable(
     }
 }
 
+// Posterization, adapted from libmypaint.
+pub fn mask_posterize(base: &mut [Pixel15], mask: &[u16], opacity: u16, posterize_num: u8) {
+    let o = opacity as u32;
+    let p = posterize_num as f32;
+    for (dp, &m) in base.iter_mut().zip(mask.iter()) {
+        let dc = Color::from_pixel15(*dp);
+        let b = [
+            (BIT15_F32 * (dc.b * p + 0.5).floor() / p) as u32,
+            (BIT15_F32 * (dc.g * p + 0.5).floor() / p) as u32,
+            (BIT15_F32 * (dc.r * p + 0.5).floor() / p) as u32,
+        ];
+        let a = m as u32 * o / BIT15_U32;
+        let a_s = BIT15_U32 - a;
+        *dp = [
+            ((a * b[0] + a_s * dp[0] as u32) / BIT15_U32) as u16,
+            ((a * b[1] + a_s * dp[1] as u32) / BIT15_U32) as u16,
+            ((a * b[2] + a_s * dp[2] as u32) / BIT15_U32) as u16,
+            dp[3],
+        ];
+    }
+}
+
 // Effectively uses the Recolor blend mode to tint the given pixels.
 pub fn tint_pixels(pixels: &mut [Pixel15], tint: Color) {
     let tint = unpack_pixel15(tint.as_unpremultiplied_pixel15());

@@ -28,7 +28,7 @@ mod utils;
 
 fn main() {
     let mut layer = BitmapLayer::new(0, 256, 256, Tile::new(&Color::rgb8(255, 255, 255), 0));
-    let black = Color::rgb8(0, 0, 0);
+    let black = Color::rgb8(0, 0, 0).as_pixel15();
 
     let mut x = 10;
     let mut w = 1i32;
@@ -43,7 +43,7 @@ fn main() {
             x - w / 2,
             30 - w / 2,
             &brush,
-            &black,
+            black,
             Blendmode::Normal,
             BIT15_U16,
         );
@@ -55,7 +55,7 @@ fn main() {
             x - w / 2,
             60 - w / 2 as i32,
             &brush,
-            &black,
+            black,
             Blendmode::Normal,
             BIT15_U16,
         );
@@ -68,7 +68,7 @@ fn main() {
             bx,
             by,
             &brush,
-            &black,
+            black,
             Blendmode::Normal,
             BIT15_U16,
         );
@@ -81,7 +81,7 @@ fn main() {
             bx,
             by,
             &brush,
-            &black,
+            black,
             Blendmode::Normal,
             BIT15_U16,
         );

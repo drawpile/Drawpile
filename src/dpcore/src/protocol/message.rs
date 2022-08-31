@@ -1240,20 +1240,26 @@ pub struct DrawDabsMyPaintMessage {
     pub y: i32,
     pub color: u32,
     pub lock_alpha: u8,
+    pub colorize: u8,
+    pub posterize: u8,
+    pub posterize_num: u8,
     pub dabs: Vec<MyPaintDab>,
 }
 
 impl DrawDabsMyPaintMessage {
-    pub const MAX_MYPAINTDABS: usize = 8190;
+    pub const MAX_MYPAINTDABS: usize = 8189;
 
     fn deserialize(reader: &mut MessageReader) -> Result<Self, DeserializationError> {
-        reader.validate(23, 65535)?;
+        reader.validate(26, 65530)?;
 
         let layer = reader.read::<u16>();
         let x = reader.read::<i32>();
         let y = reader.read::<i32>();
         let color = reader.read::<u32>();
         let lock_alpha = reader.read::<u8>();
+        let colorize = reader.read::<u8>();
+        let posterize = reader.read::<u8>();
+        let posterize_num = reader.read::<u8>();
         let mut dabs = Vec::<MyPaintDab>::with_capacity(reader.remaining() / 8);
         while reader.remaining() > 0 {
             let x = reader.read::<i8>();
@@ -1279,17 +1285,23 @@ impl DrawDabsMyPaintMessage {
             y,
             color,
             lock_alpha,
+            colorize,
+            posterize,
+            posterize_num,
             dabs,
         })
     }
 
     fn serialize(&self, w: &mut MessageWriter, user_id: u8) {
-        w.write_header(151, user_id, 15 + (self.dabs.len() * 8));
+        w.write_header(151, user_id, 18 + (self.dabs.len() * 8));
         w.write(self.layer);
         w.write(self.x);
         w.write(self.y);
         w.write(self.color);
         w.write(self.lock_alpha);
+        w.write(self.colorize);
+        w.write(self.posterize);
+        w.write(self.posterize_num);
         for item in self.dabs.iter() {
             w.write(item.x);
             w.write(item.y);
@@ -1319,6 +1331,9 @@ impl DrawDabsMyPaintMessage {
             .set("y", (self.y as f64 / 4.0).to_string())
             .set_argb32("color", self.color)
             .set("lock_alpha", self.lock_alpha.to_string())
+            .set("colorize", self.colorize.to_string())
+            .set("posterize", self.posterize.to_string())
+            .set("posterize_num", self.posterize_num.to_string())
             .set_dabs(dabs)
     }
 
@@ -1345,6 +1360,9 @@ impl DrawDabsMyPaintMessage {
             y: (tm.get_f64("y") * 4.0) as i32,
             color: tm.get_argb32("color"),
             lock_alpha: tm.get_u8("lock_alpha"),
+            colorize: tm.get_u8("colorize"),
+            posterize: tm.get_u8("posterize"),
+            posterize_num: tm.get_u8("posterize_num"),
             dabs: dab_structs,
         }
     }

@@ -75,7 +75,7 @@ fn main() {
     ];
 
     let brush = BrushMask::new_round_pixel(10);
-    let dabcolor = Color::rgb8(255, 0, 0);
+    let dabcolor = Color::rgb8(255, 0, 0).as_pixel15();
 
     for (i, &mode) in modes.iter().enumerate() {
         println!("Mode: {:?}", mode);
@@ -86,7 +86,7 @@ fn main() {
                 x as i32,
                 10 + i as i32 * 15,
                 &brush,
-                &dabcolor,
+                dabcolor,
                 mode,
                 BIT15_U16,
             );

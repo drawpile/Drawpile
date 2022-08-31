@@ -47,7 +47,7 @@ constexpr static const uintptr_t DrawDabsClassicMessage_MAX_CLASSICDABS = 10920;
 
 constexpr static const uintptr_t DrawDabsPixelMessage_MAX_PIXELDABS = 16380;
 
-constexpr static const uintptr_t DrawDabsMyPaintMessage_MAX_MYPAINTDABS = 8190;
+constexpr static const uintptr_t DrawDabsMyPaintMessage_MAX_MYPAINTDABS = 8189;
 
 enum class AnimationExportMode {
   Gif,

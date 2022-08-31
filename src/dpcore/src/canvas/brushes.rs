@@ -78,6 +78,7 @@ fn drawdabs_classic_draw(
     dabs: &DrawDabsClassicMessage,
     cache: &mut ClassicBrushCache,
 ) -> (AoE, (i32, i32)) {
+    let colorpix = color.as_pixel15();
     let mut last_x = dabs.x;
     let mut last_y = dabs.y;
     let mut aoe = AoE::Nothing;
@@ -98,7 +99,7 @@ fn drawdabs_classic_draw(
             mx,
             my,
             &mask,
-            &color,
+            colorpix,
             mode,
             channel8_to_15(dab.opacity),
         ));
@@ -163,6 +164,7 @@ fn drawdabs_pixel_draw(
         mask: Vec::new(),
     };
 
+    let colorpix = color.as_pixel15();
     let mut last_x = dabs.x;
     let mut last_y = dabs.y;
     let mut last_size = 0;
@@ -188,7 +190,7 @@ fn drawdabs_pixel_draw(
             x - offset,
             y - offset,
             &mask,
-            &color,
+            colorpix,
             mode,
             channel8_to_15(dab.opacity),
         ));
@@ -221,9 +223,13 @@ fn drawdabs_mypaint_draw(
 ) -> ((AoE, (i32, i32)), bool) {
     let mut aoe = AoE::Nothing;
     let color = Color::from_argb32(dabs.color);
+    let colorpix = color.as_pixel15();
 
     let lock_alpha = dabs.lock_alpha as f32 / 255.0f32;
-    let normal = 1.0f32 * (1.0f32 - lock_alpha);
+    let colorize = dabs.colorize as f32 / 255.0f32;
+    let posterize = dabs.posterize as f32 / 255.0f32;
+    let posterize_num = dabs.posterize_num.clamp(0, 127) + 1;
+    let normal = 1.0f32 * (1.0f32 - lock_alpha) * (1.0f32 - colorize) * (1.0f32 - posterize);
 
     let mut last_x = dabs.x;
     let mut last_y = dabs.y;
@@ -264,7 +270,7 @@ fn drawdabs_mypaint_draw(
                 mx,
                 my,
                 &mask,
-                &color,
+                colorpix,
                 mode,
                 (normal * opacity * BIT15_F32) as u16,
             ));
@@ -277,15 +283,36 @@ fn drawdabs_mypaint_draw(
                 mx,
                 my,
                 &mask,
-                &color,
+                colorpix,
                 Blendmode::Recolor,
                 (lock_alpha * opacity * BIT15_F32) as u16,
             ));
         }
 
-        // Colorize, posterize and spectral painting isn't supported while we
-        // still only have 8 bits to work with. If we end up expanding that to
-        // 15 bits like MyPaint does it, it'd be worth implementing.
+        if colorize > 0.0f32 {
+            aoe = aoe.merge(editlayer::draw_brush_dab(
+                layer,
+                user,
+                mx,
+                my,
+                &mask,
+                colorpix,
+                Blendmode::Color,
+                (colorize * opacity * BIT15_F32) as u16,
+            ));
+        }
+
+        if posterize > 0.0f32 {
+            aoe = aoe.merge(editlayer::posterize_brush_dab(
+                layer,
+                user,
+                mx,
+                my,
+                &mask,
+                (posterize * opacity * BIT15_F32) as u16,
+                posterize_num,
+            ));
+        }
     }
 
     ((aoe, (last_x / 4, last_y / 4)), may_have_decreased_opacity)

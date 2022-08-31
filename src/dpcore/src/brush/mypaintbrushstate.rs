@@ -64,7 +64,16 @@ struct MyPaintBrushStateTarget {
 }
 
 impl MyPaintBrushStateTarget {
-    fn needs_new_dab(&mut self, dx: i32, dy: i32, color: u32, lock_alpha: u8) -> bool {
+    fn needs_new_dab(
+        &mut self,
+        dx: i32,
+        dy: i32,
+        color: u32,
+        lock_alpha: u8,
+        colorize: u8,
+        posterize: u8,
+        posterize_num: u8,
+    ) -> bool {
         if !self.dabs.is_empty() {
             let last = &self.dabs.last().unwrap();
             const MAX_XY_DELTA: i32 = 127;
@@ -73,6 +82,9 @@ impl MyPaintBrushStateTarget {
                 || dy.abs() > MAX_XY_DELTA
                 || last.color != color
                 || last.lock_alpha != lock_alpha
+                || last.colorize != colorize
+                || last.posterize != posterize
+                || last.posterize_num != posterize_num
         } else {
             true
         }
@@ -94,8 +106,9 @@ impl MyPaintTarget for MyPaintBrushStateTarget {
         aspect_ratio: f32,
         angle: f32,
         lock_alpha: f32,
-        // Colorize isn't supported while we still only have 8 bits to work with.
-        _colorize: f32,
+        colorize: f32,
+        posterize: f32,
+        posterize_num: f32,
     ) {
         let color = if self.erase {
             Color::TRANSPARENT
@@ -131,16 +144,40 @@ impl MyPaintTarget for MyPaintBrushStateTarget {
         } else if self.lock_alpha {
             255u8
         } else {
-            (lock_alpha * 255.0).clamp(0.0, 255.0) as u8
+            (lock_alpha * 255.0 + 0.5).clamp(0.0, 255.0) as u8
+        };
+        let (dab_colorize, dab_posterize, dab_posterize_num) = if self.erase {
+            (0u8, 0u8, 0u8) // Erasing and colorizing/posterizing neither.
+        } else {
+            (
+                (colorize * 255.0 + 0.5).clamp(0.0, 255.0) as u8,
+                (posterize * 255.0 + 0.5).clamp(0.0, 255.0) as u8,
+                // MyPaint clamps the number of colors to posterize between 1
+                // and 128, so we do too. We subtract 1 so that our value fits
+                // in a nibble, leaving another nibble free for something else
+                // in the future. We could stick a blend mode there for example.
+                (posterize_num * 100.0 + 0.5).clamp(1.0, 128.0) as u8 - 1,
+            )
         };
 
-        if self.needs_new_dab(dx, dy, dab_color, dab_lock_alpha) {
+        if self.needs_new_dab(
+            dx,
+            dy,
+            dab_color,
+            dab_lock_alpha,
+            dab_colorize,
+            dab_posterize,
+            dab_posterize_num,
+        ) {
             self.dabs.push(DrawDabsMyPaintMessage {
                 layer: self.layer_id,
                 x: dab_x,
                 y: dab_y,
                 color: dab_color,
                 lock_alpha: dab_lock_alpha,
+                colorize: dab_colorize,
+                posterize: dab_posterize,
+                posterize_num: dab_posterize_num,
                 dabs: vec![dab],
             });
         } else {
@@ -197,12 +234,7 @@ impl MyPaintBrushState {
         unsafe { c::mypaint_brush_set_mapping_point(self.brush, setting_id, input_id, n, x, y) }
     }
 
-    pub fn set_brush(
-        &mut self,
-        brush: &MyPaintBrush,
-        settings: &MyPaintSettings,
-        freehand: bool,
-    ) {
+    pub fn set_brush(&mut self, brush: &MyPaintBrush, settings: &MyPaintSettings, freehand: bool) {
         let mappings = &settings.mappings;
         for i in 0..mappings.len() {
             let mapping = &mappings[i];
@@ -225,7 +257,10 @@ impl MyPaintBrushState {
         }
 
         let (h, s, v) = brush.color.as_hsv();
-        self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_H, h / 360.0);
+        self.set_base_value(
+            c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_H,
+            h / 360.0,
+        );
         self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_S, s);
         self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_V, v);
 
@@ -268,12 +303,36 @@ impl BrushState for MyPaintBrushState {
                 // MyPaint, since when you crank up the smoothing really high
                 // there and move the pen really fast, you can get strokes from
                 // when your pen wasn't on the tablet, which is just weird.
-                c::mypaint_brush_stroke_to(self.brush, surface.get_raw(), x, y, 0.0, 0.0, 0.0, 1000.0);
+                c::mypaint_brush_stroke_to_2(
+                    self.brush,
+                    surface.get_raw(),
+                    x,
+                    y,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1000.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                );
             }
         }
         let delta_sec = (delta_msec as f64) / 1000.0f64;
         unsafe {
-            c::mypaint_brush_stroke_to(self.brush, surface.get_raw(), x, y, p, 0.0, 0.0, delta_sec);
+            c::mypaint_brush_stroke_to_2(
+                self.brush,
+                surface.get_raw(),
+                x,
+                y,
+                p,
+                0.0,
+                0.0,
+                delta_sec,
+                1.0,
+                0.0,
+                0.0,
+            );
         }
     }
 

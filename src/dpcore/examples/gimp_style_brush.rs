@@ -109,7 +109,7 @@ fn draw_dab(
         bx,
         by,
         &brush,
-        &Color::rgb8(0, 0, 0),
+        Color::rgb8(0, 0, 0).as_pixel15(),
         Blendmode::Normal,
         BIT15_U16,
     );

@@ -37,7 +37,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32, color: &Color) {
             x - w / 2,
             y - w / 2,
             &brush,
-            &color,
+            color.as_pixel15(),
             Blendmode::Normal,
             (0.4 * BIT15_F32) as u16,
         );

@@ -169,14 +169,13 @@ impl BrushPreview {
                 let mut hue = 0.0;
                 let dabmask = BrushMask::new_round_pixel(d as u32);
                 for x in (x0..x1).step_by(step as usize) {
-                    let color = Color::from_hsv(hue, 0.62, 0.86);
                     editlayer::draw_brush_dab(
                         layer,
                         1,
                         x - d / 2,
                         h / 2 - d / 2,
                         &dabmask,
-                        &color,
+                        Color::from_hsv(hue, 0.62, 0.86).as_pixel15(),
                         Blendmode::Normal,
                         BIT15_U16,
                     );

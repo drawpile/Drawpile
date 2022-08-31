@@ -40,14 +40,61 @@ pub trait MyPaintTarget {
         angle: f32,
         lock_alpha: f32,
         colorize: f32,
+        posterize: f32,
+        posterize_num: f32,
     );
 }
 
 #[repr(C)]
 pub struct MyPaintSurface<'a> {
-    parent: c::MyPaintSurface,
+    parent: c::MyPaintSurface2,
     source: Option<&'a BitmapLayer>,
     target: &'a mut dyn MyPaintTarget,
+}
+
+unsafe extern "C" fn draw_dab_pigment(
+    parent: *mut c::MyPaintSurface2,
+    x: f32,
+    y: f32,
+    radius: f32,
+    color_r: f32,
+    color_g: f32,
+    color_b: f32,
+    opaque: f32,
+    hardness: f32,
+    alpha_eraser: f32,
+    aspect_ratio: f32,
+    angle: f32,
+    lock_alpha: f32,
+    colorize: f32,
+    posterize: f32,
+    posterize_num: f32,
+    // Spectral painting just eats a lot of performance for a negligible
+    // difference in the resulting visuals, so we don't support that.
+    _paint: f32,
+) -> ::std::os::raw::c_int {
+    let surface = &mut *(parent as *mut MyPaintSurface);
+    if surface.draw_dab(
+        x,
+        y,
+        radius,
+        color_r,
+        color_g,
+        color_b,
+        opaque,
+        hardness,
+        alpha_eraser,
+        aspect_ratio,
+        angle,
+        lock_alpha,
+        colorize,
+        posterize,
+        posterize_num,
+    ) {
+        1
+    } else {
+        0
+    }
 }
 
 unsafe extern "C" fn draw_dab(
@@ -66,8 +113,8 @@ unsafe extern "C" fn draw_dab(
     lock_alpha: f32,
     colorize: f32,
 ) -> ::std::os::raw::c_int {
-    let surface = &mut *(parent as *mut MyPaintSurface);
-    if surface.draw_dab(
+    draw_dab_pigment(
+        parent as *mut c::MyPaintSurface2,
         x,
         y,
         radius,
@@ -81,11 +128,30 @@ unsafe extern "C" fn draw_dab(
         angle,
         lock_alpha,
         colorize,
-    ) {
-        1
-    } else {
-        0
-    }
+        0.0,
+        0.0,
+        0.0,
+    )
+}
+
+unsafe extern "C" fn get_color_pigment(
+    parent: *mut c::MyPaintSurface2,
+    x: f32,
+    y: f32,
+    radius: f32,
+    color_r: *mut f32,
+    color_g: *mut f32,
+    color_b: *mut f32,
+    color_a: *mut f32,
+    // No spectral painting support for the sake of performance.
+    _pigment: f32,
+) {
+    let surface = &mut *(parent as *mut MyPaintSurface);
+    let color = surface.get_color(x, y, radius);
+    *color_r = color.r;
+    *color_g = color.g;
+    *color_b = color.b;
+    *color_a = color.a;
 }
 
 unsafe extern "C" fn get_color(
@@ -98,12 +164,17 @@ unsafe extern "C" fn get_color(
     color_b: *mut f32,
     color_a: *mut f32,
 ) {
-    let surface = &mut *(parent as *mut MyPaintSurface);
-    let color = surface.get_color(x, y, radius);
-    *color_r = color.r;
-    *color_g = color.g;
-    *color_b = color.b;
-    *color_a = color.a;
+    get_color_pigment(
+        parent as *mut c::MyPaintSurface2,
+        x,
+        y,
+        radius,
+        color_r,
+        color_g,
+        color_b,
+        color_a,
+        0.0,
+    )
 }
 
 unsafe extern "C" fn begin_atomic(_parent: *mut c::MyPaintSurface) {
@@ -114,16 +185,74 @@ unsafe extern "C" fn end_atomic(_parent: *mut c::MyPaintSurface, _roi: *mut c::M
     // Nothing to do
 }
 
+unsafe extern "C" fn end_atomic_multi(
+    _parent: *mut c::MyPaintSurface2,
+    _roi: *mut c::MyPaintRectangles,
+) {
+    // Nothing to do
+}
+
 impl<'a> MyPaintSurface<'a> {
     pub fn new(source: Option<&'a BitmapLayer>, target: &'a mut dyn MyPaintTarget) -> Self {
         // The compiler gets confused between fn pointers and fn items here, so
         // all the functions have to be cast to their own type to make it work.
         let mut surface = MyPaintSurface {
-            parent: c::MyPaintSurface {
-                draw_dab: Option::from(
-                    draw_dab
+            parent: c::MyPaintSurface2 {
+                parent: c::MyPaintSurface {
+                    draw_dab: Option::from(
+                        draw_dab
+                            as unsafe extern "C" fn(
+                                *mut c::MyPaintSurface,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                                f32,
+                            )
+                                -> ::std::os::raw::c_int,
+                    ),
+                    get_color: Option::from(
+                        get_color
+                            as unsafe extern "C" fn(
+                                *mut c::MyPaintSurface,
+                                f32,
+                                f32,
+                                f32,
+                                *mut f32,
+                                *mut f32,
+                                *mut f32,
+                                *mut f32,
+                            ),
+                    ),
+                    begin_atomic: Option::from(
+                        begin_atomic as unsafe extern "C" fn(*mut c::MyPaintSurface),
+                    ),
+                    end_atomic: Option::from(
+                        end_atomic
+                            as unsafe extern "C" fn(
+                                *mut c::MyPaintSurface,
+                                roi: *mut c::MyPaintRectangle,
+                            ),
+                    ),
+                    destroy: Option::None,
+                    save_png: Option::None,
+                    refcount: 1,
+                },
+                draw_dab_pigment: Option::from(
+                    draw_dab_pigment
                         as unsafe extern "C" fn(
-                            *mut c::MyPaintSurface,
+                            *mut c::MyPaintSurface2,
+                            f32,
+                            f32,
+                            f32,
                             f32,
                             f32,
                             f32,
@@ -139,10 +268,10 @@ impl<'a> MyPaintSurface<'a> {
                             f32,
                         ) -> ::std::os::raw::c_int,
                 ),
-                get_color: Option::from(
-                    get_color
+                get_color_pigment: Option::from(
+                    get_color_pigment
                         as unsafe extern "C" fn(
-                            *mut c::MyPaintSurface,
+                            *mut c::MyPaintSurface2,
                             f32,
                             f32,
                             f32,
@@ -150,30 +279,25 @@ impl<'a> MyPaintSurface<'a> {
                             *mut f32,
                             *mut f32,
                             *mut f32,
+                            f32,
                         ),
                 ),
-                begin_atomic: Option::from(
-                    begin_atomic as unsafe extern "C" fn(*mut c::MyPaintSurface),
-                ),
-                end_atomic: Option::from(
-                    end_atomic
+                end_atomic_multi: Option::from(
+                    end_atomic_multi
                         as unsafe extern "C" fn(
-                            *mut c::MyPaintSurface,
-                            roi: *mut c::MyPaintRectangle,
+                            *mut c::MyPaintSurface2,
+                            roi: *mut c::MyPaintRectangles,
                         ),
                 ),
-                destroy: Option::None,
-                save_png: Option::None,
-                refcount: 1,
             },
             source: source,
             target: target,
         };
-        unsafe { c::mypaint_surface_init(&mut surface.parent) }
+        unsafe { c::mypaint_surface_init(&mut surface.parent.parent) }
         surface
     }
 
-    pub unsafe fn get_raw(&mut self) -> *mut c::MyPaintSurface {
+    pub unsafe fn get_raw(&mut self) -> *mut c::MyPaintSurface2 {
         &mut self.parent
     }
 
@@ -192,6 +316,8 @@ impl<'a> MyPaintSurface<'a> {
         angle: f32,
         lock_alpha: f32,
         colorize: f32,
+        posterize: f32,
+        posterize_num: f32,
     ) -> bool {
         // A radius less than 0.1 pixels is infinitesimally small. A hardness or
         // opacity of zero means the mask is completely blank. Disregard the dab
@@ -211,6 +337,8 @@ impl<'a> MyPaintSurface<'a> {
                 angle,
                 lock_alpha,
                 colorize,
+                posterize,
+                posterize_num,
             );
             true
         } else {
