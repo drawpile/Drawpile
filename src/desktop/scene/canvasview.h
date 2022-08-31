@@ -60,8 +60,8 @@ public:
 	qreal rotation() const { return m_rotate; }
 
 	using QGraphicsView::mapToScene;
-	canvas::Point mapToScene(const QPoint &point, qreal pressure) const;
-	canvas::Point mapToScene(const QPointF &point, qreal pressure) const;
+	canvas::Point mapToScene(const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt) const;
+	canvas::Point mapToScene(const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt) const;
 
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
@@ -194,8 +194,8 @@ protected:
 
 private:
 	// unified mouse/stylus event handlers
-	void penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
 
 private:

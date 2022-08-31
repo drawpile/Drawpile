@@ -41,8 +41,8 @@ public:
     void beginStroke(unsigned int contextId, bool pushUndoPoint = true);
 
     void strokeTo(
-        float x, float y, float pressure, long long deltaMsec,
-        const drawdance::CanvasState &cs);
+        float x, float y, float pressure, float xtilt, float ytilt,
+        long long deltaMsec, const drawdance::CanvasState &cs);
 
     void endStroke(bool pushPenUp = true);
 

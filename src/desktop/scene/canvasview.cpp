@@ -420,12 +420,12 @@ void CanvasView::leaveEvent(QEvent *event)
 	updateOutline();
 }
 
-canvas::Point CanvasView::mapToScene(const QPoint &point, qreal pressure) const
+canvas::Point CanvasView::mapToScene(const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt) const
 {
-	return canvas::Point(mapToScene(point), pressure);
+	return canvas::Point(mapToScene(point), pressure, xtilt, ytilt);
 }
 
-canvas::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) const
+canvas::Point CanvasView::mapToScene(const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt) const
 {
 	// QGraphicsView API lacks mapToScene(QPointF), even though
 	// the QPoint is converted to QPointF internally...
@@ -444,7 +444,7 @@ canvas::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) const
 		(p1.y()-p2.y()) * yf + p2.y()
 	);
 
-	return canvas::Point(mapped, pressure);
+	return canvas::Point(mapped, pressure, xtilt, ytilt);
 }
 
 void CanvasView::setPointerTracking(bool tracking)
@@ -509,7 +509,7 @@ void CanvasView::onPenUp()
 	updateOutline();
 }
 
-void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_pendown != NOTDOWN)
 		return;
@@ -525,14 +525,14 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButt
 		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		m_pointerdistance = 0;
 		m_pointervelocity = 0;
-		m_prevpoint = mapToScene(pos, pressure);
+		m_prevpoint = mapToScene(pos, pressure, xtilt, ytilt);
 
 		m_penmode = PenMode(CanvasViewShortcuts::matches(
 			modifiers, false,
 			m_shortcuts.colorPick, m_shortcuts.layerPick
 		) + 1);
 
-		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus)), button == Qt::RightButton);
+		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus), xtilt, ytilt), button == Qt::RightButton);
 	}
 }
 
@@ -549,20 +549,22 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	penPressEvent(
 		event->pos(),
-		1,
+		1.0,
+		0.0,
+		0.0,
 		event->button(),
 		event->modifiers(),
 		false
 	);
 }
 
-void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_dragmode == ViewDragMode::Started) {
 		moveDrag(pos.toPoint(), modifiers);
 
 	} else {
-		canvas::Point point = mapToScene(pos, pressure);
+		canvas::Point point = mapToScene(pos, pressure, xtilt, ytilt);
 		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
@@ -607,6 +609,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	penMoveEvent(
 		event->pos(),
 		1.0,
+		0.0,
+		0.0,
 		event->buttons(),
 		event->modifiers(),
 		false
@@ -615,7 +619,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 {
-	m_prevpoint = mapToScene(pos, 0.0);
+	m_prevpoint = mapToScene(pos, 0.0, 0.0, 0.0);
 	if(m_dragmode != ViewDragMode::None) {
 		if(m_spacebar)
 			m_dragmode = ViewDragMode::Prepared;
@@ -875,6 +879,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		penPressEvent(
 			tabev->posF(),
 			tabev->pressure(),
+			tabev->xTilt(),
+			tabev->yTilt(),
 			tabev->button(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
 			true
@@ -889,6 +895,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		penMoveEvent(
 			tabev->posF(),
 			tabev->pressure(),
+			tabev->xTilt(),
+			tabev->yTilt(),
 			tabev->buttons(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
 			true

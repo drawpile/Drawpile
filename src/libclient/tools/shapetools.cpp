@@ -84,7 +84,7 @@ void ShapeTool::end()
 	const canvas::PointVector pv = pointVector();
 	m_brushEngine.beginStroke(client->myId());
 	for(const canvas::Point &p : pv) {
-		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), 10, canvasState);
+		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, canvasState);
 	}
 	m_brushEngine.endStroke();
 
@@ -102,7 +102,7 @@ void ShapeTool::updatePreview()
 	Q_ASSERT(pv.count() > 1);
 	m_brushEngine.beginStroke(0);
 	for(const canvas::Point &p : pv) {
-		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), 10, canvasState);
+		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), p.xtilt(), p.ytilt(), 10, canvasState);
 	}
 	m_brushEngine.endStroke();
 
