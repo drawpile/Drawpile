@@ -45,8 +45,8 @@ pub extern "C" fn brushpreview_render_classic(
     bp: &mut BrushPreview,
     brush: &ClassicBrush,
     shape: BrushPreviewShape,
-) {
-    bp.render_classic(brush, shape);
+) -> i32 {
+    bp.render_classic(brush, shape) as i32
 }
 
 #[no_mangle]
@@ -55,8 +55,8 @@ pub extern "C" fn brushpreview_render_mypaint(
     brush: &MyPaintBrush,
     settings: &MyPaintSettings,
     shape: BrushPreviewShape,
-) {
-    bp.render_mypaint(brush, settings, shape);
+) -> i32 {
+    bp.render_mypaint(brush, settings, shape) as i32
 }
 
 #[no_mangle]

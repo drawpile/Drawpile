@@ -121,7 +121,8 @@ public:
 	QPixmap presetThumbnail() const;
 
 	void setInBrushEngine(rustpile::BrushEngine *be, uint16_t layer, bool freehand = true) const;
-	void renderPreview(rustpile::BrushPreview *bp, rustpile::BrushPreviewShape shape) const;
+	// Returns the number of dabs drawn in the preview.
+	int renderPreview(rustpile::BrushPreview *bp, rustpile::BrushPreviewShape shape) const;
 
 private:
 	ActiveType m_activeType;

@@ -539,12 +539,12 @@ void ActiveBrush::setInBrushEngine(rustpile::BrushEngine *be, uint16_t layer, bo
 	}
 }
 
-void ActiveBrush::renderPreview(rustpile::BrushPreview *bp, rustpile::BrushPreviewShape shape) const
+int ActiveBrush::renderPreview(rustpile::BrushPreview *bp, rustpile::BrushPreviewShape shape) const
 {
 	if(m_activeType == CLASSIC) {
-		rustpile::brushpreview_render_classic(bp, &m_classic, shape);
+		return rustpile::brushpreview_render_classic(bp, &m_classic, shape);
 	} else {
-		rustpile::brushpreview_render_mypaint(
+		return rustpile::brushpreview_render_mypaint(
 			bp, &m_myPaint.constBrush(), &m_myPaint.constSettings(), shape);
 	}
 }

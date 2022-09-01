@@ -71,7 +71,8 @@ impl BrushPreview {
         smudge: bool,
         mode: Blendmode,
         set_engine_brush: SetEngineBrushFn,
-    ) where
+    ) -> usize
+    where
         SetEngineBrushFn: FnOnce(&mut BrushEngine, Option<Color>),
     {
         // Prepare background and foreground colors
@@ -235,24 +236,34 @@ impl BrushPreview {
         let mut brushcache = ClassicBrushCache::new();
 
         let dabs = painter.take_dabs(1);
+        let mut dab_count = 0;
         for dab in dabs {
             match dab {
                 CommandMessage::DrawDabsClassic(_, m) => {
-                    brushes::drawdabs_classic(layer, 1, &m, &mut brushcache)
+                    brushes::drawdabs_classic(layer, 1, &m, &mut brushcache);
+                    dab_count += m.dabs.len();
                 }
-                CommandMessage::DrawDabsPixel(_, m) => brushes::drawdabs_pixel(layer, 1, &m, false),
+                CommandMessage::DrawDabsPixel(_, m) => {
+                    brushes::drawdabs_pixel(layer, 1, &m, false);
+                    dab_count += m.dabs.len();
+                }
                 CommandMessage::DrawDabsPixelSquare(_, m) => {
-                    brushes::drawdabs_pixel(layer, 1, &m, true)
+                    brushes::drawdabs_pixel(layer, 1, &m, true);
+                    dab_count += m.dabs.len();
                 }
-                CommandMessage::DrawDabsMyPaint(_, m) => brushes::drawdabs_mypaint(layer, 1, &m),
+                CommandMessage::DrawDabsMyPaint(_, m) => {
+                    brushes::drawdabs_mypaint(layer, 1, &m);
+                    dab_count += m.dabs.len();
+                }
                 _ => unimplemented!(),
             };
         }
 
         editlayer::merge_sublayer(layer, 1);
+        dab_count
     }
 
-    pub fn render_classic(&mut self, brush: &ClassicBrush, shape: BrushPreviewShape) {
+    pub fn render_classic(&mut self, brush: &ClassicBrush, shape: BrushPreviewShape) -> usize {
         self.render(
             shape,
             brush.color,
@@ -266,7 +277,7 @@ impl BrushPreview {
                 }
                 painter.set_classicbrush(cloned_brush);
             },
-        );
+        )
     }
 
     pub fn render_mypaint(
@@ -274,7 +285,7 @@ impl BrushPreview {
         brush: &MyPaintBrush,
         settings: &MyPaintSettings,
         shape: BrushPreviewShape,
-    ) {
+    ) -> usize {
         self.render(
             shape,
             brush.color,

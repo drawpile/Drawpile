@@ -438,14 +438,14 @@ BrushPreview *brushpreview_new(uint32_t width, uint32_t height);
 
 void brushpreview_free(BrushPreview *bp);
 
-void brushpreview_render_classic(BrushPreview *bp,
-                                 const ClassicBrush *brush,
-                                 BrushPreviewShape shape);
+int32_t brushpreview_render_classic(BrushPreview *bp,
+                                    const ClassicBrush *brush,
+                                    BrushPreviewShape shape);
 
-void brushpreview_render_mypaint(BrushPreview *bp,
-                                 const MyPaintBrush *brush,
-                                 const MyPaintSettings *settings,
-                                 BrushPreviewShape shape);
+int32_t brushpreview_render_mypaint(BrushPreview *bp,
+                                    const MyPaintBrush *brush,
+                                    const MyPaintSettings *settings,
+                                    BrushPreviewShape shape);
 
 void brushpreview_floodfill(BrushPreview *bp,
                             const Color *color,

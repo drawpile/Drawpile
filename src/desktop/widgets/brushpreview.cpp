@@ -124,13 +124,16 @@ void BrushPreview::updatePreview()
 		m_preview = QPixmap(size);
 	}
 
-	m_brush.renderPreview(m_previewcanvas, m_shape);
+	int dabCount = m_brush.renderPreview(m_previewcanvas, m_shape);
 	if(m_shape == rustpile::BrushPreviewShape::FloodFill || m_shape == rustpile::BrushPreviewShape::FloodErase) {
 		rustpile::Color color = m_brush.color();
 		if(m_shape == rustpile::BrushPreviewShape::FloodErase) {
 			color.a = 0;
 		}
 		rustpile::brushpreview_floodfill(m_previewcanvas, &color, m_fillTolerance / 255.0, m_fillExpansion, m_underFill);
+		setToolTip(QString());
+	} else {
+		this->setToolTip(tr("%1 brush dab(s) drawn").arg(dabCount));
 	}
 
 	QPainter p(&m_preview);
