@@ -98,7 +98,7 @@ QString fileFormatFilter(FileFormatOptions formats)
 				}
 			} else {
 				// Formats supported by Rustpile
-				readImages = "*.ora *.png *.jpeg *.gif";
+				readImages = "*.ora *.png *.jpg *.jpeg *.gif";
 			}
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
