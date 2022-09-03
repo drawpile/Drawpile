@@ -81,8 +81,9 @@ namespace dialogs {
  */
 SettingsDialog::SettingsDialog(QWidget *parent)
 	: QDialog(parent)
+	, m_ui(new Ui_SettingsDialog)
+	, m_itemEditorFactory(new QItemEditorFactory)
 {
-	m_ui = new Ui_SettingsDialog;
 	m_ui->setupUi(this);
 
 	connect(m_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
@@ -139,9 +140,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	// QKeySequence editor delegate
 	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(this);
-	QItemEditorFactory *itemeditorfactory = new QItemEditorFactory;
-	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
-	keyseqdel->setItemEditorFactory(itemeditorfactory);
+	m_itemEditorFactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
+	keyseqdel->setItemEditorFactory(m_itemEditorFactory.get());
 	m_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
 	m_ui->shortcuts->setItemDelegateForColumn(2, keyseqdel);
 
@@ -218,7 +218,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 SettingsDialog::~SettingsDialog()
 {
-	delete m_ui;
 }
 
 void SettingsDialog::resetSettings()

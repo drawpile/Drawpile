@@ -24,6 +24,7 @@
 #include <QMap>
 
 class Ui_SettingsDialog;
+class QItemEditorFactory;
 class QListWidgetItem;
 class CustomShortcutModel;
 class AvatarListModel;
@@ -71,7 +72,8 @@ private:
 	void setParentalControlsLocked(bool lock);
 	void rememberPcLevel();
 
-	Ui_SettingsDialog *m_ui;
+	QScopedPointer<Ui_SettingsDialog> m_ui;
+	QScopedPointer<QItemEditorFactory> m_itemEditorFactory;
 
 	QStringList m_removeCerts;
 	QStringList m_trustCerts;
