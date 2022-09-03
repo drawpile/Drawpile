@@ -393,7 +393,15 @@ private:
 	QString createDb()
 	{
 		QString databasePath = utils::paths::writablePath("brushpresets.db");
-		if(!QFileInfo(databasePath).exists()) {
+		QFileInfo fileInfo(databasePath);
+
+		QString dirName = fileInfo.canonicalPath();
+		if(!QDir().mkpath(dirName)) {
+			qWarning("Failed to create brush preset database parent directory '%s'",
+				qPrintable(dirName));
+		}
+
+		if(!fileInfo.exists()) {
 			QString initialPath = utils::paths::locateDataFile("initialbrushpresets.db");
 			if(initialPath.isEmpty()) {
 				qWarning("No initial brush preset database found");
