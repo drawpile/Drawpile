@@ -38,18 +38,20 @@ bool checkImageSize(const QSize &size)
 		size.height() <= MAX_SIZE;
 }
 
-static QVector<QPair<QString,QByteArray>> writableImageFormats()
+using WritableImageFormat = QPair<QString,QVector<QByteArray>>;
+
+static const QVector<WritableImageFormat> &writableImageFormats()
 {
-	static QVector<QPair<QString,QByteArray>> formats;
+	static QVector<WritableImageFormat> formats;
 
 	if(formats.isEmpty()) {
 		// List of formats supported by Rustpile
 		// (See the image crate's features in dpimpex/Cargo.toml)
 		formats
-			<< QPair<QString,QByteArray>("OpenRaster", "ora")
-			<< QPair<QString,QByteArray>("JPEG", "jpeg")
-			<< QPair<QString,QByteArray>("PNG", "png")
-			<< QPair<QString,QByteArray>("GIF", "gif")
+			<< WritableImageFormat("OpenRaster", {"ora"})
+			<< WritableImageFormat("JPEG", {"jpeg", "jpg"})
+			<< WritableImageFormat("PNG", {"png"})
+			<< WritableImageFormat("GIF", {"gif"})
 			;
 	}
 
@@ -63,9 +65,8 @@ bool isWritableFormat(const QString &filename)
 		return false;
 	const QByteArray suffix = filename.mid(dot+1).toLower().toLatin1();
 
-	const auto writableFormats = writableImageFormats();
-	for(const auto &pair : writableFormats) {
-		if(suffix == pair.second)
+	for(const WritableImageFormat &pair : writableImageFormats()) {
+		if(pair.second.contains(suffix))
 			return true;
 	}
 
@@ -85,8 +86,12 @@ QString fileFormatFilter(FileFormatOptions formats)
 				}
 
 			} else {
-				for(const auto &format : utils::writableImageFormats()) {
-					filter << QStringLiteral("%1 (*.%2)").arg(format.first, QString::fromLatin1(format.second));
+				for(const WritableImageFormat &format : writableImageFormats()) {
+					QStringList extensions;
+					for(const QByteArray &extension : format.second) {
+						extensions << QStringLiteral("*.%1").arg(QString::fromUtf8(extension));
+					}
+					filter << QStringLiteral("%1 (%2)").arg(format.first, extensions.join(" "));
 				}
 			}
 
