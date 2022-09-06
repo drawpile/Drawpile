@@ -125,8 +125,9 @@ DP_Image *DP_image_new_from_compressed(int width, int height,
         // Nothing else to do here.
 #elif DP_BYTE_ORDER == DP_BIG_ENDIAN
         // Gotta byte-swap the pixels.
+        DP_Pixel *pixels = args.img->pixels;
         for (int i = 0; i < width * height; ++i) {
-            args.img->pixels[i] = DP_swap_uint32(args.img->pixels[i]);
+            pixels[i].color = DP_swap_uint32(pixels[i].color);
         }
 #else
 #    error "Unknown byte order"
