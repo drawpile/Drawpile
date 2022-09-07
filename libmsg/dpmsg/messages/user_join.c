@@ -143,7 +143,7 @@ DP_Message *DP_msg_user_join_deserialize(unsigned int context_id,
             return DP_msg_user_join_new(
                 context_id, DP_read_bigendian_uint8(buffer),
                 (const char *)buffer + 2, name_length, buffer + 2 + name_length,
-                length - name_length - 1);
+                length - name_length - 2);
         }
     }
     else {
