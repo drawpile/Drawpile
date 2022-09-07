@@ -46,7 +46,7 @@ static const DP_BlendModeAttributes invalid_attributes = {
 static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
     [DP_BLEND_MODE_ERASE] =
         {
-            BRUSH | DECREASE_OPACITY,
+            LAYER | BRUSH | DECREASE_OPACITY,
             "DP_BLEND_MODE_ERASE",
             "-dp-erase",
             "Erase",
@@ -116,7 +116,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_RECOLOR] =
         {
-            BRUSH,
+            LAYER | BRUSH,
             "DP_BLEND_MODE_RECOLOR",
             "src-atop",
             "Recolor",
@@ -134,6 +134,90 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "DP_BLEND_MODE_COLOR_ERASE",
             "-dp-cerase",
             "Color Erase",
+        },
+    [DP_BLEND_MODE_SCREEN] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_SCREEN",
+            "svg:screen",
+            "Screen",
+        },
+    [DP_BLEND_MODE_NORMAL_AND_ERASER] =
+        {
+            BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_NORMAL_AND_ERASER",
+            "-dp-normal-and-eraser",
+            "Normal and Eraser",
+        },
+    [DP_BLEND_MODE_LUMINOSITY_SHINE_SAI] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_LUMINOSITY_SHINE_SAI",
+            "krita:luminosity_sai",
+            "Luminosity/Shine (SAI)",
+        },
+    [DP_BLEND_MODE_OVERLAY] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_OVERLAY",
+            "svg:overlay",
+            "Overlay",
+        },
+    [DP_BLEND_MODE_HARD_LIGHT] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_HARD_LIGHT",
+            "svg:hard-light",
+            "Hard Light",
+        },
+    [DP_BLEND_MODE_SOFT_LIGHT] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_SOFT_LIGHT",
+            "svg:soft-light",
+            "Soft Light",
+        },
+    [DP_BLEND_MODE_LINEAR_BURN] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_LINEAR_BURN",
+            "krita:linear_burn",
+            "Linear Burn",
+        },
+    [DP_BLEND_MODE_LINEAR_LIGHT] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_LINEAR_LIGHT",
+            "krita:linear light",
+            "Linear Light",
+        },
+    [DP_BLEND_MODE_HUE] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_HUE",
+            "svg:hue",
+            "Hue",
+        },
+    [DP_BLEND_MODE_SATURATION] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_SATURATION",
+            "svg:saturation",
+            "Saturation",
+        },
+    [DP_BLEND_MODE_LUMINOSITY] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_LUMINOSITY",
+            "svg:luminosity",
+            "Luminosity",
+        },
+    [DP_BLEND_MODE_COLOR] =
+        {
+            LAYER | BRUSH,
+            "DP_BLEND_MODE_COLOR",
+            "svg:color",
+            "Color",
         },
     [DP_BLEND_MODE_REPLACE] =
         {

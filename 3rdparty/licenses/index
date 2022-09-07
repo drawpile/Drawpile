@@ -9,6 +9,7 @@ FreeType      <https://freetype.org/>                                GPL-2.0-or-
 GIMP          <https://www.gimp.org/>                                GPL-3.0          3rdparty/licenses/gimp/COPYING
 json.lua      <https://github.com/rxi/json.lua>                      MIT              appdrawdance/lua/3rdparty/json/LICENSE
 Krita         <https://krita.org/>                                   GPL-3.0          3rdparty/licenses/krita/COPYING.txt
+libmypaint    <https://github.com/mypaint/libmypaint>                MIT              3rdparty/libmypaint/COPYING
 libpng        <http://www.libpng.org/pub/png/libpng.html>            Zlib             3rdparty/licenses/libpng/LICENSE
 Lua           <https://www.lua.org/>                                 MIT              3rdparty/lua/LICENSE
 musl libc     <http://musl.libc.org/>                                MIT              3rdparty/licenses/musl/COPYRIGHT       [emscripten]
