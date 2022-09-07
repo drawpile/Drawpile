@@ -30,7 +30,7 @@
 #define DPENGINE_DRAW_CONTEXT_H
 #include <dpcommon/common.h>
 
-typedef union DP_Pixel DP_Pixel;
+typedef union DP_Pixel8 DP_Pixel8;
 
 
 #define DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER 260
@@ -41,7 +41,7 @@ typedef union DP_Pixel DP_Pixel;
 #define DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE  8192
 #define DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE  (1024 * 1024)
 
-typedef uint8_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
+typedef uint16_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 
 typedef struct DP_DrawContext DP_DrawContext;
 
@@ -49,10 +49,12 @@ DP_DrawContext *DP_draw_context_new(void);
 
 void DP_draw_context_free(DP_DrawContext *dc);
 
-uint8_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc);
-uint8_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc);
+uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc);
+uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc);
 
-DP_Pixel *DP_draw_context_transform_buffer(DP_DrawContext *dc);
+DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc);
+
+DP_Pixel8 *DP_draw_context_tile_decompression_buffer(DP_DrawContext *dc);
 
 unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc,
                                            size_t *out_size);

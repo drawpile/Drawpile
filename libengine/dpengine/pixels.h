@@ -25,7 +25,10 @@
 #include <dpcommon/endianness.h>
 
 
-typedef union DP_Pixel {
+#define DP_BIT15 (1 << 15)
+
+// Premultiplied 8 bit pixel
+typedef union DP_Pixel8 {
     uint32_t color;
     struct {
 #if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
@@ -36,27 +39,88 @@ typedef union DP_Pixel {
 #    error "Unknown byte order"
 #endif
     };
-} DP_Pixel;
+} DP_Pixel8;
+
+// Unpremultiplied 8 bit pixel
+typedef union DP_UPixel8 {
+    uint32_t color;
+    struct {
+#if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
+        uint8_t b, g, r, a;
+#elif DP_BYTE_ORDER == DP_BIG_ENDIAN
+        uint8_t a, r, g, b;
+#else
+#    error "Unknown byte order"
+#endif
+    };
+} DP_UPixel8;
+
+// Premultiplied 15 bit pixel
+typedef struct DP_Pixel15 {
+    uint16_t b, g, r, a;
+} DP_Pixel15;
+
+// Unpremultiplied 15 bit pixel
+typedef struct DP_UPixel15 {
+    uint16_t b, g, r, a;
+} DP_UPixel15;
+
+// Unpremultiplied float pixel
+typedef struct DP_UPixelFloat {
+    float b, g, r, a;
+} DP_UPixelFloat;
 
 
-DP_Pixel DP_pixel_unpremultiply(DP_Pixel pixel);
+uint16_t DP_channel8_to_15(uint8_t c);
+uint8_t DP_channel15_to_8(uint16_t c);
+float DP_channel15_to_float(uint16_t c);
 
-DP_Pixel DP_pixel_premultiply(DP_Pixel pixel);
+DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel);
+DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel);
+DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel);
+
+void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
+void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count);
+
+DP_UPixel8 DP_pixel8_unpremultiply(DP_Pixel8 pixel);
+DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel);
+
+DP_Pixel8 DP_pixel8_premultiply(DP_UPixel8 pixel);
+DP_Pixel15 DP_pixel15_premultiply(DP_UPixel15 pixel);
 
 
-void DP_pixels_composite_mask(DP_Pixel *dst, DP_Pixel src, int blend_mode,
-                              uint8_t *mask, int w, int h, int mask_skip,
-                              int base_skip);
+DP_INLINE DP_Pixel15 DP_pixel15_zero(void)
+{
+    DP_Pixel15 pixel = {0, 0, 0, 0};
+    return pixel;
+}
+
+DP_INLINE DP_UPixel15 DP_upixel15_zero(void)
+{
+    DP_UPixel15 pixel = {0, 0, 0, 0};
+    return pixel;
+}
+
+DP_INLINE DP_Pixel15 DP_pixel15_from_color(uint32_t color)
+{
+    DP_Pixel8 pixel = {color};
+    return DP_pixel8_to_15(pixel);
+}
 
 
-void DP_pixels_composite(DP_Pixel *dst, DP_Pixel *src, int pixel_count,
-                         uint8_t opacity, int blend_mode);
+void DP_blend_mask(DP_Pixel15 *dst, DP_Pixel15 src, int blend_mode,
+                   const uint16_t *mask, uint16_t opacity, int w, int h,
+                   int mask_skip, int base_skip);
 
 
-void DP_pixels_sample_mask(DP_Pixel *src, uint8_t *mask, int w, int h,
-                           int mask_skip, int base_skip, uint32_t *out_weight,
-                           uint32_t *out_red, uint32_t *out_green,
-                           uint32_t *out_blue, uint32_t *out_alpha);
+void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
+                     uint16_t opacity, int blend_mode);
+
+
+void DP_sample_mask(DP_Pixel15 *src, const uint16_t *mask, int w, int h,
+                    int mask_skip, int base_skip, float *out_weight,
+                    float *out_red, float *out_green, float *out_blue,
+                    float *out_alpha);
 
 
 #endif

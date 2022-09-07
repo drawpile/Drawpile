@@ -21,26 +21,28 @@
  */
 #ifndef DPENGINE_TILE_H
 #define DPENGINE_TILE_H
+#include "pixels.h"
 #include <dpcommon/common.h>
 
+typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
-typedef union DP_Pixel DP_Pixel;
 
 
-#define DP_TILE_SIZE   64
-#define DP_TILE_LENGTH (DP_TILE_SIZE * DP_TILE_SIZE)
-#define DP_TILE_BYTES  (DP_TILE_LENGTH * sizeof(uint32_t))
+#define DP_TILE_SIZE             64
+#define DP_TILE_LENGTH           (DP_TILE_SIZE * DP_TILE_SIZE)
+#define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
+#define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
 
 typedef struct DP_TileCounts {
     int x, y;
 } DP_TileCounts;
 
 typedef struct DP_TileWeightedAverage {
-    uint32_t weight;
-    uint32_t red;
-    uint32_t green;
-    uint32_t blue;
-    uint32_t alpha;
+    float weight;
+    float red;
+    float green;
+    float blue;
+    float alpha;
 } DP_TileWeightedAverage;
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -87,9 +89,12 @@ DP_INLINE int DP_tile_total_round(int width, int height)
 
 DP_Tile *DP_tile_new(unsigned int context_id);
 
+DP_Tile *DP_tile_new_from_pixel15(unsigned int context_id, DP_Pixel15 pixel);
+
 DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra);
 
-DP_Tile *DP_tile_new_from_compressed(unsigned int context_id,
+DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
+                                     unsigned int context_id,
                                      const unsigned char *image,
                                      size_t image_size);
 
@@ -110,21 +115,21 @@ bool DP_tile_transient(DP_Tile *tile);
 
 unsigned int DP_tile_context_id(DP_Tile *tile);
 
-DP_Pixel *DP_tile_pixels(DP_Tile *tile);
+DP_Pixel15 *DP_tile_pixels(DP_Tile *tile);
 
-DP_Pixel DP_tile_pixel_at(DP_Tile *tile, int x, int y);
+DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y);
 
 bool DP_tile_blank(DP_Tile *tile);
 
-bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel *out_pixel);
+bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel);
 
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);
 
 
 DP_TileWeightedAverage DP_tile_weighted_average(DP_Tile *tile_or_null,
-                                                uint8_t *mask, int x, int y,
-                                                int width, int height,
+                                                const uint16_t *mask, int x,
+                                                int y, int width, int height,
                                                 int skip);
 
 
@@ -140,23 +145,24 @@ DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt);
 
 unsigned int DP_transient_tile_context_id(DP_Tile *tt);
 
-DP_Pixel *DP_transient_tile_pixels(DP_Tile *tt);
+DP_Pixel15 *DP_transient_tile_pixels(DP_Tile *tt);
 
-DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y);
+DP_Pixel15 DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y);
 
 void DP_transient_tile_pixel_at_set(DP_TransientTile *tt, int x, int y,
-                                    DP_Pixel pixel);
+                                    DP_Pixel15 pixel);
 
 void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
-                                    int y, DP_Pixel pixel);
+                                    int y, DP_Pixel15 pixel);
 
 void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
-                             DP_Tile *DP_RESTRICT t, uint8_t opacity,
+                             DP_Tile *DP_RESTRICT t, uint16_t opacity,
                              int blend_mode);
 
-void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel src,
-                                   int blend_mode, uint8_t *mask, int x, int y,
-                                   int w, int h, int skip);
+void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,
+                                   int blend_mode, const uint16_t *mask,
+                                   uint16_t opacity, int x, int y, int w, int h,
+                                   int skip);
 
 
 #endif

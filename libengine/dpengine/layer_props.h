@@ -51,7 +51,7 @@ bool DP_layer_props_transient(DP_LayerProps *lp);
 
 int DP_layer_props_id(DP_LayerProps *lp);
 
-uint8_t DP_layer_props_opacity(DP_LayerProps *lp);
+uint16_t DP_layer_props_opacity(DP_LayerProps *lp);
 
 int DP_layer_props_blend_mode(DP_LayerProps *lp);
 
@@ -81,7 +81,7 @@ DP_LayerProps *DP_transient_layer_props_persist(DP_TransientLayerProps *tlp);
 
 int DP_transient_layer_props_id(DP_TransientLayerProps *tlp);
 
-uint8_t DP_transient_layer_props_opacity(DP_TransientLayerProps *tlp);
+uint16_t DP_transient_layer_props_opacity(DP_TransientLayerProps *tlp);
 
 int DP_transient_layer_props_blend_mode(DP_TransientLayerProps *tlp);
 
@@ -102,7 +102,7 @@ void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
                                         const char *title, size_t length);
 
 void DP_transient_layer_props_opacity_set(DP_TransientLayerProps *tlp,
-                                          uint8_t opacity);
+                                          uint16_t opacity);
 
 void DP_transient_layer_props_blend_mode_set(DP_TransientLayerProps *tlp,
                                              int blend_mode);

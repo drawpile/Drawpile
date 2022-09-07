@@ -155,7 +155,7 @@ static DP_TransientLayerProps *get_layer_props(DP_TransientCanvasState *tcs,
 }
 
 DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
-                                  int sublayer_id, uint8_t opacity,
+                                  int sublayer_id, uint16_t opacity,
                                   int blend_mode, bool censored, bool fixed)
 {
     int index = DP_layer_props_list_index_by_id(
@@ -412,7 +412,7 @@ DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
     else {
         DP_transient_layer_content_fill_rect(
             tlc, context_id, DP_BLEND_MODE_REPLACE, src_rect->x1, src_rect->y1,
-            src_rect->x2 + 1, src_rect->y2 + 1, 0u);
+            src_rect->x2 + 1, src_rect->y2 + 1, DP_pixel15_zero());
     }
 
     DP_transient_layer_content_put_image(tlc, context_id, DP_BLEND_MODE_NORMAL,
@@ -429,7 +429,8 @@ DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
 
 DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, unsigned int context_id,
                                  int layer_id, int blend_mode, int left,
-                                 int top, int right, int bottom, uint32_t color)
+                                 int top, int right, int bottom,
+                                 DP_Pixel15 pixel)
 {
     int index = DP_layer_props_list_index_by_id(
         DP_canvas_state_layer_props_noinc(cs), layer_id);
@@ -445,7 +446,7 @@ DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, unsigned int context_id,
         DP_transient_layer_content_list_transient_at_noinc(tlcl, index);
 
     DP_transient_layer_content_fill_rect(tlc, context_id, blend_mode, left, top,
-                                         right, bottom, color);
+                                         right, bottom, pixel);
 
     return DP_transient_canvas_state_persist(tcs);
 }
@@ -653,7 +654,7 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, int layer_id,
     DP_ASSERT(sublayer_id == 0 || sublayer_blend_mode >= 0);
     DP_ASSERT(sublayer_id == 0 || sublayer_blend_mode < DP_BLEND_MODE_COUNT);
     DP_ASSERT(sublayer_id == 0 || sublayer_opacity >= 0);
-    DP_ASSERT(sublayer_id == 0 || sublayer_opacity <= UINT8_MAX);
+    DP_ASSERT(sublayer_id == 0 || sublayer_opacity <= DP_BIT15);
 
     int index = DP_layer_props_list_index_by_id(
         DP_canvas_state_layer_props_noinc(cs), layer_id);
@@ -684,7 +685,7 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, int layer_id,
             // always be the same values for a single sublayer anyway.
             DP_transient_layer_props_blend_mode_set(tlp, sublayer_blend_mode);
             DP_transient_layer_props_opacity_set(
-                tlp, DP_int_to_uint8(sublayer_opacity));
+                tlp, DP_int_to_uint16(sublayer_opacity));
         }
         else {
             DP_transient_layer_content_list_transient_sublayer_at(

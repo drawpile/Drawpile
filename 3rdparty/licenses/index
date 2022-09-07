@@ -12,6 +12,7 @@ Krita         <https://krita.org/>                                   GPL-3.0    
 libpng        <http://www.libpng.org/pub/png/libpng.html>            Zlib             3rdparty/licenses/libpng/LICENSE
 Lua           <https://www.lua.org/>                                 MIT              3rdparty/lua/LICENSE
 musl libc     <http://musl.libc.org/>                                MIT              3rdparty/licenses/musl/COPYRIGHT       [emscripten]
+MyPaint       <http://mypaint.org/>                                  GPL-2.0-or-later 3rdparty/licenses/mypaint/COPYING
 Node.js       <https://nodejs.org/>                                  MIT              3rdparty/licenses/nodejs/LICENSE       [emscripten]
 OpenGL ES 2.0 <https://www.khronos.org/registry/OpenGL/index_es.php> MIT              3rdparty/dpgles2/LICENSE
 Parson        <https://github.com/kgabis/parson>                     MIT              3rdparty/parson/LICENSE

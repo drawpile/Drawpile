@@ -247,7 +247,7 @@ void DP_layer_content_list_merge_to_flat_image(DP_LayerContentList *lcl,
                        && (include_fixed || !DP_layer_props_fixed(lp));
         if (want_layer) {
             DP_LayerContent *lc = lcl->elements[i].layer_content;
-            uint8_t opacity = DP_layer_props_opacity(lp);
+            uint16_t opacity = DP_layer_props_opacity(lp);
             int blend_mode = DP_layer_props_blend_mode(lp);
             if (include_sublayers) {
                 DP_LayerContent *sub_lc =

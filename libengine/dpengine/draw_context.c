@@ -28,11 +28,12 @@
  */
 #include "draw_context.h"
 #include "pixels.h"
+#include "tile.h"
 #include <dpcommon/common.h>
 
 
 struct DP_DrawContext {
-    // Brush stamps and transformations are used by distinct,
+    // Brush stamps, transformations and decompression are used by distinct
     // operations, so their buffers can share the same memory.
     union {
         // Brush stamp masks. Pixel brushes need one, classic brush needs two.
@@ -41,7 +42,9 @@ struct DP_DrawContext {
             DP_BrushStampBuffer stamp_buffer2;
         };
         // Pixel buffer for image transformation. Used by region move transform.
-        DP_Pixel transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
+        DP_Pixel8 transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
+        // Buffer to inflate compressed 8 bit tiles into.
+        DP_Pixel8 tile_decompression_buffer[DP_TILE_LENGTH];
     };
     // Memory pool used by qgrayraster during region move transform.
     size_t raster_pool_size;
@@ -65,22 +68,28 @@ void DP_draw_context_free(DP_DrawContext *dc)
     }
 }
 
-uint8_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc)
+uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
     return dc->stamp_buffer1;
 }
 
-uint8_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc)
+uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
     return dc->stamp_buffer2;
 }
 
-DP_Pixel *DP_draw_context_transform_buffer(DP_DrawContext *dc)
+DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
     return dc->transform_buffer;
+}
+
+DP_Pixel8 *DP_draw_context_tile_decompression_buffer(DP_DrawContext *dc)
+{
+    DP_ASSERT(dc);
+    return dc->tile_decompression_buffer;
 }
 
 unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc, size_t *out_size)

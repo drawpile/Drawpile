@@ -41,8 +41,8 @@ static bool image_vok(DP_TestContext *T, const char *file, int line,
         return false;
     }
 
-    DP_Pixel *pixels_a = DP_image_pixels(a);
-    DP_Pixel *pixels_b = DP_image_pixels(b);
+    DP_Pixel8 *pixels_a = DP_image_pixels(a);
+    DP_Pixel8 *pixels_b = DP_image_pixels(b);
     for (int y = 0; y < height_a; ++y) {
         for (int x = 0; x < width_a; ++x) {
             int i = y * width_a + x;

@@ -21,6 +21,7 @@
  */
 #include "tile.h"
 #include "compress.h"
+#include "draw_context.h"
 #include "image.h"
 #include "pixels.h"
 #include <dpcommon/atomic.h>
@@ -35,14 +36,14 @@ struct DP_Tile {
     DP_Atomic refcount;
     const bool transient;
     const unsigned int context_id;
-    DP_Pixel pixels[DP_TILE_LENGTH];
+    DP_Pixel15 pixels[DP_TILE_LENGTH];
 };
 
 struct DP_TransientTile {
     DP_Atomic refcount;
     bool transient;
     unsigned int context_id;
-    DP_Pixel pixels[DP_TILE_LENGTH];
+    DP_Pixel15 pixels[DP_TILE_LENGTH];
 };
 
 #else
@@ -51,7 +52,7 @@ struct DP_Tile {
     DP_Atomic refcount;
     bool transient;
     unsigned int context_id;
-    DP_Pixel pixels[DP_TILE_LENGTH];
+    DP_Pixel15 pixels[DP_TILE_LENGTH];
 };
 
 #endif
@@ -72,52 +73,53 @@ DP_Tile *DP_tile_new(unsigned int context_id)
     return DP_tile_new_from_bgra(context_id, 0);
 }
 
-DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra)
+DP_Tile *DP_tile_new_from_pixel15(unsigned int context_id, DP_Pixel15 pixel)
 {
     DP_TransientTile *tt = alloc_tile(false, context_id);
     for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-        tt->pixels[i].color = bgra;
+        tt->pixels[i] = pixel;
     }
     return (DP_Tile *)tt;
 }
 
+DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra)
+{
+    return DP_tile_new_from_pixel15(context_id, DP_pixel15_from_color(bgra));
+}
+
 
 struct DP_TileInflateArgs {
+    DP_Pixel8 *buffer;
     unsigned int context_id;
     DP_TransientTile *tt;
 };
 
 static unsigned char *get_output_buffer(size_t out_size, void *user)
 {
-    if (out_size == DP_TILE_BYTES) {
+    if (out_size == DP_TILE_COMPRESSED_BYTES) {
         struct DP_TileInflateArgs *args = user;
-        DP_TransientTile *tt = alloc_tile(false, args->context_id);
-        args->tt = tt;
-        return (unsigned char *)tt->pixels;
+        args->tt = alloc_tile(false, args->context_id);
+        return (unsigned char *)args->buffer;
     }
     else {
         DP_error_set("Tile decompression needs size %zu, but got %zu",
-                     (size_t)DP_TILE_BYTES, out_size);
+                     (size_t)DP_TILE_COMPRESSED_BYTES, out_size);
         return NULL;
     }
 }
 
-DP_Tile *DP_tile_new_from_compressed(unsigned int context_id,
+DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
+                                     unsigned int context_id,
                                      const unsigned char *image,
                                      size_t image_size)
 {
-    struct DP_TileInflateArgs args = {context_id, NULL};
+    struct DP_TileInflateArgs args = {
+        DP_draw_context_tile_decompression_buffer(dc),
+        context_id,
+        NULL,
+    };
     if (DP_compress_inflate(image, image_size, get_output_buffer, &args)) {
-#if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
-        // Nothing else to do here.
-#elif DP_BYTE_ORDER == DP_BIG_ENDIAN
-        // Gotta byte-swap the pixels.
-        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-            args.tt->pixels[i].color = DP_swap_uint32(args.tt->pixels[i].color);
-        }
-#else
-#    error "Unknown byte order"
-#endif
+        DP_pixels8_to_15(args.tt->pixels, args.buffer, DP_TILE_LENGTH);
         return (DP_Tile *)args.tt;
     }
     else {
@@ -185,14 +187,14 @@ unsigned int DP_tile_context_id(DP_Tile *tile)
     return tile->context_id;
 }
 
-DP_Pixel *DP_tile_pixels(DP_Tile *tile)
+DP_Pixel15 *DP_tile_pixels(DP_Tile *tile)
 {
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     return tile->pixels;
 }
 
-DP_Pixel DP_tile_pixel_at(DP_Tile *tile, int x, int y)
+DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y)
 {
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
@@ -205,30 +207,31 @@ DP_Pixel DP_tile_pixel_at(DP_Tile *tile, int x, int y)
 
 bool DP_tile_blank(DP_Tile *tile)
 {
-    DP_Pixel *pixels = DP_tile_pixels(tile);
+    DP_Pixel15 *pixels = DP_tile_pixels(tile);
     for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-        // Colors should be premultiplied.
-        if (pixels[i].color != 0) {
+        if (pixels[i].a != 0) {
             return false;
         }
     }
     return true;
 }
 
-bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel *out_pixel)
+bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
 {
-    DP_Pixel pixel;
+    DP_Pixel15 pixel;
     if (tile_or_null) {
-        DP_Pixel *pixels = DP_tile_pixels(tile_or_null);
+        DP_Pixel15 *pixels = DP_tile_pixels(tile_or_null);
         pixel = pixels[0];
         for (int i = 1; i < DP_TILE_LENGTH; ++i) {
-            if (pixels[i].color != pixel.color) {
+            DP_Pixel15 q = pixels[i];
+            if (pixel.b != q.b || pixel.g != q.g || pixel.r != q.r
+                || pixel.a != q.a) {
                 return false;
             }
         }
     }
     else {
-        pixel.color = 0;
+        pixel = DP_pixel15_zero();
     }
 
     if (out_pixel) {
@@ -244,14 +247,15 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
     int img_width = DP_image_width(img);
     int width = DP_min_int(img_width - x, DP_TILE_SIZE);
     int height = DP_min_int(DP_image_height(img) - y, DP_TILE_SIZE);
-    DP_Pixel *dst = DP_image_pixels(img) + y * img_width + x;
+    DP_Pixel8 *dst = DP_image_pixels(img) + y * img_width + x;
     size_t bytes = DP_int_to_size(width) * sizeof(*dst);
 
     if (tile_or_null) {
         DP_ASSERT(DP_atomic_get(&tile_or_null->refcount) > 0);
-        DP_Pixel *src = tile_or_null->pixels;
+        DP_Pixel15 *src = tile_or_null->pixels;
         for (int i = 0; i < height; ++i) {
-            memcpy(dst + i * img_width, src + i * DP_TILE_SIZE, bytes);
+            DP_pixels15_to_8(dst + i * img_width, src + i * DP_TILE_SIZE,
+                             width);
         }
     }
     else {
@@ -262,29 +266,30 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
 }
 
 
-static DP_TileWeightedAverage sample_empty(uint8_t *mask, int width, int height,
-                                           int skip)
+static DP_TileWeightedAverage sample_empty(const uint16_t *mask, int width,
+                                           int height, int skip)
 {
-    uint32_t sum = 0;
+    float sum = 0.0f;
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            sum += mask[y * width + x];
+            sum += DP_uint16_to_float(mask[y * width + x]) / (float)DP_BIT15;
         }
         mask += skip;
     }
-    return (DP_TileWeightedAverage){sum, 0, 0, 0, 0};
+    return (DP_TileWeightedAverage){sum, 0.0f, 0.0f, 0.0f, 0.0f};
 }
 
 DP_TileWeightedAverage DP_tile_weighted_average(DP_Tile *tile_or_null,
-                                                uint8_t *mask, int x, int y,
-                                                int width, int height, int skip)
+                                                const uint16_t *mask, int x,
+                                                int y, int width, int height,
+                                                int skip)
 {
     if (tile_or_null) {
         DP_TileWeightedAverage twa;
-        DP_Pixel *src = tile_or_null->pixels + y * DP_TILE_SIZE + x;
-        DP_pixels_sample_mask(src, mask, width, height, skip,
-                              DP_TILE_SIZE - width, &twa.weight, &twa.red,
-                              &twa.green, &twa.blue, &twa.alpha);
+        DP_Pixel15 *src = tile_or_null->pixels + y * DP_TILE_SIZE + x;
+        DP_sample_mask(src, mask, width, height, skip, DP_TILE_SIZE - width,
+                       &twa.weight, &twa.red, &twa.green, &twa.blue,
+                       &twa.alpha);
         return twa;
     }
     else {
@@ -334,7 +339,7 @@ unsigned int DP_transient_tile_context_id(DP_Tile *tt)
     return tt->context_id;
 }
 
-DP_Pixel *DP_transient_tile_pixels(DP_Tile *tt)
+DP_Pixel15 *DP_transient_tile_pixels(DP_Tile *tt)
 {
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
@@ -342,7 +347,7 @@ DP_Pixel *DP_transient_tile_pixels(DP_Tile *tt)
     return tt->pixels;
 }
 
-DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y)
+DP_Pixel15 DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y)
 {
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
@@ -351,7 +356,7 @@ DP_Pixel DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y)
 }
 
 void DP_transient_tile_pixel_at_set(DP_TransientTile *tt, int x, int y,
-                                    DP_Pixel pixel)
+                                    DP_Pixel15 pixel)
 {
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
@@ -364,7 +369,7 @@ void DP_transient_tile_pixel_at_set(DP_TransientTile *tt, int x, int y,
 }
 
 void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
-                                    int y, DP_Pixel pixel)
+                                    int y, DP_Pixel15 pixel)
 {
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
@@ -373,23 +378,23 @@ void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
     DP_ASSERT(y >= 0);
     DP_ASSERT(x < DP_TILE_SIZE);
     DP_ASSERT(y < DP_TILE_SIZE);
-    DP_pixels_composite(&tt->pixels[y * DP_TILE_SIZE + x], &pixel, 1, 255,
-                        blend_mode);
+    DP_blend_pixels(&tt->pixels[y * DP_TILE_SIZE + x], &pixel, 1, DP_BIT15,
+                    blend_mode);
 }
 
 void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
-                             DP_Tile *DP_RESTRICT t, uint8_t opacity,
+                             DP_Tile *DP_RESTRICT t, uint16_t opacity,
                              int blend_mode)
 {
     DP_ASSERT(tt);
     DP_ASSERT(t);
-    DP_pixels_composite(tt->pixels, t->pixels, DP_TILE_LENGTH, opacity,
-                        blend_mode);
+    DP_blend_pixels(tt->pixels, t->pixels, DP_TILE_LENGTH, opacity, blend_mode);
 }
 
-void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel src,
-                                   int blend_mode, uint8_t *mask, int x, int y,
-                                   int w, int h, int skip)
+void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,
+                                   int blend_mode, const uint16_t *mask,
+                                   uint16_t opacity, int x, int y, int w, int h,
+                                   int skip)
 {
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
@@ -401,6 +406,6 @@ void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel src,
     DP_ASSERT(y < DP_TILE_SIZE);
     DP_ASSERT(x + w <= DP_TILE_SIZE);
     DP_ASSERT(y + h <= DP_TILE_SIZE);
-    DP_pixels_composite_mask(tt->pixels + y * DP_TILE_SIZE + x, src, blend_mode,
-                             mask, w, h, skip, DP_TILE_SIZE - w);
+    DP_blend_mask(tt->pixels + y * DP_TILE_SIZE + x, src, blend_mode, mask,
+                  opacity, w, h, skip, DP_TILE_SIZE - w);
 }

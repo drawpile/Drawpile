@@ -21,6 +21,7 @@
  */
 #ifndef DPENGINE_OPS_H
 #define DPENGINE_OPS_H
+#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
@@ -42,7 +43,7 @@ DP_CanvasState *DP_ops_layer_create(DP_CanvasState *cs, int layer_id,
                                     size_t title_length);
 
 DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
-                                  int sublayer_id, uint8_t opacity,
+                                  int sublayer_id, uint16_t opacity,
                                   int blend_mode, bool censored, bool fixed);
 
 DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, int layer_id_count,
@@ -71,7 +72,7 @@ DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, unsigned int context_id,
                                  int layer_id, int blend_mode, int left,
                                  int top, int right, int bottom,
-                                 uint32_t color);
+                                 DP_Pixel15 pixel);
 
 DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_Tile *tile, int layer_id,
                                 int sublayer_id, int x, int y, int repeat);

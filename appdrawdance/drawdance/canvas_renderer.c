@@ -54,6 +54,7 @@ struct DP_CanvasRenderer {
         double scale;
         double rotation_in_radians;
     } transform;
+    DP_Pixel8 pixels_buffer[DP_TILE_LENGTH];
 };
 
 
@@ -102,7 +103,8 @@ DP_CanvasRenderer *DP_canvas_renderer_new(void)
     DP_CanvasRenderer *cr = DP_malloc(sizeof(*cr));
     (*cr) = (DP_CanvasRenderer){0,      0,         true,
                                 0,      {0, 0},    {{0}, {0}},
-                                {0, 0}, {0, 0, 0}, {0.0, 0.0, 1.0, 0.0}};
+                                {0, 0}, {0, 0, 0}, {0.0, 0.0, 1.0, 0.0},
+                                {{0}}};
     cr->program = init_program();
     DP_GL(glGenBuffers, DP_ARRAY_LENGTH(cr->buffers), cr->buffers);
     cr->uniforms.view = glGetUniformLocation(cr->program, "u_view");
@@ -230,23 +232,43 @@ static bool resize(DP_CanvasRenderer *cr, int layer_width, int layer_height)
     }
 }
 
-static void write_tile_to_texture(void *layer, int tile_x, int tile_y)
+static const DP_Pixel8 *get_tile_pixels(DP_CanvasRenderer *cr, DP_Tile *tile)
 {
-    static const DP_Pixel BLANK_PIXELS[DP_TILE_LENGTH];
-    DP_Tile *tile = DP_layer_content_tile_at_noinc(layer, tile_x, tile_y);
-    const DP_Pixel *pixels = tile ? DP_tile_pixels(tile) : BLANK_PIXELS;
-    DP_GL(glTexSubImage2D, GL_TEXTURE_2D, 0, tile_x * DP_TILE_SIZE,
-          tile_y * DP_TILE_SIZE, DP_TILE_SIZE, DP_TILE_SIZE, GL_RGBA,
-          GL_UNSIGNED_BYTE, pixels);
+    static const DP_Pixel8 BLANK_PIXELS[DP_TILE_LENGTH];
+    if (tile) {
+        DP_Pixel8 *pixels = cr->pixels_buffer;
+        DP_pixels15_to_8(pixels, DP_tile_pixels(tile), DP_TILE_LENGTH);
+        return pixels;
+    }
+    else {
+        return BLANK_PIXELS;
+    }
 }
 
-static void write_all_tiles_to_texture(DP_LayerContent *lc, int layer_width,
+static void write_tile_to_texture(DP_CanvasRenderer *cr, DP_LayerContent *lc,
+                                  int tile_x, int tile_y)
+{
+    DP_Tile *tile = DP_layer_content_tile_at_noinc(lc, tile_x, tile_y);
+    DP_GL(glTexSubImage2D, GL_TEXTURE_2D, 0, tile_x * DP_TILE_SIZE,
+          tile_y * DP_TILE_SIZE, DP_TILE_SIZE, DP_TILE_SIZE, GL_RGBA,
+          GL_UNSIGNED_BYTE, get_tile_pixels(cr, tile));
+}
+
+static void write_diff_tile_to_texture(void *user, int tile_x, int tile_y)
+{
+    DP_CanvasRenderer *cr = ((void **)user)[0];
+    DP_LayerContent *lc = ((void **)user)[1];
+    write_tile_to_texture(cr, lc, tile_x, tile_y);
+}
+
+static void write_all_tiles_to_texture(DP_CanvasRenderer *cr,
+                                       DP_LayerContent *lc, int layer_width,
                                        int layer_height)
 {
     DP_TileCounts counts = DP_tile_counts_round(layer_width, layer_height);
     for (int tile_y = 0; tile_y < counts.y; ++tile_y) {
         for (int tile_x = 0; tile_x < counts.x; ++tile_x) {
-            write_tile_to_texture(lc, tile_x, tile_y);
+            write_tile_to_texture(cr, lc, tile_x, tile_y);
         }
     }
 }
@@ -332,10 +354,11 @@ void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_LayerContent *lc,
     DP_GL(glActiveTexture, GL_TEXTURE0);
     DP_GL(glBindTexture, GL_TEXTURE_2D, cr->texture.id);
     if (resize(cr, layer_width, layer_height)) {
-        write_all_tiles_to_texture(lc, layer_width, layer_height);
+        write_all_tiles_to_texture(cr, lc, layer_width, layer_height);
     }
     else if (diff_or_null) {
-        DP_canvas_diff_each_pos(diff_or_null, write_tile_to_texture, lc);
+        DP_canvas_diff_each_pos(diff_or_null, write_diff_tile_to_texture,
+                                (void *[]){cr, lc});
     }
 
     if (cr->recalculate_vertices) {

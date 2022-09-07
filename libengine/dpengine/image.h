@@ -58,11 +58,11 @@ int DP_image_width(DP_Image *img);
 
 int DP_image_height(DP_Image *img);
 
-DP_Pixel *DP_image_pixels(DP_Image *img);
+DP_Pixel8 *DP_image_pixels(DP_Image *img);
 
-DP_Pixel DP_image_pixel_at(DP_Image *img, int x, int y);
+DP_Pixel8 DP_image_pixel_at(DP_Image *img, int x, int y);
 
-void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel pixel);
+void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel8 pixel);
 
 
 DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,

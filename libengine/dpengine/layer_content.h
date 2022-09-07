@@ -21,6 +21,7 @@
  */
 #ifndef DPENGINE_LAYER_CONTENT_H
 #define DPENGINE_LAYER_CONTENT_H
+#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_BrushStamp DP_BrushStamp;
@@ -77,9 +78,10 @@ int DP_layer_content_height(DP_LayerContent *lc);
 
 DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y);
 
-uint32_t DP_layer_content_sample_color_at(DP_LayerContent *lc,
-                                          uint8_t *stamp_buffer, int x, int y,
-                                          int diameter, int last_diameter);
+DP_UPixel15 DP_layer_content_sample_color_at(DP_LayerContent *lc,
+                                             uint16_t *stamp_buffer, int x,
+                                             int y, int diameter,
+                                             int last_diameter);
 
 DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
 
@@ -107,7 +109,7 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
 DP_LayerContent *DP_layer_content_merge_to_flat_image(DP_LayerContent *lc);
 
 void DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                      DP_TransientTile *tt, uint8_t opacity,
+                                      DP_TransientTile *tt, uint16_t opacity,
                                       int blend_mode);
 
 
@@ -149,7 +151,7 @@ DP_transient_layer_content_resize_to(DP_TransientLayerContent *tlc,
 
 void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                                       unsigned int context_id,
-                                      DP_LayerContent *lc, uint8_t opacity,
+                                      DP_LayerContent *lc, uint16_t opacity,
                                       int blend_mode);
 
 void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
@@ -161,17 +163,15 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
                                           unsigned int context_id,
                                           int blend_mode, int left, int top,
                                           int right, int bottom,
-                                          uint32_t color);
+                                          DP_Pixel15 pixel);
 
 void DP_transient_layer_content_put_tile(DP_TransientLayerContent *tlc,
                                          DP_Tile *tile, int x, int y,
                                          int repeat);
 
-void DP_transient_layer_content_brush_stamp_apply(DP_TransientLayerContent *tlc,
-                                                  unsigned int context_id,
-                                                  uint32_t color,
-                                                  int blend_mode,
-                                                  DP_BrushStamp *stamp);
+void DP_transient_layer_content_brush_stamp_apply(
+    DP_TransientLayerContent *tlc, unsigned int context_id, DP_Pixel15 pixel,
+    uint16_t opacity, int blend_mode, DP_BrushStamp *stamp);
 
 void DP_transient_layer_content_list_transient_sublayer_at(
     DP_TransientLayerContent *tlc, int sublayer_index,

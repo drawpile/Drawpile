@@ -22,6 +22,7 @@
 #include "layer_props.h"
 #include "blend_mode.h"
 #include "layer_props_list.h"
+#include "pixels.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 
@@ -38,7 +39,7 @@ struct DP_LayerProps {
     DP_Atomic refcount;
     const bool transient;
     const int id;
-    const uint8_t opacity;
+    const uint16_t opacity;
     int blend_mode;
     const bool hidden;
     const bool censored;
@@ -50,7 +51,7 @@ struct DP_TransientLayerProps {
     DP_Atomic refcount;
     bool transient;
     int id;
-    uint8_t opacity;
+    uint16_t opacity;
     int blend_mode;
     bool hidden;
     bool censored;
@@ -64,7 +65,7 @@ struct DP_LayerProps {
     DP_Atomic refcount;
     bool transient;
     int id;
-    uint8_t opacity;
+    uint16_t opacity;
     int blend_mode;
     bool hidden;
     bool censored;
@@ -170,7 +171,7 @@ int DP_layer_props_id(DP_LayerProps *lp)
     return lp->id;
 }
 
-uint8_t DP_layer_props_opacity(DP_LayerProps *lp)
+uint16_t DP_layer_props_opacity(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
@@ -264,7 +265,7 @@ DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id)
         DP_ATOMIC_INIT(1),
         true,
         layer_id,
-        255,
+        DP_BIT15,
         DP_BLEND_MODE_NORMAL,
         false,
         false,
@@ -317,7 +318,7 @@ int DP_transient_layer_props_id(DP_TransientLayerProps *tlp)
     return DP_layer_props_id((DP_LayerProps *)tlp);
 }
 
-uint8_t DP_transient_layer_props_opacity(DP_TransientLayerProps *tlp)
+uint16_t DP_transient_layer_props_opacity(DP_TransientLayerProps *tlp)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
@@ -393,7 +394,7 @@ void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
 }
 
 void DP_transient_layer_props_opacity_set(DP_TransientLayerProps *tlp,
-                                          uint8_t opacity)
+                                          uint16_t opacity)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);

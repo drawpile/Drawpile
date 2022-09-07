@@ -38,7 +38,7 @@ typedef struct DP_BrushStamp {
     int top;
     int left;
     int diameter;
-    uint8_t *data;
+    uint16_t *data;
 } DP_BrushStamp;
 
 typedef struct DP_PaintDrawDabsParams {
@@ -57,7 +57,7 @@ typedef struct DP_PaintDrawDabsParams {
 void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
                         DP_TransientLayerContent *tlc);
 
-DP_BrushStamp DP_paint_color_sampling_stamp_make(uint8_t *data, int diameter,
+DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
                                                  int left, int top,
                                                  int last_diameter);
 

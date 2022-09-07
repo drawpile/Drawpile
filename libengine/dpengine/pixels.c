@@ -22,8 +22,9 @@
  *
  * --------------------------------------------------------------------
  *
- * Parts of this code are based on Krita, using it under the GNU General Public
- * License, version 3. See 3rdparty/licenses/krita/COPYING.txt for details.
+ * Parts of this code are based on MyPaint, using it under the GNU General
+ * Public License, version 3. See 3rdparty/licenses/mypaint/COPYING for
+ * details.
  *
  * --------------------------------------------------------------------
  *
@@ -41,79 +42,170 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 
-static_assert(sizeof(DP_Pixel) == sizeof(uint32_t), "DP_Pixel is 32 bits");
+static_assert(sizeof(DP_Pixel8) == sizeof(uint32_t), "DP_Pixel8 is 32 bits");
+static_assert(sizeof(DP_UPixel8) == sizeof(uint32_t), "DP_UPixel8 is 32 bits");
 static_assert(sizeof(uint32_t) == 4, "uint32_t is 4 bytes long");
 
 
-typedef void (*DP_CompositeBrushFn)(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                    int w, int h, int mask_skip, int dst_skip);
+typedef uint_fast32_t Fix15;
+typedef int_fast32_t IFix15;
 
-typedef void (*DP_CompositeLayerFn)(DP_Pixel *DP_RESTRICT dst,
-                                    DP_Pixel *DP_RESTRICT src, int pixel_count,
-                                    uint8_t opacity);
+#define BIT15_U16    ((uint16_t)DP_BIT15)
+#define BIT15_FLOAT  ((float)DP_BIT15)
+#define BIT15_DOUBLE ((double)DP_BIT15)
+#define BIT15_FIX    ((Fix15)DP_BIT15)
+#define BIT15_IFIX   ((IFix15)DP_BIT15)
 
+#define FIX_1         ((Fix15)1)
+#define FIX_2         ((Fix15)2)
+#define BIT15_INC_FIX ((Fix15)(DP_BIT15 + 1))
 
-// Adapted from Krita, see license above.
-static uint8_t blend(int a, int b, int alpha)
+static Fix15 to_fix(uint16_t x)
 {
-    unsigned int c = DP_int_to_uint(((a - b) * alpha) + (b << 8) - b) + 0x80u;
-    return DP_uint_to_uint8(((c >> 8) + c) >> 8);
+    return (Fix15)x;
 }
 
-// Multiplying two bytes as if they were floats between 0 and 1.
-static uint8_t mul(unsigned int a, unsigned int b)
+static uint16_t from_fix(Fix15 x)
 {
-    unsigned int c = a * b + 0x80u;
-    return DP_uint_to_uint8(((c >> 8u) + c) >> 8u);
+    DP_ASSERT(x <= BIT15_FIX);
+    return (uint16_t)x;
+}
+
+static Fix15 fix15_clamp(Fix15 x)
+{
+    return x > BIT15_FIX ? BIT15_FIX : x;
+}
+
+static Fix15 ifix15_clamp(IFix15 x)
+{
+    return x < 0 ? 0 : x > BIT15_IFIX ? BIT15_FIX : (Fix15)x;
+}
+
+// Adapted from MyPaint, see license above.
+static Fix15 fix15_mul(Fix15 a, Fix15 b)
+{
+    return (a * b) >> (Fix15)15;
+}
+
+// Adapted from MyPaint, see license above.
+static Fix15 fix15_sumprods(Fix15 a1, Fix15 a2, Fix15 b1, Fix15 b2)
+{
+    return ((a1 * a2) + (b1 * b2)) >> (Fix15)15;
 }
 
 
-static uint8_t blend_multiply(uint8_t base, uint8_t blend)
+typedef struct BGR15 {
+    Fix15 b, g, r;
+} BGR15;
+
+typedef struct BGRA15 {
+    union {
+        BGR15 bgr;
+        struct {
+            Fix15 b, g, r;
+        };
+    };
+    Fix15 a;
+} BGRA15;
+
+static BGR15 to_bgr(DP_Pixel15 pixel)
 {
-    return DP_min_uint8(255u, mul(base, blend));
+    return (BGR15){
+        .b = to_fix(pixel.b),
+        .g = to_fix(pixel.g),
+        .r = to_fix(pixel.r),
+    };
 }
 
-static uint8_t blend_divide(uint8_t base, uint8_t blend)
+static BGR15 to_ubgr(DP_UPixel15 pixel)
 {
-    return DP_uint_to_uint8(
-        DP_min_uint(255u, (base * 256u + blend / 2u) / (1u + blend)));
+    return (BGR15){
+        .b = to_fix(pixel.b),
+        .g = to_fix(pixel.g),
+        .r = to_fix(pixel.r),
+    };
 }
 
-static uint8_t blend_darken(uint8_t base, uint8_t blend)
+static BGRA15 to_bgra(DP_Pixel15 pixel)
 {
-    return DP_min_uint8(base, blend);
+    return (BGRA15){
+        .bgr = to_bgr(pixel),
+        .a = to_fix(pixel.a),
+    };
 }
 
-static uint8_t blend_lighten(uint8_t base, uint8_t blend)
+static DP_Pixel15 from_bgra(BGRA15 bgra)
 {
-    return DP_max_uint8(base, blend);
+    return (DP_Pixel15){
+        .b = from_fix(bgra.b),
+        .g = from_fix(bgra.g),
+        .r = from_fix(bgra.r),
+        .a = from_fix(bgra.a),
+    };
 }
 
-static uint8_t blend_dodge(uint8_t base, uint8_t blend)
+
+uint16_t DP_channel8_to_15(uint8_t c)
 {
-    return DP_uint_to_uint8(DP_min_uint(255u, base * 256u / (256u - blend)));
+    return DP_float_to_uint16(DP_uint8_to_float(c) / 255.0f * BIT15_FLOAT);
 }
 
-static uint8_t blend_burn(uint8_t base, uint8_t blend)
+uint8_t DP_channel15_to_8(uint16_t c)
 {
-    return DP_int_to_uint8(DP_max_int(
-        0, DP_min_int((255 - ((255 - base) * 256 / (blend + 1))), 255)));
+    return DP_float_to_uint8(DP_uint16_to_float(c) / BIT15_FLOAT * 255.0f);
 }
 
-static uint8_t blend_add(uint8_t base, uint8_t blend)
+float DP_channel15_to_float(uint16_t c)
 {
-    return DP_uint_to_uint8(DP_min_uint(base + blend, 255u));
+    return DP_uint16_to_float(c) / BIT15_FLOAT;
 }
 
-static uint8_t blend_subtract(uint8_t base, uint8_t blend)
+DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel)
 {
-    return DP_int_to_uint8(
-        DP_max_int(DP_uint8_to_int(base) - DP_uint8_to_int(blend), 0));
+    return (DP_Pixel15){
+        .b = DP_channel8_to_15(pixel.b),
+        .g = DP_channel8_to_15(pixel.g),
+        .r = DP_channel8_to_15(pixel.r),
+        .a = DP_channel8_to_15(pixel.a),
+    };
 }
 
-static uint8_t blend_blend(DP_UNUSED uint8_t base, uint8_t blend)
+DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel)
 {
-    return blend;
+    return (DP_Pixel8){
+        .b = DP_channel15_to_8(pixel.b),
+        .g = DP_channel15_to_8(pixel.g),
+        .r = DP_channel15_to_8(pixel.r),
+        .a = DP_channel15_to_8(pixel.a),
+    };
+}
+
+DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel)
+{
+    return (DP_UPixelFloat){
+        .b = DP_channel15_to_float(pixel.b),
+        .g = DP_channel15_to_float(pixel.g),
+        .r = DP_channel15_to_float(pixel.r),
+        .a = DP_channel15_to_float(pixel.a),
+    };
+}
+
+void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
+{
+    DP_ASSERT(count <= 0 || dst);
+    DP_ASSERT(count <= 0 || src);
+    for (int i = 0; i < count; ++i) {
+        dst[i] = DP_pixel8_to_15(src[i]);
+    }
+}
+
+void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
+{
+    DP_ASSERT(count <= 0 || dst);
+    DP_ASSERT(count <= 0 || src);
+    for (int i = 0; i < count; ++i) {
+        dst[i] = DP_pixel15_to_8(src[i]);
+    }
 }
 
 
@@ -159,17 +251,22 @@ static const unsigned int unpremultiply_factors[] = {
 };
 
 // Adapted from the Qt framework, see license above.
-DP_Pixel DP_pixel_unpremultiply(DP_Pixel pixel)
+DP_UPixel8 DP_pixel8_unpremultiply(DP_Pixel8 pixel)
 {
     if (pixel.a == 255) {
-        return pixel;
+        return (DP_UPixel8){
+            .b = pixel.b,
+            .g = pixel.g,
+            .r = pixel.r,
+            .a = pixel.a,
+        };
     }
     else if (pixel.a == 0) {
-        return (DP_Pixel){0};
+        return (DP_UPixel8){0};
     }
     else {
         unsigned int a1 = unpremultiply_factors[pixel.a];
-        return (DP_Pixel){
+        return (DP_UPixel8){
             .b = DP_uint_to_uint8((pixel.b * a1 + 0x8000) >> 16),
             .g = DP_uint_to_uint8((pixel.g * a1 + 0x8000) >> 16),
             .r = DP_uint_to_uint8((pixel.r * a1 + 0x8000) >> 16),
@@ -178,8 +275,32 @@ DP_Pixel DP_pixel_unpremultiply(DP_Pixel pixel)
     }
 }
 
+DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel)
+{
+    if (pixel.a == BIT15_U16) {
+        return (DP_UPixel15){
+            .b = pixel.b,
+            .g = pixel.g,
+            .r = pixel.r,
+            .a = pixel.a,
+        };
+    }
+    else if (pixel.a == 0) {
+        return DP_upixel15_zero();
+    }
+    else {
+        Fix15 a = to_fix(pixel.a);
+        return (DP_UPixel15){
+            .b = from_fix(to_fix(pixel.b) * BIT15_FIX / a),
+            .g = from_fix(to_fix(pixel.g) * BIT15_FIX / a),
+            .r = from_fix(to_fix(pixel.r) * BIT15_FIX / a),
+            .a = pixel.a,
+        };
+    }
+}
+
 // Adapted from the Qt framework, see license above.
-DP_Pixel DP_pixel_premultiply(DP_Pixel pixel)
+DP_Pixel8 DP_pixel8_premultiply(DP_UPixel8 pixel)
 {
     unsigned int a = pixel.a;
     unsigned int t = (pixel.color & 0xff00ff) * a;
@@ -188,14 +309,84 @@ DP_Pixel DP_pixel_premultiply(DP_Pixel pixel)
     uint32_t x = ((pixel.color >> 8) & 0xff) * a;
     x = (x + ((x >> 8) & 0xff) + 0x80);
     x &= 0xff00;
-    return (DP_Pixel){DP_uint_to_uint32(x | t | (a << 24u))};
+    return (DP_Pixel8){DP_uint_to_uint32(x | t | (a << 24u))};
+}
+
+DP_Pixel15 DP_pixel15_premultiply(DP_UPixel15 pixel)
+{
+    if (pixel.a == BIT15_U16) {
+        return (DP_Pixel15){
+            .b = pixel.b,
+            .g = pixel.g,
+            .r = pixel.r,
+            .a = pixel.a,
+        };
+    }
+    else if (pixel.a == 0) {
+        return DP_pixel15_zero();
+    }
+    else {
+        Fix15 a = to_fix(pixel.a);
+        return (DP_Pixel15){
+            .b = from_fix(to_fix(pixel.b) * a / BIT15_FIX),
+            .g = from_fix(to_fix(pixel.g) * a / BIT15_FIX),
+            .r = from_fix(to_fix(pixel.r) * a / BIT15_FIX),
+            .a = pixel.a,
+        };
+    }
 }
 
 
+static BGRA15 blend_normal(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
+{
+    Fix15 as1 = BIT15_FIX - fix15_mul(as, o);
+    return (BGRA15){
+        .b = fix15_mul(cb.b, as1) + fix15_mul(cs.b, o),
+        .g = fix15_mul(cb.g, as1) + fix15_mul(cs.g, o),
+        .r = fix15_mul(cb.r, as1) + fix15_mul(cs.r, o),
+        .a = fix15_mul(ab, as1) + fix15_mul(as, o),
+    };
+}
+
+static BGRA15 blend_behind(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
+{
+    Fix15 a1 = fix15_mul(BIT15_FIX - ab, fix15_mul(as, o));
+    return (BGRA15){
+        .b = cb.b + fix15_mul(cs.b, a1),
+        .g = cb.g + fix15_mul(cs.g, a1),
+        .r = cb.r + fix15_mul(cs.r, a1),
+        .a = ab + fix15_mul(as, a1),
+    };
+}
+
+static BGRA15 blend_erase(BGR15 cb, DP_UNUSED BGR15 cs, Fix15 ab, Fix15 as,
+                          Fix15 o)
+{
+    Fix15 as1 = BIT15_FIX - fix15_mul(as, o);
+    return (BGRA15){
+        .b = fix15_mul(cb.b, as1),
+        .g = fix15_mul(cb.g, as1),
+        .r = fix15_mul(cb.r, as1),
+        .a = fix15_mul(ab, as1),
+    };
+}
+
+static BGRA15 blend_replace(DP_UNUSED BGR15 cb, DP_UNUSED BGR15 cs,
+                            DP_UNUSED Fix15 ab, Fix15 as, Fix15 o)
+{
+    return (BGRA15){
+        .b = fix15_mul(cs.b, o),
+        .g = fix15_mul(cs.g, o),
+        .r = fix15_mul(cs.r, o),
+        .a = fix15_mul(as, o),
+    };
+}
+
 // Adapted from GIMP, see license above.
-static DP_Pixel color_erase(double fsrc_b, double fsrc_g, double fsrc_r,
-                            double fsrc_a, double ufdst_b, double ufdst_g,
-                            double ufdst_r, double ufdst_a)
+static DP_Pixel15 blend_color_erase(double fsrc_b, double fsrc_g, double fsrc_r,
+                                    double fsrc_a, double ufdst_b,
+                                    double ufdst_g, double ufdst_r,
+                                    double ufdst_a)
 {
     double ufalpha_a = ufdst_a;
 
@@ -265,231 +456,194 @@ static DP_Pixel color_erase(double fsrc_b, double fsrc_g, double fsrc_r,
         ufdst_a *= ufalpha_a;
     }
 
-    return DP_pixel_premultiply((DP_Pixel){
-        .b = DP_double_to_uint8(ufdst_b * 255.0),
-        .g = DP_double_to_uint8(ufdst_g * 255.0),
-        .r = DP_double_to_uint8(ufdst_r * 255.0),
-        .a = DP_double_to_uint8(ufdst_a * 255.0),
+    return DP_pixel15_premultiply((DP_UPixel15){
+        .b = DP_double_to_uint16(ufdst_b * BIT15_DOUBLE),
+        .g = DP_double_to_uint16(ufdst_g * BIT15_DOUBLE),
+        .r = DP_double_to_uint16(ufdst_r * BIT15_DOUBLE),
+        .a = DP_double_to_uint16(ufdst_a * BIT15_DOUBLE),
     });
 }
 
+static Fix15 comp_multiply(Fix15 a, Fix15 b)
+{
+    return fix15_mul(a, b);
+}
 
-#define FOR_MASK_PIXEL(DST, MASK, W, H, MASK_SKIP, DST_SKIP, X, Y, A, BLOCK) \
-    do {                                                                     \
-        for (int Y = 0; Y < H; ++Y) {                                        \
-            for (int X = 0; X < W; ++X, ++DST, ++MASK) {                     \
-                uint8_t A = *MASK;                                           \
-                BLOCK                                                        \
-            }                                                                \
-            DST += DST_SKIP;                                                 \
-            MASK += MASK_SKIP;                                               \
-        }                                                                    \
+static Fix15 comp_divide(Fix15 a, Fix15 b)
+{
+    return fix15_clamp((a * BIT15_INC_FIX + b / FIX_2) / (b + FIX_1));
+}
+
+static Fix15 comp_burn(Fix15 a, Fix15 b)
+{
+    return ifix15_clamp(
+        BIT15_IFIX - (IFix15)((BIT15_FIX - a) * BIT15_INC_FIX / (b + FIX_1)));
+}
+
+static Fix15 comp_dodge(Fix15 a, Fix15 b)
+{
+    return fix15_clamp(a * BIT15_INC_FIX / (BIT15_INC_FIX - b));
+}
+
+static Fix15 comp_lighten(Fix15 a, Fix15 b)
+{
+    return a > b ? a : b;
+}
+
+static Fix15 comp_darken(Fix15 a, Fix15 b)
+{
+    return a < b ? a : b;
+}
+
+static Fix15 comp_subtract(Fix15 a, Fix15 b)
+{
+    return b < a ? a - b : 0;
+}
+
+static Fix15 comp_add(Fix15 a, Fix15 b)
+{
+    return fix15_clamp(a + b);
+}
+
+static Fix15 comp_recolor(DP_UNUSED Fix15 a, Fix15 b)
+{
+    return b;
+}
+
+
+#define FOR_MASK_PIXEL(DST, MASK, OPACITY, W, H, MASK_SKIP, DST_SKIP, X, Y, A, \
+                       BLOCK)                                                  \
+    do {                                                                       \
+        for (int Y = 0; Y < H; ++Y) {                                          \
+            for (int X = 0; X < W; ++X, ++DST, ++MASK) {                       \
+                Fix15 A = fix15_mul(*MASK, OPACITY);                           \
+                BLOCK                                                          \
+            }                                                                  \
+            DST += DST_SKIP;                                                   \
+            MASK += MASK_SKIP;                                                 \
+        }                                                                      \
     } while (0)
 
-static void composite_mask_unknown(DP_UNUSED DP_Pixel *dst,
-                                   DP_UNUSED DP_Pixel src,
-                                   DP_UNUSED uint8_t *mask, DP_UNUSED int w,
-                                   DP_UNUSED int h, DP_UNUSED int mask_skip,
-                                   DP_UNUSED int dst_skip)
+static void blend_mask_alpha_op(DP_Pixel15 *dst, DP_Pixel15 src,
+                                const uint16_t *mask, Fix15 opacity, int w,
+                                int h, int mask_skip, int base_skip,
+                                BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15, Fix15))
 {
-    // Nothing, unknown blend mode.
-}
-
-static void composite_mask_copy(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                int w, int h, int mask_skip, int dst_skip)
-{
-    FOR_MASK_PIXEL(dst, mask, w, h, mask_skip, dst_skip, x, y, a, {
-        dst->b = mul(src.b, a);
-        dst->g = mul(src.g, a);
-        dst->r = mul(src.r, a);
-        dst->a = mul(src.a, a);
+    BGR15 cs = to_bgr(src);
+    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
+        BGRA15 b = to_bgra(*dst);
+        *dst = from_bgra(op(b.bgr, cs, b.a, BIT15_FIX, o));
     });
 }
 
-static void composite_mask_erase(DP_Pixel *dst, DP_UNUSED DP_Pixel src,
-                                 uint8_t *mask, int w, int h, int mask_skip,
-                                 int dst_skip)
+static void blend_mask_color_erase(DP_Pixel15 *dst, DP_Pixel15 src,
+                                   const uint16_t *mask, Fix15 opacity, int w,
+                                   int h, int mask_skip, int base_skip)
 {
-    FOR_MASK_PIXEL(dst, mask, w, h, mask_skip, dst_skip, x, y, a, {
-        if (a != 0u && dst->a != 0u) {
-            unsigned int a1 = 255u - a;
-            dst->b = mul(dst->b, a1);
-            dst->g = mul(dst->g, a1);
-            dst->r = mul(dst->r, a1);
-            dst->a = mul(dst->a, a1);
+    double fsrc_b = src.b / BIT15_DOUBLE;
+    double fsrc_g = src.g / BIT15_DOUBLE;
+    double fsrc_r = src.r / BIT15_DOUBLE;
+    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        if (as != 0u) {
+            double fas = (double)as;
+            DP_UPixel15 ub = DP_pixel15_unpremultiply(*dst);
+            *dst = blend_color_erase(fsrc_b, fsrc_g, fsrc_r, fas / BIT15_DOUBLE,
+                                     DP_uint16_to_double(ub.b) / BIT15_DOUBLE,
+                                     DP_uint16_to_double(ub.g) / BIT15_DOUBLE,
+                                     DP_uint16_to_double(ub.r) / BIT15_DOUBLE,
+                                     DP_uint16_to_double(ub.a) / BIT15_DOUBLE);
         }
     });
 }
 
-static void composite_mask_color_erase(DP_Pixel *dst, DP_Pixel src,
-                                       uint8_t *mask, int w, int h,
-                                       int mask_skip, int dst_skip)
+static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_Pixel15 src,
+                                           const uint16_t *mask, Fix15 opacity,
+                                           int w, int h, int mask_skip,
+                                           int base_skip,
+                                           Fix15 (*comp_op)(Fix15, Fix15))
 {
-    double fsrc_b = src.b / 255.0;
-    double fsrc_g = src.g / 255.0;
-    double fsrc_r = src.r / 255.0;
-    FOR_MASK_PIXEL(dst, mask, w, h, mask_skip, dst_skip, x, y, a, {
-        if (a != 0u) {
-            DP_Pixel udst = DP_pixel_unpremultiply(*dst);
-            *dst =
-                color_erase(fsrc_b, fsrc_g, fsrc_r, a / 255.0, udst.b / 255.0,
-                            udst.g / 255.0, udst.r / 255.0, udst.a / 255.0);
-        }
+    BGR15 s = to_bgr(src);
+    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        DP_Pixel15 bp = *dst;
+        BGR15 b = to_ubgr(DP_pixel15_unpremultiply(bp));
+        Fix15 as1 = BIT15_FIX - as;
+        *dst = DP_pixel15_premultiply((DP_UPixel15){
+            from_fix(fix15_sumprods(as1, b.b, as, comp_op(b.b, s.b))),
+            from_fix(fix15_sumprods(as1, b.g, as, comp_op(b.g, s.g))),
+            from_fix(fix15_sumprods(as1, b.r, as, comp_op(b.r, s.r))),
+            bp.a,
+        });
     });
 }
 
-static void composite_mask_alpha_blend(DP_Pixel *dst, DP_Pixel src,
-                                       uint8_t *mask, int w, int h,
-                                       int mask_skip, int dst_skip)
-{
-    FOR_MASK_PIXEL(dst, mask, w, h, mask_skip, dst_skip, x, y, a, {
-        if (a == 255u) { // Pixel is opaque, just replace the color.
-            dst->color = src.color | 0xff000000u;
-        }
-        else if (a != 0u) { // Pixel isn't transparent, blend normally.
-            unsigned int a1 = 255u - a;
-            dst->b = mul(src.b, a) + mul(dst->b, a1);
-            dst->g = mul(src.g, a) + mul(dst->g, a1);
-            dst->r = mul(src.r, a) + mul(dst->r, a1);
-            dst->a = a + mul(dst->a, a1);
-        }
-    });
-}
-
-static void composite_mask_alpha_under(DP_Pixel *dst, DP_Pixel src,
-                                       uint8_t *mask, int w, int h,
-                                       int mask_skip, int dst_skip)
-{
-    FOR_MASK_PIXEL(dst, mask, w, h, mask_skip, dst_skip, x, y, a, {
-        if (a != 0u && dst->a != 255u) {
-            unsigned int a1 = mul(255u - dst->a, a);
-            dst->b = mul(src.b, a1) + dst->b;
-            dst->g = mul(src.g, a1) + dst->g;
-            dst->r = mul(src.r, a1) + dst->r;
-            dst->a += DP_uint_to_uint8(a1);
-        }
-    });
-}
-
-static void mask_composite_with(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                int w, int h, int mask_skip, int dst_skip,
-                                uint8_t (*blend_op)(uint8_t, uint8_t))
-{
-    FOR_MASK_PIXEL(dst, mask, w, h, mask_skip, dst_skip, x, y, a, {
-        if (a != 0u && dst->color != 0u) {
-            DP_Pixel d = DP_pixel_unpremultiply(*dst);
-            d.b = blend(blend_op(d.b, src.b), d.b, a);
-            d.g = blend(blend_op(d.g, src.g), d.g, a);
-            d.r = blend(blend_op(d.r, src.r), d.r, a);
-            *dst = DP_pixel_premultiply(d);
-        }
-    });
-}
-
-static void composite_mask_multiply(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                    int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip,
-                        blend_multiply);
-}
-
-static void composite_mask_divide(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                  int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip,
-                        blend_divide);
-}
-
-static void composite_mask_burn(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip, blend_burn);
-}
-
-static void composite_mask_dodge(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                 int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip, blend_dodge);
-}
-
-static void composite_mask_darken(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                  int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip,
-                        blend_darken);
-}
-
-static void composite_mask_lighten(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                   int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip,
-                        blend_lighten);
-}
-
-static void composite_mask_subtract(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                    int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip,
-                        blend_subtract);
-}
-
-static void composite_mask_add(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                               int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip, blend_add);
-}
-
-static void composite_mask_blend(DP_Pixel *dst, DP_Pixel src, uint8_t *mask,
-                                 int w, int h, int mask_skip, int dst_skip)
-{
-    mask_composite_with(dst, src, mask, w, h, mask_skip, dst_skip, blend_blend);
-}
-
-static DP_CompositeBrushFn
-get_composite_composite_mask_operation(int blend_mode)
+void DP_blend_mask(DP_Pixel15 *dst, DP_Pixel15 src, int blend_mode,
+                   const uint16_t *mask, uint16_t opacity, int w, int h,
+                   int mask_skip, int base_skip)
 {
     switch (blend_mode) {
-    case DP_BLEND_MODE_ERASE:
-        return composite_mask_erase;
+    // Alpha-affecting blend modes.
     case DP_BLEND_MODE_NORMAL:
-        return composite_mask_alpha_blend;
-    case DP_BLEND_MODE_MULTIPLY:
-        return composite_mask_multiply;
-    case DP_BLEND_MODE_DIVIDE:
-        return composite_mask_divide;
-    case DP_BLEND_MODE_BURN:
-        return composite_mask_burn;
-    case DP_BLEND_MODE_DODGE:
-        return composite_mask_dodge;
-    case DP_BLEND_MODE_DARKEN:
-        return composite_mask_darken;
-    case DP_BLEND_MODE_LIGHTEN:
-        return composite_mask_lighten;
-    case DP_BLEND_MODE_SUBTRACT:
-        return composite_mask_subtract;
-    case DP_BLEND_MODE_ADD:
-        return composite_mask_add;
-    case DP_BLEND_MODE_RECOLOR:
-        return composite_mask_blend;
+        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                            base_skip, blend_normal);
+        break;
     case DP_BLEND_MODE_BEHIND:
-        return composite_mask_alpha_under;
-    case DP_BLEND_MODE_COLOR_ERASE:
-        return composite_mask_color_erase;
+        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                            base_skip, blend_behind);
+        break;
+    case DP_BLEND_MODE_ERASE:
+        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                            base_skip, blend_erase);
+        break;
     case DP_BLEND_MODE_REPLACE:
-        return composite_mask_copy;
+        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                            base_skip, blend_replace);
+        break;
+    case DP_BLEND_MODE_COLOR_ERASE:
+        blend_mask_color_erase(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                               base_skip);
+        break;
+    // Alpha-preserving separable blend modes (each channel handled separately)
+    case DP_BLEND_MODE_MULTIPLY:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_multiply);
+        break;
+    case DP_BLEND_MODE_DIVIDE:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_divide);
+        break;
+    case DP_BLEND_MODE_BURN:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_burn);
+        break;
+    case DP_BLEND_MODE_DODGE:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_dodge);
+        break;
+    case DP_BLEND_MODE_DARKEN:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_darken);
+        break;
+    case DP_BLEND_MODE_LIGHTEN:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_lighten);
+        break;
+    case DP_BLEND_MODE_SUBTRACT:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_subtract);
+        break;
+    case DP_BLEND_MODE_ADD:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_add);
+        break;
+    case DP_BLEND_MODE_RECOLOR:
+        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
+                                       base_skip, comp_recolor);
+        break;
     default:
-        DP_debug("Unknown brush composite blend mode %d (%s)", blend_mode,
+        DP_debug("Unknown mask blend mode %d (%s)", blend_mode,
                  DP_blend_mode_enum_name(blend_mode));
-        return composite_mask_unknown;
+        break;
     }
-}
-
-void DP_pixels_composite_mask(DP_Pixel *dst, DP_Pixel src, int blend_mode,
-                              uint8_t *mask, int w, int h, int mask_skip,
-                              int dst_skip)
-{
-    DP_CompositeBrushFn op = get_composite_composite_mask_operation(blend_mode);
-    op(dst, src, mask, w, h, mask_skip, dst_skip);
 }
 
 
@@ -500,231 +654,148 @@ void DP_pixels_composite_mask(DP_Pixel *dst, DP_Pixel src, int blend_mode,
         }                                                     \
     } while (0)
 
-static void composite_unknown(DP_UNUSED DP_Pixel *DP_RESTRICT dst,
-                              DP_UNUSED DP_Pixel *DP_RESTRICT src,
-                              DP_UNUSED int pixel_count,
-                              DP_UNUSED uint8_t opacity)
-{
-    // Nothing, unknown blend mode.
-}
-
-static void composite_copy(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
-                           int pixel_count, DP_UNUSED uint8_t opacity)
-{
-    FOR_PIXEL(dst, src, pixel_count, i, { *dst = *src; });
-}
-
-static void composite_erase(DP_Pixel *DP_RESTRICT dst,
-                            DP_Pixel *DP_RESTRICT src, int pixel_count,
-                            uint8_t opacity)
+static void blend_pixels_alpha_op(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                  int pixel_count, Fix15 opacity,
+                                  BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15,
+                                               Fix15))
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
-        unsigned int a1 = 255 - mul(src->a, opacity);
-        dst->b = mul(dst->b, a1);
-        dst->g = mul(dst->g, a1);
-        dst->r = mul(dst->r, a1);
-        dst->a = mul(dst->a, a1);
+        BGRA15 b = to_bgra(*dst);
+        BGRA15 s = to_bgra(*src);
+        *dst = from_bgra(op(b.bgr, s.bgr, b.a, s.a, opacity));
     });
 }
 
-static void composite_color_erase(DP_Pixel *DP_RESTRICT dst,
-                                  DP_Pixel *DP_RESTRICT src, int pixel_count,
-                                  uint8_t opacity)
+static void blend_pixels_color_erase(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                     int pixel_count, uint16_t opacity)
 {
-    double o = opacity / 255.0;
+    double o = DP_uint16_to_double(opacity) / BIT15_DOUBLE;
     FOR_PIXEL(dst, src, pixel_count, i, {
-        DP_Pixel udst = DP_pixel_unpremultiply(*dst);
-        DP_Pixel usrc = DP_pixel_unpremultiply(*src);
-        *dst = color_erase(usrc.b / 255.0, usrc.g / 255.0, usrc.r / 255.0,
-                           usrc.a / 255.0 * o, udst.b / 255.0, udst.g / 255.0,
-                           udst.r / 255.0, udst.a / 255.0);
+        DP_UPixel15 udst = DP_pixel15_unpremultiply(*dst);
+        DP_UPixel15 usrc = DP_pixel15_unpremultiply(*src);
+        *dst =
+            blend_color_erase(usrc.b / BIT15_DOUBLE, usrc.g / BIT15_DOUBLE,
+                              usrc.r / BIT15_DOUBLE, usrc.a / BIT15_DOUBLE * o,
+                              udst.b / BIT15_DOUBLE, udst.g / BIT15_DOUBLE,
+                              udst.r / BIT15_DOUBLE, udst.a / BIT15_DOUBLE);
     });
 }
 
-static void composite_alpha_blend(DP_Pixel *DP_RESTRICT dst,
-                                  DP_Pixel *DP_RESTRICT src, int pixel_count,
-                                  uint8_t opacity)
+static void blend_pixels_composite_separable(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                             int pixel_count, Fix15 opacity,
+                                             Fix15 (*comp_op)(Fix15, Fix15))
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
-        DP_Pixel s = *src;
-        unsigned int sa1 = 255u - mul(s.a, opacity);
-        if (sa1 != 255u) {
-            dst->b = mul(s.b, opacity) + mul(dst->b, sa1);
-            dst->g = mul(s.g, opacity) + mul(dst->g, sa1);
-            dst->r = mul(s.r, opacity) + mul(dst->r, sa1);
-            dst->a = mul(s.a, opacity) + mul(dst->a, sa1);
-        }
+        DP_Pixel15 bp = *dst;
+        DP_Pixel15 sp = *src;
+        BGR15 b = to_ubgr(DP_pixel15_unpremultiply(bp));
+        BGR15 s = to_ubgr(DP_pixel15_unpremultiply(sp));
+        Fix15 as = fix15_mul(to_fix(sp.a), opacity);
+        Fix15 as1 = BIT15_FIX - as;
+        *dst = DP_pixel15_premultiply((DP_UPixel15){
+            from_fix(fix15_sumprods(as1, b.b, as, comp_op(b.b, s.b))),
+            from_fix(fix15_sumprods(as1, b.g, as, comp_op(b.g, s.g))),
+            from_fix(fix15_sumprods(as1, b.r, as, comp_op(b.r, s.r))),
+            bp.a,
+        });
     });
 }
 
-static void composite_alpha_under(DP_Pixel *DP_RESTRICT dst,
-                                  DP_Pixel *DP_RESTRICT src, int pixel_count,
-                                  uint8_t opacity)
-{
-    FOR_PIXEL(dst, src, pixel_count, i, {
-        DP_Pixel d = *dst;
-        DP_Pixel s = *src;
-        if (d.a != 255u && s.a != 0u) {
-            unsigned int sa1 = mul(255u - d.a, mul(s.a, opacity));
-            dst->b = mul(s.b, sa1) + d.b;
-            dst->g = mul(s.g, sa1) + d.g;
-            dst->r = mul(s.r, sa1) + d.r;
-            dst->a = mul(s.a, sa1) + d.a;
-        }
-    });
-}
-
-static void composite_with(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
-                           int pixel_count, uint8_t opacity,
-                           uint8_t (*blend_op)(uint8_t, uint8_t))
-{
-    FOR_PIXEL(dst, src, pixel_count, i, {
-        DP_Pixel d = *dst;
-        DP_Pixel s = *src;
-        if (d.color && s.color) {
-            DP_Pixel ud = DP_pixel_unpremultiply(d);
-            DP_Pixel us = DP_pixel_unpremultiply(s);
-            uint8_t a = mul(us.a, opacity);
-            ud.b = blend(blend_op(ud.b, us.b), ud.b, a);
-            ud.g = blend(blend_op(ud.g, us.g), ud.g, a);
-            ud.r = blend(blend_op(ud.r, us.r), ud.r, a);
-            *dst = DP_pixel_premultiply(ud);
-        }
-    });
-}
-
-static void composite_multiply(DP_Pixel *DP_RESTRICT dst,
-                               DP_Pixel *DP_RESTRICT src, int pixel_count,
-                               uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_multiply);
-}
-
-static void composite_divide(DP_Pixel *DP_RESTRICT dst,
-                             DP_Pixel *DP_RESTRICT src, int pixel_count,
-                             uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_divide);
-}
-
-static void composite_burn(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
-                           int pixel_count, uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_burn);
-}
-
-static void composite_dodge(DP_Pixel *DP_RESTRICT dst,
-                            DP_Pixel *DP_RESTRICT src, int pixel_count,
-                            uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_dodge);
-}
-
-static void composite_darken(DP_Pixel *DP_RESTRICT dst,
-                             DP_Pixel *DP_RESTRICT src, int pixel_count,
-                             uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_darken);
-}
-
-static void composite_lighten(DP_Pixel *DP_RESTRICT dst,
-                              DP_Pixel *DP_RESTRICT src, int pixel_count,
-                              uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_lighten);
-}
-
-static void composite_subtract(DP_Pixel *DP_RESTRICT dst,
-                               DP_Pixel *DP_RESTRICT src, int pixel_count,
-                               uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_subtract);
-}
-
-static void composite_add(DP_Pixel *DP_RESTRICT dst, DP_Pixel *DP_RESTRICT src,
-                          int pixel_count, uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_add);
-}
-
-static void composite_blend(DP_Pixel *DP_RESTRICT dst,
-                            DP_Pixel *DP_RESTRICT src, int pixel_count,
-                            uint8_t opacity)
-{
-    composite_with(dst, src, pixel_count, opacity, blend_blend);
-}
-
-static DP_CompositeLayerFn get_composite_operation(int blend_mode)
+void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
+                     uint16_t opacity, int blend_mode)
 {
     switch (blend_mode) {
-    case DP_BLEND_MODE_ERASE:
-        return composite_erase;
+    // Alpha-affecting blend modes.
     case DP_BLEND_MODE_NORMAL:
-        return composite_alpha_blend;
-    case DP_BLEND_MODE_MULTIPLY:
-        return composite_multiply;
-    case DP_BLEND_MODE_DIVIDE:
-        return composite_divide;
-    case DP_BLEND_MODE_BURN:
-        return composite_burn;
-    case DP_BLEND_MODE_DODGE:
-        return composite_dodge;
-    case DP_BLEND_MODE_DARKEN:
-        return composite_darken;
-    case DP_BLEND_MODE_LIGHTEN:
-        return composite_lighten;
-    case DP_BLEND_MODE_SUBTRACT:
-        return composite_subtract;
-    case DP_BLEND_MODE_ADD:
-        return composite_add;
-    case DP_BLEND_MODE_RECOLOR:
-        return composite_blend;
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_normal);
+        break;
     case DP_BLEND_MODE_BEHIND:
-        return composite_alpha_under;
-    case DP_BLEND_MODE_COLOR_ERASE:
-        return composite_color_erase;
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_behind);
+        break;
+    case DP_BLEND_MODE_ERASE:
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_erase);
+        break;
     case DP_BLEND_MODE_REPLACE:
-        return composite_copy;
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_replace);
+        break;
+    case DP_BLEND_MODE_COLOR_ERASE:
+        blend_pixels_color_erase(dst, src, pixel_count, opacity);
+        break;
+    // Alpha-preserving separable blend modes (each channel handled separately)
+    case DP_BLEND_MODE_MULTIPLY:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_multiply);
+        break;
+    case DP_BLEND_MODE_DIVIDE:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_divide);
+        break;
+    case DP_BLEND_MODE_BURN:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_burn);
+        break;
+    case DP_BLEND_MODE_DODGE:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_dodge);
+        break;
+    case DP_BLEND_MODE_DARKEN:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_darken);
+        break;
+    case DP_BLEND_MODE_LIGHTEN:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_lighten);
+        break;
+    case DP_BLEND_MODE_SUBTRACT:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_subtract);
+        break;
+    case DP_BLEND_MODE_ADD:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_add);
+        break;
+    case DP_BLEND_MODE_RECOLOR:
+        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
+                                         comp_recolor);
+        break;
     default:
-        DP_debug("Unknown layer composite blend mode %d (%s)", blend_mode,
+        DP_debug("Unknown mask blend mode %d (%s)", blend_mode,
                  DP_blend_mode_enum_name(blend_mode));
-        return composite_unknown;
+        break;
     }
 }
 
-void DP_pixels_composite(DP_Pixel *dst, DP_Pixel *src, int pixel_count,
-                         uint8_t opacity, int blend_mode)
-{
-    DP_CompositeLayerFn op = get_composite_operation(blend_mode);
-    op(dst, src, pixel_count, opacity);
-}
 
-
-void DP_pixels_sample_mask(DP_Pixel *src, uint8_t *mask, int w, int h,
-                           int mask_skip, int base_skip, uint32_t *out_weight,
-                           uint32_t *out_red, uint32_t *out_green,
-                           uint32_t *out_blue, uint32_t *out_alpha)
+void DP_sample_mask(DP_Pixel15 *src, const uint16_t *mask, int w, int h,
+                    int mask_skip, int base_skip, float *out_weight,
+                    float *out_red, float *out_green, float *out_blue,
+                    float *out_alpha)
 {
     DP_ASSERT(out_weight);
     DP_ASSERT(out_red);
     DP_ASSERT(out_green);
     DP_ASSERT(out_blue);
     DP_ASSERT(out_alpha);
-    uint32_t weight = 0;
-    uint32_t red = 0;
-    uint32_t green = 0;
-    uint32_t blue = 0;
-    uint32_t alpha = 0;
+    float weight = 0.0f;
+    float red = 0.0f;
+    float green = 0.0f;
+    float blue = 0.0f;
+    float alpha = 0.0f;
 
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x, ++mask) {
-            uint8_t m = *mask;
-            DP_Pixel p = *src;
+            float m = DP_uint16_to_float(*mask) / BIT15_FLOAT;
+            DP_UPixelFloat p =
+                DP_upixel15_to_float(DP_pixel15_unpremultiply(*src));
             weight += m;
-            red += mul(p.r, m);
-            green += mul(p.g, m);
-            blue += mul(p.b, m);
-            alpha += mul(p.a, m);
+            red += p.r * m;
+            green += p.g * m;
+            blue += p.b * m;
+            alpha += p.a * m;
             ++src;
         }
         src += base_skip;

@@ -133,19 +133,19 @@ DP_Image *DP_image_png_read(DP_Input *input)
 
     png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
     DP_Image *img = DP_image_new((int)width, (int)height);
-    DP_Pixel *pixels = DP_image_pixels(img);
+    DP_Pixel8 *pixels = DP_image_pixels(img);
     for (png_uint_32 y = 0; y < height; ++y) {
         png_bytep row = row_pointers[y];
         for (png_uint_32 x = 0; x < width; ++x) {
             png_uint_32 offset = x * 4;
-            DP_Pixel pixel = {
+            DP_UPixel8 pixel = {
                 .b = row[offset],
                 .g = row[offset + 1],
                 .r = row[offset + 2],
                 .a = row[offset + 3],
             };
             // PNG stores pixels unpremultiplied, fix them up.
-            pixels[y * width + x] = DP_pixel_premultiply(pixel);
+            pixels[y * width + x] = DP_pixel8_premultiply(pixel);
         }
     }
 
@@ -155,7 +155,7 @@ DP_Image *DP_image_png_read(DP_Input *input)
 
 
 bool DP_image_png_write(DP_Output *output, int width, int height,
-                        DP_Pixel *pixels)
+                        DP_Pixel8 *pixels)
 {
     png_structp png_ptr =
         png_create_write_struct_2(PNG_LIBPNG_VER_STRING, NULL, error_png,
@@ -181,7 +181,7 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
     size_t pixel_count = stride * row_count;
     png_bytep bytes = png_malloc(png_ptr, pixel_count * 4);
     for (size_t pixel_index = 0; pixel_index < pixel_count; ++pixel_index) {
-        DP_Pixel pixel = DP_pixel_unpremultiply(pixels[pixel_index]);
+        DP_UPixel8 pixel = DP_pixel8_unpremultiply(pixels[pixel_index]);
         size_t byte_index = pixel_index * 4u;
         bytes[byte_index + 0u] = pixel.r;
         bytes[byte_index + 1u] = pixel.g;

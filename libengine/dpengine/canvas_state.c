@@ -266,8 +266,8 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
     bool fixed = flags & DP_MSG_LAYER_ATTR_FLAG_FIXED;
     return DP_ops_layer_attr(
         cs, DP_msg_layer_attr_layer_id(mla), DP_msg_layer_attr_sublayer_id(mla),
-        DP_msg_layer_attr_opacity(mla), DP_msg_layer_attr_blend_mode(mla),
-        censored, fixed);
+        DP_channel8_to_15(DP_msg_layer_attr_opacity(mla)),
+        DP_msg_layer_attr_blend_mode(mla), censored, fixed);
 }
 
 
@@ -355,9 +355,9 @@ static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
         return NULL;
     }
 
+    DP_Pixel15 pixel = DP_pixel15_from_color(DP_msg_fill_rect_color(mfr));
     return DP_ops_fill_rect(cs, context_id, DP_msg_fill_rect_layer_id(mfr),
-                            blend_mode, left, top, right, bottom,
-                            DP_msg_fill_rect_color(mfr));
+                            blend_mode, left, top, right, bottom, pixel);
 }
 
 static DP_CanvasState *handle_region_move(DP_CanvasState *cs,
@@ -406,8 +406,9 @@ static DP_CanvasState *handle_region_move(DP_CanvasState *cs,
     return next;
 }
 
-static DP_CanvasState *
-handle_put_tile(DP_CanvasState *cs, unsigned int context_id, DP_MsgPutTile *mpt)
+static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
+                                       unsigned int context_id,
+                                       DP_MsgPutTile *mpt)
 {
     DP_TileCounts tile_counts = DP_tile_counts_round(cs->width, cs->height);
     int tile_total = tile_counts.x * tile_counts.y;
@@ -428,7 +429,7 @@ handle_put_tile(DP_CanvasState *cs, unsigned int context_id, DP_MsgPutTile *mpt)
     else {
         size_t image_size;
         const unsigned char *image = DP_msg_put_tile_image(mpt, &image_size);
-        tile = DP_tile_new_from_compressed(context_id, image, image_size);
+        tile = DP_tile_new_from_compressed(dc, context_id, image, image_size);
         if (!tile) {
             return NULL;
         }
@@ -443,6 +444,7 @@ handle_put_tile(DP_CanvasState *cs, unsigned int context_id, DP_MsgPutTile *mpt)
 }
 
 static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
+                                                DP_DrawContext *dc,
                                                 unsigned int context_id,
                                                 DP_MsgCanvasBackground *mcb)
 {
@@ -455,7 +457,7 @@ static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
         size_t image_size;
         const unsigned char *image =
             DP_msg_canvas_background_image(mcb, &image_size);
-        tile = DP_tile_new_from_compressed(context_id, image, image_size);
+        tile = DP_tile_new_from_compressed(dc, context_id, image, image_size);
     }
 
     if (tile) {
@@ -551,7 +553,8 @@ handle_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc, DP_MessageType type,
     int sublayer_id, sublayer_opacity, sublayer_blend_mode, dabs_blend_mode;
     if (DP_msg_draw_dabs_indirect(mdd)) {
         sublayer_id = DP_uint_to_int(context_id);
-        sublayer_opacity = DP_uint32_to_int((color & 0xff000000) >> 24);
+        sublayer_opacity =
+            DP_channel8_to_15(DP_uint32_to_uint8((color & 0xff000000) >> 24));
         sublayer_blend_mode = blend_mode;
         dabs_blend_mode = DP_BLEND_MODE_NORMAL;
     }
@@ -615,10 +618,10 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
         return handle_region_move(cs, dc, DP_message_context_id(msg),
                                   DP_msg_region_move_cast(msg));
     case DP_MSG_PUT_TILE:
-        return handle_put_tile(cs, DP_message_context_id(msg),
+        return handle_put_tile(cs, dc, DP_message_context_id(msg),
                                DP_msg_put_tile_cast(msg));
     case DP_MSG_CANVAS_BACKGROUND:
-        return handle_canvas_background(cs, DP_message_context_id(msg),
+        return handle_canvas_background(cs, dc, DP_message_context_id(msg),
                                         DP_msg_canvas_background_cast(msg));
     case DP_MSG_PEN_UP:
         return handle_pen_up(cs, DP_message_context_id(msg));

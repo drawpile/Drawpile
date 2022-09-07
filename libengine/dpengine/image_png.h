@@ -26,7 +26,7 @@
 typedef struct DP_Image DP_Image;
 typedef struct DP_Input DP_Input;
 typedef struct DP_Output DP_Output;
-typedef union DP_Pixel DP_Pixel;
+typedef union DP_Pixel8 DP_Pixel8;
 
 
 bool DP_image_png_guess(unsigned char *buf, size_t size);
@@ -34,7 +34,7 @@ bool DP_image_png_guess(unsigned char *buf, size_t size);
 DP_Image *DP_image_png_read(DP_Input *input);
 
 bool DP_image_png_write(DP_Output *output, int width, int height,
-                        DP_Pixel *pixels);
+                        DP_Pixel8 *pixels);
 
 
 #endif

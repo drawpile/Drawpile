@@ -34,7 +34,7 @@
 struct DP_Image {
     int width, height;
     size_t count;
-    DP_Pixel pixels[];
+    DP_Pixel8 pixels[];
 };
 
 DP_Image *DP_image_new(int width, int height)
@@ -125,7 +125,7 @@ DP_Image *DP_image_new_from_compressed(int width, int height,
         // Nothing else to do here.
 #elif DP_BYTE_ORDER == DP_BIG_ENDIAN
         // Gotta byte-swap the pixels.
-        DP_Pixel *pixels = args.img->pixels;
+        DP_Pixel8 *pixels = args.img->pixels;
         for (int i = 0; i < width * height; ++i) {
             pixels[i].color = DP_swap_uint32(pixels[i].color);
         }
@@ -176,7 +176,7 @@ static DP_Image *extract_monochrome(int width, int height, int line_width,
             int byte_index = y * line_width + x / 8;
             int bit_mask = 1 << (7 - (x % 8)); // most significant bit first
             bool white = buffer[byte_index] & bit_mask;
-            DP_Pixel pixel = {white ? 0xffffffff : 0x00000000};
+            DP_Pixel8 pixel = {white ? 0xffffffff : 0x00000000};
             DP_image_pixel_at_set(img, x, y, pixel);
         }
     }
@@ -219,8 +219,8 @@ static void copy_pixels(DP_Image *DP_RESTRICT dst, DP_Image *DP_RESTRICT src,
     DP_ASSERT(src_y + copy_height <= src->height);
     int dst_width = dst->width;
     int src_width = src->width;
-    DP_Pixel *DP_RESTRICT dst_pixels = dst->pixels;
-    DP_Pixel *DP_RESTRICT src_pixels = src->pixels;
+    DP_Pixel8 *DP_RESTRICT dst_pixels = dst->pixels;
+    DP_Pixel8 *DP_RESTRICT src_pixels = src->pixels;
     size_t row_size = sizeof(uint32_t) * DP_int_to_size(copy_width);
     for (int y = 0; y < copy_height; ++y) {
         int d = (y + dst_y) * dst_width + dst_x;
@@ -264,13 +264,13 @@ int DP_image_height(DP_Image *img)
     return img->height;
 }
 
-DP_Pixel *DP_image_pixels(DP_Image *img)
+DP_Pixel8 *DP_image_pixels(DP_Image *img)
 {
     DP_ASSERT(img);
     return img->pixels;
 }
 
-DP_Pixel DP_image_pixel_at(DP_Image *img, int x, int y)
+DP_Pixel8 DP_image_pixel_at(DP_Image *img, int x, int y)
 {
     DP_ASSERT(img);
     DP_ASSERT(x >= 0);
@@ -280,7 +280,7 @@ DP_Pixel DP_image_pixel_at(DP_Image *img, int x, int y)
     return img->pixels[y * img->width + x];
 }
 
-void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel pixel)
+void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel8 pixel)
 {
     DP_ASSERT(img);
     DP_ASSERT(x >= 0);

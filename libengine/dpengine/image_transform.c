@@ -16,9 +16,15 @@
  *
  * --------------------------------------------------------------------
  *
- * This code is wholly based on the Qt framework's raster paint engine
- * implementation, using it under the GNU General Public License, version 3.
- * See 3rdparty/licenses/qt/license.GPL3 for details.
+ * If not otherwise noted, this code is wholly based on the Qt framework's
+ * raster paint engine implementation, using it under the GNU General Public
+ * License, version 3. See 3rdparty/licenses/qt/license.GPL3 for details.
+ *
+ * --------------------------------------------------------------------
+ *
+ * Parts of this code are based on Krita, using it under the GNU General
+ * Public License, version 3. See 3rdparty/licenses/krita/COPYING.txt for
+ * details.
  */
 #include "image_transform.h"
 #include "blend_mode.h"
@@ -33,11 +39,11 @@
 
 struct DP_RenderSpansData {
     int src_width, src_height;
-    DP_Pixel *src_pixels;
+    DP_Pixel8 *src_pixels;
     int dst_width, dst_height;
-    DP_Pixel *dst_pixels;
+    DP_Pixel8 *dst_pixels;
     DP_Transform tf;
-    DP_Pixel *buffer;
+    DP_Pixel8 *buffer;
 };
 
 
@@ -81,10 +87,10 @@ static inline uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr,
     return interpolate_pixel(xtop, idisty, xbot, disty);
 }
 
-static DP_Pixel *fetch_transformed_bilinear(int width, int height,
-                                            DP_Pixel *pixels, DP_Transform tf,
-                                            int x, int y, int length,
-                                            DP_Pixel *out_buffer)
+static DP_Pixel8 *fetch_transformed_bilinear(int width, int height,
+                                             DP_Pixel8 *pixels, DP_Transform tf,
+                                             int x, int y, int length,
+                                             DP_Pixel8 *out_buffer)
 {
     double *m = tf.matrix;
     double fdx = m[0];
@@ -95,8 +101,8 @@ static DP_Pixel *fetch_transformed_bilinear(int width, int height,
     double fx = m[3] * cy + m[0] * cx + m[6];
     double fy = m[4] * cy + m[1] * cx + m[7];
     double fw = m[5] * cy + m[2] * cx + m[8];
-    DP_Pixel *end = out_buffer + length;
-    DP_Pixel *b = out_buffer;
+    DP_Pixel8 *end = out_buffer + length;
+    DP_Pixel8 *b = out_buffer;
 
     while (b < end) {
         double iw = fw == 0.0 ? 1.0 : 1.0 / fw;
@@ -115,8 +121,8 @@ static DP_Pixel *fetch_transformed_bilinear(int width, int height,
         fetch_transformed_bilinear_pixel_bounds(0, width - 1, x1, &x1, &x2);
         fetch_transformed_bilinear_pixel_bounds(0, height - 1, y1, &y1, &y2);
 
-        DP_Pixel *s1 = pixels + y1 * width;
-        DP_Pixel *s2 = pixels + y2 * width;
+        DP_Pixel8 *s1 = pixels + y1 * width;
+        DP_Pixel8 *s2 = pixels + y2 * width;
         b->color =
             interpolate_4_pixels(s1[x1].color, s1[x2].color, s2[x1].color,
                                  s2[x2].color, distx, disty);
@@ -134,10 +140,32 @@ static DP_Pixel *fetch_transformed_bilinear(int width, int height,
     return out_buffer;
 }
 
-static void process_span(int len, int coverage, DP_Pixel *src, DP_Pixel *dst)
+// Multiplying two bytes as if they were floats between 0 and 1.
+// Adapted from Krita, see license above.
+static uint8_t mul(unsigned int a, unsigned int b)
 {
-    DP_pixels_composite(dst, src, len, DP_int_to_uint8(coverage),
-                        DP_BLEND_MODE_NORMAL);
+    unsigned int c = a * b + 0x80u;
+    return DP_uint_to_uint8(((c >> 8u) + c) >> 8u);
+}
+
+// Normal blending with 8 bit pixels.
+static void process_span(int len, int coverage, DP_Pixel8 *DP_RESTRICT src,
+                         DP_Pixel8 *DP_RESTRICT dst)
+{
+    unsigned int opacity = DP_uint8_to_uint(DP_int_to_uint8(coverage));
+    for (int i = 0; i < len; ++i) {
+        DP_Pixel8 s = src[i];
+        DP_Pixel8 d = dst[i];
+        unsigned int sa1 = 255u - mul(s.a, opacity);
+        if (sa1 != 255u) {
+            dst[i] = (DP_Pixel8){
+                .b = mul(s.b, opacity) + mul(d.b, sa1),
+                .g = mul(s.g, opacity) + mul(d.g, sa1),
+                .r = mul(s.r, opacity) + mul(d.r, sa1),
+                .a = mul(s.a, opacity) + mul(d.a, sa1),
+            };
+        }
+    }
 }
 
 static void render_spans(int count, const DP_FT_Span *spans, void *user)
@@ -145,10 +173,10 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
     struct DP_RenderSpansData *rsd = user;
     int src_width = rsd->src_width;
     int src_height = rsd->src_height;
-    DP_Pixel *src_pixels = rsd->src_pixels;
+    DP_Pixel8 *src_pixels = rsd->src_pixels;
     int dst_width = rsd->dst_width;
-    DP_Pixel *dst_pixels = rsd->dst_pixels;
-    DP_Pixel *buffer = rsd->buffer;
+    DP_Pixel8 *dst_pixels = rsd->dst_pixels;
+    DP_Pixel8 *buffer = rsd->buffer;
 
     int coverage = 0;
     while (count) {
@@ -172,8 +200,8 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
             int l = DP_min_int(length, DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE);
             length -= l;
 
-            DP_Pixel *dst = dst_pixels + y * dst_width + x;
-            DP_Pixel *src = fetch_transformed_bilinear(
+            DP_Pixel8 *dst = dst_pixels + y * dst_width + x;
+            DP_Pixel8 *src = fetch_transformed_bilinear(
                 src_width, src_height, src_pixels, rsd->tf, x, y, l, buffer);
             int offset = 0;
             while (l > 0) {

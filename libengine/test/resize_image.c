@@ -31,12 +31,12 @@
 static DP_Image *generate_base_image(void)
 {
     DP_Image *img = DP_image_new(WIDTH, HEIGHT);
-    DP_Pixel *pixels = DP_image_pixels(img);
+    DP_Pixel8 *pixels = DP_image_pixels(img);
     double wf = DP_int_to_double(WIDTH);
     double hf = DP_int_to_double(HEIGHT);
     for (int y = 0; y < HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
-            pixels[y * WIDTH + x] = (DP_Pixel){
+            pixels[y * WIDTH + x] = (DP_Pixel8){
                 .b = DP_double_to_uint8(DP_int_to_double(y) / hf * 255.0),
                 .g = DP_double_to_uint8(DP_int_to_double(x) / wf * 255.0),
                 .r = 255,
