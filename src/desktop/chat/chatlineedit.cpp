@@ -21,8 +21,9 @@
 #include "chatlineedit.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
-	QLineEdit(parent), _historypos(0)
+	QPlainTextEdit(parent), _historypos(0)
 {
+	setFixedHeight(60);
 }
 
 void ChatLineEdit::pushHistory(const QString &text)
@@ -44,34 +45,34 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 	if(event->key() == Qt::Key_Up) {
 		if(_historypos>0) {
 			if(_historypos==_history.count())
-				_current = text();
+				_current = toPlainText();
 			--_historypos;
-			setText(_history[_historypos]);
+			setPlainText(_history[_historypos]);
 		}
 	} else if(event->key() == Qt::Key_Down) {
 		if(_historypos<_history.count()-1) {
 			++_historypos;
-			setText(_history[_historypos]);
+			setPlainText(_history[_historypos]);
 		} else if(_historypos==_history.count()-1) {
 			++_historypos;
-			setText(_current);
+			setPlainText(_current);
 		}
-	} else if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+	} else if((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) && !(event->modifiers() & Qt::ShiftModifier)) {
 		QString txt = trimmedText();
 		if(!txt.isEmpty()) {
 			pushHistory(txt);
 			_historypos = _history.count();
-			setText(QString());
+			setPlainText(QString());
 			emit returnPressed(txt);
 		}
 	} else {
-		QLineEdit::keyPressEvent(event);
+		QPlainTextEdit::keyPressEvent(event);
 	}
 }
 
 QString ChatLineEdit::trimmedText() const
 {
-	QString str = text();
+	QString str = toPlainText();
 
 	// Remove trailing whitespace
 	int chop = str.length();
