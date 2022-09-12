@@ -212,12 +212,12 @@ void ChatWidget::Private::updatePreserveModeUi()
 
 	chatbox->setStyleSheet(
 		QStringLiteral(
-		"QTextEdit, QLineEdit {"
+		"QTextEdit, QPlainTextEdit {"
 			"background-color: #232629;"
 			"border: none;"
 			"color: #eff0f1"
 		"}"
-		"QLineEdit {"
+		"QPlainTextEdit {"
 			"border-top: 1px solid %1;"
 			"padding: 4px"
 		"}"
@@ -389,7 +389,12 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 		cursor.setPosition(b.position() + b.length() - 1);
 
 		cursor.insertHtml(QStringLiteral("<br>"));
-		cursor.insertHtml(message);
+	
+		// Using css property "white-space: pre" only works for the first message. Newlines disappear on subsequent messages.
+		// Thus the need to manually replace newlines by <br>
+		QString messageWithBr = message;
+		messageWithBr.replace("\n", "<br>");
+		cursor.insertHtml(messageWithBr);
 
 		return;
 	}
