@@ -26,6 +26,7 @@
 
 typedef struct DP_AnnotationList DP_AnnotationList;
 typedef struct DP_CanvasDiff DP_CanvasDiff;
+typedef struct DP_DocumentMetadata DP_DocumentMetadata;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 typedef struct DP_LayerContentList DP_LayerContentList;
@@ -42,12 +43,14 @@ typedef struct DP_CanvasState DP_CanvasState;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_TransientCanvasState DP_TransientCanvasState;
+typedef struct DP_TransientDocumentMetadata DP_TransientDocumentMetadata;
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 typedef struct DP_TransientLayerContentList DP_TransientLayerContentList;
 typedef struct DP_TransientLayerPropsList DP_TransientLayerPropsList;
 typedef struct DP_TransientTile DP_TransientTile;
 #else
 typedef struct DP_CanvasState DP_TransientCanvasState;
+typedef struct DP_DocumentMetadata DP_TransientDocumentMetadata;
 typedef struct DP_LayerContent DP_TransientLayerContent;
 typedef struct DP_LayerContentList DP_TransientLayerContentList;
 typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
@@ -79,6 +82,8 @@ DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs);
 DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs);
 
 DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs);
+
+DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs);
 
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_Message *msg);
@@ -150,6 +155,9 @@ DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
 DP_TransientAnnotationList *
 DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
                                                 int reserve);
+
+DP_TransientDocumentMetadata *
+DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);
 
 
 #endif

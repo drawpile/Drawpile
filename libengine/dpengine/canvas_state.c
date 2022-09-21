@@ -24,6 +24,7 @@
 #include "annotation_list.h"
 #include "canvas_diff.h"
 #include "compress.h"
+#include "document_metadata.h"
 #include "image.h"
 #include "layer_content.h"
 #include "layer_content_list.h"
@@ -51,6 +52,7 @@ struct DP_CanvasState {
     DP_LayerContentList *const layer_contents;
     DP_LayerPropsList *const layer_props;
     DP_AnnotationList *const annotations;
+    DP_DocumentMetadata *const metadata;
 };
 
 struct DP_TransientCanvasState {
@@ -69,6 +71,10 @@ struct DP_TransientCanvasState {
     union {
         DP_AnnotationList *annotations;
         DP_TransientAnnotationList *transient_annotations;
+    };
+    union {
+        DP_DocumentMetadata *metadata;
+        DP_TransientDocumentMetadata *transient_metadata;
     };
 };
 
@@ -91,6 +97,10 @@ struct DP_CanvasState {
         DP_AnnotationList *annotations;
         DP_TransientAnnotationList *transient_annotations;
     };
+    union {
+        DP_DocumentMetadata *metadata;
+        DP_TransientDocumentMetadata *transient_metadata;
+    };
 };
 
 #endif
@@ -107,6 +117,7 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                     NULL,
                                     {NULL},
                                     {NULL},
+                                    {NULL},
                                     {NULL}};
     return cs;
 }
@@ -117,6 +128,7 @@ DP_CanvasState *DP_canvas_state_new(void)
     tcs->layer_contents = DP_layer_content_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->annotations = DP_annotation_list_new();
+    tcs->metadata = DP_document_metadata_new();
     return (DP_CanvasState *)tcs;
 }
 
@@ -138,6 +150,7 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     if (DP_atomic_dec(&cs->refcount)) {
+        DP_document_metadata_decref(cs->metadata);
         DP_annotation_list_decref(cs->annotations);
         DP_layer_props_list_decref(cs->layer_props);
         DP_layer_content_list_decref(cs->layer_contents);
@@ -207,6 +220,13 @@ DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->annotations;
+}
+
+DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->metadata;
 }
 
 
@@ -624,6 +644,44 @@ static DP_CanvasState *handle_draw_dabs_mypaint(DP_CanvasState *cs,
                          0, 0, 0}}});
 }
 
+static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
+                                               DP_MsgSetMetadataInt *msmi)
+{
+    int field = DP_msg_set_metadata_int_field(msmi);
+    void (*set_field)(DP_TransientDocumentMetadata *, int);
+    switch (field) {
+    case DP_MSG_SET_METADATA_INT_FIELD_DPIX:
+        set_field = DP_transient_document_metadata_dpix_set;
+        break;
+    case DP_MSG_SET_METADATA_INT_FIELD_DPIY:
+        set_field = DP_transient_document_metadata_dpiy_set;
+        break;
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
+        set_field = DP_transient_document_metadata_framerate_set;
+        break;
+    case DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE:
+        set_field = DP_transient_document_metadata_use_timeline_set;
+        break;
+    default:
+        DP_error_set("Set metadata int: unknown field %d", field);
+        return NULL;
+    }
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientDocumentMetadata *tdm =
+        DP_transient_canvas_state_transient_metadata(tcs);
+    set_field(tdm, DP_msg_set_metadata_int_value(msmi));
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+static DP_CanvasState *handle_set_metadata_str(DP_UNUSED DP_CanvasState *cs,
+                                               DP_MsgSetMetadataStr *msms)
+{
+    // No string metadata is actually implemented, so just error out.
+    int field = DP_msg_set_metadata_str_field(msms);
+    DP_error_set("Set metadata str: unknown field %d", field);
+    return NULL;
+}
+
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_Message *msg)
 {
@@ -691,6 +749,10 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_DRAW_DABS_MYPAINT:
         return handle_draw_dabs_mypaint(cs, dc, DP_message_context_id(msg),
                                         DP_msg_draw_dabs_mypaint_cast(msg));
+    case DP_MSG_SET_METADATA_INT:
+        return handle_set_metadata_int(cs, DP_msg_set_metadata_int_cast(msg));
+    case DP_MSG_SET_METADATA_STR:
+        return handle_set_metadata_str(cs, DP_msg_set_metadata_str_cast(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;
@@ -839,6 +901,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
     tcs->layer_contents = DP_layer_content_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->annotations = DP_annotation_list_new();
+    tcs->metadata = DP_document_metadata_new();
     return tcs;
 }
 
@@ -859,6 +922,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
     tcs->layer_contents = DP_layer_content_list_incref(cs->layer_contents);
     tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
+    tcs->metadata = DP_document_metadata_incref(cs->metadata);
     return tcs;
 }
 
@@ -870,6 +934,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
     tcs->transient_layer_contents = tlcl;
     tcs->transient_layer_props = tlpl;
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
+    tcs->metadata = DP_document_metadata_incref(cs->metadata);
     return tcs;
 }
 
@@ -903,6 +968,9 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
     }
     if (DP_annotation_list_transient(tcs->annotations)) {
         DP_transient_annotation_list_persist(tcs->transient_annotations);
+    }
+    if (DP_document_metadata_transient(tcs->metadata)) {
+        DP_transient_document_metadata_persist(tcs->transient_metadata);
     }
     tcs->transient = false;
     return (DP_CanvasState *)tcs;
@@ -1025,4 +1093,18 @@ DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
             tcs->transient_annotations, reserve);
     }
     return tcs->transient_annotations;
+}
+
+DP_TransientDocumentMetadata *
+DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_DocumentMetadata *dm = tcs->metadata;
+    if (!DP_document_metadata_transient(dm)) {
+        tcs->transient_metadata = DP_transient_document_metadata_new(dm);
+        DP_document_metadata_decref(dm);
+    }
+    return tcs->transient_metadata;
 }

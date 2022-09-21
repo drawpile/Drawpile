@@ -19,14 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <dpcommon/output.h>
+#include "handle_common.h"
 #include <dpengine/annotation.h>
 #include <dpengine/annotation_list.h>
-#include <dpengine/canvas_history.h>
-#include <dpengine/canvas_state.h>
-#include <dpengine/draw_context.h>
-#include <dpmsg/message.h>
-#include <dptest.h>
 #include <parson.h>
 
 
@@ -82,37 +77,6 @@ static void dump(DP_Output *output, DP_CanvasHistory *ch, const char *title)
     DP_canvas_state_decref(cs);
 }
 
-static void add_message(DP_Output *output, DP_CanvasHistory *ch,
-                        DP_DrawContext *dc, DP_Message *msg)
-{
-    unsigned int error_count = DP_error_count();
-    bool ok = DP_canvas_history_handle(ch, dc, msg);
-    const char *error = DP_error_since(error_count);
-    DP_output_format(output, "-> %s %s - %u error(s)%s%s\n",
-                     DP_message_type_enum_name(DP_message_type(msg)),
-                     ok ? "ok" : "fail", DP_error_count_since(error_count),
-                     error ? ": " : "", error ? error : "");
-    DP_message_decref(msg);
-}
-
-static void add_undo_point(DP_Output *output, DP_CanvasHistory *ch,
-                           DP_DrawContext *dc)
-{
-    add_message(output, ch, dc, DP_msg_undo_point_new(1));
-}
-
-static void add_undo(DP_Output *output, DP_CanvasHistory *ch,
-                     DP_DrawContext *dc)
-{
-    add_message(output, ch, dc, DP_msg_undo_new(1, 0, false));
-}
-
-static void add_redo(DP_Output *output, DP_CanvasHistory *ch,
-                     DP_DrawContext *dc)
-{
-    add_message(output, ch, dc, DP_msg_undo_new(1, 0, true));
-}
-
 static void add_annotation_create(DP_Output *output, DP_CanvasHistory *ch,
                                   DP_DrawContext *dc, uint16_t id, int32_t x,
                                   int32_t y, uint16_t width, uint16_t height)
@@ -146,18 +110,9 @@ static void add_annotation_delete(DP_Output *output, DP_CanvasHistory *ch,
 }
 
 
-static void handle_annotations(TEST_PARAMS)
+static void handle_annotations(DP_Output *output, DP_CanvasHistory *ch,
+                               DP_DrawContext *dc)
 {
-    const char *in_path = "test/data/handle_annotations";
-    const char *out_path = "test/tmp/handle_annotations";
-
-    DP_Output *output = DP_file_output_new_from_path(out_path);
-    FATAL(NOT_NULL_OK(output, "got output for %s", out_path));
-
-    DP_output_print(output, "begin testing\n");
-
-    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
-    DP_DrawContext *dc = DP_draw_context_new();
     dump(output, ch, "initial empty annotations");
 
     add_undo_point(output, ch, dc);
@@ -217,23 +172,15 @@ static void handle_annotations(TEST_PARAMS)
     add_undo_point(output, ch, dc);
     add_annotation_delete(output, ch, dc, 258);
     dump(output, ch, "second annotation deleted");
-
-    DP_output_print(output, "done testing\n");
-
-    DP_draw_context_free(dc);
-    DP_canvas_history_free(ch);
-    DP_output_free(output);
-
-    FILE_EQ_OK(out_path, in_path, "annotation log as expected");
 }
 
-
-static void register_tests(REGISTER_PARAMS)
-{
-    REGISTER_TEST(handle_annotations);
-}
 
 int main(int argc, char **argv)
 {
-    return DP_test_main(argc, argv, register_tests, NULL);
+    static DP_HandleTest tests[] = {
+        {"handle_annotations", "test/tmp/handle_annotations",
+         "test/data/handle_annotations", handle_annotations},
+        {NULL, NULL, NULL, NULL},
+    };
+    return DP_test_main(argc, argv, register_handle_tests, tests);
 }

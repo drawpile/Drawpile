@@ -26,6 +26,7 @@ set(dpengine_sources
     dpengine/canvas_history.c
     dpengine/canvas_state.c
     dpengine/compress.c
+    dpengine/document_metadata.c
     dpengine/draw_context.c
     dpengine/image.c
     dpengine/image_png.c
@@ -48,6 +49,7 @@ set(dpengine_headers
     dpengine/canvas_history.h
     dpengine/canvas_state.h
     dpengine/compress.h
+    dpengine/document_metadata.h
     dpengine/draw_context.h
     dpengine/image.h
     dpengine/image_png.h
@@ -67,6 +69,7 @@ set(dptest_engine_headers test/dptest/dptest_engine.h)
 
 set(dpengine_tests
     test/handle_annotations.c
+    test/handle_metadata.c
     test/image_thumbnail.c
     test/model_changes.c
     test/read_write_image.c
@@ -75,7 +78,8 @@ set(dpengine_tests
 
 set(dpengine_clang_format_files "${dpengine_sources}" "${dpengine_headers}"
                                 "${dptest_engine_sources}"
-                                "${dptest_engine_headers}" "${dpengine_tests}")
+                                "${dptest_engine_headers}" "${dpengine_tests}"
+                                test/handle_metadata.h test/resize_image.h)
 
 add_clang_format_files("${dpengine_clang_format_files}")
 
