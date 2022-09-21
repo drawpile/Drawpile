@@ -35,7 +35,6 @@
 #include <dpengine/layer_content.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/command.h>
 #include <SDL.h>
 #include <lauxlib.h>
 #include <lua.h>

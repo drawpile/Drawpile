@@ -22,8 +22,8 @@
 #include "ops.h"
 #include "annotation.h"
 #include "annotation_list.h"
-#include "blend_mode.h"
 #include "canvas_state.h"
+#include "draw_context.h"
 #include "image.h"
 #include "layer_content.h"
 #include "layer_content_list.h"
@@ -34,6 +34,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
+#include <dpmsg/blend_mode.h>
 
 
 DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
@@ -74,33 +75,42 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
 
 
 DP_CanvasState *DP_ops_layer_create(DP_CanvasState *cs, int layer_id,
-                                    int source_id, DP_Tile *tile, bool insert,
-                                    bool copy, const char *title,
+                                    int source_id, int target_id, DP_Tile *tile,
+                                    bool into, bool group, const char *title,
                                     size_t title_length)
 {
+    if ((into && target_id != 0) || group) {
+        DP_error_set("Create layer: groups not supported yet");
+        return NULL;
+    }
+
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
     if (DP_layer_props_list_index_by_id(lpl, layer_id) >= 0) {
         DP_error_set("Create layer: id %d already exists", layer_id);
         return NULL;
     }
 
-    int source_index;
-    if (source_id > 0) {
-        source_index = DP_layer_props_list_index_by_id(lpl, source_id);
-        if (source_index < 0) {
-            DP_error_set("Create layer: source id %d not found", source_id);
+    int target_index;
+    if (target_id > 0) {
+        int i = DP_layer_props_list_index_by_id(lpl, target_id);
+        if (i >= 0) {
+            target_index = i + 1;
+        }
+        else {
+            DP_error_set("Create layer: target id %d not found", target_id);
             return NULL;
         }
     }
     else {
-        source_index = -1;
+        target_index = DP_layer_props_list_count(lpl);
     }
 
     DP_TransientLayerContent *tlc;
     DP_TransientLayerProps *tlp;
-    if (copy) {
+    if (source_id > 0) {
+        int source_index = DP_layer_props_list_index_by_id(lpl, source_id);
         if (source_index < 0) {
-            DP_error_set("Create layer: no copy source specified");
+            DP_error_set("Create layer: source id %d not found", source_id);
             return NULL;
         }
         DP_LayerContentList *lcl = DP_canvas_state_layer_contents_noinc(cs);
@@ -118,8 +128,6 @@ DP_CanvasState *DP_ops_layer_create(DP_CanvasState *cs, int layer_id,
     }
     DP_transient_layer_props_title_set(tlp, title, title_length);
 
-    int target_index =
-        insert ? source_index + 1 : DP_layer_props_list_count(lpl);
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
 
     DP_transient_layer_content_list_insert_transient_noinc(
@@ -154,9 +162,10 @@ static DP_TransientLayerProps *get_layer_props(DP_TransientCanvasState *tcs,
     }
 }
 
-DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
-                                  int sublayer_id, uint16_t opacity,
-                                  int blend_mode, bool censored, bool fixed)
+DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
+                                        int sublayer_id, uint16_t opacity,
+                                        int blend_mode, bool censored,
+                                        bool fixed, bool isolated)
 {
     int index = DP_layer_props_list_index_by_id(
         DP_canvas_state_layer_props_noinc(cs), layer_id);
@@ -171,62 +180,166 @@ DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
     DP_transient_layer_props_blend_mode_set(tlp, blend_mode);
     DP_transient_layer_props_censored_set(tlp, censored);
     DP_transient_layer_props_fixed_set(tlp, fixed);
+    (void)isolated; // TODO groups
 
     return DP_transient_canvas_state_persist(tcs);
 }
 
 
-DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, int layer_id_count,
-                                     int (*get_layer_id)(void *, int),
-                                     void *user)
+struct DP_LayerOrderContext {
+    DP_DrawContext *dc;
+    int count;
+    struct DP_LayerOrderPair (*get_layer)(void *, int);
+    void *user;
+    int layers_capacity;
+    int layers_used;
+    struct DP_LayerContentPropsPair *layers;
+};
+
+static void gather_layers(struct DP_LayerOrderContext *c,
+                          DP_LayerContentList *lcl, DP_LayerPropsList *lpl)
 {
-    DP_LayerContentList *lcl = DP_canvas_state_layer_contents_noinc(cs);
-    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
     int layer_count = DP_layer_content_list_count(lcl);
     DP_ASSERT(layer_count == DP_layer_props_list_count(lpl));
+
+    int used = c->layers_used;
+    if (c->layers_capacity - used < layer_count) {
+        int new_capacity = c->layers_capacity * 2;
+        DP_debug("Layer reorder: reallocate to new capacity %d", new_capacity);
+        c->layers = DP_draw_context_layer_pool_resize(c->dc, new_capacity);
+        c->layers_capacity = new_capacity;
+    }
+
+    for (int i = 0; i < layer_count; ++i) {
+        DP_debug("Layer reorder: layer %d with id %d", used + i,
+                 DP_layer_props_id(DP_layer_props_list_at_noinc(lpl, i)));
+        c->layers[used + i] = (struct DP_LayerContentPropsPair){
+            DP_layer_content_list_at_noinc(lcl, i),
+            DP_layer_props_list_at_noinc(lpl, i),
+        };
+    }
+    c->layers_used = used + layer_count;
+}
+
+static int skip_layers(struct DP_LayerOrderContext *c, int start,
+                       int child_count)
+{
+    int skip = 0;
+    int order_count = c->count;
+    for (int i = 0; i < child_count; ++i) {
+        if (i < order_count) {
+            ++skip;
+            struct DP_LayerOrderPair p = c->get_layer(c->user, start + i);
+            if (p.child_count > 0) {
+                int s = skip_layers(c, start + i, p.child_count);
+                if (s >= p.child_count) {
+                    skip += s;
+                }
+                else {
+                    return -1;
+                }
+            }
+        }
+        else {
+            return -1;
+        }
+    }
+    return skip;
+}
+
+static int count_layers(struct DP_LayerOrderContext *c)
+{
+    int layer_count = 0;
+    int order_count = c->count;
+    for (int i = 0; i < order_count; ++i) {
+        ++layer_count;
+        struct DP_LayerOrderPair p = c->get_layer(c->user, i);
+        if (p.child_count > 0) {
+            int s = skip_layers(c, i, p.child_count);
+            if (s >= p.child_count) {
+                i += s;
+            }
+            else {
+                return -1;
+            }
+        }
+    }
+    return layer_count;
+}
+
+static struct DP_LayerContentPropsPair *
+search_layer(struct DP_LayerOrderContext *c, int layer_id)
+{
+    int used = c->layers_used;
+    struct DP_LayerContentPropsPair *layers = c->layers;
+    for (int i = 0; i < used; ++i) {
+        struct DP_LayerContentPropsPair *l = &layers[i];
+        DP_LayerProps *lp = l->lp;
+        if (lp && DP_layer_props_id(lp) == layer_id) {
+            return l;
+        }
+    }
+    return NULL;
+}
+
+DP_CanvasState *DP_ops_layer_reorder(
+    DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int count,
+    struct DP_LayerOrderPair (*get_layer)(void *, int), void *user)
+{
+    if (root_layer_id != 0) {
+        DP_error_set("Layer reorder: groups not supported yet");
+        return NULL;
+    }
+
+    struct DP_LayerOrderContext c = {dc, count, get_layer, user, 0, 0, NULL};
+    c.layers = DP_draw_context_layer_pool(dc, &c.layers_capacity);
+
+    DP_LayerContentList *lcl = DP_canvas_state_layer_contents_noinc(cs);
+    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    gather_layers(&c, lcl, lpl);
+
+    if (count != c.layers_used) {
+        DP_error_set("Layer reorder: given layer count %d != actual %d", count,
+                     c.layers_used);
+        return NULL;
+    }
+
+    int layer_count = count_layers(&c);
+    if (layer_count < 0) {
+        DP_error_set("Layer reorder: invalid tree");
+        return NULL;
+    }
 
     DP_TransientLayerContentList *tlcl =
         DP_transient_layer_content_list_new_init(layer_count);
     DP_TransientLayerPropsList *tlpl =
         DP_transient_layer_props_list_new_init(layer_count);
-    DP_TransientCanvasState *tcs =
-        DP_transient_canvas_state_new_with_layers_noinc(cs, tlcl, tlpl);
 
-    int fill = 0;
-    for (int i = 0; i < layer_id_count; ++i) {
-        int layer_id = get_layer_id(user, i);
-        if (DP_transient_layer_props_list_index_by_id(tlpl, layer_id) == -1) {
-            int from_index = DP_layer_props_list_index_by_id(lpl, layer_id);
-            if (from_index != -1) {
-                DP_LayerContent *lc =
-                    DP_layer_content_list_at_noinc(lcl, from_index);
-                DP_LayerProps *lp =
-                    DP_layer_props_list_at_noinc(lpl, from_index);
-                DP_transient_layer_content_list_insert_inc(tlcl, lc, fill);
-                DP_transient_layer_props_list_insert_inc(tlpl, lp, fill);
-                ++fill;
-            }
-            else {
-                DP_warn("Layer reorder: unknown layer id %d", layer_id);
-            }
+    for (int i = 0; i < count; ++i) {
+        struct DP_LayerOrderPair p = get_layer(user, i);
+        DP_debug("Layer reorder: layer id %d with %d children", p.layer_id,
+                 p.child_count);
+        struct DP_LayerContentPropsPair *l = search_layer(&c, p.layer_id);
+        if (l) {
+            DP_ASSERT(l->lc && l->lp);
+            DP_TransientLayerContent *tlc =
+                DP_transient_layer_content_new(l->lc);
+            DP_TransientLayerProps *tlp = DP_transient_layer_props_new(l->lp);
+            DP_transient_layer_content_list_insert_transient_noinc(tlcl, tlc,
+                                                                   i);
+            DP_transient_layer_props_list_insert_transient_noinc(tlpl, tlp, i);
+            *l = (struct DP_LayerContentPropsPair){NULL, NULL};
         }
         else {
-            DP_warn("Layer reorder: duplicate layer id %d", layer_id);
+            DP_error_set("Layer reorder: invalid layer id %d", p.layer_id);
+            DP_transient_layer_props_list_decref(tlpl);
+            DP_transient_layer_content_list_decref(tlcl);
+            return NULL;
         }
     }
 
-    // If further layers remain, just move them over in the order they appear.
-    for (int i = 0; fill < layer_count && i < layer_count; ++i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        int layer_id = DP_layer_props_id(lp);
-        if (DP_transient_layer_props_list_index_by_id(tlpl, layer_id) == -1) {
-            DP_LayerContent *lc = DP_layer_content_list_at_noinc(lcl, i);
-            DP_transient_layer_content_list_insert_inc(tlcl, lc, fill);
-            DP_transient_layer_props_list_insert_inc(tlpl, lp, fill);
-            ++fill;
-        }
-    }
-
+    DP_TransientCanvasState *tcs =
+        DP_transient_canvas_state_new_with_layers_noinc(cs, tlcl, tlpl);
     return DP_transient_canvas_state_persist(tcs);
 }
 
@@ -253,27 +366,32 @@ DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, int layer_id,
 }
 
 
-static void merge_down_at(DP_TransientLayerContentList *tlcl,
-                          DP_TransientLayerPropsList *tlpl,
-                          unsigned int context_id, int index)
-{
-    DP_TransientLayerContent *tlc =
-        DP_transient_layer_content_list_transient_at_noinc(tlcl, index - 1);
-    DP_LayerContent *lc = DP_transient_layer_content_list_at_noinc(tlcl, index);
-    DP_LayerProps *lp = DP_transient_layer_props_list_at_noinc(tlpl, index);
-    DP_transient_layer_content_merge(tlc, context_id, lc,
-                                     DP_layer_props_opacity(lp),
-                                     DP_layer_props_blend_mode(lp));
-}
-
 DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, unsigned int context_id,
-                                    int layer_id, bool merge)
+                                    int layer_id, int merge_layer_id)
 {
-    int index = DP_layer_props_list_index_by_id(
-        DP_canvas_state_layer_props_noinc(cs), layer_id);
+    if (layer_id == merge_layer_id) {
+        DP_error_set("Layer delete: invalid merge of layer %d into itself",
+                     layer_id);
+        return NULL;
+    }
+
+    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    int index = DP_layer_props_list_index_by_id(lpl, layer_id);
     if (index < 0) {
         DP_error_set("Layer delete: id %d not found", layer_id);
         return NULL;
+    }
+
+    int merge_index;
+    if (merge_layer_id > 0) {
+        merge_index = DP_layer_props_list_index_by_id(lpl, merge_layer_id);
+        if (merge_index < 0) {
+            DP_error_set("Layer delete: merge id %d not found", merge_layer_id);
+            return NULL;
+        }
+    }
+    else {
+        merge_index = -1;
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
@@ -282,13 +400,16 @@ DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, unsigned int context_id,
     DP_TransientLayerPropsList *tlpl =
         DP_transient_canvas_state_transient_layer_props(tcs, 0);
 
-    if (merge) {
-        if (index > 0) {
-            merge_down_at(tlcl, tlpl, context_id, index);
-        }
-        else {
-            DP_warn("Attempt to merge down bottom layer ignored");
-        }
+    if (merge_index >= 0) {
+        DP_TransientLayerContent *tlc =
+            DP_transient_layer_content_list_transient_at_noinc(tlcl,
+                                                               merge_index);
+        DP_LayerContent *lc =
+            DP_transient_layer_content_list_at_noinc(tlcl, index);
+        DP_LayerProps *lp = DP_transient_layer_props_list_at_noinc(tlpl, index);
+        DP_transient_layer_content_merge(tlc, context_id, lc,
+                                         DP_layer_props_opacity(lp),
+                                         DP_layer_props_blend_mode(lp));
     }
 
     DP_transient_layer_content_list_delete_at(tlcl, index);

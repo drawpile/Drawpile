@@ -28,9 +28,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/command.h>
-#include <dpmsg/messages/internal.h>
-#include <dpmsg/messages/ping.h>
+#include <dpmsg/msg_internal.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
@@ -126,8 +124,8 @@ static void push_reset_command(DP_LuaClientData *lcd, DP_Message *msg,
 
 static void handle_command(DP_LuaClientData *lcd, DP_Message *msg)
 {
-    DP_MsgCommand *mc = DP_msg_command_cast(msg);
-    const char *string = DP_msg_command_message(mc, NULL);
+    DP_MsgServerCommand *msc = DP_msg_server_command_cast(msg);
+    const char *string = DP_msg_server_command_msg(msc, NULL);
     DP_debug("Handling command %s", string);
     JSON_Value *value = json_parse_string(string);
     if (!value) {
@@ -161,7 +159,7 @@ static void on_message(void *data, DP_Client *client, DP_Message *msg)
         push_reset_command(lcd, msg, true);
     }
     else {
-        if (type == DP_MSG_COMMAND) {
+        if (type == DP_MSG_SERVER_COMMAND) {
             handle_command(lcd, msg);
         }
         int client_id = DP_client_id(client);

@@ -22,90 +22,23 @@ set(dpmsg_sources
     dpmsg/access_tier.c
     dpmsg/binary_reader.c
     dpmsg/binary_writer.c
+    dpmsg/blend_mode.c
     dpmsg/message.c
+    dpmsg/messages.c
     dpmsg/message_queue.c
-    dpmsg/messages/annotation_create.c
-    dpmsg/messages/annotation_delete.c
-    dpmsg/messages/annotation_edit.c
-    dpmsg/messages/annotation_reshape.c
-    dpmsg/messages/canvas_background.c
-    dpmsg/messages/canvas_resize.c
-    dpmsg/messages/chat.c
-    dpmsg/messages/command.c
-    dpmsg/messages/disconnect.c
-    dpmsg/messages/draw_dabs.c
-    dpmsg/messages/draw_dabs.c
-    dpmsg/messages/feature_levels.c
-    dpmsg/messages/fill_rect.c
-    dpmsg/messages/internal.c
-    dpmsg/messages/interval.c
-    dpmsg/messages/layer_acl.c
-    dpmsg/messages/layer_attr.c
-    dpmsg/messages/layer_create.c
-    dpmsg/messages/layer_delete.c
-    dpmsg/messages/layer_order.c
-    dpmsg/messages/layer_retitle.c
-    dpmsg/messages/layer_visibility.c
-    dpmsg/messages/pen_up.c
-    dpmsg/messages/ping.c
-    dpmsg/messages/private_chat.c
-    dpmsg/messages/put_image.c
-    dpmsg/messages/put_tile.c
-    dpmsg/messages/region_move.c
-    dpmsg/messages/session_owner.c
-    dpmsg/messages/soft_reset.c
-    dpmsg/messages/trusted_users.c
-    dpmsg/messages/user_acl.c
-    dpmsg/messages/user_join.c
-    dpmsg/messages/user_leave.c
-    dpmsg/messages/undo.c
-    dpmsg/messages/undo_point.c
-    dpmsg/messages/zero_length.c
+    dpmsg/msg_internal.c
     dpmsg/text_writer.c)
 
 set(dpmsg_headers
     dpmsg/access_tier.h
+    dpmsg/disconnect_reason.h
     dpmsg/binary_reader.h
     dpmsg/binary_writer.h
+    dpmsg/blend_mode.h
     dpmsg/message.h
+    dpmsg/messages.h
     dpmsg/message_queue.h
-    dpmsg/messages/annotation_create.h
-    dpmsg/messages/annotation_delete.h
-    dpmsg/messages/annotation_edit.h
-    dpmsg/messages/annotation_reshape.h
-    dpmsg/messages/canvas_background.h
-    dpmsg/messages/canvas_resize.h
-    dpmsg/messages/chat.h
-    dpmsg/messages/command.h
-    dpmsg/messages/disconnect.h
-    dpmsg/messages/draw_dabs.h
-    dpmsg/messages/feature_levels.h
-    dpmsg/messages/fill_rect.h
-    dpmsg/messages/internal.c
-    dpmsg/messages/interval.h
-    dpmsg/messages/layer_acl.h
-    dpmsg/messages/layer_attr.h
-    dpmsg/messages/layer_create.h
-    dpmsg/messages/layer_delete.h
-    dpmsg/messages/layer_order.h
-    dpmsg/messages/layer_retitle.h
-    dpmsg/messages/layer_visibility.h
-    dpmsg/messages/pen_up.h
-    dpmsg/messages/ping.h
-    dpmsg/messages/private_chat.h
-    dpmsg/messages/put_image.h
-    dpmsg/messages/put_tile.h
-    dpmsg/messages/region_move.h
-    dpmsg/messages/session_owner.h
-    dpmsg/messages/soft_reset.h
-    dpmsg/messages/trusted_users.h
-    dpmsg/messages/user_acl.h
-    dpmsg/messages/user_ids.h
-    dpmsg/messages/user_join.h
-    dpmsg/messages/user_leave.h
-    dpmsg/messages/undo.h
-    dpmsg/messages/undo_point.h
-    dpmsg/messages/zero_length.h
+    dpmsg/msg_internal.h
     dpmsg/text_writer.h)
 
 set(dpmsg_tests

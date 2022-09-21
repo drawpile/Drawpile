@@ -20,8 +20,8 @@
 local EventTypes <const> = require("event.types")
 
 local MSG_TYPE_DISCONNECT <const> = DP.Message.Type.DISCONNECT
-local MSG_TYPE_USER_JOIN <const> = DP.Message.Type.USER_JOIN
-local MSG_TYPE_USER_LEAVE <const> = DP.Message.Type.USER_LEAVE
+local MSG_TYPE_JOIN <const> = DP.Message.Type.JOIN
+local MSG_TYPE_LEAVE <const> = DP.Message.Type.LEAVE
 local MSG_TYPE_CHAT <const> = DP.Message.Type.CHAT
 local MSG_TYPE_PRIVATE_CHAT <const> = DP.Message.Type.PRIVATE_CHAT
 
@@ -110,13 +110,13 @@ function State:handle_message(msg)
     if type == MSG_TYPE_DISCONNECT then
         local reason = DISCONNECT_REASONS[msg.reason] or "disconnect_other"
         self:_detach_state(reason, true)
-    elseif type == MSG_TYPE_USER_JOIN then
+    elseif type == MSG_TYPE_JOIN then
         self._app:publish(EventTypes.USER_JOIN, {
             client_id = self.client_id,
             context_id = msg.context_id,
             name = msg.name,
         })
-    elseif type == MSG_TYPE_USER_LEAVE then
+    elseif type == MSG_TYPE_LEAVE then
         self._app:publish(EventTypes.USER_LEAVE, {
             client_id = self.client_id,
             context_id = msg.context_id,

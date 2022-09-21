@@ -113,18 +113,24 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
                                      const unsigned char *image,
                                      size_t image_size)
 {
-    struct DP_TileInflateArgs args = {
-        DP_draw_context_tile_decompression_buffer(dc),
-        context_id,
-        NULL,
-    };
-    if (DP_compress_inflate(image, image_size, get_output_buffer, &args)) {
-        DP_pixels8_to_15(args.tt->pixels, args.buffer, DP_TILE_LENGTH);
-        return (DP_Tile *)args.tt;
+    if (image_size == 4) {
+        uint32_t bgra = DP_read_bigendian_uint32(image);
+        return DP_tile_new_from_bgra(context_id, bgra);
     }
     else {
-        DP_tile_decref_nullable((DP_Tile *)args.tt);
-        return NULL;
+        struct DP_TileInflateArgs args = {
+            DP_draw_context_tile_decompression_buffer(dc),
+            context_id,
+            NULL,
+        };
+        if (DP_compress_inflate(image, image_size, get_output_buffer, &args)) {
+            DP_pixels8_to_15(args.tt->pixels, args.buffer, DP_TILE_LENGTH);
+            return (DP_Tile *)args.tt;
+        }
+        else {
+            DP_tile_decref_nullable((DP_Tile *)args.tt);
+            return NULL;
+        }
     }
 }
 

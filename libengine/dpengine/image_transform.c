@@ -27,13 +27,13 @@
  * details.
  */
 #include "image_transform.h"
-#include "blend_mode.h"
 #include "dpcommon/conversions.h"
 #include "draw_context.h"
 #include "image.h"
 #include "pixels.h"
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
+#include <dpmsg/blend_mode.h>
 #include <qgrayraster_inc.h>
 
 

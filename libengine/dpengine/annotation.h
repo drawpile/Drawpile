@@ -23,6 +23,10 @@
 #define DPENGINE_ANNOTATION_H
 #include <dpcommon/common.h>
 
+#define DP_ANNOTATION_VALIGN_TOP    0
+#define DP_ANNOTATION_VALIGN_CENTER 1
+#define DP_ANNOTATION_VALIGN_BOTTOM 2
+
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_Annotation DP_Annotation;
 typedef struct DP_TransientAnnotation DP_TransientAnnotation;

@@ -20,7 +20,7 @@
 local EventTypes <const> = require("event.types")
 local Json <const> = require("3rdparty.json.json")
 
-local MSG_TYPE_COMMAND <const> = DP.Message.Type.COMMAND
+local MSG_TYPE_SERVER_COMMAND <const> = DP.Message.Type.SERVER_COMMAND
 local MSG_TYPE_DISCONNECT <const> = DP.Message.Type.DISCONNECT
 local MSG_TYPE_PING <const> = DP.Message.Type.PING
 local PROTOCOL_VERSION <const> = "4"
@@ -510,7 +510,7 @@ function LoginHandler:on_client_message(event)
     if session then
         local msg = event.message
         local type = msg.type
-        if type == MSG_TYPE_COMMAND then
+        if type == MSG_TYPE_SERVER_COMMAND then
             self:_run_handler(self._handle_command, session, msg.message)
         elseif type == MSG_TYPE_DISCONNECT then
             if msg.reason == DP.Message.Disconnect.Reason.KICK then

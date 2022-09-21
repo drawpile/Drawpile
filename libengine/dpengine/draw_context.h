@@ -30,6 +30,8 @@
 #define DPENGINE_DRAW_CONTEXT_H
 #include <dpcommon/common.h>
 
+typedef struct DP_LayerContent DP_LayerContent;
+typedef struct DP_LayerProps DP_LayerProps;
 typedef union DP_Pixel8 DP_Pixel8;
 
 
@@ -40,6 +42,11 @@ typedef union DP_Pixel8 DP_Pixel8;
 #define DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE 204
 #define DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE  8192
 #define DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE  (1024 * 1024)
+
+struct DP_LayerContentPropsPair {
+    DP_LayerContent *lc;
+    DP_LayerProps *lp;
+};
 
 typedef uint16_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 
@@ -61,6 +68,12 @@ unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc,
 
 unsigned char *DP_draw_context_raster_pool_resize(DP_DrawContext *dc,
                                                   size_t new_size);
+
+struct DP_LayerContentPropsPair *DP_draw_context_layer_pool(DP_DrawContext *dc,
+                                                            int *out_capacity);
+
+struct DP_LayerContentPropsPair *
+DP_draw_context_layer_pool_resize(DP_DrawContext *dc, int new_capacity);
 
 
 #endif

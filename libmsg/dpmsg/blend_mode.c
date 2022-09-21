@@ -268,6 +268,11 @@ const char *DP_blend_mode_enum_name_unprefixed(int blend_mode)
     return get_attributes(blend_mode)->enum_name + 14;
 }
 
+const char *DP_blend_mode_svg_name(int blend_mode)
+{
+    return get_attributes(blend_mode)->svg_name;
+}
+
 DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode)
 {
     return get_attributes(blend_mode)->flags & BLEND_BLANK

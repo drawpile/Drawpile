@@ -19,8 +19,8 @@
  * This code is based on Drawpile, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
-#ifndef DPENGINE_BLEND_MODE_H
-#define DPENGINE_BLEND_MODE_H
+#ifndef DPMSG_BLEND_MODE_H
+#define DPMSG_BLEND_MODE_H
 #include <dpcommon/common.h>
 
 
@@ -71,6 +71,8 @@ bool DP_blend_mode_valid_for_brush(int blend_mode);
 const char *DP_blend_mode_enum_name(int blend_mode);
 
 const char *DP_blend_mode_enum_name_unprefixed(int blend_mode);
+
+const char *DP_blend_mode_svg_name(int blend_mode);
 
 DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode);
 

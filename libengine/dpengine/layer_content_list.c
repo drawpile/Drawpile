@@ -107,7 +107,7 @@ void DP_layer_content_list_decref(DP_LayerContentList *lcl)
     if (DP_atomic_dec(&lcl->refcount)) {
         int count = lcl->count;
         for (int i = 0; i < count; ++i) {
-            DP_layer_content_decref(lcl->elements[i].layer_content);
+            DP_layer_content_decref_nullable(lcl->elements[i].layer_content);
         }
         DP_free(lcl);
     }

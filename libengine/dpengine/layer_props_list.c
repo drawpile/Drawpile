@@ -103,7 +103,7 @@ void DP_layer_props_list_decref(DP_LayerPropsList *lpl)
     if (DP_atomic_dec(&lpl->refcount)) {
         int count = lpl->count;
         for (int i = 0; i < count; ++i) {
-            DP_layer_props_decref(lpl->elements[i].layer_props);
+            DP_layer_props_decref_nullable(lpl->elements[i].layer_props);
         }
         DP_free(lpl);
     }

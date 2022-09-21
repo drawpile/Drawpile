@@ -22,7 +22,6 @@ set(dpengine_sources
     dpengine/affected_area.c
     dpengine/annotation.c
     dpengine/annotation_list.c
-    dpengine/blend_mode.c
     dpengine/canvas_diff.c
     dpengine/canvas_history.c
     dpengine/canvas_state.c
@@ -45,7 +44,6 @@ set(dpengine_headers
     dpengine/affected_area.h
     dpengine/annotation.h
     dpengine/annotation_list.h
-    dpengine/blend_mode.h
     dpengine/canvas_diff.h
     dpengine/canvas_history.h
     dpengine/canvas_state.h

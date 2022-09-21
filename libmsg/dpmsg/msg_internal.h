@@ -19,22 +19,29 @@
  * This code is based on Drawpile, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
-#ifndef DPMSG_PEN_UP_H
-#define DPMSG_PEN_UP_H
+#ifndef DPMSG_MSG_INTERNAL_H
+#define DPMSG_MSG_INTERNAL_H
 #include <dpcommon/common.h>
 
 typedef struct DP_Message DP_Message;
 
+typedef enum DP_MsgInternalType {
+    DP_MSG_INTERNAL_TYPE_RESET,
+    DP_MSG_INTERNAL_TYPE_SOFT_RESET,
+    DP_MSG_INTERNAL_TYPE_COUNT,
+} DP_MsgInternalType;
 
-typedef struct DP_MsgPenUp DP_MsgPenUp;
 
-DP_Message *DP_msg_pen_up_new(unsigned int context_id);
+typedef struct DP_MsgInternal DP_MsgInternal;
 
-DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
-                                      const unsigned char *buffer,
-                                      size_t length);
+DP_Message *DP_msg_internal_reset_new(unsigned int context_id);
 
-DP_MsgPenUp *DP_msg_pen_up_cast(DP_Message *msg);
+DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id);
+
+DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
+
+
+DP_MsgInternalType DP_msg_internal_type(DP_MsgInternal *mi);
 
 
 #endif

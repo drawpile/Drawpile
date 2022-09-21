@@ -32,29 +32,35 @@ typedef struct DP_Quad DP_Quad;
 typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
 
+struct DP_LayerOrderPair {
+    int child_count;
+    int layer_id;
+};
+
 
 DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
                                      unsigned int context_id, int top,
                                      int right, int bottom, int left);
 
 DP_CanvasState *DP_ops_layer_create(DP_CanvasState *cs, int layer_id,
-                                    int source_id, DP_Tile *tile, bool insert,
-                                    bool copy, const char *title,
+                                    int source_id, int target_id, DP_Tile *tile,
+                                    bool into, bool group, const char *title,
                                     size_t title_length);
 
-DP_CanvasState *DP_ops_layer_attr(DP_CanvasState *cs, int layer_id,
-                                  int sublayer_id, uint16_t opacity,
-                                  int blend_mode, bool censored, bool fixed);
+DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
+                                        int sublayer_id, uint16_t opacity,
+                                        int blend_mode, bool censored,
+                                        bool fixed, bool isolated);
 
-DP_CanvasState *DP_ops_layer_reorder(DP_CanvasState *cs, int layer_id_count,
-                                     int (*get_layer_id)(void *, int),
-                                     void *user);
+DP_CanvasState *DP_ops_layer_reorder(
+    DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int count,
+    struct DP_LayerOrderPair (*get_layer)(void *, int), void *user);
 
 DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, int layer_id,
                                      const char *title, size_t title_length);
 
 DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, unsigned int context_id,
-                                    int layer_id, bool merge);
+                                    int layer_id, int merge_layer_id);
 
 DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, int layer_id,
                                         bool visible);

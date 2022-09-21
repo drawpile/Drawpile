@@ -34,7 +34,6 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/draw_dabs.h>
 #include <math.h>
 
 
@@ -291,24 +290,23 @@ static void draw_dabs_classic(DP_PaintDrawDabsParams *params,
     DP_Pixel15 pixel = DP_pixel15_from_color(params->color);
     int blend_mode = params->blend_mode;
     int dab_count = params->dab_count;
-    DP_ClassicBrushDab *dabs = params->dabs;
+    const DP_ClassicDab *dabs = params->classic.dabs;
 
     int last_x = params->origin_x;
     int last_y = params->origin_y;
     DP_BrushStamp mask_stamp = make_brush_stamp1(dc);
     DP_BrushStamp offset_stamp = make_brush_stamp2(dc);
     for (int i = 0; i < dab_count; ++i) {
-        DP_ClassicBrushDab *dab = DP_classic_brush_dab_at(dabs, i);
+        const DP_ClassicDab *dab = DP_classic_dab_at(dabs, i);
 
-        get_classic_mask_stamp(&mask_stamp,
-                               DP_classic_brush_dab_size(dab) / 256.0,
-                               DP_classic_brush_dab_hardness(dab) / 255.0);
+        get_classic_mask_stamp(&mask_stamp, DP_classic_dab_size(dab) / 256.0,
+                               DP_classic_dab_hardness(dab) / 255.0);
 
-        int x = last_x + DP_classic_brush_dab_x(dab);
-        int y = last_y + DP_classic_brush_dab_y(dab);
+        int x = last_x + DP_classic_dab_x(dab);
+        int y = last_y + DP_classic_dab_y(dab);
         get_classic_offset_stamp(&offset_stamp, &mask_stamp, x / 4.0, y / 4.0);
 
-        uint16_t opacity = DP_channel8_to_15(DP_classic_brush_dab_opacity(dab));
+        uint16_t opacity = DP_channel8_to_15(DP_classic_dab_opacity(dab));
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel, opacity, blend_mode, &offset_stamp);
         last_x = x;
@@ -358,7 +356,7 @@ static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
     DP_Pixel15 pixel = DP_pixel15_from_color(params->color);
     int blend_mode = params->blend_mode;
     int dab_count = params->dab_count;
-    DP_PixelBrushDab *dabs = params->dabs;
+    const DP_PixelDab *dabs = params->pixel.dabs;
 
     int last_x = params->origin_x;
     int last_y = params->origin_y;
@@ -366,21 +364,21 @@ static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
 
     int last_size = -1;
     for (int i = 0; i < dab_count; ++i) {
-        DP_PixelBrushDab *dab = DP_pixel_brush_dab_at(dabs, i);
+        const DP_PixelDab *dab = DP_pixel_dab_at(dabs, i);
 
-        int size = DP_pixel_brush_dab_size(dab);
+        int size = DP_pixel_dab_size(dab);
         if (size != last_size) {
             get_stamp(&stamp, size);
             last_size = size;
         }
 
-        int x = last_x + DP_pixel_brush_dab_x(dab);
-        int y = last_y + DP_pixel_brush_dab_y(dab);
+        int x = last_x + DP_pixel_dab_x(dab);
+        int y = last_y + DP_pixel_dab_y(dab);
         int offset = size / 2;
         stamp.left = x - offset;
         stamp.top = y - offset;
 
-        uint16_t opacity = DP_channel8_to_15(DP_pixel_brush_dab_opacity(dab));
+        uint16_t opacity = DP_channel8_to_15(DP_pixel_dab_opacity(dab));
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel, opacity, blend_mode, &stamp);
         last_x = x;
@@ -405,6 +403,9 @@ void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
         break;
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
         draw_dabs_pixel(params, tlc, get_square_pixel_mask_stamp);
+        break;
+    case DP_MSG_DRAW_DABS_MYPAINT:
+        DP_error_set("MyPaint dabs not yet implemented");
         break;
     default:
         DP_panic("Unknown paint type %d", type);

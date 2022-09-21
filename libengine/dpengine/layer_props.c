@@ -20,11 +20,11 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "layer_props.h"
-#include "blend_mode.h"
 #include "layer_props_list.h"
 #include "pixels.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
+#include <dpmsg/blend_mode.h>
 
 
 typedef struct DP_LayerTitle {

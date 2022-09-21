@@ -20,10 +20,12 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "text_writer.h"
+#include "blend_mode.h"
 #include "dpcommon/output.h"
 #include "message.h"
 #include <dpcommon/base64.h>
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 #include <ctype.h>
 #include <inttypes.h>
 #include <parson.h>
@@ -156,6 +158,14 @@ static bool format_argument(DP_TextWriter *writer, const char *fmt, ...)
 }
 
 
+bool DP_text_writer_write_bool(DP_TextWriter *writer, const char *key,
+                               bool value)
+{
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    return format_argument(writer, " %s=%s", key, value ? "true" : "false");
+}
+
 bool DP_text_writer_write_int(DP_TextWriter *writer, const char *key, int value)
 {
     DP_ASSERT(writer);
@@ -256,6 +266,15 @@ bool DP_text_writer_write_argb_color(DP_TextWriter *writer, const char *key,
     }
 }
 
+bool DP_text_writer_write_blend_mode(DP_TextWriter *writer, const char *key,
+                                     int blend_mode)
+{
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    return DP_text_writer_write_string(writer, key,
+                                       DP_blend_mode_svg_name(blend_mode));
+}
+
 static bool buffer_wrapped_argument(DP_TextWriter *writer, const char *key,
                                     const char *value, size_t value_length,
                                     size_t line_width)
@@ -288,18 +307,19 @@ static bool buffer_wrapped_argument(DP_TextWriter *writer, const char *key,
 }
 
 bool DP_text_writer_write_base64(DP_TextWriter *writer, const char *key,
-                                 const unsigned char *value, size_t length)
+                                 const unsigned char *value, int length)
 {
     DP_ASSERT(writer);
     DP_ASSERT(key);
 
-    if (length == 0) {
+    if (length <= 0) {
         return format_argument(writer, " %s=", key);
     }
     else {
         DP_ASSERT(value);
         size_t base64_length;
-        char *base64 = DP_base64_encode(value, length, &base64_length);
+        char *base64 =
+            DP_base64_encode(value, DP_int_to_size(length), &base64_length);
         bool ok = base64_length <= BASE64_LINE_WIDTH
                     ? format_argument(writer, " %s=%s", key, base64)
                     : buffer_wrapped_argument(writer, key, base64,
@@ -345,42 +365,47 @@ bool DP_text_writer_write_id(DP_TextWriter *writer, const char *key, int value)
     return format_argument(writer, " %s=0x%04x", key, value);
 }
 
+
+#define WRITE_LIST(WRITER, KEY, VALUE, COUNT, TYPE, FMT)                   \
+    do {                                                                   \
+        DP_ASSERT(WRITER);                                                 \
+        DP_ASSERT(KEY);                                                    \
+        if (COUNT == 0) {                                                  \
+            DP_RETURN_UNLESS(format_argument(WRITER, " %s=", KEY));        \
+        }                                                                  \
+        else {                                                             \
+            DP_RETURN_UNLESS(                                              \
+                format_argument(WRITER, " %s=" FMT, KEY, (TYPE)VALUE[0])); \
+            for (int _i = 1; _i < COUNT; ++_i) {                           \
+                DP_RETURN_UNLESS(                                          \
+                    format_argument(writer, "," FMT, (TYPE)VALUE[_i]));    \
+            }                                                              \
+        }                                                                  \
+        return true;                                                       \
+    } while (0)
+
 bool DP_text_writer_write_id_list(DP_TextWriter *writer, const char *key,
                                   const int *value, int count)
 {
-    DP_ASSERT(writer);
-    DP_ASSERT(key);
-
-    if (count == 0) {
-        DP_RETURN_UNLESS(format_argument(writer, " %s=", key));
-    }
-    else {
-        DP_RETURN_UNLESS(format_argument(writer, " %s=0x%04x", key, value[0]));
-        for (int i = 1; i < count; ++i) {
-            DP_RETURN_UNLESS(format_argument(writer, ",0x%04x", value[i]));
-        }
-    }
-
-    return true;
+    WRITE_LIST(writer, key, value, count, int, "0x%04x");
 }
 
 bool DP_text_writer_write_uint_list(DP_TextWriter *writer, const char *key,
                                     const unsigned int *value, int count)
 {
-    DP_ASSERT(writer);
-    DP_ASSERT(key);
+    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
+}
 
-    if (count == 0) {
-        DP_RETURN_UNLESS(format_argument(writer, " %s=", key));
-    }
-    else {
-        DP_RETURN_UNLESS(format_argument(writer, " %s=%u", key, value[0]));
-        for (int i = 1; i < count; ++i) {
-            DP_RETURN_UNLESS(format_argument(writer, ",%u", value[i]));
-        }
-    }
+bool DP_text_writer_write_uint8_list(DP_TextWriter *writer, const char *key,
+                                     const uint8_t *value, int count)
+{
+    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
+}
 
-    return true;
+bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
+                                      const uint16_t *value, int count)
+{
+    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
 }
 
 

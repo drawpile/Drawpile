@@ -29,7 +29,6 @@
 #include <dpcommon/threading.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/ping.h>
 #include <SDL_timer.h>
 
 #ifdef __EMSCRIPTEN__

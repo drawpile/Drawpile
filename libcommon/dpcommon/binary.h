@@ -21,20 +21,42 @@
  */
 #ifndef DPCOMMON_BINARY_H
 #define DPCOMMON_BINARY_H
-#include <stdint.h>
-#include <stdlib.h>
+#include "common.h"
 
 int8_t DP_read_bigendian_int8(const unsigned char *d);
+int16_t DP_read_bigendian_int16(const unsigned char *d);
 int32_t DP_read_bigendian_int32(const unsigned char *d);
 uint8_t DP_read_bigendian_uint8(const unsigned char *d);
 uint16_t DP_read_bigendian_uint16(const unsigned char *d);
 uint32_t DP_read_bigendian_uint32(const unsigned char *d);
 
 size_t DP_write_bigendian_int8(int8_t x, unsigned char *out);
+size_t DP_write_bigendian_int16(int16_t x, unsigned char *out);
 size_t DP_write_bigendian_int32(int32_t x, unsigned char *out);
 size_t DP_write_bigendian_uint8(uint8_t x, unsigned char *out);
 size_t DP_write_bigendian_uint16(uint16_t x, unsigned char *out);
 size_t DP_write_bigendian_uint32(uint32_t x, unsigned char *out);
+
+size_t DP_write_bytes(const void *DP_RESTRICT x, int count, size_t elem_size,
+                      unsigned char *DP_RESTRICT out);
+
+size_t DP_write_bigendian_int8_array(const int8_t *DP_RESTRICT x, int count,
+                                     unsigned char *DP_RESTRICT out);
+
+size_t DP_write_bigendian_int16_array(const int16_t *DP_RESTRICT x, int count,
+                                      unsigned char *DP_RESTRICT out);
+
+size_t DP_write_bigendian_int32_array(const int32_t *DP_RESTRICT x, int count,
+                                      unsigned char *DP_RESTRICT out);
+
+size_t DP_write_bigendian_uint8_array(const uint8_t *DP_RESTRICT x, int count,
+                                      unsigned char *DP_RESTRICT out);
+
+size_t DP_write_bigendian_uint16_array(const uint16_t *DP_RESTRICT x, int count,
+                                       unsigned char *DP_RESTRICT out);
+
+size_t DP_write_bigendian_uint32_array(const uint32_t *DP_RESTRICT x, int count,
+                                       unsigned char *DP_RESTRICT out);
 
 uint32_t DP_swap_uint32(uint32_t x);
 

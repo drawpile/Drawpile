@@ -34,12 +34,14 @@ typedef enum DP_AffectedDomain {
     DP_AFFECTED_DOMAIN_ANNOTATIONS,
     DP_AFFECTED_DOMAIN_PIXELS,
     DP_AFFECTED_DOMAIN_CANVAS_BACKGROUND,
+    DP_AFFECTED_DOMAIN_DOCUMENT_METADATA,
+    DP_AFFECTED_DOMAIN_TIMELINE,
     DP_AFFECTED_DOMAIN_EVERYTHING,
 } DP_AffectedDomain;
 
 typedef struct DP_AffectedArea {
     DP_AffectedDomain domain;
-    int affected_id; // layer or annotation id
+    int affected_id; // layer, annotation, field or frame id
     DP_Rect bounds;
 } DP_AffectedArea;
 

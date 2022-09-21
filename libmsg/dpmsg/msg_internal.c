@@ -19,9 +19,9 @@
  * This code is based on Drawpile, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
-#include "internal.h"
-#include "../message.h"
-#include "../text_writer.h"
+#include "msg_internal.h"
+#include "message.h"
+#include "text_writer.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 
@@ -47,19 +47,23 @@ static bool write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
     DP_MsgInternal *mi = DP_msg_internal_cast(msg);
     DP_ASSERT(mi);
-    DP_RETURN_UNLESS(DP_text_writer_write_int(writer, "type", (int)mi->type));
-    return true;
+    return DP_text_writer_write_int(writer, "type", (int)mi->type);
 }
 
 static bool equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
 {
     DP_MsgInternal *a = DP_msg_internal_cast(msg);
+    DP_ASSERT(a);
     DP_MsgInternal *b = DP_msg_internal_cast(other);
+    DP_ASSERT(b);
     return a->type == b->type;
 }
 
 static const DP_MessageMethods methods = {
-    payload_length, serialize_payload, write_payload_text, equals, NULL,
+    payload_length,
+    serialize_payload,
+    write_payload_text,
+    equals,
 };
 
 static DP_Message *msg_internal_new(unsigned int context_id,

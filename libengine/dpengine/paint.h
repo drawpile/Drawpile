@@ -23,9 +23,10 @@
 #define DPENGINE_PAINT_H
 #include <dpcommon/common.h>
 
-typedef struct DP_ClassicBrushDab DP_ClassicBrushDab;
+typedef struct DP_ClassicDab DP_ClassicDab;
 typedef struct DP_DrawContext DP_DrawContext;
-typedef struct DP_PixelBrushDab DP_PixelBrushDab;
+typedef struct DP_MyPaintDab DP_MyPaintDab;
+typedef struct DP_PixelDab DP_PixelDab;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
@@ -50,7 +51,21 @@ typedef struct DP_PaintDrawDabsParams {
     uint32_t color;
     int blend_mode;
     int dab_count;
-    void *dabs;
+    union {
+        struct {
+            const DP_ClassicDab *dabs;
+        } classic;
+        struct {
+            const DP_PixelDab *dabs;
+        } pixel;
+        struct {
+            const DP_MyPaintDab *dabs;
+            uint8_t lock_alpha;
+            uint8_t colorize;
+            uint8_t posterize;
+            uint8_t posterize_num;
+        } mypaint;
+    };
 } DP_PaintDrawDabsParams;
 
 

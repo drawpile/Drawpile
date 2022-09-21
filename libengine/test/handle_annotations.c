@@ -26,15 +26,23 @@
 #include <dpengine/canvas_state.h>
 #include <dpengine/draw_context.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/annotation_create.h>
-#include <dpmsg/messages/annotation_delete.h>
-#include <dpmsg/messages/annotation_edit.h>
-#include <dpmsg/messages/annotation_reshape.h>
-#include <dpmsg/messages/undo.h>
-#include <dpmsg/messages/undo_point.h>
 #include <dptest.h>
 #include <parson.h>
 
+
+static const char *dump_valign(int valign)
+{
+    switch (valign) {
+    case DP_ANNOTATION_VALIGN_TOP:
+        return "top";
+    case DP_ANNOTATION_VALIGN_CENTER:
+        return "center";
+    case DP_ANNOTATION_VALIGN_BOTTOM:
+        return "bottom";
+    default:
+        return "unknown";
+    }
+}
 
 static void dump(DP_Output *output, DP_CanvasHistory *ch, const char *title)
 {
@@ -56,8 +64,8 @@ static void dump(DP_Output *output, DP_CanvasHistory *ch, const char *title)
                          DP_annotation_background_color(a));
         DP_output_format(output, "    protect = %s\n",
                          DP_annotation_protect(a) ? "true" : "false");
-        DP_output_format(output, "    valign = 0x%x\n",
-                         DP_annotation_valign(a));
+        DP_output_format(output, "    valign = %s\n",
+                         dump_valign(DP_annotation_valign(a)));
         size_t length;
         const char *text = DP_annotation_text(a, &length);
         DP_output_format(output, "    text_length = %zu\n", length);
@@ -106,24 +114,24 @@ static void add_redo(DP_Output *output, DP_CanvasHistory *ch,
 }
 
 static void add_annotation_create(DP_Output *output, DP_CanvasHistory *ch,
-                                  DP_DrawContext *dc, int id, int x, int y,
-                                  int width, int height)
+                                  DP_DrawContext *dc, uint16_t id, int32_t x,
+                                  int32_t y, uint16_t width, uint16_t height)
 {
     add_message(output, ch, dc,
                 DP_msg_annotation_create_new(1, id, x, y, width, height));
 }
 
 static void add_annotation_reshape(DP_Output *output, DP_CanvasHistory *ch,
-                                   DP_DrawContext *dc, int id, int x, int y,
-                                   int width, int height)
+                                   DP_DrawContext *dc, uint16_t id, int32_t x,
+                                   int32_t y, uint16_t width, uint16_t height)
 {
     add_message(output, ch, dc,
                 DP_msg_annotation_reshape_new(1, id, x, y, width, height));
 }
 
 static void add_annotation_edit(DP_Output *output, DP_CanvasHistory *ch,
-                                DP_DrawContext *dc, int id,
-                                uint32_t background_color, int flags,
+                                DP_DrawContext *dc, uint16_t id,
+                                uint32_t background_color, uint8_t flags,
                                 const char *text)
 {
     add_message(output, ch, dc,
@@ -132,7 +140,7 @@ static void add_annotation_edit(DP_Output *output, DP_CanvasHistory *ch,
 }
 
 static void add_annotation_delete(DP_Output *output, DP_CanvasHistory *ch,
-                                  DP_DrawContext *dc, int id)
+                                  DP_DrawContext *dc, uint16_t id)
 {
     add_message(output, ch, dc, DP_msg_annotation_delete_new(1, id));
 }
@@ -180,14 +188,14 @@ static void handle_annotations(TEST_PARAMS)
 
     add_undo_point(output, ch, dc);
     add_annotation_edit(output, ch, dc, 257, 0xffffffffu,
-                        DP_MSG_ANNOTATION_EDIT_PROTECT
-                            | DP_MSG_ANNOTATION_EDIT_VALIGN_CENTER,
+                        DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT
+                            | DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER,
                         "first annotation");
     dump(output, ch, "first annotation edited");
 
     add_undo_point(output, ch, dc);
     add_annotation_edit(output, ch, dc, 257, 0xffabcdefu,
-                        DP_MSG_ANNOTATION_EDIT_VALIGN_BOTTOM, NULL);
+                        DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM, NULL);
     dump(output, ch, "first annotation edited with empty text");
 
     add_undo_point(output, ch, dc);

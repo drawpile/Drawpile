@@ -50,6 +50,9 @@ bool DP_text_writer_start_message(DP_TextWriter *writer, DP_Message *msg);
 
 bool DP_text_writer_finish_message(DP_TextWriter *writer, DP_Message *msg);
 
+bool DP_text_writer_write_bool(DP_TextWriter *writer, const char *key,
+                               bool value) DP_MUST_CHECK;
+
 bool DP_text_writer_write_int(DP_TextWriter *writer, const char *key,
                               int value) DP_MUST_CHECK;
 
@@ -65,9 +68,12 @@ bool DP_text_writer_write_string(DP_TextWriter *writer, const char *key,
 bool DP_text_writer_write_argb_color(DP_TextWriter *writer, const char *key,
                                      uint32_t bgra) DP_MUST_CHECK;
 
+bool DP_text_writer_write_blend_mode(DP_TextWriter *writer, const char *key,
+                                     int blend_mode) DP_MUST_CHECK;
+
 bool DP_text_writer_write_base64(DP_TextWriter *writer, const char *key,
                                  const unsigned char *value,
-                                 size_t length) DP_MUST_CHECK;
+                                 int length) DP_MUST_CHECK;
 
 bool DP_text_writer_write_flags(DP_TextWriter *writer, const char *key,
                                 unsigned int value, ...) DP_MUST_CHECK;
@@ -81,6 +87,14 @@ bool DP_text_writer_write_id_list(DP_TextWriter *writer, const char *key,
 bool DP_text_writer_write_uint_list(DP_TextWriter *writer, const char *key,
                                     const unsigned int *value,
                                     int count) DP_MUST_CHECK;
+
+bool DP_text_writer_write_uint8_list(DP_TextWriter *writer, const char *key,
+                                     const uint8_t *value,
+                                     int count) DP_MUST_CHECK;
+
+bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
+                                      const uint16_t *value,
+                                      int count) DP_MUST_CHECK;
 
 
 bool DP_text_writer_raw_write(DP_TextWriter *writer, const char *buffer,

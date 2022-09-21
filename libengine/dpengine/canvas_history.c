@@ -22,20 +22,16 @@
 #include "canvas_history.h"
 #include "affected_area.h"
 #include "canvas_state.h"
-#include "dpmsg/messages/undo.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/internal.h>
-#include <dpmsg/messages/undo_point.h>
+#include <dpmsg/msg_internal.h>
 
 
 #define INITIAL_CAPACITY              1024
 #define EXPAND_CAPACITY(OLD_CAPACITY) ((OLD_CAPACITY)*2)
-
-#define UNDO_DEPTH_LIMIT 30
 
 #define MAX_FALLBEHIND 10000
 
@@ -390,7 +386,7 @@ static int mark_undone_actions_gone(DP_CanvasHistory *ch, int index,
     DP_CanvasHistoryEntry *entries = ch->entries;
     int i = index - 1;
     int depth = 1;
-    for (; i >= 0 && depth < UNDO_DEPTH_LIMIT; --i) {
+    for (; i >= 0 && depth < DP_UNDO_DEPTH; --i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_undo_point_entry(entry)) {
             ++depth;
@@ -413,7 +409,7 @@ static int mark_undone_actions_gone(DP_CanvasHistory *ch, int index,
 static int find_first_unreachable_index(DP_CanvasHistory *ch, int i, int depth)
 {
     DP_CanvasHistoryEntry *entries = ch->entries;
-    for (; i >= 0 && depth < UNDO_DEPTH_LIMIT; --i) {
+    for (; i >= 0 && depth < DP_UNDO_DEPTH; --i) {
         if (is_undo_point_entry(&entries[i])) {
             ++depth;
         }
@@ -439,7 +435,7 @@ static int find_first_undo_point(DP_CanvasHistory *ch, unsigned int context_id,
     DP_CanvasHistoryEntry *entries = ch->entries;
     int i;
     int depth = 0;
-    for (i = ch->used - 1; i >= 0 && depth <= UNDO_DEPTH_LIMIT; --i) {
+    for (i = ch->used - 1; i >= 0 && depth <= DP_UNDO_DEPTH; --i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_undo_point_entry(entry)) {
             ++depth;
@@ -471,7 +467,7 @@ static int undo(DP_CanvasHistory *ch, unsigned int context_id)
 {
     int depth;
     int undo_start = find_first_undo_point(ch, context_id, &depth);
-    if (depth > UNDO_DEPTH_LIMIT) {
+    if (depth > DP_UNDO_DEPTH) {
         DP_error_set("Undo by user %u beyond history limit", context_id);
         return -1;
     }
@@ -492,7 +488,7 @@ static int find_oldest_redo_point(DP_CanvasHistory *ch, unsigned int context_id,
     DP_CanvasHistoryEntry *entries = ch->entries;
     int redo_start = -1;
     int depth = 0;
-    for (int i = ch->used - 1; i >= 0 && depth <= UNDO_DEPTH_LIMIT; --i) {
+    for (int i = ch->used - 1; i >= 0 && depth <= DP_UNDO_DEPTH; --i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_undo_point_entry(entry)) {
             ++depth;
@@ -535,7 +531,7 @@ static int redo(DP_CanvasHistory *ch, unsigned int context_id)
 {
     int depth;
     int redo_start = find_oldest_redo_point(ch, context_id, &depth);
-    if (depth > UNDO_DEPTH_LIMIT) {
+    if (depth > DP_UNDO_DEPTH) {
         DP_error_set("Redo by user %u beyond history limit", context_id);
         return -1;
     }
@@ -647,8 +643,8 @@ static bool handle_undo(DP_CanvasHistory *ch, DP_DrawContext *dc,
                         DP_Message *msg)
 {
     DP_MsgUndo *mu = DP_msg_undo_cast(msg);
-    bool is_redo = DP_msg_undo_is_redo(mu);
-    unsigned int context_id = DP_msg_undo_override_id(mu);
+    bool is_redo = DP_msg_undo_redo(mu);
+    unsigned int context_id = DP_msg_undo_override_user(mu);
     if (context_id == 0) {
         context_id = DP_message_context_id(msg);
     }

@@ -19,14 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "dpmsg/messages/disconnect.h"
 #include "lua_util.h"
 #include <dpcommon/common.h>
+#include <dpmsg/disconnect_reason.h>
 #include <dpmsg/message.h>
-#include <dpmsg/messages/chat.h>
-#include <dpmsg/messages/command.h>
-#include <dpmsg/messages/ping.h>
-#include <dpmsg/messages/user_join.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
@@ -47,11 +43,11 @@ static int message_index_context_id(lua_State *L, DP_Message *msg)
     return 1;
 }
 
-static int message_index_command_message(lua_State *L, DP_Message *msg)
+static int message_index_server_command_message(lua_State *L, DP_Message *msg)
 {
-    DP_MsgCommand *mc = DP_message_internal(msg);
+    DP_MsgServerCommand *mc = DP_message_internal(msg);
     size_t len;
-    const char *message = DP_msg_command_message(mc, &len);
+    const char *message = (const char *)DP_msg_server_command_msg(mc, &len);
     lua_pushlstring(L, message, len);
     return 1;
 }
@@ -70,12 +66,12 @@ static int message_index_ping_is_pong(lua_State *L, DP_Message *msg)
     return 1;
 }
 
-static int message_index_user_join_name(lua_State *L, DP_Message *msg)
+static int message_index_join_name(lua_State *L, DP_Message *msg)
 {
-    DP_MsgUserJoin *muj = DP_message_internal(msg);
+    DP_MsgJoin *mj = DP_message_internal(msg);
     size_t len;
-    const char *message = DP_msg_user_join_name(muj, &len);
-    lua_pushlstring(L, message, len);
+    const char *name = DP_msg_join_name(mj, &len);
+    lua_pushlstring(L, name, len);
     return 1;
 }
 
@@ -83,7 +79,7 @@ static int message_index_chat_text(lua_State *L, DP_Message *msg)
 {
     DP_MsgChat *mc = DP_message_internal(msg);
     size_t len;
-    const char *message = DP_msg_chat_text(mc, &len);
+    const char *message = DP_msg_chat_message(mc, &len);
     lua_pushlstring(L, message, len);
     return 1;
 }
@@ -91,21 +87,21 @@ static int message_index_chat_text(lua_State *L, DP_Message *msg)
 static int message_index_chat_is_shout(lua_State *L, DP_Message *msg)
 {
     DP_MsgChat *mc = DP_message_internal(msg);
-    lua_pushboolean(L, DP_msg_chat_is_shout(mc));
+    lua_pushboolean(L, DP_msg_chat_oflags(mc) & DP_MSG_CHAT_OFLAGS_SHOUT);
     return 1;
 }
 
 static int message_index_chat_is_action(lua_State *L, DP_Message *msg)
 {
     DP_MsgChat *mc = DP_message_internal(msg);
-    lua_pushboolean(L, DP_msg_chat_is_action(mc));
+    lua_pushboolean(L, DP_msg_chat_oflags(mc) & DP_MSG_CHAT_OFLAGS_ACTION);
     return 1;
 }
 
 static int message_index_chat_is_pin(lua_State *L, DP_Message *msg)
 {
     DP_MsgChat *mc = DP_message_internal(msg);
-    lua_pushboolean(L, DP_msg_chat_is_pin(mc));
+    lua_pushboolean(L, DP_msg_chat_oflags(mc) & DP_MSG_CHAT_OFLAGS_PIN);
     return 1;
 }
 
@@ -130,7 +126,7 @@ static int message_index(lua_State *L)
     DP_MessageType type = DP_message_type(msg);
     if (lua_geti(L, lua_upvalueindex(1), (lua_Integer)type) == LUA_TNIL) {
         lua_pop(L, 1); // Unknown types, use fallback table.
-        lua_geti(L, lua_upvalueindex(1), (lua_Integer)DP_MSG_COUNT);
+        lua_geti(L, lua_upvalueindex(1), (lua_Integer)DP_MSG_TYPE_COUNT);
     }
     lua_pushvalue(L, 2);
     if (lua_gettable(L, -2) != LUA_TNIL) {
@@ -149,8 +145,8 @@ static const DP_LuaMessageIndexReg index_common[] = {
     {NULL, {NULL}},
 };
 
-static const DP_LuaMessageIndexReg index_command[] = {
-    {"message", {message_index_command_message}},
+static const DP_LuaMessageIndexReg index_server_command[] = {
+    {"message", {message_index_server_command_message}},
     {NULL, {NULL}},
 };
 
@@ -164,8 +160,8 @@ static const DP_LuaMessageIndexReg index_ping[] = {
     {NULL, {NULL}},
 };
 
-static const DP_LuaMessageIndexReg index_user_join[] = {
-    {"name", {message_index_user_join_name}},
+static const DP_LuaMessageIndexReg index_join[] = {
+    {"name", {message_index_join_name}},
     {NULL, {NULL}},
 };
 
@@ -178,8 +174,10 @@ static const DP_LuaMessageIndexReg index_chat[] = {
 };
 
 static const DP_LuaMessageIndexTable index_tables[] = {
-    {DP_MSG_COMMAND, index_command}, {DP_MSG_DISCONNECT, index_disconnect},
-    {DP_MSG_PING, index_ping},       {DP_MSG_USER_JOIN, index_user_join},
+    {DP_MSG_SERVER_COMMAND, index_server_command},
+    {DP_MSG_DISCONNECT, index_disconnect},
+    {DP_MSG_PING, index_ping},
+    {DP_MSG_JOIN, index_join},
     {DP_MSG_CHAT, index_chat},
 };
 
@@ -204,7 +202,7 @@ static void create_index_table(lua_State *L)
     // Fallback for unknown types.
     lua_newtable(L);
     register_indexes(L, index_common);
-    lua_seti(L, -2, (lua_Integer)DP_MSG_COUNT);
+    lua_seti(L, -2, (lua_Integer)DP_MSG_TYPE_COUNT);
 }
 
 void DP_lua_message_push_noinc(lua_State *L, DP_Message *msg)
@@ -230,7 +228,7 @@ static int message_command_new(lua_State *L)
     luaL_checktype(L, 1, LUA_TTABLE);
     size_t length;
     const char *message = luaL_checklstring(L, 2, &length);
-    return push_new_message(L, DP_msg_command_new(0, message, length));
+    return push_new_message(L, DP_msg_server_command_new(0, message, length));
 }
 
 static int message_disconnect_new(lua_State *L)
@@ -287,12 +285,12 @@ int DP_lua_message_init(lua_State *L)
     }
 
     luaL_getsubtable(L, -1, "Type");
-    DP_LUA_SET_ENUM(DP_MSG_, COMMAND);
+    DP_LUA_SET_ENUM(DP_MSG_, SERVER_COMMAND);
     DP_LUA_SET_ENUM(DP_MSG_, DISCONNECT);
     DP_LUA_SET_ENUM(DP_MSG_, PING);
     DP_LUA_SET_ENUM(DP_MSG_, INTERNAL);
-    DP_LUA_SET_ENUM(DP_MSG_, USER_JOIN);
-    DP_LUA_SET_ENUM(DP_MSG_, USER_LEAVE);
+    DP_LUA_SET_ENUM(DP_MSG_, JOIN);
+    DP_LUA_SET_ENUM(DP_MSG_, LEAVE);
     DP_LUA_SET_ENUM(DP_MSG_, SESSION_OWNER);
     DP_LUA_SET_ENUM(DP_MSG_, CHAT);
     DP_LUA_SET_ENUM(DP_MSG_, TRUSTED_USERS);
@@ -304,31 +302,39 @@ int DP_lua_message_init(lua_State *L)
     DP_LUA_SET_ENUM(DP_MSG_, MARKER);
     DP_LUA_SET_ENUM(DP_MSG_, USER_ACL);
     DP_LUA_SET_ENUM(DP_MSG_, LAYER_ACL);
-    DP_LUA_SET_ENUM(DP_MSG_, FEATURE_LEVELS);
-    DP_LUA_SET_ENUM(DP_MSG_, LAYER_DEFAULT);
+    DP_LUA_SET_ENUM(DP_MSG_, FEATURE_ACCESS_LEVELS);
+    DP_LUA_SET_ENUM(DP_MSG_, DEFAULT_LAYER);
     DP_LUA_SET_ENUM(DP_MSG_, FILTERED);
     DP_LUA_SET_ENUM(DP_MSG_, EXTENSION);
     DP_LUA_SET_ENUM(DP_MSG_, UNDO_POINT);
     DP_LUA_SET_ENUM(DP_MSG_, CANVAS_RESIZE);
     DP_LUA_SET_ENUM(DP_MSG_, LAYER_CREATE);
-    DP_LUA_SET_ENUM(DP_MSG_, LAYER_ATTR);
+    DP_LUA_SET_ENUM(DP_MSG_, LAYER_ATTRIBUTES);
     DP_LUA_SET_ENUM(DP_MSG_, LAYER_RETITLE);
     DP_LUA_SET_ENUM(DP_MSG_, LAYER_ORDER);
     DP_LUA_SET_ENUM(DP_MSG_, LAYER_DELETE);
     DP_LUA_SET_ENUM(DP_MSG_, LAYER_VISIBILITY);
     DP_LUA_SET_ENUM(DP_MSG_, PUT_IMAGE);
     DP_LUA_SET_ENUM(DP_MSG_, FILL_RECT);
+    DP_LUA_SET_ENUM(DP_MSG_, TOOL_CHANGE);
+    DP_LUA_SET_ENUM(DP_MSG_, PEN_MOVE);
     DP_LUA_SET_ENUM(DP_MSG_, PEN_UP);
     DP_LUA_SET_ENUM(DP_MSG_, ANNOTATION_CREATE);
     DP_LUA_SET_ENUM(DP_MSG_, ANNOTATION_RESHAPE);
     DP_LUA_SET_ENUM(DP_MSG_, ANNOTATION_EDIT);
     DP_LUA_SET_ENUM(DP_MSG_, ANNOTATION_DELETE);
-    DP_LUA_SET_ENUM(DP_MSG_, REGION_MOVE);
+    DP_LUA_SET_ENUM(DP_MSG_, MOVE_REGION);
     DP_LUA_SET_ENUM(DP_MSG_, PUT_TILE);
     DP_LUA_SET_ENUM(DP_MSG_, CANVAS_BACKGROUND);
     DP_LUA_SET_ENUM(DP_MSG_, DRAW_DABS_CLASSIC);
     DP_LUA_SET_ENUM(DP_MSG_, DRAW_DABS_PIXEL);
     DP_LUA_SET_ENUM(DP_MSG_, DRAW_DABS_PIXEL_SQUARE);
+    DP_LUA_SET_ENUM(DP_MSG_, DRAW_DABS_MYPAINT);
+    DP_LUA_SET_ENUM(DP_MSG_, MOVE_RECT);
+    DP_LUA_SET_ENUM(DP_MSG_, SET_METADATA_INT);
+    DP_LUA_SET_ENUM(DP_MSG_, SET_METADATA_STR);
+    DP_LUA_SET_ENUM(DP_MSG_, SET_TIMELINE_FRAME);
+    DP_LUA_SET_ENUM(DP_MSG_, REMOVE_TIMELINE_FRAME);
     DP_LUA_SET_ENUM(DP_MSG_, UNDO);
     lua_pop(L, 1);
 

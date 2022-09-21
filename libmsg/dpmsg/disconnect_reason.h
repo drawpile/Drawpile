@@ -19,8 +19,14 @@
  * This code is based on Drawpile, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
-#include "session_owner.h"
-#include "user_ids.h"
-#include <dpcommon/common.h>
+#ifndef DPMSG_DISCONNECT_REASON_H
+#define DPMSG_DISCONNECT_REASON_H
 
-DP_MSG_USER_IDS_DEFINE(DP_MSG_SESSION_OWNER, DP_MsgSessionOwner, session_owner)
+typedef enum DP_DisconnectReason {
+    DP_MSG_DISCONNECT_REASON_ERROR,
+    DP_MSG_DISCONNECT_REASON_KICK,
+    DP_MSG_DISCONNECT_REASON_SHUTDOWN,
+    DP_MSG_DISCONNECT_REASON_OTHER,
+} DP_DisconnectReason;
+
+#endif

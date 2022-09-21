@@ -30,6 +30,7 @@
 #include "pixels.h"
 #include "tile.h"
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 
 
 struct DP_DrawContext {
@@ -47,23 +48,23 @@ struct DP_DrawContext {
         DP_Pixel8 tile_decompression_buffer[DP_TILE_LENGTH];
     };
     // Memory pool used by qgrayraster during region move transform.
-    size_t raster_pool_size;
-    unsigned char *raster_pool;
+    size_t pool_size;
+    unsigned char *pool;
 };
 
 
 DP_DrawContext *DP_draw_context_new(void)
 {
     DP_DrawContext *dc = DP_malloc(sizeof(*dc));
-    dc->raster_pool_size = DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE;
-    dc->raster_pool = DP_malloc(DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE);
+    dc->pool_size = DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE;
+    dc->pool = DP_malloc(DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE);
     return dc;
 }
 
 void DP_draw_context_free(DP_DrawContext *dc)
 {
     if (dc) {
-        DP_free(dc->raster_pool);
+        DP_free(dc->pool);
         DP_free(dc);
     }
 }
@@ -96,18 +97,48 @@ unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc, size_t *out_size)
 {
     DP_ASSERT(dc);
     DP_ASSERT(out_size);
-    *out_size = dc->raster_pool_size;
-    return dc->raster_pool;
+    *out_size = dc->pool_size;
+    return dc->pool;
 }
 
 unsigned char *DP_draw_context_raster_pool_resize(DP_DrawContext *dc,
                                                   size_t new_size)
 {
     DP_ASSERT(dc);
+    DP_ASSERT(new_size > dc->pool_size);
     DP_ASSERT(new_size < DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE);
-    DP_free(dc->raster_pool);
+    DP_free(dc->pool);
     unsigned char *new_raster_pool = DP_malloc(new_size);
-    dc->raster_pool = new_raster_pool;
-    dc->raster_pool_size = new_size;
+    dc->pool = new_raster_pool;
+    dc->pool_size = new_size;
     return new_raster_pool;
+}
+
+struct DP_LayerContentPropsPair *DP_draw_context_layer_pool(DP_DrawContext *dc,
+                                                            int *out_capacity)
+{
+    DP_ASSERT(dc);
+    struct DP_LayerContentPropsPair *layer_pool =
+        (struct DP_LayerContentPropsPair *)dc->pool;
+    if (out_capacity) {
+        *out_capacity = DP_size_to_int(dc->pool_size / sizeof(*layer_pool));
+    }
+    return layer_pool;
+}
+
+struct DP_LayerContentPropsPair *
+DP_draw_context_layer_pool_resize(DP_DrawContext *dc, int new_capacity)
+{
+    DP_ASSERT(dc);
+    DP_ASSERT(new_capacity > 0);
+
+    size_t new_size =
+        DP_int_to_size(new_capacity) * sizeof(struct DP_LayerContentPropsPair);
+    DP_ASSERT(new_size > dc->pool_size);
+    DP_ASSERT(DP_size_to_int(new_size / sizeof(struct DP_LayerContentPropsPair))
+              == new_capacity);
+
+    dc->pool = DP_realloc(dc->pool, new_size);
+    dc->pool_size = new_size;
+    return (struct DP_LayerContentPropsPair *)dc->pool;
 }

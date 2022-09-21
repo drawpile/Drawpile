@@ -43,9 +43,9 @@
  * See 3rdparty/licenses/qt/license.GPL3 for details.
  */
 #include "pixels.h"
-#include "blend_mode.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpmsg/blend_mode.h>
 
 static_assert(sizeof(DP_Pixel8) == sizeof(uint32_t), "DP_Pixel8 is 32 bits");
 static_assert(sizeof(DP_UPixel8) == sizeof(uint32_t), "DP_UPixel8 is 32 bits");

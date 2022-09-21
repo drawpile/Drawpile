@@ -20,7 +20,6 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "layer_content.h"
-#include "blend_mode.h"
 #include "canvas_diff.h"
 #include "draw_context.h"
 #include "image.h"
@@ -33,6 +32,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
+#include <dpmsg/blend_mode.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING

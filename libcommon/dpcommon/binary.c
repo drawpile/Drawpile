@@ -22,6 +22,7 @@
 #include "binary.h"
 #include "common.h"
 #include "conversions.h"
+#include "endianness.h"
 
 static_assert(sizeof(int8_t) == 1, "int8_t has size 1");
 static_assert(sizeof(uint8_t) == 1, "uint8_t has size 1");
@@ -34,6 +35,11 @@ static_assert(sizeof(uint32_t) == 4, "uint32_t has size 4");
 int8_t DP_read_bigendian_int8(const unsigned char *d)
 {
     return DP_uint8_to_int8(DP_read_bigendian_uint8(d));
+}
+
+int16_t DP_read_bigendian_int16(const unsigned char *d)
+{
+    return DP_uint16_to_int16(DP_read_bigendian_uint16(d));
 }
 
 int32_t DP_read_bigendian_int32(const unsigned char *d)
@@ -66,6 +72,11 @@ size_t DP_write_bigendian_int8(int8_t x, unsigned char *out)
     return DP_write_bigendian_uint8((uint8_t)x, out);
 }
 
+size_t DP_write_bigendian_int16(int16_t x, unsigned char *out)
+{
+    return DP_write_bigendian_uint16((uint16_t)x, out);
+}
+
 size_t DP_write_bigendian_int32(int32_t x, unsigned char *out)
 {
     return DP_write_bigendian_uint32((uint32_t)x, out);
@@ -91,6 +102,82 @@ size_t DP_write_bigendian_uint32(uint32_t x, unsigned char *out)
     out[2] = DP_uint_to_uchar((x >> 8u) & 0xffu);
     out[3] = DP_uint_to_uchar(x & 0xffu);
     return 4;
+}
+
+
+size_t DP_write_bytes(const void *DP_RESTRICT x, int count, size_t elem_size,
+                      unsigned char *DP_RESTRICT out)
+{
+    if (count > 0) {
+        size_t size = DP_int_to_size(count) * elem_size;
+        memcpy(out, x, size);
+        return size;
+    }
+    else {
+        return 0;
+    }
+}
+
+size_t DP_write_bigendian_int8_array(const int8_t *DP_RESTRICT x, int count,
+                                     unsigned char *DP_RESTRICT out)
+{
+    return DP_write_bigendian_uint8_array((const uint8_t *)x, count, out);
+}
+
+size_t DP_write_bigendian_int16_array(const int16_t *DP_RESTRICT x, int count,
+                                      unsigned char *DP_RESTRICT out)
+{
+    return DP_write_bigendian_uint16_array((const uint16_t *)x, count, out);
+}
+
+size_t DP_write_bigendian_int32_array(const int32_t *DP_RESTRICT x, int count,
+                                      unsigned char *DP_RESTRICT out)
+{
+    return DP_write_bigendian_uint32_array((const uint32_t *)x, count, out);
+}
+
+size_t DP_write_bigendian_uint8_array(const uint8_t *DP_RESTRICT x, int count,
+                                      unsigned char *DP_RESTRICT out)
+{
+    return DP_write_bytes(x, count, sizeof(*x), out);
+}
+
+size_t DP_write_bigendian_uint16_array(const uint16_t *DP_RESTRICT x, int count,
+                                       unsigned char *DP_RESTRICT out)
+{
+#if DP_BYTE_ORDER == DP_BIG_ENDIAN
+    return DP_write_bytes(x, count, sizeof(*x), out);
+#else
+    if (count > 0) {
+        size_t written = 0;
+        for (int i = 0; i < count; ++i) {
+            written += DP_write_bigendian_uint16(x[i], out + written);
+        }
+        return written;
+    }
+    else {
+        return 0;
+    }
+#endif
+}
+
+size_t DP_write_bigendian_uint32_array(const uint32_t *DP_RESTRICT x, int count,
+                                       unsigned char *DP_RESTRICT out)
+{
+#if DP_BYTE_ORDER == DP_BIG_ENDIAN
+    return DP_write_bytes(x, count, sizeof(*x), out);
+#else
+    if (count > 0) {
+        size_t written = 0;
+        for (int i = 0; i < count; ++i) {
+            written += DP_write_bigendian_uint32(x[i], out + written);
+        }
+        return written;
+    }
+    else {
+        return 0;
+    }
+#endif
 }
 
 
