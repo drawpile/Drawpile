@@ -559,12 +559,14 @@ static void read_uint8_array(int count, uint8_t *out, void *user)
 static void read_uint16_array(int count, uint16_t *out, void *user)
 {
     const unsigned char *buffer = user;
-#if DP_BYTE_ORDER == DP_BIG_ENDIAN
-    memcpy(out, buffer, DP_int_to_size(count) * 2);
-#else
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
     for (int i = 0; i < count; ++i) {
         out[i] = DP_read_bigendian_uint16(buffer + i * 2);
     }
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+    memcpy(out, buffer, DP_int_to_size(count) * 2);
+#else
+#    error "Unknown byte order"
 #endif
 }
 

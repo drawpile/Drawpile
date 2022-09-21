@@ -121,16 +121,16 @@ DP_Image *DP_image_new_from_compressed(int width, int height,
 {
     struct DP_ImageInflateArgs args = {width, height, NULL};
     if (DP_compress_inflate(in, in_size, get_output_buffer, &args)) {
-#if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
         // Nothing else to do here.
-#elif DP_BYTE_ORDER == DP_BIG_ENDIAN
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
         // Gotta byte-swap the pixels.
         DP_Pixel8 *pixels = args.img->pixels;
         for (int i = 0; i < width * height; ++i) {
             pixels[i].color = DP_swap_uint32(pixels[i].color);
         }
 #else
-#    error "Unknown byte order"
+#       error "Unknown byte order"
 #endif
         return args.img;
     }

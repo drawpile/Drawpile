@@ -31,9 +31,9 @@
 typedef union DP_Pixel8 {
     uint32_t color;
     struct {
-#if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
         uint8_t b, g, r, a;
-#elif DP_BYTE_ORDER == DP_BIG_ENDIAN
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
         uint8_t a, r, g, b;
 #else
 #    error "Unknown byte order"
@@ -45,9 +45,9 @@ typedef union DP_Pixel8 {
 typedef union DP_UPixel8 {
     uint32_t color;
     struct {
-#if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
         uint8_t b, g, r, a;
-#elif DP_BYTE_ORDER == DP_BIG_ENDIAN
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
         uint8_t a, r, g, b;
 #else
 #    error "Unknown byte order"

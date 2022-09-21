@@ -145,9 +145,7 @@ size_t DP_write_bigendian_uint8_array(const uint8_t *DP_RESTRICT x, int count,
 size_t DP_write_bigendian_uint16_array(const uint16_t *DP_RESTRICT x, int count,
                                        unsigned char *DP_RESTRICT out)
 {
-#if DP_BYTE_ORDER == DP_BIG_ENDIAN
-    return DP_write_bytes(x, count, sizeof(*x), out);
-#else
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
     if (count > 0) {
         size_t written = 0;
         for (int i = 0; i < count; ++i) {
@@ -158,15 +156,17 @@ size_t DP_write_bigendian_uint16_array(const uint16_t *DP_RESTRICT x, int count,
     else {
         return 0;
     }
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+    return DP_write_bytes(x, count, sizeof(*x), out);
+#else
+#   error "Unknown byte order"
 #endif
 }
 
 size_t DP_write_bigendian_uint32_array(const uint32_t *DP_RESTRICT x, int count,
                                        unsigned char *DP_RESTRICT out)
 {
-#if DP_BYTE_ORDER == DP_BIG_ENDIAN
-    return DP_write_bytes(x, count, sizeof(*x), out);
-#else
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
     if (count > 0) {
         size_t written = 0;
         for (int i = 0; i < count; ++i) {
@@ -177,6 +177,10 @@ size_t DP_write_bigendian_uint32_array(const uint32_t *DP_RESTRICT x, int count,
     else {
         return 0;
     }
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+    return DP_write_bytes(x, count, sizeof(*x), out);
+#else
+#   error "Unknown byte order"
 #endif
 }
 

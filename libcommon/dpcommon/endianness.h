@@ -41,4 +41,16 @@
 #endif
 
 
+#undef DP_BYTE_ORDER_LITTLE_ENDIAN
+#undef DP_BYTE_ORDER_BIG_ENDIAN
+
+#if DP_BYTE_ORDER == DP_LITTLE_ENDIAN
+#   define DP_BYTE_ORDER_LITTLE_ENDIAN DP_LITTLE_ENDIAN
+#elif DP_BYTE_ORDER == DP_BIG_ENDIAN
+#   define DP_BYTE_ORDER_BIG_ENDIAN DP_BIG_ENDIAN
+#else
+#   error "DP_BYTE_ORDER defined to an unknown value"
+#endif
+
+
 #endif
