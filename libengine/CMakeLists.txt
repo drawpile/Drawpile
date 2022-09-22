@@ -28,6 +28,7 @@ set(dpengine_sources
     dpengine/compress.c
     dpengine/document_metadata.c
     dpengine/draw_context.c
+    dpengine/frame.c
     dpengine/image.c
     dpengine/image_png.c
     dpengine/image_transform.c
@@ -39,7 +40,8 @@ set(dpengine_sources
     dpengine/ops.c
     dpengine/paint.c
     dpengine/pixels.c
-    dpengine/tile.c)
+    dpengine/tile.c
+    dpengine/timeline.c)
 
 set(dpengine_headers
     dpengine/affected_area.h
@@ -51,6 +53,7 @@ set(dpengine_headers
     dpengine/compress.h
     dpengine/document_metadata.h
     dpengine/draw_context.h
+    dpengine/frame.h
     dpengine/image.h
     dpengine/image_png.h
     dpengine/image_transform.h
@@ -62,7 +65,8 @@ set(dpengine_headers
     dpengine/ops.h
     dpengine/paint.h
     dpengine/pixels.h
-    dpengine/tile.h)
+    dpengine/tile.h
+    dpengine/timeline.h)
 
 set(dptest_engine_sources test/dptest/dptest_engine.c)
 set(dptest_engine_headers test/dptest/dptest_engine.h)
@@ -70,6 +74,7 @@ set(dptest_engine_headers test/dptest/dptest_engine.h)
 set(dpengine_tests
     test/handle_annotations.c
     test/handle_metadata.c
+    test/handle_timeline.c
     test/image_thumbnail.c
     test/model_changes.c
     test/read_write_image.c

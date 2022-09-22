@@ -33,6 +33,7 @@
 #include "ops.h"
 #include "paint.h"
 #include "tile.h"
+#include "timeline.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -52,6 +53,7 @@ struct DP_CanvasState {
     DP_LayerContentList *const layer_contents;
     DP_LayerPropsList *const layer_props;
     DP_AnnotationList *const annotations;
+    DP_Timeline *const timeline;
     DP_DocumentMetadata *const metadata;
 };
 
@@ -71,6 +73,10 @@ struct DP_TransientCanvasState {
     union {
         DP_AnnotationList *annotations;
         DP_TransientAnnotationList *transient_annotations;
+    };
+    union {
+        DP_Timeline *timeline;
+        DP_TransientTimeline *transient_timeline;
     };
     union {
         DP_DocumentMetadata *metadata;
@@ -98,6 +104,10 @@ struct DP_CanvasState {
         DP_TransientAnnotationList *transient_annotations;
     };
     union {
+        DP_Timeline *timeline;
+        DP_TransientTimeline *transient_timeline;
+    };
+    union {
         DP_DocumentMetadata *metadata;
         DP_TransientDocumentMetadata *transient_metadata;
     };
@@ -118,6 +128,7 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                     {NULL},
                                     {NULL},
                                     {NULL},
+                                    {NULL},
                                     {NULL}};
     return cs;
 }
@@ -128,6 +139,7 @@ DP_CanvasState *DP_canvas_state_new(void)
     tcs->layer_contents = DP_layer_content_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->annotations = DP_annotation_list_new();
+    tcs->timeline = DP_timeline_new();
     tcs->metadata = DP_document_metadata_new();
     return (DP_CanvasState *)tcs;
 }
@@ -151,6 +163,7 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     if (DP_atomic_dec(&cs->refcount)) {
         DP_document_metadata_decref(cs->metadata);
+        DP_timeline_decref(cs->timeline);
         DP_annotation_list_decref(cs->annotations);
         DP_layer_props_list_decref(cs->layer_props);
         DP_layer_content_list_decref(cs->layer_contents);
@@ -220,6 +233,13 @@ DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->annotations;
+}
+
+DP_Timeline *DP_canvas_state_timeline_noinc(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->timeline;
 }
 
 DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs)
@@ -682,6 +702,32 @@ static DP_CanvasState *handle_set_metadata_str(DP_UNUSED DP_CanvasState *cs,
     return NULL;
 }
 
+static int get_layer_id(void *user, int index)
+{
+    const uint16_t *layer_ids = user;
+    return layer_ids[index];
+}
+
+static DP_CanvasState *handle_set_timeline_frame(DP_CanvasState *cs,
+                                                 DP_MsgSetTimelineFrame *mstf)
+{
+    int layer_id_count;
+    const uint16_t *layer_ids =
+        DP_msg_set_timeline_frame_layers(mstf, &layer_id_count);
+    return DP_ops_timeline_frame_set(cs, DP_msg_set_timeline_frame_frame(mstf),
+                                     DP_msg_set_timeline_frame_insert(mstf),
+                                     layer_id_count, get_layer_id,
+                                     (void *)layer_ids);
+}
+
+static DP_CanvasState *
+handle_remove_timeline_frame(DP_CanvasState *cs,
+                             DP_MsgRemoveTimelineFrame *mrtf)
+{
+    return DP_ops_timeline_frame_delete(
+        cs, DP_msg_remove_timeline_frame_frame(mrtf));
+}
+
 DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_Message *msg)
 {
@@ -753,6 +799,12 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
         return handle_set_metadata_int(cs, DP_msg_set_metadata_int_cast(msg));
     case DP_MSG_SET_METADATA_STR:
         return handle_set_metadata_str(cs, DP_msg_set_metadata_str_cast(msg));
+    case DP_MSG_SET_TIMELINE_FRAME:
+        return handle_set_timeline_frame(cs,
+                                         DP_msg_set_timeline_frame_cast(msg));
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
+        return handle_remove_timeline_frame(
+            cs, DP_msg_remove_timeline_frame_cast(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;
@@ -901,6 +953,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
     tcs->layer_contents = DP_layer_content_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->annotations = DP_annotation_list_new();
+    tcs->timeline = DP_timeline_new();
     tcs->metadata = DP_document_metadata_new();
     return tcs;
 }
@@ -922,6 +975,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
     tcs->layer_contents = DP_layer_content_list_incref(cs->layer_contents);
     tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
+    tcs->timeline = DP_timeline_incref(cs->timeline);
     tcs->metadata = DP_document_metadata_incref(cs->metadata);
     return tcs;
 }
@@ -934,6 +988,7 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
     tcs->transient_layer_contents = tlcl;
     tcs->transient_layer_props = tlpl;
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
+    tcs->timeline = DP_timeline_incref(cs->timeline);
     tcs->metadata = DP_document_metadata_incref(cs->metadata);
     return tcs;
 }
@@ -968,6 +1023,9 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
     }
     if (DP_annotation_list_transient(tcs->annotations)) {
         DP_transient_annotation_list_persist(tcs->transient_annotations);
+    }
+    if (DP_timeline_transient(tcs->timeline)) {
+        DP_transient_timeline_persist(tcs->transient_timeline);
     }
     if (DP_document_metadata_transient(tcs->metadata)) {
         DP_transient_document_metadata_persist(tcs->transient_metadata);
@@ -1093,6 +1151,25 @@ DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
             tcs->transient_annotations, reserve);
     }
     return tcs->transient_annotations;
+}
+
+DP_TransientTimeline *
+DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
+                                             int reserve)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_Timeline *tl = tcs->timeline;
+    if (!DP_timeline_transient(tl)) {
+        tcs->transient_timeline = DP_transient_timeline_new(tl, reserve);
+        DP_timeline_decref(tl);
+    }
+    else if (reserve > 0) {
+        tcs->transient_timeline =
+            DP_transient_timeline_reserve(tcs->transient_timeline, reserve);
+    }
+    return tcs->transient_timeline;
 }
 
 DP_TransientDocumentMetadata *

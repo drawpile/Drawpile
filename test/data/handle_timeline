@@ -1,0 +1,94 @@
+begin testing
+
+-- initial timeline
+0 frame(s)
+
+-> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+
+-- append first frame with layers
+1 frame(s)
+[0] 3 layer(s): 1 2 3
+
+-> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+
+-- append second frame without layers
+2 frame(s)
+[0] 3 layer(s): 1 2 3
+[1] 0 layer(s):
+
+-> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+
+-- insert frame at beginning with lots of layers
+3 frame(s)
+[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+[1] 3 layer(s): 1 2 3
+[2] 0 layer(s):
+
+-> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+
+-- insert frame in middle with single layer
+4 frame(s)
+[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+[1] 1 layer(s): 1
+[2] 3 layer(s): 1 2 3
+[3] 0 layer(s):
+
+-> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+
+-- change last frame layers
+4 frame(s)
+[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+[1] 1 layer(s): 1
+[2] 3 layer(s): 1 2 3
+[3] 3 layer(s): 9 99 999
+
+-> DP_MSG_REMOVE_TIMELINE_FRAME ok - 0 error(s)
+
+-- remove last frame
+3 frame(s)
+[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+[1] 1 layer(s): 1
+[2] 3 layer(s): 1 2 3
+
+-> DP_MSG_REMOVE_TIMELINE_FRAME ok - 0 error(s)
+
+-- remove second frame
+2 frame(s)
+[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+[1] 3 layer(s): 1 2 3
+
+-> DP_MSG_REMOVE_TIMELINE_FRAME ok - 0 error(s)
+
+-- remove first frame
+1 frame(s)
+[0] 3 layer(s): 1 2 3
+
+-> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+
+-- changing frame at end appends it
+2 frame(s)
+[0] 3 layer(s): 1 2 3
+[1] 1 layer(s): 1
+
+-> DP_MSG_REMOVE_TIMELINE_FRAME fail - 1 error(s): Remove timeline frame: given frame 2 beyond end 2
+
+-- remove nonexistent frame does nothing
+2 frame(s)
+[0] 3 layer(s): 1 2 3
+[1] 1 layer(s): 1
+
+-> DP_MSG_SET_TIMELINE_FRAME fail - 1 error(s): Set timeline frame: given frame 3 beyond end 2
+
+-- adding frame beyond end does nothing
+2 frame(s)
+[0] 3 layer(s): 1 2 3
+[1] 1 layer(s): 1
+
+-> DP_MSG_SET_TIMELINE_FRAME fail - 1 error(s): Set timeline frame: given frame 3 beyond end 2
+
+-- changing frame beyond end does nothing
+2 frame(s)
+[0] 3 layer(s): 1 2 3
+[1] 1 layer(s): 1
+
+done testing

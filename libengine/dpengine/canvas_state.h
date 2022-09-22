@@ -33,6 +33,7 @@ typedef struct DP_LayerContentList DP_LayerContentList;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Tile DP_Tile;
+typedef struct DP_Timeline DP_Timeline;
 
 
 #define DP_FLAT_IMAGE_INCLUDE_BACKGROUND   (1 << 0)
@@ -48,6 +49,7 @@ typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 typedef struct DP_TransientLayerContentList DP_TransientLayerContentList;
 typedef struct DP_TransientLayerPropsList DP_TransientLayerPropsList;
 typedef struct DP_TransientTile DP_TransientTile;
+typedef struct DP_TransientTimeline DP_TransientTimeline;
 #else
 typedef struct DP_CanvasState DP_TransientCanvasState;
 typedef struct DP_DocumentMetadata DP_TransientDocumentMetadata;
@@ -55,6 +57,7 @@ typedef struct DP_LayerContent DP_TransientLayerContent;
 typedef struct DP_LayerContentList DP_TransientLayerContentList;
 typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
 typedef struct DP_Tile DP_TransientTile;
+typedef struct DP_Timeline DP_TransientTimeline;
 #endif
 
 DP_CanvasState *DP_canvas_state_new(void);
@@ -82,6 +85,8 @@ DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs);
 DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs);
 
 DP_AnnotationList *DP_canvas_state_annotations_noinc(DP_CanvasState *cs);
+
+DP_Timeline *DP_canvas_state_timeline_noinc(DP_CanvasState *cs);
 
 DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs);
 
@@ -155,6 +160,10 @@ DP_transient_canvas_state_transient_layer_props(DP_TransientCanvasState *tcs,
 DP_TransientAnnotationList *
 DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
                                                 int reserve);
+
+DP_TransientTimeline *
+DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
+                                             int reserve);
 
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);

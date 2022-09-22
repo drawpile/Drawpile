@@ -24,6 +24,7 @@
 #include "annotation_list.h"
 #include "canvas_state.h"
 #include "draw_context.h"
+#include "frame.h"
 #include "image.h"
 #include "layer_content.h"
 #include "layer_content_list.h"
@@ -31,6 +32,7 @@
 #include "layer_props_list.h"
 #include "paint.h"
 #include "tile.h"
+#include "timeline.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
@@ -815,6 +817,67 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, int layer_id,
     }
 
     DP_paint_draw_dabs(params, target);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+
+DP_CanvasState *DP_ops_timeline_frame_set(DP_CanvasState *cs, int frame_index,
+                                          bool insert, int layer_id_count,
+                                          int get_layer_id(void *, int),
+                                          void *user)
+{
+    DP_ASSERT(frame_index >= 0);
+    DP_ASSERT(layer_id_count >= 0);
+
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int old_frame_count = DP_timeline_frame_count(tl);
+    if (frame_index > DP_timeline_frame_count(tl)) {
+        DP_error_set("Set timeline frame: given frame %d beyond end %d",
+                     frame_index, old_frame_count);
+        return NULL;
+    }
+
+    DP_TransientFrame *tf = DP_transient_frame_new_init(layer_id_count);
+    for (int i = 0; i < layer_id_count; ++i) {
+        int layer_id = get_layer_id(user, i);
+        DP_transient_frame_layer_id_set_at(tf, layer_id, i);
+    }
+
+    bool replace = frame_index < old_frame_count && !insert;
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, replace ? 0 : 1);
+
+    if (replace) {
+        DP_transient_timeline_replace_transient_noinc(ttl, tf, frame_index);
+    }
+    else {
+        DP_transient_timeline_insert_transient_noinc(ttl, tf, frame_index);
+    }
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+
+DP_CanvasState *DP_ops_timeline_frame_delete(DP_CanvasState *cs,
+                                             int frame_index)
+{
+    DP_ASSERT(frame_index >= 0);
+
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int old_frame_count = DP_timeline_frame_count(tl);
+    if (frame_index >= DP_timeline_frame_count(tl)) {
+        DP_error_set("Remove timeline frame: given frame %d beyond end %d",
+                     frame_index, old_frame_count);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+
+    DP_transient_timeline_delete_at(ttl, frame_index);
 
     return DP_transient_canvas_state_persist(tcs);
 }

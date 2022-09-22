@@ -103,5 +103,13 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, int layer_id,
                                  int sublayer_opacity,
                                  DP_PaintDrawDabsParams *params);
 
+DP_CanvasState *DP_ops_timeline_frame_set(DP_CanvasState *cs, int frame_index,
+                                          bool insert, int layer_id_count,
+                                          int get_layer_id(void *, int),
+                                          void *user);
+
+DP_CanvasState *DP_ops_timeline_frame_delete(DP_CanvasState *cs,
+                                             int frame_index);
+
 
 #endif
