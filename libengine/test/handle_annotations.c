@@ -19,8 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "dpcommon_test.h"
-#include <dpcommon/common.h>
 #include <dpcommon/output.h>
 #include <dpengine/annotation.h>
 #include <dpengine/annotation_list.h>
@@ -34,16 +32,13 @@
 #include <dpmsg/messages/annotation_reshape.h>
 #include <dpmsg/messages/undo.h>
 #include <dpmsg/messages/undo_point.h>
-#include <dpengine_test.h>
+#include <dptest.h>
 #include <parson.h>
 
 
-static void dump(void **state, DP_Output *output, DP_CanvasHistory *ch,
-                 const char *title)
+static void dump(DP_Output *output, DP_CanvasHistory *ch, const char *title)
 {
     DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL);
-    push_canvas_state(state, cs);
-
     DP_output_format(output, "\n-- %s\n", title);
 
     DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
@@ -76,13 +71,12 @@ static void dump(void **state, DP_Output *output, DP_CanvasHistory *ch,
     }
 
     DP_output_print(output, "\n");
-    destructor_run(state, cs);
+    DP_canvas_state_decref(cs);
 }
 
-static void add_message(void **state, DP_Output *output, DP_CanvasHistory *ch,
+static void add_message(DP_Output *output, DP_CanvasHistory *ch,
                         DP_DrawContext *dc, DP_Message *msg)
 {
-    push_message(state, msg);
     unsigned int error_count = DP_error_count();
     bool ok = DP_canvas_history_handle(ch, dc, msg);
     const char *error = DP_error_since(error_count);
@@ -90,144 +84,148 @@ static void add_message(void **state, DP_Output *output, DP_CanvasHistory *ch,
                      DP_message_type_enum_name(DP_message_type(msg)),
                      ok ? "ok" : "fail", DP_error_count_since(error_count),
                      error ? ": " : "", error ? error : "");
-    destructor_run(state, msg);
+    DP_message_decref(msg);
 }
 
-static void add_undo_point(void **state, DP_Output *output,
-                           DP_CanvasHistory *ch, DP_DrawContext *dc)
+static void add_undo_point(DP_Output *output, DP_CanvasHistory *ch,
+                           DP_DrawContext *dc)
 {
-    add_message(state, output, ch, dc, DP_msg_undo_point_new(1));
+    add_message(output, ch, dc, DP_msg_undo_point_new(1));
 }
 
-static void add_undo(void **state, DP_Output *output, DP_CanvasHistory *ch,
+static void add_undo(DP_Output *output, DP_CanvasHistory *ch,
                      DP_DrawContext *dc)
 {
-    add_message(state, output, ch, dc, DP_msg_undo_new(1, 0, false));
+    add_message(output, ch, dc, DP_msg_undo_new(1, 0, false));
 }
 
-static void add_redo(void **state, DP_Output *output, DP_CanvasHistory *ch,
+static void add_redo(DP_Output *output, DP_CanvasHistory *ch,
                      DP_DrawContext *dc)
 {
-    add_message(state, output, ch, dc, DP_msg_undo_new(1, 0, true));
+    add_message(output, ch, dc, DP_msg_undo_new(1, 0, true));
 }
 
-static void add_annotation_create(void **state, DP_Output *output,
-                                  DP_CanvasHistory *ch, DP_DrawContext *dc,
-                                  int id, int x, int y, int width, int height)
+static void add_annotation_create(DP_Output *output, DP_CanvasHistory *ch,
+                                  DP_DrawContext *dc, int id, int x, int y,
+                                  int width, int height)
 {
-    add_message(state, output, ch, dc,
+    add_message(output, ch, dc,
                 DP_msg_annotation_create_new(1, id, x, y, width, height));
 }
 
-static void add_annotation_reshape(void **state, DP_Output *output,
-                                   DP_CanvasHistory *ch, DP_DrawContext *dc,
-                                   int id, int x, int y, int width, int height)
+static void add_annotation_reshape(DP_Output *output, DP_CanvasHistory *ch,
+                                   DP_DrawContext *dc, int id, int x, int y,
+                                   int width, int height)
 {
-    add_message(state, output, ch, dc,
+    add_message(output, ch, dc,
                 DP_msg_annotation_reshape_new(1, id, x, y, width, height));
 }
 
-static void add_annotation_edit(void **state, DP_Output *output,
-                                DP_CanvasHistory *ch, DP_DrawContext *dc,
-                                int id, uint32_t background_color, int flags,
+static void add_annotation_edit(DP_Output *output, DP_CanvasHistory *ch,
+                                DP_DrawContext *dc, int id,
+                                uint32_t background_color, int flags,
                                 const char *text)
 {
-    add_message(state, output, ch, dc,
+    add_message(output, ch, dc,
                 DP_msg_annotation_edit_new(1, id, background_color, flags, 0,
                                            text, text ? strlen(text) : 0));
 }
 
-static void add_annotation_delete(void **state, DP_Output *output,
-                                  DP_CanvasHistory *ch, DP_DrawContext *dc,
-                                  int id)
+static void add_annotation_delete(DP_Output *output, DP_CanvasHistory *ch,
+                                  DP_DrawContext *dc, int id)
 {
-    add_message(state, output, ch, dc, DP_msg_annotation_delete_new(1, id));
+    add_message(output, ch, dc, DP_msg_annotation_delete_new(1, id));
 }
 
 
-static void handle_annotations(void **state)
+static void handle_annotations(TEST_PARAMS)
 {
-    DP_Output *output =
-        DP_file_output_new_from_path("test/tmp/handle_annotations");
-    push_output(state, output);
+    const char *in_path = "test/data/handle_annotations";
+    const char *out_path = "test/tmp/handle_annotations";
+
+    DP_Output *output = DP_file_output_new_from_path(out_path);
+    FATAL(NOT_NULL_OK(output, "got output for %s", out_path));
+
     DP_output_print(output, "begin testing\n");
 
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
-    push_canvas_history(state, ch);
     DP_DrawContext *dc = DP_draw_context_new();
-    push_draw_context(state, dc);
-    dump(state, output, ch, "initial empty annotations");
+    dump(output, ch, "initial empty annotations");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_create(state, output, ch, dc, 257, 1, 51, 101, 201);
-    dump(state, output, ch, "first annotation created");
+    add_undo_point(output, ch, dc);
+    add_annotation_create(output, ch, dc, 257, 1, 51, 101, 201);
+    dump(output, ch, "first annotation created");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_create(state, output, ch, dc, 257, 0, 1, 2, 3);
-    dump(state, output, ch, "duplicate annotation id not created with error");
+    add_undo_point(output, ch, dc);
+    add_annotation_create(output, ch, dc, 257, 0, 1, 2, 3);
+    dump(output, ch, "duplicate annotation id not created with error");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_create(state, output, ch, dc, 258, 202, 202, 202, 202);
-    dump(state, output, ch, "second annotation created");
+    add_undo_point(output, ch, dc);
+    add_annotation_create(output, ch, dc, 258, 202, 202, 202, 202);
+    dump(output, ch, "second annotation created");
 
-    add_undo(state, output, ch, dc);
-    dump(state, output, ch, "second annotation undone");
+    add_undo(output, ch, dc);
+    dump(output, ch, "second annotation undone");
 
-    add_redo(state, output, ch, dc);
-    dump(state, output, ch, "second annotation redone");
+    add_redo(output, ch, dc);
+    dump(output, ch, "second annotation redone");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_reshape(state, output, ch, dc, 257, 101, 151, 1101, 1201);
-    dump(state, output, ch, "first annotation reshaped");
+    add_undo_point(output, ch, dc);
+    add_annotation_reshape(output, ch, dc, 257, 101, 151, 1101, 1201);
+    dump(output, ch, "first annotation reshaped");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_reshape(state, output, ch, dc, 259, 0, 1, 2, 3);
-    dump(state, output, ch, "unknown annotation reshaped with error");
+    add_undo_point(output, ch, dc);
+    add_annotation_reshape(output, ch, dc, 259, 0, 1, 2, 3);
+    dump(output, ch, "unknown annotation reshaped with error");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_edit(state, output, ch, dc, 257, 0xffffffffu,
+    add_undo_point(output, ch, dc);
+    add_annotation_edit(output, ch, dc, 257, 0xffffffffu,
                         DP_MSG_ANNOTATION_EDIT_PROTECT
                             | DP_MSG_ANNOTATION_EDIT_VALIGN_CENTER,
                         "first annotation");
-    dump(state, output, ch, "first annotation edited");
+    dump(output, ch, "first annotation edited");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_edit(state, output, ch, dc, 257, 0xffabcdefu,
+    add_undo_point(output, ch, dc);
+    add_annotation_edit(output, ch, dc, 257, 0xffabcdefu,
                         DP_MSG_ANNOTATION_EDIT_VALIGN_BOTTOM, NULL);
-    dump(state, output, ch, "first annotation edited with empty text");
+    dump(output, ch, "first annotation edited with empty text");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_edit(state, output, ch, dc, 258, 0x0u, 0,
-                        "second annotation");
-    dump(state, output, ch, "second annotation edited");
+    add_undo_point(output, ch, dc);
+    add_annotation_edit(output, ch, dc, 258, 0x0u, 0, "second annotation");
+    dump(output, ch, "second annotation edited");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_edit(state, output, ch, dc, 259, 0x0u, 0, NULL);
-    dump(state, output, ch, "nonexistent annotation edited with error");
+    add_undo_point(output, ch, dc);
+    add_annotation_edit(output, ch, dc, 259, 0x0u, 0, NULL);
+    dump(output, ch, "nonexistent annotation edited with error");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_delete(state, output, ch, dc, 257);
-    dump(state, output, ch, "first annotation deleted");
+    add_undo_point(output, ch, dc);
+    add_annotation_delete(output, ch, dc, 257);
+    dump(output, ch, "first annotation deleted");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_delete(state, output, ch, dc, 257);
-    dump(state, output, ch, "first annotation deleted again with error");
+    add_undo_point(output, ch, dc);
+    add_annotation_delete(output, ch, dc, 257);
+    dump(output, ch, "first annotation deleted again with error");
 
-    add_undo_point(state, output, ch, dc);
-    add_annotation_delete(state, output, ch, dc, 258);
-    dump(state, output, ch, "second annotation deleted");
+    add_undo_point(output, ch, dc);
+    add_annotation_delete(output, ch, dc, 258);
+    dump(output, ch, "second annotation deleted");
 
     DP_output_print(output, "done testing\n");
-    destructor_run(state, output);
-    assert_files_equal("test/tmp/handle_annotations",
-                       "test/data/handle_annotations");
+
+    DP_draw_context_free(dc);
+    DP_canvas_history_free(ch);
+    DP_output_free(output);
+
+    FILE_EQ_OK(out_path, in_path, "annotation log as expected");
 }
 
 
-int main(void)
+static void register_tests(REGISTER_PARAMS)
 {
-    const struct CMUnitTest tests[] = {
-        dp_unit_test(handle_annotations),
-    };
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    REGISTER_TEST(handle_annotations);
+}
+
+int main(int argc, char **argv)
+{
+    return DP_test_main(argc, argv, register_tests, NULL);
 }

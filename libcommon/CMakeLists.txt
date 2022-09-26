@@ -50,16 +50,12 @@ set(dpcommon_headers
     dpcommon/threading.h
     dpcommon/worker.h)
 
-set(dpcommon_test_sources test/lib/dpcommon_test.c)
-set(dpcommon_test_headers test/lib/dpcommon_test.h)
-
 set(dpcommon_tests
     test/base64_encode.c
     test/queue.c
     test/rect.c)
 
 add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
-                       "${dpcommon_test_sources}" "${dpcommon_test_headers}"
                        "${dpcommon_tests}" dpcommon/threading_pthread.c
                        dpcommon/threading_qt.cpp dpcommon/threading_sdl.c)
 
@@ -91,12 +87,5 @@ elseif("${THREAD_IMPL}" STREQUAL "SDL")
 endif()
 
 if(BUILD_TESTS)
-    add_library(dpcommon_test STATIC "${dpcommon_test_sources}"
-                                     "${dpcommon_test_headers}")
-    set_dp_target_properties(dpcommon_test NO_EXPORT)
-    target_include_directories(dpcommon_test INTERFACE
-                               "${CMAKE_CURRENT_LIST_DIR}/test/lib")
-    target_link_libraries(dpcommon_test PUBLIC cmocka-static dpcommon)
-
-    add_dp_test_targets(common dpcommon_tests)
+    add_dptest_targets(common dptest dpcommon_tests)
 endif()

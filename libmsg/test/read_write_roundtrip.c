@@ -19,187 +19,129 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "dpcommon_test.h"
-#include <dpcommon/common.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/binary_writer.h>
 #include <dpmsg/message.h>
 #include <dpmsg/text_writer.h>
-#include <dpmsg_test.h>
+#include <dptest.h>
 #include <parson.h>
 
 
-typedef struct TestPaths {
-    const char *in_path;
-    const char *out_path;
-    const char *expected_path;
-} TestPaths;
-
-
-static void test_binary_to_binary(void **state)
+static void binary_to_binary(TEST_PARAMS)
 {
-    TestPaths *paths = initial_state(state);
+    const char *key = T->test->user;
+    char *in_path = DP_format("test/data/recordings/%s.dprec", key);
+    char *out_path = DP_format("test/tmp/read_write_%s.dprec", key);
 
-    DP_Input *input = DP_file_input_new_from_path(paths->in_path);
-    assert_non_null(input);
-    push_input(state, input);
+    DP_Input *input = DP_file_input_new_from_path(in_path);
+    FATAL(NOT_NULL_OK(input, "got input for %s", in_path));
 
     DP_BinaryReader *reader = DP_binary_reader_new(input);
-    assert_non_null(reader);
-    push_binary_reader(state, reader, input);
+    FATAL(NOT_NULL_OK(reader, "got binary reader for %s", in_path));
 
-    DP_Output *output = DP_file_output_new_from_path(paths->out_path);
-    assert_non_null(output);
-    push_output(state, output);
+    DP_Output *output = DP_file_output_new_from_path(out_path);
+    FATAL(NOT_NULL_OK(reader, "got output for %s", out_path));
 
     DP_BinaryWriter *writer = DP_binary_writer_new(output);
-    assert_non_null(writer);
-    push_binary_writer(state, writer, output);
+    FATAL(NOT_NULL_OK(writer, "got binary writer for %s", out_path));
 
     JSON_Object *header = DP_binary_reader_header(reader);
-    assert_non_null(header);
-
-    assert_true(DP_binary_writer_write_header(writer, header));
+    if (NOT_NULL_OK(header, "got binary reader header")) {
+        OK(DP_binary_writer_write_header(writer, header), "wrote header");
+    }
 
     unsigned int error_count = DP_error_count();
     while (DP_binary_reader_has_next(reader)) {
         DP_Message *message = DP_binary_reader_read_next(reader);
-        assert_non_null(message);
-        push_message(state, message);
-        assert_true(DP_binary_writer_write_message(writer, message));
-        destructor_run(state, message);
+        if (NOT_NULL_OK(message, "got message")) {
+            OK(DP_binary_writer_write_message(writer, message),
+               "wrote message to binary");
+            DP_message_decref(message);
+        }
     }
 
-    destructor_run(state, writer);
-    assert_null(DP_error_since(error_count));
-    assert_files_equal(paths->out_path, paths->expected_path);
+    DP_binary_writer_free(writer);
+    DP_binary_reader_free(reader);
+
+    NULL_OK(DP_error_since(error_count), "no errors occurred");
+    FILE_EQ_OK(out_path, in_path, "binary output equal");
+
+    DP_free(out_path);
+    DP_free(in_path);
 }
 
 
-static void test_binary_to_text(void **state)
+static void binary_to_text(TEST_PARAMS)
 {
-    TestPaths *paths = initial_state(state);
+    const char *key = T->test->user;
+    char *in_path = DP_format("test/data/recordings/%s.dprec", key);
+    char *out_path = DP_format("test/tmp/read_write_%s.dprec", key);
+    char *expected_path = DP_format("test/data/recordings/%s.dptxt", key);
 
-    DP_Input *input = DP_file_input_new_from_path(paths->in_path);
-    assert_non_null(input);
-    push_input(state, input);
+    DP_Input *input = DP_file_input_new_from_path(in_path);
+    FATAL(NOT_NULL_OK(input, "got input for %s", in_path));
 
     DP_BinaryReader *reader = DP_binary_reader_new(input);
-    assert_non_null(reader);
-    push_binary_reader(state, reader, input);
+    FATAL(NOT_NULL_OK(reader, "got binary reader for %s", in_path));
 
-    DP_Output *output = DP_file_output_new_from_path(paths->out_path);
-    assert_non_null(output);
-    push_output(state, output);
+    DP_Output *output = DP_file_output_new_from_path(out_path);
+    FATAL(NOT_NULL_OK(reader, "got output for %s", out_path));
 
     DP_TextWriter *writer = DP_text_writer_new(output);
-    assert_non_null(writer);
-    push_text_writer(state, writer, output);
+    FATAL(NOT_NULL_OK(writer, "got text writer for %s", out_path));
 
     JSON_Object *header = DP_binary_reader_header(reader);
-    assert_non_null(header);
-
-    assert_true(DP_text_writer_write_header(writer, header));
+    if (NOT_NULL_OK(header, "got binary reader header")) {
+        OK(DP_text_writer_write_header(writer, header), "wrote header");
+    }
 
     unsigned int error_count = DP_error_count();
     while (DP_binary_reader_has_next(reader)) {
         DP_Message *message = DP_binary_reader_read_next(reader);
-        assert_non_null(message);
-        push_message(state, message);
-        assert_true(DP_message_write_text(message, writer));
-        destructor_run(state, message);
+        if (NOT_NULL_OK(message, "got message")) {
+            OK(DP_message_write_text(message, writer), "wrote message to text");
+            DP_message_decref(message);
+        }
     }
 
-    destructor_run(state, writer);
-    assert_null(DP_error_since(error_count));
-    assert_files_equal(paths->out_path, paths->expected_path);
+    DP_text_writer_free(writer);
+    DP_binary_reader_free(reader);
+
+    NULL_OK(DP_error_since(error_count), "no errors occurred");
+    FILE_EQ_OK(out_path, expected_path, "text output equal");
+
+    DP_free(expected_path);
+    DP_free(out_path);
+    DP_free(in_path);
 }
 
 
-int main(void)
+static void register_tests(REGISTER_PARAMS)
 {
-    TestPaths paths[] = {
-        {
-            "test/data/blank.dprec",
-            "test/tmp/blank.dprec",
-            "test/data/blank.dprec",
-        },
-        {
-            "test/data/blank.dprec",
-            "test/tmp/blank.dptxt",
-            "test/data/blank.dptxt",
-        },
-        {
-            "test/data/recordings/rect.dprec",
-            "test/tmp/rect.dptxt",
-            "test/data/recordings/rect.dptxt",
-        },
-        {
-            "test/data/recordings/rect.dprec",
-            "test/tmp/rect.dprec",
-            "test/data/recordings/rect.dprec",
-        },
-        {
-            "test/data/resize.dprec",
-            "test/tmp/resize.dprec",
-            "test/data/resize.dprec",
-        },
-        {
-            "test/data/resize.dprec",
-            "test/tmp/resize.dptxt",
-            "test/data/resize.dptxt",
-        },
-        {
-            "test/data/stroke.dprec",
-            "test/tmp/stroke.dprec",
-            "test/data/stroke.dprec",
-        },
-        {
-            "test/data/stroke.dprec",
-            "test/tmp/stroke.dptxt",
-            "test/data/stroke.dptxt",
-        },
-        {
-            "test/data/recordings/transform.dprec",
-            "test/tmp/transform.dptxt",
-            "test/data/recordings/transform.dptxt",
-        },
-        {
-            "test/data/recordings/transform.dprec",
-            "test/tmp/transform.dprec",
-            "test/data/recordings/transform.dprec",
-        },
-        {
-            "test/data/drawdabs.dprec",
-            "test/tmp/drawdabs.dprec",
-            "test/data/drawdabs.dprec",
-        },
-        {
-            "test/data/drawdabs.dprec",
-            "test/tmp/drawdabs.dptxt",
-            "test/data/drawdabs.dptxt",
-        },
+    const char *keys[] = {
+        "blank", "rect", "resize", "stroke", "transform", "drawdabs",
     };
 
-    struct CMUnitTest tests[DP_ARRAY_LENGTH(paths)];
-    for (size_t i = 0; i < DP_ARRAY_LENGTH(paths); ++i) {
-        TestPaths *p = &paths[i];
-        char *name = DP_format("%s -> %s", p->in_path, p->out_path);
-        CMUnitTestFunction test_func;
-        if (strcmp(p->out_path + strlen(p->out_path) - 6, ".dptxt") == 0) {
-            test_func = test_binary_to_text;
+    for (size_t i = 0; i < DP_ARRAY_LENGTH(keys); ++i) {
+        const char *key = keys[i];
+        {
+            char *binary_name = DP_format("%s_binary", key);
+            DP_test_register(REGISTER_ARGS, binary_name, binary_to_binary,
+                             (void *)key);
+            DP_free(binary_name);
         }
-        else {
-            test_func = test_binary_to_binary;
+        {
+            char *text_name = DP_format("%s_text", key);
+            DP_test_register(REGISTER_ARGS, text_name, binary_to_text,
+                             (void *)key);
+            DP_free(text_name);
         }
-        tests[i] = (struct CMUnitTest){name, test_func, setup, teardown, p};
     }
+}
 
-    int exit_code = cmocka_run_group_tests(tests, NULL, NULL);
-    for (size_t i = 0; i < DP_ARRAY_LENGTH(paths); ++i) {
-        DP_free((char *)tests[i].name);
-    }
-    return exit_code;
+int main(int argc, char **argv)
+{
+    return DP_test_main(argc, argv, register_tests, NULL);
 }

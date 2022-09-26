@@ -108,15 +108,10 @@ set(dpmsg_headers
     dpmsg/messages/zero_length.h
     dpmsg/text_writer.h)
 
-set(dpmsg_test_sources test/lib/dpmsg_test.c)
-set(dpmsg_test_headers test/lib/dpmsg_test.h)
-
 set(dpmsg_tests
     test/read_write_roundtrip.c)
 
-add_clang_format_files("${dpmsg_sources}" "${dpmsg_headers}"
-                       "${dpmsg_test_sources}" "${dpmsg_test_headers}"
-                       "${dpmsg_tests}")
+add_clang_format_files("${dpmsg_sources}" "${dpmsg_headers}" "${dpmsg_tests}")
 
 add_library(dpmsg_interface INTERFACE)
 set_dp_target_properties(dpmsg_interface)
@@ -133,12 +128,5 @@ if(LINK_WITH_LIBM)
 endif()
 
 if(BUILD_TESTS)
-    add_library(dpmsg_test STATIC "${dpmsg_test_sources}"
-                                  "${dpmsg_test_headers}")
-    set_dp_target_properties(dpmsg_test NO_EXPORT)
-    target_include_directories(dpmsg_test INTERFACE
-                               "${CMAKE_CURRENT_LIST_DIR}/test/lib")
-    target_link_libraries(dpmsg_test PUBLIC dpcommon_test dpmsg)
-
-    add_dp_test_targets(msg dpmsg_tests)
+    add_dptest_targets(msg dptest dpmsg_tests)
 endif()

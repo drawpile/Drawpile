@@ -64,8 +64,8 @@ set(dpengine_headers
     dpengine/pixels.h
     dpengine/tile.h)
 
-set(dpengine_test_sources test/lib/dpengine_test.c)
-set(dpengine_test_headers test/lib/dpengine_test.h)
+set(dptest_engine_sources test/dptest/dptest_engine.c)
+set(dptest_engine_headers test/dptest/dptest_engine.h)
 
 set(dpengine_tests
     test/handle_annotations.c
@@ -76,8 +76,8 @@ set(dpengine_tests
     test/resize_image.c)
 
 set(dpengine_clang_format_files "${dpengine_sources}" "${dpengine_headers}"
-                                "${dpengine_test_sources}"
-                                "${dpengine_test_headers}" "${dpengine_tests}")
+                                "${dptest_engine_sources}"
+                                "${dptest_engine_headers}" "${dpengine_tests}")
 
 add_clang_format_files("${dpengine_clang_format_files}")
 
@@ -87,12 +87,12 @@ target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(dpengine PUBLIC dpmsg_interface PNG::PNG qgrayraster)
 
 if(BUILD_TESTS)
-    add_library(dpengine_test STATIC "${dpengine_test_sources}"
-                                     "${dpengine_test_headers}")
-    set_dp_target_properties(dpengine_test NO_EXPORT)
-    target_include_directories(dpengine_test INTERFACE
-                               "${CMAKE_CURRENT_LIST_DIR}/test/lib")
-    target_link_libraries(dpengine_test PUBLIC dpmsg_test dpengine dpmsg)
+    add_library(dptest_engine STATIC "${dptest_engine_sources}"
+                                     "${dptest_engine_headers}")
+    set_dp_target_properties(dptest_engine NO_EXPORT)
+    target_include_directories(dptest_engine INTERFACE
+                               "${CMAKE_CURRENT_LIST_DIR}/test/dptest")
+    target_link_libraries(dptest_engine PUBLIC dptest dpengine dpmsg)
 
-    add_dp_test_targets(engine dpengine_tests)
+    add_dptest_targets(engine dptest_engine dpengine_tests)
 endif()

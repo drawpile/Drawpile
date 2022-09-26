@@ -20,47 +20,46 @@
  * SOFTWARE.
  */
 #include <dpcommon/base64.h>
-#include <dpcommon/common.h>
-#include <dpcommon_test.h>
+#include <dptest.h>
 
 
-static void check_encode(void **state, const void *in, size_t in_length,
-                         const char *expected)
+static void encode_ok(TEST_PARAMS, const void *in, size_t in_length,
+                      const char *expected)
 {
     size_t actual_length;
     char *encoded = DP_base64_encode(in, in_length, &actual_length);
-    destructor_push(state, encoded, DP_free);
-    assert_int_equal(actual_length, strlen(expected));
-    assert_string_equal(encoded, expected);
-    assert_int_equal(encoded[actual_length], '\0');
+    STR_LEN_EQ_OK(encoded, actual_length, expected, strlen(expected),
+                  "correct encoded value");
+    INT_EQ_OK(encoded[actual_length], '\0', "properly null-terminated");
+    DP_free(encoded);
 }
 
-static void encode_null(void **state)
+static void encode_null(TEST_PARAMS)
 {
-    check_encode(state, NULL, 0, "");
+    encode_ok(TEST_ARGS, NULL, 0, "");
 }
 
-static void encode_zero(void **state)
+static void encode_zero(TEST_PARAMS)
 {
-    check_encode(state, "", 0, "");
+    encode_ok(TEST_ARGS, "", 0, "");
 }
 
-static void encode_one(void **state)
+static void encode_one(TEST_PARAMS)
 {
-    check_encode(state, "a", 1, "YQ==");
+    encode_ok(TEST_ARGS, "a", 1, "YQ==");
 }
 
-static void encode_two(void **state)
+static void encode_two(TEST_PARAMS)
 {
-    check_encode(state, "bc", 2, "YmM=");
+    encode_ok(TEST_ARGS, "bc", 2, "YmM=");
 }
 
-static void encode_three(void **state)
+static void encode_three(TEST_PARAMS)
 {
-    check_encode(state, "def", 3, "ZGVm");
+    encode_ok(TEST_ARGS, "def", 3, "ZGVm");
 }
 
-static void encode_data(void **state)
+static void encode_data(TEST_PARAMS)
 {
     static const unsigned char data[] = {
         129, 244, 184, 213, 83,  88,  89,  102, 14,  54,  141, 210, 189,
@@ -72,19 +71,24 @@ static void encode_data(void **state)
         89,  96,  241, 179, 239, 128, 155, 168, 227, 223, 153, 122, 180,
         234, 37,  215, 157, 173, 68,  150, 29,  51,
     };
-    check_encode(state, data, sizeof(data),
-                 "gfS41VNYWWYONo3SvfXX60jpD9VJT+"
-                 "k1H7pZ1wXCUjkX0nUAOWnGWiJHM6JNf3bzP5LeHpITA92e0mtjP3apmgu9y6B"
-                 "kw3yThWmTLodrWWDxs++Am6jj35l6tOol152tRJYdMw==");
+    encode_ok(TEST_ARGS, data, sizeof(data),
+              "gfS41VNYWWYONo3SvfXX60jpD9VJT+"
+              "k1H7pZ1wXCUjkX0nUAOWnGWiJHM6JNf3bzP5LeHpITA92e0mtjP3apmgu9y6B"
+              "kw3yThWmTLodrWWDxs++Am6jj35l6tOol152tRJYdMw==");
 }
 
 
-int main(void)
+static void register_tests(REGISTER_PARAMS)
 {
-    const struct CMUnitTest tests[] = {
-        dp_unit_test(encode_null),  dp_unit_test(encode_zero),
-        dp_unit_test(encode_one),   dp_unit_test(encode_two),
-        dp_unit_test(encode_three), dp_unit_test(encode_data),
-    };
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    REGISTER_TEST(encode_null);
+    REGISTER_TEST(encode_zero);
+    REGISTER_TEST(encode_one);
+    REGISTER_TEST(encode_two);
+    REGISTER_TEST(encode_three);
+    REGISTER_TEST(encode_data);
+}
+
+int main(int argc, char **argv)
+{
+    return DP_test_main(argc, argv, register_tests, NULL);
 }

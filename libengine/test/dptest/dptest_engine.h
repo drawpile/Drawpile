@@ -19,24 +19,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef DPMSG_TEST_H
-#define DPMSG_TEST_H
-#include <dpcommon_test.h> // IWYU pragma: export
+#ifndef DPTEST_DPTEST_ENGINE_H
+#define DPTEST_DPTEST_ENGINE_H
+#include <dptest.h>
 
-typedef struct DP_BinaryReader DP_BinaryReader;
-typedef struct DP_BinaryWriter DP_BinaryWriter;
-typedef struct DP_Message DP_Message;
-typedef struct DP_TextWriter DP_TextWriter;
+typedef struct DP_Image DP_Image;
 
 
-void push_binary_reader(void **state, DP_BinaryReader *value, DP_Input *input);
+bool DP_test_image_eq_ok(DP_TestContext *T, const char *file, int line,
+                         const char *sa, const char *sb, DP_Image *a,
+                         DP_Image *b, const char *fmt, ...) DP_FORMAT(8, 9);
 
-void push_binary_writer(void **state, DP_BinaryWriter *value,
-                        DP_Output *output);
+bool DP_test_image_file_eq_ok(DP_TestContext *T, const char *file, int line,
+                              const char *sa, const char *sb, const char *a,
+                              const char *b, const char *fmt, ...)
+    DP_FORMAT(8, 9);
 
-void push_message(void **state, DP_Message *value);
 
-void push_text_writer(void **state, DP_TextWriter *value, DP_Output *output);
+#define IMAGE_EQ_OK(A, B, ...)                                           \
+    DP_test_image_eq_ok(TEST_ARGS, __FILE__, __LINE__, #A, #B, (A), (B), \
+                        __VA_ARGS__)
+
+#define IMAGE_FILE_EQ_OK(A, B, ...)                                           \
+    DP_test_image_file_eq_ok(TEST_ARGS, __FILE__, __LINE__, #A, #B, (A), (B), \
+                             __VA_ARGS__)
 
 
 #endif

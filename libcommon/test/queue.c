@@ -19,11 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <dpcommon/common.h>
 #include <dpcommon/output.h>
 #include <dpcommon/queue.h>
-#include <dpcommon_test.h>
-#include <stdio.h>
+#include <dptest.h>
 
 #define ELEMENT_SIZE sizeof(int)
 
@@ -83,39 +81,41 @@ static void shift(DP_Output *output, DP_Queue *queue)
 }
 
 
-static void int_queue(void **state)
+static void int_queue(TEST_PARAMS)
 {
     DP_Output *output = DP_file_output_new_from_path("test/tmp/int_queue");
-    push_output(state, output);
+    DP_Queue queue;
 
-    DP_Queue *queue = DP_malloc(sizeof(*queue));
-    push_queue(state, queue);
-    init(output, queue, 2);
-    push(output, queue, 1);
-    push(output, queue, 2);
-    push(output, queue, 3);
-    push(output, queue, 4);
-    push(output, queue, 5);
-    push(output, queue, 6);
-    shift(output, queue);
-    shift(output, queue);
-    shift(output, queue);
-    shift(output, queue);
-    shift(output, queue);
-    shift(output, queue);
-    shift(output, queue);
-    push(output, queue, 7);
-    shift(output, queue);
+    init(output, &queue, 2);
+    push(output, &queue, 1);
+    push(output, &queue, 2);
+    push(output, &queue, 3);
+    push(output, &queue, 4);
+    push(output, &queue, 5);
+    push(output, &queue, 6);
+    shift(output, &queue);
+    shift(output, &queue);
+    shift(output, &queue);
+    shift(output, &queue);
+    shift(output, &queue);
+    shift(output, &queue);
+    shift(output, &queue);
+    push(output, &queue, 7);
+    shift(output, &queue);
 
-    destructor_run(state, output);
-    assert_files_equal("test/tmp/int_queue", "test/data/int_queue");
+    DP_queue_dispose(&queue);
+    DP_output_free(output);
+    FILE_EQ_OK("test/tmp/int_queue", "test/data/int_queue",
+               "int queue operation log matches expected");
 }
 
 
-int main(void)
+static void register_tests(REGISTER_PARAMS)
 {
-    const struct CMUnitTest tests[] = {
-        dp_unit_test(int_queue),
-    };
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    REGISTER_TEST(int_queue);
+}
+
+int main(int argc, char **argv)
+{
+    return DP_test_main(argc, argv, register_tests, NULL);
 }

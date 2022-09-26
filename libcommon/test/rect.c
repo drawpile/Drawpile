@@ -19,125 +19,97 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <dpcommon/common.h>
 #include <dpcommon/geom.h>
-#include <dpcommon_test.h>
+#include <dptest.h>
 
 
-static void assert_rect(DP_Rect rect, int x, int y, int width, int height)
+static void rect_ok(TEST_PARAMS, DP_Rect rect, int x, int y, int width,
+                    int height, const char *title)
 {
-    assert_true(DP_rect_valid(rect));
+    OK(DP_rect_valid(rect), "%s valid", title);
     char *got = DP_format("x1=%d, x2=%d, y1=%d, y2=%d, width=%d, height=%d",
                           rect.x1, rect.x2, rect.y1, rect.y2,
                           DP_rect_width(rect), DP_rect_height(rect));
     char *want = DP_format("x1=%d, x2=%d, y1=%d, y2=%d, width=%d, height=%d", x,
                            x + width - 1, y, y + height - 1, width, height);
-    assert_string_equal(got, want);
+    STR_EQ_OK(got, want, "%s correct values", title);
     DP_free(want);
     DP_free(got);
 }
 
 
-static void make_rect(DP_UNUSED void **state)
+static void rect_make(TEST_PARAMS)
 {
     DP_Rect rect = DP_rect_make(0, 3, 1, 2);
-    assert_rect(rect, 0, 3, 1, 2);
-}
+    rect_ok(TEST_ARGS, rect, 0, 3, 1, 2, "normal rect");
 
-static void make_empty_rect(DP_UNUSED void **state)
-{
     DP_Rect empty = DP_rect_make(0, 0, 0, 0);
-    assert_false(DP_rect_valid(empty));
+    NOK(DP_rect_valid(empty), "empty rect is not valid");
 }
 
 
-static void union_separate_rects(DP_UNUSED void **state)
+static void rect_unions(TEST_PARAMS)
 {
-    assert_rect(
+    rect_ok(
+        TEST_ARGS,
         DP_rect_union(DP_rect_make(0, 1, 10, 11), DP_rect_make(20, 21, 10, 11)),
-        0, 1, 30, 31);
-}
+        0, 1, 30, 31, "union of separate rects");
 
-static void union_intersecting_rects(DP_UNUSED void **state)
-{
-    assert_rect(
+    rect_ok(
+        TEST_ARGS,
         DP_rect_union(DP_rect_make(10, 15, 20, 1), DP_rect_make(12, 5, 1, 50)),
-        10, 5, 20, 50);
-}
+        10, 5, 20, 50, "union of overlapping rects");
 
-static void union_small_rect_in_larger_rect(DP_UNUSED void **state)
-{
-    assert_rect(
+    rect_ok(
+        TEST_ARGS,
         DP_rect_union(DP_rect_make(0, 50, 100, 200), DP_rect_make(1, 53, 2, 4)),
-        0, 50, 100, 200);
+        0, 50, 100, 200, "union of smaller in larger rect");
 }
 
 
-static void intersect_same_rect(DP_UNUSED void **state)
+static void rect_intersections(TEST_PARAMS)
 {
     DP_Rect rect = DP_rect_make(0, 10, 5, 50);
-    assert_true(DP_rect_intersects(rect, rect));
-}
+    OK(DP_rect_intersects(rect, rect), "same rect intersects");
 
-static void intersect_separate_rects(DP_UNUSED void **state)
-{
-    assert_false(DP_rect_intersects(DP_rect_make(0, 1, 10, 11),
-                                    DP_rect_make(20, 21, 10, 11)));
-}
+    NOK(DP_rect_intersects(DP_rect_make(0, 1, 10, 11),
+                           DP_rect_make(20, 21, 10, 11)),
+        "separate rects don't intersect");
 
-static void intersect_intersecting_rects(DP_UNUSED void **state)
-{
-    assert_true(DP_rect_intersects(DP_rect_make(10, 15, 20, 1),
-                                   DP_rect_make(12, 5, 1, 50)));
-}
+    OK(DP_rect_intersects(DP_rect_make(10, 15, 20, 1),
+                          DP_rect_make(12, 5, 1, 50)),
+       "overlapping rects intersect");
 
-static void intersect_small_rect_in_larger_rect(DP_UNUSED void **state)
-{
-    assert_true(DP_rect_intersects(DP_rect_make(0, 50, 100, 200),
-                                   DP_rect_make(1, 53, 2, 4)));
-}
+    OK(DP_rect_intersects(DP_rect_make(0, 50, 100, 200),
+                          DP_rect_make(1, 53, 2, 4)),
+       "larger in smaller rect intersects");
 
-static void intersect_adjacent_rects_x(DP_UNUSED void **state)
-{
-    assert_false(DP_rect_intersects(DP_rect_make(0, 50, 100, 60),
-                                    DP_rect_make(100, 50, 150, 60)));
-}
+    NOK(DP_rect_intersects(DP_rect_make(0, 50, 100, 60),
+                           DP_rect_make(100, 50, 150, 60)),
+        "horizontally directly adjacent rects don't intersect");
 
-static void intersect_adjacent_rects_y(DP_UNUSED void **state)
-{
-    assert_false(DP_rect_intersects(DP_rect_make(50, 0, 60, 100),
-                                    DP_rect_make(50, 100, 60, 150)));
-}
+    NOK(DP_rect_intersects(DP_rect_make(50, 0, 60, 100),
+                           DP_rect_make(50, 100, 60, 150)),
+        "vertically directly adjacent rects don't intersect");
 
-static void intersect_barely_intersecting_rects_x(DP_UNUSED void **state)
-{
-    assert_true(DP_rect_intersects(DP_rect_make(0, 50, 100, 60),
-                                   DP_rect_make(99, 50, 150, 60)));
-}
+    OK(DP_rect_intersects(DP_rect_make(0, 50, 100, 60),
+                          DP_rect_make(99, 50, 150, 60)),
+       "horizontally barely overlapping rects intersect");
 
-static void intersect_barely_intersecting_rects_y(DP_UNUSED void **state)
-{
-    assert_true(DP_rect_intersects(DP_rect_make(50, 1, 60, 100),
-                                   DP_rect_make(50, 100, 60, 150)));
+    OK(DP_rect_intersects(DP_rect_make(50, 1, 60, 100),
+                          DP_rect_make(50, 100, 60, 150)),
+       "vertically barely overlapping rects intersect");
 }
 
 
-int main(void)
+static void register_tests(REGISTER_PARAMS)
 {
-    const struct CMUnitTest tests[] = {
-        dp_unit_test(make_rect),
-        dp_unit_test(make_empty_rect),
-        dp_unit_test(union_separate_rects),
-        dp_unit_test(union_intersecting_rects),
-        dp_unit_test(union_small_rect_in_larger_rect),
-        dp_unit_test(intersect_same_rect),
-        dp_unit_test(intersect_separate_rects),
-        dp_unit_test(intersect_intersecting_rects),
-        dp_unit_test(intersect_small_rect_in_larger_rect),
-        dp_unit_test(intersect_adjacent_rects_x),
-        dp_unit_test(intersect_adjacent_rects_y),
-        dp_unit_test(intersect_barely_intersecting_rects_x),
-        dp_unit_test(intersect_barely_intersecting_rects_y),
-    };
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    REGISTER_TEST(rect_make);
+    REGISTER_TEST(rect_unions);
+    REGISTER_TEST(rect_intersections);
+}
+
+int main(int argc, char **argv)
+{
+    DP_test_main(argc, argv, register_tests, NULL);
 }

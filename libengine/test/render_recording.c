@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <dpcommon/common.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
 #include <dpengine/canvas_history.h>
@@ -28,83 +27,78 @@
 #include <dpengine/image.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/message.h>
-#include <dpengine_test.h>
+#include <dptest_engine.h>
 
 
-static void test_render_recording(void **state)
+static void render_recording(TEST_PARAMS)
 {
-    const char *name = initial_state(state);
-    char *dprec_path =
-        push_format(state, "test/data/recordings/%s.dprec", name);
-    char *out_path =
-        push_format(state, "test/tmp/render_recording_%s.png", name);
-    char *expected_path =
-        push_format(state, "test/data/recordings/%s.png", name);
+    const char *name = T->test->user;
+    char *dprec_path = DP_format("test/data/recordings/%s.dprec", name);
+    char *out_path = DP_format("test/tmp/render_recording_%s.png", name);
+    char *expected_path = DP_format("test/data/recordings/%s.png", name);
 
     DP_Input *input = DP_file_input_new_from_path(dprec_path);
-    push_input(state, input);
+    FATAL(NOT_NULL_OK(input, "got input for %s", dprec_path));
 
     DP_BinaryReader *reader = DP_binary_reader_new(input);
-    assert_non_null(reader);
-    push_binary_reader(state, reader, input);
+    FATAL(NOT_NULL_OK(input, "got binary reader for %s", dprec_path));
 
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
-    assert_non_null(ch);
-    push_canvas_history(state, ch);
-
     DP_DrawContext *dc = DP_draw_context_new();
-    assert_non_null(dc);
-    push_draw_context(state, dc);
 
     while (DP_binary_reader_has_next(reader)) {
         DP_Message *msg = DP_binary_reader_read_next(reader);
-        assert_non_null(msg);
-        push_message(state, msg);
-
-        if (DP_message_type_command(DP_message_type(msg))) {
-            if (!DP_canvas_history_handle(ch, dc, msg)) {
-                DP_warn("%s", DP_error());
+        if (NOT_NULL_OK(msg, "got message from binary reader")) {
+            if (DP_message_type_command(DP_message_type(msg))) {
+                if (!DP_canvas_history_handle(ch, dc, msg)) {
+                    DP_warn("%s", DP_error());
+                }
             }
+            DP_message_decref(msg);
         }
-
-        destructor_run(state, msg);
     }
 
     DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL);
-    push_canvas_state(state, cs);
+    FATAL(NOT_NULL_OK(cs, "got rendered canvas state"));
+    DP_draw_context_free(dc);
+    DP_canvas_history_free(ch);
+    DP_binary_reader_free(reader);
+
     DP_Image *img =
         DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND);
-    assert_non_null(img);
-    push_image(state, img);
+    FATAL(NOT_NULL_OK(img, "got flat image from canvas state"));
+    DP_canvas_state_decref(cs);
 
     DP_Output *output = DP_file_output_new_from_path(out_path);
-    push_output(state, output);
-    if (!DP_image_write_png(img, output)) {
-        DP_warn("%s", DP_error());
+    FATAL(NOT_NULL_OK(output, "got output for %s", out_path));
+    if (OK(DP_image_write_png(img, output), "wrote png to %s", out_path)) {
+        IMAGE_FILE_EQ_OK(out_path, expected_path, "rendered image matches");
     }
-    destructor_run(state, output);
 
-    assert_image_files_equal(state, out_path, expected_path);
+    DP_output_free(output);
+    DP_image_free(img);
+    DP_free(expected_path);
+    DP_free(out_path);
+    DP_free(dprec_path);
 }
 
 
-#define recording_unit_test(NAME)                          \
-    (struct CMUnitTest)                                    \
-    {                                                      \
-        NAME, test_render_recording, setup, teardown, NAME \
-    }
-
-int main(void)
+static void register_tests(REGISTER_PARAMS)
 {
-    const struct CMUnitTest tests[] = {
-        recording_unit_test("brushmodes"),
-        recording_unit_test("layermodes"),
-        recording_unit_test("layerops"),
-        recording_unit_test("persp"),
-        recording_unit_test("rect"),
-        recording_unit_test("resize"),
-        recording_unit_test("transform"),
-        recording_unit_test("transparentbackground"),
-    };
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    DP_test_register(REGISTER_ARGS, "brushmodes", render_recording,
+                     "brushmodes");
+    DP_test_register(REGISTER_ARGS, "layermodes", render_recording,
+                     "layermodes");
+    DP_test_register(REGISTER_ARGS, "layerops", render_recording, "layerops");
+    DP_test_register(REGISTER_ARGS, "persp", render_recording, "persp");
+    DP_test_register(REGISTER_ARGS, "rect", render_recording, "rect");
+    DP_test_register(REGISTER_ARGS, "resize", render_recording, "resize");
+    DP_test_register(REGISTER_ARGS, "transform", render_recording, "transform");
+    DP_test_register(REGISTER_ARGS, "transparentbackground", render_recording,
+                     "transparentbackground");
+}
+
+int main(int argc, char **argv)
+{
+    return DP_test_main(argc, argv, register_tests, NULL);
 }
