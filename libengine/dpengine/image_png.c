@@ -215,5 +215,6 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
     png_free(png_ptr, bytes);
     png_free(png_ptr, row_pointers);
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    return true;
+
+    return DP_output_flush(output);
 }
