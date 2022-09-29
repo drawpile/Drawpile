@@ -33,7 +33,8 @@ static void binary_to_binary(TEST_PARAMS)
 {
     const char *key = T->test->user;
     char *in_path = DP_format("test/data/recordings/%s.dprec", key);
-    char *out_path = DP_format("test/tmp/read_write_%s.dprec", key);
+    char *out_path =
+        DP_format("test/tmp/read_binary_write_binary%s.dprec", key);
 
     DP_Input *input = DP_file_input_new_from_path(in_path);
     FATAL(NOT_NULL_OK(input, "got input for %s", in_path));
@@ -77,7 +78,7 @@ static void binary_to_text(TEST_PARAMS)
 {
     const char *key = T->test->user;
     char *in_path = DP_format("test/data/recordings/%s.dprec", key);
-    char *out_path = DP_format("test/tmp/read_write_%s.dprec", key);
+    char *out_path = DP_format("test/tmp/read_binary_write_text_%s.dprec", key);
     char *expected_path = DP_format("test/data/recordings/%s.dptxt", key);
 
     DP_Input *input = DP_file_input_new_from_path(in_path);
