@@ -297,6 +297,11 @@ static DP_Pixel15 from_bgra(BGRA15 bgra)
 }
 
 
+uint16_t DP_fix15_mul(uint16_t a, uint16_t b)
+{
+    return from_fix(fix15_mul(to_fix(a), to_fix(b)));
+}
+
 uint16_t DP_channel8_to_15(uint8_t c)
 {
     return DP_float_to_uint16(DP_uint8_to_float(c) / 255.0f * BIT15_FLOAT);

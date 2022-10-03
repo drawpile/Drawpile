@@ -291,6 +291,26 @@ DP_TransientLayerProps *DP_transient_layer_props_list_transient_at_noinc(
     return tlpl->elements[index].transient_layer_props;
 }
 
+DP_TransientLayerProps *
+DP_transient_layer_props_list_transient_at_with_children_noinc(
+    DP_TransientLayerPropsList *tlpl, int index,
+    DP_TransientLayerPropsList *transient_children)
+{
+    DP_ASSERT(tlpl);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
+    DP_ASSERT(tlpl->transient);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tlpl->count);
+    DP_ASSERT(transient_children);
+    DP_LayerProps *lp = tlpl->elements[index].layer_props;
+    DP_ASSERT(!DP_layer_props_transient(lp));
+    tlpl->elements[index].transient_layer_props =
+        DP_transient_layer_props_new_with_children_noinc(lp,
+                                                         transient_children);
+    DP_layer_props_decref(lp);
+    return tlpl->elements[index].transient_layer_props;
+}
+
 int DP_transient_layer_props_list_index_by_id(DP_TransientLayerPropsList *tlpl,
                                               int layer_id)
 {
@@ -300,19 +320,17 @@ int DP_transient_layer_props_list_index_by_id(DP_TransientLayerPropsList *tlpl,
     return DP_layer_props_list_index_by_id((DP_LayerPropsList *)tlpl, layer_id);
 }
 
-void DP_transient_layer_props_list_insert_inc(DP_TransientLayerPropsList *tlpl,
-                                              DP_LayerProps *lp, int index)
+void DP_transient_layer_props_list_set_noinc(DP_TransientLayerPropsList *tlpl,
+                                             DP_LayerProps *lp, int index)
 {
     DP_ASSERT(tlpl);
     DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
-    DP_ASSERT(!tlpl->elements[tlpl->count - 1].layer_props);
     DP_ASSERT(lp);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < tlpl->count);
-    memmove(&tlpl->elements[index + 1], &tlpl->elements[index],
-            sizeof(*tlpl->elements) * DP_int_to_size(tlpl->count - index - 1));
-    tlpl->elements[index].layer_props = DP_layer_props_incref(lp);
+    DP_ASSERT(!tlpl->elements[index].layer_props);
+    tlpl->elements[index].layer_props = lp;
 }
 
 void DP_transient_layer_props_list_insert_transient_noinc(

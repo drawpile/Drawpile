@@ -27,7 +27,8 @@
 #include "document_metadata.h"
 #include "image.h"
 #include "layer_content.h"
-#include "layer_content_list.h"
+#include "layer_group.h"
+#include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "ops.h"
@@ -50,7 +51,7 @@ struct DP_CanvasState {
     const bool transient;
     const int width, height;
     DP_Tile *const background_tile;
-    DP_LayerContentList *const layer_contents;
+    DP_LayerList *const layers;
     DP_LayerPropsList *const layer_props;
     DP_AnnotationList *const annotations;
     DP_Timeline *const timeline;
@@ -63,8 +64,8 @@ struct DP_TransientCanvasState {
     int width, height;
     DP_Tile *background_tile;
     union {
-        DP_LayerContentList *layer_contents;
-        DP_TransientLayerContentList *transient_layer_contents;
+        DP_LayerList *layers;
+        DP_TransientLayerList *transient_layers;
     };
     union {
         DP_LayerPropsList *layer_props;
@@ -92,8 +93,8 @@ struct DP_CanvasState {
     int width, height;
     DP_Tile *background_tile;
     union {
-        DP_LayerContentList *layer_contents;
-        DP_TransientLayerContentList *transient_layer_contents;
+        DP_LayerList *layers;
+        DP_TransientLayerList *transient_layers;
     };
     union {
         DP_LayerPropsList *layer_props;
@@ -136,7 +137,7 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
 DP_CanvasState *DP_canvas_state_new(void)
 {
     DP_TransientCanvasState *tcs = allocate_canvas_state(false, 0, 0);
-    tcs->layer_contents = DP_layer_content_list_new();
+    tcs->layers = DP_layer_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->annotations = DP_annotation_list_new();
     tcs->timeline = DP_timeline_new();
@@ -166,7 +167,7 @@ void DP_canvas_state_decref(DP_CanvasState *cs)
         DP_timeline_decref(cs->timeline);
         DP_annotation_list_decref(cs->annotations);
         DP_layer_props_list_decref(cs->layer_props);
-        DP_layer_content_list_decref(cs->layer_contents);
+        DP_layer_list_decref(cs->layers);
         DP_tile_decref_nullable(cs->background_tile);
         DP_free(cs);
     }
@@ -214,11 +215,11 @@ DP_Tile *DP_canvas_state_background_tile_noinc(DP_CanvasState *cs)
     return cs->background_tile;
 }
 
-DP_LayerContentList *DP_canvas_state_layer_contents_noinc(DP_CanvasState *cs)
+DP_LayerList *DP_canvas_state_layers_noinc(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    return cs->layer_contents;
+    return cs->layers;
 }
 
 DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs)
@@ -261,40 +262,53 @@ static DP_CanvasState *handle_canvas_resize(DP_CanvasState *cs,
 }
 
 static DP_CanvasState *handle_layer_create(DP_CanvasState *cs,
+                                           DP_DrawContext *dc,
                                            unsigned int context_id,
                                            DP_MsgLayerCreate *mlc)
 {
+    int layer_id = DP_msg_layer_create_id(mlc);
+    if (layer_id == 0) {
+        DP_error_set("Create layer: layer id 0 is invalid");
+        return NULL;
+    }
+
     unsigned int flags = DP_msg_layer_create_flags(mlc);
     bool into = flags & DP_MSG_LAYER_CREATE_FLAGS_INTO;
     bool group = flags & DP_MSG_LAYER_CREATE_FLAGS_GROUP;
 
     uint32_t fill = DP_msg_layer_create_fill(mlc);
-    DP_Tile *tile = fill == 0 ? NULL : DP_tile_new_from_bgra(context_id, fill);
+    DP_Tile *tile =
+        group || fill == 0 ? NULL : DP_tile_new_from_bgra(context_id, fill);
 
     size_t title_length;
     const char *title = DP_msg_layer_create_name(mlc, &title_length);
 
-    DP_CanvasState *next = DP_ops_layer_create(
-        cs, DP_msg_layer_create_id(mlc), DP_msg_layer_create_source(mlc),
-        DP_msg_layer_create_target(mlc), tile, into, group, title,
-        title_length);
+    DP_CanvasState *next =
+        DP_ops_layer_create(cs, dc, layer_id, DP_msg_layer_create_source(mlc),
+                            DP_msg_layer_create_target(mlc), tile, into, group,
+                            title, title_length);
 
     DP_tile_decref_nullable(tile);
     return next;
 }
 
-static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
+static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs, DP_DrawContext *dc,
                                          DP_MsgLayerAttributes *mla)
 {
+    int layer_id = DP_msg_layer_attributes_id(mla);
+    if (layer_id == 0) {
+        DP_error_set("Layer attributes: layer id 0 is invalid");
+        return NULL;
+    }
+
     unsigned int flags = DP_msg_layer_attributes_flags(mla);
     bool censored = flags & DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR;
-    bool fixed = flags & DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED;
     bool isolated = flags & DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED;
+
     return DP_ops_layer_attributes(
-        cs, DP_msg_layer_attributes_id(mla),
-        DP_msg_layer_attributes_sublayer(mla),
+        cs, dc, layer_id, DP_msg_layer_attributes_sublayer(mla),
         DP_channel8_to_15(DP_msg_layer_attributes_opacity(mla)),
-        DP_msg_layer_attributes_blend(mla), censored, fixed, isolated);
+        DP_msg_layer_attributes_blend(mla), censored, isolated);
 }
 
 
@@ -312,9 +326,9 @@ static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
     int count;
     const uint16_t *layers = DP_msg_layer_order_layers(mlo, &count);
     if (count != 0 && count % 2 == 0) {
-        return DP_ops_layer_reorder(cs, dc, DP_msg_layer_order_root(mlo),
-                                    count / 2, get_layer_order_pair,
-                                    (void *)layers);
+        return DP_ops_layer_order(cs, dc, DP_msg_layer_order_root(mlo),
+                                  count / 2, get_layer_order_pair,
+                                  (void *)layers);
     }
     else {
         DP_error_set("Layer order: ordering %s",
@@ -324,30 +338,57 @@ static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
 }
 
 static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,
+                                            DP_DrawContext *dc,
                                             DP_MsgLayerRetitle *mlr)
 {
+    int layer_id = DP_msg_layer_retitle_id(mlr);
+    if (layer_id == 0) {
+        DP_error_set("Layer retitle: layer id 0 is invalid");
+        return NULL;
+    }
+
     size_t title_length;
     const char *title = DP_msg_layer_retitle_title(mlr, &title_length);
-    return DP_ops_layer_retitle(cs, DP_msg_layer_retitle_id(mlr), title,
-                                title_length);
+
+    return DP_ops_layer_retitle(cs, dc, layer_id, title, title_length);
 }
 
 static DP_CanvasState *handle_layer_delete(DP_CanvasState *cs,
+                                           DP_DrawContext *dc,
                                            unsigned int context_id,
                                            DP_MsgLayerDelete *mld)
 {
-    return DP_ops_layer_delete(cs, context_id, DP_msg_layer_delete_id(mld),
-                               DP_msg_layer_delete_merge_to(mld));
+    int layer_id = DP_msg_layer_delete_id(mld);
+    if (layer_id == 0) {
+        DP_error_set("Layer delete: layer id 0 is invalid");
+        return NULL;
+    }
+
+    int merge_layer_id = DP_msg_layer_delete_merge_to(mld);
+    if (layer_id == merge_layer_id) {
+        DP_error_set("Layer delete: invalid merge of layer %d into itself",
+                     layer_id);
+        return NULL;
+    }
+
+    return DP_ops_layer_delete(cs, dc, context_id, layer_id, merge_layer_id);
 }
 
 static DP_CanvasState *handle_layer_visibility(DP_CanvasState *cs,
+                                               DP_DrawContext *dc,
                                                DP_MsgLayerVisibility *mlv)
 {
-    return DP_ops_layer_visibility(cs, DP_msg_layer_visibility_id(mlv),
+    int layer_id = DP_msg_layer_visibility_id(mlv);
+    if (layer_id == 0) {
+        DP_error_set("Layer visibility: layer id 0 is invalid");
+        return NULL;
+    }
+
+    return DP_ops_layer_visibility(cs, dc, layer_id,
                                    DP_msg_layer_visibility_visible(mlv));
 }
 
-static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
+static DP_CanvasState *handle_put_image(DP_CanvasState *cs, DP_DrawContext *dc,
                                         unsigned int context_id,
                                         DP_MsgPutImage *mpi)
 {
@@ -360,14 +401,14 @@ static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
     size_t image_size;
     const unsigned char *image = DP_msg_put_image_image(mpi, &image_size);
     return DP_ops_put_image(
-        cs, context_id, DP_msg_put_image_layer(mpi), blend_mode,
+        cs, dc, context_id, DP_msg_put_image_layer(mpi), blend_mode,
         DP_uint32_to_int(DP_msg_put_image_x(mpi)),
         DP_uint32_to_int(DP_msg_put_image_y(mpi)),
         DP_uint32_to_int(DP_msg_put_image_w(mpi)),
         DP_uint32_to_int(DP_msg_put_image_h(mpi)), image, image_size);
 }
 
-static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
+static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs, DP_DrawContext *dc,
                                         unsigned int context_id,
                                         DP_MsgFillRect *mfr)
 {
@@ -396,7 +437,7 @@ static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
     }
 
     DP_Pixel15 pixel = DP_pixel15_from_color(DP_msg_fill_rect_color(mfr));
-    return DP_ops_fill_rect(cs, context_id, DP_msg_fill_rect_layer(mfr),
+    return DP_ops_fill_rect(cs, dc, context_id, DP_msg_fill_rect_layer(mfr),
                             blend_mode, left, top, right, bottom, pixel);
 }
 
@@ -473,9 +514,9 @@ static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
         return NULL;
     }
 
-    DP_CanvasState *next = DP_ops_put_tile(cs, tile, DP_msg_put_tile_layer(mpt),
-                                           DP_msg_put_tile_sublayer(mpt), x, y,
-                                           DP_msg_put_tile_repeat(mpt));
+    DP_CanvasState *next = DP_ops_put_tile(
+        cs, dc, tile, DP_msg_put_tile_layer(mpt), DP_msg_put_tile_sublayer(mpt),
+        x, y, DP_msg_put_tile_repeat(mpt));
 
     DP_tile_decref(tile);
     return next;
@@ -502,10 +543,10 @@ static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
     }
 }
 
-static DP_CanvasState *handle_pen_up(DP_CanvasState *cs,
+static DP_CanvasState *handle_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
                                      unsigned int context_id)
 {
-    return DP_ops_pen_up(cs, context_id);
+    return DP_ops_pen_up(cs, dc, context_id);
 }
 
 static DP_CanvasState *handle_annotation_create(DP_CanvasState *cs,
@@ -742,24 +783,25 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
         return handle_canvas_resize(cs, DP_message_context_id(msg),
                                     DP_msg_canvas_resize_cast(msg));
     case DP_MSG_LAYER_CREATE:
-        return handle_layer_create(cs, DP_message_context_id(msg),
+        return handle_layer_create(cs, dc, DP_message_context_id(msg),
                                    DP_msg_layer_create_cast(msg));
     case DP_MSG_LAYER_ATTRIBUTES:
-        return handle_layer_attr(cs, DP_msg_layer_attributes_cast(msg));
+        return handle_layer_attr(cs, dc, DP_msg_layer_attributes_cast(msg));
     case DP_MSG_LAYER_ORDER:
         return handle_layer_order(cs, dc, DP_msg_layer_order_cast(msg));
     case DP_MSG_LAYER_RETITLE:
-        return handle_layer_retitle(cs, DP_msg_layer_retitle_cast(msg));
+        return handle_layer_retitle(cs, dc, DP_msg_layer_retitle_cast(msg));
     case DP_MSG_LAYER_DELETE:
-        return handle_layer_delete(cs, DP_message_context_id(msg),
+        return handle_layer_delete(cs, dc, DP_message_context_id(msg),
                                    DP_msg_layer_delete_cast(msg));
     case DP_MSG_LAYER_VISIBILITY:
-        return handle_layer_visibility(cs, DP_msg_layer_visibility_cast(msg));
+        return handle_layer_visibility(cs, dc,
+                                       DP_msg_layer_visibility_cast(msg));
     case DP_MSG_PUT_IMAGE:
-        return handle_put_image(cs, DP_message_context_id(msg),
+        return handle_put_image(cs, dc, DP_message_context_id(msg),
                                 DP_msg_put_image_cast(msg));
     case DP_MSG_FILL_RECT:
-        return handle_fill_rect(cs, DP_message_context_id(msg),
+        return handle_fill_rect(cs, dc, DP_message_context_id(msg),
                                 DP_msg_fill_rect_cast(msg));
     case DP_MSG_MOVE_REGION:
         return handle_move_region(cs, dc, DP_message_context_id(msg),
@@ -771,7 +813,7 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
         return handle_canvas_background(cs, dc, DP_message_context_id(msg),
                                         DP_msg_canvas_background_cast(msg));
     case DP_MSG_PEN_UP:
-        return handle_pen_up(cs, DP_message_context_id(msg));
+        return handle_pen_up(cs, dc, DP_message_context_id(msg));
     case DP_MSG_ANNOTATION_CREATE:
         return handle_annotation_create(cs, DP_msg_annotation_create_cast(msg));
     case DP_MSG_ANNOTATION_RESHAPE:
@@ -819,15 +861,25 @@ int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
     DP_ASSERT(cs);
     DP_ASSERT(context_id != 0);
     DP_ASSERT(context_id <= INT_MAX);
-    DP_LayerContentList *lcl = DP_canvas_state_layer_contents_noinc(cs);
-    int count = DP_layer_content_list_count(cs->layer_contents);
+    DP_LayerList *ll = DP_canvas_state_layers_noinc(cs);
+    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    int count = DP_layer_list_count(cs->layers);
+    DP_ASSERT(DP_layer_props_list_count(lpl) == count);
     for (int i = 0; i < count; ++i) {
-        DP_LayerContent *lc = DP_layer_content_list_at_noinc(lcl, i);
-        if (DP_layer_content_search_change_bounds(lc, context_id, out_x, out_y,
-                                                  out_width, out_height)) {
-            DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
-            DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-            return DP_layer_props_id(lp);
+        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
+        if (DP_layer_list_entry_is_group(lle)) {
+            int layer_id = DP_layer_group_search_change_bounds(
+                DP_layer_list_entry_group_noinc(lle),
+                DP_layer_props_list_at_noinc(lpl, i), context_id, out_x, out_y,
+                out_width, out_height);
+            if (layer_id != 0) {
+                return layer_id;
+            }
+        }
+        else if (DP_layer_content_search_change_bounds(
+                     DP_layer_list_entry_content_noinc(lle), context_id, out_x,
+                     out_y, out_width, out_height)) {
+            return DP_layer_props_id(DP_layer_props_list_at_noinc(lpl, i));
         }
     }
     return 0;
@@ -851,8 +903,9 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags)
         DP_transient_layer_content_new_init(width, height, background_tile);
 
     // Merge the other layers into the flattening layer.
-    DP_layer_content_list_merge_to_flat_image(cs->layer_contents,
-                                              cs->layer_props, tlc, flags);
+    bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
+    DP_layer_list_merge_to_flat_image(cs->layers, cs->layer_props, tlc,
+                                      DP_BIT15, include_sublayers);
 
     // Write it all to an image and toss the flattening layer.
     DP_LayerContent *lc = DP_transient_layer_content_persist(tlc);
@@ -871,9 +924,8 @@ DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,
     DP_TransientTile *tt = background_tile
                              ? DP_transient_tile_new(background_tile, 0)
                              : DP_transient_tile_new_blank(0);
-    DP_layer_content_list_flatten_tile_to(cs->layer_contents, cs->layer_props,
-                                          tile_index, tt);
-    return tt;
+    return DP_layer_list_flatten_tile_to(cs->layers, cs->layer_props,
+                                         tile_index, tt, DP_BIT15);
 }
 
 DP_TransientTile *DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x,
@@ -899,9 +951,8 @@ static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
         DP_canvas_diff_check_all(diff);
     }
     else {
-        DP_layer_content_list_diff(cs->layer_contents, cs->layer_props,
-                                   prev->layer_contents, prev->layer_props,
-                                   diff);
+        DP_layer_list_diff(cs->layers, cs->layer_props, prev->layers,
+                           prev->layer_props, diff);
     }
 }
 
@@ -950,7 +1001,7 @@ DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
 DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
 {
     DP_TransientCanvasState *tcs = allocate_canvas_state(true, 0, 0);
-    tcs->layer_contents = DP_layer_content_list_new();
+    tcs->layers = DP_layer_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->annotations = DP_annotation_list_new();
     tcs->timeline = DP_timeline_new();
@@ -972,7 +1023,7 @@ static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
 DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
 {
     DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
-    tcs->layer_contents = DP_layer_content_list_incref(cs->layer_contents);
+    tcs->layers = DP_layer_list_incref(cs->layers);
     tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
     tcs->timeline = DP_timeline_incref(cs->timeline);
@@ -981,11 +1032,11 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs)
 }
 
 DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
-    DP_CanvasState *cs, DP_TransientLayerContentList *tlcl,
+    DP_CanvasState *cs, DP_TransientLayerList *tll,
     DP_TransientLayerPropsList *tlpl)
 {
     DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
-    tcs->transient_layer_contents = tlcl;
+    tcs->transient_layers = tll;
     tcs->transient_layer_props = tlpl;
     tcs->annotations = DP_annotation_list_incref(cs->annotations);
     tcs->timeline = DP_timeline_incref(cs->timeline);
@@ -1015,8 +1066,8 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
     DP_ASSERT(tcs);
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
-    if (DP_layer_content_list_transient(tcs->layer_contents)) {
-        DP_transient_layer_content_list_persist(tcs->transient_layer_contents);
+    if (DP_layer_list_transient(tcs->layers)) {
+        DP_transient_layer_list_persist(tcs->transient_layers);
     }
     if (DP_layer_props_list_transient(tcs->layer_props)) {
         DP_transient_layer_props_list_persist(tcs->transient_layer_props);
@@ -1062,13 +1113,13 @@ void DP_transient_canvas_state_background_tile_set_noinc(
     tcs->background_tile = tile;
 }
 
-DP_LayerContentList *
-DP_transient_canvas_state_layer_contents_noinc(DP_TransientCanvasState *tcs)
+DP_LayerList *
+DP_transient_canvas_state_layers_noinc(DP_TransientCanvasState *tcs)
 {
     DP_ASSERT(tcs);
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
-    return DP_canvas_state_layer_contents_noinc((DP_CanvasState *)tcs);
+    return DP_canvas_state_layers_noinc((DP_CanvasState *)tcs);
 }
 
 DP_LayerPropsList *
@@ -1080,35 +1131,34 @@ DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs)
     return DP_canvas_state_layer_props_noinc((DP_CanvasState *)tcs);
 }
 
-void DP_transient_canvas_state_transient_layer_contents_set_noinc(
-    DP_TransientCanvasState *tcs, DP_TransientLayerContentList *tlcl)
+void DP_transient_canvas_state_transient_layers_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientLayerList *tll)
 {
     DP_ASSERT(tcs);
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
-    DP_layer_content_list_decref(tcs->layer_contents);
-    tcs->transient_layer_contents = tlcl;
+    DP_layer_list_decref(tcs->layers);
+    tcs->transient_layers = tll;
 }
 
-DP_TransientLayerContentList *
-DP_transient_canvas_state_transient_layer_contents(DP_TransientCanvasState *tcs,
-                                                   int reserve)
+DP_TransientLayerList *
+DP_transient_canvas_state_transient_layers(DP_TransientCanvasState *tcs,
+                                           int reserve)
 {
     DP_ASSERT(tcs);
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     DP_ASSERT(reserve >= 0);
-    DP_LayerContentList *lcl = tcs->layer_contents;
-    if (!DP_layer_content_list_transient(lcl)) {
-        tcs->transient_layer_contents =
-            DP_transient_layer_content_list_new(lcl, reserve);
-        DP_layer_content_list_decref(lcl);
+    DP_LayerList *ll = tcs->layers;
+    if (!DP_layer_list_transient(ll)) {
+        tcs->transient_layers = DP_transient_layer_list_new(ll, reserve);
+        DP_layer_list_decref(ll);
     }
     else if (reserve > 0) {
-        tcs->transient_layer_contents = DP_transient_layer_content_list_reserve(
-            tcs->transient_layer_contents, reserve);
+        tcs->transient_layers =
+            DP_transient_layer_list_reserve(tcs->transient_layers, reserve);
     }
-    return tcs->transient_layer_contents;
+    return tcs->transient_layers;
 }
 
 DP_TransientLayerPropsList *

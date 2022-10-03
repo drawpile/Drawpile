@@ -33,9 +33,11 @@ set(dpengine_sources
     dpengine/image_png.c
     dpengine/image_transform.c
     dpengine/layer_content.c
-    dpengine/layer_content_list.c
+    dpengine/layer_group.c
+    dpengine/layer_list.c
     dpengine/layer_props.c
     dpengine/layer_props_list.c
+    dpengine/layer_search.c
     dpengine/model_changes.c
     dpengine/ops.c
     dpengine/paint.c
@@ -58,9 +60,11 @@ set(dpengine_headers
     dpengine/image_png.h
     dpengine/image_transform.h
     dpengine/layer_content.h
-    dpengine/layer_content_list.h
+    dpengine/layer_group.h
+    dpengine/layer_list.h
     dpengine/layer_props.h
     dpengine/layer_props_list.h
+    dpengine/layer_search.h
     dpengine/model_changes.c
     dpengine/ops.h
     dpengine/paint.h
@@ -73,6 +77,7 @@ set(dptest_engine_headers test/dptest/dptest_engine.h)
 
 set(dpengine_tests
     test/handle_annotations.c
+    test/handle_layers.c
     test/handle_metadata.c
     test/handle_timeline.c
     test/image_thumbnail.c

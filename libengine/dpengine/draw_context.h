@@ -30,7 +30,7 @@
 #define DPENGINE_DRAW_CONTEXT_H
 #include <dpcommon/common.h>
 
-typedef struct DP_LayerContent DP_LayerContent;
+typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef union DP_Pixel8 DP_Pixel8;
 
@@ -43,8 +43,10 @@ typedef union DP_Pixel8 DP_Pixel8;
 #define DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE  8192
 #define DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE  (1024 * 1024)
 
-struct DP_LayerContentPropsPair {
-    DP_LayerContent *lc;
+#define DP_DRAW_CONTEXT_ID_COUNT 256
+
+struct DP_LayerPoolEntry {
+    DP_LayerListEntry *lle;
     DP_LayerProps *lp;
 };
 
@@ -52,9 +54,14 @@ typedef uint16_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 
 typedef struct DP_DrawContext DP_DrawContext;
 
+
 DP_DrawContext *DP_draw_context_new(void);
 
 void DP_draw_context_free(DP_DrawContext *dc);
+
+
+// All of the following operations share the same memory, their use can't be
+// intermixed within the same operation, they must be used in sequence.
 
 uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc);
 uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc);
@@ -63,17 +70,47 @@ DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc);
 
 DP_Pixel8 *DP_draw_context_tile_decompression_buffer(DP_DrawContext *dc);
 
+void DP_draw_context_id_generator_reset(DP_DrawContext *dc, int last_used_id);
+
+void DP_draw_context_id_generator_mark_used(DP_DrawContext *dc, int id);
+
+int DP_draw_context_id_generator_next(DP_DrawContext *dc);
+
+
+// The following operations also share a memory pool, same restriction applies.
+// It's different memory to the set of operations above though, so mixing those
+// above with these here works fine (and is done during transform handling.)
+
 unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc,
                                            size_t *out_size);
 
 unsigned char *DP_draw_context_raster_pool_resize(DP_DrawContext *dc,
                                                   size_t new_size);
 
-struct DP_LayerContentPropsPair *DP_draw_context_layer_pool(DP_DrawContext *dc,
-                                                            int *out_capacity);
+struct DP_LayerPoolEntry *DP_draw_context_layer_pool(DP_DrawContext *dc,
+                                                     int *out_capacity);
 
-struct DP_LayerContentPropsPair *
-DP_draw_context_layer_pool_resize(DP_DrawContext *dc, int new_capacity);
+struct DP_LayerPoolEntry *DP_draw_context_layer_pool_resize(DP_DrawContext *dc,
+                                                            int new_capacity);
+
+
+// Layer index lists have their own memory.
+
+// Clear layer index list 0.
+void DP_draw_context_layer_indexes_clear(DP_DrawContext *dc);
+
+// Push only increments the count of layer index list 0. Set is used to actually
+// assign a value to the pushed element. Pop decrements the count again.
+void DP_draw_context_layer_indexes_push(DP_DrawContext *dc);
+void DP_draw_context_layer_indexes_set(DP_DrawContext *dc, int layer_index);
+void DP_draw_context_layer_indexes_pop(DP_DrawContext *dc);
+
+// Copy the contents of layer index list 0 to another one.
+void DP_draw_context_layer_indexes_flush(DP_DrawContext *dc, int list_index);
+
+// Get the contents of the given layer index list.
+int *DP_draw_context_layer_indexes_at(DP_DrawContext *dc, int list_index,
+                                      int *out_count);
 
 
 #endif

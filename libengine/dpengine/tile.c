@@ -178,6 +178,13 @@ void DP_tile_decref_nullable(DP_Tile *tile_or_null)
     }
 }
 
+int DP_tile_refcount(DP_Tile *tile)
+{
+    DP_ASSERT(tile);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    return DP_atomic_get(&tile->refcount);
+}
+
 bool DP_tile_transient(DP_Tile *tile)
 {
     DP_ASSERT(tile);
@@ -327,6 +334,43 @@ DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
                         : DP_transient_tile_new_blank(context_id);
 }
 
+DP_TransientTile *DP_transient_tile_incref(DP_TransientTile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    return (DP_TransientTile *)DP_tile_incref((DP_Tile *)tt);
+}
+
+DP_TransientTile *
+DP_transient_tile_incref_nullable(DP_TransientTile *tt_or_null)
+{
+    return tt_or_null ? DP_transient_tile_incref(tt_or_null) : NULL;
+}
+
+void DP_transient_tile_decref(DP_TransientTile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_tile_decref((DP_Tile *)tt);
+}
+
+void DP_transient_tile_decref_nullable(DP_TransientTile *tt_or_null)
+{
+    if (tt_or_null) {
+        DP_transient_tile_decref(tt_or_null);
+    }
+}
+
+int DP_transient_tile_refcount(DP_TransientTile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    return DP_tile_refcount((DP_Tile *)tt);
+}
+
 DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt)
 {
     DP_ASSERT(tt);
@@ -395,6 +439,17 @@ void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
     DP_ASSERT(tt);
     DP_ASSERT(t);
     DP_blend_pixels(tt->pixels, t->pixels, DP_TILE_LENGTH, opacity, blend_mode);
+}
+
+DP_TransientTile *
+DP_transient_tile_merge_nullable(DP_TransientTile *DP_RESTRICT tt_or_null,
+                                 DP_Tile *DP_RESTRICT t, uint16_t opacity,
+                                 int blend_mode)
+{
+    DP_TransientTile *tt =
+        tt_or_null ? tt_or_null : DP_transient_tile_new_blank(0);
+    DP_transient_tile_merge(tt, t, opacity, blend_mode);
+    return tt;
 }
 
 void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,

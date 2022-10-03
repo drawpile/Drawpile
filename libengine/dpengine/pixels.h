@@ -71,6 +71,8 @@ typedef struct DP_UPixelFloat {
 } DP_UPixelFloat;
 
 
+uint16_t DP_fix15_mul(uint16_t a, uint16_t b);
+
 uint16_t DP_channel8_to_15(uint8_t c);
 uint8_t DP_channel15_to_8(uint16_t c);
 float DP_channel15_to_float(uint16_t c);

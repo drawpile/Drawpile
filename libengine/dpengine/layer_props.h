@@ -59,16 +59,25 @@ bool DP_layer_props_hidden(DP_LayerProps *lp);
 
 bool DP_layer_props_censored(DP_LayerProps *lp);
 
-bool DP_layer_props_fixed(DP_LayerProps *lp);
+bool DP_layer_props_isolated(DP_LayerProps *lp);
 
 bool DP_layer_props_visible(DP_LayerProps *lp);
 
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length);
 
+// Will return NULL if this is not a group.
+DP_LayerPropsList *DP_layer_props_children_noinc(DP_LayerProps *lp);
+
+bool DP_layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp);
+
 
 DP_TransientLayerProps *DP_transient_layer_props_new(DP_LayerProps *lp);
 
-DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id);
+DP_TransientLayerProps *DP_transient_layer_props_new_with_children_noinc(
+    DP_LayerProps *lp, DP_TransientLayerPropsList *tlpl);
+
+DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
+                                                          bool group);
 
 DP_TransientLayerProps *
 DP_transient_layer_props_incref(DP_TransientLayerProps *tlp);
@@ -89,17 +98,22 @@ bool DP_transient_layer_props_hidden(DP_TransientLayerProps *tlp);
 
 bool DP_transient_layer_props_censored(DP_TransientLayerProps *tlp);
 
-bool DP_transient_layer_props_fixed(DP_TransientLayerProps *tlp);
+bool DP_transient_layer_props_isolated(DP_TransientLayerProps *tlp);
 
 bool DP_transient_layer_props_visible(DP_TransientLayerProps *tlp);
 
 const char *DP_transient_layer_props_title(DP_TransientLayerProps *tlp,
                                            size_t *out_length);
 
-void DP_transient_layer_props_id_set(DP_TransientLayerProps *tlp, int layer_id);
+// Will return NULL if this is not a group.
+DP_LayerPropsList *
+DP_transient_layer_props_children_noinc(DP_TransientLayerProps *tlp);
 
-void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
-                                        const char *title, size_t length);
+DP_TransientLayerPropsList *
+DP_transient_layer_props_transient_children(DP_TransientLayerProps *tlp,
+                                            int reserve);
+
+void DP_transient_layer_props_id_set(DP_TransientLayerProps *tlp, int layer_id);
 
 void DP_transient_layer_props_opacity_set(DP_TransientLayerProps *tlp,
                                           uint16_t opacity);
@@ -113,8 +127,11 @@ void DP_transient_layer_props_censored_set(DP_TransientLayerProps *tlp,
 void DP_transient_layer_props_hidden_set(DP_TransientLayerProps *tlp,
                                          bool hidden);
 
-void DP_transient_layer_props_fixed_set(DP_TransientLayerProps *tlp,
-                                        bool fixed);
+void DP_transient_layer_props_isolated_set(DP_TransientLayerProps *tlp,
+                                           bool isolated);
+
+void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
+                                        const char *title, size_t length);
 
 
 #endif

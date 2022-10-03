@@ -33,21 +33,30 @@ function LayerListDock:on_layer_props(event)
     self._layer_props = event
 end
 
+function LayerListDock:_show_layers(layer_props)
+    for i = #layer_props, 1, -1 do
+        local l = layer_props[i]
+        local children = l.children
+        ImGui.Text(string.format("%s %s %d: %s %d%%",
+                children and (l.isolated and "Group" or "Pass") or "Layer",
+                l.hidden and "X" or "O", l.id, l.title or "(nil)",
+                math.floor(l.opacity / 32768.0 * 100.0 + 0.5)))
+        if children then
+            ImGui.Indent()
+            self:_show_layers(children)
+            ImGui.Unindent()
+        end
+    end
+end
+
 function LayerListDock:show()
     local T <const> = Translations:for_category("layer_list_dock")
     Utils.set_next_window_size_once(500.0, 100.0)
     Utils.begin_dialog(T"title##layer_list_dock")
 
     local layer_props = self._layer_props
-    local layer_count = #layer_props
-    if layer_count ~= 0 then
-        for i = layer_count, 1, -1 do
-            local l = layer_props[i]
-            ImGui.Text(string.format("%s %d: %s %d%%%s",
-                    l.hidden and "X" or "O", l.id, l.title or "(nil)",
-                    math.floor(l.opacity / 255.0 * 100.0 + 0.5),
-                    l.fixed and "*" or ""))
-        end
+    if #layer_props > 0 then
+        self:_show_layers(layer_props)
     else
         ImGui.Text("No Layers")
     end

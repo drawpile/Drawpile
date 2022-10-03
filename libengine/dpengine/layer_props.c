@@ -43,8 +43,11 @@ struct DP_LayerProps {
     int blend_mode;
     const bool hidden;
     const bool censored;
-    const bool fixed;
+    const bool isolated;
     DP_LayerTitle *const title;
+    struct {
+        DP_LayerPropsList *const children;
+    };
 };
 
 struct DP_TransientLayerProps {
@@ -55,8 +58,12 @@ struct DP_TransientLayerProps {
     int blend_mode;
     bool hidden;
     bool censored;
-    bool fixed;
+    bool isolated;
     DP_LayerTitle *title;
+    union {
+        DP_LayerPropsList *children;
+        DP_TransientLayerPropsList *transient_children;
+    };
 };
 
 #else
@@ -69,8 +76,12 @@ struct DP_LayerProps {
     int blend_mode;
     bool hidden;
     bool censored;
-    bool fixed;
+    bool isolated;
     DP_LayerTitle *title;
+    union {
+        DP_LayerPropsList *children;
+        DP_TransientLayerPropsList *transient_children;
+    };
 };
 
 #endif
@@ -138,6 +149,7 @@ void DP_layer_props_decref(DP_LayerProps *lp)
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
     if (DP_atomic_dec(&lp->refcount)) {
+        DP_layer_props_list_decref_nullable(lp->children);
         layer_title_decref_nullable(lp->title);
         DP_free(lp);
     }
@@ -199,11 +211,11 @@ bool DP_layer_props_censored(DP_LayerProps *lp)
     return lp->censored;
 }
 
-bool DP_layer_props_fixed(DP_LayerProps *lp)
+bool DP_layer_props_isolated(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
-    return lp->fixed;
+    return lp->isolated;
 }
 
 bool DP_layer_props_visible(DP_LayerProps *lp)
@@ -237,12 +249,26 @@ const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length)
     return title;
 }
 
-
-DP_TransientLayerProps *DP_transient_layer_props_new(DP_LayerProps *lp)
+DP_LayerPropsList *DP_layer_props_children_noinc(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
-    DP_ASSERT(!lp->transient);
+    return lp->children;
+}
+
+bool DP_layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp)
+{
+    return lp != prev_lp
+        && (lp->opacity != prev_lp->opacity
+            || lp->blend_mode != prev_lp->blend_mode
+            || lp->hidden != prev_lp->hidden
+            || lp->censored != prev_lp->censored
+            || lp->isolated != prev_lp->isolated);
+}
+
+
+static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
+{
     DP_TransientLayerProps *tlp = DP_malloc(sizeof(*tlp));
     *tlp = (DP_TransientLayerProps){
         DP_ATOMIC_INIT(1),
@@ -252,13 +278,38 @@ DP_TransientLayerProps *DP_transient_layer_props_new(DP_LayerProps *lp)
         lp->blend_mode,
         lp->hidden,
         lp->censored,
-        lp->fixed,
+        lp->isolated,
         layer_title_incref_nullable(lp->title),
+        {NULL},
     };
     return tlp;
 }
 
-DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id)
+DP_TransientLayerProps *DP_transient_layer_props_new(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    DP_ASSERT(!lp->transient);
+    DP_ASSERT(!lp->children || !DP_layer_props_list_transient(lp->children));
+    DP_TransientLayerProps *tlp = alloc_transient_layer_props(lp);
+    tlp->children = DP_layer_props_list_incref_nullable(lp->children);
+    return tlp;
+}
+
+DP_TransientLayerProps *DP_transient_layer_props_new_with_children_noinc(
+    DP_LayerProps *lp, DP_TransientLayerPropsList *tlpl)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    DP_ASSERT(!lp->transient);
+    DP_ASSERT(tlpl);
+    DP_TransientLayerProps *tlp = alloc_transient_layer_props(lp);
+    tlp->transient_children = tlpl;
+    return tlp;
+}
+
+DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
+                                                          bool group)
 {
     DP_TransientLayerProps *tlp = DP_malloc(sizeof(*tlp));
     *tlp = (DP_TransientLayerProps){
@@ -269,8 +320,9 @@ DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id)
         DP_BLEND_MODE_NORMAL,
         false,
         false,
-        false,
+        group,
         NULL,
+        {group ? DP_layer_props_list_new() : NULL},
     };
     return tlp;
 }
@@ -306,6 +358,10 @@ DP_LayerProps *DP_transient_layer_props_persist(DP_TransientLayerProps *tlp)
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
+    DP_LayerPropsList *children = tlp->children;
+    if (children && DP_layer_props_list_transient(children)) {
+        DP_transient_layer_props_list_persist(tlp->transient_children);
+    }
     tlp->transient = false;
     return (DP_LayerProps *)tlp;
 }
@@ -350,12 +406,12 @@ bool DP_transient_layer_props_censored(DP_TransientLayerProps *tlp)
     return DP_layer_props_censored((DP_LayerProps *)tlp);
 }
 
-bool DP_transient_layer_props_fixed(DP_TransientLayerProps *tlp)
+bool DP_transient_layer_props_isolated(DP_TransientLayerProps *tlp)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
-    return DP_layer_props_fixed((DP_LayerProps *)tlp);
+    return DP_layer_props_isolated((DP_LayerProps *)tlp);
 }
 
 bool DP_transient_layer_props_visible(DP_TransientLayerProps *tlp)
@@ -375,22 +431,42 @@ const char *DP_transient_layer_props_title(DP_TransientLayerProps *tlp,
     return DP_layer_props_title((DP_LayerProps *)tlp, out_length);
 }
 
+DP_LayerPropsList *
+DP_transient_layer_props_children_noinc(DP_TransientLayerProps *tlp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    return DP_layer_props_children_noinc((DP_LayerProps *)tlp);
+}
+
+DP_TransientLayerPropsList *
+DP_transient_layer_props_transient_children(DP_TransientLayerProps *tlp,
+                                            int reserve)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    DP_ASSERT(reserve >= 0);
+    DP_LayerPropsList *lpl = tlp->children;
+    if (!DP_layer_props_list_transient(lpl)) {
+        tlp->transient_children =
+            DP_transient_layer_props_list_new(lpl, reserve);
+        DP_layer_props_list_decref(lpl);
+    }
+    else if (reserve > 0) {
+        tlp->transient_children = DP_transient_layer_props_list_reserve(
+            tlp->transient_children, reserve);
+    }
+    return tlp->transient_children;
+}
+
 void DP_transient_layer_props_id_set(DP_TransientLayerProps *tlp, int layer_id)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
     tlp->id = layer_id;
-}
-
-void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
-                                        const char *title, size_t length)
-{
-    DP_ASSERT(tlp);
-    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
-    DP_ASSERT(tlp->transient);
-    layer_title_decref_nullable(tlp->title);
-    tlp->title = layer_title_new(title, length);
 }
 
 void DP_transient_layer_props_opacity_set(DP_TransientLayerProps *tlp,
@@ -429,10 +505,21 @@ void DP_transient_layer_props_hidden_set(DP_TransientLayerProps *tlp,
     tlp->hidden = hidden;
 }
 
-void DP_transient_layer_props_fixed_set(DP_TransientLayerProps *tlp, bool fixed)
+void DP_transient_layer_props_isolated_set(DP_TransientLayerProps *tlp,
+                                           bool isolated)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
-    tlp->fixed = fixed;
+    tlp->isolated = isolated;
+}
+
+void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
+                                        const char *title, size_t length)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    layer_title_decref_nullable(tlp->title);
+    tlp->title = layer_title_new(title, length);
 }

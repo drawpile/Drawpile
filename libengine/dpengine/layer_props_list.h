@@ -87,11 +87,16 @@ DP_transient_layer_props_list_at_noinc(DP_TransientLayerPropsList *tlpl,
 DP_TransientLayerProps *DP_transient_layer_props_list_transient_at_noinc(
     DP_TransientLayerPropsList *tlpl, int index);
 
+DP_TransientLayerProps *
+DP_transient_layer_props_list_transient_at_with_children_noinc(
+    DP_TransientLayerPropsList *tlpl, int index,
+    DP_TransientLayerPropsList *transient_children);
+
 int DP_transient_layer_props_list_index_by_id(DP_TransientLayerPropsList *tlpl,
                                               int layer_id);
 
-void DP_transient_layer_props_list_insert_inc(DP_TransientLayerPropsList *tlpl,
-                                              DP_LayerProps *lp, int index);
+void DP_transient_layer_props_list_set_noinc(DP_TransientLayerPropsList *tlpl,
+                                             DP_LayerProps *lp, int index);
 
 void DP_transient_layer_props_list_insert_transient_noinc(
     DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index);

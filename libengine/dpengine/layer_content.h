@@ -34,8 +34,8 @@ typedef struct DP_Tile DP_Tile;
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_LayerContent DP_LayerContent;
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
-typedef struct DP_LayerContentList DP_LayerContentList;
-typedef struct DP_TransientLayerContentList DP_TransientLayerContentList;
+typedef struct DP_LayerList DP_LayerList;
+typedef struct DP_TransientLayerList DP_TransientLayerList;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_TransientLayerProps DP_TransientLayerProps;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
@@ -44,8 +44,8 @@ typedef struct DP_TransientTile DP_TransientTile;
 #else
 typedef struct DP_LayerContent DP_LayerContent;
 typedef struct DP_LayerContent DP_TransientLayerContent;
-typedef struct DP_LayerContentList DP_LayerContentList;
-typedef struct DP_LayerContentList DP_TransientLayerContentList;
+typedef struct DP_LayerList DP_LayerList;
+typedef struct DP_LayerList DP_TransientLayerList;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_LayerProps DP_TransientLayerProps;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
@@ -83,7 +83,7 @@ DP_UPixel15 DP_layer_content_sample_color_at(DP_LayerContent *lc,
                                              int y, int diameter,
                                              int last_diameter);
 
-DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
+DP_LayerList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
 
 DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
@@ -108,9 +108,11 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
 
 DP_LayerContent *DP_layer_content_merge_to_flat_image(DP_LayerContent *lc);
 
-void DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                      DP_TransientTile *tt, uint16_t opacity,
-                                      int blend_mode);
+DP_TransientTile *DP_layer_content_flatten_tile_to(DP_LayerContent *lc,
+                                                   int tile_index,
+                                                   DP_TransientTile *tt_or_null,
+                                                   uint16_t opacity,
+                                                   int blend_mode);
 
 
 DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc);
@@ -138,7 +140,7 @@ DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
 void DP_transient_layer_content_transient_tile_at_set_noinc(
     DP_TransientLayerContent *tlc, int x, int y, DP_TransientTile *tt);
 
-DP_LayerContentList *
+DP_LayerList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc);
 
 DP_LayerPropsList *

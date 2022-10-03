@@ -42,48 +42,53 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
                                      unsigned int context_id, int top,
                                      int right, int bottom, int left);
 
-DP_CanvasState *DP_ops_layer_create(DP_CanvasState *cs, int layer_id,
-                                    int source_id, int target_id, DP_Tile *tile,
-                                    bool into, bool group, const char *title,
-                                    size_t title_length);
+DP_CanvasState *DP_ops_layer_create(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    int layer_id, int source_id, int target_id,
+                                    DP_Tile *tile, bool into, bool group,
+                                    const char *title, size_t title_length);
 
-DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
-                                        int sublayer_id, uint16_t opacity,
-                                        int blend_mode, bool censored,
-                                        bool fixed, bool isolated);
+DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, DP_DrawContext *dc,
+                                        int layer_id, int sublayer_id,
+                                        uint16_t opacity, int blend_mode,
+                                        bool censored, bool isolated);
 
-DP_CanvasState *DP_ops_layer_reorder(
-    DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int count,
-    struct DP_LayerOrderPair (*get_layer)(void *, int), void *user);
+DP_CanvasState *DP_ops_layer_order(
+    DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int order_count,
+    struct DP_LayerOrderPair (*get_order)(void *, int), void *user);
 
-DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, int layer_id,
-                                     const char *title, size_t title_length);
+DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, DP_DrawContext *dc,
+                                     int layer_id, const char *title,
+                                     size_t title_length);
 
-DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, unsigned int context_id,
-                                    int layer_id, int merge_layer_id);
+DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    unsigned int context_id, int layer_id,
+                                    int merge_layer_id);
 
-DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, int layer_id,
-                                        bool visible);
+DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, DP_DrawContext *dc,
+                                        int layer_id, bool visible);
 
-DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs, unsigned int context_id,
-                                 int layer_id, int blend_mode, int x, int y,
-                                 int width, int height,
-                                 const unsigned char *image, size_t image_size);
+DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs, DP_DrawContext *dc,
+                                 unsigned int context_id, int layer_id,
+                                 int blend_mode, int x, int y, int width,
+                                 int height, const unsigned char *image,
+                                 size_t image_size);
 
 DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
                                    unsigned int context_id, int layer_id,
                                    const DP_Rect *src_rect,
                                    const DP_Quad *dst_quad, DP_Image *mask);
 
-DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, unsigned int context_id,
-                                 int layer_id, int blend_mode, int left,
-                                 int top, int right, int bottom,
-                                 DP_Pixel15 pixel);
+DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, DP_DrawContext *dc,
+                                 unsigned int context_id, int layer_id,
+                                 int blend_mode, int left, int top, int right,
+                                 int bottom, DP_Pixel15 pixel);
 
-DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_Tile *tile, int layer_id,
-                                int sublayer_id, int x, int y, int repeat);
+DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
+                                DP_Tile *tile, int layer_id, int sublayer_id,
+                                int x, int y, int repeat);
 
-DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, unsigned int context_id);
+DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
+                              unsigned int context_id);
 
 DP_CanvasState *DP_ops_annotation_create(DP_CanvasState *cs, int annotation_id,
                                          int x, int y, int width, int height);

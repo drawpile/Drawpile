@@ -180,38 +180,47 @@ static void move_client_events_to_lua(lua_State *L, int ref)
     }
 }
 
+static void push_layer_props_list(lua_State *L, DP_LayerPropsList *lpl)
+{
+    int count = DP_layer_props_list_count(lpl);
+    lua_createtable(L, count, 0);
+    for (int i = 0; i < count; ++i) {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
+        lua_createtable(L, 0, child_lpl ? 8 : 7);
+        lua_pushinteger(L, DP_layer_props_id(lp));
+        lua_setfield(L, -2, "id");
+        lua_pushinteger(L, DP_layer_props_opacity(lp));
+        lua_setfield(L, -2, "opacity");
+        lua_pushinteger(L, DP_layer_props_blend_mode(lp));
+        lua_setfield(L, -2, "blend_mode");
+        lua_pushboolean(L, DP_layer_props_hidden(lp));
+        lua_setfield(L, -2, "hidden");
+        lua_pushboolean(L, DP_layer_props_censored(lp));
+        lua_setfield(L, -2, "censored");
+        lua_pushboolean(L, DP_layer_props_isolated(lp));
+        lua_setfield(L, -2, "isolated");
+        size_t title_length;
+        const char *title = DP_layer_props_title(lp, &title_length);
+        lua_pushlstring(L, title, title_length);
+        lua_setfield(L, -2, "title");
+        if (child_lpl) {
+            push_layer_props_list(L, child_lpl);
+            lua_setfield(L, -2, "children");
+        }
+        lua_seti(L, -2, i + 1);
+    }
+}
+
 static int publish_layer_props_event(lua_State *L)
 {
     DP_ASSERT(lua_gettop(L) == 2);
     DP_ASSERT(lua_type(L, 1) == LUA_TLIGHTUSERDATA); // Layer props list.
     DP_ASSERT(lua_type(L, 2) == LUA_TTABLE);         // The Lua App instance.
-    DP_LayerPropsList *lpl = lua_touserdata(L, 1);
-    int count = DP_layer_props_list_count(lpl);
     lua_getfield(L, 2, "publish");
     lua_pushvalue(L, 2);
     lua_pushliteral(L, "LAYER_PROPS");
-    lua_createtable(L, count, 0);
-    for (int i = 0; i < count; ++i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        lua_createtable(L, 0, 7);
-        lua_pushinteger(L, DP_layer_props_id(lp));
-        lua_setfield(L, 7, "id");
-        lua_pushinteger(L, DP_layer_props_opacity(lp));
-        lua_setfield(L, 7, "opacity");
-        lua_pushinteger(L, DP_layer_props_blend_mode(lp));
-        lua_setfield(L, 7, "blend_mode");
-        lua_pushboolean(L, DP_layer_props_hidden(lp));
-        lua_setfield(L, 7, "hidden");
-        lua_pushboolean(L, DP_layer_props_censored(lp));
-        lua_setfield(L, 7, "censored");
-        lua_pushboolean(L, DP_layer_props_fixed(lp));
-        lua_setfield(L, 7, "fixed");
-        size_t title_length;
-        const char *title = DP_layer_props_title(lp, &title_length);
-        lua_pushlstring(L, title, title_length);
-        lua_setfield(L, 7, "title");
-        lua_seti(L, 6, i + 1);
-    }
+    push_layer_props_list(L, lua_touserdata(L, 1));
     lua_call(L, 3, 0);
     return 0;
 }

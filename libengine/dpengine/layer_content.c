@@ -23,7 +23,7 @@
 #include "canvas_diff.h"
 #include "draw_context.h"
 #include "image.h"
-#include "layer_content_list.h"
+#include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "paint.h"
@@ -42,7 +42,7 @@ struct DP_LayerContent {
     const bool transient;
     const int width, height;
     struct {
-        DP_LayerContentList *contents;
+        DP_LayerList *contents;
         DP_LayerPropsList *props;
     } sub;
     union {
@@ -56,8 +56,8 @@ struct DP_TransientLayerContent {
     int width, height;
     struct {
         union {
-            DP_LayerContentList *contents;
-            DP_TransientLayerContentList *transient_contents;
+            DP_LayerList *contents;
+            DP_TransientLayerList *transient_contents;
         };
         union {
             DP_LayerPropsList *props;
@@ -78,8 +78,8 @@ struct DP_LayerContent {
     int width, height;
     struct {
         union {
-            DP_LayerContentList *contents;
-            DP_TransientLayerContentList *transient_contents;
+            DP_LayerList *contents;
+            DP_TransientLayerList *transient_contents;
         };
         union {
             DP_LayerPropsList *props;
@@ -118,7 +118,7 @@ void DP_layer_content_decref(DP_LayerContent *lc)
             DP_tile_decref_nullable(lc->elements[i].tile);
         }
         DP_layer_props_list_decref(lc->sub.props);
-        DP_layer_content_list_decref(lc->sub.contents);
+        DP_layer_list_decref(lc->sub.contents);
         DP_free(lc);
     }
 }
@@ -144,16 +144,6 @@ bool DP_layer_content_transient(DP_LayerContent *lc)
     return lc->transient;
 }
 
-
-static bool layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp)
-{
-    return lp != prev_lp
-        && (DP_layer_props_opacity(lp) != DP_layer_props_opacity(prev_lp)
-            || DP_layer_props_blend_mode(lp)
-                   != DP_layer_props_blend_mode(prev_lp)
-            || DP_layer_props_hidden(lp) != DP_layer_props_hidden(prev_lp)
-            || DP_layer_props_censored(lp) != DP_layer_props_censored(prev_lp));
-}
 
 static bool mark_both(void *data, int tile_index)
 {
@@ -213,14 +203,14 @@ void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
     DP_ASSERT(prev_lc);
     DP_ASSERT(prev_lp);
     DP_ASSERT(diff);
-    if (layer_props_differ(lp, prev_lp)) {
+    if (DP_layer_props_differ(lp, prev_lp)) {
         layer_content_diff_mark_both(lc, prev_lc, diff);
     }
     else {
         layer_content_diff(lc, prev_lc, diff);
     }
-    DP_layer_content_list_diff(lc->sub.contents, lc->sub.props,
-                               prev_lc->sub.contents, prev_lc->sub.props, diff);
+    DP_layer_list_diff(lc->sub.contents, lc->sub.props, prev_lc->sub.contents,
+                       prev_lc->sub.props, diff);
 }
 
 static bool mark(void *data, int tile_index)
@@ -245,7 +235,7 @@ void DP_layer_content_diff_mark(DP_LayerContent *lc, DP_CanvasDiff *diff)
     DP_ASSERT(lc);
     DP_ASSERT(diff);
     layer_content_diff_mark(lc, diff);
-    DP_layer_content_list_diff_mark(lc->sub.contents, diff);
+    DP_layer_list_diff_mark(lc->sub.contents, diff);
 }
 
 
@@ -393,7 +383,7 @@ DP_UPixel15 DP_layer_content_sample_color_at(DP_LayerContent *lc,
     }
 }
 
-DP_LayerContentList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc)
+DP_LayerList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -454,8 +444,10 @@ static bool get_sublayer_change_bounds(DP_LayerContent *lc, int i, int *out_x,
                                        int *out_y, int *out_width,
                                        int *out_height)
 {
-    DP_LayerContentList *lcl = DP_layer_content_sub_contents_noinc(lc);
-    DP_LayerContent *slc = DP_layer_content_list_at_noinc(lcl, i);
+    DP_LayerList *ll = DP_layer_content_sub_contents_noinc(lc);
+    DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
+    DP_ASSERT(!DP_layer_list_entry_is_group(lle));
+    DP_LayerContent *slc = DP_layer_list_entry_content_noinc(lle);
     int left, top, right, bottom;
     if (layer_content_tile_bounds(slc, &left, &top, &right, &bottom)) {
         if (out_x) {
@@ -589,28 +581,40 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index)
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
     DP_Tile *t = lc->elements[tile_index].tile;
-    DP_LayerContentList *lcl = lc->sub.contents;
-    if (DP_layer_content_list_count(lcl) == 0) {
+    DP_LayerList *ll = lc->sub.contents;
+    if (DP_layer_list_count(ll) == 0) {
         return DP_tile_incref_nullable(t);
     }
-    else {
-        DP_TransientTile *tt = DP_transient_tile_new_nullable(t, 0);
-        DP_layer_content_list_flatten_tile_to(lcl, lc->sub.props, tile_index,
-                                              tt);
+    else if (t) {
+        DP_TransientTile *tt = DP_transient_tile_new(t, 0);
+        DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
+                                      DP_BIT15);
         return DP_transient_tile_persist(tt);
+    }
+    else {
+        DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
+            ll, lc->sub.props, tile_index, NULL, DP_BIT15);
+        return tt_or_null ? DP_transient_tile_persist(tt_or_null) : NULL;
     }
 }
 
-void DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                      DP_TransientTile *tt, uint16_t opacity,
-                                      int blend_mode)
+DP_TransientTile *DP_layer_content_flatten_tile_to(DP_LayerContent *lc,
+                                                   int tile_index,
+                                                   DP_TransientTile *tt_or_null,
+                                                   uint16_t opacity,
+                                                   int blend_mode)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_Tile *t = flatten_tile(lc, tile_index);
     if (t) {
-        DP_transient_tile_merge(tt, t, opacity, blend_mode);
+        DP_TransientTile *tt = DP_transient_tile_merge_nullable(
+            tt_or_null, t, opacity, blend_mode);
         DP_tile_decref(t);
+        return tt;
+    }
+    else {
+        return tt_or_null;
     }
 }
 
@@ -736,7 +740,7 @@ resize_layer_content_aligned(DP_LayerContent *lc, int top, int left, int width,
                 DP_tile_incref_nullable(tile);
         }
     }
-    tlc->sub.contents = DP_layer_content_list_new();
+    tlc->sub.contents = DP_layer_list_new();
     tlc->sub.props = DP_layer_props_list_new();
     return tlc;
 }
@@ -824,11 +828,11 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
         tlc = DP_transient_layer_content_new_init(width, height, NULL);
     }
 
-    DP_LayerContentList *sub_lcl = lc->sub.contents;
-    if (DP_layer_content_list_count(sub_lcl) != 0) {
-        tlc->sub.transient_contents = DP_layer_content_list_resize(
-            sub_lcl, context_id, top, right, bottom, left);
-        DP_layer_content_list_decref(sub_lcl);
+    DP_LayerList *sub_ll = lc->sub.contents;
+    if (DP_layer_list_count(sub_ll) != 0) {
+        tlc->sub.transient_contents =
+            DP_layer_list_resize(sub_ll, context_id, top, right, bottom, left);
+        DP_layer_list_decref(sub_ll);
     }
 
     return tlc;
@@ -838,8 +842,8 @@ DP_LayerContent *DP_layer_content_merge_to_flat_image(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_LayerContentList *lcl = lc->sub.contents;
-    int count = DP_layer_content_list_count(lcl);
+    DP_LayerList *ll = lc->sub.contents;
+    int count = DP_layer_list_count(ll);
     if (count > 0) {
         DP_TransientLayerContent *tlc = DP_transient_layer_content_new(lc);
         DP_transient_layer_content_merge_all_sublayers(tlc, 0);
@@ -863,7 +867,7 @@ DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
     for (int i = 0; i < count; ++i) {
         tlc->elements[i].tile = DP_tile_incref_nullable(lc->elements[i].tile);
     }
-    tlc->sub.contents = DP_layer_content_list_incref(lc->sub.contents);
+    tlc->sub.contents = DP_layer_list_incref(lc->sub.contents);
     tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
     return tlc;
 }
@@ -879,7 +883,7 @@ DP_transient_layer_content_new_init(int width, int height, DP_Tile *tile)
     for (int i = 0; i < tile_count; ++i) {
         tlc->elements[i].tile = tile;
     }
-    tlc->sub.transient_contents = DP_transient_layer_content_list_new_init(0);
+    tlc->sub.transient_contents = DP_transient_layer_list_new_init(0);
     tlc->sub.transient_props = DP_transient_layer_props_list_new_init(0);
     return tlc;
 }
@@ -924,8 +928,8 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
             DP_transient_tile_persist(tlc->elements[i].transient_tile);
         }
     }
-    if (DP_layer_content_list_transient(tlc->sub.contents)) {
-        DP_transient_layer_content_list_persist(tlc->sub.transient_contents);
+    if (DP_layer_list_transient(tlc->sub.contents)) {
+        DP_transient_layer_list_persist(tlc->sub.transient_contents);
     }
     if (DP_layer_props_list_transient(tlc->sub.props)) {
         DP_transient_layer_props_list_persist(tlc->sub.transient_props);
@@ -970,7 +974,7 @@ void DP_transient_layer_content_transient_tile_at_set_noinc(
 }
 
 
-DP_LayerContentList *
+DP_LayerList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
@@ -1084,17 +1088,16 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
 }
 
 
-static DP_TransientLayerContentList *
+static DP_TransientLayerList *
 get_transient_sub_contents(DP_TransientLayerContent *tlc, int reserve)
 {
-    DP_LayerContentList *lcl = tlc->sub.contents;
-    if (!DP_layer_content_list_transient(lcl)) {
-        tlc->sub.transient_contents =
-            DP_transient_layer_content_list_new(lcl, reserve);
-        DP_layer_content_list_decref(lcl);
+    DP_LayerList *ll = tlc->sub.contents;
+    if (!DP_layer_list_transient(ll)) {
+        tlc->sub.transient_contents = DP_transient_layer_list_new(ll, reserve);
+        DP_layer_list_decref(ll);
     }
     else if (reserve != 0) {
-        tlc->sub.transient_contents = DP_transient_layer_content_list_reserve(
+        tlc->sub.transient_contents = DP_transient_layer_list_reserve(
             tlc->sub.transient_contents, reserve);
     }
     return tlc->sub.transient_contents;
@@ -1120,21 +1123,20 @@ static void create_sublayer(DP_TransientLayerContent *tlc, int sublayer_id,
                             DP_TransientLayerContent **out_tlc,
                             DP_TransientLayerProps **out_tlp)
 {
-    DP_TransientLayerContentList *tlcl = get_transient_sub_contents(tlc, 1);
+    DP_TransientLayerList *tll = get_transient_sub_contents(tlc, 1);
     DP_TransientLayerPropsList *tlpl = get_transient_sub_props(tlc, 1);
     DP_ASSERT(DP_transient_layer_props_list_count(tlpl)
-              == DP_transient_layer_content_list_count(tlcl));
+              == DP_transient_layer_list_count(tll));
     DP_ASSERT(DP_transient_layer_props_list_index_by_id(tlpl, sublayer_id)
               == -1);
-    int index = DP_transient_layer_content_list_count(tlcl) - 1;
+    int index = DP_transient_layer_list_count(tll) - 1;
 
     DP_TransientLayerContent *sub_tlc =
         DP_transient_layer_content_new_init(tlc->width, tlc->height, NULL);
-    DP_transient_layer_content_list_insert_transient_noinc(tlcl, sub_tlc,
-                                                           index);
+    DP_transient_layer_list_insert_transient_content_noinc(tll, sub_tlc, index);
 
     DP_TransientLayerProps *sub_tlp =
-        DP_transient_layer_props_new_init(sublayer_id);
+        DP_transient_layer_props_new_init(sublayer_id, false);
     DP_transient_layer_props_list_insert_transient_noinc(tlpl, sub_tlp, index);
 
     if (out_tlc) {
@@ -1353,9 +1355,9 @@ void DP_transient_layer_content_list_transient_sublayer_at(
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     if (out_tlc) {
-        DP_TransientLayerContentList *tlcl = get_transient_sub_contents(tlc, 0);
-        *out_tlc = DP_transient_layer_content_list_transient_at_noinc(
-            tlcl, sublayer_index);
+        DP_TransientLayerList *tll = get_transient_sub_contents(tlc, 0);
+        *out_tlc = DP_transient_layer_list_transient_content_at_noinc(
+            tll, sublayer_index);
     }
     if (out_tlp) {
         DP_TransientLayerPropsList *tlpl = get_transient_sub_props(tlc, 0);
@@ -1388,14 +1390,15 @@ void DP_transient_layer_content_merge_sublayer_at(DP_TransientLayerContent *tlc,
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
-    DP_TransientLayerContentList *tlcl = get_transient_sub_contents(tlc, 0);
+    DP_TransientLayerList *tll = get_transient_sub_contents(tlc, 0);
     DP_TransientLayerPropsList *tlpl = get_transient_sub_props(tlc, 0);
-    DP_LayerContent *lc = DP_transient_layer_content_list_at_noinc(tlcl, index);
+    DP_LayerListEntry *lle = DP_transient_layer_list_at_noinc(tll, index);
+    DP_LayerContent *lc = DP_layer_list_entry_content_noinc(lle);
     DP_LayerProps *lp = DP_transient_layer_props_list_at_noinc(tlpl, index);
     DP_transient_layer_content_merge(tlc, context_id, lc,
                                      DP_layer_props_opacity(lp),
                                      DP_layer_props_blend_mode(lp));
-    DP_transient_layer_content_list_delete_at(tlcl, index);
+    DP_transient_layer_list_delete_at(tll, index);
     DP_transient_layer_props_list_delete_at(tlpl, index);
 }
 
@@ -1405,19 +1408,20 @@ void DP_transient_layer_content_merge_all_sublayers(
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
-    DP_LayerContentList *lcl = tlc->sub.contents;
+    DP_LayerList *ll = tlc->sub.contents;
     DP_LayerPropsList *lpl = tlc->sub.props;
-    int count = DP_layer_content_list_count(lcl);
+    int count = DP_layer_list_count(ll);
     for (int i = 0; i < count; ++i) {
-        DP_LayerContent *lc = DP_layer_content_list_at_noinc(lcl, i);
+        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
+        DP_LayerContent *lc = DP_layer_list_entry_content_noinc(lle);
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         DP_transient_layer_content_merge(tlc, context_id, lc,
                                          DP_layer_props_opacity(lp),
                                          DP_layer_props_blend_mode(lp));
     }
-    DP_layer_content_list_decref(lcl);
+    DP_layer_list_decref(ll);
     DP_layer_props_list_decref(lpl);
-    tlc->sub.contents = DP_layer_content_list_new();
+    tlc->sub.contents = DP_layer_list_new();
     tlc->sub.props = DP_layer_props_list_new();
 }
 

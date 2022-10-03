@@ -110,6 +110,8 @@ void DP_tile_decref(DP_Tile *tile);
 
 void DP_tile_decref_nullable(DP_Tile *tile_or_null);
 
+int DP_tile_refcount(DP_Tile *tile);
+
 bool DP_tile_transient(DP_Tile *tile);
 
 
@@ -140,6 +142,17 @@ DP_TransientTile *DP_transient_tile_new_blank(unsigned int context_id);
 DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
                                                  unsigned int context_id);
 
+DP_TransientTile *DP_transient_tile_incref(DP_TransientTile *tt);
+
+DP_TransientTile *
+DP_transient_tile_incref_nullable(DP_TransientTile *tt_or_null);
+
+void DP_transient_tile_decref(DP_TransientTile *tt);
+
+void DP_transient_tile_decref_nullable(DP_TransientTile *tt_or_null);
+
+int DP_transient_tile_refcount(DP_TransientTile *tt);
+
 DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt);
 
 
@@ -158,6 +171,11 @@ void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
 void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
                              DP_Tile *DP_RESTRICT t, uint16_t opacity,
                              int blend_mode);
+
+DP_TransientTile *
+DP_transient_tile_merge_nullable(DP_TransientTile *DP_RESTRICT tt_or_null,
+                                 DP_Tile *DP_RESTRICT t, uint16_t opacity,
+                                 int blend_mode);
 
 void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,
                                    int blend_mode, const uint16_t *mask,
