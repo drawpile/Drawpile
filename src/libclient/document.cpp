@@ -55,6 +55,7 @@ Document::Document(QObject *parent)
 	  m_sessionPasswordProtected(false),
 	  m_sessionOpword(false),
 	  m_sessionNsfm(false),
+	  m_sessionForceNsfm(false),
 	  m_sessionDeputies(false),
 	  m_sessionMaxUserCount(0),
 	  m_sessionHistoryMaxSize(0),
@@ -236,6 +237,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("nsfm"))
 		setSessionNsfm(config["nsfm"].toBool());
 
+	if(config.contains("forceNsfm"))
+		setSessionForceNsfm(config["forceNsfm"].toBool());
+
 	if(config.contains("deputies"))
 		setSessionDeputies(config["deputies"].toBool());
 
@@ -382,6 +386,14 @@ void Document::setSessionNsfm(bool nsfm)
 	if(m_sessionNsfm != nsfm) {
 		m_sessionNsfm = nsfm;
 		emit sessionNsfmChanged(nsfm);
+	}
+}
+
+void Document::setSessionForceNsfm(bool forceNsfm)
+{
+	if(m_sessionForceNsfm != forceNsfm) {
+		m_sessionForceNsfm = forceNsfm;
+		emit sessionForceNsfmChanged(forceNsfm);
 	}
 }
 
