@@ -86,6 +86,7 @@ private slots:
 	void sendSessionConf();
 
 	void updatePasswordLabel(QLabel *label);
+	void updateNsfmCheckbox(bool);
 
 protected:
 	void showEvent(QShowEvent *event) override;

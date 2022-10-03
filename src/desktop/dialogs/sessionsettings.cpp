@@ -83,7 +83,8 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->opword->setProperty("haspass", hasPassword);
 		updatePasswordLabel(m_ui->opword);
 	});
-	connect(m_doc, &Document::sessionNsfmChanged, m_ui->nsfm, &QCheckBox::setChecked);
+	connect(m_doc, &Document::sessionNsfmChanged, this, &SessionSettingsDialog::updateNsfmCheckbox);
+	connect(m_doc, &Document::sessionForceNsfmChanged, this, &SessionSettingsDialog::updateNsfmCheckbox);
 	connect(m_doc, &Document::sessionDeputiesChanged, this, [this](bool deputies) { m_ui->deputies->setCurrentIndex(deputies ? 1 : 0); });
 	connect(m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers, &QSpinBox::setValue);
 	connect(m_doc, &Document::sessionResetThresholdChanged, m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
@@ -370,6 +371,17 @@ void SessionSettingsDialog::updatePasswordLabel(QLabel *label)
 		txt = txt.arg(tr("no", "password"), tr("assign", "password"));
 
 	label->setText(txt);
+}
+
+void SessionSettingsDialog::updateNsfmCheckbox(bool)
+{
+	if(m_doc->isSessionForceNsfm()) {
+		m_ui->nsfm->setEnabled(false);
+		m_ui->nsfm->setChecked(true);
+	} else {
+		m_ui->nsfm->setEnabled(true);
+		m_ui->nsfm->setChecked(m_doc->isSessionNsfm());
+	}
 }
 
 void SessionSettingsDialog::sendSessionConf()

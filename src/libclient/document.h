@@ -72,6 +72,7 @@ class Document : public QObject
 	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
 	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
+	Q_PROPERTY(bool sessionForceNsfm READ isSessionForceNsfm NOTIFY sessionForceNsfmChanged)
 	Q_PROPERTY(bool sessionDeputies READ isSessionDeputies NOTIFY sessionDeputiesChanged)
 	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
 	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY sessionResetThresholdChanged)
@@ -136,6 +137,7 @@ public:
 	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
 	bool isSessionOpword() const { return m_sessionOpword; }
 	bool isSessionNsfm() const { return m_sessionNsfm; }
+	bool isSessionForceNsfm() const { return m_sessionForceNsfm; }
 	bool isSessionDeputies() const { return m_sessionDeputies; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
 	double sessionResetThreshold() const { return m_sessionResetThreshold/double(1024*1024); }
@@ -166,6 +168,7 @@ signals:
 	void sessionPasswordChanged(bool passwordProtected);
 	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
+	void sessionForceNsfmChanged(bool forceNsfm);
 	void sessionDeputiesChanged(bool deputies);
 	void sessionMaxUserCountChanged(int count);
 	void sessionRoomcodeChanged(const QString &code);
@@ -242,6 +245,7 @@ private:
 	void setSessionResetThreshold(int threshold);
 	void setBaseResetThreshold(int threshold);
 	void setSessionNsfm(bool nsfm);
+	void setSessionForceNsfm(bool forceNsfm);
 	void setSessionDeputies(bool deputies);
 	void setRoomcode(const QString &roomcode);
 
@@ -278,6 +282,7 @@ private:
 	bool m_sessionPasswordProtected;
 	bool m_sessionOpword;
 	bool m_sessionNsfm;
+	bool m_sessionForceNsfm;
 	bool m_sessionDeputies;
 
 	int m_sessionMaxUserCount;
