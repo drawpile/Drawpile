@@ -41,6 +41,18 @@ namespace server {
 
 using protocol::MessagePtr;
 
+static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
+{
+	if(config->getConfigBool(config::ForceNsfm) && !history->hasFlag(SessionHistory::Nsfm)) {
+		SessionHistory::Flags flags = history->flags();
+		flags.setFlag(SessionHistory::Nsfm);
+		history->setFlags(flags);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 Session::Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent)
 	: QObject(parent),
 	m_history(history),
@@ -48,6 +60,8 @@ Session::Session(SessionHistory *history, ServerConfig *config, sessionlisting::
 	m_announcements(announcements)
 {
 	m_history->setParent(this);
+	connect(m_config, &ServerConfig::configValueChanged, this, &Session::onConfigValueChanged);
+	forceEnableNsfm(m_history, m_config);
 
 	m_lastEventTime.start();
 
@@ -394,7 +408,12 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << (conf["preserveChat"].toBool() ? "preserve chat" : "don't preserve chat");
 	}
 
-	if(conf.contains("nsfm")) {
+	if(m_config->getConfigBool(config::ForceNsfm)) {
+		if(!flags.testFlag(SessionHistory::Nsfm)) {
+			flags.setFlag(SessionHistory::Nsfm, true);
+			changes << "forced NSFM";
+		}
+	} else if(conf.contains("nsfm")) {
 		flags.setFlag(SessionHistory::Nsfm, conf["nsfm"].toBool());
 		changes << (conf["nsfm"].toBool() ? "tagged NSFM" : "removed NSFM tag");
 	}
@@ -538,6 +557,9 @@ void Session::sendUpdatedSessionProperties()
 	conf["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
 	conf["hasPassword"] = !m_history->passwordHash().isEmpty();
 	conf["hasOpword"] = !m_history->opwordHash().isEmpty();
+	// This config option is basically a session property set by the server.
+	// We report it here so the client can disable the checkbox in the UI.
+	conf["forceNsfm"] = m_config->getConfigBool(config::ForceNsfm);
 	props.reply["config"] = conf;
 
 	addToHistory(protocol::MessagePtr(new protocol::Command(0, props)));
@@ -980,6 +1002,16 @@ void Session::onAnnouncementsChanged(const sessionlisting::Announcable *session)
 {
 	if(session == this)
 		sendUpdatedAnnouncementList();
+}
+
+void Session::onConfigValueChanged(const ConfigKey &key)
+{
+	if(key.index == config::ForceNsfm.index) {
+		if(forceEnableNsfm(m_history, m_config)) {
+			log(Log().about(Log::Level::Info, Log::Topic::Status).message("Forced NSFM after config change"));
+		}
+		sendUpdatedSessionProperties();
+	}
 }
 
 void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QString &message)

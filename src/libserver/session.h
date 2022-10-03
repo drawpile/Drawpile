@@ -46,6 +46,7 @@ namespace sessionlisting {
 namespace server {
 
 class Client;
+class ConfigKey;
 class ServerConfig;
 class Log;
 
@@ -354,6 +355,7 @@ signals:
 private slots:
 	void removeUser(Client *user);
 	void onAnnouncementsChanged(const Announcable *session);
+	void onConfigValueChanged(const ConfigKey &key);
 
 protected:
 	Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent);

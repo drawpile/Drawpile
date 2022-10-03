@@ -76,7 +76,8 @@ namespace config {
 		LogPurgeDays(20, "logpurgedays", "0", ConfigKey::INT),               // Automatically purge log entries older than this many days (DB log only)
 		AutoresetThreshold(21, "autoResetThreshold", "15mb", ConfigKey::SIZE), // Default autoreset threshold in bytes
 		AllowCustomAvatars(22, "customAvatars", "true", ConfigKey::BOOL),      // Allow users to set a custom avatar when logging in
-		ExtAuthAvatars(23, "extAuthAvatars", "true", ConfigKey::BOOL)          // Use avatars received from ext-auth server (unless a custom avatar has been set)
+		ExtAuthAvatars(23, "extAuthAvatars", "true", ConfigKey::BOOL),         // Use avatars received from ext-auth server (unless a custom avatar has been set)
+		ForceNsfm(24, "forceNsfm", "false", ConfigKey::BOOL)                   // Force NSFM flag to be set on all sessions
 		;
 }
 
@@ -181,6 +182,9 @@ public:
 	 * @return size in bytes or a negative value in case of error
 	 */
 	static int parseSizeString(const QString &str);
+
+signals:
+	void configValueChanged(const ConfigKey &key);
 
 protected:
 	/**
