@@ -392,7 +392,8 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::LogPurgeDays,
 		config::AllowCustomAvatars,
 		config::AbuseReport,
-		config::ReportToken
+		config::ReportToken,
+		config::ForceNsfm,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

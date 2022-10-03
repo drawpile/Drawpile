@@ -110,6 +110,7 @@ bool ServerConfig::setConfigString(ConfigKey key, const QString &value)
 	// TODO key specific validation
 
 	setConfigValue(key, value);
+	emit configValueChanged(key);
 	return true;
 }
 
