@@ -24,6 +24,16 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
                            -Wmissing-include-dirs -Wconversion -Werror
                            -Wno-error=unused-parameter)
 
+    # When LTO is enabled, CMake will try to pass -fno-fat-lto-objects, which in
+    # turn causes clang-tidy to spew a warning about not understanding it, which
+    # fails the compilation due to -Werror. We have to turn off the ignored
+    # optimization argument warning entirely, -Wno-error doesn't work with GCC
+    # in turn because it doesn't know that warning and dies because of it. At
+    # the time of writing, there's no way to make CMake not pass that flag.
+    if(CMAKE_INTERPROCEDURAL_OPTIMIZATION AND dp_clang_tidy)
+        list(APPEND dp_common_warnings -Wno-ignored-optimization-argument)
+    endif()
+
     # MinGW doesn't have %z printf specifiers, so it needs MS-specific formats.
     if(CMAKE_C_COMPILER MATCHES "mingw")
         list(APPEND dp_common_warnings -Wno-pedantic-ms-format)
