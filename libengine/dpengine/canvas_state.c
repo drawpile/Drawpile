@@ -451,7 +451,17 @@ static DP_CanvasState *handle_move_region(DP_CanvasState *cs,
     int src_width = DP_msg_move_region_bw(mmr);
     int src_height = DP_msg_move_region_bh(mmr);
     if (src_width <= 0 || src_height <= 0) {
-        DP_error_set("Region move: selection is empty");
+        DP_error_set("Move region: selection is empty");
+        return NULL;
+    }
+
+    int canvas_width = cs->width;
+    int canvas_height = cs->height;
+    DP_Rect canvas_bounds = DP_rect_make(0, 0, canvas_width, canvas_height);
+
+    DP_Rect src_rect = DP_rect_make(src_x, src_y, src_width, src_height);
+    if (!DP_rect_intersects(canvas_bounds, src_rect)) {
+        DP_error_set("Move region: source out of bounds");
         return NULL;
     }
 
@@ -461,18 +471,22 @@ static DP_CanvasState *handle_move_region(DP_CanvasState *cs,
                      DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
                      DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr));
 
-    long long canvas_width = cs->width;
-    long long canvas_height = cs->height;
+    DP_Rect dst_bounds = DP_quad_bounds(dst_quad);
+    if (!DP_rect_intersects(canvas_bounds, dst_bounds)) {
+        DP_error_set("Move region: destination out of bounds");
+        return NULL;
+    }
+
     long long max_size = (canvas_width + 1LL) * (canvas_height + 1LL);
-    if (DP_rect_size(DP_quad_bounds(dst_quad)) > max_size) {
-        DP_error_set("Region move: attempt to scale beyond image size");
+    if (DP_rect_size(dst_bounds) > max_size) {
+        DP_error_set("Move region: attempt to scale beyond image size");
         return NULL;
     }
 
     size_t in_mask_size;
     const unsigned char *in_mask = DP_msg_move_region_mask(mmr, &in_mask_size);
     DP_Image *mask;
-    if (in_mask) {
+    if (in_mask_size > 0) {
         mask = DP_image_new_from_compressed_monochrome(src_width, src_height,
                                                        in_mask, in_mask_size);
         if (!mask) {
@@ -483,9 +497,8 @@ static DP_CanvasState *handle_move_region(DP_CanvasState *cs,
         mask = NULL;
     }
 
-    DP_Rect src_rect = DP_rect_make(src_x, src_y, src_width, src_height);
     DP_CanvasState *next =
-        DP_ops_region_move(cs, dc, context_id, DP_msg_move_region_layer(mmr),
+        DP_ops_move_region(cs, dc, context_id, DP_msg_move_region_layer(mmr),
                            &src_rect, &dst_quad, mask);
     DP_free(mask);
     return next;
@@ -705,6 +718,57 @@ static DP_CanvasState *handle_draw_dabs_mypaint(DP_CanvasState *cs,
                          0, 0, 0}}});
 }
 
+static DP_CanvasState *handle_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
+                                        unsigned int context_id,
+                                        DP_MsgMoveRect *mmr)
+{
+    int width = DP_msg_move_rect_w(mmr);
+    int height = DP_msg_move_rect_h(mmr);
+    if (width <= 0 || height <= 0) {
+        DP_error_set("Move rect: selection is empty");
+        return NULL;
+    }
+
+    DP_Rect canvas_bounds = DP_rect_make(0, 0, DP_canvas_state_width(cs),
+                                         DP_canvas_state_height(cs));
+    DP_Rect src_rect = DP_rect_make(DP_msg_move_rect_sx(mmr),
+                                    DP_msg_move_rect_sy(mmr), width, height);
+    if (!DP_rect_intersects(canvas_bounds, src_rect)) {
+        DP_error_set("Move rect: source out of bounds");
+        return NULL;
+    }
+
+    int dst_x = DP_msg_move_rect_tx(mmr);
+    int dst_y = DP_msg_move_rect_ty(mmr);
+    if (!DP_rect_intersects(canvas_bounds,
+                            DP_rect_make(dst_x, dst_y, width, height))) {
+        DP_error_set("Move rect: destination out of bounds");
+        return NULL;
+    }
+
+    size_t in_mask_size;
+    const unsigned char *in_mask = DP_msg_move_rect_mask(mmr, &in_mask_size);
+    DP_Image *mask;
+    if (in_mask_size > 0) {
+        // TODO: this could be monochrome, but the move rect message sends
+        // 32 bit masks instead. Could probably make that more efficient.
+        mask =
+            DP_image_new_from_compressed(width, height, in_mask, in_mask_size);
+        if (!mask) {
+            return NULL;
+        }
+    }
+    else {
+        mask = NULL;
+    }
+
+    DP_CanvasState *next =
+        DP_ops_move_rect(cs, dc, context_id, DP_msg_move_rect_layer(mmr),
+                         &src_rect, dst_x, dst_y, mask);
+    DP_free(mask);
+    return next;
+}
+
 static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
                                                DP_MsgSetMetadataInt *msmi)
 {
@@ -837,6 +901,9 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_DRAW_DABS_MYPAINT:
         return handle_draw_dabs_mypaint(cs, dc, DP_message_context_id(msg),
                                         DP_msg_draw_dabs_mypaint_cast(msg));
+    case DP_MSG_MOVE_RECT:
+        return handle_move_rect(cs, dc, DP_message_context_id(msg),
+                                DP_msg_move_rect_cast(msg));
     case DP_MSG_SET_METADATA_INT:
         return handle_set_metadata_int(cs, DP_msg_set_metadata_int_cast(msg));
     case DP_MSG_SET_METADATA_STR:

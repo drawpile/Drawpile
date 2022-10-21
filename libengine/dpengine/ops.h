@@ -73,10 +73,15 @@ DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs, DP_DrawContext *dc,
                                  int height, const unsigned char *image,
                                  size_t image_size);
 
-DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
+DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
                                    unsigned int context_id, int layer_id,
                                    const DP_Rect *src_rect,
                                    const DP_Quad *dst_quad, DP_Image *mask);
+
+DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
+                                 unsigned int context_id, int layer_id,
+                                 const DP_Rect *src_rect, int dst_x, int dst_y,
+                                 DP_Image *mask);
 
 DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, DP_DrawContext *dc,
                                  unsigned int context_id, int layer_id,

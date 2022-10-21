@@ -879,40 +879,16 @@ static bool looks_like_translation_only(DP_Rect src_rect, DP_Quad dst_quad)
 {
     DP_Rect dst_bounds = DP_quad_bounds(dst_quad);
     return DP_rect_width(src_rect) == DP_rect_width(dst_bounds)
-        && DP_rect_height(src_rect) == DP_rect_width(dst_bounds)
+        && DP_rect_height(src_rect) == DP_rect_height(dst_bounds)
         && dst_quad.x1 < dst_quad.x2;
 }
 
-DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   unsigned int context_id, int layer_id,
-                                   const DP_Rect *src_rect,
-                                   const DP_Quad *dst_quad, DP_Image *mask)
+static DP_CanvasState *move_image(DP_CanvasState *cs, DP_DrawContext *dc,
+                                  unsigned int context_id,
+                                  const DP_Rect *src_rect, DP_Image *mask,
+                                  DP_Image *src_img, int offset_x, int offset_y,
+                                  DP_Image *dst_img)
 {
-    DP_LayerSearch search;
-    if (!search_layer("Region move", cs, dc, 1, layer_id, ALLOW_LAYERS,
-                      &search)) {
-        return NULL;
-    }
-
-    DP_Image *src_img = DP_layer_content_select(
-        DP_layer_list_entry_content_noinc(search.lle), src_rect, mask);
-
-    int offset_x, offset_y;
-    DP_Image *dst_img;
-    if (looks_like_translation_only(*src_rect, *dst_quad)) {
-        offset_x = dst_quad->x1;
-        offset_y = dst_quad->y2;
-        dst_img = src_img;
-    }
-    else {
-        dst_img =
-            DP_image_transform(src_img, dc, dst_quad, &offset_x, &offset_y);
-        if (!dst_img) {
-            DP_free(src_img);
-            return NULL;
-        }
-    }
-
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientLayerContent *tlc = get_transient_content(tcs, dc, 1);
 
@@ -936,6 +912,58 @@ DP_CanvasState *DP_ops_region_move(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_image_free(src_img);
 
     return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   unsigned int context_id, int layer_id,
+                                   const DP_Rect *src_rect,
+                                   const DP_Quad *dst_quad, DP_Image *mask)
+{
+    DP_LayerSearch search;
+    if (!search_layer("Move region", cs, dc, 1, layer_id, ALLOW_LAYERS,
+                      &search)) {
+        return NULL;
+    }
+
+    DP_Image *src_img = DP_layer_content_select(
+        DP_layer_list_entry_content_noinc(search.lle), src_rect, mask);
+
+    int offset_x, offset_y;
+    DP_Image *dst_img;
+    if (looks_like_translation_only(*src_rect, *dst_quad)) {
+        offset_x = dst_quad->x1;
+        offset_y = dst_quad->y2;
+        dst_img = src_img;
+    }
+    else {
+        dst_img =
+            DP_image_transform(src_img, dc, dst_quad, &offset_x, &offset_y);
+        if (!dst_img) {
+            DP_free(src_img);
+            return NULL;
+        }
+    }
+
+    return move_image(cs, dc, context_id, src_rect, mask, src_img, offset_x,
+                      offset_y, dst_img);
+}
+
+DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
+                                 unsigned int context_id, int layer_id,
+                                 const DP_Rect *src_rect, int dst_x, int dst_y,
+                                 DP_Image *mask)
+{
+    DP_LayerSearch search;
+    if (!search_layer("Move rect", cs, dc, 1, layer_id, ALLOW_LAYERS,
+                      &search)) {
+        return NULL;
+    }
+
+    DP_Image *src_img = DP_layer_content_select(
+        DP_layer_list_entry_content_noinc(search.lle), src_rect, mask);
+
+    return move_image(cs, dc, context_id, src_rect, mask, src_img, dst_x, dst_y,
+                      src_img);
 }
 
 
