@@ -1,6 +1,14 @@
 /* libmypaint - The MyPaint Brush Library
  * Copyright (C) 2007-2011 Martin Renold <martinxyz@gmx.ch>
  *
+ * With Drawpile patches to disable an include of a useless glib file and JSON
+ * support. We don't need glib and our JSON is loaded through Qt, so we can
+ * avoid the dependency on the json-c library. The patches are marked with
+ * DRAWPILE_UNWANTED_MYPAINT_FEATURES.
+ *
+ * There's also a fix for an off by one error when clearing smudge buckets.
+ * That has been marked with "Drawpile Patch".
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
@@ -34,7 +42,9 @@
 #include "helpers.h"
 #include "rng-double.h"
 
+#ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
 #include <json.h>
+#endif
 
 #ifdef _MSC_VER
 #if _MSC_VER < 1700     // Visual Studio 2012 and later has isfinite and roundf
@@ -121,7 +131,9 @@ struct MyPaintBrush {
     float speed_mapping_q[2];
 
     gboolean reset_requested;
+#ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
     json_object *brush_json;
+#endif
     int refcount;
 };
 
@@ -138,8 +150,9 @@ struct MyPaintBrush {
 
 void settings_base_values_have_changed (MyPaintBrush *self);
 
-
+#ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
 #include "glib/mypaint-brush.c"
+#endif
 
 void
 brush_reset(MyPaintBrush *self)
@@ -158,7 +171,10 @@ brush_reset(MyPaintBrush *self)
       int min_index = self->min_bucket_used;
       if (min_index != -1) {
         int max_index = self->max_bucket_used;
-        size_t num_bytes = (max_index - min_index) * sizeof(self->smudge_buckets[0]) * SMUDGE_BUCKET_SIZE;
+        // Drawpile Patch: fix off by one error when clearing smudge buckets.
+        // We added the + 1 here, since max_index is *inclusive*. See also
+        // https://github.com/mypaint/libmypaint/pull/186
+        size_t num_bytes = (max_index - min_index + 1) * sizeof(self->smudge_buckets[0]) * SMUDGE_BUCKET_SIZE;
         memset(self->smudge_buckets + min_index, 0, num_bytes);
         self->min_bucket_used = -1;
         self->max_bucket_used = -1;
@@ -217,9 +233,9 @@ mypaint_brush_new_with_buckets(int num_smudge_buckets)
     settings_base_values_have_changed(self);
 
     self->reset_requested = TRUE;
-
+#ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
     self->brush_json = json_object_new_object();
-
+#endif
     return self;
 }
 
@@ -231,11 +247,11 @@ brush_free(MyPaintBrush *self)
     }
     rng_double_free (self->rng);
     self->rng = NULL;
-
+#ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
     if (self->brush_json) {
         json_object_put(self->brush_json);
     }
-
+#endif
     free(self->smudge_buckets);
     free(self);
 }
@@ -1544,6 +1560,7 @@ mypaint_brush_stroke_to_internal(
     return FALSE;
   }
 
+#ifdef DRAWPILE_UNWANTED_MYPAINT_FEATURES
 // Compat wrapper, for supporting libjson
 static gboolean
 obj_get(json_object *self, const gchar *key, json_object **obj_out) {
@@ -1677,7 +1694,7 @@ mypaint_brush_from_string(MyPaintBrush *self, const char *string)
         return FALSE;
     }
 }
-
+#endif
 
 void
 mypaint_brush_from_defaults(MyPaintBrush *self) {
