@@ -22,6 +22,11 @@
  *
  * --------------------------------------------------------------------
  *
+ * Parts of this code are based on libmypaint, using it under the MIT license.
+ * See 3rdparty/libmypaint/COPYING for details.
+ *
+ * --------------------------------------------------------------------
+ *
  * Parts of this code are based on GIMP, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/gimp/COPYING for details.
  *
@@ -33,6 +38,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <math.h>
 
@@ -387,6 +393,317 @@ static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
 }
 
 
+static float aspect_ratio_from_uint8(uint8_t aspect_ratio)
+{
+    if (aspect_ratio == 23) {
+        return 1.0f; // Fudged to be a perfectly round dab.
+    }
+    else {
+        return DP_uint8_to_float(aspect_ratio) / 25.755f + 0.1f;
+    }
+}
+
+// The following code is based on libmypaint, see license above.
+
+#define AA_BORDER                    1.0f
+#define TWO_PI                       6.283185307179586f
+#define RADIUS_OF_CIRCLE_WITH_AREA_1 0.5641895835477563f /* sqrt(1.0 / pi) */
+
+static float calculate_rr(int xp, int yp, float radius, float aspect_ratio,
+                          float sn, float cs, float one_over_radius2)
+{
+    float yy = DP_int_to_float(yp) + 0.5f - radius;
+    float xx = DP_int_to_float(xp) + 0.5f - radius;
+    float yyr = (yy * cs - xx * sn) * aspect_ratio;
+    float xxr = yy * sn + xx * cs;
+    return (yyr * yyr + xxr * xxr) * one_over_radius2;
+}
+
+static float calculate_r_sample(float x, float y, float aspect_ratio, float sn,
+                                float cs)
+{
+    float yyr = (y * cs - x * sn) * aspect_ratio;
+    float xxr = y * sn + x * cs;
+    return yyr * yyr + xxr * xxr;
+}
+
+static float sign_point_in_line(float px, float py, float vx, float vy)
+{
+    return (px - vx) * -vy - vx * (py - vy);
+}
+
+static float calculate_rr_antialiased(int xp, int yp, float radius,
+                                      float aspect_ratio, float sn, float cs,
+                                      float one_over_radius2, float r_aa_start)
+{
+    float pixel_right = radius - DP_int_to_float(xp);
+    float pixel_bottom = radius - DP_int_to_float(yp);
+    float pixel_center_x = pixel_right - 0.5f;
+    float pixel_center_y = pixel_bottom - 0.5f;
+    float pixel_left = pixel_right - 1.0f;
+    float pixel_top = pixel_bottom - 1.0f;
+
+    float nearest_x, nearest_y, rr_near;
+    if (pixel_left < 0.0f && pixel_right > 0.0f && pixel_top < 0.0f
+        && pixel_bottom > 0.0f) {
+        nearest_x = 0.0f;
+        nearest_y = 0.0f;
+        rr_near = 0.0f;
+    }
+    else {
+        float l2 = cs * cs + sn * sn;
+        float ltp_dot = pixel_center_x * cs + pixel_center_y * sn;
+        float t = ltp_dot / l2;
+        nearest_x = DP_min_float(pixel_right, DP_max_float(pixel_left, cs * t));
+        nearest_y = DP_min_float(pixel_top, DP_max_float(pixel_bottom, sn * t));
+        float r_near =
+            calculate_r_sample(nearest_x, nearest_y, aspect_ratio, sn, cs);
+        rr_near = r_near * one_over_radius2;
+    }
+
+    if (rr_near > 1.0f) {
+        return rr_near;
+    }
+    else {
+        float center_sign =
+            sign_point_in_line(pixel_center_x, pixel_center_y, cs, -sn);
+
+        float farthest_x, farthest_y;
+        if (center_sign < 0.0f) {
+            farthest_x = nearest_x - sn * RADIUS_OF_CIRCLE_WITH_AREA_1;
+            farthest_y = nearest_y + cs * RADIUS_OF_CIRCLE_WITH_AREA_1;
+        }
+        else {
+            farthest_x = nearest_x + sn * RADIUS_OF_CIRCLE_WITH_AREA_1;
+            farthest_y = nearest_y - cs * RADIUS_OF_CIRCLE_WITH_AREA_1;
+        }
+
+        float r_far =
+            calculate_r_sample(farthest_x, farthest_y, aspect_ratio, sn, cs);
+        float rr_far = r_far * one_over_radius2;
+
+        if (r_far < r_aa_start) {
+            return (rr_far + rr_near) * 0.5f;
+        }
+        else {
+            float delta = rr_far - rr_near;
+            float delta2 = 1.0f + delta;
+            float visibility_near = (1.0f - rr_near) / delta2;
+            return 1.0f - visibility_near;
+        }
+    }
+}
+
+static float calculate_opa(float rr, float hardness, float segment1_offset,
+                           float segment1_slope, float segment2_offset,
+                           float segment2_slope)
+{
+    if (rr > 1.0f) {
+        return 0.0f;
+    }
+    else {
+        float fac, opa;
+        if (rr <= hardness) {
+            fac = segment1_slope;
+            opa = segment1_offset;
+        }
+        else {
+            fac = segment2_slope;
+            opa = segment2_offset;
+        }
+        return opa + rr * fac;
+    }
+}
+
+static void get_mypaint_brush_stamp_offsets(DP_BrushStamp *stamp, float x,
+                                            float y, float radius)
+{
+    stamp->top = DP_float_to_int(y - radius + 0.5f);
+    stamp->left = DP_float_to_int(x - radius + 0.5f);
+}
+
+static void get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc,
+                                    int raw_x, int raw_y, uint16_t raw_diameter,
+                                    uint8_t raw_hardness,
+                                    uint8_t raw_aspect_ratio, uint8_t raw_angle)
+{
+    float x = DP_int_to_float(raw_x) / 4.0f;
+    float y = DP_int_to_float(raw_y) / 4.0f;
+    float diameter = DP_uint16_to_float(raw_diameter) / 256.0f;
+    float hardness = DP_uint8_to_float(raw_hardness) / 255.0f;
+    float aspect_ratio = aspect_ratio_from_uint8(raw_aspect_ratio);
+    float angle = DP_uint8_to_float(raw_angle) / 255.0f;
+
+    float segment1_offset = 1.0f;
+    float segment1_slope = -(1.0f / hardness - 1.0f);
+    float segment2_offset = hardness / (1.0f - hardness);
+    float segment2_slope = -hardness / (1.0f - hardness);
+
+    float angle_rad = angle * TWO_PI; // angle is between 0 and 1, scale it.
+    float cs = cosf(angle_rad);
+    float sn = sinf(angle_rad);
+
+    float radius = diameter / 2.0f;
+    int idia = DP_float_to_int(floorf(diameter + 2.0f));
+    DP_ASSERT(idia < DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
+    float one_over_radius2 = 1.0f / (radius * radius);
+
+    // Like MyPaint, we precalculate the RR mask because that's way faster than
+    // doing each value inline, about twice as fast by my measurements.
+    float *rr_mask = DP_draw_context_rr_mask_buffer(dc);
+    if (radius < 3.0f) {
+        float aa_start = DP_max_float(0.0f, radius - AA_BORDER);
+        float r_aa_start = aa_start * (aa_start / aspect_ratio);
+        for (int yp = 0; yp < idia; ++yp) {
+            for (int xp = 0; xp < idia; ++xp) {
+                rr_mask[yp * idia + xp] =
+                    calculate_rr_antialiased(xp, yp, radius, aspect_ratio, sn,
+                                             cs, one_over_radius2, r_aa_start);
+            }
+        }
+    }
+    else {
+        for (int yp = 0; yp < idia; ++yp) {
+            for (int xp = 0; xp < idia; ++xp) {
+                rr_mask[yp * idia + xp] = calculate_rr(
+                    xp, yp, radius, aspect_ratio, sn, cs, one_over_radius2);
+            }
+        }
+    }
+
+    uint16_t *mask = DP_draw_context_stamp_buffer1(dc);
+    for (int yp = 0; yp < idia; ++yp) {
+        for (int xp = 0; xp < idia; ++xp) {
+            float rr = rr_mask[yp * idia + xp];
+            float opa =
+                calculate_opa(rr, hardness, segment1_offset, segment1_slope,
+                              segment2_offset, segment2_slope);
+            DP_ASSERT(opa >= 0.0f);
+            DP_ASSERT(opa <= 1.0f);
+            mask[yp * idia + xp] = DP_float_to_uint16(opa * (float)DP_BIT15);
+        }
+    }
+
+    get_mypaint_brush_stamp_offsets(stamp, x, y, radius);
+    stamp->diameter = idia;
+    stamp->data = mask;
+}
+
+// End of libmypaint-based code.
+
+static uint16_t scale_opacity(float ratio, float opacity)
+{
+    return DP_float_to_uint16(ratio * opacity * (float)DP_BIT15);
+}
+
+static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
+                              unsigned int context_id, DP_UPixel15 pixel,
+                              float normal, float lock_alpha, float colorize,
+                              float posterize, int posterize_num,
+                              DP_BrushStamp *stamp, uint8_t dab_opacity)
+{
+    float opacity = DP_uint8_to_float(dab_opacity) / 255.0f;
+
+    if (normal > 0.0f) {
+        DP_transient_layer_content_brush_stamp_apply(
+            tlc, context_id, pixel, scale_opacity(normal, opacity),
+            pixel.a == DP_BIT15 ? DP_BLEND_MODE_NORMAL
+                                : DP_BLEND_MODE_NORMAL_AND_ERASER,
+            stamp);
+    }
+
+    if (lock_alpha > 0.0f && pixel.a != 0) {
+        DP_transient_layer_content_brush_stamp_apply(
+            tlc, context_id, pixel, scale_opacity(lock_alpha, opacity),
+            DP_BLEND_MODE_RECOLOR, stamp);
+    }
+
+    if (colorize > 0.0f) {
+        DP_transient_layer_content_brush_stamp_apply(
+            tlc, context_id, pixel, scale_opacity(colorize, opacity),
+            DP_BLEND_MODE_COLOR, stamp);
+    }
+
+    if (posterize > 0.0f) {
+        DP_transient_layer_content_brush_stamp_apply_posterize(
+            tlc, context_id, scale_opacity(posterize, opacity), posterize_num,
+            stamp);
+    }
+}
+
+static void draw_dabs_mypaint(DP_PaintDrawDabsParams *params,
+                              DP_TransientLayerContent *tlc)
+{
+    DP_DrawContext *dc = params->draw_context;
+    unsigned int context_id = params->context_id;
+    DP_Pixel15 pixel = DP_pixel15_from_color(params->color);
+    int dab_count = params->dab_count;
+    const DP_MyPaintDab *dabs = params->mypaint.dabs;
+
+    float lock_alpha = DP_uint8_to_float(params->mypaint.lock_alpha) / 255.0f;
+    float colorize = DP_uint8_to_float(params->mypaint.colorize) / 255.0f;
+    float posterize = DP_uint8_to_float(params->mypaint.posterize) / 255.0f;
+    int posterize_num =
+        DP_max_int(0, DP_min_int(127, params->mypaint.posterize_num)) + 1;
+    float normal =
+        1.0f * (1.0f - lock_alpha) * (1.0f - colorize) * (1.0f - posterize);
+
+    // If two subsequent dabs use the same parameters, we can avoid the effort
+    // of generating a new mask. The first dab is guaranteed to exist, a draw
+    // dabs command with 0 dabs is rejected before we get here.
+    const DP_MyPaintDab *first_dab = DP_mypaint_dab_at(dabs, 0);
+    int last_x = params->origin_x + DP_mypaint_dab_x(first_dab);
+    int last_y = params->origin_y + DP_mypaint_dab_y(first_dab);
+    uint16_t last_size = DP_mypaint_dab_size(first_dab);
+    uint8_t last_hardness = DP_mypaint_dab_hardness(first_dab);
+    uint8_t last_aspect_ratio = DP_mypaint_dab_aspect_ratio(first_dab);
+    uint8_t last_angle = DP_mypaint_dab_angle(first_dab);
+
+    DP_BrushStamp stamp;
+    get_mypaint_brush_stamp(&stamp, dc, last_x, last_y, last_size,
+                            last_hardness, last_aspect_ratio, last_angle);
+    apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
+                      posterize, posterize_num, &stamp,
+                      DP_mypaint_dab_opacity(first_dab));
+
+    for (int i = 1; i < dab_count; ++i) {
+        const DP_MyPaintDab *dab = DP_mypaint_dab_at(dabs, i);
+        int x = last_x + DP_mypaint_dab_x(dab);
+        int y = last_y + DP_mypaint_dab_y(dab);
+
+        uint16_t size = DP_mypaint_dab_size(dab);
+        uint8_t hardness = DP_mypaint_dab_hardness(dab);
+        uint8_t aspect_ratio = DP_mypaint_dab_aspect_ratio(dab);
+        uint8_t angle = DP_mypaint_dab_angle(dab);
+        bool needs_new_mask = hardness != last_hardness || size != last_size
+                           || aspect_ratio != last_aspect_ratio
+                           || angle != last_angle;
+
+        if (needs_new_mask) {
+            get_mypaint_brush_stamp(&stamp, dc, x, y, size, hardness,
+                                    aspect_ratio, angle);
+            last_hardness = hardness;
+            last_size = size;
+            last_aspect_ratio = aspect_ratio;
+            last_angle = angle;
+        }
+        else {
+            float xf = DP_int_to_float(x) / 4.0f;
+            float yf = DP_int_to_float(y) / 4.0f;
+            float radius = DP_int_to_float(size) / 256.0f / 2.0f;
+            get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
+        }
+
+        apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
+                          posterize, posterize_num, &stamp,
+                          DP_mypaint_dab_opacity(dab));
+
+        last_x = x;
+        last_y = y;
+    }
+}
+
+
 void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
                         DP_TransientLayerContent *tlc)
 {
@@ -405,7 +722,7 @@ void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
         draw_dabs_pixel(params, tlc, get_square_pixel_mask_stamp);
         break;
     case DP_MSG_DRAW_DABS_MYPAINT:
-        DP_error_set("MyPaint dabs not yet implemented");
+        draw_dabs_mypaint(params, tlc);
         break;
     default:
         DP_panic("Unknown paint type %d", type);

@@ -96,7 +96,8 @@ add_clang_format_files("${dpengine_clang_format_files}")
 add_library(dpengine STATIC "${dpengine_sources}" "${dpengine_headers}")
 set_dp_target_properties(dpengine)
 target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpengine PUBLIC dpmsg_interface PNG::PNG qgrayraster)
+target_link_libraries(dpengine PUBLIC
+                      dpmsg_interface mypaint PNG::PNG qgrayraster)
 
 if(BUILD_TESTS)
     add_library(dptest_engine STATIC "${dptest_engine_sources}"

@@ -82,3 +82,26 @@ target_include_directories(
         uriparser PRIVATE "${CMAKE_CURRENT_LIST_DIR}/uriparser")
 target_include_directories(
         uriparser PUBLIC "${CMAKE_CURRENT_LIST_DIR}/uriparser/include")
+
+add_library(mypaint STATIC libmypaint/brushsettings-gen.h
+            libmypaint/config.h libmypaint/fastapprox/cast.h
+            libmypaint/fastapprox/fasterf.h libmypaint/fastapprox/fastexp.h
+            libmypaint/fastapprox/fastgamma.h
+            libmypaint/fastapprox/fasthyperbolic.h
+            libmypaint/fastapprox/fastlambertw.h libmypaint/fastapprox/fastlog.h
+            libmypaint/fastapprox/fastonebigheader.h
+            libmypaint/fastapprox/fastpow.h libmypaint/fastapprox/fastsigmoid.h
+            libmypaint/fastapprox/fasttrig.h libmypaint/fastapprox/sse.h
+            libmypaint/helpers.c libmypaint/helpers.h libmypaint/mypaint-brush.c
+            libmypaint/mypaint-brush.h libmypaint/mypaint-brush-settings.c
+            libmypaint/mypaint-brush-settings-gen.h
+            libmypaint/mypaint-brush-settings.h libmypaint/mypaint.c
+            libmypaint/mypaint-config.h libmypaint/mypaint-glib-compat.h
+            libmypaint/mypaint.h libmypaint/mypaint-mapping.c
+            libmypaint/mypaint-mapping.h libmypaint/mypaint-rectangle.c
+            libmypaint/mypaint-rectangle.h libmypaint/mypaint-surface.c
+            libmypaint/mypaint-surface.h libmypaint/rng-double.c
+            libmypaint/rng-double.h )
+set_dp_target_properties(mypaint NO_CLANG_TIDY NO_WARNINGS)
+target_include_directories(mypaint INTERFACE
+                           "${CMAKE_CURRENT_LIST_DIR}/libmypaint")

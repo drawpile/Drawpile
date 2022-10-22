@@ -43,10 +43,14 @@ struct DP_DrawContext {
     // Brush stamps, transformations, decompression and layer id generation
     // are used by distinct operations, so their buffers can share memory.
     union {
-        // Brush stamp masks. Pixel brushes need one, classic brush needs two.
+        // Brush stamp masks. Pixel brushes use only stamp buffer 1, classic
+        // brushes use 1 and 2, MyPaint brushes use 1 and the RR mask buffer.
         struct {
             DP_BrushStampBuffer stamp_buffer1;
-            DP_BrushStampBuffer stamp_buffer2;
+            union {
+                DP_BrushStampBuffer stamp_buffer2;
+                DP_RrMaskBuffer rr_mask_buffer;
+            };
         };
         // Pixel buffer for image transformation. Used by region move transform.
         DP_Pixel8 transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
@@ -105,6 +109,12 @@ uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
     return dc->stamp_buffer2;
+}
+
+float *DP_draw_context_rr_mask_buffer(DP_DrawContext *dc)
+{
+    DP_ASSERT(dc);
+    return dc->rr_mask_buffer;
 }
 
 DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc)

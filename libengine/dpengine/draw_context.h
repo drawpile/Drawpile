@@ -51,6 +51,7 @@ struct DP_LayerPoolEntry {
 };
 
 typedef uint16_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
+typedef float DP_RrMaskBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 
 typedef struct DP_DrawContext DP_DrawContext;
 
@@ -63,8 +64,14 @@ void DP_draw_context_free(DP_DrawContext *dc);
 // All of the following operations share the same memory, their use can't be
 // intermixed within the same operation, they must be used in sequence.
 
+// You can use both stamp buffer 1 and *either* stamp buffer 2 *or* the RR mask
+// buffer in the same operation. The latter two buffers share the same memory
+// amongst each other again. In practice, pixel brushes only use stamp buffer 1,
+// classic brushes use stamp buffers 1 and 2, MyPaint brushes use stamp buffer 1
+// and the RR mask buffer.
 uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc);
 uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc);
+float *DP_draw_context_rr_mask_buffer(DP_DrawContext *dc);
 
 DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc);
 
