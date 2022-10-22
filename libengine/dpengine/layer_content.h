@@ -175,6 +175,10 @@ void DP_transient_layer_content_brush_stamp_apply(
     DP_TransientLayerContent *tlc, unsigned int context_id, DP_Pixel15 pixel,
     uint16_t opacity, int blend_mode, DP_BrushStamp *stamp);
 
+void DP_transient_layer_content_brush_stamp_apply_posterize(
+    DP_TransientLayerContent *tlc, unsigned int context_id, uint16_t opacity,
+    int posterize_num, DP_BrushStamp *stamp);
+
 void DP_transient_layer_content_list_transient_sublayer_at(
     DP_TransientLayerContent *tlc, int sublayer_index,
     DP_TransientLayerContent **out_tlc, DP_TransientLayerProps **out_tlp);

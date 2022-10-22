@@ -46,6 +46,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpmsg/blend_mode.h>
+#include <math.h>
 
 static_assert(sizeof(DP_Pixel8) == sizeof(uint32_t), "DP_Pixel8 is 32 bits");
 static_assert(sizeof(DP_UPixel8) == sizeof(uint32_t), "DP_UPixel8 is 32 bits");
@@ -1208,6 +1209,37 @@ void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
                  DP_blend_mode_enum_name(blend_mode));
         break;
     }
+}
+
+
+// Posterization adapted from libmypaint, see license above.
+
+static BGRA15 posterize(float p, Fix15 o, DP_UPixel15 ub)
+{
+    DP_UPixelFloat fb = DP_upixel15_to_float(ub);
+    BGR15 b = (BGR15){
+        .b = (Fix15)(BIT15_FLOAT * floorf(fb.b * p + 0.5f) / p),
+        .g = (Fix15)(BIT15_FLOAT * floorf(fb.g * p + 0.5f) / p),
+        .r = (Fix15)(BIT15_FLOAT * floorf(fb.r * p + 0.5f) / p),
+    };
+    Fix15 o1 = BIT15_FIX - o;
+    return (BGRA15){
+        .b = (o * b.b + o1 * to_fix(ub.b)) / BIT15_FIX,
+        .g = (o * b.g + o1 * to_fix(ub.g)) / BIT15_FIX,
+        .r = (o * b.r + o1 * to_fix(ub.r)) / BIT15_FIX,
+        .a = ub.a,
+    };
+}
+
+void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
+                       uint16_t opacity, int w, int h, int mask_skip,
+                       int base_skip)
+{
+    Fix15 ofix = to_fix(opacity);
+    float p = DP_int_to_float(posterize_num);
+    FOR_MASK_PIXEL(dst, mask, ofix, w, h, mask_skip, base_skip, x, y, o, {
+        *dst = from_bgra(posterize(p, o, DP_pixel15_unpremultiply(*dst)));
+    });
 }
 
 

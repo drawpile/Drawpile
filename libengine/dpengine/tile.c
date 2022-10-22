@@ -470,3 +470,23 @@ void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,
     DP_blend_mask(tt->pixels + y * DP_TILE_SIZE + x, src, blend_mode, mask,
                   opacity, w, h, skip, DP_TILE_SIZE - w);
 }
+
+void DP_transient_tile_brush_apply_posterize(DP_TransientTile *tt,
+                                             int posterize_num,
+                                             const uint16_t *mask,
+                                             uint16_t opacity, int x, int y,
+                                             int w, int h, int skip)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_ASSERT(mask);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(x < DP_TILE_SIZE);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(y < DP_TILE_SIZE);
+    DP_ASSERT(x + w <= DP_TILE_SIZE);
+    DP_ASSERT(y + h <= DP_TILE_SIZE);
+    DP_posterize_mask(tt->pixels + y * DP_TILE_SIZE + x, posterize_num, mask,
+                      opacity, w, h, skip, DP_TILE_SIZE - w);
+}

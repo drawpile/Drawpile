@@ -119,6 +119,11 @@ void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
                      uint16_t opacity, int blend_mode);
 
 
+void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
+                       uint16_t opacity, int w, int h, int mask_skip,
+                       int base_skip);
+
+
 void DP_sample_mask(DP_Pixel15 *src, const uint16_t *mask, int w, int h,
                     int mask_skip, int base_skip, float *out_weight,
                     float *out_red, float *out_green, float *out_blue,

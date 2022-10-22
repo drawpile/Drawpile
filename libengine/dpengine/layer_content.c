@@ -1293,9 +1293,14 @@ void DP_transient_layer_content_put_tile(DP_TransientLayerContent *tlc,
 }
 
 
-void DP_transient_layer_content_brush_stamp_apply(
-    DP_TransientLayerContent *tlc, unsigned int context_id, DP_Pixel15 pixel,
-    uint16_t opacity, int blend_mode, DP_BrushStamp *stamp)
+typedef void (*DP_ApplyBrushStampFn)(DP_TransientTile *tt, const uint16_t *mask,
+                                     uint16_t opacity, int x, int y, int w,
+                                     int h, int skip, void *user);
+
+static void apply_brush_stamp_with(DP_TransientLayerContent *tlc,
+                                   unsigned int context_id, uint16_t opacity,
+                                   DP_BrushStamp *stamp,
+                                   DP_ApplyBrushStampFn apply_fn, void *user)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
@@ -1334,9 +1339,8 @@ void DP_transient_layer_content_brush_stamp_apply(
 
             DP_TransientTile *tt =
                 get_or_create_transient_tile(tlc, context_id, i);
-            DP_transient_tile_brush_apply(tt, pixel, blend_mode,
-                                          mask + yb * d + xb, opacity, xt, yt,
-                                          wb, hb, d - wb);
+            apply_fn(tt, mask + yb * d + xb, opacity, xt, yt, wb, hb, d - wb,
+                     user);
 
             x = (xindex + 1) * DP_TILE_SIZE;
             xb = xb + wb;
@@ -1344,6 +1348,48 @@ void DP_transient_layer_content_brush_stamp_apply(
         y = (yindex + 1) * DP_TILE_SIZE;
         yb = yb + hb;
     }
+}
+
+
+struct DP_ApplyStampParams {
+    DP_Pixel15 pixel;
+    int blend_mode;
+};
+
+static void apply_stamp(DP_TransientTile *tt, const uint16_t *mask,
+                        uint16_t opacity, int x, int y, int w, int h, int skip,
+                        void *user)
+{
+    struct DP_ApplyStampParams *params = user;
+    DP_transient_tile_brush_apply(tt, params->pixel, params->blend_mode, mask,
+                                  opacity, x, y, w, h, skip);
+}
+
+void DP_transient_layer_content_brush_stamp_apply(
+    DP_TransientLayerContent *tlc, unsigned int context_id, DP_Pixel15 pixel,
+    uint16_t opacity, int blend_mode, DP_BrushStamp *stamp)
+{
+    struct DP_ApplyStampParams params = {pixel, blend_mode};
+    apply_brush_stamp_with(tlc, context_id, opacity, stamp, apply_stamp,
+                           &params);
+}
+
+
+static void apply_stamp_posterize(DP_TransientTile *tt, const uint16_t *mask,
+                                  uint16_t opacity, int x, int y, int w, int h,
+                                  int skip, void *user)
+{
+    int *posterize_num_ptr = user;
+    DP_transient_tile_brush_apply_posterize(tt, *posterize_num_ptr, mask,
+                                            opacity, x, y, w, h, skip);
+}
+
+void DP_transient_layer_content_brush_stamp_apply_posterize(
+    DP_TransientLayerContent *tlc, unsigned int context_id, uint16_t opacity,
+    int posterize_num, DP_BrushStamp *stamp)
+{
+    apply_brush_stamp_with(tlc, context_id, opacity, stamp,
+                           apply_stamp_posterize, &posterize_num);
 }
 
 

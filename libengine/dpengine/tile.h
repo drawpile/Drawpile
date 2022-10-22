@@ -182,5 +182,11 @@ void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,
                                    uint16_t opacity, int x, int y, int w, int h,
                                    int skip);
 
+void DP_transient_tile_brush_apply_posterize(DP_TransientTile *tt,
+                                             int posterize_num,
+                                             const uint16_t *mask,
+                                             uint16_t opacity, int x, int y,
+                                             int w, int h, int skip);
+
 
 #endif
