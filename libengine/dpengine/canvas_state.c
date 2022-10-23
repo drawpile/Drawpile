@@ -436,7 +436,7 @@ static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs, DP_DrawContext *dc,
         return NULL;
     }
 
-    DP_Pixel15 pixel = DP_pixel15_from_color(DP_msg_fill_rect_color(mfr));
+    DP_UPixel15 pixel = DP_upixel15_from_color(DP_msg_fill_rect_color(mfr));
     return DP_ops_fill_rect(cs, dc, context_id, DP_msg_fill_rect_layer(mfr),
                             blend_mode, left, top, right, bottom, pixel);
 }

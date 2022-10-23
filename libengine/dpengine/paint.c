@@ -293,7 +293,7 @@ static void draw_dabs_classic(DP_PaintDrawDabsParams *params,
 {
     DP_DrawContext *dc = params->draw_context;
     unsigned int context_id = params->context_id;
-    DP_Pixel15 pixel = DP_pixel15_from_color(params->color);
+    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int blend_mode = params->blend_mode;
     int dab_count = params->dab_count;
     const DP_ClassicDab *dabs = params->classic.dabs;
@@ -359,7 +359,7 @@ static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
                             void (*get_stamp)(DP_BrushStamp *, int))
 {
     unsigned int context_id = params->context_id;
-    DP_Pixel15 pixel = DP_pixel15_from_color(params->color);
+    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int blend_mode = params->blend_mode;
     int dab_count = params->dab_count;
     const DP_PixelDab *dabs = params->pixel.dabs;
@@ -636,7 +636,7 @@ static void draw_dabs_mypaint(DP_PaintDrawDabsParams *params,
 {
     DP_DrawContext *dc = params->draw_context;
     unsigned int context_id = params->context_id;
-    DP_Pixel15 pixel = DP_pixel15_from_color(params->color);
+    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int dab_count = params->dab_count;
     const DP_MyPaintDab *dabs = params->mypaint.dabs;
 

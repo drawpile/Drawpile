@@ -900,7 +900,7 @@ static DP_CanvasState *move_image(DP_CanvasState *cs, DP_DrawContext *dc,
     else {
         DP_transient_layer_content_fill_rect(
             tlc, context_id, DP_BLEND_MODE_REPLACE, src_rect->x1, src_rect->y1,
-            src_rect->x2 + 1, src_rect->y2 + 1, DP_pixel15_zero());
+            src_rect->x2 + 1, src_rect->y2 + 1, DP_upixel15_zero());
     }
 
     DP_transient_layer_content_put_image(tlc, context_id, DP_BLEND_MODE_NORMAL,
@@ -970,7 +970,7 @@ DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, DP_DrawContext *dc,
                                  unsigned int context_id, int layer_id,
                                  int blend_mode, int left, int top, int right,
-                                 int bottom, DP_Pixel15 pixel)
+                                 int bottom, DP_UPixel15 pixel)
 {
     if (!search_layer("Fill rect", cs, dc, 1, layer_id, ALLOW_LAYERS, NULL)) {
         return NULL;

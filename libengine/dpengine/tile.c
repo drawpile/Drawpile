@@ -82,9 +82,14 @@ DP_Tile *DP_tile_new_from_pixel15(unsigned int context_id, DP_Pixel15 pixel)
     return (DP_Tile *)tt;
 }
 
+DP_Tile *DP_tile_new_from_upixel15(unsigned int context_id, DP_UPixel15 pixel)
+{
+    return DP_tile_new_from_pixel15(context_id, DP_pixel15_premultiply(pixel));
+}
+
 DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra)
 {
-    return DP_tile_new_from_pixel15(context_id, DP_pixel15_from_color(bgra));
+    return DP_tile_new_from_upixel15(context_id, DP_upixel15_from_color(bgra));
 }
 
 
@@ -452,7 +457,7 @@ DP_transient_tile_merge_nullable(DP_TransientTile *DP_RESTRICT tt_or_null,
     return tt;
 }
 
-void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_Pixel15 src,
+void DP_transient_tile_brush_apply(DP_TransientTile *tt, DP_UPixel15 src,
                                    int blend_mode, const uint16_t *mask,
                                    uint16_t opacity, int x, int y, int w, int h,
                                    int skip)

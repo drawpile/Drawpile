@@ -79,6 +79,7 @@ float DP_channel15_to_float(uint16_t c);
 
 DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel);
 DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel);
+DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel);
 DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel);
 
 void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
@@ -103,14 +104,14 @@ DP_INLINE DP_UPixel15 DP_upixel15_zero(void)
     return pixel;
 }
 
-DP_INLINE DP_Pixel15 DP_pixel15_from_color(uint32_t color)
+DP_INLINE DP_UPixel15 DP_upixel15_from_color(uint32_t color)
 {
-    DP_Pixel8 pixel = {color};
-    return DP_pixel8_to_15(pixel);
+    DP_UPixel8 pixel = {color};
+    return DP_upixel8_to_15(pixel);
 }
 
 
-void DP_blend_mask(DP_Pixel15 *dst, DP_Pixel15 src, int blend_mode,
+void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
                    int mask_skip, int base_skip);
 

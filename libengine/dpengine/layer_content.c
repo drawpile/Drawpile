@@ -1189,7 +1189,7 @@ void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
 
 static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
                       int blend_mode, int left, int top, int right, int bottom,
-                      DP_Pixel15 pixel)
+                      DP_UPixel15 pixel)
 {
     static const uint16_t mask[DP_TILE_LENGTH] = {DP_BIT15_4096};
 
@@ -1233,13 +1233,13 @@ static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
 
 static void fill_entirely(DP_TransientLayerContent *tld,
                           unsigned int context_id, int blend_mode,
-                          DP_Pixel15 pixel)
+                          DP_UPixel15 pixel)
 {
     bool is_replacement =
         blend_mode == DP_BLEND_MODE_REPLACE
         || (blend_mode == DP_BLEND_MODE_NORMAL && pixel.a == DP_BIT15);
     if (is_replacement) {
-        DP_Tile *tile = DP_tile_new_from_pixel15(context_id, pixel);
+        DP_Tile *tile = DP_tile_new_from_upixel15(context_id, pixel);
         int tile_count = DP_tile_total_round(tld->width, tld->height);
         DP_tile_incref_by(tile, tile_count - 1);
         for (int i = 0; i < tile_count; ++i) {
@@ -1257,7 +1257,7 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
                                           unsigned int context_id,
                                           int blend_mode, int left, int top,
                                           int right, int bottom,
-                                          DP_Pixel15 pixel)
+                                          DP_UPixel15 pixel)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
@@ -1352,7 +1352,7 @@ static void apply_brush_stamp_with(DP_TransientLayerContent *tlc,
 
 
 struct DP_ApplyStampParams {
-    DP_Pixel15 pixel;
+    DP_UPixel15 pixel;
     int blend_mode;
 };
 
@@ -1366,7 +1366,7 @@ static void apply_stamp(DP_TransientTile *tt, const uint16_t *mask,
 }
 
 void DP_transient_layer_content_brush_stamp_apply(
-    DP_TransientLayerContent *tlc, unsigned int context_id, DP_Pixel15 pixel,
+    DP_TransientLayerContent *tlc, unsigned int context_id, DP_UPixel15 pixel,
     uint16_t opacity, int blend_mode, DP_BrushStamp *stamp)
 {
     struct DP_ApplyStampParams params = {pixel, blend_mode};

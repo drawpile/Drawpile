@@ -165,14 +165,14 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
                                           unsigned int context_id,
                                           int blend_mode, int left, int top,
                                           int right, int bottom,
-                                          DP_Pixel15 pixel);
+                                          DP_UPixel15 pixel);
 
 void DP_transient_layer_content_put_tile(DP_TransientLayerContent *tlc,
                                          DP_Tile *tile, int x, int y,
                                          int repeat);
 
 void DP_transient_layer_content_brush_stamp_apply(
-    DP_TransientLayerContent *tlc, unsigned int context_id, DP_Pixel15 pixel,
+    DP_TransientLayerContent *tlc, unsigned int context_id, DP_UPixel15 pixel,
     uint16_t opacity, int blend_mode, DP_BrushStamp *stamp);
 
 void DP_transient_layer_content_brush_stamp_apply_posterize(

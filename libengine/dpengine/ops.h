@@ -86,7 +86,7 @@ DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs, DP_DrawContext *dc,
                                  unsigned int context_id, int layer_id,
                                  int blend_mode, int left, int top, int right,
-                                 int bottom, DP_Pixel15 pixel);
+                                 int bottom, DP_UPixel15 pixel);
 
 DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
                                 DP_Tile *tile, int layer_id, int sublayer_id,

@@ -338,6 +338,16 @@ DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel)
     };
 }
 
+DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel)
+{
+    return (DP_UPixel15){
+        .b = DP_channel8_to_15(pixel.b),
+        .g = DP_channel8_to_15(pixel.g),
+        .r = DP_channel8_to_15(pixel.r),
+        .a = DP_channel8_to_15(pixel.a),
+    };
+}
+
 DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel)
 {
     return (DP_UPixelFloat){
@@ -773,12 +783,12 @@ static BGR15 comp_color(BGR15 a, BGR15 b)
         }                                                                      \
     } while (0)
 
-static void blend_mask_alpha_op(DP_Pixel15 *dst, DP_Pixel15 src,
+static void blend_mask_alpha_op(DP_Pixel15 *dst, DP_UPixel15 src,
                                 const uint16_t *mask, Fix15 opacity, int w,
                                 int h, int mask_skip, int base_skip,
                                 BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15, Fix15))
 {
-    BGR15 cs = to_bgr(src);
+    BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         BGRA15 b = to_bgra(*dst);
         *dst = from_bgra(op(b.bgr, cs, b.a, BIT15_FIX, o));
@@ -786,12 +796,12 @@ static void blend_mask_alpha_op(DP_Pixel15 *dst, DP_Pixel15 src,
 }
 
 // Adapted from libmypaint, see license above.
-static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_Pixel15 src,
+static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
                                          const uint16_t *mask, Fix15 opacity,
                                          int w, int h, int mask_skip,
                                          int base_skip)
 {
-    BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(src));
+    BGR15 cs = to_ubgr(src);
     Fix15 as = to_fix(src.a);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         BGRA15 b = to_bgra(*dst);
@@ -799,7 +809,7 @@ static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_Pixel15 src,
     });
 }
 
-static void blend_mask_color_erase(DP_Pixel15 *dst, DP_Pixel15 src,
+static void blend_mask_color_erase(DP_Pixel15 *dst, DP_UPixel15 src,
                                    const uint16_t *mask, Fix15 opacity, int w,
                                    int h, int mask_skip, int base_skip)
 {
@@ -819,13 +829,13 @@ static void blend_mask_color_erase(DP_Pixel15 *dst, DP_Pixel15 src,
     });
 }
 
-static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_Pixel15 src,
+static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_UPixel15 src,
                                            const uint16_t *mask, Fix15 opacity,
                                            int w, int h, int mask_skip,
                                            int base_skip,
                                            Fix15 (*comp_op)(Fix15, Fix15))
 {
-    BGR15 cs = to_bgr(src);
+    BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         DP_Pixel15 bp = *dst;
         BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
@@ -840,10 +850,11 @@ static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_Pixel15 src,
 }
 
 static void blend_mask_composite_separable_with_opacity(
-    DP_Pixel15 *dst, DP_Pixel15 src, const uint16_t *mask, Fix15 opacity, int w,
-    int h, int mask_skip, int base_skip, Fix15 (*comp_op)(Fix15, Fix15, Fix15))
+    DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask, Fix15 opacity,
+    int w, int h, int mask_skip, int base_skip,
+    Fix15 (*comp_op)(Fix15, Fix15, Fix15))
 {
-    BGR15 cs = to_bgr(src);
+    BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         DP_Pixel15 bp = *dst;
         BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
@@ -857,13 +868,13 @@ static void blend_mask_composite_separable_with_opacity(
     });
 }
 
-static void blend_mask_composite_nonseparable(DP_Pixel15 *dst, DP_Pixel15 src,
+static void blend_mask_composite_nonseparable(DP_Pixel15 *dst, DP_UPixel15 src,
                                               const uint16_t *mask,
                                               Fix15 opacity, int w, int h,
                                               int mask_skip, int base_skip,
                                               BGR15 (*comp_op)(BGR15, BGR15))
 {
-    BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(src));
+    BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         DP_Pixel15 bp = *dst;
         BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
@@ -878,7 +889,7 @@ static void blend_mask_composite_nonseparable(DP_Pixel15 *dst, DP_Pixel15 src,
     });
 }
 
-void DP_blend_mask(DP_Pixel15 *dst, DP_Pixel15 src, int blend_mode,
+void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
                    int mask_skip, int base_skip)
 {
