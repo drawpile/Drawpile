@@ -424,7 +424,7 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 	QList<uint8_t> truelist;
 	Client *kickResetter = nullptr;
 	for(Client *c : m_clients) {
-		const bool op = ids.contains(c->id()) | c->isModerator();
+		const bool op = ids.contains(c->id()) || c->isModerator();
 		if(op != c->isOperator()) {
 			if(!op && c->id() == m_initUser && m_state == State::Reset) {
 				// OP status removed mid-reset! The user probably has at least part
