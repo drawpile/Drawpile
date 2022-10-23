@@ -82,7 +82,7 @@ Ulid::Ulid(const QString &string)
 		return;
 	for(int i=0;i<str.length();++i) {
 		const uchar c = str.at(i);
-		if(c > sizeof(DEC) || DEC[c] == 0xff)
+		if(c >= sizeof(DEC) || DEC[c] == 0xff)
 			return;
 	}
 
