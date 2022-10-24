@@ -52,6 +52,7 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_SATURATION,
     DP_BLEND_MODE_LUMINOSITY,
     DP_BLEND_MODE_COLOR,
+    DP_BLEND_MODE_LAST_EXCEPT_REPLACE, // Put new blend modes before this value.
     DP_BLEND_MODE_REPLACE = DP_BLEND_MODE_MAX,
     DP_BLEND_MODE_COUNT,
 } DP_BlendMode;
@@ -75,6 +76,9 @@ const char *DP_blend_mode_enum_name_unprefixed(int blend_mode);
 const char *DP_blend_mode_svg_name(int blend_mode);
 
 DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode);
+
+DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
+                                       DP_BlendMode not_found_value);
 
 
 #endif

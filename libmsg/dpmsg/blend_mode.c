@@ -279,3 +279,20 @@ DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode)
              ? DP_BLEND_MODE_BLANK_TILE_BLEND
              : DP_BLEND_MODE_BLANK_TILE_SKIP;
 }
+
+DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
+                                       DP_BlendMode not_found_value)
+{
+    if (svg_name) {
+        for (int i = 0; i < DP_BLEND_MODE_LAST_EXCEPT_REPLACE; ++i) {
+            if (strcmp(svg_name, mode_attributes[i].svg_name) == 0) {
+                return (DP_BlendMode)i;
+            }
+        }
+        if (strcmp(svg_name, mode_attributes[DP_BLEND_MODE_REPLACE].svg_name)
+            == 0) {
+            return DP_BLEND_MODE_ERASE;
+        }
+    }
+    return not_found_value;
+}
