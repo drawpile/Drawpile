@@ -81,7 +81,7 @@ preset_emscripten_release() {
 preset_drawpile_debug() {
     cmake -DCMAKE_BUILD_TYPE=Debug \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
-          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -G Ninja \
