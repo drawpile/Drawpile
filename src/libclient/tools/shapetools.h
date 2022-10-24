@@ -20,6 +20,7 @@
 #define TOOLS_SHAPETOOLS_H
 
 #include "tool.h"
+#include "drawdance/brushengine.h"
 
 #include <QRectF>
 
@@ -30,7 +31,11 @@ namespace tools {
  */
 class ShapeTool : public Tool {
 public:
-	ShapeTool(ToolController &owner, Type type, QCursor cursor) : Tool(owner, type, cursor), m_drawing(false) {}
+	ShapeTool(ToolController &owner, Type type, QCursor cursor)
+		: Tool{owner, type, cursor}
+		, m_drawing{false}
+		, m_brushEngine{}
+	{}
 
 	void begin(const canvas::Point& point, bool right, float zoom) override;
 	void motion(const canvas::Point& point, bool constrain, bool center) override;
@@ -46,6 +51,7 @@ protected:
 
 private:
 	bool m_drawing;
+	drawdance::BrushEngine m_brushEngine;
 };
 
 /**

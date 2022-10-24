@@ -19,8 +19,10 @@
 
 #include "timelinemodel.h"
 #include "layerlist.h"
-#include "../net/envelopebuilder.h"
-#include "../../rustpile/rustpile.h"
+#include "canvasmodel.h"
+#include "drawdance/layerpropslist.h"
+#include "drawdance/timeline.h"
+#include "drawdance/frame.h"
 
 #include <QBitArray>
 
@@ -28,15 +30,13 @@ namespace canvas {
 
 namespace {
 	struct Layer {
-		rustpile::LayerID id;
+		int layerId;
 		QString name;
 	};
 
-	static const int MAX_LAYERS_PER_FRAME = sizeof(rustpile::Frame) / sizeof(rustpile::LayerID);
-
 	struct Frame {
 		/// the original list of layers in this frame
-		rustpile::Frame frame = {0};
+		QVector<int> layerIds;
 
 		/// lookup table generated from the above
 		QBitArray rows;
@@ -45,14 +45,13 @@ namespace {
 		void updateRows(const QVector<Layer> &layers)
 		{
 			rows.clear();
-			rows.resize(layers.size());
-			for(int i=0;i<MAX_LAYERS_PER_FRAME;++i) {
-				if(frame[i] == 0)
-					break;
+			int layersCount = layers.count();
+			rows.resize(layersCount);
+			for(int layerId : layerIds) {
 				// TODO needs benchmarking? Number of layers is generally low enough
 				// that a linear search may still be faster than a hashmap?
-				for(int j=0;j<layers.size();++i) {
-					if(layers.at(j).id == frame[i]) {
+				for(int j = 0; j < layersCount; ++j) {
+					if(layers.at(j).layerId == layerId) {
 						rows.setBit(j);
 						break;
 					}
@@ -62,46 +61,21 @@ namespace {
 	};
 }
 
-TimelineModel::TimelineModel(QObject *parent)
-    : QObject(parent), m_manualMode(true)
+TimelineModel::TimelineModel(CanvasModel *canvas)
+    : QObject(canvas), m_canvas(canvas), m_manualMode(true)
 {
 }
 
-void TimelineModel::setLayers(const QVector<LayerListItem> &layers)
+uint8_t TimelineModel::localUserId() const
+{
+	return m_canvas->localUserId();
+}
+
+void TimelineModel::setLayers(const drawdance::LayerPropsList &lpl)
 {
 	m_layers.clear();
 	m_layerIdsToRows.clear();
-
-	int skipUntil=-1;
-	int prefixUntil=-1;
-	QString prefix;
-
-	for(const auto &l : layers) {
-		if(l.left < skipUntil)
-			continue;
-
-		if(l.group) {
-			if(l.isolated) {
-				// We don't include the content of isolated groups in the timeline,
-				// as we want to treat them as individual layers
-				skipUntil = l.right;
-			} else {
-				// But we do want to see the content of non-isolated groups.
-				// They can be used to group together related frames
-				prefix = l.title;
-				prefixUntil = l.right;
-				continue;
-			}
-		}
-
-		m_layers << TimelineLayer {
-		    l.id,
-		    l.left < prefixUntil ? prefixUntil : 0,
-		    l.left < prefixUntil ? QStringLiteral("%1 / %2").arg(prefix, l.title) : l.title
-	    };
-		m_layerIdsToRows[l.id] = m_layers.size() - 1;
-	}
-
+	setLayersRecursive(lpl, 0, QString{});
 	emit layersChanged();
 	if(!m_manualMode) {
 		updateAutoFrames();
@@ -109,12 +83,38 @@ void TimelineModel::setLayers(const QVector<LayerListItem> &layers)
 	}
 }
 
-void timelineUpdateFrames(void *ctx, const rustpile::Frame *frames, uintptr_t count)
+void TimelineModel::setLayersRecursive(const drawdance::LayerPropsList &lpl, int group, const QString &prefix)
 {
-	TimelineModel *model = reinterpret_cast<TimelineModel*>(ctx);
-	model->m_frames.resize(count);
-	memcpy(model->m_frames.data(), frames, sizeof(rustpile::Frame) * count);
-	emit model->framesChanged();
+	int count = lpl.count();
+	for(int i = count - 1; i >= 0; --i) {
+		drawdance::LayerProps lp = lpl.at(i);
+		drawdance::LayerPropsList children;
+		if(lp.isGroup(&children) && !lp.isolated()) {
+			setLayersRecursive(children, lp.id(),
+				QString{"%1%2 / "}.arg(prefix).arg(lp.title()));
+		} else {
+			int id = lp.id();
+			m_layerIdsToRows[id] = m_layers.count();
+			m_layers.append(TimelineLayer{id, group,
+				QString{"%1%2"}.arg(prefix).arg(lp.title())});
+		}
+	}
+}
+
+void TimelineModel::setTimeline(const drawdance::Timeline &tl)
+{
+	int frameCount = tl.frameCount();
+	m_frames.resize(frameCount);
+	for(int i = 0; i < frameCount; ++i) {
+		const drawdance::Frame frame = tl.frameAt(i);
+		int layerIdCount = frame.layerIdCount();
+		QVector<int> &layerIds = m_frames[i].layerIds;
+		layerIds.resize(layerIdCount);
+		for (int j = 0; j < layerIdCount; ++j) {
+			layerIds[j] = frame.layerIdAt(j);
+		}
+	}
+	emit framesChanged();
 }
 
 void TimelineModel::updateAutoFrames()
@@ -128,55 +128,49 @@ void TimelineModel::updateAutoFrames()
 	// selected.
 	for(auto i=m_layers.rbegin();i!=m_layers.rend();++i) {
 		if(i->group != 0 && i->group != lastGroup) {
-			m_autoFrames.append(TimelineFrame{{0}});
+			m_autoFrames.append(TimelineFrame{{}});
 			lastGroup = i->group;
 		} else if(i->group != 0) {
 			// skip
 		} else {
-			m_autoFrames.append(TimelineFrame{{i->id}});
+			m_autoFrames.append(TimelineFrame{{i->layerId}});
 		}
 	}
 }
 
-void TimelineModel::makeToggleCommand(net::EnvelopeBuilder &eb, int frameCol, int layerRow) const
+drawdance::Message TimelineModel::makeToggleCommand(int frameCol, int layerRow) const
 {
-	if(frameCol < 0 || frameCol > m_frames.size())
-		return;
-	if(layerRow < 0 || layerRow >= m_layers.size())
-		return;
+	if(frameCol < 0 || frameCol > m_frames.size() || layerRow < 0 || layerRow >= m_layers.size()) {
+		return drawdance::Message::null();
+	}
 
-	TimelineFrame frame;
-
-	const rustpile::LayerID layerId = m_layers.at(layerRow).id;
-
+	QVector<uint16_t> layerIds;
+	int layerId = m_layers.at(layerRow).layerId;
 	if(frameCol == m_frames.size()) {
-		frame = { layerId, 0 };
-
+		layerIds.append(layerId);
 	} else {
-		frame = m_frames.at(frameCol);
-
-		for(int i=0;i<MAX_LAYERS_PER_FRAME;++i) {
-			if(frame.frame[i] == layerId) {
-				for(int j=i;j<MAX_LAYERS_PER_FRAME-1;++j) {
-					frame.frame[j] = frame.frame[j+1];
-				}
-				frame.frame[MAX_LAYERS_PER_FRAME-1] = 0;
-				break;
-			} else if(frame.frame[i] == 0) {
-				frame.frame[i] = layerId;
-				break;
-			}
+		for(int layerId : m_frames.at(frameCol).layerIds) {
+			layerIds.append(layerId);
+		}
+		int i = layerIds.indexOf(layerId);
+		if(i == -1) {
+			layerIds.append(layerId);
+		} else {
+			layerIds.remove(i);
 		}
 	}
 
-	rustpile::write_settimelineframe(eb, 0, frameCol, false, reinterpret_cast<const uint16_t*>(&frame.frame), MAX_LAYERS_PER_FRAME);
+	return drawdance::Message::makeSetTimelineFrame(
+		m_canvas->localUserId(), frameCol, false, layerIds);
 }
 
-void TimelineModel::makeRemoveCommand(net::EnvelopeBuilder &eb, int frameCol) const
+drawdance::Message TimelineModel::makeRemoveCommand(int frameCol) const
 {
-	if(frameCol < 0 || frameCol > m_frames.size())
-		return;
-	rustpile::write_removetimelineframe(eb, 0, frameCol);
+	if(frameCol < 0 || frameCol > m_frames.size()) {
+		return drawdance::Message::null();
+	}
+	return drawdance::Message::makeRemoveTimelineFrame(
+		m_canvas->localUserId(), frameCol);
 }
 
 void TimelineModel::setManualMode(bool manual)
@@ -189,7 +183,7 @@ void TimelineModel::setManualMode(bool manual)
 	}
 }
 
-rustpile::LayerID TimelineModel::nearestLayerTo(int frameIdx, rustpile::LayerID originalLayer) const
+int TimelineModel::nearestLayerTo(int frameIdx, int originalLayer) const
 {
 	const auto &frames = m_manualMode ? m_frames : m_autoFrames;
 	if(frameIdx < 1 || frameIdx > frames.size())
@@ -201,18 +195,15 @@ rustpile::LayerID TimelineModel::nearestLayerTo(int frameIdx, rustpile::LayerID 
 		return 0;
 
 	const int originalLayerRow = m_layerIdsToRows[originalLayer];
-	const rustpile::Frame &frame = frames[frameIdx].frame;
 
 	int nearestRow = -1;
 	int nearestDist = 999;
 
-	for(unsigned int i=0;i<sizeof(rustpile::Frame)/sizeof(rustpile::LayerID);++i) {
-		if(frame[i] == 0)
-			break;
-		if(frame[i] == originalLayer)
+	for(int layerId : frames[frameIdx].layerIds) {
+		if(layerId == originalLayer)
 			continue;
 
-		const int r = layerRow(frame[i]);
+		const int r = layerRow(layerId);
 		const int dist = qAbs(r-originalLayerRow);
 		if(dist < nearestDist) {
 			nearestRow = r;

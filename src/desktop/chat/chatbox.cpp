@@ -24,6 +24,7 @@
 #include "document.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/userlist.h"
+#include "drawdance/message.h"
 #include "net/client.h"
 
 #include <QResizeEvent>
@@ -72,7 +73,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	connect(doc->client(), &net::Client::serverMessage, m_chatWidget, &ChatWidget::systemMessage);
 	connect(doc->client(), &net::Client::youWereKicked, m_chatWidget, &ChatWidget::kicked);
 
-	connect(m_userItemDelegate, &widgets::UserItemDelegate::opCommand, doc->client(), &net::Client::sendEnvelope);
+	connect(m_userItemDelegate, &widgets::UserItemDelegate::opCommand, doc->client(), &net::Client::sendMessage);
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatWidget, &ChatWidget::openPrivateChat);
 }
 

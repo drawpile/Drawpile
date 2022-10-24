@@ -60,7 +60,7 @@ signals:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel*);
 	void onOperatorModeChanged(bool op);
-	void onFeatureTiersChanged(const rustpile::FeatureTiers &features);
+	void onFeatureTiersChanged(const DP_FeatureTiers &features);
 
 	void permissionPresetSaving(const QString &);
 	void permissionPresetSelected(const QString &);
@@ -94,7 +94,7 @@ protected:
 private:
 	void initPermissionComboBoxes();
 	void reloadSettings();
-	QComboBox *featureBox(canvas::Feature f);
+	QComboBox *featureBox(DP_Feature f);
 
 	Ui_SessionSettingsDialog *m_ui;
 	Document *m_doc;

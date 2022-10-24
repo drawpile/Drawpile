@@ -19,6 +19,11 @@
 
 #include "images.h"
 
+extern "C" {
+#include <dpengine/load.h>
+#include <dpengine/save.h>
+}
+
 #include <QSize>
 #include <QImageReader>
 #include <QImageWriter>
@@ -38,24 +43,53 @@ bool checkImageSize(const QSize &size)
 		size.height() <= MAX_SIZE;
 }
 
-using WritableImageFormat = QPair<QString,QVector<QByteArray>>;
+using ImageFormat = QPair<QString,QVector<QString>>;
 
-static const QVector<WritableImageFormat> &writableImageFormats()
+static void appendFormats(QVector<ImageFormat> &formats, const char *title, const char **extensions)
 {
-	static QVector<WritableImageFormat> formats;
-
-	if(formats.isEmpty()) {
-		// List of formats supported by Rustpile
-		// (See the image crate's features in dpimpex/Cargo.toml)
-		formats
-			<< WritableImageFormat("OpenRaster", {"ora"})
-			<< WritableImageFormat("JPEG", {"jpeg", "jpg"})
-			<< WritableImageFormat("PNG", {"png"})
-			<< WritableImageFormat("GIF", {"gif"})
-			;
+	ImageFormat format{QString::fromUtf8(title), {}};
+	for(const char **ext = extensions; *ext; ++ext) {
+		format.second.append(QString::fromUtf8(*ext));
 	}
+	formats.append(format);
+}
 
+static const QVector<ImageFormat> &readableImageFormats()
+{
+	static QVector<ImageFormat> formats;
+	if(formats.isEmpty()) {
+		for(const DP_LoadFormat *lf = DP_load_supported_formats(); lf->title; ++lf) {
+			appendFormats(formats, lf->title, lf->extensions);
+		}
+	}
 	return formats;
+}
+
+static const QVector<ImageFormat> &writableImageFormats()
+{
+	static QVector<ImageFormat> formats;
+	if(formats.isEmpty()) {
+		for(const DP_SaveFormat *sf = DP_save_supported_formats(); sf->title; ++sf) {
+			appendFormats(formats, sf->title, sf->extensions);
+		}
+	}
+	return formats;
+}
+
+static const QString &readableImageFormatsGlobs()
+{
+	static QString globs{};
+	if(globs.isNull()) {
+		QStringList suffixes;
+		QString fmt{"*.%1"};
+		for(const ImageFormat &pair : readableImageFormats()) {
+			for(const QString &suffix : pair.second) {
+				suffixes.append(fmt.arg(suffix));
+			}
+		}
+		globs = suffixes.join(" ");
+	}
+	return globs;
 }
 
 bool isWritableFormat(const QString &filename)
@@ -63,9 +97,9 @@ bool isWritableFormat(const QString &filename)
 	const int dot = filename.lastIndexOf('.');
 	if(dot<0)
 		return false;
-	const QByteArray suffix = filename.mid(dot+1).toLower().toLatin1();
+	const QString suffix = filename.mid(dot+1).toLower();
 
-	for(const WritableImageFormat &pair : writableImageFormats()) {
+	for(const ImageFormat &pair : writableImageFormats()) {
 		if(pair.second.contains(suffix))
 			return true;
 	}
@@ -86,10 +120,10 @@ QString fileFormatFilter(FileFormatOptions formats)
 				}
 
 			} else {
-				for(const WritableImageFormat &format : writableImageFormats()) {
+				for(const ImageFormat &format : writableImageFormats()) {
 					QStringList extensions;
-					for(const QByteArray &extension : format.second) {
-						extensions << QStringLiteral("*.%1").arg(QString::fromUtf8(extension));
+					for(const QString &extension : format.second) {
+						extensions << QStringLiteral("*.%1").arg(extension);
 					}
 					filter << QStringLiteral("%1 (%2)").arg(format.first, extensions.join(" "));
 				}
@@ -102,8 +136,7 @@ QString fileFormatFilter(FileFormatOptions formats)
 					readImages += "*." + format + " ";
 				}
 			} else {
-				// Formats supported by Rustpile
-				readImages = "*.ora *.png *.jpg *.jpeg *.gif";
+				readImages = readableImageFormatsGlobs();
 			}
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);

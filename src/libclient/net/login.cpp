@@ -27,6 +27,8 @@
 #include "../libshared/util/networkaccess.h"
 #include "../libshared/util/paths.h"
 
+#include "config.h"
+
 #include <QDebug>
 #include <QStringList>
 #include <QRegularExpression>
@@ -554,14 +556,17 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 			send("sessionconf", {}, kwargs);
 
 			if(!m_announceUrl.isEmpty())
-				m_server->sendEnvelope(ServerCommand::makeAnnounce(m_announceUrl, m_announcePrivate));
+				m_server->sendMessage(ServerCommand::makeAnnounce(m_announceUrl, m_announcePrivate));
 
 			// Upload initial session content
 			if(m_mode == Mode::HostRemote) {
-				m_server->sendEnvelope(m_initialState);
+				m_server->sendMessages(m_initialState.count(), m_initialState.constData());
 				send("init-complete");
 			}
 		}
+
+		m_server->sendMessage(drawdance::Message::makeChat(
+			0, 0, DP_MSG_CHAT_OFLAGS_ACTION, QString::fromUtf8("is using Dancepile " DRAWPILE_VERSION "!")));
 
 		// Login phase over: any remaining messages belong to the session
 		return false;
@@ -788,7 +793,7 @@ void LoginHandler::send(const QString &cmd, const QJsonArray &args, const QJsonO
 #ifdef DEBUG_LOGIN
 	qInfo() << "login -->" << cmd << args << kwargs;
 #endif
-	m_server->sendEnvelope(ServerCommand::make(cmd, args, kwargs));
+	m_server->sendMessage(ServerCommand::make(cmd, args, kwargs));
 }
 
 bool LoginHandler::hasUserFlag(const QString &flag) const

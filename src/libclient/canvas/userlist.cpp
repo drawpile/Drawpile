@@ -17,12 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern "C" {
+#include <dpmsg/message.h>
+}
+
 #include "userlist.h"
 #include "utils/icon.h"
 #include "acl.h"
-#include "net/envelopebuilder.h"
-
-#include "../rustpile/rustpile.h"
 
 #include <QDebug>
 #include <QJsonArray>
@@ -296,7 +297,7 @@ QString UserListModel::getUsername(int id) const
 	return tr("User #%1").arg(id);
 }
 
-net::Envelope UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
+drawdance::Message UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
 {
 	Q_ASSERT(userId>0 && userId<255);
 
@@ -308,12 +309,10 @@ net::Envelope UserListModel::getLockUserCommand(int localId, int userId, bool lo
 		ids.removeAll(userId);
 	}
 
-	net::EnvelopeBuilder eb;
-	rustpile::write_useracl(eb, localId, ids.constData(), ids.length());
-	return eb.toEnvelope();
+	return drawdance::Message::makeUserAcl(localId, ids);
 }
 
-net::Envelope UserListModel::getOpUserCommand(int localId, int userId, bool op) const
+drawdance::Message UserListModel::getOpUserCommand(int localId, int userId, bool op) const
 {
 	Q_ASSERT(userId>0 && userId<255);
 
@@ -325,12 +324,10 @@ net::Envelope UserListModel::getOpUserCommand(int localId, int userId, bool op) 
 		ops.removeOne(userId);
 	}
 
-	net::EnvelopeBuilder eb;
-	rustpile::write_sessionowner(eb, localId, ops.constData(), ops.length());
-	return eb.toEnvelope();
+	return drawdance::Message::makeSessionOwner(localId, ops);
 }
 
-net::Envelope UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
+drawdance::Message UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
 {
 	Q_ASSERT(userId>0 && userId<255);
 
@@ -342,9 +339,7 @@ net::Envelope UserListModel::getTrustUserCommand(int localId, int userId, bool t
 		trusted.removeOne(userId);
 	}
 
-	net::EnvelopeBuilder eb;
-	rustpile::write_trusted(eb, localId, trusted.constData(), trusted.length());
-	return eb.toEnvelope();
+	return drawdance::Message::makeTrustedUsers(localId, trusted);
 }
 
 bool OnlineUserListModel::filterAcceptsRow(int source_row, const QModelIndex &parent) const

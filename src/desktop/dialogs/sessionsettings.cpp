@@ -24,7 +24,6 @@
 #include "document.h"
 #include "canvas/canvasmodel.h"
 #include "parentalcontrols/parentalcontrols.h"
-#include "../rustpile/rustpile.h"
 
 #include "ui_sessionsettings.h"
 
@@ -231,8 +230,8 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
 		w[i]->setEnabled(op);
 
-	for(int i=0;i<canvas::FeatureCount;++i)
-		featureBox(canvas::Feature(i))->setEnabled(op);
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i)
+		featureBox(DP_Feature(i))->setEnabled(op);
 
 	m_ui->persistent->setEnabled(m_canPersist && op);
 	m_ui->autoresetThreshold->setEnabled(m_canAutoreset && op);
@@ -242,38 +241,36 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	updatePasswordLabel(m_ui->opword);
 }
 
-QComboBox *SessionSettingsDialog::featureBox(canvas::Feature f)
+QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 {
 	switch(f) {
-	using canvas::Feature;
-	case Feature::PutImage: return m_ui->permPutImage;
-	case Feature::RegionMove: return m_ui->permRegionMove;
-	case Feature::Resize: return m_ui->permResize;
-	case Feature::Background: return m_ui->permBackground;
-	case Feature::EditLayers: return m_ui->permEditLayers;
-	case Feature::OwnLayers: return m_ui->permOwnLayers;
-	case Feature::CreateAnnotation: return m_ui->permCreateAnnotation;
-	case Feature::Laser: return m_ui->permLaser;
-	case Feature::Undo: return m_ui->permUndo;
-	case Feature::Metadata: return m_ui->permMetadata;
-	case Feature::Timeline: return m_ui->permTimeline;
+	case DP_FEATURE_PUT_IMAGE: return m_ui->permPutImage;
+	case DP_FEATURE_REGION_MOVE: return m_ui->permRegionMove;
+	case DP_FEATURE_RESIZE: return m_ui->permResize;
+	case DP_FEATURE_BACKGROUND: return m_ui->permBackground;
+	case DP_FEATURE_EDIT_LAYERS: return m_ui->permEditLayers;
+	case DP_FEATURE_OWN_LAYERS: return m_ui->permOwnLayers;
+	case DP_FEATURE_CREATE_ANNOTATION: return m_ui->permCreateAnnotation;
+	case DP_FEATURE_LASER: return m_ui->permLaser;
+	case DP_FEATURE_UNDO: return m_ui->permUndo;
+	case DP_FEATURE_METADATA: return m_ui->permMetadata;
+	case DP_FEATURE_TIMELINE: return m_ui->permTimeline;
+	default: Q_ASSERT_X(false, "featureBox", "unhandled case"); return nullptr;
 	}
-	Q_ASSERT_X(false, "featureBox", "unhandled case");
-	return nullptr;
 }
-void SessionSettingsDialog::onFeatureTiersChanged(const rustpile::FeatureTiers &features)
+void SessionSettingsDialog::onFeatureTiersChanged(const DP_FeatureTiers &features)
 {
-	m_ui->permPutImage->setCurrentIndex(int(features.put_image));
-	m_ui->permRegionMove->setCurrentIndex(int(features.move_rect));
-	m_ui->permResize->setCurrentIndex(int(features.resize));
-	m_ui->permBackground->setCurrentIndex(int(features.background));
-	m_ui->permEditLayers->setCurrentIndex(int(features.edit_layers));
-	m_ui->permOwnLayers->setCurrentIndex(int(features.own_layers));
-	m_ui->permCreateAnnotation->setCurrentIndex(int(features.create_annotation));
-	m_ui->permLaser->setCurrentIndex(int(features.laser));
-	m_ui->permUndo->setCurrentIndex(int(features.undo));
-	m_ui->permMetadata->setCurrentIndex(int(features.metadata));
-	m_ui->permTimeline->setCurrentIndex(int(features.timeline));
+	m_ui->permPutImage->setCurrentIndex(int(features.tiers[DP_FEATURE_PUT_IMAGE]));
+	m_ui->permRegionMove->setCurrentIndex(int(features.tiers[DP_FEATURE_REGION_MOVE]));
+	m_ui->permResize->setCurrentIndex(int(features.tiers[DP_FEATURE_RESIZE]));
+	m_ui->permBackground->setCurrentIndex(int(features.tiers[DP_FEATURE_BACKGROUND]));
+	m_ui->permEditLayers->setCurrentIndex(int(features.tiers[DP_FEATURE_EDIT_LAYERS]));
+	m_ui->permOwnLayers->setCurrentIndex(int(features.tiers[DP_FEATURE_OWN_LAYERS]));
+	m_ui->permCreateAnnotation->setCurrentIndex(int(features.tiers[DP_FEATURE_CREATE_ANNOTATION]));
+	m_ui->permLaser->setCurrentIndex(int(features.tiers[DP_FEATURE_LASER]));
+	m_ui->permUndo->setCurrentIndex(int(features.tiers[DP_FEATURE_UNDO]));
+	m_ui->permMetadata->setCurrentIndex(int(features.tiers[DP_FEATURE_METADATA]));
+	m_ui->permTimeline->setCurrentIndex(int(features.tiers[DP_FEATURE_TIMELINE]));
 }
 
 void SessionSettingsDialog::initPermissionComboBoxes()
@@ -286,9 +283,9 @@ void SessionSettingsDialog::initPermissionComboBoxes()
 		tr("Everyone")
 	};
 
-	for(uint i=0;i<canvas::FeatureCount;++i) {
-		QComboBox *box = featureBox(canvas::Feature(i));
-		for(uint j=0;j<sizeof(items)/sizeof(QString);++j)
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		QComboBox *box = featureBox(DP_Feature(i));
+		for(uint j = 0; j < sizeof(items) / sizeof(QString); ++j)
 			box->addItem(items[j]);
 
 		box->setProperty("featureIdx", i);
@@ -313,8 +310,8 @@ void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
 	QJsonObject cfg = QJsonDocument::fromJson(f.readAll()).object();
 
 	// Normal features
-	for(int i=0;i<canvas::FeatureCount;++i) {
-		auto *box = featureBox(canvas::Feature(i));
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		auto *box = featureBox(DP_Feature(i));
 		box->setCurrentIndex(
 			cfg.value(box->objectName()).toInt(box->currentIndex())
 			);
@@ -337,8 +334,8 @@ void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
 	QJsonObject cfg;
 
 	// Normal features
-	for(int i=0;i<canvas::FeatureCount;++i) {
-		auto *box = featureBox(canvas::Feature(i));
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		auto *box = featureBox(DP_Feature(i));
 		cfg[box->objectName()] = box->currentIndex();
 	}
 
@@ -359,16 +356,14 @@ void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
 
 void SessionSettingsDialog::updatePasswordLabel(QLabel *label)
 {
-	QString txt;
-	if(m_op)
-		txt = QStringLiteral("<b>%1</b> (<a href=\"#\">%2</a>)");
-	else
-		txt = QStringLiteral("<b>%1</b>");
+	bool hasPass = label->property("haspass").toBool();
+	QString txt = QStringLiteral("<b>%1</b>").arg(
+		hasPass ? tr("yes", "password") : tr("no", "password"));
 
-	if(label->property("haspass").toBool())
-		txt = txt.arg(tr("yes", "password"), tr("change", "password"));
-	else
-		txt = txt.arg(tr("no", "password"), tr("assign", "password"));
+	if(m_op) {
+		txt.append(QStringLiteral(" (<a href=\"#\">%1</a>)").arg(
+			hasPass ? tr("change", "password") : tr("assign", "password")));
+	}
 
 	label->setText(txt);
 }
@@ -395,9 +390,10 @@ void SessionSettingsDialog::sendSessionConf()
 	}
 
 	if(m_featureTiersChanged) {
-		uint8_t tiers[canvas::FeatureCount];
-		for(int i=0;i<canvas::FeatureCount;++i)
-			tiers[i] = featureBox(canvas::Feature(i))->currentIndex();
+		uint8_t tiers[DP_FEATURE_COUNT];
+		for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+			tiers[i] = featureBox(DP_Feature(i))->currentIndex();
+		}
 
 		m_doc->sendFeatureAccessLevelChange(tiers);
 		m_featureTiersChanged = false;

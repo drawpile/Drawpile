@@ -30,6 +30,7 @@ Q_OBJECT
    friend void notification::playSound(notification::Event);
 public:
 	DrawpileApp(int & argc, char ** argv );
+   virtual ~DrawpileApp();
 
 	void setDarkTheme(bool dark);
 	void notifySettingsChanged();

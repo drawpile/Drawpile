@@ -146,9 +146,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	emit modelChanged(model);
 }
 
-void ToolController::onFeatureAccessChange(canvas::Feature feature, bool canUse)
+void ToolController::onFeatureAccessChange(DP_Feature feature, bool canUse)
 {
-	if(feature == canvas::Feature::RegionMove) {
+	if(feature == DP_FEATURE_REGION_MOVE) {
 		static_cast<SelectionTool*>(getTool(Tool::SELECTION))->setTransformEnabled(canUse);
 		static_cast<SelectionTool*>(getTool(Tool::POLYGONSELECTION))->setTransformEnabled(canUse);
 	}
@@ -176,10 +176,9 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 	m_smoother.reset();
 	m_activeTool->begin(canvas::Point(point, pressure), right, zoom);
 
-#if 0 // FIXME
-	if(!m_activeTool->isMultipart())
-		m_model->stateTracker()->setLocalDrawingInProgress(true);
-#endif
+	if(!m_activeTool->isMultipart()) {
+		m_model->paintEngine()->setLocalDrawingInProgress(true);
+	}
 
 	if(!m_activebrush.isEraser())
 		emit colorUsed(m_activebrush.qColor());
@@ -239,9 +238,7 @@ void ToolController::endDrawing()
 	}
 
 	m_activeTool->end();
-#if 0 // FIXME
-	m_model->stateTracker()->setLocalDrawingInProgress(false);
-#endif
+	m_model->paintEngine()->setLocalDrawingInProgress(false);
 }
 
 bool ToolController::undoMultipartDrawing()
@@ -307,7 +304,7 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 	m_smoother.addOffset(QPointF(xOffset, yOffset));
 }
 
-void ToolController::setBrushEngineBrush(rustpile::BrushEngine *be, bool freehand)
+void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand)
 {
 	activeBrush().setInBrushEngine(be, activeLayer(), freehand);
 }

@@ -19,11 +19,13 @@
 #ifndef DP_NET_SERVER_H
 #define DP_NET_SERVER_H
 
-#include "envelope.h"
-
 #include <QObject>
 
 class QSslCertificate;
+
+namespace drawdance {
+	class Message;
+}
 
 namespace net {
 
@@ -41,11 +43,16 @@ public:
 	};
 
 	Server(QObject *parent);
-	
+
 	/**
 	 * \brief Send a message to the server
 	 */
-	virtual void sendEnvelope(const Envelope &e) = 0;
+	virtual void sendMessage(const drawdance::Message &msg) = 0;
+
+	/**
+	 * \brief Send multiple messages to the server
+	 */
+	virtual void sendMessages(int count, const drawdance::Message *msgs) = 0;
 
     /**
      * @brief Log out from the server
@@ -79,7 +86,7 @@ public:
 	virtual bool supportsAbuseReports() const = 0;
 
 signals:
-	void envelopeReceived(const Envelope &envelope);
+	void messagesReceived(int count, const drawdance::Message *msgs);
 };
 
 

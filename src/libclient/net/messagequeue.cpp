@@ -18,9 +18,8 @@
 */
 
 #include "messagequeue.h"
-#include "envelopebuilder.h"
-#include "../rustpile/rustpile.h"
 
+#include <QtEndian>
 #include <QTcpSocket>
 #include <QDateTime>
 #include <QTimer>
@@ -29,7 +28,7 @@
 namespace net {
 
 // Reserve enough buffer space for one complete message
-static const int MAX_BUF_LEN = 0xffff + Envelope::HEADER_LEN;
+static const int MAX_BUF_LEN = 0xffff + DP_MESSAGE_HEADER_LENGTH;
 
 // Special message types handled internally by this class
 static const int MSG_TYPE_DISCONNECT = 1;
@@ -106,17 +105,22 @@ bool MessageQueue::isPending() const
 	return !m_inbox.isEmpty();
 }
 
-Envelope MessageQueue::getPending()
+void MessageQueue::receive(drawdance::MessageList &buffer)
 {
-	Envelope e = m_inbox;
-	m_inbox = Envelope();
-	return e;
+	buffer.swap(m_inbox);
 }
 
-void MessageQueue::send(const Envelope &message)
+void MessageQueue::send(const drawdance::Message &msg)
+{
+	sendMultiple(1, &msg);
+}
+
+void MessageQueue::sendMultiple(int count, const drawdance::Message *msgs)
 {
 	if(!m_gracefullyDisconnecting) {
-		m_outbox.enqueue(message);
+		for(int i = 0; i < count; ++i) {
+			m_outbox.enqueue(msgs[i]);
+		}
 		if(m_sendbuffer.isEmpty())
 			writeData();
 	}
@@ -124,10 +128,7 @@ void MessageQueue::send(const Envelope &message)
 
 void MessageQueue::sendPingMsg(bool pong)
 {
-	EnvelopeBuilder eb;
-	rustpile::write_ping(eb, 0, pong);
-
-	send(eb.toEnvelope());
+	send(drawdance::Message::noinc(DP_msg_ping_new(0, pong)));
 }
 
 void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &message)
@@ -135,11 +136,11 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 	if(m_gracefullyDisconnecting)
 		qWarning("sendDisconnect: already disconnecting.");
 
-	EnvelopeBuilder eb;
-	rustpile::write_disconnect(eb, 0, uint8_t(reason), reinterpret_cast<const uint16_t*>(message.constData()), message.length());
+	QByteArray data = message.toUtf8();
+	drawdance::Message msg = drawdance::Message::noinc(DP_msg_disconnect_new(0, uint8_t(reason), data.constData(), data.count()));
 
 	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%d messages) is empty.", int(reason), m_outbox.size());
-	send(eb.toEnvelope());
+	send(msg);
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
 }
@@ -162,8 +163,8 @@ void MessageQueue::sendPing()
 int MessageQueue::uploadQueueBytes() const
 {
 	int total = m_socket->bytesToWrite() + m_sendbuffer.length() - m_sentbytes;
-	for(const Envelope &e: m_outbox)
-		total += e.length();
+	for(const drawdance::Message &msg : m_outbox)
+		total += msg.length();
 	return total;
 }
 
@@ -175,6 +176,18 @@ bool MessageQueue::isUploading() const
 qint64 MessageQueue::idleTime() const
 {
 	return QDateTime::currentMSecsSinceEpoch() - m_lastRecvTime;
+}
+
+int MessageQueue::haveWholeMessageToRead()
+{
+	if(m_recvbytes>= DP_MESSAGE_HEADER_LENGTH) {
+		int bodyLength = qFromBigEndian<quint16>(m_recvbuffer);
+		int messageLength = bodyLength + DP_MESSAGE_HEADER_LENGTH;
+		if(m_recvbytes >= messageLength) {
+			return messageLength;
+		}
+	}
+	return 0;
 }
 
 void MessageQueue::readData() {
@@ -200,37 +213,42 @@ void MessageQueue::readData() {
 
 		// Extract all complete messages
 		int messageLength;
-		while(m_recvbytes >= Envelope::HEADER_LEN && m_recvbytes >= (messageLength=Envelope::sniffLength(m_recvbuffer))) {
+		while((messageLength = haveWholeMessageToRead()) != 0) {
 			// Whole message received!
-
-			if(Envelope::sniffType(m_recvbuffer) == MSG_TYPE_PING) {
+			int type = static_cast<unsigned char>(m_recvbuffer[2]);
+			if(type == MSG_TYPE_PING) {
 				// Pings are handled internally
-				if(messageLength != Envelope::HEADER_LEN + 1) {
+				if(messageLength != DP_MESSAGE_HEADER_LENGTH + 1) {
 					// Not a valid Ping message!
 					emit badData(messageLength, MSG_TYPE_PING, 0);
-
 				} else {
-					handlePing(m_recvbuffer[Envelope::HEADER_LEN]);
-
+					handlePing(m_recvbuffer[DP_MESSAGE_HEADER_LENGTH]);
 				}
 
-			} else if(Envelope::sniffType(m_recvbuffer) == MSG_TYPE_DISCONNECT) {
+			} else if(type == MSG_TYPE_DISCONNECT) {
 				// Graceful disconnects are also handled internally
-				if(messageLength < Envelope::HEADER_LEN + 1) {
+				if(messageLength < DP_MESSAGE_HEADER_LENGTH + 1) {
 					// We expected at least a reason!
 					emit badData(messageLength, MSG_TYPE_DISCONNECT, 0);
-
 				} else {
 					emit gracefulDisconnect(
-						GracefulDisconnect(m_recvbuffer[Envelope::HEADER_LEN]),
-							QString::fromUtf8(m_recvbuffer+Envelope::HEADER_LEN+1, messageLength - Envelope::HEADER_LEN - 1)
-					);
+						GracefulDisconnect(m_recvbuffer[DP_MESSAGE_HEADER_LENGTH]),
+							QString::fromUtf8
+								(m_recvbuffer + DP_MESSAGE_HEADER_LENGTH + 1,
+								messageLength - DP_MESSAGE_HEADER_LENGTH - 1));
 				}
 
 			} else {
 				// The rest are normal messages
-				m_inbox.append(m_recvbuffer, messageLength);
-				gotmessage = true;
+				drawdance::Message msg = drawdance::Message::deserialize(
+					reinterpret_cast<unsigned char *>(m_recvbuffer), m_recvbytes);
+				if(msg.isNull()) {
+					qWarning("Error deserializing message: %s", DP_error());
+					emit badData(messageLength, type, static_cast<unsigned char>(m_recvbuffer[3]));
+				} else {
+					m_inbox.append(msg);
+					gotmessage = true;
+				}
 			}
 
 			if(messageLength < m_recvbytes) {
@@ -299,11 +317,11 @@ void MessageQueue::writeData() {
 		if(m_sendbuffer.isEmpty() && !m_outbox.isEmpty()) {
 			// Upload buffer is empty, but there are messages in the outbox
 			Q_ASSERT(m_sentbytes == 0);
-
-			auto msgpair = m_outbox.dequeue().breakApart();
-
-			m_sendbuffer = msgpair.first;
-			m_sentbytes = msgpair.second;
+			if(!m_outbox.dequeue().serialize(m_sendbuffer)) {
+				qWarning("Error serializing message: %s", DP_error());
+				sendMore = !m_outbox.isEmpty();
+				continue;
+			}
 		}
 
 		if(m_sentbytes < m_sendbuffer.length()) {
@@ -320,7 +338,7 @@ void MessageQueue::writeData() {
 
 			if(m_sentbytes >= m_sendbuffer.length()) {
 				// Complete envelope sent
-				m_sendbuffer = QByteArray();
+				m_sendbuffer.clear();
 				m_sentbytes = 0;
 				sendMore = !m_outbox.isEmpty();
 			}

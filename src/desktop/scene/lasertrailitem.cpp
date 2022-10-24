@@ -22,11 +22,12 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDateTime>
+#include <cmath>
 
 namespace drawingboard {
 
 LaserTrailItem::LaserTrailItem(uint8_t owner, int persistenceMs, const QColor &color, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_blink(false), m_fadeout(false), m_owner(owner), m_lastModified(0), m_persistence(persistenceMs)
+	: QGraphicsItem(parent), m_blink(0.0f), m_fadeout(false), m_owner(owner), m_lastModified(0), m_persistence(persistenceMs)
 {
 	m_pen.setWidth(qApp->devicePixelRatio() * 3);
 	m_pen.setCapStyle(Qt::RoundCap);
@@ -58,7 +59,7 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, true);
 
-	if(m_blink) {
+	if(m_blink < ANIM_TIME / 2.0f) {
 		QPen pen = m_pen;
 		pen.setWidth(pen.width() + 1);
 		painter->setPen(pen);
@@ -73,7 +74,7 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 bool LaserTrailItem::animationStep(float dt)
 {
-	m_blink = !m_blink;
+	m_blink = std::fmod(m_blink + dt, ANIM_TIME);
 
 	bool retain = true;
 	if(m_fadeout) {

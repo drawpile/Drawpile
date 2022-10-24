@@ -17,8 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern "C" {
+#include <dpmsg/message.h>
+#include <dpengine/pixels.h>
+}
+
 #include "layerlist.h"
-#include "../rustpile/rustpile.h"
+#include "drawdance/layerpropslist.h"
 
 #include <QDebug>
 #include <QImage>
@@ -243,67 +248,102 @@ QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent
 	return createIndex(row, column, cursor);
 }
 
-void LayerListModel::setLayers(const QVector<LayerListItem> &items)
+static LayerListItem makeItem(
+	const drawdance::LayerProps &lp, int frameId, bool isGroup,
+	const drawdance::LayerPropsList &children, int relIndex, int left,
+	int right)
 {
-	// See if there are any new layers we should autoselect
-	int autoselect = -1;
+	return LayerListItem{
+		uint16_t(lp.id()), uint16_t(frameId), lp.title(),
+		float(lp.opacity()) / float(DP_BIT15), DP_BlendMode(lp.blendMode()),
+		lp.hidden(), lp.censored(), lp.isolated(), isGroup,
+		uint16_t(isGroup ? children.count() : 0), uint16_t(relIndex),
+		left, right};
+}
 
-	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
+static void flattenLayerList(
+	QVector<LayerListItem> &newItems, int &index,
+	const drawdance::LayerPropsList lpl, int frameId)
+{
+	int count = lpl.count();
+	for(int i = 0; i < count; ++i) {
+		// Layers are shown in reverse in the UI.
+		drawdance::LayerProps lp = lpl.at(count - i - 1);
+		drawdance::LayerPropsList children;
+		if(lp.isGroup(&children)) {
+			int nextFrameId = frameId == 0 && lp.isolated() ? lp.id() : frameId;
+			int pos = newItems.count();
+			newItems.append(makeItem(
+				lp, nextFrameId, true, children, i, index, -1));
+			++index;
+			flattenLayerList(newItems, index, children, nextFrameId);
+			newItems[pos].right = index;
+			++index;
+		} else {
+			newItems.append(makeItem(
+				lp, frameId, false, children, i, index, index + 1));
+			index += 2;
+		}
+	}
+}
 
-	if(m_items.size() < items.size()) {
-		for(const LayerListItem &newItem : items) {
-			// O(n²) loop but the number of layers is typically small enough that
-			// it doesn't matter
-			bool isNew = true;
-			for(const LayerListItem &oldItem : qAsConst(m_items)) {
-				if(oldItem.id == newItem.id) {
-					isNew = false;
-					break;
-				}
-			}
-			if(!isNew)
-				continue;
+static bool isNewLayerId(
+	const QVector<LayerListItem> &oldItems, const LayerListItem &newItem)
+{
+	// O(n²) loop but the number of layers is typically small enough that
+	// it doesn't matter
+	int id = newItem.id;
+	for(const LayerListItem &item : oldItems) {
+		if(item.id == id) {
+			return false;
+		}
+	}
+	return true;
+}
 
+static int getAutoselect(
+	uint8_t localUser, bool autoselectAny, int defaultLayer,
+	const QVector<LayerListItem> &oldItems, const QVector<LayerListItem> &newItems)
+{
+	if(oldItems.size() < newItems.size()) {
+		for(const LayerListItem &newItem : newItems) {
 			// Autoselection rules:
 			// 1. If we haven't participated yet, and there is a default layer,
 			//    only select the default layer
 			// 2. If we haven't participated in the session yet, select any new layer
 			// 3. Otherwise, select any new layer that was created by us
 			// TODO implement the other rules
-			if(
+			if(isNewLayerId(oldItems, newItem) && (
 					newItem.creatorId() == localUser ||
-					(m_autoselectAny && (
-						 (m_defaultLayer>0 && newItem.id == m_defaultLayer)
-						 || m_defaultLayer==0
-						 )
-					 )
-				) {
-				autoselect = newItem.id;
-				break;
+					(autoselectAny && (
+						 (defaultLayer > 0 && newItem.id == defaultLayer)
+						 || defaultLayer == 0
+						 )))) {
+				return newItem.id;
 			}
 		}
 	}
+	return -1;
+}
 
-	// Count root layers
-	int rootLayers = 0;
-	if(!items.isEmpty()) {
-		++rootLayers;
-		int next = items[0].right + 1;
-		for(int i=1;i<items.length();++i) {
-			if(items[i].left == next) {
-				++rootLayers;
-				next = items[i].right + 1;
-			}
-		}
-	}
+void LayerListModel::setLayers(const drawdance::LayerPropsList &lpl)
+{
+	QVector<LayerListItem> newItems;
+	int index = 0;
+	flattenLayerList(newItems, index, lpl, 0);
+
+	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
+	int autoselect = getAutoselect(
+		localUser, m_autoselectAny, m_defaultLayer, m_items, newItems);
 
 	beginResetModel();
-	m_rootLayerCount = rootLayers;
-	m_items = items;
+	m_rootLayerCount = lpl.count();
+	m_items = newItems;
 	endResetModel();
 
-	if(autoselect>=0)
+	if(autoselect >= 0) {
 		emit autoSelectRequest(autoselect);
+	}
 }
 
 void LayerListModel::setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode)
@@ -337,10 +377,10 @@ QStringList LayerMimeData::formats() const
 	return QStringList() << "application/x-qt-image";
 }
 
-QVariant LayerMimeData::retrieveData(const QString &mimeType, QMetaType::Type type) const
+QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
 {
 	Q_UNUSED(mimeType);
-	if(type==QMetaType::QImage) {
+	if(type == QVariant::Image) {
 		if(m_source->m_getlayerfn) {
 			return m_source->m_getlayerfn(m_id);
 		}
@@ -401,8 +441,8 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 
 uint8_t LayerListItem::attributeFlags() const
 {
-	return (censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
-			(isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0)
+	return (censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0)
 			;
 }
 

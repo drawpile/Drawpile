@@ -18,17 +18,15 @@
 */
 
 #include "servercmd.h"
-#include "envelopebuilder.h"
-#include "../rustpile/rustpile.h"
 
 namespace net {
 
-Envelope ServerCommand::make(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
+drawdance::Message ServerCommand::make(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
 {
-	return ServerCommand { cmd, args, kwargs }.toEnvelope();
+	return ServerCommand { cmd, args, kwargs }.toMessage();
 }
 
-Envelope ServerCommand::makeKick(int target, bool ban)
+drawdance::Message ServerCommand::makeKick(int target, bool ban)
 {
 	Q_ASSERT(target>0 && target<256);
 	QJsonObject kwargs;
@@ -38,7 +36,7 @@ Envelope ServerCommand::makeKick(int target, bool ban)
 	return make("kick-user", QJsonArray() << target, kwargs);
 }
 
-Envelope ServerCommand::makeAnnounce(const QString &url, bool privateMode)
+drawdance::Message ServerCommand::makeAnnounce(const QString &url, bool privateMode)
 {
 	QJsonObject kwargs;
 	if(privateMode)
@@ -47,22 +45,22 @@ Envelope ServerCommand::makeAnnounce(const QString &url, bool privateMode)
 	return make("announce-session", QJsonArray() << url, kwargs);
 }
 
-Envelope ServerCommand::makeUnannounce(const QString &url)
+drawdance::Message ServerCommand::makeUnannounce(const QString &url)
 {
 	return make("unlist-session", QJsonArray() << url);
 }
 
-Envelope ServerCommand::makeUnban(int entryId)
+drawdance::Message ServerCommand::makeUnban(int entryId)
 {
 	return make("remove-ban", QJsonArray() << entryId);
 }
 
-Envelope ServerCommand::makeMute(int target, bool mute)
+drawdance::Message ServerCommand::makeMute(int target, bool mute)
 {
 	return make("mute", QJsonArray() << target << mute);
 }
 
-Envelope ServerCommand::toEnvelope() const
+drawdance::Message ServerCommand::toMessage() const
 {
 	QJsonObject o;
 	o["cmd"] = cmd;
@@ -74,19 +72,17 @@ Envelope ServerCommand::toEnvelope() const
 	const QByteArray payload = QJsonDocument(o).toJson(QJsonDocument::Compact);
 
 	// TODO we should have a message type for splitting up overlong messages
-	if(payload.length() > 0xffff - Envelope::HEADER_LEN) {
+	if(payload.length() > 0xffff - DP_MESSAGE_HEADER_LENGTH) {
 		qWarning(
 			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%d bytes)",
 			qPrintable(cmd),
 			payload.length()
 		);
-		return Envelope();
+		return drawdance::Message{};
 	}
 
-	EnvelopeBuilder eb;
-	rustpile::write_servercommand(eb, 0, reinterpret_cast<const uchar*>(payload.constData()), payload.length());
-
-	return eb.toEnvelope();
+	return drawdance::Message::noinc(DP_msg_server_command_new(
+		0, payload.constData(), payload.length()));
 }
 
 static ServerReply ServerReplyFromJson(const QJsonDocument &doc)
@@ -128,11 +124,10 @@ static ServerReply ServerReplyFromJson(const QJsonDocument &doc)
 	return r;
 }
 
-ServerReply ServerReply::fromEnvelope(const Envelope &e)
+ServerReply ServerReply::fromMessage(const drawdance::Message &msg)
 {
-	const int len = e.messageLength();
-	if(len == 0 || e.messageType() != 0) {
-		qWarning("ServerReply::fromEnvelope: bad message. Type %d, length %d", e.messageType(), len);
+	if(msg.isNull() || msg.type() != DP_MSG_SERVER_COMMAND) {
+		qWarning("ServerReply::fromMessage: bad message");
 		return ServerReply{
 			ServerReply::ReplyType::Unknown,
 			QString(),
@@ -140,12 +135,14 @@ ServerReply ServerReply::fromEnvelope(const Envelope &e)
 		};
 	}
 
-	const QByteArray payload = QByteArray::fromRawData(reinterpret_cast<const char*>(e.data() + Envelope::HEADER_LEN), len - Envelope::HEADER_LEN);
+	size_t len;
+	const char *data = DP_msg_server_command_msg(msg.toServerCommand(), &len);
+	QByteArray bytes = QByteArray::fromRawData(data, len);
 
 	QJsonParseError err;
-	const QJsonDocument doc = QJsonDocument::fromJson(payload, &err);
+	const QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);
 	if(err.error != QJsonParseError::NoError) {
-		qWarning("ServerReply::fromEnvelope JSON parsing error: %s", qPrintable(err.errorString()));
+		qWarning("ServerReply::fromMessage JSON parsing error: %s", qPrintable(err.errorString()));
 		return ServerReply{
 			ServerReply::ReplyType::Unknown,
 			QString(),

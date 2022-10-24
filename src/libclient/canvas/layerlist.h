@@ -19,6 +19,10 @@
 #ifndef DP_NET_LAYERLIST_H
 #define DP_NET_LAYERLIST_H
 
+extern "C" {
+#include <dpmsg/blend_mode.h>
+}
+
 #include "acl.h"
 
 #include <QAbstractItemModel>
@@ -27,12 +31,8 @@
 
 #include <functional>
 
-namespace net {
-	class Envelope;
-}
-
-namespace rustpile {
-	enum class Blendmode : uint8_t;
+namespace drawdance {
+	class LayerPropsList;
 }
 
 namespace canvas {
@@ -46,15 +46,15 @@ struct LayerListItem {
 
 	//! ID of the frame layer this layer belongs to
 	uint16_t frameId;
-	
+
 	//! Layer title
 	QString title;
-	
+
 	//! Layer opacity
 	float opacity;
-	
+
 	//! Blending mode
-	rustpile::Blendmode blend;
+	DP_BlendMode blend;
 
 	//! Layer hidden flag (local only)
 	bool hidden;
@@ -108,7 +108,7 @@ public:
 	};
 
 	LayerListModel(QObject *parent=nullptr);
-	
+
 	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
@@ -165,7 +165,7 @@ public:
 	int findNearestLayer(int layerId) const;
 
 public slots:
-	void setLayers(const QVector<LayerListItem> &items);
+	void setLayers(const drawdance::LayerPropsList &lpl);
 	void setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode);
 
 signals:
@@ -204,7 +204,7 @@ public:
 	QStringList formats() const;
 
 protected:
-	QVariant retrieveData(const QString& mimeType, QMetaType::Type type) const;
+	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
 
 private:
 	const LayerListModel *m_source;

@@ -20,34 +20,13 @@
 #ifndef CANVAS_ACL_STATE_H
 #define CANVAS_ACL_STATE_H
 
+#include "drawdance/aclstate.h"
 #include <QObject>
 #include <QVector>
 
-namespace rustpile {
-	struct PaintEngine;
-	enum class Tier : uint8_t;
-	struct UserACLs;
-	struct FeatureTiers;
-}
-
 namespace canvas {
 
-// Features with configurable access levels
-enum class Feature {
-	PutImage,
-	RegionMove,
-	Resize,
-	Background,
-	EditLayers,
-	OwnLayers,
-	CreateAnnotation,
-	Laser,
-	Undo,
-	Metadata,
-	Timeline
-};
-
-static const int FeatureCount = int(Feature::Timeline)+1;
+class PaintEngine;
 
 /**
  * Access control list state that is relevant to the UI.
@@ -56,8 +35,8 @@ class AclState : public QObject {
 	Q_OBJECT
 public:
 	struct Layer {
-		bool locked;              // layer is locked for all users
-		rustpile::Tier tier;      // layer access tier (if not exclusive)
+		bool locked;                // layer is locked for all users
+		DP_AccessTier tier;         // layer access tier (if not exclusive)
 		QVector<uint8_t> exclusive; // if not empty, only these users can draw on this layer
 
 		Layer();
@@ -69,9 +48,9 @@ public:
 
 	void setLocalUserId(uint8_t localUser);
 
-	void updateUserBits(const rustpile::UserACLs &acls);
-	void updateFeatures(const rustpile::FeatureTiers &features);
-	void updateLayers(rustpile::PaintEngine *pe);
+	void updateUserBits(const drawdance::AclState &acls);
+	void updateFeatures(const drawdance::AclState &acls);
+	void updateLayers(const drawdance::AclState &acls);
 
 	//! Is this user an operator?
 	bool isOperator(uint8_t userId) const;
@@ -95,16 +74,19 @@ public:
 	bool isLayerLocked(uint16_t layerId) const;
 
 	//! Is this feature available for us?
-	bool canUseFeature(Feature f) const;
+	bool canUseFeature(DP_Feature feature) const;
 
 	//! Get the ID of the local user
 	uint8_t localUserId() const;
 
 	//! Get the required access tier to use this feature
-	rustpile::FeatureTiers featureTiers() const;
+	DP_FeatureTiers featureTiers() const;
 
 	//! Get the layer's access control list
 	Layer layerAcl(uint16_t layerId) const;
+
+public slots:
+	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags);
 
 signals:
 	//! Local user's operator status has changed
@@ -117,13 +99,13 @@ signals:
 	void layerAclChanged(int id);
 
 	//! The local user's access to a feature has changed
-	void featureAccessChanged(Feature feature, bool canUse);
+	void featureAccessChanged(DP_Feature feature, bool canUse);
 
 	//! User lock/op/trust bits have changed
 	void userBitsChanged(const AclState *acl);
 
 	//! Feature access tiers have changed
-	void featureTiersChanged(const rustpile::FeatureTiers&);
+	void featureTiersChanged(const DP_FeatureTiers&);
 
 private:
 	void emitFeatureChanges(int before, int now);

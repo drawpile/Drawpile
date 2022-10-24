@@ -19,7 +19,9 @@
 #ifndef LAYERLISTDOCK_H
 #define LAYERLISTDOCK_H
 
-#include "canvas/features.h"
+extern "C" {
+#include <dpmsg/acl.h>
+}
 
 #include <QDockWidget>
 
@@ -31,18 +33,18 @@ class QTreeView;
 
 class Ui_LayerBox;
 
-namespace net {
-	class Envelope;
-}
-
 namespace canvas {
 	class CanvasModel;
-	enum class Feature;
+}
+
+namespace drawdance {
+	class Message;
 }
 
 namespace widgets {
 	class GroupedToolButton;
 }
+
 namespace docks {
 
 class LayerAclMenu;
@@ -74,13 +76,13 @@ signals:
 	void layerSelected(int id);
 	void activeLayerVisibilityChanged();
 
-	void layerCommand(const net::Envelope &msg);
+	void layerCommands(int count, const drawdance::Message *msgs);
 
 private slots:
 	void beforeLayerReset();
 	void afterLayerReset();
-	
-	void onFeatureAccessChange(canvas::Feature feature, bool canuse);
+
+	void onFeatureAccessChange(DP_Feature feature, bool canuse);
 
 	void addLayer();
 	void addGroup();
@@ -93,7 +95,7 @@ private slots:
 	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
 	void setLayerVisibility(int layerId, bool visible);
-	void changeLayerAcl(bool lock, canvas::Tier tier, QVector<uint8_t> exclusive);
+	void changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
 
 	void lockStatusChanged(int layerId);
 	void selectionChanged(const QItemSelection &selected);
@@ -103,6 +105,8 @@ private:
 	bool canMergeCurrent() const;
 
 	void updateUiFromSelection();
+
+	void addLayerOrGroup(bool group);
 
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo=false);

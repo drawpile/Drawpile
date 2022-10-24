@@ -20,7 +20,7 @@
 #ifndef DP_CLIENT_MSGQUEUE_H
 #define DP_CLIENT_MSGQUEUE_H
 
-#include "envelope.h"
+#include "drawdance/message.h"
 
 #include <QQueue>
 #include <QObject>
@@ -58,14 +58,19 @@ public:
 	bool isPending() const;
 
 	/**
-	 * Get an envelope containing all queued messages
+	 * Get received messages, swaps (!) the given buffer with the inbox.
 	 */
-	Envelope getPending();
+	void receive(drawdance::MessageList &buffer);
 
 	/**
-	 * Enqueue messages for sending.
+	 * Enqueue a single message for sending.
 	 */
-	void send(const Envelope &message);
+	void send(const drawdance::Message &msg);
+
+	/**
+	 * Enqueue multiple messages for sending.
+	 */
+	void sendMultiple(int count, const drawdance::Message *msgs);
 
 	/**
 	 * @brief Gracefully disconnect
@@ -174,6 +179,7 @@ private slots:
 	void checkIdleTimeout();
 
 private:
+	int haveWholeMessageToRead();
 	void writeData();
 
 	void handlePing(bool isPong);
@@ -186,8 +192,8 @@ private:
 	int m_recvbytes;    // number of bytes in reception buffer
 	int m_sentbytes;    // number of bytes in upload buffer already sent
 
-	Envelope m_inbox;   // received (complete) messages
-	QQueue<Envelope> m_outbox; // messages to be sent
+	drawdance::MessageList m_inbox;  // received (complete) messages
+	QQueue<drawdance::Message> m_outbox; // messages to be sent
 
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;

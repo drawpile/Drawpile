@@ -20,17 +20,15 @@
 #ifndef SELECTION_H
 #define SELECTION_H
 
+extern "C" {
+#include <dpmsg/blend_mode.h>
+}
+
+#include "drawdance/message.h"
+
 #include <QObject>
 #include <QImage>
 #include <QPolygonF>
-
-namespace net {
-	class Envelope;
-}
-
-namespace rustpile {
-	enum class Blendmode : uint8_t;
-}
 
 namespace canvas {
 
@@ -168,11 +166,12 @@ public:
 	 * If a MoveRegion command is generated, the source layer ID set previously in setMoveImage is used
 	 * instead of the given target layer
 	 *
+	 * @param buffer vector to put the commands into
 	 * @param contextId user ID for the commands
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	net::Envelope pasteOrMoveToCanvas(uint8_t contextId, int layer) const;
+	bool pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer) const;
 
 	/**
 	 * @brief Generate the commands to fill the selection with solid color
@@ -180,13 +179,14 @@ public:
 	 * If this is an axis aligned rectangle, a FillRect command will be returned.
 	 * Otherwise, a PutImage set will be generated.
 	 *
+	 * @param buffer vector to put the commands into
 	 * @param contextId user ID for the commands
 	 * @param color fill color
 	 * @param mode blending mode
 	 * @param layer target layer
 	 * @return set of commands
 	 */
-	net::Envelope fillCanvas(uint8_t contextId, const QColor &color, rustpile::Blendmode mode, int layer) const;
+	bool fillCanvas(drawdance::MessageList &buffer, uint8_t contextId, const QColor &color, DP_BlendMode mode, int layer) const;
 
 	/**
 	 * @brief Get the size of the adjustment handles in pixels at 1:1 zoom level

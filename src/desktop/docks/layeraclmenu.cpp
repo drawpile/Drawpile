@@ -26,7 +26,7 @@
 
 namespace docks {
 
-static void addTier(QActionGroup *group, const QString &title, canvas::Tier tier)
+static void addTier(QActionGroup *group, const QString &title, DP_AccessTier tier)
 {
 	QAction *a = group->addAction(title);
 	a->setProperty("userTier", int(tier));
@@ -45,11 +45,11 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 
 	addSection(tr("Access tier:"));
 	m_tiers = new QActionGroup(this);
-	addTier(m_tiers, tr("Operators"), canvas::Tier::Op);
-	addTier(m_tiers, tr("Trusted"), canvas::Tier::Trusted);
-	addTier(m_tiers, tr("Registered"), canvas::Tier::Auth);
-	addTier(m_tiers, tr("Everyone"), canvas::Tier::Guest);
-	static_assert(canvas::TierCount == 4, "update LayerAclMenu tiers!");
+	addTier(m_tiers, tr("Operators"), DP_ACCESS_TIER_OPERATOR);
+	addTier(m_tiers, tr("Trusted"), DP_ACCESS_TIER_TRUSTED);
+	addTier(m_tiers, tr("Registered"), DP_ACCESS_TIER_AUTHENTICATED);
+	addTier(m_tiers, tr("Everyone"), DP_ACCESS_TIER_GUEST);
+	static_assert(DP_ACCESS_TIER_COUNT == 4, "update LayerAclMenu tiers!");
 	addActions(m_tiers->actions());
 
 	addSection(tr("Exclusive access:"));
@@ -105,10 +105,10 @@ void LayerAclMenu::userClicked(QAction *useraction)
 	}
 
 	// Get selected tier
-	canvas::Tier tier = canvas::Tier::Guest;
+	DP_AccessTier tier = DP_ACCESS_TIER_GUEST;
 	for(const QAction *a : m_tiers->actions()) {
 		if(a->isChecked()) {
-			tier = canvas::Tier(a->property("userTier").toInt());
+			tier = DP_AccessTier(a->property("userTier").toInt());
 			break;
 		}
 	}

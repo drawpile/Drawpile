@@ -17,28 +17,32 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern "C" {
+#include <dpcommon/queue.h>
+#include <dpmsg/message.h>
+}
+
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
+#include "drawdance/canvasstate.h"
 #include "net/client.h"
-#include "net/envelopebuilder.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/freehand.h"
 
 #include "../libshared/net/undo.h"
-#include "../rustpile/rustpile.h"
 
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
-	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor), m_drawing(false)
+	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor)
+	, m_brushEngine{}
+	, m_drawing(false)
 {
-	m_brushengine = rustpile::brushengine_new();
 }
 
 Freehand::~Freehand()
 {
-	rustpile::brushengine_free(m_brushengine);
 }
 
 void Freehand::begin(const canvas::Point& point, bool right, float zoom)
@@ -51,7 +55,7 @@ void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 	m_firstPoint = true;
 	m_lastTimestamp = QDateTime::currentMSecsSinceEpoch();
 
-	owner.setBrushEngineBrush(m_brushengine);
+	owner.setBrushEngineBrush(m_brushEngine);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
@@ -66,41 +70,31 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 	if(!m_drawing)
 		return;
 
-	net::EnvelopeBuilder writer;
+	drawdance::CanvasState canvasState = owner.model()->paintEngine()->canvasState();
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
-
-		rustpile::write_undopoint(writer, owner.client()->myId());
-
-		rustpile::brushengine_stroke_to(
-			m_brushengine,
+		m_brushEngine.beginStroke(owner.client()->myId());
+		m_brushEngine.strokeTo(
 			m_start.x(),
 			m_start.y(),
 			qMin(m_start.pressure(), point.pressure()),
 			0,
-			owner.model()->paintEngine()->engine(),
-			owner.activeLayer()
-		);
+			canvasState);
 	}
 
 	qint64 now = QDateTime::currentMSecsSinceEpoch();
 	qint64 deltaMsec = now - m_lastTimestamp;
 	m_lastTimestamp = now;
 
-	rustpile::brushengine_stroke_to(
-		m_brushengine,
+	m_brushEngine.strokeTo(
 		point.x(),
 		point.y(),
 		point.pressure(),
 		deltaMsec,
-		owner.model()->paintEngine()->engine(),
-		owner.activeLayer()
-	);
+		canvasState);
 
-	rustpile::brushengine_write_dabs(m_brushengine, owner.client()->myId(), writer);
-
-	owner.client()->sendEnvelope(writer.toEnvelope());
+	m_brushEngine.sendMessagesTo(owner.client());
 }
 
 void Freehand::end()
@@ -108,36 +102,27 @@ void Freehand::end()
 	if(m_drawing) {
 		m_drawing = false;
 
-		net::EnvelopeBuilder writer;
-
 		if(m_firstPoint) {
 			m_firstPoint = false;
-
-			rustpile::write_undopoint(writer, owner.client()->myId());
-
-			rustpile::brushengine_stroke_to(
-				m_brushengine,
+			m_brushEngine.beginStroke(owner.client()->myId());
+			m_brushEngine.strokeTo(
 				m_start.x(),
 				m_start.y(),
 				m_start.pressure(),
 				QDateTime::currentMSecsSinceEpoch(),
-				nullptr,
-				0
-			);
+				drawdance::CanvasState::null());
 		}
 
-		rustpile::brushengine_end_stroke(m_brushengine);
-		rustpile::brushengine_write_dabs(m_brushengine, owner.client()->myId(), writer);
-		rustpile::write_penup(writer, owner.client()->myId());
-
-		owner.client()->sendEnvelope(writer.toEnvelope());
+		m_brushEngine.endStroke();
+		m_brushEngine.sendMessagesTo(owner.client());
 	}
 }
 
 void Freehand::offsetActiveTool(int x, int y)
 {
-	if(m_drawing)
-		rustpile::brushengine_add_offset(m_brushengine, x, y);
+	if(m_drawing) {
+		m_brushEngine.addOffset(x, y);
+	}
 }
 
 }

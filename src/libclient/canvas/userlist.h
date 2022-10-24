@@ -19,14 +19,14 @@
 #ifndef DP_NET_USERLISTMODEL_H
 #define DP_NET_USERLISTMODEL_H
 
+#include "drawdance/message.h"
+
 #include <QAbstractTableModel>
 #include <QSortFilterProxyModel>
 #include <QList>
 #include <QPixmap>
 
 class QJsonArray;
-
-namespace net { class Envelope; }
 
 namespace canvas {
 
@@ -131,7 +131,7 @@ public:
 	 * @param lock
 	 * @return
 	 */
-	net::Envelope getLockUserCommand(int localId, int userId, bool lock) const;
+	drawdance::Message getLockUserCommand(int localId, int userId, bool lock) const;
 
 	/**
 	 * @brief Get the command for granting or revoking operator privileges
@@ -140,7 +140,7 @@ public:
 	 * @param op
 	 * @return
 	 */
-	net::Envelope getOpUserCommand(int localId, int userId, bool op) const;
+	drawdance::Message getOpUserCommand(int localId, int userId, bool op) const;
 
 	/**
 	 * @brief Get the command for granting or revoking trusted status
@@ -149,14 +149,14 @@ public:
 	 * @param trusted
 	 * @return
 	 */
-	net::Envelope getTrustUserCommand(int localId, int userId, bool op) const;
+	drawdance::Message getTrustUserCommand(int localId, int userId, bool op) const;
 
-        /**
-         * @brief Check if the given user is an operator
-         * @param userId
-         * @return
-         */
-        bool isOperator(int userId) const;
+	/**
+		* @brief Check if the given user is an operator
+		* @param userId
+		* @return
+		*/
+	bool isOperator(int userId) const;
 
 public slots:
 	void updateAclState(const AclState *state);

@@ -54,6 +54,11 @@ public:
 		{}
 	virtual ~Tool() {}
 
+    Tool(const Tool &) = delete;
+    Tool(Tool &&) = delete;
+    Tool &operator=(const Tool &) = delete;
+    Tool &operator=(Tool &&) = delete;
+
 	Type type() const { return m_type; }
 	const QCursor &cursor() const { return m_cursor; }
 

@@ -20,7 +20,6 @@
 #include "flipbook.h"
 #include "canvas/paintengine.h"
 #include "utils/icon.h"
-#include "../rustpile/rustpile.h"
 
 #include "ui_flipbook.h"
 
@@ -127,7 +126,8 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
 	m_ui->loopEnd->setValue(max);
 
-	m_crop = QRect(QPoint(), pe->size());
+	drawdance::CanvasState canvasState = pe->canvasState();
+	m_crop = QRect(QPoint(), canvasState.size());
 
 	const QRect crop = QSettings().value("flipbook/crop").toRect();
 	if(m_crop.contains(crop, true)) {
@@ -137,13 +137,11 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 		m_ui->zoomButton->setEnabled(false);
 	}
 
-	m_realFps = rustpile::paintengine_get_metadata_int(pe->engine(), rustpile::MetadataInt::Framerate);
+	drawdance::DocumentMetadata documentMetadata = canvasState.documentMetadata();
+	m_realFps = documentMetadata.framerate();
 
-	m_ui->timelineModeLabel->setText(
-		rustpile::paintengine_get_metadata_int(pe->engine(), rustpile::MetadataInt::UseTimeline)
-		? tr("Timeline: manual")
-		: tr("Timeline: automatic")
-	);
+	m_ui->timelineModeLabel->setText(documentMetadata.useTimeline()
+		? tr("Timeline: manual") : tr("Timeline: automatic"));
 
 	updateFps(m_ui->fps->value());
 	resetFrameCache();
@@ -156,7 +154,7 @@ void Flipbook::setCrop(const QRectF &rect)
 	const int h = m_crop.height();
 
 	if(rect.width()*w<=5 || rect.height()*h<=5) {
-		m_crop = QRect(QPoint(), m_paintengine->size());
+		m_crop = QRect(QPoint(), m_paintengine->canvasState().size());
 		m_ui->zoomButton->setEnabled(false);
 	} else {
 		m_crop = QRect(

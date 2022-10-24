@@ -21,8 +21,11 @@
 
 #include <QWidget>
 
-namespace net { class Envelope; }
 namespace canvas { class UserListModel; }
+
+namespace drawdance {
+	class Message;
+}
 
 namespace widgets {
 
@@ -75,14 +78,14 @@ public slots:
 	void openPrivateChat(int userId);
 
 private slots:
-	void sendMessage(const QString &msg);
+	void sendMessage(const QString &chatMessage);
 	void chatTabSelected(int index);
 	void chatTabClosed(int index);
 	void showChatContextMenu(const QPoint &pos);
 	void setCompactMode(bool compact);
 
 signals:
-	void message(const net::Envelope &msg);
+	void message(const drawdance::Message &msg);
 	void detachRequested();
 	void expandRequested();
 

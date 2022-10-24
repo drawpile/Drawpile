@@ -20,10 +20,8 @@
 #define TOOLS_FREEHAND_H
 
 #include "tool.h"
-
-namespace rustpile {
-	struct PaintEngineBrush;
-}
+#include "drawdance/brushengine.h"
+#include "drawdance/message.h"
 
 namespace tools {
 
@@ -43,7 +41,7 @@ public:
 	void offsetActiveTool(int x, int y) override;
 
 private:
-	rustpile::BrushEngine *m_brushengine;
+	drawdance::BrushEngine m_brushEngine;
 	bool m_drawing;
 	bool m_firstPoint;
 	qint64 m_lastTimestamp;

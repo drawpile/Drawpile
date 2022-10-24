@@ -83,33 +83,39 @@ int TcpServer::uploadQueueBytes() const
 	return m_msgqueue->uploadQueueBytes();
 }
 
-void TcpServer::sendEnvelope(const Envelope &e)
+void TcpServer::sendMessage(const drawdance::Message &msg)
 {
-	m_msgqueue->send(e);
+	m_msgqueue->send(msg);
+}
+
+void TcpServer::sendMessages(int count, const drawdance::Message *msgs)
+{
+	m_msgqueue->sendMultiple(count, msgs);
 }
 
 void TcpServer::handleMessage()
 {
-	Envelope envelope = m_msgqueue->getPending();
-
-	if(m_loginstate) {
-		// Drip feed messages one by one to the login handler,
-		// since the envelope may contain messages not belonging to
-		// the login handshake anymore.
-		while(!envelope.isEmpty()) {
-			const ServerReply sr = ServerReply::fromEnvelope(envelope);
-			const bool expectMoreLogin = m_loginstate->receiveMessage(sr);
-			envelope = envelope.next();
-
-			if(!expectMoreLogin) {
-				if(!envelope.isEmpty())
-					emit envelopeReceived(envelope);
-				break;
+	m_msgqueue->receive(m_receiveBuffer);
+	int count = m_receiveBuffer.count();
+	if(count != 0) {
+		if(m_loginstate) {
+			// Drip feed messages one by one to the login handler,
+			// since the inbox may contain messages not belonging to
+			// the login handshake anymore.
+			for(int i = 0; i < count; ++i) {
+				const ServerReply sr = ServerReply::fromMessage(m_receiveBuffer[i]);
+				const bool expectMoreLogin = m_loginstate->receiveMessage(sr);
+				const int offset = i + 1;
+				if(!expectMoreLogin && offset < count) {
+					emit messagesReceived(
+						count - offset, m_receiveBuffer.constData() + offset);
+					break;
+				}
 			}
+		} else {
+			emit messagesReceived(count, m_receiveBuffer.constData());
 		}
-
-	} else {
-		emit envelopeReceived(envelope);
+		m_receiveBuffer.clear();
 	}
 }
 

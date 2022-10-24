@@ -40,7 +40,8 @@ public:
 	void login(LoginHandler *login);
 	void logout() override;
 
-	void sendEnvelope(const Envelope &e) override;
+	void sendMessage(const drawdance::Message &msg) override;
+	void sendMessages(int count, const drawdance::Message *msgs) override;
 
 	bool isLoggedIn() const override { return m_loginstate == nullptr; }
 
@@ -78,6 +79,7 @@ private slots:
 private:
 	QSslSocket *m_socket;
 	MessageQueue *m_msgqueue;
+	drawdance::MessageList m_receiveBuffer;
 	LoginHandler *m_loginstate;
 	QString m_error, m_errorcode;
 	Security m_securityLevel;

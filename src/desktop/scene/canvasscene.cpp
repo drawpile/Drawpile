@@ -28,10 +28,10 @@
 #include "scene/lasertrailitem.h"
 
 #include "canvas/canvasmodel.h"
+#include "canvas/layerlist.h"
 #include "canvas/paintengine.h"
 #include "canvas/userlist.h"
-
-#include "../rustpile/rustpile.h"
+#include "drawdance/annotationlist.h"
 
 namespace drawingboard {
 
@@ -67,15 +67,13 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	onSelectionChanged(nullptr);
 
-	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize, Qt::QueuedConnection);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged, Qt::QueuedConnection);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &CanvasScene::userCursorMoved, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &CanvasScene::userCursorMoved);
 
 	connect(m_model, &canvas::CanvasModel::previewAnnotationRequested, this, &CanvasScene::previewAnnotation);
 	connect(m_model, &canvas::CanvasModel::laserTrail, this, &CanvasScene::laserTrail);
 	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
-
-	connect(m_model->paintEngine(), &canvas::PaintEngine::enginePanicked, this, &CanvasScene::paintEngineCrashed);
 
 	const auto items = this->items();
 	for(QGraphicsItem *item : items) {
@@ -101,6 +99,13 @@ void CanvasScene::hideCanvas()
 {
 	if(m_canvasItem)
 		m_canvasItem->setVisible(false);
+}
+
+void CanvasScene::canvasViewportChanged(const QPolygonF &viewport)
+{
+	if(m_canvasItem) {
+		m_canvasItem->setViewportBounds(viewport.boundingRect());
+	}
 }
 
 void CanvasScene::onSelectionChanged(canvas::Selection *selection)
@@ -168,57 +173,40 @@ void CanvasScene::setActiveAnnotation(int id)
 	}
 }
 
-void CanvasScene::annotationsChanged(rustpile::Annotations *annotations) {
-	struct Context {
-		QList<AnnotationItem*> items;
-		QList<AnnotationItem*> newItems;
-	} ctx;
-
-	// Gather up all the existing annotation items
+void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al) {
+	QHash<int, AnnotationItem*> annotationItems;
 	for(QGraphicsItem *item : items()) {
-		 auto ai = qgraphicsitem_cast<AnnotationItem*>(item);
-		 if(ai)
-			 ctx.items << ai;
+		 AnnotationItem *ai = qgraphicsitem_cast<AnnotationItem*>(item);
+		 if(ai) {
+			 annotationItems.insert(ai->id(), ai);
+		 }
 	}
 
-	// The update function
-	auto update = [](void *ctx, rustpile::AnnotationID id, const char *text, uintptr_t textlen, rustpile::Rectangle rect, rustpile::Color background, bool protect, rustpile::VAlign valign) {
-		auto context = reinterpret_cast<Context*>(ctx);
-		AnnotationItem *ai = nullptr;
-		for(int i=0;i<context->items.size();++i) {
-			if(context->items.at(i)->id() == id) {
-				ai = context->items.takeAt(i);
-				break;
-			}
-		}
-
-		if(!ai) {
+	int count = al.count();
+	for (int i = 0; i < count; ++i) {
+		drawdance::Annotation a = al.at(i);
+		int id = a.id();
+		QHash<int, AnnotationItem *>::iterator it = annotationItems.find(id);
+		AnnotationItem *ai;
+		if(it == annotationItems.end()) {
 			ai = new AnnotationItem(id);
-			context->newItems << ai;
+			ai->setShowBorder(showAnnotationBorders());
+			ai->setVisible(m_showAnnotations);
+			addItem(ai);
+		} else {
+			ai = it.value();
+			annotationItems.erase(it);
 		}
+		ai->setText(a.text());
+		ai->setGeometry(a.bounds());
+		ai->setColor(a.backgroundColor());
+		ai->setProtect(a.protect());
+		ai->setValign(a.valign());
+	}
 
-		ai->setText(QString::fromUtf8(text, textlen));
-		ai->setGeometry(QRect{rect.x, rect.y, rect.w, rect.h});
-		ai->setColor(QColor::fromRgbF(background.r, background.g, background.b, background.a));
-		ai->setProtect(protect);
-		ai->setValign(int(valign));
-	};
-
-	// Update or create annotations
-	rustpile::annotations_get_all(annotations, &ctx, update);
-	rustpile::annotations_free(annotations);
-
-	// Whatever remains in the list are annotations that were removed
-	for(auto ai : qAsConst(ctx.items)) {
+	for(AnnotationItem *ai : annotationItems) {
 		emit annotationDeleted(ai->id());
 		delete ai;
-	}
-
-	// These were added
-	for(auto ai : qAsConst(ctx.newItems)) {
-		ai->setShowBorder(showAnnotationBorders());
-		ai->setVisible(m_showAnnotations);
-		addItem(ai);
 	}
 }
 

@@ -23,7 +23,6 @@
 #include "net/servercmd.h"
 #include "net/banlistmodel.h"
 #include "net/announcementlist.h"
-#include "net/envelopebuilder.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "canvas/selection.h"
@@ -40,9 +39,12 @@
 #include <QClipboard>
 #include <QThreadPool>
 #include <QPainter>
+#include <QtEndian>
 
 Document::Document(QObject *parent)
 	: QObject(parent),
+	  m_resetstate(),
+	  m_messageBuffer(),
 	  m_canvas(nullptr),
 	  m_dirty(false),
 	  m_autosave(false),
@@ -94,23 +96,10 @@ void Document::initCanvas()
 
 	m_toolctrl->setModel(m_canvas);
 
-	connect(m_client, &net::Client::messageReceived, m_canvas, &canvas::CanvasModel::handleCommand);
-	connect(m_client, &net::Client::drawingCommandLocal, m_canvas, &canvas::CanvasModel::handleLocalCommand);
+	connect(m_client, &net::Client::messagesReceived, m_canvas, &canvas::CanvasModel::handleCommands);
+	connect(m_client, &net::Client::drawingCommandsLocal, m_canvas, &canvas::CanvasModel::handleLocalCommands);
 	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
-	connect(m_canvas->layerlist(), &canvas::LayerListModel::moveRequested, this, [this](int sourceId, int targetId, bool intoGroup, bool below) {
-		net::EnvelopeBuilder eb;
-		rustpile::write_undopoint(eb, m_client->myId());
-		rustpile::paintengine_make_movelayer(
-			m_canvas->paintEngine()->engine(),
-			eb,
-			m_client->myId(),
-			sourceId,
-			targetId,
-			intoGroup,
-			below
-		);
-		m_client->sendEnvelope(eb.toEnvelope());
-	});
+	connect(m_canvas->layerlist(), &canvas::LayerListModel::moveRequested, this, &Document::onMoveLayerRequested);
 
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
 	connect(m_canvas, &canvas::CanvasModel::recorderStateChanged, this, &Document::recorderStateChanged);
@@ -139,45 +128,49 @@ void Document::onSessionResetted()
 
 	// Clear out the canvas in preparation for the new data that is about to follow
 	m_canvas->resetCanvas();
-	m_resetstate = net::Envelope();
+	m_resetstate.clear();
 }
 
-bool Document::loadCanvas(const QSize &size, const QColor &background)
+bool Document::loadBlank(const QSize &size, const QColor &background)
 {
 	setAutosave(false);
 	initCanvas();
 	unmarkDirty();
 
-	m_canvas->load(size, background);
+	m_canvas->loadBlank(size, background);
 	setCurrentFilename(QString());
 	return true;
 }
 
-rustpile::CanvasIoError Document::loadCanvas(const QString &path)
+DP_LoadResult Document::loadFile(const QString &path)
 {
-	setAutosave(false);
-	initCanvas();
-	unmarkDirty();
-
-	const auto result = m_canvas->load(path);
-	if(result == rustpile::CanvasIoError::NoError)
+	DP_LoadResult result;
+	drawdance::CanvasState canvasState = drawdance::CanvasState::load(path, &result);
+	if(canvasState.isNull()) {
+		Q_ASSERT(result != DP_LOAD_RESULT_SUCCESS);
+		return result;
+	} else {
+		setAutosave(false);
+		initCanvas();
+		unmarkDirty();
+		m_canvas->loadCanvasState(canvasState);
 		setCurrentFilename(path);
-
-	return result;
+		return DP_LOAD_RESULT_SUCCESS;
+	}
 }
 
-rustpile::CanvasIoError Document::loadRecording(const QString &path)
+bool Document::loadRecording(const QString &path)
 {
 	setAutosave(false);
 	initCanvas();
 	unmarkDirty();
 
-	const auto result = m_canvas->loadRecording(path);
-	if(result == rustpile::CanvasIoError::NoError)
+	if(m_canvas->loadRecording(path)) {
 		setCurrentFilename(path);
-
-	setCurrentFilename(path);
-	return result;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void Document::onServerLogin(bool join)
@@ -292,19 +285,37 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 	if(QSettings().value("settings/server/autoreset", true).toBool()) {
 		if(query) {
 			// This is just a query: send back an affirmative response
-			m_client->sendEnvelope(net::ServerCommand::make("ready-to-autoreset"));
+			m_client->sendMessage(net::ServerCommand::make("ready-to-autoreset"));
 
 		} else {
 			// Autoreset on request
 			sendLockSession(true);
 
-			// FIXME
-			//m_client->sendMessage(protocol::Chat::action(m_client->myId(), "beginning session autoreset...", true));
+			QByteArray bytes = QStringLiteral("beginning session autoreset...").toUtf8();
+			m_client->sendMessage(drawdance::Message::noinc(DP_msg_chat_new(
+				m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS, DP_MSG_CHAT_OFLAGS_ACTION,
+				bytes.constData(), bytes.length())));
 
-			sendResetSession(net::Envelope());
+			sendResetSession();
 		}
 	} else {
 		qInfo("Ignoring autoreset request as configured.");
+	}
+}
+
+void Document::onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, bool below)
+{
+	uint8_t contextId = m_client->myId();
+	drawdance::Message layerOrderMessage = m_canvas->paintEngine()->canvasState()
+		.makeLayerOrder(contextId, sourceId, targetId, intoGroup, below);
+	if(layerOrderMessage.isNull()) {
+		qWarning("Can't move layer: %s", DP_error());
+	} else {
+		drawdance::Message messages[] = {
+			layerOrderMessage,
+			drawdance::Message::noinc(DP_msg_undo_point_new(contextId)),
+		};
+		m_client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 	}
 }
 
@@ -519,21 +530,21 @@ void Document::onCanvasSaved(const QString &errorMessage)
 	emit canvasSaved(errorMessage);
 }
 
-rustpile::CanvasIoError Document::startRecording(const QString &filename)
+drawdance::RecordStartResult Document::startRecording(const QString &filename)
 {
 	// Set file suffix if missing
-	m_originalRecordingFilename = filename;
 	const QFileInfo info(filename);
-	if(info.suffix().isEmpty())
-		m_originalRecordingFilename += ".dprec";
-
-	// TODO error string
-	return m_canvas->startRecording(filename);
+	if(info.suffix().isEmpty()) {
+		m_originalRecordingFilename = filename + ".dprec";
+	} else {
+		m_originalRecordingFilename = filename;
+	}
+	return m_canvas->startRecording(m_originalRecordingFilename);
 }
 
-void Document::stopRecording()
+bool Document::stopRecording()
 {
-	m_canvas->stopRecording();
+	return m_canvas->stopRecording();
 }
 
 bool Document::isRecording() const
@@ -543,33 +554,35 @@ bool Document::isRecording() const
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	net::EnvelopeBuilder eb;
-	rustpile::write_movepointer(eb, m_client->myId(), point.x(), point.y());
-	m_client->sendEnvelope(eb.toEnvelope());
+	m_client->sendMessage(drawdance::Message::noinc(DP_msg_move_pointer_new(
+		m_client->myId(), point.x(), point.y())));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
 {
-	m_client->sendEnvelope(net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
+	m_client->sendMessage(net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
 }
 
-void Document::sendFeatureAccessLevelChange(const uint8_t tiers[canvas::FeatureCount])
+static void setFeatureTiers(int count, uint8_t *out, void *tiers)
 {
-	net::EnvelopeBuilder eb;
-	rustpile::write_featureaccess(eb, m_client->myId(), tiers, canvas::FeatureCount);
-	m_client->sendEnvelope(eb.toEnvelope());
+	memcpy(out, tiers, count * sizeof(*out));
+}
+
+void Document::sendFeatureAccessLevelChange(const uint8_t tiers[DP_FEATURE_COUNT])
+{
+	m_client->sendMessage(drawdance::Message::noinc(DP_msg_feature_access_levels_new(
+		m_client->myId(), setFeatureTiers, DP_FEATURE_COUNT, const_cast<uint8_t *>(tiers))));
 }
 
 void Document::sendLockSession(bool lock)
 {
-	net::EnvelopeBuilder eb;
-	rustpile::write_layeracl(eb, m_client->myId(), 0, lock ? 0x80 : 0, nullptr, 0);
-	m_client->sendEnvelope(eb.toEnvelope());
+	m_client->sendMessage(drawdance::Message::noinc(DP_msg_layer_acl_new(
+		m_client->myId(), 0, lock ? DP_ACL_ALL_LOCKED_BIT : 0, nullptr, 0, nullptr)));
 }
 
 void Document::sendOpword(const QString &opword)
 {
-	m_client->sendEnvelope(net::ServerCommand::make("gain-op", QJsonArray() << opword));
+	m_client->sendMessage(net::ServerCommand::make("gain-op", QJsonArray() << opword));
 }
 
 /**
@@ -580,7 +593,7 @@ void Document::sendOpword(const QString &opword)
  *
  * If the document is in offline mode, this will immediately reset the current canvas.
  */
-void Document::sendResetSession(const net::Envelope &resetImage)
+void Document::sendResetSession(const drawdance::MessageList &resetImage)
 {
 	if(!m_client->isConnected()) {
 		if(resetImage.isEmpty()) {
@@ -589,7 +602,7 @@ void Document::sendResetSession(const net::Envelope &resetImage)
 		}
 		// Not connected? Do a local reset
 		initCanvas();
-		m_client->sendEnvelope(resetImage);
+		m_client->sendMessages(resetImage.count(), resetImage.data());
 		return;
 	}
 
@@ -600,44 +613,52 @@ void Document::sendResetSession(const net::Envelope &resetImage)
 	}
 
 	m_resetstate = resetImage;
-	m_client->sendEnvelope(net::ServerCommand::make("reset-session"));
+	m_client->sendMessage(net::ServerCommand::make("reset-session"));
 }
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
-	net::EnvelopeBuilder eb;
-	rustpile::write_undopoint(eb, m_client->myId());
-	rustpile::write_resize(eb, m_client->myId(), top, right, bottom, left);
-	m_client->sendEnvelope(eb.toEnvelope());
+	drawdance::Message msgs[] = {
+		drawdance::Message::noinc(DP_msg_undo_point_new(m_client->myId())),
+		drawdance::Message::noinc(DP_msg_canvas_resize_new(m_client->myId(), top, right, bottom, left)),
+	};
+	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
 }
 
 void Document::sendUnban(int entryId)
 {
-	m_client->sendEnvelope(net::ServerCommand::makeUnban(entryId));
+	m_client->sendMessage(net::ServerCommand::makeUnban(entryId));
 }
 
 void Document::sendAnnounce(const QString &url, bool privateMode)
 {
-	m_client->sendEnvelope(net::ServerCommand::makeAnnounce(url, privateMode));
+	m_client->sendMessage(net::ServerCommand::makeAnnounce(url, privateMode));
 }
 
 void Document::sendUnannounce(const QString &url)
 {
-	m_client->sendEnvelope(net::ServerCommand::makeUnannounce(url));
+	m_client->sendMessage(net::ServerCommand::makeUnannounce(url));
 }
 
 void Document::sendTerminateSession()
 {
-	m_client->sendEnvelope(net::ServerCommand::make("kill-session"));
+	m_client->sendMessage(net::ServerCommand::make("kill-session"));
+}
+
+static void setBackgroundColor(size_t size, unsigned char *out, void *user)
+{
+	memcpy(out, user, size);
 }
 
 void Document::sendCanvasBackground(const QColor &color)
 {
-	const uint32_t c = qToBigEndian(color.rgba());
-	net::EnvelopeBuilder eb;
-	rustpile::write_undopoint(eb, m_client->myId());
-	rustpile::write_background(eb, m_client->myId(), reinterpret_cast<const uchar*>(&c), 4);
-	m_client->sendEnvelope(eb.toEnvelope());
+	uint32_t c = qToBigEndian(color.rgba());
+	drawdance::Message msgs[] = {
+		drawdance::Message::noinc(DP_msg_undo_point_new(m_client->myId())),
+		drawdance::Message::noinc(DP_msg_canvas_background_new(
+			m_client->myId(), setBackgroundColor, 4, &c)),
+	};
+	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
 }
 
 void Document::sendAbuseReport(int userId, const QString &message)
@@ -646,7 +667,7 @@ void Document::sendAbuseReport(int userId, const QString &message)
 	if(userId > 0 && userId < 256)
 		kwargs["user"] = userId;
 	kwargs["reason"] = message;
-	m_client->sendEnvelope(net::ServerCommand::make("report", QJsonArray(), kwargs));
+	m_client->sendMessage(net::ServerCommand::make("report", QJsonArray(), kwargs));
 }
 
 void Document::snapshotNeeded()
@@ -659,7 +680,7 @@ void Document::snapshotNeeded()
 
 			if(m_resetstate.isEmpty()) {
 				qWarning("Just-in-time snapshot has zero size!");
-				m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
+				m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 				return;
 			}
 		}
@@ -668,21 +689,21 @@ void Document::snapshotNeeded()
 		if(m_sessionHistoryMaxSize>0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
 			qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
 			emit autoResetTooLarge(m_sessionHistoryMaxSize);
-			m_resetstate = net::Envelope();
-			m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
+			m_resetstate.clear();
+			m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 			return;
 		}
 
 		// Send the reset command+image
-		m_client->sendResetEnvelope(net::ServerCommand::make("init-begin"));
-		m_client->sendResetEnvelope(m_resetstate);
-		m_client->sendResetEnvelope(net::ServerCommand::make("init-complete"));
+		m_client->sendResetMessage(net::ServerCommand::make("init-begin"));
+		m_client->sendResetMessages(m_resetstate.count(), m_resetstate.constData());
+		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
 
-		m_resetstate = net::Envelope();
+		m_resetstate.clear();
 
 	} else {
 		qWarning("Server requested snapshot, but canvas is not yet initialized!");
-		m_client->sendEnvelope(net::ServerCommand::make("init-cancel"));
+		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	}
 }
 
@@ -692,9 +713,8 @@ void Document::undo()
 		return;
 
 	if(!m_toolctrl->undoMultipartDrawing()) {
-		net::EnvelopeBuilder eb;
-		eb.buildUndo(m_client->myId(), 0, false);
-		m_client->sendEnvelope(eb.toEnvelope());
+		m_client->sendMessage(drawdance::Message::noinc(
+			DP_msg_undo_new(m_client->myId(), 0, false)));
 	}
 }
 
@@ -705,9 +725,8 @@ void Document::redo()
 
 	// Cannot redo while a multipart drawing action is in progress
 	if(!m_toolctrl->isMultipartDrawing()) {
-		net::EnvelopeBuilder eb;
-		eb.buildUndo(m_client->myId(), 0, true);
-		m_client->sendEnvelope(eb.toEnvelope());
+		m_client->sendMessage(drawdance::Message::noinc(
+			DP_msg_undo_new(m_client->myId(), 0, true)));
 	}
 }
 
@@ -724,8 +743,10 @@ void Document::selectAll()
 
 void Document::selectNone()
 {
-	if(m_canvas && m_canvas->selection()) {
-		m_client->sendEnvelope(m_canvas->selection()->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
+	if(m_canvas && m_canvas->selection() && m_canvas->selection()->pasteOrMoveToCanvas(
+			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer())) {
+		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+		m_messageBuffer.clear();
 		cancelSelection();
 	}
 }
@@ -807,7 +828,7 @@ void Document::cutLayer()
 		if(m_canvas->selection() && m_canvas->selection()->isMovedFromCanvas())
 			m_canvas->selection()->setShape(m_canvas->selection()->moveSourceRegion());
 
-		fillArea(Qt::white, rustpile::Blendmode::Erase);
+		fillArea(Qt::white, DP_BLEND_MODE_ERASE);
 		m_canvas->setSelection(nullptr);
 	}
 }
@@ -822,20 +843,25 @@ void Document::pasteImage(const QImage &image, const QPoint &point, bool forcePo
 void Document::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
-	if(sel && !sel->pasteImage().isNull()) {
-		m_client->sendEnvelope(sel->pasteOrMoveToCanvas(m_client->myId(), m_toolctrl->activeLayer()));
+	if(sel && !sel->pasteImage().isNull() && sel->pasteOrMoveToCanvas(
+			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer())) {
+		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+		m_messageBuffer.clear();
 		sel->detachMove();
 	}
 }
 
-void Document::fillArea(const QColor &color, rustpile::Blendmode mode)
+void Document::fillArea(const QColor &color, DP_BlendMode mode)
 {
 	if(!m_canvas) {
 		qWarning("fillArea: no canvas!");
 		return;
 	}
-	if(m_canvas->selection() && !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer())) {
-		m_client->sendEnvelope(m_canvas->selection()->fillCanvas(m_client->myId(), color, mode, m_toolctrl->activeLayer()));
+	if(m_canvas->selection() && !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer())
+			&& m_canvas->selection()->fillCanvas(
+				m_messageBuffer, m_client->myId(), color, mode, m_toolctrl->activeLayer())) {
+		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+		m_messageBuffer.clear();
 	}
 }
 
@@ -846,14 +872,19 @@ void Document::removeEmptyAnnotations()
 		return;
 	}
 
-	net::EnvelopeBuilder eb;
-	rustpile::paintengine_make_delete_empty_annotations(
-		m_canvas->paintEngine()->engine(),
-		eb,
-		m_canvas->localUserId()
-	);
+	uint8_t contextId = m_canvas->localUserId();
+	drawdance::AnnotationList al = m_canvas->paintEngine()->canvasState().annotations();
+	int count = al.count();
+	for(int i = 0; i < count; ++i) {
+		drawdance::Annotation a = al.at(i);
+		if(a.textBytes().length() == 0) {
+			m_messageBuffer.append(drawdance::Message::noinc(
+				DP_msg_annotation_delete_new(contextId, a.id())));
+		}
+	}
 
-	m_client->sendEnvelope(eb.toEnvelope());
+	m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+	m_messageBuffer.clear();
 }
 
 void Document::addServerLogEntry(const QString &log)

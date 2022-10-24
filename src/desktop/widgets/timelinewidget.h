@@ -26,8 +26,8 @@ namespace canvas {
     class TimelineModel;
 }
 
-namespace net {
-    class Envelope;
+namespace drawdance {
+    class Message;
 }
 
 namespace widgets {
@@ -50,7 +50,7 @@ public:
 	int currentLayerId() const;
 
 signals:
-	void timelineEditCommand(const net::Envelope &e);
+	void timelineEditCommands(int count, const drawdance::Message *msgs);
 	void selectFrameRequest(int frame, int layerId);
 
 protected:

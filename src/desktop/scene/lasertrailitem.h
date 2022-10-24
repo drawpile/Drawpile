@@ -44,7 +44,9 @@ protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-	bool m_blink;
+	static constexpr float ANIM_TIME = 0.4f;
+
+	float m_blink;
 	bool m_fadeout;
 	uint8_t m_owner;
 	QPen m_pen;

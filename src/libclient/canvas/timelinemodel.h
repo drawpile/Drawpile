@@ -19,70 +19,79 @@
 #ifndef DP_TIMELINE_MODEL_H
 #define DP_TIMELINE_MODEL_H
 
-#include "../rustpile/rustpile.h"
 #include "layerlist.h"
+#include "drawdance/message.h"
 
 #include <QVector>
 #include <QHash>
 #include <QObject>
 
-namespace net {
-	class EnvelopeBuilder;
+namespace drawdance {
+	class LayerPropsList;
+	class Timeline;
 }
 
 namespace canvas {
 
+class CanvasModel;
+
 class TimelineModel : public QObject {
 	Q_OBJECT
-	friend void timelineUpdateFrames(void *ctx, const rustpile::Frame *frames, uintptr_t count);
 public:
 	struct TimelineFrame {
-		rustpile::Frame frame;
+		QVector<int> layerIds;
 	};
 
 	struct TimelineLayer {
-		rustpile::LayerID id;
+		int layerId;
 		int group;
 		QString name;
 	};
 
-	explicit TimelineModel(QObject *parent=nullptr);
+	explicit TimelineModel(CanvasModel *canvas);
 
+	uint8_t localUserId() const;
 	const QVector<TimelineFrame> &frames() const { return m_manualMode ? m_frames : m_autoFrames; }
 	const QVector<TimelineLayer> &layers() const { return m_layers; }
-	int layerRow(rustpile::LayerID id) const { return m_layerIdsToRows[id]; }
-	rustpile::LayerID layerRowId(int row) const {
+
+	int layerRow(int layerId) const { return m_layerIdsToRows[layerId]; }
+
+	int layerRowId(int row) const {
 		if(row >= 0 && row < m_layers.size()) {
-			return m_layers[row].id;
+			return m_layers[row].layerId;
 		} else {
 			return 0;
 		}
 	}
-        rustpile::LayerID nearestLayerTo(int frame, rustpile::LayerID nearet) const;
 
-	void makeToggleCommand(net::EnvelopeBuilder &eb, int frameCol, int layerRow) const;
-	void makeRemoveCommand(net::EnvelopeBuilder &eb, int frameCol) const;
+	int nearestLayerTo(int frame, int nearest) const;
+
+	// These may return null messages!
+	drawdance::Message makeToggleCommand(int frameCol, int layerRow) const;
+	drawdance::Message makeRemoveCommand(int frameCol) const;
 
 	void setManualMode(bool manual);
 	bool isManualMode() const { return m_manualMode; }
 
 public slots:
-	void setLayers(const QVector<LayerListItem> &layers);
+	void setLayers(const drawdance::LayerPropsList &lpl);
+	void setTimeline(const drawdance::Timeline &tl);
 
 signals:
 	void layersChanged();
 	void framesChanged();
 
 private:
+	void setLayersRecursive(const drawdance::LayerPropsList &lpl, int group, const QString &prefix);
 	void updateAutoFrames();
+
+	CanvasModel *m_canvas;
 	QVector<TimelineFrame> m_frames;
 	QVector<TimelineFrame> m_autoFrames;
 	QVector<TimelineLayer> m_layers;
-	QHash<rustpile::LayerID, int> m_layerIdsToRows;
+	QHash<int, int> m_layerIdsToRows;
 	bool m_manualMode;
 };
-
-void timelineUpdateFrames(void *ctx, const rustpile::Frame *frames, uintptr_t count);
 
 }
 

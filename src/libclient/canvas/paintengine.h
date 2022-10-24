@@ -20,31 +20,30 @@
 #ifndef LAYERSTACKPIXMAP_H
 #define LAYERSTACKPIXMAP_H
 
-#include <QObject>
-#include <QPixmap>
-
-#include "layerlist.h"
-#include "net/envelope.h"
-
-namespace rustpile {
-	struct PaintEngine;
-	struct Rectangle;
-	struct Size;
-	struct LayerInfo;
-	struct Annotations;
-	struct AnnotationAt;
-	enum class LayerViewMode;
+extern "C" {
+#include <dpengine/draw_context.h>
 }
 
-Q_DECLARE_OPAQUE_POINTER(rustpile::Annotations*)
+#include <QMutex>
+#include <QObject>
+#include <QPainter>
+#include <QPixmap>
+
+#include "drawdance/aclstate.h"
+#include "drawdance/canvasstate.h"
+#include "drawdance/paintengine.h"
+#include "drawdance/snapshotqueue.h"
+
+struct DP_PaintEngine;
+
+namespace drawdance {
+	class AnnotationList;
+	class LayerPropsList;
+	class Message;
+}
 
 namespace canvas {
 
-/**
- * @brief A Qt compatibility wrapper around the Rust paint engine library.
- *
- * The canvas view cache is held on this side of the C++/Rust boundary.
- */
 class PaintEngine : public QObject {
 	Q_OBJECT
 public:
@@ -52,35 +51,45 @@ public:
 	~PaintEngine();
 
 	/// Reset the paint engine to its default state
-	void reset();
+	void reset(const drawdance::CanvasState &canvasState = drawdance::CanvasState::null());
 
 	/**
 	 * @brief Get a reference to the view cache pixmap while makign sure at least the given area has been refreshed
+	 *
+	 * Should only be called by the CanvasItem, since the last refresh area is cached and shouldn't change much.
 	 */
-	const QPixmap &getPixmap(const QRect &refreshArea);
+	const QPixmap &getPixmapView(const QRect &refreshArea);
 
 	//! Get a reference to the view cache pixmap while making sure the whole pixmap is refreshed
-	const QPixmap &getPixmap() { return getPixmap(QRect{-1, -1, -1, -1}); }
+	const QPixmap &getPixmap();
 
 	//! Get the number of frames in an animated canvas
 	int frameCount() const;
 
 	//! Get a layer as an image
+	//! An id of 0 means to flatten the whole image including the background,
+	//! -1 means flatten without the background, other ids are taken as actual
+	//! layer ids. Returns a null image if the layer wasn't found, it was a
+	//! group or the canvas size is empty.
 	QImage getLayerImage(int id, const QRect &rect=QRect()) const;
 
 	//! Render a frame
 	QImage getFrameImage(int index, const QRect &rect=QRect()) const;
 
-	//! Get the current size of the canvas
-	QSize size() const;
+	//! Receive and handle messages, returns how many messages were actually
+	//! pushed to the paint engine.
+	int receiveMessages(bool local, int count, const drawdance::Message *msgs);
 
-	//! Receive and handle messages
-	void receiveMessages(bool local, const net::Envelope &msgs);
+	void enqueueReset();
+
+	void enqueueLoadBlank(const QSize &size, const QColor &backgroundColor);
 
 	//! Enqueue a "catchup progress" marker.
 	//! Will trigger the emission of caughtUpTo signal once the marker
 	//! has been processed by the paint engine.
 	void enqueueCatchupProgress(int progress);
+
+	void resetAcl(uint8_t localUserId);
 
 	//! Clean up dangling state after disconnecting from a remote session
 	void cleanup();
@@ -92,13 +101,27 @@ public:
 	uint16_t findAvailableAnnotationId(uint8_t forUser) const;
 
 	//! Get the annotation at the given point
-	rustpile::AnnotationAt getAnnotationAt(int x, int y, int expand) const;
+	drawdance::Annotation getAnnotationAt(int x, int y, int expand) const;
 
 	//! Is OpenRaster file format needed to save the canvas losslessly?
 	bool needsOpenRaster() const;
 
+	/*
+	 * @brief Set the "local user is currently drawing!" hint
+	 *
+	 * This affects the way the retcon local fork is handled: when
+	 * local drawing is in progress, the local fork is not discarded
+	 * on conflict (with other users) to avoid self-conflict feedback loop.
+	 *
+	 * Not setting this flag doesn't break anything, but may cause
+	 * unnecessary rollbacks if a conflict occurs during local drawing.
+	 */
+	void setLocalDrawingInProgress(bool localDrawingInProgress);
+
+	void setLayerVisibility(int layerId, bool hidden);
+
 	//! Set layerstack rendering mode (normal, solo, frame, onionskin)
-	void setViewMode(rustpile::LayerViewMode mode, bool censor);
+	void setViewMode(DP_LayerViewMode mode, bool censor);
 
 	//! Is the "censor" view mode flag set?
 	bool isCensored() const;
@@ -112,28 +135,77 @@ public:
 	//! Set options to use with onion skin layer rendering mode
 	void setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint);
 
-	//! Get the raw rustpile paint engine instance
-	rustpile::PaintEngine *engine() const { return m_pe; }
+	void setInspectContextId(unsigned int contextId);
+
+	//! Get the current canvas state from the paint engine instance
+	drawdance::CanvasState canvasState() const { return m_paintEngine.canvasState(); }
+
+	const drawdance::SnapshotQueue &snapshotQueue() const { return m_snapshotQueue; }
+
+	QColor sampleColor(int x, int y, int layerId, int diameter);
+
+	drawdance::RecordStartResult startRecording(const QString &path);
+	bool stopRecording();
+	bool isRecording() const;
+
+	void previewCut(int layerId, const QRect &bounds, const QImage &mask);
+	void previewDabs(int layerId, const drawdance::MessageList &msgs);
+	void clearPreview();
 
 signals:
-	// Note: these signals are emitted from the paint engine thread
 	void areaChanged(const QRect &area);
 	void resized(int xoffset, int yoffset, const QSize &oldSize);
-	void layersChanged(QVector<LayerListItem> layers);
-	void annotationsChanged(rustpile::Annotations *annotations);
+	void layersChanged(const drawdance::LayerPropsList &lpl);
+	void annotationsChanged(const drawdance::AnnotationList &al);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
 	void playbackAt(qint64 pos, qint32 interval);
 	void caughtUpTo(int progress);
-	void metadataChanged();
-	void timelineChanged();
+	void recorderStateChanged(bool started);
+	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
+	void timelineChanged(const drawdance::Timeline &tl);
 	void frameVisibilityChanged(const QVector<int> layers, bool frameMode);
+	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags);
+	void laserTrail(uint8_t userId, int persistence, uint32_t color);
+	void defaultLayer(uint16_t layerId);
 
-	//! Paint engine has panicked and died
-	void enginePanicked();
+protected:
+	void timerEvent(QTimerEvent *) override;
 
 private:
-	rustpile::PaintEngine *m_pe;
+	static void onAclsChanged(void *user, int aclChangeFlags);
+	static void onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color);
+	static void onMovePointer(void *user, unsigned int contextId, int x, int y);
+	static void onDefaultLayer(void *user, int layerId);
+	static void onCatchup(void *user, int progress);
+	static void onRecorderStateChanged(void *user, bool started);
+	static void onResized(void *user, int offsetX, int offsetY, int prevWidth, int prevHeight);
+	static void onTileChanged(void *user, int x, int y);
+	static void onLayerPropsChanged(void *user, DP_LayerPropsList *lpl);
+	static void onAnnotationsChanged(void *user, DP_AnnotationList *al);
+	static void onDocumentMetadataChanged(void *user, DP_DocumentMetadata *dm);
+	static void onTimelineChanged(void *user, DP_Timeline *tl);
+	static void onCursorMoved(void *user, unsigned int contextId, int layerId, int x, int y);
+	static void onRenderSize(void *user, int width, int height);
+	static void onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int threadIndex);
+
+	void start();
+	void renderTileBounds(const QRect &tileBounds);
+	void renderEverything();
+
+	void deletePainters();
+
+	drawdance::AclState m_acls;
+	drawdance::SnapshotQueue m_snapshotQueue;
+	drawdance::PaintEngine m_paintEngine;
+	int m_timerId;
+	QRect m_changedTileBounds;
+	QRect m_lastRefreshAreaTileBounds;
+	bool m_lastRefreshAreaTileBoundsTouched;
 	QPixmap m_cache;
+	QPainter m_painter;
+	QMutex m_painterMutex;
+	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
+	int m_sampleColorLastDiameter;
 };
 
 }

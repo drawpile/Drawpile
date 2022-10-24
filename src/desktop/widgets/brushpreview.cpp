@@ -39,10 +39,8 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	p.fillRect(w, w, w, w, Qt::white);
 }
 
-BrushPreview::~BrushPreview() {
-#ifndef DESIGNER_PLUGIN
-	rustpile::brushpreview_free(m_previewcanvas);
-#endif
+BrushPreview::~BrushPreview()
+{
 }
 
 void BrushPreview::setBrush(const brushes::ActiveBrush &brush)
@@ -52,7 +50,7 @@ void BrushPreview::setBrush(const brushes::ActiveBrush &brush)
 	update();
 }
 
-void BrushPreview::setPreviewShape(rustpile::BrushPreviewShape shape)
+void BrushPreview::setPreviewShape(DP_BrushPreviewShape shape)
 {
 	if(m_shape != shape) {
 		m_shape = shape;
@@ -109,7 +107,7 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	Q_UNUSED(event)
 	painter.drawTiledPixmap(0, 0, width(), height(), m_background);
 #else
-	painter.drawPixmap(event->rect(), m_preview, event->rect());
+	painter.drawPixmap(event->rect(), m_brushPreview.pixmap(), event->rect());
 #endif
 }
 
@@ -117,31 +115,20 @@ void BrushPreview::updatePreview()
 {
 #ifndef DESIGNER_PLUGIN
 	const QSize size = contentsRect().size();
+	m_brushPreview.reset(size);
 
-	if(size != m_preview.size()) {
-		rustpile::brushpreview_free(m_previewcanvas);
-		m_previewcanvas = rustpile::brushpreview_new(size.width(), size.height());
-		m_preview = QPixmap(size);
-	}
-
-	m_brush.renderPreview(m_previewcanvas, m_shape);
-	if(m_shape == rustpile::BrushPreviewShape::FloodFill || m_shape == rustpile::BrushPreviewShape::FloodErase) {
-		rustpile::Color color = m_brush.color();
-		if(m_shape == rustpile::BrushPreviewShape::FloodErase) {
-			color.a = 0;
+	m_brush.renderPreview(m_brushPreview, m_shape);
+	if(m_shape == DP_BRUSH_PREVIEW_FLOOD_FILL || m_shape == DP_BRUSH_PREVIEW_FLOOD_ERASE) {
+		QColor color = m_brush.qColor();
+		if(m_shape == DP_BRUSH_PREVIEW_FLOOD_ERASE) {
+			color.setAlpha(0);
 		}
-		rustpile::brushpreview_floodfill(m_previewcanvas, &color, m_fillTolerance / 255.0, m_fillExpansion, m_underFill);
+		m_brushPreview.floodFill(color, m_fillTolerance / 255.0, m_fillExpansion, m_underFill);
 	}
 
-	QPainter p(&m_preview);
-	p.drawTiledPixmap(0, 0, m_preview.width(), m_preview.height(), m_background);
-	rustpile::brushpreview_paint(m_previewcanvas, &p, [](void *p, int x, int y, const uchar *pixels) {
-		const QImage img(pixels, 64, 64, 64*4, QImage::Format_ARGB32_Premultiplied);
-		static_cast<QPainter*>(p)->drawImage(x, y, img);
-	});
-
+	m_brushPreview.paint(m_background);
 #endif
-	m_needUpdate=false;
+	m_needUpdate = false;
 }
 
 void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)

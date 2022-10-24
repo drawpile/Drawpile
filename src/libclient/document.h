@@ -20,8 +20,14 @@
 #ifndef DRAWPILE_DOCUMENT_H
 #define DRAWPILE_DOCUMENT_H
 
+extern "C" {
+#include <dpmsg/blend_mode.h>
+#include <dpengine/load.h>
+}
+
 #include "canvas/acl.h"
-#include "net/envelope.h"
+#include "drawdance/message.h"
+#include "drawdance/paintengine.h"
 
 #include <QObject>
 #include <QStringListModel>
@@ -39,11 +45,6 @@ namespace net {
 }
 
 namespace tools { class ToolController; }
-
-namespace rustpile {
-	enum class CanvasIoError;
-	enum class Blendmode : uint8_t;
-}
 
 /**
  * @brief An active document and its associated data, including the network connection
@@ -99,9 +100,9 @@ public:
 	 */
 	void initCanvas();
 
-	bool loadCanvas(const QSize &size, const QColor &background);
-	rustpile::CanvasIoError loadCanvas(const QString &path);
-	rustpile::CanvasIoError loadRecording(const QString &path);
+	bool loadBlank(const QSize &size, const QColor &background);
+	DP_LoadResult loadFile(const QString &path);
+	bool loadRecording(const QString &path);
 
 	/**
 	 * @brief Save the canvas content
@@ -125,8 +126,8 @@ public:
 	QString currentFilename() const { return m_currentFilename; }
 
 	bool isRecording() const;
-	rustpile::CanvasIoError startRecording(const QString &filename);
-	void stopRecording();
+	drawdance::RecordStartResult startRecording(const QString &filename);
+	bool stopRecording();
 
 	bool isDirty() const { return m_dirty; }
 
@@ -185,10 +186,10 @@ public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
 	void sendSessionConf(const QJsonObject &sessionconf);
-	void sendFeatureAccessLevelChange(const uint8_t[canvas::FeatureCount]);
+	void sendFeatureAccessLevelChange(const uint8_t[DP_FEATURE_COUNT]);
 	void sendLockSession(bool lock=true);
 	void sendOpword(const QString &opword);
-	void sendResetSession(const net::Envelope &resetImage);
+	void sendResetSession(const drawdance::MessageList &resetImage = {});
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
@@ -213,7 +214,7 @@ public slots:
 	void stamp();
 
 	void removeEmptyAnnotations();
-	void fillArea(const QColor &color, rustpile::Blendmode mode);
+	void fillArea(const QColor &color, DP_BlendMode mode);
 
 	void addServerLogEntry(const QString &log);
 
@@ -224,6 +225,7 @@ private slots:
 
 	void onSessionConfChanged(const QJsonObject &config);
 	void onAutoresetRequested(int maxSize, bool query);
+	void onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, bool below);
 
 	void snapshotNeeded();
 	void markDirty();
@@ -255,7 +257,8 @@ private:
 
 	QString m_currentFilename;
 
-	net::Envelope m_resetstate;
+	drawdance::MessageList m_resetstate;
+	drawdance::MessageList m_messageBuffer;
 
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;

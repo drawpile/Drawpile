@@ -48,8 +48,11 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 	m_end = point;
 
 	if(m_handle == canvas::Selection::Handle::Outside) {
-		if(sel)
-			owner.client()->sendEnvelope(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
+		net::Client *client = owner.client();
+		if(sel && sel->pasteOrMoveToCanvas(m_messages, owner.client()->myId(), owner.activeLayer())) {
+			client->sendMessages(m_messages.count(), m_messages.constData());
+			m_messages.clear();
+		}
 
 		sel = new canvas::Selection;
 		initSelection(sel);
@@ -120,8 +123,10 @@ void SelectionTool::end()
 void SelectionTool::finishMultipart()
 {
 	canvas::Selection *sel = owner.model()->selection();
-	if(sel && !sel->pasteImage().isNull()) {
-		owner.client()->sendEnvelope(sel->pasteOrMoveToCanvas(owner.client()->myId(), owner.activeLayer()));
+	net::Client *client = owner.client();
+	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), owner.activeLayer())) {
+		owner.client()->sendMessages(m_messages.count(), m_messages.constData());
+		m_messages.clear();
 		owner.model()->setSelection(nullptr);
 	}
 }
@@ -150,7 +155,8 @@ bool SelectionTool::isMultipart() const
 
 void SelectionTool::startMove()
 {
-	canvas::Selection *sel = owner.model()->selection();
+	canvas::CanvasModel *model = owner.model();
+	canvas::Selection *sel = model->selection();
 	Q_ASSERT(sel);
 
 	// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
@@ -158,18 +164,13 @@ void SelectionTool::startMove()
 	QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
 
 	// Copy layer content into move preview buffer.
-	const QImage img = owner.model()->selectionToImage(owner.activeLayer());
-	sel->setMoveImage(img, maskBounds, owner.model()->size(), owner.activeLayer());
+	int layerId = owner.activeLayer();
+	const QImage img = model->selectionToImage(layerId);
+	sel->setMoveImage(img, maskBounds, model->size(), layerId);
 
 	// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
 	// to erase the selected region.
-
-	rustpile::paintengine_preview_cut(
-		owner.model()->paintEngine()->engine(),
-		owner.activeLayer(),
-		rustpile::Rectangle { maskBounds.x(), maskBounds.y(), maskBounds.width(), maskBounds.height() },
-		eraseMask.isNull() ? nullptr : eraseMask.constBits()
-	);
+	model->paintEngine()->previewCut(layerId, maskBounds, eraseMask);
 }
 
 RectangleSelection::RectangleSelection(ToolController &owner)

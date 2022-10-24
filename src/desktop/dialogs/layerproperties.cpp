@@ -19,9 +19,7 @@
 
 #include "layerproperties.h"
 #include "canvas/blendmodes.h"
-#include "net/envelopebuilder.h"
-
-#include "../rustpile/rustpile.h"
+#include "drawdance/message.h"
 
 #include "ui_layerproperties.h"
 
@@ -109,20 +107,15 @@ void LayerProperties::showEvent(QShowEvent *event)
 
 void LayerProperties::emitChanges()
 {
-	net::EnvelopeBuilder eb;
+	drawdance::MessageList messages;
 
-	if(m_item.title != m_ui->title->text()) {
-		rustpile::write_retitlelayer(
-			eb,
-			m_user,
-			m_item.id,
-			reinterpret_cast<const uint16_t*>(m_ui->title->text().constData()),
-			m_ui->title->text().length()
-		);
+	QString title = m_ui->title->text();
+	if(m_item.title != title) {
+		messages.append(drawdance::Message::makeLayerRetitle(m_user, m_item.id, title));
 	}
 
 	const int oldOpacity = qRound(m_item.opacity * 100.0);
-	const rustpile::Blendmode newBlendmode = static_cast<rustpile::Blendmode>(m_ui->blendMode->currentData().toInt());
+	const DP_BlendMode newBlendmode = DP_BlendMode(m_ui->blendMode->currentData().toInt());
 	const bool censored = m_ui->censored->isChecked();
 	const bool isolated = !m_ui->passThrough->isChecked();
 
@@ -132,16 +125,12 @@ void LayerProperties::emitChanges()
 		censored != m_item.censored ||
 	    isolated != m_item.isolated
 	) {
-		rustpile::write_layerattr(
-			eb,
-			m_user,
-			m_item.id,
-			0,
-			(censored ? rustpile::LayerAttributesMessage_FLAGS_CENSOR : 0) |
-		    (isolated ? rustpile::LayerAttributesMessage_FLAGS_ISOLATED : 0),
-			qRound(m_ui->opacitySpinner->value() / 100.0 * 255),
-			newBlendmode
-		);
+		uint8_t flags =
+			(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+		uint8_t opacity = qRound(m_ui->opacitySpinner->value() / 100.0 * 255);
+		messages.append(drawdance::Message::makeLayerAttributes(
+			m_user, m_item.id, 0, flags, opacity, newBlendmode));
     }
 
 	if(m_ui->visible->isChecked() != (!m_item.hidden)) {
@@ -149,17 +138,17 @@ void LayerProperties::emitChanges()
     }
 
     if(m_ui->defaultLayer->isEnabled() && m_ui->defaultLayer->isChecked()) {
-		rustpile::write_defaultlayer(eb, m_user, m_item.id);
+		messages.append(drawdance::Message::makeDefaultLayer(m_user, m_item.id));
     }
 
-	emit layerCommand(eb.toEnvelope());
+	emit layerCommands(messages.count(), messages.constData());
 }
 
-int LayerProperties::searchBlendModeIndex(rustpile::Blendmode mode)
+int LayerProperties::searchBlendModeIndex(DP_BlendMode mode)
 {
 	const int blendModeCount = m_ui->blendMode->count();
     for(int i = 0; i < blendModeCount; ++i) {
-		if(m_ui->blendMode->itemData(i).toInt() == static_cast<int>(mode)) {
+		if(m_ui->blendMode->itemData(i).toInt() == int(mode)) {
             return i;
         }
     }

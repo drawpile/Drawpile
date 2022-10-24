@@ -19,8 +19,8 @@
 
 #include "serverlogdialog.h"
 #include "canvas/userlist.h"
+#include "drawdance/message.h"
 #include "net/servercmd.h"
-#include "net/envelopebuilder.h"
 #include "ui_serverlog.h"
 
 #include <QSortFilterProxyModel>
@@ -139,26 +139,22 @@ void ServerLogDialog::banSelected()
 		emit opCommand(net::ServerCommand::makeKick(user, true));
 }
 
-static net::Envelope makeUndo(uint8_t overrideUser, bool redo) {
-
-	net::EnvelopeBuilder eb;
-	// note: using a context id of 0 here is acceptable since the server will fix it for us
-	eb.buildUndo(0, overrideUser, redo);
-	return eb.toEnvelope();
-}
-
 void ServerLogDialog::undoSelected()
 {
-	auto user = selectedUserId();
-	if(user)
-		emit opCommand(makeUndo(user, false));
+	uint8_t user = selectedUserId();
+	if(user != 0) {
+		// note: using a context id of 0 here is acceptable since the server will fix it for us
+		emit opCommand(drawdance::Message::makeUndo(0, user, false));
+	}
 }
 
 void ServerLogDialog::redoSelected()
 {
-	auto user = selectedUserId();
-	if(user)
-		emit opCommand(makeUndo(user, true));
+	uint8_t user = selectedUserId();
+	if(user != 0) {
+		// note: using a context id of 0 here is acceptable since the server will fix it for us
+		emit opCommand(drawdance::Message::makeUndo(0, user, true));
+	}
 }
 
 }

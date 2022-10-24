@@ -28,10 +28,6 @@ namespace canvas {
 	class PaintEngine;
 }
 
-namespace rustpile {
-	struct RecordingIndex;
-}
-
 class Ui_PlaybackDialog;
 class QMenu;
 class VideoExporter;
@@ -73,7 +69,7 @@ private slots:
 private:
 	Ui_PlaybackDialog *m_ui;
 	canvas::PaintEngine *m_paintengine;
-	rustpile::RecordingIndex *m_index;
+	void *m_index;
 	QPointer<VideoExporter> m_exporter;
 
 	QTimer *m_autoStepTimer;

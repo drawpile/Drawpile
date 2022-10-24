@@ -3,6 +3,13 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Sql REQUIRED)
 
 if(CLIENT)
+	find_package(PNG MODULE REQUIRED)
+	find_package(JPEG MODULE REQUIRED)
+	find_package(KF5Archive REQUIRED)
+	find_package(Qt5Xml REQUIRED)
+	find_package(Threads REQUIRED)
+	include("${DRAWDANCE_EXPORT_PATH}")
+
 	find_package(Qt5Gui REQUIRED)
 	find_package(Qt5Multimedia REQUIRED)
 	find_package(Qt5Svg REQUIRED)
@@ -32,7 +39,7 @@ if(PKGCONFIG_FOUND)
 	if(INITSYS STREQUAL "systemd")
 		pkg_check_modules(SYSTEMD "libsystemd")
 	endif()
-endif(PKGCONFIG_FOUND)
+endif()
 
 # disabled pending built-in server rewrite
 # find_package(KF5DNSSD NO_MODULE)

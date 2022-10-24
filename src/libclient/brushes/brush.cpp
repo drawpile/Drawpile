@@ -19,22 +19,22 @@
 
 #include "brush.h"
 #include "canvas/blendmodes.h"
+#include "drawdance/brushengine.h"
 #include "../utils/icon.h"
 
 #include <cmath>
 #include <mypaint-brush.h>
-#include <mypaint-brush-settings.h>
 #include <QJsonArray>
 #include <QJsonDocument>
 
 namespace {
 
-void setRustpileColorToQColor(rustpile::Color &r, const QColor &q)
+void setDrawdanceColorToQColor(DP_UPixelFloat &r, const QColor &q)
 {
-	r = {float(q.redF()), float(q.greenF()), float(q.blueF()), float(q.alphaF())};
+	r = {float(q.blueF()), float(q.greenF()), float(q.redF()), float(q.alphaF())};
 }
 
-QColor rustpileColorToQColor(const rustpile::Color &color)
+QColor drawdanceColorToQColor(const DP_UPixelFloat &color)
 {
 	return QColor::fromRgbF(color.r, color.g, color.b, color.a);
 }
@@ -44,16 +44,16 @@ QColor rustpileColorToQColor(const rustpile::Color &color)
 namespace brushes {
 
 ClassicBrush::ClassicBrush()
-	: rustpile::ClassicBrush{
+	: DP_ClassicBrush{
 		{1.0, 10.0},
 		{0, 1},
 		{0, 1},
 		{0, 0},
 		0.1,
 		0,
-		rustpile::Color_BLACK,
-		rustpile::ClassicBrushShape::RoundPixel,
-		rustpile::Blendmode::Normal,
+		{0.0f, 0.0f, 0.0f, 1.0f},
+		DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND,
+		DP_BLEND_MODE_NORMAL,
 		true,
 		false,
 		false,
@@ -66,26 +66,26 @@ ClassicBrush::ClassicBrush()
 
 bool ClassicBrush::isEraser() const
 {
-	return mode == rustpile::Blendmode::Erase || mode == rustpile::Blendmode::ColorErase;
+	return mode == DP_BLEND_MODE_ERASE || mode == DP_BLEND_MODE_COLOR_ERASE;
 }
 
 void ClassicBrush::setQColor(const QColor& c)
 {
-	setRustpileColorToQColor(color, c);
+	setDrawdanceColorToQColor(color, c);
 }
 
 QColor ClassicBrush::qColor() const
 {
-	return rustpileColorToQColor(color);
+	return drawdanceColorToQColor(color);
 }
 
 QJsonObject ClassicBrush::toJson() const
 {
 	QJsonObject o;
 	switch(shape) {
-	case rustpile::ClassicBrushShape::RoundPixel: o["shape"] = "round-pixel"; break;
-	case rustpile::ClassicBrushShape::SquarePixel: o["shape"] = "square-pixel"; break;
-	case rustpile::ClassicBrushShape::RoundSoft: o["shape"] = "round-soft"; break;
+	case DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND: o["shape"] = "round-pixel"; break;
+	case DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE: o["shape"] = "square-pixel"; break;
+	case DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND: o["shape"] = "round-soft"; break;
 	}
 
 	o["size"] = size.max;
@@ -132,11 +132,11 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	const QJsonObject o = json["settings"].toObject();
 
 	if(o["shape"] == "round-pixel")
-		b.shape = rustpile::ClassicBrushShape::RoundPixel;
+		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
 	else if(o["shape"] == "square-pixel")
-		b.shape = rustpile::ClassicBrushShape::SquarePixel;
+		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE;
 	else
-		b.shape = rustpile::ClassicBrushShape::RoundSoft;
+		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
 
 	b.size.max = o["size"].toDouble();
 	b.size.min = o["size2"].toDouble();
@@ -167,36 +167,22 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 
 QPixmap ClassicBrush::presetThumbnail() const
 {
-	QImage img(64, 64, QImage::Format_ARGB32_Premultiplied);
-	img.fill(0);
-
-	rustpile::Color c;
+	QColor c;
 	if(smudge.max > 0.0f) {
-		c = rustpile::Color{0.1f, 0.6f, 0.9f, 1.0};
+		c = QColor::fromRgbF(0.9f, 0.6f, 0.1f);
 	} else if(icon::isDarkThemeSelected()) {
-		c = rustpile::Color{1.0, 1.0, 1.0, 1.0};
+		c = Qt::white;
 	} else {
-		c = rustpile::Color{0.0, 0.0, 0.0, 1.0};
+		c = Qt::black;
 	}
-
-	rustpile::brush_preview_dab(this, img.bits(), img.width(), img.height(), &c);
-
-	QPixmap pixmap;
-	pixmap.convertFromImage(img);
-	return pixmap;
+	return drawdance::BrushPreview::classicBrushPreviewDab(*this, 64, 64, c);
 }
 
 
 MyPaintBrush::MyPaintBrush()
-	: m_brush{rustpile::Color_BLACK, false, false}
+	: m_brush{{0.0f, 0.0f, 0.0f, 1.0f}, false, false}
 	, m_settings(nullptr)
 {
-	static_assert(
-		sizeof(m_settings->mappings) / sizeof(m_settings->mappings[0]) == MYPAINT_BRUSH_SETTINGS_COUNT,
-		"Mapping count must match MYPAINT_BRUSH_SETTINGS_COUNT");
-	static_assert(
-		sizeof(m_settings->mappings->inputs) / sizeof(m_settings->mappings->inputs[0]) == MYPAINT_BRUSH_INPUTS_COUNT,
-		"Mapping input count must match MYPAINT_BRUSH_INPUTS_COUNT");
 }
 
 MyPaintBrush::~MyPaintBrush()
@@ -209,7 +195,7 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	, m_settings(nullptr)
 {
 	if(other.m_settings) {
-		m_settings = new rustpile::MyPaintSettings;
+		m_settings = new DP_MyPaintSettings;
 		*m_settings = *other.m_settings;
 	}
 }
@@ -233,7 +219,7 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 	m_brush = other.m_brush;
 	if(other.m_settings) {
 		if(!m_settings) {
-			m_settings = new rustpile::MyPaintSettings;
+			m_settings = new DP_MyPaintSettings;
 		}
 		*m_settings = *other.m_settings;
 	} else {
@@ -243,27 +229,27 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 	return *this;
 }
 
-rustpile::MyPaintSettings &MyPaintBrush::settings()
+DP_MyPaintSettings &MyPaintBrush::settings()
 {
 	if(!m_settings) {
-		m_settings = new rustpile::MyPaintSettings(getDefaultSettings());
+		m_settings = new DP_MyPaintSettings(getDefaultSettings());
 	}
 	return *m_settings;
 }
 
-const rustpile::MyPaintSettings &MyPaintBrush::constSettings() const
+const DP_MyPaintSettings &MyPaintBrush::constSettings() const
 {
 	return m_settings ? *m_settings : getDefaultSettings();
 }
 
 void MyPaintBrush::setQColor(const QColor& c)
 {
-	setRustpileColorToQColor(m_brush.color, c);
+	setDrawdanceColorToQColor(m_brush.color, c);
 }
 
 QColor MyPaintBrush::qColor() const
 {
-	return rustpileColorToQColor(m_brush.color);
+	return drawdanceColorToQColor(m_brush.color);
 }
 
 QJsonObject MyPaintBrush::toJson() const
@@ -272,11 +258,11 @@ QJsonObject MyPaintBrush::toJson() const
 	if(m_settings) {
 		QJsonObject o;
 		for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
-			const rustpile::MyPaintMapping &mapping = m_settings->mappings[i];
+			const DP_MyPaintMapping &mapping = m_settings->mappings[i];
 
 			QJsonObject inputs;
 			for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j) {
-				const rustpile::ControlPoints &cps = mapping.inputs[j];
+				const DP_MyPaintControlPoints &cps = mapping.inputs[j];
 				if (cps.n) {
 					QJsonArray points;
 					for (int k = 0; k < cps.n; ++k) {
@@ -353,24 +339,24 @@ QPixmap MyPaintBrush::presetThumbnail() const
 	return pixmap;
 }
 
-const rustpile::MyPaintSettings &MyPaintBrush::getDefaultSettings()
+const DP_MyPaintSettings &MyPaintBrush::getDefaultSettings()
 {
-	static rustpile::MyPaintSettings settings;
+	static DP_MyPaintSettings settings;
 	static bool settingsInitialized;
 	if(!settingsInitialized) {
 		settingsInitialized = true;
 		// Same procedure as mypaint_brush_from_defaults.
         for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
-            rustpile::MyPaintMapping &mapping = settings.mappings[i];
+            DP_MyPaintMapping &mapping = settings.mappings[i];
             mapping.base_value = mypaint_brush_setting_info(
 				static_cast<MyPaintBrushSetting>(i))->def;
             for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j) {
                 mapping.inputs[j].n = 0;
             }
         }
-        rustpile::MyPaintMapping &opaqueMultiplyMapping =
+        DP_MyPaintMapping &opaqueMultiplyMapping =
 			settings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY];
-        rustpile::ControlPoints &brushInputPressure =
+        DP_MyPaintControlPoints &brushInputPressure =
 			opaqueMultiplyMapping.inputs[MYPAINT_BRUSH_INPUT_PRESSURE];
         brushInputPressure.n = 2;
         brushInputPressure.xvalues[0] = 0.0;
@@ -431,7 +417,7 @@ bool MyPaintBrush::loadJsonInputs(const QString &mappingKey,
 				qPrintable(inputKey), qPrintable(mappingKey));
 		} else {
 			foundSetting = true;
-			rustpile::ControlPoints &cps = settings().mappings[settingId].inputs[inputId];
+			DP_MyPaintControlPoints &cps = settings().mappings[settingId].inputs[inputId];
 			const QJsonArray points = o[inputKey].toArray();
 
 			static constexpr int MAX_POINTS = sizeof(cps.xvalues) / sizeof(cps.xvalues[0]);
@@ -461,7 +447,7 @@ bool ActiveBrush::isEraser() const
 	return m_activeType == CLASSIC ? m_classic.isEraser() : m_myPaint.constBrush().erase;
 }
 
-rustpile::Color ActiveBrush::color() const
+DP_UPixelFloat ActiveBrush::color() const
 {
 	return m_activeType == CLASSIC ? m_classic.color : m_myPaint.constBrush().color;
 }
@@ -529,23 +515,22 @@ QPixmap ActiveBrush::presetThumbnail() const
 	return m_activeType == MYPAINT ? m_myPaint.presetThumbnail() : m_classic.presetThumbnail();
 }
 
-void ActiveBrush::setInBrushEngine(rustpile::BrushEngine *be, uint16_t layer, bool freehand) const
+void ActiveBrush::setInBrushEngine(drawdance::BrushEngine &be, uint16_t layer, bool freehand) const
 {
 	if(m_activeType == CLASSIC) {
-		rustpile::brushengine_set_classicbrush(be, &m_classic, layer);
+		be.setClassicBrush(m_classic, layer);
 	} else {
-		rustpile::brushengine_set_mypaintbrush(
-			be, &m_myPaint.constBrush(), &m_myPaint.constSettings(), layer, freehand);
+		be.setMyPaintBrush(
+			m_myPaint.constBrush(), m_myPaint.constSettings(), layer, freehand);
 	}
 }
 
-void ActiveBrush::renderPreview(rustpile::BrushPreview *bp, rustpile::BrushPreviewShape shape) const
+void ActiveBrush::renderPreview(drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const
 {
 	if(m_activeType == CLASSIC) {
-		rustpile::brushpreview_render_classic(bp, &m_classic, shape);
+		bp.renderClassic(m_classic, shape);
 	} else {
-		rustpile::brushpreview_render_mypaint(
-			bp, &m_myPaint.constBrush(), &m_myPaint.constSettings(), shape);
+		bp.renderMyPaint(m_myPaint.constBrush(), m_myPaint.constSettings(), shape);
 	}
 }
 

@@ -18,14 +18,11 @@
 */
 
 #include "blendmodes.h"
-#include "../rustpile/rustpile.h"
 
 #include <QCoreApplication>
 
 namespace canvas {
 namespace blendmode {
-
-using rustpile::Blendmode;
 
 // Mode can be used as a layer blending mode
 static const uint8_t LayerMode = 0x01;
@@ -41,7 +38,7 @@ struct BlendModeInfo {
 	const char *name;
 
 	//! The blend mode ID
-	const rustpile::Blendmode id;
+	const DP_BlendMode id;
 
 	//! Blend mode category
 	const uint8_t flags;
@@ -51,152 +48,150 @@ struct BlendModeInfo {
 static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Normal"),
-		Blendmode::Normal,
+		DP_BLEND_MODE_NORMAL,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Recolor"),
-		Blendmode::Recolor,
+		DP_BLEND_MODE_RECOLOR,
 		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Behind"),
-		Blendmode::Behind,
+		DP_BLEND_MODE_BEHIND,
 		BrushMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
-		Blendmode::Multiply,
+		DP_BLEND_MODE_MULTIPLY,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Screen"),
-		Blendmode::Screen,
+		DP_BLEND_MODE_SCREEN,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Overlay"),
-		Blendmode::Overlay,
+		DP_BLEND_MODE_OVERLAY,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Divide"),
-		Blendmode::Divide,
+		DP_BLEND_MODE_DIVIDE,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Burn"),
-		Blendmode::Burn,
+		DP_BLEND_MODE_BURN,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Dodge"),
-		Blendmode::Dodge,
+		DP_BLEND_MODE_DODGE,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Darken"),
-		Blendmode::Darken,
+		DP_BLEND_MODE_DARKEN,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Lighten"),
-		Blendmode::Lighten,
+		DP_BLEND_MODE_LIGHTEN,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Subtract"),
-		Blendmode::Subtract,
+		DP_BLEND_MODE_SUBTRACT,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Add"),
-		Blendmode::Add,
+		DP_BLEND_MODE_ADD,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
-		Blendmode::Erase,
+		DP_BLEND_MODE_ERASE,
 		LayerMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
-		Blendmode::HardLight,
+		DP_BLEND_MODE_HARD_LIGHT,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Soft Light"),
-		Blendmode::SoftLight,
+		DP_BLEND_MODE_SOFT_LIGHT,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Linear Burn"),
-		Blendmode::LinearBurn,
+		DP_BLEND_MODE_LINEAR_BURN,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Linear Light"),
-		Blendmode::LinearLight,
+		DP_BLEND_MODE_LINEAR_LIGHT,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Luminosity/Shine (SAI)"),
-		Blendmode::LuminosityShineSai,
+		DP_BLEND_MODE_LUMINOSITY_SHINE_SAI,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hue"),
-		Blendmode::Hue,
+		DP_BLEND_MODE_HUE,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Saturation"),
-		Blendmode::Saturation,
+		DP_BLEND_MODE_SATURATION,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Luminosity"),
-		Blendmode::Luminosity,
+		DP_BLEND_MODE_LUMINOSITY,
 		UniversalMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Color"),
-		Blendmode::Color,
+		DP_BLEND_MODE_COLOR,
 		UniversalMode
 	},
 };
 
 static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);
 
-QString svgName(Blendmode mode)
+QString svgName(DP_BlendMode mode)
 {
-	uintptr_t len;
-	const char *name = reinterpret_cast<const char*>(rustpile::blendmode_svgname(mode, &len));
-	return QString::fromUtf8(name, len);
+	return QString::fromUtf8(DP_blend_mode_svg_name(mode));
 }
 
-Blendmode fromSvgName(const QString &name)
+DP_BlendMode fromSvgName(const QString &name)
 {
-	return rustpile::blendmode_from_svgname(reinterpret_cast<const uint16_t*>(name.constData()), name.length());
+	return DP_blend_mode_by_svg_name(name.toUtf8().constData(), DP_BLEND_MODE_NORMAL);
 }
 
 
-QVector<QPair<rustpile::Blendmode, QString>> brushModeNames()
+QVector<QPair<DP_BlendMode, QString>> brushModeNames()
 {
-	QVector<QPair<rustpile::Blendmode, QString>> list;
+	QVector<QPair<DP_BlendMode, QString>> list;
 	for(int i=0;i<BLEND_MODES;++i) {
 		if((BLEND_MODE[i].flags & BrushMode))
-			list << QPair<rustpile::Blendmode, QString>{BLEND_MODE[i].id, QCoreApplication::translate("blendmode", BLEND_MODE[i].name)};
+			list << QPair<DP_BlendMode, QString>{BLEND_MODE[i].id, QCoreApplication::translate("blendmode", BLEND_MODE[i].name)};
 	}
 	return list;
 }
 
-QVector<QPair<rustpile::Blendmode, QString>> layerModeNames()
+QVector<QPair<DP_BlendMode, QString>> layerModeNames()
 {
-	QVector<QPair<rustpile::Blendmode, QString>> list;
+	QVector<QPair<DP_BlendMode, QString>> list;
 	for(int i=0;i<BLEND_MODES;++i) {
 		if((BLEND_MODE[i].flags & LayerMode))
-			list << QPair<rustpile::Blendmode, QString>{BLEND_MODE[i].id, QCoreApplication::translate("blendmode", BLEND_MODE[i].name)};
+			list << QPair<DP_BlendMode, QString>{BLEND_MODE[i].id, QCoreApplication::translate("blendmode", BLEND_MODE[i].name)};
 	}
 	return list;
 }

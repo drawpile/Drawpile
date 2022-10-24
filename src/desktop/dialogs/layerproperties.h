@@ -26,8 +26,8 @@
 
 class Ui_LayerProperties;
 
-namespace net {
-	class Envelope;
+namespace drawdance {
+    class Message;
 }
 
 namespace dialogs {
@@ -46,7 +46,7 @@ public:
 	int layerId() const { return m_item.id; }
 
 signals:
-	void layerCommand(const net::Envelope&);
+	void layerCommands(int count, const drawdance::Message *msgs);
 	void visibilityChanged(int layerId, bool visible);
 
 protected:
@@ -56,7 +56,7 @@ private slots:
 	void emitChanges();
 
 private:
-	int searchBlendModeIndex(rustpile::Blendmode mode);
+	int searchBlendModeIndex(DP_BlendMode mode);
 
     Ui_LayerProperties *m_ui;
 	canvas::LayerListItem m_item;

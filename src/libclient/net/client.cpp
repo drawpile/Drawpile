@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "drawdance/message.h"
 #include "net/client.h"
 #include "net/tcpserver.h"
 #include "net/login.h"
-#include "net/envelope.h"
 #include "net/servercmd.h"
 
 #include <QDebug>
@@ -43,7 +43,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);
 	connect(server, &TcpServer::serverDisconnected, loginhandler, &LoginHandler::serverDisconnected);
 	connect(server, &TcpServer::loggedIn, this, &Client::handleConnect);
-	connect(server, &TcpServer::envelopeReceived, this, &Client::handleEnvelope);
+	connect(server, &TcpServer::messagesReceived, this, &Client::handleMessages);
 
 	connect(server, &TcpServer::bytesReceived, this, &Client::bytesReceived);
 	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
@@ -130,64 +130,54 @@ int Client::uploadQueueBytes() const
 	return 0;
 }
 
-void Client::sendEnvelope(const Envelope &envelope) {
-	if(envelope.isEmpty())
-		return;
 
-	// When we build envelopes with Commands in them, they always start out with
-	// a command, so it's enough to check just the first message.
-	if(envelope.isCommand()) {
-		emit drawingCommandLocal(envelope);
-	}
+void Client::sendMessage(const drawdance::Message &msg)
+{
+	sendMessages(1, &msg);
+}
 
+void Client::sendMessages(int count, const drawdance::Message *msgs)
+{
+	emit drawingCommandsLocal(count, msgs);
 	// Note: we could emit drawingCommandLocal only in connected mode,
 	// but it's good to exercise the code path in local mode too
 	// to make potential bugs more obvious.
-	if(m_server)
-		m_server->sendEnvelope(envelope);
-	else
-		emit messageReceived(envelope);
-}
-
-void Client::sendResetEnvelope(const net::Envelope &resetImage)
-{
-	if(resetImage.isEmpty())
-		return;
-
-	if(m_server)
-		m_server->sendEnvelope(resetImage);
-	else
-		emit messageReceived(resetImage);
-}
-
-void Client::handleEnvelope(const Envelope &envelope)
-{
-	// Catch all Control messages here
-	bool allControl = true;
-	int messageCount = 0;
-	Envelope ctrl = envelope;
-	while(!ctrl.isEmpty()) {
-		messageCount++;
-		if(ctrl.messageType() == 0) {
-			const ServerReply sr = ServerReply::fromEnvelope(ctrl);
-			handleServerReply(sr);
-
-		} else {
-			allControl = false;
-		}
-
-		ctrl = ctrl.next();
+	if(m_server) {
+		m_server->sendMessages(count, msgs);
+	} else {
+		emit messagesReceived(count, msgs);
 	}
+}
 
-	// The paint engine will handle the rest and ignore the control messages
-	if(!allControl)
-		emit messageReceived(envelope);
+void Client::sendResetMessage(const drawdance::Message &msg)
+{
+	sendResetMessages(1, &msg);
+}
+
+void Client::sendResetMessages(int count, const drawdance::Message *msgs)
+{
+	if(m_server) {
+		m_server->sendMessages(count, msgs);
+	} else {
+		emit messagesReceived(count, msgs);
+	}
+}
+
+void Client::handleMessages(int count, const drawdance::Message *msgs)
+{
+	for(int i = 0; i < count; ++i) {
+		const drawdance::Message &msg = msgs[i];
+		if(msg.type() == DP_MSG_SERVER_COMMAND) {
+			handleServerReply(ServerReply::fromMessage(msg));
+		}
+	}
+	emit messagesReceived(count, msgs);
 
 	// The server can send a "catchup" message when there is a significant number
 	// of messages queued. During login, we can show a progress bar and hide the canvas
 	// to speed up the initial catchup phase.
 	if(m_catchupTo>0) {
-		m_caughtUp += messageCount;
+		m_caughtUp += count;
 		if(m_caughtUp >= m_catchupTo) {
 			qInfo("Catchup: caught up to %d messages", m_caughtUp);
 			emit catchupProgress(100);

@@ -20,7 +20,7 @@
 #define BRUSHPREVIEW_H
 
 #include "../../libclient/brushes/brush.h"
-#include "../../rustpile/rustpile.h"
+#include "drawdance/brushpreview.h"
 
 #include <QFrame>
 
@@ -46,9 +46,9 @@ public:
 	~BrushPreview();
 
 	//! Set preview shape
-	void setPreviewShape(rustpile::BrushPreviewShape shape);
+	void setPreviewShape(DP_BrushPreviewShape shape);
 
-	rustpile::BrushPreviewShape previewShape() const { return m_shape; }
+	DP_BrushPreviewShape previewShape() const { return m_shape; }
 
 	QColor brushColor() const { return m_brush.qColor(); }
 	const brushes::ActiveBrush &brush() const { return m_brush; }
@@ -82,10 +82,11 @@ private:
 	QPixmap m_background;
 	brushes::ActiveBrush m_brush;
 
-	rustpile::BrushPreview *m_previewcanvas = nullptr;
-	QPixmap m_preview;
+#ifndef DESIGNER_PLUGIN
+	drawdance::BrushPreview m_brushPreview;
+#endif
 
-	rustpile::BrushPreviewShape m_shape = rustpile::BrushPreviewShape::Stroke;
+	DP_BrushPreviewShape m_shape = DP_BRUSH_PREVIEW_STROKE;
 	int m_fillTolerance = 0;
 	int m_fillExpansion = 0;
 	bool m_underFill = false;

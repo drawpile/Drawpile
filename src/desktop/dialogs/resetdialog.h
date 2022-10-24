@@ -19,14 +19,12 @@
 #ifndef RESETSESSIONDIALOG_H
 #define RESETSESSIONDIALOG_H
 
+#include "drawdance/message.h"
+
 #include <QDialog>
 
 namespace canvas {
 	class PaintEngine;
-}
-
-namespace net {
-	class Envelope;
 }
 
 namespace dialogs {
@@ -40,7 +38,7 @@ public:
 
 	void setCanReset(bool canReset);
 
-	net::Envelope getResetImage() const;
+	drawdance::MessageList getResetImage() const;
 
 signals:
 	void resetSelected();

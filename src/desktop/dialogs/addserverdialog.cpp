@@ -73,7 +73,7 @@ void AddServerDialog::showSuccess()
 	show();
 
 	if(m_serverInfo.faviconUrl == "drawpile") {
-		const auto icon = QIcon(":/icons/drawpile.png").pixmap(128, 128);
+		const auto icon = QIcon(":/icons/dancepile.png").pixmap(128, 128);
 		m_favicon = icon.toImage();
 		setIconPixmap(icon);
 
@@ -131,7 +131,7 @@ void AddServerDialog::onAddClicked()
 	if(!m_favicon.isNull()) {
 		listservers->setFavicon(
 			url,
-			QIcon(":/icons/drawpile.png").pixmap(128, 128).toImage()
+			QIcon(":/icons/dancepile.png").pixmap(128, 128).toImage()
 			);
 	}
 

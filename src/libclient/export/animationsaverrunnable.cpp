@@ -18,7 +18,6 @@
 */
 #include "animationsaverrunnable.h"
 #include "canvas/paintengine.h"
-#include "../rustpile/rustpile.h"
 
 AnimationSaverRunnable::AnimationSaverRunnable(const canvas::PaintEngine *pe, rustpile::AnimationExportMode mode, const QString &filename, QObject *parent)
 	: QObject(parent),
@@ -40,23 +39,25 @@ bool animationSaverProgressCallback(void *ctx, float progress) {
 
 void AnimationSaverRunnable::run()
 {
-	const auto result = rustpile::paintengine_save_animation(
-		m_pe->engine(),
-		reinterpret_cast<const uint16_t*>(m_filename.constData()),
-		m_filename.length(),
-		m_mode,
-		this,
-		&animationSaverProgressCallback
-	);
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	emit saveComplete(tr("Not implemented"), QString());
+	// const auto result = rustpile::paintengine_save_animation(
+	// 	m_pe->engine(),
+	// 	reinterpret_cast<const uint16_t*>(m_filename.constData()),
+	// 	m_filename.length(),
+	// 	m_mode,
+	// 	this,
+	// 	&animationSaverProgressCallback
+	// );
 
-	QString msg;
-	switch(result) {
-	case rustpile::CanvasIoError::NoError: break;
-	case rustpile::CanvasIoError::FileOpenError: msg = tr("Couldn't open file for writing"); break;
-	default: msg = tr("An error occurred while saving image");
-	}
+	// QString msg;
+	// switch(result) {
+	// case rustpile::CanvasIoError::NoError: break;
+	// case rustpile::CanvasIoError::FileOpenError: msg = tr("Couldn't open file for writing"); break;
+	// default: msg = tr("An error occurred while saving image");
+	// }
 
-	emit saveComplete(msg, QString());
+	// emit saveComplete(msg, QString());
 }
 
 void AnimationSaverRunnable::cancelExport()

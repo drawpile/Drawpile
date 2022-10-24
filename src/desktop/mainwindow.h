@@ -19,6 +19,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+extern "C" {
+#include <dpengine/load.h>
+}
+
 #include <QMainWindow>
 #include <QElapsedTimer>
 #include <QUrl>
@@ -132,7 +136,7 @@ private slots:
 	void exportAnimationFrames();
 
 	void onOperatorModeChange(bool op);
-	void onFeatureAccessChange(canvas::Feature feature, bool canUse);
+	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 
 	void onServerConnected();
 	void onServerLogin();
@@ -197,7 +201,7 @@ private:
 
 	//! Display an error message
 	void showErrorMessage(const QString& message, const QString& details=QString());
-	void showErrorMessage(rustpile::CanvasIoError error);
+	void showLoadResultMessage(DP_LoadResult result);
 
 	void readSettings(bool windowpos=true);
 	void writeSettings();

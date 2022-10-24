@@ -19,17 +19,13 @@
 
 #include "timelinewidget.h"
 #include "canvas/timelinemodel.h"
-#include "net/envelopebuilder.h"
+#include "drawdance/message.h"
 
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QHash>
 #include <QScrollBar>
-
-namespace {
-static const int MAX_LAYERS_PER_FRAME = sizeof(rustpile::Frame) / sizeof(rustpile::LayerID);
-}
 
 namespace widgets {
 
@@ -211,7 +207,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.setPen(gridColor);
 
 	int frameNum = 1;
-	for(const auto &col : d->model->frames()) {
+	for(const canvas::TimelineModel::TimelineFrame &col : d->model->frames()) {
 		if(x+d->columnWidth > d->headerWidth) {
 			if(x > w)
 				break;
@@ -220,10 +216,8 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				painter.fillRect(x, 0, d->columnWidth, vLine, highlightColor);
 			}
 
-			for(int i=0;i<MAX_LAYERS_PER_FRAME;++i) {
-				if(col.frame[i] == 0)
-					break;
-				const int y = d->model->layerRow(col.frame[i]) * d->rowHeight - d->yScroll;
+			for(int layerId : col.layerIds) {
+				const int y = d->model->layerRow(layerId) * d->rowHeight - d->yScroll;
 				painter.fillRect(x, y, d->columnWidth, d->rowHeight, selectedColor);
 			}
 
@@ -274,9 +268,10 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 
 	if(event->button() == Qt::LeftButton) {
 		if(d->model->isManualMode() && d->editable) {
-			net::EnvelopeBuilder eb;
-			d->model->makeToggleCommand(eb, col, row);
-			emit timelineEditCommand(eb.toEnvelope());
+			drawdance::Message msg = d->model->makeToggleCommand(col, row);
+			if(!msg.isNull()) {
+				emit timelineEditCommands(1, &msg);
+			}
 		}
 	} else if(event->button() == Qt::MiddleButton) {
 		emit selectFrameRequest(
@@ -296,10 +291,14 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 	    d->model->frames().size() - 1
 	);
 
-	net::EnvelopeBuilder eb;
-	eb.buildUndoPoint(0);
-	d->model->makeRemoveCommand(eb, col);
-	emit timelineEditCommand(eb.toEnvelope());
+	drawdance::Message msg = d->model->makeRemoveCommand(col);
+	if(!msg.isNull()) {
+		drawdance::Message messages[] = {
+			drawdance::Message::makeUndoPoint(d->model->localUserId()),
+			msg,
+		};
+		emit timelineEditCommands(DP_ARRAY_LENGTH(messages), messages);
+	}
 }
 
 }

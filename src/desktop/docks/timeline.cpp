@@ -20,9 +20,8 @@
 #include "timeline.h"
 #include "titlewidget.h"
 #include "canvas/timelinemodel.h"
+#include "drawdance/message.h"
 #include "widgets/timelinewidget.h"
-#include "net/envelopebuilder.h"
-#include "../rustpile/rustpile.h"
 
 #include <QCheckBox>
 #include <QSpinBox>
@@ -34,7 +33,7 @@ Timeline::Timeline(QWidget *parent)
 	: QDockWidget(tr("Timeline"), parent)
 {
 	m_widget = new widgets::TimelineWidget(this);
-	connect(m_widget, &widgets::TimelineWidget::timelineEditCommand, this, &Timeline::timelineEditCommand);
+	connect(m_widget, &widgets::TimelineWidget::timelineEditCommands, this, &Timeline::timelineEditCommands);
 	connect(m_widget, &widgets::TimelineWidget::selectFrameRequest, this, &Timeline::setCurrentFrame);
 	m_widget->setMinimumHeight(40);
 	setWidget(m_widget);
@@ -142,27 +141,23 @@ void Timeline::onFramesChanged()
 
 void Timeline::onUseTimelineClicked()
 {
-	net::EnvelopeBuilder eb;
-	rustpile::write_setmetadataint(
-		eb,
-		0,
-		uint8_t(rustpile::MetadataInt::UseTimeline),
-		m_useTimeline->isChecked()
-	);
-	emit timelineEditCommand(eb.toEnvelope());
+	canvas::TimelineModel *model = m_widget->model();
+	if(model) {
+		drawdance::Message msg = drawdance::Message::makeSetMetadataInt(
+			model->localUserId(), DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE, m_useTimeline->isChecked());
+		emit timelineEditCommands(1, &msg);
+	}
 }
 
 void Timeline::onFpsChanged()
 {
 	// TODO debounce
-	net::EnvelopeBuilder eb;
-	rustpile::write_setmetadataint(
-		eb,
-		0,
-		uint8_t(rustpile::MetadataInt::Framerate),
-		m_fps->value()
-	);
-	emit timelineEditCommand(eb.toEnvelope());
+	canvas::TimelineModel *model = m_widget->model();
+	if(model) {
+		drawdance::Message msg = drawdance::Message::makeSetMetadataInt(
+			model->localUserId(), DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, m_fps->value());
+		emit timelineEditCommands(1, &msg);
+	}
 }
 
 }

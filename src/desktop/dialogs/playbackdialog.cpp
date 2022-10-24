@@ -27,7 +27,6 @@
 #include "export/videoexporter.h"
 
 #include "mainwindow.h"
-#include "../rustpile/rustpile.h"
 
 #include "ui_playback.h"
 
@@ -85,7 +84,8 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	connect(m_ui->skipBackward, &QAbstractButton::clicked, this, [this]() {
 		if(!m_awaiting) {
 			m_awaiting = true;
-			rustpile::paintengine_playback_step(m_paintengine->engine(), -1, true);
+			qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+			// rustpile::paintengine_playback_step(m_paintengine->engine(), -1, true);
 		}
 	});
 
@@ -93,7 +93,8 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	connect(m_ui->skipForward, &QAbstractButton::clicked, this, [this]() {
 		if(!m_awaiting) {
 			m_awaiting = true;
-			rustpile::paintengine_playback_step(m_paintengine->engine(), 1, true);
+			qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+			// rustpile::paintengine_playback_step(m_paintengine->engine(), 1, true);
 		}
 	});
 
@@ -169,7 +170,8 @@ void PlaybackDialog::stepNext()
 {
 	if(!m_awaiting) {
 		m_awaiting = true;
-		rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+		qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+		// rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
 	}
 }
 
@@ -177,7 +179,8 @@ void PlaybackDialog::jumpTo(int pos)
 {
 	if(!m_awaiting) {
 		m_awaiting = true;
-		rustpile::paintengine_playback_jump(m_paintengine->engine(), pos, true);
+		qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+		// rustpile::paintengine_playback_jump(m_paintengine->engine(), pos, true);
 	}
 }
 
@@ -203,6 +206,8 @@ void PlaybackDialog::onBuildIndexClicked()
 
 void PlaybackDialog::loadIndex()
 {
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	/*
 	auto rp = m_paintengine->engine();
 	if(!rustpile::paintengine_load_recording_index(rp))
 		return;
@@ -229,6 +234,7 @@ void PlaybackDialog::loadIndex()
 	});
 
 	m_ui->indexStack->setCurrentIndex(1);
+	*/
 }
 
 void PlaybackDialog::centerOnParent()
@@ -260,13 +266,15 @@ void PlaybackDialog::setPlaying(bool playing)
 	m_autoplay = playing;
 	if(playing && !m_awaiting) {
 		m_awaiting = true;
-		rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+		// rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+		qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
 	}
 }
 
 void PlaybackDialog::closeEvent(QCloseEvent *event)
 {
-	rustpile::paintengine_close_recording(m_paintengine->engine());
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	// rustpile::paintengine_close_recording(m_paintengine->engine());
 
 	if(m_exporter) {
 		// Exporter still working? Disown it and let it finish.

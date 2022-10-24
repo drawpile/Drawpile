@@ -13,6 +13,27 @@ set(libclient_sources
 	canvas/timelinemodel.cpp
 	canvas/userlist.cpp
 	document.cpp
+	drawdance/aclstate.cpp
+	drawdance/annotation.cpp
+	drawdance/annotationlist.cpp
+	drawdance/brushengine.cpp
+	drawdance/brushpreview.cpp
+	drawdance/canvasstate.cpp
+	drawdance/drawcontextpool.cpp
+	drawdance/documentmetadata.cpp
+	drawdance/frame.cpp
+	drawdance/image.cpp
+	drawdance/layercontent.cpp
+	drawdance/layergroup.cpp
+	drawdance/layerlist.cpp
+	drawdance/layerprops.cpp
+	drawdance/layerpropslist.cpp
+	drawdance/logging.cpp
+	drawdance/message.cpp
+	drawdance/paintengine.cpp
+	drawdance/snapshotqueue.cpp
+	drawdance/timeline.cpp
+	drawdance/tile.cpp
 	export/animationsaverrunnable.cpp
 	export/canvassaverrunnable.cpp
 	export/ffmpegexporter.cpp
@@ -21,7 +42,6 @@ set(libclient_sources
 	net/announcementlist.cpp
 	net/banlistmodel.cpp
 	net/client.cpp
-	net/envelopebuilder.cpp
 	net/login.cpp
 	net/loginsessions.cpp
 	net/messagequeue.cpp
@@ -62,7 +82,7 @@ set(libclient_sources
 	utils/usernamevalidator.cpp
 )
 
-set(dpclient_tss
+set(libclient_tss
 	i18n/drawpile_fi.ts
 	i18n/drawpile_cs.ts
 	i18n/drawpile_ja.ts
@@ -80,7 +100,8 @@ add_library(dpclient STATIC ${libclient_sources})
 set_drawpile_target_properties(dpclient)
 target_include_directories(dpclient PUBLIC "${CMAKE_CURRENT_LIST_DIR}" bundled)
 target_link_libraries(dpclient PUBLIC
-	dpshared Qt5::Gui Qt5::Network Qt5::Sql rustpile pthread dl libmypaint)
+	dpshared Drawdance::dpengine Drawdance::dpengine_archive Drawdance::dpmsg
+	Drawdance::dpcommon Qt5::Gui Qt5::Network Qt5::Sql)
 
 if(WIN32)
 	target_sources(dpclient PRIVATE parentalcontrols/parentalcontrols_win.cpp)

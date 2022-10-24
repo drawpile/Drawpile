@@ -21,6 +21,10 @@
 
 #include <QObject>
 
+namespace drawdance {
+   class DocumentMetadata;
+}
+
 namespace canvas {
 
 class PaintEngine;
@@ -39,7 +43,7 @@ signals:
 	void useTimelineChanged(bool useTimeline);
 
 private slots:
-	void refreshMetadata();
+	void refreshMetadata(const drawdance::DocumentMetadata &dm);
 
 private:
 	PaintEngine *m_engine;

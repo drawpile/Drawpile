@@ -6,7 +6,7 @@
 set -e
 
 function usage() {
-	echo "Usage: ./build.sh [-l \"build label\"] [-i IMAGE] <shell|pkg|installer|release>"
+	echo "Usage: ./build.sh [-l \"build label\"] [-i IMAGE] [-d DRAWDANCE_ROOT] <shell|pkg|installer|release>"
 	exit 1
 }
 
@@ -17,6 +17,9 @@ while getopts ":l:i:" opt; do
 			;;
 		i)
 			IMAGE="${OPTARG}"
+			;;
+		d)
+			DRAWDANCE_ROOT="$(realpath "${OPTARG}")"
 			;;
 		\?)
 			usage
@@ -32,10 +35,14 @@ fi
 
 PKG_DIR="$(realpath $(dirname $0))"
 OUT_DIR="$PKG_DIR/out"
-PROJECT_ROOT="$(realpath $PKG_DIR/../..)"
+PROJECT_ROOT="$(realpath "$PKG_DIR/../..")"
+if [ -z "$DRAWDANCE_ROOT" ]; then
+	DRAWDANCE_ROOT="$(realpath "$PKG_DIR/../../../Drawdance")"
+fi
 
 IMAGE="${IMAGE:-dpwin8}"
-SRCVOL="type=bind,src=$PROJECT_ROOT,dst=/Drawpile,ro"
+PROJECTVOL="type=bind,src=$PROJECT_ROOT,dst=/Drawpile,ro"
+DRAWDANCEVOL="type=bind,src=$DRAWDANCE_ROOT,dst=/drawdance,ro"
 OUTVOL="type=bind,src=$OUT_DIR,dst=/out"
 
 mkdir "$OUT_DIR"
@@ -49,7 +56,7 @@ fi
 echo "Running $CMD in $IMAGE"
 
 docker run --rm -ti \
-	--mount "$SRCVOL" --mount "$OUTVOL" \
+	--mount "$PROJECTVOL" --mount "$DRAWDANCEVOL" --mount "$OUTVOL" \
 	-e "HOST_UID=$UID" -e "BUILD_LABEL=${BUILD_LABEL}" \
 	$IMAGE $CMD
 

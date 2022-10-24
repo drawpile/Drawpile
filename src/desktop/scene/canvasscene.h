@@ -21,13 +21,13 @@
 
 #include <QGraphicsScene>
 
-namespace rustpile {
-	struct Annotations;
-}
-
 namespace canvas {
 	class CanvasModel;
 	class Selection;
+}
+
+namespace drawdance {
+	class AnnotationList;
 }
 
 //! Drawing board related classes
@@ -98,14 +98,14 @@ public slots:
 	//! Hide canvas item
 	void hideCanvas();
 
+	void canvasViewportChanged(const QPolygonF &viewport);
+
 signals:
 	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
 
 	//! An annotation item was just deleted
 	void annotationDeleted(int id);
-
-	void paintEngineCrashed();
 
 private slots:
 	void onSelectionChanged(canvas::Selection *sel);
@@ -115,7 +115,7 @@ private slots:
 	void userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y);
 	void laserTrail(uint8_t userId, int persistence, const QColor &color);
 
-	void annotationsChanged(rustpile::Annotations *annotations);
+	void annotationsChanged(const drawdance::AnnotationList &al);
 	void previewAnnotation(int id, const QRect &shape);
 
 private:

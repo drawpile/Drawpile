@@ -19,7 +19,9 @@
 #ifndef LAYERACLMENU_H
 #define LAYERACLMENU_H
 
-#include "canvas/features.h"
+extern "C" {
+#include <dpmsg/acl.h>
+}
 
 #include <QMenu>
 
@@ -47,7 +49,7 @@ signals:
 	 * @param lock general layer lock
 	 * @param ids list of user IDs.
 	 */
-	void layerAclChange(bool lock, canvas::Tier tier, QVector<uint8_t> ids);
+	void layerAclChange(bool lock, DP_AccessTier tier, QVector<uint8_t> ids);
 
 	/**
 	 * @brief The censored checkbox was toggled

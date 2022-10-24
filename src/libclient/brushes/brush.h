@@ -19,7 +19,12 @@
 #ifndef DP_BRUSHES_BRUSH_H
 #define DP_BRUSHES_BRUSH_H
 
-#include "../../rustpile/rustpile.h"
+extern "C" {
+#include <dpengine/brush.h>
+#include <dpengine/pixels.h>
+}
+
+#include "drawdance/brushpreview.h"
 
 #include <QColor>
 #include <QJsonObject>
@@ -28,10 +33,14 @@
 
 struct MyPaintBrush;
 
+namespace drawdance {
+	class BrushEngine;
+}
+
 namespace brushes {
 
 //! A convenience wrapper for classic brush settings
-struct ClassicBrush : public rustpile::ClassicBrush
+struct ClassicBrush : public DP_ClassicBrush
 {
 	ClassicBrush();
 
@@ -57,11 +66,11 @@ public:
     MyPaintBrush &operator=(MyPaintBrush &&other);
     MyPaintBrush &operator=(const MyPaintBrush &other);
 
-	rustpile::MyPaintBrush &brush() { return m_brush; }
-	const rustpile::MyPaintBrush &constBrush() const { return m_brush; }
+	DP_MyPaintBrush &brush() { return m_brush; }
+	const DP_MyPaintBrush &constBrush() const { return m_brush; }
 
-	rustpile::MyPaintSettings &settings();
-	const rustpile::MyPaintSettings &constSettings() const;
+	DP_MyPaintSettings &settings();
+	const DP_MyPaintSettings &constSettings() const;
 
 	void setQColor(const QColor& c);
 	QColor qColor() const;
@@ -74,10 +83,10 @@ public:
 	QPixmap presetThumbnail() const;
 
 private:
-	rustpile::MyPaintBrush m_brush;
-	rustpile::MyPaintSettings *m_settings;
+	DP_MyPaintBrush m_brush;
+	DP_MyPaintSettings *m_settings;
 
-	static const rustpile::MyPaintSettings &getDefaultSettings();
+	static const DP_MyPaintSettings &getDefaultSettings();
 
 	bool loadJsonSettings(const QJsonObject &o);
 	bool loadJsonMapping(const QString &mappingKey, int settingId, const QJsonObject &o);
@@ -109,7 +118,7 @@ public:
 
 	bool isEraser() const;
 
-	rustpile::Color color() const;
+	DP_UPixelFloat color() const;
 	QColor qColor() const;
 	void setQColor(const QColor &c);
 
@@ -120,8 +129,8 @@ public:
 	QByteArray presetData() const;
 	QPixmap presetThumbnail() const;
 
-	void setInBrushEngine(rustpile::BrushEngine *be, uint16_t layer, bool freehand = true) const;
-	void renderPreview(rustpile::BrushPreview *bp, rustpile::BrushPreviewShape shape) const;
+	void setInBrushEngine(drawdance::BrushEngine &be, uint16_t layer, bool freehand = true) const;
+	void renderPreview(drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;
 
 private:
 	ActiveType m_activeType;

@@ -27,7 +27,8 @@
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
 #include "../libshared/util/paths.h"
-#include "../rustpile/rustpile.h"
+#include <drawdance/drawcontextpool.h>
+#include <drawdance/logging.h>
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
@@ -69,7 +70,13 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setApplicationVersion(DRAWPILE_VERSION);
 	setApplicationDisplayName("Drawpile");
 #endif
-	setWindowIcon(QIcon(":/icons/drawpile.png"));
+	setWindowIcon(QIcon(":/icons/dancepile.png"));
+	drawdance::DrawContextPool::init();
+}
+
+DrawpileApp::~DrawpileApp()
+{
+	drawdance::DrawContextPool::deinit();
 }
 
 /**
@@ -345,7 +352,7 @@ int main(int argc, char *argv[]) {
 	{
 		const auto files = initApp(app);
 
-		rustpile::rustpile_init_logging(&utils::logMessage);
+		drawdance::initLogging();
 
 		if(files.isEmpty()) {
 			app.openBlankDocument();

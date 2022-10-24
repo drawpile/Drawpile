@@ -1,3 +1,4 @@
+#error "noh"
 #ifndef DP_RUSTPILE_FFI_H
 #define DP_RUSTPILE_FFI_H
 

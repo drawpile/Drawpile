@@ -18,23 +18,22 @@
 */
 
 #include "acl.h"
-#include "../rustpile/rustpile.h"
 
 #include <QHash>
 
 namespace canvas {
 
 struct AclState::Data {
-	rustpile::UserACLs users;
-	rustpile::FeatureTiers features;
+	DP_UserAcls users;
+	DP_FeatureTiers features;
 	QHash<int, Layer> layers;
 	uint8_t localUser;
 
-	rustpile::Tier tier() const;
+	DP_AccessTier tier() const;
 };
 
 AclState::Layer::Layer()
-	: locked(false), tier(rustpile::Tier::Guest)
+	: locked(false), tier(DP_ACCESS_TIER_GUEST)
 { }
 
 bool AclState::Layer::operator!=(const Layer &other) const
@@ -42,44 +41,26 @@ bool AclState::Layer::operator!=(const Layer &other) const
 	return locked != other.locked || tier != other.tier || exclusive != other.exclusive;
 }
 
-static inline bool isUserbit(const rustpile::UserBits &bits, uint8_t user) {
-	return bits[user / 8] & (1 << user % 8);
-}
-
-rustpile::Tier AclState::Data::tier() const
+DP_AccessTier AclState::Data::tier() const
 {
-	if(isUserbit(users.operators, localUser))
-		return rustpile::Tier::Operator;
-	else if(isUserbit(users.trusted, localUser))
-		return rustpile::Tier::Trusted;
-	else if(isUserbit(users.authenticated, localUser))
-		return rustpile::Tier::Authenticated;
-	else
-		return rustpile::Tier::Guest;
+	return DP_user_acls_tier(&users, localUser);
 }
 
-static int featureFlags(const rustpile::FeatureTiers &features, rustpile::Tier t) {
+static int featureFlags(const DP_FeatureTiers &features, DP_AccessTier t) {
 	int f = 0;
-	if(t <= features.put_image) f |= 1<<int(Feature::PutImage);
-	if(t <= features.move_rect) f |= 1<<int(Feature::RegionMove);
-	if(t <= features.resize) f |= 1<<int(Feature::Resize);
-	if(t <= features.background) f |= 1<<int(Feature::Background);
-	if(t <= features.edit_layers) f |= 1<<int(Feature::EditLayers);
-	if(t <= features.own_layers) f |= 1<<int(Feature::OwnLayers);
-	if(t <= features.create_annotation) f |= 1<<int(Feature::CreateAnnotation);
-	if(t <= features.laser) f |= 1<<int(Feature::Laser);
-	if(t <= features.undo) f |= 1<<int(Feature::Undo);
-	if(t <= features.metadata) f |= 1<<int(Feature::Metadata);
-	if(t <= features.timeline) f |= 1<<int(Feature::Timeline);
-
+	for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		if (t <= features.tiers[i]) {
+			f |= 1 << i;
+		}
+	}
 	return f;
 }
 
 AclState::AclState(QObject *parent)
 	: QObject(parent), d(new Data)
 {
-	memset(&d->users, 0, sizeof(rustpile::UserACLs));
-	memset(&d->features, 0, sizeof(rustpile::FeatureTiers));
+	memset(&d->users, 0, sizeof(DP_UserAcls));
+	memset(&d->features, 0, sizeof(DP_FeatureTiers));
 	d->localUser = 0;
 }
 
@@ -93,13 +74,28 @@ AclState::~AclState()
 	delete d;
 }
 
-void AclState::updateUserBits(const rustpile::UserACLs &acls)
+void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags)
+{
+	if(aclChangeFlags & DP_ACL_STATE_CHANGE_USERS_BIT) {
+		updateUserBits(acls);
+	}
+
+	if(aclChangeFlags & DP_ACL_STATE_CHANGE_LAYERS_BIT) {
+		updateLayers(acls);
+	}
+
+	if(aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT) {
+		updateFeatures(acls);
+	}
+}
+
+void AclState::updateUserBits(const drawdance::AclState &acls)
 {
 	const bool wasOp = amOperator();
 	const bool wasLocked = amLocked();
 	const auto hadFeatures = featureFlags(d->features, d->tier());
 
-	d->users = acls;
+	d->users = acls.users();
 
 	const bool amOpNow = amOperator();
 	const bool amLockedNow = amLocked();
@@ -117,46 +113,42 @@ void AclState::updateUserBits(const rustpile::UserACLs &acls)
 	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()));
 }
 
-void AclState::updateFeatures(const rustpile::FeatureTiers &newFeatures)
+void AclState::updateFeatures(const drawdance::AclState &acls)
 {
-	const auto hadFeatures = featureFlags(d->features, d->tier());
-	d->features = newFeatures;
-
-	emit featureTiersChanged(newFeatures);
+	int hadFeatures = featureFlags(d->features, d->tier());
+	d->features = acls.featureTiers();
+	emit featureTiersChanged(d->features);
 	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()));
 }
 
-static void layerAclVisitor(void *ctx, rustpile::LayerID id, const rustpile::LayerACL *acl)
-{
-	AclState::Layer l;
-
-	l.locked = acl->locked;
-	l.tier = acl->tier;
-	l.exclusive.clear();
-
-	bool allOnes = true;
-	for(unsigned int i=0;i<sizeof(rustpile::UserBits);++i) {
-		if(acl->exclusive[i] != 0xff) {
-			allOnes = false;
-			break;
-		}
-	}
-
-	if(!allOnes) {
-		for(int i=1;i<256;++i) {
-			if(isUserbit(acl->exclusive, i))
-				l.exclusive << i;
-		}
-	}
-
-	static_cast<QHash<int, AclState::Layer>*>(ctx)->insert(id, l);
-}
-
-void AclState::updateLayers(rustpile::PaintEngine *pe)
+void AclState::updateLayers(const drawdance::AclState &acls)
 {
 	const auto oldLayers = d->layers;
 	QHash<int, Layer> layers;
-	rustpile::paintengine_get_acl_layers(pe, &layers, &layerAclVisitor);
+	acls.eachLayerAcl([&layers](int layerId, const DP_LayerAcl *acl) {
+		AclState::Layer l;
+		l.locked = acl->locked;
+		l.tier = acl->tier;
+		l.exclusive.clear();
+
+		bool allOnes = true;
+		for(unsigned int i=0;i < sizeof(DP_UserBits); ++i) {
+			if(acl->exclusive[i] != 0xff) {
+				allOnes = false;
+				break;
+			}
+		}
+
+		if(!allOnes) {
+			for(int i = 1; i < 256; ++i) {
+				if(DP_user_bit_get(acl->exclusive, i)) {
+					l.exclusive << i;
+				}
+			}
+		}
+
+		layers.insert(layerId, l);
+	});
 	d->layers = layers;
 
 	QHashIterator<int, Layer> i(layers);
@@ -179,25 +171,27 @@ void AclState::emitFeatureChanges(int before, int now)
 {
 	if(before != now) {
 		const int changes = before ^ now;
-		for(int i=0;i<FeatureCount;++i) {
-			if(changes & (1<<i))
-				emit featureAccessChanged(Feature(i), now & (1<<i));
+		for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+			if(changes & (1 << i)) {
+				emit featureAccessChanged(DP_Feature(i), now & (1 << i));
+			}
 		}
 	}
 }
+
 bool AclState::isOperator(uint8_t userId) const
 {
-	return isUserbit(d->users.operators, userId);
+	return DP_user_acls_is_op(&d->users, userId);
 }
 
 bool AclState::isTrusted(uint8_t userId) const
 {
-	return isUserbit(d->users.trusted, userId);
+	return DP_user_acls_is_trusted(&d->users, userId);
 }
 
 bool AclState::isLocked(uint8_t userId) const
 {
-	return isUserbit(d->users.locked, userId);
+	return DP_user_acls_is_locked(&d->users, userId);
 }
 
 bool AclState::amOperator() const
@@ -223,23 +217,14 @@ bool AclState::isLayerLocked(uint16_t layerId) const
 	return l.locked || (!l.exclusive.isEmpty() && !l.exclusive.contains(d->localUser));
 }
 
-bool AclState::canUseFeature(Feature f) const
+bool AclState::canUseFeature(DP_Feature feature) const
 {
-	const rustpile::Tier t = d->tier();
-	switch(f) {
-	case Feature::PutImage: return t <= d->features.put_image;
-	case Feature::RegionMove: return t <= d->features.move_rect;
-	case Feature::Resize: return t <= d->features.resize;
-	case Feature::Background: return t <= d->features.background;
-	case Feature::EditLayers: return t <= d->features.edit_layers;
-	case Feature::OwnLayers: return t <= d->features.own_layers;
-	case Feature::CreateAnnotation: return t <= d->features.create_annotation;
-	case Feature::Laser: return t <= d->features.laser;
-	case Feature::Undo: return t <= d->features.undo;
-	case Feature::Metadata: return t <= d->features.metadata;
-	case Feature::Timeline: return t <= d->features.timeline;
+	const DP_AccessTier t = d->tier();
+	for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		if (feature == i) {
+			return t <= d->features.tiers[i];
+		}
 	}
-
 	return false;
 }
 
@@ -248,7 +233,7 @@ uint8_t AclState::localUserId() const
 	return d->localUser;
 }
 
-rustpile::FeatureTiers AclState::featureTiers() const
+DP_FeatureTiers AclState::featureTiers() const
 {
 	return d->features;
 }

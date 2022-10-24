@@ -40,6 +40,8 @@ public:
 
 	QRectF boundingRect() const override;
 
+	void setViewportBounds(const QRectF viewportBounds);
+
 private slots:
 	void refreshImage(const QRect &area);
 	void canvasResize();
@@ -48,7 +50,12 @@ protected:
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override;
 
 private:
+	void updateVisibleArea();
+
 	QPointer<canvas::PaintEngine> m_image;
+	QRectF m_boundingRect;
+	QRectF m_viewportBounds;
+	QRect m_visibleArea;
 };
 
 }

@@ -57,7 +57,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_FillSettings;
 	_ui->setupUi(uiwidget);
 
-	_ui->preview->setPreviewShape(rustpile::BrushPreviewShape::FloodFill);
+	_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
 
 	connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	connect(_ui->tolerance, &QSlider::valueChanged, this, &FillSettings::pushSettings);
@@ -67,7 +67,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->erasermode, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->erasermode, &QAbstractButton::toggled, this, [this](bool erase) {
-			_ui->preview->setPreviewShape(erase ? rustpile::BrushPreviewShape::FloodErase : rustpile::BrushPreviewShape::FloodFill);
+			_ui->preview->setPreviewShape(erase ? DP_BRUSH_PREVIEW_FLOOD_ERASE : DP_BRUSH_PREVIEW_FLOOD_FILL);
 			_ui->fillunder->setEnabled(!erase);
 			_ui->samplemerged->setEnabled(!erase);
 	});

@@ -50,6 +50,7 @@ cp "$MBIN/libiconv-2.dll" .
 cp "$MBIN/libcrypto-1_1-x64.dll" .
 cp "$MBIN/libssl-1_1-x64.dll" .
 cp "$MBIN/libsqlite3-0.dll" .
+cp "$MBIN/libKF5Archive.dll" .
 cp "$MBIN/libsodium-23.dll" .
 cp "$MBIN/libqt5keychain.dll" .
 
@@ -99,7 +100,7 @@ mkdir -p i18n
 for tr in cs de fi fr it ja pt ru uk vi zh
 do
 	cp "$QROOT/translations/qt_$tr.qm" i18n/ || true
-	cp "/Build/src/libclient/drawpile_$tr.qm" i18n/
+	cp "/Build/src/libclient/drawpile_$tr.qm" i18n/ || true
 done
 
 # Copy text files

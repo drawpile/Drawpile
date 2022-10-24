@@ -19,8 +19,6 @@
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
 
-#include "envelope.h"
-
 #include <QString>
 #include <QUrl>
 #include <QObject>
@@ -29,6 +27,8 @@
 #include <QByteArray>
 #include <QJsonArray>
 #include <QJsonObject>
+
+#include "drawdance/message.h"
 
 class QImage;
 
@@ -96,7 +96,7 @@ public:
 	 *
 	 * @param msgs
 	 */
-	void setInitialState(const Envelope &msgs) { Q_ASSERT(m_mode==Mode::HostRemote); m_initialState = msgs; }
+	void setInitialState(const drawdance::MessageList &msgs) { Q_ASSERT(m_mode==Mode::HostRemote); m_initialState = msgs; }
 
 	/**
 	 * @brief Set session announcement URL
@@ -380,7 +380,7 @@ private:
 	QString m_title;
 	bool m_announcePrivate;
 	QString m_announceUrl;
-	Envelope m_initialState;
+	drawdance::MessageList m_initialState;
 
 	// Settings for joining
 	QString m_joinPassword;

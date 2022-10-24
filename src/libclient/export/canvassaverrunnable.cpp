@@ -18,7 +18,41 @@
 */
 #include "canvassaverrunnable.h"
 #include "canvas/paintengine.h"
-#include "../rustpile/rustpile.h"
+#include "drawdance/drawcontextpool.h"
+#include <QDir>
+#include <QFileInfo>
+#include <QTemporaryFile>
+
+extern "C" {
+#include <dpengine/save.h>
+}
+
+namespace {
+
+QString makeTemporaryPath(QString path)
+{
+	QFileInfo info{path};
+	QString templateName = info.dir().filePath(
+		info.baseName() + ".XXXXXX." + info.completeSuffix());
+	QTemporaryFile tempFile{templateName};
+	if(tempFile.open()) {
+		return tempFile.fileName();
+	} else {
+		qWarning("Can't open temporary template '%s', writing to '%s' instead",
+			qUtf8Printable(templateName), qUtf8Printable(path));
+		return QString{};
+	}
+}
+
+DP_SaveResult save(const canvas::PaintEngine *pe, QString path)
+{
+	QByteArray pathBytes = path.toUtf8();
+	qDebug("Saving to '%s'", pathBytes.constData());
+	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
+	return DP_save(pe->canvasState().get(), dc.get(), pathBytes.constData());
+}
+
+}
 
 CanvasSaverRunnable::CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent)
 	: QObject(parent),
@@ -29,15 +63,50 @@ CanvasSaverRunnable::CanvasSaverRunnable(const canvas::PaintEngine *pe, const QS
 
 void CanvasSaverRunnable::run()
 {
-	const auto result = rustpile::paintengine_save_file(
-		m_pe->engine(),
-		reinterpret_cast<const uint16_t*>(m_filename.constData()),
-		m_filename.length()
-	);
+	DP_SaveResult result;
+	QString tempPath = makeTemporaryPath(m_filename);
+	if(tempPath.isEmpty()) {
+		result = save(m_pe, m_filename);
+	} else {
+		result = save(m_pe, tempPath);
+		if(result != DP_SAVE_RESULT_SUCCESS) {
+			QFile::remove(tempPath);
+		} else {
+			qDebug("Renaming temporary '%s' to '%s'", qUtf8Printable(tempPath),
+				qUtf8Printable(m_filename));
+			QFile::remove(m_filename); // Qt won't rename over existing files.
+			if(!QFile::rename(tempPath, m_filename)) {
+				emit saveComplete(tr("Error moving temporary file %1 to %2.")
+					.arg(tempPath, m_filename));
+				return;
+			}
+		}
+	}
 
 	switch(result) {
-	case rustpile::CanvasIoError::NoError: emit saveComplete(QString()); break;
-	case rustpile::CanvasIoError::FileOpenError: emit saveComplete(tr("Couldn't open file for writing")); break;
-	default: emit saveComplete(tr("An error occurred while saving image"));
+    case DP_SAVE_RESULT_SUCCESS:
+		emit saveComplete(QString{});
+		break;
+    case DP_SAVE_RESULT_BAD_ARGUMENTS:
+		emit saveComplete(tr("Bad arguments, this is probably a bug in Drawpile."));
+		break;
+    case DP_SAVE_RESULT_NO_EXTENSION:
+		emit saveComplete(tr("No file extension given."));
+		break;
+    case DP_SAVE_RESULT_UNKNOWN_FORMAT:
+		emit saveComplete(tr("Unsupported format."));
+		break;
+	case DP_SAVE_RESULT_FLATTEN_ERROR:
+		emit saveComplete(tr("Couldn't merge the canvas into a flat image."));
+		break;
+    case DP_SAVE_RESULT_OPEN_ERROR:
+		emit saveComplete(tr("Couldn't open file for writing."));
+		break;
+    case DP_SAVE_RESULT_WRITE_ERROR:
+		emit saveComplete(tr("Save operation failed, but the file might have been partially written."));
+		break;
+	default:
+		emit saveComplete(tr("Unknown error."));
+		break;
 	}
 }

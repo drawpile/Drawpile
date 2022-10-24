@@ -30,6 +30,7 @@
 class QCursor;
 
 namespace canvas { class CanvasModel; }
+namespace drawdance { class BrushEngine; }
 namespace net { class Client; }
 
 namespace tools {
@@ -90,12 +91,12 @@ public:
 	void offsetActiveTool(int xOffset, int yOffset);
 
 	/**
-	 * Set the active brush in the Rustpile brush engine.
+	 * Set the active brush in the Drawdance brush engine.
 	 *
 	 * The freehand parameter can be used to turn off stabilizer
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
-	void setBrushEngineBrush(rustpile::BrushEngine *be, bool freehand = true);
+	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand = true);
 
 public slots:
 	//! Start a new stroke
@@ -139,7 +140,7 @@ signals:
 	void zoomRequested(const QRect &rect, int steps);
 
 private slots:
-	void onFeatureAccessChange(canvas::Feature feature, bool canUse);
+	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 
 private:
 	void registerTool(Tool *tool);

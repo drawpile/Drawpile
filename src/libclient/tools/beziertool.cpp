@@ -21,12 +21,9 @@
 #include "canvas/paintengine.h"
 
 #include "net/client.h"
-#include "net/envelopebuilder.h"
 
 #include "tools/toolcontroller.h"
 #include "tools/beziertool.h"
-
-#include "../rustpile/rustpile.h"
 
 #include <QPixmap>
 
@@ -37,6 +34,7 @@ using canvas::Point;
 
 BezierTool::BezierTool(ToolController &owner)
 	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 1, 1))
+	, m_brushEngine{}
 {
 }
 
@@ -111,26 +109,20 @@ void BezierTool::finishMultipart()
 	if(m_points.size() > 2) {
 		m_points.pop_back();
 
-		auto brushengine = rustpile::brushengine_new();
-		owner.setBrushEngineBrush(brushengine, false);
+		owner.setBrushEngineBrush(m_brushEngine, false);
 
-		const uint8_t contextId = owner.client()->myId();
-		auto engine = owner.model()->paintEngine()->engine();
+		net::Client *client = owner.client();
+		const uint8_t contextId = client->myId();
+		drawdance::CanvasState canvasState = owner.model()->paintEngine()->canvasState();
 
-		const auto pv = calculateBezierCurve();
-		for(const auto &p : pv) {
-			rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
+		const PointVector pv = calculateBezierCurve();
+		m_brushEngine.beginStroke(contextId);
+		for(const canvas::Point &p : pv) {
+			m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), 10, canvasState);
 		}
-		rustpile::brushengine_end_stroke(brushengine);
+		m_brushEngine.endStroke();
 
-		net::EnvelopeBuilder writer;
-		rustpile::write_undopoint(writer, contextId);
-		rustpile::brushengine_write_dabs(brushengine, contextId, writer);
-		rustpile::write_penup(writer, contextId);
-
-		rustpile::brushengine_free(brushengine);
-
-		owner.client()->sendEnvelope(writer.toEnvelope());
+		m_brushEngine.sendMessagesTo(client);
 	}
 	cancelMultipart();
 }
@@ -138,7 +130,7 @@ void BezierTool::finishMultipart()
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
-	rustpile::paintengine_remove_preview(owner.model()->paintEngine()->engine(), owner.activeLayer());
+	owner.model()->paintEngine()->clearPreview();
 }
 
 void BezierTool::undoMultipart()
@@ -204,18 +196,18 @@ void BezierTool::updatePreview()
 	if(pv.size()<=1)
 		return;
 
-	auto brushengine = rustpile::brushengine_new();
-	owner.setBrushEngineBrush(brushengine, false);
+	owner.setBrushEngineBrush(m_brushEngine, false);
 
-	auto engine = owner.model()->paintEngine()->engine();
-
-	for(const auto &p : pv) {
-		rustpile::brushengine_stroke_to(brushengine, p.x(), p.y(), p.pressure(), 10, engine, owner.activeLayer());
+	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
+	drawdance::CanvasState canvasState = paintEngine->canvasState();
+	m_brushEngine.beginStroke(0);
+	for(const canvas::Point &p : pv) {
+		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), 10, canvasState);
 	}
-	rustpile::brushengine_end_stroke(brushengine);
+	m_brushEngine.endStroke();
 
-	rustpile::paintengine_preview_brush(engine, owner.activeLayer(), brushengine);
-	rustpile::brushengine_free(brushengine);
+	paintEngine->previewDabs(owner.activeLayer(), m_brushEngine.messages());
+	m_brushEngine.clearMessages();
 }
 
 }

@@ -18,8 +18,9 @@
 */
 
 #include "documentmetadata.h"
-#include "../rustpile/rustpile.h"
 #include "paintengine.h"
+
+#include "drawdance/canvasstate.h"
 
 namespace canvas {
 
@@ -27,24 +28,22 @@ DocumentMetadata::DocumentMetadata(PaintEngine *engine, QObject *parent)
     : QObject{parent}, m_engine(engine), m_framerate(15), m_useTimeline(false)
 {
 	Q_ASSERT(engine);
-	refreshMetadata();
-	connect(engine, &PaintEngine::metadataChanged, this, &DocumentMetadata::refreshMetadata);
+	refreshMetadata(m_engine->canvasState().documentMetadata());
+	connect(engine, &PaintEngine::documentMetadataChanged, this, &DocumentMetadata::refreshMetadata);
 }
 
-void DocumentMetadata::refreshMetadata()
+void DocumentMetadata::refreshMetadata(const drawdance::DocumentMetadata &dm)
 {
-	const auto e = m_engine->engine();
-
 	// Note: dpix and dpiy are presently not used in the GUI.
 	// To be included here when needed.
 
-	const int framerate = rustpile::paintengine_get_metadata_int(e, rustpile::MetadataInt::Framerate);
+	const int framerate = dm.framerate();
 	if(framerate != m_framerate) {
 		m_framerate = framerate;
 		emit framerateChanged(framerate);
 	}
 
-	const bool useTimeline = rustpile::paintengine_get_metadata_int(e, rustpile::MetadataInt::UseTimeline);
+	const bool useTimeline = dm.useTimeline();
 	if(useTimeline != m_useTimeline) {
 		m_useTimeline = useTimeline;
 		emit useTimelineChanged(useTimeline);

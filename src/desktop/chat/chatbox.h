@@ -21,9 +21,12 @@
 
 #include <QWidget>
 
-namespace net { class Envelope; }
 namespace canvas {
 	class CanvasModel;
+}
+
+namespace drawdance {
+	class Message;
 }
 
 class QListView;
@@ -55,7 +58,7 @@ private slots:
 
 signals:
 	//! User has written a new message
-	void message(const net::Envelope &msg);
+	void message(const drawdance::Message &msg);
 
 	//! The chatbox was either expanded or collapsed
 	void expandedChanged(bool isExpanded);

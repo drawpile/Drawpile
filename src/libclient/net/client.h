@@ -28,8 +28,12 @@
 class QJsonObject;
 class QJsonArray;
 
+namespace drawdance {
+	class Message;
+}
+
 namespace net {
-	
+
 class LoginHandler;
 struct ServerReply;
 
@@ -125,12 +129,25 @@ public:
 
 public slots:
 	/**
-	 * @brief Send one or more message to the server
+	 * @brief Send a single message to the server
 	 *
-	 * If the envelope starts with a Command type message, drawingCommandLocal
-	 * will be emitted with a copy of the envelope before the message is sent.
+	 * Just a convenience method around sendMessages.
 	 */
-	void sendEnvelope(const Envelope &envelope);
+	void sendMessage(const drawdance::Message &msg);
+
+	/**
+	 * @brief Send messages to the server
+	 *
+	 * A drawingCommandLocal signal will be emitted for drawing command messages.
+	 */
+	void sendMessages(int count, const drawdance::Message *msgs);
+
+	/**
+	 * @brief Send a single reset message to the server
+	 *
+	 * Just a convenience method around sendResetMessages.
+	 */
+	void sendResetMessage(const drawdance::Message &msg);
 
 	/**
 	 * @brief Send the reset image to the server
@@ -139,11 +156,11 @@ public slots:
 	 * will not be emitted, as the reset image was generate from content already
 	 * on the canvas.
 	 */
-	void sendResetEnvelope(const net::Envelope &resetImage);
+	void sendResetMessages(int count, const drawdance::Message *msgs);
 
 signals:
-	void messageReceived(const Envelope &e);
-	void drawingCommandLocal(const Envelope &e);
+	void messagesReceived(int count, const drawdance::Message *msgs);
+	void drawingCommandsLocal(int count, const drawdance::Message *msgs);
 	void catchupProgress(int percentage);
 
 	void needSnapshot();
@@ -166,7 +183,7 @@ signals:
 	void serverStatusUpdate(int historySize);
 
 private slots:
-	void handleEnvelope(const Envelope &envelope);
+	void handleMessages(int count, const drawdance::Message *msgs);
 	void handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 

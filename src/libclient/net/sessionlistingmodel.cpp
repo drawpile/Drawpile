@@ -255,18 +255,20 @@ void SessionListingModel::setList(const QString &listing, const QVector<Session>
 	for(int i=0;i<m_listings.size();++i) {
 		if(m_listings.at(i).name == listing) {
 			const int oldSize = m_listings[i].message.isEmpty() ? m_listings[i].sessions.size() : 1;
-			if(sessions.size() < oldSize)
+			if(sessions.size() < oldSize) {
 				beginRemoveRows(createIndex(i, 0), sessions.size(), oldSize-1);
-			else if(sessions.size() > oldSize)
+			} else if(sessions.size() > oldSize) {
 				beginInsertRows(createIndex(i, 0), oldSize, sessions.size()-1);
+			}
 
 			m_listings[i].message = QString();
 			m_listings[i].sessions = sessions;
 
-			if(sessions.size() < oldSize)
+			if(sessions.size() < oldSize) {
 				endRemoveRows();
-			else if(sessions.size() > oldSize)
+			} else if(sessions.size() > oldSize) {
 				endInsertRows();
+			}
 
 			emit dataChanged(createIndex(i, 0), createIndex(i, 0));
 			emit dataChanged(createIndex(0, 0, quintptr(i+1)), createIndex(sessions.size(), COLUMN_COUNT, quintptr(i+1)));

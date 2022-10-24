@@ -20,12 +20,10 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "net/client.h"
-#include "net/envelopebuilder.h"
+#include "drawdance/message.h"
 
 #include "toolcontroller.h"
 #include "annotation.h"
-
-#include "../rustpile/rustpile.h"
 
 #include <QPixmap>
 
@@ -48,25 +46,11 @@ void Annotation::begin(const canvas::Point& point, bool right, float zoom)
 	m_p2 = point;
 
 	const int handleSize = qRound(qMax(10.0, 10.0 / zoom) / 2.0);
-	auto selection = owner.model()->paintEngine()->getAnnotationAt(point.x(), point.y(), handleSize);
+	drawdance::Annotation selection = owner.model()->paintEngine()->getAnnotationAt(point.x(), point.y(), handleSize);
 
-	if(selection.id > 0) {
-		m_isNew = false;
-		m_selectedId = selection.id;
-		m_shape = QRect{selection.rect.x, selection.rect.y, selection.rect.w, selection.rect.h};
-
-
-		if(selection.protect && !owner.model()->aclState()->amOperator() && (selection.id >> 8) != owner.client()->myId()) {
-			m_handle = Handle::Outside;
-		} else {
-			m_handle = handleAt(m_shape, point.toPoint(), handleSize);
-		}
-
-		owner.setActiveAnnotation(m_selectedId);
-
-	} else {
+	if(selection.isNull()) {
 		// No annotation, start creating a new one
-		if(!owner.model()->aclState()->canUseFeature(canvas::Feature::CreateAnnotation)) {
+		if(!owner.model()->aclState()->canUseFeature(DP_FEATURE_CREATE_ANNOTATION)) {
 			m_handle = Handle::Outside;
 			return;
 		}
@@ -80,6 +64,18 @@ void Annotation::begin(const canvas::Point& point, bool right, float zoom)
 		// response to the call, only the visual feedback will be missing.
 		if(m_selectedId > 0)
 			owner.model()->previewAnnotation(m_selectedId, m_shape);
+	} else {
+		m_isNew = false;
+		m_selectedId = selection.id();
+		m_shape = selection.bounds();
+
+		if(selection.protect() && !owner.model()->aclState()->amOperator() && (m_selectedId >> 8) != owner.client()->myId()) {
+			m_handle = Handle::Outside;
+		} else {
+			m_handle = handleAt(m_shape, point.toPoint(), handleSize);
+		}
+
+		owner.setActiveAnnotation(m_selectedId);
 	}
 }
 
@@ -182,31 +178,31 @@ void Annotation::end()
 	if(m_selectedId == 0)
 		return;
 
-	net::EnvelopeBuilder eb;
 	const uint8_t contextId = owner.client()->myId();
-
-	rustpile::write_undopoint(eb, contextId);
-	bool hasMessages = false;
+	drawdance::Message msg;
 
 	if(!m_isNew) {
 		if(m_p1.toPoint() != m_p2.toPoint()) {
-			rustpile::write_reshapeannotation(eb, contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height());
-			hasMessages = true;
+			msg = drawdance::Message::noinc(DP_msg_annotation_reshape_new(
+				contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height()));
 		}
-
 	} else if(m_handle != Handle::Outside) {
 		if(m_shape.width() < 10 && m_shape.height() < 10) {
 			// User created a tiny annotation, probably by clicking rather than dragging.
 			// Create a nice and big annotation box rather than a minimum size one.
 			m_shape.setSize(QSize(160, 60));
 		}
-
-		rustpile::write_newannotation(eb, contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height());
-		hasMessages = true;
+		msg = drawdance::Message::noinc(DP_msg_annotation_create_new(
+			contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height()));
 	}
 
-	if(hasMessages)
-		owner.client()->sendEnvelope(eb.toEnvelope());
+	if(!msg.isNull()) {
+		drawdance::Message messages[] = {
+			drawdance::Message::noinc(DP_msg_undo_point_new(contextId)),
+			msg,
+		};
+		owner.client()->sendMessages(DP_ARRAY_LENGTH(messages), messages);
+	}
 }
 
 }

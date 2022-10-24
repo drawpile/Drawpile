@@ -4,7 +4,7 @@ project(drawpile
 	VERSION "2.2.0"
 	LANGUAGES C CXX)
 
-set(DRAWPILE_VERSION_SUFFIX "b2")
+set(DRAWPILE_VERSION_SUFFIX "dancepiledev7")
 set(DRAWPILE_VERSION "${PROJECT_VERSION}${DRAWPILE_VERSION_SUFFIX}")
 set(DRAWPILE_HOMEPAGE_URL "https://drawpile.net/")
 
@@ -14,17 +14,14 @@ set(DRAWPILE_PROTO_MAJOR_VERSION 22)
 set(DRAWPILE_PROTO_MINOR_VERSION 2)
 set(DRAWPILE_PROTO_DEFAULT_PORT 27750)
 
-# scaffolding for Qt and Rust
+# scaffolding for Qt
 find_package(ECM REQUIRED NOMODULE)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_MODULE_PATH
 	"${CMAKE_MODULE_PATH}"
 	"${CMAKE_SOURCE_DIR}/config"
-	"${CMAKE_SOURCE_DIR}/config/rust"
 	"${ECM_MODULE_PATH}"
 	"${ECM_KDE_MODULE_DIR}")
-enable_language(Rust)
-include(CMakeCargo)
 include(KDEInstallDirs)
 
 include("config/BuildOptions.cmake")
@@ -41,9 +38,14 @@ endif()
 
 function(set_drawpile_target_properties target)
 	target_compile_definitions("${target}" PRIVATE "HAVE_CONFIG_H")
-	target_compile_options("${target}" PRIVATE "-pedantic" "-Wall" "-Wextra")
+	if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+		target_compile_options("${target}" PRIVATE "-pedantic" "-Wall" "-Wextra")
+	endif()
 	if(APPLE)
 		target_compile_options("${target}" PRIVATE "-mmacosx-version-min=10.10")
+	endif()
+	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		target_compile_definitions("${target}" PRIVATE "QT_NO_DEBUG_OUTPUT")
 	endif()
 	target_include_directories("${target}" PUBLIC "${CMAKE_BINARY_DIR}")
 	set_target_properties("${target}" PROPERTIES

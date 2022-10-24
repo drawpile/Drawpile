@@ -187,17 +187,17 @@ set_target_properties(${CLIENTNAME} PROPERTIES
 	VERSION ${DRAWPILE_VERSION}
 	PROJECT_LABEL drawpile-client)
 
-if(WIN32 AND NOT (CMAKE_BUILD_TYPE STREQUAL DEBUG))
+if(WIN32 AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	# Don't show a console window in Windows in release mode.
-	set_property(TARGET ${CLIENTNAME} PROPERTY WIN32_EXECUTABLE)
+	set_property(TARGET ${CLIENTNAME} PROPERTY WIN32_EXECUTABLE ON)
 endif()
 
-IF(APPLE)
-	set_property(TARGET ${CLIENTNAME} PROPERTY MACOSX_BUNDLE)
+if(APPLE)
+	set_property(TARGET ${CLIENTNAME} PROPERTY MACOSX_BUNDLE ON)
 	target_sources(${CLIENTNAME} PRIVATE widgets/macmenu.cpp)
-ENDIF()
+endif()
 
-IF(KIS_TABLET)
+if(KIS_TABLET)
 	if(WIN32)
 		target_sources(${CLIENTNAME} PRIVATE
 			bundled/kis_tablet/kis_tablet_support_win8.cpp
@@ -239,7 +239,8 @@ endif()
 qt5_add_resources(desktop_resources ui/cursors/cursors.qrc)
 qt5_add_resources(desktop_resources ui/icons/builtin.qrc)
 qt5_wrap_ui(desktop_ui_headers ${desktop_uis} )
-target_sources(${CLIENTNAME} PRIVATE ${desktop_ui_headers} ${desktop_resources})
+target_sources(${CLIENTNAME} PRIVATE
+	${desktop_ui_headers} ${desktop_resources} ${libclient_qm_translations})
 
 if(WIN32)
 	generate_win32_resource(
@@ -249,8 +250,9 @@ if(WIN32)
 		"Drawpile client"
 		${DRAWPILE_HOMEPAGE_URL}
 		"2006-2022 Calle Laakkonen"
-		${DRAWPILE_VERSION}
-		"${CMAKE_SOURCE_DIR}/desktop/drawpile.ico")
+		${PROJECT_VERSION}
+		"${CMAKE_SOURCE_DIR}/desktop/dancepile.ico")
+	target_sources(${CLIENTNAME} PRIVATE ${Win32Resource})
 endif()
 
 if(APPLE)
@@ -264,7 +266,7 @@ if(APPLE)
 	set(MACOSX_BUNDLE_COPYRIGHT "Copyright Drawpile team")
 
 	set(ResourcesDir "${CMAKE_BINARY_DIR}/bin/${CLIENTNAME}.app/Contents/Resources")
-	add_custom_target( appbundle ALL
+	add_custom_target(appbundle ALL
 		COMMAND mkdir -p "${ResourcesDir}/i18n"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
 		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/../libclient/*.qm" "${ResourcesDir}/i18n"

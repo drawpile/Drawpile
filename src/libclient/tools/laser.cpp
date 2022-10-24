@@ -17,13 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "drawdance/message.h"
 #include "net/client.h"
-
 #include "tools/toolcontroller.h"
 #include "tools/laser.h"
-#include "net/envelopebuilder.h"
-
-#include "../rustpile/rustpile.h"
 
 #include <QPixmap>
 
@@ -42,12 +39,14 @@ void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
 
 	m_drawing = true;
 
-	net::EnvelopeBuilder msgs;
-
-	rustpile::write_lasertrail(msgs, owner.client()->myId(), owner.activeBrush().qColor().rgb(), m_persistence);
-	rustpile::write_movepointer(msgs, owner.client()->myId(), point.x(), point.y());
-	owner.client()->sendEnvelope(msgs.toEnvelope());
-
+	net::Client *client = owner.client();
+	uint8_t contextId = client->myId();
+	uint32_t color = owner.activeBrush().qColor().rgb();
+	drawdance::Message messages[] = {
+		drawdance::Message::noinc(DP_msg_laser_trail_new(contextId, color, m_persistence)),
+		drawdance::Message::noinc(DP_msg_move_pointer_new(contextId, point.x(), point.y())),
+	};
+	client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 }
 
 void LaserPointer::motion(const canvas::Point &point, bool constrain, bool center)
@@ -55,9 +54,8 @@ void LaserPointer::motion(const canvas::Point &point, bool constrain, bool cente
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 	if(m_drawing) {
-		net::EnvelopeBuilder msgs;
-		rustpile::write_movepointer(msgs, owner.client()->myId(), point.x(), point.y());
-		owner.client()->sendEnvelope(msgs.toEnvelope());
+		owner.client()->sendMessage(drawdance::Message::noinc(
+			DP_msg_move_pointer_new(owner.client()->myId(), point.x(), point.y())));
 	}
 }
 
@@ -65,10 +63,8 @@ void LaserPointer::end()
 {
 	if(m_drawing) {
 		m_drawing = false;
-
-		net::EnvelopeBuilder msgs;
-		rustpile::write_lasertrail(msgs, owner.client()->myId(), 0, 0);
-		owner.client()->sendEnvelope(msgs.toEnvelope());
+		owner.client()->sendMessage(drawdance::Message::noinc(
+			DP_msg_laser_trail_new(owner.client()->myId(), 0, 0)));
 	}
 }
 

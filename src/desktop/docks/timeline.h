@@ -25,12 +25,12 @@
 class QCheckBox;
 class QSpinBox;
 
-namespace net {
-	class Envelope;
-}
-
 namespace canvas {
 	class TimelineModel;
+}
+
+namespace drawdance {
+	class Message;
 }
 
 namespace widgets {
@@ -59,7 +59,7 @@ public slots:
 	void setFeatureAccess(bool access);
 
 signals:
-	void timelineEditCommand(const net::Envelope &e);
+	void timelineEditCommands(int count, const drawdance::Message *msgs);
 	void currentFrameChanged(int frame);
 	void layerSelectRequested(int layerId);
 

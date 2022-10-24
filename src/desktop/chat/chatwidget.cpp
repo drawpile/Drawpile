@@ -23,11 +23,9 @@
 #include "utils/html.h"
 #include "utils/funstuff.h"
 #include "notifications.h"
-#include "net/envelopebuilder.h"
-#include "net/envelope.h"
 
 #include "canvas/userlist.h"
-#include "../rustpile/rustpile.h"
+#include "drawdance/message.h"
 
 #include <QResizeEvent>
 #include <QTextBrowser>
@@ -591,7 +589,7 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
 
-	if(oflags & rustpile::ChatMessage_OFLAGS_ALERT && d->userlist && d->userlist->isOperator(sender)) {
+	if(oflags & DP_MSG_CHAT_OFLAGS_ALERT && d->userlist && d->userlist->isOperator(sender)) {
 		chat.appendAlert(d->usernameSpan(sender), safetext);
 
 		for(int i=0;i<d->tabs->count();++i) {
@@ -602,12 +600,13 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 		}
 
 		emit expandRequested();
-	} else if(oflags & rustpile::ChatMessage_OFLAGS_ACTION)
+	} else if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
 		chat.appendAction(d->usernameSpan(sender), safetext);
-	else if(d->compactMode)
-		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
-	else
-		chat.appendMessage(sender, d->usernameSpan(sender), safetext, oflags & rustpile::ChatMessage_OFLAGS_SHOUT);
+	} else if(d->compactMode) {
+		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, oflags & DP_MSG_CHAT_OFLAGS_SHOUT);
+	} else {
+		chat.appendMessage(sender, d->usernameSpan(sender), safetext, oflags & DP_MSG_CHAT_OFLAGS_SHOUT);
+	}
 
 	if(chatId != d->currentChat) {
 		for(int i=0;i<d->tabs->count();++i) {
@@ -643,60 +642,60 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 		d->scrollToEnd(0);
 }
 
-void ChatWidget::sendMessage(const QString &msg)
+void ChatWidget::sendMessage(const QString &chatMessage)
 {
-	uint8_t tflags = d->preserveChat ? 0 : rustpile::ChatMessage_TFLAGS_BYPASS;
+	uint8_t tflags = d->preserveChat ? 0 : DP_MSG_CHAT_TFLAGS_BYPASS;
 	uint8_t oflags = 0;
-	auto chatmsg = msg;
+	QString effectiveMessage = chatMessage;
 
-	if(msg.at(0) == '/') {
+	if(chatMessage.at(0) == '/') {
 		// Special commands
 
-		int split = msg.indexOf(' ');
+		int split = chatMessage.indexOf(' ');
 		if(split<0)
-			split = msg.length();
+			split = chatMessage.length();
 
-		const auto cmd = msg.mid(1, split-1);
-		const auto params = msg.mid(split).trimmed();
+		const auto cmd = chatMessage.mid(1, split-1);
+		const auto params = chatMessage.mid(split).trimmed();
 
 		if(cmd == QStringLiteral("clear")) {
 			clear();
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			if(msg.length() > 2) {
-				chatmsg = msg.mid(2);
-				oflags = rustpile::ChatMessage_OFLAGS_SHOUT;
+			if(chatMessage.length() > 2) {
+				effectiveMessage = chatMessage.mid(2);
+				oflags = DP_MSG_CHAT_OFLAGS_SHOUT;
 			}
 
 		} else if(cmd == QStringLiteral("alert")) {
-			if(msg.length() > 2) {
-				chatmsg = params;
-				oflags |= rustpile::ChatMessage_OFLAGS_ALERT;
+			if(chatMessage.length() > 2) {
+				effectiveMessage = params;
+				oflags |= DP_MSG_CHAT_OFLAGS_ALERT;
 			}
 
 		} else if(cmd == QStringLiteral("me")) {
 			if(!params.isEmpty()) {
-				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
-				chatmsg = params;
+				oflags = DP_MSG_CHAT_OFLAGS_ACTION;
+				effectiveMessage = params;
 			}
 
 		} else if(cmd == QStringLiteral("pin") && d->currentChat == 0) {
 			if(!params.isEmpty()) {
-				oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
-				chatmsg = params;
+				oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
+				effectiveMessage = params;
 			}
 
 		} else if(cmd == QStringLiteral("unpin") && d->currentChat == 0) {
-			oflags = rustpile::ChatMessage_OFLAGS_PIN | rustpile::ChatMessage_OFLAGS_SHOUT;
-			chatmsg = QStringLiteral("-");
+			oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
+			effectiveMessage = QStringLiteral("-");
 
 		} else if(cmd == QStringLiteral("roll")) {
 			// TODO this should be done serverside to prevent cheating
 			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6") : params);
 			if(result.number>0) {
-				oflags = rustpile::ChatMessage_OFLAGS_ACTION;
-				chatmsg = "rolls " + result.toString();
+				oflags = DP_MSG_CHAT_OFLAGS_ACTION;
+				effectiveMessage = "rolls " + result.toString();
 			} else {
 				systemMessage(tr("Invalid dice roll description"));
 				return;
@@ -720,14 +719,12 @@ void ChatWidget::sendMessage(const QString &msg)
 	}
 
 	// Send the chat message
-	net::EnvelopeBuilder msgbuilder;
-
-	if(d->currentChat == 0)
-		rustpile::write_chat(msgbuilder, d->myId, tflags, oflags, reinterpret_cast<const uint16_t*>(chatmsg.constData()), chatmsg.length());
-	else
-		rustpile::write_privatechat(msgbuilder, d->myId, d->currentChat, oflags, reinterpret_cast<const uint16_t*>(chatmsg.constData()), chatmsg.length());
-
-	emit message(msgbuilder.toEnvelope());
+	int target = d->currentChat;
+	uint8_t contextId = d->myId;
+	drawdance::Message msg = target == 0
+		? drawdance::Message::makeChat(contextId, tflags, oflags, effectiveMessage)
+		: drawdance::Message::makePrivateChat(contextId, target, oflags, effectiveMessage);
+	emit message(msg);
 }
 
 void ChatWidget::chatTabSelected(int index)

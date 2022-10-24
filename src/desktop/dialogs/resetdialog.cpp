@@ -19,13 +19,12 @@
 
 #include "resetdialog.h"
 #include "canvas/paintengine.h"
-#include "../rustpile/rustpile.h"
 #include "utils/icon.h"
-#include "net/envelopebuilder.h"
 #include "utils/images.h"
 
 #include "ui_resetsession.h"
 
+#include <QScopedPointer>
 #include <QPushButton>
 #include <QPainter>
 #include <QVector>
@@ -34,71 +33,96 @@
 #include <QSettings>
 #include <QApplication>
 
-namespace dialogs {
+namespace {
 
-static const QSize THUMBNAIL_SIZE { 256, 256 };
+struct ResetPoint {
+	drawdance::CanvasState canvasState;
+	QPixmap thumbnail;
+};
 
-static void drawCheckerBackground(QImage &image)
+QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 {
-	const int TS = 16;
-	const QBrush checker[] = {
-		QColor(128,128,128),
-		QColor(Qt::white)
-	};
-	QPainter painter(&image);
-	painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
-	for(int y=0;y<image.height();y+=TS) {
-		for(int x=0;x<image.width();x+=TS*2) {
-			const int z = (y/TS+x) % 2 == 0;
-			painter.fillRect(x, y, TS, TS, checker[z]);
-			painter.fillRect(x+TS, y, TS, TS, checker[1-z]);
+	QVector<ResetPoint> resetPoints;
+	pe->snapshotQueue().getSnapshotsWith([&](size_t count, drawdance::SnapshotQueue::SnapshotAtFn at) {
+		resetPoints.reserve(count + 1);
+		for (size_t i = 0; i < count; ++i) {
+			DP_Snapshot *s = at(i);
+			resetPoints.append(ResetPoint{
+				drawdance::CanvasState::inc(DP_snapshot_canvas_state_noinc(s)),
+				QPixmap{},
+			});
 		}
+	});
+
+	drawdance::CanvasState currentCanvasState = pe->canvasState();
+	int lastIndex = resetPoints.count() - 1;
+	// Don't repeat last reset point if the canvas state hasn't changed since.
+	if(lastIndex < 0 || currentCanvasState.get() != resetPoints[lastIndex].canvasState.get()) {
+		resetPoints.append(ResetPoint{
+			currentCanvasState,
+			QPixmap{},
+		});
 	}
+
+	return resetPoints;
 }
 
-struct ResetDialog::Private
-{
-	Ui_ResetDialog *ui;
-	rustpile::PaintEngine *paintEngine;
+}
+
+namespace dialogs {
+
+struct ResetDialog::Private {
+	QScopedPointer<Ui_ResetDialog> ui;
+	const canvas::PaintEngine *paintEngine;
 	QPushButton *resetButton;
-	rustpile::SnapshotQueue *snapshots;
-	QVector<QPixmap> resetPoints;
+	QVector<ResetPoint> resetPoints;
 	int selection;
 
 	Private(const canvas::PaintEngine *pe)
-		: ui(new Ui_ResetDialog), paintEngine(pe->engine()), selection(0)
+		: ui{new Ui_ResetDialog}
+		, paintEngine{pe}
+		, resetPoints{makeResetPoints(pe)}
+		, selection{resetPoints.size() - 1}
 	{
-		snapshots = rustpile::paintengine_get_snapshots(pe->engine());
-		resetPoints.resize(rustpile::snapshots_count(snapshots));
-		selection = resetPoints.size() - 1;
 	}
 
-	~Private() {
-		rustpile::paintengine_release_snapshots(snapshots);
-		delete ui;
+	~Private() = default;
+
+	static void drawCheckerBackground(QImage &image)
+	{
+		const int TS = 16;
+		const QBrush checker[] = {
+			QColor(128,128,128),
+			QColor(Qt::white)
+		};
+		QPainter painter(&image);
+		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+		for(int y=0;y<image.height();y+=TS) {
+			for(int x=0;x<image.width();x+=TS*2) {
+				const int z = (y/TS+x) % 2 == 0;
+				painter.fillRect(x, y, TS, TS, checker[z]);
+				painter.fillRect(x+TS, y, TS, TS, checker[1-z]);
+			}
+		}
 	}
 
 	void updateSelection()
 	{
-		if(resetPoints.isEmpty())
-			return;
-
 		Q_ASSERT(!resetPoints.isEmpty());
-		Q_ASSERT(selection >=0 && selection < resetPoints.size());
+		Q_ASSERT(selection >= 0 && selection < resetPoints.size());
 
-		if(resetPoints[selection].isNull()) {
-			const rustpile::Size s = rustpile::snapshots_size(snapshots, selection);
-			if(s.width > 0) {
-				QImage img(s.width, s.height, QImage::Format_ARGB32_Premultiplied);
-				img.fill(0);
-				rustpile::snapshots_get_content(snapshots, selection, img.bits());
-				img = img.scaled(THUMBNAIL_SIZE, Qt::KeepAspectRatio);
+		ResetPoint &rp = resetPoints[selection];
+		if(rp.thumbnail.isNull()) {
+			const drawdance::CanvasState &canvasState = rp.canvasState;
+			QImage img = canvasState.toFlatImage();
+			if(!img.isNull()) {
+				img = img.scaled(256, 256, Qt::KeepAspectRatio);
 				drawCheckerBackground(img);
-				resetPoints[selection] = QPixmap::fromImage(img);
+				rp.thumbnail = QPixmap::fromImage(img);
 			}
 		}
 
-		ui->preview->setPixmap(resetPoints[selection]);
+		ui->preview->setPixmap(rp.thumbnail);
 	}
 };
 
@@ -138,8 +162,8 @@ void ResetDialog::setCanReset(bool canReset)
 
 void ResetDialog::onSelectionChanged(int pos)
 {
-	d->selection = d->resetPoints.size() - pos;
-	qInfo("sliderMoved(%d) selection=%d", pos, d->selection);
+	int count = d->resetPoints.count();
+	d->selection = qBound(0, count - pos, count - 1);
 	d->updateSelection();
 }
 
@@ -157,29 +181,25 @@ void ResetDialog::onOpenClicked()
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	if(rustpile::snapshots_import_file(d->snapshots, reinterpret_cast<const uint16_t*>(file.constData()), file.length())) {
-		d->resetPoints.append(QPixmap());
+	drawdance::CanvasState canvasState = drawdance::CanvasState::load(file);
+	QApplication::restoreOverrideCursor();
+
+	if(canvasState.isNull()) {
+		QMessageBox::warning(this, tr("Reset"), tr("Couldn't open file"));
+	} else {
+		d->resetPoints.append({canvasState, QPixmap{}});
 		d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
 		d->ui->snapshotSlider->setValue(0);
 		d->selection = d->resetPoints.size() - 1;
 		d->updateSelection();
-		QApplication::restoreOverrideCursor();
-
-	} else {
-		QApplication::restoreOverrideCursor();
-		QMessageBox::warning(this, tr("Reset"), tr("Couldn't open file"));
 	}
 }
 
-net::Envelope ResetDialog::getResetImage() const
+drawdance::MessageList ResetDialog::getResetImage() const
 {
-	if(d->resetPoints.isEmpty())
-		return net::Envelope();
-
-	net::EnvelopeBuilder eb;
-	rustpile::paintengine_get_historical_reset_snapshot(d->paintEngine, d->snapshots, d->selection, eb);
-
-	return eb.toEnvelope();
+	drawdance::MessageList resetImage;
+	d->resetPoints[d->selection].canvasState.toResetImage(resetImage, 0);
+	return resetImage;
 }
 
 }

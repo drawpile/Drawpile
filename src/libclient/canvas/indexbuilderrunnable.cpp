@@ -19,7 +19,6 @@
 
 #include "indexbuilderrunnable.h"
 #include "paintengine.h"
-#include "../rustpile/rustpile.h"
 
 namespace canvas {
 
@@ -36,13 +35,13 @@ static void emit_progress(void *runnable, uint32_t progress)
 
 void IndexBuilderRunnable::run()
 {
-	const bool result = rustpile::paintengine_build_index(
-		m_paintengine->engine(),
-		this,
-		&emit_progress
-	);
-
-	emit indexingComplete(result);
+	// const bool result = rustpile::paintengine_build_index(
+	// 	m_paintengine->engine(),
+	// 	this,
+	// 	&emit_progress
+	// );
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	emit indexingComplete(false);
 }
 
 }

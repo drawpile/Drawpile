@@ -21,9 +21,9 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-namespace net {
+#include "drawdance/message.h"
 
-class Envelope;
+namespace net {
 
 /**
  * @brief A command sent to the server using the (Control) Command message
@@ -33,25 +33,25 @@ struct ServerCommand {
 	QJsonArray args;
 	QJsonObject kwargs;
 
-	Envelope toEnvelope() const;
+	drawdance::Message toMessage() const;
 
 	// Convenience functions_
-	static Envelope make(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
+	static drawdance::Message make(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
 
 	//! Kick (and optionally ban) a user from the session
-	static Envelope makeKick(int target, bool ban);
+	static drawdance::Message makeKick(int target, bool ban);
 
 	//! Remove a ban entry
-	static Envelope makeUnban(int entryId);
+	static drawdance::Message makeUnban(int entryId);
 
 	//! (Un)mute a user
-	static Envelope makeMute(int target, bool mute);
+	static drawdance::Message makeMute(int target, bool mute);
 
 	//! Request the server to announce this session at a listing server
-	static Envelope makeAnnounce(const QString &url, bool privateMode);
+	static drawdance::Message makeAnnounce(const QString &url, bool privateMode);
 
 	//! Request the server to remove an announcement at the listing server
-	static Envelope makeUnannounce(const QString &url);
+	static drawdance::Message makeUnannounce(const QString &url);
 };
 
 /**
@@ -76,7 +76,7 @@ struct ServerReply {
 	QString message;
 	QJsonObject reply;
 
-	static ServerReply fromEnvelope(const Envelope &e);
+	static ServerReply fromMessage(const drawdance::Message &msg);
 	static ServerReply fromJson(const QJsonDocument &doc);
 	QJsonDocument toJson() const;
 };

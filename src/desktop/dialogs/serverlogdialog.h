@@ -31,8 +31,8 @@ namespace canvas {
 	class UserListModel;
 }
 
-namespace net {
-	class Envelope;
+namespace drawdance {
+	class Message;
 }
 
 namespace dialogs {
@@ -53,7 +53,7 @@ public slots:
 signals:
 	void inspectModeChanged(int contextId);
 	void inspectModeStopped();
-	void opCommand(const net::Envelope &msg);
+	void opCommand(const drawdance::Message &msg);
 
 protected:
 	void hideEvent(QHideEvent *event) override;

@@ -19,27 +19,27 @@
 #ifndef PAINTCORE_BLENDMODES_H
 #define PAINTCORE_BLENDMODES_H
 
+extern "C" {
+#include <dpmsg/blend_mode.h>
+}
+
 #include <QString>
 #include <QVector>
 #include <QPair>
 
-namespace rustpile {
-	enum class Blendmode : uint8_t;
-}
-
 namespace canvas {
 namespace blendmode {
 	//! Get the SVG name for the given blend mode
-	QString svgName(rustpile::Blendmode mode);
+	QString svgName(DP_BlendMode mode);
 
 	//! Find a blend mode by its SVG name
-	rustpile::Blendmode fromSvgName(const QString &name);
+	DP_BlendMode fromSvgName(const QString &name);
 
 	//! Get a list of (brush) blend modes and their translated names
-	QVector<QPair<rustpile::Blendmode, QString>> brushModeNames();
+	QVector<QPair<DP_BlendMode, QString>> brushModeNames();
 
 	//! Get a list of (layer) blend modes and their translated names
-	QVector<QPair<rustpile::Blendmode, QString>> layerModeNames();
+	QVector<QPair<DP_BlendMode, QString>> layerModeNames();
 }
 }
 

@@ -25,8 +25,8 @@ class QMenu;
 
 class Document;
 
-namespace net {
-	class Envelope;
+namespace drawdance {
+	class Message;
 }
 
 namespace widgets {
@@ -45,7 +45,7 @@ public:
 	void setDocument(Document *doc) { m_doc = doc; }
 
 signals:
-	void opCommand(const net::Envelope &msg);
+	void opCommand(const drawdance::Message &msg);
 	void requestPrivateChat(int userId);
 
 private slots:

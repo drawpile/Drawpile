@@ -23,7 +23,6 @@
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "net/client.h"
-#include "net/envelopebuilder.h"
 
 #include <QGuiApplication>
 #include <QPixmap>
@@ -41,32 +40,27 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
 	Q_UNUSED(right);
-	const QColor color = owner.activeBrush().qColor();
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	net::EnvelopeBuilder writer;
+	canvas::CanvasModel *model = owner.model();
+	QColor fillColor = m_eraseMode ? Qt::black : owner.activeBrush().qColor();
+	int layerId = owner.activeLayer();
+	int x, y;
+	QImage img = model->paintEngine()->canvasState().floodFill(
+		point.x(), point.y(), fillColor, m_tolerance, layerId,
+		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion, x, y);
 
-	if(rustpile::paintengine_floodfill(
-		owner.model()->paintEngine()->engine(),
-		writer,
-		owner.model()->localUserId(),
-		owner.activeLayer(),
-		point.x(),
-		point.y(),
-		rustpile::Color {
-			static_cast<float>(color.redF()),
-			static_cast<float>(color.greenF()),
-			static_cast<float>(color.blueF()),
-			m_eraseMode ? 0.0f : 1.0f,
-		},
-		m_tolerance,
-		m_sampleMerged,
-		m_sizelimit,
-		m_expansion,
-		m_underFill
-	)) {
-		owner.client()->sendEnvelope(writer.toEnvelope());
+	if(img.isNull()) {
+		qWarning("Flood fill failed: %s", DP_error());
+	} else {
+		uint8_t contextId = model->localUserId();
+		drawdance::MessageList msgs;
+		msgs.append(drawdance::Message::makeUndoPoint(contextId));
+		uint8_t blendMode =
+			m_eraseMode ? DP_BLEND_MODE_ERASE : m_underFill ? DP_BLEND_MODE_BEHIND : DP_BLEND_MODE_NORMAL;
+		drawdance::Message::makePutImages(msgs, contextId, layerId, blendMode, x, y, img);
+		owner.client()->sendMessages(msgs.count(), msgs.constData());
 	}
 
 	QGuiApplication::restoreOverrideCursor();

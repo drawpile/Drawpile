@@ -94,7 +94,6 @@
 
 #include "net/client.h"
 #include "net/login.h"
-#include "net/envelopebuilder.h"
 #include "canvas/layerlist.h"
 #include "parentalcontrols/parentalcontrols.h"
 
@@ -328,6 +327,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockColorSpinner, &docks::ColorSpinnerDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSliders, &docks::ColorSliderDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 
+	// Canvas view -> canvas item, so that the item knows what are to re-render.
+	connect(m_view, &widgets::CanvasView::viewRectChange, m_canvasscene, &drawingboard::CanvasScene::canvasViewportChanged);
+
 	// Navigator <-> View
 	connect(m_dockNavigator, &docks::Navigator::focusMoved, m_view, &widgets::CanvasView::scrollTo);
 	connect(m_view, &widgets::CanvasView::viewRectChange, m_dockNavigator, &docks::Navigator::setViewFocus);
@@ -343,11 +345,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 		sessionHistorySize->setText(QString("%1 MB").arg(size / float(1024*1024), 0, 'f', 2));
 	});
 
-	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendEnvelope);
-	connect(m_dockTimeline, &docks::Timeline::timelineEditCommand, m_doc->client(), &net::Client::sendEnvelope);
+	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
+	connect(m_dockTimeline, &docks::Timeline::timelineEditCommands, m_doc->client(), &net::Client::sendMessages);
 
-	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendEnvelope);
-	connect(m_dockLayers, &docks::LayerList::layerCommand, m_doc->client(), &net::Client::sendEnvelope);
+	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
+	connect(m_dockLayers, &docks::LayerList::layerCommands, m_doc->client(), &net::Client::sendMessages);
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
@@ -412,7 +414,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Restore settings
 	readSettings(restoreWindowPosition);
-	
+
 	// Set status indicators
 	updateLockWidget();
 	setRecorderStatus(false);
@@ -441,6 +443,17 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 	setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
+
+	static bool warningShown;
+	if(!warningShown) {
+		QMessageBox::warning(this, tr("Dancepile Test Build"), tr(
+			"<p><strong>This is a development test build. Do not report problems in the official Drawpile issue tracker.</strong></p>"
+			"<p>Several features are known to be missing or broken. There might still be bugs that cause crashes. The application icon is a ferret. So don't use this for anything important.</p>"
+#ifdef DRAWDANCE_HISTORY_DUMP
+			"<p><strong>This build will automatically record debug dumps.</strong> They'll probably appear in the application directory and will have a \".drawdancedump\" extension. They might get several megabytes large, you can delete them if you don't run into any problems. If you do have a problem, keep them around in case a developer asks for them, they might help diagnose what went wrong.</p>"
+#endif
+			));
+	}
 }
 
 MainWindow::~MainWindow()
@@ -512,8 +525,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	// Make sure the UI matches the default feature access level
 	m_currentdoctools->setEnabled(true);
 	setDrawingToolsEnabled(true);
-	for(int i=0;i<canvas::FeatureCount;++i) {
-		onFeatureAccessChange(canvas::Feature(i), m_doc->canvas()->aclState()->canUseFeature(canvas::Feature(i)));
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		DP_Feature f = DP_Feature(i);
+		onFeatureAccessChange(f, m_doc->canvas()->aclState()->canUseFeature(f));
 	}
 }
 
@@ -715,16 +729,16 @@ void MainWindow::updateLayerViewMode()
 
 	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
-	rustpile::LayerViewMode mode = rustpile::LayerViewMode::Normal;
+	DP_LayerViewMode mode = DP_LAYER_VIEW_MODE_NORMAL;
 
 	if(getAction("layerviewsolo")->isChecked()) {
-		mode = rustpile::LayerViewMode::Solo;
+		mode = DP_LAYER_VIEW_MODE_SOLO;
 
 	} else if(getAction("layerviewframe")->isChecked()) {
 		if(getAction("layerviewonionskin")->isChecked())
-			mode = rustpile::LayerViewMode::Onionskin;
+			mode = DP_LAYER_VIEW_MODE_ONION_SKIN;
 		else
-			mode = rustpile::LayerViewMode::Frame;
+			mode = DP_LAYER_VIEW_MODE_FRAME;
 	}
 
 
@@ -788,10 +802,10 @@ void MainWindow::writeSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("window");
-	
+
 	cfg.setValue("pos", normalGeometry().topLeft());
 	cfg.setValue("size", normalGeometry().size());
-	
+
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", m_splitter->saveState());
@@ -949,7 +963,7 @@ void MainWindow::showNew()
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
 	MainWindow *w = replaceableWindow();
-	w->m_doc->loadCanvas(size, background);
+	w->m_doc->loadBlank(size, background);
 }
 
 /**
@@ -968,9 +982,9 @@ void MainWindow::open(const QUrl& url)
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
 		if(recording::Reader::isRecordingExtension(file)) {
-			const auto result = m_doc->loadRecording(file);
-			showErrorMessage(result);
-			if(result == rustpile::CanvasIoError::NoError || result == rustpile::CanvasIoError::PartiallySupportedFormat || result == rustpile::CanvasIoError::UnknownRecordingVersion) {
+			bool result = m_doc->loadRecording(file);
+			showLoadResultMessage(result ? DP_LOAD_RESULT_SUCCESS : DP_LOAD_RESULT_UNKNOWN_FORMAT);
+			if(result) {
 				QFileInfo fileinfo(file);
 				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
 				m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
@@ -981,15 +995,12 @@ void MainWindow::open(const QUrl& url)
 
 		} else {
 			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-			const auto result = m_doc->loadCanvas(file);
-			showErrorMessage(result);
-			if(result != rustpile::CanvasIoError::NoError && result != rustpile::CanvasIoError::PartiallySupportedFormat) {
-				QApplication::restoreOverrideCursor();
-				return;
-			}
-
+			DP_LoadResult result = m_doc->loadFile(file);
+			showLoadResultMessage(result);
 			QApplication::restoreOverrideCursor();
-			getAction("hostsession")->setEnabled(true);
+			if(result) {
+				getAction("hostsession")->setEnabled(true);
+			}
 		}
 
 		addRecentFile(file);
@@ -1065,7 +1076,7 @@ bool MainWindow::confirmFlatten(QString& file) const
 	// Don't save at all
 	if(box.exec() == QMessageBox::Cancel)
 		return false;
-	
+
 	// Save
 	if(box.clickedButton() == saveora) {
 		file = file.left(file.lastIndexOf('.')) + ".ora";
@@ -1219,7 +1230,8 @@ void MainWindow::exportGifAnimation()
 		"GIF (*.gif)"
 	);
 
-	exportAnimation(path, rustpile::AnimationExportMode::Gif);
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	// exportAnimation(path, rustpile::AnimationExportMode::Gif);
 }
 
 void MainWindow::exportAnimationFrames()
@@ -1230,7 +1242,8 @@ void MainWindow::exportAnimationFrames()
 		getLastPath()
 	);
 
-	exportAnimation(path, rustpile::AnimationExportMode::Frames);
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	// exportAnimation(path, rustpile::AnimationExportMode::Frames);
 }
 
 void MainWindow::exportAnimation(const QString &path, rustpile::AnimationExportMode mode)
@@ -1299,9 +1312,8 @@ void MainWindow::toggleRecording()
 		return;
 	}
 
-	if(m_doc->isRecording()) {
-		m_doc->stopRecording();
-		return;
+	if(m_doc->stopRecording()) {
+		return; // There was a recording and we just stopped it.
 	}
 
 	QString file = QFileDialog::getSaveFileName(
@@ -1312,8 +1324,20 @@ void MainWindow::toggleRecording()
 	);
 
 	if(!file.isEmpty()) {
-		const auto result = m_doc->startRecording(file);
-		showErrorMessage(result);
+		drawdance::RecordStartResult result = m_doc->startRecording(file);
+		switch(result) {
+		case drawdance::RECORD_START_SUCCESS:
+			break;
+		case drawdance::RECORD_START_UNKNOWN_FORMAT:
+			showErrorMessage(tr("Unsupported format."));
+			break;
+		case drawdance::RECORD_START_OPEN_ERROR:
+			showErrorMessage(tr("Couldn't start recording."), DP_error());
+			break;
+		default:
+			showErrorMessage(tr("Unknown error.", DP_error()));
+			break;
+		}
 	}
 }
 
@@ -1460,7 +1484,7 @@ void MainWindow::leave()
 		if(result == 0)
 			m_doc->client()->disconnectFromServer();
 	});
-	
+
 	if(m_doc->client()->uploadQueueBytes() > 0) {
 		leavebox->setIcon(QMessageBox::Warning);
 		leavebox->setInformativeText(tr("There is still unsent data! Please wait until transmission completes!"));
@@ -1503,7 +1527,7 @@ void MainWindow::tryToGainOp()
 
 void MainWindow::resetSession()
 {
-	auto dlg = new dialogs::ResetDialog(m_doc->canvas()->paintEngine(), this);
+	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(m_doc->canvas()->paintEngine(), this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -1700,26 +1724,26 @@ void MainWindow::onOperatorModeChange(bool op)
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
 }
 
-void MainWindow::onFeatureAccessChange(canvas::Feature feature, bool canUse)
+void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 {
 	switch(feature) {
-	case canvas::Feature::PutImage:
+	case DP_FEATURE_PUT_IMAGE:
 		m_putimagetools->setEnabled(canUse);
 		getAction("toolfill")->setEnabled(canUse);
 		break;
-	case canvas::Feature::Resize:
+	case DP_FEATURE_RESIZE:
 		m_resizetools->setEnabled(canUse);
 		break;
-	case canvas::Feature::Background:
+	case DP_FEATURE_BACKGROUND:
 		m_canvasbgtools->setEnabled(canUse);
 		break;
-	case canvas::Feature::Laser:
+	case DP_FEATURE_LASER:
 		getAction("toollaser")->setEnabled(canUse && getAction("showlasers")->isChecked());
 		break;
-	case canvas::Feature::Undo:
+	case DP_FEATURE_UNDO:
 		m_undotools->setEnabled(canUse);
 		break;
-	case canvas::Feature::Timeline:
+	case DP_FEATURE_TIMELINE:
 		m_dockTimeline->setFeatureAccess(canUse);
 		break;
 	default: break;
@@ -1761,35 +1785,27 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 	msgbox->show();
 }
 
-void MainWindow::showErrorMessage(rustpile::CanvasIoError error)
+void MainWindow::showLoadResultMessage(DP_LoadResult result)
 {
-	QString msg;
-	switch(error) {
-	case rustpile::CanvasIoError::NoError: return;
-	case rustpile::CanvasIoError::FileOpenError:
-		msg = tr("Couldn't open file");
+	switch(result) {
+	case DP_LOAD_RESULT_SUCCESS:
 		break;
-	case rustpile::CanvasIoError::FileIoError:
-		msg = tr("Something went wrong with the file");
+    case DP_LOAD_RESULT_BAD_ARGUMENTS:
+		showErrorMessage(tr("Bad arguments, this is probably a bug in Drawpile."));
 		break;
-	case rustpile::CanvasIoError::UnsupportedFormat:
-		msg = tr("This file format is not supported");
+    case DP_LOAD_RESULT_UNKNOWN_FORMAT:
+		showErrorMessage(tr("Unsupported format."));
 		break;
-	case rustpile::CanvasIoError::PartiallySupportedFormat:
-		msg = tr("This file is only partially supported. It may not appear as it should.");
+    case DP_LOAD_RESULT_OPEN_ERROR:
+		showErrorMessage(tr("Couldn't open file for reading."), DP_error());
 		break;
-	case rustpile::CanvasIoError::UnknownRecordingVersion:
-		msg = tr("This recording was made with an unknown version. It may not appear as it should.");
+    case DP_LOAD_RESULT_READ_ERROR:
+		showErrorMessage(tr("Error reading file."), DP_error());
 		break;
-	case rustpile::CanvasIoError::CodecError:
-		msg = tr("Couldn't decode image");
-		break;
-	case rustpile::CanvasIoError::PaintEngineCrashed:
-		msg = tr("Paint engine has crashed! Save your work and restart the application.");
+	default:
+		showErrorMessage(tr("Unknown error.", DP_error()));
 		break;
 	}
-
-	showErrorMessage(msg);
 }
 
 void MainWindow::setShowAnnotations(bool show)
@@ -2068,7 +2084,7 @@ void MainWindow::pasteFile(const QUrl &url)
 
 void MainWindow::pasteImage(const QImage &image, const QPoint *point)
 {
-	if(!m_canvasscene->model()->aclState()->canUseFeature(canvas::Feature::PutImage))
+	if(!m_canvasscene->model()->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE))
 		return;
 
 	if(m_dockToolSettings->currentTool() != tools::Tool::SELECTION && m_dockToolSettings->currentTool() != tools::Tool::POLYGONSELECTION) {
@@ -2108,16 +2124,19 @@ void MainWindow::clearOrDelete()
 	if(annotationtool->isChecked()) {
 		const uint16_t a = static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
 		if(a>0) {
-			net::EnvelopeBuilder eb;
-			rustpile::write_undopoint(eb, m_doc->client()->myId());
-			rustpile::write_deleteannotation(eb, m_doc->client()->myId(), a);
-			m_doc->client()->sendEnvelope(eb.toEnvelope());
+			net::Client *client = m_doc->client();
+			uint8_t contextId = client->myId();
+			drawdance::Message messages[] = {
+				drawdance::Message::makeUndoPoint(contextId),
+				drawdance::Message::makeAnnotationDelete(contextId, a),
+			};
+			client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 			return;
 		}
 	}
 
 	// No annotation selected: clear seleted area as usual
-	m_doc->fillArea(Qt::white, rustpile::Blendmode::Erase);
+	m_doc->fillArea(Qt::white, DP_BLEND_MODE_ERASE);
 }
 
 void MainWindow::resizeCanvas()
@@ -2177,7 +2196,7 @@ void MainWindow::about()
 			"<p>Copyright © 2006-2022 Calle Laakkonen</p>"
 
 			"<p>This program is free software; you may redistribute it and/or "
-			"modify it under the terms of the GNU General Public License as " 
+			"modify it under the terms of the GNU General Public License as "
 			"published by the Free Software Foundation, either version 3, or "
 			"(at your opinion) any later version.</p>"
 
@@ -2447,9 +2466,9 @@ void MainWindow::setupActions()
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), rustpile::Blendmode::Normal); });
-	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), rustpile::Blendmode::Recolor); });
-	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), rustpile::Blendmode::ColorErase); });
+	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_NORMAL); });
+	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_RECOLOR); });
+	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_COLOR_ERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));

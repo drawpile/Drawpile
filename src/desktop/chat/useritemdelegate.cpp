@@ -19,9 +19,9 @@
 #include "useritemdelegate.h"
 #include "canvas/userlist.h"
 #include "canvas/canvasmodel.h"
+#include "drawdance/message.h"
 #include "utils/icon.h"
 #include "net/servercmd.h"
-#include "net/envelopebuilder.h"
 #include "document.h"
 
 #include <QPainter>
@@ -111,7 +111,7 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 		index.data(canvas::UserListModel::AvatarRole).value<QPixmap>()
 		);
 
-	// Draw status overlay	
+	// Draw status overlay
 	const bool isLocked = index.data(canvas::UserListModel::IsLockedRole).toBool();
 	if(isLocked || index.data(canvas::UserListModel::IsMutedRole).toBool()) {
 		const QRect statusOverlayRect(
@@ -310,16 +310,12 @@ void UserItemDelegate::pmUser()
 
 void UserItemDelegate::undoByUser()
 {
-	net::EnvelopeBuilder eb;
-	eb.buildUndo(m_doc->canvas()->localUserId(), m_menuId, false);
-	emit opCommand(eb.toEnvelope());
+	emit opCommand(drawdance::Message::makeUndo(m_doc->canvas()->localUserId(), m_menuId, false));
 }
 
 void UserItemDelegate::redoByUser()
 {
-	net::EnvelopeBuilder eb;
-	eb.buildUndo(m_doc->canvas()->localUserId(), m_menuId, true);
-	emit opCommand(eb.toEnvelope());
+	emit opCommand(drawdance::Message::makeUndo(m_doc->canvas()->localUserId(), m_menuId, true));
 }
 
 }

@@ -20,15 +20,14 @@
 #ifndef CANVASMODEL_H
 #define CANVASMODEL_H
 
+#include "drawdance/message.h"
+#include "drawdance/paintengine.h"
+
 #include <QObject>
 #include <QPointer>
 
-namespace net {
-	class Envelope;
-}
-
-namespace rustpile {
-	enum class CanvasIoError;
+namespace drawdance {
+	class CanvasState;
 }
 
 namespace canvas {
@@ -49,14 +48,13 @@ public:
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 
-	//! Load canvas content from file
-	rustpile::CanvasIoError load(const QString &path);
-
 	//! Load an empty canvas
-	bool load(const QSize &size, const QColor &background);
+	void loadBlank(const QSize &size, const QColor &background);
+
+	void loadCanvasState(const drawdance::CanvasState &canvasState);
 
 	//! Load a recording and prepare to start playback
-	rustpile::CanvasIoError loadRecording(const QString &path);
+	bool loadRecording(const QString &path);
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
@@ -66,7 +64,7 @@ public:
 	Selection *selection() const { return m_selection; }
 	void setSelection(Selection *selection);
 
-	net::Envelope generateSnapshot() const;
+	drawdance::MessageList generateSnapshot() const;
 
 	uint8_t localUserId() const { return m_localUserId; }
 
@@ -83,10 +81,10 @@ public:
 	DocumentMetadata *metadata() const { return m_metadata; }
 
 	//! Open a recording file and start recording
-	rustpile::CanvasIoError startRecording(const QString &path);
+	drawdance::RecordStartResult startRecording(const QString &path);
 
-	//! Stop recording
-	void stopRecording();
+	//! Stop recording, returns false if none was in progress
+	bool stopRecording();
 
 	//! Is recording in progress?
 	bool isRecording() const;
@@ -113,10 +111,10 @@ public:
 
 public slots:
 	//! Handle a meta/command message received from the server
-	void handleCommand(const net::Envelope &cmd);
+	void handleCommands(int count, const drawdance::Message *msgs);
 
 	//! Handle a local drawing command (will be put in the local fork)
-	void handleLocalCommand(const net::Envelope &cmd);
+	void handleLocalCommands(int count, const drawdance::Message *msgs);
 
 	void pickLayer(int x, int y);
 	void pickColor(int x, int y, int layer, int diameter=0);
@@ -153,15 +151,14 @@ signals:
 
 private slots:
 	void onCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
+	void onLaserTrail(uint8_t userId, int persistence, uint32_t color);
 
 private:
-	friend void metaUserJoin(void *canvas, uint8_t user, uint8_t flags, const uint8_t *name, uintptr_t name_len, const uint8_t *avatar, uintptr_t avatar_len);
-	friend void metaUserLeave(void *ctx, uint8_t user);
-	friend void metaChatMessage(void *ctx, uint8_t sender, uint8_t recipient, uint8_t tflags, uint8_t oflags, const uint8_t *message, uintptr_t message_len);
-	friend void metaLaserTrail(void *ctx, uint8_t user, uint8_t persistence, uint32_t color);
-	friend void metaDefaultLayer(void *ctx, uint16_t layerId);
-	friend void metaAclChange(void *ctx, uint32_t changes);
-	friend void metaRecorderStateChanged(void *ctx, bool recording);
+	void handleMetaMessages(int count, const drawdance::Message *msgs);
+	void handleJoin(const drawdance::Message &msg);
+	void handleLeave(const drawdance::Message &msg);
+	void handleChat(const drawdance::Message &msg);
+	void handlePrivateChat(const drawdance::Message &msg);
 
 	AclState *m_aclstate;
 	UserListModel *m_userlist;

@@ -17,6 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern "C" {
+#include <dpmsg/blend_mode.h>
+#include <dpengine/brush.h>
+}
+
 #include "brushsettings.h"
 #include "main.h"
 #include "tools/toolcontroller.h"
@@ -27,8 +32,6 @@
 #include "canvas/inputpresetmodel.h"
 #include "canvas/blendmodes.h"
 #include "ui_brushdock.h"
-
-#include "../rustpile/rustpile.h"
 
 #include <mypaint-brush-settings.h>
 #include <QKeyEvent>
@@ -52,8 +55,8 @@ namespace {
 		brushes::ActiveBrush brush;
 
 		// For remembering previous selection when switching between normal/erase mode
-		rustpile::Blendmode normalMode = rustpile::Blendmode::Normal;
-		rustpile::Blendmode eraserMode = rustpile::Blendmode::Erase;
+		DP_BlendMode normalMode = DP_BLEND_MODE_NORMAL;
+		DP_BlendMode eraserMode = DP_BLEND_MODE_ERASE;
 
 		QString inputPresetId;
 	};
@@ -101,11 +104,11 @@ struct BrushSettings::Private {
 
 		eraseModes = new QStandardItemModel(0, 1, b);
 		auto erase1 = new QStandardItem(QApplication::tr("Erase"));
-		erase1->setData(QVariant(int(rustpile::Blendmode::Erase)), Qt::UserRole);
+		erase1->setData(QVariant(int(DP_BLEND_MODE_ERASE)), Qt::UserRole);
 		eraseModes->appendRow(erase1);
 
 		auto erase2 = new QStandardItem(QApplication::tr("Color Erase"));
-		erase2->setData(QVariant(int(rustpile::Blendmode::ColorErase)), Qt::UserRole);
+		erase2->setData(QVariant(int(DP_BLEND_MODE_COLOR_ERASE)), Qt::UserRole);
 		eraseModes->appendRow(erase2);
 	}
 
@@ -346,7 +349,7 @@ void BrushSettings::setEraserMode(bool erase)
 		// Uh oh, an inconsistency. Try to fix it.
 		// This can happen if the settings data was broken
 		qWarning("setEraserMode(%d): wrong mode %d", erase, int(classic.mode));
-		classic.mode = erase ? rustpile::Blendmode::Erase : rustpile::Blendmode::Normal;
+		classic.mode = erase ? DP_BLEND_MODE_ERASE : DP_BLEND_MODE_NORMAL;
 	}
 
 	updateUi();
@@ -397,7 +400,7 @@ void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 
 void BrushSettings::selectBlendMode(int modeIndex)
 {
-	const auto mode = rustpile::Blendmode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
+	const DP_BlendMode mode = DP_BlendMode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	ToolSlot &tool = d->currentTool();
 	brushes::ClassicBrush &classic = tool.brush.classic();
 
@@ -425,15 +428,15 @@ void BrushSettings::updateUi()
 
 	// Select brush type
 	const bool mypaintmode = brush.activeType() == brushes::ActiveBrush::MYPAINT;
-	const bool softmode = mypaintmode || classic.shape == rustpile::ClassicBrushShape::RoundSoft;
+	const bool softmode = mypaintmode || classic.shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
 
 	if(mypaintmode) {
 		d->ui.mypaintMode->setChecked(true);
 	} else {
 		switch(classic.shape) {
-		case rustpile::ClassicBrushShape::RoundPixel: d->ui.hardedgeMode->setChecked(true); break;
-		case rustpile::ClassicBrushShape::SquarePixel: d->ui.squareMode->setChecked(true); break;
-		case rustpile::ClassicBrushShape::RoundSoft: d->ui.softedgeMode->setChecked(true); break;
+		case DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND: d->ui.hardedgeMode->setChecked(true); break;
+		case DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE: d->ui.squareMode->setChecked(true); break;
+		case DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND: d->ui.softedgeMode->setChecked(true); break;
 		}
 	}
 
@@ -470,7 +473,7 @@ void BrushSettings::updateUi()
 	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
 
-	const rustpile::MyPaintSettings &myPaintSettings = myPaint.constSettings();
+	const DP_MyPaintSettings &myPaintSettings = myPaint.constSettings();
 	d->ui.radiusLogarithmicBox->setValue(
 		(myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value + 2.0) * 100.0);
 	d->ui.gainBox->setValue(qRound(
@@ -515,11 +518,11 @@ void BrushSettings::updateFromUi()
 	brushes::MyPaintBrush &myPaint = brush.myPaint();
 
 	if(d->ui.hardedgeMode->isChecked())
-		classic.shape = rustpile::ClassicBrushShape::RoundPixel;
+		classic.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
 	else if(d->ui.squareMode->isChecked())
-		classic.shape = rustpile::ClassicBrushShape::SquarePixel;
+		classic.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE;
 	else
-		classic.shape = rustpile::ClassicBrushShape::RoundSoft;
+		classic.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
 
 	classic.size.max = d->ui.brushsizeBox->value();
 	classic.size_pressure = d->ui.pressureSize->isChecked();
@@ -537,9 +540,9 @@ void BrushSettings::updateFromUi()
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
 	classic.incremental = d->ui.modeIncremental->isChecked();
 	classic.colorpick = d->ui.modeColorpick->isChecked();
-	classic.mode = rustpile::Blendmode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
+	classic.mode = DP_BlendMode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
 
-	rustpile::MyPaintSettings &myPaintSettings = myPaint.settings();
+	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value =
 		d->ui.radiusLogarithmicBox->value() / 100.0 - 2.0;
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value =
@@ -709,8 +712,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		tool.brush = brushes::ActiveBrush::fromJson(o);
 		const auto color = QColor(s["color"].toString());
 		tool.brush.setQColor(color.isValid() ? color : Qt::black);
-		tool.normalMode = rustpile::Blendmode(s["normalMode"].toInt());
-		tool.eraserMode = rustpile::Blendmode(s["eraserMode"].toInt());
+		tool.normalMode = DP_BlendMode(s["normalMode"].toInt());
+		tool.eraserMode = DP_BlendMode(s["eraserMode"].toInt());
 		tool.inputPresetId = s["inputPresetId"].toString();
 		d->updateInputPresetUuid(tool);
 
@@ -719,7 +722,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 
 	if(!d->toolSlots[ERASER_SLOT].brush.isEraser()) {
-		d->toolSlots[ERASER_SLOT].brush.classic().mode = rustpile::Blendmode::Erase;
+		d->toolSlots[ERASER_SLOT].brush.classic().mode = DP_BLEND_MODE_ERASE;
 		d->toolSlots[ERASER_SLOT].brush.myPaint().brush().erase = true;
 	}
 
@@ -730,10 +733,10 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 {
 	switch(tool) {
-	case tools::Tool::LINE: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Line); break;
-	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Rectangle); break;
-	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Ellipse); break;
-	default: d->ui.preview->setPreviewShape(rustpile::BrushPreviewShape::Stroke); break;
+	case tools::Tool::LINE: d->ui.preview->setPreviewShape(DP_BRUSH_PREVIEW_LINE); break;
+	case tools::Tool::RECTANGLE: d->ui.preview->setPreviewShape(DP_BRUSH_PREVIEW_RECTANGLE); break;
+	case tools::Tool::ELLIPSE: d->ui.preview->setPreviewShape(DP_BRUSH_PREVIEW_ELLIPSE); break;
+	default: d->ui.preview->setPreviewShape(DP_BRUSH_PREVIEW_STROKE); break;
 	}
 
 	if(tool == tools::Tool::ERASER) {
@@ -799,12 +802,12 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().classic().shape == rustpile::ClassicBrushShape::RoundSoft;
+	return d->currentBrush().classic().shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
 }
 
 bool BrushSettings::isSquare() const
 {
-	return d->currentBrush().classic().shape == rustpile::ClassicBrushShape::SquarePixel;
+	return d->currentBrush().classic().shape == DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE;
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)

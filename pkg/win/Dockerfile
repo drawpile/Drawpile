@@ -20,18 +20,12 @@ RUN make download-libsodium download-qtkeychain
 RUN make -j$(nproc) libsodium qtkeychain
 
 # Add our own deps
-ADD extra-cmake-modules.mk /usr/src/mxe/src/
-RUN make extra-cmake-modules
-
-# Add Rust compiler
-# See: https://github.com/mxe/mxe/pull/2514/
-ADD rust/* /usr/src/mxe/src/
-RUN make download-rust-std
-# Need to run this twice for the target std package to download for some reason
-RUN make rust-std || make rust-std
-
-# Needed by Rust:
-RUN make dlfcn-win32
+ADD extra-cmake-modules.mk karchive.mk /usr/src/mxe/src/
+# This old Docker container seems to have issues with KDE mirror certificates.
+# MXE checksums the downloaded files though, so we can just turn off certificate
+# validation in wget without risking being given any malicious or whatever.
+RUN perl -pi -e 's/^(WGET\s*=.*)/$1 --no-check-certificate/' Makefile
+RUN make extra-cmake-modules karchive
 
 # Create the app build directory
 RUN mkdir /Build && chmod a+w /Build

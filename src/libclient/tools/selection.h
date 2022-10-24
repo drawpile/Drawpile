@@ -20,6 +20,7 @@
 #define TOOLS_SELECTION_H
 
 #include "canvas/selection.h"
+#include "drawdance/message.h"
 #include "tool.h"
 
 class QImage;
@@ -65,6 +66,7 @@ protected:
 
 private:
 	bool m_allowTransform;
+	drawdance::MessageList m_messages;
 };
 
 

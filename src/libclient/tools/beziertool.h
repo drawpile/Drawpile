@@ -20,6 +20,7 @@
 #define TOOLS_BEZIER_H
 
 #include "tool.h"
+#include "drawdance/brushengine.h"
 
 namespace tools {
 
@@ -48,6 +49,7 @@ private:
 		QPointF cp; // second control point, relative to the main point
 	};
 
+	drawdance::BrushEngine m_brushEngine;
 	QVector<ControlPoint> m_points;
 	QPointF m_beginPoint;
 	bool m_rightButton;

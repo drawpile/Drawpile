@@ -24,7 +24,6 @@
 #include "scene/canvasscene.h"
 #include "scene/annotationitem.h"
 #include "net/client.h"
-#include "net/envelopebuilder.h"
 #include "utils/icon.h"
 #include "widgets/groupedtoolbutton.h"
 
@@ -112,8 +111,8 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	// Vertical alignment options
 	QMenu *valignMenu = new QMenu(parent);
 	valignMenu->addAction(icon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM);
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER);
+	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM);
 	m_ui->valign->setIcon(valignMenu->actions().constFirst()->icon());
 	connect(valignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
 	m_ui->valign->setMenu(valignMenu);
@@ -316,7 +315,6 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 
 void AnnotationSettings::setSelectionId(uint16_t id)
 {
-
 	m_noupdate = true;
 	setUiEnabled(id>0);
 
@@ -340,11 +338,11 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 			break;
 		case 1:
 			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-center"));
-			align = rustpile::AnnotationEditMessage_FLAGS_VALIGN_CENTER;
+			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
 			break;
 		case 2:
 			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom"));
-			align = rustpile::AnnotationEditMessage_FLAGS_VALIGN_BOTTOM;
+			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM;
 			break;
 		}
 		m_ui->valign->setProperty(VALIGN_PROP, align);
@@ -392,35 +390,32 @@ void AnnotationSettings::saveChanges()
 
 	if(selected()) {
 		QString content;
-		if(m_ui->content->document()->isEmpty())
+		if(m_ui->content->document()->isEmpty()) {
 			content = QString();
-		else
+		} else {
 			content = m_ui->content->toHtml();
+		}
 
-		net::EnvelopeBuilder eb;
-		rustpile::write_editannotation(
-			eb,
-			controller()->client()->myId(),
-			selected(),
-			m_ui->btnBackground->color().rgba(),
-			(m_protectedAction->isChecked() ? rustpile::AnnotationEditMessage_FLAGS_PROTECT : 0)
-			| uint8_t(m_ui->valign->property(VALIGN_PROP).toInt()),
-			0,
-			reinterpret_cast<const uint16_t*>(content.constData()),
-			content.length()
-		);
-		controller()->client()->sendEnvelope(eb.toEnvelope());
+		net::Client *client = controller()->client();
+		uint8_t contextId = client->myId();
+		uint8_t flags =
+			(m_protectedAction->isChecked() ? DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT : 0) |
+			uint8_t(m_ui->valign->property(VALIGN_PROP).toInt());
+		client->sendMessage(drawdance::Message::makeAnnotationEdit(
+			contextId, selected(), m_ui->btnBackground->color().rgba(), flags, 0, content));
 	}
 }
 
 void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
-	const uint8_t contextId = controller()->client()->myId();
-	net::EnvelopeBuilder eb;
-	rustpile::write_undopoint(eb, contextId);
-	rustpile::write_deleteannotation(eb, contextId, selected());
-	controller()->client()->sendEnvelope(eb.toEnvelope());
+	net::Client *client = controller()->client();
+	uint8_t contextId = client->myId();
+	drawdance::Message messages[] = {
+		drawdance::Message::makeUndoPoint(contextId),
+		drawdance::Message::makeAnnotationDelete(contextId, selected()),
+	};
+	client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 }
 
 void AnnotationSettings::bake()
@@ -432,18 +427,18 @@ void AnnotationSettings::bake()
 		return;
 	}
 
-	const QImage img = a->toImage();
-
-	const uint8_t contextId = controller()->client()->myId();
-	const int layer = controller()->activeLayer();
-
-	const QRect rect = a->rect().toRect();
-
-	net::EnvelopeBuilder eb;
-	rustpile::write_undopoint(eb, contextId);
-	rustpile::write_deleteannotation(eb, contextId, selected());
-	eb.buildPutQImage(contextId, layer, rect.x(), rect.y(), img, rustpile::Blendmode::Normal);
-	controller()->client()->sendEnvelope(eb.toEnvelope());
+	net::Client *client = controller()->client();
+	uint8_t contextId = client->myId();
+	int layer = controller()->activeLayer();
+	QRect rect = a->rect().toRect();
+	QImage img = a->toImage();
+	drawdance::MessageList msgs = {
+		drawdance::Message::makeUndoPoint(contextId),
+		drawdance::Message::makeAnnotationDelete(contextId, selected()),
+	};
+	drawdance::Message::makePutImages(
+		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img);
+	client->sendMessages(msgs.count(), msgs.data());
 }
 
 }

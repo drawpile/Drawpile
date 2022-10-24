@@ -17,42 +17,33 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern "C" {
+#include <dpengine/layer_routes.h>
+#include <dpengine/paint_engine.h>
+#include <dpengine/recorder.h>
+#include <dpengine/tile.h>
+#include <dpmsg/msg_internal.h>
+}
+
 #include "paintengine.h"
-#include "../../rustpile/rustpile.h"
+#include "drawdance/layercontent.h"
+#include "drawdance/layerpropslist.h"
+#include "drawdance/message.h"
 
 #include <QPainter>
-
-namespace {
-static const int TILE_SIZE = 64; // FIXME
-
-static void updateCacheTile(void *p, int x, int y, const uchar *pixels)
-{
-	((QPainter*)p)->drawImage(
-			x,
-			y,
-			QImage(pixels,
-				TILE_SIZE, TILE_SIZE,
-				QImage::Format_ARGB32_Premultiplied
-			)
-	);
-}
-
-}
+#include <QSet>
+#include <QTimer>
+#include <QtEndian>
 
 namespace canvas {
 
+/*
 // Callback: notify the view that an area on the canvas is in need of refresh.
 // Refreshing is lazy: if that area is not visible at the moment, it doesn't
 // need to be repainted now.
 void paintEngineAreaChanged(void *pe, rustpile::Rectangle area)
 {
 	emit reinterpret_cast<PaintEngine*>(pe)->areaChanged(QRect(area.x, area.y, area.w, area.h));
-}
-
-// Callback: notify the view that the canvas size has changed.
-void paintEngineResized(void *pe, int xoffset, int yoffset, rustpile::Size oldSize)
-{
-	emit reinterpret_cast<PaintEngine*>(pe)->resized(xoffset, yoffset, QSize{oldSize.width, oldSize.height});
 }
 
 void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, uintptr_t count)
@@ -122,161 +113,343 @@ void paintEnginePlayback(void *pe, int64_t pos, uint32_t interval)
 {
 	emit reinterpret_cast<PaintEngine*>(pe)->playbackAt(pos, interval);
 }
-
-void paintEngineCatchup(void *pe, uint32_t progress)
-{
-	emit reinterpret_cast<PaintEngine*>(pe)->caughtUpTo(progress);
-}
+*/
 
 PaintEngine::PaintEngine(QObject *parent)
-	: QObject(parent), m_pe(nullptr)
+	: QObject(parent)
+	, m_acls{}
+	, m_snapshotQueue{5, 10000} // TODO: make these configurable
+	, m_paintEngine{m_acls, m_snapshotQueue}
+	, m_timerId{0}
+	, m_changedTileBounds{}
+	, m_lastRefreshAreaTileBounds{}
+	, m_lastRefreshAreaTileBoundsTouched{false}
+	, m_cache{}
+	, m_painter{}
+	, m_painterMutex{}
+	, m_sampleColorLastDiameter(-1)
 {
-	reset();
+	start();
 }
 
 PaintEngine::~PaintEngine()
 {
-	rustpile::paintengine_free(m_pe);
 }
 
-void PaintEngine::reset()
+void PaintEngine::start()
 {
-	rustpile::paintengine_free(m_pe);
-	m_pe = rustpile::paintengine_new(
-		this,
-		paintEngineAreaChanged,
-		paintEngineResized,
-		paintEngineLayersChanged,
-		paintEngineAnnotationsChanged,
-		paintEngineCursors,
-		paintEnginePlayback,
-		paintEngineCatchup,
-		paintEngineMetadataChanged,
-		paintEngineTimelineChanged,
-		paintEngineFrameVisbilityChanged
-	);
-
-	m_cache = QPixmap();
+	// TODO make this configurable
+	m_timerId = startTimer(1000 / 60, Qt::PreciseTimer);
 }
 
-void PaintEngine::receiveMessages(bool local, const net::Envelope &msgs)
+void PaintEngine::reset(const drawdance::CanvasState &canvasState)
 {
-	if(!rustpile::paintengine_receive_messages(m_pe, local, msgs.data(), msgs.length()))
-		emit enginePanicked();
+	if(m_timerId != 0) {
+		killTimer(m_timerId);
+	}
+	m_paintEngine.reset(m_acls, m_snapshotQueue, canvasState);
+	m_cache = QPixmap{};
+	m_lastRefreshAreaTileBounds = QRect{};
+	m_lastRefreshAreaTileBoundsTouched = false;
+	start();
+	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK);
+}
+
+void PaintEngine::timerEvent(QTimerEvent *)
+{
+	m_changedTileBounds = QRect{};
+	DP_paint_engine_tick(
+		m_paintEngine.get(), &PaintEngine::onCatchup,
+		&PaintEngine::onRecorderStateChanged, &PaintEngine::onResized,
+		&PaintEngine::onTileChanged, &PaintEngine::onLayerPropsChanged,
+		&PaintEngine::onAnnotationsChanged,
+		&PaintEngine::onDocumentMetadataChanged,
+		&PaintEngine::onTimelineChanged,
+		&PaintEngine::onCursorMoved, this);
+
+	if(m_changedTileBounds.isValid()) {
+		QRect changedArea{
+			m_changedTileBounds.x() * DP_TILE_SIZE,
+			m_changedTileBounds.y() * DP_TILE_SIZE,
+			m_changedTileBounds.width() * DP_TILE_SIZE,
+			m_changedTileBounds.height() * DP_TILE_SIZE};
+		emit areaChanged(changedArea);
+	}
+}
+
+int PaintEngine::receiveMessages(bool local, int count, const drawdance::Message *msgs)
+{
+	return DP_paint_engine_handle_inc(m_paintEngine.get(), local, count,
+		drawdance::Message::asRawMessages(msgs), &PaintEngine::onAclsChanged,
+		&PaintEngine::onLaserTrail, &PaintEngine::onMovePointer,
+		&PaintEngine::onDefaultLayer, this);
+}
+
+void PaintEngine::enqueueReset()
+{
+	drawdance::Message msg = drawdance::Message::makeInternalReset(0);
+	receiveMessages(false, 1, &msg);
+}
+
+void PaintEngine::enqueueLoadBlank(const QSize &size, const QColor &backgroundColor)
+{
+	drawdance::Message messages[] = {
+		drawdance::Message::makeInternalReset(0),
+		drawdance::Message::makeCanvasBackground(0, backgroundColor),
+		drawdance::Message::makeCanvasResize(0, 0, size.width(), size.height(), 0),
+		drawdance::Message::makeLayerCreate(0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
+		drawdance::Message::makeInternalSnapshot(0),
+	};
+	receiveMessages(false, DP_ARRAY_LENGTH(messages), messages);
 }
 
 void PaintEngine::enqueueCatchupProgress(int progress)
 {
-	if(!rustpile::paintengine_enqueue_catchup(m_pe, progress))
-		emit enginePanicked();
+	drawdance::Message msg = drawdance::Message::makeInternalCatchup(0, progress);
+	receiveMessages(false, 1, &msg);
+}
+
+void PaintEngine::resetAcl(uint8_t localUserId)
+{
+	m_acls.reset(localUserId);
+	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK);
 }
 
 void PaintEngine::cleanup()
 {
-	rustpile::paintengine_cleanup(m_pe);
+	drawdance::Message msg = drawdance::Message::makeInternalCleanup(0);
+	receiveMessages(false, 1, &msg);
 }
 
 QColor PaintEngine::backgroundColor() const
 {
-	const auto c = rustpile::paintengine_background_color(m_pe);
-	return QColor::fromRgbF(c.r, c.g, c.b, c.a);
+	DP_Pixel15 pixel;
+	if (canvasState().backgroundTile().samePixel(&pixel)) {
+		DP_UPixelFloat color = DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
+		return QColor::fromRgbF(color.r, color.g, color.b, color.a);
+	} else {
+		return Qt::transparent;
+	}
 }
 
 uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
 {
-	return rustpile::paintengine_get_available_annotation_id(m_pe, forUser);
+	QSet<int> usedIds;
+	int idMask = forUser << 8;
+	drawdance::AnnotationList annotations = canvasState().annotations();
+	int count = annotations.count();
+	for(int i = 0; i < count; ++i) {
+		int id = annotations.at(i).id();
+		if((id & 0xff00) == idMask) {
+			usedIds.insert(id & 0xff);
+		}
+	}
+
+	for(int i = 0; i < 256; ++i) {
+		if(!usedIds.contains(i)) {
+			return idMask | i;
+		}
+	}
+
+	qWarning("No available annotation id for user %d", forUser);
+	return 0;
 }
 
-rustpile::AnnotationAt PaintEngine::getAnnotationAt(int x, int y, int expand) const
+drawdance::Annotation PaintEngine::getAnnotationAt(int x, int y, int expand) const
 {
-	return rustpile::paintengine_get_annotation_at(m_pe, x, y, expand);
+	QPoint point{x, y};
+	QMargins margins{expand, expand, expand, expand};
+
+	drawdance::AnnotationList annotations = canvasState().annotations();
+	int count = annotations.count();
+	int closestIndex = -1;
+	int closestDistance = INT_MAX;
+
+	for(int i = 0; i < count; ++i) {
+		drawdance::Annotation annotation = annotations.at(i);
+		QRect bounds = annotation.bounds().marginsAdded(margins);
+		if(bounds.contains(point)) {
+			int distance = (point - bounds.center()).manhattanLength();
+			if(closestIndex == -1 || distance < closestDistance) {
+				closestIndex = i;
+				closestDistance = distance;
+			}
+		}
+	}
+
+	return closestIndex == -1 ? drawdance::Annotation::null() : annotations.at(closestIndex);
 }
 
 bool PaintEngine::needsOpenRaster() const
 {
-	return !rustpile::paintengine_is_simple(m_pe);
+	drawdance::CanvasState cs = canvasState();
+	return cs.backgroundTile().isNull() && cs.layers().count() > 1 && cs.annotations().count() != 0;
 }
 
-void PaintEngine::setViewMode(rustpile::LayerViewMode mode, bool censor)
+void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)
 {
-	rustpile::paintengine_set_view_mode(m_pe, mode, censor);
+	m_paintEngine.setLocalDrawingInProgress(localDrawingInProgress);
+}
+
+void PaintEngine::setLayerVisibility(int layerId, bool hidden)
+{
+	m_paintEngine.setLayerVisibility(layerId, hidden);
+}
+
+void PaintEngine::setViewMode(DP_LayerViewMode mode, bool censor)
+{
+	m_paintEngine.setViewMode(mode);
+	m_paintEngine.setRevealCensored(!censor);
 }
 
 bool PaintEngine::isCensored() const
 {
-	return rustpile::paintengine_is_censored(m_pe);
+	return m_paintEngine.revealCensored();
 }
 
 void PaintEngine::setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint)
 {
-	rustpile::paintengine_set_onionskin_opts(m_pe, skinsBelow, skinsAbove, tint);
+	// rustpile::paintengine_set_onionskin_opts(m_pe, skinsBelow, skinsAbove, tint);
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
 }
 
 void PaintEngine::setViewLayer(int id)
 {
-	rustpile::paintengine_set_active_layer(m_pe, id);
+	m_paintEngine.setActiveLayerId(id);
 }
 
 void PaintEngine::setViewFrame(int frame)
 {
-	rustpile::paintengine_set_active_frame(m_pe, frame);
+	m_paintEngine.setActiveFrameIndex(frame);
 }
 
-const QPixmap& PaintEngine::getPixmap(const QRect &refreshArea)
+void PaintEngine::setInspectContextId(unsigned int contextId)
 {
-	const auto size = this->size();
-	if(size.isEmpty())
-		return m_cache;
+	m_paintEngine.setInspectContextId(contextId);
+}
 
-	if(m_cache.isNull() || m_cache.size() != size) {
-		m_cache = QPixmap(size);
-		m_cache.fill();
+QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
+{
+	drawdance::LayerContent lc = layerId == 0
+		? m_paintEngine.renderContent()
+		: canvasState().searchLayerContent(layerId);
+	if(lc.isNull()) {
+		return Qt::transparent;
+	} else {
+		return lc.sampleColorAt(m_sampleColorStampBuffer, x, y, diameter, m_sampleColorLastDiameter);
 	}
+}
 
-	const rustpile::Rectangle r {
-		refreshArea.x(),
-		refreshArea.y(),
-		refreshArea.width(),
-		refreshArea.height()
-	};
+drawdance::RecordStartResult PaintEngine::startRecording(const QString &path)
+{
+	return m_paintEngine.startRecorder(path);
+}
 
-	QPainter painter(&m_cache);
-	painter.setCompositionMode(QPainter::CompositionMode_Source);
+bool PaintEngine::stopRecording()
+{
+	return m_paintEngine.stopRecorder();
+}
 
-	rustpile::paintengine_paint_changes(m_pe, &painter, r, &updateCacheTile);
+bool PaintEngine::isRecording() const
+{
+	return m_paintEngine.recorderIsRecording();
+}
 
+void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mask)
+{
+	m_paintEngine.previewCut(layerId, bounds, mask);
+}
+
+void PaintEngine::previewDabs(int layerId, const drawdance::MessageList &msgs)
+{
+	m_paintEngine.previewDabs(layerId, msgs.count(), msgs.constData());
+}
+
+void PaintEngine::clearPreview()
+{
+	m_paintEngine.clearPreview();
+}
+
+const QPixmap &PaintEngine::getPixmapView(const QRect &refreshArea)
+{
+	QRect refreshAreaTileBounds{
+		QPoint{refreshArea.left() / DP_TILE_SIZE, refreshArea.top() / DP_TILE_SIZE},
+		QPoint{refreshArea.right() / DP_TILE_SIZE, refreshArea.bottom() / DP_TILE_SIZE}};
+	if(refreshAreaTileBounds == m_lastRefreshAreaTileBounds) {
+		if(m_lastRefreshAreaTileBoundsTouched) {
+			renderTileBounds(refreshAreaTileBounds);
+			m_lastRefreshAreaTileBoundsTouched = false;
+		}
+	} else {
+		renderTileBounds(refreshAreaTileBounds);
+		m_lastRefreshAreaTileBounds = refreshAreaTileBounds;
+		m_lastRefreshAreaTileBoundsTouched = false;
+	}
 	return m_cache;
+}
+
+const QPixmap &PaintEngine::getPixmap()
+{
+	renderEverything();
+	m_lastRefreshAreaTileBoundsTouched = false;
+	return m_cache;
+}
+
+void PaintEngine::renderTileBounds(const QRect &tileBounds)
+{
+	DP_PaintEngine *pe = m_paintEngine.get();
+	DP_paint_engine_prepare_render(pe, &PaintEngine::onRenderSize, this);
+	if(!m_cache.isNull() && m_painter.begin(&m_cache)) {
+		m_painter.setCompositionMode(QPainter::CompositionMode_Source);
+		DP_paint_engine_render_tile_bounds(
+			pe, tileBounds.left(), tileBounds.top(), tileBounds.right(),
+			tileBounds.bottom(), &PaintEngine::onRenderTile, this);
+		m_painter.end();
+	}
+}
+
+void PaintEngine::renderEverything()
+{
+	DP_PaintEngine *pe = m_paintEngine.get();
+	DP_paint_engine_prepare_render(pe, &PaintEngine::onRenderSize, this);
+	if(!m_cache.isNull() && m_painter.begin(&m_cache)) {
+		m_painter.setCompositionMode(QPainter::CompositionMode_Source);
+		DP_paint_engine_render_everything(pe, &PaintEngine::onRenderTile, this);
+		m_painter.end();
+	}
 }
 
 int PaintEngine::frameCount() const
 {
-	return rustpile::paintengine_get_frame_count(m_pe);
+	drawdance::CanvasState cs = canvasState();
+	if(cs.documentMetadata().useTimeline()) {
+		return cs.timeline().frameCount();
+	} else {
+		return cs.layers().count();
+	}
 }
 
 QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 {
-	rustpile::Rectangle r;
-	if(rect.isEmpty()) {
-		r = rustpile::paintengine_get_layer_bounds(m_pe, id);
-		if(r.w <= 0)
-			return QImage();
+	drawdance::CanvasState cs = canvasState();
+	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
+	if (area.isEmpty()) {
+		return QImage{};
+	}
 
+	if(id <= 0) {
+		bool includeBackground = id == 0;
+		// TODO: flatten only the given rect, rather than cropping afterwards.
+		return cs.toFlatImage(includeBackground).copy(area);
 	} else {
-		r = {rect.x(), rect.y(), rect.width(), rect.height()};
+		drawdance::LayerContent layerContent = cs.searchLayerContent(id);
+		return layerContent.isNull() ? QImage{} : layerContent.toImage(area);
 	}
-
-	QImage img(r.w, r.h, QImage::Format_ARGB32_Premultiplied);
-	img.fill(0);
-
-	if(!rustpile::paintengine_get_layer_content(m_pe, id, r, img.bits())) {
-		return QImage();
-	}
-
-	return img;
 }
 
 QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 {
+	/*
 	rustpile::Rectangle r;
 	if(rect.isEmpty()) {
 		const auto size = rustpile::paintengine_canvas_size(m_pe);
@@ -292,12 +465,115 @@ QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 	}
 
 	return img;
+	*/
+	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	return QImage{};
 }
 
-QSize PaintEngine::size() const
+
+void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)
 {
-	const auto size = rustpile::paintengine_canvas_size(m_pe);
-	return QSize(size.width, size.height);
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->aclsChanged(pe->m_acls, aclChangeFlags);
 }
+
+void PaintEngine::onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->laserTrail(contextId, persistence, color);
+}
+
+void PaintEngine::onMovePointer(void *user, unsigned int contextId, int x, int y)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->cursorMoved(contextId, 0, x, y);
+}
+
+void PaintEngine::onDefaultLayer(void *user, int layerId)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->defaultLayer(layerId);
+}
+
+void PaintEngine::onCatchup(void *user, int progress)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->caughtUpTo(progress);
+}
+
+void PaintEngine::onRecorderStateChanged(void *user, bool started)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->recorderStateChanged(started);
+}
+
+void PaintEngine::onResized(void *user, int offsetX, int offsetY, int prevWidth, int prevHeight)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	pe->resized(offsetX, offsetY, QSize{prevWidth, prevHeight});
+}
+
+void PaintEngine::onTileChanged(void *user, int x, int y)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	pe->m_changedTileBounds |= QRect{x, y, 1, 1};
+	if(!pe->m_lastRefreshAreaTileBoundsTouched && pe->m_lastRefreshAreaTileBounds.contains(x, y)) {
+		pe->m_lastRefreshAreaTileBoundsTouched = true;
+	}
+}
+
+void PaintEngine::onLayerPropsChanged(void *user, DP_LayerPropsList *lpl)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->layersChanged(drawdance::LayerPropsList::inc(lpl));
+}
+
+void PaintEngine::onAnnotationsChanged(void *user, DP_AnnotationList *al)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->annotationsChanged(drawdance::AnnotationList::inc(al));
+}
+
+void PaintEngine::onDocumentMetadataChanged(void *user, DP_DocumentMetadata *dm)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->documentMetadataChanged(drawdance::DocumentMetadata::inc(dm));
+}
+
+void PaintEngine::onTimelineChanged(void *user, DP_Timeline *tl)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->timelineChanged(drawdance::Timeline::inc(tl));
+}
+
+void PaintEngine::onCursorMoved(void *user, unsigned int contextId, int layerId, int x, int y)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->cursorMoved(contextId, layerId, x, y);
+}
+
+void PaintEngine::onRenderSize(void *user, int width, int height)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	QSize size{width, height};
+	if(pe->m_cache.size() != size) {
+		pe->m_cache = QPixmap{size};
+	}
+}
+
+void PaintEngine::onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int threadIndex)
+{
+	// My initial idea was to use an array of QPainters to spew pixels into the
+	// pixmap in parallel, but Qt doesn't support multiple painters on a single
+	// pixmap. So we have to use a single painter and lock its usage instead.
+	Q_UNUSED(threadIndex);
+	QImage image{
+		reinterpret_cast<unsigned char *>(pixels), DP_TILE_SIZE, DP_TILE_SIZE,
+		QImage::Format_ARGB32_Premultiplied};
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	QMutexLocker lock{&pe->m_painterMutex};
+	pe->m_painter.drawImage(x * DP_TILE_SIZE, y * DP_TILE_SIZE, image);
+}
+
 
 }
