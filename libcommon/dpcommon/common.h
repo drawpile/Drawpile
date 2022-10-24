@@ -19,11 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-#if defined(__cplusplus) && !defined(DP_INSIDE_EXTERN_C)
-#   error "Thwarted attempt to include Drawdance header without extern C"
-#endif
-
 #ifndef DPCOMMON_COMMON_H
 #define DPCOMMON_COMMON_H
 #include <assert.h>   // IWYU pragma: export
