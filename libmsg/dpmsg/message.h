@@ -64,6 +64,8 @@ void *DP_message_cast2(DP_Message *msg, DP_MessageType type1,
 void *DP_message_cast3(DP_Message *msg, DP_MessageType type1,
                        DP_MessageType type2, DP_MessageType type3);
 
+size_t DP_message_length(DP_Message *msg);
+
 size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
                             DP_GetMessageBufferFn get_buffer,
                             void *user) DP_MUST_CHECK;
