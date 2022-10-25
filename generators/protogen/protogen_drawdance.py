@@ -66,6 +66,9 @@ class DrawdanceFieldType:
     def array_assign(self, f, subject):
         return None
 
+    def array_check(self, f, subject):
+        return None
+
 
 class DrawdancePlainFieldType(DrawdanceFieldType):
     def __init__(
@@ -241,6 +244,9 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_count"
         return f"set_{f.name}({a_count}, {a}, {f.name}_user)"
+
+    def array_check(self, f, subject):
+        return f"set_{f.name}"
 
 
 class DrawdanceStringFieldType(DrawdanceFieldType):
@@ -777,6 +783,9 @@ class DrawdanceField:
 
     def array_assign(self, subject):
         return self.type.array_assign(self, subject)
+
+    def array_check(self, subject):
+        return self.type.array_check(self, subject)
 
     def offset_expr(self, subject):
         return self.type.offset_expr(self, subject)

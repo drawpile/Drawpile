@@ -958,8 +958,10 @@ DP_Message *DP_msg_join_new(unsigned int context_id, uint8_t flags,
     mj->name_len = DP_size_to_uint16(name_len);
     assign_string(((char *)mj->name_avatar), name_value, mj->name_len);
     mj->avatar_count = DP_size_to_uint16(avatar_count);
-    set_avatar(mj->avatar_count, mj->name_avatar + mj->name_len + 1,
-               avatar_user);
+    if (set_avatar) {
+        set_avatar(mj->avatar_count, mj->name_avatar + mj->name_len + 1,
+                   avatar_user);
+    }
     return msg;
 }
 
@@ -1103,7 +1105,9 @@ DP_Message *DP_msg_session_owner_new(unsigned int context_id,
         DP_FLEX_SIZEOF(DP_MsgSessionOwner, users, DP_int_to_size(users_count)));
     DP_MsgSessionOwner *mso = DP_message_internal(msg);
     mso->users_count = DP_int_to_uint16(users_count);
-    set_users(mso->users_count, mso->users, users_user);
+    if (set_users) {
+        set_users(mso->users_count, mso->users, users_user);
+    }
     return msg;
 }
 
@@ -1345,7 +1349,9 @@ DP_Message *DP_msg_trusted_users_new(unsigned int context_id,
         DP_FLEX_SIZEOF(DP_MsgTrustedUsers, users, DP_int_to_size(users_count)));
     DP_MsgTrustedUsers *mtu = DP_message_internal(msg);
     mtu->users_count = DP_int_to_uint16(users_count);
-    set_users(mtu->users_count, mtu->users, users_user);
+    if (set_users) {
+        set_users(mtu->users_count, mtu->users, users_user);
+    }
     return msg;
 }
 
@@ -1958,7 +1964,9 @@ DP_Message *DP_msg_user_acl_new(unsigned int context_id,
         DP_FLEX_SIZEOF(DP_MsgUserAcl, users, DP_int_to_size(users_count)));
     DP_MsgUserAcl *mua = DP_message_internal(msg);
     mua->users_count = DP_int_to_uint16(users_count);
-    set_users(mua->users_count, mua->users, users_user);
+    if (set_users) {
+        set_users(mua->users_count, mua->users, users_user);
+    }
     return msg;
 }
 
@@ -2069,7 +2077,9 @@ DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint16_t id,
     mla->id = id;
     mla->flags = flags;
     mla->exclusive_count = DP_int_to_uint16(exclusive_count);
-    set_exclusive(mla->exclusive_count, mla->exclusive, exclusive_user);
+    if (set_exclusive) {
+        set_exclusive(mla->exclusive_count, mla->exclusive, exclusive_user);
+    }
     return msg;
 }
 
@@ -2187,8 +2197,10 @@ DP_Message *DP_msg_feature_access_levels_new(
                                       DP_int_to_size(feature_tiers_count)));
     DP_MsgFeatureAccessLevels *mfal = DP_message_internal(msg);
     mfal->feature_tiers_count = DP_int_to_uint16(feature_tiers_count);
-    set_feature_tiers(mfal->feature_tiers_count, mfal->feature_tiers,
-                      feature_tiers_user);
+    if (set_feature_tiers) {
+        set_feature_tiers(mfal->feature_tiers_count, mfal->feature_tiers,
+                          feature_tiers_user);
+    }
     return msg;
 }
 
@@ -2371,7 +2383,9 @@ DP_Message *DP_msg_filtered_new(unsigned int context_id,
                        DP_FLEX_SIZEOF(DP_MsgFiltered, message, message_count));
     DP_MsgFiltered *mf = DP_message_internal(msg);
     mf->message_count = DP_size_to_uint16(message_count);
-    set_message(mf->message_count, mf->message, message_user);
+    if (set_message) {
+        set_message(mf->message_count, mf->message, message_user);
+    }
     return msg;
 }
 
@@ -3038,7 +3052,9 @@ DP_Message *DP_msg_layer_order_new(unsigned int context_id, uint16_t root,
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
     mlo->root = root;
     mlo->layers_count = DP_int_to_uint16(layers_count);
-    set_layers(mlo->layers_count, mlo->layers, layers_user);
+    if (set_layers) {
+        set_layers(mlo->layers_count, mlo->layers, layers_user);
+    }
     return msg;
 }
 
@@ -3370,7 +3386,9 @@ DP_msg_put_image_new(unsigned int context_id, uint16_t layer, uint8_t mode,
     mpi->w = w;
     mpi->h = h;
     mpi->image_count = DP_size_to_uint16(image_count);
-    set_image(mpi->image_count, mpi->image, image_user);
+    if (set_image) {
+        set_image(mpi->image_count, mpi->image, image_user);
+    }
     return msg;
 }
 
@@ -4248,7 +4266,9 @@ DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
     mmr->x4 = x4;
     mmr->y4 = y4;
     mmr->mask_count = DP_size_to_uint16(mask_count);
-    set_mask(mmr->mask_count, mmr->mask, mask_user);
+    if (set_mask) {
+        set_mask(mmr->mask_count, mmr->mask, mask_user);
+    }
     return msg;
 }
 
@@ -4469,7 +4489,9 @@ DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint16_t layer,
     mpt->row = row;
     mpt->repeat = repeat;
     mpt->image_count = DP_size_to_uint16(image_count);
-    set_image(mpt->image_count, mpt->image, image_user);
+    if (set_image) {
+        set_image(mpt->image_count, mpt->image, image_user);
+    }
     return msg;
 }
 
@@ -4612,7 +4634,9 @@ DP_msg_canvas_background_new(unsigned int context_id,
         DP_FLEX_SIZEOF(DP_MsgCanvasBackground, image, image_count));
     DP_MsgCanvasBackground *mcb = DP_message_internal(msg);
     mcb->image_count = DP_size_to_uint16(image_count);
-    set_image(mcb->image_count, mcb->image, image_user);
+    if (set_image) {
+        set_image(mcb->image_count, mcb->image, image_user);
+    }
     return msg;
 }
 
@@ -5707,7 +5731,9 @@ DP_msg_move_rect_new(unsigned int context_id, uint16_t layer, int32_t sx,
     mmr->w = w;
     mmr->h = h;
     mmr->mask_count = DP_size_to_uint16(mask_count);
-    set_mask(mmr->mask_count, mmr->mask, mask_user);
+    if (set_mask) {
+        set_mask(mmr->mask_count, mmr->mask, mask_user);
+    }
     return msg;
 }
 
@@ -6088,7 +6114,9 @@ DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
     mstf->frame = frame;
     mstf->insert = insert;
     mstf->layers_count = DP_int_to_uint16(layers_count);
-    set_layers(mstf->layers_count, mstf->layers, layers_user);
+    if (set_layers) {
+        set_layers(mstf->layers_count, mstf->layers, layers_user);
+    }
     return msg;
 }
 

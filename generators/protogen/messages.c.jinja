@@ -484,7 +484,14 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
                 {{ f.assign(message.param_name) }};
                 {% set array_assign = f.array_assign(message.param_name) %}
                 {% if array_assign %}
-                    {{ array_assign }};
+                    {% set array_check = f.array_check(message.param_name) %}
+                    {% if array_check %}
+                        if ({{ array_check }}) {
+                            {{ array_assign }};
+                        }
+                    {% else %}
+                        {{ array_assign }};
+                    {% endif %}
                 {% endif %}
             {% endfor %}
             return msg;
