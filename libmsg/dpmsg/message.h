@@ -41,7 +41,11 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
 
 DP_Message *DP_message_incref(DP_Message *msg);
 
+DP_Message *DP_message_incref_nullable(DP_Message *msg_or_null);
+
 void DP_message_decref(DP_Message *msg);
+
+void DP_message_decref_nullable(DP_Message *msg_or_null);
 
 int DP_message_refcount(DP_Message *msg);
 

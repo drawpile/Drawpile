@@ -68,12 +68,24 @@ DP_Message *DP_message_incref(DP_Message *msg)
     return msg;
 }
 
+DP_Message *DP_message_incref_nullable(DP_Message *msg_or_null)
+{
+    return msg_or_null ? DP_message_incref(msg_or_null) : NULL;
+}
+
 void DP_message_decref(DP_Message *msg)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     if (DP_atomic_dec(&msg->refcount)) {
         DP_free(msg);
+    }
+}
+
+void DP_message_decref_nullable(DP_Message *msg_or_null)
+{
+    if (msg_or_null) {
+        DP_message_decref(msg_or_null);
     }
 }
 
