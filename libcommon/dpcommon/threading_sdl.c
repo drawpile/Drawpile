@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "atomic.h"
 #include "common.h"
 #include "conversions.h"
 #include "threading.h"
@@ -190,55 +191,64 @@ void DP_thread_free_join(DP_Thread *thread)
 }
 
 
-static void SDLCALL tls_destroy(void *data)
+typedef struct DP_SdlErrorState {
+    unsigned int count;
+    size_t buffer_size;
+    char *buffer;
+} DP_SdlErrorState;
+
+static void SDLCALL free_sdl_errror_state(void *arg)
 {
-    struct DP_TlsValue *tv = data;
-    void (*destructor)(void *) = tv->destructor;
-    if (destructor) {
-        destructor(tv->value);
-    }
-    DP_free(tv);
+    DP_SdlErrorState *error = arg;
+    DP_free(error->buffer);
+    DP_free(error);
 }
 
-DP_TlsKey DP_tls_create(void (*destructor)(void *))
+static DP_SdlErrorState *get_sdl_error_state(void)
 {
-    SDL_TLSID id = SDL_TLSCreate();
-    if (id == DP_TLS_UNDEFINED) {
-        DP_panic("Error creating thread-local key: %s", SDL_GetError());
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
+    static SDL_TLSID key;
+
+    if (key == 0) {
+        DP_atomic_lock(&lock);
+        if (key == 0) {
+            key = SDL_TLSCreate();
+            if (key == 0) {
+                DP_panic("Error creating thread-local key: %s", SDL_GetError());
+            }
+        }
+        DP_atomic_unlock(&lock);
     }
 
-    struct DP_TlsValue *tv = DP_malloc(sizeof(*tv));
-    *tv = (struct DP_TlsValue){NULL, destructor};
-    if (SDL_TLSSet(id, tv, tls_destroy) != 0) {
-        DP_panic("Error initializing thread-local key: %s", SDL_GetError());
+    DP_SdlErrorState *state = SDL_TLSGet(key);
+    if (!state) {
+        state = DP_malloc(sizeof(*state));
+        *state =
+            (DP_SdlErrorState){0, DP_ERROR_STATE_INITIAL_BUFFER_SIZE,
+                               DP_malloc(DP_ERROR_STATE_INITIAL_BUFFER_SIZE)};
+
+        if (SDL_TLSSet(key, state, free_sdl_errror_state) != 0) {
+            DP_panic("Error initializing thread-local key: %s", SDL_GetError());
+        }
     }
 
-    return id;
+    return state;
 }
 
-void *DP_tls_get(DP_TlsKey key)
+static DP_ErrorState to_error_state(DP_SdlErrorState *state)
 {
-    DP_ASSERT(key != DP_TLS_UNDEFINED);
-    SDL_TLSID id = key;
-    struct DP_TlsValue *tv = SDL_TLSGet(id);
-    if (tv) {
-        return tv->value;
-    }
-    else {
-        DP_panic("Error getting thread-local %u: %s", key, SDL_GetError());
-    }
+    return (DP_ErrorState){&state->count, state->buffer_size, state->buffer};
 }
 
-void DP_tls_set(DP_TlsKey key, void *value)
+DP_ErrorState DP_thread_error_state_get(void)
 {
-    DP_ASSERT(key != DP_TLS_UNDEFINED);
-    SDL_TLSID id = key;
-    struct DP_TlsValue *tv = SDL_TLSGet(id);
-    if (tv) {
-        tv->value = value;
-    }
-    else {
-        DP_panic("Error setting thread-local %u = %p: %s", key, value,
-                 SDL_GetError());
-    }
+    return to_error_state(get_sdl_error_state());
+}
+
+DP_ErrorState DP_thread_error_state_resize(size_t new_size)
+{
+    DP_SdlErrorState *state = get_sdl_error_state();
+    state->buffer_size = new_size;
+    state->buffer = DP_realloc(state->buffer, new_size);
+    return to_error_state(state);
 }

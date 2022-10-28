@@ -184,99 +184,52 @@ slurp_close:
 }
 
 
-DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(error_tls_lock);
-static DP_TlsKey error_tls = DP_TLS_UNDEFINED;
-
-typedef struct DP_ErrorState {
-    unsigned int count;
-    size_t buffer_size;
-    char *buffer;
-} DP_ErrorState;
-
-static DP_ErrorState *get_error_state(void)
-{
-    return error_tls == DP_TLS_UNDEFINED ? NULL : DP_tls_get(error_tls);
-}
-
-static void free_error_buffer(void *arg)
-{
-    DP_ErrorState *error = arg;
-    DP_free(error->buffer);
-    DP_free(error);
-}
-
-static DP_ErrorState *init_error_buffer(void)
-{
-    DP_ErrorState *error = DP_malloc(sizeof(*error));
-    *error = (DP_ErrorState){0, 0, NULL};
-
-    if (error_tls == DP_TLS_UNDEFINED) {
-        DP_atomic_lock(&error_tls_lock);
-        if (error_tls == DP_TLS_UNDEFINED) {
-            error_tls = DP_tls_create(free_error_buffer);
-        }
-        DP_atomic_unlock(&error_tls_lock);
-    }
-    DP_tls_set(error_tls, error);
-
-    return error;
-}
-
-static DP_ErrorState *get_or_init_error_buffer(void)
-{
-    DP_ErrorState *error = get_error_state();
-    return error ? error : init_error_buffer();
-}
-
-
 const char *DP_error(void)
 {
-    DP_ErrorState *error = get_error_state();
-    return error ? error->buffer : NULL;
+    DP_ErrorState error = DP_thread_error_state_get();
+    return error.buffer;
 }
 
 const char *DP_error_since(unsigned int count)
 {
-    DP_ErrorState *error = get_error_state();
-    return error && count != error->count ? error->buffer : NULL;
+    DP_ErrorState error = DP_thread_error_state_get();
+    return count != *error.count ? error.buffer : NULL;
 }
 
 void DP_error_set(const char *fmt, ...)
 {
-    DP_ErrorState *error = get_or_init_error_buffer();
-    ++error->count;
+    DP_ErrorState error = DP_thread_error_state_get();
+    ++*error.count;
 
     va_list ap;
     va_start(ap, fmt);
-    int length = vsnprintf(error->buffer, error->buffer_size, fmt, ap);
+    int length = vsnprintf(error.buffer, error.buffer_size, fmt, ap);
     va_end(ap);
 
     if (length >= 0) {
         size_t size = DP_int_to_size(length) + 1u;
-        if (size > error->buffer_size) {
-            error->buffer = DP_realloc(error->buffer, size);
-            error->buffer_size = size;
-
+        if (size > error.buffer_size) {
+            error = DP_thread_error_state_resize(size);
             va_start(ap, fmt);
-            vsnprintf(error->buffer, error->buffer_size, fmt, ap);
+            vsnprintf(error.buffer, error.buffer_size, fmt, ap);
             va_end(ap);
         }
     }
 
-    DP_debug("Set error %u: %s", error->count,
-             error->buffer ? error->buffer : "");
+    DP_debug("Set error %u: %s", *error.count,
+             error.buffer ? error.buffer : "");
 }
 
 unsigned int DP_error_count(void)
 {
-    DP_ErrorState *error = get_error_state();
-    return error ? error->count : 0;
+    DP_ErrorState error = DP_thread_error_state_get();
+    return *error.count;
 }
 
 void DP_error_count_set(unsigned int count)
 {
-    DP_ErrorState *error = get_or_init_error_buffer();
-    error->count = count;
+    DP_ErrorState error = DP_thread_error_state_get();
+    *error.count = count;
 }
 
 unsigned int DP_error_count_since(unsigned int count)

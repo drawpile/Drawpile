@@ -24,13 +24,7 @@
 #include "common.h"
 
 
-#ifdef DRAWDANCE_THREADING_PTHREAD
-#    define DP_TLS_UNDEFINED ((unsigned int)-1)
-#else
-#    define DP_TLS_UNDEFINED 0u
-#endif
-
-typedef unsigned int DP_TlsKey;
+#define DP_ERROR_STATE_INITIAL_BUFFER_SIZE 128
 
 typedef struct DP_Mutex DP_Mutex;
 typedef struct DP_Semaphore DP_Semaphore;
@@ -50,6 +44,12 @@ typedef enum DP_SemaphoreResult {
     DP_SEMAPHORE_INTERRUPTED,
     DP_SEMAPHORE_ERROR,
 } DP_SemaphoreResult;
+
+typedef struct DP_ErrorState {
+    unsigned int *count;
+    size_t buffer_size;
+    char *buffer;
+} DP_ErrorState;
 
 
 DP_Mutex *DP_mutex_new(void);
@@ -118,11 +118,9 @@ DP_Thread *DP_thread_new(DP_ThreadFn fn, void *data);
 void DP_thread_free_join(DP_Thread *thread);
 
 
-DP_TlsKey DP_tls_create(void (*destructor)(void *));
+DP_ErrorState DP_thread_error_state_get(void);
 
-void *DP_tls_get(DP_TlsKey key);
-
-void DP_tls_set(DP_TlsKey key, void *value);
+DP_ErrorState DP_thread_error_state_resize(size_t size);
 
 
 #endif

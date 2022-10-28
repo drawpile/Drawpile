@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "atomic.h"
 #include "common.h"
 #include "threading.h"
 #include <errno.h>
@@ -230,30 +231,66 @@ void DP_thread_free_join(DP_Thread *thread)
 }
 
 
-DP_TlsKey DP_tls_create(void (*destructor)(void *))
+typedef struct DP_PthreadErrorState {
+    unsigned int count;
+    size_t buffer_size;
+    char *buffer;
+} DP_PthreadErrorState;
+
+static void free_pthread_errror_state(void *arg)
 {
-    DP_TlsKey key;
-    int error = pthread_key_create(&key, destructor);
-    if (error == 0) {
-        return key;
-    }
-    else {
-        DP_panic("Error creating thread-local key: %s", strerror(errno));
-    }
+    DP_PthreadErrorState *error = arg;
+    DP_free(error->buffer);
+    DP_free(error);
 }
 
-void *DP_tls_get(DP_TlsKey key)
+static DP_PthreadErrorState *get_pthread_error_state(void)
 {
-    DP_ASSERT(key != DP_TLS_UNDEFINED);
-    return pthread_getspecific(key);
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
+    static pthread_key_t key;
+
+    if (key == 0) {
+        DP_atomic_lock(&lock);
+        if (key == 0) {
+            int error = pthread_key_create(&key, free_pthread_errror_state);
+            if (error != 0) {
+                DP_panic("Error creating thread-local key: %s",
+                         strerror(error));
+            }
+        }
+        DP_atomic_unlock(&lock);
+    }
+
+    DP_PthreadErrorState *state = pthread_getspecific(key);
+    if (!state) {
+        state = DP_malloc(sizeof(*state));
+        *state = (DP_PthreadErrorState){
+            0, DP_ERROR_STATE_INITIAL_BUFFER_SIZE,
+            DP_malloc(DP_ERROR_STATE_INITIAL_BUFFER_SIZE)};
+
+        int error = pthread_setspecific(key, state);
+        if (error != 0) {
+            DP_panic("Error setting thread-local: %s", strerror(error));
+        }
+    }
+
+    return state;
 }
 
-void DP_tls_set(DP_TlsKey key, void *value)
+static DP_ErrorState to_error_state(DP_PthreadErrorState *state)
 {
-    DP_ASSERT(key != DP_TLS_UNDEFINED);
-    int error = pthread_setspecific(key, value);
-    if (error != 0) {
-        DP_panic("Error setting thread-local %u = %p: %s", key, value,
-                 strerror(error));
-    }
+    return (DP_ErrorState){&state->count, state->buffer_size, state->buffer};
+}
+
+DP_ErrorState DP_thread_error_state_get(void)
+{
+    return to_error_state(get_pthread_error_state());
+}
+
+DP_ErrorState DP_thread_error_state_resize(size_t new_size)
+{
+    DP_PthreadErrorState *state = get_pthread_error_state();
+    state->buffer_size = new_size;
+    state->buffer = DP_realloc(state->buffer, new_size);
+    return to_error_state(state);
 }

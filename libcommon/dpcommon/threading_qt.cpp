@@ -20,23 +20,15 @@
  * SOFTWARE.
  */
 extern "C" {
-#define DP_INSIDE_EXTERN_C
 #include "common.h"
 #include "threading.h"
-#undef DP_INSIDE_EXTERN_C
 }
-#include <QAtomicInteger>
-#include <QHash>
+#include <QByteArray>
 #include <QMutex>
 #include <QSemaphore>
 #include <QSharedPointer>
 #include <QThread>
 #include <QThreadStorage>
-#include <QVector>
-
-
-typedef class DP_TlsValue DP_TlsValue;
-typedef QHash<DP_TlsKey, QSharedPointer<DP_TlsValue>> DP_TlsHash;
 
 
 extern "C" DP_Mutex *DP_mutex_new(void)
@@ -131,99 +123,39 @@ extern "C" void DP_thread_free_join(DP_Thread *thread)
 }
 
 
-class DP_TlsValue {
+class DP_QtErrorState final {
   public:
-    DP_TlsValue() : m_value(nullptr), m_destructor(nullptr)
+    DP_QtErrorState()
+        : m_count{0}, m_buffer{DP_ERROR_STATE_INITIAL_BUFFER_SIZE, 0}
     {
     }
 
-    ~DP_TlsValue()
+    DP_ErrorState get()
     {
-        if (m_destructor) {
-            m_destructor(m_value);
-        }
+        DP_ErrorState error = {&m_count, static_cast<size_t>(m_buffer.length()),
+                               m_buffer.data()};
+        return error;
     }
 
-    void set(void *value, void (*destructor)(void *))
+    DP_ErrorState resize(size_t size)
     {
-        m_value = value;
-        m_destructor = destructor;
-    }
-
-    void *value() const
-    {
-        return m_value;
+        m_buffer.resize(static_cast<int>(size));
+        return get();
     }
 
   private:
-    Q_DISABLE_COPY(DP_TlsValue)
-    void *m_value;
-    void (*m_destructor)(void *);
+    unsigned int m_count;
+    QByteArray m_buffer;
 };
 
-static QAtomicInteger<int> tls_spinlock{0};
-static QVector<void (*)(void *)> tls_destructors;
-// The QHash interface requires copying stuff around, so a shared pointer is
-// required, even though we're not sharing anything. C++ and all that.
-static QThreadStorage<DP_TlsHash> tls;
+static QThreadStorage<DP_QtErrorState> thread_local_error_state;
 
-static void with_tls_destructors(std::function<void()> fn)
+extern "C" DP_ErrorState DP_thread_error_state_get(void)
 {
-    while (true) {
-        bool locked = tls_spinlock.testAndSetOrdered(0, 1);
-        if (locked) {
-            break;
-        }
-        else {
-            QThread::yieldCurrentThread();
-        }
-    }
-    fn();
-    tls_spinlock.storeRelease(0);
+    return thread_local_error_state.localData().get();
 }
 
-extern "C" DP_TlsKey DP_tls_create(void (*destructor)(void *))
+extern "C" DP_ErrorState DP_thread_error_state_resize(size_t new_size)
 {
-    DP_TlsKey key;
-    with_tls_destructors([&]() {
-        tls_destructors.append(destructor);
-        key = static_cast<DP_TlsKey>(tls_destructors.count());
-    });
-    return key;
-}
-
-extern "C" void *DP_tls_get(DP_TlsKey key)
-{
-    DP_ASSERT(key != DP_TLS_UNDEFINED);
-    DP_TlsHash &store = tls.localData();
-    DP_TlsHash::iterator it = store.find(key);
-    if (it != store.end()) {
-        return it->get()->value();
-    }
-    else {
-        return nullptr;
-    }
-}
-
-extern "C" void DP_tls_set(DP_TlsKey key, void *value)
-{
-    DP_ASSERT(key != DP_TLS_UNDEFINED);
-    void (*destructor)(void *);
-    with_tls_destructors([&]() {
-        int i = static_cast<int>(key) - 1;
-        DP_ASSERT(i >= 0);
-        DP_ASSERT(i < tls_destructors.count());
-        destructor = tls_destructors.at(i);
-    });
-    DP_TlsHash &store = tls.localData();
-    DP_TlsHash::iterator it = store.find(key);
-    DP_TlsValue *tls_value;
-    if (it != store.end()) {
-        tls_value = it->get();
-    }
-    else {
-        tls_value = new DP_TlsValue;
-        store.insert(key, QSharedPointer<DP_TlsValue>{tls_value});
-    }
-    tls_value->set(value, destructor);
+    return thread_local_error_state.localData().resize(new_size);
 }
