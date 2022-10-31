@@ -891,7 +891,7 @@ DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
         return handle_draw_dabs_classic(cs, dc, DP_message_context_id(msg),
                                         DP_msg_draw_dabs_classic_cast(msg));
     case DP_MSG_DRAW_DABS_PIXEL:
-        return handle_draw_dabs_pixel(cs, dc, DP_MSG_DRAW_DABS_PIXEL_SQUARE,
+        return handle_draw_dabs_pixel(cs, dc, DP_MSG_DRAW_DABS_PIXEL,
                                       DP_message_context_id(msg),
                                       DP_msg_draw_dabs_pixel_cast(msg));
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:

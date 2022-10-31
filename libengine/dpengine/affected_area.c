@@ -185,6 +185,17 @@ static DP_Rect move_rect_bounds(DP_MsgMoveRect *mrr)
     return DP_rect_union(src, dst);
 }
 
+static DP_AffectedArea make_pixel_dabs_affected_area(DP_MsgDrawDabsPixel *mddp)
+{
+    if (DP_msg_draw_dabs_pixel_indirect(mddp)) {
+        return make_user_attrs();
+    }
+    else {
+        return make_pixels(DP_msg_draw_dabs_pixel_layer(mddp),
+                           pixel_dabs_bounds(mddp));
+    }
+}
+
 DP_AffectedArea DP_affected_area_make(DP_Message *msg, DP_CanvasState *cs)
 {
     DP_MessageType type = DP_message_type(msg);
@@ -239,16 +250,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg, DP_CanvasState *cs)
         }
     }
     case DP_MSG_DRAW_DABS_PIXEL:
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
-        DP_MsgDrawDabsPixel *mddp = DP_msg_draw_dabs_pixel_cast(msg);
-        if (DP_msg_draw_dabs_pixel_indirect(mddp)) {
-            return make_user_attrs();
-        }
-        else {
-            return make_pixels(DP_msg_draw_dabs_pixel_layer(mddp),
-                               pixel_dabs_bounds(mddp));
-        }
-    }
+        return make_pixel_dabs_affected_area(DP_msg_draw_dabs_pixel_cast(msg));
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+        return make_pixel_dabs_affected_area(DP_msg_draw_dabs_pixel_square_cast(msg));
     case DP_MSG_DRAW_DABS_MYPAINT: {
         DP_MsgDrawDabsMyPaint *mddmp = DP_msg_draw_dabs_mypaint_cast(msg);
         return make_pixels(DP_msg_draw_dabs_mypaint_layer(mddmp),
