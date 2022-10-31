@@ -166,23 +166,19 @@ static void validate_history(DP_CanvasHistory *ch)
 #else
     DP_CanvasHistoryEntry *entries = ch->entries;
     int used = ch->used;
-    bool have_savepoint = false;
+    bool have_save_point = false;
     for (int i = 0; i < used; ++i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         DP_Message *msg = entry->msg;
         DP_ASSERT(msg); // Message must not be null.
         DP_MessageType type = DP_message_type(msg);
         DP_ASSERT(type != DP_MSG_UNDO); // Undos and redos aren't historized.
-        // Only undo points are allowed to have savepoints.
-        if (!is_undo_point_entry(entry)) {
-            DP_ASSERT(!entry->state);
-        }
-        else if (entry->state) {
-            have_savepoint = true;
+        if (entry->state) {
+            have_save_point = true;
         }
     }
-    // There must exist at least one savepoint.
-    DP_ASSERT(have_savepoint);
+    // There must exist at least one save point.
+    DP_ASSERT(have_save_point);
     // If the local fork contains entries, it must also be consistent.
     if (ch->fork.queue.used != 0) {
         // Fork start can't be beyond the truncation point.
@@ -366,13 +362,15 @@ static int append_to_history(DP_CanvasHistory *ch, DP_Message *msg)
 }
 
 
-static void make_savepoint(DP_CanvasHistory *ch, int index)
+static void make_save_point(DP_CanvasHistory *ch, int index)
 {
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < ch->used);
-    // Don't make savepoints while a local fork is present, since the local
-    // state may be incongruent with what the server thinks is happening.
-    if (ch->fork.queue.used == 0) {
+    // Save points based on local fork state are invalid.
+    DP_ASSERT(ch->fork.queue.used == 0);
+    DP_CanvasHistoryEntry *entry = &ch->entries[index];
+    // There might already be a save point here, don't create one again.
+    if (!entry->state) {
         DP_CanvasState *cs = ch->current_state;
         ch->entries[index].state = DP_canvas_state_incref(cs);
         call_save_point_fn(ch, ch->offset + index, cs);
@@ -414,12 +412,20 @@ static int find_first_unreachable_index(DP_CanvasHistory *ch, int i, int depth)
             ++depth;
         }
     }
+    // There must be a save point at or before the furthest undo point.
+    while (i >= 0 && !entries[i].state) {
+        --i;
+    }
     return i;
 }
 
 static void handle_undo_point(DP_CanvasHistory *ch, int index)
 {
-    make_savepoint(ch, index);
+    // Don't make save points while a local fork is present, since the local
+    // state may be incongruent with what the server thinks is happening.
+    if (ch->fork.queue.used == 0) {
+        make_save_point(ch, index);
+    }
     int depth;
     int i = mark_undone_actions_gone(ch, index, &depth);
     int first_unreachable_index = find_first_unreachable_index(ch, i, depth);
@@ -459,6 +465,11 @@ static void mark_entries_undone(DP_CanvasHistory *ch, unsigned int context_id,
         if (entry->undo == DP_UNDO_DONE
             && DP_message_context_id(entry->msg) == context_id) {
             entry->undo = DP_UNDO_UNDONE;
+            DP_CanvasState *cs = entry->state;
+            if (cs) {
+                DP_canvas_state_decref_nullable(cs);
+                entry->state = NULL;
+            }
         }
     }
 }
@@ -580,11 +591,12 @@ static DP_CanvasState *replay(DP_CanvasState *cs, DP_DrawContext *dc,
     }
 }
 
-static int search_savepoint_index(DP_CanvasHistory *ch, int target_index)
+static int search_save_point_index(DP_CanvasHistory *ch, int target_index)
 {
     DP_CanvasHistoryEntry *entries = ch->entries;
     for (int i = target_index; i >= 0; --i) {
-        if (entries[i].state) {
+        DP_CanvasHistoryEntry *entry = &entries[i];
+        if (entry->state && entry->undo == DP_UNDO_DONE) {
             return i;
         }
     }
@@ -608,9 +620,9 @@ static void replay_fork(void *element, void *user)
 static bool replay_from(DP_CanvasHistory *ch, DP_DrawContext *dc,
                         int target_index)
 {
-    int start_index = search_savepoint_index(ch, target_index);
+    int start_index = search_save_point_index(ch, target_index);
     if (start_index < 0) {
-        DP_error_set("Can't find savepoint at or before %d", target_index);
+        DP_error_set("Can't find save point at or before %d", target_index);
         return false;
     }
 
@@ -793,7 +805,7 @@ bool DP_canvas_history_handle_local(DP_CanvasHistory *ch, DP_DrawContext *dc,
 
     if (ch->fork.queue.used == 0) {
         set_fork_start(ch);
-        // TODO: create a savepoint here?
+        make_save_point(ch, ch->used - 1);
     }
     push_fork_entry_inc(ch, msg);
 
