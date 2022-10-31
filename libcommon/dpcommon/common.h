@@ -43,10 +43,19 @@
 #    error "unknown platform"
 #endif
 
+#ifdef NDEBUG
+#    define DP_ASSERT(X) // nothing
+#else
+#    define DP_ASSERT(X)     assert(X)
+#    define DP_UNREACHABLE() DP_panic("unreachable")
+#endif
+
 #ifdef __GNUC__
-#    define DP_TRAP()        __builtin_trap()
-#    define DP_UNUSED        __attribute__((__unused__))
-#    define DP_UNREACHABLE() __builtin_unreachable()
+#    define DP_TRAP() __builtin_trap()
+#    define DP_UNUSED __attribute__((__unused__))
+#    ifndef DP_UNREACHABLE
+#        define DP_UNREACHABLE() __builtin_unreachable()
+#    endif
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) \
         __attribute__((__format__(printf, STRING_INDEX, FIRST_TO_CHECK)))
 #    ifdef __clang__
@@ -59,19 +68,15 @@
 #    define DP_MUST_CHECK   __attribute((warn_unused_result))
 #    define DP_INLINE       DP_UNUSED static inline
 #else
-#    define DP_TRAP()                               abort()
-#    define DP_UNUSED                               // nothing
-#    define DP_UNREACHABLE()                        // nothing
+#    define DP_TRAP() abort()
+#    define DP_UNUSED // nothing
+#    ifndef DP_UNREACHABLE
+#        define DP_UNREACHABLE() // nothing
+#    endif
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) // nothing
 #    define DP_MALLOC_ATTR                          // nothing
 #    define DP_REALLOC_ATTR                         // nothing
 #    define DP_MUST_CHECK                           // nothing
-#endif
-
-#ifdef NDEBUG
-#    define DP_ASSERT(X) // nothing
-#else
-#    define DP_ASSERT(X) assert(X)
 #endif
 
 #ifdef __cplusplus
