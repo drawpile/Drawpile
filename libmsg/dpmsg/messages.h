@@ -138,6 +138,8 @@ DP_MsgServerCommand *DP_msg_server_command_cast(DP_Message *msg);
 const char *DP_msg_server_command_msg(const DP_MsgServerCommand *msc,
                                       size_t *out_len);
 
+size_t DP_msg_server_command_msg_len(const DP_MsgServerCommand *msc);
+
 
 /*
  * DP_MSG_DISCONNECT
@@ -164,6 +166,8 @@ uint8_t DP_msg_disconnect_reason(const DP_MsgDisconnect *md);
 
 const char *DP_msg_disconnect_message(const DP_MsgDisconnect *md,
                                       size_t *out_len);
+
+size_t DP_msg_disconnect_message_len(const DP_MsgDisconnect *md);
 
 
 /*
@@ -216,7 +220,7 @@ typedef struct DP_MsgJoin DP_MsgJoin;
 DP_Message *DP_msg_join_new(unsigned int context_id, uint8_t flags,
                             const char *name_value, size_t name_len,
                             void (*set_avatar)(size_t, unsigned char *, void *),
-                            size_t avatar_count, void *avatar_user);
+                            size_t avatar_size, void *avatar_user);
 
 DP_Message *DP_msg_join_deserialize(unsigned int context_id,
                                     const unsigned char *buffer, size_t length);
@@ -227,8 +231,11 @@ uint8_t DP_msg_join_flags(const DP_MsgJoin *mj);
 
 const char *DP_msg_join_name(const DP_MsgJoin *mj, size_t *out_len);
 
-const unsigned char *DP_msg_join_avatar(const DP_MsgJoin *mj,
-                                        size_t *out_count);
+size_t DP_msg_join_name_len(const DP_MsgJoin *mj);
+
+const unsigned char *DP_msg_join_avatar(const DP_MsgJoin *mj, size_t *out_size);
+
+size_t DP_msg_join_avatar_size(const DP_MsgJoin *mj);
 
 
 /*
@@ -279,6 +286,8 @@ DP_MsgSessionOwner *DP_msg_session_owner_cast(DP_Message *msg);
 const uint8_t *DP_msg_session_owner_users(const DP_MsgSessionOwner *mso,
                                           int *out_count);
 
+int DP_msg_session_owner_users_count(const DP_MsgSessionOwner *mso);
+
 
 /*
  * DP_MSG_CHAT
@@ -319,6 +328,8 @@ uint8_t DP_msg_chat_oflags(const DP_MsgChat *mc);
 
 const char *DP_msg_chat_message(const DP_MsgChat *mc, size_t *out_len);
 
+size_t DP_msg_chat_message_len(const DP_MsgChat *mc);
+
 
 /*
  * DP_MSG_TRUSTED_USERS
@@ -351,6 +362,8 @@ DP_MsgTrustedUsers *DP_msg_trusted_users_cast(DP_Message *msg);
 
 const uint8_t *DP_msg_trusted_users_users(const DP_MsgTrustedUsers *mtu,
                                           int *out_count);
+
+int DP_msg_trusted_users_users_count(const DP_MsgTrustedUsers *mtu);
 
 
 /*
@@ -403,6 +416,8 @@ uint8_t DP_msg_private_chat_oflags(const DP_MsgPrivateChat *mpc);
 
 const char *DP_msg_private_chat_message(const DP_MsgPrivateChat *mpc,
                                         size_t *out_len);
+
+size_t DP_msg_private_chat_message_len(const DP_MsgPrivateChat *mpc);
 
 
 /*
@@ -508,6 +523,8 @@ DP_MsgMarker *DP_msg_marker_cast(DP_Message *msg);
 
 const char *DP_msg_marker_text(const DP_MsgMarker *mm, size_t *out_len);
 
+size_t DP_msg_marker_text_len(const DP_MsgMarker *mm);
+
 
 /*
  * DP_MSG_USER_ACL
@@ -531,6 +548,8 @@ DP_Message *DP_msg_user_acl_deserialize(unsigned int context_id,
 DP_MsgUserAcl *DP_msg_user_acl_cast(DP_Message *msg);
 
 const uint8_t *DP_msg_user_acl_users(const DP_MsgUserAcl *mua, int *out_count);
+
+int DP_msg_user_acl_users_count(const DP_MsgUserAcl *mua);
 
 
 /*
@@ -572,6 +591,8 @@ uint8_t DP_msg_layer_acl_flags(const DP_MsgLayerAcl *mla);
 const uint8_t *DP_msg_layer_acl_exclusive(const DP_MsgLayerAcl *mla,
                                           int *out_count);
 
+int DP_msg_layer_acl_exclusive_count(const DP_MsgLayerAcl *mla);
+
 
 /*
  * DP_MSG_FEATURE_ACCESS_LEVELS
@@ -592,6 +613,9 @@ DP_MsgFeatureAccessLevels *DP_msg_feature_access_levels_cast(DP_Message *msg);
 
 const uint8_t *DP_msg_feature_access_levels_feature_tiers(
     const DP_MsgFeatureAccessLevels *mfal, int *out_count);
+
+int DP_msg_feature_access_levels_feature_tiers_count(
+    const DP_MsgFeatureAccessLevels *mfal);
 
 
 /*
@@ -630,7 +654,7 @@ typedef struct DP_MsgFiltered DP_MsgFiltered;
 DP_Message *DP_msg_filtered_new(unsigned int context_id,
                                 void (*set_message)(size_t, unsigned char *,
                                                     void *),
-                                size_t message_count, void *message_user);
+                                size_t message_size, void *message_user);
 
 DP_Message *DP_msg_filtered_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
@@ -639,7 +663,9 @@ DP_Message *DP_msg_filtered_deserialize(unsigned int context_id,
 DP_MsgFiltered *DP_msg_filtered_cast(DP_Message *msg);
 
 const unsigned char *DP_msg_filtered_message(const DP_MsgFiltered *mf,
-                                             size_t *out_count);
+                                             size_t *out_size);
+
+size_t DP_msg_filtered_message_size(const DP_MsgFiltered *mf);
 
 
 /*
@@ -762,6 +788,8 @@ uint8_t DP_msg_layer_create_flags(const DP_MsgLayerCreate *mlc);
 const char *DP_msg_layer_create_name(const DP_MsgLayerCreate *mlc,
                                      size_t *out_len);
 
+size_t DP_msg_layer_create_name_len(const DP_MsgLayerCreate *mlc);
+
 
 /*
  * DP_MSG_LAYER_ATTRIBUTES
@@ -829,6 +857,8 @@ uint16_t DP_msg_layer_retitle_id(const DP_MsgLayerRetitle *mlr);
 const char *DP_msg_layer_retitle_title(const DP_MsgLayerRetitle *mlr,
                                        size_t *out_len);
 
+size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
+
 
 /*
  * DP_MSG_LAYER_ORDER
@@ -870,6 +900,8 @@ uint16_t DP_msg_layer_order_root(const DP_MsgLayerOrder *mlo);
 
 const uint16_t *DP_msg_layer_order_layers(const DP_MsgLayerOrder *mlo,
                                           int *out_count);
+
+int DP_msg_layer_order_layers_count(const DP_MsgLayerOrder *mlo);
 
 
 /*
@@ -948,7 +980,7 @@ DP_Message *
 DP_msg_put_image_new(unsigned int context_id, uint16_t layer, uint8_t mode,
                      uint32_t x, uint32_t y, uint32_t w, uint32_t h,
                      void (*set_image)(size_t, unsigned char *, void *),
-                     size_t image_count, void *image_user);
+                     size_t image_size, void *image_user);
 
 DP_Message *DP_msg_put_image_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
@@ -969,7 +1001,9 @@ uint32_t DP_msg_put_image_w(const DP_MsgPutImage *mpi);
 uint32_t DP_msg_put_image_h(const DP_MsgPutImage *mpi);
 
 const unsigned char *DP_msg_put_image_image(const DP_MsgPutImage *mpi,
-                                            size_t *out_count);
+                                            size_t *out_size);
+
+size_t DP_msg_put_image_image_size(const DP_MsgPutImage *mpi);
 
 
 /*
@@ -1140,6 +1174,8 @@ uint8_t DP_msg_annotation_edit_border(const DP_MsgAnnotationEdit *mae);
 const char *DP_msg_annotation_edit_text(const DP_MsgAnnotationEdit *mae,
                                         size_t *out_len);
 
+size_t DP_msg_annotation_edit_text_len(const DP_MsgAnnotationEdit *mae);
+
 
 /*
  * DP_MSG_ANNOTATION_DELETE
@@ -1196,7 +1232,7 @@ DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
                        int32_t y1, int32_t x2, int32_t y2, int32_t x3,
                        int32_t y3, int32_t x4, int32_t y4,
                        void (*set_mask)(size_t, unsigned char *, void *),
-                       size_t mask_count, void *mask_user);
+                       size_t mask_size, void *mask_user);
 
 DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
@@ -1231,7 +1267,9 @@ int32_t DP_msg_move_region_x4(const DP_MsgMoveRegion *mmr);
 int32_t DP_msg_move_region_y4(const DP_MsgMoveRegion *mmr);
 
 const unsigned char *DP_msg_move_region_mask(const DP_MsgMoveRegion *mmr,
-                                             size_t *out_count);
+                                             size_t *out_size);
+
+size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr);
 
 
 /*
@@ -1255,7 +1293,7 @@ DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint16_t layer,
                                 uint16_t col, uint16_t row, uint16_t repeat,
                                 void (*set_image)(size_t, unsigned char *,
                                                   void *),
-                                size_t image_count, void *image_user);
+                                size_t image_size, void *image_user);
 
 DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
@@ -1276,7 +1314,9 @@ uint16_t DP_msg_put_tile_row(const DP_MsgPutTile *mpt);
 uint16_t DP_msg_put_tile_repeat(const DP_MsgPutTile *mpt);
 
 const unsigned char *DP_msg_put_tile_image(const DP_MsgPutTile *mpt,
-                                           size_t *out_count);
+                                           size_t *out_size);
+
+size_t DP_msg_put_tile_image_size(const DP_MsgPutTile *mpt);
 
 
 /*
@@ -1293,7 +1333,7 @@ typedef struct DP_MsgCanvasBackground DP_MsgCanvasBackground;
 DP_Message *
 DP_msg_canvas_background_new(unsigned int context_id,
                              void (*set_image)(size_t, unsigned char *, void *),
-                             size_t image_count, void *image_user);
+                             size_t image_size, void *image_user);
 
 DP_Message *DP_msg_canvas_background_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -1303,7 +1343,9 @@ DP_MsgCanvasBackground *DP_msg_canvas_background_cast(DP_Message *msg);
 
 const unsigned char *
 DP_msg_canvas_background_image(const DP_MsgCanvasBackground *mcb,
-                               size_t *out_count);
+                               size_t *out_size);
+
+size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
 
 
 /*
@@ -1365,6 +1407,8 @@ const DP_ClassicDab *
 DP_msg_draw_dabs_classic_dabs(const DP_MsgDrawDabsClassic *mddc,
                               int *out_count);
 
+int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
+
 
 /*
  * DP_MSG_DRAW_DABS_PIXEL
@@ -1419,6 +1463,8 @@ uint8_t DP_msg_draw_dabs_pixel_mode(const DP_MsgDrawDabsPixel *mddp);
 
 const DP_PixelDab *DP_msg_draw_dabs_pixel_dabs(const DP_MsgDrawDabsPixel *mddp,
                                                int *out_count);
+
+int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
 
 
 /*
@@ -1497,6 +1543,8 @@ const DP_MyPaintDab *
 DP_msg_draw_dabs_mypaint_dabs(const DP_MsgDrawDabsMyPaint *mddmp,
                               int *out_count);
 
+int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
+
 
 /*
  * DP_MSG_MOVE_RECT
@@ -1521,7 +1569,7 @@ DP_Message *
 DP_msg_move_rect_new(unsigned int context_id, uint16_t layer, int32_t sx,
                      int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h,
                      void (*set_mask)(size_t, unsigned char *, void *),
-                     size_t mask_count, void *mask_user);
+                     size_t mask_size, void *mask_user);
 
 DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
@@ -1544,7 +1592,9 @@ int32_t DP_msg_move_rect_w(const DP_MsgMoveRect *mmr);
 int32_t DP_msg_move_rect_h(const DP_MsgMoveRect *mmr);
 
 const unsigned char *DP_msg_move_rect_mask(const DP_MsgMoveRect *mmr,
-                                           size_t *out_count);
+                                           size_t *out_size);
+
+size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
 
 
 /*
@@ -1603,6 +1653,8 @@ uint8_t DP_msg_set_metadata_str_field(const DP_MsgSetMetadataStr *msms);
 const char *DP_msg_set_metadata_str_value(const DP_MsgSetMetadataStr *msms,
                                           size_t *out_len);
 
+size_t DP_msg_set_metadata_str_value_len(const DP_MsgSetMetadataStr *msms);
+
 
 /*
  * DP_MSG_SET_TIMELINE_FRAME
@@ -1636,6 +1688,8 @@ bool DP_msg_set_timeline_frame_insert(const DP_MsgSetTimelineFrame *mstf);
 const uint16_t *
 DP_msg_set_timeline_frame_layers(const DP_MsgSetTimelineFrame *mstf,
                                  int *out_count);
+
+int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf);
 
 
 /*

@@ -524,22 +524,22 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
             {% for f in message.effective_fields %}
                 {% set deserialize_field_size = f.deserialize_field_size %}
                 {% if deserialize_field_size %}
-                    size_t {{ f.name }}_size = {{ deserialize_field_size }};
+                    size_t {{ f.name }}_bytes = {{ deserialize_field_size }};
                 {% endif %}
                 {% set deserialize_field_divisor = f.deserialize_field_divisor %}
                 {% if deserialize_field_divisor > 1 %}
-                    if (({{ f.name }}_size % {{ deserialize_field_divisor }}) != 0) {
+                    if (({{ f.name }}_bytes % {{ deserialize_field_divisor }}) != 0) {
                         DP_error_set("Wrong length for {{ f.name }} field in {{ message.cmd_name }} message; "
                                      "%zu not divisible by {{ deserialize_field_divisor }}",
-                                     {{ f.name }}_size);
+                                     {{ f.name }}_bytes);
                         return NULL;
                     }
                 {% endif %}
                 {% if f.deserialize_field_check_remaining %}
-                    if (read + {{ f.name }}_size > length) {
+                    if (read + {{ f.name }}_bytes > length) {
                         DP_error_set("Wrong length for {{ f.name }} field in {{ message.cmd_name }} message; "
                                      "field length %zu exceeds total length %zu",
-                                     {{ f.name }}_size, length);
+                                     {{ f.name }}_bytes, length);
                         return NULL;
                     }
                 {% endif %}
@@ -577,6 +577,14 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
             {% endif %}
             return {{ f.access(message.param_name) }};
         }
+        {% set array_size_type = f.array_size_type %}
+        {% if array_size_type %}
+
+            {{ array_size_type }} DP_{{ message.func_name }}_{{ f.func_name }}_{{ f.array_size_name }}(const {{message.param}})
+            {
+                return {{ f.access_size(message.param_name) }};
+            }
+        {% endif %}
     {% endfor %}
 
 {% endfor %}

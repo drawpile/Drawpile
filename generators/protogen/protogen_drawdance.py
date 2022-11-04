@@ -39,6 +39,9 @@ class DrawdanceFieldType:
     def access(self, f, subject):
         return f"{subject}->{f.field_name}"
 
+    def access_size(self, f, subject):
+        return f"{subject}->{f.name}_{f.array_size_name}"
+
     def deserialize_field_size(self, f):
         return None
 
@@ -67,6 +70,12 @@ class DrawdanceFieldType:
         return None
 
     def array_check(self, f, subject):
+        return None
+
+    def array_size_name(self, f):
+        return None
+
+    def array_size_type(self, f):
         return None
 
 
@@ -171,18 +180,18 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         return f"const {self.base_type} *"
 
     def accessor_out_param(self, f):
-        return f"{self.size_type} *out_count"
+        return f"{self.size_type} *out_{self.array_size_name(f)}"
 
     def accessor_out_param_condition(self, f):
-        return "out_count"
+        return f"out_{self.array_size_name(f)}"
 
     def accessor_out_param_assign(self, f, subject):
-        return f"*out_count = {subject}->{f.name}_count"
+        return f"*out_{self.array_size_name(f)} = {subject}->{f.name}_{self.array_size_name(f)}"
 
     def constructor_param(self, f):
         return (
             f"void (*set_{f.name})({self.size_type}, {self.base_type} *, void *), "
-            + f"{self.size_type} {f.name}_count, void *{f.name}_user"
+            + f"{self.size_type} {f.name}_{self.array_size_name(f)}, void *{f.name}_user"
         )
 
     def deserialize_field_size(self, f):
@@ -192,34 +201,35 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         return self.payload_length
 
     def deserialize_field_count(self, f):
-        return (
-            f"uint16_t {f.name}_count = DP_size_to_uint16({f.name}_size{self.divisor});"
-        )
+        return f"uint16_t {f.name}_{self.array_size_name(f)} = DP_size_to_uint16({f.name}_bytes{self.divisor});"
 
     def deserialize_field(self, f):
         return f"void *{f.name}_user = (void *)(buffer + read);"
 
     def deserialize_constructor_arg(self, f):
-        return f"{self.deserialize_payload_fn}, {f.name}_count, {f.name}_user"
+        return f"{self.deserialize_payload_fn}, {f.name}_{self.array_size_name(f)}, {f.name}_user"
 
     def dynamic_payload_length(self, f):
-        base = self._to_size(f"{f.message.param_name}->{f.name}_count")
+        base = self._to_size(
+            f"{f.message.param_name}->{f.name}_{self.array_size_name(f)}"
+        )
         return base + self.multiplier
 
     def struct_declaration(self, f):
-        return f"uint16_t {f.name}_count"
+        return f"uint16_t {f.name}_{self.array_size_name(f)}"
 
     def array_declaration(self, f):
         return f"{self.base_type} {f.name}[]"
 
     def array_field_size(self, f):
-        base = self._to_size(f"{f.func_name}_count")
+        base = self._to_size(f"{f.func_name}_{self.array_size_name(f)}")
         return base + self.multiplier
 
     def equals(self, f):
         try:
             a, b = self.access(f, "a"), self.access(f, "b")
-            a_count, b_count = f"a->{f.name}_count", f"b->{f.name}_count"
+            size_name = self.array_size_name(f)
+            a_count, b_count = f"a->{f.name}_{size_name}", f"b->{f.name}_{size_name}"
             size = f"DP_uint16_to_size({a_count}){self.multiplier}"
             return f"{a_count} == {b_count} && memcmp({a}, {b}, {size})"
         except Exception as e:
@@ -227,26 +237,33 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
 
     def serialize_payload(self, f, subject, dst):
         a = self.access(f, subject)
-        a_count = f"{subject}->{f.name}_count"
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
         return f"{self.serialize_payload_fn}({a}, {a_count}, {dst})"
 
     def write_payload_text(self, f, subject):
         a = self.access(f, subject)
-        a_count = f"{subject}->{f.name}_count"
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
         return f'{self.write_payload_text_fn}(writer, "{f.name}", {a}, {a_count})'
 
     def assign(self, f, subject):
-        a_count = f"{subject}->{f.name}_count"
-        value = self._to_uint16(f"{f.name}_count")
+        size_name = self.array_size_name(f)
+        a_count = f"{subject}->{f.name}_{size_name}"
+        value = self._to_uint16(f"{f.name}_{size_name}")
         return f"{a_count} = {value}"
 
     def array_assign(self, f, subject):
         a = self.access(f, subject)
-        a_count = f"{subject}->{f.name}_count"
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
         return f"set_{f.name}({a_count}, {a}, {f.name}_user)"
 
     def array_check(self, f, subject):
         return f"set_{f.name}"
+
+    def array_size_name(self, f):
+        return "size" if self.size_type == "size_t" else "count"
+
+    def array_size_type(self, f):
+        return self.size_type
 
 
 class DrawdanceStringFieldType(DrawdanceFieldType):
@@ -275,7 +292,7 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
         return 1
 
     def deserialize_field_count(self, f):
-        return f"uint16_t {f.name}_len = DP_size_to_uint16({f.name}_size);"
+        return f"uint16_t {f.name}_len = DP_size_to_uint16({f.name}_bytes);"
 
     def deserialize_field(self, f):
         return f"const char *{f.name} = (const char *)buffer + read;"
@@ -320,6 +337,12 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
 
     def offset_expr(self, f, subject):
         return f"{subject}->{f.name}_len + 1"
+
+    def array_size_name(self, f):
+        return "len"
+
+    def array_size_type(self, f):
+        return "size_t"
 
 
 class DrawdanceStringWithLengthFieldType(DrawdanceStringFieldType):
@@ -376,9 +399,7 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         return f.sub.item_length
 
     def deserialize_field_count(self, f):
-        return (
-            f"int {f.name}_count = DP_size_to_int({f.name}_size) / {f.sub.item_length};"
-        )
+        return f"int {f.name}_count = DP_size_to_int({f.name}_bytes) / {f.sub.item_length};"
 
     def deserialize_field(self, f):
         return f"void *{f.name}_user = (void *)(buffer + read);"
@@ -425,6 +446,12 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_count"
         return f"set_{f.name}({a_count}, {a}, {f.name}_user)"
+
+    def array_size_name(self, f):
+        return "count"
+
+    def array_size_type(self, f):
+        return "int"
 
 
 DrawdancePlainFieldType.declare(
@@ -705,6 +732,9 @@ class DrawdanceField:
     def access(self, subject):
         return self.type.access(self, subject)
 
+    def access_size(self, subject):
+        return self.type.access_size(self, subject)
+
     @property
     def accessor_return_type(self):
         return self.type.accessor_return_type(self)
@@ -767,6 +797,14 @@ class DrawdanceField:
     @property
     def array_field_size(self):
         return self.type.array_field_size(self)
+
+    @property
+    def array_size_name(self):
+        return self.type.array_size_name(self)
+
+    @property
+    def array_size_type(self):
+        return self.type.array_size_type(self)
 
     @property
     def equals(self):

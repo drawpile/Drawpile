@@ -131,6 +131,11 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const
                 const {{ message.param }}
                 {%- if f.accessor_out_param %}, {{ f.accessor_out_param }}{% endif -%}
             );
+            {% set array_size_type = f.array_size_type %}
+            {% if array_size_type %}
+
+                {{ array_size_type }} DP_{{ message.func_name }}_{{ f.func_name }}_{{ f.array_size_name }}(const {{message.param}});
+            {% endif %}
         {% endfor %}
     {% endif %}
 
