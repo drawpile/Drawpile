@@ -404,8 +404,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
             DP_Message *msg)
         {
             {% if dpl %}
-                {{ message.param }} = DP_{{ message.func_name }}_cast(msg);
-                DP_ASSERT({{ message.param_name }});
+                {{ message.param }} = DP_message_internal(msg);
             {% endif %}
             return {% if spl %}{{ spl }}{% endif -%}
                    {% if spl and dpl %} + {% endif -%}
@@ -414,8 +413,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
 
         static size_t {{ message.func_name }}_serialize_payload(DP_Message *msg, unsigned char *data)
         {
-            {{ message.param }} = DP_{{ message.func_name }}_cast(msg);
-            DP_ASSERT({{ message.param_name }});
+            {{ message.param }} = DP_message_internal(msg);
             size_t written = 0;
             {% for f in message.fields %}
                 written += {{ f.serialize_payload(message.param_name, "data + written") }};
@@ -426,8 +424,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
 
         static bool {{ message.func_name }}_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
         {
-            {{ message.param }} = DP_{{ message.func_name }}_cast(msg);
-            DP_ASSERT({{ message.param_name }});
+            {{ message.param }} = DP_message_internal(msg);
             return {% for f in message.fields %}
                 {{ f.write_payload_text(message.param_name) }}
                 {%- if not loop.last %} && {% endif -%}
@@ -436,10 +433,8 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
 
         static bool {{ message.func_name }}_equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
         {
-            {{ message.struct_name }} *a = DP_{{ message.func_name }}_cast(msg);
-            DP_ASSERT(a);
-            {{ message.struct_name }} *b = DP_{{ message.func_name }}_cast(other);
-            DP_ASSERT(b);
+            {{ message.struct_name }} *a = DP_message_internal(msg);
+            {{ message.struct_name }} *b = DP_message_internal(other);
             return {% for f in message.fields %}
                     {{ f.equals }}
                     {%- if not loop.last %} && {% endif -%}

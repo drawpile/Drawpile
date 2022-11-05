@@ -593,16 +593,14 @@ struct DP_MsgServerCommand {
 
 static size_t msg_server_command_payload_length(DP_Message *msg)
 {
-    DP_MsgServerCommand *msc = DP_msg_server_command_cast(msg);
-    DP_ASSERT(msc);
+    DP_MsgServerCommand *msc = DP_message_internal(msg);
     return DP_uint16_to_size(msc->msg_len);
 }
 
 static size_t msg_server_command_serialize_payload(DP_Message *msg,
                                                    unsigned char *data)
 {
-    DP_MsgServerCommand *msc = DP_msg_server_command_cast(msg);
-    DP_ASSERT(msc);
+    DP_MsgServerCommand *msc = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bytes(msc->msg, 1, msc->msg_len, data + written);
     DP_ASSERT(written == msg_server_command_payload_length(msg));
@@ -612,18 +610,15 @@ static size_t msg_server_command_serialize_payload(DP_Message *msg,
 static bool msg_server_command_write_payload_text(DP_Message *msg,
                                                   DP_TextWriter *writer)
 {
-    DP_MsgServerCommand *msc = DP_msg_server_command_cast(msg);
-    DP_ASSERT(msc);
+    DP_MsgServerCommand *msc = DP_message_internal(msg);
     return DP_text_writer_write_string(writer, "msg", msc->msg);
 }
 
 static bool msg_server_command_equals(DP_Message *DP_RESTRICT msg,
                                       DP_Message *DP_RESTRICT other)
 {
-    DP_MsgServerCommand *a = DP_msg_server_command_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgServerCommand *b = DP_msg_server_command_cast(other);
-    DP_ASSERT(b);
+    DP_MsgServerCommand *a = DP_message_internal(msg);
+    DP_MsgServerCommand *b = DP_message_internal(other);
     return a->msg_len == b->msg_len && memcmp(a->msg, b->msg, a->msg_len);
 }
 
@@ -694,16 +689,14 @@ struct DP_MsgDisconnect {
 
 static size_t msg_disconnect_payload_length(DP_Message *msg)
 {
-    DP_MsgDisconnect *md = DP_msg_disconnect_cast(msg);
-    DP_ASSERT(md);
+    DP_MsgDisconnect *md = DP_message_internal(msg);
     return 1 + DP_uint16_to_size(md->message_len);
 }
 
 static size_t msg_disconnect_serialize_payload(DP_Message *msg,
                                                unsigned char *data)
 {
-    DP_MsgDisconnect *md = DP_msg_disconnect_cast(msg);
-    DP_ASSERT(md);
+    DP_MsgDisconnect *md = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(md->reason, data + written);
     written += DP_write_bytes(md->message, 1, md->message_len, data + written);
@@ -714,8 +707,7 @@ static size_t msg_disconnect_serialize_payload(DP_Message *msg,
 static bool msg_disconnect_write_payload_text(DP_Message *msg,
                                               DP_TextWriter *writer)
 {
-    DP_MsgDisconnect *md = DP_msg_disconnect_cast(msg);
-    DP_ASSERT(md);
+    DP_MsgDisconnect *md = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "reason", md->reason)
         && DP_text_writer_write_string(writer, "message", md->message);
 }
@@ -723,10 +715,8 @@ static bool msg_disconnect_write_payload_text(DP_Message *msg,
 static bool msg_disconnect_equals(DP_Message *DP_RESTRICT msg,
                                   DP_Message *DP_RESTRICT other)
 {
-    DP_MsgDisconnect *a = DP_msg_disconnect_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgDisconnect *b = DP_msg_disconnect_cast(other);
-    DP_ASSERT(b);
+    DP_MsgDisconnect *a = DP_message_internal(msg);
+    DP_MsgDisconnect *b = DP_message_internal(other);
     return a->reason == b->reason && a->message_len == b->message_len
         && memcmp(a->message, b->message, a->message_len);
 }
@@ -809,8 +799,7 @@ static size_t msg_ping_payload_length(DP_UNUSED DP_Message *msg)
 
 static size_t msg_ping_serialize_payload(DP_Message *msg, unsigned char *data)
 {
-    DP_MsgPing *mp = DP_msg_ping_cast(msg);
-    DP_ASSERT(mp);
+    DP_MsgPing *mp = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(mp->is_pong, data + written);
     DP_ASSERT(written == msg_ping_payload_length(msg));
@@ -819,18 +808,15 @@ static size_t msg_ping_serialize_payload(DP_Message *msg, unsigned char *data)
 
 static bool msg_ping_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
-    DP_MsgPing *mp = DP_msg_ping_cast(msg);
-    DP_ASSERT(mp);
+    DP_MsgPing *mp = DP_message_internal(msg);
     return DP_text_writer_write_bool(writer, "is_pong", mp->is_pong);
 }
 
 static bool msg_ping_equals(DP_Message *DP_RESTRICT msg,
                             DP_Message *DP_RESTRICT other)
 {
-    DP_MsgPing *a = DP_msg_ping_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgPing *b = DP_msg_ping_cast(other);
-    DP_ASSERT(b);
+    DP_MsgPing *a = DP_message_internal(msg);
+    DP_MsgPing *b = DP_message_internal(other);
     return a->is_pong == b->is_pong;
 }
 
@@ -901,15 +887,13 @@ struct DP_MsgJoin {
 
 static size_t msg_join_payload_length(DP_Message *msg)
 {
-    DP_MsgJoin *mj = DP_msg_join_cast(msg);
-    DP_ASSERT(mj);
+    DP_MsgJoin *mj = DP_message_internal(msg);
     return 2 + DP_uint16_to_size(mj->name_len) + mj->avatar_size;
 }
 
 static size_t msg_join_serialize_payload(DP_Message *msg, unsigned char *data)
 {
-    DP_MsgJoin *mj = DP_msg_join_cast(msg);
-    DP_ASSERT(mj);
+    DP_MsgJoin *mj = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(mj->flags, data + written);
     written += write_string_with_length(((char *)mj->name_avatar), mj->name_len,
@@ -922,8 +906,7 @@ static size_t msg_join_serialize_payload(DP_Message *msg, unsigned char *data)
 
 static bool msg_join_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
-    DP_MsgJoin *mj = DP_msg_join_cast(msg);
-    DP_ASSERT(mj);
+    DP_MsgJoin *mj = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "flags", mj->flags)
         && DP_text_writer_write_string(writer, "name",
                                        ((char *)mj->name_avatar))
@@ -935,10 +918,8 @@ static bool msg_join_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 static bool msg_join_equals(DP_Message *DP_RESTRICT msg,
                             DP_Message *DP_RESTRICT other)
 {
-    DP_MsgJoin *a = DP_msg_join_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgJoin *b = DP_msg_join_cast(other);
-    DP_ASSERT(b);
+    DP_MsgJoin *a = DP_message_internal(msg);
+    DP_MsgJoin *b = DP_message_internal(other);
     return a->flags == b->flags && a->name_len == b->name_len
         && memcmp(((char *)a->name_avatar), ((char *)b->name_avatar),
                   a->name_len)
@@ -1072,16 +1053,14 @@ struct DP_MsgSessionOwner {
 
 static size_t msg_session_owner_payload_length(DP_Message *msg)
 {
-    DP_MsgSessionOwner *mso = DP_msg_session_owner_cast(msg);
-    DP_ASSERT(mso);
+    DP_MsgSessionOwner *mso = DP_message_internal(msg);
     return DP_int_to_size(mso->users_count);
 }
 
 static size_t msg_session_owner_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
-    DP_MsgSessionOwner *mso = DP_msg_session_owner_cast(msg);
-    DP_ASSERT(mso);
+    DP_MsgSessionOwner *mso = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8_array(mso->users, mso->users_count,
                                               data + written);
@@ -1092,8 +1071,7 @@ static size_t msg_session_owner_serialize_payload(DP_Message *msg,
 static bool msg_session_owner_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
-    DP_MsgSessionOwner *mso = DP_msg_session_owner_cast(msg);
-    DP_ASSERT(mso);
+    DP_MsgSessionOwner *mso = DP_message_internal(msg);
     return DP_text_writer_write_uint8_list(writer, "users", mso->users,
                                            mso->users_count);
 }
@@ -1101,10 +1079,8 @@ static bool msg_session_owner_write_payload_text(DP_Message *msg,
 static bool msg_session_owner_equals(DP_Message *DP_RESTRICT msg,
                                      DP_Message *DP_RESTRICT other)
 {
-    DP_MsgSessionOwner *a = DP_msg_session_owner_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgSessionOwner *b = DP_msg_session_owner_cast(other);
-    DP_ASSERT(b);
+    DP_MsgSessionOwner *a = DP_message_internal(msg);
+    DP_MsgSessionOwner *b = DP_message_internal(other);
     return a->users_count == b->users_count
         && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count));
 }
@@ -1207,15 +1183,13 @@ struct DP_MsgChat {
 
 static size_t msg_chat_payload_length(DP_Message *msg)
 {
-    DP_MsgChat *mc = DP_msg_chat_cast(msg);
-    DP_ASSERT(mc);
+    DP_MsgChat *mc = DP_message_internal(msg);
     return 2 + DP_uint16_to_size(mc->message_len);
 }
 
 static size_t msg_chat_serialize_payload(DP_Message *msg, unsigned char *data)
 {
-    DP_MsgChat *mc = DP_msg_chat_cast(msg);
-    DP_ASSERT(mc);
+    DP_MsgChat *mc = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(mc->tflags, data + written);
     written += DP_write_bigendian_uint8(mc->oflags, data + written);
@@ -1226,8 +1200,7 @@ static size_t msg_chat_serialize_payload(DP_Message *msg, unsigned char *data)
 
 static bool msg_chat_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
-    DP_MsgChat *mc = DP_msg_chat_cast(msg);
-    DP_ASSERT(mc);
+    DP_MsgChat *mc = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "tflags", mc->tflags)
         && DP_text_writer_write_uint(writer, "oflags", mc->oflags)
         && DP_text_writer_write_string(writer, "message", mc->message);
@@ -1236,10 +1209,8 @@ static bool msg_chat_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 static bool msg_chat_equals(DP_Message *DP_RESTRICT msg,
                             DP_Message *DP_RESTRICT other)
 {
-    DP_MsgChat *a = DP_msg_chat_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgChat *b = DP_msg_chat_cast(other);
-    DP_ASSERT(b);
+    DP_MsgChat *a = DP_message_internal(msg);
+    DP_MsgChat *b = DP_message_internal(other);
     return a->tflags == b->tflags && a->oflags == b->oflags
         && a->message_len == b->message_len
         && memcmp(a->message, b->message, a->message_len);
@@ -1326,16 +1297,14 @@ struct DP_MsgTrustedUsers {
 
 static size_t msg_trusted_users_payload_length(DP_Message *msg)
 {
-    DP_MsgTrustedUsers *mtu = DP_msg_trusted_users_cast(msg);
-    DP_ASSERT(mtu);
+    DP_MsgTrustedUsers *mtu = DP_message_internal(msg);
     return DP_int_to_size(mtu->users_count);
 }
 
 static size_t msg_trusted_users_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
-    DP_MsgTrustedUsers *mtu = DP_msg_trusted_users_cast(msg);
-    DP_ASSERT(mtu);
+    DP_MsgTrustedUsers *mtu = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8_array(mtu->users, mtu->users_count,
                                               data + written);
@@ -1346,8 +1315,7 @@ static size_t msg_trusted_users_serialize_payload(DP_Message *msg,
 static bool msg_trusted_users_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
-    DP_MsgTrustedUsers *mtu = DP_msg_trusted_users_cast(msg);
-    DP_ASSERT(mtu);
+    DP_MsgTrustedUsers *mtu = DP_message_internal(msg);
     return DP_text_writer_write_uint8_list(writer, "users", mtu->users,
                                            mtu->users_count);
 }
@@ -1355,10 +1323,8 @@ static bool msg_trusted_users_write_payload_text(DP_Message *msg,
 static bool msg_trusted_users_equals(DP_Message *DP_RESTRICT msg,
                                      DP_Message *DP_RESTRICT other)
 {
-    DP_MsgTrustedUsers *a = DP_msg_trusted_users_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgTrustedUsers *b = DP_msg_trusted_users_cast(other);
-    DP_ASSERT(b);
+    DP_MsgTrustedUsers *a = DP_message_internal(msg);
+    DP_MsgTrustedUsers *b = DP_message_internal(other);
     return a->users_count == b->users_count
         && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count));
 }
@@ -1457,16 +1423,14 @@ struct DP_MsgPrivateChat {
 
 static size_t msg_private_chat_payload_length(DP_Message *msg)
 {
-    DP_MsgPrivateChat *mpc = DP_msg_private_chat_cast(msg);
-    DP_ASSERT(mpc);
+    DP_MsgPrivateChat *mpc = DP_message_internal(msg);
     return 2 + DP_uint16_to_size(mpc->message_len);
 }
 
 static size_t msg_private_chat_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
-    DP_MsgPrivateChat *mpc = DP_msg_private_chat_cast(msg);
-    DP_ASSERT(mpc);
+    DP_MsgPrivateChat *mpc = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(mpc->target, data + written);
     written += DP_write_bigendian_uint8(mpc->oflags, data + written);
@@ -1479,8 +1443,7 @@ static size_t msg_private_chat_serialize_payload(DP_Message *msg,
 static bool msg_private_chat_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
-    DP_MsgPrivateChat *mpc = DP_msg_private_chat_cast(msg);
-    DP_ASSERT(mpc);
+    DP_MsgPrivateChat *mpc = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "target", mpc->target)
         && DP_text_writer_write_uint(writer, "oflags", mpc->oflags)
         && DP_text_writer_write_string(writer, "message", mpc->message);
@@ -1489,10 +1452,8 @@ static bool msg_private_chat_write_payload_text(DP_Message *msg,
 static bool msg_private_chat_equals(DP_Message *DP_RESTRICT msg,
                                     DP_Message *DP_RESTRICT other)
 {
-    DP_MsgPrivateChat *a = DP_msg_private_chat_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgPrivateChat *b = DP_msg_private_chat_cast(other);
-    DP_ASSERT(b);
+    DP_MsgPrivateChat *a = DP_message_internal(msg);
+    DP_MsgPrivateChat *b = DP_message_internal(other);
     return a->target == b->target && a->oflags == b->oflags
         && a->message_len == b->message_len
         && memcmp(a->message, b->message, a->message_len);
@@ -1587,8 +1548,7 @@ static size_t msg_interval_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_interval_serialize_payload(DP_Message *msg,
                                              unsigned char *data)
 {
-    DP_MsgInterval *mi = DP_msg_interval_cast(msg);
-    DP_ASSERT(mi);
+    DP_MsgInterval *mi = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mi->msecs, data + written);
     DP_ASSERT(written == msg_interval_payload_length(msg));
@@ -1598,18 +1558,15 @@ static size_t msg_interval_serialize_payload(DP_Message *msg,
 static bool msg_interval_write_payload_text(DP_Message *msg,
                                             DP_TextWriter *writer)
 {
-    DP_MsgInterval *mi = DP_msg_interval_cast(msg);
-    DP_ASSERT(mi);
+    DP_MsgInterval *mi = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "msecs", mi->msecs);
 }
 
 static bool msg_interval_equals(DP_Message *DP_RESTRICT msg,
                                 DP_Message *DP_RESTRICT other)
 {
-    DP_MsgInterval *a = DP_msg_interval_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgInterval *b = DP_msg_interval_cast(other);
-    DP_ASSERT(b);
+    DP_MsgInterval *a = DP_message_internal(msg);
+    DP_MsgInterval *b = DP_message_internal(other);
     return a->msecs == b->msecs;
 }
 
@@ -1672,8 +1629,7 @@ static size_t msg_laser_trail_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_laser_trail_serialize_payload(DP_Message *msg,
                                                 unsigned char *data)
 {
-    DP_MsgLaserTrail *mlt = DP_msg_laser_trail_cast(msg);
-    DP_ASSERT(mlt);
+    DP_MsgLaserTrail *mlt = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint32(mlt->color, data + written);
     written += DP_write_bigendian_uint8(mlt->persistence, data + written);
@@ -1684,8 +1640,7 @@ static size_t msg_laser_trail_serialize_payload(DP_Message *msg,
 static bool msg_laser_trail_write_payload_text(DP_Message *msg,
                                                DP_TextWriter *writer)
 {
-    DP_MsgLaserTrail *mlt = DP_msg_laser_trail_cast(msg);
-    DP_ASSERT(mlt);
+    DP_MsgLaserTrail *mlt = DP_message_internal(msg);
     return DP_text_writer_write_argb_color(writer, "color", mlt->color)
         && DP_text_writer_write_uint(writer, "persistence", mlt->persistence);
 }
@@ -1693,10 +1648,8 @@ static bool msg_laser_trail_write_payload_text(DP_Message *msg,
 static bool msg_laser_trail_equals(DP_Message *DP_RESTRICT msg,
                                    DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLaserTrail *a = DP_msg_laser_trail_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLaserTrail *b = DP_msg_laser_trail_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLaserTrail *a = DP_message_internal(msg);
+    DP_MsgLaserTrail *b = DP_message_internal(other);
     return a->color == b->color && a->persistence == b->persistence;
 }
 
@@ -1768,8 +1721,7 @@ static size_t msg_move_pointer_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_move_pointer_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
-    DP_MsgMovePointer *mmp = DP_msg_move_pointer_cast(msg);
-    DP_ASSERT(mmp);
+    DP_MsgMovePointer *mmp = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_int32(mmp->x, data + written);
     written += DP_write_bigendian_int32(mmp->y, data + written);
@@ -1780,8 +1732,7 @@ static size_t msg_move_pointer_serialize_payload(DP_Message *msg,
 static bool msg_move_pointer_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
-    DP_MsgMovePointer *mmp = DP_msg_move_pointer_cast(msg);
-    DP_ASSERT(mmp);
+    DP_MsgMovePointer *mmp = DP_message_internal(msg);
     return DP_text_writer_write_int(writer, "x", mmp->x)
         && DP_text_writer_write_int(writer, "y", mmp->y);
 }
@@ -1789,10 +1740,8 @@ static bool msg_move_pointer_write_payload_text(DP_Message *msg,
 static bool msg_move_pointer_equals(DP_Message *DP_RESTRICT msg,
                                     DP_Message *DP_RESTRICT other)
 {
-    DP_MsgMovePointer *a = DP_msg_move_pointer_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgMovePointer *b = DP_msg_move_pointer_cast(other);
-    DP_ASSERT(b);
+    DP_MsgMovePointer *a = DP_message_internal(msg);
+    DP_MsgMovePointer *b = DP_message_internal(other);
     return a->x == b->x && a->y == b->y;
 }
 
@@ -1858,15 +1807,13 @@ struct DP_MsgMarker {
 
 static size_t msg_marker_payload_length(DP_Message *msg)
 {
-    DP_MsgMarker *mm = DP_msg_marker_cast(msg);
-    DP_ASSERT(mm);
+    DP_MsgMarker *mm = DP_message_internal(msg);
     return DP_uint16_to_size(mm->text_len);
 }
 
 static size_t msg_marker_serialize_payload(DP_Message *msg, unsigned char *data)
 {
-    DP_MsgMarker *mm = DP_msg_marker_cast(msg);
-    DP_ASSERT(mm);
+    DP_MsgMarker *mm = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bytes(mm->text, 1, mm->text_len, data + written);
     DP_ASSERT(written == msg_marker_payload_length(msg));
@@ -1876,18 +1823,15 @@ static size_t msg_marker_serialize_payload(DP_Message *msg, unsigned char *data)
 static bool msg_marker_write_payload_text(DP_Message *msg,
                                           DP_TextWriter *writer)
 {
-    DP_MsgMarker *mm = DP_msg_marker_cast(msg);
-    DP_ASSERT(mm);
+    DP_MsgMarker *mm = DP_message_internal(msg);
     return DP_text_writer_write_string(writer, "text", mm->text);
 }
 
 static bool msg_marker_equals(DP_Message *DP_RESTRICT msg,
                               DP_Message *DP_RESTRICT other)
 {
-    DP_MsgMarker *a = DP_msg_marker_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgMarker *b = DP_msg_marker_cast(other);
-    DP_ASSERT(b);
+    DP_MsgMarker *a = DP_message_internal(msg);
+    DP_MsgMarker *b = DP_message_internal(other);
     return a->text_len == b->text_len && memcmp(a->text, b->text, a->text_len);
 }
 
@@ -1956,16 +1900,14 @@ struct DP_MsgUserAcl {
 
 static size_t msg_user_acl_payload_length(DP_Message *msg)
 {
-    DP_MsgUserAcl *mua = DP_msg_user_acl_cast(msg);
-    DP_ASSERT(mua);
+    DP_MsgUserAcl *mua = DP_message_internal(msg);
     return DP_int_to_size(mua->users_count);
 }
 
 static size_t msg_user_acl_serialize_payload(DP_Message *msg,
                                              unsigned char *data)
 {
-    DP_MsgUserAcl *mua = DP_msg_user_acl_cast(msg);
-    DP_ASSERT(mua);
+    DP_MsgUserAcl *mua = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8_array(mua->users, mua->users_count,
                                               data + written);
@@ -1976,8 +1918,7 @@ static size_t msg_user_acl_serialize_payload(DP_Message *msg,
 static bool msg_user_acl_write_payload_text(DP_Message *msg,
                                             DP_TextWriter *writer)
 {
-    DP_MsgUserAcl *mua = DP_msg_user_acl_cast(msg);
-    DP_ASSERT(mua);
+    DP_MsgUserAcl *mua = DP_message_internal(msg);
     return DP_text_writer_write_uint8_list(writer, "users", mua->users,
                                            mua->users_count);
 }
@@ -1985,10 +1926,8 @@ static bool msg_user_acl_write_payload_text(DP_Message *msg,
 static bool msg_user_acl_equals(DP_Message *DP_RESTRICT msg,
                                 DP_Message *DP_RESTRICT other)
 {
-    DP_MsgUserAcl *a = DP_msg_user_acl_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgUserAcl *b = DP_msg_user_acl_cast(other);
-    DP_ASSERT(b);
+    DP_MsgUserAcl *a = DP_message_internal(msg);
+    DP_MsgUserAcl *b = DP_message_internal(other);
     return a->users_count == b->users_count
         && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count));
 }
@@ -2064,16 +2003,14 @@ struct DP_MsgLayerAcl {
 
 static size_t msg_layer_acl_payload_length(DP_Message *msg)
 {
-    DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
-    DP_ASSERT(mla);
+    DP_MsgLayerAcl *mla = DP_message_internal(msg);
     return 3 + DP_int_to_size(mla->exclusive_count);
 }
 
 static size_t msg_layer_acl_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
-    DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
-    DP_ASSERT(mla);
+    DP_MsgLayerAcl *mla = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mla->id, data + written);
     written += DP_write_bigendian_uint8(mla->flags, data + written);
@@ -2086,8 +2023,7 @@ static size_t msg_layer_acl_serialize_payload(DP_Message *msg,
 static bool msg_layer_acl_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
-    DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
-    DP_ASSERT(mla);
+    DP_MsgLayerAcl *mla = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mla->id)
         && DP_text_writer_write_uint(writer, "flags", mla->flags)
         && DP_text_writer_write_uint8_list(writer, "exclusive", mla->exclusive,
@@ -2097,10 +2033,8 @@ static bool msg_layer_acl_write_payload_text(DP_Message *msg,
 static bool msg_layer_acl_equals(DP_Message *DP_RESTRICT msg,
                                  DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerAcl *a = DP_msg_layer_acl_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerAcl *b = DP_msg_layer_acl_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerAcl *a = DP_message_internal(msg);
+    DP_MsgLayerAcl *b = DP_message_internal(other);
     return a->id == b->id && a->flags == b->flags
         && a->exclusive_count == b->exclusive_count
         && memcmp(a->exclusive, b->exclusive,
@@ -2195,16 +2129,14 @@ struct DP_MsgFeatureAccessLevels {
 
 static size_t msg_feature_access_levels_payload_length(DP_Message *msg)
 {
-    DP_MsgFeatureAccessLevels *mfal = DP_msg_feature_access_levels_cast(msg);
-    DP_ASSERT(mfal);
+    DP_MsgFeatureAccessLevels *mfal = DP_message_internal(msg);
     return DP_int_to_size(mfal->feature_tiers_count);
 }
 
 static size_t msg_feature_access_levels_serialize_payload(DP_Message *msg,
                                                           unsigned char *data)
 {
-    DP_MsgFeatureAccessLevels *mfal = DP_msg_feature_access_levels_cast(msg);
-    DP_ASSERT(mfal);
+    DP_MsgFeatureAccessLevels *mfal = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8_array(
         mfal->feature_tiers, mfal->feature_tiers_count, data + written);
@@ -2215,8 +2147,7 @@ static size_t msg_feature_access_levels_serialize_payload(DP_Message *msg,
 static bool msg_feature_access_levels_write_payload_text(DP_Message *msg,
                                                          DP_TextWriter *writer)
 {
-    DP_MsgFeatureAccessLevels *mfal = DP_msg_feature_access_levels_cast(msg);
-    DP_ASSERT(mfal);
+    DP_MsgFeatureAccessLevels *mfal = DP_message_internal(msg);
     return DP_text_writer_write_uint8_list(writer, "feature_tiers",
                                            mfal->feature_tiers,
                                            mfal->feature_tiers_count);
@@ -2225,10 +2156,8 @@ static bool msg_feature_access_levels_write_payload_text(DP_Message *msg,
 static bool msg_feature_access_levels_equals(DP_Message *DP_RESTRICT msg,
                                              DP_Message *DP_RESTRICT other)
 {
-    DP_MsgFeatureAccessLevels *a = DP_msg_feature_access_levels_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgFeatureAccessLevels *b = DP_msg_feature_access_levels_cast(other);
-    DP_ASSERT(b);
+    DP_MsgFeatureAccessLevels *a = DP_message_internal(msg);
+    DP_MsgFeatureAccessLevels *b = DP_message_internal(other);
     return a->feature_tiers_count == b->feature_tiers_count
         && memcmp(a->feature_tiers, b->feature_tiers,
                   DP_uint16_to_size(a->feature_tiers_count));
@@ -2312,8 +2241,7 @@ static size_t msg_default_layer_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_default_layer_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
-    DP_MsgDefaultLayer *mdl = DP_msg_default_layer_cast(msg);
-    DP_ASSERT(mdl);
+    DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mdl->id, data + written);
     DP_ASSERT(written == msg_default_layer_payload_length(msg));
@@ -2323,18 +2251,15 @@ static size_t msg_default_layer_serialize_payload(DP_Message *msg,
 static bool msg_default_layer_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
-    DP_MsgDefaultLayer *mdl = DP_msg_default_layer_cast(msg);
-    DP_ASSERT(mdl);
+    DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mdl->id);
 }
 
 static bool msg_default_layer_equals(DP_Message *DP_RESTRICT msg,
                                      DP_Message *DP_RESTRICT other)
 {
-    DP_MsgDefaultLayer *a = DP_msg_default_layer_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgDefaultLayer *b = DP_msg_default_layer_cast(other);
-    DP_ASSERT(b);
+    DP_MsgDefaultLayer *a = DP_message_internal(msg);
+    DP_MsgDefaultLayer *b = DP_message_internal(other);
     return a->id == b->id;
 }
 
@@ -2391,16 +2316,14 @@ struct DP_MsgFiltered {
 
 static size_t msg_filtered_payload_length(DP_Message *msg)
 {
-    DP_MsgFiltered *mf = DP_msg_filtered_cast(msg);
-    DP_ASSERT(mf);
+    DP_MsgFiltered *mf = DP_message_internal(msg);
     return mf->message_size;
 }
 
 static size_t msg_filtered_serialize_payload(DP_Message *msg,
                                              unsigned char *data)
 {
-    DP_MsgFiltered *mf = DP_msg_filtered_cast(msg);
-    DP_ASSERT(mf);
+    DP_MsgFiltered *mf = DP_message_internal(msg);
     size_t written = 0;
     written += write_bytes(mf->message, mf->message_size, data + written);
     DP_ASSERT(written == msg_filtered_payload_length(msg));
@@ -2410,8 +2333,7 @@ static size_t msg_filtered_serialize_payload(DP_Message *msg,
 static bool msg_filtered_write_payload_text(DP_Message *msg,
                                             DP_TextWriter *writer)
 {
-    DP_MsgFiltered *mf = DP_msg_filtered_cast(msg);
-    DP_ASSERT(mf);
+    DP_MsgFiltered *mf = DP_message_internal(msg);
     return DP_text_writer_write_base64(writer, "message", mf->message,
                                        mf->message_size);
 }
@@ -2419,10 +2341,8 @@ static bool msg_filtered_write_payload_text(DP_Message *msg,
 static bool msg_filtered_equals(DP_Message *DP_RESTRICT msg,
                                 DP_Message *DP_RESTRICT other)
 {
-    DP_MsgFiltered *a = DP_msg_filtered_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgFiltered *b = DP_msg_filtered_cast(other);
-    DP_ASSERT(b);
+    DP_MsgFiltered *a = DP_message_internal(msg);
+    DP_MsgFiltered *b = DP_message_internal(other);
     return a->message_size == b->message_size
         && memcmp(a->message, b->message, DP_uint16_to_size(a->message_size));
 }
@@ -2528,8 +2448,7 @@ static size_t msg_canvas_resize_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_canvas_resize_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
-    DP_MsgCanvasResize *mcr = DP_msg_canvas_resize_cast(msg);
-    DP_ASSERT(mcr);
+    DP_MsgCanvasResize *mcr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_int32(mcr->top, data + written);
     written += DP_write_bigendian_int32(mcr->right, data + written);
@@ -2542,8 +2461,7 @@ static size_t msg_canvas_resize_serialize_payload(DP_Message *msg,
 static bool msg_canvas_resize_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
-    DP_MsgCanvasResize *mcr = DP_msg_canvas_resize_cast(msg);
-    DP_ASSERT(mcr);
+    DP_MsgCanvasResize *mcr = DP_message_internal(msg);
     return DP_text_writer_write_int(writer, "top", mcr->top)
         && DP_text_writer_write_int(writer, "right", mcr->right)
         && DP_text_writer_write_int(writer, "bottom", mcr->bottom)
@@ -2553,10 +2471,8 @@ static bool msg_canvas_resize_write_payload_text(DP_Message *msg,
 static bool msg_canvas_resize_equals(DP_Message *DP_RESTRICT msg,
                                      DP_Message *DP_RESTRICT other)
 {
-    DP_MsgCanvasResize *a = DP_msg_canvas_resize_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgCanvasResize *b = DP_msg_canvas_resize_cast(other);
-    DP_ASSERT(b);
+    DP_MsgCanvasResize *a = DP_message_internal(msg);
+    DP_MsgCanvasResize *b = DP_message_internal(other);
     return a->top == b->top && a->right == b->right && a->bottom == b->bottom
         && a->left == b->left;
 }
@@ -2657,16 +2573,14 @@ struct DP_MsgLayerCreate {
 
 static size_t msg_layer_create_payload_length(DP_Message *msg)
 {
-    DP_MsgLayerCreate *mlc = DP_msg_layer_create_cast(msg);
-    DP_ASSERT(mlc);
+    DP_MsgLayerCreate *mlc = DP_message_internal(msg);
     return 11 + DP_uint16_to_size(mlc->name_len);
 }
 
 static size_t msg_layer_create_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
-    DP_MsgLayerCreate *mlc = DP_msg_layer_create_cast(msg);
-    DP_ASSERT(mlc);
+    DP_MsgLayerCreate *mlc = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mlc->id, data + written);
     written += DP_write_bigendian_uint16(mlc->source, data + written);
@@ -2681,8 +2595,7 @@ static size_t msg_layer_create_serialize_payload(DP_Message *msg,
 static bool msg_layer_create_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
-    DP_MsgLayerCreate *mlc = DP_msg_layer_create_cast(msg);
-    DP_ASSERT(mlc);
+    DP_MsgLayerCreate *mlc = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mlc->id)
         && DP_text_writer_write_uint(writer, "source", mlc->source)
         && DP_text_writer_write_uint(writer, "target", mlc->target)
@@ -2694,10 +2607,8 @@ static bool msg_layer_create_write_payload_text(DP_Message *msg,
 static bool msg_layer_create_equals(DP_Message *DP_RESTRICT msg,
                                     DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerCreate *a = DP_msg_layer_create_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerCreate *b = DP_msg_layer_create_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerCreate *a = DP_message_internal(msg);
+    DP_MsgLayerCreate *b = DP_message_internal(other);
     return a->id == b->id && a->source == b->source && a->target == b->target
         && a->fill == b->fill && a->flags == b->flags
         && a->name_len == b->name_len && memcmp(a->name, b->name, a->name_len);
@@ -2835,8 +2746,7 @@ static size_t msg_layer_attributes_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_layer_attributes_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
-    DP_MsgLayerAttributes *mla = DP_msg_layer_attributes_cast(msg);
-    DP_ASSERT(mla);
+    DP_MsgLayerAttributes *mla = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mla->id, data + written);
     written += DP_write_bigendian_uint8(mla->sublayer, data + written);
@@ -2850,8 +2760,7 @@ static size_t msg_layer_attributes_serialize_payload(DP_Message *msg,
 static bool msg_layer_attributes_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
-    DP_MsgLayerAttributes *mla = DP_msg_layer_attributes_cast(msg);
-    DP_ASSERT(mla);
+    DP_MsgLayerAttributes *mla = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mla->id)
         && DP_text_writer_write_uint(writer, "sublayer", mla->sublayer)
         && DP_text_writer_write_uint(writer, "flags", mla->flags)
@@ -2862,10 +2771,8 @@ static bool msg_layer_attributes_write_payload_text(DP_Message *msg,
 static bool msg_layer_attributes_equals(DP_Message *DP_RESTRICT msg,
                                         DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerAttributes *a = DP_msg_layer_attributes_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerAttributes *b = DP_msg_layer_attributes_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerAttributes *a = DP_message_internal(msg);
+    DP_MsgLayerAttributes *b = DP_message_internal(other);
     return a->id == b->id && a->sublayer == b->sublayer && a->flags == b->flags
         && a->opacity == b->opacity && a->blend == b->blend;
 }
@@ -2959,16 +2866,14 @@ struct DP_MsgLayerRetitle {
 
 static size_t msg_layer_retitle_payload_length(DP_Message *msg)
 {
-    DP_MsgLayerRetitle *mlr = DP_msg_layer_retitle_cast(msg);
-    DP_ASSERT(mlr);
+    DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
     return 2 + DP_uint16_to_size(mlr->title_len);
 }
 
 static size_t msg_layer_retitle_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
-    DP_MsgLayerRetitle *mlr = DP_msg_layer_retitle_cast(msg);
-    DP_ASSERT(mlr);
+    DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mlr->id, data + written);
     written += DP_write_bytes(mlr->title, 1, mlr->title_len, data + written);
@@ -2979,8 +2884,7 @@ static size_t msg_layer_retitle_serialize_payload(DP_Message *msg,
 static bool msg_layer_retitle_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
-    DP_MsgLayerRetitle *mlr = DP_msg_layer_retitle_cast(msg);
-    DP_ASSERT(mlr);
+    DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mlr->id)
         && DP_text_writer_write_string(writer, "title", mlr->title);
 }
@@ -2988,10 +2892,8 @@ static bool msg_layer_retitle_write_payload_text(DP_Message *msg,
 static bool msg_layer_retitle_equals(DP_Message *DP_RESTRICT msg,
                                      DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerRetitle *a = DP_msg_layer_retitle_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerRetitle *b = DP_msg_layer_retitle_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerRetitle *a = DP_message_internal(msg);
+    DP_MsgLayerRetitle *b = DP_message_internal(other);
     return a->id == b->id && a->title_len == b->title_len
         && memcmp(a->title, b->title, a->title_len);
 }
@@ -3071,16 +2973,14 @@ struct DP_MsgLayerOrder {
 
 static size_t msg_layer_order_payload_length(DP_Message *msg)
 {
-    DP_MsgLayerOrder *mlo = DP_msg_layer_order_cast(msg);
-    DP_ASSERT(mlo);
+    DP_MsgLayerOrder *mlo = DP_message_internal(msg);
     return 2 + DP_int_to_size(mlo->layers_count) * 2;
 }
 
 static size_t msg_layer_order_serialize_payload(DP_Message *msg,
                                                 unsigned char *data)
 {
-    DP_MsgLayerOrder *mlo = DP_msg_layer_order_cast(msg);
-    DP_ASSERT(mlo);
+    DP_MsgLayerOrder *mlo = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mlo->root, data + written);
     written += DP_write_bigendian_uint16_array(mlo->layers, mlo->layers_count,
@@ -3092,8 +2992,7 @@ static size_t msg_layer_order_serialize_payload(DP_Message *msg,
 static bool msg_layer_order_write_payload_text(DP_Message *msg,
                                                DP_TextWriter *writer)
 {
-    DP_MsgLayerOrder *mlo = DP_msg_layer_order_cast(msg);
-    DP_ASSERT(mlo);
+    DP_MsgLayerOrder *mlo = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "root", mlo->root)
         && DP_text_writer_write_uint16_list(writer, "layers", mlo->layers,
                                             mlo->layers_count);
@@ -3102,10 +3001,8 @@ static bool msg_layer_order_write_payload_text(DP_Message *msg,
 static bool msg_layer_order_equals(DP_Message *DP_RESTRICT msg,
                                    DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerOrder *a = DP_msg_layer_order_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerOrder *b = DP_msg_layer_order_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerOrder *a = DP_message_internal(msg);
+    DP_MsgLayerOrder *b = DP_message_internal(other);
     return a->root == b->root && a->layers_count == b->layers_count
         && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2);
 }
@@ -3201,8 +3098,7 @@ static size_t msg_layer_delete_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_layer_delete_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
-    DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
-    DP_ASSERT(mld);
+    DP_MsgLayerDelete *mld = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mld->id, data + written);
     written += DP_write_bigendian_uint16(mld->merge_to, data + written);
@@ -3213,8 +3109,7 @@ static size_t msg_layer_delete_serialize_payload(DP_Message *msg,
 static bool msg_layer_delete_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
-    DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
-    DP_ASSERT(mld);
+    DP_MsgLayerDelete *mld = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mld->id)
         && DP_text_writer_write_uint(writer, "merge_to", mld->merge_to);
 }
@@ -3222,10 +3117,8 @@ static bool msg_layer_delete_write_payload_text(DP_Message *msg,
 static bool msg_layer_delete_equals(DP_Message *DP_RESTRICT msg,
                                     DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerDelete *a = DP_msg_layer_delete_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerDelete *b = DP_msg_layer_delete_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerDelete *a = DP_message_internal(msg);
+    DP_MsgLayerDelete *b = DP_message_internal(other);
     return a->id == b->id && a->merge_to == b->merge_to;
 }
 
@@ -3297,8 +3190,7 @@ static size_t msg_layer_visibility_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_layer_visibility_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
-    DP_MsgLayerVisibility *mlv = DP_msg_layer_visibility_cast(msg);
-    DP_ASSERT(mlv);
+    DP_MsgLayerVisibility *mlv = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mlv->id, data + written);
     written += DP_write_bigendian_uint8(mlv->visible, data + written);
@@ -3309,8 +3201,7 @@ static size_t msg_layer_visibility_serialize_payload(DP_Message *msg,
 static bool msg_layer_visibility_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
-    DP_MsgLayerVisibility *mlv = DP_msg_layer_visibility_cast(msg);
-    DP_ASSERT(mlv);
+    DP_MsgLayerVisibility *mlv = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mlv->id)
         && DP_text_writer_write_bool(writer, "visible", mlv->visible);
 }
@@ -3318,10 +3209,8 @@ static bool msg_layer_visibility_write_payload_text(DP_Message *msg,
 static bool msg_layer_visibility_equals(DP_Message *DP_RESTRICT msg,
                                         DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerVisibility *a = DP_msg_layer_visibility_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgLayerVisibility *b = DP_msg_layer_visibility_cast(other);
-    DP_ASSERT(b);
+    DP_MsgLayerVisibility *a = DP_message_internal(msg);
+    DP_MsgLayerVisibility *b = DP_message_internal(other);
     return a->id == b->id && a->visible == b->visible;
 }
 
@@ -3393,16 +3282,14 @@ struct DP_MsgPutImage {
 
 static size_t msg_put_image_payload_length(DP_Message *msg)
 {
-    DP_MsgPutImage *mpi = DP_msg_put_image_cast(msg);
-    DP_ASSERT(mpi);
+    DP_MsgPutImage *mpi = DP_message_internal(msg);
     return 19 + mpi->image_size;
 }
 
 static size_t msg_put_image_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
-    DP_MsgPutImage *mpi = DP_msg_put_image_cast(msg);
-    DP_ASSERT(mpi);
+    DP_MsgPutImage *mpi = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mpi->layer, data + written);
     written += DP_write_bigendian_uint8(mpi->mode, data + written);
@@ -3418,8 +3305,7 @@ static size_t msg_put_image_serialize_payload(DP_Message *msg,
 static bool msg_put_image_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
-    DP_MsgPutImage *mpi = DP_msg_put_image_cast(msg);
-    DP_ASSERT(mpi);
+    DP_MsgPutImage *mpi = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mpi->layer)
         && DP_text_writer_write_blend_mode(writer, "mode", mpi->mode)
         && DP_text_writer_write_uint(writer, "x", mpi->x)
@@ -3433,10 +3319,8 @@ static bool msg_put_image_write_payload_text(DP_Message *msg,
 static bool msg_put_image_equals(DP_Message *DP_RESTRICT msg,
                                  DP_Message *DP_RESTRICT other)
 {
-    DP_MsgPutImage *a = DP_msg_put_image_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgPutImage *b = DP_msg_put_image_cast(other);
-    DP_ASSERT(b);
+    DP_MsgPutImage *a = DP_message_internal(msg);
+    DP_MsgPutImage *b = DP_message_internal(other);
     return a->layer == b->layer && a->mode == b->mode && a->x == b->x
         && a->y == b->y && a->w == b->w && a->h == b->h
         && a->image_size == b->image_size
@@ -3574,8 +3458,7 @@ static size_t msg_fill_rect_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_fill_rect_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
-    DP_MsgFillRect *mfr = DP_msg_fill_rect_cast(msg);
-    DP_ASSERT(mfr);
+    DP_MsgFillRect *mfr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mfr->layer, data + written);
     written += DP_write_bigendian_uint8(mfr->mode, data + written);
@@ -3591,8 +3474,7 @@ static size_t msg_fill_rect_serialize_payload(DP_Message *msg,
 static bool msg_fill_rect_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
-    DP_MsgFillRect *mfr = DP_msg_fill_rect_cast(msg);
-    DP_ASSERT(mfr);
+    DP_MsgFillRect *mfr = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mfr->layer)
         && DP_text_writer_write_blend_mode(writer, "mode", mfr->mode)
         && DP_text_writer_write_uint(writer, "x", mfr->x)
@@ -3605,10 +3487,8 @@ static bool msg_fill_rect_write_payload_text(DP_Message *msg,
 static bool msg_fill_rect_equals(DP_Message *DP_RESTRICT msg,
                                  DP_Message *DP_RESTRICT other)
 {
-    DP_MsgFillRect *a = DP_msg_fill_rect_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgFillRect *b = DP_msg_fill_rect_cast(other);
-    DP_ASSERT(b);
+    DP_MsgFillRect *a = DP_message_internal(msg);
+    DP_MsgFillRect *b = DP_message_internal(other);
     return a->layer == b->layer && a->mode == b->mode && a->x == b->x
         && a->y == b->y && a->w == b->w && a->h == b->h && a->color == b->color;
 }
@@ -3746,8 +3626,7 @@ static size_t msg_annotation_create_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_annotation_create_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
-    DP_MsgAnnotationCreate *mac = DP_msg_annotation_create_cast(msg);
-    DP_ASSERT(mac);
+    DP_MsgAnnotationCreate *mac = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mac->id, data + written);
     written += DP_write_bigendian_int32(mac->x, data + written);
@@ -3761,8 +3640,7 @@ static size_t msg_annotation_create_serialize_payload(DP_Message *msg,
 static bool msg_annotation_create_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
-    DP_MsgAnnotationCreate *mac = DP_msg_annotation_create_cast(msg);
-    DP_ASSERT(mac);
+    DP_MsgAnnotationCreate *mac = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mac->id)
         && DP_text_writer_write_int(writer, "x", mac->x)
         && DP_text_writer_write_int(writer, "y", mac->y)
@@ -3773,10 +3651,8 @@ static bool msg_annotation_create_write_payload_text(DP_Message *msg,
 static bool msg_annotation_create_equals(DP_Message *DP_RESTRICT msg,
                                          DP_Message *DP_RESTRICT other)
 {
-    DP_MsgAnnotationCreate *a = DP_msg_annotation_create_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgAnnotationCreate *b = DP_msg_annotation_create_cast(other);
-    DP_ASSERT(b);
+    DP_MsgAnnotationCreate *a = DP_message_internal(msg);
+    DP_MsgAnnotationCreate *b = DP_message_internal(other);
     return a->id == b->id && a->x == b->x && a->y == b->y && a->w == b->w
         && a->h == b->h;
 }
@@ -3877,8 +3753,7 @@ static size_t msg_annotation_reshape_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_annotation_reshape_serialize_payload(DP_Message *msg,
                                                        unsigned char *data)
 {
-    DP_MsgAnnotationReshape *mar = DP_msg_annotation_reshape_cast(msg);
-    DP_ASSERT(mar);
+    DP_MsgAnnotationReshape *mar = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mar->id, data + written);
     written += DP_write_bigendian_int32(mar->x, data + written);
@@ -3892,8 +3767,7 @@ static size_t msg_annotation_reshape_serialize_payload(DP_Message *msg,
 static bool msg_annotation_reshape_write_payload_text(DP_Message *msg,
                                                       DP_TextWriter *writer)
 {
-    DP_MsgAnnotationReshape *mar = DP_msg_annotation_reshape_cast(msg);
-    DP_ASSERT(mar);
+    DP_MsgAnnotationReshape *mar = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mar->id)
         && DP_text_writer_write_int(writer, "x", mar->x)
         && DP_text_writer_write_int(writer, "y", mar->y)
@@ -3904,10 +3778,8 @@ static bool msg_annotation_reshape_write_payload_text(DP_Message *msg,
 static bool msg_annotation_reshape_equals(DP_Message *DP_RESTRICT msg,
                                           DP_Message *DP_RESTRICT other)
 {
-    DP_MsgAnnotationReshape *a = DP_msg_annotation_reshape_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgAnnotationReshape *b = DP_msg_annotation_reshape_cast(other);
-    DP_ASSERT(b);
+    DP_MsgAnnotationReshape *a = DP_message_internal(msg);
+    DP_MsgAnnotationReshape *b = DP_message_internal(other);
     return a->id == b->id && a->x == b->x && a->y == b->y && a->w == b->w
         && a->h == b->h;
 }
@@ -4017,16 +3889,14 @@ struct DP_MsgAnnotationEdit {
 
 static size_t msg_annotation_edit_payload_length(DP_Message *msg)
 {
-    DP_MsgAnnotationEdit *mae = DP_msg_annotation_edit_cast(msg);
-    DP_ASSERT(mae);
+    DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
     return 8 + DP_uint16_to_size(mae->text_len);
 }
 
 static size_t msg_annotation_edit_serialize_payload(DP_Message *msg,
                                                     unsigned char *data)
 {
-    DP_MsgAnnotationEdit *mae = DP_msg_annotation_edit_cast(msg);
-    DP_ASSERT(mae);
+    DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mae->id, data + written);
     written += DP_write_bigendian_uint32(mae->bg, data + written);
@@ -4040,8 +3910,7 @@ static size_t msg_annotation_edit_serialize_payload(DP_Message *msg,
 static bool msg_annotation_edit_write_payload_text(DP_Message *msg,
                                                    DP_TextWriter *writer)
 {
-    DP_MsgAnnotationEdit *mae = DP_msg_annotation_edit_cast(msg);
-    DP_ASSERT(mae);
+    DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mae->id)
         && DP_text_writer_write_argb_color(writer, "bg", mae->bg)
         && DP_text_writer_write_uint(writer, "flags", mae->flags)
@@ -4052,10 +3921,8 @@ static bool msg_annotation_edit_write_payload_text(DP_Message *msg,
 static bool msg_annotation_edit_equals(DP_Message *DP_RESTRICT msg,
                                        DP_Message *DP_RESTRICT other)
 {
-    DP_MsgAnnotationEdit *a = DP_msg_annotation_edit_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgAnnotationEdit *b = DP_msg_annotation_edit_cast(other);
-    DP_ASSERT(b);
+    DP_MsgAnnotationEdit *a = DP_message_internal(msg);
+    DP_MsgAnnotationEdit *b = DP_message_internal(other);
     return a->id == b->id && a->bg == b->bg && a->flags == b->flags
         && a->border == b->border && a->text_len == b->text_len
         && memcmp(a->text, b->text, a->text_len);
@@ -4167,8 +4034,7 @@ static size_t msg_annotation_delete_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_annotation_delete_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
-    DP_MsgAnnotationDelete *mad = DP_msg_annotation_delete_cast(msg);
-    DP_ASSERT(mad);
+    DP_MsgAnnotationDelete *mad = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mad->id, data + written);
     DP_ASSERT(written == msg_annotation_delete_payload_length(msg));
@@ -4178,18 +4044,15 @@ static size_t msg_annotation_delete_serialize_payload(DP_Message *msg,
 static bool msg_annotation_delete_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
-    DP_MsgAnnotationDelete *mad = DP_msg_annotation_delete_cast(msg);
-    DP_ASSERT(mad);
+    DP_MsgAnnotationDelete *mad = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mad->id);
 }
 
 static bool msg_annotation_delete_equals(DP_Message *DP_RESTRICT msg,
                                          DP_Message *DP_RESTRICT other)
 {
-    DP_MsgAnnotationDelete *a = DP_msg_annotation_delete_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgAnnotationDelete *b = DP_msg_annotation_delete_cast(other);
-    DP_ASSERT(b);
+    DP_MsgAnnotationDelete *a = DP_message_internal(msg);
+    DP_MsgAnnotationDelete *b = DP_message_internal(other);
     return a->id == b->id;
 }
 
@@ -4259,16 +4122,14 @@ struct DP_MsgMoveRegion {
 
 static size_t msg_move_region_payload_length(DP_Message *msg)
 {
-    DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
-    DP_ASSERT(mmr);
+    DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     return 50 + mmr->mask_size;
 }
 
 static size_t msg_move_region_serialize_payload(DP_Message *msg,
                                                 unsigned char *data)
 {
-    DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
-    DP_ASSERT(mmr);
+    DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mmr->layer, data + written);
     written += DP_write_bigendian_int32(mmr->bx, data + written);
@@ -4291,8 +4152,7 @@ static size_t msg_move_region_serialize_payload(DP_Message *msg,
 static bool msg_move_region_write_payload_text(DP_Message *msg,
                                                DP_TextWriter *writer)
 {
-    DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
-    DP_ASSERT(mmr);
+    DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mmr->layer)
         && DP_text_writer_write_int(writer, "bx", mmr->bx)
         && DP_text_writer_write_int(writer, "by", mmr->by)
@@ -4313,10 +4173,8 @@ static bool msg_move_region_write_payload_text(DP_Message *msg,
 static bool msg_move_region_equals(DP_Message *DP_RESTRICT msg,
                                    DP_Message *DP_RESTRICT other)
 {
-    DP_MsgMoveRegion *a = DP_msg_move_region_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgMoveRegion *b = DP_msg_move_region_cast(other);
-    DP_ASSERT(b);
+    DP_MsgMoveRegion *a = DP_message_internal(msg);
+    DP_MsgMoveRegion *b = DP_message_internal(other);
     return a->layer == b->layer && a->bx == b->bx && a->by == b->by
         && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1 && a->y1 == b->y1
         && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3 && a->y3 == b->y3
@@ -4509,16 +4367,14 @@ struct DP_MsgPutTile {
 
 static size_t msg_put_tile_payload_length(DP_Message *msg)
 {
-    DP_MsgPutTile *mpt = DP_msg_put_tile_cast(msg);
-    DP_ASSERT(mpt);
+    DP_MsgPutTile *mpt = DP_message_internal(msg);
     return 10 + mpt->image_size;
 }
 
 static size_t msg_put_tile_serialize_payload(DP_Message *msg,
                                              unsigned char *data)
 {
-    DP_MsgPutTile *mpt = DP_msg_put_tile_cast(msg);
-    DP_ASSERT(mpt);
+    DP_MsgPutTile *mpt = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mpt->layer, data + written);
     written += DP_write_bigendian_uint8(mpt->sublayer, data + written);
@@ -4534,8 +4390,7 @@ static size_t msg_put_tile_serialize_payload(DP_Message *msg,
 static bool msg_put_tile_write_payload_text(DP_Message *msg,
                                             DP_TextWriter *writer)
 {
-    DP_MsgPutTile *mpt = DP_msg_put_tile_cast(msg);
-    DP_ASSERT(mpt);
+    DP_MsgPutTile *mpt = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mpt->layer)
         && DP_text_writer_write_uint(writer, "sublayer", mpt->sublayer)
         && DP_text_writer_write_uint(writer, "last_touch", mpt->last_touch)
@@ -4549,10 +4404,8 @@ static bool msg_put_tile_write_payload_text(DP_Message *msg,
 static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
                                 DP_Message *DP_RESTRICT other)
 {
-    DP_MsgPutTile *a = DP_msg_put_tile_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgPutTile *b = DP_msg_put_tile_cast(other);
-    DP_ASSERT(b);
+    DP_MsgPutTile *a = DP_message_internal(msg);
+    DP_MsgPutTile *b = DP_message_internal(other);
     return a->layer == b->layer && a->sublayer == b->sublayer
         && a->last_touch == b->last_touch && a->col == b->col
         && a->row == b->row && a->repeat == b->repeat
@@ -4681,16 +4534,14 @@ struct DP_MsgCanvasBackground {
 
 static size_t msg_canvas_background_payload_length(DP_Message *msg)
 {
-    DP_MsgCanvasBackground *mcb = DP_msg_canvas_background_cast(msg);
-    DP_ASSERT(mcb);
+    DP_MsgCanvasBackground *mcb = DP_message_internal(msg);
     return mcb->image_size;
 }
 
 static size_t msg_canvas_background_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
-    DP_MsgCanvasBackground *mcb = DP_msg_canvas_background_cast(msg);
-    DP_ASSERT(mcb);
+    DP_MsgCanvasBackground *mcb = DP_message_internal(msg);
     size_t written = 0;
     written += write_bytes(mcb->image, mcb->image_size, data + written);
     DP_ASSERT(written == msg_canvas_background_payload_length(msg));
@@ -4700,8 +4551,7 @@ static size_t msg_canvas_background_serialize_payload(DP_Message *msg,
 static bool msg_canvas_background_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
-    DP_MsgCanvasBackground *mcb = DP_msg_canvas_background_cast(msg);
-    DP_ASSERT(mcb);
+    DP_MsgCanvasBackground *mcb = DP_message_internal(msg);
     return DP_text_writer_write_base64(writer, "image", mcb->image,
                                        mcb->image_size);
 }
@@ -4709,10 +4559,8 @@ static bool msg_canvas_background_write_payload_text(DP_Message *msg,
 static bool msg_canvas_background_equals(DP_Message *DP_RESTRICT msg,
                                          DP_Message *DP_RESTRICT other)
 {
-    DP_MsgCanvasBackground *a = DP_msg_canvas_background_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgCanvasBackground *b = DP_msg_canvas_background_cast(other);
-    DP_ASSERT(b);
+    DP_MsgCanvasBackground *a = DP_message_internal(msg);
+    DP_MsgCanvasBackground *b = DP_message_internal(other);
     return a->image_size == b->image_size
         && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size));
 }
@@ -4925,16 +4773,14 @@ struct DP_MsgDrawDabsClassic {
 
 static size_t msg_draw_dabs_classic_payload_length(DP_Message *msg)
 {
-    DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
-    DP_ASSERT(mddc);
+    DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
     return 15 + DP_int_to_size(mddc->dabs_count) * 6;
 }
 
 static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
-    DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
-    DP_ASSERT(mddc);
+    DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mddc->layer, data + written);
     written += DP_write_bigendian_int32(mddc->x, data + written);
@@ -4950,8 +4796,7 @@ static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
 static bool msg_draw_dabs_classic_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
-    DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
-    DP_ASSERT(mddc);
+    DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mddc->layer)
         && DP_text_writer_write_int(writer, "x", mddc->x)
         && DP_text_writer_write_int(writer, "y", mddc->y)
@@ -4964,10 +4809,8 @@ static bool msg_draw_dabs_classic_write_payload_text(DP_Message *msg,
 static bool msg_draw_dabs_classic_equals(DP_Message *DP_RESTRICT msg,
                                          DP_Message *DP_RESTRICT other)
 {
-    DP_MsgDrawDabsClassic *a = DP_msg_draw_dabs_classic_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgDrawDabsClassic *b = DP_msg_draw_dabs_classic_cast(other);
-    DP_ASSERT(b);
+    DP_MsgDrawDabsClassic *a = DP_message_internal(msg);
+    DP_MsgDrawDabsClassic *b = DP_message_internal(other);
     return a->layer == b->layer && a->x == b->x && a->y == b->y
         && a->color == b->color && a->mode == b->mode
         && a->dabs_count == b->dabs_count
@@ -5215,16 +5058,14 @@ struct DP_MsgDrawDabsPixel {
 
 static size_t msg_draw_dabs_pixel_payload_length(DP_Message *msg)
 {
-    DP_MsgDrawDabsPixel *mddp = DP_msg_draw_dabs_pixel_cast(msg);
-    DP_ASSERT(mddp);
+    DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
     return 15 + DP_int_to_size(mddp->dabs_count) * 4;
 }
 
 static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
                                                     unsigned char *data)
 {
-    DP_MsgDrawDabsPixel *mddp = DP_msg_draw_dabs_pixel_cast(msg);
-    DP_ASSERT(mddp);
+    DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mddp->layer, data + written);
     written += DP_write_bigendian_int32(mddp->x, data + written);
@@ -5240,8 +5081,7 @@ static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
 static bool msg_draw_dabs_pixel_write_payload_text(DP_Message *msg,
                                                    DP_TextWriter *writer)
 {
-    DP_MsgDrawDabsPixel *mddp = DP_msg_draw_dabs_pixel_cast(msg);
-    DP_ASSERT(mddp);
+    DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mddp->layer)
         && DP_text_writer_write_int(writer, "x", mddp->x)
         && DP_text_writer_write_int(writer, "y", mddp->y)
@@ -5253,10 +5093,8 @@ static bool msg_draw_dabs_pixel_write_payload_text(DP_Message *msg,
 static bool msg_draw_dabs_pixel_equals(DP_Message *DP_RESTRICT msg,
                                        DP_Message *DP_RESTRICT other)
 {
-    DP_MsgDrawDabsPixel *a = DP_msg_draw_dabs_pixel_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgDrawDabsPixel *b = DP_msg_draw_dabs_pixel_cast(other);
-    DP_ASSERT(b);
+    DP_MsgDrawDabsPixel *a = DP_message_internal(msg);
+    DP_MsgDrawDabsPixel *b = DP_message_internal(other);
     return a->layer == b->layer && a->x == b->x && a->y == b->y
         && a->color == b->color && a->mode == b->mode
         && a->dabs_count == b->dabs_count
@@ -5599,16 +5437,14 @@ struct DP_MsgDrawDabsMyPaint {
 
 static size_t msg_draw_dabs_mypaint_payload_length(DP_Message *msg)
 {
-    DP_MsgDrawDabsMyPaint *mddmp = DP_msg_draw_dabs_mypaint_cast(msg);
-    DP_ASSERT(mddmp);
+    DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
     return 15 + DP_int_to_size(mddmp->dabs_count) * 8;
 }
 
 static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
-    DP_MsgDrawDabsMyPaint *mddmp = DP_msg_draw_dabs_mypaint_cast(msg);
-    DP_ASSERT(mddmp);
+    DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mddmp->layer, data + written);
     written += DP_write_bigendian_int32(mddmp->x, data + written);
@@ -5624,8 +5460,7 @@ static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
 static bool msg_draw_dabs_mypaint_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
-    DP_MsgDrawDabsMyPaint *mddmp = DP_msg_draw_dabs_mypaint_cast(msg);
-    DP_ASSERT(mddmp);
+    DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mddmp->layer)
         && DP_text_writer_write_int(writer, "x", mddmp->x)
         && DP_text_writer_write_int(writer, "y", mddmp->y)
@@ -5638,10 +5473,8 @@ static bool msg_draw_dabs_mypaint_write_payload_text(DP_Message *msg,
 static bool msg_draw_dabs_mypaint_equals(DP_Message *DP_RESTRICT msg,
                                          DP_Message *DP_RESTRICT other)
 {
-    DP_MsgDrawDabsMyPaint *a = DP_msg_draw_dabs_mypaint_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgDrawDabsMyPaint *b = DP_msg_draw_dabs_mypaint_cast(other);
-    DP_ASSERT(b);
+    DP_MsgDrawDabsMyPaint *a = DP_message_internal(msg);
+    DP_MsgDrawDabsMyPaint *b = DP_message_internal(other);
     return a->layer == b->layer && a->x == b->x && a->y == b->y
         && a->color == b->color && a->lock_alpha == b->lock_alpha
         && a->dabs_count == b->dabs_count
@@ -5774,16 +5607,14 @@ struct DP_MsgMoveRect {
 
 static size_t msg_move_rect_payload_length(DP_Message *msg)
 {
-    DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-    DP_ASSERT(mmr);
+    DP_MsgMoveRect *mmr = DP_message_internal(msg);
     return 26 + mmr->mask_size;
 }
 
 static size_t msg_move_rect_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
-    DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-    DP_ASSERT(mmr);
+    DP_MsgMoveRect *mmr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mmr->layer, data + written);
     written += DP_write_bigendian_int32(mmr->sx, data + written);
@@ -5800,8 +5631,7 @@ static size_t msg_move_rect_serialize_payload(DP_Message *msg,
 static bool msg_move_rect_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
-    DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-    DP_ASSERT(mmr);
+    DP_MsgMoveRect *mmr = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "layer", mmr->layer)
         && DP_text_writer_write_int(writer, "sx", mmr->sx)
         && DP_text_writer_write_int(writer, "sy", mmr->sy)
@@ -5816,10 +5646,8 @@ static bool msg_move_rect_write_payload_text(DP_Message *msg,
 static bool msg_move_rect_equals(DP_Message *DP_RESTRICT msg,
                                  DP_Message *DP_RESTRICT other)
 {
-    DP_MsgMoveRect *a = DP_msg_move_rect_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgMoveRect *b = DP_msg_move_rect_cast(other);
-    DP_ASSERT(b);
+    DP_MsgMoveRect *a = DP_message_internal(msg);
+    DP_MsgMoveRect *b = DP_message_internal(other);
     return a->layer == b->layer && a->sx == b->sx && a->sy == b->sy
         && a->tx == b->tx && a->ty == b->ty && a->w == b->w && a->h == b->h
         && a->mask_size == b->mask_size
@@ -5976,8 +5804,7 @@ static size_t msg_set_metadata_int_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_set_metadata_int_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
-    DP_MsgSetMetadataInt *msmi = DP_msg_set_metadata_int_cast(msg);
-    DP_ASSERT(msmi);
+    DP_MsgSetMetadataInt *msmi = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(msmi->field, data + written);
     written += DP_write_bigendian_int32(msmi->value, data + written);
@@ -5988,8 +5815,7 @@ static size_t msg_set_metadata_int_serialize_payload(DP_Message *msg,
 static bool msg_set_metadata_int_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
-    DP_MsgSetMetadataInt *msmi = DP_msg_set_metadata_int_cast(msg);
-    DP_ASSERT(msmi);
+    DP_MsgSetMetadataInt *msmi = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "field", msmi->field)
         && DP_text_writer_write_int(writer, "value", msmi->value);
 }
@@ -5997,10 +5823,8 @@ static bool msg_set_metadata_int_write_payload_text(DP_Message *msg,
 static bool msg_set_metadata_int_equals(DP_Message *DP_RESTRICT msg,
                                         DP_Message *DP_RESTRICT other)
 {
-    DP_MsgSetMetadataInt *a = DP_msg_set_metadata_int_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgSetMetadataInt *b = DP_msg_set_metadata_int_cast(other);
-    DP_ASSERT(b);
+    DP_MsgSetMetadataInt *a = DP_message_internal(msg);
+    DP_MsgSetMetadataInt *b = DP_message_internal(other);
     return a->field == b->field && a->value == b->value;
 }
 
@@ -6067,16 +5891,14 @@ struct DP_MsgSetMetadataStr {
 
 static size_t msg_set_metadata_str_payload_length(DP_Message *msg)
 {
-    DP_MsgSetMetadataStr *msms = DP_msg_set_metadata_str_cast(msg);
-    DP_ASSERT(msms);
+    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
     return 1 + DP_uint16_to_size(msms->value_len);
 }
 
 static size_t msg_set_metadata_str_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
-    DP_MsgSetMetadataStr *msms = DP_msg_set_metadata_str_cast(msg);
-    DP_ASSERT(msms);
+    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(msms->field, data + written);
     written += DP_write_bytes(msms->value, 1, msms->value_len, data + written);
@@ -6087,8 +5909,7 @@ static size_t msg_set_metadata_str_serialize_payload(DP_Message *msg,
 static bool msg_set_metadata_str_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
-    DP_MsgSetMetadataStr *msms = DP_msg_set_metadata_str_cast(msg);
-    DP_ASSERT(msms);
+    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "field", msms->field)
         && DP_text_writer_write_string(writer, "value", msms->value);
 }
@@ -6096,10 +5917,8 @@ static bool msg_set_metadata_str_write_payload_text(DP_Message *msg,
 static bool msg_set_metadata_str_equals(DP_Message *DP_RESTRICT msg,
                                         DP_Message *DP_RESTRICT other)
 {
-    DP_MsgSetMetadataStr *a = DP_msg_set_metadata_str_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgSetMetadataStr *b = DP_msg_set_metadata_str_cast(other);
-    DP_ASSERT(b);
+    DP_MsgSetMetadataStr *a = DP_message_internal(msg);
+    DP_MsgSetMetadataStr *b = DP_message_internal(other);
     return a->field == b->field && a->value_len == b->value_len
         && memcmp(a->value, b->value, a->value_len);
 }
@@ -6181,16 +6000,14 @@ struct DP_MsgSetTimelineFrame {
 
 static size_t msg_set_timeline_frame_payload_length(DP_Message *msg)
 {
-    DP_MsgSetTimelineFrame *mstf = DP_msg_set_timeline_frame_cast(msg);
-    DP_ASSERT(mstf);
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
     return 3 + DP_int_to_size(mstf->layers_count) * 2;
 }
 
 static size_t msg_set_timeline_frame_serialize_payload(DP_Message *msg,
                                                        unsigned char *data)
 {
-    DP_MsgSetTimelineFrame *mstf = DP_msg_set_timeline_frame_cast(msg);
-    DP_ASSERT(mstf);
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mstf->frame, data + written);
     written += DP_write_bigendian_uint8(mstf->insert, data + written);
@@ -6203,8 +6020,7 @@ static size_t msg_set_timeline_frame_serialize_payload(DP_Message *msg,
 static bool msg_set_timeline_frame_write_payload_text(DP_Message *msg,
                                                       DP_TextWriter *writer)
 {
-    DP_MsgSetTimelineFrame *mstf = DP_msg_set_timeline_frame_cast(msg);
-    DP_ASSERT(mstf);
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "frame", mstf->frame)
         && DP_text_writer_write_bool(writer, "insert", mstf->insert)
         && DP_text_writer_write_uint16_list(writer, "layers", mstf->layers,
@@ -6214,10 +6030,8 @@ static bool msg_set_timeline_frame_write_payload_text(DP_Message *msg,
 static bool msg_set_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
                                           DP_Message *DP_RESTRICT other)
 {
-    DP_MsgSetTimelineFrame *a = DP_msg_set_timeline_frame_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgSetTimelineFrame *b = DP_msg_set_timeline_frame_cast(other);
-    DP_ASSERT(b);
+    DP_MsgSetTimelineFrame *a = DP_message_internal(msg);
+    DP_MsgSetTimelineFrame *b = DP_message_internal(other);
     return a->frame == b->frame && a->insert == b->insert
         && a->layers_count == b->layers_count
         && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2);
@@ -6327,8 +6141,7 @@ msg_remove_timeline_frame_payload_length(DP_UNUSED DP_Message *msg)
 static size_t msg_remove_timeline_frame_serialize_payload(DP_Message *msg,
                                                           unsigned char *data)
 {
-    DP_MsgRemoveTimelineFrame *mrtf = DP_msg_remove_timeline_frame_cast(msg);
-    DP_ASSERT(mrtf);
+    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mrtf->frame, data + written);
     DP_ASSERT(written == msg_remove_timeline_frame_payload_length(msg));
@@ -6338,18 +6151,15 @@ static size_t msg_remove_timeline_frame_serialize_payload(DP_Message *msg,
 static bool msg_remove_timeline_frame_write_payload_text(DP_Message *msg,
                                                          DP_TextWriter *writer)
 {
-    DP_MsgRemoveTimelineFrame *mrtf = DP_msg_remove_timeline_frame_cast(msg);
-    DP_ASSERT(mrtf);
+    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "frame", mrtf->frame);
 }
 
 static bool msg_remove_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
                                              DP_Message *DP_RESTRICT other)
 {
-    DP_MsgRemoveTimelineFrame *a = DP_msg_remove_timeline_frame_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgRemoveTimelineFrame *b = DP_msg_remove_timeline_frame_cast(other);
-    DP_ASSERT(b);
+    DP_MsgRemoveTimelineFrame *a = DP_message_internal(msg);
+    DP_MsgRemoveTimelineFrame *b = DP_message_internal(other);
     return a->frame == b->frame;
 }
 
@@ -6412,8 +6222,7 @@ static size_t msg_undo_payload_length(DP_UNUSED DP_Message *msg)
 
 static size_t msg_undo_serialize_payload(DP_Message *msg, unsigned char *data)
 {
-    DP_MsgUndo *mu = DP_msg_undo_cast(msg);
-    DP_ASSERT(mu);
+    DP_MsgUndo *mu = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint8(mu->override_user, data + written);
     written += DP_write_bigendian_uint8(mu->redo, data + written);
@@ -6423,8 +6232,7 @@ static size_t msg_undo_serialize_payload(DP_Message *msg, unsigned char *data)
 
 static bool msg_undo_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
-    DP_MsgUndo *mu = DP_msg_undo_cast(msg);
-    DP_ASSERT(mu);
+    DP_MsgUndo *mu = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "override_user", mu->override_user)
         && DP_text_writer_write_bool(writer, "redo", mu->redo);
 }
@@ -6432,10 +6240,8 @@ static bool msg_undo_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 static bool msg_undo_equals(DP_Message *DP_RESTRICT msg,
                             DP_Message *DP_RESTRICT other)
 {
-    DP_MsgUndo *a = DP_msg_undo_cast(msg);
-    DP_ASSERT(a);
-    DP_MsgUndo *b = DP_msg_undo_cast(other);
-    DP_ASSERT(b);
+    DP_MsgUndo *a = DP_message_internal(msg);
+    DP_MsgUndo *b = DP_message_internal(other);
     return a->override_user == b->override_user && a->redo == b->redo;
 }
 
