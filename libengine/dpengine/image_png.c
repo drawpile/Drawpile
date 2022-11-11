@@ -153,8 +153,11 @@ DP_Image *DP_image_png_read(DP_Input *input)
 
     png_uint_32 width = png_get_image_width(png_ptr, info_ptr);
     png_uint_32 height = png_get_image_height(png_ptr, info_ptr);
-    DP_ASSERT(width <= INT16_MAX);
-    DP_ASSERT(height <= INT16_MAX);
+    if (width == 0 || width > INT16_MAX || height == 0 || height > INT16_MAX) {
+        DP_error_set("Invalid PNG dimensions %ux%u", (unsigned int)width,
+                     (unsigned int)height);
+        png_longjmp(png_ptr, 1);
+    }
 
     size_t rowbytes = png_get_rowbytes(png_ptr, info_ptr);
     size_t expected_rowbytes = width * channels;
