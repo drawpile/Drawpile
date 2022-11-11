@@ -114,9 +114,16 @@ DP_Image *DP_image_png_read(DP_Input *input)
     png_set_read_fn(png_ptr, input, read_png);
     png_set_user_limits(png_ptr, INT16_MAX, INT16_MAX);
 
-    int transforms =
-        PNG_TRANSFORM_SCALE_16 | PNG_TRANSFORM_BGR | PNG_TRANSFORM_GRAY_TO_RGB;
+    int transforms = PNG_TRANSFORM_SCALE_16 | PNG_TRANSFORM_BGR
+                   | PNG_TRANSFORM_GRAY_TO_RGB | PNG_TRANSFORM_EXPAND;
     png_read_png(png_ptr, info_ptr, transforms, NULL);
+
+    png_uint_32 channels = png_get_channels(png_ptr, info_ptr);
+    if (channels != 3u && channels != 4u) {
+        DP_error_set("Can't handle a PNG with %u color channels",
+                     (unsigned int)channels);
+        png_longjmp(png_ptr, 1);
+    }
 
     png_uint_32 width = png_get_image_width(png_ptr, info_ptr);
     png_uint_32 height = png_get_image_height(png_ptr, info_ptr);
@@ -124,7 +131,7 @@ DP_Image *DP_image_png_read(DP_Input *input)
     DP_ASSERT(height <= INT16_MAX);
 
     size_t rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-    size_t expected_rowbytes = width * 4u;
+    size_t expected_rowbytes = width * channels;
     if (rowbytes != expected_rowbytes) {
         DP_error_set("Expected PNG row length of %zu, but got %zu",
                      expected_rowbytes, rowbytes);
@@ -137,12 +144,12 @@ DP_Image *DP_image_png_read(DP_Input *input)
     for (png_uint_32 y = 0; y < height; ++y) {
         png_bytep row = row_pointers[y];
         for (png_uint_32 x = 0; x < width; ++x) {
-            png_uint_32 offset = x * 4;
+            png_uint_32 offset = x * channels;
             DP_UPixel8 pixel = {
                 .b = row[offset],
                 .g = row[offset + 1],
                 .r = row[offset + 2],
-                .a = row[offset + 3],
+                .a = channels == 3 ? 0xff : row[offset + 3],
             };
             // PNG stores pixels unpremultiplied, fix them up.
             pixels[y * width + x] = DP_pixel8_premultiply(pixel);
