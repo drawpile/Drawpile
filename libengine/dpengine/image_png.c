@@ -90,6 +90,32 @@ static void flush_png(png_structp png_ptr)
 }
 
 
+// When compiling with optimizations, gcc produces warnings about potential
+// variable clobbering by longjmp, so we have to force this to be non-inlined.
+static void push_pixels(png_uint_32 channels, png_uint_32 width,
+                        png_uint_32 height, png_bytepp row_pointers,
+                        DP_Pixel8 *pixels) DP_NOINLINE;
+
+static void push_pixels(png_uint_32 channels, png_uint_32 width,
+                        png_uint_32 height, png_bytepp row_pointers,
+                        DP_Pixel8 *pixels)
+{
+    for (png_uint_32 y = 0; y < height; ++y) {
+        png_bytep row = row_pointers[y];
+        for (png_uint_32 x = 0; x < width; ++x) {
+            png_uint_32 offset = x * channels;
+            DP_UPixel8 pixel = {
+                .b = row[offset],
+                .g = row[offset + 1],
+                .r = row[offset + 2],
+                .a = channels == 3 ? 0xff : row[offset + 3],
+            };
+            // PNG stores pixels unpremultiplied, fix them up.
+            pixels[y * width + x] = DP_pixel8_premultiply(pixel);
+        }
+    }
+}
+
 DP_Image *DP_image_png_read(DP_Input *input)
 {
     png_structp png_ptr =
@@ -141,20 +167,7 @@ DP_Image *DP_image_png_read(DP_Input *input)
     png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
     DP_Image *img = DP_image_new((int)width, (int)height);
     DP_Pixel8 *pixels = DP_image_pixels(img);
-    for (png_uint_32 y = 0; y < height; ++y) {
-        png_bytep row = row_pointers[y];
-        for (png_uint_32 x = 0; x < width; ++x) {
-            png_uint_32 offset = x * channels;
-            DP_UPixel8 pixel = {
-                .b = row[offset],
-                .g = row[offset + 1],
-                .r = row[offset + 2],
-                .a = channels == 3 ? 0xff : row[offset + 3],
-            };
-            // PNG stores pixels unpremultiplied, fix them up.
-            pixels[y * width + x] = DP_pixel8_premultiply(pixel);
-        }
-    }
+    push_pixels(channels, width, height, row_pointers, pixels);
 
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     return img;

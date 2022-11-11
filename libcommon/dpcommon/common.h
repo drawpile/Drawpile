@@ -67,6 +67,7 @@
 #    define DP_REALLOC_ATTR __attribute__((malloc, alloc_size(2)))
 #    define DP_MUST_CHECK   __attribute((warn_unused_result))
 #    define DP_INLINE       DP_UNUSED static inline
+#    define DP_NOINLINE     __attribute__((noinline))
 #else
 #    define DP_TRAP() abort()
 #    define DP_UNUSED // nothing
@@ -77,6 +78,8 @@
 #    define DP_MALLOC_ATTR                          // nothing
 #    define DP_REALLOC_ATTR                         // nothing
 #    define DP_MUST_CHECK                           // nothing
+#    define DP_INLINE                               static inline
+#    define DP_NOINLINE                             // nothing
 #endif
 
 #ifdef __cplusplus
