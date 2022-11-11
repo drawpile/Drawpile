@@ -619,7 +619,7 @@ static bool msg_server_command_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgServerCommand *a = DP_message_internal(msg);
     DP_MsgServerCommand *b = DP_message_internal(other);
-    return a->msg_len == b->msg_len && memcmp(a->msg, b->msg, a->msg_len);
+    return a->msg_len == b->msg_len && memcmp(a->msg, b->msg, a->msg_len) == 0;
 }
 
 static const DP_MessageMethods msg_server_command_methods = {
@@ -718,7 +718,7 @@ static bool msg_disconnect_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgDisconnect *a = DP_message_internal(msg);
     DP_MsgDisconnect *b = DP_message_internal(other);
     return a->reason == b->reason && a->message_len == b->message_len
-        && memcmp(a->message, b->message, a->message_len);
+        && memcmp(a->message, b->message, a->message_len) == 0;
 }
 
 static const DP_MessageMethods msg_disconnect_methods = {
@@ -923,10 +923,12 @@ static bool msg_join_equals(DP_Message *DP_RESTRICT msg,
     return a->flags == b->flags && a->name_len == b->name_len
         && memcmp(((char *)a->name_avatar), ((char *)b->name_avatar),
                   a->name_len)
+               == 0
         && a->avatar_size == b->avatar_size
         && memcmp(a->name_avatar + a->name_len + 1,
                   b->name_avatar + b->name_len + 1,
-                  DP_uint16_to_size(a->avatar_size));
+                  DP_uint16_to_size(a->avatar_size))
+               == 0;
 }
 
 static const DP_MessageMethods msg_join_methods = {
@@ -1082,7 +1084,7 @@ static bool msg_session_owner_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgSessionOwner *a = DP_message_internal(msg);
     DP_MsgSessionOwner *b = DP_message_internal(other);
     return a->users_count == b->users_count
-        && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count));
+        && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count)) == 0;
 }
 
 static const DP_MessageMethods msg_session_owner_methods = {
@@ -1213,7 +1215,7 @@ static bool msg_chat_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgChat *b = DP_message_internal(other);
     return a->tflags == b->tflags && a->oflags == b->oflags
         && a->message_len == b->message_len
-        && memcmp(a->message, b->message, a->message_len);
+        && memcmp(a->message, b->message, a->message_len) == 0;
 }
 
 static const DP_MessageMethods msg_chat_methods = {
@@ -1326,7 +1328,7 @@ static bool msg_trusted_users_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgTrustedUsers *a = DP_message_internal(msg);
     DP_MsgTrustedUsers *b = DP_message_internal(other);
     return a->users_count == b->users_count
-        && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count));
+        && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count)) == 0;
 }
 
 static const DP_MessageMethods msg_trusted_users_methods = {
@@ -1456,7 +1458,7 @@ static bool msg_private_chat_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgPrivateChat *b = DP_message_internal(other);
     return a->target == b->target && a->oflags == b->oflags
         && a->message_len == b->message_len
-        && memcmp(a->message, b->message, a->message_len);
+        && memcmp(a->message, b->message, a->message_len) == 0;
 }
 
 static const DP_MessageMethods msg_private_chat_methods = {
@@ -1832,7 +1834,8 @@ static bool msg_marker_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgMarker *a = DP_message_internal(msg);
     DP_MsgMarker *b = DP_message_internal(other);
-    return a->text_len == b->text_len && memcmp(a->text, b->text, a->text_len);
+    return a->text_len == b->text_len
+        && memcmp(a->text, b->text, a->text_len) == 0;
 }
 
 static const DP_MessageMethods msg_marker_methods = {
@@ -1929,7 +1932,7 @@ static bool msg_user_acl_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgUserAcl *a = DP_message_internal(msg);
     DP_MsgUserAcl *b = DP_message_internal(other);
     return a->users_count == b->users_count
-        && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count));
+        && memcmp(a->users, b->users, DP_uint16_to_size(a->users_count)) == 0;
 }
 
 static const DP_MessageMethods msg_user_acl_methods = {
@@ -2038,7 +2041,8 @@ static bool msg_layer_acl_equals(DP_Message *DP_RESTRICT msg,
     return a->id == b->id && a->flags == b->flags
         && a->exclusive_count == b->exclusive_count
         && memcmp(a->exclusive, b->exclusive,
-                  DP_uint16_to_size(a->exclusive_count));
+                  DP_uint16_to_size(a->exclusive_count))
+               == 0;
 }
 
 static const DP_MessageMethods msg_layer_acl_methods = {
@@ -2160,7 +2164,8 @@ static bool msg_feature_access_levels_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgFeatureAccessLevels *b = DP_message_internal(other);
     return a->feature_tiers_count == b->feature_tiers_count
         && memcmp(a->feature_tiers, b->feature_tiers,
-                  DP_uint16_to_size(a->feature_tiers_count));
+                  DP_uint16_to_size(a->feature_tiers_count))
+               == 0;
 }
 
 static const DP_MessageMethods msg_feature_access_levels_methods = {
@@ -2344,7 +2349,8 @@ static bool msg_filtered_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgFiltered *a = DP_message_internal(msg);
     DP_MsgFiltered *b = DP_message_internal(other);
     return a->message_size == b->message_size
-        && memcmp(a->message, b->message, DP_uint16_to_size(a->message_size));
+        && memcmp(a->message, b->message, DP_uint16_to_size(a->message_size))
+               == 0;
 }
 
 static const DP_MessageMethods msg_filtered_methods = {
@@ -2611,7 +2617,8 @@ static bool msg_layer_create_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgLayerCreate *b = DP_message_internal(other);
     return a->id == b->id && a->source == b->source && a->target == b->target
         && a->fill == b->fill && a->flags == b->flags
-        && a->name_len == b->name_len && memcmp(a->name, b->name, a->name_len);
+        && a->name_len == b->name_len
+        && memcmp(a->name, b->name, a->name_len) == 0;
 }
 
 static const DP_MessageMethods msg_layer_create_methods = {
@@ -2895,7 +2902,7 @@ static bool msg_layer_retitle_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgLayerRetitle *a = DP_message_internal(msg);
     DP_MsgLayerRetitle *b = DP_message_internal(other);
     return a->id == b->id && a->title_len == b->title_len
-        && memcmp(a->title, b->title, a->title_len);
+        && memcmp(a->title, b->title, a->title_len) == 0;
 }
 
 static const DP_MessageMethods msg_layer_retitle_methods = {
@@ -3004,7 +3011,8 @@ static bool msg_layer_order_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgLayerOrder *a = DP_message_internal(msg);
     DP_MsgLayerOrder *b = DP_message_internal(other);
     return a->root == b->root && a->layers_count == b->layers_count
-        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2);
+        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
+               == 0;
 }
 
 static const DP_MessageMethods msg_layer_order_methods = {
@@ -3324,7 +3332,7 @@ static bool msg_put_image_equals(DP_Message *DP_RESTRICT msg,
     return a->layer == b->layer && a->mode == b->mode && a->x == b->x
         && a->y == b->y && a->w == b->w && a->h == b->h
         && a->image_size == b->image_size
-        && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size));
+        && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
 
 static const DP_MessageMethods msg_put_image_methods = {
@@ -3925,7 +3933,7 @@ static bool msg_annotation_edit_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgAnnotationEdit *b = DP_message_internal(other);
     return a->id == b->id && a->bg == b->bg && a->flags == b->flags
         && a->border == b->border && a->text_len == b->text_len
-        && memcmp(a->text, b->text, a->text_len);
+        && memcmp(a->text, b->text, a->text_len) == 0;
 }
 
 static const DP_MessageMethods msg_annotation_edit_methods = {
@@ -4179,7 +4187,7 @@ static bool msg_move_region_equals(DP_Message *DP_RESTRICT msg,
         && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1 && a->y1 == b->y1
         && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3 && a->y3 == b->y3
         && a->x4 == b->x4 && a->y4 == b->y4 && a->mask_size == b->mask_size
-        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size));
+        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
 static const DP_MessageMethods msg_move_region_methods = {
@@ -4410,7 +4418,7 @@ static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
         && a->last_touch == b->last_touch && a->col == b->col
         && a->row == b->row && a->repeat == b->repeat
         && a->image_size == b->image_size
-        && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size));
+        && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
 
 static const DP_MessageMethods msg_put_tile_methods = {
@@ -4562,7 +4570,7 @@ static bool msg_canvas_background_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgCanvasBackground *a = DP_message_internal(msg);
     DP_MsgCanvasBackground *b = DP_message_internal(other);
     return a->image_size == b->image_size
-        && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size));
+        && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
 
 static const DP_MessageMethods msg_canvas_background_methods = {
@@ -5651,7 +5659,7 @@ static bool msg_move_rect_equals(DP_Message *DP_RESTRICT msg,
     return a->layer == b->layer && a->sx == b->sx && a->sy == b->sy
         && a->tx == b->tx && a->ty == b->ty && a->w == b->w && a->h == b->h
         && a->mask_size == b->mask_size
-        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size));
+        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
 static const DP_MessageMethods msg_move_rect_methods = {
@@ -5920,7 +5928,7 @@ static bool msg_set_metadata_str_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgSetMetadataStr *a = DP_message_internal(msg);
     DP_MsgSetMetadataStr *b = DP_message_internal(other);
     return a->field == b->field && a->value_len == b->value_len
-        && memcmp(a->value, b->value, a->value_len);
+        && memcmp(a->value, b->value, a->value_len) == 0;
 }
 
 static const DP_MessageMethods msg_set_metadata_str_methods = {
@@ -6034,7 +6042,8 @@ static bool msg_set_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgSetTimelineFrame *b = DP_message_internal(other);
     return a->frame == b->frame && a->insert == b->insert
         && a->layers_count == b->layers_count
-        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2);
+        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
+               == 0;
 }
 
 static const DP_MessageMethods msg_set_timeline_frame_methods = {

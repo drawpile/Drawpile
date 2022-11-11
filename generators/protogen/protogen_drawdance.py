@@ -231,7 +231,7 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
             size_name = self.array_size_name(f)
             a_count, b_count = f"a->{f.name}_{size_name}", f"b->{f.name}_{size_name}"
             size = f"DP_uint16_to_size({a_count}){self.multiplier}"
-            return f"{a_count} == {b_count} && memcmp({a}, {b}, {size})"
+            return f"{a_count} == {b_count} && memcmp({a}, {b}, {size}) == 0"
         except Exception as e:
             raise Exception("a") from e
 
@@ -315,7 +315,7 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
     def equals(self, f):
         a, b = self.access(f, "a"), self.access(f, "b")
         a_len, b_len = f"a->{f.name}_len", f"b->{f.name}_len"
-        return f"{a_len} == {b_len} && memcmp({a}, {b}, {a_len})"
+        return f"{a_len} == {b_len} && memcmp({a}, {b}, {a_len}) == 0"
 
     def serialize_payload(self, f, subject, dst):
         a = self.access(f, subject)
