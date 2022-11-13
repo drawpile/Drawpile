@@ -749,7 +749,8 @@ static Fix15 comp_soft_light(Fix15 a, Fix15 b)
 
 static Fix15 comp_linear_burn(Fix15 a, Fix15 b)
 {
-    return fix15_clamp(a + b) - BIT15_FIX;
+    Fix15 c = a + b;
+    return c <= BIT15_FIX ? 0 : c - BIT15_FIX;
 }
 
 static Fix15 comp_linear_light(Fix15 a, Fix15 b)
