@@ -563,7 +563,7 @@ DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
         if (layer_y >= 0 && layer_y < layer_height) {
             for (int x = 0; x < src_width; ++x) {
                 int layer_x = src_x + x;
-                if (layer_x >= 0 && layer_y < layer_width
+                if (layer_x >= 0 && layer_x < layer_width
                     && (!mask || DP_image_pixel_at(mask, x, y).color != 0)) {
                     DP_Pixel8 pixel = DP_pixel15_to_8(
                         layer_content_pixel_at(lc, layer_x, layer_y));
