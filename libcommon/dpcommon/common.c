@@ -83,6 +83,18 @@ void *DP_malloc(size_t size)
     }
 }
 
+void *DP_malloc_zeroed(size_t size)
+{
+    void *ptr = calloc(size, 1);
+    if (ptr || size == 0) {
+        return ptr;
+    }
+    else {
+        fprintf(stderr, "Zeroed allocation of %zu bytes failed\n", size);
+        DP_TRAP();
+    }
+}
+
 void *DP_realloc(void *ptr, size_t size)
 {
     void *new_ptr = realloc(ptr, size);

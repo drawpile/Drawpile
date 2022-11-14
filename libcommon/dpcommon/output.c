@@ -35,8 +35,7 @@ DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size)
 {
     DP_ASSERT(init);
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Output));
-    DP_Output *output = DP_malloc(sizeof(*output) + internal_size);
-    memset(output->internal, 0, internal_size);
+    DP_Output *output = DP_malloc_zeroed(sizeof(*output) + internal_size);
     output->methods = init(output->internal, arg);
     if (output->methods) {
         DP_ASSERT(output->methods->write);

@@ -211,6 +211,8 @@ void DP_free(void *ptr);
 
 void *DP_malloc(size_t size) DP_MALLOC_ATTR;
 
+void *DP_malloc_zeroed(size_t size) DP_MALLOC_ATTR;
+
 void *DP_realloc(void *ptr, size_t size) DP_REALLOC_ATTR;
 
 

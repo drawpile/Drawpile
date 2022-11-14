@@ -328,8 +328,10 @@ DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
 
 DP_TransientTile *DP_transient_tile_new_blank(unsigned int context_id)
 {
-    DP_TransientTile *tt = alloc_tile(true, context_id);
-    memset(tt->pixels, 0, DP_TILE_BYTES);
+    DP_TransientTile *tt = DP_malloc_zeroed(sizeof(*tt));
+    DP_atomic_set(&tt->refcount, 1);
+    tt->transient = true;
+    tt->context_id = context_id;
     return tt;
 }
 

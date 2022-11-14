@@ -51,12 +51,11 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
     DP_ASSERT(methods->equals);
     DP_ASSERT(methods->write_payload_text);
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Message));
-    DP_Message *msg = DP_malloc(sizeof(*msg) + internal_size);
+    DP_Message *msg = DP_malloc_zeroed(sizeof(*msg) + internal_size);
     DP_atomic_set(&msg->refcount, 1);
     msg->type = type;
     msg->context_id = context_id;
     msg->methods = methods;
-    memset(msg->internal, 0, internal_size);
     return msg;
 }
 

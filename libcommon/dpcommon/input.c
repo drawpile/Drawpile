@@ -36,8 +36,7 @@ DP_Input *DP_input_new(DP_InputInitFn init, void *arg, size_t internal_size)
 {
     DP_ASSERT(init);
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Input));
-    DP_Input *input = DP_malloc(sizeof(*input) + internal_size);
-    memset(input->internal, 0, internal_size);
+    DP_Input *input = DP_malloc_zeroed(sizeof(*input) + internal_size);
     input->methods = init(input->internal, arg);
     if (input->methods) {
         DP_ASSERT(input->methods->read);

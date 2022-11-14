@@ -42,11 +42,10 @@ DP_Image *DP_image_new(int width, int height)
     DP_ASSERT(width > 0);
     DP_ASSERT(height > 0);
     size_t count = DP_int_to_size(width) * DP_int_to_size(height);
-    DP_Image *img = DP_malloc(DP_FLEX_SIZEOF(DP_Image, pixels, count));
+    DP_Image *img = DP_malloc_zeroed(DP_FLEX_SIZEOF(DP_Image, pixels, count));
     img->width = width;
     img->height = height;
     img->count = count;
-    memset(img->pixels, 0, sizeof(*img->pixels) * count);
     return img;
 }
 
