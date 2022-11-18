@@ -55,14 +55,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_NORMAL",
-            "src-over",
+            "svg:src-over",
             "Normal",
         },
     [DP_BLEND_MODE_MULTIPLY] =
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_MULTIPLY",
-            "multiply",
+            "svg:multiply",
             "Multiply",
         },
     [DP_BLEND_MODE_DIVIDE] =
@@ -76,28 +76,28 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_BURN",
-            "color-burn",
+            "svg:color-burn",
             "Burn",
         },
     [DP_BLEND_MODE_DODGE] =
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_DODGE",
-            "color-dodge",
+            "svg:color-dodge",
             "Dodge",
         },
     [DP_BLEND_MODE_DARKEN] =
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_DARKEN",
-            "darken",
+            "svg:darken",
             "Darken",
         },
     [DP_BLEND_MODE_LIGHTEN] =
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_LIGHTEN",
-            "lighten",
+            "svg:lighten",
             "Lighten",
         },
     [DP_BLEND_MODE_SUBTRACT] =
@@ -111,21 +111,21 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_ADD",
-            "plus",
+            "svg:plus",
             "Add",
         },
     [DP_BLEND_MODE_RECOLOR] =
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_RECOLOR",
-            "src-atop",
+            "svg:src-atop",
             "Recolor",
         },
     [DP_BLEND_MODE_BEHIND] =
         {
             BRUSH | INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_BEHIND",
-            "dst-over",
+            "svg:dst-over",
             "Behind",
         },
     [DP_BLEND_MODE_COLOR_ERASE] =
