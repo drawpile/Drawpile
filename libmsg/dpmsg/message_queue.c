@@ -61,6 +61,12 @@ DP_Message *DP_message_queue_push_inc(DP_Queue *queue, DP_Message *msg)
     return DP_message_queue_push_noinc(queue, DP_message_incref(msg));
 }
 
+DP_Message *DP_message_queue_peek(DP_Queue *queue)
+{
+    DP_Message **pp = DP_queue_peek(queue, ELEMENT_SIZE);
+    return pp ? *pp : NULL;
+}
+
 DP_Message *DP_message_queue_shift(DP_Queue *queue)
 {
     DP_ASSERT(queue);

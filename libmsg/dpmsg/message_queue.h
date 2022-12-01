@@ -35,6 +35,8 @@ DP_Message *DP_message_queue_push_noinc(DP_Queue *queue, DP_Message *msg);
 
 DP_Message *DP_message_queue_push_inc(DP_Queue *queue, DP_Message *msg);
 
+DP_Message *DP_message_queue_peek(DP_Queue *queue);
+
 DP_Message *DP_message_queue_shift(DP_Queue *queue);
 
 
