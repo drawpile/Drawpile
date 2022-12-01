@@ -58,12 +58,7 @@
 #    endif
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) \
         __attribute__((__format__(printf, STRING_INDEX, FIRST_TO_CHECK)))
-#    ifdef __clang__
-#        define DP_MALLOC_ATTR __attribute__((malloc, alloc_size(1)))
-#    else
-#        define DP_MALLOC_ATTR \
-            __attribute__((malloc, malloc(DP_free, 1), alloc_size(1)))
-#    endif
+#    define DP_MALLOC_ATTR  __attribute__((malloc, alloc_size(1)))
 #    define DP_REALLOC_ATTR __attribute__((malloc, alloc_size(2)))
 #    define DP_MUST_CHECK   __attribute((warn_unused_result))
 #    define DP_INLINE       DP_UNUSED static inline
