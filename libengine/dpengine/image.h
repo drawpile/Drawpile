@@ -83,6 +83,8 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
                         int max_height, DP_Image **out_thumb) DP_MUST_CHECK;
 
+bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel);
+
 
 DP_Image *DP_image_read_png(DP_Input *input);
 DP_Image *DP_image_read_jpeg(DP_Input *input);

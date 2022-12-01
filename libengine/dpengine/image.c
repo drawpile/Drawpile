@@ -402,6 +402,22 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
     }
 }
 
+bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel)
+{
+    DP_Pixel8 *pixels = img->pixels;
+    DP_Pixel8 pixel = pixels[0];
+    size_t count = img->count;
+    for (size_t i = 1; i < count; ++i) {
+        if (pixels[i].color != pixel.color) {
+            return false;
+        }
+    }
+    if (out_pixel) {
+        *out_pixel = pixel;
+    }
+    return true;
+}
+
 
 DP_Image *DP_image_read_png(DP_Input *input)
 {
