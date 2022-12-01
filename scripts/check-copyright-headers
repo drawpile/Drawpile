@@ -28,7 +28,7 @@ use FindBin;
 sub want_file {
     my ($path) = @_;
     return -f $path
-        && $path !~ m{[/\\](?:build\w*|\w+_git|imgui|emsdl2|node_modules)[/\\]}
+        && $path !~ m{[/\\](?:build\w*|\w+_git|imgui|emsdl2|node_modules|libmypaint|site-packages)[/\\]}
         && $path =~ /(?:\.(?:c|cpp|h|pl|lua|cmake|go|css|tsx?)|CMakeLists\.txt)\z/;
 }
 
