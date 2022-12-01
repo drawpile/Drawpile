@@ -223,6 +223,33 @@ slurp_close:
 }
 
 
+bool DP_str_equal(const char *a, const char *b)
+{
+    return a == b || (a && strcmp(a, b) == 0);
+}
+
+bool DP_str_equal_lowercase(const char *a, const char *b)
+{
+    if (a == b) {
+        return true;
+    }
+
+    if (a && b) {
+        size_t len = strlen(a);
+        if (len == strlen(b)) {
+            for (size_t i = 0; i < len; ++i) {
+                if (tolower(a[i]) != tolower(b[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 const char *DP_error(void)
 {
     DP_ErrorState error = DP_thread_error_state_get();

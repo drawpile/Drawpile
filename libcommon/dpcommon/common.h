@@ -240,6 +240,11 @@ char *DP_strdup(const char *str);
 void *DP_slurp(const char *path, size_t *out_length);
 
 
+bool DP_str_equal(const char *a, const char *b);
+
+bool DP_str_equal_lowercase(const char *a, const char *b);
+
+
 const char *DP_error(void);
 
 const char *DP_error_since(unsigned int count);
