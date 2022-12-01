@@ -46,6 +46,7 @@ set(dpengine_sources
     dpengine/paint.c
     dpengine/pixels.c
     dpengine/save.c
+    dpengine/snapshots.c
     dpengine/tile.c
     dpengine/timeline.c)
 
@@ -77,6 +78,7 @@ set(dpengine_headers
     dpengine/paint.h
     dpengine/pixels.h
     dpengine/save.h
+    dpengine/snapshots.h
     dpengine/tile.h
     dpengine/timeline.h
     dpengine/xml_stream.h
