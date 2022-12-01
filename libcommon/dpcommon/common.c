@@ -101,7 +101,7 @@ void DP_free(void *ptr)
 void *DP_malloc(size_t size)
 {
     void *ptr = malloc(size);
-    if (ptr) {
+    if (ptr || size == 0) {
         return ptr;
     }
     else {
@@ -125,7 +125,7 @@ void *DP_malloc_zeroed(size_t size)
 void *DP_realloc(void *ptr, size_t size)
 {
     void *new_ptr = realloc(ptr, size);
-    if (new_ptr) {
+    if (new_ptr || size == 0) {
         return new_ptr;
     }
     else {
