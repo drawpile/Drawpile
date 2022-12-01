@@ -406,7 +406,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
             {% if dpl %}
                 {{ message.param }} = DP_message_internal(msg);
             {% endif %}
-            return {% if spl %}{{ spl }}{% endif -%}
+            return {% if spl %}((size_t){{ spl }}){% endif -%}
                    {% if spl and dpl %} + {% endif -%}
                    {% if dpl %}{{ dpl }}{% endif %};
         }

@@ -690,7 +690,7 @@ struct DP_MsgDisconnect {
 static size_t msg_disconnect_payload_length(DP_Message *msg)
 {
     DP_MsgDisconnect *md = DP_message_internal(msg);
-    return 1 + DP_uint16_to_size(md->message_len);
+    return ((size_t)1) + DP_uint16_to_size(md->message_len);
 }
 
 static size_t msg_disconnect_serialize_payload(DP_Message *msg,
@@ -794,7 +794,7 @@ struct DP_MsgPing {
 
 static size_t msg_ping_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 1;
+    return ((size_t)1);
 }
 
 static size_t msg_ping_serialize_payload(DP_Message *msg, unsigned char *data)
@@ -888,7 +888,7 @@ struct DP_MsgJoin {
 static size_t msg_join_payload_length(DP_Message *msg)
 {
     DP_MsgJoin *mj = DP_message_internal(msg);
-    return 2 + DP_uint16_to_size(mj->name_len) + mj->avatar_size;
+    return ((size_t)2) + DP_uint16_to_size(mj->name_len) + mj->avatar_size;
 }
 
 static size_t msg_join_serialize_payload(DP_Message *msg, unsigned char *data)
@@ -1186,7 +1186,7 @@ struct DP_MsgChat {
 static size_t msg_chat_payload_length(DP_Message *msg)
 {
     DP_MsgChat *mc = DP_message_internal(msg);
-    return 2 + DP_uint16_to_size(mc->message_len);
+    return ((size_t)2) + DP_uint16_to_size(mc->message_len);
 }
 
 static size_t msg_chat_serialize_payload(DP_Message *msg, unsigned char *data)
@@ -1426,7 +1426,7 @@ struct DP_MsgPrivateChat {
 static size_t msg_private_chat_payload_length(DP_Message *msg)
 {
     DP_MsgPrivateChat *mpc = DP_message_internal(msg);
-    return 2 + DP_uint16_to_size(mpc->message_len);
+    return ((size_t)2) + DP_uint16_to_size(mpc->message_len);
 }
 
 static size_t msg_private_chat_serialize_payload(DP_Message *msg,
@@ -1544,7 +1544,7 @@ struct DP_MsgInterval {
 
 static size_t msg_interval_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 2;
+    return ((size_t)2);
 }
 
 static size_t msg_interval_serialize_payload(DP_Message *msg,
@@ -1625,7 +1625,7 @@ struct DP_MsgLaserTrail {
 
 static size_t msg_laser_trail_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 5;
+    return ((size_t)5);
 }
 
 static size_t msg_laser_trail_serialize_payload(DP_Message *msg,
@@ -1717,7 +1717,7 @@ struct DP_MsgMovePointer {
 
 static size_t msg_move_pointer_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 8;
+    return ((size_t)8);
 }
 
 static size_t msg_move_pointer_serialize_payload(DP_Message *msg,
@@ -2007,7 +2007,7 @@ struct DP_MsgLayerAcl {
 static size_t msg_layer_acl_payload_length(DP_Message *msg)
 {
     DP_MsgLayerAcl *mla = DP_message_internal(msg);
-    return 3 + DP_int_to_size(mla->exclusive_count);
+    return ((size_t)3) + DP_int_to_size(mla->exclusive_count);
 }
 
 static size_t msg_layer_acl_serialize_payload(DP_Message *msg,
@@ -2240,7 +2240,7 @@ struct DP_MsgDefaultLayer {
 
 static size_t msg_default_layer_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 2;
+    return ((size_t)2);
 }
 
 static size_t msg_default_layer_serialize_payload(DP_Message *msg,
@@ -2448,7 +2448,7 @@ struct DP_MsgCanvasResize {
 
 static size_t msg_canvas_resize_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 16;
+    return ((size_t)16);
 }
 
 static size_t msg_canvas_resize_serialize_payload(DP_Message *msg,
@@ -2580,7 +2580,7 @@ struct DP_MsgLayerCreate {
 static size_t msg_layer_create_payload_length(DP_Message *msg)
 {
     DP_MsgLayerCreate *mlc = DP_message_internal(msg);
-    return 11 + DP_uint16_to_size(mlc->name_len);
+    return ((size_t)11) + DP_uint16_to_size(mlc->name_len);
 }
 
 static size_t msg_layer_create_serialize_payload(DP_Message *msg,
@@ -2747,7 +2747,7 @@ struct DP_MsgLayerAttributes {
 
 static size_t msg_layer_attributes_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 6;
+    return ((size_t)6);
 }
 
 static size_t msg_layer_attributes_serialize_payload(DP_Message *msg,
@@ -2874,7 +2874,7 @@ struct DP_MsgLayerRetitle {
 static size_t msg_layer_retitle_payload_length(DP_Message *msg)
 {
     DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
-    return 2 + DP_uint16_to_size(mlr->title_len);
+    return ((size_t)2) + DP_uint16_to_size(mlr->title_len);
 }
 
 static size_t msg_layer_retitle_serialize_payload(DP_Message *msg,
@@ -2981,7 +2981,7 @@ struct DP_MsgLayerOrder {
 static size_t msg_layer_order_payload_length(DP_Message *msg)
 {
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
-    return 2 + DP_int_to_size(mlo->layers_count) * 2;
+    return ((size_t)2) + DP_int_to_size(mlo->layers_count) * 2;
 }
 
 static size_t msg_layer_order_serialize_payload(DP_Message *msg,
@@ -3100,7 +3100,7 @@ struct DP_MsgLayerDelete {
 
 static size_t msg_layer_delete_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 4;
+    return ((size_t)4);
 }
 
 static size_t msg_layer_delete_serialize_payload(DP_Message *msg,
@@ -3192,7 +3192,7 @@ struct DP_MsgLayerVisibility {
 
 static size_t msg_layer_visibility_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 3;
+    return ((size_t)3);
 }
 
 static size_t msg_layer_visibility_serialize_payload(DP_Message *msg,
@@ -3291,7 +3291,7 @@ struct DP_MsgPutImage {
 static size_t msg_put_image_payload_length(DP_Message *msg)
 {
     DP_MsgPutImage *mpi = DP_message_internal(msg);
-    return 19 + mpi->image_size;
+    return ((size_t)19) + mpi->image_size;
 }
 
 static size_t msg_put_image_serialize_payload(DP_Message *msg,
@@ -3460,7 +3460,7 @@ struct DP_MsgFillRect {
 
 static size_t msg_fill_rect_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 23;
+    return ((size_t)23);
 }
 
 static size_t msg_fill_rect_serialize_payload(DP_Message *msg,
@@ -3628,7 +3628,7 @@ struct DP_MsgAnnotationCreate {
 
 static size_t msg_annotation_create_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 14;
+    return ((size_t)14);
 }
 
 static size_t msg_annotation_create_serialize_payload(DP_Message *msg,
@@ -3755,7 +3755,7 @@ struct DP_MsgAnnotationReshape {
 
 static size_t msg_annotation_reshape_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 14;
+    return ((size_t)14);
 }
 
 static size_t msg_annotation_reshape_serialize_payload(DP_Message *msg,
@@ -3898,7 +3898,7 @@ struct DP_MsgAnnotationEdit {
 static size_t msg_annotation_edit_payload_length(DP_Message *msg)
 {
     DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
-    return 8 + DP_uint16_to_size(mae->text_len);
+    return ((size_t)8) + DP_uint16_to_size(mae->text_len);
 }
 
 static size_t msg_annotation_edit_serialize_payload(DP_Message *msg,
@@ -4036,7 +4036,7 @@ struct DP_MsgAnnotationDelete {
 
 static size_t msg_annotation_delete_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 2;
+    return ((size_t)2);
 }
 
 static size_t msg_annotation_delete_serialize_payload(DP_Message *msg,
@@ -4131,7 +4131,7 @@ struct DP_MsgMoveRegion {
 static size_t msg_move_region_payload_length(DP_Message *msg)
 {
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-    return 50 + mmr->mask_size;
+    return ((size_t)50) + mmr->mask_size;
 }
 
 static size_t msg_move_region_serialize_payload(DP_Message *msg,
@@ -4376,7 +4376,7 @@ struct DP_MsgPutTile {
 static size_t msg_put_tile_payload_length(DP_Message *msg)
 {
     DP_MsgPutTile *mpt = DP_message_internal(msg);
-    return 10 + mpt->image_size;
+    return ((size_t)10) + mpt->image_size;
 }
 
 static size_t msg_put_tile_serialize_payload(DP_Message *msg,
@@ -4782,7 +4782,7 @@ struct DP_MsgDrawDabsClassic {
 static size_t msg_draw_dabs_classic_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
-    return 15 + DP_int_to_size(mddc->dabs_count) * 6;
+    return ((size_t)15) + DP_int_to_size(mddc->dabs_count) * 6;
 }
 
 static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
@@ -5067,7 +5067,7 @@ struct DP_MsgDrawDabsPixel {
 static size_t msg_draw_dabs_pixel_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
-    return 15 + DP_int_to_size(mddp->dabs_count) * 4;
+    return ((size_t)15) + DP_int_to_size(mddp->dabs_count) * 4;
 }
 
 static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
@@ -5446,7 +5446,7 @@ struct DP_MsgDrawDabsMyPaint {
 static size_t msg_draw_dabs_mypaint_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-    return 15 + DP_int_to_size(mddmp->dabs_count) * 8;
+    return ((size_t)15) + DP_int_to_size(mddmp->dabs_count) * 8;
 }
 
 static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
@@ -5616,7 +5616,7 @@ struct DP_MsgMoveRect {
 static size_t msg_move_rect_payload_length(DP_Message *msg)
 {
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
-    return 26 + mmr->mask_size;
+    return ((size_t)26) + mmr->mask_size;
 }
 
 static size_t msg_move_rect_serialize_payload(DP_Message *msg,
@@ -5806,7 +5806,7 @@ struct DP_MsgSetMetadataInt {
 
 static size_t msg_set_metadata_int_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 5;
+    return ((size_t)5);
 }
 
 static size_t msg_set_metadata_int_serialize_payload(DP_Message *msg,
@@ -5900,7 +5900,7 @@ struct DP_MsgSetMetadataStr {
 static size_t msg_set_metadata_str_payload_length(DP_Message *msg)
 {
     DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
-    return 1 + DP_uint16_to_size(msms->value_len);
+    return ((size_t)1) + DP_uint16_to_size(msms->value_len);
 }
 
 static size_t msg_set_metadata_str_serialize_payload(DP_Message *msg,
@@ -6009,7 +6009,7 @@ struct DP_MsgSetTimelineFrame {
 static size_t msg_set_timeline_frame_payload_length(DP_Message *msg)
 {
     DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
-    return 3 + DP_int_to_size(mstf->layers_count) * 2;
+    return ((size_t)3) + DP_int_to_size(mstf->layers_count) * 2;
 }
 
 static size_t msg_set_timeline_frame_serialize_payload(DP_Message *msg,
@@ -6144,7 +6144,7 @@ struct DP_MsgRemoveTimelineFrame {
 static size_t
 msg_remove_timeline_frame_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 2;
+    return ((size_t)2);
 }
 
 static size_t msg_remove_timeline_frame_serialize_payload(DP_Message *msg,
@@ -6226,7 +6226,7 @@ struct DP_MsgUndo {
 
 static size_t msg_undo_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return 2;
+    return ((size_t)2);
 }
 
 static size_t msg_undo_serialize_payload(DP_Message *msg, unsigned char *data)
