@@ -255,7 +255,8 @@ static void ext_auth_on_worker(void *user)
 }
 
 void DP_client_ext_auth(DP_Client *client, const char *url, const char *body,
-                        long timeout_seconds, DP_Worker *worker)
+                        long timeout_seconds, DP_ClientExtAuthPushFn push,
+                        void *user)
 {
     DP_ASSERT(client);
     DP_ASSERT(url);
@@ -269,7 +270,7 @@ void DP_client_ext_auth(DP_Client *client, const char *url, const char *body,
     cea->timeout_seconds = timeout_seconds;
     memcpy(cea->data, url, url_size);
     memcpy(cea->data + url_size, body, body_size);
-    DP_worker_push(worker, ext_auth_on_worker, cea);
+    push(user, ext_auth_on_worker, cea);
 }
 
 

@@ -24,7 +24,6 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_Message DP_Message;
-typedef struct DP_Worker DP_Worker;
 
 
 #define DP_CLIENT_PING_INTERVAL_MS (15000u)
@@ -64,6 +63,11 @@ typedef struct DP_ClientCallbacks {
     void (*message)(void *data, DP_Client *client, DP_Message *msg);
 } DP_ClientCallbacks;
 
+typedef void (*DP_ClientExtAuthExecFn)(void *ext_auth_params);
+typedef void (*DP_ClientExtAuthPushFn)(void *user,
+                                       DP_ClientExtAuthExecFn exec_fn,
+                                       void *ext_auth_params);
+
 
 const char **DP_client_supported_schemes(void);
 
@@ -89,7 +93,8 @@ void DP_client_send_inc(DP_Client *client, DP_Message *msg);
 bool DP_client_ping_timer_start(DP_Client *client);
 
 void DP_client_ext_auth(DP_Client *client, const char *url, const char *body,
-                        long timeout_seconds, DP_Worker *worker);
+                        long timeout_seconds, DP_ClientExtAuthPushFn push,
+                        void *user);
 
 
 #endif

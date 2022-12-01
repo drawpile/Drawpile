@@ -32,6 +32,8 @@ typedef struct DP_App DP_App;
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Document DP_Document;
 
+typedef void (*DP_AppWorkerJobFn)(void *user);
+
 DP_App *DP_app_new(SDL_Window *window, SDL_GLContext gl_context);
 
 void DP_app_free(DP_App *app);
@@ -48,7 +50,9 @@ void DP_app_canvas_renderer_transform_set(DP_App *app, double x, double y,
                                           double scale,
                                           double rotation_in_radians);
 
-DP_Worker *DP_app_worker(DP_App *app);
+bool DP_app_worker_ready(DP_App *app);
+
+void DP_app_worker_push(DP_App *app, DP_AppWorkerJobFn fn, void *user);
 
 DP_UserInputs *DP_app_inputs(DP_App *app);
 

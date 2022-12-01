@@ -53,7 +53,7 @@
 #define HANDLE_EVENTS_QUIT         0
 #define HANDLE_EVENTS_KEEP_RUNNING 1
 
-typedef struct DP_App {
+struct DP_App {
     bool running;
     SDL_Window *window;
     SDL_GLContext gl_context;
@@ -74,7 +74,12 @@ typedef struct DP_App {
 #endif
     DP_Worker *worker;
     DP_UserInputs inputs;
-} DP_App;
+};
+
+typedef struct DP_AppWorkerJobParams {
+    DP_AppWorkerJobFn fn;
+    void *user;
+} DP_AppWorkerJobParams;
 
 
 static bool init_canvas_renderer(DP_App *app)
@@ -150,9 +155,16 @@ static bool init_gui_thread(DP_UNUSED DP_App *app)
 }
 #endif
 
+static void run_app_worker_job(void *element, DP_UNUSED int thread_index)
+{
+    DP_AppWorkerJobParams *params = element;
+    params->fn(params->user);
+}
+
 static bool init_worker(DP_App *app)
 {
-    return (app->worker = DP_worker_new(1));
+    return (app->worker = DP_worker_new(1, sizeof(DP_AppWorkerJobParams), 1,
+                                        run_app_worker_job));
 }
 
 
@@ -282,7 +294,7 @@ void DP_app_free(DP_App *app)
         app->running = false;
         DP_Worker *worker = app->worker;
         app->worker = NULL;
-        DP_worker_free(worker);
+        DP_worker_free_join(worker);
 #if defined(DRAWDANCE_IMGUI) && !defined(__EMSCRIPTEN__)
         if (app->thread_gui) {
             DP_SEMAPHORE_MUST_POST(app->sem_gui_prepare);
@@ -391,10 +403,19 @@ void DP_app_canvas_renderer_transform_set(DP_App *app, double x, double y,
                                      rotation_in_radians);
 }
 
-DP_Worker *DP_app_worker(DP_App *app)
+bool DP_app_worker_ready(DP_App *app)
 {
     DP_ASSERT(app);
-    return app->worker;
+    return app->worker != NULL;
+}
+
+void DP_app_worker_push(DP_App *app, DP_AppWorkerJobFn fn, void *user)
+{
+    DP_ASSERT(app);
+    DP_ASSERT(fn);
+    DP_ASSERT(app->worker);
+    DP_AppWorkerJobParams params = {fn, user};
+    DP_worker_push(app->worker, &params);
 }
 
 DP_UserInputs *DP_app_inputs(DP_App *app)

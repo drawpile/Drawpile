@@ -26,13 +26,16 @@
 
 typedef struct DP_Worker DP_Worker;
 
-typedef void (*DP_WorkerFn)(void *user);
+typedef void (*DP_WorkerJobFn)(void *element, int thread_index);
 
-DP_Worker *DP_worker_new(size_t initial_capacity);
+DP_Worker *DP_worker_new(size_t initial_capacity, size_t element_size,
+                         int thread_count, DP_WorkerJobFn job_fn);
 
-void DP_worker_free(DP_Worker *worker);
+void DP_worker_free_join(DP_Worker *worker);
 
-void DP_worker_push(DP_Worker *worker, DP_WorkerFn fn, void *user);
+int DP_worker_thread_count(DP_Worker *worker);
+
+void DP_worker_push(DP_Worker *worker, void *element);
 
 
 #endif

@@ -205,10 +205,9 @@ static void free_client_on_worker(void *user)
 static void free_client(lua_State *L, DP_Client *client)
 {
     DP_App *app = DP_lua_app(L);
-    DP_Worker *worker = DP_app_worker(app);
-    if (worker) {
+    if (DP_app_worker_ready(app)) {
         DP_debug("Freeing client %d on worker", DP_client_id(client));
-        DP_worker_push(worker, free_client_on_worker, client);
+        DP_app_worker_push(app, free_client_on_worker, client);
     }
     else {
         DP_debug("Freeing client %d synchronously", DP_client_id(client));
@@ -277,6 +276,13 @@ static int client_start_ping_timer(lua_State *L)
     }
 }
 
+static void push_ext_auth(void *user, DP_ClientExtAuthExecFn exec_fn,
+                          void *ext_auth_params)
+{
+    DP_App *app = user;
+    DP_app_worker_push(app, exec_fn, ext_auth_params);
+}
+
 static int client_ext_auth(lua_State *L)
 {
     DP_Client *client = check_client(L, 1);
@@ -284,12 +290,14 @@ static int client_ext_auth(lua_State *L)
     const char *body = luaL_checkstring(L, 3);
     long timeout_seconds = (long)luaL_checkinteger(L, 4);
     DP_App *app = DP_lua_app(L);
-    DP_Worker *worker = DP_app_worker(app);
-    if (!worker) {
+    if (DP_app_worker_ready(app)) {
+        DP_client_ext_auth(client, url, body, timeout_seconds, push_ext_auth,
+                           app);
+        return 0;
+    }
+    else {
         return luaL_error(L, "No worker available");
     }
-    DP_client_ext_auth(client, url, body, timeout_seconds, worker);
-    return 0;
 }
 
 static const luaL_Reg client_methods[] = {

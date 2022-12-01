@@ -21,99 +21,121 @@
  */
 #include "worker.h"
 #include "common.h"
+#include "conversions.h"
 #include "queue.h"
 #include "threading.h"
 
 
-#define ELEMENT_SIZE sizeof(DP_WorkerJob)
-
-typedef struct DP_WorkerJob {
-    DP_WorkerFn fn;
-    void *user;
-} DP_WorkerJob;
-
 typedef struct DP_Worker {
+    size_t element_size;
+    DP_WorkerJobFn job_fn;
     DP_Semaphore *sem;
     DP_Queue queue;
     DP_Mutex *queue_mutex;
-    DP_Thread *thread;
+    int thread_count;
+    DP_Thread *threads[];
 } DP_Worker;
 
+struct DP_WorkerParams {
+    DP_Worker *worker;
+    int thread_index;
+};
 
-static DP_WorkerFn shift_worker_job(DP_Mutex *queue_mutex, DP_Queue *queue,
-                                    void **out_user)
+
+static bool shift_worker_element(DP_Mutex *queue_mutex, DP_Queue *queue,
+                                 size_t element_size, void *out_element)
 {
     DP_MUTEX_MUST_LOCK(queue_mutex);
-    DP_WorkerJob *job = DP_queue_peek(queue, ELEMENT_SIZE);
-    DP_WorkerFn fn;
-    if (job) {
-        fn = job->fn;
-        *out_user = job->user;
+    void *element = DP_queue_peek(queue, element_size);
+    if (element) {
+        memcpy(out_element, element, element_size);
         DP_queue_shift(queue);
     }
-    else {
-        fn = NULL;
-    }
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
-    return fn;
+    return element;
 }
 
 static void run_worker_thread(void *data)
 {
-    DP_Worker *worker = data;
+    struct DP_WorkerParams *params = data;
+    DP_Worker *worker = params->worker;
+    int thread_index = params->thread_index;
+    DP_free(params);
+
+    size_t element_size = worker->element_size;
+    DP_WorkerJobFn job_fn = worker->job_fn;
     DP_Semaphore *sem = worker->sem;
     DP_Mutex *queue_mutex = worker->queue_mutex;
     DP_Queue *queue = &worker->queue;
+    void *element = DP_malloc(element_size);
     while (true) {
         DP_SEMAPHORE_MUST_WAIT(sem);
-        void *user;
-        DP_WorkerFn fn = shift_worker_job(queue_mutex, queue, &user);
-        if (fn) {
-            fn(user);
+        if (shift_worker_element(queue_mutex, queue, element_size, element)) {
+            job_fn(element, thread_index);
         }
         else {
             break;
         }
     }
+    DP_free(element);
 }
 
-DP_Worker *DP_worker_new(size_t initial_capacity)
+DP_Worker *DP_worker_new(size_t initial_capacity, size_t element_size,
+                         int thread_count, DP_WorkerJobFn job_fn)
 {
     DP_ASSERT(initial_capacity > 0);
-    DP_Worker *worker = DP_malloc(sizeof(*worker));
-    *worker = (DP_Worker){NULL, DP_QUEUE_NULL, NULL, NULL};
+    DP_ASSERT(element_size > 0);
+    DP_ASSERT(thread_count > 0);
+    DP_ASSERT(job_fn);
+
+    DP_Worker *worker = DP_malloc_zeroed(
+        DP_FLEX_SIZEOF(DP_Worker, threads, DP_int_to_size(thread_count)));
+    worker->element_size = element_size;
+    worker->job_fn = job_fn;
 
     worker->sem = DP_semaphore_new(0);
     if (!worker->sem) {
-        DP_worker_free(worker);
+        DP_worker_free_join(worker);
         return NULL;
     }
 
-    DP_queue_init(&worker->queue, initial_capacity, ELEMENT_SIZE);
+    DP_queue_init(&worker->queue, initial_capacity, element_size);
 
     worker->queue_mutex = DP_mutex_new();
     if (!worker->queue_mutex) {
-        DP_worker_free(worker);
+        DP_worker_free_join(worker);
         return NULL;
     }
 
-    worker->thread = DP_thread_new(run_worker_thread, worker);
-    if (!worker->thread) {
-        DP_worker_free(worker);
-        return NULL;
+    for (int i = 0; i < thread_count; ++i) {
+        struct DP_WorkerParams *params = DP_malloc(sizeof(*params));
+        *params = (struct DP_WorkerParams){worker, i};
+        DP_Thread *thread = DP_thread_new(run_worker_thread, params);
+        if (thread) {
+            worker->threads[i] = thread;
+            worker->thread_count = i + 1;
+        }
+        else {
+            DP_free(params);
+            DP_worker_free_join(worker);
+            return NULL;
+        }
     }
 
     return worker;
 }
 
-void DP_worker_free(DP_Worker *worker)
+void DP_worker_free_join(DP_Worker *worker)
 {
     if (worker) {
         DP_Semaphore *sem = worker->sem;
+        int thread_count = worker->thread_count;
         if (sem) {
-            DP_SEMAPHORE_MUST_POST(sem);
+            DP_SEMAPHORE_MUST_POST_N(sem, thread_count);
         }
-        DP_thread_free_join(worker->thread);
+        for (int i = 0; i < thread_count; ++i) {
+            DP_thread_free_join(worker->threads[i]);
+        }
         DP_mutex_free(worker->queue_mutex);
         DP_queue_dispose(&worker->queue);
         DP_semaphore_free(sem);
@@ -121,14 +143,20 @@ void DP_worker_free(DP_Worker *worker)
     }
 }
 
-void DP_worker_push(DP_Worker *worker, DP_WorkerFn fn, void *user)
+int DP_worker_thread_count(DP_Worker *worker)
 {
     DP_ASSERT(worker);
-    DP_ASSERT(fn);
+    return worker->thread_count;
+}
+
+void DP_worker_push(DP_Worker *worker, void *element)
+{
+    DP_ASSERT(worker);
+    DP_ASSERT(element);
     DP_Mutex *queue_mutex = worker->queue_mutex;
+    size_t element_size = worker->element_size;
     DP_MUTEX_MUST_LOCK(queue_mutex);
-    DP_WorkerJob *job = DP_queue_push(&worker->queue, ELEMENT_SIZE);
-    *job = (DP_WorkerJob){fn, user};
+    memcpy(DP_queue_push(&worker->queue, element_size), element, element_size);
     DP_MUTEX_MUST_UNLOCK(queue_mutex);
     DP_SEMAPHORE_MUST_POST(worker->sem);
 }
