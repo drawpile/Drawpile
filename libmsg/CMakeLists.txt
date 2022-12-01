@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 set(dpmsg_sources
-    dpmsg/access_tier.c
+    dpmsg/acl.c
     dpmsg/binary_reader.c
     dpmsg/binary_writer.c
     dpmsg/blend_mode.c
@@ -30,7 +30,7 @@ set(dpmsg_sources
     dpmsg/text_writer.c)
 
 set(dpmsg_headers
-    dpmsg/access_tier.h
+    dpmsg/acl.h
     dpmsg/disconnect_reason.h
     dpmsg/binary_reader.h
     dpmsg/binary_writer.h
@@ -54,7 +54,7 @@ target_include_directories(dpmsg_interface INTERFACE
 
 add_library(dpmsg STATIC "${dpmsg_sources}" "${dpmsg_headers}")
 set_dp_target_properties(dpmsg)
-target_link_libraries(dpmsg PUBLIC dpmsg_interface parson)
+target_link_libraries(dpmsg PUBLIC dpmsg_interface parson uthash)
 
 if(LINK_WITH_LIBM)
     target_link_libraries(dpmsg PUBLIC m)
