@@ -90,12 +90,7 @@ macro(generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMENT 
 			file(APPEND ${win32RC} "\tEND\nEND\n")
 		endif(${CMAKE_CURRENT_LIST_FILE} IS_NEWER_THAN ${win32RC})
 
-		set(${resfile} "${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj")
-
-		add_custom_command(
-			OUTPUT ${${resfile}}
-			COMMAND ${CMAKE_RC_COMPILER} ${win32RC} ${${resfile}}
-			DEPENDS ${win32RC})
+		set(${resfile} ${win32RC})
 	endif()
 endmacro()
 

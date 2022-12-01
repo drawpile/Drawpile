@@ -76,3 +76,18 @@ For instructions on how to build Drawpile on Windows and OSX, see the [Building 
 [QtKeyChain]: https://github.com/frankosterfeld/qtkeychain
 [Building from sources]: https://github.com/drawpile/Drawpile/wiki/Building-from-sources
 
+### Building on windows
+You can install dependencies with [vcpkg](https://github.com/microsoft/vcpkg).
+```
+vcpkg install ecm qt5-base qt5-multimedia qt5-svg libsodium qtkeychain kf5archive --triplet=x64-windows-static
+```
+Then you can build the libraries with the following commands:
+```
+mkdir build
+cd build
+
+cmake -DDRAWDANCE_EXPORT_PATH=[PATH TO DRAWDANCE]/build/Drawdance.cmake -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DUSE_CLANG_TIDY=OFF -DUSE_ADDRESS_SANITIZER=OFF -DCMAKE_BUILD_TYPE=Release -G Ninja ../
+
+cmake --build .
+```
+**Note: Drawdance and Drawpile must be compiled with the same CMAKE_BUILD_TYPE.**
