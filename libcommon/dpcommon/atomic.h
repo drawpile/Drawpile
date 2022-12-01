@@ -24,6 +24,7 @@
 #include "common.h"
 #include <stdatomic.h>
 
+
 typedef atomic_int DP_Atomic;
 
 #define DP_ATOMIC_INIT(X) X
@@ -40,5 +41,13 @@ typedef atomic_int DP_Atomic;
 void DP_atomic_lock(DP_Atomic *x);
 
 void DP_atomic_unlock(DP_Atomic *x);
+
+
+typedef _Atomic(void *) DP_AtomicPtr;
+
+#define DP_ATOMIC_PTR_INIT(X)       X
+#define DP_atomic_ptr_set(X, VALUE) atomic_store((X), (VALUE))
+#define DP_atomic_ptr_xch(X, VALUE) atomic_exchange((X), (VALUE))
+
 
 #endif
