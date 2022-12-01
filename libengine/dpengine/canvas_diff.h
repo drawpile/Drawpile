@@ -45,10 +45,20 @@ void DP_canvas_diff_check_all(DP_CanvasDiff *diff);
 void DP_canvas_diff_each_index(DP_CanvasDiff *diff, DP_CanvasDiffEachIndexFn fn,
                                void *data);
 
+void DP_canvas_diff_each_index_reset(DP_CanvasDiff *diff,
+                                     DP_CanvasDiffEachIndexFn fn, void *data);
+
 void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
                              void *data);
 
-bool DP_canvas_diff_tiles_changed(DP_CanvasDiff *diff);
+void DP_canvas_diff_each_pos_reset(DP_CanvasDiff *diff,
+                                   DP_CanvasDiffEachPosFn fn, void *data);
+
+void DP_canvas_diff_each_pos_tile_bounds_reset(DP_CanvasDiff *diff,
+                                               int tile_left, int tile_top,
+                                               int tile_right, int tile_bottom,
+                                               DP_CanvasDiffEachPosFn fn,
+                                               void *data);
 
 bool DP_canvas_diff_layer_props_changed_reset(DP_CanvasDiff *diff);
 

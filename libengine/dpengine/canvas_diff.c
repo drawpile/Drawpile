@@ -70,11 +70,11 @@ void DP_canvas_diff_begin(DP_CanvasDiff *diff, int old_width, int old_height,
         size_t size = DP_int_to_size(count) * sizeof(*diff->tile_changes);
         diff->tile_changes = DP_realloc(diff->tile_changes, size);
     }
-    // TODO: Mark only newly added tiles as changed, not all of them.
-    bool init = old_width != current_width || old_height != current_height;
-    bool *tile_changes = diff->tile_changes;
-    for (int i = 0; i < count; ++i) {
-        tile_changes[i] = init;
+    if (old_width != current_width || old_height != current_height) {
+        bool *tile_changes = diff->tile_changes;
+        for (int i = 0; i < count; ++i) {
+            tile_changes[i] = true;
+        }
     }
     diff->layer_props_changed = layer_props_changed;
 }
@@ -118,6 +118,20 @@ void DP_canvas_diff_each_index(DP_CanvasDiff *diff, DP_CanvasDiffEachIndexFn fn,
     }
 }
 
+void DP_canvas_diff_each_index_reset(DP_CanvasDiff *diff,
+                                     DP_CanvasDiffEachIndexFn fn, void *data)
+{
+    DP_ASSERT(diff);
+    DP_ASSERT(fn);
+    int count = diff->count;
+    bool *tile_changes = diff->tile_changes;
+    for (int i = 0; i < count; ++i) {
+        if (tile_changes[i]) {
+            fn(data, i);
+            tile_changes[i] = false;
+        }
+    }
+}
 
 void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
                              void *data)
@@ -129,25 +143,58 @@ void DP_canvas_diff_each_pos(DP_CanvasDiff *diff, DP_CanvasDiffEachPosFn fn,
     bool *tile_changes = diff->tile_changes;
     for (int y = 0; y < ytiles; ++y) {
         for (int x = 0; x < xtiles; ++x) {
-            if (tile_changes[y * xtiles + x]) {
+            int i = y * xtiles + x;
+            if (tile_changes[i]) {
                 fn(data, x, y);
             }
         }
     }
 }
 
-bool DP_canvas_diff_tiles_changed(DP_CanvasDiff *diff)
+void DP_canvas_diff_each_pos_reset(DP_CanvasDiff *diff,
+                                   DP_CanvasDiffEachPosFn fn, void *data)
 {
     DP_ASSERT(diff);
-    int count = diff->count;
+    DP_ASSERT(fn);
+    int xtiles = diff->xtiles;
+    int ytiles = diff->ytiles;
     bool *tile_changes = diff->tile_changes;
-    for (int i = 0; i < count; ++i) {
-        if (tile_changes[i]) {
-            return true;
+    for (int y = 0; y < ytiles; ++y) {
+        for (int x = 0; x < xtiles; ++x) {
+            int i = y * xtiles + x;
+            if (tile_changes[i]) {
+                fn(data, x, y);
+                tile_changes[i] = false;
+            }
         }
     }
-    return false;
 }
+
+void DP_canvas_diff_each_pos_tile_bounds_reset(DP_CanvasDiff *diff,
+                                               int tile_left, int tile_top,
+                                               int tile_right, int tile_bottom,
+                                               DP_CanvasDiffEachPosFn fn,
+                                               void *data)
+{
+    DP_ASSERT(diff);
+    DP_ASSERT(fn);
+    int xtiles = diff->xtiles;
+    int left = DP_max_int(0, tile_left);
+    int top = DP_max_int(0, tile_top);
+    int right = DP_min_int(xtiles - 1, tile_right);
+    int bottom = DP_min_int(diff->ytiles - 1, tile_bottom);
+    bool *tile_changes = diff->tile_changes;
+    for (int y = top; y <= bottom; ++y) {
+        for (int x = left; x <= right; ++x) {
+            int i = y * xtiles + x;
+            if (tile_changes[i]) {
+                fn(data, x, y);
+                tile_changes[i] = false;
+            }
+        }
+    }
+}
+
 
 bool DP_canvas_diff_layer_props_changed_reset(DP_CanvasDiff *diff)
 {
