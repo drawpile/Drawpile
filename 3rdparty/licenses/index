@@ -21,4 +21,5 @@ Qt Base       <https://www.qt.io/>                                   GPL-3.0    
 SDL2          <https://www.libsdl.org/>                              Zlib             3rdparty/licenses/sdl2/LICENSE.txt
 stb           <https://github.com/nothings/stb>                      Unlicense        3rdparty/licenses/stb/LICENSE
 uriparser     <https://uriparser.github.io/>                         BSD-3-Clause     3rdparty/uriparser/COPYING
+uthash        <https://troydhanson.github.io/uthash/>                BSD-1-Clause     3rdparty/uthash/LICENSE
 zlib          <https://www.zlib.net/>                                Zlib             3rdparty/licenses/zlib/LICENSE

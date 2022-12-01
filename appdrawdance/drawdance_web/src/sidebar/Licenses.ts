@@ -41,7 +41,9 @@ const license19: string = "This is free and unencumbered software released into 
 
 const license20: string = "uriparser - RFC 3986 URI parsing library\n\nCopyright (C) 2007, Weijia Song <songweijia@gmail.com>\nCopyright (C) 2007, Sebastian Pipping <sebastian@pipping.org>\nAll rights reserved.\n\nRedistribution and use in source  and binary forms, with or without\nmodification, are permitted provided  that the following conditions\nare met:\n\n    1. Redistributions  of  source  code   must  retain  the  above\n       copyright notice, this list  of conditions and the following\n       disclaimer.\n\n    2. Redistributions  in binary  form  must  reproduce the  above\n       copyright notice, this list  of conditions and the following\n       disclaimer  in  the  documentation  and/or  other  materials\n       provided with the distribution.\n\n    3. Neither the  name of the  copyright holder nor the  names of\n       its contributors may be used  to endorse or promote products\n       derived from  this software  without specific  prior written\n       permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n\"AS IS\" AND  ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING, BUT NOT\nLIMITED TO,  THE IMPLIED WARRANTIES OF  MERCHANTABILITY AND FITNESS\nFOR  A  PARTICULAR  PURPOSE  ARE  DISCLAIMED.  IN  NO  EVENT  SHALL\nTHE  COPYRIGHT HOLDER  OR CONTRIBUTORS  BE LIABLE  FOR ANY  DIRECT,\nINDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT OF SUBSTITUTE GOODS OR\nSERVICES; LOSS OF USE, DATA,  OR PROFITS; OR BUSINESS INTERRUPTION)\nHOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,\nSTRICT  LIABILITY,  OR  TORT (INCLUDING  NEGLIGENCE  OR  OTHERWISE)\nARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED\nOF THE POSSIBILITY OF SUCH DAMAGE.";
 
-const license21: string = "Copyright (C) 1995-2017 Jean-loup Gailly and Mark Adler\n\nThis software is provided 'as-is', without any express or implied\nwarranty.  In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.\n\nJean-loup Gailly        Mark Adler\njloup@gzip.org          madler@alumni.caltech.edu";
+const license21: string = "Copyright (c) 2005-2022, Troy D. Hanson  https://troydhanson.github.io/uthash/\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS\nIS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED\nTO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A\nPARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER\nOR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\nEXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\nPROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\nPROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\nLIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\nNEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
+
+const license22: string = "Copyright (C) 1995-2017 Jean-loup Gailly and Mark Adler\n\nThis software is provided 'as-is', without any express or implied\nwarranty.  In no event will the authors be held liable for any damages\narising from the use of this software.\n\nPermission is granted to anyone to use this software for any purpose,\nincluding commercial applications, and to alter it and redistribute it\nfreely, subject to the following restrictions:\n\n1. The origin of this software must not be misrepresented; you must not\n   claim that you wrote the original software. If you use this software\n   in a product, an acknowledgment in the product documentation would be\n   appreciated but is not required.\n2. Altered source versions must be plainly marked as such, and must not be\n   misrepresented as being the original software.\n3. This notice may not be removed or altered from any source distribution.\n\nJean-loup Gailly        Mark Adler\njloup@gzip.org          madler@alumni.caltech.edu";
 
 export interface License {
   ident: string;
@@ -184,9 +186,15 @@ export const DRAWDANCE_LICENSES: readonly License[] = Object.freeze([
     url: "https://uriparser.github.io/",
   },
   {
+    ident: "BSD-1-Clause",
+    name: "uthash",
+    text: license21,
+    url: "https://troydhanson.github.io/uthash/",
+  },
+  {
     ident: "Zlib",
     name: "zlib",
-    text: license21,
+    text: license22,
     url: "https://www.zlib.net/",
   },
 ]);

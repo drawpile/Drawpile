@@ -34,6 +34,7 @@ sub slurp($path) {
 
 sub describe_ident($ident) {
     state %descriptions = (
+        'BSD-1-Clause' => 'BSD 1-Clause License',
         'BSD-3-Clause' => 'BSD 3-Clause "New" or "Revised" License',
         'curl' => 'curl License',
         'GPL-2.0-or-later' => 'GNU General Public License (GPL), version 2 or later (being used as version 3)',

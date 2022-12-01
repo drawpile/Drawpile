@@ -107,3 +107,7 @@ add_library(mypaint STATIC libmypaint/brushsettings-gen.h
 set_dp_target_properties(mypaint NO_CLANG_TIDY NO_WARNINGS)
 target_include_directories(mypaint INTERFACE
                            "${CMAKE_CURRENT_LIST_DIR}/libmypaint")
+
+add_library(uthash INTERFACE)
+set_dp_target_properties(uthash NO_CLANG_TIDY NO_WARNINGS)
+target_include_directories(uthash INTERFACE "${CMAKE_CURRENT_LIST_DIR}/uthash")
