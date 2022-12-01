@@ -24,6 +24,9 @@
 #include "common.h"
 #include <stdio.h>
 
+#define DP_OUTPUT_PRINT_LITERAL(OUTPUT, LITERAL) \
+    DP_output_write((OUTPUT), "" LITERAL, strlen(LITERAL))
+
 
 typedef struct DP_Output DP_Output;
 
