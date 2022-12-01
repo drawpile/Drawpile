@@ -39,6 +39,7 @@ set(dpengine_sources
     dpengine/layer_props.c
     dpengine/layer_props_list.c
     dpengine/layer_search.c
+    dpengine/load.c
     dpengine/model_changes.c
     dpengine/ops.c
     dpengine/paint.c
@@ -68,7 +69,8 @@ set(dpengine_headers
     dpengine/layer_props.h
     dpengine/layer_props_list.h
     dpengine/layer_search.h
-    dpengine/model_changes.c
+    dpengine/load.h
+    dpengine/model_changes.h
     dpengine/ops.h
     dpengine/paint.h
     dpengine/pixels.h
