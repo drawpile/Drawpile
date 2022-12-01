@@ -32,7 +32,7 @@
 #define INVALID_BOUNDS                     \
     (DP_Rect)                              \
     {                                      \
-        INT_MAX, INT_MIN, INT_MAX, INT_MIN \
+        INT_MAX, INT_MAX, INT_MIN, INT_MIN \
     }
 
 static DP_AffectedArea make_user_attrs(void)
