@@ -59,6 +59,14 @@ void DP_semaphore_must_wait_at(const char *file, int line, DP_Semaphore *sem)
     }
 }
 
+void DP_semaphore_must_wait_at_n(const char *file, int line, DP_Semaphore *sem,
+                                 int n)
+{
+    if (DP_semaphore_wait_n(sem, n) != n) {
+        DP_panic_at(file, line, "%s", DP_error());
+    }
+}
+
 bool DP_semaphore_must_try_wait_at(const char *file, int line,
                                    DP_Semaphore *sem)
 {

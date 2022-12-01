@@ -78,10 +78,24 @@ extern "C" void DP_semaphore_free(DP_Semaphore *sem)
     delete reinterpret_cast<QSemaphore *>(sem);
 }
 
+extern "C" int DP_semaphore_value(DP_Semaphore *sem)
+{
+    DP_ASSERT(sem);
+    return reinterpret_cast<QSemaphore *>(sem)->available();
+}
+
 extern "C" bool DP_semaphore_post(DP_Semaphore *sem)
 {
     DP_ASSERT(sem);
     reinterpret_cast<QSemaphore *>(sem)->release();
+    return true;
+}
+
+extern "C" bool DP_semaphore_post_n(DP_Semaphore *sem, int n)
+{
+    DP_ASSERT(sem);
+    DP_ASSERT(n >= 0);
+    reinterpret_cast<QSemaphore *>(sem)->release(n);
     return true;
 }
 
@@ -90,6 +104,13 @@ extern "C" DP_SemaphoreResult DP_semaphore_wait(DP_Semaphore *sem)
     DP_ASSERT(sem);
     reinterpret_cast<QSemaphore *>(sem)->acquire();
     return DP_SEMAPHORE_OK;
+}
+
+extern "C" int DP_semaphore_wait_n(DP_Semaphore *sem, int n)
+{
+    DP_ASSERT(sem);
+    reinterpret_cast<QSemaphore *>(sem)->acquire(n);
+    return n;
 }
 
 extern "C" DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
@@ -104,9 +125,14 @@ extern "C" DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 }
 
 
+extern "C" int DP_thread_cpu_count(void)
+{
+    return DP_max_int(1, QThread::idealThreadCount());
+}
+
 extern "C" DP_Thread *DP_thread_new(DP_ThreadFn fn, void *data)
 {
-    QThread *qthread = QThread::create(fn, data);
+    QThread *qthread = QThread::create([=]() { fn(data); });
     qthread->start();
     return reinterpret_cast<DP_Thread *>(qthread);
 }

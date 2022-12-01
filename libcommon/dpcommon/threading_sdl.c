@@ -119,6 +119,12 @@ void DP_semaphore_free(DP_Semaphore *sem)
     }
 }
 
+int DP_semaphore_value(DP_Semaphore *sem)
+{
+    DP_ASSERT(sem);
+    return DP_uint32_to_int(SDL_SemValue((SDL_sem *)sem));
+}
+
 bool DP_semaphore_post(DP_Semaphore *sem)
 {
     DP_ASSERT(sem);
@@ -129,6 +135,19 @@ bool DP_semaphore_post(DP_Semaphore *sem)
         DP_error_set("Can't post semaphore: %s", SDL_GetError());
         return false;
     }
+}
+
+bool DP_semaphore_post_n(DP_Semaphore *sem, int n)
+{
+    DP_ASSERT(sem);
+    DP_ASSERT(n >= 0);
+    for (int i = 0; i < n; ++i) {
+        if (SDL_SemPost((SDL_sem *)sem) != 0) {
+            DP_error_set("Can't post semaphore: %s", SDL_GetError());
+            return false;
+        }
+    }
+    return true;
 }
 
 DP_SemaphoreResult DP_semaphore_wait(DP_Semaphore *sem)
@@ -145,6 +164,20 @@ DP_SemaphoreResult DP_semaphore_wait(DP_Semaphore *sem)
     }
 }
 
+int DP_semaphore_wait_n(DP_Semaphore *sem, int n)
+{
+    int i = 0;
+    while (i < n) {
+        if (DP_semaphore_wait(sem) == DP_SEMAPHORE_OK) {
+            ++i;
+        }
+        else {
+            break;
+        }
+    }
+    return i;
+}
+
 DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 {
     DP_ASSERT(sem);
@@ -159,6 +192,11 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
     }
 }
 
+
+int DP_thread_cpu_count(void)
+{
+    return DP_max_int(1, SDL_GetCPUCount());
+}
 
 static int SDLCALL run_thread(void *arg)
 {

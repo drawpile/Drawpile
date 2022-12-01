@@ -87,13 +87,22 @@ DP_Semaphore *DP_semaphore_new(unsigned int initial_value);
 
 void DP_semaphore_free(DP_Semaphore *sem);
 
+int DP_semaphore_value(DP_Semaphore *sem);
+
 bool DP_semaphore_post(DP_Semaphore *sem);
 
+bool DP_semaphore_post_n(DP_Semaphore *sem, int n);
+
 DP_SemaphoreResult DP_semaphore_wait(DP_Semaphore *sem);
+
+int DP_semaphore_wait_n(DP_Semaphore *sem, int n);
 
 DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem);
 
 void DP_semaphore_must_wait_at(const char *file, int line, DP_Semaphore *sem);
+
+void DP_semaphore_must_wait_at_n(const char *file, int line, DP_Semaphore *sem,
+                                 int n);
 
 bool DP_semaphore_must_try_wait_at(const char *file, int line,
                                    DP_Semaphore *sem);
@@ -105,13 +114,26 @@ bool DP_semaphore_must_try_wait_at(const char *file, int line,
         }                               \
     } while (0)
 
+#define DP_SEMAPHORE_MUST_POST_N(SEM, N)    \
+    do {                                    \
+        if (!DP_semaphore_post_n(SEM, N)) { \
+            DP_panic("%s", DP_error());     \
+        }                                   \
+    } while (0)
+
 #define DP_SEMAPHORE_MUST_WAIT(SEM) \
     DP_semaphore_must_wait_at(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__, (SEM))
+
+#define DP_SEMAPHORE_MUST_WAIT_N(SEM, N)                                    \
+    DP_semaphore_must_wait_at_n(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__, \
+                                (SEM), (N))
 
 #define DP_SEMAPHORE_MUST_TRY_WAIT(SEM)                                       \
     DP_semaphore_must_try_wait_at(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__, \
                                   (SEM))
 
+
+int DP_thread_cpu_count(void);
 
 DP_Thread *DP_thread_new(DP_ThreadFn fn, void *data);
 
