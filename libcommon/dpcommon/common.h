@@ -140,6 +140,11 @@ DP_INLINE double DP_square_double(double x)
     return x * x;
 }
 
+DP_INLINE size_t DP_square_size(size_t x)
+{
+    return x * x;
+}
+
 DP_INLINE int DP_min_int(int x, int y)
 {
     return x < y ? x : y;
