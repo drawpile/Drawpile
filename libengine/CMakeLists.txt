@@ -30,6 +30,7 @@ set(dpengine_sources
     dpengine/draw_context.c
     dpengine/frame.c
     dpengine/image.c
+    dpengine/image_jpeg.c
     dpengine/image_png.c
     dpengine/image_transform.c
     dpengine/layer_content.c
@@ -57,6 +58,7 @@ set(dpengine_headers
     dpengine/draw_context.h
     dpengine/frame.h
     dpengine/image.h
+    dpengine/image_jpeg.h
     dpengine/image_png.h
     dpengine/image_transform.h
     dpengine/layer_content.h

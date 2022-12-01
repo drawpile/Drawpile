@@ -21,6 +21,7 @@
  */
 #include "image.h"
 #include "compress.h"
+#include "image_jpeg.h"
 #include "image_png.h"
 #include "image_transform.h"
 #include <dpcommon/binary.h>
@@ -50,7 +51,14 @@ DP_Image *DP_image_new(int width, int height)
 }
 
 
-static DP_Image *read_image_guess(DP_Input *input)
+static void assign_type(DP_ImageFileType *out_type, DP_ImageFileType type)
+{
+    if (out_type) {
+        *out_type = type;
+    }
+}
+
+static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
 {
     unsigned char buf[8];
     bool error;
@@ -61,9 +69,15 @@ static DP_Image *read_image_guess(DP_Input *input)
 
     DP_Image *(*read_fn)(DP_Input *);
     if (DP_image_png_guess(buf, read)) {
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_PNG);
         read_fn = DP_image_png_read;
     }
+    else if (DP_image_jpeg_guess(buf, read)) {
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
+        read_fn = DP_image_jpeg_read;
+    }
     else {
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
         DP_error_set("Could not guess image file format");
         return NULL;
     }
@@ -76,15 +90,21 @@ static DP_Image *read_image_guess(DP_Input *input)
     }
 }
 
-DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type)
+DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
+                                 DP_ImageFileType *out_type)
 {
     DP_ASSERT(input);
     switch (type) {
     case DP_IMAGE_FILE_TYPE_GUESS:
-        return read_image_guess(input);
+        return read_image_guess(input, out_type);
     case DP_IMAGE_FILE_TYPE_PNG:
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_PNG);
         return DP_image_png_read(input);
+    case DP_IMAGE_FILE_TYPE_JPEG:
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
+        return DP_image_jpeg_read(input);
     default:
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
         DP_error_set("Unknown image file type %d", (int)type);
         return NULL;
     }
@@ -129,7 +149,7 @@ DP_Image *DP_image_new_from_compressed(int width, int height,
             pixels[i].color = DP_swap_uint32(pixels[i].color);
         }
 #else
-#       error "Unknown byte order"
+#    error "Unknown byte order"
 #endif
         return args.img;
     }
@@ -389,9 +409,22 @@ DP_Image *DP_image_read_png(DP_Input *input)
     return DP_image_png_read(input);
 }
 
+DP_Image *DP_image_read_jpeg(DP_Input *input)
+{
+    DP_ASSERT(input);
+    return DP_image_jpeg_read(input);
+}
+
 bool DP_image_write_png(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
     DP_ASSERT(output);
     return DP_image_png_write(output, img->width, img->height, img->pixels);
+}
+
+bool DP_image_write_jpeg(DP_Image *img, DP_Output *output)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(output);
+    return DP_image_jpeg_write(output, img->width, img->height, img->pixels);
 }

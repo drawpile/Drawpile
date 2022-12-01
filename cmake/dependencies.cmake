@@ -47,6 +47,7 @@ if(DRAWDANCE_EMSCRIPTEN)
     endif()
 else()
     find_package(PNG MODULE REQUIRED)
+    find_package(JPEG MODULE REQUIRED)
 
     if("${THREAD_IMPL}" STREQUAL "PTHREAD")
         set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

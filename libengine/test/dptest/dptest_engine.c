@@ -85,7 +85,8 @@ static DP_Image *read_image(const char *path)
 {
     DP_Input *input = DP_file_input_new_from_path(path);
     if (input) {
-        DP_Image *img = DP_image_new_from_file(input, DP_IMAGE_FILE_TYPE_GUESS);
+        DP_Image *img =
+            DP_image_new_from_file(input, DP_IMAGE_FILE_TYPE_GUESS, NULL);
         DP_input_free(input);
         return img;
     }

@@ -33,13 +33,16 @@ typedef struct DP_Quad DP_Quad;
 typedef enum DP_ImageFileType {
     DP_IMAGE_FILE_TYPE_GUESS,
     DP_IMAGE_FILE_TYPE_PNG,
+    DP_IMAGE_FILE_TYPE_JPEG,
+    DP_IMAGE_FILE_TYPE_UNKNOWN = DP_IMAGE_FILE_TYPE_GUESS,
 } DP_ImageFileType;
 
 typedef struct DP_Image DP_Image;
 
 DP_Image *DP_image_new(int width, int height);
 
-DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type);
+DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
+                                 DP_ImageFileType *out_type);
 
 DP_Image *DP_image_new_from_compressed(int width, int height,
                                        const unsigned char *in, size_t in_size);
@@ -82,8 +85,10 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
 
 
 DP_Image *DP_image_read_png(DP_Input *input);
+DP_Image *DP_image_read_jpeg(DP_Input *input);
 
 bool DP_image_write_png(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
+bool DP_image_write_jpeg(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 
 
 #endif
