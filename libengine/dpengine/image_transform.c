@@ -159,10 +159,10 @@ static void process_span(int len, int coverage, DP_Pixel8 *DP_RESTRICT src,
         unsigned int sa1 = 255u - mul(s.a, opacity);
         if (sa1 != 255u) {
             dst[i] = (DP_Pixel8){
-                .b = mul(s.b, opacity) + mul(d.b, sa1),
-                .g = mul(s.g, opacity) + mul(d.g, sa1),
-                .r = mul(s.r, opacity) + mul(d.r, sa1),
-                .a = mul(s.a, opacity) + mul(d.a, sa1),
+                .b = (uint8_t)(mul(s.b, opacity) + mul(d.b, sa1)),
+                .g = (uint8_t)(mul(s.g, opacity) + mul(d.g, sa1)),
+                .r = (uint8_t)(mul(s.r, opacity) + mul(d.r, sa1)),
+                .a = (uint8_t)(mul(s.a, opacity) + mul(d.a, sa1)),
             };
         }
     }
