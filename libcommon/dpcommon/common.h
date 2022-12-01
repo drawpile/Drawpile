@@ -95,6 +95,20 @@
 #endif
 
 
+typedef enum DP_LogLevel {
+    DP_LOG_DEBUG,
+    DP_LOG_WARN,
+    DP_LOG_PANIC,
+} DP_LogLevel;
+
+typedef void (*DP_LogFn)(void *user, DP_LogLevel level, const char *file,
+                         int line, const char *fmt, va_list ap);
+
+// Sets the log function and returns the previously set user data.
+// Passing NULL as the function will turn off all logging.
+// The default log function prints to stderr.
+void *DP_log_fn_set(DP_LogFn fn, void *user);
+
 #ifdef NDEBUG
 #    define DP_debug(...) // nothing
 #else

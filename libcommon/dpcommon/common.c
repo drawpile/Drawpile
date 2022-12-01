@@ -23,45 +23,72 @@
 #include "atomic.h"
 #include "conversions.h"
 #include "threading.h"
+#include <ctype.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 
-DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(log_lock);
-
-static void log_message(const char *file, int line, const char *level,
-                        const char *fmt, va_list ap)
+static const char *log_level_to_string(DP_LogLevel level)
 {
+    switch (level) {
+    case DP_LOG_DEBUG:
+        return "DEBUG";
+    case DP_LOG_WARN:
+        return "WARN";
+    case DP_LOG_PANIC:
+        return "PANIC";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+static void log_message(DP_UNUSED void *user, DP_LogLevel level,
+                        const char *file, int line, const char *fmt, va_list ap)
+{
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(log_lock);
     DP_atomic_lock(&log_lock);
-    fprintf(stderr, "[%s] %s:%d - ", level, file ? file : "?", line);
+    fprintf(stderr, "[%s] %s:%d - ", log_level_to_string(level), file, line);
     vfprintf(stderr, fmt, ap);
     fputc('\n', stderr);
     DP_atomic_unlock(&log_lock);
 }
 
-#define DO_LOG(FILE, LINE, LEVEL, FMT, AP)       \
-    do {                                         \
-        va_list AP;                              \
-        va_start(AP, FMT);                       \
-        log_message(FILE, LINE, LEVEL, FMT, AP); \
-        va_end(AP);                              \
+static DP_LogFn log_fn = log_message;
+static void *log_user;
+
+void *DP_log_fn_set(DP_LogFn fn, void *user)
+{
+    log_fn = fn;
+    void *prev_user = user;
+    log_user = user;
+    return prev_user;
+}
+
+#define DO_LOG(LEVEL, FILE, LINE, FMT, AP)                             \
+    do {                                                               \
+        if (log_fn) {                                                  \
+            va_list AP;                                                \
+            va_start(AP, FMT);                                         \
+            log_fn(log_user, LEVEL, FILE ? FILE : "?", LINE, FMT, AP); \
+            va_end(AP);                                                \
+        }                                                              \
     } while (0)
 
 #ifndef NDEBUG
 void DP_debug_at(const char *file, int line, const char *fmt, ...)
 {
-    DO_LOG(file, line, "DEBUG", fmt, ap);
+    DO_LOG(DP_LOG_DEBUG, file, line, fmt, ap);
 }
 #endif
 
 void DP_warn_at(const char *file, int line, const char *fmt, ...)
 {
-    DO_LOG(file, line, "WARNING", fmt, ap);
+    DO_LOG(DP_LOG_WARN, file, line, fmt, ap);
 }
 
 void DP_panic_at(const char *file, int line, const char *fmt, ...)
 {
-    DO_LOG(file, line, "PANIC", fmt, ap);
+    DO_LOG(DP_LOG_PANIC, file, line, fmt, ap);
     DP_TRAP();
 }
 
