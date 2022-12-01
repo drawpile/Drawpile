@@ -34,11 +34,6 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
         list(APPEND dp_common_warnings -Wno-ignored-optimization-argument)
     endif()
 
-    # MinGW doesn't have %z printf specifiers, so it needs MS-specific formats.
-    if(CMAKE_C_COMPILER MATCHES "mingw")
-        list(APPEND dp_common_warnings -Wno-pedantic-ms-format)
-    endif()
-
     if(NOT USE_STRICT_ALIASING)
         list(APPEND dp_common_cflags -fno-strict-aliasing)
     endif()
