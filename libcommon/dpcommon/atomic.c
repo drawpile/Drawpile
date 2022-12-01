@@ -24,7 +24,7 @@
 #include <stdatomic.h>
 
 #if defined(_WIN32)
-#    include <winnt.h>
+#    include <windows.h>
 #    define DP_YIELD() YieldProcessor()
 #else
 #    include <sched.h>
