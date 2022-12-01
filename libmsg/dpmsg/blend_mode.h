@@ -77,6 +77,8 @@ const char *DP_blend_mode_svg_name(int blend_mode);
 
 DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode);
 
+bool DP_blend_mode_can_decrease_opacity(int blend_mode);
+
 DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
                                        DP_BlendMode not_found_value);
 

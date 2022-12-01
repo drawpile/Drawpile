@@ -925,7 +925,14 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
     for (int i = 0; i < count; ++i) {
         DP_Tile *tile = tlc->elements[i].tile;
         if (tile && DP_tile_transient(tile)) {
-            DP_transient_tile_persist(tlc->elements[i].transient_tile);
+            DP_TransientTile *tt = tlc->elements[i].transient_tile;
+            if (DP_transient_tile_blank(tt)) {
+                DP_transient_tile_decref(tt);
+                tlc->elements[i].transient_tile = NULL;
+            }
+            else {
+                DP_transient_tile_persist(tt);
+            }
         }
     }
     if (DP_layer_list_transient(tlc->sub.contents)) {

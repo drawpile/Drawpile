@@ -280,6 +280,11 @@ DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode)
              : DP_BLEND_MODE_BLANK_TILE_SKIP;
 }
 
+bool DP_blend_mode_can_decrease_opacity(int blend_mode)
+{
+    return get_attributes(blend_mode)->flags & DECREASE_OPACITY;
+}
+
 DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
                                        DP_BlendMode not_found_value)
 {
