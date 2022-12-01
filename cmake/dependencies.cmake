@@ -56,6 +56,10 @@ else()
         find_package(Qt5 COMPONENTS Core REQUIRED)
     endif()
 
+    if("${XML_IMPL}" STREQUAL "QT")
+        find_package(Qt5 COMPONENTS Xml REQUIRED)
+    endif()
+
     if("${ZIP_IMPL}" STREQUAL "LIBZIP")
         find_package(libzip REQUIRED)
     elseif("${ZIP_IMPL}" STREQUAL "KARCHIVE")

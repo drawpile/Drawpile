@@ -71,6 +71,7 @@ set(dpengine_headers
     dpengine/pixels.h
     dpengine/tile.h
     dpengine/timeline.h
+    dpengine/xml_stream.h
     dpengine/zip_archive.h)
 
 set(dptest_engine_sources test/dptest/dptest_engine.c)
@@ -90,11 +91,20 @@ set(dpengine_tests
 set(dpengine_clang_format_files "${dpengine_sources}" "${dpengine_headers}"
                                 "${dptest_engine_sources}"
                                 "${dptest_engine_headers}" "${dpengine_tests}"
+                                dpengine/xml_stream_qt.cpp
                                 dpengine/zip_archive_karchive.cpp
                                 dpengine/zip_archive_libzip.c
                                 test/handle_metadata.h test/resize_image.h)
 
 add_clang_format_files("${dpengine_clang_format_files}")
+
+if("${XML_IMPL}" STREQUAL "QT")
+    add_library(dpengine_xml STATIC dpengine/xml_stream_qt.cpp)
+    set_dp_target_properties(dpengine_xml CXX)
+    target_link_libraries(dpengine_xml PUBLIC dpcommon Qt5::Xml)
+else()
+    message(SEND_ERROR "Unknown XML_IMPL value '${XML_IMPL}'")
+endif()
 
 if("${ZIP_IMPL}" STREQUAL "LIBZIP")
     add_library(dpengine_archive STATIC dpengine/zip_archive_libzip.c)
@@ -112,7 +122,7 @@ add_library(dpengine STATIC "${dpengine_sources}" "${dpengine_headers}")
 set_dp_target_properties(dpengine)
 target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
 target_include_directories(dpengine PRIVATE "${CMAKE_BINARY_DIR}/config")
-target_link_libraries(dpengine PUBLIC dpengine_archive
+target_link_libraries(dpengine PUBLIC dpengine_archive dpengine_xml
                                       dpmsg_interface uthash mypaint PNG::PNG
                                       JPEG::JPEG qgrayraster parson)
 

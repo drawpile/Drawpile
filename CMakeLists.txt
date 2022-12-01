@@ -36,6 +36,8 @@ option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
 set(THREAD_IMPL PTHREAD CACHE STRING
     "Threading implementation (PTHREAD, QT, SDL)")
 
+set(XML_IMPL QT CACHE STRING "XML reader implementation (QT)")
+
 set(ZIP_IMPL LIBZIP CACHE STRING "ZIP folder implementation (LIBZIP, KARCHIVE)")
 
 if(CMAKE_CROSSCOMPILING)
