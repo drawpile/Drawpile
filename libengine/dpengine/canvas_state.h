@@ -139,6 +139,8 @@ void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
 void DP_transient_canvas_state_background_tile_set_noinc(
     DP_TransientCanvasState *tcs, DP_Tile *tile);
 
+void DP_transient_canvas_state_timeline_cleanup(DP_TransientCanvasState *tcs);
+
 DP_LayerList *
 DP_transient_canvas_state_layers_noinc(DP_TransientCanvasState *tcs);
 

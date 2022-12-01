@@ -25,6 +25,7 @@
 #include "canvas_diff.h"
 #include "compress.h"
 #include "document_metadata.h"
+#include "frame.h"
 #include "image.h"
 #include "layer_content.h"
 #include "layer_group.h"
@@ -1178,6 +1179,63 @@ void DP_transient_canvas_state_background_tile_set_noinc(
     DP_ASSERT(tcs->transient);
     DP_tile_decref_nullable(tcs->background_tile);
     tcs->background_tile = tile;
+}
+
+static bool layer_id_exists(DP_LayerRoutes *lr, int layer_id)
+{
+    return DP_layer_routes_search(lr, layer_id) != NULL;
+}
+
+static bool frame_has_layer_id_before(DP_Frame *f, int layer_id, int index)
+{
+    for (int i = 0; i < index; ++i) {
+        if (DP_frame_layer_id_at(f, i) == layer_id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void DP_transient_canvas_state_timeline_cleanup(DP_TransientCanvasState *tcs)
+{
+    DP_Timeline *tl = tcs->timeline;
+    DP_TransientTimeline *ttl =
+        DP_timeline_transient(tl) ? (DP_TransientTimeline *)tl : NULL;
+    DP_LayerRoutes *lr = tcs->layer_routes;
+    int frame_count = DP_timeline_frame_count(tl);
+    DP_debug("Frame count: %d", frame_count);
+    for (int i = 0; i < frame_count; ++i) {
+        DP_Frame *f = DP_timeline_frame_at_noinc(tl, i);
+        DP_TransientFrame *tf =
+            DP_frame_transient(f) ? (DP_TransientFrame *)f : NULL;
+        int layer_id_count = DP_frame_layer_id_count(f);
+        DP_debug("Layer id count of frame %d: %d", i, layer_id_count);
+        int j = 0;
+        while (j < layer_id_count) {
+            int layer_id = DP_frame_layer_id_at(f, j);
+            DP_debug("Layer id %d: %d", j, layer_id);
+            bool should_keep = layer_id_exists(lr, layer_id)
+                            && !frame_has_layer_id_before(f, layer_id, j);
+            if (should_keep) {
+                DP_debug("Should keep");
+                ++j;
+            }
+            else {
+                DP_debug("Delete");
+                if (!ttl) {
+                    ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+                    tl = (DP_Timeline *)ttl;
+                }
+                if (!tf) {
+                    tf = DP_transient_frame_new(f, 0);
+                    f = (DP_Frame *)tf;
+                    DP_transient_timeline_replace_transient_noinc(ttl, tf, i);
+                }
+                DP_transient_frame_layer_id_delete_at(tf, j);
+                --layer_id_count;
+            }
+        }
+    }
 }
 
 DP_LayerList *

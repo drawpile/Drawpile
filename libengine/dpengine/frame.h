@@ -49,6 +49,8 @@ int DP_frame_layer_id_count(DP_Frame *f);
 int DP_frame_layer_id_at(DP_Frame *f, int index);
 
 
+DP_TransientFrame *DP_transient_frame_new(DP_Frame *f, int reserve);
+
 DP_TransientFrame *DP_transient_frame_new_init(int layer_id_count);
 
 DP_TransientFrame *DP_transient_frame_incref(DP_TransientFrame *tf);
@@ -65,6 +67,8 @@ int DP_transient_frame_layer_id_at(DP_TransientFrame *tf, int index);
 
 void DP_transient_frame_layer_id_set_at(DP_TransientFrame *tf, int layer_id,
                                         int index);
+
+void DP_transient_frame_layer_id_delete_at(DP_TransientFrame *tf, int index);
 
 
 #endif

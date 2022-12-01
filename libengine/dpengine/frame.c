@@ -121,6 +121,22 @@ int DP_frame_layer_id_at(DP_Frame *f, int index)
 }
 
 
+DP_TransientFrame *DP_transient_frame_new(DP_Frame *f, int reserve)
+{
+    DP_ASSERT(f);
+    DP_ASSERT(reserve >= 0);
+    int layer_id_count = f->count;
+    DP_TransientFrame *tf =
+        DP_transient_frame_new_init(layer_id_count + reserve);
+    for (int i = 0; i < layer_id_count; ++i) {
+        tf->elements[i].transient_layer_id = f->elements[i].layer_id;
+    }
+    for (int i = 0; i < reserve; ++i) {
+        tf->elements[layer_id_count + i].transient_layer_id = 0;
+    }
+    return tf;
+}
+
 DP_TransientFrame *DP_transient_frame_new_init(int layer_id_count)
 {
     DP_TransientFrame *tf = DP_malloc(DP_FLEX_SIZEOF(
@@ -174,4 +190,18 @@ void DP_transient_frame_layer_id_set_at(DP_TransientFrame *tf, int layer_id,
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < tf->count);
     tf->elements[index].transient_layer_id = layer_id;
+}
+
+void DP_transient_frame_layer_id_delete_at(DP_TransientFrame *tf, int index)
+{
+    DP_ASSERT(tf);
+    DP_ASSERT(DP_atomic_get(&tf->refcount) > 0);
+    DP_ASSERT(tf->transient);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tf->count);
+    int count = tf->count;
+    tf->count = count - 1;
+    for (int i = index + 1; i < count; ++i) {
+        tf->elements[i - 1].transient_layer_id = tf->elements[i].layer_id;
+    }
 }
