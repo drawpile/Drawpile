@@ -42,12 +42,12 @@ static const char *get_z_error(z_stream *stream)
     return msg ? msg : "no error message";
 }
 
-static void free_z_stream(z_stream *stream)
+
+static void free_inflate_z_stream(z_stream *stream)
 {
     int ret = inflateEnd(stream);
     if (ret != Z_OK) {
-        DP_warn("Tile decompression end error %d: %s", ret,
-                get_z_error(stream));
+        DP_warn("Inflate end error %d: %s", ret, get_z_error(stream));
     }
 }
 
@@ -85,16 +85,67 @@ bool DP_compress_inflate(const unsigned char *in, size_t in_size,
     if (ret != Z_STREAM_END) {
         DP_error_set("Inflate decompression error %d: %s", ret,
                      get_z_error(&stream));
-        free_z_stream(&stream);
+        free_inflate_z_stream(&stream);
         return false;
     }
 
     unsigned int left = stream.avail_out;
-    free_z_stream(&stream);
+    free_inflate_z_stream(&stream);
     if (left != 0) {
         DP_error_set("Inflate result is %u bytes too short", left);
         return false;
     }
 
     return true;
+}
+
+
+static void free_deflate_z_stream(z_stream *stream)
+{
+    int ret = deflateEnd(stream);
+    if (ret != Z_OK) {
+        DP_warn("Deflate end error %d: %s", ret, get_z_error(stream));
+    }
+}
+
+size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
+                           unsigned char *(*get_output_buffer)(size_t, void *),
+                           void *user)
+{
+    z_stream stream = {0};
+    stream.zalloc = malloc_z;
+    stream.zfree = free_z;
+
+    int ret = deflateInit(&stream, 9);
+    if (ret != Z_OK) {
+        DP_error_set("Deflate init error %d: %s", ret, get_z_error(&stream));
+        return 0;
+    }
+
+    unsigned long bound = deflateBound(&stream, DP_size_to_ulong(in_size));
+    size_t out_size = bound + 4;
+
+    unsigned char *out = get_output_buffer(out_size, user);
+    if (!out) {
+        free_deflate_z_stream(&stream);
+        return 0; // The function should have already set the error message.
+    }
+
+    DP_write_bigendian_uint32(DP_size_to_uint32(in_size), out);
+
+    stream.avail_out = DP_ulong_to_uint(bound);
+    stream.next_out = out + 4;
+    stream.avail_in = DP_size_to_uint(in_size);
+    stream.next_in = (z_const unsigned char *)in;
+    ret = deflate(&stream, Z_FINISH);
+    if (ret != Z_STREAM_END) {
+        DP_error_set("Deflate compression error %d: %s", ret,
+                     get_z_error(&stream));
+        free_deflate_z_stream(&stream);
+        return 0;
+    }
+
+    size_t out_used = out_size - stream.avail_out;
+    free_deflate_z_stream(&stream);
+    return out_used;
 }

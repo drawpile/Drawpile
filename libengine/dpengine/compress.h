@@ -28,5 +28,9 @@ bool DP_compress_inflate(const unsigned char *in, size_t in_size,
                          unsigned char *(*get_output_buffer)(size_t, void *),
                          void *user);
 
+size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
+                           unsigned char *(*get_output_buffer)(size_t, void *),
+                           void *user);
+
 
 #endif
