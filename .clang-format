@@ -25,7 +25,9 @@ IncludeCategories:
     Priority: 2
     SortPriority: 0
     CaseSensitive: false
-  - Regex: '^<cmocka'
+  # MyPaint helpers.h checks for definedness of M_PI, so it should come after
+  # inclusion of math.h. So we'll just put it at the end, it's fine there.
+  - Regex: '^<helpers.h>'
     Priority: 4
     SortPriority: 0
     CaseSensitive: false
