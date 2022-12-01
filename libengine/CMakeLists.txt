@@ -70,7 +70,8 @@ set(dpengine_headers
     dpengine/paint.h
     dpengine/pixels.h
     dpengine/tile.h
-    dpengine/timeline.h)
+    dpengine/timeline.h
+    dpengine/zip_archive.h)
 
 set(dptest_engine_sources test/dptest/dptest_engine.c)
 set(dptest_engine_headers test/dptest/dptest_engine.h)
@@ -89,15 +90,31 @@ set(dpengine_tests
 set(dpengine_clang_format_files "${dpengine_sources}" "${dpengine_headers}"
                                 "${dptest_engine_sources}"
                                 "${dptest_engine_headers}" "${dpengine_tests}"
+                                dpengine/zip_archive_karchive.cpp
+                                dpengine/zip_archive_libzip.c
                                 test/handle_metadata.h test/resize_image.h)
 
 add_clang_format_files("${dpengine_clang_format_files}")
 
+if("${ZIP_IMPL}" STREQUAL "LIBZIP")
+    add_library(dpengine_archive STATIC dpengine/zip_archive_libzip.c)
+    set_dp_target_properties(dpengine_archive)
+    target_link_libraries(dpengine_archive PUBLIC dpcommon libzip::zip)
+elseif("${ZIP_IMPL}" STREQUAL "KARCHIVE")
+    add_library(dpengine_archive STATIC dpengine/zip_archive_karchive.cpp)
+    set_dp_target_properties(dpengine_archive CXX)
+    target_link_libraries(dpengine_archive PUBLIC dpcommon KF5::Archive)
+else()
+    message(SEND_ERROR "Unknown ZIP_IMPL value '${ZIP_IMPL}'")
+endif()
+
 add_library(dpengine STATIC "${dpengine_sources}" "${dpengine_headers}")
 set_dp_target_properties(dpengine)
 target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpengine PUBLIC
-                      dpmsg_interface mypaint PNG::PNG qgrayraster)
+target_include_directories(dpengine PRIVATE "${CMAKE_BINARY_DIR}/config")
+target_link_libraries(dpengine PUBLIC dpengine_archive
+                                      dpmsg_interface uthash mypaint PNG::PNG
+                                      JPEG::JPEG qgrayraster parson)
 
 if(BUILD_TESTS)
     add_library(dptest_engine STATIC "${dptest_engine_sources}"

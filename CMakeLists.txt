@@ -36,6 +36,8 @@ option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
 set(THREAD_IMPL PTHREAD CACHE STRING
     "Threading implementation (PTHREAD, QT, SDL)")
 
+set(ZIP_IMPL LIBZIP CACHE STRING "ZIP folder implementation (LIBZIP, KARCHIVE)")
+
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross-compiling for platform '${CMAKE_SYSTEM_NAME}'")
 endif()
