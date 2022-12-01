@@ -112,6 +112,46 @@ DP_INLINE int DP_rect_y(DP_Rect rect)
     return rect.y1;
 }
 
+DP_INLINE int DP_rect_left(DP_Rect rect)
+{
+    DP_ASSERT(DP_rect_valid(rect));
+    return rect.x1;
+}
+
+DP_INLINE int DP_rect_top(DP_Rect rect)
+{
+    DP_ASSERT(DP_rect_valid(rect));
+    return rect.y1;
+}
+
+DP_INLINE int DP_rect_right(DP_Rect rect)
+{
+    DP_ASSERT(DP_rect_valid(rect));
+    return rect.x2;
+}
+
+DP_INLINE int DP_rect_bottom(DP_Rect rect)
+{
+    DP_ASSERT(DP_rect_valid(rect));
+    return rect.y2;
+}
+
+DP_INLINE void DP_rect_sides(DP_Rect rect, int *out_left, int *out_top, int *out_right, int *out_bottom)
+{
+    if (out_left) {
+        *out_left = DP_rect_left(rect);
+    }
+    if (out_top) {
+        *out_top = DP_rect_top(rect);
+    }
+    if (out_right) {
+        *out_right = DP_rect_right(rect);
+    }
+    if (out_bottom) {
+        *out_bottom = DP_rect_bottom(rect);
+    }
+}
+
 DP_INLINE int DP_rect_width(DP_Rect rect)
 {
     DP_ASSERT(DP_rect_valid(rect));
@@ -141,6 +181,18 @@ DP_INLINE DP_Rect DP_rect_union(DP_Rect a, DP_Rect b)
     result.x2 = DP_max_int(a.x2, b.x2);
     result.y1 = DP_min_int(a.y1, b.y1);
     result.y2 = DP_max_int(a.y2, b.y2);
+    return result;
+}
+
+DP_INLINE DP_Rect DP_rect_intersection(DP_Rect a, DP_Rect b)
+{
+    DP_ASSERT(DP_rect_valid(a));
+    DP_ASSERT(DP_rect_valid(b));
+    DP_Rect result;
+    result.x1 = DP_max_int(a.x1, b.x1);
+    result.x2 = DP_min_int(a.x2, b.x2);
+    result.y1 = DP_max_int(a.y1, b.y1);
+    result.y2 = DP_min_int(a.y2, b.y2);
     return result;
 }
 
