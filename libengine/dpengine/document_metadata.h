@@ -24,6 +24,10 @@
 #include <dpcommon/common.h>
 
 
+#define DP_DOCUMENT_METADATA_DPIX_DEFAULT      72
+#define DP_DOCUMENT_METADATA_DPIY_DEFAULT      72
+#define DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT 24
+
 typedef struct DP_DocumentMetadata DP_DocumentMetadata;
 
 #ifdef DP_NO_STRICT_ALIASING

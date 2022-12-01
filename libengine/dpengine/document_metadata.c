@@ -71,8 +71,10 @@ allocate_document_metadata(bool transient, int dpix, int dpiy, int framerate,
 
 DP_DocumentMetadata *DP_document_metadata_new(void)
 {
-    return (DP_DocumentMetadata *)allocate_document_metadata(false, 72, 72, 24,
-                                                             false);
+    return (DP_DocumentMetadata *)allocate_document_metadata(
+        false, DP_DOCUMENT_METADATA_DPIX_DEFAULT,
+        DP_DOCUMENT_METADATA_DPIY_DEFAULT,
+        DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT, false);
 }
 
 DP_DocumentMetadata *DP_document_metadata_incref(DP_DocumentMetadata *dm)
