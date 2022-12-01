@@ -286,7 +286,8 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
     // do that, since we always allocate with malloc, which is guaranteed to
     // return something with maximum alignment, while Qt uses a stack buffer.
 
-    DP_ft_grays_raster.raster_reset(gray_raster, raster_pool, raster_pool_size);
+    DP_ft_grays_raster.raster_reset(gray_raster, raster_pool,
+                                    DP_size_to_ulong(raster_pool_size));
 
     DP_FT_Raster_Params params = {0};
     params.source = &outline;
@@ -322,7 +323,7 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
                 break;
             }
             DP_ft_grays_raster.raster_reset(gray_raster, raster_pool,
-                                            raster_pool_size);
+                                            DP_size_to_ulong(raster_pool_size));
         }
         else {
             DP_ft_grays_raster.raster_done(gray_raster);
