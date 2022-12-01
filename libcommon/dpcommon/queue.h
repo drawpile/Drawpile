@@ -50,7 +50,13 @@ void *DP_queue_push(DP_Queue *queue, size_t element_size);
 
 void *DP_queue_peek(DP_Queue *queue, size_t element_size);
 
+void *DP_queue_peek_last(DP_Queue *queue, size_t element_size);
+
+void *DP_queue_at(DP_Queue *queue, size_t element_size, size_t index);
+
 void DP_queue_shift(DP_Queue *queue);
+
+void DP_queue_pop(DP_Queue *queue);
 
 void DP_queue_each(DP_Queue *queue, size_t element_size,
                    void (*fn)(void *element, void *user), void *user);

@@ -110,10 +110,40 @@ void *DP_queue_peek(DP_Queue *queue, size_t element_size)
     }
 }
 
+void *DP_queue_peek_last(DP_Queue *queue, size_t element_size)
+{
+    DP_ASSERT(queue);
+    DP_ASSERT(element_size > 0);
+    size_t used = queue->used;
+    if (used > 0) {
+        return element_at(queue, (queue->head + used - 1) % queue->capacity,
+                          element_size);
+    }
+    else {
+        return NULL;
+    }
+}
+
+void *DP_queue_at(DP_Queue *queue, size_t element_size, size_t index)
+{
+    DP_ASSERT(queue);
+    DP_ASSERT(element_size > 0);
+    DP_ASSERT(index < queue->used);
+    return element_at(queue, (queue->head + index) % queue->capacity,
+                      element_size);
+}
+
 void DP_queue_shift(DP_Queue *queue)
 {
     if (queue->used > 0) {
         queue->head = (queue->head + 1) % queue->capacity;
+        --queue->used;
+    }
+}
+
+void DP_queue_pop(DP_Queue *queue)
+{
+    if (queue->used > 0) {
         --queue->used;
     }
 }
