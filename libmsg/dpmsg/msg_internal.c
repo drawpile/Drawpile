@@ -30,6 +30,16 @@ struct DP_MsgInternal {
     DP_MsgInternalType type;
 };
 
+typedef struct DP_MsgInternalCatchup {
+    DP_MsgInternal parent;
+    int progress;
+} DP_MsgInternalCatchup;
+
+typedef struct DP_MsgInternalPreview {
+    DP_MsgInternal parent;
+    void *data;
+} DP_MsgInternalPreview;
+
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
     DP_warn("DP_MsgInternal: payload_length called on internal message");
@@ -67,11 +77,12 @@ static const DP_MessageMethods methods = {
 };
 
 static DP_Message *msg_internal_new(unsigned int context_id,
-                                    DP_MsgInternalType internal_type)
+                                    DP_MsgInternalType internal_type,
+                                    size_t size)
 {
     DP_MsgInternal *mi;
     DP_Message *msg =
-        DP_message_new(DP_MSG_INTERNAL, context_id, &methods, sizeof(*mi));
+        DP_message_new(DP_MSG_INTERNAL, context_id, &methods, size);
     mi = DP_message_internal(msg);
     mi->type = internal_type;
     return msg;
@@ -79,12 +90,50 @@ static DP_Message *msg_internal_new(unsigned int context_id,
 
 DP_Message *DP_msg_internal_reset_new(unsigned int context_id)
 {
-    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RESET);
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RESET,
+                            sizeof(DP_MsgInternal));
 }
 
 DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id)
 {
-    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_SOFT_RESET);
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_SOFT_RESET,
+                            sizeof(DP_MsgInternal));
+}
+
+DP_Message *DP_msg_internal_snapshot_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_SNAPSHOT,
+                            sizeof(DP_MsgInternal));
+}
+
+DP_Message *DP_msg_internal_catchup_new(unsigned int context_id, int progress)
+{
+    DP_Message *msg = msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_CATCHUP,
+                                       sizeof(DP_MsgInternalCatchup));
+    DP_MsgInternalCatchup *mic = DP_message_internal(msg);
+    mic->progress = progress;
+    return msg;
+}
+
+DP_Message *DP_msg_internal_cleanup_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_CLEANUP,
+                            sizeof(DP_MsgInternal));
+}
+
+DP_Message *DP_msg_internal_preview_new(unsigned int context_id, void *data)
+{
+    DP_Message *msg = msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_PREVIEW,
+                                       sizeof(DP_MsgInternalPreview));
+    DP_MsgInternalPreview *mip = DP_message_internal(msg);
+    mip->data = data;
+    return msg;
+}
+
+DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id)
+{
+    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RECORDER_START,
+                            sizeof(DP_MsgInternal));
 }
 
 
@@ -98,4 +147,18 @@ DP_MsgInternalType DP_msg_internal_type(DP_MsgInternal *mi)
 {
     DP_ASSERT(mi);
     return mi->type;
+}
+
+int DP_msg_internal_catchup_progress(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_CATCHUP);
+    return ((DP_MsgInternalCatchup *)mi)->progress;
+}
+
+void *DP_msg_internal_preview_data(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PREVIEW);
+    return ((DP_MsgInternalPreview *)mi)->data;
 }

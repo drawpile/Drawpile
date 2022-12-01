@@ -333,6 +333,13 @@ void DP_transient_layer_props_list_set_noinc(DP_TransientLayerPropsList *tlpl,
     tlpl->elements[index].layer_props = lp;
 }
 
+void DP_transient_layer_props_list_set_inc(DP_TransientLayerPropsList *tlpl,
+                                           DP_LayerProps *lp, int index)
+{
+    DP_transient_layer_props_list_set_noinc(tlpl, DP_layer_props_incref(lp),
+                                            index);
+}
+
 void DP_transient_layer_props_list_insert_transient_noinc(
     DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index)
 {

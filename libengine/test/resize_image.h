@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#define WIDTH 64
+#define WIDTH  64
 #define HEIGHT 32
 
 typedef struct ResizeTestCase {

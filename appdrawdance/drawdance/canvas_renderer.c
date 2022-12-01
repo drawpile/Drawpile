@@ -357,8 +357,8 @@ void DP_canvas_renderer_render(DP_CanvasRenderer *cr, DP_LayerContent *lc,
         write_all_tiles_to_texture(cr, lc, layer_width, layer_height);
     }
     else if (diff_or_null) {
-        DP_canvas_diff_each_pos(diff_or_null, write_diff_tile_to_texture,
-                                (void *[]){cr, lc});
+        DP_canvas_diff_each_pos_reset(diff_or_null, write_diff_tile_to_texture,
+                                      (void *[]){cr, lc});
     }
 
     if (cr->recalculate_vertices) {

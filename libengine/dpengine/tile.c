@@ -93,6 +93,14 @@ DP_Tile *DP_tile_new_from_upixel15(unsigned int context_id, DP_UPixel15 pixel)
     return DP_tile_new_from_pixel15(context_id, DP_pixel15_premultiply(pixel));
 }
 
+DP_Tile *DP_tile_new_from_pixels8(unsigned int context_id,
+                                  const DP_Pixel8 *pixels)
+{
+    DP_TransientTile *tt = alloc_tile(false, true, context_id);
+    DP_pixels8_to_15(tt->pixels, pixels, DP_TILE_LENGTH);
+    return (DP_Tile *)tt;
+}
+
 DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra)
 {
     return DP_tile_new_from_upixel15(context_id, DP_upixel15_from_color(bgra));
@@ -105,7 +113,7 @@ struct DP_TileInflateArgs {
     DP_TransientTile *tt;
 };
 
-static unsigned char *get_output_buffer(size_t out_size, void *user)
+static unsigned char *get_inflate_output_buffer(size_t out_size, void *user)
 {
     if (out_size == DP_TILE_COMPRESSED_BYTES) {
         struct DP_TileInflateArgs *args = user;
@@ -134,7 +142,8 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
             context_id,
             NULL,
         };
-        if (DP_compress_inflate(image, image_size, get_output_buffer, &args)
+        if (DP_compress_inflate(image, image_size, get_inflate_output_buffer,
+                                &args)
             && DP_pixels8_to_15_checked(args.tt->pixels, args.buffer,
                                         DP_TILE_LENGTH)) {
             return (DP_Tile *)args.tt;
@@ -144,6 +153,52 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
             return NULL;
         }
     }
+}
+
+DP_Tile *DP_tile_new_checker(unsigned int context_id, DP_Pixel15 pixel1,
+                             DP_Pixel15 pixel2)
+{
+    DP_TransientTile *tt =
+        alloc_tile(true, pixel1.a == 0 && pixel2.a == 0, context_id);
+    int half = DP_TILE_SIZE / 2;
+    for (int y = 0; y < half; ++y) {
+        for (int x = 0; x < half; ++x) {
+            DP_transient_tile_pixel_at_set(tt, x, y, pixel1);
+            DP_transient_tile_pixel_at_set(tt, x + half, y, pixel2);
+            DP_transient_tile_pixel_at_set(tt, x, y + half, pixel2);
+            DP_transient_tile_pixel_at_set(tt, x + half, y + half, pixel1);
+        }
+    }
+    return DP_transient_tile_persist(tt);
+}
+
+DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
+                           DP_Pixel15 pixel2)
+{
+    DP_TransientTile *tt =
+        alloc_tile(true, pixel1.a == 0 && pixel2.a == 0, context_id);
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        tt->pixels[i] = ((i / DP_TILE_SIZE + i % DP_TILE_SIZE) / 16) % 2 == 0
+                          ? pixel1
+                          : pixel2;
+    }
+    return DP_transient_tile_persist(tt);
+}
+
+DP_Tile *DP_tile_censored_inc(void)
+{
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(censor_tile_lock);
+    static DP_Tile *censor_tile;
+    if (!censor_tile) {
+        DP_atomic_lock(&censor_tile_lock);
+        if (!censor_tile) {
+            censor_tile =
+                DP_tile_new_zebra(0, (DP_Pixel15){4497, 4883, 5268, DP_BIT15},
+                                  (DP_Pixel15){30711, 30840, 30968, DP_BIT15});
+        }
+        DP_atomic_unlock(&censor_tile_lock);
+    }
+    return DP_tile_incref(censor_tile);
 }
 
 
@@ -232,13 +287,8 @@ DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y)
 
 bool DP_tile_blank(DP_Tile *tile)
 {
-    DP_Pixel15 *pixels = DP_tile_pixels(tile);
-    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-        if (pixels[i].a != 0) {
-            return false;
-        }
-    }
-    return true;
+    static const DP_Pixel15 blank_pixels[DP_TILE_LENGTH];
+    return memcmp(tile->pixels, blank_pixels, DP_TILE_BYTES) == 0;
 }
 
 bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
@@ -263,6 +313,20 @@ bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
         *out_pixel = pixel;
     }
     return true;
+}
+
+
+size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
+                        unsigned char *(*get_output_buffer)(size_t, void *),
+                        void *user)
+{
+    DP_ASSERT(tile);
+    DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
+    DP_ASSERT(pixel_buffer);
+    DP_pixels15_to_8(pixel_buffer, tile->pixels, DP_TILE_LENGTH);
+    return DP_compress_deflate((const unsigned char *)pixel_buffer,
+                               DP_TILE_COMPRESSED_BYTES, get_output_buffer,
+                               user);
 }
 
 

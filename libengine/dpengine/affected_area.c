@@ -29,6 +29,8 @@
 #include <limits.h>
 
 
+#define ALL_IDS INT_MIN
+
 #define INVALID_BOUNDS                     \
     (DP_Rect)                              \
     {                                      \
@@ -164,6 +166,30 @@ static DP_Rect pixel_dabs_bounds(DP_MsgDrawDabsPixel *mddp)
     return bounds;
 }
 
+static DP_Rect move_region_bounds(DP_MsgMoveRegion *mmr)
+{
+    int src_x = DP_msg_move_region_bx(mmr);
+    int src_y = DP_msg_move_region_by(mmr);
+    int src_width = DP_msg_move_region_bw(mmr);
+    int src_height = DP_msg_move_region_bh(mmr);
+    DP_Rect src = DP_rect_make(src_x, src_y, src_width, src_height);
+    if (!DP_rect_valid(src)) {
+        return INVALID_BOUNDS;
+    }
+
+    DP_Quad dst_quad =
+        DP_quad_make(DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
+                     DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
+                     DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
+                     DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr));
+    DP_Rect dst = DP_quad_bounds(dst_quad);
+    if (!DP_rect_valid(dst)) {
+        return INVALID_BOUNDS;
+    }
+
+    return DP_rect_union(src, dst);
+}
+
 static DP_Rect move_rect_bounds(DP_MsgMoveRect *mrr)
 {
     int sx = DP_msg_move_rect_sx(mrr);
@@ -185,32 +211,79 @@ static DP_Rect move_rect_bounds(DP_MsgMoveRect *mrr)
     return DP_rect_union(src, dst);
 }
 
-static DP_AffectedArea make_pixel_dabs_affected_area(DP_MsgDrawDabsPixel *mddp)
+static DP_AffectedArea update_indirect_area(DP_AffectedIndirectAreas *aia,
+                                            unsigned int context_id,
+                                            int layer_id, DP_Rect bounds)
 {
-    if (DP_msg_draw_dabs_pixel_indirect(mddp)) {
-        return make_user_attrs();
+    DP_ASSERT(context_id < DP_AFFECTED_INDIRECT_AREAS_COUNT);
+    DP_IndirectArea *ia = &aia->areas[context_id];
+    if (DP_rect_valid(ia->bounds)) {
+        // This shouldn't happen if a client behaves properly. If it
+        // does, we'll just punt to the pen up affecting everything.
+        if (ia->layer_id != layer_id && ia->layer_id != -1) {
+            DP_warn("User %u drawing on layers %d and %d without a pen up",
+                    context_id, ia->layer_id, layer_id);
+            ia->layer_id = -1;
+        }
+        ia->bounds = DP_rect_union(ia->bounds, bounds);
     }
     else {
-        return make_pixels(DP_msg_draw_dabs_pixel_layer(mddp),
-                           pixel_dabs_bounds(mddp));
+        ia->layer_id = layer_id;
+        ia->bounds = bounds;
+    }
+    return make_user_attrs();
+}
+
+static DP_AffectedArea take_indirect_area(DP_AffectedIndirectAreas *aia,
+                                          unsigned int context_id)
+{
+    DP_ASSERT(context_id < DP_AFFECTED_INDIRECT_AREAS_COUNT);
+    DP_IndirectArea *ia = &aia->areas[context_id];
+    DP_Rect bounds = ia->bounds;
+    if (DP_rect_valid(bounds)) {
+        int layer_id = ia->layer_id;
+        ia->layer_id = -1;
+        ia->bounds = INVALID_BOUNDS;
+        return layer_id > 0 ? make_pixels(layer_id, bounds) : make_everything();
+    }
+    else {
+        return make_user_attrs();
     }
 }
 
-DP_AffectedArea DP_affected_area_make(DP_Message *msg, DP_CanvasState *cs)
+DP_AffectedArea DP_affected_area_make(DP_Message *msg,
+                                      DP_AffectedIndirectAreas *aia)
 {
     DP_MessageType type = DP_message_type(msg);
     switch (type) {
+    case DP_MSG_CANVAS_RESIZE:
+        return make_everything();
     case DP_MSG_LAYER_CREATE:
-        return make_layer_attrs(
-            DP_msg_layer_create_id(DP_msg_layer_create_cast(msg)));
+        // Creating a layer is complicated business, it might copy an entire
+        // layer group for example. So we'll err on the side of caution and
+        // say that it conflicts with every other layer domain message. Not
+        // like those are super common anyway, so it shouldn't be disruptive.
+        return make_layer_attrs(ALL_IDS);
     case DP_MSG_LAYER_ATTRIBUTES:
         return make_layer_attrs(
             DP_msg_layer_attributes_id(DP_msg_layer_attributes_cast(msg)));
     case DP_MSG_LAYER_RETITLE:
         return make_layer_attrs(
             DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
-    case DP_MSG_LAYER_VISIBILITY:
-        return make_user_attrs();
+    case DP_MSG_LAYER_ORDER:
+        // Reordering layers affects an arbitrary number of them, so
+        // punt to conflicting with every other layer domain message.
+        return make_layer_attrs(ALL_IDS);
+    case DP_MSG_LAYER_DELETE: {
+        DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
+        // If this layer gets merged into another, we affect two layers, which
+        // we can't represent in our affected area structure. But since changing
+        // layer properties is pretty rare, we'll just say that it conflicts
+        // with every other layer domain message and not bother special-casing.
+        return make_layer_attrs(DP_msg_layer_delete_merge_to(mld) == 0
+                                    ? DP_msg_layer_delete_id(mld)
+                                    : ALL_IDS);
+    }
     case DP_MSG_PUT_IMAGE: {
         DP_MsgPutImage *mpi = DP_msg_put_image_cast(msg);
         return make_pixels(
@@ -222,48 +295,61 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg, DP_CanvasState *cs)
     }
     case DP_MSG_PUT_TILE: {
         DP_MsgPutTile *mpt = DP_msg_put_tile_cast(msg);
-        if (DP_msg_put_tile_sublayer(mpt) > 0) {
-            return make_user_attrs();
-        }
-        else if (DP_msg_put_tile_repeat(mpt) > 0) {
-            // We can't intuit the affected area because we don't know the
-            // canvas size here. This only happens during resets though, so
-            // local fork performance is irrelevant and we punt to everything.
-            return make_everything();
+        int layer_id = DP_msg_put_tile_layer(mpt);
+        unsigned int sublayer_id = DP_msg_put_tile_sublayer(mpt);
+        // If there's a repetition involved, we can't intuit where it will end,
+        // since we don't know the canvas size at this time. So we just act as
+        // if it covers the entire rest of the canvas from this row onwards.
+        int y = DP_msg_put_tile_row(mpt) * DP_TILE_SIZE;
+        DP_Rect bounds =
+            DP_msg_put_tile_repeat(mpt) > 0
+                ? DP_rect_make(0, y, INT_MAX, INT_MAX - y)
+                : DP_rect_make(DP_msg_put_tile_col(mpt) * DP_TILE_SIZE, y,
+                               DP_TILE_SIZE, DP_TILE_SIZE);
+        if (sublayer_id != 0) {
+            return update_indirect_area(aia, sublayer_id, layer_id, bounds);
         }
         else {
-            return make_pixels(
-                DP_msg_put_tile_layer(mpt),
-                DP_rect_make(DP_msg_put_tile_col(mpt) * DP_TILE_SIZE,
-                             DP_msg_put_tile_row(mpt) * DP_TILE_SIZE,
-                             DP_TILE_SIZE, DP_TILE_SIZE));
+            return make_pixels(layer_id, bounds);
         }
     }
     case DP_MSG_DRAW_DABS_CLASSIC: {
         DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
+        int layer_id = DP_msg_draw_dabs_classic_layer(mddc);
+        DP_Rect bounds = classic_dabs_bounds(mddc);
         if (DP_msg_draw_dabs_classic_indirect(mddc)) {
-            return make_user_attrs();
+            return update_indirect_area(aia, DP_message_context_id(msg),
+                                        layer_id, bounds);
         }
         else {
-            return make_pixels(DP_msg_draw_dabs_classic_layer(mddc),
-                               classic_dabs_bounds(mddc));
+            return make_pixels(layer_id, bounds);
         }
     }
     case DP_MSG_DRAW_DABS_PIXEL:
-        return make_pixel_dabs_affected_area(DP_msg_draw_dabs_pixel_cast(msg));
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        return make_pixel_dabs_affected_area(DP_msg_draw_dabs_pixel_square_cast(msg));
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
+        DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+        int layer_id = DP_msg_draw_dabs_pixel_layer(mddp);
+        DP_Rect bounds = pixel_dabs_bounds(mddp);
+        if (DP_msg_draw_dabs_pixel_indirect(mddp)) {
+            return update_indirect_area(aia, DP_message_context_id(msg),
+                                        layer_id, bounds);
+        }
+        else {
+            return make_pixels(layer_id, bounds);
+        }
+    }
     case DP_MSG_DRAW_DABS_MYPAINT: {
         DP_MsgDrawDabsMyPaint *mddmp = DP_msg_draw_dabs_mypaint_cast(msg);
         return make_pixels(DP_msg_draw_dabs_mypaint_layer(mddmp),
                            mypaint_dabs_bounds(mddmp));
     }
     case DP_MSG_PEN_UP: {
-        int x, y, w, h;
-        int layer_id = DP_canvas_state_search_change_bounds(
-            cs, DP_message_context_id(msg), &x, &y, &w, &h);
-        return layer_id == 0 ? make_user_attrs()
-                             : make_pixels(layer_id, DP_rect_make(x, y, w, h));
+        unsigned int context_id = DP_message_context_id(msg);
+        DP_ASSERT(context_id < DP_AFFECTED_INDIRECT_AREAS_COUNT);
+        // Context id 0 is only used when drawing locally, where there won't be
+        // any conflicts, and when merging all sublayers after a disconnect.
+        return context_id == 0 ? make_everything()
+                               : take_indirect_area(aia, context_id);
     }
     case DP_MSG_FILL_RECT: {
         DP_MsgFillRect *mfr = DP_msg_fill_rect_cast(msg);
@@ -286,9 +372,14 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg, DP_CanvasState *cs)
     case DP_MSG_ANNOTATION_DELETE:
         return make_annotations(
             DP_msg_annotation_delete_id(DP_msg_annotation_delete_cast(msg)));
+    case DP_MSG_MOVE_REGION: {
+        DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
+        return make_pixels(DP_msg_move_region_layer(mmr),
+                           move_region_bounds(mmr));
+    }
     case DP_MSG_MOVE_RECT: {
-        DP_MsgMoveRect *mrr = DP_msg_move_rect_cast(msg);
-        return make_pixels(DP_msg_move_rect_layer(mrr), move_rect_bounds(mrr));
+        DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
+        return make_pixels(DP_msg_move_rect_layer(mmr), move_rect_bounds(mmr));
     }
     case DP_MSG_UNDO_POINT:
         return make_user_attrs();
@@ -306,11 +397,18 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg, DP_CanvasState *cs)
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return make_timeline(DP_msg_remove_timeline_frame_frame(
             DP_msg_remove_timeline_frame_cast(msg)));
+    case DP_MSG_UNDO:
+        return make_user_attrs();
     default:
         DP_debug("Unhandled message of type %d (%s) affects everything",
                  (int)type, DP_message_type_enum_name(type));
         return make_everything();
     }
+}
+
+static bool affected_ids_differ(int a, int b)
+{
+    return a != b && a != ALL_IDS && b != ALL_IDS;
 }
 
 bool DP_affected_area_concurrent_with(const DP_AffectedArea *a,
@@ -326,9 +424,17 @@ bool DP_affected_area_concurrent_with(const DP_AffectedArea *a,
                a_domain == DP_AFFECTED_DOMAIN_USER_ATTRS
                // Affecting different domains is concurrent.
                || a_domain != b_domain
-               // Affecting different layers or annotations is concurrent.
-               || a->affected_id != b->affected_id
+               // Affecting different layers, annotations etc. is concurrent.
+               || affected_ids_differ(a->affected_id, b->affected_id)
                // Affecting different pixels on the same layer is concurrent.
                || (a_domain == DP_AFFECTED_DOMAIN_PIXELS
                    && DP_rect_intersects(a->bounds, b->bounds)));
+}
+
+void DP_affected_indirect_areas_clear(DP_AffectedIndirectAreas *aia)
+{
+    DP_ASSERT(aia);
+    for (int i = 0; i < DP_AFFECTED_INDIRECT_AREAS_COUNT; ++i) {
+        aia->areas[i] = (DP_IndirectArea){-1, INVALID_BOUNDS};
+    }
 }

@@ -147,7 +147,7 @@ static void dump_layer_list(DP_Output *output, DP_LayerList *ll,
 static void dump_layers(DP_Output *output, DP_CanvasHistory *ch,
                         const char *title)
 {
-    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL);
+    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL, NULL);
     DP_output_format(output, "\n-- %s\n", title);
     dump_layer_list(output, DP_canvas_state_layers_noinc(cs),
                     DP_canvas_state_layer_props_noinc(cs), 0, "");
@@ -253,13 +253,13 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
     dump_layers(output, ch, "initial layers");
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 257, 0, 0, 0, 0, "Layer 1");
-    dump_layers(output, ch, "create initial layer");
-
-    add_undo_point(output, ch, dc);
     add_layer_create(output, ch, dc, 258, 0, 0, 0,
                      DP_MSG_LAYER_CREATE_FLAGS_GROUP, "Group 1");
     dump_layers(output, ch, "create initial group");
+
+    add_undo_point(output, ch, dc);
+    add_layer_create(output, ch, dc, 257, 0, 0, 0, 0, "Layer 1");
+    dump_layers(output, ch, "create initial layer");
 
     add_undo_point(output, ch, dc);
     add_layer_create(output, ch, dc, 259, 0, 258, 0,

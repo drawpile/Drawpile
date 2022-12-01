@@ -24,6 +24,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;
+typedef union DP_Pixel8 DP_Pixel8;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_LayerGroup DP_LayerGroup;
@@ -76,6 +77,9 @@ int DP_layer_group_search_change_bounds(DP_LayerGroup *lg, DP_LayerProps *lp,
 DP_TransientLayerGroup *DP_layer_group_resize(DP_LayerGroup *lg,
                                               unsigned int context_id, int top,
                                               int right, int bottom, int left);
+
+DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
+                                     int x, int y, int width, int height);
 
 void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         DP_TransientLayerContent *tlc,

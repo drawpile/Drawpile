@@ -288,10 +288,10 @@ static void get_classic_offset_stamp(DP_BrushStamp *offset_stamp,
     offset_mask(offset_stamp, mask_stamp, xfrac, yfrac);
 }
 
-static void draw_dabs_classic(DP_PaintDrawDabsParams *params,
-                              DP_TransientLayerContent *tlc)
+static DP_UserCursor draw_dabs_classic(DP_DrawContext *dc,
+                                       DP_PaintDrawDabsParams *params,
+                                       DP_TransientLayerContent *tlc)
 {
-    DP_DrawContext *dc = params->draw_context;
     unsigned int context_id = params->context_id;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int blend_mode = params->blend_mode;
@@ -305,19 +305,30 @@ static void draw_dabs_classic(DP_PaintDrawDabsParams *params,
     for (int i = 0; i < dab_count; ++i) {
         const DP_ClassicDab *dab = DP_classic_dab_at(dabs, i);
 
-        get_classic_mask_stamp(&mask_stamp, DP_classic_dab_size(dab) / 256.0,
-                               DP_classic_dab_hardness(dab) / 255.0);
-
         int x = last_x + DP_classic_dab_x(dab);
         int y = last_y + DP_classic_dab_y(dab);
-        get_classic_offset_stamp(&offset_stamp, &mask_stamp, x / 4.0, y / 4.0);
+        double radius = DP_classic_dab_size(dab) / 256.0;
+        uint8_t opacity = DP_classic_dab_opacity(dab);
 
-        uint16_t opacity = DP_channel8_to_15(DP_classic_dab_opacity(dab));
-        DP_transient_layer_content_brush_stamp_apply(
-            tlc, context_id, pixel, opacity, blend_mode, &offset_stamp);
+        // Don't try to draw infinitesimal or fully opaque dabs.
+        if (radius >= 0.1 && opacity != 0) {
+            get_classic_mask_stamp(&mask_stamp, radius,
+                                   DP_classic_dab_hardness(dab) / 255.0);
+
+            get_classic_offset_stamp(&offset_stamp, &mask_stamp, x / 4.0,
+                                     y / 4.0);
+
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel, DP_channel8_to_15(opacity), blend_mode,
+                &offset_stamp);
+        }
+
         last_x = x;
         last_y = y;
     }
+
+    return (DP_UserCursor){context_id, params->layer_id, last_x / 4,
+                           last_y / 4};
 }
 
 
@@ -354,9 +365,10 @@ static void get_square_pixel_mask_stamp(DP_BrushStamp *stamp, int diameter)
     }
 }
 
-static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
-                            DP_TransientLayerContent *tlc,
-                            void (*get_stamp)(DP_BrushStamp *, int))
+static DP_UserCursor draw_dabs_pixel(DP_DrawContext *dc,
+                                     DP_PaintDrawDabsParams *params,
+                                     DP_TransientLayerContent *tlc,
+                                     void (*get_stamp)(DP_BrushStamp *, int))
 {
     unsigned int context_id = params->context_id;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
@@ -366,30 +378,37 @@ static void draw_dabs_pixel(DP_PaintDrawDabsParams *params,
 
     int last_x = params->origin_x;
     int last_y = params->origin_y;
-    DP_BrushStamp stamp = make_brush_stamp1(params->draw_context);
+    DP_BrushStamp stamp = make_brush_stamp1(dc);
 
     int last_size = -1;
     for (int i = 0; i < dab_count; ++i) {
         const DP_PixelDab *dab = DP_pixel_dab_at(dabs, i);
-
-        int size = DP_pixel_dab_size(dab);
-        if (size != last_size) {
-            get_stamp(&stamp, size);
-            last_size = size;
-        }
-
         int x = last_x + DP_pixel_dab_x(dab);
         int y = last_y + DP_pixel_dab_y(dab);
-        int offset = size / 2;
-        stamp.left = x - offset;
-        stamp.top = y - offset;
+        int size = DP_pixel_dab_size(dab);
+        uint8_t opacity = DP_pixel_dab_opacity(dab);
 
-        uint16_t opacity = DP_channel8_to_15(DP_pixel_dab_opacity(dab));
-        DP_transient_layer_content_brush_stamp_apply(
-            tlc, context_id, pixel, opacity, blend_mode, &stamp);
+        // Don't try to draw infinitesimal or fully opaque dabs.
+        if (size != 0 && opacity != 0) {
+            if (size != last_size) {
+                get_stamp(&stamp, size);
+                last_size = size;
+            }
+
+            int offset = size / 2;
+            stamp.left = x - offset;
+            stamp.top = y - offset;
+
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel, DP_channel8_to_15(opacity), blend_mode,
+                &stamp);
+        }
+
         last_x = x;
         last_y = y;
     }
+
+    return (DP_UserCursor){context_id, params->layer_id, last_x, last_y};
 }
 
 
@@ -631,10 +650,10 @@ static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
     }
 }
 
-static void draw_dabs_mypaint(DP_PaintDrawDabsParams *params,
-                              DP_TransientLayerContent *tlc)
+static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
+                                       DP_PaintDrawDabsParams *params,
+                                       DP_TransientLayerContent *tlc)
 {
-    DP_DrawContext *dc = params->draw_context;
     unsigned int context_id = params->context_id;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int dab_count = params->dab_count;
@@ -654,6 +673,7 @@ static void draw_dabs_mypaint(DP_PaintDrawDabsParams *params,
     const DP_MyPaintDab *first_dab = DP_mypaint_dab_at(dabs, 0);
     int last_x = params->origin_x + DP_mypaint_dab_x(first_dab);
     int last_y = params->origin_y + DP_mypaint_dab_y(first_dab);
+    // FIXME: size is supposed to be the radius, not the diameter. I think.
     uint16_t last_size = DP_mypaint_dab_size(first_dab);
     uint8_t last_hardness = DP_mypaint_dab_hardness(first_dab);
     uint8_t last_aspect_ratio = DP_mypaint_dab_aspect_ratio(first_dab);
@@ -701,31 +721,32 @@ static void draw_dabs_mypaint(DP_PaintDrawDabsParams *params,
         last_x = x;
         last_y = y;
     }
+
+    return (DP_UserCursor){context_id, params->layer_id, last_x / 4,
+                           last_y / 4};
 }
 
 
-void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
-                        DP_TransientLayerContent *tlc)
+DP_UserCursor DP_paint_draw_dabs(DP_DrawContext *dc,
+                                 DP_PaintDrawDabsParams *params,
+                                 DP_TransientLayerContent *tlc)
 {
+    DP_ASSERT(dc);
     DP_ASSERT(params);
     DP_ASSERT(tlc);
     DP_ASSERT(params->dab_count > 0); // This should be checked beforehand.
     int type = params->type;
     switch (type) {
     case DP_MSG_DRAW_DABS_CLASSIC:
-        draw_dabs_classic(params, tlc);
-        break;
+        return draw_dabs_classic(dc, params, tlc);
     case DP_MSG_DRAW_DABS_PIXEL:
-        draw_dabs_pixel(params, tlc, get_round_pixel_mask_stamp);
-        break;
+        return draw_dabs_pixel(dc, params, tlc, get_round_pixel_mask_stamp);
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        draw_dabs_pixel(params, tlc, get_square_pixel_mask_stamp);
-        break;
+        return draw_dabs_pixel(dc, params, tlc, get_square_pixel_mask_stamp);
     case DP_MSG_DRAW_DABS_MYPAINT:
-        draw_dabs_mypaint(params, tlc);
-        break;
+        return draw_dabs_mypaint(dc, params, tlc);
     default:
-        DP_panic("Unknown paint type %d", type);
+        DP_UNREACHABLE();
     }
 }
 

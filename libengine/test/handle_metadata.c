@@ -26,7 +26,7 @@
 static void dump_metadata(DP_Output *output, DP_CanvasHistory *ch,
                           const char *title)
 {
-    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL);
+    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL, NULL);
     DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
 
     DP_output_format(output, "\n-- %s\n", title);

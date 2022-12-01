@@ -54,7 +54,7 @@ static DP_CanvasState *play_recording(TEST_PARAMS, const char *path)
         }
     }
 
-    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL);
+    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL, NULL);
     FATAL(NOT_NULL_OK(cs, "got canvas state from playing back %s", path));
     DP_draw_context_free(dc);
     DP_canvas_history_free(ch);

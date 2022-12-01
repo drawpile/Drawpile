@@ -93,12 +93,23 @@ DP_Tile *DP_tile_new_from_pixel15(unsigned int context_id, DP_Pixel15 pixel);
 
 DP_Tile *DP_tile_new_from_upixel15(unsigned int context_id, DP_UPixel15 pixel);
 
+DP_Tile *DP_tile_new_from_pixels8(unsigned int context_id,
+                                  const DP_Pixel8 *pixels);
+
 DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra);
 
 DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
                                      unsigned int context_id,
                                      const unsigned char *image,
                                      size_t image_size);
+
+DP_Tile *DP_tile_new_checker(unsigned int context_id, DP_Pixel15 pixel1,
+                             DP_Pixel15 pixel2);
+
+DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
+                           DP_Pixel15 pixel2);
+
+DP_Tile *DP_tile_censored_inc(void);
 
 DP_Tile *DP_tile_incref(DP_Tile *tile);
 
@@ -126,6 +137,11 @@ DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y);
 bool DP_tile_blank(DP_Tile *tile);
 
 bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel);
+
+
+size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
+                        unsigned char *(*get_output_buffer)(size_t, void *),
+                        void *user);
 
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);

@@ -147,7 +147,7 @@ DP_CanvasState *DP_document_canvas_state_compare_and_get(DP_Document *doc,
                                                          DP_CanvasState *prev)
 {
     DP_ASSERT(doc);
-    return DP_canvas_history_compare_and_get(doc->canvas_history, prev);
+    return DP_canvas_history_compare_and_get(doc->canvas_history, prev, NULL);
 }
 
 void DP_document_command_push_noinc(DP_Document *doc, DP_Message *msg)

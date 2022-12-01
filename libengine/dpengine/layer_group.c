@@ -28,6 +28,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
 
 
@@ -120,17 +121,30 @@ void DP_layer_group_diff(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(DP_atomic_get(&prev_lg->refcount) > 0);
     DP_ASSERT(prev_lp);
     DP_ASSERT(diff);
-    if (DP_layer_props_differ(lp, prev_lp)) {
-        DP_layer_list_diff_mark(lg->children, diff);
-        DP_layer_list_diff_mark(prev_lg->children, diff);
+    bool visible = DP_layer_props_visible(lp);
+    bool prev_visible = DP_layer_props_visible(prev_lp);
+    if (visible) {
+        if (prev_visible) {
+            if (DP_layer_props_differ(lp, prev_lp)) {
+                DP_layer_list_diff_mark(lg->children, diff);
+                DP_layer_list_diff_mark(prev_lg->children, diff);
+            }
+            else {
+                DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
+                DP_ASSERT(lpl);
+                DP_LayerPropsList *prev_lpl =
+                    DP_layer_props_children_noinc(prev_lp);
+                DP_ASSERT(prev_lpl);
+                DP_layer_list_diff(lg->children, lpl, prev_lg->children,
+                                   prev_lpl, diff);
+            }
+        }
+        else {
+            DP_layer_list_diff_mark(lg->children, diff);
+        }
     }
-    else {
-        DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
-        DP_ASSERT(lpl);
-        DP_LayerPropsList *prev_lpl = DP_layer_props_children_noinc(prev_lp);
-        DP_ASSERT(prev_lpl);
-        DP_layer_list_diff(lg->children, lpl, prev_lg->children, prev_lpl,
-                           diff);
+    else if (prev_visible) {
+        DP_layer_list_diff_mark(prev_lg->children, diff);
     }
 }
 
@@ -228,6 +242,25 @@ DP_TransientLayerGroup *DP_layer_group_resize(DP_LayerGroup *lg,
     }
 
     return tlg;
+}
+
+DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
+                                     int x, int y, int width, int height)
+{
+    DP_ASSERT(lg);
+    DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
+    DP_ASSERT(lp);
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+    // TODO: Don't merge the whole group just to cut out a part of it.
+    DP_TransientLayerContent *tlc =
+        DP_transient_layer_content_new_init(lg->width, lg->height, NULL);
+    DP_layer_list_merge_to_flat_image(
+        lg->children, DP_layer_props_children_noinc(lp), tlc, DP_BIT15, true);
+    DP_Pixel8 *pixels = DP_layer_content_to_pixels8((DP_LayerContent *)tlc, x,
+                                                    y, width, height);
+    DP_transient_layer_content_decref(tlc);
+    return pixels;
 }
 
 void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,

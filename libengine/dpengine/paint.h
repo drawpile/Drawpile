@@ -21,6 +21,7 @@
  */
 #ifndef DPENGINE_PAINT_H
 #define DPENGINE_PAINT_H
+#include "canvas_state.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_ClassicDab DP_ClassicDab;
@@ -44,12 +45,13 @@ typedef struct DP_BrushStamp {
 
 typedef struct DP_PaintDrawDabsParams {
     int type;
-    DP_DrawContext *draw_context;
     unsigned int context_id;
+    int layer_id;
     int origin_x;
     int origin_y;
     uint32_t color;
     int blend_mode;
+    bool indirect;
     int dab_count;
     union {
         struct {
@@ -69,8 +71,9 @@ typedef struct DP_PaintDrawDabsParams {
 } DP_PaintDrawDabsParams;
 
 
-void DP_paint_draw_dabs(DP_PaintDrawDabsParams *params,
-                        DP_TransientLayerContent *tlc);
+DP_UserCursor DP_paint_draw_dabs(DP_DrawContext *dc,
+                                 DP_PaintDrawDabsParams *params,
+                                 DP_TransientLayerContent *tlc);
 
 DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
                                                  int left, int top,

@@ -136,7 +136,8 @@ DP_INLINE int DP_rect_bottom(DP_Rect rect)
     return rect.y2;
 }
 
-DP_INLINE void DP_rect_sides(DP_Rect rect, int *out_left, int *out_top, int *out_right, int *out_bottom)
+DP_INLINE void DP_rect_sides(DP_Rect rect, int *out_left, int *out_top,
+                             int *out_right, int *out_bottom)
 {
     if (out_left) {
         *out_left = DP_rect_left(rect);

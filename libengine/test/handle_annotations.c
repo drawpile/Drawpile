@@ -41,7 +41,7 @@ static const char *dump_valign(int valign)
 
 static void dump(DP_Output *output, DP_CanvasHistory *ch, const char *title)
 {
-    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL);
+    DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL, NULL);
     DP_output_format(output, "\n-- %s\n", title);
 
     DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);

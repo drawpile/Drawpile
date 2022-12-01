@@ -181,7 +181,21 @@ static bool diff_tile(void *data, int tile_index)
     return a->elements[tile_index].tile != b->elements[tile_index].tile;
 }
 
-static void layer_content_diff(DP_LayerContent *lc, DP_LayerContent *prev_lc,
+static bool diff_tile_both_censored(void *data, int tile_index)
+{
+    DP_ASSERT(data);
+    DP_ASSERT(tile_index >= 0);
+    DP_LayerContent *a = ((DP_LayerContent **)data)[0];
+    DP_LayerContent *b = ((DP_LayerContent **)data)[1];
+    DP_ASSERT(tile_index < DP_tile_total_round(a->width, a->height));
+    DP_ASSERT(tile_index < DP_tile_total_round(b->width, b->height));
+    // When layers are censored, all non-blank tiles get turned into the
+    // same censor tile, so we just have to compare their null-ness.
+    return !a->elements[tile_index].tile != !b->elements[tile_index].tile;
+}
+
+static void layer_content_diff(DP_LayerContent *lc, bool censored,
+                               DP_LayerContent *prev_lc, bool prev_censored,
                                DP_CanvasDiff *diff)
 {
     DP_ASSERT(lc);
@@ -191,7 +205,17 @@ static void layer_content_diff(DP_LayerContent *lc, DP_LayerContent *prev_lc,
     DP_ASSERT(DP_atomic_get(&prev_lc->refcount) > 0);
     DP_ASSERT(lc->width == prev_lc->width);   // Different sizes could be
     DP_ASSERT(lc->height == prev_lc->height); // supported, but aren't yet.
-    DP_canvas_diff_check(diff, diff_tile, (DP_LayerContent *[]){lc, prev_lc});
+    if (!censored && !prev_censored) {
+        DP_canvas_diff_check(diff, diff_tile,
+                             (DP_LayerContent *[]){lc, prev_lc});
+    }
+    else if (censored && prev_censored) {
+        DP_canvas_diff_check(diff, diff_tile_both_censored,
+                             (DP_LayerContent *[]){lc, prev_lc});
+    }
+    else {
+        layer_content_diff_mark_both(lc, prev_lc, diff);
+    }
 }
 
 void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
@@ -203,14 +227,27 @@ void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
     DP_ASSERT(prev_lc);
     DP_ASSERT(prev_lp);
     DP_ASSERT(diff);
-    if (DP_layer_props_differ(lp, prev_lp)) {
-        layer_content_diff_mark_both(lc, prev_lc, diff);
+    bool visible = DP_layer_props_visible(lp);
+    bool prev_visible = DP_layer_props_visible(prev_lp);
+    if (visible) {
+        if (prev_visible) {
+            if (DP_layer_props_differ(lp, prev_lp)) {
+                layer_content_diff_mark_both(lc, prev_lc, diff);
+            }
+            else {
+                layer_content_diff(lc, DP_layer_props_censored(lp), prev_lc,
+                                   DP_layer_props_censored(prev_lp), diff);
+            }
+            DP_layer_list_diff(lc->sub.contents, lc->sub.props,
+                               prev_lc->sub.contents, prev_lc->sub.props, diff);
+        }
+        else {
+            DP_layer_content_diff_mark(lc, diff);
+        }
     }
-    else {
-        layer_content_diff(lc, prev_lc, diff);
+    else if (prev_visible) {
+        DP_layer_content_diff_mark(prev_lc, diff);
     }
-    DP_layer_list_diff(lc->sub.contents, lc->sub.props, prev_lc->sub.contents,
-                       prev_lc->sub.props, diff);
 }
 
 static bool mark(void *data, int tile_index)
@@ -264,7 +301,7 @@ DP_Tile *DP_layer_content_tile_at_noinc(DP_LayerContent *lc, int x, int y)
     return lc->elements[y * DP_tile_count_round(lc->width) + x].tile;
 }
 
-static DP_Pixel15 layer_content_pixel_at(DP_LayerContent *lc, int x, int y)
+DP_Pixel15 DP_layer_content_pixel_at(DP_LayerContent *lc, int x, int y)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -365,14 +402,22 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
 DP_UPixel15 DP_layer_content_sample_color_at(DP_LayerContent *lc,
                                              uint16_t *stamp_buffer, int x,
                                              int y, int diameter,
-                                             int last_diameter)
+                                             int *in_out_last_diameter)
 {
     if (x >= 0 && y >= 0 && x < lc->width && y < lc->height) {
         if (diameter < 2) {
-            DP_Pixel15 pixel = layer_content_pixel_at(lc, x, y);
+            DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, x, y);
             return DP_pixel15_unpremultiply(pixel);
         }
         else {
+            int last_diameter;
+            if (in_out_last_diameter) {
+                last_diameter = *in_out_last_diameter;
+                *in_out_last_diameter = diameter;
+            }
+            else {
+                last_diameter = -1;
+            }
             return sample_dab_color(
                 lc, DP_paint_color_sampling_stamp_make(stamp_buffer, diameter,
                                                        x, y, last_diameter));
@@ -545,6 +590,31 @@ DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,
     return img;
 }
 
+DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
+                                       int width, int height)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+    DP_Pixel8 *pixels = DP_malloc_zeroed(sizeof(*pixels) * DP_int_to_size(width)
+                                         * DP_int_to_size(height));
+    int left, top, right, bottom;
+    DP_rect_sides(
+        DP_rect_intersection(DP_rect_make(0, 0, lc->width, lc->height),
+                             DP_rect_make(x, y, width, height)),
+        &left, &top, &right, &bottom);
+
+    for (int yy = top; yy <= bottom; ++yy) {
+        for (int xx = left; xx <= right; ++xx) {
+            pixels[(yy - y) * width + (xx - x)] =
+                DP_pixel15_to_8(DP_layer_content_pixel_at(lc, xx, yy));
+        }
+    }
+
+    return pixels;
+}
+
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                                   DP_Image *mask)
 {
@@ -566,7 +636,7 @@ DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                 if (layer_x >= 0 && layer_x < layer_width
                     && (!mask || DP_image_pixel_at(mask, x, y).color != 0)) {
                     DP_Pixel8 pixel = DP_pixel15_to_8(
-                        layer_content_pixel_at(lc, layer_x, layer_y));
+                        DP_layer_content_pixel_at(lc, layer_x, layer_y));
                     DP_image_pixel_at_set(src_img, x, y, pixel);
                 }
             }
@@ -598,15 +668,37 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index)
     }
 }
 
-DP_TransientTile *DP_layer_content_flatten_tile_to(DP_LayerContent *lc,
-                                                   int tile_index,
-                                                   DP_TransientTile *tt_or_null,
-                                                   uint16_t opacity,
-                                                   int blend_mode)
+static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index)
+{
+    DP_ASSERT(tile_index >= 0);
+    DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
+    DP_Tile *t = lc->elements[tile_index].tile;
+    if (t) {
+        return DP_tile_censored_inc();
+    }
+    else {
+        DP_LayerList *ll = lc->sub.contents;
+        int sublayer_count = DP_layer_list_count(ll);
+        for (int i = 0; i < sublayer_count; ++i) {
+            DP_LayerContent *sub_lc = DP_layer_list_entry_content_noinc(
+                DP_layer_list_at_noinc(ll, i));
+            if (sub_lc->elements[tile_index].tile) {
+                return DP_tile_censored_inc();
+            }
+        }
+        return NULL;
+    }
+}
+
+DP_TransientTile *
+DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
+                                 DP_TransientTile *tt_or_null, uint16_t opacity,
+                                 int blend_mode, bool censored)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_Tile *t = flatten_tile(lc, tile_index);
+    DP_Tile *t = censored ? flatten_censored_tile(lc, tile_index)
+                          : flatten_tile(lc, tile_index);
     if (t) {
         DP_TransientTile *tt = DP_transient_tile_merge_nullable(
             tt_or_null, t, opacity, blend_mode);
@@ -645,6 +737,27 @@ static DP_TransientLayerContent *alloc_layer_content(int width, int height)
     return tlc;
 }
 
+static DP_TransientTile *get_transient_tile(DP_TransientLayerContent *tlc,
+                                            unsigned int context_id, int i)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
+    DP_Tile *t = tlc->elements[i].tile;
+    DP_ASSERT(t);
+    if (DP_tile_transient(t)) {
+        return (DP_TransientTile *)t;
+    }
+    else {
+        DP_TransientTile *tt = DP_transient_tile_new(t, context_id);
+        tlc->elements[i].transient_tile = tt;
+        DP_tile_decref(t);
+        return tt;
+    }
+}
+
 static DP_TransientTile *
 get_or_create_transient_tile(DP_TransientLayerContent *tlc,
                              unsigned int context_id, int i)
@@ -667,10 +780,10 @@ get_or_create_transient_tile(DP_TransientLayerContent *tlc,
     return tlc->elements[i].transient_tile;
 }
 
-static void transient_layer_content_pixel_at_put(DP_TransientLayerContent *tlc,
-                                                 unsigned int context_id,
-                                                 int blend_mode, int x, int y,
-                                                 DP_Pixel15 pixel)
+void DP_transient_layer_content_pixel_at_put(DP_TransientLayerContent *tlc,
+                                             unsigned int context_id,
+                                             int blend_mode, int x, int y,
+                                             DP_Pixel15 pixel)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
@@ -688,34 +801,24 @@ static void transient_layer_content_pixel_at_put(DP_TransientLayerContent *tlc,
                                    y - yt * DP_TILE_SIZE, pixel);
 }
 
-static void transient_layer_content_put_image(DP_TransientLayerContent *tlc,
-                                              DP_Image *img,
-                                              unsigned int context_id,
-                                              int blend_mode, int left, int top)
+void DP_transient_layer_content_pixel_at_set(DP_TransientLayerContent *tlc,
+                                             unsigned int context_id, int x,
+                                             int y, DP_Pixel15 pixel)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
-    DP_ASSERT(img);
-
-    int img_width = DP_image_width(img);
-    int img_height = DP_image_height(img);
-    int img_start_x = left < 0 ? -left : 0;
-    int img_start_y = top < 0 ? -top : 0;
-    int start_x = DP_max_int(left, 0);
-    int start_y = DP_max_int(top, 0);
-    int width = DP_min_int(tlc->width - start_x, img_width - img_start_x);
-    int height = DP_min_int(tlc->height - start_y, img_height - img_start_y);
-    for (int y = 0; y < height; ++y) {
-        int cur_y = start_y + y;
-        int img_y = img_start_y + y;
-        for (int x = 0; x < width; ++x) {
-            DP_Pixel15 pixel =
-                DP_pixel8_to_15(DP_image_pixel_at(img, img_start_x + x, img_y));
-            transient_layer_content_pixel_at_put(tlc, context_id, blend_mode,
-                                                 start_x + x, cur_y, pixel);
-        }
-    }
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < tlc->width);
+    DP_ASSERT(y < tlc->height);
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int wt = DP_tile_count_round(tlc->width);
+    DP_TransientTile *tt =
+        get_or_create_transient_tile(tlc, context_id, yt * wt + xt);
+    DP_transient_tile_pixel_at_set(tt, x - xt * DP_TILE_SIZE,
+                                   y - yt * DP_TILE_SIZE, pixel);
 }
 
 
@@ -786,8 +889,8 @@ resize_layer_content_copy(DP_LayerContent *lc, unsigned int context_id, int top,
 
     DP_TransientLayerContent *tlc =
         DP_transient_layer_content_new_init(width, height, NULL);
-    transient_layer_content_put_image(tlc, img, context_id,
-                                      DP_BLEND_MODE_REPLACE, x, y);
+    DP_transient_layer_content_put_image(tlc, context_id, DP_BLEND_MODE_REPLACE,
+                                         x, y, img);
     DP_image_free(img);
 
     return tlc;
@@ -838,7 +941,7 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
     return tlc;
 }
 
-DP_LayerContent *DP_layer_content_merge_to_flat_image(DP_LayerContent *lc)
+DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -1037,22 +1140,9 @@ static DP_TransientTile *create_transient_tile(DP_TransientLayerContent *tlc,
     return tt;
 }
 
-static DP_TransientTile *get_transient_tile(DP_TransientLayerContent *tlc,
-                                            unsigned int context_id, int i)
+static bool can_blend_blank(int blend_mode, uint16_t opacity)
 {
-    DP_ASSERT(tlc);
-    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
-    DP_ASSERT(tlc->transient);
-    DP_ASSERT(i >= 0);
-    DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
-    DP_Tile *tile = tlc->elements[i].tile;
-    DP_ASSERT(tile);
-    if (!DP_tile_transient(tile)) {
-        tlc->elements[i].transient_tile =
-            DP_transient_tile_new(tile, context_id);
-        DP_tile_decref(tile);
-    }
-    return tlc->elements[i].transient_tile;
+    return DP_blend_mode_blend_blank(blend_mode) && opacity != 0;
 }
 
 void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
@@ -1068,8 +1158,7 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
     DP_ASSERT(tlc->width == lc->width);
     DP_ASSERT(tlc->height == lc->height);
     int count = DP_tile_total_round(lc->width, lc->height);
-    DP_BlendModeBlankTileBehavior on_blank =
-        DP_blend_mode_blank_tile_behavior(blend_mode);
+    bool blend_blank = can_blend_blank(blend_mode, opacity);
     for (int i = 0; i < count; ++i) {
         DP_Tile *t = lc->elements[i].tile;
         if (t) {
@@ -1078,7 +1167,7 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                 DP_ASSERT((void *)tt != (void *)t);
                 DP_transient_tile_merge(tt, t, opacity, blend_mode);
             }
-            else if (on_blank == DP_BLEND_MODE_BLANK_TILE_BLEND) {
+            else if (blend_blank) {
                 // For blend modes like normal and behind, do regular blending.
                 DP_TransientTile *tt =
                     create_transient_tile(tlc, context_id, i);
@@ -1088,7 +1177,6 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                 // For most other blend modes merging with transparent pixels
                 // doesn't do anything. For example erasing nothing or multiply
                 // with nothing just leads to more nothing. Skip the empty tile.
-                DP_ASSERT(on_blank == DP_BLEND_MODE_BLANK_TILE_SKIP);
             }
         }
     }
@@ -1172,18 +1260,89 @@ void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
     int start_y = DP_max_int(top, 0);
     int width = DP_min_int(tlc->width - start_x, img_width - img_start_x);
     int height = DP_min_int(tlc->height - start_y, img_height - img_start_y);
-    for (int y = 0; y < height; ++y) {
-        int cur_y = start_y + y;
-        int img_y = img_start_y + y;
-        for (int x = 0; x < width; ++x) {
-            DP_Pixel15 pixel =
-                DP_pixel8_to_15(DP_image_pixel_at(img, img_start_x + x, img_y));
-            transient_layer_content_pixel_at_put(tlc, context_id, blend_mode,
-                                                 start_x + x, cur_y, pixel);
+
+    // Shuffling these pixels around is expensive, try to avoid doing as much
+    // work as possible by special-casing the most common blend modes.
+    // TODO: do this a tile at a time instead of a pixel at a time.
+    switch (blend_mode) {
+    case DP_BLEND_MODE_NORMAL:
+        for (int y = 0; y < height; ++y) {
+            int cur_y = start_y + y;
+            int img_y = img_start_y + y;
+            for (int x = 0; x < width; ++x) {
+                DP_Pixel8 pixel =
+                    DP_image_pixel_at(img, img_start_x + x, img_y);
+                if (pixel.a == 255) {
+                    DP_transient_layer_content_pixel_at_set(
+                        tlc, context_id, start_x + x, cur_y,
+                        DP_pixel8_to_15(pixel));
+                }
+                else if (pixel.a != 0) {
+                    DP_transient_layer_content_pixel_at_put(
+                        tlc, context_id, blend_mode, start_x + x, cur_y,
+                        DP_pixel8_to_15(pixel));
+                }
+            }
         }
+        break;
+    case DP_BLEND_MODE_ERASE:
+        for (int y = 0; y < height; ++y) {
+            int cur_y = start_y + y;
+            int img_y = img_start_y + y;
+            for (int x = 0; x < width; ++x) {
+                DP_Pixel8 pixel =
+                    DP_image_pixel_at(img, img_start_x + x, img_y);
+                if (pixel.a == 255) {
+                    DP_transient_layer_content_pixel_at_set(
+                        tlc, context_id, start_x + x, cur_y, DP_pixel15_zero());
+                }
+                else if (pixel.a != 0) {
+                    DP_transient_layer_content_pixel_at_put(
+                        tlc, context_id, blend_mode, start_x + x, cur_y,
+                        (DP_Pixel15){0, 0, 0, DP_channel15_to_8(pixel.a)});
+                }
+            }
+        }
+        break;
+    case DP_BLEND_MODE_REPLACE:
+        for (int y = 0; y < height; ++y) {
+            int cur_y = start_y + y;
+            int img_y = img_start_y + y;
+            for (int x = 0; x < width; ++x) {
+                DP_Pixel15 pixel = DP_pixel8_to_15(
+                    DP_image_pixel_at(img, img_start_x + x, img_y));
+                DP_transient_layer_content_pixel_at_set(
+                    tlc, context_id, start_x + x, cur_y, pixel);
+            }
+        }
+        break;
+    default:
+        for (int y = 0; y < height; ++y) {
+            int cur_y = start_y + y;
+            int img_y = img_start_y + y;
+            for (int x = 0; x < width; ++x) {
+                DP_Pixel8 pixel =
+                    DP_image_pixel_at(img, img_start_x + x, img_y);
+                if (pixel.a != 0) {
+                    DP_transient_layer_content_pixel_at_put(
+                        tlc, context_id, blend_mode, start_x + x, cur_y,
+                        DP_pixel8_to_15(pixel));
+                }
+            }
+        }
+        break;
     }
 }
 
+
+static bool can_blend_blank_pixel(int blend_mode, uint16_t opacity,
+                                  DP_UPixel15 pixel)
+{
+    return can_blend_blank(blend_mode, opacity)
+        && ((blend_mode != DP_BLEND_MODE_NORMAL_AND_ERASER
+             && blend_mode != DP_BLEND_MODE_REPLACE)
+            || pixel.a != 0);
+}
 
 // We want to initialize a static buffer with the same value 4096 times, so this
 // is a goofy way to achieve that at compile time without spelling it all out.
@@ -1201,9 +1360,7 @@ static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
     static const uint16_t mask[DP_TILE_LENGTH] = {DP_BIT15_4096};
 
     uint16_t opacity = pixel.a;
-    bool blend_blank = DP_blend_mode_blank_tile_behavior(blend_mode)
-                        != DP_BLEND_MODE_BLANK_TILE_SKIP
-                    && opacity != 0;
+    bool blend_blank = can_blend_blank_pixel(blend_mode, opacity, pixel);
 
     int tx_min = left / DP_TILE_SIZE;
     int tx_max = (right - 1) / DP_TILE_SIZE;
@@ -1277,10 +1434,25 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
     }
 }
 
-void DP_transient_layer_content_put_tile(DP_TransientLayerContent *tlc,
-                                         DP_Tile *tile, int x, int y,
-                                         int repeat)
+void DP_transient_layer_content_tile_set_noinc(DP_TransientLayerContent *tlc,
+                                               DP_Tile *tile, int i)
 {
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
+    DP_tile_decref_nullable(tlc->elements[i].tile);
+    tlc->elements[i].tile = tile;
+}
+
+void DP_transient_layer_content_put_tile_inc(DP_TransientLayerContent *tlc,
+                                             DP_Tile *tile, int x, int y,
+                                             int repeat)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+
     DP_TileCounts tile_counts = DP_tile_counts_round(tlc->width, tlc->height);
     int tile_total = tile_counts.x * tile_counts.y;
     int start = y * tile_counts.x + x;
@@ -1306,7 +1478,7 @@ typedef void (*DP_ApplyBrushStampFn)(DP_TransientTile *tt, const uint16_t *mask,
 
 static void apply_brush_stamp_with(DP_TransientLayerContent *tlc,
                                    unsigned int context_id, uint16_t opacity,
-                                   DP_BrushStamp *stamp,
+                                   DP_BrushStamp *stamp, bool blend_blank,
                                    DP_ApplyBrushStampFn apply_fn, void *user)
 {
     DP_ASSERT(tlc);
@@ -1342,15 +1514,24 @@ static void apply_brush_stamp_with(DP_TransientLayerContent *tlc,
             int xindex = x / DP_TILE_SIZE;
             int xt = x - xindex * DP_TILE_SIZE;
             int wb = xt + d - xb < DP_TILE_SIZE ? d - xb : DP_TILE_SIZE - xt;
+            int mask_offset = yb * d + xb;
             int i = xtiles * yindex + xindex;
-
-            DP_TransientTile *tt =
-                get_or_create_transient_tile(tlc, context_id, i);
-            apply_fn(tt, mask + yb * d + xb, opacity, xt, yt, wb, hb, d - wb,
-                     user);
-
             x = (xindex + 1) * DP_TILE_SIZE;
             xb = xb + wb;
+
+            DP_TransientTile *tt;
+            if (tlc->elements[i].tile) {
+                tt = get_transient_tile(tlc, context_id, i);
+            }
+            else if (blend_blank) {
+                tt = create_transient_tile(tlc, context_id, i);
+            }
+            else {
+                continue;
+            }
+
+            apply_fn(tt, mask + mask_offset, opacity, xt, yt, wb, hb, d - wb,
+                     user);
         }
         y = (yindex + 1) * DP_TILE_SIZE;
         yb = yb + hb;
@@ -1377,8 +1558,9 @@ void DP_transient_layer_content_brush_stamp_apply(
     uint16_t opacity, int blend_mode, DP_BrushStamp *stamp)
 {
     struct DP_ApplyStampParams params = {pixel, blend_mode};
-    apply_brush_stamp_with(tlc, context_id, opacity, stamp, apply_stamp,
-                           &params);
+    apply_brush_stamp_with(tlc, context_id, opacity, stamp,
+                           can_blend_blank_pixel(blend_mode, opacity, pixel),
+                           apply_stamp, &params);
 }
 
 
@@ -1395,12 +1577,12 @@ void DP_transient_layer_content_brush_stamp_apply_posterize(
     DP_TransientLayerContent *tlc, unsigned int context_id, uint16_t opacity,
     int posterize_num, DP_BrushStamp *stamp)
 {
-    apply_brush_stamp_with(tlc, context_id, opacity, stamp,
+    apply_brush_stamp_with(tlc, context_id, opacity, stamp, true,
                            apply_stamp_posterize, &posterize_num);
 }
 
 
-void DP_transient_layer_content_list_transient_sublayer_at(
+void DP_transient_layer_content_transient_sublayer_at(
     DP_TransientLayerContent *tlc, int sublayer_index,
     DP_TransientLayerContent **out_tlc, DP_TransientLayerProps **out_tlp)
 {
@@ -1419,7 +1601,7 @@ void DP_transient_layer_content_list_transient_sublayer_at(
     }
 }
 
-void DP_transient_layer_content_list_transient_sublayer(
+void DP_transient_layer_content_transient_sublayer(
     DP_TransientLayerContent *tlc, int sublayer_id,
     DP_TransientLayerContent **out_tlc, DP_TransientLayerProps **out_tlp)
 {
@@ -1431,9 +1613,30 @@ void DP_transient_layer_content_list_transient_sublayer(
         create_sublayer(tlc, sublayer_id, out_tlc, out_tlp);
     }
     else {
-        DP_transient_layer_content_list_transient_sublayer_at(tlc, index,
-                                                              out_tlc, out_tlp);
+        DP_transient_layer_content_transient_sublayer_at(tlc, index, out_tlc,
+                                                         out_tlp);
     }
+}
+
+void DP_transient_layer_content_sublayer_insert_inc(
+    DP_TransientLayerContent *tlc, DP_LayerContent *sub_lc,
+    DP_LayerProps *sub_lp)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(sub_lc);
+    DP_ASSERT(sub_lp);
+
+    DP_TransientLayerList *tll = get_transient_sub_contents(tlc, 1);
+    DP_TransientLayerPropsList *tlpl = get_transient_sub_props(tlc, 1);
+    DP_ASSERT(DP_transient_layer_props_list_count(tlpl)
+              == DP_transient_layer_list_count(tll));
+    DP_ASSERT(DP_transient_layer_props_list_index_by_id(
+                  tlpl, DP_layer_props_id(sub_lp))
+              == -1);
+
+    int index = DP_transient_layer_list_count(tll) - 1;
+    DP_transient_layer_list_set_content_inc(tll, sub_lc, index);
+    DP_transient_layer_props_list_set_inc(tlpl, sub_lp, index);
 }
 
 void DP_transient_layer_content_merge_sublayer_at(DP_TransientLayerContent *tlc,
@@ -1478,8 +1681,9 @@ void DP_transient_layer_content_merge_all_sublayers(
     tlc->sub.props = DP_layer_props_list_new();
 }
 
-void DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
-                                            DP_CanvasState *cs, int tile_index)
+DP_TransientTile *
+DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
+                                       DP_CanvasState *cs, int tile_index)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
@@ -1487,8 +1691,8 @@ void DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
     DP_ASSERT(cs);
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(tlc->width, tlc->height));
-    DP_Tile **pp = &tlc->elements[tile_index].tile;
-    DP_tile_decref_nullable(*pp);
-    *pp =
-        DP_transient_tile_persist(DP_canvas_state_flatten_tile(cs, tile_index));
+    DP_tile_decref_nullable(tlc->elements[tile_index].tile);
+    DP_TransientTile *tt = DP_canvas_state_flatten_tile(cs, tile_index);
+    tlc->elements[tile_index].transient_tile = tt;
+    return tt;
 }

@@ -57,11 +57,6 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_COUNT,
 } DP_BlendMode;
 
-typedef enum DP_BlendModeBlankTileBehavior {
-    DP_BLEND_MODE_BLANK_TILE_SKIP,
-    DP_BLEND_MODE_BLANK_TILE_BLEND,
-} DP_BlendModeBlankTileBehavior;
-
 
 bool DP_blend_mode_exists(int blend_mode);
 
@@ -75,9 +70,11 @@ const char *DP_blend_mode_enum_name_unprefixed(int blend_mode);
 
 const char *DP_blend_mode_svg_name(int blend_mode);
 
-DP_BlendModeBlankTileBehavior DP_blend_mode_blank_tile_behavior(int blend_mode);
+bool DP_blend_mode_can_increase_opacity(int blend_mode);
 
 bool DP_blend_mode_can_decrease_opacity(int blend_mode);
+
+bool DP_blend_mode_blend_blank(int blend_mode);
 
 DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
                                        DP_BlendMode not_found_value);

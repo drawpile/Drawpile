@@ -84,8 +84,22 @@ preset_drawpile_debug() {
           -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
+          -DZIP_IMPL=KARCHIVE \
           -G Ninja \
           -B builddp
+}
+
+preset_drawpile_relwithdebinfo() {
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DBUILD_APPS=OFF \
+          -DTHREAD_IMPL=QT \
+          -DZIP_IMPL=KARCHIVE \
+          -G Ninja \
+          -B builddprelwithdebinfo
 }
 
 preset_drawpile_release() {
@@ -96,6 +110,7 @@ preset_drawpile_release() {
           -DUSE_STRICT_ALIASING=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
+          -DZIP_IMPL=KARCHIVE \
           -G Ninja \
           -B builddprelease
 }

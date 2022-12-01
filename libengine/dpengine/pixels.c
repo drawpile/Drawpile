@@ -313,9 +313,19 @@ uint8_t DP_channel15_to_8(uint16_t c)
     return DP_float_to_uint8(DP_uint16_to_float(c) / BIT15_FLOAT * 255.0f);
 }
 
+float DP_channel8_to_float(uint8_t c)
+{
+    return DP_uint8_to_float(c) / 255.0f;
+}
+
 float DP_channel15_to_float(uint16_t c)
 {
     return DP_uint16_to_float(c) / BIT15_FLOAT;
+}
+
+uint8_t DP_channel_float_to_8(float c)
+{
+    return DP_float_to_uint8(c * 255.0f + 0.5f);
 }
 
 DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel)
@@ -348,6 +358,16 @@ DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel)
     };
 }
 
+DP_UPixelFloat DP_upixel8_to_float(DP_UPixel8 pixel)
+{
+    return (DP_UPixelFloat){
+        .b = DP_channel8_to_float(pixel.b),
+        .g = DP_channel8_to_float(pixel.g),
+        .r = DP_channel8_to_float(pixel.r),
+        .a = DP_channel8_to_float(pixel.a),
+    };
+}
+
 DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel)
 {
     return (DP_UPixelFloat){
@@ -355,6 +375,16 @@ DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel)
         .g = DP_channel15_to_float(pixel.g),
         .r = DP_channel15_to_float(pixel.r),
         .a = DP_channel15_to_float(pixel.a),
+    };
+}
+
+DP_UPixel8 DP_upixel_float_to_8(DP_UPixelFloat pixel)
+{
+    return (DP_UPixel8){
+        .b = DP_channel_float_to_8(pixel.b),
+        .g = DP_channel_float_to_8(pixel.g),
+        .r = DP_channel_float_to_8(pixel.r),
+        .a = DP_channel_float_to_8(pixel.a),
     };
 }
 
