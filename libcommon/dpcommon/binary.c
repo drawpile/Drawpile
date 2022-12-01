@@ -56,14 +56,13 @@ uint8_t DP_read_bigendian_uint8(const unsigned char *d)
 uint16_t DP_read_bigendian_uint16(const unsigned char *d)
 {
     DP_ASSERT(d);
-    return DP_int_to_uint16(d[0] << 8) + DP_uchar_to_uint16(d[1]);
+    return DP_int_to_uint16((d[0] << 8) + d[1]);
 }
 
 uint32_t DP_read_bigendian_uint32(const unsigned char *d)
 {
     DP_ASSERT(d);
-    return DP_int_to_uint32(d[0] << 24) + DP_int_to_uint32(d[1] << 16)
-         + DP_int_to_uint32(d[2] << 8) + DP_uchar_to_uint32(d[3]);
+    return DP_int_to_uint32((d[0] << 24) + (d[1] << 16) + (d[2] << 8) + d[3]);
 }
 
 
@@ -159,7 +158,7 @@ size_t DP_write_bigendian_uint16_array(const uint16_t *DP_RESTRICT x, int count,
 #elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
     return DP_write_bytes(x, count, sizeof(*x), out);
 #else
-#   error "Unknown byte order"
+#    error "Unknown byte order"
 #endif
 }
 
@@ -180,7 +179,7 @@ size_t DP_write_bigendian_uint32_array(const uint32_t *DP_RESTRICT x, int count,
 #elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
     return DP_write_bytes(x, count, sizeof(*x), out);
 #else
-#   error "Unknown byte order"
+#    error "Unknown byte order"
 #endif
 }
 
