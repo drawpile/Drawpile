@@ -28,7 +28,7 @@
 
 struct DP_Output {
     const DP_OutputMethods *methods;
-    alignas(max_align_t) unsigned char internal[];
+    alignas(DP_max_align_t) unsigned char internal[];
 };
 
 DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size)

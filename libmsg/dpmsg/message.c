@@ -35,7 +35,7 @@ struct DP_Message {
     DP_MessageType type;
     unsigned int context_id;
     const DP_MessageMethods *methods;
-    alignas(max_align_t) unsigned char internal[];
+    alignas(DP_max_align_t) unsigned char internal[];
 };
 
 DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,

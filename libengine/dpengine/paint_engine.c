@@ -165,7 +165,7 @@ struct DP_PaintEngine {
         DP_Semaphore *tiles_done_sem;
         int tiles_waiting;
     } render;
-    alignas(max_align_t) unsigned char buffers[];
+    alignas(DP_max_align_t) unsigned char buffers[];
 };
 
 struct DP_PaintEngineRenderParams {

@@ -29,7 +29,7 @@
 
 struct DP_Input {
     const DP_InputMethods *methods;
-    alignas(max_align_t) unsigned char internal[];
+    alignas(DP_max_align_t) unsigned char internal[];
 };
 
 DP_Input *DP_input_new(DP_InputInitFn init, void *arg, size_t internal_size)

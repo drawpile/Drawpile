@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 project(drawdance
     VERSION 0.3.0
@@ -86,7 +86,7 @@ function(set_dp_target_properties target)
     if(NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
         set_language_standards("${target}")
         add_address_sanitizer("${target}")
-        target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600")
+        target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600" _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
 
         if("CXX" IN_LIST ARGN)
             target_compile_options("${target}" PRIVATE "${dp_cxxflags}")

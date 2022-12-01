@@ -77,6 +77,12 @@
 #    define DP_NOINLINE                             // nothing
 #endif
 
+#ifdef _MSC_VER
+typedef long double DP_max_align_t;
+#else
+typedef max_align_t DP_max_align_t;
+#endif
+
 #ifdef __cplusplus
 #    ifdef __GNUC__
 #        define DP_RESTRICT __restrict__

@@ -21,7 +21,6 @@
  */
 #include "atomic.h"
 #include "common.h"
-#include <stdatomic.h>
 
 #if defined(_WIN32)
 #    include <windows.h>
@@ -35,8 +34,7 @@ void DP_atomic_lock(DP_Atomic *x)
 {
     while (true) {
         int expected = 0;
-        bool locked = atomic_compare_exchange_weak_explicit(
-            x, &expected, 1, memory_order_seq_cst, memory_order_relaxed);
+        bool locked = DP_atomic_compare_exchange(x, &expected, 1);
         if (locked) {
             break;
         }

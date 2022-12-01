@@ -14,7 +14,28 @@ There'll be a proper description here eventually.
 
 ## Building
 
+### Linux
+
 Until there's a proper writeup, check out [scripts/cmake-presets](scripts/cmake-presets) for settings that work for me on Linux. You need gcc or clang, CMake, SDL2 and Ninja for that to have a chance of working out of the box. For the browser, you also need Emscripten installed and loaded into your environment.
+
+### Windows
+
+On windows, it's highly recommended to install dependencies with [vcpkg](https://github.com/microsoft/vcpkg).
+
+```
+vcpkg install qt5-base libpng libjpeg-turbo kf5archive curl --triplet=x64-windows-static
+```
+
+Then you can build the libraries with the following commands:
+
+```
+mkdir build
+cd build
+
+cmake -DCMAKE_TOOLCHAIN_FILE=[PATH TO VCPKG]/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DBUILD_APPS=OFF -DUSE_CLANG_TIDY=OFF -DTHREAD_IMPL=QT -DXML_IMPL=QT -DZIP_IMPL=KARCHIVE -DLINK_WITH_LIBM=OFF -DCMAKE_BUILD_TYPE=Release -DUSE_ADDRESS_SANITIZER=OFF -G Ninja ../
+
+cmake --build .
+```
 
 ## Running
 

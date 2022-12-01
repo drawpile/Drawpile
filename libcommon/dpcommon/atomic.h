@@ -22,32 +22,62 @@
 #ifndef DPCOMMON_ATOMIC_H
 #define DPCOMMON_ATOMIC_H
 #include "common.h"
-#include <stdatomic.h>
 
+#ifdef _MSC_VER
+#    include <windows.h>
+
+typedef LONG64 volatile DP_Atomic;
+#    define DP_ATOMIC_INIT(X) X
+
+#    define DP_atomic_get(X)        ((int)(*(X)))
+#    define DP_atomic_set(X, VALUE) ((void)InterlockedExchange64((X), (VALUE)))
+#    define DP_atomic_xch(X, VALUE) ((int)InterlockedExchange64((X), (VALUE)))
+#    define DP_atomic_add(X, VALUE) ((void)_InlineInterlockedAdd64((X), VALUE))
+#    define DP_atomic_inc(X)        ((void)InterlockedIncrement64((X)))
+#    define DP_atomic_dec(X)        (InterlockedDecrement64((X)) == 0)
+#    define DP_atomic_compare_exchange(X, EXPECTED, DESIRED)  \
+        (InterlockedCompareExchange64((X), (LONG64)(DESIRED), \
+                                      (LONG64)(*(EXPECTED)))  \
+         == (LONG64)(*(EXPECTED)))
+
+
+typedef void *volatile DP_AtomicPtr;
+
+#    define DP_ATOMIC_PTR_INIT(X) X
+#    define DP_atomic_ptr_set(X, VALUE) \
+        ((void)InterlockedExchangePointer((X), (VALUE)))
+#    define DP_atomic_ptr_xch(X, VALUE) InterlockedExchangePointer((X), (VALUE))
+
+#else
+#    include <stdatomic.h>
 
 typedef atomic_int DP_Atomic;
 
-#define DP_ATOMIC_INIT(X) X
+#    define DP_ATOMIC_INIT(X) X
 
-#define DP_atomic_get(X)        atomic_load((X))
-#define DP_atomic_set(X, VALUE) atomic_store((X), (VALUE))
-#define DP_atomic_xch(X, VALUE) atomic_exchange((X), (VALUE))
-#define DP_atomic_add(X, VALUE) ((void)atomic_fetch_add((X), VALUE))
-#define DP_atomic_inc(X)        DP_atomic_add((X), 1)
-#define DP_atomic_dec(X)        (atomic_fetch_sub((X), 1) == 1)
+#    define DP_atomic_get(X)        atomic_load((X))
+#    define DP_atomic_set(X, VALUE) atomic_store((X), (VALUE))
+#    define DP_atomic_xch(X, VALUE) atomic_exchange((X), (VALUE))
+#    define DP_atomic_add(X, VALUE) ((void)atomic_fetch_add((X), VALUE))
+#    define DP_atomic_inc(X)        DP_atomic_add((X), 1)
+#    define DP_atomic_dec(X)        (atomic_fetch_sub((X), 1) == 1)
+#    define DP_atomic_compare_exchange(X, EXPECTED, DESIRED) \
+        atomic_compare_exchange_weak_explicit(               \
+            X, EXPECTED, DESIRED, memory_order_seq_cst, memory_order_relaxed)
+
+
+typedef _Atomic(void *) DP_AtomicPtr;
+
+#    define DP_ATOMIC_PTR_INIT(X)       X
+#    define DP_atomic_ptr_set(X, VALUE) atomic_store((X), (VALUE))
+#    define DP_atomic_ptr_xch(X, VALUE) atomic_exchange((X), (VALUE))
+
+#endif
 
 #define DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(NAME) static DP_Atomic NAME
 
 void DP_atomic_lock(DP_Atomic *x);
 
 void DP_atomic_unlock(DP_Atomic *x);
-
-
-typedef _Atomic(void *) DP_AtomicPtr;
-
-#define DP_ATOMIC_PTR_INIT(X)       X
-#define DP_atomic_ptr_set(X, VALUE) atomic_store((X), (VALUE))
-#define DP_atomic_ptr_xch(X, VALUE) atomic_exchange((X), (VALUE))
-
 
 #endif
