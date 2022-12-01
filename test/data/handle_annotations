@@ -15,7 +15,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_CREATE fail - 1 error(s): Annotation create: id 257 already exists
@@ -29,7 +29,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_CREATE ok - 0 error(s)
@@ -43,7 +43,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202
@@ -51,7 +51,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO ok - 0 error(s)
 
@@ -64,7 +64,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO ok - 0 error(s)
 
@@ -77,7 +77,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202
@@ -85,7 +85,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_RESHAPE ok - 0 error(s)
@@ -99,7 +99,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202
@@ -107,7 +107,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_RESHAPE fail - 1 error(s): Annotation reshape: id 259 not found
@@ -121,7 +121,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202
@@ -129,7 +129,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_EDIT ok - 0 error(s)
@@ -151,7 +151,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_EDIT ok - 0 error(s)
@@ -165,7 +165,7 @@ begin testing
     protect = false
     valign = bottom
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202
@@ -173,7 +173,7 @@ begin testing
     protect = false
     valign = top
     text_length = 0
-    text = null
+    text = ""
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_ANNOTATION_EDIT ok - 0 error(s)
@@ -187,7 +187,7 @@ begin testing
     protect = false
     valign = bottom
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202
@@ -209,7 +209,7 @@ begin testing
     protect = false
     valign = bottom
     text_length = 0
-    text = null
+    text = ""
 [1]
     id = 258
     x, y, w, h = 202, 202, 202, 202

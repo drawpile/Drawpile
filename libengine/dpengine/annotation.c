@@ -258,7 +258,7 @@ const char *DP_annotation_text(DP_Annotation *a, size_t *out_length)
         length = at->length;
     }
     else {
-        text = NULL;
+        text = "";
         length = 0;
     }
 
