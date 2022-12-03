@@ -1,0 +1,3 @@
+!.gitignore
+out/
+drawpile-win-msvc*.zip

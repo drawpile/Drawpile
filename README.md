@@ -79,7 +79,7 @@ For instructions on how to build Drawpile on Windows and OSX, see the [Building 
 ### Building on windows
 You can install dependencies with [vcpkg](https://github.com/microsoft/vcpkg).
 ```
-vcpkg install ecm qt5-base qt5-multimedia qt5-svg libsodium qtkeychain kf5archive --triplet=x64-windows-static
+vcpkg install ecm qt5-base qt5-multimedia qt5-svg qt5-translations libsodium qtkeychain kf5archive --triplet=x64-windows-static
 ```
 Then you can build the libraries with the following commands:
 ```
