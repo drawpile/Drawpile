@@ -1,11 +1,17 @@
-name: Build
+name: "Windows Release Build"
 
-on: [push]
-
-env:
-  DRAWDANCE_REPO: "https://github.com/cow54787/Drawdance.git"
-  DRAWDANCE_BRANCH: "windows-build"
-  VCPKG_DEFAULT_BINARY_CACHE: "C:/vcpkg-cache"
+on:
+  workflow_dispatch:
+    inputs:
+      drawdance_repo:
+        default: "https://github.com/drawpile/Drawdance.git"
+        description: "Where to clone the Drawdance repository from. Unless you're working on a fork, the default should be fine."
+        required: true
+        type: "string"
+      drawdance_branch:
+        description: "Which branch of Drawdance to build."
+        required: true
+        type: "string"
 
 jobs:
   build:
@@ -17,7 +23,7 @@ jobs:
         with:
           arch: amd64
 
-      - run: mkdir $Env:VCPKG_DEFAULT_BINARY_CACHE
+      - run: mkdir C:/vcpkg-cache
 
       - name: Cache vcpkg deps
         uses: actions/cache@v3
@@ -31,10 +37,10 @@ jobs:
 
       - name: "Download Drawdance"
         run: |
-          pushd C:/ 
-          git clone -b $Env:DRAWDANCE_BRANCH $Env:DRAWDANCE_REPO drawdance
+          pushd C:/
+          git clone -b ${{ inputs.drawdance_branch }} ${{ inputs.drawdance_repo }} drawdance
           popd
-      
+
       - name: "Build"
         run : |
           pushd pkg/win-msvc/
