@@ -15,7 +15,8 @@ example_*.png
 *.so
 
 # Hidden files
-.*
+.*/*
+!.github/*
 
 # Python venv directories
 env/
