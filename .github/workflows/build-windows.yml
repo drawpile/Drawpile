@@ -13,6 +13,9 @@ on:
         required: true
         type: "string"
 
+env:
+  VCPKG_DEFAULT_BINARY_CACHE: "C:/vcpkg-cache" # vcpkg reads this env
+
 jobs:
   build:
     runs-on: windows-latest
@@ -56,4 +59,6 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: drawpile-win-msvc
-          path: pkg/win-msvc/drawpile-win-msvc.zip
+          path: |
+            pkg/win-msvc/drawpile-win-msvc*.zip
+            pkg/win-msvc/drawpile-win-msvc*-setup.exe

@@ -57,6 +57,8 @@ endfunction()
 
 configure_file(config/config.h.cmake "${CMAKE_BINARY_DIR}/config.h")
 
+file(WRITE "${CMAKE_BINARY_DIR}/DRAWPILE_VERSION.txt" ${DRAWPILE_VERSION}) # needed for packaging
+
 add_subdirectory(src)
 if(INSTALL_DOC)
 	add_subdirectory(doc)

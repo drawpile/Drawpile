@@ -1,4 +1,4 @@
-param ($vcpkgDir, $vcpkgTriplet = "x64-windows-static")
+param ($vcpkgDir, $vcpkgTriplet = "x64-windows-static", $innoSetupExePath)
 
 $location = Get-Location
 
@@ -14,12 +14,26 @@ if ($null -eq $vcpkgdir) {
     $vcpkgDir = [System.IO.Path]::GetDirectoryName($vcpkgExe.Path)
 }
 
+# Try to find ISCC.exe in PATH
+if ($null -eq $innoSetupExePath) {
+    $innoSetupExePath = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Path
+
+    if ($null -eq $innoSetupExePath) {
+        Write-Warning "ISCC.exe not found in PATH. Installer will not be created. To specify the path to iscc.exe, use the -innoSetupExePath parameter."
+    }
+    else {
+        $innoSetupExePath = [System.IO.Path]::GetDirectoryName($innoSetupExePath) + "/ISCC.exe"
+    }
+}
+
 $drawpileDir = (Resolve-Path -Path "$PSScriptRoot/../../")
 $buildDir = "$drawpileDir/build-win-msvc"
 if (!(Test-Path $buildDir)) {
     Write-Error "$buildDir does not exist. Make sure to run build-release.ps1 first."
     exit 1
 }
+
+$drawpileVersion = Get-Content "$buildDir/DRAWPILE_VERSION.txt"
 
 $qtTranslationsDir = "$vcpkgDir/installed/$vcpkgTriplet/share/qt5/translations"
 Write-Output "Using translations files from $qtTranslationsDir"
@@ -33,6 +47,7 @@ Copy-Item -Path "$buildDir/bin/drawpile.exe" -Destination $outDir
 Copy-Item -Path "$buildDir/bin/drawpile-srv.exe" -Destination $outDir
 
 # Copy ressources
+Copy-Item -Path "$drawpileDir/desktop/palettes" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/theme" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/sounds" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/nightmode.colors" -Destination $outDir
@@ -53,7 +68,29 @@ Get-Content -Path "$drawpileDir/AUTHORS" | Out-File -FilePath "$outDir/Authors.t
 Get-Content -Path "$drawpileDir/COPYING" | Out-File -FilePath "$outDir/License.txt"
 
 # Zip it up
-Compress-Archive -Path "$outDir/*" -DestinationPath "$outDir/../drawpile-win-msvc.zip" -CompressionLevel "Optimal" -Force
+Compress-Archive -Path "$outDir/*" -DestinationPath "$PSScriptRoot/drawpile-win-msvc-$drawpileVersion.zip" -CompressionLevel "Optimal" -Force
+
+Write-Output "Created $PSScriptRoot/drawpile-win-msvc-$drawpileVersion.zip"
+
+# Create installer
+if ($null -ne $innoSetupExePath) {
+    Write-Output "Creating installer using $innoSetupExePath"
+
+    $installerFilename = "drawpile-win-msvc-$drawpileVersion-setup"
+
+    Get-Content "$PSScriptRoot/drawpile.iss" |
+    ForEach-Object { $_ -replace "DRAWPILE_VERSION", $drawpileVersion } |
+    ForEach-Object { $_ -replace "SOURCE_DIR", $outDir } |
+    ForEach-Object { $_ -replace "OUTPUT_DIR", $PSScriptRoot } |
+    ForEach-Object { $_ -replace "OUPUT_FILENAME", $installerFilename } |
+    Out-File -FilePath "$PSScriptRoot/drawpile-out.iss" -Encoding ascii
+
+    & $innoSetupExePath "$PSScriptRoot/drawpile-out.iss"
+
+    Remove-Item "$PSScriptRoot/drawpile-out.iss"
+
+    Write-Output "Created $PSScriptRoot/$installerFilename.exe"
+}
 
 # Clean up
 Remove-Item $outDir -Recurse -Force
