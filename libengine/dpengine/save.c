@@ -137,8 +137,7 @@ static void save_ora_context_dispose(DP_SaveOraContext *c)
 {
     DP_free(c->string.buffer);
     DP_SaveOraLayer *sol, *tmp;
-    HASH_ITER(hh, c->layers, sol, tmp)
-    {
+    HASH_ITER(hh, c->layers, sol, tmp) {
         HASH_DEL(c->layers, sol);
         DP_free(sol);
     }

@@ -260,8 +260,7 @@ DP_AclState *DP_acl_state_new(void)
 static void clear_layers(DP_AclState *acls)
 {
     DP_LayerAclEntry *entry, *tmp;
-    HASH_ITER(hh, acls->layers, entry, tmp)
-    {
+    HASH_ITER(hh, acls->layers, entry, tmp) {
         HASH_DEL(acls->layers, entry);
         DP_free(entry);
     }
@@ -270,8 +269,7 @@ static void clear_layers(DP_AclState *acls)
 static void clear_annotations(DP_AclState *acls)
 {
     DP_AnnotationAclEntry *entry, *tmp;
-    HASH_ITER(hh, acls->annotations, entry, tmp)
-    {
+    HASH_ITER(hh, acls->annotations, entry, tmp) {
         HASH_DEL(acls->annotations, entry);
         DP_free(entry);
     }
@@ -316,8 +314,7 @@ void DP_acl_state_layers_each(DP_AclState *acls, DP_AclStateLayerFn fn,
 {
     DP_ASSERT(acls);
     DP_LayerAclEntry *entry, *tmp;
-    HASH_ITER(hh, acls->layers, entry, tmp)
-    {
+    HASH_ITER(hh, acls->layers, entry, tmp) {
         fn(user, entry->layer_id, &entry->layer_acl);
     }
 }

@@ -121,8 +121,7 @@ void DP_layer_routes_decref(DP_LayerRoutes *lr)
     DP_ASSERT(DP_atomic_get(&lr->refcount) > 0);
     if (DP_atomic_dec(&lr->refcount)) {
         DP_LayerRoutesEntry *lre, *tmp;
-        HASH_ITER(hh, lr->entries, lre, tmp)
-        {
+        HASH_ITER(hh, lr->entries, lre, tmp) {
             HASH_DEL(lr->entries, lre);
             DP_free(lre);
         }

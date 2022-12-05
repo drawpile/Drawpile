@@ -16,6 +16,8 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Stroustrup
 DeriveLineEnding: false
 DerivePointerAlignment: false
+ForEachMacros:
+  - HASH_ITER
 IncludeCategories:
   - Regex: '^"'
     Priority: 1
@@ -39,6 +41,7 @@ IndentPPDirectives: AfterHash
 IndentWidth: 4
 MaxEmptyLinesToKeep: 2
 PointerAlignment: Right
+SpaceBeforeParens: ControlStatementsExceptControlMacros
 UseCRLF: false
 UseTab: Never
 ...
