@@ -28,6 +28,7 @@
 #include "layer_props_list.h"
 #include "paint.h"
 #include "tile.h"
+#include "tile_iterator.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -597,53 +598,56 @@ DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
     DP_ASSERT(width > 0);
     DP_ASSERT(height > 0);
+
+    DP_TileIterator ti = DP_tile_iterator_make(
+        lc->width, lc->height, DP_rect_make(x, y, width, height));
     DP_Pixel8 *pixels = DP_malloc_zeroed(sizeof(*pixels) * DP_int_to_size(width)
                                          * DP_int_to_size(height));
-    int left, top, right, bottom;
-    DP_rect_sides(
-        DP_rect_intersection(DP_rect_make(0, 0, lc->width, lc->height),
-                             DP_rect_make(x, y, width, height)),
-        &left, &top, &right, &bottom);
 
-    for (int yy = top; yy <= bottom; ++yy) {
-        for (int xx = left; xx <= right; ++xx) {
-            pixels[(yy - y) * width + (xx - x)] =
-                DP_pixel15_to_8(DP_layer_content_pixel_at(lc, xx, yy));
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                pixels[tidi.dst_y * width + tidi.dst_x] = DP_pixel15_to_8(
+                    DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y));
+            }
         }
     }
 
     return pixels;
 }
 
+static bool is_in_mask(DP_Image *mask, int dst_x, int dst_y)
+{
+    return !mask || DP_image_pixel_at(mask, dst_x, dst_y).color != 0;
+}
+
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                                   DP_Image *mask)
 {
-    DP_Rect src_rect = *rect;
-    int src_width = DP_rect_width(src_rect);
-    int src_height = DP_rect_height(src_rect);
-    DP_Image *src_img = DP_image_new(src_width, src_height);
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(rect);
 
-    // TODO: make this smarter and prettier, without repeated tile lookup.
-    int src_x = DP_rect_x(src_rect);
-    int src_y = DP_rect_y(src_rect);
-    int layer_width = lc->width;
-    int layer_height = lc->height;
-    for (int y = 0; y < src_height; ++y) {
-        int layer_y = src_y + y;
-        if (layer_y >= 0 && layer_y < layer_height) {
-            for (int x = 0; x < src_width; ++x) {
-                int layer_x = src_x + x;
-                if (layer_x >= 0 && layer_x < layer_width
-                    && (!mask || DP_image_pixel_at(mask, x, y).color != 0)) {
-                    DP_Pixel8 pixel = DP_pixel15_to_8(
-                        DP_layer_content_pixel_at(lc, layer_x, layer_y));
-                    DP_image_pixel_at_set(src_img, x, y, pixel);
+    DP_TileIterator ti = DP_tile_iterator_make(lc->width, lc->height, *rect);
+    DP_Image *img = DP_image_new(DP_rect_width(ti.dst), DP_rect_height(ti.dst));
+
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                if (is_in_mask(mask, tidi.dst_x, tidi.dst_y)) {
+                    DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y,
+                                          DP_pixel15_to_8(DP_tile_pixel_at(
+                                              t, tidi.tile_x, tidi.tile_y)));
                 }
             }
         }
     }
 
-    return src_img;
+    return img;
 }
 
 static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index)
@@ -1242,6 +1246,56 @@ static void create_sublayer(DP_TransientLayerContent *tlc, int sublayer_id,
     }
 }
 
+#define PUT_IMAGE_PIXEL_SKIP 0
+#define PUT_IMAGE_PIXEL_PUT  1
+#define PUT_IMAGE_PIXEL_SET  2
+
+static int put_image_handle_pixel(int blend_mode, DP_Pixel8 pixel,
+                                  DP_Pixel15 *out_dst_pixel)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_ERASE:
+        if (pixel.a == 255) {
+            *out_dst_pixel = DP_pixel15_zero();
+            return PUT_IMAGE_PIXEL_SET;
+        }
+        else if (pixel.a != 0) {
+            uint16_t a = DP_channel8_to_15(pixel.a);
+            *out_dst_pixel = (DP_Pixel15){a, a, a, a};
+            return PUT_IMAGE_PIXEL_PUT;
+        }
+        else {
+            return PUT_IMAGE_PIXEL_SKIP;
+        }
+    case DP_BLEND_MODE_NORMAL:
+        if (pixel.a == 255) {
+            *out_dst_pixel = DP_pixel8_to_15(pixel);
+            return PUT_IMAGE_PIXEL_SET;
+        }
+        else if (pixel.a != 0) {
+            *out_dst_pixel = DP_pixel8_to_15(pixel);
+            return PUT_IMAGE_PIXEL_PUT;
+        }
+        else {
+            return PUT_IMAGE_PIXEL_SKIP;
+        }
+    case DP_BLEND_MODE_NORMAL_AND_ERASER:
+        *out_dst_pixel = DP_pixel8_to_15(pixel);
+        return pixel.a == 255 ? PUT_IMAGE_PIXEL_SET : PUT_IMAGE_PIXEL_PUT;
+    case DP_BLEND_MODE_REPLACE:
+        *out_dst_pixel = DP_pixel8_to_15(pixel);
+        return PUT_IMAGE_PIXEL_SET;
+    default:
+        if (pixel.a != 0) {
+            *out_dst_pixel = DP_pixel8_to_15(pixel);
+            return PUT_IMAGE_PIXEL_PUT;
+        }
+        else {
+            return PUT_IMAGE_PIXEL_SKIP;
+        }
+    }
+}
+
 void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
                                           unsigned int context_id,
                                           int blend_mode, int left, int top,
@@ -1252,85 +1306,41 @@ void DP_transient_layer_content_put_image(DP_TransientLayerContent *tlc,
     DP_ASSERT(tlc->transient);
     DP_ASSERT(img);
 
-    int img_width = DP_image_width(img);
-    int img_height = DP_image_height(img);
-    int img_start_x = left < 0 ? -left : 0;
-    int img_start_y = top < 0 ? -top : 0;
-    int start_x = DP_max_int(left, 0);
-    int start_y = DP_max_int(top, 0);
-    int width = DP_min_int(tlc->width - start_x, img_width - img_start_x);
-    int height = DP_min_int(tlc->height - start_y, img_height - img_start_y);
+    int width = tlc->width;
+    int wt = DP_tile_count_round(width);
+    DP_TileIterator ti = DP_tile_iterator_make(
+        width, tlc->height,
+        DP_rect_make(left, top, DP_image_width(img), DP_image_height(img)));
 
-    // Shuffling these pixels around is expensive, try to avoid doing as much
-    // work as possible by special-casing the most common blend modes.
-    // TODO: do this a tile at a time instead of a pixel at a time.
-    switch (blend_mode) {
-    case DP_BLEND_MODE_NORMAL:
-        for (int y = 0; y < height; ++y) {
-            int cur_y = start_y + y;
-            int img_y = img_start_y + y;
-            for (int x = 0; x < width; ++x) {
+    while (DP_tile_iterator_next(&ti)) {
+        int i = ti.row * wt + ti.col;
+        if (tlc->elements[i].tile || DP_blend_mode_blend_blank(blend_mode)) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            DP_TransientTile *tt = NULL;
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
                 DP_Pixel8 pixel =
-                    DP_image_pixel_at(img, img_start_x + x, img_y);
-                if (pixel.a == 255) {
-                    DP_transient_layer_content_pixel_at_set(
-                        tlc, context_id, start_x + x, cur_y,
-                        DP_pixel8_to_15(pixel));
-                }
-                else if (pixel.a != 0) {
-                    DP_transient_layer_content_pixel_at_put(
-                        tlc, context_id, blend_mode, start_x + x, cur_y,
-                        DP_pixel8_to_15(pixel));
-                }
-            }
-        }
-        break;
-    case DP_BLEND_MODE_ERASE:
-        for (int y = 0; y < height; ++y) {
-            int cur_y = start_y + y;
-            int img_y = img_start_y + y;
-            for (int x = 0; x < width; ++x) {
-                DP_Pixel8 pixel =
-                    DP_image_pixel_at(img, img_start_x + x, img_y);
-                if (pixel.a == 255) {
-                    DP_transient_layer_content_pixel_at_set(
-                        tlc, context_id, start_x + x, cur_y, DP_pixel15_zero());
-                }
-                else if (pixel.a != 0) {
-                    DP_transient_layer_content_pixel_at_put(
-                        tlc, context_id, blend_mode, start_x + x, cur_y,
-                        (DP_Pixel15){0, 0, 0, DP_channel15_to_8(pixel.a)});
+                    DP_image_pixel_at(img, tidi.dst_x, tidi.dst_y);
+                DP_Pixel15 dst_pixel;
+                switch (put_image_handle_pixel(blend_mode, pixel, &dst_pixel)) {
+                case PUT_IMAGE_PIXEL_SKIP:
+                    break;
+                case PUT_IMAGE_PIXEL_PUT:
+                    if (!tt) {
+                        tt = get_or_create_transient_tile(tlc, context_id, i);
+                    }
+                    DP_transient_tile_pixel_at_put(tt, blend_mode, tidi.tile_x,
+                                                   tidi.tile_y, dst_pixel);
+                    break;
+                case PUT_IMAGE_PIXEL_SET:
+                    if (!tt) {
+                        tt = get_or_create_transient_tile(tlc, context_id, i);
+                    }
+                    DP_transient_tile_pixel_at_set(tt, tidi.tile_x, tidi.tile_y,
+                                                   dst_pixel);
+                    break;
                 }
             }
         }
-        break;
-    case DP_BLEND_MODE_REPLACE:
-        for (int y = 0; y < height; ++y) {
-            int cur_y = start_y + y;
-            int img_y = img_start_y + y;
-            for (int x = 0; x < width; ++x) {
-                DP_Pixel15 pixel = DP_pixel8_to_15(
-                    DP_image_pixel_at(img, img_start_x + x, img_y));
-                DP_transient_layer_content_pixel_at_set(
-                    tlc, context_id, start_x + x, cur_y, pixel);
-            }
-        }
-        break;
-    default:
-        for (int y = 0; y < height; ++y) {
-            int cur_y = start_y + y;
-            int img_y = img_start_y + y;
-            for (int x = 0; x < width; ++x) {
-                DP_Pixel8 pixel =
-                    DP_image_pixel_at(img, img_start_x + x, img_y);
-                if (pixel.a != 0) {
-                    DP_transient_layer_content_pixel_at_put(
-                        tlc, context_id, blend_mode, start_x + x, cur_y,
-                        DP_pixel8_to_15(pixel));
-                }
-            }
-        }
-        break;
     }
 }
 

@@ -53,6 +53,7 @@ set(dpengine_sources
     dpengine/save.c
     dpengine/snapshots.c
     dpengine/tile.c
+    dpengine/tile_iterator.c
     dpengine/timeline.c)
 
 set(dpengine_headers
@@ -90,6 +91,7 @@ set(dpengine_headers
     dpengine/save.h
     dpengine/snapshots.h
     dpengine/tile.h
+    dpengine/tile_iterator.h
     dpengine/timeline.h
     dpengine/xml_stream.h
     dpengine/zip_archive.h)

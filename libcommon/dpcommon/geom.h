@@ -173,6 +173,17 @@ DP_INLINE long long DP_rect_size(DP_Rect rect)
     return width * height;
 }
 
+DP_INLINE DP_Rect DP_rect_translate(DP_Rect rect, int tx, int ty)
+{
+    DP_ASSERT(DP_rect_valid(rect));
+    DP_Rect result;
+    result.x1 = rect.x1 + tx;
+    result.y1 = rect.y1 + ty;
+    result.x2 = rect.x2 + tx;
+    result.y2 = rect.y2 + ty;
+    return result;
+}
+
 DP_INLINE DP_Rect DP_rect_union(DP_Rect a, DP_Rect b)
 {
     DP_ASSERT(DP_rect_valid(a));
