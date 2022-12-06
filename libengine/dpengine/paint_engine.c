@@ -41,6 +41,7 @@
 #include <dpcommon/output.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
+#include <dpcommon/vector.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
@@ -136,11 +137,7 @@ struct DP_PaintEngine {
         DP_LayerViewMode layer_view_mode;
         bool reveal_censored;
         unsigned int inspect_context_id;
-        struct {
-            int used;
-            int capacity;
-            int *layer_ids;
-        } hidden_layers;
+        DP_Vector hidden_layers;
         DP_LayerPropsList *prev_lpl;
         DP_Timeline *prev_tl;
         DP_LayerPropsList *lpl;
@@ -488,9 +485,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.layer_view_mode = DP_LAYER_VIEW_MODE_NORMAL;
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
-    pe->local_view.hidden_layers.used = 0;
-    pe->local_view.hidden_layers.capacity = 0;
-    pe->local_view.hidden_layers.layer_ids = NULL;
+    DP_VECTOR_INIT_TYPE(&pe->local_view.hidden_layers, int, 8);
     pe->local_view.prev_lpl = NULL;
     pe->local_view.prev_tl = NULL;
     pe->local_view.lpl = NULL;
@@ -547,7 +542,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_layer_props_list_decref_nullable(pe->local_view.lpl);
         DP_timeline_decref_nullable(pe->local_view.prev_tl);
         DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
-        DP_free(pe->local_view.hidden_layers.layer_ids);
+        DP_vector_dispose(&pe->local_view.hidden_layers);
         DP_canvas_state_decref_nullable(pe->history_cs);
         DP_canvas_state_decref_nullable(pe->view_cs);
         DP_tile_decref(pe->checker);
@@ -645,51 +640,24 @@ void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
 }
 
 
-static int search_hidden_layer_index(DP_PaintEngine *pe, int layer_id)
+static bool is_hidden_layer_id(void *element, void *user)
 {
-    int used = pe->local_view.hidden_layers.used;
-    int *layer_ids = pe->local_view.hidden_layers.layer_ids;
-    for (int i = 0; i < used; ++i) {
-        if (layer_ids[i] == layer_id) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-static void insert_hidden_layer(DP_PaintEngine *pe, int layer_id)
-{
-    int used = pe->local_view.hidden_layers.used++;
-    int capacity = pe->local_view.hidden_layers.capacity;
-    int *layer_ids = pe->local_view.hidden_layers.layer_ids;
-    if (used == capacity) {
-        int new_capacity = DP_max_int(8, capacity * 2);
-        layer_ids = DP_realloc(layer_ids, DP_int_to_size(new_capacity)
-                                              * sizeof(*layer_ids));
-        pe->local_view.hidden_layers.layer_ids = layer_ids;
-        pe->local_view.hidden_layers.capacity = new_capacity;
-    }
-    layer_ids[used] = layer_id;
-}
-
-static void remove_hidden_layer(DP_PaintEngine *pe, int index)
-{
-    int *layer_ids = pe->local_view.hidden_layers.layer_ids;
-    int last = --pe->local_view.hidden_layers.used;
-    layer_ids[index] = layer_ids[last];
+    return *(int *)element == *(int *)user;
 }
 
 void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
                                           bool hidden)
 {
     DP_ASSERT(pe);
-    int index = search_hidden_layer_index(pe, layer_id);
+    DP_Vector *hidden_layers = &pe->local_view.hidden_layers;
+    int index = DP_vector_search_index(hidden_layers, sizeof(int),
+                                       is_hidden_layer_id, &layer_id);
     if (hidden && index == -1) {
-        insert_hidden_layer(pe, layer_id);
+        DP_VECTOR_PUSH_TYPE(hidden_layers, int, layer_id);
         invalidate_local_view(pe);
     }
     else if (!hidden && index != -1) {
-        remove_hidden_layer(pe, index);
+        DP_VECTOR_REMOVE_TYPE(hidden_layers, int, index);
         invalidate_local_view(pe);
     }
 }
@@ -1184,14 +1152,15 @@ static void set_local_view_layer_props_recursive(
 }
 
 static void set_hidden_layer_props(DP_PaintEngine *pe,
-                                   DP_TransientCanvasState *tcs, int used)
+                                   DP_TransientCanvasState *tcs)
 {
-    int *layer_ids = pe->local_view.hidden_layers.layer_ids;
+    DP_Vector *hidden_layers = &pe->local_view.hidden_layers;
     DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
     // Using a while loop since we might purge elements along the way.
-    int i = 0;
+    size_t i = 0;
+    size_t used = hidden_layers->used;
     while (i < used) {
-        int layer_id = layer_ids[i];
+        int layer_id = DP_VECTOR_AT_TYPE(hidden_layers, int, i);
         DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
         if (lre) {
             DP_TransientLayerProps *tlp =
@@ -1200,7 +1169,7 @@ static void set_hidden_layer_props(DP_PaintEngine *pe,
             ++i;
         }
         else {
-            remove_hidden_layer(pe, i);
+            DP_VECTOR_REMOVE_TYPE(hidden_layers, int, i);
             --used;
         }
     }
@@ -1222,10 +1191,7 @@ set_local_layer_props(DP_PaintEngine *pe, DP_CanvasState *cs, DP_Timeline *tl)
             DP_transient_canvas_state_layer_props_noinc(tcs));
     }
 
-    int hidden_layers_used = pe->local_view.hidden_layers.used;
-    if (hidden_layers_used != 0) {
-        set_hidden_layer_props(pe, tcs, hidden_layers_used);
-    }
+    set_hidden_layer_props(pe, tcs);
 
     // We remember the root layer props list for later and then jam it into
     // subsequent canvas states. That'll make them diff correctly instead of
