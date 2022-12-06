@@ -38,15 +38,15 @@ $drawpileVersion = Get-Content "$buildDir/DRAWPILE_VERSION.txt"
 $qtTranslationsDir = "$vcpkgDir/installed/$vcpkgTriplet/share/qt5/translations"
 Write-Output "Using translations files from $qtTranslationsDir"
 
-$outDir = "$PSScriptRoot/out"
+$outDir = "$PSScriptRoot/drawpile-win-$drawpileVersion"
+Remove-Item "$outDir" -Recurse -Force -ErrorAction:SilentlyContinue
 New-Item -Path $outDir -ItemType Directory -Force
-Remove-Item "$outDir/*" -Recurse -Force
 
 # Copy binaries
 Copy-Item -Path "$buildDir/bin/drawpile.exe" -Destination $outDir
 Copy-Item -Path "$buildDir/bin/drawpile-srv.exe" -Destination $outDir
 
-# Copy ressources
+# Copy resources
 Copy-Item -Path "$drawpileDir/desktop/palettes" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/theme" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/sounds" -Destination $outDir -Recurse
@@ -68,15 +68,15 @@ Get-Content -Path "$drawpileDir/AUTHORS" | Out-File -FilePath "$outDir/Authors.t
 Get-Content -Path "$drawpileDir/COPYING" | Out-File -FilePath "$outDir/License.txt"
 
 # Zip it up
-Compress-Archive -Path "$outDir/*" -DestinationPath "$PSScriptRoot/drawpile-win-msvc-$drawpileVersion.zip" -CompressionLevel "Optimal" -Force
-
-Write-Output "Created $PSScriptRoot/drawpile-win-msvc-$drawpileVersion.zip"
+$zipPath = "$PSScriptRoot/drawpile-win-$drawpileVersion.zip"
+Compress-Archive -Path $outDir -DestinationPath $zipPath -CompressionLevel "Optimal" -Force
+Write-Output "Created $zipPath"
 
 # Create installer
 if ($null -ne $innoSetupExePath) {
     Write-Output "Creating installer using $innoSetupExePath"
 
-    $installerFilename = "drawpile-win-msvc-$drawpileVersion-setup"
+    $installerFilename = "drawpile-win-$drawpileVersion-setup"
 
     Get-Content "$PSScriptRoot/drawpile.iss" |
     ForEach-Object { $_ -replace "DRAWPILE_VERSION", $drawpileVersion } |

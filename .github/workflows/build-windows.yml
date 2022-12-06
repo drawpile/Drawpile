@@ -60,5 +60,5 @@ jobs:
         with:
           name: drawpile-win-msvc
           path: |
-            pkg/win-msvc/drawpile-win-msvc*.zip
-            pkg/win-msvc/drawpile-win-msvc*-setup.exe
+            pkg/win-msvc/drawpile-win-*.zip
+            pkg/win-msvc/drawpile-win-*-setup.exe
