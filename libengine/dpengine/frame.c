@@ -120,6 +120,19 @@ int DP_frame_layer_id_at(DP_Frame *f, int index)
     return f->elements[index].layer_id;
 }
 
+bool DP_frame_layer_ids_contain(DP_Frame *f, int layer_id)
+{
+    DP_ASSERT(f);
+    DP_ASSERT(DP_atomic_get(&f->refcount) > 0);
+    int count = f->count;
+    for (int i = 0; i < count; ++i) {
+        if (f->elements[i].layer_id == layer_id) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 DP_TransientFrame *DP_transient_frame_new(DP_Frame *f, int reserve)
 {

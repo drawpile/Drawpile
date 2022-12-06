@@ -286,6 +286,13 @@ DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs)
     return cs->metadata;
 }
 
+bool DP_canvas_state_use_timeline(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_document_metadata_use_timeline(cs->metadata);
+}
+
 
 static DP_CanvasState *handle_canvas_resize(DP_CanvasState *cs,
                                             unsigned int context_id,

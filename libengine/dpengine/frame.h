@@ -48,6 +48,8 @@ int DP_frame_layer_id_count(DP_Frame *f);
 
 int DP_frame_layer_id_at(DP_Frame *f, int index);
 
+bool DP_frame_layer_ids_contain(DP_Frame *f, int layer_id);
+
 
 DP_TransientFrame *DP_transient_frame_new(DP_Frame *f, int reserve);
 

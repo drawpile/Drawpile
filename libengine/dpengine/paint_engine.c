@@ -24,6 +24,7 @@
 #include "canvas_history.h"
 #include "canvas_state.h"
 #include "draw_context.h"
+#include "frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -33,6 +34,7 @@
 #include "paint.h"
 #include "recorder.h"
 #include "tile.h"
+#include "timeline.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -140,6 +142,7 @@ struct DP_PaintEngine {
             int *layer_ids;
         } hidden_layers;
         DP_LayerPropsList *prev_lpl;
+        DP_Timeline *prev_tl;
         DP_LayerPropsList *lpl;
     } local_view;
     DP_DrawContext *paint_dc;
@@ -489,6 +492,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.hidden_layers.capacity = 0;
     pe->local_view.hidden_layers.layer_ids = NULL;
     pe->local_view.prev_lpl = NULL;
+    pe->local_view.prev_tl = NULL;
     pe->local_view.lpl = NULL;
     pe->paint_dc = paint_dc;
     pe->preview = NULL;
@@ -541,6 +545,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_message_queue_dispose(&pe->local_queue);
         free_preview(pe->preview);
         DP_layer_props_list_decref_nullable(pe->local_view.lpl);
+        DP_timeline_decref_nullable(pe->local_view.prev_tl);
         DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
         DP_free(pe->local_view.hidden_layers.layer_ids);
         DP_canvas_state_decref_nullable(pe->history_cs);
@@ -1064,10 +1069,53 @@ static DP_CanvasState *apply_inspect(DP_PaintEngine *pe, DP_CanvasState *cs)
 }
 
 
+// Only grab the timeline if we're in a view mode where that's relevant and
+// we're not dealing with an automatic timeline, where the layers act as frames.
+static DP_Timeline *maybe_get_timeline(DP_CanvasState *cs,
+                                       DP_LayerViewMode layer_view_mode)
+{
+    bool want_timeline = layer_view_mode == DP_LAYER_VIEW_MODE_FRAME
+                      && DP_canvas_state_use_timeline(cs);
+    return want_timeline ? DP_canvas_state_timeline_noinc(cs) : NULL;
+}
+
+struct DP_ViewModeParams {
+    int layer_id;
+    DP_Frame *frame;
+};
+
+static struct DP_ViewModeParams
+get_view_mode_params(DP_PaintEngine *pe, DP_CanvasState *cs, DP_Timeline *tl)
+{
+    struct DP_ViewModeParams vmp = {0, NULL};
+    if (pe->local_view.layer_view_mode == DP_LAYER_VIEW_MODE_FRAME) {
+        int frame_index = pe->local_view.active_frame_index;
+        if (tl) {
+            int frame_count = DP_timeline_frame_count(tl);
+            if (frame_index >= 0 && frame_index < frame_count) {
+                vmp.frame = DP_timeline_frame_at_noinc(tl, frame_index);
+            }
+        }
+        else {
+            DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+            int layer_count = DP_layer_props_list_count(lpl);
+            if (frame_index >= 0 && frame_index < layer_count) {
+                DP_LayerProps *lp =
+                    DP_layer_props_list_at_noinc(lpl, frame_index);
+                vmp.layer_id = DP_layer_props_id(lp);
+            }
+        }
+    }
+    else {
+        vmp.layer_id = pe->local_view.active_layer_id;
+    }
+    return vmp;
+}
+
 static void set_local_view_layer_props_recursive(
-    DP_TransientCanvasState *tcs, DP_DrawContext *dc, int active_layer_id,
-    DP_LayerViewMode layer_view_mode, bool reveal_censored,
-    DP_LayerPropsList *lpl)
+    DP_TransientCanvasState *tcs, DP_DrawContext *dc,
+    struct DP_ViewModeParams vmp, DP_LayerViewMode layer_view_mode,
+    bool reveal_censored, DP_LayerPropsList *lpl)
 {
     int count = DP_layer_props_list_count(lpl);
     DP_draw_context_layer_indexes_push(dc);
@@ -1080,7 +1128,7 @@ static void set_local_view_layer_props_recursive(
         DP_LayerViewMode child_layer_view_mode;
         switch (layer_view_mode) {
         case DP_LAYER_VIEW_MODE_SOLO:
-            if (DP_layer_props_id(lp) == active_layer_id) {
+            if (DP_layer_props_id(lp) == vmp.layer_id) {
                 hide_layer = false;
                 child_layer_view_mode = DP_LAYER_VIEW_MODE_NORMAL;
             }
@@ -1089,6 +1137,21 @@ static void set_local_view_layer_props_recursive(
                 child_layer_view_mode = layer_view_mode;
             }
             break;
+        case DP_LAYER_VIEW_MODE_FRAME: {
+            int layer_id = DP_layer_props_id(lp);
+            DP_Frame *f = vmp.frame;
+            bool is_in_frame = f ? DP_frame_layer_ids_contain(f, layer_id)
+                                 : layer_id == vmp.layer_id;
+            if (is_in_frame) {
+                hide_layer = false;
+                child_layer_view_mode = DP_LAYER_VIEW_MODE_NORMAL;
+            }
+            else {
+                hide_layer = !child_lpl;
+                child_layer_view_mode = layer_view_mode;
+            }
+            break;
+        }
         default:
             hide_layer = false;
             child_layer_view_mode = layer_view_mode;
@@ -1112,7 +1175,7 @@ static void set_local_view_layer_props_recursive(
         }
 
         if (child_lpl) {
-            set_local_view_layer_props_recursive(tcs, dc, active_layer_id,
+            set_local_view_layer_props_recursive(tcs, dc, vmp,
                                                  child_layer_view_mode,
                                                  reveal_censored, child_lpl);
         }
@@ -1143,19 +1206,20 @@ static void set_hidden_layer_props(DP_PaintEngine *pe,
     }
 }
 
-static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
-                                             DP_CanvasState *cs)
+static DP_CanvasState *
+set_local_layer_props(DP_PaintEngine *pe, DP_CanvasState *cs, DP_Timeline *tl)
 {
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
 
     DP_LayerViewMode layer_view_mode = pe->local_view.layer_view_mode;
     bool reveal_censored = pe->local_view.reveal_censored;
     if (layer_view_mode != DP_LAYER_VIEW_MODE_NORMAL || reveal_censored) {
+        struct DP_ViewModeParams vmp = get_view_mode_params(pe, cs, tl);
         DP_DrawContext *dc = pe->preview_dc;
         DP_draw_context_layer_indexes_clear(dc);
         set_local_view_layer_props_recursive(
-            tcs, dc, pe->local_view.active_layer_id, layer_view_mode,
-            reveal_censored, DP_transient_canvas_state_layer_props_noinc(tcs));
+            tcs, dc, vmp, layer_view_mode, reveal_censored,
+            DP_transient_canvas_state_layer_props_noinc(tcs));
     }
 
     int hidden_layers_used = pe->local_view.hidden_layers.used;
@@ -1176,13 +1240,16 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
 static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
                                                DP_CanvasState *cs)
 {
+    DP_LayerViewMode layer_view_mode = pe->local_view.layer_view_mode;
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    DP_Timeline *tl = maybe_get_timeline(cs, layer_view_mode);
     // This function here may replace the layer props entirely, so there can't
     // have been any meddling with it beforehand. Any layer props changes must
     // be part of this function so that they're cached properly.
     DP_ASSERT(!DP_layer_props_list_transient(lpl));
     DP_LayerPropsList *prev_lpl = pe->local_view.prev_lpl;
-    if (lpl == prev_lpl) {
+    DP_Timeline *prev_tl = pe->local_view.prev_tl;
+    if (lpl == prev_lpl && tl == prev_tl) {
         // If our local view doesn't have anything to change about the canvas
         // state, we don't need to replace anything in the target state either.
         bool keep_layer_props =
@@ -1202,8 +1269,10 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
     }
     else {
         DP_layer_props_list_decref_nullable(prev_lpl);
+        DP_timeline_decref_nullable(prev_tl);
         pe->local_view.prev_lpl = DP_layer_props_list_incref(lpl);
-        return set_local_layer_props(pe, cs);
+        pe->local_view.prev_tl = DP_timeline_incref_nullable(tl);
+        return set_local_layer_props(pe, cs, tl);
     }
 }
 
