@@ -50,6 +50,8 @@ public:
     AnnotationList annotations() const;
     Timeline timeline() const;
 
+    int frameCount() const;
+
     QImage toFlatImage(
         bool includeBackground = true, bool includeSublayers = true) const;
 

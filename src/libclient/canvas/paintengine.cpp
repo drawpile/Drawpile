@@ -421,12 +421,7 @@ void PaintEngine::renderEverything()
 
 int PaintEngine::frameCount() const
 {
-	drawdance::CanvasState cs = canvasState();
-	if(cs.documentMetadata().useTimeline()) {
-		return cs.timeline().frameCount();
-	} else {
-		return cs.layers().count();
-	}
+	return canvasState().frameCount();
 }
 
 QImage PaintEngine::getLayerImage(int id, const QRect &rect) const

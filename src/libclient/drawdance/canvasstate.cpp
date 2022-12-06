@@ -127,6 +127,11 @@ Timeline CanvasState::timeline() const
     return Timeline::inc(DP_canvas_state_timeline_noinc(m_data));
 }
 
+int CanvasState::frameCount() const
+{
+    return DP_canvas_state_frame_count(m_data);
+}
+
 QImage CanvasState::toFlatImage(bool includeBackground, bool includeSublayers) const
 {
     unsigned int flags =
