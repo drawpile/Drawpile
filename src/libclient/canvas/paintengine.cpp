@@ -439,11 +439,9 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 
 	if(id <= 0) {
 		bool includeBackground = id == 0;
-		// TODO: flatten only the given rect, rather than cropping afterwards.
-		return cs.toFlatImage(includeBackground).copy(area);
+		return cs.toFlatImageArea(area, includeBackground);
 	} else {
-		drawdance::LayerContent layerContent = cs.searchLayerContent(id);
-		return layerContent.isNull() ? QImage{} : layerContent.toImage(area);
+		return cs.layerToFlatImage(id, area);
 	}
 }
 

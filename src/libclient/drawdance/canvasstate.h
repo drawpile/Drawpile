@@ -53,6 +53,10 @@ public:
     QImage toFlatImage(
         bool includeBackground = true, bool includeSublayers = true) const;
 
+    QImage toFlatImageArea(
+        const QRect &rect, bool includeBackground = true,
+        bool includeSublayers = true) const;
+
     QImage layerToFlatImage(int layerId, const QRect &rect) const;
 
     void toResetImage(MessageList &msgs, uint8_t contextId) const;

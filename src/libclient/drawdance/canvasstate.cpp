@@ -136,6 +136,17 @@ QImage CanvasState::toFlatImage(bool includeBackground, bool includeSublayers) c
     return wrapImage(img);
 }
 
+QImage CanvasState::toFlatImageArea(
+    const QRect &rect, bool includeBackground, bool includeSublayers) const
+{
+    unsigned int flags =
+        (includeBackground ? DP_FLAT_IMAGE_INCLUDE_BACKGROUND : 0) |
+        (includeSublayers ? DP_FLAT_IMAGE_INCLUDE_SUBLAYERS : 0);
+    DP_Rect area = DP_rect_make(rect.x(), rect.y(), rect.width(), rect.height());
+    DP_Image *img = DP_canvas_state_area_to_flat_image(m_data, area, flags);
+    return wrapImage(img);
+}
+
 QImage CanvasState::layerToFlatImage(int layerId, const QRect &rect) const
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
