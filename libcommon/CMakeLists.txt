@@ -34,6 +34,7 @@ set(dpcommon_sources
     dpcommon/output.c
     dpcommon/queue.c
     dpcommon/threading_common.c
+    dpcommon/vector.c
     dpcommon/worker.c)
 
 set(dpcommon_headers
@@ -48,12 +49,14 @@ set(dpcommon_headers
     dpcommon/output.h
     dpcommon/queue.h
     dpcommon/threading.h
+    dpcommon/vector.h
     dpcommon/worker.h)
 
 set(dpcommon_tests
     test/base64_encode.c
     test/queue.c
-    test/rect.c)
+    test/rect.c
+    test/vector.c)
 
 add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
                        "${dpcommon_tests}" dpcommon/threading_pthread.c

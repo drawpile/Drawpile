@@ -1,0 +1,51 @@
+-- init(1)
+capacity=1, used=0
+[ ]
+
+-- push(2)
+capacity=1, used=1
+[2]
+
+-- push(5)
+capacity=2, used=2
+[2] [5]
+
+-- unshift(1)
+capacity=4, used=3
+[1] [2] [5] [ ]
+
+-- insert(2, 3)
+capacity=4, used=4
+[1] [2] [3] [5]
+
+-- insert(3, 4)
+capacity=8, used=5
+[1] [2] [3] [4] [5] [ ] [ ] [ ]
+
+-- remove(2) = 3
+capacity=8, used=4
+[1] [2] [4] [5] [ ] [ ] [ ] [ ]
+
+-- shift() = 1
+capacity=8, used=3
+[2] [4] [5] [ ] [ ] [ ] [ ] [ ]
+
+-- pop() = 5
+capacity=8, used=2
+[2] [4] [ ] [ ] [ ] [ ] [ ] [ ]
+
+-- remove(1) = 4
+capacity=8, used=1
+[2] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+
+-- remove(0) = 2
+capacity=8, used=0
+[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+
+-- shift() = NULL
+capacity=8, used=0
+[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+
+-- pop() = NULL
+capacity=8, used=0
+[ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
