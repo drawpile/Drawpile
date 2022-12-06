@@ -127,6 +127,8 @@ DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs);
 
 bool DP_canvas_state_use_timeline(DP_CanvasState *cs);
 
+int DP_canvas_state_frame_count(DP_CanvasState *cs);
+
 DP_CanvasStateChange
 DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc, DP_Message *msg);
 

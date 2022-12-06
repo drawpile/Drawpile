@@ -293,6 +293,13 @@ bool DP_canvas_state_use_timeline(DP_CanvasState *cs)
     return DP_document_metadata_use_timeline(cs->metadata);
 }
 
+int DP_canvas_state_frame_count(DP_CanvasState *cs)
+{
+    return DP_canvas_state_use_timeline(cs)
+             ? DP_timeline_frame_count(cs->timeline)
+             : DP_layer_list_count(cs->layers);
+}
+
 
 static DP_CanvasState *handle_canvas_resize(DP_CanvasState *cs,
                                             unsigned int context_id,
