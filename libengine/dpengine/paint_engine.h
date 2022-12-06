@@ -24,6 +24,7 @@
 #include "canvas_diff.h"
 #include "canvas_history.h"
 #include "recorder.h"
+#include "view_mode.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_AclState DP_AclState;
@@ -63,13 +64,6 @@ typedef void (*DP_PaintEngineRenderSizeFn)(void *user, int width, int height);
 typedef void (*DP_PaintEngineRenderTileFn)(void *user, int x, int y,
                                            DP_Pixel8 *pixels, int thread_index);
 
-typedef enum DP_LayerViewMode {
-    DP_LAYER_VIEW_MODE_NORMAL,
-    DP_LAYER_VIEW_MODE_SOLO,
-    DP_LAYER_VIEW_MODE_FRAME,
-    DP_LAYER_VIEW_MODE_ONION_SKIN,
-} DP_LayerViewMode;
-
 
 typedef struct DP_PaintEngine DP_PaintEngine;
 
@@ -94,7 +88,7 @@ void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id);
 void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe,
                                             int frame_index);
 
-void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_LayerViewMode mode);
+void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm);
 
 bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe);
 

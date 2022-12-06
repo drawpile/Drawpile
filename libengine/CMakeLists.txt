@@ -54,7 +54,8 @@ set(dpengine_sources
     dpengine/snapshots.c
     dpengine/tile.c
     dpengine/tile_iterator.c
-    dpengine/timeline.c)
+    dpengine/timeline.c
+    dpengine/view_mode.c)
 
 set(dpengine_headers
     dpengine/affected_area.h
@@ -93,6 +94,7 @@ set(dpengine_headers
     dpengine/tile.h
     dpengine/tile_iterator.h
     dpengine/timeline.h
+    dpengine/view_mode.h
     dpengine/xml_stream.h
     dpengine/zip_archive.h)
 
