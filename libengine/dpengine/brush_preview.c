@@ -35,6 +35,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
+#include <dpcommon/vector.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <math.h>
@@ -52,50 +53,35 @@
 struct DP_BrushPreview {
     DP_BrushEngine *be;
     DP_CanvasState *cs;
-    struct {
-        int used;
-        int capacity;
-        DP_Message **buffer;
-    } messages;
+    DP_Vector messages;
 };
 
 static void push_message(void *user, DP_Message *msg)
 {
     DP_BrushPreview *bp = user;
-    int used = bp->messages.used++;
-    int capacity = bp->messages.capacity;
-    if (used == capacity) {
-        int new_capacity = DP_max_int(64, capacity * 2);
-        bp->messages.buffer = DP_realloc(
-            bp->messages.buffer, sizeof(msg) * DP_int_to_size(new_capacity));
-        bp->messages.capacity = new_capacity;
-    }
-    bp->messages.buffer[used] = msg;
+    DP_VECTOR_PUSH_TYPE(&bp->messages, DP_Message *, msg);
 }
 
 DP_BrushPreview *DP_brush_preview_new(void)
 {
     DP_BrushPreview *bp = DP_malloc(sizeof(*bp));
-    *bp = (DP_BrushPreview){
-        DP_brush_engine_new(push_message, bp), NULL, {0, 0, NULL}};
+    *bp = (DP_BrushPreview){DP_brush_engine_new(push_message, bp), NULL,
+                            DP_VECTOR_NULL};
+    DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
     return bp;
 }
 
-static void clear_message_buffer(DP_BrushPreview *bp)
+static void dispose_message(void *element)
 {
-    int used = bp->messages.used;
-    DP_Message **msgs = bp->messages.buffer;
-    for (int i = 0; i < used; ++i) {
-        DP_message_decref(msgs[i]);
-    }
-    bp->messages.used = 0;
+    DP_Message **msg_ptr = element;
+    DP_message_decref(*msg_ptr);
 }
 
 void DP_brush_preview_free(DP_BrushPreview *bp)
 {
     if (bp) {
-        clear_message_buffer(bp);
-        DP_free(bp->messages.buffer);
+        DP_VECTOR_CLEAR_DISPOSE_TYPE(&bp->messages, DP_Message *,
+                                     dispose_message);
         DP_canvas_state_decref_nullable(bp->cs);
         DP_brush_engine_free(bp->be);
         DP_free(bp);
@@ -414,9 +400,9 @@ void render_brush_preview(
     DP_brush_engine_stroke_end(be, false);
     DP_brush_engine_dabs_flush(be);
 
-    cs = handle_preview_messages_multidab(cs, dc, bp->messages.used,
-                                          bp->messages.buffer);
-    clear_message_buffer(bp);
+    cs = handle_preview_messages_multidab(
+        cs, dc, DP_size_to_int(bp->messages.used), bp->messages.elements);
+    DP_VECTOR_CLEAR_TYPE(&bp->messages, DP_Message *, dispose_message);
 
     bp->cs = handle_preview_message_dec(cs, dc, DP_msg_pen_up_new(1));
 }
