@@ -95,11 +95,10 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
                                        uint16_t parent_opacity,
                                        bool include_sublayers);
 
-DP_TransientTile *DP_layer_list_flatten_tile_to(DP_LayerList *ll,
-                                                DP_LayerPropsList *lpl,
-                                                int tile_index,
-                                                DP_TransientTile *tt_or_null,
-                                                uint16_t parent_opacity);
+DP_TransientTile *
+DP_layer_list_flatten_tile_to(DP_LayerList *ll, DP_LayerPropsList *lpl,
+                              int tile_index, DP_TransientTile *tt_or_null,
+                              uint16_t parent_opacity, bool include_sublayers);
 
 
 DP_TransientLayerList *DP_transient_layer_list_new_init(int reserve);

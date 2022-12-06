@@ -468,7 +468,7 @@ unsigned int DP_transient_tile_context_id(DP_Tile *tt)
     return tt->context_id;
 }
 
-DP_Pixel15 *DP_transient_tile_pixels(DP_Tile *tt)
+DP_Pixel15 *DP_transient_tile_pixels(DP_TransientTile *tt)
 {
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);

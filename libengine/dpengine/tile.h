@@ -176,7 +176,7 @@ DP_Tile *DP_transient_tile_persist(DP_TransientTile *tt);
 
 unsigned int DP_transient_tile_context_id(DP_Tile *tt);
 
-DP_Pixel15 *DP_transient_tile_pixels(DP_Tile *tt);
+DP_Pixel15 *DP_transient_tile_pixels(DP_TransientTile *tt);
 
 DP_Pixel15 DP_transient_tile_pixel_at(DP_TransientTile *tt, int x, int y);
 

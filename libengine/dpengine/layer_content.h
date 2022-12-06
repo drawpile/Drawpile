@@ -113,10 +113,9 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
 
 DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc);
 
-DP_TransientTile *
-DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                 DP_TransientTile *tt_or_null, uint16_t opacity,
-                                 int blend_mode, bool censored);
+DP_TransientTile *DP_layer_content_flatten_tile_to(
+    DP_LayerContent *lc, int tile_index, DP_TransientTile *tt_or_null,
+    uint16_t opacity, int blend_mode, bool censored, bool include_sublayers);
 
 
 DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc);

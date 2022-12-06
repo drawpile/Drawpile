@@ -296,11 +296,10 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
     }
 }
 
-DP_TransientTile *DP_layer_group_flatten_tile_to(DP_LayerGroup *lg,
-                                                 DP_LayerProps *lp,
-                                                 int tile_index,
-                                                 DP_TransientTile *tt_or_null,
-                                                 uint16_t parent_opacity)
+DP_TransientTile *
+DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
+                               int tile_index, DP_TransientTile *tt_or_null,
+                               uint16_t parent_opacity, bool include_sublayers)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -314,7 +313,7 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(DP_LayerGroup *lg,
         // Flatten the group into a temporary layer with full opacity, then
         // merge the result with the group's blend mode and opacity.
         DP_TransientTile *gtt = DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, NULL, DP_BIT15);
+            lg->children, lpl, tile_index, NULL, DP_BIT15, include_sublayers);
         if (gtt) {
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null, (DP_Tile *)gtt, opacity,
@@ -330,7 +329,8 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(DP_LayerGroup *lg,
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
         return DP_layer_list_flatten_tile_to(lg->children, lpl, tile_index,
-                                             tt_or_null, opacity);
+                                             tt_or_null, opacity,
+                                             include_sublayers);
     }
 }
 

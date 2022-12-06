@@ -36,6 +36,7 @@
 #include "ops.h"
 #include "paint.h"
 #include "tile.h"
+#include "tile_iterator.h"
 #include "timeline.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
@@ -1109,18 +1110,21 @@ unsigned int DP_canvas_state_pick_context_id(DP_CanvasState *cs, int x, int y)
 }
 
 
+static DP_Tile *get_flat_background_tile_or_null(DP_CanvasState *cs,
+                                                 unsigned int flags)
+{
+    bool include_background = flags & DP_FLAT_IMAGE_INCLUDE_BACKGROUND;
+    return include_background ? cs->background_tile : NULL;
+}
+
 DP_TransientLayerContent *DP_canvas_state_to_flat_layer(DP_CanvasState *cs,
                                                         unsigned int flags)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    // Create a layer to flatten the image into. Start by filling it with the
-    // background tile if requested, otherwise leave it transparent.
-    bool include_background = flags & DP_FLAT_IMAGE_INCLUDE_BACKGROUND;
-    DP_Tile *background_tile = include_background ? cs->background_tile : NULL;
+    DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
     DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
         cs->width, cs->height, background_tile);
-    // Merge the other layers into the flattening layer.
     bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
     DP_layer_list_merge_to_flat_image(cs->layers, cs->layer_props, tlc,
                                       DP_BIT15, include_sublayers);
@@ -1131,34 +1135,72 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    int width = cs->width;
-    int height = cs->height;
-    if (width <= 0 || height <= 0) {
+    return DP_canvas_state_area_to_flat_image(
+        cs, DP_rect_make(0, 0, cs->width, cs->height), flags);
+}
+
+DP_Image *DP_canvas_state_area_to_flat_image(DP_CanvasState *cs, DP_Rect area,
+                                             unsigned int flags)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    if (!DP_rect_valid(area)) {
         DP_error_set("Can't create a flat image with zero pixels");
         return NULL;
     }
-    DP_TransientLayerContent *tlc = DP_canvas_state_to_flat_layer(cs, flags);
-    DP_Image *img = DP_layer_content_to_image((DP_LayerContent *)tlc);
-    DP_transient_layer_content_decref(tlc);
+
+    DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
+    DP_LayerList *ll = cs->layers;
+    DP_LayerPropsList *lpl = cs->layer_props;
+    int wt = DP_tile_count_round(cs->width);
+    bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
+
+    DP_Image *img = DP_image_new(DP_rect_width(area), DP_rect_height(area));
+    DP_TransientTile *tt = DP_transient_tile_new_blank(0);
+    DP_TileIterator ti = DP_tile_iterator_make(cs->width, cs->height, area);
+    while (DP_tile_iterator_next(&ti)) {
+        if (background_tile) {
+            memcpy(DP_transient_tile_pixels(tt),
+                   DP_tile_pixels(background_tile), DP_TILE_BYTES);
+        }
+        else {
+            memset(DP_transient_tile_pixels(tt), 0, DP_TILE_BYTES);
+        }
+        int i = ti.row * wt + ti.col;
+        DP_layer_list_flatten_tile_to(ll, lpl, i, tt, DP_BIT15,
+                                      include_sublayers);
+
+        DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+        while (DP_tile_into_dst_iterator_next(&tidi)) {
+            DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y,
+                                  DP_pixel15_to_8(DP_transient_tile_pixel_at(
+                                      tt, tidi.tile_x, tidi.tile_y)));
+        }
+    }
+    DP_transient_tile_decref(tt);
+
     return img;
 }
 
 DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,
-                                               int tile_index)
+                                               int tile_index,
+                                               unsigned int flags)
 {
     DP_ASSERT(cs);
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(cs->width, cs->height));
-    DP_Tile *background_tile = cs->background_tile;
+    DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
     DP_TransientTile *tt = background_tile
                              ? DP_transient_tile_new(background_tile, 0)
                              : DP_transient_tile_new_blank(0);
+    bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
     return DP_layer_list_flatten_tile_to(cs->layers, cs->layer_props,
-                                         tile_index, tt, DP_BIT15);
+                                         tile_index, tt, DP_BIT15,
+                                         include_sublayers);
 }
 
 DP_TransientTile *DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x,
-                                                  int y)
+                                                  int y, unsigned int flags)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
@@ -1167,7 +1209,7 @@ DP_TransientTile *DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x,
     DP_ASSERT(y >= 0);
     DP_ASSERT(y < cs->height);
     int i = y * DP_tile_count_round(cs->width) + x;
-    return DP_canvas_state_flatten_tile(cs, i);
+    return DP_canvas_state_flatten_tile(cs, i, flags);
 }
 
 

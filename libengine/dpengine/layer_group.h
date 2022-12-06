@@ -86,11 +86,10 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         uint16_t parent_opacity,
                                         bool include_sublayers);
 
-DP_TransientTile *DP_layer_group_flatten_tile_to(DP_LayerGroup *lg,
-                                                 DP_LayerProps *lp,
-                                                 int tile_index,
-                                                 DP_TransientTile *tt_or_null,
-                                                 uint16_t parent_opacity);
+DP_TransientTile *
+DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
+                               int tile_index, DP_TransientTile *tt_or_null,
+                               uint16_t parent_opacity, bool include_sublayers);
 
 
 DP_TransientLayerGroup *DP_transient_layer_group_new(DP_LayerGroup *lg);

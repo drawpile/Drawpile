@@ -378,11 +378,10 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
     }
 }
 
-DP_TransientTile *DP_layer_list_flatten_tile_to(DP_LayerList *ll,
-                                                DP_LayerPropsList *lpl,
-                                                int tile_index,
-                                                DP_TransientTile *tt_or_null,
-                                                uint16_t parent_opacity)
+DP_TransientTile *
+DP_layer_list_flatten_tile_to(DP_LayerList *ll, DP_LayerPropsList *lpl,
+                              int tile_index, DP_TransientTile *tt_or_null,
+                              uint16_t parent_opacity, bool include_sublayers)
 {
     DP_ASSERT(ll);
     DP_ASSERT(DP_atomic_get(&ll->refcount) > 0);
@@ -397,16 +396,17 @@ DP_TransientTile *DP_layer_list_flatten_tile_to(DP_LayerList *ll,
             DP_LayerListEntry *lle = &ll->elements[i];
             if (lle->is_group) {
                 tt = DP_layer_group_flatten_tile_to(lle->group, lp, tile_index,
-                                                    tt, parent_opacity);
+                                                    tt, parent_opacity,
+                                                    include_sublayers);
             }
             else {
                 uint16_t opacity =
                     DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
                 int blend_mode = DP_layer_props_blend_mode(lp);
                 bool censored = DP_layer_props_censored(lp);
-                tt = DP_layer_content_flatten_tile_to(lle->content, tile_index,
-                                                      tt, opacity, blend_mode,
-                                                      censored);
+                tt = DP_layer_content_flatten_tile_to(
+                    lle->content, tile_index, tt, opacity, blend_mode, censored,
+                    include_sublayers);
             }
         }
     }

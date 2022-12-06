@@ -650,29 +650,31 @@ DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
     return img;
 }
 
-static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index)
+static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
+                             bool include_sublayers)
 {
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
     DP_Tile *t = lc->elements[tile_index].tile;
     DP_LayerList *ll = lc->sub.contents;
-    if (DP_layer_list_count(ll) == 0) {
+    if (!include_sublayers || DP_layer_list_count(ll) == 0) {
         return DP_tile_incref_nullable(t);
     }
     else if (t) {
         DP_TransientTile *tt = DP_transient_tile_new(t, 0);
         DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
-                                      DP_BIT15);
+                                      DP_BIT15, false);
         return DP_transient_tile_persist(tt);
     }
     else {
         DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
-            ll, lc->sub.props, tile_index, NULL, DP_BIT15);
+            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false);
         return tt_or_null ? DP_transient_tile_persist(tt_or_null) : NULL;
     }
 }
 
-static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index)
+static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index,
+                                      bool include_sublayers)
 {
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
@@ -680,7 +682,7 @@ static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index)
     if (t) {
         return DP_tile_censored_inc();
     }
-    else {
+    else if (include_sublayers) {
         DP_LayerList *ll = lc->sub.contents;
         int sublayer_count = DP_layer_list_count(ll);
         for (int i = 0; i < sublayer_count; ++i) {
@@ -692,17 +694,20 @@ static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index)
         }
         return NULL;
     }
+    else {
+        return NULL;
+    }
 }
 
-DP_TransientTile *
-DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
-                                 DP_TransientTile *tt_or_null, uint16_t opacity,
-                                 int blend_mode, bool censored)
+DP_TransientTile *DP_layer_content_flatten_tile_to(
+    DP_LayerContent *lc, int tile_index, DP_TransientTile *tt_or_null,
+    uint16_t opacity, int blend_mode, bool censored, bool include_sublayers)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_Tile *t = censored ? flatten_censored_tile(lc, tile_index)
-                          : flatten_tile(lc, tile_index);
+    DP_Tile *t = censored
+                   ? flatten_censored_tile(lc, tile_index, include_sublayers)
+                   : flatten_tile(lc, tile_index, include_sublayers);
     if (t) {
         DP_TransientTile *tt = DP_transient_tile_merge_nullable(
             tt_or_null, t, opacity, blend_mode);
@@ -1702,7 +1707,8 @@ DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(tlc->width, tlc->height));
     DP_tile_decref_nullable(tlc->elements[tile_index].tile);
-    DP_TransientTile *tt = DP_canvas_state_flatten_tile(cs, tile_index);
+    DP_TransientTile *tt = DP_canvas_state_flatten_tile(
+        cs, tile_index, DP_FLAT_IMAGE_RENDER_FLAGS);
     tlc->elements[tile_index].transient_tile = tt;
     return tt;
 }
