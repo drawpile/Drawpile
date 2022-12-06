@@ -320,7 +320,7 @@ void PaintEngine::setViewLayer(int id)
 
 void PaintEngine::setViewFrame(int frame)
 {
-	m_paintEngine.setActiveFrameIndex(frame);
+	m_paintEngine.setActiveFrameIndex(frame - 1); // 1-based to 0-based index.
 }
 
 void PaintEngine::setInspectContextId(unsigned int contextId)

@@ -130,6 +130,7 @@ public:
 	void setViewLayer(int id);
 
 	//! Set the active view frame (for frame and onionskin modes)
+	//! This index is 1-based like in the UI, not 0-based like in Drawdance.
 	void setViewFrame(int frame);
 
 	//! Set options to use with onion skin layer rendering mode
