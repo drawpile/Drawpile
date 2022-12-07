@@ -44,9 +44,18 @@ typedef enum DP_SaveResult {
     DP_SAVE_RESULT_FLATTEN_ERROR,
     DP_SAVE_RESULT_OPEN_ERROR,
     DP_SAVE_RESULT_WRITE_ERROR,
+    DP_SAVE_RESULT_INTERNAL_ERROR,
+    DP_SAVE_RESULT_CANCEL,
 } DP_SaveResult;
 
 DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc, const char *path);
+
+
+typedef bool (*DP_SaveAnimationProgressFn)(void *user, double progress);
+
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
+                                       DP_SaveAnimationProgressFn progress_fn,
+                                       void *user);
 
 
 #endif

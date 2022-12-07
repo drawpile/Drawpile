@@ -35,10 +35,14 @@
 #include "layer_props_list.h"
 #include "tile.h"
 #include "timeline.h"
+#include "view_mode.h"
 #include "zip_archive.h"
+#include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/output.h>
+#include <dpcommon/threading.h>
+#include <dpcommon/worker.h>
 #include <dpmsg/blend_mode.h>
 #include <ctype.h>
 #include <uthash_inc.h>
@@ -586,10 +590,11 @@ static DP_SaveResult save_jpeg(DP_Image *img, DP_Output *output)
 
 static DP_SaveResult save_flat_image(DP_CanvasState *cs, const char *path,
                                      DP_SaveResult (*save_fn)(DP_Image *,
-                                                              DP_Output *))
+                                                              DP_Output *),
+                                     DP_ViewModeFilter vmf)
 {
     DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, &vmf);
     if (!img) {
         DP_warn("Save: %s", DP_error());
         return DP_SAVE_RESULT_FLATTEN_ERROR;
@@ -623,13 +628,156 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc, const char *path)
         return save_ora(cs, path, dc);
     }
     else if (DP_str_equal_lowercase(ext, "png")) {
-        return save_flat_image(cs, path, save_png);
+        return save_flat_image(cs, path, save_png,
+                               DP_view_mode_filter_make_default());
     }
     else if (DP_str_equal_lowercase(ext, "jpg")
              || DP_str_equal_lowercase(ext, "jpeg")) {
-        return save_flat_image(cs, path, save_jpeg);
+        return save_flat_image(cs, path, save_jpeg,
+                               DP_view_mode_filter_make_default());
     }
     else {
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;
     }
+}
+
+
+#if defined(_WIN32)
+#    define PREFERRED_PATH_SEPARATOR "\\"
+#    define POSSIBLE_PATH_SEPARATORS "\\/"
+#elif defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__)
+#    define PREFERRED_PATH_SEPARATOR "/"
+#    define POSSIBLE_PATH_SEPARATORS "/"
+#else
+#    error "unknown platform"
+#endif
+
+static const char *get_path_separator(const char *path)
+{
+    size_t len = strlen(path);
+    char last = len > 0 ? path[len - 1] : '\0';
+    size_t possible_path_separators_len = strlen(POSSIBLE_PATH_SEPARATORS);
+    for (size_t i = 0; i < possible_path_separators_len; ++i) {
+        if (last == POSSIBLE_PATH_SEPARATORS[i]) {
+            return "";
+        }
+    }
+    return PREFERRED_PATH_SEPARATOR;
+}
+
+struct DP_SaveFrameContext {
+    DP_CanvasState *cs;
+    int frame_count;
+    const char *path;
+    const char *separator;
+    DP_SaveAnimationProgressFn progress_fn;
+    void *user;
+    DP_Mutex *progress_mutex;
+    DP_Atomic result;
+    int frames_done;
+};
+
+struct DP_SaveFrameJobParams {
+    struct DP_SaveFrameContext *c;
+    int frame_index;
+};
+
+static void set_error_result(struct DP_SaveFrameContext *c,
+                             DP_SaveResult result)
+{
+    if (result != DP_SAVE_RESULT_SUCCESS) {
+        DP_atomic_compare_exchange(&c->result, DP_SAVE_RESULT_SUCCESS,
+                                   (int)result);
+    }
+}
+
+static void save_frame(struct DP_SaveFrameContext *c, int frame_index)
+{
+    DP_CanvasState *cs = c->cs;
+    char *path =
+        DP_format("%s%sframe-%03d.png", c->path, c->separator, frame_index + 1);
+    DP_SaveResult result = save_flat_image(
+        cs, path, save_png, DP_view_mode_filter_make_frame(cs, frame_index));
+    set_error_result(c, result);
+    DP_free(path);
+}
+
+static void report_progress(struct DP_SaveFrameContext *c)
+{
+    DP_SaveAnimationProgressFn progress_fn = c->progress_fn;
+    if (progress_fn && DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+        DP_Mutex *progress_mutex = c->progress_mutex;
+        DP_MUTEX_MUST_LOCK(progress_mutex);
+        int done = ++c->frames_done;
+        bool keep_going = progress_fn(
+            c->user, DP_int_to_double(done) / DP_int_to_double(c->frame_count));
+        DP_MUTEX_MUST_UNLOCK(progress_mutex);
+        if (!keep_going) {
+            set_error_result(c, DP_SAVE_RESULT_CANCEL);
+        }
+    }
+}
+
+static void save_frame_job(void *element, DP_UNUSED int thread_index)
+{
+    struct DP_SaveFrameJobParams *params = element;
+    struct DP_SaveFrameContext *c = params->c;
+    if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+        save_frame(c, params->frame_index);
+        report_progress(c);
+    }
+}
+
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
+                                       DP_SaveAnimationProgressFn progress_fn,
+                                       void *user)
+{
+    if (!cs || !path) {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+
+    int frame_count = DP_canvas_state_frame_count(cs);
+    if (frame_count == 0) {
+        return DP_SAVE_RESULT_SUCCESS;
+    }
+
+    DP_Mutex *progress_mutex;
+    if (progress_fn) {
+        progress_mutex = DP_mutex_new();
+        if (!progress_mutex) {
+            return DP_SAVE_RESULT_INTERNAL_ERROR;
+        }
+    }
+    else {
+        progress_mutex = NULL;
+    }
+
+    DP_Worker *worker = DP_worker_new(DP_int_to_size(frame_count),
+                                      sizeof(struct DP_SaveFrameJobParams),
+                                      DP_thread_cpu_count(), save_frame_job);
+    if (!worker) {
+        DP_mutex_free(progress_mutex);
+        return DP_SAVE_RESULT_INTERNAL_ERROR;
+    }
+
+    struct DP_SaveFrameContext c = {
+        cs,
+        frame_count,
+        path,
+        get_path_separator(path),
+        progress_fn,
+        user,
+        progress_mutex,
+        DP_ATOMIC_INIT(DP_SAVE_RESULT_SUCCESS),
+        0,
+    };
+
+    for (int i = 0; i < frame_count; ++i) {
+        struct DP_SaveFrameJobParams params = {&c, i};
+        DP_worker_push(worker, &params);
+    }
+
+    DP_worker_free_join(worker);
+    DP_mutex_free(progress_mutex);
+    return (DP_SaveResult)DP_atomic_get(&c.result);
 }
