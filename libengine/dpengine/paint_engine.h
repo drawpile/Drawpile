@@ -90,6 +90,10 @@ void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe,
 
 void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm);
 
+// Only keeps a reference to the given onion skins, pointer must remain valid.
+void DP_paint_engine_onion_skins_set(DP_PaintEngine *pe,
+                                     const DP_OnionSkins *oss_or_null);
+
 bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe);
 
 void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,

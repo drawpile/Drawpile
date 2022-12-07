@@ -87,6 +87,9 @@ DP_INLINE int DP_tile_total_round(int width, int height)
 }
 
 
+const uint16_t *DP_tile_opaque_mask(void);
+
+
 DP_Tile *DP_tile_new(unsigned int context_id);
 
 DP_Tile *DP_tile_new_from_pixel15(unsigned int context_id, DP_Pixel15 pixel);

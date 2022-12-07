@@ -26,6 +26,7 @@
 #include "layer_props_list.h"
 #include "timeline.h"
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 
 
 #define TYPE_NORMAL          0
@@ -68,8 +69,6 @@ static DP_ViewModeFilter build_frame_manual(DP_CanvasState *cs, int frame_index)
         return make_frame_manual(DP_timeline_frame_at_noinc(tl, frame_index));
     }
     else {
-        DP_debug("Manual frame index %d not between 0 and %d", frame_index,
-                 frame_count);
         return make_nothing();
     }
 }
@@ -84,8 +83,6 @@ static DP_ViewModeFilter build_frame_automatic(DP_CanvasState *cs,
         return make_frame_automatic(DP_layer_props_id(lp));
     }
     else {
-        DP_debug("Automatic frame index %d not between 0 and %d", frame_index,
-                 layer_count);
         return make_nothing();
     }
 }
@@ -117,6 +114,13 @@ DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewMode vm, DP_CanvasState *cs,
     default:
         DP_UNREACHABLE();
     }
+}
+
+
+bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf)
+{
+    DP_ASSERT(vmf);
+    return vmf->internal_type == TYPE_NOTHING;
 }
 
 
@@ -190,4 +194,85 @@ DP_ViewModeFilterResult DP_view_mode_filter_apply(const DP_ViewModeFilter *vmf,
     default:
         DP_UNREACHABLE();
     }
+}
+
+
+struct DP_OnionSkins {
+    int count_below;
+    int count_above;
+    DP_OnionSkin skins[];
+};
+
+DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above)
+{
+    DP_ASSERT(count_below >= 0);
+    DP_ASSERT(count_above >= 0);
+    DP_OnionSkins *oss = DP_malloc_zeroed(DP_FLEX_SIZEOF(
+        DP_OnionSkins, skins, DP_int_to_size(count_below + count_above)));
+    oss->count_below = count_below;
+    oss->count_above = count_above;
+    return oss;
+}
+
+void DP_onion_skins_free(DP_OnionSkins *oss)
+{
+    DP_free(oss);
+}
+
+int DP_onion_skins_count_below(const DP_OnionSkins *oss)
+{
+    DP_ASSERT(oss);
+    return oss->count_below;
+}
+
+int DP_onion_skins_count_above(const DP_OnionSkins *oss)
+{
+    DP_ASSERT(oss);
+    return oss->count_above;
+}
+
+const DP_OnionSkin *DP_onion_skins_skin_below_at(const DP_OnionSkins *oss,
+                                                 int index)
+{
+    DP_ASSERT(oss);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < oss->count_below);
+    return &oss->skins[index];
+}
+
+const DP_OnionSkin *DP_onion_skins_skin_above_at(const DP_OnionSkins *oss,
+                                                 int index)
+{
+    DP_ASSERT(oss);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < oss->count_above);
+    return &oss->skins[oss->count_below + index];
+}
+
+void DP_onion_skins_skin_below_at_set(DP_OnionSkins *oss, int index,
+                                      uint16_t opacity, DP_UPixel15 tint)
+{
+    DP_ASSERT(oss);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < oss->count_below);
+    DP_ASSERT(opacity <= DP_BIT15);
+    DP_ASSERT(tint.b <= DP_BIT15);
+    DP_ASSERT(tint.g <= DP_BIT15);
+    DP_ASSERT(tint.r <= DP_BIT15);
+    DP_ASSERT(tint.a <= DP_BIT15);
+    oss->skins[index] = (DP_OnionSkin){opacity, tint};
+}
+
+void DP_onion_skins_skin_above_at_set(DP_OnionSkins *oss, int index,
+                                      uint16_t opacity, DP_UPixel15 tint)
+{
+    DP_ASSERT(oss);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < oss->count_above);
+    DP_ASSERT(opacity <= DP_BIT15);
+    DP_ASSERT(tint.b <= DP_BIT15);
+    DP_ASSERT(tint.g <= DP_BIT15);
+    DP_ASSERT(tint.r <= DP_BIT15);
+    DP_ASSERT(tint.a <= DP_BIT15);
+    oss->skins[oss->count_below + index] = (DP_OnionSkin){opacity, tint};
 }

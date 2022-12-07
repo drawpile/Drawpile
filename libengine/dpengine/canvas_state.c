@@ -1280,7 +1280,7 @@ static void render_tile(void *data, int tile_index)
 {
     DP_CanvasState *cs = ((void **)data)[0];
     DP_TransientLayerContent *target = ((void **)data)[1];
-    DP_transient_layer_content_render_tile(target, cs, tile_index);
+    DP_transient_layer_content_render_tile(target, cs, tile_index, NULL);
 }
 
 DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,

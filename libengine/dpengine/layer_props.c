@@ -42,7 +42,6 @@ struct DP_LayerProps {
     const uint16_t opacity;
     int blend_mode;
     const bool hidden;
-    const bool hidden_by_view_mode;
     const bool censored;
     const bool isolated;
     DP_LayerTitle *const title;
@@ -58,7 +57,6 @@ struct DP_TransientLayerProps {
     uint16_t opacity;
     int blend_mode;
     bool hidden;
-    bool hidden_by_view_mode;
     bool censored;
     bool isolated;
     DP_LayerTitle *title;
@@ -77,7 +75,6 @@ struct DP_LayerProps {
     uint16_t opacity;
     int blend_mode;
     bool hidden;
-    bool hidden_by_view_mode;
     bool censored;
     bool isolated;
     DP_LayerTitle *title;
@@ -225,7 +222,7 @@ bool DP_layer_props_visible(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
-    return lp->opacity > 0 && !lp->hidden && !lp->hidden_by_view_mode;
+    return lp->opacity > 0 && !lp->hidden;
 }
 
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length)
@@ -265,7 +262,6 @@ bool DP_layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp)
         && (lp->opacity != prev_lp->opacity
             || lp->blend_mode != prev_lp->blend_mode
             || lp->hidden != prev_lp->hidden
-            || lp->hidden_by_view_mode != prev_lp->hidden_by_view_mode
             || lp->censored != prev_lp->censored
             || lp->isolated != prev_lp->isolated);
 }
@@ -281,7 +277,6 @@ static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
         lp->opacity,
         lp->blend_mode,
         lp->hidden,
-        lp->hidden_by_view_mode,
         lp->censored,
         lp->isolated,
         layer_title_incref_nullable(lp->title),
@@ -323,7 +318,6 @@ DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
         layer_id,
         DP_BIT15,
         DP_BLEND_MODE_NORMAL,
-        false,
         false,
         false,
         group,
@@ -509,15 +503,6 @@ void DP_transient_layer_props_hidden_set(DP_TransientLayerProps *tlp,
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
     tlp->hidden = hidden;
-}
-
-void DP_transient_layer_props_hidden_by_view_mode_set(
-    DP_TransientLayerProps *tlp, bool hidden_by_view_mode)
-{
-    DP_ASSERT(tlp);
-    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
-    DP_ASSERT(tlp->transient);
-    tlp->hidden_by_view_mode = hidden_by_view_mode;
 }
 
 void DP_transient_layer_props_isolated_set(DP_TransientLayerProps *tlp,

@@ -62,6 +62,22 @@ struct DP_Tile {
 #endif
 
 
+// We want to initialize a static buffer with the same value 4096 times, so this
+// is a goofy way to achieve that at compile time without spelling it all out.
+#define DP_BIT15_4    DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15
+#define DP_BIT15_16   DP_BIT15_4, DP_BIT15_4, DP_BIT15_4, DP_BIT15_4
+#define DP_BIT15_64   DP_BIT15_16, DP_BIT15_16, DP_BIT15_16, DP_BIT15_16
+#define DP_BIT15_256  DP_BIT15_64, DP_BIT15_64, DP_BIT15_64, DP_BIT15_64
+#define DP_BIT15_1024 DP_BIT15_256, DP_BIT15_256, DP_BIT15_256, DP_BIT15_256
+#define DP_BIT15_4096 DP_BIT15_1024, DP_BIT15_1024, DP_BIT15_1024, DP_BIT15_1024
+
+const uint16_t *DP_tile_opaque_mask(void)
+{
+    static const uint16_t opaque_mask[DP_TILE_LENGTH] = {DP_BIT15_4096};
+    return opaque_mask;
+}
+
+
 static void *alloc_tile(bool transient, bool maybe_blank,
                         unsigned int context_id)
 {

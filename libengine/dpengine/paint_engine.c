@@ -135,6 +135,7 @@ struct DP_PaintEngine {
         int active_layer_id;
         int active_frame_index;
         DP_ViewMode view_mode;
+        const DP_OnionSkins *onion_skins;
         bool reveal_censored;
         unsigned int inspect_context_id;
         DP_Vector hidden_layers;
@@ -432,6 +433,66 @@ static void run_paint_engine(void *user)
 }
 
 
+static void flatten_onion_skin(DP_TransientTile *tt, DP_CanvasState *cs,
+                               int tile_index, int frame_index,
+                               const DP_OnionSkin *os)
+{
+    DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs, frame_index);
+    uint16_t opacity = os->opacity;
+    if (!DP_view_mode_filter_excludes_everything(&vmf) && opacity != 0) {
+        DP_TransientTile *skin_tt = DP_canvas_state_flatten_tile(
+            cs, tile_index, DP_FLAT_IMAGE_RENDER_ONION_SKIN_FLAGS, &vmf);
+
+        DP_UPixel15 tint = os->tint;
+        if (tint.a != 0) {
+            DP_transient_tile_brush_apply(skin_tt, tint, DP_BLEND_MODE_RECOLOR,
+                                          DP_tile_opaque_mask(), tint.a, 0, 0,
+                                          DP_TILE_SIZE, DP_TILE_SIZE, 0);
+        }
+
+        DP_transient_tile_merge(tt, (DP_Tile *)skin_tt, opacity,
+                                DP_BLEND_MODE_NORMAL);
+        DP_transient_tile_decref(skin_tt);
+    }
+}
+
+static DP_TransientTile *flatten_tile(DP_PaintEngine *pe, int tile_index)
+{
+    DP_CanvasState *cs = pe->view_cs;
+    DP_TransientTile *tt = DP_transient_tile_new_nullable(
+        DP_canvas_state_background_tile_noinc(cs), 0);
+
+    DP_ViewMode vm = pe->local_view.view_mode;
+    const DP_OnionSkins *oss = pe->local_view.onion_skins;
+    int active_frame_index = pe->local_view.active_frame_index;
+    if (vm == DP_VIEW_MODE_FRAME && oss) {
+        int count_below = DP_onion_skins_count_below(oss);
+        for (int i = 0; i < count_below; ++i) {
+            int skin_frame_index = active_frame_index - count_below + i;
+            flatten_onion_skin(tt, cs, tile_index, skin_frame_index,
+                               DP_onion_skins_skin_below_at(oss, i));
+        }
+
+        int count_above = DP_onion_skins_count_below(oss);
+        for (int i = 0; i < count_above; ++i) {
+            int skin_frame_index = active_frame_index + i + 1;
+            flatten_onion_skin(tt, cs, tile_index, skin_frame_index,
+                               DP_onion_skins_skin_above_at(oss, i));
+        }
+    }
+
+    DP_ViewModeFilter vmf = DP_view_mode_filter_make(
+        vm, cs, pe->local_view.active_layer_id, active_frame_index);
+    DP_layer_list_flatten_tile_to(DP_canvas_state_layers_noinc(cs),
+                                  DP_canvas_state_layer_props_noinc(cs),
+                                  tile_index, tt, DP_BIT15, true, &vmf);
+
+    DP_transient_tile_merge(tt, pe->checker, DP_BIT15, DP_BLEND_MODE_BEHIND);
+    DP_transient_layer_content_transient_tile_set_noinc(pe->tlc, tt,
+                                                        tile_index);
+    return tt;
+}
+
 static void render_job(void *user, int thread_index)
 {
     struct DP_PaintEngineRenderJobParams *job_params = user;
@@ -441,15 +502,13 @@ static void render_job(void *user, int thread_index)
     int y = job_params->y;
 
     DP_PaintEngine *pe = render_params->pe;
-    DP_TransientLayerContent *tlc = pe->tlc;
-    DP_TransientTile *tt = DP_transient_layer_content_render_tile(
-        tlc, pe->view_cs, y * render_params->xtiles + x);
-    DP_transient_tile_merge(tt, pe->checker, DP_BIT15, DP_BLEND_MODE_BEHIND);
+    int tile_index = y * render_params->xtiles + x;
+    DP_TransientTile *tt = flatten_tile(pe, tile_index);
 
-    DP_Tile *t = DP_transient_layer_content_tile_at_noinc(tlc, x, y);
     DP_Pixel8 *pixel_buffer =
         ((DP_Pixel8 *)pe->buffers) + DP_TILE_LENGTH * thread_index;
-    DP_pixels15_to_8(pixel_buffer, DP_tile_pixels(t), DP_TILE_LENGTH);
+    DP_pixels15_to_8(pixel_buffer, DP_transient_tile_pixels(tt),
+                     DP_TILE_LENGTH);
 
     render_params->render_tile(render_params->user, x, y, pixel_buffer,
                                thread_index);
@@ -483,6 +542,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.active_layer_id = 0;
     pe->local_view.active_frame_index = 0;
     pe->local_view.view_mode = DP_VIEW_MODE_NORMAL;
+    pe->local_view.onion_skins = NULL;
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
     DP_VECTOR_INIT_TYPE(&pe->local_view.hidden_layers, int, 8);
@@ -579,6 +639,7 @@ static void invalidate_local_view(DP_PaintEngine *pe)
 {
     DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
     pe->local_view.prev_lpl = NULL;
+    DP_canvas_diff_check_all(pe->diff);
 }
 
 void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
@@ -606,6 +667,16 @@ void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm)
     DP_ASSERT(pe);
     if (pe->local_view.view_mode != vm) {
         pe->local_view.view_mode = vm;
+        invalidate_local_view(pe);
+    }
+}
+
+void DP_paint_engine_onion_skins_set(DP_PaintEngine *pe,
+                                     const DP_OnionSkins *oss_or_null)
+{
+    DP_ASSERT(pe);
+    if (pe->local_view.onion_skins != oss_or_null) {
+        pe->local_view.onion_skins = oss_or_null;
         invalidate_local_view(pe);
     }
 }
@@ -1044,11 +1115,9 @@ static DP_Timeline *maybe_get_timeline(DP_CanvasState *cs, DP_ViewMode vm)
     return want_timeline ? DP_canvas_state_timeline_noinc(cs) : NULL;
 }
 
-static void set_local_view_layer_props_recursive(DP_TransientCanvasState *tcs,
-                                                 DP_DrawContext *dc,
-                                                 const DP_ViewModeFilter *vmf,
-                                                 bool reveal_censored,
-                                                 DP_LayerPropsList *lpl)
+static void set_reveal_censored_props(DP_TransientCanvasState *tcs,
+                                      DP_DrawContext *dc,
+                                      DP_LayerPropsList *lpl)
 {
     int count = DP_layer_props_list_count(lpl);
     DP_draw_context_layer_indexes_push(dc);
@@ -1056,26 +1125,18 @@ static void set_local_view_layer_props_recursive(DP_TransientCanvasState *tcs,
         DP_draw_context_layer_indexes_set(dc, i);
 
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        DP_ViewModeFilterResult vmfr = DP_view_mode_filter_apply(vmf, lp);
-        bool change_censored = reveal_censored && DP_layer_props_censored(lp);
-        if (vmfr.hidden_by_view_mode || change_censored) {
+        if (DP_layer_props_censored(lp)) {
             int index_count;
             int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
             DP_TransientLayerProps *tlp =
                 DP_layer_routes_entry_indexes_transient_props(index_count,
                                                               indexes, tcs);
-            if (vmfr.hidden_by_view_mode) {
-                DP_transient_layer_props_hidden_by_view_mode_set(tlp, true);
-            }
-            if (change_censored) {
-                DP_transient_layer_props_censored_set(tlp, false);
-            }
+            DP_transient_layer_props_censored_set(tlp, false);
         }
 
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
         if (child_lpl) {
-            set_local_view_layer_props_recursive(tcs, dc, &vmfr.child_vmf,
-                                                 reveal_censored, child_lpl);
+            set_reveal_censored_props(tcs, dc, child_lpl);
         }
     }
     DP_draw_context_layer_indexes_pop(dc);
@@ -1110,17 +1171,12 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
 {
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
 
-    DP_ViewMode vm = pe->local_view.view_mode;
     bool reveal_censored = pe->local_view.reveal_censored;
-    if (vm != DP_VIEW_MODE_NORMAL || reveal_censored) {
-        DP_ViewModeFilter vmf =
-            DP_view_mode_filter_make(vm, cs, pe->local_view.active_layer_id,
-                                     pe->local_view.active_frame_index);
+    if (reveal_censored) {
         DP_DrawContext *dc = pe->preview_dc;
         DP_draw_context_layer_indexes_clear(dc);
-        set_local_view_layer_props_recursive(
-            tcs, dc, &vmf, reveal_censored,
-            DP_transient_canvas_state_layer_props_noinc(tcs));
+        set_reveal_censored_props(
+            tcs, dc, DP_transient_canvas_state_layer_props_noinc(tcs));
     }
 
     set_hidden_layer_props(pe, tcs);
@@ -1150,7 +1206,7 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
     if (lpl == prev_lpl && tl == prev_tl) {
         // If our local view doesn't have anything to change about the canvas
         // state, we don't need to replace anything in the target state either.
-        bool keep_layer_props = pe->local_view.view_mode == DP_VIEW_MODE_NORMAL
+        bool keep_layer_props = vm == DP_VIEW_MODE_NORMAL
                              && !pe->local_view.reveal_censored
                              && pe->local_view.hidden_layers.used == 0;
         if (keep_layer_props) {
@@ -1165,6 +1221,14 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         }
     }
     else {
+        if (vm == DP_VIEW_MODE_FRAME && tl != prev_tl) {
+            // We're currently viewing the canvas in single-frame mode and the
+            // timeline has been manipulated just now. The diff won't pick up
+            // that it needs to potentially re-render some tiles, since it
+            // doesn't have all that context. We'll just mark all tiles as
+            // needing re-rendering instead of complicating the diff logic.
+            DP_canvas_diff_check_all(pe->diff);
+        }
         DP_layer_props_list_decref_nullable(prev_lpl);
         DP_timeline_decref_nullable(prev_tl);
         pe->local_view.prev_lpl = DP_layer_props_list_incref(lpl);

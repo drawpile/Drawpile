@@ -127,9 +127,6 @@ void DP_transient_layer_props_censored_set(DP_TransientLayerProps *tlp,
 void DP_transient_layer_props_hidden_set(DP_TransientLayerProps *tlp,
                                          bool hidden);
 
-void DP_transient_layer_props_hidden_by_view_mode_set(
-    DP_TransientLayerProps *tlp, bool hidden_by_view_mode);
-
 void DP_transient_layer_props_isolated_set(DP_TransientLayerProps *tlp,
                                            bool isolated);
 

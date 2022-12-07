@@ -30,6 +30,7 @@ typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
+typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_LayerContent DP_LayerContent;
@@ -180,7 +181,10 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
                                           DP_UPixel15 pixel);
 
 void DP_transient_layer_content_tile_set_noinc(DP_TransientLayerContent *tlc,
-                                               DP_Tile *tile, int i);
+                                               DP_Tile *t, int i);
+
+void DP_transient_layer_content_transient_tile_set_noinc(
+    DP_TransientLayerContent *tlc, DP_TransientTile *tt, int i);
 
 void DP_transient_layer_content_put_tile_inc(DP_TransientLayerContent *tlc,
                                              DP_Tile *tile, int x, int y,
@@ -215,7 +219,8 @@ void DP_transient_layer_content_merge_all_sublayers(
 
 DP_TransientTile *
 DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
-                                       DP_CanvasState *cs, int tile_index);
+                                       DP_CanvasState *cs, int tile_index,
+                                       const DP_ViewModeFilter *vmf_or_null);
 
 
 #endif

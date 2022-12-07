@@ -1375,8 +1375,7 @@ static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
                       int blend_mode, int left, int top, int right, int bottom,
                       DP_UPixel15 pixel)
 {
-    static const uint16_t mask[DP_TILE_LENGTH] = {DP_BIT15_4096};
-
+    const uint16_t *mask = DP_tile_opaque_mask();
     uint16_t opacity = pixel.a;
     bool blend_blank = can_blend_blank_pixel(blend_mode, opacity, pixel);
 
@@ -1453,14 +1452,25 @@ void DP_transient_layer_content_fill_rect(DP_TransientLayerContent *tlc,
 }
 
 void DP_transient_layer_content_tile_set_noinc(DP_TransientLayerContent *tlc,
-                                               DP_Tile *tile, int i)
+                                               DP_Tile *t, int i)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
     DP_tile_decref_nullable(tlc->elements[i].tile);
-    tlc->elements[i].tile = tile;
+    tlc->elements[i].tile = t;
+}
+
+void DP_transient_layer_content_transient_tile_set_noinc(
+    DP_TransientLayerContent *tlc, DP_TransientTile *tt, int i)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_ASSERT(i < DP_tile_total_round(tlc->width, tlc->height));
+    DP_tile_decref_nullable(tlc->elements[i].tile);
+    tlc->elements[i].transient_tile = tt;
 }
 
 void DP_transient_layer_content_put_tile_inc(DP_TransientLayerContent *tlc,
@@ -1701,7 +1711,8 @@ void DP_transient_layer_content_merge_all_sublayers(
 
 DP_TransientTile *
 DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
-                                       DP_CanvasState *cs, int tile_index)
+                                       DP_CanvasState *cs, int tile_index,
+                                       const DP_ViewModeFilter *vmf_or_null)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
@@ -1710,7 +1721,8 @@ DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(tlc->width, tlc->height));
     DP_tile_decref_nullable(tlc->elements[tile_index].tile);
-    DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
+    DP_ViewModeFilter vmf =
+        vmf_or_null ? *vmf_or_null : DP_view_mode_filter_make_default();
     DP_TransientTile *tt = DP_canvas_state_flatten_tile(
         cs, tile_index, DP_FLAT_IMAGE_RENDER_FLAGS, &vmf);
     tlc->elements[tile_index].transient_tile = tt;
