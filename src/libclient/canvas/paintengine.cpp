@@ -128,12 +128,15 @@ PaintEngine::PaintEngine(QObject *parent)
 	, m_painter{}
 	, m_painterMutex{}
 	, m_sampleColorLastDiameter(-1)
+	, m_onionSkins{nullptr}
+	, m_enableOnionSkins{false}
 {
 	start();
 }
 
 PaintEngine::~PaintEngine()
 {
+	DP_onion_skins_free(m_onionSkins);
 }
 
 void PaintEngine::start()
@@ -296,10 +299,12 @@ void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 	m_paintEngine.setLayerVisibility(layerId, hidden);
 }
 
-void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
+void PaintEngine::setViewMode(DP_ViewMode vm, bool censor, bool enableOnionSkins)
 {
 	m_paintEngine.setViewMode(vm);
 	m_paintEngine.setRevealCensored(!censor);
+	m_enableOnionSkins = enableOnionSkins;
+	m_paintEngine.setOnionSkins(m_enableOnionSkins ? m_onionSkins : nullptr);
 }
 
 bool PaintEngine::isCensored() const
@@ -309,8 +314,42 @@ bool PaintEngine::isCensored() const
 
 void PaintEngine::setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint)
 {
-	// rustpile::paintengine_set_onionskin_opts(m_pe, skinsBelow, skinsAbove, tint);
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+	// Drawdance allows specifying the opacity and tint of every onion skin
+	// individually, but Drawpile only provides a UI with regard to how many
+	// onion skins there should be above/below and if they should be tinted or
+	// not. So we translate it here: tinting below is red, above is blue, both
+	// with an alpha of 80%. Opacity starts at 50% and is linearly reduced
+	// according to how many skins there are.
+	DP_OnionSkins *oss = DP_onion_skins_new(qBound(0, skinsBelow, 99), qBound(0, skinsAbove, 99));
+
+	int countBelow = DP_onion_skins_count_below(oss);
+	if(countBelow != 0) {
+		uint16_t opacityBelow = DP_BIT15 / 2;
+		uint16_t opacityBelowStep = opacityBelow / countBelow;
+		DP_UPixel15 tintBelow = tint ? DP_upixel15_from_color(0xccff3333) : DP_upixel15_zero();
+		for(int i = countBelow - 1; i >= 0; --i) {
+			DP_onion_skins_skin_below_at_set(oss, i, opacityBelow, tintBelow);
+			opacityBelow -= opacityBelowStep;
+		}
+	}
+
+	int countAbove = DP_onion_skins_count_above(oss);
+	if (countAbove != 0) {
+		uint16_t opacityAbove = DP_BIT15 / 2;
+		uint16_t opacityAboveStep = opacityAbove / countAbove;
+		DP_UPixel15 tintAbove = tint ? DP_upixel15_from_color(0xcc3333ff) : DP_upixel15_zero();
+		for(int i = 0; i < countAbove; ++i) {
+			DP_onion_skins_skin_above_at_set(oss, i, opacityAbove, tintAbove);
+			opacityAbove -= opacityAboveStep;
+		}
+	}
+
+	DP_OnionSkins *prev_oss = m_onionSkins;
+	m_onionSkins = oss;
+	if(m_enableOnionSkins) {
+		m_paintEngine.setOnionSkins(m_onionSkins);
+	}
+	DP_onion_skins_free(prev_oss);
 }
 
 void PaintEngine::setViewLayer(int id)

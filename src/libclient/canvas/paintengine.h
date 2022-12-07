@@ -121,7 +121,7 @@ public:
 	void setLayerVisibility(int layerId, bool hidden);
 
 	//! Set layerstack rendering mode (normal, solo, frame, onionskin)
-	void setViewMode(DP_ViewMode vm, bool censor);
+	void setViewMode(DP_ViewMode vm, bool censor, bool enableOnionSkins);
 
 	//! Is the "censor" view mode flag set?
 	bool isCensored() const;
@@ -207,6 +207,8 @@ private:
 	QMutex m_painterMutex;
 	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 	int m_sampleColorLastDiameter;
+	DP_OnionSkins *m_onionSkins;
+	bool m_enableOnionSkins;
 };
 
 }

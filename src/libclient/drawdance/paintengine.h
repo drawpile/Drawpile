@@ -51,6 +51,8 @@ public:
 
     void setViewMode(DP_ViewMode vm);
 
+    void setOnionSkins(const DP_OnionSkins *oss);
+
     bool revealCensored() const;
     void setRevealCensored(bool revealCensored);
 

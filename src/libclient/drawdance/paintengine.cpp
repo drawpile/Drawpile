@@ -63,6 +63,11 @@ void PaintEngine::setViewMode(DP_ViewMode vm)
     DP_paint_engine_view_mode_set(m_data, vm);
 }
 
+void PaintEngine::setOnionSkins(const DP_OnionSkins *oss)
+{
+    DP_paint_engine_onion_skins_set(m_data, oss);
+}
+
 bool PaintEngine::revealCensored() const
 {
     return DP_paint_engine_reveal_censored(m_data);
