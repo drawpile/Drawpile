@@ -1207,7 +1207,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	updateTitle();
 
 	if(!errorMessage.isEmpty())
-		showErrorMessage(tr("Couldn't save image"), errorMessage);
+		showErrorMessageWithDetails(tr("Couldn't save image"), errorMessage);
 	else
 		m_viewStatusBar->showMessage(tr("Image saved"), 1000);
 
@@ -1240,11 +1240,10 @@ void MainWindow::exportAnimationFrames()
 		getLastPath()
 	);
 
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	// exportAnimation(path, rustpile::AnimationExportMode::Frames);
+	exportAnimation(path, DP_save_animation_frames);
 }
 
-void MainWindow::exportAnimation(const QString &path, rustpile::AnimationExportMode mode)
+void MainWindow::exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn)
 {
 	if(path.isEmpty())
 		return;
@@ -1257,13 +1256,13 @@ void MainWindow::exportAnimation(const QString &path, rustpile::AnimationExportM
 		this);
 	progressDialog->setMinimumDuration(500);
 
-	auto *saver = new AnimationSaverRunnable(
+	AnimationSaverRunnable *saver = new AnimationSaverRunnable(
 		m_doc->canvas()->paintEngine(),
-		mode,
+		saveFn,
 		path);
 
 	connect(saver, &AnimationSaverRunnable::progress, progressDialog, &QProgressDialog::setValue);
-	connect(saver, &AnimationSaverRunnable::saveComplete, this, QOverload<const QString&, const QString&>::of(&MainWindow::showErrorMessage));
+	connect(saver, &AnimationSaverRunnable::saveComplete, this, &MainWindow::showErrorMessage);
 	connect(progressDialog, &QProgressDialog::canceled, saver, &AnimationSaverRunnable::cancelExport);
 
 	progressDialog->setValue(0);
@@ -1330,10 +1329,10 @@ void MainWindow::toggleRecording()
 			showErrorMessage(tr("Unsupported format."));
 			break;
 		case drawdance::RECORD_START_OPEN_ERROR:
-			showErrorMessage(tr("Couldn't start recording."), DP_error());
+			showErrorMessageWithDetails(tr("Couldn't start recording."), DP_error());
 			break;
 		default:
-			showErrorMessage(tr("Unknown error.", DP_error()));
+			showErrorMessageWithDetails(tr("Unknown error."), DP_error());
 			break;
 		}
 	}
@@ -1761,11 +1760,16 @@ void MainWindow::exit()
 	deleteLater();
 }
 
+void MainWindow::showErrorMessage(const QString &message)
+{
+	showErrorMessageWithDetails(message, QString{});
+}
+
 /**
  * @param message error message
  * @param details error details
  */
-void MainWindow::showErrorMessage(const QString& message, const QString& details)
+void MainWindow::showErrorMessageWithDetails(const QString &message, const QString &details)
 {
 	if(message.isEmpty())
 		return;
@@ -1795,13 +1799,13 @@ void MainWindow::showLoadResultMessage(DP_LoadResult result)
 		showErrorMessage(tr("Unsupported format."));
 		break;
     case DP_LOAD_RESULT_OPEN_ERROR:
-		showErrorMessage(tr("Couldn't open file for reading."), DP_error());
+		showErrorMessageWithDetails(tr("Couldn't open file for reading."), DP_error());
 		break;
     case DP_LOAD_RESULT_READ_ERROR:
-		showErrorMessage(tr("Error reading file."), DP_error());
+		showErrorMessageWithDetails(tr("Error reading file."), DP_error());
 		break;
 	default:
-		showErrorMessage(tr("Unknown error.", DP_error()));
+		showErrorMessageWithDetails(tr("Unknown error."), DP_error());
 		break;
 	}
 }

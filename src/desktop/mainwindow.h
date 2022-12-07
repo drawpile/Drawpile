@@ -30,6 +30,7 @@ extern "C" {
 
 #include "tools/tool.h"
 #include "canvas/acl.h"
+#include "export/animationsaverrunnable.h"
 
 class QActionGroup;
 class QLabel;
@@ -188,7 +189,7 @@ private:
 	//! Confirm saving of image in a format that doesn't support all required features
 	bool confirmFlatten(QString& file) const;
 
-	void exportAnimation(const QString &path, rustpile::AnimationExportMode mode);
+	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);
 
 	ActionBuilder makeAction(const char *name, const QString &text);
 	QAction *getAction(const QString &name);
@@ -200,7 +201,8 @@ private:
 	void setDrawingToolsEnabled(bool enable);
 
 	//! Display an error message
-	void showErrorMessage(const QString& message, const QString& details=QString());
+	void showErrorMessage(const QString &message);
+	void showErrorMessageWithDetails(const QString &message, const QString &details);
 	void showLoadResultMessage(DP_LoadResult result);
 
 	void readSettings(bool windowpos=true);

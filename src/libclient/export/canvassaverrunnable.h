@@ -19,6 +19,10 @@
 #ifndef CANVASSAVERRUNNABLE_H
 #define CANVASSAVERRUNNABLE_H
 
+extern "C" {
+#include <dpengine/save.h>
+}
+
 #include <QObject>
 #include <QRunnable>
 
@@ -33,9 +37,11 @@ class CanvasSaverRunnable : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:
-        CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent = nullptr);
+	CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent = nullptr);
 
 	void run() override;
+
+	static QString saveResultToErrorString(DP_SaveResult result);
 
 signals:
 	/**

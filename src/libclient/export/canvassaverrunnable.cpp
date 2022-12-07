@@ -82,31 +82,31 @@ void CanvasSaverRunnable::run()
 			}
 		}
 	}
+	emit saveComplete(saveResultToErrorString(result));
+}
 
+
+QString CanvasSaverRunnable::saveResultToErrorString(DP_SaveResult result)
+{
 	switch(result) {
     case DP_SAVE_RESULT_SUCCESS:
-		emit saveComplete(QString{});
-		break;
+	case DP_SAVE_RESULT_CANCEL:
+		return QString{};
     case DP_SAVE_RESULT_BAD_ARGUMENTS:
-		emit saveComplete(tr("Bad arguments, this is probably a bug in Drawpile."));
-		break;
+		return tr("Bad arguments, this is probably a bug in Drawpile.");
     case DP_SAVE_RESULT_NO_EXTENSION:
-		emit saveComplete(tr("No file extension given."));
-		break;
+		return tr("No file extension given.");
     case DP_SAVE_RESULT_UNKNOWN_FORMAT:
-		emit saveComplete(tr("Unsupported format."));
-		break;
+		return tr("Unsupported format.");
 	case DP_SAVE_RESULT_FLATTEN_ERROR:
-		emit saveComplete(tr("Couldn't merge the canvas into a flat image."));
-		break;
+		return tr("Couldn't merge the canvas into a flat image.");
     case DP_SAVE_RESULT_OPEN_ERROR:
-		emit saveComplete(tr("Couldn't open file for writing."));
-		break;
+		return tr("Couldn't open file for writing.");
     case DP_SAVE_RESULT_WRITE_ERROR:
-		emit saveComplete(tr("Save operation failed, but the file might have been partially written."));
-		break;
+		return tr("Save operation failed, but the file might have been partially written.");
+	case DP_SAVE_RESULT_INTERNAL_ERROR:
+		return tr("Internal error during saving.");
 	default:
-		emit saveComplete(tr("Unknown error."));
-		break;
+		return tr("Unknown error.");
 	}
 }

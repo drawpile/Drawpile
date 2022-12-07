@@ -19,37 +19,43 @@
 #ifndef ANIMATIONSAVERRUNNABLE_H
 #define ANIMATIONSAVERRUNNABLE_H
 
+extern "C" {
+#include <dpengine/save.h>
+}
+
 #include <QObject>
 #include <QRunnable>
 
 namespace canvas { class PaintEngine; }
-namespace rustpile { enum class AnimationExportMode; }
 
 /**
  * @brief A runnable for saving the canvas content as an animation in a background thread
  */
 class AnimationSaverRunnable : public QObject, public QRunnable
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    AnimationSaverRunnable(const canvas::PaintEngine *pe, rustpile::AnimationExportMode mode, const QString &filename, QObject *parent = nullptr);
+	using SaveFn = DP_SaveResult (*)(
+		DP_CanvasState *, const char *, DP_SaveAnimationProgressFn, void *);
 
-    void run() override;
+	AnimationSaverRunnable(const canvas::PaintEngine *pe, SaveFn saveFn, const QString &filename, QObject *parent = nullptr);
+
+	void run() override;
 
 public slots:
-    void cancelExport();
+	void cancelExport();
 
 signals:
-    void progress(int progress);
-    void saveComplete(const QString &error, const QString &errorDetail);
+	void progress(int progress);
+	void saveComplete(const QString &error);
 
 private:
-    friend bool animationSaverProgressCallback(void *ctx, float progress);
-    const canvas::PaintEngine *m_pe;
-    QString m_filename;
-    rustpile::AnimationExportMode m_mode;
+	const canvas::PaintEngine *m_pe;
+	QString m_filename;
+	SaveFn m_saveFn;
+	bool m_cancelled;
 
-    bool m_cancelled;
+	static bool onProgress(void *user, double progress);
 };
 
 #endif

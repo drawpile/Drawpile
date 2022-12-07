@@ -17,50 +17,38 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "animationsaverrunnable.h"
+#include "canvassaverrunnable.h"
 #include "canvas/paintengine.h"
 
-AnimationSaverRunnable::AnimationSaverRunnable(const canvas::PaintEngine *pe, rustpile::AnimationExportMode mode, const QString &filename, QObject *parent)
+AnimationSaverRunnable::AnimationSaverRunnable(const canvas::PaintEngine *pe, SaveFn saveFn, const QString &filename, QObject *parent)
 	: QObject(parent),
 	  m_pe(pe),
 	  m_filename(filename),
-	  m_mode(mode),
+	  m_saveFn(saveFn),
 	  m_cancelled(false)
 {
 }
 
-bool animationSaverProgressCallback(void *ctx, float progress) {
-	auto *a = static_cast<AnimationSaverRunnable*>(ctx);
-	if(a->m_cancelled)
-		return false;
-
-	emit a->progress(qRound(progress * 100));
-	return true;
-}
-
 void AnimationSaverRunnable::run()
 {
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	emit saveComplete(tr("Not implemented"), QString());
-	// const auto result = rustpile::paintengine_save_animation(
-	// 	m_pe->engine(),
-	// 	reinterpret_cast<const uint16_t*>(m_filename.constData()),
-	// 	m_filename.length(),
-	// 	m_mode,
-	// 	this,
-	// 	&animationSaverProgressCallback
-	// );
-
-	// QString msg;
-	// switch(result) {
-	// case rustpile::CanvasIoError::NoError: break;
-	// case rustpile::CanvasIoError::FileOpenError: msg = tr("Couldn't open file for writing"); break;
-	// default: msg = tr("An error occurred while saving image");
-	// }
-
-	// emit saveComplete(msg, QString());
+	QByteArray pathBytes = m_filename.toUtf8();
+	DP_SaveResult result = m_saveFn(
+		m_pe->canvasState().get(), pathBytes.constData(), onProgress, this);
+	emit saveComplete(CanvasSaverRunnable::saveResultToErrorString(result));
 }
 
 void AnimationSaverRunnable::cancelExport()
 {
 	m_cancelled = true;
+}
+
+bool AnimationSaverRunnable::onProgress(void *user, double progress)
+{
+	AnimationSaverRunnable *saver = static_cast<AnimationSaverRunnable*>(user);
+	if(saver->m_cancelled) {
+		return false;
+	} else {
+		emit saver->progress(qRound(progress * 100));
+		return true;
+	}
 }
