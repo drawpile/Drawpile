@@ -35,11 +35,13 @@ typedef LONG64 volatile DP_Atomic;
 #    define DP_atomic_add(X, VALUE) ((void)_InlineInterlockedAdd64((X), VALUE))
 #    define DP_atomic_inc(X)        ((void)InterlockedIncrement64((X)))
 #    define DP_atomic_dec(X)        (InterlockedDecrement64((X)) == 0)
-#    define DP_atomic_compare_exchange(X, EXPECTED, DESIRED)  \
-        (InterlockedCompareExchange64((X), (LONG64)(DESIRED), \
-                                      (LONG64)(*(EXPECTED)))  \
-         == (LONG64)(*(EXPECTED)))
 
+DP_INLINE bool DP_atomic_compare_exchange(DP_Atomic *x, int expected,
+                                          int desired)
+{
+    return InterlockedCompareExchange64(x, (LONG64)desired, (LONG64)expected)
+        == (LONG64)expected;
+}
 
 typedef void *volatile DP_AtomicPtr;
 
@@ -61,10 +63,13 @@ typedef atomic_int DP_Atomic;
 #    define DP_atomic_add(X, VALUE) ((void)atomic_fetch_add((X), VALUE))
 #    define DP_atomic_inc(X)        DP_atomic_add((X), 1)
 #    define DP_atomic_dec(X)        (atomic_fetch_sub((X), 1) == 1)
-#    define DP_atomic_compare_exchange(X, EXPECTED, DESIRED) \
-        atomic_compare_exchange_weak_explicit(               \
-            X, EXPECTED, DESIRED, memory_order_seq_cst, memory_order_relaxed)
 
+DP_INLINE bool DP_atomic_compare_exchange(DP_Atomic *x, int expected,
+                                          int desired)
+{
+    return atomic_compare_exchange_weak_explicit(
+        x, &expected, desired, memory_order_seq_cst, memory_order_relaxed);
+}
 
 typedef _Atomic(void *) DP_AtomicPtr;
 

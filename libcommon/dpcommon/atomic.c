@@ -33,8 +33,7 @@
 void DP_atomic_lock(DP_Atomic *x)
 {
     while (true) {
-        int expected = 0;
-        bool locked = DP_atomic_compare_exchange(x, &expected, 1);
+        bool locked = DP_atomic_compare_exchange(x, 0, 1);
         if (locked) {
             break;
         }
