@@ -296,9 +296,9 @@ void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 	m_paintEngine.setLayerVisibility(layerId, hidden);
 }
 
-void PaintEngine::setViewMode(DP_LayerViewMode mode, bool censor)
+void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 {
-	m_paintEngine.setViewMode(mode);
+	m_paintEngine.setViewMode(vm);
 	m_paintEngine.setRevealCensored(!censor);
 }
 
@@ -434,7 +434,7 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 
 	if(id <= 0) {
 		bool includeBackground = id == 0;
-		return cs.toFlatImageArea(area, includeBackground);
+		return cs.toFlatImage(includeBackground, true, &area);
 	} else {
 		return cs.layerToFlatImage(id, area);
 	}
@@ -442,25 +442,13 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 
 QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 {
-	/*
-	rustpile::Rectangle r;
-	if(rect.isEmpty()) {
-		const auto size = rustpile::paintengine_canvas_size(m_pe);
-		r = {0, 0, size.width, size.height};
-	} else {
-		r = {rect.x(), rect.y(), rect.width(), rect.height()};
+	drawdance::CanvasState cs = canvasState();
+	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
+	if (area.isEmpty()) {
+		return QImage{};
 	}
-
-	QImage img(r.w, r.h, QImage::Format_ARGB32_Premultiplied);
-
-	if(!rustpile::paintengine_get_frame_content(m_pe, index, r, img.bits())) {
-		return QImage();
-	}
-
-	return img;
-	*/
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	return QImage{};
+	DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs.get(), index);
+	return cs.toFlatImage(true, true, &area, &vmf);
 }
 
 

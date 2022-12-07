@@ -16,6 +16,7 @@ extern "C" {
 #include <QSize>
 
 struct DP_CanvasState;
+struct DP_ViewModeFilter;
 
 namespace drawdance {
 
@@ -53,11 +54,8 @@ public:
     int frameCount() const;
 
     QImage toFlatImage(
-        bool includeBackground = true, bool includeSublayers = true) const;
-
-    QImage toFlatImageArea(
-        const QRect &rect, bool includeBackground = true,
-        bool includeSublayers = true) const;
+        bool includeBackground = true, bool includeSublayers = true,
+        const QRect *rect = nullptr, const DP_ViewModeFilter *vmf = nullptr) const;
 
     QImage layerToFlatImage(int layerId, const QRect &rect) const;
 

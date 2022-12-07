@@ -121,7 +121,7 @@ public:
 	void setLayerVisibility(int layerId, bool hidden);
 
 	//! Set layerstack rendering mode (normal, solo, frame, onionskin)
-	void setViewMode(DP_LayerViewMode mode, bool censor);
+	void setViewMode(DP_ViewMode vm, bool censor);
 
 	//! Is the "censor" view mode flag set?
 	bool isCensored() const;

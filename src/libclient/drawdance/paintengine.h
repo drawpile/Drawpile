@@ -49,7 +49,7 @@ public:
 
     void setActiveFrameIndex(int frameIndex);
 
-    void setViewMode(DP_LayerViewMode mode);
+    void setViewMode(DP_ViewMode vm);
 
     bool revealCensored() const;
     void setRevealCensored(bool revealCensored);

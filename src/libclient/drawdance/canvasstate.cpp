@@ -1,4 +1,5 @@
 extern "C" {
+#include <dpcommon/geom.h>
 #include <dpengine/canvas_state.h>
 #include <dpengine/flood_fill.h>
 #include <dpengine/image.h>
@@ -132,23 +133,19 @@ int CanvasState::frameCount() const
     return DP_canvas_state_frame_count(m_data);
 }
 
-QImage CanvasState::toFlatImage(bool includeBackground, bool includeSublayers) const
+QImage CanvasState::toFlatImage(
+    bool includeBackground, bool includeSublayers,
+    const QRect *rect, const DP_ViewModeFilter *vmf) const
 {
     unsigned int flags =
         (includeBackground ? DP_FLAT_IMAGE_INCLUDE_BACKGROUND : 0) |
         (includeSublayers ? DP_FLAT_IMAGE_INCLUDE_SUBLAYERS : 0);
-    DP_Image *img = DP_canvas_state_to_flat_image(m_data, flags);
-    return wrapImage(img);
-}
-
-QImage CanvasState::toFlatImageArea(
-    const QRect &rect, bool includeBackground, bool includeSublayers) const
-{
-    unsigned int flags =
-        (includeBackground ? DP_FLAT_IMAGE_INCLUDE_BACKGROUND : 0) |
-        (includeSublayers ? DP_FLAT_IMAGE_INCLUDE_SUBLAYERS : 0);
-    DP_Rect area = DP_rect_make(rect.x(), rect.y(), rect.width(), rect.height());
-    DP_Image *img = DP_canvas_state_area_to_flat_image(m_data, area, flags);
+    DP_Rect area;
+    if(rect) {
+        area = DP_rect_make(rect->x(), rect->y(), rect->width(), rect->height());
+    }
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        m_data, flags, rect ? &area : nullptr, vmf);
     return wrapImage(img);
 }
 

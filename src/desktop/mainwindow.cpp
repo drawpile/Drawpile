@@ -729,18 +729,15 @@ void MainWindow::updateLayerViewMode()
 
 	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
-	DP_LayerViewMode mode = DP_LAYER_VIEW_MODE_NORMAL;
-
+	DP_ViewMode mode = DP_VIEW_MODE_NORMAL;
 	if(getAction("layerviewsolo")->isChecked()) {
-		mode = DP_LAYER_VIEW_MODE_SOLO;
-
+		mode = DP_VIEW_MODE_LAYER;
 	} else if(getAction("layerviewframe")->isChecked()) {
-		if(getAction("layerviewonionskin")->isChecked())
-			mode = DP_LAYER_VIEW_MODE_ONION_SKIN;
-		else
-			mode = DP_LAYER_VIEW_MODE_FRAME;
+		mode = DP_VIEW_MODE_FRAME;
+		if(getAction("layerviewonionskin")->isChecked()) {
+			qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+		}
 	}
-
 
 	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
 	updateLockWidget();

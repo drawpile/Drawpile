@@ -58,9 +58,9 @@ void PaintEngine::setActiveFrameIndex(int frameIndex)
     DP_paint_engine_active_frame_index_set(m_data, frameIndex);
 }
 
-void PaintEngine::setViewMode(DP_LayerViewMode mode)
+void PaintEngine::setViewMode(DP_ViewMode vm)
 {
-    DP_paint_engine_view_mode_set(m_data, mode);
+    DP_paint_engine_view_mode_set(m_data, vm);
 }
 
 bool PaintEngine::revealCensored() const
