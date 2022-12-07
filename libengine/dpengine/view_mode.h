@@ -47,6 +47,11 @@ typedef struct DP_ViewModeFilterResult {
     DP_ViewModeFilter child_vmf;
 } DP_ViewModeFilterResult;
 
+DP_ViewModeFilter DP_view_mode_filter_make_default(void);
+
+DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_CanvasState *cs,
+                                                 int frame_index);
+
 DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewMode vm, DP_CanvasState *cs,
                                            int layer_id, int frame_index);
 

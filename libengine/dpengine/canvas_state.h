@@ -23,7 +23,6 @@
 #define DPENGINE_CANVAS_STATE_H
 #include "annotation_list.h"
 #include <dpcommon/common.h>
-#include <dpcommon/geom.h>
 
 typedef struct DP_AnnotationList DP_AnnotationList;
 typedef struct DP_CanvasDiff DP_CanvasDiff;
@@ -34,8 +33,10 @@ typedef struct DP_LayerList DP_LayerList;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_LayerRoutes DP_LayerRoutes;
 typedef struct DP_Message DP_Message;
+typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
 typedef struct DP_Timeline DP_Timeline;
+typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 
 #define DP_FLAT_IMAGE_INCLUDE_BACKGROUND (1 << 0)
@@ -149,17 +150,19 @@ unsigned int DP_canvas_state_pick_context_id(DP_CanvasState *cs, int x, int y);
 DP_TransientLayerContent *DP_canvas_state_to_flat_layer(DP_CanvasState *cs,
                                                         unsigned int flags);
 
-DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags);
+DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
+                                        const DP_Rect *area_or_null,
+                                        const DP_ViewModeFilter *vmf_or_null);
 
-DP_Image *DP_canvas_state_area_to_flat_image(DP_CanvasState *cs, DP_Rect area,
-                                             unsigned int flags);
+DP_TransientTile *
+DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index,
+                             unsigned int flags,
+                             const DP_ViewModeFilter *vmf_or_null);
 
-DP_TransientTile *DP_canvas_state_flatten_tile(DP_CanvasState *cs,
-                                               int tile_index,
-                                               unsigned int flags);
-
-DP_TransientTile *DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x,
-                                                  int y, unsigned int flags);
+DP_TransientTile *
+DP_canvas_state_flatten_tile_at(DP_CanvasState *cs, int x, int y,
+                                unsigned int flags,
+                                const DP_ViewModeFilter *vmf_or_null);
 
 void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
                           DP_CanvasDiff *diff);

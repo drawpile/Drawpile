@@ -25,6 +25,7 @@
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "tile.h"
+#include "view_mode.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -299,7 +300,8 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
 DP_TransientTile *
 DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
                                int tile_index, DP_TransientTile *tt_or_null,
-                               uint16_t parent_opacity, bool include_sublayers)
+                               uint16_t parent_opacity, bool include_sublayers,
+                               const DP_ViewModeFilter *vmf)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -307,13 +309,25 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lg->width, lg->height));
     DP_ASSERT(parent_opacity <= DP_BIT15);
+    DP_ASSERT(vmf);
+
+    if (parent_opacity == 0 || !DP_layer_props_visible(lp)) {
+        return tt_or_null;
+    }
+
+    DP_ViewModeFilterResult vmfr = DP_view_mode_filter_apply(vmf, lp);
+    if (vmfr.hidden_by_view_mode) {
+        return tt_or_null;
+    }
+
     DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
     uint16_t opacity = DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
     if (DP_layer_props_isolated(lp)) {
         // Flatten the group into a temporary layer with full opacity, then
         // merge the result with the group's blend mode and opacity.
         DP_TransientTile *gtt = DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, NULL, DP_BIT15, include_sublayers);
+            lg->children, lpl, tile_index, NULL, DP_BIT15, include_sublayers,
+            &vmfr.child_vmf);
         if (gtt) {
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null, (DP_Tile *)gtt, opacity,
@@ -328,9 +342,9 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
     else {
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
-        return DP_layer_list_flatten_tile_to(lg->children, lpl, tile_index,
-                                             tt_or_null, opacity,
-                                             include_sublayers);
+        return DP_layer_list_flatten_tile_to(
+            lg->children, lpl, tile_index, tt_or_null, opacity,
+            include_sublayers, &vmfr.child_vmf);
     }
 }
 

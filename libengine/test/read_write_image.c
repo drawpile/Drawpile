@@ -65,8 +65,8 @@ static DP_CanvasState *play_recording(TEST_PARAMS, const char *path)
 static DP_Image *render_recording(TEST_PARAMS, const char *path)
 {
     DP_CanvasState *cs = play_recording(TEST_ARGS, path);
-    DP_Image *img =
-        DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND);
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
     FATAL(NOT_NULL_OK(img, "rendered image from playing back %s", path));
     DP_canvas_state_decref(cs);
     return img;

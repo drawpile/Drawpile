@@ -260,8 +260,8 @@ int main(int argc, char **argv)
     DP_binary_reader_free(reader);
 
     DP_CanvasState *cs = DP_canvas_history_compare_and_get(ch, NULL, NULL);
-    DP_Image *img =
-        DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND);
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
     DP_canvas_state_decref(cs);
 
     DP_draw_context_free(dc);

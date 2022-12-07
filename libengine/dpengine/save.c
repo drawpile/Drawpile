@@ -262,7 +262,7 @@ static bool ora_store_merged(DP_SaveOraContext *c, DP_CanvasState *cs,
                              DP_DrawContext *dc)
 {
     DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS);
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
     if (!img) {
         return false;
     }
@@ -589,7 +589,7 @@ static DP_SaveResult save_flat_image(DP_CanvasState *cs, const char *path,
                                                               DP_Output *))
 {
     DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS);
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
     if (!img) {
         DP_warn("Save: %s", DP_error());
         return DP_SAVE_RESULT_FLATTEN_ERROR;

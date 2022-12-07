@@ -64,8 +64,8 @@ static void render_recording(TEST_PARAMS)
     DP_canvas_history_free(ch);
     DP_binary_reader_free(reader);
 
-    DP_Image *img =
-        DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND);
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
     FATAL(NOT_NULL_OK(img, "got flat image from canvas state"));
     DP_canvas_state_decref(cs);
 

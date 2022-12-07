@@ -90,6 +90,20 @@ static DP_ViewModeFilter build_frame_automatic(DP_CanvasState *cs,
     }
 }
 
+DP_ViewModeFilter DP_view_mode_filter_make_default(void)
+{
+    return make_normal();
+}
+
+DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_CanvasState *cs,
+                                                 int frame_index)
+{
+    DP_ASSERT(cs);
+    return DP_canvas_state_use_timeline(cs)
+             ? build_frame_manual(cs, frame_index)
+             : build_frame_automatic(cs, frame_index);
+}
+
 DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewMode vm, DP_CanvasState *cs,
                                            int layer_id, int frame_index)
 {
@@ -99,10 +113,7 @@ DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewMode vm, DP_CanvasState *cs,
     case DP_VIEW_MODE_LAYER:
         return make_layer(layer_id);
     case DP_VIEW_MODE_FRAME:
-        DP_ASSERT(cs);
-        return DP_canvas_state_use_timeline(cs)
-                 ? build_frame_manual(cs, frame_index)
-                 : build_frame_automatic(cs, frame_index);
+        return DP_view_mode_filter_make_frame(cs, frame_index);
     default:
         DP_UNREACHABLE();
     }

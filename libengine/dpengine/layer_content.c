@@ -29,6 +29,7 @@
 #include "paint.h"
 #include "tile.h"
 #include "tile_iterator.h"
+#include "view_mode.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -662,13 +663,15 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
     }
     else if (t) {
         DP_TransientTile *tt = DP_transient_tile_new(t, 0);
+        DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
         DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
-                                      DP_BIT15, false);
+                                      DP_BIT15, false, &vmf);
         return DP_transient_tile_persist(tt);
     }
     else {
+        DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
         DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
-            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false);
+            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false, &vmf);
         return tt_or_null ? DP_transient_tile_persist(tt_or_null) : NULL;
     }
 }
@@ -1707,8 +1710,9 @@ DP_transient_layer_content_render_tile(DP_TransientLayerContent *tlc,
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(tlc->width, tlc->height));
     DP_tile_decref_nullable(tlc->elements[tile_index].tile);
+    DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
     DP_TransientTile *tt = DP_canvas_state_flatten_tile(
-        cs, tile_index, DP_FLAT_IMAGE_RENDER_FLAGS);
+        cs, tile_index, DP_FLAT_IMAGE_RENDER_FLAGS, &vmf);
     tlc->elements[tile_index].transient_tile = tt;
     return tt;
 }

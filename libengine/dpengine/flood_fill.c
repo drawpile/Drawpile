@@ -269,8 +269,7 @@ DP_Image *DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_Pixel8 fill_color,
     DP_LayerContent *lc;
     if (sample_merged) {
         lc = (DP_LayerContent *)DP_canvas_state_to_flat_layer(
-            cs,
-            DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS);
+            cs, DP_FLAT_IMAGE_RENDER_FLAGS);
     }
     else {
         DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);

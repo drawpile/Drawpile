@@ -497,9 +497,8 @@ DP_Image *DP_brush_preview_to_image(DP_BrushPreview *bp)
 {
     DP_ASSERT(bp);
     DP_CanvasState *cs = bp->cs;
-    return cs ? DP_canvas_state_to_flat_image(
-               cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND
-                       | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS)
+    return cs ? DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_RENDER_FLAGS,
+                                              NULL, NULL)
               : NULL;
 }
 
@@ -563,7 +562,7 @@ DP_Image *DP_classic_brush_preview_dab(const DP_ClassicBrush *cb,
         cs, dc, get_preview_draw_dab_message(cb, width, height, color));
 
     DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS);
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
     DP_canvas_state_decref(cs);
     return img;
 }

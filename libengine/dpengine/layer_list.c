@@ -25,6 +25,7 @@
 #include "layer_group.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "view_mode.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -378,36 +379,43 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
     }
 }
 
+static bool should_flatten_layer(DP_LayerProps *lp, uint16_t parent_opacity,
+                                 const DP_ViewModeFilter *vmf)
+{
+    return DP_layer_props_visible(lp) && parent_opacity != 0
+        && !DP_view_mode_filter_apply(vmf, lp).hidden_by_view_mode;
+}
+
 DP_TransientTile *
 DP_layer_list_flatten_tile_to(DP_LayerList *ll, DP_LayerPropsList *lpl,
                               int tile_index, DP_TransientTile *tt_or_null,
-                              uint16_t parent_opacity, bool include_sublayers)
+                              uint16_t parent_opacity, bool include_sublayers,
+                              const DP_ViewModeFilter *vmf)
 {
     DP_ASSERT(ll);
     DP_ASSERT(DP_atomic_get(&ll->refcount) > 0);
     DP_ASSERT(lpl);
     DP_ASSERT(DP_layer_props_list_refcount(lpl) > 0);
     DP_ASSERT(ll->count == DP_layer_props_list_count(lpl));
+    DP_ASSERT(vmf);
     int count = ll->count;
     DP_TransientTile *tt = tt_or_null;
     for (int i = 0; i < count; ++i) {
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        if (DP_layer_props_visible(lp)) {
-            DP_LayerListEntry *lle = &ll->elements[i];
-            if (lle->is_group) {
-                tt = DP_layer_group_flatten_tile_to(lle->group, lp, tile_index,
-                                                    tt, parent_opacity,
-                                                    include_sublayers);
-            }
-            else {
-                uint16_t opacity =
-                    DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
-                int blend_mode = DP_layer_props_blend_mode(lp);
-                bool censored = DP_layer_props_censored(lp);
-                tt = DP_layer_content_flatten_tile_to(
-                    lle->content, tile_index, tt, opacity, blend_mode, censored,
-                    include_sublayers);
-            }
+        DP_LayerListEntry *lle = &ll->elements[i];
+        if (lle->is_group) {
+            tt = DP_layer_group_flatten_tile_to(lle->group, lp, tile_index, tt,
+                                                parent_opacity,
+                                                include_sublayers, vmf);
+        }
+        else if (should_flatten_layer(lp, parent_opacity, vmf)) {
+            uint16_t opacity =
+                DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
+            int blend_mode = DP_layer_props_blend_mode(lp);
+            bool censored = DP_layer_props_censored(lp);
+            tt = DP_layer_content_flatten_tile_to(lle->content, tile_index, tt,
+                                                  opacity, blend_mode, censored,
+                                                  include_sublayers);
         }
     }
     return tt;
