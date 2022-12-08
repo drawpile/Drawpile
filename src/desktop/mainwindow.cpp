@@ -1221,15 +1221,14 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 void MainWindow::exportGifAnimation()
 {
-	const QString path = QFileDialog::getSaveFileName(
+	QString path = QFileDialog::getSaveFileName(
 		this,
 		tr("Export Animated GIF"),
 		getLastPath(),
 		"GIF (*.gif)"
 	);
 
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	// exportAnimation(path, rustpile::AnimationExportMode::Gif);
+	exportAnimation(path, DP_save_animation_gif);
 }
 
 void MainWindow::exportAnimationFrames()
