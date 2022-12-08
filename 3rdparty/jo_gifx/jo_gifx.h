@@ -25,11 +25,9 @@
  * writer by Jon Olick, placed into the public domain: http://jonolick.com
  *
  * It has been modified to support big endian machines, bgra color instead of
- * argb, output-agnostic functions, error checking, quantizing the palette
- * colors separately instead of using the first frame and cumulative frames
- * with identical pixels between them getting turned transparent. It also
- * doesn't use large stack structures and doesn't allocate and free memory for
- * each frame, instead it does a single allocation to hold everything.
+ * argb, output-agnostic functions and error checking. It also doesn't use large
+ * stack structures and doesn't allocate and free memory for each frame, instead
+ * it does a single allocation to hold everything.
  */
 #ifndef JO_GIFX_H
 #define JO_GIFX_H
@@ -47,10 +45,6 @@ typedef bool (*jo_gifx_write_fn)(void *user, const void *buffer, size_t size);
 // or NULL if writing the header failed.
 jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
                          uint16_t height, int repeat, int numColors);
-
-// Use the given pixels (same number as in a frame) to generate a palette. Must
-// be called before outputting any frames and can only be called once.
-void jo_gifx_quantize_colors(jo_gifx_t *gif, uint32_t *rgba);
 
 // Appends a frame with the given pixels, delayCsec is the amount of time the
 // frame persists in centiseconds (hundredth of a second, not milliseconds.)

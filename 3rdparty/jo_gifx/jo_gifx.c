@@ -25,11 +25,9 @@
  * writer by Jon Olick, placed into the public domain: http://jonolick.com
  *
  * It has been modified to support big endian machines, bgra color instead of
- * argb, output-agnostic functions, error checking, quantizing the palette
- * colors separately instead of using the first frame and cumulative frames
- * with identical pixels between them getting turned transparent. It also
- * doesn't use large stack structures and doesn't allocate and free memory for
- * each frame, instead it does a single allocation to hold everything.
+ * argb, output-agnostic functions and error checking. It also doesn't use large
+ * stack structures and doesn't allocate and free memory for each frame, instead
+ * it does a single allocation to hold everything.
  */
 #include "jo_gifx.h"
 #include <math.h>
@@ -333,7 +331,7 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
 
     numColors = numColors > 255 ? 255 : numColors < 2 ? 2 : numColors;
     size_t size = width * height;
-    jo_gifx_t *gif = calloc(1, sizeof(*gif) + size * 6);
+    jo_gifx_t *gif = calloc(1, sizeof(*gif) + size * 5);
     if (!gif) {
         return NULL;
     }
@@ -347,12 +345,6 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
     return gif;
 }
 
-void jo_gifx_quantize_colors(jo_gifx_t *gif, uint32_t *rgba)
-{
-    size_t size = (size_t)gif->width * (size_t)gif->height;
-    jo_gifx_quantize(rgba, size * 4, 1, gif->palette, gif->numColors);
-}
-
 bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
                    uint32_t *rgba, uint16_t delayCsec)
 {
@@ -360,10 +352,12 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
     uint16_t height = gif->height;
     size_t size = (size_t)width * (size_t)height;
 
-    const unsigned char *palette = gif->palette;
-    unsigned char *indexedPixels = gif->pixels + size * (gif->frame % 2);
+    unsigned char *palette = gif->palette;
+    jo_gifx_quantize(rgba, size * 4, 1, palette, gif->numColors);
+
+    unsigned char *indexedPixels = gif->pixels;
     {
-        unsigned char *ditheredPixels = gif->pixels + size * 2;
+        unsigned char *ditheredPixels = gif->pixels + size;
         for (size_t i = 0; i < size; ++i) {
             uint32_t color = rgba[i];
             ditheredPixels[i * 4 + 0] = (color >> 16) & 0xff;
@@ -424,9 +418,7 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
             }
         }
     }
-    unsigned char *outPixels;
     if (gif->frame == 0) {
-        outPixels = indexedPixels;
         // Global Color Table
         write_fn(user, palette, 3 * (1 << (gif->palSize + 1)));
         if (gif->repeat >= 0 && gif->repeat <= UINT16_MAX) {
@@ -441,22 +433,13 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
             write_fn(user, extension_block, sizeof(extension_block));
         }
     }
-    else {
-        // Pixels that are the same as the previous frame are set to transparent
-        unsigned char *prevPixels = gif->pixels + size * ((gif->frame + 1) % 2);
-        outPixels = gif->pixels + size * 2;
-        for (size_t i = 0; i < size; ++i) {
-            unsigned char p = indexedPixels[i];
-            outPixels[i] = p == prevPixels[i] ? 0xff : p;
-        }
-    }
     unsigned char image_header[] = {
         // Graphic Control Extension
-        0x21, 0xf9, 0x04, 0x01,
+        0x21, 0xf9, 0x04, 0x00,
         // Delay in centiseconds, 16 bit little-endian
         delayCsec & 0xff, (delayCsec >> 8) & 0xff,
-        // Transparent pixel index (255), end of block
-        0xff, 0x00,
+        // Transparent pixel index (0, not used), end of block
+        0x00, 0x00,
         // Image Descriptor header, x, y (always top-left, so zero)
         0x2c, 0x00, 0x00, 0x00, 0x00,
         // Width in 16 bit little-endian
@@ -464,13 +447,18 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
         // Height in 16 bit little-endian
         height & 0xff, (height >> 8) & 0xff,
         // Local palette size (zero, because we don't use local palettes)
-        0x00};
+        gif->frame == 0 ? 0x00 : 0x80 | gif->palSize};
     if (!write_fn(user, image_header, sizeof(image_header))) {
         return false;
     }
+    if (gif->frame != 0) {
+        if (!write_fn(user, palette, 3 * (1 << (gif->palSize + 1)))) {
+            return false;
+        }
+    }
     // Start of image, compressed pixels, block terminator.
     bool ok = write_fn(user, (unsigned char[]){0x08}, 1)
-           && jo_gifx_lzw_encode(write_fn, user, gif, outPixels, size)
+           && jo_gifx_lzw_encode(write_fn, user, gif, indexedPixels, size)
            && write_fn(user, (unsigned char[]){0x00}, 1);
     ++gif->frame;
     return ok;

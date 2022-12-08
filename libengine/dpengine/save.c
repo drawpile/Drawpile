@@ -792,17 +792,6 @@ static bool write_gif(void *user, const void *buffer, size_t size)
     return DP_output_write(output, buffer, size);
 }
 
-static void quantize_gif_palette(DP_CanvasState *cs, jo_gifx_t *gif)
-{
-    // Create a palette from the merged image. This isn't spectacularly
-    // accurate, quantizing over all frames would probably be better, but
-    // also immensely slow. I'll leave it like this for now though.
-    DP_Image *img = DP_canvas_state_to_flat_image(
-        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
-    jo_gifx_quantize_colors(gif, (uint32_t *)DP_image_pixels(img));
-    DP_image_free(img);
-}
-
 static double get_gif_centiseconds_per_frame(DP_CanvasState *cs)
 {
     DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
@@ -814,8 +803,8 @@ static double get_gif_centiseconds_per_frame(DP_CanvasState *cs)
 static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
                                 void *user, int frames_done, int frame_count)
 {
-    double part = DP_int_to_double(frames_done + 1);
-    double total = DP_int_to_double(frame_count + 1);
+    double part = DP_int_to_double(frames_done);
+    double total = DP_int_to_double(frame_count);
     return !progress_fn || progress_fn(user, part / total);
 }
 
@@ -844,8 +833,6 @@ DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
         DP_output_free(output);
         return DP_SAVE_RESULT_OPEN_ERROR;
     }
-
-    quantize_gif_palette(cs, gif);
 
     int frame_count = DP_canvas_state_frame_count(cs);
     if (!report_gif_progress(progress_fn, user, 0, frame_count)) {
