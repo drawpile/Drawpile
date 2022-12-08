@@ -1219,24 +1219,45 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 }
 
+static QString withGifSuffix(QString path)
+{
+	if(!path.isEmpty()) {
+		QFileInfo info{path};
+		QString suffix = info.suffix();
+		if(suffix.compare("gif", Qt::CaseInsensitive) != 0) {
+			path.chop(suffix.length());
+			path.append(path.endsWith(".") ? "gif" : ".gif");
+		}
+	}
+	return path;
+}
+
 void MainWindow::exportGifAnimation()
 {
 	QString path = QFileDialog::getSaveFileName(
 		this,
 		tr("Export Animated GIF"),
-		getLastPath(),
+		withGifSuffix(getLastPath()),
 		"GIF (*.gif)"
 	);
 
-	exportAnimation(path, DP_save_animation_gif);
+	exportAnimation(withGifSuffix(path), DP_save_animation_gif);
 }
 
 void MainWindow::exportAnimationFrames()
 {
+	QString lastPath = getLastPath();
+	if(!lastPath.isEmpty()) {
+		QFileInfo info{lastPath};
+		if(!info.isDir()) {
+			lastPath = info.dir().path();
+		}
+	}
+
 	const QString path = QFileDialog::getExistingDirectory(
 		this,
 		tr("Choose folder to save frames in"),
-		getLastPath()
+		lastPath
 	);
 
 	exportAnimation(path, DP_save_animation_frames);
