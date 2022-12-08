@@ -57,5 +57,9 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
                                        DP_SaveAnimationProgressFn progress_fn,
                                        void *user);
 
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
+                                    DP_SaveAnimationProgressFn progress_fn,
+                                    void *user);
+
 
 #endif

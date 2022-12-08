@@ -45,6 +45,9 @@
 #include <dpcommon/worker.h>
 #include <dpmsg/blend_mode.h>
 #include <ctype.h>
+#include <jo_gifx.h>
+#include <limits.h>
+#include <math.h>
 #include <uthash_inc.h>
 
 
@@ -780,4 +783,107 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
     DP_worker_free_join(worker);
     DP_mutex_free(progress_mutex);
     return (DP_SaveResult)DP_atomic_get(&c.result);
+}
+
+
+static bool write_gif(void *user, const void *buffer, size_t size)
+{
+    DP_Output *output = user;
+    return DP_output_write(output, buffer, size);
+}
+
+static void quantize_gif_palette(DP_CanvasState *cs, jo_gifx_t *gif)
+{
+    // Create a palette from the merged image. This isn't spectacularly
+    // accurate, quantizing over all frames would probably be better, but
+    // also immensely slow. I'll leave it like this for now though.
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
+    jo_gifx_quantize_colors(gif, (uint32_t *)DP_image_pixels(img));
+    DP_image_free(img);
+}
+
+static double get_gif_centiseconds_per_frame(DP_CanvasState *cs)
+{
+    DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
+    int raw_framerate = DP_document_metadata_framerate(dm);
+    int framerate = DP_min_int(DP_max_int(raw_framerate, 1), 100);
+    return 100.0 / DP_int_to_double(framerate);
+}
+
+static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
+                                void *user, int frames_done, int frame_count)
+{
+    double part = DP_int_to_double(frames_done + 1);
+    double total = DP_int_to_double(frame_count + 1);
+    return !progress_fn || progress_fn(user, part / total);
+}
+
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
+                                    DP_SaveAnimationProgressFn progress_fn,
+                                    void *user)
+{
+    if (!cs || !path) {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+
+    int width = DP_canvas_state_width(cs);
+    int height = DP_canvas_state_height(cs);
+    if (width > UINT16_MAX || height > UINT16_MAX) {
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    DP_Output *output = DP_file_output_new_from_path(path);
+    if (!output) {
+        return DP_SAVE_RESULT_OPEN_ERROR;
+    }
+
+    jo_gifx_t *gif = jo_gifx_start(write_gif, output, DP_int_to_uint16(width),
+                                   DP_int_to_uint16(height), 0, 255);
+    if (!gif) {
+        DP_output_free(output);
+        return DP_SAVE_RESULT_OPEN_ERROR;
+    }
+
+    quantize_gif_palette(cs, gif);
+
+    int frame_count = DP_canvas_state_frame_count(cs);
+    if (!report_gif_progress(progress_fn, user, 0, frame_count)) {
+        jo_gifx_abort(gif);
+        DP_output_free(output);
+        return DP_SAVE_RESULT_CANCEL;
+    }
+
+    double centiseconds_per_frame = get_gif_centiseconds_per_frame(cs);
+    double delay_frac = 0.0;
+    for (int i = 0; i < frame_count; ++i) {
+        DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs, i);
+        DP_Image *img = DP_canvas_state_to_flat_image(
+            cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, &vmf);
+        double delay_floored = floor(centiseconds_per_frame + delay_frac);
+        delay_frac = centiseconds_per_frame - delay_floored;
+        bool frame_ok = jo_gifx_frame(write_gif, output, gif,
+                                      (uint32_t *)DP_image_pixels(img),
+                                      DP_double_to_uint16(delay_floored));
+        DP_image_free(img);
+        if (!frame_ok) {
+            jo_gifx_abort(gif);
+            DP_output_free(output);
+            return DP_SAVE_RESULT_WRITE_ERROR;
+        }
+
+        if (!report_gif_progress(progress_fn, user, i + 1, frame_count)) {
+            jo_gifx_abort(gif);
+            DP_output_free(output);
+            return DP_SAVE_RESULT_CANCEL;
+        }
+    }
+
+    if (!jo_gifx_end(write_gif, output, gif) || !DP_output_flush(output)) {
+        DP_output_free(output);
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+
+    DP_output_free(output);
+    return DP_SAVE_RESULT_SUCCESS;
 }
