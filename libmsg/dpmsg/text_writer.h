@@ -27,13 +27,9 @@
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
 
-#define DP_RETURN_UNLESS(X) \
-    do {                    \
-        if (!(X)) {         \
-            return false;   \
-        }                   \
-    } while (0)
 
+#define DP_TEXT_WRITER_RAW_PRINT_LITERAL(WRITER, LITERAL) \
+    DP_text_writer_raw_write((WRITER), "" LITERAL, strlen(LITERAL))
 
 typedef struct DP_TextWriter DP_TextWriter;
 
@@ -48,7 +44,7 @@ bool DP_text_writer_write_header(DP_TextWriter *writer,
 
 bool DP_text_writer_start_message(DP_TextWriter *writer, DP_Message *msg);
 
-bool DP_text_writer_finish_message(DP_TextWriter *writer, DP_Message *msg);
+bool DP_text_writer_finish_message(DP_TextWriter *writer);
 
 bool DP_text_writer_write_bool(DP_TextWriter *writer, const char *key,
                                bool value) DP_MUST_CHECK;
@@ -57,10 +53,10 @@ bool DP_text_writer_write_int(DP_TextWriter *writer, const char *key,
                               int value) DP_MUST_CHECK;
 
 bool DP_text_writer_write_uint(DP_TextWriter *writer, const char *key,
-                               unsigned int value) DP_MUST_CHECK;
+                               unsigned int value, bool hex) DP_MUST_CHECK;
 
 bool DP_text_writer_write_decimal(DP_TextWriter *writer, const char *key,
-                                  unsigned int value) DP_MUST_CHECK;
+                                  double value) DP_MUST_CHECK;
 
 bool DP_text_writer_write_string(DP_TextWriter *writer, const char *key,
                                  const char *value) DP_MUST_CHECK;
@@ -76,25 +72,26 @@ bool DP_text_writer_write_base64(DP_TextWriter *writer, const char *key,
                                  int length) DP_MUST_CHECK;
 
 bool DP_text_writer_write_flags(DP_TextWriter *writer, const char *key,
-                                unsigned int value, ...) DP_MUST_CHECK;
-
-bool DP_text_writer_write_id(DP_TextWriter *writer, const char *key,
-                             int value) DP_MUST_CHECK;
-
-bool DP_text_writer_write_id_list(DP_TextWriter *writer, const char *key,
-                                  const int *value, int count) DP_MUST_CHECK;
-
-bool DP_text_writer_write_uint_list(DP_TextWriter *writer, const char *key,
-                                    const unsigned int *value,
-                                    int count) DP_MUST_CHECK;
+                                unsigned int value, int count,
+                                const char **names,
+                                unsigned int *values) DP_MUST_CHECK;
 
 bool DP_text_writer_write_uint8_list(DP_TextWriter *writer, const char *key,
                                      const uint8_t *value,
                                      int count) DP_MUST_CHECK;
 
 bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
-                                      const uint16_t *value,
-                                      int count) DP_MUST_CHECK;
+                                      const uint16_t *value, int count,
+                                      bool hex) DP_MUST_CHECK;
+
+bool DP_text_writer_write_subfield_int(DP_TextWriter *writer,
+                                       int value) DP_MUST_CHECK;
+
+bool DP_text_writer_write_subfield_uint(DP_TextWriter *writer,
+                                        unsigned int value) DP_MUST_CHECK;
+
+bool DP_text_writer_write_subfield_decimal(DP_TextWriter *writer,
+                                           double value) DP_MUST_CHECK;
 
 
 bool DP_text_writer_raw_write(DP_TextWriter *writer, const char *buffer,

@@ -708,8 +708,8 @@ static bool msg_disconnect_write_payload_text(DP_Message *msg,
                                               DP_TextWriter *writer)
 {
     DP_MsgDisconnect *md = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "reason", md->reason)
-        && DP_text_writer_write_string(writer, "message", md->message);
+    return DP_text_writer_write_string(writer, "message", md->message)
+        && DP_text_writer_write_uint(writer, "reason", md->reason, false);
 }
 
 static bool msg_disconnect_equals(DP_Message *DP_RESTRICT msg,
@@ -907,12 +907,16 @@ static size_t msg_join_serialize_payload(DP_Message *msg, unsigned char *data)
 static bool msg_join_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
     DP_MsgJoin *mj = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "flags", mj->flags)
-        && DP_text_writer_write_string(writer, "name",
-                                       ((char *)mj->name_avatar))
-        && DP_text_writer_write_base64(writer, "avatar",
+    return DP_text_writer_write_base64(writer, "avatar",
                                        mj->name_avatar + mj->name_len + 1,
-                                       mj->avatar_size);
+                                       mj->avatar_size)
+        && DP_text_writer_write_flags(writer, "flags", mj->flags, 3,
+                                      (const char *[]){"auth", "mod", "bot"},
+                                      (unsigned int[]){DP_MSG_JOIN_FLAGS_AUTH,
+                                                       DP_MSG_JOIN_FLAGS_MOD,
+                                                       DP_MSG_JOIN_FLAGS_BOT})
+        && DP_text_writer_write_string(writer, "name",
+                                       ((char *)mj->name_avatar));
 }
 
 static bool msg_join_equals(DP_Message *DP_RESTRICT msg,
@@ -1203,9 +1207,16 @@ static size_t msg_chat_serialize_payload(DP_Message *msg, unsigned char *data)
 static bool msg_chat_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
     DP_MsgChat *mc = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "tflags", mc->tflags)
-        && DP_text_writer_write_uint(writer, "oflags", mc->oflags)
-        && DP_text_writer_write_string(writer, "message", mc->message);
+    return DP_text_writer_write_string(writer, "message", mc->message)
+        && DP_text_writer_write_flags(
+               writer, "oflags", mc->oflags, 4,
+               (const char *[]){"shout", "action", "pin", "alert"},
+               (unsigned int[]){
+                   DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION,
+                   DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT})
+        && DP_text_writer_write_flags(
+               writer, "tflags", mc->tflags, 1, (const char *[]){"bypass"},
+               (unsigned int[]){DP_MSG_CHAT_TFLAGS_BYPASS});
 }
 
 static bool msg_chat_equals(DP_Message *DP_RESTRICT msg,
@@ -1446,9 +1457,9 @@ static bool msg_private_chat_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
     DP_MsgPrivateChat *mpc = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "target", mpc->target)
-        && DP_text_writer_write_uint(writer, "oflags", mpc->oflags)
-        && DP_text_writer_write_string(writer, "message", mpc->message);
+    return DP_text_writer_write_string(writer, "message", mpc->message)
+        && DP_text_writer_write_uint(writer, "oflags", mpc->oflags, false)
+        && DP_text_writer_write_uint(writer, "target", mpc->target, false);
 }
 
 static bool msg_private_chat_equals(DP_Message *DP_RESTRICT msg,
@@ -1561,7 +1572,7 @@ static bool msg_interval_write_payload_text(DP_Message *msg,
                                             DP_TextWriter *writer)
 {
     DP_MsgInterval *mi = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "msecs", mi->msecs);
+    return DP_text_writer_write_uint(writer, "msecs", mi->msecs, false);
 }
 
 static bool msg_interval_equals(DP_Message *DP_RESTRICT msg,
@@ -1644,7 +1655,8 @@ static bool msg_laser_trail_write_payload_text(DP_Message *msg,
 {
     DP_MsgLaserTrail *mlt = DP_message_internal(msg);
     return DP_text_writer_write_argb_color(writer, "color", mlt->color)
-        && DP_text_writer_write_uint(writer, "persistence", mlt->persistence);
+        && DP_text_writer_write_uint(writer, "persistence", mlt->persistence,
+                                     false);
 }
 
 static bool msg_laser_trail_equals(DP_Message *DP_RESTRICT msg,
@@ -2027,10 +2039,10 @@ static bool msg_layer_acl_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
     DP_MsgLayerAcl *mla = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mla->id)
-        && DP_text_writer_write_uint(writer, "flags", mla->flags)
-        && DP_text_writer_write_uint8_list(writer, "exclusive", mla->exclusive,
-                                           mla->exclusive_count);
+    return DP_text_writer_write_uint8_list(writer, "exclusive", mla->exclusive,
+                                           mla->exclusive_count)
+        && DP_text_writer_write_uint(writer, "flags", mla->flags, false)
+        && DP_text_writer_write_uint(writer, "id", mla->id, false);
 }
 
 static bool msg_layer_acl_equals(DP_Message *DP_RESTRICT msg,
@@ -2257,7 +2269,7 @@ static bool msg_default_layer_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
     DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mdl->id);
+    return DP_text_writer_write_uint(writer, "id", mdl->id, true);
 }
 
 static bool msg_default_layer_equals(DP_Message *DP_RESTRICT msg,
@@ -2468,10 +2480,10 @@ static bool msg_canvas_resize_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
     DP_MsgCanvasResize *mcr = DP_message_internal(msg);
-    return DP_text_writer_write_int(writer, "top", mcr->top)
+    return DP_text_writer_write_int(writer, "bottom", mcr->bottom)
+        && DP_text_writer_write_int(writer, "left", mcr->left)
         && DP_text_writer_write_int(writer, "right", mcr->right)
-        && DP_text_writer_write_int(writer, "bottom", mcr->bottom)
-        && DP_text_writer_write_int(writer, "left", mcr->left);
+        && DP_text_writer_write_int(writer, "top", mcr->top);
 }
 
 static bool msg_canvas_resize_equals(DP_Message *DP_RESTRICT msg,
@@ -2602,12 +2614,16 @@ static bool msg_layer_create_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
     DP_MsgLayerCreate *mlc = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mlc->id)
-        && DP_text_writer_write_uint(writer, "source", mlc->source)
-        && DP_text_writer_write_uint(writer, "target", mlc->target)
-        && DP_text_writer_write_argb_color(writer, "fill", mlc->fill)
-        && DP_text_writer_write_uint(writer, "flags", mlc->flags)
-        && DP_text_writer_write_string(writer, "name", mlc->name);
+    return DP_text_writer_write_argb_color(writer, "fill", mlc->fill)
+        && DP_text_writer_write_flags(
+               writer, "flags", mlc->flags, 2,
+               (const char *[]){"group", "into"},
+               (unsigned int[]){DP_MSG_LAYER_CREATE_FLAGS_GROUP,
+                                DP_MSG_LAYER_CREATE_FLAGS_INTO})
+        && DP_text_writer_write_uint(writer, "id", mlc->id, true)
+        && DP_text_writer_write_string(writer, "name", mlc->name)
+        && DP_text_writer_write_uint(writer, "source", mlc->source, true)
+        && DP_text_writer_write_uint(writer, "target", mlc->target, true);
 }
 
 static bool msg_layer_create_equals(DP_Message *DP_RESTRICT msg,
@@ -2768,11 +2784,16 @@ static bool msg_layer_attributes_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
     DP_MsgLayerAttributes *mla = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mla->id)
-        && DP_text_writer_write_uint(writer, "sublayer", mla->sublayer)
-        && DP_text_writer_write_uint(writer, "flags", mla->flags)
-        && DP_text_writer_write_uint(writer, "opacity", mla->opacity)
-        && DP_text_writer_write_blend_mode(writer, "blend", mla->blend);
+    return DP_text_writer_write_blend_mode(writer, "blend", mla->blend)
+        && DP_text_writer_write_flags(
+               writer, "flags", mla->flags, 3,
+               (const char *[]){"censor", "fixed", "isolated"},
+               (unsigned int[]){DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR,
+                                DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED,
+                                DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED})
+        && DP_text_writer_write_uint(writer, "id", mla->id, true)
+        && DP_text_writer_write_uint(writer, "opacity", mla->opacity, false)
+        && DP_text_writer_write_uint(writer, "sublayer", mla->sublayer, false);
 }
 
 static bool msg_layer_attributes_equals(DP_Message *DP_RESTRICT msg,
@@ -2892,7 +2913,7 @@ static bool msg_layer_retitle_write_payload_text(DP_Message *msg,
                                                  DP_TextWriter *writer)
 {
     DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mlr->id)
+    return DP_text_writer_write_uint(writer, "id", mlr->id, true)
         && DP_text_writer_write_string(writer, "title", mlr->title);
 }
 
@@ -3000,9 +3021,9 @@ static bool msg_layer_order_write_payload_text(DP_Message *msg,
                                                DP_TextWriter *writer)
 {
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "root", mlo->root)
-        && DP_text_writer_write_uint16_list(writer, "layers", mlo->layers,
-                                            mlo->layers_count);
+    return DP_text_writer_write_uint16_list(writer, "layers", mlo->layers,
+                                            mlo->layers_count, true)
+        && DP_text_writer_write_uint(writer, "root", mlo->root, true);
 }
 
 static bool msg_layer_order_equals(DP_Message *DP_RESTRICT msg,
@@ -3118,8 +3139,8 @@ static bool msg_layer_delete_write_payload_text(DP_Message *msg,
                                                 DP_TextWriter *writer)
 {
     DP_MsgLayerDelete *mld = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mld->id)
-        && DP_text_writer_write_uint(writer, "merge_to", mld->merge_to);
+    return DP_text_writer_write_uint(writer, "id", mld->id, true)
+        && DP_text_writer_write_uint(writer, "merge_to", mld->merge_to, true);
 }
 
 static bool msg_layer_delete_equals(DP_Message *DP_RESTRICT msg,
@@ -3210,7 +3231,7 @@ static bool msg_layer_visibility_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
     DP_MsgLayerVisibility *mlv = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mlv->id)
+    return DP_text_writer_write_uint(writer, "id", mlv->id, false)
         && DP_text_writer_write_bool(writer, "visible", mlv->visible);
 }
 
@@ -3314,14 +3335,14 @@ static bool msg_put_image_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
     DP_MsgPutImage *mpi = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mpi->layer)
-        && DP_text_writer_write_blend_mode(writer, "mode", mpi->mode)
-        && DP_text_writer_write_uint(writer, "x", mpi->x)
-        && DP_text_writer_write_uint(writer, "y", mpi->y)
-        && DP_text_writer_write_uint(writer, "w", mpi->w)
-        && DP_text_writer_write_uint(writer, "h", mpi->h)
+    return DP_text_writer_write_uint(writer, "h", mpi->h, false)
         && DP_text_writer_write_base64(writer, "image", mpi->image,
-                                       mpi->image_size);
+                                       mpi->image_size)
+        && DP_text_writer_write_uint(writer, "layer", mpi->layer, true)
+        && DP_text_writer_write_blend_mode(writer, "mode", mpi->mode)
+        && DP_text_writer_write_uint(writer, "w", mpi->w, false)
+        && DP_text_writer_write_uint(writer, "x", mpi->x, false)
+        && DP_text_writer_write_uint(writer, "y", mpi->y, false);
 }
 
 static bool msg_put_image_equals(DP_Message *DP_RESTRICT msg,
@@ -3483,13 +3504,13 @@ static bool msg_fill_rect_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
     DP_MsgFillRect *mfr = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mfr->layer)
+    return DP_text_writer_write_argb_color(writer, "color", mfr->color)
+        && DP_text_writer_write_uint(writer, "h", mfr->h, false)
+        && DP_text_writer_write_uint(writer, "layer", mfr->layer, true)
         && DP_text_writer_write_blend_mode(writer, "mode", mfr->mode)
-        && DP_text_writer_write_uint(writer, "x", mfr->x)
-        && DP_text_writer_write_uint(writer, "y", mfr->y)
-        && DP_text_writer_write_uint(writer, "w", mfr->w)
-        && DP_text_writer_write_uint(writer, "h", mfr->h)
-        && DP_text_writer_write_argb_color(writer, "color", mfr->color);
+        && DP_text_writer_write_uint(writer, "w", mfr->w, false)
+        && DP_text_writer_write_uint(writer, "x", mfr->x, false)
+        && DP_text_writer_write_uint(writer, "y", mfr->y, false);
 }
 
 static bool msg_fill_rect_equals(DP_Message *DP_RESTRICT msg,
@@ -3649,11 +3670,11 @@ static bool msg_annotation_create_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
     DP_MsgAnnotationCreate *mac = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mac->id)
+    return DP_text_writer_write_uint(writer, "h", mac->h, false)
+        && DP_text_writer_write_uint(writer, "id", mac->id, true)
+        && DP_text_writer_write_uint(writer, "w", mac->w, false)
         && DP_text_writer_write_int(writer, "x", mac->x)
-        && DP_text_writer_write_int(writer, "y", mac->y)
-        && DP_text_writer_write_uint(writer, "w", mac->w)
-        && DP_text_writer_write_uint(writer, "h", mac->h);
+        && DP_text_writer_write_int(writer, "y", mac->y);
 }
 
 static bool msg_annotation_create_equals(DP_Message *DP_RESTRICT msg,
@@ -3776,11 +3797,11 @@ static bool msg_annotation_reshape_write_payload_text(DP_Message *msg,
                                                       DP_TextWriter *writer)
 {
     DP_MsgAnnotationReshape *mar = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mar->id)
+    return DP_text_writer_write_uint(writer, "h", mar->h, false)
+        && DP_text_writer_write_uint(writer, "id", mar->id, true)
+        && DP_text_writer_write_uint(writer, "w", mar->w, false)
         && DP_text_writer_write_int(writer, "x", mar->x)
-        && DP_text_writer_write_int(writer, "y", mar->y)
-        && DP_text_writer_write_uint(writer, "w", mar->w)
-        && DP_text_writer_write_uint(writer, "h", mar->h);
+        && DP_text_writer_write_int(writer, "y", mar->y);
 }
 
 static bool msg_annotation_reshape_equals(DP_Message *DP_RESTRICT msg,
@@ -3919,10 +3940,15 @@ static bool msg_annotation_edit_write_payload_text(DP_Message *msg,
                                                    DP_TextWriter *writer)
 {
     DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mae->id)
-        && DP_text_writer_write_argb_color(writer, "bg", mae->bg)
-        && DP_text_writer_write_uint(writer, "flags", mae->flags)
-        && DP_text_writer_write_uint(writer, "border", mae->border)
+    return DP_text_writer_write_argb_color(writer, "bg", mae->bg)
+        && DP_text_writer_write_uint(writer, "border", mae->border, false)
+        && DP_text_writer_write_flags(
+               writer, "flags", mae->flags, 3,
+               (const char *[]){"protect", "valign_center", "valign_bottom"},
+               (unsigned int[]){DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT,
+                                DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER,
+                                DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM})
+        && DP_text_writer_write_uint(writer, "id", mae->id, true)
         && DP_text_writer_write_string(writer, "text", mae->text);
 }
 
@@ -4053,7 +4079,7 @@ static bool msg_annotation_delete_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
     DP_MsgAnnotationDelete *mad = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "id", mad->id);
+    return DP_text_writer_write_uint(writer, "id", mad->id, true);
 }
 
 static bool msg_annotation_delete_equals(DP_Message *DP_RESTRICT msg,
@@ -4161,21 +4187,21 @@ static bool msg_move_region_write_payload_text(DP_Message *msg,
                                                DP_TextWriter *writer)
 {
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mmr->layer)
+    return DP_text_writer_write_int(writer, "bh", mmr->bh)
+        && DP_text_writer_write_int(writer, "bw", mmr->bw)
         && DP_text_writer_write_int(writer, "bx", mmr->bx)
         && DP_text_writer_write_int(writer, "by", mmr->by)
-        && DP_text_writer_write_int(writer, "bw", mmr->bw)
-        && DP_text_writer_write_int(writer, "bh", mmr->bh)
-        && DP_text_writer_write_int(writer, "x1", mmr->x1)
-        && DP_text_writer_write_int(writer, "y1", mmr->y1)
-        && DP_text_writer_write_int(writer, "x2", mmr->x2)
-        && DP_text_writer_write_int(writer, "y2", mmr->y2)
-        && DP_text_writer_write_int(writer, "x3", mmr->x3)
-        && DP_text_writer_write_int(writer, "y3", mmr->y3)
-        && DP_text_writer_write_int(writer, "x4", mmr->x4)
-        && DP_text_writer_write_int(writer, "y4", mmr->y4)
+        && DP_text_writer_write_uint(writer, "layer", mmr->layer, true)
         && DP_text_writer_write_base64(writer, "mask", mmr->mask,
-                                       mmr->mask_size);
+                                       mmr->mask_size)
+        && DP_text_writer_write_int(writer, "x1", mmr->x1)
+        && DP_text_writer_write_int(writer, "x2", mmr->x2)
+        && DP_text_writer_write_int(writer, "x3", mmr->x3)
+        && DP_text_writer_write_int(writer, "x4", mmr->x4)
+        && DP_text_writer_write_int(writer, "y1", mmr->y1)
+        && DP_text_writer_write_int(writer, "y2", mmr->y2)
+        && DP_text_writer_write_int(writer, "y3", mmr->y3)
+        && DP_text_writer_write_int(writer, "y4", mmr->y4);
 }
 
 static bool msg_move_region_equals(DP_Message *DP_RESTRICT msg,
@@ -4399,14 +4425,15 @@ static bool msg_put_tile_write_payload_text(DP_Message *msg,
                                             DP_TextWriter *writer)
 {
     DP_MsgPutTile *mpt = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mpt->layer)
-        && DP_text_writer_write_uint(writer, "sublayer", mpt->sublayer)
-        && DP_text_writer_write_uint(writer, "last_touch", mpt->last_touch)
-        && DP_text_writer_write_uint(writer, "col", mpt->col)
-        && DP_text_writer_write_uint(writer, "row", mpt->row)
-        && DP_text_writer_write_uint(writer, "repeat", mpt->repeat)
+    return DP_text_writer_write_uint(writer, "col", mpt->col, false)
         && DP_text_writer_write_base64(writer, "image", mpt->image,
-                                       mpt->image_size);
+                                       mpt->image_size)
+        && DP_text_writer_write_uint(writer, "last_touch", mpt->last_touch,
+                                     false)
+        && DP_text_writer_write_uint(writer, "layer", mpt->layer, true)
+        && DP_text_writer_write_uint(writer, "repeat", mpt->repeat, false)
+        && DP_text_writer_write_uint(writer, "row", mpt->row, false)
+        && DP_text_writer_write_uint(writer, "sublayer", mpt->sublayer, false);
 }
 
 static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
@@ -4671,22 +4698,28 @@ static size_t classic_dab_serialize_payloads(DP_ClassicDab *cd, int count,
 static bool classic_dab_write_payload_text(DP_ClassicDab *cd,
                                            DP_TextWriter *writer)
 {
-    return DP_text_writer_write_int(writer, "x", cd->x)
-        && DP_text_writer_write_int(writer, "y", cd->y)
-        && DP_text_writer_write_uint(writer, "size", cd->size)
-        && DP_text_writer_write_uint(writer, "hardness", cd->hardness)
-        && DP_text_writer_write_uint(writer, "opacity", cd->opacity);
+    return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "   ")
+        && DP_text_writer_write_subfield_decimal(writer, (double)cd->x / 4.0)
+        && DP_text_writer_write_subfield_decimal(writer, (double)cd->y / 4.0)
+        && DP_text_writer_write_subfield_decimal(writer,
+                                                 (double)cd->size / 256.0)
+        && DP_text_writer_write_subfield_uint(writer, cd->hardness)
+        && DP_text_writer_write_subfield_uint(writer, cd->opacity)
+        && DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "\n");
 }
 
 static size_t classic_dab_write_payload_texts(DP_ClassicDab *cd, int count,
                                               DP_TextWriter *writer)
 {
+    if (!DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, " {\n")) {
+        return false;
+    }
     for (int i = 0; i < count; ++i) {
         if (!classic_dab_write_payload_text(&cd[i], writer)) {
             return false;
         }
     }
-    return true;
+    return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "}");
 }
 
 static bool classic_dab_equals(DP_ClassicDab *DP_RESTRICT a,
@@ -4805,11 +4838,11 @@ static bool msg_draw_dabs_classic_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mddc->layer)
-        && DP_text_writer_write_int(writer, "x", mddc->x)
-        && DP_text_writer_write_int(writer, "y", mddc->y)
-        && DP_text_writer_write_argb_color(writer, "color", mddc->color)
+    return DP_text_writer_write_argb_color(writer, "color", mddc->color)
+        && DP_text_writer_write_uint(writer, "layer", mddc->layer, true)
         && DP_text_writer_write_blend_mode(writer, "mode", mddc->mode)
+        && DP_text_writer_write_decimal(writer, "x", (double)mddc->x / 4.0)
+        && DP_text_writer_write_decimal(writer, "y", (double)mddc->y / 4.0)
         && classic_dab_write_payload_texts(mddc->dabs, mddc->dabs_count,
                                            writer);
 }
@@ -4965,21 +4998,26 @@ static size_t pixel_dab_serialize_payloads(DP_PixelDab *pd, int count,
 
 static bool pixel_dab_write_payload_text(DP_PixelDab *pd, DP_TextWriter *writer)
 {
-    return DP_text_writer_write_int(writer, "x", pd->x)
-        && DP_text_writer_write_int(writer, "y", pd->y)
-        && DP_text_writer_write_uint(writer, "size", pd->size)
-        && DP_text_writer_write_uint(writer, "opacity", pd->opacity);
+    return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "   ")
+        && DP_text_writer_write_subfield_int(writer, pd->x)
+        && DP_text_writer_write_subfield_int(writer, pd->y)
+        && DP_text_writer_write_subfield_uint(writer, pd->size)
+        && DP_text_writer_write_subfield_uint(writer, pd->opacity)
+        && DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "\n");
 }
 
 static size_t pixel_dab_write_payload_texts(DP_PixelDab *pd, int count,
                                             DP_TextWriter *writer)
 {
+    if (!DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, " {\n")) {
+        return false;
+    }
     for (int i = 0; i < count; ++i) {
         if (!pixel_dab_write_payload_text(&pd[i], writer)) {
             return false;
         }
     }
-    return true;
+    return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "}");
 }
 
 static bool pixel_dab_equals(DP_PixelDab *DP_RESTRICT a,
@@ -5090,11 +5128,11 @@ static bool msg_draw_dabs_pixel_write_payload_text(DP_Message *msg,
                                                    DP_TextWriter *writer)
 {
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mddp->layer)
+    return DP_text_writer_write_argb_color(writer, "color", mddp->color)
+        && DP_text_writer_write_uint(writer, "layer", mddp->layer, true)
+        && DP_text_writer_write_blend_mode(writer, "mode", mddp->mode)
         && DP_text_writer_write_int(writer, "x", mddp->x)
         && DP_text_writer_write_int(writer, "y", mddp->y)
-        && DP_text_writer_write_argb_color(writer, "color", mddp->color)
-        && DP_text_writer_write_blend_mode(writer, "mode", mddp->mode)
         && pixel_dab_write_payload_texts(mddp->dabs, mddp->dabs_count, writer);
 }
 
@@ -5314,24 +5352,30 @@ static size_t mypaint_dab_serialize_payloads(DP_MyPaintDab *mpd, int count,
 static bool mypaint_dab_write_payload_text(DP_MyPaintDab *mpd,
                                            DP_TextWriter *writer)
 {
-    return DP_text_writer_write_int(writer, "x", mpd->x)
-        && DP_text_writer_write_int(writer, "y", mpd->y)
-        && DP_text_writer_write_uint(writer, "size", mpd->size)
-        && DP_text_writer_write_uint(writer, "hardness", mpd->hardness)
-        && DP_text_writer_write_uint(writer, "opacity", mpd->opacity)
-        && DP_text_writer_write_uint(writer, "angle", mpd->angle)
-        && DP_text_writer_write_uint(writer, "aspect_ratio", mpd->aspect_ratio);
+    return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "   ")
+        && DP_text_writer_write_subfield_decimal(writer, (double)mpd->x / 4.0)
+        && DP_text_writer_write_subfield_decimal(writer, (double)mpd->y / 4.0)
+        && DP_text_writer_write_subfield_decimal(writer,
+                                                 (double)mpd->size / 256.0)
+        && DP_text_writer_write_subfield_uint(writer, mpd->hardness)
+        && DP_text_writer_write_subfield_uint(writer, mpd->opacity)
+        && DP_text_writer_write_subfield_uint(writer, mpd->angle)
+        && DP_text_writer_write_subfield_uint(writer, mpd->aspect_ratio)
+        && DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "\n");
 }
 
 static size_t mypaint_dab_write_payload_texts(DP_MyPaintDab *mpd, int count,
                                               DP_TextWriter *writer)
 {
+    if (!DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, " {\n")) {
+        return false;
+    }
     for (int i = 0; i < count; ++i) {
         if (!mypaint_dab_write_payload_text(&mpd[i], writer)) {
             return false;
         }
     }
-    return true;
+    return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "}");
 }
 
 static bool mypaint_dab_equals(DP_MyPaintDab *DP_RESTRICT a,
@@ -5469,11 +5513,12 @@ static bool msg_draw_dabs_mypaint_write_payload_text(DP_Message *msg,
                                                      DP_TextWriter *writer)
 {
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mddmp->layer)
-        && DP_text_writer_write_int(writer, "x", mddmp->x)
-        && DP_text_writer_write_int(writer, "y", mddmp->y)
-        && DP_text_writer_write_argb_color(writer, "color", mddmp->color)
-        && DP_text_writer_write_uint(writer, "lock_alpha", mddmp->lock_alpha)
+    return DP_text_writer_write_argb_color(writer, "color", mddmp->color)
+        && DP_text_writer_write_uint(writer, "layer", mddmp->layer, true)
+        && DP_text_writer_write_uint(writer, "lock_alpha", mddmp->lock_alpha,
+                                     false)
+        && DP_text_writer_write_decimal(writer, "x", (double)mddmp->x / 4.0)
+        && DP_text_writer_write_decimal(writer, "y", (double)mddmp->y / 4.0)
         && mypaint_dab_write_payload_texts(mddmp->dabs, mddmp->dabs_count,
                                            writer);
 }
@@ -5640,15 +5685,15 @@ static bool msg_move_rect_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "layer", mmr->layer)
+    return DP_text_writer_write_int(writer, "h", mmr->h)
+        && DP_text_writer_write_uint(writer, "layer", mmr->layer, true)
+        && DP_text_writer_write_base64(writer, "mask", mmr->mask,
+                                       mmr->mask_size)
         && DP_text_writer_write_int(writer, "sx", mmr->sx)
         && DP_text_writer_write_int(writer, "sy", mmr->sy)
         && DP_text_writer_write_int(writer, "tx", mmr->tx)
         && DP_text_writer_write_int(writer, "ty", mmr->ty)
-        && DP_text_writer_write_int(writer, "w", mmr->w)
-        && DP_text_writer_write_int(writer, "h", mmr->h)
-        && DP_text_writer_write_base64(writer, "mask", mmr->mask,
-                                       mmr->mask_size);
+        && DP_text_writer_write_int(writer, "w", mmr->w);
 }
 
 static bool msg_move_rect_equals(DP_Message *DP_RESTRICT msg,
@@ -5824,7 +5869,7 @@ static bool msg_set_metadata_int_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
     DP_MsgSetMetadataInt *msmi = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "field", msmi->field)
+    return DP_text_writer_write_uint(writer, "field", msmi->field, false)
         && DP_text_writer_write_int(writer, "value", msmi->value);
 }
 
@@ -5918,7 +5963,7 @@ static bool msg_set_metadata_str_write_payload_text(DP_Message *msg,
                                                     DP_TextWriter *writer)
 {
     DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "field", msms->field)
+    return DP_text_writer_write_uint(writer, "field", msms->field, false)
         && DP_text_writer_write_string(writer, "value", msms->value);
 }
 
@@ -6029,10 +6074,10 @@ static bool msg_set_timeline_frame_write_payload_text(DP_Message *msg,
                                                       DP_TextWriter *writer)
 {
     DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "frame", mstf->frame)
+    return DP_text_writer_write_uint(writer, "frame", mstf->frame, false)
         && DP_text_writer_write_bool(writer, "insert", mstf->insert)
         && DP_text_writer_write_uint16_list(writer, "layers", mstf->layers,
-                                            mstf->layers_count);
+                                            mstf->layers_count, true);
 }
 
 static bool msg_set_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
@@ -6161,7 +6206,7 @@ static bool msg_remove_timeline_frame_write_payload_text(DP_Message *msg,
                                                          DP_TextWriter *writer)
 {
     DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "frame", mrtf->frame);
+    return DP_text_writer_write_uint(writer, "frame", mrtf->frame, false);
 }
 
 static bool msg_remove_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
@@ -6242,7 +6287,8 @@ static size_t msg_undo_serialize_payload(DP_Message *msg, unsigned char *data)
 static bool msg_undo_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
 {
     DP_MsgUndo *mu = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "override_user", mu->override_user)
+    return DP_text_writer_write_uint(writer, "override_user", mu->override_user,
+                                     false)
         && DP_text_writer_write_bool(writer, "redo", mu->redo);
 }
 

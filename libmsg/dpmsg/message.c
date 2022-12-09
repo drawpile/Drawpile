@@ -234,7 +234,7 @@ bool DP_message_write_text(DP_Message *msg, DP_TextWriter *writer)
     DP_ASSERT(writer);
     return DP_text_writer_start_message(writer, msg)
         && msg->methods->write_payload_text(msg, writer)
-        && DP_text_writer_finish_message(writer, msg);
+        && DP_text_writer_finish_message(writer);
 }
 
 bool DP_message_equals(DP_Message *msg, DP_Message *other)

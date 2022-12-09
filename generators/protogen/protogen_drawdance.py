@@ -78,6 +78,83 @@ class DrawdanceFieldType:
     def array_size_type(self, f):
         return None
 
+    def write_text_raw(self, f, subject, fn):
+        fmt = f.format
+        if fmt:
+            raise RuntimeError(f"Unknown raw format '{fmt}'")
+        a = self.access(f, subject)
+        return f'{fn}(writer, "{f.name}", {a})'
+
+    def write_text_int(self, f, subject):
+        a = self.access(f, subject)
+        fmt = f.format
+        if not fmt:
+            return f'DP_text_writer_write_int(writer, "{f.name}", {a})'
+        elif fmt == "div4":
+            return (
+                f'DP_text_writer_write_decimal(writer, "{f.name}", (double){a} / 4.0)'
+            )
+        else:
+            raise RuntimeError(f"Unknown int format '{fmt}'")
+
+    @staticmethod
+    def _get_flag_args(f):
+        names = []
+        values = []
+        for flag in f.flags:
+            names.append(f'"{flag.name}"')
+            values.append(f"{flag.define_name}")
+        names_arg = "(const char *[]){" + ", ".join(names) + "}"
+        values_arg = "(unsigned int []){" + ", ".join(values) + "}"
+        return (names_arg, values_arg, len(f.flags))
+
+    def write_text_uint(self, f, subject):
+        a = self.access(f, subject)
+        fmt = f.format
+        if not fmt:
+            return f'DP_text_writer_write_uint(writer, "{f.name}", {a}, false)'
+        elif fmt == "hex":
+            return f'DP_text_writer_write_uint(writer, "{f.name}", {a}, true)'
+        elif fmt == "div256":
+            return (
+                f'DP_text_writer_write_decimal(writer, "{f.name}", (double){a} / 256.0)'
+            )
+        elif fmt == "flags":
+            names_arg, values_arg, count = self._get_flag_args(f)
+            return f'DP_text_writer_write_flags(writer, "{f.name}", {a}, {count}, {names_arg}, {values_arg})'
+        else:
+            raise RuntimeError(f"Unknown uint format '{fmt}'")
+
+    def write_text_uint16_list(self, f, a, a_count):
+        fmt = f.format
+        if not fmt:
+            hex_arg = "false"
+        elif fmt == "hex":
+            hex_arg = "true"
+        else:
+            raise RuntimeError(f"Unknown uint16 list format '{fmt}'")
+        return f'DP_text_writer_write_uint16_list(writer, "{f.name}", {a}, {a_count}, {hex_arg})'
+
+    def write_subfield_text_int(self, f, subject):
+        a = self.access(f, subject)
+        fmt = f.format
+        if not fmt:
+            return f"DP_text_writer_write_subfield_int(writer, {a})"
+        elif fmt == "div4":
+            return f"DP_text_writer_write_subfield_decimal(writer, (double){a} / 4.0)"
+        else:
+            raise RuntimeError(f"Unknown int subfield format '{fmt}'")
+
+    def write_subfield_text_uint(self, f, subject):
+        a = self.access(f, subject)
+        fmt = f.format
+        if not fmt:
+            return f"DP_text_writer_write_subfield_uint(writer, {a})"
+        elif fmt == "div256":
+            return f"DP_text_writer_write_subfield_decimal(writer, (double){a} / 256.0)"
+        else:
+            raise RuntimeError(f"Unknown uint subfield format '{fmt}'")
+
 
 class DrawdancePlainFieldType(DrawdanceFieldType):
     def __init__(
@@ -88,12 +165,14 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         serialize_payload_fn,
         write_payload_text_fn,
         deserialize_payload_fn,
+        write_subfield_payload_text_fn=None,
     ):
         super().__init__(key, False)
         self.base_type = base_type
         self.payload_length = payload_length
         self.serialize_payload_fn = serialize_payload_fn
         self.write_payload_text_fn = write_payload_text_fn
+        self.write_subfield_payload_text_fn = write_subfield_payload_text_fn
         self.deserialize_payload_fn = deserialize_payload_fn
 
     def accessor_return_type(self, f):
@@ -122,8 +201,18 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         return f"{self.serialize_payload_fn}({a}, {dst})"
 
     def write_payload_text(self, f, subject):
-        a = self.access(f, subject)
-        return f'{self.write_payload_text_fn}(writer, "{f.name}", {a})'
+        fn = self.write_payload_text_fn
+        if isinstance(fn, str):
+            return self.write_text_raw(f, subject, fn)
+        else:
+            return fn(self, f, subject)
+
+    def write_subfield_payload_text(self, f, subject):
+        fn = self.write_subfield_payload_text_fn
+        if fn:
+            return fn(self, f, subject)
+        else:
+            raise RuntimeError(f"No subfield payload text fn for {self.key}")
 
     def assign(self, f, subject):
         a = self.access(f, subject)
@@ -243,7 +332,15 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
     def write_payload_text(self, f, subject):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
-        return f'{self.write_payload_text_fn}(writer, "{f.name}", {a}, {a_count})'
+        fmt = f.format or ""
+        fn = self.write_payload_text_fn
+        if isinstance(fn, str):
+            if fmt:
+                raise RuntimeError(f"Unknown {self.base_type} array format '{fmt}'")
+            else:
+                return f'{fn}(writer, "{f.name}", {a}, {a_count})'
+        else:
+            return fn(self, f, a, a_count)
 
     def assign(self, f, subject):
         size_name = self.array_size_name(f)
@@ -323,6 +420,9 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
         return f"DP_write_bytes({a}, 1, {a_len}, {dst})"
 
     def write_payload_text(self, f, subject):
+        fmt = f.format
+        if fmt:
+            raise RuntimeError(f"Unknown string format '{fmt}'")
         a = self.access(f, subject)
         return f'DP_text_writer_write_string(writer, "{f.name}", {a})'
 
@@ -434,6 +534,9 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         return f"{f.sub.func_name}_serialize_payloads({a}, {a_count}, {dst})"
 
     def write_payload_text(self, f, subject):
+        fmt = f.format
+        if fmt:
+            raise RuntimeError(f"Unknown struct format '{fmt}'")
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_count"
         return f"{f.sub.func_name}_write_payload_texts({a}, {a_count}, writer)"
@@ -486,7 +589,8 @@ DrawdancePlainFieldType.declare(
     base_type="int8_t",
     payload_length=1,
     serialize_payload_fn="DP_write_bigendian_int8",
-    write_payload_text_fn="DP_text_writer_write_int",
+    write_payload_text_fn=DrawdanceFieldType.write_text_int,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
     deserialize_payload_fn="read_int8",
 )
 
@@ -495,7 +599,8 @@ DrawdancePlainFieldType.declare(
     base_type="int16_t",
     payload_length=2,
     serialize_payload_fn="DP_write_bigendian_int16",
-    write_payload_text_fn="DP_text_writer_write_int",
+    write_payload_text_fn=DrawdanceFieldType.write_text_int,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
     deserialize_payload_fn="read_int16",
 )
 
@@ -504,7 +609,8 @@ DrawdancePlainFieldType.declare(
     base_type="int32_t",
     payload_length=4,
     serialize_payload_fn="DP_write_bigendian_int32",
-    write_payload_text_fn="DP_text_writer_write_int",
+    write_payload_text_fn=DrawdanceFieldType.write_text_int,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
     deserialize_payload_fn="read_int32",
 )
 
@@ -513,7 +619,8 @@ DrawdancePlainFieldType.declare(
     base_type="uint8_t",
     payload_length=1,
     serialize_payload_fn="DP_write_bigendian_uint8",
-    write_payload_text_fn="DP_text_writer_write_uint",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint8",
 )
 
@@ -522,7 +629,8 @@ DrawdancePlainFieldType.declare(
     base_type="uint16_t",
     payload_length=2,
     serialize_payload_fn="DP_write_bigendian_uint16",
-    write_payload_text_fn="DP_text_writer_write_uint",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint16",
 )
 
@@ -531,7 +639,8 @@ DrawdancePlainFieldType.declare(
     base_type="uint32_t",
     payload_length=4,
     serialize_payload_fn="DP_write_bigendian_uint32",
-    write_payload_text_fn="DP_text_writer_write_uint",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint32",
 )
 
@@ -561,7 +670,7 @@ DrawdanceArrayFieldType.declare(
     size_type="int",
     payload_length=2,
     serialize_payload_fn="DP_write_bigendian_uint16_array",
-    write_payload_text_fn="DP_text_writer_write_uint16_list",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint16_list,
     deserialize_payload_fn="read_uint16_array",
 )
 
@@ -665,6 +774,16 @@ class DrawdanceMessage:
             else:
                 raise ValueError(f"Unhandled array field combination: {array_fields}")
 
+            fields_with_subfields = [f for f in self.fields if f.sub]
+            if len(fields_with_subfields) == 0:
+                self.field_with_subfields = None
+            elif len(fields_with_subfields) == 1:
+                self.field_with_subfields = fields_with_subfields[0]
+            else:
+                raise ValueError(
+                    f"Multiple fields with subfields: {fields_with_subfields}"
+                )
+
     def init_alias(self, messages):
         if self.alias:
             for m in messages:
@@ -711,8 +830,17 @@ class DrawdanceField:
         self.type = DrawdanceFieldType.TYPES[field.field_type]
         self.offset_field = None
 
+        if hasattr(field, "format") and field.format:
+            self.format = field.format
+        else:
+            self.format = None
+
         if hasattr(field, "flags") and field.flags:
             self.flags = [DrawdanceFlag(message, self, flag) for flag in field.flags]
+            if self.format:
+                raise RuntimeError(f"Conflicting format for flags: {self.format}")
+            else:
+                self.format = "flags"
         else:
             self.flags = None
 
@@ -815,6 +943,9 @@ class DrawdanceField:
 
     def write_payload_text(self, subject):
         return self.type.write_payload_text(self, subject)
+
+    def write_subfield_payload_text(self, subject):
+        return self.type.write_subfield_payload_text(self, subject)
 
     def assign(self, subject):
         return self.type.assign(self, subject)

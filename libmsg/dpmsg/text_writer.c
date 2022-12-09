@@ -30,7 +30,8 @@
 #include <inttypes.h>
 #include <parson.h>
 
-#define BASE64_LINE_WIDTH 70
+#define DECIMAL_BUFFER_SIZE 1024
+#define BASE64_LINE_WIDTH   70
 
 
 struct DP_TextWriter {
@@ -38,13 +39,17 @@ struct DP_TextWriter {
     DP_Output *multiline_output;
     void **multiline_buffer;
     size_t *multiline_size;
+    char decimal_buffer[DECIMAL_BUFFER_SIZE];
 };
 
 DP_TextWriter *DP_text_writer_new(DP_Output *output)
 {
     DP_ASSERT(output);
     DP_TextWriter *writer = DP_malloc(sizeof(*writer));
-    *writer = (DP_TextWriter){output, NULL, NULL, NULL};
+    writer->output = output;
+    writer->multiline_output = NULL;
+    writer->multiline_buffer = NULL;
+    writer->multiline_size = NULL;
     return writer;
 }
 
@@ -113,8 +118,7 @@ bool DP_text_writer_write_header(DP_TextWriter *writer, JSON_Object *header)
             return false;
         }
     }
-
-    return DP_output_write(output, "\n", 1);
+    return true;
 }
 
 
@@ -126,21 +130,20 @@ bool DP_text_writer_start_message(DP_TextWriter *writer, DP_Message *msg)
                             DP_message_name(msg));
 }
 
-bool DP_text_writer_finish_message(DP_TextWriter *writer, DP_Message *msg)
+bool DP_text_writer_finish_message(DP_TextWriter *writer)
 {
     DP_ASSERT(writer);
     DP_Output *output = writer->output;
     size_t *multiline_size = writer->multiline_size;
-    bool add_newline = DP_message_type(msg) == DP_MSG_UNDO_POINT;
     if (multiline_size && *multiline_size > 0) {
-        return DP_output_write(output, " {", 2)
+        return DP_OUTPUT_PRINT_LITERAL(output, " {")
             && DP_output_write(output, *writer->multiline_buffer,
                                *multiline_size)
-            && DP_output_write(output, "\n}\n\n", add_newline ? 4 : 3)
+            && DP_OUTPUT_PRINT_LITERAL(output, "\n}\n")
             && DP_output_clear(writer->multiline_output);
     }
     else {
-        return DP_output_write(output, "\n\n", add_newline ? 2 : 1);
+        return DP_OUTPUT_PRINT_LITERAL(output, "\n");
     }
 }
 
@@ -174,19 +177,40 @@ bool DP_text_writer_write_int(DP_TextWriter *writer, const char *key, int value)
 }
 
 bool DP_text_writer_write_uint(DP_TextWriter *writer, const char *key,
-                               unsigned int value)
+                               unsigned int value, bool hex)
 {
     DP_ASSERT(writer);
     DP_ASSERT(key);
-    return format_argument(writer, " %s=%u", key, value);
+    return format_argument(writer, hex ? " %s=0x%x" : " %s=%u", key, value);
+}
+
+static const char *format_decimal(DP_TextWriter *writer, double value)
+{
+    // Get rid of pointless trailing zeroes and decimal point.
+    char *buffer = writer->decimal_buffer;
+    snprintf(buffer, DECIMAL_BUFFER_SIZE, "%.6f", value);
+    for (size_t i = 0; buffer[i] != '\0'; ++i) {
+        if (buffer[i] == '.') {
+            size_t end = i;
+            for (size_t j = i + 1; buffer[j] != '\0'; ++j) {
+                if (buffer[j] != '0') {
+                    end = j + 1;
+                }
+            }
+            buffer[end] = '\0';
+            break;
+        }
+    }
+    return buffer;
 }
 
 bool DP_text_writer_write_decimal(DP_TextWriter *writer, const char *key,
-                                  unsigned int value)
+                                  double value)
 {
     DP_ASSERT(writer);
     DP_ASSERT(key);
-    return format_argument(writer, " %s=%.2f", key, value / 255.0 * 100.0);
+    return format_argument(writer, " %s=%s", key,
+                           format_decimal(writer, value));
 }
 
 static bool contains_whitespace(const char *value)
@@ -202,7 +226,7 @@ static bool contains_whitespace(const char *value)
 static bool buffer_line(DP_TextWriter *writer, const char *key,
                         const char *value, size_t length)
 {
-    return DP_output_format(writer->multiline_output, "\n\t%s=", key)
+    return DP_output_format(writer->multiline_output, "\n    %s=", key)
         && DP_output_write(writer->multiline_output, value, length);
 }
 
@@ -330,82 +354,95 @@ bool DP_text_writer_write_base64(DP_TextWriter *writer, const char *key,
 }
 
 bool DP_text_writer_write_flags(DP_TextWriter *writer, const char *key,
-                                unsigned int value, ...)
+                                unsigned int value, int count,
+                                const char **names, unsigned int *values)
 {
     DP_ASSERT(writer);
     DP_ASSERT(key);
-
-    va_list ap;
-    va_start(ap, value);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(names);
+    DP_ASSERT(values);
     bool first = true;
-    bool ok = true;
-    const char *name;
-
-    while (ok && (name = va_arg(ap, const char *))) {
-        unsigned int mask = va_arg(ap, unsigned int);
-        if (value & mask) {
+    for (int i = 0; i < count; ++i) {
+        if (value & values[i]) {
+            const char *name = names[i];
             if (first) {
-                ok = format_argument(writer, " %s=%s", key, name);
                 first = false;
+                if (!format_argument(writer, " %s=%s", key, name)) {
+                    return false;
+                }
             }
-            else {
-                ok = format_argument(writer, ",%s", name);
+            else if (!format_argument(writer, ",%s", name)) {
+                return false;
             }
         }
     }
-
-    va_end(ap);
-    return ok;
-}
-
-bool DP_text_writer_write_id(DP_TextWriter *writer, const char *key, int value)
-{
-    DP_ASSERT(writer);
-    DP_ASSERT(key);
-    return format_argument(writer, " %s=0x%04x", key, value);
+    return true;
 }
 
 
-#define WRITE_LIST(WRITER, KEY, VALUE, COUNT, TYPE, FMT)                   \
-    do {                                                                   \
-        DP_ASSERT(WRITER);                                                 \
-        DP_ASSERT(KEY);                                                    \
-        if (COUNT == 0) {                                                  \
-            DP_RETURN_UNLESS(format_argument(WRITER, " %s=", KEY));        \
-        }                                                                  \
-        else {                                                             \
-            DP_RETURN_UNLESS(                                              \
-                format_argument(WRITER, " %s=" FMT, KEY, (TYPE)VALUE[0])); \
-            for (int _i = 1; _i < COUNT; ++_i) {                           \
-                DP_RETURN_UNLESS(                                          \
-                    format_argument(writer, "," FMT, (TYPE)VALUE[_i]));    \
-            }                                                              \
-        }                                                                  \
-        return true;                                                       \
+#define WRITE_LIST(WRITER, KEY, VALUE, COUNT, TYPE, FMT)                     \
+    do {                                                                     \
+        if (COUNT == 0) {                                                    \
+            return format_argument(WRITER, " %s=", KEY);                     \
+        }                                                                    \
+        else {                                                               \
+            if (!format_argument(WRITER, " %s=" FMT, KEY, (TYPE)VALUE[0])) { \
+                return false;                                                \
+            }                                                                \
+            for (int _i = 1; _i < COUNT; ++_i) {                             \
+                if (!format_argument(writer, "," FMT, (TYPE)VALUE[_i])) {    \
+                    return false;                                            \
+                }                                                            \
+            }                                                                \
+            return true;                                                     \
+        }                                                                    \
     } while (0)
-
-bool DP_text_writer_write_id_list(DP_TextWriter *writer, const char *key,
-                                  const int *value, int count)
-{
-    WRITE_LIST(writer, key, value, count, int, "0x%04x");
-}
-
-bool DP_text_writer_write_uint_list(DP_TextWriter *writer, const char *key,
-                                    const unsigned int *value, int count)
-{
-    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
-}
 
 bool DP_text_writer_write_uint8_list(DP_TextWriter *writer, const char *key,
                                      const uint8_t *value, int count)
 {
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(value || count == 0);
     WRITE_LIST(writer, key, value, count, unsigned int, "%u");
 }
 
 bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
-                                      const uint16_t *value, int count)
+                                      const uint16_t *value, int count,
+                                      bool hex)
 {
-    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(value || count == 0);
+    if (hex) {
+        WRITE_LIST(writer, key, value, count, unsigned int, "0x%04x");
+    }
+    else {
+        WRITE_LIST(writer, key, value, count, unsigned int, "%u");
+    }
+}
+
+bool DP_text_writer_write_subfield_int(DP_TextWriter *writer, int value)
+{
+    DP_ASSERT(writer);
+    return format_argument(writer, " %d", value);
+}
+
+bool DP_text_writer_write_subfield_uint(DP_TextWriter *writer,
+                                        unsigned int value)
+{
+    DP_ASSERT(writer);
+    return format_argument(writer, " %u", value);
+}
+
+bool DP_text_writer_write_subfield_decimal(DP_TextWriter *writer, double value)
+{
+
+    DP_ASSERT(writer);
+    return format_argument(writer, " %s", format_decimal(writer, value));
 }
 
 

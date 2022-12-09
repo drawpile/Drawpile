@@ -308,20 +308,24 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
 
             static bool {{ f.sub.func_name }}_write_payload_text({{ f.sub.param }}, DP_TextWriter *writer)
             {
-                return {% for sf in f.sub.fields %}
-                    {{ sf.write_payload_text(f.sub.param_name) }}
-                    {%- if not loop.last %} && {% endif -%}
-                {% endfor %};
+                return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "   ") &&
+                    {% for sf in f.sub.fields %}
+                        {{ sf.write_subfield_payload_text(f.sub.param_name) }} &&
+                    {% endfor %}
+                    DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "\n");
             }
 
             static size_t {{ f.sub.func_name }}_write_payload_texts({{ f.sub.param }}, int count, DP_TextWriter *writer)
             {
+                if (!DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, " {\n")) {
+                    return false;
+                }
                 for (int i = 0; i < count; ++i) {
                     if (!{{ f.sub.func_name }}_write_payload_text(&{{ f.sub.param_name }}[i], writer)) {
                         return false;
                     }
                 }
-                return true;
+                return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "}");
             }
 
             static bool {{ f.sub.func_name }}_equals({{ f.sub.struct_name }} *DP_RESTRICT a, {{ f.sub.struct_name }} *DP_RESTRICT b)
@@ -425,10 +429,15 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
         static bool {{ message.func_name }}_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
         {
             {{ message.param }} = DP_message_internal(msg);
-            return {% for f in message.fields %}
-                {{ f.write_payload_text(message.param_name) }}
-                {%- if not loop.last %} && {% endif -%}
-            {% endfor %};
+            return {% for f in message.fields|sort(attribute='name') %}
+                {% if not f.sub %}
+                    {{ f.write_payload_text(message.param_name) }}
+                    {%- if not loop.last or message.field_with_subfields %} && {% endif -%}
+                {% endif %}
+            {% endfor -%}
+            {% if message.field_with_subfields %}
+                {{ message.field_with_subfields.write_payload_text(message.param_name) }}
+            {% endif %};
         }
 
         static bool {{ message.func_name }}_equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
