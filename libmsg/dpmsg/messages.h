@@ -213,7 +213,7 @@ bool DP_msg_ping_is_pong(const DP_MsgPing *mp);
 #define DP_MSG_JOIN_FLAGS_MOD  0x2
 #define DP_MSG_JOIN_FLAGS_BOT  0x4
 
-const char *DP_msg_join_flags_flag_name(int value);
+const char *DP_msg_join_flags_flag_name(unsigned int value);
 
 typedef struct DP_MsgJoin DP_MsgJoin;
 
@@ -302,14 +302,14 @@ int DP_msg_session_owner_users_count(const DP_MsgSessionOwner *mso);
 
 #define DP_MSG_CHAT_TFLAGS_BYPASS 0x1
 
-const char *DP_msg_chat_tflags_flag_name(int value);
+const char *DP_msg_chat_tflags_flag_name(unsigned int value);
 
 #define DP_MSG_CHAT_OFLAGS_SHOUT  0x1
 #define DP_MSG_CHAT_OFLAGS_ACTION 0x2
 #define DP_MSG_CHAT_OFLAGS_PIN    0x4
 #define DP_MSG_CHAT_OFLAGS_ALERT  0x8
 
-const char *DP_msg_chat_oflags_flag_name(int value);
+const char *DP_msg_chat_oflags_flag_name(unsigned int value);
 
 typedef struct DP_MsgChat DP_MsgChat;
 
@@ -760,7 +760,7 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
 #define DP_MSG_LAYER_CREATE_FLAGS_GROUP 0x1
 #define DP_MSG_LAYER_CREATE_FLAGS_INTO  0x2
 
-const char *DP_msg_layer_create_flags_flag_name(int value);
+const char *DP_msg_layer_create_flags_flag_name(unsigned int value);
 
 typedef struct DP_MsgLayerCreate DP_MsgLayerCreate;
 
@@ -810,7 +810,7 @@ size_t DP_msg_layer_create_name_len(const DP_MsgLayerCreate *mlc);
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED    0x2
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED 0x4
 
-const char *DP_msg_layer_attributes_flags_flag_name(int value);
+const char *DP_msg_layer_attributes_flags_flag_name(unsigned int value);
 
 typedef struct DP_MsgLayerAttributes DP_MsgLayerAttributes;
 
@@ -1148,7 +1148,7 @@ uint16_t DP_msg_annotation_reshape_h(const DP_MsgAnnotationReshape *mar);
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER 0x2
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM 0x4
 
-const char *DP_msg_annotation_edit_flags_flag_name(int value);
+const char *DP_msg_annotation_edit_flags_flag_name(unsigned int value);
 
 typedef struct DP_MsgAnnotationEdit DP_MsgAnnotationEdit;
 
@@ -1612,7 +1612,7 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
 #define DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE    2
 #define DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE 3
 
-const char *DP_msg_set_metadata_int_field_variant_name(int value);
+const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value);
 
 typedef struct DP_MsgSetMetadataInt DP_MsgSetMetadataInt;
 

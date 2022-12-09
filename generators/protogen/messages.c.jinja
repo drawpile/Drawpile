@@ -252,7 +252,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
     {% for f in message.fields %}
         {% if f.flags %}
 
-            const char *DP_{{ message.func_name }}_{{ f.func_name }}_flag_name(int value)
+            const char *DP_{{ message.func_name }}_{{ f.func_name }}_flag_name(unsigned int value)
             {
                 switch (value) {
                 {% for flag in f.flags %}
@@ -266,7 +266,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
         {% endif %}
         {% if f.variants %}
 
-            const char *DP_{{ message.func_name }}_{{ f.func_name }}_variant_name(int value)
+            const char *DP_{{ message.func_name }}_{{ f.func_name }}_variant_name(unsigned int value)
             {
                 switch (value) {
                 {% for variant in f.variants %}

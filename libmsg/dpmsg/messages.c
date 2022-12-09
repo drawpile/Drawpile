@@ -864,7 +864,7 @@ bool DP_msg_ping_is_pong(const DP_MsgPing *mp)
 
 /* DP_MSG_JOIN */
 
-const char *DP_msg_join_flags_flag_name(int value)
+const char *DP_msg_join_flags_flag_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_JOIN_FLAGS_AUTH:
@@ -1154,7 +1154,7 @@ int DP_msg_session_owner_users_count(const DP_MsgSessionOwner *mso)
 
 /* DP_MSG_CHAT */
 
-const char *DP_msg_chat_tflags_flag_name(int value)
+const char *DP_msg_chat_tflags_flag_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_CHAT_TFLAGS_BYPASS:
@@ -1164,7 +1164,7 @@ const char *DP_msg_chat_tflags_flag_name(int value)
     }
 }
 
-const char *DP_msg_chat_oflags_flag_name(int value)
+const char *DP_msg_chat_oflags_flag_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_CHAT_OFLAGS_SHOUT:
@@ -2567,7 +2567,7 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr)
 
 /* DP_MSG_LAYER_CREATE */
 
-const char *DP_msg_layer_create_flags_flag_name(int value)
+const char *DP_msg_layer_create_flags_flag_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_LAYER_CREATE_FLAGS_GROUP:
@@ -2739,7 +2739,7 @@ size_t DP_msg_layer_create_name_len(const DP_MsgLayerCreate *mlc)
 
 /* DP_MSG_LAYER_ATTRIBUTES */
 
-const char *DP_msg_layer_attributes_flags_flag_name(int value)
+const char *DP_msg_layer_attributes_flags_flag_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR:
@@ -3893,7 +3893,7 @@ uint16_t DP_msg_annotation_reshape_h(const DP_MsgAnnotationReshape *mar)
 
 /* DP_MSG_ANNOTATION_EDIT */
 
-const char *DP_msg_annotation_edit_flags_flag_name(int value)
+const char *DP_msg_annotation_edit_flags_flag_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT:
@@ -5828,7 +5828,7 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr)
 
 /* DP_MSG_SET_METADATA_INT */
 
-const char *DP_msg_set_metadata_int_field_variant_name(int value)
+const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value)
 {
     switch (value) {
     case DP_MSG_SET_METADATA_INT_FIELD_DPIX:

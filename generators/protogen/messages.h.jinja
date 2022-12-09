@@ -75,7 +75,7 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const
                     #define {{ flag.define_name }} 0x{{ '%.x'|format(flag.value) }}
                 {% endfor %}
 
-                const char *DP_{{ message.func_name }}_{{ f.func_name }}_flag_name(int value);
+                const char *DP_{{ message.func_name }}_{{ f.func_name }}_flag_name(unsigned int value);
             {% endif %}
             {% if f.variants %}
 
@@ -83,7 +83,7 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const
                     #define {{ variant.define_name }} {{ variant.value }}
                 {% endfor %}
 
-                const char *DP_{{ message.func_name }}_{{ f.func_name }}_variant_name(int value);
+                const char *DP_{{ message.func_name }}_{{ f.func_name }}_variant_name(unsigned int value);
             {% endif %}
         {% endfor %}
         {% for f in message.fields %}
