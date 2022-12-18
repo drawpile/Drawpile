@@ -291,16 +291,14 @@ bool DP_blend_mode_blend_blank(int blend_mode)
 DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
                                        DP_BlendMode not_found_value)
 {
-    if (svg_name) {
-        for (int i = 0; i < DP_BLEND_MODE_LAST_EXCEPT_REPLACE; ++i) {
-            if (strcmp(svg_name, mode_attributes[i].svg_name) == 0) {
-                return (DP_BlendMode)i;
-            }
+    for (int i = 0; i < DP_BLEND_MODE_LAST_EXCEPT_REPLACE; ++i) {
+        if (DP_str_equal(svg_name, mode_attributes[i].svg_name)) {
+            return (DP_BlendMode)i;
         }
-        if (strcmp(svg_name, mode_attributes[DP_BLEND_MODE_REPLACE].svg_name)
-            == 0) {
-            return DP_BLEND_MODE_ERASE;
-        }
+    }
+    if (DP_str_equal(svg_name,
+                     mode_attributes[DP_BLEND_MODE_REPLACE].svg_name)) {
+        return DP_BLEND_MODE_ERASE;
     }
     return not_found_value;
 }
