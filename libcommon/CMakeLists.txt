@@ -53,7 +53,7 @@ set(dpcommon_headers
     dpcommon/worker.h)
 
 set(dpcommon_tests
-    test/base64_encode.c
+    test/base64.c
     test/queue.c
     test/rect.c
     test/vector.c)

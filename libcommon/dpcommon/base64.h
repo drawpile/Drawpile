@@ -26,4 +26,13 @@
 char *DP_base64_encode(const unsigned char *in, size_t in_length,
                        size_t *out_length);
 
+// Decoding tries to be lax with wonky inputs: it ignores anything that's not a
+// valid base64 character, doesn't verify correct padding and rectifies invalid
+// input lengths by chopping off the trailing character.
+
+size_t DP_base64_decode_length(const char *in, size_t in_length);
+
+void DP_base64_decode(const char *in, size_t in_length, unsigned char *out,
+                      size_t out_length);
+
 #endif
