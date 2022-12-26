@@ -91,7 +91,7 @@ static void dump_layer(DP_Output *output, DP_LayerListEntry *lle,
     size_t title_length;
     const char *title = DP_layer_props_title(lp, &title_length);
     if (title) {
-        format_indent(output, indent, "title: \"%*s\"\n",
+        format_indent(output, indent, "title: \"%.*s\"\n",
                       DP_size_to_int(title_length), title);
     }
     else {

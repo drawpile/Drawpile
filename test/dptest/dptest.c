@@ -463,9 +463,9 @@ bool DP_test_str_len_eq_ok(DP_TestContext *T, const char *file, int line,
     va_end(ap);
     if (!result) {
         DIAG_VALUE("actual length", "%zu", salen, alen);
-        DIAG_VALUE("actual string", "%*s", sa, DP_size_to_int(alen), a);
+        DIAG_VALUE("actual string", "%.*s", sa, DP_size_to_int(alen), a);
         DIAG_VALUE("expected length", "%zu", sblen, blen);
-        DIAG_VALUE("expected string", "%*s", sb, DP_size_to_int(blen), b);
+        DIAG_VALUE("expected string", "%.*s", sb, DP_size_to_int(blen), b);
     }
     return result;
 }

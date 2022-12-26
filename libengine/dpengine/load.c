@@ -677,7 +677,7 @@ static void ora_handle_frame_end(DP_ReadOraContext *c)
                     }
                 }
                 else {
-                    DP_warn("Read ORA: error parsing frame number '%*s'",
+                    DP_warn("Read ORA: error parsing frame number '%.*s'",
                             (int)(end - text), text);
                     while (!is_nul_or_space(*end)) {
                         ++end;
