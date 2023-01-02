@@ -62,6 +62,11 @@
         (*(TYPE *)DP_vector_push((VECTOR), sizeof(TYPE))) = (ELEMENT); \
     } while (0)
 
+#define DP_VECTOR_FIRST_TYPE(VECTOR, TYPE) (*(TYPE *)DP_vector_first((VECTOR)))
+
+#define DP_VECTOR_LAST_TYPE(VECTOR, TYPE) \
+    (*(TYPE *)DP_vector_last((VECTOR), sizeof(TYPE)))
+
 #define DP_VECTOR_AT_TYPE(VECTOR, TYPE, INDEX) \
     (*(TYPE *)DP_vector_at((VECTOR), sizeof(TYPE), (size_t)(INDEX)))
 
