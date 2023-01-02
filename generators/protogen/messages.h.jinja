@@ -24,6 +24,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_Message DP_Message;
+typedef struct DP_TextReader DP_TextReader;
 typedef struct DP_TextWriter DP_TextWriter;
 
 #define DP_PROTOCOL_VERSION "{{ version }}"
@@ -57,8 +58,16 @@ const char *DP_message_type_enum_name(DP_MessageType type);
 
 const char *DP_message_type_enum_name_unprefixed(DP_MessageType type);
 
+DP_MessageType DP_message_type_from_name(const char *type_name, DP_MessageType not_found_value);
+
+// Returns if the given type's text format has a body of value tuples, rather
+// than a body of multiline fields. This is the case for draw dabs messages.
+bool DP_message_type_parse_multiline_tuples(DP_MessageType type);
+
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length);
+
+DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, DP_TextReader *reader);
 
 {% for message in messages %}
 
@@ -121,6 +130,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const
         );
 
         DP_Message *DP_{{ message.func_name }}_deserialize(unsigned int context_id, const unsigned char *buffer, size_t length);
+
+        DP_Message *DP_{{ message.func_name }}_parse(unsigned int context_id, DP_TextReader *reader);
         {% if message.fields or message.alias %}
 
             {{ message.struct_name }} *DP_{{ message.func_name }}_cast(DP_Message *msg);

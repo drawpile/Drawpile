@@ -21,6 +21,7 @@
  */
 #include "messages.h"
 #include "message.h"
+#include "text_reader.h"
 #include "text_writer.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
@@ -340,6 +341,168 @@ const char *DP_message_type_enum_name_unprefixed(DP_MessageType type)
     return DP_message_type_enum_name(type) + 7;
 }
 
+DP_MessageType DP_message_type_from_name(const char *type_name,
+                                         DP_MessageType not_found_value)
+{
+    if (DP_str_equal(type_name, "servercommand")) {
+        return DP_MSG_SERVER_COMMAND;
+    }
+    else if (DP_str_equal(type_name, "disconnect")) {
+        return DP_MSG_DISCONNECT;
+    }
+    else if (DP_str_equal(type_name, "ping")) {
+        return DP_MSG_PING;
+    }
+    else if (DP_str_equal(type_name, "join")) {
+        return DP_MSG_JOIN;
+    }
+    else if (DP_str_equal(type_name, "leave")) {
+        return DP_MSG_LEAVE;
+    }
+    else if (DP_str_equal(type_name, "sessionowner")) {
+        return DP_MSG_SESSION_OWNER;
+    }
+    else if (DP_str_equal(type_name, "chat")) {
+        return DP_MSG_CHAT;
+    }
+    else if (DP_str_equal(type_name, "trusted")) {
+        return DP_MSG_TRUSTED_USERS;
+    }
+    else if (DP_str_equal(type_name, "softreset")) {
+        return DP_MSG_SOFT_RESET;
+    }
+    else if (DP_str_equal(type_name, "privatechat")) {
+        return DP_MSG_PRIVATE_CHAT;
+    }
+    else if (DP_str_equal(type_name, "interval")) {
+        return DP_MSG_INTERVAL;
+    }
+    else if (DP_str_equal(type_name, "lasertrail")) {
+        return DP_MSG_LASER_TRAIL;
+    }
+    else if (DP_str_equal(type_name, "movepointer")) {
+        return DP_MSG_MOVE_POINTER;
+    }
+    else if (DP_str_equal(type_name, "marker")) {
+        return DP_MSG_MARKER;
+    }
+    else if (DP_str_equal(type_name, "useracl")) {
+        return DP_MSG_USER_ACL;
+    }
+    else if (DP_str_equal(type_name, "layeracl")) {
+        return DP_MSG_LAYER_ACL;
+    }
+    else if (DP_str_equal(type_name, "featureaccess")) {
+        return DP_MSG_FEATURE_ACCESS_LEVELS;
+    }
+    else if (DP_str_equal(type_name, "defaultlayer")) {
+        return DP_MSG_DEFAULT_LAYER;
+    }
+    else if (DP_str_equal(type_name, "filtered")) {
+        return DP_MSG_FILTERED;
+    }
+    else if (DP_str_equal(type_name, "undopoint")) {
+        return DP_MSG_UNDO_POINT;
+    }
+    else if (DP_str_equal(type_name, "resize")) {
+        return DP_MSG_CANVAS_RESIZE;
+    }
+    else if (DP_str_equal(type_name, "newlayer")) {
+        return DP_MSG_LAYER_CREATE;
+    }
+    else if (DP_str_equal(type_name, "layerattr")) {
+        return DP_MSG_LAYER_ATTRIBUTES;
+    }
+    else if (DP_str_equal(type_name, "retitlelayer")) {
+        return DP_MSG_LAYER_RETITLE;
+    }
+    else if (DP_str_equal(type_name, "layerorder")) {
+        return DP_MSG_LAYER_ORDER;
+    }
+    else if (DP_str_equal(type_name, "deletelayer")) {
+        return DP_MSG_LAYER_DELETE;
+    }
+    else if (DP_str_equal(type_name, "layervisibility")) {
+        return DP_MSG_LAYER_VISIBILITY;
+    }
+    else if (DP_str_equal(type_name, "putimage")) {
+        return DP_MSG_PUT_IMAGE;
+    }
+    else if (DP_str_equal(type_name, "fillrect")) {
+        return DP_MSG_FILL_RECT;
+    }
+    else if (DP_str_equal(type_name, "penup")) {
+        return DP_MSG_PEN_UP;
+    }
+    else if (DP_str_equal(type_name, "newannotation")) {
+        return DP_MSG_ANNOTATION_CREATE;
+    }
+    else if (DP_str_equal(type_name, "reshapeannotation")) {
+        return DP_MSG_ANNOTATION_RESHAPE;
+    }
+    else if (DP_str_equal(type_name, "editannotation")) {
+        return DP_MSG_ANNOTATION_EDIT;
+    }
+    else if (DP_str_equal(type_name, "deleteannotation")) {
+        return DP_MSG_ANNOTATION_DELETE;
+    }
+    else if (DP_str_equal(type_name, "moveregion")) {
+        return DP_MSG_MOVE_REGION;
+    }
+    else if (DP_str_equal(type_name, "puttile")) {
+        return DP_MSG_PUT_TILE;
+    }
+    else if (DP_str_equal(type_name, "background")) {
+        return DP_MSG_CANVAS_BACKGROUND;
+    }
+    else if (DP_str_equal(type_name, "classicdabs")) {
+        return DP_MSG_DRAW_DABS_CLASSIC;
+    }
+    else if (DP_str_equal(type_name, "pixeldabs")) {
+        return DP_MSG_DRAW_DABS_PIXEL;
+    }
+    else if (DP_str_equal(type_name, "squarepixeldabs")) {
+        return DP_MSG_DRAW_DABS_PIXEL_SQUARE;
+    }
+    else if (DP_str_equal(type_name, "mypaintdabs")) {
+        return DP_MSG_DRAW_DABS_MYPAINT;
+    }
+    else if (DP_str_equal(type_name, "moverect")) {
+        return DP_MSG_MOVE_RECT;
+    }
+    else if (DP_str_equal(type_name, "setmetadataint")) {
+        return DP_MSG_SET_METADATA_INT;
+    }
+    else if (DP_str_equal(type_name, "setmetadatastr")) {
+        return DP_MSG_SET_METADATA_STR;
+    }
+    else if (DP_str_equal(type_name, "settimelineframe")) {
+        return DP_MSG_SET_TIMELINE_FRAME;
+    }
+    else if (DP_str_equal(type_name, "removetimelineframe")) {
+        return DP_MSG_REMOVE_TIMELINE_FRAME;
+    }
+    else if (DP_str_equal(type_name, "undo")) {
+        return DP_MSG_UNDO;
+    }
+    else {
+        return not_found_value;
+    }
+}
+
+bool DP_message_type_parse_multiline_tuples(DP_MessageType type)
+{
+    switch (type) {
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+        return true;
+    default:
+        return false;
+    }
+}
+
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                         const unsigned char *buf, size_t length)
@@ -460,6 +623,123 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return DP_msg_undo_deserialize(context_id, buf, length);
     default:
         DP_error_set("Can't deserialize unknown message type %d", type);
+        return NULL;
+    }
+}
+
+DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
+                                  DP_TextReader *reader)
+{
+    switch (type) {
+    case DP_MSG_SERVER_COMMAND:
+        return DP_msg_server_command_parse(context_id, reader);
+    case DP_MSG_DISCONNECT:
+        return DP_msg_disconnect_parse(context_id, reader);
+    case DP_MSG_PING:
+        return DP_msg_ping_parse(context_id, reader);
+    case DP_MSG_INTERNAL:
+        DP_error_set("Can't parse reserved message type 31 DP_MSG_INTERNAL");
+        return NULL;
+    case DP_MSG_JOIN:
+        return DP_msg_join_parse(context_id, reader);
+    case DP_MSG_LEAVE:
+        return DP_msg_leave_parse(context_id, reader);
+    case DP_MSG_SESSION_OWNER:
+        return DP_msg_session_owner_parse(context_id, reader);
+    case DP_MSG_CHAT:
+        return DP_msg_chat_parse(context_id, reader);
+    case DP_MSG_TRUSTED_USERS:
+        return DP_msg_trusted_users_parse(context_id, reader);
+    case DP_MSG_SOFT_RESET:
+        return DP_msg_soft_reset_parse(context_id, reader);
+    case DP_MSG_PRIVATE_CHAT:
+        return DP_msg_private_chat_parse(context_id, reader);
+    case DP_MSG_INTERVAL:
+        return DP_msg_interval_parse(context_id, reader);
+    case DP_MSG_LASER_TRAIL:
+        return DP_msg_laser_trail_parse(context_id, reader);
+    case DP_MSG_MOVE_POINTER:
+        return DP_msg_move_pointer_parse(context_id, reader);
+    case DP_MSG_MARKER:
+        return DP_msg_marker_parse(context_id, reader);
+    case DP_MSG_USER_ACL:
+        return DP_msg_user_acl_parse(context_id, reader);
+    case DP_MSG_LAYER_ACL:
+        return DP_msg_layer_acl_parse(context_id, reader);
+    case DP_MSG_FEATURE_ACCESS_LEVELS:
+        return DP_msg_feature_access_levels_parse(context_id, reader);
+    case DP_MSG_DEFAULT_LAYER:
+        return DP_msg_default_layer_parse(context_id, reader);
+    case DP_MSG_FILTERED:
+        return DP_msg_filtered_parse(context_id, reader);
+    case DP_MSG_EXTENSION:
+        DP_error_set("Can't parse reserved message type 73 DP_MSG_EXTENSION");
+        return NULL;
+    case DP_MSG_UNDO_POINT:
+        return DP_msg_undo_point_parse(context_id, reader);
+    case DP_MSG_CANVAS_RESIZE:
+        return DP_msg_canvas_resize_parse(context_id, reader);
+    case DP_MSG_LAYER_CREATE:
+        return DP_msg_layer_create_parse(context_id, reader);
+    case DP_MSG_LAYER_ATTRIBUTES:
+        return DP_msg_layer_attributes_parse(context_id, reader);
+    case DP_MSG_LAYER_RETITLE:
+        return DP_msg_layer_retitle_parse(context_id, reader);
+    case DP_MSG_LAYER_ORDER:
+        return DP_msg_layer_order_parse(context_id, reader);
+    case DP_MSG_LAYER_DELETE:
+        return DP_msg_layer_delete_parse(context_id, reader);
+    case DP_MSG_LAYER_VISIBILITY:
+        return DP_msg_layer_visibility_parse(context_id, reader);
+    case DP_MSG_PUT_IMAGE:
+        return DP_msg_put_image_parse(context_id, reader);
+    case DP_MSG_FILL_RECT:
+        return DP_msg_fill_rect_parse(context_id, reader);
+    case DP_MSG_TOOL_CHANGE:
+        DP_error_set(
+            "Can't parse reserved message type 138 DP_MSG_TOOL_CHANGE");
+        return NULL;
+    case DP_MSG_PEN_MOVE:
+        DP_error_set("Can't parse reserved message type 139 DP_MSG_PEN_MOVE");
+        return NULL;
+    case DP_MSG_PEN_UP:
+        return DP_msg_pen_up_parse(context_id, reader);
+    case DP_MSG_ANNOTATION_CREATE:
+        return DP_msg_annotation_create_parse(context_id, reader);
+    case DP_MSG_ANNOTATION_RESHAPE:
+        return DP_msg_annotation_reshape_parse(context_id, reader);
+    case DP_MSG_ANNOTATION_EDIT:
+        return DP_msg_annotation_edit_parse(context_id, reader);
+    case DP_MSG_ANNOTATION_DELETE:
+        return DP_msg_annotation_delete_parse(context_id, reader);
+    case DP_MSG_MOVE_REGION:
+        return DP_msg_move_region_parse(context_id, reader);
+    case DP_MSG_PUT_TILE:
+        return DP_msg_put_tile_parse(context_id, reader);
+    case DP_MSG_CANVAS_BACKGROUND:
+        return DP_msg_canvas_background_parse(context_id, reader);
+    case DP_MSG_DRAW_DABS_CLASSIC:
+        return DP_msg_draw_dabs_classic_parse(context_id, reader);
+    case DP_MSG_DRAW_DABS_PIXEL:
+        return DP_msg_draw_dabs_pixel_parse(context_id, reader);
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+        return DP_msg_draw_dabs_pixel_square_parse(context_id, reader);
+    case DP_MSG_DRAW_DABS_MYPAINT:
+        return DP_msg_draw_dabs_mypaint_parse(context_id, reader);
+    case DP_MSG_MOVE_RECT:
+        return DP_msg_move_rect_parse(context_id, reader);
+    case DP_MSG_SET_METADATA_INT:
+        return DP_msg_set_metadata_int_parse(context_id, reader);
+    case DP_MSG_SET_METADATA_STR:
+        return DP_msg_set_metadata_str_parse(context_id, reader);
+    case DP_MSG_SET_TIMELINE_FRAME:
+        return DP_msg_set_timeline_frame_parse(context_id, reader);
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
+        return DP_msg_remove_timeline_frame_parse(context_id, reader);
+    case DP_MSG_UNDO:
+        return DP_msg_undo_parse(context_id, reader);
+    default:
+        DP_error_set("Can't parse unknown message type %d", type);
         return NULL;
     }
 }
@@ -658,6 +938,14 @@ DP_Message *DP_msg_server_command_deserialize(unsigned int context_id,
     return DP_msg_server_command_new(context_id, msg, msg_len);
 }
 
+DP_Message *DP_msg_server_command_parse(unsigned int context_id,
+                                        DP_TextReader *reader)
+{
+    uint16_t msg_len;
+    const char *msg = DP_text_reader_get_string(reader, "msg", &msg_len);
+    return DP_msg_server_command_new(context_id, msg, msg_len);
+}
+
 DP_MsgServerCommand *DP_msg_server_command_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_SERVER_COMMAND);
@@ -759,6 +1047,17 @@ DP_Message *DP_msg_disconnect_deserialize(unsigned int context_id,
     return DP_msg_disconnect_new(context_id, reason, message, message_len);
 }
 
+DP_Message *DP_msg_disconnect_parse(unsigned int context_id,
+                                    DP_TextReader *reader)
+{
+    uint8_t reason =
+        (uint8_t)DP_text_reader_get_ulong(reader, "reason", UINT8_MAX);
+    uint16_t message_len;
+    const char *message =
+        DP_text_reader_get_string(reader, "message", &message_len);
+    return DP_msg_disconnect_new(context_id, reason, message, message_len);
+}
+
 DP_MsgDisconnect *DP_msg_disconnect_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_DISCONNECT);
@@ -847,6 +1146,12 @@ DP_Message *DP_msg_ping_deserialize(unsigned int context_id,
     }
     size_t read = 0;
     bool is_pong = read_bool(buffer + read, &read);
+    return DP_msg_ping_new(context_id, is_pong);
+}
+
+DP_Message *DP_msg_ping_parse(unsigned int context_id, DP_TextReader *reader)
+{
+    bool is_pong = DP_text_reader_get_bool(reader, "is_pong");
     return DP_msg_ping_new(context_id, is_pong);
 }
 
@@ -989,6 +1294,22 @@ DP_Message *DP_msg_join_deserialize(unsigned int context_id,
                            avatar_size, avatar_user);
 }
 
+DP_Message *DP_msg_join_parse(unsigned int context_id, DP_TextReader *reader)
+{
+    uint8_t flags = (uint8_t)DP_text_reader_get_flags(
+        reader, "flags", 3, (const char *[]){"auth", "mod", "bot"},
+        (unsigned int[]){DP_MSG_JOIN_FLAGS_AUTH, DP_MSG_JOIN_FLAGS_MOD,
+                         DP_MSG_JOIN_FLAGS_BOT});
+    uint16_t name_len;
+    const char *name = DP_text_reader_get_string(reader, "name", &name_len);
+    size_t avatar_size;
+    DP_TextReaderParseParams avatar_params =
+        DP_text_reader_get_base64_string(reader, "avatar", &avatar_size);
+    return DP_msg_join_new(context_id, flags, name, name_len,
+                           DP_text_reader_parse_base64, avatar_size,
+                           &avatar_params);
+}
+
 DP_MsgJoin *DP_msg_join_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_JOIN);
@@ -1046,6 +1367,12 @@ DP_Message *DP_msg_leave_deserialize(unsigned int context_id,
                      length);
         return NULL;
     }
+    return DP_msg_leave_new(context_id);
+}
+
+DP_Message *DP_msg_leave_parse(unsigned int context_id,
+                               DP_UNUSED DP_TextReader *reader)
+{
     return DP_msg_leave_new(context_id);
 }
 
@@ -1129,6 +1456,17 @@ DP_Message *DP_msg_session_owner_deserialize(unsigned int context_id,
     void *users_user = (void *)(buffer + read);
     return DP_msg_session_owner_new(context_id, read_uint8_array, users_count,
                                     users_user);
+}
+
+DP_Message *DP_msg_session_owner_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    int users_count;
+    DP_TextReaderParseParams users_params =
+        DP_text_reader_get_comma_separated(reader, "users", &users_count);
+    return DP_msg_session_owner_new(context_id,
+                                    DP_text_reader_parse_uint8_array,
+                                    users_count, &users_params);
 }
 
 DP_MsgSessionOwner *DP_msg_session_owner_cast(DP_Message *msg)
@@ -1269,6 +1607,22 @@ DP_Message *DP_msg_chat_deserialize(unsigned int context_id,
     return DP_msg_chat_new(context_id, tflags, oflags, message, message_len);
 }
 
+DP_Message *DP_msg_chat_parse(unsigned int context_id, DP_TextReader *reader)
+{
+    uint8_t tflags = (uint8_t)DP_text_reader_get_flags(
+        reader, "tflags", 1, (const char *[]){"bypass"},
+        (unsigned int[]){DP_MSG_CHAT_TFLAGS_BYPASS});
+    uint8_t oflags = (uint8_t)DP_text_reader_get_flags(
+        reader, "oflags", 4,
+        (const char *[]){"shout", "action", "pin", "alert"},
+        (unsigned int[]){DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION,
+                         DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT});
+    uint16_t message_len;
+    const char *message =
+        DP_text_reader_get_string(reader, "message", &message_len);
+    return DP_msg_chat_new(context_id, tflags, oflags, message, message_len);
+}
+
 DP_MsgChat *DP_msg_chat_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_CHAT);
@@ -1382,6 +1736,17 @@ DP_Message *DP_msg_trusted_users_deserialize(unsigned int context_id,
                                     users_user);
 }
 
+DP_Message *DP_msg_trusted_users_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    int users_count;
+    DP_TextReaderParseParams users_params =
+        DP_text_reader_get_comma_separated(reader, "users", &users_count);
+    return DP_msg_trusted_users_new(context_id,
+                                    DP_text_reader_parse_uint8_array,
+                                    users_count, &users_params);
+}
+
 DP_MsgTrustedUsers *DP_msg_trusted_users_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_TRUSTED_USERS);
@@ -1421,6 +1786,12 @@ DP_Message *DP_msg_soft_reset_deserialize(unsigned int context_id,
                      length);
         return NULL;
     }
+    return DP_msg_soft_reset_new(context_id);
+}
+
+DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
+                                    DP_UNUSED DP_TextReader *reader)
+{
     return DP_msg_soft_reset_new(context_id);
 }
 
@@ -1510,6 +1881,20 @@ DP_Message *DP_msg_private_chat_deserialize(unsigned int context_id,
     size_t message_bytes = length - read;
     uint16_t message_len = DP_size_to_uint16(message_bytes);
     const char *message = (const char *)buffer + read;
+    return DP_msg_private_chat_new(context_id, target, oflags, message,
+                                   message_len);
+}
+
+DP_Message *DP_msg_private_chat_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    uint8_t target =
+        (uint8_t)DP_text_reader_get_ulong(reader, "target", UINT8_MAX);
+    uint8_t oflags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "oflags", UINT8_MAX);
+    uint16_t message_len;
+    const char *message =
+        DP_text_reader_get_string(reader, "message", &message_len);
     return DP_msg_private_chat_new(context_id, target, oflags, message,
                                    message_len);
 }
@@ -1615,6 +2000,14 @@ DP_Message *DP_msg_interval_deserialize(unsigned int context_id,
     return DP_msg_interval_new(context_id, msecs);
 }
 
+DP_Message *DP_msg_interval_parse(unsigned int context_id,
+                                  DP_TextReader *reader)
+{
+    uint16_t msecs =
+        (uint16_t)DP_text_reader_get_ulong(reader, "msecs", UINT16_MAX);
+    return DP_msg_interval_new(context_id, msecs);
+}
+
 DP_MsgInterval *DP_msg_interval_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_INTERVAL);
@@ -1699,6 +2092,15 @@ DP_Message *DP_msg_laser_trail_deserialize(unsigned int context_id,
     size_t read = 0;
     uint32_t color = read_uint32(buffer + read, &read);
     uint8_t persistence = read_uint8(buffer + read, &read);
+    return DP_msg_laser_trail_new(context_id, color, persistence);
+}
+
+DP_Message *DP_msg_laser_trail_parse(unsigned int context_id,
+                                     DP_TextReader *reader)
+{
+    uint32_t color = DP_text_reader_get_argb_color(reader, "color");
+    uint8_t persistence =
+        (uint8_t)DP_text_reader_get_ulong(reader, "persistence", UINT8_MAX);
     return DP_msg_laser_trail_new(context_id, color, persistence);
 }
 
@@ -1794,6 +2196,16 @@ DP_Message *DP_msg_move_pointer_deserialize(unsigned int context_id,
     return DP_msg_move_pointer_new(context_id, x, y);
 }
 
+DP_Message *DP_msg_move_pointer_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    int32_t x =
+        (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
+    int32_t y =
+        (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
+    return DP_msg_move_pointer_new(context_id, x, y);
+}
+
 DP_MsgMovePointer *DP_msg_move_pointer_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_MOVE_POINTER);
@@ -1883,6 +2295,13 @@ DP_Message *DP_msg_marker_deserialize(unsigned int context_id,
     size_t text_bytes = length - read;
     uint16_t text_len = DP_size_to_uint16(text_bytes);
     const char *text = (const char *)buffer + read;
+    return DP_msg_marker_new(context_id, text, text_len);
+}
+
+DP_Message *DP_msg_marker_parse(unsigned int context_id, DP_TextReader *reader)
+{
+    uint16_t text_len;
+    const char *text = DP_text_reader_get_string(reader, "text", &text_len);
     return DP_msg_marker_new(context_id, text, text_len);
 }
 
@@ -1985,6 +2404,16 @@ DP_Message *DP_msg_user_acl_deserialize(unsigned int context_id,
     void *users_user = (void *)(buffer + read);
     return DP_msg_user_acl_new(context_id, read_uint8_array, users_count,
                                users_user);
+}
+
+DP_Message *DP_msg_user_acl_parse(unsigned int context_id,
+                                  DP_TextReader *reader)
+{
+    int users_count;
+    DP_TextReaderParseParams users_params =
+        DP_text_reader_get_comma_separated(reader, "users", &users_count);
+    return DP_msg_user_acl_new(context_id, DP_text_reader_parse_uint8_array,
+                               users_count, &users_params);
 }
 
 DP_MsgUserAcl *DP_msg_user_acl_cast(DP_Message *msg)
@@ -2101,6 +2530,21 @@ DP_Message *DP_msg_layer_acl_deserialize(unsigned int context_id,
     void *exclusive_user = (void *)(buffer + read);
     return DP_msg_layer_acl_new(context_id, id, flags, read_uint8_array,
                                 exclusive_count, exclusive_user);
+}
+
+DP_Message *DP_msg_layer_acl_parse(unsigned int context_id,
+                                   DP_TextReader *reader)
+{
+    uint16_t id = (uint16_t)DP_text_reader_get_ulong(reader, "id", UINT16_MAX);
+    uint8_t flags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "flags", UINT8_MAX);
+    int exclusive_count;
+    DP_TextReaderParseParams exclusive_params =
+        DP_text_reader_get_comma_separated(reader, "exclusive",
+                                           &exclusive_count);
+    return DP_msg_layer_acl_new(context_id, id, flags,
+                                DP_text_reader_parse_uint8_array,
+                                exclusive_count, &exclusive_params);
 }
 
 DP_MsgLayerAcl *DP_msg_layer_acl_cast(DP_Message *msg)
@@ -2222,6 +2666,18 @@ DP_Message *DP_msg_feature_access_levels_deserialize(
         context_id, read_uint8_array, feature_tiers_count, feature_tiers_user);
 }
 
+DP_Message *DP_msg_feature_access_levels_parse(unsigned int context_id,
+                                               DP_TextReader *reader)
+{
+    int feature_tiers_count;
+    DP_TextReaderParseParams feature_tiers_params =
+        DP_text_reader_get_comma_separated(reader, "feature_tiers",
+                                           &feature_tiers_count);
+    return DP_msg_feature_access_levels_new(
+        context_id, DP_text_reader_parse_uint8_array, feature_tiers_count,
+        &feature_tiers_params);
+}
+
 DP_MsgFeatureAccessLevels *DP_msg_feature_access_levels_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_FEATURE_ACCESS_LEVELS);
@@ -2309,6 +2765,14 @@ DP_Message *DP_msg_default_layer_deserialize(unsigned int context_id,
     }
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
+    return DP_msg_default_layer_new(context_id, id);
+}
+
+DP_Message *DP_msg_default_layer_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
     return DP_msg_default_layer_new(context_id, id);
 }
 
@@ -2406,6 +2870,16 @@ DP_Message *DP_msg_filtered_deserialize(unsigned int context_id,
                                message_user);
 }
 
+DP_Message *DP_msg_filtered_parse(unsigned int context_id,
+                                  DP_TextReader *reader)
+{
+    size_t message_size;
+    DP_TextReaderParseParams message_params =
+        DP_text_reader_get_base64_string(reader, "message", &message_size);
+    return DP_msg_filtered_new(context_id, DP_text_reader_parse_base64,
+                               message_size, &message_params);
+}
+
 DP_MsgFiltered *DP_msg_filtered_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_FILTERED);
@@ -2445,6 +2919,12 @@ DP_Message *DP_msg_undo_point_deserialize(unsigned int context_id,
                      length);
         return NULL;
     }
+    return DP_msg_undo_point_new(context_id);
+}
+
+DP_Message *DP_msg_undo_point_parse(unsigned int context_id,
+                                    DP_UNUSED DP_TextReader *reader)
+{
     return DP_msg_undo_point_new(context_id);
 }
 
@@ -2532,6 +3012,20 @@ DP_Message *DP_msg_canvas_resize_deserialize(unsigned int context_id,
     int32_t right = read_int32(buffer + read, &read);
     int32_t bottom = read_int32(buffer + read, &read);
     int32_t left = read_int32(buffer + read, &read);
+    return DP_msg_canvas_resize_new(context_id, top, right, bottom, left);
+}
+
+DP_Message *DP_msg_canvas_resize_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    int32_t top =
+        (int32_t)DP_text_reader_get_long(reader, "top", INT32_MIN, INT32_MAX);
+    int32_t right =
+        (int32_t)DP_text_reader_get_long(reader, "right", INT32_MIN, INT32_MAX);
+    int32_t bottom = (int32_t)DP_text_reader_get_long(reader, "bottom",
+                                                      INT32_MIN, INT32_MAX);
+    int32_t left =
+        (int32_t)DP_text_reader_get_long(reader, "left", INT32_MIN, INT32_MAX);
     return DP_msg_canvas_resize_new(context_id, top, right, bottom, left);
 }
 
@@ -2682,6 +3176,26 @@ DP_Message *DP_msg_layer_create_deserialize(unsigned int context_id,
     size_t name_bytes = length - read;
     uint16_t name_len = DP_size_to_uint16(name_bytes);
     const char *name = (const char *)buffer + read;
+    return DP_msg_layer_create_new(context_id, id, source, target, fill, flags,
+                                   name, name_len);
+}
+
+DP_Message *DP_msg_layer_create_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint16_t source =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
+    uint16_t target =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "target", UINT16_MAX);
+    uint32_t fill = DP_text_reader_get_argb_color(reader, "fill");
+    uint8_t flags = (uint8_t)DP_text_reader_get_flags(
+        reader, "flags", 2, (const char *[]){"group", "into"},
+        (unsigned int[]){DP_MSG_LAYER_CREATE_FLAGS_GROUP,
+                         DP_MSG_LAYER_CREATE_FLAGS_INTO});
+    uint16_t name_len;
+    const char *name = DP_text_reader_get_string(reader, "name", &name_len);
     return DP_msg_layer_create_new(context_id, id, source, target, fill, flags,
                                    name, name_len);
 }
@@ -2848,6 +3362,25 @@ DP_Message *DP_msg_layer_attributes_deserialize(unsigned int context_id,
                                        blend);
 }
 
+DP_Message *DP_msg_layer_attributes_parse(unsigned int context_id,
+                                          DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint8_t sublayer =
+        (uint8_t)DP_text_reader_get_ulong(reader, "sublayer", UINT8_MAX);
+    uint8_t flags = (uint8_t)DP_text_reader_get_flags(
+        reader, "flags", 3, (const char *[]){"censor", "fixed", "isolated"},
+        (unsigned int[]){DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR,
+                         DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED,
+                         DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED});
+    uint8_t opacity =
+        (uint8_t)DP_text_reader_get_ulong(reader, "opacity", UINT8_MAX);
+    uint8_t blend = DP_text_reader_get_blend_mode(reader, "blend");
+    return DP_msg_layer_attributes_new(context_id, id, sublayer, flags, opacity,
+                                       blend);
+}
+
 DP_MsgLayerAttributes *DP_msg_layer_attributes_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_LAYER_ATTRIBUTES);
@@ -2961,6 +3494,16 @@ DP_Message *DP_msg_layer_retitle_deserialize(unsigned int context_id,
     size_t title_bytes = length - read;
     uint16_t title_len = DP_size_to_uint16(title_bytes);
     const char *title = (const char *)buffer + read;
+    return DP_msg_layer_retitle_new(context_id, id, title, title_len);
+}
+
+DP_Message *DP_msg_layer_retitle_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint16_t title_len;
+    const char *title = DP_text_reader_get_string(reader, "title", &title_len);
     return DP_msg_layer_retitle_new(context_id, id, title, title_len);
 }
 
@@ -3085,6 +3628,19 @@ DP_Message *DP_msg_layer_order_deserialize(unsigned int context_id,
                                   layers_count, layers_user);
 }
 
+DP_Message *DP_msg_layer_order_parse(unsigned int context_id,
+                                     DP_TextReader *reader)
+{
+    uint16_t root =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "root", UINT16_MAX);
+    int layers_count;
+    DP_TextReaderParseParams layers_params =
+        DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
+    return DP_msg_layer_order_new(context_id, root,
+                                  DP_text_reader_parse_uint16_array_hex,
+                                  layers_count, &layers_params);
+}
+
 DP_MsgLayerOrder *DP_msg_layer_order_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_LAYER_ORDER);
@@ -3186,6 +3742,16 @@ DP_Message *DP_msg_layer_delete_deserialize(unsigned int context_id,
     return DP_msg_layer_delete_new(context_id, id, merge_to);
 }
 
+DP_Message *DP_msg_layer_delete_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint16_t merge_to =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "merge_to", UINT16_MAX);
+    return DP_msg_layer_delete_new(context_id, id, merge_to);
+}
+
 DP_MsgLayerDelete *DP_msg_layer_delete_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_LAYER_DELETE);
@@ -3275,6 +3841,14 @@ DP_Message *DP_msg_layer_visibility_deserialize(unsigned int context_id,
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
     bool visible = read_bool(buffer + read, &read);
+    return DP_msg_layer_visibility_new(context_id, id, visible);
+}
+
+DP_Message *DP_msg_layer_visibility_parse(unsigned int context_id,
+                                          DP_TextReader *reader)
+{
+    uint16_t id = (uint16_t)DP_text_reader_get_ulong(reader, "id", UINT16_MAX);
+    bool visible = DP_text_reader_get_bool(reader, "visible");
     return DP_msg_layer_visibility_new(context_id, id, visible);
 }
 
@@ -3408,6 +3982,24 @@ DP_Message *DP_msg_put_image_deserialize(unsigned int context_id,
     void *image_user = (void *)(buffer + read);
     return DP_msg_put_image_new(context_id, layer, mode, x, y, w, h, read_bytes,
                                 image_size, image_user);
+}
+
+DP_Message *DP_msg_put_image_parse(unsigned int context_id,
+                                   DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
+    uint32_t x = (uint32_t)DP_text_reader_get_ulong(reader, "x", UINT32_MAX);
+    uint32_t y = (uint32_t)DP_text_reader_get_ulong(reader, "y", UINT32_MAX);
+    uint32_t w = (uint32_t)DP_text_reader_get_ulong(reader, "w", UINT32_MAX);
+    uint32_t h = (uint32_t)DP_text_reader_get_ulong(reader, "h", UINT32_MAX);
+    size_t image_size;
+    DP_TextReaderParseParams image_params =
+        DP_text_reader_get_base64_string(reader, "image", &image_size);
+    return DP_msg_put_image_new(context_id, layer, mode, x, y, w, h,
+                                DP_text_reader_parse_base64, image_size,
+                                &image_params);
 }
 
 DP_MsgPutImage *DP_msg_put_image_cast(DP_Message *msg)
@@ -3568,6 +4160,20 @@ DP_Message *DP_msg_fill_rect_deserialize(unsigned int context_id,
     return DP_msg_fill_rect_new(context_id, layer, mode, x, y, w, h, color);
 }
 
+DP_Message *DP_msg_fill_rect_parse(unsigned int context_id,
+                                   DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
+    uint32_t x = (uint32_t)DP_text_reader_get_ulong(reader, "x", UINT32_MAX);
+    uint32_t y = (uint32_t)DP_text_reader_get_ulong(reader, "y", UINT32_MAX);
+    uint32_t w = (uint32_t)DP_text_reader_get_ulong(reader, "w", UINT32_MAX);
+    uint32_t h = (uint32_t)DP_text_reader_get_ulong(reader, "h", UINT32_MAX);
+    uint32_t color = DP_text_reader_get_argb_color(reader, "color");
+    return DP_msg_fill_rect_new(context_id, layer, mode, x, y, w, h, color);
+}
+
 DP_MsgFillRect *DP_msg_fill_rect_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_FILL_RECT);
@@ -3633,6 +4239,12 @@ DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
                      length);
         return NULL;
     }
+    return DP_msg_pen_up_new(context_id);
+}
+
+DP_Message *DP_msg_pen_up_parse(unsigned int context_id,
+                                DP_UNUSED DP_TextReader *reader)
+{
     return DP_msg_pen_up_new(context_id);
 }
 
@@ -3725,6 +4337,20 @@ DP_Message *DP_msg_annotation_create_deserialize(unsigned int context_id,
     int32_t y = read_int32(buffer + read, &read);
     uint16_t w = read_uint16(buffer + read, &read);
     uint16_t h = read_uint16(buffer + read, &read);
+    return DP_msg_annotation_create_new(context_id, id, x, y, w, h);
+}
+
+DP_Message *DP_msg_annotation_create_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    int32_t x =
+        (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
+    int32_t y =
+        (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
+    uint16_t w = (uint16_t)DP_text_reader_get_ulong(reader, "w", UINT16_MAX);
+    uint16_t h = (uint16_t)DP_text_reader_get_ulong(reader, "h", UINT16_MAX);
     return DP_msg_annotation_create_new(context_id, id, x, y, w, h);
 }
 
@@ -3852,6 +4478,20 @@ DP_Message *DP_msg_annotation_reshape_deserialize(unsigned int context_id,
     int32_t y = read_int32(buffer + read, &read);
     uint16_t w = read_uint16(buffer + read, &read);
     uint16_t h = read_uint16(buffer + read, &read);
+    return DP_msg_annotation_reshape_new(context_id, id, x, y, w, h);
+}
+
+DP_Message *DP_msg_annotation_reshape_parse(unsigned int context_id,
+                                            DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    int32_t x =
+        (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
+    int32_t y =
+        (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
+    uint16_t w = (uint16_t)DP_text_reader_get_ulong(reader, "w", UINT16_MAX);
+    uint16_t h = (uint16_t)DP_text_reader_get_ulong(reader, "h", UINT16_MAX);
     return DP_msg_annotation_reshape_new(context_id, id, x, y, w, h);
 }
 
@@ -4009,6 +4649,26 @@ DP_Message *DP_msg_annotation_edit_deserialize(unsigned int context_id,
                                       text_len);
 }
 
+DP_Message *DP_msg_annotation_edit_parse(unsigned int context_id,
+                                         DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint32_t bg = DP_text_reader_get_argb_color(reader, "bg");
+    uint8_t flags = (uint8_t)DP_text_reader_get_flags(
+        reader, "flags", 3,
+        (const char *[]){"protect", "valign_center", "valign_bottom"},
+        (unsigned int[]){DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT,
+                         DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER,
+                         DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM});
+    uint8_t border =
+        (uint8_t)DP_text_reader_get_ulong(reader, "border", UINT8_MAX);
+    uint16_t text_len;
+    const char *text = DP_text_reader_get_string(reader, "text", &text_len);
+    return DP_msg_annotation_edit_new(context_id, id, bg, flags, border, text,
+                                      text_len);
+}
+
 DP_MsgAnnotationEdit *DP_msg_annotation_edit_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_ANNOTATION_EDIT);
@@ -4119,6 +4779,14 @@ DP_Message *DP_msg_annotation_delete_deserialize(unsigned int context_id,
     }
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
+    return DP_msg_annotation_delete_new(context_id, id);
+}
+
+DP_Message *DP_msg_annotation_delete_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
     return DP_msg_annotation_delete_new(context_id, id);
 }
 
@@ -4285,6 +4953,43 @@ DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
     return DP_msg_move_region_new(context_id, layer, bx, by, bw, bh, x1, y1, x2,
                                   y2, x3, y3, x4, y4, read_bytes, mask_size,
                                   mask_user);
+}
+
+DP_Message *DP_msg_move_region_parse(unsigned int context_id,
+                                     DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    int32_t bx =
+        (int32_t)DP_text_reader_get_long(reader, "bx", INT32_MIN, INT32_MAX);
+    int32_t by =
+        (int32_t)DP_text_reader_get_long(reader, "by", INT32_MIN, INT32_MAX);
+    int32_t bw =
+        (int32_t)DP_text_reader_get_long(reader, "bw", INT32_MIN, INT32_MAX);
+    int32_t bh =
+        (int32_t)DP_text_reader_get_long(reader, "bh", INT32_MIN, INT32_MAX);
+    int32_t x1 =
+        (int32_t)DP_text_reader_get_long(reader, "x1", INT32_MIN, INT32_MAX);
+    int32_t y1 =
+        (int32_t)DP_text_reader_get_long(reader, "y1", INT32_MIN, INT32_MAX);
+    int32_t x2 =
+        (int32_t)DP_text_reader_get_long(reader, "x2", INT32_MIN, INT32_MAX);
+    int32_t y2 =
+        (int32_t)DP_text_reader_get_long(reader, "y2", INT32_MIN, INT32_MAX);
+    int32_t x3 =
+        (int32_t)DP_text_reader_get_long(reader, "x3", INT32_MIN, INT32_MAX);
+    int32_t y3 =
+        (int32_t)DP_text_reader_get_long(reader, "y3", INT32_MIN, INT32_MAX);
+    int32_t x4 =
+        (int32_t)DP_text_reader_get_long(reader, "x4", INT32_MIN, INT32_MAX);
+    int32_t y4 =
+        (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_move_region_new(
+        context_id, layer, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4,
+        DP_text_reader_parse_base64, mask_size, &mask_params);
 }
 
 DP_MsgMoveRegion *DP_msg_move_region_cast(DP_Message *msg)
@@ -4503,6 +5208,29 @@ DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
                                row, repeat, read_bytes, image_size, image_user);
 }
 
+DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
+                                  DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint8_t sublayer =
+        (uint8_t)DP_text_reader_get_ulong(reader, "sublayer", UINT8_MAX);
+    uint8_t last_touch =
+        (uint8_t)DP_text_reader_get_ulong(reader, "last_touch", UINT8_MAX);
+    uint16_t col =
+        (uint16_t)DP_text_reader_get_ulong(reader, "col", UINT16_MAX);
+    uint16_t row =
+        (uint16_t)DP_text_reader_get_ulong(reader, "row", UINT16_MAX);
+    uint16_t repeat =
+        (uint16_t)DP_text_reader_get_ulong(reader, "repeat", UINT16_MAX);
+    size_t image_size;
+    DP_TextReaderParseParams image_params =
+        DP_text_reader_get_base64_string(reader, "image", &image_size);
+    return DP_msg_put_tile_new(context_id, layer, sublayer, last_touch, col,
+                               row, repeat, DP_text_reader_parse_base64,
+                               image_size, &image_params);
+}
+
 DP_MsgPutTile *DP_msg_put_tile_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_PUT_TILE);
@@ -4641,6 +5369,16 @@ DP_Message *DP_msg_canvas_background_deserialize(unsigned int context_id,
                                         image_user);
 }
 
+DP_Message *DP_msg_canvas_background_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    size_t image_size;
+    DP_TextReaderParseParams image_params =
+        DP_text_reader_get_base64_string(reader, "image", &image_size);
+    return DP_msg_canvas_background_new(context_id, DP_text_reader_parse_base64,
+                                        image_size, &image_params);
+}
+
 DP_MsgCanvasBackground *DP_msg_canvas_background_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_CANVAS_BACKGROUND);
@@ -4752,7 +5490,7 @@ void DP_classic_dab_init(DP_ClassicDab *cds, int i, int8_t x, int8_t y,
     cd->opacity = opacity;
 }
 
-void classic_dab_deserialize(int count, DP_ClassicDab *cds, void *user)
+static void classic_dab_deserialize(int count, DP_ClassicDab *cds, void *user)
 {
     const unsigned char *buffer = user;
     size_t read = 0;
@@ -4762,6 +5500,24 @@ void classic_dab_deserialize(int count, DP_ClassicDab *cds, void *user)
         uint16_t size = read_uint16(buffer + read, &read);
         uint8_t hardness = read_uint8(buffer + read, &read);
         uint8_t opacity = read_uint8(buffer + read, &read);
+        DP_classic_dab_init(cds, i, x, y, size, hardness, opacity);
+    }
+}
+
+static void classic_dab_parse(int count, DP_ClassicDab *cds, void *user)
+{
+    DP_TextReader *reader = user;
+    for (int i = 0; i < count; ++i) {
+        int8_t x = (int8_t)DP_text_reader_get_subfield_decimal(
+            reader, i, 0, 4.0, INT8_MIN, INT8_MAX);
+        int8_t y = (int8_t)DP_text_reader_get_subfield_decimal(
+            reader, i, 1, 4.0, INT8_MIN, INT8_MAX);
+        uint16_t size = (uint16_t)DP_text_reader_get_subfield_decimal(
+            reader, i, 2, 256.0, 0, UINT16_MAX);
+        uint8_t hardness =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 3, UINT8_MAX);
+        uint8_t opacity =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 4, UINT8_MAX);
         DP_classic_dab_init(cds, i, x, y, size, hardness, opacity);
     }
 }
@@ -4916,6 +5672,24 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
                                         dabs_user);
 }
 
+DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    int32_t x = (int32_t)DP_text_reader_get_decimal(reader, "x", 4.0, INT32_MIN,
+                                                    INT32_MAX);
+    int32_t y = (int32_t)DP_text_reader_get_decimal(reader, "y", 4.0, INT32_MIN,
+                                                    INT32_MAX);
+    uint32_t color = DP_text_reader_get_argb_color(reader, "color");
+    uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
+    int dabs_count = DP_text_reader_get_tuple_count(reader);
+    void *dabs_user = reader;
+    return DP_msg_draw_dabs_classic_new(context_id, layer, x, y, color, mode,
+                                        classic_dab_parse, dabs_count,
+                                        dabs_user);
+}
+
 DP_MsgDrawDabsClassic *DP_msg_draw_dabs_classic_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_DRAW_DABS_CLASSIC);
@@ -5049,7 +5823,7 @@ void DP_pixel_dab_init(DP_PixelDab *pds, int i, int8_t x, int8_t y,
     pd->opacity = opacity;
 }
 
-void pixel_dab_deserialize(int count, DP_PixelDab *pds, void *user)
+static void pixel_dab_deserialize(int count, DP_PixelDab *pds, void *user)
 {
     const unsigned char *buffer = user;
     size_t read = 0;
@@ -5058,6 +5832,22 @@ void pixel_dab_deserialize(int count, DP_PixelDab *pds, void *user)
         int8_t y = read_int8(buffer + read, &read);
         uint8_t size = read_uint8(buffer + read, &read);
         uint8_t opacity = read_uint8(buffer + read, &read);
+        DP_pixel_dab_init(pds, i, x, y, size, opacity);
+    }
+}
+
+static void pixel_dab_parse(int count, DP_PixelDab *pds, void *user)
+{
+    DP_TextReader *reader = user;
+    for (int i = 0; i < count; ++i) {
+        int8_t x = (int8_t)DP_text_reader_get_subfield_long(reader, i, 0,
+                                                            INT8_MIN, INT8_MAX);
+        int8_t y = (int8_t)DP_text_reader_get_subfield_long(reader, i, 1,
+                                                            INT8_MIN, INT8_MAX);
+        uint8_t size =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 2, UINT8_MAX);
+        uint8_t opacity =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 3, UINT8_MAX);
         DP_pixel_dab_init(pds, i, x, y, size, opacity);
     }
 }
@@ -5205,6 +5995,23 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
                                       dabs_user);
 }
 
+DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
+                                         DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    int32_t x =
+        (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
+    int32_t y =
+        (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
+    uint32_t color = DP_text_reader_get_argb_color(reader, "color");
+    uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
+    int dabs_count = DP_text_reader_get_tuple_count(reader);
+    void *dabs_user = reader;
+    return DP_msg_draw_dabs_pixel_new(context_id, layer, x, y, color, mode,
+                                      pixel_dab_parse, dabs_count, dabs_user);
+}
+
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_DRAW_DABS_PIXEL);
@@ -5305,6 +6112,24 @@ DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     return DP_msg_draw_dabs_pixel_square_new(context_id, layer, x, y, color,
                                              mode, pixel_dab_deserialize,
                                              dabs_count, dabs_user);
+}
+
+DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
+                                                DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    int32_t x =
+        (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
+    int32_t y =
+        (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
+    uint32_t color = DP_text_reader_get_argb_color(reader, "color");
+    uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
+    int dabs_count = DP_text_reader_get_tuple_count(reader);
+    void *dabs_user = reader;
+    return DP_msg_draw_dabs_pixel_square_new(context_id, layer, x, y, color,
+                                             mode, pixel_dab_parse, dabs_count,
+                                             dabs_user);
 }
 
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg)
@@ -5412,7 +6237,7 @@ void DP_mypaint_dab_init(DP_MyPaintDab *mpds, int i, int8_t x, int8_t y,
     mpd->aspect_ratio = aspect_ratio;
 }
 
-void mypaint_dab_deserialize(int count, DP_MyPaintDab *mpds, void *user)
+static void mypaint_dab_deserialize(int count, DP_MyPaintDab *mpds, void *user)
 {
     const unsigned char *buffer = user;
     size_t read = 0;
@@ -5424,6 +6249,29 @@ void mypaint_dab_deserialize(int count, DP_MyPaintDab *mpds, void *user)
         uint8_t opacity = read_uint8(buffer + read, &read);
         uint8_t angle = read_uint8(buffer + read, &read);
         uint8_t aspect_ratio = read_uint8(buffer + read, &read);
+        DP_mypaint_dab_init(mpds, i, x, y, size, hardness, opacity, angle,
+                            aspect_ratio);
+    }
+}
+
+static void mypaint_dab_parse(int count, DP_MyPaintDab *mpds, void *user)
+{
+    DP_TextReader *reader = user;
+    for (int i = 0; i < count; ++i) {
+        int8_t x = (int8_t)DP_text_reader_get_subfield_decimal(
+            reader, i, 0, 4.0, INT8_MIN, INT8_MAX);
+        int8_t y = (int8_t)DP_text_reader_get_subfield_decimal(
+            reader, i, 1, 4.0, INT8_MIN, INT8_MAX);
+        uint16_t size = (uint16_t)DP_text_reader_get_subfield_decimal(
+            reader, i, 2, 256.0, 0, UINT16_MAX);
+        uint8_t hardness =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 3, UINT8_MAX);
+        uint8_t opacity =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 4, UINT8_MAX);
+        uint8_t angle =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 5, UINT8_MAX);
+        uint8_t aspect_ratio =
+            (uint8_t)DP_text_reader_get_subfield_ulong(reader, i, 6, UINT8_MAX);
         DP_mypaint_dab_init(mpds, i, x, y, size, hardness, opacity, angle,
                             aspect_ratio);
     }
@@ -5589,6 +6437,25 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_mypaint_new(context_id, layer, x, y, color,
                                         lock_alpha, mypaint_dab_deserialize,
+                                        dabs_count, dabs_user);
+}
+
+DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    int32_t x = (int32_t)DP_text_reader_get_decimal(reader, "x", 4.0, INT32_MIN,
+                                                    INT32_MAX);
+    int32_t y = (int32_t)DP_text_reader_get_decimal(reader, "y", 4.0, INT32_MIN,
+                                                    INT32_MAX);
+    uint32_t color = DP_text_reader_get_argb_color(reader, "color");
+    uint8_t lock_alpha =
+        (uint8_t)DP_text_reader_get_ulong(reader, "lock_alpha", UINT8_MAX);
+    int dabs_count = DP_text_reader_get_tuple_count(reader);
+    void *dabs_user = reader;
+    return DP_msg_draw_dabs_mypaint_new(context_id, layer, x, y, color,
+                                        lock_alpha, mypaint_dab_parse,
                                         dabs_count, dabs_user);
 }
 
@@ -5763,6 +6630,31 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                 read_bytes, mask_size, mask_user);
 }
 
+DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
+                                   DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    int32_t sx =
+        (int32_t)DP_text_reader_get_long(reader, "sx", INT32_MIN, INT32_MAX);
+    int32_t sy =
+        (int32_t)DP_text_reader_get_long(reader, "sy", INT32_MIN, INT32_MAX);
+    int32_t tx =
+        (int32_t)DP_text_reader_get_long(reader, "tx", INT32_MIN, INT32_MAX);
+    int32_t ty =
+        (int32_t)DP_text_reader_get_long(reader, "ty", INT32_MIN, INT32_MAX);
+    int32_t w =
+        (int32_t)DP_text_reader_get_long(reader, "w", INT32_MIN, INT32_MAX);
+    int32_t h =
+        (int32_t)DP_text_reader_get_long(reader, "h", INT32_MIN, INT32_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_move_rect_new(context_id, layer, sx, sy, tx, ty, w, h,
+                                DP_text_reader_parse_base64, mask_size,
+                                &mask_params);
+}
+
 DP_MsgMoveRect *DP_msg_move_rect_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_MOVE_RECT);
@@ -5916,6 +6808,16 @@ DP_Message *DP_msg_set_metadata_int_deserialize(unsigned int context_id,
     return DP_msg_set_metadata_int_new(context_id, field, value);
 }
 
+DP_Message *DP_msg_set_metadata_int_parse(unsigned int context_id,
+                                          DP_TextReader *reader)
+{
+    uint8_t field =
+        (uint8_t)DP_text_reader_get_ulong(reader, "field", UINT8_MAX);
+    int32_t value =
+        (int32_t)DP_text_reader_get_long(reader, "value", INT32_MIN, INT32_MAX);
+    return DP_msg_set_metadata_int_new(context_id, field, value);
+}
+
 DP_MsgSetMetadataInt *DP_msg_set_metadata_int_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_SET_METADATA_INT);
@@ -6012,6 +6914,16 @@ DP_Message *DP_msg_set_metadata_str_deserialize(unsigned int context_id,
     size_t value_bytes = length - read;
     uint16_t value_len = DP_size_to_uint16(value_bytes);
     const char *value = (const char *)buffer + read;
+    return DP_msg_set_metadata_str_new(context_id, field, value, value_len);
+}
+
+DP_Message *DP_msg_set_metadata_str_parse(unsigned int context_id,
+                                          DP_TextReader *reader)
+{
+    uint8_t field =
+        (uint8_t)DP_text_reader_get_ulong(reader, "field", UINT8_MAX);
+    uint16_t value_len;
+    const char *value = DP_text_reader_get_string(reader, "value", &value_len);
     return DP_msg_set_metadata_str_new(context_id, field, value, value_len);
 }
 
@@ -6146,6 +7058,20 @@ DP_Message *DP_msg_set_timeline_frame_deserialize(unsigned int context_id,
                                          layers_user);
 }
 
+DP_Message *DP_msg_set_timeline_frame_parse(unsigned int context_id,
+                                            DP_TextReader *reader)
+{
+    uint16_t frame =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame", UINT16_MAX);
+    bool insert = DP_text_reader_get_bool(reader, "insert");
+    int layers_count;
+    DP_TextReaderParseParams layers_params =
+        DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
+    return DP_msg_set_timeline_frame_new(context_id, frame, insert,
+                                         DP_text_reader_parse_uint16_array_hex,
+                                         layers_count, &layers_params);
+}
+
 DP_MsgSetTimelineFrame *DP_msg_set_timeline_frame_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_SET_TIMELINE_FRAME);
@@ -6249,6 +7175,14 @@ DP_Message *DP_msg_remove_timeline_frame_deserialize(
     return DP_msg_remove_timeline_frame_new(context_id, frame);
 }
 
+DP_Message *DP_msg_remove_timeline_frame_parse(unsigned int context_id,
+                                               DP_TextReader *reader)
+{
+    uint16_t frame =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame", UINT16_MAX);
+    return DP_msg_remove_timeline_frame_new(context_id, frame);
+}
+
 DP_MsgRemoveTimelineFrame *DP_msg_remove_timeline_frame_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_REMOVE_TIMELINE_FRAME);
@@ -6330,6 +7264,14 @@ DP_Message *DP_msg_undo_deserialize(unsigned int context_id,
     size_t read = 0;
     uint8_t override_user = read_uint8(buffer + read, &read);
     bool redo = read_bool(buffer + read, &read);
+    return DP_msg_undo_new(context_id, override_user, redo);
+}
+
+DP_Message *DP_msg_undo_parse(unsigned int context_id, DP_TextReader *reader)
+{
+    uint8_t override_user =
+        (uint8_t)DP_text_reader_get_ulong(reader, "override_user", UINT8_MAX);
+    bool redo = DP_text_reader_get_bool(reader, "redo");
     return DP_msg_undo_new(context_id, override_user, redo);
 }
 

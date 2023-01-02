@@ -27,6 +27,7 @@ set(dpmsg_sources
     dpmsg/messages.c
     dpmsg/message_queue.c
     dpmsg/msg_internal.c
+    dpmsg/text_reader.c
     dpmsg/text_writer.c)
 
 set(dpmsg_headers
@@ -39,6 +40,7 @@ set(dpmsg_headers
     dpmsg/messages.h
     dpmsg/message_queue.h
     dpmsg/msg_internal.h
+    dpmsg/text_reader.h
     dpmsg/text_writer.h)
 
 set(dpmsg_tests

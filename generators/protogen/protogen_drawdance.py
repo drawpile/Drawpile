@@ -54,6 +54,9 @@ class DrawdanceFieldType:
     def deserialize_field_check_remaining(self, f):
         return None
 
+    def parse_field_count(self, f):
+        return None
+
     def accessor_out_param(self, f):
         return None
 
@@ -78,6 +81,76 @@ class DrawdanceFieldType:
     def array_size_type(self, f):
         return None
 
+    @staticmethod
+    def _get_min_max(f):
+        prefix = f.type.base_type.replace("_t", "").upper()
+        return (f"{prefix}_MIN", f"{prefix}_MAX")
+
+    @staticmethod
+    def _get_flag_args(f):
+        names = []
+        values = []
+        for flag in f.flags:
+            names.append(f'"{flag.name}"')
+            values.append(f"{flag.define_name}")
+        names_arg = "(const char *[]){" + ", ".join(names) + "}"
+        values_arg = "(unsigned int []){" + ", ".join(values) + "}"
+        return (names_arg, values_arg, len(f.flags))
+
+    def parse_text_int(self, f):
+        fmt = f.format
+        min_value, max_value = self._get_min_max(f)
+        if not fmt:
+            return f'({f.type.base_type})DP_text_reader_get_long(reader, "{f.name}", {min_value}, {max_value})'
+        elif fmt == "div4":
+            return f'({f.type.base_type})DP_text_reader_get_decimal(reader, "{f.name}", 4.0, {min_value}, {max_value})'
+        else:
+            raise RuntimeError(f"Unknown int format '{fmt}'")
+
+    def parse_text_uint(self, f):
+        fmt = f.format
+        min_value, max_value = self._get_min_max(f)
+        if not fmt:
+            return f'({f.type.base_type})DP_text_reader_get_ulong(reader, "{f.name}", {max_value})'
+        elif fmt == "hex":
+            return f'({f.type.base_type})DP_text_reader_get_ulong_hex(reader, "{f.name}", {max_value})'
+        elif fmt == "div256":
+            return f'({f.type.base_type})DP_text_reader_get_decimal(reader, "{f.name}", 256.0, 0, {max_value})'
+        elif fmt == "flags":
+            names_arg, values_arg, count = self._get_flag_args(f)
+            return f'({f.type.base_type})DP_text_reader_get_flags(reader, "{f.name}", {count}, {names_arg}, {values_arg})'
+        else:
+            raise RuntimeError(f"Unknown uint format '{fmt}'")
+
+    def parse_text_uint16_list(self, f):
+        fmt = f.format
+        if not fmt:
+            return "DP_text_reader_parse_uint16_array"
+        elif fmt == "hex":
+            return "DP_text_reader_parse_uint16_array_hex"
+        else:
+            raise RuntimeError(f"Unknown uint16 list format '{fmt}'")
+
+    def parse_subfield_int(self, f, index):
+        fmt = f.format
+        min_value, max_value = self._get_min_max(f)
+        if not fmt:
+            return f"DP_text_reader_get_subfield_long(reader, i, {index}, {min_value}, {max_value})"
+        elif fmt == "div4":
+            return f"DP_text_reader_get_subfield_decimal(reader, i, {index}, 4.0, {min_value}, {max_value})"
+        else:
+            raise RuntimeError(f"Unknown int subfield format '{fmt}'")
+
+    def parse_subfield_uint(self, f, index):
+        fmt = f.format
+        min_value, max_value = self._get_min_max(f)
+        if not fmt:
+            return f"DP_text_reader_get_subfield_ulong(reader, i, {index}, {max_value})"
+        elif fmt == "div256":
+            return f"DP_text_reader_get_subfield_decimal(reader, i, {index}, 256.0, 0, {max_value})"
+        else:
+            raise RuntimeError(f"Unknown uint subfield format '{fmt}'")
+
     def write_text_raw(self, f, subject, fn):
         fmt = f.format
         if fmt:
@@ -96,17 +169,6 @@ class DrawdanceFieldType:
             )
         else:
             raise RuntimeError(f"Unknown int format '{fmt}'")
-
-    @staticmethod
-    def _get_flag_args(f):
-        names = []
-        values = []
-        for flag in f.flags:
-            names.append(f'"{flag.name}"')
-            values.append(f"{flag.define_name}")
-        names_arg = "(const char *[]){" + ", ".join(names) + "}"
-        values_arg = "(unsigned int []){" + ", ".join(values) + "}"
-        return (names_arg, values_arg, len(f.flags))
 
     def write_text_uint(self, f, subject):
         a = self.access(f, subject)
@@ -165,6 +227,8 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         serialize_payload_fn,
         write_payload_text_fn,
         deserialize_payload_fn,
+        parse_field_fn,
+        parse_subfield_fn=None,
         write_subfield_payload_text_fn=None,
     ):
         super().__init__(key, False)
@@ -172,8 +236,10 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         self.payload_length = payload_length
         self.serialize_payload_fn = serialize_payload_fn
         self.write_payload_text_fn = write_payload_text_fn
-        self.write_subfield_payload_text_fn = write_subfield_payload_text_fn
         self.deserialize_payload_fn = deserialize_payload_fn
+        self.parse_field_fn = parse_field_fn
+        self.parse_subfield_fn = parse_subfield_fn
+        self.write_subfield_payload_text_fn = write_subfield_payload_text_fn
 
     def accessor_return_type(self, f):
         return self.base_type
@@ -185,6 +251,26 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         return f"{self.base_type} {f.name} = {self.deserialize_payload_fn}(buffer + read, &read);"
 
     def deserialize_constructor_arg(self, f):
+        return f.name
+
+    def parse_field(self, f):
+        fn = self.parse_field_fn
+        if isinstance(fn, str):
+            assign = f'{fn}(reader, "{f.name}")'
+        else:
+            assign = fn(self, f)
+        return f"{self.base_type} {f.name} = {assign};"
+
+    def parse_tuple_field(self, f, index):
+        fn = self.parse_subfield_fn
+        if fn:
+            return (
+                f"{self.base_type} {f.name} = ({self.base_type}){fn(self, f, index)};"
+            )
+        else:
+            raise RuntimeError(f"No parse subfield fn for {self.key}")
+
+    def parse_constructor_arg(self, f):
         return f.name
 
     def static_payload_length(self, f):
@@ -229,6 +315,8 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         serialize_payload_fn,
         write_payload_text_fn,
         deserialize_payload_fn,
+        parse_get_field_fn,
+        parse_constructor_fn,
     ):
         super().__init__(key, True)
         self.base_type = base_type
@@ -241,6 +329,8 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         self.serialize_payload_fn = serialize_payload_fn
         self.write_payload_text_fn = write_payload_text_fn
         self.deserialize_payload_fn = deserialize_payload_fn
+        self.parse_get_field_fn = parse_get_field_fn
+        self.parse_constructor_fn = parse_constructor_fn
 
     def _to_size(self, expr):
         if self.size_type == "size_t":
@@ -297,6 +387,20 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
 
     def deserialize_constructor_arg(self, f):
         return f"{self.deserialize_payload_fn}, {f.name}_{self.array_size_name(f)}, {f.name}_user"
+
+    def parse_field_count(self, f):
+        return f"{self.size_type} {f.name}_{self.array_size_name(f)};"
+
+    def parse_field(self, f):
+        return f'DP_TextReaderParseParams {f.name}_params = {self.parse_get_field_fn}(reader, "{f.name}", &{f.name}_{self.array_size_name(f)});'
+
+    def parse_constructor_arg(self, f):
+        fn = self.parse_constructor_fn
+        if isinstance(fn, str):
+            parse_constructor_fn = fn
+        else:
+            parse_constructor_fn = fn(self, f)
+        return f"{parse_constructor_fn}, {f.name}_{self.array_size_name(f)}, &{f.name}_params"
 
     def dynamic_payload_length(self, f):
         base = self._to_size(
@@ -395,6 +499,15 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
         return f"const char *{f.name} = (const char *)buffer + read;"
 
     def deserialize_constructor_arg(self, f):
+        return f"{f.name}, {f.name}_len"
+
+    def parse_field_count(self, f):
+        return f"uint16_t {f.name}_len;"
+
+    def parse_field(self, f):
+        return f'const char *{f.name} = DP_text_reader_get_string(reader, "{f.name}", &{f.name}_len);'
+
+    def parse_constructor_arg(self, f):
         return f"{f.name}, {f.name}_len"
 
     def dynamic_payload_length(self, f):
@@ -507,6 +620,15 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
     def deserialize_constructor_arg(self, f):
         return f"{f.sub.func_name}_deserialize, {f.name}_count, {f.name}_user"
 
+    def parse_field_count(self, f):
+        return f"int {f.name}_count = DP_text_reader_get_tuple_count(reader);"
+
+    def parse_field(self, f):
+        return f"void *{f.name}_user = reader;"
+
+    def parse_constructor_arg(self, f):
+        return f"{f.sub.func_name}_parse, {f.name}_count, {f.name}_user"
+
     def dynamic_payload_length(self, f):
         payload_length = sum([sf.static_payload_length for sf in f.sub.fields])
         multiplier = "" if payload_length == 1 else f" * {payload_length}"
@@ -564,6 +686,7 @@ DrawdancePlainFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint8",
     write_payload_text_fn="DP_text_writer_write_blend_mode",
     deserialize_payload_fn="read_uint8",
+    parse_field_fn="DP_text_reader_get_blend_mode",
 )
 
 DrawdancePlainFieldType.declare(
@@ -573,6 +696,7 @@ DrawdancePlainFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint32",
     write_payload_text_fn="DP_text_writer_write_argb_color",
     deserialize_payload_fn="read_uint32",
+    parse_field_fn="DP_text_reader_get_argb_color",
 )
 
 DrawdancePlainFieldType.declare(
@@ -582,6 +706,7 @@ DrawdancePlainFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint8",
     write_payload_text_fn="DP_text_writer_write_bool",
     deserialize_payload_fn="read_bool",
+    parse_field_fn="DP_text_reader_get_bool",
 )
 
 DrawdancePlainFieldType.declare(
@@ -592,6 +717,8 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_int,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
     deserialize_payload_fn="read_int8",
+    parse_field_fn=DrawdanceFieldType.parse_text_int,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_int,
 )
 
 DrawdancePlainFieldType.declare(
@@ -602,6 +729,8 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_int,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
     deserialize_payload_fn="read_int16",
+    parse_field_fn=DrawdanceFieldType.parse_text_int,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_int,
 )
 
 DrawdancePlainFieldType.declare(
@@ -612,6 +741,8 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_int,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
     deserialize_payload_fn="read_int32",
+    parse_field_fn=DrawdanceFieldType.parse_text_int,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_int,
 )
 
 DrawdancePlainFieldType.declare(
@@ -622,6 +753,8 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_uint,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint8",
+    parse_field_fn=DrawdanceFieldType.parse_text_uint,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
 )
 
 DrawdancePlainFieldType.declare(
@@ -632,6 +765,8 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_uint,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint16",
+    parse_field_fn=DrawdanceFieldType.parse_text_uint,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
 )
 
 DrawdancePlainFieldType.declare(
@@ -642,6 +777,8 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_uint,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint32",
+    parse_field_fn=DrawdanceFieldType.parse_text_uint,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
 )
 
 DrawdanceArrayFieldType.declare(
@@ -652,6 +789,8 @@ DrawdanceArrayFieldType.declare(
     serialize_payload_fn="write_bytes",
     write_payload_text_fn="DP_text_writer_write_base64",
     deserialize_payload_fn="read_bytes",
+    parse_get_field_fn="DP_text_reader_get_base64_string",
+    parse_constructor_fn="DP_text_reader_parse_base64",
 )
 
 DrawdanceArrayFieldType.declare(
@@ -662,6 +801,8 @@ DrawdanceArrayFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint8_array",
     write_payload_text_fn="DP_text_writer_write_uint8_list",
     deserialize_payload_fn="read_uint8_array",
+    parse_get_field_fn="DP_text_reader_get_comma_separated",
+    parse_constructor_fn="DP_text_reader_parse_uint8_array",
 )
 
 DrawdanceArrayFieldType.declare(
@@ -672,6 +813,8 @@ DrawdanceArrayFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint16_array",
     write_payload_text_fn=DrawdanceFieldType.write_text_uint16_list,
     deserialize_payload_fn="read_uint16_array",
+    parse_get_field_fn="DP_text_reader_get_comma_separated",
+    parse_constructor_fn=DrawdanceFieldType.parse_text_uint16_list,
 )
 
 DrawdanceStringFieldType.declare(
@@ -795,6 +938,7 @@ class DrawdanceMessage:
                     self.min_length = m.min_length
                     self.max_length = m.max_length
                     self.array_field = m.array_field
+                    self.field_with_subfields = m.field_with_subfields
                     break
         else:
             self.alias_message = None
@@ -905,6 +1049,21 @@ class DrawdanceField:
     @property
     def deserialize_constructor_arg(self):
         return self.type.deserialize_constructor_arg(self)
+
+    @property
+    def parse_field_count(self):
+        return self.type.parse_field_count(self)
+
+    @property
+    def parse_field(self):
+        return self.type.parse_field(self)
+
+    def parse_tuple_field(self, index):
+        return self.type.parse_tuple_field(self, index)
+
+    @property
+    def parse_constructor_arg(self):
+        return self.type.parse_constructor_arg(self)
 
     @property
     def static_payload_length(self):

@@ -21,6 +21,7 @@
  */
 #include "messages.h"
 #include "message.h"
+#include "text_reader.h"
 #include "text_writer.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
@@ -113,6 +114,34 @@ const char *DP_message_type_enum_name_unprefixed(DP_MessageType type)
     return DP_message_type_enum_name(type) + 7;
 }
 
+DP_MessageType DP_message_type_from_name(const char *type_name, DP_MessageType not_found_value)
+{
+    {% for message in messages %}
+        {% if not message.reserved %}
+            {% if not loop.first %}else {% endif %}if (DP_str_equal(type_name, "{{ message.cmd_name }}")) {
+                return {{ message.enum_name }};
+            }
+        {% endif %}
+    {% endfor %}
+    else {
+        return not_found_value;
+    }
+}
+
+bool DP_message_type_parse_multiline_tuples(DP_MessageType type)
+{
+    switch (type) {
+        {% for message in messages %}
+            {% if message.field_with_subfields %}
+                case {{ message.enum_name }}:
+            {% endif %}
+        {% endfor %}
+        return true;
+    default:
+        return false;
+    }
+}
+
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length)
 {
@@ -128,6 +157,24 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const
     {% endfor %}
     default:
         DP_error_set("Can't deserialize unknown message type %d", type);
+        return NULL;
+    }
+}
+
+DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, DP_TextReader *reader)
+{
+    switch (type) {
+    {% for message in messages %}
+        case {{ message.enum_name }}:
+            {% if message.reserved %}
+                DP_error_set("Can't parse reserved message type {{ message.id }} {{ message.enum_name }}");
+                return NULL;
+            {% else %}
+                return DP_{{ message.func_name }}_parse(context_id, reader);
+            {% endif %}
+    {% endfor %}
+    default:
+        DP_error_set("Can't parse unknown message type %d", type);
         return NULL;
     }
 }
@@ -359,13 +406,27 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
                 {% endfor %}
             }
 
-            void {{ f.sub.func_name }}_deserialize(int count, {{ f.sub.param }}s, void *user)
+            static void {{ f.sub.func_name }}_deserialize(int count, {{ f.sub.param }}s, void *user)
             {
                 const unsigned char *buffer = user;
                 size_t read = 0;
                 for (int i = 0; i < count; ++i) {
                     {% for sf in f.sub.fields %}
                         {{ sf.deserialize_field }}
+                    {% endfor %}
+                    DP_{{ f.sub.func_name }}_init({{ f.sub.param_name }}s, i
+                        {%- for sf in f.sub.fields %}
+                            , {{ sf.deserialize_constructor_arg }}
+                        {% endfor %});
+                }
+            }
+
+            static void {{ f.sub.func_name }}_parse(int count, {{ f.sub.param }}s, void *user)
+            {
+                DP_TextReader *reader = user;
+                for (int i = 0; i < count; ++i) {
+                    {% for sf in f.sub.fields %}
+                        {{ sf.parse_tuple_field(loop.index - 1) }}
                     {% endfor %}
                     DP_{{ f.sub.func_name }}_init({{ f.sub.param_name }}s, i
                         {%- for sf in f.sub.fields %}
@@ -557,6 +618,23 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
         return DP_{{ message.func_name }}_new(context_id
             {%- for f in message.effective_fields %}
                 , {{ f.deserialize_constructor_arg }}
+            {% endfor %});
+    }
+
+    DP_Message *DP_{{ message.func_name }}_parse(unsigned int context_id, {% if not message.effective_fields %}DP_UNUSED {% endif %}DP_TextReader *reader)
+    {
+        {% if message.effective_fields %}
+            {% for f in message.effective_fields %}
+                {% set parse_field_count = f.parse_field_count %}
+                {% if parse_field_count %}
+                    {{ parse_field_count }}
+                {% endif %}
+                {{ f.parse_field }}
+            {% endfor %}
+        {% endif %}
+        return DP_{{ message.func_name }}_new(context_id
+            {%- for f in message.effective_fields %}
+                , {{ f.parse_constructor_arg }}
             {% endfor %});
     }
     {% if message.fields or message.alias %}
