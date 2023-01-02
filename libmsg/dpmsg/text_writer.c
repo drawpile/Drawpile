@@ -181,14 +181,14 @@ bool DP_text_writer_write_uint(DP_TextWriter *writer, const char *key,
 {
     DP_ASSERT(writer);
     DP_ASSERT(key);
-    return format_argument(writer, hex ? " %s=0x%x" : " %s=%u", key, value);
+    return format_argument(writer, hex ? " %s=0x%04x" : " %s=%u", key, value);
 }
 
 static const char *format_decimal(DP_TextWriter *writer, double value)
 {
     // Get rid of pointless trailing zeroes and decimal point.
     char *buffer = writer->decimal_buffer;
-    snprintf(buffer, DECIMAL_BUFFER_SIZE, "%.6f", value);
+    snprintf(buffer, DECIMAL_BUFFER_SIZE, "%.8f", value);
     for (size_t i = 0; buffer[i] != '\0'; ++i) {
         if (buffer[i] == '.') {
             size_t end = i;
@@ -266,7 +266,10 @@ bool DP_text_writer_write_string(DP_TextWriter *writer, const char *key,
     DP_ASSERT(writer);
     DP_ASSERT(key);
     DP_ASSERT(value);
-    if (contains_whitespace(value)) {
+    if (strlen(value) == 0) {
+        return true;
+    }
+    else if (contains_whitespace(value)) {
         return buffer_multiline_argument(writer, key, value);
     }
     else {
@@ -337,7 +340,7 @@ bool DP_text_writer_write_base64(DP_TextWriter *writer, const char *key,
     DP_ASSERT(key);
 
     if (length <= 0) {
-        return format_argument(writer, " %s=", key);
+        return true;
     }
     else {
         DP_ASSERT(value);
@@ -384,7 +387,7 @@ bool DP_text_writer_write_flags(DP_TextWriter *writer, const char *key,
 #define WRITE_LIST(WRITER, KEY, VALUE, COUNT, TYPE, FMT)                     \
     do {                                                                     \
         if (COUNT == 0) {                                                    \
-            return format_argument(WRITER, " %s=", KEY);                     \
+            return true;                                                     \
         }                                                                    \
         else {                                                               \
             if (!format_argument(WRITER, " %s=" FMT, KEY, (TYPE)VALUE[0])) { \
