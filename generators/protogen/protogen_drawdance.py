@@ -1160,14 +1160,14 @@ def load_template_file(template_file_name):
         return jinja2.Template(fh.read(), trim_blocks=True, lstrip_blocks=True)
 
 
-def render(path, template_file_name, protocol, messages):
+def render(path, template_file_name, protocol, messages, version):
     template = load_template_file(template_file_name)
     with open(path, "w") as fh:
         fh.write(
             template.render(
                 messages=messages,
                 message_types=protogen.MSG_TYPES,
-                version=protocol["version"],
+                version=version,
                 undo_depth=protocol["undo_depth"],
             )
         )
@@ -1186,9 +1186,21 @@ if __name__ == "__main__":
         else os.path.join(os.path.dirname(__file__), "protocol.yaml")
     )
 
+    version_string = protocol["version"]
+    match = re.search(r"^(\w+):(\d+).(\d+).(\d+)$", version_string)
+    if not match:
+        raise ValueError(f"Invalid version: '{version_string}'")
+    version = {
+        "string": version_string,
+        "namespace": match.group(1),
+        "server": int(match.group(2)),
+        "major": int(match.group(3)),
+        "minor": int(match.group(4)),
+    }
+
     messages = [DrawdanceMessage(m) for m in protocol["messages"]]
     for m in messages:
         m.init_alias(messages)
 
     for target in ["messages.h", "messages.c"]:
-        render(os.path.join(output_dir, target), f"{target}.jinja", protocol, messages)
+        render(os.path.join(output_dir, target), f"{target}.jinja", protocol, messages, version)
