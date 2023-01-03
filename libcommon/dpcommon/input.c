@@ -76,6 +76,40 @@ size_t DP_input_read(DP_Input *input, void *buffer, size_t size,
     }
 }
 
+size_t DP_input_length(DP_Input *input, bool *out_error)
+{
+    DP_ASSERT(input);
+    size_t (*length)(void *, bool *) = input->methods->length;
+    if (length) {
+        bool error = false;
+        size_t result = length(input->internal, &error);
+        if (out_error) {
+            *out_error = error;
+        }
+        return result;
+    }
+    else {
+        DP_error_set("Length not supported");
+        if (out_error) {
+            *out_error = true;
+        }
+        return 0;
+    }
+}
+
+bool DP_input_rewind(DP_Input *input)
+{
+    DP_ASSERT(input);
+    bool (*rewind)(void *) = input->methods->rewind;
+    if (rewind) {
+        return rewind(input->internal);
+    }
+    else {
+        DP_error_set("Rewind not supported");
+        return false;
+    }
+}
+
 bool DP_input_rewind_by(DP_Input *input, size_t size)
 {
     DP_ASSERT(input);
@@ -85,7 +119,7 @@ bool DP_input_rewind_by(DP_Input *input, size_t size)
             return rewind_by(input->internal, size);
         }
         else {
-            DP_error_set("Rewind not supported");
+            DP_error_set("Rewind by not supported");
             return false;
         }
     }
@@ -112,6 +146,53 @@ static size_t file_input_read(void *internal, void *buffer, size_t size,
     return result;
 }
 
+static size_t file_input_length(void *internal, bool *out_error)
+{
+    FILE *fp = *((FILE **)internal);
+    long pos = ftell(fp);
+    if (pos == -1) {
+        DP_error_set("File input initial tell error: %s", strerror(errno));
+        *out_error = true;
+        return 0;
+    }
+
+    if (fseek(fp, 0L, SEEK_END) == -1) {
+        DP_error_set("File input seek end error: %s", strerror(errno));
+        *out_error = true;
+        return 0;
+    }
+
+    long length = ftell(fp);
+    int tell_errno = errno;
+
+    if (fseek(fp, pos, SEEK_SET) == -1L) {
+        DP_error_set("File input seek back error: %s", strerror(errno));
+        *out_error = true;
+        return 0;
+    }
+
+    if (length == -1) {
+        DP_error_set("File input length tell error: %s", strerror(tell_errno));
+        *out_error = true;
+        return 0;
+    }
+
+    return DP_long_to_size(length);
+}
+
+static bool file_input_rewind(void *internal)
+{
+    DP_FileInputState *state = internal;
+    if (fseek(state->fp, 0, SEEK_SET) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("File input could not rewind to beginning: %s",
+                     strerror(errno));
+        return false;
+    }
+}
+
 static bool file_input_rewind_by(void *internal, size_t size)
 {
     DP_FileInputState *state = internal;
@@ -135,9 +216,8 @@ static void file_input_dispose(void *internal)
 }
 
 static const DP_InputMethods file_input_methods = {
-    file_input_read,
-    file_input_rewind_by,
-    file_input_dispose,
+    file_input_read,      file_input_length,  file_input_rewind,
+    file_input_rewind_by, file_input_dispose,
 };
 
 const DP_InputMethods *file_input_init(void *internal, void *arg)
@@ -186,6 +266,19 @@ static size_t mem_input_read(void *internal, void *buffer, size_t size,
     return read;
 }
 
+static size_t mem_input_length(void *internal, DP_UNUSED bool *out_error)
+{
+    DP_MemInputState *state = internal;
+    return state->size;
+}
+
+static bool mem_input_rewind(void *internal)
+{
+    DP_MemInputState *state = internal;
+    state->pos = 0;
+    return true;
+}
+
 static bool mem_input_rewind_by(void *internal, size_t size)
 {
     DP_MemInputState *state = internal;
@@ -210,9 +303,8 @@ static void mem_input_dispose(void *internal)
 }
 
 static const DP_InputMethods mem_input_methods = {
-    mem_input_read,
-    mem_input_rewind_by,
-    mem_input_dispose,
+    mem_input_read,      mem_input_length,  mem_input_rewind,
+    mem_input_rewind_by, mem_input_dispose,
 };
 
 const DP_InputMethods *mem_input_init(void *internal, void *arg)
