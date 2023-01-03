@@ -32,6 +32,13 @@ typedef struct json_object_t JSON_Object;
 
 typedef struct DP_BinaryReader DP_BinaryReader;
 
+typedef enum DP_BinaryReaderResult {
+    DP_BINARY_READER_SUCCESS,
+    DP_BINARY_READER_INPUT_END,
+    DP_BINARY_READER_ERROR_INPUT,
+    DP_BINARY_READER_ERROR_PARSE,
+} DP_BinaryReaderResult;
+
 DP_BinaryReader *DP_binary_reader_new(DP_Input *input);
 
 void DP_binary_reader_free(DP_BinaryReader *reader);
@@ -39,9 +46,8 @@ void DP_binary_reader_free(DP_BinaryReader *reader);
 
 JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader);
 
-bool DP_binary_reader_has_next(DP_BinaryReader *reader);
-
-DP_Message *DP_binary_reader_read_next(DP_BinaryReader *reader);
+DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
+                                                    DP_Message **out_msg);
 
 
 #endif

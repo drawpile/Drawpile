@@ -29,6 +29,50 @@
 #include <parson.h>
 
 
+static void write_message_binary(TEST_PARAMS, void *writer, DP_Message *msg)
+{
+    OK(DP_binary_writer_write_message(writer, msg), "wrote message to binary");
+}
+
+static void write_message_text(TEST_PARAMS, void *writer, DP_Message *msg)
+{
+    OK(DP_message_write_text(msg, writer), "wrote message to text");
+}
+
+static void read_write_binary(TEST_PARAMS, DP_BinaryReader *reader,
+                              void (*write_message)(TEST_PARAMS, void *,
+                                                    DP_Message *),
+                              void *writer)
+{
+    while (true) {
+        DP_Message *msg;
+        DP_BinaryReaderResult result =
+            DP_binary_reader_read_message(reader, &msg);
+        OK(result == DP_BINARY_READER_SUCCESS
+               || result == DP_BINARY_READER_INPUT_END,
+           "binary read without error");
+
+        if (result == DP_BINARY_READER_SUCCESS) {
+            write_message(TEST_ARGS, writer, msg);
+            DP_message_decref(msg);
+        }
+        else if (result == DP_BINARY_READER_INPUT_END) {
+            break;
+        }
+        else if (result == DP_BINARY_READER_ERROR_PARSE) {
+            DIAG("Parse error: %s", DP_error());
+        }
+        else if (result == DP_BINARY_READER_ERROR_INPUT) {
+            DIAG("Input error: %s", DP_error());
+            break;
+        }
+        else {
+            DIAG("Unknown binary reader result %d", (int)result);
+            break;
+        }
+    }
+}
+
 static void binary_to_binary(TEST_PARAMS)
 {
     const char *key = T->test->user;
@@ -53,20 +97,11 @@ static void binary_to_binary(TEST_PARAMS)
         OK(DP_binary_writer_write_header(writer, header), "wrote header");
     }
 
-    unsigned int error_count = DP_error_count();
-    while (DP_binary_reader_has_next(reader)) {
-        DP_Message *message = DP_binary_reader_read_next(reader);
-        if (NOT_NULL_OK(message, "got message")) {
-            OK(DP_binary_writer_write_message(writer, message),
-               "wrote message to binary");
-            DP_message_decref(message);
-        }
-    }
+    read_write_binary(TEST_ARGS, reader, write_message_binary, writer);
 
     DP_binary_writer_free(writer);
     DP_binary_reader_free(reader);
 
-    NULL_OK(DP_error_since(error_count), "no errors occurred");
     FILE_EQ_OK(out_path, in_path, "binary output equal");
 
     DP_free(out_path);
@@ -98,19 +133,11 @@ static void binary_to_text(TEST_PARAMS)
         OK(DP_text_writer_write_header(writer, header), "wrote header");
     }
 
-    unsigned int error_count = DP_error_count();
-    while (DP_binary_reader_has_next(reader)) {
-        DP_Message *message = DP_binary_reader_read_next(reader);
-        if (NOT_NULL_OK(message, "got message")) {
-            OK(DP_message_write_text(message, writer), "wrote message to text");
-            DP_message_decref(message);
-        }
-    }
+    read_write_binary(TEST_ARGS, reader, write_message_text, writer);
 
     DP_text_writer_free(writer);
     DP_binary_reader_free(reader);
 
-    NULL_OK(DP_error_since(error_count), "no errors occurred");
     FILE_EQ_OK(out_path, expected_path, "text output equal");
 
     DP_free(expected_path);

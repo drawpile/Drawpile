@@ -42,15 +42,35 @@ static DP_CanvasState *play_recording(TEST_PARAMS, const char *path)
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
     DP_DrawContext *dc = DP_draw_context_new();
 
-    while (DP_binary_reader_has_next(reader)) {
-        DP_Message *msg = DP_binary_reader_read_next(reader);
-        if (NOT_NULL_OK(msg, "got message from binary reader")) {
+    while (true) {
+        DP_Message *msg;
+        DP_BinaryReaderResult result =
+            DP_binary_reader_read_message(reader, &msg);
+        OK(result == DP_BINARY_READER_SUCCESS
+               || result == DP_BINARY_READER_INPUT_END,
+           "binary read without error");
+
+        if (result == DP_BINARY_READER_SUCCESS) {
             if (DP_message_type_command(DP_message_type(msg))) {
                 if (!DP_canvas_history_handle(ch, dc, msg)) {
-                    DP_warn("%s", DP_error());
+                    DIAG("Error handling message: %s", DP_error());
                 }
             }
             DP_message_decref(msg);
+        }
+        else if (result == DP_BINARY_READER_INPUT_END) {
+            break;
+        }
+        else if (result == DP_BINARY_READER_ERROR_PARSE) {
+            DIAG("Parse error: %s", DP_error());
+        }
+        else if (result == DP_BINARY_READER_ERROR_INPUT) {
+            DIAG("Input error: %s", DP_error());
+            break;
+        }
+        else {
+            DIAG("Unknown binary reader result %d", (int)result);
+            break;
         }
     }
 

@@ -193,77 +193,44 @@ static size_t read_into(DP_BinaryReader *reader, size_t size, size_t offset,
                          out_error);
 }
 
-static bool read_message_length(DP_BinaryReader *reader)
+DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
+                                                    DP_Message **out_msg)
 {
+    DP_ASSERT(reader);
+    DP_ASSERT(out_msg);
+
     bool error;
     size_t read = read_into(reader, DP_MESSAGE_HEADER_LENGTH, 0, &error);
-
     if (error) {
-        return false;
+        return DP_BINARY_READER_ERROR_INPUT;
     }
-    else if (read != 0 && read < DP_MESSAGE_HEADER_LENGTH) {
-        DP_error_set("Expected message length of %d bytes, but got %zu",
+    else if (read == 0) {
+        return DP_BINARY_READER_INPUT_END;
+    }
+    else if (read != DP_MESSAGE_HEADER_LENGTH) {
+        DP_error_set("Tried to read message header of %d bytes, but got %zu",
                      DP_MESSAGE_HEADER_LENGTH, read);
+        return DP_BINARY_READER_ERROR_INPUT;
     }
 
-    return read == DP_MESSAGE_HEADER_LENGTH;
-}
-
-static bool read_message_body(DP_BinaryReader *reader, size_t body_length)
-{
-    bool error;
-    size_t read =
-        read_into(reader, body_length, DP_MESSAGE_HEADER_LENGTH, &error);
-
+    size_t body_length = DP_read_bigendian_uint16(reader->buffer);
+    read = read_into(reader, body_length, DP_MESSAGE_HEADER_LENGTH, &error);
     if (error) {
-        return false;
+        return DP_BINARY_READER_ERROR_INPUT;
     }
     else if (read != body_length) {
-        DP_error_set("Expected message body of %zu bytes, but got %zu",
+        DP_error_set("Treid to read message body of %zu bytes, but got %zu",
                      body_length, read);
-        return false;
+        return DP_BINARY_READER_ERROR_INPUT;
+    }
+
+    DP_Message *msg = DP_message_deserialize(
+        reader->buffer, DP_MESSAGE_HEADER_LENGTH + body_length);
+    if (msg) {
+        *out_msg = msg;
+        return DP_BINARY_READER_SUCCESS;
     }
     else {
-        return true;
-    }
-}
-
-static bool check_next(DP_BinaryReader *reader)
-{
-    if (read_message_length(reader)) {
-        size_t body_length = DP_read_bigendian_uint16(reader->buffer);
-        if (read_message_body(reader, body_length)) {
-            reader->message_size = DP_MESSAGE_HEADER_LENGTH + body_length;
-            return true;
-        }
-    }
-    reader->message_size = MESSAGE_SIZE_DONE;
-    return false;
-}
-
-bool DP_binary_reader_has_next(DP_BinaryReader *reader)
-{
-    DP_ASSERT(reader);
-    switch (reader->message_size) {
-    case 0:
-        return check_next(reader);
-    case MESSAGE_SIZE_DONE:
-        return false;
-    default:
-        return true;
-    }
-}
-
-DP_Message *DP_binary_reader_read_next(DP_BinaryReader *reader)
-{
-    DP_ASSERT(reader);
-    if (DP_binary_reader_has_next(reader)) {
-        DP_Message *message =
-            DP_message_deserialize(reader->buffer, reader->message_size);
-        reader->message_size = 0;
-        return message;
-    }
-    else {
-        return NULL;
+        return DP_BINARY_READER_ERROR_PARSE;
     }
 }
