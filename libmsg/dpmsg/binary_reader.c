@@ -23,6 +23,7 @@
 #include "message.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
 #include <parson.h>
 
@@ -33,20 +34,22 @@ static_assert(MESSAGE_SIZE_DONE > 0, "Valid message size sentinel value");
 
 struct DP_BinaryReader {
     DP_Input *input;
+    size_t input_length;
+    size_t input_offset;
     JSON_Value *header;
     unsigned char *buffer;
     size_t buffer_size;
-    size_t message_size;
 };
 
 
-static bool read_magic(DP_Input *input)
+static bool read_magic(DP_Input *input, size_t *input_offset)
 {
     DP_ASSERT(strlen(DP_DPREC_MAGIC) + 1 == DP_DPREC_MAGIC_LENGTH);
 
     char buffer[DP_DPREC_MAGIC_LENGTH];
     bool error;
     size_t read = DP_input_read(input, buffer, DP_DPREC_MAGIC_LENGTH, &error);
+    *input_offset += read;
     if (error) {
         return false;
     }
@@ -64,11 +67,12 @@ static bool read_magic(DP_Input *input)
     }
 }
 
-static size_t read_metadata_length(DP_Input *input)
+static size_t read_metadata_length(DP_Input *input, size_t *input_offset)
 {
     unsigned char buffer[2];
     bool error;
     size_t read = DP_input_read(input, buffer, 2, &error);
+    *input_offset += read;
     if (error) {
         return 0;
     }
@@ -86,11 +90,12 @@ static size_t read_metadata_length(DP_Input *input)
     return length;
 }
 
-static char *read_metadata(DP_Input *input, size_t length)
+static char *read_metadata(DP_Input *input, size_t length, size_t *input_offset)
 {
     char *buffer = DP_malloc(length + 1);
     bool error;
     size_t read = DP_input_read(input, buffer, length, &error);
+    *input_offset += read;
     if (error) {
         DP_free(buffer);
         return NULL;
@@ -122,18 +127,18 @@ static JSON_Value *parse_metadata(const char *buffer)
     return value;
 }
 
-static JSON_Value *read_header(DP_Input *input)
+static JSON_Value *read_header(DP_Input *input, size_t *input_offset)
 {
-    if (!read_magic(input)) {
+    if (!read_magic(input, input_offset)) {
         return NULL;
     }
 
-    size_t length = read_metadata_length(input);
+    size_t length = read_metadata_length(input, input_offset);
     if (length == 0) {
         return NULL;
     }
 
-    char *buffer = read_metadata(input, length);
+    char *buffer = read_metadata(input, length, input_offset);
     if (!buffer) {
         return NULL;
     }
@@ -147,14 +152,23 @@ static JSON_Value *read_header(DP_Input *input)
 DP_BinaryReader *DP_binary_reader_new(DP_Input *input)
 {
     DP_ASSERT(input);
-    JSON_Value *header = read_header(input);
+    bool error;
+    size_t input_length = DP_input_length(input, &error);
+    if (error) {
+        DP_input_free(input);
+        return NULL;
+    }
+
+    size_t input_offset = 0;
+    JSON_Value *header = read_header(input, &input_offset);
     if (!header) {
         DP_input_free(input);
         return NULL;
     }
 
     DP_BinaryReader *reader = DP_malloc(sizeof(*reader));
-    *reader = (DP_BinaryReader){input, header, NULL, 0, 0};
+    *reader =
+        (DP_BinaryReader){input, input_length, input_offset, header, NULL, 0};
     return reader;
 }
 
@@ -175,6 +189,14 @@ JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader)
     return json_value_get_object(reader->header);
 }
 
+double DP_binary_reader_progress(DP_BinaryReader *reader)
+{
+    DP_ASSERT(reader);
+    double length = DP_size_to_double(reader->input_length);
+    double offset = DP_size_to_double(reader->input_offset);
+    return length == 0 ? 1.0 : offset / length;
+}
+
 
 static void ensure_buffer_size(DP_BinaryReader *reader, size_t required_size)
 {
@@ -189,8 +211,10 @@ static size_t read_into(DP_BinaryReader *reader, size_t size, size_t offset,
                         bool *out_error)
 {
     ensure_buffer_size(reader, size + offset);
-    return DP_input_read(reader->input, reader->buffer + offset, size,
-                         out_error);
+    size_t read =
+        DP_input_read(reader->input, reader->buffer + offset, size, out_error);
+    reader->input_offset += read;
+    return read;
 }
 
 DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,

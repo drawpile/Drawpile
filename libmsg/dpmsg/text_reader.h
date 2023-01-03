@@ -46,6 +46,8 @@ DP_TextReader *DP_text_reader_new(DP_Input *input);
 
 void DP_text_reader_free(DP_TextReader *reader);
 
+double DP_text_reader_progress(DP_TextReader *reader);
+
 DP_TextReaderResult DP_text_reader_read_header_field(DP_TextReader *reader,
                                                      const char **out_key,
                                                      const char **out_value);

@@ -46,6 +46,8 @@ void DP_binary_reader_free(DP_BinaryReader *reader);
 
 JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader);
 
+double DP_binary_reader_progress(DP_BinaryReader *reader);
+
 DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
                                                     DP_Message **out_msg);
 

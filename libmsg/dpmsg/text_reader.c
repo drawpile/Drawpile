@@ -46,6 +46,8 @@ typedef struct DP_TextReaderTupleRow {
 
 struct DP_TextReader {
     DP_Input *input;
+    size_t input_length;
+    size_t input_offset;
     size_t line;
     size_t line_end;
     struct {
@@ -68,8 +70,16 @@ struct DP_TextReader {
 DP_TextReader *DP_text_reader_new(DP_Input *input)
 {
     DP_ASSERT(input);
+    bool error;
+    size_t input_length = DP_input_length(input, &error);
+    if (error) {
+        return NULL;
+    }
+
     DP_TextReader *reader = DP_malloc(sizeof(*reader));
     *reader = (DP_TextReader){input,
+                              input_length,
+                              0,
                               0,
                               0,
                               {0, 0, NULL},
@@ -94,6 +104,14 @@ void DP_text_reader_free(DP_TextReader *reader)
         DP_input_free(reader->input);
         DP_free(reader);
     }
+}
+
+double DP_text_reader_progress(DP_TextReader *reader)
+{
+    DP_ASSERT(reader);
+    double length = DP_size_to_double(reader->input_length);
+    double offset = DP_size_to_double(reader->input_offset);
+    return length == 0 ? 1.0 : offset / length;
 }
 
 static bool buffer_more(DP_TextReader *reader)
@@ -164,6 +182,7 @@ static void consume_line(DP_TextReader *reader)
     DP_ASSERT(reader->line_end <= reader->read.used);
     size_t consume = reader->line_end;
     size_t new_used = reader->read.used - consume;
+    reader->input_offset += consume;
     reader->line_end = 0;
     reader->read.used = new_used;
     memmove(reader->read.buffer, reader->read.buffer + consume, new_used);
