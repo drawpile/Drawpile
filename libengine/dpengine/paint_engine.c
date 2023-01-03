@@ -885,9 +885,10 @@ static void handle_default_layer(DP_PaintEngine *pe, DP_Message *msg)
     meta_buffer->default_layer = DP_msg_default_layer_id(mdl);
 }
 
-static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg)
+static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
+                                       bool override_acls)
 {
-    uint8_t result = DP_acl_state_handle(pe->acls, msg);
+    uint8_t result = DP_acl_state_handle(pe->acls, msg, override_acls);
     get_meta_buffer(pe)->acl_change_flags |= result;
     if (!(result & DP_ACL_STATE_FILTERED_BIT)) {
         DP_MessageType type = DP_message_type(msg);
@@ -909,15 +910,17 @@ static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg)
 }
 
 static bool should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
-                                      DP_Message *msg)
+                                      DP_Message *msg,
+                                      DP_UNUSED bool ignore_acls)
 {
     DP_MessageType type = DP_message_type(msg);
     return is_internal_or_command(type);
 }
 
-static int push_messages(DP_PaintEngine *pe, DP_Queue *queue, int count,
-                         DP_Message **msgs,
-                         bool (*should_push)(DP_PaintEngine *, DP_Message *))
+static int push_messages(DP_PaintEngine *pe, DP_Queue *queue,
+                         bool override_acls, int count, DP_Message **msgs,
+                         bool (*should_push)(DP_PaintEngine *, DP_Message *,
+                                             bool))
 {
     DP_MUTEX_MUST_LOCK(pe->queue_mutex);
     // First message is the one that triggered the call to this function,
@@ -926,7 +929,7 @@ static int push_messages(DP_PaintEngine *pe, DP_Queue *queue, int count,
     DP_message_queue_push_inc(queue, msgs[0]);
     for (int i = 1; i < count; ++i) {
         DP_Message *msg = msgs[i];
-        if (should_push(pe, msg)) {
+        if (should_push(pe, msg, override_acls)) {
             DP_message_queue_push_inc(queue, msg);
             ++pushed;
         }
@@ -937,8 +940,8 @@ static int push_messages(DP_PaintEngine *pe, DP_Queue *queue, int count,
 }
 
 int DP_paint_engine_handle_inc(
-    DP_PaintEngine *pe, bool local, int count, DP_Message **msgs,
-    DP_PaintEngineAclsChangedFn acls_changed,
+    DP_PaintEngine *pe, bool local, bool override_acls, int count,
+    DP_Message **msgs, DP_PaintEngineAclsChangedFn acls_changed,
     DP_PaintEngineLaserTrailFn laser_trail,
     DP_PaintEngineMovePointerFn move_pointer,
     DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user)
@@ -946,7 +949,7 @@ int DP_paint_engine_handle_inc(
     DP_ASSERT(pe);
     DP_ASSERT(msgs);
 
-    bool (*should_push)(DP_PaintEngine *, DP_Message *) =
+    bool (*should_push)(DP_PaintEngine *, DP_Message *, bool) =
         local ? should_push_message_local : should_push_message_remote;
 
     DP_PaintEngineMetaBuffer *meta_buffer = get_meta_buffer(pe);
@@ -958,10 +961,10 @@ int DP_paint_engine_handle_inc(
     // Don't lock anything until we actually find a message to push.
     int pushed = 0;
     for (int i = 0; i < count; ++i) {
-        if (should_push(pe, msgs[i])) {
+        if (should_push(pe, msgs[i], override_acls)) {
             pushed =
                 push_messages(pe, local ? &pe->local_queue : &pe->remote_queue,
-                              count - i, msgs + i, should_push);
+                              override_acls, count - i, msgs + i, should_push);
             break;
         }
     }

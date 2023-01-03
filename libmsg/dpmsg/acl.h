@@ -143,8 +143,10 @@ bool DP_acl_state_annotation_locked(DP_AclState *acls, int annotation_id);
 // Returns a set of flags describing the outcome. If DP_ACL_STATE_FILTERED_BIT
 // is set, the message was filtered out and should not be processed further. If
 // any of the DP_ACL_STATE_CHANGE_*_BITs are set, the ACL state itself changed
-// and UI elements should be updated as appropriate.
-uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg) DP_MUST_CHECK;
+// and UI elements should be updated as appropriate. If override is set,
+// permissions aren't checked, the message is always processed.
+uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg,
+                            bool override) DP_MUST_CHECK;
 
 
 #endif

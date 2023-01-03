@@ -114,8 +114,8 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe);
 
 // Returns the number of drawing commands actually pushed to the paint engine.
 int DP_paint_engine_handle_inc(
-    DP_PaintEngine *pe, bool local, int count, DP_Message **msgs,
-    DP_PaintEngineAclsChangedFn acls_changed,
+    DP_PaintEngine *pe, bool local, bool override_acls, int count,
+    DP_Message **msgs, DP_PaintEngineAclsChangedFn acls_changed,
     DP_PaintEngineLaserTrailFn laser_trail,
     DP_PaintEngineMovePointerFn move_pointer,
     DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user);

@@ -428,9 +428,10 @@ static uint8_t handle_trusted_users(DP_AclState *acls, DP_Message *msg)
     return DP_ACL_STATE_CHANGE_USERS_BIT;
 }
 
-static uint8_t handle_user_acl(DP_AclState *acls, DP_Message *msg)
+static uint8_t handle_user_acl(DP_AclState *acls, DP_Message *msg,
+                               bool override)
 {
-    if (DP_acl_state_is_op(acls, message_user_id(msg))) {
+    if (override || DP_acl_state_is_op(acls, message_user_id(msg))) {
         DP_MsgUserAcl *mua = DP_msg_user_acl_cast(msg);
         int count;
         const uint8_t *user_ids = DP_msg_user_acl_users(mua, &count);
@@ -473,13 +474,14 @@ static void set_layer_acl(DP_AclState *acls, int layer_id,
     }
 }
 
-static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg)
+static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg,
+                                bool override)
 {
     uint8_t user_id = message_user_id(msg);
     DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
     int layer_id = DP_msg_layer_acl_id(mla);
 
-    if (can_edit_layer(acls, user_id, layer_id)) {
+    if (override || can_edit_layer(acls, user_id, layer_id)) {
         uint8_t flags = DP_msg_layer_acl_flags(mla);
         int exclusive_count;
         const uint8_t *exclusive =
@@ -509,9 +511,10 @@ static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg)
     }
 }
 
-static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg)
+static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg,
+                                            bool override)
 {
-    if (DP_acl_state_is_op(acls, message_user_id(msg))) {
+    if (override || DP_acl_state_is_op(acls, message_user_id(msg))) {
         DP_MsgFeatureAccessLevels *mfal =
             DP_msg_feature_access_levels_cast(msg);
         int feature_tiers_count;
@@ -533,27 +536,38 @@ static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg)
 }
 
 static bool handle_layer_create(DP_AclState *acls, DP_Message *msg,
-                                uint8_t user_id)
+                                uint8_t user_id, bool override)
 {
+    if (override) {
+        return true;
+    }
     DP_MsgLayerCreate *mlc = DP_msg_layer_create_cast(msg);
     int layer_id = DP_msg_layer_create_id(mlc);
-    return
-        // Only operators can create layers under a different owner.
+    // Only operators can create layers under a different owner.
+    bool can_create =
         (owns_layer(user_id, layer_id) || DP_acl_state_is_op(acls, user_id))
         && (DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS,
                                             user_id));
+    return can_create;
+}
+
+static bool can_delete_layer(DP_AclState *acls, uint8_t user_id, int layer_id,
+                             int merge_id)
+{
+    return can_edit_layer(acls, user_id, layer_id)
+        && (merge_id == 0
+            || !DP_acl_state_layer_locked_for(acls, user_id, merge_id));
 }
 
 static bool handle_layer_delete(DP_AclState *acls, DP_Message *msg,
-                                uint8_t user_id)
+                                uint8_t user_id, bool override)
 {
     DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
     int layer_id = DP_msg_layer_delete_id(mld);
-    int merge_id = DP_msg_layer_delete_merge_to(mld);
-    if (can_edit_layer(acls, user_id, layer_id)
-        && (merge_id == 0
-            || !DP_acl_state_layer_locked_for(acls, user_id, merge_id))) {
+    if (override
+        || can_delete_layer(acls, user_id, layer_id,
+                            DP_msg_layer_delete_merge_to(mld))) {
         DP_LayerAclEntry *entry;
         HASH_FIND_INT(acls->layers, &layer_id, entry);
         if (entry) {
@@ -568,8 +582,11 @@ static bool handle_layer_delete(DP_AclState *acls, DP_Message *msg,
 }
 
 static bool handle_annotation_create(DP_AclState *acls, DP_Message *msg,
-                                     uint8_t user_id)
+                                     uint8_t user_id, bool override)
 {
+    if (override) {
+        return true;
+    }
     DP_MsgAnnotationCreate *mac = DP_msg_annotation_create_cast(msg);
     int annotation_id = DP_msg_annotation_create_id(mac);
     return DP_acl_state_can_use_feature(acls, DP_FEATURE_CREATE_ANNOTATION,
@@ -579,8 +596,11 @@ static bool handle_annotation_create(DP_AclState *acls, DP_Message *msg,
 }
 
 static bool handle_annotation_reshape(DP_AclState *acls, DP_Message *msg,
-                                      uint8_t user_id)
+                                      uint8_t user_id, bool override)
 {
+    if (override) {
+        return true;
+    }
     DP_MsgAnnotationReshape *mar = DP_msg_annotation_reshape_cast(msg);
     int annotation_id = DP_msg_annotation_reshape_id(mar);
     return owns_annotation(user_id, annotation_id)
@@ -589,11 +609,11 @@ static bool handle_annotation_reshape(DP_AclState *acls, DP_Message *msg,
 }
 
 static bool handle_annotation_edit(DP_AclState *acls, DP_Message *msg,
-                                   uint8_t user_id)
+                                   uint8_t user_id, bool override)
 {
     DP_MsgAnnotationEdit *mae = DP_msg_annotation_edit_cast(msg);
     int annotation_id = DP_msg_annotation_edit_id(mae);
-    bool can_edit = owns_annotation(user_id, annotation_id)
+    bool can_edit = override || owns_annotation(user_id, annotation_id)
                  || DP_acl_state_is_op(acls, user_id);
     if (can_edit) {
         DP_AnnotationAclEntry *entry;
@@ -617,13 +637,14 @@ static bool handle_annotation_edit(DP_AclState *acls, DP_Message *msg,
 }
 
 static bool handle_annotation_delete(DP_AclState *acls, DP_Message *msg,
-                                     uint8_t user_id)
+                                     uint8_t user_id, bool override)
 {
     DP_MsgAnnotationDelete *mad = DP_msg_annotation_delete_cast(msg);
     int annotation_id = DP_msg_annotation_delete_id(mad);
-    bool is_owner_or_op = owns_annotation(user_id, annotation_id)
-                       || DP_acl_state_is_op(acls, user_id);
-    if (is_owner_or_op) {
+    bool can_delete = override || owns_annotation(user_id, annotation_id)
+                   || DP_acl_state_is_op(acls, user_id)
+                   || !DP_acl_state_annotation_locked(acls, annotation_id);
+    if (can_delete) {
         DP_AnnotationAclEntry *entry;
         HASH_FIND_INT(acls->annotations, &annotation_id, entry);
         if (entry) {
@@ -633,13 +654,16 @@ static bool handle_annotation_delete(DP_AclState *acls, DP_Message *msg,
         return true;
     }
     else {
-        return !DP_acl_state_annotation_locked(acls, annotation_id);
+        return false;
     }
 }
 
 static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
-                             uint8_t user_id)
+                             uint8_t user_id, bool override)
 {
+    if (override) {
+        return true;
+    }
     if (DP_acl_state_can_use_feature(acls, DP_FEATURE_REGION_MOVE, user_id)) {
         DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
         int layer_id = DP_msg_move_rect_layer(mmr);
@@ -651,8 +675,11 @@ static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
 }
 
 static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
-                                    uint8_t user_id)
+                                    uint8_t user_id, bool override)
 {
+    if (override) {
+        return true;
+    }
     DP_MsgSetMetadataInt *msmi = DP_msg_set_metadata_int_cast(msg);
     DP_Feature feature;
     switch (DP_msg_set_metadata_int_field(msmi)) {
@@ -668,86 +695,106 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
 }
 
 static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
-                                   DP_MessageType type, uint8_t user_id)
+                                   DP_MessageType type, uint8_t user_id,
+                                   bool override)
 {
     switch (type) {
     case DP_MSG_CANVAS_RESIZE:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_RESIZE, user_id);
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_RESIZE, user_id);
     case DP_MSG_LAYER_CREATE:
-        return handle_layer_create(acls, msg, user_id);
+        return handle_layer_create(acls, msg, user_id, override);
     case DP_MSG_LAYER_ATTRIBUTES:
-        return can_edit_layer(
-            acls, user_id,
-            DP_msg_layer_attributes_id(DP_msg_layer_attributes_cast(msg)));
+        return override
+            || can_edit_layer(acls, user_id,
+                              DP_msg_layer_attributes_id(
+                                  DP_msg_layer_attributes_cast(msg)));
     case DP_MSG_LAYER_RETITLE:
-        return can_edit_layer(
-            acls, user_id,
-            DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
+        return override
+            || can_edit_layer(
+                   acls, user_id,
+                   DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
     case DP_MSG_LAYER_ORDER:
-        return can_edit_layer(
-            acls, user_id,
-            DP_msg_layer_order_root(DP_msg_layer_order_cast(msg)));
+        return override
+            || can_edit_layer(
+                   acls, user_id,
+                   DP_msg_layer_order_root(DP_msg_layer_order_cast(msg)));
     case DP_MSG_LAYER_DELETE:
-        return handle_layer_delete(acls, msg, user_id);
+        return handle_layer_delete(acls, msg, user_id, override);
     case DP_MSG_LAYER_VISIBILITY:
         return false; // Layer hiding is client-side.
     case DP_MSG_PUT_IMAGE:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE, user_id)
-            && !DP_acl_state_layer_locked_for(
-                   acls, user_id,
-                   DP_msg_put_image_layer(DP_msg_put_image_cast(msg)));
+        return override
+            || (DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE,
+                                             user_id)
+                && !DP_acl_state_layer_locked_for(
+                    acls, user_id,
+                    DP_msg_put_image_layer(DP_msg_put_image_cast(msg))));
     case DP_MSG_FILL_RECT:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE, user_id)
-            && !DP_acl_state_layer_locked_for(
-                   acls, user_id,
-                   DP_msg_fill_rect_layer(DP_msg_fill_rect_cast(msg)));
+        return override
+            || (DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE,
+                                             user_id)
+                && !DP_acl_state_layer_locked_for(
+                    acls, user_id,
+                    DP_msg_fill_rect_layer(DP_msg_fill_rect_cast(msg))));
     case DP_MSG_ANNOTATION_CREATE:
-        return handle_annotation_create(acls, msg, user_id);
+        return handle_annotation_create(acls, msg, user_id, override);
     case DP_MSG_ANNOTATION_RESHAPE:
-        return handle_annotation_reshape(acls, msg, user_id);
+        return handle_annotation_reshape(acls, msg, user_id, override);
     case DP_MSG_ANNOTATION_EDIT:
-        return handle_annotation_edit(acls, msg, user_id);
+        return handle_annotation_edit(acls, msg, user_id, override);
     case DP_MSG_ANNOTATION_DELETE:
-        return handle_annotation_delete(acls, msg, user_id);
+        return handle_annotation_delete(acls, msg, user_id, override);
     case DP_MSG_PUT_TILE:
-        return DP_acl_state_is_op(acls, user_id);
+        return override || DP_acl_state_is_op(acls, user_id);
     case DP_MSG_CANVAS_BACKGROUND:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_BACKGROUND,
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_BACKGROUND,
                                             user_id);
     case DP_MSG_DRAW_DABS_CLASSIC:
-        return !DP_acl_state_layer_locked_for(
-            acls, user_id,
-            DP_msg_draw_dabs_classic_layer(DP_msg_draw_dabs_classic_cast(msg)));
+        return override
+            || !DP_acl_state_layer_locked_for(
+                   acls, user_id,
+                   DP_msg_draw_dabs_classic_layer(
+                       DP_msg_draw_dabs_classic_cast(msg)));
     case DP_MSG_DRAW_DABS_PIXEL:
-        return !DP_acl_state_layer_locked_for(
-            acls, user_id,
-            DP_msg_draw_dabs_pixel_layer(DP_msg_draw_dabs_pixel_cast(msg)));
+        return override
+            || !DP_acl_state_layer_locked_for(
+                   acls, user_id,
+                   DP_msg_draw_dabs_pixel_layer(
+                       DP_msg_draw_dabs_pixel_cast(msg)));
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        return !DP_acl_state_layer_locked_for(
-            acls, user_id,
-            DP_msg_draw_dabs_pixel_layer(
-                DP_msg_draw_dabs_pixel_square_cast(msg)));
+        return override
+            || !DP_acl_state_layer_locked_for(
+                   acls, user_id,
+                   DP_msg_draw_dabs_pixel_layer(
+                       DP_msg_draw_dabs_pixel_square_cast(msg)));
     case DP_MSG_DRAW_DABS_MYPAINT:
-        return !DP_acl_state_layer_locked_for(
-            acls, user_id,
-            DP_msg_draw_dabs_mypaint_layer(DP_msg_draw_dabs_mypaint_cast(msg)));
+        return override
+            || !DP_acl_state_layer_locked_for(
+                   acls, user_id,
+                   DP_msg_draw_dabs_mypaint_layer(
+                       DP_msg_draw_dabs_mypaint_cast(msg)));
     case DP_MSG_MOVE_RECT:
-        return handle_move_rect(acls, msg, user_id);
+        return handle_move_rect(acls, msg, user_id, override);
     case DP_MSG_UNDO:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_UNDO, user_id);
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_UNDO, user_id);
     case DP_MSG_SET_METADATA_INT:
-        return handle_set_metadata_int(acls, msg, user_id);
+        return handle_set_metadata_int(acls, msg, user_id, override);
     case DP_MSG_SET_METADATA_STR:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_METADATA, user_id);
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_METADATA, user_id);
     case DP_MSG_SET_TIMELINE_FRAME:
     case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
     default:
         return true;
     }
 }
 
-uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg)
+uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
 {
     DP_ASSERT(acls);
     DP_ASSERT(msg);
@@ -764,17 +811,19 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg)
         case DP_MSG_TRUSTED_USERS:
             return handle_trusted_users(acls, msg);
         case DP_MSG_LASER_TRAIL:
-            return filter_unless(DP_acl_state_can_use_feature(
-                acls, DP_FEATURE_LASER, message_user_id(msg)));
+            return filter_unless(
+                override
+                || DP_acl_state_can_use_feature(acls, DP_FEATURE_LASER,
+                                                message_user_id(msg)));
         case DP_MSG_USER_ACL:
-            return handle_user_acl(acls, msg);
+            return handle_user_acl(acls, msg, override);
         case DP_MSG_LAYER_ACL:
-            return handle_layer_acl(acls, msg);
+            return handle_layer_acl(acls, msg, override);
         case DP_MSG_FEATURE_ACCESS_LEVELS:
-            return handle_feature_access_levels(acls, msg);
+            return handle_feature_access_levels(acls, msg, override);
         case DP_MSG_DEFAULT_LAYER:
             return filter_unless(
-                DP_acl_state_is_op(acls, message_user_id(msg)));
+                override || DP_acl_state_is_op(acls, message_user_id(msg)));
         case DP_MSG_FILTERED:
             return DP_ACL_STATE_FILTERED_BIT;
         default:
@@ -782,11 +831,11 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg)
         }
     }
     else {
-        if (!acls->users.all_locked) {
+        if (override || !acls->users.all_locked) {
             uint8_t user_id = message_user_id(msg);
-            if (!DP_user_bit_get(acls->users.locked, user_id)) {
+            if (override || !DP_user_bit_get(acls->users.locked, user_id)) {
                 return filter_unless(
-                    handle_command_message(acls, msg, type, user_id));
+                    handle_command_message(acls, msg, type, user_id, override));
             }
         }
         return DP_ACL_STATE_FILTERED_BIT;
