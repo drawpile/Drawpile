@@ -30,15 +30,16 @@ struct ConversionType {
 };
 
 const struct ConversionType conversion_types[] = {
-    {"char", "char"},     {"unsigned char", "uchar"},
-    {"short", "short"},   {"unsigned short", "ushort"},
-    {"int", "int"},       {"unsigned int", "uint"},
-    {"long", "long"},     {"unsigned long", "ulong"},
-    {"int8_t", "int8"},   {"uint8_t", "uint8"},
-    {"int16_t", "int16"}, {"uint16_t", "uint16"},
-    {"int32_t", "int32"}, {"uint32_t", "uint32"},
-    {"float", "float"},   {"double", "double"},
-    {"size_t", "size"},
+    {"char", "char"},       {"unsigned char", "uchar"},
+    {"short", "short"},     {"unsigned short", "ushort"},
+    {"int", "int"},         {"unsigned int", "uint"},
+    {"long", "long"},       {"unsigned long", "ulong"},
+    {"long long", "llong"}, {"unsigned long long", "ullong"},
+    {"int8_t", "int8"},     {"uint8_t", "uint8"},
+    {"int16_t", "int16"},   {"uint16_t", "uint16"},
+    {"int32_t", "int32"},   {"uint32_t", "uint32"},
+    {"uint64_t", "uint64"}, {"float", "float"},
+    {"double", "double"},   {"size_t", "size"},
 };
 
 static void generate_conversion_function(FILE *fp, int i, int j)
