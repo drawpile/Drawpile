@@ -53,7 +53,7 @@ static void generate_conversion_function(FILE *fp, int i, int j)
     fprintf(fp, "\n");
 }
 
-static bool generate_c_file(const char *path)
+static bool generate_h_file(const char *path)
 {
     FILE *fp = fopen(path, "wb");
     if (!fp) {
@@ -92,9 +92,9 @@ static bool generate_c_file(const char *path)
 int main(int argc, char **argv)
 {
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s C_FILE_PATH\n",
+        fprintf(stderr, "Usage: %s H_FILE_PATH\n",
                 argc == 0 ? "generate_conversions" : argv[0]);
         return 2;
     }
-    return generate_c_file(argv[1]) ? 0 : 1;
+    return generate_h_file(argv[1]) ? 0 : 1;
 }
