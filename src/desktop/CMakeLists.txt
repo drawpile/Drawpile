@@ -280,6 +280,7 @@ IF ( APPLE )
 
 	SET(ResourcesDir "${CMAKE_BINARY_DIR}/bin/${CLIENTNAME}.app/Contents/Resources")
 	add_custom_target( appbundle ALL
+		DEPENDS dpclient
 		COMMAND mkdir -p "${ResourcesDir}/i18n"
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
 		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/../libclient/*.qm" "${ResourcesDir}/i18n"
