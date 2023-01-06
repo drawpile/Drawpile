@@ -8,6 +8,7 @@ extern "C" {
 #include "canvasstate.h"
 #include "drawcontextpool.h"
 #include <QtGlobal>
+#include <functional>
 
 struct DP_PaintEngine;
 

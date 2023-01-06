@@ -1,4 +1,4 @@
-param ($vcpkgDir, $vcpkgTriplet = "x64-windows-static", $innoSetupExePath)
+param ($vcpkgDir, $vcpkgTriplet = "x64-windows", $innoSetupExePath)
 
 $location = Get-Location
 
@@ -45,6 +45,38 @@ New-Item -Path $outDir -ItemType Directory -Force
 # Copy binaries
 Copy-Item -Path "$buildDir/bin/drawpile.exe" -Destination $outDir
 Copy-Item -Path "$buildDir/bin/drawpile-srv.exe" -Destination $outDir
+
+# Copy shared libraries
+foreach ($dll in ("double-conversion.dll", "bz2.dll", "freetype.dll", "harfbuzz.dll",
+        "icudt71.dll", "icuin71.dll", "icuuc71.dll", "jasper.dll", "jpeg62.dll",
+        "KF5Archive.dll", "liblzma.dll", "libpng16.dll", "pcre2-16.dll", "Qt5Core.dll",
+        "Qt5Gui.dll", "qt5keychain.dll", "Qt5Multimedia.dll", "Qt5Network.dll", "Qt5Sql.dll",
+        "Qt5Svg.dll", "Qt5Widgets.dll", "sqlite3.dll", "tiff.dll", "webp.dll",
+        "webpdecoder.dll", "webpdemux.dll", "zlib1.dll", "libcrypto-1_1-x64.dll", "libssl-1_1-x64.dll")) {
+    Copy-Item -Path "$buildDir/bin/$dll" -Destination $outDir
+} 
+# Copy Qt plugins
+Copy-Item -Path "$buildDir/bin/qt.conf" -Destination "$outDir/" # qt.conf is needed for plugins to load
+
+New-Item -Path "$outDir/plugins/platforms" -ItemType Directory -Force
+Copy-Item -Path "$buildDir/bin/plugins/platforms/qwindows.dll" -Destination "$outDir/plugins/platforms"
+
+New-Item -Path "$outDir/plugins/styles" -ItemType Directory -Force
+Copy-Item -Path "$buildDir/bin/plugins/styles/qwindowsvistastyle.dll" -Destination "$outDir/plugins/styles"
+
+New-Item -Path "$outDir/plugins/audio" -ItemType Directory -Force
+Copy-Item -Path "$buildDir/bin/plugins/audio/qtaudio_windows.dll" -Destination "$outDir/plugins/audio"
+
+New-Item -Path "$outDir/plugins/iconengines" -ItemType Directory -Force
+Copy-Item -Path "$buildDir/bin/plugins/iconengines/qsvgicon.dll" -Destination "$outDir/plugins/iconengines"
+
+New-Item -Path "$outDir/plugins/sqldrivers" -ItemType Directory -Force
+Copy-Item -Path "$buildDir/bin/plugins/sqldrivers/qsqlite.dll" -Destination "$outDir/plugins/sqldrivers"
+
+New-Item -Path "$outDir/plugins/imageformats" -ItemType Directory -Force
+foreach ($fmt in ("qgif", "qjpeg", "qsvg")) {
+    Copy-Item -Path "$buildDir/bin/plugins/imageformats/$fmt.dll" -Destination "$outDir/plugins/imageformats"   
+}
 
 # Copy resources
 Copy-Item -Path "$drawpileDir/desktop/palettes" -Destination $outDir -Recurse

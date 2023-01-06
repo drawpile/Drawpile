@@ -1,4 +1,4 @@
-param ($vcpkgDir, $vcpkgTriplet = "x64-windows-static", $drawdanceDir = (Resolve-Path -Path $PSScriptRoot+"/../../../Drawdance"))
+param ($vcpkgDir, $vcpkgTriplet = "x64-windows", $drawdanceDir = (Resolve-Path -Path $PSScriptRoot+"/../../../Drawdance"))
 
 $location = Get-Location
 
@@ -44,14 +44,15 @@ Write-Output "Using triplet $vcpkgTriplet"
 Write-Output "Using drawdance $drawdanceDir"
 
 # Install dependencies
-& $vcpkg install qt5-base libpng libjpeg-turbo kf5archive curl --triplet=$vcpkgTriplet # Drawdance deps
-& $vcpkg install ecm qt5-base qt5-multimedia qt5-svg qt5-translations libsodium qtkeychain kf5archive --triplet=$vcpkgTriplet  # Drawpile deps
+$overlayPortsDir = (Resolve-Path -Path "$PSScriptRoot/vcpkg-ports-qt5.12")
+& $vcpkg install qt5-base libpng libjpeg-turbo kf5archive curl --triplet=$vcpkgTriplet --host-triplet=$vcpkgTriplet "--overlay-ports=$overlayPortsDir" --clean-buildtrees-after-build --clean-packages-after-build # Drawdance deps
+& $vcpkg install ecm qt5-base qt5-multimedia qt5-svg qt5-translations libsodium qtkeychain kf5archive --triplet=$vcpkgTriplet --host-triplet=$vcpkgTriplet "--overlay-ports=$overlayPortsDir" --clean-buildtrees-after-build --clean-packages-after-build # Drawpile deps
 
 # Build Drawdance
 Set-Location -Path $drawdanceDir
 New-Item -Path "$drawdanceDir/build-win-msvc" -ItemType Directory -Force
 Set-Location -Path "$drawdanceDir/build-win-msvc"
-& cmake "-DCMAKE_TOOLCHAIN_FILE=$vcpkgDir/scripts/buildsystems/vcpkg.cmake" "-DVCPKG_TARGET_TRIPLET=$vcpkgTriplet" "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DBUILD_APPS=OFF -DUSE_CLANG_TIDY=OFF -DTHREAD_IMPL=QT -DXML_IMPL=QT -DZIP_IMPL=KARCHIVE -DLINK_WITH_LIBM=OFF -DCMAKE_BUILD_TYPE=Release -DUSE_ADDRESS_SANITIZER=OFF -G Ninja ../
+& cmake "-DCMAKE_TOOLCHAIN_FILE=$vcpkgDir/scripts/buildsystems/vcpkg.cmake" "-DVCPKG_TARGET_TRIPLET=$vcpkgTriplet" "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DBUILD_APPS=OFF -DUSE_GENERATORS=OFF -DUSE_CLANG_TIDY=OFF -DTHREAD_IMPL=QT -DXML_IMPL=QT -DZIP_IMPL=KARCHIVE -DLINK_WITH_LIBM=OFF -DCMAKE_BUILD_TYPE=Release -DUSE_ADDRESS_SANITIZER=OFF -G Ninja ../
 & cmake --build .
 
 # Build Drawpile
@@ -59,7 +60,7 @@ $drawpileDir = (Resolve-Path -Path "$PSScriptRoot/../../")
 Set-Location -Path $drawpileDir
 New-Item -Path "$drawpileDir/build-win-msvc" -ItemType Directory -Force
 Set-Location -Path "$drawpileDir/build-win-msvc"
-& cmake "-DDRAWDANCE_EXPORT_PATH=$drawdanceDir/build-win-msvc/Drawdance.cmake" "-DCMAKE_TOOLCHAIN_FILE=$vcpkgDir/scripts/buildsystems/vcpkg.cmake" "-DVCPKG_TARGET_TRIPLET=$vcpkgTriplet" "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DUSE_CLANG_TIDY=OFF -DUSE_ADDRESS_SANITIZER=OFF -DCMAKE_BUILD_TYPE=Release -G Ninja ../
+& cmake "-DDRAWDANCE_EXPORT_PATH=$drawdanceDir/build-win-msvc/Drawdance.cmake" "-DCMAKE_TOOLCHAIN_FILE=$vcpkgDir/scripts/buildsystems/vcpkg.cmake" "-DVCPKG_TARGET_TRIPLET=$vcpkgTriplet" "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DUSE_CLANG_TIDY=OFF -DUSE_ADDRESS_SANITIZER=OFF -DKIS_TABLET=ON -DCMAKE_BUILD_TYPE=Release -G Ninja ../
 & cmake --build .
 
 Write-Output "Build complete. Drawpile binaries are in $drawpileDir/build-win-msvc/bin"

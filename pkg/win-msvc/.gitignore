@@ -1,4 +1,4 @@
 !.gitignore
 out/
-drawpile-win-msvc*.zip
-drawpile-win-msvc*-setup.exe
+drawpile-win-*.zip
+drawpile-win-*-setup.exe
