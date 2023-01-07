@@ -1,16 +1,8 @@
-find_package(Qt5Test REQUIRED)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Network Sql Test)
+find_package(${QT_PACKAGE_NAME}${Qt_VERSION_MAJOR} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Network Sql Test)
 
-set(TEST_PREFIX server)
-
-qt5_add_resources( TestResources resources.qrc )
-
-set(
-	TEST_LIBS
-	"${SRVNAME}lib"
-	Qt5::Test
-	)
-
-AddUnitTest(serverconfig)
-AddUnitTest(templates)
-AddUnitTest(dblog)
-
+add_unit_tests(thinsrv
+	SOURCES resources.qrc
+	LIBS ${srvlib} ${QT_PACKAGE_NAME}::Network ${QT_PACKAGE_NAME}::Sql ${QT_PACKAGE_NAME}::Test
+	TESTS serverconfig templates dblog
+)

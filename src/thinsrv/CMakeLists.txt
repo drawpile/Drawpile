@@ -1,26 +1,34 @@
-# src/server/CMakeLists.txt
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Sql)
+find_package(Libmicrohttpd QUIET)
+find_package(Sodium QUIET)
 
-find_package( Qt5Sql REQUIRED)
-find_package( Libmicrohttpd )
-find_package(Sodium)
+set(srvname "drawpile-srv")
+set(srvlib "${srvname}lib")
 
-set (
-	SOURCES
+add_executable(${srvname} main.cpp)
+
+add_library(${srvlib} STATIC
 	multiserver.cpp
 	database.cpp
 	dblog.cpp
 	templatefiles.cpp
 	headless/headless.cpp
 	headless/configfile.cpp
-	)
+	$<$<BOOL:${UNIX}>:headless/unixsignals.cpp>
+)
+
+target_link_libraries(${srvlib}
+	dpserver
+	${QT_PACKAGE_NAME}::Network
+	${QT_PACKAGE_NAME}::Sql
+)
+
+target_link_libraries(${srvname} ${srvlib})
 
 if(SERVERGUI)
-	find_package(Qt5Widgets REQUIRED)
+	find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Widgets)
 
-	qt5_wrap_ui( UI_Headers gui/ipbandialog.ui gui/accountdialog.ui gui/settings.ui gui/authdialog.ui )
-	qt5_add_resources( QtResource gui/res/resources.qrc )
-
-	set(SOURCES ${SOURCES} ${UI_Headers}
+	target_sources(${srvlib} PRIVATE
 		gui/gui.cpp
 		gui/singleinstance.cpp
 		gui/trayicon.cpp
@@ -45,55 +53,53 @@ if(SERVERGUI)
 		gui/accountlistmodel.cpp
 		gui/serverlogmodel.cpp
 		gui/serverlogpage.cpp
-		)
-	add_definitions(-DHAVE_SERVERGUI)
+		gui/res/resources.qrc
+	)
 
-endif(SERVERGUI)
+	target_compile_definitions(${srvlib} PRIVATE HAVE_SERVERGUI)
+	target_link_libraries(${srvlib} ${QT_PACKAGE_NAME}::Widgets)
+endif()
 
-# Unix specific features
-if ( UNIX )
-	set ( SOURCES ${SOURCES} headless/unixsignals.cpp )
-endif ( UNIX )
+string(TOLOWER "${INITSYS}" INITSYS)
+if(INITSYS STREQUAL "systemd")
+	find_package(PkgConfig QUIET)
+	if(PKGCONFIG_FOUND)
+		pkg_check_modules(SYSTEMD "libsystemd" QUIET)
+	endif()
+endif()
 
-# Select init system integration backend
-if ( INITSYS STREQUAL "systemd" AND SYSTEMD_FOUND )
-	set ( SOURCES ${SOURCES} initsys_systemd.cpp )
-	set ( INITSYS_LIB ${SYSTEMD_LIBRARIES} )
-else ()
-	set ( SOURCES ${SOURCES} initsys_dummy.cpp )
-endif ()
+if(SYSTEMD_FOUND)
+	target_sources(${srvlib} PRIVATE
+		initsys_systemd.cpp
+	)
+	target_link_libraries(${srvlib} ${SYSTEMD_LIBRARIES})
+else()
+	target_sources(${srvlib} PRIVATE
+		initsys_dummy.cpp
+	)
+endif()
+add_feature_info("Server systemd integration" SYSTEMD_FOUND "")
 
-# Enable HTTP admin API if libmicrohttpd was found
-if( MHD_FOUND )
-	set( SOURCES ${SOURCES}
+if(MHD_FOUND)
+	target_sources(${srvlib} PRIVATE
 		webadmin/qmhttp.cpp
 		webadmin/webadmin.cpp
 	)
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_WEBADMIN" )
-else( MHD_FOUND )
-	message(WARNING "Libmicrohttpd not found: web-admin not enabled" )
-endif( MHD_FOUND )
+	target_compile_definitions(${srvlib} PRIVATE HAVE_WEBADMIN)
+	target_link_libraries(${srvlib} ${MHD_LIBRARIES})
+endif()
+add_feature_info("Server web-admin support" MHD_FOUND "")
 
-# Enable ext-auth if libsodium is available
-if( Sodium_FOUND )
-    add_definitions(-DHAVE_LIBSODIUM)
-endif( Sodium_FOUND )
-
-
-add_library( "${SRVNAME}lib" STATIC ${SOURCES} )
-target_link_libraries( "${SRVNAME}lib"  dpserver Qt5::Network Qt5::Sql ${INITSYS_LIB} ${MHD_LIBRARIES} )
-if(SERVERGUI)
-	target_link_libraries( "${SRVNAME}lib"  Qt5::Widgets )
+if(Sodium_FOUND)
+	target_compile_definitions(${srvlib} PRIVATE HAVE_LIBSODIUM)
 endif()
 
-add_executable(${SRVNAME} main.cpp ${QtResource})
-target_link_libraries(${SRVNAME} "${SRVNAME}lib")
-
-if ( UNIX AND NOT APPLE )
-	install ( TARGETS ${SRVNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS} )
-endif ()
+if(UNIX AND NOT APPLE)
+	install(TARGETS ${srvname})
+endif()
 
 if(TESTS)
 	add_subdirectory(tests)
-endif(TESTS)
+endif()
 
+target_auto_source_group(${srvname} ${srvlib})
