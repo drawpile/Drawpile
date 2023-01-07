@@ -1,5 +1,7 @@
-set(libserver_sources
-	announcements.cpp
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Network)
+find_package(Sodium QUIET)
+
+add_library(dpserver STATIC
 	client.cpp
 	filedhistory.cpp
 	idqueue.cpp
@@ -15,15 +17,22 @@ set(libserver_sources
 	sessionhistory.cpp
 	sessionserver.cpp
 	sslserver.cpp
-	thinserverclient.cpp
-	thinsession.cpp
+	announcements.cpp
 )
 
-add_library(dpserver STATIC ${libserver_sources})
-set_drawpile_target_properties(dpserver)
-target_link_libraries(dpserver PUBLIC dpshared DP::QtNetwork)
+target_link_libraries(dpserver
+	dpshared
+	${QT_PACKAGE_NAME}::Network
+)
+
+if(Sodium_FOUND)
+	target_compile_definitions(dpserver PRIVATE HAVE_LIBSODIUM)
+	target_include_directories(dpserver SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
+endif()
+add_feature_info("Ext-auth support" Sodium_FOUND "")
 
 if(TESTS)
 	add_subdirectory(tests)
 endif()
 
+target_auto_source_group(dpserver)

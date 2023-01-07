@@ -1,0 +1,16 @@
+[workspace]
+members = []
+
+[workspace.package]
+version = "2.2.0-beta.4"
+publish = false
+edition = "2021"
+license = "GPL-3.0-or-later"
+
+[profile.relwithdebinfo]
+inherits = "release"
+debug = true
+
+[profile.minsizerel]
+inherits = "release"
+opt-level = "s"

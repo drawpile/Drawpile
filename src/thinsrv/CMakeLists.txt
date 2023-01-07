@@ -1,98 +1,103 @@
-set(thinsrv_sources
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Sql)
+find_package(Libmicrohttpd QUIET)
+find_package(Sodium QUIET)
+
+set(srvname "drawpile-srv")
+set(srvlib "${srvname}lib")
+
+add_executable(${srvname} main.cpp)
+
+add_library(${srvlib} STATIC
+	multiserver.cpp
 	database.cpp
 	dblog.cpp
 	headless/configfile.cpp
-	headless/headless.cpp
-	multiserver.cpp
-	templatefiles.cpp
+	$<$<BOOL:${UNIX}>:headless/unixsignals.cpp>
 )
 
-set(thinsrv_gui_sources
-	gui/accountlistmodel.cpp
-	gui/accountlistpage.cpp
-	gui/authdialog.cpp
-	gui/banlistmodel.cpp
-	gui/banlistpage.cpp
-	gui/gui.cpp
-	gui/jsonlistmodel.cpp
-	gui/localserver.cpp
-	gui/mainwindow.cpp
-	gui/remoteserver.cpp
-	gui/server.cpp
-	gui/serverlogmodel.cpp
-	gui/serverlogpage.cpp
-	gui/serversummarypage.cpp
-	gui/sessionlistmodel.cpp
-	gui/sessionlistpage.cpp
-	gui/sessionpage.cpp
-	gui/sidebaritemdelegate.cpp
-	gui/sidebarmodel.cpp
-	gui/singleinstance.cpp
-	gui/subheaderwidget.cpp
-	gui/trayicon.cpp
-	gui/userlistmodel.cpp
-	gui/userlistpage.cpp
+target_link_libraries(${srvlib}
+	dpserver
+	${QT_PACKAGE_NAME}::Network
+	${QT_PACKAGE_NAME}::Sql
 )
 
-set(thinsrv_gui_uis
-	gui/accountdialog.ui
-	gui/authdialog.ui
-	gui/ipbandialog.ui
-	gui/settings.ui
-)
-
-add_library("${SRVNAME}lib" STATIC ${thinsrv_sources})
-set_drawpile_target_properties(dpshared)
-target_include_directories("${SRVNAME}lib" PUBLIC
-	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
-target_link_libraries("${SRVNAME}lib" PUBLIC dpserver DP::QtNetwork DP::QtSql)
+target_link_libraries(${srvname} ${srvlib})
 
 if(SERVERGUI)
-	dp_qt_wrap_ui(thinsrv_ui_headers ${thinsrv_gui_uis})
-	dp_qt_add_resources(thinsrv_qt_resources gui/res/resources.qrc)
-	message(STATUS "thinsrv_ui_headers ${thinsrv_ui_headers}")
-	target_sources("${SRVNAME}lib" PRIVATE
-		${thinsrv_gui_sources}
-		${thinsrv_ui_headers})
-	target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_SERVERGUI)
-	target_link_libraries("${SRVNAME}lib" PUBLIC DP::QtWidgets)
+	find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Widgets)
+
+	target_sources(${srvlib} PRIVATE
+		gui/gui.cpp
+		gui/singleinstance.cpp
+		gui/trayicon.cpp
+		gui/authdialog.cpp
+		gui/mainwindow.cpp
+		gui/server.cpp
+		gui/localserver.cpp
+		gui/remoteserver.cpp
+		gui/sidebarmodel.cpp
+		gui/sidebaritemdelegate.cpp
+		gui/serversummarypage.cpp
+		gui/sessionlistpage.cpp
+		gui/userlistpage.cpp
+		gui/banlistpage.cpp
+		gui/accountlistpage.cpp
+		gui/sessionpage.cpp
+		gui/subheaderwidget.cpp
+		gui/jsonlistmodel.cpp
+		gui/userlistmodel.cpp
+		gui/sessionlistmodel.cpp
+		gui/banlistmodel.cpp
+		gui/accountlistmodel.cpp
+		gui/serverlogmodel.cpp
+		gui/serverlogpage.cpp
+		gui/res/resources.qrc
+	)
+
+	target_compile_definitions(${srvlib} PRIVATE HAVE_SERVERGUI)
+	target_link_libraries(${srvlib} ${QT_PACKAGE_NAME}::Widgets)
 endif()
 
-if(UNIX)
-	target_sources("${SRVNAME}lib" PRIVATE headless/unixsignals.cpp)
+string(TOLOWER "${INITSYS}" INITSYS)
+if(INITSYS STREQUAL "systemd")
+	find_package(PkgConfig QUIET)
+	if(PKGCONFIG_FOUND)
+		pkg_check_modules(SYSTEMD "libsystemd" QUIET)
+	endif()
 endif()
 
-# Select init system integration backend
-if(INITSYS STREQUAL "systemd" AND SYSTEMD_FOUND)
-	target_sources("${SRVNAME}lib" PRIVATE initsys_systemd.cpp)
-	target_link_libraries("${SRVNAME}lib" PUBLIC ${SYSTEMD_LIBRARIES})
+if(SYSTEMD_FOUND)
+	target_sources(${srvlib} PRIVATE
+		initsys_systemd.cpp
+	)
+	target_link_libraries(${srvlib} ${SYSTEMD_LIBRARIES})
 else()
-	target_sources("${SRVNAME}lib" PRIVATE initsys_dummy.cpp)
+	target_sources(${srvlib} PRIVATE
+		initsys_dummy.cpp
+	)
 endif()
+add_feature_info("Server systemd integration" SYSTEMD_FOUND "")
 
-# Enable HTTP admin API if libmicrohttpd was found
 if(MHD_FOUND)
-	target_sources("${SRVNAME}lib" PRIVATE webadmin/qmhttp.cpp webadmin/webadmin.cpp)
-    target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_WEBADMIN)
-	target_link_libraries("${SRVNAME}lib" PUBLIC ${MHD_LIBRARIES})
-else()
-	message(WARNING "Libmicrohttpd not found: web-admin not enabled" )
+	target_sources(${srvlib} PRIVATE
+		webadmin/qmhttp.cpp
+		webadmin/webadmin.cpp
+	)
+	target_compile_definitions(${srvlib} PRIVATE HAVE_WEBADMIN)
+	target_link_libraries(${srvlib} ${MHD_LIBRARIES})
 endif()
+add_feature_info("Server web-admin support" MHD_FOUND "")
 
-# Enable ext-auth if libsodium is available
 if(Sodium_FOUND)
-    target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_LIBSODIUM)
+	target_compile_definitions(${srvlib} PRIVATE HAVE_LIBSODIUM)
 endif()
-
-add_executable(${SRVNAME} main.cpp ${thinsrv_qt_resources})
-set_drawpile_target_properties(${SRVNAME})
-target_link_libraries(${SRVNAME} PUBLIC "${SRVNAME}lib")
 
 if(UNIX AND NOT APPLE)
-	install(TARGETS ${SRVNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+	install(TARGETS ${srvname})
 endif()
 
 if(TESTS)
 	add_subdirectory(tests)
 endif()
 
+target_auto_source_group(${srvname} ${srvlib})

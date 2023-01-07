@@ -1,14 +1,11 @@
-set(TEST_PREFIX shared)
-set(TEST_LIBS dpshared DP::QtTest)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Test)
+find_package(Sodium)
 
-AddUnitTest(passwordhash)
-AddUnitTest(filename)
-AddUnitTest(messages)
-AddUnitTest(recording)
-AddUnitTest(messagequeue)
-AddUnitTest(listings)
-AddUnitTest(ulid)
+add_unit_tests(shared
+	LIBS dpshared ${QT_PACKAGE_NAME}::Test
+	TESTS passwordhash filename messages recording messagequeue listings ulid
+)
 
 if(Sodium_FOUND)
-	AddUnitTest(authtoken)
+	add_unit_test(shared authtoken LIBS dpshared ${QT_PACKAGE_NAME}::Test)
 endif()

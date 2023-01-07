@@ -1,7 +1,7 @@
-set(TEST_PREFIX client)
-set(TEST_LIBS dpclient dpserver DP::QtTest)
-dp_qt_add_resources(TestResources resources.qrc)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Test)
 
-AddUnitTest(html)
-AddUnitTest(listingfiltering)
-AddUnitTest(newversion)
+add_unit_tests(client
+	SOURCES resources.qrc
+	LIBS dpclient ${QT_PACKAGE_NAME}::Test
+	TESTS html listingfiltering newversion
+)

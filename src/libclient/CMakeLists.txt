@@ -1,6 +1,19 @@
-set(libclient_sources
-	brushes/brush.cpp
-	brushes/brushpresetmodel.cpp
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Gui Sql)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
+
+add_library(dpclient STATIC
+	document.cpp
+	tools/colorpicker.cpp
+	tools/laser.cpp
+	tools/selection.cpp
+	tools/shapetools.cpp
+	tools/beziertool.cpp
+	tools/floodfill.cpp
+	tools/strokesmoother.cpp
+	tools/zoom.cpp
+	tools/inspector.cpp
+	canvas/canvasmodel.cpp
+	canvas/selection.cpp
 	canvas/acl.cpp
 	canvas/blendmodes.cpp
 	canvas/canvasmodel.cpp
@@ -13,7 +26,6 @@ set(libclient_sources
 	canvas/selection.cpp
 	canvas/timelinemodel.cpp
 	canvas/userlist.cpp
-	document.cpp
 	drawdance/aclstate.cpp
 	drawdance/annotation.cpp
 	drawdance/annotationlist.cpp
@@ -38,11 +50,6 @@ set(libclient_sources
 	drawdance/tile.cpp
 	drawdance/timeline.cpp
 	drawdance/ziparchive.cpp
-	export/animationsaverrunnable.cpp
-	export/canvassaverrunnable.cpp
-	export/ffmpegexporter.cpp
-	export/imageseriesexporter.cpp
-	export/videoexporter.cpp
 	net/announcementlist.cpp
 	net/banlistmodel.cpp
 	net/client.cpp
@@ -53,7 +60,6 @@ set(libclient_sources
 	net/servercmd.cpp
 	net/sessionlistingmodel.cpp
 	net/tcpserver.cpp
-	parentalcontrols/parentalcontrols.cpp
 	tools/annotation.cpp
 	tools/beziertool.cpp
 	tools/colorpicker.cpp
@@ -86,47 +92,53 @@ set(libclient_sources
 	utils/sessionidvalidator.cpp
 	utils/shortcutdetector.cpp
 	utils/usernamevalidator.cpp
+	brushes/brush.cpp
+	brushes/brushpresetmodel.cpp
+	export/videoexporter.cpp
+	export/imageseriesexporter.cpp
+	export/ffmpegexporter.cpp
+	export/canvassaverrunnable.cpp
+	export/animationsaverrunnable.cpp
+	parentalcontrols/parentalcontrols.cpp
+	parentalcontrols/parentalcontrols_$<IF:$<BOOL:${WIN32}>,win,dummy>.cpp
 )
 
-set(libclient_tss
-	i18n/drawpile_fi.ts
-	i18n/drawpile_cs.ts
-	i18n/drawpile_ja.ts
-	i18n/drawpile_ru.ts
-	i18n/drawpile_de.ts
-	i18n/drawpile_zh.ts
-	i18n/drawpile_vi.ts
-	i18n/drawpile_uk.ts
-	i18n/drawpile_it.ts
-	i18n/drawpile_fr.ts
-	i18n/drawpile_pt.ts
+target_link_libraries(dpclient
+	dpshared
+	${QT_PACKAGE_NAME}::Gui
+	${QT_PACKAGE_NAME}::Network
+	${QT_PACKAGE_NAME}::Sql
+	Drawdance::dpengine
+	Drawdance::dpengine_archive
+	Drawdance::dpmsg
+	Drawdance::dpcommon
 )
 
-add_library(dpclient STATIC ${libclient_sources})
-set_drawpile_target_properties(dpclient)
-target_include_directories(dpclient PUBLIC "${CMAKE_CURRENT_LIST_DIR}" bundled)
-target_link_libraries(dpclient PUBLIC
-	dpshared Drawdance::dpengine Drawdance::dpengine_archive Drawdance::dpmsg
-	Drawdance::dpcommon DP::QtGui DP::QtNetwork DP::QtSql)
-
-# Required in libshared/qtshims.h to enable QtGui-related shims.
-target_compile_definitions(dpclient PUBLIC HAVE_QT_GUI)
-
-if(WIN32)
-	target_sources(dpclient PRIVATE parentalcontrols/parentalcontrols_win.cpp)
-	target_link_libraries(dpclient PUBLIC ws2_32 userenv bcrypt)
-else()
-	target_sources(dpclient PRIVATE parentalcontrols/parentalcontrols_dummy.cpp)
+if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
+	set(ts_files
+		i18n/drawpile_fi.ts
+		i18n/drawpile_cs.ts
+		i18n/drawpile_ja.ts
+		i18n/drawpile_ru.ts
+		i18n/drawpile_de.ts
+		i18n/drawpile_zh.ts
+		i18n/drawpile_vi.ts
+		i18n/drawpile_uk.ts
+		i18n/drawpile_it.ts
+		i18n/drawpile_fr.ts
+		i18n/drawpile_pt.ts
+	)
+	target_sources(dpclient PRIVATE ${ts_files})
+	set_source_files_properties(${ts_files} PROPERTIES
+		OUTPUT_LOCATION "i18n"
+	)
+	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/i18n")
+	qt_add_translation(qm_files ${ts_files})
 endif()
-
-if(DP_QtLinguistTools_FOUND)
-	dp_qt_add_translation(libclient_qm_translations ${libclient_tss})
-	target_sources(dpclient PRIVATE ${libclient_qm_translations})
-	install(FILES ${libclient_qm_translations}
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n")
-endif()
+add_feature_info("Client translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
 
 if(TESTS)
-    add_subdirectory(tests)
+	add_subdirectory(tests)
 endif()
 
+target_auto_source_group(dpclient)

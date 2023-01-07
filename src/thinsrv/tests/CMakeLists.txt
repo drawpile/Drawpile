@@ -1,7 +1,7 @@
-set(TEST_PREFIX server)
-set(TEST_LIBS "${SRVNAME}lib" DP::QtTest)
-dp_qt_add_resources(TestResources resources.qrc)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Network Sql Test)
 
-AddUnitTest(serverconfig)
-AddUnitTest(templates)
-AddUnitTest(dblog)
+add_unit_tests(thinsrv
+	SOURCES resources.qrc
+	LIBS ${srvlib} ${QT_PACKAGE_NAME}::Network ${QT_PACKAGE_NAME}::Sql ${QT_PACKAGE_NAME}::Test
+	TESTS serverconfig templates dblog
+)

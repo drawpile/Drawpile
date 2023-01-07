@@ -1,7 +1,6 @@
-set(TEST_PREFIX shared)
-set(TEST_LIBS dpserver DP::QtTest)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Test)
 
-AddUnitTest(filedhistory)
-AddUnitTest(sessionban)
-AddUnitTest(idqueue)
-AddUnitTest(serverlog)
+add_unit_tests(server
+	LIBS dpserver ${QT_PACKAGE_NAME}::Test
+	TESTS filedhistory sessionban idqueue serverlog
+)

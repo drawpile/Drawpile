@@ -1,9 +1,15 @@
-set(desktop_sources
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Widgets Multimedia)
+find_package(${QT_PACKAGE_NAME}ColorWidgets QUIET)
+find_package(${QT_PACKAGE_NAME}Keychain QUIET)
+
+add_executable(drawpile MACOSX_BUNDLE
 	main.cpp
 	filewrangler.cpp
+	filewrangler.h
 	mainwindow.cpp
 	notifications.cpp
 	tabletinput.cpp
+	tabletinput.h
 	toolwidgets/toolsettings.cpp
 	toolwidgets/brushsettings.cpp
 	toolwidgets/colorpickersettings.cpp
@@ -93,227 +99,236 @@ set(desktop_sources
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp
 	utils/hidedocktitlebarseventfilter.cpp
+	utils/hidedocktitlebarseventfilter.h
+	utils/hotbordereventfilter.cpp
+	utils/hotbordereventfilter.h
+	ui/cursors/dpcursors.qrc
+	ui/icons/builtin.qrc
+	$<$<BOOL:${APPLE}>:widgets/macmenu.cpp>
 )
 
-set(desktop_uis
-	ui/abusereport.ui
-	ui/avatarimport.ui
-	ui/brushdock.ui
-	ui/brushpresetproperties.ui
-	ui/canvasshortcutsdialog.ui
-	ui/certificateview.ui
-	ui/dumpplayback.ui
-	ui/fillsettings.ui
-	ui/flipbook.ui
-	ui/hostdialog.ui
-	ui/inputcfg.ui
-	ui/inspectorsettings.ui
-	ui/joindialog.ui
-	ui/lasersettings.ui
-	ui/layerproperties.ui
-	ui/layoutsdialog.ui
-	ui/logindialog.ui
-	ui/netstats.ui
-	ui/newdialog.ui
-	ui/playback.ui
-	ui/resetsession.ui
-	ui/resizedialog.ui
-	ui/selectsettings.ui
-	ui/serverlog.ui
-	ui/sessionsettings.ui
-	ui/settings.ui
-	ui/tablettest.ui
-	ui/textsettings.ui
-	ui/videoexport.ui
-)
+target_include_directories(drawpile PRIVATE "../libclient")
 
-set(bundled_qtcolorwidgets_sources
-	bundled/QtColorWidgets/abstract_widget_list.cpp
-	bundled/QtColorWidgets/bound_color_selector.cpp
-	bundled/QtColorWidgets/color_2d_slider.cpp
-	bundled/QtColorWidgets/color_delegate.cpp
-	bundled/QtColorWidgets/color_dialog.cpp
-	bundled/QtColorWidgets/color_line_edit.cpp
-	bundled/QtColorWidgets/color_list_widget.cpp
-	bundled/QtColorWidgets/color_names.cpp
-	bundled/QtColorWidgets/color_palette.cpp
-	bundled/QtColorWidgets/color_palette_model.cpp
-	bundled/QtColorWidgets/color_palette_widget.cpp
-	bundled/QtColorWidgets/color_preview.cpp
-	bundled/QtColorWidgets/color_selector.cpp
-	bundled/QtColorWidgets/color_utils.cpp
-	bundled/QtColorWidgets/color_wheel.cpp
-	bundled/QtColorWidgets/color_widgets.qrc
-	bundled/QtColorWidgets/gradient_editor.cpp
-	bundled/QtColorWidgets/gradient_list_model.cpp
-	bundled/QtColorWidgets/gradient_slider.cpp
-	bundled/QtColorWidgets/harmony_color_wheel.cpp
-	bundled/QtColorWidgets/hue_slider.cpp
-	bundled/QtColorWidgets/swatch.cpp
-	bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
-	bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/BoundColorSelector
-	bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/CMakeLists.txt
-	bundled/QtColorWidgets/include/QtColorWidgets/color_2d_slider.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/ColorDelegate
-	bundled/QtColorWidgets/include/QtColorWidgets/color_delegate.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/ColorDialog
-	bundled/QtColorWidgets/include/QtColorWidgets/color_dialog.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_line_edit.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/ColorListWidget
-	bundled/QtColorWidgets/include/QtColorWidgets/color_list_widget.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_names.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_palette.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_palette_model.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_palette_widget.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/ColorPreview
-	bundled/QtColorWidgets/include/QtColorWidgets/color_preview.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/ColorSelector
-	bundled/QtColorWidgets/include/QtColorWidgets/color_selector.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_utils.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/ColorWheel
-	bundled/QtColorWidgets/include/QtColorWidgets/color_wheel.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/color_wheel_private.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/colorwidgets_global.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/gradient_delegate.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/GradientEditor
-	bundled/QtColorWidgets/include/QtColorWidgets/gradient_editor.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/gradient_helper.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/GradientListModel
-	bundled/QtColorWidgets/include/QtColorWidgets/gradient_list_model.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/GradientSlider
-	bundled/QtColorWidgets/include/QtColorWidgets/gradient_slider.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/HarmonyColorWheel
-	bundled/QtColorWidgets/include/QtColorWidgets/harmony_color_wheel.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/HueSlider
-	bundled/QtColorWidgets/include/QtColorWidgets/hue_slider.hpp
-	bundled/QtColorWidgets/include/QtColorWidgets/swatch.hpp
+set_target_properties(drawpile PROPERTIES
+	AUTOUIC_SEARCH_PATHS ui
+	VERSION ${PROJECT_VERSION}
+	PROJECT_LABEL drawpile-client
+	WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>
 )
-
-# On Android "executables" are shared libraries.
-add_dp_executable(${CLIENTNAME} ${desktop_sources})
-set_drawpile_target_properties(${CLIENTNAME})
-target_include_directories("${CLIENTNAME}" PUBLIC
-	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
-target_link_libraries(${CLIENTNAME} PUBLIC dpclient
-	DP::QtWidgets DP::QtMultimedia DP::QtSvg)
 
 # On Qt6, private headers are required to switch between Windows Ink and Wintab.
-if("${QT_VERSION}" EQUAL 6)
-	include_directories("${CLIENTNAME}" PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
+if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
+	# TODO: Check this is doing the right thing
+	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
 
 # Android doesn't sensibly support multiple windows, they just cover each other
 # up with no way to switch between them, so we don't allow that there.
 if(ANDROID)
-	target_compile_definitions(${CLIENTNAME} PRIVATE SINGLE_MAIN_WINDOW=1)
-	target_sources(${CLIENTNAME} PRIVATE dialogs/androidfiledialog.cpp)
-	list(APPEND desktop_uis ui/androidfiledialog.ui)
+	target_compile_definitions(drawpile PRIVATE SINGLE_MAIN_WINDOW=1)
+	target_sources(drawpile PRIVATE
+		dialogs/androidfiledialog.cpp
+		dialogs/androidfiledialog.h
+	)
 endif()
 
-if(ENABLE_VERSION_CHECK)
-	target_compile_definitions(${CLIENTNAME} PRIVATE ENABLE_VERSION_CHECK=1)
-	target_sources(${CLIENTNAME} PRIVATE dialogs/versioncheckdialog.cpp)
-	list(APPEND desktop_uis ui/versioncheck.ui)
-endif()
-
-set_target_properties(${CLIENTNAME} PROPERTIES
-	VERSION ${DRAWPILE_VERSION}
-	PROJECT_LABEL drawpile-client)
-
-if(WIN32 AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	# Don't show a console window in Windows in release mode.
-	set_property(TARGET ${CLIENTNAME} PROPERTY WIN32_EXECUTABLE ON)
-endif()
-
-if(APPLE)
-	set_property(TARGET ${CLIENTNAME} PROPERTY MACOSX_BUNDLE ON)
-	target_sources(${CLIENTNAME} PRIVATE widgets/macmenu.cpp)
-endif()
+target_link_libraries(drawpile
+	dpclient
+	${QT_PACKAGE_NAME}::Widgets
+	${QT_PACKAGE_NAME}::Multimedia
+)
 
 if(KIS_TABLET)
-	if("${WIN32}" AND "${QT_VERSION}" EQUAL 5)
-		target_compile_definitions(${CLIENTNAME} PUBLIC HAVE_KIS_TABLET)
-		target_sources(${CLIENTNAME} PRIVATE
+	if(WIN32)
+		target_sources(drawpile PRIVATE
 			bundled/kis_tablet/kis_tablet_support_win8.cpp
-			bundled/kis_tablet/kis_tablet_support_win.cpp)
-	else()
-		message(WARNING "KIS_TABLET is only supported and necessary on Windows with Qt5")
+			bundled/kis_tablet/kis_tablet_support_win.cpp
+		)
+	elseif(NOT APPLE)
+		find_package(X11 REQUIRED COMPONENTS Xi xcb)
+		find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS X11Extras)
+
+		target_sources(drawpile PRIVATE
+			bundled/kis_tablet/kis_xi2_event_filter.cpp
+			bundled/kis_tablet/qxcbconnection.cpp
+			bundled/kis_tablet/qxcbconnection_xi2.cpp
+		)
+
+		target_link_libraries(drawpile
+			${QT_PACKAGE_NAME}::X11Extras
+			X11::Xi
+			X11::xcb
+		)
 	endif()
-ENDIF()
-
-if(TARGET DP::QtKeychain)
-	target_compile_definitions(${CLIENTNAME} PUBLIC HAVE_QTKEYCHAIN)
-	target_link_libraries(${CLIENTNAME} PUBLIC DP::QtKeychain)
-else ()
-	message(WARNING "QtKeyChain not found: password remembering not enabled")
 endif()
 
-# Use bundled QtColorWidgets widgets if library not found
+if(${QT_PACKAGE_NAME}Keychain_FOUND)
+	target_compile_definitions(drawpile PRIVATE HAVE_QTKEYCHAIN)
+	target_link_libraries(drawpile ${QT_PACKAGE_NAME}Keychain::${QT_PACKAGE_NAME}Keychain)
+endif()
+add_feature_info("Client password manager" ${QT_PACKAGE_NAME}Keychain_FOUND "")
+
 if(QTCOLORWIDGETS_FOUND)
-	target_include_directories(${CLIENTNAME} PUBLIC ${LIBQTCOLORWIDGETS_INCLUDE_DIRS})
-	target_link_libraries(${CLIENTNAME} PUBLIC ${LIBQTCOLORWIDGETS_LIBRARIES})
+	target_include_directories(drawpile SYSTEM PRIVATE
+		${LIBQTCOLORWIDGETS_INCLUDE_DIRS}
+	)
+	target_link_libraries(drawpile ${LIBQTCOLORWIDGETS_LIBRARIES})
 else()
-	message(WARNING "QtColorWidgets not found: using bundled copy!")
-	dp_qt_add_resources(desktop_resources bundled/QtColorWidgets/color_widgets.qrc)
-	dp_qt_wrap_ui(bundled_qtcolorwidgets_ui_headers
-		bundled/QtColorWidgets/color_dialog.ui
-		bundled/QtColorWidgets/color_palette_widget.ui)
-	target_compile_definitions(${CLIENTNAME} PUBLIC QTCOLORPICKER_STATICALLY_LINKED)
-	target_include_directories(${CLIENTNAME} PUBLIC
-		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include")
-	target_sources(${CLIENTNAME} PRIVATE
-		${bundled_qtcolorwidgets_sources} ${bundled_qtcolorwidgets_ui_headers})
+	target_sources(drawpile PRIVATE
+		bundled/QtColorWidgets/abstract_widget_list.cpp
+		bundled/QtColorWidgets/bound_color_selector.cpp
+		bundled/QtColorWidgets/color_2d_slider.cpp
+		bundled/QtColorWidgets/color_delegate.cpp
+		bundled/QtColorWidgets/color_dialog.cpp
+		bundled/QtColorWidgets/color_line_edit.cpp
+		bundled/QtColorWidgets/color_list_widget.cpp
+		bundled/QtColorWidgets/color_names.cpp
+		bundled/QtColorWidgets/color_palette.cpp
+		bundled/QtColorWidgets/color_palette_model.cpp
+		bundled/QtColorWidgets/color_palette_widget.cpp
+		bundled/QtColorWidgets/color_preview.cpp
+		bundled/QtColorWidgets/color_selector.cpp
+		bundled/QtColorWidgets/color_utils.cpp
+		bundled/QtColorWidgets/color_wheel.cpp
+		bundled/QtColorWidgets/color_widgets.qrc
+		bundled/QtColorWidgets/gradient_editor.cpp
+		bundled/QtColorWidgets/gradient_list_model.cpp
+		bundled/QtColorWidgets/gradient_slider.cpp
+		bundled/QtColorWidgets/harmony_color_wheel.cpp
+		bundled/QtColorWidgets/hue_slider.cpp
+		bundled/QtColorWidgets/swatch.cpp
+		bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
+		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/BoundColorSelector
+		bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/CMakeLists.txt
+		bundled/QtColorWidgets/include/QtColorWidgets/color_2d_slider.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorDelegate
+		bundled/QtColorWidgets/include/QtColorWidgets/color_delegate.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorDialog
+		bundled/QtColorWidgets/include/QtColorWidgets/color_dialog.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_line_edit.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorListWidget
+		bundled/QtColorWidgets/include/QtColorWidgets/color_list_widget.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_names.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_palette.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_palette_model.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_palette_widget.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorPreview
+		bundled/QtColorWidgets/include/QtColorWidgets/color_preview.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorSelector
+		bundled/QtColorWidgets/include/QtColorWidgets/color_selector.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_utils.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/ColorWheel
+		bundled/QtColorWidgets/include/QtColorWidgets/color_wheel.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/color_wheel_private.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/colorwidgets_global.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_delegate.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/GradientEditor
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_editor.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_helper.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/GradientListModel
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_list_model.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/GradientSlider
+		bundled/QtColorWidgets/include/QtColorWidgets/gradient_slider.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/HarmonyColorWheel
+		bundled/QtColorWidgets/include/QtColorWidgets/harmony_color_wheel.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/HueSlider
+		bundled/QtColorWidgets/include/QtColorWidgets/hue_slider.hpp
+		bundled/QtColorWidgets/include/QtColorWidgets/swatch.hpp
+		bundled/QtColorWidgets/color_widgets.qrc
+	)
+	target_include_directories(drawpile SYSTEM PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include"
+	)
+	target_compile_definitions(drawpile PRIVATE QTCOLORPICKER_STATICALLY_LINKED)
 endif()
-
-dp_qt_add_resources(desktop_resources ui/cursors/dpcursors.qrc)
-dp_qt_add_resources(desktop_resources ui/icons/builtin.qrc)
-dp_qt_wrap_ui(desktop_ui_headers ${desktop_uis} )
-target_sources(${CLIENTNAME} PRIVATE
-	${desktop_ui_headers} ${desktop_resources} ${libclient_qm_translations})
+add_feature_info("External QtColorWidgets" QTCOLORWIDGETS_FOUND "")
 
 if(WIN32)
-	generate_win32_resource(
-		Win32Resource
-		"Drawpile client" # full name
-		${CLIENTNAME} # internal name
-		"Drawpile client"
-		${DRAWPILE_HOMEPAGE_URL}
-		"2006-2022 Calle Laakkonen"
-		${PROJECT_VERSION}
-		"${CMAKE_SOURCE_DIR}/desktop/dancepile.ico")
-	target_sources(${CLIENTNAME} PRIVATE ${Win32Resource})
-endif()
+	configure_file(drawpile.rc.in drawpile.rc)
+	target_sources(drawpile PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc)
+elseif(APPLE)
+	function(add_desktop_resources target)
+		set(multiValueArgs FILES DIRS)
+		cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "${multiValueArgs}")
 
-if(APPLE)
-	set(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
-	# set how it shows up in the Info.plist file
-	set(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
-	# set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
-	set(MACOSX_BUNDLE_GUI_IDENTIFIER "net.drawpile.DrawpileClient")
-	set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${DRAWPILE_VERSION}")
-	set(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
-	set(MACOSX_BUNDLE_COPYRIGHT "Copyright Drawpile team")
+		if(NOT target)
+			message(FATAL_ERROR "missing required target")
+			return()
+		endif()
 
-	set(ResourcesDir "${CMAKE_BINARY_DIR}/bin/${CLIENTNAME}.app/Contents/Resources")
-	add_custom_target(appbundle ALL
-		COMMAND mkdir -p "${ResourcesDir}/i18n"
-		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/drawpile.icns" "${ResourcesDir}"
-		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/../libclient/*.qm" "${ResourcesDir}/i18n"
-		COMMAND mkdir -p "${ResourcesDir}/palettes"
-		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/palettes/*.gpl" "${ResourcesDir}/palettes"
-		COMMAND mkdir -p "${ResourcesDir}/sounds"
-		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/sounds/*.wav" "${ResourcesDir}/sounds"
-		COMMAND cp -r "${CMAKE_SOURCE_DIR}/desktop/theme" "${ResourcesDir}"
-		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/initialbrushpresets.db" "${ResourcesDir}")
-endif()
+		foreach(dir IN LISTS ARG_DIRS)
+			file(GLOB resources LIST_DIRECTORIES FALSE "assets/${dir}/*")
+			target_sources(${target} PRIVATE ${resources})
+			set_source_files_properties(${resources}
+				PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/${dir}"
+			)
+		endforeach()
 
-# We don't install anything on Android nor do we have an executable to strip.
-if(NOT ANDROID)
-	install(TARGETS ${CLIENTNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
-	if(NOT "${CMAKE_BUILD_TYPE}" MATCHES "Debug|RelWithDebInfo")
-		strip_exe(${CLIENTNAME})
+		foreach(file IN LISTS ARG_FILES)
+			target_sources(${target} PRIVATE
+				assets/${file}
+			)
+			set_property(TARGET ${target} APPEND PROPERTY RESOURCE
+				assets/${file}
+			)
+		endforeach()
+	endfunction()
+
+	set_property(TARGET drawpile PROPERTY RUNTIME_OUTPUT_NAME Drawpile)
+	set(MACOSX_BUNDLE_INFO_PLIST DrawpileInfo.plist.in)
+	set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
+	set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_GIT_REVISION})
+	set(MACOSX_BUNDLE_COPYRIGHT "Copyright © Drawpile contributors")
+	set(MACOSX_BUNDLE_GUI_IDENTIFIER net.drawpile.DrawpileClient)
+	set(MACOSX_BUNDLE_ICON_FILE drawpile.icns)
+	set(MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
+	set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
+	set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
+
+	# TODO: This should be generic and then use install(TARGETS... RESOURCE)
+	add_desktop_resources(drawpile
+		FILES initialbrushpresets.db
+		DIRS "theme/dark" "theme/light" palettes sounds theme
+	)
+
+	add_custom_command(
+		OUTPUT drawpile.icns
+		DEPENDS assets/drawpile.iconset/icon_512x512@2x.png
+		COMMAND iconutil -c icns -o drawpile.icns "${CMAKE_CURRENT_SOURCE_DIR}/assets/drawpile.iconset"
+	)
+	target_sources(drawpile PRIVATE drawpile.icns)
+	set_property(TARGET drawpile APPEND PROPERTY RESOURCE drawpile.icns)
+
+	find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
+	if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
+		add_custom_command(TARGET drawpile POST_BUILD
+			DEPENDS dpclient
+			COMMENT "Copying OS X i18n content"
+			COMMAND ${CMAKE_COMMAND} -E copy_directory
+				"$<TARGET_PROPERTY:dpclient,BINARY_DIR>/i18n"
+				"$<TARGET_BUNDLE_CONTENT_DIR:drawpile>/Resources/i18n"
+		)
 	endif()
+elseif(UNIX)
+	install(TARGETS drawpile)
+	install(FILES assets/net.drawpile.drawpile.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+	install(FILES assets/drawpile.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps)
+	install(FILES assets/drawpile.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps)
+	install(FILES assets/drawpile.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/mimetypes RENAME application-x-drawpile-recording.png)
+	install(FILES assets/drawpile.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/mimetypes RENAME application-x-drawpile-recording.svg)
+	install(FILES assets/net.drawpile.drawpile.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo)
+	install(FILES assets/x-drawpile.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages)
+	install(DIRECTORY assets/palettes DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
+	install(DIRECTORY assets/sounds DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
+	install(DIRECTORY assets/theme DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
+	install(FILES
+		assets/nightmode.colors
+		assets/initialbrushpresets.db
+		DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
+else()
+	message(FATAL_ERROR "unsupported installation target")
 endif()
 
+target_auto_source_group(drawpile)

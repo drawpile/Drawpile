@@ -1,6 +1,5 @@
-set(libshared_sources
-	listings/announcementapi.cpp
-	listings/listserverfinder.cpp
+add_library(dpshared STATIC
+	net/message.cpp
 	net/annotation.cpp
 	net/brushes.cpp
 	net/control.cpp
@@ -26,37 +25,45 @@ set(libshared_sources
 	util/ulid.cpp
 	util/validators.cpp
 	util/whatismyip.cpp
+	listings/announcementapi.cpp
+	listings/listserverfinder.cpp
 )
 
-add_library(dpshared STATIC ${libshared_sources})
-set_drawpile_target_properties(dpshared)
-target_include_directories(dpshared PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
-target_link_libraries(dpshared PUBLIC DP::QtNetwork)
+target_link_libraries(dpshared
+	${QT_PACKAGE_NAME}::Network
+)
 
 if(ANDROID)
-	target_sources(dpshared PRIVATE util/androidutils.cpp)
-	target_link_libraries(dpshared PUBLIC DP::QtAndroidExtras)
+	target_sources(dpshared PRIVATE
+		util/androidutils.cpp
+		util/androidutils.h
+	)
+	target_link_libraries(dpshared PRIVATE
+		${QT_PACKAGE_NAME}::QtAndroidExtras
+	)
 endif()
 
+find_package(Sodium)
 if(Sodium_FOUND)
 	target_sources(dpshared PRIVATE util/authtoken.cpp)
-	target_compile_definitions(dpshared PUBLIC HAVE_LIBSODIUM)
-	target_include_directories(dpshared SYSTEM PUBLIC "${SODIUM_INCLUDE_DIR}")
-	target_link_libraries(dpshared PUBLIC ${SODIUM_LIBRARY})
-	# On MSVC, libsodium requires additional defines for static linking.
-	if("${CMAKE_C_COMPILER}" MATCHES "MSVC" AND "${SODIUM_LIBRARY}" MATCHES "\\.[lL][iI][bB]$")
-		target_compile_definitions(dpshared PUBLIC SODIUM_STATIC=1 SODIUM_EXPORT=)
-	endif()
-else()
-	message(WARNING "Libsodium not found: Ext-auth support not enabled" )
+	target_compile_definitions(dpshared PRIVATE HAVE_LIBSODIUM)
+	target_include_directories(dpshared SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
+	target_link_libraries(dpshared ${SODIUM_LIBRARY})
 endif()
+add_feature_info("Ext-auth support" Sodium_FOUND "")
 
 if(KF5DNSSD_FOUND)
-	target_sources(dpshared PRIVATE
-		listings/zeroconfdiscovery.cpp listings/zeroconfannouncement.cpp)
-	target_link_libraries(dpshared PUBLIC KF5::DNSSD)
+	message(STATUS "KF5 DNSSD enabled")
+	target_sources(dpshared
+		listings/zeroconfdiscovery.cpp
+		listings/zeroconfannouncement.cpp
+	)
+	target_link_libraries(dpshared KF5::DNSSD)
 endif()
+add_feature_info("Zeroconf support" KF5DNSSD_FOUND "")
 
 if(TESTS)
 	add_subdirectory(tests)
 endif()
+
+target_auto_source_group(dpshared)
