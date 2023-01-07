@@ -201,10 +201,10 @@ public:
 
 	uint16_t layerId() const { return m_id; }
 
-	QStringList formats() const;
+	QStringList formats() const override;
 
 protected:
-	QVariant retrieveData(const QString& mimeType, QMetaType::Type type) const;
+	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const override;
 
 private:
 	const LayerListModel *m_source;

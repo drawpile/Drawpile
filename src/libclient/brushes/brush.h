@@ -45,7 +45,7 @@ struct ClassicBrush : public rustpile::ClassicBrush
 	QPixmap presetThumbnail() const;
 };
 
-class MyPaintBrush final
+struct MyPaintBrush final
 {
 public:
 	MyPaintBrush();
@@ -84,7 +84,7 @@ private:
 	bool loadJsonInputs(const QString &mappingKey, int settingId, const QJsonObject &o);
 };
 
-class ActiveBrush final
+struct ActiveBrush final
 {
 public:
 	enum ActiveType { CLASSIC, MYPAINT };
