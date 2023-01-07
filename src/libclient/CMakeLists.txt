@@ -1,10 +1,7 @@
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Sql REQUIRED)
-find_package(Qt5Svg REQUIRED)
-find_package(Qt5LinguistTools)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Gui Sql)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
 
-set (
-	SOURCES
+add_library(dpclient STATIC
 	document.cpp
 	tools/toolcontroller.cpp
 	tools/toolproperties.cpp
@@ -66,18 +63,20 @@ set (
 	export/canvassaverrunnable.cpp
 	export/animationsaverrunnable.cpp
 	parentalcontrols/parentalcontrols.cpp
+	parentalcontrols/parentalcontrols_$<IF:$<BOOL:${WIN32}>,win,dummy>.cpp
 )
 
-include_directories(bundled)
+target_link_libraries(dpclient
+	dpshared
+	${QT_PACKAGE_NAME}::Gui
+	${QT_PACKAGE_NAME}::Network
+	${QT_PACKAGE_NAME}::Sql
+	rustpile
+	libmypaint
+)
 
-if(WIN32)
-	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_win.cpp)
-else()
-	set(SOURCES ${SOURCES} parentalcontrols/parentalcontrols_dummy.cpp)
-endif()
-
-if( Qt5LinguistTools_FOUND)
-	set(TRANSLATIONS
+if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
+	set(ts_files
 		i18n/drawpile_fi.ts
 		i18n/drawpile_cs.ts
 		i18n/drawpile_ja.ts
@@ -90,30 +89,17 @@ if( Qt5LinguistTools_FOUND)
 		i18n/drawpile_fr.ts
 		i18n/drawpile_pt.ts
 	)
-
-	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})
+	target_sources(dpclient PRIVATE ${ts_files})
+	set_source_files_properties(${ts_files} PROPERTIES
+		OUTPUT_LOCATION "i18n"
+	)
+	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/i18n")
+	qt_add_translation(qm_files ${ts_files})
 endif()
-
-add_library (
-	dpclient
-	STATIC
-	${SOURCES}
-	${QM_TRANSLATIONS}
-)
-
-target_link_libraries(dpclient dpshared Qt5::Gui Qt5::Network Qt5::Sql)
-target_link_libraries(dpclient rustpile pthread dl)
-target_link_libraries(dpclient libmypaint)
-
-if ( WIN32 )
-	target_link_libraries (dpclient ws2_32 userenv bcrypt)
-endif ()
-
-if( QM_TRANSLATIONS )
-	install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
-endif( QM_TRANSLATIONS)
+add_feature_info("Client translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
 
 if(TESTS)
-    add_subdirectory(tests)
-endif(TESTS)
+	add_subdirectory(tests)
+endif()
 
+target_auto_source_group(dpclient)

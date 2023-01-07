@@ -1,7 +1,7 @@
 [package]
 name = "dpmypaint"
 version = "1.6.1"
-edition = "2021"
+edition.workspace = true
 license = "MIT"
 
 [build-dependencies]

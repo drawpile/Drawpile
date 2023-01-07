@@ -31,7 +31,7 @@
 
 #include <algorithm>
 
-static const QRegularExpression VERSION_RE("^(\\d+)\\.(\\d+)\\.(\\d+)\\w*$");
+static const QRegularExpression VERSION_RE("^(\\d+)\\.(\\d+)\\.(\\d+)");
 
 NewVersionCheck::NewVersionCheck(QObject *parent)
 	: QObject(parent),

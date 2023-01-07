@@ -50,11 +50,12 @@ impl ProtocolVersion {
 
 impl Default for ProtocolVersion {
     fn default() -> Self {
+        let version = include!("protover.version");
         Self {
             ns: "dp".into(),
-            server: 4,
-            major: 21,
-            minor: 2,
+            server: version[0],
+            major: version[1],
+            minor: version[2],
         }
     }
 }

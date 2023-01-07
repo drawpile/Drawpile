@@ -1,8 +1,4 @@
-find_package(Qt5Network REQUIRED)
-find_package(Sodium)
-
-set (
-	SOURCES
+add_library(dpshared STATIC
 	net/message.cpp
 	net/annotation.cpp
 	net/layer.cpp
@@ -29,38 +25,33 @@ set (
 	util/ulid.cpp
 	listings/announcementapi.cpp
 	listings/listserverfinder.cpp
-	)
+)
 
-if( Sodium_FOUND )
-	set( SOURCES ${SOURCES}
-		util/authtoken.cpp
-	)
-	add_definitions(-DHAVE_LIBSODIUM)
-	include_directories(system "${SODIUM_INCLUDE_DIR}")
-else( Sodium_FOUND )
-	message(WARNING "Libsodium not found: Ext-auth support not enabled" )
-endif( Sodium_FOUND )
+target_link_libraries(dpshared
+	${QT_PACKAGE_NAME}::Network
+)
+
+find_package(Sodium)
+if(Sodium_FOUND)
+	target_sources(dpshared PRIVATE util/authtoken.cpp)
+	target_compile_definitions(dpshared PRIVATE HAVE_LIBSODIUM)
+	target_include_directories(dpshared SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
+	target_link_libraries(dpshared ${SODIUM_LIBRARY})
+endif()
+add_feature_info("Ext-auth support" Sodium_FOUND "")
 
 if(KF5DNSSD_FOUND)
-	set( SOURCES ${SOURCES}
+	message(STATUS "KF5 DNSSD enabled")
+	target_sources(dpshared
 		listings/zeroconfdiscovery.cpp
 		listings/zeroconfannouncement.cpp
 	)
-endif()
-
-add_library(dpshared STATIC ${SOURCES})
-
-target_link_libraries(dpshared Qt5::Network)
-
-if( Sodium_FOUND )
-	target_link_libraries(dpshared ${SODIUM_LIBRARY})
-endif()
-
-if(KF5DNSSD_FOUND)
 	target_link_libraries(dpshared KF5::DNSSD)
 endif()
+add_feature_info("Zeroconf support" KF5DNSSD_FOUND "")
 
 if(TESTS)
 	add_subdirectory(tests)
-endif(TESTS)
+endif()
 
+target_auto_source_group(dpshared)

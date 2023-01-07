@@ -1,0 +1,38 @@
+#pragma code_page(65001)
+#include <winver.h>
+
+IDI_ICON1 ICON DISCARDABLE "${CMAKE_CURRENT_SOURCE_DIR}/assets/drawpile.ico"
+
+#ifdef DEBUG
+#define VER_DEBUG VS_FF_DEBUG
+#else
+#define VER_DEBUG 0
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION ${PROJECT_VERSION_MAJOR},${PROJECT_VERSION_MINOR},${PROJECT_VERSION_PATCH},0
+PRODUCTVERSION ${PROJECT_VERSION_MAJOR},${PROJECT_VERSION_MINOR},${PROJECT_VERSION_PATCH},0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS VER_DEBUG
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904b0"
+		BEGIN
+			VALUE "CompanyName", "Drawpile contributors\0"
+			VALUE "Comments", "${PROJECT_HOMEPAGE_URL}\0"
+			VALUE "FileDescription", "Drawpile client\0"
+			VALUE "FileVersion", "${PROJECT_GIT_REVISION}\0"
+			VALUE "InternalName", "${RUNTIME_OUTPUT_NAME}\0"
+			VALUE "LegalCopyright", "Copyright (c) Drawpile contributors\0"
+			VALUE "ProductName", "Drawpile client\0"
+			VALUE "ProductVersion", "${PROJECT_VERSION}\0"
+			VALUE "OriginalFilename", "${RUNTIME_OUTPUT_NAME}\0"
+		END
+	END
+
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 0x4b0
+	END
+END

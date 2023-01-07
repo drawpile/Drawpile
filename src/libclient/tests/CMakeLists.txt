@@ -1,17 +1,7 @@
-find_package(Qt5Test REQUIRED)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Test)
 
-set(TEST_PREFIX client)
-
-qt5_add_resources( TestResources resources.qrc )
-
-set(
-	TEST_LIBS
-	dpclient
-	dpserver
-	Qt5::Test
-	)
-
-AddUnitTest(html)
-AddUnitTest(listingfiltering)
-AddUnitTest(newversion)
-
+add_unit_tests(client
+	SOURCES resources.qrc
+	LIBS dpclient ${QT_PACKAGE_NAME}::Test
+	TESTS html listingfiltering newversion
+)

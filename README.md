@@ -23,7 +23,6 @@ Some feature highlights:
 
 Common dependencies:
  * Qt 5.12 or newer (QtGui not required for headless server)
- * KF5 Extra CMake Modules
  * Rust compiler (tested with rustc 1.40)
 
 Client specific dependencies:
