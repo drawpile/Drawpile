@@ -25,7 +25,7 @@ use crate::paint::{pixels15_to_8, Color, Pixel8, UserID};
 
 use std::convert::TryInto;
 use std::io::Write;
-use std::{mem, slice};
+use std::mem;
 use tracing::warn;
 
 use deflate::{deflate_bytes_zlib, write::ZlibEncoder, Compression};
@@ -73,26 +73,15 @@ pub fn decompress_tile(data: &[u8], user_id: UserID) -> Option<Tile> {
         return None;
     }
 
-    let pixels =
-        unsafe { std::slice::from_raw_parts(decompressed.as_ptr() as *const Pixel8, TILE_LENGTH) };
-
-    Some(Tile::from_data(pixels, user_id))
+    Some(Tile::from_data(bytemuck::cast_slice(&decompressed), user_id))
 }
 
 /// Compress a tile's content.
 ///
 pub fn compress_tiledata(tiledata: &TileData) -> Vec<u8> {
-    let mut pixels8: [Pixel8; TILE_LENGTH] =
-        unsafe { mem::MaybeUninit::<[Pixel8; TILE_LENGTH]>::uninit().assume_init() };
+    let mut pixels8 = [ <_>::default(); TILE_LENGTH ];
     pixels15_to_8(&mut pixels8, &tiledata.pixels);
-    let pixelbytes = unsafe {
-        slice::from_raw_parts(
-            pixels8.as_ptr() as *const u8,
-            TILE_LENGTH * mem::size_of::<Pixel8>(),
-        )
-    };
-
-    let compressed = deflate_bytes_zlib(pixelbytes);
+    let compressed = deflate_bytes_zlib(bytemuck::cast_slice(&pixels8));
 
     // For compatibility with Qt's compresssion function, add a prefix
     // containing the expected length of the decompressed buffer.
@@ -159,12 +148,7 @@ pub fn decompress_image(data: &[u8], expected_len: usize) -> Option<Vec<Pixel8>>
 }
 
 pub fn compress_image(pixels: &[Pixel8]) -> Vec<u8> {
-    let pixelbytes = unsafe {
-        slice::from_raw_parts(
-            pixels.as_ptr() as *const u8,
-            pixels.len() * mem::size_of::<Pixel8>(),
-        )
-    };
+    let pixelbytes = bytemuck::cast_slice(pixels);
 
     let compressed = deflate_bytes_zlib(pixelbytes);
 
@@ -197,12 +181,7 @@ impl ImageCompressor {
     }
 
     pub fn add(&mut self, data: &[Pixel8]) {
-        let data = unsafe {
-            slice::from_raw_parts(
-                data.as_ptr() as *const u8,
-                data.len() * mem::size_of::<Pixel8>(),
-            )
-        };
+        let data = bytemuck::cast_slice(data);
 
         // encoding shouldn't fail in normal conditions
         self.encoder.write_all(data).expect("Zlib Encoder failed!");

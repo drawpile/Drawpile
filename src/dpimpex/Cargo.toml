@@ -6,6 +6,7 @@ edition = "2021"
 license = "GPLv3"
 
 [dependencies]
+bytemuck = "1.12"
 dpcore = { path = "../dpcore" }
 xml-rs = "0.8.4"
 tracing = "0.1.36"

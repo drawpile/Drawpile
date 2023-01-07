@@ -27,12 +27,7 @@ use image::RgbaImage;
 pub fn to_dpimage(img: &RgbaImage) -> Image8 {
     let mut dpimg = Image8::new(img.width() as usize, img.height() as usize);
 
-    let pixels = unsafe {
-        std::slice::from_raw_parts(
-            img.as_raw().as_ptr() as *const Pixel8,
-            dpimg.width * dpimg.height,
-        )
-    };
+    let pixels = bytemuck::cast_slice::<_, Pixel8>(img.as_raw());
 
     // Premultiply pixel values
     dpimg
