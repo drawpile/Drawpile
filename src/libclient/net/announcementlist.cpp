@@ -128,9 +128,11 @@ void AnnouncementListModel::removeAnnouncement(const QString &url)
 
 void AnnouncementListModel::clear()
 {
-	beginRemoveRows(QModelIndex(), 0, m_announcements.size()-1);
-	m_announcements.clear();
-	endRemoveRows();
+	if(!m_announcements.isEmpty()) {
+		beginRemoveRows(QModelIndex(), 0, m_announcements.size()-1);
+		m_announcements.clear();
+		endRemoveRows();
+	}
 }
 
 }
