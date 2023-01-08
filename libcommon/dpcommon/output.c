@@ -114,6 +114,37 @@ bool DP_output_flush(DP_Output *output)
     return flush ? flush(output->internal) : true;
 }
 
+size_t DP_output_tell(DP_Output *output, bool *out_error)
+{
+    DP_ASSERT(output);
+    size_t (*tell)(void *, bool *) = output->methods->tell;
+    if (tell) {
+        bool error = false;
+        size_t result = tell(output->internal, &error);
+        if (out_error) {
+            *out_error = error;
+        }
+        return result;
+    }
+    else {
+        DP_error_set("Tell not supported");
+        return false;
+    }
+}
+
+bool DP_output_seek(DP_Output *output, size_t offset)
+{
+    DP_ASSERT(output);
+    bool (*seek)(void *, size_t) = output->methods->seek;
+    if (seek) {
+        return seek(output->internal, offset);
+    }
+    else {
+        DP_error_set("Seek not supported");
+        return false;
+    }
+}
+
 
 typedef struct DP_FileOutputState {
     FILE *fp;
@@ -143,6 +174,32 @@ static bool file_output_flush(void *internal)
     }
 }
 
+static size_t file_output_tell(void *internal, bool *out_error)
+{
+    DP_FileOutputState *state = internal;
+    long offset = ftell(state->fp);
+    if (offset != -1) {
+        return DP_long_to_size(offset);
+    }
+    else {
+        DP_error_set("File output tell error: %s", strerror(errno));
+        *out_error = true;
+        return 0;
+    }
+}
+
+static bool file_output_seek(void *internal, size_t offset)
+{
+    DP_FileOutputState *state = internal;
+    if (fseek(state->fp, DP_size_to_long(offset), SEEK_SET) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("File output could not seek to %zu", offset);
+        return false;
+    }
+}
+
 static void file_output_dispose(void *internal)
 {
     DP_FileOutputState *state = internal;
@@ -152,10 +209,9 @@ static void file_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods file_output_methods = {
-    file_output_write,
-    NULL,
-    file_output_flush,
-    file_output_dispose,
+    file_output_write, NULL,
+    file_output_flush, file_output_tell,
+    file_output_seek,  file_output_dispose,
 };
 
 static const DP_OutputMethods *file_output_init(void *internal, void *arg)
@@ -228,10 +284,7 @@ static void mem_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods mem_output_methods = {
-    mem_output_write,
-    mem_output_clear,
-    NULL,
-    mem_output_dispose,
+    mem_output_write, mem_output_clear, NULL, NULL, NULL, mem_output_dispose,
 };
 
 static const DP_OutputMethods *mem_output_init(void *internal, void *arg)
