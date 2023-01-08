@@ -1,0 +1,85 @@
+name: Build and Test
+
+on: [pull_request, push]
+
+env:
+  CARGO_TERM_COLOR: always
+  CMAKE_COLOR_DIAGNOSTICS: ON
+  CLICOLOR_FORCE: 1
+
+jobs:
+  lint:
+    name: Lint Rust
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Check formatting
+        run: cargo fmt -- --check
+      - name: Run clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        include:
+          - os: ubuntu-latest
+            packages: >
+              sudo sed -i 's/azure\.//' /etc/apt/sources.list &&
+              sudo apt-get update && sudo apt-get install --no-install-recommends
+              libmicrohttpd-dev libsodium-dev
+              libqt5sql5 libqt5svg5
+              qtbase5-dev qttools5-dev qtmultimedia5-dev libqt5x11extras5-dev
+              qtkeychain-qt5-dev
+              libxcb1-dev libxi-dev
+          - os: macos-latest
+            # The sed hack is only needed because the brew version of Qt is
+            # compiled with a different CMAKE_OSX_DEPLOYMENT_TARGET that
+            # includes unused features that do not work when targeting earlier
+            # macOS versions
+            packages: >
+              brew install libmicrohttpd libsodium qtkeychain &&
+              sed -i -e 's/\(#define QT_FEATURE_cxx17_filesystem\) 1/\1 -1/'
+              /usr/local/lib/QtCore.framework/Headers/qtcore-config.h
+          - os: windows-latest
+            packages: >
+              choco install aqt &&
+              aqt install-qt -O qt windows desktop 5.15.2 win64_msvc2019_64 --archives qtbase qtmultimedia qtsvg qttools &&
+              ($env:PATH += ";$(Get-Location)\qt\5.15.2\msvc2019_64\bin") &&
+              ($env:VCPKG_KEEP_ENV_VARS = "PATH") &&
+              echo '{"name":"qt5-tools","version":"5.15.2","description":"Qt5 Tools Module"}' > qt/vcpkg.json &&
+              echo 'set(VCPKG_POLICY_EMPTY_PACKAGE enabled)' > qt/portfile.cmake &&
+              vcpkg install --triplet=x64-windows --overlay-ports=qt libmicrohttpd libsodium qtkeychain &&
+              (echo "$(Get-Location)\qt\5.15.2\msvc2019_64\bin" >> $env:GITHUB_PATH) &&
+              (echo "C:\vcpkg\installed\x64-windows\bin" >> $env:GITHUB_PATH)
+            flags: -DKIS_TABLET=on
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # for git-describe
+          submodules: true
+      - name: Activate MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ runner.os == 'Windows' }}
+      - name: Install dependencies
+        run: ${{ matrix.packages }}
+      - name: Generate project
+        run: >
+          cmake -S . -B build --log-level=VERBOSE -DCMAKE_BUILD_TYPE=Debug
+          -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on ${{ matrix.flags }}
+      - name: Build project
+        run: cmake --build build --parallel 2
+      - name: Run C++ tests
+        run: ctest -C Debug --output-on-failure
+        working-directory: build
+      - name: Run Rust tests
+        run: cargo test --target-dir build/cargo

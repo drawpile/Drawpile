@@ -17,6 +17,7 @@ example_*.png
 # Hidden files
 .*/*
 !.github/*
+.DS_Store
 
 # Python venv directories
 env/
