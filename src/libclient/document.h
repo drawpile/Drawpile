@@ -102,7 +102,7 @@ public:
 
 	bool loadBlank(const QSize &size, const QColor &background);
 	DP_LoadResult loadFile(const QString &path);
-	bool loadRecording(const QString &path);
+	DP_LoadResult loadRecording(const QString &path);
 
 	/**
 	 * @brief Save the canvas content

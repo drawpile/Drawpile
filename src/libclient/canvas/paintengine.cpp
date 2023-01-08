@@ -37,89 +37,11 @@ extern "C" {
 
 namespace canvas {
 
-/*
-// Callback: notify the view that an area on the canvas is in need of refresh.
-// Refreshing is lazy: if that area is not visible at the moment, it doesn't
-// need to be repainted now.
-void paintEngineAreaChanged(void *pe, rustpile::Rectangle area)
-{
-	emit reinterpret_cast<PaintEngine*>(pe)->areaChanged(QRect(area.x, area.y, area.w, area.h));
-}
-
-void paintEngineLayersChanged(void *pe, const rustpile::LayerInfo *layerInfos, uintptr_t count)
-{
-	QVector<LayerListItem> layers;
-	layers.reserve(count);
-
-	for(uintptr_t i=0;i<count;++i) {
-		const rustpile::LayerInfo &li = layerInfos[i];
-		layers << LayerListItem {
-			uint16_t(li.id), // only internal (non-visible) layers have IDs outside the u16 range
-			uint16_t(li.frame_id),
-			QString::fromUtf8(reinterpret_cast<const char*>(li.title), li.titlelen),
-			li.opacity,
-			li.blendmode,
-			li.hidden,
-			li.censored,
-			li.isolated,
-			li.group,
-			li.children,
-			li.rel_index,
-			li.left,
-			li.right
-		};
-	}
-
-	emit reinterpret_cast<PaintEngine*>(pe)->layersChanged(layers);
-}
-
-void paintEngineAnnotationsChanged(void *pe, rustpile::Annotations *annotations)
-{
-	// Note: rustpile::Annotations is thread safe
-	emit reinterpret_cast<PaintEngine*>(pe)->annotationsChanged(annotations);
-}
-
-void paintEngineMetadataChanged(void *pe)
-{
-	emit reinterpret_cast<PaintEngine*>(pe)->metadataChanged();
-}
-
-void paintEngineTimelineChanged(void *pe)
-{
-	emit reinterpret_cast<PaintEngine*>(pe)->timelineChanged();
-}
-
-void paintEngineFrameVisbilityChanged(void *pe, const rustpile::Frame *frame, bool frameMode)
-{
-	QVector<int> layers;
-	if(frameMode) {
-		for(unsigned long i=0;i<sizeof(rustpile::Frame)/sizeof(rustpile::LayerID);++i) {
-			if((*frame)[i] != 0)
-				layers << (*frame)[i];
-			else
-				break;
-		}
-	}
-	emit reinterpret_cast<PaintEngine*>(pe)->frameVisibilityChanged(layers, frameMode);
-}
-
-void paintEngineCursors(void *pe, uint8_t user, uint16_t layer, int32_t x, int32_t y)
-{
-	// This may be emitted from either the main thread or the paint engine thread
-	emit reinterpret_cast<PaintEngine*>(pe)->cursorMoved(user, layer, x, y);
-}
-
-void paintEnginePlayback(void *pe, int64_t pos, uint32_t interval)
-{
-	emit reinterpret_cast<PaintEngine*>(pe)->playbackAt(pos, interval);
-}
-*/
-
 PaintEngine::PaintEngine(QObject *parent)
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{5, 10000} // TODO: make these configurable
-	, m_paintEngine{m_acls, m_snapshotQueue}
+	, m_paintEngine{m_acls, m_snapshotQueue, PaintEngine::onPlayback, this}
 	, m_timerId{0}
 	, m_changedTileBounds{}
 	, m_lastRefreshAreaTileBounds{}
@@ -145,12 +67,13 @@ void PaintEngine::start()
 	m_timerId = startTimer(1000 / 60, Qt::PreciseTimer);
 }
 
-void PaintEngine::reset(const drawdance::CanvasState &canvasState)
+void PaintEngine::reset(const drawdance::CanvasState &canvasState, DP_Player *player)
 {
 	if(m_timerId != 0) {
 		killTimer(m_timerId);
 	}
-	m_paintEngine.reset(m_acls, m_snapshotQueue, canvasState);
+	m_paintEngine.reset(
+		m_acls, m_snapshotQueue, PaintEngine::onPlayback, this, canvasState, player);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
@@ -180,12 +103,13 @@ void PaintEngine::timerEvent(QTimerEvent *)
 	}
 }
 
-int PaintEngine::receiveMessages(bool local, int count, const drawdance::Message *msgs)
+int PaintEngine::receiveMessages(
+	bool local, int count, const drawdance::Message *msgs, bool overrideAcls)
 {
-	return DP_paint_engine_handle_inc(m_paintEngine.get(), local, count,
-		drawdance::Message::asRawMessages(msgs), &PaintEngine::onAclsChanged,
-		&PaintEngine::onLaserTrail, &PaintEngine::onMovePointer,
-		&PaintEngine::onDefaultLayer, this);
+	return DP_paint_engine_handle_inc(m_paintEngine.get(), local, overrideAcls,
+		count, drawdance::Message::asRawMessages(msgs),
+		&PaintEngine::onAclsChanged, &PaintEngine::onLaserTrail,
+		&PaintEngine::onMovePointer, &PaintEngine::onDefaultLayer, this);
 }
 
 void PaintEngine::enqueueReset()
@@ -394,6 +318,60 @@ bool PaintEngine::isRecording() const
 	return m_paintEngine.recorderIsRecording();
 }
 
+DP_PlayerResult PaintEngine::stepPlayback(long long steps)
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.stepPlayback(steps, msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
+DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps)
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.skipPlaybackBy(steps, msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
+DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position)
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.jumpPlaybackTo(position, msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
+bool PaintEngine::buildPlaybackIndex(drawdance::PaintEngine::BuildIndexProgressFn progressFn)
+{
+	return m_paintEngine.buildPlaybackIndex(progressFn);
+}
+
+bool PaintEngine::loadPlaybackIndex()
+{
+	return m_paintEngine.loadPlaybackIndex();
+}
+
+unsigned int PaintEngine::playbackIndexMessageCount()
+{
+    return m_paintEngine.playbackIndexMessageCount();
+}
+
+size_t PaintEngine::playbackIndexEntryCount()
+{
+    return m_paintEngine.playbackIndexEntryCount();
+}
+
+QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
+{
+	return m_paintEngine.playbackIndexThumbnailAt(index);
+}
+
+bool PaintEngine::closePlayback()
+{
+	return m_paintEngine.closePlayback();
+}
+
 void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mask)
 {
 	m_paintEngine.previewCut(layerId, bounds, mask);
@@ -490,6 +468,12 @@ QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 	return cs.toFlatImage(true, true, &area, &vmf);
 }
 
+
+void PaintEngine::onPlayback(void *user, long long position, int interval)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->playbackAt(position, interval);
+}
 
 void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)
 {

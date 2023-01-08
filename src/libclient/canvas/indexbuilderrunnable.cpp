@@ -22,26 +22,18 @@
 
 namespace canvas {
 
-IndexBuilderRunnable::IndexBuilderRunnable(const PaintEngine *pe)
-	: QObject(), m_paintengine(pe)
+IndexBuilderRunnable::IndexBuilderRunnable(PaintEngine *pe)
+	: QObject{}
+	, m_paintengine{pe}
 {
-
-}
-
-static void emit_progress(void *runnable, uint32_t progress)
-{
-	emit static_cast<IndexBuilderRunnable*>(runnable)->progress(progress);
 }
 
 void IndexBuilderRunnable::run()
 {
-	// const bool result = rustpile::paintengine_build_index(
-	// 	m_paintengine->engine(),
-	// 	this,
-	// 	&emit_progress
-	// );
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	emit indexingComplete(false);
+	bool success = m_paintengine->buildPlaybackIndex([this](int percent) {
+		emit progress(percent);
+	});
+	emit indexingComplete(success, success ? QString{} : QString::fromUtf8(DP_error()));
 }
 
 }

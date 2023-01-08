@@ -82,11 +82,9 @@ void CanvasModel::loadCanvasState(const drawdance::CanvasState &canvasState)
 	m_paintengine->reset(canvasState);
 }
 
-bool CanvasModel::loadRecording(const QString &path)
+void CanvasModel::loadPlayer(DP_Player *player)
 {
-	// return rustpile::paintengine_load_recording(m_paintengine->engine(), reinterpret_cast<const uint16_t*>(path.constData()), path.length());
-	DP_error_set("CanvasModel::loadRecording");
-	return false;
+	return m_paintengine->reset(drawdance::CanvasState::null(), player);
 }
 
 QSize CanvasModel::size() const

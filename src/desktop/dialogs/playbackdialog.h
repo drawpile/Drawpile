@@ -54,9 +54,9 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 
 private slots:
-	void onPlaybackAt(qint64 pos, qint32 interval);
+	void onPlaybackAt(long long pos, int interval);
 	void stepNext();
-	void autoStepNext(qint32 interval);
+	void autoStepNext(int interval);
 	void jumpTo(int pos);
 
 	void loadIndex();

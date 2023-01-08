@@ -159,17 +159,21 @@ DP_LoadResult Document::loadFile(const QString &path)
 	}
 }
 
-bool Document::loadRecording(const QString &path)
+DP_LoadResult Document::loadRecording(const QString &path)
 {
-	setAutosave(false);
-	initCanvas();
-	unmarkDirty();
-
-	if(m_canvas->loadRecording(path)) {
+	DP_LoadResult result;
+	DP_Player *player = DP_load_recording(path.toUtf8().constData(), &result);
+	switch (result) {
+	case DP_LOAD_RESULT_SUCCESS:
+		setAutosave(false);
+		initCanvas();
+		unmarkDirty();
+		m_canvas->loadPlayer(player);
 		setCurrentFilename(path);
-		return true;
-	} else {
-		return false;
+		return result;
+	default:
+		Q_ASSERT(!player);
+		return result;
 	}
 }
 

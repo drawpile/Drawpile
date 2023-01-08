@@ -28,18 +28,18 @@ class PaintEngine;
 
 class IndexBuilderRunnable : public QObject, public QRunnable
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit IndexBuilderRunnable(const PaintEngine *pe);
+	explicit IndexBuilderRunnable(PaintEngine *pe);
 
-    void run() override;
+	void run() override;
 
 signals:
-    void progress(int percent);
-    void indexingComplete(bool success);
+	void progress(int percent);
+	void indexingComplete(bool success, const QString error);
 
 private:
-    const PaintEngine *m_paintengine;
+	PaintEngine *m_paintengine;
 };
 
 }

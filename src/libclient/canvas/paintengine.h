@@ -34,12 +34,8 @@ extern "C" {
 #include "drawdance/paintengine.h"
 #include "drawdance/snapshotqueue.h"
 
-struct DP_PaintEngine;
-
 namespace drawdance {
-	class AnnotationList;
 	class LayerPropsList;
-	class Message;
 }
 
 namespace canvas {
@@ -51,7 +47,9 @@ public:
 	~PaintEngine();
 
 	/// Reset the paint engine to its default state
-	void reset(const drawdance::CanvasState &canvasState = drawdance::CanvasState::null());
+	void reset(
+		const drawdance::CanvasState &canvasState = drawdance::CanvasState::null(),
+		DP_Player *player = nullptr);
 
 	/**
 	 * @brief Get a reference to the view cache pixmap while makign sure at least the given area has been refreshed
@@ -78,7 +76,8 @@ public:
 
 	//! Receive and handle messages, returns how many messages were actually
 	//! pushed to the paint engine.
-	int receiveMessages(bool local, int count, const drawdance::Message *msgs);
+	int receiveMessages(
+		bool local, int count, const drawdance::Message *msgs, bool overrideAcls = false);
 
 	void enqueueReset();
 
@@ -149,6 +148,16 @@ public:
 	bool stopRecording();
 	bool isRecording() const;
 
+	DP_PlayerResult stepPlayback(long long steps);
+	DP_PlayerResult skipPlaybackBy(long long steps);
+	DP_PlayerResult jumpPlaybackTo(long long position);
+	bool buildPlaybackIndex(drawdance::PaintEngine::BuildIndexProgressFn progressFn);
+	bool loadPlaybackIndex();
+	unsigned int playbackIndexMessageCount();
+	size_t playbackIndexEntryCount();
+	QImage playbackIndexThumbnailAt(size_t index);
+	bool closePlayback();
+
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);
 	void previewDabs(int layerId, const drawdance::MessageList &msgs);
 	void clearPreview();
@@ -159,7 +168,7 @@ signals:
 	void layersChanged(const drawdance::LayerPropsList &lpl);
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
-	void playbackAt(qint64 pos, qint32 interval);
+	void playbackAt(long long pos, int interval);
 	void caughtUpTo(int progress);
 	void recorderStateChanged(bool started);
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
@@ -173,6 +182,7 @@ protected:
 	void timerEvent(QTimerEvent *) override;
 
 private:
+	static void onPlayback(void *user, long long position, int interval);
 	static void onAclsChanged(void *user, int aclChangeFlags);
 	static void onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color);
 	static void onMovePointer(void *user, unsigned int contextId, int x, int y);

@@ -17,65 +17,81 @@ class AclState;
 class SnapshotQueue;
 
 enum RecordStartResult {
-    RECORD_START_SUCCESS,
-    RECORD_START_UNKNOWN_FORMAT,
-    RECORD_START_OPEN_ERROR,
+	RECORD_START_SUCCESS,
+	RECORD_START_UNKNOWN_FORMAT,
+	RECORD_START_OPEN_ERROR,
 };
 
 class PaintEngine {
 public:
-    PaintEngine(AclState &acls, SnapshotQueue &sq,
-        const CanvasState &canvasState = CanvasState::null());
+	using BuildIndexProgressFn = std::function<void (int)>;
 
-    ~PaintEngine();
+	PaintEngine(AclState &acls, SnapshotQueue &sq, DP_PaintEnginePlaybackFn playbackFn,
+		void *playbackUser, const CanvasState &canvasState = CanvasState::null());
 
-    PaintEngine(const PaintEngine &) = delete;
-    PaintEngine(PaintEngine &&) = delete;
-    PaintEngine &operator=(const PaintEngine &) = delete;
-    PaintEngine &operator=(PaintEngine &&) = delete;
+	~PaintEngine();
 
-    DP_PaintEngine *get();
+	PaintEngine(const PaintEngine &) = delete;
+	PaintEngine(PaintEngine &&) = delete;
+	PaintEngine &operator=(const PaintEngine &) = delete;
+	PaintEngine &operator=(PaintEngine &&) = delete;
 
-    void reset(AclState &acls, SnapshotQueue &sq,
-        const CanvasState &canvasState = CanvasState::null());
+	DP_PaintEngine *get();
 
-    int renderThreadCount() const;
+	void reset(AclState &acls, SnapshotQueue &sq, DP_PaintEnginePlaybackFn playbackFn,
+		void *playbackUser, const CanvasState &canvasState = CanvasState::null(),
+		DP_Player *player = nullptr);
 
-    LayerContent renderContent() const;
+	int renderThreadCount() const;
 
-    void setLocalDrawingInProgress(bool localDrawingInProgress);
+	LayerContent renderContent() const;
 
-    void setActiveLayerId(int layerId);
+	void setLocalDrawingInProgress(bool localDrawingInProgress);
 
-    void setActiveFrameIndex(int frameIndex);
+	void setActiveLayerId(int layerId);
 
-    void setViewMode(DP_ViewMode vm);
+	void setActiveFrameIndex(int frameIndex);
 
-    void setOnionSkins(const DP_OnionSkins *oss);
+	void setViewMode(DP_ViewMode vm);
 
-    bool revealCensored() const;
-    void setRevealCensored(bool revealCensored);
+	void setOnionSkins(const DP_OnionSkins *oss);
 
-    void setInspectContextId(unsigned int contextId);
+	bool revealCensored() const;
+	void setRevealCensored(bool revealCensored);
 
-    void setLayerVisibility(int layerId, bool hidden);
+	void setInspectContextId(unsigned int contextId);
 
-    RecordStartResult startRecorder(const QString &path);
-    bool stopRecorder();
-    bool recorderIsRecording() const;
+	void setLayerVisibility(int layerId, bool hidden);
 
-    void previewCut(int layerId, const QRect &bounds, const QImage &mask);
-    void previewDabs(int layerId, int count, const drawdance::Message *msgs);
-    void clearPreview();
+	RecordStartResult startRecorder(const QString &path);
+	bool stopRecorder();
+	bool recorderIsRecording() const;
 
-    CanvasState canvasState() const;
+	DP_PlayerResult stepPlayback(long long steps, MessageList &outMsgs);
+	DP_PlayerResult skipPlaybackBy(long long steps, MessageList &outMsgs);
+	DP_PlayerResult jumpPlaybackTo(long long position, MessageList &outMsgs);
+	bool buildPlaybackIndex(BuildIndexProgressFn progressFn);
+	bool loadPlaybackIndex();
+	unsigned int playbackIndexMessageCount();
+	size_t playbackIndexEntryCount();
+	QImage playbackIndexThumbnailAt(size_t index);
+	bool closePlayback();
+
+	void previewCut(int layerId, const QRect &bounds, const QImage &mask);
+	void previewDabs(int layerId, int count, const Message *msgs);
+	void clearPreview();
+
+	CanvasState canvasState() const;
 
 private:
-    DrawContext m_paintDc;
-    DrawContext m_previewDc;
-    DP_PaintEngine *m_data;
+	DrawContext m_paintDc;
+	DrawContext m_previewDc;
+	DP_PaintEngine *m_data;
 
-    static long long getTimeMs(void *);
+	static long long getTimeMs(void *);
+	static void pushMessage(void *user, DP_Message *msg);
+	static bool shouldSnapshot(void *user);
+	static void indexProgress(void *user, int percent);
 };
 
 }

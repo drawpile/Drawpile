@@ -980,9 +980,9 @@ void MainWindow::open(const QUrl& url)
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
 		if(recording::Reader::isRecordingExtension(file)) {
-			bool result = m_doc->loadRecording(file);
-			showLoadResultMessage(result ? DP_LOAD_RESULT_SUCCESS : DP_LOAD_RESULT_UNKNOWN_FORMAT);
-			if(result) {
+			DP_LoadResult result = m_doc->loadRecording(file);
+			showLoadResultMessage(result);
+			if(result == DP_LOAD_RESULT_SUCCESS) {
 				QFileInfo fileinfo(file);
 				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
 				m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
@@ -1823,6 +1823,12 @@ void MainWindow::showLoadResultMessage(DP_LoadResult result)
 		break;
     case DP_LOAD_RESULT_READ_ERROR:
 		showErrorMessageWithDetails(tr("Error reading file."), DP_error());
+		break;
+	case DP_LOAD_RESULT_BAD_MIMETYPE:
+		showErrorMessage(tr("File content doesn't match its type."));
+		break;
+	case DP_LOAD_RESULT_RECORDING_INCOMPATIBLE:
+		showErrorMessage(tr("Incompatible recording."));
 		break;
 	default:
 		showErrorMessageWithDetails(tr("Unknown error."), DP_error());

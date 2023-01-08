@@ -78,14 +78,15 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 
 	// The paint engine's playback callback lets us know when the step/sequence
 	// has been rendered and we're free to take another one.
-	connect(canvas->paintEngine(), &canvas::PaintEngine::playbackAt, this, &PlaybackDialog::onPlaybackAt);
+	connect(canvas->paintEngine(), &canvas::PaintEngine::playbackAt, this, &PlaybackDialog::onPlaybackAt, Qt::QueuedConnection);
 
 	// |<< button skips backwards. This needs an index to work
 	connect(m_ui->skipBackward, &QAbstractButton::clicked, this, [this]() {
 		if(!m_awaiting) {
 			m_awaiting = true;
-			qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-			// rustpile::paintengine_playback_step(m_paintengine->engine(), -1, true);
+			if(m_paintengine->skipPlaybackBy(-1) != DP_PLAYER_SUCCESS) {
+				qWarning("Error skipping backward: %s", DP_error());
+			}
 		}
 	});
 
@@ -93,8 +94,9 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	connect(m_ui->skipForward, &QAbstractButton::clicked, this, [this]() {
 		if(!m_awaiting) {
 			m_awaiting = true;
-			qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-			// rustpile::paintengine_playback_step(m_paintengine->engine(), 1, true);
+			if(m_paintengine->skipPlaybackBy(1) != DP_PLAYER_SUCCESS) {
+				qWarning("Error skipping forward: %s", DP_error());
+			}
 		}
 	});
 
@@ -120,7 +122,7 @@ PlaybackDialog::~PlaybackDialog()
  *
  * We can now automatically step forward again
  */
-void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
+void PlaybackDialog::onPlaybackAt(long long pos, int interval)
 {
 	m_awaiting = false;
 	if(pos < 0) {
@@ -154,12 +156,11 @@ void PlaybackDialog::onPlaybackAt(qint64 pos, qint32 interval)
 	}
 }
 
-void PlaybackDialog::autoStepNext(qint32 interval)
+void PlaybackDialog::autoStepNext(int interval)
 {
 	if(interval > 0) {
 		const auto elapsed = m_lastInterval.elapsed();
 		m_lastInterval.restart();
-
 		m_autoStepTimer->start(qMax(0.0f, qMin(interval, 5000) * m_speedFactor - elapsed));
 	} else {
 		m_autoStepTimer->start(33.0 * m_speedFactor);
@@ -170,8 +171,9 @@ void PlaybackDialog::stepNext()
 {
 	if(!m_awaiting) {
 		m_awaiting = true;
-		qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-		// rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
+		if(m_paintengine->stepPlayback(1) != DP_PLAYER_SUCCESS) {
+			qWarning("Error stepping next: %s", DP_error());
+		}
 	}
 }
 
@@ -179,8 +181,9 @@ void PlaybackDialog::jumpTo(int pos)
 {
 	if(!m_awaiting) {
 		m_awaiting = true;
-		qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-		// rustpile::paintengine_playback_jump(m_paintengine->engine(), pos, true);
+		if(m_paintengine->jumpPlaybackTo(pos) != DP_PLAYER_SUCCESS) {
+			qWarning("Error jumping to %d: %s", pos, DP_error());
+		}
 	}
 }
 
@@ -190,13 +193,14 @@ void PlaybackDialog::onBuildIndexClicked()
 	m_ui->buildIndexProgress->show();
 	m_ui->buildIndexButton->setEnabled(false);
 
-	auto *indexer = new canvas::IndexBuilderRunnable(m_paintengine);
+	canvas::IndexBuilderRunnable *indexer = new canvas::IndexBuilderRunnable(m_paintengine);
 	connect(indexer, &canvas::IndexBuilderRunnable::progress, m_ui->buildIndexProgress, &QProgressBar::setValue);
-	connect(indexer, &canvas::IndexBuilderRunnable::indexingComplete, this, [this](bool success) {
+	connect(indexer, &canvas::IndexBuilderRunnable::indexingComplete, this, [this](bool success, QString error) {
 		m_ui->buildIndexProgress->hide();
 		if(success) {
 			loadIndex();
 		} else {
+			qWarning("Error building index: %s", qUtf8Printable(error));
 			m_ui->noIndexReason->setText(tr("Index building failed."));
 		}
 	});
@@ -206,14 +210,13 @@ void PlaybackDialog::onBuildIndexClicked()
 
 void PlaybackDialog::loadIndex()
 {
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	/*
-	auto rp = m_paintengine->engine();
-	if(!rustpile::paintengine_load_recording_index(rp))
+	if(!m_paintengine->loadPlaybackIndex()) {
+		qWarning("Error loading index: %s", DP_error());
 		return;
+	}
 
-	m_ui->filmStrip->setLength(rustpile::paintengine_recording_index_messages(rp));
-	m_ui->filmStrip->setFrames(rustpile::paintengine_recording_index_thumbnails(rp));
+	m_ui->filmStrip->setLength(m_paintengine->playbackIndexMessageCount());
+	m_ui->filmStrip->setFrames(m_paintengine->playbackIndexEntryCount());
 
 	m_ui->skipBackward->setEnabled(true);
 
@@ -221,20 +224,11 @@ void PlaybackDialog::loadIndex()
 	m_ui->buildIndexProgress->hide();
 	m_ui->noIndexReason->hide();
 
-	m_ui->filmStrip->setLoadImageFn([rp](int frame) -> QImage {
-		uintptr_t len;
-		const uint8_t *dataptr = rustpile::paintengine_get_recording_index_thumbnail(rp, frame, &len);
-		if(dataptr == nullptr) {
-			return QImage();
-
-		} else {
-			const QByteArray data = QByteArray::fromRawData(reinterpret_cast<const char*>(dataptr), len);
-			return QImage::fromData(data, "PNG");
-		}
+	m_ui->filmStrip->setLoadImageFn([this](int frame) {
+		return m_paintengine->playbackIndexThumbnailAt(frame);
 	});
 
 	m_ui->indexStack->setCurrentIndex(1);
-	*/
 }
 
 void PlaybackDialog::centerOnParent()
@@ -266,15 +260,15 @@ void PlaybackDialog::setPlaying(bool playing)
 	m_autoplay = playing;
 	if(playing && !m_awaiting) {
 		m_awaiting = true;
-		// rustpile::paintengine_playback_step(m_paintengine->engine(), 1, false);
-		qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
+		if(m_paintengine->stepPlayback(1)) {
+			qWarning("Error stepping next: %s", DP_error());
+		}
 	}
 }
 
 void PlaybackDialog::closeEvent(QCloseEvent *event)
 {
-	qDebug("FIXME Dancepile: %s %d not implemented", __FILE__, __LINE__);
-	// rustpile::paintengine_close_recording(m_paintengine->engine());
+	m_paintengine->closePlayback();
 
 	if(m_exporter) {
 		// Exporter still working? Disown it and let it finish.

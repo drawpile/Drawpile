@@ -26,6 +26,8 @@
 #include <QObject>
 #include <QPointer>
 
+struct DP_Player;
+
 namespace drawdance {
 	class CanvasState;
 }
@@ -53,8 +55,8 @@ public:
 
 	void loadCanvasState(const drawdance::CanvasState &canvasState);
 
-	//! Load a recording and prepare to start playback
-	bool loadRecording(const QString &path);
+	//! Prepare to start playback, takes ownership of the given player
+	void loadPlayer(DP_Player *player);
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
