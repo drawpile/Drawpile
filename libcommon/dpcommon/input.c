@@ -155,7 +155,7 @@ static size_t file_input_read(void *internal, void *buffer, size_t size,
 {
     FILE *fp = *((FILE **)internal);
     size_t result = fread(buffer, 1, size, fp);
-    if (result != size && ferror(fp)) {
+    if (ferror(fp)) {
         *out_error = true;
         DP_error_set("File input read error: %s", strerror(errno));
     }
