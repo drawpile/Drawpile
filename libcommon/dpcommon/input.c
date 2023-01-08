@@ -72,6 +72,9 @@ size_t DP_input_read(DP_Input *input, void *buffer, size_t size,
         return result;
     }
     else {
+        if (out_error) {
+            *out_error = false;
+        }
         return 0;
     }
 }
