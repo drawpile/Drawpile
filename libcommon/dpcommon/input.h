@@ -32,6 +32,7 @@ typedef struct DP_InputMethods {
     size_t (*length)(void *internal, bool *out_error);
     bool (*rewind)(void *internal);
     bool (*rewind_by)(void *internal, size_t size);
+    bool (*seek)(void *internal, size_t offset);
     void (*dispose)(void *internal);
 } DP_InputMethods;
 
@@ -49,6 +50,8 @@ size_t DP_input_length(DP_Input *input, bool *out_error);
 bool DP_input_rewind(DP_Input *input);
 
 bool DP_input_rewind_by(DP_Input *input, size_t size);
+
+bool DP_input_seek(DP_Input *input, size_t offset);
 
 
 DP_Input *DP_file_input_new(FILE *fp, bool close);
