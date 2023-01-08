@@ -71,4 +71,95 @@ DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
                              void ***out_buffer, size_t **out_size);
 
 
+#define DP_OUTPUT_INT8(X)                                       \
+    (DP_OutputBinaryEntry)                                      \
+    {                                                           \
+        .type = DP_OUTPUT_BINARY_TYPE_INT8, .int8 = (int8_t)(X) \
+    }
+#define DP_OUTPUT_INT16(X)                                         \
+    (DP_OutputBinaryEntry)                                         \
+    {                                                              \
+        .type = DP_OUTPUT_BINARY_TYPE_INT16, .int16 = (int16_t)(X) \
+    }
+#define DP_OUTPUT_INT32(X)                                         \
+    (DP_OutputBinaryEntry)                                         \
+    {                                                              \
+        .type = DP_OUTPUT_BINARY_TYPE_INT32, .int32 = (int32_t)(X) \
+    }
+#define DP_OUTPUT_INT64(X)                                         \
+    (DP_OutputBinaryEntry)                                         \
+    {                                                              \
+        .type = DP_OUTPUT_BINARY_TYPE_INT64, .int64 = (int64_t)(X) \
+    }
+#define DP_OUTPUT_UINT8(X)                                         \
+    (DP_OutputBinaryEntry)                                         \
+    {                                                              \
+        .type = DP_OUTPUT_BINARY_TYPE_UINT8, .uint8 = (uint8_t)(X) \
+    }
+#define DP_OUTPUT_UINT16(X)                                           \
+    (DP_OutputBinaryEntry)                                            \
+    {                                                                 \
+        .type = DP_OUTPUT_BINARY_TYPE_UINT16, .uint16 = (uint16_t)(X) \
+    }
+#define DP_OUTPUT_UINT32(X)                                           \
+    (DP_OutputBinaryEntry)                                            \
+    {                                                                 \
+        .type = DP_OUTPUT_BINARY_TYPE_UINT32, .uint32 = (uint32_t)(X) \
+    }
+#define DP_OUTPUT_UINT64(X)                                           \
+    (DP_OutputBinaryEntry)                                            \
+    {                                                                 \
+        .type = DP_OUTPUT_BINARY_TYPE_UINT64, .uint64 = (uint64_t)(X) \
+    }
+// Only for small, fixed buffers <= the size of a DP_OutputBinaryEntry!
+#define DP_OUTPUT_BYTES(X, COUNT)     \
+    (DP_OutputBinaryEntry)            \
+    {                                 \
+        .type = (COUNT), .bytes = (X) \
+    }
+#define DP_OUTPUT_END                     \
+    (DP_OutputBinaryEntry)                \
+    {                                     \
+        .type = DP_OUTPUT_BINARY_TYPE_END \
+    }
+
+#define DP_OUTPUT_WRITE_LITTLEENDIAN(OUTPUT, ...) \
+    DP_output_write_binary_littleendian(          \
+        (OUTPUT), (DP_OutputBinaryEntry[]){__VA_ARGS__, DP_OUTPUT_END})
+
+// Negative numbers so that the type can double as a size for a byte array.
+typedef enum DP_OutputBinaryType {
+    DP_OUTPUT_BINARY_TYPE_END = 0,
+    DP_OUTPUT_BINARY_TYPE_INT8 = -1,
+    DP_OUTPUT_BINARY_TYPE_INT16 = -2,
+    DP_OUTPUT_BINARY_TYPE_INT32 = -3,
+    DP_OUTPUT_BINARY_TYPE_INT64 = -4,
+    DP_OUTPUT_BINARY_TYPE_UINT8 = -5,
+    DP_OUTPUT_BINARY_TYPE_UINT16 = -6,
+    DP_OUTPUT_BINARY_TYPE_UINT32 = -7,
+    DP_OUTPUT_BINARY_TYPE_UINT64 = -8,
+} DP_OutputBinaryType;
+
+typedef struct DP_OutputBinaryEntry {
+    int type;
+    union {
+        int8_t int8;
+        int16_t int16;
+        int32_t int32;
+        int64_t int64;
+        uint8_t uint8;
+        uint16_t uint16;
+        uint32_t uint32;
+        uint64_t uint64;
+        const void *bytes;
+    };
+} DP_OutputBinaryEntry;
+
+// Writes little-endian binary data to the given output. The given entries must
+// end with an entry of type DP_OUTPUT_END. The contents of the array will be
+// clobbered, since its memory is re-used as a write buffer.
+bool DP_output_write_binary_littleendian(DP_Output *output,
+                                         DP_OutputBinaryEntry *entries);
+
+
 #endif
