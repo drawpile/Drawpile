@@ -397,22 +397,24 @@ void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
     }
 }
 
-bool DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
+void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
 {
     DP_ASSERT(count <= 0 || dst);
     DP_ASSERT(count <= 0 || src);
     for (int i = 0; i < count; ++i) {
         DP_Pixel8 pixel = src[i];
         uint8_t a = pixel.a;
-        if (pixel.b <= a && pixel.g <= a && pixel.r <= a) {
-            dst[i] = DP_pixel8_to_15(pixel);
+        if (pixel.b > a) {
+            pixel.b = a;
         }
-        else {
-            DP_error_set("Pixel color out of bounds");
-            return false;
+        if (pixel.g > a) {
+            pixel.g = a;
         }
+        if (pixel.r > a) {
+            pixel.r = a;
+        }
+        dst[i] = DP_pixel8_to_15(pixel);
     }
-    return true;
 }
 
 void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)

@@ -159,9 +159,9 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
             NULL,
         };
         if (DP_compress_inflate(image, image_size, get_inflate_output_buffer,
-                                &args)
-            && DP_pixels8_to_15_checked(args.tt->pixels, args.buffer,
-                                        DP_TILE_LENGTH)) {
+                                &args)) {
+            DP_pixels8_to_15_checked(args.tt->pixels, args.buffer,
+                                     DP_TILE_LENGTH);
             return (DP_Tile *)args.tt;
         }
         else {

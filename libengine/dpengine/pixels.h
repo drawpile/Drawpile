@@ -90,9 +90,8 @@ void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
 void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count);
 
 // Checks the color channel of each source pixel if it's less than or equal to
-// the alpha channel. If not, the color is invalid and would go out of bounds
-// when unpremultiplied. Sets an error if it finds an invalid pixel.
-bool DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
+// the alpha channel and clamps them if necessary.
+void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
 
 DP_UPixel8 DP_pixel8_unpremultiply(DP_Pixel8 pixel);
 DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel);
