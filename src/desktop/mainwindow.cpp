@@ -447,10 +447,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	static bool warningShown;
 	if(!warningShown) {
 		QMessageBox::warning(this, tr("Dancepile Test Build"), tr(
-			"<p><strong>This is a development test build. Do not report problems in the official Drawpile issue tracker.</strong></p>"
-			"<p>Several features are known to be missing or broken. There might still be bugs that cause crashes. The application icon is a ferret. So don't use this for anything important.</p>"
+			"<p><strong>This is a development test build.</strong> Do <strong>not</strong> report problems in the official Drawpile issue tracker. Tell me about them on Discord or something instead.</p>"
+			"<p>This has not been tested in the wild. There are probably still bugs. The application icon is a ferret. Save often.</p>"
 #ifdef DRAWDANCE_HISTORY_DUMP
-			"<p><strong>This build will automatically record debug dumps.</strong> They'll probably appear in the application directory and will have a \".drawdancedump\" extension. They might get several megabytes large, you can delete them if you don't run into any problems. If you do have a problem, keep them around in case a developer asks for them, they might help diagnose what went wrong.</p>"
+			"<p><strong>This build will automatically record debug dumps.</strong> They should appear in the application directory and will have a \".drawdancedump\" extension. You can delete them if you don't run into any issues. If you <em>do</em> encounter a problem, keep them around, they might help figure out why it happened.</p>"
 #endif
 			));
 	}
