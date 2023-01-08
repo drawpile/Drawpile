@@ -36,6 +36,7 @@ struct DP_BinaryReader {
     DP_Input *input;
     size_t input_length;
     size_t input_offset;
+    size_t body_offset;
     JSON_Value *header;
     unsigned char *buffer;
     size_t buffer_size;
@@ -167,8 +168,8 @@ DP_BinaryReader *DP_binary_reader_new(DP_Input *input)
     }
 
     DP_BinaryReader *reader = DP_malloc(sizeof(*reader));
-    *reader =
-        (DP_BinaryReader){input, input_length, input_offset, header, NULL, 0};
+    *reader = (DP_BinaryReader){
+        input, input_length, input_offset, input_offset, header, NULL, 0};
     return reader;
 }
 
@@ -187,6 +188,35 @@ JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader)
 {
     DP_ASSERT(reader);
     return json_value_get_object(reader->header);
+}
+
+size_t DP_binary_reader_body_offset(DP_BinaryReader *reader)
+{
+    DP_ASSERT(reader);
+    return reader->body_offset;
+}
+
+size_t DP_binary_reader_tell(DP_BinaryReader *reader)
+{
+    DP_ASSERT(reader);
+    return reader->input_offset;
+}
+
+bool DP_binary_reader_seek(DP_BinaryReader *reader, size_t offset)
+{
+    DP_ASSERT(reader);
+    size_t input_length = reader->input_length;
+    if (offset > input_length) {
+        DP_error_set("Seek offset %zu beyond end %zu", offset, input_length);
+        return false;
+    }
+    else if (!DP_input_seek(reader->input, offset)) {
+        return false;
+    }
+    else {
+        reader->input_offset = offset;
+        return true;
+    }
 }
 
 double DP_binary_reader_progress(DP_BinaryReader *reader)

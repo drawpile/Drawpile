@@ -382,11 +382,17 @@ DP_transient_layer_group_new_with_children_noinc(DP_LayerGroup *lg,
 DP_TransientLayerGroup *DP_transient_layer_group_new_init(int width, int height,
                                                           int reserve)
 {
-    DP_ASSERT(width >= 0);
-    DP_ASSERT(height >= 0);
     DP_ASSERT(reserve >= 0);
+    return DP_transient_layer_group_new_init_with_transient_children_noinc(
+        width, height, DP_transient_layer_list_new_init(reserve));
+}
+
+DP_TransientLayerGroup *
+DP_transient_layer_group_new_init_with_transient_children_noinc(
+    int width, int height, DP_TransientLayerList *tll)
+{
     DP_TransientLayerGroup *tlg = alloc_layer_group(width, height);
-    tlg->transient_children = DP_transient_layer_list_new_init(reserve);
+    tlg->transient_children = tll;
     return tlg;
 }
 

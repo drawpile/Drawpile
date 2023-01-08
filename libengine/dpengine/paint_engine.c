@@ -31,6 +31,7 @@
 #include "layer_props_list.h"
 #include "layer_routes.h"
 #include "paint.h"
+#include "player.h"
 #include "recorder.h"
 #include "tile.h"
 #include "timeline.h"
@@ -162,6 +163,11 @@ struct DP_PaintEngine {
         void *get_time_ms_user;
     } record;
     struct {
+        DP_Player *player;
+        DP_PaintEnginePlaybackFn fn;
+        void *user;
+    } playback;
+    struct {
         DP_Worker *worker;
         DP_Semaphore *tiles_done_sem;
         int tiles_waiting;
@@ -207,6 +213,10 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_SOFT_RESET:
         DP_canvas_history_soft_reset(pe->ch);
         break;
+    case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
+        DP_canvas_history_reset_to_state_noinc(
+            pe->ch, DP_msg_internal_reset_to_state_data(mi));
+        break;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
         if (!DP_canvas_history_snapshot(pe->ch)) {
             DP_warn("Error requesting snapshot: %s", DP_error());
@@ -227,6 +237,18 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_RECORDER_START:
         DP_SEMAPHORE_MUST_POST(pe->record.start_sem);
         break;
+    case DP_MSG_INTERNAL_TYPE_PLAYBACK: {
+        DP_PaintEnginePlaybackFn playback_fn = pe->playback.fn;
+        DP_debug("Reached playback position %lld, interval %d",
+                 DP_msg_internal_playback_position(mi),
+                 DP_msg_internal_playback_interval(mi));
+        if (playback_fn) {
+            playback_fn(pe->playback.user,
+                        DP_msg_internal_playback_position(mi),
+                        DP_msg_internal_playback_interval(mi));
+        }
+        break;
+    }
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -520,7 +542,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
     void *save_point_user, DP_RecorderGetTimeMsFn get_time_ms_fn,
-    void *get_time_ms_user)
+    void *get_time_ms_user, DP_Player *player_or_null,
+    DP_PaintEnginePlaybackFn playback_fn, void *playback_user)
 {
     int render_thread_count = DP_thread_cpu_count();
     size_t flex_size = DP_max_size(sizeof(DP_PaintEngineLaserBuffer),
@@ -565,6 +588,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->record.state_change = RECORDER_STOPPED;
     pe->record.get_time_ms_fn = get_time_ms_fn;
     pe->record.get_time_ms_user = get_time_ms_user;
+    pe->playback.player = player_or_null;
+    pe->playback.fn = playback_fn;
+    pe->playback.user = playback_user;
     pe->render.worker =
         DP_worker_new(1024, sizeof(struct DP_PaintEngineRenderJobParams),
                       render_thread_count, render_job);
@@ -581,6 +607,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_worker_free_join(pe->render.worker);
         DP_SEMAPHORE_MUST_POST(pe->queue_sem);
         DP_thread_free_join(pe->paint_thread);
+        DP_player_free(pe->playback.player);
         DP_recorder_free_join(pe->record.recorder);
         DP_semaphore_free(pe->record.start_sem);
         DP_mutex_free(pe->queue_mutex);
@@ -591,8 +618,16 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         while ((msg = DP_message_queue_shift(&pe->local_queue))) {
             if (DP_message_type(msg) == DP_MSG_INTERNAL) {
                 DP_MsgInternal *mi = DP_msg_internal_cast(msg);
-                if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_PREVIEW) {
+                switch (DP_msg_internal_type(mi)) {
+                case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
+                    DP_canvas_state_decref(
+                        DP_msg_internal_reset_to_state_data(mi));
+                    break;
+                case DP_MSG_INTERNAL_TYPE_PREVIEW:
                     free_preview(DP_msg_internal_preview_data(mi));
+                    break;
+                default:
+                    break;
                 }
             }
             DP_message_decref(msg);
@@ -800,6 +835,282 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
     return pe->record.recorder != NULL;
+}
+
+
+static void push_playback(DP_PaintEnginePushMessageFn push_message, void *user,
+                          long long position, int interval)
+{
+    push_message(user, DP_msg_internal_playback_new(0, position, interval));
+}
+
+static DP_PlayerResult
+skip_playback_forward(DP_PaintEngine *pe, long long steps, bool single_step,
+                      DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_ASSERT(steps >= 0);
+    DP_ASSERT(push_message);
+    DP_debug("Skip playback forward by %lld %s", steps,
+             single_step ? "step(s)" : "undo point(s)");
+
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    long long done = 0;
+    int interval = 0;
+    while (done < steps) {
+        DP_Message *msg;
+        DP_PlayerResult result = DP_player_step(player, &msg);
+        if (result == DP_PLAYER_SUCCESS) {
+            DP_MessageType type = DP_message_type(msg);
+            if (type == DP_MSG_INTERVAL) {
+                DP_MsgInterval *mi = DP_message_internal(msg);
+                int ms = DP_msg_interval_msecs(mi);
+                // Don't overflow the interval, cap it at INT_MAX instead.
+                interval = ms <= INT_MAX - interval ? interval + ms : INT_MAX;
+                DP_message_decref(msg);
+                if (single_step) {
+                    ++done;
+                }
+            }
+            else {
+                if (single_step || type == DP_MSG_UNDO_POINT) {
+                    ++done;
+                }
+                push_message(user, msg);
+            }
+        }
+        else if (result == DP_PLAYER_ERROR_PARSE) {
+            if (single_step) {
+                ++done;
+            }
+            DP_warn("Can't play back message: %s", DP_error());
+        }
+        else {
+            // We're either at the end of the recording or encountered an input
+            // error. In either case, we're done playing this recording, report
+            // a negative value as the position to indicate that.
+            push_playback(push_message, user, -1, 0);
+            return result;
+        }
+    }
+
+    // If we don't have an index, report the position as a percentage
+    // completion based on the amount of bytes read from the recording.
+    long long position =
+        DP_player_index_loaded(player)
+            ? DP_player_position(player)
+            : DP_double_to_llong(DP_player_progress(player) * 100.0 + 0.5);
+    push_playback(push_message, user, position, interval);
+    return DP_PLAYER_SUCCESS;
+}
+
+DP_PlayerResult
+DP_paint_engine_playback_step(DP_PaintEngine *pe, long long steps,
+                              DP_PaintEnginePushMessageFn push_message,
+                              void *user)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(steps >= 0);
+    DP_ASSERT(push_message);
+    return skip_playback_forward(pe, steps, true, push_message, user);
+}
+
+static DP_PlayerResult
+jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
+                 bool relative, bool exact,
+                 DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    if (!DP_player_index_loaded(player)) {
+        DP_error_set("No index loaded");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    long long player_position = DP_player_position(player);
+    long long target_position = relative ? player_position + to : to;
+    DP_debug("Jump playback from %lld to %s %lld", player_position,
+             exact ? "exactly" : "snapshot nearest", target_position);
+
+    long long message_count =
+        DP_uint_to_llong(DP_player_index_message_count(player));
+    if (message_count == 0) {
+        DP_error_set("Recording contains no messages");
+        push_playback(push_message, user, player_position, 0);
+        return DP_PLAYER_ERROR_INPUT;
+    }
+    else if (target_position < 0) {
+        target_position = 0;
+    }
+    else if (target_position >= message_count) {
+        target_position = message_count - 1;
+    }
+    DP_debug("Clamped position to %lld (message count %lld)", target_position,
+             message_count);
+
+    DP_PlayerIndexEntry entry =
+        DP_player_index_entry_search(player, target_position);
+    DP_debug("Loaded entry with message index %lld, message offset %zu, "
+             "snapshot offset %zu, thumbnail offset %zu",
+             entry.message_index, entry.message_offset, entry.snapshot_offset,
+             entry.thumbnail_offset);
+
+    bool inside_snapshot = player_position >= entry.message_index
+                        && player_position < target_position;
+    if (inside_snapshot) {
+        long long steps = target_position - player_position;
+        DP_debug("Already inside snapshot, stepping forward by %lld", steps);
+        DP_PlayerResult result =
+            skip_playback_forward(pe, steps, true, push_message, user);
+        // If skipping playback forward doesn't work, e.g. because we're
+        // in an input error state, punt to reloading the snapshot.
+        if (result == DP_PLAYER_SUCCESS) {
+            return result;
+        }
+        else {
+            DP_warn("Skipping inside snapshot failed with result %d: %s",
+                    (int)result, DP_error());
+        }
+    }
+
+    DP_CanvasState *cs = DP_player_index_entry_load(player, dc, entry);
+    if (!cs) {
+        DP_debug("Reading snapshot failed: %s", DP_error());
+        push_playback(push_message, user, player_position, 0);
+        return DP_PLAYER_ERROR_INPUT;
+    }
+
+    if (!DP_player_seek(player, entry)) {
+        DP_canvas_state_decref(cs);
+        push_playback(push_message, user, player_position, 0);
+        return DP_PLAYER_ERROR_INPUT;
+    }
+
+    push_message(user, DP_msg_internal_reset_to_state_new(0, cs));
+    return skip_playback_forward(
+        pe, exact ? target_position - entry.message_index : 0, true,
+        push_message, user);
+}
+
+DP_PlayerResult DP_paint_engine_playback_skip_by(
+    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps,
+    DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_ASSERT(pe);
+    if (steps < 0) {
+        return jump_playback_to(pe, dc, steps, true, false, push_message, user);
+    }
+    else {
+        return skip_playback_forward(pe, steps, false, push_message, user);
+    }
+}
+
+DP_PlayerResult DP_paint_engine_playback_jump_to(
+    DP_PaintEngine *pe, DP_DrawContext *dc, long long position,
+    DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_ASSERT(pe);
+    return jump_playback_to(pe, dc, position, false, true, push_message, user);
+}
+
+bool DP_paint_engine_playback_index_build(
+    DP_PaintEngine *pe, DP_DrawContext *dc,
+    DP_PlayerIndexShouldSnapshotFn should_snapshot_fn,
+    DP_PlayerIndexProgressFn progress_fn, void *user)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(dc);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        return DP_player_index_build(player, dc, should_snapshot_fn,
+                                     progress_fn, user);
+    }
+    else {
+        DP_error_set("No player set");
+        return false;
+    }
+}
+
+bool DP_paint_engine_playback_index_load(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        return DP_player_index_load(player);
+    }
+    else {
+        DP_error_set("No player set");
+        return false;
+    }
+}
+
+unsigned int DP_paint_engine_playback_index_message_count(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        return DP_player_index_message_count(player);
+    }
+    else {
+        DP_error_set("No player set");
+        return 0;
+    }
+}
+
+size_t DP_paint_engine_playback_index_entry_count(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        return DP_player_index_entry_count(player);
+    }
+    else {
+        DP_error_set("No player set");
+        return 0;
+    }
+}
+
+DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
+                                                      size_t index,
+                                                      bool *out_error)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        return DP_player_index_thumbnail_at(player, index, out_error);
+    }
+    else {
+        DP_error_set("No player set");
+        if (out_error) {
+            *out_error = true;
+        }
+        return NULL;
+    }
+}
+
+bool DP_paint_engine_playback_close(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        DP_player_free(player);
+        pe->playback.player = NULL;
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 

@@ -48,7 +48,7 @@ struct DP_TextReader {
     DP_Input *input;
     size_t input_length;
     size_t input_offset;
-    size_t line;
+    size_t body_offset;
     size_t line_end;
     struct {
         size_t capacity;
@@ -103,6 +103,36 @@ void DP_text_reader_free(DP_TextReader *reader)
         DP_free(reader->read.buffer);
         DP_input_free(reader->input);
         DP_free(reader);
+    }
+}
+
+size_t DP_text_reader_body_offset(DP_TextReader *reader)
+{
+    return reader->body_offset;
+}
+
+size_t DP_text_reader_tell(DP_TextReader *reader)
+{
+    DP_ASSERT(reader);
+    return reader->input_offset + reader->line_end;
+}
+
+bool DP_text_reader_seek(DP_TextReader *reader, size_t offset)
+{
+    DP_ASSERT(reader);
+    size_t input_length = reader->input_length;
+    if (offset > input_length) {
+        DP_error_set("Seek offset %zu beyond end %zu", offset, input_length);
+        return false;
+    }
+    else if (!DP_input_seek(reader->input, offset)) {
+        return false;
+    }
+    else {
+        reader->input_offset = offset;
+        reader->read.used = 0;
+        reader->line_end = 0;
+        return true;
     }
 }
 
@@ -166,14 +196,12 @@ static bool buffer_line(DP_TextReader *reader, size_t *out_len)
         }
         ++i;
     }
-    ++reader->line;
     *out_len = reader->line_end = i;
     return true;
 }
 
 static void regurgitate_line(DP_TextReader *reader)
 {
-    --reader->line;
     reader->line_end = 0;
 }
 
@@ -306,6 +334,7 @@ DP_TextReaderResult DP_text_reader_read_header_field(DP_TextReader *reader,
     char *key, *value;
     if (end == 0 || buffer[start] != '!') {
         regurgitate_line(reader); // This isn't a header line, don't consume it.
+        reader->body_offset = reader->input_offset;
         return DP_TEXT_READER_HEADER_END;
     }
 
@@ -350,7 +379,8 @@ static void discard_message_body(DP_TextReader *reader)
         size_t field_start = skip_ws(buffer, start, end);
         if (buffer[field_start] == '}') {
             if (skip_ws(buffer, field_start + 1, end) != end) {
-                DP_warn("Garbage after '}' in line %zu", reader->line);
+                DP_warn("Garbage after '}' at offset %zu",
+                        reader->input_offset);
             }
             break;
         }
@@ -365,11 +395,15 @@ static void discard_message(DP_TextReader *reader, size_t field_offset,
         size_t field_start = skip_ws(buffer, field_offset, end);
         size_t field_end = skip_non_ws(buffer, field_start, end);
         if (field_start == field_end) {
+            consume_line(reader);
             break;
         }
         else if (buffer[field_start] == '{') {
             discard_message_body(reader);
             break;
+        }
+        else {
+            field_offset = field_end + 1;
         }
     }
 }
@@ -465,9 +499,9 @@ static bool parse_multiline_field(DP_TextReader *reader, size_t field_start,
     char *buffer = reader->read.buffer;
     size_t equals_index = search_char_index(buffer, field_start, end, '=');
     if (equals_index == end) {
-        DP_error_set("Missing '=' in multiline field '%.*s' in line %zu",
+        DP_error_set("Missing '=' in multiline field '%.*s' at offset %zu",
                      DP_size_to_int(end - field_start), buffer + field_start,
-                     reader->line);
+                     reader->input_offset);
         return can_append;
     }
 
@@ -507,7 +541,8 @@ static DP_TextReaderResult parse_multiline(DP_TextReader *reader,
         size_t field_start = skip_ws(buffer, start, end);
         if (buffer[field_start] == '}') {
             if (skip_ws(buffer, field_start + 1, end) != end) {
-                DP_warn("Garbage after '}' in line %zu", reader->line);
+                DP_warn("Garbage after '}' at offset %zu",
+                        reader->input_offset);
             }
             return DP_TEXT_READER_SUCCESS;
         }
@@ -537,7 +572,8 @@ static DP_TextReaderResult parse_fields(DP_TextReader *reader,
 
         if (buffer[field_start] == '{') {
             if (skip_ws(buffer, field_start + 1, end) != end) {
-                DP_warn("Garbage after '{' in line %zu", reader->line);
+                DP_warn("Garbage after '{' at offset %zu",
+                        reader->input_offset);
             }
             bool parse_tuples = DP_message_type_parse_multiline_tuples(type);
             return parse_multiline(reader, parse_tuples);
@@ -548,8 +584,8 @@ static DP_TextReaderResult parse_fields(DP_TextReader *reader,
         size_t equals_index =
             search_char_index(buffer, field_start, field_end, '=');
         if (equals_index == field_end) {
-            DP_warn("Missing '=' in field '%s' in line %zu",
-                    buffer + field_start, reader->line);
+            DP_warn("Missing '=' in field '%s' at offset %zu",
+                    buffer + field_start, reader->input_offset);
             continue;
         }
 
@@ -584,7 +620,7 @@ DP_TextReaderResult DP_text_reader_read_message(DP_TextReader *reader,
         buffer[context_id_end] = '\0';
         unsigned int context_id;
         if (!parse_uint(buffer, start, context_id_end, 0, 255, &context_id)) {
-            DP_error_set("No context id in line %zu", reader->line);
+            DP_error_set("Error parsing context id in %s", buffer);
             return DP_TEXT_READER_ERROR_PARSE;
         }
 
@@ -596,8 +632,8 @@ DP_TextReaderResult DP_text_reader_read_message(DP_TextReader *reader,
         DP_MessageType type =
             DP_message_type_from_name(buffer + type_start, DP_MSG_TYPE_COUNT);
         if (type == DP_MSG_TYPE_COUNT) {
-            discard_message(reader, field_offset, end);
             DP_error_set("Unknown message type '%s'", buffer + type_start);
+            discard_message(reader, field_offset, end);
             return DP_TEXT_READER_ERROR_PARSE;
         }
 

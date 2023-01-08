@@ -125,6 +125,11 @@ DP_TransientLayerContent *
 DP_transient_layer_content_new_init(int width, int height, DP_Tile *tile);
 
 DP_TransientLayerContent *
+DP_transient_layer_content_new_init_with_transient_sublayers_noinc(
+    int width, int height, DP_Tile *tile, DP_TransientLayerList *sub_tll,
+    DP_TransientLayerPropsList *sub_tlpl);
+
+DP_TransientLayerContent *
 DP_transient_layer_content_incref(DP_TransientLayerContent *tlc);
 
 void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc);

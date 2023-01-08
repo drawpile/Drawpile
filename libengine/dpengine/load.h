@@ -25,6 +25,7 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_Player DP_Player;
 
 
 typedef struct DP_LoadFormat {
@@ -43,11 +44,14 @@ typedef enum DP_LoadResult {
     DP_LOAD_RESULT_OPEN_ERROR,
     DP_LOAD_RESULT_READ_ERROR,
     DP_LOAD_RESULT_BAD_MIMETYPE,
+    DP_LOAD_RESULT_RECORDING_INCOMPATIBLE,
 } DP_LoadResult;
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title,
                         DP_LoadResult *out_result);
+
+DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);
 
 
 #endif

@@ -30,6 +30,11 @@ struct DP_MsgInternal {
     DP_MsgInternalType type;
 };
 
+typedef struct DP_MsgInternalResetToState {
+    DP_MsgInternal parent;
+    void *data;
+} DP_MsgInternalResetToState;
+
 typedef struct DP_MsgInternalCatchup {
     DP_MsgInternal parent;
     int progress;
@@ -39,6 +44,12 @@ typedef struct DP_MsgInternalPreview {
     DP_MsgInternal parent;
     void *data;
 } DP_MsgInternalPreview;
+
+typedef struct DP_MsgInternalPlayback {
+    DP_MsgInternal parent;
+    long long position;
+    int interval;
+} DP_MsgInternalPlayback;
 
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
@@ -100,6 +111,17 @@ DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id)
                             sizeof(DP_MsgInternal));
 }
 
+DP_Message *DP_msg_internal_reset_to_state_new(unsigned int context_id,
+                                               void *data)
+{
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_RESET_TO_STATE,
+                         sizeof(DP_MsgInternalResetToState));
+    DP_MsgInternalResetToState *mirst = DP_message_internal(msg);
+    mirst->data = data;
+    return msg;
+}
+
 DP_Message *DP_msg_internal_snapshot_new(unsigned int context_id)
 {
     return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_SNAPSHOT,
@@ -136,6 +158,18 @@ DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id)
                             sizeof(DP_MsgInternal));
 }
 
+DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
+                                         long long position, int interval)
+{
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_PLAYBACK,
+                         sizeof(DP_MsgInternalPlayback));
+    DP_MsgInternalPlayback *mip = DP_message_internal(msg);
+    mip->position = position;
+    mip->interval = interval;
+    return msg;
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {
@@ -147,6 +181,13 @@ DP_MsgInternalType DP_msg_internal_type(DP_MsgInternal *mi)
 {
     DP_ASSERT(mi);
     return mi->type;
+}
+
+void *DP_msg_internal_reset_to_state_data(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_RESET_TO_STATE);
+    return ((DP_MsgInternalResetToState *)mi)->data;
 }
 
 int DP_msg_internal_catchup_progress(DP_MsgInternal *mi)
@@ -161,4 +202,18 @@ void *DP_msg_internal_preview_data(DP_MsgInternal *mi)
     DP_ASSERT(mi);
     DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PREVIEW);
     return ((DP_MsgInternalPreview *)mi)->data;
+}
+
+long long DP_msg_internal_playback_position(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PLAYBACK);
+    return ((DP_MsgInternalPlayback *)mi)->position;
+}
+
+int DP_msg_internal_playback_interval(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PLAYBACK);
+    return ((DP_MsgInternalPlayback *)mi)->interval;
 }

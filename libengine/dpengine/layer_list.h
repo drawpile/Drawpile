@@ -86,6 +86,10 @@ int DP_layer_list_count(DP_LayerList *ll);
 
 DP_LayerListEntry *DP_layer_list_at_noinc(DP_LayerList *ll, int index);
 
+DP_LayerContent *DP_layer_list_content_at_noinc(DP_LayerList *ll, int index);
+
+DP_LayerGroup *DP_layer_list_group_at_noinc(DP_LayerList *ll, int index);
+
 DP_TransientLayerList *DP_layer_list_resize(DP_LayerList *ll,
                                             unsigned int context_id, int top,
                                             int right, int bottom, int left);

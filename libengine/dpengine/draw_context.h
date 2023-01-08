@@ -88,6 +88,11 @@ int DP_draw_context_id_generator_next(DP_DrawContext *dc);
 // It's different memory to the set of operations above though, so mixing those
 // above with these here works fine (and is done during transform handling.)
 
+unsigned char *DP_draw_context_pool(DP_DrawContext *dc);
+
+unsigned char *DP_draw_context_pool_require(DP_DrawContext *dc,
+                                            size_t required_capacity);
+
 unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc,
                                            size_t *out_size);
 

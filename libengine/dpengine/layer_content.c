@@ -990,16 +990,28 @@ DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
 DP_TransientLayerContent *
 DP_transient_layer_content_new_init(int width, int height, DP_Tile *tile)
 {
+    return DP_transient_layer_content_new_init_with_transient_sublayers_noinc(
+        width, height, tile, DP_transient_layer_list_new_init(0),
+        DP_transient_layer_props_list_new_init(0));
+}
+
+DP_TransientLayerContent *
+DP_transient_layer_content_new_init_with_transient_sublayers_noinc(
+    int width, int height, DP_Tile *tile, DP_TransientLayerList *sub_tll,
+    DP_TransientLayerPropsList *sub_tlpl)
+{
     DP_ASSERT(width >= 0);
     DP_ASSERT(height >= 0);
+    DP_ASSERT(sub_tll);
+    DP_ASSERT(sub_tlpl);
     DP_TransientLayerContent *tlc = alloc_layer_content(width, height);
     int tile_count = DP_tile_total_round(width, height);
     DP_tile_incref_by_nullable(tile, tile_count);
     for (int i = 0; i < tile_count; ++i) {
         tlc->elements[i].tile = tile;
     }
-    tlc->sub.transient_contents = DP_transient_layer_list_new_init(0);
-    tlc->sub.transient_props = DP_transient_layer_props_list_new_init(0);
+    tlc->sub.transient_contents = sub_tll;
+    tlc->sub.transient_props = sub_tlpl;
     return tlc;
 }
 

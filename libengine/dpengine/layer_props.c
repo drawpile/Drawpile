@@ -311,6 +311,14 @@ DP_TransientLayerProps *DP_transient_layer_props_new_with_children_noinc(
 DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
                                                           bool group)
 {
+    return DP_transient_layer_props_new_init_with_transient_children_noinc(
+        layer_id, group ? DP_transient_layer_props_list_new_init(0) : NULL);
+}
+
+DP_TransientLayerProps *
+DP_transient_layer_props_new_init_with_transient_children_noinc(
+    int layer_id, DP_TransientLayerPropsList *tlpl_or_null)
+{
     DP_TransientLayerProps *tlp = DP_malloc(sizeof(*tlp));
     *tlp = (DP_TransientLayerProps){
         DP_ATOMIC_INIT(1),
@@ -320,9 +328,9 @@ DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
         DP_BLEND_MODE_NORMAL,
         false,
         false,
-        group,
+        tlpl_or_null != NULL,
         NULL,
-        {group ? DP_layer_props_list_new() : NULL},
+        {.transient_children = tlpl_or_null},
     };
     return tlp;
 }

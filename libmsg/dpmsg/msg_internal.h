@@ -28,11 +28,13 @@ typedef struct DP_Message DP_Message;
 typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_RESET,
     DP_MSG_INTERNAL_TYPE_SOFT_RESET,
+    DP_MSG_INTERNAL_TYPE_RESET_TO_STATE,
     DP_MSG_INTERNAL_TYPE_SNAPSHOT,
     DP_MSG_INTERNAL_TYPE_CATCHUP,
     DP_MSG_INTERNAL_TYPE_CLEANUP,
     DP_MSG_INTERNAL_TYPE_PREVIEW,
     DP_MSG_INTERNAL_TYPE_RECORDER_START,
+    DP_MSG_INTERNAL_TYPE_PLAYBACK,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
@@ -42,6 +44,9 @@ typedef struct DP_MsgInternal DP_MsgInternal;
 DP_Message *DP_msg_internal_reset_new(unsigned int context_id);
 
 DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id);
+
+DP_Message *DP_msg_internal_reset_to_state_new(unsigned int context_id,
+                                               void *data);
 
 DP_Message *DP_msg_internal_snapshot_new(unsigned int context_id);
 
@@ -53,14 +58,23 @@ DP_Message *DP_msg_internal_preview_new(unsigned int context_id, void *data);
 
 DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id);
 
+DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
+                                         long long position, int interval);
+
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
 
 
 DP_MsgInternalType DP_msg_internal_type(DP_MsgInternal *mi);
 
+void *DP_msg_internal_reset_to_state_data(DP_MsgInternal *mi);
+
 int DP_msg_internal_catchup_progress(DP_MsgInternal *mi);
 
 void *DP_msg_internal_preview_data(DP_MsgInternal *mi);
+
+long long DP_msg_internal_playback_position(DP_MsgInternal *mi);
+
+int DP_msg_internal_playback_interval(DP_MsgInternal *mi);
 
 
 #endif

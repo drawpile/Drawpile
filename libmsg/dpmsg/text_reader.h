@@ -46,6 +46,12 @@ DP_TextReader *DP_text_reader_new(DP_Input *input);
 
 void DP_text_reader_free(DP_TextReader *reader);
 
+size_t DP_text_reader_body_offset(DP_TextReader *reader);
+
+size_t DP_text_reader_tell(DP_TextReader *reader);
+
+bool DP_text_reader_seek(DP_TextReader *reader, size_t offset);
+
 double DP_text_reader_progress(DP_TextReader *reader);
 
 DP_TextReaderResult DP_text_reader_read_header_field(DP_TextReader *reader,

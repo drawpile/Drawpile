@@ -46,6 +46,12 @@ void DP_binary_reader_free(DP_BinaryReader *reader);
 
 JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader);
 
+size_t DP_binary_reader_body_offset(DP_BinaryReader *reader);
+
+size_t DP_binary_reader_tell(DP_BinaryReader *reader);
+
+bool DP_binary_reader_seek(DP_BinaryReader *reader, size_t offset);
+
 double DP_binary_reader_progress(DP_BinaryReader *reader);
 
 DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,

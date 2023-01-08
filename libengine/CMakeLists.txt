@@ -49,6 +49,7 @@ set(dpengine_sources
     dpengine/paint.c
     dpengine/paint_engine.c
     dpengine/pixels.c
+    dpengine/player.c
     dpengine/recorder.c
     dpengine/save.c
     dpengine/snapshots.c
@@ -88,6 +89,7 @@ set(dpengine_headers
     dpengine/paint.h
     dpengine/paint_engine.h
     dpengine/pixels.h
+    dpengine/player.h
     dpengine/recorder.h
     dpengine/save.h
     dpengine/snapshots.h

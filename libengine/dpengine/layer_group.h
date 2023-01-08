@@ -104,6 +104,10 @@ DP_TransientLayerGroup *DP_transient_layer_group_new_init(int width, int height,
                                                           int reserve);
 
 DP_TransientLayerGroup *
+DP_transient_layer_group_new_init_with_transient_children_noinc(
+    int width, int height, DP_TransientLayerList *tll);
+
+DP_TransientLayerGroup *
 DP_transient_layer_group_incref(DP_TransientLayerGroup *tlg);
 
 void DP_transient_layer_group_decref(DP_TransientLayerGroup *tlg);

@@ -1547,6 +1547,18 @@ DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs)
     return DP_canvas_state_layer_routes_noinc((DP_CanvasState *)tcs);
 }
 
+void DP_transient_canvas_state_layers_set_inc(DP_TransientCanvasState *tcs,
+                                              DP_LayerList *ll)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_ASSERT(ll);
+    DP_layer_list_decref(tcs->layers);
+    tcs->layers = DP_layer_list_incref(ll);
+}
+
+
 void DP_transient_canvas_state_transient_layers_set_noinc(
     DP_TransientCanvasState *tcs, DP_TransientLayerList *tll)
 {

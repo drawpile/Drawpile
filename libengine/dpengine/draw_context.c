@@ -146,6 +146,35 @@ int DP_draw_context_id_generator_next(DP_DrawContext *dc)
 }
 
 
+unsigned char *DP_draw_context_pool(DP_DrawContext *dc)
+{
+    DP_ASSERT(dc);
+    return dc->pool;
+}
+
+unsigned char *DP_draw_context_pool_require(DP_DrawContext *dc,
+                                            size_t required_capacity)
+{
+    if (dc->pool) {
+        if (dc->pool_size < required_capacity) {
+            // If we got here, there was an allocation before us, which
+            // must have been at least enough to hold the minimum size.
+            DP_ASSERT(required_capacity
+                      >= DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE);
+            DP_free(dc->pool);
+            dc->pool_size = required_capacity;
+            dc->pool = DP_malloc(required_capacity);
+        }
+    }
+    else {
+        size_t size = DP_max_size(DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE,
+                                  required_capacity);
+        dc->pool_size = size;
+        dc->pool = DP_malloc(size);
+    }
+    return dc->pool;
+}
+
 static void init_pool(DP_DrawContext *dc)
 {
     if (!dc->pool) {

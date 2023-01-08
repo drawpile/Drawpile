@@ -179,6 +179,7 @@ static void dump_history(DP_CanvasHistory *ch)
 #define DUMP_TYPE_RESET                                     6
 #define DUMP_TYPE_SOFT_RESET                                7
 #define DUMP_TYPE_CLEANUP                                   8
+#define DUMP_TYPE_RESET_TO_STATE                            9
 
 #ifdef DRAWDANCE_HISTORY_DUMP
 
@@ -633,6 +634,17 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch)
     HISTORY_DEBUG("Hard reset");
     dump_internal(ch, DUMP_TYPE_RESET);
     reset_to_state_noinc(ch, DP_canvas_state_new());
+}
+
+void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
+                                            DP_CanvasState *cs)
+{
+    HISTORY_DEBUG("Reset to state");
+    // XXX: Resetting to a state doesn't get dumped correctly. However, that
+    // only happens during recording playback, which is pointless to debug dump
+    // anyway, since you might as well just play back the recording again.
+    dump_internal(ch, DUMP_TYPE_RESET_TO_STATE);
+    reset_to_state_noinc(ch, cs);
 }
 
 void DP_canvas_history_soft_reset(DP_CanvasHistory *ch)

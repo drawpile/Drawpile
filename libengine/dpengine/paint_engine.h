@@ -23,6 +23,7 @@
 #define DPENGINE_PAINT_ENGINE
 #include "canvas_diff.h"
 #include "canvas_history.h"
+#include "player.h"
 #include "recorder.h"
 #include "view_mode.h"
 #include <dpcommon/common.h>
@@ -31,6 +32,7 @@ typedef struct DP_AclState DP_AclState;
 typedef struct DP_AnnotationList DP_AnnotationList;
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DocumentMetadata DP_DocumentMetadata;
+typedef struct DP_Image DP_Image;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
 typedef union DP_Pixel8 DP_Pixel8;
@@ -41,6 +43,8 @@ typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 typedef struct DP_LayerContent DP_TransientLayerContent;
 #endif
 
+typedef void (*DP_PaintEnginePlaybackFn)(void *user, long long position,
+                                         int interval);
 typedef void (*DP_PaintEngineAclsChangedFn)(void *user, int acl_change_flags);
 typedef void (*DP_PaintEngineLaserTrailFn)(void *user, unsigned int context_id,
                                            int persistence, uint32_t color);
@@ -63,6 +67,7 @@ typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int context_id,
 typedef void (*DP_PaintEngineRenderSizeFn)(void *user, int width, int height);
 typedef void (*DP_PaintEngineRenderTileFn)(void *user, int x, int y,
                                            DP_Pixel8 *pixels, int thread_index);
+typedef void (*DP_PaintEnginePushMessageFn)(void *user, DP_Message *msg);
 
 
 typedef struct DP_PaintEngine DP_PaintEngine;
@@ -71,7 +76,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
     void *save_point_user, DP_RecorderGetTimeMsFn get_time_ms_fn,
-    void *get_time_ms_user);
+    void *get_time_ms_user, DP_Player *player_or_null,
+    DP_PaintEnginePlaybackFn playback_fn, void *playback_user);
 
 void DP_paint_engine_free_join(DP_PaintEngine *pe);
 
@@ -111,6 +117,36 @@ bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
 bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe);
 
 bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe);
+
+DP_PlayerResult
+DP_paint_engine_playback_step(DP_PaintEngine *pe, long long steps,
+                              DP_PaintEnginePushMessageFn push_message,
+                              void *user);
+
+DP_PlayerResult DP_paint_engine_playback_skip_by(
+    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps,
+    DP_PaintEnginePushMessageFn push_message, void *user);
+
+DP_PlayerResult DP_paint_engine_playback_jump_to(
+    DP_PaintEngine *pe, DP_DrawContext *dc, long long position,
+    DP_PaintEnginePushMessageFn push_message, void *user);
+
+bool DP_paint_engine_playback_index_build(
+    DP_PaintEngine *pe, DP_DrawContext *dc,
+    DP_PlayerIndexShouldSnapshotFn should_snapshot_fn,
+    DP_PlayerIndexProgressFn progress_fn, void *user);
+
+bool DP_paint_engine_playback_index_load(DP_PaintEngine *pe);
+
+unsigned int DP_paint_engine_playback_index_message_count(DP_PaintEngine *pe);
+
+size_t DP_paint_engine_playback_index_entry_count(DP_PaintEngine *pe);
+
+DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
+                                                      size_t index,
+                                                      bool *out_error);
+
+bool DP_paint_engine_playback_close(DP_PaintEngine *pe);
 
 // Returns the number of drawing commands actually pushed to the paint engine.
 int DP_paint_engine_handle_inc(

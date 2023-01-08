@@ -80,6 +80,10 @@ DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
                                                           bool group);
 
 DP_TransientLayerProps *
+DP_transient_layer_props_new_init_with_transient_children_noinc(
+    int layer_id, DP_TransientLayerPropsList *tlpl_or_null);
+
+DP_TransientLayerProps *
 DP_transient_layer_props_incref(DP_TransientLayerProps *tlp);
 
 void DP_transient_layer_props_decref(DP_TransientLayerProps *tlp);

@@ -61,6 +61,8 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
 
 void DP_canvas_history_reset(DP_CanvasHistory *ch);
 
+void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs);
+
 void DP_canvas_history_soft_reset(DP_CanvasHistory *ch);
 
 bool DP_canvas_history_snapshot(DP_CanvasHistory *ch);

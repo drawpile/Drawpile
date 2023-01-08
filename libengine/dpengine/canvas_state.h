@@ -229,6 +229,9 @@ DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs);
 DP_LayerRoutes *
 DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs);
 
+void DP_transient_canvas_state_layers_set_inc(DP_TransientCanvasState *tcs,
+                                              DP_LayerList *ll);
+
 void DP_transient_canvas_state_transient_layers_set_noinc(
     DP_TransientCanvasState *tcs, DP_TransientLayerList *tll);
 

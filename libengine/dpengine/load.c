@@ -32,6 +32,7 @@
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "ops.h"
+#include "player.h"
 #include "tile.h"
 #include "timeline.h"
 #include "xml_stream.h"
@@ -42,6 +43,7 @@
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpcommon/worker.h>
+#include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
 #include <ctype.h>
 
@@ -1079,4 +1081,14 @@ DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
 
     DP_input_free(input);
     return cs;
+}
+
+
+DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
+{
+    if (!path) {
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
+        return NULL;
+    }
+    return DP_player_new(path, out_result);
 }
