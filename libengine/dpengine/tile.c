@@ -154,7 +154,7 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
     }
     else {
         struct DP_TileInflateArgs args = {
-            DP_draw_context_tile_decompression_buffer(dc),
+            DP_draw_context_tile8_buffer(dc),
             context_id,
             NULL,
         };

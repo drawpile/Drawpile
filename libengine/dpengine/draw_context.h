@@ -75,7 +75,7 @@ float *DP_draw_context_rr_mask_buffer(DP_DrawContext *dc);
 
 DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc);
 
-DP_Pixel8 *DP_draw_context_tile_decompression_buffer(DP_DrawContext *dc);
+DP_Pixel8 *DP_draw_context_tile8_buffer(DP_DrawContext *dc);
 
 void DP_draw_context_id_generator_reset(DP_DrawContext *dc, int last_used_id);
 

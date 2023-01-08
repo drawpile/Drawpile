@@ -48,8 +48,8 @@ struct DP_DrawContext {
         };
         // Pixel buffer for image transformation. Used by region move transform.
         DP_Pixel8 transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
-        // Buffer to inflate compressed 8 bit tiles into.
-        DP_Pixel8 tile_decompression_buffer[DP_TILE_LENGTH];
+        // Buffer to hold 8 bit tiles, used e.g. for inflate/deflate.
+        DP_Pixel8 tile8_buffer[DP_TILE_LENGTH];
         // Layer id generation, masking off already used ids.
         struct {
             bool ids_used[DP_DRAW_CONTEXT_ID_COUNT];
@@ -105,10 +105,10 @@ DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc)
     return dc->transform_buffer;
 }
 
-DP_Pixel8 *DP_draw_context_tile_decompression_buffer(DP_DrawContext *dc)
+DP_Pixel8 *DP_draw_context_tile8_buffer(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
-    return dc->tile_decompression_buffer;
+    return dc->tile8_buffer;
 }
 
 void DP_draw_context_id_generator_reset(DP_DrawContext *dc, int last_used_id)
