@@ -69,4 +69,26 @@ DP_Input *DP_mem_input_new_free_on_close(void *buffer, size_t size);
 DP_Input *DP_mem_input_new_keep_on_close(const void *buffer, size_t size);
 
 
+#define DP_BUFFERD_INPUT_NULL \
+    (DP_BufferedInput)        \
+    {                         \
+        NULL, NULL, 0         \
+    }
+
+typedef struct DP_BufferedInput {
+    DP_Input *inner;
+    unsigned char *buffer;
+    size_t capacity;
+} DP_BufferedInput;
+
+DP_BufferedInput DP_buffered_input_init(DP_Input *input);
+
+void DP_buffered_input_dispose(DP_BufferedInput *bi);
+
+size_t DP_buffered_input_read(DP_BufferedInput *bi, size_t size,
+                              bool *out_error);
+
+bool DP_buffered_input_seek(DP_BufferedInput *bi, size_t offset);
+
+
 #endif

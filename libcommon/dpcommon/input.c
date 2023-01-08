@@ -378,3 +378,34 @@ DP_Input *DP_mem_input_new_keep_on_close(const void *buffer, size_t size)
 {
     return DP_mem_input_new((void *)buffer, size, NULL, NULL);
 }
+
+
+DP_BufferedInput DP_buffered_input_init(DP_Input *input)
+{
+    DP_ASSERT(input);
+    return (DP_BufferedInput){input, NULL, 0};
+}
+
+void DP_buffered_input_dispose(DP_BufferedInput *bi)
+{
+    DP_ASSERT(bi);
+    DP_free(bi->buffer);
+    DP_input_free(bi->inner);
+}
+
+size_t DP_buffered_input_read(DP_BufferedInput *bi, size_t size,
+                              bool *out_error)
+{
+    DP_ASSERT(bi);
+    if (size > bi->capacity) {
+        bi->buffer = DP_realloc(bi->buffer, size);
+        bi->capacity = size;
+    }
+    return DP_input_read(bi->inner, bi->buffer, size, out_error);
+}
+
+bool DP_buffered_input_seek(DP_BufferedInput *bi, size_t offset)
+{
+    DP_ASSERT(bi);
+    return DP_input_seek(bi->inner, offset);
+}
