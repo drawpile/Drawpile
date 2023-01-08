@@ -455,7 +455,17 @@ void DP_transient_annotation_valign_set(DP_TransientAnnotation *ta, int valign)
     DP_ASSERT(ta);
     DP_ASSERT(DP_atomic_get(&ta->refcount) > 0);
     DP_ASSERT(ta->transient);
-    ta->valign = valign;
+    switch (valign) {
+    case DP_ANNOTATION_VALIGN_TOP:
+    case DP_ANNOTATION_VALIGN_CENTER:
+    case DP_ANNOTATION_VALIGN_BOTTOM:
+        ta->valign = valign;
+        break;
+    default:
+        DP_warn("Invalid valign value %d", valign);
+        ta->valign = DP_ANNOTATION_VALIGN_TOP;
+        break;
+    }
 }
 
 void DP_transient_annotation_text_set(DP_TransientAnnotation *ta,
