@@ -198,21 +198,24 @@ DP_INLINE DP_Rect DP_rect_union(DP_Rect a, DP_Rect b)
 
 DP_INLINE DP_Rect DP_rect_intersection(DP_Rect a, DP_Rect b)
 {
-    DP_ASSERT(DP_rect_valid(a));
-    DP_ASSERT(DP_rect_valid(b));
-    DP_Rect result;
-    result.x1 = DP_max_int(a.x1, b.x1);
-    result.x2 = DP_min_int(a.x2, b.x2);
-    result.y1 = DP_max_int(a.y1, b.y1);
-    result.y2 = DP_min_int(a.y2, b.y2);
-    return result;
+    if (DP_rect_valid(a) && DP_rect_valid(b)) {
+        DP_Rect result;
+        result.x1 = DP_max_int(a.x1, b.x1);
+        result.x2 = DP_min_int(a.x2, b.x2);
+        result.y1 = DP_max_int(a.y1, b.y1);
+        result.y2 = DP_min_int(a.y2, b.y2);
+        return result;
+    }
+    else {
+        DP_Rect result = {0, 0, -1, -1};
+        return result;
+    }
 }
 
 DP_INLINE bool DP_rect_intersects(DP_Rect a, DP_Rect b)
 {
-    DP_ASSERT(DP_rect_valid(a));
-    DP_ASSERT(DP_rect_valid(b));
-    return ((a.x1 <= b.x1 && b.x1 <= a.x2) || (b.x1 <= a.x1 && a.x1 <= b.x2))
+    return DP_rect_valid(a) && DP_rect_valid(b)
+        && ((a.x1 <= b.x1 && b.x1 <= a.x2) || (b.x1 <= a.x1 && a.x1 <= b.x2))
         && ((a.y1 <= b.y1 && b.y1 <= a.y2) || (b.y1 <= a.y1 && a.y1 <= b.y2));
 }
 
