@@ -28,7 +28,7 @@ public:
 	bool listen()
 	{
 		m_server = new QTcpServer(this);
-		
+
 		if(!m_server->listen(QHostAddress::LocalHost)) {
 			qWarning() << "Couldn't start echo server:" << m_server->errorString();
 			return false;
@@ -146,7 +146,7 @@ private slots:
 		int countReceived = 0;
 		bool allReceived = false;
 
-		connect(mq.get(), &MessageQueue::messageAvailable, [&mq, sendCount, &countReceived, &allReceived]() {
+		connect(mq.get(), &MessageQueue::messageAvailable, [&]() {
 			while(mq->isPending()) {
 				MessagePtr got = mq->getPending();
 				// Expect to receive the messages in the same order as we sent them
@@ -175,7 +175,7 @@ private slots:
 	{
 		auto s = getConnection();
 		MessageQueue mq(s.get());
-		
+
 		bool disconnected = false;
 
 		connect(s.get(), &QTcpSocket::disconnected, [&disconnected]() {

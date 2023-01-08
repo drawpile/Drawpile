@@ -17,7 +17,7 @@ private slots:
 	void initTestCase()
 	{
 		QVERIFY(m_tempdir.isValid());
-		m_dir = m_tempdir.path();
+		m_dir.setPath(m_tempdir.path());
 	}
 
 	// Test that all metadata is stored correctly
