@@ -679,13 +679,10 @@ fn make_idlist(stack: &OraStack) -> Vec<LayerID> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     #[test]
     fn test_load_openraster() {
-        let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "testdata", "oratest.ora"]
-            .iter()
-            .collect();
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/testdata/oratest.ora");
         let ls = load_openraster_image(path.as_ref()).unwrap();
         let annotations = ls.get_annotations();
 

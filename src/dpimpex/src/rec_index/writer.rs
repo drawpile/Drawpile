@@ -390,7 +390,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
                 let offset = match grouplayer.as_ref() {
                     Layer::Group(g) => self.write_grouplayer(g, tilemap, layermap, stats)?,
-                    Layer::Bitmap(b) => self.write_bitmaplayer(b, tilemap, layermap, stats)?,
+                    Layer::Bitmap(b) => self.write_bitmaplayer(b, tilemap, stats)?,
                 };
 
                 layermap.insert(layer_p, (grouplayer.clone(), offset));
@@ -416,7 +416,6 @@ impl<W: Write + Seek> IndexBuilder<W> {
         &mut self,
         layer: &BitmapLayer,
         tilemap: &mut TileMap,
-        layermap: &mut LayerMap,
         stats: &mut Stats,
     ) -> IndexResult<u64> {
         let mut sublayers: Vec<u64> = Vec::new();
@@ -430,7 +429,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
             .filter(|sl| sl.metadata().is_visible() && sl.metadata().id < 256)
         {
             stats.changed_layers += 1;
-            let offset = self.write_bitmaplayer(sublayer, tilemap, layermap, stats)?;
+            let offset = self.write_bitmaplayer(sublayer, tilemap, stats)?;
             sublayers.push(offset);
         }
 

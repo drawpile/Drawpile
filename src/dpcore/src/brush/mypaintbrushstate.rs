@@ -100,12 +100,7 @@ impl MyPaintTarget for MyPaintBrushStateTarget {
         let color = if self.erase {
             Color::TRANSPARENT
         } else {
-            Color {
-                r: r,
-                g: g,
-                b: b,
-                a: a,
-            }
+            Color { r, g, b, a }
         };
 
         let mut dab = MyPaintDab {
@@ -197,15 +192,9 @@ impl MyPaintBrushState {
         unsafe { c::mypaint_brush_set_mapping_point(self.brush, setting_id, input_id, n, x, y) }
     }
 
-    pub fn set_brush(
-        &mut self,
-        brush: &MyPaintBrush,
-        settings: &MyPaintSettings,
-        freehand: bool,
-    ) {
+    pub fn set_brush(&mut self, brush: &MyPaintBrush, settings: &MyPaintSettings, freehand: bool) {
         let mappings = &settings.mappings;
-        for i in 0..mappings.len() {
-            let mapping = &mappings[i];
+        for (i, mapping) in mappings.iter().enumerate() {
             let setting_id = i as c::MyPaintBrushSetting;
             self.set_base_value(setting_id, mapping.base_value);
             for j in 0..mapping.inputs.len() {
@@ -225,7 +214,10 @@ impl MyPaintBrushState {
         }
 
         let (h, s, v) = brush.color.as_hsv();
-        self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_H, h / 360.0);
+        self.set_base_value(
+            c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_H,
+            h / 360.0,
+        );
         self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_S, s);
         self.set_base_value(c::MyPaintBrushSetting_MYPAINT_BRUSH_SETTING_COLOR_V, v);
 
@@ -263,7 +255,16 @@ impl BrushState for MyPaintBrushState {
                 // MyPaint, since when you crank up the smoothing really high
                 // there and move the pen really fast, you can get strokes from
                 // when your pen wasn't on the tablet, which is just weird.
-                c::mypaint_brush_stroke_to(self.brush, surface.get_raw(), x, y, 0.0, 0.0, 0.0, 1000.0);
+                c::mypaint_brush_stroke_to(
+                    self.brush,
+                    surface.get_raw(),
+                    x,
+                    y,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1000.0,
+                );
             }
         }
         let delta_sec = (delta_msec as f64) / 1000.0f64;

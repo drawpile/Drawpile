@@ -20,7 +20,7 @@ pub struct IndexReader {
 
 impl IndexReader {
     pub fn open(path: &Path) -> IndexResult<IndexReader> {
-        let mut reader = File::open(&path)?;
+        let mut reader = File::open(path)?;
 
         let read_index = read_index(&mut reader)?;
 

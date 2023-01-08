@@ -67,25 +67,23 @@ unsafe extern "C" fn draw_dab(
     colorize: f32,
 ) -> ::std::os::raw::c_int {
     let surface = &mut *(parent as *mut MyPaintSurface);
-    if surface.draw_dab(
-        x,
-        y,
-        radius,
-        color_r,
-        color_g,
-        color_b,
-        opaque,
-        hardness,
-        alpha_eraser,
-        aspect_ratio,
-        angle,
-        lock_alpha,
-        colorize,
-    ) {
-        1
-    } else {
-        0
-    }
+    surface
+        .draw_dab(
+            x,
+            y,
+            radius,
+            color_r,
+            color_g,
+            color_b,
+            opaque,
+            hardness,
+            alpha_eraser,
+            aspect_ratio,
+            angle,
+            lock_alpha,
+            colorize,
+        )
+        .into()
 }
 
 unsafe extern "C" fn get_color(
@@ -166,8 +164,8 @@ impl<'a> MyPaintSurface<'a> {
                 save_png: Option::None,
                 refcount: 1,
             },
-            source: source,
-            target: target,
+            source,
+            target,
         };
         unsafe { c::mypaint_surface_init(&mut surface.parent) }
         surface

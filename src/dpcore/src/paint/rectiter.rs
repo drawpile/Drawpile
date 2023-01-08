@@ -252,7 +252,7 @@ mod tests {
         let mut buf = [0, 1, 2, 3, 10, 11, 12, 12, 20, 21, 22, 13, 30, 31, 32, 33];
         let crop = MutableRectIterator::new(&mut buf, 4, 1, 1, 2, 2);
         for pixel in crop.flatten() {
-            *pixel = *pixel + 50;
+            *pixel += 50;
         }
         let expected = [0, 1, 2, 3, 10, 61, 62, 12, 20, 71, 72, 13, 30, 31, 32, 33];
         assert_eq!(buf, expected);

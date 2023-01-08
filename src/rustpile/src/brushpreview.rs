@@ -134,34 +134,34 @@ impl BrushPreview {
                 if mode == Blendmode::Behind {
                     let w = layer.width() as i32;
                     let h = layer.height() as i32;
-                    let b = (w / 20).max(2) as i32;
+                    let b = (w / 20).max(2);
                     editlayer::fill_rect(
                         layer,
                         1,
                         &Color::BLACK,
                         Blendmode::Normal,
-                        &Rectangle::new((w / 4 - b / 2) as i32, 0, b, h),
+                        &Rectangle::new(w / 4 - b / 2, 0, b, h),
                     );
                     editlayer::fill_rect(
                         layer,
                         1,
                         &Color::BLACK,
                         Blendmode::Normal,
-                        &Rectangle::new((w / 4 * 2 - b / 2) as i32, 0, b, h),
+                        &Rectangle::new(w / 4 * 2 - b / 2, 0, b, h),
                     );
                     editlayer::fill_rect(
                         layer,
                         1,
                         &Color::BLACK,
                         Blendmode::Normal,
-                        &Rectangle::new((w / 4 * 3 - b / 2) as i32, 0, b, h),
+                        &Rectangle::new(w / 4 * 3 - b / 2, 0, b, h),
                     );
                 }
             }
             ForegroundStyle::RainbowDabs => {
                 let w = layer.width() as i32;
                 let h = layer.height() as i32;
-                let d = (h * 2 / 3).max(10).min(255);
+                let d = (h * 2 / 3).clamp(10, 255);
                 let x0 = d;
                 let x1 = w - d;
                 let step = d * 70 / 100;
@@ -261,9 +261,8 @@ impl BrushPreview {
             brush.mode,
             |painter, optional_color| {
                 let mut cloned_brush = brush.clone();
-                match optional_color {
-                    Some(color) => cloned_brush.color = color,
-                    None => {}
+                if let Some(color) = optional_color {
+                    cloned_brush.color = color;
                 }
                 painter.set_classicbrush(cloned_brush);
             },
@@ -289,9 +288,8 @@ impl BrushPreview {
             },
             |painter, optional_color| {
                 let mut cloned_brush = brush.clone();
-                match optional_color {
-                    Some(color) => cloned_brush.color = color,
-                    None => {}
+                if let Some(color) = optional_color {
+                    cloned_brush.color = color;
                 }
                 painter.set_mypaintbrush(&cloned_brush, settings, false);
             },
@@ -325,8 +323,8 @@ impl BrushPreview {
             1,
             &result.image.pixels,
             &Rectangle::new(
-                result.x as i32,
-                result.y as i32,
+                result.x,
+                result.y,
                 result.image.width as i32,
                 result.image.height as i32,
             ),
@@ -355,7 +353,7 @@ fn make_strokeshape(rect: Rectangle) -> Vec<Point> {
     points.reserve(w as usize);
     for x in 0..rect.w {
         let fx = x as f32 / w;
-        let pressure = ((fx * fx - fx * fx * fx) * 6.756).min(1.0).max(0.0);
+        let pressure = ((fx * fx - fx * fx * fx) * 6.756).clamp(0.0, 1.0);
         let y = phase.sin() * h;
         points.push(((rect.x + x) as f32, offy + y, pressure));
         phase += dphase;

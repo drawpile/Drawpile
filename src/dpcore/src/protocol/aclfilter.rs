@@ -494,7 +494,7 @@ mod tests {
         assert!(create_layer(&mut acl, 2, 0x0202, 0));
 
         // But only for themselves
-        assert_eq!(create_layer(&mut acl, 2, 0x0302, 0), false);
+        assert!(!create_layer(&mut acl, 2, 0x0302, 0));
     }
 
     #[test]

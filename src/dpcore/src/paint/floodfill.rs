@@ -114,7 +114,7 @@ pub fn floodfill(
     }
 
     // Execute the flood fill algorithm
-    let mut stack = vec![(x as i32, y as i32)];
+    let mut stack = vec![(x, y)];
     let mut filled_size = 0;
 
     let right = scratch.layer.width() as i32 - 1;

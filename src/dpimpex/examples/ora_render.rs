@@ -22,8 +22,6 @@
 
 use std::env;
 
-use dpimpex;
-
 // A sample program that can read an OpenRaster file (or any other supported file)
 // and save it again (as a PNG, for example.)
 // This can be used to compare Drawpile's interpretation of the OpenRaster file

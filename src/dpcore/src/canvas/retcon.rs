@@ -487,8 +487,8 @@ mod tests {
             user,
             DrawDabsPixelMessage {
                 layer: 1,
-                x: x,
-                y: y,
+                x,
+                y,
                 color: if indirect { 0xff_ffffff } else { 0x00_ffffff },
                 mode: 1,
                 dabs: vec![PixelDab {
@@ -506,10 +506,10 @@ mod tests {
             user,
             FillRectMessage {
                 layer: 1,
-                x: x,
-                y: y,
-                w: w,
-                h: h,
+                x,
+                y,
+                w,
+                h,
                 mode: 1,
                 color: 0xff_ffffff,
             },

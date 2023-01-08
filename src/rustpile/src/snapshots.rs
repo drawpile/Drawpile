@@ -105,7 +105,7 @@ pub extern "C" fn snapshots_import_file(
 ) -> bool {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
-    let ls = match dpimpex::load_image(&path) {
+    let ls = match dpimpex::load_image(path) {
         Ok(ls) => Arc::new(ls),
         Err(err) => {
             warn!("Couldn't load: {:?}", err);

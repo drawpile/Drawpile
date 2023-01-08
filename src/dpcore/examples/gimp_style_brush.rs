@@ -19,6 +19,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
+#![allow(clippy::too_many_arguments)]
 
 use dpcore::paint::{
     editlayer, BitmapLayer, Blendmode, BrushMask, ClassicBrushCache, Color, Tile, BIT15_U16,

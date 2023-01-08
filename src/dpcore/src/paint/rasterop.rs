@@ -195,7 +195,7 @@ fn lumi(bgr: [i32; 3]) -> i32 {
 }
 
 fn clip_color(bgr: [i32; 3]) -> BGR15 {
-    let l = lumi(bgr) as i32;
+    let l = lumi(bgr);
     let n = bgr[0].min(bgr[1].min(bgr[2]));
     let x = bgr[0].max(bgr[1].max(bgr[2]));
     let mut out = bgr;
@@ -205,9 +205,9 @@ fn clip_color(bgr: [i32; 3]) -> BGR15 {
         out[2] = l + (((out[2] - l) * l) / (l - n));
     }
     if x > BIT15_I32 {
-        out[0] = l + (((out[0] as i32 - l) * (BIT15_I32 - l)) / (x - l));
-        out[1] = l + (((out[1] as i32 - l) * (BIT15_I32 - l)) / (x - l));
-        out[2] = l + (((out[2] as i32 - l) * (BIT15_I32 - l)) / (x - l));
+        out[0] = l + (((out[0] - l) * (BIT15_I32 - l)) / (x - l));
+        out[1] = l + (((out[1] - l) * (BIT15_I32 - l)) / (x - l));
+        out[2] = l + (((out[2] - l) * (BIT15_I32 - l)) / (x - l));
     }
     [out[0] as u32, out[1] as u32, out[2] as u32]
 }
@@ -661,7 +661,7 @@ fn mask_composite_nonseparable(
 // Effectively uses the Recolor blend mode to tint the given pixels.
 pub fn tint_pixels(pixels: &mut [Pixel15], tint: Color) {
     let tint = unpack_pixel15(tint.as_unpremultiplied_pixel15());
-    let a = tint[ALPHA_CHANNEL] as u32;
+    let a = tint[ALPHA_CHANNEL];
     for dp in pixels {
         let dc = unpack_unpremultiply_bgr(*dp);
         let a_s = BIT15_U32 - a;

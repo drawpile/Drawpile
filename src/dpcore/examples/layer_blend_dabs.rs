@@ -83,7 +83,7 @@ fn main() {
             editlayer::draw_brush_dab(
                 &mut layer,
                 0,
-                x as i32,
+                x,
                 10 + i as i32 * 15,
                 &brush,
                 &dabcolor,

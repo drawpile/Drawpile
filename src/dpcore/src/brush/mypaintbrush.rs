@@ -57,7 +57,7 @@ pub struct MyPaintBrush {
     // Color is only stored as HSV in the brush, we track the RGB separately.
     pub color: Color,
     // Forces locked alpha on all dabs, acting as Recolor mode.
-    pub lock_alpha : bool,
+    pub lock_alpha: bool,
     // Forces transparent color on all dabs, acting as Erase mode.
     pub erase: bool,
 }

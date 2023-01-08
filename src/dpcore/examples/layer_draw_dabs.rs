@@ -53,7 +53,7 @@ fn main() {
             &mut layer,
             0,
             x - w / 2,
-            60 - w / 2 as i32,
+            60 - w / 2,
             &brush,
             &black,
             Blendmode::Normal,

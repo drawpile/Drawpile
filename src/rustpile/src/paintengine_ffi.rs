@@ -787,7 +787,7 @@ pub extern "C" fn paintengine_set_active_frame(dp: &mut PaintEngine, frame_idx: 
     let aoe_bounds = {
         let mut vc = dp.viewcache.lock().unwrap();
 
-        let frame_idx = frame_idx.min(vc.layerstack.frame_count() as isize).max(1) - 1;
+        let frame_idx = frame_idx.clamp(1, vc.layerstack.frame_count().max(1) as isize) - 1;
 
         let frame = vc.layerstack.frame_at(frame_idx);
 
@@ -1395,7 +1395,7 @@ pub extern "C" fn paintengine_load_file(
 ) -> CanvasIoError {
     let path = String::from_utf16_lossy(unsafe { slice::from_raw_parts(path, path_len) });
 
-    let ls = match dpimpex::load_image(&path) {
+    let ls = match dpimpex::load_image(path) {
         Ok(ls) => Box::new(ls),
         Err(err) => {
             warn!("Couldn't load: {:?}", err);

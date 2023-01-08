@@ -327,7 +327,7 @@ impl Tile {
     #[cfg(test)]
     pub fn refcount(&self) -> usize {
         match self {
-            Tile::Bitmap(d) => Arc::strong_count(&d) + Arc::weak_count(&d),
+            Tile::Bitmap(d) => Arc::strong_count(d) + Arc::weak_count(d),
             Tile::Blank => 0,
         }
     }

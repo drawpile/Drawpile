@@ -112,7 +112,7 @@ impl DeserializableScalar for i8 {
 
 impl Serializable for bool {
     fn write(&self, v: &mut Vec<u8>) {
-        v.push(if *self { 1 } else { 0 });
+        v.push(u8::from(*self));
     }
     fn len(&self) -> usize {
         1
@@ -193,7 +193,7 @@ impl Serializable for &Vec<u8> {
 impl Serializable for &Vec<u16> {
     fn write(&self, v: &mut Vec<u8>) {
         for i in self.iter() {
-            v.extend(&i.to_be_bytes())
+            v.extend(i.to_be_bytes())
         }
     }
 
@@ -444,9 +444,9 @@ mod tests {
         assert_eq!(val, 100);
 
         assert_eq!(r.remaining(), 0);
-        assert!(match r.read_header() {
-            Err(DeserializationError::NoMoreMessages) => true,
-            _ => false,
-        });
+        assert!(matches!(
+            r.read_header(),
+            Err(DeserializationError::NoMoreMessages)
+        ));
     }
 }

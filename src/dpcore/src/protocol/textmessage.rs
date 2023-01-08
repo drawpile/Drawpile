@@ -95,7 +95,7 @@ impl TextMessage {
     /// Set a byte string.
     /// The byte string will be base64 encoded
     pub fn set_bytes<T: Into<String>>(mut self, key: T, value: &[u8]) -> Self {
-        let buf = base64::encode_config(&value, base64::STANDARD_NO_PAD);
+        let buf = base64::encode_config(value, base64::STANDARD_NO_PAD);
 
         let mut s = String::new();
         for chunk in buf.as_bytes().chunks(70) {
@@ -340,7 +340,7 @@ mod tests {
             m.args.get("hello"),
             Some(&String::from("258,512,773,33023,65535"))
         );
-        assert_eq!(m.get_vec_u16("hello"), vec.clone());
+        assert_eq!(m.get_vec_u16("hello"), vec);
 
         let m = m.set_vec_u16("hello", &vec, true);
         assert_eq!(

@@ -252,7 +252,7 @@ impl BrushMask {
         let yfrac = y - fy;
 
         let diameter_offset = (1.0 - diameter % 2.0) / 2.0;
-        let radius = diameter as f32 + 0.5; // oversample
+        let radius = diameter + 0.5; // oversample
         let xoffset = 0.5 - xfrac * 2.0 - radius - diameter_offset;
         let yoffset = 0.5 - yfrac * 2.0 - radius - diameter_offset;
 
@@ -274,7 +274,7 @@ impl BrushMask {
                         let dist = fast_sqrt(*dist_squared);
                         let dist_scaled = (dist * lut_scale) as usize;
                         acc + if dist_scaled < lut.len() {
-                            let cover = (radius - dist).max(0.0).min(1.0);
+                            let cover = (radius - dist).clamp(0.0, 1.0);
                             lut[dist_scaled] * cover
                         } else {
                             0.0
@@ -309,7 +309,7 @@ impl BrushMask {
         let yfrac = y - fy;
 
         let diameter_offset = (1.0 - diameter % 2.0) / 2.0;
-        let radius = diameter as f32 / 2.0 + 0.5;
+        let radius = diameter / 2.0 + 0.5;
         let xoffset = 0.5 - xfrac - radius - diameter_offset;
         let yoffset = 0.5 - yfrac - radius - diameter_offset;
 
@@ -326,7 +326,7 @@ impl BrushMask {
 
                 let dist_scaled = (dist * lut_scale) as usize;
                 let value = if dist_scaled < lut.len() {
-                    let cover = (radius - dist).max(0.0).min(1.0);
+                    let cover = (radius - dist).clamp(0.0, 1.0);
                     lut[dist_scaled] * cover * OPACITY_SCALE
                 } else {
                     0.0

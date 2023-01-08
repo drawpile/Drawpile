@@ -89,7 +89,7 @@ impl PixelBrushState {
 
     fn add_dab(&mut self, x: i32, y: i32, p: f32, source: Option<&BitmapLayer>) {
         let smudge = self.brush.smudge_at(p);
-        let dia = self.brush.size_at(p).max(1.0).min(255.0) as u8;
+        let dia = self.brush.size_at(p).clamp(1.0, 255.0) as u8;
 
         self.smudge_distance += 1;
         if smudge > 0.0 && self.smudge_distance > self.brush.resmudge {
@@ -222,7 +222,7 @@ impl BrushState for PixelBrushState {
                     self.smudge_color = sl.sample_color(
                         x as i32,
                         y as i32,
-                        self.brush.size_at(p).max(1.0).min(128.0) as i32,
+                        self.brush.size_at(p).clamp(1.0, 128.0) as i32,
                     );
                     self.smudge_distance = -1;
                 }

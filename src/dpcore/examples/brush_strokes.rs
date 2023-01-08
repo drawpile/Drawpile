@@ -24,6 +24,7 @@ use dpcore::brush::{BrushEngine, BrushState, ClassicBrush, ClassicBrushShape};
 use dpcore::canvas::CanvasState;
 use dpcore::paint::Color;
 use dpcore::protocol::message::{CommandMessage, Message};
+use std::f32::consts::PI;
 
 mod utils;
 
@@ -200,7 +201,7 @@ fn main() {
         canvas.receive_message(d);
     });
 
-    utils::save_layerstack(&canvas.layerstack(), "example_brush_strokes.png");
+    utils::save_layerstack(canvas.layerstack(), "example_brush_strokes.png");
 }
 
 fn draw_wavy_line(
@@ -212,8 +213,8 @@ fn draw_wavy_line(
 ) {
     let mut x = 0.0;
     while x < width {
-        let y = (x / width * 3.141 * 4.0).sin() * amplitude;
-        let p = (x / width * 3.141).sin();
+        let y = (x / width * PI * 4.0).sin() * amplitude;
+        let p = (x / width * PI).sin();
         brush.stroke_to(start_x + x, start_y + y, p, 0, None);
         x += 1.0;
     }

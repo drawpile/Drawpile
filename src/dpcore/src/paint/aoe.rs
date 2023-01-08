@@ -229,10 +229,10 @@ impl TileMap {
             return self;
         }
 
-        let x0 = bound(0, r.x / TILE_SIZEI, w - 1) as usize;
-        let x1 = bound(0, r.right() / TILE_SIZEI, w - 1) as usize;
-        let y0 = bound(0, r.y / TILE_SIZEI, h - 1) as usize;
-        let y1 = bound(0, r.bottom() / TILE_SIZEI, h - 1) as usize;
+        let x0 = (r.x / TILE_SIZEI).clamp(0, w - 1) as usize;
+        let x1 = (r.right() / TILE_SIZEI).clamp(0, w - 1) as usize;
+        let y0 = (r.y / TILE_SIZEI).clamp(0, h - 1) as usize;
+        let y1 = (r.bottom() / TILE_SIZEI).clamp(0, h - 1) as usize;
 
         for y in y0..=y1 {
             self.tiles[y * self.w as usize + x0..=y * w as usize + x1].fill(value);
@@ -264,14 +264,11 @@ impl TileMap {
         let mut bottom = 0i32;
 
         for (row, bits) in self.tiles.chunks(self.w as usize).enumerate() {
-            match bits.first_one() {
-                Some(first) => {
-                    left = min(left, first as i32);
-                    right = max(right, bits.last_one().unwrap() as i32);
-                    top = min(top, row as i32);
-                    bottom = max(bottom, row as i32);
-                }
-                None => {}
+            if let Some(first) = bits.first_one() {
+                left = min(left, first as i32);
+                right = max(right, bits.last_one().unwrap() as i32);
+                top = min(top, row as i32);
+                bottom = max(bottom, row as i32);
             }
         }
         if left < self.w as i32 {
@@ -297,10 +294,6 @@ impl Not for TileMap {
             h: self.h,
         }
     }
-}
-
-fn bound(min: i32, v: i32, max: i32) -> i32 {
-    v.max(min).min(max)
 }
 
 #[cfg(test)]

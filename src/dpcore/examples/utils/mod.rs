@@ -23,16 +23,15 @@
 use dpcore::paint::color::*;
 use dpcore::paint::tile::{Tile, TileData, TILE_SIZE};
 use dpcore::paint::{AoE, BitmapLayer, FlattenedTileIterator, LayerStack, LayerViewOptions};
-use image;
 use image::{ImageBuffer, RgbaImage};
 
-fn copy_tile_to(dest: &mut Vec<u8>, stride: u32, tile: &TileData, tx: u32, ty: u32) {
+fn copy_tile_to(dest: &mut [u8], stride: u32, tile: &TileData, tx: u32, ty: u32) {
     let mut dest_offset = ty * TILE_SIZE * stride * 4 + tx * TILE_SIZE * 4;
 
     for y in 0..TILE_SIZE {
         for x in 0..TILE_SIZE {
             let px = tile.pixels[(y * TILE_SIZE + x) as usize];
-            dest[(dest_offset + x * 4 + 0) as usize] = channel15_to_8(px[RED_CHANNEL]);
+            dest[(dest_offset + x * 4) as usize] = channel15_to_8(px[RED_CHANNEL]);
             dest[(dest_offset + x * 4 + 1) as usize] = channel15_to_8(px[GREEN_CHANNEL]);
             dest[(dest_offset + x * 4 + 2) as usize] = channel15_to_8(px[BLUE_CHANNEL]);
             dest[(dest_offset + x * 4 + 3) as usize] = channel15_to_8(px[ALPHA_CHANNEL]);

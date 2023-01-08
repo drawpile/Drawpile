@@ -107,13 +107,10 @@ pub fn save_flat_image(path: &Path, layerstack: &LayerStack) -> ImageExportResul
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     #[test]
     fn test_load_testpattern() {
-        let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "testdata", "testpattern.png"]
-            .iter()
-            .collect();
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/testdata/testpattern.png");
         let ls = load_flat_image(path.as_ref()).unwrap();
         let layer = ls.root().get_bitmaplayer(0x0100).unwrap();
 

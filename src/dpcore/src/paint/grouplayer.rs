@@ -1337,7 +1337,7 @@ mod tests {
         root.add_bitmap_layer(21, Color::TRANSPARENT, LayerInsertion::Into(2));
         root.add_bitmap_layer(22, Color::TRANSPARENT, LayerInsertion::Into(2));
 
-        let reordered = root.reordered(2, &vec![0, 21, 0, 20, 0, 22]).unwrap();
+        let reordered = root.reordered(2, &[0, 21, 0, 20, 0, 22]).unwrap();
 
         assert_eq!(reordered.0.layervec()[0].id(), 2);
         assert_eq!(reordered.0.layervec()[1].id(), 1);

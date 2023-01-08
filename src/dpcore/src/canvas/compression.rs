@@ -73,13 +73,16 @@ pub fn decompress_tile(data: &[u8], user_id: UserID) -> Option<Tile> {
         return None;
     }
 
-    Some(Tile::from_data(bytemuck::cast_slice(&decompressed), user_id))
+    Some(Tile::from_data(
+        bytemuck::cast_slice(&decompressed),
+        user_id,
+    ))
 }
 
 /// Compress a tile's content.
 ///
 pub fn compress_tiledata(tiledata: &TileData) -> Vec<u8> {
-    let mut pixels8 = [ <_>::default(); TILE_LENGTH ];
+    let mut pixels8 = [<_>::default(); TILE_LENGTH];
     pixels15_to_8(&mut pixels8, &tiledata.pixels);
     let compressed = deflate_bytes_zlib(bytemuck::cast_slice(&pixels8));
 

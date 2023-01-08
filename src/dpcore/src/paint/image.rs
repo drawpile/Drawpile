@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Drawpile.  If not, see <https://www.gnu.org/licenses/>.
 
-use super::color::{Pixel8, Pixel15};
+use super::color::{Pixel15, Pixel8};
 use super::rectiter::{MutableRectIterator, RectIterator};
 use super::{Rectangle, Size};
 

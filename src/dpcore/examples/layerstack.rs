@@ -24,12 +24,13 @@ use dpcore::paint::tile::Tile;
 use dpcore::paint::{
     editlayer, BitmapLayer, Blendmode, BrushMask, Color, LayerInsertion, LayerStack, BIT15_F32,
 };
+use std::f32::consts::PI;
 
 mod utils;
 
 fn brush_stroke(layer: &mut BitmapLayer, y: i32, color: &Color) {
     for x in (10..246).step_by(5) {
-        let w = 16 + ((x as f32 / 40.0 * 3.14).sin() * 15.0) as i32;
+        let w = 16 + ((x as f32 / 40.0 * PI).sin() * 15.0) as i32;
         let brush = BrushMask::new_round_pixel(w as u32);
         editlayer::draw_brush_dab(
             layer,
@@ -37,7 +38,7 @@ fn brush_stroke(layer: &mut BitmapLayer, y: i32, color: &Color) {
             x - w / 2,
             y - w / 2,
             &brush,
-            &color,
+            color,
             Blendmode::Normal,
             (0.4 * BIT15_F32) as u16,
         );

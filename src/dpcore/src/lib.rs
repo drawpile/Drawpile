@@ -22,6 +22,7 @@
 
 // lint: We often want to group hex color constants like "AA_RRGGBB"
 #![allow(clippy::unusual_byte_groupings)]
+#![allow(clippy::too_many_arguments)]
 
 pub mod brush;
 pub mod canvas;

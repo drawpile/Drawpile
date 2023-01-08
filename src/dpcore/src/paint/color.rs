@@ -204,11 +204,19 @@ impl Color {
     }
 
     pub fn min_component(&self) -> f32 {
-        min_by(self.r, min_by(self.g, self.b, compare_floats), compare_floats)
+        min_by(
+            self.r,
+            min_by(self.g, self.b, compare_floats),
+            compare_floats,
+        )
     }
 
     pub fn max_component(&self) -> f32 {
-        max_by(self.r, max_by(self.g, self.b, compare_floats), compare_floats)
+        max_by(
+            self.r,
+            max_by(self.g, self.b, compare_floats),
+            compare_floats,
+        )
     }
 
     pub fn as_hsv(&self) -> (f32, f32, f32) {

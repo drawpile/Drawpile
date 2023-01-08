@@ -314,12 +314,12 @@ impl LayerStack {
     /// directions by the given amount. This is used to account for the
     /// grab handles drawn in the UI.
     pub fn get_annotation_at(&self, x: i32, y: i32, expand: i32) -> Option<&Annotation> {
-        for a in self.annotations.iter() {
-            if a.rect.expanded(expand).contains_point(x, y) {
-                return Some(a);
-            }
-        }
-        None
+        self.annotations.iter().find_map(|a| {
+            a.rect
+                .expanded(expand)
+                .contains_point(x, y)
+                .then(|| a.as_ref())
+        })
     }
 
     pub fn find_available_annotation_id(&self, for_user: UserID) -> AnnotationID {
@@ -358,7 +358,7 @@ impl LayerStack {
                     }
                 }
                 _ => {
-                    self.inner_flatten_tile(&mut destination, self.root.inner_ref(), i, j, opts);
+                    Self::inner_flatten_tile(&mut destination, self.root.inner_ref(), i, j, opts);
                 }
             }
         }
@@ -373,7 +373,6 @@ impl LayerStack {
     }
 
     fn inner_flatten_tile(
-        &self,
         destination: &mut TileData,
         root: &GroupLayer,
         i: u32,
@@ -397,7 +396,13 @@ impl LayerStack {
                         // descend into non-isolated groups.
                         // this allows related layer frames to be kept side by side,
                         // rather than interspersed along the layerstack root
-                        self.inner_flatten_tile(destination, layer.as_group().unwrap(), i, j, opts);
+                        Self::inner_flatten_tile(
+                            destination,
+                            layer.as_group().unwrap(),
+                            i,
+                            j,
+                            opts,
+                        );
                         (0.0, 0)
                     } else if opts.active_frame.contains(metadata.id) {
                         (1.0, 0)
@@ -455,7 +460,7 @@ impl LayerStack {
 
             Color::from_pixel15(tile.pixels[(ty * TILE_SIZE + tx) as usize])
         } else {
-            let r = (dia / 2).min(1) as i32;
+            let r = (dia / 2).min(1);
 
             let mut tmp = BitmapLayer::new(
                 0,
@@ -466,17 +471,12 @@ impl LayerStack {
 
             let opts = LayerViewOptions::default();
 
-            tmp.tile_rect_mut(&Rectangle::new(
-                x as i32 - r,
-                y as i32 - r,
-                dia as i32,
-                dia as i32,
-            ))
-            .for_each(|(i, j, t)| {
-                *t = Tile::Bitmap(Arc::new(self.flatten_tile(i as u32, j as u32, &opts)))
-            });
+            tmp.tile_rect_mut(&Rectangle::new(x - r, y - r, dia, dia))
+                .for_each(|(i, j, t)| {
+                    *t = Tile::Bitmap(Arc::new(self.flatten_tile(i as u32, j as u32, &opts)))
+                });
 
-            tmp.sample_color(x as i32, y as i32, dia)
+            tmp.sample_color(x, y, dia)
         }
     }
 
