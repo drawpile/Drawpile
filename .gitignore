@@ -15,7 +15,7 @@ example_*.png
 *.so
 
 # Hidden files
-.*
+.DS_Store
 
 # Python venv directories
 env/
