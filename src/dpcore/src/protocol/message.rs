@@ -13,7 +13,7 @@ use std::str::FromStr;
 pub static PROTOCOL_VERSION: &str = "dp:4.22.2";
 pub const UNDO_DEPTH: u32 = 30;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DisconnectMessage {
     pub reason: u8,
     pub message: String,
@@ -48,7 +48,7 @@ impl DisconnectMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct JoinMessage {
     pub flags: u8,
     pub name: String,
@@ -104,7 +104,7 @@ impl JoinMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ChatMessage {
     pub tflags: u8,
     pub oflags: u8,
@@ -156,7 +156,7 @@ impl ChatMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PrivateChatMessage {
     pub target: u8,
     pub oflags: u8,
@@ -200,7 +200,7 @@ impl PrivateChatMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LaserTrailMessage {
     pub color: u32,
     pub persistence: u8,
@@ -235,7 +235,7 @@ impl LaserTrailMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MovePointerMessage {
     pub x: i32,
     pub y: i32,
@@ -270,7 +270,7 @@ impl MovePointerMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerACLMessage {
     pub id: u16,
     pub flags: u8,
@@ -314,7 +314,7 @@ impl LayerACLMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CanvasResizeMessage {
     pub top: i32,
     pub right: i32,
@@ -364,7 +364,7 @@ impl CanvasResizeMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerCreateMessage {
     pub id: u16,
     pub source: u16,
@@ -430,7 +430,7 @@ impl LayerCreateMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerAttributesMessage {
     pub id: u16,
     pub sublayer: u8,
@@ -491,7 +491,7 @@ impl LayerAttributesMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerRetitleMessage {
     pub id: u16,
     pub title: String,
@@ -526,7 +526,7 @@ impl LayerRetitleMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerOrderMessage {
     pub root: u16,
     pub layers: Vec<u16>,
@@ -561,7 +561,7 @@ impl LayerOrderMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerDeleteMessage {
     pub id: u16,
     pub merge_to: u16,
@@ -596,7 +596,7 @@ impl LayerDeleteMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LayerVisibilityMessage {
     pub id: u16,
     pub visible: bool,
@@ -631,7 +631,7 @@ impl LayerVisibilityMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PutImageMessage {
     pub layer: u16,
     pub mode: u8,
@@ -699,7 +699,7 @@ impl PutImageMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FillRectMessage {
     pub layer: u16,
     pub mode: u8,
@@ -767,7 +767,7 @@ impl FillRectMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AnnotationCreateMessage {
     pub id: u16,
     pub x: i32,
@@ -817,7 +817,7 @@ impl AnnotationCreateMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AnnotationReshapeMessage {
     pub id: u16,
     pub x: i32,
@@ -867,7 +867,7 @@ impl AnnotationReshapeMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AnnotationEditMessage {
     pub id: u16,
     pub bg: u32,
@@ -928,7 +928,7 @@ impl AnnotationEditMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PutTileMessage {
     pub layer: u16,
     pub sublayer: u8,
@@ -996,7 +996,7 @@ impl PutTileMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct ClassicDab {
     pub x: i8,
     pub y: i8,
@@ -1005,7 +1005,7 @@ pub struct ClassicDab {
     pub opacity: u8,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DrawDabsClassicMessage {
     pub layer: u16,
     pub x: i32,
@@ -1112,7 +1112,7 @@ impl DrawDabsClassicMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PixelDab {
     pub x: i8,
     pub y: i8,
@@ -1120,7 +1120,7 @@ pub struct PixelDab {
     pub opacity: u8,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DrawDabsPixelMessage {
     pub layer: u16,
     pub x: i32,
@@ -1222,7 +1222,7 @@ impl DrawDabsPixelMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MyPaintDab {
     pub x: i8,
     pub y: i8,
@@ -1233,7 +1233,7 @@ pub struct MyPaintDab {
     pub aspect_ratio: u8,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DrawDabsMyPaintMessage {
     pub layer: u16,
     pub x: i32,
@@ -1350,7 +1350,7 @@ impl DrawDabsMyPaintMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MoveRectMessage {
     pub layer: u16,
     pub sx: i32,
@@ -1424,7 +1424,7 @@ impl MoveRectMessage {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, IntoPrimitive, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
 #[repr(u8)]
 pub enum MetadataInt {
     Dpix,
@@ -1433,7 +1433,7 @@ pub enum MetadataInt {
     UseTimeline,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SetMetadataIntMessage {
     pub field: u8,
     pub value: i32,
@@ -1468,7 +1468,7 @@ impl SetMetadataIntMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SetMetadataStrMessage {
     pub field: u8,
     pub value: String,
@@ -1503,7 +1503,7 @@ impl SetMetadataStrMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SetTimelineFrameMessage {
     pub frame: u16,
     pub insert: bool,
@@ -1547,7 +1547,7 @@ impl SetTimelineFrameMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UndoMessage {
     pub override_user: u8,
     pub redo: bool,
@@ -1585,7 +1585,7 @@ impl UndoMessage {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ControlMessage {
     /// Server command message
     ///
@@ -1615,7 +1615,7 @@ pub enum ControlMessage {
     Ping(u8, bool),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ServerMetaMessage {
     /// Inform the client of a new user
     ///
@@ -1690,7 +1690,7 @@ pub enum ServerMetaMessage {
     PrivateChat(u8, PrivateChatMessage),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ClientMetaMessage {
     /// Event interval record
     ///
@@ -1768,7 +1768,7 @@ pub enum ClientMetaMessage {
     Filtered(u8, Vec<u8>),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum CommandMessage {
     /// Undo demarcation point
     ///
@@ -2003,7 +2003,7 @@ pub enum CommandMessage {
     Undo(u8, UndoMessage),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Message {
     Control(ControlMessage),
     ServerMeta(ServerMetaMessage),

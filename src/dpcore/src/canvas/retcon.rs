@@ -65,7 +65,7 @@ pub struct LocalFork {
     drawing_in_progress: bool,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug)]
 pub enum RetconAction {
     /// Message was concurrent with the local fork: OK to apply
     Concurrent,
@@ -79,7 +79,7 @@ pub enum RetconAction {
     Rollback(u32),
 }
 
-#[derive(PartialEq)]
+#[derive(Eq, PartialEq)]
 enum AffectedArea {
     /// User attributes are always concurrent with the local user's operations
     UserAttrs,

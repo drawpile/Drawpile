@@ -25,7 +25,7 @@ pub const UNDO_DEPTH: u32 = {{ undo_depth }};
 
 {# THE STRUCT FIELD TYPE IS USED FOR DAB DATA ONLY (AT THE MOMENT) #}
 {% if message.fields[-1].subfields %}{% set sfield = message.fields[-1] %}
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct {{ sfield.struct_name }} {
     {% for f in sfield.subfields %}
     pub {{ f.name }}: {{ field_rust_type(f) }},
@@ -36,7 +36,7 @@ pub struct {{ sfield.struct_name }} {
 {# ENUM TYPE #}
 {% for f in message.fields %}
 {% if f.variants %}
-#[derive(Copy, Clone, Debug, PartialEq, IntoPrimitive, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
 #[repr(u8)]
 pub enum {{ f.enum_name }} {
 {% for v in f.variants %}{{ v }},{% endfor %}
@@ -44,7 +44,7 @@ pub enum {{ f.enum_name }} {
 {% endif %}
 {% endfor %}
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct {{ message.name }}Message {
     {% for f in message.fields %}
     pub {{ f.name }}: {{ field_rust_type(f) }},
@@ -160,7 +160,7 @@ impl {{ message.name }}Message {
 
 {% for message_type in message_types %}
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum {{ message_type }}Message {
     {% for message in messages %}{% if message.message_type == message_type %}
     {{ comment(message.comment) }}
@@ -178,7 +178,7 @@ pub enum {{ message_type }}Message {
 }
 {% endfor %}{# normal_message_types #}
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Message {
     {% for mt in message_types %}{{ mt }}({{ mt }}Message),{% endfor %}
 }

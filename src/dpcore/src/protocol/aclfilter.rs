@@ -10,7 +10,7 @@ use std::convert::TryFrom;
 pub type UserBits = [u8; 32];
 
 /// Feature access tiers
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, IntoPrimitive, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, IntoPrimitive, TryFromPrimitive)]
 #[repr(u8)]
 pub enum Tier {
     Operator,

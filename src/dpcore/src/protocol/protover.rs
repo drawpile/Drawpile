@@ -22,7 +22,7 @@
 
 use std::fmt;
 
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct ProtocolVersion {
     pub ns: String,
     pub server: i32,

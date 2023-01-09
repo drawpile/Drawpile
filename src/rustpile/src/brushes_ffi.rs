@@ -26,7 +26,7 @@ pub extern "C" fn brushengine_set_classicbrush(
     brush: &ClassicBrush,
     layer: u16,
 ) {
-    be.set_classicbrush(brush.clone());
+    be.set_classicbrush(*brush);
     be.set_layer(layer);
 }
 

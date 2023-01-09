@@ -40,7 +40,7 @@ pub enum ReadMessage {
     Eof,
 }
 
-#[derive(PartialEq)]
+#[derive(Eq, PartialEq)]
 pub enum Compatibility {
     /// Recording is either the same format or a known compatible version
     Compatible,

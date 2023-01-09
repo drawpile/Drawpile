@@ -30,7 +30,7 @@ use std::io;
 use std::io::Write;
 use std::path::Path;
 
-#[derive(Copy, Clone, PartialEq, Default, clap::ValueEnum)]
+#[derive(Copy, Clone, Eq, PartialEq, Default, clap::ValueEnum)]
 pub enum Format {
     #[default]
     Guess,

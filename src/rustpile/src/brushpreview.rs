@@ -260,7 +260,7 @@ impl BrushPreview {
             brush.smudge.1 > 0.0,
             brush.mode,
             |painter, optional_color| {
-                let mut cloned_brush = brush.clone();
+                let mut cloned_brush = *brush;
                 if let Some(color) = optional_color {
                     cloned_brush.color = color;
                 }
@@ -287,7 +287,7 @@ impl BrushPreview {
                 Blendmode::NormalAndEraser
             },
             |painter, optional_color| {
-                let mut cloned_brush = brush.clone();
+                let mut cloned_brush = *brush;
                 if let Some(color) = optional_color {
                     cloned_brush.color = color;
                 }

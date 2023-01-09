@@ -39,7 +39,7 @@ use bitvec::prelude::*;
 ///
 /// Note that the AoE can be `Nothing` even if some pixels were changed,
 /// if the changed layer is hidden.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum AoE {
     /// Canvas was resized.
     /// This typically should be interpreted the same way as Everything.
@@ -175,7 +175,7 @@ impl From<Rectangle> for AoE {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct TileMap {
     /// Bitmap of changed tiles
     pub tiles: BitVec,

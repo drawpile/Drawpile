@@ -23,7 +23,7 @@
 use num_enum::IntoPrimitive;
 use num_enum::TryFromPrimitive;
 
-#[derive(Copy, Clone, Debug, PartialEq, IntoPrimitive, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
 #[repr(u8)]
 pub enum Blendmode {
     Erase = 0,

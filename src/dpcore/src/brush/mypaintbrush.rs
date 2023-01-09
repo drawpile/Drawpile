@@ -22,7 +22,7 @@
 
 use crate::paint::Color;
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct ControlPoints {
     pub xvalues: [f32; 64],
@@ -30,7 +30,7 @@ pub struct ControlPoints {
     pub n: i32,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct MyPaintMapping {
     pub base_value: f32,
@@ -43,7 +43,7 @@ pub struct MyPaintMapping {
 // Settings are split off from the brush because they're huge and blow up the
 // stack if allocated there and then cloned a bunch. So instead we keep them
 // as separate, heap-allocated objects and only pass pointers to them around.
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct MyPaintSettings {
     // The 64 must also be hard-coded because of cbindgen. This one's referring
@@ -51,7 +51,7 @@ pub struct MyPaintSettings {
     pub mappings: [MyPaintMapping; 64usize],
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct MyPaintBrush {
     // Color is only stored as HSV in the brush, we track the RGB separately.

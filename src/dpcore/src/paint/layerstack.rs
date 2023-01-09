@@ -46,7 +46,7 @@ pub struct LayerStack {
 }
 
 /// Properties related to the whole document
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Copy, Eq, PartialEq)]
 #[repr(C)]
 pub struct DocumentMetadata {
     /// Horizontal resolution (not used by Drawpile)
@@ -74,7 +74,7 @@ impl Default for DocumentMetadata {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(Eq, PartialEq)]
 #[repr(C)]
 pub enum LayerViewMode {
     /// The normal rendering mode (all visible layers rendered)

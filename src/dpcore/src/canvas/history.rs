@@ -31,7 +31,7 @@ struct HistoryEntry {
     seq_num: u32,
 }
 
-#[derive(PartialEq)]
+#[derive(Eq, PartialEq)]
 enum UndoState {
     Done,
     Undone,

@@ -313,7 +313,7 @@ impl<W: Write + Seek> IndexBuilder<W> {
 
         // Write metadata
         if self.last_metadata.0 == 0 || self.last_metadata.1 != *ls.metadata() {
-            self.last_metadata = (self.write_metadata(ls.metadata())?, ls.metadata().clone());
+            self.last_metadata = (self.write_metadata(ls.metadata())?, *ls.metadata());
             stats.metadata_changed = true;
         }
         let metadata_offset = self.last_metadata.0;

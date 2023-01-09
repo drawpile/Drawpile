@@ -48,7 +48,7 @@ lazy_static! {
     };
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct TileData {
     /// The pixel content
     pub pixels: [Pixel15; TILE_LENGTH],

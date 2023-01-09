@@ -33,7 +33,7 @@ use std::fmt;
 ///
 /// Non-isolated groups can be used to create logical groups of subframes,
 /// such as individual character animations.
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Timeline {
     /// The timeline frames
     ///
@@ -48,7 +48,7 @@ pub struct Timeline {
 ///
 /// Unused indices should be zerod. No more layers should be listed
 /// after the first zero.
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, Eq, PartialEq)]
 #[repr(transparent)]
 pub struct Frame(pub [LayerID; 12]);
 

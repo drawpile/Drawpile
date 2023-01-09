@@ -37,7 +37,7 @@ pub enum ClassicBrushShape {
 }
 
 /// The parameters of a classic soft and pixel Drawpile brushes.
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct ClassicBrush {
     /// The diameter of the brush
