@@ -303,7 +303,11 @@ void KisAngleGauge::keyPressEvent(QKeyEvent *e)
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void KisAngleGauge::enterEvent(QEnterEvent *e)
+#else
 void KisAngleGauge::enterEvent(QEvent *e)
+#endif
 {
     m_d->isMouseHover = true;
     update();

@@ -227,7 +227,11 @@ quint32 parseColor(const QString &color)
 {
 	if((color.length() == 7 || color.length() == 9) && color.at(0) == '#') {
 		bool ok;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		quint32 c = QStringView(color).sliced(1).toUInt(&ok, 16);
+#else
 		quint32 c = color.midRef(1).toUInt(&ok, 16);
+#endif
 		if(ok)
 			return color.length() == 7 ? 0xff000000 | c : c;
 	}
@@ -250,9 +254,13 @@ uint16_t parseIdString16(const QString &idstr, bool *allOk)
 {
 	bool ok;
 	int id;
-	if(idstr.startsWith("0x"))
+	if(idstr.startsWith("0x")) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		id = QStringView(idstr).sliced(2).toInt(&ok, 16);
+#else
 		id = idstr.midRef(2).toInt(&ok, 16);
-	else
+#endif
+	} else
 		id = idstr.toInt(&ok);
 
 	if(ok && id>=0 && id<=0xffff) {

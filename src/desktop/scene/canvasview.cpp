@@ -391,7 +391,11 @@ void CanvasView::setEnableViewportEntryHack(bool enabled)
 	m_enableViewportEntryHack = enabled;
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void CanvasView::enterEvent(QEnterEvent *event)
+#else
 void CanvasView::enterEvent(QEvent *event)
+#endif
 {
 	QGraphicsView::enterEvent(event);
 	m_showoutline = true;

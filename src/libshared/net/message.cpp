@@ -24,7 +24,7 @@
 
 #include <QObject>
 #include <QtEndian>
-#include <QRegExp>
+#include <QRegularExpression>
 
 namespace protocol {
 
@@ -135,7 +135,7 @@ QString Message::toString() const
 	QString str = QStringLiteral("%1 %2").arg(contextId()).arg(messageName());
 
 	// Add non-multiline keyword args
-	const QRegExp space("\\s");
+	const QRegularExpression space("\\s");
 	bool hasMultiline = false;
 	KwargsIterator i(kw);
 	while(i.hasNext()) {

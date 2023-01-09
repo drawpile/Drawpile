@@ -96,7 +96,7 @@ bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata)
 	QByteArray metadatabuf = QJsonDocument(md).toJson(QJsonDocument::Compact);
 
 	if(metadatabuf.length() > 0xffff) {
-		qWarning("Recording metadata block too long (%d)", metadatabuf.length());
+		qWarning("Recording metadata block too long (%lld)", static_cast<long long>(metadatabuf.length()));
 		return false;
 	}
 

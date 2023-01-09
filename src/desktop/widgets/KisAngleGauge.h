@@ -115,7 +115,11 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *e) override;
     void keyPressEvent(QKeyEvent *e) override;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    void enterEvent(QEnterEvent *e) override;
+#else
     void enterEvent(QEvent *e) override;
+#endif
     void leaveEvent(QEvent *e) override;
 
 private:

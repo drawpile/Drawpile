@@ -22,6 +22,8 @@
 #include "utils/icon.h"
 #include "tools/tool.h"
 
+#include <QObject>
+
 class QComboBox;
 
 namespace widgets { class BrushPreview; }

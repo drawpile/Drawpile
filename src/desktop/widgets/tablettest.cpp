@@ -84,22 +84,31 @@ void TabletTester::mouseReleaseEvent(QMouseEvent *e)
 	m_mouseDown = false;
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define DEVICE_TYPE QInputDevice::DeviceType
+#else
+#define DEVICE_TYPE QTabletEvent
+#endif
+
 void TabletTester::tabletEvent(QTabletEvent *e)
 {
 	e->accept();
 
 	QString msg;
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-	switch(e->device()) {
-		case QTabletEvent::Stylus: msg = "Stylus"; break;
-		default: msg = QString("Device(%1)").arg(e->device()); break;
-	}
+	auto device = e->device();
 #else
-	switch(e->deviceType()) {
-		case QTabletEvent::Stylus: msg = "Stylus"; break;
-		default: msg = QString("Device(%1)").arg(e->deviceType()); break;
-	}
+	auto device = e->deviceType();
 #endif
+
+	switch(device) {
+		case DEVICE_TYPE::Stylus: msg = "Stylus"; break;
+		default: {
+			msg = QString("Device(%1)").arg(int(device));
+			break;
+		}
+	}
 
 	switch(e->type()) {
 		case QEvent::TabletMove:
@@ -138,6 +147,8 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 
 	emit eventReport(msg);
 }
+
+#undef DEVICE_TYPE
 
 }
 

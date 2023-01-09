@@ -40,7 +40,11 @@ public:
 	QSize sizeHint() const override;
 	QSize minimumSizeHint() const override { return sizeHint(); }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	void enterEvent(QEnterEvent *event) override;
+#else
 	void enterEvent(QEvent *event) override;
+#endif
 	void leaveEvent(QEvent *event) override;
 	void paintEvent(QPaintEvent *event) override;
 };
@@ -65,7 +69,11 @@ QSize TitleWidget::Button::sizeHint() const
 	return QSize(size, size);
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void TitleWidget::Button::enterEvent(QEnterEvent *event)
+#else
 void TitleWidget::Button::enterEvent(QEvent *event)
+#endif
 {
 	if (isEnabled()) update();
 	QAbstractButton::enterEvent(event);

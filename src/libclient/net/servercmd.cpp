@@ -76,9 +76,9 @@ Envelope ServerCommand::toEnvelope() const
 	// TODO we should have a message type for splitting up overlong messages
 	if(payload.length() > 0xffff - Envelope::HEADER_LEN) {
 		qWarning(
-			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%d bytes)",
+			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%lld bytes)",
 			qPrintable(cmd),
-			payload.length()
+			static_cast<long long>(payload.length())
 		);
 		return Envelope();
 	}

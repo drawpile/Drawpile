@@ -138,7 +138,7 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 	EnvelopeBuilder eb;
 	rustpile::write_disconnect(eb, 0, uint8_t(reason), reinterpret_cast<const uint16_t*>(message.constData()), message.length());
 
-	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%d messages) is empty.", int(reason), m_outbox.size());
+	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%lld messages) is empty.", int(reason), static_cast<long long>(m_outbox.size()));
 	send(eb.toEnvelope());
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
