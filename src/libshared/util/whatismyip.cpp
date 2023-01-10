@@ -47,8 +47,8 @@ bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
 {
 	// Sort an IP address list so public addresses are at the beginning of the list
 	uchar adr1[17], adr2[17];
-	adr1[0] = a1.isLoopback() ? 2 : 0 | !isPublicAddress(a1) ? 1 : 0;
-	adr2[0] = a2.isLoopback() ? 2 : 0 | !isPublicAddress(a2) ? 1 : 0;
+	adr1[0] = (a1.isLoopback() ? 2 : 0) | (!isPublicAddress(a1) ? 1 : 0);
+	adr2[0] = (a2.isLoopback() ? 2 : 0) | (!isPublicAddress(a2) ? 1 : 0);
 
 	Q_IPV6ADDR ip6;
 	ip6 = a1.toIPv6Address();
