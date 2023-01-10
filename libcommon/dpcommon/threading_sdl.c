@@ -193,6 +193,11 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 }
 
 
+unsigned long long DP_thread_current_id(void)
+{
+    return SDL_ThreadID();
+}
+
 int DP_thread_cpu_count(void)
 {
     return DP_max_int(1, SDL_GetCPUCount());

@@ -22,6 +22,14 @@
 extern "C" {
 #include "common.h"
 #include "threading.h"
+// Qt doesn't have a way to get a numeric thread id, only a handle.
+#if defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__)
+#    include <pthread.h>
+#elif defined(_WIN32)
+#    include <windows.h>
+#else
+#    error "unknown platform"
+#endif
 }
 #include <QByteArray>
 #include <QMutex>
@@ -124,6 +132,18 @@ extern "C" DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
     }
 }
 
+
+extern "C" unsigned long long DP_thread_current_id(void)
+{
+    // Qt doesn't have a way to get a numeric thread id, only a handle.
+#if defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__)
+    return pthread_self();
+#elif defined(_WIN32)
+    return GetCurrentThreadId();
+#else
+#    error "unknown platform"
+#endif
+}
 
 extern "C" int DP_thread_cpu_count(void)
 {

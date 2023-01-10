@@ -133,6 +133,8 @@ bool DP_semaphore_must_try_wait_at(const char *file, int line,
                                   (SEM))
 
 
+unsigned long long DP_thread_current_id(void);
+
 int DP_thread_cpu_count(void);
 
 DP_Thread *DP_thread_new(DP_ThreadFn fn, void *data);

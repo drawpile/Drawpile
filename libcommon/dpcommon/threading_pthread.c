@@ -234,6 +234,11 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 }
 
 
+unsigned long long DP_thread_current_id(void)
+{
+    return pthread_self();
+}
+
 int DP_thread_cpu_count(void)
 {
     static int cpus;
