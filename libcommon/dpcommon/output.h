@@ -67,6 +67,11 @@ DP_Output *DP_file_output_new(FILE *fp, bool close);
 DP_Output *DP_file_output_new_from_path(const char *path);
 
 
+DP_Output *DP_gzip_output_new(void *gf, bool close);
+
+DP_Output *DP_gzip_output_new_from_path(const char *path);
+
+
 DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
                              void ***out_buffer, size_t **out_size);
 

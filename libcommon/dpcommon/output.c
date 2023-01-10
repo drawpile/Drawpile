@@ -24,6 +24,7 @@
 #include "common.h"
 #include "conversions.h"
 #include <errno.h>
+#include <zlib.h>
 
 #define DP_MEM_OUTPUT_MIN_CAPACITY 32
 
@@ -240,6 +241,119 @@ DP_Output *DP_file_output_new_from_path(const char *path)
     FILE *fp = fopen(path, "wb");
     if (fp) {
         return DP_file_output_new(fp, true);
+    }
+    else {
+        DP_error_set("Can't open '%s': %s", path, strerror(errno));
+        return NULL;
+    }
+}
+
+
+typedef struct DP_GzipOutputState {
+    gzFile gf;
+    bool close;
+} DP_GzipOutputState;
+
+static const char *gzip_output_error(gzFile gf)
+{
+    int errnum;
+    const char *errtext = gzerror(gf, &errnum);
+    return errnum == Z_ERRNO ? strerror(errno) : errtext;
+}
+
+static size_t gzip_output_write(void *internal, const void *buffer, size_t size)
+{
+    DP_GzipOutputState *state = internal;
+    gzFile gf = state->gf;
+    size_t written = gzfwrite(buffer, 1, size, gf);
+    if (written != size) {
+        DP_error_set("GZip output wrote %zu instead of expected %zu bytes: %s",
+                     size, written, gzip_output_error(gf));
+    }
+    return written;
+}
+
+static bool gzip_output_flush(void *internal)
+{
+    DP_GzipOutputState *state = internal;
+    gzFile gf = state->gf;
+    if (gzflush(gf, Z_PARTIAL_FLUSH) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("GZip output flush error: %s", gzip_output_error(gf));
+        return false;
+    }
+}
+
+static size_t gzip_output_tell(void *internal, bool *out_error)
+{
+    DP_GzipOutputState *state = internal;
+    gzFile gf = state->gf;
+    z_off_t offset = gztell(gf);
+    if (offset != -1) {
+        return (size_t)offset;
+    }
+    else {
+        DP_error_set("GZip output tell error: %s", gzip_output_error(gf));
+        *out_error = true;
+        return 0;
+    }
+}
+
+static bool gzip_output_seek(void *internal, size_t offset)
+{
+    DP_GzipOutputState *state = internal;
+    gzFile gf = state->gf;
+    if (gzseek(gf, (z_off_t)offset, SEEK_SET) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("GZip output could not seek to %zu: %s", offset,
+                     gzip_output_error(gf));
+        return false;
+    }
+}
+
+static bool gzip_output_dispose(void *internal)
+{
+    DP_GzipOutputState *state = internal;
+    gzFile gf = state->gf;
+    if (state->close) {
+        int errnum = gzclose(gf);
+        if (errnum != Z_OK) {
+            DP_error_set("GZip output close error: %s", zError(errnum));
+            return false;
+        }
+    }
+    return true;
+}
+
+static const DP_OutputMethods gzip_output_methods = {
+    gzip_output_write, NULL,
+    gzip_output_flush, gzip_output_tell,
+    gzip_output_seek,  gzip_output_dispose,
+};
+
+static const DP_OutputMethods *gzip_output_init(void *internal, void *arg)
+{
+    *((DP_GzipOutputState *)internal) = *((DP_GzipOutputState *)arg);
+    return &gzip_output_methods;
+}
+
+DP_Output *DP_gzip_output_new(void *gf, bool close)
+{
+    DP_ASSERT(gf);
+    DP_GzipOutputState state = {gf, close};
+    return DP_output_new(gzip_output_init, &state, sizeof(state));
+}
+
+DP_Output *DP_gzip_output_new_from_path(const char *path)
+{
+    DP_ASSERT(path);
+    gzFile gf = gzopen(path, "wb");
+    if (gf) {
+        return DP_gzip_output_new(gf, true);
     }
     else {
         DP_error_set("Can't open '%s': %s", path, strerror(errno));

@@ -46,6 +46,7 @@ if(DRAWDANCE_EMSCRIPTEN)
         message(SEND_ERROR "Emscripten supports only THREAD_IMPL PTHREAD")
     endif()
 else()
+    find_package(ZLIB MODULE REQUIRED)
     find_package(PNG MODULE REQUIRED)
     find_package(JPEG MODULE REQUIRED)
 
