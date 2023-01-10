@@ -132,6 +132,7 @@ public slots:
 
 private slots:
 	void toggleRecording();
+	void toggleProfile();
 
 	void exportGifAnimation();
 	void exportAnimationFrames();

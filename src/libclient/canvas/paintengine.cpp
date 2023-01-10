@@ -29,11 +29,14 @@ extern "C" {
 #include "drawdance/layercontent.h"
 #include "drawdance/layerpropslist.h"
 #include "drawdance/message.h"
+#include "drawdance/perf.h"
 
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
 #include <QtEndian>
+
+#define DP_PERF_CONTEXT "paint_engine"
 
 namespace canvas {
 
@@ -83,6 +86,7 @@ void PaintEngine::reset(const drawdance::CanvasState &canvasState, DP_Player *pl
 
 void PaintEngine::timerEvent(QTimerEvent *)
 {
+	DP_PERF_SCOPE("tick");
 	m_changedTileBounds = QRect{};
 	DP_paint_engine_tick(
 		m_paintEngine.get(), &PaintEngine::onCatchup,

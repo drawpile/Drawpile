@@ -47,11 +47,13 @@ enum FileFormatOption {
 	AllFiles = 0x04,
 	Save = 0x08,
 	QtImagesOnly = 0x10,  // return images supported by Qt, rather than Rustpile
+   Profile = 0x20,
 
 	OpenImages = Images | AllFiles,
 	OpenEverything = Images | Recordings | AllFiles,
 	SaveImages = Images | AllFiles | Save,
-	SaveRecordings = Recordings | AllFiles | Save
+	SaveRecordings = Recordings | AllFiles | Save,
+   SaveProfile = Profile | Save,
 };
 Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)

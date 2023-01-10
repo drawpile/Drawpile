@@ -108,6 +108,7 @@
 
 #include "export/animationsaverrunnable.h"
 #include "../libshared/record/reader.h"
+#include "drawdance/perf.h"
 
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
@@ -1219,14 +1220,17 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 }
 
-static QString withGifSuffix(QString path)
+static QString withSuffix(QString path, const QString &wantedSuffix)
 {
 	if(!path.isEmpty()) {
 		QFileInfo info{path};
 		QString suffix = info.suffix();
-		if(suffix.compare("gif", Qt::CaseInsensitive) != 0) {
+		if(suffix.compare(wantedSuffix, Qt::CaseInsensitive) != 0) {
 			path.chop(suffix.length());
-			path.append(path.endsWith(".") ? "gif" : ".gif");
+			if(!path.endsWith(".")) {
+				path.append(".");
+			}
+			path.append(wantedSuffix);
 		}
 	}
 	return path;
@@ -1237,11 +1241,11 @@ void MainWindow::exportGifAnimation()
 	QString path = QFileDialog::getSaveFileName(
 		this,
 		tr("Export Animated GIF"),
-		withGifSuffix(getLastPath()),
+		withSuffix(getLastPath(), "gif"),
 		"GIF (*.gif)"
 	);
 
-	exportAnimation(withGifSuffix(path), DP_save_animation_gif);
+	exportAnimation(withSuffix(path, "gif"), DP_save_animation_gif);
 }
 
 void MainWindow::exportAnimationFrames()
@@ -1354,6 +1358,31 @@ void MainWindow::toggleRecording()
 		default:
 			showErrorMessageWithDetails(tr("Unknown error."), DP_error());
 			break;
+		}
+	}
+}
+
+void MainWindow::toggleProfile()
+{
+	QAction *profileAction = getAction("profile");
+	if(drawdance::Perf::isOpen()) {
+		if(!drawdance::Perf::close()) {
+			showErrorMessageWithDetails(tr("Error closing profile."), DP_error());
+		}
+		profileAction->setText(tr("Profile..."));
+	} else {
+		QString path = QFileDialog::getSaveFileName(
+			this,
+			tr("Profile"),
+			withSuffix(getLastPath(), "dpperf"),
+			utils::fileFormatFilter(utils::FileFormatOption::SaveProfile)
+		);
+		if(!path.isEmpty()) {
+			if(drawdance::Perf::open(withSuffix(path, "dpperf"))) {
+				profileAction->setText(tr("Stop Profile"));
+			} else {
+				showErrorMessageWithDetails(tr("Error opening profile."), DP_error());
+			}
 		}
 	}
 }
@@ -2345,6 +2374,7 @@ void MainWindow::setupActions()
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
+	QAction *profile = makeAction("profile", tr("Profile..."));
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
 #ifdef Q_OS_MAC
@@ -2370,6 +2400,7 @@ void MainWindow::setupActions()
 	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
+	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
@@ -2397,6 +2428,7 @@ void MainWindow::setupActions()
 	exportMenu->addAction(exportGifAnimation);
 	exportMenu->addAction(exportAnimationFrames);
 	filemenu->addAction(record);
+	filemenu->addAction(profile);
 	filemenu->addSeparator();
 
 	filemenu->addAction(quit);

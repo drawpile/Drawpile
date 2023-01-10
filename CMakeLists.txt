@@ -37,7 +37,9 @@ if(TESTS)
 endif()
 
 function(set_drawpile_target_properties target)
-	target_compile_definitions("${target}" PRIVATE "HAVE_CONFIG_H")
+	target_compile_definitions("${target}" PRIVATE
+		"DP_PERF_REALM=${target}"
+		"HAVE_CONFIG_H")
 	if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 		target_compile_options("${target}" PRIVATE "-pedantic" "-Wall" "-Wextra")
 	endif()

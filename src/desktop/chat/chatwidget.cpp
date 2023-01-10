@@ -26,6 +26,7 @@
 
 #include "canvas/userlist.h"
 #include "drawdance/message.h"
+#include "drawdance/perf.h"
 
 #include <QResizeEvent>
 #include <QTextBrowser>
@@ -40,6 +41,8 @@
 #include <QSettings>
 
 #include <memory>
+
+#define DP_PERF_CONTEXT "chat_widget"
 
 namespace widgets {
 
@@ -644,6 +647,7 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 
 void ChatWidget::sendMessage(const QString &chatMessage)
 {
+	DP_PERF_SCOPE("send_message");
 	uint8_t tflags = d->preserveChat ? 0 : DP_MSG_CHAT_TFLAGS_BYPASS;
 	uint8_t oflags = 0;
 	QString effectiveMessage = chatMessage;

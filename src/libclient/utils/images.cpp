@@ -160,6 +160,14 @@ QString fileFormatFilter(FileFormatOptions formats)
 		}
 	}
 
+	if(formats.testFlag(FileFormatOption::Profile)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			filter << QGuiApplication::tr("Performance Profile (%1)").arg("*.dpperf");
+		} else {
+			// Can't read performance profiles.
+		}
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

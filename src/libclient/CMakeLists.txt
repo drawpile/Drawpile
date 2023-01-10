@@ -23,6 +23,7 @@ set(libclient_sources
 	drawdance/documentmetadata.cpp
 	drawdance/frame.cpp
 	drawdance/image.cpp
+	drawdance/perf.cpp
 	drawdance/layercontent.cpp
 	drawdance/layergroup.cpp
 	drawdance/layerlist.cpp
