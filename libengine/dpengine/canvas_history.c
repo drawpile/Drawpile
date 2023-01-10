@@ -25,6 +25,7 @@
 #include "recorder.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/message.h>
@@ -34,6 +35,8 @@
 #    include <dpcommon/output.h>
 #    include <time.h>
 #endif
+
+#define DP_PERF_CONTEXT "canvas_history"
 
 
 #define INITIAL_CAPACITY              1024
@@ -1289,11 +1292,16 @@ bool DP_canvas_history_handle(DP_CanvasHistory *ch, DP_DrawContext *dc,
                      : DUMP_TYPE_REMOTE_MESSAGE);
 
     DP_MessageType type = DP_message_type(msg);
+    DP_PERF_BEGIN_DETAIL(fn, "handle", "type=%d,local_drawing=%d", (int)type,
+                         local_drawing_in_progress);
+
     bool ok = type == DP_MSG_INTERNAL
                 ? handle_internal(ch, DP_msg_internal_cast(msg))
                 : handle_remote_command(ch, dc, msg, type,
                                         local_drawing_in_progress);
     validate_history(ch);
+
+    DP_PERF_END(fn);
     return ok;
 }
 
@@ -1308,16 +1316,20 @@ bool DP_canvas_history_handle_local(DP_CanvasHistory *ch, DP_DrawContext *dc,
                   DP_message_context_id(msg));
     dump_message(ch, msg, DUMP_TYPE_LOCAL_MESSAGE);
 
+    DP_MessageType type = DP_message_type(msg);
+    DP_PERF_BEGIN_DETAIL(fn, "handle_local", "type=%d", (int)type);
+
     if (!have_local_fork(ch)) {
         set_fork_start(ch);
         make_save_point(ch, find_save_point_index(ch), false);
     }
     push_fork_entry_inc(ch, msg);
 
-    DP_MessageType type = DP_message_type(msg);
     bool ok = type == DP_MSG_UNDO || type == DP_MSG_UNDO_POINT
            || handle_drawing_command(ch, dc, msg);
     validate_history(ch);
+
+    DP_PERF_END(fn);
     return ok;
 }
 
@@ -1336,6 +1348,8 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
                   local_drawing_in_progress
                       ? DUMP_TYPE_REMOTE_MULTIDAB_LOCAL_DRAWING_IN_PROGRESS
                       : DUMP_TYPE_REMOTE_MULTIDAB);
+    DP_PERF_BEGIN_DETAIL(fn, "handle_multidab", "count=%d,local_drawing=%d",
+                         count, local_drawing_in_progress);
 
     int offset = 0;
     for (int i = 0; i < count; ++i) {
@@ -1374,6 +1388,8 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
             DP_warn("Error handling remote multidab: %s", DP_error());
         }
     }
+
+    DP_PERF_END(fn);
 }
 
 void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
@@ -1384,6 +1400,7 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
     DP_ASSERT(count > 0);
     DP_ASSERT(msgs);
     dump_multidab(ch, count, msgs, DUMP_TYPE_LOCAL_MULTIDAB);
+    DP_PERF_BEGIN_DETAIL(fn, "handle_local_multidab", "count=%d", count);
 
     if (!have_local_fork(ch)) {
         set_fork_start(ch);
@@ -1404,6 +1421,7 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
     }
 
     validate_history(ch);
+    DP_PERF_END(fn);
 }
 
 

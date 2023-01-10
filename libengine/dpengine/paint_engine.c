@@ -40,6 +40,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/output.h>
+#include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpcommon/vector.h>
@@ -50,6 +51,8 @@
 #include <dpmsg/message_queue.h>
 #include <dpmsg/msg_internal.h>
 #include <limits.h>
+
+#define DP_PERF_CONTEXT "paint_engine"
 
 
 #define INITIAL_QUEUE_CAPACITY 64
@@ -1259,6 +1262,7 @@ int DP_paint_engine_handle_inc(
 {
     DP_ASSERT(pe);
     DP_ASSERT(msgs);
+    DP_PERF_BEGIN_DETAIL(fn, "handle", "count=%d,local=%d", count, local);
 
     bool (*should_push)(DP_PaintEngine *, DP_Message *, bool) =
         local ? should_push_message_local : should_push_message_remote;
@@ -1273,9 +1277,11 @@ int DP_paint_engine_handle_inc(
     int pushed = 0;
     for (int i = 0; i < count; ++i) {
         if (should_push(pe, msgs[i], override_acls)) {
+            DP_PERF_BEGIN(push, "handle:push");
             pushed =
                 push_messages(pe, local ? &pe->local_queue : &pe->remote_queue,
                               override_acls, count - i, msgs + i, should_push);
+            DP_PERF_END(push);
             break;
         }
     }
@@ -1308,6 +1314,7 @@ int DP_paint_engine_handle_inc(
         default_layer_set(user, meta_buffer->default_layer);
     }
 
+    DP_PERF_END(fn);
     return pushed;
 }
 
@@ -1316,10 +1323,13 @@ static DP_CanvasState *apply_preview(DP_PaintEngine *pe, DP_CanvasState *cs)
 {
     DP_PaintEnginePreview *preview = pe->preview;
     if (preview) {
-        return preview->render(
+        DP_PERF_BEGIN(preview, "tick:changes:preview");
+        DP_CanvasState *next_cs = preview->render(
             preview, cs, pe->preview_dc,
             preview->initial_offset_x - DP_canvas_state_offset_x(cs),
             preview->initial_offset_y - DP_canvas_state_offset_y(cs));
+        DP_PERF_END(preview);
+        return next_cs;
     }
     else {
         return DP_canvas_state_incref(cs);
@@ -1407,6 +1417,7 @@ static DP_CanvasState *apply_inspect(DP_PaintEngine *pe, DP_CanvasState *cs)
         return cs;
     }
     else {
+        DP_PERF_BEGIN(inspect, "tick:changes:inspect");
         DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
         DP_DrawContext *dc = pe->preview_dc;
         DP_draw_context_layer_indexes_clear(dc);
@@ -1415,6 +1426,7 @@ static DP_CanvasState *apply_inspect(DP_PaintEngine *pe, DP_CanvasState *cs)
         apply_inspect_recursive(tcs, dc, context_id, tile_counts.x,
                                 tile_counts.y,
                                 DP_canvas_state_layers_noinc(cs));
+        DP_PERF_END(inspect);
         return (DP_CanvasState *)tcs;
     }
 }
@@ -1535,6 +1547,7 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         }
     }
     else {
+        DP_PERF_BEGIN(local, "tick:changes:local");
         if (vm == DP_VIEW_MODE_FRAME && tl != prev_tl) {
             // We're currently viewing the canvas in single-frame mode and the
             // timeline has been manipulated just now. The diff won't pick up
@@ -1547,6 +1560,7 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         DP_timeline_decref_nullable(prev_tl);
         pe->local_view.prev_lpl = DP_layer_props_list_incref(lpl);
         pe->local_view.prev_tl = DP_timeline_incref_nullable(tl);
+        DP_PERF_END(local);
         return set_local_layer_props(pe, cs);
     }
 }
@@ -1617,6 +1631,7 @@ void DP_paint_engine_tick(
     DP_ASSERT(resized);
     DP_ASSERT(tile_changed);
     DP_ASSERT(layer_props_changed);
+    DP_PERF_BEGIN(fn, "tick");
 
     int progress = DP_atomic_xch(&pe->catchup, -1);
     if (progress != -1) {
@@ -1655,6 +1670,7 @@ void DP_paint_engine_tick(
     bool local_view_changed = !pe->local_view.prev_lpl;
 
     if (next_history_cs || next_preview || local_view_changed) {
+        DP_PERF_BEGIN(changes, "tick:changes");
         // Previews, hidden layers etc. are local changes, so we have to apply
         // them on top of the canvas state we got out of the history.
         DP_CanvasState *prev_view_cs = pe->view_cs;
@@ -1666,7 +1682,10 @@ void DP_paint_engine_tick(
                      document_metadata_changed, timeline_changed, cursor_moved,
                      user);
         DP_canvas_state_decref(prev_view_cs);
+        DP_PERF_END(changes);
     }
+
+    DP_PERF_END(fn);
 }
 
 void DP_paint_engine_prepare_render(DP_PaintEngine *pe,
@@ -1713,11 +1732,13 @@ void DP_paint_engine_render_everything(DP_PaintEngine *pe,
 {
     DP_ASSERT(pe);
     DP_ASSERT(render_tile);
+    DP_PERF_BEGIN(fn, "render:everything");
     struct DP_PaintEngineRenderParams params = {
         pe, DP_tile_count_round(DP_canvas_state_width(pe->view_cs)),
         render_tile, user};
     DP_canvas_diff_each_pos_reset(pe->diff, render_pos, &params);
     wait_for_render(pe);
+    DP_PERF_END(fn);
 }
 
 void DP_paint_engine_render_tile_bounds(DP_PaintEngine *pe, int tile_left,
@@ -1728,6 +1749,7 @@ void DP_paint_engine_render_tile_bounds(DP_PaintEngine *pe, int tile_left,
 {
     DP_ASSERT(pe);
     DP_ASSERT(render_tile);
+    DP_PERF_BEGIN(fn, "render:tile_bounds");
     struct DP_PaintEngineRenderParams params = {
         pe, DP_tile_count_round(DP_canvas_state_width(pe->view_cs)),
         render_tile, user};
@@ -1735,6 +1757,7 @@ void DP_paint_engine_render_tile_bounds(DP_PaintEngine *pe, int tile_left,
                                               tile_right, tile_bottom,
                                               render_pos, &params);
     wait_for_render(pe);
+    DP_PERF_END(fn);
 }
 
 

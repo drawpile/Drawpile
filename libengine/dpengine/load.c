@@ -40,12 +40,15 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
+#include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
 #include <ctype.h>
+
+#define DP_PERF_CONTEXT "load"
 
 
 #define DRAWPILE_NAMESPACE "http://drawpile.net/"
@@ -1056,15 +1059,10 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 }
 
 
-DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
-                        const char *flat_image_layer_title,
-                        DP_LoadResult *out_result)
+static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
+                            const char *flat_image_layer_title,
+                            DP_LoadResult *out_result)
 {
-    if (!path) {
-        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
-        return NULL;
-    }
-
     const char *dot = strrchr(path, '.');
     if (DP_str_equal_lowercase(dot, ".ora")) {
         return load_ora(dc, path, out_result);
@@ -1083,12 +1081,33 @@ DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
     return cs;
 }
 
-
-DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
+DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
+                        const char *flat_image_layer_title,
+                        DP_LoadResult *out_result)
 {
-    if (!path) {
+    if (path) {
+        DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
+        DP_CanvasState *cs = load(dc, path, flat_image_layer_title, out_result);
+        DP_PERF_END(fn);
+        return cs;
+    }
+    else {
         assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
         return NULL;
     }
-    return DP_player_new(path, out_result);
+}
+
+
+DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
+{
+    if (path) {
+        DP_PERF_BEGIN_DETAIL(fn, "recording", "path=%s", path);
+        DP_Player *player = DP_player_new(path, out_result);
+        DP_PERF_END(fn);
+        return player;
+    }
+    else {
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
+        return NULL;
+    }
 }

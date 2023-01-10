@@ -43,9 +43,12 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
+#include <dpcommon/perf.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <limits.h>
+
+#define DP_PERF_CONTEXT "canvas_state"
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -891,14 +894,9 @@ handle_remove_timeline_frame(DP_CanvasState *cs,
         cs, DP_msg_remove_timeline_frame_frame(mrtf));
 }
 
-DP_CanvasStateChange DP_canvas_state_handle(DP_CanvasState *cs,
-                                            DP_DrawContext *dc, DP_Message *msg)
+static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   DP_Message *msg, DP_MessageType type)
 {
-    DP_ASSERT(cs);
-    DP_ASSERT(msg);
-    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    DP_ASSERT(!cs->transient);
-    DP_MessageType type = DP_message_type(msg);
     switch (type) {
     case DP_MSG_CANVAS_RESIZE:
         return DP_canvas_state_change_of(handle_canvas_resize(
@@ -978,6 +976,20 @@ DP_CanvasStateChange DP_canvas_state_handle(DP_CanvasState *cs,
     }
 }
 
+DP_CanvasStateChange DP_canvas_state_handle(DP_CanvasState *cs,
+                                            DP_DrawContext *dc, DP_Message *msg)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    DP_ASSERT(!cs->transient);
+    DP_MessageType type = DP_message_type(msg);
+    DP_PERF_BEGIN_DETAIL(fn, "handle", "type=%d", (int)type);
+    DP_CanvasStateChange csc = handle(cs, dc, msg, type);
+    DP_PERF_END(fn);
+    return csc;
+}
+
 DP_CanvasStateChange DP_canvas_state_handle_multidab(DP_CanvasState *cs,
                                                      DP_DrawContext *dc,
                                                      int count,
@@ -986,7 +998,10 @@ DP_CanvasStateChange DP_canvas_state_handle_multidab(DP_CanvasState *cs,
     DP_ASSERT(cs);
     DP_ASSERT(dc);
     DP_ASSERT(count <= 0 || msgs);
-    return handle_draw_dabs(cs, dc, count, msgs);
+    DP_PERF_BEGIN_DETAIL(fn, "handle_multidab", "count=%d", (int)count);
+    DP_CanvasStateChange csc = handle_draw_dabs(cs, dc, count, msgs);
+    DP_PERF_END(fn);
+    return csc;
 }
 
 int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
@@ -1261,6 +1276,7 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
     DP_ASSERT(cs);
     DP_ASSERT(diff);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    DP_PERF_BEGIN_DETAIL(fn, "diff", "prev=%d", prev_or_null ? 1 : 0);
     if (prev_or_null) {
         DP_ASSERT(DP_atomic_get(&prev_or_null->refcount) > 0);
         bool change = cs != prev_or_null;
@@ -1274,6 +1290,7 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
     else {
         DP_canvas_diff_begin(diff, 0, 0, cs->width, cs->height, true);
     }
+    DP_PERF_END(fn);
 }
 
 static void render_tile(void *data, int tile_index)

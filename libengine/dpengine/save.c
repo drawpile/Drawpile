@@ -41,6 +41,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/output.h>
+#include <dpcommon/perf.h>
 #include <dpcommon/threading.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/blend_mode.h>
@@ -49,6 +50,8 @@
 #include <limits.h>
 #include <math.h>
 #include <uthash_inc.h>
+
+#define DP_PERF_CONTEXT "save"
 
 
 const DP_SaveFormat *DP_save_supported_formats(void)
@@ -615,12 +618,9 @@ static DP_SaveResult save_flat_image(DP_CanvasState *cs, const char *path,
     return result;
 }
 
-DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc, const char *path)
+static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
+                          const char *path)
 {
-    if (!cs || !path) {
-        return DP_SAVE_RESULT_BAD_ARGUMENTS;
-    }
-
     const char *dot = strrchr(path, '.');
     if (!dot) {
         return DP_SAVE_RESULT_NO_EXTENSION;
@@ -641,6 +641,19 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc, const char *path)
     }
     else {
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;
+    }
+}
+
+DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc, const char *path)
+{
+    if (cs && path) {
+        DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
+        DP_SaveResult result = save(cs, dc, path);
+        DP_PERF_END(fn);
+        return result;
+    }
+    else {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
     }
 }
 
@@ -731,15 +744,11 @@ static void save_frame_job(void *element, DP_UNUSED int thread_index)
     }
 }
 
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
-                                       DP_SaveAnimationProgressFn progress_fn,
-                                       void *user)
+static DP_SaveResult
+save_animation_frames(DP_CanvasState *cs, const char *path,
+                      DP_SaveAnimationProgressFn progress_fn, void *user,
+                      int frame_count)
 {
-    if (!cs || !path) {
-        return DP_SAVE_RESULT_BAD_ARGUMENTS;
-    }
-
-    int frame_count = DP_canvas_state_frame_count(cs);
     if (frame_count == 0) {
         return DP_SAVE_RESULT_SUCCESS;
     }
@@ -785,6 +794,24 @@ DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
     return (DP_SaveResult)DP_atomic_get(&c.result);
 }
 
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
+                                       DP_SaveAnimationProgressFn progress_fn,
+                                       void *user)
+{
+    if (cs && path) {
+        int frame_count = DP_canvas_state_frame_count(cs);
+        DP_PERF_BEGIN_DETAIL(fn, "animation_frames", "frame_count=%d,path=%s",
+                             frame_count, path);
+        DP_SaveResult result =
+            save_animation_frames(cs, path, progress_fn, user, frame_count);
+        DP_PERF_END(fn);
+        return result;
+    }
+    else {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
+}
+
 
 static bool write_gif(void *user, const void *buffer, size_t size)
 {
@@ -808,14 +835,10 @@ static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
     return !progress_fn || progress_fn(user, part / total);
 }
 
-DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
-                                    DP_SaveAnimationProgressFn progress_fn,
-                                    void *user)
+static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
+                                        DP_SaveAnimationProgressFn progress_fn,
+                                        void *user, int frame_count)
 {
-    if (!cs || !path) {
-        return DP_SAVE_RESULT_BAD_ARGUMENTS;
-    }
-
     int width = DP_canvas_state_width(cs);
     int height = DP_canvas_state_height(cs);
     if (width > UINT16_MAX || height > UINT16_MAX) {
@@ -834,7 +857,6 @@ DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
         return DP_SAVE_RESULT_OPEN_ERROR;
     }
 
-    int frame_count = DP_canvas_state_frame_count(cs);
     if (!report_gif_progress(progress_fn, user, 0, frame_count)) {
         jo_gifx_abort(gif);
         DP_output_free(output);
@@ -873,4 +895,22 @@ DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
 
     DP_output_free(output);
     return DP_SAVE_RESULT_SUCCESS;
+}
+
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
+                                    DP_SaveAnimationProgressFn progress_fn,
+                                    void *user)
+{
+    if (cs && path) {
+        int frame_count = DP_canvas_state_frame_count(cs);
+        DP_PERF_BEGIN_DETAIL(fn, "animation_gif", "frame_count=%d,path=%s",
+                             frame_count, path);
+        DP_SaveResult result =
+            save_animation_gif(cs, path, progress_fn, user, frame_count);
+        DP_PERF_END(fn);
+        return result;
+    }
+    else {
+        return DP_SAVE_RESULT_BAD_ARGUMENTS;
+    }
 }

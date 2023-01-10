@@ -28,11 +28,14 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/perf.h>
 #include <dpmsg/message.h>
 #include <math.h>
 #include <mypaint-brush.h>
 #include <mypaint.h>
 #include <helpers.h> // RGB <-> HSV conversion, CLAMP, mod_arith
+
+#define DP_PERF_CONTEXT "brush_engine"
 
 
 // Same amount of smudge buckets that MyPaint uses.
@@ -613,10 +616,14 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
     DP_ASSERT(be);
     DP_ASSERT(!be->in_progress);
     DP_ASSERT(be->dabs.used == 0);
+    DP_PERF_BEGIN_DETAIL(fn, "stroke_begin", "active=%d", (int)be->active);
+
     be->context_id = context_id;
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
+
+    DP_PERF_END(fn);
 }
 
 
@@ -852,14 +859,18 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
                                DP_CanvasState *cs_or_null)
 {
     DP_ASSERT(be);
+    DP_BrushEngineActiveType active = be->active;
+    DP_PERF_BEGIN_DETAIL(fn, "stroke_to", "active=%d", (int)active);
 
     if (cs_or_null != be->cs) {
+        DP_PERF_BEGIN(search_layer, "stroke_to:search_layer");
         be->cs = cs_or_null;
         DP_layer_content_decref_nullable(be->lc);
         be->lc = cs_or_null ? search_layer(cs_or_null, be->layer_id) : NULL;
+        DP_PERF_END(search_layer);
     }
 
-    switch (be->active) {
+    switch (active) {
     case DP_BRUSH_ENGINE_ACTIVE_PIXEL:
         stroke_to_classic(be, x, y, pressure, first_dab_pixel, stroke_pixel);
         break;
@@ -872,11 +883,15 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
     default:
         DP_UNREACHABLE();
     }
+
+    DP_PERF_END(fn);
 }
 
 void DP_brush_engine_stroke_end(DP_BrushEngine *be, bool push_pen_up)
 {
     DP_ASSERT(be);
+    DP_PERF_BEGIN_DETAIL(fn, "stroke_end", "active=%d", (int)be->active);
+
     DP_layer_content_decref_nullable(be->lc);
     be->lc = NULL;
     be->cs = NULL;
@@ -887,6 +902,8 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, bool push_pen_up)
         be->push_message(be->user, DP_msg_pen_up_new(be->context_id));
     }
     be->in_progress = false;
+
+    DP_PERF_END(fn);
 }
 
 void DP_brush_engine_offset_add(DP_BrushEngine *be, float x, float y)

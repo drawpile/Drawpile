@@ -86,7 +86,12 @@ function(set_dp_target_properties target)
     if(NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
         set_language_standards("${target}")
         add_address_sanitizer("${target}")
-        target_compile_definitions("${target}" PRIVATE "_XOPEN_SOURCE=600" _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN NOMINMAX)
+        target_compile_definitions("${target}" PRIVATE
+            "DP_PERF_REALM=${target}"
+            "_XOPEN_SOURCE=600"
+            "_CRT_SECURE_NO_WARNINGS"
+            "WIN32_LEAN_AND_MEAN"
+            "NOMINMAX")
 
         if("CXX" IN_LIST ARGN)
             target_compile_options("${target}" PRIVATE "${dp_cxxflags}")

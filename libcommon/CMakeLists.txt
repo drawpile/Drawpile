@@ -32,6 +32,7 @@ set(dpcommon_sources
     dpcommon/common.c
     dpcommon/input.c
     dpcommon/output.c
+    dpcommon/perf.c
     dpcommon/queue.c
     dpcommon/threading_common.c
     dpcommon/vector.c
@@ -47,6 +48,7 @@ set(dpcommon_headers
     dpcommon/geom.h
     dpcommon/input.h
     dpcommon/output.h
+    dpcommon/perf.h
     dpcommon/queue.h
     dpcommon/threading.h
     dpcommon/vector.h

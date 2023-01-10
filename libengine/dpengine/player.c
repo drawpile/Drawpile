@@ -41,6 +41,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
+#include <dpcommon/perf.h>
 #include <dpcommon/vector.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
@@ -48,6 +49,9 @@
 #include <ctype.h>
 #include <parson.h>
 #include <uthash_inc.h>
+
+#define DP_PERF_CONTEXT "player"
+
 
 #define INDEX_EXTENSION       "dpidx"
 #define INDEX_MAGIC           "DPIDX"
@@ -1346,12 +1350,14 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
         return false;
     }
 
-    DP_Output *output = DP_file_output_new_from_path(index_player->index_path);
+    const char *path = index_player->index_path;
+    DP_Output *output = DP_file_output_new_from_path(path);
     if (!output) {
         DP_player_free(index_player);
         return false;
     }
 
+    DP_PERF_BEGIN_DETAIL(fn, "index_build", "path=%s", path);
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
     DP_BuildIndexContext c = {index_player,
                               output,
@@ -1370,6 +1376,7 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     DP_canvas_history_free(ch);
     DP_output_free(output);
     DP_player_free(index_player);
+    DP_PERF_END(fn);
     return ok;
 }
 
@@ -1458,24 +1465,29 @@ bool DP_player_index_load(DP_Player *player)
 {
     DP_ASSERT(player);
 
-    DP_Input *input = DP_file_input_new_from_path(player->index_path);
+    const char *path = player->index_path;
+    DP_Input *input = DP_file_input_new_from_path(path);
     if (!input) {
         return false;
     }
 
+    DP_PERF_BEGIN_DETAIL(fn, "index_load", "path=%s", path);
     DP_ReadIndexContext c = {DP_buffered_input_init(input), 0, 0,
                              DP_VECTOR_NULL};
-    if (read_index_header(&c) && read_index_entries(&c)) {
+
+    bool ok = read_index_header(&c) && read_index_entries(&c);
+    if (ok) {
         player_index_dispose(&player->index);
         player->index = (DP_PlayerIndex){c.input, c.message_count,
                                          c.entries.elements, c.entries.used};
-        return true;
     }
     else {
         DP_vector_dispose(&c.entries);
         DP_buffered_input_dispose(&c.input);
-        return false;
     }
+
+    DP_PERF_END(fn);
+    return ok;
 }
 
 static bool check_index(DP_Player *player)
@@ -1960,6 +1972,7 @@ DP_CanvasState *DP_player_index_entry_load(DP_Player *player,
         return NULL;
     }
 
+    DP_PERF_BEGIN_DETAIL(fn, "index_entry_load", "offset=%zu", snapshot_offset);
     DP_ReadSnapshotContext c = {input, dc, NULL, NULL};
     bool ok = read_index_snapshot(&c);
 
@@ -1970,15 +1983,18 @@ DP_CanvasState *DP_player_index_entry_load(DP_Player *player,
         DP_free(tile_entry);
     }
 
+    DP_CanvasState *cs;
     if (ok) {
         DP_transient_canvas_state_layer_routes_reindex(c.tcs, dc);
         DP_transient_canvas_state_timeline_cleanup(c.tcs);
-        return DP_transient_canvas_state_persist(c.tcs);
+        cs = DP_transient_canvas_state_persist(c.tcs);
     }
     else {
         DP_transient_canvas_state_decref_nullable(c.tcs);
-        return NULL;
+        cs = NULL;
     }
+    DP_PERF_END(fn);
+    return cs;
 }
 
 
