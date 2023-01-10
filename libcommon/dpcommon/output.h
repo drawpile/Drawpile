@@ -36,14 +36,14 @@ typedef struct DP_OutputMethods {
     bool (*flush)(void *internal);
     size_t (*tell)(void *internal, bool *out_error);
     bool (*seek)(void *internal, size_t offset);
-    void (*dispose)(void *internal);
+    bool (*dispose)(void *internal);
 } DP_OutputMethods;
 
 typedef const DP_OutputMethods *(*DP_OutputInitFn)(void *internal, void *arg);
 
 DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size);
 
-void DP_output_free(DP_Output *output);
+bool DP_output_free(DP_Output *output);
 
 bool DP_output_write(DP_Output *output, const void *buffer, size_t size);
 

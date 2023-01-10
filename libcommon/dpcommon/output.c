@@ -49,14 +49,16 @@ DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size)
     }
 }
 
-void DP_output_free(DP_Output *output)
+bool DP_output_free(DP_Output *output)
 {
     if (output) {
-        void (*dispose)(void *) = output->methods->dispose;
-        if (dispose) {
-            dispose(output->internal);
-        }
+        bool (*dispose)(void *) = output->methods->dispose;
+        bool ok = dispose ? dispose(output->internal) : true;
         DP_free(output);
+        return ok;
+    }
+    else {
+        return true;
     }
 }
 
@@ -202,11 +204,15 @@ static bool file_output_seek(void *internal, size_t offset)
     }
 }
 
-static void file_output_dispose(void *internal)
+static bool file_output_dispose(void *internal)
 {
     DP_FileOutputState *state = internal;
     if (state->close && fclose(state->fp) != 0) {
         DP_error_set("File output close error: %s", strerror(errno));
+        return false;
+    }
+    else {
+        return true;
     }
 }
 
@@ -277,12 +283,13 @@ static bool mem_output_clear(void *internal)
     return true;
 }
 
-static void mem_output_dispose(void *internal)
+static bool mem_output_dispose(void *internal)
 {
     DP_MemOutputState *state = internal;
     if (state->free_on_close) {
         free(state->buffer);
     }
+    return true;
 }
 
 static const DP_OutputMethods mem_output_methods = {
