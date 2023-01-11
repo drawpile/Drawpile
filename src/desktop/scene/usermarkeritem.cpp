@@ -208,7 +208,7 @@ void UserMarkerItem::setTargetPos(qreal x, qreal y, bool force)
 	}
 }
 
-void UserMarkerItem::animationStep(double dt)
+void UserMarkerItem::animationStep(qreal dt)
 {
 	if(isVisible()) {
 		// Smoothing to avoid crazy jerking with spread out MyPaint brushes.

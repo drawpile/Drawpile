@@ -71,7 +71,7 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->restore();
 }
 
-bool LaserTrailItem::animationStep(float dt)
+bool LaserTrailItem::animationStep(qreal dt)
 {
 	m_blink = !m_blink;
 

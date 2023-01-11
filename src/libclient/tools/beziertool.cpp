@@ -189,7 +189,7 @@ PointVector BezierTool::calculateBezierCurve() const
 		};
 
 		// TODO smart step size selection
-		for(float t=0;t<1;t+=0.05) {
+		for(float t=0;t<1;t+=0.05f) {
 			pv << _cubicBezierPoint(points, t);
 		}
 	}

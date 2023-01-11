@@ -49,7 +49,7 @@ ClassicBrush::ClassicBrush()
 		{0, 1},
 		{0, 1},
 		{0, 0},
-		0.1,
+		0.1f,
 		0,
 		rustpile::Color_BLACK,
 		rustpile::ClassicBrushShape::RoundPixel,
@@ -489,7 +489,6 @@ QJsonObject ActiveBrush::toJson() const
 			{"mypaint", m_myPaint.toJson()},
 		}},
 	};
-	return m_activeType == CLASSIC ? m_classic.toJson() : m_myPaint.toJson();
 }
 
 ActiveBrush ActiveBrush::fromJson(const QJsonObject &json)

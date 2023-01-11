@@ -122,12 +122,6 @@ void printContext(const LOGCONTEXT &lc)
 }
 
 
-static QRect mapToNative(const QRect &qRect, int m_factor)
-{
-    return QRect(qRect.x() * m_factor, qRect.y() * m_factor, qRect.width() * m_factor, qRect.height() * m_factor);
-}
-
-
 static inline QEvent::Type mouseEventType(QEvent::Type t)
 {
     return  (t == QEvent::TabletMove    ? QEvent::MouseMove :
