@@ -105,27 +105,10 @@ target_link_libraries(drawpile
 )
 
 if(KIS_TABLET)
-	if(WIN32)
-		target_sources(drawpile PRIVATE
-			bundled/kis_tablet/kis_tablet_support_win8.cpp
-			bundled/kis_tablet/kis_tablet_support_win.cpp
-		)
-	elseif(NOT APPLE)
-		find_package(X11 REQUIRED COMPONENTS Xi xcb)
-		find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS X11Extras)
-
-		target_sources(drawpile PRIVATE
-			bundled/kis_tablet/kis_xi2_event_filter.cpp
-			bundled/kis_tablet/qxcbconnection.cpp
-			bundled/kis_tablet/qxcbconnection_xi2.cpp
-		)
-
-		target_link_libraries(drawpile
-			${QT_PACKAGE_NAME}::X11Extras
-			X11::Xi
-			X11::xcb
-		)
-	endif()
+	target_sources(drawpile PRIVATE
+		bundled/kis_tablet/kis_tablet_support_win8.cpp
+		bundled/kis_tablet/kis_tablet_support_win.cpp
+	)
 endif()
 
 if(${QT_PACKAGE_NAME}Keychain_FOUND)

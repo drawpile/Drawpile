@@ -13,7 +13,7 @@ option(CLIENT "Compile client" ON)
 add_feature_info("Drawpile client (CLIENT)" CLIENT "")
 option(BUILD_LABEL "A custom label to add to the version")
 
-if(NOT APPLE)
+if(WIN32)
 	cmake_dependent_option(KIS_TABLET "Enable custom tablet support code" OFF "CLIENT" OFF)
 	add_feature_info("Custom tablet support code (KIS_TABLET)" KIS_TABLET "")
 endif()
