@@ -667,32 +667,55 @@ void ChatWidget::sendMessage(const QString &chatMessage)
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			if(chatMessage.length() > 2) {
+			if (d->currentChat != 0) {
+				systemMessage(tr("/!: can only shout in a public chat."));
+				return;
+			} else if(chatMessage.length() <= 2) {
+				systemMessage(tr("/!: no text given."));
+				return;
+			} else {
 				effectiveMessage = chatMessage.mid(2);
 				oflags = DP_MSG_CHAT_OFLAGS_SHOUT;
 			}
 
 		} else if(cmd == QStringLiteral("alert")) {
-			if(!params.isEmpty()) {
+			if(params.isEmpty()) {
+				systemMessage(tr("/alert: no text given."));
+				return;
+			} else {
 				effectiveMessage = params;
 				oflags = DP_MSG_CHAT_OFLAGS_ALERT;
 			}
 
 		} else if(cmd == QStringLiteral("me")) {
-			if(!params.isEmpty()) {
+			if(params.isEmpty()) {
+				systemMessage(tr("/me: no text given."));
+				return;
+			} else {
 				oflags = DP_MSG_CHAT_OFLAGS_ACTION;
 				effectiveMessage = params;
 			}
 
-		} else if(cmd == QStringLiteral("pin") && d->currentChat == 0) {
-			if(!params.isEmpty()) {
+		} else if(cmd == QStringLiteral("pin")) {
+			if (d->currentChat != 0) {
+				systemMessage(tr("/pin: can only pin in a public chat."));
+				return;
+			} else if(params.isEmpty()) {
+				systemMessage(tr("/pin: no text given."));
+				return;
+			} else {
 				oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
 				effectiveMessage = params;
 			}
 
-		} else if(cmd == QStringLiteral("unpin") && d->currentChat == 0) {
-			oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
-			effectiveMessage = QStringLiteral("-");
+		} else if(cmd == QStringLiteral("unpin")) {
+			if (d->currentChat != 0) {
+				systemMessage(tr("/unpin: can only unpin in a public chat."));
+				return;
+			} else {
+				oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
+				effectiveMessage = QStringLiteral("-");
+			}
 
 		} else if(cmd == QStringLiteral("roll")) {
 			// TODO this should be done serverside to prevent cheating
@@ -701,7 +724,7 @@ void ChatWidget::sendMessage(const QString &chatMessage)
 				oflags = DP_MSG_CHAT_OFLAGS_ACTION;
 				effectiveMessage = "rolls " + result.toString();
 			} else {
-				systemMessage(tr("Invalid dice roll description"));
+				systemMessage(tr("/roll: invalid dice roll description."));
 				return;
 			}
 
@@ -718,6 +741,10 @@ void ChatWidget::sendMessage(const QString &chatMessage)
 				"/roll [AdX] - roll dice"
 			);
 			systemMessage(text);
+			return;
+
+		} else {
+			systemMessage(tr("Unknown command: %1").arg(chatMessage));
 			return;
 		}
 	}
