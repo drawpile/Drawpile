@@ -22,7 +22,9 @@
 #include <QList>
 #include <QString>
 #include <QCryptographicHash>
-#include <qpassworddigestor.h>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#include <QPasswordDigestor>
+#endif
 #include <QRandomGenerator>
 
 #ifdef HAVE_LIBSODIUM
@@ -57,10 +59,13 @@ bool isValidHash(const QByteArray &hash)
 
 	} else if(hash.startsWith("s+sha1;")) {
 		return hash.count(';') == 2;
-
 	} else if(hash.startsWith("pbkdf2;")) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 		return hash.count(';') == 3;
-
+#else
+		qWarning("Qt 5.12 needed to support PBKDF2 hashes!");
+		return false;
+#endif
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
 		return hash.length() > 7 && (unsigned int)hash.length() < 7+crypto_pwhash_STRBYTES;
@@ -95,6 +100,7 @@ bool check(const QString &password, const QByteArray &hash)
 		return hp == QByteArray::fromHex(parts.at(2));
 
 	} else if(hash.startsWith("pbkdf2;")) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 		const auto parts = hash.split(';');
 		const auto salt = QByteArray::fromBase64(parts.at(2));
 		const auto expectedHash = QByteArray::fromBase64(parts.at(3));
@@ -102,7 +108,7 @@ bool check(const QString &password, const QByteArray &hash)
 			const auto hash = QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64);
 			return hash == expectedHash;
 		}
-
+#endif
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
 		const QByteArray passwd = password.toUtf8();
@@ -133,11 +139,15 @@ QByteArray hash(const QString &password, Algorithm algorithm)
 		}
 
 	case PBKDF2: {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 		const QByteArray salt = makesalt();
 		return "pbkdf2;1;" +
 			salt.toBase64() + ";" +
 			QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64).toBase64()
 			;
+#else
+		break;
+#endif
 		}
 
 	case SODIUM: {
