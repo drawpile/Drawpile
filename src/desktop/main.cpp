@@ -130,10 +130,10 @@ void DrawpileApp::setTheme(int theme)
 
 	switch(theme) {
 	case THEME_SYSTEM:
-		setStyleSheet(QStringLiteral(""));
+		setStyle(QStringLiteral(""));
 		break;
 	default:
-		setStyleSheet(QStringLiteral("fusion"));
+		setStyle(QStringLiteral("Fusion"));
 		break;
 	}
 
