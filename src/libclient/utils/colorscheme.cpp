@@ -33,7 +33,7 @@ static std::array<QPair<QPalette::ColorGroup, QString>, 3> GROUPS {{
 	{QPalette::Inactive, "Inactive"}
 }};
 
-static std::array<QPair<QPalette::ColorRole, QString>, 12> ROLES {{
+static std::array<QPair<QPalette::ColorRole, QString>, 14> ROLES {{
 	{QPalette::Window, "Window"},
 	{QPalette::WindowText, "WindowText"},
 	{QPalette::Base, "Base"},
@@ -45,7 +45,9 @@ static std::array<QPair<QPalette::ColorRole, QString>, 12> ROLES {{
 	{QPalette::ButtonText, "ButtonText"},
 	{QPalette::BrightText, "BrightText"},
 	{QPalette::Highlight, "Highlight"},
-	{QPalette::HighlightedText, "HighlightedText"}
+	{QPalette::HighlightedText, "HighlightedText"},
+	{QPalette::Light, "Light"},
+	{QPalette::Dark, "Dark"},
 }};
 
 QPalette loadFromFile(const QString &filename)
