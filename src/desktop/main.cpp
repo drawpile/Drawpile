@@ -122,23 +122,41 @@ void DrawpileApp::notifySettingsChanged()
 	emit settingsChanged();
 }
 
-void DrawpileApp::setDarkTheme(bool dark)
+void DrawpileApp::setTheme(int theme)
 {
-	QPalette pal;
-	if(dark) {
-		const QString paletteFile = utils::paths::locateDataFile("nightmode.colors");
-		if(paletteFile.isEmpty()) {
-			qWarning("Cannot switch to night mode: couldn't find color scheme file!");
-		} else {
-			pal = colorscheme::loadFromFile(paletteFile);
-		}
-
-	} else {
-		pal = style()->standardPalette();
+	if(theme < THEME_SYSTEM || theme >= THEME_COUNT) {
+		theme = THEME_DEFAULT;
 	}
 
-	setPalette(pal);
+	switch(theme) {
+	case THEME_SYSTEM:
+		setStyleSheet(QStringLiteral(""));
+		setPalette(style()->standardPalette());
+		break;
+	case THEME_FUSION_LIGHT:
+		setStyleSheet(QStringLiteral("fusion"));
+		setPalette(style()->standardPalette());
+		break;
+	case THEME_FUSION_DARK:
+		setStyleSheet(QStringLiteral("fusion"));
+		setPalette(loadPalette(QStringLiteral("nightmode.colors")));
+		break;
+	default:
+		Q_UNREACHABLE();
+	}
+
 	icon::selectThemeVariant();
+}
+
+QPalette DrawpileApp::loadPalette(const QString &fileName)
+{
+	QString path = utils::paths::locateDataFile(fileName);
+	if(path.isEmpty()) {
+		qWarning("Could not find palette file %s", qUtf8Printable(fileName));
+		return style()->standardPalette();
+	} else {
+		return colorscheme::loadFromFile(path);
+	}
 }
 
 void DrawpileApp::openUrl(QUrl url)
@@ -268,14 +286,20 @@ static QStringList initApp(DrawpileApp &app)
 	utils::initLogging();
 
 	// Override widget theme
-	const int theme = QSettings().value("settings/theme", 0).toInt();
-	if(theme != 0) // choice 0: system theme
-		app.setStyle("fusion");
+	QSettings settings{};
+	int theme = settings.value("settings/theme", DrawpileApp::THEME_SYSTEM).toInt();
 
-	if(theme==2) // choice 2: dark theme
-		app.setDarkTheme(true);
-	else
-		icon::selectThemeVariant();
+	// System themes tend to look ugly and broken. If the user had selected the
+	// system theme in a previous version, we reset it once. The user can go and
+	// change it to something ugly again afterwards if they want.
+	int themeVersion = settings.value("settings/themeversion", 0).toInt();
+	if(theme == DrawpileApp::THEME_SYSTEM && themeVersion < 1) {
+		theme = DrawpileApp::THEME_DEFAULT;
+		settings.setValue("settings/theme", theme);
+		settings.setValue("settings/themeversion", 1);
+	}
+
+	app.setTheme(theme);
 
 #ifdef Q_OS_MAC
 	// Mac specific settings
