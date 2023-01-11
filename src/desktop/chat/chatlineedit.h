@@ -44,11 +44,15 @@ public slots:
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
+	void resizeEvent(QResizeEvent *event);
 
 private:
 	QStringList _history;
 	QString _current;
 	int _historypos;
+
+   void resizeBasedOnLines();
+   int lineCountToWidgetHeight(int lineCount) const;
 };
 
 #endif

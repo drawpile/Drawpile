@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QKeyEvent>
+#include <QScrollBar>
 
 #include "chatlineedit.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
 	QPlainTextEdit(parent), _historypos(0)
 {
-	setFixedHeight(60);
 }
 
 void ChatLineEdit::pushHistory(const QString &text)
@@ -68,6 +68,14 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 	} else {
 		QPlainTextEdit::keyPressEvent(event);
 	}
+
+	resizeBasedOnLines();	
+}
+
+void ChatLineEdit::resizeEvent(QResizeEvent *)
+{
+	// Line height depends on widget margins, which change after constructor is called.
+	resizeBasedOnLines();
 }
 
 QString ChatLineEdit::trimmedText() const
@@ -84,4 +92,39 @@ QString ChatLineEdit::trimmedText() const
 	str.truncate(chop);
 
 	return str;
+}
+
+void ChatLineEdit::resizeBasedOnLines() 
+{
+	int lineCount = int(document()->size().height());
+	int clampedLineCount = qBound(1, lineCount, 5);
+	setFixedHeight(lineCountToWidgetHeight(clampedLineCount));
+
+	// Scrollbar shows up sometimes for no reason, hardcode to hide it when in autosize range.
+	// It'll also scroll down and hide the top line for no reason.
+	if(lineCount <= 5) {
+		verticalScrollBar()->setValue(0);
+		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	}
+	else {
+		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	}
+}
+
+// Based on https://github.com/cameel/auto-resizing-text-edit/blob/master/auto_resizing_text_edit/auto_resizing_text_edit.py
+int ChatLineEdit::lineCountToWidgetHeight(int lineCount) const
+{
+	Q_ASSERT(lineCount > 0);
+
+    QMargins widgetMargins  = contentsMargins();
+    qreal documentMargin = document()->documentMargin();
+    QFontMetrics fontMetrics(document()->defaultFont());
+
+    return (
+		widgetMargins.top() +
+		documentMargin +
+		lineCount * fontMetrics.lineSpacing() +
+		documentMargin +
+		widgetMargins.bottom() 
+    );
 }
