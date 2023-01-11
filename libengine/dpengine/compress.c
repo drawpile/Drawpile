@@ -73,7 +73,7 @@ bool DP_compress_inflate(const unsigned char *in, size_t in_size,
     int ret = inflateInit(&stream);
     if (ret != Z_OK) {
         DP_error_set("Inflate init error %d: %s", ret, get_z_error(&stream));
-        return NULL;
+        return false;
     }
 
     stream.avail_out = DP_size_to_uint(out_size);
