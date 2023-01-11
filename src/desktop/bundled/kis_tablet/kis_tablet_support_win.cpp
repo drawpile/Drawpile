@@ -122,12 +122,6 @@ void printContext(const LOGCONTEXT &lc)
 }
 
 
-static QRect mapToNative(const QRect &qRect, int m_factor)
-{
-    return QRect(qRect.x() * m_factor, qRect.y() * m_factor, qRect.width() * m_factor, qRect.height() * m_factor);
-}
-
-
 static inline QEvent::Type mouseEventType(QEvent::Type t)
 {
     return  (t == QEvent::TabletMove    ? QEvent::MouseMove :
@@ -666,7 +660,7 @@ bool QWindowsTabletSupport::translateTabletProximityEvent(WPARAM /* wParam */, L
         qreal zero = 0.0;
         QTabletEvent e(type, emptyPos, emptyPos, 0, m_devices.at(m_currentDevice).currentPointerType,
                        zero, 0, 0, zero, zero, 0, Qt::NoModifier,
-                       m_devices.at(m_currentDevice).uniqueId, Qt::NoButton, (Qt::MouseButtons)0);
+                       m_devices.at(m_currentDevice).uniqueId, Qt::NoButton, Qt::MouseButtons{});
         qApp->sendEvent(qApp, &e);
     };
 

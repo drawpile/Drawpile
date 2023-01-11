@@ -1042,12 +1042,12 @@ void CanvasView::dragMoveEvent(QDragMoveEvent *event)
  */
 void CanvasView::dropEvent(QDropEvent *event)
 {
-	const QMimeData *data = event->mimeData();
-	if(data->hasImage()) {
+	const QMimeData *mimeData = event->mimeData();
+	if(mimeData->hasImage()) {
 		emit imageDropped(qvariant_cast<QImage>(event->mimeData()->imageData()));
-	} else if(data->hasUrls()) {
+	} else if(mimeData->hasUrls()) {
 		emit urlDropped(event->mimeData()->urls().first());
-	} else if(data->hasColor()) {
+	} else if(mimeData->hasColor()) {
 		emit colorDropped(event->mimeData()->colorData().value<QColor>());
 	} else {
 		// unsupported data

@@ -1986,13 +1986,13 @@ void MainWindow::copyText()
 
 void MainWindow::paste()
 {
-	const QMimeData *data = QApplication::clipboard()->mimeData();
-	if(data->hasImage()) {
+	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+	if(mimeData->hasImage()) {
 		QPoint pastepos;
 		bool pasteAtPos = false;
 
 		// Get source position
-		QByteArray srcpos = data->data("x-drawpile/pastesrc");
+		QByteArray srcpos = mimeData->data("x-drawpile/pastesrc");
 		if(!srcpos.isNull()) {
 			QList<QByteArray> pos = srcpos.split(',');
 			if(pos.size() == 2) {
@@ -2004,9 +2004,9 @@ void MainWindow::paste()
 
 		// Paste-in-place if source was Drawpile (and source is visible)
 		if(pasteAtPos && m_view->isPointVisible(pastepos))
-			pasteImage(data->imageData().value<QImage>(), &pastepos);
+			pasteImage(mimeData->imageData().value<QImage>(), &pastepos);
 		else
-			pasteImage(data->imageData().value<QImage>());
+			pasteImage(mimeData->imageData().value<QImage>());
 	}
 }
 

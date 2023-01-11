@@ -55,7 +55,7 @@ public:
 
 	void setTargetPos(qreal x, qreal y, bool force);
 
-	void animationStep(double dt);
+	void animationStep(qreal dt);
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;

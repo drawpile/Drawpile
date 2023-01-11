@@ -726,7 +726,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		b.shape = rustpile::ClassicBrushShape::RoundPixel;
 		b.size.max = 16;
 		b.opacity.max = 1.0;
-		b.spacing = 0.15;
+		b.spacing = 0.15f;
 		b.size_pressure = true;
 		brush.setClassic(b);
 		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(1),
@@ -737,8 +737,8 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		b.shape = rustpile::ClassicBrushShape::RoundSoft;
 		b.size.max = 10;
 		b.opacity.max = 1.0;
-		b.hardness.max = 0.8;
-		b.spacing = 0.15;
+		b.hardness.max = 0.8f;
+		b.spacing = 0.15f;
 		b.size_pressure = true;
 		b.opacity_pressure = true;
 		brush.setClassic(b);
@@ -749,9 +749,9 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		ClassicBrush b;
 		b.shape = rustpile::ClassicBrushShape::RoundSoft;
 		b.size.max = 30;
-		b.opacity.max = 0.34;
+		b.opacity.max = 0.34f;
 		b.hardness.max = 1.0;
-		b.spacing = 0.18;
+		b.spacing = 0.18f;
 		brush.setClassic(b);
 		newClassicPreset(tagId, tr("Soft Brush %1").arg(2),
 			tr("Default brush %1.").arg(3), brush);
@@ -761,8 +761,8 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		b.shape = rustpile::ClassicBrushShape::RoundPixel;
 		b.incremental = false;
 		b.size.max = 32;
-		b.opacity.max = 0.65;
-		b.spacing = 0.15;
+		b.opacity.max = 0.65f;
+		b.spacing = 0.15f;
 		brush.setClassic(b);
 		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(2),
 			tr("Default brush %1.").arg(4), brush);
@@ -772,8 +772,8 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		b.shape = rustpile::ClassicBrushShape::RoundPixel;
 		b.incremental = false;
 		b.size.max = 70;
-		b.opacity.max = 0.42;
-		b.spacing = 0.15;
+		b.opacity.max = 0.42f;
+		b.spacing = 0.15f;
 		b.opacity_pressure = true;
 		brush.setClassic(b);
 		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(3),
@@ -783,9 +783,9 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		ClassicBrush b;
 		b.shape = rustpile::ClassicBrushShape::RoundSoft;
 		b.size.max = 113;
-		b.opacity.max = 0.6;
+		b.opacity.max = 0.6f;
 		b.hardness.max = 1.0;
-		b.spacing = 0.19;
+		b.spacing = 0.19f;
 		b.opacity_pressure = true;
 		brush.setClassic(b);
 		newClassicPreset(tagId, tr("Soft Brush %1").arg(3),
@@ -795,7 +795,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 		ClassicBrush b;
 		b.shape = rustpile::ClassicBrushShape::RoundSoft;
 		b.size.max = 43;
-		b.opacity.max = 0.3;
+		b.opacity.max = 0.3f;
 		b.hardness.max = 1.0;
 		b.spacing = 0.25;
 		b.smudge.max = 1.0;

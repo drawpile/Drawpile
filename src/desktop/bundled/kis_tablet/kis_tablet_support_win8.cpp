@@ -498,7 +498,7 @@ QTabletEvent makeProximityTabletEvent(const QEvent::Type eventType, const POINTE
         Qt::NoModifier, // keyState
         reinterpret_cast<qint64>(penInfo.pointerInfo.sourceDevice), // uniqueID
         Qt::NoButton, // button
-        (Qt::MouseButtons)0 // buttons
+        Qt::MouseButtons{} // buttons
     );
 }
 
