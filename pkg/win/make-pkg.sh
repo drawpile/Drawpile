@@ -93,6 +93,9 @@ cp -r /Drawpile/desktop/theme .
 cp -r /Drawpile/desktop/sounds .
 cp -r /Drawpile/desktop/palettes .
 cp /Drawpile/desktop/nightmode.colors .
+cp /Drawpile/desktop/kritabright.colors .
+cp /Drawpile/desktop/kritadark.colors .
+cp /Drawpile/desktop/kritadarker.colors .
 cp /Drawpile/desktop/initialbrushpresets.db .
 
 # Copy translations

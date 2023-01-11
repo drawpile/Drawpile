@@ -33,6 +33,9 @@ public:
 	  THEME_SYSTEM,
 	  THEME_FUSION_LIGHT,
 	  THEME_FUSION_DARK,
+	  THEME_KRITA_BRIGHT,
+	  THEME_KRITA_DARK,
+	  THEME_KRITA_DARKER,
 	  THEME_COUNT,
 	  // On OSX, there's no theme selection. The settings code says something
 	  // about it being broken prior to Qt5.12, but I have no way of checking

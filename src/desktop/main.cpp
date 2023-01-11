@@ -131,18 +131,28 @@ void DrawpileApp::setTheme(int theme)
 	switch(theme) {
 	case THEME_SYSTEM:
 		setStyleSheet(QStringLiteral(""));
-		setPalette(style()->standardPalette());
-		break;
-	case THEME_FUSION_LIGHT:
-		setStyleSheet(QStringLiteral("fusion"));
-		setPalette(style()->standardPalette());
-		break;
-	case THEME_FUSION_DARK:
-		setStyleSheet(QStringLiteral("fusion"));
-		setPalette(loadPalette(QStringLiteral("nightmode.colors")));
 		break;
 	default:
-		Q_UNREACHABLE();
+		setStyleSheet(QStringLiteral("fusion"));
+		break;
+	}
+
+	switch(theme) {
+	case THEME_FUSION_DARK:
+		setPalette(loadPalette(QStringLiteral("nightmode.colors")));
+		break;
+	case THEME_KRITA_BRIGHT:
+		setPalette(loadPalette(QStringLiteral("kritabright.colors")));
+		break;
+	case THEME_KRITA_DARK:
+		setPalette(loadPalette(QStringLiteral("kritadark.colors")));
+		break;
+	case THEME_KRITA_DARKER:
+		setPalette(loadPalette(QStringLiteral("kritadarker.colors")));
+		break;
+	default:
+		setPalette(style()->standardPalette());
+		break;
 	}
 
 	icon::selectThemeVariant();

@@ -394,6 +394,21 @@
                   <string>Fusion Dark</string>
                  </property>
                 </item>
+                <item>
+                 <property name="text">
+                  <string>Krita Bright</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Krita Dark</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Krita Darker</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item>

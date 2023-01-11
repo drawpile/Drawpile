@@ -83,6 +83,9 @@ Copy-Item -Path "$drawpileDir/desktop/palettes" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/theme" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/sounds" -Destination $outDir -Recurse
 Copy-Item -Path "$drawpileDir/desktop/nightmode.colors" -Destination $outDir
+Copy-Item -Path "$drawpileDir/desktop/kritabright.colors" -Destination $outDir
+Copy-Item -Path "$drawpileDir/desktop/kritadark.colors" -Destination $outDir
+Copy-Item -Path "$drawpileDir/desktop/kritadarker.colors" -Destination $outDir
 Copy-Item -Path "$drawpileDir/desktop/initialbrushpresets.db" -Destination $outDir
 
 # Copy translations

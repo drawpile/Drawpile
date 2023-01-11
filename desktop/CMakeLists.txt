@@ -28,6 +28,9 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${DPDATADIR}
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/theme" DESTINATION "${DPDATADIR}")
 install(FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/nightmode.colors"
+	"${CMAKE_CURRENT_SOURCE_DIR}/kritabright.colors"
+	"${CMAKE_CURRENT_SOURCE_DIR}/kritadark.colors"
+	"${CMAKE_CURRENT_SOURCE_DIR}/kritadarker.colors"
 	"${CMAKE_CURRENT_SOURCE_DIR}/initialbrushpresets.db"
 	DESTINATION "${DPDATADIR}")
 
