@@ -299,11 +299,10 @@ static QStringList initApp(DrawpileApp &app)
 	QSettings settings{};
 	int theme = settings.value("settings/theme", DrawpileApp::THEME_SYSTEM).toInt();
 
-	// System themes tend to look ugly and broken. If the user had selected the
-	// system theme in a previous version, we reset it once. The user can go and
-	// change it to something ugly again afterwards if they want.
+	// System themes tend to look ugly and broken. Reset the theme once to get
+	// a sensible default, the user can still revert to the ugly theme manually.
 	int themeVersion = settings.value("settings/themeversion", 0).toInt();
-	if(theme == DrawpileApp::THEME_SYSTEM && themeVersion < 1) {
+	if(themeVersion < 1) {
 		theme = DrawpileApp::THEME_DEFAULT;
 		settings.setValue("settings/theme", theme);
 		settings.setValue("settings/themeversion", 1);

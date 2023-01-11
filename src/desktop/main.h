@@ -43,7 +43,7 @@ public:
 #ifdef Q_OS_MAC
 	  THEME_DEFAULT = THEME_SYSTEM,
 #else
-	  THEME_DEFAULT = THEME_FUSION_LIGHT,
+	  THEME_DEFAULT = THEME_KRITA_DARK,
 #endif
    };
 
