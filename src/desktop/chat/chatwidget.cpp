@@ -673,9 +673,9 @@ void ChatWidget::sendMessage(const QString &chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("alert")) {
-			if(chatMessage.length() > 2) {
+			if(!params.isEmpty()) {
 				effectiveMessage = params;
-				oflags |= DP_MSG_CHAT_OFLAGS_ALERT;
+				oflags = DP_MSG_CHAT_OFLAGS_ALERT;
 			}
 
 		} else if(cmd == QStringLiteral("me")) {
