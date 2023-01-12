@@ -1204,7 +1204,12 @@ static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
 {
     uint8_t result = DP_acl_state_handle(pe->acls, msg, override_acls);
     get_meta_buffer(pe)->acl_change_flags |= result;
-    if (!(result & DP_ACL_STATE_FILTERED_BIT)) {
+    if (result & DP_ACL_STATE_FILTERED_BIT) {
+        DP_debug("ACL filtered %s message from user %u",
+                 DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
+                 DP_message_context_id(msg));
+    }
+    else {
         DP_MessageType type = DP_message_type(msg);
         record_message(pe, msg, type);
         if (is_internal_or_command(type)) {
