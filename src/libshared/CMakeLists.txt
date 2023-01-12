@@ -33,7 +33,7 @@ target_link_libraries(dpshared PUBLIC Qt5::Network)
 
 if(Sodium_FOUND)
 	target_sources(dpshared PRIVATE util/authtoken.cpp)
-	target_compile_definitions(dpshared PUBLIC HAVE_SODIUM)
+	target_compile_definitions(dpshared PUBLIC HAVE_LIBSODIUM)
 	target_include_directories(dpshared SYSTEM PUBLIC "${SODIUM_INCLUDE_DIR}")
 	target_link_libraries(dpshared PUBLIC ${SODIUM_LIBRARY})
 else()
@@ -49,4 +49,3 @@ endif()
 if(TESTS)
 	add_subdirectory(tests)
 endif()
-
