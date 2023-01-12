@@ -121,6 +121,9 @@ void DP_acl_state_free(DP_AclState *acls);
 
 void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id);
 
+// Dumps a textural description of the ACL state to a DP_malloc'd string.
+char *DP_acl_state_dump(DP_AclState *acls);
+
 DP_UserAcls DP_acl_state_users(DP_AclState *acls);
 
 DP_FeatureTiers DP_acl_state_feature_tiers(DP_AclState *acls);

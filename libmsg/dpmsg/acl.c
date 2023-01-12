@@ -23,6 +23,7 @@
 #include "message.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/output.h>
 #include <uthash_inc.h>
 
 
@@ -51,6 +52,7 @@ typedef struct DP_AccessTierAttributes {
 
 typedef struct DP_FeatureAttributes {
     const char *enum_name;
+    const char *name;
 } DP_FeatureAttributes;
 
 static const DP_AccessTierAttributes access_tier_attributes[] = {
@@ -61,17 +63,18 @@ static const DP_AccessTierAttributes access_tier_attributes[] = {
 };
 
 static DP_FeatureAttributes feature_attributes[] = {
-    [DP_FEATURE_PUT_IMAGE] = {"DP_FEATURE_PUT_IMAGE"},
-    [DP_FEATURE_REGION_MOVE] = {"DP_FEATURE_REGION_MOVE"},
-    [DP_FEATURE_RESIZE] = {"DP_FEATURE_RESIZE"},
-    [DP_FEATURE_BACKGROUND] = {"DP_FEATURE_BACKGROUND"},
-    [DP_FEATURE_EDIT_LAYERS] = {"DP_FEATURE_EDIT_LAYERS"},
-    [DP_FEATURE_OWN_LAYERS] = {"DP_FEATURE_OWN_LAYERS"},
-    [DP_FEATURE_CREATE_ANNOTATION] = {"DP_FEATURE_CREATE_ANNOTATION"},
-    [DP_FEATURE_LASER] = {"DP_FEATURE_LASER"},
-    [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO"},
-    [DP_FEATURE_METADATA] = {"DP_FEATURE_METADATA"},
-    [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE"},
+    [DP_FEATURE_PUT_IMAGE] = {"DP_FEATURE_PUT_IMAGE", "put_image"},
+    [DP_FEATURE_REGION_MOVE] = {"DP_FEATURE_REGION_MOVE", "region_move"},
+    [DP_FEATURE_RESIZE] = {"DP_FEATURE_RESIZE", "resize"},
+    [DP_FEATURE_BACKGROUND] = {"DP_FEATURE_BACKGROUND", "background"},
+    [DP_FEATURE_EDIT_LAYERS] = {"DP_FEATURE_EDIT_LAYERS", "edit_layers"},
+    [DP_FEATURE_OWN_LAYERS] = {"DP_FEATURE_OWN_LAYERS", "own_layers"},
+    [DP_FEATURE_CREATE_ANNOTATION] = {"DP_FEATURE_CREATE_ANNOTATION",
+                                      "create_annotation"},
+    [DP_FEATURE_LASER] = {"DP_FEATURE_LASER", "laser"},
+    [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO", "undo"},
+    [DP_FEATURE_METADATA] = {"DP_FEATURE_METADATA", "metadata"},
+    [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE", "timeline"},
 };
 
 int DP_access_tier_clamp(int tier)
@@ -293,6 +296,83 @@ void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id)
     if (local_user_id != 0) {
         DP_user_bit_set(acls->users.operators, local_user_id);
     }
+}
+
+static void dump_user_bits(DP_Output *output, const char *title,
+                           const uint8_t *users)
+{
+    if (title) {
+        DP_output_format(output, "    %s: ", title);
+    }
+    bool first = true;
+    for (int i = 0; i < 256; ++i) {
+        if (DP_user_bit_get(users, DP_int_to_uint8(i))) {
+            DP_output_format(output, first ? "%d" : ", %d", i);
+            first = false;
+        }
+    }
+    DP_output_print(output, first ? "(none)\n" : "\n");
+}
+
+static void dump_layer_acls(DP_Output *output, DP_AclState *acls)
+{
+    if (acls->layers) {
+        DP_OUTPUT_PRINT_LITERAL(output, "    layers:\n");
+        DP_LayerAclEntry *entry, *tmp;
+        HASH_ITER(hh, acls->layers, entry, tmp) {
+            DP_LayerAcl *la = &entry->layer_acl;
+            DP_output_format(
+                output, "        layer_id %d, locked %s, tier %s, exclusive: ",
+                entry->layer_id, la->locked ? " locked" : "",
+                access_tier_attributes[la->tier].name);
+            dump_user_bits(output, NULL, la->exclusive);
+        }
+    }
+    else {
+        DP_OUTPUT_PRINT_LITERAL(output, "    layers: (none)\n");
+    }
+}
+
+static void dump_annotation_acls(DP_Output *output, DP_AclState *acls)
+{
+    DP_OUTPUT_PRINT_LITERAL(output, "    annotations: ");
+    bool first = true;
+    DP_AnnotationAclEntry *entry, *tmp;
+    HASH_ITER(hh, acls->annotations, entry, tmp) {
+        DP_output_format(output, first ? "%d" : ", %d", entry->annotation_id);
+    }
+    DP_output_print(output, first ? "(none)\n" : "\n");
+}
+
+char *DP_acl_state_dump(DP_AclState *acls)
+{
+    DP_ASSERT(acls);
+    void **buffer_ptr;
+    size_t *size_ptr;
+    DP_Output *output = DP_mem_output_new(1024, false, &buffer_ptr, &size_ptr);
+
+    DP_output_format(output, "acl state %p\n", (void *)acls);
+    DP_output_format(output, "    all_locked: %s\n",
+                     acls->users.all_locked ? "true" : "false");
+
+    dump_user_bits(output, "operators", acls->users.operators);
+    dump_user_bits(output, "trusted", acls->users.trusted);
+    dump_user_bits(output, "authenticated", acls->users.authenticated);
+    dump_user_bits(output, "locked", acls->users.locked);
+
+    DP_OUTPUT_PRINT_LITERAL(output, "    features:\n");
+    for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+        DP_output_format(output, "        %s: %s\n",
+                         feature_attributes[i].enum_name,
+                         access_tier_attributes[acls->feature_tiers[i]].name);
+    }
+
+    dump_layer_acls(output, acls);
+    dump_annotation_acls(output, acls);
+
+    char *buffer = *buffer_ptr;
+    DP_output_free(output);
+    return buffer;
 }
 
 DP_UserAcls DP_acl_state_users(DP_AclState *acls)
