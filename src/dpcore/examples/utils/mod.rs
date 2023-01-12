@@ -46,8 +46,9 @@ fn u8_mult(a: u8, b: u8) -> u8 {
 }
 
 #[allow(dead_code)]
-pub fn load_image(filename: &str) -> (Vec<Pixel8>, i32, i32) {
-    let img = image::open(filename).expect("couldn't load image");
+pub fn load_image_data(data: &[u8]) -> (Vec<Pixel8>, i32, i32) {
+    let img = image::load_from_memory_with_format(data, image::ImageFormat::Png)
+        .expect("couldn't load image");
     let rgba = img.as_rgba8().unwrap();
 
     let mut argb_data = Vec::<Pixel8>::with_capacity((rgba.width() * rgba.height()) as usize);
