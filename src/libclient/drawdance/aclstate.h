@@ -26,6 +26,8 @@ public:
 
     void reset(uint8_t localUserId);
 
+    char *dump() const;
+
     DP_UserAcls users() const;
 
     DP_FeatureTiers featureTiers() const;

@@ -76,15 +76,26 @@ AclState::~AclState()
 
 void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags)
 {
-	if(aclChangeFlags & DP_ACL_STATE_CHANGE_USERS_BIT) {
+	bool users = aclChangeFlags & DP_ACL_STATE_CHANGE_USERS_BIT;
+	bool layers = aclChangeFlags & DP_ACL_STATE_CHANGE_LAYERS_BIT;
+	bool features = aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT;
+
+#ifdef QT_DEBUG
+	char *dump = acls.dump();
+	qDebug("Acls changed:%s%s%s %s", users ? " users" : "",
+		layers ? " layers" : "", features ? " features" : "", dump);
+	DP_free(dump);
+#endif
+
+	if(users) {
 		updateUserBits(acls);
 	}
 
-	if(aclChangeFlags & DP_ACL_STATE_CHANGE_LAYERS_BIT) {
+	if(layers) {
 		updateLayers(acls);
 	}
 
-	if(aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT) {
+	if(features) {
 		updateFeatures(acls);
 	}
 }

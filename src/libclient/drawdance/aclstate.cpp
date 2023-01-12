@@ -22,6 +22,11 @@ void AclState::reset(uint8_t localUserId)
     DP_acl_state_reset(m_data, localUserId);
 }
 
+char *AclState::dump() const
+{
+    return DP_acl_state_dump(m_data);
+}
+
 DP_UserAcls AclState::users() const
 {
     return DP_acl_state_users(m_data);
