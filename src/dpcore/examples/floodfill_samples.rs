@@ -45,7 +45,7 @@ fn main() {
         .root_mut()
         .add_bitmap_layer(2, Color::TRANSPARENT, LayerInsertion::Top);
 
-    let (bgimage, w, h) = utils::load_image("testdata/filltest.png");
+    let (bgimage, w, h) = utils::load_image_data(include_bytes!("testdata/filltest.png"));
 
     editlayer::draw_image8(
         layerstack.root_mut().get_bitmaplayer_mut(1).unwrap(),

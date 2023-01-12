@@ -27,7 +27,7 @@ mod utils;
 fn main() {
     let mut layer = BitmapLayer::new(0, 256, 256, Tile::new(&Color::rgb8(255, 255, 255), 0));
 
-    let (image, w, h) = utils::load_image("testdata/logo.png");
+    let (image, w, h) = utils::load_image_data(include_bytes!("testdata/logo.png"));
 
     editlayer::draw_image8(
         &mut layer,
