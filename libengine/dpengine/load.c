@@ -750,7 +750,7 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
             if (c->want_layers) {
                 c->want_layers = false;
                 c->expect = DP_READ_ORA_EXPECT_STACK_OR_LAYER;
-                c->next_id = 1;
+                c->next_id = 0x100;
             }
             else {
                 DP_warn("Duplicate root <stack>");
@@ -762,7 +762,7 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
             if (c->want_annotations) {
                 c->want_annotations = false;
                 c->expect = DP_READ_ORA_EXPECT_ANNOTATION;
-                c->next_id = 1;
+                c->next_id = 0x100;
                 read_ora_context_init_annotations(c);
             }
             else {
