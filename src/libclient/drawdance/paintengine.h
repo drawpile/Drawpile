@@ -39,8 +39,9 @@ public:
 
 	DP_PaintEngine *get();
 
-	void reset(AclState &acls, SnapshotQueue &sq, DP_PaintEnginePlaybackFn playbackFn,
-		void *playbackUser, const CanvasState &canvasState = CanvasState::null(),
+	void reset(AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+		DP_PaintEnginePlaybackFn playbackFn, void *playbackUser,
+		const CanvasState &canvasState = CanvasState::null(),
 		DP_Player *player = nullptr);
 
 	int renderThreadCount() const;

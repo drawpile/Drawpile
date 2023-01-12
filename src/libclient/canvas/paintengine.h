@@ -48,6 +48,7 @@ public:
 
 	/// Reset the paint engine to its default state
 	void reset(
+		uint8_t localUserId,
 		const drawdance::CanvasState &canvasState = drawdance::CanvasState::null(),
 		DP_Player *player = nullptr);
 

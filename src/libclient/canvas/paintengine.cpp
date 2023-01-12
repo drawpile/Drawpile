@@ -70,13 +70,14 @@ void PaintEngine::start()
 	m_timerId = startTimer(1000 / 60, Qt::PreciseTimer);
 }
 
-void PaintEngine::reset(const drawdance::CanvasState &canvasState, DP_Player *player)
+void PaintEngine::reset(
+	uint8_t localUserId, const drawdance::CanvasState &canvasState, DP_Player *player)
 {
 	if(m_timerId != 0) {
 		killTimer(m_timerId);
 	}
-	m_paintEngine.reset(
-		m_acls, m_snapshotQueue, PaintEngine::onPlayback, this, canvasState, player);
+	m_paintEngine.reset(m_acls, m_snapshotQueue, localUserId,
+		PaintEngine::onPlayback, this, canvasState, player);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;

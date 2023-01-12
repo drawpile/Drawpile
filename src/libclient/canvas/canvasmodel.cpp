@@ -79,12 +79,12 @@ void CanvasModel::loadBlank(const QSize &size, const QColor &background)
 
 void CanvasModel::loadCanvasState(const drawdance::CanvasState &canvasState)
 {
-	m_paintengine->reset(canvasState);
+	m_paintengine->reset(m_localUserId, canvasState);
 }
 
 void CanvasModel::loadPlayer(DP_Player *player)
 {
-	return m_paintengine->reset(drawdance::CanvasState::null(), player);
+	return m_paintengine->reset(m_localUserId, drawdance::CanvasState::null(), player);
 }
 
 QSize CanvasModel::size() const

@@ -28,11 +28,12 @@ DP_PaintEngine *PaintEngine::get()
 }
 
 void PaintEngine::reset(
-	AclState &acls, SnapshotQueue &sq, DP_PaintEnginePlaybackFn playbackFn,
-	void *playbackUser, const CanvasState &canvasState, DP_Player *player)
+	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+	DP_PaintEnginePlaybackFn playbackFn, void *playbackUser,
+	const CanvasState &canvasState, DP_Player *player)
 {
 	DP_paint_engine_free_join(m_data);
-	acls.reset(0);
+	acls.reset(localUserId);
 	m_data = DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
 		&PaintEngine::getTimeMs, nullptr, player, playbackFn, playbackUser);
