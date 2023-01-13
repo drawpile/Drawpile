@@ -96,7 +96,7 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
 		&PaintEngine::onTimelineChanged,
-		&PaintEngine::onCursorMoved, this);
+		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer, this);
 
 	if(m_changedTileBounds.isValid()) {
 		QRect changedArea{
@@ -114,7 +114,7 @@ int PaintEngine::receiveMessages(
 	return DP_paint_engine_handle_inc(m_paintEngine.get(), local, overrideAcls,
 		count, drawdance::Message::asRawMessages(msgs),
 		&PaintEngine::onAclsChanged, &PaintEngine::onLaserTrail,
-		&PaintEngine::onMovePointer, &PaintEngine::onDefaultLayer, this);
+		&PaintEngine::onMovePointer, this);
 }
 
 void PaintEngine::enqueueReset()
@@ -501,7 +501,7 @@ void PaintEngine::onMovePointer(void *user, unsigned int contextId, int x, int y
 void PaintEngine::onDefaultLayer(void *user, int layerId)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->defaultLayer(layerId);
+	emit pe->defaultLayer(layerId >= 0 && layerId <= UINT16_MAX ? layerId : 0);
 }
 
 void PaintEngine::onCatchup(void *user, int progress)
