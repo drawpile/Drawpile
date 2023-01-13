@@ -30,12 +30,27 @@ use std::io;
 use std::io::Write;
 use std::path::Path;
 
-#[derive(Copy, Clone, Eq, PartialEq, Default, clap::ValueEnum)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
 pub enum Format {
     #[default]
     Guess,
     Binary,
     Text,
+}
+
+impl std::str::FromStr for Format {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "guess" => Ok(Self::Guess),
+            "binary" => Ok(Self::Binary),
+            "text" => Ok(Self::Text),
+            _ => Err(format!(
+                "invalid format '{s}'. Valid options are: 'guess', 'binary', 'text'"
+            )),
+        }
+    }
 }
 
 pub struct ConvertRecOpts<'a> {

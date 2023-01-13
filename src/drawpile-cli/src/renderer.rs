@@ -38,7 +38,7 @@ use std::time::{Duration, Instant};
 
 use image;
 
-#[derive(Clone, Copy, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Size(u32, u32);
 
 impl FromStr for Size {

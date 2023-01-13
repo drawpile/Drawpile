@@ -7,7 +7,7 @@ license.workspace = true
 [dependencies]
 dpcore = { path = "../dpcore" }
 dpimpex = { path = "../dpimpex" }
-clap = { version = "3.2.16", features=["derive"] }
 image = { version = "0.24.3", default-features = false }
 tracing-subscriber = "0.3.15"
 tracing = "0.1.36"
+xflags = "0.3.1"
