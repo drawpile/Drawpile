@@ -541,6 +541,23 @@ static void render_job(void *user, int thread_index)
     DP_SEMAPHORE_MUST_POST(pe->render.tiles_done_sem);
 }
 
+static void apply_hidden_layers_recursive(DP_Vector *hidden_layers,
+                                          DP_LayerPropsList *lpl)
+{
+    int count = DP_layer_props_list_count(lpl);
+    for (int i = 0; i < count; ++i) {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        if (DP_layer_props_hidden(lp)) {
+            int layer_id = DP_layer_props_id(lp);
+            DP_VECTOR_PUSH_TYPE(hidden_layers, int, layer_id);
+        }
+        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
+        if (child_lpl) {
+            apply_hidden_layers_recursive(hidden_layers, child_lpl);
+        }
+    }
+}
+
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
@@ -599,6 +616,13 @@ DP_PaintEngine *DP_paint_engine_new_inc(
                       render_thread_count, render_job);
     pe->render.tiles_done_sem = DP_semaphore_new(0);
     pe->render.tiles_waiting = 0;
+    // If there's hidden layers in the canvas state, add them to our
+    // local view so that they actually appear hidden to start with.
+    if (cs_or_null) {
+        DP_Vector *hidden_layers = &pe->local_view.hidden_layers;
+        DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs_or_null);
+        apply_hidden_layers_recursive(hidden_layers, lpl);
+    }
     return pe;
 }
 
@@ -1446,9 +1470,10 @@ static DP_Timeline *maybe_get_timeline(DP_CanvasState *cs, DP_ViewMode vm)
     return want_timeline ? DP_canvas_state_timeline_noinc(cs) : NULL;
 }
 
-static void set_reveal_censored_props(DP_TransientCanvasState *tcs,
-                                      DP_DrawContext *dc,
-                                      DP_LayerPropsList *lpl)
+static void set_local_layer_props_recursive(DP_TransientCanvasState *tcs,
+                                            DP_DrawContext *dc,
+                                            bool reveal_censored,
+                                            DP_LayerPropsList *lpl)
 {
     int count = DP_layer_props_list_count(lpl);
     DP_draw_context_layer_indexes_push(dc);
@@ -1456,18 +1481,29 @@ static void set_reveal_censored_props(DP_TransientCanvasState *tcs,
         DP_draw_context_layer_indexes_set(dc, i);
 
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        if (DP_layer_props_censored(lp)) {
+        // Hidden layers are supposed to be purely local state. If the remote
+        // state gives us hidden layers, we unhide them first. That may get
+        // undone by the hidden layers processing that comes after this step.
+        bool needs_show = DP_layer_props_hidden(lp);
+        bool needs_reveal = reveal_censored && DP_layer_props_censored(lp);
+        if (needs_show || needs_reveal) {
             int index_count;
             int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
             DP_TransientLayerProps *tlp =
                 DP_layer_routes_entry_indexes_transient_props(index_count,
                                                               indexes, tcs);
-            DP_transient_layer_props_censored_set(tlp, false);
+            if (needs_show) {
+                DP_transient_layer_props_hidden_set(tlp, false);
+            }
+            if (needs_reveal) {
+                DP_transient_layer_props_censored_set(tlp, false);
+            }
         }
 
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
         if (child_lpl) {
-            set_reveal_censored_props(tcs, dc, child_lpl);
+            set_local_layer_props_recursive(tcs, dc, reveal_censored,
+                                            child_lpl);
         }
     }
     DP_draw_context_layer_indexes_pop(dc);
@@ -1503,12 +1539,11 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
 
     bool reveal_censored = pe->local_view.reveal_censored;
-    if (reveal_censored) {
-        DP_DrawContext *dc = pe->preview_dc;
-        DP_draw_context_layer_indexes_clear(dc);
-        set_reveal_censored_props(
-            tcs, dc, DP_transient_canvas_state_layer_props_noinc(tcs));
-    }
+    DP_DrawContext *dc = pe->preview_dc;
+    DP_draw_context_layer_indexes_clear(dc);
+    set_local_layer_props_recursive(
+        tcs, dc, reveal_censored,
+        DP_transient_canvas_state_layer_props_noinc(tcs));
 
     set_hidden_layer_props(pe, tcs);
 
