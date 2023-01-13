@@ -243,9 +243,6 @@ char *DP_format(const char *fmt, ...) DP_FORMAT(1, 2);
 char *DP_strdup(const char *str);
 
 
-void *DP_slurp(const char *path, size_t *out_length);
-
-
 bool DP_str_equal(const char *a, const char *b);
 
 bool DP_str_equal_lowercase(const char *a, const char *b);

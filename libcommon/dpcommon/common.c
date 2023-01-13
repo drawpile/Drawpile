@@ -24,9 +24,9 @@
 #include "conversions.h"
 #include "threading.h"
 #include <ctype.h>
-#include <errno.h>
 #include <limits.h>
 #include <stdio.h>
+
 
 static const char *log_level_to_string(DP_LogLevel level)
 {
@@ -169,57 +169,6 @@ char *DP_strdup(const char *str)
     else {
         return NULL;
     }
-}
-
-
-void *DP_slurp(const char *path, size_t *out_length)
-{
-    DP_ASSERT(path);
-    FILE *fp = fopen(path, "rb");
-    if (!fp) {
-        DP_error_set("Can't open '%s': %s", path, strerror(errno));
-        return NULL;
-    }
-
-    char *buf = NULL;
-    if (fseek(fp, 0L, SEEK_END) == -1) {
-        DP_error_set("Can't seek end of '%s': %s", path, strerror(errno));
-        goto slurp_close;
-    }
-
-    long maybe_length = ftell(fp);
-    if (maybe_length == -1) {
-        DP_error_set("Can't tell length of '%s': %s", path, strerror(errno));
-        goto slurp_close;
-    }
-
-    if (fseek(fp, 0L, SEEK_SET) == -1L) {
-        DP_error_set("Can't seek start of '%s': %s", path, strerror(errno));
-        goto slurp_close;
-    }
-
-    size_t length = DP_long_to_size(maybe_length);
-    size_t size = length + 1;
-    buf = DP_malloc(size);
-    size_t read = fread(buf, 1, length, fp);
-    if (read != length) {
-        DP_error_set("Can't read %zu bytes from '%s': got %zu bytes", length,
-                     path, read);
-        DP_free(buf);
-        buf = NULL;
-        goto slurp_close;
-    }
-
-    buf[length] = '\0';
-    if (out_length) {
-        *out_length = length;
-    }
-
-slurp_close:
-    if (fclose(fp) != 0) {
-        DP_warn("Error closing '%s': %s", path, strerror(errno));
-    }
-    return buf;
 }
 
 

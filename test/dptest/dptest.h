@@ -121,6 +121,19 @@ bool DP_test_file_eq_ok(DP_TestContext *T, const char *file, int line,
 #define REGISTER_ARGS   R
 #define TEST_ARGS       T
 
+// For sticking TEST_PARAMS into a struct, e.g. to have them in callbacks.
+#define TEST_FIELD_DECL DP_TestContext *T
+#define TEST_FIELD_INIT T
+#define TEST_FIELD_PACK(X) \
+    do {                   \
+        (X).T = T;         \
+    } while (0)
+#define TEST_UNPACK(X) \
+    TEST_FIELD_DECL;   \
+    do {               \
+        T = (X).T;     \
+    } while (0)
+
 #define REGISTER_TEST_USER(NAME, USER) \
     DP_test_register(REGISTER_ARGS, #NAME, NAME, USER)
 

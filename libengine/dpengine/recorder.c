@@ -56,7 +56,7 @@ struct DP_Recorder {
 
 struct DP_RecorderThreadArgs {
     DP_Recorder *r;
-    DP_CanvasState *cs;
+    DP_CanvasState *cs_or_null;
 };
 
 
@@ -166,12 +166,14 @@ static void run_recorder(void *user)
 {
     struct DP_RecorderThreadArgs *args = user;
     DP_Recorder *r = args->r;
-    DP_CanvasState *cs = args->cs;
+    DP_CanvasState *cs_or_null = args->cs_or_null;
     DP_free(args);
 
     if (write_header(r)) {
-        DP_reset_image_build(cs, 0, write_reset_image_message, r);
-        DP_canvas_state_decref(cs);
+        if (cs_or_null) {
+            DP_reset_image_build(cs_or_null, 0, write_reset_image_message, r);
+            DP_canvas_state_decref(cs_or_null);
+        }
         DP_Semaphore *sem = r->sem;
         while (true) {
             DP_SEMAPHORE_MUST_WAIT(sem);
@@ -187,16 +189,16 @@ static void run_recorder(void *user)
         }
     }
     else {
-        DP_canvas_state_decref(cs);
+        DP_canvas_state_decref(cs_or_null);
     }
 }
 
 
-DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, DP_CanvasState *cs,
+DP_Recorder *DP_recorder_new_inc(DP_RecorderType type,
+                                 DP_CanvasState *cs_or_null,
                                  DP_RecorderGetTimeMsFn get_time_fn,
                                  void *get_time_user, DP_Output *output)
 {
-    DP_ASSERT(cs);
     DP_ASSERT(output);
     DP_Recorder *r = DP_malloc(sizeof(*r));
     *r = (DP_Recorder){type,          {get_time_fn, get_time_user},
@@ -234,7 +236,8 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, DP_CanvasState *cs,
     }
 
     struct DP_RecorderThreadArgs *args = DP_malloc(sizeof(*args));
-    *args = (struct DP_RecorderThreadArgs){r, DP_canvas_state_incref(cs)};
+    *args = (struct DP_RecorderThreadArgs){
+        r, DP_canvas_state_incref_nullable(cs_or_null)};
     r->thread = DP_thread_new(run_recorder, args);
     if (!r->thread) {
         DP_recorder_free_join(r);
@@ -267,6 +270,12 @@ void DP_recorder_free_join(DP_Recorder *r)
         }
         DP_free(r);
     }
+}
+
+DP_RecorderType DP_recorder_type(DP_Recorder *r)
+{
+    DP_ASSERT(r);
+    return r->type;
 }
 
 void DP_recorder_message_push_initial_inc(DP_Recorder *r, int count,

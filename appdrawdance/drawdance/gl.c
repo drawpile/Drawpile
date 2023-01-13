@@ -22,6 +22,7 @@
 #include "gl.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/file.h>
 #include <SDL.h>
 
 #define DP_GL_DEFINE_FALLBACKS
@@ -107,7 +108,7 @@ static unsigned int parse_shader(unsigned int type, const char *source)
         return 0;
     }
 
-    char *buffer = source[0] == '<' ? DP_slurp(source + 1, NULL) : NULL;
+    char *buffer = source[0] == '<' ? DP_file_slurp(source + 1, NULL) : NULL;
     const char *code = buffer ? buffer : source;
     DP_GL(glShaderSource, shader, 1, &code, NULL);
     DP_GL(glCompileShader, shader);

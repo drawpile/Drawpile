@@ -30,6 +30,7 @@ set(dpcommon_sources
     dpcommon/base64.c
     dpcommon/binary.c
     dpcommon/common.c
+    dpcommon/file.c
     dpcommon/input.c
     dpcommon/output.c
     dpcommon/perf.c
@@ -45,6 +46,7 @@ set(dpcommon_headers
     dpcommon/common.h
     dpcommon/conversions.h
     dpcommon/endianness.h
+    dpcommon/file.h
     dpcommon/geom.h
     dpcommon/input.h
     dpcommon/output.h
@@ -56,6 +58,7 @@ set(dpcommon_headers
 
 set(dpcommon_tests
     test/base64.c
+    test/file.c
     test/queue.c
     test/rect.c
     test/vector.c)

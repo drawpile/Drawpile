@@ -24,6 +24,7 @@
 #include <dpclient/client.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/file.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpengine/layer_props.h>
@@ -325,7 +326,7 @@ static int slurp(lua_State *L)
 {
     const char *path = luaL_checkstring(L, 1);
     size_t length;
-    char *content = DP_slurp(path, &length);
+    char *content = DP_file_slurp(path, &length);
     if (content) {
         lua_pushlstring(L, content, length);
         DP_free(content);

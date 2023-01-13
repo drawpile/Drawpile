@@ -44,6 +44,8 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, DP_CanvasState *cs,
 
 void DP_recorder_free_join(DP_Recorder *r);
 
+DP_RecorderType DP_recorder_type(DP_Recorder *r);
+
 void DP_recorder_message_push_initial_inc(DP_Recorder *r, int count,
                                           DP_Message *(*get)(void *, int),
                                           void *user);

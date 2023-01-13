@@ -39,6 +39,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/file.h>
 #include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
@@ -50,6 +51,7 @@
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
 #include <dpmsg/msg_internal.h>
+#include <ctype.h>
 #include <limits.h>
 
 #define DP_PERF_CONTEXT "paint_engine"
@@ -159,6 +161,7 @@ struct DP_PaintEngine {
     DP_AtomicPtr next_preview;
     DP_Thread *paint_thread;
     struct {
+        char *path;
         DP_Recorder *recorder;
         DP_Semaphore *start_sem;
         int state_change;
@@ -603,6 +606,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_atomic_set(&pe->catchup, -1);
     DP_atomic_ptr_set(&pe->next_preview, NULL);
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
+    pe->record.path = NULL;
     pe->record.recorder = NULL;
     pe->record.start_sem = DP_semaphore_new(0);
     pe->record.state_change = RECORDER_STOPPED;
@@ -629,13 +633,13 @@ DP_PaintEngine *DP_paint_engine_new_inc(
 void DP_paint_engine_free_join(DP_PaintEngine *pe)
 {
     if (pe) {
+        DP_paint_engine_recorder_stop(pe);
         DP_atomic_set(&pe->running, false);
         DP_semaphore_free(pe->render.tiles_done_sem);
         DP_worker_free_join(pe->render.worker);
         DP_SEMAPHORE_MUST_POST(pe->queue_sem);
         DP_thread_free_join(pe->paint_thread);
         DP_player_free(pe->playback.player);
-        DP_recorder_free_join(pe->record.recorder);
         DP_semaphore_free(pe->record.start_sem);
         DP_mutex_free(pe->queue_mutex);
         DP_semaphore_free(pe->queue_sem);
@@ -794,34 +798,47 @@ void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
 }
 
 
-bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
-                                    const char *path)
+static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
+                            char *path, bool with_history)
 {
     DP_Output *output = DP_file_output_new_from_path(path);
     if (!output) {
+        DP_free(path);
         return false;
     }
 
-    // To get a clean recording, we have to first spin down all queued messages.
-    // We send ourselves a RECORDER_START internal message and then block this
-    // thread (which must be the only thread interacting with the paint engine,
-    // maybe we should verify that somehow) until the paint thread gets to it.
-    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
-    DP_message_queue_push_noinc(&pe->remote_queue,
-                                DP_msg_internal_recorder_start_new(0));
-    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
-    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
-    // The paint thread will post to this semaphore when it reaches our message.
-    DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
-    DP_ASSERT(pe->remote_queue.used == 0);
+    DP_Recorder *r;
+    if (with_history) {
+        // To get a clean initial recording, we have to first spin down all
+        // queued messages. We send ourselves a RECORDER_START internal message
+        // and then block this thread (which must be the only thread interacting
+        // with the paint engine, maybe we should verify that somehow) until the
+        // paint thread gets to it.
+        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+        DP_message_queue_push_noinc(&pe->remote_queue,
+                                    DP_msg_internal_recorder_start_new(0));
+        DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+        // The paint thread will post to this semaphore when it reaches our
+        // recorder start message.
+        DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
+        DP_ASSERT(pe->remote_queue.used == 0);
+        // Now all queued messages have been handled. We can't just take the
+        // current canvas state from the canvas history though, since that would
+        // lose undo history and might contain state from local messages. So
+        // instead, we grab the oldest reachable state and then record the
+        // entire history since then.
+        r = DP_canvas_history_recorder_new(pe->ch, type,
+                                           pe->record.get_time_ms_fn,
+                                           pe->record.get_time_ms_user, output);
+    }
+    else {
+        // This is a continuation recording after a reset. That means there's no
+        // history to worry about, just create a fresh recorder.
+        r = DP_recorder_new_inc(type, NULL, pe->record.get_time_ms_fn,
+                                pe->record.get_time_ms_user, output);
+    }
 
-    // Now all queued messages have been handled. We can't just take the current
-    // canvas state from the canvas history though, since that would lose undo
-    // history and might contain state from local messages. So instead, we grab
-    // the oldest reachable state and then record the entire history since then.
-    DP_Recorder *r =
-        DP_canvas_history_recorder_new(pe->ch, type, pe->record.get_time_ms_fn,
-                                       pe->record.get_time_ms_user, output);
     if (r) {
         if (pe->record.recorder) {
             DP_warn("Stopping already running recording");
@@ -832,14 +849,22 @@ bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
         // fork, so we have to take a lock around manipulating it. We re-use
         // the queue mutex for that, since it's what the cleanup uses too.
         DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+        pe->record.path = path;
         pe->record.recorder = r;
         DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
         pe->record.state_change = RECORDER_STARTED;
         return true;
     }
     else {
+        DP_free(path);
         return false;
     }
+}
+
+bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
+                                    const char *path)
+{
+    return start_recording(pe, type, DP_strdup(path), true);
 }
 
 bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe)
@@ -848,6 +873,8 @@ bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe)
         // Need to take a lock due to cleanup handling, see explanation above.
         DP_MUTEX_MUST_LOCK(pe->queue_mutex);
         DP_recorder_free_join(pe->record.recorder);
+        DP_free(pe->record.path);
+        pe->record.path = NULL;
         pe->record.recorder = NULL;
         DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
         pe->record.state_change = RECORDER_STOPPED;
@@ -1151,16 +1178,31 @@ static DP_PaintEngineMetaBuffer *get_meta_buffer(DP_PaintEngine *pe)
     return (DP_PaintEngineMetaBuffer *)pe->buffers;
 }
 
+static void restart_recording(DP_PaintEngine *pe)
+{
+    char *path = DP_file_path_unique_nonexistent(pe->record.path, 99);
+    if (!path) {
+        DP_warn("Can't restart recording: no available file name after %s",
+                pe->record.path);
+    }
+
+    DP_RecorderType type = DP_recorder_type(pe->record.recorder);
+    DP_paint_engine_recorder_stop(pe);
+    if (path && !start_recording(pe, type, path, false)) {
+        DP_warn("Can't restart recording: %s", DP_error());
+    }
+}
+
 static void record_message(DP_PaintEngine *pe, DP_Message *msg,
                            DP_MessageType type)
 {
     DP_Recorder *r = pe->record.recorder;
     if (r) {
-        bool is_reset = type == DP_MSG_INTERNAL
-                     && DP_msg_internal_type(DP_message_internal(msg))
-                            == DP_MSG_INTERNAL_TYPE_RESET;
-        if (is_reset) {
-            DP_paint_engine_recorder_stop(pe);
+        if (type == DP_MSG_INTERNAL) {
+            DP_MsgInternal *mi = DP_message_internal(msg);
+            if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+                restart_recording(pe);
+            }
         }
         else if (!DP_recorder_message_push_inc(r, msg)) {
             DP_warn("Failed to push message to recorder: %s", DP_error());

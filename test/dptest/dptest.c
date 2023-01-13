@@ -22,6 +22,7 @@
 #include "dptest.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/file.h>
 #include <dpcommon/output.h>
 #include <stdlib.h>
 #include <time.h>
@@ -521,7 +522,7 @@ bool DP_test_file_eq_ok(DP_TestContext *T, const char *file, int line,
                         const char *b, const char *fmt, ...)
 {
     size_t length_a;
-    unsigned char *content_a = DP_slurp(a, &length_a);
+    unsigned char *content_a = DP_file_slurp(a, &length_a);
     if (!content_a) {
         va_list ap;
         va_start(ap, fmt);
@@ -534,7 +535,7 @@ bool DP_test_file_eq_ok(DP_TestContext *T, const char *file, int line,
     }
 
     size_t length_b;
-    unsigned char *content_b = DP_slurp(b, &length_b);
+    unsigned char *content_b = DP_file_slurp(b, &length_b);
     if (!content_b) {
         DP_free(content_a);
         va_list ap;
