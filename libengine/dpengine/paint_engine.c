@@ -123,8 +123,6 @@ typedef struct DP_PaintEngineCursorChanges {
 
 typedef struct DP_PaintEngineMetaBuffer {
     uint8_t acl_change_flags;
-    bool have_default_layer;
-    uint16_t default_layer;
     DP_PaintEngineLaserChanges laser_changes;
     DP_PaintEngineCursorChanges cursor_changes;
 } DP_PaintEngineMetaBuffer;
@@ -158,6 +156,7 @@ struct DP_PaintEngine {
     DP_Mutex *queue_mutex;
     DP_Atomic running;
     DP_Atomic catchup;
+    DP_Atomic default_layer_id;
     DP_AtomicPtr next_preview;
     DP_Thread *paint_thread;
     struct {
@@ -398,6 +397,11 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
     if (type == DP_MSG_INTERNAL) {
         handle_internal(pe, dc, DP_msg_internal_cast(msg));
     }
+    else if (type == DP_MSG_DEFAULT_LAYER) {
+        DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
+        int default_layer_id = DP_msg_default_layer_id(mdl);
+        DP_atomic_xch(&pe->default_layer_id, default_layer_id);
+    }
     else if (local) {
         if (!DP_canvas_history_handle_local(pe->ch, dc, msg)) {
             DP_warn("Handle local command: %s", DP_error());
@@ -604,6 +608,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->queue_mutex = DP_mutex_new();
     DP_atomic_set(&pe->running, true);
     DP_atomic_set(&pe->catchup, -1);
+    DP_atomic_set(&pe->default_layer_id, -1);
     DP_atomic_ptr_set(&pe->next_preview, NULL);
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->record.path = NULL;
@@ -1168,9 +1173,10 @@ bool DP_paint_engine_playback_close(DP_PaintEngine *pe)
 }
 
 
-static bool is_internal_or_command(DP_MessageType type)
+static bool is_pushable_type(DP_MessageType type)
 {
-    return type >= 128 || type == DP_MSG_INTERNAL;
+    return type >= 128 || type == DP_MSG_INTERNAL
+        || type == DP_MSG_DEFAULT_LAYER;
 }
 
 static DP_PaintEngineMetaBuffer *get_meta_buffer(DP_PaintEngine *pe)
@@ -1257,14 +1263,6 @@ static void handle_move_pointer(DP_PaintEngine *pe, DP_Message *msg)
         DP_msg_move_pointer_x(mmp), DP_msg_move_pointer_y(mmp)};
 }
 
-static void handle_default_layer(DP_PaintEngine *pe, DP_Message *msg)
-{
-    DP_MsgDefaultLayer *mdl = DP_msg_default_layer_cast(msg);
-    DP_PaintEngineMetaBuffer *meta_buffer = get_meta_buffer(pe);
-    meta_buffer->have_default_layer = true;
-    meta_buffer->default_layer = DP_msg_default_layer_id(mdl);
-}
-
 static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
                                        bool override_acls)
 {
@@ -1278,7 +1276,7 @@ static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
     else {
         DP_MessageType type = DP_message_type(msg);
         record_message(pe, msg, type);
-        if (is_internal_or_command(type)) {
+        if (is_pushable_type(type)) {
             return true;
         }
         else if (type == DP_MSG_LASER_TRAIL) {
@@ -1286,9 +1284,6 @@ static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
         }
         else if (type == DP_MSG_MOVE_POINTER) {
             handle_move_pointer(pe, msg);
-        }
-        else if (type == DP_MSG_DEFAULT_LAYER) {
-            handle_default_layer(pe, msg);
         }
     }
     return false;
@@ -1299,7 +1294,7 @@ static bool should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
                                       DP_UNUSED bool ignore_acls)
 {
     DP_MessageType type = DP_message_type(msg);
-    return is_internal_or_command(type);
+    return is_pushable_type(type);
 }
 
 static int push_messages(DP_PaintEngine *pe, DP_Queue *queue,
@@ -1324,12 +1319,12 @@ static int push_messages(DP_PaintEngine *pe, DP_Queue *queue,
     return pushed;
 }
 
-int DP_paint_engine_handle_inc(
-    DP_PaintEngine *pe, bool local, bool override_acls, int count,
-    DP_Message **msgs, DP_PaintEngineAclsChangedFn acls_changed,
-    DP_PaintEngineLaserTrailFn laser_trail,
-    DP_PaintEngineMovePointerFn move_pointer,
-    DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user)
+int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
+                               bool override_acls, int count, DP_Message **msgs,
+                               DP_PaintEngineAclsChangedFn acls_changed,
+                               DP_PaintEngineLaserTrailFn laser_trail,
+                               DP_PaintEngineMovePointerFn move_pointer,
+                               void *user)
 {
     DP_ASSERT(pe);
     DP_ASSERT(msgs);
@@ -1342,7 +1337,6 @@ int DP_paint_engine_handle_inc(
     meta_buffer->acl_change_flags = 0;
     meta_buffer->laser_changes.count = 0;
     meta_buffer->cursor_changes.count = 0;
-    meta_buffer->have_default_layer = false;
 
     // Don't lock anything until we actually find a message to push.
     int pushed = 0;
@@ -1379,10 +1373,6 @@ int DP_paint_engine_handle_inc(
         DP_PaintEngineCursorPosition *cp = &cursor->positions[context_id];
         move_pointer(user, context_id, DP_int32_to_int(cp->x),
                      DP_int32_to_int(cp->y));
-    }
-
-    if (meta_buffer->have_default_layer) {
-        default_layer_set(user, meta_buffer->default_layer);
     }
 
     DP_PERF_END(fn);
@@ -1706,7 +1696,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineAnnotationsChangedFn annotations_changed,
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
     DP_PaintEngineTimelineChangedFn timeline_changed,
-    DP_PaintEngineCursorMovedFn cursor_moved, void *user)
+    DP_PaintEngineCursorMovedFn cursor_moved,
+    DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user)
 {
     DP_ASSERT(pe);
     DP_ASSERT(catchup);
@@ -1765,6 +1756,11 @@ void DP_paint_engine_tick(
                      user);
         DP_canvas_state_decref(prev_view_cs);
         DP_PERF_END(changes);
+    }
+
+    int default_layer_id = DP_atomic_xch(&pe->default_layer_id, -1);
+    if (default_layer_id != -1) {
+        default_layer_set(user, default_layer_id);
     }
 
     DP_PERF_END(fn);

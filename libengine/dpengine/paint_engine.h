@@ -149,12 +149,12 @@ DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
 bool DP_paint_engine_playback_close(DP_PaintEngine *pe);
 
 // Returns the number of drawing commands actually pushed to the paint engine.
-int DP_paint_engine_handle_inc(
-    DP_PaintEngine *pe, bool local, bool override_acls, int count,
-    DP_Message **msgs, DP_PaintEngineAclsChangedFn acls_changed,
-    DP_PaintEngineLaserTrailFn laser_trail,
-    DP_PaintEngineMovePointerFn move_pointer,
-    DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user);
+int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
+                               bool override_acls, int count, DP_Message **msgs,
+                               DP_PaintEngineAclsChangedFn acls_changed,
+                               DP_PaintEngineLaserTrailFn laser_trail,
+                               DP_PaintEngineMovePointerFn move_pointer,
+                               void *user);
 
 void DP_paint_engine_tick(
     DP_PaintEngine *pe, DP_PaintEngineCatchupFn catchup,
@@ -164,7 +164,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineAnnotationsChangedFn annotations_changed,
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
     DP_PaintEngineTimelineChangedFn timeline_changed,
-    DP_PaintEngineCursorMovedFn cursor_moved, void *user);
+    DP_PaintEngineCursorMovedFn cursor_moved,
+    DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user);
 
 void DP_paint_engine_prepare_render(DP_PaintEngine *pe,
                                     DP_PaintEngineRenderSizeFn render_size,
