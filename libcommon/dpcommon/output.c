@@ -464,6 +464,7 @@ DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
                         ? DP_MEM_OUTPUT_MIN_CAPACITY
                         : initial_capacity;
     DP_MemOutputState state = {DP_malloc(capacity), capacity, 0, free_on_close};
+    state.buffer[0] = '\0';
     DP_Output *output = DP_output_new(mem_output_init, &state, sizeof(state));
     mem_output_assign_out_vars(output, out_buffer, out_size);
     return output;
