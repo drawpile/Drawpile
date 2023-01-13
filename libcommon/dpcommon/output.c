@@ -30,6 +30,8 @@
 
 
 struct DP_Output {
+    size_t capacity;
+    char *buffer;
     const DP_OutputMethods *methods;
     alignas(DP_max_align_t) unsigned char internal[];
 };
@@ -39,6 +41,8 @@ DP_Output *DP_output_new(DP_OutputInitFn init, void *arg, size_t internal_size)
     DP_ASSERT(init);
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Output));
     DP_Output *output = DP_malloc_zeroed(sizeof(*output) + internal_size);
+    output->capacity = 0;
+    output->buffer = NULL;
     output->methods = init(output->internal, arg);
     if (output->methods) {
         DP_ASSERT(output->methods->write);
@@ -55,6 +59,7 @@ bool DP_output_free(DP_Output *output)
     if (output) {
         bool (*dispose)(void *) = output->methods->dispose;
         bool ok = dispose ? dispose(output->internal) : true;
+        DP_free(output->buffer);
         DP_free(output);
         return ok;
     }
@@ -82,10 +87,34 @@ bool DP_output_print(DP_Output *output, const char *string)
 bool DP_output_vformat(DP_Output *output, const char *fmt, va_list ap)
 {
     DP_ASSERT(fmt);
-    char *buffer = DP_vformat(fmt, ap);
-    bool result = DP_output_print(output, buffer);
-    DP_free(buffer);
-    return result;
+
+    va_list aq;
+    va_copy(aq, ap);
+    size_t capacity = output->capacity;
+    int len = vsnprintf(output->buffer, capacity, fmt, aq);
+    va_end(aq);
+
+    if (len > 0) {
+        size_t slen = DP_int_to_size(len);
+        size_t size = slen + 1;
+        if (size > capacity) {
+            DP_free(output->buffer);
+            output->buffer = DP_malloc(size);
+            output->capacity = size;
+            if (vsnprintf(output->buffer, size, fmt, ap) != len) {
+                DP_error_set("Format length changed");
+                return false;
+            }
+        }
+        return DP_output_write(output, output->buffer, slen);
+    }
+    else if (len == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("Format encoding error");
+        return false;
+    }
 }
 
 bool DP_output_format(DP_Output *output, const char *fmt, ...)
