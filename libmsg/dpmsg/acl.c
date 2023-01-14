@@ -322,8 +322,8 @@ static void dump_layer_acls(DP_Output *output, DP_AclState *acls)
         HASH_ITER(hh, acls->layers, entry, tmp) {
             DP_LayerAcl *la = &entry->layer_acl;
             DP_output_format(
-                output, "        layer_id %d, locked %s, tier %s, exclusive: ",
-                entry->layer_id, la->locked ? " locked" : "",
+                output, "        layer_id %d, locked %d, tier %s, exclusive: ",
+                entry->layer_id, la->locked ? 1 : 0,
                 access_tier_attributes[la->tier].name);
             dump_user_bits(output, NULL, la->exclusive);
         }
