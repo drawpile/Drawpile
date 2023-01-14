@@ -52,6 +52,7 @@ Timeline::Timeline(QWidget *parent)
 	m_currentFrame = new QSpinBox;
 	m_currentFrame->setWrapping(true);
 	m_currentFrame->setMinimum(1);
+	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), this, &Timeline::onFrameChanged);
 	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), this, &Timeline::currentFrameChanged);
 	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), m_widget, &widgets::TimelineWidget::setCurrentFrame);
 	titlebar->addCustomWidget(m_currentFrame);
@@ -103,6 +104,14 @@ void Timeline::setCurrentFrame(int frame, int layerId)
 void Timeline::setCurrentLayer(int layerId)
 {
 	m_widget->setCurrentLayer(layerId);
+	// Synchronize frames and layer selection in manual mode.
+	canvas::TimelineModel *model = m_widget->model();
+	if(!model->isManualMode()) {
+		int frame = model->getAutoFrameForLayerId(layerId);
+		if(frame > 0 && currentFrame() != frame) {
+			setCurrentFrame(frame, 0);
+		}
+	}
 }
 
 void Timeline::setNextFrame()
@@ -137,6 +146,20 @@ void Timeline::onFramesChanged()
 {
 	m_currentFrame->setMaximum(qMax(1, m_widget->model()->frames().size()));
 	emit currentFrameChanged(m_currentFrame->value());
+}
+
+void Timeline::onFrameChanged(int frame)
+{
+	canvas::TimelineModel *model = m_widget->model();
+	if(!model->isManualMode()) {
+		int currentLayerId = m_widget->currentLayerId();
+		if(frame != model->getAutoFrameForLayerId(currentLayerId)) {
+			int layerId = model->frames().value(frame - 1).layerIds.value(0);
+			if(layerId > 0) {
+				emit layerSelectRequested(layerId);
+			}
+		}
+	}
 }
 
 void Timeline::onUseTimelineClicked()

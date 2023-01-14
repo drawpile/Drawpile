@@ -27,6 +27,7 @@
 #include <QObject>
 
 namespace drawdance {
+	class LayerProps;
 	class LayerPropsList;
 	class Timeline;
 }
@@ -73,6 +74,8 @@ public:
 	void setManualMode(bool manual);
 	bool isManualMode() const { return m_manualMode; }
 
+	int getAutoFrameForLayerId(int layerId);
+
 public slots:
 	void setLayers(const drawdance::LayerPropsList &lpl);
 	void setTimeline(const drawdance::Timeline &tl);
@@ -83,6 +86,8 @@ signals:
 
 private:
 	void setLayersRecursive(const drawdance::LayerPropsList &lpl, int group, const QString &prefix);
+	void setLayerIdsToAutoFrame(const drawdance::LayerPropsList &lpl);
+	void setLayerIdsToAutoFrameRecursive(drawdance::LayerProps lp, int autoFrame);
 	void updateAutoFrames();
 
 	CanvasModel *m_canvas;
@@ -90,6 +95,7 @@ private:
 	QVector<TimelineFrame> m_autoFrames;
 	QVector<TimelineLayer> m_layers;
 	QHash<int, int> m_layerIdsToRows;
+	QHash<int, int> m_layerIdsToAutoFrame;
 	bool m_manualMode;
 };
 

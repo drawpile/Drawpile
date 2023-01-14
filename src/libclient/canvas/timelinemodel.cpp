@@ -76,6 +76,7 @@ void TimelineModel::setLayers(const drawdance::LayerPropsList &lpl)
 	m_layers.clear();
 	m_layerIdsToRows.clear();
 	setLayersRecursive(lpl, 0, QString{});
+	setLayerIdsToAutoFrame(lpl);
 	emit layersChanged();
 	if(!m_manualMode) {
 		updateAutoFrames();
@@ -97,6 +98,27 @@ void TimelineModel::setLayersRecursive(const drawdance::LayerPropsList &lpl, int
 			m_layerIdsToRows[id] = m_layers.count();
 			m_layers.append(TimelineLayer{id, group,
 				QString{"%1%2"}.arg(prefix).arg(lp.title())});
+		}
+	}
+}
+
+void TimelineModel::setLayerIdsToAutoFrame(const drawdance::LayerPropsList &lpl)
+{
+	m_layerIdsToAutoFrame.clear();
+	int count = lpl.count();
+	for(int i = count - 1; i >= 0; --i) {
+		setLayerIdsToAutoFrameRecursive(lpl.at(i), i + 1);
+	}
+}
+
+void TimelineModel::setLayerIdsToAutoFrameRecursive(drawdance::LayerProps lp, int autoFrame)
+{
+	m_layerIdsToAutoFrame.insert(lp.id(), autoFrame);
+	drawdance::LayerPropsList children;
+	if(lp.isGroup(&children)) {
+		int childCount = children.count();
+		for(int i = 0; i < childCount; ++i) {
+			setLayerIdsToAutoFrameRecursive(children.at(i), autoFrame);
 		}
 	}
 }
@@ -181,6 +203,11 @@ void TimelineModel::setManualMode(bool manual)
 			updateAutoFrames();
 		emit framesChanged();
 	}
+}
+
+int TimelineModel::getAutoFrameForLayerId(int layerId)
+{
+	return m_layerIdsToAutoFrame.value(layerId, -1);
 }
 
 int TimelineModel::nearestLayerTo(int frameIdx, int originalLayer) const

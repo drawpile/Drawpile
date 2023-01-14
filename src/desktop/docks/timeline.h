@@ -64,6 +64,7 @@ signals:
 	void layerSelectRequested(int layerId);
 
 private slots:
+	void onFrameChanged(int frame);
 	void onUseTimelineClicked();
 	void onFpsChanged();
 	void onFramesChanged();
