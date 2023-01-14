@@ -83,6 +83,7 @@ void PaintEngine::reset(
 	m_lastRefreshAreaTileBoundsTouched = false;
 	start();
 	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK);
+	emit defaultLayer(0);
 }
 
 void PaintEngine::timerEvent(QTimerEvent *)
