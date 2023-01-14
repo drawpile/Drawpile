@@ -629,7 +629,11 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 
 void ChatWidget::setPinnedMessage(const QString &message)
 {
+	const bool wasAtEnd = d->isAtEnd();
 	d->pinned->setPinText(message);
+	if(wasAtEnd) {
+		d->scrollToEnd(d->currentChat);
+	}
 }
 
 void ChatWidget::systemMessage(const QString& message, bool alert)
