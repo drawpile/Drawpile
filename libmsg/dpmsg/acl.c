@@ -542,7 +542,7 @@ static void set_layer_acl(DP_AclState *acls, int layer_id,
 
     DP_LayerAcl *l = &entry->layer_acl;
     l->locked = flags & DP_ACL_ALL_LOCKED_BIT;
-    l->tier = DP_max_uint8(flags & DP_ACCESS_TIER_MASK, DP_ACCESS_TIER_GUEST);
+    l->tier = DP_min_uint8(flags & DP_ACCESS_TIER_MASK, DP_ACCESS_TIER_GUEST);
 
     // If no exclusive user ids are given, all users are allowed to use this.
     // To lock it for all users, the locked flag needs to be set instead.
