@@ -60,6 +60,7 @@ private:
 
     Ui_LayerProperties *m_ui;
 	canvas::LayerListItem m_item;
+	bool m_wasDefault;
 	uint8_t m_user;
 };
 

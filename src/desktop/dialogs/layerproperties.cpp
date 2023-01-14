@@ -55,13 +55,13 @@ LayerProperties::~LayerProperties()
 void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QString &creator, bool isDefault)
 {
 	m_item = item;
+	m_wasDefault = isDefault;
 
 	m_ui->title->setText(item.title);
 	m_ui->opacitySpinner->setValue(qRound(item.opacity * 100.0f));
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.censored);
 	m_ui->defaultLayer->setChecked(isDefault);
-	m_ui->defaultLayer->setEnabled(!isDefault);
 
 	int blendModeIndex = searchBlendModeIndex(item.blend);
 	if(blendModeIndex == -1) {
@@ -137,8 +137,10 @@ void LayerProperties::emitChanges()
 		emit visibilityChanged(m_item.id, m_ui->visible->isChecked());
     }
 
-    if(m_ui->defaultLayer->isEnabled() && m_ui->defaultLayer->isChecked()) {
-		messages.append(drawdance::Message::makeDefaultLayer(m_user, m_item.id));
+	bool makeDefault = m_ui->defaultLayer->isChecked();
+    if(m_ui->defaultLayer->isEnabled() && makeDefault != m_wasDefault) {
+		messages.append(drawdance::Message::makeDefaultLayer(
+			m_user, makeDefault ? m_item.id : 0));
     }
 
 	emit layerCommands(messages.count(), messages.constData());
