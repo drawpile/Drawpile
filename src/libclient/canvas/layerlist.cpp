@@ -305,24 +305,31 @@ static int getAutoselect(
 	uint8_t localUser, bool autoselectAny, int defaultLayer,
 	const QVector<LayerListItem> &oldItems, const QVector<LayerListItem> &newItems)
 {
-	if(oldItems.size() < newItems.size()) {
+	if(autoselectAny) {
+		// We haven't participated yet: select the default layer if it exists.
+		if(defaultLayer > 0) {
+			for(const LayerListItem &newItem : newItems) {
+				if(newItem.id == defaultLayer) {
+					return isNewLayerId(oldItems, newItem);
+				}
+			}
+		}
+		// No default layer, just pick latest newly created one we can find.
 		for(const LayerListItem &newItem : newItems) {
-			// Autoselection rules:
-			// 1. If we haven't participated yet, and there is a default layer,
-			//    only select the default layer
-			// 2. If we haven't participated in the session yet, select any new layer
-			// 3. Otherwise, select any new layer that was created by us
-			// TODO implement the other rules
-			if(isNewLayerId(oldItems, newItem) && (
-					newItem.creatorId() == localUser ||
-					(autoselectAny && (
-						 (defaultLayer > 0 && newItem.id == defaultLayer)
-						 || defaultLayer == 0
-						 )))) {
+			if(isNewLayerId(oldItems, newItem)) {
+				return newItem.id;
+			}
+		}
+	} else {
+		// We already participated: we might have just created a new layer,
+		// try to select that one.
+		for(const LayerListItem &newItem : newItems) {
+			if(isNewLayerId(oldItems, newItem) && newItem.creatorId() == localUser) {
 				return newItem.id;
 			}
 		}
 	}
+	// Don't select a different layer.
 	return -1;
 }
 
@@ -370,6 +377,10 @@ void LayerListModel::setDefaultLayer(uint16_t id)
 	const auto newIdx = layerIndex(m_defaultLayer);
 	if(newIdx.isValid())
 		emit dataChanged(newIdx, newIdx, role);
+
+	if(m_defaultLayer > 0 && m_autoselectAny) {
+		emit autoSelectRequest(m_defaultLayer);
+	}
 }
 
 QStringList LayerMimeData::formats() const
