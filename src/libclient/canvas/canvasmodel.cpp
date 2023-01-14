@@ -263,20 +263,22 @@ void CanvasModel::onLaserTrail(uint8_t userId, int persistence, uint32_t color)
 drawdance::MessageList CanvasModel::generateSnapshot() const
 {
 	drawdance::MessageList snapshot;
+	m_paintengine->canvasState().toResetImage(snapshot, 0);
+	amendSnapshotMetadata(snapshot);
+	return snapshot;
+}
 
+void CanvasModel::amendSnapshotMetadata(drawdance::MessageList &snapshot) const
+{
 	if(!m_pinnedMessage.isEmpty()) {
 		snapshot.prepend(drawdance::Message::makeChat(
 			m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
 	}
 
-	if(m_layerlist->defaultLayer() > 0) {
-		snapshot.prepend(drawdance::Message::makeDefaultLayer(
-			0, m_layerlist->defaultLayer()));
+	int defaultLayerId = m_layerlist->defaultLayer();
+	if(defaultLayerId > 0) {
+		snapshot.append(drawdance::Message::makeDefaultLayer(0, defaultLayerId));
 	}
-
-	m_paintengine->canvasState().toResetImage(snapshot, 0);
-
-	return snapshot;
 }
 
 void CanvasModel::pickLayer(int x, int y)

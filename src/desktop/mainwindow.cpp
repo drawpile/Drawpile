@@ -1587,8 +1587,11 @@ void MainWindow::resetSession()
 	// Session resetting is available only to session operators
 	if(m_doc->canvas()->aclState()->amOperator()) {
 		connect(dlg, &dialogs::ResetDialog::resetSelected, this, [this, dlg]() {
-			if(m_doc->canvas()->aclState()->amOperator()) {
-				m_doc->sendResetSession(dlg->getResetImage());
+			canvas::CanvasModel *canvas = m_doc->canvas();
+			if(canvas->aclState()->amOperator()) {
+				drawdance::MessageList snapshot = dlg->getResetImage();
+				canvas->amendSnapshotMetadata(snapshot);
+				m_doc->sendResetSession(snapshot);
 			}
 			dlg->deleteLater();
 		});

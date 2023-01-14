@@ -67,6 +67,8 @@ public:
 	void setSelection(Selection *selection);
 
 	drawdance::MessageList generateSnapshot() const;
+	// Adds default layer and pinned message to a reset image.
+	void amendSnapshotMetadata(drawdance::MessageList &snapshot) const;
 
 	uint8_t localUserId() const { return m_localUserId; }
 
