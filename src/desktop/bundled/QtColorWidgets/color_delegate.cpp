@@ -42,8 +42,8 @@ void color_widgets::ReadOnlyColorDelegate::paintItem(
         opt.text = "";
 
         QStyleOptionFrame panel;
-        panel.initFrom(option.widget);
-        if (option.widget->isEnabled())
+        panel.initFrom(widget);
+        if (widget && widget->isEnabled())
             panel.state = QStyle::State_Enabled;
         panel.rect = geom;
         panel.lineWidth = 2;
