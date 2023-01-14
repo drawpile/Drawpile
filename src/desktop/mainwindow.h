@@ -151,6 +151,7 @@ private slots:
 	void loadShortcuts();
 	void updateSettings();
 
+	void toggleLayerViewMode();
 	void updateLayerViewMode();
 
 	void copyText();
@@ -240,6 +241,7 @@ private:
 	drawingboard::CanvasScene *m_canvasscene;
 
 	QMenu *m_recentMenu;
+	QAction *m_lastLayerViewMode;
 
 	QActionGroup *m_currentdoctools; // general tools that require no special permissions
 	QActionGroup *m_admintools;      // session operator actions

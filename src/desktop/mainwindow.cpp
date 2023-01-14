@@ -155,6 +155,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_serverLogDialog(nullptr),
 	  m_canvasscene(nullptr),
 	  m_recentMenu(nullptr),
+	  m_lastLayerViewMode(nullptr),
 	  m_currentdoctools(nullptr),
 	  m_admintools(nullptr),
 	  m_modtools(nullptr),
@@ -723,6 +724,28 @@ void MainWindow::updateSettings()
 	cfg.endGroup();
 }
 
+void MainWindow::toggleLayerViewMode()
+{
+	if(!m_doc->canvas())
+		return;
+	// If any of the special view modes is triggered again, we want to toggle
+	// back to the normal view mode. This allows the user to e.g. switch between
+	// single layer and normal mode by mashing the same shortcut. Otherwise
+	// pressing the shortcut again would have no useful effect anyway.
+	QAction *actions[] = {
+		getAction("layerviewcurrentlayer"),
+		getAction("layerviewcurrentframe"),
+		getAction("layerviewonionskin"),
+	};
+	for (QAction *action : actions) {
+		if (action->isChecked() && m_lastLayerViewMode == action) {
+			getAction("layerviewnormal")->setChecked(true);
+			break;
+		}
+	}
+	updateLayerViewMode();
+}
+
 void MainWindow::updateLayerViewMode()
 {
 	if(!m_doc->canvas())
@@ -730,16 +753,24 @@ void MainWindow::updateLayerViewMode()
 
 	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
-	DP_ViewMode mode = DP_VIEW_MODE_NORMAL;
-	bool enableOnionSkins = false;
-	if(getAction("layerviewsolo")->isChecked()) {
+	DP_ViewMode mode;
+	bool enableOnionSkins;
+	QAction *action;
+	if((action = getAction("layerviewcurrentlayer"))->isChecked()) {
 		mode = DP_VIEW_MODE_LAYER;
-	} else if(getAction("layerviewframe")->isChecked()) {
+		enableOnionSkins = false;
+	} else if((action = getAction("layerviewcurrentframe"))->isChecked()) {
 		mode = DP_VIEW_MODE_FRAME;
-		if(getAction("layerviewonionskin")->isChecked()) {
-			enableOnionSkins = true;
-		}
+		enableOnionSkins = false;
+	} else if((action = getAction("layerviewonionskin"))->isChecked()) {
+		mode = DP_VIEW_MODE_FRAME;
+		enableOnionSkins = true;
+	} else {
+		action = getAction("layerviewnormal");
+		mode = DP_VIEW_MODE_NORMAL;
+		enableOnionSkins = false;
 	}
+	m_lastLayerViewMode = action;
 
 	m_doc->canvas()->paintEngine()->setViewMode(mode, censor, enableOnionSkins);
 	updateLockWidget();
@@ -2702,6 +2733,31 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 
+	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal")).checkable().checked();
+	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Current Layer Only")).shortcut("Shift+Home").checkable();
+	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Current Frame Only")).shortcut("Home").checkable();
+	QAction *layerViewOnionSkin = makeAction("layerviewonionskin", tr("Onion Skin")).shortcut("Ctrl+Shift+O").checkable();
+	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
+	m_lastLayerViewMode = layerViewNormal;
+
+	QActionGroup *layerViewModeGroup = new QActionGroup(this);
+	layerViewModeGroup->setExclusive(true);
+	layerViewModeGroup->addAction(layerViewNormal);
+	layerViewModeGroup->addAction(layerViewCurrentLayer);
+	layerViewModeGroup->addAction(layerViewCurrentFrame);
+	layerViewModeGroup->addAction(layerViewOnionSkin);
+
+	QMenu *layerViewMenu = viewmenu->addMenu(tr("Layer View Mode"));
+	layerViewMenu->addAction(layerViewNormal);
+	layerViewMenu->addAction(layerViewCurrentLayer);
+	layerViewMenu->addAction(layerViewCurrentFrame);
+	layerViewMenu->addAction(layerViewOnionSkin);
+	viewmenu->addAction(layerUncensor);
+
+	connect(layerViewModeGroup, &QActionGroup::triggered, this, &MainWindow::toggleLayerViewMode);
+	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
+
+	viewmenu->addSeparator();
 	QMenu *userpointermenu = viewmenu->addMenu(tr("User Pointers"));
 	userpointermenu->addAction(showusermarkers);
 	userpointermenu->addAction(showlasers);
@@ -2709,7 +2765,6 @@ void MainWindow::setupActions()
 	userpointermenu->addAction(showusernames);
 	userpointermenu->addAction(showuserlayers);
 	userpointermenu->addAction(showuseravatars);
-
 
 	viewmenu->addAction(showannotations);
 
@@ -2730,18 +2785,9 @@ void MainWindow::setupActions()
 
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete);
 
-	QAction *layerSolo = makeAction("layerviewsolo", tr("Solo")).shortcut("Shift+Home").checkable();
-	QAction *layerFrame = makeAction("layerviewframe", tr("Frame")).shortcut("Home").checkable();
-	QAction *layerOnionskin = makeAction("layerviewonionskin", tr("Onionskin")).shortcut("Shift+Ctrl+O").checkable();
-	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
-
 	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Shift+X");
 	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Shift+Z");
 
-	connect(layerSolo, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
-	connect(layerFrame, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
-	connect(layerOnionskin, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
-	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 	connect(nextFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setNextFrame);
 	connect(prevFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setPreviousFrame);
 
@@ -2753,9 +2799,6 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerDelete);
 
 	layerMenu->addSeparator();
-	layerMenu->addAction(layerFrame);
-	layerMenu->addAction(layerSolo);
-	layerMenu->addAction(layerOnionskin);
 	layerMenu->addAction(layerUncensor);
 
 	layerMenu->addSeparator();
