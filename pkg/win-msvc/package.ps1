@@ -51,7 +51,7 @@ foreach ($dll in ("double-conversion.dll", "bz2.dll", "freetype.dll", "harfbuzz.
         "icudt71.dll", "icuin71.dll", "icuuc71.dll", "jasper.dll", "jpeg62.dll",
         "KF5Archive.dll", "liblzma.dll", "libpng16.dll", "pcre2-16.dll", "Qt5Core.dll",
         "Qt5Gui.dll", "qt5keychain.dll", "Qt5Multimedia.dll", "Qt5Network.dll", "Qt5Sql.dll",
-        "Qt5Svg.dll", "Qt5Widgets.dll", "sqlite3.dll", "tiff.dll", "webp.dll",
+        "Qt5Svg.dll", "Qt5Widgets.dll", "sqlite3.dll", "tiff.dll", "webp.dll", "libsodium.dll",
         "webpdecoder.dll", "webpdemux.dll", "zlib1.dll", "libcrypto-1_1-x64.dll", "libssl-1_1-x64.dll")) {
     Copy-Item -Path "$buildDir/bin/$dll" -Destination $outDir
 } 
