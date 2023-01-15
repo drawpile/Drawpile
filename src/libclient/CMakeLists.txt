@@ -2,69 +2,146 @@ find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Gui
 find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
 
 add_library(dpclient STATIC
-	document.cpp
-	tools/toolcontroller.cpp
-	tools/toolproperties.cpp
-	tools/utils.cpp
-	tools/annotation.cpp
-	tools/freehand.cpp
-	tools/colorpicker.cpp
-	tools/laser.cpp
-	tools/selection.cpp
-	tools/shapetools.cpp
-	tools/beziertool.cpp
-	tools/floodfill.cpp
-	tools/strokesmoother.cpp
-	tools/zoom.cpp
-	tools/inspector.cpp
-	canvas/canvasmodel.cpp
-	canvas/selection.cpp
-	canvas/acl.cpp
-	canvas/userlist.cpp
-	canvas/layerlist.cpp
-	canvas/inputpresetmodel.cpp
-	canvas/paintengine.cpp
-	canvas/indexbuilderrunnable.cpp
-	canvas/blendmodes.cpp
-	canvas/timelinemodel.cpp
-	canvas/documentmetadata.cpp
-	net/client.cpp
-	net/server.cpp
-	net/tcpserver.cpp
-	net/login.cpp
-	net/loginsessions.cpp
-	net/sessionlistingmodel.cpp
-	net/banlistmodel.cpp
-	net/announcementlist.cpp
-	net/envelopebuilder.cpp
-	net/messagequeue.cpp
-	net/servercmd.cpp
-	utils/html.cpp
-	utils/usernamevalidator.cpp
-	utils/sessionidvalidator.cpp
-	utils/images.cpp
-	utils/funstuff.cpp
-	utils/kis_cubic_curve.cpp
-	utils/shortcutdetector.cpp
-	utils/customshortcutmodel.cpp
-	utils/listservermodel.cpp
-	utils/colorscheme.cpp
-	utils/icon.cpp
-	utils/logging.cpp
-	utils/identicon.cpp
-	utils/avatarlistmodel.cpp
-	utils/sessionfilterproxymodel.cpp
-	utils/newversion.cpp
 	brushes/brush.cpp
+	brushes/brush.h
 	brushes/brushpresetmodel.cpp
-	export/videoexporter.cpp
-	export/imageseriesexporter.cpp
-	export/ffmpegexporter.cpp
-	export/canvassaverrunnable.cpp
+	brushes/brushpresetmodel.h
+	canvas/acl.cpp
+	canvas/acl.h
+	canvas/blendmodes.cpp
+	canvas/blendmodes.h
+	canvas/canvasmodel.cpp
+	canvas/canvasmodel.h
+	canvas/documentmetadata.cpp
+	canvas/documentmetadata.h
+	canvas/features.h
+	canvas/indexbuilderrunnable.cpp
+	canvas/indexbuilderrunnable.h
+	canvas/inputpresetmodel.cpp
+	canvas/inputpresetmodel.h
+	canvas/layerlist.cpp
+	canvas/layerlist.h
+	canvas/paintengine.cpp
+	canvas/paintengine.h
+	canvas/point.h
+	canvas/pressure.h
+	canvas/selection.cpp
+	canvas/selection.h
+	canvas/timelinemodel.cpp
+	canvas/timelinemodel.h
+	canvas/userlist.cpp
+	canvas/userlist.h
 	export/animationsaverrunnable.cpp
+	export/animationsaverrunnable.h
+	export/canvassaverrunnable.cpp
+	export/canvassaverrunnable.h
+	export/ffmpegexporter.cpp
+	export/ffmpegexporter.h
+	export/imageseriesexporter.cpp
+	export/imageseriesexporter.h
+	export/videoexporter.cpp
+	export/videoexporter.h
+	net/announcementlist.cpp
+	net/announcementlist.h
+	net/banlistmodel.cpp
+	net/banlistmodel.h
+	net/client.cpp
+	net/client.h
+	net/envelope.h
+	net/envelopebuilder.cpp
+	net/envelopebuilder.h
+	net/login.cpp
+	net/login.h
+	net/loginsessions.cpp
+	net/loginsessions.h
+	net/messagequeue.cpp
+	net/messagequeue.h
+	net/server.cpp
+	net/server.h
+	net/servercmd.cpp
+	net/servercmd.h
+	net/sessionlistingmodel.cpp
+	net/sessionlistingmodel.h
+	net/tcpserver.cpp
+	net/tcpserver.h
 	parentalcontrols/parentalcontrols.cpp
-	parentalcontrols/parentalcontrols_$<IF:$<BOOL:${WIN32}>,win,dummy>.cpp
+	parentalcontrols/parentalcontrols.h
+	tools/annotation.cpp
+	tools/annotation.h
+	tools/beziertool.cpp
+	tools/beziertool.h
+	tools/colorpicker.cpp
+	tools/colorpicker.h
+	tools/floodfill.cpp
+	tools/floodfill.h
+	tools/freehand.cpp
+	tools/freehand.h
+	tools/inspector.cpp
+	tools/inspector.h
+	tools/laser.cpp
+	tools/laser.h
+	tools/selection.cpp
+	tools/selection.h
+	tools/shapetools.cpp
+	tools/shapetools.h
+	tools/strokesmoother.cpp
+	tools/strokesmoother.h
+	tools/tool.h
+	tools/toolcontroller.cpp
+	tools/toolcontroller.h
+	tools/toolproperties.cpp
+	tools/toolproperties.h
+	tools/utils.cpp
+	tools/utils.h
+	tools/zoom.cpp
+	tools/zoom.h
+	utils/avatarlistmodel.cpp
+	utils/avatarlistmodel.h
+	utils/changeflags.h
+	utils/colorscheme.cpp
+	utils/colorscheme.h
+	utils/customshortcutmodel.cpp
+	utils/customshortcutmodel.h
+	utils/funstuff.cpp
+	utils/funstuff.h
+	utils/html.cpp
+	utils/html.h
+	utils/icon.cpp
+	utils/icon.h
+	utils/identicon.cpp
+	utils/identicon.h
+	utils/images.cpp
+	utils/images.h
+	utils/kis_cubic_curve.cpp
+	utils/kis_cubic_curve.h
+	utils/listservermodel.cpp
+	utils/listservermodel.h
+	utils/logging.cpp
+	utils/logging.h
+	utils/newversion.cpp
+	utils/newversion.h
+	utils/sessionfilterproxymodel.cpp
+	utils/sessionfilterproxymodel.h
+	utils/sessionidvalidator.cpp
+	utils/sessionidvalidator.h
+	utils/shortcutdetector.cpp
+	utils/shortcutdetector.h
+	utils/usernamevalidator.cpp
+	utils/usernamevalidator.h
+	document.cpp
+	document.h
 )
+
+# https://gitlab.kitware.com/cmake/cmake/-/issues/19813
+if(WIN32)
+	target_sources(dpclient PRIVATE
+		parentalcontrols/parentalcontrols_win.cpp
+	)
+else()
+	target_sources(dpclient PRIVATE
+		parentalcontrols/parentalcontrols_dummy.cpp
+	)
+endif()
 
 target_link_libraries(dpclient
 	dpshared
@@ -77,17 +154,17 @@ target_link_libraries(dpclient
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	set(ts_files
-		i18n/drawpile_fi.ts
 		i18n/drawpile_cs.ts
-		i18n/drawpile_ja.ts
-		i18n/drawpile_ru.ts
 		i18n/drawpile_de.ts
-		i18n/drawpile_zh.ts
-		i18n/drawpile_vi.ts
-		i18n/drawpile_uk.ts
-		i18n/drawpile_it.ts
+		i18n/drawpile_fi.ts
 		i18n/drawpile_fr.ts
+		i18n/drawpile_it.ts
+		i18n/drawpile_ja.ts
 		i18n/drawpile_pt.ts
+		i18n/drawpile_ru.ts
+		i18n/drawpile_uk.ts
+		i18n/drawpile_vi.ts
+		i18n/drawpile_zh.ts
 	)
 	target_sources(dpclient PRIVATE ${ts_files})
 	set_source_files_properties(${ts_files} PROPERTIES

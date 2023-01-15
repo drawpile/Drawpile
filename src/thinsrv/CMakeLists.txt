@@ -8,13 +8,21 @@ set(srvlib "${srvname}lib")
 add_executable(${srvname} main.cpp)
 
 add_library(${srvlib} STATIC
-	multiserver.cpp
-	database.cpp
-	dblog.cpp
-	templatefiles.cpp
-	headless/headless.cpp
 	headless/configfile.cpp
+	headless/configfile.h
+	headless/headless.cpp
+	headless/headless.h
 	$<$<BOOL:${UNIX}>:headless/unixsignals.cpp>
+	database.cpp
+	database.h
+	dblog.cpp
+	dblog.h
+	initsys.h
+	main.cpp
+	multiserver.cpp
+	multiserver.h
+	templatefiles.cpp
+	templatefiles.h
 )
 
 target_link_libraries(${srvlib}
@@ -29,31 +37,61 @@ if(SERVERGUI)
 	find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Widgets)
 
 	target_sources(${srvlib} PRIVATE
-		gui/gui.cpp
-		gui/singleinstance.cpp
-		gui/trayicon.cpp
-		gui/authdialog.cpp
-		gui/mainwindow.cpp
-		gui/server.cpp
-		gui/localserver.cpp
-		gui/remoteserver.cpp
-		gui/sidebarmodel.cpp
-		gui/sidebaritemdelegate.cpp
-		gui/serversummarypage.cpp
-		gui/sessionlistpage.cpp
-		gui/userlistpage.cpp
-		gui/banlistpage.cpp
-		gui/accountlistpage.cpp
-		gui/sessionpage.cpp
-		gui/subheaderwidget.cpp
-		gui/jsonlistmodel.cpp
-		gui/userlistmodel.cpp
-		gui/sessionlistmodel.cpp
-		gui/banlistmodel.cpp
-		gui/accountlistmodel.cpp
-		gui/serverlogmodel.cpp
-		gui/serverlogpage.cpp
+		gui/res/icon.svg
 		gui/res/resources.qrc
+		gui/accountdialog.ui
+		gui/accountlistmodel.cpp
+		gui/accountlistmodel.h
+		gui/accountlistpage.cpp
+		gui/accountlistpage.h
+		gui/authdialog.cpp
+		gui/authdialog.h
+		gui/authdialog.ui
+		gui/banlistmodel.cpp
+		gui/banlistmodel.h
+		gui/banlistpage.cpp
+		gui/banlistpage.h
+		gui/gui.cpp
+		gui/gui.h
+		gui/ipbandialog.ui
+		gui/jsonlistmodel.cpp
+		gui/jsonlistmodel.h
+		gui/localserver.cpp
+		gui/localserver.h
+		gui/mainwindow.cpp
+		gui/mainwindow.h
+		gui/pagefactory.h
+		gui/remoteserver.cpp
+		gui/remoteserver.h
+		gui/server.cpp
+		gui/server.h
+		gui/serverlogmodel.cpp
+		gui/serverlogmodel.h
+		gui/serverlogpage.cpp
+		gui/serverlogpage.h
+		gui/serversummarypage.cpp
+		gui/serversummarypage.h
+		gui/sessionlistmodel.cpp
+		gui/sessionlistmodel.h
+		gui/sessionlistpage.cpp
+		gui/sessionlistpage.h
+		gui/sessionpage.cpp
+		gui/sessionpage.h
+		gui/settings.ui
+		gui/sidebaritemdelegate.cpp
+		gui/sidebaritemdelegate.h
+		gui/sidebarmodel.cpp
+		gui/sidebarmodel.h
+		gui/singleinstance.cpp
+		gui/singleinstance.h
+		gui/subheaderwidget.cpp
+		gui/subheaderwidget.h
+		gui/trayicon.cpp
+		gui/trayicon.h
+		gui/userlistmodel.cpp
+		gui/userlistmodel.h
+		gui/userlistpage.cpp
+		gui/userlistpage.h
 	)
 
 	target_compile_definitions(${srvlib} PRIVATE HAVE_SERVERGUI)
@@ -83,7 +121,9 @@ add_feature_info("Server systemd integration" SYSTEMD_FOUND "")
 if(MHD_FOUND)
 	target_sources(${srvlib} PRIVATE
 		webadmin/qmhttp.cpp
+		webadmin/qmhttp.h
 		webadmin/webadmin.cpp
+		webadmin/webadmin.h
 	)
 	target_compile_definitions(${srvlib} PRIVATE HAVE_WEBADMIN)
 	target_link_libraries(${srvlib} ${MHD_LIBRARIES})
