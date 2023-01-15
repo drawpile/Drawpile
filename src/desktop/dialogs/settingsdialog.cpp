@@ -283,6 +283,10 @@ void SettingsDialog::restoreSettings()
 
 	cfg.endGroup();
 
+	cfg.beginGroup("versioncheck");
+	m_ui->checkForUpdates->setChecked(cfg.value("enabled", true).toBool());
+	cfg.endGroup();
+
 	cfg.beginGroup("settings/input");
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
 	m_ui->windowsink->setChecked(cfg.value("windowsink", true).toBool());
@@ -408,6 +412,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
+	cfg.setValue("versioncheck/enabled", m_ui->checkForUpdates->isChecked());
 
 	cfg.beginGroup("settings/input");
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
