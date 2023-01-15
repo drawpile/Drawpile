@@ -2734,8 +2734,8 @@ void MainWindow::setupActions()
 	viewmenu->addSeparator();
 
 	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal")).checkable().checked();
-	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Current Layer Only")).shortcut("Shift+Home").checkable();
-	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Current Frame Only")).shortcut("Home").checkable();
+	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Current Layer Only")).shortcut("Home").checkable();
+	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Current Frame Only")).shortcut("Shift+Home").checkable();
 	QAction *layerViewOnionSkin = makeAction("layerviewonionskin", tr("Onion Skin")).shortcut("Ctrl+Shift+O").checkable();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 	m_lastLayerViewMode = layerViewNormal;
