@@ -505,7 +505,7 @@ static DP_TransientTile *flatten_tile(DP_PaintEngine *pe, int tile_index)
                                DP_onion_skins_skin_below_at(oss, i));
         }
 
-        int count_above = DP_onion_skins_count_below(oss);
+        int count_above = DP_onion_skins_count_above(oss);
         for (int i = 0; i < count_above; ++i) {
             int skin_frame_index = active_frame_index + i + 1;
             flatten_onion_skin(tt, cs, tile_index, skin_frame_index,
