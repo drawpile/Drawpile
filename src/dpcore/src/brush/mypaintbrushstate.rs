@@ -157,6 +157,16 @@ pub struct MyPaintBrushState {
     target: MyPaintBrushStateTarget,
 }
 
+impl Drop for MyPaintBrushState {
+    fn drop(&mut self) {
+        if !self.brush.is_null() {
+            unsafe {
+                c::mypaint_brush_unref(self.brush);
+            }
+        }
+    }
+}
+
 impl MyPaintBrushState {
     pub fn new() -> Self {
         MyPaintBrushState {
