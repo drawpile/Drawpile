@@ -78,6 +78,7 @@ uint8_t DP_channel15_to_8(uint16_t c);
 float DP_channel8_to_float(uint8_t c);
 float DP_channel15_to_float(uint16_t c);
 uint8_t DP_channel_float_to_8(float c);
+uint16_t DP_channel_float_to_15(float c);
 
 DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel);
 DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel);

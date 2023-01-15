@@ -328,6 +328,11 @@ uint8_t DP_channel_float_to_8(float c)
     return DP_float_to_uint8(c * 255.0f + 0.5f);
 }
 
+uint16_t DP_channel_float_to_15(float c)
+{
+    return DP_float_to_uint16(c * BIT15_FLOAT + 0.5f);
+}
+
 DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel)
 {
     return (DP_Pixel15){
