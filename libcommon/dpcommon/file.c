@@ -101,8 +101,8 @@ static int find_prefix_len(const char *start, const char *end,
 {
     // If there's already a " (1)" or something before the end, chop that off.
     const char *open = NULL;
-    const char *close;
-    bool all_digits;
+    const char *close = NULL;
+    bool all_digits = true;
     for (const char *p = start; p < end; ++p) {
         char c = *p;
         if (c == '(') {
