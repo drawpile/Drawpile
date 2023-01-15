@@ -307,12 +307,6 @@ void SettingsDialog::restoreSettings()
 	m_ui->timestampInterval->setValue(cfg.value("timestampinterval", 15).toInt());
 	cfg.endGroup();
 
-	cfg.beginGroup("settings/animation");
-	m_ui->onionskinsBelow->setValue(cfg.value("onionskinsbelow", 4).toInt());
-	m_ui->onionskinsAbove->setValue(cfg.value("onionskinsabove", 4).toInt());
-	m_ui->onionskinTint->setChecked(cfg.value("onionskintint", true).toBool());
-	cfg.endGroup();
-
 	cfg.beginGroup("settings/server");
 	m_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	m_ui->lowspaceAutoreset->setChecked(cfg.value("autoreset", true).toBool());
@@ -425,12 +419,6 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("minimumpause", m_ui->minimumpause->value());
 	cfg.setValue("recordtimestamp", m_ui->recordtimestamp->isChecked());
 	cfg.setValue("timestampinterval", m_ui->timestampInterval->value());
-	cfg.endGroup();
-
-	cfg.beginGroup("settings/animation");
-	cfg.setValue("onionskinsbelow", m_ui->onionskinsBelow->value());
-	cfg.setValue("onionskinsabove", m_ui->onionskinsAbove->value());
-	cfg.setValue("onionskintint", m_ui->onionskinTint->isChecked());
 	cfg.endGroup();
 
 	// Remember server settings

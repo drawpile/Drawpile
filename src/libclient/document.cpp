@@ -103,7 +103,6 @@ void Document::initCanvas()
 
 	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
 	connect(m_canvas, &canvas::CanvasModel::recorderStateChanged, this, &Document::recorderStateChanged);
-	connect(qApp, SIGNAL(settingsChanged()), m_canvas, SLOT(updateLayerViewOptions()));
 
 	connect(m_client, &net::Client::catchupProgress, m_canvas->paintEngine(), &canvas::PaintEngine::enqueueCatchupProgress);
 	connect(m_canvas->paintEngine(), &canvas::PaintEngine::caughtUpTo, this, &Document::catchupProgress, Qt::QueuedConnection);

@@ -810,54 +810,6 @@
               </item>
              </layout>
             </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Onionskin layers:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QSpinBox" name="onionskinsBelow">
-                <property name="suffix">
-                 <string> below</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="onionskinsAbove">
-                <property name="suffix">
-                 <string> above</string>
-                </property>
-                <property name="maximum">
-                 <number>10</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="8" column="1">
-             <widget class="QCheckBox" name="onionskinTint">
-              <property name="text">
-               <string>Tint layers</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="stackedWidgetPage3">

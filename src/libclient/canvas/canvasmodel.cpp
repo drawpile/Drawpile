@@ -68,8 +68,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_paintengine, &PaintEngine::layersChanged, m_timeline, &TimelineModel::setLayers);
 	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, &TimelineModel::setTimeline);
 	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);
-
-	updateLayerViewOptions();
 }
 
 void CanvasModel::loadBlank(const QSize &size, const QColor &background)
@@ -338,18 +336,6 @@ void CanvasModel::setSelection(Selection *selection)
 		if(hadSelection && !selection)
 			emit selectionRemoved();
 	}
-}
-
-void CanvasModel::updateLayerViewOptions()
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/animation");
-
-	m_paintengine->setOnionskinOptions(
-		cfg.value("onionskinsbelow", 4).toInt(),
-		cfg.value("onionskinsabove", 4).toInt(),
-		cfg.value("onionskintint", true).toBool()
-	);
 }
 
 QImage CanvasModel::selectionToImage(int layerId) const

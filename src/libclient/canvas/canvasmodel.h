@@ -126,8 +126,6 @@ public slots:
 	void inspectCanvas(int contextId);
 	void stopInspectingCanvas();
 
-	void updateLayerViewOptions();
-
 signals:
 	void layerAutoselectRequest(int id);
 	void canvasModified();
