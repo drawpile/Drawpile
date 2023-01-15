@@ -133,8 +133,9 @@ public:
 	//! This index is 1-based like in the UI, not 0-based like in Drawdance.
 	void setViewFrame(int frame);
 
-	//! Set options to use with onion skin layer rendering mode
-	void setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint);
+	void setOnionSkins(
+		const QVector<QPair<float, QColor>> &skinsBelow,
+		const QVector<QPair<float, QColor>> &skinsAbove);
 
 	void setInspectContextId(unsigned int contextId);
 

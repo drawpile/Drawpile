@@ -242,36 +242,26 @@ bool PaintEngine::isCensored() const
 	return m_paintEngine.revealCensored();
 }
 
-void PaintEngine::setOnionskinOptions(int skinsBelow, int skinsAbove, bool tint)
+void PaintEngine::setOnionSkins(
+	const QVector<QPair<float, QColor>> &skinsBelow,
+	const QVector<QPair<float, QColor>> &skinsAbove)
 {
-	// Drawdance allows specifying the opacity and tint of every onion skin
-	// individually, but Drawpile only provides a UI with regard to how many
-	// onion skins there should be above/below and if they should be tinted or
-	// not. So we translate it here: tinting below is red, above is blue, both
-	// with an alpha of 80%. Opacity starts at 50% and is linearly reduced
-	// according to how many skins there are.
-	DP_OnionSkins *oss = DP_onion_skins_new(qBound(0, skinsBelow, 99), qBound(0, skinsAbove, 99));
+	int countBelow = skinsBelow.count();
+	int countAbove = skinsAbove.count();
+	DP_OnionSkins *oss = DP_onion_skins_new(countBelow, countAbove);
 
-	int countBelow = DP_onion_skins_count_below(oss);
-	if(countBelow != 0) {
-		uint16_t opacityBelow = DP_BIT15 / 2;
-		uint16_t opacityBelowStep = opacityBelow / countBelow;
-		DP_UPixel15 tintBelow = tint ? DP_upixel15_from_color(0xccff3333) : DP_upixel15_zero();
-		for(int i = countBelow - 1; i >= 0; --i) {
-			DP_onion_skins_skin_below_at_set(oss, i, opacityBelow, tintBelow);
-			opacityBelow -= opacityBelowStep;
-		}
+	for(int i = 0; i < countBelow; ++i) {
+		const QPair<float, QColor> &skin = skinsBelow[i];
+		DP_onion_skins_skin_below_at_set(
+			oss, i, DP_channel_float_to_15(skin.first),
+			DP_upixel15_from_color(skin.second.rgba()));
 	}
 
-	int countAbove = DP_onion_skins_count_above(oss);
-	if (countAbove != 0) {
-		uint16_t opacityAbove = DP_BIT15 / 2;
-		uint16_t opacityAboveStep = opacityAbove / countAbove;
-		DP_UPixel15 tintAbove = tint ? DP_upixel15_from_color(0xcc3333ff) : DP_upixel15_zero();
-		for(int i = 0; i < countAbove; ++i) {
-			DP_onion_skins_skin_above_at_set(oss, i, opacityAbove, tintAbove);
-			opacityAbove -= opacityAboveStep;
-		}
+	for(int i = 0; i < countAbove; ++i) {
+		const QPair<float, QColor> &skin = skinsAbove[i];
+		DP_onion_skins_skin_above_at_set(
+			oss, i, DP_channel_float_to_15(skin.first),
+			DP_upixel15_from_color(skin.second.rgba()));
 	}
 
 	DP_OnionSkins *prev_oss = m_onionSkins;

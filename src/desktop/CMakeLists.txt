@@ -68,6 +68,7 @@ set(desktop_sources
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
+	docks/onionskins.cpp
 	docks/timeline.cpp
 	docks/titlewidget.cpp
 	chat/chatlineedit.cpp

@@ -90,6 +90,7 @@
 #include "docks/colorspinner.h"
 #include "docks/colorsliders.h"
 #include "docks/layerlistdock.h"
+#include "docks/onionskins.h"
 #include "docks/timeline.h"
 
 #include "net/client.h"
@@ -142,6 +143,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_dockLayers(nullptr),
 	  m_dockColorPalette(nullptr),
 	  m_dockNavigator(nullptr),
+	  m_dockOnionSkins(nullptr),
 	  m_dockTimeline(nullptr),
 	  m_chatbox(nullptr),
 	  m_view(nullptr),
@@ -521,6 +523,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(m_dockTimeline, &docks::Timeline::currentFrameChanged, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
 	connect(m_dockTimeline, &docks::Timeline::layerSelectRequested, m_dockLayers, &docks::LayerList::selectLayer);
+
+	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
+	m_dockOnionSkins->triggerUpdate();
 
 	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
 
@@ -3075,9 +3080,17 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default
 
+	// Create onion skin settings
+	m_dockOnionSkins = new docks::OnionSkinsDock(tr("Onion Skins"), this);
+	m_dockOnionSkins->setObjectName("onionskins");
+	m_dockOnionSkins->setAllowedAreas(Qt::AllDockWidgetAreas);
+	addDockWidget(Qt::TopDockWidgetArea, m_dockOnionSkins);
+
 	// Create timeline
 	m_dockTimeline = new docks::Timeline(this);
 	m_dockTimeline->setObjectName("Timeline");
 	m_dockTimeline->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::TopDockWidgetArea, m_dockTimeline);
+
+	tabifyDockWidget(m_dockOnionSkins, m_dockTimeline);
 }

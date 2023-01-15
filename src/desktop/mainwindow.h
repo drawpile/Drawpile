@@ -56,6 +56,7 @@ namespace docks {
 	class ColorSpinnerDock;
 	class ColorSliderDock;
 	class Navigator;
+	class OnionSkinsDock;
 	class Timeline;
 }
 namespace dialogs {
@@ -223,6 +224,7 @@ private:
 	docks::ColorSpinnerDock *m_dockColorSpinner;
 	docks::ColorSliderDock *m_dockColorSliders;
 	docks::Navigator *m_dockNavigator;
+	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;
 	widgets::ChatBox *m_chatbox;
 
