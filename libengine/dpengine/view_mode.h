@@ -71,7 +71,7 @@ typedef struct DP_OnionSkin {
 
 typedef struct DP_OnionSkins DP_OnionSkins;
 
-DP_OnionSkins *DP_onion_skins_new(int count_above, int count_below);
+DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above);
 
 void DP_onion_skins_free(DP_OnionSkins *oss);
 
