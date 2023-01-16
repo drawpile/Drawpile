@@ -389,7 +389,7 @@ bool BrushSettings::isCurrentEraserSlot() const
 
 void BrushSettings::changeBrushType()
 {
-	updateFromUi(false);
+	updateFromUiWith(false);
 	updateUi();
 	// Communicate the current size of the brush cursor to the outside. These
 	// functions check for their applicability themselves, so we just call both.
@@ -478,13 +478,15 @@ void BrushSettings::updateUi()
 	d->ui.brushsizeBox->setValue(classic.size.max);
 	d->ui.pressureSize->setChecked(classic.size_pressure);
 	d->ui.pressureOpacity->setChecked(classic.opacity_pressure);
-	d->ui.pressureHardness->setChecked(softmode && classic.hardness_pressure);
 	d->ui.brushsmudging->setValue(classic.smudge.max * 100);
 	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
 	d->ui.colorpickup->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(classic.spacing * 100);
 	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
+	if(softmode) {
+		d->ui.pressureHardness->setChecked(classic.hardness_pressure);
+	}
 
 	const DP_MyPaintSettings &myPaintSettings = myPaint.constSettings();
 	d->ui.radiusLogarithmicBox->setValue(
@@ -516,7 +518,12 @@ void BrushSettings::updateUi()
 	pushSettings();
 }
 
-void BrushSettings::updateFromUi(bool updateShared)
+void BrushSettings::updateFromUi()
+{
+	updateFromUiWith(true);
+}
+
+void BrushSettings::updateFromUiWith(bool updateShared)
 {
 	if(d->updateInProgress)
 		return;
@@ -572,7 +579,9 @@ void BrushSettings::updateFromUi(bool updateShared)
 			classic.opacity.max = d->ui.brushopacity->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
 			classic.hardness.max = d->ui.brushhardness->value() / 100.0;
-			classic.hardness_pressure = d->ui.pressureHardness->isChecked();
+			if(classic.shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND) {
+				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
+			}
 		}
 	}
 

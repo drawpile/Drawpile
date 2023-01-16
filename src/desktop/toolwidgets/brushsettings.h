@@ -102,7 +102,8 @@ private slots:
 	void selectBlendMode(int);
 	void setEraserMode(bool erase);
 	void updateUi();
-	void updateFromUi(bool updateShared = true);
+	void updateFromUi();
+	void updateFromUiWith(bool updateShared);
 	void chooseInputPreset(int index);
 	void updateSettings();
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
