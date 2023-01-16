@@ -285,14 +285,27 @@ void BrushSettings::setCurrentBrush(brushes::ActiveBrush brush)
 {
 	brush.setQColor(d->currentBrush().qColor());
 
-	if(d->current == ERASER_SLOT) {
-		if(!brush.classic().isEraser()) {
+	brushes::ActiveBrush &currentBrush = d->currentBrush();
+	brushes::ActiveBrush::ActiveType activeType = brush.activeType();
+	switch(activeType) {
+	case brushes::ActiveBrush::CLASSIC:
+		if(d->current == ERASER_SLOT) {
 			brush.classic().mode = d->currentBrush().classic().mode;
 		}
-		brush.myPaint().brush().erase = true;
+		currentBrush.setClassic(brush.classic());
+		break;
+	case brushes::ActiveBrush::MYPAINT:
+		if(d->current == ERASER_SLOT) {
+			brush.myPaint().brush().erase = true;
+		}
+		currentBrush.setMyPaint(brush.myPaint());
+		break;
+	default:
+		qWarning("Invalid brush type %d", static_cast<int>(brush.activeType()));
+		return;
 	}
 
-	d->currentBrush() = brush;
+	currentBrush.setActiveType(activeType);
 	updateUi();
 }
 
