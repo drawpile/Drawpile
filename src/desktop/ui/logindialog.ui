@@ -320,8 +320,11 @@ padding: 16px;</string>
        </item>
        <item>
         <widget class="QProgressBar" name="progressBar">
-         <property name="value">
-          <number>24</number>
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>0</number>
          </property>
          <property name="textVisible">
           <bool>false</bool>

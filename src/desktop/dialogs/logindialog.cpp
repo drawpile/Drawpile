@@ -625,6 +625,7 @@ void LoginDialog::onReportClicked()
 
 void LoginDialog::catchupProgress(int value)
 {
+	d->ui->progressBar->setMaximum(100);
 	d->ui->progressBar->setValue(value);
 	if(d->mode == Mode::catchup && value >= 100)
 		this->deleteLater();
