@@ -1,8 +1,0 @@
-[package]
-name = "dpmypaint"
-version = "1.6.1"
-edition = "2021"
-license = "MIT"
-
-[build-dependencies]
-cc = { version = "1.0", features = ["parallel"] }
