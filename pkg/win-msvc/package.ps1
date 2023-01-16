@@ -1,3 +1,4 @@
+#Requires -Modules @{ ModuleName="Microsoft.PowerShell.Archive"; ModuleVersion="1.2.3.0" }
 param ($vcpkgDir, $vcpkgTriplet = "x64-windows", $innoSetupExePath)
 
 $location = Get-Location
