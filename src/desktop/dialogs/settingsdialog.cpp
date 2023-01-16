@@ -286,7 +286,6 @@ void SettingsDialog::restoreSettings()
 	m_ui->windowsink->setChecked(cfg.value("windowsink", true).toBool());
 	m_ui->relativePenModeHack->setChecked(cfg.value("relativepenhack", false).toBool());
 #endif
-	m_ui->viewportEntryHack->setChecked(cfg.value("viewportentryhack").toBool());
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
 #ifdef Q_OS_MAC
@@ -406,7 +405,6 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("windowsink", m_ui->windowsink->isChecked());
 	cfg.setValue("relativepenhack", m_ui->relativePenModeHack->isChecked());
 #endif
-	cfg.setValue("viewportentryhack", m_ui->viewportEntryHack->isChecked());
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
 	cfg.setValue("touchscroll", m_ui->touchscroll->isChecked());

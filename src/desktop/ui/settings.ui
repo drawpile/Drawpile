@@ -345,16 +345,6 @@
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
-             <widget class="QCheckBox" name="viewportEntryHack">
-              <property name="toolTip">
-               <string>Enable this workaround if your cursor doesn't update when you move it into the canvas with the tablet pen.</string>
-              </property>
-              <property name="text">
-               <string>Enable canvas viewport entry hack</string>
-              </property>
-             </widget>
-            </item>
             <item row="21" column="1">
              <widget class="QDoubleSpinBox" name="brushOutlineWidth">
               <property name="minimum">

@@ -37,6 +37,20 @@
 #include <QScreen>
 #include <QtMath>
 
+// When KIS_TABLET isn't enabled (and maybe when the Qt version is new enough
+// too, so I'm putting this into a separate #define), Qt will only generate
+// mouse events when a tablet input goes unaccepted. We need those mouse events
+// though, since it e.g. causes the cursor to update when the cursor enters the
+// canvas or unfocuses the chat when you start drawing or panning with a tablet
+// pen. So in that case, we don't accept those tablet events and instead add a
+// check in our mouse event handlers to disregard synthetically generated mouse
+// events, meaning we don't double up on them and the view acts properly.
+#ifdef KIS_TABLET
+#	undef PASS_PEN_EVENTS
+#else
+#	define PASS_PEN_EVENTS
+#endif
+
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
@@ -52,7 +66,6 @@ CanvasView::CanvasView(QWidget *parent)
 	m_touching(false), m_touchRotating(false),
 	m_dpi(96),
 	m_brushCursorStyle(0),
-	m_enableViewportEntryHack(false),
 	m_brushOutlineWidth(1.0)
 {
 	viewport()->setAcceptDrops(true);
@@ -378,11 +391,6 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 	}
 }
 
-void CanvasView::setEnableViewportEntryHack(bool enabled)
-{
-	m_enableViewportEntryHack = enabled;
-}
-
 void CanvasView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
@@ -527,8 +535,11 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButt
 //! Handle mouse press events
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
-	if(m_enableViewportEntryHack && (event->source() & Qt::MouseEventSynthesizedByQt))
+#ifdef PASS_PEN_EVENTS
+	if(event->source() & Qt::MouseEventSynthesizedByQt) {
 		return;
+	}
+#endif
 	if(m_touching)
 		return;
 
@@ -574,8 +585,11 @@ void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButto
 //! Handle mouse motion events
 void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
-	if(m_enableViewportEntryHack && (event->source() & Qt::MouseEventSynthesizedByQt))
+#ifdef PASS_PEN_EVENTS
+	if(event->source() & Qt::MouseEventSynthesizedByQt) {
 		return;
+	}
+#endif
 	if(m_pendown == TABLETDOWN)
 		return;
 	if(m_touching)
@@ -615,8 +629,11 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(m_enableViewportEntryHack && (event->source() & Qt::MouseEventSynthesizedByQt))
+#ifdef PASS_PEN_EVENTS
+	if(event->source() & Qt::MouseEventSynthesizedByQt) {
 		return;
+	}
+#endif
 	if(m_touching)
 		return;
 	penReleaseEvent(event->pos(), event->button());
@@ -846,10 +863,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// it is never possible to get a TabletPress for a real mouse press. Therefore,
 		// we don't actually do anything yet in the penDown handler other than remember
 		// the initial point and we'll let a TabletEvent override the mouse event.
-		// Except when this hack is enabled, because accepting the event will make it
-		// so that the chat doesn't get unfocused. Instead we ignore synthesized events.
-		if(!m_enableViewportEntryHack)
-			tabev->accept();
+		// When KIS_TABLET isn't enabled we ignore synthetic mouse events though.
+#ifndef PASS_PEN_EVENTS
+		tabev->accept();
+#endif
 
 		penPressEvent(
 			tabev->posF(),
@@ -861,8 +878,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 	else if(event->type() == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		if (!m_enableViewportEntryHack)
-			tabev->accept();
+#ifndef PASS_PEN_EVENTS
+		tabev->accept();
+#endif
 
 		penMoveEvent(
 			tabev->posF(),
@@ -874,8 +892,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 	else if(event->type() == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		if(!m_enableViewportEntryHack)
-			tabev->accept();
+#ifndef PASS_PEN_EVENTS
+		tabev->accept();
+#endif
 		penReleaseEvent(tabev->posF(), tabev->button());
 	}
 	else {

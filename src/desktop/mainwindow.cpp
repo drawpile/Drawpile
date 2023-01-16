@@ -723,10 +723,6 @@ void MainWindow::updateSettings()
 	m_view->setBrushCursorStyle(cfg.value("brushcursor").toInt(), cfg.value("brushoutlinewidth").toReal());
 	static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->setShareBrushSlotColor(cfg.value("sharebrushslotcolor", false).toBool());
 	cfg.endGroup();
-
-	cfg.beginGroup("settings/input");
-	m_view->setEnableViewportEntryHack(cfg.value("viewportentryhack").toBool());
-	cfg.endGroup();
 }
 
 void MainWindow::toggleLayerViewMode()
