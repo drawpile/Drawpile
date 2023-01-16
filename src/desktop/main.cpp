@@ -35,6 +35,7 @@
 
 #ifdef Q_OS_MACOS
 #include "desktop/widgets/macmenu.h"
+#include <QTimer>
 #endif
 
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
@@ -385,6 +386,14 @@ static QStringList initApp(DrawpileApp &app)
 
 	// Global menu bar that is shown when no windows are open
 	MacMenu::instance();
+
+	// This is a hack to deal with the menu disappearing when the final
+	// window is closed by a confirmation sheet.
+	QObject::connect(&app, &QGuiApplication::lastWindowClosed, [] {
+		QTimer::singleShot(0, [] {
+			qGuiApp->focusWindowChanged(nullptr);
+		});
+	});
 #endif
 
 	tabletinput::init(&app, settings);
