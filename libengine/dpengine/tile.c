@@ -18,6 +18,12 @@
  *
  * This code is based on Drawpile, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
+ *
+ * --------------------------------------------------------------------
+ *
+ * Parts of this code are based on libmypaint, using it under the MIT license.
+ * See 3rdparty/libmypaint/COPYING for details.
+ *
  */
 #include "tile.h"
 #include "compress.h"
@@ -371,34 +377,67 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
 }
 
 
-static DP_TileWeightedAverage sample_empty(const uint16_t *mask, int width,
-                                           int height, int skip)
+// Based on libmypaint, see license above.
+static void sample_tile(DP_Pixel15 *src, const uint16_t *mask, int w, int h,
+                        int mask_skip, int base_skip, float *in_out_weight,
+                        float *in_out_red, float *in_out_green,
+                        float *in_out_blue, float *in_out_alpha)
 {
-    float sum = 0.0f;
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            sum += DP_uint16_to_float(mask[y * width + x]) / (float)DP_BIT15;
+    // The sum of values from a single tile fit into a 32 bit integer,
+    // so we use those and only convert to a float once at the end.
+    uint_fast32_t weight = 0;
+    uint_fast32_t red = 0;
+    uint_fast32_t green = 0;
+    uint_fast32_t blue = 0;
+    uint_fast32_t alpha = 0;
+
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, ++mask, ++src) {
+            uint_fast32_t m = *mask;
+            DP_Pixel15 p = *src;
+            weight += m;
+            red += m * p.r / (uint_fast32_t)DP_BIT15;
+            green += m * p.g / (uint_fast32_t)DP_BIT15;
+            blue += m * p.b / (uint_fast32_t)DP_BIT15;
+            alpha += m * p.a / (uint_fast32_t)DP_BIT15;
         }
-        mask += skip;
+        src += base_skip;
+        mask += mask_skip;
     }
-    return (DP_TileWeightedAverage){sum, 0.0f, 0.0f, 0.0f, 0.0f};
+
+    *in_out_weight += (float)weight;
+    *in_out_red += (float)red;
+    *in_out_green += (float)green;
+    *in_out_blue += (float)blue;
+    *in_out_alpha += (float)alpha;
 }
 
-DP_TileWeightedAverage DP_tile_weighted_average(DP_Tile *tile_or_null,
-                                                const uint16_t *mask, int x,
-                                                int y, int width, int height,
-                                                int skip)
+static void sample_blank(const uint16_t *mask, int w, int h, int mask_skip,
+                         float *in_out_weight)
+{
+    uint_fast32_t weight = 0;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, ++mask) {
+            weight += *mask;
+        }
+        mask += mask_skip;
+    }
+    *in_out_weight += (float)weight;
+}
+
+void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
+                    int width, int height, int skip, float *in_out_weight,
+                    float *in_out_red, float *in_out_green, float *in_out_blue,
+                    float *in_out_alpha)
 {
     if (tile_or_null) {
-        DP_TileWeightedAverage twa;
         DP_Pixel15 *src = tile_or_null->pixels + y * DP_TILE_SIZE + x;
-        DP_sample_mask(src, mask, width, height, skip, DP_TILE_SIZE - width,
-                       &twa.weight, &twa.red, &twa.green, &twa.blue,
-                       &twa.alpha);
-        return twa;
+        sample_tile(src, mask, width, height, skip, DP_TILE_SIZE - width,
+                    in_out_weight, in_out_red, in_out_green, in_out_blue,
+                    in_out_alpha);
     }
     else {
-        return sample_empty(mask, width, height, skip);
+        sample_blank(mask, width, height, skip, in_out_weight);
     }
 }
 

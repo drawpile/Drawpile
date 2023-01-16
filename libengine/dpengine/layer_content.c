@@ -35,6 +35,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
+#include <helpers.h> // CLAMP
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -337,11 +338,11 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
     int xb0 = stamp.left < 0 ? -stamp.left : 0;
     int xtiles = DP_tile_count_round(lc->width);
 
-    double weight = 0.0;
-    double red = 0.0;
-    double green = 0.0;
-    double blue = 0.0;
-    double alpha = 0.0;
+    float weight = 0.0;
+    float red = 0.0;
+    float green = 0.0;
+    float blue = 0.0;
+    float alpha = 0.0;
 
     // collect weighted color sums
     while (y < bottom) {
@@ -359,14 +360,9 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
                              : DP_TILE_SIZE - xt;
             const int i = xtiles * yindex + xindex;
 
-            DP_TileWeightedAverage twa = DP_tile_weighted_average(
-                lc->elements[i].tile, weights + yb * diameter + xb, xt, yt, wb,
-                hb, diameter - wb);
-            weight += twa.weight;
-            red += twa.red;
-            green += twa.green;
-            blue += twa.blue;
-            alpha += twa.alpha;
+            DP_tile_sample(lc->elements[i].tile, weights + yb * diameter + xb,
+                           xt, yt, wb, hb, diameter - wb, &weight, &red, &green,
+                           &blue, &alpha);
 
             x = (xindex + 1) * DP_TILE_SIZE;
             xb = xb + wb;
@@ -376,8 +372,8 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
     }
 
     // There must be at least some alpha for the results to make sense
-    double required_alpha =
-        DP_int_to_double(DP_square_int(diameter) * 30) / (double)DP_BIT15;
+    float required_alpha =
+        DP_int_to_float(DP_square_int(diameter) * 30) / (float)DP_BIT15;
     if (alpha < required_alpha) {
         return DP_upixel15_zero();
     }
@@ -388,16 +384,16 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
     blue /= weight;
     alpha /= weight;
 
-    // Unpremultiply
-    red = DP_min_double(1.0, red / alpha);
-    green = DP_min_double(1.0, green / alpha);
-    blue = DP_min_double(1.0, blue / alpha);
+    // Unpremultiply, clamp against rounding error.
+    red = CLAMP(red / alpha, 0.0f, 1.0f);
+    green = CLAMP(green / alpha, 0.0f, 1.0f);
+    blue = CLAMP(blue / alpha, 0.0f, 1.0f);
 
     return (DP_UPixel15){
-        .b = DP_double_to_uint16(blue * (double)DP_BIT15),
-        .g = DP_double_to_uint16(green * (double)DP_BIT15),
-        .r = DP_double_to_uint16(red * (double)DP_BIT15),
-        .a = DP_double_to_uint16(alpha * (double)DP_BIT15),
+        .b = DP_channel_float_to_15(blue),
+        .g = DP_channel_float_to_15(green),
+        .r = DP_channel_float_to_15(red),
+        .a = DP_channel_float_to_15(alpha),
     };
 }
 
