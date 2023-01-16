@@ -354,15 +354,20 @@ QImage CanvasModel::selectionToImage(int layerId) const
 		return QImage{};
 	}
 
-	drawdance::LayerContent layerContent = canvasState.searchLayerContent(layerId);
-	if(layerContent.isNull()) {
-		qWarning("selectionToImage: layer %d not found", layerId);
-		QImage img(rect.size(), QImage::Format_ARGB32_Premultiplied);
-		img.fill(0);
-		return img;
+	QImage img;
+	if(layerId == 0) {
+		img = canvasState.toFlatImage(true, true, &rect);
+	} else {
+		drawdance::LayerContent layerContent = canvasState.searchLayerContent(layerId);
+		if(layerContent.isNull()) {
+			qWarning("selectionToImage: layer %d not found", layerId);
+			QImage img(rect.size(), QImage::Format_ARGB32_Premultiplied);
+			img.fill(0);
+			return img;
+		}
+		img = layerContent.toImage(rect);
 	}
 
-	QImage img = layerContent.toImage(rect);
 	if(m_selection && !m_selection->isAxisAlignedRectangle()) {
 		// Mask out pixels outside the selection
 		QPainter mp(&img);
