@@ -119,7 +119,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 
 	connect(addAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {
 		const QString apiUrl = a->property("API_URL").toString();
-		qDebug() << "Requesting pbulic announcement:" << apiUrl;
+		qDebug() << "Requesting public announcement:" << apiUrl;
 		m_doc->sendAnnounce(apiUrl, false);
 	});
 	connect(addPrivateAnnouncementMenu, &QMenu::triggered, [this](QAction *a) {

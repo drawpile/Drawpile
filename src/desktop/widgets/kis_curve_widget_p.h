@@ -89,10 +89,10 @@ public:
 
 
 
-    /*** Internal routins ***/
+    /*** Internal routines ***/
 
     /**
-     * Common update routins
+     * Common update routines
      */
     void setCurveModified();
     void setCurveRepaint();

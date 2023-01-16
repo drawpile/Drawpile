@@ -185,7 +185,7 @@ signals:
 	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
 
-	void catchupProgress(int perent);
+	void catchupProgress(int percent);
 
 	void canvasSaveStarted();
 	void canvasSaved(const QString &errorMessage);
