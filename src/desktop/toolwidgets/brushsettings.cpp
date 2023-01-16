@@ -376,7 +376,7 @@ bool BrushSettings::isCurrentEraserSlot() const
 
 void BrushSettings::changeBrushType()
 {
-	updateFromUi();
+	updateFromUi(false);
 	updateUi();
 	// Communicate the current size of the brush cursor to the outside. These
 	// functions check for their applicability themselves, so we just call both.
@@ -503,13 +503,14 @@ void BrushSettings::updateUi()
 	pushSettings();
 }
 
-void BrushSettings::updateFromUi()
+void BrushSettings::updateFromUi(bool updateShared)
 {
 	if(d->updateInProgress)
 		return;
 
-	d->currentTool().brush.setActiveType(d->ui.mypaintMode->isChecked()
-		? brushes::ActiveBrush::MYPAINT : brushes::ActiveBrush::CLASSIC);
+	bool mypaintmode = d->ui.mypaintMode->isChecked();
+	d->currentTool().brush.setActiveType(
+		mypaintmode ? brushes::ActiveBrush::MYPAINT : brushes::ActiveBrush::CLASSIC);
 
 	// Copy changes from the UI to the brush properties object,
 	// then update the brush
@@ -527,12 +528,6 @@ void BrushSettings::updateFromUi()
 	classic.size.max = d->ui.brushsizeBox->value();
 	classic.size_pressure = d->ui.pressureSize->isChecked();
 
-	classic.opacity.max = d->ui.brushopacity->value() / 100.0;
-	classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
-
-	classic.hardness.max = d->ui.brushhardness->value() / 100.0;
-	classic.hardness_pressure = d->ui.pressureHardness->isChecked();
-
 	classic.smudge.max = d->ui.brushsmudging->value() / 100.0;
 	classic.smudge_pressure = d->ui.pressureSmudging->isChecked();
 	classic.resmudge = d->ui.colorpickup->value();
@@ -545,15 +540,28 @@ void BrushSettings::updateFromUi()
 	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value =
 		d->ui.radiusLogarithmicBox->value() / 100.0 - 2.0;
-	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value =
-		d->ui.brushopacity->value() / 100.0;
-	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value =
-		d->ui.brushhardness->value() / 100.0;
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value =
 		d->ui.gainBox->value() / 100.0;
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value =
 		d->ui.slowTrackingBox->value() / 10.0;
 	myPaint.brush().lock_alpha = d->ui.modeLockAlpha->isChecked();
+
+	// We want to keep MyPaint and classic brush opacity and hardness separate,
+	// since they work so differently from each other. So this will be false
+	// when switching types as to not overwrite the values with each other.
+	if(updateShared) {
+		if(mypaintmode) {
+			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value =
+				d->ui.brushopacity->value() / 100.0;
+			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value =
+				d->ui.brushhardness->value() / 100.0;
+		} else {
+			classic.opacity.max = d->ui.brushopacity->value() / 100.0;
+			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
+			classic.hardness.max = d->ui.brushhardness->value() / 100.0;
+			classic.hardness_pressure = d->ui.pressureHardness->isChecked();
+		}
+	}
 
 	chooseInputPreset(d->ui.inputPreset->currentIndex());
 
