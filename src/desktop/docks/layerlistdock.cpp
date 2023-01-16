@@ -217,6 +217,16 @@ void LayerList::selectLayer(int id)
 	selectLayerIndex(m_canvas->layerlist()->layerIndex(id), true);
 }
 
+void LayerList::selectAbove()
+{
+	selectLayerIndex(m_view->indexAbove(currentSelection()), true);
+}
+
+void LayerList::selectBelow()
+{
+	selectLayerIndex(m_view->indexBelow(currentSelection()), true);
+}
+
 void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 {
 	if(index.isValid()) {

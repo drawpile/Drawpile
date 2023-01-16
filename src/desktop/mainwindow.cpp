@@ -2790,9 +2790,13 @@ void MainWindow::setupActions()
 
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete);
 
-	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Shift+X");
-	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Shift+Z");
+	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
+	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
+	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Ctrl+Shift+X");
+	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Ctrl+Shift+Z");
 
+	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
+	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
 	connect(nextFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setNextFrame);
 	connect(prevFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setPreviousFrame);
 
@@ -2805,6 +2809,10 @@ void MainWindow::setupActions()
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUncensor);
+
+	layerMenu->addSeparator();
+	layerMenu->addAction(layerUpAct);
+	layerMenu->addAction(layerDownAct);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(nextFrameAct);
