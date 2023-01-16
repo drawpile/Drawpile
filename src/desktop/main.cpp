@@ -256,6 +256,30 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 		qApp->installTranslator(myTranslator);
 }
 
+static bool shouldCopyNativeSettings(const QSettings &settings, const QString mode)
+{
+	if(mode.compare("true", Qt::CaseInsensitive) == 0) {
+		return true;
+	} else if(mode.compare("false", Qt::CaseInsensitive) == 0) {
+		return false;
+	} else if(mode.compare("if-empty", Qt::CaseInsensitive) == 0) {
+		return settings.allKeys().isEmpty();
+	} else {
+		qCritical("Unknown --copy-legacy-settings value '%s'", qUtf8Printable(mode));
+		std::exit(EXIT_FAILURE);
+	}
+}
+
+static void copyNativeSettings(DrawpileApp &app, QSettings &settings)
+{
+	QSettings nativeSettings{
+		QSettings::NativeFormat, QSettings::UserScope,
+		app.organizationName(), app.applicationName()};
+	for(const QString &key : nativeSettings.allKeys()) {
+		settings.setValue(key, nativeSettings.value(key));
+	}
+}
+
 // Initialize the application and return a list of files to be opened (if any)
 static QStringList initApp(DrawpileApp &app)
 {
@@ -272,6 +296,14 @@ static QStringList initApp(DrawpileApp &app)
 	QCommandLineOption portableDataDir("portable-data-dir", "Override settings directory.", "path");
 	parser.addOption(portableDataDir);
 
+	// --copy-legacy-settings
+	QCommandLineOption copyLegacySettings("copy-legacy-settings",
+		"Copy settings from Drawpile 2.1 to the new ini format. Use 'true' to "
+		"copy the settings, 'false' to not copy them and 'if-empty' to only "
+		"copy if the new settings are empty (this is the default.)",
+		"mode", "if-empty");
+	parser.addOption(copyLegacySettings);
+
 	// URL
 	parser.addPositionalArgument("url", "Filename or URL.");
 
@@ -281,10 +313,12 @@ static QStringList initApp(DrawpileApp &app)
 	if(parser.isSet(dataDir))
 		utils::paths::setDataPath(parser.value(dataDir));
 
+	// On Windows, QSettings defaults to using the registry, which is awful.
+	// We always want to use config files, so force that format.
+	QSettings::setDefaultFormat(QSettings::IniFormat);
+
 	if(parser.isSet(portableDataDir)) {
 		utils::paths::setWritablePath(parser.value(portableDataDir));
-
-		QSettings::setDefaultFormat(QSettings::IniFormat);
 		QSettings::setPath(
 			QSettings::IniFormat,
 			QSettings::UserScope,
@@ -292,11 +326,17 @@ static QStringList initApp(DrawpileApp &app)
 		);
 	}
 
+	QSettings settings{};
+	if(shouldCopyNativeSettings(settings, parser.value(copyLegacySettings))) {
+		// Port over the settings from Drawpile 2.1 so that the user doesn't
+		// have to set them up again just because our format changed.
+		copyNativeSettings(app, settings);
+	}
+
 	// Continue initialization (can use QSettings from now on)
 	utils::initLogging();
 
 	// Override widget theme
-	QSettings settings{};
 	int theme = settings.value("settings/theme", DrawpileApp::THEME_SYSTEM).toInt();
 
 	// System themes tend to look ugly and broken. Reset the theme once to get
