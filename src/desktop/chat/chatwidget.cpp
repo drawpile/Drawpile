@@ -105,16 +105,25 @@ struct ChatWidget::Private {
 	bool preserveChat = true;
 	bool compactMode = false;
 	bool isAttached = true;
+	bool wasAtEnd = true;
 
 	QString usernameSpan(int userId);
 
-	bool isAtEnd() const {
+	bool isAtEnd() const
+	{
 		return view->verticalScrollBar()->value() == view->verticalScrollBar()->maximum();
 	}
 
-	void scrollToEnd(int ifCurrentId) {
-		if(ifCurrentId == tabs->tabData(tabs->currentIndex()).toInt())
-			view->verticalScrollBar()->setValue(view->verticalScrollBar()->maximum());
+	void scrollChatToEnd(int ifCurrentId)
+	{
+		if(ifCurrentId == tabs->tabData(tabs->currentIndex()).toInt()) {
+			scrollToEnd();
+		}
+	}
+
+	void scrollToEnd()
+	{
+		view->verticalScrollBar()->setValue(view->verticalScrollBar()->maximum());
 	}
 
 	inline Chat &publicChat()
@@ -164,6 +173,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	d->view = new QTextBrowser(this);
 	d->view->setOpenExternalLinks(true);
+	connect(d->view->verticalScrollBar(), &QScrollBar::valueChanged, this, &ChatWidget::scrollBarMoved);
 
 	d->view->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(d->view, &QTextBrowser::customContextMenuRequested, this, &ChatWidget::showChatContextMenu);
@@ -390,7 +400,7 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 		cursor.setPosition(b.position() + b.length() - 1);
 
 		cursor.insertHtml(QStringLiteral("<br>"));
-	
+
 		// Using css property "white-space: pre" only works for the first message. Newlines disappear on subsequent messages.
 		// Thus the need to manually replace newlines by <br>
 		QString messageWithBr = message;
@@ -534,12 +544,12 @@ void ChatWidget::userJoined(int id, const QString &name)
 
 	d->publicChat().appendNotification(msg);
 	if(wasAtEnd)
-		d->scrollToEnd(0);
+		d->scrollChatToEnd(0);
 
 	if(d->chats.contains(id)) {
 		d->chats[id].appendNotification(msg);
 		if(wasAtEnd)
-			d->scrollToEnd(id);
+			d->scrollChatToEnd(id);
 	}
 
 	notification::playSound(notification::Event::LOGIN);
@@ -552,12 +562,12 @@ void ChatWidget::userParted(int id)
 
 	d->publicChat().appendNotification(msg);
 	if(wasAtEnd)
-		d->scrollToEnd(0);
+		d->scrollChatToEnd(0);
 
 	if(d->chats.contains(id)) {
 		d->chats[id].appendNotification(msg);
 		if(wasAtEnd)
-			d->scrollToEnd(id);
+			d->scrollChatToEnd(id);
 	}
 
 	d->announcedUsers.removeAll(id);
@@ -570,7 +580,7 @@ void ChatWidget::kicked(const QString &kickedBy)
 	const bool wasAtEnd = d->isAtEnd();
 	d->publicChat().appendNotification(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
 	if(wasAtEnd)
-		d->scrollToEnd(0);
+		d->scrollChatToEnd(0);
 }
 
 void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message)
@@ -624,7 +634,7 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 		notification::playSound(notification::Event::CHAT);
 
 	if(wasAtEnd)
-		d->scrollToEnd(chatId);
+		d->scrollChatToEnd(chatId);
 }
 
 void ChatWidget::setPinnedMessage(const QString &message)
@@ -632,7 +642,7 @@ void ChatWidget::setPinnedMessage(const QString &message)
 	const bool wasAtEnd = d->isAtEnd();
 	d->pinned->setPinText(message);
 	if(wasAtEnd) {
-		d->scrollToEnd(d->currentChat);
+		d->scrollToEnd();
 	}
 }
 
@@ -646,7 +656,12 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 		d->publicChat().appendNotification(message.toHtmlEscaped());
 
 	if(wasAtEnd)
-		d->scrollToEnd(0);
+		d->scrollChatToEnd(0);
+}
+
+void ChatWidget::scrollBarMoved(int)
+{
+	d->wasAtEnd = d->isAtEnd();
 }
 
 void ChatWidget::sendMessage(const QString &chatMessage)
@@ -819,6 +834,13 @@ void ChatWidget::setCompactMode(bool compact)
 {
 	d->compactMode = compact;
 	QSettings().setValue("history/compactchat", compact);
+}
+
+void ChatWidget::resizeEvent(QResizeEvent *)
+{
+	if(d->wasAtEnd) {
+		d->scrollToEnd();
+	}
 }
 
 }

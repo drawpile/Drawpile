@@ -77,7 +77,11 @@ public slots:
 	//! Open a private chat view with this user
 	void openPrivateChat(int userId);
 
+protected:
+	void resizeEvent(QResizeEvent *) override;
+
 private slots:
+	void scrollBarMoved(int);
 	void sendMessage(const QString &chatMessage);
 	void chatTabSelected(int index);
 	void chatTabClosed(int index);
