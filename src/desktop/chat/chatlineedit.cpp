@@ -24,6 +24,7 @@
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
 	QPlainTextEdit(parent), _historypos(0)
 {
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 void ChatLineEdit::pushHistory(const QString &text)
