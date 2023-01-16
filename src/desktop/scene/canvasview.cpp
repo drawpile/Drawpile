@@ -527,6 +527,8 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButt
 //! Handle mouse press events
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
+	if(m_enableViewportEntryHack && (event->source() & Qt::MouseEventSynthesizedByQt))
+		return;
 	if(m_touching)
 		return;
 
@@ -613,6 +615,8 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
+	if(m_enableViewportEntryHack && (event->source() & Qt::MouseEventSynthesizedByQt))
+		return;
 	if(m_touching)
 		return;
 	penReleaseEvent(event->pos(), event->button());
@@ -842,7 +846,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// it is never possible to get a TabletPress for a real mouse press. Therefore,
 		// we don't actually do anything yet in the penDown handler other than remember
 		// the initial point and we'll let a TabletEvent override the mouse event.
-		tabev->accept();
+		// Except when this hack is enabled, because accepting the event will make it
+		// so that the chat doesn't get unfocused. Instead we ignore synthesized events.
+		if(!m_enableViewportEntryHack)
+			tabev->accept();
 
 		penPressEvent(
 			tabev->posF(),
@@ -867,7 +874,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 	else if(event->type() == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		tabev->accept();
+		if(!m_enableViewportEntryHack)
+			tabev->accept();
 		penReleaseEvent(tabev->posF(), tabev->button());
 	}
 	else {
