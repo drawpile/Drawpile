@@ -196,15 +196,6 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	setWidget(d->widgetStack);
 	titleWidget->addCustomWidget(d->headerStack, true);
 
-	for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
-		if(!d->pages[i].settings->getUi()) {
-			d->widgetStack->addWidget(d->pages[i].settings->createUi(this));
-			auto *headerWidget = d->pages[i].settings->getHeaderWidget();
-			if(headerWidget)
-				d->headerStack->addWidget(headerWidget);
-		}
-	}
-
 	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::colorChanged,
 			this, &ToolSettings::setForegroundColor);
 	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::subpixelModeChanged,
@@ -226,11 +217,6 @@ void ToolSettings::readSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("tools");
-	cfg.beginGroup("toolset");
-	for(auto ts : qAsConst(d->toolSettings)) {
-		ts->restoreToolSettings(tools::ToolProperties::load(cfg, ts->toolType()));
-	}
-	cfg.endGroup();
 	setForegroundColor(cfg.value("color").value<QColor>());
 	selectTool(tools::Tool::Type(cfg.value("tool").toInt()));
 }
@@ -244,15 +230,31 @@ void ToolSettings::saveSettings()
 
 	cfg.beginGroup("toolset");
 	for(auto ts : qAsConst(d->toolSettings)) {
-		ts->saveToolSettings().save(cfg);
+		// If no UI was loaded then the settings could not have changed and
+		// there is no need to re-save them
+		if(ts->getUi()) {
+			ts->saveToolSettings().save(cfg);
+		}
 	}
 }
 
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
 	Q_ASSERT(tool < tools::Tool::_LASTTOOL);
-	if(tool<tools::Tool::_LASTTOOL)
-		return d->pages[tool].settings.data();
+	if(tool<tools::Tool::_LASTTOOL) {
+		auto ts = d->pages[tool].settings.data();
+		if(!ts->getUi()) {
+			d->widgetStack->addWidget(ts->createUi(this));
+			auto *headerWidget = ts->getHeaderWidget();
+			if(headerWidget)
+				d->headerStack->addWidget(headerWidget);
+
+			QSettings cfg;
+			cfg.beginGroup("tools/toolset");
+			ts->restoreToolSettings(tools::ToolProperties::load(cfg, ts->toolType()));
+		}
+		return ts;
+	}
 	else
 		return nullptr;
 }
@@ -369,7 +371,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 		tool = tools::Tool::FREEHAND;
 	}
 
-	tools::ToolSettings *ts = d->pages[tool].settings.data();
+	tools::ToolSettings *ts = getToolSettingsPage(tool);
 	if(!ts) {
 		qWarning("selectTool(%d): tool settings not created!", tool);
 		return;
