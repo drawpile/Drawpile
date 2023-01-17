@@ -5,6 +5,7 @@
 
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPalette>
 #include <QEvent>
 
 namespace widgets {
@@ -15,12 +16,7 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
 
-	const int w = 16;
-	m_background = QPixmap(w*2, w*2);
-	m_background.fill(QColor(128, 128, 128));
-	QPainter p(&m_background);
-	p.fillRect(0, 0, w, w, Qt::white);
-	p.fillRect(w, w, w, w, Qt::white);
+	updateBackground();
 }
 
 BrushPreview::~BrushPreview()
@@ -84,8 +80,12 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 	m_needUpdate = true;
 }
 
-void BrushPreview::changeEvent(QEvent *)
+void BrushPreview::changeEvent(QEvent *event)
 {
+	if (event->type() == QEvent::PaletteChange) {
+		updateBackground();
+	}
+
 	m_needUpdate = true;
 	update();
 }
@@ -109,6 +109,18 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 		color.setAlphaF(0.75);
 		painter.fillRect(rect, color);
 	}
+}
+
+void BrushPreview::updateBackground()
+{
+	constexpr int w = 16;
+	const auto dark = palette().color(QPalette::Window).lightness() < 128;
+	m_background = QPixmap(w*2, w*2);
+	m_background.fill(dark ? QColor(153, 153, 153) : QColor(204, 204, 204));
+	const auto alt = dark ? QColor(102, 102, 102) : Qt::white;
+	QPainter p(&m_background);
+	p.fillRect(0, 0, w, w, alt);
+	p.fillRect(w, w, w, w, alt);
 }
 
 void BrushPreview::updatePreview()

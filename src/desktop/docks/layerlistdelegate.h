@@ -4,6 +4,7 @@
 #define LAYERLISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QIcon>
 #include <QItemDelegate>
 
 namespace docks {

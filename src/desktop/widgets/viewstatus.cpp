@@ -31,16 +31,11 @@ ViewStatus::ViewStatus(QWidget *parent)
 	// View flipping
 	m_viewFlip = new widgets::GroupedToolButton(this);
 	m_viewFlip->setAutoRaise(true);
+	m_viewFlip->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
 
 	m_viewMirror = new widgets::GroupedToolButton(this);
 	m_viewMirror->setAutoRaise(true);
-
-#ifdef Q_OS_MACOS
-	// Auto-raise style doesn't work on mac (because of a stylesheet),
-	// but grouping only looks nice /without/ auto-raise
-	m_viewFlip->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
 	m_viewMirror->setGroupPosition(widgets::GroupedToolButton::GroupRight);
-#endif
 
 	layout->addWidget(m_viewFlip);
 	layout->addWidget(m_viewMirror);

@@ -13,11 +13,11 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/dialogs/layerproperties.h"
 #include "libclient/utils/changeflags.h"
-#include "libclient/utils/icon.h"
 
 #include <QDebug>
 #include <QComboBox>
 #include <QDateTime>
+#include <QIcon>
 #include <QItemSelection>
 #include <QMessageBox>
 #include <QPushButton>
@@ -48,7 +48,7 @@ LayerList::LayerList(QWidget *parent)
 	setTitleBarWidget(titlebar);
 
 	m_lockButton = new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
-	m_lockButton->setIcon(icon::fromTheme("object-locked"));
+	m_lockButton->setIcon(QIcon::fromTheme("object-locked"));
 	m_lockButton->setCheckable(true);
 	m_lockButton->setPopupMode(QToolButton::InstantPopup);
 	titlebar->addCustomWidget(m_lockButton);

@@ -3,6 +3,7 @@
 #ifndef STATUSBARTOOLBUTTON_H
 #define STATUSBARTOOLBUTTON_H
 
+#include <QColor>
 #include <QToolButton>
 
 #ifdef DESIGNER_PLUGIN
@@ -10,6 +11,10 @@
 #else
 #define QDESIGNER_WIDGET_EXPORT
 #endif
+
+class QEvent;
+class QPaintEvent;
+class QWidget;
 
 namespace widgets {
 
@@ -39,17 +44,17 @@ public:
 	explicit GroupedToolButton(GroupPosition position, QWidget* parent = nullptr);
 	explicit GroupedToolButton(QWidget* parent = nullptr);
 
-	GroupPosition groupPosition() const { return mGroupPosition; }
+	GroupPosition groupPosition() const { return m_groupPosition; }
 	void setGroupPosition(GroupPosition groupPosition);
 
 	void setColorSwatch(const QColor &color);
 	QColor colorSwatch() const { return m_colorSwatch; }
 
 protected:
-	virtual void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
+	void paintEvent(QPaintEvent* event) override;
 
 private:
-	GroupPosition mGroupPosition;
+	GroupPosition m_groupPosition;
 	QColor m_colorSwatch;
 };
 

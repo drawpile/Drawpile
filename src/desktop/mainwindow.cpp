@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QActionGroup>
+#include <QIcon>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QStatusBar>
@@ -52,7 +53,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/utils/recentfiles.h"
 #include "libshared/util/whatismyip.h"
 #include "cmake-config/config.h"
-#include "libclient/utils/icon.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
@@ -195,15 +195,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_viewStatusBar->setSizeGripEnabled(false);
 	mainwinlayout->addWidget(m_viewStatusBar);
 
-#ifdef Q_OS_MACOS
-	// The "native" style status bar appears slightly glitchy.
-	// This makes it look better.
-	if(icon::isDark(palette().color(QPalette::Window)))
-		m_viewStatusBar->setStyleSheet("QStatusBar { background: #323232 }");
-	else
-		m_viewStatusBar->setStyleSheet("QStatusBar { background: #ececec }");
-#endif
-
 	// Create status indicator widgets
 	m_viewstatus = new widgets::ViewStatus(this);
 
@@ -215,7 +206,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// when there are unread chat messages.
 	m_statusChatButton = new QToolButton(this);
 	m_statusChatButton->setAutoRaise(true);
-	m_statusChatButton->setIcon(icon::fromTheme("drawpile_chat"));
+	m_statusChatButton->setIcon(QIcon::fromTheme("drawpile_chat"));
 	m_statusChatButton->hide();
 	m_viewStatusBar->addWidget(m_statusChatButton);
 
@@ -1248,7 +1239,7 @@ void MainWindow::promptForSaveOnReset(const drawdance::CanvasState &canvasState)
 		box->setModal(false);
 
 		QPushButton *saveButton = new QPushButton{
-			icon::fromTheme("document-save-as"), tr("Save As..."), box};
+			QIcon::fromTheme("document-save-as"), tr("Save As..."), box};
 		box->addButton(saveButton, QMessageBox::ActionRole);
 
 		connect(box, &QMessageBox::buttonClicked, this, [=](QAbstractButton *button) {
@@ -1352,20 +1343,20 @@ void MainWindow::setRecorderStatus(bool on)
 
 	if(m_playbackDialog) {
 		if(m_playbackDialog->isPlaying()) {
-			recordAction->setIcon(icon::fromTheme("media-playback-pause"));
+			recordAction->setIcon(QIcon::fromTheme("media-playback-pause"));
 			recordAction->setText(tr("Pause"));
 		} else {
-			recordAction->setIcon(icon::fromTheme("media-playback-start"));
+			recordAction->setIcon(QIcon::fromTheme("media-playback-start"));
 			recordAction->setText(tr("Play"));
 		}
 
 	} else {
 		if(on) {
 			recordAction->setText(tr("Stop Recording"));
-			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
+			recordAction->setIcon(QIcon::fromTheme("media-playback-stop"));
 		} else {
 			recordAction->setText(tr("Record..."));
-			recordAction->setIcon(icon::fromTheme("media-record"));
+			recordAction->setIcon(QIcon::fromTheme("media-record"));
 		}
 	}
 }
@@ -1862,7 +1853,7 @@ void MainWindow::updateLockWidget()
 	}
 
 	if(locked) {
-		m_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
+		m_lockstatus->setPixmap(QIcon::fromTheme("object-locked").pixmap(16, 16));
 	} else {
 		m_lockstatus->setPixmap(QPixmap());
 	}
@@ -2761,6 +2752,7 @@ void MainWindow::setupActions()
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
+
 #ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
@@ -2784,11 +2776,11 @@ void MainWindow::setupActions()
 	filemenu->addSeparator();
 
 	QMenu *importMenu = filemenu->addMenu(tr("&Import"));
-	importMenu->setIcon(icon::fromTheme("document-import"));
+	importMenu->setIcon(QIcon::fromTheme("document-import"));
 	importMenu->addAction(importBrushes);
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
-	exportMenu->setIcon(icon::fromTheme("document-export"));
+	exportMenu->setIcon(QIcon::fromTheme("document-export"));
 	exportMenu->addAction(exportTemplate);
 	exportMenu->addAction(exportGifAnimation);
 #ifndef Q_OS_ANDROID

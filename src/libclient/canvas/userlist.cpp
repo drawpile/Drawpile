@@ -5,10 +5,10 @@ extern "C" {
 }
 
 #include "libclient/canvas/userlist.h"
-#include "libclient/utils/icon.h"
 #include "libclient/canvas/acl.h"
 
 #include <QDebug>
+#include <QIcon>
 #include <QJsonArray>
 #include <QPixmap>
 #include <QPalette>
@@ -70,8 +70,8 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 
 	} else if(role==Qt::DecorationRole) {
 		switch(index.column()) {
-		case 3: return u.isLocked ? icon::fromTheme("object-locked") : QVariant();
-		case 4: return u.isMuted ? icon::fromTheme("irc-unvoice") : QVariant();
+		case 3: return u.isLocked ? QIcon::fromTheme("object-locked") : QVariant();
+		case 4: return u.isMuted ? QIcon::fromTheme("irc-unvoice") : QVariant();
 		}
 	}
 
@@ -101,8 +101,8 @@ QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int
 			}
 		} else if(role == Qt::DecorationRole) {
 			switch(section) {
-			case 3: return icon::fromTheme("object-locked");
-			case 4: return icon::fromTheme("irc-unvoice");
+			case 3: return QIcon::fromTheme("object-locked");
+			case 4: return QIcon::fromTheme("irc-unvoice");
 			}
 		}
 

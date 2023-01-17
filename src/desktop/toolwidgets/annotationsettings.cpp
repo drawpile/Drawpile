@@ -7,7 +7,6 @@
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/annotationitem.h"
 #include "libclient/net/client.h"
-#include "libclient/utils/icon.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/utils/qtguicompat.h"
 
@@ -15,6 +14,7 @@
 #include "ui_textsettings.h"
 
 #include <QActionGroup>
+#include <QIcon>
 #include <QTimer>
 #include <QTextBlock>
 #include <QMenu>
@@ -47,14 +47,14 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_ui->headerLayout->setContentsMargins(0, 0, 1, 0);
 	m_headerWidget->setLayout(m_ui->headerLayout);
 
-	m_protectedAction = new QAction(icon::fromTheme("object-locked"), tr("Protect"), this);
+	m_protectedAction = new QAction(QIcon::fromTheme("object-locked"), tr("Protect"), this);
 	m_protectedAction->setCheckable(true);
 	m_ui->protectButton->setDefaultAction(m_protectedAction);
 
-	QAction *mergeAction = new QAction(icon::fromTheme("arrow-down-double"), tr("Merge"), this);
+	QAction *mergeAction = new QAction(QIcon::fromTheme("arrow-down-double"), tr("Merge"), this);
 	m_ui->mergeButton->setDefaultAction(mergeAction);
 
-	QAction *deleteAction = new QAction(icon::fromTheme("list-remove"), tr("Delete"), this);
+	QAction *deleteAction = new QAction(QIcon::fromTheme("list-remove"), tr("Delete"), this);
 	m_ui->deleteButton->setDefaultAction(deleteAction);
 
 	m_editActions = new QActionGroup(this);
@@ -70,19 +70,19 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 	// Horizontal alignment options
 	QMenu *halignMenu = new QMenu(parent);
-	halignMenu->addAction(icon::fromTheme("format-justify-left"), tr("Left"))->setProperty(HALIGN_PROP, Qt::AlignLeft);
-	halignMenu->addAction(icon::fromTheme("format-justify-center"), tr("Center"))->setProperty(HALIGN_PROP, Qt::AlignCenter);
-	halignMenu->addAction(icon::fromTheme("format-justify-fill"), tr("Justify"))->setProperty(HALIGN_PROP, Qt::AlignJustify);
-	halignMenu->addAction(icon::fromTheme("format-justify-right"), tr("Right"))->setProperty(HALIGN_PROP, Qt::AlignRight);
+	halignMenu->addAction(QIcon::fromTheme("format-justify-left"), tr("Left"))->setProperty(HALIGN_PROP, Qt::AlignLeft);
+	halignMenu->addAction(QIcon::fromTheme("format-justify-center"), tr("Center"))->setProperty(HALIGN_PROP, Qt::AlignCenter);
+	halignMenu->addAction(QIcon::fromTheme("format-justify-fill"), tr("Justify"))->setProperty(HALIGN_PROP, Qt::AlignJustify);
+	halignMenu->addAction(QIcon::fromTheme("format-justify-right"), tr("Right"))->setProperty(HALIGN_PROP, Qt::AlignRight);
 	m_ui->halign->setIcon(halignMenu->actions().constFirst()->icon());
 	connect(halignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
 	m_ui->halign->setMenu(halignMenu);
 
 	// Vertical alignment options
 	QMenu *valignMenu = new QMenu(parent);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER);
-	valignMenu->addAction(icon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM);
+	valignMenu->addAction(QIcon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
+	valignMenu->addAction(QIcon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER);
+	valignMenu->addAction(QIcon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM);
 	m_ui->valign->setIcon(valignMenu->actions().constFirst()->icon());
 	connect(valignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
 	m_ui->valign->setMenu(valignMenu);
@@ -181,10 +181,10 @@ void AnnotationSettings::updateStyleButtons()
 {
 	QTextBlockFormat bf = m_ui->content->textCursor().blockFormat();
 	switch(bf.alignment()) {
-	case Qt::AlignLeft: m_ui->halign->setIcon(icon::fromTheme("format-justify-left")); break;
-	case Qt::AlignCenter: m_ui->halign->setIcon(icon::fromTheme("format-justify-center")); break;
-	case Qt::AlignJustify: m_ui->halign->setIcon(icon::fromTheme("format-justify-fill")); break;
-	case Qt::AlignRight: m_ui->halign->setIcon(icon::fromTheme("format-justify-right")); break;
+	case Qt::AlignLeft: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-left")); break;
+	case Qt::AlignCenter: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-center")); break;
+	case Qt::AlignJustify: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-fill")); break;
+	case Qt::AlignRight: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-right")); break;
 	default: break;
 	}
 
@@ -317,14 +317,14 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		int align = 0;
 		switch(a->valign()) {
 		case 0:
-			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-top"));
+			m_ui->valign->setIcon(QIcon::fromTheme("format-align-vertical-top"));
 			break;
 		case 1:
-			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-center"));
+			m_ui->valign->setIcon(QIcon::fromTheme("format-align-vertical-center"));
 			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
 			break;
 		case 2:
-			m_ui->valign->setIcon(icon::fromTheme("format-align-vertical-bottom"));
+			m_ui->valign->setIcon(QIcon::fromTheme("format-align-vertical-bottom"));
 			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM;
 			break;
 		}

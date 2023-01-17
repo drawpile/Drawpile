@@ -10,6 +10,7 @@
 #include <QtColorWidgets/swatch.hpp>
 
 #include <QBoxLayout>
+#include <QIcon>
 #include <QLabel>
 #include <QSlider>
 #include <QSpinBox>
@@ -59,7 +60,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	layout->addWidget(m_palettewidget);
 
 	QPushButton *addButton = new QPushButton{
-		icon::fromTheme("list-add"), tr("Add Color..."), widget};
+		QIcon::fromTheme("list-add"), tr("Add Color..."), widget};
 	layout->addWidget(addButton);
 
 	connect(m_palettewidget, &color_widgets::Swatch::colorSelected, this, &ColorPickerSettings::colorSelected);

@@ -2,13 +2,13 @@
 
 #include "desktop/dialogs/resetdialog.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/utils/icon.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/qtcompat.h"
 
 #include "ui_resetsession.h"
 
 #include <QScopedPointer>
+#include <QIcon>
 #include <QPushButton>
 #include <QPainter>
 #include <QVector>
@@ -118,19 +118,19 @@ ResetDialog::ResetDialog(const canvas::PaintEngine *pe, bool compatibilityMode, 
 	d->ui->setupUi(this);
 
 	d->resetButton = d->ui->buttonBox->addButton(tr("Reset Session"), QDialogButtonBox::DestructiveRole);
-	d->resetButton->setIcon(icon::fromTheme("edit-undo"));
+	d->resetButton->setIcon(QIcon::fromTheme("edit-undo"));
 	connect(d->resetButton, &QPushButton::clicked, this, &ResetDialog::resetSelected);
 
 #ifndef SINGLE_MAIN_WINDOW
 	// If we can't open a new window, this would obliterate the current session.
 	// That's confusing and not terribly useful, so we don't offer this option.
 	QPushButton *newButton = d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
-	newButton->setIcon(icon::fromTheme("document-new"));
+	newButton->setIcon(QIcon::fromTheme("document-new"));
 	connect(newButton, &QPushButton::clicked, this, &ResetDialog::newSelected);
 #endif
 
 	QPushButton *openButton = d->ui->buttonBox->addButton(tr("Open..."), QDialogButtonBox::ActionRole);
-	openButton->setIcon(icon::fromTheme("document-open"));
+	openButton->setIcon(QIcon::fromTheme("document-open"));
 	connect(openButton, &QPushButton::clicked, this, &ResetDialog::onOpenClicked);
 
 	d->ui->snapshotSlider->setMaximum(d->resetPoints.size());

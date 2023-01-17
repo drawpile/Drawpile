@@ -3,7 +3,6 @@
 #include "libclient/brushes/brush.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/brushengine.h"
-#include "libclient/utils/icon.h"
 #include "libshared/util/qtcompat.h"
 
 #include <cmath>

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/net/loginsessions.h"
-#include "libclient/utils/icon.h"
 
 #include <QDebug>
+#include <QIcon>
 #include <QPixmap>
 
 namespace net {
@@ -62,19 +62,19 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		switch(index.column()) {
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
-				return icon::fromTheme("dialog-error");
+				return QIcon::fromTheme("dialog-error");
 			} else if(ls.compatibilityMode) {
-				return icon::fromTheme("dialog-warning");
+				return QIcon::fromTheme("dialog-warning");
 			} else {
-				return icon::fromTheme("dialog-positive");
+				return QIcon::fromTheme("dialog-positive");
 			}
 		case ColumnStatus:
 			if(ls.isIncompatible()) {
-				return icon::fromTheme("dontknow");
+				return QIcon::fromTheme("dontknow");
 			} else if(ls.closed) {
-				return icon::fromTheme("im-ban-user");
+				return QIcon::fromTheme("im-ban-user");
 			} else if(ls.needPassword) {
-				return icon::fromTheme("object-locked");
+				return QIcon::fromTheme("object-locked");
 			} else {
 				return QVariant{};
 			}

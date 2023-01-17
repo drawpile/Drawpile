@@ -7,9 +7,9 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/widgets/groupedtoolbutton.h"
-#include "libclient/utils/icon.h"
 #include "libshared/util/paths.h"
 
+#include <QIcon>
 #include <QSettings>
 #include <QMessageBox>
 #include <QMenu>
@@ -87,12 +87,12 @@ ColorPaletteDock::ColorPaletteDock(const QString& title, QWidget *parent)
 	setTitleBarWidget(titlebar);
 
 	auto *menuButton = new widgets::GroupedToolButton;
-	menuButton->setIcon(icon::fromTheme("application-menu"));
+	menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	titlebar->addCustomWidget(menuButton);
 
 	d->readonlyPalette = new widgets::GroupedToolButton;
 	d->readonlyPalette->setToolTip(tr("Write protect"));
-	d->readonlyPalette->setIcon(icon::fromTheme("object-locked"));
+	d->readonlyPalette->setIcon(QIcon::fromTheme("object-locked"));
 	d->readonlyPalette->setCheckable(true);
 	titlebar->addCustomWidget(d->readonlyPalette);
 

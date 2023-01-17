@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/versioncheckdialog.h"
-#include "libclient/utils/icon.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
 
 #include "ui_versioncheck.h"
 
+#include <QIcon>
 #include <QMessageBox>
 #include <QSettings>
 #include <QStyle>
@@ -51,7 +51,7 @@ void VersionCheckDialog::doVersionCheckIfNeeded()
 			tr("Should Drawpile automatically check for updates?"),
 			QMessageBox::Yes | QMessageBox::No
 		};
-		const auto icon = icon::fromTheme("update-none");
+		const auto icon = QIcon::fromTheme("update-none");
 		const auto iconSize = mb.style()->pixelMetric(QStyle::PM_MessageBoxIconSize, nullptr, &mb);
 		auto pixmap = icon.pixmap(iconSize);
 		mb.setIconPixmap(pixmap);

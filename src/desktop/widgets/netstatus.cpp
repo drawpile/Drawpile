@@ -4,10 +4,10 @@
 #include "desktop/widgets/popupmessage.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/netstats.h"
-#include "libclient/utils/icon.h"
 #include "libshared/util/whatismyip.h"
 
 #include <QAction>
+#include <QIcon>
 #include <QLabel>
 #include <QApplication>
 #include <QClipboard>
@@ -183,7 +183,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	if(iconname.isEmpty()) {
 		m_security->hide();
 	} else {
-		m_security->setPixmap(icon::fromTheme(iconname).pixmap(16, 16));
+		m_security->setPixmap(QIcon::fromTheme(iconname).pixmap(16, 16));
 		m_security->setToolTip(tooltip);
 		m_security->show();
 	}

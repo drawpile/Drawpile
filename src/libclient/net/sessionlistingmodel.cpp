@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/net/sessionlistingmodel.h"
-#include "libclient/utils/icon.h"
 #include "cmake-config/config.h"
 
 #include <QGuiApplication>
+#include <QIcon>
 #include <QUrl>
 #include <QDebug>
 
@@ -113,9 +113,9 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		} else if(role == Qt::DecorationRole) {
 			if(index.column() == 0) {
 				if(!s.protocol.isCurrent())
-					return icon::fromTheme("dontknow");
+					return QIcon::fromTheme("dontknow");
 				else if(s.password)
-					return icon::fromTheme("object-locked");
+					return QIcon::fromTheme("object-locked");
 				else if(s.nsfm)
 					return QIcon(":/icons/censored.svg");
 			}

@@ -2,7 +2,6 @@
 
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "libclient/canvas/blendmodes.h"
-#include "libclient/utils/icon.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
@@ -11,6 +10,7 @@
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
@@ -210,16 +210,16 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->brushTypeCombo = new QComboBox{widget};
 	layout->addRow(tr("Brush Type:"), d->brushTypeCombo);
 	d->brushTypeCombo->addItem(
-		icon::fromTheme("drawpile_pixelround"), tr("Round Pixel Brush"),
+		QIcon::fromTheme("drawpile_pixelround"), tr("Round Pixel Brush"),
 		int(DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND));
 	d->brushTypeCombo->addItem(
-		icon::fromTheme("drawpile_square"), tr("Square Pixel Brush"),
+		QIcon::fromTheme("drawpile_square"), tr("Square Pixel Brush"),
 		int(DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE));
 	d->brushTypeCombo->addItem(
-		icon::fromTheme("drawpile_round"), tr("Soft Round Brush"),
+		QIcon::fromTheme("drawpile_round"), tr("Soft Round Brush"),
 		int(DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND));
 	d->brushTypeCombo->addItem(
-		icon::fromTheme("draw-brush"), tr("MyPaint Brush"),
+		QIcon::fromTheme("draw-brush"), tr("MyPaint Brush"),
 		int(DP_BRUSH_SHAPE_MYPAINT));
 	connect(
 		d->brushTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -601,7 +601,7 @@ void BrushSettingsDialog::buildClassicApplyToAllButton(
 	widgets::CurveWidget *curve)
 {
 	QPushButton *applyToAllButton =
-		new QPushButton{icon::fromTheme("fill-color"), tr("Apply to All")};
+		new QPushButton{QIcon::fromTheme("fill-color"), tr("Apply to All")};
 	applyToAllButton->setToolTip(
 		tr("Set this curve for Size, Opacity, Hardness and Smudging at once."));
 	curve->addButton(applyToAllButton);

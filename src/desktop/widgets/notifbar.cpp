@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/widgets/notifbar.h"
-#include "libclient/utils/icon.h"
 
 #include <QResizeEvent>
 #include <QBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QPainter>
+#include <QPalette>
 #include <QGraphicsDropShadowEffect>
 #include <QStyle>
 
@@ -67,7 +67,7 @@ void NotificationBar::setColor(const QColor &color)
 {
 	m_color = color;
 	auto pal = palette();
-	if(icon::isDark(color))
+	if(color.lightness() < 128)
 		pal.setColor(QPalette::Text, Qt::white);
 	else
 		pal.setColor(QPalette::Text, Qt::black);

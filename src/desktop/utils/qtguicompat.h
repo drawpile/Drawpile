@@ -7,6 +7,7 @@
 #include <QtGlobal>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QStyle>
 #include <QTabletEvent>
 #include <QTextCharFormat>
 #include <QTouchEvent>
@@ -122,6 +123,10 @@ inline auto mousePos(const QMouseEvent &event) {
 	return event.position().toPoint();
 }
 
+inline auto styleName(const QStyle &style) {
+	return style.name();
+}
+
 inline auto tabPosF(const QTabletEvent &event) {
 	return event.position();
 }
@@ -184,6 +189,10 @@ inline auto mousePos(const QMouseEvent &event) {
 
 inline auto tabPosF(const QTabletEvent &event) {
 	return event.posF();
+}
+
+inline auto styleName(const QStyle &style) {
+	return style.objectName();
 }
 
 inline auto touchPoints(const QTouchEvent &event) {

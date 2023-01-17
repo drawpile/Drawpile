@@ -15,9 +15,14 @@ endif()
 # file is used as the CMake project version
 include(DrawpileVersions)
 
+if(APPLE)
+	set(EXTRA_LANGUAGES OBJCXX)
+endif()
+
 project(Drawpile
 	VERSION ${PROJECT_VERSION}
 	HOMEPAGE_URL https://drawpile.net
+	LANGUAGES CXX ${EXTRA_LANGUAGES}
 )
 
 # DrawpileOptions uses this so it must be included before then

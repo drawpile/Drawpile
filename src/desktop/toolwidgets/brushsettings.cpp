@@ -16,6 +16,7 @@ extern "C" {
 #include "ui_brushdock.h"
 
 #include <dpengine/libmypaint/mypaint-brush-settings.h>
+#include <QIcon>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QMimeData>
@@ -106,7 +107,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	widgets::GroupedToolButton *brushSettingsDialogButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped, d->brushSlotWidget);
 	brushSlotWidgetLayout->addWidget(brushSettingsDialogButton);
-	brushSettingsDialogButton->setIcon(icon::fromTheme("configure"));
+	brushSettingsDialogButton->setIcon(QIcon::fromTheme("configure"));
 	brushSettingsDialogButton->setToolTip(tr("Brush Settings"));
 	connect(brushSettingsDialogButton, &widgets::GroupedToolButton::pressed,
 		this, &BrushSettings::brushSettingsDialogRequested);
@@ -131,7 +132,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	d->brushSlotButton[0]->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
 	d->brushSlotButton[BRUSH_COUNT-1]->setGroupPosition(widgets::GroupedToolButton::GroupRight);
-	d->brushSlotButton[ERASER_SLOT]->setIcon(icon::fromTheme("draw-eraser"));
+	d->brushSlotButton[ERASER_SLOT]->setIcon(QIcon::fromTheme("draw-eraser"));
 
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);

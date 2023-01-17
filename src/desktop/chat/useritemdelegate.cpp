@@ -5,12 +5,12 @@
 #include "libclient/canvas/userlist.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/message.h"
-#include "libclient/utils/icon.h"
 #include "libclient/net/servercmd.h"
 #include "libclient/document.h"
 #include "desktop/utils/qtguicompat.h"
 
 #include <QPainter>
+#include <QIcon>
 #include <QModelIndex>
 #include <QMouseEvent>
 #include <QMenu>
@@ -64,8 +64,8 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	connect(m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
 	connect(m_redoAction, &QAction::triggered, this, &UserItemDelegate::redoByUser);
 
-	m_lockIcon = icon::fromTheme("object-locked");
-	m_muteIcon = icon::fromTheme("irc-unvoice");
+	m_lockIcon = QIcon::fromTheme("object-locked");
+	m_muteIcon = QIcon::fromTheme("irc-unvoice");
 }
 
 UserItemDelegate::~UserItemDelegate()

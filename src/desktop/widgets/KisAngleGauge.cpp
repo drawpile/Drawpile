@@ -112,34 +112,33 @@ void KisAngleGauge::paintEvent(QPaintEvent *e)
 
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QColor backgroundColor, circleColor, axesColor, angleLineColor, angleLineMarkerColor;
-    if (palette().color(QPalette::Window).lightness() < 128) {
-        circleColor = palette().color(QPalette::Light);
-        axesColor = palette().color(QPalette::Light);
-        axesColor.setAlpha(200);
-        if (isEnabled()) {
-            backgroundColor = palette().color(QPalette::Dark);
-            angleLineColor = QColor(255, 255, 255, 128);
-            angleLineMarkerColor = QColor(255, 255, 255, 200);
-        } else {
-            backgroundColor = palette().color(QPalette::Window);
-            angleLineColor = palette().color(QPalette::Light);
-            angleLineMarkerColor = palette().color(QPalette::Light);
-        }
-    } else {
-        circleColor = palette().color(QPalette::Dark);
-        axesColor = palette().color(QPalette::Dark);
-        axesColor.setAlpha(200);
-        if (isEnabled()) {
-            backgroundColor = palette().color(QPalette::Light);
-            angleLineColor = QColor(0, 0, 0, 128);
-            angleLineMarkerColor = QColor(0, 0, 0, 200);
-        } else {
-            backgroundColor = palette().color(QPalette::Window);
-            angleLineColor = palette().color(QPalette::Dark);
-            angleLineMarkerColor = palette().color(QPalette::Dark);
-        }
-    }
+	QColor backgroundColor, circleColor, axesColor, angleLineColor, angleLineMarkerColor;
+	angleLineColor = palette().color(QPalette::Dark);
+	angleLineMarkerColor = palette().color(QPalette::Dark);
+	axesColor = palette().color(QPalette::Dark);
+	if (palette().color(QPalette::Window).lightness() < 128) {
+		circleColor = palette().color(QPalette::Light);
+		if (isEnabled()) {
+			angleLineColor = QColor(255, 255, 255, 200);
+			angleLineMarkerColor = QColor(255, 255, 255);
+		} else {
+			axesColor = palette().color(QPalette::Mid);
+			angleLineColor.setAlpha(128);
+			angleLineMarkerColor.setAlpha(128);
+		}
+	} else {
+		circleColor = palette().color(QPalette::Dark);
+		axesColor.setAlpha(200);
+		if (isEnabled()) {
+			angleLineColor = QColor(0, 0, 0, 128);
+			angleLineMarkerColor = QColor(0, 0, 0, 200);
+		}
+	}
+	if (isEnabled()) {
+		backgroundColor = palette().color(QPalette::Light);
+	} else {
+		backgroundColor = palette().color(QPalette::Window);
+	}
 
     // Background
     painter.setPen(Qt::transparent);

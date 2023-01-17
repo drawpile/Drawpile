@@ -11,10 +11,11 @@
 
 #include "desktop/mainwindow.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/utils/icon.h"
 
 #include "ui_playback.h"
+
 #include <QCloseEvent>
+#include <QIcon>
 #include <QMessageBox>
 #include <QThreadPool>
 #include <QTimer>
@@ -380,7 +381,7 @@ void PlaybackDialog::updateButtons()
 
 	m_ui->playButton->setDisabled(m_awaiting && !m_autoplay);
 	m_ui->playButton->setChecked(m_autoplay);
-	m_ui->playButton->setIcon(icon::fromTheme(
+	m_ui->playButton->setIcon(QIcon::fromTheme(
 		m_autoplay ? "media-playback-pause" : "media-playback-start"));
 
 	m_ui->nextButton->setDisabled(m_awaiting || m_autoplay);

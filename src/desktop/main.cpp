@@ -4,7 +4,6 @@
 #include "desktop/mainwindow.h"
 #include "desktop/tabletinput.h"
 
-#include "libclient/utils/icon.h"
 #include "libclient/utils/logging.h"
 #include "libclient/utils/colorscheme.h"
 #include "desktop/utils/hidedocktitlebarseventfilter.h"
@@ -17,23 +16,25 @@
 #include "desktop/utils/qtguicompat.h"
 
 #ifdef Q_OS_MACOS
+#include "desktop/utils/macui.h"
 #include "desktop/widgets/macmenu.h"
 #include <QTimer>
-#endif
-
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#elif defined(Q_OS_WIN) && defined(KIS_TABLET)
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
 #include <QCommandLineParser>
+#include <QDir>
+#include <QIcon>
 #include <QSettings>
+#include <QStyle>
 #include <QUrl>
 #include <QTabletEvent>
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDateTime>
-#include <QStyle>
+#include <QWidget>
 
 #include <QtColorWidgets/ColorWheel>
 
@@ -92,6 +93,8 @@ bool DrawpileApp::event(QEvent *e) {
 
 		return true;
 
+	} else if (e->type() == QEvent::ApplicationPaletteChange) {
+		updateThemeIcons();
 	}
 #ifdef Q_OS_MACOS
 	else if(e->type() == QEvent::ApplicationStateChange) {
@@ -120,11 +123,15 @@ void DrawpileApp::setTheme(int theme)
 
 	switch(theme) {
 	case THEME_SYSTEM:
+	case THEME_SYSTEM_LIGHT:
+	case THEME_SYSTEM_DARK:
 #ifdef Q_OS_WIN
 		// Empty string will use the Vista style, which is so incredibly ugly
 		// that it looks outright broken. So we use the old Windows-95-esque
 		// style instead, it looks old, but at least not totally busted.
 		setStyle(QStringLiteral("Windows"));
+#elif defined(Q_OS_MACOS)
+		setStyle(new macui::MacViewStatusBarProxyStyle);
 #else
 		setStyle(QStringLiteral(""));
 #endif
@@ -135,9 +142,25 @@ void DrawpileApp::setTheme(int theme)
 	}
 
 	switch(theme) {
+	case THEME_SYSTEM_DARK:
+#ifdef Q_OS_MACOS
+		if (macui::setNativeAppearance(macui::Appearance::Dark)) {
+			setPalette(style()->standardPalette());
+			break;
+		}
+#endif
+		[[fallthrough]];
 	case THEME_FUSION_DARK:
 		setPalette(loadPalette(QStringLiteral("nightmode.colors")));
 		break;
+	case THEME_SYSTEM_LIGHT:
+#ifdef Q_OS_MACOS
+	if (macui::setNativeAppearance(macui::Appearance::Light)) {
+		setPalette(style()->standardPalette());
+		break;
+	}
+#endif
+		[[fallthrough]];
 	case THEME_KRITA_BRIGHT:
 		setPalette(loadPalette(QStringLiteral("kritabright.colors")));
 		break;
@@ -148,11 +171,24 @@ void DrawpileApp::setTheme(int theme)
 		setPalette(loadPalette(QStringLiteral("kritadarker.colors")));
 		break;
 	default:
+#ifdef Q_OS_MACOS
+		macui::setNativeAppearance(macui::Appearance::System);
+#endif
 		setPalette(style()->standardPalette());
-		break;
 	}
 
-	icon::selectThemeVariant();
+	// When the global style changes, `QApplication::setStyle` only sends
+	// `QEvent::StyleChange` to widgets without the `Qt::WA_SetStyle` attribute.
+	// For efficiency, all `GroupedToolButton` share the same global style, and
+	// that style needs some signal to reset itself. Sending `StyleChange` to
+	// the application when its own style changes seems like a reasonable
+	// choice, since the alternatives are either to have each widget have its
+	// own copy of the proxy style and reset all of them every time, or have
+	// the widgets notify the global object when they receive a `StyleChange`
+	// event and then have to debounce all of them and guard against recursive
+	// style changes.
+	QEvent event(QEvent::StyleChange);
+	QCoreApplication::sendEvent(this, &event);
 }
 
 QPalette DrawpileApp::loadPalette(const QString &fileName)
@@ -164,6 +200,49 @@ QPalette DrawpileApp::loadPalette(const QString &fileName)
 	} else {
 		return colorscheme::loadFromFile(path);
 	}
+}
+
+void DrawpileApp::updateThemeIcons()
+{
+	const auto *iconTheme = QPalette().color(QPalette::Window).lightness() < 128
+		? "dark"
+		: "light";
+
+	QStringList fallbackIconPaths;
+	for (const auto &path : utils::paths::dataPaths()) {
+		fallbackIconPaths.append(path + "/theme/" + iconTheme);
+	}
+
+	QDir::setSearchPaths("theme", fallbackIconPaths);
+	QIcon::setThemeName(iconTheme);
+}
+
+void DrawpileApp::initTheme()
+{
+	static QStringList defaultThemePaths{QIcon::themeSearchPaths()};
+
+	QStringList themePaths{defaultThemePaths};
+	for (const auto &path : utils::paths::dataPaths()) {
+		themePaths.append(path + "/theme");
+	}
+	QIcon::setThemeSearchPaths(themePaths);
+
+	QSettings settings;
+
+	// Override widget theme
+	int theme = settings.value("settings/theme", DrawpileApp::THEME_SYSTEM).toInt();
+
+	// System themes tend to look ugly and broken. Reset the theme once to get
+	// a sensible default, the user can still revert to the ugly theme manually.
+	int themeVersion = settings.value("settings/themeversion", 0).toInt();
+	if(themeVersion < 1) {
+		theme = DrawpileApp::THEME_DEFAULT;
+		settings.setValue("settings/theme", theme);
+		settings.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
+	}
+
+	setTheme(theme);
+	updateThemeIcons();
 }
 
 void DrawpileApp::openUrl(QUrl url)
@@ -349,19 +428,7 @@ static QStringList initApp(DrawpileApp &app)
 
 	QSettings settings;
 
-	// Override widget theme
-	int theme = settings.value("settings/theme", DrawpileApp::THEME_SYSTEM).toInt();
-
-	// System themes tend to look ugly and broken. Reset the theme once to get
-	// a sensible default, the user can still revert to the ugly theme manually.
-	int themeVersion = settings.value("settings/themeversion", 0).toInt();
-	if(themeVersion < 1) {
-		theme = DrawpileApp::THEME_DEFAULT;
-		settings.setValue("settings/theme", theme);
-		settings.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
-	}
-
-	app.setTheme(theme);
+	app.initTheme();
 
 #ifdef Q_OS_MACOS
 	// Mac specific settings

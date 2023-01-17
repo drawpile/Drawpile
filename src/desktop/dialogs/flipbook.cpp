@@ -2,7 +2,6 @@
 
 #include "desktop/dialogs/flipbook.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/utils/icon.h"
 #include "desktop/utils/qtguicompat.h"
 
 #include "ui_flipbook.h"
@@ -79,11 +78,11 @@ void Flipbook::playPause()
 {
 	if(m_timer->isActive()) {
 		m_timer->stop();
-		m_ui->playButton->setIcon(icon::fromTheme("media-playback-start"));
+		m_ui->playButton->setIcon(QIcon::fromTheme("media-playback-start"));
 
 	} else {
 		m_timer->start(1000 / m_ui->fps->value());
-		m_ui->playButton->setIcon(icon::fromTheme("media-playback-pause"));
+		m_ui->playButton->setIcon(QIcon::fromTheme("media-playback-pause"));
 	}
 }
 

@@ -2,9 +2,9 @@
 
 #include "desktop/docks/layerlistdelegate.h"
 #include "libclient/canvas/layerlist.h"
-#include "libclient/utils/icon.h"
 
 #include <QDebug>
+#include <QIcon>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QLineEdit>
@@ -15,10 +15,10 @@ static const QSize ICON_SIZE { 16, 16 };
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  m_visibleIcon(icon::fromTheme("layer-visible-on")),
-	  m_groupIcon(icon::fromTheme("folder")),
+	  m_visibleIcon(QIcon::fromTheme("layer-visible-on")),
+	  m_groupIcon(QIcon::fromTheme("folder")),
 	  m_censoredIcon(QIcon(":/icons/censored.svg")),
-      m_hiddenIcon(icon::fromTheme("layer-visible-off"))
+	  m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
 {
 }
 

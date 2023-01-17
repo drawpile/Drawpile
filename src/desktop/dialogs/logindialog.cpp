@@ -11,7 +11,6 @@
 #include "libclient/utils/sessionfilterproxymodel.h"
 #include "libclient/utils/usernamevalidator.h"
 #include "libclient/utils/html.h"
-#include "libclient/utils/icon.h"
 
 #include "ui_logindialog.h"
 
@@ -23,6 +22,7 @@
 #endif
 #endif
 
+#include <QIcon>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QSettings>
@@ -80,28 +80,11 @@ struct LoginDialog::Private {
 		ui->rememberPassword->setEnabled(false);
 #endif
 
-#ifdef Q_OS_MACOS
-		// The avatar selection combobox looks terrible on macOS
-		// With this style, it looks slightly less terrible.
-		ui->avatarList->setStyleSheet(
-			"QComboBox {"
-				"border: none;"
-				"background: transparent;"
-			"}"
-			"QComboBox:hover {"
-				"border: 1px dotted black;"
-			"}"
-			"QComboBox::drop-down {"
-				"background: transparent;"
-			"}"
-		);
-#endif
-
 		ui->usernameIcon->setText(QString());
-		ui->usernameIcon->setPixmap(icon::fromTheme("im-user").pixmap(22, 22));
+		ui->usernameIcon->setPixmap(QIcon::fromTheme("im-user").pixmap(22, 22));
 
 		ui->passwordIcon->setText(QString());
-		ui->passwordIcon->setPixmap(icon::fromTheme("object-locked").pixmap(22, 22));
+		ui->passwordIcon->setPixmap(QIcon::fromTheme("object-locked").pixmap(22, 22));
 
 		// Session list page
 		QObject::connect(ui->sessionList, &QTableView::doubleClicked, [this](const QModelIndex&) {

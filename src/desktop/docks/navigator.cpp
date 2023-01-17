@@ -5,8 +5,8 @@
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
 #include "desktop/docks/titlewidget.h"
-#include "libclient/utils/icon.h"
 
+#include <QIcon>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QPainter>
@@ -309,7 +309,7 @@ Navigator::Navigator(QWidget *parent)
 	setWidget(m_view);
 
 	m_resetZoomButton = new QToolButton;
-	m_resetZoomButton->setIcon(icon::fromTheme("zoom-original"));
+	m_resetZoomButton->setIcon(QIcon::fromTheme("zoom-original"));
 	titlebar->addCustomWidget(m_resetZoomButton);
 
 	m_zoomSlider = new QSlider;

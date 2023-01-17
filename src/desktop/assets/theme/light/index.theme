@@ -1,0 +1,10 @@
+[Icon Theme]
+Name=light
+Comment=Drawpile Light
+Directories=.
+
+[.]
+Size=22
+MinSize=1
+MaxSize=256
+Type=Scalable

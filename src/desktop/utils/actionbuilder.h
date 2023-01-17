@@ -4,7 +4,7 @@
 #define DP_ACTIONBUILDER_H
 
 #include <QAction>
-#include "libclient/utils/icon.h"
+#include <QIcon>
 #include "libclient/utils/customshortcutmodel.h"
 
 /**
@@ -24,7 +24,7 @@ public:
 
 	ActionBuilder &icon(const QString &name)
 	{
-		m_action->setIcon(icon::fromTheme(name));
+		m_action->setIcon(QIcon::fromTheme(name));
 		return *this;
 	}
 

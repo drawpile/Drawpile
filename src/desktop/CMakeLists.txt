@@ -303,8 +303,13 @@ if(WIN32)
 elseif(APPLE)
 	target_sources(drawpile PRIVATE
 		icons/drawpile.iconset/icon_512x512@2x.png
+		utils/macui.h
+		utils/macui.mm
 		widgets/macmenu.cpp
 		widgets/macmenu.h
+	)
+	target_link_libraries(drawpile PRIVATE
+		"-framework Cocoa"
 	)
 endif()
 

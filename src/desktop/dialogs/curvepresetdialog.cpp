@@ -2,9 +2,9 @@
 
 #include "desktop/dialogs/curvepresetdialog.h"
 #include "desktop/widgets/kis_curve_widget.h"
-#include "libclient/utils/icon.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QInputDialog>
 #include <QListWidget>
 #include <QMessageBox>
@@ -259,9 +259,9 @@ QIcon CurvePresetDialog::getPresetIcon(int type)
 {
 	switch(type) {
 	case Saved:
-		return icon::fromTheme("pathshape");
+		return QIcon::fromTheme("pathshape");
 	case Builtin:
-		return icon::fromTheme("insert-math-expression");
+		return QIcon::fromTheme("insert-math-expression");
 	default:
 		return QIcon{};
 	}

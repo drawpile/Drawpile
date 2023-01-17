@@ -25,21 +25,22 @@ public:
 		THEME_KRITA_BRIGHT,
 		THEME_KRITA_DARK,
 		THEME_KRITA_DARKER,
+		THEME_SYSTEM_LIGHT,
+		THEME_SYSTEM_DARK,
 		THEME_COUNT,
-		// On OSX, there's no theme selection. The settings code says something
-		// about it being broken prior to Qt5.12, but I have no way of checking
-		// if it works now. So we'll just always use the system theme there.
 #ifdef Q_OS_MACOS
 		THEME_DEFAULT = THEME_SYSTEM,
 #else
 		THEME_DEFAULT = THEME_KRITA_DARK,
 #endif
-   };
+	};
 
 	DrawpileApp(int & argc, char ** argv );
 	~DrawpileApp() override;
 
 	void setTheme(int theme);
+	void initTheme();
+
 	void notifySettingsChanged();
 
 	void openUrl(QUrl url);
@@ -58,6 +59,7 @@ protected:
 
 private:
 	QMap<notification::Event, QSoundEffect*> m_sounds;
+	void updateThemeIcons();
 
 	QPalette loadPalette(const QString &file);
 };

@@ -3,10 +3,7 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
-#include "libclient/utils/icon.h"
 #include "libclient/tools/tool.h"
-
-#include <QObject>
 
 #include <QObject>
 

@@ -6,13 +6,13 @@
 #include "desktop/toolwidgets/brushsettings.h"
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/brushes/brush.h"
-#include "libclient/utils/icon.h"
 #include "desktop/docks/titlewidget.h"
 
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QFileDialog>
+#include <QIcon>
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -116,24 +116,24 @@ BrushPalette::BrushPalette(QWidget *parent)
 	titleWidget->addSpace(4);
 
 	d->menuButton = new widgets::GroupedToolButton(this);
-	d->menuButton->setIcon(icon::fromTheme("application-menu"));
+	d->menuButton->setIcon(QIcon::fromTheme("application-menu"));
 	d->menuButton->setPopupMode(QToolButton::InstantPopup);
 	d->menuButton->setMaximumHeight(d->tagComboBox->height());
 	titleWidget->addCustomWidget(d->menuButton);
 	titleWidget->addSpace(4);
 
 	d->menu = new QMenu(this);
-	d->newBrushAction = d->menu->addAction(icon::fromTheme("list-add"), tr("New Brush Preset"));
-	d->duplicateBrushAction = d->menu->addAction(icon::fromTheme("edit-copy"), tr("Duplicate Brush Preset"));
-	d->overwriteBrushAction = d->menu->addAction(icon::fromTheme("document-save"), tr("Overwrite Brush Preset"));
-	d->editBrushAction = d->menu->addAction(icon::fromTheme("configure"), tr("Edit Brush Preset"));
-	d->deleteBrushAction = d->menu->addAction(icon::fromTheme("trash-empty"), tr("Delete Brush Preset"));
+	d->newBrushAction = d->menu->addAction(QIcon::fromTheme("list-add"), tr("New Brush Preset"));
+	d->duplicateBrushAction = d->menu->addAction(QIcon::fromTheme("edit-copy"), tr("Duplicate Brush Preset"));
+	d->overwriteBrushAction = d->menu->addAction(QIcon::fromTheme("document-save"), tr("Overwrite Brush Preset"));
+	d->editBrushAction = d->menu->addAction(QIcon::fromTheme("configure"), tr("Edit Brush Preset"));
+	d->deleteBrushAction = d->menu->addAction(QIcon::fromTheme("trash-empty"), tr("Delete Brush Preset"));
 	d->assignmentMenu = d->menu->addMenu(tr("Brush Tags"));
 	d->iconSizeMenu = d->menu->addMenu(tr("Icon Size"));
 	d->menu->addSeparator();
-	d->newTagAction = d->menu->addAction(icon::fromTheme("folder-new"), tr("New Tag"));
-	d->editTagAction = d->menu->addAction(icon::fromTheme("edit-rename"), tr("Rename Tag"));
-	d->deleteTagAction = d->menu->addAction(icon::fromTheme("list-remove"), tr("Delete Tag"));
+	d->newTagAction = d->menu->addAction(QIcon::fromTheme("folder-new"), tr("New Tag"));
+	d->editTagAction = d->menu->addAction(QIcon::fromTheme("edit-rename"), tr("Rename Tag"));
+	d->deleteTagAction = d->menu->addAction(QIcon::fromTheme("list-remove"), tr("Delete Tag"));
 	d->menu->addSeparator();
 	d->importBrushesAction = d->menu->addAction(tr("Import Brushes..."));
 	d->menuButton->setMenu(d->menu);

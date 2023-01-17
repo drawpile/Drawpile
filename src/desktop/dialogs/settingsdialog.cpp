@@ -8,7 +8,6 @@
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/widgets/keysequenceedit.h"
-#include "libclient/utils/icon.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/listservermodel.h"
@@ -27,6 +26,7 @@
 
 #include "ui_settings.h"
 
+#include <QIcon>
 #include <QSettings>
 #include <QHeaderView>
 #include <QStyledItemDelegate>
@@ -119,10 +119,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		}
 	}
 
-	// Night mode support needs Qt 5.12 on macOS
-#ifdef Q_OS_MACOS
-	m_ui->formLayout_2->removeRow(m_ui->themeChoice);
-#endif
+	connect(m_ui->themeChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int theme) {
+		static_cast<DrawpileApp *>(qApp)->setTheme(theme);
+	});
 
 #if defined(HAVE_INPUT_SETTINGS)
 #	if !defined(HAVE_RELATIVE_PEN_MODE_HACK)
@@ -195,7 +194,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	const QDir trustedHostsDir(utils::paths::writablePath("trusted-hosts"));
-	const QIcon trustedIcon = icon::fromTheme("security-high");
+	const QIcon trustedIcon = QIcon::fromTheme("security-high");
 	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), m_ui->knownHostList);
 		i->setData(Qt::UserRole, true);
@@ -251,6 +250,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	// Settings saving
 	connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::rememberSettings);
+	connect(m_ui->buttonBox, &QDialogButtonBox::rejected, [] {
+		static_cast<DrawpileApp *>(qApp)->setTheme(QSettings().value("settings/theme", DrawpileApp::THEME_DEFAULT).toInt());
+	});
 	connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::saveCertTrustChanges);
 	connect(m_ui->buttonBox->button(QDialogButtonBox::Reset), &QPushButton::clicked, this, &SettingsDialog::resetSettings);
 
@@ -326,9 +328,7 @@ void SettingsDialog::restoreSettings()
 		}
 	}
 
-#ifndef Q_OS_MACOS
 	m_ui->themeChoice->setCurrentIndex(cfg.value("theme", DrawpileApp::THEME_DEFAULT).toInt());
-#endif
 	m_ui->logfile->setChecked(cfg.value("logfile", true).toBool());
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
@@ -471,9 +471,7 @@ void SettingsDialog::rememberSettings()
 
 	// Remember general settings
 	cfg.setValue("settings/language", m_ui->languageBox->currentData());
-#ifndef Q_OS_MACOS
 	cfg.setValue("settings/theme", m_ui->themeChoice->currentIndex());
-#endif
 	cfg.setValue("settings/logfile", m_ui->logfile->isChecked());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
@@ -723,7 +721,7 @@ void SettingsDialog::certificateSelectionChanged()
 
 void SettingsDialog::markTrustedCertificates()
 {
-	const QIcon trustedIcon = icon::fromTheme("security-high");
+	const QIcon trustedIcon = QIcon::fromTheme("security-high");
 	for(QListWidgetItem *item : m_ui->knownHostList->selectedItems()) {
 		if(!item->data(Qt::UserRole).toBool()) {
 			m_trustCerts.append(item->data(Qt::UserRole+1).toString());
@@ -776,7 +774,7 @@ void SettingsDialog::importTrustedCertificate()
 
 	m_importCerts.append(certs.at(0));
 
-	const QIcon trustedIcon = icon::fromTheme("security-high");
+	const QIcon trustedIcon = QIcon::fromTheme("security-high");
 	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), m_ui->knownHostList);
 	i->setData(Qt::UserRole, true);
 	i->setData(Qt::UserRole+2, path);

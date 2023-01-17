@@ -1,0 +1,10 @@
+[Icon Theme]
+Name=dark
+Comment=Drawpile Dark
+Directories=.
+
+[.]
+Size=22
+MinSize=1
+MaxSize=256
+Type=Scalable

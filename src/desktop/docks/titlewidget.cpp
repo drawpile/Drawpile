@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/docks/titlewidget.h"
-#include "libclient/utils/icon.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
 #include <QMainWindow>
 #include <QMenu>
@@ -25,7 +25,7 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 
 	m_button = new widgets::GroupedToolButton{
 		widgets::GroupedToolButton::NotGrouped, this};
-	m_button->setIcon(icon::fromTheme("window"));
+	m_button->setIcon(QIcon::fromTheme("window"));
 	m_button->setPopupMode(QToolButton::InstantPopup);
 	m_layout->addWidget(m_button);
 

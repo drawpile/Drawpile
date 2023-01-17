@@ -6,10 +6,10 @@
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/toolmessage.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/utils/icon.h"
 #include <QClipboard>
 #include <QGridLayout>
 #include <QGuiApplication>
+#include <QIcon>
 #include <QLabel>
 #include <QPainter>
 #include <QPushButton>
@@ -87,7 +87,7 @@ CurveWidget::CurveWidget(
 	m_buttonLayout = new QVBoxLayout;
 
 	m_copyButton =
-		new QPushButton{icon::fromTheme("edit-copy"), tr("Copy"), this};
+		new QPushButton{QIcon::fromTheme("edit-copy"), tr("Copy"), this};
 	m_buttonLayout->addWidget(m_copyButton);
 	m_copyButton->setToolTip(
 		tr("Copies this curve to the clipboard. You can paste it into another "
@@ -95,7 +95,7 @@ CurveWidget::CurveWidget(
 	connect(m_copyButton, &QPushButton::pressed, this, &CurveWidget::copyCurve);
 
 	m_pasteButton =
-		new QPushButton{icon::fromTheme("edit-paste"), tr("Paste"), this};
+		new QPushButton{QIcon::fromTheme("edit-paste"), tr("Paste"), this};
 	m_buttonLayout->addWidget(m_pasteButton);
 	m_pasteButton->setToolTip(tr("Pastes a copied curve from the clipboard, "
 								 "overwriting what is there currently."));
@@ -103,7 +103,7 @@ CurveWidget::CurveWidget(
 		m_pasteButton, &QPushButton::pressed, this, &CurveWidget::pasteCurve);
 
 	m_presetsButton = new QPushButton{
-		icon::fromTheme("document-save"), tr("Presets..."), this};
+		QIcon::fromTheme("document-save"), tr("Presets..."), this};
 	m_buttonLayout->addWidget(m_presetsButton);
 	m_presetsButton->setToolTip(tr("Save and load curve presets."));
 	connect(
