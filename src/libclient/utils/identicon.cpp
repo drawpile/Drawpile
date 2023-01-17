@@ -30,7 +30,7 @@ QImage make_identicon(const QString &name, const QSize &size)
 	image.fill(color);
 
 	QPainter painter(&image);
-	QFont font(QStringLiteral("sans"));
+	QFont font;
 	font.setPixelSize(size.height() * 0.7);
 	painter.setFont(font);
 	painter.setPen(Qt::white);
