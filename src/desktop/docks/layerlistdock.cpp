@@ -491,7 +491,12 @@ void LayerList::afterLayerReset()
 {
 	const bool wasAnimated = m_view->isAnimated();
 	m_view->setAnimated(false);
-	if(m_selectedId) {
+
+	if(m_canvas->layerlist()->rowCount() == 0) {
+		// If there's nothing to select, the selection model doesn't emit
+		// a selection change signal, so we have to call this manually.
+		selectionChanged(QItemSelection{});
+	} else if(m_selectedId) {
 		const auto selectedIndex = m_canvas->layerlist()->layerIndex(m_selectedId);
 		if(selectedIndex.isValid()) {
 			selectLayerIndex(selectedIndex);
