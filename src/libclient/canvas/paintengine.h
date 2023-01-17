@@ -144,8 +144,9 @@ public:
 
 	void setInspectContextId(unsigned int contextId);
 
-	//! Get the current canvas state from the paint engine instance
-	drawdance::CanvasState canvasState() const { return m_paintEngine.canvasState(); }
+	//! The current canvas state with the local view (hidden layers, local background) applied.
+	drawdance::CanvasState viewCanvasState() const { return m_paintEngine.viewCanvasState(); }
+	//! The current canvas state as it came out of the canvas history.
 	drawdance::CanvasState historyCanvasState() const { return m_paintEngine.historyCanvasState(); }
 
 	const drawdance::SnapshotQueue &snapshotQueue() const { return m_snapshotQueue; }

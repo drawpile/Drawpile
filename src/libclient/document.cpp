@@ -309,7 +309,7 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 void Document::onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, bool below)
 {
 	uint8_t contextId = m_client->myId();
-	drawdance::Message layerOrderMessage = m_canvas->paintEngine()->canvasState()
+	drawdance::Message layerOrderMessage = m_canvas->paintEngine()->historyCanvasState()
 		.makeLayerOrder(contextId, sourceId, targetId, intoGroup, below);
 	if(layerOrderMessage.isNull()) {
 		qWarning("Can't move layer: %s", DP_error());
@@ -876,7 +876,7 @@ void Document::removeEmptyAnnotations()
 	}
 
 	uint8_t contextId = m_canvas->localUserId();
-	drawdance::AnnotationList al = m_canvas->paintEngine()->canvasState().annotations();
+	drawdance::AnnotationList al = m_canvas->paintEngine()->historyCanvasState().annotations();
 	int count = al.count();
 	for(int i = 0; i < count; ++i) {
 		drawdance::Annotation a = al.at(i);

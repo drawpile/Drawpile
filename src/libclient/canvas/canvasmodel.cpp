@@ -87,7 +87,7 @@ void CanvasModel::loadPlayer(DP_Player *player)
 
 QSize CanvasModel::size() const
 {
-	return m_paintengine->canvasState().size();
+	return m_paintengine->viewCanvasState().size();
 }
 
 void CanvasModel::previewAnnotation(int id, const QRect &shape)
@@ -261,7 +261,7 @@ void CanvasModel::onLaserTrail(uint8_t userId, int persistence, uint32_t color)
 drawdance::MessageList CanvasModel::generateSnapshot() const
 {
 	drawdance::MessageList snapshot;
-	m_paintengine->canvasState().toResetImage(snapshot, 0);
+	m_paintengine->historyCanvasState().toResetImage(snapshot, 0);
 	amendSnapshotMetadata(snapshot);
 	return snapshot;
 }
@@ -281,7 +281,7 @@ void CanvasModel::amendSnapshotMetadata(drawdance::MessageList &snapshot) const
 
 void CanvasModel::pickLayer(int x, int y)
 {
-	int layerId = m_paintengine->canvasState().pickLayer(x, y);
+	int layerId = m_paintengine->viewCanvasState().pickLayer(x, y);
 	if(layerId > 0) {
 		emit layerAutoselectRequest(layerId);
 	}
@@ -298,7 +298,7 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 
 void CanvasModel::inspectCanvas(int x, int y)
 {
-	unsigned int contextId = m_paintengine->canvasState().pickContextId(x, y);
+	unsigned int contextId = m_paintengine->viewCanvasState().pickContextId(x, y);
 	if (contextId != 0) {
 		inspectCanvas(contextId);
 	}
@@ -344,7 +344,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 		return m_selection->transformedPasteImage();
 	}
 
-	drawdance::CanvasState canvasState = m_paintengine->canvasState();
+	drawdance::CanvasState canvasState = m_paintengine->viewCanvasState();
 	QRect rect{QPoint(), canvasState.size()};
 	if(m_selection) {
 		rect = rect.intersected(m_selection->boundingRect());

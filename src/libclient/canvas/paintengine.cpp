@@ -184,7 +184,7 @@ uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
 {
 	QSet<int> usedIds;
 	int idMask = forUser << 8;
-	drawdance::AnnotationList annotations = canvasState().annotations();
+	drawdance::AnnotationList annotations = historyCanvasState().annotations();
 	int count = annotations.count();
 	for(int i = 0; i < count; ++i) {
 		int id = annotations.at(i).id();
@@ -208,7 +208,7 @@ drawdance::Annotation PaintEngine::getAnnotationAt(int x, int y, int expand) con
 	QPoint point{x, y};
 	QMargins margins{expand, expand, expand, expand};
 
-	drawdance::AnnotationList annotations = canvasState().annotations();
+	drawdance::AnnotationList annotations = viewCanvasState().annotations();
 	int count = annotations.count();
 	int closestIndex = -1;
 	int closestDistance = INT_MAX;
@@ -230,7 +230,7 @@ drawdance::Annotation PaintEngine::getAnnotationAt(int x, int y, int expand) con
 
 bool PaintEngine::needsOpenRaster() const
 {
-	drawdance::CanvasState cs = canvasState();
+	drawdance::CanvasState cs = viewCanvasState();
 	return cs.backgroundTile().isNull() && cs.layers().count() > 1 && cs.annotations().count() != 0;
 }
 
@@ -306,7 +306,7 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 {
 	drawdance::LayerContent lc = layerId == 0
 		? m_paintEngine.renderContent()
-		: canvasState().searchLayerContent(layerId);
+		: viewCanvasState().searchLayerContent(layerId);
 	if(lc.isNull()) {
 		return Qt::transparent;
 	} else {
@@ -449,12 +449,12 @@ void PaintEngine::renderEverything()
 
 int PaintEngine::frameCount() const
 {
-	return canvasState().frameCount();
+	return historyCanvasState().frameCount();
 }
 
 QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 {
-	drawdance::CanvasState cs = canvasState();
+	drawdance::CanvasState cs = viewCanvasState();
 	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
 	if (area.isEmpty()) {
 		return QImage{};
@@ -470,7 +470,7 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 
 QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 {
-	drawdance::CanvasState cs = canvasState();
+	drawdance::CanvasState cs = viewCanvasState();
 	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
 	if (area.isEmpty()) {
 		return QImage{};

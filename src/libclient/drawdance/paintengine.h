@@ -86,7 +86,7 @@ public:
 	void previewDabs(int layerId, int count, const Message *msgs);
 	void clearPreview();
 
-	CanvasState canvasState() const;
+	CanvasState viewCanvasState() const;
 	CanvasState historyCanvasState() const;
 
 private:

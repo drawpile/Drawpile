@@ -47,7 +47,7 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 	QColor fillColor = m_eraseMode ? Qt::black : owner.activeBrush().qColor();
 	int layerId = owner.activeLayer();
 	int x, y;
-	QImage img = model->paintEngine()->canvasState().floodFill(
+	QImage img = model->paintEngine()->viewCanvasState().floodFill(
 		point.x(), point.y(), fillColor, m_tolerance, layerId,
 		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion, x, y);
 

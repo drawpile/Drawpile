@@ -33,7 +33,7 @@ void AnimationSaverRunnable::run()
 {
 	QByteArray pathBytes = m_filename.toUtf8();
 	DP_SaveResult result = m_saveFn(
-		m_pe->canvasState().get(), pathBytes.constData(), onProgress, this);
+		m_pe->viewCanvasState().get(), pathBytes.constData(), onProgress, this);
 	emit saveComplete(CanvasSaverRunnable::saveResultToErrorString(result));
 }
 

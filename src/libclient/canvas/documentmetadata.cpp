@@ -28,7 +28,7 @@ DocumentMetadata::DocumentMetadata(PaintEngine *engine, QObject *parent)
     : QObject{parent}, m_engine(engine), m_framerate(15), m_useTimeline(false)
 {
 	Q_ASSERT(engine);
-	refreshMetadata(m_engine->canvasState().documentMetadata());
+	refreshMetadata(m_engine->historyCanvasState().documentMetadata());
 	connect(engine, &PaintEngine::documentMetadataChanged, this, &DocumentMetadata::refreshMetadata);
 }
 

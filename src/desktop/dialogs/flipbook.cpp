@@ -126,7 +126,7 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
 	m_ui->loopEnd->setValue(max);
 
-	drawdance::CanvasState canvasState = pe->canvasState();
+	drawdance::CanvasState canvasState = pe->viewCanvasState();
 	m_crop = QRect(QPoint(), canvasState.size());
 
 	const QRect crop = QSettings().value("flipbook/crop").toRect();
@@ -154,7 +154,7 @@ void Flipbook::setCrop(const QRectF &rect)
 	const int h = m_crop.height();
 
 	if(rect.width()*w<=5 || rect.height()*h<=5) {
-		m_crop = QRect(QPoint(), m_paintengine->canvasState().size());
+		m_crop = QRect(QPoint(), m_paintengine->viewCanvasState().size());
 		m_ui->zoomButton->setEnabled(false);
 	} else {
 		m_crop = QRect(

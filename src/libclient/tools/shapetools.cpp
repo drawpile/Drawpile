@@ -77,7 +77,7 @@ void ShapeTool::end()
 
 	net::Client *client = owner.client();
 	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
-	drawdance::CanvasState canvasState = paintEngine->canvasState();
+	drawdance::CanvasState canvasState = paintEngine->viewCanvasState();
 
 	owner.setBrushEngineBrush(m_brushEngine, false);
 
@@ -96,7 +96,7 @@ void ShapeTool::updatePreview()
 {
 	owner.setBrushEngineBrush(m_brushEngine, false);
 	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
-	drawdance::CanvasState canvasState = paintEngine->canvasState();
+	drawdance::CanvasState canvasState = paintEngine->viewCanvasState();
 
 	const canvas::PointVector pv = pointVector();
 	Q_ASSERT(pv.count() > 1);

@@ -70,7 +70,7 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 	if(!m_drawing)
 		return;
 
-	drawdance::CanvasState canvasState = owner.model()->paintEngine()->canvasState();
+	drawdance::CanvasState canvasState = owner.model()->paintEngine()->viewCanvasState();
 
 	if(m_firstPoint) {
 		m_firstPoint = false;

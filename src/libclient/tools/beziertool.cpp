@@ -113,7 +113,7 @@ void BezierTool::finishMultipart()
 
 		net::Client *client = owner.client();
 		const uint8_t contextId = client->myId();
-		drawdance::CanvasState canvasState = owner.model()->paintEngine()->canvasState();
+		drawdance::CanvasState canvasState = owner.model()->paintEngine()->viewCanvasState();
 
 		const PointVector pv = calculateBezierCurve();
 		m_brushEngine.beginStroke(contextId);
@@ -199,7 +199,7 @@ void BezierTool::updatePreview()
 	owner.setBrushEngineBrush(m_brushEngine, false);
 
 	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
-	drawdance::CanvasState canvasState = paintEngine->canvasState();
+	drawdance::CanvasState canvasState = paintEngine->viewCanvasState();
 	m_brushEngine.beginStroke(0);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p.x(), p.y(), p.pressure(), 10, canvasState);

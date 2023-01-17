@@ -56,7 +56,7 @@ void CanvasItem::refreshImage(const QRect &area)
 
 void CanvasItem::canvasResize()
 {
-	QRectF bounds = m_image ? QRectF(QPointF(), QSizeF(m_image->canvasState().size())) : QRectF{};
+	QRectF bounds = m_image ? QRectF(QPointF(), QSizeF(m_image->viewCanvasState().size())) : QRectF{};
 	if(bounds != m_boundingRect) {
 		m_boundingRect = bounds;
 		updateVisibleArea();

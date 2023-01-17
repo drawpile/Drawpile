@@ -229,9 +229,9 @@ void PaintEngine::clearPreview()
 	DP_paint_engine_preview_clear(m_data);
 }
 
-CanvasState PaintEngine::canvasState() const
+CanvasState PaintEngine::viewCanvasState() const
 {
-	return drawdance::CanvasState::noinc(DP_paint_engine_canvas_state_inc(m_data));
+	return drawdance::CanvasState::noinc(DP_paint_engine_view_canvas_state_inc(m_data));
 }
 
 CanvasState PaintEngine::historyCanvasState() const

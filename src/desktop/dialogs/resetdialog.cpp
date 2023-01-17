@@ -54,7 +54,7 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 		}
 	});
 
-	drawdance::CanvasState currentCanvasState = pe->canvasState();
+	drawdance::CanvasState currentCanvasState = pe->historyCanvasState();
 	int lastIndex = resetPoints.count() - 1;
 	// Don't repeat last reset point if the canvas state hasn't changed since.
 	if(lastIndex < 0 || currentCanvasState.get() != resetPoints[lastIndex].canvasState.get()) {
