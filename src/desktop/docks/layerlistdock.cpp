@@ -18,6 +18,7 @@
 */
 
 #include "widgets/groupedtoolbutton.h"
+#include "canvas/blendmodes.h"
 #include "canvas/layerlist.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/userlist.h"
@@ -31,6 +32,7 @@
 #include "utils/icon.h"
 
 #include <QDebug>
+#include <QComboBox>
 #include <QItemSelection>
 #include <QMessageBox>
 #include <QPushButton>
@@ -39,37 +41,67 @@
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QScrollBar>
+#include <QSpinBox>
 #include <QTreeView>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
 	: QDockWidget(tr("Layers"), parent),
 	  m_canvas(nullptr), m_selectedId(0), m_nearestToDeletedId(0),
-	  m_noupdate(false),
+	  m_noupdate(false), m_updateBlendModeIndex(-1), m_updateOpacity(-1),
 	  m_addLayerAction(nullptr), m_duplicateLayerAction(nullptr),
 	  m_mergeLayerAction(nullptr), m_deleteLayerAction(nullptr)
 {
+	m_debounceTimer = new QTimer{this};
+	m_debounceTimer->setSingleShot(true);
+	m_debounceTimer->setInterval(500);
+	connect(m_debounceTimer, &QTimer::timeout, this, &LayerList::triggerUpdate);
+
 	auto *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
-	m_lockButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped, titlebar);
+	m_lockButton = new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
 	m_lockButton->setIcon(icon::fromTheme("object-locked"));
 	m_lockButton->setCheckable(true);
 	m_lockButton->setPopupMode(QToolButton::InstantPopup);
 	titlebar->addCustomWidget(m_lockButton);
-	titlebar->addStretch();
+	titlebar->addSpace(4);
+
+	m_blendModeCombo = new QComboBox;
+	for(const QPair<DP_BlendMode, QString> &bm : canvas::blendmode::layerModeNames()) {
+		m_blendModeCombo->addItem(bm.second, int(bm.first));
+	}
+	connect(
+		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &LayerList::blendModeChanged);
+	titlebar->addCustomWidget(m_blendModeCombo);
+	titlebar->addSpace(4);
+
+	m_opacitySlider = new QSlider{Qt::Horizontal};
+	m_opacitySlider->setRange(0, 100);
+	connect(m_opacitySlider, &QSlider::valueChanged, this, &LayerList::opacityChanged);
+	titlebar->addCustomWidget(m_opacitySlider);
+	titlebar->addSpace(4);
+
+	QWidget *root = new QWidget{this};
+	QVBoxLayout *rootLayout = new QVBoxLayout;
+	rootLayout->setSpacing(0);
+	rootLayout->setContentsMargins(0, 0, 0, 0);
+	root->setLayout(rootLayout);
+	setWidget(root);
 
 	m_view = new QTreeView;
 	m_view->setHeaderHidden(true);
-	setWidget(m_view);
-
 	m_view->setDragEnabled(true);
 	m_view->viewport()->setAcceptDrops(true);
 	m_view->setEnabled(false);
 	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+	rootLayout->addWidget(m_view);
 
 	m_contextMenu = new QMenu(this);
 	connect(m_view, &QTreeView::customContextMenuRequested, this, &LayerList::showContextMenu);
@@ -110,6 +142,15 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	updateLockedControls();
 }
 
+static void addLayerButton(
+	QWidget *root, QHBoxLayout *layout, QAction *action,
+	widgets::GroupedToolButton::GroupPosition position)
+{
+	widgets::GroupedToolButton *button = new widgets::GroupedToolButton{position, root};
+	button->setDefaultAction(action);
+	layout->addWidget(button);
+}
+
 void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del)
 {
 	Q_ASSERT(addLayer);
@@ -124,35 +165,22 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_propertiesAction = properties;
 	m_deleteLayerAction = del;
 
-	// Add the actions to the header bar
-	TitleWidget *titlebar = qobject_cast<TitleWidget*>(titleBarWidget());
-	Q_ASSERT(titlebar);
+	// Add the actions below the layer list
+	QWidget *root = widget();
+	Q_ASSERT(root);
+	Q_ASSERT(titleBarWidget());
 
-	auto *addLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, titlebar);
-	addLayerButton->setDefaultAction(addLayer);
-	titlebar->addCustomWidget(addLayerButton);
-
-	auto *addGroupButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
-	addGroupButton->setDefaultAction(addGroup);
-	titlebar->addCustomWidget(addGroupButton);
-
-	auto *dupplicateLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
-	dupplicateLayerButton->setDefaultAction(m_duplicateLayerAction);
-	titlebar->addCustomWidget(dupplicateLayerButton);
-
-	auto *mergeLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
-	mergeLayerButton->setDefaultAction(m_mergeLayerAction);
-	titlebar->addCustomWidget(mergeLayerButton);
-
-	auto *propertiesButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, titlebar);
-	propertiesButton->setDefaultAction(m_propertiesAction);
-	titlebar->addCustomWidget(propertiesButton);
-
-	auto *deleteLayerButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, titlebar);
-	deleteLayerButton->setDefaultAction(m_deleteLayerAction);
-	titlebar->addCustomWidget(deleteLayerButton);
-
-	titlebar->addStretch();
+	QHBoxLayout *layout = new QHBoxLayout;
+	layout->setSpacing(0);
+	layout->setContentsMargins(titleBarWidget()->layout()->contentsMargins());
+	addLayerButton(root, layout, addLayer, widgets::GroupedToolButton::GroupLeft);
+	addLayerButton(root, layout, addGroup, widgets::GroupedToolButton::GroupCenter);
+	addLayerButton(root, layout, duplicate, widgets::GroupedToolButton::GroupCenter);
+	addLayerButton(root, layout, merge, widgets::GroupedToolButton::GroupCenter);
+	addLayerButton(root, layout, properties, widgets::GroupedToolButton::GroupRight);
+	layout->addStretch();
+	addLayerButton(root, layout, del, widgets::GroupedToolButton::NotGrouped);
+	root->layout()->addItem(layout);
 
 	// Add the actions to the context menu
 	m_contextMenu->addAction(m_propertiesAction);
@@ -203,6 +231,8 @@ void LayerList::updateLockedControls()
 	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
 	m_lockButton->setEnabled(enabled);
+	m_blendModeCombo->setEnabled(enabled);
+	m_opacitySlider->setEnabled(enabled);
 
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
@@ -504,6 +534,11 @@ bool LayerList::isCurrentLayerLocked() const
 
 void LayerList::selectionChanged(const QItemSelection &selected)
 {
+	if(m_debounceTimer->isActive()) {
+		m_debounceTimer->stop();
+		triggerUpdate();
+	}
+
 	bool on = selected.count() > 0;
 
 	if(on) {
@@ -517,6 +552,17 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 	emit layerSelected(m_selectedId);
 }
 
+static int searchBlendModeIndex(QComboBox *blendModeCombo, DP_BlendMode mode)
+{
+	const int blendModeCount = blendModeCombo->count();
+    for(int i = 0; i < blendModeCount; ++i) {
+		if(blendModeCombo->itemData(i).toInt() == int(mode)) {
+            return i;
+        }
+    }
+    return 0; // Don't know that blend mode, punt to Normal.
+}
+
 void LayerList::updateUiFromSelection()
 {
 	const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
@@ -524,6 +570,8 @@ void LayerList::updateUiFromSelection()
 	m_selectedId = layer.id;
 
 	m_aclmenu->setCensored(layer.censored);
+	m_blendModeCombo->setCurrentIndex(searchBlendModeIndex(m_blendModeCombo, layer.blend));
+	m_opacitySlider->setValue(layer.opacity * 100.0 + 0.5);
 
 	lockStatusChanged(layer.id);
 	updateLockedControls();
@@ -542,6 +590,58 @@ void LayerList::lockStatusChanged(int layerId)
 
 		emit activeLayerVisibilityChanged();
 	}
+}
+
+void LayerList::blendModeChanged(int index)
+{
+	if(m_noupdate) {
+		return;
+	}
+	m_updateBlendModeIndex = index;
+	m_debounceTimer->start();
+}
+
+void LayerList::opacityChanged(int value)
+{
+	if(m_noupdate) {
+		return;
+	}
+	m_updateOpacity = value;
+	m_debounceTimer->start();
+}
+
+void LayerList::triggerUpdate()
+{
+	QModelIndex index = m_canvas->layerlist()->layerIndex(m_selectedId);
+	if(!index.isValid()) {
+		return;
+	}
+	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
+
+	DP_BlendMode mode;
+	if(m_updateBlendModeIndex == -1) {
+		mode = layer.blend;
+	} else {
+		mode = DP_BlendMode(m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt());
+		m_updateBlendModeIndex = -1;
+	}
+
+	float opacity;
+	if(m_updateOpacity == -1) {
+		opacity = layer.opacity;
+	} else {
+		opacity = m_updateOpacity / 100.0f;
+		m_updateOpacity = -1;
+	}
+
+	uint8_t flags =
+		(layer.censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+		(layer.isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+
+	drawdance::Message msg = drawdance::Message::makeLayerAttributes(
+		m_canvas->localUserId(), layer.id, 0, flags, opacity * 255.0f + 0.5f, mode);
+
+	emit layerCommands(1, &msg);
 }
 
 }

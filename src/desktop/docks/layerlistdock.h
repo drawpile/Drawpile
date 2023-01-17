@@ -30,8 +30,8 @@ class QItemSelection;
 class QMenu;
 class QTimer;
 class QTreeView;
-
-class Ui_LayerBox;
+class QComboBox;
+class QSlider;
 
 namespace canvas {
 	class CanvasModel;
@@ -100,7 +100,11 @@ private slots:
 	void changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
 
 	void lockStatusChanged(int layerId);
+	void blendModeChanged(int index);
+	void opacityChanged(int value);
 	void selectionChanged(const QItemSelection &selected);
+
+	void triggerUpdate();
 
 private:
 	void updateLockedControls();
@@ -130,7 +134,13 @@ private:
 	QMenu *m_contextMenu;
 	LayerAclMenu *m_aclmenu;
 
+	QTimer *m_debounceTimer;
+	int m_updateBlendModeIndex;
+	int m_updateOpacity;
+
 	widgets::GroupedToolButton *m_lockButton;
+	QComboBox *m_blendModeCombo;
+	QSlider *m_opacitySlider;
 	QTreeView *m_view;
 
 	QAction *m_addLayerAction;
