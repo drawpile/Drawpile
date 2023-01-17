@@ -239,11 +239,6 @@
        </item>
        <item row="10" column="1" colspan="2">
         <widget class="color_widgets::ColorLineEdit" name="edit_hex">
-         <property name="font">
-          <font>
-           <family>Monospace</family>
-          </font>
-         </property>
          <property name="showAlpha" stdset="0">
           <bool>true</bool>
          </property>
