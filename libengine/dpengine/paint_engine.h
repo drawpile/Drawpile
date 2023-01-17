@@ -111,6 +111,11 @@ void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
 void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
                                           bool hidden);
 
+DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe);
+
+void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
+                                                     DP_Tile *tile_or_null);
+
 bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
                                     const char *path);
 
@@ -191,6 +196,8 @@ void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
 void DP_paint_engine_preview_clear(DP_PaintEngine *pe);
 
 DP_CanvasState *DP_paint_engine_canvas_state_inc(DP_PaintEngine *pe);
+
+DP_CanvasState *DP_paint_engine_history_canvas_state_inc(DP_PaintEngine *pe);
 
 
 #endif

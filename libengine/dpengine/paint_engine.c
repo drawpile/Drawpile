@@ -146,6 +146,7 @@ struct DP_PaintEngine {
         DP_LayerPropsList *prev_lpl;
         DP_Timeline *prev_tl;
         DP_LayerPropsList *lpl;
+        DP_Tile *background_tile;
     } local_view;
     DP_DrawContext *paint_dc;
     DP_PaintEnginePreview *preview;
@@ -599,6 +600,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.prev_lpl = NULL;
     pe->local_view.prev_tl = NULL;
     pe->local_view.lpl = NULL;
+    pe->local_view.background_tile = NULL;
     pe->paint_dc = paint_dc;
     pe->preview = NULL;
     pe->preview_dc = preview_dc;
@@ -670,6 +672,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         }
         DP_message_queue_dispose(&pe->local_queue);
         free_preview(pe->preview);
+        DP_tile_decref_nullable(pe->local_view.background_tile);
         DP_layer_props_list_decref_nullable(pe->local_view.lpl);
         DP_timeline_decref_nullable(pe->local_view.prev_tl);
         DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
@@ -798,6 +801,25 @@ void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
     }
     else if (!hidden && index != -1) {
         DP_VECTOR_REMOVE_TYPE(hidden_layers, int, index);
+        invalidate_local_view(pe);
+    }
+}
+
+
+DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->local_view.background_tile;
+}
+
+void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
+                                                     DP_Tile *tile_or_null)
+{
+    DP_ASSERT(pe);
+    DP_Tile *prev = pe->local_view.background_tile;
+    if (prev != tile_or_null) {
+        pe->local_view.background_tile = tile_or_null;
+        DP_tile_decref_nullable(prev);
         invalidate_local_view(pe);
     }
 }
@@ -1637,6 +1659,21 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
     }
 }
 
+static DP_CanvasState *apply_local_background_tile(DP_PaintEngine *pe,
+                                                   DP_CanvasState *cs)
+{
+    DP_Tile *t = pe->local_view.background_tile;
+    if (t) {
+        DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
+        DP_transient_canvas_state_background_tile_set_noinc(tcs,
+                                                            DP_tile_incref(t));
+        return (DP_CanvasState *)tcs;
+    }
+    else {
+        return cs;
+    }
+}
+
 static void
 emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
              DP_UserCursorBuffer *ucb, DP_PaintEngineResizedFn resized,
@@ -1747,8 +1784,9 @@ void DP_paint_engine_tick(
         // Previews, hidden layers etc. are local changes, so we have to apply
         // them on top of the canvas state we got out of the history.
         DP_CanvasState *prev_view_cs = pe->view_cs;
-        DP_CanvasState *next_view_cs = apply_local_layer_props(
-            pe, apply_inspect(pe, apply_preview(pe, pe->history_cs)));
+        DP_CanvasState *next_view_cs = apply_local_background_tile(
+            pe, apply_local_layer_props(
+                    pe, apply_inspect(pe, apply_preview(pe, pe->history_cs))));
         pe->view_cs = next_view_cs;
         emit_changes(pe, prev_view_cs, next_view_cs, ucb, resized, tile_changed,
                      layer_props_changed, annotations_changed,
@@ -2095,4 +2133,10 @@ DP_CanvasState *DP_paint_engine_canvas_state_inc(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
     return DP_canvas_state_incref(pe->view_cs);
+}
+
+DP_CanvasState *DP_paint_engine_history_canvas_state_inc(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return DP_canvas_state_incref(pe->history_cs);
 }
