@@ -2260,6 +2260,55 @@ void MainWindow::resizeCanvas()
 	dlg->show();
 }
 
+static QIcon makeBackgroundColorIcon(QColor &color)
+{
+	static constexpr int SIZE = 16;
+	static constexpr int HALF = SIZE / 2;
+	QPixmap pixmap{SIZE, SIZE};
+	pixmap.fill(color);
+	if(color.alpha() != 255) {
+		QPainter painter{&pixmap};
+		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+		painter.fillRect(0, 0, HALF, HALF, Qt::gray);
+		painter.fillRect(HALF, 0, HALF, HALF, Qt::white);
+		painter.fillRect(0, HALF, HALF, HALF, Qt::white);
+		painter.fillRect(HALF, HALF, HALF, HALF, Qt::gray);
+	}
+	return pixmap;
+}
+
+void MainWindow::updateBackgroundActions()
+{
+	QAction *canvasBackground = getAction("canvas-background");
+	QAction *setLocalBackground = getAction("set-local-background");
+	QAction *clearLocalBackground = getAction("clear-local-background");
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas) {
+		canvasBackground->setEnabled(true);
+		setLocalBackground->setEnabled(true);
+
+		canvas::PaintEngine *paintEngine = canvas->paintEngine();
+		QColor sessionColor = paintEngine->backgroundColor();
+		canvasBackground->setIcon(makeBackgroundColorIcon(sessionColor));
+
+		QColor localColor;
+		if(paintEngine->localBackgroundColor(localColor)) {
+			setLocalBackground->setIcon(makeBackgroundColorIcon(localColor));
+			clearLocalBackground->setEnabled(true);
+		} else {
+			setLocalBackground->setIcon(QIcon{});
+			clearLocalBackground->setEnabled(false);
+		}
+	} else {
+		QIcon nullIcon = QIcon{};
+		canvasBackground->setIcon(nullIcon);
+		canvasBackground->setEnabled(false);
+		setLocalBackground->setIcon(nullIcon);
+		setLocalBackground->setEnabled(false);
+		clearLocalBackground->setEnabled(false);
+	}
+}
+
 void MainWindow::changeCanvasBackground()
 {
 	if(!m_doc->canvas()) {
@@ -2272,6 +2321,38 @@ void MainWindow::changeCanvasBackground()
 
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
 	dlg->show();
+}
+
+void MainWindow::changeLocalCanvasBackground()
+{
+	if(!m_doc->canvas()) {
+		qWarning("changeLocalCanvasBackground: no canvas!");
+		return;
+	}
+
+	canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
+	QColor color;
+	if(!paintEngine->localBackgroundColor(color)) {
+		color = paintEngine->backgroundColor();
+	}
+
+	color_widgets::ColorDialog *dlg = new color_widgets::ColorDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setColor(color);
+
+	connect(
+		dlg, &color_widgets::ColorDialog::colorSelected, paintEngine,
+		&canvas::PaintEngine::setLocalBackgroundColor);
+	dlg->show();
+}
+
+void MainWindow::clearLocalCanvasBackground()
+{
+	if(!m_doc->canvas()) {
+		qWarning("clearLocalCanvasBackground: no canvas!");
+		return;
+	}
+	m_doc->canvas()->paintEngine()->clearLocalBackgroundColor();
 }
 
 void MainWindow::about()
@@ -2499,7 +2580,9 @@ void MainWindow::setupActions()
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations"));
 	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas..."));
-	QAction *canvasBackground = makeAction("canvas-background", tr("Set Background..."));
+	QAction *canvasBackground = makeAction("canvas-background", tr("Set Session Background..."));
+	QAction *setLocalBackground = makeAction("set-local-background", tr("Set Local Background..."));
+	QAction *clearLocalBackground = makeAction("clear-local-background", tr("Clear Local Background"));
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
@@ -2569,6 +2652,8 @@ void MainWindow::setupActions()
 	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_COLOR_ERASE); });
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
+	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
+	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Expanding by multiples of tile size allows efficient resizing
@@ -2600,7 +2685,11 @@ void MainWindow::setupActions()
 	expandmenu->addAction(expanddown);
 	expandmenu->addAction(expandleft);
 	expandmenu->addAction(expandright);
-	editmenu->addAction(canvasBackground);
+	QMenu *backgroundmenu = editmenu->addMenu(tr("Canvas Background"));
+	backgroundmenu->addAction(canvasBackground);
+	backgroundmenu->addAction(setLocalBackground);
+	backgroundmenu->addAction(clearLocalBackground);
+	connect(backgroundmenu, &QMenu::aboutToShow, this, &MainWindow::updateBackgroundActions);
 
 	editmenu->addSeparator();
 	editmenu->addAction(deleteAnnotations);

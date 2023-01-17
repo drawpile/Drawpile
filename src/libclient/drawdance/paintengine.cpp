@@ -1,3 +1,7 @@
+extern "C" {
+#include <dpengine/tile.h>
+}
+
 #include "paintengine.h"
 #include "aclstate.h"
 #include "image.h"
@@ -92,6 +96,18 @@ void PaintEngine::setInspectContextId(unsigned int contextId)
 void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 {
 	DP_paint_engine_layer_visibility_set(m_data, layerId, hidden);
+}
+
+Tile PaintEngine::localBackgroundTile() const
+{
+	return Tile::inc(DP_paint_engine_local_background_tile_noinc(m_data));
+}
+
+void PaintEngine::setLocalBackgroundTile(const Tile &tile)
+{
+
+	DP_paint_engine_local_background_tile_set_noinc(
+		m_data, DP_tile_incref_nullable(tile.get()));
 }
 
 RecordStartResult PaintEngine::startRecorder(const QString &path)
@@ -216,6 +232,11 @@ void PaintEngine::clearPreview()
 CanvasState PaintEngine::canvasState() const
 {
 	return drawdance::CanvasState::noinc(DP_paint_engine_canvas_state_inc(m_data));
+}
+
+CanvasState PaintEngine::historyCanvasState() const
+{
+	return drawdance::CanvasState::noinc(DP_paint_engine_history_canvas_state_inc(m_data));
 }
 
 long long PaintEngine::getTimeMs(void *)

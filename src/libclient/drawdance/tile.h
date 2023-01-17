@@ -5,14 +5,18 @@ extern "C" {
 #include <dpengine/pixels.h>
 }
 
+#include <QColor>
+
 struct DP_Tile;
 
 namespace drawdance {
 
 class Tile final {
 public:
+    static Tile null();
     static Tile inc(DP_Tile *t);
     static Tile noinc(DP_Tile *t);
+    static Tile fromColor(const QColor &color);
 
     Tile(const Tile &other);
     Tile(Tile &&other);
@@ -22,9 +26,13 @@ public:
 
     ~Tile();
 
+    DP_Tile *get() const;
+
     bool isNull() const;
 
-    bool samePixel(DP_Pixel15 *outPixel = nullptr) const;
+    // If the tile contains the same color for every pixel, this will return
+    // that color (unpremultiplied.) If not, returns the given default value.
+    QColor singleColor(const QColor &defaultValue);
 
 private:
     explicit Tile(DP_Tile *t);

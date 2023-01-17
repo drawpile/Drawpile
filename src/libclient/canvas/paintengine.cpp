@@ -156,13 +156,28 @@ void PaintEngine::cleanup()
 
 QColor PaintEngine::backgroundColor() const
 {
-	DP_Pixel15 pixel;
-	if (canvasState().backgroundTile().samePixel(&pixel)) {
-		DP_UPixelFloat color = DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
-		return QColor::fromRgbF(color.r, color.g, color.b, color.a);
+	return historyCanvasState().backgroundTile().singleColor(Qt::transparent);
+}
+
+bool PaintEngine::localBackgroundColor(QColor &outColor) const
+{
+	drawdance::Tile tile = m_paintEngine.localBackgroundTile();
+	if(tile.isNull()) {
+		return false;
 	} else {
-		return Qt::transparent;
+		outColor = tile.singleColor(Qt::transparent);
+		return true;
 	}
+}
+
+void PaintEngine::setLocalBackgroundColor(const QColor &color)
+{
+	m_paintEngine.setLocalBackgroundTile(drawdance::Tile::fromColor(color));
+}
+
+void PaintEngine::clearLocalBackgroundColor()
+{
+	m_paintEngine.setLocalBackgroundTile(drawdance::Tile::null());
 }
 
 uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const

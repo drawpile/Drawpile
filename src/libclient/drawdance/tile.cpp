@@ -6,6 +6,11 @@ extern "C" {
 
 namespace drawdance {
 
+Tile Tile::null()
+{
+    return Tile{nullptr};
+}
+
 Tile Tile::inc(DP_Tile *t)
 {
     return Tile{DP_tile_incref_nullable(t)};
@@ -14,6 +19,11 @@ Tile Tile::inc(DP_Tile *t)
 Tile Tile::noinc(DP_Tile *t)
 {
     return Tile{t};
+}
+
+Tile Tile::fromColor(const QColor &color)
+{
+    return Tile::noinc(DP_tile_new_from_bgra(0, color.rgba()));
 }
 
 Tile::Tile(const Tile &other)
@@ -47,15 +57,26 @@ Tile::~Tile()
     DP_tile_decref_nullable(m_data);
 }
 
+DP_Tile *Tile::get() const
+{
+    return m_data;
+}
+
 bool Tile::isNull() const
 {
     return !m_data;
 }
 
 
-bool Tile::samePixel(DP_Pixel15 *outPixel) const
+QColor Tile::singleColor(const QColor &defaultValue)
 {
-    return DP_tile_same_pixel(m_data, outPixel);
+    DP_Pixel15 pixel;
+    if(DP_tile_same_pixel(m_data, &pixel)) {
+		DP_UPixelFloat color = DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
+		return QColor::fromRgbF(color.r, color.g, color.b, color.a);
+    } else {
+        return defaultValue;
+    }
 }
 
 Tile::Tile(DP_Tile *cs)

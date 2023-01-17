@@ -97,6 +97,11 @@ public:
 	//! Get the color of the background tile
 	QColor backgroundColor() const;
 
+	//! Get the color of the local background tile, returning if one exists
+	bool localBackgroundColor(QColor &outColor) const;
+	void setLocalBackgroundColor(const QColor &color);
+	void clearLocalBackgroundColor();
+
 	//! Find an unused ID for a new annotation
 	uint16_t findAvailableAnnotationId(uint8_t forUser) const;
 
@@ -141,6 +146,7 @@ public:
 
 	//! Get the current canvas state from the paint engine instance
 	drawdance::CanvasState canvasState() const { return m_paintEngine.canvasState(); }
+	drawdance::CanvasState historyCanvasState() const { return m_paintEngine.historyCanvasState(); }
 
 	const drawdance::SnapshotQueue &snapshotQueue() const { return m_snapshotQueue; }
 

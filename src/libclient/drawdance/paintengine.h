@@ -65,6 +65,9 @@ public:
 
 	void setLayerVisibility(int layerId, bool hidden);
 
+	Tile localBackgroundTile() const;
+	void setLocalBackgroundTile(const Tile &tile);
+
 	RecordStartResult startRecorder(const QString &path);
 	bool stopRecorder();
 	bool recorderIsRecording() const;
@@ -84,6 +87,7 @@ public:
 	void clearPreview();
 
 	CanvasState canvasState() const;
+	CanvasState historyCanvasState() const;
 
 private:
 	DrawContext m_paintDc;

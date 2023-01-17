@@ -165,7 +165,10 @@ private slots:
 	void clearOrDelete();
 
 	void resizeCanvas();
+	void updateBackgroundActions();
 	void changeCanvasBackground();
+	void changeLocalCanvasBackground();
+	void clearLocalCanvasBackground();
 
 	void toolChanged(tools::Tool::Type tool);
 
