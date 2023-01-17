@@ -66,6 +66,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="keepaspect">
+       <property name="text">
+        <string>Keep aspect ratio</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -87,13 +94,6 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="keepaspect">
-     <property name="text">
-      <string>Keep aspect ratio</string>
      </property>
     </widget>
    </item>
