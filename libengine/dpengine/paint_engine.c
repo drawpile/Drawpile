@@ -2129,7 +2129,7 @@ void DP_paint_engine_preview_clear(DP_PaintEngine *pe)
 }
 
 
-DP_CanvasState *DP_paint_engine_canvas_state_inc(DP_PaintEngine *pe)
+DP_CanvasState *DP_paint_engine_view_canvas_state_inc(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
     return DP_canvas_state_incref(pe->view_cs);
