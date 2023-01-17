@@ -60,10 +60,6 @@ class BrushPresetTagModel final : public QAbstractItemModel {
 	Q_OBJECT
 	friend class BrushPresetModel;
 public:
-	enum Roles {
-		SortRole = Qt::UserRole + 1,
-	};
-
 	explicit BrushPresetTagModel(QObject *parent = nullptr);
 	~BrushPresetTagModel() override;
 
@@ -112,8 +108,7 @@ class BrushPresetModel final : public QAbstractItemModel {
 
 public:
 	enum Roles {
-		SortRole = Qt::UserRole + 1,
-		FilterRole,
+		FilterRole = Qt::UserRole + 1,
 		BrushRole,
 	};
 

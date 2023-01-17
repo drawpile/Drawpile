@@ -87,7 +87,7 @@ public:
 
 	int readTagIdAtIndex(int index)
 	{
-		return readInt("select id from tag order by id limit 1 offset ?", {index});
+		return readInt("select id from tag order by LOWER(name) limit 1 offset ?", {index});
 	}
 
 	Tag readTagAtIndex(int index)
@@ -187,7 +187,7 @@ public:
 
 	int readPresetIdAtIndexAll(int index)
 	{
-		return readInt("select id from preset order by id limit 1 offset ?", {index});
+		return readInt("select id from preset order by LOWER(name) limit 1 offset ?", {index});
 	}
 
 	int readPresetIdAtIndexByUntagged(int index)
@@ -195,7 +195,7 @@ public:
 		QString sql = QStringLiteral(
 			"select p.id from preset p\n"
 			"	where not exists(select 1 from preset_tag pt where pt.preset_id = p.id)\n"
-			"	order by p.id limit 1 offset ?");
+			"	order by LOWER(p.name) limit 1 offset ?");
 		return readInt(sql, {index});
 	}
 
@@ -205,7 +205,7 @@ public:
 			"select p.id from preset p\n"
 			"	join preset_tag pt on pt.preset_id = p.id\n"
 			"	where pt.tag_id = ?"
-			"	order by p.id limit 1 offset ?");
+			"	order by LOWER(p.name) limit 1 offset ?");
 		return readInt(sql, {tagId, index});
 	}
 
@@ -446,6 +446,12 @@ private:
 			"	tag_id integer not null\n"
 			"		references tag (id) on delete cascade,\n"
 			"	primary key (preset_id, tag_id))");
+		exec(query,
+			"create index if not exists preset_name_idx\n"
+			"	ON preset(LOWER(name))");
+		exec(query,
+			"create index if not exists tag_name_idx\n"
+			"	ON tag(LOWER(name))");
 	}
 
 	static QSqlDatabase &getDbInstance()
@@ -544,15 +550,6 @@ QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 			return tr("Show brushes not assigned to any tag.");
 		default:
 			return QVariant();
-		}
-	case SortRole:
-		switch(index.row()) {
-		case ALL_ROW:
-			return QStringLiteral("1");
-		case UNTAGGED_ROW:
-			return QStringLiteral("2");
-		default:
-			return QString("3") + d->readTagNameById(index.internalId());
 		}
 	default:
 		return QVariant();
@@ -942,7 +939,6 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 {
 	switch(role) {
 	case Qt::ToolTipRole:
-	case SortRole:
 	case FilterRole:
 		return d->readPresetNameById(index.internalId());
 	case Qt::DecorationRole: {

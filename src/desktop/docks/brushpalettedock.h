@@ -68,10 +68,6 @@ private:
 
    void changeTagAssignment(int tagId, bool assigned);
 
-   int tagRowToSource(int proxyRow);
-   int tagRowToProxy(int sourceRow);
-   QModelIndex tagIndexToSource(const QModelIndex &proxyIndex);
-   QModelIndex tagIndexToProxy(const QModelIndex &sourceIndex);
    int tagIdToProxyRow(int tagId);
 
    int presetRowToSource(int proxyRow);
