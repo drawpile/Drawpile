@@ -14,8 +14,7 @@
    <string>Select Color</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="format-fill-color">
-    <normaloff>.</normaloff>.</iconset>
+   <iconset theme="format-fill-color"/>
   </property>
   <layout class="QVBoxLayout" name="layout">
    <item>

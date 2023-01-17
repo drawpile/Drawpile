@@ -1328,7 +1328,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="arrow-up">
-                  <normaloff>.</normaloff>.</iconset>
+                  <normaloff>theme:arrow-up.svg</normaloff>theme:arrow-up.svg</iconset>
                 </property>
                </widget>
               </item>
@@ -1339,7 +1339,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="arrow-down">
-                  <normaloff>.</normaloff>.</iconset>
+                  <normaloff>theme:arrow-down.svg</normaloff>theme:arrow-down.svg</iconset>
                 </property>
                </widget>
               </item>

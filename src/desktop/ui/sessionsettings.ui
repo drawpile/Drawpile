@@ -464,7 +464,7 @@
            </property>
            <property name="icon">
             <iconset theme="list-add">
-             <normaloff>.</normaloff>.</iconset>
+             <normaloff>theme:list-add.svg</normaloff>theme:list-add.svg</iconset>
            </property>
           </widget>
          </item>
@@ -475,7 +475,7 @@
            </property>
            <property name="icon">
             <iconset theme="list-add">
-             <normaloff>.</normaloff>.</iconset>
+             <normaloff>theme:list-add.svg</normaloff>theme:list-add.svg</iconset>
            </property>
           </widget>
          </item>
@@ -486,7 +486,7 @@
            </property>
            <property name="icon">
             <iconset theme="list-remove">
-             <normaloff>.</normaloff>.</iconset>
+             <normaloff>theme:list-remove.svg</normaloff>theme:list-remove.svg</iconset>
            </property>
           </widget>
          </item>

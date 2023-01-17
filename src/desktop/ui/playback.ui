@@ -40,7 +40,7 @@
          </property>
          <property name="icon">
           <iconset theme="media-skip-backward">
-           <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+           <normaloff>theme:media-skip-backward.svg</normaloff>theme:media-skip-backward.svg</iconset>
          </property>
          <property name="iconSize">
           <size>

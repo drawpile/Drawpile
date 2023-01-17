@@ -22,7 +22,7 @@
      <item>
       <widget class="QToolButton" name="zoomButton">
        <property name="icon">
-        <iconset theme="zoom-in">
+        <iconset theme="zoom-original">
          <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
        </property>
        <property name="iconSize">

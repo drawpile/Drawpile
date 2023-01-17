@@ -187,7 +187,7 @@
         <string>Lock alpha (recolor mode)</string>
        </property>
        <property name="icon">
-        <iconset theme="color-picker">
+        <iconset theme="object-locked">
          <normaloff>theme:object-locked.svg</normaloff>theme:object-locked.svg</iconset>
        </property>
        <property name="checkable">
