@@ -18,6 +18,7 @@
 */
 
 #include "widgets/groupedtoolbutton.h"
+#include "widgets/kis_slider_spin_box.h"
 #include "canvas/blendmodes.h"
 #include "canvas/layerlist.h"
 #include "canvas/canvasmodel.h"
@@ -41,7 +42,6 @@
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QScrollBar>
-#include <QSpinBox>
 #include <QTreeView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -80,9 +80,14 @@ LayerList::LayerList(QWidget *parent)
 	titlebar->addCustomWidget(m_blendModeCombo);
 	titlebar->addSpace(4);
 
-	m_opacitySlider = new QSlider{Qt::Horizontal};
+	m_opacitySlider = new KisSliderSpinBox;
 	m_opacitySlider->setRange(0, 100);
-	connect(m_opacitySlider, &QSlider::valueChanged, this, &LayerList::opacityChanged);
+	m_opacitySlider->setPrefix(tr("Opacity: "));
+	m_opacitySlider->setSuffix(tr("%"));
+	m_opacitySlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	connect(
+		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &LayerList::opacityChanged);
 	titlebar->addCustomWidget(m_opacitySlider);
 	titlebar->addSpace(4);
 

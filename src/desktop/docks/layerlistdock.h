@@ -32,6 +32,7 @@ class QTimer;
 class QTreeView;
 class QComboBox;
 class QSlider;
+class KisSliderSpinBox;
 
 namespace canvas {
 	class CanvasModel;
@@ -140,7 +141,7 @@ private:
 
 	widgets::GroupedToolButton *m_lockButton;
 	QComboBox *m_blendModeCombo;
-	QSlider *m_opacitySlider;
+	KisSliderSpinBox *m_opacitySlider;
 	QTreeView *m_view;
 
 	QAction *m_addLayerAction;
