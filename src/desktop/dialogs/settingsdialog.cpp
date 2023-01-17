@@ -276,6 +276,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->brushOutlineWidth->setValue(cfg.value("brushoutlinewidth", 1.0).toReal());
 	m_ui->toolToggleShortcut->setChecked(cfg.value("tooltoggle", true).toBool());
 	m_ui->shareBrushSlotColor->setChecked(cfg.value("sharebrushslotcolor", false).toBool());
+	m_ui->confirmLayerDeleteBox->setChecked(cfg.value("confirmlayerdelete", false).toBool());
 
 	m_ui->insecurePasswordStorage->setChecked(cfg.value("insecurepasswordstorage", false).toBool());
 
@@ -398,6 +399,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/brushoutlinewidth", static_cast<qreal>(m_ui->brushOutlineWidth->value()));
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
+	cfg.setValue("settings/confirmlayerdelete", m_ui->confirmLayerDeleteBox->isChecked());
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
 
 	cfg.beginGroup("settings/input");

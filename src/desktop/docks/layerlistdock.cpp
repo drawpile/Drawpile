@@ -391,6 +391,19 @@ void LayerList::deleteSelected()
 	if(!index.isValid())
 		return;
 
+	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
+	QSettings settings;
+	if(settings.value("settings/confirmlayerdelete", false).toBool()) {
+		QMessageBox::StandardButton result = QMessageBox::question(
+			this, tr("Delete Layer?"),
+			tr("Really delete the layer '%1'?").arg(layer.title),
+			QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
+			QMessageBox::StandardButton::Yes);
+		if(result != QMessageBox::StandardButton::Yes) {
+			return;
+		}
+	}
+
 	uint8_t contextId = m_canvas->localUserId();
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId),
