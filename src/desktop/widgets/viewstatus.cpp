@@ -79,22 +79,22 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Canvas rotation box
 	m_angleBox = new QComboBox(this);
+	m_angleBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 	m_angleBox->setFixedWidth(m_angleBox->fontMetrics().boundingRect("9999-O--").width());
 	m_angleBox->setFrame(false);
 	m_angleBox->setEditable(true);
 	m_angleBox->setToolTip(tr("Canvas Rotation"));
 
-	layout->addSpacing(4);
-	layout->addWidget(m_angleBox);
-
-	m_angleBox->addItem(QStringLiteral("-135°"));
-	m_angleBox->addItem(QStringLiteral("-90°"));
-	m_angleBox->addItem(QStringLiteral("-45°"));
-	m_angleBox->addItem(QStringLiteral("0°"));
-	m_angleBox->addItem(QStringLiteral("45°"));
-	m_angleBox->addItem(QStringLiteral("90°"));
-	m_angleBox->addItem(QStringLiteral("135°"));
-	m_angleBox->addItem(QStringLiteral("180°"));
+	m_angleBox->addItems({
+		QStringLiteral("-135°"),
+		QStringLiteral("-90°"),
+		QStringLiteral("-45°"),
+		QStringLiteral("0°"),
+		QStringLiteral("45°"),
+		QStringLiteral("90°"),
+		QStringLiteral("135°"),
+		QStringLiteral("180°"),
+	});
 	m_angleBox->setEditText(QStringLiteral("0°"));
 
 	m_angleBox->lineEdit()->setValidator(
@@ -104,6 +104,9 @@ ViewStatus::ViewStatus(QWidget *parent)
 		)
 	);
 	connect(m_angleBox, &QComboBox::editTextChanged, this, &ViewStatus::angleBoxChanged);
+
+	layout->addSpacing(4);
+	layout->addWidget(m_angleBox);
 
 	// Zoom reset button
 	m_zoomReset = new widgets::GroupedToolButton(this);
@@ -124,19 +127,19 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Zoom box
 	m_zoomBox = new QComboBox(this);
+	m_zoomBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().boundingRect("9999.9%----").width());
 	m_zoomBox->setFrame(false);
 	m_zoomBox->setEditable(true);
 
-	layout->addWidget(m_zoomSlider);
-	layout->addWidget(m_zoomBox);
-
-	m_zoomBox->addItem(QStringLiteral("1600%"));
-	m_zoomBox->addItem(QStringLiteral("800%"));
-	m_zoomBox->addItem(QStringLiteral("400%"));
-	m_zoomBox->addItem(QStringLiteral("200%"));
-	m_zoomBox->addItem(QStringLiteral("100%"));
-	m_zoomBox->addItem(QStringLiteral("50%"));
+	m_zoomBox->addItems({
+		QStringLiteral("1600%"),
+		QStringLiteral("800%"),
+		QStringLiteral("400%"),
+		QStringLiteral("200%"),
+		QStringLiteral("100%"),
+		QStringLiteral("50%"),
+	});
 	m_zoomBox->setEditText(QStringLiteral("100%"));
 
 	m_zoomBox->lineEdit()->setValidator(
@@ -146,6 +149,9 @@ ViewStatus::ViewStatus(QWidget *parent)
 		)
 	);
 	connect(m_zoomBox, &QComboBox::editTextChanged, this, &ViewStatus::zoomBoxChanged);
+
+	layout->addWidget(m_zoomSlider);
+	layout->addWidget(m_zoomBox);
 
 	updatePalette();
 }
