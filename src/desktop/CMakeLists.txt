@@ -57,6 +57,10 @@ set(desktop_sources
 	widgets/spinner.cpp
 	widgets/modifierkeys.cpp
 	widgets/notifbar.cpp
+	widgets/kis_double_parse_spin_box.cpp
+	widgets/kis_int_parse_spin_box.cpp
+	widgets/kis_num_parser.cpp
+	widgets/kis_slider_spin_box.cpp
 	widgets/KisAngleGauge.cpp
 	widgets/timelinewidget.cpp
 	docks/toolsettingsdock.cpp
