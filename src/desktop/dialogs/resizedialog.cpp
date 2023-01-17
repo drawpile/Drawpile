@@ -50,8 +50,6 @@ ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 
 	connect(centerButton, &QPushButton::clicked, m_ui->resizer, &widgets::ResizerWidget::center);
 	connect(m_ui->buttons->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this, &ResizeDialog::reset);
-
-	m_ui->keepaspect->setChecked(true);
 }
 
 ResizeDialog::~ResizeDialog()
