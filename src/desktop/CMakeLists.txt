@@ -138,7 +138,6 @@ add_executable(drawpile MACOSX_BUNDLE
 	ui/cursors/zoom.png
 	ui/icons/builtin.qrc
 	ui/icons/censored.svg
-	ui/icons/drawpile.png
 	ui/abusereport.ui
 	ui/avatarimport.ui
 	ui/brushdock.ui
