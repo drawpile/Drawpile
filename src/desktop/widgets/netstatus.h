@@ -112,7 +112,7 @@ private:
 
 	quint64 _sentbytes, _recvbytes, _lag;
 
-	QSslCertificate m_certificate;
+	QScopedPointer<const QSslCertificate> m_certificate;
 };
 
 }

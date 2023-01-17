@@ -205,7 +205,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 		m_security->show();
 	}
 
-	m_certificate = certificate;
+	m_certificate.reset(new QSslCertificate(certificate));
 }
 
 void NetStatus::hostDisconnecting()
@@ -381,7 +381,9 @@ void NetStatus::updateLabel()
 
 void NetStatus::showCertificate()
 {
-	dialogs::CertificateView *certdlg = new dialogs::CertificateView(m_address, m_certificate, parentWidget());
+	if(!m_certificate)
+		return;
+	dialogs::CertificateView *certdlg = new dialogs::CertificateView(m_address, *m_certificate, parentWidget());
 	certdlg->setAttribute(Qt::WA_DeleteOnClose);
 	certdlg->show();
 }
