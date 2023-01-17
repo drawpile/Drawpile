@@ -157,9 +157,10 @@ private slots:
 
 	void copyText();
 	void paste();
+	void pasteCentered();
 	void pasteFile();
 	void pasteFile(const QUrl &url);
-	void pasteImage(const QImage &image, const QPoint *point=nullptr);
+	void pasteImage(const QImage &image, const QPoint *point=nullptr, bool force=false);
 	void dropUrl(const QUrl &url);
 
 	void clearOrDelete();

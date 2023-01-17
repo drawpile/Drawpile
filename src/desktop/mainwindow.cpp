@@ -2115,9 +2115,17 @@ void MainWindow::paste()
 
 		// Paste-in-place if we're the source (same process, same document)
 		if(pasteAtPos && m_view->isPointVisible(pastepos))
-			pasteImage(data->imageData().value<QImage>(), &pastepos);
+			pasteImage(data->imageData().value<QImage>(), &pastepos, true);
 		else
 			pasteImage(data->imageData().value<QImage>());
+	}
+}
+
+void MainWindow::pasteCentered()
+{
+	const QMimeData *data = QApplication::clipboard()->mimeData();
+	if(data->hasImage()) {
+		pasteImage(data->imageData().value<QImage>(), nullptr, true);
 	}
 }
 
@@ -2177,7 +2185,7 @@ void MainWindow::pasteFile(const QUrl &url)
 	}
 }
 
-void MainWindow::pasteImage(const QImage &image, const QPoint *point)
+void MainWindow::pasteImage(const QImage &image, const QPoint *point, bool force)
 {
 	if(!m_canvasscene->model()->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE))
 		return;
@@ -2188,17 +2196,7 @@ void MainWindow::pasteImage(const QImage &image, const QPoint *point)
 		m_lastToolBeforePaste = currentTool;
 	}
 
-	QPoint p;
-	bool force;
-	if(point) {
-		p = *point;
-		force = true;
-	} else {
-		p = m_view->viewCenterPoint();
-		force = false;
-	}
-
-	m_doc->pasteImage(image, p, force);
+	m_doc->pasteImage(image, point ? *point : m_view->viewCenterPoint(), force);
 }
 
 void MainWindow::dropUrl(const QUrl &url)
@@ -2578,6 +2576,7 @@ void MainWindow::setupActions()
 	QAction *copylayer = makeAction("copylayer", tr("Copy &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
 	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
 	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
+	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
 	QAction *stamp = makeAction("stamp", tr("&Stamp")).shortcut("Ctrl+T");
 
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
@@ -2618,6 +2617,7 @@ void MainWindow::setupActions()
 
 	m_putimagetools->addAction(cutlayer);
 	m_putimagetools->addAction(paste);
+	m_putimagetools->addAction(pasteCentered);
 	m_putimagetools->addAction(pastefile);
 	m_putimagetools->addAction(stamp);
 	m_putimagetools->addAction(cleararea);
@@ -2639,6 +2639,7 @@ void MainWindow::setupActions()
 	connect(copylayer, &QAction::triggered, m_doc, &Document::copyLayer);
 	connect(cutlayer, &QAction::triggered, m_doc, &Document::cutLayer);
 	connect(paste, &QAction::triggered, this, &MainWindow::paste);
+	connect(pasteCentered, &QAction::triggered, this, &MainWindow::pasteCentered);
 	connect(stamp, &QAction::triggered, m_doc, &Document::stamp);
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(selectall, &QAction::triggered, this, [this]() {
@@ -2674,6 +2675,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(copyMerged);
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
+	editmenu->addAction(pasteCentered);
 	editmenu->addAction(pastefile);
 	editmenu->addAction(stamp);
 	editmenu->addSeparator();
