@@ -30,7 +30,7 @@ namespace widgets
 
 GroupedToolButton::GroupedToolButton(QWidget *parent) : GroupedToolButton(NotGrouped, parent) { }
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 static const QString LIGHT_STYLE = QStringLiteral(
 			"QToolButton {"
 				"background: white;"
@@ -60,7 +60,7 @@ GroupedToolButton::GroupedToolButton(GroupPosition position, QWidget* parent)
 {
 	setFocusPolicy(Qt::NoFocus);
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	if(icon::isDark(palette().color(QPalette::Window)))
 		setStyleSheet(DARK_STYLE);
 	else

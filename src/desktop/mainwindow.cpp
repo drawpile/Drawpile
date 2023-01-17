@@ -47,7 +47,7 @@
 
 #include <QtColorWidgets/ColorDialog>
 
-#ifdef Q_OS_OSX
+#ifdef Q_OS_MACOS
 #define CTRL_KEY "Meta"
 #include "widgets/macmenu.h"
 #else
@@ -417,7 +417,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	updateLockWidget();
 	setRecorderStatus(false);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->addWindow(this);
 
 #else
@@ -445,7 +445,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 MainWindow::~MainWindow()
 {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->removeWindow(this);
 #endif
 
@@ -565,7 +565,7 @@ void MainWindow::addRecentFile(const QString& file)
 		if(win)
 			RecentFiles::initMenu(win->m_recentMenu);
 	}
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->updateRecentMenu();
 #endif
 }
@@ -2287,7 +2287,7 @@ void MainWindow::setupActions()
 	//
 	QAction *newdocument = makeAction("newdocument", tr("&New")).icon("document-new").shortcut(QKeySequence::New);
 	QAction *open = makeAction("opendocument", tr("&Open...")).icon("document-open").shortcut(QKeySequence::Open);
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	QAction *closefile = makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
@@ -2300,7 +2300,7 @@ void MainWindow::setupActions()
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	m_currentdoctools->addAction(closefile);
 #endif
 	m_currentdoctools->addAction(save);
@@ -2323,7 +2323,7 @@ void MainWindow::setupActions()
 	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
 #else
@@ -2336,7 +2336,7 @@ void MainWindow::setupActions()
 	m_recentMenu = filemenu->addMenu(tr("Open &Recent"));
 	filemenu->addSeparator();
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	filemenu->addAction(closefile);
 #endif
 	filemenu->addAction(save);
@@ -2387,7 +2387,7 @@ void MainWindow::setupActions()
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
 	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
-#if (defined(Q_OS_MAC) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
+#if defined(Q_OS_MACOS) || defined(Q_OS_WIN) // Deselect is not defined on Mac and Win
 		.shortcut("Shift+Ctrl+A")
 #else
 		.shortcut(QKeySequence::Deselect)
@@ -2810,7 +2810,7 @@ void MainWindow::setupActions()
 	//
 	// Window menu (Mac only)
 	//
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	menuBar()->addMenu(MacMenu::instance()->windowMenu());
 #endif
 

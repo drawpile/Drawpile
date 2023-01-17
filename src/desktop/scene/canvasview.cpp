@@ -56,7 +56,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_brushOutlineWidth(1.0)
 {
 	viewport()->setAcceptDrops(true);
-#ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
+#ifdef Q_OS_MACOS // Standard touch events seem to work better with mac touchpad
 	viewport()->grabGesture(Qt::PinchGesture);
 #else
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -841,7 +841,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 	if(event->type() == QEvent::Gesture) {
 		gestureEvent(static_cast<QGestureEvent*>(event));
 	}
-#ifndef Q_OS_MAC // On Mac, the above gesture events work better
+#ifndef Q_OS_MACOS // On Mac, the above gesture events work better
 	else if(event->type()==QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel) {
 		touchEvent(static_cast<QTouchEvent*>(event));
 	}

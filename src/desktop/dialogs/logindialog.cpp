@@ -97,7 +97,7 @@ struct LoginDialog::Private {
 		ui->rememberPassword->setEnabled(false);
 #endif
 
-#ifdef Q_OS_OSX
+#ifdef Q_OS_MACOS
 		// The avatar selection combobox looks terrible on macOS
 		// With this style, it looks slightly less terrible.
 		ui->avatarList->setStyleSheet(

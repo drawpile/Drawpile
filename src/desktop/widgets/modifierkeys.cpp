@@ -24,7 +24,7 @@
 
 namespace widgets {
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #define MAC_OR_PC(mac, pc) (mac)
 #else
 #define MAC_OR_PC(mac, pc) (pc)

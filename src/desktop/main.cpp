@@ -29,7 +29,7 @@
 #include "../libshared/util/paths.h"
 #include "../rustpile/rustpile.h"
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 #include "widgets/macmenu.h"
 #endif
 
@@ -279,7 +279,7 @@ static QStringList initApp(DrawpileApp &app)
 	else
 		icon::selectThemeVariant();
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
 	app.setQuitOnLastWindowClosed(false);

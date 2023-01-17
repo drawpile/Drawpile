@@ -111,7 +111,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	// Night mode support needs Qt 5.12 on macOS
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	m_ui->formLayout_2->removeRow(m_ui->themeChoice);
 #endif
 
@@ -267,7 +267,7 @@ void SettingsDialog::restoreSettings()
 		}
 	}
 
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 	m_ui->themeChoice->setCurrentIndex(cfg.value("theme", 0).toInt());
 #endif
 	m_ui->logfile->setChecked(cfg.value("logfile", true).toBool());
@@ -290,7 +290,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->viewportEntryHack->setChecked(cfg.value("viewportentryhack").toBool());
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	// Gesture scrolling is always enabled on Macs
 	m_ui->touchscroll->setChecked(true);
 	m_ui->touchscroll->setEnabled(false);
@@ -397,7 +397,7 @@ void SettingsDialog::rememberSettings()
 
 	// Remember general settings
 	cfg.setValue("settings/language", m_ui->languageBox->currentData());
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 	cfg.setValue("settings/theme", m_ui->themeChoice->currentIndex());
 #endif
 	cfg.setValue("settings/logfile", m_ui->logfile->isChecked());
