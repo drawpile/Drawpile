@@ -2103,14 +2103,17 @@ void MainWindow::paste()
 		QByteArray srcpos = data->data("x-drawpile/pastesrc");
 		if(!srcpos.isNull()) {
 			QList<QByteArray> pos = srcpos.split(',');
-			if(pos.size() == 2) {
-				bool ok1, ok2;
+			if(pos.size() == 4) {
+				bool ok1, ok2, ok3, ok4;
 				pastepos = QPoint(pos.at(0).toInt(&ok1), pos.at(1).toInt(&ok2));
-				pasteAtPos = ok1 && ok2;
+				qint64 pid = pos.at(2).toLongLong(&ok3);
+				qulonglong doc = pos.at(3).toULongLong(&ok4);
+				pasteAtPos = ok1 && ok2 && ok3 && ok4 &&
+					pid == qApp->applicationPid() && doc == m_doc->pasteId();
 			}
 		}
 
-		// Paste-in-place if source was Drawpile (and source is visible)
+		// Paste-in-place if we're the source (same process, same document)
 		if(pasteAtPos && m_view->isPointVisible(pastepos))
 			pasteImage(data->imageData().value<QImage>(), &pastepos);
 		else

@@ -148,6 +148,8 @@ public:
 
 	void setRecordOnConnect(const QString &filename) { m_recordOnConnect = filename; }
 
+	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
+
 signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);

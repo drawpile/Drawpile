@@ -785,7 +785,11 @@ void Document::copyFromLayer(int layer)
 		srcpos = QPoint(s.width()/2, s.height()/2);
 	}
 
-	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," + QByteArray::number(srcpos.y());
+	QByteArray srcbuf =
+		QByteArray::number(srcpos.x()) + "," +
+		QByteArray::number(srcpos.y()) + "," +
+		QByteArray::number(qApp->applicationPid()) + "," +
+		QByteArray::number(pasteId());
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
 	QGuiApplication::clipboard()->setMimeData(data);
