@@ -37,6 +37,7 @@ public:
 
 	void setForeground(const QColor& color) override;
 	void quickAdjust1(qreal adjustment) override;
+	void stepAdjust1(bool increase) override;
 
 	virtual int getSize() const override { return 0; }
 	virtual bool getSubpixelMode() const override { return false; }

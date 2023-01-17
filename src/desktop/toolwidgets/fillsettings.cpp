@@ -133,5 +133,13 @@ void FillSettings::quickAdjust1(qreal adjustment)
 	}
 }
 
+void FillSettings::stepAdjust1(bool increase)
+{
+	QSlider *tolerance = _ui->tolerance;
+	tolerance->setValue(stepLogarithmic(
+		tolerance->minimum(), tolerance->maximum(), tolerance->value(),
+		increase));
+}
+
 }
 

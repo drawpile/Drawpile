@@ -52,6 +52,7 @@ public:
 	void setActiveTool(tools::Tool::Type tool) override;
 	void setForeground(const QColor& color) override;
 	void quickAdjust1(qreal adjustment) override;
+	void stepAdjust1(bool increase) override;
 
 	int getSize() const override;
 	bool getSubpixelMode() const override;

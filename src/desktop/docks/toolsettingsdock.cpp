@@ -425,4 +425,9 @@ void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 	d->currentSettings()->quickAdjust1(adjustment);
 }
 
+void ToolSettings::stepAdjustCurrent1(bool increase)
+{
+	d->currentSettings()->stepAdjust1(increase);
+}
+
 }

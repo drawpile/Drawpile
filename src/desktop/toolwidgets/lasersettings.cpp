@@ -136,5 +136,13 @@ void LaserPointerSettings::quickAdjust1(qreal adjustment)
 	}
 }
 
+void LaserPointerSettings::stepAdjust1(bool increase)
+{
+	QSlider *persistence = _ui->persistence;
+	persistence->setValue(stepLogarithmic(
+		persistence->minimum(), persistence->maximum(), persistence->value(),
+		increase));
+}
+
 }
 

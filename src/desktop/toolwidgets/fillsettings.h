@@ -37,6 +37,7 @@ public:
 	QString toolType() const override { return QStringLiteral("fill"); }
 
 	void quickAdjust1(qreal adjustment) override;
+	void stepAdjust1(bool increase) override;
 	void setForeground(const QColor &color) override;
 
 	int getSize() const override { return 0; }

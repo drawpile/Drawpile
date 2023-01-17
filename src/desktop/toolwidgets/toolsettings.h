@@ -94,6 +94,16 @@ public:
 	virtual void quickAdjust1(qreal adjustment) { Q_UNUSED(adjustment) }
 
 	/**
+	 * @brief Increase or decrease tool parameter by one "step".
+	 *
+	 * Unlike quickAdjust, this is a digital increase. For brush-based tools,
+	 * this increases the size according to the current size.
+	 *
+	 * @param increase If this is an increase (true) or decrease (false).
+	 */
+	virtual void stepAdjust1(bool increase) { Q_UNUSED(increase); }
+
+	/**
 	 * @brief Get the current brush size
 	 * @return size of the current brush
 	 */
@@ -129,6 +139,24 @@ public:
 	 * @param props
 	 */
 	virtual void restoreToolSettings(const ToolProperties &);
+
+	/**
+	 * @brief Step the given value logarithmically larger or smaller.
+	 *
+	 * Used for increasing or decreasing brush sizes and such by one "step",
+	 * where that step gets larger as the brush gets larger.
+	 */
+	static int stepLogarithmic(
+		int min, int max, int current, bool increase, double stepSize = 15.0);
+
+	/**
+	 * @brief Step the given value linearly larger or smaller.
+	 *
+	 * Used for increasing or decreasing MyPaint brush sizes by one step. Their
+	 * size is already logarithmic, so the value change needs to be linear.
+	 */
+	static int stepLinear(
+		int min, int max, int current, bool increase, int stepSize = 12);
 
 public slots:
 	//! Toggle tool eraser mode (if it has one)

@@ -810,6 +810,21 @@ void BrushSettings::quickAdjust1(qreal adjustment)
 	}
 }
 
+void BrushSettings::stepAdjust1(bool increase)
+{
+	QSpinBox *brushsizeBox = d->ui.brushsizeBox;
+	if(brushsizeBox->isVisible()) {
+		brushsizeBox->setValue(stepLogarithmic(
+			brushsizeBox->minimum(), brushsizeBox->maximum(),
+			brushsizeBox->value(), increase));
+	} else {
+		QSpinBox *radiusLogarithmicBox = d->ui.radiusLogarithmicBox;
+		radiusLogarithmicBox->setValue(stepLinear(
+			radiusLogarithmicBox->minimum(), radiusLogarithmicBox->maximum(),
+			radiusLogarithmicBox->value(), increase));
+	}
+}
+
 void BrushSettings::quickAdjustOn(QSpinBox *box, qreal adjustment)
 {
 	d->quickAdjust1 += adjustment;

@@ -117,6 +117,12 @@ void ColorPickerSettings::quickAdjust1(qreal adjustment)
 	}
 }
 
+void ColorPickerSettings::stepAdjust1(bool increase)
+{
+	m_size->setValue(stepLogarithmic(
+		m_size->minimum(), m_size->maximum(), m_size->value(), increase));
+}
+
 ToolProperties ColorPickerSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());

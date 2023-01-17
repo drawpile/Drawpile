@@ -3012,8 +3012,8 @@ void MainWindow::setupActions()
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
 	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapLastUsedColors);
 
-	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->quickAdjustCurrent1(-1); });
-	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->quickAdjustCurrent1(1); });
+	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
+	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(swapcolors);

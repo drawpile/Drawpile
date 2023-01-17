@@ -75,6 +75,9 @@ public slots:
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 
+	//! Increase or decrease size for current tool by one step
+	void stepAdjustCurrent1(bool increase);
+
 	//! Select the tool previosly set with setTool or setToolSlot
 	void setPreviousTool();
 
