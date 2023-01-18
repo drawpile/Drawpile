@@ -62,7 +62,7 @@ function(_add_cargo target is_exe)
 		set(out_kind RUNTIME)
 	else()
 		set(all "")
-		set(out_name ${CMAKE_STATIC_LIBRARY_PREFIX}${target}${CMAKE_STATIC_LIBRARY_SUFFIX})
+		set(out_name ${CMAKE_STATIC_LIBRARY_PREFIX}${ARG_PACKAGE}${CMAKE_STATIC_LIBRARY_SUFFIX})
 		set(out_kind ARCHIVE)
 	endif()
 
