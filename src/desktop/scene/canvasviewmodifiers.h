@@ -31,8 +31,12 @@ struct CanvasViewShortcut {
 	CanvasViewShortcut(Qt::KeyboardModifier m) : modifiers(m) { }
 	operator Qt::KeyboardModifiers() const { return modifiers; }
 
-	inline bool matches(Qt::KeyboardModifiers mod) const {
-		return modifiers != Qt::NoModifier && (mod & modifiers) == modifiers;
+	inline bool matches(Qt::KeyboardModifiers mod, bool allowNone) const {
+		if(modifiers == Qt::NoModifier) {
+			return allowNone && mod == modifiers;
+		} else {
+			return (mod & modifiers) == modifiers;
+		}
 	}
 
 	inline int len() const {
@@ -88,21 +92,21 @@ struct CanvasViewShortcuts {
 	/**
 	 * Modifiers to rotate the canvas using the scroll wheel
 	 *
-	 * If set to NoModifier, rotation by scrollwheel is disabled
+	 * Setting to NoModifier is allowed.
 	 */
 	CanvasViewShortcut scrollRotate = Qt::ControlModifier | Qt::ShiftModifier;
 
 	/**
 	 * Modifiers to zoom when using the scroll wheel
 	 *
-	 * If set to NoModifier, zoom by scrolling is disabled
+	 * Setting to NoModifier is allowed.
 	 */
-	CanvasViewShortcut scrollZoom = Qt::ControlModifier;
+	CanvasViewShortcut scrollZoom = Qt::NoModifier;
 
 	/**
 	 * Modifiers to quick adjust tool by scrolling
 	 *
-	 * If set to NoModifier, quick adjust by scrolling is disabled
+	 * Setting to NoModifier is allowed.
 	 */
 	CanvasViewShortcut scrollQuickAdjust = Qt::ShiftModifier;
 
@@ -136,26 +140,23 @@ struct CanvasViewShortcuts {
 	 * returned, or -1 if none match.
 	 */
 	template<typename ...Args>
-	static int matches(Qt::KeyboardModifiers modifiers, Args... shortcuts) {
-		if(modifiers == Qt::NoModifier)
-			return -1;
-
-		return matches(0, 0, -1, modifiers, shortcuts...);
+	static int matches(Qt::KeyboardModifiers modifiers, bool allowNone, Args... shortcuts) {
+		return matches(0, -1, -1, modifiers, allowNone, shortcuts...);
 	}
 
 private:
-	static int matches(int idx, int longest, int longestIdx, Qt::KeyboardModifiers modifiers, CanvasViewShortcut shortcut) {
-		if(shortcut.matches(modifiers) && shortcut.len() > longest)
+	static int matches(int idx, int longest, int longestIdx, Qt::KeyboardModifiers modifiers, bool allowNone, CanvasViewShortcut shortcut) {
+		if(shortcut.matches(modifiers, allowNone) && shortcut.len() > longest)
 			longestIdx = idx;
 		return longestIdx;
 	}
 	template<typename ...Args>
-	static int matches(int idx, int longest, int longestIdx, Qt::KeyboardModifiers modifiers, CanvasViewShortcut first, Args... rest) {
-		if(first.matches(modifiers) && first.len() > longest) {
+	static int matches(int idx, int longest, int longestIdx, Qt::KeyboardModifiers modifiers, bool allowNone, CanvasViewShortcut first, Args... rest) {
+		if(first.matches(modifiers, allowNone) && first.len() > longest) {
 			longest = first.len();
 			longestIdx = idx;
 		}
-		return matches(idx+1, longest, longestIdx, modifiers, rest...);
+		return matches(idx+1, longest, longestIdx, modifiers, allowNone, rest...);
 	}
 
 };

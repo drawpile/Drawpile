@@ -286,7 +286,8 @@ void CanvasView::resetCursor()
 		viewport()->setCursor(Qt::OpenHandCursor);
 		return;
 	} else if(m_dragmode == ViewDragMode::Started) {
-		const int shortcut = CanvasViewShortcuts::matches(QApplication::queryKeyboardModifiers(),
+		const int shortcut = CanvasViewShortcuts::matches(
+			QApplication::queryKeyboardModifiers(), false,
 			m_shortcuts.dragZoom,
 			m_shortcuts.dragRotate,
 			m_shortcuts.dragQuickAdjust
@@ -524,7 +525,7 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, Qt::MouseButt
 		m_prevpoint = mapToScene(pos, pressure);
 
 		m_penmode = PenMode(CanvasViewShortcuts::matches(
-			modifiers,
+			modifiers, false,
 			m_shortcuts.colorPick, m_shortcuts.layerPick
 		) + 1);
 
@@ -568,8 +569,8 @@ void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, Qt::MouseButto
 				onPenMove(
 					point,
 					buttons.testFlag(Qt::RightButton),
-					m_shortcuts.toolConstraint1.matches(modifiers),
-					m_shortcuts.toolConstraint2.matches(modifiers)
+					m_shortcuts.toolConstraint1.matches(modifiers, false),
+					m_shortcuts.toolConstraint2.matches(modifiers, false)
 				);
 
 			} else {
@@ -646,7 +647,7 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
 
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
-	const int shortcut = CanvasViewShortcuts::matches(event->modifiers(),
+	const int shortcut = CanvasViewShortcuts::matches(event->modifiers(), true,
 		m_shortcuts.scrollRotate,
 		m_shortcuts.scrollZoom,
 		m_shortcuts.scrollQuickAdjust
@@ -697,7 +698,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 		if(m_pendown == NOTDOWN) {
 			// Switch penmode here so we get to see the right cursor
 			m_penmode = PenMode(CanvasViewShortcuts::matches(
-				event->modifiers(),
+				event->modifiers(), false,
 				m_shortcuts.colorPick, m_shortcuts.layerPick
 			) + 1);
 		}
@@ -720,7 +721,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	if(m_pendown == NOTDOWN) {
 		// Switch penmode here so we get to see the right cursor
 		m_penmode = PenMode(CanvasViewShortcuts::matches(
-			event->modifiers(),
+			event->modifiers(), false,
 			m_shortcuts.colorPick, m_shortcuts.layerPick
 		) + 1);
 	}
@@ -993,7 +994,7 @@ void CanvasView::moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers)
 	const int dx = m_dragLastPoint.x() - point.x();
 	const int dy = m_dragLastPoint.y() - point.y();
 
-	const int shortcut = CanvasViewShortcuts::matches(modifiers,
+	const int shortcut = CanvasViewShortcuts::matches(modifiers, false,
 		m_shortcuts.dragRotate,
 		m_shortcuts.dragZoom,
 		m_shortcuts.dragQuickAdjust
