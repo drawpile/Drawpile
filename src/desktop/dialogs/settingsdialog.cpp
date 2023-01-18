@@ -86,13 +86,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 {
 	m_ui->setupUi(this);
 
-	connect(m_ui->notificationVolume, &QSlider::valueChanged, [this](int val) {
-		if(val>0)
-			m_ui->volumeLabel->setText(QString::number(val) + "%");
-		else
-			m_ui->volumeLabel->setText(tr("off", "notifications sounds"));
-	});
-
 	// Get available languages
 	m_ui->languageBox->addItem(tr("Default"), QString());
 	m_ui->languageBox->addItem(QStringLiteral("English"), QStringLiteral("en"));

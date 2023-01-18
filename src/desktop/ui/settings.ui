@@ -527,46 +527,6 @@
           </widget>
           <widget class="QWidget" name="page_2">
            <layout class="QFormLayout" name="formLayout_6">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Notification volume:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QSlider" name="notificationVolume">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximum">
-                 <number>100</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksBelow</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>25</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="volumeLabel">
-                <property name="text">
-                 <string notr="true">100%</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_13">
               <property name="text">
@@ -599,6 +559,19 @@
              <widget class="QCheckBox" name="notifLock">
               <property name="text">
                <string>Canvas lock</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="KisSliderSpinBox" name="notificationVolume">
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="prefix">
+               <string>Notification Volume: </string>
+              </property>
+              <property name="maximum">
+               <number>100</number>
               </property>
              </widget>
             </item>
@@ -1270,6 +1243,11 @@
    <class>color_widgets::ColorWheel</class>
    <extends>QWidget</extends>
    <header>QtColorWidgets/ColorWheel</header>
+  </customwidget>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
