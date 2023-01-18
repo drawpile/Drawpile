@@ -114,7 +114,6 @@ ColorPaletteDock::ColorPaletteDock(const QString& title, QWidget *parent)
 	titlebar->addCustomWidget(d->readonlyPalette);
 
 	d->paletteChoiceBox = new QComboBox;
-	d->paletteChoiceBox->setCompleter(nullptr);
 	d->paletteChoiceBox->setInsertPolicy(QComboBox::NoInsert); // we want to handle editingFinished signal ourselves
 	d->paletteChoiceBox->setModel(getSharedPaletteModel());
 	titlebar->addCustomWidget(d->paletteChoiceBox, true);
