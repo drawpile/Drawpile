@@ -226,7 +226,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout_2">
+    <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1,0,0">
      <property name="horizontalSpacing">
       <number>3</number>
      </property>
@@ -261,208 +261,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="brushsizeLabel">
-       <property name="text">
-        <string>Size:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="gainLabel">
-       <property name="text">
-        <string>Gain:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="slowTrackingLabel">
-       <property name="text">
-        <string>Stabilizer:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
-      <widget class="QSpinBox" name="smudgingBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="hardnessLabel">
-       <property name="text">
-        <string>Hardness:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QSpinBox" name="hardnessBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSlider" name="brushsizeSlider">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>128</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="brushspacingLabel">
-       <property name="text">
-        <string>Spacing:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QSpinBox" name="colorpickupBox">
-       <property name="prefix">
-        <string notr="true">1/</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>32</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QSpinBox" name="gainBox">
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="minimum">
-        <number>-180</number>
-       </property>
-       <property name="maximum">
-        <number>180</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Opacity:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QSpinBox" name="spinBox_2">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2">
-      <widget class="QSpinBox" name="brushspacingBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>999</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSlider" name="brushopacity">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QSlider" name="slowTrackingSlider">
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QSlider" name="brushspacingSlider">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QSlider" name="colorpickup">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>32</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="widgets::GroupedToolButton" name="pressureSize">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="3">
       <widget class="widgets::GroupedToolButton" name="pressureOpacity">
        <property name="toolTip">
@@ -480,89 +278,10 @@
      <item row="10" column="1" colspan="2">
       <widget class="QComboBox" name="inputPreset"/>
      </item>
-     <item row="3" column="1">
-      <widget class="QSlider" name="brushhardness">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QSlider" name="gainSlider">
-       <property name="minimum">
-        <number>-180</number>
-       </property>
-       <property name="maximum">
-        <number>180</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QSlider" name="brushsmudging">
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="smudgingLabel">
-       <property name="text">
-        <string>Smudging:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="brushsizeBox">
-       <property name="suffix">
-        <string>px</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
      <item row="10" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Input:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="2">
-      <widget class="QSpinBox" name="slowTrackingBox">
-       <property name="suffix">
-        <string>%</string>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="colorpickupLabel">
-       <property name="text">
-        <string>Color pickup:</string>
+        <string>Input: </string>
        </property>
       </widget>
      </item>
@@ -577,27 +296,155 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="radiusLogarithmicLabel">
-       <property name="text">
-        <string>Radius:</string>
+     <item row="0" column="3">
+      <widget class="widgets::GroupedToolButton" name="pressureSize">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QSlider" name="radiusLogarithmicSlider">
-       <property name="maximum">
-        <number>800</number>
+     <item row="0" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="brushsizeBox">
+       <property name="suffix">
+        <string>px</string>
        </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="prefix">
+        <string>Size: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QSpinBox" name="radiusLogarithmicBox">
+     <item row="1" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="radiusLogarithmicBox">
+       <property name="prefix">
+        <string>Radius: </string>
+       </property>
        <property name="maximum">
         <number>800</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="opacityBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Opacity: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="hardnessBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Hardness: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="smudgingBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Smudging: </string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="colorpickupBox">
+       <property name="prefix">
+        <string notr="true">Color Pickup: 1/</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="brushspacingBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Spacing: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>999</number>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="gainBox">
+       <property name="suffix">
+        <string/>
+       </property>
+       <property name="prefix">
+        <string>Gain: </string>
+       </property>
+       <property name="minimum">
+        <number>-180</number>
+       </property>
+       <property name="maximum">
+        <number>180</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="slowTrackingBox">
+       <property name="suffix">
+        <string>%</string>
+       </property>
+       <property name="prefix">
+        <string>Stabilizer: </string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
      </item>
@@ -630,296 +477,12 @@
    <extends>QToolButton</extends>
    <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>brushsizeSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushsizeBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>223</x>
-     <y>189</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>273</x>
-     <y>182</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushsizeBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushsizeSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>263</x>
-     <y>190</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>229</x>
-     <y>192</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushopacity</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinBox_2</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>194</x>
-     <y>245</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>304</x>
-     <y>231</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinBox_2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushopacity</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>260</x>
-     <y>241</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>202</x>
-     <y>244</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushhardness</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>hardnessBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>213</x>
-     <y>293</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>295</x>
-     <y>281</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>hardnessBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushhardness</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>290</x>
-     <y>287</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>219</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushsmudging</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>smudgingBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>206</x>
-     <y>347</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>284</x>
-     <y>331</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>smudgingBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushsmudging</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>253</x>
-     <y>343</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>222</x>
-     <y>345</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorpickup</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorpickupBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>214</x>
-     <y>369</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>305</x>
-     <y>372</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorpickupBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorpickup</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>278</x>
-     <y>385</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>222</x>
-     <y>379</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushspacingSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushspacingBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>229</x>
-     <y>409</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>304</x>
-     <y>409</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushspacingBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushspacingSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>279</x>
-     <y>411</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>221</x>
-     <y>415</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>gainSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>gainBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>275</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>275</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>gainBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>gainSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>275</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>154</x>
-     <y>275</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slowTrackingBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slowTrackingSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>325</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>154</x>
-     <y>325</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slowTrackingSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slowTrackingBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>325</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>325</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radiusLogarithmicBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>radiusLogarithmicSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>264</x>
-     <y>142</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>154</x>
-     <y>142</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radiusLogarithmicSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>radiusLogarithmicBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>142</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>142</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

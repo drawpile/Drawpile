@@ -75,11 +75,6 @@ public:
 
 	QWidget *getHeaderWidget() override;
 
-	static const int MAX_BRUSH_SIZE;
-	static const int MAX_BRUSH_SPACING;
-	static const int DEFAULT_BRUSH_SIZE;
-	static const int DEFAULT_BRUSH_SPACING;
-
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
@@ -106,7 +101,6 @@ private slots:
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void chooseInputPreset(int index);
-	void updateSettings();
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:

@@ -140,11 +140,6 @@ struct BrushSettings::Private {
 	}
 };
 
-const int BrushSettings::MAX_BRUSH_SIZE = 255;
-const int BrushSettings::MAX_BRUSH_SPACING = 999;
-const int BrushSettings::DEFAULT_BRUSH_SIZE = 128;
-const int BrushSettings::DEFAULT_BRUSH_SPACING = 50;
-
 BrushSettings::BrushSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent), d(new Private(this))
 {
@@ -233,17 +228,17 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureSize, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
-	connect(d->ui.brushopacity, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.opacityBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureOpacity, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
-	connect(d->ui.brushhardness, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.hardnessBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureHardness, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
-	connect(d->ui.brushsmudging, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.smudgingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.pressureSmudging, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.radiusLogarithmicBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
-	connect(d->ui.colorpickup, &QSlider::valueChanged, this, &BrushSettings::updateFromUi);
+	connect(d->ui.colorpickupBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.gainBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.slowTrackingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
@@ -253,10 +248,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.modeLockAlpha, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &BrushSettings::updateFromUi);
-
-	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
-			this, &BrushSettings::updateSettings);
-	updateSettings();
 
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
@@ -478,9 +469,9 @@ void BrushSettings::updateUi()
 	d->ui.brushsizeBox->setValue(classic.size.max);
 	d->ui.pressureSize->setChecked(classic.size_pressure);
 	d->ui.pressureOpacity->setChecked(classic.opacity_pressure);
-	d->ui.brushsmudging->setValue(classic.smudge.max * 100);
+	d->ui.smudgingBox->setValue(classic.smudge.max * 100);
 	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
-	d->ui.colorpickup->setValue(classic.resmudge);
+	d->ui.colorpickupBox->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(classic.spacing * 100);
 	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
@@ -498,13 +489,13 @@ void BrushSettings::updateUi()
 	d->ui.modeLockAlpha->setChecked(myPaint.constBrush().lock_alpha);
 
 	if(mypaintmode) {
-		d->ui.brushopacity->setValue(qRound(
+		d->ui.opacityBox->setValue(qRound(
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value * 100.0));
-		d->ui.brushhardness->setValue(qRound(
+		d->ui.hardnessBox->setValue(qRound(
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value * 100.0));
 	} else {
-		d->ui.brushopacity->setValue(classic.opacity.max * 100);
-		d->ui.brushhardness->setValue(classic.hardness.max * 100);
+		d->ui.opacityBox->setValue(classic.opacity.max * 100);
+		d->ui.hardnessBox->setValue(classic.hardness.max * 100);
 	}
 
 	const int presetIndex = d->presetModel->searchIndexById(tool.inputPresetId);
@@ -548,9 +539,9 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	classic.size.max = d->ui.brushsizeBox->value();
 	classic.size_pressure = d->ui.pressureSize->isChecked();
 
-	classic.smudge.max = d->ui.brushsmudging->value() / 100.0;
+	classic.smudge.max = d->ui.smudgingBox->value() / 100.0;
 	classic.smudge_pressure = d->ui.pressureSmudging->isChecked();
-	classic.resmudge = d->ui.colorpickup->value();
+	classic.resmudge = d->ui.colorpickupBox->value();
 
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
 	classic.incremental = d->ui.modeIncremental->isChecked();
@@ -572,13 +563,13 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	if(updateShared) {
 		if(mypaintmode) {
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value =
-				d->ui.brushopacity->value() / 100.0;
+				d->ui.opacityBox->value() / 100.0;
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value =
-				d->ui.brushhardness->value() / 100.0;
+				d->ui.hardnessBox->value() / 100.0;
 		} else {
-			classic.opacity.max = d->ui.brushopacity->value() / 100.0;
+			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
-			classic.hardness.max = d->ui.brushhardness->value() / 100.0;
+			classic.hardness.max = d->ui.hardnessBox->value() / 100.0;
 			if(classic.shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND) {
 				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
 			}
@@ -602,33 +593,17 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.modeLockAlpha, mypaintmode},
 		{d->ui.modeIncremental, !mypaintmode},
 		{d->ui.blendmode, !mypaintmode},
-		{d->ui.brushhardness, softmode},
 		{d->ui.pressureHardness, softmode && !mypaintmode},
-		{d->ui.hardnessLabel, softmode},
 		{d->ui.hardnessBox, softmode},
-		{d->ui.brushsizeLabel, !mypaintmode},
-		{d->ui.brushsizeSlider, !mypaintmode},
 		{d->ui.brushsizeBox, !mypaintmode},
 		{d->ui.pressureSize, !mypaintmode},
-		{d->ui.radiusLogarithmicLabel, mypaintmode},
-		{d->ui.radiusLogarithmicSlider, mypaintmode},
 		{d->ui.radiusLogarithmicBox, mypaintmode},
 		{d->ui.pressureOpacity, !mypaintmode},
-		{d->ui.smudgingLabel, !mypaintmode},
-		{d->ui.brushsmudging, !mypaintmode},
 		{d->ui.smudgingBox, !mypaintmode},
 		{d->ui.pressureSmudging, !mypaintmode},
-		{d->ui.colorpickupLabel, !mypaintmode},
-		{d->ui.colorpickup, !mypaintmode},
 		{d->ui.colorpickupBox, !mypaintmode},
-		{d->ui.brushspacingLabel, !mypaintmode},
-		{d->ui.brushspacingSlider, !mypaintmode},
 		{d->ui.brushspacingBox, !mypaintmode},
-		{d->ui.gainLabel, mypaintmode},
-		{d->ui.gainSlider, mypaintmode},
 		{d->ui.gainBox, mypaintmode},
-		{d->ui.slowTrackingLabel, mypaintmode},
-		{d->ui.slowTrackingSlider, mypaintmode},
 		{d->ui.slowTrackingBox, mypaintmode},
 	};
 	// First hide them all so that the docker doesn't end up bigger temporarily
@@ -674,19 +649,6 @@ PressureMapping BrushSettings::getPressureMapping() const
 {
 	const input::Preset *preset = d->currentPreset();
 	return preset ? preset->curve : PressureMapping{};
-}
-
-void BrushSettings::updateSettings()
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/brushsliderlimits");
-	d->ui.brushsizeSlider->setMaximum(qMin(
-			cfg.value("size", DEFAULT_BRUSH_SIZE).toInt(),
-			MAX_BRUSH_SIZE));
-	d->ui.brushspacingSlider->setMaximum(qMin(
-			cfg.value("spacing", DEFAULT_BRUSH_SPACING).toInt(),
-			MAX_BRUSH_SPACING));
-	cfg.endGroup();
 }
 
 namespace toolprop {

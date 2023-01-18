@@ -355,13 +355,6 @@ void SettingsDialog::restoreSettings()
 	changeColorWheelSpace(cfg.value("space").toInt());
 	cfg.endGroup();
 
-	cfg.beginGroup("settings/brushsliderlimits");
-	m_ui->sizeLimitSpinner->setValue(cfg.value(
-			"size", tools::BrushSettings::DEFAULT_BRUSH_SIZE).toInt());
-	m_ui->spacingLimitSpinner->setValue(cfg.value(
-			"spacing", tools::BrushSettings::DEFAULT_BRUSH_SPACING).toInt());
-	cfg.endGroup();
-
 	m_customShortcuts->loadShortcuts();
 	m_avatars->loadAvatars();
 }
@@ -462,11 +455,6 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("shape", static_cast<int>(m_ui->colorwheel->selectorShape()));
 	cfg.setValue("rotate", static_cast<int>(m_ui->colorwheel->rotatingSelector()));
 	cfg.setValue("space", static_cast<int>(m_ui->colorwheel->colorSpace()));
-	cfg.endGroup();
-
-	cfg.beginGroup("settings/brushsliderlimits");
-	cfg.setValue("size", m_ui->sizeLimitSpinner->value());
-	cfg.setValue("spacing", m_ui->spacingLimitSpinner->value());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())

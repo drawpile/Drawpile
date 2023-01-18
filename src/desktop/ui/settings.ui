@@ -25,11 +25,6 @@
        </item>
        <item>
         <property name="text">
-         <string>Brushes</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Color Wheel</string>
         </property>
        </item>
@@ -423,114 +418,6 @@
                <string>Layers:</string>
               </property>
              </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="brushPage">
-           <layout class="QFormLayout" name="brushFormLayout">
-            <property name="fieldGrowthPolicy">
-             <enum>QFormLayout::ExpandingFieldsGrow</enum>
-            </property>
-            <property name="topMargin">
-             <number>19</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="sizeLimitLabel">
-              <property name="toolTip">
-               <string>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</string>
-              </property>
-              <property name="text">
-               <string>Size Slider Limit:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="sizeLimitLayout">
-              <item>
-               <widget class="QSlider" name="sizeLimitSlider">
-                <property name="toolTip">
-                 <string>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</string>
-                </property>
-                <property name="maximum">
-                 <number>255</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="sizeLimitSpinner">
-                <property name="minimumSize">
-                 <size>
-                  <width>80</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</string>
-                </property>
-                <property name="suffix">
-                 <string>px</string>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>255</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="spacingLimitLabel">
-              <property name="toolTip">
-               <string>The maximum value for the brush spacing slider. You can always enter larger values manually.</string>
-              </property>
-              <property name="text">
-               <string>Spacing Slider Limit:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout" name="spacingLimitLayout">
-              <item>
-               <widget class="QSlider" name="spacingLimitSlider">
-                <property name="toolTip">
-                 <string>The maximum value for the brush spacing slider. You can always enter larger values manually.</string>
-                </property>
-                <property name="maximum">
-                 <number>999</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="spacingLimitSpinner">
-                <property name="minimumSize">
-                 <size>
-                  <width>80</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>The maximum value for the brush spacing slider. You can always enter larger values manually.</string>
-                </property>
-                <property name="suffix">
-                 <string>%</string>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>999</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </item>
            </layout>
           </widget>
@@ -1432,70 +1319,6 @@
     <hint type="destinationlabel">
      <x>394</x>
      <y>241</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sizeLimitSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sizeLimitSpinner</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>479</x>
-     <y>52</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>704</x>
-     <y>52</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sizeLimitSpinner</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>sizeLimitSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>704</x>
-     <y>52</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>479</x>
-     <y>52</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spacingLimitSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spacingLimitSpinner</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>479</x>
-     <y>86</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>704</x>
-     <y>86</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spacingLimitSpinner</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spacingLimitSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>704</x>
-     <y>86</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>479</x>
-     <y>86</y>
     </hint>
    </hints>
   </connection>
