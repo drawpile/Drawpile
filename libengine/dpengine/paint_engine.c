@@ -709,11 +709,13 @@ void DP_paint_engine_local_drawing_in_progress_set(
 }
 
 
-static void invalidate_local_view(DP_PaintEngine *pe)
+static void invalidate_local_view(DP_PaintEngine *pe, bool check_all)
 {
     DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
     pe->local_view.prev_lpl = NULL;
-    DP_canvas_diff_check_all(pe->diff);
+    if (check_all) {
+        DP_canvas_diff_check_all(pe->diff);
+    }
 }
 
 void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
@@ -721,7 +723,7 @@ void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
     if (pe->local_view.active_layer_id != layer_id) {
         pe->local_view.active_layer_id = layer_id;
         if (pe->local_view.view_mode != DP_VIEW_MODE_NORMAL) {
-            invalidate_local_view(pe);
+            invalidate_local_view(pe, true);
         }
     }
 }
@@ -731,7 +733,7 @@ void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe, int frame_index)
     if (pe->local_view.active_frame_index != frame_index) {
         pe->local_view.active_frame_index = frame_index;
         if (pe->local_view.view_mode == DP_VIEW_MODE_FRAME) {
-            invalidate_local_view(pe);
+            invalidate_local_view(pe, true);
         }
     }
 }
@@ -741,7 +743,7 @@ void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm)
     DP_ASSERT(pe);
     if (pe->local_view.view_mode != vm) {
         pe->local_view.view_mode = vm;
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, true);
     }
 }
 
@@ -751,7 +753,7 @@ void DP_paint_engine_onion_skins_set(DP_PaintEngine *pe,
     DP_ASSERT(pe);
     if (pe->local_view.onion_skins != oss_or_null) {
         pe->local_view.onion_skins = oss_or_null;
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, true);
     }
 }
 
@@ -767,7 +769,7 @@ void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
     DP_ASSERT(pe);
     if (pe->local_view.reveal_censored != reveal_censored) {
         pe->local_view.reveal_censored = reveal_censored;
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, false);
     }
 }
 
@@ -778,7 +780,7 @@ void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
     DP_ASSERT(pe);
     if (pe->local_view.inspect_context_id != context_id) {
         pe->local_view.inspect_context_id = context_id;
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, false);
     }
 }
 
@@ -786,6 +788,23 @@ void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
 static bool is_hidden_layer_id(void *element, void *user)
 {
     return *(int *)element == *(int *)user;
+}
+
+static void check_layer_id(DP_PaintEngine *pe, int layer_id)
+{
+    DP_CanvasState *cs = pe->view_cs;
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    if (lre) {
+        if (DP_layer_routes_entry_is_group(lre)) {
+            DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
+            DP_layer_group_diff_mark(lg, pe->diff);
+        }
+        else {
+            DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
+            DP_layer_content_diff_mark(lc, pe->diff);
+        }
+    }
 }
 
 void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
@@ -797,11 +816,13 @@ void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
                                        is_hidden_layer_id, &layer_id);
     if (hidden && index == -1) {
         DP_VECTOR_PUSH_TYPE(hidden_layers, int, layer_id);
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, false);
+        check_layer_id(pe, layer_id);
     }
     else if (!hidden && index != -1) {
         DP_VECTOR_REMOVE_TYPE(hidden_layers, int, index);
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, false);
+        check_layer_id(pe, layer_id);
     }
 }
 
@@ -820,7 +841,7 @@ void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
     if (prev != tile_or_null) {
         pe->local_view.background_tile = tile_or_null;
         DP_tile_decref_nullable(prev);
-        invalidate_local_view(pe);
+        invalidate_local_view(pe, false);
     }
 }
 
