@@ -60,9 +60,9 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
 
 	connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
-	connect(_ui->tolerance, &QSlider::valueChanged, this, &FillSettings::pushSettings);
+	connect(_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->sizelimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(_ui->expand, &QSlider::valueChanged, this, &FillSettings::pushSettings);
+	connect(_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->erasermode, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
@@ -135,7 +135,7 @@ void FillSettings::quickAdjust1(qreal adjustment)
 
 void FillSettings::stepAdjust1(bool increase)
 {
-	QSlider *tolerance = _ui->tolerance;
+	QSpinBox *tolerance = _ui->tolerance;
 	tolerance->setValue(stepLogarithmic(
 		tolerance->minimum(), tolerance->maximum(), tolerance->value(),
 		increase));

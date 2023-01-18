@@ -26,14 +26,31 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label">
+   <item row="8" column="0" colspan="3">
+    <widget class="QCheckBox" name="samplemerged">
      <property name="text">
-      <string>Tolerance:</string>
+      <string>Sample merged</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
+    <widget class="QCheckBox" name="fillunder">
+     <property name="text">
+      <string>Fill under</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="KisSliderSpinBox" name="tolerance">
+     <property name="prefix">
+      <string>Tolerance: </string>
+     </property>
+     <property name="maximum">
+      <number>254</number>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -45,57 +62,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="3" column="1">
-    <widget class="QSlider" name="expand">
-     <property name="maximum">
-      <number>30</number>
-     </property>
-     <property name="pageStep">
-      <number>1</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QSlider" name="tolerance">
-     <property name="maximum">
-      <number>254</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QSpinBox" name="tolerancebox">
-     <property name="maximum">
-      <number>254</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QSpinBox" name="expandBox">
-     <property name="maximum">
-      <number>30</number>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="3">
-    <widget class="QCheckBox" name="samplemerged">
-     <property name="text">
-      <string>Sample merged</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Expand:</string>
-     </property>
-    </widget>
    </item>
    <item row="1" column="0" colspan="3">
     <widget class="widgets::BrushPreview" name="preview">
@@ -113,24 +79,30 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QCheckBox" name="fillunder">
+   <item row="10" column="0">
+    <widget class="QCheckBox" name="erasermode">
      <property name="text">
-      <string>Fill under</string>
+      <string>Erase</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Size limit:</string>
+   <item row="5" column="0" colspan="3">
+    <widget class="KisSliderSpinBox" name="expand">
+     <property name="prefix">
+      <string>Expand: </string>
+     </property>
+     <property name="maximum">
+      <number>30</number>
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QDoubleSpinBox" name="sizelimit">
+   <item row="7" column="0" colspan="3">
+    <widget class="KisDoubleSliderSpinBox" name="sizelimit">
+     <property name="prefix">
+      <string>Size Limit: </string>
+     </property>
      <property name="suffix">
-      <string> ྾ 10² px</string>
+      <string> × 10² px</string>
      </property>
      <property name="decimals">
       <number>1</number>
@@ -146,13 +118,6 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QCheckBox" name="erasermode">
-     <property name="text">
-      <string>Erase</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -162,105 +127,19 @@
    <header>widgets/brushpreview.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KisDoubleSliderSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>tolerance</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>tolerancebox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>134</x>
-     <y>94</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>196</x>
-     <y>90</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>tolerancebox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>tolerance</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>196</x>
-     <y>78</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>94</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>expand</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>expandBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>134</x>
-     <y>127</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>196</x>
-     <y>114</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>expandBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>expand</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>196</x>
-     <y>114</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>tolerance</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setFloodFillTolerance(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>81</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>95</x>
-     <y>42</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>expand</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setFloodFillExpansion(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>134</x>
-     <y>127</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>150</x>
-     <y>30</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>fillunder</sender>
    <signal>toggled(bool)</signal>
@@ -274,6 +153,38 @@
     <hint type="destinationlabel">
      <x>49</x>
      <y>45</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tolerance</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setFloodFillTolerance(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>34</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>expand</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setFloodFillExpansion(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>34</y>
     </hint>
    </hints>
   </connection>
