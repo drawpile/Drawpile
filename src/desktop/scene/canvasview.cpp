@@ -68,6 +68,9 @@ CanvasView::CanvasView(QWidget *parent)
 	m_brushCursorStyle(0),
 	m_brushOutlineWidth(1.0)
 {
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
 	viewport()->setAcceptDrops(true);
 #ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
 	viewport()->grabGesture(Qt::PinchGesture);
