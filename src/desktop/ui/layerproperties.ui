@@ -34,30 +34,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QSlider" name="opacitySlider">
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="opacitySpinner">
-       <property name="suffix">
-        <string>%</string>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="4" column="0">
     <widget class="QLabel" name="blendModeLabel">
      <property name="text">
@@ -179,42 +155,27 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="1">
+    <widget class="KisSliderSpinBox" name="opacitySlider">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>opacitySlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>opacitySpinner</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>170</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>247</x>
-     <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>opacitySpinner</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>opacitySlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>247</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>170</x>
-     <y>67</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>passThrough</sender>
    <signal>toggled(bool)</signal>

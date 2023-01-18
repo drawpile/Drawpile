@@ -58,7 +58,7 @@ void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QStr
 	m_wasDefault = isDefault;
 
 	m_ui->title->setText(item.title);
-	m_ui->opacitySpinner->setValue(qRound(item.opacity * 100.0f));
+	m_ui->opacitySlider->setValue(qRound(item.opacity * 100.0f));
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.censored);
 	m_ui->defaultLayer->setChecked(isDefault);
@@ -84,7 +84,6 @@ void LayerProperties::setControlsEnabled(bool enabled) {
 	QWidget *w[] = {
 		m_ui->title,
 		m_ui->opacitySlider,
-		m_ui->opacitySpinner,
 		m_ui->blendMode,
 		m_ui->passThrough,
 		m_ui->censored
@@ -120,7 +119,7 @@ void LayerProperties::emitChanges()
 	const bool isolated = !m_ui->passThrough->isChecked();
 
 	if(
-		m_ui->opacitySpinner->value() != oldOpacity ||
+		m_ui->opacitySlider->value() != oldOpacity ||
 		newBlendmode != m_item.blend ||
 		censored != m_item.censored ||
 	    isolated != m_item.isolated
@@ -128,7 +127,7 @@ void LayerProperties::emitChanges()
 		uint8_t flags =
 			(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
-		uint8_t opacity = qRound(m_ui->opacitySpinner->value() / 100.0 * 255);
+		uint8_t opacity = qRound(m_ui->opacitySlider->value() / 100.0 * 255);
 		messages.append(drawdance::Message::makeLayerAttributes(
 			m_user, m_item.id, 0, flags, opacity, newBlendmode));
     }
