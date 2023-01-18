@@ -21,6 +21,7 @@
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "tools/colorpicker.h"
+#include "widgets/kis_slider_spin_box.h"
 
 #include <QtColorWidgets/swatch.hpp>
 
@@ -57,24 +58,12 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	layout->setContentsMargins(3, 3, 3, 3);
 	widget->setLayout(layout);
 
-	QHBoxLayout *sizelayout = new QHBoxLayout;
-	layout->addLayout(sizelayout);
-
-	QLabel *sizelbl = new QLabel(tr("Size:"), widget);
-	sizelayout->addWidget(sizelbl);
-
-	QSlider *slider = new QSlider(widget);
-	slider->setOrientation(Qt::Horizontal);
-	sizelayout->addWidget(slider);
-
-	m_size = new QSpinBox(widget);
-	sizelayout->addWidget(m_size);
-
+	m_size = new KisSliderSpinBox;
+	m_size->setPrefix(tr("Size: "));
+	m_size->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	m_size->setMinimum(1);
-	slider->setMinimum(1);
-
 	m_size->setMaximum(128);
-	slider->setMaximum(128);
+	layout->addWidget(m_size);
 
 	m_layerpick = new QCheckBox(tr("Pick from current layer only"), widget);
 	layout->addWidget(m_layerpick);
@@ -86,9 +75,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 
 	connect(m_palettewidget, &color_widgets::Swatch::colorSelected, this, &ColorPickerSettings::colorSelected);
 	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	connect(slider, &QSlider::valueChanged, m_size, &QSpinBox::setValue);
-	connect(m_size, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)));
-	connect(slider, &QSlider::valueChanged, this, &ColorPickerSettings::pushSettings);
+	connect(m_size, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorPickerSettings::pushSettings);
 	connect(m_layerpick, &QCheckBox::toggled, this, &ColorPickerSettings::pushSettings);
 
 	return widget;
