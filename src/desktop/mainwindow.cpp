@@ -2885,8 +2885,8 @@ void MainWindow::setupActions()
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
-	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Ctrl+Shift+X");
-	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Ctrl+Shift+Z");
+	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Alt+Shift+X");
+	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Alt+Shift+Z");
 
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
