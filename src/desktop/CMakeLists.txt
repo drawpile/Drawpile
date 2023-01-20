@@ -207,13 +207,8 @@ if(KIS_TABLET)
 		target_sources(${CLIENTNAME} PRIVATE
 			bundled/kis_tablet/kis_tablet_support_win8.cpp
 			bundled/kis_tablet/kis_tablet_support_win.cpp)
-	elseif(NOT APPLE)
-		target_sources(${CLIENTNAME} PRIVATE
-			bundled/kis_tablet/kis_xi2_event_filter.cpp
-			bundled/kis_tablet/qxcbconnection.cpp
-			bundled/kis_tablet/qxcbconnection_xi2.cpp)
-		target_link_libraries(${CLIENTNAME} PUBLIC
-			Qt5::X11Extras ${X11_Xinput_LIB} ${XCB_LIBRARIES} ${X11_LIBRARIES})
+	else()
+		message(WARNING "KIS_TABLET is only supported and necessary on Windows")
 	endif()
 ENDIF()
 

@@ -126,7 +126,7 @@
 #include "dialogs/abusereport.h"
 #include "dialogs/versioncheckdialog.h"
 
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#ifdef KIS_TABLET
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
@@ -701,7 +701,7 @@ void MainWindow::updateSettings()
 
 	m_view->setTabletEnabled(enable);
 
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#ifdef KIS_TABLET
 	KisTabletSupportWin::enableRelativePenModeHack(cfg.value("relativepenhack", false).toBool());
 #endif
 

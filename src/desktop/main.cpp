@@ -35,15 +35,8 @@
 #endif
 
 #ifdef KIS_TABLET
-
-#if defined(Q_OS_WIN)
 #include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #include "bundled/kis_tablet/kis_tablet_support_win.h"
-#else
-#include "bundled/kis_tablet/kis_xi2_event_filter.h"
-#include <QX11Info>
-#endif
-
 #endif
 
 #include <QCommandLineParser>
@@ -360,7 +353,6 @@ static QStringList initApp(DrawpileApp &app)
 #endif
 
 #ifdef KIS_TABLET
-#ifdef Q_OS_WIN
 	{
 		bool useWindowsInk = false;
 		// Enable Windows Ink tablet event handler
@@ -387,15 +379,6 @@ static QStringList initApp(DrawpileApp &app)
 			KisTabletSupportWin::init();
 		}
 	}
-#else
-	if(QX11Info::isPlatformX11()) {
-		// Qt's X11 tablet event handling is broken in different ways
-		// in pretty much every Qt5 version, so we use this Krita's
-		// modified event filter
-		qInfo("Enabling custom XInput2 tablet event filter");
-		app.installNativeEventFilter(kis_tablet::KisXi2EventFilter::instance());
-	}
-#endif
 #endif // KIS_TABLET
 
 	// Set override locale from settings, or use system locale if no override is set
