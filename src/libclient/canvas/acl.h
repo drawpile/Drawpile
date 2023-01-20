@@ -70,6 +70,9 @@ public:
 	//! Is the local user trusted?
 	bool amTrusted() const;
 
+	//! Is there a general session lock in place?
+	bool isSessionLocked() const;
+
 	//! Is the given layer locked for this user (ignoring canvaswide lock)
 	bool isLayerLocked(uint16_t layerId) const;
 

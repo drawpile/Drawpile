@@ -220,6 +220,11 @@ bool AclState::amLocked() const
 	return d->users.all_locked || isLocked(d->localUser);
 }
 
+bool AclState::isSessionLocked() const
+{
+	return d->users.all_locked;
+}
+
 bool AclState::isLayerLocked(uint16_t layerId) const
 {
 	if(!d->layers.contains(layerId))

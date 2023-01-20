@@ -1775,7 +1775,7 @@ void MainWindow::onServerLogin()
 
 void MainWindow::updateLockWidget()
 {
-	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->amLocked();
+	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->isSessionLocked();
 	getAction("locksession")->setChecked(locked);
 
 	locked |= m_dockLayers->isCurrentLayerLocked();
