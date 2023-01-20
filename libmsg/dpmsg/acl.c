@@ -21,6 +21,7 @@
  */
 #include "acl.h"
 #include "message.h"
+#include "msg_internal.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/output.h>
@@ -42,7 +43,7 @@ typedef struct DP_AclState {
     DP_UserAcls users;
     DP_LayerAclEntry *layers;
     DP_AnnotationAclEntry *annotations;
-    DP_AccessTier feature_tiers[DP_FEATURE_COUNT];
+    DP_FeatureTiers feature;
 } DP_AclState;
 
 typedef struct DP_AccessTierAttributes {
@@ -231,26 +232,27 @@ DP_AccessTier DP_user_acls_tier(const DP_UserAcls *users, uint8_t user_id)
 }
 
 
+static DP_FeatureTiers null_feature_tiers(void)
+{
+    return (DP_FeatureTiers){{
+        DP_ACCESS_TIER_GUEST,
+        DP_ACCESS_TIER_GUEST,
+        DP_ACCESS_TIER_OPERATOR,
+        DP_ACCESS_TIER_OPERATOR,
+        DP_ACCESS_TIER_OPERATOR,
+        DP_ACCESS_TIER_GUEST,
+        DP_ACCESS_TIER_GUEST,
+        DP_ACCESS_TIER_GUEST,
+        DP_ACCESS_TIER_GUEST,
+        DP_ACCESS_TIER_OPERATOR,
+        DP_ACCESS_TIER_GUEST,
+    }};
+}
+
 static DP_AclState null_acl_state(void)
 {
     return (DP_AclState){
-        {{0}, {0}, {0}, {0}, false},
-        NULL,
-        NULL,
-        {
-            DP_ACCESS_TIER_GUEST,
-            DP_ACCESS_TIER_GUEST,
-            DP_ACCESS_TIER_OPERATOR,
-            DP_ACCESS_TIER_OPERATOR,
-            DP_ACCESS_TIER_OPERATOR,
-            DP_ACCESS_TIER_GUEST,
-            DP_ACCESS_TIER_GUEST,
-            DP_ACCESS_TIER_GUEST,
-            DP_ACCESS_TIER_GUEST,
-            DP_ACCESS_TIER_OPERATOR,
-            DP_ACCESS_TIER_GUEST,
-        },
-    };
+        {{0}, {0}, {0}, {0}, false}, NULL, NULL, null_feature_tiers()};
 }
 
 DP_AclState *DP_acl_state_new(void)
@@ -364,7 +366,7 @@ char *DP_acl_state_dump(DP_AclState *acls)
     for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
         DP_output_format(output, "        %s: %s\n",
                          feature_attributes[i].enum_name,
-                         access_tier_attributes[acls->feature_tiers[i]].name);
+                         access_tier_attributes[acls->feature.tiers[i]].name);
     }
 
     dump_layer_acls(output, acls);
@@ -384,9 +386,7 @@ DP_UserAcls DP_acl_state_users(DP_AclState *acls)
 DP_FeatureTiers DP_acl_state_feature_tiers(DP_AclState *acls)
 {
     DP_ASSERT(acls);
-    DP_FeatureTiers fts;
-    memcpy(fts.tiers, acls->feature_tiers, sizeof(fts.tiers));
-    return fts;
+    return acls->feature;
 }
 
 void DP_acl_state_layers_each(DP_AclState *acls, DP_AclStateLayerFn fn,
@@ -417,7 +417,7 @@ bool DP_acl_state_can_use_feature(DP_AclState *acls, DP_Feature feature,
     DP_ASSERT(acls);
     DP_ASSERT(feature >= 0);
     DP_ASSERT(feature < DP_FEATURE_COUNT);
-    DP_AccessTier feature_tier = acls->feature_tiers[feature];
+    DP_AccessTier feature_tier = acls->feature.tiers[feature];
     return feature_tier == DP_ACCESS_TIER_GUEST
         || DP_acl_state_user_tier(acls, user_id) <= feature_tier;
 }
@@ -506,6 +506,22 @@ static uint8_t handle_trusted_users(DP_AclState *acls, DP_Message *msg)
     const uint8_t *user_ids = DP_msg_trusted_users_users(mtu, &count);
     DP_user_bits_replace(acls->users.trusted, count, user_ids);
     return DP_ACL_STATE_CHANGE_USERS_BIT;
+}
+
+static uint8_t handle_internal(DP_AclState *acls, DP_Message *msg)
+{
+    DP_MsgInternal *mi = DP_message_internal(msg);
+    if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+        clear_layers(acls);
+        clear_annotations(acls);
+        acls->users.all_locked = false;
+        memset_userbits(acls->users.locked, 0);
+        acls->feature = null_feature_tiers();
+        return DP_ACL_STATE_CHANGE_MASK;
+    }
+    else {
+        return 0;
+    }
 }
 
 static uint8_t handle_user_acl(DP_AclState *acls, DP_Message *msg,
@@ -636,7 +652,7 @@ static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg,
 
         int count = DP_min_int(feature_tiers_count, DP_FEATURE_COUNT);
         for (int i = 0; i < count; ++i) {
-            acls->feature_tiers[i] =
+            acls->feature.tiers[i] =
                 DP_min_uint8(feature_tiers[i], DP_ACCESS_TIER_GUEST);
         }
 
@@ -922,6 +938,8 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
             return handle_session_owner(acls, msg);
         case DP_MSG_TRUSTED_USERS:
             return handle_trusted_users(acls, msg);
+        case DP_MSG_INTERNAL:
+            return handle_internal(acls, msg);
         case DP_MSG_LASER_TRAIL:
             return filter_unless(
                 override
