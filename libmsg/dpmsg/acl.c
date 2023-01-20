@@ -971,3 +971,67 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
         return DP_ACL_STATE_FILTERED_BIT;
     }
 }
+
+
+static int count_user_bits(const uint8_t *users)
+{
+    int count = 0;
+    for (int i = 0; i < 256; ++i) {
+        if (DP_user_bit_get(users, DP_int_to_uint8(i))) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+static void set_message_user_bits(int count, uint8_t *out, void *user)
+{
+    const uint8_t *users = user;
+    int out_index = 0;
+    for (int i = 0; i < 256; ++i) {
+        uint8_t user_id = DP_int_to_uint8(i);
+        if (DP_user_bit_get(users, user_id)) {
+            out[out_index++] = user_id;
+        }
+    }
+    DP_ASSERT(out_index == count);
+}
+
+static void set_feature_tiers(int count, uint8_t *out, void *user)
+{
+    DP_ASSERT(count == DP_FEATURE_COUNT);
+    const DP_AccessTier *features = user;
+    for (int i = 0; i < count; ++i) {
+        out[i] = (uint8_t)features[i];
+    }
+}
+
+void DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
+                                    void (*push_message)(void *, DP_Message *),
+                                    void *user)
+{
+    DP_ASSERT(acls);
+    DP_ASSERT(push_message);
+
+    DP_LayerAclEntry *entry, *tmp;
+    HASH_ITER(hh, acls->layers, entry, tmp) {
+        DP_LayerAcl *l = &entry->layer_acl;
+        uint8_t flags =
+            DP_uint_to_uint8(l->tier | (l->locked ? DP_ACL_ALL_LOCKED_BIT : 0));
+        int exclusive_count = count_user_bits(l->exclusive);
+        DP_Message *layer_acl_msg = DP_msg_layer_acl_new(
+            context_id, DP_int_to_uint16(entry->layer_id), flags,
+            exclusive_count == 256 ? NULL : set_message_user_bits,
+            exclusive_count == 256 ? 0 : exclusive_count, l->exclusive);
+        push_message(user, layer_acl_msg);
+    }
+
+    DP_Message *feature_access_levels_msg = DP_msg_feature_access_levels_new(
+        context_id, set_feature_tiers, DP_FEATURE_COUNT, acls->feature.tiers);
+    push_message(user, feature_access_levels_msg);
+
+    int locked_count = count_user_bits(acls->users.locked);
+    DP_Message *user_acl_message = DP_msg_user_acl_new(
+        context_id, set_message_user_bits, locked_count, acls->users.locked);
+    push_message(user, user_acl_message);
+}

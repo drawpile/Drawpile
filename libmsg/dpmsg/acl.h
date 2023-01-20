@@ -151,5 +151,9 @@ bool DP_acl_state_annotation_locked(DP_AclState *acls, int annotation_id);
 uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg,
                             bool override) DP_MUST_CHECK;
 
+void DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
+                                    void (*push_message)(void *, DP_Message *),
+                                    void *user);
+
 
 #endif
