@@ -554,13 +554,30 @@ static void set_layer_acl(DP_AclState *acls, int layer_id,
     }
 }
 
-static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg,
-                                bool override)
+static uint8_t handle_layer_acl_session_lock(DP_AclState *acls,
+                                             DP_MsgLayerAcl *mla,
+                                             uint8_t user_id, bool override)
 {
-    uint8_t user_id = message_user_id(msg);
-    DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
-    int layer_id = DP_msg_layer_acl_id(mla);
+    if (override || DP_acl_state_is_op(acls, user_id)) {
+        uint8_t flags = DP_msg_layer_acl_flags(mla);
+        bool lock = flags & DP_ACL_ALL_LOCKED_BIT;
+        if (acls->users.all_locked == lock) {
+            return 0;
+        }
+        else {
+            acls->users.all_locked = lock;
+            return DP_ACL_STATE_CHANGE_USERS_BIT;
+        }
+    }
+    else {
+        return DP_ACL_STATE_FILTERED_BIT;
+    }
+}
 
+static uint8_t handle_layer_acl_layer(DP_AclState *acls, DP_MsgLayerAcl *mla,
+                                      uint8_t user_id, int layer_id,
+                                      bool override)
+{
     if (override || can_edit_layer(acls, user_id, layer_id)) {
         uint8_t flags = DP_msg_layer_acl_flags(mla);
         int exclusive_count;
@@ -588,6 +605,21 @@ static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg,
     }
     else {
         return DP_ACL_STATE_FILTERED_BIT;
+    }
+}
+
+static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg,
+                                bool override)
+{
+    uint8_t user_id = message_user_id(msg);
+    DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
+    int layer_id = DP_msg_layer_acl_id(mla);
+    // Special case: layer 0 means lock or unlock the whole session.
+    if (layer_id == 0) {
+        return handle_layer_acl_session_lock(acls, mla, user_id, override);
+    }
+    else {
+        return handle_layer_acl_layer(acls, mla, user_id, layer_id, override);
     }
 }
 
