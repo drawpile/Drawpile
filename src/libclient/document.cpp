@@ -108,6 +108,7 @@ void Document::initCanvas()
 	connect(m_canvas->paintEngine(), &canvas::PaintEngine::caughtUpTo, this, &Document::catchupProgress, Qt::QueuedConnection);
 
 	emit canvasChanged(m_canvas);
+	m_canvas->paintEngine()->resetAcl(m_client->myId());
 
 	setCurrentFilename(QString());
 }

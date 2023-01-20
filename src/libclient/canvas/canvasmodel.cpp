@@ -57,7 +57,6 @@ CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
 	connect(m_paintengine, &PaintEngine::recorderStateChanged, this, &CanvasModel::recorderStateChanged);
 
 	m_aclstate->setLocalUserId(localUserId);
-	m_paintengine->resetAcl(m_localUserId);
 
 	m_layerlist->setAclState(m_aclstate);
 	m_layerlist->setLayerGetter([this](int id)->QImage { return m_paintengine->getLayerImage(id); });
