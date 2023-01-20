@@ -48,9 +48,9 @@ public:
 
 	void setLocalUserId(uint8_t localUser);
 
-	void updateUserBits(const drawdance::AclState &acls);
-	void updateFeatures(const drawdance::AclState &acls);
-	void updateLayers(const drawdance::AclState &acls);
+	void updateUserBits(const drawdance::AclState &acls, bool reset);
+	void updateFeatures(const drawdance::AclState &acls, bool reset);
+	void updateLayers(const drawdance::AclState &acls, bool reset);
 
 	//! Is this user an operator?
 	bool isOperator(uint8_t userId) const;
@@ -89,7 +89,7 @@ public:
 	Layer layerAcl(uint16_t layerId) const;
 
 public slots:
-	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags);
+	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 
 signals:
 	//! Local user's operator status has changed
@@ -111,7 +111,7 @@ signals:
 	void featureTiersChanged(const DP_FeatureTiers&);
 
 private:
-	void emitFeatureChanges(int before, int now);
+	void emitFeatureChanges(int before, int now, bool reset);
 
 	struct Data;
 	Data *d;

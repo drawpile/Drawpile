@@ -74,7 +74,7 @@ AclState::~AclState()
 	delete d;
 }
 
-void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags)
+void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset)
 {
 	bool users = aclChangeFlags & DP_ACL_STATE_CHANGE_USERS_BIT;
 	bool layers = aclChangeFlags & DP_ACL_STATE_CHANGE_LAYERS_BIT;
@@ -82,25 +82,25 @@ void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags)
 
 #ifdef QT_DEBUG
 	char *dump = acls.dump();
-	qDebug("Acls changed:%s%s%s %s", users ? " users" : "",
+	qDebug("Acls %s:%s%s%s %s", reset ? "reset" : "changed", users ? " users" : "",
 		layers ? " layers" : "", features ? " features" : "", dump);
 	DP_free(dump);
 #endif
 
-	if(users) {
-		updateUserBits(acls);
+	if(users || reset) {
+		updateUserBits(acls, reset);
 	}
 
-	if(layers) {
-		updateLayers(acls);
+	if(layers || reset) {
+		updateLayers(acls, reset);
 	}
 
-	if(features) {
-		updateFeatures(acls);
+	if(features || reset) {
+		updateFeatures(acls, reset);
 	}
 }
 
-void AclState::updateUserBits(const drawdance::AclState &acls)
+void AclState::updateUserBits(const drawdance::AclState &acls, bool reset)
 {
 	const bool wasOp = amOperator();
 	const bool wasLocked = amLocked();
@@ -113,26 +113,26 @@ void AclState::updateUserBits(const drawdance::AclState &acls)
 
 	emit userBitsChanged(this);
 
-	if(wasOp != amOpNow) {
+	if(wasOp != amOpNow || reset) {
 		emit localOpChanged(amOpNow);
 	}
 
-	if(wasLocked != amLockedNow) {
+	if(wasLocked != amLockedNow || reset) {
 		emit localLockChanged(amLockedNow);
 	}
 
-	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()));
+	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()), reset);
 }
 
-void AclState::updateFeatures(const drawdance::AclState &acls)
+void AclState::updateFeatures(const drawdance::AclState &acls, bool reset)
 {
 	int hadFeatures = featureFlags(d->features, d->tier());
 	d->features = acls.featureTiers();
 	emit featureTiersChanged(d->features);
-	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()));
+	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()), reset);
 }
 
-void AclState::updateLayers(const drawdance::AclState &acls)
+void AclState::updateLayers(const drawdance::AclState &acls, bool reset)
 {
 	const auto oldLayers = d->layers;
 	QHash<int, Layer> layers;
@@ -165,7 +165,7 @@ void AclState::updateLayers(const drawdance::AclState &acls)
 	QHashIterator<int, Layer> i(layers);
 	while(i.hasNext()) {
 		i.next();
-		if(i.value() != oldLayers.value(i.key())) {
+		if(reset || i.value() != oldLayers.value(i.key())) {
 			emit layerAclChanged(i.key());
 		}
 	}
@@ -178,9 +178,13 @@ void AclState::updateLayers(const drawdance::AclState &acls)
 	}
 }
 
-void AclState::emitFeatureChanges(int before, int now)
+void AclState::emitFeatureChanges(int before, int now, bool reset)
 {
-	if(before != now) {
+	if(reset) {
+		for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+			emit featureAccessChanged(DP_Feature(i), now & (1 << i));
+		}
+	} else if(before != now) {
 		const int changes = before ^ now;
 		for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
 			if(changes & (1 << i)) {

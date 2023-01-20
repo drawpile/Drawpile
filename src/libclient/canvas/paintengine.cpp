@@ -82,7 +82,7 @@ void PaintEngine::reset(
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
 	start();
-	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK);
+	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
 	emit defaultLayer(0);
 }
 
@@ -145,7 +145,7 @@ void PaintEngine::enqueueCatchupProgress(int progress)
 void PaintEngine::resetAcl(uint8_t localUserId)
 {
 	m_acls.reset(localUserId);
-	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK);
+	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
 }
 
 void PaintEngine::cleanup()
@@ -489,7 +489,7 @@ void PaintEngine::onPlayback(void *user, long long position, int interval)
 void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->aclsChanged(pe->m_acls, aclChangeFlags);
+	emit pe->aclsChanged(pe->m_acls, aclChangeFlags, false);
 }
 
 void PaintEngine::onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color)

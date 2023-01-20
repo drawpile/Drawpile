@@ -183,7 +183,7 @@ signals:
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
 	void timelineChanged(const drawdance::Timeline &tl);
 	void frameVisibilityChanged(const QVector<int> layers, bool frameMode);
-	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags);
+	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 	void laserTrail(uint8_t userId, int persistence, uint32_t color);
 	void defaultLayer(uint16_t layerId);
 
