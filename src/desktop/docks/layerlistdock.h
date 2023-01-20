@@ -100,7 +100,8 @@ private slots:
 	void setLayerVisibility(int layerId, bool visible);
 	void changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
 
-	void lockStatusChanged(int layerId);
+	void layerLockStatusChanged(int layerId);
+	void userLockStatusChanged(bool);
 	void blendModeChanged(int index);
 	void opacityChanged(int value);
 	void selectionChanged(const QItemSelection &selected);

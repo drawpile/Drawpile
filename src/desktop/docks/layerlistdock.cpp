@@ -139,7 +139,8 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->layerlist(), &canvas::LayerListModel::modelReset, this, &LayerList::afterLayerReset);
 
 	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
-	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::lockStatusChanged);
+	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::layerLockStatusChanged);
+	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &LayerList::userLockStatusChanged);
 	connect(m_view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 
 	// Init
@@ -221,11 +222,13 @@ void LayerList::onFeatureAccessChange(DP_Feature feature, bool canUse)
 void LayerList::updateLockedControls()
 {
 	// The basic permissions
-	const bool canEdit = m_canvas && m_canvas->aclState()->canUseFeature(DP_FEATURE_EDIT_LAYERS);
-	const bool ownLayers = m_canvas && m_canvas->aclState()->canUseFeature(DP_FEATURE_OWN_LAYERS);
+	canvas::AclState *acls = m_canvas ? m_canvas->aclState() : nullptr;
+	const bool locked = acls ? acls->amLocked() : true;
+	const bool canEdit = acls && acls->canUseFeature(DP_FEATURE_EDIT_LAYERS);
+	const bool ownLayers = acls && acls->canUseFeature(DP_FEATURE_OWN_LAYERS);
 
 	// Layer creation actions work as long as we have an editing permission
-	const bool canAdd = canEdit | ownLayers;
+	const bool canAdd = !locked && (canEdit || ownLayers);
 	const bool hasEditActions = m_addLayerAction != nullptr;
 	if(hasEditActions) {
 		m_addLayerAction->setEnabled(canAdd);
@@ -233,7 +236,7 @@ void LayerList::updateLockedControls()
 	}
 
 	// Rest of the controls need a selection to work.
-	const bool enabled = m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
+	const bool enabled = !locked && m_selectedId && (canEdit || (ownLayers && (m_selectedId>>8) == m_canvas->localUserId()));
 
 	m_lockButton->setEnabled(enabled);
 	m_blendModeCombo->setEnabled(enabled);
@@ -596,7 +599,7 @@ void LayerList::updateUiFromSelection()
 	m_blendModeCombo->setCurrentIndex(searchBlendModeIndex(m_blendModeCombo, layer.blend));
 	m_opacitySlider->setValue(layer.opacity * 100.0 + 0.5);
 
-	lockStatusChanged(layer.id);
+	layerLockStatusChanged(layer.id);
 	updateLockedControls();
 
 	// TODO use change flags to detect if this really changed
@@ -604,7 +607,7 @@ void LayerList::updateUiFromSelection()
 	m_noupdate = false;
 }
 
-void LayerList::lockStatusChanged(int layerId)
+void LayerList::layerLockStatusChanged(int layerId)
 {
 	if(m_selectedId == layerId) {
 		const auto acl = m_canvas->aclState()->layerAcl(layerId);
@@ -613,6 +616,11 @@ void LayerList::lockStatusChanged(int layerId)
 
 		emit activeLayerVisibilityChanged();
 	}
+}
+
+void LayerList::userLockStatusChanged(bool)
+{
+	updateLockedControls();
 }
 
 void LayerList::blendModeChanged(int index)
