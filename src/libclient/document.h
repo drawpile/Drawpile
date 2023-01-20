@@ -184,6 +184,8 @@ signals:
 	void canvasSaveStarted();
 	void canvasSaved(const QString &errorMessage);
 
+	void justInTimeSnapshotGenerated();
+
 public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
@@ -256,6 +258,9 @@ private:
 	void copyFromLayer(int layer);
 
 	void autosave();
+
+	void generateJustInTimeSnapshot();
+	void sendResetSnapshot();
 
 	QString m_currentFilename;
 

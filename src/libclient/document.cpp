@@ -87,6 +87,8 @@ Document::Document(QObject *parent)
 	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
 
 	connect(m_client, &net::Client::sessionResetted, this, &Document::onSessionResetted);
+
+	connect(this, &Document::justInTimeSnapshotGenerated, this, &Document::sendResetSnapshot, Qt::QueuedConnection);
 }
 
 void Document::initCanvas()
@@ -679,36 +681,44 @@ void Document::snapshotNeeded()
 	// (We) requested a session reset and the server is now ready for it.
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
-			qInfo("Generating a just-in-time snapshot for session reset...");
-			m_resetstate = m_canvas->generateSnapshot();
-
-			if(m_resetstate.isEmpty()) {
-				qWarning("Just-in-time snapshot has zero size!");
-				m_client->sendMessage(net::ServerCommand::make("init-cancel"));
-				return;
-			}
+			QThreadPool::globalInstance()->start([this](){
+				generateJustInTimeSnapshot();
+			});
+		} else {
+			sendResetSnapshot();
 		}
-
-		// Size limit check. The server will kick us if we send an oversized reset.
-		if(m_sessionHistoryMaxSize>0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
-			qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
-			emit autoResetTooLarge(m_sessionHistoryMaxSize);
-			m_resetstate.clear();
-			m_client->sendMessage(net::ServerCommand::make("init-cancel"));
-			return;
-		}
-
-		// Send the reset command+image
-		m_client->sendResetMessage(net::ServerCommand::make("init-begin"));
-		m_client->sendResetMessages(m_resetstate.count(), m_resetstate.constData());
-		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
-
-		m_resetstate.clear();
-
 	} else {
 		qWarning("Server requested snapshot, but canvas is not yet initialized!");
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	}
+}
+
+void Document::generateJustInTimeSnapshot()
+{
+	qInfo("Generating a just-in-time snapshot for session reset...");
+	m_resetstate = m_canvas->generateSnapshot();
+	if(m_resetstate.isEmpty()) {
+		qWarning("Just-in-time snapshot has zero size!");
+		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
+	} else {
+		emit justInTimeSnapshotGenerated();
+	}
+}
+
+void Document::sendResetSnapshot()
+{
+	// Size limit check. The server will kick us if we send an oversized reset.
+	if(m_sessionHistoryMaxSize > 0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
+		qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
+		emit autoResetTooLarge(m_sessionHistoryMaxSize);
+		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
+	} else {
+		// Send the reset command+image
+		m_client->sendResetMessage(net::ServerCommand::make("init-begin"));
+		m_client->sendResetMessages(m_resetstate.count(), m_resetstate.constData());
+		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
+	}
+	m_resetstate.clear();
 }
 
 void Document::undo()
