@@ -295,6 +295,9 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 
 		} else {
 			// Autoreset on request
+			// TODO: There seems to be a race condition in the server where it
+			// will fail to actually send this command out to the clients if the
+			// subsequent server command comes in too fast.
 			sendLockSession(true);
 
 			QByteArray bytes = QStringLiteral("beginning session autoreset...").toUtf8();
