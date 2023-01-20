@@ -5,6 +5,8 @@ extern "C" {
 #include <dpmsg/acl.h>
 }
 
+#include "message.h"
+
 #include <functional>
 #include <QtGlobal>
 
@@ -34,8 +36,12 @@ public:
 
     void eachLayerAcl(EachLayerFn fn) const;
 
+    void toResetImage(MessageList &msgs, uint8_t userId) const;
+
 private:
     static void onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl);
+
+    static void pushMessage(void *user, DP_Message *msg);
 
     DP_AclState *m_data;
 };

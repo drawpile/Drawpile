@@ -276,6 +276,8 @@ void CanvasModel::amendSnapshotMetadata(drawdance::MessageList &snapshot) const
 	if(defaultLayerId > 0) {
 		snapshot.append(drawdance::Message::makeDefaultLayer(0, defaultLayerId));
 	}
+
+	m_paintengine->aclState().toResetImage(snapshot, m_localUserId);
 }
 
 void CanvasModel::pickLayer(int x, int y)

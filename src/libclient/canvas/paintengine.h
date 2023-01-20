@@ -151,6 +151,8 @@ public:
 
 	const drawdance::SnapshotQueue &snapshotQueue() const { return m_snapshotQueue; }
 
+	const drawdance::AclState &aclState() const { return m_acls; }
+
 	QColor sampleColor(int x, int y, int layerId, int diameter);
 
 	drawdance::RecordStartResult startRecording(const QString &path);
