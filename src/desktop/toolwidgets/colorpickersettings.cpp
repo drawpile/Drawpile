@@ -144,10 +144,16 @@ void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 void ColorPickerSettings::addColor(const QColor &color)
 {
 	auto &palette = m_palettewidget->palette();
-	if(palette.count() > 0 && palette.colorAt(0).rgb() == color.rgb())
-		return;
-
 	palette.insertColor(0, color);
+
+	int i = 1;
+	while(i < palette.count()) {
+		if(palette.colorAt(i) == color) {
+			palette.eraseColor(i);
+		} else {
+			++i;
+		}
+	}
 
 	if(palette.count() > 80)
 		palette.eraseColor(palette.count()-1);
