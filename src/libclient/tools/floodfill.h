@@ -20,11 +20,13 @@
 #define TOOLS_FLOODFILL_H
 
 #include "tool.h"
+#include <QCoreApplication>
 
 namespace tools {
 
 class FloodFill : public Tool
 {
+	Q_DECLARE_TR_FUNCTIONS(FloodFill)
 public:
 	FloodFill(ToolController &owner);
 

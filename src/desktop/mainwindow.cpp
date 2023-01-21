@@ -106,6 +106,7 @@
 #include "toolwidgets/lasersettings.h"
 #include "toolwidgets/zoomsettings.h"
 #include "toolwidgets/inspectorsettings.h"
+#include "widgets/toolmessage.h"
 
 #include "export/animationsaverrunnable.h"
 #include "../libshared/record/reader.h"
@@ -359,6 +360,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
+	connect(m_doc->toolCtrl(), &tools::ToolController::toolTip, [](const QString &message) {
+		ToolMessage::showText(message);
+	});
 
 	connect(m_canvasscene, &drawingboard::CanvasScene::annotationDeleted, this, [this](int id) {
 		if(m_doc->toolCtrl()->activeAnnotation() == id)

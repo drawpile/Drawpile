@@ -139,6 +139,8 @@ signals:
 	void colorUsed(const QColor &color);
 	void zoomRequested(const QRect &rect, int steps);
 
+	void toolTip(const QString &message);
+
 private slots:
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 

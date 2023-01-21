@@ -202,15 +202,20 @@ unsigned int CanvasState::pickContextId(int x, int y) const
 }
 
 
-QImage CanvasState::floodFill(
+DP_FloodFillResult CanvasState::floodFill(
     int x, int y, const QColor &fillColor, double tolerance, int layerId,
-    bool sampleMerged, int sizeLimit, int expand, int &outX, int &outY) const
+    bool sampleMerged, int sizeLimit, int expand, QImage &outImg, int &outX,
+    int &outY) const
 {
 	DP_Pixel8 fillColorPixel = {fillColor.rgba()};
-	DP_Image *img = DP_flood_fill(
+	DP_Image *img;
+    DP_FloodFillResult result = DP_flood_fill(
 		m_data, x, y, fillColorPixel, tolerance, layerId, sampleMerged,
-        sizeLimit, expand, &outX, &outY);
-    return wrapImage(img);
+        sizeLimit, expand, &img, &outX, &outY);
+    if(result == DP_FLOOD_FILL_SUCCESS) {
+        outImg = wrapImage(img);
+    }
+    return result;
 }
 
 CanvasState::CanvasState(DP_CanvasState *cs)

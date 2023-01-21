@@ -63,6 +63,7 @@ set(desktop_sources
 	widgets/kis_slider_spin_box.cpp
 	widgets/KisAngleGauge.cpp
 	widgets/timelinewidget.cpp
+	widgets/toolmessage.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
 	docks/navigator.cpp

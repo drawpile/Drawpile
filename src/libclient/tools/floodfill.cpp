@@ -47,13 +47,12 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 	QColor fillColor = m_eraseMode ? Qt::black : owner.activeBrush().qColor();
 	int layerId = owner.activeLayer();
 	int x, y;
-	QImage img = model->paintEngine()->viewCanvasState().floodFill(
+	QImage img;
+	DP_FloodFillResult result = model->paintEngine()->viewCanvasState().floodFill(
 		point.x(), point.y(), fillColor, m_tolerance, layerId,
-		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion, x, y);
+		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion, img, x, y);
 
-	if(img.isNull()) {
-		qWarning("Flood fill failed: %s", DP_error());
-	} else {
+	if(result == DP_FLOOD_FILL_SUCCESS) {
 		uint8_t contextId = model->localUserId();
 		drawdance::MessageList msgs;
 		msgs.append(drawdance::Message::makeUndoPoint(contextId));
@@ -61,6 +60,14 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 			m_eraseMode ? DP_BLEND_MODE_ERASE : m_underFill ? DP_BLEND_MODE_BEHIND : DP_BLEND_MODE_NORMAL;
 		drawdance::Message::makePutImages(msgs, contextId, layerId, blendMode, x, y, img);
 		owner.client()->sendMessages(msgs.count(), msgs.constData());
+	} else if(result == DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED) {
+		// The flood fill failing due to an exceeded size limit is non-obvious.
+		// Show a message to the user to explain the situation.
+		emit owner.toolTip(tr("Size limit exceeded."));
+	} else {
+		// Other stuff is obvious errors, like trying to fill out of bounds.
+		// Don't show a message in those cases.
+		qWarning("Flood fill failed: %s", DP_error());
 	}
 
 	QGuiApplication::restoreOverrideCursor();

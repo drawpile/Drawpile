@@ -2,6 +2,7 @@
 #define DRAWDANCE_CANVASSTATE_H
 
 extern "C" {
+#include <dpengine/flood_fill.h>
 #include <dpengine/load.h>
 }
 
@@ -70,9 +71,10 @@ public:
 
     unsigned int pickContextId(int x, int y) const;
 
-    QImage floodFill(
+    DP_FloodFillResult floodFill(
         int x, int y, const QColor &fillColor, double tolerance, int layerId,
-        bool sampleMerged, int sizeLimit, int expand, int &outX, int &outY) const;
+        bool sampleMerged, int sizeLimit, int expand, QImage &outImg, int &outX,
+        int &outY) const;
 
 private:
     explicit CanvasState(DP_CanvasState *cs);
