@@ -473,10 +473,11 @@ void DP_brush_preview_render_flood_fill(DP_BrushPreview *bp,
     int width = DP_canvas_state_width(cs);
     int height = DP_canvas_state_height(cs);
     int x, y;
-    DP_Image *img =
-        DP_flood_fill(cs, width / 2, height / 2, (DP_Pixel8){fill_color},
-                      tolerance, 1, false, width * height, expand, &x, &y);
-    if (!img) {
+    DP_Image *img;
+    DP_FloodFillResult result = DP_flood_fill(
+        cs, width / 2, height / 2, (DP_Pixel8){fill_color}, tolerance, 1, false,
+        width * height, expand, &img, &x, &y);
+    if (result != DP_FLOOD_FILL_SUCCESS) {
         DP_warn("Preview flood fill: %s", DP_error());
         return;
     }

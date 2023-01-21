@@ -27,10 +27,19 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
 
+typedef enum DP_FloodFillResult {
+    DP_FLOOD_FILL_SUCCESS,
+    DP_FLOOD_FILL_OUT_OF_BOUNDS,
+    DP_FLOOD_FILL_INVALID_LAYER,
+    DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED,
+    DP_FLOOD_FILL_NOTHING_TO_FILL,
+} DP_FloodFillResult;
 
-DP_Image *DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_Pixel8 fill_color,
-                        double tolerance, int layer_id, bool sample_merged,
-                        int size_limit, int expand, int *out_x, int *out_y);
+DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
+                                 DP_Pixel8 fill_color, double tolerance,
+                                 int layer_id, bool sample_merged,
+                                 int size_limit, int expand, DP_Image **out_img,
+                                 int *out_x, int *out_y);
 
 
 #endif

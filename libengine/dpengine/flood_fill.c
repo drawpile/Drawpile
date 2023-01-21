@@ -254,16 +254,18 @@ static DP_Image *make_image_expand(DP_FillContext *c, DP_Pixel8 fill_color,
     return img;
 }
 
-DP_Image *DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_Pixel8 fill_color,
-                        double tolerance, int layer_id, bool sample_merged,
-                        int size_limit, int expand, int *out_x, int *out_y)
+DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
+                                 DP_Pixel8 fill_color, double tolerance,
+                                 int layer_id, bool sample_merged,
+                                 int size_limit, int expand, DP_Image **out_img,
+                                 int *out_x, int *out_y)
 {
     DP_ASSERT(cs);
     int width = DP_canvas_state_width(cs);
     int height = DP_canvas_state_height(cs);
     if (x < 0 || y < 0 || x >= width || y >= height) {
         DP_error_set("Flood fill: initial point out of bounds");
-        return NULL;
+        return DP_FLOOD_FILL_OUT_OF_BOUNDS;
     }
 
     DP_LayerContent *lc;
@@ -276,7 +278,7 @@ DP_Image *DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_Pixel8 fill_color,
         DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
         if (!lre) {
             DP_error_set("Flood fill: layer %d not found", layer_id);
-            return NULL;
+            return DP_FLOOD_FILL_INVALID_LAYER;
         }
         lc = DP_layer_content_incref(DP_layer_routes_entry_content(lre, cs));
     }
@@ -306,13 +308,13 @@ DP_Image *DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_Pixel8 fill_color,
     if (!fill_done) {
         DP_error_set("Flood fill: size limit %d exceeded", size_limit);
         DP_free(buffer);
-        return NULL;
+        return DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED;
     }
 
     if (c.min_x > c.max_x || c.min_y > c.max_y) {
         DP_error_set("Flood fill: nothing to fill");
         DP_free(buffer);
-        return NULL;
+        return DP_FLOOD_FILL_NOTHING_TO_FILL;
     }
 
     int img_x, img_y;
@@ -327,5 +329,11 @@ DP_Image *DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_Pixel8 fill_color,
     if (out_y) {
         *out_y = img_y;
     }
-    return img;
+    if (out_img) {
+        *out_img = img;
+    }
+    else {
+        DP_free(img);
+    }
+    return DP_FLOOD_FILL_SUCCESS;
 }
