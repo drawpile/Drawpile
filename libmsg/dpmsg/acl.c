@@ -984,7 +984,7 @@ static int count_user_bits(const uint8_t *users)
     return count;
 }
 
-static void set_message_user_bits(int count, uint8_t *out, void *user)
+static void set_message_user_bits(DP_UNUSED int count, uint8_t *out, void *user)
 {
     const uint8_t *users = user;
     int out_index = 0;
