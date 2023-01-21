@@ -72,6 +72,9 @@ public slots:
 	//! Toggle current tool's eraser mode (if it has one)
 	void toggleEraserMode();
 
+	//! Toggle current tool's recolor mode (if it has one)
+	void toggleRecolorMode();
+
 	//! Quick adjust current tool
 	void quickAdjustCurrent1(qreal adjustment);
 

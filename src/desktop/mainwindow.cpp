@@ -3010,7 +3010,8 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
-	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle eraser mode")).shortcut("Ctrl+E");
+	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
+	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Ctrl+W");
 	QAction *swapcolors = makeAction("swapcolors", tr("Swap Last Colors")).shortcut("X");
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight);
@@ -3019,12 +3020,14 @@ void MainWindow::setupActions()
 	biggerbrush->setAutoRepeat(true);
 
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
+	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleRecolorMode);
 	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapLastUsedColors);
 
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
 
 	toolshortcuts->addAction(currentEraseMode);
+	toolshortcuts->addAction(currentRecolorMode);
 	toolshortcuts->addAction(swapcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);

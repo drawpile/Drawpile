@@ -295,6 +295,11 @@ void ToolSettings::toggleEraserMode()
 	d->currentSettings()->toggleEraserMode();
 }
 
+void ToolSettings::toggleRecolorMode()
+{
+	d->currentSettings()->toggleRecolorMode();
+}
+
 void ToolSettings::eraserNear(bool near)
 {
 	// Auto-switch to eraser mode only when using a brush tool, since

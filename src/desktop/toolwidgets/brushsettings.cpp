@@ -340,6 +340,32 @@ void BrushSettings::toggleEraserMode()
 	}
 }
 
+void BrushSettings::toggleRecolorMode()
+{
+	if(!isCurrentEraserSlot()) {
+		brushes::ActiveBrush &brush = d->currentBrush();
+		switch(brush.activeType()) {
+		case brushes::ActiveBrush::CLASSIC: {
+			brushes::ClassicBrush &cb = brush.classic();
+			if(cb.mode == DP_BLEND_MODE_RECOLOR) {
+				cb.mode = DP_BLEND_MODE_NORMAL;
+			} else {
+				cb.mode = DP_BLEND_MODE_RECOLOR;
+			}
+			break;
+		}
+		case brushes::ActiveBrush::MYPAINT: {
+			DP_MyPaintBrush &mpb = brush.myPaint().brush();
+			mpb.lock_alpha = !mpb.lock_alpha;
+			break;
+		}
+		default:
+			break;
+		}
+		updateUi();
+	}
+}
+
 void BrushSettings::setEraserMode(bool erase)
 {
 	Q_ASSERT(!isCurrentEraserSlot());

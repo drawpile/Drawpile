@@ -161,9 +161,11 @@ public:
 public slots:
 	//! Toggle tool eraser mode (if it has one)
 	virtual void toggleEraserMode() { }
+	//! Toggle tool recolor mode (if it has one)
+	virtual void toggleRecolorMode() { }
 
 protected:
-	virtual QWidget *createUiWidget(QWidget *parent) = 0;	
+	virtual QWidget *createUiWidget(QWidget *parent) = 0;
 	ToolController *controller() { return m_ctrl; }
 
 private:
