@@ -170,8 +170,8 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
         float raw_pressure = (p * p - p * p * p) * 6.756f;
         float pressure = CLAMP(raw_pressure, 0.0f, 1.0f);
         float y = sinf(phase) * h;
-        DP_brush_engine_stroke_to(be, rxf + xf, offy + y, pressure, DELTA_MS,
-                                  cs);
+        DP_brush_engine_stroke_to(be, rxf + xf, offy + y, pressure, 0.0f, 0.0f,
+                                  0.0f, DELTA_MS, cs);
         phase += dphase;
     }
 }
@@ -179,11 +179,11 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
 static void stroke_line(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect)
 {
     DP_brush_engine_stroke_to(be, DP_int_to_float(DP_rect_x(rect)),
-                              DP_int_to_float(DP_rect_y(rect)), 1.0f, DELTA_MS,
-                              cs);
+                              DP_int_to_float(DP_rect_y(rect)), 1.0f, 0.0f,
+                              0.0f, 0.0f, DELTA_MS, cs);
     DP_brush_engine_stroke_to(be, DP_int_to_float(DP_rect_right(rect)),
-                              DP_int_to_float(DP_rect_bottom(rect)), 1.0f,
-                              DELTA_MS, cs);
+                              DP_int_to_float(DP_rect_bottom(rect)), 1.0f, 0.0f,
+                              0.0f, 0.0f, DELTA_MS, cs);
 }
 
 static void stroke_rectangle(DP_BrushEngine *be, DP_CanvasState *cs,
@@ -193,11 +193,11 @@ static void stroke_rectangle(DP_BrushEngine *be, DP_CanvasState *cs,
     float r = DP_int_to_float(DP_rect_right(rect));
     float t = DP_int_to_float(DP_rect_top(rect));
     float b = DP_int_to_float(DP_rect_bottom(rect));
-    DP_brush_engine_stroke_to(be, l, t, 1.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, r, t, 1.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, r, b, 1.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, l, b, 1.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, l, t, 1.0f, DELTA_MS, cs);
+    DP_brush_engine_stroke_to(be, l, t, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
+    DP_brush_engine_stroke_to(be, r, t, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
+    DP_brush_engine_stroke_to(be, r, b, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
+    DP_brush_engine_stroke_to(be, l, b, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
+    DP_brush_engine_stroke_to(be, l, t, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
 }
 
 static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect)
@@ -209,7 +209,7 @@ static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect)
     for (int i = 0; i <= 40; ++i) {
         float t = PI_FLOAT / 20.0f * DP_int_to_float(i);
         DP_brush_engine_stroke_to(be, cx + a * cosf(t), cy + b * sinf(t), 1.0f,
-                                  DELTA_MS, cs);
+                                  0.0f, 0.0f, 0.0f, DELTA_MS, cs);
     }
 }
 
@@ -230,7 +230,8 @@ static void stroke_flood_fill_blob(DP_BrushEngine *be, DP_CanvasState *cs,
     while (a < PI_FLOAT) {
         float x = rxf + a / PI_FLOAT * rwf;
         float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 3.0f) * 0.3f;
-        DP_brush_engine_stroke_to(be, x, mid - y * h, 1.0f, DELTA_MS, cs);
+        DP_brush_engine_stroke_to(be, x, mid - y * h, 1.0f, 0.0f, 0.0f, 0.0f,
+                                  DELTA_MS, cs);
         a += 0.1f;
     }
 
@@ -238,14 +239,16 @@ static void stroke_flood_fill_blob(DP_BrushEngine *be, DP_CanvasState *cs,
     while (a < PI_FLOAT) {
         float x = rrf - (a / PI_FLOAT * rwf);
         float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 2.8f) * 0.2f;
-        DP_brush_engine_stroke_to(be, x, mid + y * h, 1.0f, DELTA_MS, cs);
+        DP_brush_engine_stroke_to(be, x, mid + y * h, 1.0f, 0.0f, 0.0f, 0.0f,
+                                  DELTA_MS, cs);
         a += 0.1f;
     }
 
     a = 0.0f;
     float x = rxf + a / PI_FLOAT * rwf;
     float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 3.0f) * 0.3f;
-    DP_brush_engine_stroke_to(be, x, mid - y * h, 1.0f, DELTA_MS, cs);
+    DP_brush_engine_stroke_to(be, x, mid - y * h, 1.0f, 0.0f, 0.0f, 0.0f,
+                              DELTA_MS, cs);
 }
 
 void render_brush_preview(

@@ -58,7 +58,8 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
 
 // Pushes draw dabs messages.
 void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
-                               float pressure, long long delta_msec,
+                               float pressure, float xtilt, float ytilt,
+                               float rotation, long long delta_msec,
                                DP_CanvasState *cs_or_null);
 
 // Finishes a stroke, optionally pushes a pen up message.

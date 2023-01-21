@@ -83,7 +83,7 @@ struct DP_BrushEngine {
     int last_diameter;
     DP_BrushEngineActiveType active;
     MyPaintBrush *mypaint_brush;
-    MyPaintSurface mypaint_surface;
+    MyPaintSurface2 mypaint_surface2;
     bool in_progress;
     union {        // Active type decides which of these is relevant.
         int dummy; // Make this initializable without the compiler whining.
@@ -260,11 +260,11 @@ static void init_mypaint_once(void)
     }
 }
 
-static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface *self)
+static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface2 *self)
 {
     unsigned char *bytes = (unsigned char *)self;
     return (DP_BrushEngine *)(bytes
-                              - offsetof(DP_BrushEngine, mypaint_surface));
+                              - offsetof(DP_BrushEngine, mypaint_surface2));
 }
 
 static uint32_t get_mypaint_dab_color(DP_BrushEngine *be, float color_r,
@@ -313,11 +313,13 @@ static uint8_t get_mypaint_dab_aspect_ratio(float aspect_ratio)
                              + 0.5f);
 }
 
-static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
-                           float color_r, float color_g, float color_b,
-                           float opaque, float hardness, float alpha_eraser,
-                           float aspect_ratio, float angle, float lock_alpha,
-                           DP_UNUSED float colorize)
+static int
+add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y, float radius,
+                        float color_r, float color_g, float color_b,
+                        float opaque, float hardness, float alpha_eraser,
+                        float aspect_ratio, float angle, float lock_alpha,
+                        DP_UNUSED float colorize, DP_UNUSED float posterize,
+                        DP_UNUSED float posterize_num, DP_UNUSED float paint)
 {
     // A radius less than 0.1 pixels is infinitesimally small. A hardness or
     // opacity of zero means the mask is completely blank. Disregard the dab
@@ -365,9 +367,22 @@ static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
     }
 }
 
-static void get_color_mypaint(MyPaintSurface *self, float x, float y,
-                              float radius, float *color_r, float *color_g,
-                              float *color_b, float *color_a)
+static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
+                           float color_r, float color_g, float color_b,
+                           float opaque, float hardness, float alpha_eraser,
+                           float aspect_ratio, float angle, float lock_alpha,
+                           float colorize)
+{
+    return add_dab_mypaint_pigment((MyPaintSurface2 *)self, x, y, radius,
+                                   color_r, color_g, color_b, opaque, hardness,
+                                   alpha_eraser, aspect_ratio, angle,
+                                   lock_alpha, colorize, 0.0f, 0.0f, 0.0f);
+}
+
+static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
+                                      float radius, float *color_r,
+                                      float *color_g, float *color_b,
+                                      float *color_a, DP_UNUSED float paint)
 {
     DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
     DP_LayerContent *lc = be->lc;
@@ -389,6 +404,14 @@ static void get_color_mypaint(MyPaintSurface *self, float x, float y,
     }
 }
 
+static void get_color_mypaint(MyPaintSurface *self, float x, float y,
+                              float radius, float *color_r, float *color_g,
+                              float *color_b, float *color_a)
+{
+    get_color_mypaint_pigment((MyPaintSurface2 *)self, x, y, radius, color_r,
+                              color_g, color_b, color_a, 0.0f);
+}
+
 
 DP_BrushEngine *DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
                                     void *user)
@@ -404,7 +427,10 @@ DP_BrushEngine *DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
         -1,
         DP_BRUSH_ENGINE_ACTIVE_PIXEL,
         mypaint_brush_new_with_buckets(SMUDGE_BUCKET_COUNT),
-        {add_dab_mypaint, get_color_mypaint, NULL, NULL, NULL, NULL, 0},
+        {{add_dab_mypaint, get_color_mypaint, NULL, NULL, NULL, NULL, 0},
+         add_dab_mypaint_pigment,
+         get_color_mypaint_pigment,
+         NULL},
         false,
         {0},
         {0, 0, 0, 0, NULL},
@@ -816,10 +842,11 @@ static void stroke_to_classic(
 
 
 static void stroke_to_mypaint(DP_BrushEngine *be, float x, float y,
-                              float pressure, long long delta_msec)
+                              float pressure, float xtilt, float ytilt,
+                              float rotation, long long delta_msec)
 {
     MyPaintBrush *mb = be->mypaint_brush;
-    MyPaintSurface *surface = &be->mypaint_surface;
+    MyPaintSurface2 *surface = &be->mypaint_surface2;
 
     if (!be->in_progress) {
         be->in_progress = true;
@@ -834,12 +861,13 @@ static void stroke_to_mypaint(DP_BrushEngine *be, float x, float y,
         // you crank up the smoothing really high there and move the pen
         // really fast, you can get strokes from when your pen wasn't on the
         // tablet, which is just weird.
-        mypaint_brush_stroke_to(mb, surface, x, y, pressure, 0.0f, 0.0f,
-                                1000.0);
+        mypaint_brush_stroke_to_2(mb, surface, x, y, pressure, xtilt, ytilt,
+                                  0.0f, 1.0f, 0.0f, rotation);
     }
 
     double delta_sec = ((double)delta_msec) / 1000.0f;
-    mypaint_brush_stroke_to(mb, surface, x, y, pressure, 0.0f, 0.0f, delta_sec);
+    mypaint_brush_stroke_to_2(mb, surface, x, y, pressure, xtilt, ytilt,
+                              delta_sec, 1.0f, 0.0f, rotation);
 }
 
 static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
@@ -856,7 +884,8 @@ static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
 }
 
 void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
-                               float pressure, long long delta_msec,
+                               float pressure, float xtilt, float ytilt,
+                               float rotation, long long delta_msec,
                                DP_CanvasState *cs_or_null)
 {
     DP_ASSERT(be);
@@ -879,7 +908,8 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
         stroke_to_classic(be, x, y, pressure, first_dab_soft, stroke_soft);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_MYPAINT:
-        stroke_to_mypaint(be, x, y, pressure, delta_msec);
+        stroke_to_mypaint(be, x, y, pressure, xtilt, ytilt, rotation,
+                          delta_msec);
         break;
     default:
         DP_UNREACHABLE();
