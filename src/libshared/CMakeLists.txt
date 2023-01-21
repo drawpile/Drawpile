@@ -19,6 +19,7 @@ set(libshared_sources
 	record/reader.cpp
 	record/writer.cpp
 	util/filename.cpp
+	util/functionrunnable.cpp
 	util/networkaccess.cpp
 	util/passwordhash.cpp
 	util/paths.cpp

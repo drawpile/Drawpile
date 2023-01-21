@@ -31,6 +31,7 @@
 #include "export/canvassaverrunnable.h"
 #include "tools/toolcontroller.h"
 #include "utils/images.h"
+#include "../libshared/util/functionrunnable.h"
 
 #include <QGuiApplication>
 #include <QSettings>
@@ -40,6 +41,7 @@
 #include <QThreadPool>
 #include <QPainter>
 #include <QtEndian>
+#include <QRunnable>
 
 Document::Document(QObject *parent)
 	: QObject(parent),
@@ -702,9 +704,11 @@ void Document::snapshotNeeded()
 	// (We) requested a session reset and the server is now ready for it.
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
-			QThreadPool::globalInstance()->start([this](){
+			// FunctionRunnable has autoDelete enabled
+			auto runnable = new utils::FunctionRunnable([this](){
 				generateJustInTimeSnapshot();
 			});
+			QThreadPool::globalInstance()->start(runnable);
 		} else {
 			sendResetSnapshot();
 		}
