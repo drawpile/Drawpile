@@ -71,6 +71,7 @@ LayerList::LayerList(QWidget *parent)
 	titlebar->addSpace(4);
 
 	m_blendModeCombo = new QComboBox;
+	m_blendModeCombo->setMinimumWidth(24);
 	for(const QPair<DP_BlendMode, QString> &bm : canvas::blendmode::layerModeNames()) {
 		m_blendModeCombo->addItem(bm.second, int(bm.first));
 	}
@@ -85,6 +86,7 @@ LayerList::LayerList(QWidget *parent)
 	m_opacitySlider->setPrefix(tr("Opacity: "));
 	m_opacitySlider->setSuffix(tr("%"));
 	m_opacitySlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_opacitySlider->setMinimumWidth(64);
 	connect(
 		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &LayerList::opacityChanged);
