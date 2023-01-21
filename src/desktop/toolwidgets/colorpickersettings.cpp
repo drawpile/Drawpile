@@ -23,6 +23,7 @@
 #include "tools/colorpicker.h"
 #include "widgets/kis_slider_spin_box.h"
 
+#include <QtColorWidgets/color_dialog.hpp>
 #include <QtColorWidgets/swatch.hpp>
 
 #include <QBoxLayout>
@@ -30,6 +31,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QCheckBox>
+#include <QPushButton>
 
 namespace tools {
 
@@ -73,10 +75,15 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	m_palettewidget->setReadOnly(true);
 	layout->addWidget(m_palettewidget);
 
+	QPushButton *addButton = new QPushButton{
+		icon::fromTheme("list-add"), tr("Add Color..."), widget};
+	layout->addWidget(addButton);
+
 	connect(m_palettewidget, &color_widgets::Swatch::colorSelected, this, &ColorPickerSettings::colorSelected);
 	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(m_size, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorPickerSettings::pushSettings);
 	connect(m_layerpick, &QCheckBox::toggled, this, &ColorPickerSettings::pushSettings);
+	connect(addButton, &QPushButton::pressed, this, &ColorPickerSettings::openColorDialog);
 
 	return widget;
 }
@@ -86,6 +93,16 @@ void ColorPickerSettings::pushSettings()
 	auto *tool = static_cast<ColorPicker*>(controller()->getTool(Tool::PICKER));
 	tool->setSize(m_size->value());
 	tool->setPickFromCurrentLayer(m_layerpick->isChecked());
+}
+
+void ColorPickerSettings::openColorDialog()
+{
+	color_widgets::ColorDialog *dlg = new color_widgets::ColorDialog{m_palettewidget};
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	color_widgets::ColorPalette &palette = m_palettewidget->palette();
+	dlg->setColor(palette.count() == 0 ? Qt::black : palette.colorAt(0));
+	connect(dlg, &color_widgets::ColorDialog::colorSelected, this, &ColorPickerSettings::addColor);
+	dlg->show();
 }
 
 int ColorPickerSettings::getSize() const
