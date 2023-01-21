@@ -309,7 +309,8 @@ static uint8_t get_mypaint_dab_angle(float angle)
 // Spread the aspect ratio into a range between 0.1 and 10.0, then into a byte.
 static uint8_t get_mypaint_dab_aspect_ratio(float aspect_ratio)
 {
-    return DP_float_to_uint8(CLAMP(aspect_ratio, 0.1f, 10.0f) * 25.755f + 0.5f);
+    return DP_float_to_uint8((CLAMP(aspect_ratio, 0.1f, 10.0f) - 0.1f) * 25.755f
+                             + 0.5f);
 }
 
 static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
