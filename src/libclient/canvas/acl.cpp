@@ -234,7 +234,8 @@ bool AclState::isLayerLocked(uint16_t layerId) const
 	if(!d->layers.contains(layerId))
 		return false;
 	const Layer &l = d->layers[layerId];
-	return l.locked || (!l.exclusive.isEmpty() && !l.exclusive.contains(d->localUser));
+	return l.locked || DP_user_acls_tier(&d->users, d->localUser) > l.tier ||
+		(!l.exclusive.isEmpty() && !l.exclusive.contains(d->localUser));
 }
 
 bool AclState::canUseFeature(DP_Feature feature) const
