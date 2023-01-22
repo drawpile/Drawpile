@@ -171,7 +171,7 @@ public slots:
 	 */
 	void setBrushCursorStyle(int style, qreal outlineWidth);
 
-	void updateShortcuts();
+	void updateSettings();
 
 protected:
 	void enterEvent(QEvent *event) override;

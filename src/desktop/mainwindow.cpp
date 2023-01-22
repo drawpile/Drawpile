@@ -413,7 +413,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(loadShortcuts()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateSettings()));
 	connect(qApp, SIGNAL(settingsChanged()), m_doc, SLOT(updateSettings()));
-	connect(qApp, SIGNAL(settingsChanged()), m_view, SLOT(updateShortcuts()));
+	connect(qApp, SIGNAL(settingsChanged()), m_view, SLOT(updateSettings()));
 
 	updateSettings();
 

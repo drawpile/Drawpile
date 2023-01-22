@@ -271,6 +271,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->toolToggleShortcut->setChecked(cfg.value("tooltoggle", true).toBool());
 	m_ui->shareBrushSlotColor->setChecked(cfg.value("sharebrushslotcolor", false).toBool());
 	m_ui->confirmLayerDeleteBox->setChecked(cfg.value("confirmlayerdelete", false).toBool());
+	m_ui->canvasScrollBarsBox->setChecked(cfg.value("canvasscrollbars", false).toBool());
 
 	m_ui->insecurePasswordStorage->setChecked(cfg.value("insecurepasswordstorage", false).toBool());
 
@@ -396,6 +397,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
 	cfg.setValue("settings/confirmlayerdelete", m_ui->confirmLayerDeleteBox->isChecked());
+	cfg.setValue("settings/canvasscrollbars", m_ui->canvasScrollBarsBox->isChecked());
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
 
 	cfg.beginGroup("settings/input");

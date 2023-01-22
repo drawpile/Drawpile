@@ -68,9 +68,6 @@ CanvasView::CanvasView(QWidget *parent)
 	m_brushCursorStyle(0),
 	m_brushOutlineWidth(1.0)
 {
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
 	viewport()->setAcceptDrops(true);
 #ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
 	viewport()->grabGesture(Qt::PinchGesture);
@@ -100,7 +97,7 @@ CanvasView::CanvasView(QWidget *parent)
 		m_dotcursor = QCursor(dot, 0, 0);
 	}
 
-	updateShortcuts();
+	updateSettings();
 }
 
 void CanvasView::showDisconnectedWarning(const QString &message)
@@ -108,11 +105,19 @@ void CanvasView::showDisconnectedWarning(const QString &message)
 	m_notificationBar->show(message, tr("Reconnect"), NotificationBar::RoleColor::Warning);
 }
 
-void CanvasView::updateShortcuts()
+void CanvasView::updateSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("settings/canvasShortcuts");
 	m_shortcuts = CanvasViewShortcuts::load(cfg);
+	cfg.endGroup();
+
+	cfg.beginGroup("settings");
+	Qt::ScrollBarPolicy policy = cfg.value("canvasscrollbars", false).toBool()
+		? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff;
+	setHorizontalScrollBarPolicy(policy);
+	setVerticalScrollBarPolicy(policy);
+	cfg.endGroup();
 }
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
