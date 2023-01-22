@@ -16,15 +16,15 @@
   <property name="windowTitle">
    <string>Host a Session</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Session</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel">
         <property name="text">
          <string>&amp;Title:</string>
         </property>
@@ -41,7 +41,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel">
         <property name="text">
          <string>&amp;Password:</string>
         </property>
@@ -67,7 +67,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel">
         <property name="text">
          <string>ID a&amp;lias:</string>
         </property>
@@ -93,11 +93,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Listing</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <layout class="QFormLayout">
       <item row="0" column="0">
        <widget class="QCheckBox" name="announce">
         <property name="toolTip">
@@ -122,7 +122,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel">
         <property name="text">
          <string>Type:</string>
         </property>
@@ -149,11 +149,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Server</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout">
       <item>
        <widget class="QRadioButton" name="uselocal">
         <property name="enabled">
@@ -171,7 +171,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout">
         <item>
          <widget class="QRadioButton" name="useremote">
           <property name="toolTip">
@@ -222,7 +222,7 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

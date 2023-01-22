@@ -13,12 +13,12 @@
   <property name="windowTitle">
    <string>Tablet Tester</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+  <layout class="QHBoxLayout" stretch="1,1">
    <item>
     <widget class="widgets::TabletTester" name="tablettest"/>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout">
      <item>
       <widget class="QPlainTextEdit" name="logView">
        <property name="readOnly">

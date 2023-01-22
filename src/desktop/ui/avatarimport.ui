@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Crop Avatar</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="widgets::ResizerWidget" name="resizer"/>
    </item>

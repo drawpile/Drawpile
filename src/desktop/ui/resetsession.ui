@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Reset session</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0">
+  <layout class="QVBoxLayout" stretch="1,0,0">
    <item>
     <widget class="QLabel" name="preview">
      <property name="minimumSize">

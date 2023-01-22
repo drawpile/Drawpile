@@ -10,7 +10,7 @@
     <height>370</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <property name="spacing">
     <number>3</number>
    </property>
@@ -49,10 +49,10 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QWidget" name="brushTypeContainer" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -152,7 +152,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -226,7 +226,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout_2">
+    <layout class="QGridLayout">
      <property name="horizontalSpacing">
       <number>3</number>
      </property>
@@ -381,14 +381,14 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel">
        <property name="text">
         <string>Opacity:</string>
        </property>
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QSpinBox" name="spinBox_2">
+      <widget class="QSpinBox" name="opacityBox">
        <property name="suffix">
         <string notr="true">%</string>
        </property>
@@ -576,7 +576,7 @@
       </widget>
      </item>
      <item row="10" column="0">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel">
        <property name="text">
         <string>Input:</string>
        </property>
@@ -637,7 +637,7 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -701,7 +701,7 @@
   <connection>
    <sender>brushopacity</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_2</receiver>
+   <receiver>opacityBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -715,7 +715,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_2</sender>
+   <sender>opacityBox</sender>
    <signal>valueChanged(int)</signal>
    <receiver>brushopacity</receiver>
    <slot>setValue(int)</slot>

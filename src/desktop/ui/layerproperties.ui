@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Layer Properties</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <layout class="QFormLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="titleLabel">
      <property name="text">
@@ -35,7 +35,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QSlider" name="opacitySlider">
        <property name="maximum">
@@ -76,7 +76,7 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <spacer name="verticalSpacer">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -92,7 +92,7 @@
     </spacer>
    </item>
    <item row="8" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel">
      <property name="text">
       <string>Visibility:</string>
      </property>
@@ -113,7 +113,7 @@
     </widget>
    </item>
    <item row="10" column="1">
-    <spacer name="verticalSpacer_2">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -129,7 +129,7 @@
     </spacer>
    </item>
    <item row="11" column="0">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel">
      <property name="text">
       <string>Collaboration:</string>
      </property>
@@ -143,7 +143,7 @@
     </widget>
    </item>
    <item row="13" column="0">
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel">
      <property name="text">
       <string>Created by:</string>
      </property>
@@ -160,7 +160,7 @@
     </widget>
    </item>
    <item row="15" column="0">
-    <spacer name="verticalSpacer_3">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

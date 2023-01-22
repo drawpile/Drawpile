@@ -13,12 +13,12 @@
   <property name="windowTitle">
    <string>Flipbook</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+  <layout class="QVBoxLayout" stretch="1,0">
    <item>
     <widget class="FlipbookView" name="view" native="true"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QToolButton" name="zoomButton">
        <property name="icon">
@@ -83,7 +83,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel">
        <property name="text">
         <string>Frame:</string>
        </property>
@@ -103,7 +103,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel">
        <property name="text">
         <string>Loop range:</string>
        </property>
@@ -117,7 +117,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel">
        <property name="text">
         <string notr="true">-</string>
        </property>
@@ -131,7 +131,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -154,7 +154,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -167,7 +167,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel">
        <property name="text">
         <string>FPS:</string>
        </property>

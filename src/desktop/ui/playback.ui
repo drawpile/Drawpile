@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Playback</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -21,7 +21,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout">
      <property name="leftMargin">
       <number>6</number>
      </property>
@@ -29,7 +29,7 @@
       <number>6</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout">
        <item>
         <widget class="QToolButton" name="skipBackward">
          <property name="enabled">
@@ -119,7 +119,7 @@
       </layout>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -132,7 +132,7 @@
       </spacer>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout">
        <item row="0" column="0" rowspan="2">
         <widget class="QDial" name="speedcontrol">
          <property name="sizePolicy">
@@ -165,7 +165,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel">
          <property name="text">
           <string>Speed:</string>
          </property>
@@ -194,7 +194,7 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="buildIndexPage">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QProgressBar" name="playbackProgress">
          <property name="styleSheet">
@@ -218,7 +218,7 @@ border-right: 2px solid black;
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -247,7 +247,7 @@ border-right: 2px solid black;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout">
          <property name="leftMargin">
           <number>6</number>
          </property>
@@ -276,7 +276,7 @@ border-right: 2px solid black;
       </layout>
      </widget>
      <widget class="QWidget" name="filmstripPage">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="widgets::Filmstrip" name="filmStrip">
          <property name="sizePolicy">
@@ -299,7 +299,7 @@ border-right: 2px solid black;
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
+    <layout class="QHBoxLayout">
      <property name="leftMargin">
       <number>6</number>
      </property>
@@ -318,7 +318,7 @@ border-right: 2px solid black;
         <number>1</number>
        </property>
        <widget class="QWidget" name="page">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -332,7 +332,7 @@ border-right: 2px solid black;
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -361,7 +361,7 @@ border-right: 2px solid black;
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_3">
+          <spacer>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -414,8 +414,8 @@ border-right: 2px solid black;
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_2">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <widget class="QWidget">
+        <layout class="QHBoxLayout">
          <property name="leftMargin">
           <number>0</number>
          </property>

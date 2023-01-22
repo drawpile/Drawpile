@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,5">
+    <layout class="QHBoxLayout" stretch="1,5">
      <item>
       <widget class="QListWidget" name="pager">
        <item>
@@ -88,7 +88,7 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout">
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
@@ -100,7 +100,7 @@
              <enum>QFormLayout::ExpandingFieldsGrow</enum>
             </property>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel">
               <property name="text">
                <string>Language:</string>
               </property>
@@ -110,14 +110,14 @@
              <widget class="QComboBox" name="languageBox"/>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel">
               <property name="text">
                <string>Theme:</string>
               </property>
              </widget>
             </item>
             <item row="5" column="0">
-             <widget class="QLabel" name="label_17">
+             <widget class="QLabel">
               <property name="text">
                <string>Logging:</string>
               </property>
@@ -131,7 +131,7 @@
              </widget>
             </item>
             <item row="6" column="1">
-             <spacer name="verticalSpacer_2">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -144,7 +144,7 @@
              </spacer>
             </item>
             <item row="7" column="0">
-             <widget class="QLabel" name="label_7">
+             <widget class="QLabel">
               <property name="text">
                <string>Tablet:</string>
               </property>
@@ -182,7 +182,7 @@
              </widget>
             </item>
             <item row="12" column="1">
-             <spacer name="verticalSpacer_5">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -198,7 +198,7 @@
              </spacer>
             </item>
             <item row="13" column="0">
-             <widget class="QLabel" name="label_12">
+             <widget class="QLabel">
               <property name="text">
                <string>Touch:</string>
               </property>
@@ -226,7 +226,7 @@
              </widget>
             </item>
             <item row="16" column="1">
-             <spacer name="verticalSpacer_3">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -242,7 +242,7 @@
              </spacer>
             </item>
             <item row="18" column="0">
-             <widget class="QLabel" name="label_11">
+             <widget class="QLabel">
               <property name="text">
                <string>Autosave interval:</string>
               </property>
@@ -262,7 +262,7 @@
              </widget>
             </item>
             <item row="19" column="1">
-             <spacer name="verticalSpacer_9">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -275,7 +275,7 @@
              </spacer>
             </item>
             <item row="20" column="0">
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel">
               <property name="text">
                <string>Brush cursor:</string>
               </property>
@@ -301,7 +301,7 @@
              </widget>
             </item>
             <item row="22" column="1">
-             <spacer name="verticalSpacer">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -314,7 +314,7 @@
              </spacer>
             </item>
             <item row="23" column="0">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel">
               <property name="text">
                <string>Tools:</string>
               </property>
@@ -358,7 +358,7 @@
              </widget>
             </item>
             <item row="21" column="0">
-             <widget class="QLabel" name="label_30">
+             <widget class="QLabel">
               <property name="text">
                <string>Brush outline width:</string>
               </property>
@@ -386,7 +386,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="brushPage">
-           <layout class="QFormLayout" name="brushFormLayout">
+           <layout class="QFormLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::ExpandingFieldsGrow</enum>
             </property>
@@ -404,7 +404,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <layout class="QHBoxLayout" name="sizeLimitLayout">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QSlider" name="sizeLimitSlider">
                 <property name="toolTip">
@@ -453,7 +453,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <layout class="QHBoxLayout" name="spacingLimitLayout">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QSlider" name="spacingLimitSlider">
                 <property name="toolTip">
@@ -500,7 +500,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <layout class="QFormLayout" name="formLayout_9">
+           <layout class="QFormLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::ExpandingFieldsGrow</enum>
             </property>
@@ -597,17 +597,17 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_2">
-           <layout class="QFormLayout" name="formLayout_6">
+          <widget class="QWidget">
+           <layout class="QFormLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel">
               <property name="text">
                <string>Notification volume:</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QSlider" name="notificationVolume">
                 <property name="sizePolicy">
@@ -640,7 +640,7 @@
              </layout>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_13">
+             <widget class="QLabel">
               <property name="text">
                <string>Notifications:</string>
               </property>
@@ -677,7 +677,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="stackedWidgetPage2">
-           <layout class="QFormLayout" name="formLayout_3">
+           <layout class="QFormLayout">
             <item row="1" column="0">
              <widget class="QCheckBox" name="recordpause">
               <property name="text">
@@ -689,7 +689,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QDoubleSpinBox" name="minimumpause">
                 <property name="prefix">
@@ -713,7 +713,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_2">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -735,7 +735,7 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QSpinBox" name="timestampInterval">
                 <property name="suffix">
@@ -759,7 +759,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_5">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -774,14 +774,14 @@
              </layout>
             </item>
             <item row="7" column="0">
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel">
               <property name="text">
                <string>Onionskin layers:</string>
               </property>
              </widget>
             </item>
             <item row="7" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QSpinBox" name="onionskinsBelow">
                 <property name="suffix">
@@ -800,7 +800,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_3">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -824,12 +824,12 @@
            </layout>
           </widget>
           <widget class="QWidget" name="stackedWidgetPage3">
-           <layout class="QFormLayout" name="formLayout">
+           <layout class="QFormLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::FieldsStayAtSizeHint</enum>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_6">
+             <widget class="QLabel">
               <property name="text">
                <string>Connection timeout:</string>
               </property>
@@ -852,7 +852,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel">
               <property name="text">
                <string>Default server port:</string>
               </property>
@@ -887,7 +887,7 @@
              </widget>
             </item>
             <item row="5" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel">
               <property name="text">
                <string>Session history:</string>
               </property>
@@ -901,7 +901,7 @@
              </widget>
             </item>
             <item row="6" column="0">
-             <widget class="QLabel" name="label_29">
+             <widget class="QLabel">
               <property name="text">
                <string>Account passwords:</string>
               </property>
@@ -937,24 +937,24 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_4">
-           <layout class="QFormLayout" name="formLayout_4">
+          <widget class="QWidget">
+           <layout class="QFormLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_8">
+             <widget class="QLabel">
               <property name="text">
                <string>Drag mode:</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_18">
+             <widget class="QLabel">
               <property name="text">
                <string>Spacebar / middle mouse button</string>
               </property>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_19">
+             <widget class="QLabel">
               <property name="text">
                <string>Drag rotate view:</string>
               </property>
@@ -964,7 +964,7 @@
              <widget class="widgets::ModifierKeys" name="dragRotateKeys" native="true"/>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="label_21">
+             <widget class="QLabel">
               <property name="text">
                <string>Drag zoom view:</string>
               </property>
@@ -974,7 +974,7 @@
              <widget class="widgets::ModifierKeys" name="dragZoomKeys" native="true"/>
             </item>
             <item row="6" column="0">
-             <widget class="QLabel" name="label_20">
+             <widget class="QLabel">
               <property name="text">
                <string>Drag tool adjust:</string>
               </property>
@@ -984,7 +984,7 @@
              <widget class="widgets::ModifierKeys" name="dragQuickAdjustKeys" native="true"/>
             </item>
             <item row="9" column="0">
-             <widget class="QLabel" name="label_22">
+             <widget class="QLabel">
               <property name="text">
                <string>Scroll zoom view:</string>
               </property>
@@ -994,7 +994,7 @@
              <widget class="widgets::ModifierKeys" name="scrollZoomKeys" native="true"/>
             </item>
             <item row="11" column="0">
-             <widget class="QLabel" name="label_23">
+             <widget class="QLabel">
               <property name="text">
                <string>Scroll tool adjust:</string>
               </property>
@@ -1004,7 +1004,7 @@
              <widget class="widgets::ModifierKeys" name="scrollQuickAdjustKeys" native="true"/>
             </item>
             <item row="13" column="0">
-             <widget class="QLabel" name="label_24">
+             <widget class="QLabel">
               <property name="text">
                <string>Color picker mode:</string>
               </property>
@@ -1014,7 +1014,7 @@
              <widget class="widgets::ModifierKeys" name="colorPickKeys" native="true"/>
             </item>
             <item row="15" column="0">
-             <widget class="QLabel" name="label_25">
+             <widget class="QLabel">
               <property name="text">
                <string>Layer picker mode:</string>
               </property>
@@ -1024,7 +1024,7 @@
              <widget class="widgets::ModifierKeys" name="layerPickKeys" native="true"/>
             </item>
             <item row="17" column="0">
-             <widget class="QLabel" name="label_26">
+             <widget class="QLabel">
               <property name="text">
                <string>Tool constrain mode:</string>
               </property>
@@ -1034,7 +1034,7 @@
              <widget class="widgets::ModifierKeys" name="toolConstrain1Keys" native="true"/>
             </item>
             <item row="20" column="0">
-             <widget class="QLabel" name="label_27">
+             <widget class="QLabel">
               <property name="text">
                <string>Tool center mode:</string>
               </property>
@@ -1044,7 +1044,7 @@
              <widget class="widgets::ModifierKeys" name="toolConstrain2Keys" native="true"/>
             </item>
             <item row="7" column="0">
-             <spacer name="verticalSpacer_4">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -1057,7 +1057,7 @@
              </spacer>
             </item>
             <item row="12" column="0">
-             <spacer name="verticalSpacer_10">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -1070,7 +1070,7 @@
              </spacer>
             </item>
             <item row="16" column="0">
-             <spacer name="verticalSpacer_11">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -1083,7 +1083,7 @@
              </spacer>
             </item>
             <item row="1" column="0">
-             <spacer name="verticalSpacer_12">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -1096,7 +1096,7 @@
              </spacer>
             </item>
             <item row="8" column="0">
-             <widget class="QLabel" name="label_28">
+             <widget class="QLabel">
               <property name="text">
                <string>Scroll rotate view:</string>
               </property>
@@ -1108,7 +1108,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="stackedWidgetPage5">
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QListWidget" name="knownHostList">
               <property name="selectionMode">
@@ -1120,7 +1120,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QPushButton" name="importTrustedButton">
                 <property name="text">
@@ -1129,7 +1129,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1170,7 +1170,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="stackedWidgetPage6">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QListView" name="listserverview">
               <property name="verticalScrollMode">
@@ -1182,9 +1182,9 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout">
               <item>
-               <spacer name="horizontalSpacer_4">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1237,9 +1237,9 @@
            </layout>
           </widget>
           <widget class="QWidget" name="page">
-           <layout class="QFormLayout" name="formLayout_5">
+           <layout class="QFormLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_15">
+             <widget class="QLabel">
               <property name="text">
                <string>NSFM tag words:</string>
               </property>
@@ -1256,7 +1256,7 @@
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="label_14">
+             <widget class="QLabel">
               <property name="text">
                <string>NSFM sessions:</string>
               </property>
@@ -1298,7 +1298,7 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <spacer name="verticalSpacer_8">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -1319,8 +1319,8 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_3">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+          <widget class="QWidget">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QListView" name="avatarList">
               <property name="viewMode">
@@ -1329,9 +1329,9 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <layout class="QHBoxLayout">
               <item>
-               <spacer name="horizontalSpacer_7">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>

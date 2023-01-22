@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string notr="true">SSL certificate</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -23,16 +23,16 @@
       <attribute name="title">
        <string>Info</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0,0,0,0">
+      <layout class="QGridLayout" columnstretch="0,0,0,0,0,0,0">
        <item row="8" column="1" colspan="3">
-        <widget class="QLabel" name="label_10">
+        <widget class="QLabel">
          <property name="text">
           <string>Organization:</string>
          </property>
         </widget>
        </item>
        <item row="16" column="1" colspan="3">
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel">
          <property name="text">
           <string>SHA1 fingerprint:</string>
          </property>
@@ -49,7 +49,7 @@
         </widget>
        </item>
        <item row="5" column="0" colspan="7">
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel">
          <property name="font">
           <font>
            <weight>75</weight>
@@ -62,14 +62,14 @@
         </widget>
        </item>
        <item row="12" column="1" colspan="3">
-        <widget class="QLabel" name="label_15">
+        <widget class="QLabel">
          <property name="text">
           <string>Expires on:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0" rowspan="2">
-        <spacer name="horizontalSpacer">
+        <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -125,49 +125,49 @@
         </widget>
        </item>
        <item row="15" column="1" colspan="3">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel">
          <property name="text">
           <string>MD5 fingerprint:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1" colspan="3">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel">
          <property name="text">
           <string>Organization:</string>
          </property>
         </widget>
        </item>
        <item row="9" column="1" colspan="3">
-        <widget class="QLabel" name="label_11">
+        <widget class="QLabel">
          <property name="text">
           <string>Organization unit:</string>
          </property>
         </widget>
        </item>
        <item row="11" column="1" colspan="3">
-        <widget class="QLabel" name="label_14">
+        <widget class="QLabel">
          <property name="text">
           <string>Issued on:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1" colspan="3">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel">
          <property name="text">
           <string>Organization unit:</string>
          </property>
         </widget>
        </item>
        <item row="7" column="1" colspan="3">
-        <widget class="QLabel" name="label_9">
+        <widget class="QLabel">
          <property name="text">
           <string>Common name:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1" colspan="3">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel">
          <property name="text">
           <string>Serial number:</string>
          </property>
@@ -187,7 +187,7 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="7">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel">
          <property name="font">
           <font>
            <weight>75</weight>
@@ -210,7 +210,7 @@
         </widget>
        </item>
        <item row="1" column="1" colspan="3">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel">
          <property name="text">
           <string>Common name:</string>
          </property>
@@ -240,7 +240,7 @@
         </widget>
        </item>
        <item row="10" column="0" colspan="7">
-        <widget class="QLabel" name="label_12">
+        <widget class="QLabel">
          <property name="font">
           <font>
            <weight>75</weight>
@@ -253,7 +253,7 @@
         </widget>
        </item>
        <item row="13" column="0" rowspan="2" colspan="7">
-        <widget class="QLabel" name="label_13">
+        <widget class="QLabel">
          <property name="font">
           <font>
            <weight>75</weight>
@@ -286,7 +286,7 @@
         </widget>
        </item>
        <item row="17" column="1">
-        <spacer name="verticalSpacer">
+        <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -300,11 +300,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget">
       <attribute name="title">
        <string>Details</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QTextEdit" name="certificateText">
          <property name="readOnly">
