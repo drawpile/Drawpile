@@ -21,6 +21,7 @@
 #include "qmhttp.h"
 #include "multiserver.h"
 
+#include "../../libshared/util/qtcompat.h"
 #include "../../libserver/jsonapi.h"
 
 #include <QJsonObject>
@@ -66,11 +67,7 @@ void Webadmin::setSessions(MultiServer *server)
 			break;
 		}
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-		const QStringList path = req.pathMatch().captured(1).split('/', QString::SkipEmptyParts);
-#else
-		const QStringList path = req.pathMatch().captured(1).split('/', Qt::SkipEmptyParts);
-#endif
+		const QStringList path = req.pathMatch().captured(1).split('/', compat::SkipEmptyParts);
 
 		QJsonDocument reqBodyDoc;
 		if(m == JsonApiMethod::Get) {

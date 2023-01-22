@@ -45,6 +45,7 @@ add_library(dpshared STATIC
 	util/passwordhash.h
 	util/paths.cpp
 	util/paths.h
+	util/qtcompat.h
 	util/ulid.cpp
 	util/ulid.h
 	util/validators.cpp

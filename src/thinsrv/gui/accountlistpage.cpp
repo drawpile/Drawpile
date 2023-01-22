@@ -21,6 +21,7 @@
 #include "accountlistmodel.h"
 #include "subheaderwidget.h"
 #include "server.h"
+#include "../../libshared/util/qtcompat.h"
 
 #include "ui_accountdialog.h"
 
@@ -164,11 +165,7 @@ void AccountListPage::editSelectedAccount()
 
 	ui.username->setText(account["username"].toString());
 	ui.locked->setChecked(account["locked"].toBool());
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-	const QStringList flags = account["flags"].toString().split(',', QString::SkipEmptyParts);
-#else
-	const QStringList flags = account["flags"].toString().split(',', Qt::SkipEmptyParts);
-#endif
+	const QStringList flags = account["flags"].toString().split(',', compat::SkipEmptyParts);
 	ui.flagHost->setChecked(flags.contains("HOST"));
 	ui.flagMod->setChecked(flags.contains("MOD"));
 

@@ -529,11 +529,7 @@ net::Envelope Selection::pasteOrMoveToCanvas(uint8_t contextId, int layer) const
 			if(!mask.isNull()) {
 				compressedMask = qCompress(
 					mask.constBits(),
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-					mask.byteCount()
-#else
 					mask.sizeInBytes()
-#endif
 				);
 			}
 

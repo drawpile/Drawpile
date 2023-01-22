@@ -22,6 +22,7 @@
 
 #include "canvas/acl.h"
 #include "net/envelope.h"
+#include "../libshared/util/qtcompat.h"
 
 #include <QObject>
 #include <QStringListModel>
@@ -45,11 +46,9 @@ namespace rustpile {
 	enum class Blendmode : uint8_t;
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("canvas/canvasmodel.h")
 Q_MOC_INCLUDE("net/banlistmodel.h")
 Q_MOC_INCLUDE("net/announcementlist.h")
-#endif
 
 /**
  * @brief An active document and its associated data, including the network connection

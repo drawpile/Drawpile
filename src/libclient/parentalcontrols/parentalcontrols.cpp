@@ -18,6 +18,7 @@
 */
 
 #include "parentalcontrols.h"
+#include "../../libshared/util/qtcompat.h"
 
 #include <QSettings>
 #include <QRegularExpression>
@@ -56,11 +57,7 @@ bool isNsfmTitle(const QString &title)
 		return false;
 
 	QString wordlist = cfg.value("tagwords").toString();
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-	const auto words = wordlist.split(QRegularExpression("[\\s,]"), QString::SkipEmptyParts);
-#else
-	const auto words = QStringView{wordlist}.split(QRegularExpression("[\\s,]"), Qt::SkipEmptyParts);
-#endif
+	const auto words = compat::StringView{wordlist}.split(QRegularExpression("[\\s,]"), compat::SkipEmptyParts);
 
 	for(const auto word : words) {
 		if(title.contains(word, Qt::CaseInsensitive))

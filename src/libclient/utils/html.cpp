@@ -18,6 +18,7 @@
 */
 
 #include "html.h"
+#include "../../libshared/util/qtcompat.h"
 
 #include <QRegularExpression>
 
@@ -25,11 +26,7 @@ namespace htmlutils {
 
 QString newlineToBr(const QString &input)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-	QString in = input;
-#else
-	QStringView in{input};
-#endif
+	compat::StringView in{input};
 	QString out;
 	int pos=0;
 	int last=0;
@@ -48,11 +45,7 @@ QString newlineToBr(const QString &input)
 
 QString linkify(const QString &input, const QString &extra)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-	QString in = input;
-#else
-	QStringView in{input};
-#endif
+	compat::StringView in{input};
 
 	// This regular expression is from: http://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without-the
 	static const QRegularExpression linkre(

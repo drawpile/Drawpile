@@ -18,6 +18,7 @@
 */
 
 #include "networkaccess.h"
+#include "qtcompat.h"
 
 #include <QNetworkReply>
 #include <QMutexLocker>
@@ -47,9 +48,7 @@ QNetworkAccessManager *getInstance()
 	if(!nam) {
 		qDebug() << "Creating new NetworkAccessManager for thread" << t;
 		nam = new QNetworkAccessManager;
-#if QT_VERSION > QT_VERSION_CHECK(5, 9, 0)
 		nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-#endif
 		t->connect(t, &QThread::finished, [nam, t]() {
 			qDebug() << "thread" << t << "ended. Removing NetworkAccessManager";
 			nam->deleteLater();
@@ -78,7 +77,7 @@ void FileDownload::setExpectedHash(const QByteArray &hash, QCryptographicHash::A
 	m_expectedHash = hash;
 	m_hash.reset(new QCryptographicHash(algorithm));
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#ifdef HAVE_QT_COMPAT_HASH_LENGTH
 	if(hash.length() > 0 && QCryptographicHash::hashLength(algorithm) != hash.length()) {
 		qWarning() << "Expected hash length" << hash.length() << "not valid for" << algorithm;
 		m_expectedHash = QByteArray();

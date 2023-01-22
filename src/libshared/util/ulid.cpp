@@ -25,10 +25,7 @@
 #include <QDateTime>
 #include <QtEndian>
 #include <cstring>
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 #include <QRandomGenerator>
-#endif
 
 namespace {
 	// Crockford's base32 encoding
@@ -131,12 +128,7 @@ Ulid Ulid::make(const QDateTime &datetime)
 
 	// The remaining 10 bytes (80 bits) are random
 	quint32 randomWords[3];
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-	for(int i=0;i<3;++i)
-		randomWords[i] = qrand();
-#else
 	QRandomGenerator::global()->fillRange(randomWords);
-#endif
 
 	memcpy(u.m_ulid + 6, &randomWords, 10);
 

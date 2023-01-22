@@ -1,4 +1,5 @@
 #include "../util/passwordhash.h"
+#include "../util/qtcompat.h"
 
 #include <QtTest/QtTest>
 
@@ -24,7 +25,7 @@ private slots:
 		QTest::newRow("plaintext") << "plainpassword" << server::passwordhash::hash("wrong", server::passwordhash::PLAINTEXT) << false << true;
 		QTest::newRow("plaintext") << "plainpassword" << QByteArray("plain;plainpassword") << true << true;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		QTest::newRow("pbkdf2") << "pbk" << server::passwordhash::hash("pbk", server::passwordhash::PBKDF2) << true << true;
 		QTest::newRow("pbkdf2(wrong)") << "pbkx" << server::passwordhash::hash("pbk", server::passwordhash::PBKDF2) << false << true;
 #endif

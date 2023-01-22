@@ -19,6 +19,7 @@
 
 #include "layerlist.h"
 #include "../rustpile/rustpile.h"
+#include "../../libshared/util/qtcompat.h"
 
 #include <QDebug>
 #include <QImage>
@@ -337,23 +338,10 @@ QStringList LayerMimeData::formats() const
 	return QStringList() << "application/x-qt-image";
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-QVariant LayerMimeData::retrieveData(const QString &mimeType, QMetaType type) const
-#else
-QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
-#endif
+QVariant LayerMimeData::retrieveData(const QString &mimeType, compat::RetrieveDataMetaType type) const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	Q_UNUSED(type);
-	if(mimeType=="application/x-qt-image") {
-#else
-	Q_UNUSED(mimeType);
-	if(type==QVariant::Image) {
-#endif
-		if(m_source->m_getlayerfn) {
-			return m_source->m_getlayerfn(m_id);
-		}
-	}
+	if(compat::isImageMime(mimeType, type) && m_source->m_getlayerfn)
+		return m_source->m_getlayerfn(m_id);
 
 	return QVariant();
 }

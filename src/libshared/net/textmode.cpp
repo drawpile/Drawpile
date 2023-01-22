@@ -27,6 +27,7 @@
 #include "image.h"
 #include "recording.h"
 #include "undo.h"
+#include "util/qtcompat.h"
 
 namespace protocol {
 namespace text {
@@ -49,11 +50,7 @@ Parser::Result Parser::parseLine(const QString &line)
 			return Result { Result::Skip, nullptr };
 		}
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-		QStringList tokens = line.split(' ', QString::SkipEmptyParts);
-#else
-		QStringList tokens = line.split(' ', Qt::SkipEmptyParts);
-#endif
+		QStringList tokens = line.split(' ', compat::SkipEmptyParts);
 		if(tokens.length() < 2) {
 			m_error = "Expected at least two tokens";
 			return Result { Result::Error, nullptr };
@@ -227,11 +224,7 @@ quint32 parseColor(const QString &color)
 {
 	if((color.length() == 7 || color.length() == 9) && color.at(0) == '#') {
 		bool ok;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		quint32 c = QStringView(color).sliced(1).toUInt(&ok, 16);
-#else
-		quint32 c = color.midRef(1).toUInt(&ok, 16);
-#endif
+		quint32 c = compat::stringSlice(color, 1).toUInt(&ok, 16);
 		if(ok)
 			return color.length() == 7 ? 0xff000000 | c : c;
 	}
@@ -255,11 +248,7 @@ uint16_t parseIdString16(const QString &idstr, bool *allOk)
 	bool ok;
 	int id;
 	if(idstr.startsWith("0x")) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		id = QStringView(idstr).sliced(2).toInt(&ok, 16);
-#else
-		id = idstr.midRef(2).toInt(&ok, 16);
-#endif
+		id = compat::stringSlice(idstr, 2).toInt(&ok, 16);
 	} else
 		id = idstr.toInt(&ok);
 

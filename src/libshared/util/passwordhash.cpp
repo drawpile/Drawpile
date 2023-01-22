@@ -18,11 +18,12 @@
 */
 
 #include "passwordhash.h"
+#include "qtcompat.h"
 
 #include <QList>
 #include <QString>
 #include <QCryptographicHash>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#ifdef HAVE_QT_COMPAT_PBKDF2
 #include <QPasswordDigestor>
 #endif
 #include <QRandomGenerator>
@@ -60,7 +61,7 @@ bool isValidHash(const QByteArray &hash)
 	} else if(hash.startsWith("s+sha1;")) {
 		return hash.count(';') == 2;
 	} else if(hash.startsWith("pbkdf2;")) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		return hash.count(';') == 3;
 #else
 		qWarning("Qt 5.12 needed to support PBKDF2 hashes!");
@@ -100,7 +101,7 @@ bool check(const QString &password, const QByteArray &hash)
 		return hp == QByteArray::fromHex(parts.at(2));
 
 	} else if(hash.startsWith("pbkdf2;")) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		const auto parts = hash.split(';');
 		const auto salt = QByteArray::fromBase64(parts.at(2));
 		const auto expectedHash = QByteArray::fromBase64(parts.at(3));
@@ -139,7 +140,7 @@ QByteArray hash(const QString &password, Algorithm algorithm)
 		}
 
 	case PBKDF2: {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		const QByteArray salt = makesalt();
 		return "pbkdf2;1;" +
 			salt.toBase64() + ";" +
