@@ -46,7 +46,9 @@ class CanvasModel : public QObject
 {
 	Q_OBJECT
 public:
-	explicit CanvasModel(uint8_t localUserId, QObject *parent=nullptr);
+	CanvasModel(
+		uint8_t localUserId, int fps, int snapshotMaxCount,
+		long long snapshotMinDelayMs, QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 

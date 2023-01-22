@@ -35,6 +35,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Paint Engine</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Animation</string>
         </property>
        </item>
@@ -574,6 +579,112 @@
                <number>100</number>
               </property>
              </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="paintEnginePage">
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QGroupBox" name="paintEngineRenderingGroup">
+              <property name="title">
+               <string>Rendering</string>
+              </property>
+              <layout class="QVBoxLayout" name="paintEngineRenderingGroupLayout">
+               <item>
+                <widget class="KisSliderSpinBox" name="fpsSpinner">
+                 <property name="suffix">
+                  <string> frames per second</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Framerate: </string>
+                 </property>
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>120</number>
+                 </property>
+                 <property name="value">
+                  <number>60</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="fpsLabel">
+                 <property name="text">
+                  <string>How often the canvas visuals are updated. Lowering this value may improve performance. This doesn't affect input or network handling, it's only how often your view is updated.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="paintEngineSnapshotsGroup">
+              <property name="title">
+               <string>Session Reset</string>
+              </property>
+              <layout class="QVBoxLayout" name="paintEngineSnapshotsLayout">
+               <item>
+                <widget class="KisSliderSpinBox" name="snapshotCountSpinner">
+                 <property name="prefix">
+                  <string>Number of Snapshots to Keep: </string>
+                 </property>
+                 <property name="value">
+                  <number>5</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="KisSliderSpinBox" name="snapshotIntervalSpinner">
+                 <property name="suffix">
+                  <string> second(s)</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Snapshot Interval: </string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>600</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="snapshotsLabel">
+                 <property name="text">
+                  <string>Drawpile will hold onto a certain number of canvas snapshots. You can use Session &gt; Reset... to revert back to one of these. If you want Drawpile to use less memory, reduce the number of snapshots to keep. Snapshots share data that didn't change between them, so higher intervals use more memory.</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="paintEngineSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>

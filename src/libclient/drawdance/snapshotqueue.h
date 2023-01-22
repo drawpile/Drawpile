@@ -15,7 +15,7 @@ public:
     using SnapshotAtFn = std::function<DP_Snapshot * (int index)>;
     using GetSnapshotsFn = std::function<void (size_t count, SnapshotAtFn at)>;
 
-    SnapshotQueue(size_t maxCount, long long minDelayMs);
+    SnapshotQueue(int maxCount, long long minDelayMs);
 
     ~SnapshotQueue();
 
@@ -25,6 +25,9 @@ public:
     SnapshotQueue &operator=(SnapshotQueue &&) = delete;
 
     DP_SnapshotQueue *get();
+
+    void setMaxCount(int maxCount);
+    void setMinDelayMs(long long minDelayMs);
 
     void getSnapshotsWith(GetSnapshotsFn get) const;
 

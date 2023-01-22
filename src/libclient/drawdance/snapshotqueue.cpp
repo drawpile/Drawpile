@@ -12,8 +12,8 @@ struct GetSnapshotContext {
 
 }
 
-SnapshotQueue::SnapshotQueue(size_t maxCount, long long minDelayMs)
-    : m_data(DP_snapshot_queue_new(maxCount, minDelayMs, SnapshotQueue::getTimestampMs, nullptr))
+SnapshotQueue::SnapshotQueue(int maxCount, long long minDelayMs)
+    : m_data(DP_snapshot_queue_new(qMax(0, maxCount), minDelayMs, SnapshotQueue::getTimestampMs, nullptr))
 {
 }
 
@@ -25,6 +25,16 @@ SnapshotQueue::~SnapshotQueue()
 DP_SnapshotQueue *SnapshotQueue::get()
 {
     return m_data;
+}
+
+void SnapshotQueue::setMaxCount(int maxCount)
+{
+    DP_snapshot_queue_max_count_set(m_data, qMax(0, maxCount));
+}
+
+void SnapshotQueue::setMinDelayMs(long long minDelayMs)
+{
+    DP_snapshot_queue_min_delay_ms_set(m_data, minDelayMs);
 }
 
 void SnapshotQueue::getSnapshotsWith(GetSnapshotsFn get) const

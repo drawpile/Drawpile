@@ -43,8 +43,19 @@ namespace canvas {
 class PaintEngine : public QObject {
 	Q_OBJECT
 public:
-	explicit PaintEngine(QObject *parent=nullptr);
+	static constexpr int DEFAULT_FPS = 60;
+    static constexpr int DEFAULT_SNAPSHOT_MAX_COUNT = 5;
+    static constexpr int DEFAULT_SNAPSHOT_MIN_DELAY_MS = 10000;
+
+	PaintEngine(
+		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
+		QObject *parent = nullptr);
+
 	~PaintEngine();
+
+	void setFps(int fps);
+	void setSnapshotMaxCount(int snapshotMaxCount);
+	void setSnapshotMinDelayMs(long long snapshotMinDelayMs);
 
 	/// Reset the paint engine to its default state
 	void reset(
@@ -219,6 +230,7 @@ private:
 	drawdance::AclState m_acls;
 	drawdance::SnapshotQueue m_snapshotQueue;
 	drawdance::PaintEngine m_paintEngine;
+	int m_fps;
 	int m_timerId;
 	QRect m_changedTileBounds;
 	QRect m_lastRefreshAreaTileBounds;

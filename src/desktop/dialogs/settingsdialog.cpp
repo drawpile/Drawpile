@@ -36,6 +36,7 @@
 #include "../libshared/util/passwordhash.h"
 #include "../libshared/util/networkaccess.h"
 #include "../libshared/util/paths.h"
+#include "canvas/paintengine.h"
 
 #include "ui_settings.h"
 
@@ -348,6 +349,15 @@ void SettingsDialog::restoreSettings()
 	changeColorWheelSpace(cfg.value("space").toInt());
 	cfg.endGroup();
 
+	cfg.beginGroup("settings/paintengine");
+	m_ui->fpsSpinner->setValue(cfg.value(
+		"fps", canvas::PaintEngine::DEFAULT_FPS).toInt());
+	m_ui->snapshotCountSpinner->setValue(cfg.value(
+		"snapshotcount", canvas::PaintEngine::DEFAULT_SNAPSHOT_MAX_COUNT).toInt());
+	m_ui->snapshotIntervalSpinner->setValue(cfg.value(
+		"snapshotinterval", canvas::PaintEngine::DEFAULT_SNAPSHOT_MIN_DELAY_MS / 1000).toInt());
+	cfg.endGroup();
+
 	m_customShortcuts->loadShortcuts();
 	m_avatars->loadAvatars();
 }
@@ -448,6 +458,12 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("shape", static_cast<int>(m_ui->colorwheel->selectorShape()));
 	cfg.setValue("rotate", static_cast<int>(m_ui->colorwheel->rotatingSelector()));
 	cfg.setValue("space", static_cast<int>(m_ui->colorwheel->colorSpace()));
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/paintengine");
+	cfg.setValue("fps", m_ui->fpsSpinner->value());
+	cfg.setValue("snapshotcount", m_ui->snapshotCountSpinner->value());
+	cfg.setValue("snapshotinterval", m_ui->snapshotIntervalSpinner->value());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())

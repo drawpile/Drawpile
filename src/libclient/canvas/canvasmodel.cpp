@@ -39,10 +39,11 @@ extern "C" {
 
 namespace canvas {
 
-CanvasModel::CanvasModel(uint8_t localUserId, QObject *parent)
+CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
+		long long snapshotMinDelayMs, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_localUserId(1)
 {
-	m_paintengine = new PaintEngine(this);
+	m_paintengine = new PaintEngine(fps, snapshotMaxCount, snapshotMinDelayMs, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);

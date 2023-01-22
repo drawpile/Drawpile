@@ -40,11 +40,12 @@ extern "C" {
 
 namespace canvas {
 
-PaintEngine::PaintEngine(QObject *parent)
+PaintEngine::PaintEngine(int fps, int snapshotMaxCount, long long snapshotMinDelayMs, QObject *parent)
 	: QObject(parent)
 	, m_acls{}
-	, m_snapshotQueue{5, 10000} // TODO: make these configurable
+	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine{m_acls, m_snapshotQueue, PaintEngine::onPlayback, this}
+	, m_fps{fps}
 	, m_timerId{0}
 	, m_changedTileBounds{}
 	, m_lastRefreshAreaTileBounds{}
@@ -64,18 +65,36 @@ PaintEngine::~PaintEngine()
 	DP_onion_skins_free(m_onionSkins);
 }
 
+void PaintEngine::setFps(int fps)
+{
+	if(fps != m_fps) {
+		m_fps = fps;
+		start();
+	}
+}
+
+void PaintEngine::setSnapshotMaxCount(int snapshotMaxCount)
+{
+	m_snapshotQueue.setMaxCount(snapshotMaxCount);
+}
+
+void PaintEngine::setSnapshotMinDelayMs(long long snapshotMinDelayMs)
+{
+	m_snapshotQueue.setMinDelayMs(snapshotMinDelayMs);
+}
+
 void PaintEngine::start()
 {
-	// TODO make this configurable
-	m_timerId = startTimer(1000 / 60, Qt::PreciseTimer);
+	if(m_timerId != 0) {
+		killTimer(m_timerId);
+	}
+	int fps = qBound(1, m_fps, 120);
+	m_timerId = startTimer(1000 / fps, Qt::PreciseTimer);
 }
 
 void PaintEngine::reset(
 	uint8_t localUserId, const drawdance::CanvasState &canvasState, DP_Player *player)
 {
-	if(m_timerId != 0) {
-		killTimer(m_timerId);
-	}
 	m_paintEngine.reset(m_acls, m_snapshotQueue, localUserId,
 		PaintEngine::onPlayback, this, canvasState, player);
 	m_cache = QPixmap{};

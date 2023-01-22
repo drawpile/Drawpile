@@ -91,10 +91,28 @@ Document::Document(QObject *parent)
 	connect(this, &Document::justInTimeSnapshotGenerated, this, &Document::sendResetSnapshot, Qt::QueuedConnection);
 }
 
+static void getPaintEngineSettings(
+	int &outFps, int &outSnapshotMaxCount, long long &outSnapshotMinDelayMs)
+{
+	QSettings settings;
+	settings.beginGroup("settings/paintengine");
+	outFps = settings.value(
+		"fps", canvas::PaintEngine::DEFAULT_FPS).toInt();
+	outSnapshotMaxCount = settings.value(
+		"snapshotcount", canvas::PaintEngine::DEFAULT_SNAPSHOT_MAX_COUNT).toInt();
+	outSnapshotMinDelayMs = settings.value(
+		"snapshotinterval", canvas::PaintEngine::DEFAULT_SNAPSHOT_MIN_DELAY_MS / 1000).toInt() * 1000LL;
+}
+
 void Document::initCanvas()
 {
 	delete m_canvas;
-	m_canvas = new canvas::CanvasModel(m_client->myId(), this);
+
+	int fps, snapshotMaxCount;
+	long long snapshotMinDelayMs;
+	getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
+	m_canvas = new canvas::CanvasModel{
+		m_client->myId(), fps, snapshotMaxCount, snapshotMinDelayMs, this};
 
 	m_toolctrl->setModel(m_canvas);
 
@@ -915,3 +933,15 @@ void Document::addServerLogEntry(const QString &log)
 	m_serverLog->setData(m_serverLog->index(i), log);
 }
 
+void Document::updateSettings()
+{
+	if(m_canvas) {
+		int fps, snapshotMaxCount;
+		long long snapshotMinDelayMs;
+		getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
+		canvas::PaintEngine *paintEngine = m_canvas->paintEngine();
+		paintEngine->setFps(fps);
+		paintEngine->setSnapshotMaxCount(snapshotMaxCount);
+		paintEngine->setSnapshotMinDelayMs(snapshotMinDelayMs);
+	}
+}
