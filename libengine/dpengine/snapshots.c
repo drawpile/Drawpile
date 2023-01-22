@@ -79,7 +79,6 @@ DP_snapshot_queue_new(size_t max_count, long long min_delay_ms,
                       DP_SnapshotQueueTimestampMsFn timestamp_fn,
                       void *timestamp_user)
 {
-    DP_ASSERT(max_count > 0);
     DP_ASSERT(timestamp_fn);
     DP_Mutex *mutex = DP_mutex_new();
     if (mutex) {
@@ -89,7 +88,7 @@ DP_snapshot_queue_new(size_t max_count, long long min_delay_ms,
                                  {timestamp_fn, timestamp_user},
                                  mutex,
                                  DP_QUEUE_NULL};
-        DP_queue_init(&sq->queue, max_count, ELEMENT_SIZE);
+        DP_queue_init(&sq->queue, DP_max_size(1, max_count), ELEMENT_SIZE);
         return sq;
     }
     else {
@@ -117,36 +116,48 @@ static bool should_make_snapshot(DP_SnapshotQueue *sq, DP_CanvasState *cs,
                                  bool snapshot_requested,
                                  long long timestamp_ms)
 {
-    DP_Snapshot *s = DP_queue_peek_last(&sq->queue, ELEMENT_SIZE);
-    if (s) {
-        // Make a new snapshot if its canvas state would be different from the
-        // last and if it was explicitly requested or enough time has elapsed.
-        return s->cs != cs
-            && (snapshot_requested
-                || timestamp_ms - s->timestamp_ms >= sq->min_delay_ms);
+    if (sq->max_count == 0) {
+        return false; // We're not supposed to make snapshots.
     }
     else {
-        return true; // There's no prior snapshot, make one now.
+        DP_Snapshot *s = DP_queue_peek_last(&sq->queue, ELEMENT_SIZE);
+        if (s) {
+            // Make a new snapshot if its canvas state would be different from
+            // the last and if it was explicitly requested or enough time has
+            // elapsed.
+            return s->cs != cs
+                && (snapshot_requested
+                    || timestamp_ms - s->timestamp_ms >= sq->min_delay_ms);
+        }
+        else {
+            return true; // There's no prior snapshot, make one now.
+        }
     }
 }
 
 static void make_snapshot(DP_SnapshotQueue *sq, long long timestamp_ms,
                           DP_CanvasState *cs)
 {
-    if (sq->queue.used == sq->max_count) {
-        dispose_snapshot(DP_queue_peek(&sq->queue, ELEMENT_SIZE));
-        DP_queue_shift(&sq->queue);
+    size_t max_count = sq->max_count;
+    if (max_count != 0) {
+        while (sq->queue.used >= max_count) {
+            dispose_snapshot(DP_queue_peek(&sq->queue, ELEMENT_SIZE));
+            DP_queue_shift(&sq->queue);
+        }
+        DP_Snapshot *s = DP_queue_push(&sq->queue, ELEMENT_SIZE);
+        *s = (DP_Snapshot){timestamp_ms, DP_canvas_state_incref(cs)};
     }
-    DP_Snapshot *s = DP_queue_push(&sq->queue, ELEMENT_SIZE);
-    *s = (DP_Snapshot){timestamp_ms, DP_canvas_state_incref(cs)};
 }
 
 void DP_snapshot_queue_on_save_point(void *user, DP_CanvasState *cs,
                                      bool snapshot_requested)
 {
-    // Resetting to a zero-size canvas is just confusing, don't snapshot it.
-    if (DP_canvas_state_width(cs) > 0 && DP_canvas_state_height(cs) > 0) {
-        DP_SnapshotQueue *sq = user;
+    DP_SnapshotQueue *sq = user;
+    // Don't snapshot if we're supposed to keep zero snapshots. Also don't
+    // snapshot zero-size canvases, nobody wants to reset to those.
+    bool want_snapshot = sq->max_count != 0 && DP_canvas_state_width(cs) > 0
+                      && DP_canvas_state_height(cs) > 0;
+    if (want_snapshot) {
         long long timestamp_ms = sq->timestamp.fn(sq->timestamp.user);
         if (should_make_snapshot(sq, cs, snapshot_requested, timestamp_ms)) {
             DP_Mutex *mutex = sq->mutex;
