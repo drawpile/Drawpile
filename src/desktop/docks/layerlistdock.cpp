@@ -246,7 +246,6 @@ void LayerList::updateLockedControls()
 
 	if(hasEditActions) {
 		m_duplicateLayerAction->setEnabled(enabled);
-		m_propertiesAction->setEnabled(enabled);
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	}
