@@ -112,6 +112,32 @@ void DP_snapshot_queue_free(DP_SnapshotQueue *sq)
 }
 
 
+void DP_snapshot_queue_max_count_set(DP_SnapshotQueue *sq, size_t max_count)
+{
+    DP_ASSERT(sq);
+    DP_Mutex *mutex = sq->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    sq->max_count = max_count;
+    if (max_count == 0) {
+        DP_queue_clear(&sq->queue, ELEMENT_SIZE, dispose_queued_snapshot);
+    }
+    else {
+        while (sq->queue.used >= max_count) {
+            dispose_snapshot(DP_queue_peek(&sq->queue, ELEMENT_SIZE));
+            DP_queue_shift(&sq->queue);
+        }
+    }
+    DP_MUTEX_MUST_UNLOCK(mutex);
+}
+
+void DP_snapshot_queue_min_delay_ms_set(DP_SnapshotQueue *sq,
+                                        long long min_delay_ms)
+{
+    DP_ASSERT(sq);
+    sq->min_delay_ms = min_delay_ms;
+}
+
+
 static bool should_make_snapshot(DP_SnapshotQueue *sq, DP_CanvasState *cs,
                                  bool snapshot_requested,
                                  long long timestamp_ms)

@@ -46,6 +46,10 @@ DP_snapshot_queue_new(size_t max_count, long long min_delay_ms,
 
 void DP_snapshot_queue_free(DP_SnapshotQueue *sq);
 
+void DP_snapshot_queue_max_count_set(DP_SnapshotQueue *sq, size_t max_count);
+void DP_snapshot_queue_min_delay_ms_set(DP_SnapshotQueue *sq,
+                                        long long min_delay_ms);
+
 // Pass this to canvas_history_new to wire up the snapshot queue.
 void DP_snapshot_queue_on_save_point(void *user, DP_CanvasState *cs,
                                      bool snapshot_requested);
