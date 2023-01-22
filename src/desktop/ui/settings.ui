@@ -100,197 +100,254 @@
            <number>0</number>
           </property>
           <widget class="QWidget" name="stackedWidgetPage1">
-           <layout class="QFormLayout" name="formLayout_2">
-            <property name="fieldGrowthPolicy">
-             <enum>QFormLayout::ExpandingFieldsGrow</enum>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Language:</string>
+           <layout class="QVBoxLayout" name="verticalLayout_14">
+            <item>
+             <widget class="QGroupBox" name="groupBox_7">
+              <property name="title">
+               <string>Interface</string>
               </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="languageLayout">
-              <item>
-               <widget class="QComboBox" name="languageBox"/>
-              </item>
-              <item>
-               <widget class="QLabel" name="languageRestartLabel">
-                <property name="text">
-                 <string>(requires restart)</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Theme:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <layout class="QHBoxLayout" name="themeLayout">
-              <item>
-               <widget class="QComboBox" name="themeChoice">
-                <item>
+              <layout class="QFormLayout" name="formLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>System</string>
+                  <string>Language:</string>
                  </property>
-                </item>
-                <item>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <item>
+                  <widget class="QComboBox" name="languageBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="themeRestartLabel">
+                   <property name="text">
+                    <string>(requires restart)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_3">
                  <property name="text">
-                  <string>Fusion</string>
+                  <string>Theme:</string>
                  </property>
-                </item>
-                <item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <item>
+                  <widget class="QComboBox" name="themeChoice">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>System</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Fusion</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Fusion Dark</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Krita Bright</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Krita Dark</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Krita Darker</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="languageRestartLabel">
+                   <property name="text">
+                    <string>(requires restart)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0" colspan="2">
+                <widget class="QCheckBox" name="confirmLayerDeleteBox">
                  <property name="text">
-                  <string>Fusion Dark</string>
+                  <string>Ask for confirmation when deleting a layer</string>
                  </property>
-                </item>
-                <item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>Logging</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item>
+                <widget class="QCheckBox" name="logfile">
                  <property name="text">
-                  <string>Krita Bright</string>
+                  <string>Write log file</string>
                  </property>
-                </item>
-                <item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_4">
+              <property name="title">
+               <string>Autosave</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="KisSliderSpinBox" name="autosaveInterval">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="suffix">
+                  <string>s</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Interval: </string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_4">
                  <property name="text">
-                  <string>Krita Dark</string>
+                  <string>You can enable and disable autosave using File &gt; Autosave.</string>
                  </property>
-                </item>
-                <item>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_5">
+              <property name="title">
+               <string>Brush Cursor</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QComboBox" name="brushCursorBox">
+                 <item>
+                  <property name="text">
+                   <string>Dot</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Crosshair</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Arrow</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="KisDoubleSliderSpinBox" name="brushOutlineWidth">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="prefix">
+                  <string>Outline Width: </string>
+                 </property>
+                 <property name="suffix">
+                  <string>px</string>
+                 </property>
+                 <property name="minimum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>25.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_6">
+              <property name="title">
+               <string>Tools</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <widget class="QCheckBox" name="toolToggleShortcut">
                  <property name="text">
-                  <string>Krita Darker</string>
+                  <string>Toggle to previous tool when shortcut for the current tool is pressed again</string>
                  </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="themeRestartLabel">
-                <property name="text">
-                 <string>(requires restart)</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_17">
-              <property name="text">
-               <string>Logging:</string>
-              </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="shareBrushSlotColor">
+                 <property name="text">
+                  <string>Share color across brush slots</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QCheckBox" name="logfile">
-              <property name="text">
-               <string>Write log file</string>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Autosave interval:</string>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
               </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QSpinBox" name="autosaveInterval">
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>300</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_16">
-              <property name="text">
-               <string>Brush cursor:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QComboBox" name="brushCursorBox">
-              <item>
-               <property name="text">
-                <string>Dot</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Crosshair</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Arrow</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_30">
-              <property name="text">
-               <string>Brush outline width:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QDoubleSpinBox" name="brushOutlineWidth">
-              <property name="minimum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>25.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.500000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Tools:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QCheckBox" name="toolToggleShortcut">
-              <property name="text">
-               <string>Shortcut toggles last selection</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QCheckBox" name="shareBrushSlotColor">
-              <property name="text">
-               <string>Share color across brush slots</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="layersLabel">
-              <property name="text">
-               <string>Layers:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1">
-             <widget class="QCheckBox" name="confirmLayerDeleteBox">
-              <property name="text">
-               <string>Ask for confirmation when deleting a layer</string>
-              </property>
-             </widget>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -370,6 +427,12 @@
              <spacer name="tabletAndTouchSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
               </property>
              </spacer>
             </item>
@@ -1307,6 +1370,11 @@
   <customwidget>
    <class>KisSliderSpinBox</class>
    <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KisDoubleSliderSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
    <header>widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>
