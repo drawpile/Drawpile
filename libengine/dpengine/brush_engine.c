@@ -861,8 +861,8 @@ static void stroke_to_mypaint(DP_BrushEngine *be, float x, float y,
         // you crank up the smoothing really high there and move the pen
         // really fast, you can get strokes from when your pen wasn't on the
         // tablet, which is just weird.
-        mypaint_brush_stroke_to_2(mb, surface, x, y, pressure, xtilt, ytilt,
-                                  0.0f, 1.0f, 0.0f, rotation);
+        mypaint_brush_stroke_to_2(mb, surface, x, y, 0.0f, xtilt, ytilt,
+                                  1000.0f, 1.0f, 0.0f, rotation);
     }
 
     double delta_sec = ((double)delta_msec) / 1000.0f;
