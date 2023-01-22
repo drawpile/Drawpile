@@ -143,6 +143,12 @@ include(Cargo)
 
 if(CLIENT OR SERVER)
 	find_package(${QT_PACKAGE_NAME} ${QT_MIN_VERSION_SERVER} REQUIRED COMPONENTS Core Network)
+	find_package(Sodium)
+
+	if(Sodium_FOUND)
+		add_compile_definitions(HAVE_LIBSODIUM)
+	endif()
+	add_feature_info("Ext-auth support" Sodium_FOUND "")
 
 	#find_package(KF5DNSSD NO_MODULE) # disabled pending built-in server rewrite
 	if(KF5DNSSD_FOUND)

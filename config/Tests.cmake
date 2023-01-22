@@ -1,5 +1,5 @@
 function(add_unit_tests prefix)
-	set(multiValueArgs LIBS SOURCES TESTS)
+	set(multiValueArgs LIBS SOURCES TESTS DEFINITIONS)
 	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "${multiValueArgs}")
 
 	if(NOT prefix)
@@ -15,7 +15,7 @@ function(add_unit_tests prefix)
 endfunction()
 
 function(add_unit_test prefix name)
-	set(multiValueArgs LIBS SOURCES)
+	set(multiValueArgs LIBS SOURCES DEFINITIONS)
 	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "${multiValueArgs}")
 
 	if(NOT prefix)
@@ -37,6 +37,9 @@ function(add_unit_test prefix name)
 	)
 	target_include_directories(${target_name} PRIVATE ..)
 	target_link_libraries(${target_name} ${ARG_LIBS})
+	if(ARG_DEFINITIONS)
+		target_compile_definitions(${target_name} PRIVATE ${ARG_DEFINITIONS})
+	endif()
 
 	add_test(
 		NAME ${test_name}
