@@ -1,5 +1,4 @@
 find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Network)
-find_package(Sodium QUIET)
 
 add_library(dpserver STATIC
 	announcable.h
@@ -49,10 +48,8 @@ target_link_libraries(dpserver
 )
 
 if(Sodium_FOUND)
-	target_compile_definitions(dpserver PRIVATE HAVE_LIBSODIUM)
 	target_include_directories(dpserver SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
 endif()
-add_feature_info("Ext-auth support" Sodium_FOUND "")
 
 if(TESTS)
 	add_subdirectory(tests)

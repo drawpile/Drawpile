@@ -70,17 +70,14 @@ if(ANDROID)
 	)
 endif()
 
-find_package(Sodium)
 if(Sodium_FOUND)
 	target_sources(dpshared PRIVATE
 		util/authtoken.cpp
 		util/authtoken.h
 	)
-	target_compile_definitions(dpshared PRIVATE HAVE_LIBSODIUM)
 	target_include_directories(dpshared SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
 	target_link_libraries(dpshared ${SODIUM_LIBRARY})
 endif()
-add_feature_info("Ext-auth support" Sodium_FOUND "")
 
 if(KF5DNSSD_FOUND)
 	target_sources(dpshared PRIVATE

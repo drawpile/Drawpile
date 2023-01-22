@@ -1,6 +1,5 @@
 find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Sql)
 find_package(Libmicrohttpd QUIET)
-find_package(Sodium QUIET)
 
 set(srvname "drawpile-srv")
 set(srvlib "${srvname}lib")
@@ -130,10 +129,6 @@ if(MHD_FOUND)
 	target_link_libraries(${srvlib} ${MHD_LIBRARIES})
 endif()
 add_feature_info("Server web-admin support" MHD_FOUND "")
-
-if(Sodium_FOUND)
-	target_compile_definitions(${srvlib} PRIVATE HAVE_LIBSODIUM)
-endif()
 
 if(UNIX AND NOT APPLE)
 	install(TARGETS ${srvname})
