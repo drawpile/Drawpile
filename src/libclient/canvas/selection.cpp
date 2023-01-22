@@ -187,27 +187,71 @@ void Selection::adjustGeometry(const QPointF &start, const QPointF &point, bool 
 void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 {
 	if(keepAspect) {
-		const int dxy = (qAbs(delta.x()) > qAbs(delta.y())) ? delta.x() : delta.y();
-
 		const QRectF bounds = m_preAdjustmentShape.boundingRect();
-		const qreal aspect = bounds.width() / bounds.height();
-		const qreal dx = dxy * aspect;
-		const qreal dy = dxy;
+		QPointF handle;
+		QPointF anchor;
+		bool swap = false;
+		int top = 0;
+		int left = 0;
+		int bottom = 0;
+		int right = 0;
 
 		switch(m_adjustmentHandle) {
 		case Handle::Outside: return;
-		case Handle::Center: adjustTranslation(delta); break;
-
-		case Handle::TopLeft: adjustScale(dx, dy, 0, 0); break;
-		case Handle::TopRight: adjustScale(0, -dy, dx, 0); break;
-		case Handle::BottomRight: adjustScale(0, 0, dx, dy); break;
-		case Handle::BottomLeft: adjustScale(dx, 0, 0, -dy); break;
-
+		case Handle::Center: adjustTranslation(delta); return;
+		case Handle::BottomRight:
+			swap = true;
+			[[fallthrough]];
+		case Handle::TopLeft:
+			handle = bounds.topLeft();
+			anchor = bounds.bottomRight();
+			top = 1;
+			left = 1;
+			break;
+		case Handle::BottomLeft:
+			swap = true;
+			[[fallthrough]];
+		case Handle::TopRight:
+			handle = bounds.topRight();
+			anchor = bounds.bottomLeft();
+			top = 1;
+			right = 1;
+			break;
+		case Handle::Bottom:
+			swap = true;
+			[[fallthrough]];
 		case Handle::Top:
-		case Handle::Left: adjustScale(dx, dy, -dx, -dy); break;
+			handle = QPointF(bounds.left() + bounds.width() / 2, bounds.top());
+			anchor = handle + QPointF(0, bounds.height());
+			top = 1;
+			left = 1;
+			right = -1;
+			break;
 		case Handle::Right:
-		case Handle::Bottom: adjustScale(-dx, -dy, dx, dy); break;
+			swap = true;
+			[[fallthrough]];
+		case Handle::Left:
+			handle = QPointF(bounds.left(), bounds.top() + bounds.height() / 2);
+			anchor = handle + QPointF(bounds.width(), 0);
+			top = 1;
+			left = 1;
+			bottom = -1;
+			break;
 		}
+
+		if(swap) {
+			std::swap(handle, anchor);
+			std::swap(top, bottom);
+			std::swap(left, right);
+		}
+
+		const QPointF sizeWithSign = handle - anchor;
+		const qreal zoom = QPointF::dotProduct(delta + sizeWithSign, sizeWithSign) / QPointF::dotProduct(sizeWithSign, sizeWithSign);
+		const QPoint snapped = (anchor + sizeWithSign * zoom - handle).toPoint();
+		const qreal a = bounds.width() / bounds.height();
+		const int dx = sizeWithSign.x() == 0 ? (snapped.y() * a / 2) : snapped.x();
+		const int dy = sizeWithSign.y() == 0 ? (snapped.x() / a / 2) : snapped.y();
+		adjustScale(left * dx, top * dy, right * dx, bottom * dy);
 	} else {
 		switch(m_adjustmentHandle) {
 		case Handle::Outside: return;
