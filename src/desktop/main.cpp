@@ -24,8 +24,10 @@
 #include "utils/icon.h"
 #include "utils/logging.h"
 #include "utils/colorscheme.h"
+#include "utils/qtguicompat.h"
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
+#include "../libshared/util/qtcompat.h"
 #include "../libshared/util/paths.h"
 #include "../rustpile/rustpile.h"
 
@@ -65,12 +67,6 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define POINTER_TYPE QPointingDevice::PointerType
-#else
-#define POINTER_TYPE QTabletEvent
-#endif
-
 /**
  * Handle tablet proximity events. When the eraser is brought near
  * the tablet surface, switch to eraser tool on all windows.
@@ -82,7 +78,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 bool DrawpileApp::event(QEvent *e) {
 	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent*>(e);
-		if(te->pointerType()==POINTER_TYPE::Eraser)
+		if(te->pointerType()==compat::PointerType::Eraser)
 			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
 		return true;
 
@@ -108,8 +104,6 @@ bool DrawpileApp::event(QEvent *e) {
 
 	return QApplication::event(e);
 }
-
-#undef POINTER_TYPE
 
 void DrawpileApp::notifySettingsChanged()
 {
@@ -185,12 +179,6 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define LIBRARY_PATH QLibraryInfo::path
-#else
-#define LIBRARY_PATH QLibraryInfo::location
-#endif
-
 static void initTranslations(const QLocale &locale)
 {
 	const auto preferredLangs = locale.uiLanguages();
@@ -211,7 +199,8 @@ static void initTranslations(const QLocale &locale)
 
 	// Qt's own translations
 	QTranslator *qtTranslator = new QTranslator;
-	qtTranslator->load("qt_" + preferredLang, LIBRARY_PATH(QLibraryInfo::TranslationsPath));
+	if(!qtTranslator->load("qt_" + preferredLang, compat::libraryPath(QLibraryInfo::TranslationsPath)))
+		qWarning("Qt translations not found");
 	qApp->installTranslator(qtTranslator);
 
 	// Our translations
@@ -227,8 +216,6 @@ static void initTranslations(const QLocale &locale)
 	else
 		qApp->installTranslator(myTranslator);
 }
-
-#undef LIBRARY_PATH
 
 // Initialize the application and return a list of files to be opened (if any)
 static QStringList initApp(DrawpileApp &app)
@@ -332,7 +319,7 @@ static QStringList initApp(DrawpileApp &app)
 }
 
 int main(int argc, char *argv[]) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif

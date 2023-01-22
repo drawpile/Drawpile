@@ -22,6 +22,7 @@
 #include "videoexportdialog.h"
 #include "export/imageseriesexporter.h"
 #include "export/ffmpegexporter.h"
+#include "../../libshared/util/qtcompat.h"
 
 #include "ui_videoexport.h"
 
@@ -65,7 +66,7 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 
 	connect(m_ui->sizeChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {
 		const QVariant isCustom = m_ui->sizeChoice->currentData(Qt::UserRole);
-		const bool e = static_cast<QMetaType::Type>(isCustom.type()) == QMetaType::Bool && isCustom.toBool();
+		const bool e = compat::metaTypeFromVariant(isCustom) == QMetaType::Bool && isCustom.toBool();
 
 		m_ui->framewidth->setVisible(e);
 		m_ui->frameheight->setVisible(e);
@@ -145,7 +146,7 @@ VideoExporter *VideoExportDialog::getExporter()
 	ve->setFps(m_ui->fps->value());
 
 	QVariant sizechoice = m_ui->sizeChoice->currentData(Qt::UserRole);
-	if(static_cast<QMetaType::Type>(sizechoice.type()) == QMetaType::Bool) {
+	if(compat::metaTypeFromVariant(sizechoice) == QMetaType::Bool) {
 		if(sizechoice.toBool()) {
 			// custom (fixed) size
 			ve->setFrameSize(QSize(m_ui->framewidth->value(), m_ui->frameheight->value()));

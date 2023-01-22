@@ -21,6 +21,7 @@
 #define PASSWORDHASH_H
 
 #include <QtGlobal>
+#include "qtcompat.h"
 
 class QByteArray;
 class QString;
@@ -36,8 +37,10 @@ enum Algorithm {
 
 #if defined(HAVE_LIBSODIUM)
 	BEST_ALGORITHM = SODIUM
-#else
+#elif defined(HAVE_QT_COMPAT_PBKDF2)
 	BEST_ALGORITHM = PBKDF2
+#else
+   BEST_ALGORITHM = SALTED_SHA1
 #endif
 };
 

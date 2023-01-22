@@ -36,6 +36,7 @@
 #include "../libshared/util/passwordhash.h"
 #include "../libshared/util/networkaccess.h"
 #include "../libshared/util/paths.h"
+#include "../../libshared/util/qtcompat.h"
 
 #include "ui_settings.h"
 
@@ -140,7 +141,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	// QKeySequence editor delegate
 	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(this);
 	QItemEditorFactory *itemeditorfactory = new QItemEditorFactory;
-	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
+	itemeditorfactory->registerEditor(compat::metaTypeFromName("QKeySequence"), new KeySequenceEditFactory);
 	keyseqdel->setItemEditorFactory(itemeditorfactory);
 	m_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
 	m_ui->shortcuts->setItemDelegateForColumn(2, keyseqdel);

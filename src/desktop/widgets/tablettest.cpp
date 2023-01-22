@@ -18,6 +18,7 @@
 */
 
 #include "tablettest.h"
+#include "utils/qtguicompat.h"
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -64,7 +65,8 @@ void TabletTester::paintEvent(QPaintEvent *e)
 
 void TabletTester::mousePressEvent(QMouseEvent *e)
 {
-	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3").arg(e->x()).arg(e->y()).arg(e->button()));
+	const auto mousePos = compat::mousePos(*e);
+	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3").arg(mousePos.x()).arg(mousePos.y()).arg(e->button()));
 	m_mouseDown = true;
 	m_mousePath.clear();
 	update();
@@ -72,7 +74,8 @@ void TabletTester::mousePressEvent(QMouseEvent *e)
 
 void TabletTester::mouseMoveEvent(QMouseEvent *e)
 {
-	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3").arg(e->x()).arg(e->y()).arg(e->buttons()));
+	const auto mousePos = compat::mousePos(*e);
+	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3").arg(mousePos.x()).arg(mousePos.y()).arg(e->buttons()));
 	m_mousePath << e->pos();
 	update();
 }
@@ -84,26 +87,16 @@ void TabletTester::mouseReleaseEvent(QMouseEvent *e)
 	m_mouseDown = false;
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define DEVICE_TYPE QInputDevice::DeviceType
-#else
-#define DEVICE_TYPE QTabletEvent
-#endif
-
 void TabletTester::tabletEvent(QTabletEvent *e)
 {
 	e->accept();
 
 	QString msg;
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-	auto device = e->device();
-#else
-	auto device = e->deviceType();
-#endif
+	auto device = compat::tabDevice(*e);
 
 	switch(device) {
-		case DEVICE_TYPE::Stylus: msg = "Stylus"; break;
+		case compat::DeviceType::Stylus: msg = "Stylus"; break;
 		default: {
 			msg = QString("Device(%1)").arg(int(device));
 			break;
@@ -128,9 +121,10 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 			break;
 	}
 
+	const auto posF = compat::tabPosF(*e);
 	msg += QString(" X=%1 Y=%2 B=%3 P=%4%")
-		.arg(e->posF().x(), 0, 'f', 2)
-		.arg(e->posF().y(), 0, 'f', 2)
+		.arg(posF.x(), 0, 'f', 2)
+		.arg(posF.y(), 0, 'f', 2)
 		.arg(e->buttons())
 		.arg(e->pressure()*100, 0, 'f', 1)
 		;
@@ -138,7 +132,7 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	if(e->type() == QEvent::TabletMove) {
 		if(m_tabletDown) {
 			msg += " (DRAW)";
-			m_tabletPath << e->pos();
+			m_tabletPath << compat::tabPosF(*e).toPoint();
 			update();
 		} else {
 			msg += " (HOVER)";
@@ -147,8 +141,6 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 
 	emit eventReport(msg);
 }
-
-#undef DEVICE_TYPE
 
 }
 

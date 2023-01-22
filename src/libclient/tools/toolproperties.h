@@ -70,7 +70,7 @@ public:
 	template<typename Type> Type value(const Value<Type> &v) const
 	{
 		QVariant var = m_props.value(v.key);
-		if(var.isNull() || !var.convert(qMetaTypeId<Type>()))
+		if(var.isNull() || !var.canConvert<Type>())
 			return v.defaultValue;
 		return var.value<Type>();
 	}
@@ -78,7 +78,7 @@ public:
 	template<typename Type> Type value(const RangedValue<Type> &v) const
 	{
 		QVariant var = m_props.value(v.key);
-		if(var.isNull() || !var.convert(qMetaTypeId<Type>()))
+		if(var.isNull() || !var.canConvert<Type>())
 			return v.defaultValue;
 
 		return qBound(

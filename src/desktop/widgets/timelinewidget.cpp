@@ -20,6 +20,7 @@
 #include "timelinewidget.h"
 #include "canvas/timelinemodel.h"
 #include "net/envelopebuilder.h"
+#include "utils/qtguicompat.h"
 
 #include <QPaintEvent>
 #include <QMouseEvent>
@@ -263,12 +264,14 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 	if(!d->model)
 		return;
 
-	const int row = (event->y()+d->yScroll) / d->rowHeight;
-	if(row >= d->model->layers().size() || event->x() < d->headerWidth)
+	const auto mousePos = compat::mousePos(*event);
+
+	const int row = (mousePos.y()+d->yScroll) / d->rowHeight;
+	if(row >= d->model->layers().size() || mousePos.x() < d->headerWidth)
 		return;
 
 	const int col = qMin(
-		(event->x() - d->headerWidth + d->xScroll) / d->columnWidth,
+		(mousePos.x() - d->headerWidth + d->xScroll) / d->columnWidth,
 	    d->model->frames().size()
 	);
 
@@ -291,8 +294,9 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 	if(!d->model || !d->model->isManualMode() || event->button() != Qt::RightButton || !d->editable)
 		return;
 
+	const auto mousePos = compat::mousePos(*event);
 	const int col = qMin(
-	    (event->x() - d->headerWidth + d->xScroll) / d->columnWidth,
+	    (mousePos.x() - d->headerWidth + d->xScroll) / d->columnWidth,
 	    d->model->frames().size() - 1
 	);
 

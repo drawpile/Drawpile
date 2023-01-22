@@ -23,6 +23,7 @@
 #include "net/servercmd.h"
 #include "net/envelopebuilder.h"
 #include "document.h"
+#include "utils/qtguicompat.h"
 
 #include <QPainter>
 #include <QModelIndex>
@@ -213,8 +214,8 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 	if(event->type() == QEvent::MouseButtonPress && m_doc) {
 		const QMouseEvent *e = static_cast<const QMouseEvent*>(event);
 
-		if(e->button() == Qt::RightButton || (e->button() == Qt::LeftButton && e->x() > option.rect.right() - MARGIN - BUTTON_WIDTH)) {
-			showContextMenu(index, e->globalPos());
+		if(e->button() == Qt::RightButton || (e->button() == Qt::LeftButton && compat::mousePos(*e).x() > option.rect.right() - MARGIN - BUTTON_WIDTH)) {
+			showContextMenu(index, compat::globalPos(*e));
 			return true;
 		}
 	}

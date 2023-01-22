@@ -127,7 +127,7 @@ void UserMarkerItem::updateFullText()
 	}
 
 	// Make a new bubble for the text and avatar
-	const QRect textrect = m_fulltext.isEmpty() ? QRect() : qApp->fontMetrics().boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
+	const QRect textrect = m_fulltext.isEmpty() ? QRect() : QFontMetrics(QFont()).boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
 	const bool showAvatar = m_showAvatar && !m_avatar.isNull();
 
 	const qreal round = 3;

@@ -11,6 +11,7 @@
 #include <QtMath>
 
 #include "KisAngleGauge.h"
+#include "utils/qtguicompat.h"
 
 namespace widgets {
 
@@ -189,7 +190,8 @@ void KisAngleGauge::mousePressEvent(QMouseEvent *e)
     const QPointF center(width() / 2.0, height() / 2.0);
     const qreal radius = std::min(center.x(), center.y());
     const qreal radiusSquared = radius * radius;
-    const QPointF delta(e->x() - center.x(), e->y() - center.y());
+    const auto mousePos = compat::mousePos(*e);
+    const QPointF delta(mousePos.x() - center.x(), mousePos.y() - center.y());
     const qreal distanceSquared = delta.x() * delta.x() + delta.y() * delta.y();
 
     if (distanceSquared > radiusSquared) {
@@ -235,7 +237,8 @@ void KisAngleGauge::mouseMoveEvent(QMouseEvent *e)
     const QPointF center(width() / 2.0, height() / 2.0);
     const qreal radius = std::min(center.x(), center.y());
     const qreal radiusSquared = radius * radius;
-    const QPointF delta(e->x() - center.x(), e->y() - center.y());
+    const auto mousePos = compat::mousePos(*e);
+    const QPointF delta(mousePos.x() - center.x(), mousePos.y() - center.y());
     const qreal distanceSquared = delta.x() * delta.x() + delta.y() * delta.y();
     qreal angle =
         std::atan2(
@@ -303,11 +306,7 @@ void KisAngleGauge::keyPressEvent(QKeyEvent *e)
     }
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-void KisAngleGauge::enterEvent(QEnterEvent *e)
-#else
-void KisAngleGauge::enterEvent(QEvent *e)
-#endif
+void KisAngleGauge::enterEvent(compat::EnterEvent *e)
 {
     m_d->isMouseHover = true;
     update();

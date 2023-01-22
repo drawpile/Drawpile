@@ -27,6 +27,7 @@
 #include "net/envelopebuilder.h"
 #include "utils/icon.h"
 #include "widgets/groupedtoolbutton.h"
+#include "utils/qtguicompat.h"
 
 
 #include "ui_textsettings.h"
@@ -152,7 +153,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 	// Set initial content format
 	QTextCharFormat fmt;
-	fmt.setFontFamily(m_ui->font->currentText());
+	compat::setFontFamily(fmt, m_ui->font->currentText());
 	fmt.setFontPointSize(m_ui->size->value());
 	fmt.setForeground(m_ui->btnTextColor->color());
 	m_ui->content->setCurrentCharFormat(fmt);
@@ -282,7 +283,7 @@ void AnnotationSettings::updateFontIfUniform()
 				first = false;
 
 			} else {
-				uniformFontFamily &= fr.format.fontFamily() == fmt1.fontFamily();
+				uniformFontFamily &= compat::fontFamily(fr.format) == compat::fontFamily(fmt1);
 				uniformSize &= qFuzzyCompare(fr.format.fontPointSize(), fmt1.fontPointSize());
 				uniformColor &= fr.format.foreground() == fmt1.foreground();
 			}
@@ -303,7 +304,7 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 	QTextCharFormat fmt;
 
 	if(resetFamily)
-		fmt.setFontFamily(m_ui->font->currentText());
+		compat::setFontFamily(fmt, m_ui->font->currentText());
 
 	if(resetSize)
 		fmt.setFontPointSize(m_ui->size->value());

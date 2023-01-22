@@ -24,6 +24,7 @@
 #include "notifications.h"
 
 #include "widgets/notifbar.h"
+#include "utils/qtguicompat.h"
 
 #include <QMouseEvent>
 #include <QTabletEvent>
@@ -391,11 +392,7 @@ void CanvasView::setEnableViewportEntryHack(bool enabled)
 	m_enableViewportEntryHack = enabled;
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-void CanvasView::enterEvent(QEnterEvent *event)
-#else
-void CanvasView::enterEvent(QEvent *event)
-#endif
+void CanvasView::enterEvent(compat::EnterEvent *event)
 {
 	QGraphicsView::enterEvent(event);
 	m_showoutline = true;
@@ -759,11 +756,11 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 	case QEvent::TouchUpdate: {
 		QPointF startCenter, lastCenter, center;
-		const int points = event->touchPoints().size();
-		for(const auto &tp : event->touchPoints()) {
-			startCenter += tp.startPos();
-			lastCenter += tp.lastPos();
-			center += tp.pos();
+		const int points = compat::touchPoints(*event).size();
+		for(const auto &tp : compat::touchPoints(*event)) {
+			startCenter += compat::touchStartPos(tp);
+			lastCenter += compat::touchLastPos(tp);
+			center += compat::touchPos(tp);
 		}
 		startCenter /= points;
 		lastCenter /= points;
@@ -789,9 +786,9 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		if(points >= 2 && (m_enableTouchPinch | m_enableTouchTwist)) {
 			m_touching = true;
 			float startAvgDist=0, avgDist=0;
-			for(const auto &tp : event->touchPoints()) {
-				startAvgDist += squareDist(tp.startPos() - startCenter);
-				avgDist += squareDist(tp.pos() - center);
+			for(const auto &tp : compat::touchPoints(*event)) {
+				startAvgDist += squareDist(compat::touchStartPos(tp) - startCenter);
+				avgDist += squareDist(compat::touchPos(tp) - center);
 			}
 			startAvgDist = sqrt(startAvgDist);
 
@@ -802,8 +799,10 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			}
 
 			if(m_enableTouchTwist) {
-				const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
-				const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+				const auto &tps = compat::touchPoints(*event);
+
+				const QLineF l1 { compat::touchStartPos(tps.first()), compat::touchStartPos(tps.last()) };
+				const QLineF l2 { compat::touchPos(tps.first()), compat::touchPos(tps.last()) };
 
 				const qreal dAngle = l1.angle() - l2.angle();
 
@@ -857,7 +856,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		tabev->accept();
 
 		penPressEvent(
-			tabev->posF(),
+			compat::tabPosF(*tabev),
 			tabev->pressure(),
 			tabev->button(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
@@ -870,7 +869,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			tabev->accept();
 
 		penMoveEvent(
-			tabev->posF(),
+			compat::tabPosF(*tabev),
 			tabev->pressure(),
 			tabev->buttons(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
@@ -880,7 +879,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 	else if(event->type() == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		penReleaseEvent(tabev->posF(), tabev->button());
+		penReleaseEvent(compat::tabPosF(*tabev), tabev->button());
 	}
 	else {
 		return QGraphicsView::viewportEvent(event);
