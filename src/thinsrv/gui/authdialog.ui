@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string>Authentication</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <layout class="QFormLayout">
    <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel">
      <property name="text">
       <string>Username:</string>
      </property>
@@ -25,7 +25,7 @@
     <widget class="QLineEdit" name="username"/>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel">
      <property name="text">
       <string>Password:</string>
      </property>
@@ -49,7 +49,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel">
      <property name="text">
       <string notr="true">Server requires username and password</string>
      </property>

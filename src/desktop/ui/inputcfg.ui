@@ -10,7 +10,7 @@
     <height>400</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <property name="spacing">
     <number>6</number>
    </property>
@@ -27,7 +27,7 @@
     <number>9</number>
    </property>
    <item>
-    <layout class="QFormLayout" name="formLayout">
+    <layout class="QFormLayout">
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
@@ -38,7 +38,7 @@
       <number>5</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel">
        <property name="text">
         <string>Preset:</string>
        </property>
@@ -48,7 +48,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel">
        <property name="text">
         <string>Smoothing:</string>
        </property>
@@ -58,7 +58,7 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel">
        <property name="text">
         <string>Pressure:</string>
        </property>
@@ -87,7 +87,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <layout class="QHBoxLayout">
        <item>
         <widget class="QComboBox" name="preset">
          <property name="sizePolicy">
@@ -105,7 +105,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -149,7 +149,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QSlider" name="curveParam">
        <property name="minimumSize">
@@ -200,9 +200,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout">
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

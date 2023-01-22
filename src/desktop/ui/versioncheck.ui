@@ -13,14 +13,14 @@
   <property name="windowTitle">
    <string>New Version Check</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QStackedWidget" name="views">
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="widgets::Spinner" name="loadingSpinner">
          <property name="minimumSize">
@@ -39,8 +39,8 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_2">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QTextBrowser" name="textBrowser">
          <property name="openExternalLinks">
@@ -57,8 +57,8 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_3">
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+     <widget class="QWidget">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QLabel" name="downloadLabel">
          <property name="text">
@@ -74,7 +74,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

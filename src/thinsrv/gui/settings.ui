@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Server Settings</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QLabel" name="restartAlert">
      <property name="styleSheet">
@@ -32,13 +32,13 @@ border-radius: 3px;</string>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Server</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <layout class="QFormLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel">
         <property name="text">
          <string>User Interface:</string>
         </property>
@@ -52,7 +52,7 @@ border-radius: 3px;</string>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel">
         <property name="text">
          <string>Session storage:</string>
         </property>
@@ -76,13 +76,13 @@ border-radius: 3px;</string>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Network</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel">
         <property name="text">
          <string>Port:</string>
         </property>
@@ -105,14 +105,14 @@ border-radius: 3px;</string>
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel">
         <property name="text">
          <string>Services:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel">
         <property name="text">
          <string>Local hostname:</string>
         </property>
@@ -145,13 +145,13 @@ border-radius: 3px;</string>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_4">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Security</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_3">
+     <layout class="QFormLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel">
         <property name="toolTip">
          <string>URL of the external authentication server</string>
         </property>
@@ -164,21 +164,21 @@ border-radius: 3px;</string>
        <widget class="QLineEdit" name="extAuthUrl"/>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel">
         <property name="text">
          <string>TLS:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel">
         <property name="text">
          <string>Certificate:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout">
         <item>
          <widget class="QLineEdit" name="certFile">
           <property name="enabled">
@@ -199,14 +199,14 @@ border-radius: 3px;</string>
        </layout>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel">
         <property name="text">
          <string>Key:</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout">
         <item>
          <widget class="QLineEdit" name="keyFile">
           <property name="enabled">

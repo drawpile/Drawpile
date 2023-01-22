@@ -10,16 +10,16 @@
     <height>300</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel">
      <property name="text">
       <string>Last edited by:</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QLabel" name="lblAvatar">
        <property name="sizePolicy">
@@ -55,7 +55,7 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

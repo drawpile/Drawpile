@@ -16,13 +16,13 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QGroupBox" name="typeGroup">
      <property name="title">
       <string>Type</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout">
       <item>
        <widget class="QComboBox" name="typeCombo"/>
       </item>
@@ -44,7 +44,7 @@
      <property name="title">
       <string>Shortcut</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout">
       <item>
        <widget class="widgets::CanvasShortcutEdit" name="shortcutEdit" native="true">
         <property name="focusPolicy">
@@ -60,7 +60,7 @@
      <property name="title">
       <string>Action</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout">
       <item>
        <widget class="QComboBox" name="actionCombo"/>
       </item>
@@ -110,7 +110,7 @@
      <property name="title">
       <string>Action</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout">
       <item>
        <widget class="QComboBox" name="constraintsCombo"/>
       </item>
@@ -118,7 +118,7 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

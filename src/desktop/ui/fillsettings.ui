@@ -10,7 +10,7 @@
     <height>300</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <property name="leftMargin">
     <number>3</number>
    </property>
@@ -108,7 +108,7 @@
     </widget>
    </item>
    <item row="10" column="0" colspan="2">
-    <spacer name="verticalSpacer">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

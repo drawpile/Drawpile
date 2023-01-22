@@ -13,21 +13,21 @@
   <property name="windowTitle">
    <string>Export video</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Video Options</string>
      </property>
      <property name="flat">
       <bool>true</bool>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
       <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout">
         <item>
          <widget class="QSpinBox" name="fps">
           <property name="suffix">
@@ -42,7 +42,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -57,21 +57,21 @@
        </layout>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel">
         <property name="text">
          <string>Size:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel">
         <property name="text">
          <string>Framerate:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel">
         <property name="text">
          <string>Format:</string>
         </property>
@@ -92,7 +92,7 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <layout class="QHBoxLayout">
         <item>
          <widget class="QComboBox" name="sizeChoice"/>
         </item>
@@ -136,7 +136,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer">
+         <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -154,14 +154,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox">
      <property name="title">
       <string>Export Options</string>
      </property>
      <property name="flat">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout">
       <property name="spacing">
        <number>0</number>
       </property>
@@ -183,21 +183,21 @@
          <number>0</number>
         </property>
         <widget class="QWidget" name="page">
-         <layout class="QFormLayout" name="formLayout">
+         <layout class="QFormLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel">
             <property name="text">
              <string>Image format:</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <layout class="QHBoxLayout">
             <item>
              <widget class="QComboBox" name="imageFormatChoice"/>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -212,7 +212,7 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel">
             <property name="text">
              <string>File name pattern:</string>
             </property>
@@ -232,7 +232,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -243,8 +243,8 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="page_2">
-         <layout class="QFormLayout" name="formLayout_3">
+        <widget class="QWidget">
+         <layout class="QFormLayout">
           <item row="1" column="0" colspan="2">
            <widget class="QLineEdit" name="ffmpegBasics">
             <property name="readOnly">

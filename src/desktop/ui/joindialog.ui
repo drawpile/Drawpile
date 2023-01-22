@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Join a Session</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QLabel" name="newVersionNotification">
      <property name="styleSheet">
@@ -55,7 +55,7 @@ padding: 6px;</string>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QLineEdit" name="filter">
        <property name="placeholderText">
@@ -67,7 +67,7 @@ padding: 6px;</string>
       </widget>
      </item>
      <item>
-      <spacer name="filterSpacer">
+      <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -133,14 +133,14 @@ padding: 6px;</string>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel">
      <property name="text">
       <string>Enter a host address, session URL or room code to join a session:</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout">
      <item>
       <widget class="QComboBox" name="address">
        <property name="sizePolicy">

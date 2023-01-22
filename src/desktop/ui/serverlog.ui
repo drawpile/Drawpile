@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Event Log</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -23,7 +23,7 @@
       <attribute name="title">
        <string>Event Log</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QLineEdit" name="filter">
          <property name="placeholderText">
@@ -43,13 +43,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget">
       <attribute name="title">
        <string>Users</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <layout class="QVBoxLayout">
          <item>
           <widget class="QLineEdit" name="userlistFilter">
            <property name="placeholderText">
@@ -73,7 +73,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout">
          <item>
           <widget class="QPushButton" name="inspectMode">
            <property name="text">
@@ -85,7 +85,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer_2">
+          <spacer>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -112,7 +112,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
+          <spacer>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>

@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,5">
+    <layout class="QHBoxLayout" stretch="1,5">
      <item>
       <widget class="QListWidget" name="pager">
        <item>
@@ -93,29 +93,29 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout">
         <item>
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
            <number>0</number>
           </property>
-          <widget class="QWidget" name="stackedWidgetPage1">
-           <layout class="QVBoxLayout" name="verticalLayout_14">
+          <widget class="QWidget">
+           <layout class="QVBoxLayout">
             <item>
-             <widget class="QGroupBox" name="groupBox_7">
+             <widget class="QGroupBox">
               <property name="title">
                <string>Interface</string>
               </property>
               <layout class="QFormLayout" name="formLayout_2">
                <item row="0" column="0">
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel">
                  <property name="text">
                   <string>Language:</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <layout class="QHBoxLayout">
                  <item>
                   <widget class="QComboBox" name="languageBox">
                    <property name="sizePolicy">
@@ -136,14 +136,14 @@
                 </layout>
                </item>
                <item row="1" column="0">
-                <widget class="QLabel" name="label_3">
+                <widget class="QLabel">
                  <property name="text">
                   <string>Theme:</string>
                  </property>
                 </widget>
                </item>
                <item row="1" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout">
+                <layout class="QHBoxLayout">
                  <item>
                   <widget class="QComboBox" name="themeChoice">
                    <property name="sizePolicy">
@@ -211,11 +211,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_3">
+             <widget class="QGroupBox">
               <property name="title">
                <string>Logging</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
+              <layout class="QVBoxLayout">
                <item>
                 <widget class="QCheckBox" name="logfile">
                  <property name="text">
@@ -227,11 +227,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_4">
+             <widget class="QGroupBox">
               <property name="title">
                <string>Autosave</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_10">
+              <layout class="QVBoxLayout">
                <item>
                 <widget class="KisSliderSpinBox" name="autosaveInterval">
                  <property name="sizePolicy">
@@ -255,7 +255,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_4">
+                <widget class="QLabel">
                  <property name="text">
                   <string>You can enable and disable autosave using File &gt; Autosave.</string>
                  </property>
@@ -268,11 +268,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_5">
+             <widget class="QGroupBox">
               <property name="title">
                <string>Brush Cursor</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <layout class="QHBoxLayout">
                <item>
                 <widget class="QComboBox" name="brushCursorBox">
                  <item>
@@ -331,11 +331,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_6">
+             <widget class="QGroupBox">
               <property name="title">
                <string>Tools</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_12">
+              <layout class="QVBoxLayout">
                <item>
                 <widget class="QCheckBox" name="toolToggleShortcut">
                  <property name="text">
@@ -354,7 +354,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -369,7 +369,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="tabletAndTouchPage">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QGroupBox" name="tabletGroup">
               <property name="title">
@@ -395,7 +395,7 @@
                </item>
                <item>
                 <widget class="QWidget" name="tabletInputWrapper" native="true">
-                 <layout class="QVBoxLayout" name="tabletInputLayout_2">
+                 <layout class="QVBoxLayout">
                   <property name="leftMargin">
                    <number>0</number>
                   </property>
@@ -409,9 +409,9 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <layout class="QHBoxLayout" name="tabletInputLayout">
+                   <layout class="QHBoxLayout">
                     <item>
-                     <widget class="QLabel" name="tabletInputLabel">
+                     <widget class="QLabel">
                       <property name="text">
                        <string>Input:</string>
                       </property>
@@ -482,7 +482,7 @@
               <property name="title">
                <string>Touch</string>
               </property>
-              <layout class="QFormLayout" name="formLayout_4">
+              <layout class="QFormLayout">
                <item row="0" column="0">
                 <widget class="QLabel" name="oneFingerTouchLabel">
                  <property name="text">
@@ -576,7 +576,7 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <layout class="QFormLayout" name="formLayout_9">
+           <layout class="QFormLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::ExpandingFieldsGrow</enum>
             </property>
@@ -673,8 +673,8 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_2">
-           <layout class="QVBoxLayout" name="verticalLayout_8">
+          <widget class="QWidget">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="KisSliderSpinBox" name="notificationVolume">
               <property name="suffix">
@@ -693,7 +693,7 @@
               <property name="title">
                <string>Notifications</string>
               </property>
-              <layout class="QGridLayout" name="gridLayout">
+              <layout class="QGridLayout">
                <item row="1" column="0">
                 <widget class="QCheckBox" name="notifMarker">
                  <property name="text">
@@ -852,7 +852,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="paintEnginePage">
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QGroupBox" name="paintEngineRenderingGroup">
               <property name="title">
@@ -957,8 +957,8 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="stackedWidgetPage2">
-           <layout class="QFormLayout" name="formLayout_3">
+          <widget class="QWidget">
+           <layout class="QFormLayout">
             <item row="1" column="0">
              <widget class="QCheckBox" name="recordpause">
               <property name="text">
@@ -970,7 +970,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QDoubleSpinBox" name="minimumpause">
                 <property name="prefix">
@@ -994,7 +994,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_2">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1016,7 +1016,7 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QSpinBox" name="timestampInterval">
                 <property name="suffix">
@@ -1040,7 +1040,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_5">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1056,13 +1056,13 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="stackedWidgetPage3">
-           <layout class="QFormLayout" name="formLayout">
+          <widget class="QWidget">
+           <layout class="QFormLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::FieldsStayAtSizeHint</enum>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_6">
+             <widget class="QLabel">
               <property name="text">
                <string>Connection timeout:</string>
               </property>
@@ -1085,7 +1085,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel">
               <property name="text">
                <string>Default server port:</string>
               </property>
@@ -1120,7 +1120,7 @@
              </widget>
             </item>
             <item row="5" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel">
               <property name="text">
                <string>Session history:</string>
               </property>
@@ -1134,7 +1134,7 @@
              </widget>
             </item>
             <item row="6" column="0">
-             <widget class="QLabel" name="label_29">
+             <widget class="QLabel">
               <property name="text">
                <string>Account passwords:</string>
               </property>
@@ -1149,7 +1149,7 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="stackedWidgetPage4">
+          <widget class="QWidget">
            <layout class="QVBoxLayout">
             <item>
              <widget class="QLineEdit" name="shortcutFilter">
@@ -1171,7 +1171,7 @@
            </layout>
           </widget>
           <widget class="QWidget" name="canvasShortcutsPage">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QTableView" name="canvasShortcutsTable">
               <property name="selectionMode">
@@ -1232,8 +1232,8 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="stackedWidgetPage5">
-           <layout class="QVBoxLayout" name="verticalLayout">
+          <widget class="QWidget">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QListWidget" name="knownHostList">
               <property name="selectionMode">
@@ -1245,7 +1245,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout">
               <item>
                <widget class="QPushButton" name="importTrustedButton">
                 <property name="text">
@@ -1254,7 +1254,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1294,8 +1294,8 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="stackedWidgetPage6">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+          <widget class="QWidget">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QListView" name="listserverview">
               <property name="verticalScrollMode">
@@ -1307,9 +1307,9 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout">
               <item>
-               <spacer name="horizontalSpacer_4">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -1362,13 +1362,13 @@
            </layout>
           </widget>
           <widget class="QWidget" name="parentalControlsPage">
-           <layout class="QVBoxLayout" name="verticalLayout_16">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QGroupBox" name="nsfmTagsGroup">
               <property name="title">
                <string>NSFM (Not Safe For Minors) Tag Words</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_11">
+              <layout class="QVBoxLayout">
                <item>
                 <widget class="QPlainTextEdit" name="nsfmWords"/>
                </item>
@@ -1387,7 +1387,7 @@
               <property name="title">
                <string>NSFM Session Restrictions</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_13">
+              <layout class="QVBoxLayout">
                <item>
                 <widget class="QRadioButton" name="nsfmUnrestricted">
                  <property name="text">
@@ -1481,8 +1481,8 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_3">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+          <widget class="QWidget">
+           <layout class="QVBoxLayout">
             <item>
              <widget class="QListView" name="avatarList">
               <property name="viewMode">
@@ -1491,9 +1491,9 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <layout class="QHBoxLayout">
               <item>
-               <spacer name="horizontalSpacer_7">
+               <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>

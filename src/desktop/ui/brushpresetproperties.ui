@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Brush Preset Properties</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <layout class="QFormLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="nameLabel">
      <property name="text">
@@ -115,7 +115,7 @@ to 64x64 pixels.</string>
     </layout>
    </item>
    <item row="6" column="0">
-    <spacer name="buttonSpacer">
+    <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

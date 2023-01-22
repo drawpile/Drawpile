@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Play Debug Dump</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <item row="3" column="0" colspan="4">
     <widget class="KisSliderSpinBox" name="delaySpinner">
      <property name="suffix">
@@ -93,7 +93,7 @@
       <attribute name="title">
        <string>Status</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout">
+      <layout class="QFormLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="historyCountLabel">
          <property name="text">
@@ -184,7 +184,7 @@
       <attribute name="title">
        <string>History</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QTableWidget" name="historyTable"/>
        </item>
@@ -212,7 +212,7 @@
       <attribute name="title">
        <string>Local Fork</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout">
        <item>
         <widget class="QTableWidget" name="forkTable"/>
        </item>
