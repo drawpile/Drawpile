@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "net/client.h"
+#include "libclient/net/client.h"
 
-#include "tools/toolcontroller.h"
-#include "tools/laser.h"
-#include "net/envelopebuilder.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/laser.h"
+#include "libclient/net/envelopebuilder.h"
 
-#include "../rustpile/rustpile.h"
+#include "rustpile/rustpile.h"
 
 #include <QPixmap>
 

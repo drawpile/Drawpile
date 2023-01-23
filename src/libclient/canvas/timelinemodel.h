@@ -19,8 +19,8 @@
 #ifndef DP_TIMELINE_MODEL_H
 #define DP_TIMELINE_MODEL_H
 
-#include "../rustpile/rustpile.h"
-#include "layerlist.h"
+#include "rustpile/rustpile.h"
+#include "libclient/canvas/layerlist.h"
 
 #include <QVector>
 #include <QHash>

@@ -19,10 +19,10 @@
 #ifndef DP_SERVER_SESSION_HISTORY_H
 #define DP_SERVER_SESSION_HISTORY_H
 
-#include "../libshared/net/message.h"
-#include "../libshared/util/passwordhash.h"
-#include "sessionban.h"
-#include "idqueue.h"
+#include "libshared/net/message.h"
+#include "libshared/util/passwordhash.h"
+#include "libserver/sessionban.h"
+#include "libserver/idqueue.h"
 
 #include <QObject>
 #include <QDateTime>

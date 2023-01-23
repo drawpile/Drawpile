@@ -20,18 +20,18 @@
 #include <QTimer>
 #include <QApplication>
 
-#include "scene/canvasscene.h"
-#include "scene/canvasitem.h"
-#include "scene/selectionitem.h"
-#include "scene/annotationitem.h"
-#include "scene/usermarkeritem.h"
-#include "scene/lasertrailitem.h"
+#include "desktop/scene/canvasscene.h"
+#include "desktop/scene/canvasitem.h"
+#include "desktop/scene/selectionitem.h"
+#include "desktop/scene/annotationitem.h"
+#include "desktop/scene/usermarkeritem.h"
+#include "desktop/scene/lasertrailitem.h"
 
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "canvas/userlist.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/userlist.h"
 
-#include "../rustpile/rustpile.h"
+#include "rustpile/rustpile.h"
 
 namespace drawingboard {
 

@@ -19,8 +19,8 @@
 #ifndef TOOLSETTINGS_SELECTION_H
 #define TOOLSETTINGS_SELECTION_H
 
-#include "toolsettings.h"
-#include "tools/selection.h"
+#include "desktop/toolwidgets/toolsettings.h"
+#include "libclient/tools/selection.h"
 
 class Ui_SelectionSettings;
 

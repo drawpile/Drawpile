@@ -20,7 +20,7 @@
 // An implementation of Universally Unique Lexicographically Sortable Identifier
 // https://github.com/ulid/spec
 
-#include "ulid.h"
+#include "libshared/util/ulid.h"
 
 #include <QDateTime>
 #include <QtEndian>

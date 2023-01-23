@@ -20,7 +20,7 @@
 #include <QImage>
 #include <QPainter>
 
-#include "videoexporter.h"
+#include "libclient/export/videoexporter.h"
 
 VideoExporter::VideoExporter(QObject *parent)
 	: QObject(parent), _fps(25), _variablesize(true), _frame(0), _targetsize(0, 0)

@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "zeroconfannouncement.h"
-#include "../net/protover.h"
+#include "libshared/listings/zeroconfannouncement.h"
+#include "libshared/net/protover.h"
 
 #ifdef HAVE_DNSSD_BEFORE_5_84_0
 #	include <KDNSSD/DNSSD/PublicService>

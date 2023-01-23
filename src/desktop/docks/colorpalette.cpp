@@ -21,11 +21,11 @@
 #include <QtColorWidgets/color_palette_model.hpp>
 #include <QtColorWidgets/color_dialog.hpp>
 
-#include "colorpalette.h"
-#include "titlewidget.h"
-#include "widgets/groupedtoolbutton.h"
-#include "utils/icon.h"
-#include "../libshared/util/paths.h"
+#include "desktop/docks/colorpalette.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/utils/icon.h"
+#include "libshared/util/paths.h"
 
 #include <QSettings>
 #include <QMessageBox>

@@ -20,9 +20,9 @@
 #ifndef DRAWPILE_DOCUMENT_H
 #define DRAWPILE_DOCUMENT_H
 
-#include "canvas/acl.h"
-#include "net/envelope.h"
-#include "../libshared/util/qtcompat.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/net/envelope.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QObject>
 #include <QStringListModel>
@@ -46,9 +46,9 @@ namespace rustpile {
 	enum class Blendmode : uint8_t;
 }
 
-Q_MOC_INCLUDE("canvas/canvasmodel.h")
-Q_MOC_INCLUDE("net/banlistmodel.h")
-Q_MOC_INCLUDE("net/announcementlist.h")
+Q_MOC_INCLUDE("libclient/canvas/canvasmodel.h")
+Q_MOC_INCLUDE("libclient/net/banlistmodel.h")
+Q_MOC_INCLUDE("libclient/net/announcementlist.h")
 
 /**
  * @brief An active document and its associated data, including the network connection

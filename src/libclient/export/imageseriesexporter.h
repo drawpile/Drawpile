@@ -19,7 +19,7 @@
 #ifndef IMAGESERIESEXPORTER_H
 #define IMAGESERIESEXPORTER_H
 
-#include "videoexporter.h"
+#include "libclient/export/videoexporter.h"
 
 class ImageSeriesExporter : public VideoExporter
 {

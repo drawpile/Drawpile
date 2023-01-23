@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "titlewidget.h"
-#include "utils/qtguicompat.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/utils/qtguicompat.h"
 
 #include <QHBoxLayout>
 #include <QLabel>

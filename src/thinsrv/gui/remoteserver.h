@@ -20,7 +20,7 @@
 #ifndef REMOTESERVER_H
 #define REMOTESERVER_H
 
-#include "server.h"
+#include "thinsrv/gui/server.h"
 
 #include <QUrl>
 

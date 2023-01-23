@@ -20,7 +20,7 @@
 #ifndef SESSIONPAGE_H
 #define SESSIONPAGE_H
 
-#include "pagefactory.h"
+#include "thinsrv/gui/pagefactory.h"
 
 #include <QWidget>
 

@@ -17,18 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "brushsettings.h"
-#include "main.h"
-#include "tools/toolcontroller.h"
-#include "tools/toolproperties.h"
-#include "brushes/brush.h"
-#include "dialogs/inputsettings.h"
+#include "desktop/toolwidgets/brushsettings.h"
+#include "desktop/main.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/toolproperties.h"
+#include "libclient/brushes/brush.h"
+#include "desktop/dialogs/inputsettings.h"
 
-#include "canvas/inputpresetmodel.h"
-#include "canvas/blendmodes.h"
+#include "libclient/canvas/inputpresetmodel.h"
+#include "libclient/canvas/blendmodes.h"
 #include "ui_brushdock.h"
 
-#include "../rustpile/rustpile.h"
+#include "rustpile/rustpile.h"
 
 #include <mypaint-brush-settings.h>
 #include <QKeyEvent>

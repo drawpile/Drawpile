@@ -19,7 +19,7 @@
 #ifndef PresetModel_H
 #define PresetModel_H
 
-#include "canvas/pressure.h"
+#include "libclient/canvas/pressure.h"
 
 #include <QAbstractListModel>
 #include <QSettings>

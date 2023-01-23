@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvasviewmodifiers.h"
+#include "desktop/scene/canvasviewmodifiers.h"
 
 #include <QSettings>
 

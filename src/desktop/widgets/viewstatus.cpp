@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "viewstatus.h"
-#include "groupedtoolbutton.h"
-#include "KisAngleGauge.h"
-#include "../../libshared/util/qtcompat.h"
+#include "desktop/widgets/viewstatus.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/KisAngleGauge.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QComboBox>
 #include <QLineEdit>

@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "userlist.h"
-#include "utils/icon.h"
-#include "acl.h"
-#include "net/envelopebuilder.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/utils/icon.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/net/envelopebuilder.h"
 
-#include "../rustpile/rustpile.h"
+#include "rustpile/rustpile.h"
 
 #include <QDebug>
 #include <QJsonArray>

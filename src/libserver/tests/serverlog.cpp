@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../serverlog.h"
+#include "libserver/serverlog.h"
 
 #include <QtTest/QtTest>
 

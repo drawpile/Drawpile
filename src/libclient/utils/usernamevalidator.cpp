@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "usernamevalidator.h"
-#include "../../libshared/util/validators.h"
+#include "libclient/utils/usernamevalidator.h"
+#include "libshared/util/validators.h"
 
 UsernameValidator::UsernameValidator(QObject *parent) :
 	QValidator(parent)

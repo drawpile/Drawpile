@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "flipbookview.h"
+#include "desktop/widgets/flipbookview.h"
 
 #include <QPaintEvent>
 #include <QPainter>

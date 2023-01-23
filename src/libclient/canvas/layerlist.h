@@ -19,8 +19,8 @@
 #ifndef DP_NET_LAYERLIST_H
 #define DP_NET_LAYERLIST_H
 
-#include "acl.h"
-#include "../../libshared/util/qtcompat.h"
+#include "libclient/canvas/acl.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QAbstractItemModel>
 #include <QMimeData>

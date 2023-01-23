@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "filedhistory.h"
-#include "../libshared/util/passwordhash.h"
-#include "../libshared/util/filename.h"
-#include "../libshared/record/header.h"
-#include "../libshared/net/meta.h"
+#include "libserver/filedhistory.h"
+#include "libshared/util/passwordhash.h"
+#include "libshared/util/filename.h"
+#include "libshared/record/header.h"
+#include "libshared/net/meta.h"
 
 #include <QFile>
 #include <QJsonObject>

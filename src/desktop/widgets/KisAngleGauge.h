@@ -11,7 +11,7 @@
 
 #include <QWidget>
 #include <QScopedPointer>
-#include "utils/qtguicompat.h"
+#include "desktop/utils/qtguicompat.h"
 
 namespace widgets {
 

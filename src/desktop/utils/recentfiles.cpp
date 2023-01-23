@@ -22,7 +22,7 @@
 #include <QSettings>
 #include <QMenu>
 
-#include "recentfiles.h"
+#include "desktop/utils/recentfiles.h"
 
 /**
  * @param filename filename to add

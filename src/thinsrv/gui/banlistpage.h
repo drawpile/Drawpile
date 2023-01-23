@@ -20,7 +20,7 @@
 #ifndef BANLISTPAGE_H
 #define BANLISTPAGE_H
 
-#include "pagefactory.h"
+#include "thinsrv/gui/pagefactory.h"
 
 #include <QWidget>
 #include <QApplication>

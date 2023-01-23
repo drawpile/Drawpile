@@ -19,7 +19,7 @@
 #ifndef BRUSHPALETTEDOCK_H
 #define BRUSHPALETTEDOCK_H
 
-#include "tools/tool.h"
+#include "libclient/tools/tool.h"
 
 #include <QDockWidget>
 

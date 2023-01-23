@@ -19,7 +19,7 @@
 #ifndef DP_NET_META_TRANSPARENT_H
 #define DP_NET_META_TRANSPARENT_H
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 #include <QList>
 #include <QString>

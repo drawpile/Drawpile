@@ -17,14 +17,14 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "docks/brushpalettedock.h"
-#include "dialogs/brushpresetproperties.h"
-#include "widgets/groupedtoolbutton.h"
-#include "toolwidgets/brushsettings.h"
-#include "brushes/brushpresetmodel.h"
-#include "brushes/brush.h"
-#include "utils/icon.h"
-#include "titlewidget.h"
+#include "desktop/docks/brushpalettedock.h"
+#include "desktop/dialogs/brushpresetproperties.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/toolwidgets/brushsettings.h"
+#include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/brushes/brush.h"
+#include "libclient/utils/icon.h"
+#include "desktop/docks/titlewidget.h"
 
 #include <QComboBox>
 #include <QFileDialog>

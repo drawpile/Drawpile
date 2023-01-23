@@ -19,7 +19,7 @@
 #ifndef NETSTATUS_H
 #define NETSTATUS_H
 
-#include "net/server.h"
+#include "libclient/net/server.h"
 
 #include <QWidget>
 #include <QUrl>

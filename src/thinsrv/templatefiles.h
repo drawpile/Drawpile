@@ -20,7 +20,7 @@
 #ifndef DP_SERVER_TEMPLATEFILES_H
 #define DP_SERVER_TEMPLATEFILES_H
 
-#include "../libserver/templateloader.h"
+#include "libserver/templateloader.h"
 
 #include <QObject>
 #include <QDir>

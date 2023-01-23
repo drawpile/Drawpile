@@ -18,9 +18,9 @@
 */
 
 #include "config.h"
-#include "header.h"
-#include "../net/protover.h"
-#include "../net/message.h"
+#include "libshared/record/header.h"
+#include "libshared/net/protover.h"
+#include "libshared/net/message.h"
 
 #include <QIODevice>
 #include <QJsonDocument>

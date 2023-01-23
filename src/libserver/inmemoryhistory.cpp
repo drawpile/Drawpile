@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "inmemoryhistory.h"
-#include "../libshared/util/passwordhash.h"
+#include "libserver/inmemoryhistory.h"
+#include "libshared/util/passwordhash.h"
 
 namespace server {
 

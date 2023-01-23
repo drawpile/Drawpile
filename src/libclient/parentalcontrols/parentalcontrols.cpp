@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "parentalcontrols.h"
-#include "../../libshared/util/qtcompat.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QSettings>
 #include <QRegularExpression>

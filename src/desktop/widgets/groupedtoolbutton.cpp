@@ -16,8 +16,8 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "groupedtoolbutton.h"
-#include "../../libclient/utils/icon.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/utils/icon.h"
 
 #include <QAction>
 #include <QStyleOptionToolButton>

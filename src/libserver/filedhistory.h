@@ -20,8 +20,8 @@
 #ifndef DP_SERVER_FILEDHISTORY_H
 #define DP_SERVER_FILEDHISTORY_H
 
-#include "sessionhistory.h"
-#include "../libshared/net/protover.h"
+#include "libserver/sessionhistory.h"
+#include "libshared/net/protover.h"
 
 #include <QDir>
 #include <QVector>

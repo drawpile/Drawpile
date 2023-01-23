@@ -20,7 +20,8 @@
 #ifndef USERLISTMODEL_H
 #define USERLISTMODEL_H
 
-#include "jsonlistmodel.h"
+#include "thinsrv/gui/jsonlistmodel.h"
+
 namespace server {
 namespace gui {
 

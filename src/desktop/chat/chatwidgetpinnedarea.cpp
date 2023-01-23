@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "chatwidgetpinnedarea.h"
-#include "utils/html.h"
+#include "desktop/chat/chatwidgetpinnedarea.h"
+#include "libclient/utils/html.h"
 
 namespace widgets {
 

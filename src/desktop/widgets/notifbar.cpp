@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "notifbar.h"
-#include "utils/icon.h"
+#include "desktop/widgets/notifbar.h"
+#include "libclient/utils/icon.h"
 
 #include <QResizeEvent>
 #include <QBoxLayout>

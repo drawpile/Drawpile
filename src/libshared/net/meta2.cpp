@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "meta2.h"
-#include "textmode.h"
+#include "libshared/net/meta2.h"
+#include "libshared/net/textmode.h"
 
 #include <cstring>
 #include <QtEndian>

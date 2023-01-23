@@ -19,7 +19,7 @@
 #ifndef TOOLS_FREEHAND_H
 #define TOOLS_FREEHAND_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 namespace rustpile {
 	struct PaintEngineBrush;

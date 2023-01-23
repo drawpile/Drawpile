@@ -20,8 +20,6 @@
 #ifndef KIS_CURVE_WIDGET_H
 #define KIS_CURVE_WIDGET_H
 
-// Qt includes.
-
 #include <QWidget>
 #include <QColor>
 #include <QPointF>

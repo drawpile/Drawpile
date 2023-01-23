@@ -1,6 +1,6 @@
-#include "../../libserver/inmemoryconfig.h"
-#include "../database.h"
-#include "../headless/configfile.h"
+#include "libserver/inmemoryconfig.h"
+#include "thinsrv/database.h"
+#include "thinsrv/headless/configfile.h"
 
 #include <QtTest/QtTest>
 

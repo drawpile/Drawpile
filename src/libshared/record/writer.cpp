@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "writer.h"
-#include "header.h"
-#include "../net/recording.h"
+#include "libshared/record/writer.h"
+#include "libshared/record/header.h"
+#include "libshared/net/recording.h"
 
 #include <QVarLengthArray>
 #include <QDateTime>

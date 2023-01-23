@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "toolproperties.h"
+#include "libclient/tools/toolproperties.h"
 
 #include <QSettings>
 

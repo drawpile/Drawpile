@@ -20,7 +20,7 @@
 #ifndef VERSIONCHECKDIALOG_H
 #define VERSIONCHECKDIALOG_H
 
-#include "utils/newversion.h"
+#include "libclient/utils/newversion.h"
 
 #include <QDialog>
 

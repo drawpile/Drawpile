@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "colorpickersettings.h"
-#include "tools/toolcontroller.h"
-#include "tools/toolproperties.h"
-#include "tools/colorpicker.h"
+#include "desktop/toolwidgets/colorpickersettings.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/toolproperties.h"
+#include "libclient/tools/colorpicker.h"
 
 #include <QtColorWidgets/swatch.hpp>
 

@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "hotbordereventfilter.h"
+#include "desktop/utils/hotbordereventfilter.h"
 
 #include <QMouseEvent>
 #include <QWidget>

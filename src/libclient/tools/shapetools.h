@@ -19,7 +19,7 @@
 #ifndef TOOLS_SHAPETOOLS_H
 #define TOOLS_SHAPETOOLS_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 #include <QRectF>
 

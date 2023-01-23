@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "colorbutton.h"
+#include "desktop/widgets/colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
 #include <QtColorWidgets/ColorDialog>

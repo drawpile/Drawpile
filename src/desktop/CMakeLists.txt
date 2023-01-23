@@ -221,8 +221,6 @@ if(APPLE)
 	)
 endif()
 
-target_include_directories(drawpile PRIVATE "../libclient")
-
 set_target_properties(drawpile PROPERTIES
 	AUTOUIC_SEARCH_PATHS ui
 	VERSION ${PROJECT_VERSION}

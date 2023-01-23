@@ -19,7 +19,7 @@
 #ifndef LAYERACLMENU_H
 #define LAYERACLMENU_H
 
-#include "canvas/features.h"
+#include "libclient/canvas/features.h"
 
 #include <QMenu>
 

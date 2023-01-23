@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sslserver.h"
+#include "libserver/sslserver.h"
 
 #include <QSslSocket>
 #include <QSslCipher>

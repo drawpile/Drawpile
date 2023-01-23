@@ -21,7 +21,7 @@
 #define PASSWORDHASH_H
 
 #include <QtGlobal>
-#include "qtcompat.h"
+#include "libshared/util/qtcompat.h"
 
 class QByteArray;
 class QString;

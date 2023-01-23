@@ -21,7 +21,7 @@
 
 #include <QVector>
 
-#include "canvas/point.h"
+#include "libclient/canvas/point.h"
 
 class StrokeSmoother
 {

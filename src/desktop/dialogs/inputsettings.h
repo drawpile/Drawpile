@@ -19,7 +19,7 @@
 #ifndef InputSettings_H
 #define InputSettings_H
 
-#include "canvas/pressure.h"
+#include "libclient/canvas/pressure.h"
 
 #include <QDialog>
 #include <QMenu>

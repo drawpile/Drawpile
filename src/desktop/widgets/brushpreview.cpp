@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "brushpreview.h"
+#include "desktop/widgets/brushpreview.h"
 
 #include <QPaintEvent>
 #include <QPainter>

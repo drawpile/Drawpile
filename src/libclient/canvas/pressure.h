@@ -20,7 +20,7 @@
 #ifndef CANVAS_PRESSURE_H
 #define CANVAS_PRESSURE_H
 
-#include "utils/kis_cubic_curve.h"
+#include "libclient/utils/kis_cubic_curve.h"
 
 struct PressureMapping {
 	enum Mode {

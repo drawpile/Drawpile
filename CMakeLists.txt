@@ -109,7 +109,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Generated Targets")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -142,6 +141,8 @@ include(GNUInstallDirs)
 include(Cargo)
 
 if(CLIENT OR SERVER)
+	include_directories(${CMAKE_SOURCE_DIR}/src)
+
 	find_package(${QT_PACKAGE_NAME} ${QT_MIN_VERSION_SERVER} REQUIRED COMPONENTS Core Network)
 	find_package(Sodium)
 

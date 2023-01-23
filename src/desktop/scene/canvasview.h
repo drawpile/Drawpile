@@ -19,11 +19,11 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
-#include "canvasviewmodifiers.h"
-#include "canvas/pressure.h"
-#include "canvas/point.h"
-#include "tools/tool.h"
-#include "utils/qtguicompat.h"
+#include "desktop/scene/canvasviewmodifiers.h"
+#include "libclient/canvas/pressure.h"
+#include "libclient/canvas/point.h"
+#include "libclient/tools/tool.h"
+#include "desktop/utils/qtguicompat.h"
 
 #include <QGraphicsView>
 

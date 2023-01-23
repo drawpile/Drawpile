@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "html.h"
-#include "../../libshared/util/qtcompat.h"
+#include "libclient/utils/html.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QRegularExpression>
 

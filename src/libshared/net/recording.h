@@ -19,7 +19,7 @@
 #ifndef DP_NET_RECORDING_H
 #define DP_NET_RECORDING_H
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 #include <QByteArray>
 #include <QString>

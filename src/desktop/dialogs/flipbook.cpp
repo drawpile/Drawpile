@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "flipbook.h"
-#include "canvas/paintengine.h"
-#include "utils/icon.h"
-#include "utils/qtguicompat.h"
-#include "../rustpile/rustpile.h"
+#include "desktop/dialogs/flipbook.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/utils/icon.h"
+#include "desktop/utils/qtguicompat.h"
+#include "rustpile/rustpile.h"
 
 #include "ui_flipbook.h"
 

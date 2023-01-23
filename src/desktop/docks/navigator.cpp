@@ -15,12 +15,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "navigator.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "canvas/userlist.h"
-#include "docks/titlewidget.h"
-#include "utils/icon.h"
+#include "desktop/docks/navigator.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/userlist.h"
+#include "desktop/docks/titlewidget.h"
+#include "libclient/utils/icon.h"
 
 #include <QMouseEvent>
 #include <QTimer>

@@ -16,14 +16,14 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "useritemdelegate.h"
-#include "canvas/userlist.h"
-#include "canvas/canvasmodel.h"
-#include "utils/icon.h"
-#include "net/servercmd.h"
-#include "net/envelopebuilder.h"
-#include "document.h"
-#include "utils/qtguicompat.h"
+#include "desktop/chat/useritemdelegate.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/utils/icon.h"
+#include "libclient/net/servercmd.h"
+#include "libclient/net/envelopebuilder.h"
+#include "libclient/document.h"
+#include "desktop/utils/qtguicompat.h"
 
 #include <QPainter>
 #include <QModelIndex>

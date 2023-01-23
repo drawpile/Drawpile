@@ -16,9 +16,9 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "animationsaverrunnable.h"
-#include "canvas/paintengine.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/export/animationsaverrunnable.h"
+#include "libclient/canvas/paintengine.h"
+#include "rustpile/rustpile.h"
 
 AnimationSaverRunnable::AnimationSaverRunnable(const canvas::PaintEngine *pe, rustpile::AnimationExportMode mode, const QString &filename, QObject *parent)
 	: QObject(parent),

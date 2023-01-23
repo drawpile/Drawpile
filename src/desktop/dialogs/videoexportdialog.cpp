@@ -19,10 +19,10 @@
 
 #include "config.h"
 
-#include "videoexportdialog.h"
-#include "export/imageseriesexporter.h"
-#include "export/ffmpegexporter.h"
-#include "../../libshared/util/qtcompat.h"
+#include "desktop/dialogs/videoexportdialog.h"
+#include "libclient/export/imageseriesexporter.h"
+#include "libclient/export/ffmpegexporter.h"
+#include "libshared/util/qtcompat.h"
 
 #include "ui_videoexport.h"
 

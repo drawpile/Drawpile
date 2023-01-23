@@ -17,17 +17,17 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "textmode.h"
+#include "libshared/net/textmode.h"
 
-#include "meta.h"
-#include "meta2.h"
-#include "brushes.h"
-#include "annotation.h"
-#include "layer.h"
-#include "image.h"
-#include "recording.h"
-#include "undo.h"
-#include "util/qtcompat.h"
+#include "libshared/net/meta.h"
+#include "libshared/net/meta2.h"
+#include "libshared/net/brushes.h"
+#include "libshared/net/annotation.h"
+#include "libshared/net/layer.h"
+#include "libshared/net/image.h"
+#include "libshared/net/recording.h"
+#include "libshared/net/undo.h"
+#include "libshared/util/qtcompat.h"
 
 namespace protocol {
 namespace text {

@@ -20,11 +20,11 @@
 #ifndef DP_SHARED_SERVER_SESSION_H
 #define DP_SHARED_SERVER_SESSION_H
 
-#include "announcable.h"
-#include "../libshared/net/message.h"
-#include "../libshared/net/protover.h"
-#include "sessionhistory.h"
-#include "jsonapi.h"
+#include "libserver/announcable.h"
+#include "libshared/net/message.h"
+#include "libshared/net/protover.h"
+#include "libserver/sessionhistory.h"
+#include "libserver/jsonapi.h"
 
 #include <QHash>
 #include <QString>

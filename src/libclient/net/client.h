@@ -19,7 +19,7 @@
 #ifndef DP_NET_CLIENT_H
 #define DP_NET_CLIENT_H
 
-#include "net/server.h"
+#include "libclient/net/server.h"
 
 #include <QObject>
 #include <QSslCertificate>

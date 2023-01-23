@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "selection.h"
-#include "net/envelopebuilder.h"
-#include "net/envelope.h"
-#include "../tools/selection.h" // for selection utilities
-#include "../rustpile/rustpile.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/net/envelopebuilder.h"
+#include "libclient/net/envelope.h"
+#include "libclient/tools/selection.h" // for selection utilities
+#include "rustpile/rustpile.h"
 
 #include <QPainter>
 #include <QtMath>

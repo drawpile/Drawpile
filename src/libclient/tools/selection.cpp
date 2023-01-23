@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "net/client.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/net/client.h"
 
-#include "tools/selection.h"
-#include "tools/toolcontroller.h"
-#include "tools/utils.h"
+#include "libclient/tools/selection.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/utils.h"
 
 #include <QPixmap>
 #include <QtMath>

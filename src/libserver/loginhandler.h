@@ -19,7 +19,7 @@
 #ifndef DP_SERVER_LOGINHANDLER_H
 #define DP_SERVER_LOGINHANDLER_H
 
-#include "../libshared/net/message.h"
+#include "libshared/net/message.h"
 
 #include <QObject>
 #include <QStringList>

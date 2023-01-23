@@ -19,7 +19,7 @@
 #ifndef DP_NET_BRUSHES_H
 #define DP_NET_BRUSHES_H
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 #include <QVector>
 #include <QRect>

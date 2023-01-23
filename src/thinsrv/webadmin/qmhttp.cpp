@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "qmhttp.h"
+#include "thinsrv/webadmin/qmhttp.h"
 
 #include <QList>
 #include <QPair>

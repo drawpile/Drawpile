@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvas/canvasmodel.h"
+#include "libclient/canvas/canvasmodel.h"
 
-#include "tools/toolcontroller.h"
-#include "tools/colorpicker.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/colorpicker.h"
 
 #include <QPixmap>
 

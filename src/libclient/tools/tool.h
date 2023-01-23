@@ -19,7 +19,7 @@
 #ifndef TOOLS_TOOL_H
 #define TOOLS_TOOL_H
 
-#include "canvas/point.h"
+#include "libclient/canvas/point.h"
 
 #include <QCursor>
 

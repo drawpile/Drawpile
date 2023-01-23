@@ -1,4 +1,4 @@
-#include "../listings/listserverfinder.h"
+#include "libshared/listings/listserverfinder.h"
 
 #include <QtTest/QtTest>
 #include <QBuffer>

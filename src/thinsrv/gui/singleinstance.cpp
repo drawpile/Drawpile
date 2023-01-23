@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "singleinstance.h"
+#include "thinsrv/gui/singleinstance.h"
 
 namespace server {
 namespace gui {

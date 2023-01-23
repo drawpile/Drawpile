@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "messagequeue.h"
-#include "envelopebuilder.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/net/messagequeue.h"
+#include "libclient/net/envelopebuilder.h"
+#include "rustpile/rustpile.h"
 
 #include <QTcpSocket>
 #include <QDateTime>

@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "filename.h"
+#include "libshared/util/filename.h"
 
 #include <QFileInfo>
 #include <QDir>

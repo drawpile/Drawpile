@@ -23,7 +23,7 @@
 #include <QString>
 #include <QList>
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 namespace protocol {
 

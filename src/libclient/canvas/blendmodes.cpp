@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "blendmodes.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/canvas/blendmodes.h"
+#include "rustpile/rustpile.h"
 
 #include <QCoreApplication>
 

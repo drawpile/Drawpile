@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lasertrailitem.h"
+#include "desktop/scene/lasertrailitem.h"
 
 #include <QApplication>
 #include <QPainter>

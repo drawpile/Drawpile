@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "selectionitem.h"
-#include "arrows_data.h"
+#include "desktop/scene/selectionitem.h"
+#include "desktop/scene/arrows_data.h"
 
 #include <QPainter>
 #include <QApplication>

@@ -19,8 +19,8 @@
 #ifndef TOOLSETTINGS_BRUSHES_H
 #define TOOLSETTINGS_BRUSHES_H
 
-#include "canvas/pressure.h"
-#include "toolsettings.h"
+#include "libclient/canvas/pressure.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 class QAction;
 class QSpinBox;

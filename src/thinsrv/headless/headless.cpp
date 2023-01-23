@@ -18,16 +18,16 @@
 */
 #include "config.h"
 
-#include "multiserver.h"
-#include "initsys.h"
-#include "database.h"
-#include "../libserver/sslserver.h"
-#include "../libserver/inmemoryconfig.h"
-#include "configfile.h"
-#include "../libshared/util/paths.h"
+#include "thinsrv/multiserver.h"
+#include "thinsrv/initsys.h"
+#include "thinsrv/database.h"
+#include "libserver/sslserver.h"
+#include "libserver/inmemoryconfig.h"
+#include "thinsrv/headless/configfile.h"
+#include "libshared/util/paths.h"
 
 #ifdef HAVE_WEBADMIN
-#include "webadmin/webadmin.h"
+#include "thinsrv/webadmin/webadmin.h"
 #endif
 
 #include <QCoreApplication>
@@ -37,7 +37,7 @@
 #include <QDir>
 
 #ifdef Q_OS_UNIX
-#include "unixsignals.h"
+#include "thinsrv/headless/unixsignals.h"
 #endif
 
 namespace server {

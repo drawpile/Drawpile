@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "envelopebuilder.h"
-#include "envelope.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/net/envelopebuilder.h"
+#include "libclient/net/envelope.h"
+#include "rustpile/rustpile.h"
 
 #include <QImage>
 

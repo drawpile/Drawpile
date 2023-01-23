@@ -19,7 +19,7 @@
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
 
-#include "envelope.h"
+#include "libclient/net/envelope.h"
 
 #include <QString>
 #include <QUrl>

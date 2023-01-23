@@ -19,8 +19,8 @@
 #ifndef DP_NET_TCPSERVER_H
 #define DP_NET_TCPSERVER_H
 
-#include "server.h"
-#include "messagequeue.h"
+#include "libclient/net/server.h"
+#include "libclient/net/messagequeue.h"
 
 #include <QUrl>
 

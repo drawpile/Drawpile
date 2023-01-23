@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "docks/layeraclmenu.h"
-#include "canvas/userlist.h"
-#include "parentalcontrols/parentalcontrols.h"
+#include "desktop/docks/layeraclmenu.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include <QApplication>
 #include <QActionGroup>

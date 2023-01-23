@@ -18,7 +18,7 @@
 */
 #include <QKeyEvent>
 
-#include "chatlineedit.h"
+#include "desktop/chat/chatlineedit.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
 	QLineEdit(parent), _historypos(0)

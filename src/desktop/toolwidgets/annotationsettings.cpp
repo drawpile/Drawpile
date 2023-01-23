@@ -17,17 +17,17 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "annotationsettings.h"
-#include "tools/toolcontroller.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/userlist.h"
-#include "scene/canvasscene.h"
-#include "scene/annotationitem.h"
-#include "net/client.h"
-#include "net/envelopebuilder.h"
-#include "utils/icon.h"
-#include "widgets/groupedtoolbutton.h"
-#include "utils/qtguicompat.h"
+#include "desktop/toolwidgets/annotationsettings.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/userlist.h"
+#include "desktop/scene/canvasscene.h"
+#include "desktop/scene/annotationitem.h"
+#include "libclient/net/client.h"
+#include "libclient/net/envelopebuilder.h"
+#include "libclient/utils/icon.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/utils/qtguicompat.h"
 
 
 #include "ui_textsettings.h"

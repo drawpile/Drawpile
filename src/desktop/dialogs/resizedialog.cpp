@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "resizedialog.h"
-#include "utils/images.h"
+#include "desktop/dialogs/resizedialog.h"
+#include "libclient/utils/images.h"
 
 #include "ui_resizedialog.h"
 

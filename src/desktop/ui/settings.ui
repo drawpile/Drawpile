@@ -1384,7 +1384,7 @@
   <customwidget>
    <class>widgets::ModifierKeys</class>
    <extends>QWidget</extends>
-   <header>widgets/modifierkeys.h</header>
+   <header>desktop/widgets/modifierkeys.h</header>
   </customwidget>
   <customwidget>
    <class>color_widgets::ColorWheel</class>

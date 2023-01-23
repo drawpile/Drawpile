@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dialogs/hostdialog.h"
+#include "desktop/dialogs/hostdialog.h"
 
-#include "utils/mandatoryfields.h"
-#include "utils/sessionidvalidator.h"
-#include "utils/images.h"
-#include "utils/listservermodel.h"
+#include "desktop/utils/mandatoryfields.h"
+#include "libclient/utils/sessionidvalidator.h"
+#include "libclient/utils/images.h"
+#include "libclient/utils/listservermodel.h"
 
 #include "ui_hostdialog.h"
 

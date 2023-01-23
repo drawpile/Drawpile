@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "loginsessions.h"
-#include "utils/icon.h"
+#include "libclient/net/loginsessions.h"
+#include "libclient/utils/icon.h"
 
 #include <QDebug>
 #include <QPixmap>

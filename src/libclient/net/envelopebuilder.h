@@ -21,7 +21,7 @@
 
 #include <cstdint>
 
-#include "envelope.h"
+#include "libclient/net/envelope.h"
 
 class QImage;
 

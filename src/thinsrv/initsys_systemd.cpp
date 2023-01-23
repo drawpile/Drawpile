@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "initsys.h"
+#include "thinsrv/initsys.h"
 
 #include <systemd/sd-daemon.h>
 #include <sys/socket.h>

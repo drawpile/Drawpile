@@ -19,8 +19,8 @@
 #ifndef REC_READER_H
 #define REC_READER_H
 
-#include "../net/message.h"
-#include "../net/protover.h"
+#include "libshared/net/message.h"
+#include "libshared/net/protover.h"
 
 #include <QObject>
 #include <QJsonObject>

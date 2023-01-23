@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "images.h"
+#include "libclient/utils/images.h"
 
 #include <QSize>
 #include <QImageReader>

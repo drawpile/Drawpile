@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "addserverdialog.h"
-#include "../../libshared/util/networkaccess.h"
-#include "utils/listservermodel.h"
+#include "desktop/dialogs/addserverdialog.h"
+#include "libshared/util/networkaccess.h"
+#include "libclient/utils/listservermodel.h"
 
 #include <QIcon>
 #include <QPushButton>

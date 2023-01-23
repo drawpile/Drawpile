@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "serversummarypage.h"
-#include "subheaderwidget.h"
-#include "localserver.h"
-#include "trayicon.h"
-#include "../../libserver/serverconfig.h"
+#include "thinsrv/gui/serversummarypage.h"
+#include "thinsrv/gui/subheaderwidget.h"
+#include "thinsrv/gui/localserver.h"
+#include "thinsrv/gui/trayicon.h"
+#include "libserver/serverconfig.h"
 #include "ui_settings.h"
 
 #include <QDebug>

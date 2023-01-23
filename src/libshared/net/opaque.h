@@ -19,7 +19,7 @@
 #ifndef DP_NET_OPAQUE_H
 #define DP_NET_OPAQUE_H
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 #include <QByteArray>
 

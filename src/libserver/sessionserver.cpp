@@ -17,16 +17,16 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionserver.h"
-#include "thinsession.h"
-#include "thinserverclient.h"
-#include "loginhandler.h"
-#include "serverconfig.h"
-#include "serverlog.h"
-#include "inmemoryhistory.h"
-#include "filedhistory.h"
-#include "templateloader.h"
-#include "announcements.h"
+#include "libserver/sessionserver.h"
+#include "libserver/thinsession.h"
+#include "libserver/thinserverclient.h"
+#include "libserver/loginhandler.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
+#include "libserver/inmemoryhistory.h"
+#include "libserver/filedhistory.h"
+#include "libserver/templateloader.h"
+#include "libserver/announcements.h"
 
 #include <QTimer>
 #include <QJsonArray>

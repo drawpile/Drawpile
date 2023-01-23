@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "validators.h"
-#include "ulid.h"
+#include "libshared/util/validators.h"
+#include "libshared/util/ulid.h"
 
 #include <QString>
 #include <QUuid>

@@ -1,4 +1,4 @@
-#include "../utils/html.h"
+#include "libclient/utils/html.h"
 
 #include <QtTest/QtTest>
 

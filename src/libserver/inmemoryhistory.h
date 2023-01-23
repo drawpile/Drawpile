@@ -19,8 +19,8 @@
 #ifndef DP_SERVER_SESSION_INMEMHISTORY_H
 #define DP_SERVER_SESSION_INMEMHISTORY_H
 
-#include "sessionhistory.h"
-#include "../libshared/net/protover.h"
+#include "libserver/sessionhistory.h"
+#include "libshared/net/protover.h"
 
 #include <QSet>
 

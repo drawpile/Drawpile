@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvasitem.h"
+#include "desktop/scene/canvasitem.h"
 
-#include "canvas/paintengine.h"
+#include "libclient/canvas/paintengine.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>

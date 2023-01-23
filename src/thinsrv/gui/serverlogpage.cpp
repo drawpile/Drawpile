@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "serverlogpage.h"
-#include "serverlogmodel.h"
-#include "subheaderwidget.h"
-#include "server.h"
+#include "thinsrv/gui/serverlogpage.h"
+#include "thinsrv/gui/serverlogmodel.h"
+#include "thinsrv/gui/subheaderwidget.h"
+#include "thinsrv/gui/server.h"
 
 #include "ui_ipbandialog.h"
 

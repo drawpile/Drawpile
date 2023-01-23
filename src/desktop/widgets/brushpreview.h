@@ -19,8 +19,8 @@
 #ifndef BRUSHPREVIEW_H
 #define BRUSHPREVIEW_H
 
-#include "../../libclient/brushes/brush.h"
-#include "../../rustpile/rustpile.h"
+#include "libclient/brushes/brush.h"
+#include "rustpile/rustpile.h"
 
 #include <QFrame>
 

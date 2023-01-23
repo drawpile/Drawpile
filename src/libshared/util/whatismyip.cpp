@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "whatismyip.h"
-#include "networkaccess.h"
+#include "libshared/util/whatismyip.h"
+#include "libshared/util/networkaccess.h"
 
 #include <QDebug>
 #include <QNetworkInterface>

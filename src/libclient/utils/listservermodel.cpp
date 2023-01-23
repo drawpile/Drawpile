@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "listservermodel.h"
-#include "../libshared/util/paths.h"
+#include "libclient/utils/listservermodel.h"
+#include "libshared/util/paths.h"
 
 #include <QImage>
 #include <QBuffer>

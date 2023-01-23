@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "localserver.h"
-#include "multiserver.h"
-#include "../../libserver/sessionserver.h"
-#include "../../libserver/serverconfig.h"
-#include "../../libshared/util/whatismyip.h"
+#include "thinsrv/gui/localserver.h"
+#include "thinsrv/multiserver.h"
+#include "libserver/sessionserver.h"
+#include "libserver/serverconfig.h"
+#include "libshared/util/whatismyip.h"
 
 #include <QSettings>
 #include <QJsonObject>

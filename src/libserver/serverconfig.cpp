@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "serverconfig.h"
+#include "libserver/serverconfig.h"
 
 #include <QRegularExpression>
 

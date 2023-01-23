@@ -20,7 +20,7 @@
 #ifndef DP_NET_MSGQUEUE_H
 #define DP_NET_MSGQUEUE_H
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 #include <QQueue>
 #include <QObject>

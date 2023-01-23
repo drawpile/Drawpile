@@ -23,8 +23,8 @@
 #include <QObject>
 #include <QPixmap>
 
-#include "layerlist.h"
-#include "net/envelope.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/net/envelope.h"
 
 namespace rustpile {
 	struct PaintEngine;

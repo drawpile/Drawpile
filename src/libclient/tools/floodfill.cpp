@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "tools/toolcontroller.h"
-#include "tools/floodfill.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/floodfill.h"
 
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "net/client.h"
-#include "net/envelopebuilder.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/net/client.h"
+#include "libclient/net/envelopebuilder.h"
 
 #include <QGuiApplication>
 #include <QPixmap>

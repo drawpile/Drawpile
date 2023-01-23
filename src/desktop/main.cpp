@@ -18,26 +18,26 @@
 */
 #include "config.h"
 
-#include "main.h"
-#include "mainwindow.h"
+#include "desktop/main.h"
+#include "desktop/mainwindow.h"
 
-#include "utils/icon.h"
-#include "utils/logging.h"
-#include "utils/colorscheme.h"
-#include "utils/qtguicompat.h"
-#include "notifications.h"
-#include "dialogs/versioncheckdialog.h"
-#include "../libshared/util/qtcompat.h"
-#include "../libshared/util/paths.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/utils/icon.h"
+#include "libclient/utils/logging.h"
+#include "libclient/utils/colorscheme.h"
+#include "desktop/utils/qtguicompat.h"
+#include "desktop/notifications.h"
+#include "desktop/dialogs/versioncheckdialog.h"
+#include "libshared/util/qtcompat.h"
+#include "libshared/util/paths.h"
+#include "rustpile/rustpile.h"
 
 #ifdef Q_OS_MACOS
-#include "widgets/macmenu.h"
+#include "desktop/widgets/macmenu.h"
 #endif
 
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)
-#include "bundled/kis_tablet/kis_tablet_support_win8.h"
-#include "bundled/kis_tablet/kis_tablet_support_win.h"
+#include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
+#include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
 #include <QCommandLineParser>

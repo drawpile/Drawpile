@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "servercmd.h"
-#include "envelopebuilder.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/net/servercmd.h"
+#include "libclient/net/envelopebuilder.h"
+#include "rustpile/rustpile.h"
 
 namespace net {
 

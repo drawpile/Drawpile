@@ -1,4 +1,4 @@
-#include "parentalcontrols.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include <wpcapi.h>
 

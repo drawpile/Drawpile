@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lasersettings.h"
-#include "tools/toolcontroller.h"
-#include "tools/toolproperties.h"
-#include "tools/laser.h"
+#include "desktop/toolwidgets/lasersettings.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/toolproperties.h"
+#include "libclient/tools/laser.h"
 
 #include "ui_lasersettings.h"
 

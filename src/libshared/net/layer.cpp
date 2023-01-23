@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "layer.h"
-#include "textmode.h"
+#include "libshared/net/layer.h"
+#include "libshared/net/textmode.h"
 
 #include <QtEndian>
 

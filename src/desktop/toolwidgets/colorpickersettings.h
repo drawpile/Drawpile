@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGS_COLORPICKER_H
 #define TOOLSETTINGS_COLORPICKER_H
 
-#include "toolsettings.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 namespace color_widgets {
 	class Swatch;

@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "docks/layerlistdelegate.h"
-#include "canvas/layerlist.h"
-#include "utils/icon.h"
+#include "desktop/docks/layerlistdelegate.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/utils/icon.h"
 
 #include <QDebug>
 #include <QMouseEvent>

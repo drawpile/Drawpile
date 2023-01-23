@@ -10,8 +10,8 @@
 #include <QMouseEvent>
 #include <QtMath>
 
-#include "KisAngleGauge.h"
-#include "utils/qtguicompat.h"
+#include "desktop/widgets/KisAngleGauge.h"
+#include "desktop/utils/qtguicompat.h"
 
 namespace widgets {
 

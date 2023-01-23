@@ -20,7 +20,7 @@
 #ifndef DP_CLIENT_MSGQUEUE_H
 #define DP_CLIENT_MSGQUEUE_H
 
-#include "envelope.h"
+#include "libclient/net/envelope.h"
 
 #include <QQueue>
 #include <QObject>

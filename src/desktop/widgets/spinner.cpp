@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "spinner.h"
+#include "desktop/widgets/spinner.h"
 
 #include <QPainter>
 #include <QtMath>

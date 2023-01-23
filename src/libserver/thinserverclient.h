@@ -20,7 +20,7 @@
 #ifndef THINSERVERCLIENT_H
 #define THINSERVERCLIENT_H
 
-#include "client.h"
+#include "libserver/client.h"
 
 namespace server {
 

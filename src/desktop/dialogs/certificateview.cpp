@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "certificateview.h"
+#include "desktop/dialogs/certificateview.h"
 #include "ui_certificateview.h"
 
 #include <QSslCertificate>

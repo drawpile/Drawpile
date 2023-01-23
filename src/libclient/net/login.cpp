@@ -17,15 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "net/login.h"
-#include "net/loginsessions.h"
-#include "net/tcpserver.h"
-#include "servercmd.h"
-#include "parentalcontrols/parentalcontrols.h"
+#include "libclient/net/login.h"
+#include "libclient/net/loginsessions.h"
+#include "libclient/net/tcpserver.h"
+#include "libclient/net/servercmd.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
-#include "../libshared/net/protover.h"
-#include "../libshared/util/networkaccess.h"
-#include "../libshared/util/paths.h"
+#include "libshared/net/protover.h"
+#include "libshared/util/networkaccess.h"
+#include "libshared/util/paths.h"
 
 #include <QDebug>
 #include <QStringList>

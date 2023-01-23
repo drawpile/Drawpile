@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "acl.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/canvas/acl.h"
+#include "rustpile/rustpile.h"
 
 #include <QHash>
 

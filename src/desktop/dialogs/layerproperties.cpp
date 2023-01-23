@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "layerproperties.h"
-#include "canvas/blendmodes.h"
-#include "net/envelopebuilder.h"
+#include "desktop/dialogs/layerproperties.h"
+#include "libclient/canvas/blendmodes.h"
+#include "libclient/net/envelopebuilder.h"
 
-#include "../rustpile/rustpile.h"
+#include "rustpile/rustpile.h"
 
 #include "ui_layerproperties.h"
 

@@ -1,9 +1,9 @@
-#include "../record/reader.h"
-#include "../record/writer.h"
-#include "../record/header.h"
+#include "libshared/record/reader.h"
+#include "libshared/record/writer.h"
+#include "libshared/record/header.h"
 
-#include "../net/control.h"
-#include "../net/meta.h"
+#include "libshared/net/control.h"
+#include "libshared/net/meta.h"
 
 #include <QtTest/QtTest>
 #include <QTemporaryDir>

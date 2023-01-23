@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "paintengine.h"
-#include "../../rustpile/rustpile.h"
+#include "libclient/canvas/paintengine.h"
+#include "rustpile/rustpile.h"
 
 #include <QPainter>
 

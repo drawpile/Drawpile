@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "indexbuilderrunnable.h"
-#include "paintengine.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/canvas/indexbuilderrunnable.h"
+#include "libclient/canvas/paintengine.h"
+#include "rustpile/rustpile.h"
 
 namespace canvas {
 

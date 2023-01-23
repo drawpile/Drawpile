@@ -19,7 +19,7 @@
 #ifndef DP_NET_SERVER_H
 #define DP_NET_SERVER_H
 
-#include "envelope.h"
+#include "libclient/net/envelope.h"
 
 #include <QObject>
 

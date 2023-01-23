@@ -17,18 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvasmodel.h"
-#include "layerlist.h"
-#include "userlist.h"
-#include "timelinemodel.h"
-#include "acl.h"
-#include "selection.h"
-#include "paintengine.h"
-#include "documentmetadata.h"
-#include "net/envelopebuilder.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/documentmetadata.h"
+#include "libclient/net/envelopebuilder.h"
 
-#include "utils/identicon.h"
-#include "../rustpile/rustpile.h"
+#include "libclient/utils/identicon.h"
+#include "rustpile/rustpile.h"
 
 #include <QSettings>
 #include <QDebug>

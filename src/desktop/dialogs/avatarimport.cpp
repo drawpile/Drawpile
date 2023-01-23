@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "avatarimport.h"
-#include "utils/avatarlistmodel.h"
+#include "desktop/dialogs/avatarimport.h"
+#include "libclient/utils/avatarlistmodel.h"
 
 #include "ui_avatarimport.h"
 

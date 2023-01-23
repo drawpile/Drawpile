@@ -20,7 +20,7 @@
 #ifndef BANLISTMODEL_H
 #define BANLISTMODEL_H
 
-#include "jsonlistmodel.h"
+#include "thinsrv/gui/jsonlistmodel.h"
 
 namespace server {
 namespace gui {

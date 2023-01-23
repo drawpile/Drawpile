@@ -19,7 +19,7 @@
 #ifndef DRAWPILE_SERVER_ANNOUNCEMENTS_H
 #define DRAWPILE_SERVER_ANNOUNCEMENTS_H
 
-#include "../libshared/listings/announcementapi.h"
+#include "libshared/listings/announcementapi.h"
 
 #include <QObject>
 #include <QVector>

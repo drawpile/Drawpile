@@ -1,4 +1,4 @@
-#include "../util/authtoken.h"
+#include "libshared/util/authtoken.h"
 
 #include <QtTest/QtTest>
 

@@ -19,7 +19,7 @@
 #ifndef INMEMORYCONFIG_H
 #define INMEMORYCONFIG_H
 
-#include "serverconfig.h"
+#include "libserver/serverconfig.h"
 
 namespace server {
 

@@ -1,4 +1,4 @@
-#include "../util/filename.h"
+#include "libshared/util/filename.h"
 
 #include <QtTest/QtTest>
 #include <QTemporaryDir>

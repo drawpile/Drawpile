@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "colorscheme.h"
+#include "libclient/utils/colorscheme.h"
 
 #include <QPalette>
 #include <QPair>

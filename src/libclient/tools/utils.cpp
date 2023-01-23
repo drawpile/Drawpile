@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "tools/utils.h"
+#include "libclient/tools/utils.h"
 
 #include <QtMath>
 

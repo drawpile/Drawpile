@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "timelinemodel.h"
-#include "layerlist.h"
-#include "../net/envelopebuilder.h"
-#include "../../rustpile/rustpile.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/net/envelopebuilder.h"
+#include "rustpile/rustpile.h"
 
 #include <QBitArray>
 

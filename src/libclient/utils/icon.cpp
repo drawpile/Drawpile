@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "icon.h"
-#include "../libshared/util/paths.h"
+#include "libclient/utils/icon.h"
+#include "libshared/util/paths.h"
 
 #include <QDir>
 #include <QPalette>

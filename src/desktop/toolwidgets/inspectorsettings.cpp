@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "inspectorsettings.h"
-#include "tools/toolcontroller.h"
-#include "canvas/userlist.h"
+#include "desktop/toolwidgets/inspectorsettings.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/canvas/userlist.h"
 
 #include "ui_inspectorsettings.h"
 

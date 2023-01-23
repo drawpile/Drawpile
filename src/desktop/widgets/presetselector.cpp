@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "presetselector.h"
-#include "../libshared/util/paths.h"
+#include "desktop/widgets/presetselector.h"
+#include "libshared/util/paths.h"
 
 #include <QComboBox>
 #include <QLineEdit>

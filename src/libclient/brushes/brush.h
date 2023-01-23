@@ -19,7 +19,7 @@
 #ifndef DP_BRUSHES_BRUSH_H
 #define DP_BRUSHES_BRUSH_H
 
-#include "../../rustpile/rustpile.h"
+#include "rustpile/rustpile.h"
 
 #include <QColor>
 #include <QJsonObject>

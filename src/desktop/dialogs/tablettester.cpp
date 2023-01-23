@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "tablettester.h"
+#include "desktop/dialogs/tablettester.h"
 #include "ui_tablettest.h"
 
-#include "../main.h"
+#include "desktop/main.h"
 
 namespace dialogs {
 

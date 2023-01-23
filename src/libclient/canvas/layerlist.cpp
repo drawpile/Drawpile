@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "layerlist.h"
-#include "../rustpile/rustpile.h"
-#include "../../libshared/util/qtcompat.h"
+#include "libclient/canvas/layerlist.h"
+#include "rustpile/rustpile.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QDebug>
 #include <QImage>

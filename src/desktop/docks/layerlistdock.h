@@ -19,7 +19,7 @@
 #ifndef LAYERLISTDOCK_H
 #define LAYERLISTDOCK_H
 
-#include "canvas/features.h"
+#include "libclient/canvas/features.h"
 
 #include <QDockWidget>
 

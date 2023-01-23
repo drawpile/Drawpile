@@ -20,7 +20,7 @@
 #ifndef DBLOG_H
 #define DBLOG_H
 
-#include "../libserver/serverlog.h"
+#include "libserver/serverlog.h"
 
 #include <QSqlDatabase>
 

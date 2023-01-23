@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "networkaccess.h"
-#include "qtcompat.h"
+#include "libshared/util/networkaccess.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QNetworkReply>
 #include <QMutexLocker>

@@ -19,7 +19,7 @@
 #ifndef TOOLS_INSPECTOR_H
 #define TOOLS_INSPECTOR_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 namespace tools {
 

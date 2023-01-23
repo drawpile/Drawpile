@@ -19,7 +19,7 @@
 #ifndef DP_NET_IMAGE_H
 #define DP_NET_IMAGE_H
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 #include <QByteArray>
 #include <QList>

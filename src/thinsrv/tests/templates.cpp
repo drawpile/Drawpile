@@ -1,8 +1,8 @@
-#include "../templatefiles.h"
-#include "../../libserver/inmemoryhistory.h"
-#include "../../libshared/net/protover.h"
-#include "../../libshared/util/passwordhash.h"
-#include "../../libshared/util/ulid.h"
+#include "thinsrv/templatefiles.h"
+#include "libserver/inmemoryhistory.h"
+#include "libshared/net/protover.h"
+#include "libshared/util/passwordhash.h"
+#include "libshared/util/ulid.h"
 
 #include <QtTest/QtTest>
 #include <QTemporaryDir>

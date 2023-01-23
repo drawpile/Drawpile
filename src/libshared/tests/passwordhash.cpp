@@ -1,5 +1,5 @@
-#include "../util/passwordhash.h"
-#include "../util/qtcompat.h"
+#include "libshared/util/passwordhash.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QtTest/QtTest>
 

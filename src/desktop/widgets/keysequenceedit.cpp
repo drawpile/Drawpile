@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keysequenceedit.h"
+#include "desktop/widgets/keysequenceedit.h"
 
 #include <QToolButton>
 #include <QHBoxLayout>

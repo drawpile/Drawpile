@@ -19,7 +19,7 @@
 #ifndef TOOLS_FLOODFILL_H
 #define TOOLS_FLOODFILL_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 namespace tools {
 

@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionidvalidator.h"
-#include "../libshared/util/validators.h"
+#include "libclient/utils/sessionidvalidator.h"
+#include "libshared/util/validators.h"
 
 SessionIdAliasValidator::SessionIdAliasValidator(QObject *parent) :
 	QValidator(parent)

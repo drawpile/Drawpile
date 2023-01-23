@@ -20,7 +20,7 @@
 #ifndef DP_MULTISERVER_H
 #define DP_MULTISERVER_H
 
-#include "../libserver/jsonapi.h"
+#include "libserver/jsonapi.h"
 
 #include <QObject>
 #include <QHostAddress>

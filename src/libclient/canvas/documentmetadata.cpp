@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "documentmetadata.h"
-#include "../rustpile/rustpile.h"
-#include "paintengine.h"
+#include "libclient/canvas/documentmetadata.h"
+#include "rustpile/rustpile.h"
+#include "libclient/canvas/paintengine.h"
 
 namespace canvas {
 

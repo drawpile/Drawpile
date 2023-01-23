@@ -24,8 +24,8 @@
 #include <QUrl>
 #include <QPointer>
 
-#include "tools/tool.h"
-#include "canvas/acl.h"
+#include "libclient/tools/tool.h"
+#include "libclient/canvas/acl.h"
 
 class QActionGroup;
 class QLabel;

@@ -512,7 +512,7 @@
   <customwidget>
    <class>widgets::PresetSelector</class>
    <extends>QWidget</extends>
-   <header>widgets/presetselector.h</header>
+   <header>desktop/widgets/presetselector.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

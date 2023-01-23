@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "mainwindow.h"
-#include "sidebarmodel.h"
-#include "sidebaritemdelegate.h"
-#include "localserver.h"
-#include "trayicon.h"
+#include "thinsrv/gui/mainwindow.h"
+#include "thinsrv/gui/sidebarmodel.h"
+#include "thinsrv/gui/sidebaritemdelegate.h"
+#include "thinsrv/gui/localserver.h"
+#include "thinsrv/gui/trayicon.h"
 
 #include <QDebug>
 #include <QAction>

@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "newdialog.h"
-#include "utils/images.h"
+#include "desktop/dialogs/newdialog.h"
+#include "libclient/utils/images.h"
 
 #include "ui_newdialog.h"
 

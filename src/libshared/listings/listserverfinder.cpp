@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "listserverfinder.h"
+#include "libshared/listings/listserverfinder.h"
 
 #include <QXmlStreamReader>
 

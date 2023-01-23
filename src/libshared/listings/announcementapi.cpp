@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "announcementapi.h"
-#include "listserverfinder.h"
-#include "../util/networkaccess.h"
+#include "libshared/listings/announcementapi.h"
+#include "libshared/listings/listserverfinder.h"
+#include "libshared/util/networkaccess.h"
 #include "config.h" // for DRAWPILE_VERSION
 
 #include <QNetworkRequest>

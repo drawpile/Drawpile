@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "unixsignals.h"
+#include "thinsrv/headless/unixsignals.h"
 
 #include <sys/socket.h>
 #include <signal.h>

@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "templatefiles.h"
-#include "../libshared/record/reader.h"
-#include "../libserver/sessionhistory.h"
-#include "../libshared/util/validators.h"
+#include "thinsrv/templatefiles.h"
+#include "libshared/record/reader.h"
+#include "libserver/sessionhistory.h"
+#include "libshared/util/validators.h"
 
 #include <QJsonArray>
 #include <QFileSystemWatcher>
