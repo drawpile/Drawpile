@@ -31,7 +31,7 @@ option(USE_CLANG_TIDY "Run clang-tidy on build" ON)
 option(USE_STRICT_ALIASING "Enable strict aliasing optimizations" OFF)
 option(ENABLE_HISTORY_DUMP "Produce history dumps (debug feature)" OFF)
 option(LINK_WITH_LIBM "Link with libm when using math" ON)
-option(BUILD_TESTS "Build tests with CMocka" ON)
+option(BUILD_TESTS "Build TAP tests" ON)
 option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
 
 set(THREAD_IMPL PTHREAD CACHE STRING
