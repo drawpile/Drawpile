@@ -19,7 +19,7 @@
 #ifndef ADDSERVERDIALOG_H
 #define ADDSERVERDIALOG_H
 
-#include "net/sessionlistingmodel.h"
+#include "libclient/net/sessionlistingmodel.h"
 
 #include <QMessageBox>
 

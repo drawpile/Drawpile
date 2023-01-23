@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "tablettest.h"
+#include "desktop/widgets/tablettest.h"
 
 #include <QPaintEvent>
 #include <QPainter>

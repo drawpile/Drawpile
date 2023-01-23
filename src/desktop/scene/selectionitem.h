@@ -19,7 +19,7 @@
 #ifndef SELECTIONITEM_H
 #define SELECTIONITEM_H
 
-#include "canvas/selection.h"
+#include "libclient/canvas/selection.h"
 
 #include <QGraphicsObject>
 

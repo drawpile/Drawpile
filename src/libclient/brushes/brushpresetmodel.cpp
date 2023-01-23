@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "brushpresetmodel.h"
-#include "brush.h"
+#include "libclient/brushes/brushpresetmodel.h"
+#include "libclient/brushes/brush.h"
 
-#include "../utils/icon.h"
-#include "../libshared/util/paths.h"
-#include "qtshims.h"
-#include <drawdance/ziparchive.h>
+#include "libclient/utils/icon.h"
+#include "libshared/util/paths.h"
+#include "libshared/qtshims.h"
+#include "libclient/drawdance/ziparchive.h"
 
 #include <QBuffer>
 #include <QDebug>

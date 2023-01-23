@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "database.h"
-#include "dblog.h"
-#include "../libshared/util/passwordhash.h"
-#include "../libshared/util/validators.h"
-#include "../libserver/serverlog.h"
-#include "qtshims.h"
+#include "thinsrv/database.h"
+#include "thinsrv/dblog.h"
+#include "libshared/util/passwordhash.h"
+#include "libshared/util/validators.h"
+#include "libshared/qtshims.h"
+#include "libserver/serverlog.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>

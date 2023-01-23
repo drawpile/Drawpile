@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "canvasview.h"
-#include "canvasscene.h"
-#include "canvas/canvasmodel.h"
-#include "drawdance/eventlog.h"
+#include "desktop/scene/canvasview.h"
+#include "desktop/scene/canvasscene.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/drawdance/eventlog.h"
 
-#include "widgets/notifbar.h"
+#include "desktop/widgets/notifbar.h"
 
 #include <QMouseEvent>
 #include <QTabletEvent>

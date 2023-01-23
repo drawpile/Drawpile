@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "fillsettings.h"
-#include "tools/toolcontroller.h"
-#include "tools/toolproperties.h"
-#include "tools/floodfill.h"
+#include "desktop/toolwidgets/fillsettings.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/toolproperties.h"
+#include "libclient/tools/floodfill.h"
 
 #include "ui_fillsettings.h"
 

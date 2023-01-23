@@ -17,18 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "multiserver.h"
-#include "initsys.h"
-#include "database.h"
-#include "templatefiles.h"
+#include "thinsrv/multiserver.h"
+#include "thinsrv/initsys.h"
+#include "thinsrv/database.h"
+#include "thinsrv/templatefiles.h"
 
-#include "../libserver/session.h"
-#include "../libserver/sessionserver.h"
-#include "../libserver/thinserverclient.h"
-#include "../libserver/serverconfig.h"
-#include "../libserver/serverlog.h"
-#include "../libserver/sslserver.h"
-#include "../libshared/util/whatismyip.h"
+#include "libserver/session.h"
+#include "libserver/sessionserver.h"
+#include "libserver/thinserverclient.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
+#include "libserver/sslserver.h"
+#include "libshared/util/whatismyip.h"
 
 #include <QTcpSocket>
 #include <QFileInfo>

@@ -23,7 +23,7 @@
 #include <QDateTime>
 #include <QHostAddress>
 
-#include "../libshared/util/ulid.h"
+#include "libshared/util/ulid.h"
 
 class QJsonObject;
 

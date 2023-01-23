@@ -432,7 +432,7 @@ padding: 16px;</string>
   <customwidget>
    <class>widgets::Spinner</class>
    <extends>QWidget</extends>
-   <header>widgets/spinner.h</header>
+   <header>desktop/widgets/spinner.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "reader.h"
-#include "header.h"
-#include "../net/recording.h"
-#include "../net/textmode.h"
+#include "libshared/record/reader.h"
+#include "libshared/record/header.h"
+#include "libshared/net/recording.h"
+#include "libshared/net/textmode.h"
 
 #include "config.h"
 

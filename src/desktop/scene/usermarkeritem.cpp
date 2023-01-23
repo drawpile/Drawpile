@@ -24,7 +24,7 @@
 #include <QGraphicsDropShadowEffect>
 #include <QDateTime>
 
-#include "usermarkeritem.h"
+#include "desktop/scene/usermarkeritem.h"
 
 namespace drawingboard {
 

@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "authdialog.h"
+#include "thinsrv/gui/authdialog.h"
 #include "ui_authdialog.h"
-#include "../../libshared/util/networkaccess.h"
+#include "libshared/util/networkaccess.h"
 
 #include <QNetworkAccessManager>
 #include <QAuthenticator>

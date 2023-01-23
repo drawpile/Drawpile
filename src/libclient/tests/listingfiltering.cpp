@@ -1,6 +1,6 @@
-#include "../net/sessionlistingmodel.h"
-#include "../net/loginsessions.h"
-#include "../utils/sessionfilterproxymodel.h"
+#include "libclient/net/sessionlistingmodel.h"
+#include "libclient/net/loginsessions.h"
+#include "libclient/utils/sessionfilterproxymodel.h"
 
 #include <QtTest/QtTest>
 

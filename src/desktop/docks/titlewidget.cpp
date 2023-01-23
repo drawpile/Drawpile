@@ -17,15 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "titlewidget.h"
+#include "desktop/docks/titlewidget.h"
+#include "libclient/utils/icon.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "libshared/qtshims.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
 #include <QMenu>
-#include "utils/icon.h"
-#include "widgets/groupedtoolbutton.h"
-#include "../../libshared/qtshims.h"
 
 namespace docks {
 

@@ -20,7 +20,7 @@
 #ifndef SIDEBARMODEL_H
 #define SIDEBARMODEL_H
 
-#include "pagefactory.h"
+#include "thinsrv/gui/pagefactory.h"
 
 #include <QAbstractItemModel>
 #include <QList>

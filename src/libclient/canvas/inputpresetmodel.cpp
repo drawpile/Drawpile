@@ -16,8 +16,8 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "inputpresetmodel.h"
-#include "../../libshared/util/ulid.h"
+#include "libclient/canvas/inputpresetmodel.h"
+#include "libshared/util/ulid.h"
 
 namespace input {
 

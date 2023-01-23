@@ -21,7 +21,7 @@
 #include <QImageWriter>
 #include <QDir>
 
-#include "imageseriesexporter.h"
+#include "libclient/export/imageseriesexporter.h"
 
 ImageSeriesExporter::ImageSeriesExporter(QObject *parent)
 	: VideoExporter(parent)

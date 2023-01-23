@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "banlistpage.h"
-#include "banlistmodel.h"
-#include "subheaderwidget.h"
-#include "server.h"
+#include "thinsrv/gui/banlistpage.h"
+#include "thinsrv/gui/banlistmodel.h"
+#include "thinsrv/gui/subheaderwidget.h"
+#include "thinsrv/gui/server.h"
 
 #include "ui_ipbandialog.h"
 

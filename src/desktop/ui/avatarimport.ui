@@ -46,7 +46,7 @@
   <customwidget>
    <class>widgets::ResizerWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/resizerwidget.h</header>
+   <header>desktop/widgets/resizerwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

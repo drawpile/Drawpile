@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "colorsliders.h"
-#include "colorpalette.h"
-#include "titlewidget.h"
+#include "desktop/docks/colorsliders.h"
+#include "desktop/docks/colorpalette.h"
+#include "desktop/docks/titlewidget.h"
 
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>

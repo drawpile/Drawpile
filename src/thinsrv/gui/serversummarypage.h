@@ -19,7 +19,7 @@
 #ifndef SERVERSUMMARYPAGE_H
 #define SERVERSUMMARYPAGE_H
 
-#include "pagefactory.h"
+#include "thinsrv/gui/pagefactory.h"
 
 #include <QWidget>
 #include <QApplication>

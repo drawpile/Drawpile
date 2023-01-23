@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "toolsettings.h"
-#include "tools/toolproperties.h"
-#include "tools/toolcontroller.h"
+#include "desktop/toolwidgets/toolsettings.h"
+#include "libclient/tools/toolproperties.h"
+#include "libclient/tools/toolcontroller.h"
 #include <functional>
 
 namespace tools {

@@ -23,7 +23,7 @@ extern "C" {
 #include <dpmsg/blend_mode.h>
 }
 
-#include "acl.h"
+#include "libclient/canvas/acl.h"
 
 #include <QAbstractItemModel>
 #include <QMimeData>

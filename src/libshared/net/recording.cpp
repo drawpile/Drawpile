@@ -16,8 +16,8 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "recording.h"
-#include "opaque.h"
+#include "libshared/net/recording.h"
+#include "libshared/net/opaque.h"
 
 #include <QtEndian>
 #include <cstring>

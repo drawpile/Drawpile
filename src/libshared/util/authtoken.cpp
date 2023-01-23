@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "authtoken.h"
+#include "libshared/util/authtoken.h"
 
 #include <QList>
 #include <QJsonDocument>

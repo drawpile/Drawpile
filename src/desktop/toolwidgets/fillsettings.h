@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGS_FILL_H
 #define TOOLSETTINGS_FILL_H
 
-#include "toolsettings.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 class Ui_FillSettings;
 

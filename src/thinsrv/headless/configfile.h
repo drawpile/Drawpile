@@ -20,7 +20,7 @@
 #ifndef CONFIGFILE_H
 #define CONFIGFILE_H
 
-#include "../../libserver/serverconfig.h"
+#include "libserver/serverconfig.h"
 
 #include <QDateTime>
 #include <QHostAddress>

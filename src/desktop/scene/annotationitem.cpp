@@ -21,7 +21,7 @@
 #include <QPalette>
 #include <QPainter>
 
-#include "scene/annotationitem.h"
+#include "desktop/scene/annotationitem.h"
 
 namespace drawingboard {
 

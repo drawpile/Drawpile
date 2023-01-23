@@ -24,7 +24,7 @@ extern "C" {
 #include <dpmsg/blend_mode.h>
 }
 
-#include "drawdance/message.h"
+#include "libclient/drawdance/message.h"
 
 #include <QObject>
 #include <QImage>

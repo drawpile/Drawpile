@@ -20,12 +20,12 @@
 #include <QtColorWidgets/swatch.hpp>
 #include <QtColorWidgets/color_palette_model.hpp>
 
-#include "colorpalette.h"
-#include "titlewidget.h"
-#include "dialogs/colordialog.h"
-#include "widgets/groupedtoolbutton.h"
-#include "utils/icon.h"
-#include "../libshared/util/paths.h"
+#include "desktop/docks/colorpalette.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/dialogs/colordialog.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "libclient/utils/icon.h"
+#include "libshared/util/paths.h"
 
 #include <QSettings>
 #include <QMessageBox>

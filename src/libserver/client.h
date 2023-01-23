@@ -19,8 +19,8 @@
 #ifndef DP_SERVER_CLIENT_H
 #define DP_SERVER_CLIENT_H
 
-#include "../libshared/net/message.h"
-#include "jsonapi.h"
+#include "libshared/net/message.h"
+#include "libserver/jsonapi.h"
 
 #include <QObject>
 #include <QTcpSocket>

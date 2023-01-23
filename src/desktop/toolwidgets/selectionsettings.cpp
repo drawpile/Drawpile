@@ -17,14 +17,14 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "selectionsettings.h"
-#include "canvas/selection.h"
-#include "canvas/canvasmodel.h"
-#include "net/client.h"
-#include "scene/canvasview.h"
-#include "tools/toolcontroller.h"
-#include "tools/toolproperties.h"
-#include "tools/selection.h"
+#include "desktop/toolwidgets/selectionsettings.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/net/client.h"
+#include "desktop/scene/canvasview.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/toolproperties.h"
+#include "libclient/tools/selection.h"
 
 #include "ui_selectsettings.h"
 

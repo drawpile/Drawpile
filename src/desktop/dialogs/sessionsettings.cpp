@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionsettings.h"
-#include "utils/listservermodel.h"
-#include "net/banlistmodel.h"
-#include "net/announcementlist.h"
-#include "document.h"
-#include "canvas/canvasmodel.h"
-#include "parentalcontrols/parentalcontrols.h"
+#include "desktop/dialogs/sessionsettings.h"
+#include "libclient/utils/listservermodel.h"
+#include "libclient/net/banlistmodel.h"
+#include "libclient/net/announcementlist.h"
+#include "libclient/document.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include "ui_sessionsettings.h"
 

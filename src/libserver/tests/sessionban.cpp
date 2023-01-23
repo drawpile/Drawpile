@@ -1,4 +1,4 @@
-#include "../sessionban.h"
+#include "libserver/sessionban.h"
 
 #include <QtTest/QtTest>
 #include <QHostAddress>

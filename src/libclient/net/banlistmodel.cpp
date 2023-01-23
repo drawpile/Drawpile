@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "banlistmodel.h"
+#include "libclient/net/banlistmodel.h"
 
 #include <QDebug>
 #include <QJsonArray>

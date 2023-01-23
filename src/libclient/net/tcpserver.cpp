@@ -18,10 +18,10 @@
 */
 
 #include "config.h"
-#include "tcpserver.h"
-#include "login.h"
-#include "messagequeue.h"
-#include "servercmd.h"
+#include "libclient/net/tcpserver.h"
+#include "libclient/net/login.h"
+#include "libclient/net/messagequeue.h"
+#include "libclient/net/servercmd.h"
 
 #include <QDebug>
 #include <QSslSocket>

@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "timeline.h"
-#include "titlewidget.h"
-#include "canvas/timelinemodel.h"
-#include "drawdance/message.h"
-#include "widgets/timelinewidget.h"
+#include "desktop/docks/timeline.h"
+#include "desktop/docks/titlewidget.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/drawdance/message.h"
+#include "desktop/widgets/timelinewidget.h"
 
 #include <QCheckBox>
 #include <QSpinBox>

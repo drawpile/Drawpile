@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionlistingmodel.h"
-#include "utils/icon.h"
+#include "libclient/net/sessionlistingmodel.h"
+#include "libclient/utils/icon.h"
 #include "config.h"
 
 #include <QGuiApplication>

@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../libshared/net/protover.h"
-#include "jsonapi.h"
-#include "sessions.h"
+#include "libshared/net/protover.h"
+#include "libserver/jsonapi.h"
+#include "libserver/sessions.h"
 
 #include <QObject>
 #include <QDir>

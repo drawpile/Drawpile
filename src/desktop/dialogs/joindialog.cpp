@@ -17,21 +17,21 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "joindialog.h"
-#include "addserverdialog.h"
+#include "desktop/dialogs/joindialog.h"
+#include "desktop/dialogs/addserverdialog.h"
 
-#include "utils/mandatoryfields.h"
-#include "utils/usernamevalidator.h"
-#include "utils/listservermodel.h"
-#include "utils/sessionfilterproxymodel.h"
-#include "utils/images.h"
-#include "utils/newversion.h"
-#include "utils/icon.h"
-#include "../libshared/listings/announcementapi.h"
-#include "parentalcontrols/parentalcontrols.h"
+#include "desktop/utils/mandatoryfields.h"
+#include "libclient/utils/usernamevalidator.h"
+#include "libclient/utils/listservermodel.h"
+#include "libclient/utils/sessionfilterproxymodel.h"
+#include "libclient/utils/images.h"
+#include "libclient/utils/newversion.h"
+#include "libclient/utils/icon.h"
+#include "libshared/listings/announcementapi.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
-#include "../libshared/listings/zeroconfdiscovery.h"
+#include "libshared/listings/zeroconfdiscovery.h"
 #endif
 
 #include "ui_joindialog.h"

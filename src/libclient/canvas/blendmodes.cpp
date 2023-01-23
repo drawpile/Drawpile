@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "blendmodes.h"
+#include "libclient/canvas/blendmodes.h"
 
 #include <QCoreApplication>
 

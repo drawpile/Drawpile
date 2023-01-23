@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "thinserverclient.h"
-#include "../libshared/net/messagequeue.h"
-#include "thinsession.h"
+#include "libserver/thinserverclient.h"
+#include "libshared/net/messagequeue.h"
+#include "libserver/thinsession.h"
 
 namespace server {
 

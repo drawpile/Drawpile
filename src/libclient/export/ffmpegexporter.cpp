@@ -22,7 +22,7 @@
 #include <QBuffer>
 #include <QSettings>
 
-#include "ffmpegexporter.h"
+#include "libclient/export/ffmpegexporter.h"
 
 FfmpegExporter::FfmpegExporter(QObject *parent)
 	: VideoExporter(parent), m_encoder(nullptr)

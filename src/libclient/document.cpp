@@ -17,19 +17,19 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "document.h"
+#include "libclient/document.h"
 
-#include "net/client.h"
-#include "net/servercmd.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "canvas/selection.h"
-#include "canvas/layerlist.h"
-#include "canvas/userlist.h"
-#include "export/canvassaverrunnable.h"
-#include "tools/toolcontroller.h"
-#include "utils/images.h"
-#include "../libshared/util/functionrunnable.h"
+#include "libclient/net/client.h"
+#include "libclient/net/servercmd.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/export/canvassaverrunnable.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/images.h"
+#include "libshared/util/functionrunnable.h"
 
 #include <QGuiApplication>
 #include <QSettings>

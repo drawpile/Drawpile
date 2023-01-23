@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "customshortcutmodel.h"
+#include "libclient/utils/customshortcutmodel.h"
 
 #include <QSettings>
 

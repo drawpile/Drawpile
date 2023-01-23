@@ -16,9 +16,10 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "canvassaverrunnable.h"
-#include "canvas/paintengine.h"
-#include "drawdance/global.h"
+
+#include "libclient/export/canvassaverrunnable.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/global.h"
 
 extern "C" {
 #include <dpengine/save.h>

@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "brushpresetproperties.h"
+#include "desktop/dialogs/brushpresetproperties.h"
 
 #include "ui_brushpresetproperties.h"
 

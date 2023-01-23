@@ -26,11 +26,11 @@ extern "C" {
 #include <dpmsg/msg_internal.h>
 }
 
-#include "paintengine.h"
-#include "drawdance/layercontent.h"
-#include "drawdance/layerpropslist.h"
-#include "drawdance/message.h"
-#include "drawdance/perf.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/layercontent.h"
+#include "libclient/drawdance/layerpropslist.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/drawdance/perf.h"
 
 #include <QPainter>
 #include <QSet>

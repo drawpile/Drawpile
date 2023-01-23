@@ -194,7 +194,7 @@
   <customwidget>
    <class>FlipbookView</class>
    <extends>QWidget</extends>
-   <header>widgets/flipbookview.h</header>
+   <header>desktop/widgets/flipbookview.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

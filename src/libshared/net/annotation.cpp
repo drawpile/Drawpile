@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "annotation.h"
-#include "textmode.h"
+#include "libshared/net/annotation.h"
+#include "libshared/net/textmode.h"
 
 #include <QtEndian>
 

@@ -22,16 +22,15 @@ extern "C" {
 #include <dpmsg/message.h>
 }
 
-#include "canvasmodel.h"
-#include "layerlist.h"
-#include "userlist.h"
-#include "timelinemodel.h"
-#include "acl.h"
-#include "selection.h"
-#include "paintengine.h"
-#include "documentmetadata.h"
-
-#include "utils/identicon.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/documentmetadata.h"
+#include "libclient/utils/identicon.h"
 
 #include <QSettings>
 #include <QDebug>

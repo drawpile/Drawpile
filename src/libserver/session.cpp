@@ -17,19 +17,19 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "session.h"
-#include "client.h"
-#include "serverconfig.h"
-#include "serverlog.h"
-#include "opcommands.h"
-#include "announcements.h"
+#include "libserver/session.h"
+#include "libserver/client.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
+#include "libserver/opcommands.h"
+#include "libserver/announcements.h"
 
-#include "../libshared/net/control.h"
-#include "../libshared/net/meta.h"
-#include "../libshared/record/writer.h"
-#include "../libshared/util/filename.h"
-#include "../libshared/util/passwordhash.h"
-#include "../libshared/util/networkaccess.h"
+#include "libshared/net/control.h"
+#include "libshared/net/meta.h"
+#include "libshared/record/writer.h"
+#include "libshared/util/filename.h"
+#include "libshared/util/passwordhash.h"
+#include "libshared/util/networkaccess.h"
 
 #include "config.h"
 

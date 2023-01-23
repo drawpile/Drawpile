@@ -28,11 +28,11 @@ extern "C" {
 #include <QPainter>
 #include <QPixmap>
 
-#include "drawdance/aclstate.h"
-#include "drawdance/canvashistory.h"
-#include "drawdance/canvasstate.h"
-#include "drawdance/paintengine.h"
-#include "drawdance/snapshotqueue.h"
+#include "libclient/drawdance/aclstate.h"
+#include "libclient/drawdance/canvashistory.h"
+#include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/paintengine.h"
+#include "libclient/drawdance/snapshotqueue.h"
 
 struct DP_Mutex;
 

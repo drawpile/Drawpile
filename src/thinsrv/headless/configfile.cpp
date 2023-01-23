@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "configfile.h"
-#include "../../libserver/serverlog.h"
-#include "../../libshared/util/passwordhash.h"
+#include "thinsrv/headless/configfile.h"
+#include "libserver/serverlog.h"
+#include "libshared/util/passwordhash.h"
 
 #include <QFileInfo>
 

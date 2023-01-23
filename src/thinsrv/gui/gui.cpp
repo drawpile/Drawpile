@@ -17,14 +17,14 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "mainwindow.h"
-#include "localserver.h"
-#include "remoteserver.h"
-#include "multiserver.h"
-#include "database.h"
-#include "trayicon.h"
-#include "singleinstance.h"
-#include "authdialog.h"
+#include "thinsrv/gui/mainwindow.h"
+#include "thinsrv/gui/localserver.h"
+#include "thinsrv/gui/remoteserver.h"
+#include "thinsrv/multiserver.h"
+#include "thinsrv/database.h"
+#include "thinsrv/gui/trayicon.h"
+#include "thinsrv/gui/singleinstance.h"
+#include "thinsrv/gui/authdialog.h"
 
 #include <QApplication>
 #include <QCommandLineParser>

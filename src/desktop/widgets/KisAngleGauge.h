@@ -11,7 +11,7 @@
 
 #include <QWidget>
 #include <QScopedPointer>
-#include "../../libshared/qtshims.h"
+#include "libshared/qtshims.h"
 
 namespace widgets {
 
@@ -35,16 +35,16 @@ public:
      */
 	explicit KisAngleGauge(QWidget *parent = nullptr);
     ~KisAngleGauge();
-    
+
     /**
      * @brief Gets the current angle
-     * @return The current angle 
+     * @return The current angle
      * @see setAngle(qreal)
      */
     qreal angle() const;
     /**
      * @brief Gets the angle to which multiples the selected angle will snap
-     * 
+     *
      * The default snap angle is 15 degrees so the selected angle will snap
      * to its multiples (0, 15, 30, 45, etc.)
      * @return The angle to which multiples the selected angle will snap
@@ -53,7 +53,7 @@ public:
     qreal snapAngle() const;
     /**
      * @brief Gets the angle that is used to reset the current angle
-     * 
+     *
      * This angle is used when the user double clicks on the widget
      * @return The angle that is used to reset the current angle
      * @see setResetAngle(qreal)
@@ -66,7 +66,7 @@ public:
      * @see setIncreasingDirection(IcreasingDirection)
      */
     IncreasingDirection increasingDirection() const;
-    
+
     /**
      * @brief Sets the angle to which multiples the selected angle will snap
      * @param newSnapAngle the new angle to which multiples the selected angle will snap

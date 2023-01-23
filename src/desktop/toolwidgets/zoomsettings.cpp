@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "zoomsettings.h"
+#include "desktop/toolwidgets/zoomsettings.h"
 
 #include <QWidget>
 #include <QVBoxLayout>

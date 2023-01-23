@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "abusereport.h"
-#include "utils/mandatoryfields.h"
+#include "desktop/dialogs/abusereport.h"
+#include "desktop/utils/mandatoryfields.h"
 
 #include "ui_abusereport.h"
 

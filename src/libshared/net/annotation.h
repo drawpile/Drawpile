@@ -19,10 +19,10 @@
 #ifndef DP_NET_ANNOTATION_H
 #define DP_NET_ANNOTATION_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <QString>
 
-#include "message.h"
+#include "libshared/net/message.h"
 
 namespace protocol {
 

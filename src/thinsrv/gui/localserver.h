@@ -20,7 +20,7 @@
 #ifndef LOCALSERVER_H
 #define LOCALSERVER_H
 
-#include "server.h"
+#include "thinsrv/gui/server.h"
 
 namespace server {
 

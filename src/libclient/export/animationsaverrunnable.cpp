@@ -16,9 +16,10 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "animationsaverrunnable.h"
-#include "canvassaverrunnable.h"
-#include "canvas/paintengine.h"
+
+#include "libclient/export/animationsaverrunnable.h"
+#include "libclient/export/canvassaverrunnable.h"
+#include "libclient/canvas/paintengine.h"
 
 AnimationSaverRunnable::AnimationSaverRunnable(const canvas::PaintEngine *pe, SaveFn saveFn, const QString &filename, QObject *parent)
 	: QObject(parent),

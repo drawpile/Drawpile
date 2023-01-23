@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sidebaritemdelegate.h"
+#include "thinsrv/gui/sidebaritemdelegate.h"
 
 #include <QPainter>
 

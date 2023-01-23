@@ -19,7 +19,7 @@
 #ifndef RESETSESSIONDIALOG_H
 #define RESETSESSIONDIALOG_H
 
-#include "drawdance/message.h"
+#include "libclient/drawdance/message.h"
 
 #include <QDialog>
 

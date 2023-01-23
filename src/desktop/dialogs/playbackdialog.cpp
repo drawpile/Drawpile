@@ -17,16 +17,16 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dialogs/playbackdialog.h"
-#include "dialogs/videoexportdialog.h"
+#include "desktop/dialogs/playbackdialog.h"
+#include "desktop/dialogs/videoexportdialog.h"
 
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "canvas/indexbuilderrunnable.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/indexbuilderrunnable.h"
 
-#include "export/videoexporter.h"
+#include "libclient/export/videoexporter.h"
 
-#include "mainwindow.h"
+#include "desktop/mainwindow.h"
 
 #include "ui_playback.h"
 

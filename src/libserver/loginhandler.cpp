@@ -17,17 +17,17 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "loginhandler.h"
-#include "client.h"
-#include "session.h"
-#include "sessions.h"
-#include "serverconfig.h"
-#include "serverlog.h"
+#include "libserver/loginhandler.h"
+#include "libserver/client.h"
+#include "libserver/session.h"
+#include "libserver/sessions.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
 
-#include "../libshared/net/control.h"
-#include "../libshared/util/authtoken.h"
-#include "../libshared/util/networkaccess.h"
-#include "../libshared/util/validators.h"
+#include "libshared/net/control.h"
+#include "libshared/util/authtoken.h"
+#include "libshared/util/networkaccess.h"
+#include "libshared/util/validators.h"
 
 #include "config.h"
 

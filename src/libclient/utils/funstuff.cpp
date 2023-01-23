@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "funstuff.h"
+#include "libclient/utils/funstuff.h"
 
 #include <QRegularExpression>
 #include <QVector>

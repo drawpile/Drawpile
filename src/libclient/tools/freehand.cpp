@@ -22,15 +22,14 @@ extern "C" {
 #include <dpmsg/message.h>
 }
 
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "drawdance/canvasstate.h"
-#include "net/client.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/net/client.h"
 
-#include "tools/toolcontroller.h"
-#include "tools/freehand.h"
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/freehand.h"
 
-#include "../libshared/net/undo.h"
+#include "libshared/net/undo.h"
 
 namespace tools {
 

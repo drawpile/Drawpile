@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "webadmin.h"
-#include "qmhttp.h"
-#include "multiserver.h"
+#include "thinsrv/webadmin/webadmin.h"
+#include "thinsrv/webadmin/qmhttp.h"
+#include "thinsrv/multiserver.h"
 
-#include "qtshims.h"
-#include "../../libserver/jsonapi.h"
+#include "libshared/qtshims.h"
+#include "libserver/jsonapi.h"
 
 #include <QJsonObject>
 #include <QMetaObject>

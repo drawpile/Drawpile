@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "zeroconfdiscovery.h"
+#include "libshared/listings/zeroconfdiscovery.h"
 
 #include <QUrl>
 #ifdef HAVE_DNSSD_BEFORE_5_84_0

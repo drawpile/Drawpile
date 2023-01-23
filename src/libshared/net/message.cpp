@@ -16,11 +16,11 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "message.h"
-#include "control.h"
-#include "meta.h"
-#include "opaque.h"
-#include "recording.h"
+#include "libshared/net/message.h"
+#include "libshared/net/control.h"
+#include "libshared/net/meta.h"
+#include "libshared/net/opaque.h"
+#include "libshared/net/recording.h"
 
 #include <QObject>
 #include <QtEndian>

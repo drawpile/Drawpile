@@ -20,7 +20,7 @@
 #ifndef LAYERPROPERTIES_H
 #define LAYERPROPERTIES_H
 
-#include "canvas/layerlist.h"
+#include "libclient/canvas/layerlist.h"
 
 #include <QDialog>
 

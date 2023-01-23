@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "protover.h"
+#include "libshared/net/protover.h"
 #include "config.h"
 
 #include <QRegularExpression>

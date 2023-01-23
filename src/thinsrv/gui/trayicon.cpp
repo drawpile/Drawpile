@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "trayicon.h"
-#include "mainwindow.h"
-#include "localserver.h"
-#include "remoteserver.h"
+#include "thinsrv/gui/trayicon.h"
+#include "thinsrv/gui/mainwindow.h"
+#include "thinsrv/gui/localserver.h"
+#include "thinsrv/gui/remoteserver.h"
 
 #include <QMenu>
 #include <QApplication>

@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "chatwindow.h"
+#include "desktop/chat/chatwindow.h"
 
 #include <QVBoxLayout>
 

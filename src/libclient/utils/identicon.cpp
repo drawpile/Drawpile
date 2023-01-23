@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "identicon.h"
+#include "libclient/utils/identicon.h"
 
 #include <QPainter>
 

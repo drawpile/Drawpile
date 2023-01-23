@@ -239,13 +239,13 @@
   <customwidget>
    <class>KisCurveWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/kis_curve_widget.h</header>
+   <header>desktop/widgets/kis_curve_widget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
-   <header>widgets/groupedtoolbutton.h</header>
+   <header>desktop/widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

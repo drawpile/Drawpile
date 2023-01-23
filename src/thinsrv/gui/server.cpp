@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server.h"
-#include "sessionlistmodel.h"
+#include "thinsrv/gui/server.h"
+#include "thinsrv/gui/sessionlistmodel.h"
 
 #include <QJsonObject>
 #include <QDebug>

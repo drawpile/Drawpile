@@ -16,7 +16,7 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "sessionhistory.h"
+#include "libserver/sessionhistory.h"
 
 namespace server {
 

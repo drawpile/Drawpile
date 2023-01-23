@@ -19,11 +19,11 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
-#include "canvas/canvasshortcuts.h"
-#include "canvas/pressure.h"
-#include "canvas/point.h"
-#include "tools/tool.h"
-#include "../../libshared/qtshims.h"
+#include "libclient/canvas/canvasshortcuts.h"
+#include "libclient/canvas/pressure.h"
+#include "libclient/canvas/point.h"
+#include "libclient/tools/tool.h"
+#include "libshared/qtshims.h"
 
 #include <QGraphicsView>
 

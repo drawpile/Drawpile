@@ -21,9 +21,9 @@ extern "C" {
 #include <dpmsg/message.h>
 }
 
-#include "selection.h"
-#include "../tools/selection.h" // for selection utilities
-#include "drawdance/message.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/tools/selection.h" // for selection utilities
+#include "libclient/drawdance/message.h"
 
 #include <QPainter>
 #include <QtMath>

@@ -19,8 +19,9 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
-#include "utils/icon.h"
-#include "tools/tool.h"
+#include "libclient/utils/icon.h"
+#include "libclient/tools/tool.h"
+
 #include <QObject>
 
 class QComboBox;

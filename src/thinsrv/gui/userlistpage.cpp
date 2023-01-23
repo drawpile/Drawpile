@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "userlistpage.h"
-#include "subheaderwidget.h"
-#include "userlistmodel.h"
-#include "server.h"
+#include "thinsrv/gui/userlistpage.h"
+#include "thinsrv/gui/subheaderwidget.h"
+#include "thinsrv/gui/userlistmodel.h"
+#include "thinsrv/gui/server.h"
 
 #include <QDebug>
 #include <QJsonArray>

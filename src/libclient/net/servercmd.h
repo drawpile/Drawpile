@@ -21,7 +21,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include "drawdance/message.h"
+#include "libclient/drawdance/message.h"
 
 namespace net {
 

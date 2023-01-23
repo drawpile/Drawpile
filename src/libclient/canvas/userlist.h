@@ -19,7 +19,7 @@
 #ifndef DP_NET_USERLISTMODEL_H
 #define DP_NET_USERLISTMODEL_H
 
-#include "drawdance/message.h"
+#include "libclient/drawdance/message.h"
 
 #include <QAbstractTableModel>
 #include <QSortFilterProxyModel>

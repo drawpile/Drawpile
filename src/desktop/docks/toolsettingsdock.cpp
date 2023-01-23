@@ -17,20 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "docks/toolsettingsdock.h"
-#include "docks/titlewidget.h"
-
-#include "toolwidgets/brushsettings.h"
-#include "toolwidgets/colorpickersettings.h"
-#include "toolwidgets/selectionsettings.h"
-#include "toolwidgets/annotationsettings.h"
-#include "toolwidgets/fillsettings.h"
-#include "toolwidgets/lasersettings.h"
-#include "toolwidgets/zoomsettings.h"
-#include "toolwidgets/inspectorsettings.h"
-
-#include "dialogs/colordialog.h"
-#include "tools/toolproperties.h"
+#include "desktop/docks/toolsettingsdock.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/toolwidgets/brushsettings.h"
+#include "desktop/toolwidgets/colorpickersettings.h"
+#include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/annotationsettings.h"
+#include "desktop/toolwidgets/fillsettings.h"
+#include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/zoomsettings.h"
+#include "desktop/toolwidgets/inspectorsettings.h"
+#include "desktop/dialogs/colordialog.h"
+#include "libclient/tools/toolproperties.h"
 
 #include <QtColorWidgets/color_palette.hpp>
 

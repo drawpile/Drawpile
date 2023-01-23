@@ -17,20 +17,20 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "widgets/groupedtoolbutton.h"
-#include "widgets/kis_slider_spin_box.h"
-#include "canvas/blendmodes.h"
-#include "canvas/layerlist.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/userlist.h"
-#include "canvas/paintengine.h"
-#include "docks/layerlistdock.h"
-#include "docks/layerlistdelegate.h"
-#include "docks/layeraclmenu.h"
-#include "docks/titlewidget.h"
-#include "dialogs/layerproperties.h"
-#include "utils/changeflags.h"
-#include "utils/icon.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/canvas/blendmodes.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/canvas/paintengine.h"
+#include "desktop/docks/layerlistdock.h"
+#include "desktop/docks/layerlistdelegate.h"
+#include "desktop/docks/layeraclmenu.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/dialogs/layerproperties.h"
+#include "libclient/utils/changeflags.h"
+#include "libclient/utils/icon.h"
 
 #include <QDebug>
 #include <QComboBox>

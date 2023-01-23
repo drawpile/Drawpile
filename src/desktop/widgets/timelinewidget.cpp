@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "timelinewidget.h"
-#include "canvas/timelinemodel.h"
-#include "drawdance/message.h"
+#include "desktop/widgets/timelinewidget.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/drawdance/message.h"
 
 #include <QPaintEvent>
 #include <QMouseEvent>

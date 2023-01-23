@@ -25,11 +25,10 @@ extern "C" {
 #include <dpengine/load.h>
 }
 
-#include "canvas/acl.h"
-#include "drawdance/message.h"
-#include "drawdance/paintengine.h"
-#include "net/announcementlist.h"
-#include "net/banlistmodel.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/drawdance/paintengine.h"
+#include "libclient/net/announcementlist.h"
+#include "libclient/net/banlistmodel.h"
 
 #include <QObject>
 #include <QStringListModel>

@@ -19,13 +19,13 @@
 
 #include "config.h"
 
-#include "../libserver/jsonapi.h" // for datatype registration
+#include "libserver/jsonapi.h" // for datatype registration
 
-#include "initsys.h"
-#include "headless/headless.h"
+#include "thinsrv/initsys.h"
+#include "thinsrv/headless/headless.h"
 
 #ifdef HAVE_SERVERGUI
-#include "gui/gui.h"
+#include "thinsrv/gui/gui.h"
 #include <QApplication>
 
 #else

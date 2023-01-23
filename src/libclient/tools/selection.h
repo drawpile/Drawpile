@@ -19,9 +19,9 @@
 #ifndef TOOLS_SELECTION_H
 #define TOOLS_SELECTION_H
 
-#include "canvas/selection.h"
-#include "drawdance/message.h"
-#include "tool.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/tools/tool.h"
 
 class QImage;
 class QPolygon;

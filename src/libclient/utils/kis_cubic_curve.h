@@ -19,9 +19,9 @@
 #ifndef _KIS_CUBIC_CURVE_H_
 #define _KIS_CUBIC_CURVE_H_
 
-#include<QList>
-#include<QVector>
-#include<QVariant>
+#include <QList>
+#include <QVector>
+#include <QVariant>
 
 class QPointF;
 

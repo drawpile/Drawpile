@@ -19,7 +19,7 @@
 #ifndef TOOLS_COLORPICKER_H
 #define TOOLS_COLORPICKER_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 namespace tools {
 

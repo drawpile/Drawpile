@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "opcommands.h"
-#include "client.h"
-#include "session.h"
-#include "serverlog.h"
-#include "../libshared/net/control.h"
-#include "../libshared/net/meta.h"
-#include "../libshared/util/passwordhash.h"
+#include "libserver/opcommands.h"
+#include "libserver/client.h"
+#include "libserver/session.h"
+#include "libserver/serverlog.h"
+#include "libshared/net/control.h"
+#include "libshared/net/meta.h"
+#include "libshared/util/passwordhash.h"
 
 #include <QList>
 #include <QStringList>

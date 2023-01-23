@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "serverlogmodel.h"
+#include "thinsrv/gui/serverlogmodel.h"
 
 #include <QDebug>
 

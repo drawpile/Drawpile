@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "control.h"
+#include "libshared/net/control.h"
 
 #include <cstring>
 

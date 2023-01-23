@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "remoteserver.h"
-#include "../../libshared/util/networkaccess.h"
+#include "thinsrv/gui/remoteserver.h"
+#include "libshared/util/networkaccess.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>

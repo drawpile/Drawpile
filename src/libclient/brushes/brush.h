@@ -24,7 +24,8 @@ extern "C" {
 #include <dpengine/pixels.h>
 }
 
-#include "drawdance/brushpreview.h"
+#include "libclient/drawdance/brushpreview.h"
+#include "libclient/utils/kis_cubic_curve.h"
 
 #include <QColor>
 #include <QHash>
@@ -33,7 +34,6 @@ extern "C" {
 #include <QPair>
 #include <QPixmap>
 #include <limits>
-#include <utils/kis_cubic_curve.h>
 
 struct MyPaintBrush;
 

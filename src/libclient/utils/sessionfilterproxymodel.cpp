@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionfilterproxymodel.h"
-#include "../net/sessionlistingmodel.h"
-#include "../net/loginsessions.h"
+#include "libclient/utils/sessionfilterproxymodel.h"
+#include "libclient/net/sessionlistingmodel.h"
+#include "libclient/net/loginsessions.h"
 
 SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 	: QSortFilterProxyModel(parent),

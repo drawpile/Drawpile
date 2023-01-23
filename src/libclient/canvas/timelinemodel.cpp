@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "timelinemodel.h"
-#include "layerlist.h"
-#include "canvasmodel.h"
-#include "drawdance/layerpropslist.h"
-#include "drawdance/timeline.h"
-#include "drawdance/frame.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/drawdance/layerpropslist.h"
+#include "libclient/drawdance/timeline.h"
+#include "libclient/drawdance/frame.h"
 
 #include <QBitArray>
 

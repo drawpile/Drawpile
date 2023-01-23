@@ -19,7 +19,7 @@
 #ifndef TOOLS_LASER_H
 #define TOOLS_LASER_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 namespace tools {
 

@@ -22,7 +22,7 @@
 #include <QProcess>
 #include <QByteArray>
 
-#include "videoexporter.h"
+#include "libclient/export/videoexporter.h"
 
 class FfmpegExporter : public VideoExporter
 {

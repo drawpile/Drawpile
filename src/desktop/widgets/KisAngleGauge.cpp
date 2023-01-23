@@ -10,7 +10,7 @@
 #include <QMouseEvent>
 #include <QtMath>
 
-#include "KisAngleGauge.h"
+#include "desktop/widgets/KisAngleGauge.h"
 
 namespace widgets {
 
@@ -35,7 +35,7 @@ KisAngleGauge::KisAngleGauge(QWidget* parent)
     m_d->increasingDirection = IncreasingDirection_CounterClockwise;
     m_d->isPressed = false;
     m_d->isMouseHover = false;
-    
+
     setFocusPolicy(Qt::WheelFocus);
 }
 
@@ -202,7 +202,7 @@ void KisAngleGauge::mousePressEvent(QMouseEvent *e)
             m_d->increasingDirection == IncreasingDirection_CounterClockwise ? -delta.y() : delta.y(),
             delta.x()
         );
-    
+
     if (e->modifiers() & Qt::ControlModifier)  {
         const qreal sa = m_d->snapAngle * M_PI / 180.0;
         angle = std::round(angle / sa) * sa;
@@ -211,7 +211,7 @@ void KisAngleGauge::mousePressEvent(QMouseEvent *e)
     setAngle(angle * 180.0 / M_PI);
 
     m_d->isPressed = true;
-    
+
     e->accept();
 }
 
@@ -250,7 +250,7 @@ void KisAngleGauge::mouseMoveEvent(QMouseEvent *e)
     }
 
     setAngle(angle * 180.0 / M_PI);
-    
+
     e->accept();
 }
 

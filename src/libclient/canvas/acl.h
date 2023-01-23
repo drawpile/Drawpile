@@ -20,7 +20,7 @@
 #ifndef CANVAS_ACL_STATE_H
 #define CANVAS_ACL_STATE_H
 
-#include "drawdance/aclstate.h"
+#include "libclient/drawdance/aclstate.h"
 #include <QObject>
 #include <QVector>
 

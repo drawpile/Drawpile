@@ -19,8 +19,8 @@
 #ifndef BRUSHPREVIEW_H
 #define BRUSHPREVIEW_H
 
-#include "../../libclient/brushes/brush.h"
-#include "drawdance/brushpreview.h"
+#include "libclient/brushes/brush.h"
+#include "libclient/drawdance/brushpreview.h"
 
 #include <QFrame>
 

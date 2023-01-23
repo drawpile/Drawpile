@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "thinsession.h"
-#include "thinserverclient.h"
-#include "serverlog.h"
-#include "serverconfig.h"
+#include "libserver/thinsession.h"
+#include "libserver/thinserverclient.h"
+#include "libserver/serverlog.h"
+#include "libserver/serverconfig.h"
 
-#include "../libshared/net/control.h"
+#include "libshared/net/control.h"
 
 namespace server {
 

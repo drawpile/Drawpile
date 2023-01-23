@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "newversion.h"
-#include "../libshared/util/networkaccess.h"
-#include "../libshared/net/protover.h"
+#include "libclient/utils/newversion.h"
+#include "libshared/util/networkaccess.h"
+#include "libshared/net/protover.h"
 #include "config.h"
 
 #include <QXmlStreamReader>

@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGS_ANNOTATION_H
 #define TOOLSETTINGS_ANNOTATION_H
 
-#include "toolsettings.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 class Ui_TextSettings;
 class QAction;

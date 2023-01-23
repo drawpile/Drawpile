@@ -463,7 +463,7 @@ border-right: 2px solid black;
   <customwidget>
    <class>widgets::Filmstrip</class>
    <extends>QWidget</extends>
-   <header>widgets/filmstrip.h</header>
+   <header>desktop/widgets/filmstrip.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

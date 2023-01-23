@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "paths.h"
+#include "libshared/util/paths.h"
 
 #include <QCoreApplication>
 #include <QDir>

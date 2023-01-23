@@ -18,7 +18,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "kis_cubic_curve.h"
+#include "libclient/utils/kis_cubic_curve.h"
 
 #include <QPointF>
 #include <QList>

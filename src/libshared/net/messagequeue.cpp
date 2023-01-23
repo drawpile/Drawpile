@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "messagequeue.h"
-#include "control.h"
+#include "libshared/net/messagequeue.h"
+#include "libshared/net/control.h"
 
 #include <QTcpSocket>
 #include <QDateTime>

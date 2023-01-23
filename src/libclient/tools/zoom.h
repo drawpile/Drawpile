@@ -19,7 +19,7 @@
 #ifndef TOOLS_ZOOM_H
 #define TOOLS_ZOOM_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 namespace tools {
 

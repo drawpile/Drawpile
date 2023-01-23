@@ -1,13 +1,13 @@
-#include "../net/annotation.h"
-#include "../net/control.h"
-#include "../net/meta.h"
-#include "../net/meta2.h"
-#include "../net/recording.h"
-#include "../net/layer.h"
-#include "../net/image.h"
-#include "../net/undo.h"
-#include "../net/brushes.h"
-#include "../net/textmode.h"
+#include "libshared/net/annotation.h"
+#include "libshared/net/control.h"
+#include "libshared/net/meta.h"
+#include "libshared/net/meta2.h"
+#include "libshared/net/recording.h"
+#include "libshared/net/layer.h"
+#include "libshared/net/image.h"
+#include "libshared/net/undo.h"
+#include "libshared/net/brushes.h"
+#include "libshared/net/textmode.h"
 
 #include <QtTest/QtTest>
 

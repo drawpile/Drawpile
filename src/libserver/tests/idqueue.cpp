@@ -1,4 +1,4 @@
-#include "../idqueue.h"
+#include "libserver/idqueue.h"
 
 #include <QtTest/QtTest>
 

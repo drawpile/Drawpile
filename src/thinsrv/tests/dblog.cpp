@@ -1,5 +1,5 @@
-#include "../database.h"
-#include "../dblog.h"
+#include "thinsrv/database.h"
+#include "thinsrv/dblog.h"
 
 #include <QtTest/QtTest>
 

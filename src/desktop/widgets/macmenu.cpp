@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main.h"
-#include "macmenu.h"
-#include "mainwindow.h"
-#include "utils/recentfiles.h"
-#include "dialogs/newdialog.h"
-#include "dialogs/hostdialog.h"
-#include "dialogs/joindialog.h"
+#include "desktop/main.h"
+#include "desktop/widgets/macmenu.h"
+#include "desktop/mainwindow.h"
+#include "desktop/utils/recentfiles.h"
+#include "desktop/dialogs/newdialog.h"
+#include "desktop/dialogs/hostdialog.h"
+#include "desktop/dialogs/joindialog.h"
 
 #include <QAction>
 #include <QMessageBox>

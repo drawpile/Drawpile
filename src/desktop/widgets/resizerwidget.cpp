@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "resizerwidget.h"
+#include "desktop/widgets/resizerwidget.h"
 
 #include <QPainter>
 #include <QMouseEvent>

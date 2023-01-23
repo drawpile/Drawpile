@@ -20,7 +20,7 @@
 #ifndef SESSIONSETTINGSDIALOG_H
 #define SESSIONSETTINGSDIALOG_H
 
-#include "canvas/acl.h"
+#include "libclient/canvas/acl.h"
 
 #include <QDialog>
 #include <QJsonObject>

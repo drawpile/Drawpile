@@ -19,8 +19,8 @@
 #ifndef TOOLS_BEZIER_H
 #define TOOLS_BEZIER_H
 
-#include "tool.h"
-#include "drawdance/brushengine.h"
+#include "libclient/tools/tool.h"
+#include "libclient/drawdance/brushengine.h"
 
 namespace tools {
 

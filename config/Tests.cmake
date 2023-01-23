@@ -35,7 +35,6 @@ function(add_unit_test prefix name)
 		"${name}.cpp"
 		${ARG_SOURCES}
 	)
-	target_include_directories(${target_name} PRIVATE ..)
 	target_link_libraries(${target_name} ${ARG_LIBS})
 	if(ARG_DEFINITIONS)
 		target_compile_definitions(${target_name} PRIVATE ${ARG_DEFINITIONS})

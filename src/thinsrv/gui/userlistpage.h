@@ -19,7 +19,7 @@
 #ifndef USERLISTPAGE_H
 #define USERLISTPAGE_H
 
-#include "pagefactory.h"
+#include "thinsrv/gui/pagefactory.h"
 
 #include <QWidget>
 #include <QApplication>

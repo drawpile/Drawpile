@@ -21,8 +21,8 @@
 #define DP_ACTIONBUILDER_H
 
 #include <QAction>
-#include "utils/icon.h"
-#include "utils/customshortcutmodel.h"
+#include "libclient/utils/icon.h"
+#include "libclient/utils/customshortcutmodel.h"
 
 /**
  * @brief A helper class for configuring QActions

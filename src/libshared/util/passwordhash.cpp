@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "passwordhash.h"
+#include "libshared/util/passwordhash.h"
 
 #include <QList>
 #include <QString>

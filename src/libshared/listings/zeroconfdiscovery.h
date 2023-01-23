@@ -19,7 +19,7 @@
 #ifndef ZEROCONF_SERVER_DISCOVERY_H
 #define ZEROCONF_SERVER_DISCOVERY_H
 
-#include "announcementapi.h"
+#include "libshared/listings/announcementapi.h"
 
 #include <QVector>
 #ifdef HAVE_DNSSD_BEFORE_5_84_0

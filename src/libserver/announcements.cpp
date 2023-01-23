@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "announcements.h"
-#include "announcable.h"
+#include "libserver/announcements.h"
+#include "libserver/announcable.h"
 
-#include "serverconfig.h"
-#include "serverlog.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
 
 #include <QTimerEvent>
 

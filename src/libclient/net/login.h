@@ -28,7 +28,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include "drawdance/message.h"
+#include "libclient/drawdance/message.h"
 
 class QImage;
 

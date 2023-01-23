@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "subheaderwidget.h"
+#include "thinsrv/gui/subheaderwidget.h"
 
 #include <QPainter>
 

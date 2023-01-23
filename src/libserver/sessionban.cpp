@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionban.h"
+#include "libserver/sessionban.h"
 
 #include <QJsonArray>
 #include <QJsonObject>

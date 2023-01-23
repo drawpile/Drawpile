@@ -21,9 +21,9 @@ extern "C" {
 #include <dpmsg/message.h>
 }
 
-#include "userlist.h"
-#include "utils/icon.h"
-#include "acl.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/utils/icon.h"
+#include "libclient/canvas/acl.h"
 
 #include <QDebug>
 #include <QJsonArray>

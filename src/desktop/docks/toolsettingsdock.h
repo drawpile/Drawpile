@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGSDOCK_H
 #define TOOLSETTINGSDOCK_H
 
-#include "tools/tool.h"
+#include "libclient/tools/tool.h"
 
 #include <QDockWidget>
 

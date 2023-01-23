@@ -1,5 +1,5 @@
-#include "../net/messagequeue.h"
-#include "../net/meta.h"
+#include "libshared/net/messagequeue.h"
+#include "libshared/net/meta.h"
 
 #include <QtTest/QtTest>
 #include <QTcpSocket>

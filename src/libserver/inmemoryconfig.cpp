@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "inmemoryconfig.h"
-#include "serverlog.h"
+#include "libserver/inmemoryconfig.h"
+#include "libserver/serverlog.h"
 
 namespace server {
 

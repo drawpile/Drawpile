@@ -104,7 +104,7 @@
   <customwidget>
    <class>widgets::ColorButton</class>
    <extends>QToolButton</extends>
-   <header>widgets/colorbutton.h</header>
+   <header>desktop/widgets/colorbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

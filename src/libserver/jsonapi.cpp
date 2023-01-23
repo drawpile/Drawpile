@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "jsonapi.h"
+#include "libserver/jsonapi.h"
 
 #include <QJsonObject>
 

@@ -20,7 +20,7 @@
 #ifndef SERVER_CFG_DATABASE_H
 #define SERVER_CFG_DATABASE_H
 
-#include "../libserver/serverconfig.h"
+#include "libserver/serverconfig.h"
 
 namespace server {
 

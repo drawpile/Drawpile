@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGS_INSPECTOR_H
 #define TOOLSETTINGS_INSPECTOR_H
 
-#include "toolsettings.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 class Ui_InspectorSettings;
 

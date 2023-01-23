@@ -17,15 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sidebarmodel.h"
+#include "thinsrv/gui/sidebarmodel.h"
 
-#include "serversummarypage.h"
-#include "sessionlistpage.h"
-#include "userlistpage.h"
-#include "banlistpage.h"
-#include "sessionpage.h"
-#include "accountlistpage.h"
-#include "serverlogpage.h"
+#include "thinsrv/gui/serversummarypage.h"
+#include "thinsrv/gui/sessionlistpage.h"
+#include "thinsrv/gui/userlistpage.h"
+#include "thinsrv/gui/banlistpage.h"
+#include "thinsrv/gui/sessionpage.h"
+#include "thinsrv/gui/accountlistpage.h"
+#include "thinsrv/gui/serverlogpage.h"
 
 #include <QDebug>
 #include <QBrush>

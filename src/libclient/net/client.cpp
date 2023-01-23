@@ -17,14 +17,14 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "drawdance/message.h"
-#include "net/client.h"
-#include "net/tcpserver.h"
-#include "net/login.h"
-#include "net/servercmd.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/net/client.h"
+#include "libclient/net/tcpserver.h"
+#include "libclient/net/login.h"
+#include "libclient/net/servercmd.h"
 
 #ifdef Q_OS_ANDROID
-#	include "util/androidutils.h"
+#	include "libshared/util/androidutils.h"
 #endif
 
 #include <QDebug>

@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "serverlogdialog.h"
-#include "canvas/userlist.h"
-#include "drawdance/message.h"
-#include "net/servercmd.h"
+#include "desktop/dialogs/serverlogdialog.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/net/servercmd.h"
 #include "ui_serverlog.h"
 
 #include <QSortFilterProxyModel>

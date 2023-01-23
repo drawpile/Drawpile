@@ -19,9 +19,9 @@
 #ifndef TOOLS_FREEHAND_H
 #define TOOLS_FREEHAND_H
 
-#include "tool.h"
-#include "drawdance/brushengine.h"
-#include "drawdance/message.h"
+#include "libclient/tools/tool.h"
+#include "libclient/drawdance/brushengine.h"
+#include "libclient/drawdance/message.h"
 
 namespace tools {
 

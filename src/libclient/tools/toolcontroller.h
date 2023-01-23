@@ -20,10 +20,10 @@
 #ifndef TOOLCONTROLLER_H
 #define TOOLCONTROLLER_H
 
-#include "strokesmoother.h"
-#include "tool.h"
-#include "brushes/brush.h"
-#include "canvas/acl.h"
+#include "libclient/tools/strokesmoother.h"
+#include "libclient/tools/tool.h"
+#include "libclient/brushes/brush.h"
+#include "libclient/canvas/acl.h"
 
 #include <QObject>
 

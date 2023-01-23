@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "messagequeue.h"
+#include "libclient/net/messagequeue.h"
 
 #include <QtEndian>
 #include <QTcpSocket>

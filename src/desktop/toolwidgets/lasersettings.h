@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGS_LASER_H
 #define TOOLSETTINGS_LASER_H
 
-#include "toolsettings.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 class Ui_LaserSettings;
 

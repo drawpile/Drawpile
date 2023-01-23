@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main.h"
-#include "colorspinner.h"
-#include "colorpalette.h"
-#include "titlewidget.h"
+#include "desktop/main.h"
+#include "desktop/docks/colorspinner.h"
+#include "desktop/docks/colorpalette.h"
+#include "desktop/docks/titlewidget.h"
 
 #include <QtColorWidgets/swatch.hpp>
 #include <QtColorWidgets/color_wheel.hpp>

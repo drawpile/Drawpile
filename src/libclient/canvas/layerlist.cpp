@@ -22,8 +22,8 @@ extern "C" {
 #include <dpengine/pixels.h>
 }
 
-#include "layerlist.h"
-#include "drawdance/layerpropslist.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/drawdance/layerpropslist.h"
 
 #include <QDebug>
 #include <QImage>

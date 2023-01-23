@@ -19,7 +19,7 @@
 #ifndef TOOLS_ANNOTATION_H
 #define TOOLS_ANNOTATION_H
 
-#include "tool.h"
+#include "libclient/tools/tool.h"
 
 #include <QRect>
 

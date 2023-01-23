@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "resetdialog.h"
-#include "canvas/paintengine.h"
-#include "utils/icon.h"
-#include "utils/images.h"
+#include "desktop/dialogs/resetdialog.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/utils/icon.h"
+#include "libclient/utils/images.h"
 
 #include "ui_resetsession.h"
 

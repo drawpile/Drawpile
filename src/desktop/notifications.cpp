@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "notifications.h"
-#include "../libshared/util/paths.h"
-#include "main.h"
+#include "desktop/notifications.h"
+#include "libshared/util/paths.h"
+#include "desktop/main.h"
 
 #include <QSoundEffect>
 #include <QMap>

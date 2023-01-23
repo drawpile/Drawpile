@@ -20,7 +20,7 @@
 #ifndef DP_SERVER_THINSESSION_H
 #define DP_SERVER_THINSESSION_H
 
-#include "session.h"
+#include "libserver/session.h"
 
 namespace server {
 

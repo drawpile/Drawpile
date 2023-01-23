@@ -18,21 +18,27 @@
 */
 #include "config.h"
 
-#include "main.h"
-#include "mainwindow.h"
-#include "tabletinput.h"
+#include "desktop/main.h"
+#include "desktop/mainwindow.h"
+#include "desktop/tabletinput.h"
 
-#include "utils/icon.h"
-#include "utils/logging.h"
-#include "utils/colorscheme.h"
-#include "utils/hidedocktitlebarseventfilter.h"
-#include "notifications.h"
-#include "../libshared/qtshims.h"
-#include "../libshared/util/paths.h"
-#include <drawdance/global.h>
+#include "libclient/utils/icon.h"
+#include "libclient/utils/logging.h"
+#include "libclient/utils/colorscheme.h"
+#include "desktop/utils/hidedocktitlebarseventfilter.h"
+#include "desktop/notifications.h"
+#include "desktop/dialogs/versioncheckdialog.h"
+#include "libshared/qtshims.h"
+#include "libshared/util/paths.h"
+#include "libclient/drawdance/global.h"
 
-#ifdef Q_OS_MAC
-#include "widgets/macmenu.h"
+#ifdef Q_OS_MACOS
+#include "desktop/widgets/macmenu.h"
+#endif
+
+#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
+#include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
 #include <QCommandLineParser>

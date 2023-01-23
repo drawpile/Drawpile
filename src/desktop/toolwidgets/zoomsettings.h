@@ -19,7 +19,7 @@
 #ifndef TOOLSETTINGS_ZOOM_H
 #define TOOLSETTINGS_ZOOM_H
 
-#include "toolsettings.h"
+#include "desktop/toolwidgets/toolsettings.h"
 
 namespace tools {
 

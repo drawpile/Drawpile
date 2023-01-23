@@ -20,7 +20,7 @@
 #ifndef ANNOUNCEMENTAPI_V2_H
 #define ANNOUNCEMENTAPI_V2_H
 
-#include "../net/protover.h"
+#include "libshared/net/protover.h"
 
 #include <QObject>
 #include <QDateTime>

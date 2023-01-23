@@ -17,10 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "documentmetadata.h"
-#include "paintengine.h"
-
-#include "drawdance/canvasstate.h"
+#include "libclient/canvas/documentmetadata.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/canvasstate.h"
 
 namespace canvas {
 

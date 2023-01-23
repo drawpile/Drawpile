@@ -19,7 +19,7 @@
 #include <QKeyEvent>
 #include <QScrollBar>
 
-#include "chatlineedit.h"
+#include "desktop/chat/chatlineedit.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
 	QPlainTextEdit(parent), _historypos(0)

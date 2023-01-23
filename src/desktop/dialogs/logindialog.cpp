@@ -17,18 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "logindialog.h"
-#include "abusereport.h"
-#include "certificateview.h"
-#include "net/login.h"
-#include "net/loginsessions.h"
-#include "parentalcontrols/parentalcontrols.h"
+#include "desktop/dialogs/logindialog.h"
+#include "desktop/dialogs/abusereport.h"
+#include "desktop/dialogs/certificateview.h"
+#include "libclient/net/login.h"
+#include "libclient/net/loginsessions.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
-#include "utils/avatarlistmodel.h"
-#include "utils/sessionfilterproxymodel.h"
-#include "utils/usernamevalidator.h"
-#include "utils/html.h"
-#include "utils/icon.h"
+#include "libclient/utils/avatarlistmodel.h"
+#include "libclient/utils/sessionfilterproxymodel.h"
+#include "libclient/utils/usernamevalidator.h"
+#include "libclient/utils/html.h"
+#include "libclient/utils/icon.h"
 
 #include "ui_logindialog.h"
 

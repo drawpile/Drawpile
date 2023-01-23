@@ -17,16 +17,16 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "chatlineedit.h"
-#include "chatwidgetpinnedarea.h"
-#include "chatwidget.h"
-#include "utils/html.h"
-#include "utils/funstuff.h"
-#include "notifications.h"
+#include "desktop/chat/chatlineedit.h"
+#include "desktop/chat/chatwidgetpinnedarea.h"
+#include "desktop/chat/chatwidget.h"
+#include "libclient/utils/html.h"
+#include "libclient/utils/funstuff.h"
+#include "desktop/notifications.h"
 
-#include "canvas/userlist.h"
-#include "drawdance/message.h"
-#include "drawdance/perf.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/drawdance/perf.h"
 
 #include <QResizeEvent>
 #include <QTextBrowser>

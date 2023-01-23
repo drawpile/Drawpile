@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "userlistmodel.h"
+#include "thinsrv/gui/userlistmodel.h"
 
 #include <QJsonObject>
 

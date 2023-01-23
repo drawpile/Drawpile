@@ -17,13 +17,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
-
-// C++ includes.
-
 #include <cstdlib>
-
-// Qt includes.
 
 #include <QPixmap>
 #include <QPainter>
@@ -41,19 +35,13 @@
 #include <QSpinBox>
 #include <QtMath>
 
-// Local includes.
-
-#include "kis_curve_widget.h"
+#include "desktop/widgets/kis_curve_widget.h"
 
 #define MOUSE_AWAY_THRES 15
 #define POINT_AREA       1E-4
 #define CURVE_AREA       1E-4
 
-#include "kis_curve_widget_p.h"
-
-
-//static bool pointLessThan(const QPointF &a, const QPointF &b);
-
+#include "desktop/widgets/kis_curve_widget_p.h"
 
 KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
         : QWidget(parent, f), d(new KisCurveWidget::Private(this))

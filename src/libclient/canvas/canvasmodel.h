@@ -20,8 +20,8 @@
 #ifndef CANVASMODEL_H
 #define CANVASMODEL_H
 
-#include "drawdance/message.h"
-#include "drawdance/paintengine.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/drawdance/paintengine.h"
 
 #include <QObject>
 #include <QPointer>

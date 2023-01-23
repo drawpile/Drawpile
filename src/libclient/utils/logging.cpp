@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "logging.h"
+#include "libclient/utils/logging.h"
 #include "config.h"
-#include "../libshared/util/paths.h"
+#include "libshared/util/paths.h"
 
 #include <QMessageLogContext>
 #include <QDateTime>

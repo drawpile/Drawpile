@@ -17,12 +17,12 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "widgets/netstatus.h"
-#include "widgets/popupmessage.h"
-#include "dialogs/certificateview.h"
-#include "dialogs/netstats.h"
-#include "utils/icon.h"
-#include "../libshared/util/whatismyip.h"
+#include "desktop/widgets/netstatus.h"
+#include "desktop/widgets/popupmessage.h"
+#include "desktop/dialogs/certificateview.h"
+#include "desktop/dialogs/netstats.h"
+#include "libclient/utils/icon.h"
+#include "libshared/util/whatismyip.h"
 
 #include <QAction>
 #include <QLabel>

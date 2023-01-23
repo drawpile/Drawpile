@@ -17,22 +17,22 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "toolcontroller.h"
+#include "libclient/tools/toolcontroller.h"
 
-#include "annotation.h"
-#include "freehand.h"
-#include "colorpicker.h"
-#include "laser.h"
-#include "selection.h"
-#include "shapetools.h"
-#include "beziertool.h"
-#include "floodfill.h"
-#include "zoom.h"
-#include "inspector.h"
+#include "libclient/tools/annotation.h"
+#include "libclient/tools/freehand.h"
+#include "libclient/tools/colorpicker.h"
+#include "libclient/tools/laser.h"
+#include "libclient/tools/selection.h"
+#include "libclient/tools/shapetools.h"
+#include "libclient/tools/beziertool.h"
+#include "libclient/tools/floodfill.h"
+#include "libclient/tools/zoom.h"
+#include "libclient/tools/inspector.h"
 
-#include "canvas/point.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
+#include "libclient/canvas/point.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
 
 namespace tools {
 

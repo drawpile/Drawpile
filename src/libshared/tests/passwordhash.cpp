@@ -1,4 +1,4 @@
-#include "../util/passwordhash.h"
+#include "libshared/util/passwordhash.h"
 
 #include <QtTest/QtTest>
 

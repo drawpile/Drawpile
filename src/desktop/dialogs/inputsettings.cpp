@@ -17,13 +17,13 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "inputsettings.h"
-#include "canvas/inputpresetmodel.h"
+#include "desktop/dialogs/inputsettings.h"
+#include "libclient/canvas/inputpresetmodel.h"
 
 #include "ui_inputcfg.h"
 
 #include <QDebug>
-#include <qpushbutton.h>
+#include <QPushButton>
 
 namespace dialogs {
 

@@ -17,10 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "brush.h"
-#include "canvas/blendmodes.h"
-#include "drawdance/brushengine.h"
-#include "../utils/icon.h"
+#include "libclient/brushes/brush.h"
+#include "libclient/canvas/blendmodes.h"
+#include "libclient/drawdance/brushengine.h"
+#include "libclient/utils/icon.h"
 
 #include <cmath>
 #include <mypaint-brush.h>

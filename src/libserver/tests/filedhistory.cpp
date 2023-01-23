@@ -1,7 +1,7 @@
-#include "../filedhistory.h"
-#include "../../libshared/util/passwordhash.h"
-#include "../../libshared/util/ulid.h"
-#include "../../libshared/net/meta.h"
+#include "libserver/filedhistory.h"
+#include "libshared/util/passwordhash.h"
+#include "libshared/util/ulid.h"
+#include "libshared/net/meta.h"
 
 #include <QtTest/QtTest>
 #include <QTemporaryDir>

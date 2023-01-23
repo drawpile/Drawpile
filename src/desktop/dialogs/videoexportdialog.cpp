@@ -19,9 +19,9 @@
 
 #include "config.h"
 
-#include "videoexportdialog.h"
-#include "export/imageseriesexporter.h"
-#include "export/ffmpegexporter.h"
+#include "desktop/dialogs/videoexportdialog.h"
+#include "libclient/export/imageseriesexporter.h"
+#include "libclient/export/ffmpegexporter.h"
 
 #include "ui_videoexport.h"
 

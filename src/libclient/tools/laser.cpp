@@ -17,10 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "drawdance/message.h"
-#include "net/client.h"
-#include "tools/toolcontroller.h"
-#include "tools/laser.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/net/client.h"
+
+#include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/laser.h"
 
 #include <QPixmap>
 

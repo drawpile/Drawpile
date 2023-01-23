@@ -22,8 +22,8 @@
 #include <QSettings>
 #include <QMenu>
 
-#include "recentfiles.h"
-#include "util/paths.h"
+#include "desktop/utils/recentfiles.h"
+#include "libshared/util/paths.h"
 
 /**
  * @param filename filename to add

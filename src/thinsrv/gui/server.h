@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QJsonArray>
 
-#include "../../libserver/jsonapi.h"
+#include "libserver/jsonapi.h"
 
 namespace server {
 namespace gui {

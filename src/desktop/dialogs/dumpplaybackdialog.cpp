@@ -17,10 +17,10 @@
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dumpplaybackdialog.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "drawdance/canvashistory.h"
+#include "desktop/dialogs/dumpplaybackdialog.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/canvashistory.h"
 #include "ui_dumpplayback.h"
 #include <QDateTime>
 #include <QTimer>

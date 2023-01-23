@@ -19,8 +19,8 @@
 #ifndef DP_TIMELINE_MODEL_H
 #define DP_TIMELINE_MODEL_H
 
-#include "layerlist.h"
-#include "drawdance/message.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/drawdance/message.h"
 
 #include <QVector>
 #include <QHash>

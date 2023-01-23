@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "announcementlist.h"
-#include "utils/listservermodel.h"
+#include "libclient/net/announcementlist.h"
+#include "libclient/utils/listservermodel.h"
 
 namespace net {
 

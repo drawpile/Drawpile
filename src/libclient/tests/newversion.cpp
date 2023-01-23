@@ -1,4 +1,4 @@
-#include "../utils/newversion.h"
+#include "libclient/utils/newversion.h"
 
 #include <QXmlStreamReader>
 #include <QFile>

@@ -28,9 +28,9 @@ extern "C" {
 #include <QUrl>
 #include <QPointer>
 
-#include "tools/tool.h"
-#include "canvas/acl.h"
-#include "export/animationsaverrunnable.h"
+#include "libclient/tools/tool.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/export/animationsaverrunnable.h"
 
 class QActionGroup;
 class QLabel;

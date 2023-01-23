@@ -20,7 +20,7 @@
 #ifndef DP_CLIENT_MSGQUEUE_H
 #define DP_CLIENT_MSGQUEUE_H
 
-#include "drawdance/message.h"
+#include "libclient/drawdance/message.h"
 
 #include <QQueue>
 #include <QVector>

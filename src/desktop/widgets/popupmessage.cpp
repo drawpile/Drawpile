@@ -25,7 +25,7 @@
 #include <QTextCursor>
 #include <QTimer>
 
-#include "popupmessage.h"
+#include "desktop/widgets/popupmessage.h"
 
 namespace widgets {
 

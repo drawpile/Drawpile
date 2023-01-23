@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "listserverdelegate.h"
+#include "desktop/utils/listserverdelegate.h"
 
 #include <QPainter>
 

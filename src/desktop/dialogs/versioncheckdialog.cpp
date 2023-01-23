@@ -17,9 +17,9 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "versioncheckdialog.h"
-#include "../../libshared/util/networkaccess.h"
-#include "../../libshared/util/paths.h"
+#include "desktop/dialogs/versioncheckdialog.h"
+#include "libshared/util/networkaccess.h"
+#include "libshared/util/paths.h"
 
 #include "ui_versioncheck.h"
 

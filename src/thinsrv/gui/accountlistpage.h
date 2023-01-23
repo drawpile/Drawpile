@@ -20,7 +20,7 @@
 #ifndef ACCOUNTLISTPAGE_H
 #define ACCOUNTLISTPAGE_H
 
-#include "pagefactory.h"
+#include "thinsrv/gui/pagefactory.h"
 
 #include <QWidget>
 #include <QApplication>

@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "accountlistpage.h"
-#include "accountlistmodel.h"
-#include "subheaderwidget.h"
-#include "server.h"
-#include "qtshims.h"
+#include "thinsrv/gui/accountlistpage.h"
+#include "thinsrv/gui/accountlistmodel.h"
+#include "thinsrv/gui/subheaderwidget.h"
+#include "thinsrv/gui/server.h"
+#include "libshared/qtshims.h"
 
 #include "ui_accountdialog.h"
 

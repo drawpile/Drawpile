@@ -17,15 +17,15 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "client.h"
-#include "session.h"
-#include "sessionhistory.h"
-#include "serverlog.h"
-#include "serverconfig.h"
+#include "libserver/client.h"
+#include "libserver/session.h"
+#include "libserver/sessionhistory.h"
+#include "libserver/serverlog.h"
+#include "libserver/serverconfig.h"
 
-#include "../libshared/net/messagequeue.h"
-#include "../libshared/net/control.h"
-#include "../libshared/net/meta.h"
+#include "libshared/net/messagequeue.h"
+#include "libshared/net/control.h"
+#include "libshared/net/meta.h"
 
 #include <QSslSocket>
 #include <QStringList>

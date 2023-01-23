@@ -17,7 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "banlistmodel.h"
+#include "thinsrv/gui/banlistmodel.h"
 
 #include <QJsonObject>
 

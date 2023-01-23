@@ -19,7 +19,7 @@
 #ifndef WRITER_H
 #define WRITER_H
 
-#include "../net/message.h"
+#include "libshared/net/message.h"
 
 #include <QObject>
 #include <QJsonObject>

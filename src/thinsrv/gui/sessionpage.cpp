@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sessionpage.h"
-#include "subheaderwidget.h"
-#include "userlistmodel.h"
-#include "server.h"
-#include "../../libserver/jsonapi.h"
+#include "thinsrv/gui/sessionpage.h"
+#include "thinsrv/gui/subheaderwidget.h"
+#include "thinsrv/gui/userlistmodel.h"
+#include "thinsrv/gui/server.h"
+#include "libserver/jsonapi.h"
 
 #include <QDebug>
 #include <QBoxLayout>

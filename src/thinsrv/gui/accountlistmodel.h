@@ -20,7 +20,7 @@
 #ifndef ACCOUNTLISTMODEL_H
 #define ACCOUNTLISTMODEL_H
 
-#include "jsonlistmodel.h"
+#include "thinsrv/gui/jsonlistmodel.h"
 
 namespace server {
 namespace gui {
