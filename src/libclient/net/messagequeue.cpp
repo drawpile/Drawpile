@@ -39,7 +39,9 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	  m_pingTimer(nullptr),
 	  m_lastRecvTime(0),
 	  m_idleTimeout(0), m_pingSent(0),
-	  m_gracefullyDisconnecting(false)
+	  m_gracefullyDisconnecting(false),
+	  m_artificialLagMs(0),
+	  m_artificialLagTimer(nullptr)
 {
 	connect(socket, &QTcpSocket::readyRead, this, &MessageQueue::readData);
 	connect(socket, &QTcpSocket::bytesWritten, this, &MessageQueue::dataWritten);
@@ -95,6 +97,18 @@ void MessageQueue::setPingInterval(int msecs)
 	m_pingTimer->start(msecs);
 }
 
+void MessageQueue::setArtificialLagMs(int msecs)
+{
+	m_artificialLagMs = qMax(0, msecs);
+	if(m_artificialLagMs != 0 && !m_artificialLagTimer) {
+		m_artificialLagTimer = new QTimer(this);
+		m_artificialLagTimer->setTimerType(Qt::PreciseTimer);
+		m_artificialLagTimer->setSingleShot(true);
+		connect(m_artificialLagTimer, &QTimer::timeout, this,
+			&MessageQueue::sendArtificallyLaggedMessages);
+	}
+}
+
 MessageQueue::~MessageQueue()
 {
 	delete [] m_recvbuffer;
@@ -117,12 +131,53 @@ void MessageQueue::send(const drawdance::Message &msg)
 
 void MessageQueue::sendMultiple(int count, const drawdance::Message *msgs)
 {
+	if(m_artificialLagMs == 0) {
+		enqueueMessages(count, msgs);
+	} else {
+		long long time =
+			QDateTime::currentMSecsSinceEpoch() + m_artificialLagMs;
+		for(int i = 0; i < count; ++i) {
+			m_artificialLagTimes.append(time);
+			m_artificialLagMessages.append(msgs[i]);
+		}
+		if(!m_artificialLagTimer->isActive()) {
+			m_artificialLagTimer->start(m_artificialLagMs);
+		}
+	}
+}
+
+void MessageQueue::sendArtificallyLaggedMessages()
+{
+	long long now = QDateTime::currentMSecsSinceEpoch();
+	int count = m_artificialLagTimes.count();
+	int i = 0;
+	while(i < count) {
+		long long time = m_artificialLagTimes[i];
+		if(time <= now) {
+			++i;
+		} else {
+			break;
+		}
+	}
+
+	enqueueMessages(i, m_artificialLagMessages.constData());
+	m_artificialLagTimes.remove(0, i);
+	m_artificialLagMessages.remove(0, i);
+
+	if(i < count) {
+		m_artificialLagTimer->start(m_artificialLagTimes.first() - now);
+	}
+}
+
+void MessageQueue::enqueueMessages(int count, const drawdance::Message *msgs)
+{
 	if(!m_gracefullyDisconnecting) {
 		for(int i = 0; i < count; ++i) {
 			m_outbox.enqueue(msgs[i]);
 		}
-		if(m_sendbuffer.isEmpty())
+		if(m_sendbuffer.isEmpty()) {
 			writeData();
+		}
 	}
 }
 

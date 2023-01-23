@@ -1401,12 +1401,10 @@ void MainWindow::toggleRecording()
 
 void MainWindow::toggleProfile()
 {
-	QAction *profileAction = getAction("profile");
 	if(drawdance::Perf::isOpen()) {
 		if(!drawdance::Perf::close()) {
 			showErrorMessageWithDetails(tr("Error closing profile."), DP_error());
 		}
-		profileAction->setText(tr("Profile..."));
 	} else {
 		QString path = QFileDialog::getSaveFileName(
 			this,
@@ -1415,9 +1413,7 @@ void MainWindow::toggleProfile()
 			utils::fileFormatFilter(utils::FileFormatOption::SaveProfile)
 		);
 		if(!path.isEmpty()) {
-			if(drawdance::Perf::open(withSuffix(path, "dpperf"))) {
-				profileAction->setText(tr("Stop Profile"));
-			} else {
+			if(!drawdance::Perf::open(withSuffix(path, "dpperf"))) {
 				showErrorMessageWithDetails(tr("Error opening profile."), DP_error());
 			}
 		}
@@ -2361,6 +2357,32 @@ void MainWindow::clearLocalCanvasBackground()
 	m_doc->canvas()->paintEngine()->clearLocalBackgroundColor();
 }
 
+
+void MainWindow::updateDevToolsActions()
+{
+	QAction *profileAction = getAction("profile");
+	profileAction->setText(drawdance::Perf::isOpen() ? tr("Stop Profile") : tr("Profile..."));
+	QAction *artificialLagAction = getAction("artificiallag");
+	net::Client *client = m_doc->client();
+	artificialLagAction->setEnabled(client->isConnected());
+	int artificialLagMs = m_doc->client()->artificialLagMs();
+	artificialLagAction->setText(
+		tr("Set Artificial Lag... (currently %1 ms)").arg(artificialLagMs));
+}
+
+void MainWindow::setArtificialLag()
+{
+	bool ok;
+	int artificalLagMs = QInputDialog::getInt(
+		this, tr("Set Artificial Lag"),
+		tr("Artificial lag in milliseconds (0 to disable):"),
+		m_doc->client()->artificialLagMs(), 0, INT_MAX, 1, &ok);
+	if(ok) {
+		m_doc->client()->setArtificialLagMs(artificalLagMs);
+	}
+}
+
+
 void MainWindow::about()
 {
 #ifdef BUILD_LABEL
@@ -2499,7 +2521,6 @@ void MainWindow::setupActions()
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
-	QAction *profile = makeAction("profile", tr("Profile..."));
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
 #ifdef Q_OS_MAC
@@ -2525,7 +2546,6 @@ void MainWindow::setupActions()
 	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
-	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
@@ -2553,7 +2573,6 @@ void MainWindow::setupActions()
 	exportMenu->addAction(exportGifAnimation);
 	exportMenu->addAction(exportAnimationFrames);
 	filemenu->addAction(record);
-	filemenu->addAction(profile);
 	filemenu->addSeparator();
 
 	filemenu->addAction(quit);
@@ -3010,6 +3029,15 @@ void MainWindow::setupActions()
 	toolsmenu->addActions(m_drawingtools->actions());
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
+
+	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
+	QAction *profile = makeAction("profile", tr("Profile..."));
+	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag..."));
+	devtoolsmenu->addAction(profile);
+	devtoolsmenu->addAction(artificialLag);
+	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
+	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
+	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Ctrl+W");

@@ -127,6 +127,15 @@ public:
 	//! Are we expecting more incoming data?
 	bool isFullyCaughtUp() const { return m_catchupTo == 0; }
 
+	int artificialLagMs() const { return m_server ? m_server->artificialLagMs() : 0; }
+
+	void setArtificialLagMs(int msecs) const
+	{
+		if(m_server) {
+			m_server->setArtificialLagMs(msecs);
+		}
+	}
+
 public slots:
 	/**
 	 * @brief Send a single message to the server

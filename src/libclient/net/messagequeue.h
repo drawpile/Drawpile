@@ -23,6 +23,7 @@
 #include "drawdance/message.h"
 
 #include <QQueue>
+#include <QVector>
 #include <QObject>
 
 class QTcpSocket;
@@ -123,6 +124,10 @@ public:
 	 */
 	void setPingInterval(int msecs);
 
+	int artificalLagMs() { return m_artificialLagMs; }
+
+	void setArtificialLagMs(int msecs);
+
 public slots:
 	/**
 	 * @brief Send a Ping message
@@ -178,7 +183,11 @@ private slots:
 	void sslEncrypted();
 	void checkIdleTimeout();
 
+	void sendArtificallyLaggedMessages();
+
 private:
+	void enqueueMessages(int count, const drawdance::Message *msgs);
+
 	int haveWholeMessageToRead();
 	void writeData();
 
@@ -202,6 +211,11 @@ private:
 	qint64 m_pingSent;
 
 	bool m_gracefullyDisconnecting;
+
+	int m_artificialLagMs;
+	QVector<long long> m_artificialLagTimes;
+	QVector<drawdance::Message> m_artificialLagMessages;
+	QTimer *m_artificialLagTimer;
 };
 
 }

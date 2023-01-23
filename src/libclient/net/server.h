@@ -85,6 +85,10 @@ public:
 	virtual bool supportsPersistence() const = 0;
 	virtual bool supportsAbuseReports() const = 0;
 
+	// Artificial lag for debugging.
+	virtual int artificialLagMs() const = 0;
+	virtual void setArtificialLagMs(int msecs) = 0;
+
 signals:
 	void messagesReceived(int count, const drawdance::Message *msgs);
 };

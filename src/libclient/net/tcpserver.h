@@ -55,6 +55,9 @@ public:
 	bool supportsPersistence() const override { return m_supportsPersistence; }
 	bool supportsAbuseReports() const override { return m_supportsAbuseReports; }
 
+	int artificialLagMs() const override { return m_msgqueue->artificalLagMs(); }
+	void setArtificialLagMs(int msecs) override { m_msgqueue->setArtificialLagMs(msecs); }
+
 signals:
 	void loggedIn(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool hasAutoreset);
 	void loggingOut();

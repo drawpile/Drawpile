@@ -171,6 +171,9 @@ private slots:
 	void changeLocalCanvasBackground();
 	void clearLocalCanvasBackground();
 
+	void updateDevToolsActions();
+	void setArtificialLag();
+
 	void toolChanged(tools::Tool::Type tool);
 
 	void selectionRemoved();
