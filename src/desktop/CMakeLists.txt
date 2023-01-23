@@ -249,7 +249,12 @@ endif()
 
 if(${QT_PACKAGE_NAME}Keychain_FOUND)
 	target_compile_definitions(drawpile PRIVATE HAVE_QTKEYCHAIN)
-	target_link_libraries(drawpile ${QT_PACKAGE_NAME}Keychain::${QT_PACKAGE_NAME}Keychain)
+	if(TARGET ${QT_PACKAGE_NAME}Keychain::${QT_PACKAGE_NAME}Keychain)
+		target_link_libraries(drawpile ${QT_PACKAGE_NAME}Keychain::${QT_PACKAGE_NAME}Keychain)
+	else()
+		# QtKeychain < 0.13
+		target_link_libraries(drawpile ${QTKEYCHAIN_LIBRARIES})
+	endif()
 endif()
 add_feature_info("Client password manager" ${QT_PACKAGE_NAME}Keychain_FOUND "")
 
