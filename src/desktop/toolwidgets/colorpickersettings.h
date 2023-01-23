@@ -54,6 +54,7 @@ public slots:
 	void addColor(const QColor &color);
 	void pushSettings() override;
 	void openColorDialog();
+	void selectColorFromDialog(const QColor &color);
 
 signals:
 	void colorSelected(const QColor &color);

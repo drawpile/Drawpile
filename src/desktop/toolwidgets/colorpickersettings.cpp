@@ -101,8 +101,14 @@ void ColorPickerSettings::openColorDialog()
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	color_widgets::ColorPalette &palette = m_palettewidget->palette();
 	dlg->setColor(palette.count() == 0 ? Qt::black : palette.colorAt(0));
-	connect(dlg, &color_widgets::ColorDialog::colorSelected, this, &ColorPickerSettings::addColor);
+	connect(dlg, &color_widgets::ColorDialog::colorSelected, this, &ColorPickerSettings::selectColorFromDialog);
 	dlg->show();
+}
+
+void ColorPickerSettings::selectColorFromDialog(const QColor &color)
+{
+	addColor(color);
+	emit colorSelected(color);
 }
 
 int ColorPickerSettings::getSize() const
