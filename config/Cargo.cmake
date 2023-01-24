@@ -114,8 +114,8 @@ function(_add_cargo target is_exe)
 
 		# Adapted from corrosion. Required for successful linking of anything
 		# that uses the Rust Standard Library
+		set(libs "")
 		if(WIN32)
-			set(libs "")
 			list(APPEND libs "advapi32" "userenv" "ws2_32" "bcrypt")
 			if(MSVC)
 				list(APPEND libs "$<$<CONFIG:Debug>:msvcrtd>")
@@ -126,10 +126,15 @@ function(_add_cargo target is_exe)
 			else()
 				list(APPEND libs "gcc_eh" "pthread")
 			endif()
-			set_target_properties(${target} PROPERTIES
-				INTERFACE_LINK_LIBRARIES "${libs}"
-			)
+		elseif(APPLE)
+			list(APPEND libs "System" "resolv" "c" "m")
+		else()
+			list(APPEND libs "dl" "rt" "pthread" "gcc_s" "c" "m" "util")
 		endif()
+
+		set_target_properties(${target} PROPERTIES
+			INTERFACE_LINK_LIBRARIES "${libs}"
+		)
 	endif()
 
 	add_dependencies(${target} cargo-build_${target})
