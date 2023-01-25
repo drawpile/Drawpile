@@ -19,10 +19,10 @@
 
 #include <QtColorWidgets/swatch.hpp>
 #include <QtColorWidgets/color_palette_model.hpp>
-#include <QtColorWidgets/color_dialog.hpp>
 
 #include "colorpalette.h"
 #include "titlewidget.h"
+#include "dialogs/colordialog.h"
 #include "widgets/groupedtoolbutton.h"
 #include "utils/icon.h"
 #include "../libshared/util/paths.h"
@@ -319,6 +319,7 @@ void ColorPaletteDock::paletteDoubleClicked(int index)
 		return;
 
 	color_widgets::ColorDialog dlg;
+	dialogs::applyColorDialogSettings(&dlg);
 	dlg.setAlphaEnabled(false);
 	dlg.setButtonMode(color_widgets::ColorDialog::OkCancel);
 	dlg.setColor(d->paletteSwatch->palette().colorAt(index));

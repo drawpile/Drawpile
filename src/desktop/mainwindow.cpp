@@ -45,8 +45,6 @@
 #include <QTextEdit>
 #include <QThreadPool>
 
-#include <QtColorWidgets/ColorDialog>
-
 #ifdef Q_OS_OSX
 #define CTRL_KEY "Meta"
 #include "widgets/macmenu.h"
@@ -112,6 +110,7 @@
 #include "../libshared/record/reader.h"
 #include "drawdance/perf.h"
 
+#include "dialogs/colordialog.h"
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
 #include "dialogs/joindialog.h"
@@ -2329,10 +2328,8 @@ void MainWindow::changeCanvasBackground()
 		qWarning("changeCanvasBackground: no canvas!");
 		return;
 	}
-	auto *dlg = new color_widgets::ColorDialog(this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setColor(m_doc->canvas()->paintEngine()->backgroundColor());
-
+	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
+		m_doc->canvas()->paintEngine()->backgroundColor(), this);
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
 	dlg->show();
 }
@@ -2350,10 +2347,8 @@ void MainWindow::changeLocalCanvasBackground()
 		color = paintEngine->backgroundColor();
 	}
 
-	color_widgets::ColorDialog *dlg = new color_widgets::ColorDialog(this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setColor(color);
-
+	color_widgets::ColorDialog *dlg =
+		dialogs::newDeleteOnCloseColorDialog(color, this);
 	connect(
 		dlg, &color_widgets::ColorDialog::colorSelected, paintEngine,
 		&canvas::PaintEngine::setLocalBackgroundColor);

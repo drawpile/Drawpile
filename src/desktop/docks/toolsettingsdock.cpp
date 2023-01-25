@@ -29,9 +29,9 @@
 #include "toolwidgets/zoomsettings.h"
 #include "toolwidgets/inspectorsettings.h"
 
+#include "dialogs/colordialog.h"
 #include "tools/toolproperties.h"
 
-#include <QtColorWidgets/color_dialog.hpp>
 #include <QtColorWidgets/color_palette.hpp>
 
 #include <QStackedWidget>
@@ -214,7 +214,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
 
-	d->colorDialog = new color_widgets::ColorDialog(this);
+	d->colorDialog = dialogs::newColorDialog(this);
 	d->colorDialog->setAlphaEnabled(false);
 	connect(d->colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
 }

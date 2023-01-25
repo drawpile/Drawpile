@@ -17,6 +17,7 @@
  *  along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "onionskins.h"
+#include "dialogs/colordialog.h"
 #include "main.h"
 #include "titlewidget.h"
 
@@ -33,7 +34,6 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 #include <QVector>
-#include <QtColorWidgets/ColorDialog>
 #include <QtColorWidgets/ColorPreview>
 
 using color_widgets::ColorDialog;
@@ -52,7 +52,8 @@ constexpr int DEBOUNCE_DELAY_MS = 500;
 
 class EqualizerSlider : public QSlider {
 public:
-	EqualizerSlider(QWidget *parent) : QSlider{Qt::Vertical, parent}
+	EqualizerSlider(QWidget *parent)
+		: QSlider{Qt::Vertical, parent}
 	{
 		setRange(0, 100);
 		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -134,7 +135,8 @@ struct OnionSkinsDock::Private {
 };
 
 OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
-	: QDockWidget{title, parent}, d{new Private}
+	: QDockWidget{title, parent}
+	, d{new Private}
 {
 	TitleWidget *titlebar = new TitleWidget{this};
 	setTitleBarWidget(titlebar);
@@ -346,9 +348,7 @@ void OnionSkinsDock::showSliderValue(int value)
 void OnionSkinsDock::showColorPicker(
 	const QColor &currentColor, std::function<void(QColor)> onColorSelected)
 {
-	ColorDialog *dlg = new ColorDialog{this};
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setColor(currentColor);
+	ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(currentColor, this);
 	connect(dlg, &ColorDialog::colorSelected, onColorSelected);
 	dlg->show();
 }

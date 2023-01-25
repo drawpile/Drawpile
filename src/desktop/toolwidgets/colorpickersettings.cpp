@@ -18,12 +18,12 @@
 */
 
 #include "colorpickersettings.h"
+#include "dialogs/colordialog.h"
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
 #include "tools/colorpicker.h"
 #include "widgets/kis_slider_spin_box.h"
 
-#include <QtColorWidgets/color_dialog.hpp>
 #include <QtColorWidgets/swatch.hpp>
 
 #include <QBoxLayout>
@@ -97,10 +97,9 @@ void ColorPickerSettings::pushSettings()
 
 void ColorPickerSettings::openColorDialog()
 {
-	color_widgets::ColorDialog *dlg = new color_widgets::ColorDialog{m_palettewidget};
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	color_widgets::ColorPalette &palette = m_palettewidget->palette();
-	dlg->setColor(palette.count() == 0 ? Qt::black : palette.colorAt(0));
+	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
+		palette.count() == 0 ? Qt::black : palette.colorAt(0), m_palettewidget);
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, this, &ColorPickerSettings::selectColorFromDialog);
 	dlg->show();
 }

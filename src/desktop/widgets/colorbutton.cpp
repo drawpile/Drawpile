@@ -20,7 +20,7 @@
 #include "colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
-#include <QtColorWidgets/ColorDialog>
+#include "dialogs/colordialog.h"
 #endif
 
 #include <QStylePainter>
@@ -55,6 +55,7 @@ void ColorButton::selectColor()
 #ifndef DESIGNER_PLUGIN
 	if(!_locked) {
 		color_widgets::ColorDialog dlg;
+		dialogs::applyColorDialogSettings(&dlg);
 		dlg.setWindowTitle(tr("Select a color"));
 		dlg.setAlphaEnabled(alpha());
 		dlg.setButtonMode(color_widgets::ColorDialog::OkCancel);

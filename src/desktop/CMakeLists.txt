@@ -21,6 +21,7 @@ set(desktop_sources
 	scene/lasertrailitem.cpp
 	dialogs/abusereport.cpp
 	dialogs/certificateview.cpp
+	dialogs/colordialog.cpp
 	dialogs/dumpplaybackdialog.cpp
 	dialogs/newdialog.cpp
 	dialogs/hostdialog.cpp
