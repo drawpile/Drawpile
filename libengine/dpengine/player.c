@@ -25,6 +25,7 @@
 #include "canvas_history.h"
 #include "document_metadata.h"
 #include "draw_context.h"
+#include "dump_reader.h"
 #include "frame.h"
 #include "image.h"
 #include "layer_content.h"
@@ -75,6 +76,7 @@ typedef struct DP_PlayerIndex {
 typedef union DP_PlayerReader {
     DP_BinaryReader *binary;
     DP_TextReader *text;
+    DP_DumpReader *dump;
 } DP_PlayerReader;
 
 struct DP_Player {
@@ -335,6 +337,22 @@ DP_Player *DP_player_new(const char *path, DP_LoadResult *out_result)
     return player;
 }
 
+DP_Player *DP_player_new_debug_dump(DP_Input *input)
+{
+    DP_ASSERT(input);
+    DP_Player *player = DP_malloc(sizeof(*player));
+    *player = (DP_Player){NULL,
+                          NULL,
+                          DP_PLAYER_TYPE_DEBUG_DUMP,
+                          {.dump = DP_dump_reader_new(input)},
+                          0,
+                          true,
+                          false,
+                          false,
+                          {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
+    return player;
+}
+
 void DP_player_free(DP_Player *player)
 {
     if (player) {
@@ -346,6 +364,8 @@ void DP_player_free(DP_Player *player)
         case DP_PLAYER_TYPE_TEXT:
             DP_text_reader_free(player->reader.text);
             break;
+        case DP_PLAYER_TYPE_DEBUG_DUMP:
+            DP_dump_reader_free(player->reader.dump);
         default:
             break;
         }
@@ -375,6 +395,8 @@ size_t DP_player_tell(DP_Player *player)
         return DP_binary_reader_tell(player->reader.binary);
     case DP_PLAYER_TYPE_TEXT:
         return DP_text_reader_tell(player->reader.text);
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        return DP_dump_reader_tell(player->reader.dump);
     default:
         DP_UNREACHABLE();
     }
@@ -388,6 +410,8 @@ double DP_player_progress(DP_Player *player)
         return DP_binary_reader_progress(player->reader.binary);
     case DP_PLAYER_TYPE_TEXT:
         return DP_text_reader_progress(player->reader.text);
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        return 0.0;
     default:
         DP_UNREACHABLE();
     }
@@ -456,6 +480,9 @@ DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg)
         case DP_PLAYER_TYPE_TEXT:
             result = step_text(player, out_msg);
             break;
+        case DP_PLAYER_TYPE_DEBUG_DUMP:
+            DP_error_set("Can't step debug dump like a recording");
+            return DP_PLAYER_ERROR_OPERATION;
         default:
             DP_UNREACHABLE();
         }
@@ -466,34 +493,93 @@ DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg)
     }
 }
 
+DP_PlayerResult DP_player_step_dump(DP_Player *player, DP_DumpType *out_type,
+                                    int *out_count, DP_Message ***out_msgs)
+{
+    DP_ASSERT(player);
+    if (player->input_error) {
+        DP_error_set("Player input in error state");
+        return DP_PLAYER_ERROR_INPUT;
+    }
+    else if (player->end) {
+        return DP_PLAYER_RECORDING_END;
+    }
+    else if (player->type != DP_PLAYER_TYPE_DEBUG_DUMP) {
+        DP_error_set("Can't step recording like a debug dump");
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+    else {
+        DP_DumpReader *dr = player->reader.dump;
+        DP_DumpReaderResult result =
+            DP_dump_reader_read(dr, out_type, out_count, out_msgs);
+        player->position = DP_dump_reader_position(dr);
+        switch (result) {
+        case DP_DUMP_READER_SUCCESS:
+            return DP_PLAYER_SUCCESS;
+        case DP_DUMP_READER_INPUT_END:
+            return DP_PLAYER_RECORDING_END;
+        case DP_DUMP_READER_ERROR_INPUT:
+            return DP_PLAYER_ERROR_INPUT;
+        case DP_DUMP_READER_ERROR_PARSE:
+            return DP_PLAYER_ERROR_PARSE;
+        }
+        DP_UNREACHABLE();
+    }
+}
 
-bool DP_player_seek(DP_Player *player, DP_PlayerIndexEntry entry)
+
+bool DP_player_seek(DP_Player *player, long long position, size_t offset)
 {
     DP_ASSERT(player);
     // No need to check for input errors, since seeking clears those.
 
     bool seek_ok;
-    size_t message_offset = entry.message_offset;
-    DP_debug("Seeking playback to %zu", message_offset);
+    DP_debug("Seeking playback to %zu", offset);
     switch (player->type) {
     case DP_PLAYER_TYPE_BINARY:
-        seek_ok = DP_binary_reader_seek(player->reader.binary, message_offset);
+        seek_ok = DP_binary_reader_seek(player->reader.binary, offset);
         break;
     case DP_PLAYER_TYPE_TEXT:
-        seek_ok = DP_text_reader_seek(player->reader.text, message_offset);
+        seek_ok = DP_text_reader_seek(player->reader.text, offset);
+        break;
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        seek_ok = DP_dump_reader_seek(player->reader.dump,
+                                      (DP_DumpReaderEntry){position, offset});
         break;
     default:
         DP_UNREACHABLE();
     }
 
     if (seek_ok) {
-        player->position = entry.message_index;
+        player->position = position;
         player->input_error = false;
         player->end = false;
         return true;
     }
     else {
         player->input_error = true;
+        return false;
+    }
+}
+
+bool DP_player_seek_dump(DP_Player *player, long long position)
+{
+    DP_ASSERT(player);
+    if (player->type == DP_PLAYER_TYPE_DEBUG_DUMP) {
+        DP_DumpReader *dr = player->reader.dump;
+        DP_DumpReaderEntry entry =
+            DP_dump_reader_search_reset_for(dr, position);
+        if (DP_dump_reader_seek(dr, entry)) {
+            player->position = DP_dump_reader_position(dr);
+            return true;
+        }
+        else {
+            player->input_error = true;
+            return false;
+        }
+    }
+    else {
+        DP_error_set("Can't seek recording like a debug dump");
         return false;
     }
 }
@@ -1343,6 +1429,10 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     DP_ASSERT(player);
     DP_ASSERT(dc);
     DP_ASSERT(should_snapshot_fn);
+    if (player->type == DP_PLAYER_TYPE_DEBUG_DUMP) {
+        DP_error_set("Can't index a debug dump");
+        return false;
+    }
 
     DP_Player *index_player = DP_player_new(player->recording_path, NULL);
     if (!index_player) {
@@ -1463,6 +1553,10 @@ static bool read_index_entries(DP_ReadIndexContext *c)
 bool DP_player_index_load(DP_Player *player)
 {
     DP_ASSERT(player);
+    if (player->type == DP_PLAYER_TYPE_DEBUG_DUMP) {
+        DP_error_set("Can't load index of a debug dump");
+        return false;
+    }
 
     const char *path = player->index_path;
     DP_Input *input = DP_file_input_new_from_path(path);

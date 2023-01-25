@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +156,20 @@ size_t DP_paint_engine_playback_index_entry_count(DP_PaintEngine *pe);
 DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
                                                       size_t index,
                                                       bool *out_error);
+
+DP_PlayerResult DP_paint_engine_playback_dump_step(
+    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user);
+
+DP_PlayerResult DP_paint_engine_playback_dump_jump_previous_reset(
+    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user);
+
+DP_PlayerResult DP_paint_engine_playback_dump_jump_next_reset(
+    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user);
+
+DP_PlayerResult
+DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
+                                   DP_PaintEnginePushMessageFn push_message,
+                                   void *user);
 
 bool DP_paint_engine_playback_close(DP_PaintEngine *pe);
 

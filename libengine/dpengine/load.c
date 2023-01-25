@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1103,6 +1103,23 @@ DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
     if (path) {
         DP_PERF_BEGIN_DETAIL(fn, "recording", "path=%s", path);
         DP_Player *player = DP_player_new(path, out_result);
+        DP_PERF_END(fn);
+        return player;
+    }
+    else {
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
+        return NULL;
+    }
+}
+
+DP_Player *DP_load_debug_dump(const char *path, DP_LoadResult *out_result)
+{
+    if (path) {
+        DP_PERF_BEGIN_DETAIL(fn, "dump", "path=%s", path);
+        DP_Input *input = DP_file_input_new_from_path(path);
+        DP_Player *player = input ? DP_player_new_debug_dump(input) : NULL;
+        assign_load_result(out_result, player ? DP_LOAD_RESULT_SUCCESS
+                                              : DP_LOAD_RESULT_OPEN_ERROR);
         DP_PERF_END(fn);
         return player;
     }

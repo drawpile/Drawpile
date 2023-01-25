@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,8 @@ DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         DP_LoadResult *out_result);
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);
+
+DP_Player *DP_load_debug_dump(const char *path, DP_LoadResult *out_result);
 
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,6 +208,78 @@ static void free_preview(DP_PaintEnginePreview *preview)
     }
 }
 
+static void decref_messages(int count, DP_Message **msgs)
+{
+    for (int i = 0; i < count; ++i) {
+        DP_message_decref(msgs[i]);
+    }
+}
+
+static void drop_message(DP_UNUSED void *user, DP_Message *msg)
+{
+    DP_message_decref(msg);
+}
+
+static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
+{
+    DP_CanvasHistory *ch = pe->ch;
+    DP_DrawContext *dc = pe->paint_dc;
+    int count;
+    DP_Message **msgs = DP_msg_internal_dump_command_messages(mi, &count);
+    int type = DP_msg_internal_dump_command_type(mi);
+    switch (type) {
+    case DP_DUMP_REMOTE_MESSAGE:
+        DP_canvas_history_local_drawing_in_progress_set(ch, false);
+        if (!DP_canvas_history_handle(ch, dc, msgs[0])) {
+            DP_warn("Error handling remote dump message: %s", DP_error());
+        }
+        decref_messages(count, msgs);
+        break;
+    case DP_DUMP_REMOTE_MESSAGE_LOCAL_DRAWING_IN_PROGRESS:
+        DP_canvas_history_local_drawing_in_progress_set(ch, true);
+        if (!DP_canvas_history_handle(ch, dc, msgs[0])) {
+            DP_warn("Error handling remote dump message with local drawing in "
+                    "progress: %s",
+                    DP_error());
+        }
+        decref_messages(count, msgs);
+        break;
+    case DP_DUMP_LOCAL_MESSAGE:
+        if (!DP_canvas_history_handle_local(ch, dc, msgs[0])) {
+            DP_warn("Error handling local dump message: %s", DP_error());
+        }
+        decref_messages(count, msgs);
+        break;
+    case DP_DUMP_REMOTE_MULTIDAB:
+        DP_canvas_history_local_drawing_in_progress_set(ch, false);
+        DP_canvas_history_handle_multidab_dec(ch, dc, count, msgs);
+        break;
+    case DP_DUMP_REMOTE_MULTIDAB_LOCAL_DRAWING_IN_PROGRESS:
+        DP_canvas_history_local_drawing_in_progress_set(ch, true);
+        DP_canvas_history_handle_multidab_dec(ch, dc, count, msgs);
+        break;
+    case DP_DUMP_LOCAL_MULTIDAB:
+        DP_canvas_history_handle_local_multidab_dec(ch, dc, count, msgs);
+        break;
+    case DP_DUMP_RESET:
+        decref_messages(count, msgs);
+        DP_canvas_history_reset(ch);
+        break;
+    case DP_DUMP_SOFT_RESET:
+        decref_messages(count, msgs);
+        DP_canvas_history_soft_reset(ch);
+        break;
+    case DP_DUMP_CLEANUP:
+        decref_messages(count, msgs);
+        DP_canvas_history_cleanup(ch, dc, drop_message, NULL);
+        break;
+    default:
+        decref_messages(count, msgs);
+        DP_warn("Unknown dump entry type %d", type);
+        break;
+    }
+}
+
 static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
                             DP_MsgInternal *mi)
 {
@@ -255,6 +327,9 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         }
         break;
     }
+    case DP_MSG_INTERNAL_TYPE_DUMP_COMMAND:
+        handle_dump_command(pe, mi);
+        break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -666,6 +741,12 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
                 case DP_MSG_INTERNAL_TYPE_PREVIEW:
                     free_preview(DP_msg_internal_preview_data(mi));
                     break;
+                case DP_MSG_INTERNAL_TYPE_DUMP_COMMAND: {
+                    int count;
+                    DP_Message **msgs =
+                        DP_msg_internal_dump_command_messages(mi, &count);
+                    decref_messages(count, msgs);
+                }
                 default:
                     break;
                 }
@@ -1108,7 +1189,7 @@ jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
         return DP_PLAYER_ERROR_INPUT;
     }
 
-    if (!DP_player_seek(player, entry)) {
+    if (!DP_player_seek(player, entry.message_index, entry.message_offset)) {
         DP_canvas_state_decref(cs);
         push_playback(push_message, user, player_position, 0);
         return DP_PLAYER_ERROR_INPUT;
@@ -1214,6 +1295,143 @@ DP_Image *DP_paint_engine_playback_index_thumbnail_at(DP_PaintEngine *pe,
         }
         return NULL;
     }
+}
+
+static DP_PlayerResult step_dump(DP_Player *player,
+                                 DP_PaintEnginePushMessageFn push_message,
+                                 void *user)
+{
+    DP_DumpType type;
+    int count;
+    DP_Message **msgs;
+    DP_PlayerResult result = DP_player_step_dump(player, &type, &count, &msgs);
+    if (result == DP_PLAYER_SUCCESS) {
+        push_message(user, DP_msg_internal_dump_command_new_inc(0, (int)type,
+                                                                count, msgs));
+    }
+    return result;
+}
+
+DP_PlayerResult DP_paint_engine_playback_dump_step(
+    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    DP_PlayerResult result = step_dump(player, push_message, user);
+    long long position_to_report =
+        result == DP_PLAYER_SUCCESS ? DP_player_position(player) : -1;
+    push_playback(push_message, user, position_to_report, 0);
+    return result;
+}
+
+DP_PlayerResult DP_paint_engine_playback_dump_jump_previous_reset(
+    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    if (!DP_player_seek_dump(player, DP_player_position(player) - 1)) {
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_INPUT;
+    }
+
+    push_message(user, DP_msg_internal_reset_new(0));
+    push_playback(push_message, user, DP_player_position(player), 0);
+    return DP_PLAYER_SUCCESS;
+}
+
+static int step_toward_next_reset(DP_Player *player, bool stop_at_reset,
+                                  DP_PaintEnginePushMessageFn push_message,
+                                  void *user)
+{
+    long long position = DP_player_position(player);
+    size_t offset = DP_player_tell(player);
+    DP_DumpType type;
+    int count;
+    DP_Message **msgs;
+    DP_PlayerResult result = DP_player_step_dump(player, &type, &count, &msgs);
+    if (result == DP_PLAYER_SUCCESS) {
+        if (type == DP_DUMP_RESET && stop_at_reset) {
+            if (DP_player_seek(player, position, offset)) {
+                return -1;
+            }
+            else {
+                return DP_PLAYER_ERROR_INPUT;
+            }
+        }
+        else {
+            push_message(user, DP_msg_internal_dump_command_new_inc(
+                                   0, (int)type, count, msgs));
+        }
+    }
+    return (int)result;
+}
+
+DP_PlayerResult DP_paint_engine_playback_dump_jump_next_reset(
+    DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    // We want to jump up to, but excluding the next reset. So we keep walking
+    // through the dump until we hit a reset and then seek to before it. If we
+    // hit a reset as our very first message, we push through it, since
+    // otherwise we'd be doing nothing at all until manually stepping forward.
+    int result = step_toward_next_reset(player, false, push_message, user);
+    while (result == DP_PLAYER_SUCCESS) {
+        result = step_toward_next_reset(player, true, push_message, user);
+    }
+
+    push_playback(push_message, user, DP_player_position(player), 0);
+    return result == -1 ? DP_PLAYER_SUCCESS : (DP_PlayerResult)result;
+}
+
+DP_PlayerResult
+DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
+                                   DP_PaintEnginePushMessageFn push_message,
+                                   void *user)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    if (!DP_player_seek_dump(player, position)) {
+        push_playback(push_message, user, -1, 0);
+        return DP_PLAYER_ERROR_INPUT;
+    }
+
+    if (DP_player_position(player) == 0) {
+        push_message(user, DP_msg_internal_reset_new(0));
+    }
+
+    DP_PlayerResult result = DP_PLAYER_SUCCESS;
+    while (DP_player_position(player) < position) {
+        result = step_dump(player, push_message, user);
+        if (result != DP_PLAYER_SUCCESS) {
+            break;
+        }
+    }
+    push_playback(push_message, user, DP_player_position(player), 0);
+    return result;
 }
 
 bool DP_paint_engine_playback_close(DP_PaintEngine *pe)

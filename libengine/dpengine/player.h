@@ -21,12 +21,14 @@
  */
 #ifndef DPMSG_PLAYER_H
 #define DPMSG_PLAYER_H
+#include "canvas_history.h"
 #include "load.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct DP_Input DP_Input;
 typedef struct DP_Message DP_Message;
 
 
@@ -35,6 +37,7 @@ typedef struct DP_Player DP_Player;
 typedef enum DP_PlayerType {
     DP_PLAYER_TYPE_BINARY,
     DP_PLAYER_TYPE_TEXT,
+    DP_PLAYER_TYPE_DEBUG_DUMP,
 } DP_PlayerType;
 
 typedef enum DP_PlayerResult {
@@ -58,6 +61,8 @@ typedef void (*DP_PlayerIndexProgressFn)(void *user, int percent);
 
 DP_Player *DP_player_new(const char *path, DP_LoadResult *out_result);
 
+DP_Player *DP_player_new_debug_dump(DP_Input *input);
+
 void DP_player_free(DP_Player *player);
 
 bool DP_player_compatible(DP_Player *player);
@@ -73,7 +78,12 @@ long long DP_player_position(DP_Player *player);
 
 DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg);
 
-bool DP_player_seek(DP_Player *player, const DP_PlayerIndexEntry entry);
+DP_PlayerResult DP_player_step_dump(DP_Player *player, DP_DumpType *out_type,
+                                    int *out_count, DP_Message ***out_msgs);
+
+bool DP_player_seek(DP_Player *player, long long position, size_t offset);
+
+bool DP_player_seek_dump(DP_Player *player, long long position);
 
 
 bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,

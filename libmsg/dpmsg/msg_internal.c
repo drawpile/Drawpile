@@ -24,6 +24,7 @@
 #include "text_writer.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 
 
 struct DP_MsgInternal {
@@ -50,6 +51,13 @@ typedef struct DP_MsgInternalPlayback {
     long long position;
     int interval;
 } DP_MsgInternalPlayback;
+
+typedef struct DP_MsgInternalDumpCommand {
+    DP_MsgInternal parent;
+    int type;
+    int count;
+    DP_Message *messages[];
+} DP_MsgInternalDumpCommand;
 
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
@@ -170,6 +178,23 @@ DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
     return msg;
 }
 
+DP_Message *DP_msg_internal_dump_command_new_inc(unsigned int context_id,
+                                                 int type, int count,
+                                                 DP_Message **messages)
+{
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_DUMP_COMMAND,
+                         DP_FLEX_SIZEOF(DP_MsgInternalDumpCommand, messages,
+                                        DP_int_to_size(count)));
+    DP_MsgInternalDumpCommand *midc = DP_message_internal(msg);
+    midc->type = type;
+    midc->count = count;
+    for (int i = 0; i < count; ++i) {
+        midc->messages[i] = DP_message_incref(messages[i]);
+    }
+    return msg;
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {
@@ -216,4 +241,23 @@ int DP_msg_internal_playback_interval(DP_MsgInternal *mi)
     DP_ASSERT(mi);
     DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PLAYBACK);
     return ((DP_MsgInternalPlayback *)mi)->interval;
+}
+
+int DP_msg_internal_dump_command_type(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_DUMP_COMMAND);
+    return ((DP_MsgInternalDumpCommand *)mi)->type;
+}
+
+DP_Message **DP_msg_internal_dump_command_messages(DP_MsgInternal *mi,
+                                                   int *out_count)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_DUMP_COMMAND);
+    DP_MsgInternalDumpCommand *midc = (DP_MsgInternalDumpCommand *)mi;
+    if (out_count) {
+        *out_count = midc->count;
+    }
+    return midc->messages;
 }
