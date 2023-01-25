@@ -1014,8 +1014,9 @@ void MainWindow::open(const QUrl& url)
 
 	if(url.isLocalFile()) {
 		QString file = url.toLocalFile();
-		if(recording::Reader::isRecordingExtension(file)) {
-			DP_LoadResult result = m_doc->loadRecording(file);
+		static constexpr auto opt = QRegularExpression::CaseInsensitiveOption;
+		if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(file).hasMatch()) {
+			DP_LoadResult result = m_doc->loadRecording(file, false);
 			showLoadResultMessage(result);
 			if(result == DP_LOAD_RESULT_SUCCESS) {
 				QFileInfo fileinfo(file);
