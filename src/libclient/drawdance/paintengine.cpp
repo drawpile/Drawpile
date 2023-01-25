@@ -6,17 +6,19 @@ extern "C" {
 #include "aclstate.h"
 #include "image.h"
 #include "snapshotqueue.h"
+#include "../../libshared/util/paths.h"
 #include <QDateTime>
 
 namespace drawdance {
 
 PaintEngine::PaintEngine(AclState &acls, SnapshotQueue &sq,
-		DP_PaintEnginePlaybackFn playbackFn, void *playbackUser,
-		const CanvasState &canvasState)
+		bool wantCanvasHistoryDump, DP_PaintEnginePlaybackFn playbackFn,
+		void *playbackUser, const CanvasState &canvasState)
 	: m_paintDc{DrawContextPool::acquire()}
 	, m_previewDc{DrawContextPool::acquire()}
 	, m_data(DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
+		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
 		&PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, playbackUser))
 {
 }
@@ -36,10 +38,12 @@ void PaintEngine::reset(
 	DP_PaintEnginePlaybackFn playbackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
 {
+	bool wantCanvasHistoryDump = DP_paint_engine_want_canvas_history_dump(m_data);
 	DP_paint_engine_free_join(m_data);
 	acls.reset(localUserId);
 	m_data = DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
+		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
 		&PaintEngine::getTimeMs, nullptr, player, playbackFn, playbackUser);
 }
 
@@ -56,6 +60,11 @@ LayerContent PaintEngine::renderContent() const
 void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)
 {
 	DP_paint_engine_local_drawing_in_progress_set(m_data, localDrawingInProgress);
+}
+
+void PaintEngine::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
+{
+	DP_paint_engine_want_canvas_history_dump_set(m_data, wantCanvasHistoryDump);
 }
 
 void PaintEngine::setActiveLayerId(int layerId)
@@ -237,6 +246,11 @@ CanvasState PaintEngine::viewCanvasState() const
 CanvasState PaintEngine::historyCanvasState() const
 {
 	return drawdance::CanvasState::noinc(DP_paint_engine_history_canvas_state_inc(m_data));
+}
+
+QString PaintEngine::getDumpDir()
+{
+	return utils::paths::writablePath("dumps", ".");
 }
 
 long long PaintEngine::getTimeMs(void *)

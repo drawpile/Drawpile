@@ -121,6 +121,9 @@ public:
 	bool isAutosave() const { return m_autosave; }
 	bool canAutosave() const { return m_canAutosave; }
 
+	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
+	bool wantCanvasHistoryDump() const { return m_wantCanvasHistoryDump; }
+
 	QString sessionTitle() const;
 
 	QString currentFilename() const { return m_currentFilename; }
@@ -283,6 +286,7 @@ private:
 	bool m_autosave;
 	bool m_canAutosave;
 	bool m_saveInProgress;
+	bool m_wantCanvasHistoryDump;
 	QTimer *m_autosaveTimer;
 
 	QString m_roomcode;

@@ -173,6 +173,7 @@ private slots:
 
 	void updateDevToolsActions();
 	void setArtificialLag();
+	void toggleDebugDump();
 
 	void toolChanged(tools::Tool::Type tool);
 

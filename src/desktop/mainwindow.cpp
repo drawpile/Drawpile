@@ -2362,12 +2362,16 @@ void MainWindow::updateDevToolsActions()
 {
 	QAction *profileAction = getAction("profile");
 	profileAction->setText(drawdance::Perf::isOpen() ? tr("Stop Profile") : tr("Profile..."));
+
 	QAction *artificialLagAction = getAction("artificiallag");
 	net::Client *client = m_doc->client();
 	artificialLagAction->setEnabled(client->isConnected());
-	int artificialLagMs = m_doc->client()->artificialLagMs();
+	int artificialLagMs = client->artificialLagMs();
 	artificialLagAction->setText(
 		tr("Set Artificial Lag... (currently %1 ms)").arg(artificialLagMs));
+
+	QAction *debugDumpAction = getAction("debugdump");
+	debugDumpAction->setChecked(m_doc->wantCanvasHistoryDump());
 }
 
 void MainWindow::setArtificialLag()
@@ -2379,6 +2383,26 @@ void MainWindow::setArtificialLag()
 		m_doc->client()->artificialLagMs(), 0, INT_MAX, 1, &ok);
 	if(ok) {
 		m_doc->client()->setArtificialLagMs(artificalLagMs);
+	}
+}
+
+void MainWindow::toggleDebugDump()
+{
+	if(m_doc->wantCanvasHistoryDump()) {
+		m_doc->setWantCanvasHistoryDump(false);
+	} else {
+		QString path = utils::paths::writablePath("dumps");
+		QMessageBox::StandardButton result = QMessageBox::question(
+			this, tr("Record Debug Dumps"),
+			tr("Debug dumps will record local and remote drawing commands. "
+				"They can be used to fix network issues, but not much else. "
+				"If you want to make a regular recording, use File > Record... "
+				"instead.\n\nDebug dump recording starts on the next canvas "
+				"reset and the files will be saved in %1\n\nAre you sure you"
+				"want to start recording debug dumps?").arg(path));
+		if(result == QMessageBox::Yes) {
+			m_doc->setWantCanvasHistoryDump(true);
+		}
 	}
 }
 
@@ -3033,11 +3057,14 @@ void MainWindow::setupActions()
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
 	QAction *profile = makeAction("profile", tr("Profile..."));
 	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag..."));
+	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable();
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
+	devtoolsmenu->addAction(debugDump);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);
+	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Ctrl+W");

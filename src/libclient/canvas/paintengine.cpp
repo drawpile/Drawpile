@@ -40,11 +40,13 @@ extern "C" {
 
 namespace canvas {
 
-PaintEngine::PaintEngine(int fps, int snapshotMaxCount, long long snapshotMinDelayMs, QObject *parent)
+PaintEngine::PaintEngine(
+		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
+		bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
-	, m_paintEngine{m_acls, m_snapshotQueue, PaintEngine::onPlayback, this}
+	, m_paintEngine{m_acls, m_snapshotQueue, wantCanvasHistoryDump, PaintEngine::onPlayback, this}
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_changedTileBounds{}
@@ -81,6 +83,11 @@ void PaintEngine::setSnapshotMaxCount(int snapshotMaxCount)
 void PaintEngine::setSnapshotMinDelayMs(long long snapshotMinDelayMs)
 {
 	m_snapshotQueue.setMinDelayMs(snapshotMinDelayMs);
+}
+
+void PaintEngine::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
+{
+	m_paintEngine.setWantCanvasHistoryDump(wantCanvasHistoryDump);
 }
 
 void PaintEngine::start()

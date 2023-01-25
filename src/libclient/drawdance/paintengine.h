@@ -27,8 +27,9 @@ class PaintEngine {
 public:
 	using BuildIndexProgressFn = std::function<void (int)>;
 
-	PaintEngine(AclState &acls, SnapshotQueue &sq, DP_PaintEnginePlaybackFn playbackFn,
-		void *playbackUser, const CanvasState &canvasState = CanvasState::null());
+	PaintEngine(AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
+		DP_PaintEnginePlaybackFn playbackFn, void *playbackUser,
+		const CanvasState &canvasState = CanvasState::null());
 
 	~PaintEngine();
 
@@ -49,6 +50,8 @@ public:
 	LayerContent renderContent() const;
 
 	void setLocalDrawingInProgress(bool localDrawingInProgress);
+
+	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 
 	void setActiveLayerId(int layerId);
 
@@ -94,6 +97,7 @@ private:
 	DrawContext m_previewDc;
 	DP_PaintEngine *m_data;
 
+	static QString getDumpDir();
 	static long long getTimeMs(void *);
 	static void pushMessage(void *user, DP_Message *msg);
 	static bool shouldSnapshot(void *user);

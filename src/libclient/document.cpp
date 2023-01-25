@@ -52,6 +52,7 @@ Document::Document(QObject *parent)
 	  m_autosave(false),
 	  m_canAutosave(false),
 	  m_saveInProgress(false),
+	  m_wantCanvasHistoryDump(false),
 	  m_sessionPersistent(false),
 	  m_sessionClosed(false),
 	  m_sessionAuthOnly(false),
@@ -114,7 +115,8 @@ void Document::initCanvas()
 	long long snapshotMinDelayMs;
 	getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
 	m_canvas = new canvas::CanvasModel{
-		m_client->myId(), fps, snapshotMaxCount, snapshotMinDelayMs, this};
+		m_client->myId(), fps, snapshotMaxCount, snapshotMinDelayMs,
+		m_wantCanvasHistoryDump, this};
 
 	m_toolctrl->setModel(m_canvas);
 
@@ -502,6 +504,14 @@ void Document::unmarkDirty()
 	if(m_dirty) {
 		m_dirty = false;
 		emit dirtyCanvas(m_dirty);
+	}
+}
+
+void Document::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
+{
+	m_wantCanvasHistoryDump = wantCanvasHistoryDump;
+	if(m_canvas) {
+		m_canvas->paintEngine()->setWantCanvasHistoryDump(wantCanvasHistoryDump);
 	}
 }
 

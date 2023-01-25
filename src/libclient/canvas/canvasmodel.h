@@ -48,7 +48,8 @@ class CanvasModel : public QObject
 public:
 	CanvasModel(
 		uint8_t localUserId, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, QObject *parent = nullptr);
+		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
+		QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 

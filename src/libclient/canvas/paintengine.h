@@ -49,13 +49,14 @@ public:
 
 	PaintEngine(
 		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-		QObject *parent = nullptr);
+		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
 	~PaintEngine();
 
 	void setFps(int fps);
 	void setSnapshotMaxCount(int snapshotMaxCount);
 	void setSnapshotMinDelayMs(long long snapshotMinDelayMs);
+	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 
 	/// Reset the paint engine to its default state
 	void reset(
