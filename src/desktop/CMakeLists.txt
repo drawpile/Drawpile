@@ -259,7 +259,7 @@ if(QTCOLORWIDGETS_FOUND)
 	)
 	target_link_libraries(drawpile ${LIBQTCOLORWIDGETS_LIBRARIES})
 else()
-	target_sources(drawpile PRIVATE
+	set(sources
 		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
 		bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
 		bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
@@ -325,6 +325,16 @@ else()
 		bundled/QtColorWidgets/hue_slider.cpp
 		bundled/QtColorWidgets/swatch.cpp
 	)
+	target_sources(drawpile PRIVATE ${sources})
+	if(MSVC)
+		set_source_files_properties(${sources} PROPERTIES
+			COMPILE_OPTIONS "/W0"
+		)
+	else()
+		set_source_files_properties(${sources} PROPERTIES
+			COMPILE_OPTIONS "-Wno-all;-Wno-extra;-Wno-error"
+		)
+	endif()
 	target_include_directories(drawpile SYSTEM PRIVATE
 		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include"
 	)
