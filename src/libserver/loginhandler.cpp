@@ -36,10 +36,6 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#ifndef Q_FALLTHROUGH
-	#define Q_FALLTHROUGH() (void)0  // work-around for qt<5.8
-#endif
-
 namespace server {
 
 Sessions::~Sessions()
