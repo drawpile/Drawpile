@@ -79,7 +79,8 @@ function(_add_cargo target is_exe)
 	add_custom_target(cargo-build_${target}
 		${all}
 		BYPRODUCTS "${out_dir}/${out_name}"
-		COMMAND ${CARGO_COMMAND} build
+		COMMAND ${CMAKE_COMMAND} -E env MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+			${CARGO_COMMAND} build
 			"$<$<BOOL:${ARG_MANIFEST_PATH}>:--manifest-path;${ARG_MANIFEST_PATH}>"
 			"$<$<BOOL:${ARG_FEATURES}>:--features;${ARG_FEATURES}>"
 			"$<$<BOOL:${ARG_ALL_FEATURES}>:--all-features>"

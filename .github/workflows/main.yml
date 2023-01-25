@@ -22,7 +22,7 @@ jobs:
         run: cargo clippy --all-targets -- -D warnings
 
   test:
-    name: Test on ${{ matrix.os }}
+    name: Test Qt ${{ matrix.qt }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -30,37 +30,34 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+        libsodium: [ 1.0.18 ]
+        qt: [ 5.15.8 ]
+        libmicrohttpd: [ 0.9.75 ]
         include:
           - os: ubuntu-latest
-            packages: >
-              sudo sed -i 's/azure\.//' /etc/apt/sources.list &&
-              sudo apt-get update && sudo apt-get install --no-install-recommends
-              libmicrohttpd-dev libsodium-dev
-              libqt5sql5 libqt5svg5
-              qtbase5-dev qttools5-dev qtmultimedia5-dev libqt5x11extras5-dev
-              qtkeychain-qt5-dev
-              libxcb1-dev libxi-dev
-          - os: macos-latest
-            # The sed hack is only needed because the brew version of Qt is
-            # compiled with a different CMAKE_OSX_DEPLOYMENT_TARGET that
-            # includes unused features that do not work when targeting earlier
-            # macOS versions
-            packages: >
-              brew install libmicrohttpd libsodium qtkeychain &&
-              sed -i -e 's/\(#define QT_FEATURE_cxx17_filesystem\) 1/\1 -1/'
-              /usr/local/lib/QtCore.framework/Headers/qtcore-config.h
+            sccache_tuple: x86_64-unknown-linux-musl
+            qt_packages: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libgl1-mesa-dev libglu1-mesa-dev libxi-dev
+              libxext-dev libxfixes-dev libxrender-dev
+              libxcb1-dev libx11-xcb-dev libxcb-glx0-dev libxcb-util0-dev
+              libxkbcommon-dev libxcb-keysyms1-dev
+              libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
+              libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
+              libxcb-randr0-dev libxcb-render-util0-dev libxcb-xinerama0-dev
+              libxcb-xkb-dev libxcb-xinput-dev
           - os: windows-latest
-            packages: >
-              choco install aqt &&
-              aqt install-qt -O qt windows desktop 5.15.2 win64_msvc2019_64 --archives qtbase qtmultimedia qtsvg qttools &&
-              ($env:PATH += ";$(Get-Location)\qt\5.15.2\msvc2019_64\bin") &&
-              ($env:VCPKG_KEEP_ENV_VARS = "PATH") &&
-              echo '{"name":"qt5-tools","version":"5.15.2","description":"Qt5 Tools Module"}' > qt/vcpkg.json &&
-              echo 'set(VCPKG_POLICY_EMPTY_PACKAGE enabled)' > qt/portfile.cmake &&
-              vcpkg install --triplet=x64-windows --overlay-ports=qt libmicrohttpd libsodium qtkeychain &&
-              (echo "$(Get-Location)\qt\5.15.2\msvc2019_64\bin" >> $env:GITHUB_PATH) &&
-              (echo "C:\vcpkg\installed\x64-windows\bin" >> $env:GITHUB_PATH)
-            flags: -DKIS_TABLET=on
+            sccache_tuple: x86_64-pc-windows-msvc
+            qt: 5.15.8
+            qt_packages: >
+              choco install gperf jom openssl winflexbison3 &&
+              (echo "INCLUDE=${env:INCLUDE};C:\Program Files\OpenSSL-Win64\include" >> $env:GITHUB_ENV) &&
+              (echo "LIB=${env:LIB};C:\Program Files\OpenSSL-Win64\lib" >> $env:GITHUB_ENV) &&
+              New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
+              New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+          - os: macos-latest
+            sccache_tuple: x86_64-apple-darwin
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -69,17 +66,138 @@ jobs:
           submodules: true
       - name: Activate MSVC
         uses: ilammy/msvc-dev-cmd@v1
-        if: ${{ runner.os == 'Windows' }}
-      - name: Install dependencies
-        run: ${{ matrix.packages }}
+        if: runner.os == 'Windows'
+
+      - name: Restore Qt from cache
+        uses: actions/cache/restore@v3
+        id: deps-qt-cache
+        with:
+          path: .github/deps/qt
+          key: qt-${{ runner.os }}-${{ matrix.qt }}
+      - name: Install Qt system dependencies
+        run: ${{ matrix.qt_packages }}
+        if: matrix.qt_packages && steps.deps-qt-cache.outputs.cache-hit != 'true'
+      - name: Build Qt from source
+        run: bash .github/scripts/build-qt.sh .github/deps/qt release ${{ matrix.qt }}
+        if: steps.deps-qt-cache.outputs.cache-hit != 'true'
+      - name: Store Qt to cache
+        uses: actions/cache/save@v3
+        if: steps.deps-qt-cache.outputs.cache-hit != 'true'
+        with:
+          path: .github/deps/qt
+          key: qt-${{ runner.os }}-${{ matrix.qt }}
+      - name: Activate Qt
+        run: echo "${{ github.workspace }}/.github/deps/qt/bin" >> $GITHUB_PATH
+        shell: bash
+
+      - name: Restore other dependencies from cache
+        uses: actions/cache/restore@v3
+        id: deps-other-cache
+        with:
+          path: .github/deps/other
+          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}
+      - name: Build other dependencies from source
+        run: bash .github/scripts/build-other.sh .github/deps/other release ${{ matrix.libmicrohttpd }} ${{ matrix.libsodium }}
+        if: steps.deps-other-cache.outputs.cache-hit != 'true'
+      - name: Store other dependencies to cache
+        uses: actions/cache/save@v3
+        if: steps.deps-other-cache.outputs.cache-hit != 'true'
+        with:
+          path: .github/deps/other
+          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}
+
+      - name: Restore Rust build artefacts from cache
+        uses: actions/cache/restore@v3
+        id: rust-deps-cache
+        with:
+          path: build/cargo/relwithdebinfo/deps
+          key: rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+
+      - name: Save/restore Cargo database from cache
+        uses: actions/cache@v3
+        id: cargo-cache
+        with:
+          path: |-
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: cargo-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+      - name: Install Cargo database
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
+        run: bash .github/scripts/init-cargo.sh
+      - name: Use Cargo from cache
+        if: steps.cargo-cache.outputs.cache-hit == 'true'
+        run: echo "CARGO_NET_OFFLINE=1" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Restore sccache
+        uses: actions/cache/restore@v3
+        id: sccache
+        with:
+          path: .github/sccache
+          key: sccache-${{ runner.os }}
+      - name: Install sccache
+        if: steps.sccache.outputs.cache-hit != 'true'
+        run: bash .github/scripts/install-sccache.sh 0.3.3 ${{ matrix.sccache_tuple }}
+      - name: Activate sccache
+        run: echo "${{ github.workspace }}/.github/sccache/bin" >> $GITHUB_PATH
+        shell: bash
+
       - name: Generate project
         run: >
-          cmake -S . -B build --log-level=VERBOSE -DCMAKE_BUILD_TYPE=Debug
-          -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on ${{ matrix.flags }}
+          cmake -S . -B build --log-level=VERBOSE -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DCMAKE_C_COMPILER_LAUNCHER=sccache
+          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+          -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on
+          "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt;${{ github.workspace }}/.github/deps/other"
       - name: Build project
-        run: cmake --build build --parallel 2
+        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
+        env:
+          RUSTC_WRAPPER: sccache
+          SCCACHE_CACHE_SIZE: 400M
+          SCCACHE_DIR: ${{ github.workspace }}/.github/sccache/cache
+
       - name: Run C++ tests
-        run: ctest -C Debug --output-on-failure
+        run: ctest -C RelWithDebInfo --output-on-failure
         working-directory: build
+
       - name: Run Rust tests
-        run: cargo test --target-dir build/cargo
+        run: cargo test --target-dir build/cargo --profile relwithdebinfo
+        env:
+          RUSTC_WRAPPER: sccache
+          SCCACHE_CACHE_SIZE: 400M
+          SCCACHE_DIR: ${{ github.workspace }}/.github/sccache/cache
+
+      - name: Evict sccache from cache
+        if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh extension install actions/gh-actions-cache || true
+          gh actions-cache delete "sccache-${{ runner.os }}" --confirm
+        continue-on-error: true
+
+      - name: Save sccache
+        if: success() || failure()
+        uses: actions/cache/save@v3
+        with:
+          path: .github/sccache
+          key: sccache-${{ runner.os }}
+
+      - name: Evict Rust build artefacts from cache
+        if: (success() || failure()) && steps.rust-deps-cache.outputs.cache-hit == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh extension install actions/gh-actions-cache || true
+          gh actions-cache delete "rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}" --confirm
+        continue-on-error: true
+
+      - name: Save Rust build artefacts to cache
+        if: success() || failure()
+        uses: actions/cache/save@v3
+        with:
+          path: build/cargo/relwithdebinfo/deps
+          key: rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
