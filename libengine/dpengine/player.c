@@ -1358,7 +1358,7 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     }
 
     DP_PERF_BEGIN_DETAIL(fn, "index_build", "path=%s", path);
-    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
+    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
     DP_BuildIndexContext c = {index_player,
                               output,
                               ch,

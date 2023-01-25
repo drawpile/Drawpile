@@ -75,7 +75,8 @@ typedef struct DP_PaintEngine DP_PaintEngine;
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
-    void *save_point_user, DP_RecorderGetTimeMsFn get_time_ms_fn,
+    void *save_point_user, bool want_canvas_history_dump,
+    const char *canvas_history_dump_dir, DP_RecorderGetTimeMsFn get_time_ms_fn,
     void *get_time_ms_user, DP_Player *player_or_null,
     DP_PaintEnginePlaybackFn playback_fn, void *playback_user);
 
@@ -88,6 +89,11 @@ DP_paint_engine_render_content_noinc(DP_PaintEngine *pe);
 
 void DP_paint_engine_local_drawing_in_progress_set(
     DP_PaintEngine *pe, bool local_drawing_in_progress);
+
+bool DP_paint_engine_want_canvas_history_dump(DP_PaintEngine *pe);
+
+void DP_paint_engine_want_canvas_history_dump_set(
+    DP_PaintEngine *pe, bool want_canvas_history_dump);
 
 void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id);
 

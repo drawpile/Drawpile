@@ -152,10 +152,6 @@ target_link_libraries(dpengine PUBLIC dpengine_archive dpengine_xml
                                       dpmsg_interface uthash mypaint PNG::PNG
                                       JPEG::JPEG qgrayraster parson jo_gifx)
 
-if(ENABLE_HISTORY_DUMP)
-    target_compile_definitions(dpengine PUBLIC DRAWDANCE_HISTORY_DUMP)
-endif()
-
 if(BUILD_TESTS)
     add_library(dptest_engine STATIC "${dptest_engine_sources}"
                                      "${dptest_engine_headers}")

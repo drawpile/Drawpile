@@ -569,7 +569,8 @@ static void apply_hidden_layers_recursive(DP_Vector *hidden_layers,
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
-    void *save_point_user, DP_RecorderGetTimeMsFn get_time_ms_fn,
+    void *save_point_user, bool want_canvas_history_dump,
+    const char *canvas_history_dump_dir, DP_RecorderGetTimeMsFn get_time_ms_fn,
     void *get_time_ms_user, DP_Player *player_or_null,
     DP_PaintEnginePlaybackFn playback_fn, void *playback_user)
 {
@@ -581,8 +582,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
         DP_malloc(DP_FLEX_SIZEOF(DP_PaintEngine, buffers, flex_size));
 
     pe->acls = acls;
-    pe->ch =
-        DP_canvas_history_new_inc(cs_or_null, save_point_fn, save_point_user);
+    pe->ch = DP_canvas_history_new_inc(
+        cs_or_null, save_point_fn, save_point_user, want_canvas_history_dump,
+        canvas_history_dump_dir);
     pe->diff = DP_canvas_diff_new();
     pe->tlc = DP_transient_layer_content_new_init(0, 0, NULL);
     pe->checker = DP_tile_new_checker(
@@ -706,6 +708,19 @@ void DP_paint_engine_local_drawing_in_progress_set(
     DP_ASSERT(pe);
     DP_canvas_history_local_drawing_in_progress_set(pe->ch,
                                                     local_drawing_in_progress);
+}
+
+bool DP_paint_engine_want_canvas_history_dump(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return DP_canvas_history_want_dump(pe->ch);
+}
+
+void DP_paint_engine_want_canvas_history_dump_set(DP_PaintEngine *pe,
+                                                  bool want_canvas_history_dump)
+{
+    DP_ASSERT(pe);
+    DP_canvas_history_want_dump_set(pe->ch, want_canvas_history_dump);
 }
 
 

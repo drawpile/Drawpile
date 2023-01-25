@@ -23,18 +23,17 @@
 #include "affected_area.h"
 #include "canvas_state.h"
 #include "recorder.h"
+#include "snapshots.h"
 #include <dpcommon/atomic.h>
+#include <dpcommon/binary.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/message.h>
 #include <dpmsg/msg_internal.h>
-#ifdef DRAWDANCE_HISTORY_DUMP
-#    include <dpcommon/binary.h>
-#    include <dpcommon/output.h>
-#    include <time.h>
-#endif
+#include <time.h>
 
 #define DP_PERF_CONTEXT "canvas_history"
 
@@ -78,13 +77,6 @@ typedef struct DP_Cursor {
 } DP_Cursor;
 
 struct DP_CanvasHistory {
-#ifdef DRAWDANCE_HISTORY_DUMP
-    struct {
-        DP_Output *output;
-        size_t buffer_size;
-        unsigned char *buffer;
-    } dump;
-#endif
     DP_Mutex *mutex;
     DP_CanvasState *current_state;
     // User cursor changes are tracked in this perfect-hash-table-ish structure.
@@ -118,11 +110,18 @@ struct DP_CanvasHistory {
         DP_Message *buffer[REPLAY_BUFFER_CAPACITY];
     } replay;
     DP_Atomic local_drawing_in_progress;
+    struct {
+        bool want;
+        char *dir;
+        DP_Output *output;
+        size_t buffer_size;
+        unsigned char *buffer;
+    } dump;
 };
 
 
 // History debug is very noisy, only enable it when requested.
-#if defined(NDEBUG) || !defined(DRAWDANCE_HISTORY_DUMP)
+#if defined(NDEBUG) || !defined(DRAWDANCE_HISTORY_DEBUG)
 #    define HISTORY_DEBUG(...) /* nothing */
 #    define dump_history(CH)   /* nothing */
 #else
@@ -173,20 +172,60 @@ static void dump_history(DP_CanvasHistory *ch)
 #endif
 
 
-#define DUMP_TYPE_REMOTE_MESSAGE                            0
-#define DUMP_TYPE_REMOTE_MESSAGE_LOCAL_DRAWING_IN_PROGRESS  1
-#define DUMP_TYPE_LOCAL_MESSAGE                             2
-#define DUMP_TYPE_REMOTE_MULTIDAB                           3
-#define DUMP_TYPE_REMOTE_MULTIDAB_LOCAL_DRAWING_IN_PROGRESS 4
-#define DUMP_TYPE_LOCAL_MULTIDAB                            5
-#define DUMP_TYPE_RESET                                     6
-#define DUMP_TYPE_SOFT_RESET                                7
-#define DUMP_TYPE_CLEANUP                                   8
-#define DUMP_TYPE_RESET_TO_STATE                            9
+static void dump_init(DP_CanvasHistory *ch)
+{
+    if (ch->dump.want && !ch->dump.output) {
+        const char *dir = ch->dump.dir;
+        char *dump_path =
+            DP_format("%s%s%lu_%p.drawdancedump", dir ? dir : "",
+                      dir ? "/" : "", (unsigned long)time(NULL), (void *)ch);
+        ch->dump.output = DP_file_output_new_from_path(dump_path);
+        if (ch->dump.output) {
+            DP_warn("Writing canvas history dump to '%s'", dump_path);
+        }
+        else {
+            DP_warn("Can't open dump file '%s': %s", dump_path, DP_error());
+        }
+        DP_free(dump_path);
+    }
+}
 
-#ifdef DRAWDANCE_HISTORY_DUMP
+static void dump_close(DP_CanvasHistory *ch, DP_Output *output)
+{
+    DP_free(ch->dump.buffer);
+    if (!DP_output_free(output)) {
+        DP_warn("Error closing dump: %s", DP_error());
+    }
+    ch->dump.output = NULL;
+    ch->dump.buffer = NULL;
+    ch->dump.buffer_size = 0;
+}
 
-static unsigned char *get_dump_buffer(void *user, size_t size)
+static void dump_dispose_error(DP_CanvasHistory *ch, DP_Output *output)
+{
+    DP_warn("Dump error, closing it: %s", DP_error());
+    dump_close(ch, output);
+}
+
+static bool dump_check(DP_CanvasHistory *ch, DP_Output **out_output)
+{
+    DP_Output *output = ch->dump.output;
+    if (output) {
+        if (ch->dump.want) {
+            if (out_output) {
+                *out_output = output;
+            }
+            return true;
+        }
+        else {
+            DP_warn("Dump no longer wanted, closing it");
+            dump_close(ch, output);
+        }
+    }
+    return false;
+}
+
+static unsigned char *dump_get_buffer(void *user, size_t size)
 {
     DP_CanvasHistory *ch = user;
     if (ch->dump.buffer_size < size) {
@@ -196,80 +235,84 @@ static unsigned char *get_dump_buffer(void *user, size_t size)
     return ch->dump.buffer;
 }
 
-static bool write_dump_message(DP_CanvasHistory *ch, DP_Output *output,
+static bool dump_message_write(DP_CanvasHistory *ch, DP_Output *output,
                                DP_Message *msg)
 {
-    size_t size = DP_message_serialize(msg, true, get_dump_buffer, ch);
-    unsigned char header[4];
-    DP_write_bigendian_uint32(DP_size_to_uint32(size), header);
-    return DP_output_write(output, header, sizeof(header))
+    size_t size = DP_message_serialize(msg, true, dump_get_buffer, ch);
+    return DP_OUTPUT_WRITE_BIGENDIAN(output, DP_OUTPUT_UINT32(size),
+                                     DP_OUTPUT_END)
         && DP_output_write(output, ch->dump.buffer, size);
 }
 
-static bool try_dump_message(DP_CanvasHistory *ch, DP_Output *output,
+static bool dump_message_try(DP_CanvasHistory *ch, DP_Output *output,
                              DP_Message *msg, unsigned char type)
 {
-    unsigned char header[1] = {type};
-    return DP_output_write(output, header, sizeof(header))
-        && write_dump_message(ch, output, msg) && DP_output_flush(output);
-}
-
-static void close_dump_on_error(DP_CanvasHistory *ch, DP_Output *output)
-{
-    DP_warn("Dump error, closing it: %s", DP_error());
-    DP_output_free(output);
-    ch->dump.output = NULL;
+    return DP_OUTPUT_WRITE_BIGENDIAN(output, DP_OUTPUT_UINT8(type),
+                                     DP_OUTPUT_END)
+        && dump_message_write(ch, output, msg) && DP_output_flush(output);
 }
 
 static void dump_message(DP_CanvasHistory *ch, DP_Message *msg,
                          unsigned char type)
 {
-    DP_Output *output = ch->dump.output;
-    if (output && !try_dump_message(ch, output, msg, type)) {
-        close_dump_on_error(ch, output);
+    DP_Output *output;
+    if (dump_check(ch, &output)) {
+        if (!dump_message_try(ch, output, msg, type)) {
+            dump_dispose_error(ch, output);
+        }
     }
 }
 
-static bool try_dump_multidab(DP_CanvasHistory *ch, DP_Output *output,
+static bool dump_multidab_try(DP_CanvasHistory *ch, DP_Output *output,
                               int count, DP_Message **msgs, unsigned char type)
 {
-    unsigned char header[5];
-    header[0] = type;
-    DP_write_bigendian_uint32(DP_int_to_uint32(count), header + 1);
-    if (!DP_output_write(output, header, sizeof(header))) {
+    if (!DP_OUTPUT_WRITE_BIGENDIAN(output, DP_OUTPUT_UINT8(type),
+                                   DP_OUTPUT_UINT32(count), DP_OUTPUT_END)) {
         return false;
     }
     for (int i = 0; i < count; ++i) {
-        if (!write_dump_message(ch, output, msgs[i])) {
+        if (!dump_message_write(ch, output, msgs[i])) {
             return false;
         }
     }
-    return DP_output_flush(output);
+    return true;
 }
 
 static void dump_multidab(DP_CanvasHistory *ch, int count, DP_Message **msgs,
                           unsigned char type)
 {
-    DP_Output *output = ch->dump.output;
-    if (output && !try_dump_multidab(ch, output, count, msgs, type)) {
-        close_dump_on_error(ch, output);
+    DP_Output *output;
+    if (dump_check(ch, &output)) {
+        if (!dump_multidab_try(ch, output, count, msgs, type)) {
+            dump_dispose_error(ch, output);
+        }
     }
 }
 
 static void dump_internal(DP_CanvasHistory *ch, unsigned char type)
 {
-    DP_Output *output = ch->dump.output;
-    unsigned char header[1] = {type};
-    if (output && !DP_output_write(output, header, sizeof(header))) {
-        close_dump_on_error(ch, output);
+    DP_Output *output;
+    if (dump_check(ch, &output)) {
+        if (!DP_OUTPUT_WRITE_BIGENDIAN(output, DP_OUTPUT_UINT8(type),
+                                       DP_OUTPUT_END)) {
+            dump_dispose_error(ch, output);
+        }
     }
 }
 
-#else
-#    define dump_message(CH, MSG, TYPE)          /* nothing */
-#    define dump_multidab(CH, COUNT, MSGS, TYPE) /* nothing */
-#    define dump_internal(CH, TYPE)              /* nothing */
-#endif
+static void dump_snapshot_message(void *user, DP_Message *msg)
+{
+    DP_CanvasHistory *ch = user;
+    dump_message(ch, msg, DP_DUMP_REMOTE_MESSAGE);
+    DP_message_decref(msg);
+}
+
+static void dump_snapshot(DP_CanvasHistory *ch, DP_CanvasState *cs)
+{
+    if (dump_check(ch, NULL)) {
+        DP_reset_image_build(cs, 0, dump_snapshot_message, ch);
+    }
+}
 
 
 static void set_fork_start(DP_CanvasHistory *ch)
@@ -430,15 +473,16 @@ static void validate_history(DP_UNUSED DP_CanvasHistory *ch)
 
 DP_CanvasHistory *
 DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
-                      void *save_point_user)
+                      void *save_point_user, bool want_dump,
+                      const char *dump_dir)
 {
-    return DP_canvas_history_new_inc(NULL, save_point_fn, save_point_user);
+    return DP_canvas_history_new_inc(NULL, save_point_fn, save_point_user,
+                                     want_dump, dump_dir);
 }
 
-DP_CanvasHistory *
-DP_canvas_history_new_inc(DP_CanvasState *cs_or_null,
-                          DP_CanvasHistorySavePointFn save_point_fn,
-                          void *save_point_user)
+DP_CanvasHistory *DP_canvas_history_new_inc(
+    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
+    void *save_point_user, bool want_dump, const char *dump_dir)
 {
     DP_Mutex *mutex = DP_mutex_new();
     if (!mutex) {
@@ -451,9 +495,6 @@ DP_canvas_history_new_inc(DP_CanvasState *cs_or_null,
     size_t entries_size = sizeof(*ch->entries) * INITIAL_CAPACITY;
 
     *ch = (DP_CanvasHistory){
-#ifdef DRAWDANCE_HISTORY_DUMP
-        {NULL, 0, NULL},
-#endif
         mutex,
         cs,
         {0},
@@ -466,22 +507,14 @@ DP_canvas_history_new_inc(DP_CanvasState *cs_or_null,
         {save_point_fn, save_point_user},
         {0, {0}},
         DP_ATOMIC_INIT(0),
+        {want_dump, DP_strdup(dump_dir), NULL, 0, NULL},
     };
     DP_affected_indirect_areas_clear(&ch->aia);
 
-#ifdef DRAWDANCE_HISTORY_DUMP
-    // Let's put at least a little effort into avoiding path collisions.
-    char *dump_path = DP_format("%lu_%p.drawdancedump",
-                                (unsigned long)time(NULL), (void *)ch);
-    ch->dump.output = DP_file_output_new_from_path(dump_path);
-    if (ch->dump.output) {
-        DP_warn("Writing canvas history dump to '%s'", dump_path);
+    dump_init(ch);
+    if (cs_or_null) {
+        dump_snapshot(ch, cs);
     }
-    else {
-        DP_warn("Can't open dump file '%s': %s", dump_path, DP_error());
-    }
-    DP_free(dump_path);
-#endif
 
     DP_queue_init(&ch->fork.queue, INITIAL_CAPACITY, sizeof(DP_ForkEntry));
     set_initial_entry(ch, cs);
@@ -520,10 +553,9 @@ void DP_canvas_history_free(DP_CanvasHistory *ch)
         DP_free(ch->entries);
         DP_canvas_state_decref(ch->current_state);
         DP_mutex_free(ch->mutex);
-#ifdef DRAWDANCE_HISTORY_DUMP
         DP_free(ch->dump.buffer);
         DP_output_free(ch->dump.output);
-#endif
+        DP_free(ch->dump.dir);
         DP_free(ch);
     }
 }
@@ -539,6 +571,18 @@ void DP_canvas_history_local_drawing_in_progress_set(
 {
     DP_ASSERT(ch);
     DP_atomic_set(&ch->local_drawing_in_progress, local_drawing_in_progress);
+}
+
+bool DP_canvas_history_want_dump(DP_CanvasHistory *ch)
+{
+    DP_ASSERT(ch);
+    return ch->dump.want;
+}
+
+void DP_canvas_history_want_dump_set(DP_CanvasHistory *ch, bool want_dump)
+{
+    DP_ASSERT(ch);
+    ch->dump.want = want_dump;
 }
 
 static void retrieve_user_cursors(DP_CanvasHistory *ch,
@@ -635,19 +679,19 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch)
     // tile commands to restore the canvas as it was before the reset. Kinda
     // like git squash.
     HISTORY_DEBUG("Hard reset");
-    dump_internal(ch, DUMP_TYPE_RESET);
+    dump_internal(ch, DP_DUMP_RESET);
     reset_to_state_noinc(ch, DP_canvas_state_new());
+    dump_init(ch);
 }
 
 void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
                                             DP_CanvasState *cs)
 {
     HISTORY_DEBUG("Reset to state");
-    // XXX: Resetting to a state doesn't get dumped correctly. However, that
-    // only happens during recording playback, which is pointless to debug dump
-    // anyway, since you might as well just play back the recording again.
-    dump_internal(ch, DUMP_TYPE_RESET_TO_STATE);
+    dump_internal(ch, DP_DUMP_RESET);
     reset_to_state_noinc(ch, cs);
+    dump_init(ch);
+    dump_snapshot(ch, cs);
 }
 
 void DP_canvas_history_soft_reset(DP_CanvasHistory *ch)
@@ -660,7 +704,7 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch)
     // soft reset so that they can't undo beyond the point that the new
     // client joined at.
     HISTORY_DEBUG("Soft reset");
-    dump_internal(ch, DUMP_TYPE_SOFT_RESET);
+    dump_internal(ch, DP_DUMP_SOFT_RESET);
     reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
 }
 
@@ -984,7 +1028,7 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
 {
     DP_ASSERT(ch);
     DP_ASSERT(push_message);
-    dump_internal(ch, DUMP_TYPE_CLEANUP);
+    dump_internal(ch, DP_DUMP_CLEANUP);
     if (have_local_fork(ch)) {
         int target_index = ch->fork.start - ch->offset;
         while (ch->fork.queue.used) {
@@ -1288,8 +1332,8 @@ bool DP_canvas_history_handle(DP_CanvasHistory *ch, DP_DrawContext *dc,
         DP_canvas_history_local_drawing_in_progress(ch);
     dump_message(ch, msg,
                  local_drawing_in_progress
-                     ? DUMP_TYPE_REMOTE_MESSAGE_LOCAL_DRAWING_IN_PROGRESS
-                     : DUMP_TYPE_REMOTE_MESSAGE);
+                     ? DP_DUMP_REMOTE_MESSAGE_LOCAL_DRAWING_IN_PROGRESS
+                     : DP_DUMP_REMOTE_MESSAGE);
 
     DP_MessageType type = DP_message_type(msg);
     DP_PERF_BEGIN_DETAIL(fn, "handle", "type=%d,local_drawing=%d", (int)type,
@@ -1314,7 +1358,7 @@ bool DP_canvas_history_handle_local(DP_CanvasHistory *ch, DP_DrawContext *dc,
     HISTORY_DEBUG("Handle local %s command from user %u",
                   DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
                   DP_message_context_id(msg));
-    dump_message(ch, msg, DUMP_TYPE_LOCAL_MESSAGE);
+    dump_message(ch, msg, DP_DUMP_LOCAL_MESSAGE);
 
     DP_MessageType type = DP_message_type(msg);
     DP_PERF_BEGIN_DETAIL(fn, "handle_local", "type=%d", (int)type);
@@ -1346,8 +1390,8 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
         DP_canvas_history_local_drawing_in_progress(ch);
     dump_multidab(ch, count, msgs,
                   local_drawing_in_progress
-                      ? DUMP_TYPE_REMOTE_MULTIDAB_LOCAL_DRAWING_IN_PROGRESS
-                      : DUMP_TYPE_REMOTE_MULTIDAB);
+                      ? DP_DUMP_REMOTE_MULTIDAB_LOCAL_DRAWING_IN_PROGRESS
+                      : DP_DUMP_REMOTE_MULTIDAB);
     DP_PERF_BEGIN_DETAIL(fn, "handle_multidab", "count=%d,local_drawing=%d",
                          count, local_drawing_in_progress);
 
@@ -1399,7 +1443,7 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
     DP_ASSERT(ch);
     DP_ASSERT(count > 0);
     DP_ASSERT(msgs);
-    dump_multidab(ch, count, msgs, DUMP_TYPE_LOCAL_MULTIDAB);
+    dump_multidab(ch, count, msgs, DP_DUMP_LOCAL_MULTIDAB);
     DP_PERF_BEGIN_DETAIL(fn, "handle_local_multidab", "count=%d", count);
 
     if (!have_local_fork(ch)) {

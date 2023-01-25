@@ -39,7 +39,7 @@ static DP_CanvasState *play_recording(TEST_PARAMS, const char *path)
     DP_BinaryReader *reader = DP_binary_reader_new(recording_input);
     FATAL(NOT_NULL_OK(reader, "got reader from %s", path));
 
-    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
+    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
     DP_DrawContext *dc = DP_draw_context_new();
 
     while (true) {

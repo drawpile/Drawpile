@@ -43,7 +43,7 @@ static void render_recording(TEST_PARAMS)
     DP_BinaryReader *reader = DP_binary_reader_new(input);
     FATAL(NOT_NULL_OK(input, "got binary reader for %s", dprec_path));
 
-    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
+    DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
     DP_DrawContext *dc = DP_draw_context_new();
 
     while (true) {

@@ -41,19 +41,35 @@ typedef struct DP_UserCursorBuffer {
 typedef void (*DP_CanvasHistorySavePointFn)(void *user, DP_CanvasState *cs,
                                             bool snapshot_requested);
 
-DP_CanvasHistory *
-DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
-                      void *save_point_user);
+typedef enum DP_DumpType {
+    DP_DUMP_REMOTE_MESSAGE,
+    DP_DUMP_REMOTE_MESSAGE_LOCAL_DRAWING_IN_PROGRESS,
+    DP_DUMP_LOCAL_MESSAGE,
+    DP_DUMP_REMOTE_MULTIDAB,
+    DP_DUMP_REMOTE_MULTIDAB_LOCAL_DRAWING_IN_PROGRESS,
+    DP_DUMP_LOCAL_MULTIDAB,
+    DP_DUMP_RESET,
+    DP_DUMP_SOFT_RESET,
+    DP_DUMP_CLEANUP,
+} DP_DumpType;
 
 DP_CanvasHistory *
-DP_canvas_history_new_inc(DP_CanvasState *cs_or_null,
-                          DP_CanvasHistorySavePointFn save_point_fn,
-                          void *save_point_user);
+DP_canvas_history_new(DP_CanvasHistorySavePointFn save_point_fn,
+                      void *save_point_user, bool want_dump,
+                      const char *dump_dir);
+
+DP_CanvasHistory *DP_canvas_history_new_inc(
+    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
+    void *save_point_user, bool want_dump, const char *dump_dir);
 
 void DP_canvas_history_free(DP_CanvasHistory *ch);
 
 void DP_canvas_history_local_drawing_in_progress_set(
     DP_CanvasHistory *ch, bool local_drawing_in_progress);
+
+bool DP_canvas_history_want_dump(DP_CanvasHistory *ch);
+
+void DP_canvas_history_want_dump_set(DP_CanvasHistory *ch, bool want_dump);
 
 DP_CanvasState *
 DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
@@ -61,7 +77,8 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
 
 void DP_canvas_history_reset(DP_CanvasHistory *ch);
 
-void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs);
+void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
+                                            DP_CanvasState *cs);
 
 void DP_canvas_history_soft_reset(DP_CanvasHistory *ch);
 

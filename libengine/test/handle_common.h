@@ -43,7 +43,7 @@ DP_UNUSED static void run_handle_test(TEST_PARAMS)
     if (NOT_NULL_OK(output, "got output for %s", ht->out_path)) {
         DP_output_format(output, "begin testing\n");
 
-        DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL);
+        DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
         DP_DrawContext *dc = DP_draw_context_new();
         ht->test_fn(output, ch, dc);
 
