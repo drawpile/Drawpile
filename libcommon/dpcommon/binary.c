@@ -180,6 +180,11 @@ size_t DP_write_bigendian_int32(int32_t x, unsigned char *out)
     return DP_write_bigendian_uint32((uint32_t)x, out);
 }
 
+size_t DP_write_bigendian_int64(int64_t x, unsigned char *out)
+{
+    return DP_write_bigendian_uint64((uint64_t)x, out);
+}
+
 size_t DP_write_bigendian_uint8(uint8_t x, unsigned char *out)
 {
     out[0] = x;
@@ -200,6 +205,15 @@ size_t DP_write_bigendian_uint32(uint32_t x, unsigned char *out)
     out[2] = DP_uint_to_uchar((x >> 8u) & 0xffu);
     out[3] = DP_uint_to_uchar(x & 0xffu);
     return 4;
+}
+
+size_t DP_write_bigendian_uint64(uint64_t x, unsigned char *out)
+{
+    for (int i = 0; i < 8; ++i) {
+        out[7 - i] = DP_uint64_to_uchar(x & (uint64_t)0xff);
+        x >>= (uint64_t)8;
+    }
+    return 8;
 }
 
 

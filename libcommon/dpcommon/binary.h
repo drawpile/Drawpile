@@ -50,9 +50,11 @@ size_t DP_write_littleendian_uint64(uint64_t x, unsigned char *out);
 size_t DP_write_bigendian_int8(int8_t x, unsigned char *out);
 size_t DP_write_bigendian_int16(int16_t x, unsigned char *out);
 size_t DP_write_bigendian_int32(int32_t x, unsigned char *out);
+size_t DP_write_bigendian_int64(int64_t x, unsigned char *out);
 size_t DP_write_bigendian_uint8(uint8_t x, unsigned char *out);
 size_t DP_write_bigendian_uint16(uint16_t x, unsigned char *out);
 size_t DP_write_bigendian_uint32(uint32_t x, unsigned char *out);
+size_t DP_write_bigendian_uint64(uint64_t x, unsigned char *out);
 
 size_t DP_write_bytes(const void *DP_RESTRICT x, int count, size_t elem_size,
                       unsigned char *DP_RESTRICT out);

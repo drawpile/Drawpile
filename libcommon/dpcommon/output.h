@@ -128,6 +128,10 @@ DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
         .type = DP_OUTPUT_BINARY_TYPE_END \
     }
 
+#define DP_OUTPUT_WRITE_BIGENDIAN(OUTPUT, ...) \
+    DP_output_write_binary_bigendian(          \
+        (OUTPUT), (DP_OutputBinaryEntry[]){__VA_ARGS__, DP_OUTPUT_END})
+
 #define DP_OUTPUT_WRITE_LITTLEENDIAN(OUTPUT, ...) \
     DP_output_write_binary_littleendian(          \
         (OUTPUT), (DP_OutputBinaryEntry[]){__VA_ARGS__, DP_OUTPUT_END})
@@ -159,6 +163,10 @@ typedef struct DP_OutputBinaryEntry {
         const void *bytes;
     };
 } DP_OutputBinaryEntry;
+
+
+bool DP_output_write_binary_bigendian(DP_Output *output,
+                                      DP_OutputBinaryEntry *entries);
 
 // Writes little-endian binary data to the given output. The given entries must
 // end with an entry of type DP_OUTPUT_END. The contents of the array will be

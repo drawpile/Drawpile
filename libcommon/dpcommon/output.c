@@ -471,11 +471,16 @@ DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
 }
 
 
-bool DP_output_write_binary_littleendian(DP_Output *output,
-                                         DP_OutputBinaryEntry *entries)
+static bool write_binary(DP_Output *output, DP_OutputBinaryEntry *entries,
+                         size_t (*write_int8)(int8_t, unsigned char *),
+                         size_t (*write_int16)(int16_t, unsigned char *),
+                         size_t (*write_int32)(int32_t, unsigned char *),
+                         size_t (*write_int64)(int64_t, unsigned char *),
+                         size_t (*write_uint8)(uint8_t, unsigned char *),
+                         size_t (*write_uint16)(uint16_t, unsigned char *),
+                         size_t (*write_uint32)(uint32_t, unsigned char *),
+                         size_t (*write_uint64)(uint64_t, unsigned char *))
 {
-    DP_ASSERT(output);
-    DP_ASSERT(entries);
     // We'll re-use the memory of the given entries as a write buffer. This is
     // totally an evil hack, but it's legal and avoids malloc or alloca. There's
     // no issues with strict aliasing since char is allowed to alias anything.
@@ -485,46 +490,61 @@ bool DP_output_write_binary_littleendian(DP_Output *output,
         DP_OutputBinaryEntry e = entries[i];
         switch (e.type) {
         case DP_OUTPUT_BINARY_TYPE_END:
-            DP_debug("Write %zu byte(s) to output", written);
             return DP_output_write(output, entries, written);
         case DP_OUTPUT_BINARY_TYPE_INT8:
-            DP_debug("Little endian int8 %d", (int)e.int8);
-            written += DP_write_littleendian_int8(e.int8, out + written);
+            written += write_int8(e.int8, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_INT16:
-            DP_debug("Little endian int16 %d", (int)e.int16);
-            written += DP_write_littleendian_int16(e.int16, out + written);
+            written += write_int16(e.int16, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_INT32:
-            DP_debug("Little endian int32 %ld", (long)e.int32);
-            written += DP_write_littleendian_int32(e.int32, out + written);
+            written += write_int32(e.int32, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_INT64:
-            DP_debug("Little endian int64 %lld", (long long)e.int64);
-            written += DP_write_littleendian_int64(e.int64, out + written);
+            written += write_int64(e.int64, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_UINT8:
-            DP_debug("Little endian uint8 %u", (unsigned int)e.uint8);
-            written += DP_write_littleendian_uint8(e.uint8, out + written);
+            written += write_uint8(e.uint8, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_UINT16:
-            DP_debug("Little endian uint16 %u", (unsigned int)e.uint16);
-            written += DP_write_littleendian_uint16(e.uint16, out + written);
+            written += write_uint16(e.uint16, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_UINT32:
-            DP_debug("Little endian uint32 %lu", (unsigned long)e.uint32);
-            written += DP_write_littleendian_uint32(e.uint32, out + written);
+            written += write_uint32(e.uint32, out + written);
             break;
         case DP_OUTPUT_BINARY_TYPE_UINT64:
-            DP_debug("Little endian uint64 %llu", (unsigned long long)e.uint64);
-            written += DP_write_littleendian_uint64(e.uint64, out + written);
+            written += write_uint64(e.uint64, out + written);
             break;
         default:
             DP_ASSERT(e.type > 0);
             DP_ASSERT(DP_int_to_size(e.type) < sizeof(DP_OutputBinaryEntry));
-            DP_debug("Little endian %d byte(s)", e.type);
             written += DP_write_bytes(e.bytes, e.type, 1, out + written);
             break;
         }
     }
+}
+
+bool DP_output_write_binary_bigendian(DP_Output *output,
+                                      DP_OutputBinaryEntry *entries)
+{
+    DP_ASSERT(output);
+    DP_ASSERT(entries);
+    return write_binary(output, entries, DP_write_bigendian_int8,
+                        DP_write_bigendian_int16, DP_write_bigendian_int32,
+                        DP_write_bigendian_int64, DP_write_bigendian_uint8,
+                        DP_write_bigendian_uint16, DP_write_bigendian_uint32,
+                        DP_write_bigendian_uint64);
+}
+
+bool DP_output_write_binary_littleendian(DP_Output *output,
+                                         DP_OutputBinaryEntry *entries)
+{
+    DP_ASSERT(output);
+    DP_ASSERT(entries);
+    return write_binary(
+        output, entries, DP_write_littleendian_int8,
+        DP_write_littleendian_int16, DP_write_littleendian_int32,
+        DP_write_littleendian_int64, DP_write_littleendian_uint8,
+        DP_write_littleendian_uint16, DP_write_littleendian_uint32,
+        DP_write_littleendian_uint64);
 }
