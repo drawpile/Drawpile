@@ -404,6 +404,38 @@ QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
 	return m_paintEngine.playbackIndexThumbnailAt(index);
 }
 
+DP_PlayerResult PaintEngine::stepDumpPlayback()
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.stepDumpPlayback(msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
+DP_PlayerResult PaintEngine::jumpDumpPlaybackToPreviousReset()
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.jumpDumpPlaybackToPreviousReset(msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
+DP_PlayerResult PaintEngine::jumpDumpPlaybackToNextReset()
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.jumpDumpPlaybackToNextReset(msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
+DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position)
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.jumpDumpPlayback(position, msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
 bool PaintEngine::closePlayback()
 {
 	return m_paintEngine.closePlayback();

@@ -168,6 +168,14 @@ QString fileFormatFilter(FileFormatOptions formats)
 		}
 	}
 
+	if(formats.testFlag(FileFormatOption::DebugDumps)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			// Can't write debug dumps.
+		} else {
+			filter << QGuiApplication::tr("Debug Dumps (%1)").arg("*.drawdancedump");
+		}
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

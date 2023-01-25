@@ -21,6 +21,7 @@ set(desktop_sources
 	scene/lasertrailitem.cpp
 	dialogs/abusereport.cpp
 	dialogs/certificateview.cpp
+	dialogs/dumpplaybackdialog.cpp
 	dialogs/newdialog.cpp
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
@@ -94,6 +95,7 @@ set(desktop_uis
 	ui/brushdock.ui
 	ui/brushpresetproperties.ui
 	ui/certificateview.ui
+	ui/dumpplayback.ui
 	ui/fillsettings.ui
 	ui/flipbook.ui
 	ui/hostdialog.ui

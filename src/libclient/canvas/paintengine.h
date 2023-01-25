@@ -179,6 +179,10 @@ public:
 	unsigned int playbackIndexMessageCount();
 	size_t playbackIndexEntryCount();
 	QImage playbackIndexThumbnailAt(size_t index);
+	DP_PlayerResult stepDumpPlayback();
+	DP_PlayerResult jumpDumpPlaybackToPreviousReset();
+	DP_PlayerResult jumpDumpPlaybackToNextReset();
+	DP_PlayerResult jumpDumpPlayback(long long position);
 	bool closePlayback();
 
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);

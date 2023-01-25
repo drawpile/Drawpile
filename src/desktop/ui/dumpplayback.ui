@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DumpPlaybackDialog</class>
+ <widget class="QDialog" name="DumpPlaybackDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>107</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Play Debug Dump</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="2">
+    <widget class="QPushButton" name="singleStepButton">
+     <property name="text">
+      <string>Single Step</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QSpinBox" name="jumpSpinner"/>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="nextResetButton">
+     <property name="text">
+      <string>Next Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="previousResetButton">
+     <property name="text">
+      <string>Previous Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="jumpButton">
+     <property name="text">
+      <string>Jump</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="KisSliderSpinBox" name="delaySpinner">
+     <property name="suffix">
+      <string> ms</string>
+     </property>
+     <property name="prefix">
+      <string>Playback Delay: </string>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="playPauseButton">
+     <property name="text">
+      <string>Play/Pause</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QSpinBox" name="positionSpinner">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="buttonSymbols">
+      <enum>QAbstractSpinBox::NoButtons</enum>
+     </property>
+     <property name="prefix">
+      <string>Position: </string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>playPauseButton</tabstop>
+  <tabstop>singleStepButton</tabstop>
+  <tabstop>nextResetButton</tabstop>
+  <tabstop>positionSpinner</tabstop>
+  <tabstop>jumpSpinner</tabstop>
+  <tabstop>jumpButton</tabstop>
+  <tabstop>delaySpinner</tabstop>
+  <tabstop>previousResetButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

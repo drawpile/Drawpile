@@ -119,6 +119,7 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
+#include "dialogs/dumpplaybackdialog.h"
 #include "dialogs/flipbook.h"
 #include "dialogs/resetdialog.h"
 #include "dialogs/sessionsettings.h"
@@ -154,6 +155,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_viewstatus(nullptr),
 	  m_statusChatButton(nullptr),
 	  m_playbackDialog(nullptr),
+	  m_dumpPlaybackDialog(nullptr),
 	  m_sessionSettings(nullptr),
 	  m_serverLogDialog(nullptr),
 	  m_canvasscene(nullptr),
@@ -549,11 +551,12 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
  * - there is a network connection
  * - session recording is in progress
  * - recording playback is in progress
+ * - debug dump playback is in progress
  *
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(m_doc->isDirty() || m_doc->client()->isConnected() || m_doc->isRecording() || m_playbackDialog);
+	return !(m_doc->isDirty() || m_doc->client()->isConnected() || m_doc->isRecording() || m_playbackDialog || m_dumpPlaybackDialog);
 }
 
 /**
@@ -1025,6 +1028,17 @@ void MainWindow::open(const QUrl& url)
 				m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 				m_playbackDialog->show();
 				m_playbackDialog->centerOnParent();
+			}
+		} else if(QRegularExpression{"\\.drawdancedump$", opt}.match(file).hasMatch()) {
+			DP_LoadResult result = m_doc->loadRecording(file, true);
+			showLoadResultMessage(result);
+			if(result == DP_LOAD_RESULT_SUCCESS) {
+				QFileInfo fileinfo{file};
+				m_dumpPlaybackDialog = new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
+				m_dumpPlaybackDialog->setWindowTitle(QStringLiteral("%1 - %2")
+					.arg(fileinfo.baseName()).arg(m_dumpPlaybackDialog->windowTitle()));
+				m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
+				m_dumpPlaybackDialog->show();
 			}
 
 		} else {
@@ -2404,6 +2418,20 @@ void MainWindow::toggleDebugDump()
 	}
 }
 
+void MainWindow::openDebugDump()
+{
+	const QString file = QFileDialog::getOpenFileName(
+		this,
+		tr("Open Debug Dump"),
+		utils::paths::writablePath("dumps"),
+		utils::fileFormatFilter(utils::FileFormatOption::OpenDebugDumps)
+	);
+	QUrl url = QUrl::fromLocalFile(file);
+	if(url.isValid()) {
+		open(url);
+	}
+}
+
 
 void MainWindow::about()
 {
@@ -3056,13 +3084,16 @@ void MainWindow::setupActions()
 	QAction *profile = makeAction("profile", tr("Profile..."));
 	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag..."));
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable();
+	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump..."));
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
 	devtoolsmenu->addAction(debugDump);
+	devtoolsmenu->addAction(openDebugDump);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);
 	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
+	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Ctrl+W");

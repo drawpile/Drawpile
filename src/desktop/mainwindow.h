@@ -60,6 +60,7 @@ namespace docks {
 	class Timeline;
 }
 namespace dialogs {
+	class DumpPlaybackDialog;
 	class PlaybackDialog;
 	class HostDialog;
 	class SessionSettingsDialog;
@@ -174,6 +175,7 @@ private slots:
 	void updateDevToolsActions();
 	void setArtificialLag();
 	void toggleDebugDump();
+	void openDebugDump();
 
 	void toolChanged(tools::Tool::Type tool);
 
@@ -245,6 +247,7 @@ private:
 	QToolButton *m_statusChatButton;
 
 	QPointer<dialogs::PlaybackDialog> m_playbackDialog;
+	QPointer<dialogs::DumpPlaybackDialog> m_dumpPlaybackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 

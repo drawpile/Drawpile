@@ -83,6 +83,10 @@ public:
 	unsigned int playbackIndexMessageCount();
 	size_t playbackIndexEntryCount();
 	QImage playbackIndexThumbnailAt(size_t index);
+	DP_PlayerResult stepDumpPlayback(MessageList &outMsgs);
+	DP_PlayerResult jumpDumpPlaybackToPreviousReset(MessageList &outMsgs);
+	DP_PlayerResult jumpDumpPlaybackToNextReset(MessageList &outMsgs);
+	DP_PlayerResult jumpDumpPlayback(long long position, MessageList &outMsgs);
 	bool closePlayback();
 
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);

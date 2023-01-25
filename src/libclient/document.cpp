@@ -183,10 +183,12 @@ DP_LoadResult Document::loadFile(const QString &path)
 	}
 }
 
-DP_LoadResult Document::loadRecording(const QString &path)
+DP_LoadResult Document::loadRecording(const QString &path, bool debugDump)
 {
 	DP_LoadResult result;
-	DP_Player *player = DP_load_recording(path.toUtf8().constData(), &result);
+	DP_Player *player = debugDump
+		? DP_load_debug_dump(path.toUtf8().constData(), &result)
+		: DP_load_recording(path.toUtf8().constData(), &result);
 	switch (result) {
 	case DP_LOAD_RESULT_SUCCESS:
 		setAutosave(false);

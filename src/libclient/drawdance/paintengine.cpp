@@ -213,6 +213,26 @@ QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
 	return img;
 }
 
+DP_PlayerResult PaintEngine::stepDumpPlayback(MessageList &outMsgs)
+{
+	return DP_paint_engine_playback_dump_step(m_data, PaintEngine::pushMessage, &outMsgs);
+}
+
+DP_PlayerResult PaintEngine::jumpDumpPlaybackToPreviousReset(MessageList &outMsgs)
+{
+	return DP_paint_engine_playback_dump_jump_previous_reset(m_data, PaintEngine::pushMessage, &outMsgs);
+}
+
+DP_PlayerResult PaintEngine::jumpDumpPlaybackToNextReset(MessageList &outMsgs)
+{
+	return DP_paint_engine_playback_dump_jump_next_reset(m_data, PaintEngine::pushMessage, &outMsgs);
+}
+
+DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position, MessageList &outMsgs)
+{
+	return DP_paint_engine_playback_dump_jump(m_data, position, PaintEngine::pushMessage, &outMsgs);
+}
+
 bool PaintEngine::closePlayback()
 {
 	return DP_paint_engine_playback_close(m_data);
