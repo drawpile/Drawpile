@@ -235,8 +235,7 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
 {
     bool compatible = is_version_compatible(version);
     DP_free(version);
-    size_t index_path_size = strlen(index_path) + 1;
-    DP_Player *player = DP_malloc(sizeof(*player) + index_path_size);
+    DP_Player *player = DP_malloc(sizeof(*player));
     *player = (DP_Player){
         recording_path, index_path, type,
         reader,         0,          compatible,
