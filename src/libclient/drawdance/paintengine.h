@@ -95,6 +95,7 @@ public:
 
 	CanvasState viewCanvasState() const;
 	CanvasState historyCanvasState() const;
+	CanvasState sampleCanvasState() const;
 
 private:
 	DrawContext m_paintDc;

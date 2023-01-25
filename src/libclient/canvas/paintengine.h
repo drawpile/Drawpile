@@ -160,6 +160,12 @@ public:
 	drawdance::CanvasState viewCanvasState() const { return m_paintEngine.viewCanvasState(); }
 	//! The current canvas state as it came out of the canvas history.
 	drawdance::CanvasState historyCanvasState() const { return m_paintEngine.historyCanvasState(); }
+	//! Grabs the very latest canvas state out of the canvas history for color
+	//! sampling. This involves taking a lock, so it's slower than the above.
+	//! However, it gives a more up-to-date result, relevant for brushes.
+	//! It would be even more up to date if we ran brush strokes through the
+	//! paint thread to ensure up-to-dateness, but not doing that for now.
+	drawdance::CanvasState sampleCanvasState() const { return m_paintEngine.sampleCanvasState(); }
 
 	const drawdance::SnapshotQueue &snapshotQueue() const { return m_snapshotQueue; }
 

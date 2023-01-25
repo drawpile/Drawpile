@@ -268,6 +268,11 @@ CanvasState PaintEngine::historyCanvasState() const
 	return drawdance::CanvasState::noinc(DP_paint_engine_history_canvas_state_inc(m_data));
 }
 
+CanvasState PaintEngine::sampleCanvasState() const
+{
+	return drawdance::CanvasState::noinc(DP_paint_engine_sample_canvas_state_inc(m_data));
+}
+
 QString PaintEngine::getDumpDir()
 {
 	return utils::paths::writablePath("dumps", ".");
