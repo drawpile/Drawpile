@@ -71,6 +71,8 @@ bool DP_canvas_history_want_dump(DP_CanvasHistory *ch);
 
 void DP_canvas_history_want_dump_set(DP_CanvasHistory *ch, bool want_dump);
 
+DP_CanvasState *DP_canvas_history_get(DP_CanvasHistory *ch);
+
 DP_CanvasState *
 DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
                                   DP_UserCursorBuffer *out_user_cursors);

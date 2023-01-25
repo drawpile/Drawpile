@@ -585,6 +585,16 @@ void DP_canvas_history_want_dump_set(DP_CanvasHistory *ch, bool want_dump)
     ch->dump.want = want_dump;
 }
 
+DP_CanvasState *DP_canvas_history_get(DP_CanvasHistory *ch)
+{
+    DP_ASSERT(ch);
+    DP_Mutex *mutex = ch->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    DP_CanvasState *cs = DP_canvas_state_incref(ch->current_state);
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    return cs;
+}
+
 static void retrieve_user_cursors(DP_CanvasHistory *ch,
                                   DP_UserCursorBuffer *out_user_cursors)
 {

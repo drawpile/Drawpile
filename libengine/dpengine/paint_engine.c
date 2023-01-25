@@ -2394,3 +2394,9 @@ DP_CanvasState *DP_paint_engine_history_canvas_state_inc(DP_PaintEngine *pe)
     DP_ASSERT(pe);
     return DP_canvas_state_incref(pe->history_cs);
 }
+
+DP_CanvasState *DP_paint_engine_sample_canvas_state_inc(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return DP_canvas_history_get(pe->ch);
+}
