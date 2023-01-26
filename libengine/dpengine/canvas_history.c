@@ -1438,9 +1438,6 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
             set_current_state_with_cursor_noinc(ch, change.cs,
                                                 &change.user_cursor);
         }
-        else {
-            DP_warn("Error handling remote multidab: %s", DP_error());
-        }
     }
 
     DP_PERF_END(fn);
@@ -1469,9 +1466,6 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
         DP_canvas_state_handle_multidab(ch->current_state, dc, count, msgs);
     if (change.cs) {
         set_current_state_with_cursor_noinc(ch, change.cs, &change.user_cursor);
-    }
-    else {
-        DP_warn("Error handling local multidab: %s", DP_error());
     }
 
     validate_history(ch);
