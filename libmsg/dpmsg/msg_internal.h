@@ -35,6 +35,7 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_PREVIEW,
     DP_MSG_INTERNAL_TYPE_RECORDER_START,
     DP_MSG_INTERNAL_TYPE_PLAYBACK,
+    DP_MSG_INTERNAL_TYPE_DUMP_PLAYBACK,
     DP_MSG_INTERNAL_TYPE_DUMP_COMMAND,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
@@ -62,6 +63,9 @@ DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id);
 DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
                                          long long position, int interval);
 
+DP_Message *DP_msg_internal_dump_playback_new(unsigned int context_id,
+                                              long long position);
+
 DP_Message *DP_msg_internal_dump_command_new_inc(unsigned int context_id,
                                                  int type, int count,
                                                  DP_Message **messages);
@@ -80,6 +84,8 @@ void *DP_msg_internal_preview_data(DP_MsgInternal *mi);
 long long DP_msg_internal_playback_position(DP_MsgInternal *mi);
 
 int DP_msg_internal_playback_interval(DP_MsgInternal *mi);
+
+long long DP_msg_internal_dump_playback_position(DP_MsgInternal *mi);
 
 int DP_msg_internal_dump_command_type(DP_MsgInternal *mi);
 

@@ -52,6 +52,11 @@ typedef struct DP_MsgInternalPlayback {
     int interval;
 } DP_MsgInternalPlayback;
 
+typedef struct DP_MsgInternalDumpPlayback {
+    DP_MsgInternal parent;
+    long long position;
+} DP_MsgInternalDumpPlayback;
+
 typedef struct DP_MsgInternalDumpCommand {
     DP_MsgInternal parent;
     int type;
@@ -178,6 +183,17 @@ DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
     return msg;
 }
 
+DP_Message *DP_msg_internal_dump_playback_new(unsigned int context_id,
+                                              long long position)
+{
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_DUMP_PLAYBACK,
+                         sizeof(DP_MsgInternalDumpPlayback));
+    DP_MsgInternalDumpPlayback *mip = DP_message_internal(msg);
+    mip->position = position;
+    return msg;
+}
+
 DP_Message *DP_msg_internal_dump_command_new_inc(unsigned int context_id,
                                                  int type, int count,
                                                  DP_Message **messages)
@@ -241,6 +257,13 @@ int DP_msg_internal_playback_interval(DP_MsgInternal *mi)
     DP_ASSERT(mi);
     DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PLAYBACK);
     return ((DP_MsgInternalPlayback *)mi)->interval;
+}
+
+long long DP_msg_internal_dump_playback_position(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_DUMP_PLAYBACK);
+    return ((DP_MsgInternalDumpPlayback *)mi)->position;
 }
 
 int DP_msg_internal_dump_command_type(DP_MsgInternal *mi)

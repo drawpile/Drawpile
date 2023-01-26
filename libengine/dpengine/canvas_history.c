@@ -20,7 +20,6 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "canvas_history.h"
-#include "affected_area.h"
 #include "canvas_state.h"
 #include "recorder.h"
 #include "snapshots.h"
@@ -53,23 +52,6 @@ typedef enum DP_ForkAction {
     DP_FORK_ACTION_ALREADY_DONE,
     DP_FORK_ACTION_ROLLBACK,
 } DP_ForkAction;
-
-typedef enum DP_Undo {
-    DP_UNDO_DONE,
-    DP_UNDO_UNDONE,
-    DP_UNDO_GONE,
-} DP_Undo;
-
-typedef struct DP_CanvasHistoryEntry {
-    DP_Undo undo;
-    DP_Message *msg;
-    DP_CanvasState *state;
-} DP_CanvasHistoryEntry;
-
-typedef struct DP_ForkEntry {
-    DP_Message *msg;
-    DP_AffectedArea aa;
-} DP_ForkEntry;
 
 typedef struct DP_Cursor {
     int layer_id;
@@ -117,6 +99,21 @@ struct DP_CanvasHistory {
         size_t buffer_size;
         unsigned char *buffer;
     } dump;
+};
+
+struct DP_CanvasHistorySnapshot {
+    DP_Atomic refcount;
+    struct {
+        int offset;
+        int count;
+        DP_CanvasHistoryEntry *entries;
+    } history;
+    struct {
+        int start;
+        int fallbehind;
+        int count;
+        DP_ForkEntry *entries;
+    } fork;
 };
 
 
@@ -1513,4 +1510,150 @@ DP_Recorder *DP_canvas_history_recorder_new(DP_CanvasHistory *ch,
     DP_recorder_message_push_initial_inc(r, used - i, get_recorder_message,
                                          ch->entries + i);
     return r;
+}
+
+
+static DP_CanvasHistoryEntry *snapshot_history(DP_CanvasHistory *ch)
+{
+    int count = ch->used;
+    DP_CanvasHistoryEntry *entries =
+        count == 0 ? NULL : DP_malloc(sizeof(*entries) * DP_int_to_size(count));
+    for (int i = 0; i < count; ++i) {
+        DP_CanvasHistoryEntry *entry = &ch->entries[i];
+        entries[i] = (DP_CanvasHistoryEntry){
+            entry->undo, DP_message_incref(entry->msg),
+            DP_canvas_state_incref_nullable(entry->state)};
+    }
+    return entries;
+}
+
+static DP_ForkEntry *snapshot_fork(DP_CanvasHistory *ch)
+{
+    size_t count = ch->fork.queue.used;
+    DP_ForkEntry *fes = count == 0 ? NULL : DP_malloc(sizeof(*fes) * count);
+    for (size_t i = 0; i < count; ++i) {
+        DP_ForkEntry *fe =
+            DP_queue_at(&ch->fork.queue, sizeof(DP_ForkEntry), i);
+        fes[i] = (DP_ForkEntry){DP_message_incref(fe->msg), fe->aa};
+    }
+    return fes;
+}
+
+DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_new(DP_CanvasHistory *ch)
+{
+    DP_CanvasHistorySnapshot *chs = DP_malloc(sizeof(*chs));
+    *chs = (DP_CanvasHistorySnapshot){
+        DP_ATOMIC_INIT(1),
+        {ch->offset, ch->used, snapshot_history(ch)},
+        {ch->fork.start, ch->fork.fallbehind,
+         DP_size_to_int(ch->fork.queue.used), snapshot_fork(ch)}};
+    return chs;
+}
+
+DP_CanvasHistorySnapshot *
+DP_canvas_history_snapshot_incref(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    DP_atomic_inc(&chs->refcount);
+    return chs;
+}
+
+DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_incref_nullable(
+    DP_CanvasHistorySnapshot *chs_or_null)
+{
+    return chs_or_null ? DP_canvas_history_snapshot_incref(chs_or_null) : NULL;
+}
+
+void DP_canvas_history_snapshot_decref(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    if (DP_atomic_dec(&chs->refcount)) {
+        int fork_count = chs->fork.count;
+        for (int i = 0; i < fork_count; ++i) {
+            DP_message_decref(chs->fork.entries[i].msg);
+        }
+        DP_free(chs->fork.entries);
+        int history_count = chs->history.count;
+        for (int i = 0; i < history_count; ++i) {
+            DP_CanvasHistoryEntry *entry = &chs->history.entries[i];
+            DP_canvas_state_decref_nullable(entry->state);
+            DP_message_decref(entry->msg);
+        }
+        DP_free(chs->history.entries);
+        DP_free(chs);
+    }
+}
+
+void DP_canvas_history_snapshot_decref_nullable(
+    DP_CanvasHistorySnapshot *chs_or_null)
+{
+    if (chs_or_null) {
+        DP_canvas_history_snapshot_decref(chs_or_null);
+    }
+}
+
+int DP_canvas_history_snapshot_refs(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return DP_atomic_get(&chs->refcount);
+}
+
+int DP_canvas_history_snapshot_history_offset(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return chs->history.offset;
+}
+
+int DP_canvas_history_snapshot_history_count(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return chs->history.count;
+}
+
+const DP_CanvasHistoryEntry *
+DP_canvas_history_snapshot_history_entry_at(DP_CanvasHistorySnapshot *chs,
+                                            int index)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < chs->history.count);
+    return &chs->history.entries[index];
+}
+
+int DP_canvas_history_snapshot_fork_start(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return chs->fork.start;
+}
+
+int DP_canvas_history_snapshot_fork_fallbehind(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return chs->fork.fallbehind;
+}
+
+int DP_canvas_history_snapshot_fork_count(DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return chs->fork.count;
+}
+
+const DP_ForkEntry *
+DP_canvas_history_snapshot_fork_entry_at(DP_CanvasHistorySnapshot *chs,
+                                         int index)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < chs->fork.count);
+    return &chs->fork.entries[index];
 }

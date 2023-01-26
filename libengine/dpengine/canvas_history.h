@@ -21,6 +21,7 @@
  */
 #ifndef DPENGINE_CANVAS_HISTORY_H
 #define DPENGINE_CANVAS_HISTORY_H
+#include "affected_area.h"
 #include "canvas_state.h"
 #include "recorder.h"
 #include <dpcommon/common.h>
@@ -32,6 +33,25 @@ typedef struct DP_Message DP_Message;
 #define DP_USER_CURSOR_COUNT 256
 
 typedef struct DP_CanvasHistory DP_CanvasHistory;
+
+typedef struct DP_CanvasHistorySnapshot DP_CanvasHistorySnapshot;
+
+typedef enum DP_Undo {
+    DP_UNDO_DONE,
+    DP_UNDO_UNDONE,
+    DP_UNDO_GONE,
+} DP_Undo;
+
+typedef struct DP_CanvasHistoryEntry {
+    DP_Undo undo;
+    DP_Message *msg;
+    DP_CanvasState *state;
+} DP_CanvasHistoryEntry;
+
+typedef struct DP_ForkEntry {
+    DP_Message *msg;
+    DP_AffectedArea aa;
+} DP_ForkEntry;
 
 typedef struct DP_UserCursorBuffer {
     int count;
@@ -114,6 +134,40 @@ DP_Recorder *DP_canvas_history_recorder_new(DP_CanvasHistory *ch,
                                             DP_RecorderGetTimeMsFn get_time_fn,
                                             void *get_time_user,
                                             DP_Output *output);
+
+
+DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_new(DP_CanvasHistory *ch);
+
+DP_CanvasHistorySnapshot *
+DP_canvas_history_snapshot_incref(DP_CanvasHistorySnapshot *chs);
+
+DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_incref_nullable(
+    DP_CanvasHistorySnapshot *chs_or_null);
+
+void DP_canvas_history_snapshot_decref(DP_CanvasHistorySnapshot *chs);
+
+void DP_canvas_history_snapshot_decref_nullable(
+    DP_CanvasHistorySnapshot *chs_or_null);
+
+int DP_canvas_history_snapshot_refs(DP_CanvasHistorySnapshot *chs);
+
+int DP_canvas_history_snapshot_history_offset(DP_CanvasHistorySnapshot *chs);
+
+int DP_canvas_history_snapshot_history_count(DP_CanvasHistorySnapshot *chs);
+
+const DP_CanvasHistoryEntry *
+DP_canvas_history_snapshot_history_entry_at(DP_CanvasHistorySnapshot *chs,
+                                            int index);
+
+int DP_canvas_history_snapshot_fork_start(DP_CanvasHistorySnapshot *chs);
+
+int DP_canvas_history_snapshot_fork_fallbehind(DP_CanvasHistorySnapshot *chs);
+
+int DP_canvas_history_snapshot_fork_count(DP_CanvasHistorySnapshot *chs);
+
+const DP_ForkEntry *
+DP_canvas_history_snapshot_fork_entry_at(DP_CanvasHistorySnapshot *chs,
+                                         int index);
 
 
 #endif

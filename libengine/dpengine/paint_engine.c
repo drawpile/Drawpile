@@ -171,6 +171,7 @@ struct DP_PaintEngine {
     struct {
         DP_Player *player;
         DP_PaintEnginePlaybackFn fn;
+        DP_PaintEngineDumpPlaybackFn dump_fn;
         void *user;
     } playback;
     struct {
@@ -317,13 +318,21 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         break;
     case DP_MSG_INTERNAL_TYPE_PLAYBACK: {
         DP_PaintEnginePlaybackFn playback_fn = pe->playback.fn;
-        DP_debug("Reached playback position %lld, interval %d",
-                 DP_msg_internal_playback_position(mi),
-                 DP_msg_internal_playback_interval(mi));
         if (playback_fn) {
             playback_fn(pe->playback.user,
                         DP_msg_internal_playback_position(mi),
                         DP_msg_internal_playback_interval(mi));
+        }
+        break;
+    }
+    case DP_MSG_INTERNAL_TYPE_DUMP_PLAYBACK: {
+        DP_PaintEngineDumpPlaybackFn dump_playback_fn = pe->playback.dump_fn;
+        if (dump_playback_fn) {
+            DP_CanvasHistorySnapshot *chs =
+                DP_canvas_history_snapshot_new(pe->ch);
+            dump_playback_fn(pe->playback.user,
+                             DP_msg_internal_dump_playback_position(mi), chs);
+            DP_canvas_history_snapshot_decref(chs);
         }
         break;
     }
@@ -647,7 +656,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     void *save_point_user, bool want_canvas_history_dump,
     const char *canvas_history_dump_dir, DP_RecorderGetTimeMsFn get_time_ms_fn,
     void *get_time_ms_user, DP_Player *player_or_null,
-    DP_PaintEnginePlaybackFn playback_fn, void *playback_user)
+    DP_PaintEnginePlaybackFn playback_fn,
+    DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user)
 {
     int render_thread_count = DP_thread_cpu_count();
     size_t flex_size = DP_max_size(sizeof(DP_PaintEngineLaserBuffer),
@@ -698,6 +708,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->record.get_time_ms_user = get_time_ms_user;
     pe->playback.player = player_or_null;
     pe->playback.fn = playback_fn;
+    pe->playback.dump_fn = dump_playback_fn;
     pe->playback.user = playback_user;
     pe->render.worker =
         DP_worker_new(1024, sizeof(struct DP_PaintEngineRenderJobParams),
@@ -1312,6 +1323,12 @@ static DP_PlayerResult step_dump(DP_Player *player,
     return result;
 }
 
+static void push_dump_playback(DP_PaintEnginePushMessageFn push_message,
+                               void *user, long long position)
+{
+    push_message(user, DP_msg_internal_dump_playback_new(0, position));
+}
+
 DP_PlayerResult DP_paint_engine_playback_dump_step(
     DP_PaintEngine *pe, DP_PaintEnginePushMessageFn push_message, void *user)
 {
@@ -1319,14 +1336,14 @@ DP_PlayerResult DP_paint_engine_playback_dump_step(
     DP_Player *player = pe->playback.player;
     if (!player) {
         DP_error_set("No player set");
-        push_playback(push_message, user, -1, 0);
+        push_dump_playback(push_message, user, -1);
         return DP_PLAYER_ERROR_OPERATION;
     }
 
     DP_PlayerResult result = step_dump(player, push_message, user);
     long long position_to_report =
         result == DP_PLAYER_SUCCESS ? DP_player_position(player) : -1;
-    push_playback(push_message, user, position_to_report, 0);
+    push_dump_playback(push_message, user, position_to_report);
     return result;
 }
 
@@ -1336,17 +1353,17 @@ DP_PlayerResult DP_paint_engine_playback_dump_jump_previous_reset(
     DP_Player *player = pe->playback.player;
     if (!player) {
         DP_error_set("No player set");
-        push_playback(push_message, user, -1, 0);
+        push_dump_playback(push_message, user, -1);
         return DP_PLAYER_ERROR_OPERATION;
     }
 
     if (!DP_player_seek_dump(player, DP_player_position(player) - 1)) {
-        push_playback(push_message, user, -1, 0);
+        push_dump_playback(push_message, user, -1);
         return DP_PLAYER_ERROR_INPUT;
     }
 
     push_message(user, DP_msg_internal_reset_new(0));
-    push_playback(push_message, user, DP_player_position(player), 0);
+    push_dump_playback(push_message, user, DP_player_position(player));
     return DP_PLAYER_SUCCESS;
 }
 
@@ -1384,7 +1401,7 @@ DP_PlayerResult DP_paint_engine_playback_dump_jump_next_reset(
     DP_Player *player = pe->playback.player;
     if (!player) {
         DP_error_set("No player set");
-        push_playback(push_message, user, -1, 0);
+        push_dump_playback(push_message, user, -1);
         return DP_PLAYER_ERROR_OPERATION;
     }
 
@@ -1397,7 +1414,7 @@ DP_PlayerResult DP_paint_engine_playback_dump_jump_next_reset(
         result = step_toward_next_reset(player, true, push_message, user);
     }
 
-    push_playback(push_message, user, DP_player_position(player), 0);
+    push_dump_playback(push_message, user, DP_player_position(player));
     return result == -1 ? DP_PLAYER_SUCCESS : (DP_PlayerResult)result;
 }
 
@@ -1410,12 +1427,12 @@ DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
     DP_Player *player = pe->playback.player;
     if (!player) {
         DP_error_set("No player set");
-        push_playback(push_message, user, -1, 0);
+        push_dump_playback(push_message, user, -1);
         return DP_PLAYER_ERROR_OPERATION;
     }
 
     if (!DP_player_seek_dump(player, position)) {
-        push_playback(push_message, user, -1, 0);
+        push_dump_playback(push_message, user, -1);
         return DP_PLAYER_ERROR_INPUT;
     }
 
@@ -1430,7 +1447,7 @@ DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
             break;
         }
     }
-    push_playback(push_message, user, DP_player_position(player), 0);
+    push_dump_playback(push_message, user, DP_player_position(player));
     return result;
 }
 
