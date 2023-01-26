@@ -279,9 +279,9 @@ void DumpPlaybackDialog::updateHistoryTable()
 		bool hideGoneEntries = d->ui.hideGoneEntries->isChecked();
 		for(int i = 0; i < historyCount; ++i) {
 			const DP_CanvasHistoryEntry *entry = d->chs.historyEntryAt(i);
-			bool wantEntry = (hideWithoutState && !entry->state) ||
+			bool hideEntry = (hideWithoutState && !entry->state) ||
 							 (hideGoneEntries && entry->undo == DP_UNDO_GONE);
-			if(wantEntry) {
+			if(!hideEntry) {
 				ht->insertRow(row);
 				ht->setVerticalHeaderItem(
 					row, new QTableWidgetItem{QString::number(offset + i)});
