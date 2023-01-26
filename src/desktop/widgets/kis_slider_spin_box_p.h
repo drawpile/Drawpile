@@ -37,6 +37,7 @@
 template <typename SpinBoxTypeTP, typename BaseSpinBoxTypeTP>
 class KisSliderSpinBoxPrivate : public QObject
 {
+    Q_DECLARE_TR_FUNCTIONS(KisSliderSpinBoxPrivate)
 public:
     using SpinBoxType = SpinBoxTypeTP;
     using BaseSpinBoxType = BaseSpinBoxTypeTP;
