@@ -117,7 +117,6 @@ static DP_CanvasState *handle_preview_messages_multidab(DP_CanvasState *cs,
         return next;
     }
     else {
-        DP_warn("Preview: %s", DP_error());
         return cs;
     }
 }
