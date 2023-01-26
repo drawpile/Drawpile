@@ -743,7 +743,7 @@ static void make_save_point(DP_CanvasHistory *ch, int index,
         HISTORY_DEBUG("Create %s save point at %d",
                       snapshot_requested ? "requested" : "regular", index);
         DP_CanvasState *cs = ch->current_state;
-        ch->entries[index].state = DP_canvas_state_incref(cs);
+        entry->state = DP_canvas_state_incref(cs);
         call_save_point_fn(ch, cs, snapshot_requested);
     }
 }
