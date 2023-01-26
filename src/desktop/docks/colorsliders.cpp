@@ -24,6 +24,7 @@
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
 
+#include <QLabel>
 #include <QGridLayout>
 #include <QSpinBox>
 
@@ -80,8 +81,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->huebox = new QSpinBox(w);
 	d->huebox->setMaximum(359);
 	d->hue->setMaximumHeight(d->huebox->height());
-	layout->addWidget(d->hue, row, 0);
-	layout->addWidget(d->huebox, row, 1);
+	layout->addWidget(new QLabel{tr("H"), w}, row, 0);
+	layout->addWidget(d->hue, row, 1);
+	layout->addWidget(d->huebox, row, 2);
 
 	++row;
 
@@ -90,8 +92,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->saturationbox = new QSpinBox(w);
 	d->saturationbox->setMaximum(255);
 	d->saturation->setMaximumHeight(d->saturationbox->height());
-	layout->addWidget(d->saturation, row, 0);
-	layout->addWidget(d->saturationbox, row, 1);
+	layout->addWidget(new QLabel{tr("S"), w}, row, 0);
+	layout->addWidget(d->saturation, row, 1);
+	layout->addWidget(d->saturationbox, row, 2);
 
 	++row;
 
@@ -100,8 +103,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->valuebox = new QSpinBox(w);
 	d->valuebox->setMaximum(255);
 	d->value->setMaximumHeight(d->valuebox->height());
-	layout->addWidget(d->value, row, 0);
-	layout->addWidget(d->valuebox, row, 1);
+	layout->addWidget(new QLabel{tr("V"), w}, row, 0);
+	layout->addWidget(d->value, row, 1);
+	layout->addWidget(d->valuebox, row, 2);
 
 	++row;
 
@@ -110,8 +114,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->redbox = new QSpinBox(w);
 	d->redbox->setMaximum(255);
 	d->red->setMaximumHeight(d->redbox->height());
-	layout->addWidget(d->red, row, 0);
-	layout->addWidget(d->redbox, row, 1);
+	layout->addWidget(new QLabel{tr("R"), w}, row, 0);
+	layout->addWidget(d->red, row, 1);
+	layout->addWidget(d->redbox, row, 2);
 
 	++row;
 
@@ -120,8 +125,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->greenbox = new QSpinBox(w);
 	d->greenbox->setMaximum(255);
 	d->green->setMaximumHeight(d->greenbox->height());
-	layout->addWidget(d->green, row, 0);
-	layout->addWidget(d->greenbox, row, 1);
+	layout->addWidget(new QLabel{tr("G"), w}, row, 0);
+	layout->addWidget(d->green, row, 1);
+	layout->addWidget(d->greenbox, row, 2);
 
 	++row;
 
@@ -130,8 +136,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->bluebox = new QSpinBox(w);
 	d->bluebox->setMaximum(255);
 	d->blue->setMaximumHeight(d->bluebox->height());
-	layout->addWidget(d->blue, row, 0);
-	layout->addWidget(d->bluebox, row, 1);
+	layout->addWidget(new QLabel{tr("B"), w}, row, 0);
+	layout->addWidget(d->blue, row, 1);
+	layout->addWidget(d->bluebox, row, 2);
 
 	++row;
 
