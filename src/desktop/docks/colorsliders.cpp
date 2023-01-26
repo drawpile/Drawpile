@@ -79,7 +79,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->hue->setMaximum(359);
 	d->huebox = new QSpinBox(w);
 	d->huebox->setMaximum(359);
-	d->hue->setFixedHeight(d->huebox->height());
+	d->hue->setMaximumHeight(d->huebox->height());
 	layout->addWidget(d->hue, row, 0);
 	layout->addWidget(d->huebox, row, 1);
 
@@ -89,7 +89,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->saturation->setMaximum(255);
 	d->saturationbox = new QSpinBox(w);
 	d->saturationbox->setMaximum(255);
-	d->saturation->setFixedHeight(d->saturationbox->height());
+	d->saturation->setMaximumHeight(d->saturationbox->height());
 	layout->addWidget(d->saturation, row, 0);
 	layout->addWidget(d->saturationbox, row, 1);
 
@@ -99,7 +99,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->value->setMaximum(255);
 	d->valuebox = new QSpinBox(w);
 	d->valuebox->setMaximum(255);
-	d->value->setFixedHeight(d->valuebox->height());
+	d->value->setMaximumHeight(d->valuebox->height());
 	layout->addWidget(d->value, row, 0);
 	layout->addWidget(d->valuebox, row, 1);
 
@@ -109,7 +109,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->red->setMaximum(255);
 	d->redbox = new QSpinBox(w);
 	d->redbox->setMaximum(255);
-	d->red->setFixedHeight(d->redbox->height());
+	d->red->setMaximumHeight(d->redbox->height());
 	layout->addWidget(d->red, row, 0);
 	layout->addWidget(d->redbox, row, 1);
 
@@ -119,7 +119,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->green->setMaximum(255);
 	d->greenbox = new QSpinBox(w);
 	d->greenbox->setMaximum(255);
-	d->green->setFixedHeight(d->greenbox->height());
+	d->green->setMaximumHeight(d->greenbox->height());
 	layout->addWidget(d->green, row, 0);
 	layout->addWidget(d->greenbox, row, 1);
 
@@ -129,7 +129,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	d->blue->setMaximum(255);
 	d->bluebox = new QSpinBox(w);
 	d->bluebox->setMaximum(255);
-	d->blue->setFixedHeight(d->bluebox->height());
+	d->blue->setMaximumHeight(d->bluebox->height());
 	layout->addWidget(d->blue, row, 0);
 	layout->addWidget(d->bluebox, row, 1);
 
