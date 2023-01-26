@@ -199,6 +199,7 @@ static void push_cleanup_message(void *user, DP_Message *msg)
 {
     DP_PaintEngine *pe = user;
     DP_message_queue_push_noinc(&pe->remote_queue, msg);
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
 }
 
 static void free_preview(DP_PaintEnginePreview *preview)
