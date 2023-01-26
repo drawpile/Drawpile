@@ -2377,6 +2377,9 @@ void MainWindow::updateDevToolsActions()
 	artificialLagAction->setText(
 		tr("Set Artificial Lag... (currently %1 ms)").arg(artificialLagMs));
 
+	QAction *artificialDisconnectAction = getAction("artificialdisconnect");
+	artificialDisconnectAction->setEnabled(client->isConnected());
+
 	QAction *debugDumpAction = getAction("debugdump");
 	debugDumpAction->setChecked(m_doc->wantCanvasHistoryDump());
 }
@@ -2390,6 +2393,19 @@ void MainWindow::setArtificialLag()
 		m_doc->client()->artificialLagMs(), 0, INT_MAX, 1, &ok);
 	if(ok) {
 		m_doc->client()->setArtificialLagMs(artificalLagMs);
+	}
+}
+
+void MainWindow::setArtificialDisconnect()
+{
+	bool ok;
+	int seconds = QInputDialog::getInt(
+		this, tr("Artificial Disconnect"),
+		tr("Simulate a disconnect after this many seconds:"),
+		1, 0, INT_MAX, 1, &ok);
+	if(ok) {
+		QTimer::singleShot(seconds * 1000, m_doc->client(),
+			&net::Client::artificialDisconnect);
 	}
 }
 
@@ -3078,15 +3094,18 @@ void MainWindow::setupActions()
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
 	QAction *profile = makeAction("profile", tr("Profile..."));
 	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag..."));
+	QAction *artificialDisconnect = makeAction("artificialdisconnect", tr("Artifical Disconnect..."));
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable();
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump..."));
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
+	devtoolsmenu->addAction(artificialDisconnect);
 	devtoolsmenu->addAction(debugDump);
 	devtoolsmenu->addAction(openDebugDump);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);
+	connect(artificialDisconnect, &QAction::triggered, this, &MainWindow::setArtificialDisconnect);
 	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
 	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
 

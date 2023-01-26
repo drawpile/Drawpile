@@ -89,6 +89,9 @@ public:
 	virtual int artificialLagMs() const = 0;
 	virtual void setArtificialLagMs(int msecs) = 0;
 
+	// Simulate network error by just closing the connection.
+	virtual void artificialDisconnect() = 0;
+
 signals:
 	void messagesReceived(int count, const drawdance::Message *msgs);
 };

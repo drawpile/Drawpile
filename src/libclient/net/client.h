@@ -129,10 +129,17 @@ public:
 
 	int artificialLagMs() const { return m_server ? m_server->artificialLagMs() : 0; }
 
-	void setArtificialLagMs(int msecs) const
+	void setArtificialLagMs(int msecs)
 	{
 		if(m_server) {
 			m_server->setArtificialLagMs(msecs);
+		}
+	}
+
+	void artificialDisconnect()
+	{
+		if(m_server) {
+			m_server->artificialDisconnect();
 		}
 	}
 

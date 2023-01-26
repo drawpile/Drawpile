@@ -78,6 +78,11 @@ void TcpServer::logout()
 	m_msgqueue->sendDisconnect(MessageQueue::GracefulDisconnect::Shutdown, QString());
 }
 
+void TcpServer::artificialDisconnect()
+{
+	m_socket->abort();
+}
+
 int TcpServer::uploadQueueBytes() const
 {
 	return m_msgqueue->uploadQueueBytes();

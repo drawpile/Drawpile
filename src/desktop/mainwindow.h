@@ -174,6 +174,7 @@ private slots:
 
 	void updateDevToolsActions();
 	void setArtificialLag();
+	void setArtificialDisconnect();
 	void toggleDebugDump();
 	void openDebugDump();
 
