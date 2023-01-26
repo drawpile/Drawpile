@@ -25,6 +25,7 @@
 
 class AvatarListModel : public QAbstractListModel
 {
+	Q_OBJECT
 public:
 	enum AvatarListRoles {
 		FilenameRole = Qt::UserRole + 1,
