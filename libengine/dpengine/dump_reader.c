@@ -216,7 +216,7 @@ static DP_DumpReaderEntry search_best_entry(DP_DumpReader *dr,
 static bool index_reset_points_for(DP_DumpReader *dr, long long position)
 {
     DP_DumpReaderEntry entry = search_best_entry(dr, INT_MAX);
-    if (DP_buffered_input_seek(&dr->input, entry.offset)) {
+    if (!DP_dump_reader_seek(dr, entry)) {
         return false;
     }
 
