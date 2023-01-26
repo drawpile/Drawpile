@@ -67,7 +67,7 @@ typedef struct DP_Message DP_Message;
             PRINT("%s affects everything", (TITLE));                          \
             break;                                                            \
         default:                                                              \
-            PRINT("%s affects unknown domain %d", (TITLE), (int)aa->domain);  \
+            PRINT("%s affects unknown domain %d", (TITLE), (int)_aa->domain); \
             break;                                                            \
         }                                                                     \
     } while (0)
