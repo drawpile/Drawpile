@@ -71,95 +71,194 @@
 <context>
     <name>BrushDock</name>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="215"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="74"/>
         <source>Pixel brush</source>
         <translation>Pennello pixel</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="235"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="94"/>
         <source>Square pixel brush</source>
         <translation>Pennello quadrato pixel</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="255"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="114"/>
         <source>Brush</source>
         <translation>Pennello</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="291"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="134"/>
+        <source>MyPaint Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="170"/>
         <source>Pick initial color from layer</source>
         <translation>Scegliere il colore iniziale dallo strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="305"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="184"/>
+        <source>Lock alpha (recolor mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="198"/>
         <source>Eraser mode</source>
         <translation>Modalità gomma</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="322"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="215"/>
         <source>Direct drawing mode</source>
         <translation>Modalità di disegno diretto</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="429"/>
-        <location filename="../../desktop/ui/brushdock.ui" line="443"/>
-        <location filename="../../desktop/ui/brushdock.ui" line="477"/>
-        <location filename="../../desktop/ui/brushdock.ui" line="498"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="239"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="253"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="267"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="302"/>
         <source>Pressure sensitivity</source>
         <translation>Sensibilità alla pressione</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="593"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="284"/>
+        <source>Input: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="316"/>
         <source>px</source>
         <translation>px</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="606"/>
-        <source>Input:</source>
+        <location filename="../../desktop/ui/brushdock.ui" line="319"/>
+        <source>Size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="616"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="332"/>
+        <source>Radius: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="345"/>
+        <source>Opacity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="361"/>
+        <source>Hardness: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="377"/>
+        <source>Smudging: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="409"/>
+        <source>Spacing: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="425"/>
+        <source>Gain: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="441"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="444"/>
+        <source>Stabilizer: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="291"/>
         <source>Configure input presets</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>BrushPresetProperties</name>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="379"/>
-        <source>Hardness:</source>
-        <translation>Durezza:</translation>
+        <location filename="../../desktop/ui/brushpresetproperties.ui" line="17"/>
+        <source>Brush Preset Properties</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="422"/>
-        <source>Opacity:</source>
-        <translation>Opacità:</translation>
+        <location filename="../../desktop/ui/brushpresetproperties.ui" line="23"/>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="372"/>
-        <source>Size:</source>
-        <translation>Dimensione:</translation>
+        <location filename="../../desktop/ui/brushpresetproperties.ui" line="33"/>
+        <source>Description:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="491"/>
-        <source>Spacing:</source>
-        <translation>Spaziatura:</translation>
+        <location filename="../../desktop/ui/brushpresetproperties.ui" line="43"/>
+        <source>Thumbnail:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="386"/>
-        <source>Smudging:</source>
-        <translation>Sbavature:</translation>
+        <location filename="../../desktop/ui/brushpresetproperties.ui" line="54"/>
+        <source>Choose File...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="457"/>
-        <source>Color pickup:</source>
-        <translation>Raccolta colore:</translation>
+        <location filename="../../desktop/ui/brushpresetproperties.ui" line="65"/>
+        <source>Will be resized
+to 64x64 pixels.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>BrushPalette</name>
+    <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../../desktop/ui/brushpalette.ui" line="66"/>
-        <source>Delete selected preset</source>
-        <translation>Cancella preimpostato selezionato</translation>
+        <location filename="../export/canvassaverrunnable.cpp" line="79"/>
+        <source>Error moving temporary file %1 to %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="96"/>
+        <source>Bad arguments, this is probably a bug in Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="98"/>
+        <source>No file extension given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="100"/>
+        <source>Unsupported format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="102"/>
+        <source>Couldn&apos;t merge the canvas into a flat image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="104"/>
+        <source>Couldn&apos;t open file for writing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="106"/>
+        <source>Save operation failed, but the file might have been partially written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="108"/>
+        <source>Internal error during saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/canvassaverrunnable.cpp" line="110"/>
+        <source>Unknown error.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -239,39 +338,6 @@
     </message>
 </context>
 <context>
-    <name>ColorBox</name>
-    <message>
-        <location filename="../../desktop/ui/colorbox.ui" line="150"/>
-        <source>R</source>
-        <translation>R</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/colorbox.ui" line="164"/>
-        <source>G</source>
-        <translation>G</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/colorbox.ui" line="178"/>
-        <source>H</source>
-        <translation>H</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/colorbox.ui" line="192"/>
-        <source>B</source>
-        <translation>B</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/colorbox.ui" line="199"/>
-        <source>S</source>
-        <translation>S</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/colorbox.ui" line="206"/>
-        <source>V</source>
-        <translation>V</translation>
-    </message>
-</context>
-<context>
     <name>ColorDialog</name>
     <message>
         <location filename="../../desktop/bundled/QtColorWidgets/color_dialog.ui" line="14"/>
@@ -343,104 +409,176 @@
     </message>
 </context>
 <context>
+    <name>DumpPlaybackDialog</name>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="14"/>
+        <source>Play Debug Dump</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="20"/>
+        <source> ms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="23"/>
+        <source>Playback Delay: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="39"/>
+        <source>Play/Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="46"/>
+        <source>Jump</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="56"/>
+        <source>Previous Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="63"/>
+        <source>Single Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="70"/>
+        <source>Next Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="83"/>
+        <source>Position: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="94"/>
+        <source>Status</source>
+        <translation type="unfinished">Stato</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="100"/>
+        <source>History Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="107"/>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="114"/>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="142"/>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="163"/>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="177"/>
+        <source>0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="121"/>
+        <source>Local Fork Present:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="128"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="135"/>
+        <source>Local Fork Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="149"/>
+        <source>Local Fork Start:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="156"/>
+        <source>History Offset:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="170"/>
+        <source>Local Fork Fallbehind:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="185"/>
+        <source>History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="196"/>
+        <source>Hide Entries Without State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="203"/>
+        <source>Hide Gone Entries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/dumpplayback.ui" line="213"/>
+        <source>Local Fork</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FfmpegExporter</name>
+    <message>
+        <location filename="../export/ffmpegexporter.cpp" line="138"/>
+        <source>Couldn&apos;t start ffmpeg!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/ffmpegexporter.cpp" line="141"/>
+        <source>Ffmpeg crashed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../export/ffmpegexporter.cpp" line="144"/>
+        <source>Ffmpeg process error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FillSettings</name>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="32"/>
-        <source>Tolerance:</source>
-        <translation>Tolleranza:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="89"/>
         <source>Sample merged</source>
         <translation>Campione unito</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="96"/>
-        <source>Expand:</source>
-        <translation>Espandi:</translation>
+        <location filename="../../desktop/ui/fillsettings.ui" line="46"/>
+        <source>Tolerance: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="122"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="92"/>
+        <source>Expand: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/fillsettings.ui" line="102"/>
+        <source>Size Limit: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/fillsettings.ui" line="105"/>
+        <source> × 10² px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/fillsettings.ui" line="39"/>
         <source>Fill under</source>
         <translation>Riempi sotto</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="129"/>
-        <source>Size limit:</source>
-        <translation>Limite dimensione:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="136"/>
-        <source> ྾ 10² px</source>
-        <translation> ྾ 10² px</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/fillsettings.ui" line="155"/>
+        <location filename="../../desktop/ui/fillsettings.ui" line="85"/>
         <source>Erase</source>
         <translation>Cancella</translation>
-    </message>
-</context>
-<context>
-    <name>FilterRecording</name>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="14"/>
-        <source>Filter recording</source>
-        <translation>Registrazione filtro</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="22"/>
-        <source>Remove</source>
-        <translation>Rimuovi</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="28"/>
-        <source>Pauses</source>
-        <translation>Pause</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="35"/>
-        <source>Chat messages</source>
-        <translation>Messaggi chat</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="42"/>
-        <source>Laser pointers</source>
-        <translation>Puntatori laser</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="49"/>
-        <source>Markers</source>
-        <translation>Marcatori</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="56"/>
-        <source>Non-participating users</source>
-        <translation>Utenti non partecipanti</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="66"/>
-        <source>Undone actions</source>
-        <translation>Azioni annullate</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="79"/>
-        <source>Flagged actions</source>
-        <translation>Azioni contrassegnate</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="102"/>
-        <source>Modify</source>
-        <translation>Modificare</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="111"/>
-        <source>Add new markers</source>
-        <translation>Aggiungi nuovi marcatori</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/recfilter.ui" line="118"/>
-        <source>Squish strokes</source>
-        <translation>Tratti schiacciati</translation>
     </message>
 </context>
 <context>
@@ -452,8 +590,8 @@
     </message>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="88"/>
-        <source>Layer:</source>
-        <translation>Strato:</translation>
+        <source>Frame:</source>
+        <translation type="unfinished">Frame:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="108"/>
@@ -461,9 +599,17 @@
         <translation>Intervallo di loop:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/flipbook.ui" line="149"/>
+        <location filename="../../desktop/ui/flipbook.ui" line="172"/>
         <source>FPS:</source>
         <translation>FPS:</translation>
+    </message>
+</context>
+<context>
+    <name>FloodFill</name>
+    <message>
+        <location filename="../tools/floodfill.cpp" line="66"/>
+        <source>Size limit exceeded.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -544,22 +690,22 @@
         <translation>Server</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="160"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="163"/>
         <source>Use Drawpile&apos;s built-in server</source>
         <translation>Drawpile&apos;s server integrato</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="163"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="166"/>
         <source>This co&amp;mputer</source>
         <translation>Questo co&amp;mputer</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="175"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="178"/>
         <source>Use an external dedicated server</source>
         <translation>Utilizza un server esterno dedicato</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/hostdialog.ui" line="178"/>
+        <location filename="../../desktop/ui/hostdialog.ui" line="181"/>
         <source>Re&amp;mote:</source>
         <translation>Re&amp;moto:</translation>
     </message>
@@ -687,44 +833,51 @@
     </message>
 </context>
 <context>
-    <name>LaserSettings</name>
+    <name>KisSliderSpinBoxPrivate</name>
     <message>
-        <location filename="../../desktop/ui/lasersettings.ui" line="17"/>
-        <source>Trail:</source>
-        <translation>Traccia:</translation>
+        <location filename="../../desktop/widgets/kis_slider_spin_box_p.h" line="368"/>
+        <source>Toggle between full range and subrange.
+Full range: [%1, %2]
+Subrange: [%3, %4]</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/lasersettings.ui" line="45"/>
+        <location filename="../../desktop/widgets/kis_slider_spin_box_p.h" line="543"/>
+        <source>&amp;Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/kis_slider_spin_box_p.h" line="553"/>
+        <source>&amp;Step up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/kis_slider_spin_box_p.h" line="555"/>
+        <source>Step &amp;down</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LaserSettings</name>
+    <message>
+        <location filename="../../desktop/ui/lasersettings.ui" line="111"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/lasersettings.ui" line="60"/>
+        <location filename="../../desktop/ui/lasersettings.ui" line="17"/>
         <source>Color:</source>
         <translation>Colore:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/lasersettings.ui" line="147"/>
+        <location filename="../../desktop/ui/lasersettings.ui" line="104"/>
         <source>Track hovering pointer</source>
         <translation>Traccia il puntatore in sospeso</translation>
     </message>
-</context>
-<context>
-    <name>LayerBox</name>
     <message>
-        <location filename="../../desktop/ui/layerbox.ui" line="37"/>
-        <source>Layer blending mode</source>
-        <translation>Modalità di fusione dei livelli</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/layerbox.ui" line="60"/>
-        <source>Layer opacity</source>
-        <translation>Strato opacità</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/layerbox.ui" line="89"/>
-        <source>Layer access control</source>
-        <translation>Controllo dell&apos;accesso ai livelli</translation>
+        <location filename="../../desktop/ui/lasersettings.ui" line="114"/>
+        <source>Trail: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -735,39 +888,59 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="49"/>
+        <location filename="../../desktop/ui/layerproperties.ui" line="23"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="59"/>
+        <location filename="../../desktop/ui/layerproperties.ui" line="33"/>
         <source>Opacity:</source>
         <translation type="unfinished">Opacità:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="78"/>
+        <location filename="../../desktop/ui/layerproperties.ui" line="40"/>
+        <source>Blending Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="50"/>
+        <source>Pass through</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="73"/>
+        <source>Visibility:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="80"/>
+        <source>Visible to you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="87"/>
+        <source>Censor content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="110"/>
+        <source>Collaboration:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="117"/>
+        <source>Default for new users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="124"/>
+        <source>Created by:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/layerproperties.ui" line="161"/>
         <source>%</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="90"/>
-        <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="102"/>
-        <source>Visible</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="109"/>
-        <source>Fixed</source>
-        <translation type="unfinished">Aggiustato</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/layerproperties.ui" line="116"/>
-        <source>Default</source>
-        <translation type="unfinished">Predefinito</translation>
     </message>
 </context>
 <context>
@@ -867,1013 +1040,1199 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="298"/>
+        <location filename="../../desktop/mainwindow.cpp" line="281"/>
         <source>Server out of space</source>
         <translation>Spazio server esaurito</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="299"/>
+        <location filename="../../desktop/mainwindow.cpp" line="282"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
         <translation>Il server sta esaurendo lo spazio della cronologia e la sessione è diventata troppo grande per essere ripristinata automaticamente! (Il limite è% 1 MB)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="637"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1459"/>
+        <location filename="../../desktop/mainwindow.cpp" line="460"/>
+        <source>Dancepile Test Build</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="460"/>
+        <source>&lt;p&gt;&lt;strong&gt;This is a development test build.&lt;/strong&gt; Do &lt;strong&gt;not&lt;/strong&gt; report problems in the official Drawpile issue tracker. Tell me about them on Discord or something instead.&lt;/p&gt;&lt;p&gt;This has not been fully tested. There are probably still bugs. The application icon is a ferret. Save often.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="509"/>
+        <source>🙋 %1 joined!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="605"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1562"/>
         <source>Untitled</source>
         <translation>Senza titolo</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="886"/>
-        <location filename="../../desktop/mainwindow.cpp" line="907"/>
+        <location filename="../../desktop/mainwindow.cpp" line="880"/>
+        <location filename="../../desktop/mainwindow.cpp" line="901"/>
         <source>Exit Drawpile</source>
         <translation>Esci da Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="887"/>
+        <location filename="../../desktop/mainwindow.cpp" line="881"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Sei ancora connesso a una sessione di disegno.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="891"/>
+        <location filename="../../desktop/mainwindow.cpp" line="885"/>
         <source>Exit anyway</source>
         <translation>Esci comunque</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="893"/>
-        <location filename="../../desktop/mainwindow.cpp" line="915"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1239"/>
+        <location filename="../../desktop/mainwindow.cpp" line="887"/>
+        <location filename="../../desktop/mainwindow.cpp" line="909"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1325"/>
         <source>Cancel</source>
         <translation>Сancella</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="908"/>
+        <location filename="../../desktop/mainwindow.cpp" line="902"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ci sono modifiche non salvate. Salvarle prima di uscire?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="911"/>
+        <location filename="../../desktop/mainwindow.cpp" line="905"/>
         <source>Save</source>
         <translation>Salva</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="913"/>
+        <location filename="../../desktop/mainwindow.cpp" line="907"/>
         <source>Discard</source>
         <translation>Abbandona</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1068"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1091"/>
         <source>Open Image</source>
         <translation>Apri immagine</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1095"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1151"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1117"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1168"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1211"/>
         <source>Save Image</source>
         <translation>Salva Immagine</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1096"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1118"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>Il formato selezionato non supporta strati o annotazioni.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1098"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1120"/>
         <source>Flatten</source>
         <translation>Appiattire</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1099"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1121"/>
         <source>Save as OpenRaster</source>
         <translation>Salva come OpenRaster</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1193"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1245"/>
         <source>Saving...</source>
         <translation>Salvataggio...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1207"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1259"/>
         <source>Couldn&apos;t save image</source>
         <translation>Non è possibile salvare l&apos;immagine</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1209"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1261"/>
         <source>Image saved</source>
         <translation>Immagine salvata</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1233"/>
-        <source>Export error</source>
-        <translation>Errore di esportazione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1239"/>
-        <source>Exporting...</source>
-        <translation>Esportando…</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1260"/>
-        <source>Export Session Template</source>
-        <translation>Esporta Modello Sessione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1287"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1359"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1290"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1362"/>
         <source>Play</source>
         <translation>Avvia</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1295"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1367"/>
         <source>Stop Recording</source>
         <translation>Interrompi Registrazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1298"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2280"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1370"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
         <source>Record...</source>
         <translation>Registra…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1321"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1390"/>
         <source>Record Session</source>
         <translation>Sessione di Registrazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1382"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1483"/>
         <source>Invalid address</source>
         <translation>Indirizzo non valido</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1395"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1497"/>
         <source>Host Session</source>
         <translation>Sessione Ospite</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1460"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1563"/>
         <source>Really leave the session?</source>
         <translation>Vuoi abbandonare veramente la sessione?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1466"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1569"/>
         <source>Leave</source>
         <translation>Abbandona</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1468"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1571"/>
         <source>Stay</source>
         <translation>Rimani</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1477"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1580"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>Vi sono ancora dati non inviati! Si prega di attendere fino a quando la trasmissione sarà completata!</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1507"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1610"/>
         <source>Become Operator</source>
         <translation>Diventa Operatore</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1508"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1611"/>
         <source>Enter operator password</source>
         <translation>Inserire password operatore</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1546"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1654"/>
         <source>Terminate session</source>
         <translation>Termina sessione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1547"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1655"/>
         <source>Really terminate this session?</source>
         <translation>Davvero terminare questa sessione?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1552"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2670"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1660"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3013"/>
         <source>Terminate</source>
         <translation>Terminata</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1627"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1734"/>
         <source>Could not connect to server</source>
         <translation>Impossibile connettersi al server</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1639"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1746"/>
         <source>Would you like to join the session instead?</source>
         <translation>Vorresti unirti alla sessione?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1641"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1748"/>
         <source>Join</source>
         <translation>Entra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1661"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1768"/>
         <source>Disconnected:</source>
         <translation>Disconnesso:</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1690"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1797"/>
         <source>Board is locked</source>
         <translation>La tavola è bloccata</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1702"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1809"/>
         <source>Session blocked by parental controls</source>
         <translation>Sessione bloccata da controlli parentali</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1990"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2148"/>
         <source>Paste Image</source>
         <translation>Incolla immagine</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2009"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2167"/>
         <source>The image could not be loaded</source>
         <translation>L&apos;immagine non può essere caricata</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2141"/>
-        <source>Mark</source>
-        <translation>Marca</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2141"/>
-        <source>Marker text</source>
-        <translation>Marca testo</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2154"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2454"/>
         <source>About Drawpile</source>
         <translation>Informazioni su Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2156"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2456"/>
         <source>A collaborative drawing program.</source>
         <translation>Un programma di disegno collaborativo.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2258"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2561"/>
         <source>Lock in place</source>
         <translation>Blocco in atto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2262"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2565"/>
         <source>Hide Docks</source>
         <translation>Nascondi Docks</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2269"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2572"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>&amp;Nuovo</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2270"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2573"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>&amp;Apri…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2272"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2575"/>
         <source>Close</source>
         <translation>Chiudi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2274"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2577"/>
         <source>&amp;Save</source>
         <translation>&amp;Salva</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2275"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2578"/>
         <source>Save &amp;As...</source>
         <translation>Salva &amp;come…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2276"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2580"/>
         <source>Autosave</source>
         <translation>Salvataggio automatico</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2277"/>
-        <source>&amp;Animation...</source>
-        <translation>&amp;Аnimazione…</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2277"/>
-        <source>Export layers as animation frames</source>
-        <translation>Esportare i livelli come fotogrammi di animazione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2278"/>
-        <source>Session Template...</source>
-        <translation>Modello di Sessione…</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2278"/>
-        <source>Export current session as a template recording for use with the dedicated server</source>
-        <translation>Esporta la sessione corrente come modello di registrazione da utilizzare con il server dedicato</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2281"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2585"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>&amp;Esci</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2311"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2617"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>&amp;File</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2314"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2620"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>Apri &amp;Recente</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2325"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>&amp;Export</source>
         <translation>&amp;Еsporta</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2334"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2641"/>
         <source>File Tools</source>
         <translation>Strumenti File</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2350"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2657"/>
         <source>&amp;Undo</source>
         <translation>&amp;Annulla</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2351"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2658"/>
         <source>&amp;Redo</source>
         <translation>&amp;Indietro</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2352"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2659"/>
         <source>&amp;Copy Visible</source>
         <translation>&amp;Copia Visibile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2352"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2659"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Copia l&apos;&apos;area selezionata negli appunti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2353"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2660"/>
         <source>Copy Merged</source>
         <translation>Copia Unita</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2353"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2660"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>Copia l&apos;&apos;area selezionata, escluso lo sfondo, negli appunti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2354"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
         <source>Copy &amp;Layer</source>
         <translation>Copia &amp;Strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2354"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Copia l&apos;area selezionata del livello corrente negli Appunti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2355"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
         <source>Cu&amp;t Layer</source>
         <translation>Tagli&amp;a Strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2355"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Taglia l&apos;area selezionata del livello corrente negli appunti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2356"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2663"/>
         <source>&amp;Paste</source>
         <translation>&amp;Incolla</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2357"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
         <source>&amp;Stamp</source>
         <translation>&amp;Timbra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2359"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2667"/>
         <source>Paste &amp;From File...</source>
         <translation>Incolla;&amp;da File...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2360"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2668"/>
         <source>Delete Empty Annotations</source>
         <translation>Elimina Annotazioni Vuote</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2361"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2669"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>Ridimensio&amp;na Tela…</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2362"/>
-        <source>Set Background...</source>
-        <translation>Imposta sfondo…</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2363"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>Preferen&amp;ze</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2365"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2675"/>
         <source>Select &amp;All</source>
         <translation>Seleziona &amp;Tutto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2366"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2676"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Deseleziona</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2374"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2684"/>
         <source>Expand &amp;Up</source>
         <translation>Espandi &amp;Sopra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2375"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2685"/>
         <source>Expand &amp;Down</source>
         <translation>Espandi &amp;Sotto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2376"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2686"/>
         <source>Expand &amp;Left</source>
         <translation>Espandi &amp;a Sinistra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2377"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2687"/>
         <source>Expand &amp;Right</source>
         <translation>Espandi &amp;a Destra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2379"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2689"/>
         <source>Delete</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2380"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2690"/>
         <source>Fill Selection</source>
         <translation>Riempi Selezione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2381"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2691"/>
         <source>Recolor Selection</source>
         <translation>Ricolora Selezione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2382"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
         <source>Color Erase Selection</source>
         <translation>Cancella Colore Selezionato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2440"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2754"/>
         <source>&amp;Edit</source>
         <translation>&amp;Modifica</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2458"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2773"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;Espandi Tela</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2793"/>
         <source>Edit Tools</source>
         <translation>Modifica Strumenti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2487"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2806"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;Barre degli Strumenti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2490"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2809"/>
         <source>&amp;Docks</source>
         <translation>&amp;Docks</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2493"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2812"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2495"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2814"/>
         <source>Flipbook</source>
         <translation>Libro pieghevole</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2495"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2814"/>
         <source>Show animation preview window</source>
         <translation>Mostra la finestra di anteprima dell&apos;animazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2497"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2816"/>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;Avanti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2498"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2817"/>
         <source>Zoom &amp;Out</source>
         <translation>Zoom &amp;Indietro</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2499"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2818"/>
         <source>&amp;Normal Size</source>
         <translation>&amp;Dimensione Normale</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2500"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2819"/>
         <source>&amp;Reset Rotation</source>
         <translation>&amp;Ripristina Rotazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2501"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2820"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Ruota Tela Senso Orario</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2502"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2821"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>Ruota Tela Senso Antiorario</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2504"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2823"/>
         <source>Mirror</source>
         <translation>Specchio</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2505"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2824"/>
         <source>Flip</source>
         <translation>Capovolgi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2507"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2826"/>
         <source>Show &amp;Annotations</source>
         <translation>Mostra &amp;Annotazioni</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2508"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2827"/>
         <source>Show User &amp;Pointers</source>
         <translation>Mostra Utente &amp;e Puntatori</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2509"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2828"/>
         <source>Show Names</source>
         <translation>Mostra Nomi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2510"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2829"/>
         <source>Show Layers</source>
         <translation>Mostra Strati</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2511"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2830"/>
         <source>Show Avatars</source>
         <translation>Mostra Avatars</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2512"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2831"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Mostra Tr&amp;accia Laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2513"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2832"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>Mostra Griglia &amp;Pixel</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2515"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2834"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Schermo Intero</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2577"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2897"/>
         <source>&amp;View</source>
         <translation>&amp;Vista</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2584"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2904"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Zoom</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2589"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2909"/>
         <source>Rotation</source>
         <translation>Rotazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2599"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2944"/>
         <source>User Pointers</source>
         <translation>Puntatori Utente</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2618"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2962"/>
         <source>New Layer</source>
         <translation>Nuovo Strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2619"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2964"/>
         <source>Duplicate Layer</source>
         <translation>Duplica Strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2620"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2965"/>
         <source>Merge with Layer Below</source>
         <translation>Unisci con Strato Sotto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2621"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2967"/>
         <source>Delete Layer</source>
         <translation>Cancella Strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2625"/>
-        <source>Solo</source>
-        <translation>Solo</translation>
+        <location filename="../../desktop/mainwindow.cpp" line="1291"/>
+        <source>Export Animated GIF</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
-        <source>Onionskin</source>
-        <translation>Buccia di cipolla</translation>
+        <location filename="../../desktop/mainwindow.cpp" line="1311"/>
+        <source>Choose folder to save frames in</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
-        <source>Show Numbers</source>
-        <translation>Mostra Numeri</translation>
+        <location filename="../../desktop/mainwindow.cpp" line="1324"/>
+        <source>Saving animation...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1401"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1895"/>
+        <source>Unsupported format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1404"/>
+        <source>Couldn&apos;t start recording.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1407"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1910"/>
+        <source>Unknown error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1417"/>
+        <source>Error closing profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1422"/>
+        <source>Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1428"/>
+        <source>Error opening profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1892"/>
+        <source>Bad arguments, this is probably a bug in Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1898"/>
+        <source>Couldn&apos;t open file for reading.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1901"/>
+        <source>Error reading file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1904"/>
+        <source>File content doesn&apos;t match its type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="1907"/>
+        <source>Incompatible recording.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2371"/>
+        <source>Stop Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2371"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3095"/>
+        <source>Profile...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2378"/>
+        <source>Set Artificial Lag... (currently %1 ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2391"/>
+        <source>Set Artificial Lag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2392"/>
+        <source>Artificial lag in milliseconds (0 to disable):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2403"/>
+        <source>Artificial Disconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2404"/>
+        <source>Simulate a disconnect after this many seconds:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2419"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3098"/>
+        <source>Record Debug Dumps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2420"/>
+        <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
+
+Debug dump recording starts on the next canvas reset and the files will be saved in %1
+
+Are you sure youwant to start recording debug dumps?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2436"/>
+        <source>Open Debug Dump</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
+        <source>Settings File:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2579"/>
+        <source>Save Selection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2581"/>
+        <source>Animated &amp;GIF...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2582"/>
+        <source>Animation &amp;Frames...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2664"/>
+        <source>Paste in View Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2670"/>
+        <source>Set Session Background...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
+        <source>Set Local Background...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2672"/>
+        <source>Clear Local Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2778"/>
+        <source>Canvas Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2919"/>
+        <source>Normal</source>
+        <translation type="unfinished">Normale</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2920"/>
+        <source>Current Layer Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2921"/>
+        <source>Current Frame Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2922"/>
+        <source>Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2923"/>
         <source>Show Censored Layers</source>
         <translation>Mostra Livelli Censurati</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2933"/>
+        <source>Layer View Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2963"/>
+        <source>New Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2966"/>
+        <source>Properties...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2971"/>
         <source>Select Above</source>
         <translation>Seleziona Sopra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2972"/>
         <source>Select Below</source>
         <translation>Seleziona Sotto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2640"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2973"/>
+        <source>Next Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2974"/>
+        <source>Previous Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2981"/>
         <source>Layer</source>
         <translation>Strato</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3004"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>&amp;Host...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3004"/>
         <source>Share your drawingboard with others</source>
         <translation>Condividi il tuo tavolo da disegno con gli altri</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3005"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>&amp;Entra...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3005"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Partecipa alla sessione di disegno di un altro utente</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2663"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3006"/>
         <source>&amp;Leave</source>
         <translation>&amp;Abbandona</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2663"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3006"/>
         <source>Leave this drawing session</source>
         <translation>Lascia questa sessione di disegno</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3008"/>
         <source>Event Log</source>
         <translation>Registro Eventi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2666"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3009"/>
         <source>Settings...</source>
         <translation>ImpostazionI...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2668"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3011"/>
         <source>Become Operator...</source>
         <translation>Diventa Operatore...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2669"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3012"/>
         <source>&amp;Reset...</source>
         <translation>&amp;Resetta...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3014"/>
         <source>Report...</source>
         <translation>Rapporto...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3016"/>
         <source>Lock Everything</source>
         <translation>Blocca Tutto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3016"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Impedisci le modifiche al tavolo da disegno</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2696"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3038"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>&amp;Sessione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2702"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3044"/>
         <source>Moderation</source>
         <translation>Moderazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2716"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3058"/>
         <source>Freehand</source>
         <translation>A mano libera</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2716"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3058"/>
         <source>Freehand brush tool</source>
         <translation>Strumento pennello a mano libera</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2717"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3059"/>
         <source>Eraser</source>
         <translation>Gomma</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2717"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3059"/>
         <source>Freehand eraser brush</source>
         <translation>Pennello da cancellare a mano libera</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2718"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3060"/>
         <source>&amp;Line</source>
         <translation>&amp;Linea</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2718"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3060"/>
         <source>Draw straight lines</source>
         <translation>Disegna linee rette</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3061"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;Rettangolo</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3061"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>Disegna quadrati e rettangoli vuoti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2720"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3062"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Ellisse</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2720"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3062"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>Disegna cerchi e ellissi vuoti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2721"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3063"/>
         <source>Bezier Curve</source>
         <translation>Curve di bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2721"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3063"/>
         <source>Draw bezier curves</source>
         <translation>Disegna le curve di Bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2722"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3064"/>
         <source>&amp;Flood Fill</source>
         <translation>&amp;Riempimento</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2722"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3064"/>
         <source>Fill areas</source>
         <translation>Riempi le aree</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3065"/>
         <source>&amp;Annotation</source>
         <translation>&amp;Annotazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3065"/>
         <source>Add text to the picture</source>
         <translation>Aggiungi testo alla foto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3067"/>
         <source>&amp;Color Picker</source>
         <translation>&amp;Scegliere Colore</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2725"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3067"/>
         <source>Pick colors from the image</source>
         <translation>Scegli colori dall&apos;immagine</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3068"/>
         <source>&amp;Laser Pointer</source>
         <translation>&amp;Puntatore laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3068"/>
         <source>Point out things on the canvas</source>
         <translation>Fai notare cose sulla tela</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3069"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>&amp;Seleziona (Rettangolare)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3069"/>
         <source>Select area for copying</source>
         <translation>Seleziona l&apos;area per la copia</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3070"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>&amp;Seleziona (Forma Libera)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2728"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3070"/>
         <source>Select a free-form area for copying</source>
         <translation>Seleziona un&apos;area di forma libera per la copia</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2729"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3071"/>
         <source>Zoom</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2729"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3071"/>
         <source>Zoom the canvas view</source>
         <translation>Ingrandisci la vista della tela</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2730"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3072"/>
         <source>Inspector</source>
         <translation>Ispettore</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2730"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3072"/>
         <source>Find out who did it</source>
         <translation>Scopri chi l&apos;ha fatto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2731"/>
-        <source>&amp;Mark</source>
-        <translation>&amp;Marca</translation>
+        <location filename="../../desktop/mainwindow.cpp" line="3094"/>
+        <source>Developer Tools</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2731"/>
-        <source>Leave a marker to find this spot on the recording</source>
-        <translation>Lascia un segno per trovare questo punto sulla registrazione</translation>
+        <location filename="../../desktop/mainwindow.cpp" line="3096"/>
+        <source>Set Artificial Lag...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2750"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3097"/>
+        <source>Artifical Disconnect...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3099"/>
+        <source>Open Debug Dump...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3112"/>
+        <source>Toggle Eraser Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3113"/>
+        <source>Toggle Recolor Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3263"/>
+        <source>Color Wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3267"/>
+        <source>Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3271"/>
+        <source>Color Sliders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3291"/>
+        <source>Onion Skins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="3089"/>
         <source>&amp;Tools</source>
         <translation>&amp;Strumenti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2754"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3092"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Scorciatoie</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2756"/>
-        <source>Toggle eraser mode</source>
-        <translation>Attiva/disattiva modalità gomma</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2757"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3114"/>
         <source>Swap Last Colors</source>
         <translation>Scambia Ultimi Colori</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2758"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3115"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>&amp;Diminuisci Dimensione Pennello</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2759"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3116"/>
         <source>&amp;Increase Brush Size</source>
         <translation>&amp;Aumenta Dimensione Pennello</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2774"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3134"/>
         <source>Drawing tools</source>
         <translation>Strumenti di disegno</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2797"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3157"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Homepage</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2798"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3158"/>
         <source>Tablet Tester</source>
         <translation>Tablet Tester</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2799"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3159"/>
         <source>Log File</source>
         <translation>File Log</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2800"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3160"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;Informazioni su Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2801"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3161"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>Informazioni su &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2802"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3162"/>
         <source>Check For Updates</source>
         <translation>Controlla Aggiornamenti</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2833"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3193"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>&amp;Aiuto</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2869"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3229"/>
         <source>Finish action</source>
         <translation>Finire l&apos;azione</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2873"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3233"/>
         <source>Cancel action</source>
         <translation>Сancella azione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2902"/>
-        <source>Color</source>
-        <translation>Colore</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/macmenu.cpp" line="80"/>
         <source>Window</source>
         <translation>Finestra</translation>
-    </message>
-</context>
-<context>
-    <name>Navigator</name>
-    <message>
-        <location filename="../../desktop/ui/navigator.ui" line="14"/>
-        <source>Navigator</source>
-        <translation>Navigatore</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/navigator.ui" line="43"/>
-        <source>Reset Zoom</source>
-        <translation>Resetta Zoom</translation>
     </message>
 </context>
 <context>
@@ -1923,14 +2282,6 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>PaletteListModel</name>
-    <message>
-        <location filename="../utils/palettelistmodel.cpp" line="171"/>
-        <source>New palette</source>
-        <translation>Nuova tavolozza</translation>
-    </message>
-</context>
-<context>
     <name>PlaybackDialog</name>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="14"/>
@@ -1939,8 +2290,8 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="39"/>
-        <source>Rewind stroke</source>
-        <translation>Colpo di riavvolgimento</translation>
+        <source>Skip backward</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../desktop/ui/playback.ui" line="59"/>
@@ -1958,151 +2309,136 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Salta</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="190"/>
+        <location filename="../../desktop/ui/playback.ui" line="170"/>
         <source>Speed:</source>
         <translation>Velocità:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="255"/>
+        <location filename="../../desktop/ui/playback.ui" line="242"/>
+        <source>Build an index file for this recording to quickly skip to any part.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/playback.ui" line="267"/>
         <source>Build Index</source>
         <translation>Costruisci indice</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="313"/>
+        <location filename="../../desktop/ui/playback.ui" line="343"/>
         <source>Frame:</source>
         <translation>Frame:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="345"/>
-        <source>Time:</source>
-        <translation>Tempo:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/playback.ui" line="393"/>
+        <location filename="../../desktop/ui/playback.ui" line="385"/>
         <source>Automatically save a frame at each step</source>
         <translation>Salva automaticamente un frame ad ogni passaggio</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="396"/>
+        <location filename="../../desktop/ui/playback.ui" line="388"/>
         <source>Autosave</source>
         <translation>Salvataggio automatico</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="409"/>
+        <location filename="../../desktop/ui/playback.ui" line="401"/>
         <source>Save frame</source>
         <translation>Salva frame</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="416"/>
+        <location filename="../../desktop/ui/playback.ui" line="408"/>
         <source>Stop</source>
         <translation>Ferma</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/playback.ui" line="455"/>
+        <location filename="../../desktop/ui/playback.ui" line="447"/>
         <source>Export Video...</source>
         <translation>Esporta Video...</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/playback.ui" line="469"/>
-        <source>Filter recording</source>
-        <translation>Filtra la registrazione</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
         <location filename="../../desktop/dialogs/avatarimport.cpp" line="76"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="614"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="600"/>
         <source>All files (*)</source>
         <translation>Tutti i files (*)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="88"/>
-        <source>%1 s. ago</source>
-        <translation>%1 s. fà</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="88"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="93"/>
         <source>Freehand</source>
         <translation>Mano libera</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="93"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="99"/>
         <source>Eraser</source>
         <translation>Gomma</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="98"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="105"/>
         <source>Line</source>
         <translation>Linea</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="103"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="111"/>
         <source>Rectangle</source>
         <translation>Rettangolo</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="108"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="117"/>
         <source>Ellipse</source>
         <translation>Еllisse</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="113"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="123"/>
         <source>Bezier Curve</source>
         <translation>Curva Bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="118"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="129"/>
         <source>Flood Fill</source>
         <translation>Riempimento</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="123"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="135"/>
         <source>Annotation</source>
         <translation>Annotazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="128"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="141"/>
         <source>Color Picker</source>
         <translation>Prendi Colore</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="133"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="147"/>
         <source>Laser Pointer</source>
         <translation>Puntatore Laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="138"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="153"/>
         <source>Selection (Rectangular)</source>
         <translation>Selezione (Rettangolare)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="143"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="159"/>
         <source>Selection (Free-Form)</source>
         <translation>Selezione (Forma Libera)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="148"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="165"/>
         <source>Zoom</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="153"/>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="171"/>
         <source>Inspector</source>
         <translation>Іspettore</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="549"/>
-        <source>Warning</source>
-        <translation>Avviso</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="98"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="106"/>
         <source>Erase</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="102"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="110"/>
         <source>Color Erase</source>
         <translation>Сancella Colore</translation>
     </message>
@@ -2110,97 +2446,57 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../canvas/loader.cpp" line="91"/>
-        <source>Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.
-</source>
-        <translation>Drawpile non supporta tutte le funzionalità utilizzate in questo file OpenRaster. Il salvataggio di questo file potrebbe causare la perdita di dati.
-</translation>
-    </message>
-    <message>
-        <location filename="../canvas/loader.cpp" line="93"/>
-        <source>Application specific extensions are used</source>
-        <translation>Vengono utilizzate estensioni specifiche dell&apos;applicazione</translation>
-    </message>
-    <message>
-        <location filename="../canvas/loader.cpp" line="95"/>
-        <source>Nested layers are not fully supported</source>
-        <translation>I livelli nidificati non sono completamente supportati</translation>
-    </message>
-    <message>
-        <location filename="../canvas/loader.cpp" line="97"/>
-        <source>Unsupported background tile size</source>
-        <translation>Dimensione del riquadro di sfondo non supportato</translation>
-    </message>
-    <message>
         <location filename="../net/sessionlistingmodel.cpp" line="91"/>
         <source>%1h %2m</source>
         <translation>%1h %2m</translation>
     </message>
     <message>
-        <location filename="../ora/orareader.cpp" line="417"/>
-        <source>Image has zero size!</source>
-        <translation>L&apos;immagine ha dimensione zero!</translation>
-    </message>
-    <message>
-        <location filename="../ora/orareader.cpp" line="420"/>
-        <source>Image is too big!</source>
-        <translation>L&apos;immagine è troppo grande!</translation>
-    </message>
-    <message>
-        <location filename="../ora/orareader.cpp" line="423"/>
-        <source>No layers found!</source>
-        <translation>Stratinon trovati!</translation>
-    </message>
-    <message>
-        <location filename="../ora/orareader.cpp" line="482"/>
-        <source>Couldn&apos;t load layer %1</source>
-        <translation>Impossibile eseguire il caricamento dello strato %1</translation>
-    </message>
-    <message>
-        <location filename="../ora/orareader.cpp" line="562"/>
-        <location filename="../ora/orareader.cpp" line="569"/>
-        <source>File is not an OpenRaster file</source>
-        <translation>Il file non è un file OpenRaster</translation>
-    </message>
-    <message>
-        <location filename="../utils/images.cpp" line="103"/>
+        <location filename="../utils/images.cpp" line="142"/>
         <source>Images (%1)</source>
         <translation>Immagini (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="111"/>
+        <location filename="../utils/images.cpp" line="150"/>
         <source>Binary Recordings (%1)</source>
         <translation>Registrazioni binarie (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="112"/>
+        <location filename="../utils/images.cpp" line="151"/>
         <source>Text Recordings (%1)</source>
         <translation>Registrazioni di testo (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="113"/>
-        <source>Compressed Binary Recordings (%1)</source>
-        <translation>Registrazioni binarie compresse (%1)</translation>
-    </message>
-    <message>
-        <location filename="../utils/images.cpp" line="114"/>
-        <source>Compressed Text Recordings (%1)</source>
-        <translation>Registrazioni di Testo Compresse (%1)</translation>
-    </message>
-    <message>
-        <location filename="../utils/images.cpp" line="121"/>
+        <location filename="../utils/images.cpp" line="158"/>
         <source>Recordings (%1)</source>
         <translation>Registrazioni (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="128"/>
+        <location filename="../utils/images.cpp" line="165"/>
+        <source>Performance Profile (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/images.cpp" line="175"/>
+        <source>Debug Dumps (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../utils/images.cpp" line="181"/>
         <source>All Supported Files (%1)</source>
         <translation>Tutti i file supportati (%1)</translation>
     </message>
     <message>
-        <location filename="../utils/images.cpp" line="134"/>
+        <location filename="../utils/images.cpp" line="187"/>
         <source>All Files (*)</source>
         <translation>Tutti i Files(*)</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../drawdance/canvasstate.cpp" line="37"/>
+        <source>Layer %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2219,7 +2515,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Ridimensiona Tela</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/resizedialog.ui" line="96"/>
+        <location filename="../../desktop/ui/resizedialog.ui" line="71"/>
         <source>Keep aspect ratio</source>
         <translation>Mantenere proporzioni</translation>
     </message>
@@ -2538,28 +2834,38 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>permessi</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="368"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="367"/>
+        <source>Metadata:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="377"/>
+        <source>Timeline:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="388"/>
         <source>Banned users</source>
         <translation>Utenti Bloccati</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="399"/>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="465"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="419"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="485"/>
         <source>Remove selected</source>
         <translation>Rimuovi selezionati</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="409"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="429"/>
         <source>Announcements</source>
         <translation>Comunicazioni</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="443"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="463"/>
         <source>Private listing</source>
         <translation>Elenco privato</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="454"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="474"/>
         <source>Public listing</source>
         <translation>Elenco pubblico</translation>
     </message>
@@ -2577,11 +2883,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Іnterfaccia Utente</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="28"/>
-        <source>Brushes</source>
-        <translation type="unfinished">Pennelli</translation>
-    </message>
-    <message>
         <location filename="../../desktop/ui/settings.ui" line="33"/>
         <source>Color Wheel</source>
         <translation type="unfinished"></translation>
@@ -2592,534 +2893,591 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Notifiche</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="43"/>
-        <source>Animation</source>
-        <translation>Аnimazione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="48"/>
+        <location filename="../../desktop/ui/settings.ui" line="53"/>
         <source>Network</source>
         <translation>Network</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="53"/>
+        <location filename="../../desktop/ui/settings.ui" line="58"/>
         <source>Shortcuts</source>
         <translation>Scorciatoie</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="58"/>
+        <location filename="../../desktop/ui/settings.ui" line="63"/>
         <source>Canvas Shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="63"/>
+        <location filename="../../desktop/ui/settings.ui" line="68"/>
         <source>Known Hosts</source>
         <translation>Host conosciuti</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="68"/>
+        <location filename="../../desktop/ui/settings.ui" line="73"/>
         <source>List Servers</source>
         <translation>Elenco Server</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="73"/>
+        <location filename="../../desktop/ui/settings.ui" line="78"/>
         <source>Parental Controls</source>
         <translation>Controlli Parentali</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="78"/>
+        <location filename="../../desktop/ui/settings.ui" line="83"/>
         <source>Avatars</source>
         <translation>Avatars</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="105"/>
+        <location filename="../../desktop/ui/settings.ui" line="113"/>
         <source>Language:</source>
         <translation>Lingua:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="115"/>
+        <location filename="../../desktop/ui/settings.ui" line="141"/>
         <source>Theme:</source>
         <translation>Теma:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="122"/>
-        <source>Night mode (requires restart)</source>
-        <translation>Modalità notte (richiede il riavvio)</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="129"/>
-        <source>Logging:</source>
-        <translation>Logging:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="136"/>
+        <location filename="../../desktop/ui/settings.ui" line="222"/>
         <source>Write log file</source>
         <translation>Scrivi file di registro</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="156"/>
-        <source>Tablet:</source>
-        <translation>Tablet:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="163"/>
+        <location filename="../../desktop/ui/settings.ui" line="372"/>
         <source>Enable pressure sensitivity</source>
         <translation>Abilita sensibilità alla pressione</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="173"/>
+        <location filename="../../desktop/ui/settings.ui" line="389"/>
         <source>Use Windows Ink (requires restart)</source>
         <translation>Usa inchiostro Windows (richiede il riavvio)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="180"/>
+        <location filename="../../desktop/ui/settings.ui" line="396"/>
         <source>Enable relative pen mode hack (Wintab only)</source>
         <translation>Abilita modalità penna (solo Wintab)</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="187"/>
+        <location filename="../../desktop/ui/settings.ui" line="382"/>
         <source>Detect eraser tip</source>
         <translation>Rileva la gomma</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="210"/>
-        <source>Touch:</source>
-        <translation>Touch:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="217"/>
+        <location filename="../../desktop/ui/settings.ui" line="412"/>
         <source>Scroll with finger</source>
         <translation>Scorri con il dito</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="224"/>
+        <location filename="../../desktop/ui/settings.ui" line="419"/>
         <source>Pinch to zoom</source>
         <translation>Pizzica per zoomare</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="231"/>
+        <location filename="../../desktop/ui/settings.ui" line="426"/>
         <source>Twist to rotate</source>
         <translation>Gira per ruotare</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="254"/>
-        <source>Autosave interval:</source>
-        <translation>Intervallo di salvataggio automatico:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="261"/>
-        <location filename="../../desktop/ui/settings.ui" line="829"/>
+        <location filename="../../desktop/ui/settings.ui" line="824"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="287"/>
-        <source>Brush cursor:</source>
-        <translation>Cursore del pennello:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="295"/>
+        <location filename="../../desktop/ui/settings.ui" line="280"/>
         <source>Dot</source>
         <translation>Dot</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="300"/>
+        <location filename="../../desktop/ui/settings.ui" line="285"/>
         <source>Crosshair</source>
         <translation>Mirino</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="305"/>
+        <location filename="../../desktop/ui/settings.ui" line="290"/>
         <source>Arrow</source>
         <translation>Freccia</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="326"/>
-        <source>Tools:</source>
-        <translation>Strumenti:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="333"/>
-        <source>Shortcut toggles last selection</source>
-        <translation>La scelta rapida attiva o disattiva l&apos;ultima selezione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="340"/>
+        <location filename="../../desktop/ui/settings.ui" line="339"/>
         <source>Share color across brush slots</source>
         <translation>Condividi il colore attraverso gli intervalli del pennello</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="347"/>
-        <source>Enable this workaround if your cursor doesn&apos;t update when you move it into the canvas with the tablet pen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="350"/>
-        <source>Enable canvas viewport entry hack</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="370"/>
-        <source>Brush outline width:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="387"/>
-        <location filename="../../desktop/ui/settings.ui" line="399"/>
-        <location filename="../../desktop/ui/settings.ui" line="418"/>
-        <source>The maximum value for the brush size slider. You can always enter larger values manually or via keyboard shortcuts.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="390"/>
-        <source>Size Slider Limit:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="421"/>
+        <location filename="../../desktop/ui/settings.ui" line="307"/>
         <source>px</source>
         <translation type="unfinished">px</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="436"/>
-        <location filename="../../desktop/ui/settings.ui" line="448"/>
-        <location filename="../../desktop/ui/settings.ui" line="467"/>
-        <source>The maximum value for the brush spacing slider. You can always enter larger values manually.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="439"/>
-        <source>Spacing Slider Limit:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="470"/>
+        <location filename="../../desktop/ui/settings.ui" line="592"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="498"/>
+        <location filename="../../desktop/ui/settings.ui" line="462"/>
         <source>Shape:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="506"/>
+        <location filename="../../desktop/ui/settings.ui" line="470"/>
         <source>Triangle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="511"/>
+        <location filename="../../desktop/ui/settings.ui" line="475"/>
         <source>Square</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="519"/>
+        <location filename="../../desktop/ui/settings.ui" line="483"/>
         <source>Angle:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="527"/>
+        <location filename="../../desktop/ui/settings.ui" line="491"/>
         <source>Fixed</source>
         <translation type="unfinished">Aggiustato</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="532"/>
+        <location filename="../../desktop/ui/settings.ui" line="496"/>
         <source>Rotating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="540"/>
+        <location filename="../../desktop/ui/settings.ui" line="504"/>
         <source>Color Space:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="548"/>
+        <location filename="../../desktop/ui/settings.ui" line="512"/>
         <source>HSV (Hue, Saturation, Value)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="553"/>
+        <location filename="../../desktop/ui/settings.ui" line="517"/>
         <source>HSL (Hue, Saturation, Lightness)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="558"/>
+        <location filename="../../desktop/ui/settings.ui" line="522"/>
         <source>Lch (Luminance, Chroma, Hue)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="582"/>
+        <location filename="../../desktop/ui/settings.ui" line="546"/>
         <source>Preview:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="593"/>
-        <source>Notification volume:</source>
-        <translation>Volume di notifica:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="640"/>
+        <location filename="../../desktop/ui/settings.ui" line="564"/>
         <source>Chat</source>
         <translation>Сhat</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="647"/>
+        <location filename="../../desktop/ui/settings.ui" line="571"/>
         <source>Recording marker</source>
         <translation>Marcatore di registrazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="654"/>
+        <location filename="../../desktop/ui/settings.ui" line="578"/>
         <source>User login and logout</source>
         <translation>Accesso utente e disconnessione</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="661"/>
+        <location filename="../../desktop/ui/settings.ui" line="585"/>
         <source>Canvas lock</source>
         <translation>Blocco della tela</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="633"/>
+        <location filename="../../desktop/ui/settings.ui" line="557"/>
         <source>Notifications:</source>
         <translation>Notifiche:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="672"/>
+        <location filename="../../desktop/ui/settings.ui" line="715"/>
         <source>Record pauses</source>
         <translation>Registra pause</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="684"/>
+        <location filename="../../desktop/ui/settings.ui" line="727"/>
         <source>shortest: </source>
         <translation>Abbrevia: </translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="687"/>
+        <location filename="../../desktop/ui/settings.ui" line="244"/>
+        <location filename="../../desktop/ui/settings.ui" line="730"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="721"/>
+        <location filename="../../desktop/ui/settings.ui" line="764"/>
         <source>Add timestamp markers</source>
         <translation>Aggiungi marcatori di data e ora</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="730"/>
+        <location filename="../../desktop/ui/settings.ui" line="773"/>
         <source> minutes</source>
         <translation> minuti</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="733"/>
+        <location filename="../../desktop/ui/settings.ui" line="776"/>
         <source>every </source>
         <translation>ogni</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="767"/>
-        <source>Onionskin layers:</source>
-        <translation>Strati a buccia di cipolla:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="776"/>
-        <source> below</source>
-        <translation> sotto</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="783"/>
-        <source> above</source>
-        <translation> sopra</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="808"/>
-        <source>Tint layers</source>
-        <translation>Tinta strati</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/settings.ui" line="845"/>
+        <location filename="../../desktop/ui/settings.ui" line="840"/>
         <source>Default server port:</source>
         <translation>Porta del server predefinita:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="880"/>
+        <location filename="../../desktop/ui/settings.ui" line="875"/>
         <source>Session history:</source>
         <translation>Cronologia della sessione:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1190"/>
+        <location filename="../../desktop/ui/settings.ui" line="1185"/>
         <source>Move up</source>
         <translation>Sposta in alto</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1201"/>
+        <location filename="../../desktop/ui/settings.ui" line="1196"/>
         <source>Move down</source>
         <translation>Sposta in basso</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="822"/>
+        <location filename="../../desktop/ui/settings.ui" line="817"/>
         <source>Connection timeout:</source>
         <translation>Timeout di connessione:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="859"/>
+        <location filename="../../desktop/ui/settings.ui" line="28"/>
+        <source>Tablet and Touch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="43"/>
+        <source>Paint Engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="48"/>
+        <source>Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="107"/>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="132"/>
+        <location filename="../../desktop/ui/settings.ui" line="190"/>
+        <source>(requires restart)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="157"/>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="162"/>
+        <source>Fusion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="167"/>
+        <source>Fusion Dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="172"/>
+        <source>Krita Bright</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="177"/>
+        <source>Krita Dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="182"/>
+        <source>Krita Darker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="199"/>
+        <source>Ask for confirmation when deleting a layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="206"/>
+        <source>Show canvas scroll bars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="216"/>
+        <source>Logging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="232"/>
+        <source>Autosave</source>
+        <translation type="unfinished">Salvataggio automatico</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="247"/>
+        <source>Interval: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="260"/>
+        <source>You can enable and disable autosave using File &gt; Autosave.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="273"/>
+        <source>Brush Cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="304"/>
+        <source>Outline Width: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="326"/>
+        <source>Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="332"/>
+        <source>Toggle to previous tool when shortcut for the current tool is pressed again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="366"/>
+        <source>Tablet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="406"/>
+        <source>Touch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="595"/>
+        <source>Notification Volume: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="609"/>
+        <source>Rendering</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="615"/>
+        <source> frames per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="618"/>
+        <source>Framerate: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="634"/>
+        <source>How often the canvas visuals are updated. Lowering this value may improve performance. This doesn&apos;t affect input or network handling, it&apos;s only how often your view is updated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="647"/>
+        <source>Session Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="653"/>
+        <source>Number of Snapshots to Keep: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="663"/>
+        <source> second(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="666"/>
+        <source>Snapshot Interval: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="682"/>
+        <source>Drawpile will hold onto a certain number of canvas snapshots. You can use Session &gt; Reset... to revert back to one of these. If you want Drawpile to use less memory, reduce the number of snapshots to keep. Snapshots share data that didn&apos;t change between them, so higher intervals use more memory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/settings.ui" line="854"/>
         <source>Announce with Zeroconf</source>
         <translation>Annuncio con Zeroconf</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="866"/>
+        <location filename="../../desktop/ui/settings.ui" line="861"/>
         <source>Automatically set up port forwarding with UPnP</source>
         <translation>Imposta automaticamente il port forwarding con UPnP</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="873"/>
+        <location filename="../../desktop/ui/settings.ui" line="868"/>
         <source>Never publish user list</source>
         <translation>Non pubblicare mai elenchi di utenti</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="887"/>
+        <location filename="../../desktop/ui/settings.ui" line="882"/>
         <source>Automatically reset when space is low</source>
         <translation>Ripristina automaticamente quando lo spazio è basso</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="894"/>
+        <location filename="../../desktop/ui/settings.ui" line="889"/>
         <source>Account passwords:</source>
         <translation>Password dell&apos;account:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="901"/>
+        <location filename="../../desktop/ui/settings.ui" line="896"/>
         <source>Permit insecure storage</source>
         <translation>Consentire conservazione non sicura</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="912"/>
+        <location filename="../../desktop/ui/settings.ui" line="907"/>
         <source>Filter</source>
         <translation>Filtro</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="933"/>
+        <location filename="../../desktop/ui/settings.ui" line="928"/>
         <source>Drag mode:</source>
         <translation>Modalità trascinamento:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="940"/>
+        <location filename="../../desktop/ui/settings.ui" line="935"/>
         <source>Spacebar / middle mouse button</source>
         <translation>Barra spaziatrice / pulsante centrale del mouse</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="947"/>
+        <location filename="../../desktop/ui/settings.ui" line="942"/>
         <source>Drag rotate view:</source>
         <translation>Trascina vista ruotata:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="957"/>
+        <location filename="../../desktop/ui/settings.ui" line="952"/>
         <source>Drag zoom view:</source>
         <translation>Trascina vista zoom:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="967"/>
+        <location filename="../../desktop/ui/settings.ui" line="962"/>
         <source>Drag tool adjust:</source>
         <translation>trascina strumento di regolazione:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="977"/>
+        <location filename="../../desktop/ui/settings.ui" line="972"/>
         <source>Scroll zoom view:</source>
         <translation>Scorri vista zoom</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="987"/>
+        <location filename="../../desktop/ui/settings.ui" line="982"/>
         <source>Scroll tool adjust:</source>
         <translation>Scorri strumento di regolazione:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="997"/>
+        <location filename="../../desktop/ui/settings.ui" line="992"/>
         <source>Color picker mode:</source>
         <translation>Modalità selezione colori:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1007"/>
+        <location filename="../../desktop/ui/settings.ui" line="1002"/>
         <source>Layer picker mode:</source>
         <translation>Modalità selezione livelli:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1017"/>
+        <location filename="../../desktop/ui/settings.ui" line="1012"/>
         <source>Tool constrain mode:</source>
         <translation>Modalità vincolo strumento:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1027"/>
+        <location filename="../../desktop/ui/settings.ui" line="1022"/>
         <source>Tool center mode:</source>
         <translation>Modalità centro strumento:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1089"/>
+        <location filename="../../desktop/ui/settings.ui" line="1084"/>
         <source>Scroll rotate view:</source>
         <translation>Scorri vista ruotata</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1115"/>
+        <location filename="../../desktop/ui/settings.ui" line="1110"/>
         <source>Import trusted...</source>
         <translation>Importazione fidata...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1138"/>
+        <location filename="../../desktop/ui/settings.ui" line="1133"/>
         <source>Mark as trusted</source>
         <translation>Segna come fidato</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1152"/>
-        <location filename="../../desktop/ui/settings.ui" line="1219"/>
+        <location filename="../../desktop/ui/settings.ui" line="1147"/>
+        <location filename="../../desktop/ui/settings.ui" line="1214"/>
         <source>Remove</source>
         <translation>Rimuovi</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1232"/>
+        <location filename="../../desktop/ui/settings.ui" line="1227"/>
         <source>NSFM tag words:</source>
         <translation>Parole tag NSFM:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1242"/>
+        <location filename="../../desktop/ui/settings.ui" line="1237"/>
         <source>Automatically add NSFM tag based on title</source>
         <translation>Aggiungi automaticamente il tag NSFM in base al titolo</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1249"/>
+        <location filename="../../desktop/ui/settings.ui" line="1244"/>
         <source>NSFM sessions:</source>
         <translation>Sessioni NSFM:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1256"/>
+        <location filename="../../desktop/ui/settings.ui" line="1251"/>
         <source>&amp;Unrestricted</source>
         <translation>&amp;Libera</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1263"/>
+        <location filename="../../desktop/ui/settings.ui" line="1258"/>
         <source>Hide fro&amp;m listings</source>
         <translation>Nascondi dagli elenchi</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1270"/>
+        <location filename="../../desktop/ui/settings.ui" line="1265"/>
         <source>Disallow &amp;joining</source>
         <translation>Non consentire &amp;ad entrare</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1277"/>
+        <location filename="../../desktop/ui/settings.ui" line="1272"/>
         <source>Disconnect when &amp;tagged as NSFM</source>
         <translation>Disconnetti quando &amp; taggato come NSFM</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1284"/>
+        <location filename="../../desktop/ui/settings.ui" line="1279"/>
         <source>Lock</source>
         <translation>Blocca</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1304"/>
+        <location filename="../../desktop/ui/settings.ui" line="1299"/>
         <source>Block layer uncensoring</source>
         <translation>Blocco senza censura</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1212"/>
-        <location filename="../../desktop/ui/settings.ui" line="1337"/>
+        <location filename="../../desktop/ui/settings.ui" line="1207"/>
+        <location filename="../../desktop/ui/settings.ui" line="1332"/>
         <source>Add...</source>
         <translation>Aggiungi...</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/settings.ui" line="1344"/>
+        <location filename="../../desktop/ui/settings.ui" line="1339"/>
         <source>Delete</source>
         <translation>Cancella</translation>
     </message>
@@ -3184,31 +3542,6 @@ Simplify the canvas and reset manually before space runs out.</source>
         <source>Annotation content</source>
         <translation>Contenuto di annotazione</translation>
     </message>
-    <message>
-        <location filename="../../desktop/ui/textsettings.ui" line="242"/>
-        <source>Merge the text onto the current layer</source>
-        <translation>Unire il testo sullo strato corrente</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/textsettings.ui" line="245"/>
-        <source>Merge</source>
-        <translation>Unire</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/textsettings.ui" line="252"/>
-        <source>Delete this annotation</source>
-        <translation>Elimina questa annotazione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/textsettings.ui" line="255"/>
-        <source>Remove</source>
-        <translation>Rimuovi</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/textsettings.ui" line="266"/>
-        <source>Protected</source>
-        <translation>Protetto</translation>
-    </message>
 </context>
 <context>
     <name>VersionCheckDialog</name>
@@ -3231,164 +3564,319 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Esporta video</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="22"/>
-        <source>Export format:</source>
-        <translation>Formato di esportazione:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="30"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="84"/>
         <source>Image series</source>
         <translation>Serie di immagini</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="35"/>
-        <source>WebM video</source>
-        <translation>Video WebM</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="40"/>
-        <source>Animated GIF</source>
-        <translation>GIF Animata</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="50"/>
-        <source>Animation Options</source>
-        <translation>Opzioni Animazione</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="59"/>
-        <source>Layers:</source>
-        <translation>Strati:</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="94"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="20"/>
         <source>Video Options</source>
         <translation>Opzioni Video</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="106"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="69"/>
         <source>Framerate:</source>
         <translation>Frequenza fotogrammi:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="115"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="34"/>
         <source> FPS</source>
         <translation> FPS</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="143"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="62"/>
         <source>Size:</source>
         <translation>Dimensione:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="212"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="76"/>
+        <source>Format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/videoexport.ui" line="159"/>
         <source>Export Options</source>
         <translation>Opzioni di esportazione</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="243"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="190"/>
         <source>Image format:</source>
         <translation>Formato immagine:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="270"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="217"/>
         <source>File name pattern:</source>
         <translation>Nome file modello:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="290"/>
+        <location filename="../../desktop/ui/videoexport.ui" line="237"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;testa/&gt;&lt;corpo&gt;&lt;p&gt;Segnaposti del modello supportati:&lt;/p&gt;&lt;p&gt;&lt;stile di campata=&quot; peso del carattere:600;&quot;&gt;{F}&lt;/span&gt;-numero di frame&lt;br/&lt;&lt;stile di campata=&quot;peso del carattere:600;&quot;&gt;{E}&lt;campata &gt;-estensione del file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="320"/>
-        <source>Dithering:</source>
-        <translation>Oscillazione:</translation>
+        <location filename="../../desktop/ui/videoexport.ui" line="258"/>
+        <source>Use custom arguments:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="328"/>
-        <source>Diffuse</source>
-        <translation>Diffondi</translation>
+        <location filename="../../desktop/ui/videoexport.ui" line="275"/>
+        <source>ffmpeg executable not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>blendmode</name>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="50"/>
+        <source>Normal</source>
+        <translation type="unfinished">Normale</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="333"/>
-        <source>Ordered</source>
-        <translation>Ordinato</translation>
+        <location filename="../canvas/blendmodes.cpp" line="55"/>
+        <source>Recolor</source>
+        <translation type="unfinished">Ricolora</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="338"/>
-        <source>Threshold</source>
-        <translation>Soglia</translation>
+        <location filename="../canvas/blendmodes.cpp" line="60"/>
+        <source>Behind</source>
+        <translation type="unfinished">Dietro</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/videoexport.ui" line="346"/>
-        <source>Optimize frame difference</source>
-        <translation>Ottimizza la differenza d frame</translation>
+        <location filename="../canvas/blendmodes.cpp" line="65"/>
+        <source>Multiply</source>
+        <translation type="unfinished">Мoltiplica</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="70"/>
+        <source>Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="75"/>
+        <source>Overlay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="80"/>
+        <source>Divide</source>
+        <translation type="unfinished">Dividi</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="85"/>
+        <source>Burn</source>
+        <translation type="unfinished">Brucia</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="90"/>
+        <source>Dodge</source>
+        <translation type="unfinished">Scarta</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="95"/>
+        <source>Darken</source>
+        <translation type="unfinished">Scurisci</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="100"/>
+        <source>Lighten</source>
+        <translation type="unfinished">Alleggerire</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="105"/>
+        <source>Subtract</source>
+        <translation type="unfinished">Sottrarre</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="110"/>
+        <source>Add</source>
+        <translation type="unfinished">Aggiungi</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="115"/>
+        <source>Erase</source>
+        <translation type="unfinished">Cancella</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="120"/>
+        <source>Hard Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="125"/>
+        <source>Soft Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="130"/>
+        <source>Linear Burn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="135"/>
+        <source>Linear Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="140"/>
+        <source>Luminosity/Shine (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="145"/>
+        <source>Hue</source>
+        <translation type="unfinished">Colore</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="150"/>
+        <source>Saturation</source>
+        <translation type="unfinished">Saturazione</translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="155"/>
+        <source>Luminosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../canvas/blendmodes.cpp" line="160"/>
+        <source>Color</source>
+        <translation type="unfinished">Colore</translation>
     </message>
 </context>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="557"/>
-        <location filename="../brushes/brushpresetmodel.cpp" line="637"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="619"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
 </context>
 <context>
+    <name>brushes::BrushPresetTagModel</name>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="510"/>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="512"/>
+        <source>Untagged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="519"/>
+        <source>Show all brushes, regardless of tagging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="521"/>
+        <source>Show brushes not assigned to any tag.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="698"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="730"/>
+        <source>Default</source>
+        <translation type="unfinished">Predefinito</translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="718"/>
+        <source>Classic Brush %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="719"/>
+        <source>Converted from %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="740"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="775"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="787"/>
+        <source>Round Pixel Brush %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="741"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="754"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="765"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="776"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="788"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="800"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="814"/>
+        <source>Default brush %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../brushes/brushpresetmodel.cpp" line="753"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="764"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="799"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="813"/>
+        <source>Soft Brush %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>canvas::PaintEngine</name>
+    <message>
+        <location filename="../canvas/paintengine.cpp" line="162"/>
+        <source>Layer %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="72"/>
+        <location filename="../canvas/userlist.cpp" line="75"/>
         <source>Moderator</source>
         <translation>Мoderatore</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="74"/>
+        <location filename="../canvas/userlist.cpp" line="77"/>
         <source>Operator</source>
         <translation>Оperatore</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="76"/>
+        <location filename="../canvas/userlist.cpp" line="79"/>
         <source>Trusted</source>
         <translation>Fidato</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="78"/>
+        <location filename="../canvas/userlist.cpp" line="81"/>
         <source>Registered</source>
         <translation>Registrato</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="82"/>
+        <location filename="../canvas/userlist.cpp" line="85"/>
         <source>Online</source>
         <translation>Online</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="82"/>
+        <location filename="../canvas/userlist.cpp" line="85"/>
         <source>Offline</source>
         <translation>Offline</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="112"/>
+        <location filename="../canvas/userlist.cpp" line="115"/>
         <source>User</source>
         <translation>Utente</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="113"/>
+        <location filename="../canvas/userlist.cpp" line="116"/>
         <source>Type</source>
         <translation>Тipo</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="114"/>
+        <location filename="../canvas/userlist.cpp" line="117"/>
         <source>Status</source>
         <translation>Stato</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="285"/>
+        <location filename="../canvas/userlist.cpp" line="290"/>
         <source>Server</source>
         <translation>Server</translation>
     </message>
     <message>
-        <location filename="../canvas/userlist.cpp" line="292"/>
+        <location filename="../canvas/userlist.cpp" line="297"/>
         <source>User #%1</source>
         <translation>Utente #%1</translation>
     </message>
@@ -3507,17 +3995,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>color_widgets::GradientEditor</name>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="335"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="336"/>
         <source>Add Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="344"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="345"/>
         <source>Remove Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="352"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/gradient_editor.cpp" line="353"/>
         <source>Edit Color...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3533,12 +4021,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>color_widgets::Swatch</name>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="824"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="846"/>
         <source>Clear Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="833"/>
+        <location filename="../../desktop/bundled/QtColorWidgets/swatch.cpp" line="855"/>
         <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3590,6 +4078,14 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::BrushPresetProperties</name>
+    <message>
+        <location filename="../../desktop/dialogs/brushpresetproperties.cpp" line="61"/>
+        <source>Select brush thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::CertificateView</name>
     <message>
         <location filename="../../desktop/dialogs/certificateview.cpp" line="42"/>
@@ -3598,31 +4094,121 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::FilterRecordingDialog</name>
+    <name>dialogs::DumpPlaybackDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/recfilterdialog.cpp" line="37"/>
-        <source>Filter</source>
-        <translation>Filtro</translation>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="41"/>
+        <source>done</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/recfilterdialog.cpp" line="50"/>
-        <source>Save filtered recording</source>
-        <translation>Salva la registrazione filtrata</translation>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="42"/>
+        <source>undone</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/recfilterdialog.cpp" line="52"/>
-        <source>Recordings (%1)</source>
-        <translation>Registrazioni (%1)</translation>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="43"/>
+        <source>gone</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/recfilterdialog.cpp" line="53"/>
-        <source>Compressed recordings (%1)</source>
-        <translation>Registrazioni compresse (%1)</translation>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="44"/>
+        <source>unknown</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/recfilterdialog.cpp" line="79"/>
-        <source>Error</source>
-        <translation>Errore</translation>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="61"/>
+        <source>local user</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="63"/>
+        <source>properties of layer %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="65"/>
+        <source>annotation %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="68"/>
+        <source>pixels on layer %1, from (%2, %3) to (%4, %5)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="76"/>
+        <source>canvas background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="78"/>
+        <source>document metadata type %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="80"/>
+        <source>timeline frame %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="82"/>
+        <source>everything</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="84"/>
+        <source>unknown domain %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="107"/>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="113"/>
+        <source>Type</source>
+        <translation type="unfinished">Тipo</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="107"/>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="113"/>
+        <source>User</source>
+        <translation type="unfinished">Utente</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="107"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="107"/>
+        <source>State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="113"/>
+        <source>Affected Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="349"/>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/dumpplaybackdialog.cpp" line="349"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::Flipbook</name>
+    <message>
+        <location filename="../../desktop/dialogs/flipbook.cpp" line="144"/>
+        <source>Timeline: manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/flipbook.cpp" line="144"/>
+        <source>Timeline: automatic</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3745,74 +4331,57 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="48"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="50"/>
         <source>Playback</source>
         <translation>Riproduzione</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="98"/>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="192"/>
+        <source>Building index...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="204"/>
+        <source>Index building failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="318"/>
         <source>Video error</source>
         <translation>Errore video</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="200"/>
-        <source>This recording was made with a different Drawpile version (%1) and may appear differently</source>
-        <translation>Questa registrazione è stata realizzata con una diversa versione di Drawpile (%1) e potrebbe apparire in modo diverso</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="203"/>
-        <source>This recording was made with a newer Drawpile version (%1) which might not be compatible</source>
-        <translation>Questa registrazione è stata realizzata con una versione più recente di Drawpile (%1) che potrebbe non essere compatibile</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="206"/>
-        <source>Recording is incompatible. This recording was made with Drawpile version %1.</source>
-        <translation>La registrazione è incompatibile. Questa registrazione è stata realizzata con la versione di Drawpile %1.</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="210"/>
-        <source>Selected file is not a Drawpile recording</source>
-        <translation>Il file selezionato non è una registrazione Drawpile</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="214"/>
-        <source>Cannot read file: %1</source>
-        <translation>Impossibile leggere il file: %1</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="221"/>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="224"/>
-        <source>Open Recording</source>
-        <translation>Registrazione aperta</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="258"/>
-        <source>Stop on markers</source>
-        <translation>Ferma sui marcatori</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/playbackdialog.cpp" line="267"/>
-        <source>No indexed markers</source>
-        <translation>Nessun marcatore indicizzato</translation>
     </message>
 </context>
 <context>
     <name>dialogs::ResetDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="127"/>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="134"/>
+        <source>Reset Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="135"/>
+        <source>New</source>
+        <translation type="unfinished">Nuovo</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="136"/>
         <source>Open...</source>
         <translation>Apri...</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="142"/>
-        <source>Current</source>
-        <translation>Attuale</translation>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="174"/>
+        <source>Open Image</source>
+        <translation type="unfinished">Apri immagine</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="161"/>
-        <location filename="../../desktop/dialogs/resetdialog.cpp" line="176"/>
-        <source>Reset to Image</source>
-        <translation>Ripristina immagine</translation>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="188"/>
+        <source>Reset</source>
+        <translation type="unfinished">Ripristina</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/dialogs/resetdialog.cpp" line="188"/>
+        <source>Couldn&apos;t open file</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3828,12 +4397,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Centra</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="84"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="82"/>
         <source>Error</source>
         <translation>Errore</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/resizedialog.cpp" line="84"/>
+        <location filename="../../desktop/dialogs/resizedialog.cpp" line="82"/>
         <source>Size is too large</source>
         <translation>La dimensione è troppo grande</translation>
     </message>
@@ -3841,72 +4410,72 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="268"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="280"/>
         <source>Operators</source>
         <translation>Оperatori</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="269"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="281"/>
         <source>Trusted</source>
         <translation>Fidato</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="270"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="282"/>
         <source>Registered</source>
         <translation>Registrato</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="271"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="283"/>
         <source>Everyone</source>
         <translation>Tutti</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="361"/>
         <source>yes</source>
         <comment>password</comment>
         <translation>password</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="354"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="365"/>
         <source>change</source>
         <comment>password</comment>
         <translation>password</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="361"/>
         <source>no</source>
         <comment>password</comment>
         <translation>password</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="356"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="365"/>
         <source>assign</source>
         <comment>password</comment>
         <translation>password</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="412"/>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="433"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="429"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="450"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>Imposta una nuova password o lascia vuoto per rimuovere.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="414"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="431"/>
         <source>Set a password for the session.</source>
         <translation>Imposta una password per la sessione.</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="419"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="436"/>
         <source>Session Password</source>
         <translation>Password di sessione</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="435"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="452"/>
         <source>Set a password for gaining operator status.</source>
         <translation>Impostare una password per ottenere lo stato dell&apos;operatore..</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="440"/>
+        <location filename="../../desktop/dialogs/sessionsettings.cpp" line="457"/>
         <source>Operator Password</source>
         <translation>Password operatore</translation>
     </message>
@@ -3914,94 +4483,88 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="92"/>
-        <source>off</source>
-        <comment>notifications sounds</comment>
-        <translation>Suoni di notifiche</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="96"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="91"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="228"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="221"/>
         <source>Reset settings</source>
         <translation>Ripristina le impostazioni</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="229"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="222"/>
         <source>Clear all settings?</source>
         <translation>Cancellare tutte le impostazioni?</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="387"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="716"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="377"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="702"/>
         <source>Unlock</source>
         <translation>Sblocca</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="387"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="707"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="377"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="693"/>
         <source>Lock</source>
         <translation>Blocca</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="612"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="622"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="627"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="598"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="608"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="613"/>
         <source>Import trusted certificate</source>
         <translation>Importa certificato attendibile</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="613"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="599"/>
         <source>Certificates (%1)</source>
         <translation>Certificati (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="622"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="608"/>
         <source>Invalid certificate!</source>
         <translation>Certificato non valido!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="627"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="613"/>
         <source>Certificate common name not set!</source>
         <translation>Nome comune del certificato non impostato!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="641"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="650"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="627"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="636"/>
         <source>Add public listing server</source>
         <translation>Aggiungi server di elenchi pubblici</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="650"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="636"/>
         <source>Invalid URL!</source>
         <translation>URL non valido!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="693"/>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="679"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="695"/>
         <source>Unlock Parental Controls</source>
         <translation>Sblocca i controlli parentali</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="694"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="680"/>
         <source>Password</source>
         <translation>Password</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="696"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="682"/>
         <source>Lock Parental Controls</source>
         <translation>Blocca Controlli Parentali</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="697"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="683"/>
         <source>Set password</source>
         <translation>Impostare la password</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="709"/>
+        <location filename="../../desktop/dialogs/settingsdialog.cpp" line="695"/>
         <source>Incorrect password</source>
         <translation>Password errata</translation>
     </message>
@@ -4009,17 +4572,17 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::VersionCheckDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="120"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="118"/>
         <source>Download %1 (%2 MB)</source>
         <translation>Scaricamento %1 (%2 MB)</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="176"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="174"/>
         <source>Downloaded %1!</source>
         <translation>%1 Scaricato!</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="185"/>
+        <location filename="../../desktop/dialogs/versioncheckdialog.cpp" line="183"/>
         <source>Downloading %1...</source>
         <translation>Download %1 in corso ...</translation>
     </message>
@@ -4027,197 +4590,271 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="79"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="55"/>
         <source>Original</source>
         <translation>Originale</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="80"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="56"/>
         <source>Custom:</source>
         <translation>Personalizza:</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="186"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="169"/>
         <source>Select output directory</source>
         <translation>Seleziona la directory di output</translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="204"/>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="227"/>
+        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="191"/>
         <source>Export video</source>
         <translation>Esporta video</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="204"/>
-        <location filename="../../desktop/dialogs/videoexportdialog.cpp" line="227"/>
-        <source>%1 files (*%2)</source>
-        <translation>% 1 file (*%2)</translation>
     </message>
 </context>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="49"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="90"/>
         <source>Brushes</source>
         <translation>Pennelli</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="96"/>
-        <source>Add Brush</source>
-        <translation>Aggiungi Pennello</translation>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="114"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="240"/>
+        <source>New Tag</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="97"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="115"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="254"/>
+        <source>Edit Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="116"/>
+        <source>Delete Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="118"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="281"/>
+        <source>New Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="119"/>
+        <source>Duplicate Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="120"/>
         <source>Overwrite Brush</source>
         <translation>Sovrascrivi Pennello</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="98"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="121"/>
+        <source>Edit Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="122"/>
         <source>Delete Brush</source>
         <translation>Cancella Pennello</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="120"/>
-        <source>Move to</source>
-        <translation>Sposta in</translation>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="123"/>
+        <source>Brush Tags</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="128"/>
-        <source>Overwrite brush</source>
-        <translation>Sovrascrivi pennello</translation>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="124"/>
+        <source>Icon Size</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="129"/>
-        <source>Delete brush</source>
-        <translation>Cancella pennello</translation>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="126"/>
+        <source>Import MyPaint Brushes...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="207"/>
-        <source>New folder</source>
-        <translation>Nuova cartella</translation>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="130"/>
+        <source>%1x%1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="223"/>
-        <source>Delete Folder</source>
-        <translation>Cancella Cartella</translation>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="240"/>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="254"/>
+        <source>Tag name:</source>
+        <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
-        <location filename="../../desktop/docks/brushpalettedock.cpp" line="224"/>
-        <source>Really delete folder &quot;%1&quot; and %n brushes?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="285"/>
+        <source>New Brush Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="325"/>
+        <source>Edit Brush Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="342"/>
+        <source>Select one or more MyPaint brushes to import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="357"/>
+        <source>Import of %1 MyPaint brush(es).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="359"/>
+        <source>%1 successfully imported: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="363"/>
+        <source>%1 failed to import: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/brushpalettedock.cpp" line="367"/>
+        <source>MyPaint Brush Import</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>docks::ColorBox</name>
+    <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="96"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="127"/>
         <source>New</source>
-        <translation>Nuovo</translation>
+        <translation type="unfinished">Nuovo</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="97"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="128"/>
         <source>Duplicate</source>
-        <translation>Duplicare</translation>
+        <translation type="unfinished">Duplicare</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="98"/>
-        <location filename="../../desktop/docks/colorbox.cpp" line="269"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="129"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="297"/>
         <source>Delete</source>
-        <translation>Cancella</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="101"/>
-        <source>Write Protect</source>
-        <translation>Protezione da scrittura</translation>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="130"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="105"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="133"/>
         <source>Import...</source>
-        <translation>Іmporta...</translation>
+        <translation type="unfinished">Іmporta...</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="106"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="134"/>
         <source>Export...</source>
-        <translation>Еsporta...</translation>
+        <translation type="unfinished">Еsporta...</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="206"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="141"/>
+        <source>Add</source>
+        <translation type="unfinished">Aggiungi</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="142"/>
+        <source>Remove</source>
+        <translation type="unfinished">Rimuovi</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="144"/>
+        <source>Less columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="145"/>
+        <source>More columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="201"/>
         <source>Import palette</source>
-        <translation>Importa tavolozza</translation>
+        <translation type="unfinished">Importa tavolozza</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="208"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="203"/>
         <source>Palettes (%1)</source>
-        <translation>Tavolozze (%1)</translation>
+        <translation type="unfinished">Tavolozze (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="209"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="204"/>
         <source>All files (*)</source>
-        <translation>Tutti i files (*)</translation>
+        <translation type="unfinished">Tutti i files (*)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="229"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="222"/>
         <source>Export palette</source>
-        <translation>Esporta tavolozza</translation>
+        <translation type="unfinished">Esporta tavolozza</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="231"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="224"/>
         <source>GIMP palette (%1)</source>
-        <translation>Tavolozza di GIMP (%1)</translation>
+        <translation type="unfinished">Tavolozza di GIMP (%1)</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="237"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="231"/>
         <source>Error</source>
-        <translation>Errore</translation>
+        <translation type="unfinished">Errore</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/colorbox.cpp" line="270"/>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="231"/>
+        <source>Couldn&apos;t save file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/colorpalette.cpp" line="298"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation>Cancella tavolozza &quot;%1&quot;?</translation>
+        <translation type="unfinished">Cancella tavolozza &quot;%1&quot;?</translation>
     </message>
 </context>
 <context>
     <name>docks::LayerAclMenu</name>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="39"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="40"/>
         <source>Lock this layer</source>
         <translation>Blocca questo livello</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="42"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="43"/>
         <source>Censor</source>
         <translation>Censura</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="45"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="46"/>
         <source>Access tier:</source>
         <translation>Livello di accesso:</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="47"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="48"/>
         <source>Operators</source>
         <translation>Оperatori</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="48"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="49"/>
         <source>Trusted</source>
         <translation>Fidato</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="49"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="50"/>
         <source>Registered</source>
         <translation>Regitrato</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="50"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="51"/>
         <source>Everyone</source>
         <translation>Tutti</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layeraclmenu.cpp" line="54"/>
+        <location filename="../../desktop/docks/layeraclmenu.cpp" line="55"/>
         <source>Exclusive access:</source>
         <translation>Acesso esclusivo:</translation>
     </message>
@@ -4225,38 +4862,37 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="48"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="52"/>
         <source>Layers</source>
         <translation>Livelli</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="74"/>
-        <source>Insert layer</source>
-        <translation>Inserisci strato</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="78"/>
-        <source>Hide from self</source>
-        <translation>Nascondi te stesso</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="81"/>
-        <source>Fixed</source>
-        <translation>Aggiustato</translation>
-    </message>
-    <message>
         <location filename="../../desktop/docks/layerlistdock.cpp" line="86"/>
-        <source>Default</source>
-        <translation>Predefinito</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="90"/>
-        <source>Properties...</source>
+        <source>Opacity: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="385"/>
-        <location filename="../../desktop/docks/layerlistdock.cpp" line="406"/>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="87"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="357"/>
+        <source>Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="407"/>
+        <source>Delete Layer?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="408"/>
+        <source>Really delete the layer &apos;%1&apos;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/layerlistdock.cpp" line="357"/>
         <source>Layer</source>
         <translation>Strato</translation>
     </message>
@@ -4264,19 +4900,83 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="271"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="315"/>
         <source>Navigator</source>
         <translation>Navigatore</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="285"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="344"/>
         <source>Show Cursors</source>
         <translation>Mostra Cursore</translation>
     </message>
     <message>
-        <location filename="../../desktop/docks/navigator.cpp" line="289"/>
+        <location filename="../../desktop/docks/navigator.cpp" line="348"/>
         <source>Realtime Update</source>
         <translation>Aggiornamento in tempo reale</translation>
+    </message>
+</context>
+<context>
+    <name>docks::OnionSkinsDock</name>
+    <message>
+        <location filename="../../desktop/docks/onionskins.cpp" line="146"/>
+        <source>Tint Below: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/onionskins.cpp" line="162"/>
+        <source>Frames: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/onionskins.cpp" line="173"/>
+        <source>Tint Above: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/onionskins.cpp" line="294"/>
+        <source>-%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/onionskins.cpp" line="296"/>
+        <source>+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/onionskins.cpp" line="345"/>
+        <source>Opacity: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>docks::Timeline</name>
+    <message>
+        <location filename="../../desktop/docks/timeline.cpp" line="33"/>
+        <source>Timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/timeline.cpp" line="45"/>
+        <source>Use manual timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/timeline.cpp" line="51"/>
+        <source>Frame:</source>
+        <translation type="unfinished">Frame:</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/timeline.cpp" line="61"/>
+        <source>FPS:</source>
+        <translation type="unfinished">FPS:</translation>
+    </message>
+</context>
+<context>
+    <name>docks::ToolSettings</name>
+    <message>
+        <location filename="../../desktop/docks/toolsettingsdock.cpp" line="184"/>
+        <source>Tool</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4328,12 +5028,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="229"/>
+        <location filename="../net/client.cpp" line="65"/>
         <source>A server error occurred!</source>
         <translation>Si è verificato un errore del server!</translation>
     </message>
     <message>
-        <location filename="../net/client.cpp" line="231"/>
+        <location filename="../net/client.cpp" line="68"/>
         <source>The server is shutting down!</source>
         <translation>Il server si sta spegnendo!</translation>
     </message>
@@ -4341,168 +5041,157 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="97"/>
-        <source>Your IP address is banned from this server</source>
-        <translation>Il tuo indirizzo IP è bannato da questo server</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="104"/>
-        <location filename="../net/login.cpp" line="130"/>
-        <location filename="../net/login.cpp" line="392"/>
+        <location filename="../net/login.cpp" line="116"/>
+        <location filename="../net/login.cpp" line="374"/>
         <source>Invalid state</source>
         <translation>Stato non valido</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="152"/>
-        <location filename="../net/login.cpp" line="159"/>
-        <location filename="../net/login.cpp" line="226"/>
-        <location filename="../net/login.cpp" line="429"/>
-        <location filename="../net/login.cpp" line="551"/>
-        <location filename="../net/login.cpp" line="594"/>
+        <location filename="../net/login.cpp" line="141"/>
+        <location filename="../net/login.cpp" line="148"/>
+        <location filename="../net/login.cpp" line="212"/>
+        <location filename="../net/login.cpp" line="411"/>
+        <location filename="../net/login.cpp" line="532"/>
+        <location filename="../net/login.cpp" line="577"/>
         <source>Incompatible server</source>
         <translation>Server incompatibile</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="166"/>
+        <location filename="../net/login.cpp" line="155"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Il server è per una diversa versione di Drawpile!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="211"/>
+        <location filename="../net/login.cpp" line="197"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>Modalità protetta non abilitata su un host affidabile!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="252"/>
+        <location filename="../net/login.cpp" line="238"/>
         <source>This server does not allow guest logins</source>
         <translation>Questo server non consente accessi guest</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="254"/>
+        <location filename="../net/login.cpp" line="240"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
         <translation>Password necessaria per accedere come &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="320"/>
-        <location filename="../net/login.cpp" line="326"/>
+        <location filename="../net/login.cpp" line="307"/>
+        <location filename="../net/login.cpp" line="313"/>
         <source>Auth server error: %1</source>
         <translation>Errore di autenticazione del server: %1</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="350"/>
+        <location filename="../net/login.cpp" line="332"/>
         <source>Group membership needed</source>
         <translation>È necessaria l&apos;appartenenza al gruppo</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="353"/>
+        <location filename="../net/login.cpp" line="335"/>
         <source>Unexpected ext-auth response: %1</source>
         <translation>Risposta ext-auth imprevista: %1</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="375"/>
+        <location filename="../net/login.cpp" line="357"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>Errore di configurazione del server: URL ext-auth non valido</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="380"/>
+        <location filename="../net/login.cpp" line="362"/>
         <source>Unsupported ext-auth URL scheme</source>
         <translation>Schema URL ext-auth non supportato</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="470"/>
+        <location filename="../net/login.cpp" line="451"/>
         <source>New version</source>
         <translation>Nuova versione</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="474"/>
+        <location filename="../net/login.cpp" line="455"/>
         <source>Unknown version</source>
         <translation>Versione sconosciuta</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="515"/>
+        <location filename="../net/login.cpp" line="496"/>
         <source>Session not yet started!</source>
         <translation>Sessione non ancora iniziata!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="518"/>
+        <location filename="../net/login.cpp" line="499"/>
         <source>Blocked by parental controls</source>
         <translation>Bloccato dai controlli parentali</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="521"/>
+        <location filename="../net/login.cpp" line="502"/>
         <source>Session for a different Drawpile version (%s) in progress!</source>
         <translation>Sessione per un&apos;altra versione di Drawpile (%s) in corso!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="707"/>
-        <location filename="../net/login.cpp" line="727"/>
+        <location filename="../net/login.cpp" line="690"/>
+        <location filename="../net/login.cpp" line="710"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Certificato SSL non valido per l&apos;host %1</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="710"/>
+        <location filename="../net/login.cpp" line="693"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>Il certificato di un server attendibile è cambiato!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="768"/>
+        <location filename="../net/login.cpp" line="751"/>
         <source>Cancelled</source>
         <translation>Сancellato</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="777"/>
+        <location filename="../net/login.cpp" line="760"/>
         <source>Session not found!</source>
         <translation>Sessione non trovata!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="779"/>
+        <location filename="../net/login.cpp" line="762"/>
         <source>Incorrect password!</source>
         <translation>Password non corretta!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="782"/>
+        <location filename="../net/login.cpp" line="765"/>
         <source>Invalid username!</source>
         <translation>Nome utente non valido!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="784"/>
+        <location filename="../net/login.cpp" line="767"/>
         <source>This username has been locked</source>
         <translation>Questo nome utente è stato bloccato</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="786"/>
+        <location filename="../net/login.cpp" line="769"/>
         <source>Username already taken!</source>
         <translation>Nome utente già preso!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="788"/>
+        <location filename="../net/login.cpp" line="771"/>
         <source>Session is closed!</source>
         <translation>La sessione è chiusa!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="788"/>
+        <location filename="../net/login.cpp" line="771"/>
         <source>Server is full!</source>
         <translation>Il server è pieno!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="790"/>
+        <location filename="../net/login.cpp" line="773"/>
         <source>Hosting not authorized</source>
         <translation>Hosting non autorizzato</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="792"/>
+        <location filename="../net/login.cpp" line="775"/>
         <source>You have been banned from this session!</source>
         <translation>Sei stato bannato da questa sessione!</translation>
     </message>
     <message>
-        <location filename="../net/login.cpp" line="794"/>
+        <location filename="../net/login.cpp" line="777"/>
         <source>Session alias is reserved!</source>
         <translation>L&apos;alias di sessione è riservato!</translation>
-    </message>
-    <message>
-        <location filename="../net/login.cpp" line="834"/>
-        <source>Tried to send oversized message (%1 KB)</source>
-        <translation>Ho provato a inviare un messaggio di grandi dimensioni (%1 KB)</translation>
     </message>
 </context>
 <context>
@@ -4536,147 +5225,56 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="105"/>
-        <source>You were kicked by %1</source>
-        <translation>Sei stato espulso da %1</translation>
-    </message>
-    <message>
-        <location filename="../net/tcpserver.cpp" line="108"/>
-        <source>The server is shutting down.</source>
-        <translation>Il server si sta spegnendo.</translation>
-    </message>
-    <message>
-        <location filename="../net/tcpserver.cpp" line="111"/>
-        <source>Error: %1</source>
-        <translation>Errore: %1</translation>
-    </message>
-    <message>
-        <location filename="../net/tcpserver.cpp" line="128"/>
+        <location filename="../net/tcpserver.cpp" line="132"/>
         <source>Received invalid data</source>
         <translation>Ricevuti dati non validi</translation>
     </message>
 </context>
 <context>
-    <name>paintcore</name>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="30"/>
-        <source>Erase</source>
-        <translation>Cancella</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="36"/>
-        <source>Normal</source>
-        <translation>Normale</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="42"/>
-        <source>Recolor</source>
-        <translation>Ricolora</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="48"/>
-        <source>Behind</source>
-        <translation>Dietro</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="54"/>
-        <source>Multiply</source>
-        <translation>Мoltiplica</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="60"/>
-        <source>Divide</source>
-        <translation>Dividi</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="66"/>
-        <source>Burn</source>
-        <translation>Brucia</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="72"/>
-        <source>Dodge</source>
-        <translation>Scarta</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="78"/>
-        <source>Darken</source>
-        <translation>Scurisci</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="84"/>
-        <source>Lighten</source>
-        <translation>Alleggerire</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="90"/>
-        <source>Subtract</source>
-        <translation>Sottrarre</translation>
-    </message>
-    <message>
-        <location filename="../core/blendmodes.cpp" line="96"/>
-        <source>Add</source>
-        <translation>Aggiungi</translation>
-    </message>
-</context>
-<context>
-    <name>recording::PlaybackController</name>
-    <message>
-        <location filename="../recording/playbackcontroller.cpp" line="393"/>
-        <source>Cannot index compressed recordings.</source>
-        <translation>Impossibile indicizzare le registrazioni compresse.</translation>
-    </message>
-    <message>
-        <location filename="../recording/playbackcontroller.cpp" line="399"/>
-        <source>Index not yet generated</source>
-        <translation>Indice non ancora generato</translation>
-    </message>
-    <message>
-        <location filename="../recording/playbackcontroller.cpp" line="406"/>
-        <source>Error loading index!</source>
-        <translation>Errore nel caricamento dell&apos;indice!</translation>
-    </message>
-    <message>
-        <location filename="../recording/playbackcontroller.cpp" line="472"/>
-        <source>%1 m. %2 s.</source>
-        <translation>%1 m. %2 s.</translation>
-    </message>
-    <message>
-        <location filename="../recording/playbackcontroller.cpp" line="474"/>
-        <source>%1 s.</source>
-        <translation>%1 s.</translation>
-    </message>
-</context>
-<context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="67"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="68"/>
+        <source>Protect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="75"/>
+        <source>Merge</source>
+        <translation type="unfinished">Unire</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="80"/>
+        <source>Delete</source>
+        <translation type="unfinished">Cancella</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="103"/>
         <source>Left</source>
         <translation>Sinistra</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="68"/>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="78"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="104"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="114"/>
         <source>Center</source>
         <translation>Centro</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="69"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="105"/>
         <source>Justify</source>
         <translation>Giustifica</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="70"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="106"/>
         <source>Right</source>
         <translation>Destra</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="77"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="113"/>
         <source>Top</source>
         <translation>Sopra</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="79"/>
+        <location filename="../../desktop/toolwidgets/annotationsettings.cpp" line="115"/>
         <source>Bottom</source>
         <translation>Sotto</translation>
     </message>
@@ -4685,13 +5283,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>tools::ColorPickerSettings</name>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="64"/>
-        <source>Size:</source>
-        <translation>Dimensione:</translation>
+        <source>Size: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="80"/>
+        <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="70"/>
         <source>Pick from current layer only</source>
         <translation>Scegli solo dal livello corrente</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="79"/>
+        <source>Add Color...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4710,7 +5313,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../../desktop/scene/canvasview.cpp" line="94"/>
+        <location filename="../../desktop/scene/canvasview.cpp" line="105"/>
         <source>Reconnect</source>
         <translation>Riconnetti</translation>
     </message>
@@ -4718,57 +5321,97 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="135"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="150"/>
         <source>Public</source>
         <translation>Pubblico</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="198"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="214"/>
         <source>Chat (recorded)...</source>
         <translation>Сhat (registrato)...</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="201"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="217"/>
         <source>Chat...</source>
         <translation>Сhat…</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="495"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="542"/>
         <source>%1 joined the session</source>
         <translation>%1 Entrato nella sessione</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="513"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="560"/>
         <source>%1 left the session</source>
         <translation>%1 lasciato la sessione</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="534"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="581"/>
         <source>You have been kicked by %1</source>
         <translation>Sei stato espulso da %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="680"/>
-        <source>Invalid dice roll description</source>
-        <translation>Descrizione del tiro di dadi non valida</translation>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="690"/>
+        <source>/!: can only shout in a public chat.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="741"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="693"/>
+        <source>/!: no text given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="702"/>
+        <source>/alert: no text given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="711"/>
+        <source>/me: no text given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="720"/>
+        <source>/pin: can only pin in a public chat.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="723"/>
+        <source>/pin: no text given.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="732"/>
+        <source>/unpin: can only unpin in a public chat.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="746"/>
+        <source>/roll: invalid dice roll description.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="766"/>
+        <source>Unknown command: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="814"/>
         <source>Clear</source>
         <translation>Pulisci</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="743"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="816"/>
         <source>Compact mode</source>
         <translation>Modalità compatta</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="748"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="821"/>
         <source>Detach</source>
         <translation>Stacca</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/chatwidget.cpp" line="754"/>
+        <location filename="../../desktop/chat/chatwidget.cpp" line="827"/>
         <source>Attach</source>
         <translation>Attacca</translation>
     </message>
@@ -4784,7 +5427,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::ColorButton</name>
     <message>
-        <location filename="../../desktop/widgets/colorbutton.cpp" line="58"/>
+        <location filename="../../desktop/widgets/colorbutton.cpp" line="59"/>
         <source>Select a color</source>
         <translation>Seleziona un colore</translation>
     </message>
@@ -4792,160 +5435,114 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="75"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="71"/>
         <source>Copy address to clipboard</source>
         <translation>Copia l&apos;indirizzo negli appunti</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="81"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="77"/>
         <source>Copy session URL to clipboard</source>
         <translation>Copia URL della sessione negli appunti</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="87"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="83"/>
         <source>Get externally visible IP address</source>
         <translation>Ottieni indirizzo IP visibile esternamente</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="99"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="91"/>
         <source>Hide address</source>
         <translation>Indirizzo nascosto</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="114"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="106"/>
         <source>Statistics</source>
         <translation>Statistiche</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="126"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="118"/>
         <source>Show certificate</source>
         <translation>Mostra certificato</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="175"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="167"/>
         <source>Logged in!</source>
         <translation>Connesso!</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="194"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="186"/>
         <source>A previously unvisited host</source>
         <translation>Un host in precedenza non visitati</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="199"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="191"/>
         <source>Host certificate has not changed since the last visit</source>
         <translation>Il certificato host non è cambiato dall&apos;ultima visita</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="204"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="196"/>
         <source>This is a trusted host</source>
         <translation>Questo è un host fidato</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="241"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="233"/>
         <source>Disconnected</source>
         <translation>Disconnesso</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="357"/>
-        <source>&lt;b&gt;%1&lt;/b&gt; joined</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt; entrato</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="363"/>
-        <source>&lt;b&gt;%1&lt;/b&gt; left</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt; sinistra</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="368"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="348"/>
         <source>You have been kicked by %1</source>
         <translation>Sei stato espulso da %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="389"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="362"/>
         <source>not connected</source>
         <translation>non connesso</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="392"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="365"/>
         <source>Connecting...</source>
         <translation>Connettendo…</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="394"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="367"/>
         <source>Connecting to %1...</source>
         <translation>Connesso a %1...</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="398"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="371"/>
         <source>Connected</source>
         <translation>Connesso</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="400"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="373"/>
         <source>Host: %1</source>
         <translation>Ospite: %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="402"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="375"/>
         <source>Room: %1</source>
         <translation>Stanza: %1</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="404"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="377"/>
         <source>Logging out...</source>
         <translation>Disconnettendo…</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="438"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="411"/>
         <source>Notice</source>
         <translation>Avviso</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="439"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="412"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
         <translation>Il provider di servizi Internet utilizza NAT di Carrier Grade. Ciò rende impossibile agli altri collegarsi direttamente a te. Vedere la pagina di aiuto di Drawpile per soluzioni alternative.</translation>
     </message>
     <message>
-        <location filename="../../desktop/widgets/netstatus.cpp" line="443"/>
+        <location filename="../../desktop/widgets/netstatus.cpp" line="416"/>
         <source>Don&apos;t show this again</source>
         <translation>Non mostrare ancora</translation>
-    </message>
-</context>
-<context>
-    <name>widgets::PaletteWidget</name>
-    <message>
-        <location filename="../../desktop/widgets/palettewidget.cpp" line="50"/>
-        <source>Add</source>
-        <translation>Aggiungi</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/palettewidget.cpp" line="51"/>
-        <source>Modify</source>
-        <translation>Modifica</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/palettewidget.cpp" line="52"/>
-        <source>Remove</source>
-        <translation>Rimuovi</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/palettewidget.cpp" line="58"/>
-        <source>Set palette color</source>
-        <translation>Imposta il colore della tavolozza</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/widgets/palettewidget.cpp" line="253"/>
-        <source>%1
-Red: %2
-Green: %3
-Blue: %4
-Hex: %5</source>
-        <translation>%1
-Rosso: %2
-Verde: %3
-Blu: %4
-Esadecimale: %5</translation>
     </message>
 </context>
 <context>
@@ -4974,64 +5571,64 @@ Esadecimale: %5</translation>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="47"/>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="160"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="46"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="159"/>
         <source>Operator</source>
         <translation>Оperatore</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="48"/>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="162"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="47"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="161"/>
         <source>Trusted</source>
         <translation>Fidato</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="51"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="50"/>
         <source>Lock</source>
         <translation>Blocca</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="52"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="51"/>
         <source>Mute</source>
         <translation>Muto</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="55"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="54"/>
         <source>Undo</source>
         <translation>Rifai</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="56"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="55"/>
         <source>Redo</source>
         <translation>Indietro</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="59"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="58"/>
         <source>Kick</source>
         <translation>Espelli</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="60"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="59"/>
         <source>Kick &amp;&amp; Ban</source>
         <translation>Espelli &amp;&amp; Bannato</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="63"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="62"/>
         <source>Private Message</source>
         <translation>Messaggio Privato</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="156"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="155"/>
         <source>Moderator</source>
         <translation>Моderatore</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="167"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="166"/>
         <source>Bot</source>
         <translation>Bot</translation>
     </message>
     <message>
-        <location filename="../../desktop/chat/useritemdelegate.cpp" line="172"/>
+        <location filename="../../desktop/chat/useritemdelegate.cpp" line="171"/>
         <source>Registered</source>
         <translation>Registrato</translation>
     </message>
