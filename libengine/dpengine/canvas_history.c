@@ -1086,12 +1086,15 @@ static void mark_entries_undone(DP_CanvasHistory *ch, unsigned int context_id,
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_done_entry_by(entry, context_id)) {
             entry->undo = DP_UNDO_UNDONE;
-            if (!is_undo_point_entry(entry)) {
-                DP_CanvasState *cs = entry->state;
-                if (cs) {
-                    DP_canvas_state_decref_nullable(cs);
-                    entry->state = NULL;
-                }
+        }
+        // Clear out any states that were left behind by local fork starts, they
+        // happen too frequently to update them all on every undo/redo. Instead
+        // only undo points get to keep their states and get updated.
+        if (!is_undo_point_entry(entry)) {
+            DP_CanvasState *cs = entry->state;
+            if (cs) {
+                DP_canvas_state_decref_nullable(cs);
+                entry->state = NULL;
             }
         }
     }
