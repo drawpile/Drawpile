@@ -338,7 +338,7 @@ static QStringList initApp(DrawpileApp &app)
 	if(themeVersion < 1) {
 		theme = DrawpileApp::THEME_DEFAULT;
 		settings.setValue("settings/theme", theme);
-		settings.setValue("settings/themeversion", 1);
+		settings.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
 	}
 
 	app.setTheme(theme);

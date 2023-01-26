@@ -232,6 +232,10 @@ void SettingsDialog::resetSettings()
 			cfg.setValue("pc/level", pclevel);
 		}
 
+		// Restore theme version so the selected theme doesn't
+		// get clobbered with the default on next startup.
+		cfg.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
+
 		restoreSettings();
 		rememberSettings();
 	}
@@ -261,7 +265,7 @@ void SettingsDialog::restoreSettings()
 	}
 
 #ifndef Q_OS_MAC
-	m_ui->themeChoice->setCurrentIndex(cfg.value("theme", 0).toInt());
+	m_ui->themeChoice->setCurrentIndex(cfg.value("theme", DrawpileApp::THEME_DEFAULT).toInt());
 #endif
 	m_ui->logfile->setChecked(cfg.value("logfile", true).toBool());
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);

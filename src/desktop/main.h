@@ -29,21 +29,25 @@ class DrawpileApp : public QApplication {
 Q_OBJECT
    friend void notification::playSound(notification::Event);
 public:
-   enum Theme {
-	  THEME_SYSTEM,
-	  THEME_FUSION_LIGHT,
-	  THEME_FUSION_DARK,
-	  THEME_KRITA_BRIGHT,
-	  THEME_KRITA_DARK,
-	  THEME_KRITA_DARKER,
-	  THEME_COUNT,
-	  // On OSX, there's no theme selection. The settings code says something
-	  // about it being broken prior to Qt5.12, but I have no way of checking
-	  // if it works now. So we'll just always use the system theme there.
+	// A config marker to indicate what themes the user last saw. 0 or missing
+	// was Drawpile 2.1 with only System, Fusion and Fusion Dark.
+	static constexpr int THEME_VERSION = 1;
+
+	enum Theme {
+		THEME_SYSTEM,
+		THEME_FUSION_LIGHT,
+		THEME_FUSION_DARK,
+		THEME_KRITA_BRIGHT,
+		THEME_KRITA_DARK,
+		THEME_KRITA_DARKER,
+		THEME_COUNT,
+		// On OSX, there's no theme selection. The settings code says something
+		// about it being broken prior to Qt5.12, but I have no way of checking
+		// if it works now. So we'll just always use the system theme there.
 #ifdef Q_OS_MAC
-	  THEME_DEFAULT = THEME_SYSTEM,
+		THEME_DEFAULT = THEME_SYSTEM,
 #else
-	  THEME_DEFAULT = THEME_KRITA_DARK,
+		THEME_DEFAULT = THEME_KRITA_DARK,
 #endif
    };
 
