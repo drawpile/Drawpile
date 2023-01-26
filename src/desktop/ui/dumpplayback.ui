@@ -7,45 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>107</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Play Debug Dump</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2">
-    <widget class="QPushButton" name="singleStepButton">
-     <property name="text">
-      <string>Single Step</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QSpinBox" name="jumpSpinner"/>
-   </item>
-   <item row="0" column="3">
-    <widget class="QPushButton" name="nextResetButton">
-     <property name="text">
-      <string>Next Reset</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="previousResetButton">
-     <property name="text">
-      <string>Previous Reset</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="jumpButton">
-     <property name="text">
-      <string>Jump</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="4">
+   <item row="3" column="0" colspan="4">
     <widget class="KisSliderSpinBox" name="delaySpinner">
      <property name="suffix">
       <string> ms</string>
@@ -71,7 +40,38 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="2" column="3">
+    <widget class="QPushButton" name="jumpButton">
+     <property name="text">
+      <string>Jump</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QSpinBox" name="jumpSpinner"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="previousResetButton">
+     <property name="text">
+      <string>Previous Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="singleStepButton">
+     <property name="text">
+      <string>Single Step</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="nextResetButton">
+     <property name="text">
+      <string>Next Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
     <widget class="QSpinBox" name="positionSpinner">
      <property name="readOnly">
       <bool>true</bool>
@@ -82,6 +82,142 @@
      <property name="prefix">
       <string>Position: </string>
      </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="4">
+    <widget class="QTabWidget" name="tabs">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="statusTab">
+      <attribute name="title">
+       <string>Status</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="historyCountLabel">
+         <property name="text">
+          <string>History Size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="historyCount">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="historyOffset">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="forkPresentLabel">
+         <property name="text">
+          <string>Local Fork Present:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="forkPresent">
+         <property name="text">
+          <string>No</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="forkCountLabel">
+         <property name="text">
+          <string>Local Fork Size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="forkCount">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="forkStartLabel">
+         <property name="text">
+          <string>Local Fork Start:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="historyOffsetLabel">
+         <property name="text">
+          <string>History Offset:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="forkStart">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="forkFallbehindLabel">
+         <property name="text">
+          <string>Local Fork Fallbehind:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="forkFallbehind">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="historyTab">
+      <attribute name="title">
+       <string>History</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTableWidget" name="historyTable"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="historyCheckboxesLayout">
+         <item>
+          <widget class="QCheckBox" name="hideWithoutState">
+           <property name="text">
+            <string>Hide Entries Without State</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="hideGoneEntries">
+           <property name="text">
+            <string>Hide Gone Entries</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="forkTab">
+      <attribute name="title">
+       <string>Local Fork</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTableWidget" name="forkTable"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -102,6 +238,11 @@
   <tabstop>jumpButton</tabstop>
   <tabstop>delaySpinner</tabstop>
   <tabstop>previousResetButton</tabstop>
+  <tabstop>tabs</tabstop>
+  <tabstop>historyTable</tabstop>
+  <tabstop>hideWithoutState</tabstop>
+  <tabstop>hideGoneEntries</tabstop>
+  <tabstop>forkTable</tabstop>
  </tabstops>
  <resources/>
  <connections/>

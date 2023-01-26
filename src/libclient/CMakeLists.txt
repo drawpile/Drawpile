@@ -18,6 +18,7 @@ set(libclient_sources
 	drawdance/annotationlist.cpp
 	drawdance/brushengine.cpp
 	drawdance/brushpreview.cpp
+	drawdance/canvashistory.cpp
 	drawdance/canvasstate.cpp
 	drawdance/drawcontextpool.cpp
 	drawdance/documentmetadata.cpp

@@ -20,6 +20,7 @@
 #include "dumpplaybackdialog.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
+#include "drawdance/canvashistory.h"
 #include "ui_dumpplayback.h"
 #include <QDateTime>
 #include <QTimer>
@@ -33,24 +34,93 @@ struct DumpPlaybackDialog::Private {
 	long long lastStepMs;
 	bool awaiting;
 	bool playing;
+	drawdance::CanvasHistorySnapshot chs;
+
+	static const QString &undoToString(DP_Undo undo)
+	{
+		static QString undoDone{tr("done")};
+		static QString undoUndone{tr("undone")};
+		static QString undoGone{tr("gone")};
+		static QString undoUnknown{tr("unknown")};
+		switch(undo) {
+		case DP_UNDO_DONE:
+			return undoDone;
+		case DP_UNDO_UNDONE:
+			return undoUndone;
+		case DP_UNDO_GONE:
+			return undoGone;
+		default:
+			return undoUnknown;
+		}
+	}
+
+	static QString affectedAreaToString(const DP_AffectedArea *aa)
+	{
+		switch(aa->domain) {
+		case DP_AFFECTED_DOMAIN_USER_ATTRS:
+			return tr("local user");
+		case DP_AFFECTED_DOMAIN_LAYER_ATTRS:
+			return tr("properties of layer %1").arg(aa->affected_id);
+		case DP_AFFECTED_DOMAIN_ANNOTATIONS:
+			return tr("annotation %1").arg(aa->affected_id);
+		case DP_AFFECTED_DOMAIN_PIXELS: {
+			DP_Rect bounds = aa->bounds;
+			return tr("pixels on layer %1, from (%2, %3) to (%4, %5)")
+				.arg(aa->affected_id)
+				.arg(DP_rect_left(bounds))
+				.arg(DP_rect_top(bounds))
+				.arg(DP_rect_right(bounds))
+				.arg(DP_rect_bottom(bounds));
+		}
+		case DP_AFFECTED_DOMAIN_CANVAS_BACKGROUND:
+			return tr("canvas background");
+		case DP_AFFECTED_DOMAIN_DOCUMENT_METADATA:
+			return tr("document metadata type %1").arg(aa->affected_id);
+		case DP_AFFECTED_DOMAIN_TIMELINE:
+			return tr("timeline frame %1").arg(aa->affected_id);
+		case DP_AFFECTED_DOMAIN_EVERYTHING:
+			return tr("everything");
+		default:
+			return tr("unknown domain %1").arg(static_cast<int>(aa->domain));
+		}
+	}
 };
 
 DumpPlaybackDialog::DumpPlaybackDialog(
 	canvas::CanvasModel *canvas, QWidget *parent)
 	: QDialog(parent)
 	, d{new Private{
-		  {}, canvas->paintEngine(), new QTimer{this}, 0, false, false}}
+		  {},
+		  canvas->paintEngine(),
+		  new QTimer{this},
+		  0,
+		  false,
+		  false,
+		  drawdance::CanvasHistorySnapshot::null()}}
 {
 	d->ui.setupUi(this);
 	d->ui.positionSpinner->setMaximum(INT_MAX);
 	d->ui.jumpSpinner->setMaximum(INT_MAX);
 
+	d->ui.historyTable->setColumnCount(4);
+	d->ui.historyTable->setHorizontalHeaderLabels(
+		{tr("Type"), tr("User"), tr("Undo"), tr("State")});
+	d->ui.historyTable->horizontalHeader()->setStretchLastSection(true);
+	d->ui.historyTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+	d->ui.forkTable->setColumnCount(3);
+	d->ui.forkTable->setHorizontalHeaderLabels(
+		{tr("Type"), tr("User"), tr("Affected Area")});
+	d->ui.forkTable->horizontalHeader()->setStretchLastSection(true);
+	d->ui.forkTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
 	d->timer->setTimerType(Qt::PreciseTimer);
 	d->timer->setSingleShot(true);
 
+	qRegisterMetaType<drawdance::CanvasHistorySnapshot>();
 	connect(
-		d->paintEngine, &canvas::PaintEngine::playbackAt, this,
-		&DumpPlaybackDialog::onPlaybackAt, Qt::QueuedConnection);
+		d->paintEngine, &canvas::PaintEngine::dumpPlaybackAt, this,
+		&DumpPlaybackDialog::onDumpPlaybackAt, Qt::QueuedConnection);
 	connect(
 		d->ui.playPauseButton, &QPushButton::pressed, this,
 		&DumpPlaybackDialog::playPause);
@@ -66,9 +136,16 @@ DumpPlaybackDialog::DumpPlaybackDialog(
 	connect(
 		d->ui.jumpButton, &QPushButton::pressed, this,
 		&DumpPlaybackDialog::jump);
+	connect(d->ui.hideWithoutState, &QCheckBox::stateChanged, [this](int) {
+		updateHistoryTable();
+	});
+	connect(d->ui.hideGoneEntries, &QCheckBox::stateChanged, [this](int) {
+		updateHistoryTable();
+	});
 	connect(d->timer, &QTimer::timeout, this, &DumpPlaybackDialog::singleStep);
 
 	updateUi();
+	updateTables();
 }
 
 DumpPlaybackDialog::~DumpPlaybackDialog()
@@ -81,7 +158,8 @@ void DumpPlaybackDialog::closeEvent(QCloseEvent *)
 	d->paintEngine->closePlayback();
 }
 
-void DumpPlaybackDialog::onPlaybackAt(long long pos, int)
+void DumpPlaybackDialog::onDumpPlaybackAt(
+	long long pos, const drawdance::CanvasHistorySnapshot &chs)
 {
 	d->awaiting = false;
 
@@ -104,6 +182,9 @@ void DumpPlaybackDialog::onPlaybackAt(long long pos, int)
 	} else {
 		updateUi();
 	}
+
+	d->chs = chs;
+	updateTables();
 }
 
 void DumpPlaybackDialog::playPause()
@@ -168,6 +249,107 @@ void DumpPlaybackDialog::updateUi()
 	d->ui.singleStepButton->setEnabled(!d->awaiting && !d->playing);
 	d->ui.nextResetButton->setEnabled(!d->awaiting && !d->playing);
 	d->ui.jumpButton->setEnabled(!d->awaiting && !d->playing);
+}
+
+void DumpPlaybackDialog::updateTables()
+{
+	updateHistoryTable();
+	updateForkTable();
+	if(d->chs.isNull()) {
+		updateStatus(0, 0, 0, 0, 0);
+	} else {
+		updateStatus(
+			d->chs.historyCount(), d->chs.historyOffset(), d->chs.forkCount(),
+			d->chs.forkStart(), d->chs.forkFallbehind());
+	}
+}
+
+void DumpPlaybackDialog::updateHistoryTable()
+{
+	int historyCount = d->chs.isNull() ? 0 : d->chs.historyCount();
+	QTableWidget *ht = d->ui.historyTable;
+	if(historyCount == 0) {
+		ht->setRowCount(1);
+		ht->clearContents();
+	} else {
+		ht->setRowCount(0);
+		int row = 0;
+		int offset = d->chs.historyOffset();
+		bool hideWithoutState = d->ui.hideWithoutState->isChecked();
+		bool hideGoneEntries = d->ui.hideGoneEntries->isChecked();
+		for(int i = 0; i < historyCount; ++i) {
+			const DP_CanvasHistoryEntry *entry = d->chs.historyEntryAt(i);
+			bool wantEntry = (hideWithoutState && !entry->state) ||
+							 (hideGoneEntries && entry->undo == DP_UNDO_GONE);
+			if(wantEntry) {
+				ht->insertRow(row);
+				ht->setVerticalHeaderItem(
+					row, new QTableWidgetItem{QString::number(offset + i)});
+				ht->setItem(
+					row, 0,
+					new QTableWidgetItem{QString::fromUtf8(
+						DP_message_type_name(DP_message_type(entry->msg)))});
+				ht->setItem(
+					row, 1,
+					new QTableWidgetItem{
+						QString::number(DP_message_context_id(entry->msg))});
+				ht->setItem(
+					row, 2,
+					new QTableWidgetItem{Private::undoToString(entry->undo)});
+				ht->setItem(
+					row, 3,
+					new QTableWidgetItem{
+						entry->state
+							? QStringLiteral("0x%1").arg(
+								  reinterpret_cast<quintptr>(entry->state),
+								  QT_POINTER_SIZE * 2, 16, QChar('0'))
+							: QString{}});
+				++row;
+			}
+		}
+	}
+}
+
+void DumpPlaybackDialog::updateForkTable()
+{
+	int forkCount = d->chs.isNull() ? 0 : d->chs.forkCount();
+	QTableWidget *ft = d->ui.forkTable;
+	if(forkCount == 0) {
+		ft->setRowCount(1);
+		ft->clearContents();
+	} else {
+		ft->setRowCount(forkCount);
+		int start = d->chs.forkStart();
+		for(int i = 0; i < forkCount; ++i) {
+			const DP_ForkEntry *fe = d->chs.forkEntryAt(i);
+			ft->setVerticalHeaderItem(
+				i, new QTableWidgetItem{QString::number(start + i)});
+			ft->setItem(
+				i, 0,
+				new QTableWidgetItem{QString::fromUtf8(
+					DP_message_type_name(DP_message_type(fe->msg)))});
+			ft->setItem(
+				i, 1,
+				new QTableWidgetItem{
+					QString::number(DP_message_context_id(fe->msg))});
+			ft->setItem(
+				i, 2,
+				new QTableWidgetItem{Private::affectedAreaToString(&fe->aa)});
+		}
+	}
+}
+
+void DumpPlaybackDialog::updateStatus(
+	int historyCount, int historyOffset, int forkCount, int forkStart,
+	int forkFallbehind)
+{
+	d->ui.historyCount->setText(QString::number(historyCount));
+	d->ui.historyOffset->setText(QString::number(historyOffset));
+	bool forkPresent = forkCount != 0;
+	d->ui.forkPresent->setText(forkPresent ? tr("Yes") : tr("No"));
+	d->ui.forkCount->setText(QString::number(forkCount));
+	d->ui.forkStart->setText(QString::number(forkStart));
+	d->ui.forkFallbehind->setText(QString::number(forkFallbehind));
 }
 
 }

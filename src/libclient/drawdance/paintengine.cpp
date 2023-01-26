@@ -13,13 +13,15 @@ namespace drawdance {
 
 PaintEngine::PaintEngine(AclState &acls, SnapshotQueue &sq,
 		bool wantCanvasHistoryDump, DP_PaintEnginePlaybackFn playbackFn,
-		void *playbackUser, const CanvasState &canvasState)
+		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
+		const CanvasState &canvasState)
 	: m_paintDc{DrawContextPool::acquire()}
 	, m_previewDc{DrawContextPool::acquire()}
 	, m_data(DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
 		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
-		&PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, playbackUser))
+		&PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, dumpPlaybackFn,
+		playbackUser))
 {
 }
 
@@ -35,7 +37,8 @@ DP_PaintEngine *PaintEngine::get()
 
 void PaintEngine::reset(
 	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
-	DP_PaintEnginePlaybackFn playbackFn, void *playbackUser,
+	DP_PaintEnginePlaybackFn playbackFn,
+	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
 {
 	bool wantCanvasHistoryDump = DP_paint_engine_want_canvas_history_dump(m_data);
@@ -44,7 +47,8 @@ void PaintEngine::reset(
 	m_data = DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
 		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
-		&PaintEngine::getTimeMs, nullptr, player, playbackFn, playbackUser);
+		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
+		playbackUser);
 }
 
 int PaintEngine::renderThreadCount() const

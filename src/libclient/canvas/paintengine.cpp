@@ -46,7 +46,9 @@ PaintEngine::PaintEngine(
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
-	, m_paintEngine{m_acls, m_snapshotQueue, wantCanvasHistoryDump, PaintEngine::onPlayback, this}
+	, m_paintEngine{
+		m_acls, m_snapshotQueue, wantCanvasHistoryDump, PaintEngine::onPlayback,
+		PaintEngine::onDumpPlayback, this}
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_changedTileBounds{}
@@ -103,7 +105,8 @@ void PaintEngine::reset(
 	uint8_t localUserId, const drawdance::CanvasState &canvasState, DP_Player *player)
 {
 	m_paintEngine.reset(m_acls, m_snapshotQueue, localUserId,
-		PaintEngine::onPlayback, this, canvasState, player);
+		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this, canvasState,
+		player);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
@@ -542,6 +545,12 @@ void PaintEngine::onPlayback(void *user, long long position, int interval)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->playbackAt(position, interval);
+}
+
+void PaintEngine::onDumpPlayback(void *user, long long position, DP_CanvasHistorySnapshot *chs)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->dumpPlaybackAt(position, drawdance::CanvasHistorySnapshot::inc(chs));
 }
 
 void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)

@@ -30,6 +30,7 @@ extern "C" {
 #include <QPixmap>
 
 #include "drawdance/aclstate.h"
+#include "drawdance/canvashistory.h"
 #include "drawdance/canvasstate.h"
 #include "drawdance/paintengine.h"
 #include "drawdance/snapshotqueue.h"
@@ -202,6 +203,7 @@ signals:
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
 	void playbackAt(long long pos, int interval);
+	void dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
 	void caughtUpTo(int progress);
 	void recorderStateChanged(bool started);
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
@@ -216,6 +218,7 @@ protected:
 
 private:
 	static void onPlayback(void *user, long long position, int interval);
+	static void onDumpPlayback(void *user, long long position, DP_CanvasHistorySnapshot *chs);
 	static void onAclsChanged(void *user, int aclChangeFlags);
 	static void onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color);
 	static void onMovePointer(void *user, unsigned int contextId, int x, int y);

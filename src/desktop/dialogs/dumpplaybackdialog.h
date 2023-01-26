@@ -25,6 +25,10 @@ namespace canvas {
 class CanvasModel;
 }
 
+namespace drawdance {
+class CanvasHistorySnapshot;
+}
+
 namespace dialogs {
 
 class DumpPlaybackDialog : public QDialog {
@@ -39,7 +43,8 @@ protected:
 	void closeEvent(QCloseEvent *);
 
 private slots:
-	void onPlaybackAt(long long pos, int interval);
+	void onDumpPlaybackAt(
+		long long pos, const drawdance::CanvasHistorySnapshot &chs);
 	void playPause();
 	void singleStep();
 	void jumpToPreviousReset();
@@ -48,6 +53,12 @@ private slots:
 
 private:
 	void updateUi();
+	void updateTables();
+	void updateHistoryTable();
+	void updateForkTable();
+	void updateStatus(
+		int historyCount, int historyOffset, int forkCount, int forkStart,
+		int forkFallbehind);
 
 	struct Private;
 	Private *d;
