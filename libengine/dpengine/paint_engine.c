@@ -308,6 +308,10 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_CLEANUP:
         DP_MUTEX_MUST_LOCK(pe->queue_mutex);
         DP_canvas_history_cleanup(pe->ch, dc, push_cleanup_message, pe);
+        while (pe->local_queue.used != 0) {
+            DP_message_queue_push_noinc(
+                &pe->remote_queue, DP_message_queue_shift(&pe->local_queue));
+        }
         DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
         break;
     case DP_MSG_INTERNAL_TYPE_PREVIEW:
