@@ -123,7 +123,14 @@ void DrawpileApp::setTheme(int theme)
 
 	switch(theme) {
 	case THEME_SYSTEM:
+#ifdef Q_OS_WIN
+		// Empty string will use the Vista style, which is so incredibly ugly
+		// that it looks outright broken. So we use the old Windows-95-esque
+		// style instead, it looks old, but at least not totally busted.
+		setStyle(QStringLiteral("Windows"));
+#else
 		setStyle(QStringLiteral(""));
+#endif
 		break;
 	default:
 		setStyle(QStringLiteral("Fusion"));
