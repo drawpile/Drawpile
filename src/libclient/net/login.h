@@ -52,7 +52,7 @@ class LoginHandler : public QObject {
 public:
 	enum class Mode {HostRemote, HostBuiltin, Join};
 
-	LoginHandler(Mode mode, const QUrl &url, QObject *parent=nullptr);
+	LoginHandler(Mode mode, const QUrl &url, const QString &greeting, QObject *parent=nullptr);
 
 	/**
 	 * @brief Set the desired user ID
@@ -372,6 +372,7 @@ private:
 	Mode m_mode;
 	QUrl m_address;
 	QByteArray m_avatar;
+	QString m_greeting;
 
 	// Settings for hosting
 	uint8_t m_userid;

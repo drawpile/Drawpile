@@ -219,6 +219,14 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
+static const char *inputMode = "Qt tablet input";
+
+QString DrawpileApp::greeting()
+{
+	return QStringLiteral("is using Dancepile " DRAWPILE_VERSION " on Qt " QT_VERSION_STR " (%1) with %2.")
+		.arg(QSysInfo::prettyProductName()).arg(inputMode);
+}
+
 static void initTranslations(DrawpileApp &app, const QLocale &locale)
 {
 	const auto preferredLangs = locale.uiLanguages();
@@ -369,6 +377,7 @@ static QStringList initApp(DrawpileApp &app)
 			if (penFilter->init()) {
 				app.installNativeEventFilter(penFilter);
 				useWindowsInk = true;
+				inputMode = "KisTablet Windows Ink input";
 				qDebug("Using Win8 Pointer Input for tablet support");
 
 			} else {
@@ -384,6 +393,7 @@ static QStringList initApp(DrawpileApp &app)
 			// This too was taken from Krita
 			qDebug("Enabling custom Wintab support");
 			KisTabletSupportWin::init();
+			inputMode = "KisTablet Wintab input";
 		}
 	}
 #endif // KIS_TABLET

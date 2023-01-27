@@ -52,7 +52,7 @@ public:
    };
 
 	DrawpileApp(int & argc, char ** argv );
-   virtual ~DrawpileApp();
+	virtual ~DrawpileApp();
 
 	void setTheme(int theme);
 	void notifySettingsChanged();
@@ -60,6 +60,8 @@ public:
 	void openUrl(QUrl url);
 
 	void openBlankDocument();
+
+	QString greeting();
 
 signals:
 	void settingsChanged();
