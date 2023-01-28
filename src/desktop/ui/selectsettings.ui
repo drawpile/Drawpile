@@ -24,42 +24,6 @@
     <number>3</number>
    </property>
    <item>
-    <widget class="QFrame" name="flipButtons">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="flip">
-        <property name="text">
-         <string>Flip</string>
-        </property>
-        <property name="icon">
-         <iconset theme="object-flip-vertical">
-          <normaloff/>
-         </iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="mirror">
-        <property name="text">
-         <string>Mirror</string>
-        </property>
-        <property name="icon">
-         <iconset theme="object-flip-horizontal">
-          <normaloff/>
-         </iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -69,16 +33,46 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
+       <widget class="QPushButton" name="flip">
+        <property name="text">
+         <string>Flip Vertically</string>
+        </property>
+        <property name="icon">
+         <iconset theme="object-flip-vertical">
+          <normaloff>theme:object-flip-vertical.svg</normaloff>theme:object-flip-vertical.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="mirror">
+        <property name="text">
+         <string>Flip Horizontally</string>
+        </property>
+        <property name="icon">
+         <iconset theme="object-flip-horizontal">
+          <normaloff>theme:object-flip-horizontal.svg</normaloff>theme:object-flip-horizontal.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="fittoscreen">
         <property name="text">
-         <string>Fit to screen</string>
+         <string>Shrink to View</string>
+        </property>
+        <property name="icon">
+         <iconset theme="zoom-in">
+          <normaloff>theme:zoom-in.svg</normaloff>theme:zoom-in.svg</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="resetsize">
         <property name="text">
-         <string>Reset size</string>
+         <string>Reset Transform</string>
+        </property>
+        <property name="icon">
+         <iconset theme="zoom-original">
+          <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
         </property>
        </widget>
       </item>
@@ -136,6 +130,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>flip</tabstop>
+  <tabstop>mirror</tabstop>
+  <tabstop>fittoscreen</tabstop>
+  <tabstop>resetsize</tabstop>
+  <tabstop>scale</tabstop>
+  <tabstop>rotateShear</tabstop>
+  <tabstop>distort</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
