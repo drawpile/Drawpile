@@ -95,11 +95,13 @@ BrushPalette::BrushPalette(QWidget *parent)
 
 	d->tagComboBox = new QComboBox(this);
 	d->tagComboBox->setInsertPolicy(QComboBox::NoInsert);
+	d->tagComboBox->setMinimumWidth(24);
 	titleWidget->addCustomWidget(d->tagComboBox, true);
 	titleWidget->addSpace(4);
 
 	d->searchLineEdit = new QLineEdit(this);
 	d->searchLineEdit->setPlaceholderText("Search");
+	d->searchLineEdit->setMinimumWidth(24);
 	titleWidget->addCustomWidget(d->searchLineEdit, true);
 	titleWidget->addSpace(4);
 
