@@ -3236,6 +3236,8 @@ void MainWindow::createDocks()
 	Q_ASSERT(m_view);
 	Q_ASSERT(m_canvasscene);
 
+	setDockNestingEnabled(true);
+
 	// Create tool settings
 	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
 	m_dockToolSettings->setObjectName("ToolSettings");
