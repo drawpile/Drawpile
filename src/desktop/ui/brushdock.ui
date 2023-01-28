@@ -483,6 +483,32 @@
    <header>widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>hardedgeMode</tabstop>
+  <tabstop>squareMode</tabstop>
+  <tabstop>softedgeMode</tabstop>
+  <tabstop>mypaintMode</tabstop>
+  <tabstop>modeColorpick</tabstop>
+  <tabstop>modeLockAlpha</tabstop>
+  <tabstop>modeEraser</tabstop>
+  <tabstop>blendmode</tabstop>
+  <tabstop>modeIncremental</tabstop>
+  <tabstop>brushsizeBox</tabstop>
+  <tabstop>pressureSize</tabstop>
+  <tabstop>radiusLogarithmicBox</tabstop>
+  <tabstop>opacityBox</tabstop>
+  <tabstop>pressureOpacity</tabstop>
+  <tabstop>hardnessBox</tabstop>
+  <tabstop>pressureHardness</tabstop>
+  <tabstop>smudgingBox</tabstop>
+  <tabstop>pressureSmudging</tabstop>
+  <tabstop>colorpickupBox</tabstop>
+  <tabstop>brushspacingBox</tabstop>
+  <tabstop>gainBox</tabstop>
+  <tabstop>slowTrackingBox</tabstop>
+  <tabstop>inputPreset</tabstop>
+  <tabstop>configureInput</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
