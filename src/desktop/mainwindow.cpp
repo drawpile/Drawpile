@@ -1997,43 +1997,29 @@ void MainWindow::setFreezeDocks(bool freeze)
 
 void MainWindow::setDocksHidden(bool hidden)
 {
-	int xOffset1=0, xOffset2=0, yOffset=0;
-
-	for(QObject *c : children()) {
-		QWidget *w = qobject_cast<QWidget*>(c);
-		if(w && (w->inherits("QDockWidget") || w->inherits("QToolBar"))) {
-			bool visible = w->isVisible();
-
-			if(hidden) {
-				w->setProperty("wasVisible", w->isVisible());
+	QPoint centerPosBefore = centralWidget()->pos();
+	if(hidden) {
+		m_hiddenDockState = saveState();
+		for(QObject *c : children()) {
+			QWidget *w = qobject_cast<QWidget *>(c);
+			bool shouldHide = w && w->isVisible() &&
+				(w->inherits("QDockWidget") || w->inherits("QToolBar"));
+			if(shouldHide) {
 				w->hide();
-			} else {
-				const QVariant v = w->property("wasVisible");
-				if(!v.isNull()) {
-					w->setVisible(v.toBool());
-					visible = v.toBool();
-				}
 			}
-
-			QToolBar *tb = qobject_cast<QToolBar*>(w);
-			if(tb && visible && !tb->isFloating()) {
-				if(toolBarArea(tb) == Qt::TopToolBarArea)
-					yOffset = tb->height();
-				else if(toolBarArea(tb) == Qt::LeftToolBarArea)
-					xOffset1 = tb->width();
-			}
-
-			QDockWidget *dw = qobject_cast<QDockWidget*>(w);
-			if(dw && visible && !dw->isFloating() && dockWidgetArea(dw) == Qt::LeftDockWidgetArea)
-				xOffset2 = dw->width();
 		}
+		// Force recalculation of the central widget's position. Otherwise this
+		// will happen lazily on the next repaint and we can't scroll properly.
+		adjustSize();
+	} else {
+		restoreState(m_hiddenDockState);
+		m_hiddenDockState.clear();
 	}
 
 	m_viewStatusBar->setHidden(hidden);
 
-	// Docks can only dock on the left or right, so only one yOffset is needed.
-	const int dir = hidden ? -1 : 1;
-	m_view->scrollBy(dir * (xOffset1+xOffset2), dir * yOffset);
+	QPoint centerPosDelta = centralWidget()->pos() - centerPosBefore;
+	m_view->scrollBy(centerPosDelta.x(), centerPosDelta.y());
 }
 
 /**

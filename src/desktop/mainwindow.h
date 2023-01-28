@@ -237,6 +237,7 @@ private:
 	docks::Navigator *m_dockNavigator;
 	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;
+	QByteArray m_hiddenDockState;
 	widgets::ChatBox *m_chatbox;
 
 	widgets::CanvasView *m_view;
