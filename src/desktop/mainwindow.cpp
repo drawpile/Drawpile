@@ -3112,7 +3112,7 @@ void MainWindow::setupActions()
 	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
-	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Ctrl+W");
+	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Shift+E");
 	QAction *swapcolors = makeAction("swapcolors", tr("Swap Last Colors")).shortcut("X");
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight);
