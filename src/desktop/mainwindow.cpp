@@ -3240,7 +3240,7 @@ void MainWindow::createDocks()
 	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
 	m_dockToolSettings->setObjectName("ToolSettings");
 	m_dockToolSettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockToolSettings);
+	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
 	static_cast<tools::SelectionSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(m_view);
 	static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->setScene(m_canvasscene);
 	m_view->setPressureMapping(static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->getPressureMapping());
@@ -3249,7 +3249,7 @@ void MainWindow::createDocks()
 	m_dockBrushPalette = new docks::BrushPalette(this);
 	m_dockBrushPalette->setObjectName("BrushPalette");
 	m_dockBrushPalette->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockBrushPalette);
+	addDockWidget(Qt::LeftDockWidgetArea, m_dockBrushPalette);
 
 	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
 	m_dockBrushPalette->connectBrushSettings(brushSettings);
