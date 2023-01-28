@@ -192,6 +192,13 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.setupUi(widget);
 	d->ui.inputPreset->setModel(d->presetModel);
 
+	// The blend mode combo is ever so slightly higher than the buttons, so
+	// hiding it causes some jerking normally, so we'll tell it to retain its
+	// size. The space it's taking up is supposed to be empty anyway.
+	QSizePolicy blendmodeSizePolicy = d->ui.blendmode->sizePolicy();
+	blendmodeSizePolicy.setRetainSizeWhenHidden(true);
+	d->ui.blendmode->setSizePolicy(blendmodeSizePolicy);
+
 	connect(d->ui.configureInput, &QAbstractButton::clicked, [this, parent]() {
 		if(!d->inputSettingsDialog) {
 			d->inputSettingsDialog = new dialogs::InputSettings(parent);
@@ -640,6 +647,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
 		pair.first->setVisible(pair.second);
 	}
+	d->ui.blendmode->setEnabled(!mypaintmode);
 }
 
 void BrushSettings::pushSettings()

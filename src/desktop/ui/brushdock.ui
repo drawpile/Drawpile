@@ -152,17 +152,20 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QComboBox" name="blendmode">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="minimumSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>24</width>
+         <height>0</height>
         </size>
        </property>
-      </spacer>
+      </widget>
      </item>
      <item>
       <widget class="widgets::GroupedToolButton" name="modeColorpick">
@@ -205,9 +208,6 @@
         <bool>true</bool>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="blendmode"/>
      </item>
      <item>
       <widget class="widgets::GroupedToolButton" name="modeIncremental">
@@ -276,7 +276,14 @@
       </widget>
      </item>
      <item row="10" column="1" colspan="2">
-      <widget class="QComboBox" name="inputPreset"/>
+      <widget class="QComboBox" name="inputPreset">
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item row="10" column="0">
       <widget class="QLabel" name="label_3">
@@ -488,10 +495,10 @@
   <tabstop>squareMode</tabstop>
   <tabstop>softedgeMode</tabstop>
   <tabstop>mypaintMode</tabstop>
+  <tabstop>blendmode</tabstop>
   <tabstop>modeColorpick</tabstop>
   <tabstop>modeLockAlpha</tabstop>
   <tabstop>modeEraser</tabstop>
-  <tabstop>blendmode</tabstop>
   <tabstop>modeIncremental</tabstop>
   <tabstop>brushsizeBox</tabstop>
   <tabstop>pressureSize</tabstop>
