@@ -3241,7 +3241,7 @@ void MainWindow::createDocks()
 	// Create tool settings
 	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
 	m_dockToolSettings->setObjectName("ToolSettings");
-	m_dockToolSettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	m_dockToolSettings->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
 	static_cast<tools::SelectionSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(m_view);
 	static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->setScene(m_canvasscene);
@@ -3250,7 +3250,7 @@ void MainWindow::createDocks()
 	// Create brush palette
 	m_dockBrushPalette = new docks::BrushPalette(this);
 	m_dockBrushPalette->setObjectName("BrushPalette");
-	m_dockBrushPalette->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	m_dockBrushPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::LeftDockWidgetArea, m_dockBrushPalette);
 
 	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
@@ -3259,14 +3259,17 @@ void MainWindow::createDocks()
 	// Create color docks
 	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Color Wheel"), this);
 	m_dockColorSpinner->setObjectName("colorspinnerdock");
+	m_dockColorSpinner->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSpinner);
 
 	m_dockColorPalette = new docks::ColorPaletteDock(tr("Palette"), this);
 	m_dockColorPalette->setObjectName("colorpalettedock");
+	m_dockColorPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorPalette);
 
 	m_dockColorSliders = new docks::ColorSliderDock(tr("Color Sliders"), this);
 	m_dockColorSliders->setObjectName("colorsliderdock");
+	m_dockColorSliders->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
 
 	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
@@ -3275,12 +3278,12 @@ void MainWindow::createDocks()
 	// Create layer list
 	m_dockLayers = new docks::LayerList(this);
 	m_dockLayers->setObjectName("LayerList");
-	m_dockLayers->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	m_dockLayers->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockLayers);
 
 	// Create navigator
 	m_dockNavigator = new docks::Navigator(this);
-	m_dockNavigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	m_dockNavigator->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default
 
