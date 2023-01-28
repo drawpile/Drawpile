@@ -169,6 +169,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_undotools(nullptr),
 	  m_drawingtools(nullptr),
 	  m_brushSlots(nullptr),
+	  m_dockToggles(nullptr),
 	  m_lastToolBeforePaste(-1),
 	  m_fullscreenOldMaximized(false),
 	  m_tempToolSwitchShortcut(nullptr),
@@ -2020,6 +2021,7 @@ void MainWindow::setDocksHidden(bool hidden)
 
 	QPoint centerPosDelta = centralWidget()->pos() - centerPosBefore;
 	m_view->scrollBy(centerPosDelta.x(), centerPosDelta.y());
+	m_dockToggles->setDisabled(hidden);
 }
 
 /**
@@ -2537,12 +2539,17 @@ void MainWindow::setupActions()
 
 	QMenu *toggletoolbarmenu = new QMenu(this);
 	QMenu *toggledockmenu = new QMenu(this);
+	m_dockToggles = new QActionGroup{this};
+	m_dockToggles->setExclusive(false);
 
 	// Collect list of docks for dock menu
 	for(QObject *c : children()) {
 		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-		if(dw)
-			toggledockmenu->addAction(dw->toggleViewAction());
+		if(dw) {
+			QAction *toggledockaction = dw->toggleViewAction();
+			toggledockmenu->addAction(toggledockaction);
+			m_dockToggles->addAction(toggledockaction);
+		}
 	}
 
 	toggledockmenu->addSeparator();

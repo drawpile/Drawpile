@@ -267,6 +267,7 @@ private:
 	QActionGroup *m_undotools;       // undo&redo related tools
 	QActionGroup *m_drawingtools;    // drawing tool selection
 	QActionGroup *m_brushSlots;      // tool slot shortcuts
+	QActionGroup *m_dockToggles;     // dock visibility toggles
 
 	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 
