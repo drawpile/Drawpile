@@ -47,10 +47,6 @@ target_link_libraries(dpserver
 	${QT_PACKAGE_NAME}::Network
 )
 
-if(Sodium_FOUND)
-	target_include_directories(dpserver SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
-endif()
-
 if(TESTS)
 	add_subdirectory(tests)
 endif()

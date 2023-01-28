@@ -5,6 +5,6 @@ add_unit_tests(shared
 	TESTS passwordhash filename messages recording messagequeue listings ulid
 )
 
-if(Sodium_FOUND)
+if(libsodium_FOUND)
 	add_unit_test(shared authtoken LIBS dpshared ${QT_PACKAGE_NAME}::Test)
 endif()

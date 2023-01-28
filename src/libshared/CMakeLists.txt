@@ -70,13 +70,12 @@ if(ANDROID)
 	)
 endif()
 
-if(Sodium_FOUND)
+if(libsodium_FOUND)
 	target_sources(dpshared PRIVATE
 		util/authtoken.cpp
 		util/authtoken.h
 	)
-	target_include_directories(dpshared SYSTEM PRIVATE ${SODIUM_INCLUDE_DIR})
-	target_link_libraries(dpshared ${SODIUM_LIBRARY})
+	target_link_libraries(dpshared libsodium::libsodium)
 endif()
 
 if(KF5DNSSD_FOUND)

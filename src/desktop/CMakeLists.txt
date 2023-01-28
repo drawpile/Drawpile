@@ -1,5 +1,5 @@
 find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Widgets Multimedia)
-find_package(${QT_PACKAGE_NAME}ColorWidgets QUIET)
+find_package(QtColorWidgets QUIET)
 find_package(${QT_PACKAGE_NAME}Keychain QUIET)
 
 add_executable(drawpile MACOSX_BUNDLE
@@ -312,11 +312,8 @@ if(${QT_PACKAGE_NAME}Keychain_FOUND)
 endif()
 add_feature_info("Client password manager" ${QT_PACKAGE_NAME}Keychain_FOUND "")
 
-if(QTCOLORWIDGETS_FOUND)
-	target_include_directories(drawpile SYSTEM PRIVATE
-		${LIBQTCOLORWIDGETS_INCLUDE_DIRS}
-	)
-	target_link_libraries(drawpile ${LIBQTCOLORWIDGETS_LIBRARIES})
+if(QtColorWidgets_FOUND)
+	target_link_libraries(drawpile QtColorWidgets::QtColorWidgets)
 else()
 	target_sources(drawpile PRIVATE
 		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
