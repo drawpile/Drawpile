@@ -390,7 +390,7 @@
      <item row="5" column="0" colspan="3">
       <widget class="KisSliderSpinBox" name="colorpickupBox">
        <property name="prefix">
-        <string notr="true">Color Pickup: 1/</string>
+        <string>Color Pickup: 1/</string>
        </property>
        <property name="minimum">
         <number>1</number>
