@@ -189,6 +189,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	}
 }
 
+#if HAVE_LIBSODIUM
 static QStringList jsonArrayToStringList(const QJsonArray &a)
 {
 	QStringList sl;
@@ -199,6 +200,7 @@ static QStringList jsonArrayToStringList(const QJsonArray &a)
 	}
 	return sl;
 }
+#endif
 
 void LoginHandler::handleIdentMessage(const protocol::ServerCommand &cmd)
 {
