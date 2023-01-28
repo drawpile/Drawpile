@@ -1,5 +1,5 @@
 find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Sql)
-find_package(Libmicrohttpd QUIET)
+find_package(libmicrohttpd QUIET)
 
 set(srvname "drawpile-srv")
 set(srvlib "${srvname}lib")
@@ -101,15 +101,15 @@ string(TOLOWER "${INITSYS}" INITSYS)
 if(INITSYS STREQUAL "systemd")
 	find_package(PkgConfig QUIET)
 	if(PKGCONFIG_FOUND)
-		pkg_check_modules(SYSTEMD "libsystemd" QUIET)
+		pkg_check_modules(libsystemd QUIET IMPORTED_TARGET libsystemd)
 	endif()
 endif()
 
-if(SYSTEMD_FOUND)
+if(libsystemd_FOUND)
 	target_sources(${srvlib} PRIVATE
 		initsys_systemd.cpp
 	)
-	target_link_libraries(${srvlib} ${SYSTEMD_LIBRARIES})
+	target_link_libraries(${srvlib} PkgConfig::libsystemd)
 else()
 	target_sources(${srvlib} PRIVATE
 		initsys_dummy.cpp
@@ -117,7 +117,7 @@ else()
 endif()
 add_feature_info("Server systemd integration" SYSTEMD_FOUND "")
 
-if(MHD_FOUND)
+if(libmicrohttpd_FOUND)
 	target_sources(${srvlib} PRIVATE
 		webadmin/qmhttp.cpp
 		webadmin/qmhttp.h
@@ -125,9 +125,9 @@ if(MHD_FOUND)
 		webadmin/webadmin.h
 	)
 	target_compile_definitions(${srvlib} PRIVATE HAVE_WEBADMIN)
-	target_link_libraries(${srvlib} ${MHD_LIBRARIES})
+	target_link_libraries(${srvlib} libmicrohttpd::libmicrohttpd)
 endif()
-add_feature_info("Server web-admin support" MHD_FOUND "")
+add_feature_info("Server web-admin support" libmicrohttpd_FOUND "")
 
 if(UNIX AND NOT APPLE)
 	install(TARGETS ${srvname})

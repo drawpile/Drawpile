@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10 CACHE STRING "macOS deployment target")
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.11 CACHE STRING "macOS deployment target")
 
 set(DRAWPILE_PROTO_DEFAULT_PORT 27750)
 set(DP_MIN_QT_VERSION_GUI 5.12)
@@ -12,6 +12,10 @@ include(FeatureSummary)
 option(CLIENT "Compile client" ON)
 add_feature_info("Drawpile client (CLIENT)" CLIENT "")
 option(BUILD_LABEL "A custom label to add to the version")
+
+if(CLIENT)
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "macOS deployment target" FORCE)
+endif()
 
 if(WIN32)
 	cmake_dependent_option(KIS_TABLET "Enable custom tablet support code" OFF "CLIENT" OFF)
@@ -145,12 +149,12 @@ if(CLIENT OR SERVER)
 	include_directories(${CMAKE_SOURCE_DIR}/src)
 
 	find_package(${QT_PACKAGE_NAME} ${QT_MIN_VERSION_SERVER} REQUIRED COMPONENTS Core Network)
-	find_package(Sodium)
+	find_package(libsodium QUIET)
 
-	if(Sodium_FOUND)
+	if(libsodium_FOUND)
 		add_compile_definitions(HAVE_LIBSODIUM)
 	endif()
-	add_feature_info("Ext-auth support" Sodium_FOUND "")
+	add_feature_info("Ext-auth support" libsodium_FOUND "")
 
 	#find_package(KF5DNSSD NO_MODULE) # disabled pending built-in server rewrite
 	if(KF5DNSSD_FOUND)
@@ -201,7 +205,8 @@ if(TOOLS)
 	add_cargo_executable(drawpile-cli PACKAGE drawpile-cli)
 endif()
 
-feature_summary(WHAT PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
+feature_summary(INCLUDE_QUIET_PACKAGES
+	WHAT PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
 
 if(CMAKE_CONFIGURATION_TYPES)
 	message(NOTICE
