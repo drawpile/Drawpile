@@ -32,7 +32,14 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QFontComboBox" name="font"/>
+      <widget class="QFontComboBox" name="font">
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="size">
