@@ -5,6 +5,7 @@
 #include <QAbstractSocket>
 #include <QLibraryInfo>
 #include <QVariant>
+#include <limits>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 #define HAVE_QT_COMPAT_PBKDF2
@@ -36,6 +37,11 @@ using StringView = QString;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 using RetrieveDataMetaType = QMetaType;
 
+inline auto castSize(size_t size) {
+	Q_ASSERT(size <= size_t(std::numeric_limits<qsizetype>().max()));
+	return qsizetype(size);
+}
+
 inline auto isImageMime(const QString &mimeType, RetrieveDataMetaType) {
 	return mimeType == "application/x-qt-image";
 }
@@ -59,6 +65,11 @@ inline auto stringSlice(const QString &str, qsizetype position) {
 #define Q_MOC_INCLUDE(moc)
 
 using RetrieveDataMetaType = QVariant::Type;
+
+inline auto castSize(size_t size) {
+	Q_ASSERT(size < std::numeric_limits<int>().max());
+	return int(size);
+}
 
 inline auto isImageMime(const QString &, RetrieveDataMetaType type) {
 	return type == QVariant::Image;

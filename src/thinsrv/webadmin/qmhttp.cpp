@@ -18,6 +18,7 @@
 */
 
 #include "thinsrv/webadmin/qmhttp.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QList>
 #include <QPair>
@@ -106,7 +107,7 @@ MHD_Result iterate_post(void *con_cls, enum MHD_ValueKind kind, const char *key,
 
 	//logger::debug() << "iterate post" << key << "file:" << filename << "content type:" << content_type << "encoding:" << transfer_encoding << "offset" << int(off) << "size" << int(size);
 
-	ctx->postdata[key].append(data, size);
+	ctx->postdata[key].append(data, compat::castSize(size));
 
 	return MHD_YES;
 }
