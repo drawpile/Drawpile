@@ -31,8 +31,9 @@
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(nullptr, Qt::ToolTip), m_arrowoffset(0), m_timer(new QTimer(this)), m_doc(new QTextDocument(this)), m_parentWidget(parent)
+	: QWidget(nullptr, Qt::ToolTip | Qt::FramelessWindowHint), m_arrowoffset(0), m_timer(new QTimer(this)), m_doc(new QTextDocument(this)), m_parentWidget(parent)
 {
+	setAttribute(Qt::WA_TranslucentBackground);
 	m_timer->setSingleShot(true);
 	m_timer->setInterval(2500);
 
