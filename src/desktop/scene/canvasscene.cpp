@@ -42,6 +42,9 @@ CanvasScene::CanvasScene(QObject *parent)
 	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true),
 	  m_showLaserTrails(true)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	qRegisterMetaType<rustpile::Annotations*>();
+#endif
 	setItemIndexMethod(NoIndex);
 
 	m_canvasItem = new CanvasItem;
