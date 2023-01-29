@@ -30,6 +30,7 @@
 #include <QFile>
 
 #include <microhttpd.h>
+#undef DELETE // winnt.h
 
 /*
  * In version 0.9.71 of libmicrohttpd, MHD_YES and MHD_NO have been changed
