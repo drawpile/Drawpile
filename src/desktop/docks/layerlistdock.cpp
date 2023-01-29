@@ -78,19 +78,7 @@ LayerList::LayerList(QWidget *parent)
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &LayerList::blendModeChanged);
-	titlebar->addCustomWidget(m_blendModeCombo);
-	titlebar->addSpace(4);
-
-	m_opacitySlider = new KisSliderSpinBox;
-	m_opacitySlider->setRange(0, 100);
-	m_opacitySlider->setPrefix(tr("Opacity: "));
-	m_opacitySlider->setSuffix(tr("%"));
-	m_opacitySlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	m_opacitySlider->setMinimumWidth(64);
-	connect(
-		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		this, &LayerList::opacityChanged);
-	titlebar->addCustomWidget(m_opacitySlider);
+	titlebar->addCustomWidget(m_blendModeCombo, true);
 	titlebar->addSpace(4);
 
 	QWidget *root = new QWidget{this};
@@ -99,6 +87,21 @@ LayerList::LayerList(QWidget *parent)
 	rootLayout->setContentsMargins(0, 0, 0, 0);
 	root->setLayout(rootLayout);
 	setWidget(root);
+
+	m_opacitySlider = new KisSliderSpinBox{this};
+	m_opacitySlider->setRange(0, 100);
+	m_opacitySlider->setPrefix(tr("Opacity: "));
+	m_opacitySlider->setSuffix(tr("%"));
+	m_opacitySlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_opacitySlider->setMinimumWidth(24);
+	connect(
+		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &LayerList::opacityChanged);
+	QHBoxLayout *opacitySliderLayout = new QHBoxLayout;
+	opacitySliderLayout->setContentsMargins(
+		titleBarWidget()->layout()->contentsMargins());
+	opacitySliderLayout->addWidget(m_opacitySlider);
+	rootLayout->addLayout(opacitySliderLayout);
 
 	m_view = new QTreeView;
 	m_view->setHeaderHidden(true);
