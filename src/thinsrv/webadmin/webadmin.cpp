@@ -27,6 +27,7 @@
 #include <QJsonObject>
 #include <QMetaObject>
 #include <QDir>
+#include <QtGlobal>
 
 namespace server {
 
@@ -65,6 +66,8 @@ void Webadmin::setSessions(MultiServer *server)
 		case HttpRequest::DELETE:
 			m = JsonApiMethod::Delete;
 			break;
+		default:
+			return HttpResponse::JsonErrorResponse("Unknown request method", 400);
 		}
 
 		const QStringList path = req.pathMatch().captured(1).split('/', compat::SkipEmptyParts);
