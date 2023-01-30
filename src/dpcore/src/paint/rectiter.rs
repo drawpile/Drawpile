@@ -184,7 +184,8 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_out_of_bounds() {
-        let _ = RectIterator::new(&BUFFER, 5, 3, 0, 5, 5);
+        let iter = RectIterator::new(&BUFFER, 5, 3, 0, 5, 5);
+        for _ in iter {}
     }
 
     #[test]
