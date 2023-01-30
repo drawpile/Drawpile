@@ -40,6 +40,10 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->setContentsMargins(1, 1, 1, 1);
 	layout->setSpacing(0);
 
+	QSpacerItem *spacer = new QSpacerItem{
+		0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum};
+	layout->addSpacerItem(spacer);
+
 	// View flipping
 	m_viewFlip = new widgets::GroupedToolButton(this);
 	m_viewFlip->setAutoRaise(true);
@@ -109,9 +113,8 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 	// Zoom slider
 	m_zoomSlider = new QSlider(Qt::Horizontal, this);
-	m_zoomSlider->setMinimumWidth(200);
-	m_zoomSlider->setMaximumWidth(200);
-	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+	m_zoomSlider->setMinimumWidth(24);
+	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 	m_zoomSlider->setMinimum(50);
 	m_zoomSlider->setMaximum(1000);
 	m_zoomSlider->setPageStep(50);
