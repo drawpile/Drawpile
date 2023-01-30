@@ -100,7 +100,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 			QLocale locale(localename);
 			if(locale != localeC && !locales.contains(localename)) {
 				locales << localename;
-				m_ui->languageBox->addItem(locale.nativeLanguageName(), localename);
+				m_ui->languageBox->addItem(
+					tr("%1 (%2)").arg(locale.nativeLanguageName()).arg(QLocale::languageToString(locale.language())),
+					localename);
 			}
 		}
 	}
