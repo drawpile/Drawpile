@@ -26,6 +26,7 @@ set(desktop_sources
 	dialogs/newdialog.cpp
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
+	dialogs/layoutsdialog.cpp
 	dialogs/logindialog.cpp
 	dialogs/settingsdialog.cpp
 	dialogs/resizedialog.cpp
@@ -105,6 +106,7 @@ set(desktop_uis
 	ui/joindialog.ui
 	ui/lasersettings.ui
 	ui/layerproperties.ui
+	ui/layoutsdialog.ui
 	ui/logindialog.ui
 	ui/netstats.ui
 	ui/newdialog.ui

@@ -172,6 +172,8 @@ private slots:
 	void changeLocalCanvasBackground();
 	void clearLocalCanvasBackground();
 
+	void showLayoutsDialog();
+
 	void updateDevToolsActions();
 	void setArtificialLag();
 	void setArtificialDisconnect();

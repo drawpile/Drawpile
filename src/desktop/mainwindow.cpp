@@ -114,6 +114,7 @@
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
 #include "dialogs/joindialog.h"
+#include "dialogs/layoutsdialog.h"
 #include "dialogs/logindialog.h"
 #include "dialogs/settingsdialog.h"
 #include "dialogs/resizedialog.h"
@@ -2355,6 +2356,24 @@ void MainWindow::clearLocalCanvasBackground()
 }
 
 
+void MainWindow::showLayoutsDialog()
+{
+	dialogs::LayoutsDialog *dlg = findChild<dialogs::LayoutsDialog *>(
+		"layoutsdialog", Qt::FindDirectChildrenOnly);
+	if(!dlg) {
+		dlg = new dialogs::LayoutsDialog{saveState(), this};
+		dlg->setObjectName("layoutsdialog");
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		connect(dlg, &dialogs::LayoutsDialog::applyState, [this](const QByteArray &state) {
+			restoreState(state);
+		});
+	}
+	dlg->show();
+	dlg->activateWindow();
+	dlg->raise();
+}
+
+
 void MainWindow::updateDevToolsActions()
 {
 	QAction *profileAction = getAction("profile");
@@ -2798,6 +2817,8 @@ void MainWindow::setupActions()
 	//
 	// View menu
 	//
+	QAction *layoutsAction = makeAction("layouts", tr("&Layouts..."));
+
 	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
 	toolbartoggles->setMenu(toggletoolbarmenu);
 
@@ -2838,6 +2859,8 @@ void MainWindow::setupActions()
 			fullscreen->setChecked(state & Qt::WindowFullScreen);
 		});
 	}
+
+	connect(layoutsAction, &QAction::triggered, this, &MainWindow::showLayoutsDialog);
 
 	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
 
@@ -2890,6 +2913,7 @@ void MainWindow::setupActions()
 	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, zoomorig);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
+	viewmenu->addAction(layoutsAction);
 	viewmenu->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
 	viewmenu->addAction(toggleChat);
