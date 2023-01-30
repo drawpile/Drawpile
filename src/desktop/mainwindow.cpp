@@ -2973,7 +2973,7 @@ void MainWindow::setupActions()
 	connect(nextFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setNextFrame);
 	connect(prevFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setPreviousFrame);
 
-	QMenu *layerMenu = menuBar()->addMenu(tr("Layer"));
+	QMenu *layerMenu = menuBar()->addMenu(tr("&Layer"));
 	layerMenu->addAction(layerAdd);
 	layerMenu->addAction(groupAdd);
 	layerMenu->addAction(layerDupe);
