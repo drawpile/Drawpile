@@ -2576,6 +2576,18 @@ void MainWindow::setupActions()
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
+	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Tabs on Side")).checkable().remembered();
+	toggledockmenu->addAction(sideTabDocks);
+	auto updateSideTabDocks = [=](){
+		if(sideTabDocks->isChecked()) {
+			setDockOptions(dockOptions() | QMainWindow::VerticalTabs);
+		} else {
+			setDockOptions(dockOptions() & ~QMainWindow::VerticalTabs);
+		}
+	};
+	connect(sideTabDocks, &QAction::toggled, updateSideTabDocks);
+	updateSideTabDocks();
+
 	QAction *hideDocks = makeAction("hidedocks", tr("Hide Docks")).checkable().shortcut("tab");
 	toggledockmenu->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
