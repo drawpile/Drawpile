@@ -108,7 +108,7 @@ ColorPaletteDock::ColorPaletteDock(const QString& title, QWidget *parent)
 	titlebar->addCustomWidget(menuButton);
 
 	d->readonlyPalette = new widgets::GroupedToolButton;
-	d->readonlyPalette->setToolTip("Write protect");
+	d->readonlyPalette->setToolTip(tr("Write protect"));
 	d->readonlyPalette->setIcon(icon::fromTheme("object-locked"));
 	d->readonlyPalette->setCheckable(true);
 	titlebar->addCustomWidget(d->readonlyPalette);
