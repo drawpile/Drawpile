@@ -3292,12 +3292,14 @@ void MainWindow::createDocks()
 	m_dockOnionSkins->setObjectName("onionskins");
 	m_dockOnionSkins->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::TopDockWidgetArea, m_dockOnionSkins);
+	m_dockOnionSkins->hide(); // hidden by default
 
 	// Create timeline
 	m_dockTimeline = new docks::Timeline(this);
 	m_dockTimeline->setObjectName("Timeline");
 	m_dockTimeline->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::TopDockWidgetArea, m_dockTimeline);
+	m_dockTimeline->hide(); // hidden by default
 
 	tabifyDockWidget(m_dockOnionSkins, m_dockTimeline);
 }
