@@ -103,6 +103,9 @@ if [ $qt6 -eq 1 ]; then
 	install="cmake --install ."
 	base_flags="$base_flags -DCMAKE_OSX_DEPLOYMENT_TARGET=$min_mac"
 	tools_flags="-no-feature-assistant -no-feature-pixeltool"
+	if [ "${RUNNER_OS-}" == "Windows" ]; then
+		configure_module="cmd $configure_module.bat"
+	fi
 else
 	configure="configure"
 	configure_module="$prefix/bin/qmake"

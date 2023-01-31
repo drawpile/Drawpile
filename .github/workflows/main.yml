@@ -31,7 +31,7 @@ jobs:
           - macos-latest
           - windows-latest
         libsodium: [ 1.0.18 ]
-        qt: [ 5.15.8 ]
+        qt: [ 5.15.8, 6.4.2 ]
         qtkeychain: [ c6f0b66318f8da6917fb4681103f7303b1836194 ]
         libmicrohttpd: [ 0.9.75 ]
         include:
@@ -47,13 +47,19 @@ jobs:
               libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
               libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
               libxcb-randr0-dev libxcb-render-util0-dev libxcb-xinerama0-dev
-              libxcb-xkb-dev libxcb-xinput-dev
+              libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
             build_packages: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends libsystemd-dev
             build_flags: -DINITSYS=systemd
           - os: windows-latest
             sccache_tuple: x86_64-pc-windows-msvc
+            other_deps_flags: >-
+              "-DCMAKE_VS_MSBUILD_COMMAND=$(
+              vswhere -latest -requires Microsoft.Component.MSBuild
+              -find MSBuild\\**\\Bin\\amd64\\MSBuild.exe | select-object -first 1
+              )"
+          - os: windows-latest
             qt: 5.15.8
             qt_packages: >
               choco install gperf jom openssl winflexbison3 &&
@@ -61,11 +67,6 @@ jobs:
               (echo "LIB=${env:LIB};C:\Program Files\OpenSSL-Win64\lib" >> $env:GITHUB_ENV) &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
-            other_deps_flags: >-
-              "-DCMAKE_VS_MSBUILD_COMMAND=$(
-              vswhere -latest -requires Microsoft.Component.MSBuild
-              -find MSBuild\\**\\Bin\\amd64\\MSBuild.exe | select-object -first 1
-              )"
           - os: macos-latest
             sccache_tuple: x86_64-apple-darwin
     steps:
