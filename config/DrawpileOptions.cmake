@@ -22,7 +22,7 @@ if(UNIX AND NOT APPLE)
 	add_feature_info("Install documentation (INSTALL_DOC)" INSTALL_DOC "")
 
 	cmake_dependent_option(INITSYS "Init system integration for server (options: \"\", \"systemd\")" "systemd" "SERVER" "")
-	add_feature_info("Server init system integration (INITSYS)" INITSYS "")
+	string(TOLOWER "${INITSYS}" INITSYS)
 endif()
 
 # Tools options
