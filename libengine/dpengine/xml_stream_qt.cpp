@@ -99,8 +99,12 @@ static bool call_on_text_content(QXmlStreamReader *xsr,
 {
     if (on_text_content) {
         QByteArray text = xsr->text().toUtf8();
-        return on_text_content(user, DP_int_to_size(text.size()),
-                               text.constData());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        size_t len = DP_int_to_size(text.size());
+#else
+        size_t len = text.size();
+#endif
+        return on_text_content(user, len, text.constData());
     }
     else {
         return true;
