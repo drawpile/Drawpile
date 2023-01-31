@@ -88,6 +88,7 @@ preset_drawpile_debug() {
           -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
+          -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
           $GENERATOR \
           -B builddp
@@ -101,6 +102,7 @@ preset_drawpile_relwithdebinfo() {
           -DUSE_STRICT_ALIASING=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
+          -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
           $GENERATOR \
           -B builddprelwithdebinfo
@@ -114,9 +116,50 @@ preset_drawpile_release() {
           -DUSE_STRICT_ALIASING=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
+          -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
           $GENERATOR \
           -B builddprelease
+}
+
+preset_drawpile_qt6_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DUSE_ADDRESS_SANITIZER=ON \
+          -DBUILD_APPS=OFF \
+          -DTHREAD_IMPL=QT6 \
+          -DXML_IMPL=QT6 \
+          -DZIP_IMPL=LIBZIP \
+          $GENERATOR \
+          -B builddpqt6
+}
+
+preset_drawpile_qt6_relwithdebinfo() {
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DBUILD_APPS=OFF \
+          -DXML_IMPL=QT6 \
+          -DTHREAD_IMPL=QT6 \
+          -DZIP_IMPL=LIBZIP \
+          $GENERATOR \
+          -B builddpqt6relwithdebinfo
+}
+
+preset_drawpile_qt6_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DBUILD_APPS=OFF \
+          -DTHREAD_IMPL=QT6 \
+          -DXML_IMPL=QT6 \
+          -DZIP_IMPL=LIBZIP \
+          $GENERATOR \
+          -B builddpqt6release
 }
 
 if [ "$#" -ne 1 ] || [ "$(type -t "preset_$1")" != 'function' ]; then
