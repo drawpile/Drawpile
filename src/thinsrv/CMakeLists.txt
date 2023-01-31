@@ -97,12 +97,14 @@ if(SERVERGUI)
 	target_link_libraries(${srvlib} ${QT_PACKAGE_NAME}::Widgets)
 endif()
 
-string(TOLOWER "${INITSYS}" INITSYS)
-if(INITSYS STREQUAL "systemd")
-	find_package(PkgConfig QUIET)
-	if(PKGCONFIG_FOUND)
-		pkg_check_modules(libsystemd QUIET IMPORTED_TARGET libsystemd)
+if(UNIX AND NOT APPLE)
+	if(INITSYS STREQUAL "systemd")
+		find_package(PkgConfig QUIET)
+		if(PKGCONFIG_FOUND)
+			pkg_check_modules(libsystemd QUIET IMPORTED_TARGET libsystemd)
+		endif()
 	endif()
+	add_feature_info("Server init system integration (INITSYS)" libsystemd_FOUND "")
 endif()
 
 if(libsystemd_FOUND)
@@ -115,7 +117,6 @@ else()
 		initsys_dummy.cpp
 	)
 endif()
-add_feature_info("Server systemd integration" SYSTEMD_FOUND "")
 
 if(libmicrohttpd_FOUND)
 	target_sources(${srvlib} PRIVATE
