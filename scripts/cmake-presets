@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2022 askmeaboutloom
+# Copyright (c) 2022 - 2023 askmeaboutloom
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,14 @@
 set -e
 cd "$(dirname "$0")/.."
 
+if command -v ninja >/dev/null; then
+    GENERATOR='-G Ninja'
+fi
+
 preset_debug() {
     cmake -DCMAKE_BUILD_TYPE=Debug \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
-          -G Ninja \
+          $GENERATOR \
           -B build
 }
 
@@ -34,7 +38,7 @@ preset_release() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
-          -G Ninja \
+          $GENERATOR \
           -B buildrelease
 }
 
@@ -53,7 +57,7 @@ preset_emscripten_debug() {
           -DCMAKE_CXX_COMPILER="$(which 'em++')" \
           -DCMAKE_CXX_COMPILER_AR="$(which emar)" \
           -DCMAKE_CXX_COMPILER_RANLIB="$(which emranlib)" \
-          -G Ninja \
+          $GENERATOR \
           -B buildem
 }
 
@@ -74,7 +78,7 @@ preset_emscripten_release() {
           -DCMAKE_CXX_COMPILER="$(which 'em++')" \
           -DCMAKE_CXX_COMPILER_AR="$(which emar)" \
           -DCMAKE_CXX_COMPILER_RANLIB="$(which emranlib)" \
-          -G Ninja \
+          $GENERATOR \
           -B buildemrelease
 }
 
@@ -85,7 +89,7 @@ preset_drawpile_debug() {
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
-          -G Ninja \
+          $GENERATOR \
           -B builddp
 }
 
@@ -98,7 +102,7 @@ preset_drawpile_relwithdebinfo() {
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
-          -G Ninja \
+          $GENERATOR \
           -B builddprelwithdebinfo
 }
 
@@ -111,7 +115,7 @@ preset_drawpile_release() {
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
-          -G Ninja \
+          $GENERATOR \
           -B builddprelease
 }
 
