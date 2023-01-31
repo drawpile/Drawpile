@@ -120,7 +120,7 @@ preset_drawpile_release() {
 }
 
 if [ "$#" -ne 1 ] || [ "$(type -t "preset_$1")" != 'function' ]; then
-    echo "Usage: $0 debug|release|emscripten_debug|emscripten_release|drawpile_debug|drawpile_relwithdebuginfo|drawpile_release" 1>&2
+    echo "Usage: $0 $(perl -ne 'push @p, $1 if /^preset_(\w+)\(/; END { print join "|", @p }' "$BASH_SOURCE")" 1>&2
     exit 2
 fi
 
