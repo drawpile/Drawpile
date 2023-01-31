@@ -1,48 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.11 CACHE STRING "macOS deployment target")
-
-set(DRAWPILE_PROTO_DEFAULT_PORT 27750)
-set(DP_MIN_QT_VERSION_GUI 5.12)
-set(DP_MIN_QT_VERSION_SERVER 5.11)
-
-include(CMakeDependentOption)
-include(FeatureSummary)
-
-# Client options
-option(CLIENT "Compile client" ON)
-add_feature_info("Drawpile client (CLIENT)" CLIENT "")
-option(BUILD_LABEL "A custom label to add to the version")
-
-if(CLIENT)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "macOS deployment target" FORCE)
-endif()
-
-if(WIN32)
-	cmake_dependent_option(KIS_TABLET "Enable custom tablet support code" OFF "CLIENT" OFF)
-	add_feature_info("Custom tablet support code (KIS_TABLET)" KIS_TABLET "")
-endif()
-
-# Server options
-option(SERVER "Compile dedicated server" OFF)
-add_feature_info("Drawpile server (SERVER)" SERVER "")
-
-cmake_dependent_option(SERVERGUI "Enable server GUI" ON "SERVER" OFF)
-add_feature_info("Server GUI (SERVERGUI)" SERVERGUI "")
-
-if(UNIX AND NOT APPLE)
-	cmake_dependent_option(INSTALL_DOC "Install documentation" ON "SERVER" OFF)
-	add_feature_info("Install documentation (INSTALL_DOC)" INSTALL_DOC "")
-
-	cmake_dependent_option(INITSYS "Init system integration for server (options: \"\", \"systemd\")" "systemd" "SERVER" "")
-	add_feature_info("Server init system integration (INITSYS)" INITSYS "")
-endif()
-
-# Tools options
-option(TOOLS "Compile extra tools" OFF)
-add_feature_info("Extra tools (TOOLS)" TOOLS "")
-
-option(TESTS "Build unit tests" OFF)
-add_feature_info("Unit tests (TESTS)" TESTS "")
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/config)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	message(FATAL_ERROR "In-source builds are not allowed. Please specify a"
@@ -53,28 +11,27 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	"* ${CMAKE_BINARY_DIR}/CMakeFiles")
 endif()
 
-file(STRINGS Cargo.toml dp_version LIMIT_COUNT 1 REGEX "^version[ \t]*=[ \t]*\"[^\"]*\"$")
-if(dp_version MATCHES "^version[ \t]*=[ \t]*\"([0-9]+\\.[0-9]+\\.[0-9]+)(-[A-Za-z0-9.-]*)?(\\+[A-Za-z0-9.-]*)?\"")
-	set(PROJECT_VERSION ${CMAKE_MATCH_1})
-	set(PROJECT_VERSION_LABEL ${CMAKE_MATCH_2})
-else()
-	message(FATAL_ERROR "Invalid version in Cargo.toml")
-endif()
-
-set(dp_proto_regex "^[ \t]*\\[[ \t]*([0-9]+),[ \t]*([0-9]+),[ \t]*([0-9]+)[ \t]*\\][ \t]*$")
-file(STRINGS src/dpcore/src/protocol/protover.version dp_proto_version LIMIT_COUNT 1 REGEX ${dp_proto_regex})
-if(dp_proto_version MATCHES ${dp_proto_regex})
-	set(DRAWPILE_PROTO_SERVER_VERSION ${CMAKE_MATCH_1})
-	set(DRAWPILE_PROTO_MAJOR_VERSION ${CMAKE_MATCH_2})
-	set(DRAWPILE_PROTO_MINOR_VERSION ${CMAKE_MATCH_3})
-else()
-	message(FATAL_ERROR "Invalid protover.version")
-endif()
+include(FeatureSummary)
+include(DrawpileOptions)
+include(DrawpileVersions)
 
 project(Drawpile
 	VERSION ${PROJECT_VERSION}
 	HOMEPAGE_URL https://drawpile.net
 )
+
+# https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html
+find_package(QT NAMES Qt6 Qt5 REQUIRED)
+message(STATUS "Using Qt version ${QT_VERSION_MAJOR}")
+set(QT_PACKAGE_NAME Qt${QT_VERSION_MAJOR})
+
+# There is an inherent conflict that the docs say `CMAKE_OSX_DEPLOYMENT_TARGET`
+# needs to be set before calling `enable_language` or `project`, but it is
+# impossible to run `find_package` before calling one of those, so instead we
+# default it to the absolute minimum above, and then increase it to whatever Qt
+# requires here
+include(QtMacDeploymentTarget)
+set_mac_deployment_target(${QT_VERSION})
 
 # This check must happen after `project()` because `CMAKE_CONFIGURATION_TYPES`
 # is not populated by defaults until then
@@ -94,21 +51,8 @@ set(PROJECT_VERSION "${PROJECT_VERSION}${PROJECT_VERSION_LABEL}")
 
 message(STATUS "Project version: ${PROJECT_VERSION}")
 message(STATUS "Protocol version: ${DRAWPILE_PROTO_SERVER_VERSION}.${DRAWPILE_PROTO_MAJOR_VERSION}.${DRAWPILE_PROTO_MINOR_VERSION}")
-
-find_package(Git)
-if(Git_FOUND)
-	execute_process(
-		COMMAND ${GIT_EXECUTABLE} describe --tags
-		OUTPUT_VARIABLE PROJECT_GIT_REVISION
-		OUTPUT_STRIP_TRAILING_WHITESPACE
-		ERROR_QUIET
-	)
-else()
-	set(PROJECT_GIT_REVISION ${PROJECT_VERSION}-unknown)
-endif()
 message(STATUS "Git revision: ${PROJECT_GIT_REVISION}")
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/config)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Generated Targets")
@@ -135,18 +79,6 @@ include(AutoSourceGroup)
 if(TESTS)
 	enable_testing()
 	include(Tests)
-endif()
-
-# https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html
-find_package(QT NAMES Qt6 Qt5 REQUIRED)
-message(STATUS "Using Qt version ${QT_VERSION_MAJOR}")
-set(QT_PACKAGE_NAME Qt${QT_VERSION_MAJOR})
-if(QT_VERSION VERSION_GREATER_EQUAL 6.0)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.14 CACHE STRING "macOS deployment target" FORCE)
-elseif(QT_VERSION VERSION_GREATER_EQUAL 5.14)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13 CACHE STRING "macOS deployment target" FORCE)
-elseif(QT_VERSION VERSION_GREATER_EQUAL 5.12)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "macOS deployment target" FORCE)
 endif()
 
 include(GNUInstallDirs)
