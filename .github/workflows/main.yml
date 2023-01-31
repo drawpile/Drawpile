@@ -32,6 +32,7 @@ jobs:
           - windows-latest
         libsodium: [ 1.0.18 ]
         qt: [ 5.15.8 ]
+        qtkeychain: [ c6f0b66318f8da6917fb4681103f7303b1836194 ]
         libmicrohttpd: [ 0.9.75 ]
         include:
           - os: ubuntu-latest
@@ -56,6 +57,11 @@ jobs:
               (echo "LIB=${env:LIB};C:\Program Files\OpenSSL-Win64\lib" >> $env:GITHUB_ENV) &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            other_deps_flags: >-
+              "-DCMAKE_VS_MSBUILD_COMMAND=$(
+              vswhere -latest -requires Microsoft.Component.MSBuild
+              -find MSBuild\\**\\Bin\\amd64\\MSBuild.exe | select-object -first 1
+              )"
           - os: macos-latest
             sccache_tuple: x86_64-apple-darwin
     steps:
@@ -95,16 +101,25 @@ jobs:
         id: deps-other-cache
         with:
           path: .github/deps/other
-          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}
+          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}
       - name: Build other dependencies from source
-        run: bash .github/scripts/build-other.sh .github/deps/other release ${{ matrix.libmicrohttpd }} ${{ matrix.libsodium }}
+        run: >
+          cmake
+          "-DLIBMICROHTTPD=${{ matrix.libmicrohttpd }}"
+          "-DLIBSODIUM=${{ matrix.libsodium }}"
+          "-DQTKEYCHAIN=${{ matrix.qtkeychain }}"
+          "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt"
+          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.github/deps/other"
+          ${{ matrix.other_deps_flags }}
+          -P "${{ github.workspace }}/.github/scripts/build-other.cmake"
+        working-directory: ${{ env.RUNNER_TEMP }}
         if: steps.deps-other-cache.outputs.cache-hit != 'true'
       - name: Store other dependencies to cache
         uses: actions/cache/save@v3
         if: steps.deps-other-cache.outputs.cache-hit != 'true'
         with:
           path: .github/deps/other
-          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}
+          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}
 
       - name: Restore Rust build artefacts from cache
         uses: actions/cache/restore@v3
