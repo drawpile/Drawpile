@@ -22,6 +22,7 @@ set(libclient_sources
 	drawdance/canvasstate.cpp
 	drawdance/drawcontextpool.cpp
 	drawdance/documentmetadata.cpp
+	drawdance/eventlog.cpp
 	drawdance/frame.cpp
 	drawdance/image.cpp
 	drawdance/perf.cpp

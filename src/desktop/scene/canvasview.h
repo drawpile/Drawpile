@@ -198,7 +198,6 @@ private:
 	void penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
 
-private:
 	qreal mapPressure(qreal pressure, bool stylus);
 
 	enum class ViewDragMode {None, Prepared, Started};

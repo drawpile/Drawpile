@@ -176,6 +176,14 @@ QString fileFormatFilter(FileFormatOptions formats)
 		}
 	}
 
+	if(formats.testFlag(FileFormatOption::EventLog)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			filter << QGuiApplication::tr("Tablet Event Log (%1)").arg("*.dplog");
+		} else {
+			// Can't read event logs.
+		}
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

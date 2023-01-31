@@ -135,6 +135,7 @@ public slots:
 private slots:
 	void toggleRecording();
 	void toggleProfile();
+	void toggleTabletEventLog();
 
 	void exportGifAnimation();
 	void exportAnimationFrames();
@@ -207,7 +208,7 @@ private:
 
 	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);
 
-	ActionBuilder makeAction(const char *name, const QString &text);
+	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);
 
 	//! Add a new entry to recent files list

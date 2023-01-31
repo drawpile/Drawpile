@@ -49,6 +49,7 @@ enum FileFormatOption {
 	QtImagesOnly = 0x10,  // return images supported by Qt, rather than Rustpile
 	Profile = 0x20,
 	DebugDumps = 0x40,
+	EventLog = 0x80,
 
 	OpenImages = Images | AllFiles,
 	OpenEverything = Images | Recordings | AllFiles,
@@ -56,6 +57,7 @@ enum FileFormatOption {
 	SaveImages = Images | AllFiles | Save,
 	SaveRecordings = Recordings | AllFiles | Save,
 	SaveProfile = Profile | Save,
+	SaveEventLog = EventLog | Save,
 };
 Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)

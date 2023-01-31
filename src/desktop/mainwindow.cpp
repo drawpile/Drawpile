@@ -108,6 +108,7 @@
 
 #include "export/animationsaverrunnable.h"
 #include "../libshared/record/reader.h"
+#include "drawdance/eventlog.h"
 #include "drawdance/perf.h"
 
 #include "dialogs/colordialog.h"
@@ -1433,6 +1434,32 @@ void MainWindow::toggleProfile()
 	}
 }
 
+void MainWindow::toggleTabletEventLog()
+{
+	if(drawdance::EventLog::isOpen()) {
+		if(!drawdance::EventLog::close()) {
+			showErrorMessageWithDetails(tr("Error closing tablet event log."), DP_error());
+		}
+	} else {
+		QString path = QFileDialog::getSaveFileName(
+			this,
+			tr("Event Log"),
+			withSuffix(getLastPath(), "dplog"),
+			utils::fileFormatFilter(utils::FileFormatOption::SaveEventLog)
+		);
+		if(!path.isEmpty()) {
+			if(drawdance::EventLog::open(withSuffix(path, "dplog"))) {
+				DP_event_log_write_meta("Drawpile: %s", DRAWPILE_VERSION);
+				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
+				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
+				DP_event_log_write_meta("Input: %s", static_cast<DrawpileApp *>(qApp)->tabletInputMode());
+			} else {
+				showErrorMessageWithDetails(tr("Error opening tablet event log."), DP_error());
+			}
+		}
+	}
+}
+
 /**
  * The settings window will be window modal and automatically destruct
  * when it is closed.
@@ -2376,6 +2403,9 @@ void MainWindow::showLayoutsDialog()
 
 void MainWindow::updateDevToolsActions()
 {
+	QAction *tabletEventLogAction = getAction("tableteventlog");
+	tabletEventLogAction->setText(drawdance::EventLog::isOpen() ? tr("Stop Tablet Event Log") : tr("Tablet Event Log..."));
+
 	QAction *profileAction = getAction("profile");
 	profileAction->setText(drawdance::Perf::isOpen() ? tr("Stop Profile") : tr("Profile..."));
 
@@ -3123,17 +3153,20 @@ void MainWindow::setupActions()
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
-	QAction *profile = makeAction("profile", tr("Profile..."));
+	QAction *tableteventlog = makeAction("tableteventlog");
+	QAction *profile = makeAction("profile");
 	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag..."));
 	QAction *artificialDisconnect = makeAction("artificialdisconnect", tr("Artifical Disconnect..."));
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable();
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump..."));
+	devtoolsmenu->addAction(tableteventlog);
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
 	devtoolsmenu->addAction(artificialDisconnect);
 	devtoolsmenu->addAction(debugDump);
 	devtoolsmenu->addAction(openDebugDump);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
+	connect(tableteventlog, &QAction::triggered, this, &MainWindow::toggleTabletEventLog);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);
 	connect(artificialDisconnect, &QAction::triggered, this, &MainWindow::setArtificialDisconnect);

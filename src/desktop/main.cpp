@@ -227,6 +227,11 @@ QString DrawpileApp::greeting()
 		.arg(QSysInfo::prettyProductName()).arg(inputMode);
 }
 
+const char *DrawpileApp::tabletInputMode()
+{
+	return inputMode;
+}
+
 static void initTranslations(DrawpileApp &app, const QLocale &locale)
 {
 	const auto preferredLangs = locale.uiLanguages();

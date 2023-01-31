@@ -20,6 +20,7 @@
 #include "canvasview.h"
 #include "canvasscene.h"
 #include "canvas/canvasmodel.h"
+#include "drawdance/eventlog.h"
 
 #include "notifications.h"
 
@@ -541,16 +542,26 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, 
 	}
 }
 
+static bool isSynthetic(QMouseEvent *event)
+{
+#ifdef PASS_PEN_EVENTS
+	return event->source() & Qt::MouseEventSynthesizedByQt;
+#else
+	return false;
+#endif
+}
+
 //! Handle mouse press events
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
-#ifdef PASS_PEN_EVENTS
-	if(event->source() & Qt::MouseEventSynthesizedByQt) {
+	DP_EVENT_LOG(
+		"mouse_press x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d pendown=%d touching=%d",
+		event->x(), event->y(), unsigned(event->buttons()), unsigned(event->modifiers()),
+		isSynthetic(event), m_pendown, m_touching);
+
+	if(isSynthetic(event) || m_touching) {
 		return;
 	}
-#endif
-	if(m_touching)
-		return;
 
 	penPressEvent(
 		event->pos(),
@@ -597,15 +608,15 @@ void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, q
 //! Handle mouse motion events
 void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
-#ifdef PASS_PEN_EVENTS
-	if(event->source() & Qt::MouseEventSynthesizedByQt) {
+	DP_EVENT_LOG(
+		"mouse_move x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d pendown=%d touching=%d",
+		event->x(), event->y(), unsigned(event->buttons()), unsigned(event->modifiers()),
+		isSynthetic(event), m_pendown, m_touching);
+
+	if(isSynthetic(event) || m_pendown == TABLETDOWN || m_touching) {
 		return;
 	}
-#endif
-	if(m_pendown == TABLETDOWN)
-		return;
-	if(m_touching)
-		return;
+
 	if(m_pendown && event->buttons() == Qt::NoButton) {
 		// In case we missed a mouse release
 		mouseReleaseEvent(event);
@@ -644,13 +655,13 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button)
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
-#ifdef PASS_PEN_EVENTS
-	if(event->source() & Qt::MouseEventSynthesizedByQt) {
+	DP_EVENT_LOG(
+		"mouse_release x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d pendown=%d touching=%d",
+		event->x(), event->y(), unsigned(event->buttons()), unsigned(event->modifiers()),
+		isSynthetic(event), m_pendown, m_touching);
+	if(isSynthetic(event) || m_touching) {
 		return;
 	}
-#endif
-	if(m_touching)
-		return;
 	penReleaseEvent(event->pos(), event->button());
 }
 
@@ -747,6 +758,11 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 {
 	QPinchGesture *pinch = static_cast<QPinchGesture*>(event->gesture(Qt::PinchGesture));
 	if(pinch) {
+		DP_EVENT_LOG(
+			"pinch change=0x%x scale=%f rotation=%f pendown=%d touching=%d",
+			unsigned(pinch->changeFlags()), pinch->totalScaleFactor(),
+			pinch->totalRotationAngle(), m_pendown, m_touching);
+
 		if(pinch->state() == Qt::GestureStarted) {
 			m_gestureStartZoom = m_zoom;
 			m_gestureStartAngle = m_rotate;
@@ -778,6 +794,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 	switch(event->type()) {
 	case QEvent::TouchBegin:
+		DP_EVENT_LOG("touch_begin pendown=%d touching=%d", m_pendown, m_touching);
 		m_touchRotating = false;
 		break;
 
@@ -792,6 +809,10 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		startCenter /= points;
 		lastCenter /= points;
 		center /= points;
+
+		DP_EVENT_LOG(
+			"touch_update points=%d x=%f y=%f pendown=%d touching=%d",
+			points, center.x(), center.y(), m_pendown, m_touching);
 
 		if(!m_touching) {
 			m_touchStartZoom = zoom();
@@ -848,10 +869,17 @@ void CanvasView::touchEvent(QTouchEvent *event)
 	} break;
 
 	case QEvent::TouchEnd:
-	case QEvent::TouchCancel:
+		DP_EVENT_LOG("touch_end pendown=%d touching=%d", m_pendown, m_touching);
 		m_touching = false;
 		break;
-	default: break;
+
+	case QEvent::TouchCancel:
+		DP_EVENT_LOG("touch_cancel pendown=%d touching=%d", m_pendown, m_touching);
+		m_touching = false;
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -872,6 +900,11 @@ bool CanvasView::viewportEvent(QEvent *event)
 #endif
 	else if(event->type() == QEvent::TabletPress && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		DP_EVENT_LOG(
+			"tablet_press x=%d y=%d pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
+			tabev->x(), tabev->y(), tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
+			tabev->rotation(), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
+			m_pendown, m_touching);
 
 		// Note: it is possible to get a mouse press event for a tablet event (even before
 		// the tablet event is received or even though tabev->accept() is called), but
@@ -896,6 +929,12 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 	else if(event->type() == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		DP_EVENT_LOG(
+			"tablet_move x=%d y=%d pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
+			tabev->x(), tabev->y(), tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
+			tabev->rotation(), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
+			m_pendown, m_touching);
+
 #ifndef PASS_PEN_EVENTS
 		tabev->accept();
 #endif
@@ -913,6 +952,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 	else if(event->type() == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		DP_EVENT_LOG(
+			"tablet_release x=%d y=%d buttons=0x%x pendown=%d touching=%d",
+			tabev->x(), tabev->y(), unsigned(tabev->buttons()),
+			m_pendown, m_touching);
 #ifndef PASS_PEN_EVENTS
 		tabev->accept();
 #endif
