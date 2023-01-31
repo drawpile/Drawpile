@@ -48,6 +48,10 @@ jobs:
               libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
               libxcb-randr0-dev libxcb-render-util0-dev libxcb-xinerama0-dev
               libxcb-xkb-dev libxcb-xinput-dev
+            build_packages: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends libsystemd-dev
+            build_flags: -DINITSYS=systemd
           - os: windows-latest
             sccache_tuple: x86_64-pc-windows-msvc
             qt: 5.15.8
@@ -158,12 +162,16 @@ jobs:
         run: echo "${{ github.workspace }}/.github/sccache/bin" >> $GITHUB_PATH
         shell: bash
 
+      - name: Install system dependencies
+        run: ${{ matrix.build_packages }}
+        if: matrix.build_packages
       - name: Generate project
         run: >
           cmake -S . -B build --log-level=VERBOSE -DCMAKE_BUILD_TYPE=RelWithDebInfo
           -DCMAKE_C_COMPILER_LAUNCHER=sccache
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
           -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on
+          ${{ matrix.build_flags }}
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt;${{ github.workspace }}/.github/deps/other"
       - name: Build project
         run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
