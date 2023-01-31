@@ -30,6 +30,7 @@ set(dpcommon_sources
     dpcommon/base64.c
     dpcommon/binary.c
     dpcommon/common.c
+    dpcommon/event_log.c
     dpcommon/file.c
     dpcommon/input.c
     dpcommon/output.c
@@ -46,6 +47,7 @@ set(dpcommon_headers
     dpcommon/common.h
     dpcommon/conversions.h
     dpcommon/endianness.h
+    dpcommon/event_log.h
     dpcommon/file.h
     dpcommon/geom.h
     dpcommon/input.h

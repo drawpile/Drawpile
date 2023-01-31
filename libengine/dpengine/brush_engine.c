@@ -28,6 +28,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/event_log.h>
 #include <dpcommon/perf.h>
 #include <dpmsg/message.h>
 #include <math.h>
@@ -644,6 +645,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
     DP_ASSERT(!be->in_progress);
     DP_ASSERT(be->dabs.used == 0);
     DP_PERF_BEGIN_DETAIL(fn, "stroke_begin", "active=%d", (int)be->active);
+    DP_EVENT_LOG("stroke_begin");
 
     be->context_id = context_id;
     if (push_undo_point) {
@@ -902,12 +904,19 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
 
     switch (active) {
     case DP_BRUSH_ENGINE_ACTIVE_PIXEL:
+        DP_EVENT_LOG("stroke_to active=pixel x=%f y=%f pressure=%f", x, y,
+                     pressure);
         stroke_to_classic(be, x, y, pressure, first_dab_pixel, stroke_pixel);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_SOFT:
+        DP_EVENT_LOG("stroke_to active=soft x=%f y=%f pressure=%f", x, y,
+                     pressure);
         stroke_to_classic(be, x, y, pressure, first_dab_soft, stroke_soft);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_MYPAINT:
+        DP_EVENT_LOG("stroke_to active=mypaint x=%f y=%f pressure=%f xtilt=%f "
+                     "ytilt=%f rotation=%f delta_msec=%lld",
+                     x, y, pressure, xtilt, ytilt, rotation, delta_msec);
         stroke_to_mypaint(be, x, y, pressure, xtilt, ytilt, rotation,
                           delta_msec);
         break;
@@ -922,6 +931,7 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, bool push_pen_up)
 {
     DP_ASSERT(be);
     DP_PERF_BEGIN_DETAIL(fn, "stroke_end", "active=%d", (int)be->active);
+    DP_EVENT_LOG("stroke_end");
 
     DP_layer_content_decref_nullable(be->lc);
     be->lc = NULL;
