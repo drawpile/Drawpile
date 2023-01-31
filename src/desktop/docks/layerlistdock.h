@@ -128,7 +128,7 @@ private:
 	int m_nearestToDeletedId;
 
 	// try to retain view status across model resets
-	QVector<int> m_expandedGroups;
+	QHash<int, QPair<QString, qint64>> m_expandedGroups;
 	int m_lastScrollPosition;
 
 	bool m_noupdate;
