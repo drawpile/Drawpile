@@ -78,7 +78,7 @@ fn main() {
     let dabcolor = Color::rgb8(255, 0, 0);
 
     for (i, &mode) in modes.iter().enumerate() {
-        println!("Mode: {:?}", mode);
+        println!("Mode: {mode:?}");
         for x in (10..250).step_by(8) {
             editlayer::draw_brush_dab(
                 &mut layer,

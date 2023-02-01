@@ -58,15 +58,13 @@ impl fmt::Display for DeserializationError {
             }
             PayloadLengthMismatch(expected, min, max) => write!(
                 f,
-                "Unexpected message payload length ({} <= {} <= {})",
-                min, expected, max
+                "Unexpected message payload length ({min} <= {expected} <= {max})"
             ),
             UnknownMessage(user, msgtype, payload_len) => write!(
                 f,
-                "Unknown message type {} (user {}, payload length {})",
-                msgtype, user, payload_len
+                "Unknown message type {msgtype} (user {user}, payload length {payload_len})",
             ),
-            InvalidField(msg) => write!(f, "Invalid message field: {}", msg),
+            InvalidField(msg) => write!(f, "Invalid message field: {msg}"),
         }
     }
 }

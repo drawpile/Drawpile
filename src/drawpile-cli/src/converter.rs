@@ -80,7 +80,7 @@ pub fn convert_recording(opts: &ConvertRecOpts) -> Result<(), Box<dyn std::error
                 writer.write_message(&m)?;
             }
             ReadMessage::Invalid(msg) => {
-                eprintln!("Invalid message: {}", msg);
+                eprintln!("Invalid message: {msg}");
             }
             ReadMessage::IoError(e) => {
                 return Err(Box::new(e));

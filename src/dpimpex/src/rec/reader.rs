@@ -132,7 +132,7 @@ pub fn open_recording(filename: &Path) -> io::Result<Box<dyn RecordingReader>> {
         ));
     }
 
-    file.seek(io::SeekFrom::Start(0))?;
+    file.rewind()?;
 
     let metadata = file.metadata()?;
 
@@ -262,7 +262,7 @@ impl<R: Read + Seek> RecordingReader for BinaryReader<R> {
 
         match Message::deserialize(&self.read_buffer[..msg_len]) {
             Ok(m) => ReadMessage::Ok(m),
-            Err(e) => ReadMessage::Invalid(format!("Deserialization error: {:?}", e)),
+            Err(e) => ReadMessage::Invalid(format!("Deserialization error: {e:?}")),
         }
     }
 
@@ -341,7 +341,7 @@ impl<R: BufRead + Seek> TextReader<R> {
             }
         }
 
-        br.file.seek(SeekFrom::Start(0))?;
+        br.file.rewind()?;
         Ok(br)
     }
 }
@@ -439,7 +439,7 @@ mod tests {
 
         assert!(match reader.read_next() {
             ReadMessage::Eof => true,
-            x => panic!("Got: {:?}", x),
+            x => panic!("Got: {x:?}"),
         });
 
         assert_eq!(reader.current_index(), 1);

@@ -8,7 +8,7 @@ template = Template("""
 // Message definitions generated with protogen-rust.py
 
 // allow some stylistic errors that make code generations simpler
-#![allow(clippy::needless_borrow)]
+#![allow(clippy::needless_borrow, clippy::uninlined_format_args)]
 
 use super::serialization::{MessageReader, MessageWriter, DeserializationError};
 use super::textmessage::TextMessage;

@@ -321,7 +321,7 @@ fn write_stack_xml<W: Write + Seek>(
             let s = IntoIterator::into_iter(frame.0)
                 .take_while(|&id| id > 0)
                 .filter_map(|id| idmap.get(&id))
-                .fold(String::new(), |s, i| format!("{} {}", s, i));
+                .fold(String::new(), |s, i| format!("{s} {i}"));
             writer.write(XmlEvent::Characters(&s))?;
             writer.write(XmlEvent::end_element())?;
         }

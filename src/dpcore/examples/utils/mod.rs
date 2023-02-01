@@ -83,7 +83,7 @@ pub fn save_layer(layer: &BitmapLayer, filename: &str) {
 
     let img: RgbaImage = ImageBuffer::from_vec(layer.width(), layer.height(), rgba).unwrap();
 
-    println!("Writing {}", filename);
+    println!("Writing {filename}");
     img.save(filename).unwrap();
 }
 
@@ -111,6 +111,6 @@ pub fn save_layerstack(layerstack: &LayerStack, filename: &str) {
 
     let img: RgbaImage = ImageBuffer::from_vec(w, h, rgba).unwrap();
 
-    println!("Writing {}", filename);
+    println!("Writing {filename}");
     img.save(filename).unwrap();
 }

@@ -148,7 +148,7 @@ impl TextMessage {
             .iter()
             .map(|v| {
                 if hex {
-                    format!("0x{:04x}", v)
+                    format!("0x{v:04x}")
                 } else {
                     v.to_string()
                 }
@@ -195,7 +195,7 @@ impl TextMessage {
         self.args.insert(
             key.into(),
             if (color & 0xff_000000) != 0xff_000000 {
-                format!("#{:08x}", color)
+                format!("#{color:08x}")
             } else {
                 format!("#{:06x}", color & 0x00_ffffff)
             },
@@ -267,7 +267,7 @@ impl fmt::Display for TextMessage {
             if value.chars().any(char::is_whitespace) {
                 has_multiline = true;
             } else if !value.is_empty() {
-                write!(f, " {}={}", key, value)?;
+                write!(f, " {key}={value}")?;
             }
         }
 
@@ -276,7 +276,7 @@ impl fmt::Display for TextMessage {
             for (key, value) in &self.args {
                 if value.chars().any(char::is_whitespace) {
                     for line in value.lines() {
-                        writeln!(f, "    {}={}", key, line)?;
+                        writeln!(f, "    {key}={line}")?;
                     }
                 }
             }
@@ -284,7 +284,7 @@ impl fmt::Display for TextMessage {
             for dab in self.dabs.iter() {
                 write!(f, "   ")?;
                 for c in dab.iter() {
-                    write!(f, " {}", c)?;
+                    write!(f, " {c}")?;
                 }
                 writeln!(f)?;
             }

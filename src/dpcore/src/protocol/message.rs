@@ -1,7 +1,7 @@
 // Message definitions generated with protogen-rust.py
 
 // allow some stylistic errors that make code generations simpler
-#![allow(clippy::needless_borrow)]
+#![allow(clippy::needless_borrow, clippy::uninlined_format_args)]
 
 use super::serialization::{DeserializationError, MessageReader, MessageWriter};
 use super::textmessage::TextMessage;

@@ -57,13 +57,13 @@ impl From<image::ImageError> for IndexError {
 impl fmt::Display for IndexError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            IndexError::IoError(e) => write!(f, "IO error: {}", e),
-            IndexError::ConversionError(e) => write!(f, "Number too big! ({})", e),
+            IndexError::IoError(e) => write!(f, "IO error: {e}"),
+            IndexError::ConversionError(e) => write!(f, "Number too big! ({e})"),
             IndexError::IncompatibleVersion => write!(f, "Index version is not compatible"),
             IndexError::BadTile => write!(f, "Corrupt tile data"),
             IndexError::CorruptFile => write!(f, "Corrupt file"),
-            IndexError::BadImage(e) => write!(f, "Corrupt image: {}", e),
-            IndexError::BadString(e) => write!(f, "Corrupt string: {}", e),
+            IndexError::BadImage(e) => write!(f, "Corrupt image: {e}"),
+            IndexError::BadString(e) => write!(f, "Corrupt string: {e}"),
         }
     }
 }

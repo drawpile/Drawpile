@@ -68,7 +68,7 @@ pub fn index_recording(input_file: &str) -> Result<(), Box<dyn std::error::Error
             }
             ReadMessage::Ok(_) => (),
             ReadMessage::Invalid(msg) => {
-                eprintln!("Invalid message: {}", msg);
+                eprintln!("Invalid message: {msg}");
             }
             ReadMessage::IoError(e) => {
                 return Err(Box::new(e));

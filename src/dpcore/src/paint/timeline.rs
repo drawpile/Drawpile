@@ -120,7 +120,7 @@ impl fmt::Debug for Frame {
             if l == 0 {
                 break;
             }
-            write!(f, "0x{:04x}, ", l)?;
+            write!(f, "0x{l:04x}, ")?;
         }
         write!(f, ")")
     }

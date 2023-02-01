@@ -233,7 +233,7 @@ fn test_undo_depth() {
 fn m(msg: &str) -> CommandMessage {
     match Message::from_text(&msg.parse().unwrap()).unwrap() {
         Message::Command(m) => m,
-        _ => panic!("Not a command message: {}", msg),
+        _ => panic!("Not a command message: {msg}"),
     }
 }
 

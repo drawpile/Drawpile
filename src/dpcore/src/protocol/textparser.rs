@@ -54,10 +54,10 @@ impl ParseResult {
 impl fmt::Debug for ParseResult {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ParseResult::Ok(m) => write!(f, "Ok({})", m),
-            ParseResult::Metadata(k, v) => write!(f, "Metadata({}={})", k, v),
+            ParseResult::Ok(m) => write!(f, "Ok({m})"),
+            ParseResult::Metadata(k, v) => write!(f, "Metadata({k}={v})"),
             ParseResult::Skip => write!(f, "Skip"),
-            ParseResult::Error(e) => write!(f, "Error({})", e),
+            ParseResult::Error(e) => write!(f, "Error({e})"),
             ParseResult::NeedMore => write!(f, "NeedMore"),
         }
     }

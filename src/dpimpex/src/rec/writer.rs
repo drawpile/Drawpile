@@ -85,7 +85,7 @@ impl<W: Write> TextWriter<W> {
 impl<W: Write> RecordingWriter for TextWriter<W> {
     fn write_header(&mut self, metadata: &HashMap<String, String>) -> io::Result<()> {
         for (k, v) in metadata.iter() {
-            writeln!(self.file, "!{}={}", k, v)?;
+            writeln!(self.file, "!{k}={v}")?;
         }
         Ok(())
     }
