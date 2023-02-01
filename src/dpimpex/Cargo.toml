@@ -8,17 +8,17 @@ license.workspace = true
 [dependencies]
 bytemuck = "1.12"
 dpcore = { path = "../dpcore" }
-xml-rs = "0.8.4"
-tracing = "0.1.36"
-serde_json = "1.0.83"
-byteorder = "1.4.3"
+xml-rs = "0.8"
+tracing = "0.1"
+serde_json = "1.0"
+byteorder = "1.4"
 
 [dependencies.image]
-version = "0.24.3"
+version = "0.24"
 default-features = false
 features = ["png", "jpeg", "gif"]
 
 [dependencies.zip]
-version = "0.6.2"
+version = "0.6"
 default-features = false
 features = ["deflate"]
