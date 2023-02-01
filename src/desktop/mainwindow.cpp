@@ -2040,7 +2040,9 @@ void MainWindow::setDocksHidden(bool hidden)
 		}
 		// Force recalculation of the central widget's position. Otherwise this
 		// will happen lazily on the next repaint and we can't scroll properly.
-		adjustSize();
+		// Doing it this way is clearly a hack, but I can't figure out another
+		// way to do it that doesn't introduce flicker or the window resizing.
+		restoreState(saveState());
 	} else {
 		restoreState(m_hiddenDockState);
 		m_hiddenDockState.clear();
