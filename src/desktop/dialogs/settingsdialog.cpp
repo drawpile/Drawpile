@@ -118,8 +118,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	//m_ui->formLayout_2->removeRow(m_ui->windowsink);
 	m_ui->formLayout_2->removeWidget(m_ui->windowsink);
 	m_ui->windowsink->hide();
-#endif
-#if !defined(Q_OS_WIN)
 	m_ui->formLayout_2->removeWidget(m_ui->relativePenModeHack);
 	m_ui->relativePenModeHack->hide();
 #endif
