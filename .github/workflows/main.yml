@@ -60,6 +60,7 @@ jobs:
               vswhere -latest -requires Microsoft.Component.MSBuild
               -find MSBuild\\**\\Bin\\amd64\\MSBuild.exe | select-object -first 1
               )"
+            build_flags: -G Ninja
           - os: windows-latest
             qt: 5.15.8
             qt_packages: >
