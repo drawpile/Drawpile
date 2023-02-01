@@ -3,7 +3,7 @@ ProcessorCount(NPROCS)
 
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
-	set(oneValueArgs URL)
+	set(oneValueArgs URL SOURCE_DIR)
 	set(multiValueArgs VERSIONS ALL_PLATFORMS UNIX WIN32)
 	cmake_parse_arguments(PARSE_ARGV 3 ARG "" "${oneValueArgs}" "${multiValueArgs}")
 
@@ -32,8 +32,14 @@ function(build_dependency name version build_type)
 		list(GET ARG_VERSIONS ${hash_index} url_hash)
 	endif()
 
-	string(REPLACE "@version@" "${version}" url "${ARG_URL}")
-	set(source_dir "${CMAKE_BINARY_DIR}/${name}-${version}")
+	string(REGEX REPLACE "\\.[0-9]+$" "" version_major "${version}")
+	string(CONFIGURE "${ARG_URL}" url @ONLY)
+	if(ARG_SOURCE_DIR)
+		string(CONFIGURE "${ARG_SOURCE_DIR}" source_dir @ONLY)
+	else()
+		set(source_dir "${name}-${version}")
+	endif()
+	set(source_dir "${CMAKE_BINARY_DIR}/${source_dir}")
 	if(EXISTS "${source_dir}")
 		message(STATUS "Reusing existing source directory")
 	else()
@@ -41,7 +47,11 @@ function(build_dependency name version build_type)
 	endif()
 	message(STATUS "Installing ${source_dir}")
 
-	if(generator STREQUAL "automake")
+	if(generator STREQUAL "qmake")
+		_build_qmake("${build_type}" "${source_dir}" ${BUILD_ARGS})
+	elseif(generator STREQUAL "qt_module")
+		_build_qt_module("${build_type}" "${source_dir}" ${BUILD_ARGS})
+	elseif(generator STREQUAL "automake")
 		_build_automake("${build_type}" "${source_dir}" ${BUILD_ARGS})
 	elseif(generator STREQUAL "cmake")
 		_build_cmake("${build_type}" "${source_dir}" ${BUILD_ARGS})
@@ -55,7 +65,8 @@ function(build_dependency name version build_type)
 endfunction()
 
 function(_build_automake build_type source_dir)
-	_parse_flags("${build_type}" configure_flags ${ARGN})
+	set(configure "${source_dir}/configure")
+	_parse_flags("${build_type}" "${source_dir}" configure configure_flags ${ARGN})
 
 	if(NPROCS EQUAL 0)
 		set(make_flags "")
@@ -65,7 +76,7 @@ function(_build_automake build_type source_dir)
 
 	execute_process(
 		COMMAND "${CMAKE_COMMAND}" -E env "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-			"${source_dir}/configure" --prefix "${CMAKE_INSTALL_PREFIX}" ${configure_flags}
+			"${configure}" --prefix "${CMAKE_INSTALL_PREFIX}" ${configure_flags}
 		COMMAND_ECHO STDOUT
 		WORKING_DIRECTORY "${source_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
@@ -80,37 +91,62 @@ function(_build_automake build_type source_dir)
 endfunction()
 
 function(_build_cmake build_type source_dir)
-	_parse_flags("${build_type}" configure_flags ${ARGN})
+	set(configure "${CMAKE_COMMAND}" -S "${source_dir}" -B .)
+	cmake_parse_arguments(PARSE_ARGV 2 "CMAKE_ARG" "NO_DEFAULT_FLAGS;NO_DEFAULT_BUILD_TYPE" "" "")
+	_parse_flags("${build_type}" "${source_dir}" configure configure_flags ${CMAKE_ARG_UNPARSED_ARGUMENTS})
 
-	set(install_flags "--config;Release")
+	if(build_type STREQUAL "debug")
+		set(install_flags "--config;RelWithDebInfo")
+	else()
+		set(install_flags "--config;Release")
+	endif()
 	set(make_flags "${install_flags}")
 	if(NOT NPROCS EQUAL 0)
 		set(make_flags "${make_flags};--parallel;${NPROCS}")
 	endif()
 
-	execute_process(
-		COMMAND "${CMAKE_COMMAND}" "${source_dir}"
-			"-DCMAKE_BUILD_TYPE=Release"
+	if(CMAKE_ARG_NO_DEFAULT_FLAGS)
+		set(default_flags "")
+	else()
+		set(default_flags
 			"-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
 			"-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}"
 			"-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
+		)
+	endif()
+
+	if(CMAKE_ARG_NO_DEFAULT_FLAGS OR CMAKE_ARG_NO_DEFAULT_BUILD_TYPE)
+		set(build_flag "")
+	elseif(build_type STREQUAL "debug")
+		set(build_flag "-DCMAKE_BUILD_TYPE=RelWithDebInfo")
+	else()
+		set(build_flag "-DCMAKE_BUILD_TYPE=Release")
+	endif()
+
+	set(binary_dir "${source_dir}-build")
+	file(MAKE_DIRECTORY "${binary_dir}")
+	execute_process(
+		COMMAND ${configure}
 			${configure_flags}
+			${build_flag}
+			${default_flags}
 		COMMAND_ECHO STDOUT
-		WORKING_DIRECTORY "${source_dir}"
+		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
 	execute_process(
-		COMMAND "${CMAKE_COMMAND}" --build "${source_dir}" ${make_flags}
+		COMMAND "${CMAKE_COMMAND}" --build . ${make_flags}
 		COMMAND_ECHO STDOUT
-		WORKING_DIRECTORY "${source_dir}"
+		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
 	execute_process(
-		COMMAND "${CMAKE_COMMAND}" --install "${source_dir}" ${install_flags}
+		COMMAND "${CMAKE_COMMAND}" --install . ${install_flags}
 		COMMAND_ECHO STDOUT
-		WORKING_DIRECTORY "${source_dir}"
+		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
+	file(REMOVE_RECURSE "${binary_dir}")
 endfunction()
 
 function(_build_msbuild build_type source_dir)
@@ -144,6 +180,52 @@ function(_build_msbuild build_type source_dir)
 			DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
 		)
 	endif()
+endfunction()
+
+function(_build_qmake build_type source_dir)
+	set(configure qmake)
+	_parse_flags("${build_type}" "${source_dir}" configure configure_flags ${ARGN})
+
+	if(configure STREQUAL qmake)
+		find_program(configure qmake REQUIRED)
+	endif()
+
+	set(make_flags "")
+	if(WIN32)
+		find_program(make NAMES jom nmake REQUIRED)
+	else()
+		find_program(make make REQUIRED)
+		if(NOT NPROCS EQUAL 0)
+			set(make_flags -j${NPROCS})
+		endif()
+	endif()
+
+	set(binary_dir "${source_dir}-build")
+	file(MAKE_DIRECTORY "${binary_dir}")
+	execute_process(
+		COMMAND ${configure} ${source_dir}
+			"QMAKE_MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+			${configure_flags}
+		COMMAND_ECHO STDOUT
+		WORKING_DIRECTORY "${binary_dir}"
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+	# Some install targets in Qt5 have broken dependency chains so
+	# e.g. libqtpcre2.a will not be built before it tries to get installed
+	# if we only use the install target
+	execute_process(
+		COMMAND "${make}" ${make_flags}
+		COMMAND_ECHO STDOUT
+		WORKING_DIRECTORY "${binary_dir}"
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+	execute_process(
+		COMMAND "${make}" install ${make_flags}
+		COMMAND_ECHO STDOUT
+		WORKING_DIRECTORY "${binary_dir}"
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+	file(REMOVE_RECURSE "${binary_dir}")
 endfunction()
 
 function(_download url hash)
@@ -187,14 +269,22 @@ function(_download url hash)
 	file(REMOVE "${filename}")
 endfunction()
 
-function(_parse_flags build_type out_var)
-	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "ALL;DEBUG;RELEASE")
+function(_parse_flags build_type source_dir out_configurator out_flags)
+	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "CONFIGURATOR;ALL;DEBUG;RELEASE")
+
+	if(ARG_CONFIGURATOR)
+		if(NOT IS_ABSOLUTE "${ARG_CONFIGURATOR}")
+			set(ARG_CONFIGURATOR ${source_dir}/${ARG_CONFIGURATOR})
+		endif()
+		string(CONFIGURE "${ARG_CONFIGURATOR}" configurator @ONLY)
+		set(${out_configurator} ${configurator} PARENT_SCOPE)
+	endif()
 
 	if(build_type STREQUAL "debug" AND ARG_DEBUG)
-		set(${out_var} "${ARG_ALL};${ARG_DEBUG}" PARENT_SCOPE)
+		set(${out_flags} "${ARG_DEBUG};${ARG_ALL}" PARENT_SCOPE)
 	elseif(build_type STREQUAL "release" AND ARG_RELEASE)
-		set(${out_var} "${ARG_ALL};${ARG_RELEASE}" PARENT_SCOPE)
+		set(${out_flags} "${ARG_RELEASE};${ARG_ALL}" PARENT_SCOPE)
 	else()
-		set(${out_var} "${ARG_ALL}" PARENT_SCOPE)
+		set(${out_flags} "${ARG_ALL}" PARENT_SCOPE)
 	endif()
 endfunction()

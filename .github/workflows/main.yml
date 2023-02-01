@@ -48,9 +48,10 @@ jobs:
               libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
               libxcb-randr0-dev libxcb-render-util0-dev libxcb-xinerama0-dev
               libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
+            # libgl1-mesa-dev only absolutely required for Qt6 with OpenGL
             build_packages: >
               sudo apt-get update &&
-              sudo apt-get install --no-install-recommends libsystemd-dev
+              sudo apt-get install --no-install-recommends libgl1-mesa-dev libsystemd-dev
             build_flags: -DINITSYS=systemd
           - os: windows-latest
             sccache_tuple: x86_64-pc-windows-msvc
@@ -89,7 +90,13 @@ jobs:
         run: ${{ matrix.qt_packages }}
         if: matrix.qt_packages && steps.deps-qt-cache.outputs.cache-hit != 'true'
       - name: Build Qt from source
-        run: bash .github/scripts/build-qt.sh .github/deps/qt release ${{ matrix.qt }}
+        run: >
+          cmake
+          -DBUILD_TYPE=Release
+          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.github/deps/qt"
+          "-DQT_VERSION=${{ matrix.qt }}"
+          -P .github/scripts/build-qt.cmake
+        working-directory: ${{ env.RUNNER_TEMP }}
         if: steps.deps-qt-cache.outputs.cache-hit != 'true'
       - name: Store Qt to cache
         uses: actions/cache/save@v3
@@ -208,6 +215,11 @@ jobs:
         with:
           path: .github/sccache
           key: sccache-${{ runner.os }}
+        continue-on-error: true
+
+      - name: sccache stats
+        run: sccache --show-stats
+        continue-on-error: true
 
       - name: Evict Rust build artefacts from cache
         if: (success() || failure()) && steps.rust-deps-cache.outputs.cache-hit == 'true'
@@ -225,3 +237,4 @@ jobs:
         with:
           path: build/cargo/relwithdebinfo/deps
           key: rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+        continue-on-error: true
