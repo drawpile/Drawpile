@@ -38,6 +38,16 @@ struct LayoutsDialog::Layout {
 	bool transient;
 	bool deleted;
 
+	Layout()
+		: title{}
+		, state{}
+		, originalTitle{}
+		, wasTransient{false}
+		, transient{false}
+		, deleted{false}
+	{
+	}
+
 	Layout(QString title, QByteArray state)
 		: title{title}
 		, state{state}
