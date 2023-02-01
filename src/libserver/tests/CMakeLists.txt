@@ -1,5 +1,5 @@
 set(TEST_PREFIX shared)
-set(TEST_LIBS dpserver Qt5::Test)
+set(TEST_LIBS dpserver DP::QtTest)
 
 AddUnitTest(filedhistory)
 AddUnitTest(sessionban)

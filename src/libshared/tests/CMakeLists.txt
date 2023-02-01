@@ -1,5 +1,5 @@
 set(TEST_PREFIX shared)
-set(TEST_LIBS dpshared Qt5::Test)
+set(TEST_LIBS dpshared DP::QtTest)
 
 AddUnitTest(passwordhash)
 AddUnitTest(filename)

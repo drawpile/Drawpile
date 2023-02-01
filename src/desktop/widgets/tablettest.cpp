@@ -94,10 +94,21 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 		case QTabletEvent::Stylus: msg = "Stylus"; break;
 		default: msg = QString("Device(%1)").arg(e->device()); break;
 	}
-#else
+#elif QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	switch(e->deviceType()) {
 		case QTabletEvent::Stylus: msg = "Stylus"; break;
 		default: msg = QString("Device(%1)").arg(e->deviceType()); break;
+	}
+#else
+	switch(e->deviceType()) {
+        case QInputDevice::DeviceType::Mouse: msg = "Mouse"; break;
+        case QInputDevice::DeviceType::TouchScreen: msg = "TouchScreen"; break;
+        case QInputDevice::DeviceType::TouchPad: msg = "TouchPad"; break;
+        case QInputDevice::DeviceType::Puck: msg = "Puck"; break;
+        case QInputDevice::DeviceType::Stylus: msg = "Stylus"; break;
+        case QInputDevice::DeviceType::Airbrush: msg = "Airbrush"; break;
+        case QInputDevice::DeviceType::Keyboard: msg = "Keyboard"; break;
+		default: msg = QString("Device(%1)").arg(int(e->deviceType())); break;
 	}
 #endif
 

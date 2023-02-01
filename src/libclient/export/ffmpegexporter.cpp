@@ -150,7 +150,9 @@ void FfmpegExporter::writeFrame(const QImage &image, int repeat)
 {
 	qInfo("Writing frame (repeat %d)", repeat);
 	if(!m_writebuffer.isEmpty()) {
-		qWarning("FfmpegExporter: tried to write frame while not yet ready! (%lld of %d of buffered bytes written", m_written, m_writebuffer.length());
+		qWarning(
+			"FfmpegExporter: tried to write frame while not yet ready! (%lld of %lld of buffered bytes written",
+			m_written, qlonglong(m_writebuffer.length()));
 		return;
 	}
 

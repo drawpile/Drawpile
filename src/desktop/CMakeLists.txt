@@ -192,7 +192,7 @@ set_drawpile_target_properties(${CLIENTNAME})
 target_include_directories("${CLIENTNAME}" PUBLIC
 	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(${CLIENTNAME} PUBLIC dpclient
-	Qt5::Widgets Qt5::Multimedia Qt5::Svg)
+	DP::QtWidgets DP::QtMultimedia DP::QtSvg)
 
 set_target_properties(${CLIENTNAME} PROPERTIES
 	VERSION ${DRAWPILE_VERSION}
@@ -218,9 +218,9 @@ if(KIS_TABLET)
 	endif()
 ENDIF()
 
-if(QTKEYCHAIN_LIBRARIES)
+if(TARGET DP::QtKeychain)
 	target_compile_definitions(${CLIENTNAME} PUBLIC HAVE_QTKEYCHAIN)
-	target_link_libraries(${CLIENTNAME} PUBLIC ${QTKEYCHAIN_LIBRARIES})
+	target_link_libraries(${CLIENTNAME} PUBLIC DP::QtKeychain)
 else ()
 	message(WARNING "QtKeyChain not found: password remembering not enabled")
 endif()
@@ -231,8 +231,8 @@ if(QTCOLORWIDGETS_FOUND)
 	target_link_libraries(${CLIENTNAME} PUBLIC ${LIBQTCOLORWIDGETS_LIBRARIES})
 else()
 	message(WARNING "QtColorWidgets not found: using bundled copy!")
-	qt5_add_resources(desktop_resources bundled/QtColorWidgets/color_widgets.qrc)
-	qt5_wrap_ui(bundled_qtcolorwidgets_ui_headers
+	dp_qt_add_resources(desktop_resources bundled/QtColorWidgets/color_widgets.qrc)
+	dp_qt_wrap_ui(bundled_qtcolorwidgets_ui_headers
 		bundled/QtColorWidgets/color_dialog.ui
 		bundled/QtColorWidgets/color_palette_widget.ui)
 	target_compile_definitions(${CLIENTNAME} PUBLIC QTCOLORPICKER_STATICALLY_LINKED)
@@ -242,9 +242,9 @@ else()
 		${bundled_qtcolorwidgets_sources} ${bundled_qtcolorwidgets_ui_headers})
 endif()
 
-qt5_add_resources(desktop_resources ui/cursors/cursors.qrc)
-qt5_add_resources(desktop_resources ui/icons/builtin.qrc)
-qt5_wrap_ui(desktop_ui_headers ${desktop_uis} )
+dp_qt_add_resources(desktop_resources ui/cursors/cursors.qrc)
+dp_qt_add_resources(desktop_resources ui/icons/builtin.qrc)
+dp_qt_wrap_ui(desktop_ui_headers ${desktop_uis} )
 target_sources(${CLIENTNAME} PRIVATE
 	${desktop_ui_headers} ${desktop_resources} ${libclient_qm_translations})
 

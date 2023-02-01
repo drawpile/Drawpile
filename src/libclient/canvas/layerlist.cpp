@@ -388,6 +388,7 @@ QStringList LayerMimeData::formats() const
 	return QStringList() << "application/x-qt-image";
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
 {
 	Q_UNUSED(mimeType);
@@ -396,9 +397,20 @@ QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type typ
 			return m_source->m_getlayerfn(m_id);
 		}
 	}
-
-	return QVariant();
+	return QVariant{};
 }
+#else
+QVariant LayerMimeData::retrieveData(const QString &mimeType, QMetaType type) const
+{
+	Q_UNUSED(mimeType);
+	if(type.id() == QMetaType::QImage) {
+		if(m_source->m_getlayerfn) {
+			return m_source->m_getlayerfn(m_id);
+		}
+	}
+	return QVariant{};
+}
+#endif
 
 int LayerListModel::getAvailableLayerId() const
 {

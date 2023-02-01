@@ -30,7 +30,7 @@ set(libshared_sources
 
 add_library(dpshared STATIC ${libshared_sources})
 set_drawpile_target_properties(dpshared)
-target_link_libraries(dpshared PUBLIC Qt5::Network)
+target_link_libraries(dpshared PUBLIC DP::QtNetwork)
 
 if(Sodium_FOUND)
 	target_sources(dpshared PRIVATE util/authtoken.cpp)

@@ -26,6 +26,7 @@
 #include "utils/colorscheme.h"
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
+#include "../libshared/qtshims.h"
 #include "../libshared/util/paths.h"
 #include <drawdance/drawcontextpool.h>
 #include <drawdance/logging.h>
@@ -83,17 +84,13 @@ DrawpileApp::~DrawpileApp()
 bool DrawpileApp::event(QEvent *e) {
 	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent*>(e);
-		if(te->pointerType()==QTabletEvent::Eraser)
+		if(te->pointerType() == shim::ERASER_TYPE)
 			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
 		return true;
 
 	} else if(e->type() == QEvent::FileOpen) {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent*>(e);
-
-		// Note. This is currently broken in Qt 5.3.1:
-		// https://bugreports.qt-project.org/browse/QTBUG-39972
 		openUrl(fe->url());
-
 		return true;
 
 	}
@@ -252,8 +249,11 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 
 	// Qt's own translations
 	QTranslator *qtTranslator = new QTranslator(&app);
-	qtTranslator->load("qt_" + preferredLang, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-	qApp->installTranslator(qtTranslator);
+	if(qtTranslator->load("qt_" + preferredLang, shim::translationsPath())) {
+		qApp->installTranslator(qtTranslator);
+	} else {
+		delete qtTranslator;
+	}
 
 	// Our translations
 	QTranslator *myTranslator = new QTranslator(&app);
@@ -418,8 +418,10 @@ static QStringList initApp(DrawpileApp &app)
 }
 
 int main(int argc, char *argv[]) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
 	// CanvasView does not work correctly with this enabled.
 	// (Scale factor must be taken in account when zooming)

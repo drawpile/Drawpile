@@ -192,9 +192,9 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 		qWarning("sendDisconnect: already disconnecting.");
 
 	QByteArray data = message.toUtf8();
-	drawdance::Message msg = drawdance::Message::noinc(DP_msg_disconnect_new(0, uint8_t(reason), data.constData(), data.count()));
+	drawdance::Message msg = drawdance::Message::noinc(DP_msg_disconnect_new(0, uint8_t(reason), data.constData(), data.size()));
 
-	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%d messages) is empty.", int(reason), m_outbox.size());
+	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%lld messages) is empty.", int(reason), qlonglong(m_outbox.size()));
 	send(msg);
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;

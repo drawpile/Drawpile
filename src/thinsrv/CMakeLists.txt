@@ -45,17 +45,17 @@ add_library("${SRVNAME}lib" STATIC ${thinsrv_sources})
 set_drawpile_target_properties(dpshared)
 target_include_directories("${SRVNAME}lib" PUBLIC
 	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
-target_link_libraries("${SRVNAME}lib" PUBLIC dpserver Qt5::Network Qt5::Sql)
+target_link_libraries("${SRVNAME}lib" PUBLIC dpserver DP::QtNetwork DP::QtSql)
 
 if(SERVERGUI)
-	qt5_wrap_ui(thinsrv_ui_headers ${thinsrv_gui_uis})
-	qt5_add_resources(thinsrv_qt_resources gui/res/resources.qrc)
+	dp_qt_wrap_ui(thinsrv_ui_headers ${thinsrv_gui_uis})
+	dp_qt_add_resources(thinsrv_qt_resources gui/res/resources.qrc)
 	message(STATUS "thinsrv_ui_headers ${thinsrv_ui_headers}")
 	target_sources("${SRVNAME}lib" PRIVATE
 		${thinsrv_gui_sources}
 		${thinsrv_ui_headers})
 	target_compile_definitions("${SRVNAME}lib" PUBLIC HAVE_SERVERGUI)
-	target_link_libraries("${SRVNAME}lib" PUBLIC Qt5::Widgets)
+	target_link_libraries("${SRVNAME}lib" PUBLIC DP::QtWidgets)
 endif()
 
 if(UNIX)

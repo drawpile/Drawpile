@@ -204,7 +204,11 @@ public:
 	QStringList formats() const;
 
 protected:
-	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const override;
+#else
+	QVariant retrieveData(const QString &mimeType, QMetaType type) const override;
+#endif
 
 private:
 	const LayerListModel *m_source;

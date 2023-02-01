@@ -74,9 +74,9 @@ drawdance::Message ServerCommand::toMessage() const
 	// TODO we should have a message type for splitting up overlong messages
 	if(payload.length() > 0xffff - DP_MESSAGE_HEADER_LENGTH) {
 		qWarning(
-			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%d bytes)",
+			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%lld bytes)",
 			qPrintable(cmd),
-			payload.length()
+			qlonglong(payload.length())
 		);
 		return drawdance::Message{};
 	}

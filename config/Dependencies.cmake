@@ -1,29 +1,30 @@
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Network REQUIRED)
-find_package(Qt5Sql REQUIRED)
+find_package("Qt${QT_VERSION}" COMPONENTS Network Sql REQUIRED)
 
 if(CLIENT)
 	find_package(PNG MODULE REQUIRED)
 	find_package(JPEG MODULE REQUIRED)
-	find_package(KF5Archive REQUIRED)
-	find_package(Qt5Xml REQUIRED)
+	find_package("Qt${QT_VERSION}" COMPONENTS Xml REQUIRED)
 	find_package(Threads REQUIRED)
+
+	if("${QT_VERSION}" EQUAL 5)
+		find_package(KF5Archive REQUIRED)
+	else()
+		find_package(libzip REQUIRED)
+	endif()
+
 	include("${DRAWDANCE_EXPORT_PATH}")
 
-	find_package(Qt5Gui REQUIRED)
-	find_package(Qt5Multimedia REQUIRED)
-	find_package(Qt5Svg REQUIRED)
-	find_package(Qt5Keychain)
-	find_package(Qt5LinguistTools)
+	find_package("Qt${QT_VERSION}" COMPONENTS Gui Svg Multimedia REQUIRED)
+	find_package("Qt${QT_VERSION}" COMPONENTS Keychain LinguistTools)
 	find_package(QtColorWidgets)
 endif()
 
 if(CLIENT OR SERVERGUI)
-	find_package(Qt5Widgets REQUIRED)
+	find_package("Qt${QT_VERSION}" COMPONENTS Widgets REQUIRED)
 endif()
 
 if(TESTS)
-	find_package(Qt5Test REQUIRED)
+	find_package("Qt${QT_VERSION}" COMPONENTS Test REQUIRED)
 endif()
 
 find_package(Libmicrohttpd)

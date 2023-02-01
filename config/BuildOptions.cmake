@@ -11,6 +11,12 @@ option(ADDRESS_SANITIZER "Enable address sanitizer" OFF)
 option(CLANG_TIDY "Enable clang-tidy" OFF)
 option(BUILD_LABEL "A custom label to add to the version")
 
+set(QT_VERSION 5 CACHE STRING "Which Qt version to use (5, 6)")
+if(NOT "${QT_VERSION}" MATCHES "^(5|6)$")
+	message(FATAL_ERROR
+		"QT_VERSION must be either '5' or '6', but is '${QT_VERSION}'")
+endif()
+
 set(DRAWDANCE_EXPORT_PATH "" CACHE STRING "Path to Drawdance.cmake")
 if(NOT DRAWDANCE_EXPORT_PATH)
     message(FATAL_ERROR

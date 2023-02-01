@@ -12,6 +12,7 @@ extern "C" {
 #include "image.h"
 #include "layergroup.h"
 #include "layerprops.h"
+#include <QObject>
 
 namespace drawdance {
 

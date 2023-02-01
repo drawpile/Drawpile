@@ -214,7 +214,7 @@ void MultiServer::assignRecording(Session *session)
 		return;
 
 	// Expand home directory
-	if(filename.startsWith("~/")) {
+	if(filename.startsWith(QStringLiteral("~/"))) {
 		filename = QString(qgetenv("HOME")) + filename.mid(1);
 	}
 
@@ -231,7 +231,7 @@ void MultiServer::assignRecording(Session *session)
 	filename.replace("%i", session->id());
 	filename.replace("%a", session->aliasOrId());
 
-	fi = filename;
+	fi = QFileInfo{filename};
 
 	if(!fi.absoluteDir().mkpath(".")) {
 		qWarning("Recording directory \"%s\" does not exist and cannot be created!", qPrintable(fi.absolutePath()));

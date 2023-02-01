@@ -21,8 +21,6 @@
 
 #include "net/client.h"
 #include "net/servercmd.h"
-#include "net/banlistmodel.h"
-#include "net/announcementlist.h"
 #include "canvas/canvasmodel.h"
 #include "canvas/paintengine.h"
 #include "canvas/selection.h"
@@ -650,7 +648,7 @@ void Document::sendResetSession(const drawdance::MessageList &resetImage)
 	if(resetImage.isEmpty()) {
 		qInfo("Sending session reset request. (Just in time snapshot)");
 	} else {
-		qInfo("Sending session reset request. (Snapshot size is %d bytes)", resetImage.length());
+		qInfo("Sending session reset request. (Snapshot size is %lld bytes)", qlonglong(resetImage.length()));
 	}
 
 	m_resetstate = resetImage;
@@ -746,7 +744,7 @@ void Document::sendResetSnapshot()
 {
 	// Size limit check. The server will kick us if we send an oversized reset.
 	if(m_sessionHistoryMaxSize > 0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
-		qWarning("Reset snapshot (%d) is larger than the size limit (%d)!", m_resetstate.length(), m_sessionHistoryMaxSize);
+		qWarning("Reset snapshot (%lld) is larger than the size limit (%d)!", qlonglong(m_resetstate.length()), m_sessionHistoryMaxSize);
 		emit autoResetTooLarge(m_sessionHistoryMaxSize);
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	} else {

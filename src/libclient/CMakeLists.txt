@@ -104,7 +104,7 @@ set_drawpile_target_properties(dpclient)
 target_include_directories(dpclient PUBLIC "${CMAKE_CURRENT_LIST_DIR}" bundled)
 target_link_libraries(dpclient PUBLIC
 	dpshared Drawdance::dpengine Drawdance::dpengine_archive Drawdance::dpmsg
-	Drawdance::dpcommon Qt5::Gui Qt5::Network Qt5::Sql)
+	Drawdance::dpcommon DP::QtGui DP::QtNetwork DP::QtSql)
 
 if(WIN32)
 	target_sources(dpclient PRIVATE parentalcontrols/parentalcontrols_win.cpp)
@@ -113,8 +113,8 @@ else()
 	target_sources(dpclient PRIVATE parentalcontrols/parentalcontrols_dummy.cpp)
 endif()
 
-if(Qt5LinguistTools_FOUND)
-	qt5_add_translation(libclient_qm_translations ${libclient_tss})
+if(DP_QtLinguistTools_FOUND)
+	dp_qt_add_translation(libclient_qm_translations ${libclient_tss})
 	target_sources(dpclient PRIVATE ${libclient_qm_translations})
 	install(FILES ${libclient_qm_translations}
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n")

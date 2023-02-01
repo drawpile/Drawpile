@@ -14,6 +14,10 @@ set(DRAWPILE_PROTO_MAJOR_VERSION 22)
 set(DRAWPILE_PROTO_MINOR_VERSION 2)
 set(DRAWPILE_PROTO_DEFAULT_PORT 27750)
 
+# needs to come first so that ECM uses the proper Qt version
+include("config/BuildOptions.cmake")
+find_package("Qt${QT_VERSION}" COMPONENTS Core REQUIRED)
+
 # scaffolding for Qt
 find_package(ECM REQUIRED NOMODULE)
 set(CMAKE_AUTOMOC ON)
@@ -24,12 +28,12 @@ set(CMAKE_MODULE_PATH
 	"${ECM_KDE_MODULE_DIR}")
 include(KDEInstallDirs)
 
-include("config/BuildOptions.cmake")
 include("config/AddressSanitizer.cmake")
 include("config/ClangTidy.cmake")
 include("config/Macros.cmake")
 include("config/Paths.cmake")
 include("config/Dependencies.cmake")
+include("config/QtVersionCompatibility.cmake")
 
 if(TESTS)
 	enable_testing()
@@ -57,7 +61,7 @@ function(set_drawpile_target_properties target)
 	target_include_directories("${target}" PUBLIC "${CMAKE_BINARY_DIR}")
 	set_target_properties("${target}" PROPERTIES
 		C_STANDARD 11 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF
-		CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+		CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
 	add_address_sanitizer("${target}")
 	add_clang_tidy("${target}")
 endfunction()

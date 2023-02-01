@@ -21,9 +21,9 @@ set(libserver_sources
 
 add_library(dpserver STATIC ${libserver_sources})
 set_drawpile_target_properties(dpserver)
-target_link_libraries(dpserver dpshared Qt5::Network)
+target_link_libraries(dpserver dpshared DP::QtNetwork)
 
 if(TESTS)
 	add_subdirectory(tests)
-endif(TESTS)
+endif()
 

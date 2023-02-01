@@ -76,6 +76,7 @@
 #include "utils/logging.h"
 #include "utils/actionbuilder.h"
 #include "utils/hotbordereventfilter.h"
+#include "../libshared/qtshims.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -950,7 +951,7 @@ bool MainWindow::event(QEvent *event)
 						// Return from temporary tool change
 						for(const QAction *act : m_drawingtools->actions()) {
 							const QKeySequence &seq = act->shortcut();
-							if(seq.count()==1 && e->key() == seq[0]) {
+							if(seq.count()==1 && shim::getKey(e) == seq[0]) {
 								m_dockToolSettings->setPreviousTool();
 								break;
 							}
@@ -959,7 +960,7 @@ bool MainWindow::event(QEvent *event)
 						// Return from temporary tool slot change
 						for(const QAction *act : m_brushSlots->actions()) {
 							const QKeySequence &seq = act->shortcut();
-							if(seq.count()==1 && e->key() == seq[0]) {
+							if(seq.count()==1 && shim::getKey(e) == seq[0]) {
 								m_dockToolSettings->setPreviousTool();
 								break;
 							}
@@ -2873,10 +2874,10 @@ void MainWindow::setupActions()
 
 	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
-	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
-	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
-	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Period)).icon("object-rotate-right");
-	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence(Qt::SHIFT + Qt::Key_Comma)).icon("object-rotate-left");
+	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence(Qt::SHIFT | Qt::Key_Period)).icon("object-rotate-right");
+	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence(Qt::SHIFT | Qt::Key_Comma)).icon("object-rotate-left");
 
 	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
 	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();

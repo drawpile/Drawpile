@@ -24,6 +24,7 @@
 #include <QAbstractButton>
 #include <QPainter>
 #include <QStyleOptionButton>
+#include "../../libshared/qtshims.h"
 
 namespace docks {
 
@@ -40,7 +41,7 @@ public:
 	QSize sizeHint() const override;
 	QSize minimumSizeHint() const override { return sizeHint(); }
 
-	void enterEvent(QEvent *event) override;
+	void enterEvent(shim::EnterEvent *event) override;
 	void leaveEvent(QEvent *event) override;
 	void paintEvent(QPaintEvent *event) override;
 };
@@ -65,7 +66,7 @@ QSize TitleWidget::Button::sizeHint() const
 	return QSize(size, size);
 }
 
-void TitleWidget::Button::enterEvent(QEvent *event)
+void TitleWidget::Button::enterEvent(shim::EnterEvent *event)
 {
 	if (isEnabled()) update();
 	QAbstractButton::enterEvent(event);

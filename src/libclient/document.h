@@ -28,6 +28,8 @@ extern "C" {
 #include "canvas/acl.h"
 #include "drawdance/message.h"
 #include "drawdance/paintengine.h"
+#include "net/announcementlist.h"
+#include "net/banlistmodel.h"
 
 #include <QObject>
 #include <QStringListModel>

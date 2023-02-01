@@ -23,6 +23,7 @@
 #include "canvas/pressure.h"
 #include "canvas/point.h"
 #include "tools/tool.h"
+#include "../../libshared/qtshims.h"
 
 #include <QGraphicsView>
 
@@ -174,7 +175,7 @@ public slots:
 	void updateSettings();
 
 protected:
-	void enterEvent(QEvent *event) override;
+	void enterEvent(shim::EnterEvent *event) override;
 	void leaveEvent(QEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;

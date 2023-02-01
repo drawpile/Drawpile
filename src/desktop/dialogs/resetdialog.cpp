@@ -82,7 +82,7 @@ struct ResetDialog::Private {
 		: ui{new Ui_ResetDialog}
 		, paintEngine{pe}
 		, resetPoints{makeResetPoints(pe)}
-		, selection{resetPoints.size() - 1}
+		, selection{int(resetPoints.size() - 1)}
 	{
 	}
 

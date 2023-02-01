@@ -17,9 +17,15 @@ ecm_install_icons(ICONS
 	"${CMAKE_CURRENT_SOURCE_DIR}/hicolor/mimetypes/sc-mimetypes-application-x-drawpile-recording.svgz"
 	DESTINATION "${KDE_INSTALL_ICONDIR}" THEME hicolor)
 
-install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.desktop" DESTINATION "${XDG_APPS_INSTALL_DIR}")
+if("${XDG_APPS_INSTALL_DIR}")
+	install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.desktop" DESTINATION "${XDG_APPS_INSTALL_DIR}")
+endif()
+
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/net.drawpile.drawpile.appdata.xml" DESTINATION "${KDE_INSTALL_METAINFODIR}")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/x-drawpile.xml" DESTINATION "${XDG_MIME_INSTALL_DIR}")
+
+if("${XDG_MIME_INSTALL_DIR}")
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/x-drawpile.xml" DESTINATION "${XDG_MIME_INSTALL_DIR}")
+endif()
 
 set(DPDATADIR "${DATA_INSTALL_DIR}/drawpile/drawpile")
 
