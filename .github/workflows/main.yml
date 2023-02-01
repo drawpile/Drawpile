@@ -163,7 +163,7 @@ jobs:
         id: sccache
         with:
           path: .github/sccache
-          key: sccache-${{ runner.os }}
+          key: sccache-${{ runner.os }}-${{ matrix.qt }}
       - name: Install sccache
         if: steps.sccache.outputs.cache-hit != 'true'
         run: bash .github/scripts/install-sccache.sh 0.3.3 ${{ matrix.sccache_tuple }}
@@ -207,7 +207,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh extension install actions/gh-actions-cache || true
-          gh actions-cache delete "sccache-${{ runner.os }}" --confirm
+          gh actions-cache delete "sccache-${{ runner.os }}-${{ matrix.qt }}" --confirm
         continue-on-error: true
 
       - name: Save sccache
@@ -215,7 +215,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: .github/sccache
-          key: sccache-${{ runner.os }}
+          key: sccache-${{ runner.os }}-${{ matrix.qt }}
         continue-on-error: true
 
       - name: sccache stats
