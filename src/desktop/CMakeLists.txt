@@ -209,12 +209,12 @@ if(APPLE)
 endif()
 
 if(KIS_TABLET)
-	if(WIN32)
+	if("${WIN32}" AND "${QT_VERSION}" EQUAL 5)
 		target_sources(${CLIENTNAME} PRIVATE
 			bundled/kis_tablet/kis_tablet_support_win8.cpp
 			bundled/kis_tablet/kis_tablet_support_win.cpp)
 	else()
-		message(WARNING "KIS_TABLET is only supported and necessary on Windows")
+		message(WARNING "KIS_TABLET is only supported and necessary on Windows with Qt5")
 	endif()
 ENDIF()
 
