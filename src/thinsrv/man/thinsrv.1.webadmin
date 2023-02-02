@@ -1,0 +1,9 @@
+.TP
+.BR --web-admin-port\  port
+enable web admin API and listen on this port
+.TP
+.BR --web-admin-auth\  username:password
+enable HTTP BASIC Authentication on web admin API
+.TP
+.BR --web-admin-access\  address/subnet|all
+allow access to web admin API from hosts other than localhost

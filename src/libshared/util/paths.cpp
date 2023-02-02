@@ -48,15 +48,10 @@ void setWritablePath(const QString &datapath)
 QStringList dataPaths()
 {
 	if(DATAPATHS.isEmpty()) {
-#if defined(Q_OS_MAC)
-		DATAPATHS << QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-		DATAPATHS << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
-#elif defined(Q_OS_ANDROID)
+#ifdef Q_OS_ANDROID
 		DATAPATHS << QStringLiteral("assets:");
-#else
-		DATAPATHS << qApp->applicationDirPath();
-		DATAPATHS << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 #endif
+		DATAPATHS << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 	}
 	return DATAPATHS;
 }

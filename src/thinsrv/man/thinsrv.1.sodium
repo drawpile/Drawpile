@@ -1,0 +1,3 @@
+.TP
+.BR --extauth\  url
+Extauth server URL
