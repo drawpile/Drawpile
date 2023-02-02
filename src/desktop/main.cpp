@@ -203,18 +203,20 @@ static void initTranslations(const QLocale &locale)
 		qWarning("Qt translations not found");
 	qApp->installTranslator(qtTranslator);
 
-	// Our translations
-	QTranslator *myTranslator = new QTranslator;
+	for(auto &bundle : { "libclient_", "drawpile_" }) {
+		// Our translations
+		QTranslator *myTranslator = new QTranslator;
 
-	for(const QString &datapath : utils::paths::dataPaths()) {
-		if(myTranslator->load("drawpile_" + preferredLang,  datapath + "/i18n"))
-			break;
+		for(const QString &datapath : utils::paths::dataPaths()) {
+			if(myTranslator->load(bundle + preferredLang, datapath + "/i18n"))
+				break;
+		}
+
+		if(myTranslator->isEmpty())
+			delete myTranslator;
+		else
+			qApp->installTranslator(myTranslator);
 	}
-
-	if(myTranslator->isEmpty())
-		delete myTranslator;
-	else
-		qApp->installTranslator(myTranslator);
 }
 
 // Initialize the application and return a list of files to be opened (if any)

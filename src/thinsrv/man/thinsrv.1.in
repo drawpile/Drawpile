@@ -2,23 +2,23 @@
 .\" it under the terms of the GNU General Public License as published by
 .\" the Free Software Foundation, either version 3 of the License, or
 .\" (at your option) any later version.
-.\" 
+.\"
 .\" Drawpile is distributed in the hope that it will be useful,
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
-.\" 
+.\"
 .\" You should have received a copy of the GNU General Public License
 .\" along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 .
-.TH DRAWPILE-SRV 1 "2017" "drawpile-srv" "Drawpile standalone server"
+.TH @srvname_upper@ 1 "@last_modified@" "@srvname@" "Drawpile standalone server"
 .
 .SH NAME
-drawpile-srv \- Drawpile server
+@srvname@ \- Drawpile server
 .
 .SH SYNOPSIS
 .
-.B drawpile-srv
+.B @srvname@
 [\fIOPTIONS\fR]
 .
 .SH DESCRIPTION
@@ -32,27 +32,20 @@ show help text
 .TP
 .BR --version , \ -v
 prints program version number
-.TP
-.BR --gui\ 
-run in graphical mode (used with GUI specific command line arguments)
+@gui_section@
 .TP
 .BR --port , \ -p\  port
 listen on the specified port instead of the default.
 .TP
-.BR --listen , \ -l\  address 
+.BR --listen , \ -l\  address
 bind to the specified address. If no listening address is specified,
 drawpile-srv will listen on all addresses.
 .TP
 .BR --local-host\  hostname
 local server hostname to use in session announcement
 .TP
-.BR --record , \ -r\  filename\ pattern
-record sessions to files. Placeholders in the filename pattern will be expanded
-to generate the actual filename. If a directory is given, a default filename pattern
-will be used. The placeholders %d (date), %t (time) and %i (session ID) are supported.
-.TP
-.BR --sessions\  path
-where to store file backed sessions. If not specified, sessions are kept in memory.
+.BR --announce-port\  port
+local server hostname to use in session announcement
 .TP
 .BR --ssl-cert\  cert.pem
 select SSL certificate file.
@@ -62,8 +55,11 @@ select SSL private key file. This must be used together with
 .B --ssl-cert
 to enable SSL support.
 .TP
-.BR --secure , \ -S
-strict security mode. When this flag is set, clients must use SSL to log in.
+.BR --record , \ -r\  filename\ pattern
+record sessions to files. Placeholders in the filename pattern will be expanded
+to generate the actual filename. If a directory is given, a default filename pattern
+will be used. The placeholders %d (date), %t (time) and %i (session ID) are supported.
+@webadmin_section@
 .TP
 .BR --database\  path
 the configuration database to use
@@ -71,17 +67,16 @@ the configuration database to use
 .BR --config , \ -c \  path
 the configuration file to use. Mutually exclusive with --database.
 .TP
+.BR --sessions\  path
+where to store file backed sessions. If not specified, sessions are kept in memory.
+.TP
 .BR --templates , \ -t\  path
 where to look for session templates
+@sodium_section@
 .TP
-.BR --web-admin-port\  port  
-enable web admin API and listen on this port
+.BR --report-url\  url
+abuse report handler URL
 .TP
-.BR --web-admin-auth\  username:password  
-enable HTTP BASIC Authentication on web admin API
-.TP
-.BR --web-admin-access\  address/subnet|all 
-allow access to web admin API from hosts other than localhost
 
 .
 .SH SOCKET ACTIVATION

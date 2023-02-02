@@ -1,12 +1,11 @@
 [Unit]
 Description=Drawpile dedicated server socket
+Documentation=man:@srvname@(1)
 After=network.target
 
 [Socket]
-ListenStream=27750
-# Adding a second port activates the web admin API:
-ListenStream=27780
+ListenStream=@DRAWPILE_PROTO_DEFAULT_PORT@
+@webadmin_stream@
 
 [Install]
 WantedBy=sockets.target
-

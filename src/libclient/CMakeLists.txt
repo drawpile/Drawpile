@@ -153,25 +153,7 @@ target_link_libraries(dpclient
 )
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
-	set(ts_files
-		i18n/drawpile_cs.ts
-		i18n/drawpile_de.ts
-		i18n/drawpile_fi.ts
-		i18n/drawpile_fr.ts
-		i18n/drawpile_it.ts
-		i18n/drawpile_ja.ts
-		i18n/drawpile_pt.ts
-		i18n/drawpile_ru.ts
-		i18n/drawpile_uk.ts
-		i18n/drawpile_vi.ts
-		i18n/drawpile_zh.ts
-	)
-	target_sources(dpclient PRIVATE ${ts_files})
-	set_source_files_properties(${ts_files} PROPERTIES
-		OUTPUT_LOCATION "i18n"
-	)
-	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/i18n")
-	qt_add_translation(qm_files ${ts_files})
+	add_subdirectory(i18n)
 endif()
 add_feature_info("Client translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
 

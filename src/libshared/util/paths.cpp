@@ -45,13 +45,7 @@ void setWritablePath(const QString &datapath)
 QStringList dataPaths()
 {
 	if(DATAPATHS.isEmpty()) {
-#ifdef Q_OS_MACOS
-		DATAPATHS << QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-		DATAPATHS << QDir(qApp->applicationDirPath() + QStringLiteral("/../Resources")).absolutePath();
-#else
-		DATAPATHS << qApp->applicationDirPath();
 		DATAPATHS << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
-#endif
 	}
 	return DATAPATHS;
 }

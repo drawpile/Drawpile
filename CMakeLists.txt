@@ -102,7 +102,27 @@ if(TESTS)
 endif()
 
 include(GNUInstallDirs)
+# GNUInstallDirs uses the PROJECT_NAME verbatim, but then the case is wrong, so
+# just override that
+set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/drawpile")
 include(Cargo)
+
+if(APPLE)
+	set(INSTALL_BUNDLEDIR Applications CACHE STRING "macOS application bundle installation directory")
+	# Cannot use TARGET_BUNDLE_CONTENT_DIR since that points to the binary
+	# output directory, not the install directory.
+	set(INSTALL_APPCONTENTSDIR "${INSTALL_BUNDLEDIR}/$<TARGET_PROPERTY:drawpile,RUNTIME_OUTPUT_NAME>.app/Contents")
+	set(INSTALL_APPDATADIR "${INSTALL_APPCONTENTSDIR}/Resources")
+	if(CLIENT)
+		set(CMAKE_INSTALL_BINDIR "${INSTALL_APPCONTENTSDIR}/MacOS")
+		set(CMAKE_INSTALL_MANDIR "${INSTALL_APPDATADIR}/man")
+		set(CMAKE_INSTALL_DOCDIR "${INSTALL_APPDATADIR}/doc")
+	endif()
+elseif(WIN32)
+	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_BINDIR}/data")
+else()
+	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_DATAROOTDIR}/drawpile")
+endif()
 
 if(CLIENT OR SERVER)
 	include_directories(${CMAKE_SOURCE_DIR}/src)
@@ -152,16 +172,12 @@ if(SERVER)
 
 	message(STATUS "Adding thinsrv")
 	add_subdirectory(src/thinsrv)
-
-	if(INSTALL_DOC)
-		message(STATUS "Adding doc")
-		add_subdirectory(doc)
-	endif()
 endif()
 
 if(TOOLS)
 	message(STATUS "Adding drawpile-cli")
 	add_cargo_executable(drawpile-cli PACKAGE drawpile-cli)
+	install(PROGRAMS "$<TARGET_FILE:drawpile-cli>" DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()
 
 feature_summary(INCLUDE_QUIET_PACKAGES

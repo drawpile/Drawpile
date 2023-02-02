@@ -4,6 +4,7 @@ include(CMakeDependentOption)
 option(CLIENT "Compile client" ON)
 add_feature_info("Drawpile client (CLIENT)" CLIENT "")
 option(BUILD_LABEL "A custom label to add to the version")
+option(UPDATE_TRANSLATIONS "Update translation files from source")
 
 if(WIN32)
 	cmake_dependent_option(KIS_TABLET "Enable custom tablet support code" OFF "CLIENT" OFF)

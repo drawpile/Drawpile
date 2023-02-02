@@ -1,4 +1,5 @@
 find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Widgets Multimedia)
+find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
 find_package(QtColorWidgets QUIET)
 find_package(${QT_PACKAGE_NAME}Keychain QUIET)
 
@@ -221,6 +222,10 @@ if(APPLE)
 	)
 endif()
 
+if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
+	add_subdirectory(i18n)
+endif()
+
 set_target_properties(drawpile PROPERTIES
 	AUTOUIC_SEARCH_PATHS ui
 	VERSION ${PROJECT_VERSION}
@@ -346,35 +351,8 @@ add_feature_info("External QtColorWidgets" QTCOLORWIDGETS_FOUND "")
 
 if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
-	target_sources(drawpile PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc)
+	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc")
 elseif(APPLE)
-	function(add_desktop_resources target)
-		set(multiValueArgs FILES DIRS)
-		cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "${multiValueArgs}")
-
-		if(NOT target)
-			message(FATAL_ERROR "missing required target")
-			return()
-		endif()
-
-		foreach(dir IN LISTS ARG_DIRS)
-			file(GLOB resources LIST_DIRECTORIES FALSE "assets/${dir}/*")
-			target_sources(${target} PRIVATE ${resources})
-			set_source_files_properties(${resources}
-				PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/${dir}"
-			)
-		endforeach()
-
-		foreach(file IN LISTS ARG_FILES)
-			target_sources(${target} PRIVATE
-				assets/${file}
-			)
-			set_property(TARGET ${target} APPEND PROPERTY RESOURCE
-				assets/${file}
-			)
-		endforeach()
-	endfunction()
-
 	set_property(TARGET drawpile PROPERTY RUNTIME_OUTPUT_NAME Drawpile)
 	set(MACOSX_BUNDLE_INFO_PLIST DrawpileInfo.plist.in)
 	set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
@@ -386,32 +364,26 @@ elseif(APPLE)
 	set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
 	set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
 
-	# TODO: This should be generic and then use install(TARGETS... RESOURCE)
-	add_desktop_resources(drawpile
-		FILES initialbrushpresets.db
-		DIRS "theme/dark" "theme/light" palettes sounds theme
-	)
-
 	add_custom_command(
 		OUTPUT drawpile.icns
 		DEPENDS assets/drawpile.iconset/icon_512x512@2x.png
 		COMMAND iconutil -c icns -o drawpile.icns "${CMAKE_CURRENT_SOURCE_DIR}/assets/drawpile.iconset"
 	)
-	target_sources(drawpile PRIVATE drawpile.icns)
-	set_property(TARGET drawpile APPEND PROPERTY RESOURCE drawpile.icns)
+	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
+	set_property(TARGET drawpile APPEND PROPERTY RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
+endif()
 
-	find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
-	if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
-		add_custom_command(TARGET drawpile POST_BUILD
-			DEPENDS dpclient
-			COMMENT "Copying OS X i18n content"
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-				"$<TARGET_PROPERTY:dpclient,BINARY_DIR>/i18n"
-				"$<TARGET_BUNDLE_CONTENT_DIR:drawpile>/Resources/i18n"
-		)
-	endif()
-elseif(UNIX)
-	install(TARGETS drawpile)
+include(AddResources)
+add_resources(drawpile
+	FILES initialbrushpresets.db
+	DIRS palettes sounds theme
+)
+
+install(TARGETS drawpile
+	BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}"
+)
+
+if(UNIX AND NOT APPLE)
 	install(FILES assets/net.drawpile.drawpile.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
 	install(FILES assets/drawpile.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps)
 	install(FILES assets/drawpile.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps)
@@ -419,15 +391,6 @@ elseif(UNIX)
 	install(FILES assets/drawpile.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/mimetypes RENAME application-x-drawpile-recording.svg)
 	install(FILES assets/net.drawpile.drawpile.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo)
 	install(FILES assets/x-drawpile.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages)
-	install(DIRECTORY assets/palettes DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
-	install(DIRECTORY assets/sounds DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
-	install(DIRECTORY assets/theme DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
-	install(FILES
-		assets/nightmode.colors
-		assets/initialbrushpresets.db
-		DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile)
-else()
-	message(FATAL_ERROR "unsupported installation target")
 endif()
 
 target_auto_source_group(drawpile)

@@ -112,6 +112,17 @@ if(libsystemd_FOUND)
 		initsys_systemd.cpp
 	)
 	target_link_libraries(${srvlib} PkgConfig::libsystemd)
+
+	if(libmicrohttpd_FOUND)
+		set(webadmin_stream ListenStream=${DRAWPILE_WEBADMIN_DEFAULT_PORT})
+	endif()
+	configure_file(systemd/service.in ${srvname}.service @ONLY)
+	configure_file(systemd/socket.in ${srvname}.socket @ONLY)
+	install(FILES
+		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.service"
+		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.socket"
+		DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/systemd/system/"
+	)
 else()
 	target_sources(${srvlib} PRIVATE
 		initsys_dummy.cpp
@@ -130,8 +141,43 @@ if(libmicrohttpd_FOUND)
 endif()
 add_feature_info("Server web-admin support" libmicrohttpd_FOUND "")
 
-if(UNIX AND NOT APPLE)
-	install(TARGETS ${srvname})
+install(TARGETS ${srvname})
+# No trailing slash is required or else it will strip the last path of the
+# directory
+install(DIRECTORY contrib DESTINATION ${INSTALL_APPDATADIR})
+
+function(add_man_section name condition out_last_modified)
+	if(condition)
+		file(TIMESTAMP "${CMAKE_CURRENT_SOURCE_DIR}/man/thinsrv.1.${name}" last_modified_section "%Y-%m-%d" UTC)
+		file(READ "man/thinsrv.1.${name}" ${name}_section)
+		set(${name}_section ${${name}_section} PARENT_SCOPE)
+		if(${${out_last_modified}} STRLESS ${last_modified_section})
+			set(${out_last_modified} ${last_modified_section} PARENT_SCOPE)
+		endif()
+	endif()
+endfunction()
+
+if(INSTALL_DOC AND UNIX)
+	string(TOUPPER ${srvname} srvname_upper)
+	file(TIMESTAMP "${CMAKE_CURRENT_SOURCE_DIR}/man/thinsrv.1.in" last_modified "%Y-%m-%d" UTC)
+	add_man_section(gui SERVERGUI last_modified)
+	add_man_section(sodium libsodium_FOUND last_modified)
+	add_man_section(webadmin libmicrohttpd_FOUND last_modified)
+	configure_file(man/thinsrv.1.in ${srvname}.1 @ONLY)
+	install(FILES
+		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.1"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}"
+	)
+	install(FILES
+		"${CMAKE_SOURCE_DIR}/COPYING"
+		"${CMAKE_SOURCE_DIR}/ChangeLog"
+		"${CMAKE_SOURCE_DIR}/README.md"
+		DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+	)
+	# Trailing slash is required or else it will install into `doc` subdirectory
+	install(DIRECTORY "${CMAKE_SOURCE_DIR}/doc/"
+		DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+	)
 endif()
 
 if(TESTS)

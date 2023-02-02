@@ -1,0 +1,4 @@
+.TP
+.BR --gui
+.br
+run in graphical mode (used with GUI specific command line arguments)
