@@ -19,59 +19,89 @@ Some feature highlights:
 * Automatic port forwarding with UPnP
 * MyPaint brush support
 
-## Building with cmake
+## Installing Drawpile
 
-Common dependencies:
- * Qt 5.12 or newer (QtGui not required for headless server)
- * Rust compiler (tested with rustc 1.40)
+Precompiled releases are available from https://drawpile.net/download/.
 
-Client specific dependencies:
+## Building Drawpile from source
 
-* [QtColorPicker]: optional, bundled copy is included
-* [QtKeyChain]: optional, enables password storage
-* KF5 KDNSSD: optional, local server discovery with Zeroconf
+The following dependencies are required:
 
-Server specific dependencies (you can also take a look at [Docker build](pkg/docker/Dockerfile) script):
+* CMake 3.18
+* C++14 compiler
+* Rust stable compiler
+* Qt 5.12 or newer (5.11 is also supported for headless server only)
 
-* libsystemd: optional, systemd socket activation support
-* libmicrohttpd: optional, HTTP admin API
-* libsodium: optional: ext-auth support
+### Windows
 
-It's a good idea to build in a separate directory to keep build files
-separate from the source tree.
+Using Visual Studio:
 
-Example:
+1. Run the [Rust installer](https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe),
+   which will also automatically install Visual Studio Community Edition
+1. Open the Visual Studio x64 command line from the Start menu and
+   [install vcpkg](https://vcpkg.io/en/getting-started.html). Be sure to run
+   the `vcpkg integrate install` step for integration with Visual Studio
+1. Run
+   `vcpkg install qtbase:x64-windows qtmultimedia:x64-windows qtsvg:x64-windows qttools:x64-windows qttranslations:x64-windows`
+   to install required dependencies, and
+   `vcpkg install libmicrohttpd:x64-windows libsodium:x64-windows qtkeychain-qt6:x64-windows`
+   to install optional dependencies
+1. Run `git clone https://github.com/drawpile/Drawpile.git` to clone Drawpile
+1. Open Visual Studio from the Start menu and open Drawpile\\CMakeLists.txt
+   and use normally. Note that because assets are not copied into the runtime
+   directory, icons and brushes will be missing from the user interface. Copy
+   the files from the `src\\desktop\\assets` directory into the directory with
+   the built executable.
 
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
+### macOS
 
-The executables will be generated in the `build/bin` directory. You can run them from there,
-or install them with `make install`.
+Using Xcode:
 
-The configuration step supports some options:
+1. [Install Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+1. [Install Homebrew](https://brew.sh/)
+1. [Install Rust](https://www.rust-lang.org/tools/install)
+1. Open Terminal.app and run `brew install cmake qt` to install required
+   dependencies, and `brew install libmicrohttpd libsodium qtkeychain` to install
+   optional dependencies
+1. Run `git clone https://github.com/drawpile/Drawpile.git` to clone Drawpile
+1. Run `cmake -S Drawpile -B Drawpile-build -G Xcode` to generate the Xcode
+   project
+1. Run `open Drawpile-build/Drawpile.xcodeproj` to open the project in Xcode
+   and use normally
 
-* `CLIENT=off`: don't build the client (useful when building the stand-alone server only)
-* `SERVER=off`: don't build the stand-alone server.
-* `SERVERGUI=off`: build a headless-only stand-alone serveer.
-* `TOOLS=on`: build dprec2txt command line tool
-* `CMAKE_BUILD_TYPE=debug`: enable debugging features
-* `INITSYS=""`: select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
-* `TESTS=on`: build unit tests (run test suite with `make test`)
-* `KIS_TABLET=on`: enable improved graphics tablet support (taken from Krita)
+### Linux (Ubuntu)
 
-Notes about `KIS_TABLET`:
+1. Run
+   `sudo apt install build-essential cmake git libqt6svg6 qt6-base-dev qt6-multimedia-dev qt6-tools-dev`
+   to install required dependencies, and
+   `sudo apt install libmicrohttpd-dev libsodium-dev libsystemd-dev qtkeychain-qt6-dev`
+   to install optional dependencies
+1. [Install Rust](https://www.rust-lang.org/tools/install)
+1. Run `cmake -S Drawpile -B Drawpile-build -DCMAKE_BUILD_TYPE=RelWithDebInfo`
+   to generate the project and follow the output instructions to build
 
- * On Windows, it enables Windows Ink and improved Wintab support. A patched version of Qt should be used. See `pkg/win` for the patch.
- * On Linux (or any platform with an X server,) it enables a modified XInput2 event handler.
- * On macOS it does nothing and shouldn't be used.
+### Manually compiled dependencies
 
-Example: `$ cmake .. -DCMAKE_BUILD_TYPE=debug -DKIS_TABLET=on`
+Once CMake is installed, different versions of dependencies can be downloaded
+and installed from source using the CI support scripts:
 
-For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
+`cmake -DCMAKE_INSTALL_PREFIX=<installation path> -DQT_VERSION=<version> -P .github/scripts/build-qt.cmake`
+`cmake -DCMAKE_INSTALL_PREFIX=<installation path> -P .github/scripts/build-other.cmake`
 
-[QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets
-[QtKeyChain]: https://github.com/frankosterfeld/qtkeychain
-[Building from sources]: https://github.com/drawpile/Drawpile/wiki/Building-from-sources
+After installing dependencies from source, regenerate the project with
+`-DCMAKE_PREFIX_PATH=<installation path>` to use the source dependencies.
 
+The source dependency scripts can also be used to build dependencies that have
+extra assertions and ASan by running them with `-DBUILD_TYPE=debug`. Note that
+this still generates release binaries, just with extra instrumentation to find
+runtime bugs.
+
+Note that transient dependencies are not handled by these scripts; they are
+intended primarily for use by the CI service and are provided as-is.
+
+## Installing Drawpile from source
+
+Follow the above instructions, optionally using
+`-DCMAKE_INSTALL_PREFIX=<installation path>` when generating the project to
+install to a directory other than the system root, then run `cmake --build`
+as usual, and finally `cmake --install`.
