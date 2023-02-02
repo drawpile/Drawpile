@@ -242,7 +242,7 @@ else()
 		${bundled_qtcolorwidgets_sources} ${bundled_qtcolorwidgets_ui_headers})
 endif()
 
-dp_qt_add_resources(desktop_resources ui/cursors/cursors.qrc)
+dp_qt_add_resources(desktop_resources ui/cursors/dpcursors.qrc)
 dp_qt_add_resources(desktop_resources ui/icons/builtin.qrc)
 dp_qt_wrap_ui(desktop_ui_headers ${desktop_uis} )
 target_sources(${CLIENTNAME} PRIVATE
