@@ -1,11 +1,12 @@
-# Drawpile - a collaborative drawing program (dev branch)
+Drawpile - a collaborative drawing program [![CI status badge](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
+------------------------------------------
 
 Drawpile is a drawing program that lets you share the canvas
 with other users in real time.
 
 Some feature highlights:
 
-* Runs on Linux, Windows and OSX
+* Runs on Linux, Windows, macOS, and Android
 * Shared canvas using the built-in server or a dedicated server
 * Record, play back and export drawing sessions
 * Simple animation support
@@ -15,132 +16,93 @@ Some feature highlights:
 * Built-in chat
 * Supports OpenRaster file format
 * Encrypted connections using SSL
-* Automatic port forwarding with UPnP
 * MyPaint brush support
 
-## Building with cmake
+## Installing Drawpile
 
-Common dependencies:
- * Qt 5.12 or newer (QtGui not required for headless server)
- * KF5 Archive (Qt5) or libzip (Qt6)
+Precompiled releases are available from the [Drawpile web site](https://drawpile.net/download/)
+or from [GitHub releases](../../releases). Work-in-progress builds are available as
+downloadable artefacts from [GitHub Actions](../../actions).
 
-Client specific dependencies:
+## Building Drawpile from source
 
-* [QtColorPicker]: optional, bundled copy is included
-* [QtKeyChain]: optional, enables password storage
-* KF5 KDNSSD: optional, local server discovery with Zeroconf
+The following dependencies are required:
 
-Server specific dependencies (you can also take a look at [Docker build](pkg/docker/Dockerfile) script):
+* CMake 3.18 (3.19+ recommended)
+* C++17 compiler
+* Rust stable compiler
+* Qt 5.12 or newer (5.11 is also supported for headless server only)
 
-* libsystemd: optional, systemd socket activation support
-* libmicrohttpd: optional, HTTP admin API
-* libsodium: optional: ext-auth support
+### Windows
 
-It's a good idea to build in a separate directory to keep build files
-separate from the source tree.
+Using Visual Studio:
 
-The configuration step supports some options:
+1. Run the [Rust installer](https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe),
+   which will also automatically install Visual Studio Community Edition
+1. Open the Visual Studio x64 command line from the Start menu and
+   [install vcpkg](https://vcpkg.io/en/getting-started.html). Be sure to run
+   the `vcpkg integrate install` step for integration with Visual Studio
+1. Run
+   `vcpkg install libzip:x64-windows qtbase:x64-windows qtmultimedia:x64-windows qtsvg:x64-windows qttools:x64-windows qttranslations:x64-windows`
+   to install required dependencies, and
+   `vcpkg install libmicrohttpd:x64-windows libsodium:x64-windows qtkeychain-qt6:x64-windows`
+   to install optional dependencies
+1. Run `git clone https://github.com/drawpile/Drawpile.git` to clone Drawpile
+1. Open Visual Studio from the Start menu and open `Drawpile\CMakeLists.txt`
+   and use normally. Note that because assets are not copied into the runtime
+   directory, icons and brushes will be missing from the user interface. Copy
+   the files from the `src\desktop\assets` directory into the directory with
+   the built executable.
 
-* `DRAWDANCE_EXPORT_PATH=path/to/Drawdance.cmake`: path to the Drawdance.cmake file in the Drawdance build directory (required)
-* `QT_VERSION=6`: use Qt6 instead of Qt5
-* `CLIENT=OFF`: don't build the client (useful when building the stand-alone server only)
-* `SERVER=OFF`: don't build the stand-alone server.
-* `SERVERGUI=OFF`: build a headless-only stand-alone serveer.
-* `TOOLS=ON`: build command line tools
-* `CMAKE_BUILD_TYPE=Debug`: enable debugging features
-* `INITSYS=""`: select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
-* `TESTS=ON`: build unit tests (run test suite with `make test`)
-* `KIS_TABLET=ON`: enable improved graphics tablet support from Krita. Only available on Windows with Qt5 and should be used with a patched version of Qt 5.12. The MSVC build takes care of setting this up.
+### macOS
 
-For instructions on how to build Drawpile on Windows and OSX, see the [Building from sources] page.
+Using Xcode:
 
-[QtColorPicker]: https://gitlab.com/mattia.basaglia/Qt-Color-Widgets
-[QtKeyChain]: https://github.com/frankosterfeld/qtkeychain
+1. [Install Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)
+1. [Install Homebrew](https://brew.sh/)
+1. [Install Rust](https://www.rust-lang.org/tools/install)
+1. Open Terminal.app and run `brew install cmake libzip qt` to install required
+   dependencies, and `brew install libmicrohttpd libsodium qtkeychain` to install
+   optional dependencies
+1. Run `git clone https://github.com/drawpile/Drawpile.git` to clone Drawpile
+1. Run `cmake -S Drawpile -B Drawpile-build -G Xcode` to generate the Xcode
+   project
+1. Run `open Drawpile-build/Drawpile.xcodeproj` to open the project in Xcode
+   and use normally
 
-### Building on Linux
+### Linux (Ubuntu)
 
-This is how to build on a plain Ubuntu 22.04. Other Linuxes are similar, the dependencies just have different names. There's two options: Qt6 or Qt5. Pick one of them, don't install both. If you're using an older version of your distribution, Qt6 might not yet be available for you.
+1. Run
+   `sudo apt install build-essential cmake git libqt6svg6 qt6-base-dev qt6-multimedia-dev qt6-tools-dev libxkbcommon-dev libzip-dev zipcmp zipmerge ziptool`
+   to install required dependencies, and
+   `sudo apt install libmicrohttpd-dev libsodium-dev libsystemd-dev qtkeychain-qt6-dev`
+   to install optional dependencies
+1. [Install Rust](https://www.rust-lang.org/tools/install)
+1. Run `cmake -S Drawpile -B Drawpile-build -DCMAKE_BUILD_TYPE=RelWithDebInfo`
+   to generate the project and follow the output instructions to build
 
-Here's how to build with Qt6:
+### Manually compiled dependencies
 
-```sh
-# Install dependencies (Qt6)
-apt install -y build-essential cmake extra-cmake-modules git libgles2-mesa-dev libjpeg-dev libmicrohttpd-dev libpng-dev libsodium-dev libqt6svg6-dev libvulkan-dev libxkb-common-dev libz-dev libzip-dev ninja-build qtkeychain-qt6-dev qt6-multimedia-dev qt6-base-dev qt6-l10n-tools qt6-tools-dev qt6-tools-dev-tools zipcmp zipmerge ziptool
+Once CMake is installed, different versions of dependencies can be downloaded
+and installed from source using the CI support scripts:
 
-# Clone the repositories and check out the correct branches.
-git clone --branch dev-2.2 https://github.com/drawpile/Drawdance.git
-git clone --branch dancepile-2.2 https://github.com/askmeaboutlo0m/Drawpile.git
+`cmake -DCMAKE_INSTALL_PREFIX=<installation path> -DQT_VERSION=<version> -P .github/scripts/build-qt.cmake`
+`cmake -DCMAKE_INSTALL_PREFIX=<installation path> -P .github/scripts/build-other.cmake`
 
-# Build Drawdance
-cd Drawdance
-scripts/cmake-presets drawpile_qt6_release
-cmake --build builddpqt6release
+After installing dependencies from source, regenerate the project with
+`-DCMAKE_PREFIX_PATH=<installation path>` to use the source dependencies.
 
-# Build Drawpile
-cd ../Drawpile
-scripts/cmake-presets drawpile_qt6_release
-cmake --build builddpqt6release
+The source dependency scripts can also be used to build dependencies that have
+extra assertions and ASan by running them with `-DBUILD_TYPE=debug`. Note that
+this still generates release binaries, just with extra instrumentation to find
+runtime bugs.
 
-# Install Drawpile - this is required to be done at least once! Do NOT just run
-# Drawpile from the build directory, you'll be missing brushes, themes and other
-# stuff. If you did it anyway, installing won't fix it, you'll have to delete
-# ~/.local/share/drawpile/drawpile and maybe ~/.config/drawpile/drawpile.ini.
-sudo cmake --install builddpqt6release
+Note that transient dependencies are not handled by these scripts; they are
+intended primarily for use by the CI service and are provided as-is.
 
-# Run Drawpile
-drawpile
-```
+## Installing Drawpile from source
 
-And here with Qt5:
-
-```sh
-# Install dependencies (Qt5)
-apt install -y build-essential cmake extra-cmake-modules git libjpeg-dev libkf5archive-dev libmicrohttpd-dev libpng-dev libsodium-dev libqt5svg5-dev libz-dev ninja-build qt5keychain-dev qt5multimedia-dev qtbase5-dev qttools5-dev
-
-# Clone the repositories and check out the correct branches.
-git clone --branch dev-2.2 https://github.com/drawpile/Drawdance.git
-git clone --branch dancepile-2.2 https://github.com/askmeaboutlo0m/Drawpile.git
-
-# Build Drawdance
-cd Drawdance
-scripts/cmake-presets drawpile_release
-cmake --build builddprelease
-
-# Build Drawpile
-cd ../Drawpile
-scripts/cmake-presets drawpile_release
-cmake --build builddprelease
-
-# Install Drawpile - this is required to be done at least once! Do NOT just run
-# Drawpile from the build directory, you'll be missing brushes, themes and other
-# stuff. If you did it anyway, installing won't fix it, you'll have to delete
-# ~/.local/share/drawpile/drawpile and maybe ~/.config/drawpile/drawpile.ini.
-sudo cmake --install builddprelease
-
-# Run Drawpile
-drawpile
-```
-
-### Building on Windows
-
-Clone Drawpile and check out branch `dancepile-2.2`. Clone [Drawdance](https://github.com/drawpile/Drawdance) and check out branch `dev-2.2`. Put those two directories next to each other.
-
-Install [vcpkg](https://github.com/microsoft/vcpkg) according to their instructions. Put it into `C:\vcpkg`, otherwise the paths might get too long and you will get strange errors.
-
-Run the `x64 Native Tools Command Prompt`. Change to the `Drawpile/pkg/win-msvc` directory, something like:
-
-    cd C:\Users\YourUsername\SomeOtherFoldersMaybe\Drawpile\pkg\win-msvc
-
-Then run the build script:
-
-    powershell -ExecutionPolicy ByPass -File build-release.ps1 -vcpkgDir C:\vcpkg
-
-This will install all required dependencies, which takes several hours the first time. Make sure you have plenty of hard disk space (50 GB or more) for temporary files. Afterwards, it will build Drawdance and Drawpile.
-
-Finally, package it up:
-
-    powershell -ExecutionPolicy ByPass -File package.ps1 -vcpkgDir C:\vcpkg
-
-Now you can run Drawpile from the newly generated `drawpile-X.Y.Z` directory in `Drawpile/pkg/win-msvg`. There will also be a ZIP file and, if you have InnoSetup available, an installer.
-
-Note that the default PowerShell ZIP archive command is really old and broken, it generates ZIP files with `\` as a path separator, which is wrong and doesn't work on non-Windows operating systems. If you want to fix that, run `Install-Module -Name Microsoft.PowerShell.Archive -RequiredVersion 1.2.3.0` in PowerShell.
+Follow the above instructions, optionally using
+`-DCMAKE_INSTALL_PREFIX=<installation path>` when generating the project to
+install to a directory other than the system root, then run `cmake --build`
+as usual, and finally `cmake --install`.
