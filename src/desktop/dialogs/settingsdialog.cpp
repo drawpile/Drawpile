@@ -55,6 +55,31 @@
 
 #include <QDebug>
 
+// On Windows, there's different tablet input settings depending on our build:
+// Qt5 without KIS_TABLET: no input settings, Qt always uses Windows Ink.
+// Qt5 with KIS_TABLET: input settings exist and there's three options: Windows
+// Ink, Wintab and Wintab with Relative Pen Mode Hack. Restart required.
+// Qt6: input settings exist and there's two options: Windows Ink and Wintab.
+// Restart not required to apply these settings.
+#undef HAVE_INPUT_SETTINGS
+#undef HAVE_RELATIVE_PEN_MODE_HACK
+#undef INPUT_NO_RESTART_REQUIRED
+#if defined(Q_OS_WIN)
+#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#		define HAVE_INPUT_SETTINGS
+#		define INPUT_NO_RESTART_REQUIRED
+#	elif defined(KIS_TABLET)
+#		define HAVE_INPUT_SETTINGS
+#		define HAVE_RELATIVE_PEN_MODE_HACK
+#	endif
+#endif
+
+#ifdef HAVE_INPUT_SETTINGS
+static constexpr int INPUT_WINDOWS_INK = 0;
+static constexpr int INPUT_WINTAB = 1;
+static constexpr int INPUT_WINTAB_RELATIVE_PEN_MODE_HACK = 2;
+#endif
+
 using color_widgets::ColorWheel;
 
 class KeySequenceEditFactory : public QItemEditorCreatorBase
@@ -112,12 +137,16 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	m_ui->formLayout_2->removeRow(m_ui->themeChoice);
 #endif
 
-	// Hide Windows specific stuff on other platforms
-#if !defined(Q_OS_WIN) || !defined(KIS_TABLET)
-	m_ui->formLayout_2->removeWidget(m_ui->windowsink);
-	m_ui->windowsink->hide();
-	m_ui->formLayout_2->removeWidget(m_ui->relativePenModeHack);
-	m_ui->relativePenModeHack->hide();
+#if defined(HAVE_INPUT_SETTINGS)
+#	if !defined(HAVE_RELATIVE_PEN_MODE_HACK)
+	m_ui->tabletInputCombo->removeItem(INPUT_WINTAB_RELATIVE_PEN_MODE_HACK);
+	m_ui->tabletInputRelativePenModeHackDescription->hide();
+#	endif
+#	if defined(INPUT_NO_RESTART_REQUIRED)
+	m_ui->tabletInputRequiresRestartLabel->hide();
+#	endif
+#else
+	m_ui->tabletInputWrapper->hide();
 #endif
 
 	// Editable shortcuts
@@ -279,9 +308,16 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
-	m_ui->windowsink->setChecked(cfg.value("windowsink", true).toBool());
-	m_ui->relativePenModeHack->setChecked(cfg.value("relativepenhack", false).toBool());
+#ifdef HAVE_INPUT_SETTINGS
+	if(cfg.value("windowsink", true).toBool()) {
+		m_ui->tabletInputCombo->setCurrentIndex(INPUT_WINDOWS_INK);
+#ifdef HAVE_RELATIVE_PEN_MODE_HACK
+	} else if(cfg.value("relativepenhack", false).toBool()) {
+		m_ui->tabletInputCombo->setCurrentIndex(INPUT_WINTAB_RELATIVE_PEN_MODE_HACK);
+#endif
+	} else {
+		m_ui->tabletInputCombo->setCurrentIndex(INPUT_WINTAB);
+	}
 #endif
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
@@ -402,9 +438,27 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
 
 	cfg.beginGroup("settings/input");
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
-	cfg.setValue("windowsink", m_ui->windowsink->isChecked());
-	cfg.setValue("relativepenhack", m_ui->relativePenModeHack->isChecked());
+#ifdef HAVE_INPUT_SETTINGS
+	switch(m_ui->tabletInputCombo->currentIndex()) {
+	case INPUT_WINDOWS_INK:
+		cfg.setValue("windowsink", true);
+		break;
+	case INPUT_WINTAB:
+		cfg.setValue("windowsink", false);
+#ifdef HAVE_RELATIVE_PEN_MODE_HACK
+		cfg.setValue("relativepenhack", false);
+#endif
+		break;
+#ifdef HAVE_RELATIVE_PEN_MODE_HACK
+	case INPUT_WINTAB_RELATIVE_PEN_MODE_HACK:
+		cfg.setValue("windowsink", false);
+		cfg.setValue("relativepenhack", true);
+		break;
+#endif
+	default:
+		qWarning("Unknown tablet input option");
+		break;
+	}
 #endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());

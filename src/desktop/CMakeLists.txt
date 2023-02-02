@@ -2,6 +2,7 @@ set(desktop_sources
 	main.cpp
 	mainwindow.cpp
 	notifications.cpp
+	tabletinput.cpp
 	toolwidgets/toolsettings.cpp
 	toolwidgets/brushsettings.cpp
 	toolwidgets/colorpickersettings.cpp
@@ -193,6 +194,11 @@ target_include_directories("${CLIENTNAME}" PUBLIC
 	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(${CLIENTNAME} PUBLIC dpclient
 	DP::QtWidgets DP::QtMultimedia DP::QtSvg)
+
+# On Qt6, private headers are required to switch between Windows Ink and Wintab.
+if("${QT_VERSION}" EQUAL 6)
+	include_directories("${CLIENTNAME}" PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
+endif()
 
 set_target_properties(${CLIENTNAME} PROPERTIES
 	VERSION ${DRAWPILE_VERSION}

@@ -62,7 +62,6 @@ public:
 	void openBlankDocument();
 
 	QString greeting();
-	const char *tabletInputMode();
 
 signals:
 	void settingsChanged();

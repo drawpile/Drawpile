@@ -365,7 +365,7 @@
               <property name="title">
                <string>Tablet</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <layout class="QVBoxLayout" name="tabletGroupLayout">
                <item>
                 <widget class="QCheckBox" name="tabletSupport">
                  <property name="text">
@@ -384,17 +384,81 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="windowsink">
-                 <property name="text">
-                  <string>Use Windows Ink (requires restart)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="relativePenModeHack">
-                 <property name="text">
-                  <string>Enable relative pen mode hack (Wintab only)</string>
-                 </property>
+                <widget class="QWidget" name="tabletInputWrapper" native="true">
+                 <layout class="QVBoxLayout" name="tabletInputLayout_2">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout" name="tabletInputLayout">
+                    <item>
+                     <widget class="QLabel" name="tabletInputLabel">
+                      <property name="text">
+                       <string>Input:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="tabletInputCombo">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <item>
+                       <property name="text">
+                        <string>Windows Ink</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Wintab</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Wintab with Relative Pen Mode Hack</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="tabletInputRequiresRestartLabel">
+                      <property name="text">
+                       <string>(requires restart)</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="tabletInputDescription">
+                    <property name="text">
+                     <string>Windows has two different tablet inputs: Wintab and Windows Ink. Tablet drivers usually have a setting to switch between these. If you're experiencing issues with pen pressure, try switching to the other option both in Drawpile and in your driver. Sometimes updates for Windows or tablet drivers cause one of the options to stop working and you have to switch to the other.</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="tabletInputRelativePenModeHackDescription">
+                    <property name="text">
+                     <string>If you're using your tablet in relative or &quot;mouse&quot; mode, try the relative pen hack option.</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>

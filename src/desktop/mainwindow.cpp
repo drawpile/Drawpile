@@ -56,6 +56,7 @@
 #include "mainwindow.h"
 #include "document.h"
 #include "main.h"
+#include "tabletinput.h"
 
 #include "canvas/canvasmodel.h"
 #include "scene/canvasview.h"
@@ -129,10 +130,6 @@
 #include "dialogs/tablettester.h"
 #include "dialogs/abusereport.h"
 #include "dialogs/versioncheckdialog.h"
-
-#ifdef KIS_TABLET
-#include "bundled/kis_tablet/kis_tablet_support_win.h"
-#endif
 
 static QString getLastPath() { return QSettings().value("window/lastpath").toString(); }
 
@@ -708,10 +705,6 @@ void MainWindow::updateSettings()
 	const bool eraser = cfg.value("tableteraser", true).toBool();
 
 	m_view->setTabletEnabled(enable);
-
-#ifdef KIS_TABLET
-	KisTabletSupportWin::enableRelativePenModeHack(cfg.value("relativepenhack", false).toBool());
-#endif
 
 	// Handle eraser event
 	if(eraser)
@@ -1453,7 +1446,7 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta("Drawpile: %s", DRAWPILE_VERSION);
 				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
 				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
-				DP_event_log_write_meta("Input: %s", static_cast<DrawpileApp *>(qApp)->tabletInputMode());
+				DP_event_log_write_meta("Input: %s", qUtf8Printable(tabletinput::current()));
 			} else {
 				showErrorMessageWithDetails(tr("Error opening tablet event log."), DP_error());
 			}

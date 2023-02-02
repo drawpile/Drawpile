@@ -20,6 +20,7 @@
 
 #include "main.h"
 #include "mainwindow.h"
+#include "tabletinput.h"
 
 #include "utils/icon.h"
 #include "utils/logging.h"
@@ -33,11 +34,6 @@
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
-#endif
-
-#ifdef KIS_TABLET
-#include "bundled/kis_tablet/kis_tablet_support_win8.h"
-#include "bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
 #include <QCommandLineParser>
@@ -109,6 +105,7 @@ bool DrawpileApp::event(QEvent *e) {
 
 void DrawpileApp::notifySettingsChanged()
 {
+	tabletinput::update(QSettings{});
 	emit settingsChanged();
 }
 
@@ -216,17 +213,10 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
-static const char *inputMode = "Qt tablet input";
-
 QString DrawpileApp::greeting()
 {
 	return QStringLiteral("is using Dancepile " DRAWPILE_VERSION " on Qt " QT_VERSION_STR " (%1) with %2.")
-		.arg(QSysInfo::prettyProductName()).arg(inputMode);
-}
-
-const char *DrawpileApp::tabletInputMode()
-{
-	return inputMode;
+		.arg(QSysInfo::prettyProductName()).arg(tabletinput::current());
 }
 
 static void initTranslations(DrawpileApp &app, const QLocale &locale)
@@ -372,40 +362,11 @@ static QStringList initApp(DrawpileApp &app)
 	MacMenu::instance();
 #endif
 
-#ifdef KIS_TABLET
-	{
-		bool useWindowsInk = false;
-		// Enable Windows Ink tablet event handler
-		// This was taken directly from Krita
-		if(QSettings().value("settings/input/windowsink", true).toBool()) {
-			KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
-			if (penFilter->init()) {
-				app.installNativeEventFilter(penFilter);
-				useWindowsInk = true;
-				inputMode = "KisTablet Windows Ink input";
-				qDebug("Using Win8 Pointer Input for tablet support");
-
-			} else {
-				qWarning("No Win8 Pointer Input available");
-				delete penFilter;
-			}
-		} else {
-			qDebug("Win8 Pointer Input disabled");
-		}
-
-		if(!useWindowsInk) {
-			// Enable modified Wintab support
-			// This too was taken from Krita
-			qDebug("Enabling custom Wintab support");
-			KisTabletSupportWin::init();
-			inputMode = "KisTablet Wintab input";
-		}
-	}
-#endif // KIS_TABLET
+	tabletinput::init(&app, settings);
 
 	// Set override locale from settings, or use system locale if no override is set
 	QLocale locale = QLocale::c();
-	QString overrideLang = QSettings().value("settings/language").toString();
+	QString overrideLang = settings.value("settings/language").toString();
 	if(!overrideLang.isEmpty())
 		locale = QLocale(overrideLang);
 
