@@ -121,7 +121,7 @@ if(libsystemd_FOUND)
 	install(FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.service"
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.socket"
-		DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/systemd/system/"
+		DESTINATION "${CMAKE_INSTALL_LIBDIR}/systemd/system/"
 	)
 else()
 	target_sources(${srvlib} PRIVATE
