@@ -98,7 +98,17 @@ if(TESTS)
 	include(Tests)
 endif()
 
-include(GNUInstallDirs)
+# linuxdeploy wants everything in a usr subdirectory, so force GNUInstallDirs
+# to generate those paths
+if(DIST_BUILD AND UNIX AND NOT APPLE)
+	set(OLD_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+	set(CMAKE_INSTALL_PREFIX "/")
+	include(GNUInstallDirs)
+	set(CMAKE_INSTALL_PREFIX ${OLD_CMAKE_INSTALL_PREFIX})
+else()
+	include(GNUInstallDirs)
+endif()
+
 # GNUInstallDirs uses the PROJECT_NAME verbatim, but then the case is wrong, so
 # just override that
 set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/drawpile")
@@ -108,7 +118,8 @@ if(APPLE)
 	set(INSTALL_BUNDLEDIR Applications CACHE STRING "macOS application bundle installation directory")
 	# Cannot use TARGET_BUNDLE_CONTENT_DIR since that points to the binary
 	# output directory, not the install directory.
-	set(INSTALL_APPCONTENTSDIR "${INSTALL_BUNDLEDIR}/$<TARGET_PROPERTY:drawpile,RUNTIME_OUTPUT_NAME>.app/Contents")
+	set(INSTALL_APPBUNDLEDIR "${INSTALL_BUNDLEDIR}/$<TARGET_PROPERTY:drawpile,RUNTIME_OUTPUT_NAME>.app")
+	set(INSTALL_APPCONTENTSDIR "${INSTALL_APPBUNDLEDIR}/Contents")
 	set(INSTALL_APPDATADIR "${INSTALL_APPCONTENTSDIR}/Resources")
 	if(CLIENT)
 		set(CMAKE_INSTALL_BINDIR "${INSTALL_APPCONTENTSDIR}/MacOS")
@@ -175,6 +186,113 @@ if(TOOLS)
 	message(STATUS "Adding drawpile-cli")
 	add_cargo_executable(drawpile-cli PACKAGE drawpile-cli)
 	install(PROGRAMS "$<TARGET_FILE:drawpile-cli>" DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()
+
+if(DIST_BUILD)
+	if(APPLE)
+		set(helper_name macdeployqt)
+		set(helper_flags "-no-strip")
+		set(path_flags "")
+		set(extra_exe_flag "-executable=")
+		set(app_path "${INSTALL_APPBUNDLEDIR}")
+		set(qt_conf_path "${INSTALL_APPDATADIR}")
+		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+			"[Paths]\n"
+			"Plugins = PlugIns\n"
+			"Translations = ${INSTALL_APPDATADIR}/i18n\n"
+		)
+		set(extra_env "bogus=")
+	elseif(WIN32)
+		set(helper_name windeployqt)
+		set(helper_flags "--release;--no-translations;--pdb")
+		set(path_flags "")
+		set(extra_exe_flag "")
+		set(app_path "${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile>")
+		set(qt_conf_path "${CMAKE_INSTALL_BINDIR}")
+		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+			"[Paths]\n"
+			"Translations = ${INSTALL_APPDATADIR}/i18n\n"
+		)
+		set(lib_paths "")
+		foreach(path IN LISTS CMAKE_PREFIX_PATH)
+			list(APPEND lib_paths "${path}/bin")
+		endforeach()
+		set(extra_env "PATH=${lib_paths}$ENV{PATH}")
+		# Prevent CMake string parsing errors treating backslashes as
+		# escape sequences when transferring variables into the install
+		# script
+		string(REPLACE "\\" "/" extra_env "${extra_env}")
+	else()
+		set(helper_name linuxdeploy-x86_64.AppImage)
+		set(helper_flags "--plugin;qt;--output;appimage")
+		set(path_flags "--appdir")
+		set(extra_exe_flag "--executable=")
+		set(app_path "")
+		set(qt_conf_path "")
+		set(lib_paths "")
+		foreach(path IN LISTS CMAKE_PREFIX_PATH)
+			if(lib_paths)
+				set(lib_paths "${lib_paths}:")
+			endif()
+			set(lib_paths "${lib_paths}${path}/lib")
+		endforeach()
+		set(extra_env "LD_LIBRARY_PATH=${lib_paths}")
+	endif()
+
+	if(SERVER)
+		list(APPEND helper_flags "${extra_exe_flag}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-srv>")
+	endif()
+	if(TOOLS AND NOT WIN32)
+		list(APPEND helper_flags "${extra_exe_flag}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-cli>")
+	endif()
+
+	# qt.conf and translations are handled automatically by
+	# linuxdeploy-plugin-qt
+	if(qt_conf_path)
+		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/qt.conf" DESTINATION "${qt_conf_path}")
+		if(CLIENT)
+			include(Translate)
+			install_qt_translations(qt qtbase qtmultimedia)
+		endif()
+	endif()
+
+	if(TARGET ${QT_PACKAGE_NAME}::${helper_name})
+		get_target_property(deployqt ${QT_PACKAGE_NAME}::${helper_name} LOCATION)
+	endif()
+	if(NOT deployqt)
+		find_program(deployqt NAMES ${helper_name})
+	endif()
+	if(NOT deployqt)
+		message(FATAL_ERROR "Could not find ${helper_name}")
+	endif()
+
+	install(CODE "
+		set(deployqt \"${deployqt}\")
+		set(helper_name \"${helper_name}\")
+		set(helper_flags \"${helper_flags}\")
+		set(app_path \"${app_path}\")
+		set(path_flags \"${path_flags}\")
+		set(extra_env \"${extra_env}\")
+		set(INSTALL_APPBUNDLEDIR \"${INSTALL_APPBUNDLEDIR}\")
+	")
+	install(CODE [[
+		message(STATUS "Running ${helper_name}...")
+		if(APPLE)
+			message(STATUS "(Unexpected prefix \"@executable_path\" errors are normal.)")
+		endif()
+		execute_process(
+			COMMAND "${CMAKE_COMMAND}" -E env "${extra_env}"
+				"${deployqt}"
+				${path_flags}
+				"${CMAKE_INSTALL_PREFIX}/${app_path}"
+				${helper_flags}
+			RESULT_VARIABLE result
+			COMMAND_ECHO STDOUT
+		)
+		if(NOT result EQUAL 0)
+			message(FATAL_ERROR "Deployment tool failed")
+		endif()
+	]])
 endif()
 
 feature_summary(INCLUDE_QUIET_PACKAGES

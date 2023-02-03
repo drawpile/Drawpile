@@ -4,7 +4,7 @@ ProcessorCount(NPROCS)
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
 	set(oneValueArgs URL SOURCE_DIR)
-	set(multiValueArgs VERSIONS ALL_PLATFORMS UNIX WIN32)
+	set(multiValueArgs VERSIONS PATCHES ALL_PLATFORMS UNIX WIN32)
 	cmake_parse_arguments(PARSE_ARGV 3 ARG "" "${oneValueArgs}" "${multiValueArgs}")
 
 	if(ARG_ALL_PLATFORMS)
@@ -46,6 +46,28 @@ function(build_dependency name version build_type)
 		_download("${url}" "${url_hash}")
 	endif()
 	message(STATUS "Installing ${source_dir}")
+
+	if(ARG_PATCHES)
+		find_program(patch patch REQUIRED)
+		set(apply_patch FALSE)
+		foreach(item IN LISTS ARG_PATCHES)
+			if(item MATCHES "^[0-9]")
+				if(item VERSION_EQUAL version)
+					set(apply_patch TRUE)
+				else()
+					set(apply_patch FALSE)
+				endif()
+			elseif(apply_patch)
+				execute_process(
+					COMMAND "${patch}" -p1
+					INPUT_FILE "${CMAKE_CURRENT_LIST_DIR}/${item}"
+					WORKING_DIRECTORY "${source_dir}"
+					COMMAND_ECHO STDOUT
+					COMMAND_ERROR_IS_FATAL ANY
+				)
+			endif()
+		endforeach()
+	endif()
 
 	if(generator STREQUAL "qmake")
 		_build_qmake("${build_type}" "${source_dir}" ${BUILD_ARGS})
@@ -156,16 +178,22 @@ function(_build_msbuild build_type source_dir)
 		message(FATAL_ERROR "CMake has no MSBuild.exe")
 	endif()
 
-	foreach(config IN ITEMS ${ARG_SHARED} ${ARG_STATIC})
-		execute_process(
-			COMMAND "${CMAKE_VS_MSBUILD_COMMAND}" -m
-				"-p:Configuration=${config};Platform=x64;OutDir=${CMAKE_INSTALL_PREFIX}"
-				"${source_dir}/${ARG_SOLUTION}"
-			COMMAND_ECHO STDOUT
-			WORKING_DIRECTORY "${source_dir}"
-			COMMAND_ERROR_IS_FATAL ANY
-		)
-	endforeach()
+	execute_process(
+		COMMAND "${CMAKE_VS_MSBUILD_COMMAND}" -m
+			"-p:Configuration=${ARG_SHARED};Platform=x64;OutDir=${CMAKE_INSTALL_PREFIX}/bin"
+			"${source_dir}/${ARG_SOLUTION}"
+		COMMAND_ECHO STDOUT
+		WORKING_DIRECTORY "${source_dir}"
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+	execute_process(
+		COMMAND "${CMAKE_VS_MSBUILD_COMMAND}" -m
+			"-p:Configuration=${ARG_STATIC};Platform=x64;OutDir=${CMAKE_INSTALL_PREFIX}/lib"
+			"${source_dir}/${ARG_SOLUTION}"
+		COMMAND_ECHO STDOUT
+		WORKING_DIRECTORY "${source_dir}"
+		COMMAND_ERROR_IS_FATAL ANY
+	)
 
 	list(TRANSFORM ARG_RM PREPEND "${CMAKE_INSTALL_PREFIX}/")
 
@@ -188,6 +216,7 @@ function(_build_qmake build_type source_dir)
 
 	if(configure STREQUAL qmake)
 		find_program(configure qmake REQUIRED)
+		list(APPEND configure "${source_dir}")
 	endif()
 
 	set(make_flags "")
@@ -203,7 +232,7 @@ function(_build_qmake build_type source_dir)
 	set(binary_dir "${source_dir}-build")
 	file(MAKE_DIRECTORY "${binary_dir}")
 	execute_process(
-		COMMAND ${configure} ${source_dir}
+		COMMAND ${configure}
 			"QMAKE_MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
 			${configure_flags}
 		COMMAND_ECHO STDOUT

@@ -35,31 +35,65 @@ jobs:
         qtkeychain: [ c6f0b66318f8da6917fb4681103f7303b1836194 ]
         libmicrohttpd: [ 0.9.75 ]
         include:
+          - qt: 5.15.8
+            dist-build: on
           - os: ubuntu-latest
             sccache_tuple: x86_64-unknown-linux-musl
             qt_packages: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
-              libgl1-mesa-dev libglu1-mesa-dev libxi-dev
-              libxext-dev libxfixes-dev libxrender-dev
+              libatspi2.0-dev libmtdev-dev libts-dev libgtk-3-dev
+              libgl1-mesa-dev libglu1-mesa-dev libxi-dev libdrm-dev
+              libgbm-dev libgl-dev libgles-dev libegl-dev libegl1-mesa-dev
+              libxext-dev libxfixes-dev libxrender-dev libx11-dev
               libxcb1-dev libx11-xcb-dev libxcb-glx0-dev libxcb-util0-dev
-              libxkbcommon-dev libxcb-keysyms1-dev
+              libxkbcommon-dev libxkbcommon-x11-dev libxcb-keysyms1-dev
               libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
               libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
-              libxcb-randr0-dev libxcb-render-util0-dev libxcb-xinerama0-dev
-              libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
+              libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
+              libxcb-util-dev libinput-dev libvulkan-dev
+              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
+              libasound2-dev libpulse-dev libcups2-dev
+            other_packages: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libsecret-1-dev
             build_packages:
               pre_restore: sudo chmod 777 /var/cache/apt/archives /var/lib/apt/lists
               path: |-
                 /var/cache/apt/archives/*.deb
                 /var/lib/apt/lists/*_Packages
-              update: sudo apt-get clean && sudo apt-get update
-              # libgl1-mesa-dev only absolutely required for Qt6 with OpenGL
-              # but does not hurt to exist everywhere
+                .github/linuxdeploy-bin
+              update: >
+                sudo apt-get clean && sudo apt-get update &&
+                mkdir .github/linuxdeploy-bin &&
+                pushd .github/linuxdeploy-bin >/dev/null &&
+                curl -L --remote-name-all
+                https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+                https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage &&
+                chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage &&
+                popd >/dev/null
+              # libgl1-mesa-dev for Qt6, libsystemd-dev for systemd integration,
+              # libsecret-1-0 and gir1.2-secret-1 for qtkeychain,
+              # the rest are for Qt/linuxdeploy
               install: >
                 sudo rm -f /var/lib/man-db/auto-update &&
                 sudo apt-get install --no-install-recommends
                 libgl1-mesa-dev libsystemd-dev
+                gir1.2-atspi-2.0 gir1.2-gudev-1.0 libdrm-intel1 libegl-mesa0
+                libegl1 libevdev2 libgles1 libgles2 libglu1-mesa libinput-bin
+                libinput10 libllvm15 libmtdev1 libopengl0 libpciaccess0
+                libwacom-common libwacom9 libxcb-icccm4 libxcb-image0
+                libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0
+                libxcb-util1 libxcb-xinerama0 libxcb-xinput0 libxcb-xkb1
+                libxkbcommon-x11-0 libdrm-amdgpu1 libdrm-common libdrm-nouveau2
+                libdrm-radeon1 libdrm2 libgbm1 libgl1-mesa-dri libglapi-mesa
+                libglx-mesa0 libts0 libgtk-3-bin librsvg2-common gir1.2-gtk-3.0
+                wayland-protocols
+                libpulse0 libasound2 libcups2
+                libsecret-1-0 gir1.2-secret-1
+                libfuse2 &&
+                echo "$GITHUB_WORKSPACE/.github/linuxdeploy-bin" >> $GITHUB_PATH
             build_flags: -DINITSYS=systemd
           - os: windows-latest
             sccache_tuple: x86_64-pc-windows-msvc
@@ -123,6 +157,9 @@ jobs:
         with:
           path: .github/deps/other
           key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}
+      - name: Install other system dependencies
+        run: ${{ matrix.other_packages }}
+        if: matrix.other_packages && steps.deps-other-cache.outputs.cache-hit != 'true'
       - name: Build other dependencies from source
         run: >
           cmake
@@ -141,13 +178,6 @@ jobs:
         with:
           path: .github/deps/other
           key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}
-
-      - name: Restore Rust build artefacts from cache
-        uses: actions/cache/restore@v3
-        id: rust-deps-cache
-        with:
-          path: build/cargo/relwithdebinfo/deps
-          key: rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
 
       - name: Save/restore Cargo database from cache
         uses: actions/cache@v3
@@ -210,6 +240,7 @@ jobs:
           -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on
           ${{ matrix.build_flags }}
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt;${{ github.workspace }}/.github/deps/other"
+          -DCMAKE_INSTALL_PREFIX=out -DDIST_BUILD=${{ matrix.dist-build }}
       - name: Build project
         run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
         env:
@@ -227,6 +258,14 @@ jobs:
           RUSTC_WRAPPER: sccache
           SCCACHE_CACHE_SIZE: 400M
           SCCACHE_DIR: ${{ github.workspace }}/.github/sccache/cache
+
+      - name: Disgusting hack for windeployqt
+        run: cp .github/deps/other/bin/*.dll .github/deps/qt/bin
+        if: runner.os == 'Windows' && matrix.dist-build
+
+      - name: Run install
+        run: cmake --install build --config RelWithDebInfo
+        if: matrix.dist-build
 
       - name: Evict sccache from cache
         if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true'
@@ -248,22 +287,4 @@ jobs:
 
       - name: sccache stats
         run: sccache --show-stats
-        continue-on-error: true
-
-      - name: Evict Rust build artefacts from cache
-        if: (success() || failure()) && steps.rust-deps-cache.outputs.cache-hit == 'true'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh extension install actions/gh-actions-cache || true
-          gh actions-cache delete "rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}" --confirm
-        continue-on-error: true
-
-      - name: Save Rust build artefacts to cache
-        if: success() || failure()
-        uses: actions/cache/save@v3
-        with:
-          path: build/cargo/relwithdebinfo/deps
-          key: rust-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
         continue-on-error: true

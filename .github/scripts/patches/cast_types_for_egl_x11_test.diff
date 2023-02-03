@@ -1,0 +1,18 @@
+Description: properly cast types for libglvnd 1.3.4
+Origin: https://src.fedoraproject.org/rpms/qt5-qtbase/blob/rawhide/f/qtbase-everywhere-src-5.15.2-libglvnd.patch
+Author: Rex Dieter <rdieter@gmail.com>
+
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -838,9 +838,9 @@
+                 ],
+                 "include": [ "EGL/egl.h", "X11/Xlib.h" ],
+                 "main": [
+-                    "Display *dpy = EGL_DEFAULT_DISPLAY;",
++                    "Display *dpy = reinterpret_cast<Display *>(EGL_DEFAULT_DISPLAY);",
+                     "EGLNativeDisplayType egldpy = XOpenDisplay(\"\");",
+-                    "dpy = egldpy;",
++                    "dpy = reinterpret_cast<Display *>(egldpy);",
+                     "EGLNativeWindowType w = XCreateWindow(dpy, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);",
+                     "XDestroyWindow(dpy, w);",
+                     "XCloseDisplay(dpy);"

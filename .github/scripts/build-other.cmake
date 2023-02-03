@@ -64,45 +64,58 @@ set_mac_deployment_target(${QT_VERSION})
 
 include(BuildDependency)
 
-build_dependency(libmicrohttpd ${LIBMICROHTTPD} ${BUILD_TYPE}
-	URL https://ftpmirror.gnu.org/libmicrohttpd/libmicrohttpd-@version@.tar.gz
-	VERSIONS
-		0.9.75
-		SHA384=5a853f06d5f82c1e708c4d19758ffb77f5d1efd8431133cc956118aa49ce9b1d5b57ca468d9098127a81ed42582a97ec
-	WIN32
-		MSBUILD
-			SOLUTION w32/VS-Any-Version/libmicrohttpd.vcxproj
-			SHARED Release-dll
-			STATIC Release-static
-			INCLUDES src/include/microhttpd.h
-			RM lib/microhttpd.h bin/microhttpd.h
-	UNIX
-		AUTOMAKE
-			ALL --disable-doc --disable-examples --disable-curl
-			DEBUG --enable-asserts --enable-sanitizers=address
-)
+if(LIBMICROHTTPD)
+	build_dependency(libmicrohttpd ${LIBMICROHTTPD} ${BUILD_TYPE}
+		URL https://ftpmirror.gnu.org/libmicrohttpd/libmicrohttpd-@version@.tar.gz
+		VERSIONS
+			0.9.75
+			SHA384=5a853f06d5f82c1e708c4d19758ffb77f5d1efd8431133cc956118aa49ce9b1d5b57ca468d9098127a81ed42582a97ec
+		WIN32
+			MSBUILD
+				SOLUTION w32/VS-Any-Version/libmicrohttpd.vcxproj
+				SHARED Release-dll
+				STATIC Release-static
+				INCLUDES src/include/microhttpd.h
+				RM lib/microhttpd.h bin/microhttpd.h
+		UNIX
+			AUTOMAKE
+				ALL --disable-doc --disable-examples --disable-curl
+				DEBUG --enable-asserts --enable-sanitizers=address
+	)
+endif()
 
-build_dependency(libsodium ${LIBSODIUM} ${BUILD_TYPE}
-	URL https://download.libsodium.org/libsodium/releases/libsodium-@version@.tar.gz
-	VERSIONS
-		1.0.18
-		SHA384=1dd0171eb6aa3444f4c7aeb35dc57871f151a2e66da13a487a5cd97f2d9d5e280b995b90de53b12b174f7f649d9acd0d
-	WIN32
-		MSBUILD
-			SOLUTION builds/msvc/vs2019/libsodium.sln
-			SHARED DynRelease
-			STATIC StaticRelease
-			INCLUDES src/libsodium/include/sodium.h src/libsodium/include/sodium
-	UNIX AUTOMAKE
-)
+if(LIBSODIUM)
+	build_dependency(libsodium ${LIBSODIUM} ${BUILD_TYPE}
+		URL https://download.libsodium.org/libsodium/releases/libsodium-@version@.tar.gz
+		VERSIONS
+			1.0.18
+			SHA384=1dd0171eb6aa3444f4c7aeb35dc57871f151a2e66da13a487a5cd97f2d9d5e280b995b90de53b12b174f7f649d9acd0d
+		WIN32
+			MSBUILD
+				SOLUTION builds/msvc/vs2019/libsodium.sln
+				SHARED DynRelease
+				STATIC StaticRelease
+				INCLUDES src/libsodium/include/sodium.h src/libsodium/include/sodium
+		UNIX AUTOMAKE
+	)
+endif()
 
-build_dependency(qtkeychain ${QTKEYCHAIN} ${BUILD_TYPE}
-	URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
-	VERSIONS
-		c6f0b66318f8da6917fb4681103f7303b1836194
-		SHA384=4dd6c985f0b8e2ad0a4e01cade0c230d8924ea564965098e5fa5a246ac5166ae0d9524516e2f19981af9f975955c563a
-	ALL_PLATFORMS
-		CMAKE
-			ALL
-				-DBUILD_WITH_QT6=${BUILD_WITH_QT6}
-)
+if(QTKEYCHAIN)
+	# macdeployqt does not search rpaths correctly so give a
+	# full path of the library instead
+	if(APPLE)
+		set(QTKEYCHAIN_FLAGS "-DCMAKE_INSTALL_NAME_DIR=${CMAKE_INSTALL_PREFIX}/lib")
+	endif()
+
+	build_dependency(qtkeychain ${QTKEYCHAIN} ${BUILD_TYPE}
+		URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
+		VERSIONS
+			c6f0b66318f8da6917fb4681103f7303b1836194
+			SHA384=4dd6c985f0b8e2ad0a4e01cade0c230d8924ea564965098e5fa5a246ac5166ae0d9524516e2f19981af9f975955c563a
+		ALL_PLATFORMS
+			CMAKE
+				ALL
+					-DBUILD_WITH_QT6=${BUILD_WITH_QT6}
+					${QTKEYCHAIN_FLAGS}
+	)
+endif()
