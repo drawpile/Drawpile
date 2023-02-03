@@ -15,7 +15,13 @@ if(CLIENT)
 	include("${DRAWDANCE_EXPORT_PATH}")
 
 	find_package("Qt${QT_VERSION}" COMPONENTS Gui Svg Multimedia REQUIRED)
-	find_package("Qt${QT_VERSION}" COMPONENTS Keychain LinguistTools)
+	find_package("Qt${QT_VERSION}" COMPONENTS LinguistTools)
+	if("${QT_VERSION}" EQUAL 5)
+		# Finding this through COMPONENTS doesn't work on vcpkg.
+		find_package("Qt5Keychain")
+	else()
+		find_package("Qt${QT_VERSION}" COMPONENTS Keychain)
+	endif()
 	find_package(QtColorWidgets)
 endif()
 
