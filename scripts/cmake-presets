@@ -38,6 +38,7 @@ preset_release() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
           $GENERATOR \
           -B buildrelease
 }
@@ -100,6 +101,7 @@ preset_drawpile_relwithdebinfo() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -DXML_IMPL=QT \
@@ -114,6 +116,7 @@ preset_drawpile_release() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT \
           -DXML_IMPL=QT \
@@ -140,6 +143,7 @@ preset_drawpile_qt6_relwithdebinfo() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DXML_IMPL=QT6 \
           -DTHREAD_IMPL=QT6 \
@@ -154,6 +158,7 @@ preset_drawpile_qt6_release() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT6 \
           -DXML_IMPL=QT6 \

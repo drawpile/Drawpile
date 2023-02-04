@@ -41,6 +41,10 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
         list(APPEND dp_common_cflags -fno-strict-aliasing)
     endif()
 
+    if(ENABLE_ARCH_NATIVE)
+        list(APPEND dp_common_cflags -march=native)
+    endif()
+
     set(dp_cflags ${dp_common_cflags})
     set(dp_cxxflags ${dp_common_cflags} -fno-exceptions)
     set(dp_cwarnings ${dp_common_warnings} -Wstrict-prototypes)
