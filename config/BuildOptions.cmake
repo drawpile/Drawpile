@@ -9,6 +9,7 @@ option(TESTS "Build unit tests" OFF)
 option(KIS_TABLET "Enable customized Windows tablet support code" OFF)
 option(ADDRESS_SANITIZER "Enable address sanitizer" OFF)
 option(CLANG_TIDY "Enable clang-tidy" OFF)
+option(ENABLE_ARCH_NATIVE "Optimize for this computer's CPU" OFF)
 option(BUILD_LABEL "A custom label to add to the version")
 
 set(QT_VERSION 5 CACHE STRING "Which Qt version to use (5, 6)")
