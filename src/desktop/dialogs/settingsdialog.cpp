@@ -296,8 +296,8 @@ void SettingsDialog::restoreSettings()
 	m_ui->logfile->setChecked(cfg.value("logfile", true).toBool());
 	m_ui->autosaveInterval->setValue(cfg.value("autosave", 5000).toInt() / 1000);
 
-	m_ui->brushCursorBox->setCurrentIndex(cfg.value("brushcursor").toInt());
-	m_ui->brushOutlineWidth->setValue(cfg.value("brushoutlinewidth", 1.0).toReal());
+	m_ui->brushCursorBox->setCurrentIndex(cfg.value("brushcursor", 3).toInt());
+	m_ui->brushOutlineWidth->setValue(cfg.value("brushoutlinewidth", 2.0).toReal());
 	m_ui->toolToggleShortcut->setChecked(cfg.value("tooltoggle", true).toBool());
 	m_ui->shareBrushSlotColor->setChecked(cfg.value("sharebrushslotcolor", false).toBool());
 	m_ui->confirmLayerDeleteBox->setChecked(cfg.value("confirmlayerdelete", false).toBool());

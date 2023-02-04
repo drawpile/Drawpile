@@ -721,7 +721,7 @@ void MainWindow::updateSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings");
-	m_view->setBrushCursorStyle(cfg.value("brushcursor").toInt(), cfg.value("brushoutlinewidth").toReal());
+	m_view->setBrushCursorStyle(cfg.value("brushcursor", 3).toInt(), cfg.value("brushoutlinewidth", 2.0).toReal());
 	static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->setShareBrushSlotColor(cfg.value("sharebrushslotcolor", false).toBool());
 	cfg.endGroup();
 }
