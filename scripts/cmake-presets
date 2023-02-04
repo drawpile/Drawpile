@@ -1,0 +1,108 @@
+#!/bin/bash
+# Copyright (c) 2022 - 2023 askmeaboutloom
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+set -e
+cd "$(dirname "$0")/.."
+
+if command -v ninja >/dev/null; then
+    GENERATOR='-G Ninja'
+fi
+
+preset_drawpile_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DADDRESS_SANITIZER=ON \
+          -DTOOLS=ON \
+          -DDRAWDANCE_EXPORT_PATH="${DRAWDANCE_EXPORT_PATH:-../Drawdance/builddp/Drawdance.cmake}" \
+          $GENERATOR \
+          -B builddp
+}
+
+preset_drawpile_relwithdebinfo() {
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+          -DADDRESS_SANITIZER=OFF \
+          -DCLANG_TIDY=OFF \
+          -DTOOLS=ON \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DDRAWDANCE_EXPORT_PATH="${DRAWDANCE_EXPORT_PATH:-../Drawdance/builddprelwithdebinfo/Drawdance.cmake}" \
+          $GENERATOR \
+          -B builddprelwithdebinfo
+}
+
+preset_drawpile_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DADDRESS_SANITIZER=OFF \
+          -DCLANG_TIDY=OFF \
+          -DTOOLS=ON \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DDRAWDANCE_EXPORT_PATH="${DRAWDANCE_EXPORT_PATH:-../Drawdance/builddprelease/Drawdance.cmake}" \
+          $GENERATOR \
+          -B builddprelease
+}
+
+preset_drawpile_qt6_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DADDRESS_SANITIZER=ON \
+          -DTOOLS=ON \
+          -DQT_VERSION=6 \
+          -DDRAWDANCE_EXPORT_PATH="${DRAWDANCE_EXPORT_PATH:-../Drawdance/builddpqt6/Drawdance.cmake}" \
+          $GENERATOR \
+          -B builddpqt6
+}
+
+preset_drawpile_qt6_relwithdebinfo() {
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+          -DADDRESS_SANITIZER=OFF \
+          -DTOOLS=ON \
+          -DCLANG_TIDY=OFF \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DQT_VERSION=6 \
+          -DDRAWDANCE_EXPORT_PATH="${DRAWDANCE_EXPORT_PATH:-../Drawdance/builddpqt6relwithdebinfo/Drawdance.cmake}" \
+          $GENERATOR \
+          -B builddpqt6relwithdebinfo
+}
+
+preset_drawpile_qt6_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DADDRESS_SANITIZER=OFF \
+          -DCLANG_TIDY=OFF \
+          -DTOOLS=ON \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DQT_VERSION=6 \
+          -DDRAWDANCE_EXPORT_PATH="${DRAWDANCE_EXPORT_PATH:-../Drawdance/builddpqt6release/Drawdance.cmake}" \
+          $GENERATOR \
+          -B builddpqt6release
+}
+
+if [ "$#" -ne 1 ] || [ "$(type -t "preset_$1")" != 'function' ]; then
+    echo "Usage: $0 $(perl -ne 'push @p, $1 if /^preset_(\w+)\(/; END { print join "|", @p }' "$BASH_SOURCE")" 1>&2
+    exit 2
+fi
+
+"preset_$1"
