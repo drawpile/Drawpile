@@ -21,8 +21,11 @@
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     unset(dp_common_cflags)
     set(dp_common_warnings -pedantic -pedantic-errors -Wall -Wextra -Wshadow
-                           -Wmissing-include-dirs -Wconversion -Werror
-                           -Wno-error=unused-parameter)
+                           -Wmissing-include-dirs -Wconversion)
+
+    if(ENABLE_WERROR)
+        list(APPEND dp_common_warnings -Werror -Wno-error=unused-parameter)
+    endif()
 
     # When LTO is enabled, CMake will try to pass -fno-fat-lto-objects, which in
     # turn causes clang-tidy to spew a warning about not understanding it, which
