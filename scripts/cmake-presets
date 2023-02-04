@@ -100,6 +100,7 @@ preset_drawpile_relwithdebinfo() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
           -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_GENERATORS=OFF \
           -DUSE_STRICT_ALIASING=ON \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
@@ -115,6 +116,7 @@ preset_drawpile_release() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_GENERATORS=OFF \
           -DUSE_STRICT_ALIASING=ON \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
@@ -143,6 +145,7 @@ preset_drawpile_qt6_relwithdebinfo() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DUSE_GENERATORS=OFF \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DXML_IMPL=QT6 \
@@ -158,6 +161,7 @@ preset_drawpile_qt6_release() {
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
           -DUSE_ADDRESS_SANITIZER=OFF \
           -DUSE_STRICT_ALIASING=ON \
+          -DUSE_GENERATORS=OFF \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DTHREAD_IMPL=QT6 \
