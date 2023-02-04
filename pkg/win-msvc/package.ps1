@@ -128,7 +128,4 @@ if ($null -ne $innoSetupExePath) {
     Write-Output "Created $PSScriptRoot/$installerFilename.exe"
 }
 
-# Clean up
-Remove-Item $outDir -Recurse -Force
-
 Set-Location -Path $location
