@@ -290,6 +290,16 @@
                    <string>Arrow</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>Right-Handed Triangle</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Left-Handed Triangle</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>

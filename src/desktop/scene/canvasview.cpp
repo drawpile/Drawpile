@@ -83,6 +83,8 @@ CanvasView::CanvasView(QWidget *parent)
 	m_notificationBar = new NotificationBar(this);
 	connect(m_notificationBar, &NotificationBar::actionButtonClicked, this, &CanvasView::reconnectRequested);
 
+	m_trianglerightcursor = QCursor(QPixmap(":/cursors/triangle-right.png"), 14, 14);
+	m_triangleleftcursor = QCursor(QPixmap(":/cursors/triangle-left.png"), 14, 14);
 	m_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
 	m_layerpickcursor = QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29);
 	m_zoomcursor = QCursor(QPixmap(":/cursors/zoom.png"), 8, 8);
@@ -323,9 +325,11 @@ void CanvasView::resetCursor()
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(m_brushCursorStyle) {
-		case 0: viewport()->setCursor(m_dotcursor); return;
 		case 1: viewport()->setCursor(Qt::CrossCursor); return;
-		default: viewport()->setCursor(Qt::ArrowCursor); return;
+		case 2: viewport()->setCursor(Qt::ArrowCursor); return;
+		case 3: viewport()->setCursor(m_trianglerightcursor); return;
+		case 4: viewport()->setCursor(m_triangleleftcursor); return;
+		default: viewport()->setCursor(m_dotcursor); return;
 		}
 	}
 

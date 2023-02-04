@@ -12,6 +12,8 @@
         <file>select-lasso.png</file>
         <file>select-rectangle.png</file>
         <file>text.png</file>
+        <file>triangle-left.png</file>
+        <file>triangle-right.png</file>
         <file>zoom.png</file>
     </qresource>
 </RCC>
