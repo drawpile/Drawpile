@@ -77,5 +77,7 @@ else()
         find_package(CURL MODULE REQUIRED COMPONENTS HTTPS HTTP SSL)
     endif()
 
-    find_package(Qt5 COMPONENTS Core Gui)
+    if(USE_GENERATORS)
+        find_package(Qt5 COMPONENTS Core Gui)
+    endif()
 endif()
