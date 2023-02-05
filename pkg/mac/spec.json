@@ -1,9 +1,0 @@
-{
-  "title": "Drawpile",
-  "background": "background.png",
-  "icon": "Drawpile_Drive_Icon.icns",
-  "contents": [
-    { "x": 130, "y": 250, "type": "file", "path": "build/bin/Drawpile.app" },
-    { "x": 380, "y": 250, "type": "link", "path": "/Applications" }
-  ]
-}

@@ -1,0 +1,29 @@
+<CPackWiXPatch>
+	<CPackWiXFragment Id="CM_CP_drawpile.exe">
+		<ProgId Id="Drawpile.DPREC" Description="Drawpile recording" Icon="CM_FP_drawpile.exe">
+			<Extension Id="dprec" ContentType="application/x-drawpile-recording">
+				<Verb Id="open" TargetFile="CM_FP_drawpile.exe" Argument="&quot;%1&quot;"/>
+			</Extension>
+		</ProgId>
+		<ProgId Id="Drawpile.DPRECZ" Description="Compressed Drawpile recording" Icon="CM_FP_drawpile.exe">
+			<Extension Id="dprecz">
+				<Verb Id="open" TargetFile="CM_FP_drawpile.exe" Argument="&quot;%1&quot;"/>
+			</Extension>
+		</ProgId>
+		<ProgId Id="Drawpile.ORA" Description="OpenRaster image" Icon="CM_FP_drawpile.exe">
+			<Extension Id="ora" ContentType="image/openraster">
+				<Verb Id="open" TargetFile="CM_FP_drawpile.exe" Argument="&quot;%1&quot;"/>
+			</Extension>
+		</ProgId>
+		<RegistryKey Key="drawpile" Root="HKCR">
+			<RegistryValue Name="URL Protocol" Value="" Type="string" />
+			<RegistryValue Value="URL: Drawpile Protocol" Type="string" />
+			<RegistryKey Key="DefaultIcon">
+				<RegistryValue Value="[INSTALLDIR]drawpile.exe" Type="string" />
+			</RegistryKey>
+			<RegistryKey Key="shell\open\command">
+				<RegistryValue Value="&quot;[INSTALLDIR]drawpile.exe&quot; &quot;%1&quot;" Type="string" />
+			</RegistryKey>
+		</RegistryKey>
+	</CPackWiXFragment>
+</CPackWiXPatch>

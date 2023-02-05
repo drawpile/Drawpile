@@ -5,5 +5,6 @@
 			<match type="string" value="DPRECR\000" offset="0" />
 		</magic>
 		<glob pattern="*.dprec"/>
+		<glob pattern="*.dprecz"/>
 	</mime-type>
 </mime-info>

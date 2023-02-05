@@ -35,8 +35,6 @@ jobs:
         qtkeychain: [ c6f0b66318f8da6917fb4681103f7303b1836194 ]
         libmicrohttpd: [ 0.9.75 ]
         include:
-          - qt: 5.15.8
-            dist-build: on
           - os: ubuntu-latest
             sccache_tuple: x86_64-unknown-linux-musl
             qt_packages: >
@@ -95,6 +93,8 @@ jobs:
                 libfuse2 &&
                 echo "$GITHUB_WORKSPACE/.github/linuxdeploy-bin" >> $GITHUB_PATH
             build_flags: -DINITSYS=systemd
+          - os: macos-latest
+            sccache_tuple: x86_64-apple-darwin
           - os: windows-latest
             sccache_tuple: x86_64-pc-windows-msvc
             other_deps_flags: >-
@@ -111,8 +111,20 @@ jobs:
               (echo "LIB=${env:LIB};C:\Program Files\OpenSSL-Win64\lib" >> $env:GITHUB_ENV) &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            # Copying files is a disgusting hack because windeployqt does not
+            # search PATH to find DLLs
+            packager: >
+              cp .github/deps/other/bin/*.dll .github/deps/qt/bin &&
+              cpack --config build/CPackConfig.cmake -C RelWithDebInfo
           - os: macos-latest
-            sccache_tuple: x86_64-apple-darwin
+            qt: 5.15.8
+            packager: cpack --config build/CPackConfig.cmake -C RelWithDebInfo
+          - os: ubuntu-latest
+            qt: 5.15.8
+            # This causes the AppImage to be generated, instead of just creating
+            # the portable tree, because there seems to be no way to separate
+            # these steps with linuxdeploy
+            packager: cmake --install build --config RelWithDebInfo
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -240,7 +252,7 @@ jobs:
           -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on
           ${{ matrix.build_flags }}
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt;${{ github.workspace }}/.github/deps/other"
-          -DCMAKE_INSTALL_PREFIX=out -DDIST_BUILD=${{ matrix.dist-build }}
+          -DCMAKE_INSTALL_PREFIX=out -DDIST_BUILD=${{ matrix.packager && 'on' }}
       - name: Build project
         run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
         env:
@@ -259,13 +271,20 @@ jobs:
           SCCACHE_CACHE_SIZE: 400M
           SCCACHE_DIR: ${{ github.workspace }}/.github/sccache/cache
 
-      - name: Disgusting hack for windeployqt
-        run: cp .github/deps/other/bin/*.dll .github/deps/qt/bin
-        if: runner.os == 'Windows' && matrix.dist-build
+      - name: Run packaging
+        run: ${{ matrix.packager }}
+        if: matrix.packager
 
-      - name: Run install
-        run: cmake --install build --config RelWithDebInfo
-        if: matrix.dist-build
+      - name: Upload builds
+        uses: actions/upload-artifact@v3
+        if: matrix.packager
+        with:
+          name: ${{ runner.os }} binaries
+          path: |
+            Drawpile-*.msi
+            Drawpile-*.zip
+            Drawpile-*.dmg
+            Drawpile-*.AppImage
 
       - name: Evict sccache from cache
         if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true'
