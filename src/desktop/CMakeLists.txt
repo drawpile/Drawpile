@@ -426,16 +426,26 @@ add_resources(drawpile
 install(TARGETS drawpile
 	BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}"
 	RESOURCE DESTINATION "${INSTALL_APPDATADIR}"
+	COMPONENT drawpile
 )
 
+function(install_datarootdir target files destination)
+	install(
+		FILES ${files}
+		DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/${destination}"
+		COMPONENT ${target}
+		${ARGN}
+	)
+endfunction()
+
 if(UNIX AND NOT APPLE)
-	install(FILES assets/net.drawpile.drawpile.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
-	install(FILES assets/drawpile.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps)
-	install(FILES assets/drawpile.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps)
-	install(FILES assets/drawpile.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/mimetypes RENAME application-x-drawpile-recording.png)
-	install(FILES assets/drawpile.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/mimetypes RENAME application-x-drawpile-recording.svg)
-	install(FILES assets/net.drawpile.drawpile.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo)
-	install(FILES assets/x-drawpile.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages)
+	install_datarootdir(drawpile assets/net.drawpile.drawpile.desktop applications)
+	install_datarootdir(drawpile assets/drawpile.png icons/hicolor/256x256/apps)
+	install_datarootdir(drawpile assets/drawpile.svg icons/hicolor/scalable/apps)
+	install_datarootdir(drawpile assets/drawpile.png icons/hicolor/256x256/mimetypes RENAME application-x-drawpile-recording.png)
+	install_datarootdir(drawpile assets/drawpile.svg icons/hicolor/scalable/mimetypes RENAME application-x-drawpile-recording.svg)
+	install_datarootdir(drawpile assets/net.drawpile.drawpile.appdata.xml metainfo)
+	install_datarootdir(drawpile assets/x-drawpile.xml mime/packages)
 endif()
 
 target_auto_source_group(drawpile)

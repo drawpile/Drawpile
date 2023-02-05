@@ -115,18 +115,26 @@ set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/drawpile")
 include(Cargo)
 
 if(APPLE)
-	set(INSTALL_BUNDLEDIR Applications CACHE STRING "macOS application bundle installation directory")
+	if(CMAKE_INSTALL_PREFIX STREQUAL "/")
+		set(INSTALL_BUNDLEDIR Applications CACHE STRING "macOS application bundle installation directory")
+	else()
+		set(INSTALL_BUNDLEDIR . CACHE STRING "macOS application bundle installation directory")
+	endif()
 	# Cannot use TARGET_BUNDLE_CONTENT_DIR since that points to the binary
 	# output directory, not the install directory.
 	set(INSTALL_APPBUNDLEDIR "${INSTALL_BUNDLEDIR}/$<TARGET_PROPERTY:drawpile,RUNTIME_OUTPUT_NAME>.app")
 	set(INSTALL_APPCONTENTSDIR "${INSTALL_APPBUNDLEDIR}/Contents")
 	set(INSTALL_APPDATADIR "${INSTALL_APPCONTENTSDIR}/Resources")
+	# If client is built then put everything into the bundle, otherwise put
+	# things in the standard *nix places. Another option would be to put them
+	# in the DMG in a separate directory that users could optionally copy.
 	if(CLIENT)
 		set(CMAKE_INSTALL_BINDIR "${INSTALL_APPCONTENTSDIR}/MacOS")
 		set(CMAKE_INSTALL_MANDIR "${INSTALL_APPDATADIR}/man")
 		set(CMAKE_INSTALL_DOCDIR "${INSTALL_APPDATADIR}/doc")
 	endif()
 elseif(WIN32)
+	set(CMAKE_INSTALL_BINDIR .)
 	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_BINDIR}/data")
 else()
 	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_DATAROOTDIR}/drawpile")
@@ -185,7 +193,11 @@ endif()
 if(TOOLS)
 	message(STATUS "Adding drawpile-cli")
 	add_cargo_executable(drawpile-cli PACKAGE drawpile-cli)
-	install(PROGRAMS "$<TARGET_FILE:drawpile-cli>" DESTINATION "${CMAKE_INSTALL_BINDIR}")
+	install(
+		PROGRAMS "$<TARGET_FILE:drawpile-cli>"
+		DESTINATION "${CMAKE_INSTALL_BINDIR}"
+		COMPONENT tools
+	)
 endif()
 
 if(DIST_BUILD)
@@ -240,16 +252,20 @@ if(DIST_BUILD)
 	endif()
 
 	if(SERVER)
-		list(APPEND helper_flags "${extra_exe_flag}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-srv>")
+		list(APPEND helper_flags "${extra_exe_flag}\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-srv>")
 	endif()
 	if(TOOLS AND NOT WIN32)
-		list(APPEND helper_flags "${extra_exe_flag}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-cli>")
+		list(APPEND helper_flags "${extra_exe_flag}\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-cli>")
 	endif()
 
 	# qt.conf and translations are handled automatically by
 	# linuxdeploy-plugin-qt
 	if(qt_conf_path)
-		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/qt.conf" DESTINATION "${qt_conf_path}")
+		install(
+			FILES "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+			DESTINATION "${qt_conf_path}"
+			COMPONENT fixup
+		)
 		if(CLIENT)
 			include(Translate)
 			install_qt_translations(qt qtbase qtmultimedia)
@@ -274,7 +290,7 @@ if(DIST_BUILD)
 		set(path_flags \"${path_flags}\")
 		set(extra_env \"${extra_env}\")
 		set(INSTALL_APPBUNDLEDIR \"${INSTALL_APPBUNDLEDIR}\")
-	")
+	" COMPONENT fixup)
 	install(CODE [[
 		message(STATUS "Running ${helper_name}...")
 		if(APPLE)
@@ -284,7 +300,7 @@ if(DIST_BUILD)
 			COMMAND "${CMAKE_COMMAND}" -E env "${extra_env}"
 				"${deployqt}"
 				${path_flags}
-				"${CMAKE_INSTALL_PREFIX}/${app_path}"
+				"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app_path}"
 				${helper_flags}
 			RESULT_VARIABLE result
 			COMMAND_ECHO STDOUT
@@ -292,7 +308,7 @@ if(DIST_BUILD)
 		if(NOT result EQUAL 0)
 			message(FATAL_ERROR "Deployment tool failed")
 		endif()
-	]])
+	]] COMPONENT fixup)
 endif()
 
 feature_summary(INCLUDE_QUIET_PACKAGES
@@ -308,3 +324,5 @@ else()
 	message(NOTICE
 		"++ To build, run: `${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}`")
 endif()
+
+include(Packaging)

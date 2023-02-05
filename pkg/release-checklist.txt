@@ -3,11 +3,9 @@ Checklist for making a new release.
 Tag the release:
 
  - Set release date in Changelog
- - Make sure correct version number is set in root CMakeLists.txt
- - Run `desktop/update-appdata-releases.py` and edit manually if needed
+ - Make sure correct version number is set in root Cargo.toml
+ - Run `desktop/assets/update-appdata-releases.py` and edit manually if needed
  - Commit
- - Make sure Linux, Windows and macOS builds succeed
- - Make sure tests run cleanly (cmake .. -DTESTS=ON && make && make test)
  - Tag release (git tag -a x.y.z -m "Release x.y.z")
  - Push new tag (git push --tags)
 

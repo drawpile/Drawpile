@@ -60,7 +60,11 @@ function(target_add_translations target prefix)
 	add_dependencies(${target} ${target}-i18n)
 	target_sources(${target} PRIVATE ${ts_files})
 
-	install(FILES ${qm_files} DESTINATION ${INSTALL_APPDATADIR}/i18n)
+	install(
+		FILES ${qm_files}
+		DESTINATION ${INSTALL_APPDATADIR}/i18n
+		COMPONENT i18n
+	)
 
 	# Cargo culting to hopefully not have generated i18n sources get erased
 	# on `make clean`
@@ -77,7 +81,11 @@ function(install_qt_translations)
 				set(file "${qm_location}/${module}_${lang_code}.qm")
 			endif()
 			if(EXISTS "${file}")
-				install(FILES ${file} DESTINATION ${INSTALL_APPDATADIR}/i18n)
+				install(
+					FILES ${file}
+					DESTINATION ${INSTALL_APPDATADIR}/i18n
+					COMPONENT i18n
+				)
 			endif()
 		endforeach()
 	endforeach()

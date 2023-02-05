@@ -101,7 +101,6 @@ def update_release_artifacts(appdata):
     # List of downloadable binaries
     binaries = (
         ('win64', 'win', f'drawpile-{version}-setup.exe'),
-        ('win32', 'win', f'drawpile-{version}-setup-w32.exe'),
         ('macos', 'osx', f'Drawpile {version}.dmg'),
         ('source', 'src', f'drawpile-{version}.tar.gz'),
     )

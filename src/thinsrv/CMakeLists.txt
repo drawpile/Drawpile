@@ -123,6 +123,7 @@ if(libsystemd_FOUND)
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.service"
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.socket"
 		DESTINATION "${CMAKE_INSTALL_LIBDIR}/systemd/system/"
+		COMPONENT ${srvname}
 	)
 else()
 	target_sources(${srvlib} PRIVATE
@@ -142,10 +143,18 @@ if(libmicrohttpd_FOUND)
 endif()
 add_feature_info("Server web-admin support" libmicrohttpd_FOUND "")
 
-install(TARGETS ${srvname})
+install(
+	TARGETS ${srvname}
+	COMPONENT ${srvname}
+)
+
 # No trailing slash is required or else it will strip the last path of the
 # directory
-install(DIRECTORY contrib DESTINATION ${INSTALL_APPDATADIR})
+install(
+	DIRECTORY contrib
+	DESTINATION ${INSTALL_APPDATADIR}
+	COMPONENT ${srvname}
+)
 
 function(add_man_section name condition out_last_modified)
 	if(condition)
@@ -168,16 +177,19 @@ if(INSTALL_DOC AND UNIX)
 	install(FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.1"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}"
+		COMPONENT ${srvname}
 	)
 	install(FILES
-		"${CMAKE_SOURCE_DIR}/COPYING"
+		"${CMAKE_SOURCE_DIR}/LICENSE.txt"
 		"${CMAKE_SOURCE_DIR}/ChangeLog"
 		"${CMAKE_SOURCE_DIR}/README.md"
 		DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+		COMPONENT ${srvname}
 	)
 	# Trailing slash is required or else it will install into `doc` subdirectory
 	install(DIRECTORY "${CMAKE_SOURCE_DIR}/doc/"
 		DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+		COMPONENT ${srvname}
 	)
 endif()
 
