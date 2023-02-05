@@ -26,6 +26,7 @@
 class Ui_SettingsDialog;
 class QItemEditorFactory;
 class QListWidgetItem;
+class CanvasShortcutsModel;
 class CustomShortcutModel;
 class AvatarListModel;
 
@@ -46,6 +47,13 @@ private slots:
 	void resetSettings();
 	void rememberSettings();
 	void saveCertTrustChanges();
+
+	void updateCanvasShortcutButtons();
+	void newCanvasShortcut();
+	void editCanvasShortcut();
+	void deleteCanvasShortcut();
+	void restoreCanvasShortcutDefaults();
+	int selectedCanvasShortcutRow();
 
 	void viewCertificate(QListWidgetItem *item);
 	void markTrustedCertificates();
@@ -79,6 +87,7 @@ private:
 	QStringList m_trustCerts;
 	QList<QSslCertificate> m_importCerts;
 	CustomShortcutModel *m_customShortcuts;
+	CanvasShortcutsModel *m_canvasShortcuts;
 	sessionlisting::ListServerModel *m_listservers;
 	AvatarListModel *m_avatars;
 };

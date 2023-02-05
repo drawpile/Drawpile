@@ -19,7 +19,7 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
-#include "canvasviewmodifiers.h"
+#include "canvas/canvasshortcuts.h"
 #include "canvas/pressure.h"
 #include "canvas/point.h"
 #include "tools/tool.h"
@@ -63,6 +63,7 @@ public:
 	using QGraphicsView::mapToScene;
 	canvas::Point mapToScene(const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
 	canvas::Point mapToScene(const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
+	QPointF mapToSceneInterpolate(const QPointF &point) const;
 
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
@@ -177,6 +178,7 @@ public slots:
 protected:
 	void enterEvent(shim::EnterEvent *event) override;
 	void leaveEvent(QEvent *event) override;
+	void focusInEvent(QFocusEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
@@ -197,14 +199,14 @@ private:
 	// unified mouse/stylus event handlers
 	void penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button);
+	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
 
 	qreal mapPressure(qreal pressure, bool stylus);
 
 	enum class ViewDragMode {None, Prepared, Started};
 
 	//! Drag the view
-	void moveDrag(const QPoint &point, Qt::KeyboardModifiers modifiers);
+	void moveDrag(const QPoint &point);
 
 	//! Redraw the scene around the outline cursor if necesasry
 	void updateOutline(canvas::Point point);
@@ -221,7 +223,8 @@ private:
 
 	inline void viewRectChanged() { emit viewRectChange(mapToScene(rect())); }
 
-	CanvasViewShortcuts m_shortcuts;
+	CanvasShortcuts m_canvasShortcuts;
+	QSet<Qt::Key> m_keysDown;
 
 	/**
 	 * @brief State of the pen
@@ -242,8 +245,11 @@ private:
 
 	//! Is the view being dragged
 	ViewDragMode m_dragmode;
+	CanvasShortcuts::Action m_dragAction;
+	bool m_dragByKey;
+	bool m_dragInverted;
+	bool m_dragSwapAxes;
 	QPoint m_dragLastPoint;
-	bool m_spacebar = false;
 
 	//! Previous pointer location
 	canvas::Point m_prevpoint;

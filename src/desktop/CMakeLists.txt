@@ -14,13 +14,13 @@ set(desktop_sources
 	toolwidgets/inspectorsettings.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
-	scene/canvasviewmodifiers.cpp
 	scene/canvasitem.cpp
 	scene/annotationitem.cpp
 	scene/selectionitem.cpp
 	scene/usermarkeritem.cpp
 	scene/lasertrailitem.cpp
 	dialogs/abusereport.cpp
+	dialogs/canvasshortcutsdialog.cpp
 	dialogs/certificateview.cpp
 	dialogs/colordialog.cpp
 	dialogs/dumpplaybackdialog.cpp
@@ -48,6 +48,7 @@ set(desktop_sources
 	widgets/viewstatus.cpp
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp
+	widgets/canvasshortcutedit.cpp
 	widgets/colorbutton.cpp
 	widgets/brushpreview.cpp
 	widgets/kis_curve_widget.cpp
@@ -59,7 +60,6 @@ set(desktop_sources
 	widgets/flipbookview.cpp
 	widgets/presetselector.cpp
 	widgets/spinner.cpp
-	widgets/modifierkeys.cpp
 	widgets/notifbar.cpp
 	widgets/kis_double_parse_spin_box.cpp
 	widgets/kis_int_parse_spin_box.cpp
@@ -97,6 +97,7 @@ set(desktop_uis
 	ui/avatarimport.ui
 	ui/brushdock.ui
 	ui/brushpresetproperties.ui
+	ui/canvasshortcutsdialog.ui
 	ui/certificateview.ui
 	ui/dumpplayback.ui
 	ui/fillsettings.ui

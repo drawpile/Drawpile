@@ -20,13 +20,14 @@
 #include "config.h" // for default port
 #include "main.h"
 #include "dialogs/settingsdialog.h"
+#include "dialogs/canvasshortcutsdialog.h"
 #include "dialogs/certificateview.h"
 #include "dialogs/avatarimport.h"
 #include "dialogs/addserverdialog.h"
 #include "../toolwidgets/brushsettings.h"
 #include "widgets/keysequenceedit.h"
-#include "../scene/canvasviewmodifiers.h"
 #include "utils/icon.h"
+#include "utils/canvasshortcutsmodel.h"
 #include "utils/customshortcutmodel.h"
 #include "utils/listservermodel.h"
 #include "utils/listserverdelegate.h"
@@ -171,6 +172,23 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(m_ui->buttonBox, &QDialogButtonBox::accepted, [this]() {
 		m_ui->shortcuts->setCurrentIndex(QModelIndex());
 	});
+
+	// Canvas shortcuts
+	m_canvasShortcuts = new CanvasShortcutsModel{this};
+	m_ui->canvasShortcutsTable->setModel(m_canvasShortcuts);
+	m_ui->canvasShortcutsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	connect(m_ui->canvasShortcutsTable->selectionModel(), &QItemSelectionModel::selectionChanged,
+		[this](const QItemSelection &, const QItemSelection &) {
+			updateCanvasShortcutButtons();
+		});
+	connect(m_ui->canvasShortcutsTable, &QTableView::doubleClicked,
+		[this](QModelIndex) {
+			editCanvasShortcut();
+		});
+	connect(m_ui->canvasShortcutsNewButton, &QPushButton::pressed, this, &SettingsDialog::newCanvasShortcut);
+	connect(m_ui->canvasShortcutsEditButton, &QPushButton::pressed, this, &SettingsDialog::editCanvasShortcut);
+	connect(m_ui->canvasShortcutsDeleteButton, &QPushButton::pressed, this, &SettingsDialog::deleteCanvasShortcut);
+	connect(m_ui->canvasShortcutsRestoreDefaultsButton, &QPushButton::pressed, this, &SettingsDialog::restoreCanvasShortcutDefaults);
 
 	// Known hosts list
 	connect(m_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
@@ -367,19 +385,19 @@ void SettingsDialog::restoreSettings()
 		m_ui->nsfmLock->setEnabled(false);
 	cfg.endGroup();
 
-	cfg.beginGroup("settings/canvasShortcuts");
-	const auto viewShortcuts = CanvasViewShortcuts::load(cfg);
-	m_ui->colorPickKeys->setModifiers(viewShortcuts.colorPick);
-	m_ui->layerPickKeys->setModifiers(viewShortcuts.layerPick);
-	m_ui->dragRotateKeys->setModifiers(viewShortcuts.dragRotate);
-	m_ui->dragZoomKeys->setModifiers(viewShortcuts.dragZoom);
-	m_ui->dragQuickAdjustKeys->setModifiers(viewShortcuts.dragQuickAdjust);
-	m_ui->scrollRotateKeys->setModifiers(viewShortcuts.scrollRotate);
-	m_ui->scrollZoomKeys->setModifiers(viewShortcuts.scrollZoom);
-	m_ui->scrollQuickAdjustKeys->setModifiers(viewShortcuts.scrollQuickAdjust);
-	m_ui->toolConstrain1Keys->setModifiers(viewShortcuts.toolConstraint1);
-	m_ui->toolConstrain2Keys->setModifiers(viewShortcuts.toolConstraint2);
-	cfg.endGroup();
+	// cfg.beginGroup("settings/canvasShortcuts");
+	// const auto viewShortcuts = CanvasViewShortcuts::load(cfg);
+	// m_ui->colorPickKeys->setModifiers(viewShortcuts.colorPick);
+	// m_ui->layerPickKeys->setModifiers(viewShortcuts.layerPick);
+	// m_ui->dragRotateKeys->setModifiers(viewShortcuts.dragRotate);
+	// m_ui->dragZoomKeys->setModifiers(viewShortcuts.dragZoom);
+	// m_ui->dragQuickAdjustKeys->setModifiers(viewShortcuts.dragQuickAdjust);
+	// m_ui->scrollRotateKeys->setModifiers(viewShortcuts.scrollRotate);
+	// m_ui->scrollZoomKeys->setModifiers(viewShortcuts.scrollZoom);
+	// m_ui->scrollQuickAdjustKeys->setModifiers(viewShortcuts.scrollQuickAdjust);
+	// m_ui->toolConstrain1Keys->setModifiers(viewShortcuts.toolConstraint1);
+	// m_ui->toolConstrain2Keys->setModifiers(viewShortcuts.toolConstraint2);
+	// cfg.endGroup();
 
 	cfg.beginGroup("settings/colorwheel");
 	changeColorWheelShape(cfg.value("shape").toInt());
@@ -398,6 +416,12 @@ void SettingsDialog::restoreSettings()
 
 	m_customShortcuts->loadShortcuts();
 	m_avatars->loadAvatars();
+
+	cfg.beginGroup("settings/canvasshortcuts2");
+	m_canvasShortcuts->loadShortcuts(cfg);
+	cfg.endGroup();
+	m_ui->canvasShortcutsTable->clearSelection();
+	updateCanvasShortcutButtons();
 }
 
 void SettingsDialog::setParentalControlsLocked(bool lock)
@@ -496,20 +520,12 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("noUncensoring", m_ui->noUncensoring->isChecked());
 	cfg.endGroup();
 
-	cfg.beginGroup("settings/canvasShortcuts");
-	CanvasViewShortcuts viewShortcuts;
-	viewShortcuts.colorPick = m_ui->colorPickKeys->modifiers();
-	viewShortcuts.layerPick = m_ui->layerPickKeys->modifiers();
-	viewShortcuts.dragRotate = m_ui->dragRotateKeys->modifiers();
-	viewShortcuts.dragZoom = m_ui->dragZoomKeys->modifiers();
-	viewShortcuts.dragQuickAdjust = m_ui->dragQuickAdjustKeys->modifiers();
-	viewShortcuts.scrollRotate = m_ui->scrollRotateKeys->modifiers();
-	viewShortcuts.scrollZoom = m_ui->scrollZoomKeys->modifiers();
-	viewShortcuts.scrollQuickAdjust = m_ui->scrollQuickAdjustKeys->modifiers();
-	viewShortcuts.toolConstraint1 = m_ui->toolConstrain1Keys->modifiers();
-	viewShortcuts.toolConstraint2 = m_ui->toolConstrain2Keys->modifiers();
-	viewShortcuts.save(cfg);
-	cfg.endGroup();
+	// Remember canvas shortcuts
+	if(m_canvasShortcuts->hasChanges()) {
+		cfg.beginGroup("settings/canvasshortcuts2");
+		m_canvasShortcuts->saveShortcuts(cfg);
+		cfg.endGroup();
+	}
 
 	cfg.beginGroup("settings/colorwheel");
 	cfg.setValue("shape", static_cast<int>(m_ui->colorwheel->selectorShape()));
@@ -572,6 +588,71 @@ void SettingsDialog::saveCertTrustChanges()
 
 		f.write(cert.toPem());
 	}
+}
+
+void SettingsDialog::updateCanvasShortcutButtons()
+{
+	bool haveSelection = selectedCanvasShortcutRow() != -1;
+	m_ui->canvasShortcutsEditButton->setEnabled(haveSelection);
+	m_ui->canvasShortcutsDeleteButton->setEnabled(haveSelection);
+}
+
+void SettingsDialog::newCanvasShortcut()
+{
+	dialogs::CanvasShortcutsDialog dlg{nullptr, *m_canvasShortcuts, this};
+	dlg.setWindowTitle(tr("New Canvas Shortcut"));
+	if(dlg.exec() == QDialog::Accepted) {
+		int row = m_canvasShortcuts->addShortcut(dlg.shortcut());
+		if(row != -1) {
+			m_ui->canvasShortcutsTable->selectRow(row);
+		}
+	}
+}
+
+void SettingsDialog::editCanvasShortcut()
+{
+	const CanvasShortcuts::Shortcut *s =
+		m_canvasShortcuts->shortcutAt(selectedCanvasShortcutRow());
+	if(s) {
+		dialogs::CanvasShortcutsDialog dlg{s, *m_canvasShortcuts, this};
+		dlg.setWindowTitle(tr("Edit Canvas Shortcut"));
+		if(dlg.exec() == QDialog::Accepted) {
+			int row = m_canvasShortcuts->editShortcut(*s, dlg.shortcut());
+			if(row != -1) {
+				m_ui->canvasShortcutsTable->selectRow(row);
+			}
+		}
+	}
+}
+
+void SettingsDialog::deleteCanvasShortcut()
+{
+	int row = selectedCanvasShortcutRow();
+	if(row != -1) {
+		QMessageBox::StandardButton b = QMessageBox::question(
+			this, tr("Delete Canvas Shortcut"),
+			tr("Are you sure you want to delete the canvas shortcut '%1'?")
+				.arg(m_canvasShortcuts->shortcutTitle(m_canvasShortcuts->shortcutAt(row))));
+		if(b == QMessageBox::StandardButton::Yes) {
+			m_canvasShortcuts->removeRow(row);
+		}
+	}
+}
+
+void SettingsDialog::restoreCanvasShortcutDefaults()
+{
+	QMessageBox::StandardButton b = QMessageBox::question(
+		this, tr("Restore Canvas Shortcut Defaults"),
+		tr("Are you sure you want to remove all canvas shortcuts and restore the default values?"));
+	if(b == QMessageBox::StandardButton::Yes) {
+		m_canvasShortcuts->restoreDefaults();
+	}
+}
+
+int SettingsDialog::selectedCanvasShortcutRow()
+{
+	QModelIndexList selectedRows = m_ui->canvasShortcutsTable->selectionModel()->selectedRows();
+	return selectedRows.isEmpty() ? -1 : selectedRows.first().row();
 }
 
 void SettingsDialog::viewCertificate(QListWidgetItem *item)

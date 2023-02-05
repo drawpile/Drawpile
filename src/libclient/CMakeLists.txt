@@ -4,6 +4,7 @@ set(libclient_sources
 	canvas/acl.cpp
 	canvas/blendmodes.cpp
 	canvas/canvasmodel.cpp
+	canvas/canvasshortcuts.cpp
 	canvas/documentmetadata.cpp
 	canvas/indexbuilderrunnable.cpp
 	canvas/inputpresetmodel.cpp
@@ -69,6 +70,7 @@ set(libclient_sources
 	tools/zoom.cpp
 	utils/avatarlistmodel.cpp
 	utils/colorscheme.cpp
+	utils/canvasshortcutsmodel.cpp
 	utils/customshortcutmodel.cpp
 	utils/funstuff.cpp
 	utils/html.cpp

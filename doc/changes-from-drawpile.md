@@ -53,6 +53,8 @@ This is probably a non-exhaustive list, but it should hit the most important poi
 
 * Made most of the docks scale better, allowing them to get smaller than they did before.
 
+* Reworked canvas shortcuts entirely. Instead of being fixed to modifier keys, spacebar and middle click, they are now freely assignable.
+
 * Pen tilt and rotation support.
 
 * Force NSFM option for the server, for servers that mandate all sessions to be marked NSFM.
