@@ -138,6 +138,12 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 			m_doc->sendUnannounce(apiUrl);
 		}
 	});
+
+	// Metadata permissions are currently only useful for changing image DPI,
+	// which isn't even possible from within Drawpile and generally useless.
+	// So we'll hide that setting for now, until it actually does something.
+	m_ui->permMetadata->hide();
+	m_ui->labelMetadata->hide();
 }
 
 SessionSettingsDialog::~SessionSettingsDialog()
