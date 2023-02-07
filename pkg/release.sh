@@ -34,7 +34,7 @@ if [ "$2" != "" ]; then
 fi
 
 REPO=${REPO:-$DEFAULT_REPO}
-ROOT_DIR=$(cd $(dirname $0) && pwd)
+ROOT_DIR=$(cd $(dirname $0)/.. && pwd)
 BUILD_DIR="$ROOT_DIR/build-release"
 
 if [ -d "$BUILD_DIR" ]; then
@@ -138,7 +138,7 @@ set_package_version "$VERSION"
 sed -i '' -e "s/^Unreleased\\( Version \\).*$/$NOW\\1$VERSION/" ChangeLog
 # Using $BUILD_DIR to be explicit that any changes to this script *must* be
 # committed to the repository
-"$BUILD_DIR/update-appdata-releases.py"
+"$BUILD_DIR/pkg/update-appdata-releases.py"
 
 git commit -m "Updating metadata for $VERSION" -m "[ci skip]" Cargo.toml ChangeLog src/desktop/appdata.xml
 git tag -s -m "Release $VERSION" $TAG_VERSION
