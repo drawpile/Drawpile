@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <component type="desktop">
   <id>net.drawpile.drawpile</id>
   <launchable type="desktop-id">net.drawpile.drawpile.desktop</launchable>
@@ -23,6 +23,111 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.3" type="development" date="2022-08-20">
+      <url>https://drawpile.net/news/release-2.2b3/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Added support for MyPaint brushes</li>
+          <li>MyPaint style 15 bit color channels</li>
+          <li>Removed popup notifications for join and leave events</li>
+          <li>Fixed skew when scaling a selection from the top-right handle</li>
+          <li>Fixed mouse droppings when for large brush outline widths</li>
+          <li>Fixed laser trail persistence selection</li>
+          <li>Split color wheel, sliders and palette into separate docks</li>
+          <li>Fixed "no guest logins" checkbox eanbled state</li>
+          <li>Fixed session snapshot missing the timeline</li>
+          <li>Enable timeline editor only when given permission</li>
+          <li>Active layer is now shown in the timeline editor</li>
+          <li>Next/previous frame action also autoselects layer</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://drawpile.net/files/win/Drawpile-2.2.0b3.zip</location>
+          <checksum type="sha256">f7a3ce8685bb0ed38ffba1ca78ff3efa72898bfec6d0e192aa365d0218e97d9f</checksum>
+          <size type="download">25840196</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-apple-darwin">
+          <location>https://drawpile.net/files/osx/Drawpile 2.2.0b3.dmg</location>
+          <checksum type="sha256">61c4983897dae9bac4306448ba78c8a6146843b5494ff40722d44ddc2876532e</checksum>
+          <size type="download">17155897</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.2.0b3.tar.gz</location>
+          <checksum type="sha256">bc6d832c7ddde6ccd8d6285de0fc2f65e0a236626d7ccb65d896389bc7936594</checksum>
+          <size type="download">3742000</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.2.0-beta.2" type="development" date="2022-08-11">
+      <url>https://drawpile.net/news/release-2.2b2/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed smudge color sampling mask offset</li>
+          <li>Fixed annotation loading</li>
+          <li>Added support for `/alert` chat command in private chats</li>
+          <li>Fixed crash if a group layer was moved by layer deletion</li>
+          <li>Fixed layer lock status updating</li>
+          <li>Fixed preserved chat mode</li>
+          <li>Annotation creator name is now shown in the dock titlebar</li>
+          <li>Restored palette write-protect feature</li>
+          <li>Fixed brush slider limit preferences</li>
+          <li>Layers hidden in frame/onionskin mode are now grayed out in the layer box</li>
+          <li>Modifying the timeline now updates the view immediately</li>
+          <li>New identicon style</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://drawpile.net/files/win/Drawpile-2.2.0b2.zip</location>
+          <checksum type="sha256">985001966b99c2b6bef2435639768978943de5125c720743a333ff6a0da01964</checksum>
+          <size type="download">24682217</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-apple-darwin">
+          <location>https://drawpile.net/files/osx/Drawpile 2.2.0b2.dmg</location>
+          <checksum type="sha256">e0141d4a6450bb980a7d01a1b1b201f6f4aa318b57edb0e90924766199f07217</checksum>
+          <size type="download">15120068</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.2.0b2.tar.gz</location>
+          <checksum type="sha256">591f490d90b8b90236c3e54c9caf8051fa3880eaf66ef7027f31acb2ccdeb954</checksum>
+          <size type="download">2726817</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.2.0-beta.1" type="development" date="2022-08-03">
+      <url>https://drawpile.net/news/release-2.2b/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>New paint engine written in Rust</li>
+          <li>Added support for layer groups</li>
+          <li>Added animation timeline editor</li>
+          <li>Added screen blend mode</li>
+          <li>Disabled built-in server pending rewrite</li>
+          <li>Added `/alert` chat command</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://drawpile.net/files/win/Drawpile-2.2.0b.zip</location>
+          <checksum type="sha256">7a2b3a698f589af9a13317c0d132768bf937754989fd333612881825f967078b</checksum>
+          <size type="download">24678820</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-apple-darwin">
+          <location>https://drawpile.net/files/osx/drawpile-2.2.0b.dmg</location>
+          <checksum type="sha256">297cb4a181933fb8ae19ef05fcb9491b7dfad2583f747f0f96a887311aa11037</checksum>
+          <size type="download">15118234</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.2.0b.tar.gz</location>
+          <checksum type="sha256">ee4f0826f9b8fb488a581f6857ec52244e8780ef07b57a99b8605afeeb3870c1</checksum>
+          <size type="download">2723608</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.1.20" date="2021-09-12">
       <url>https://drawpile.net/news/release-2.1.20/</url>
       <description>
