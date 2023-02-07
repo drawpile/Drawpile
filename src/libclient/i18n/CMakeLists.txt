@@ -1,2 +1,2 @@
-include(Translate)
+include(DrawpileTranslations)
 target_add_translations(dpclient libclient)

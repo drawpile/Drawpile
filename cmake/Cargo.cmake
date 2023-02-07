@@ -1,7 +1,13 @@
+#[[
+Adds an imported Rust executable target that is built by Cargo.
+#]]
 function(add_cargo_executable target)
 	_add_cargo(${target} TRUE ${ARGN})
 endfunction()
 
+#[[
+Adds an imported Rust static library target that is built by Cargo.
+#]]
 function(add_cargo_library target)
 	_add_cargo(${target} FALSE ${ARGN})
 endfunction()

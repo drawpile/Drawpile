@@ -1,3 +1,7 @@
+#[[
+Sets the macOS deployment target to the minimum version supported by the given
+Qt version.
+#]]
 function(set_mac_deployment_target qt_version)
 	if(qt_version VERSION_GREATER_EQUAL 6)
 		set(target 10.14)

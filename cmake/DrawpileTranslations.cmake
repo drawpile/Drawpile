@@ -20,6 +20,9 @@ function(_create_translation _qm_files)
 	set("${_qm_files}" "${${_qm_files}}" PARENT_SCOPE)
 endfunction()
 
+#[[
+Adds Qt translations with the given bundle prefix to a target.
+#]]
 function(target_add_translations target prefix)
 	if(NOT target)
 		message(FATAL_ERROR "missing required target")
@@ -71,7 +74,10 @@ function(target_add_translations target prefix)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY CLEAN_NO_CUSTOM TRUE)
 endfunction()
 
-function(install_qt_translations)
+#[[
+Installs translations from Qt.
+#]]
+function(install_qt_translations destination)
 	get_filename_component(qm_location "${QT_DIR}/../../../translations" ABSOLUTE)
 	foreach(module IN LISTS ARGN)
 		foreach(lang IN LISTS SUPPORTED_LANGS ITEMS en_US)
@@ -83,7 +89,7 @@ function(install_qt_translations)
 			if(EXISTS "${file}")
 				install(
 					FILES ${file}
-					DESTINATION ${INSTALL_APPDATADIR}/i18n
+					DESTINATION ${destination}
 					COMPONENT i18n
 				)
 			endif()

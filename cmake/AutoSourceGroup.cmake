@@ -1,9 +1,12 @@
+#[[
+Generates idiomatic source groups used by Xcode and Visual Studio projects.
+#]]
 function(target_auto_source_group)
 	foreach(target IN LISTS ARGN)
 		get_target_property(sources ${target} SOURCES)
 		get_target_property(resources ${target} RESOURCE)
 		foreach(filename IN LISTS sources)
-			if(filename MATCHES "\\.[Hh]([Pp][Pp])?$" OR filename MATCHES "include[\\/][^.]*$")
+			if(filename MATCHES "(\\.[Hh]([Pp][Pp])?|include[\\/][^.]*)$")
 				set(prefix "Header Files")
 			elseif(filename MATCHES "\\.[Cc]([Pp][Pp])?$")
 				set(prefix "Source Files")

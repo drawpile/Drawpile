@@ -1,3 +1,6 @@
+#[[
+Generates code for a basic FindXXX.cmake file.
+#]]
 macro(make_find_target name)
 	set(multiValueArgs INCLUDE LIBRARY DEFINITIONS)
 	cmake_parse_arguments(FIND_TARGET "" "" "${multiValueArgs}" ${ARGN})

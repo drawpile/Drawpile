@@ -1,19 +1,16 @@
 include(CMakeDependentOption)
 
-# Client options
 option(CLIENT "Compile client" ON)
 add_feature_info("Drawpile client (CLIENT)" CLIENT "")
 option(BUILD_LABEL "A custom label to add to the version")
+
 option(UPDATE_TRANSLATIONS "Update translation files from source")
-option(DIST_BUILD "Build for stand-alone distribution")
-add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
 
 if(WIN32)
 	cmake_dependent_option(KIS_TABLET "Enable custom tablet support code" OFF "CLIENT" OFF)
 	add_feature_info("Custom tablet support code (KIS_TABLET)" KIS_TABLET "")
 endif()
 
-# Server options
 option(SERVER "Compile dedicated server" OFF)
 add_feature_info("Drawpile server (SERVER)" SERVER "")
 
@@ -28,9 +25,11 @@ if(UNIX AND NOT APPLE)
 	string(TOLOWER "${INITSYS}" INITSYS)
 endif()
 
-# Tools options
 option(TOOLS "Compile extra tools" OFF)
 add_feature_info("Extra tools (TOOLS)" TOOLS "")
 
 option(TESTS "Build unit tests" OFF)
 add_feature_info("Unit tests (TESTS)" TESTS "")
+
+option(DIST_BUILD "Build for stand-alone distribution")
+add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
