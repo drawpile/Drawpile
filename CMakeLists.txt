@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.11 CACHE STRING "macOS deployment target")
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/config)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	message(FATAL_ERROR "In-source builds are not allowed. Please specify a"
@@ -270,8 +270,10 @@ if(DIST_BUILD)
 			COMPONENT fixup
 		)
 		if(CLIENT)
-			include(Translate)
-			install_qt_translations(qt qtbase qtmultimedia)
+			include(DrawpileTranslations)
+			install_qt_translations(${INSTALL_APPDATADIR}/i18n
+				qt qtbase qtmultimedia
+			)
 		endif()
 	endif()
 
@@ -328,4 +330,4 @@ else()
 		"++ To build, run: `${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}`")
 endif()
 
-include(Packaging)
+include(DrawpilePackaging)

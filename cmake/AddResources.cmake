@@ -1,3 +1,6 @@
+#[[
+Adds files and directories to a target as installable resources.
+#]]
 function(add_resources target)
 	set(multiValueArgs FILES DIRS)
 	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "${multiValueArgs}")

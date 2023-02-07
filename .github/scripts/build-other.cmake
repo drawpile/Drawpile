@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.11 CACHE STRING "macOS deployment target")
 list(APPEND CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/cmake
-	${CMAKE_CURRENT_LIST_DIR}/../../config
+	${CMAKE_CURRENT_LIST_DIR}/../../cmake
 )
 
 set(BUILD_TYPE "release" CACHE STRING

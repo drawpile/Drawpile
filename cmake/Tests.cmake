@@ -1,3 +1,6 @@
+#[[
+Adds unit test executables.
+#]]
 function(add_unit_tests prefix)
 	set(multiValueArgs LIBS SOURCES TESTS DEFINITIONS)
 	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "${multiValueArgs}")
