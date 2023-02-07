@@ -286,6 +286,15 @@ jobs:
             Drawpile-*.dmg
             Drawpile-*.AppImage
 
+      - name: Upload error logs and artefacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ runner.os }} error logs and artefacts
+          path: |
+            **/*.log
+            **/*.wxs
+
       - name: Evict sccache from cache
         if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true'
         shell: bash
