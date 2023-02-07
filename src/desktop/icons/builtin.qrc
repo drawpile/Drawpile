@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/icons">
-        <file alias="drawpile.png">../../assets/drawpile.png</file>
+        <file alias="drawpile.png">drawpile.png</file>
         <file>censored.svg</file>
     </qresource>
 </RCC>
