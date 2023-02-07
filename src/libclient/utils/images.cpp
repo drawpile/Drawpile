@@ -17,6 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "config.h"
 #include "libclient/utils/images.h"
 
 extern "C" {
@@ -136,7 +137,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 					readImages += "*." + format + " ";
 				}
 			} else {
-				readImages = readableImageFormatsGlobs();
+				readImages = DRAWPILE_FILE_GROUP_IMAGE;
 			}
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
@@ -157,7 +158,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 
 		} else {
 			// A single Recordings filter for loading
-			recordings = "*.dprec *.dptxt";
+			recordings = DRAWPILE_FILE_GROUP_RECORDING;
 			filter
 				<< QGuiApplication::tr("Recordings (%1)").arg(recordings)
 				;
