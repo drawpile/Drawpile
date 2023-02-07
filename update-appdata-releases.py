@@ -3,48 +3,68 @@
 # A script for updating the AppData file's <releases> section
 # with the latest release from the Changelog
 
-from lxml import etree
-from lxml.builder import E
-
 import re
 import os
 import hashlib
+import xml.etree
+import xml.etree.ElementTree as ET
+from enum import Enum
 
-CHANGELOG_FILE = '../ChangeLog'
-APPDATA_FILE = 'net.drawpile.drawpile.appdata.xml'
-
+CHANGELOG_FILE = 'ChangeLog'
+APPDATA_FILE = 'src/desktop/appdata.xml'
 
 class ChangeLogError(Exception):
     pass
 
+class State(Enum):
+    NEED_HEADER = 0
+    SKIPPING = 1
+    NEED_CHANGE = 2
+    FOUND_CHANGE = 3
+
 def read_changelog(filename):
-    state = 0
+    state = State.NEED_HEADER
     changelist = []
 
     with open(filename, 'r') as f:
         for line in f:
             line = line.strip()
             if not line:
-                break
+                if state == State.SKIPPING:
+                    state = State.NEED_HEADER
+                    continue
+                else:
+                    break
 
-            if state == 0:
+            if state == State.NEED_HEADER:
                 # Expect header
-                m = re.match(r'^(\d{4}-\d{2}-\d{2}) Version (\d+\.\d+\.\d+)$', line)
+                m = re.match(r'^(\d{4}-\d{2}-\d{2}|Unreleased) Version (\d+\.\d+\.\d+(-[A-Za-z0-9.-]*)?(?:\\+[A-Za-z0-9.-]*)?)$', line)
                 if not m:
                     raise ChangeLogError("Unparseable version line: " + line)
 
-                date, version = m.groups()
-                state = 1
+                date, version, version_tag = m.groups()
+                if date == 'Unreleased':
+                    print("Skipping unreleased changes")
+                    state = State.SKIPPING
+                else:
+                    state = State.NEED_CHANGE
 
-            elif state == 1:
+            elif state == State.SKIPPING:
+                pass
+            else:
+                state = State.FOUND_CHANGE
                 # Expect a change list entry
                 if line[0] == '*':
                     changelist.append(line[1:].strip())
                 else:
                     changelist[-1] = changelist[-1] + ' ' + line[1:].strip()
 
+    if state != State.FOUND_CHANGE:
+        raise ChangeLogError("ChangeLog contains no entries")
+
     return {
         'version': version,
+        'type': 'stable' if version_tag is None else 'development',
         'date': date,
         'changes': changelist
     }
@@ -58,15 +78,28 @@ def add_release(appdata, changes):
             return False
 
     # Create the new release entry and insert it
-    release = E.release(
-        E.url('https://drawpile.net/news/release-%s/' % changes['version']),
-        E.description(
-            E.p("Changes in this version:"),
-            E.ul(*[E.li(change) for change in changes['changes']])
-        ),
+    release = ET.Element('release',
         version=changes['version'],
+        type=changes['type'],
         date=changes['date']
     )
+    indent(release, 3, 2)
+    url = ET.SubElement(release, 'url')
+    indent(url, after=3)
+    url.text = 'https://drawpile.net/news/release-%s/' % changes['version']
+
+    description = ET.SubElement(release, 'description')
+    indent(description, 4, 3)
+    p = ET.SubElement(description, 'p')
+    indent(p, after=4)
+    p.text = 'Changes in this version:'
+    ul = ET.SubElement(description, 'ul')
+    indent(ul, 5, 3)
+    for change in changes['changes']:
+        li = ET.SubElement(ul, 'li')
+        indent(li, after=5)
+        li.text = change
+    indent(ul[-1], after=4)
 
     releases.insert(0, release)
     return True
@@ -93,6 +126,11 @@ def find_artifact(filename):
         'hash': checksum.hexdigest(),
     }
 
+def indent(elem, inner = None, after = None):
+    if inner != None:
+        elem.text = '\n' + '  ' * inner
+    if after != None:
+        elem.tail = '\n' + '  ' * after
 
 def update_release_artifacts(appdata):
     latest_release = appdata.find('releases')[0]
@@ -100,9 +138,10 @@ def update_release_artifacts(appdata):
 
     # List of downloadable binaries
     binaries = (
-        ('win64', 'win', f'drawpile-{version}-setup.exe'),
-        ('macos', 'osx', f'Drawpile {version}.dmg'),
-        ('source', 'src', f'drawpile-{version}.tar.gz'),
+        ('x86_64-windows-msvc', 'win', f'Drawpile-{version}.msi'),
+        ('x86_64-apple-darwin', 'osx', f'Drawpile-{version}.dmg'),
+        ('x86_64-linux-gnu', 'appimage', f'Drawpile-{version}-x86_64.AppImage'),
+        ('source', 'src', f'drawpile-{version}.tar.xz'),
     )
 
     # Find metadata for binaries
@@ -116,8 +155,8 @@ def update_release_artifacts(appdata):
     # Update artifacts element
     artifacts_elem = latest_release.find('artifacts')
     if artifacts_elem is None:
-        artifacts_elem = E.artifacts()
-        latest_release.append(artifacts_elem)
+        artifacts_elem = ET.SubElement(latest_release, 'artifacts')
+        indent(artifacts_elem, 4, 2)
 
     for platform, artifact in artifacts.items():
         if platform == 'source':
@@ -128,28 +167,41 @@ def update_release_artifacts(appdata):
                 'type': 'binary',
                 'platform': platform,
             }
-            xpath = f"artifact[@type='binary' and @platform='{platform}']"
+            xpath = f"artifact[@type='binary'][@platform='{platform}']"
 
-        elem = E.artifact(
-            E.location('https://drawpile.net/files/' + artifact['filename']),
-            E.checksum(artifact['hash'], type='sha256'),
-            E.size(str(artifact['size']), type='download'),
-            **attrs
-            )
+        elem = ET.Element('artifact', **attrs)
+        indent(elem, 5, 4)
+        location = ET.SubElement(elem, 'location')
+        indent(location, after=4)
+        location.text = 'https://drawpile.net/files/' + artifact['filename']
+        if artifact['hash'] is not None:
+            indent(location, after=5)
+            checksum = ET.SubElement(elem, 'checksum', type='sha256')
+            indent(checksum, after=5 if artifact['size'] is not None else 4)
+            checksum.text = artifact['hash']
+        if artifact['size'] is not None:
+            indent(location, after=5)
+            size = ET.SubElement(elem, 'size', type='download')
+            indent(size, after=4)
+            size.text = str(artifact['size'])
 
-        for old in artifacts_elem.xpath(xpath):
+        for old in artifacts_elem.findall(xpath):
             artifacts_elem.remove(old)
 
         artifacts_elem.append(elem)
+
+    if bool(artifacts):
+        indent(latest_release.find('description'), after=3)
+        indent(artifacts_elem[-1], after=3)
+    else:
+        indent(latest_release.find('description'), after=2)
+        latest_release.remove(artifacts_elem)
 
     return artifacts.items()
 
 if __name__ == '__main__':
     latestChanges = read_changelog(CHANGELOG_FILE)
-    appdata = etree.parse(
-        APPDATA_FILE,
-        etree.XMLParser(remove_blank_text=True)
-    )
+    appdata = ET.parse(APPDATA_FILE)
 
     changed = False
 
@@ -171,7 +223,7 @@ if __name__ == '__main__':
         print("No release artifacts")
 
     if changed:
-        appdata.write(APPDATA_FILE, encoding='utf-8', xml_declaration=True, pretty_print=True)
+        appdata.getroot().tail = '\n'
+        appdata.write(APPDATA_FILE, encoding='utf-8', xml_declaration=True)
         print("Validating appdata file...")
         os.system('appstream-util validate-relax ' + APPDATA_FILE)
-

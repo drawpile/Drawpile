@@ -1,4 +1,7 @@
-2022-08-20 Version 2.2 beta3
+Unreleased Version 2.2.0-pre
+ * Releases are now generated automatically
+
+2022-08-20 Version 2.2.0-beta.3
  * Added support for MyPaint brushes
  * MyPaint style 15 bit color channels
  * Removed popup notifications for join and leave events
@@ -12,7 +15,7 @@
  * Active layer is now shown in the timeline editor
  * Next/previous frame action also autoselects layer
 
-2022-08-11 Version 2.2 beta2
+2022-08-11 Version 2.2.0-beta.2
  * Fixed smudge color sampling mask offset
  * Fixed annotation loading
  * Added support for `/alert` chat command in private chats
@@ -26,7 +29,7 @@
  * Modifying the timeline now updates the view immediately
  * New identicon style
 
-2022-08-03 Version 2.2 beta
+2022-08-03 Version 2.2.0-beta.1
  * New paint engine written in Rust
  * Added support for layer groups
  * Added animation timeline editor
