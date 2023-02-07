@@ -121,6 +121,12 @@ add_executable(drawpile MACOSX_BUNDLE
 	docks/titlewidget.h
 	docks/toolsettingsdock.cpp
 	docks/toolsettingsdock.h
+	icons/builtin.qrc
+	icons/censored.svg
+	icons/drawpile.ico
+	icons/drawpile.iconset/icon_512x512@2x.png
+	icons/drawpile.png
+	icons/drawpile.svg
 	scene/annotationitem.cpp
 	scene/annotationitem.h
 	scene/arrows_data.h
@@ -160,6 +166,7 @@ add_executable(drawpile MACOSX_BUNDLE
 	icons/drawpile.ico
 	icons/drawpile.iconset/icon_512x512@2x.png
 	icons/drawpile.png
+	icons/drawpile.svg
 	ui/abusereport.ui
 	ui/avatarimport.ui
 	ui/brushdock.ui
@@ -397,24 +404,26 @@ if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc")
 elseif(APPLE)
-	set_property(TARGET drawpile PROPERTY RUNTIME_OUTPUT_NAME Drawpile)
-	set(MACOSX_BUNDLE_INFO_PLIST DrawpileInfo.plist.in)
-	set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
-	set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_GIT_REVISION})
-	set(MACOSX_BUNDLE_COPYRIGHT "Copyright © Drawpile contributors")
-	set(MACOSX_BUNDLE_GUI_IDENTIFIER net.drawpile.DrawpileClient)
-	set(MACOSX_BUNDLE_ICON_FILE drawpile.icns)
-	set(MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
-	set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
-	set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
+	set_target_properties(drawpile PROPERTIES
+		RUNTIME_OUTPUT_NAME Drawpile
+		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in"
+		MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_GIT_REVISION}
+		MACOSX_BUNDLE_COPYRIGHT "Copyright © Drawpile contributors"
+		MACOSX_BUNDLE_GUI_IDENTIFIER net.drawpile.DrawpileClient
+		MACOSX_BUNDLE_ICON_FILE drawpile.icns
+		MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${PROJECT_VERSION}"
+		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION}
+		MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
+	)
 
 	include(DrawpileFileExtensions)
 	get_plist_extensions(drawpile.icns MACOSX_BUNDLE_EXTENSIONS)
 
 	add_custom_command(
 		OUTPUT drawpile.icns
-		DEPENDS assets/drawpile.iconset/icon_512x512@2x.png
-		COMMAND iconutil -c icns -o drawpile.icns "${CMAKE_CURRENT_SOURCE_DIR}/assets/drawpile.iconset"
+		DEPENDS icons/drawpile.iconset/icon_512x512@2x.png
+		COMMAND iconutil -c icns -o drawpile.icns "${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.iconset"
 	)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 	set_property(TARGET drawpile APPEND PROPERTY RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
@@ -445,11 +454,15 @@ if(UNIX AND NOT APPLE)
 	include(DrawpileFileExtensions)
 
 	get_xdg_extensions(MIME_TYPES)
-	configure_file(net.drawpile.drawpile.desktop.in net.drawpile.drawpile.desktop)
-	install_datarootdir(drawpile "${CMAKE_CURRENT_BINARY_DIR}/net.drawpile.drawpile.desktop" applications)
-	install_datarootdir(drawpile assets/drawpile.png icons/hicolor/256x256/apps)
-	install_datarootdir(drawpile assets/drawpile.svg icons/hicolor/scalable/apps)
-	install_datarootdir(drawpile assets/net.drawpile.drawpile.appdata.xml metainfo)
+	configure_file(drawpile.desktop.in drawpile.desktop)
+	install_datarootdir(drawpile "${CMAKE_CURRENT_BINARY_DIR}/drawpile.desktop" applications
+		RENAME net.drawpile.drawpile.desktop
+	)
+	install_datarootdir(drawpile icons/drawpile.png icons/hicolor/256x256/apps)
+	install_datarootdir(drawpile icons/drawpile.svg icons/hicolor/scalable/apps)
+	install_datarootdir(drawpile appdata.xml metainfo
+		RENAME net.drawpile.drawpile.appdata.xml
+	)
 
 	generate_xdg_mime_info("${CMAKE_CURRENT_BINARY_DIR}/mime")
 	install(
@@ -457,19 +470,19 @@ if(UNIX AND NOT APPLE)
 		DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}"
 		COMPONENT drawpile
 	)
-	install_datarootdir(drawpile assets/drawpile.png
+	install_datarootdir(drawpile icons/drawpile.png
 		icons/hicolor/256x256/mimetypes
 		RENAME application-vnd.drawpile.recording.png
 	)
-	install_datarootdir(drawpile assets/drawpile.svg
+	install_datarootdir(drawpile icons/drawpile.svg
 		icons/hicolor/scalable/mimetypes
 		RENAME application-vnd.drawpile.recording.svg
 	)
-	install_datarootdir(drawpile assets/drawpile.png
+	install_datarootdir(drawpile icons/drawpile.png
 		icons/hicolor/256x256/mimetypes
 		RENAME text-vnd.drawpile.recording.png
 	)
-	install_datarootdir(drawpile assets/drawpile.svg
+	install_datarootdir(drawpile icons/drawpile.svg
 		icons/hicolor/scalable/mimetypes
 		RENAME text-vnd.drawpile.recording.svg
 	)
