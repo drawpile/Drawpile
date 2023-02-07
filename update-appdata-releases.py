@@ -139,7 +139,9 @@ def update_release_artifacts(appdata):
     # List of downloadable binaries
     binaries = (
         ('x86_64-windows-msvc', 'win', f'Drawpile-{version}.msi'),
-        ('x86_64-apple-darwin', 'osx', f'Drawpile-{version}.dmg'),
+        # This is a bogus tuple (it should probably be x86_64-apple-darwin) but
+        # it is what appstream validation demands
+        ('x86_64-darwin-gnu', 'osx', f'Drawpile-{version}.dmg'),
         ('x86_64-linux-gnu', 'appimage', f'Drawpile-{version}-x86_64.AppImage'),
         ('source', 'src', f'drawpile-{version}.tar.xz'),
     )
