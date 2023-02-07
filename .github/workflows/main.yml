@@ -275,12 +275,29 @@ jobs:
         run: ${{ matrix.packager }}
         if: matrix.packager
 
-      - name: Upload builds
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
-        if: matrix.packager
+        if: matrix.packager && !startsWith(github.ref, 'refs/tags/')
         with:
           name: ${{ runner.os }} binaries
           path: |
+            Drawpile-*.msi
+            Drawpile-*.zip
+            Drawpile-*.dmg
+            Drawpile-*.AppImage
+
+      - name: Collect release notes
+        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' ChangeLog | tail '+2' > ChangeLog-release
+        if: matrix.packager && startsWith(github.ref, 'refs/tags/')
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        if: matrix.packager && startsWith(github.ref, 'refs/tags/')
+        with:
+          body_path: ChangeLog-release
+          # In SemVer, hyphen indicates a pre-release tag
+          prerelease: contains(github.ref, '-')
+          files: |
             Drawpile-*.msi
             Drawpile-*.zip
             Drawpile-*.dmg
