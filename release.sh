@@ -140,21 +140,21 @@ sed -i '' -e "s/^Unreleased\\( Version \\).*$/$NOW\\1$VERSION/" ChangeLog
 # committed to the repository
 "$BUILD_DIR/update-appdata-releases.py"
 
-git commit -m "Updating metadata for $VERSION" Cargo.toml ChangeLog src/desktop/appdata.xml
-git tag -a -m "Release $VERSION" $TAG_VERSION
+git commit -m "Updating metadata for $VERSION" -m "[ci skip]" Cargo.toml ChangeLog src/desktop/appdata.xml
+git tag -s -m "Release $VERSION" $TAG_VERSION
 
 set_package_version "$PRE_VERSION"
 echo -e "Unreleased Version $PRE_VERSION\n" | cat - ChangeLog > ChangeLog.new
 mv ChangeLog.new ChangeLog
 
-git commit -m "Updating source version to $PRE_VERSION" Cargo.toml ChangeLog
+git commit -m "Updating source version to $PRE_VERSION" -m "[ci skip]" Cargo.toml ChangeLog
 
 if [ "$MAKE_BRANCH" != "" ]; then
 	git checkout -b $MAKE_BRANCH $TAG_VERSION
 	set_package_version "$BRANCH_VERSION"
 	sed -i '' -e "s/^\\(Unreleased Version \\).*$/\\1$BRANCH_VERSION/" ChangeLog
 
-	git commit -m "Updating source version to $BRANCH_VERSION" Cargo.toml
+	git commit -m "Updating source version to $BRANCH_VERSION" -m "[ci skip]" Cargo.toml
 	PUSH_BRANCHES="$PUSH_BRANCHES $MAKE_BRANCH"
 	PUSH_BRANCHES_MSG=" and branches ${PUSH_BRANCHES}"
 fi
