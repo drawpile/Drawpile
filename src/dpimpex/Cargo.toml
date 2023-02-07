@@ -16,7 +16,7 @@ byteorder = "1.4"
 [dependencies.image]
 version = "0.24"
 default-features = false
-features = ["png", "jpeg", "gif"]
+features = ["png", "jpeg", "gif", "webp"]
 
 [dependencies.zip]
 version = "0.6"

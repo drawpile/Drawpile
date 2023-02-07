@@ -38,36 +38,5 @@
 	<true/>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>dprec</string>
-				<string>dprecz</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleTypeIconFile</key>
-			<string>${MACOSX_BUNDLE_ICON_FILE}</string>
-			<key>CFBundleTypeName</key>
-			<string>Drawpile recording</string>
-		</dict>
-	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLIconFile</key>
-			<string>${MACOSX_BUNDLE_ICON_FILE}</string>
-			<key>CFBundleURLName</key>
-			<string>net.drawpile.session.url</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>drawpile</string>
-			</array>
-		</dict>
-	</array>
-</dict>
+${MACOSX_BUNDLE_EXTENSIONS}</dict>
 </plist>

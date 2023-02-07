@@ -17,6 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "config.h"
 #include "libclient/utils/images.h"
 
 #include <QSize>
@@ -98,7 +99,7 @@ QString fileFormatFilter(FileFormatOptions formats)
 				}
 			} else {
 				// Formats supported by Rustpile
-				readImages = "*.ora *.png *.jpeg *.gif";
+				readImages = DRAWPILE_FILE_GROUP_IMAGE;
 			}
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
@@ -115,7 +116,7 @@ QString fileFormatFilter(FileFormatOptions formats)
 
 		} else {
 			// A single Recordings filter for loading
-			recordings = "*.dprec *.dptxt";
+			recordings = DRAWPILE_FILE_GROUP_RECORDING;
 			filter
 				<< QGuiApplication::tr("Recordings (%1)").arg(recordings)
 				;

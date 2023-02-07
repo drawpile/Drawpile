@@ -1,0 +1,3 @@
+<CPackWiXPatch>
+	<CPackWiXFragment Id="CM_CP_drawpile.exe">${WIX_DRAWPILE_PROGIDS}</CPackWiXFragment>
+</CPackWiXPatch>

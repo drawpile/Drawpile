@@ -164,8 +164,11 @@ if(CLIENT OR SERVER)
 	endif()
 
 	message(STATUS "Generating config.h")
-	configure_file(src/config.h.in config.h)
-	include_directories(${CMAKE_CURRENT_BINARY_DIR})
+	include(DrawpileFileExtensions)
+	get_qt_extensions(RECORDING DRAWPILE_FILE_GROUP_RECORDING)
+	get_qt_extensions(IMAGE DRAWPILE_FILE_GROUP_IMAGE)
+	configure_file(src/config.h.in config/config.h)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 
 	message(STATUS "Adding libshared")
 	add_subdirectory(src/libshared)

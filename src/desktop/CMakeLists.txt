@@ -366,6 +366,9 @@ elseif(APPLE)
 		MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
 	)
 
+	include(DrawpileFileExtensions)
+	get_plist_extensions(drawpile.icns MACOSX_BUNDLE_EXTENSIONS)
+
 	add_custom_command(
 		OUTPUT drawpile.icns
 		DEPENDS assets/drawpile.iconset/icon_512x512@2x.png
@@ -397,13 +400,37 @@ function(install_datarootdir target files destination)
 endfunction()
 
 if(UNIX AND NOT APPLE)
-	install_datarootdir(drawpile assets/net.drawpile.drawpile.desktop applications)
+	include(DrawpileFileExtensions)
+
+	get_xdg_extensions(MIME_TYPES)
+	configure_file(net.drawpile.drawpile.desktop.in net.drawpile.drawpile.desktop)
+	install_datarootdir(drawpile "${CMAKE_CURRENT_BINARY_DIR}/net.drawpile.drawpile.desktop" applications)
 	install_datarootdir(drawpile assets/drawpile.png icons/hicolor/256x256/apps)
 	install_datarootdir(drawpile assets/drawpile.svg icons/hicolor/scalable/apps)
-	install_datarootdir(drawpile assets/drawpile.png icons/hicolor/256x256/mimetypes RENAME application-x-drawpile-recording.png)
-	install_datarootdir(drawpile assets/drawpile.svg icons/hicolor/scalable/mimetypes RENAME application-x-drawpile-recording.svg)
 	install_datarootdir(drawpile assets/net.drawpile.drawpile.appdata.xml metainfo)
-	install_datarootdir(drawpile assets/x-drawpile.xml mime/packages)
+
+	generate_xdg_mime_info("${CMAKE_CURRENT_BINARY_DIR}/mime")
+	install(
+		DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mime"
+		DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}"
+		COMPONENT drawpile
+	)
+	install_datarootdir(drawpile assets/drawpile.png
+		icons/hicolor/256x256/mimetypes
+		RENAME application-vnd.drawpile.recording.png
+	)
+	install_datarootdir(drawpile assets/drawpile.svg
+		icons/hicolor/scalable/mimetypes
+		RENAME application-vnd.drawpile.recording.svg
+	)
+	install_datarootdir(drawpile assets/drawpile.png
+		icons/hicolor/256x256/mimetypes
+		RENAME text-vnd.drawpile.recording.png
+	)
+	install_datarootdir(drawpile assets/drawpile.svg
+		icons/hicolor/scalable/mimetypes
+		RENAME text-vnd.drawpile.recording.svg
+	)
 endif()
 
 target_auto_source_group(drawpile)
