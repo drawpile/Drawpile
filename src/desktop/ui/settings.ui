@@ -466,6 +466,9 @@
                     <property name="text">
                      <string>If you're using your tablet in relative or &quot;mouse&quot; mode, try the relative pen hack option.</string>
                     </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
                    </widget>
                   </item>
                  </layout>
