@@ -189,7 +189,7 @@ void CanvasShortcutsDialog::updateType()
 		showConstraints = true;
 		break;
 	default:
-		typeDescription = tr("Unknown type %u.").arg(type);
+		typeDescription = tr("Unknown type %1.").arg(type);
 		showAction = false;
 		showConstraints = false;
 		break;
