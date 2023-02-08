@@ -415,10 +415,6 @@ void BrushSettings::changeBrushType()
 {
 	updateFromUiWith(false);
 	updateUi();
-	// Communicate the current size of the brush cursor to the outside. These
-	// functions check for their applicability themselves, so we just call both.
-	changeSizeSetting(d->ui.brushsizeBox->value());
-	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 }
 
 void BrushSettings::changeSizeSetting(int size)
@@ -536,6 +532,11 @@ void BrushSettings::updateUi()
 		d->ui.inputPreset->setCurrentIndex(presetIndex);
 		emitPresetChanges(d->presetModel->at(presetIndex));
 	}
+
+	// Communicate the current size of the brush cursor to the outside. These
+	// functions check for their applicability themselves, so we just call both.
+	changeSizeSetting(d->ui.brushsizeBox->value());
+	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 
 	d->updateInProgress = false;
 	d->ui.preview->setBrush(d->currentBrush());
