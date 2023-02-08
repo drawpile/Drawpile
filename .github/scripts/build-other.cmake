@@ -24,10 +24,6 @@ elseif(NOT BUILD_TYPE STREQUAL "release")
 	message(FATAL_ERROR "Unknown build type '${BUILD_TYPE}'")
 endif()
 
-if(NOT CMAKE_INSTALL_PREFIX)
-	message(FATAL_ERROR "`-DCMAKE_INSTALL_PREFIX` is required")
-endif()
-
 # Hack to get Qt version, since its `find_package` code does not support script
 # mode and this information is needed to set up QtKeychain and the macOS version
 # minimum

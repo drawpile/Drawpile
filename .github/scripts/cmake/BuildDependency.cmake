@@ -1,6 +1,23 @@
 include(ProcessorCount)
 ProcessorCount(NPROCS)
 
+if(NOT CMAKE_INSTALL_PREFIX)
+	message(FATAL_ERROR "`-DCMAKE_INSTALL_PREFIX` is required")
+elseif(NOT IS_ABSOLUTE "${CMAKE_INSTALL_PREFIX}")
+	set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}")
+endif()
+
+set(NEW_CMAKE_PREFIX_PATH "")
+foreach(path IN LISTS CMAKE_PREFIX_PATH)
+	if(IS_ABSOLUTE "${path}")
+		list(APPEND NEW_CMAKE_PREFIX_PATH "${path}")
+	else()
+		list(APPEND NEW_CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/${path}")
+	endif()
+endforeach()
+set(CMAKE_PREFIX_PATH ${NEW_CMAKE_PREFIX_PATH})
+unset(NEW_CMAKE_PREFIX_PATH)
+
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
 	set(oneValueArgs URL SOURCE_DIR)
