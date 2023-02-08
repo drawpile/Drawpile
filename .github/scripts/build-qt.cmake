@@ -31,10 +31,6 @@ elseif(NOT BUILD_TYPE STREQUAL "release")
 	message(FATAL_ERROR "Unknown build type '${BUILD_TYPE}'")
 endif()
 
-if(NOT CMAKE_INSTALL_PREFIX)
-	message(FATAL_ERROR "`-DCMAKE_INSTALL_PREFIX` is required")
-endif()
-
 include(QtMacDeploymentTarget)
 set_mac_deployment_target(${QT_VERSION})
 
