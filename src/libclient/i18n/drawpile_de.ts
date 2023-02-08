@@ -271,43 +271,43 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandkürzel</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="23"/>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="45"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Kürzel</translation>
+        <translation>Kürzel</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="61"/>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="111"/>
         <source>Action</source>
-        <translation type="unfinished">Aktion</translation>
+        <translation>Aktion</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="85"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertiert die Eingaberichtung. Zum Beispiel nach oben Scrollen um herauszuzoomen, statt hinein.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="88"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertiert</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="95"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertauscht horizontale und vertikale Richtung. Zum Beispiel den Cursor nach oben und unten bewegen, um die Pinselgrüße zu ändern, statt nach links und rechts.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/canvasshortcutsdialog.ui" line="98"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Achsen vertauschen</translation>
     </message>
 </context>
 <context>
@@ -315,152 +315,152 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="108"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Kürzel</translation>
+        <translation>Kürzel</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="110"/>
         <source>Action</source>
-        <translation type="unfinished">Aktion</translation>
+        <translation>Aktion</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="112"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifikatoren</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="174"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="177"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="183"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished">%1 Stunde(n), %2 Minute(n) {1:?} {2?}</translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="186"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="237"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Mausrad</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="241"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="253"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht zugewiesen</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="255"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Linksklick</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="257"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsklick</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="259"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Mittelklick</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="275"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Taste 0x%1</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="277"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Taste %1</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="285"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand bewegen</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="287"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand rotieren</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="289"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand zoomen</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="291"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbpipette</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="293"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene wählen</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="295"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselgröße ändern</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="299"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug beschränken</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="301"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug zentrieren</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="304"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug beschränken und zentrieren</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="306"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Beschränkung 0x%1</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="309"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Aktion %1</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="317"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertiert, Achsen vertauscht</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="319"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertiert</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="322"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Achsen vertauscht</translation>
     </message>
 </context>
 <context>
@@ -1154,27 +1154,27 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Anordnungen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="30"/>
         <source>Save</source>
-        <translation type="unfinished">Speichern</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="37"/>
         <source>Rename</source>
-        <translation type="unfinished">Umbenennen</translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="44"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="68"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by dragging from the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Docker in Drawpile können frei arrangiert und kombiniert werden, indem sie am oberen Rand umhergezogen werden. Sie können hier ihre favorisierten Anordnungen speichern und wiederherstellen. Stellen Sie sicher, dass ihre Anordnung in Ihre Bildschirmauflösung passt, ansonsten kann es vorkommen, dass Bedienelemente aus dem sichtbaren Bildbereich gedrückt werden.</translation>
     </message>
 </context>
 <context>
@@ -1460,12 +1460,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1435"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schließen des Tablet-Ereignislogs.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1451"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen des Tablet-Ereignislogs.</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="1634"/>
@@ -1506,17 +1506,17 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2403"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Ereignislog stoppen</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2403"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Ereignislog...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2511"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Eingabe:</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2603"/>
@@ -1526,7 +1526,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2607"/>
         <source>Tabs on Side</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabs auf der Seite</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2619"/>
@@ -1648,7 +1648,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2860"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Anordnungen...</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2862"/>
@@ -1719,7 +1719,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="3040"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ebenen</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="3063"/>
@@ -2758,7 +2758,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../utils/images.cpp" line="181"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Ereignislog (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="189"/>
@@ -2784,22 +2784,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="221"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="224"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="227"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg</translation>
     </message>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="230"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -2828,22 +2828,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="38"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikal spiegeln</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="49"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal spiegeln</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="60"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation>An Ansicht anpassen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="71"/>
         <source>Reset Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformation zurücksetzen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/selectsettings.ui" line="94"/>
@@ -3466,12 +3466,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="295"/>
         <source>Right-Handed Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Dreieck rechts</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="300"/>
         <source>Left-Handed Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Dreieck links</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="314"/>
@@ -3496,32 +3496,32 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="416"/>
         <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabe:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="430"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="435"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="440"/>
         <source>Wintab with Relative Pen Mode Hack</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab mit Hack für relativen Stiftmodus</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="457"/>
         <source>Windows has two different tablet inputs: Wintab and Windows Ink. Tablet drivers usually have a setting to switch between these. If you&apos;re experiencing issues with pen pressure, try switching to the other option both in Drawpile and in your driver. Sometimes updates for Windows or tablet drivers cause one of the options to stop working and you have to switch to the other.</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows hat zwei verschiedene Optionen zur Tablet-Eingabe: Wintab und Windows Ink. Tablet-Treiber haben normalerweise eine Einstellung, um zwischen diesen umzuschalten. Wenn Sie Probleme mit der Stiftdruckerkennung haben, versuchen Sie, zur jeweils anderen Option sowohl in Drawpile als auch in Ihrem Tablet-Treiber zu wechseln. Manchmal führen Updates von Windows oder Tablet-Treibern dazu, dass eine der Optionen aufhört zu funktionieren und erfordert einen wechsel zur jeweils anderen.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="467"/>
         <source>If you&apos;re using your tablet in relative or &quot;mouse&quot; mode, try the relative pen hack option.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Sie ihr Tablet im relativen oder &quot;Maus&quot;-Modus nutzen, versuchen Sie die Option mit Hack für relativen Stiftmodus.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="480"/>
@@ -3749,17 +3749,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1017"/>
         <source>New...</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1024"/>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten...</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1038"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1099"/>
@@ -4382,107 +4382,107 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="41"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastenkombination</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="42"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Maustaste</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="43"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Mausrad</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="45"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschränkungskürzel</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="48"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand bewegen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="50"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand rotieren</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="51"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand zoomen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="52"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbpipette</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="53"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene wählen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="55"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselgröße ändern</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="59"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug beschränken</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="61"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug zentrieren</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="63"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug beschränken und zentrieren</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="161"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein reguläres Tastenkürzel auf der Leinwand, ohne weitere Maus- oder Stifteingaben. Beispiel: Leertaste halten zum Bewegen der Leinwand, ohne zusätzlich klicken zu müssen.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="169"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drücken einer Maustaste oder eines Stiftknopfes, optional während Tasten gehalten werden. Mit dem Stift das Tablet zu berühren ist wie ein Linksklick. Beispiel: Leertaste halten und Linksklick drücken, um die Leinwand zu bewegen.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="177"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit dem Mausrad oder einem ähnlichen Eingabegerät scrollen, optional während Tasten gedrückt werden. Beispiel: Scrollen um die Leinwand zu zoomen.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="185"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tasten halten, um das Verhalten von Werkzeugen wie Rechteck, Linie oder Selektion zu verändern. Beschränken bedeutet z.B. das Seitenverhältnis gleich zu halten, Zentrieren bedeutet z.B. eine Form um den Anfangspunkt zu zeichnen.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="192"/>
         <source>Unknown type %u.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Typ %u.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="232"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Konflikt:&lt;/b&gt; das bereits existierende Kürzel für &apos;%1&apos; wird überschrieben, wenn sie fortfahren.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="237"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können kein Kürzel zu einem Linksklick ohne weitere Tasten erstellen, da dies mit dem Zeichnen interferieren würde.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="240"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Weisen Sie ein Kürzel zu, um fortzufahren.</translation>
     </message>
 </context>
 <context>
@@ -4689,92 +4689,92 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="143"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell (nicht gespeichert)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="145"/>
         <source>%1 (new)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (neu)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="147"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (gelöscht)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="149"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (umbenannt von %2)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="287"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="289"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="320"/>
         <source>Layout Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Name für die Anordnung:</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="335"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="353"/>
         <source>Default Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Animation</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="371"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>FireAlpaca-artig</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="390"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="408"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation>Hyäne</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="426"/>
         <source>Krita-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita-artig</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="446"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>MediBang-artig</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="464"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation>Nerz</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="484"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>Paint.NET-artig</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="502"/>
         <source>SAI-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>SAI-artig</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/layoutsdialog.cpp" line="521"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>Spinne</translation>
     </message>
 </context>
 <context>
@@ -4983,7 +4983,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="130"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="265"/>
@@ -5010,32 +5010,32 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="603"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Neues Leinwandkürzel</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="618"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandkürzel bearbeiten</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="633"/>
         <source>Delete Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandkürzel löschen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="634"/>
         <source>Are you sure you want to delete the canvas shortcut &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sind Sie sich sicher, dass Sie das Leinwandkürzel &apos;%1&apos; löschen möchten?</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="645"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard-Leinwandkürzel wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="646"/>
         <source>Are you sure you want to remove all canvas shortcuts and restore the default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sind Sie sich sicher, dass Sie alle Leinwandkürzel entfernen und die Standardeinstellungen wiederherstellen wollen?</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/settingsdialog.cpp" line="730"/>
@@ -5255,7 +5255,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/docks/colorpalette.cpp" line="111"/>
         <source>Write protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibgeschützt</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/colorpalette.cpp" line="127"/>
@@ -5496,7 +5496,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/docks/onionskins.cpp" line="173"/>
         <source>Tint Above: </source>
-        <translation>Darüber einfärben</translation>
+        <translation>Darüber einfärben: </translation>
     </message>
     <message>
         <location filename="../../desktop/docks/onionskins.cpp" line="294"/>
@@ -5881,42 +5881,42 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="289"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="291"/>
         <source>Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zuweisen...</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="319"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drücken Sie eine Tastenkombination. Escape um abzubrechen.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="323"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicken Sie mit der gewüschten Maustaste in das obige Feld, optional während Sie Tasten halten. Escape um abzubrechen.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="328"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drehen Sie das Mausrad oder klicken Sie in das obige Feld, optional währen Sie Tasten halten. Escape um abzubrechen.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="332"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Halten Sie die gewünschte Tastenkombination und klicken Sie in das obige Feld. Escape um abzubrechen.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="336"/>
         <source>Unknown shortcut type %1. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Kürzeltyp %1. Escape um abzubrechen.</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/canvasshortcutedit.cpp" line="341"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicken Sie auf den Zuweisen-Knopf, um ein Kürzel zuzuweisen.</translation>
     </message>
 </context>
 <context>
