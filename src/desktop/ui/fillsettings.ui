@@ -88,6 +88,9 @@
    </item>
    <item row="5" column="0" colspan="3">
     <widget class="KisSliderSpinBox" name="expand">
+     <property name="suffix">
+      <string> px</string>
+     </property>
      <property name="prefix">
       <string>Expand: </string>
      </property>
@@ -120,6 +123,9 @@
    </item>
    <item row="6" column="0" colspan="3">
     <widget class="KisSliderSpinBox" name="feather">
+     <property name="suffix">
+      <string> px</string>
+     </property>
      <property name="prefix">
       <string>Feather: </string>
      </property>
