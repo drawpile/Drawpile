@@ -21,13 +21,15 @@ Some feature highlights:
 
 ## Installing Drawpile
 
-Precompiled releases are available from https://drawpile.net/download/.
+Precompiled releases are available from the [Drawpile web site](https://drawpile.net/download/)
+or from [GitHub releases](../../releases). Work-in-progress builds are available as
+downloadable artefacts from [GitHub Actions](../../actions).
 
 ## Building Drawpile from source
 
 The following dependencies are required:
 
-* CMake 3.18
+* CMake 3.18 (3.19+ recommended)
 * C++14 compiler
 * Rust stable compiler
 * Qt 5.12 or newer (5.11 is also supported for headless server only)
@@ -72,7 +74,7 @@ Using Xcode:
 ### Linux (Ubuntu)
 
 1. Run
-   `sudo apt install build-essential cmake git libqt6svg6 qt6-base-dev qt6-multimedia-dev qt6-tools-dev`
+   `sudo apt install build-essential cmake git libqt6svg6 qt6-base-dev qt6-multimedia-dev qt6-tools-dev libxkbcommon-dev`
    to install required dependencies, and
    `sudo apt install libmicrohttpd-dev libsodium-dev libsystemd-dev qtkeychain-qt6-dev`
    to install optional dependencies
