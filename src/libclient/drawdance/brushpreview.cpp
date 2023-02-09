@@ -48,18 +48,12 @@ void BrushPreview::renderMyPaint(
 }
 
 void BrushPreview::floodFill(
-    const QColor &color, float tolerance, int expansion, int featherRadius, bool under)
+    const QColor &color, float tolerance, int expansion, int featherRadius, int blendMode)
 {
-    int blendMode;
     QColor effectiveColor;
-    if(color.alpha() == 0) {
-        blendMode = DP_BLEND_MODE_ERASE;
+    if(blendMode == DP_BLEND_MODE_ERASE) {
         effectiveColor = Qt::black;
-    } else if(under) {
-        blendMode = DP_BLEND_MODE_BEHIND;
-        effectiveColor = color;
     } else {
-        blendMode = DP_BLEND_MODE_NORMAL;
         effectiveColor = color;
     }
     DP_brush_preview_render_flood_fill(

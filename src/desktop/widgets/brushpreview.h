@@ -67,7 +67,7 @@ public slots:
 	void setFloodFillFeatherRadius(int featherRadius);
 
 	//! This is used for flood fill preview only
-	void setUnderFill(bool underfill);
+	void setFloodFillMode(int mode);
 
 signals:
 	void requestColorChange();
@@ -93,7 +93,7 @@ private:
 	int m_fillTolerance = 0;
 	int m_fillExpansion = 0;
 	int m_fillFeatherRadius = 0;
-	bool m_underFill = false;
+	int m_fillMode = 0;
 	bool m_needUpdate = false;
 };
 

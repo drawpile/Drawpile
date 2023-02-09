@@ -39,8 +39,7 @@ public:
 	void setFeatherRadius(int featherRadius) { m_featherRadius = featherRadius; }
 	void setSizeLimit(unsigned int limit) { m_sizelimit = qMax(100u, limit); }
 	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
-	void setUnderFill(bool uf) { m_underFill = uf; }
-	void setEraseMode(bool erase) { m_eraseMode = erase; }
+	void setBlendMode(int blendMode) { m_blendMode = blendMode; }
 
 private:
 	qreal m_tolerance;
@@ -48,8 +47,7 @@ private:
 	int m_featherRadius;
 	unsigned int m_sizelimit;
 	bool m_sampleMerged;
-	bool m_underFill;
-	bool m_eraseMode;
+	int m_blendMode;
 };
 
 }

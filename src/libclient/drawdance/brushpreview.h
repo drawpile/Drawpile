@@ -31,7 +31,7 @@ public:
         DP_BrushPreviewShape shape);
 
     void floodFill(
-        const QColor &color, float tolerance, int expansion, int featherRadius, bool under);
+        const QColor &color, float tolerance, int expansion, int featherRadius, int blendMode);
 
     void paint(const QPixmap &background);
 

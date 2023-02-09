@@ -24,85 +24,84 @@
 
 #include "ui_fillsettings.h"
 
+static constexpr int SOURCE_MERGED_IMAGE = 1;
+static constexpr int MODE_NORMAL = 0;
+static constexpr int MODE_BEHIND = 1;
+static constexpr int MODE_ERASE = 2;
+
 namespace tools {
 
 namespace props {
 	static const ToolProperties::RangedValue<int>
 		expand { QStringLiteral("expand"), 0, 0, 100 },
-		featherRadius { QStringLiteral("featherRadius"), 0, 0, 40 }
-		;
+		featherRadius { QStringLiteral("featherRadius"), 0, 0, 40 },
+		source { QStringLiteral("source"), 0, 0, 1},
+		mode { QStringLiteral("mode"), 0, 0, 2};
 	static const ToolProperties::RangedValue<double>
 		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 },
-		sizelimit { QStringLiteral("sizelimit"), 50.0, 0.0, 1000.0 }
-		;
-	static const ToolProperties::Value<bool>
-		samplemerged { QStringLiteral("samplemerged"), true },
-		underfill { QStringLiteral("underfill"), true },
-		erasermode { QStringLiteral("erasermode"), false }
-		;
+		sizelimit { QStringLiteral("sizelimit"), 50.0, 0.0, 1000.0 };
 }
 
 FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), _ui(nullptr)
+	: ToolSettings(ctrl, parent), m_ui(nullptr)
 {
 }
 
 FillSettings::~FillSettings()
 {
-	delete _ui;
+	delete m_ui;
 }
 
 QWidget *FillSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *uiwidget = new QWidget(parent);
-	_ui = new Ui_FillSettings;
-	_ui->setupUi(uiwidget);
+	m_ui = new Ui_FillSettings;
+	m_ui->setupUi(uiwidget);
 
-	_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
+	m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
 
-	connect(_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
-	connect(_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(_ui->sizelimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
-	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
-	connect(_ui->erasermode, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
-	connect(_ui->erasermode, &QAbstractButton::toggled, this, [this](bool erase) {
-			_ui->preview->setPreviewShape(erase ? DP_BRUSH_PREVIEW_FLOOD_ERASE : DP_BRUSH_PREVIEW_FLOOD_FILL);
-			_ui->fillunder->setEnabled(!erase);
-			_ui->samplemerged->setEnabled(!erase);
-	});
+	connect(m_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
+	connect(m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->sizelimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->source, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
 	return uiwidget;
 }
 
 void FillSettings::pushSettings()
 {
-	const bool erase = _ui->erasermode->isChecked();
-	auto *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
-	tool->setTolerance(_ui->tolerance->value() / qreal(_ui->tolerance->maximum()));
-	tool->setExpansion(_ui->expand->value());
-	tool->setFeatherRadius(_ui->feather->value());
-	tool->setSizeLimit(_ui->sizelimit->value() * _ui->sizelimit->value() * 10 * 10);
-	tool->setSampleMerged(erase ? false : _ui->samplemerged->isChecked());
-	tool->setUnderFill(_ui->fillunder->isChecked());
-	tool->setEraseMode(erase);
+	FloodFill *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
+	tool->setTolerance(m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
+	tool->setExpansion(m_ui->expand->value());
+	tool->setFeatherRadius(m_ui->feather->value());
+	tool->setSizeLimit(m_ui->sizelimit->value() * m_ui->sizelimit->value() * 10 * 10);
+	tool->setSampleMerged(m_ui->source->currentIndex() == SOURCE_MERGED_IMAGE);
+	int mode = m_ui->mode->currentIndex();
+	tool->setBlendMode(modeIndexToBlendMode(mode));
+	if(mode == MODE_ERASE) {
+		m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_ERASE);
+	} else {
+		m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
+		m_previousMode = mode;
+	}
 }
 
 void FillSettings::toggleEraserMode()
 {
-	_ui->erasermode->toggle();
+	int mode = m_ui->mode->currentIndex();
+	m_ui->mode->setCurrentIndex(mode == MODE_ERASE ? m_previousMode : MODE_ERASE);
 }
 
 ToolProperties FillSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue(props::tolerance, _ui->tolerance->value() / qreal(_ui->tolerance->maximum()));
-	cfg.setValue(props::expand, _ui->expand->value());
-	cfg.setValue(props::featherRadius, _ui->feather->value());
-	cfg.setValue(props::samplemerged, _ui->samplemerged->isChecked());
-	cfg.setValue(props::underfill, _ui->fillunder->isChecked());
-	cfg.setValue(props::erasermode, _ui->erasermode->isChecked());
+	cfg.setValue(props::tolerance, m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
+	cfg.setValue(props::expand, m_ui->expand->value());
+	cfg.setValue(props::featherRadius, m_ui->feather->value());
+	cfg.setValue(props::mode, m_ui->mode->currentIndex());
+	cfg.setValue(props::source, m_ui->source->currentIndex());
 	return cfg;
 }
 
@@ -111,20 +110,31 @@ void FillSettings::setForeground(const QColor &color)
 	brushes::ActiveBrush b;
 	b.classic().size.max = 1;
 	b.setQColor(color);
-	_ui->preview->setBrush(b);
+	m_ui->preview->setBrush(b);
 	controller()->setActiveBrush(b);
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->tolerance->setValue(cfg.value(props::tolerance) * _ui->tolerance->maximum());
-	_ui->expand->setValue(cfg.value(props::expand));
-	_ui->feather->setValue(cfg.value(props::featherRadius));
-	_ui->sizelimit->setValue(cfg.value(props::sizelimit));
-	_ui->samplemerged->setChecked(cfg.value(props::samplemerged));
-	_ui->fillunder->setChecked(cfg.value(props::underfill));
-	_ui->erasermode->setChecked(cfg.value(props::erasermode));
+	m_ui->tolerance->setValue(cfg.value(props::tolerance) * m_ui->tolerance->maximum());
+	m_ui->expand->setValue(cfg.value(props::expand));
+	m_ui->feather->setValue(cfg.value(props::featherRadius));
+	m_ui->sizelimit->setValue(cfg.value(props::sizelimit));
+	m_ui->source->setCurrentIndex(cfg.value(props::source));
+	m_ui->mode->setCurrentIndex(cfg.value(props::mode));
 	pushSettings();
+}
+
+int FillSettings::modeIndexToBlendMode(int mode)
+{
+	switch(mode) {
+	case MODE_BEHIND:
+		return DP_BLEND_MODE_BEHIND;
+	case MODE_ERASE:
+		return DP_BLEND_MODE_ERASE;
+	default:
+		return DP_BLEND_MODE_NORMAL;
+	}
 }
 
 void FillSettings::quickAdjust1(qreal adjustment)
@@ -134,13 +144,13 @@ void FillSettings::quickAdjust1(qreal adjustment)
 	qreal f = modf(m_quickAdjust1, &i);
 	if(int(i)) {
 		m_quickAdjust1 = f;
-		_ui->tolerance->setValue(_ui->tolerance->value() + int(i));
+		m_ui->tolerance->setValue(m_ui->tolerance->value() + int(i));
 	}
 }
 
 void FillSettings::stepAdjust1(bool increase)
 {
-	QSpinBox *tolerance = _ui->tolerance;
+	QSpinBox *tolerance = m_ui->tolerance;
 	tolerance->setValue(stepLogarithmic(
 		tolerance->minimum(), tolerance->maximum(), tolerance->value(),
 		increase));

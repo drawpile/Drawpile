@@ -36,8 +36,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_featherRadius(0)
 	, m_sizelimit(1000*1000)
 	, m_sampleMerged(true)
-	, m_underFill(true)
-	, m_eraseMode(false)
+	, m_blendMode(DP_BLEND_MODE_NORMAL)
 {
 }
 
@@ -49,22 +48,19 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 	canvas::CanvasModel *model = owner.model();
-	QColor fillColor = m_eraseMode ? Qt::black : owner.activeBrush().qColor();
+	QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE ? Qt::black : owner.activeBrush().qColor();
 	int layerId = owner.activeLayer();
 	int x, y;
 	QImage img;
 	DP_FloodFillResult result = model->paintEngine()->viewCanvasState().floodFill(
-		point.x(), point.y(), fillColor, m_tolerance, layerId,
-		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion,
-		m_featherRadius, img, x, y);
+		point.x(), point.y(), fillColor, m_tolerance, layerId, m_sampleMerged,
+		m_sizelimit, m_expansion, m_featherRadius, img, x, y);
 
 	if(result == DP_FLOOD_FILL_SUCCESS) {
 		uint8_t contextId = model->localUserId();
 		drawdance::MessageList msgs;
 		msgs.append(drawdance::Message::makeUndoPoint(contextId));
-		uint8_t blendMode =
-			m_eraseMode ? DP_BLEND_MODE_ERASE : m_underFill ? DP_BLEND_MODE_BEHIND : DP_BLEND_MODE_NORMAL;
-		drawdance::Message::makePutImages(msgs, contextId, layerId, blendMode, x, y, img);
+		drawdance::Message::makePutImages(msgs, contextId, layerId, m_blendMode, x, y, img);
 		owner.client()->sendMessages(msgs.count(), msgs.constData());
 	} else if(result == DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED) {
 		// The flood fill failing due to an exceeded size limit is non-obvious.

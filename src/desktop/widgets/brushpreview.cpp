@@ -18,6 +18,7 @@
 */
 
 #include "brushpreview.h"
+#include "toolwidgets/fillsettings.h"
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -86,10 +87,10 @@ void BrushPreview::setFloodFillFeatherRadius(int featherRadius)
 	}
 }
 
-void BrushPreview::setUnderFill(bool underfill)
+void BrushPreview::setFloodFillMode(int mode)
 {
-	if(m_underFill != underfill) {
-		m_underFill = underfill;
+	if(m_fillMode != mode) {
+		m_fillMode = mode;
 		m_needUpdate = true;
 		update();
 	}
@@ -128,12 +129,9 @@ void BrushPreview::updatePreview()
 
 	m_brush.renderPreview(m_brushPreview, m_shape);
 	if(m_shape == DP_BRUSH_PREVIEW_FLOOD_FILL || m_shape == DP_BRUSH_PREVIEW_FLOOD_ERASE) {
-		QColor color = m_brush.qColor();
-		if(m_shape == DP_BRUSH_PREVIEW_FLOOD_ERASE) {
-			color.setAlpha(0);
-		}
 		m_brushPreview.floodFill(
-			color, m_fillTolerance / 255.0, m_fillExpansion, m_fillFeatherRadius, m_underFill);
+			m_brush.qColor(), m_fillTolerance / 255.0, m_fillExpansion,
+			m_fillFeatherRadius, tools::FillSettings::modeIndexToBlendMode(m_fillMode));
 	}
 
 	m_brushPreview.paint(m_background);

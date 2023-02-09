@@ -46,6 +46,8 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
+	static int modeIndexToBlendMode(int mode);
+
 public slots:
 	void pushSettings() override;
 	void toggleEraserMode() override;
@@ -54,7 +56,8 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
-	Ui_FillSettings * _ui;
+	Ui_FillSettings * m_ui;
+	int m_previousMode = 0;
 	qreal m_quickAdjust1 = 0.0;
 };
 
