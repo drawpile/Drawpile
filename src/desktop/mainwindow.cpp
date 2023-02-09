@@ -1973,11 +1973,7 @@ void MainWindow::toggleFullscreen()
 		// Save windowed mode state
 		m_fullscreenOldGeometry = geometry();
 		m_fullscreenOldMaximized = isMaximized();
-
-		m_view->setFrameShape(QFrame::NoFrame);
-
 		showFullScreen();
-
 	} else {
 		// Restore old state
 		if(m_fullscreenOldMaximized) {
@@ -1986,7 +1982,6 @@ void MainWindow::toggleFullscreen()
 			showNormal();
 			setGeometry(m_fullscreenOldGeometry);
 		}
-		m_view->setFrameShape(QFrame::StyledPanel);
 	}
 }
 

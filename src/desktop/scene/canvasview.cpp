@@ -79,6 +79,7 @@ CanvasView::CanvasView(QWidget *parent)
 #endif
 	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
+	setFrameShape(QFrame::NoFrame);
 
 	setBackgroundBrush(QColor(100,100,100));
 
