@@ -9,9 +9,10 @@ import hashlib
 import xml.etree
 import xml.etree.ElementTree as ET
 from enum import Enum
+from pathlib import Path
 
-CHANGELOG_FILE = 'ChangeLog'
-APPDATA_FILE = 'src/desktop/appdata.xml'
+CHANGELOG_FILE = (Path(__file__).parent / '../ChangeLog').resolve()
+APPDATA_FILE = (Path(__file__).parent / '../src/desktop/appdata.xml').resolve()
 
 class ChangeLogError(Exception):
     pass
