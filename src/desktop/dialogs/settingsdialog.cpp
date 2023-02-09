@@ -386,20 +386,6 @@ void SettingsDialog::restoreSettings()
 		m_ui->nsfmLock->setEnabled(false);
 	cfg.endGroup();
 
-	// cfg.beginGroup("settings/canvasShortcuts");
-	// const auto viewShortcuts = CanvasViewShortcuts::load(cfg);
-	// m_ui->colorPickKeys->setModifiers(viewShortcuts.colorPick);
-	// m_ui->layerPickKeys->setModifiers(viewShortcuts.layerPick);
-	// m_ui->dragRotateKeys->setModifiers(viewShortcuts.dragRotate);
-	// m_ui->dragZoomKeys->setModifiers(viewShortcuts.dragZoom);
-	// m_ui->dragQuickAdjustKeys->setModifiers(viewShortcuts.dragQuickAdjust);
-	// m_ui->scrollRotateKeys->setModifiers(viewShortcuts.scrollRotate);
-	// m_ui->scrollZoomKeys->setModifiers(viewShortcuts.scrollZoom);
-	// m_ui->scrollQuickAdjustKeys->setModifiers(viewShortcuts.scrollQuickAdjust);
-	// m_ui->toolConstrain1Keys->setModifiers(viewShortcuts.toolConstraint1);
-	// m_ui->toolConstrain2Keys->setModifiers(viewShortcuts.toolConstraint2);
-	// cfg.endGroup();
-
 	cfg.beginGroup("settings/colorwheel");
 	changeColorWheelShape(cfg.value("shape").toInt());
 	changeColorWheelAngle(cfg.value("rotate").toInt());
