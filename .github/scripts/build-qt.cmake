@@ -41,6 +41,12 @@ if(WIN32)
 	list(APPEND BASE_FLAGS -mp -schannel)
 endif()
 
+if(UNIX AND NOT APPLE)
+	list(APPEND BASE_FLAGS -system-freetype -fontconfig)
+else()
+	list(APPEND BASE_FLAGS -qt-freetype)
+endif()
+
 if(QT_VERSION VERSION_GREATER_EQUAL 6.4)
 	list(APPEND BASE_FLAGS -no-feature-androiddeployqt)
 	list(APPEND MULTIMEDIA_FLAGS
@@ -113,7 +119,7 @@ if(BASE)
 					-release -opensource -confirm-license -ltcg
 					-nomake examples
 					-no-sql-mysql -no-sql-odbc -no-sql-psql -sql-sqlite
-					-qt-libjpeg -qt-libpng -qt-sqlite -qt-freetype -qt-harfbuzz
+					-qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
 					${BASE_FLAGS}
 				DEBUG -force-asserts -force-debug-info -sanitize address
 		PATCHES
