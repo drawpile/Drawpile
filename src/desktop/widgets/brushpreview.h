@@ -64,6 +64,9 @@ public slots:
 	void setFloodFillExpansion(int expansion);
 
 	//! This is used for flood fill preview only
+	void setFloodFillFeatherRadius(int featherRadius);
+
+	//! This is used for flood fill preview only
 	void setUnderFill(bool underfill);
 
 signals:
@@ -89,6 +92,7 @@ private:
 	DP_BrushPreviewShape m_shape = DP_BRUSH_PREVIEW_STROKE;
 	int m_fillTolerance = 0;
 	int m_fillExpansion = 0;
+	int m_fillFeatherRadius = 0;
 	bool m_underFill = false;
 	bool m_needUpdate = false;
 };

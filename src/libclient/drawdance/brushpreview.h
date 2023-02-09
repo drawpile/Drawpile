@@ -30,7 +30,8 @@ public:
         const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
         DP_BrushPreviewShape shape);
 
-    void floodFill(const QColor &color, float tolerance, int expansion, bool under);
+    void floodFill(
+        const QColor &color, float tolerance, int expansion, int featherRadius, bool under);
 
     void paint(const QPixmap &background);
 

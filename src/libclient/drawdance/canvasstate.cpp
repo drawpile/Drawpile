@@ -205,14 +205,14 @@ unsigned int CanvasState::pickContextId(int x, int y) const
 
 DP_FloodFillResult CanvasState::floodFill(
     int x, int y, const QColor &fillColor, double tolerance, int layerId,
-    bool sampleMerged, int sizeLimit, int expand, QImage &outImg, int &outX,
-    int &outY) const
+    bool sampleMerged, int sizeLimit, int expand, int featherRadius,
+    QImage &outImg, int &outX, int &outY) const
 {
-	DP_Pixel8 fillColorPixel = {fillColor.rgba()};
+	DP_UPixelFloat fillPixel = DP_upixel_float_from_color(fillColor.rgba());
 	DP_Image *img;
     DP_FloodFillResult result = DP_flood_fill(
-		m_data, x, y, fillColorPixel, tolerance, layerId, sampleMerged,
-        sizeLimit, expand, &img, &outX, &outY);
+		m_data, x, y, fillPixel, tolerance, layerId, sampleMerged, sizeLimit,
+        expand, featherRadius, &img, &outX, &outY);
     if(result == DP_FLOOD_FILL_SUCCESS) {
         outImg = wrapImage(img);
     }

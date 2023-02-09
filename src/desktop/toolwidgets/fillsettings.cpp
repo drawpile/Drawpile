@@ -28,7 +28,8 @@ namespace tools {
 
 namespace props {
 	static const ToolProperties::RangedValue<int>
-		expand { QStringLiteral("expand"), 0, 0, 100 }
+		expand { QStringLiteral("expand"), 0, 0, 100 },
+		featherRadius { QStringLiteral("featherRadius"), 0, 0, 40 }
 		;
 	static const ToolProperties::RangedValue<double>
 		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 },
@@ -63,6 +64,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->sizelimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(_ui->samplemerged, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->fillunder, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
 	connect(_ui->erasermode, &QAbstractButton::toggled, this, &FillSettings::pushSettings);
@@ -80,6 +82,7 @@ void FillSettings::pushSettings()
 	auto *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
 	tool->setTolerance(_ui->tolerance->value() / qreal(_ui->tolerance->maximum()));
 	tool->setExpansion(_ui->expand->value());
+	tool->setFeatherRadius(_ui->feather->value());
 	tool->setSizeLimit(_ui->sizelimit->value() * _ui->sizelimit->value() * 10 * 10);
 	tool->setSampleMerged(erase ? false : _ui->samplemerged->isChecked());
 	tool->setUnderFill(_ui->fillunder->isChecked());
@@ -96,6 +99,7 @@ ToolProperties FillSettings::saveToolSettings()
 	ToolProperties cfg(toolType());
 	cfg.setValue(props::tolerance, _ui->tolerance->value() / qreal(_ui->tolerance->maximum()));
 	cfg.setValue(props::expand, _ui->expand->value());
+	cfg.setValue(props::featherRadius, _ui->feather->value());
 	cfg.setValue(props::samplemerged, _ui->samplemerged->isChecked());
 	cfg.setValue(props::underfill, _ui->fillunder->isChecked());
 	cfg.setValue(props::erasermode, _ui->erasermode->isChecked());
@@ -115,6 +119,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 	_ui->tolerance->setValue(cfg.value(props::tolerance) * _ui->tolerance->maximum());
 	_ui->expand->setValue(cfg.value(props::expand));
+	_ui->feather->setValue(cfg.value(props::featherRadius));
 	_ui->sizelimit->setValue(cfg.value(props::sizelimit));
 	_ui->samplemerged->setChecked(cfg.value(props::samplemerged));
 	_ui->fillunder->setChecked(cfg.value(props::underfill));

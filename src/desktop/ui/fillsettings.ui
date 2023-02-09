@@ -118,6 +118,16 @@
      </property>
     </widget>
    </item>
+   <item row="6" column="0" colspan="3">
+    <widget class="KisSliderSpinBox" name="feather">
+     <property name="prefix">
+      <string>Feather: </string>
+     </property>
+     <property name="maximum">
+      <number>40</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -181,6 +191,22 @@
     <hint type="sourcelabel">
      <x>121</x>
      <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>34</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>feather</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setFloodFillFeatherRadius(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
      <x>121</x>

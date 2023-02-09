@@ -77,6 +77,15 @@ void BrushPreview::setFloodFillExpansion(int expansion)
 	}
 }
 
+void BrushPreview::setFloodFillFeatherRadius(int featherRadius)
+{
+	if(m_fillFeatherRadius != featherRadius) {
+		m_fillFeatherRadius = featherRadius;
+		m_needUpdate = true;
+		update();
+	}
+}
+
 void BrushPreview::setUnderFill(bool underfill)
 {
 	if(m_underFill != underfill) {
@@ -123,7 +132,8 @@ void BrushPreview::updatePreview()
 		if(m_shape == DP_BRUSH_PREVIEW_FLOOD_ERASE) {
 			color.setAlpha(0);
 		}
-		m_brushPreview.floodFill(color, m_fillTolerance / 255.0, m_fillExpansion, m_underFill);
+		m_brushPreview.floodFill(
+			color, m_fillTolerance / 255.0, m_fillExpansion, m_fillFeatherRadius, m_underFill);
 	}
 
 	m_brushPreview.paint(m_background);

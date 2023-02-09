@@ -73,8 +73,8 @@ public:
 
     DP_FloodFillResult floodFill(
         int x, int y, const QColor &fillColor, double tolerance, int layerId,
-        bool sampleMerged, int sizeLimit, int expand, QImage &outImg, int &outX,
-        int &outY) const;
+        bool sampleMerged, int sizeLimit, int expand, int featherRadius,
+        QImage &outImg, int &outX, int &outY) const;
 
 private:
     explicit CanvasState(DP_CanvasState *cs);

@@ -36,6 +36,7 @@ public:
 
 	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }
+	void setFeatherRadius(int featherRadius) { m_featherRadius = featherRadius; }
 	void setSizeLimit(unsigned int limit) { m_sizelimit = qMax(100u, limit); }
 	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
 	void setUnderFill(bool uf) { m_underFill = uf; }
@@ -44,6 +45,7 @@ public:
 private:
 	qreal m_tolerance;
 	int m_expansion;
+	int m_featherRadius;
 	unsigned int m_sizelimit;
 	bool m_sampleMerged;
 	bool m_underFill;

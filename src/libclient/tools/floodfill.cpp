@@ -30,9 +30,14 @@
 namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
-	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29)),
-	m_tolerance(0.01), m_expansion(0), m_sizelimit(1000*1000), m_sampleMerged(true), m_underFill(true),
-	m_eraseMode(false)
+	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29))
+	, m_tolerance(0.01)
+	, m_expansion(0)
+	, m_featherRadius(0)
+	, m_sizelimit(1000*1000)
+	, m_sampleMerged(true)
+	, m_underFill(true)
+	, m_eraseMode(false)
 {
 }
 
@@ -50,7 +55,8 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 	QImage img;
 	DP_FloodFillResult result = model->paintEngine()->viewCanvasState().floodFill(
 		point.x(), point.y(), fillColor, m_tolerance, layerId,
-		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion, img, x, y);
+		m_sampleMerged && !m_eraseMode, m_sizelimit, m_expansion,
+		m_featherRadius, img, x, y);
 
 	if(result == DP_FLOOD_FILL_SUCCESS) {
 		uint8_t contextId = model->localUserId();
