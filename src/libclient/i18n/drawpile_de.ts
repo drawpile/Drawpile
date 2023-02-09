@@ -761,17 +761,17 @@ to 64x64 pixels.</source>
         <location filename="../../desktop/ui/fillsettings.ui" line="32"/>
         <location filename="../../desktop/ui/fillsettings.ui" line="68"/>
         <source> px</source>
-        <translation type="unfinished"></translation>
+        <translation> px</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="35"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Verschwimmen: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="45"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Quelle:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="81"/>
@@ -786,27 +786,27 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="126"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="146"/>
         <source>Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Ebene</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="151"/>
         <source>Merged Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusammengefügtes Bild</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="172"/>
         <source>Normal</source>
-        <translation type="unfinished">Normal</translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="177"/>
         <source>Behind</source>
-        <translation type="unfinished">Dahinter auftragen</translation>
+        <translation>Dahinter auftragen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="182"/>
@@ -3084,7 +3084,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="319"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Laserpointer:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="133"/>
@@ -3651,22 +3651,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1196"/>
         <source>NSFM (Not Safe For Minors) Tag Words</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht-jugendfreie Schlagworte</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1215"/>
         <source>NSFM Session Restrictions</source>
-        <translation type="unfinished"></translation>
+        <translation>Einschränkungen für nicht-jugendfreie Sitzungen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1287"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen bei Sperre verstecken</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1300"/>
         <source>Parental controls are locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jugendschutzeinstellungen sind gesperrt.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1205"/>
@@ -4507,7 +4507,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="192"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Typ %1.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="232"/>
