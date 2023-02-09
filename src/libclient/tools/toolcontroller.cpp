@@ -94,7 +94,8 @@ void ToolController::setActiveTool(Tool::Type tool)
 		endDrawing();
 
 		m_activeTool = getTool(tool);
-		emit activeToolChanged(tool);
+		emit toolCapabilitiesChanged(
+			activeToolAllowColorPick(), activeToolAllowToolAdjust());
 		emit toolCursorChanged(activeToolCursor());
 	}
 }
@@ -117,6 +118,18 @@ QCursor ToolController::activeToolCursor() const
 {
 	Q_ASSERT(m_activeTool);
 	return m_activeTool->cursor();
+}
+
+bool ToolController::activeToolAllowColorPick() const
+{
+	Q_ASSERT(m_activeTool);
+	return m_activeTool->allowColorPick();
+}
+
+bool ToolController::activeToolAllowToolAdjust() const
+{
+	Q_ASSERT(m_activeTool);
+	return m_activeTool->allowToolAdjust();
 }
 
 void ToolController::setActiveLayer(uint16_t id)

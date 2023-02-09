@@ -27,7 +27,7 @@
 namespace tools {
 
 ColorPicker::ColorPicker(ToolController &owner)
-	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29)),
+	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29), false, true),
 	m_pickFromCurrentLayer(false),
 	m_size(0)
 {

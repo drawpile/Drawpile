@@ -375,6 +375,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_doc->toolCtrl()->setSmoothing(brushSettings->getSmoothing());
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, m_view, &widgets::CanvasView::setToolCursor);
 	m_view->setToolCursor(m_doc->toolCtrl()->activeToolCursor());
+	connect(m_doc->toolCtrl(), &tools::ToolController::toolCapabilitiesChanged, m_view, &widgets::CanvasView::setToolCapabilities);
+	m_view->setToolCapabilities(m_doc->toolCtrl()->activeToolAllowColorPick(), m_doc->toolCtrl()->activeToolAllowToolAdjust());
 
 	connect(m_view, &widgets::CanvasView::penDown, m_doc->toolCtrl(), &tools::ToolController::startDrawing);
 	connect(m_view, &widgets::CanvasView::penMove, m_doc->toolCtrl(), &tools::ToolController::continueDrawing);

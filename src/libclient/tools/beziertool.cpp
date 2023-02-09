@@ -33,7 +33,7 @@ using canvas::PointVector;
 using canvas::Point;
 
 BezierTool::BezierTool(ToolController &owner)
-	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 1, 1))
+	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 1, 1), true, true)
 	, m_brushEngine{}
 {
 }

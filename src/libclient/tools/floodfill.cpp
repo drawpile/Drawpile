@@ -30,7 +30,7 @@
 namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
-	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29))
+	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29), true, true)
 	, m_tolerance(0.01)
 	, m_expansion(0)
 	, m_featherRadius(0)

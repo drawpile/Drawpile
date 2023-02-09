@@ -25,7 +25,7 @@
 namespace tools {
 
 Inspector::Inspector(ToolController &owner)
-	: Tool(owner, INSPECTOR, QCursor(Qt::WhatsThisCursor))
+	: Tool(owner, INSPECTOR, QCursor(Qt::WhatsThisCursor), false, false)
 {
 }
 

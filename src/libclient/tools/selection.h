@@ -37,7 +37,7 @@ namespace tools {
 class SelectionTool : public Tool {
 public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool(owner, type,  cursor), m_allowTransform(true) { }
+		: Tool(owner, type, cursor, false, false), m_allowTransform(true) { }
 
 	void begin(const canvas::Point& point, bool right, float zoom) override;
 	void motion(const canvas::Point& point, bool constrain, bool center) override;

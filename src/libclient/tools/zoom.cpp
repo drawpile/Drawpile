@@ -29,7 +29,7 @@
 namespace tools {
 
 ZoomTool::ZoomTool(ToolController &owner)
-	: Tool(owner, ZOOM, QCursor(QPixmap(":cursors/zoom.png"), 8, 8))
+	: Tool(owner, ZOOM, QCursor(QPixmap(":cursors/zoom.png"), 8, 8), true, false)
 { }
 
 void ZoomTool::begin(const canvas::Point &point, bool right, float zoom)

@@ -32,7 +32,7 @@ namespace tools {
 class ShapeTool : public Tool {
 public:
 	ShapeTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool{owner, type, cursor}
+		: Tool{owner, type, cursor, true, true}
 		, m_drawing{false}
 		, m_brushEngine{}
 	{}

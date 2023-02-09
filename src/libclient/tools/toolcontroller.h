@@ -58,6 +58,8 @@ public:
 	Tool::Type activeTool() const;
 
 	QCursor activeToolCursor() const;
+	bool activeToolAllowColorPick() const;
+	bool activeToolAllowToolAdjust() const;
 
 	void setActiveLayer(uint16_t id);
 	uint16_t activeLayer() const { return m_activeLayer; }
@@ -128,7 +130,7 @@ public slots:
 	void cancelMultipartDrawing();
 
 signals:
-	void activeToolChanged(Tool::Type type);
+	void toolCapabilitiesChanged(bool allowColorPick, bool allowToolAdjust);
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(uint16_t annotationId);

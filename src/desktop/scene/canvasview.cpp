@@ -55,7 +55,8 @@
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), m_pendown(NOTDOWN), m_penmode(PenMode::Normal),
+	: QGraphicsView(parent), m_pendown(NOTDOWN),
+	m_allowColorPick(false), m_allowToolAdjust(false), m_penmode(PenMode::Normal),
 	m_dragmode(ViewDragMode::None), m_dragAction(CanvasShortcuts::NO_ACTION),
 	m_dragByKey(true), m_dragInverted(false), m_dragSwapAxes(false),
 	m_prevoutline(false), m_outlineSize(2), m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false),
@@ -292,6 +293,12 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 {
 	m_toolcursor = cursor;
 	resetCursor();
+}
+
+void CanvasView::setToolCapabilities(bool allowColorPick, bool allowToolAdjust)
+{
+	m_allowColorPick = allowColorPick;
+	m_allowToolAdjust = allowToolAdjust;
 }
 
 void CanvasView::resetCursor()
@@ -559,10 +566,14 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, 
 	switch(match.action) {
 	case CanvasShortcuts::NO_ACTION:
 		break;
+	case CanvasShortcuts::TOOL_ADJUST:
+		if(!m_allowToolAdjust) {
+			break;
+		}
+		Q_FALLTHROUGH();
 	case CanvasShortcuts::CANVAS_PAN:
 	case CanvasShortcuts::CANVAS_ROTATE:
 	case CanvasShortcuts::CANVAS_ZOOM:
-	case CanvasShortcuts::TOOL_ADJUST:
 		if(m_dragmode != ViewDragMode::Started) {
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = match.action;
@@ -571,7 +582,9 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, 
 		}
 		break;
 	case CanvasShortcuts::COLOR_PICK:
-		penmode = PenMode::Colorpick;
+		if(m_allowColorPick) {
+			penmode = PenMode::Colorpick;
+		}
 		break;
 	case CanvasShortcuts::LAYER_PICK:
 		penmode = PenMode::Layerpick;
@@ -721,10 +734,15 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 		onPenUp();
 		m_pendown = NOTDOWN;
 		switch(mouseMatch.action) {
+		case CanvasShortcuts::TOOL_ADJUST:
+			if(!m_allowToolAdjust) {
+				m_penmode = PenMode::Normal;
+				break;
+			}
+			Q_FALLTHROUGH();
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
 			m_penmode = PenMode::Normal;
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action;
@@ -732,7 +750,9 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			break;
 		case CanvasShortcuts::COLOR_PICK:
-			m_penmode = PenMode::Colorpick;
+			if(m_allowColorPick) {
+				m_penmode = PenMode::Colorpick;
+			}
 			break;
 		case CanvasShortcuts::LAYER_PICK:
 			m_penmode = PenMode::Layerpick;
@@ -803,6 +823,15 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	}
 	// Color and layer picking by spinning the scroll wheel is weird, but okay.
 	case CanvasShortcuts::COLOR_PICK:
+		if(m_allowColorPick && m_scene->hasImage()) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+			QPointF p = mapToSceneInterpolate(mapFromGlobal(QCursor::pos()));
+#else
+			QPointF p = mapToSceneInterpolate(event->position());
+#endif
+			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
+		}
+		break;
 	case CanvasShortcuts::LAYER_PICK: {
 		if(m_scene->hasImage()) {
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
@@ -810,17 +839,15 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 #else
 			QPointF p = mapToSceneInterpolate(event->position());
 #endif
-			if(match.action == CanvasShortcuts::COLOR_PICK) {
-				m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
-			} else {
-				m_scene->model()->pickLayer(p.x(), p.y());
-			}
+			m_scene->model()->pickLayer(p.x(), p.y());
 		}
 		break;
 	}
 	case CanvasShortcuts::TOOL_ADJUST:
-		event->accept();
-		emit quickAdjust(deltaY / (30 * 4.0));
+		if(m_allowToolAdjust) {
+			event->accept();
+			emit quickAdjust(deltaY / (30 * 4.0));
+		}
 		break;
 	default:
 		qWarning("Unhandled mouse wheel canvas shortcut %u", match.action);
@@ -865,10 +892,15 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 		CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
 			event->modifiers(), m_keysDown, Qt::LeftButton);
 		switch(mouseMatch.action) {
+		case CanvasShortcuts::TOOL_ADJUST:
+			if(!m_allowToolAdjust) {
+				m_penmode = PenMode::Normal;
+				break;
+			}
+			Q_FALLTHROUGH();
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
 			m_penmode = PenMode::Normal;
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action;
@@ -877,7 +909,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 			updateOutline();
 			break;
 		case CanvasShortcuts::COLOR_PICK:
-			m_penmode = PenMode::Colorpick;
+			m_penmode = m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
 			break;
 		case CanvasShortcuts::LAYER_PICK:
 			m_penmode = PenMode::Layerpick;
@@ -921,10 +953,15 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 		event->modifiers(), m_keysDown, Qt::LeftButton);
 	if(m_dragmode == ViewDragMode::Prepared) {
 		switch(mouseMatch.action) {
+		case CanvasShortcuts::TOOL_ADJUST:
+			if(!m_allowToolAdjust) {
+				m_dragmode = ViewDragMode::None;
+				break;
+			}
+			Q_FALLTHROUGH();
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action;
 			m_dragInverted = mouseMatch.inverted();
@@ -940,7 +977,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	if(m_pendown == NOTDOWN) {
 		switch(mouseMatch.action) {
 		case CanvasShortcuts::COLOR_PICK:
-			m_penmode = PenMode::Colorpick;
+			m_penmode = m_allowColorPick ? PenMode::Colorpick : PenMode::Normal;
 			break;
 		case CanvasShortcuts::LAYER_PICK:
 			m_penmode = PenMode::Layerpick;

@@ -49,9 +49,16 @@ public:
 		ZOOM, INSPECTOR,
 		_LASTTOOL};
 
-	Tool(ToolController &owner, Type type, const QCursor &cursor)
-		: owner(owner), m_type(type), m_cursor(cursor)
-		{}
+	Tool(
+		ToolController &owner, Type type, const QCursor &cursor,
+		bool allowColorPick, bool allowToolAdjust)
+		: owner{owner}
+		, m_type{type}
+		, m_cursor{cursor}
+		, m_allowColorPick{allowColorPick}
+		, m_allowToolAdjust{allowToolAdjust}
+	{}
+
 	virtual ~Tool() {}
 
     Tool(const Tool &) = delete;
@@ -61,6 +68,8 @@ public:
 
 	Type type() const { return m_type; }
 	const QCursor &cursor() const { return m_cursor; }
+	bool allowColorPick() const { return m_allowColorPick; }
+	bool allowToolAdjust() const { return m_allowToolAdjust; }
 
 	/**
 	 * @brief Start a new stroke
@@ -111,6 +120,8 @@ protected:
 private:
 	const Type m_type;
 	const QCursor m_cursor;
+	const bool m_allowColorPick;
+	const bool m_allowToolAdjust;
 };
 
 }

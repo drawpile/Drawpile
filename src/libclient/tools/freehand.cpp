@@ -35,7 +35,7 @@ extern "C" {
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
-	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor)
+	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true)
 	, m_brushEngine{}
 	, m_drawing(false)
 {
