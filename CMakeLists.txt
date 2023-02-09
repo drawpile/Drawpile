@@ -207,7 +207,9 @@ elseif(WIN32)
 	set(CMAKE_INSTALL_BINDIR .)
 	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_BINDIR}/data")
 else()
-	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_DATAROOTDIR}/drawpile")
+	# Qt combines the organization name and the application name, so the path
+	# for application data contains this redundancy
+	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile")
 endif()
 
 if(CLIENT OR SERVER)
