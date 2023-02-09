@@ -254,6 +254,7 @@ private:
 	//! Previous pointer location
 	canvas::Point m_prevpoint;
 	canvas::Point m_prevoutlinepoint;
+	bool m_prevoutline;
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
 

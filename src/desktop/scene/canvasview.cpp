@@ -58,7 +58,7 @@ CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), m_pendown(NOTDOWN), m_penmode(PenMode::Normal),
 	m_dragmode(ViewDragMode::None), m_dragAction(CanvasShortcuts::NO_ACTION),
 	m_dragByKey(true), m_dragInverted(false), m_dragSwapAxes(false),
-	m_outlineSize(2), m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false),
+	m_prevoutline(false), m_outlineSize(2), m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false),
 	m_zoom(100), m_rotate(0), m_flip(false), m_mirror(false),
 	m_scene(nullptr),
 	m_zoomWheelDelta(0),
@@ -400,7 +400,9 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 		outlineVisibleInMode = m_dragAction == CanvasShortcuts::TOOL_ADJUST;
 	}
 
-	if(m_showoutline && m_outlineSize > 0 && outlineVisibleInMode) {
+	bool shouldRenderOutline = m_showoutline && m_outlineSize > 0 && outlineVisibleInMode;
+	m_prevoutline = shouldRenderOutline;
+	if(shouldRenderOutline) {
 		QRectF outline(m_prevoutlinepoint-QPointF(m_outlineSize/2.0, m_outlineSize/2.0),
 					QSizeF(m_outlineSize, m_outlineSize));
 
@@ -445,6 +447,7 @@ void CanvasView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
 	m_showoutline = false;
+	m_prevoutline = false;
 	updateOutline();
 }
 
@@ -693,7 +696,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
-	m_prevpoint = mapToScene(pos, 0.0, 0.0, 0.0, 0.0);
+	canvas::Point point = mapToScene(pos, 0.0, 0.0, 0.0, 0.0);
+	m_prevpoint = point;
 	CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
 		modifiers, m_keysDown, Qt::LeftButton);
 
@@ -707,13 +711,11 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 			m_dragAction = mouseMatch.action;
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
-			updateOutline();
 			break;
 		default:
 			m_dragmode = ViewDragMode::None;
 			break;
 		}
-		resetCursor();
 
 	} else if(m_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && m_pendown == MOUSEDOWN)) {
 		onPenUp();
@@ -728,7 +730,6 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 			m_dragAction = mouseMatch.action;
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
-			updateOutline();
 			break;
 		case CanvasShortcuts::COLOR_PICK:
 			m_penmode = PenMode::Colorpick;
@@ -740,9 +741,10 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 			m_penmode = PenMode::Normal;
 			break;
 		}
-		resetCursor();
-		updateOutline();
 	}
+
+	resetCursor();
+	updateOutline(point);
 }
 
 //! Handle mouse release events
@@ -1195,7 +1197,7 @@ void CanvasView::updateOutline(canvas::Point point) {
 		point.setX(qFloor(point.x()) + 0.5);
 		point.setY(qFloor(point.y()) + 0.5);
 	}
-	if(m_showoutline && !m_locked && !point.roughlySame(m_prevoutlinepoint)) {
+	if(m_showoutline && !m_locked && (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
 		QList<QRectF> rect;
 		const qreal owidth = m_outlineSize + m_brushOutlineWidth;
 		const qreal orad = owidth / 2.0;
