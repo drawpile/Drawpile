@@ -796,8 +796,8 @@ void Document::selectNone()
 			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer())) {
 		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
-		cancelSelection();
 	}
+	cancelSelection();
 }
 
 void Document::cancelSelection()
