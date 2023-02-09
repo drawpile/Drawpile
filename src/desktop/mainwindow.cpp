@@ -1974,7 +1974,6 @@ void MainWindow::toggleFullscreen()
 		m_fullscreenOldGeometry = geometry();
 		m_fullscreenOldMaximized = isMaximized();
 
-		menuBar()->hide();
 		m_view->setFrameShape(QFrame::NoFrame);
 
 		showFullScreen();
@@ -1987,7 +1986,6 @@ void MainWindow::toggleFullscreen()
 			showNormal();
 			setGeometry(m_fullscreenOldGeometry);
 		}
-		menuBar()->show();
 		m_view->setFrameShape(QFrame::StyledPanel);
 	}
 }
