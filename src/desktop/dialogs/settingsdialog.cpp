@@ -380,6 +380,7 @@ void SettingsDialog::restoreSettings()
 	m_ui->nsfmWords->setPlainText(cfg.value("tagwords", parentalcontrols::defaultWordList()).toString());
 	m_ui->autotagNsfm->setChecked(cfg.value("autotag", true).toBool());
 	m_ui->noUncensoring->setChecked(cfg.value("noUncensoring", false).toBool());
+	m_ui->parentalControlsHideLockedBox->setChecked(cfg.value("hidelocked", false).toBool());
 	setParentalControlsLocked(parentalcontrols::isLocked());
 	if(parentalcontrols::isOSActive())
 		m_ui->nsfmLock->setEnabled(false);
@@ -431,7 +432,13 @@ void SettingsDialog::setParentalControlsLocked(bool lock)
 	m_ui->nsfmNoJoin->setDisabled(lock);
 	m_ui->nsfmDisconnect->setDisabled(lock);
 	m_ui->noUncensoring->setDisabled(lock);
+	m_ui->parentalControlsHideLockedBox->setDisabled(lock);
 	m_ui->nsfmLock->setText(lock ? tr("Unlock") : tr("Lock"));
+	bool hidden = m_ui->parentalControlsHideLockedBox->isChecked() && lock;
+	m_ui->nsfmTagsGroup->setHidden(hidden);
+	m_ui->nsfmSessionRestrictionsGroup->setHidden(hidden);
+	m_ui->parentalControlsHideLockedBox->setHidden(hidden);
+	m_ui->parentalControlsLockedMessage->setVisible(hidden);
 }
 
 void SettingsDialog::rememberSettings()
@@ -518,6 +525,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("autotag", m_ui->autotagNsfm->isChecked());
 	cfg.setValue("tagwords", m_ui->nsfmWords->toPlainText());
 	cfg.setValue("noUncensoring", m_ui->noUncensoring->isChecked());
+	cfg.setValue("hidelocked", m_ui->parentalControlsHideLockedBox->isChecked());
 	cfg.endGroup();
 
 	// Remember canvas shortcuts

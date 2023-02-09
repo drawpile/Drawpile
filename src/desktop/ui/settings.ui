@@ -1188,86 +1188,123 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page">
-           <layout class="QFormLayout" name="formLayout_5">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>NSFM tag words:</string>
+          <widget class="QWidget" name="parentalControlsPage">
+           <layout class="QVBoxLayout" name="verticalLayout_16">
+            <item>
+             <widget class="QGroupBox" name="nsfmTagsGroup">
+              <property name="title">
+               <string>NSFM (Not Safe For Minors) Tag Words</string>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QPlainTextEdit" name="nsfmWords"/>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="autotagNsfm">
+                 <property name="text">
+                  <string>Automatically add NSFM tag based on title</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QPlainTextEdit" name="nsfmWords"/>
-            </item>
-            <item row="1" column="1">
-             <widget class="QCheckBox" name="autotagNsfm">
-              <property name="text">
-               <string>Automatically add NSFM tag based on title</string>
+            <item>
+             <widget class="QGroupBox" name="nsfmSessionRestrictionsGroup">
+              <property name="title">
+               <string>NSFM Session Restrictions</string>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QRadioButton" name="nsfmUnrestricted">
+                 <property name="text">
+                  <string>&amp;Unrestricted</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="nsfmHide">
+                 <property name="text">
+                  <string>Hide fro&amp;m listings</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="nsfmNoJoin">
+                 <property name="text">
+                  <string>Disallow &amp;joining</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="nsfmDisconnect">
+                 <property name="text">
+                  <string>Disconnect when &amp;tagged as NSFM</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="noUncensoring">
+                 <property name="text">
+                  <string>Block layer uncensoring</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>NSFM sessions:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QRadioButton" name="nsfmUnrestricted">
-              <property name="text">
-               <string>&amp;Unrestricted</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QRadioButton" name="nsfmHide">
-              <property name="text">
-               <string>Hide fro&amp;m listings</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QRadioButton" name="nsfmNoJoin">
-              <property name="text">
-               <string>Disallow &amp;joining</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QRadioButton" name="nsfmDisconnect">
-              <property name="text">
-               <string>Disconnect when &amp;tagged as NSFM</string>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="1">
-             <widget class="QPushButton" name="nsfmLock">
-              <property name="text">
-               <string>Lock</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <spacer name="verticalSpacer_8">
+            <item>
+             <spacer name="parentalControlsSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="8" column="1">
-             <widget class="QCheckBox" name="noUncensoring">
-              <property name="text">
-               <string>Block layer uncensoring</string>
-              </property>
-             </widget>
+            <item>
+             <layout class="QHBoxLayout" name="parentalControlsButtonLayout">
+              <item>
+               <widget class="QPushButton" name="nsfmLock">
+                <property name="text">
+                 <string>Lock</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="parentalControlsHideLockedBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Hide settings when locked</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="parentalControlsLockedMessage">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Parental controls are locked.</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
