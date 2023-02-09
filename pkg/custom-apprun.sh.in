@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+this_dir="$(readlink -f "$(dirname "$0")")"
+
+exec=usr/bin/drawpile
+case "${1-}" in
+	--server)
+		exec=usr/bin/drawpile-srv
+		shift
+	;;
+	--client)
+		shift
+	;;
+	--tools)
+		exec=usr/bin/drawpile-cli
+		shift
+	;;
+	--help)
+		echo "Drawpile @VERSION@"
+		echo
+		echo "--client (default)"
+		echo "    Runs the Drawpile client."
+		if [ -x "$this_dir"/usr/bin/drawpile-srv ]; then
+			echo "--server"
+			echo "    Runs the Drawpile dedicated server."
+		fi
+		if [ -x "$this_dir"/usr/bin/drawpile-cli ]; then
+			echo "--tools"
+			echo "    Runs the Drawpile command-line tools."
+		fi
+		exit 0
+	;;
+esac
+
+# This is required for Qt to pick up the bundled application data directory
+# and is not currently provided by the linuxdeploy Qt plugin
+export XDG_DATA_DIRS="${XDG_DATA_DIRS-}:${APPDIR}/usr/share:/usr/local/share:/usr/share"
+exec "$this_dir"/"$exec" "$@"
