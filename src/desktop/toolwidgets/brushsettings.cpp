@@ -854,7 +854,7 @@ bool BrushSettings::isSquare() const
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
 {
-	return std::exp(radiusLogarithmic / 100.0 - 2.0);
+	return std::exp(radiusLogarithmic / 100.0 - 2.0) * 2.0;
 }
 
 }
