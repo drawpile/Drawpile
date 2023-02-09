@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -456,8 +456,9 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
 
 
 void DP_brush_preview_render_flood_fill(DP_BrushPreview *bp,
-                                        uint32_t fill_color, double tolerance,
-                                        int expand, int blend_mode)
+                                        DP_UPixelFloat fill_color,
+                                        double tolerance, int expand,
+                                        int feather_radius, int blend_mode)
 {
     DP_CanvasState *cs = bp->cs;
     if (!cs) {
@@ -477,8 +478,8 @@ void DP_brush_preview_render_flood_fill(DP_BrushPreview *bp,
     int x, y;
     DP_Image *img;
     DP_FloodFillResult result = DP_flood_fill(
-        cs, width / 2, height / 2, (DP_Pixel8){fill_color}, tolerance, 1, false,
-        width * height, expand, &img, &x, &y);
+        cs, width / 2, height / 2, fill_color, tolerance, 1, false,
+        width * height, expand, feather_radius, &img, &x, &y);
     if (result != DP_FLOOD_FILL_SUCCESS) {
         DP_warn("Preview flood fill: %s", DP_error());
         return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboutloom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +117,12 @@ DP_INLINE DP_UPixel15 DP_upixel15_from_color(uint32_t color)
 {
     DP_UPixel8 pixel = {color};
     return DP_upixel8_to_15(pixel);
+}
+
+DP_INLINE DP_UPixelFloat DP_upixel_float_from_color(uint32_t color)
+{
+    DP_UPixel8 pixel = {color};
+    return DP_upixel8_to_float(pixel);
 }
 
 

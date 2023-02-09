@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 #ifndef DPENGINE_BRUSHPREVIEW_H
 #define DPENGINE_BRUSHPREVIEW_H
+#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_ClassicBrush DP_ClassicBrush;
@@ -58,8 +59,9 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      DP_BrushPreviewShape shape);
 
 void DP_brush_preview_render_flood_fill(DP_BrushPreview *bp,
-                                        uint32_t fill_color, double tolerance,
-                                        int expand, int blend_mode);
+                                        DP_UPixelFloat fill_color,
+                                        double tolerance, int expand,
+                                        int feather_radius, int blend_mode);
 
 DP_Image *DP_brush_preview_to_image(DP_BrushPreview *bp);
 

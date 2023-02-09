@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022 - 2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,10 @@ typedef enum DP_FloodFillResult {
 } DP_FloodFillResult;
 
 DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
-                                 DP_Pixel8 fill_color, double tolerance,
+                                 DP_UPixelFloat fill_color, double tolerance,
                                  int layer_id, bool sample_merged,
-                                 int size_limit, int expand, DP_Image **out_img,
-                                 int *out_x, int *out_y);
+                                 int size_limit, int expand, int feather_radius,
+                                 DP_Image **out_img, int *out_x, int *out_y);
 
 
 #endif
