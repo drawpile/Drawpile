@@ -51,7 +51,8 @@ jobs:
               libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
               libxcb-util-dev libinput-dev libvulkan-dev
               libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
-              libasound2-dev libpulse-dev libcups2-dev
+              libasound2-dev libpulse-dev libcups2-dev libssl-dev
+              libfontconfig1-dev
             other_packages: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
@@ -87,7 +88,7 @@ jobs:
                 libxkbcommon-x11-0 libdrm-amdgpu1 libdrm-common libdrm-nouveau2
                 libdrm-radeon1 libdrm2 libgbm1 libgl1-mesa-dri libglapi-mesa
                 libglx-mesa0 libts0 libgtk-3-bin librsvg2-common gir1.2-gtk-3.0
-                wayland-protocols
+                wayland-protocols libfontconfig1
                 libpulse0 libasound2 libcups2
                 libsecret-1-0 gir1.2-secret-1
                 libfuse2 appstream &&
