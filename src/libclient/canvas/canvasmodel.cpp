@@ -226,6 +226,10 @@ void CanvasModel::handleChat(const drawdance::Message &msg)
 
 	uint8_t oflags = DP_msg_chat_oflags(mc);
 	if(oflags & DP_MSG_CHAT_OFLAGS_PIN) {
+		if(!m_userlist->isOperator(msg.contextId())) {
+			return; // Only operators can (un)pin messages.
+		}
+
 		// Special value to remove a pinned message
 		if(message == "-") {
 			message = QString();
