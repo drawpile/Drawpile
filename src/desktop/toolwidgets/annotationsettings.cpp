@@ -173,6 +173,10 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
 		w[i]->setEnabled(enabled);
 	m_editActions->setEnabled(enabled);
+	if(!enabled) {
+		m_protectedAction->setChecked(false);
+		m_ui->creatorLabel->setText(QString{});
+	}
 }
 
 void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
