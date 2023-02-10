@@ -103,6 +103,9 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(valignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
 	m_ui->valign->setMenu(valignMenu);
 
+	m_ui->btnTextColor->setColor(Qt::black);
+	m_ui->btnBackground->setColor(Qt::transparent);
+
 	// Editor events
 	connect(m_ui->content, &QTextEdit::textChanged, this, &AnnotationSettings::applyChanges);
 	connect(m_ui->content, &QTextEdit::cursorPositionChanged, this, &AnnotationSettings::updateStyleButtons);
