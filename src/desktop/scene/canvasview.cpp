@@ -17,6 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "config.h" // for KIS_TABLET
 #include "canvasview.h"
 #include "canvasscene.h"
 #include "canvas/canvasmodel.h"
