@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2022 Calle Laakkonen
+   Copyright (C) 2006-2023 Calle Laakkonen, askmeaboutloom
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ class Ui_TextSettings;
 class QTimer;
 class QAction;
 class QActionGroup;
-class QLabel;
 
 namespace drawingboard {
 	class CanvasScene;
@@ -98,7 +97,6 @@ private:
 	QWidget *m_headerWidget;
 	QActionGroup *m_editActions;
 	QAction *m_protectedAction;
-	QLabel *m_creatorLabel;
 
 	uint16_t m_selectionId;
 

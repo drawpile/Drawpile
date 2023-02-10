@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2022 Calle Laakkonen
+   Copyright (C) 2006-2023 Calle Laakkonen, askmeaboutloom
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@
 #include <QTimer>
 #include <QTextBlock>
 #include <QMenu>
-#include <QLabel>
 
 namespace tools {
 
@@ -60,32 +59,19 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 	// Set up the header widget
 	m_headerWidget = new QWidget(parent);
-	auto headerLayout = new QHBoxLayout;
-	headerLayout->setSpacing(0);
-	headerLayout->setContentsMargins(0, 0, 0, 0);
-	m_headerWidget->setLayout(headerLayout);
+	m_ui->headerLayout->setParent(nullptr);
+	m_ui->headerLayout->setContentsMargins(0, 0, 1, 0);
+	m_headerWidget->setLayout(m_ui->headerLayout);
 
 	m_protectedAction = new QAction(icon::fromTheme("object-locked"), tr("Protect"), this);
 	m_protectedAction->setCheckable(true);
-	auto *protectedButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft, m_headerWidget);
-	protectedButton->setDefaultAction(m_protectedAction);
-	headerLayout->addWidget(protectedButton);
+	m_ui->protectButton->setDefaultAction(m_protectedAction);
 
-	auto *mergeButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter, m_headerWidget);
 	QAction *mergeAction = new QAction(icon::fromTheme("arrow-down-double"), tr("Merge"), this);
-	mergeButton->setDefaultAction(mergeAction);
-	headerLayout->addWidget(mergeButton);
+	m_ui->mergeButton->setDefaultAction(mergeAction);
 
-	auto *deleteButton = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight, m_headerWidget);
 	QAction *deleteAction = new QAction(icon::fromTheme("list-remove"), tr("Delete"), this);
-	deleteButton->setDefaultAction(deleteAction);
-	headerLayout->addWidget(deleteButton);
-
-	headerLayout->addStretch(0);
-
-	m_creatorLabel = new QLabel(m_headerWidget);
-	m_creatorLabel->setAlignment(Qt::AlignRight);
-	headerLayout->addWidget(m_creatorLabel);
+	m_ui->deleteButton->setDefaultAction(deleteAction);
 
 	m_editActions = new QActionGroup(this);
 	m_editActions->addAction(mergeAction);
@@ -347,7 +333,7 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		}
 		m_ui->valign->setProperty(VALIGN_PROP, align);
 
-		m_creatorLabel->setText(controller()->model()->userlist()->getUsername(a->userId()));
+		m_ui->creatorLabel->setText(controller()->model()->userlist()->getUsername(a->userId()));
 		m_protectedAction->setChecked(a->protect());
 
 		const bool opOrOwner = controller()->model()->aclState()->amOperator() || (a->id() >> 8) == controller()->client()->myId();
