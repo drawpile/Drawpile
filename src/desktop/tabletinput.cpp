@@ -16,13 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "config.h"
 #include "tabletinput.h"
 #include <QApplication>
 #include <QSettings>
 
 #if defined(Q_OS_WIN)
-#	if defined(KIS_TABLET)
+#	if defined(HAVE_KIS_TABLET)
 #		include "bundled/kis_tablet/kis_tablet_support_win.h"
 #		include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #	elif QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -38,7 +37,7 @@ static const char *inputMode = "Qt tablet input";
 
 void init(QApplication *app, const QSettings &cfg)
 {
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#if defined(Q_OS_WIN) && defined(HAVE_KIS_TABLET)
 	bool useWindowsInk = false;
 	// Enable Windows Ink tablet event handler
 	// This was taken directly from Krita

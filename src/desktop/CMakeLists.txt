@@ -217,6 +217,7 @@ endif()
 
 if(KIS_TABLET)
 	if("${WIN32}" AND "${QT_VERSION}" EQUAL 5)
+		target_compile_definitions(${CLIENTNAME} PUBLIC HAVE_KIS_TABLET)
 		target_sources(${CLIENTNAME} PRIVATE
 			bundled/kis_tablet/kis_tablet_support_win8.cpp
 			bundled/kis_tablet/kis_tablet_support_win.cpp)

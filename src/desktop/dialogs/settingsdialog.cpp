@@ -69,7 +69,7 @@
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #		define HAVE_INPUT_SETTINGS
 #		define INPUT_NO_RESTART_REQUIRED
-#	elif defined(KIS_TABLET)
+#	elif defined(HAVE_KIS_TABLET)
 #		define HAVE_INPUT_SETTINGS
 #		define HAVE_RELATIVE_PEN_MODE_HACK
 #	endif

@@ -17,7 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "config.h" // for KIS_TABLET
 #include "canvasview.h"
 #include "canvasscene.h"
 #include "canvas/canvasmodel.h"
@@ -47,7 +46,7 @@
 // pen. So in that case, we don't accept those tablet events and instead add a
 // check in our mouse event handlers to disregard synthetically generated mouse
 // events, meaning we don't double up on them and the view acts properly.
-#ifdef KIS_TABLET
+#ifdef HAVE_KIS_TABLET
 #	undef PASS_PEN_EVENTS
 #else
 #	define PASS_PEN_EVENTS
