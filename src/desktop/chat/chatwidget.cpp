@@ -602,7 +602,10 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
 
-	if(oflags & DP_MSG_CHAT_OFLAGS_ALERT && d->userlist && d->userlist->isOperator(sender)) {
+	bool isOp = d->userlist && d->userlist->isOperator(sender);
+	bool isValidAlert = isOp && oflags & DP_MSG_CHAT_OFLAGS_ALERT;
+	bool isValidShout = isOp && oflags & DP_MSG_CHAT_OFLAGS_SHOUT;
+	if(isValidAlert) {
 		chat.appendAlert(d->usernameSpan(sender), safetext);
 
 		for(int i=0;i<d->tabs->count();++i) {
@@ -616,9 +619,9 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	} else if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
 		chat.appendAction(d->usernameSpan(sender), safetext);
 	} else if(d->compactMode) {
-		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, oflags & DP_MSG_CHAT_OFLAGS_SHOUT);
+		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, isValidShout);
 	} else {
-		chat.appendMessage(sender, d->usernameSpan(sender), safetext, oflags & DP_MSG_CHAT_OFLAGS_SHOUT);
+		chat.appendMessage(sender, d->usernameSpan(sender), safetext, isValidShout);
 	}
 
 	if(chatId != d->currentChat) {
