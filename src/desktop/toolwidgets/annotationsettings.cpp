@@ -157,7 +157,7 @@ QWidget *AnnotationSettings::getHeaderWidget()
 
 void AnnotationSettings::setUiEnabled(bool enabled)
 {
-	QWidget *w[] = {
+	QWidget *widgets[] = {
 		m_ui->content,
 		m_ui->btnBackground,
 		m_ui->btnTextColor,
@@ -170,8 +170,9 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 		m_ui->font,
 		m_ui->size
 	};
-	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
-		w[i]->setEnabled(enabled);
+	for(QWidget *w : widgets) {
+		w->setEnabled(enabled);
+	}
 	m_editActions->setEnabled(enabled);
 	if(!enabled) {
 		m_protectedAction->setChecked(false);
