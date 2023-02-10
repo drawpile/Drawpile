@@ -22,9 +22,10 @@
 #include "toolsettings.h"
 
 class Ui_TextSettings;
-class QTimer;
 class QAction;
 class QActionGroup;
+class QTextCharFormat;
+class QTimer;
 
 namespace drawingboard {
 	class CanvasScene;
@@ -91,6 +92,7 @@ protected:
 
 private:
 	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);
+	void setFontFamily(QTextCharFormat &fmt);
 	void setUiEnabled(bool enabled);
 
 	Ui_TextSettings *m_ui;
