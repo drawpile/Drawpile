@@ -751,16 +751,17 @@ void ChatWidget::sendMessage(const QString &chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("help")) {
-			const QString text = QStringLiteral(
+			//: Don't translate the commands, only their descriptions!
+			const QString text = tr(
 				"Available client commands:\n"
 				"/help - show this message\n"
 				"/clear - clear chat window\n"
-				"/! <text> - make an announcement (recorded in session history)\n"
-			    "/alert <text> - send a high priority alert\n"
-				"/me <text> - send action type message\n"
-				"/pin <text> - pin a message to the top of the chat box (Ops only)\n"
-				"/unpin - remove pinned message\n"
-				"/roll [AdX] - roll dice"
+				"/! <text> - make an announcement (Operators only)\n"
+				"/alert <text> - send a high priority alert (Operators only)\n"
+				"/pin <text> - pin a message to the top of the chat box (Operators only)\n"
+				"/unpin - remove pinned message (Operators only)\n"
+				"/me <text> - send action-type message\n"
+				"/roll <dice> - roll dice, e.g. 1d6 for a six-sided die"
 			);
 			systemMessage(text);
 			return;
