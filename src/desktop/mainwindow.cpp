@@ -416,10 +416,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 	connect(m_doc->client(), &net::Client::youWereKicked, m_netstatus, &widgets::NetStatus::kicked);
 
-	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(loadShortcuts()));
-	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateSettings()));
-	connect(qApp, SIGNAL(settingsChanged()), m_doc, SLOT(updateSettings()));
-	connect(qApp, SIGNAL(settingsChanged()), m_view, SLOT(updateSettings()));
+	DrawpileApp *app = static_cast<DrawpileApp *>(qApp);
+	connect(app, &DrawpileApp::settingsChanged, this, &MainWindow::loadShortcuts);
+	connect(app, &DrawpileApp::settingsChanged, this, &MainWindow::updateSettings);
+	connect(app, &DrawpileApp::settingsChanged, m_doc, &Document::updateSettings);
+	connect(app, &DrawpileApp::settingsChanged, m_view, &widgets::CanvasView::updateSettings);
 
 	updateSettings();
 
