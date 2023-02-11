@@ -224,7 +224,7 @@ void CanvasShortcutsDialog::updateResult()
 	const CanvasShortcuts::Shortcut *conflict =
 		d->canvasShortcuts.searchConflict(s, d->s);
 	bool valid = s.isValid();
-	bool unmodifiedLeftClick = s.isUnmodifiedLeftClick();
+	bool unmodifiedLeftClick = s.isUnmodifiedClick(Qt::LeftButton);
 
 	QString conflictDescription;
 	if(conflict) {

@@ -1,7 +1,7 @@
 /*
    Drawpile - a collaborative drawing program.
 
-   Copyright (C) 2006-2019 Calle Laakkonen
+   Copyright (C) 2006-2023 Calle Laakkonen, askmeaboutloom
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,12 +51,13 @@ public:
 
 	Tool(
 		ToolController &owner, Type type, const QCursor &cursor,
-		bool allowColorPick, bool allowToolAdjust)
+		bool allowColorPick, bool allowToolAdjust, bool allowRightClick)
 		: owner{owner}
 		, m_type{type}
 		, m_cursor{cursor}
 		, m_allowColorPick{allowColorPick}
 		, m_allowToolAdjust{allowToolAdjust}
+		, m_handlesRightClick{allowRightClick}
 	{}
 
 	virtual ~Tool() {}
@@ -70,6 +71,7 @@ public:
 	const QCursor &cursor() const { return m_cursor; }
 	bool allowColorPick() const { return m_allowColorPick; }
 	bool allowToolAdjust() const { return m_allowToolAdjust; }
+	bool handlesRightClick() const { return m_handlesRightClick; }
 
 	/**
 	 * @brief Start a new stroke
@@ -115,6 +117,8 @@ public:
 	virtual bool allowSmoothing() const { return false; }
 
 protected:
+	void setHandlesRightClick(bool handlesRightClickk);
+
 	ToolController &owner;
 
 private:
@@ -122,6 +126,7 @@ private:
 	const QCursor m_cursor;
 	const bool m_allowColorPick;
 	const bool m_allowToolAdjust;
+	bool m_handlesRightClick; // May change during tool operation.
 };
 
 }

@@ -33,8 +33,10 @@ namespace tools {
 void ShapeTool::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	Q_UNUSED(right);
 	Q_ASSERT(!m_drawing);
+	if(right) {
+		return;
+	}
 
 	m_start = point;
 	m_p1 = point;

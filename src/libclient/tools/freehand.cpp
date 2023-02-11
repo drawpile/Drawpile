@@ -35,7 +35,7 @@ extern "C" {
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
-	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true)
+	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true, false)
 	, m_brushEngine{}
 	, m_drawing(false)
 {
@@ -48,8 +48,10 @@ Freehand::~Freehand()
 void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	Q_UNUSED(right);
 	Q_ASSERT(!m_drawing);
+	if(right) {
+		return;
+	}
 
 	m_drawing = true;
 	m_firstPoint = true;

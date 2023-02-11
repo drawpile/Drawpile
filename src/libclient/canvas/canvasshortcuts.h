@@ -58,15 +58,6 @@ public:
 		CONSTRAINT_MASK = TOOL_CONSTRAINT1 | TOOL_CONSTRAINT2,
 	};
 
-	struct Match {
-		Action action;
-		unsigned int flags;
-		bool inverted() { return flags & Flag::INVERTED; }
-		bool swapAxes() { return flags & Flag::SWAP_AXES; }
-		bool toolConstraint1() { return flags & Flag::TOOL_CONSTRAINT1; }
-		bool toolConstraint2() { return flags & Flag::TOOL_CONSTRAINT2; }
-	};
-
 	struct Shortcut {
 		Type type;
 		Qt::KeyboardModifiers mods;
@@ -84,7 +75,26 @@ public:
 			const Shortcut *prevMatch = nullptr) const;
 
 		bool isValid(bool checkAction = true) const;
-		bool isUnmodifiedLeftClick() const;
+		bool isUnmodifiedClick(Qt::MouseButton inButton) const;
+	};
+
+	struct Match {
+		const Shortcut *shortcut;
+		Action action() { return shortcut ? shortcut->action : NO_ACTION; }
+		unsigned int flags() { return shortcut ? shortcut->flags : NORMAL; }
+		bool inverted() { return flags() & Flag::INVERTED; }
+		bool swapAxes() { return flags() & Flag::SWAP_AXES; }
+
+		bool isUnmodifiedClick(Qt::MouseButton button)
+		{
+			return shortcut && shortcut->isUnmodifiedClick(button);
+		}
+	};
+
+	struct ConstraintMatch {
+		unsigned int flags;
+		bool toolConstraint1() { return flags & Flag::TOOL_CONSTRAINT1; }
+		bool toolConstraint2() { return flags & Flag::TOOL_CONSTRAINT2; }
 	};
 
 	CanvasShortcuts();
@@ -113,7 +123,7 @@ public:
 	Match matchMouseWheel(
 		Qt::KeyboardModifiers mods, const QSet<Qt::Key> &keys) const;
 
-	Match matchConstraints(
+	ConstraintMatch matchConstraints(
 		Qt::KeyboardModifiers mods, const QSet<Qt::Key> &keys) const;
 
 private:

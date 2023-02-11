@@ -30,7 +30,7 @@
 namespace tools {
 
 Annotation::Annotation(ToolController &owner)
-	: Tool(owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2), false, false)
+	: Tool(owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2), false, false, true)
 {
 }
 
@@ -40,7 +40,11 @@ Annotation::Annotation(ToolController &owner)
  */
 void Annotation::begin(const canvas::Point& point, bool right, float zoom)
 {
-	Q_UNUSED(right);
+	if(right) {
+		m_selectedId = 0;
+		owner.setActiveAnnotation(m_selectedId);
+		return;
+	}
 
 	m_p1 = point;
 	m_p2 = point;

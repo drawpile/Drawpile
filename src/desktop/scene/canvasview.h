@@ -163,7 +163,8 @@ public slots:
 	void zoomToFit();
 
 	void setToolCursor(const QCursor &cursor);
-	void setToolCapabilities(bool allowColorPick, bool allowToolAdjust);
+	void setToolCapabilities(
+		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick);
 
 	/**
 	 * @brief Set the cursor to use for brush tools
@@ -244,6 +245,7 @@ private:
 
 	bool m_allowColorPick;
 	bool m_allowToolAdjust;
+	bool m_toolHandlesRightClick;
 	PenMode m_penmode;
 
 	//! Is the view being dragged

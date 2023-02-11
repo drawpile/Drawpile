@@ -30,7 +30,7 @@
 namespace tools {
 
 FloodFill::FloodFill(ToolController &owner)
-	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29), true, true)
+	: Tool(owner, FLOODFILL, QCursor(QPixmap(":cursors/bucket.png"), 2, 29), true, true, false)
 	, m_tolerance(0.01)
 	, m_expansion(0)
 	, m_featherRadius(0)
@@ -43,7 +43,9 @@ FloodFill::FloodFill(ToolController &owner)
 void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	Q_UNUSED(right);
+	if(right) {
+		return;
+	}
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 

@@ -27,7 +27,7 @@
 namespace tools {
 
 ColorPicker::ColorPicker(ToolController &owner)
-	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29), false, true),
+	: Tool(owner, PICKER, QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29), false, true, false),
 	m_pickFromCurrentLayer(false),
 	m_size(0)
 {
@@ -36,7 +36,9 @@ ColorPicker::ColorPicker(ToolController &owner)
 void ColorPicker::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	Q_UNUSED(right);
+	if(right) {
+		return;
+	}
 
 	motion(point, false, false);
 }

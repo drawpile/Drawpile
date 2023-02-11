@@ -25,14 +25,17 @@
 namespace tools {
 
 Inspector::Inspector(ToolController &owner)
-	: Tool(owner, INSPECTOR, QCursor(Qt::WhatsThisCursor), false, false)
+	: Tool(owner, INSPECTOR, QCursor(Qt::WhatsThisCursor), false, false, false)
 {
 }
 
 void Inspector::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	Q_UNUSED(right);
+	if(right) {
+		return;
+	}
+
 	owner.model()->inspectCanvas(point.x(), point.y());
 }
 

@@ -33,7 +33,7 @@ using canvas::PointVector;
 using canvas::Point;
 
 BezierTool::BezierTool(ToolController &owner)
-	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 1, 1), true, true)
+	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 1, 1), true, true, false)
 	, m_brushEngine{}
 {
 }
@@ -61,8 +61,11 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 		m_beginPoint = point;
 	}
 
-	if(!m_points.isEmpty())
+	bool hasPoints = !m_points.isEmpty();
+	setHandlesRightClick(hasPoints);
+	if(hasPoints) {
 		updatePreview();
+	}
 }
 
 void BezierTool::motion(const Point& point, bool constrain, bool center)
@@ -102,6 +105,8 @@ void BezierTool::end()
 	m_points << ControlPoint { m_points.last().point, QPointF() };
 	if(s > 1 && Point::intSame(m_points.at(s-1).cp, QPointF()))
 		finishMultipart();
+
+	setHandlesRightClick(!m_points.isEmpty());
 }
 
 void BezierTool::finishMultipart()

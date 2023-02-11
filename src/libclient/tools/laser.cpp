@@ -27,15 +27,17 @@
 namespace tools {
 
 LaserPointer::LaserPointer(ToolController &owner)
-	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0), false, true),
+	: Tool(owner, LASERPOINTER, QCursor(QPixmap(":cursors/arrow.png"), 0, 0), false, true, false),
 	m_persistence(1), m_drawing(false)
 {}
 
 void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	Q_UNUSED(right);
 	Q_ASSERT(!m_drawing);
+	if(right) {
+		return;
+	}
 
 	m_drawing = true;
 

@@ -35,7 +35,9 @@ namespace tools {
 
 void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 {
-	Q_UNUSED(right);
+	if(right) {
+		return;
+	}
 
 	canvas::Selection *sel = m_allowTransform ? owner.model()->selection() : nullptr;
 	if(sel)

@@ -297,16 +297,16 @@ CanvasShortcuts::Match CanvasShortcuts::matchMouseWheel(
 	return matchShortcut(MOUSE_WHEEL, mods, keys);
 }
 
-CanvasShortcuts::Match CanvasShortcuts::matchConstraints(
+CanvasShortcuts::ConstraintMatch CanvasShortcuts::matchConstraints(
 	Qt::KeyboardModifiers mods, const QSet<Qt::Key> &keys) const
 {
-	unsigned int flags = Flag::NORMAL;
+	ConstraintMatch match = {NORMAL};
 	for(const Shortcut &s : m_shortcuts) {
 		if(s.matches(CONSTRAINT_KEY_COMBINATION, mods, keys)) {
-			flags |= s.flags;
+			match.flags |= s.flags;
 		}
 	}
-	return {CONSTRAINT, flags};
+	return match;
 }
 
 bool CanvasShortcuts::Shortcut::conflictsWith(const Shortcut &other) const
@@ -329,7 +329,7 @@ bool CanvasShortcuts::Shortcut::isValid(bool checkAction) const
 {
 	// Sometimes we just want to check if the inputs are valid.
 	if(checkAction) {
-		if(isUnmodifiedLeftClick()) {
+		if(isUnmodifiedClick(Qt::LeftButton)) {
 			// A plain left click would interfere with drawing.
 			return false;
 		} else if(type == CONSTRAINT_KEY_COMBINATION) {
@@ -367,9 +367,10 @@ bool CanvasShortcuts::Shortcut::isValid(bool checkAction) const
 	}
 }
 
-bool CanvasShortcuts::Shortcut::isUnmodifiedLeftClick() const
+bool CanvasShortcuts::Shortcut::isUnmodifiedClick(
+	Qt::MouseButton inButton) const
 {
-	return type == MOUSE_BUTTON && button == Qt::LeftButton &&
+	return type == MOUSE_BUTTON && button == inButton &&
 		   mods == Qt::NoModifier && keys.isEmpty();
 }
 
@@ -393,11 +394,7 @@ CanvasShortcuts::Match CanvasShortcuts::matchShortcut(
 			match = &s;
 		}
 	}
-	if(match) {
-		return {match->action, match->flags};
-	} else {
-		return {NO_ACTION, 0};
-	}
+	return {match};
 }
 
 void CanvasShortcuts::saveShortcut(QSettings &cfg, const Shortcut &s)

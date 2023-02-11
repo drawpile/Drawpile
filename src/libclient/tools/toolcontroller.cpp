@@ -95,7 +95,8 @@ void ToolController::setActiveTool(Tool::Type tool)
 
 		m_activeTool = getTool(tool);
 		emit toolCapabilitiesChanged(
-			activeToolAllowColorPick(), activeToolAllowToolAdjust());
+			activeToolAllowColorPick(), activeToolAllowToolAdjust(),
+			activeToolHandlesRightClick());
 		emit toolCursorChanged(activeToolCursor());
 	}
 }
@@ -130,6 +131,12 @@ bool ToolController::activeToolAllowToolAdjust() const
 {
 	Q_ASSERT(m_activeTool);
 	return m_activeTool->allowToolAdjust();
+}
+
+bool ToolController::activeToolHandlesRightClick() const
+{
+	Q_ASSERT(m_activeTool);
+	return m_activeTool->handlesRightClick();
 }
 
 void ToolController::setActiveLayer(uint16_t id)

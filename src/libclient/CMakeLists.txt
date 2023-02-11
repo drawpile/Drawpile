@@ -64,6 +64,7 @@ set(libclient_sources
 	tools/selection.cpp
 	tools/shapetools.cpp
 	tools/strokesmoother.cpp
+	tools/tool.cpp
 	tools/toolcontroller.cpp
 	tools/toolproperties.cpp
 	tools/utils.cpp
