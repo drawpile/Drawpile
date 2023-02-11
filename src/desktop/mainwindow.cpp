@@ -2577,7 +2577,7 @@ void MainWindow::setupActions()
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
-	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Tabs on Side")).checkable().remembered();
+	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Vertical Tabs on Sides")).checkable().remembered();
 	toggledockmenu->addAction(sideTabDocks);
 	auto updateSideTabDocks = [=](){
 		if(sideTabDocks->isChecked()) {
