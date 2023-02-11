@@ -1204,7 +1204,7 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="68"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Docker in Drawpile können frei angeordnet und kombiniert werden, indem Sie Shift gedrückt halten und sie am oberen Rand ziehen. Sie können hier Ihre favorisierten Anordnungen speichern und wiederherstellen. Stellen Sie sicher, dass Ihre Anordnungen in Ihre Auflösung passen, ansonsten kann es sein, dass Elemente aus dem sichtbaren Bildschirmbereich hinausgedrückt werden.</translation>
     </message>
 </context>
 <context>
@@ -1561,7 +1561,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2614"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift gedrückt halten zum Anordnen</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2636"/>
@@ -2222,7 +2222,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2598"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertikale Tabs an den Seiten</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2630"/>
@@ -6056,7 +6056,15 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Verfügbare Chatkommandos:
+/help - Zeigt diese Nachricht an
+/clear - leert das Chatfenster
+/! &lt;Text&gt; - macht eine Ansage (nur Operatoren)
+/alert &lt;Text&gt; - sendet Alarm mit hoher Priorität (nur Operatoren)
+/pin &lt;Text&gt; - pinnt eine Nachricht oben im Chatfenster an (nur Operatoren)
+/unpin - entfernt die angepinnte Nachricht (nur Operatoren)
+/me &lt;Text&gt; - sendet eine Aktionsnachricht
+/roll &lt;Würfel&gt; - würfelt zufällig, z.B. 1d6 für einen sechsseitigen Würfel</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="770"/>
