@@ -76,7 +76,6 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/logging.h"
 #include "utils/actionbuilder.h"
-#include "utils/hotbordereventfilter.h"
 #include "../libshared/qtshims.h"
 
 #include "widgets/viewstatus.h"
@@ -435,20 +434,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	updateLockWidget();
 	setRecorderStatus(false);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->addWindow(this);
-
-#else
-	// OSX provides this feature itself
-	HotBorderEventFilter *hbfilter = new HotBorderEventFilter(this);
-	m_view->installEventFilter(hbfilter);
-	for(QObject *c : children()) {
-		QToolBar *tb = dynamic_cast<QToolBar*>(c);
-		if(tb)
-			tb->installEventFilter(hbfilter);
-	}
-
-	connect(hbfilter, &HotBorderEventFilter::hotBorder, this, &MainWindow::hotBorderMenubar);
 #endif
 
 	// Show self
@@ -1987,13 +1974,6 @@ void MainWindow::toggleFullscreen()
 			showNormal();
 			setGeometry(m_fullscreenOldGeometry);
 		}
-	}
-}
-
-void MainWindow::hotBorderMenubar(bool show)
-{
-	if(windowState().testFlag(Qt::WindowFullScreen)) {
-		menuBar()->setVisible(show);
 	}
 }
 

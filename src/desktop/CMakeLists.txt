@@ -89,7 +89,6 @@ set(desktop_sources
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp
-	utils/hotbordereventfilter.cpp
 )
 
 set(desktop_uis

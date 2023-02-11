@@ -185,8 +185,6 @@ private slots:
 
 	void selectionRemoved();
 
-	void hotBorderMenubar(bool show);
-
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
 
