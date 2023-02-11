@@ -172,6 +172,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_lastToolBeforePaste(-1),
 	  m_fullscreenOldMaximized(false),
 	  m_tempToolSwitchShortcut(nullptr),
+	  m_titleBarsHidden(false),
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
@@ -421,6 +422,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(app, &DrawpileApp::settingsChanged, this, &MainWindow::updateSettings);
 	connect(app, &DrawpileApp::settingsChanged, m_doc, &Document::updateSettings);
 	connect(app, &DrawpileApp::settingsChanged, m_view, &widgets::CanvasView::updateSettings);
+	connect(app, &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
 
 	updateSettings();
 
@@ -2022,6 +2024,21 @@ void MainWindow::setDocksHidden(bool hidden)
 	m_dockToggles->setDisabled(hidden);
 }
 
+void MainWindow::setDockTitleBarsHidden(bool hidden)
+{
+	QAction *hideDockTitleBars = getAction("hidedocktitlebars");
+	bool actuallyHidden = hidden && hideDockTitleBars->isChecked();
+	if(actuallyHidden != m_titleBarsHidden) {
+		m_titleBarsHidden = hidden;
+		for(QObject *c : children()) {
+			QDockWidget *dw = qobject_cast<QDockWidget*>(c);
+			if(dw) {
+				dw->titleBarWidget()->setHidden(hidden);
+			}
+		}
+	}
+}
+
 /**
  * User selected a tool
  * @param tool action representing the tool
@@ -2593,6 +2610,12 @@ void MainWindow::setupActions()
 	QAction *hideDocks = makeAction("hidedocks", tr("Hide Docks")).checkable().shortcut("tab");
 	toggledockmenu->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
+
+	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).checked().remembered();
+	toggledockmenu->addAction(hideDockTitleBars);
+	connect(hideDocks, &QAction::toggled, [this](){
+		setDockTitleBarsHidden(m_titleBarsHidden);
+	});
 
 	//
 	// File menu and toolbar

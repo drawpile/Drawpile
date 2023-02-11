@@ -116,6 +116,11 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 
 	onFeaturesChanged(parent->features());
 	connect(parent, &QDockWidget::featuresChanged, this, &TitleWidget::onFeaturesChanged);
+
+	// Retain the title bar's size when it's hidden to avoid jiggering.
+	QSizePolicy sp = sizePolicy();
+	sp.setRetainSizeWhenHidden(true);
+	setSizePolicy(sp);
 }
 
 void TitleWidget::addCustomWidget(QWidget *widget, bool stretch)

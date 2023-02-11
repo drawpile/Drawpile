@@ -66,6 +66,7 @@ public:
 signals:
 	void settingsChanged();
 	void eraserNear(bool near);
+	void setDockTitleBarsHidden(bool hidden);
 
 protected:
 	bool event(QEvent *e);

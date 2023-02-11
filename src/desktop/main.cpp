@@ -25,6 +25,7 @@
 #include "utils/icon.h"
 #include "utils/logging.h"
 #include "utils/colorscheme.h"
+#include "utils/hidedocktitlebarseventfilter.h"
 #include "notifications.h"
 #include "dialogs/versioncheckdialog.h"
 #include "../libshared/qtshims.h"
@@ -62,6 +63,13 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 #endif
 	setWindowIcon(QIcon(":/icons/dancepile.png"));
 	drawdance::DrawContextPool::init();
+
+	// Dockers are hard to drag around since their title bars are full of stuff.
+	// This event filter allows for hiding the title bars by holding shift.
+	HideDockTitleBarsEventFilter *filter = new HideDockTitleBarsEventFilter{this};
+	installEventFilter(filter);
+	connect(filter, &HideDockTitleBarsEventFilter::setDockTitleBarsHidden, this,
+		&DrawpileApp::setDockTitleBarsHidden);
 }
 
 DrawpileApp::~DrawpileApp()

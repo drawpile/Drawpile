@@ -187,6 +187,7 @@ private slots:
 
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
+	void setDockTitleBarsHidden(bool hidden);
 
 	void updateTitle();
 
@@ -280,6 +281,7 @@ private:
 
 	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool change button
 	ShortcutDetector *m_tempToolSwitchShortcut;
+	bool m_titleBarsHidden;
 
 	Document *m_doc;
 	bool m_exitAfterSave;

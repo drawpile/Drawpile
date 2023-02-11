@@ -89,6 +89,7 @@ set(desktop_sources
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/listserverdelegate.cpp
+	utils/hidedocktitlebarseventfilter.cpp
 )
 
 set(desktop_uis
