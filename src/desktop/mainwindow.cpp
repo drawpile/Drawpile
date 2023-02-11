@@ -802,6 +802,20 @@ void MainWindow::readSettings(bool windowpos)
 		m_splitter->restoreState(cfg.value("viewstate").toByteArray());
 	}
 
+	cfg.beginGroup("docks");
+	for(QObject *c : children()) {
+		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
+		if(dw && !dw->objectName().isEmpty()) {
+			cfg.beginGroup(dw->objectName());
+			if(cfg.value("undockable", false).toBool()) {
+				dw->setFloating(true);
+				dw->setAllowedAreas(Qt::NoDockWidgetArea);
+			}
+			cfg.endGroup();
+		}
+	}
+	cfg.endGroup();
+
 	// Restore remembered actions
 	cfg.beginGroup("actions");
 	for(QAction *act : actions()) {
@@ -836,6 +850,18 @@ void MainWindow::writeSettings()
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", m_splitter->saveState());
+
+	cfg.beginGroup("docks");
+	for(QObject *c : children()) {
+		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
+		if(dw && !dw->objectName().isEmpty()) {
+			cfg.beginGroup(dw->objectName());
+			bool undockable = dw->isFloating() && dw->allowedAreas() == Qt::NoDockWidgetArea;
+			cfg.setValue("undockable", undockable);
+			cfg.endGroup();
+		}
+	}
+	cfg.endGroup();
 
 	// Save all remembered actions
 	cfg.beginGroup("actions");
@@ -3347,6 +3373,7 @@ void MainWindow::createDocks()
 
 	// Create navigator
 	m_dockNavigator = new docks::Navigator(this);
+	m_dockNavigator->setObjectName("navigatordock");
 	m_dockNavigator->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default

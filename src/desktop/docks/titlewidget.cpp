@@ -22,6 +22,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QAbstractButton>
+#include <QMenu>
 #include <QPainter>
 #include <QStyleOptionButton>
 #include "../../libshared/qtshims.h"
@@ -105,22 +106,40 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 
 	// (un)dock and close buttons
 	m_dockButton = new Button(style()->standardIcon(QStyle::SP_TitleBarNormalButton), this);
-	connect(m_dockButton, &QAbstractButton::clicked, parent, [parent]() {
-		parent->setFloating(!parent->isFloating());
-	});
+	connect(m_dockButton, &QAbstractButton::clicked, this, &TitleWidget::toggleFloating);
 	m_layout->addWidget(m_dockButton);
 
 	m_closeButton = new Button(style()->standardIcon(QStyle::SP_TitleBarCloseButton), this);
 	connect(m_closeButton, &QAbstractButton::clicked, parent, &QDockWidget::close);
 	m_layout->addWidget(m_closeButton);
 
-	onFeaturesChanged(parent->features());
+	connect(parent, &QDockWidget::dockLocationChanged, this, &TitleWidget::onDockLocationChanged);
 	connect(parent, &QDockWidget::featuresChanged, this, &TitleWidget::onFeaturesChanged);
+	onFeaturesChanged(parent->features());
 
 	// Retain the title bar's size when it's hidden to avoid jiggering.
 	QSizePolicy sp = sizePolicy();
 	sp.setRetainSizeWhenHidden(true);
 	setSizePolicy(sp);
+
+	m_contextMenu = new QMenu{this};
+	setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, &QWidget::customContextMenuRequested, this, &TitleWidget::showContextMenu);
+	connect(m_contextMenu, &QMenu::aboutToShow, this, &TitleWidget::updateContextMenuActions);
+
+	m_dockAction = new QAction{tr("Docked"), m_contextMenu};
+	m_dockAction->setCheckable(true);
+	connect(m_dockAction, &QAction::triggered, this, &TitleWidget::toggleFloating);
+	m_contextMenu->addAction(m_dockAction);
+
+	m_dockableAction = new QAction{tr("Dockable by Dragging"), m_contextMenu};
+	m_dockableAction->setCheckable(true);
+	connect(m_dockableAction, &QAction::triggered, this, &TitleWidget::toggleDockable);
+	m_contextMenu->addAction(m_dockableAction);
+
+	QAction *closeAction = new QAction{tr("Close"), m_contextMenu};
+	connect(closeAction, &QAction::triggered, parent, &QDockWidget::close);
+	m_contextMenu->addAction(closeAction);
 }
 
 void TitleWidget::addCustomWidget(QWidget *widget, bool stretch)
@@ -146,6 +165,60 @@ void TitleWidget::addCenteringSpacer()
 	m_layout->insertStretch(0);
 	m_layout->insertSpacing(0, m_closeButton->width() + m_dockButton->width());
 	m_layout->insertStretch(m_layout->count()-2);
+}
+
+void TitleWidget::toggleFloating()
+{
+	QDockWidget *parent = qobject_cast<QDockWidget *>(parentWidget());
+	if(parent) {
+		if(parent->isFloating()) {
+			parent->setAllowedAreas(Qt::AllDockWidgetAreas);
+			parent->setFloating(false);
+		} else {
+			parent->setFloating(true);
+		}
+	}
+}
+
+void TitleWidget::toggleDockable()
+{
+	QDockWidget *parent = qobject_cast<QDockWidget *>(parentWidget());
+	if(parent && parent->isFloating()) {
+		if(parent->allowedAreas() == Qt::NoDockWidgetArea) {
+			parent->setAllowedAreas(Qt::AllDockWidgetAreas);
+		} else {
+			parent->setAllowedAreas(Qt::NoDockWidgetArea);
+		}
+	}
+}
+
+void TitleWidget::showContextMenu(const QPoint &pos)
+{
+	m_contextMenu->popup(mapToGlobal(pos));
+}
+
+void TitleWidget::updateContextMenuActions()
+{
+	QDockWidget *parent = qobject_cast<QDockWidget *>(parentWidget());
+	if(parent && parent->isFloating()) {
+		m_dockAction->setChecked(false);
+		m_dockableAction->setEnabled(true);
+		m_dockableAction->setChecked(parent->allowedAreas() != Qt::NoDockWidgetArea);
+	} else {
+		m_dockAction->setChecked(true);
+		m_dockableAction->setEnabled(false);
+		m_dockableAction->setChecked(true);
+	}
+}
+
+void TitleWidget::onDockLocationChanged(Qt::DockWidgetArea area)
+{
+	if(area != Qt::NoDockWidgetArea) {
+		QDockWidget *parent = qobject_cast<QDockWidget *>(parentWidget());
+		if(parent) {
+			parent->setAllowedAreas(Qt::AllDockWidgetAreas);
+		}
+	}
 }
 
 void TitleWidget::onFeaturesChanged(QDockWidget::DockWidgetFeatures features)

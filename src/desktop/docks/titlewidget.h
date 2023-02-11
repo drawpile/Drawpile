@@ -39,6 +39,11 @@ public:
 	void addCenteringSpacer();
 
 private slots:
+	void toggleFloating();
+	void toggleDockable();
+	void showContextMenu(const QPoint &pos);
+	void updateContextMenuActions();
+	void onDockLocationChanged(Qt::DockWidgetArea area);
 	void onFeaturesChanged(QDockWidget::DockWidgetFeatures features);
 
 private:
@@ -47,6 +52,9 @@ private:
 	QBoxLayout *m_layout;
 	Button *m_dockButton;
 	Button *m_closeButton;
+	QMenu *m_contextMenu;
+	QAction *m_dockAction;
+	QAction *m_dockableAction;
 };
 
 }
