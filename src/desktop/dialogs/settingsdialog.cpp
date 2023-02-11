@@ -266,19 +266,26 @@ void SettingsDialog::resetSettings()
 				tr("Clear all settings?")
 				);
 	if(b==QMessageBox::Yes) {
-		QSettings cfg;
-		const QVariant pclevel = cfg.value("pc/level");
-		const QVariant pclocked = cfg.value("pc/locked");
-		cfg.clear();
+		{
+			QSettings cfg;
 
-		// Do not reset parental controls if locked
-		if(!pclocked.toByteArray().isEmpty() || parentalcontrols::isOSActive()) {
-			cfg.setValue("pc/level", pclevel);
+			// Don't purge layouts because they're not part of the settings
+			// dialog and don't clear parental controls if they're locked.
+			bool keepParentalControls =
+				!cfg.value("pc/locked").toByteArray().isEmpty() ||
+				parentalcontrols::isOSActive();
+			QRegularExpression re{
+				keepParentalControls ? "^(layouts|pc)/?" : "^layouts/?"};
+			for(const QString &key : cfg.allKeys()) {
+				if(!re.match(key).hasMatch()) {
+					cfg.remove(key);
+				}
+			}
+
+			// Restore theme version so the selected theme doesn't
+			// get clobbered with the default on next startup.
+			cfg.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
 		}
-
-		// Restore theme version so the selected theme doesn't
-		// get clobbered with the default on next startup.
-		cfg.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
 
 		restoreSettings();
 		rememberSettings();
