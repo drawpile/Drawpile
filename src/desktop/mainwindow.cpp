@@ -91,6 +91,7 @@
 #include "docks/layerlistdock.h"
 #include "docks/onionskins.h"
 #include "docks/timeline.h"
+#include "docks/titlewidget.h"
 
 #include "net/client.h"
 #include "net/login.h"
@@ -2617,7 +2618,7 @@ void MainWindow::setupActions()
 	}
 
 	toggledockmenu->addSeparator();
-	QAction *freezeDocks = makeAction("freezedocks", tr("Lock in place")).checkable().remembered();
+	QAction *freezeDocks = makeAction("freezedocks", tr("Lock Docks")).checkable().remembered();
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
@@ -3318,6 +3319,16 @@ void MainWindow::setupActions()
 	QAction *escapeShortcut = makeAction("cancelaction", tr("Cancel action")).shortcut(Qt::Key_Escape);
 	connect(escapeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
+
+	const QList<QAction *> globalDockActions =
+		{freezeDocks, sideTabDocks, hideDocks, hideDockTitleBars};
+	for(QObject *c : children()) {
+		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
+		docks::TitleWidget *titlebar = dw ? qobject_cast<docks::TitleWidget *>(dw->titleBarWidget()) : nullptr;
+		if(titlebar) {
+			titlebar->addGlobalDockActions(globalDockActions);
+		}
+	}
 }
 
 void MainWindow::createDocks()

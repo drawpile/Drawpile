@@ -22,6 +22,8 @@
 #include <QDockWidget>
 
 class QBoxLayout;
+class QMenu;
+class QToolButton;
 
 namespace docks {
 
@@ -38,23 +40,21 @@ public:
 	/// Add a spacer to the left side to center the custom widgets
 	void addCenteringSpacer();
 
+	void addGlobalDockActions(const QList<QAction *> &actions);
+
 private slots:
 	void toggleFloating();
 	void toggleDockable();
-	void showContextMenu(const QPoint &pos);
 	void updateContextMenuActions();
 	void onDockLocationChanged(Qt::DockWidgetArea area);
-	void onFeaturesChanged(QDockWidget::DockWidgetFeatures features);
 
 private:
-	class Button;
-
 	QBoxLayout *m_layout;
-	Button *m_dockButton;
-	Button *m_closeButton;
-	QMenu *m_contextMenu;
+	QToolButton *m_button;
+	QMenu *m_menu;
 	QAction *m_dockAction;
 	QAction *m_dockableAction;
+	QAction *m_closeAction;
 };
 
 }
