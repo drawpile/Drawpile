@@ -43,12 +43,13 @@
 #include <QTimer>
 #include <QTextEdit>
 #include <QThreadPool>
+#include <QKeySequence>
 
-#ifdef Q_OS_OSX
-#define CTRL_KEY "Meta"
+#ifdef Q_OS_MACOS
+static constexpr auto CTRL_KEY = Qt::META;
 #include "desktop/widgets/macmenu.h"
 #else
-#define CTRL_KEY "Ctrl"
+static constexpr auto CTRL_KEY = Qt::CTRL;
 #endif
 
 #include "config.h"
@@ -2675,15 +2676,15 @@ void MainWindow::setupActions()
 #endif
 	;
 
-	QAction *expandup = makeAction("expandup", tr("Expand &Up")).shortcut(CTRL_KEY "+J");
-	QAction *expanddown = makeAction("expanddown", tr("Expand &Down")).shortcut(CTRL_KEY "+K");
-	QAction *expandleft = makeAction("expandleft", tr("Expand &Left")).shortcut(CTRL_KEY "+H");
-	QAction *expandright = makeAction("expandright", tr("Expand &Right")).shortcut(CTRL_KEY "+L");
+	QAction *expandup = makeAction("expandup", tr("Expand &Up")).shortcut(CTRL_KEY | Qt::Key_J);
+	QAction *expanddown = makeAction("expanddown", tr("Expand &Down")).shortcut(CTRL_KEY | Qt::Key_K);
+	QAction *expandleft = makeAction("expandleft", tr("Expand &Left")).shortcut(CTRL_KEY | Qt::Key_H);
+	QAction *expandright = makeAction("expandright", tr("Expand &Right")).shortcut(CTRL_KEY | Qt::Key_L);
 
-	QAction *cleararea = makeAction("cleararea", tr("Delete")).shortcut("Delete");
-	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection")).shortcut(CTRL_KEY "+,");
-	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection")).shortcut(CTRL_KEY "+Shift+,");
-	QAction *colorerasearea = makeAction("colorerasearea", tr("Color Erase Selection")).shortcut("Shift+Delete");
+	QAction *cleararea = makeAction("cleararea", tr("Delete")).shortcut(QKeySequence::Delete);
+	QAction *fillfgarea = makeAction("fillfgarea", tr("Fill Selection")).shortcut(CTRL_KEY | Qt::Key_Comma);
+	QAction *recolorarea = makeAction("recolorarea", tr("Recolor Selection")).shortcut(CTRL_KEY | Qt::SHIFT | Qt::Key_Comma);
+	QAction *colorerasearea = makeAction("colorerasearea", tr("Color Erase Selection")).shortcut(Qt::SHIFT | Qt::Key_Delete);
 
 	m_currentdoctools->addAction(copy);
 	m_currentdoctools->addAction(copylayer);

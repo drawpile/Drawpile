@@ -198,8 +198,14 @@ int KisCurveWidget::Private::nearestPointInRange(QPointF pt, int wWidth, int wHe
 }
 
 
-#define div2_round(x) (((x)+1)>>1)
-#define div4_round(x) (((x)+2)>>2)
+template<typename T>
+static inline constexpr auto div2_round(T x) {
+    return (x+1)>>1;
+}
+template<typename T>
+static inline constexpr auto div4_round(T x) {
+    return (x+2)>>2;
+}
 
 void KisCurveWidget::Private::drawGrid(QPainter &p, int wWidth, int wHeight)
 {
