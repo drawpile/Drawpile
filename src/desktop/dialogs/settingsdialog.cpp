@@ -285,6 +285,8 @@ void SettingsDialog::restoreSettings()
 
 	cfg.beginGroup("versioncheck");
 	m_ui->checkForUpdates->setChecked(cfg.value("enabled", true).toBool());
+	m_ui->checkForBetas->setEnabled(cfg.value("enabled", true).toBool());
+	m_ui->checkForBetas->setChecked(cfg.value("beta", false).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/input");
@@ -413,6 +415,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
 	cfg.setValue("versioncheck/enabled", m_ui->checkForUpdates->isChecked());
+	cfg.setValue("versioncheck/beta", m_ui->checkForBetas->isChecked());
 
 	cfg.beginGroup("settings/input");
 #if defined(Q_OS_WIN) && defined(KIS_TABLET)

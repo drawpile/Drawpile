@@ -928,6 +928,13 @@
               </property>
              </widget>
             </item>
+            <item row="8" column="1">
+             <widget class="QCheckBox" name="checkForBetas">
+              <property name="text">
+               <string>Include beta releases</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="stackedWidgetPage4">
@@ -1517,6 +1524,22 @@
     <hint type="destinationlabel">
      <x>479</x>
      <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkForUpdates</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkForBetas</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>517</y>
     </hint>
    </hints>
   </connection>
