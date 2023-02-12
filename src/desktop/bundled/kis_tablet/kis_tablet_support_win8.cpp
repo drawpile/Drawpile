@@ -28,6 +28,8 @@
 
 #include "kis_tablet_support_win8.h"
 #include "debug.h"
+#include "desktop/utils/qtguicompat.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -370,7 +372,7 @@ bool KisTabletSupportWin8::init()
 //     }
 // }
 
-bool KisTabletSupportWin8::nativeEventFilter(const QByteArray &eventType, void *message, long *result)
+bool KisTabletSupportWin8::nativeEventFilter(const QByteArray &eventType, void *message, compat::NativeEventResult result)
 {
     if (!result) {
         // I don't know why this even happens, but it actually does
@@ -481,13 +483,13 @@ bool registerOrUpdateDevice(HANDLE deviceHandle)
 QTabletEvent makeProximityTabletEvent(const QEvent::Type eventType, const POINTER_PEN_INFO &penInfo)
 {
     PenFlagsWrapper penFlags = PenFlagsWrapper::fromPenInfo(penInfo);
-    QTabletEvent::PointerType pointerType = penFlags.isInverted() ? QTabletEvent::Eraser : QTabletEvent::Pen;
+    compat::PointerType pointerType = penFlags.isInverted() ? compat::PointerType::Eraser : compat::PointerType::Pen;
     const QPointF emptyPoint;
-    return QTabletEvent(
+    return compat::makeTabletEvent(
         eventType, // type
         emptyPoint, // pos
         emptyPoint, // globalPos
-        QTabletEvent::Stylus, // device
+        compat::DeviceType::Stylus, // device
         pointerType, // pointerType
         0, // pressure
         0, // xTilt
@@ -542,7 +544,7 @@ QTabletEvent makePositionalTabletEvent(const QWidget *targetWidget, const QEvent
     const QPointF delta = globalPosF - globalPos;
     const QPointF localPosF = localPos + delta;
 
-    const QTabletEvent::PointerType pointerType = penFlags.isInverted() ? QTabletEvent::Eraser : QTabletEvent::Pen;
+    const compat::PointerType pointerType = penFlags.isInverted() ? compat::PointerType::Eraser : compat::PointerType::Pen;
 
     Qt::MouseButton mouseButton;
     if (eventType == QEvent::TabletPress) {
@@ -592,11 +594,11 @@ QTabletEvent makePositionalTabletEvent(const QWidget *targetWidget, const QEvent
         }
     }
 
-    return QTabletEvent(
+    return compat::makeTabletEvent(
         eventType, // type
         localPosF, // pos
         globalPosF, // globalPos
-        QTabletEvent::Stylus, // device
+        compat::DeviceType::Stylus, // device
         pointerType, // pointerType
         penMask.pressureValid() ? static_cast<qreal>(penInfo.pressure) / 1024 : 0, // pressure
         tiltX, // xTilt

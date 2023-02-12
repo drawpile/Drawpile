@@ -19,6 +19,8 @@
 #ifndef KIS_TABLET_SUPPORT_WIN8_H
 #define KIS_TABLET_SUPPORT_WIN8_H
 
+#include "libshared/util/qtcompat.h"
+
 #include <QAbstractNativeEventFilter>
 
 class KisTabletSupportWin8 : public QAbstractNativeEventFilter
@@ -33,7 +35,7 @@ public:
 
     bool init();
     // void registerPointerDeviceNotifications();
-    virtual bool nativeEventFilter(const QByteArray &eventType, void *message, long *result) override;
+    virtual bool nativeEventFilter(const QByteArray &eventType, void *message, compat::NativeEventResult result) override;
 };
 
 #endif // KIS_TABLET_SUPPORT_WIN8_H

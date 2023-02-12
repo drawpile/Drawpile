@@ -27,7 +27,7 @@
 #include <QMap>
 #include <QRect>
 
-#include "wintab.h"
+#include "desktop/bundled/kis_tablet/wintab.h"
 
 QT_BEGIN_NAMESPACE
 

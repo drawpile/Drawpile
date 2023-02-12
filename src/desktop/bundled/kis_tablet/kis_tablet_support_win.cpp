@@ -20,18 +20,20 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#ifndef UNICODE
 #define UNICODE
+#endif
 
-#include "kis_tablet_support_win_p.h"
+#include "desktop/utils/qtguicompat.h"
+#include "desktop/bundled/kis_tablet/kis_tablet_support_win_p.h"
 
-#include "kis_tablet_support_win.h"
+#include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 // #include "kis_tablet_support.h"
 
-#include "debug.h"
+#include "desktop/bundled/kis_tablet/debug.h"
 
 #include <QApplication>
 #include <QGuiApplication>
-#include <QDesktopWidget>
 
 #include <QScreen>
 #include <QWidget>
@@ -46,7 +48,7 @@
 
 // Note: The definition of the PACKET structure in pktdef.h depends on this define.
 #define PACKETDATA (PK_X | PK_Y | PK_BUTTONS | PK_TIME | PK_NORMAL_PRESSURE | PK_TANGENT_PRESSURE | PK_ORIENTATION | PK_CURSOR | PK_Z)
-#include "pktdef.h"
+#include "desktop/bundled/kis_tablet/pktdef.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -118,7 +120,7 @@ void printContext(const LOGCONTEXT &lc)
     dbgTablet << ppVar(lc.lcSysExtX);
     dbgTablet << ppVar(lc.lcSysExtY);
 
-    dbgTablet << "Qt Desktop Geometry" << QApplication::desktop()->geometry();
+    dbgTablet << "Qt Desktop Geometry" << QGuiApplication::primaryScreen()->virtualGeometry();
 }
 
 
@@ -168,8 +170,9 @@ void KisTabletSupportWin::enableRelativePenModeHack(bool enable)
 // The work done by processTabletEvent from qguiapplicationprivate is divided
 // between here and translateTabletPacketEvent.
 static void handleTabletEvent(QWidget *windowWidget, const QPointF &local, const QPointF &global,
-                              int device, int pointerType, Qt::MouseButton button, Qt::MouseButtons buttons,
-                              qreal pressure,int xTilt, int yTilt, qreal tangentialPressure, qreal rotation,
+                              compat::DeviceType device, compat::PointerType pointerType,
+                              Qt::MouseButton button, Qt::MouseButtons buttons,
+                              qreal pressure, int xTilt, int yTilt, qreal tangentialPressure, qreal rotation,
                               int z, qint64 uniqueId, Qt::KeyboardModifiers modifiers, QEvent::Type type, LONG time)
 {
 
@@ -211,7 +214,7 @@ static void handleTabletEvent(QWidget *windowWidget, const QPointF &local, const
         // The event was specified relative to windowWidget, so we remap it
         QPointF delta = global - globalPos;
         QPointF mapped = finalDestination->mapFromGlobal(global.toPoint()) + delta;
-        QTabletEvent ev(type, mapped, global, device, pointerType, pressure, xTilt, yTilt,
+        QTabletEvent ev = compat::makeTabletEvent(type, mapped, global, device, pointerType, pressure, xTilt, yTilt,
                         tangentialPressure, rotation, z, modifiers, uniqueId, button, buttons);
         ev.setTimestamp(time);
         QGuiApplication::sendEvent(finalDestination, &ev);
@@ -556,42 +559,42 @@ static inline int indexOfDevice(const QVector<QWindowsTabletDeviceData> &devices
     return -1;
 }
 
-static inline QTabletEvent::TabletDevice deviceType(const UINT cursorType)
+static inline compat::DeviceType deviceType(const UINT cursorType)
 {
     if (((cursorType & 0x0006) == 0x0002) && ((cursorType & CursorTypeBitMask) != 0x0902))
-        return QTabletEvent::Stylus;
+        return compat::DeviceType::Stylus;
     if (cursorType == 0x4020) // Surface Pro 2 tablet device
-        return QTabletEvent::Stylus;
+        return compat::DeviceType::Stylus;
     switch (cursorType & CursorTypeBitMask) {
     case 0x0802:
-        return QTabletEvent::Stylus;
+        return compat::DeviceType::Stylus;
     case 0x0902:
-        return QTabletEvent::Airbrush;
+        return compat::DeviceType::Airbrush;
     case 0x0004:
-        return QTabletEvent::FourDMouse;
+        return compat::FourDMouseDevice;
     case 0x0006:
-        return QTabletEvent::Puck;
+        return compat::DeviceType::Puck;
     case 0x0804:
-        return QTabletEvent::RotationStylus;
+        return compat::RotationStylusDevice;
     default:
         break;
     }
-    return QTabletEvent::NoDevice;
+    return compat::NoDevice;
 }
 
-static inline QTabletEvent::PointerType pointerType(unsigned pkCursor)
+static inline compat::PointerType pointerType(unsigned pkCursor)
 {
     switch (pkCursor % 3) { // %3 for dual track
     case 0:
-        return QTabletEvent::Cursor;
+        return compat::PointerType::Cursor;
     case 1:
-        return QTabletEvent::Pen;
+        return compat::PointerType::Pen;
     case 2:
-        return QTabletEvent::Eraser;
+        return compat::PointerType::Eraser;
     default:
         break;
     }
-    return QTabletEvent::UnknownPointer;
+    return compat::UnknownPointer;
 }
 
 QDebug operator<<(QDebug d, const QWindowsTabletDeviceData &t)
@@ -631,10 +634,10 @@ QWindowsTabletDeviceData QWindowsTabletSupport::tabletInit(const quint64 uniqueI
     result.maxX = int(defaultLc.lcInExtX) - int(defaultLc.lcInOrgX);
     result.maxY = int(defaultLc.lcInExtY) - int(defaultLc.lcInOrgY);
     result.maxZ = int(defaultLc.lcInExtZ) - int(defaultLc.lcInOrgZ);
-    result.currentDevice = deviceType(cursorType);
+    result.currentDevice = int(deviceType(cursorType));
 
     // Define a rectangle representing the whole screen as seen by Wintab.
-    QRect qtDesktopRect = QApplication::desktop()->geometry();
+    QRect qtDesktopRect = QGuiApplication::primaryScreen()->virtualGeometry();
     QRect wintabDesktopRect(defaultLc.lcSysOrgX, defaultLc.lcSysOrgY,
                             defaultLc.lcSysExtX, defaultLc.lcSysExtY);
     qDebug() << ppVar(qtDesktopRect);
@@ -658,7 +661,8 @@ bool QWindowsTabletSupport::translateTabletProximityEvent(WPARAM /* wParam */, L
     auto sendProximityEvent = [&](QEvent::Type type) {
         QPointF emptyPos;
         qreal zero = 0.0;
-        QTabletEvent e(type, emptyPos, emptyPos, 0, m_devices.at(m_currentDevice).currentPointerType,
+        QTabletEvent e = compat::makeTabletEvent(type, emptyPos, emptyPos, compat::NoDevice,
+                       static_cast<compat::PointerType>(m_devices.at(m_currentDevice).currentPointerType),
                        zero, 0, 0, zero, zero, 0, Qt::NoModifier,
                        m_devices.at(m_currentDevice).uniqueId, Qt::NoButton, Qt::MouseButtons{});
         qApp->sendEvent(qApp, &e);
@@ -696,8 +700,8 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
     // In contrast to Qt, these will not be "const" during our loop.
     // This is because the Surface Pro 3 may cause us to switch devices.
     QWindowsTabletDeviceData tabletData = m_devices.at(m_currentDevice);
-    int currentDevice  = tabletData.currentDevice;
-    int currentPointerType = tabletData.currentPointerType;
+    auto currentDevice  = static_cast<compat::DeviceType>(tabletData.currentDevice);
+    auto currentPointerType = static_cast<compat::PointerType>(tabletData.currentPointerType);
 
     // static Qt::MouseButtons buttons = Qt::NoButton, btnOld, btnChange;
 
@@ -747,7 +751,7 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
             type = QEvent::TabletRelease;
         }
 
-        const int z = currentDevice == QTabletEvent::FourDMouse ? int(packet.pkZ) : 0;
+        const int z = currentDevice == compat::FourDMouseDevice ? int(packet.pkZ) : 0;
 
         // This code is to delay the tablet data one cycle to sync with the mouse location.
         QPointF globalPosF = m_oldGlobalPosF / dpr; // Convert from "native" to "device independent pixels."
@@ -781,10 +785,10 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
         const QPointF delta = globalPosF - globalPos;
         const QPointF localPosF = globalPosF + QPointF(localPos - globalPos) + delta;
 
-        const qreal pressureNew = packet.pkButtons && (currentPointerType == QTabletEvent::Pen || currentPointerType == QTabletEvent::Eraser) ?
+        const qreal pressureNew = packet.pkButtons && (currentPointerType == compat::PointerType::Pen || currentPointerType == compat::PointerType::Eraser) ?
                                   m_devices.at(m_currentDevice).scalePressure(packet.pkNormalPressure) :
                                   qreal(0);
-        const qreal tangentialPressure = currentDevice == QTabletEvent::Airbrush ?
+        const qreal tangentialPressure = currentDevice == compat::DeviceType::Airbrush ?
                                          m_devices.at(m_currentDevice).scaleTangentialPressure(packet.pkTangentPressure) :
                                          qreal(0);
 
@@ -822,7 +826,7 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
         }
 
         // Reusable helper function. Better than compiler macros!
-        auto sendTabletEvent = [&](QTabletEvent::Type t){
+        auto sendTabletEvent = [&](QEvent::Type t){
             handleTabletEvent(w, localPosF, globalPosF, currentDevice, currentPointerType,
                               button, buttons, pressureNew, tiltX, tiltY, tangentialPressure, rotation, z,
                               m_devices.at(m_currentDevice).uniqueId, keyboardModifiers, t, packet.pkTime);
@@ -837,7 +841,7 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
 
             dbgTablet << "Got an inline tool switch.";
             // Send tablet release event.
-            sendTabletEvent(QTabletEvent::TabletRelease);
+            sendTabletEvent(QEvent::TabletRelease);
 
             // Read the new cursor info.
             UINT pkCursor = packet.pkCursor;
@@ -848,7 +852,7 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
             currentDevice  = deviceType(tabletData.currentDevice);
             currentPointerType = pointerType(pkCursor);
 
-            sendTabletEvent(QTabletEvent::TabletPress);
+            sendTabletEvent(QEvent::TabletPress);
         }
 
         sendTabletEvent(type);
@@ -888,7 +892,7 @@ void QWindowsTabletSupport::tabletUpdateCursor(const int pkCursor)
         m_devices[m_currentDevice].buttonsMap[0x2] = logicalButtons[1];
         m_devices[m_currentDevice].buttonsMap[0x4] = logicalButtons[2];
     }
-    m_devices[m_currentDevice].currentPointerType = pointerType(pkCursor);
+    m_devices[m_currentDevice].currentPointerType = int(pointerType(pkCursor));
     currentPkCursor = pkCursor;
 
     // Check tablet name to enable Surface Pro 3 workaround.
