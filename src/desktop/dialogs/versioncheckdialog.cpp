@@ -18,12 +18,15 @@
 */
 
 #include "desktop/dialogs/versioncheckdialog.h"
+#include "libclient/utils/icon.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
 
 #include "ui_versioncheck.h"
 
+#include <QMessageBox>
 #include <QSettings>
+#include <QStyle>
 #include <QPushButton>
 #include <QDir>
 #include <QDesktopServices>
@@ -58,6 +61,22 @@ void VersionCheckDialog::rememberSettings()
 
 void VersionCheckDialog::doVersionCheckIfNeeded()
 {
+	if(!QSettings().contains("versioncheck/enabled")) {
+		QMessageBox mb {
+			QMessageBox::NoIcon,
+			tr("Enable auto-updates?"),
+			tr("Should Drawpile automatically check for updates?"),
+			QMessageBox::Yes | QMessageBox::No
+		};
+		const auto icon = icon::fromTheme("update-none");
+		const auto iconSize = mb.style()->pixelMetric(QStyle::PM_MessageBoxIconSize, nullptr, &mb);
+		auto pixmap = icon.pixmap(iconSize);
+		mb.setIconPixmap(pixmap);
+		mb.setInformativeText(tr("You can always check for updates manually from the Help menu."));
+		const auto result = mb.exec();
+		QSettings().setValue("versioncheck/enabled", result == QMessageBox::Yes);
+	}
+
 	if(NewVersionCheck::needCheck()) {
 		// The dialog will autodelete if there is nothing to show
 		VersionCheckDialog *dlg = new VersionCheckDialog;
