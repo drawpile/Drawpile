@@ -314,7 +314,7 @@ jobs:
             **/*.wxs
 
       - name: Evict sccache from cache
-        if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true'
+        if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true' && github.ref == 'refs/heads/master'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -324,7 +324,7 @@ jobs:
         continue-on-error: true
 
       - name: Save sccache
-        if: success() || failure()
+        if: (success() || failure()) && github.ref == 'refs/heads/master'
         uses: actions/cache/save@v3
         with:
           path: .github/sccache
