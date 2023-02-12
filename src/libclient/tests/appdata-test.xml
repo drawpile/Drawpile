@@ -47,6 +47,13 @@
 		<release version="2.0.0" date="2017-03-18">
 			<url>https://drawpile.net/news/release-2.0.0/</url>
 		</release>
+		<release version="1.0.0" date="2000-01-07"/>
+		<release type="development" version="1.0.0-rc.1" date="2000-01-06"/>
+		<release type="development" version="1.0.0-beta.11" date="2000-01-05"/>
+		<release type="development" version="1.0.0-beta.2" date="2000-01-04"/>
+		<release type="development" version="1.0.0-beta" date="2000-01-03"/>
+		<release type="development" version="1.0.0-alpha.beta" date="2000-01-02"/>
+		<release type="development" version="1.0.0-alpha.1" date="2000-01-01"/>
 	</releases>
 </component>
 

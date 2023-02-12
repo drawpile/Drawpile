@@ -1,5 +1,6 @@
 <RCC>
 	<qresource prefix="/test">
+		<file>appdata-lax.xml</file>
 		<file>appdata-test.xml</file>
 	</qresource>
 </RCC>

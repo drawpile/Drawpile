@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop">
+	<id>net.drawpile.drawpile</id>
+	<description>
+		<p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
+		<p>You can share your drawing board with the built-in server or connect to a dedicated server.</p>
+	</description>
+	<url type="homepage">https://drawpile.net/</url>
+	<releases>
+		<release version="20230201.02.3.4.5garbage"/>
+		<release version="20230201.02.3.4.5garbage-beta" type="development"/>
+		<release version="20230201.02"/>
+		<release version="20230201.1"/>
+		<release version="20230201"/>
+		<release version="10"/>
+		<release version="10-beta.101" type="development"/>
+		<release version="10-beta.02" type="development"/>
+		<release version="10-beta.1" type="development"/>
+		<release version="03.010" date="13000-01-02"/>
+		<release version="000.111" date="13000-01-02"/>
+	</releases>
+</component>

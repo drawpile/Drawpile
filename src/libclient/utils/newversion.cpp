@@ -19,6 +19,7 @@
 
 #include "libclient/utils/newversion.h"
 #include "libshared/util/networkaccess.h"
+#include "libshared/util/qtcompat.h"
 #include "libshared/net/protover.h"
 #include "config.h"
 
@@ -31,7 +32,9 @@
 
 #include <algorithm>
 
-static const QRegularExpression VERSION_RE("^(\\d+)\\.(\\d+)\\.(\\d+)");
+// Since any parsing failure here means that automatic updates are broken
+// forever, this regular expression is as lax as possible
+static const QRegularExpression VERSION_RE("(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?[^-]*(?:-([A-Za-z0-9.-]*))?");
 
 NewVersionCheck::NewVersionCheck(QObject *parent)
 	: QObject(parent),
@@ -43,23 +46,27 @@ NewVersionCheck::NewVersionCheck(QObject *parent)
 	m_server = m.captured(1).toInt();
 	m_major = m.captured(2).toInt();
 	m_minor = m.captured(3).toInt();
+	m_tag = m.captured(4);
 
 #if defined(Q_OS_WIN64)
-	m_platform = "win64";
+	m_platform = "x86_64-windows";
 #elif defined(Q_OS_WIN32)
-	m_platform = "win32";
+	m_platform = "i386-windows";
 #elif defined(Q_OS_MACOS)
-	m_platform = "macos";
+	m_platform = "darwin";
+#elif defined(Q_OS_LINUX)
+	m_platform = "linux";
 #else
 	m_platform = QString();
 #endif
 }
 
-NewVersionCheck::NewVersionCheck(int server, int major, int minor, QObject *parent)
+NewVersionCheck::NewVersionCheck(int server, int major, int minor, QString tag, QObject *parent)
 	: QObject(parent),
 	m_server(server),
 	m_major(major),
 	m_minor(minor),
+	m_tag(tag),
 	m_showBetas(false)
 {
 }
@@ -68,6 +75,7 @@ bool NewVersionCheck::needCheck()
 {
 	QSettings cfg;
 	cfg.beginGroup("versioncheck");
+
 	if(!cfg.value("enabled", true).toBool())
 		return false;
 
@@ -78,13 +86,29 @@ bool NewVersionCheck::needCheck()
 	if(!lastCheck.isValid())
 		return true;
 
-	const bool lastSuccess = cfg.value("lastsuccess").toBool();
-	const int daysSinceLastCheck = lastCheck.daysTo(today);
+	const QDate lastSuccess = QDate::fromString(cfg.value("lastsuccess").toString(), Qt::ISODate);
 
-	if(lastSuccess)
+	if(!lastSuccess.isValid())
+		return true;
+
+	const int daysSinceLastCheck = lastCheck.daysTo(today);
+	if(lastSuccess == lastCheck)
 		return daysSinceLastCheck > 1;
-	else
-		return daysSinceLastCheck > 7;
+	else {
+		// We want to know how much time has passed between failure and last
+		// check, not whether someone just did not open Drawpile for a month,
+		// so do not use `today`
+		const int daysSinceLastSuccess = lastSuccess.daysTo(lastCheck);
+
+		// Forcibly disable version checks if they keep failing so the domain is
+		// not flooded with traffic from old clients forever
+		if(daysSinceLastSuccess > 30) {
+			cfg.setValue("enabled", false);
+			return false;
+		}
+
+		return daysSinceLastCheck > std::min(7, daysSinceLastSuccess * 2);
+	}
 }
 
 bool NewVersionCheck::isThereANewSeries()
@@ -275,7 +299,7 @@ static void parseArtifactsElement(QXmlStreamReader &reader, NewVersionCheck::Ver
 
 		switch(tokentype) {
 		case QXmlStreamReader::StartElement:
-			if(reader.name() == QStringLiteral("artifact") && reader.attributes().value("type") == QStringLiteral("binary") && reader.attributes().value("platform") == platform) {
+			if(reader.name() == QStringLiteral("artifact") && reader.attributes().value("type") == QStringLiteral("binary") && reader.attributes().value("platform").contains(platform)) {
 				parseArtifactElement(reader, release);
 
 			} else {
@@ -332,6 +356,56 @@ static NewVersionCheck::Version parseReleaseElement(QXmlStreamReader &reader, co
 	return NewVersionCheck::Version {};
 }
 
+// Precondition: Parts before the tag should have been equal
+static bool isNewerTag(compat::StringView current, compat::StringView other) {
+	// When major, minor, and patch are equal, a pre-release version has lower
+	// precedence than a normal version
+	if(current.isEmpty()) {
+		// Current is not a pre-release, so newer
+		return false;
+	} else if(other.isEmpty()) {
+		// Other is not a pre-release, so newer
+		return true;
+	}
+
+	// Precedence for two pre-release versions with the same major, minor, and
+	// patch version MUST be determined by comparing each dot separated
+	// identifier from left to right until a difference is found
+	const auto current_parts = current.split('.');
+	const auto other_parts = other.split('.');
+	for(auto i = 0; i < std::min(current_parts.size(), other_parts.size()); ++i) {
+		const auto &current_part = current_parts[i];
+		const auto &other_part = other_parts[i];
+
+		if(current_part == other_part) {
+			continue;
+		} else {
+			bool current_is_numeric{};
+			bool other_is_numeric{};
+			const auto current_n = current_part.toUInt(&current_is_numeric);
+			const auto other_n = other_part.toUInt(&other_is_numeric);
+
+			if(current_is_numeric && other_is_numeric) {
+				// Identifiers consisting of only digits are compared
+				// numerically.
+				return current_n < other_n;
+			} else if(current_is_numeric || other_is_numeric) {
+				// Numeric identifiers always have lower precedence than
+				// non-numeric identifiers.
+				return current_is_numeric;
+			}
+
+			// Identifiers with letters or hyphens are compared lexically in
+			// ASCII sort order.
+			return current_part < other_part;
+		}
+	}
+
+	// A larger set of pre-release fields has a higher precedence than a smaller
+	// set, if all of the preceding identifiers are equal.
+	return current_parts.size() < other_parts.size();
+}
+
 bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 {
 	const auto currentVersionNumber = protocol::ProtocolVersion(QStringLiteral("dp"), m_server, m_major, m_minor).asInteger();
@@ -374,6 +448,9 @@ bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 
 					if(versionNumber > currentVersionNumber)
 						m_newer << release;
+					else if(versionNumber == currentVersionNumber && isNewerTag(m_tag, m.captured(4))) {
+						m_newer << release;
+					}
 				}
 
 			} else {
@@ -402,6 +479,12 @@ void NewVersionCheck::queryVersions(QUrl url)
 
 	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
 		if(reply->error() != QNetworkReply::NoError) {
+
+			// Respect a 410 status as an explicit signal to kill auto-update
+			if(reply->error() == QNetworkReply::ContentGoneError) {
+				QSettings().setValue("versioncheck/enabled", false);
+			}
+
 			qWarning("NewVersionCheck error: %s", qPrintable(reply->errorString()));
 			queryFail(reply->errorString());
 			return;
@@ -424,7 +507,6 @@ void NewVersionCheck::queryFail(const QString &errorMessage)
 	QSettings cfg;
 	cfg.beginGroup("versioncheck");
 	cfg.setValue("lastcheck", QDate::currentDate().toString(Qt::ISODate));
-	cfg.setValue("lastsuccess", false);
 
 	emit versionChecked(false, errorMessage);
 }
@@ -432,9 +514,10 @@ void NewVersionCheck::queryFail(const QString &errorMessage)
 void NewVersionCheck::querySuccess()
 {
 	QSettings cfg;
+	const auto now = QDate::currentDate().toString(Qt::ISODate);
 	cfg.beginGroup("versioncheck");
-	cfg.setValue("lastcheck", QDate::currentDate().toString(Qt::ISODate));
-	cfg.setValue("lastsuccess", true);
+	cfg.setValue("lastcheck", now);
+	cfg.setValue("lastsuccess", now);
 
 	if(m_newer.isEmpty()) {
 		emit versionChecked(false, QString());
