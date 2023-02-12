@@ -2053,8 +2053,10 @@ void MainWindow::setDocksHidden(bool hidden)
 
 void MainWindow::setDockTitleBarsHidden(bool hidden)
 {
+	QAction *freezeDocks = getAction("freezedocks");
 	QAction *hideDockTitleBars = getAction("hidedocktitlebars");
-	bool actuallyHidden = hidden && hideDockTitleBars->isChecked();
+	bool actuallyHidden = hidden && !freezeDocks->isChecked()
+		&& hideDockTitleBars->isChecked();
 	if(actuallyHidden != m_titleBarsHidden) {
 		m_titleBarsHidden = hidden;
 		for(QObject *c : children()) {
