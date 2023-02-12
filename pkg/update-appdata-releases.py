@@ -3,6 +3,7 @@
 # A script for updating the AppData file's <releases> section
 # with the latest release from the Changelog
 
+import argparse
 import re
 import os
 import hashlib
@@ -10,9 +11,6 @@ import xml.etree
 import xml.etree.ElementTree as ET
 from enum import Enum
 from pathlib import Path
-
-CHANGELOG_FILE = (Path(__file__).parent / '../ChangeLog').resolve()
-APPDATA_FILE = (Path(__file__).parent / '../src/desktop/appdata.xml').resolve()
 
 class ChangeLogError(Exception):
     pass
@@ -133,27 +131,29 @@ def indent(elem, inner = None, after = None):
     if after != None:
         elem.tail = '\n' + '  ' * after
 
-def update_release_artifacts(appdata):
+def update_release_artifacts(appdata, include_legacy_platform_ids):
     latest_release = appdata.find('releases')[0]
     version = latest_release.attrib['version']
 
     # List of downloadable binaries
     binaries = (
-        ('x86_64-windows-msvc', 'win', f'Drawpile-{version}.msi'),
+        ('x86_64-windows-msvc', 'win64', 'win', f'Drawpile-{version}.msi'),
         # This is a bogus tuple (it should probably be x86_64-apple-darwin) but
         # it is what appstream validation demands
-        ('x86_64-darwin-gnu', 'osx', f'Drawpile-{version}.dmg'),
-        ('x86_64-linux-gnu', 'appimage', f'Drawpile-{version}-x86_64.AppImage'),
-        ('source', 'src', f'drawpile-{version}.tar.xz'),
+        ('x86_64-darwin-gnu', 'macos', 'osx', f'Drawpile-{version}.dmg'),
+        ('x86_64-linux-gnu', '', 'appimage', f'Drawpile-{version}-x86_64.AppImage'),
+        ('source', '', 'src', f'drawpile-{version}.tar.xz'),
     )
 
     # Find metadata for binaries
     artifacts = {}
-    for platform, prefix, filename in binaries:
+    for platform, legacy_platform, prefix, filename in binaries:
         metadata = find_artifact(filename)
         if metadata:
             metadata['filename'] = prefix + '/' + metadata['filename']
             artifacts[platform] = metadata
+            if include_legacy_platform_ids and legacy_platform:
+                artifacts[legacy_platform] = metadata
 
     # Update artifacts element
     artifacts_elem = latest_release.find('artifacts')
@@ -203,8 +203,28 @@ def update_release_artifacts(appdata):
     return artifacts.items()
 
 if __name__ == '__main__':
-    latestChanges = read_changelog(CHANGELOG_FILE)
-    appdata = ET.parse(APPDATA_FILE)
+    default_appdata = (Path(__file__).parent / '../src/desktop/appdata.xml').resolve()
+
+    parser = argparse.ArgumentParser(
+        description = 'Updates appdata.xml by parsing the latest entry in ChangeLog',
+    )
+    parser.add_argument('--changelog', default=(Path(__file__).parent / '../ChangeLog').resolve(),
+                        help='path to ChangeLog file')
+    parser.add_argument('--in', dest='in_file', default=default_appdata,
+                        help='path to input appdata.xml')
+    parser.add_argument('--out', dest='out_file', default=default_appdata,
+                        help='path to output appdata.xml')
+    # Needed for compatibility with Drawpile 2.1 auto-update mechanism,
+    # otherwise it will find no matching updates ever since it expects platform
+    # values that are not valid triplets and so violate the AppStream spec.
+    # Files generated with this option should only ever be uploaded to
+    # drawpile.net
+    parser.add_argument('--legacy', action='store_true',
+                        help='emit legacy platform IDs')
+    args = parser.parse_args()
+
+    latestChanges = read_changelog(args.changelog)
+    appdata = ET.parse(args.in_file)
 
     changed = False
 
@@ -215,7 +235,7 @@ if __name__ == '__main__':
         print("Adding release", latestChanges['version'])
         changed = True
 
-    release_artifacts = update_release_artifacts(appdata)
+    release_artifacts = update_release_artifacts(appdata, args.legacy)
     if release_artifacts:
         print("Updated release artifacts:")
         for platform, ra in release_artifacts:
@@ -225,8 +245,8 @@ if __name__ == '__main__':
     else:
         print("No release artifacts")
 
-    if changed:
+    if changed or args.in_file != args.out_file:
         appdata.getroot().tail = '\n'
-        appdata.write(APPDATA_FILE, encoding='utf-8', xml_declaration=True)
+        appdata.write(args.out_file, encoding='utf-8', xml_declaration=True)
         print("Validating appdata file...")
-        os.system('appstream-util validate-relax ' + APPDATA_FILE)
+        os.system('appstream-util validate-relax ' + args.out_file)
