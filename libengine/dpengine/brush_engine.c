@@ -488,7 +488,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         color.a = cb->opacity.max;
         cb->opacity.max = 1.0f;
         if (cb->opacity_pressure) {
-            cb->opacity.min = 0.0f;
+            cb->opacity.min_ratio = 0.0f;
         }
     }
     be->classic.brush_color = color;

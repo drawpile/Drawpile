@@ -27,8 +27,10 @@
 
 static float lerp_range(const DP_ClassicBrushRange *cbr, float pressure)
 {
-    float min = cbr->min;
-    return (cbr->max - min) * pressure + min;
+    float max = cbr->max;
+    float min_ratio = cbr->min_ratio;
+    float min = CLAMP(min_ratio, 0.0f, 1.0f) * max;
+    return (max - min) * pressure + min;
 }
 
 static float lerp_range_if(const DP_ClassicBrushRange *cbr, float pressure,

@@ -36,7 +36,7 @@ typedef enum DP_ClassicBrushShape {
 } DP_ClassicBrushShape;
 
 typedef struct DP_ClassicBrushRange {
-    float min;
+    float min_ratio;
     float max;
 } DP_ClassicBrushRange;
 
