@@ -3071,9 +3071,6 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerDelete);
 
 	layerMenu->addSeparator();
-	layerMenu->addAction(layerUncensor);
-
-	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
 	layerMenu->addAction(layerDownAct);
 
