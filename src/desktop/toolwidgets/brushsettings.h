@@ -100,11 +100,14 @@ private slots:
 	void setEraserMode(bool erase);
 	void updateUi();
 	void updateFromUi();
+	void updateFromPopupUi();
 	void updateFromUiWith(bool updateShared);
 	void chooseInputPreset(int index);
+	void togglePopup(QWidget *widget);
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:
+	void updateSpinnerLabels();
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
 	void emitPresetChanges(const input::Preset *preset);
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);

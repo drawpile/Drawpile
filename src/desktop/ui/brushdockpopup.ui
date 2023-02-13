@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BrushDockPopup</class>
+ <widget class="QWidget" name="BrushDockPopup">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>318</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="pressureBox">
+     <property name="text">
+      <string>Pressure Sensitivity</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KisSliderSpinBox" name="minSpinner">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="prefix">
+      <string notr="true"/>
+     </property>
+     <property name="maximum">
+      <number>99</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="fixedWidthSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>300</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>pressureBox</tabstop>
+  <tabstop>minSpinner</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

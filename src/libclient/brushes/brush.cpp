@@ -89,16 +89,16 @@ QJsonObject ClassicBrush::toJson() const
 	}
 
 	o["size"] = size.max;
-	if(size.min>1) o["size2"] = size.min;
+	if(size.min_ratio>0) o["sizeratio"] = size.min_ratio;
 
 	o["opacity"] = opacity.max;
-	if(opacity.min>0) o["opacity2"] = opacity.min;
+	if(opacity.min_ratio>0) o["opacityratio"] = opacity.min_ratio;
 
 	o["hard"] = hardness.max;
-	if(hardness.min>0) o["hard2"] = hardness.min;
+	if(hardness.min_ratio>0) o["hardratio"] = hardness.min_ratio;
 
 	if(smudge.max > 0) o["smudge"] = smudge.max;
-	if(smudge.min > 0) o["smudge2"] = smudge.min;
+	if(smudge.min_ratio > 0) o["smudgeratio"] = smudge.min_ratio;
 
 	o["spacing"] = spacing;
 	if(resmudge>0) o["resmudge"] = resmudge;
@@ -139,16 +139,16 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
 
 	b.size.max = o["size"].toDouble();
-	b.size.min = o["size2"].toDouble();
+	b.size.min_ratio = o["sizeratio"].toDouble();
 
 	b.opacity.max = o["opacity"].toDouble();
-	b.opacity.min= o["opacity2"].toDouble();
+	b.opacity.min_ratio= o["opacityratio"].toDouble();
 
 	b.hardness.max = o["hard"].toDouble();
-	b.hardness.min = o["hard2"].toDouble();
+	b.hardness.min_ratio = o["hardratio"].toDouble();
 
 	b.smudge.max = o["smudge"].toDouble();
-	b.smudge.min = o["smudge2"].toDouble();
+	b.smudge.min_ratio = o["smudgeratio"].toDouble();
 	b.resmudge = o["resmudge"].toInt();
 
 	b.spacing = o["spacing"].toDouble();

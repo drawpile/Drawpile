@@ -46,6 +46,7 @@ set(desktop_sources
 	dialogs/layerproperties.cpp
 	dialogs/brushpresetproperties.cpp
 	widgets/viewstatus.cpp
+	widgets/popup.cpp
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp
 	widgets/canvasshortcutedit.cpp
@@ -96,6 +97,7 @@ set(desktop_uis
 	ui/abusereport.ui
 	ui/avatarimport.ui
 	ui/brushdock.ui
+	ui/brushdockpopup.ui
 	ui/brushpresetproperties.ui
 	ui/canvasshortcutsdialog.ui
 	ui/certificateview.ui
