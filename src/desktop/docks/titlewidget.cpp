@@ -21,10 +21,10 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QToolButton>
 #include <QMainWindow>
 #include <QMenu>
 #include "utils/icon.h"
+#include "widgets/groupedtoolbutton.h"
 #include "../../libshared/qtshims.h"
 
 namespace docks {
@@ -41,7 +41,8 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 	m_layout->setContentsMargins(6, 2, 1, 2);
 	setLayout(m_layout);
 
-	m_button = new QToolButton{this};
+	m_button = new widgets::GroupedToolButton{
+		widgets::GroupedToolButton::NotGrouped, this};
 	m_button->setIcon(icon::fromTheme("window"));
 	m_button->setPopupMode(QToolButton::InstantPopup);
 	m_layout->addWidget(m_button);

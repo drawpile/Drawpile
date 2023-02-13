@@ -23,7 +23,10 @@
 
 class QBoxLayout;
 class QMenu;
-class QToolButton;
+
+namespace widgets{
+class GroupedToolButton;
+}
 
 namespace docks {
 
@@ -50,7 +53,7 @@ private slots:
 
 private:
 	QBoxLayout *m_layout;
-	QToolButton *m_button;
+	widgets::GroupedToolButton *m_button;
 	QMenu *m_menu;
 	QAction *m_dockAction;
 	QAction *m_dockableAction;
