@@ -21,8 +21,8 @@
 
 #include "canvas/pressure.h"
 
-#include <QDialog>
 #include <QMenu>
+#include "widgets/popup.h"
 
 class Ui_InputSettings;
 
@@ -31,9 +31,9 @@ namespace input {
 	struct Preset;
 }
 
-namespace dialogs {
+namespace widgets {
 
-class InputSettings : public QDialog
+class InputSettings : public Popup
 {
 	Q_OBJECT
 public:
