@@ -44,7 +44,7 @@ InputSettings::InputSettings(QWidget *parent) :
 	choosePreset(m_ui->preset->currentIndex());
 
 	// Make connections
-	connect(m_ui->smoothing, &QSlider::valueChanged, this, &InputSettings::applyUiToPreset);
+	connect(m_ui->smoothing, QOverload<int>::of(&QSpinBox::valueChanged), this, &InputSettings::applyUiToPreset);
 	connect(m_ui->curve, &KisCurveWidget::curveChanged, this, &InputSettings::applyUiToPreset);
 	connect(m_ui->curveParam, &QSlider::valueChanged, this, &InputSettings::applyUiToPreset);
 	connect(m_ui->pressuresrc, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSettings::applyUiToPreset);
