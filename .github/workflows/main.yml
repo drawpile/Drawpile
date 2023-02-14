@@ -253,7 +253,9 @@ jobs:
           -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on
           ${{ matrix.build_flags }}
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt;${{ github.workspace }}/.github/deps/other"
-          -DCMAKE_INSTALL_PREFIX=out -DDIST_BUILD=${{ matrix.packager && 'on' }}
+          -DCMAKE_INSTALL_PREFIX=out
+          -DDIST_BUILD=${{ matrix.packager && 'on' }}
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{ matrix.packager && startsWith(github.ref, 'refs/tags/') && 'on' }}
       - name: Build project
         run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
         env:
