@@ -253,13 +253,6 @@
        <item row="0" column="1">
         <widget class="QComboBox" name="permPutImage"/>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Selection Move &amp; Resize:</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1">
         <widget class="QComboBox" name="permRegionMove"/>
        </item>
@@ -273,74 +266,81 @@
        <item row="2" column="1">
         <widget class="QComboBox" name="permCreateAnnotation"/>
        </item>
-       <item row="4" column="0">
+       <item row="14" column="0" colspan="2">
+        <widget class="widgets::PresetSelector" name="permissionPresets" native="true">
+         <property name="presetFolder" stdset="0">
+          <string>permissions</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>General Layer Editing:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="3" column="1">
         <widget class="QComboBox" name="permEditLayers"/>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_9">
          <property name="text">
           <string>Own Layer Editing:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="4" column="1">
         <widget class="QComboBox" name="permOwnLayers"/>
        </item>
-       <item row="6" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
           <string>Canvas Resizing:</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="5" column="1">
         <widget class="QComboBox" name="permResize"/>
        </item>
-       <item row="7" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="label_11">
          <property name="text">
           <string>Canvas Background:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="6" column="1">
         <widget class="QComboBox" name="permBackground"/>
        </item>
-       <item row="8" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="label_12">
          <property name="text">
           <string>Laser Pointer:</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
+       <item row="7" column="1">
         <widget class="QComboBox" name="permLaser"/>
        </item>
-       <item row="9" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="label_13">
          <property name="text">
           <string>Undo &amp; Redo:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="8" column="1">
         <widget class="QComboBox" name="permUndo"/>
        </item>
-       <item row="10" column="0">
+       <item row="9" column="0">
         <widget class="QLabel" name="label_16">
          <property name="text">
           <string>Kick &amp; Ban:</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="9" column="1">
         <widget class="QComboBox" name="deputies">
          <item>
           <property name="text">
@@ -354,12 +354,15 @@
          </item>
         </widget>
        </item>
-       <item row="13" column="0" colspan="2">
-        <widget class="widgets::PresetSelector" name="permissionPresets">
-         <property name="presetFolder">
-          <string>permissions</string>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Timeline:</string>
          </property>
         </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QComboBox" name="permTimeline"/>
        </item>
        <item row="11" column="0">
         <widget class="QLabel" name="labelMetadata">
@@ -371,15 +374,12 @@
        <item row="11" column="1">
         <widget class="QComboBox" name="permMetadata"/>
        </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="label_18">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Timeline:</string>
+          <string>Selection Move &amp; Resize:</string>
          </property>
         </widget>
-       </item>
-       <item row="12" column="1">
-        <widget class="QComboBox" name="permTimeline"/>
        </item>
       </layout>
      </widget>
@@ -515,6 +515,35 @@
    <header>widgets/presetselector.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>title</tabstop>
+  <tabstop>maxUsers</tabstop>
+  <tabstop>denyJoins</tabstop>
+  <tabstop>authOnly</tabstop>
+  <tabstop>autoresetThreshold</tabstop>
+  <tabstop>preserveChat</tabstop>
+  <tabstop>persistent</tabstop>
+  <tabstop>nsfm</tabstop>
+  <tabstop>permPutImage</tabstop>
+  <tabstop>permRegionMove</tabstop>
+  <tabstop>permCreateAnnotation</tabstop>
+  <tabstop>permEditLayers</tabstop>
+  <tabstop>permOwnLayers</tabstop>
+  <tabstop>permResize</tabstop>
+  <tabstop>permBackground</tabstop>
+  <tabstop>permLaser</tabstop>
+  <tabstop>permUndo</tabstop>
+  <tabstop>deputies</tabstop>
+  <tabstop>permTimeline</tabstop>
+  <tabstop>permMetadata</tabstop>
+  <tabstop>banlistView</tabstop>
+  <tabstop>removeBan</tabstop>
+  <tabstop>announcementTableView</tabstop>
+  <tabstop>addPrivateAnnouncement</tabstop>
+  <tabstop>addAnnouncement</tabstop>
+  <tabstop>removeAnnouncement</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
