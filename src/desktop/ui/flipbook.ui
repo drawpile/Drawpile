@@ -136,11 +136,11 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
+        <enum>QSizePolicy::Expanding</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>10</width>
+         <width>0</width>
          <height>0</height>
         </size>
        </property>
@@ -149,7 +149,7 @@
      <item>
       <widget class="QLabel" name="timelineModeLabel">
        <property name="text">
-        <string notr="true">Timeline: mode</string>
+        <string notr="true">Automatic Timeline, 25 FPS</string>
        </property>
       </widget>
      </item>
@@ -160,8 +160,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
@@ -169,7 +169,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>FPS:</string>
+        <string>Flipbook FPS:</string>
        </property>
       </widget>
      </item>

@@ -108,10 +108,6 @@ void Flipbook::updateFps(int newFps)
 	if(m_timer->isActive()) {
 		m_timer->setInterval(1000 / newFps);
 	}
-	QPalette pal = palette();
-	if(newFps != m_realFps)
-		pal.setColor(QPalette::Text, Qt::red);
-	m_ui->fps->setPalette(pal);
 }
 
 void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
@@ -140,8 +136,13 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 	drawdance::DocumentMetadata documentMetadata = canvasState.documentMetadata();
 	m_realFps = documentMetadata.framerate();
 
-	m_ui->timelineModeLabel->setText(documentMetadata.useTimeline()
-		? tr("Timeline: manual") : tr("Timeline: automatic"));
+	QString timelineMode;
+	if(documentMetadata.useTimeline()) {
+		timelineMode = tr("Manual Timeline, %1 FPS");
+	} else {
+		timelineMode = tr("Automatic Timeline, %1 FPS");
+	}
+	m_ui->timelineModeLabel->setText(timelineMode.arg(m_realFps));
 
 	updateFps(m_ui->fps->value());
 	resetFrameCache();
