@@ -3210,7 +3210,11 @@ void MainWindow::setupActions()
 	helpmenu->addAction(homepage);
 	helpmenu->addAction(tablettester);
 	helpmenu->addAction(showlogfile);
+#ifndef Q_OS_MACOS
+	// Qt shunts the About menus into the Application menu on macOS, so this
+	// would cause two separators to be placed instead of one
 	helpmenu->addSeparator();
+#endif
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
 	helpmenu->addSeparator();
