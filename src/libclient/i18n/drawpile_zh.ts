@@ -761,17 +761,17 @@ to 64x64 pixels.</source>
         <location filename="../../desktop/ui/fillsettings.ui" line="32"/>
         <location filename="../../desktop/ui/fillsettings.ui" line="68"/>
         <source> px</source>
-        <translation type="unfinished"></translation>
+        <translation> px</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="35"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>羽化: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="45"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>来源:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="81"/>
@@ -786,27 +786,27 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="126"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>模式:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="146"/>
         <source>Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>当前图层</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="151"/>
         <source>Merged Image</source>
-        <translation type="unfinished"></translation>
+        <translation>拼合图像</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="172"/>
         <source>Normal</source>
-        <translation type="unfinished">普通</translation>
+        <translation>普通</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="177"/>
         <source>Behind</source>
-        <translation type="unfinished">覆盖</translation>
+        <translation>覆盖</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/fillsettings.ui" line="182"/>
@@ -1204,7 +1204,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../../desktop/ui/layoutsdialog.ui" line="68"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile的面板可以通过从顶部拖动来自由排列和组合.你可以在这里保存和恢复你喜欢的排列.请确保你的排列符合你的分辨率,否则一些控件可能会被推到屏幕之外.</translation>
     </message>
 </context>
 <context>
@@ -2225,12 +2225,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2598"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>标签靠边</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2614"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>按住shift键排列</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2630"/>
@@ -3047,7 +3047,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="107"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation>最后一个用户离开后不终止房间</translation>
+        <translation>当最后一个用户离开后不终止房间</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="110"/>
@@ -3087,7 +3087,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="319"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>记号笔:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/sessionsettings.ui" line="133"/>
@@ -3639,22 +3639,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1196"/>
         <source>NSFM (Not Safe For Minors) Tag Words</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级标签</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1215"/>
         <source>NSFM Session Restrictions</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级房间</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1287"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定时隐藏设定</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1300"/>
         <source>Parental controls are locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级设定已被锁定.</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1205"/>
@@ -4509,12 +4509,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="192"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知类型%1.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="232"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation>&lt;b&gt;冲突:&lt;/b&gt; 如果你继续 &apos;%1&apos; 的现有快捷键将被覆盖.</translation>
+        <translation>&lt;b&gt;冲突:&lt;/b&gt; 如果你继续, &apos;%1&apos;的现有快捷键将被覆盖.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/canvasshortcutsdialog.cpp" line="237"/>
@@ -6053,7 +6053,15 @@ Are you sure youwant to start recording debug dumps?</source>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>可用的客户端命令:
+/help - 显示此信息
+/clear - 清除聊天窗口
+/! &lt;text&gt; - 发送公告消息 (限operators)
+/alert &lt;text&gt; - 发送弹窗消息 (限operators)
+/pin &lt;text&gt; - 发送置顶消息 (限operators)
+/unpin - 移除置顶消息 (限operators)
+/me &lt;text&gt; - 发送动作消息
+/roll &lt;dice&gt; - 掷骰子,例如:1d6为六面骰子</translation>
     </message>
     <message>
         <location filename="../../desktop/chat/chatwidget.cpp" line="770"/>
