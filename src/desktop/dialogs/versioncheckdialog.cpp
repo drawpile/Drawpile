@@ -41,7 +41,7 @@ VersionCheckDialog::VersionCheckDialog(QWidget *parent)
 
 	connect(m_downloadButton, &QPushButton::clicked, this, &VersionCheckDialog::downloadNewVersion);
 
-	m_ui->dontCheck->setChecked(!QSettings().value("versioncheck/enabled", true).toBool());
+	m_ui->checkForUpdates->setChecked(QSettings().value("versioncheck/enabled", true).toBool());
 
 	connect(this, &VersionCheckDialog::finished, this, &VersionCheckDialog::rememberSettings);
 }
@@ -53,7 +53,7 @@ VersionCheckDialog::~VersionCheckDialog()
 
 void VersionCheckDialog::rememberSettings()
 {
-	QSettings().setValue("versioncheck/enabled", !m_ui->dontCheck->isChecked());
+	QSettings().setValue("versioncheck/enabled", m_ui->checkForUpdates->isChecked());
 }
 
 void VersionCheckDialog::doVersionCheckIfNeeded()

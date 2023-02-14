@@ -49,9 +49,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="dontCheck">
+        <widget class="QCheckBox" name="checkForUpdates">
          <property name="text">
-          <string>Don't check automatically</string>
+          <string>Check for updates automatically</string>
          </property>
         </widget>
        </item>
