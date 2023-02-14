@@ -63,6 +63,7 @@
 #    define DP_MUST_CHECK   __attribute((warn_unused_result))
 #    define DP_INLINE       DP_UNUSED static inline
 #    define DP_NOINLINE     __attribute__((noinline))
+#    define DP_FORCE_INLINE DP_INLINE __attribute__((__always_inline__))
 #else
 #    define DP_TRAP() abort()
 #    define DP_UNUSED // nothing
@@ -79,6 +80,7 @@
 
 #ifdef _MSC_VER
 typedef long double DP_max_align_t;
+#    define DP_FORCE_INLINE DP_INLINE __forceinline
 #else
 typedef max_align_t DP_max_align_t;
 #endif

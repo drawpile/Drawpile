@@ -55,7 +55,7 @@ typedef __m128i v4si;
 #define v4si_to_v4sf _mm_cvtepi32_ps
 #define v4sf_to_v4si _mm_cvttps_epi32
 
-#if _MSC_VER && !__INTEL_COMPILER
+#if _MSC_VER && !__INTEL_COMPILER && !__clang__
   template <class T>
   __forceinline char GetChar(T value, size_t index) { return ((char*)&value)[index]; }
 

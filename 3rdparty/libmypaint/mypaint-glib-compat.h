@@ -14,8 +14,12 @@
 # define G_END_DECLS
 #endif
 
+#ifndef FALSE
 #define	FALSE	(0)
+#endif
+#ifndef TRUE
 #define	TRUE	(!FALSE)
+#endif
 
 typedef void * gpointer;
 

@@ -20,11 +20,11 @@
 
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     unset(dp_common_cflags)
-    set(dp_common_warnings -pedantic -pedantic-errors -Wall -Wextra -Wshadow
+    set(dp_common_warnings -pedantic -Wall -Wextra -Wshadow
                            -Wmissing-include-dirs -Wconversion)
 
     if(ENABLE_WERROR)
-        list(APPEND dp_common_warnings -Werror -Wno-error=unused-parameter)
+        list(APPEND dp_common_warnings -pedantic-errors -Werror -Wno-error=unused-parameter)
     endif()
 
     # When LTO is enabled, CMake will try to pass -fno-fat-lto-objects, which in
@@ -46,7 +46,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     endif()
 
     set(dp_cflags ${dp_common_cflags})
-    set(dp_cxxflags ${dp_common_cflags} -fno-exceptions)
+    set(dp_cxxflags ${dp_common_cflags} -fno-exceptions -fms-extensions) # c++ anonymous struct is an MS extension
     set(dp_cwarnings ${dp_common_warnings} -Wstrict-prototypes)
     set(dp_cxxwarnings ${dp_common_warnings})
 elseif(CMAKE_C_COMPILER MATCHES "MSVC")
