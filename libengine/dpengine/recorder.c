@@ -189,7 +189,7 @@ static void run_recorder(void *user)
         }
     }
     else {
-        DP_canvas_state_decref(cs_or_null);
+        DP_canvas_state_decref_nullable(cs_or_null);
     }
 }
 
