@@ -168,3 +168,15 @@ if(BUILD_TESTS)
 
     add_dptest_targets(engine dptest_engine dpengine_tests)
 endif()
+
+if(BUILD_BENCHMARKS)
+    find_package(benchmark CONFIG REQUIRED)
+
+    set(blending_simd_bench_sources benchmark/blending_simd_bench.cpp)
+    add_clang_format_files("${blending_simd_bench_sources}")
+
+    add_executable(blending_simd_bench "${blending_simd_bench_sources}")
+    set_dp_target_properties(blending_simd_bench CXX NO_WARNINGS)
+    target_link_libraries(blending_simd_bench PUBLIC dpcommon dpengine dpmsg benchmark::benchmark benchmark::benchmark_main)
+    target_compile_options(blending_simd_bench PUBLIC -masm=intel -fverbose-asm)
+endif()

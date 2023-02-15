@@ -96,7 +96,8 @@ bool DP_perf_open(DP_Output *output)
     return DP_OUTPUT_PRINT_LITERAL(
         output, "# Drawdance performance recording v" DP_PERF_VERSION "\n"
                 "# <thread_id> <start_seconds>.<start_nanoseconds> "
-                "<end_seconds>.<end_nanoseconds> <category> <details...>\n");
+                "<end_seconds>.<end_nanoseconds> <diff_nanoseconds> <category> "
+                "<details...>\n");
 }
 
 bool DP_perf_close(void)
@@ -155,6 +156,15 @@ static DP_PerfEntry *search_or_push_perf_entry(int *out_handle)
 
 static DP_PerfTime get_time(void)
 {
+#ifdef _WIN32
+    LARGE_INTEGER ticks;
+    QueryPerformanceCounter(&ticks);
+
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+    uint64_t ns = ticks.QuadPart * 1000000000 / freq.QuadPart;
+    return (DP_PerfTime){ns / 1000000000, ns % 1000000000};
+#else
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) != 0) {
         return (DP_PerfTime){ts.tv_sec, ts.tv_nsec};
@@ -163,6 +173,7 @@ static DP_PerfTime get_time(void)
         DP_warn("Could not get perf time");
         return (DP_PerfTime){0, 0};
     }
+#endif
 }
 
 int DP_perf_begin_internal(const char *realm, const char *categories,
@@ -199,11 +210,14 @@ void DP_perf_end_internal(DP_Output *output, int handle)
     DP_PerfTime start = pe->start;
     char *detail = pe->detail;
 
-    bool ok = DP_output_format(output, "%llu %lld.%09ld %lld.%09ld %s:%s%s%s\n",
-                               DP_thread_current_id(), start.seconds,
-                               start.nanoseconds, end.seconds, end.nanoseconds,
-                               pe->realm, pe->categories,
-                               detail[0] == '\0' ? "" : " ", detail);
+    long long diff = (end.seconds * 1000000000 + end.nanoseconds)
+                   - (start.seconds * 1000000000 + start.nanoseconds);
+
+    bool ok = DP_output_format(
+        output, "%llu %lld.%09ld %lld.%09ld %llu %s:%s%s%s\n",
+        DP_thread_current_id(), start.seconds, start.nanoseconds, end.seconds,
+        end.nanoseconds, diff, pe->realm, pe->categories,
+        detail[0] == '\0' ? "" : " ", detail);
     if (!ok) {
         DP_warn("Error formatting perf output: %s", DP_error());
     }
