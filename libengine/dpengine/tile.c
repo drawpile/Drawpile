@@ -313,6 +313,22 @@ bool DP_tile_blank(DP_Tile *tile)
     return memcmp(tile->pixels, blank_pixels, DP_TILE_BYTES) == 0;
 }
 
+bool DP_tile_opaque(DP_Tile *tile_or_null)
+{
+    if (tile_or_null) {
+        DP_Pixel15 *pixels = DP_tile_pixels(tile_or_null);
+        for (int i = 1; i < DP_TILE_LENGTH; ++i) {
+            if (pixels[i].a < DP_BIT15) {
+                return false;
+            }
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
 {
     DP_Pixel15 pixel;

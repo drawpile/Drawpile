@@ -131,6 +131,8 @@ DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y);
 
 bool DP_tile_blank(DP_Tile *tile);
 
+bool DP_tile_opaque(DP_Tile *tile_or_null);
+
 bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel);
 
 

@@ -24,6 +24,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpmsg/blend_mode.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -159,6 +160,33 @@ int DP_layer_props_list_index_by_id(DP_LayerPropsList *lpl, int layer_id)
         }
     }
     return -1;
+}
+
+bool DP_layer_props_list_can_decrease_opacity(DP_LayerPropsList *lpl)
+{
+    DP_ASSERT(lpl);
+    DP_ASSERT(DP_atomic_get(&lpl->refcount) > 0);
+    int count = lpl->count;
+    for (int i = 0; i < count; ++i) {
+        DP_LayerProps *lp = lpl->elements[i].layer_props;
+
+        // Recurse if this is a pass-through group.
+        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
+        bool can_decrease_opacity;
+        if (!child_lpl || DP_layer_props_isolated(lp)) {
+            can_decrease_opacity = DP_blend_mode_can_decrease_opacity(
+                DP_layer_props_blend_mode(lp));
+        }
+        else {
+            can_decrease_opacity =
+                DP_layer_props_list_can_decrease_opacity(child_lpl);
+        }
+
+        if (can_decrease_opacity) {
+            return true;
+        }
+    }
+    return false;
 }
 
 

@@ -58,6 +58,8 @@ DP_LayerProps *DP_layer_props_list_at_noinc(DP_LayerPropsList *lpl, int index);
 
 int DP_layer_props_list_index_by_id(DP_LayerPropsList *lpl, int layer_id);
 
+bool DP_layer_props_list_can_decrease_opacity(DP_LayerPropsList *lpl);
+
 
 DP_TransientLayerPropsList *DP_transient_layer_props_list_new_init(int reserve);
 

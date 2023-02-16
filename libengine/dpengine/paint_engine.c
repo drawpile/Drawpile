@@ -147,6 +147,8 @@ struct DP_PaintEngine {
         DP_Timeline *prev_tl;
         DP_LayerPropsList *lpl;
         DP_Tile *background_tile;
+        bool background_opaque;
+        bool layers_can_decrease_opacity;
     } local_view;
     DP_DrawContext *paint_dc;
     DP_PaintEnginePreview *preview;
@@ -185,6 +187,7 @@ struct DP_PaintEngine {
 struct DP_PaintEngineRenderParams {
     DP_PaintEngine *pe;
     int xtiles;
+    bool needs_checkers;
     DP_PaintEngineRenderTileFn render_tile;
     void *user;
 };
@@ -578,7 +581,8 @@ static void flatten_onion_skin(DP_TransientTile *tt, DP_CanvasState *cs,
     }
 }
 
-static DP_TransientTile *flatten_tile(DP_PaintEngine *pe, int tile_index)
+static DP_TransientTile *flatten_tile(DP_PaintEngine *pe, bool needs_checkers,
+                                      int tile_index)
 {
     DP_CanvasState *cs = pe->view_cs;
     DP_TransientTile *tt = DP_transient_tile_new_nullable(
@@ -609,7 +613,10 @@ static DP_TransientTile *flatten_tile(DP_PaintEngine *pe, int tile_index)
                                   DP_canvas_state_layer_props_noinc(cs),
                                   tile_index, tt, DP_BIT15, true, &vmf);
 
-    DP_transient_tile_merge(tt, pe->checker, DP_BIT15, DP_BLEND_MODE_BEHIND);
+    if (needs_checkers) {
+        DP_transient_tile_merge(tt, pe->checker, DP_BIT15,
+                                DP_BLEND_MODE_BEHIND);
+    }
     DP_transient_layer_content_transient_tile_set_noinc(pe->tlc, tt,
                                                         tile_index);
     return tt;
@@ -625,7 +632,8 @@ static void render_job(void *user, int thread_index)
 
     DP_PaintEngine *pe = render_params->pe;
     int tile_index = y * render_params->xtiles + x;
-    DP_TransientTile *tt = flatten_tile(pe, tile_index);
+    DP_TransientTile *tt =
+        flatten_tile(pe, render_params->needs_checkers, tile_index);
 
     DP_Pixel8 *pixel_buffer =
         ((DP_Pixel8 *)pe->buffers) + DP_TILE_LENGTH * thread_index;
@@ -693,6 +701,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.prev_tl = NULL;
     pe->local_view.lpl = NULL;
     pe->local_view.background_tile = NULL;
+    pe->local_view.background_opaque = false;
+    pe->local_view.layers_can_decrease_opacity = true;
     pe->paint_dc = paint_dc;
     pe->preview = NULL;
     pe->preview_dc = preview_dc;
@@ -952,6 +962,7 @@ void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
     DP_Tile *prev = pe->local_view.background_tile;
     if (prev != tile_or_null) {
         pe->local_view.background_tile = tile_or_null;
+        pe->local_view.background_opaque = DP_tile_opaque(tile_or_null);
         DP_tile_decref_nullable(prev);
         invalidate_local_view(pe, false);
     }
@@ -1930,8 +1941,9 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         DP_timeline_decref_nullable(prev_tl);
         pe->local_view.prev_lpl = DP_layer_props_list_incref(lpl);
         pe->local_view.prev_tl = DP_timeline_incref_nullable(tl);
+        DP_CanvasState *next_cs = set_local_layer_props(pe, cs);
         DP_PERF_END(local);
-        return set_local_layer_props(pe, cs);
+        return next_cs;
     }
 }
 
@@ -1941,8 +1953,8 @@ static DP_CanvasState *apply_local_background_tile(DP_PaintEngine *pe,
     DP_Tile *t = pe->local_view.background_tile;
     if (t) {
         DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-        DP_transient_canvas_state_background_tile_set_noinc(tcs,
-                                                            DP_tile_incref(t));
+        DP_transient_canvas_state_background_tile_set_noinc(
+            tcs, DP_tile_incref(t), pe->local_view.background_opaque);
         return (DP_CanvasState *)tcs;
     }
     else {
@@ -2064,6 +2076,14 @@ void DP_paint_engine_tick(
             pe, apply_local_layer_props(
                     pe, apply_inspect(pe, apply_preview(pe, pe->history_cs))));
         pe->view_cs = next_view_cs;
+
+        DP_LayerPropsList *lpl =
+            DP_canvas_state_layer_props_noinc(next_view_cs);
+        if (lpl != DP_canvas_state_layer_props_noinc(prev_view_cs)) {
+            pe->local_view.layers_can_decrease_opacity =
+                DP_layer_props_list_can_decrease_opacity(lpl);
+        }
+
         emit_changes(pe, prev_view_cs, next_view_cs, ucb, resized, tile_changed,
                      layer_props_changed, annotations_changed,
                      document_metadata_changed, timeline_changed, cursor_moved,
@@ -2118,6 +2138,20 @@ static void wait_for_render(DP_PaintEngine *pe)
     }
 }
 
+static struct DP_PaintEngineRenderParams
+make_render_params(DP_PaintEngine *pe, DP_PaintEngineRenderTileFn render_tile,
+                   void *user)
+{
+    // It's very rare in practice for the checkerboard background to actually be
+    // visible behind the canvas. Only if the canvas background is set to a
+    // non-opaque value or there's weird blend modes like Erase at top-level.
+    bool needs_checkers = !DP_canvas_state_background_opaque(pe->view_cs)
+                       || pe->local_view.layers_can_decrease_opacity;
+    return (struct DP_PaintEngineRenderParams){
+        pe, DP_tile_count_round(DP_canvas_state_width(pe->view_cs)),
+        needs_checkers, render_tile, user};
+}
+
 void DP_paint_engine_render_everything(DP_PaintEngine *pe,
                                        DP_PaintEngineRenderTileFn render_tile,
                                        void *user)
@@ -2125,9 +2159,8 @@ void DP_paint_engine_render_everything(DP_PaintEngine *pe,
     DP_ASSERT(pe);
     DP_ASSERT(render_tile);
     DP_PERF_BEGIN(fn, "render:everything");
-    struct DP_PaintEngineRenderParams params = {
-        pe, DP_tile_count_round(DP_canvas_state_width(pe->view_cs)),
-        render_tile, user};
+    struct DP_PaintEngineRenderParams params =
+        make_render_params(pe, render_tile, user);
     DP_canvas_diff_each_pos_reset(pe->diff, render_pos, &params);
     wait_for_render(pe);
     DP_PERF_END(fn);
@@ -2142,9 +2175,8 @@ void DP_paint_engine_render_tile_bounds(DP_PaintEngine *pe, int tile_left,
     DP_ASSERT(pe);
     DP_ASSERT(render_tile);
     DP_PERF_BEGIN(fn, "render:tile_bounds");
-    struct DP_PaintEngineRenderParams params = {
-        pe, DP_tile_count_round(DP_canvas_state_width(pe->view_cs)),
-        render_tile, user};
+    struct DP_PaintEngineRenderParams params =
+        make_render_params(pe, render_tile, user);
     DP_canvas_diff_each_pos_tile_bounds_reset(pe->diff, tile_left, tile_top,
                                               tile_right, tile_bottom,
                                               render_pos, &params);

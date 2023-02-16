@@ -116,6 +116,8 @@ int DP_canvas_state_offset_y(DP_CanvasState *cs);
 
 DP_Tile *DP_canvas_state_background_tile_noinc(DP_CanvasState *cs);
 
+bool DP_canvas_state_background_opaque(DP_CanvasState *cs);
+
 DP_LayerList *DP_canvas_state_layers_noinc(DP_CanvasState *cs);
 
 DP_LayerPropsList *DP_canvas_state_layer_props_noinc(DP_CanvasState *cs);
@@ -213,7 +215,7 @@ void DP_transient_canvas_state_offsets_add(DP_TransientCanvasState *tcs,
                                            int offset_x, int offset_y);
 
 void DP_transient_canvas_state_background_tile_set_noinc(
-    DP_TransientCanvasState *tcs, DP_Tile *tile);
+    DP_TransientCanvasState *tcs, DP_Tile *tile, bool opaque);
 
 void DP_transient_canvas_state_layer_routes_reindex(
     DP_TransientCanvasState *tcs, DP_DrawContext *dc);

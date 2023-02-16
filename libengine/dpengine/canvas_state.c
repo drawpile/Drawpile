@@ -59,6 +59,7 @@ struct DP_CanvasState {
     const int width, height;
     const int offset_x, offset_y;
     DP_Tile *const background_tile;
+    const bool background_opaque;
     DP_LayerList *const layers;
     DP_LayerPropsList *const layer_props;
     DP_LayerRoutes *const layer_routes;
@@ -73,6 +74,7 @@ struct DP_TransientCanvasState {
     int width, height;
     int offset_x, offset_y;
     DP_Tile *background_tile;
+    bool background_opaque;
     union {
         DP_LayerList *layers;
         DP_TransientLayerList *transient_layers;
@@ -104,6 +106,7 @@ struct DP_CanvasState {
     int width, height;
     int offset_x, offset_y;
     DP_Tile *background_tile;
+    bool background_opaque;
     union {
         DP_LayerList *layers;
         DP_TransientLayerList *transient_layers;
@@ -142,6 +145,7 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                     offset_x,
                                     offset_y,
                                     NULL,
+                                    false,
                                     {NULL},
                                     {NULL},
                                     NULL,
@@ -246,6 +250,13 @@ DP_Tile *DP_canvas_state_background_tile_noinc(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->background_tile;
+}
+
+bool DP_canvas_state_background_opaque(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->background_opaque;
 }
 
 DP_LayerList *DP_canvas_state_layers_noinc(DP_CanvasState *cs)
@@ -600,7 +611,8 @@ static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
 
     if (tile) {
         DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-        DP_transient_canvas_state_background_tile_set_noinc(tcs, tile);
+        DP_transient_canvas_state_background_tile_set_noinc(
+            tcs, tile, DP_tile_opaque(tile));
         return DP_transient_canvas_state_persist(tcs);
     }
     else {
@@ -1334,6 +1346,7 @@ static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
     DP_TransientCanvasState *tcs = allocate_canvas_state(
         true, cs->width, cs->height, cs->offset_x, cs->offset_y);
     tcs->background_tile = DP_tile_incref_nullable(cs->background_tile);
+    tcs->background_opaque = cs->background_opaque;
     return tcs;
 }
 
@@ -1462,13 +1475,14 @@ void DP_transient_canvas_state_offsets_add(DP_TransientCanvasState *tcs,
 }
 
 void DP_transient_canvas_state_background_tile_set_noinc(
-    DP_TransientCanvasState *tcs, DP_Tile *tile)
+    DP_TransientCanvasState *tcs, DP_Tile *tile, bool opaque)
 {
     DP_ASSERT(tcs);
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     DP_tile_decref_nullable(tcs->background_tile);
     tcs->background_tile = tile;
+    tcs->background_opaque = opaque;
 }
 
 void DP_transient_canvas_state_layer_routes_reindex(

@@ -1760,7 +1760,8 @@ static bool read_index_background_tile(DP_ReadSnapshotContext *c, size_t offset)
     DP_debug("Read background tile at offset %zu", offset);
     DP_Tile *t;
     if (read_index_tile_inc(c, offset, &t)) {
-        DP_transient_canvas_state_background_tile_set_noinc(c->tcs, t);
+        DP_transient_canvas_state_background_tile_set_noinc(c->tcs, t,
+                                                            DP_tile_opaque(t));
         return true;
     }
     else {

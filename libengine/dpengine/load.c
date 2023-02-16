@@ -442,8 +442,9 @@ static bool ora_try_load_background_tile(DP_ReadOraContext *c,
         return false;
     }
 
-    DP_transient_canvas_state_background_tile_set_noinc(
-        c->tcs, DP_tile_new_from_pixels8(0, DP_image_pixels(img)));
+    DP_Tile *tile = DP_tile_new_from_pixels8(0, DP_image_pixels(img));
+    DP_transient_canvas_state_background_tile_set_noinc(c->tcs, tile,
+                                                        DP_tile_opaque(tile));
     DP_image_free(img);
     return true;
 }
@@ -1025,7 +1026,7 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
     DP_transient_canvas_state_background_tile_set_noinc(
-        tcs, DP_tile_new_from_bgra(0, 0xffffffffu));
+        tcs, DP_tile_new_from_bgra(0, 0xffffffffu), true);
 
     int width = DP_image_width(img);
     int height = DP_image_height(img);
