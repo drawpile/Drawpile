@@ -168,6 +168,13 @@ size_t DP_msg_server_command_msg_len(const DP_MsgServerCommand *msc);
  * queue will automatically close the socket after sending this message.
  */
 
+#define DP_MSG_DISCONNECT_REASON_ERROR    0
+#define DP_MSG_DISCONNECT_REASON_KICK     1
+#define DP_MSG_DISCONNECT_REASON_SHUTDOWN 2
+#define DP_MSG_DISCONNECT_REASON_OTHER    3
+
+const char *DP_msg_disconnect_reason_variant_name(unsigned int value);
+
 typedef struct DP_MsgDisconnect DP_MsgDisconnect;
 
 DP_Message *DP_msg_disconnect_new(unsigned int context_id, uint8_t reason,

@@ -969,6 +969,22 @@ size_t DP_msg_server_command_msg_len(const DP_MsgServerCommand *msc)
 
 /* DP_MSG_DISCONNECT */
 
+const char *DP_msg_disconnect_reason_variant_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_DISCONNECT_REASON_ERROR:
+        return "Error";
+    case DP_MSG_DISCONNECT_REASON_KICK:
+        return "Kick";
+    case DP_MSG_DISCONNECT_REASON_SHUTDOWN:
+        return "Shutdown";
+    case DP_MSG_DISCONNECT_REASON_OTHER:
+        return "Other";
+    default:
+        return NULL;
+    }
+}
+
 struct DP_MsgDisconnect {
     uint8_t reason;
     uint16_t message_len;

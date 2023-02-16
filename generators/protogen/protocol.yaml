@@ -54,7 +54,13 @@ Disconnect:
              This message is used when closing the connection gracefully. The message queue
              will automatically close the socket after sending this message.
     fields:
-        - reason u8
+        - reason enum:
+          name: DisconnectReason
+          variants:
+              - Error
+              - Kick
+              - Shutdown
+              - Other
         - message utf8
 
 Internal:
