@@ -56,6 +56,8 @@ const char *DP_message_name(DP_Message *msg);
 
 unsigned int DP_message_context_id(DP_Message *msg);
 
+void DP_message_context_id_set(DP_Message *msg, unsigned int context_id);
+
 void *DP_message_internal(DP_Message *msg);
 
 DP_Message *DP_message_from_internal(void *internal);

@@ -116,6 +116,13 @@ unsigned int DP_message_context_id(DP_Message *msg)
     return msg->context_id;
 }
 
+void DP_message_context_id_set(DP_Message *msg, unsigned int context_id)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    msg->context_id = context_id;
+}
+
 void *DP_message_internal(DP_Message *msg)
 {
     DP_ASSERT(msg);
