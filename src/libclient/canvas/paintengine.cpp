@@ -651,7 +651,7 @@ void PaintEngine::onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int 
 	Q_UNUSED(threadIndex);
 	QImage image{
 		reinterpret_cast<unsigned char *>(pixels), DP_TILE_SIZE, DP_TILE_SIZE,
-		QImage::Format_ARGB32_Premultiplied};
+		QImage::Format_RGB32};
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	QMutexLocker lock{&pe->m_painterMutex};
 	pe->m_painter.drawImage(x * DP_TILE_SIZE, y * DP_TILE_SIZE, image);
