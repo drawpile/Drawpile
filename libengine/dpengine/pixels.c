@@ -423,7 +423,8 @@ void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
     }
 }
 
-void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
+static void DP_pixels15_to_8_seq(DP_Pixel8 *dst, const DP_Pixel15 *src,
+                                 int count)
 {
     DP_ASSERT(count <= 0 || dst);
     DP_ASSERT(count <= 0 || src);
@@ -431,6 +432,137 @@ void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
         dst[i] = DP_pixel15_to_8(src[i]);
     }
 }
+
+#ifdef DP_CPU_X64
+DP_TARGET_BEGIN("sse4.2")
+static void DP_pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src,
+                                   int count)
+{
+    assert(count % 4 == 0);
+
+    for (int i = 0; i < count; i += 4) {
+        __m128i source1 = _mm_load_si128((__m128i *)&src[i]);
+        __m128i source2 = _mm_load_si128((__m128i *)&src[i + 2]);
+
+        __m128i p1 = _mm_cvtepu16_epi32(source1);
+        __m128i p2 = _mm_cvtepu16_epi32(_mm_srli_si128(source1, 8));
+        __m128i p3 = _mm_cvtepu16_epi32(source2);
+        __m128i p4 = _mm_cvtepu16_epi32(_mm_srli_si128(source2, 8));
+
+        p1 = _mm_srli_epi32(_mm_mullo_epi32(p1, _mm_set1_epi32(255)), 15);
+        p2 = _mm_srli_epi32(_mm_mullo_epi32(p2, _mm_set1_epi32(255)), 15);
+        p3 = _mm_srli_epi32(_mm_mullo_epi32(p3, _mm_set1_epi32(255)), 15);
+        p4 = _mm_srli_epi32(_mm_mullo_epi32(p4, _mm_set1_epi32(255)), 15);
+
+        p2 = _mm_slli_si128(p2, 1);
+        p3 = _mm_slli_si128(p3, 2);
+        p4 = _mm_slli_si128(p4, 3);
+
+        __m128i combined =
+            _mm_or_si128(p1, _mm_or_si128(p2, _mm_or_si128(p3, p4)));
+
+        __m128i out = _mm_shuffle_epi8(
+            combined, _mm_setr_epi8(0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3,
+                                    7, 11, 15));
+
+        _mm_store_si128((__m128i *)&dst[i], out);
+    }
+}
+DP_TARGET_END
+
+DP_TARGET_BEGIN("avx2")
+static void DP_pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src,
+                                  int count)
+{
+    assert(count % 8 == 0);
+
+    for (int i = 0; i < count; i += 8) {
+        __m256i source1 = _mm256_loadu_si256((__m256i *)&src[i]);
+        __m256i source2 = _mm256_loadu_si256((__m256i *)&src[i + 4]);
+
+        __m256i p1 = _mm256_and_si256(source1, _mm256_set1_epi32(0xFFFF));
+        __m256i p2 = _mm256_srli_epi32(
+            _mm256_and_si256(source1, _mm256_set1_epi32(0xFFFF0000)), 16);
+        __m256i p3 = _mm256_and_si256(source2, _mm256_set1_epi32(0xFFFF));
+        __m256i p4 = _mm256_srli_epi32(
+            _mm256_and_si256(source2, _mm256_set1_epi32(0xFFFF0000)), 16);
+
+        p1 = _mm256_srli_epi32(_mm256_mullo_epi32(p1, _mm256_set1_epi32(255)),
+                               15);
+        p2 = _mm256_srli_epi32(_mm256_mullo_epi32(p2, _mm256_set1_epi32(255)),
+                               15);
+        p3 = _mm256_srli_epi32(_mm256_mullo_epi32(p3, _mm256_set1_epi32(255)),
+                               15);
+        p4 = _mm256_srli_epi32(_mm256_mullo_epi32(p4, _mm256_set1_epi32(255)),
+                               15);
+
+        p1 = _mm256_shuffle_epi8(
+            p1, _mm256_setr_epi8(0, 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80, 8,
+                                 0x80, 12, 0x80, 0x80, 0x80, 0x80, 0x80, 0,
+                                 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80, 8, 0x80,
+                                 12, 0x80, 0x80, 0x80, 0x80, 0x80));
+        p2 = _mm256_shuffle_epi8(
+            p2, _mm256_setr_epi8(0x80, 0, 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80,
+                                 8, 0x80, 12, 0x80, 0x80, 0x80, 0x80, 0x80, 0,
+                                 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80, 8, 0x80,
+                                 12, 0x80, 0x80, 0x80, 0x80));
+        p3 = _mm256_shuffle_epi8(
+            p3, _mm256_setr_epi8(0x80, 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80, 0x80,
+                                 0x80, 0x80, 0x80, 8, 0x80, 12, 0x80, 0x80,
+                                 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80, 0x80, 0x80,
+                                 0x80, 0x80, 8, 0x80, 12, 0x80));
+        p4 = _mm256_shuffle_epi8(
+            p4, _mm256_setr_epi8(0x80, 0x80, 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80,
+                                 0x80, 0x80, 0x80, 0x80, 8, 0x80, 12, 0x80,
+                                 0x80, 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80, 0x80,
+                                 0x80, 0x80, 0x80, 8, 0x80, 12));
+
+        __m256i combined =
+            _mm256_or_si256(p1, _mm256_or_si256(p2, _mm256_or_si256(p3, p4)));
+
+        __m256i out = _mm256_permutevar8x32_epi32(
+            combined, _mm256_setr_epi32(0, 2, 4, 6, 1, 3, 5, 7));
+
+        _mm256_storeu_si256((__m256i *)&dst[i], out);
+    }
+}
+DP_TARGET_END
+
+void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int pixel_count)
+{
+    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
+
+    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        int remaining = pixel_count % 8;
+        int count = pixel_count - remaining;
+
+        DP_pixels15_to_8_avx2(dst, src, count);
+
+        src += count;
+        dst += count;
+        pixel_count = remaining;
+    }
+
+    if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        int remaining = pixel_count % 4;
+        int count = pixel_count - remaining;
+
+        DP_pixels15_to_8_sse42(dst, src, count);
+
+        src += count;
+        dst += count;
+        pixel_count = remaining;
+    }
+
+    // seq
+    DP_pixels15_to_8_seq(dst, src, pixel_count);
+}
+#else
+void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
+{
+    DP_pixels15_to_8_seq(dst, src, count);
+}
+#endif
 
 
 // Adapted from the Qt framework, see license above.
