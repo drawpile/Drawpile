@@ -40,8 +40,6 @@ struct DP_Semaphore {
 
 struct DP_Thread {
     pthread_t value;
-    DP_ThreadFn fn;
-    void *data;
 };
 
 struct DP_ThreadRunArgs {
