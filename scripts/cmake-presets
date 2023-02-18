@@ -88,7 +88,6 @@ preset_drawpile_debug() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
-          -DTHREAD_IMPL=QT \
           -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
           $GENERATOR \
@@ -104,7 +103,6 @@ preset_drawpile_relwithdebinfo() {
           -DUSE_STRICT_ALIASING=ON \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
-          -DTHREAD_IMPL=QT \
           -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
           $GENERATOR \
@@ -120,7 +118,6 @@ preset_drawpile_release() {
           -DUSE_STRICT_ALIASING=ON \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
-          -DTHREAD_IMPL=QT \
           -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
           $GENERATOR \
@@ -132,7 +129,6 @@ preset_drawpile_qt6_debug() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
-          -DTHREAD_IMPL=QT6 \
           -DXML_IMPL=QT6 \
           -DZIP_IMPL=LIBZIP \
           $GENERATOR \
@@ -149,7 +145,6 @@ preset_drawpile_qt6_relwithdebinfo() {
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
           -DXML_IMPL=QT6 \
-          -DTHREAD_IMPL=QT6 \
           -DZIP_IMPL=LIBZIP \
           $GENERATOR \
           -B builddpqt6relwithdebinfo
@@ -164,7 +159,6 @@ preset_drawpile_qt6_release() {
           -DUSE_GENERATORS=OFF \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
-          -DTHREAD_IMPL=QT6 \
           -DXML_IMPL=QT6 \
           -DZIP_IMPL=LIBZIP \
           $GENERATOR \
