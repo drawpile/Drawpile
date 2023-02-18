@@ -489,10 +489,10 @@ static void DP_pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src,
         // Convert 2x(16x16bit) to 4x(8x32bit)
         __m256i p1 = _mm256_and_si256(source1, _mm256_set1_epi32(0xffff));
         __m256i p2 = _mm256_srli_epi32(
-            _mm256_and_si256(source1, _mm256_set1_epi32(0xffff0000)), 16);
+            _mm256_and_si256(source1, _mm256_set1_epi32((int)0xffff0000)), 16);
         __m256i p3 = _mm256_and_si256(source2, _mm256_set1_epi32(0xffff));
         __m256i p4 = _mm256_srli_epi32(
-            _mm256_and_si256(source2, _mm256_set1_epi32(0xffff0000)), 16);
+            _mm256_and_si256(source2, _mm256_set1_epi32((int)0xffff0000)), 16);
 
         // Convert 15bit pixels to 8bit pixels. (p * 255) >> 15
         __m256i _255 = _mm256_set1_epi32(255);
