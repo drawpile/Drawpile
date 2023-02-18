@@ -28,7 +28,7 @@ static void free_error_state();
 
 DP_Mutex *DP_mutex_new(void)
 {
-    return (DP_Mutex *)CreateMutexA(NULL, FALSE, NULL);
+    return (DP_Mutex *)CreateMutexW(NULL, FALSE, NULL);
 }
 
 void DP_mutex_free(DP_Mutex *mutex)
