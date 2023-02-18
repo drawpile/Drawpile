@@ -29,15 +29,14 @@ struct DP_ZipReaderFile {
 
 extern "C" DP_ZipReader *DP_zip_reader_new(const char *path)
 {
-    KZip *kz = new (DP_malloc(sizeof(*kz))) KZip{path};
+    KZip *kz = new KZip{path};
     if (kz->open(QIODevice::ReadOnly)) {
         return reinterpret_cast<DP_ZipReader *>(kz);
     }
     else {
         DP_error_set("Error opening '%s': %s", path,
                      qUtf8Printable(kz->errorString()));
-        kz->~KZip();
-        DP_free(kz);
+        delete kz;
         return nullptr;
     }
 }
@@ -46,8 +45,7 @@ extern "C" void DP_zip_reader_free(DP_ZipReader *zr)
 {
     KZip *kz = reinterpret_cast<KZip *>(zr);
     if (kz) {
-        kz->~KZip();
-        DP_free(kz);
+        delete kz;
     }
 }
 
@@ -57,8 +55,7 @@ extern "C" DP_ZipReaderFile *DP_zip_reader_read_file(DP_ZipReader *zr,
     KZip *kz = reinterpret_cast<KZip *>(zr);
     const KArchiveFile *file = kz->directory()->file(QString::fromUtf8(path));
     if (file) {
-        DP_ZipReaderFile *zrf =
-            new (DP_malloc(sizeof(*zrf))) DP_ZipReaderFile{file->data()};
+        DP_ZipReaderFile *zrf = new DP_ZipReaderFile{file->data()};
         return zrf;
     }
     else {
@@ -79,35 +76,27 @@ extern "C" void *DP_zip_reader_file_content(DP_ZipReaderFile *zrf)
 
 extern "C" void DP_zip_reader_file_free(DP_ZipReaderFile *zrf)
 {
-    if (zrf) {
-        zrf->~DP_ZipReaderFile();
-        DP_free(zrf);
-    }
+    delete zrf;
 }
 
 
 extern "C" DP_ZipWriter *DP_zip_writer_new(const char *path)
 {
-    KZip *kz = new (DP_malloc(sizeof(*kz))) KZip{path};
+    KZip *kz = new KZip{path};
     if (kz->open(QIODevice::WriteOnly)) {
         return reinterpret_cast<DP_ZipWriter *>(kz);
     }
     else {
         DP_error_set("Error opening '%s': %s", path,
                      qUtf8Printable(kz->errorString()));
-        kz->~KZip();
-        DP_free(kz);
+        delete kz;
         return nullptr;
     }
 }
 
 extern "C" void DP_zip_writer_free_abort(DP_ZipWriter *zw)
 {
-    KZip *kz = reinterpret_cast<KZip *>(zw);
-    if (kz) {
-        kz->~KZip();
-        DP_free(kz);
-    }
+    delete reinterpret_cast<KZip *>(zw);
 }
 
 extern "C" bool DP_zip_writer_free_finish(DP_ZipWriter *zw)
@@ -118,8 +107,7 @@ extern "C" bool DP_zip_writer_free_finish(DP_ZipWriter *zw)
         DP_error_set("Error closing zip archive: %s",
                      qUtf8Printable(kz->errorString()));
     }
-    kz->~KZip();
-    DP_free(kz);
+    delete kz;
     return ok;
 }
 
