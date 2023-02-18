@@ -145,7 +145,7 @@ int DP_semaphore_value(DP_Semaphore *sem)
 {
     DP_ASSERT(sem);
     int sval;
-    if (sem_getvalue(&sem->value, &sval)) {
+    if (sem_getvalue(&sem->value, &sval) == 0) {
         return sval > 0 ? sval : 0;
     }
     else {
