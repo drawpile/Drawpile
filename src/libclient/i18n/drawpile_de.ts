@@ -113,17 +113,17 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="239"/>
         <source>Smudging Pressure Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Druckeinstellungen für Schmieren</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="253"/>
         <source>Hardness Pressure Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Druckeinstellungen für Härte</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="267"/>
         <source>Opacity Pressure Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Druckeinstellungen für Deckkraft</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="291"/>
@@ -133,12 +133,12 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="298"/>
         <source>Input Preset Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen für Eingabevoreinstellungen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="312"/>
         <source>Size Pressure Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Druckeinstellungen für Größe</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="326"/>
@@ -181,12 +181,12 @@
     <message>
         <location filename="../../desktop/ui/brushdockpopup.ui" line="23"/>
         <source>Pressure Sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucksensibilität</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdockpopup.ui" line="30"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -840,7 +840,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="172"/>
         <source>Flipbook FPS:</source>
-        <translation type="unfinished"></translation>
+        <translation>Daumenkino-FPS</translation>
     </message>
 </context>
 <context>
@@ -2217,7 +2217,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2623"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Docks sperren</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2627"/>
@@ -4648,12 +4648,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/flipbook.cpp" line="141"/>
         <source>Manual Timeline, %1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Manueller Zeitstrahl, %1 FPS</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/flipbook.cpp" line="143"/>
         <source>Automatic Timeline, %1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatischer Zeitstrahl, %1 FPS</translation>
     </message>
 </context>
 <context>
@@ -5563,17 +5563,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/docks/titlewidget.cpp" line="54"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>Angedockt</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/titlewidget.cpp" line="59"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>Dockbar durch Verschieben</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/titlewidget.cpp" line="64"/>
         <source>Close</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -5889,82 +5889,82 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="680"/>
         <source>Size: %1 - </source>
-        <translation type="unfinished"></translation>
+        <translation>Größe: %1 - </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="682"/>
         <source>Size: </source>
-        <translation type="unfinished">Größe: </translation>
+        <translation>Größe: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="687"/>
         <source>Smudging: %1 - </source>
-        <translation type="unfinished"></translation>
+        <translation>Schmieren: %1 - </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="689"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Schmieren: </translation>
+        <translation>Schmieren: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="695"/>
         <source>Opacity: %1 - </source>
-        <translation type="unfinished"></translation>
+        <translation>Deckkraft: %1 - </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="697"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Deckkraft: </translation>
+        <translation>Deckkraft: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="702"/>
         <source>Hardness: %1 - </source>
-        <translation type="unfinished"></translation>
+        <translation>Härte: %1 - </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="704"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Härte: </translation>
+        <translation>Härte: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="770"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="771"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Größe: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="774"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Deckkraft</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="775"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Deckkraft: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="778"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Härte</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="779"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Härte: </translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="782"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Schmieren</translation>
     </message>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="783"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimales Schmieren: </translation>
     </message>
 </context>
 <context>
@@ -6191,22 +6191,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location filename="../../desktop/widgets/inputsettings.cpp" line="37"/>
         <location filename="../../desktop/widgets/inputsettings.cpp" line="102"/>
         <source>New</source>
-        <translation type="unfinished">Neu</translation>
+        <translation>Neu</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/inputsettings.cpp" line="38"/>
         <source>Duplicate</source>
-        <translation type="unfinished">Duplizieren</translation>
+        <translation>Duplizieren</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/inputsettings.cpp" line="39"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/inputsettings.cpp" line="120"/>
         <source>New %1</source>
-        <translation type="unfinished">%1 (neu)</translation>
+        <translation>%1 (neu)</translation>
     </message>
 </context>
 <context>
