@@ -18,7 +18,7 @@
 */
 #include "canvassaverrunnable.h"
 #include "canvas/paintengine.h"
-#include "drawdance/drawcontextpool.h"
+#include "drawdance/global.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QTemporaryFile>

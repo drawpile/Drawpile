@@ -30,8 +30,7 @@
 #include "dialogs/versioncheckdialog.h"
 #include "../libshared/qtshims.h"
 #include "../libshared/util/paths.h"
-#include <drawdance/drawcontextpool.h>
-#include <drawdance/logging.h>
+#include <drawdance/global.h>
 
 #ifdef Q_OS_MAC
 #include "widgets/macmenu.h"
@@ -62,6 +61,9 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setApplicationDisplayName("Drawpile");
 #endif
 	setWindowIcon(QIcon(":/icons/dancepile.png"));
+
+	drawdance::initLogging();
+	drawdance::initCpuSupport();
 	drawdance::DrawContextPool::init();
 
 	// Dockers are hard to drag around since their title bars are full of stuff.
@@ -400,8 +402,6 @@ int main(int argc, char *argv[]) {
 
 	{
 		const auto files = initApp(app);
-
-		drawdance::initLogging();
 
 		if(files.isEmpty()) {
 			app.openBlankDocument();

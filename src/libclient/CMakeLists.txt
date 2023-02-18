@@ -21,23 +21,22 @@ set(libclient_sources
 	drawdance/brushpreview.cpp
 	drawdance/canvashistory.cpp
 	drawdance/canvasstate.cpp
-	drawdance/drawcontextpool.cpp
 	drawdance/documentmetadata.cpp
 	drawdance/eventlog.cpp
 	drawdance/frame.cpp
+	drawdance/global.cpp
 	drawdance/image.cpp
-	drawdance/perf.cpp
 	drawdance/layercontent.cpp
 	drawdance/layergroup.cpp
 	drawdance/layerlist.cpp
 	drawdance/layerprops.cpp
 	drawdance/layerpropslist.cpp
-	drawdance/logging.cpp
 	drawdance/message.cpp
 	drawdance/paintengine.cpp
+	drawdance/perf.cpp
 	drawdance/snapshotqueue.cpp
-	drawdance/timeline.cpp
 	drawdance/tile.cpp
+	drawdance/timeline.cpp
 	export/animationsaverrunnable.cpp
 	export/canvassaverrunnable.cpp
 	export/ffmpegexporter.cpp

@@ -1,5 +1,5 @@
-#ifndef DRAWDANCE_DRAWCONTEXTPOOL_H
-#define DRAWDANCE_DRAWCONTEXTPOOL_H
+#ifndef DRAWDANCE_GLOBAL_H
+#define DRAWDANCE_GLOBAL_H
 
 #include <QMutex>
 #include <QStack>
@@ -7,6 +7,12 @@
 typedef struct DP_DrawContext DP_DrawContext;
 
 namespace drawdance {
+
+
+void initLogging();
+
+void initCpuSupport();
+
 
 class DrawContextPool;
 

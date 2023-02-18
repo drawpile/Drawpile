@@ -5,7 +5,7 @@ extern "C" {
 }
 
 #include "brushpreview.h"
-#include "drawcontextpool.h"
+#include "global.h"
 #include "image.h"
 #include <QPainter>
 

@@ -8,7 +8,7 @@ extern "C" {
 }
 
 #include "canvasstate.h"
-#include "drawcontextpool.h"
+#include "global.h"
 #include "image.h"
 #include "layergroup.h"
 #include "layerprops.h"

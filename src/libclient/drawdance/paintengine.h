@@ -6,7 +6,7 @@ extern "C" {
 }
 
 #include "canvasstate.h"
-#include "drawcontextpool.h"
+#include "global.h"
 #include <QtGlobal>
 #include <functional>
 
