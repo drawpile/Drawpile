@@ -18,6 +18,7 @@
 */
 
 extern "C" {
+#include <dpcommon/threading.h>
 #include <dpengine/layer_routes.h>
 #include <dpengine/paint_engine.h>
 #include <dpengine/recorder.h>
@@ -56,17 +57,19 @@ PaintEngine::PaintEngine(
 	, m_lastRefreshAreaTileBoundsTouched{false}
 	, m_cache{}
 	, m_painter{}
-	, m_painterMutex{}
+	, m_painterMutex{nullptr}
 	, m_sampleColorLastDiameter(-1)
 	, m_onionSkins{nullptr}
 	, m_enableOnionSkins{false}
 {
+	m_painterMutex = DP_mutex_new();
 	start();
 }
 
 PaintEngine::~PaintEngine()
 {
 	DP_onion_skins_free(m_onionSkins);
+	DP_mutex_free(m_painterMutex);
 }
 
 void PaintEngine::setFps(int fps)
@@ -653,8 +656,9 @@ void PaintEngine::onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int 
 		reinterpret_cast<unsigned char *>(pixels), DP_TILE_SIZE, DP_TILE_SIZE,
 		QImage::Format_RGB32};
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	QMutexLocker lock{&pe->m_painterMutex};
+	DP_mutex_lock(pe->m_painterMutex);
 	pe->m_painter.drawImage(x * DP_TILE_SIZE, y * DP_TILE_SIZE, image);
+	DP_mutex_unlock(pe->m_painterMutex);
 }
 
 

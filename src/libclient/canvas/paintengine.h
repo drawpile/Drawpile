@@ -24,7 +24,6 @@ extern "C" {
 #include <dpengine/draw_context.h>
 }
 
-#include <QMutex>
 #include <QObject>
 #include <QPainter>
 #include <QPixmap>
@@ -34,6 +33,8 @@ extern "C" {
 #include "drawdance/canvasstate.h"
 #include "drawdance/paintengine.h"
 #include "drawdance/snapshotqueue.h"
+
+struct DP_Mutex;
 
 namespace drawdance {
 	class LayerPropsList;
@@ -251,7 +252,7 @@ private:
 	bool m_lastRefreshAreaTileBoundsTouched;
 	QPixmap m_cache;
 	QPainter m_painter;
-	QMutex m_painterMutex;
+	DP_Mutex *m_painterMutex;
 	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 	int m_sampleColorLastDiameter;
 	DP_OnionSkins *m_onionSkins;
