@@ -27,7 +27,7 @@ This is probably a non-exhaustive list, but it should hit the most important poi
 
     * It wholly separates the local view from the session state, allowing for local canvas backgrounds, hidden layers and any other local-only modification without modifying the underlying state.
 
-    * It has several optimizations that speed it up a good amount. It combines multiple draw dabs calls into a single "multidab" operation and executes it all in one go. Since these are so common, this speeds up painting and undo/redo by a bunch. It avoids allocations in hot code, instead re-using persistent buffers if possible. There's also efforts underway to make blending use SIMD, which seems to add a good bit of speed as well.
+    * It has several optimizations that speed it up a good amount. It combines multiple draw dabs calls into a single "multidab" operation and executes it all in one go. Since these are so common, this speeds up painting and undo/redo by a bunch. It avoids allocations in hot code, instead re-using persistent buffers if possible. Several pixel operations have SIMD implementations, which makes them a good chunk faster as well.
 
     * It supports recording of debug dumps with full local and remote history tracking, as well as the playback thereof. This means debugging issues with undo and conflict handling is much easier, since it can just be recorded in the wild and then played back afterwards, looking at what's going on with the history. This helped solve those double undo bugs that Rustpile had.
 
@@ -53,11 +53,15 @@ This is probably a non-exhaustive list, but it should hit the most important poi
 
 * Made most of the docks scale better, allowing them to get smaller than they did before.
 
+* Changed the dock controls to be a single button with a menu instead of two difficult to understand ones (that look weird on the Windows System theme) and allow docks to be marked undockable for people who want to keep them floating.
+
 * Reworked canvas shortcuts entirely. Instead of being fixed to modifier keys, spacebar and middle click, they are now freely assignable.
 
 * Feathering support for the flood fill tool.
 
 * Pen tilt and rotation support.
+
+* Minimum size/opacity/hardness/smudging settings for classic brushes in the brush dock.
 
 * Force NSFM option for the server, for servers that mandate all sessions to be marked NSFM.
 
