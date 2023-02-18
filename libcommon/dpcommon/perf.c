@@ -31,13 +31,10 @@
 
 #define INITIAL_CAPACITY 64
 #define DETAIL_LENGTH    256
-
-typedef struct DP_PerfTime {
-    uint64_t nanoseconds;
-} DP_PerfTime;
+#define NS_IN_S          1000000000
 
 typedef struct DP_PerfEntry {
-    DP_PerfTime start;
+    unsigned long long start;
     const char *realm;
     const char *categories;
     char detail[DETAIL_LENGTH];
@@ -153,7 +150,7 @@ static DP_PerfEntry *search_or_push_perf_entry(int *out_handle)
     }
 }
 
-static DP_PerfTime get_time(void)
+static unsigned long long get_time(void)
 {
 #ifdef _WIN32
     LARGE_INTEGER ticks;
@@ -161,17 +158,18 @@ static DP_PerfTime get_time(void)
 
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
-    return (DP_PerfTime){
-        DP_llong_to_uint64(ticks.QuadPart * 1000000000lu / freq.QuadPart)};
+
+    return DP_llong_to_ullong(ticks.QuadPart) * NS_IN_S
+         / DP_llong_to_ullong(freq.QuadPart);
 #else
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) != 0) {
-        return (DP_PerfTime){
-            DP_llong_to_uint64(ts.tv_sec * 1000000000lu + ts.tv_nsec)};
+        return (unsigned long long)ts.tv_sec * NS_IN_S
+             + DP_long_to_ullong(ts.tv_nsec);
     }
     else {
         DP_warn("Could not get perf time");
-        return (DP_PerfTime){0};
+        return 0;
     }
 #endif
 }
@@ -203,17 +201,16 @@ void DP_perf_end_internal(DP_Output *output, int handle)
     DP_ASSERT(output);
     DP_ASSERT(handle != DP_PERF_INVALID_HANDLE);
     DP_ASSERT(perf_mutex);
-    DP_PerfTime end = get_time();
+    unsigned long long end = get_time();
 
     DP_MUTEX_MUST_LOCK(perf_mutex);
     DP_PerfEntry *pe = perf_entry_at(handle);
-    DP_PerfTime start = pe->start;
+    unsigned long long start = pe->start;
     char *detail = pe->detail;
 
-    uint64_t diff = end.nanoseconds - start.nanoseconds;
-    double start_seconds =
-        DP_uint64_to_double(start.nanoseconds) / 1000000000.0;
-    double end_seconds = DP_uint64_to_double(end.nanoseconds) / 1000000000.0;
+    unsigned long long diff = end - start;
+    double start_seconds = DP_ullong_to_double(start) / NS_IN_S;
+    double end_seconds = DP_uint64_to_double(end) / NS_IN_S;
 
     bool ok = DP_output_format(output, "%llu %f %f %llu %s:%s%s%s\n",
                                DP_thread_current_id(), start_seconds,
