@@ -1,5 +1,4 @@
 #include "bench_common.hpp"
-#include <emmintrin.h>
 
 extern "C" {
 #include "dpcommon/cpu.h"
@@ -254,39 +253,6 @@ void seq_float(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
     }
 }
 
-/*
-static void blend_pixels_normal_cpu_support_branching(DP_Pixel15 *dst,
-                                                      DP_Pixel15 *src,
-                                                      int pixel_count,
-                                                      uint16_t opacity)
-{
-    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
-
-    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
-        int remaining = pixel_count % 8;
-        int count = pixel_count - remaining;
-
-        blend_pixels_normal_avx2(dst, src, count, opacity);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
-        int remaining = pixel_count % 4;
-        int count = pixel_count - remaining;
-
-        blend_pixels_normal_sse42(dst, src, count, opacity);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    blend_pixels_normal_seq(dst, src, pixel_count, opacity);
-}*/
-
 DISABLE_OPT_BEGIN
 #define BENCH_15TO8(name, func)                                           \
     static void name(benchmark::State &state)                             \
@@ -322,15 +288,15 @@ BENCH_15TO8(avx2_and_mul_shuffle_or_permute, avx2_and_mul_shuffle_or_permute);
 DISABLE_OPT_END
 BENCHMARK_MAIN();
 
-// int main()
-//{
-//     DP_Pixel15 src[] = {{1, 2, 3, 4},         {10, 20, 30, 40},
-//                         {100, 200, 300, 400}, {1000, 2000, 3000, 4000},
-//                         {5, 6, 7, 8},         {50, 60, 70, 80},
-//                         {500, 600, 700, 800}, {5000, 6000, 7000, 8000}};
-//     DP_Pixel8 dst[DP_ARRAY_LENGTH(src)] = {0};
-//
-//     avx2_and_mul_shuffle_or_permute(dst, src, DP_ARRAY_LENGTH(src));
-//     __debugbreak();
-//     return 0;
-// }
+/* int main()
+{
+    DP_Pixel15 src[] = {{1, 2, 3, 4},         {10, 20, 30, 40},
+                        {100, 200, 300, 400}, {1000, 2000, 3000, 4000},
+                        {5, 6, 7, 8},         {50, 60, 70, 80},
+                        {500, 600, 700, 800}, {5000, 6000, 7000, 8000}};
+    DP_Pixel8 dst[DP_ARRAY_LENGTH(src)] = {0};
+
+    avx2_and_mul_shuffle_or_permute(dst, src, DP_ARRAY_LENGTH(src));
+    __debugbreak();
+    return 0;
+} */

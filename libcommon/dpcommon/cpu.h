@@ -99,7 +99,7 @@
 #    define DP_TARGET_END _Pragma("clang attribute pop")
 #elif defined(__GNUC__)
 #    define DP_TARGET_BEGIN(TARGET) _Pragma("GCC push_options") DP_DO_PRAGMA(GCC target(TARGET))
-#    define DP_TARGET_END _Pragma("GCC pop_options");
+#    define DP_TARGET_END _Pragma("GCC pop_options")
 #else
 #    define DP_TARGET_BEGIN(TARGET) // nothing
 #    define DP_TARGET_END           // nothing
@@ -107,15 +107,24 @@
 // clang-format on
 
 // Order matters
-typedef enum DP_CPU_SUPPORT {
+typedef enum DP_CpuSupport {
     DP_CPU_SUPPORT_DEFAULT,
 #ifdef DP_CPU_X64
     DP_CPU_SUPPORT_SSE42,
     DP_CPU_SUPPORT_AVX2,
 #endif
-} DP_CPU_SUPPORT;
+} DP_CpuSupport;
 
+extern DP_CpuSupport DP_cpu_support_value; // Use DP_cpu_support macro instead
+void DP_cpu_support_init(void);
 
-DP_CPU_SUPPORT DP_get_cpu_support(void);
+#ifdef NDEBUG
+#    define DP_cpu_support DP_cpu_support_value
+#else
+DP_CpuSupport DP_cpu_support_debug_get(const char *file, int line);
+#    define DP_cpu_support \
+        DP_cpu_support_debug_get(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__)
+#endif
+
 
 #endif

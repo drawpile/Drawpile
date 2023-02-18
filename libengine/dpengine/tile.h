@@ -68,13 +68,9 @@ DP_INLINE int DP_tile_count_round(int i)
 
 DP_INLINE DP_TileCounts DP_tile_counts_round(int width, int height)
 {
-#ifdef __cplusplus
-    return DP_TileCounts{DP_tile_count_round(width),
-                         DP_tile_count_round(height)};
-#else
-    return (DP_TileCounts){DP_tile_count_round(width),
-                           DP_tile_count_round(height)};
-#endif
+    DP_TileCounts tc = {DP_tile_count_round(width),
+                        DP_tile_count_round(height)};
+    return tc;
 }
 
 DP_INLINE int DP_tile_total_round(int width, int height)

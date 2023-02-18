@@ -25,7 +25,7 @@
 
 typedef struct DP_Output DP_Output;
 
-#define DP_PERF_VERSION        "1"
+#define DP_PERF_VERSION        "2"
 #define DP_PERF_INVALID_HANDLE (-1)
 
 // Some preprocessor juggling because we want to use the

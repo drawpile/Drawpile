@@ -21,6 +21,23 @@
  */
 #include "cpu.h"
 
+DP_CpuSupport DP_cpu_support_value = DP_CPU_SUPPORT_DEFAULT;
+
+#ifndef NDEBUG
+static bool init_called = false;
+
+DP_CpuSupport DP_cpu_support_debug_get(const char *file, int line)
+{
+    if (!init_called) {
+        DP_panic_at(
+            file, line,
+            "DP_cpu_support used before DP_cpu_support_init() was called.");
+    }
+
+    return DP_cpu_support_value;
+}
+#endif
+
 #ifdef DP_CPU_X64
 static bool supports_sse42(void)
 {
@@ -53,29 +70,28 @@ static bool supports_avx2(void)
 #    endif
 }
 
-static int cpu_support = -1;
-
-// TODO: Move to an init function instead of paying branching cost everytime
-DP_CPU_SUPPORT DP_get_cpu_support(void)
+void DP_cpu_support_init(void)
 {
-    if (cpu_support == -1) {
-        if (supports_avx2()) {
-            cpu_support = DP_CPU_SUPPORT_AVX2;
-        }
-        else if (supports_sse42()) {
-            cpu_support = DP_CPU_SUPPORT_SSE42;
-        }
-        else {
-            cpu_support = DP_CPU_SUPPORT_DEFAULT;
-        }
+    if (supports_avx2()) {
+        DP_cpu_support_value = DP_CPU_SUPPORT_AVX2;
     }
-
-    return (DP_CPU_SUPPORT)cpu_support;
+    else if (supports_sse42()) {
+        DP_cpu_support_value = DP_CPU_SUPPORT_SSE42;
+    }
+    else {
+        DP_cpu_support_value = DP_CPU_SUPPORT_DEFAULT;
+    }
+#    ifndef NDEBUG
+    init_called = true;
+#    endif
 }
 
 #else
-DP_CPU_SUPPORT DP_get_cpu_support(void)
+void DP_cpu_support_init(void)
 {
-    return DP_CPU_SUPPORT_DEFAULT;
+    DP_cpu_support_value = DP_CPU_SUPPORT_DEFAULT;
+#    ifndef NDEBUG
+    init_called = true;
+#    endif
 }
 #endif

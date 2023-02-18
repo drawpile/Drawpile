@@ -438,29 +438,35 @@ DP_TARGET_BEGIN("sse4.2")
 static void DP_pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src,
                                    int count)
 {
-    assert(count % 4 == 0);
+    DP_ASSERT(count % 4 == 0);
 
     for (int i = 0; i < count; i += 4) {
         __m128i source1 = _mm_load_si128((__m128i *)&src[i]);
         __m128i source2 = _mm_load_si128((__m128i *)&src[i + 2]);
 
+        // Convert 2x(8x16bit) to 4x(4x32bit)
         __m128i p1 = _mm_cvtepu16_epi32(source1);
         __m128i p2 = _mm_cvtepu16_epi32(_mm_srli_si128(source1, 8));
         __m128i p3 = _mm_cvtepu16_epi32(source2);
         __m128i p4 = _mm_cvtepu16_epi32(_mm_srli_si128(source2, 8));
 
-        p1 = _mm_srli_epi32(_mm_mullo_epi32(p1, _mm_set1_epi32(255)), 15);
-        p2 = _mm_srli_epi32(_mm_mullo_epi32(p2, _mm_set1_epi32(255)), 15);
-        p3 = _mm_srli_epi32(_mm_mullo_epi32(p3, _mm_set1_epi32(255)), 15);
-        p4 = _mm_srli_epi32(_mm_mullo_epi32(p4, _mm_set1_epi32(255)), 15);
+        // Convert 15bit pixels to 8bit pixels. (p * 255) >> 15
+        __m128i _255 = _mm_set1_epi32(255);
+        p1 = _mm_srli_epi32(_mm_mullo_epi32(p1, _255), 15);
+        p2 = _mm_srli_epi32(_mm_mullo_epi32(p2, _255), 15);
+        p3 = _mm_srli_epi32(_mm_mullo_epi32(p3, _255), 15);
+        p4 = _mm_srli_epi32(_mm_mullo_epi32(p4, _255), 15);
 
+        // Shift every first byte of every 32bit spot to an empty spot.
         p2 = _mm_slli_si128(p2, 1);
         p3 = _mm_slli_si128(p3, 2);
         p4 = _mm_slli_si128(p4, 3);
 
+        // OR all of the bytes into a single register.
         __m128i combined =
             _mm_or_si128(p1, _mm_or_si128(p2, _mm_or_si128(p3, p4)));
 
+        // Shuffle the bytes into the right order.
         __m128i out = _mm_shuffle_epi8(
             combined, _mm_setr_epi8(0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3,
                                     7, 11, 15));
@@ -474,52 +480,56 @@ DP_TARGET_BEGIN("avx2")
 static void DP_pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src,
                                   int count)
 {
-    assert(count % 8 == 0);
+    DP_ASSERT(count % 8 == 0);
 
     for (int i = 0; i < count; i += 8) {
         __m256i source1 = _mm256_loadu_si256((__m256i *)&src[i]);
         __m256i source2 = _mm256_loadu_si256((__m256i *)&src[i + 4]);
 
-        __m256i p1 = _mm256_and_si256(source1, _mm256_set1_epi32(0xFFFF));
+        // Convert 2x(16x16bit) to 4x(8x32bit)
+        __m256i p1 = _mm256_and_si256(source1, _mm256_set1_epi32(0xffff));
         __m256i p2 = _mm256_srli_epi32(
-            _mm256_and_si256(source1, _mm256_set1_epi32(0xFFFF0000)), 16);
-        __m256i p3 = _mm256_and_si256(source2, _mm256_set1_epi32(0xFFFF));
+            _mm256_and_si256(source1, _mm256_set1_epi32(0xffff0000)), 16);
+        __m256i p3 = _mm256_and_si256(source2, _mm256_set1_epi32(0xffff));
         __m256i p4 = _mm256_srli_epi32(
-            _mm256_and_si256(source2, _mm256_set1_epi32(0xFFFF0000)), 16);
+            _mm256_and_si256(source2, _mm256_set1_epi32(0xffff0000)), 16);
 
-        p1 = _mm256_srli_epi32(_mm256_mullo_epi32(p1, _mm256_set1_epi32(255)),
-                               15);
-        p2 = _mm256_srli_epi32(_mm256_mullo_epi32(p2, _mm256_set1_epi32(255)),
-                               15);
-        p3 = _mm256_srli_epi32(_mm256_mullo_epi32(p3, _mm256_set1_epi32(255)),
-                               15);
-        p4 = _mm256_srli_epi32(_mm256_mullo_epi32(p4, _mm256_set1_epi32(255)),
-                               15);
+        // Convert 15bit pixels to 8bit pixels. (p * 255) >> 15
+        __m256i _255 = _mm256_set1_epi32(255);
+        p1 = _mm256_srli_epi32(_mm256_mullo_epi32(p1, _255), 15);
+        p2 = _mm256_srli_epi32(_mm256_mullo_epi32(p2, _255), 15);
+        p3 = _mm256_srli_epi32(_mm256_mullo_epi32(p3, _255), 15);
+        p4 = _mm256_srli_epi32(_mm256_mullo_epi32(p4, _255), 15);
 
+        // Shuffle the first of every 32bit spot to form an 4x8bit RGBA.
+        // Every register shuffles to a empty spot so they can be ORed together.
+        char bit8 = (char)0x80;
         p1 = _mm256_shuffle_epi8(
-            p1, _mm256_setr_epi8(0, 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80, 8,
-                                 0x80, 12, 0x80, 0x80, 0x80, 0x80, 0x80, 0,
-                                 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80, 8, 0x80,
-                                 12, 0x80, 0x80, 0x80, 0x80, 0x80));
+            p1, _mm256_setr_epi8(0, bit8, 4, bit8, bit8, bit8, bit8, bit8, 8,
+                                 bit8, 12, bit8, bit8, bit8, bit8, bit8, 0,
+                                 bit8, 4, bit8, bit8, bit8, bit8, bit8, 8, bit8,
+                                 12, bit8, bit8, bit8, bit8, bit8));
         p2 = _mm256_shuffle_epi8(
-            p2, _mm256_setr_epi8(0x80, 0, 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80,
-                                 8, 0x80, 12, 0x80, 0x80, 0x80, 0x80, 0x80, 0,
-                                 0x80, 4, 0x80, 0x80, 0x80, 0x80, 0x80, 8, 0x80,
-                                 12, 0x80, 0x80, 0x80, 0x80));
+            p2, _mm256_setr_epi8(bit8, 0, bit8, 4, bit8, bit8, bit8, bit8, bit8,
+                                 8, bit8, 12, bit8, bit8, bit8, bit8, bit8, 0,
+                                 bit8, 4, bit8, bit8, bit8, bit8, bit8, 8, bit8,
+                                 12, bit8, bit8, bit8, bit8));
         p3 = _mm256_shuffle_epi8(
-            p3, _mm256_setr_epi8(0x80, 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80, 0x80,
-                                 0x80, 0x80, 0x80, 8, 0x80, 12, 0x80, 0x80,
-                                 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80, 0x80, 0x80,
-                                 0x80, 0x80, 8, 0x80, 12, 0x80));
+            p3, _mm256_setr_epi8(bit8, bit8, bit8, bit8, 0, bit8, 4, bit8, bit8,
+                                 bit8, bit8, bit8, 8, bit8, 12, bit8, bit8,
+                                 bit8, bit8, bit8, 0, bit8, 4, bit8, bit8, bit8,
+                                 bit8, bit8, 8, bit8, 12, bit8));
         p4 = _mm256_shuffle_epi8(
-            p4, _mm256_setr_epi8(0x80, 0x80, 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80,
-                                 0x80, 0x80, 0x80, 0x80, 8, 0x80, 12, 0x80,
-                                 0x80, 0x80, 0x80, 0x80, 0, 0x80, 4, 0x80, 0x80,
-                                 0x80, 0x80, 0x80, 8, 0x80, 12));
+            p4, _mm256_setr_epi8(bit8, bit8, bit8, bit8, bit8, 0, bit8, 4, bit8,
+                                 bit8, bit8, bit8, bit8, 8, bit8, 12, bit8,
+                                 bit8, bit8, bit8, bit8, 0, bit8, 4, bit8, bit8,
+                                 bit8, bit8, bit8, 8, bit8, 12));
 
+        // Combine all the bytes into a single register.
         __m256i combined =
             _mm256_or_si256(p1, _mm256_or_si256(p2, _mm256_or_si256(p3, p4)));
 
+        // Final permute of 4x8bit RGBA to get them in the right order.
         __m256i out = _mm256_permutevar8x32_epi32(
             combined, _mm256_setr_epi32(0, 2, 4, 6, 1, 3, 5, 7));
 
@@ -530,7 +540,7 @@ DP_TARGET_END
 
 void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int pixel_count)
 {
-    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
+    DP_CpuSupport cpu_support = DP_cpu_support;
 
     if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         int remaining = pixel_count % 8;
@@ -808,19 +818,20 @@ static void load_avx2(DP_Pixel15 src[8], __m256i *out_blue, __m256i *out_green,
                       __m256i *out_red, __m256i *out_alpha)
 {
     // clang-format off
-    __m256i source1 = _mm256_loadu_si256((__m256i *)src);
-    __m256i source2 = _mm256_loadu_si256((__m256i *)src + 1);
+    __m256i source1 = _mm256_loadu_si256((__m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
+    __m256i source2 = _mm256_loadu_si256((__m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
-    __m256i hi = _mm256_unpackhi_epi32(source1, source2);
-    __m256i lo = _mm256_unpacklo_epi32(source1, source2);
+    __m256i lo = _mm256_unpacklo_epi32(source1, source2);     // |B1|G1|B5|G5|R1|A1|R5|A5|B3|G3|B7|G7|R3|A3|R7|A7|
+    __m256i hi = _mm256_unpackhi_epi32(source1, source2);     // |B2|G2|B6|G6|R2|A2|R6|A6|B4|G4|B8|G8|R4|A4|R8|A8|
 
-    __m256i blue_green = _mm256_unpacklo_epi64(lo, hi);
-    __m256i red_alpha = _mm256_unpackhi_epi64(lo, hi);
+    __m256i blue_green = _mm256_unpacklo_epi64(lo, hi);       // |B1|G1|B5|G5|B2|G2|B6|G6|B3|G3|B7|G7|B4|G4|B8|G8|
+    __m256i red_alpha = _mm256_unpackhi_epi64(lo, hi);        // |R1|A1|R5|A5|R2|A2|R6|A6|R3|A3|R7|A7|R4|A4|R8|A8|
 
-    *out_blue = _mm256_blend_epi16(blue_green, _mm256_set1_epi32(0), 170);
-    *out_green = _mm256_srli_epi32(blue_green, 16);
-    *out_red = _mm256_blend_epi16(red_alpha, _mm256_set1_epi32(0), 170);
-    *out_alpha = _mm256_srli_epi32(red_alpha, 16);
+    // Blend with 0 to zero upper bits of 32 spot. Shifting conveniently also zeros out upper bits.
+    *out_blue = _mm256_blend_epi16(blue_green, _mm256_set1_epi32(0), 170); // |B1|0|B5|0|B2|0|B6|0|B3|0|B7|0|B4|0|B8|0|
+    *out_green = _mm256_srli_epi32(blue_green, 16);                        // |G1|0|G5|0|G2|0|G6|0|G3|0|G7|0|G4|0|G8|0|
+    *out_red = _mm256_blend_epi16(red_alpha, _mm256_set1_epi32(0), 170);   // |R1|0|R5|0|R2|0|R6|0|R3|0|R7|0|R4|0|R8|0|
+    *out_alpha = _mm256_srli_epi32(red_alpha, 16);                         // |A1|0|A5|0|A2|0|A6|0|A3|0|A7|0|A4|0|A8|0|
     // clang-format on
 }
 
@@ -829,14 +840,14 @@ static void store_avx2(__m256i blue, __m256i green, __m256i red, __m256i alpha,
                        DP_Pixel15 dest[8])
 {
     // clang-format off
-    __m256i blue_green = _mm256_blend_epi16(blue, _mm256_slli_si256(green, 2), 170);
-    __m256i red_alpha = _mm256_blend_epi16(red, _mm256_slli_si256(alpha, 2), 170);
+    __m256i blue_green = _mm256_blend_epi16(blue, _mm256_slli_si256(green, 2), 170); // |B1|G1|B5|G5|B2|G2|B6|G6|B3|G3|B7|G7|B4|G4|B8|G8|
+    __m256i red_alpha = _mm256_blend_epi16(red, _mm256_slli_si256(alpha, 2), 170);   // |R1|A1|R5|A5|R2|A2|R6|A6|R3|A3|R7|A7|R4|A4|R8|A8|
 
-    __m256i hi = _mm256_unpackhi_epi32(blue_green, red_alpha);
-    __m256i lo = _mm256_unpacklo_epi32(blue_green, red_alpha);
+    __m256i lo = _mm256_unpacklo_epi32(blue_green, red_alpha);                       // |B1|G1|R1|A1|B5|G5|R5|A5|B3|G3|R3|A3|B7|G7|R7|A7|
+    __m256i hi = _mm256_unpackhi_epi32(blue_green, red_alpha);                       // |B2|G2|R2|A2|B6|G6|R6|A6|B4|G4|R4|A4|B8|G8|R8|A8|
 
-    __m256i source1 = _mm256_unpacklo_epi64(lo, hi);
-    __m256i source2 = _mm256_unpackhi_epi64(lo, hi);
+    __m256i source1 = _mm256_unpacklo_epi64(lo, hi);                                 // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
+    __m256i source2 = _mm256_unpackhi_epi64(lo, hi);                                 // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
     _mm256_storeu_si256((__m256i *)dest, source1);
     _mm256_storeu_si256((__m256i *)dest + 1, source2);
@@ -1519,7 +1530,7 @@ static void blend_pixels_composite_nonseparable(DP_Pixel15 *dst,
 static void blend_pixels_normal(DP_Pixel15 *dst, DP_Pixel15 *src,
                                 int pixel_count, uint16_t opacity)
 {
-    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
+    DP_CpuSupport cpu_support = DP_cpu_support;
 
     if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         int remaining = pixel_count % 8;
@@ -1550,7 +1561,7 @@ static void blend_pixels_normal(DP_Pixel15 *dst, DP_Pixel15 *src,
 static void blend_pixels_behind(DP_Pixel15 *dst, DP_Pixel15 *src,
                                 int pixel_count, uint16_t opacity)
 {
-    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
+    DP_CpuSupport cpu_support = DP_cpu_support;
 
     if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         int remaining = pixel_count % 8;

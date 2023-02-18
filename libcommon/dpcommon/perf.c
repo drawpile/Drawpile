@@ -33,8 +33,7 @@
 #define DETAIL_LENGTH    256
 
 typedef struct DP_PerfTime {
-    long long seconds;
-    long nanoseconds;
+    uint64_t nanoseconds;
 } DP_PerfTime;
 
 typedef struct DP_PerfEntry {
@@ -162,16 +161,17 @@ static DP_PerfTime get_time(void)
 
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
-    uint64_t ns = ticks.QuadPart * 1000000000 / freq.QuadPart;
-    return (DP_PerfTime){ns / 1000000000, ns % 1000000000};
+    return (DP_PerfTime){
+        DP_llong_to_uint64(ticks.QuadPart * 1000000000lu / freq.QuadPart)};
 #else
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) != 0) {
-        return (DP_PerfTime){ts.tv_sec, ts.tv_nsec};
+        return (DP_PerfTime){
+            DP_llong_to_uint64(ts.tv_sec * 1000000000lu + ts.tv_nsec)};
     }
     else {
         DP_warn("Could not get perf time");
-        return (DP_PerfTime){0, 0};
+        return (DP_PerfTime){0};
     }
 #endif
 }
@@ -210,14 +210,15 @@ void DP_perf_end_internal(DP_Output *output, int handle)
     DP_PerfTime start = pe->start;
     char *detail = pe->detail;
 
-    long long diff = (end.seconds * 1000000000 + end.nanoseconds)
-                   - (start.seconds * 1000000000 + start.nanoseconds);
+    uint64_t diff = end.nanoseconds - start.nanoseconds;
+    double start_seconds =
+        DP_uint64_to_double(start.nanoseconds) / 1000000000.0;
+    double end_seconds = DP_uint64_to_double(end.nanoseconds) / 1000000000.0;
 
-    bool ok = DP_output_format(
-        output, "%llu %lld.%09ld %lld.%09ld %llu %s:%s%s%s\n",
-        DP_thread_current_id(), start.seconds, start.nanoseconds, end.seconds,
-        end.nanoseconds, diff, pe->realm, pe->categories,
-        detail[0] == '\0' ? "" : " ", detail);
+    bool ok = DP_output_format(output, "%llu %f %f %llu %s:%s%s%s\n",
+                               DP_thread_current_id(), start_seconds,
+                               end_seconds, diff, pe->realm, pe->categories,
+                               detail[0] == '\0' ? "" : " ", detail);
     if (!ok) {
         DP_warn("Error formatting perf output: %s", DP_error());
     }

@@ -199,7 +199,7 @@ static void blend_pixels_normal_cpu_support_branching(DP_Pixel15 *dst,
                                                       int pixel_count,
                                                       uint16_t opacity)
 {
-    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
+    DP_CpuSupport cpu_support = DP_cpu_support;
 
     if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         int remaining = pixel_count % 8;
@@ -240,7 +240,7 @@ static void blend_pixels_normal_cpu_support_ptr_select(DP_Pixel15 *dst,
                                                        int pixel_count,
                                                        uint16_t opacity)
 {
-    DP_CPU_SUPPORT cpu_support = DP_get_cpu_support();
+    DP_CpuSupport cpu_support = DP_cpu_support;
 
     if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         ptr = blend_pixels_normal_avx2;
@@ -303,3 +303,12 @@ BENCH_BLEND(cpu_support_ptr, blend_pixels_normal_cpu_support_ptr);
 DISABLE_OPT_END
 
 BENCHMARK_MAIN();
+
+
+struct RunBeforeMain {
+    inline RunBeforeMain()
+    {
+        DP_cpu_support_init();
+    }
+};
+static RunBeforeMain run_before_main;
