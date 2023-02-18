@@ -22,6 +22,7 @@
 #include "dptest.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/cpu.h>
 #include <dpcommon/file.h>
 #include <dpcommon/output.h>
 #include <stdlib.h>
@@ -264,6 +265,7 @@ int DP_test_main(int argc, char **argv, DP_TestRegisterFn register_fn,
                  void *user)
 {
     srand((unsigned int)time(NULL));
+    DP_cpu_support_init();
 
     DP_TestRegistry registry = {0, 0, NULL, user};
     register_fn(&registry);
