@@ -29,7 +29,7 @@ static bool init_called = false;
 DP_CpuSupport DP_cpu_support_debug_get(const char *file, int line)
 {
     if (!init_called) {
-        DP_panic_at(
+        DP_warn_at(
             file, line,
             "DP_cpu_support used before DP_cpu_support_init() was called.");
     }
