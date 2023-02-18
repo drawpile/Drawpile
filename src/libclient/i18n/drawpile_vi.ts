@@ -112,10 +112,17 @@
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="239"/>
+        <source>Smudging Pressure Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../desktop/ui/brushdock.ui" line="253"/>
+        <source>Hardness Pressure Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../desktop/ui/brushdock.ui" line="267"/>
-        <location filename="../../desktop/ui/brushdock.ui" line="309"/>
-        <source>Pressure sensitivity</source>
+        <source>Opacity Pressure Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -124,63 +131,61 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="323"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="298"/>
+        <source>Input Preset Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="312"/>
+        <source>Size Pressure Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdock.ui" line="326"/>
         <source>px</source>
         <translation>điểm ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="326"/>
-        <source>Size: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="339"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="342"/>
         <source>Radius: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="352"/>
-        <source>Opacity: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="368"/>
-        <source>Hardness: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="384"/>
-        <source>Smudging: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="400"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="403"/>
         <source>Color Pickup: 1/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="416"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="419"/>
         <source>Spacing: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="432"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="435"/>
         <source>Gain: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="448"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="451"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="451"/>
+        <location filename="../../desktop/ui/brushdock.ui" line="454"/>
         <source>Stabilizer: </source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>BrushDockPopup</name>
     <message>
-        <location filename="../../desktop/ui/brushdock.ui" line="298"/>
-        <source>Configure input presets</source>
+        <location filename="../../desktop/ui/brushdockpopup.ui" line="23"/>
+        <source>Pressure Sensitivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/ui/brushdockpopup.ui" line="30"/>
+        <source>%</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -833,8 +838,8 @@ to 64x64 pixels.</source>
     </message>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="172"/>
-        <source>FPS:</source>
-        <translation>FPS:</translation>
+        <source>Flipbook FPS:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -946,47 +951,42 @@ to 64x64 pixels.</source>
 <context>
     <name>InputSettings</name>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="43"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="46"/>
         <source>Preset:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="50"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="56"/>
         <source>Smoothing:</source>
         <translation>Mịn:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="73"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="66"/>
         <source>Pressure:</source>
         <translation>Áp lực:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="81"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="77"/>
         <source>Stylus</source>
         <translation>Bút stylus</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="86"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="82"/>
         <source>Distance</source>
         <translation>Khoảng cách</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="91"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="87"/>
         <source>Velocity</source>
         <translation>Vận tốc</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="133"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="129"/>
         <source>Preset options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
-        <source>Close</source>
-        <translation type="unfinished">Đóng</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/ui/inputcfg.ui" line="162"/>
+        <location filename="../../desktop/ui/inputcfg.ui" line="165"/>
         <source>Velocity range</source>
         <translation>Phạm vi vận tốc</translation>
     </message>
@@ -1300,904 +1300,899 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="601"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1581"/>
+        <location filename="../../desktop/mainwindow.cpp" line="602"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1608"/>
         <source>Untitled</source>
         <translation>Không tựa đề</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="872"/>
-        <location filename="../../desktop/mainwindow.cpp" line="893"/>
+        <location filename="../../desktop/mainwindow.cpp" line="899"/>
+        <location filename="../../desktop/mainwindow.cpp" line="920"/>
         <source>Exit Drawpile</source>
         <translation>Thoát Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="873"/>
+        <location filename="../../desktop/mainwindow.cpp" line="900"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Bạn vẫn được kết nối với một phiên vẽ.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="877"/>
+        <location filename="../../desktop/mainwindow.cpp" line="904"/>
         <source>Exit anyway</source>
         <translation>Dù sao vẫn cứ thoát ra</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="879"/>
-        <location filename="../../desktop/mainwindow.cpp" line="901"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1317"/>
+        <location filename="../../desktop/mainwindow.cpp" line="906"/>
+        <location filename="../../desktop/mainwindow.cpp" line="928"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1344"/>
         <source>Cancel</source>
         <translation>Hủy bỏ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="894"/>
+        <location filename="../../desktop/mainwindow.cpp" line="921"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ở đây có các thay đổi chưa được lưu. Ghi lại chúng trước khi thoát chứ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="897"/>
+        <location filename="../../desktop/mainwindow.cpp" line="924"/>
         <source>Save</source>
         <translation>Lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="899"/>
+        <location filename="../../desktop/mainwindow.cpp" line="926"/>
         <source>Discard</source>
         <translation>Hủy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1110"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1137"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation>Định dạng đã chọn không hỗ trợ các lớp hay ghi chú</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1112"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1139"/>
         <source>Flatten</source>
         <translation>Làm phằng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1113"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1140"/>
         <source>Save as OpenRaster</source>
         <translation>Lưu dạng OpenRaster</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1237"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1264"/>
         <source>Saving...</source>
         <translation>Đang lưu...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1251"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1278"/>
         <source>Couldn&apos;t save image</source>
         <translation>Không thể lưu ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1253"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1280"/>
         <source>Image saved</source>
         <translation>Ảnh lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1351"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1378"/>
         <source>Pause</source>
         <translation>Tạm dừng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1354"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1381"/>
         <source>Play</source>
         <translation>Phát</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1501"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1528"/>
         <source>Invalid address</source>
         <translation>Địa chỉ không hợp lệ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1582"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1609"/>
         <source>Really leave the session?</source>
         <translation>Thực sự rời khỏi phiên?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1588"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1615"/>
         <source>Leave</source>
         <translation>Rời</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1590"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1617"/>
         <source>Stay</source>
         <translation>Ở lại</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1599"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1626"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
         <translation>Vẫn còn dữ liệu chưa gửi! Xin vui lòng chờ cho đền khi truyền hoàn thành!</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1766"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1793"/>
         <source>Would you like to join the session instead?</source>
         <translation>Bạn có muốn gia nhập phiên thay thế?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1768"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1795"/>
         <source>Join</source>
         <translation>Tham gia</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1817"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1844"/>
         <source>Board is locked</source>
         <translation>Bàn đã bị khóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2172"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2201"/>
         <source>The image could not be loaded</source>
         <translation>Ảnh không thể tải được</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2480"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2509"/>
         <source>About Drawpile</source>
         <translation>Giới thiệu Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2482"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2511"/>
         <source>A collaborative drawing program.</source>
         <translation>Một chương trình vẽ hợp tác.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2623"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2652"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="48"/>
         <source>&amp;New</source>
         <translation>Mớ&amp;i</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2624"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2653"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="49"/>
         <source>&amp;Open...</source>
         <translation>&amp;Mở...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2628"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2657"/>
         <source>&amp;Save</source>
         <translation>&amp;Lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2658"/>
         <source>Save &amp;As...</source>
         <translation>Lưu &amp;dạng...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2631"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2660"/>
         <source>Autosave</source>
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1362"/>
-        <location filename="../../desktop/mainwindow.cpp" line="2635"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1389"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2664"/>
         <source>Record...</source>
         <translation>Thu đĩa...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="282"/>
+        <location filename="../../desktop/mainwindow.cpp" line="283"/>
         <source>Server out of space</source>
         <translation>Máy chủ hết dung lượng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="283"/>
+        <location filename="../../desktop/mainwindow.cpp" line="284"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
         <translation>Máy chủ sắp hết dung lượng lịch sử và phiên đã phát triển quá lớn để tự động đặt lại! (Giới hạn là %1 MB)
 Đơn giản hóa khung vẽ và đặt lại thủ công trước khi hết dung lướng.</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1430"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1457"/>
         <source>Error closing tablet event log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1446"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1473"/>
         <source>Error opening tablet event log.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1629"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1656"/>
         <source>Become Operator</source>
         <translation>Trở thành nhà điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1657"/>
         <source>Enter operator password</source>
         <translation>Nhập mật khẩu nhà điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1673"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1700"/>
         <source>Terminate session</source>
         <translation>Chấm dứt phiên này</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1674"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1701"/>
         <source>Really terminate this session?</source>
         <translation>Thực sự chấm dứt phiên này?</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1679"/>
-        <location filename="../../desktop/mainwindow.cpp" line="3069"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1706"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3095"/>
         <source>Terminate</source>
         <translation>Chấm dứt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1788"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1815"/>
         <source>Disconnected:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1829"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1856"/>
         <source>Session blocked by parental controls</source>
         <translation>Phiên bị chặn bởi sự kiểm soát của cha mẹ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2394"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2423"/>
         <source>Stop Tablet Event Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2394"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2423"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2502"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2531"/>
         <source>Tablet Input:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2594"/>
-        <source>Lock in place</source>
-        <translation>Khóa tại chỗ</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2610"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2639"/>
         <source>Hide Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2636"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2665"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="58"/>
         <source>&amp;Quit</source>
         <translation>&amp;Thoát</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2668"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2697"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="46"/>
         <source>&amp;File</source>
         <translation>&amp;Tập tin</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2683"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2712"/>
         <source>&amp;Export</source>
         <translation>&amp;Xuất</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2708"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2737"/>
         <source>&amp;Undo</source>
         <translation>&amp;Hủy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2709"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2738"/>
         <source>&amp;Redo</source>
         <translation>&amp;Lặp lại</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2710"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2739"/>
         <source>Copy selected area to the clipboard</source>
         <translation>Sao chép vùng đã chọn vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2711"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2740"/>
         <source>Copy Merged</source>
         <translation>Chép trộn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2711"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2740"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>Sao chép vùng đã chọn, không bao gồm nền, vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2712"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2741"/>
         <source>Copy selected area of the current layer to the clipboard</source>
         <translation>Sao chép vùng đã chọn của lớp hiện tại vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2713"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2742"/>
         <source>Cut selected area of the current layer to the clipboard</source>
         <translation>Cắt vùng đã chọn của lớp hiện tại vào bảng tạm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2714"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2743"/>
         <source>&amp;Paste</source>
         <translation>&amp;Dán</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2716"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2745"/>
         <source>&amp;Stamp</source>
         <translation>&amp;Dấu vết thời gian</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2727"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2756"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Bỏ chọn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2735"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2764"/>
         <source>Expand &amp;Up</source>
         <translation>Rộng &amp;lên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2736"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2765"/>
         <source>Expand &amp;Down</source>
         <translation>Rộng &amp;xuống</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2737"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2766"/>
         <source>Expand &amp;Left</source>
         <translation>Rộng &amp;trái</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2738"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2767"/>
         <source>Expand &amp;Right</source>
         <translation>Rộng &amp;phải</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2741"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2770"/>
         <source>Fill Selection</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2742"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2771"/>
         <source>Recolor Selection</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2743"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2772"/>
         <source>Color Erase Selection</source>
         <translation>Màu xóa chọn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2805"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2834"/>
         <source>&amp;Edit</source>
         <translation>&amp;Sửa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2824"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2853"/>
         <source>&amp;Expand Canvas</source>
         <translation>Rộng vùng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2857"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2886"/>
         <source>&amp;Layouts...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2859"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2888"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;Thanh công cụ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2862"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2891"/>
         <source>&amp;Docks</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2865"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2894"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2896"/>
         <source>Flipbook</source>
         <translation>Flipbook</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2867"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2896"/>
         <source>Show animation preview window</source>
         <translation>Hiển thị cửa sổ xem thử hoạt hình</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2873"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2902"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Quay vùng vẽ ngược chiều</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2874"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2903"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>Quay vùng vẽ theo chiều</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2876"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2905"/>
         <source>Mirror</source>
         <translation>Gương</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2877"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2906"/>
         <source>Flip</source>
         <translation>Lật</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2881"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2910"/>
         <source>Show Names</source>
         <translation>Hiện tên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2882"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2911"/>
         <source>Show Layers</source>
         <translation>Hiện lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2883"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2912"/>
         <source>Show Avatars</source>
         <translation>Hiện avatar</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3000"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3029"/>
         <source>User Pointers</source>
         <translation>Con trỏ người dùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3018"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3047"/>
         <source>New Layer</source>
         <translation>Tạo lớp mới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3020"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3049"/>
         <source>Duplicate Layer</source>
         <translation>Nhân đôi lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3021"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3050"/>
         <source>Merge with Layer Below</source>
         <translation>Hòa trộn với lớp phía dưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3023"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3052"/>
         <source>Delete Layer</source>
         <translation>Xóa lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2979"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3008"/>
         <source>Show Censored Layers</source>
         <translation>Hiện lớp kiểm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3027"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3056"/>
         <source>Select Above</source>
         <translation>Chọn trên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3028"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3057"/>
         <source>Select Below</source>
         <translation>Chọn dưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3070"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3096"/>
         <source>Report...</source>
         <translation>Báo cáo...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3072"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3098"/>
         <source>Lock Everything</source>
         <translation>Khóa mọi thứ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3288"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3314"/>
         <source>Finish action</source>
         <translation>Hoàn tất thao tác</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3292"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3318"/>
         <source>Cancel action</source>
         <translation>Hủy bỏ thao tác</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2880"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2909"/>
         <source>Show User &amp;Pointers</source>
         <translation>Hiện con trỏ người dùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2884"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2913"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Hiện theo dõi laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2885"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2914"/>
         <source>Show Pixel &amp;Grid</source>
         <translation>Hiện điểm ảnh lưới</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2952"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2981"/>
         <source>&amp;View</source>
         <translation>&amp;Trình bày</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2960"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2989"/>
         <source>&amp;Zoom</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2965"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2994"/>
         <source>Rotation</source>
         <translation>Xoay</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3060"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3086"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="71"/>
         <source>&amp;Host...</source>
         <translation>&amp;Máy chủ...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3060"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3086"/>
         <source>Share your drawingboard with others</source>
         <translation>Chia sẻ bảng vẽ của bạn với những người khác</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3061"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3087"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="72"/>
         <source>&amp;Join...</source>
         <translation>&amp;Tham gia...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3061"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3087"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Tham gia phiên vẽ khác của người dùn&apos;g</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3062"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3088"/>
         <source>&amp;Leave</source>
         <translation>&amp;Để lại</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3062"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3088"/>
         <source>Leave this drawing session</source>
         <translation>Để lại phiên vẽ này</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3067"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3093"/>
         <source>Become Operator...</source>
         <translation>Trở thành nhà điều hành...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3072"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3098"/>
         <source>Prevent changes to the drawing board</source>
         <translation>Ngăn chặn thay đổi bảng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3094"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3120"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="70"/>
         <source>&amp;Session</source>
         <translation>&amp;Phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3120"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3146"/>
         <source>Fill areas</source>
         <translation>Điền vào vùng đã</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3125"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3151"/>
         <source>Select area for copying</source>
         <translation>Chọn khu vực để sao chép</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3150"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3176"/>
         <source>Developer Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3153"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3179"/>
         <source>Set Artificial Lag...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3154"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3180"/>
         <source>Artifical Disconnect...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3156"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3182"/>
         <source>Open Debug Dump...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3171"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3197"/>
         <source>Toggle Eraser Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3172"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3198"/>
         <source>Toggle Recolor Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3174"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3200"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>Giảm âm kích thước chổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3175"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3201"/>
         <source>&amp;Increase Brush Size</source>
         <translation>Tăng âm kích thước chổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3193"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3219"/>
         <source>Drawing tools</source>
         <translation>Công cụ vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1083"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1110"/>
         <source>Open Image</source>
         <translation>Mở ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1109"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1160"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1203"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1136"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1187"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1230"/>
         <source>Save Image</source>
         <translation>Lưu ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1382"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1409"/>
         <source>Record Session</source>
         <translation>Thu đĩa phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1359"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1386"/>
         <source>Stop Recording</source>
         <translation>Dừng thu đĩa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1515"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1542"/>
         <source>Host Session</source>
         <translation>Lưu trữ phiên</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1754"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1781"/>
         <source>Could not connect to server</source>
         <translation>Không thể kết nối đến máy chủ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2153"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2182"/>
         <source>Paste Image</source>
         <translation>Dán ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2626"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2655"/>
         <source>Close</source>
         <translation>Đóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2671"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2700"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="54"/>
         <source>Open &amp;Recent</source>
         <translation>Mở &amp;gần đây</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2692"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2721"/>
         <source>File Tools</source>
         <translation>Công cụ tập tin</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2710"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2739"/>
         <source>&amp;Copy Visible</source>
         <translation>Chép phần nhìn thấy</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2712"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2741"/>
         <source>Copy &amp;Layer</source>
         <translation>Chép lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2713"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2742"/>
         <source>Cu&amp;t Layer</source>
         <translation>Cắt lớp</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2718"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2747"/>
         <source>Paste &amp;From File...</source>
         <translation>Dán đọc từ tập tin...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2719"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2748"/>
         <source>Delete Empty Annotations</source>
         <translation>Xóa chú thích rỗng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2720"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2749"/>
         <source>Resi&amp;ze Canvas...</source>
         <translation>Đổ&amp;i cỡ vùng vẽ...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2724"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2753"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="62"/>
         <source>Prefere&amp;nces</source>
         <translation>Tù&amp;y thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2726"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2755"/>
         <source>Select &amp;All</source>
         <translation>Chọn tất cả</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2844"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2873"/>
         <source>Edit Tools</source>
         <translation>Công cụ sửa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2869"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2898"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;Phóng to</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2870"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2899"/>
         <source>Zoom &amp;Out</source>
         <translation>&amp;Thu nhỏ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2871"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2900"/>
         <source>&amp;Normal Size</source>
         <translation>&amp;Kích thước bình thường</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2872"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2901"/>
         <source>&amp;Reset Rotation</source>
         <translation>&amp;Đặt lại xoay</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2879"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2908"/>
         <source>Show &amp;Annotations</source>
         <translation>Hiện chú thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2887"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2916"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Toàn màn hình</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3123"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3149"/>
         <source>Pick colors from the image</source>
         <translation>Chọn màu từ hình ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3123"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3149"/>
         <source>&amp;Color Picker</source>
         <translation>&amp;Bộ chọn lọc màu</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3116"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3142"/>
         <source>&amp;Line</source>
         <translation>Đườn&amp;g</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="456"/>
+        <location filename="../../desktop/mainwindow.cpp" line="457"/>
         <source>Dancepile Test Build</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="456"/>
+        <location filename="../../desktop/mainwindow.cpp" line="457"/>
         <source>&lt;p&gt;&lt;strong&gt;This is a development test build.&lt;/strong&gt; Do &lt;strong&gt;not&lt;/strong&gt; report problems in the official Drawpile issue tracker. Tell me about them on Discord or something instead.&lt;/p&gt;&lt;p&gt;This has not been fully tested. There are probably still bugs. The application icon is a ferret. Save often.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="505"/>
+        <location filename="../../desktop/mainwindow.cpp" line="506"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1283"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1310"/>
         <source>Export Animated GIF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1303"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1330"/>
         <source>Choose folder to save frames in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1316"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1343"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1393"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1915"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1420"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1942"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1396"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1423"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1399"/>
-        <location filename="../../desktop/mainwindow.cpp" line="1930"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1426"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1957"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1409"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1436"/>
         <source>Error closing profile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1414"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1441"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1420"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1447"/>
         <source>Error opening profile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1912"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1939"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1918"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1945"/>
         <source>Couldn&apos;t open file for reading.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1921"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1948"/>
         <source>Error reading file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1924"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1951"/>
         <source>File content doesn&apos;t match its type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1927"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1954"/>
         <source>Incompatible recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2397"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2426"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2397"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2426"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2404"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2433"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2417"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2446"/>
         <source>Set Artificial Lag</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2418"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2447"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2429"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2458"/>
         <source>Artificial Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2430"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2459"/>
         <source>Simulate a disconnect after this many seconds:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2445"/>
-        <location filename="../../desktop/mainwindow.cpp" line="3155"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2474"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3181"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2446"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2475"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2206,326 +2201,331 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2462"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2491"/>
         <source>Open Debug Dump</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2500"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2529"/>
         <source>Settings File:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2598"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2623"/>
+        <source>Lock Docks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/mainwindow.cpp" line="2627"/>
         <source>Vertical Tabs on Sides</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2614"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2643"/>
         <source>Hold Shift to Arrange</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2630"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2659"/>
         <source>Save Selection...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2632"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2661"/>
         <source>Animated &amp;GIF...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2633"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2662"/>
         <source>Animation &amp;Frames...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2715"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2744"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2721"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2750"/>
         <source>Set Session Background...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2722"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2751"/>
         <source>Set Local Background...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2723"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2752"/>
         <source>Clear Local Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2740"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2769"/>
         <source>Delete</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2829"/>
+        <location filename="../../desktop/mainwindow.cpp" line="2858"/>
         <source>Canvas Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2975"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3004"/>
         <source>Normal</source>
         <translation type="unfinished">Bình thường</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2976"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3005"/>
         <source>Current Layer Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2977"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3006"/>
         <source>Current Frame Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2978"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3007"/>
         <source>Onion Skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="2989"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3018"/>
         <source>Layer View Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3019"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3048"/>
         <source>New Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3022"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3051"/>
         <source>Properties...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3029"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3058"/>
         <source>Next Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3030"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3059"/>
         <source>Previous Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="1435"/>
-        <location filename="../../desktop/mainwindow.cpp" line="3064"/>
+        <location filename="../../desktop/mainwindow.cpp" line="1462"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3090"/>
         <source>Event Log</source>
         <translation>Nhật ký sự kiện</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3037"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3066"/>
         <source>&amp;Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3065"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3091"/>
         <source>Settings...</source>
         <translation>Cài đặt...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3068"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3094"/>
         <source>&amp;Reset...</source>
         <translation>Đặt &amp;lại...</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3100"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3126"/>
         <source>Moderation</source>
         <translation>Người điều hành</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3114"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3140"/>
         <source>Freehand</source>
         <translation>Bằng tay</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3114"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3140"/>
         <source>Freehand brush tool</source>
         <translation>Bằng tay chổi công cụ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3115"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3141"/>
         <source>Eraser</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3115"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3141"/>
         <source>Freehand eraser brush</source>
         <translation>Bằng tay xóa chổi</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3116"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3142"/>
         <source>Draw straight lines</source>
         <translation>Vẽ các đường thắng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3117"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3143"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;Vuông</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3117"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3143"/>
         <source>Draw unfilled squares and rectangles</source>
         <translation>Vẽ các hình vuông và hình chữ nhật không hàn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3118"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3144"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Elip</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3118"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3144"/>
         <source>Draw unfilled circles and ellipses</source>
         <translation>Vẽ các vòng tròn và hình elip không hàn</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3119"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3145"/>
         <source>Bezier Curve</source>
         <translation>Đường cong Bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3119"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3145"/>
         <source>Draw bezier curves</source>
         <translation>Vẽ các đường cong bezier</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3120"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3146"/>
         <source>&amp;Flood Fill</source>
         <translation>Lũ lụt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3121"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3147"/>
         <source>&amp;Annotation</source>
         <translation>&amp;Chú thích</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3121"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3147"/>
         <source>Add text to the picture</source>
         <translation>Thêm văn bản vào hình ảnh</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3124"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3150"/>
         <source>Point out things on the canvas</source>
         <translation>Chỉ ra những thứ trên vải</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3124"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3150"/>
         <source>&amp;Laser Pointer</source>
         <translation>Con trỏ &amp;laser</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3125"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3151"/>
         <source>&amp;Select (Rectangular)</source>
         <translation>&amp;Chọn (vuông)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3126"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3152"/>
         <source>&amp;Select (Free-Form)</source>
         <translation>&amp;Chọn (hình thức)</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3126"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3152"/>
         <source>Select a free-form area for copying</source>
         <translation>Chọn một khu vực hình thức tự do để sao chép</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3127"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3153"/>
         <source>Zoom</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3127"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3153"/>
         <source>Zoom the canvas view</source>
         <translation>Thu phóng vùng vẽ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3128"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3154"/>
         <source>Inspector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3128"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3154"/>
         <source>Find out who did it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3324"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3360"/>
         <source>Color Wheel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3329"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3365"/>
         <source>Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3334"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3370"/>
         <source>Color Sliders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3355"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3392"/>
         <source>Onion Skins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3145"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3171"/>
         <source>&amp;Tools</source>
         <translation>&amp;Công cụ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3148"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3174"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;Phím tắt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3173"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3199"/>
         <source>Swap Last Colors</source>
         <translation>Hoán đổi màu sắc cuối cùng</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3216"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3242"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="95"/>
         <source>&amp;Homepage</source>
         <translation>&amp;Trang chủ</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3217"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3243"/>
         <source>Tablet Tester</source>
         <translation>Máy tính bảng thử nghiệm</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3218"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3244"/>
         <source>Log File</source>
         <translation>Tập tin nhật ký</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3219"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3245"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="96"/>
         <source>&amp;About Drawpile</source>
         <translation>&amp;Giới thiệu Drawpile</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3220"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3246"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>Giới thiệu &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3221"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3247"/>
         <source>Check For Updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/mainwindow.cpp" line="3252"/>
+        <location filename="../../desktop/mainwindow.cpp" line="3278"/>
         <location filename="../../desktop/widgets/macmenu.cpp" line="93"/>
         <source>&amp;Help</source>
         <translation>&amp;Trợ giúp</translation>
@@ -2734,12 +2734,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="106"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="110"/>
         <source>Erase</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="110"/>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="114"/>
         <source>Color Erase</source>
         <translation>Màu xóa</translation>
     </message>
@@ -3108,12 +3108,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Cắt, dán và điền vào:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="259"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="380"/>
         <source>Selection Move &amp; Resize:</source>
         <translation>Chọn chuyển và đổi cỡ:</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="269"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="262"/>
         <source>New Annotations:</source>
         <translation>Chủ đề chú thích:</translation>
     </message>
@@ -3158,17 +3158,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Tin cậy</translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="360"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="272"/>
         <source>permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="367"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="370"/>
         <source>Metadata:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/ui/sessionsettings.ui" line="377"/>
+        <location filename="../../desktop/ui/sessionsettings.ui" line="360"/>
         <source>Timeline:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4144,7 +4144,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="162"/>
+        <location filename="../canvas/paintengine.cpp" line="165"/>
         <source>Layer %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4635,13 +4635,13 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::Flipbook</name>
     <message>
-        <location filename="../../desktop/dialogs/flipbook.cpp" line="144"/>
-        <source>Timeline: manual</source>
+        <location filename="../../desktop/dialogs/flipbook.cpp" line="141"/>
+        <source>Manual Timeline, %1 FPS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../desktop/dialogs/flipbook.cpp" line="144"/>
-        <source>Timeline: automatic</source>
+        <location filename="../../desktop/dialogs/flipbook.cpp" line="143"/>
+        <source>Automatic Timeline, %1 FPS</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4651,30 +4651,6 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../../desktop/dialogs/hostdialog.cpp" line="38"/>
         <source>Host</source>
         <translation>Máy chủ</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::InputSettings</name>
-    <message>
-        <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
-        <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
-        <source>New</source>
-        <translation type="unfinished">Mới</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
-        <source>Duplicate</source>
-        <translation type="unfinished">Nhân đôi</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
-        <source>Delete</source>
-        <translation type="unfinished">Xóa</translation>
-    </message>
-    <message>
-        <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
-        <source>New %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5572,6 +5548,24 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
+    <name>docks::TitleWidget</name>
+    <message>
+        <location filename="../../desktop/docks/titlewidget.cpp" line="54"/>
+        <source>Docked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/titlewidget.cpp" line="59"/>
+        <source>Dockable by Dragging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/docks/titlewidget.cpp" line="64"/>
+        <source>Close</source>
+        <translation type="unfinished">Đóng</translation>
+    </message>
+</context>
+<context>
     <name>docks::ToolSettings</name>
     <message>
         <location filename="../../desktop/docks/toolsettingsdock.cpp" line="184"/>
@@ -5880,6 +5874,89 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
+    <name>tools::BrushSettings</name>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="680"/>
+        <source>Size: %1 - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="682"/>
+        <source>Size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="687"/>
+        <source>Smudging: %1 - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="689"/>
+        <source>Smudging: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="695"/>
+        <source>Opacity: %1 - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="697"/>
+        <source>Opacity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="702"/>
+        <source>Hardness: %1 - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="704"/>
+        <source>Hardness: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="770"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="771"/>
+        <source>Minimum Size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="774"/>
+        <source>Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="775"/>
+        <source>Minimum Opacity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="778"/>
+        <source>Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="779"/>
+        <source>Minimum Hardness: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="782"/>
+        <source>Smudging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="783"/>
+        <source>Minimum Smudging: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>tools::ColorPickerSettings</name>
     <message>
         <location filename="../../desktop/toolwidgets/colorpickersettings.cpp" line="64"/>
@@ -6087,6 +6164,30 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../../desktop/widgets/colorbutton.cpp" line="59"/>
         <source>Select a color</source>
         <translation>Chọn màu</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::InputSettings</name>
+    <message>
+        <location filename="../../desktop/widgets/inputsettings.cpp" line="37"/>
+        <location filename="../../desktop/widgets/inputsettings.cpp" line="102"/>
+        <source>New</source>
+        <translation type="unfinished">Mới</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/inputsettings.cpp" line="38"/>
+        <source>Duplicate</source>
+        <translation type="unfinished">Nhân đôi</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/inputsettings.cpp" line="39"/>
+        <source>Delete</source>
+        <translation type="unfinished">Xóa</translation>
+    </message>
+    <message>
+        <location filename="../../desktop/widgets/inputsettings.cpp" line="120"/>
+        <source>New %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
