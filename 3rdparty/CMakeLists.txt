@@ -50,6 +50,27 @@ if(BUILD_APPS)
     target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_ES2)
     target_include_directories(imgui INTERFACE "${CMAKE_CURRENT_LIST_DIR}/imgui")
     target_link_libraries(imgui PUBLIC dpgles2 SDL2::SDL2)
+
+    add_library(uriparser STATIC uriparser/UriCommon.c uriparser/UriCommon.h
+                uriparser/UriCompare.c uriparser/UriEscape.c uriparser/UriFile.c
+                uriparser/UriIp4.c uriparser/UriIp4Base.c uriparser/UriIp4Base.h
+                uriparser/UriMemory.c uriparser/UriMemory.h
+                uriparser/UriNormalize.c uriparser/UriNormalizeBase.c
+                uriparser/UriNormalizeBase.h uriparser/UriParse.c
+                uriparser/UriParseBase.c uriparser/UriParseBase.h
+                uriparser/UriQuery.c uriparser/UriRecompose.c
+                uriparser/UriResolve.c uriparser/UriShorten.c
+                uriparser/include/uriparser/Uri.h
+                uriparser/include/uriparser/UriBase.h
+                uriparser/include/uriparser/UriDefsAnsi.h
+                uriparser/include/uriparser/UriDefsConfig.h
+                uriparser/include/uriparser/UriIp4.h)
+    set_dp_target_properties(uriparser NO_CLANG_TIDY NO_WARNINGS)
+    target_compile_definitions(uriparser PUBLIC URI_NO_UNICODE)
+    target_include_directories(
+            uriparser PRIVATE "${CMAKE_CURRENT_LIST_DIR}/uriparser")
+    target_include_directories(
+            uriparser PUBLIC "${CMAKE_CURRENT_LIST_DIR}/uriparser/include")
 endif()
 
 add_library(parson STATIC parson/parson.c parson/parson.h)
@@ -63,27 +84,6 @@ add_library(qgrayraster STATIC qgrayraster/qgrayraster.c
 set_dp_target_properties(qgrayraster NO_CLANG_TIDY NO_WARNINGS)
 target_include_directories(qgrayraster INTERFACE
                            "${CMAKE_CURRENT_LIST_DIR}/qgrayraster")
-
-add_library(uriparser STATIC uriparser/UriResolve.c uriparser/UriFile.c
-            uriparser/include/uriparser/UriDefsAnsi.h
-            uriparser/include/uriparser/Uri.h
-            uriparser/include/uriparser/UriBase.h
-            uriparser/include/uriparser/UriIp4.h
-            uriparser/include/uriparser/UriDefsConfig.h
-            uriparser/UriNormalizeBase.h uriparser/UriCommon.h
-            uriparser/UriShorten.c uriparser/UriNormalize.c
-            uriparser/UriEscape.c uriparser/UriParseBase.c uriparser/UriMemory.h
-            uriparser/UriIp4.c uriparser/UriQuery.c uriparser/UriParse.c
-            uriparser/UriIp4Base.h uriparser/UriNormalizeBase.c
-            uriparser/UriIp4Base.c uriparser/UriCompare.c uriparser/UriCommon.c
-            uriparser/UriMemory.c uriparser/UriRecompose.c
-            uriparser/UriParseBase.h)
-set_dp_target_properties(uriparser NO_CLANG_TIDY NO_WARNINGS)
-target_compile_definitions(uriparser PUBLIC URI_NO_UNICODE)
-target_include_directories(
-        uriparser PRIVATE "${CMAKE_CURRENT_LIST_DIR}/uriparser")
-target_include_directories(
-        uriparser PUBLIC "${CMAKE_CURRENT_LIST_DIR}/uriparser/include")
 
 add_library(mypaint STATIC libmypaint/brushsettings-gen.h
             libmypaint/config.h libmypaint/fastapprox/cast.h
