@@ -41,24 +41,15 @@ if(DRAWDANCE_EMSCRIPTEN)
     # Need to compile and link all targets with -pthreads so that they actually
     # link together in the end, so this target does nothing on Emscripten.
     # The set_dp_target_properties function sets the flag on all targets.
-
-    if(NOT ("${THREAD_IMPL}" STREQUAL "PTHREAD"))
-        message(SEND_ERROR "Emscripten supports only THREAD_IMPL PTHREAD")
-    endif()
 else()
     find_package(ZLIB MODULE REQUIRED)
     find_package(PNG MODULE REQUIRED)
     find_package(JPEG MODULE REQUIRED)
 
-    if("${THREAD_IMPL}" STREQUAL "PTHREAD")
-        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    if(NOT WIN32)
         set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-        find_package(Threads REQUIRED)
-    elseif("${THREAD_IMPL}" STREQUAL "QT")
-        find_package(Qt5 COMPONENTS Core REQUIRED)
-    elseif("${THREAD_IMPL}" STREQUAL "QT6")
-        find_package(Qt6 COMPONENTS Core REQUIRED)
     endif()
+    find_package(Threads REQUIRED)
 
     if("${XML_IMPL}" STREQUAL "QT")
         find_package(Qt5 COMPONENTS Xml REQUIRED)
