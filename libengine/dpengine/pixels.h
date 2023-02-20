@@ -38,7 +38,7 @@ typedef union DP_Pixel8 {
 #else
 #    error "Unknown byte order"
 #endif
-    };
+    } DP_ANONYMOUS(bytes);
 } DP_Pixel8;
 
 // Unpremultiplied 8 bit pixel
@@ -52,7 +52,7 @@ typedef union DP_UPixel8 {
 #else
 #    error "Unknown byte order"
 #endif
-    };
+    } DP_ANONYMOUS(bytes);
 } DP_UPixel8;
 
 // Premultiplied 15 bit pixel

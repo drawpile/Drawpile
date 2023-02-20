@@ -236,20 +236,20 @@ DP_TARGET_END
 void seq_int(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
 {
     for (int i = 0; i < count; i++) {
-        dst[i].b = ((src[i].b << 8) - src[i].b) >> 15;
-        dst[i].g = ((src[i].g << 8) - src[i].g) >> 15;
-        dst[i].r = ((src[i].r << 8) - src[i].r) >> 15;
-        dst[i].a = ((src[i].a << 8) - src[i].a) >> 15;
+        dst[i].bytes.a = ((src[i].b << 8) - src[i].b) >> 15;
+        dst[i].bytes.g = ((src[i].g << 8) - src[i].g) >> 15;
+        dst[i].bytes.r = ((src[i].r << 8) - src[i].r) >> 15;
+        dst[i].bytes.a = ((src[i].a << 8) - src[i].a) >> 15;
     }
 }
 
 void seq_float(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
 {
     for (int i = 0; i < count; i++) {
-        dst[i].b = (float)src[i].b / (float)(1 << 15) * 255.0;
-        dst[i].g = (float)src[i].g / (float)(1 << 15) * 255.0;
-        dst[i].r = (float)src[i].r / (float)(1 << 15) * 255.0;
-        dst[i].a = (float)src[i].a / (float)(1 << 15) * 255.0;
+        dst[i].bytes.b = (float)src[i].b / (float)(1 << 15) * 255.0;
+        dst[i].bytes.g = (float)src[i].g / (float)(1 << 15) * 255.0;
+        dst[i].bytes.r = (float)src[i].r / (float)(1 << 15) * 255.0;
+        dst[i].bytes.a = (float)src[i].a / (float)(1 << 15) * 255.0;
     }
 }
 
