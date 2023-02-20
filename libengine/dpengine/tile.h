@@ -27,9 +27,6 @@
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 
-
-#define DP_TILE_SIZE             64
-#define DP_TILE_LENGTH           (DP_TILE_SIZE * DP_TILE_SIZE)
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
 

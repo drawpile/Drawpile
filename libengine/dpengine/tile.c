@@ -34,35 +34,36 @@
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/cpu.h>
 #include <dpmsg/blend_mode.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
 
 struct DP_Tile {
+    DP_Pixel15 pixels[DP_TILE_LENGTH];
     DP_Atomic refcount;
     const bool transient;
     const bool maybe_blank;
     const unsigned int context_id;
-    DP_Pixel15 pixels[DP_TILE_LENGTH];
 };
 
 struct DP_TransientTile {
+    DP_Pixel15 pixels[DP_TILE_LENGTH];
     DP_Atomic refcount;
     bool transient;
     bool maybe_blank;
     unsigned int context_id;
-    DP_Pixel15 pixels[DP_TILE_LENGTH];
 };
 
 #else
 
 struct DP_Tile {
+    DP_Pixel15 pixels[DP_TILE_LENGTH];
     DP_Atomic refcount;
     bool transient;
     bool maybe_blank;
     unsigned int context_id;
-    DP_Pixel15 pixels[DP_TILE_LENGTH];
 };
 
 #endif
@@ -87,7 +88,7 @@ const uint16_t *DP_tile_opaque_mask(void)
 static void *alloc_tile(bool transient, bool maybe_blank,
                         unsigned int context_id)
 {
-    DP_TransientTile *tt = DP_malloc(sizeof(*tt));
+    DP_TransientTile *tt = DP_malloc_simd(sizeof(*tt));
     DP_atomic_set(&tt->refcount, 1);
     tt->transient = transient;
     tt->maybe_blank = maybe_blank;
@@ -256,7 +257,7 @@ void DP_tile_decref(DP_Tile *tile)
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     if (DP_atomic_dec(&tile->refcount)) {
-        DP_free(tile);
+        DP_free_simd(tile);
     }
 }
 
@@ -469,7 +470,7 @@ DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
 
 DP_TransientTile *DP_transient_tile_new_blank(unsigned int context_id)
 {
-    DP_TransientTile *tt = DP_malloc_zeroed(sizeof(*tt));
+    DP_TransientTile *tt = DP_malloc_simd_zeroed(sizeof(*tt));
     DP_atomic_set(&tt->refcount, 1);
     tt->transient = true;
     tt->context_id = context_id;
@@ -617,7 +618,7 @@ void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
     if (DP_blend_mode_can_decrease_opacity(blend_mode)) {
         tt->maybe_blank = true;
     }
-    DP_blend_pixels(tt->pixels, t->pixels, DP_TILE_LENGTH, opacity, blend_mode);
+    DP_blend_tile(tt->pixels, t->pixels, opacity, blend_mode);
 }
 
 DP_TransientTile *

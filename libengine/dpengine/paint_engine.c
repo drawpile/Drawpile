@@ -39,6 +39,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/cpu.h>
 #include <dpcommon/file.h>
 #include <dpcommon/output.h>
 #include <dpcommon/perf.h>
@@ -128,6 +129,7 @@ typedef struct DP_PaintEngineMetaBuffer {
 } DP_PaintEngineMetaBuffer;
 
 struct DP_PaintEngine {
+    unsigned char *buffers;
     DP_AclState *acls;
     DP_CanvasHistory *ch;
     DP_CanvasDiff *diff;
@@ -181,7 +183,6 @@ struct DP_PaintEngine {
         DP_Semaphore *tiles_done_sem;
         int tiles_waiting;
     } render;
-    alignas(DP_max_align_t) unsigned char buffers[];
 };
 
 struct DP_PaintEngineRenderParams {
@@ -637,8 +638,7 @@ static void render_job(void *user, int thread_index)
 
     DP_Pixel8 *pixel_buffer =
         ((DP_Pixel8 *)pe->buffers) + DP_TILE_LENGTH * thread_index;
-    DP_pixels15_to_8(pixel_buffer, DP_transient_tile_pixels(tt),
-                     DP_TILE_LENGTH);
+    DP_pixels15_to_8_tile(pixel_buffer, DP_transient_tile_pixels(tt));
 
     render_params->render_tile(render_params->user, x, y, pixel_buffer,
                                thread_index);
@@ -672,13 +672,14 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_PaintEnginePlaybackFn playback_fn,
     DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user)
 {
-    int render_thread_count = DP_thread_cpu_count();
-    size_t flex_size = DP_max_size(sizeof(DP_PaintEngineLaserBuffer),
-                                   sizeof(DP_Pixel8[DP_TILE_LENGTH])
-                                       * DP_int_to_size(render_thread_count));
-    DP_PaintEngine *pe =
-        DP_malloc(DP_FLEX_SIZEOF(DP_PaintEngine, buffers, flex_size));
+    DP_PaintEngine *pe = DP_malloc(sizeof(*pe));
 
+    int render_thread_count = DP_thread_cpu_count();
+    size_t buffers_size =
+        DP_max_size(sizeof(DP_PaintEngineLaserBuffer),
+                    sizeof(DP_Pixel8[DP_TILE_LENGTH])
+                        * DP_int_to_size(render_thread_count));
+    pe->buffers = DP_malloc_simd(buffers_size);
     pe->acls = acls;
     pe->ch = DP_canvas_history_new_inc(
         cs_or_null, save_point_fn, save_point_user, want_canvas_history_dump,
@@ -792,6 +793,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_transient_layer_content_decref(pe->tlc);
         DP_canvas_diff_free(pe->diff);
         DP_canvas_history_free(pe->ch);
+        DP_free_simd(pe->buffers);
         DP_free(pe);
     }
 }

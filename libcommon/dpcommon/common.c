@@ -22,6 +22,7 @@
 #include "common.h"
 #include "atomic.h"
 #include "conversions.h"
+#include "cpu.h"
 #include "threading.h"
 #include <ctype.h>
 #include <limits.h>
@@ -93,11 +94,6 @@ void DP_panic_at(const char *file, int line, const char *fmt, ...)
 }
 
 
-void DP_free(void *ptr)
-{
-    free(ptr);
-}
-
 void *DP_malloc(size_t size)
 {
     void *ptr = malloc(size);
@@ -133,6 +129,46 @@ void *DP_realloc(void *ptr, size_t size)
         DP_TRAP();
     }
 }
+
+void DP_free(void *ptr)
+{
+    free(ptr);
+}
+
+#ifdef DP_SIMD_ALIGNMENT
+void *DP_malloc_simd(size_t size)
+{
+    DP_ASSERT(size != 0);
+#    ifdef _WIN32
+    void *ptr = _aligned_malloc(size, DP_SIMD_ALIGNMENT);
+    if (ptr) {
+        return ptr;
+    }
+#    else
+    void *ptr;
+    if (posix_memalign(&ptr, DP_SIMD_ALIGNMENT, size) == 0) {
+        return ptr;
+    }
+#    endif
+    fprintf(stderr, "Allocation of %zu bytes with alignment %d failed\n", size,
+            DP_SIMD_ALIGNMENT);
+    DP_TRAP();
+}
+
+void *DP_malloc_simd_zeroed(size_t size)
+{
+    void *ptr = DP_malloc_simd(size);
+    memset(ptr, 0, size);
+    return ptr;
+}
+#endif
+
+#if defined(DP_SIMD_ALIGNMENT) && defined(_WIN32)
+void DP_free_simd(void *ptr)
+{
+    _aligned_free(ptr);
+}
+#endif
 
 
 char *DP_vformat(const char *fmt, va_list ap)

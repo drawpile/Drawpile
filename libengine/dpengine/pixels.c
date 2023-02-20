@@ -423,8 +423,7 @@ void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
     }
 }
 
-static void DP_pixels15_to_8_seq(DP_Pixel8 *dst, const DP_Pixel15 *src,
-                                 int count)
+void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
 {
     DP_ASSERT(count <= 0 || dst);
     DP_ASSERT(count <= 0 || src);
@@ -433,14 +432,12 @@ static void DP_pixels15_to_8_seq(DP_Pixel8 *dst, const DP_Pixel15 *src,
     }
 }
 
+
 #ifdef DP_CPU_X64
 DP_TARGET_BEGIN("sse4.2")
-static void DP_pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src,
-                                   int count)
+static void pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
-    DP_ASSERT(count % 4 == 0);
-
-    for (int i = 0; i < count; i += 4) {
+    for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
         __m128i source1 = _mm_load_si128((__m128i *)&src[i]);
         __m128i source2 = _mm_load_si128((__m128i *)&src[i + 2]);
 
@@ -477,12 +474,9 @@ static void DP_pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src,
 DP_TARGET_END
 
 DP_TARGET_BEGIN("avx2")
-static void DP_pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src,
-                                  int count)
+static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
-    DP_ASSERT(count % 8 == 0);
-
-    for (int i = 0; i < count; i += 8) {
+    for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
         __m256i source1 = _mm256_loadu_si256((__m256i *)&src[i]);
         __m256i source2 = _mm256_loadu_si256((__m256i *)&src[i + 4]);
 
@@ -537,42 +531,24 @@ static void DP_pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src,
     }
 }
 DP_TARGET_END
-
-void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int pixel_count)
-{
-    DP_CpuSupport cpu_support = DP_cpu_support;
-
-    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
-        int remaining = pixel_count % 8;
-        int count = pixel_count - remaining;
-
-        DP_pixels15_to_8_avx2(dst, src, count);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
-        int remaining = pixel_count % 4;
-        int count = pixel_count - remaining;
-
-        DP_pixels15_to_8_sse42(dst, src, count);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    // seq
-    DP_pixels15_to_8_seq(dst, src, pixel_count);
-}
-#else
-void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
-{
-    DP_pixels15_to_8_seq(dst, src, count);
-}
 #endif
+
+void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src)
+{
+    switch (DP_cpu_support) {
+#ifdef DP_CPU_X64
+    case DP_CPU_SUPPORT_AVX2:
+        pixels15_to_8_avx2(dst, src);
+        break;
+    case DP_CPU_SUPPORT_SSE42:
+        pixels15_to_8_sse42(dst, src);
+        break;
+#endif
+    default:
+        DP_pixels15_to_8(dst, src, DP_TILE_LENGTH);
+        break;
+    }
+}
 
 
 // Adapted from the Qt framework, see license above.
@@ -750,15 +726,14 @@ static __m128i mul_sse42(__m128i a, __m128i b)
     return _mm_srli_epi32(_mm_mullo_epi32(a, b), 15);
 }
 
-static void blend_pixels_normal_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                      int pixel_count, uint16_t opacity)
+static void blend_tile_normal_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                    uint16_t opacity)
 {
-    DP_ASSERT(pixel_count % 4 == 0);
     // clang-format off
     __m128i o = _mm_set1_epi32(opacity); // o = opacity
 
     // 4 pixels are loaded at a time
-    for (int i = 0; i < pixel_count; i += 4) {
+    for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
         // load
         __m128i srcB, srcG, srcR, srcA;
         load_sse42(&src[i], &srcB, &srcG, &srcR, &srcA);
@@ -781,15 +756,14 @@ static void blend_pixels_normal_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
     // clang-format on
 }
 
-static void blend_pixels_behind_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                      int pixel_count, uint16_t opacity)
+static void blend_tile_behind_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                    uint16_t opacity)
 {
-    DP_ASSERT(pixel_count % 4 == 0);
     // clang-format off
     __m128i o = _mm_set1_epi32(opacity); // o = opacity
 
     // 4 pixels are loaded at a time
-    for (int i = 0; i < pixel_count; i += 4) {
+    for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
         // load
         __m128i srcB, srcG, srcR, srcA;
         load_sse42(&src[i], &srcB, &srcG, &srcR, &srcA);
@@ -818,6 +792,8 @@ static void load_avx2(DP_Pixel15 src[8], __m256i *out_blue, __m256i *out_green,
                       __m256i *out_red, __m256i *out_alpha)
 {
     // clang-format off
+    DP_ASSERT(((intptr_t)src) % 32 == 0);
+
     __m256i source1 = _mm256_loadu_si256((__m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
     __m256i source2 = _mm256_loadu_si256((__m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
@@ -840,6 +816,8 @@ static void store_avx2(__m256i blue, __m256i green, __m256i red, __m256i alpha,
                        DP_Pixel15 dest[8])
 {
     // clang-format off
+    DP_ASSERT(((intptr_t)dest) % 32 == 0);
+
     __m256i blue_green = _mm256_blend_epi16(blue, _mm256_slli_si256(green, 2), 170); // |B1|G1|B5|G5|B2|G2|B6|G6|B3|G3|B7|G7|B4|G4|B8|G8|
     __m256i red_alpha = _mm256_blend_epi16(red, _mm256_slli_si256(alpha, 2), 170);   // |R1|A1|R5|A5|R2|A2|R6|A6|R3|A3|R7|A7|R4|A4|R8|A8|
 
@@ -859,15 +837,14 @@ static __m256i mul_avx2(__m256i a, __m256i b)
     return _mm256_srli_epi32(_mm256_mullo_epi32(a, b), 15);
 }
 
-static void blend_pixels_normal_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                     int pixel_count, uint16_t opacity)
+static void blend_tile_normal_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                   uint16_t opacity)
 {
-    DP_ASSERT(pixel_count % 8 == 0);
     // clang-format off
     __m256i o = _mm256_set1_epi32(opacity); // o = opacity
 
     // 8 pixels are loaded at a time
-    for (int i = 0; i < pixel_count; i += 8) {
+    for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
         // load
         __m256i srcB, srcG, srcR, srcA;
         load_avx2(&src[i], &srcB, &srcG, &srcR, &srcA);
@@ -890,15 +867,14 @@ static void blend_pixels_normal_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
     // clang-format on
 }
 
-static void blend_pixels_behind_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                     int pixel_count, uint16_t opacity)
+static void blend_tile_behind_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
+                                   uint16_t opacity)
 {
-    DP_ASSERT(pixel_count % 8 == 0);
     // clang-format off
     __m256i o = _mm256_set1_epi32(opacity); // o = opacity
 
     // 4 pixels are loaded at a time
-    for (int i = 0; i < pixel_count; i += 8) {
+    for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
         // load
         __m256i srcB, srcG, srcR, srcA;
         load_avx2(&src[i], &srcB, &srcG, &srcR, &srcA);
@@ -1526,91 +1502,18 @@ static void blend_pixels_composite_nonseparable(DP_Pixel15 *dst,
     });
 }
 
-#ifdef DP_CPU_X64
-static void blend_pixels_normal(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                int pixel_count, uint16_t opacity)
-{
-    DP_CpuSupport cpu_support = DP_cpu_support;
-
-    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
-        int remaining = pixel_count % 8;
-        int count = pixel_count - remaining;
-
-        blend_pixels_normal_avx2(dst, src, count, opacity);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
-        int remaining = pixel_count % 4;
-        int count = pixel_count - remaining;
-
-        blend_pixels_normal_sse42(dst, src, count, opacity);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    // seq
-    blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity), blend_normal);
-}
-
-static void blend_pixels_behind(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                int pixel_count, uint16_t opacity)
-{
-    DP_CpuSupport cpu_support = DP_cpu_support;
-
-    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
-        int remaining = pixel_count % 8;
-        int count = pixel_count - remaining;
-
-        blend_pixels_behind_avx2(dst, src, count, opacity);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
-        int remaining = pixel_count % 4;
-        int count = pixel_count - remaining;
-
-        blend_pixels_behind_sse42(dst, src, count, opacity);
-
-        src += count;
-        dst += count;
-        pixel_count = remaining;
-    }
-
-    // seq
-    blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity), blend_behind);
-}
-#else
-static void DP_blend_pixels_normal(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                   int pixel_count, uint16_t opacity)
-{
-    blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity), blend_normal);
-}
-static void blend_pixels_behind(DP_Pixel15 *dst, DP_Pixel15 *src,
-                                int pixel_count, uint16_t opacity)
-{
-    blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity), blend_behind);
-}
-#endif
-
 void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
                      uint16_t opacity, int blend_mode)
 {
     switch (blend_mode) {
     // Alpha-affecting blend modes.
     case DP_BLEND_MODE_NORMAL:
-        blend_pixels_normal(dst, src, pixel_count, opacity);
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_normal);
         break;
     case DP_BLEND_MODE_BEHIND:
-        blend_pixels_behind(dst, src, pixel_count, opacity);
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_behind);
         break;
     case DP_BLEND_MODE_ERASE:
         blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
@@ -1707,10 +1610,50 @@ void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
                                             to_fix(opacity), comp_color);
         break;
     default:
-        DP_debug("Unknown mask blend mode %d (%s)", blend_mode,
+        DP_debug("Unknown pixel blend mode %d (%s)", blend_mode,
                  DP_blend_mode_enum_name(blend_mode));
         break;
     }
+}
+
+void DP_blend_tile(DP_Pixel15 *dst, DP_Pixel15 *src, uint16_t opacity,
+                   int blend_mode)
+{
+    DP_Pixel15 *aligned_dst = DP_ASSUME_SIMD_ALIGNED(dst);
+    DP_Pixel15 *aligned_src = DP_ASSUME_SIMD_ALIGNED(src);
+#ifdef DP_CPU_X64
+    switch (blend_mode) {
+    // Alpha-affecting blend modes.
+    case DP_BLEND_MODE_NORMAL:
+        switch (DP_cpu_support) {
+        case DP_CPU_SUPPORT_AVX2:
+            blend_tile_normal_avx2(aligned_dst, aligned_src, opacity);
+            return;
+        case DP_CPU_SUPPORT_SSE42:
+            blend_tile_normal_sse42(aligned_dst, aligned_src, opacity);
+            return;
+        default:
+            break;
+        }
+        break;
+    case DP_BLEND_MODE_BEHIND:
+        switch (DP_cpu_support) {
+        case DP_CPU_SUPPORT_AVX2:
+            blend_tile_behind_avx2(aligned_dst, aligned_src, opacity);
+            return;
+        case DP_CPU_SUPPORT_SSE42:
+            blend_tile_behind_sse42(aligned_dst, aligned_src, opacity);
+            return;
+        default:
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+#endif
+    DP_blend_pixels(aligned_dst, aligned_src, DP_TILE_LENGTH, opacity,
+                    blend_mode);
 }
 
 

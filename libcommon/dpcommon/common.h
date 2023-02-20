@@ -50,6 +50,11 @@
 #    define DP_UNREACHABLE() DP_panic("unreachable")
 #endif
 
+#if defined(_M_X64) || defined(__x86_64__)
+#    define DP_CPU_X64
+#    define DP_SIMD_ALIGNMENT 32
+#endif
+
 #ifdef __GNUC__
 #    define DP_TRAP() __builtin_trap()
 #    define DP_UNUSED __attribute__((__unused__))
@@ -64,6 +69,12 @@
 #    define DP_INLINE       DP_UNUSED static inline
 #    define DP_NOINLINE     __attribute__((noinline))
 #    define DP_FORCE_INLINE DP_INLINE __attribute__((__always_inline__))
+#    ifdef DP_CPU_X64
+#        define DP_ASSUME_SIMD_ALIGNED(PTR) \
+            __builtin_assume_aligned((PTR), DP_SIMD_ALIGNMENT)
+#    else
+#        define DP_ASSUME_SIMD_ALIGNED(PTR) (PTR)
+#    endif
 #else
 #    define DP_TRAP() abort()
 #    define DP_UNUSED // nothing
@@ -76,6 +87,7 @@
 #    define DP_MUST_CHECK                           // nothing
 #    define DP_INLINE                               static inline
 #    define DP_NOINLINE                             // nothing
+#    define DP_ASSUME_SIMD_ALIGNED(PTR)             (PTR)
 #endif
 
 #ifdef _MSC_VER
@@ -231,13 +243,27 @@ DP_INLINE size_t DP_flex_size(size_t type_size, size_t flex_offset,
                  sizeof(((TYPE *)NULL)->FIELD[0]), COUNT)
 
 
-void DP_free(void *ptr);
-
 void *DP_malloc(size_t size) DP_MALLOC_ATTR;
 
 void *DP_malloc_zeroed(size_t size) DP_MALLOC_ATTR;
 
 void *DP_realloc(void *ptr, size_t size) DP_REALLOC_ATTR;
+
+void DP_free(void *ptr);
+
+#ifdef DP_SIMD_ALIGNMENT
+void *DP_malloc_simd(size_t size) DP_MALLOC_ATTR;
+void *DP_malloc_simd_zeroed(size_t size) DP_MALLOC_ATTR;
+#else
+#    define DP_malloc_simd(SIZE)        DP_malloc((SIZE))
+#    define DP_malloc_simd_zeroed(SIZE) DP_malloc_zeroed((SIZE))
+#endif
+
+#if defined(DP_SIMD_ALIGNMENT) && defined(_WIN32)
+void DP_free_simd(void *ptr);
+#else
+#    define DP_free_simd(PTR) DP_free((PTR))
+#endif
 
 
 char *DP_vformat(const char *fmt, va_list ap);

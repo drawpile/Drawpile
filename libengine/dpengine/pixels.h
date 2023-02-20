@@ -27,6 +27,9 @@
 
 #define DP_BIT15 (1 << 15)
 
+#define DP_TILE_SIZE   64
+#define DP_TILE_LENGTH (DP_TILE_SIZE * DP_TILE_SIZE)
+
 // Premultiplied 8 bit pixel
 typedef union DP_Pixel8 {
     uint32_t color;
@@ -88,11 +91,17 @@ DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel);
 DP_UPixel8 DP_upixel_float_to_8(DP_UPixelFloat pixel);
 
 void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
-void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count);
 
 // Checks the color channel of each source pixel if it's less than or equal to
 // the alpha channel and clamps them if necessary.
 void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
+
+void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count);
+
+// Uses SIMD to convert pixels, but requires high alignments, max_align_t is not
+// enough! The pixels of tiles are automatically properly aligned, but e.g. the
+// pixels of images or compression buffers are not, so you can't use this there.
+void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src);
 
 DP_UPixel8 DP_pixel8_unpremultiply(DP_Pixel8 pixel);
 DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel);
@@ -133,6 +142,11 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
 
 void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
                      uint16_t opacity, int blend_mode);
+
+// Needs big SIMD alignment of dst and src, max_align_t is not enough! Only the
+// pixels of tiles are properly aligned, really.
+void DP_blend_tile(DP_Pixel15 *dst, DP_Pixel15 *src, uint16_t opacity,
+                   int blend_mode);
 
 
 void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,

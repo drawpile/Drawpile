@@ -23,10 +23,6 @@
 #define DPCOMMON_CPU_H
 #include "common.h"
 
-#if defined(_M_X64) || defined(__x86_64__)
-#    define DP_CPU_X64
-#endif
-
 // Include intrinsics
 #ifdef DP_CPU_X64
 #    if defined(__clang__) && defined(_MSC_VER)
