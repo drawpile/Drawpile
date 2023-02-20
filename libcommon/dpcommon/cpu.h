@@ -111,11 +111,20 @@ typedef enum DP_CpuSupport {
 #endif
 } DP_CpuSupport;
 
-extern DP_CpuSupport DP_cpu_support_value; // Use DP_cpu_support macro instead
 void DP_cpu_support_init(void);
 
+// If we AVX2 or SSE 4.2 are requested at compile-time, we switch to those at
+// compile-time instead of doing a dynamic check. If your processor supports
+// AVX2 but you ask for SSE 4.2 at compile-time then you only get the latter.
 #ifdef NDEBUG
-#    define DP_cpu_support DP_cpu_support_value
+#    if defined(DP_CPU_X64) && defined(__AVX2__)
+#        define DP_cpu_support DP_CPU_SUPPORT_AVX2
+#    elif defined(DP_CPU_X64) && defined(__SSE4_2__)
+#        define DP_cpu_support DP_CPU_SUPPORT_SSE42
+#    else
+extern DP_CpuSupport DP_cpu_support_value;
+#        define DP_cpu_support DP_cpu_support_value
+#    endif
 #else
 DP_CpuSupport DP_cpu_support_debug_get(const char *file, int line);
 #    define DP_cpu_support \
