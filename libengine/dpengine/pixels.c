@@ -681,14 +681,14 @@ DP_Pixel15 DP_pixel15_premultiply(DP_UPixel15 pixel)
 #ifdef DP_CPU_X64
 DP_TARGET_BEGIN("sse4.2")
 // Load 4 16bit pixels and split them into 4x32 bit registers.
-static void load_sse42(DP_Pixel15 src[4], __m128i *out_blue, __m128i *out_green,
-                       __m128i *out_red, __m128i *out_alpha)
+static void load_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
+                       __m128i *out_green, __m128i *out_red, __m128i *out_alpha)
 {
     // clang-format off
     DP_ASSERT(((intptr_t)src) % 16 == 0);
 
-    __m128i source1 = _mm_load_si128((__m128i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|
-    __m128i source2 = _mm_load_si128((__m128i *)src + 1); // |B3|G3|R3|A3|B4|G4|R4|A4|
+    __m128i source1 = _mm_load_si128((const __m128i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|
+    __m128i source2 = _mm_load_si128((const __m128i *)src + 1); // |B3|G3|R3|A3|B4|G4|R4|A4|
 
     __m128i shuffled1 = _mm_shuffle_epi32(source1, _MM_SHUFFLE(3, 1, 2, 0)); // |B1|G1|B2|G2|R1|A1|R2|A2|
     __m128i shuffled2 = _mm_shuffle_epi32(source2, _MM_SHUFFLE(3, 1, 2, 0)); // |B3|G3|B4|G4|R3|A3|R3|A3|
@@ -726,7 +726,8 @@ static __m128i mul_sse42(__m128i a, __m128i b)
     return _mm_srli_epi32(_mm_mullo_epi32(a, b), 15);
 }
 
-static void blend_tile_normal_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_tile_normal_sse42(DP_Pixel15 *DP_RESTRICT dst,
+                                    const DP_Pixel15 *DP_RESTRICT src,
                                     uint16_t opacity)
 {
     // clang-format off
@@ -756,7 +757,8 @@ static void blend_tile_normal_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
     // clang-format on
 }
 
-static void blend_tile_behind_sse42(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_tile_behind_sse42(DP_Pixel15 *DP_RESTRICT dst,
+                                    const DP_Pixel15 *DP_RESTRICT src,
                                     uint16_t opacity)
 {
     // clang-format off
@@ -788,14 +790,14 @@ DP_TARGET_END
 
 DP_TARGET_BEGIN("avx2")
 // Load 8 16bit pixels and split them into 8x32 bit registers.
-static void load_avx2(DP_Pixel15 src[8], __m256i *out_blue, __m256i *out_green,
-                      __m256i *out_red, __m256i *out_alpha)
+static void load_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
+                      __m256i *out_green, __m256i *out_red, __m256i *out_alpha)
 {
     // clang-format off
     DP_ASSERT(((intptr_t)src) % 32 == 0);
 
-    __m256i source1 = _mm256_loadu_si256((__m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
-    __m256i source2 = _mm256_loadu_si256((__m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
+    __m256i source1 = _mm256_loadu_si256((const __m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
+    __m256i source2 = _mm256_loadu_si256((const __m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
     __m256i lo = _mm256_unpacklo_epi32(source1, source2);     // |B1|G1|B5|G5|R1|A1|R5|A5|B3|G3|B7|G7|R3|A3|R7|A7|
     __m256i hi = _mm256_unpackhi_epi32(source1, source2);     // |B2|G2|B6|G6|R2|A2|R6|A6|B4|G4|B8|G8|R4|A4|R8|A8|
@@ -837,7 +839,8 @@ static __m256i mul_avx2(__m256i a, __m256i b)
     return _mm256_srli_epi32(_mm256_mullo_epi32(a, b), 15);
 }
 
-static void blend_tile_normal_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_tile_normal_avx2(DP_Pixel15 *DP_RESTRICT dst,
+                                   const DP_Pixel15 *DP_RESTRICT src,
                                    uint16_t opacity)
 {
     // clang-format off
@@ -867,7 +870,8 @@ static void blend_tile_normal_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
     // clang-format on
 }
 
-static void blend_tile_behind_avx2(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_tile_behind_avx2(DP_Pixel15 *DP_RESTRICT dst,
+                                   const DP_Pixel15 *DP_RESTRICT src,
                                    uint16_t opacity)
 {
     // clang-format off
@@ -1414,7 +1418,8 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
         }                                                     \
     } while (0)
 
-static void blend_pixels_alpha_op(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_pixels_alpha_op(DP_Pixel15 *DP_RESTRICT dst,
+                                  const DP_Pixel15 *DP_RESTRICT src,
                                   int pixel_count, Fix15 opacity,
                                   BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15,
                                                Fix15))
@@ -1426,7 +1431,8 @@ static void blend_pixels_alpha_op(DP_Pixel15 *dst, DP_Pixel15 *src,
     });
 }
 
-static void blend_pixels_color_erase(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
+                                     const DP_Pixel15 *DP_RESTRICT src,
                                      int pixel_count, uint16_t opacity)
 {
     double o = DP_uint16_to_double(opacity) / BIT15_DOUBLE;
@@ -1441,7 +1447,8 @@ static void blend_pixels_color_erase(DP_Pixel15 *dst, DP_Pixel15 *src,
     });
 }
 
-static void blend_pixels_composite_separable(DP_Pixel15 *dst, DP_Pixel15 *src,
+static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
+                                             const DP_Pixel15 *DP_RESTRICT src,
                                              int pixel_count, Fix15 opacity,
                                              Fix15 (*comp_op)(Fix15, Fix15))
 {
@@ -1462,8 +1469,8 @@ static void blend_pixels_composite_separable(DP_Pixel15 *dst, DP_Pixel15 *src,
 }
 
 static void blend_pixels_composite_separable_with_opacity(
-    DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count, Fix15 opacity,
-    Fix15 (*comp_op)(Fix15, Fix15, Fix15))
+    DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
+    int pixel_count, Fix15 opacity, Fix15 (*comp_op)(Fix15, Fix15, Fix15))
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
         DP_Pixel15 bp = *dst;
@@ -1481,10 +1488,9 @@ static void blend_pixels_composite_separable_with_opacity(
     });
 }
 
-static void blend_pixels_composite_nonseparable(DP_Pixel15 *dst,
-                                                DP_Pixel15 *src,
-                                                int pixel_count, Fix15 opacity,
-                                                BGR15 (*comp_op)(BGR15, BGR15))
+static void blend_pixels_composite_nonseparable(
+    DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
+    int pixel_count, Fix15 opacity, BGR15 (*comp_op)(BGR15, BGR15))
 {
     FOR_PIXEL(dst, src, pixel_count, i, {
         DP_Pixel15 bp = *dst;
@@ -1502,7 +1508,8 @@ static void blend_pixels_composite_nonseparable(DP_Pixel15 *dst,
     });
 }
 
-void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
+void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
+                     const DP_Pixel15 *DP_RESTRICT src, int pixel_count,
                      uint16_t opacity, int blend_mode)
 {
     switch (blend_mode) {
@@ -1616,11 +1623,12 @@ void DP_blend_pixels(DP_Pixel15 *dst, DP_Pixel15 *src, int pixel_count,
     }
 }
 
-void DP_blend_tile(DP_Pixel15 *dst, DP_Pixel15 *src, uint16_t opacity,
+void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
+                   const DP_Pixel15 *DP_RESTRICT src, uint16_t opacity,
                    int blend_mode)
 {
     DP_Pixel15 *aligned_dst = DP_ASSUME_SIMD_ALIGNED(dst);
-    DP_Pixel15 *aligned_src = DP_ASSUME_SIMD_ALIGNED(src);
+    const DP_Pixel15 *aligned_src = DP_ASSUME_SIMD_ALIGNED(src);
 #ifdef DP_CPU_X64
     switch (blend_mode) {
     // Alpha-affecting blend modes.
