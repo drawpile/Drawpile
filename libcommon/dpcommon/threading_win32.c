@@ -28,25 +28,31 @@ static void free_error_state();
 
 DP_Mutex *DP_mutex_new(void)
 {
-    return (DP_Mutex *)CreateMutexW(NULL, FALSE, NULL);
+    CRITICAL_SECTION *cs = DP_malloc(sizeof(*cs));
+    InitializeCriticalSection(cs);
+    return (DP_Mutex *)cs;
 }
 
 void DP_mutex_free(DP_Mutex *mutex)
 {
-    CloseHandle((HANDLE *)mutex);
+    CRITICAL_SECTION *cs = (CRITICAL_SECTION *)mutex;
+    if (cs) {
+        DeleteCriticalSection(cs);
+        DP_free(cs);
+    }
 }
 
 bool DP_mutex_lock(DP_Mutex *mutex)
 {
     DP_ASSERT(mutex);
-    WaitForSingleObject((HANDLE *)mutex, INFINITE);
+    EnterCriticalSection((CRITICAL_SECTION *)mutex);
     return true;
 }
 
 DP_MutexResult DP_mutex_try_lock(DP_Mutex *mutex)
 {
     DP_ASSERT(mutex);
-    if (WaitForSingleObject((HANDLE *)mutex, 0) == WAIT_OBJECT_0) {
+    if (TryEnterCriticalSection((CRITICAL_SECTION *)mutex)) {
         return DP_MUTEX_OK;
     }
     else {
@@ -57,7 +63,7 @@ DP_MutexResult DP_mutex_try_lock(DP_Mutex *mutex)
 bool DP_mutex_unlock(DP_Mutex *mutex)
 {
     DP_ASSERT(mutex);
-    ReleaseMutex((HANDLE *)mutex);
+    LeaveCriticalSection((CRITICAL_SECTION *)mutex);
     return true;
 }
 
