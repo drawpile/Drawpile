@@ -24,7 +24,7 @@
 #include "threading.h"
 #include <windows.h>
 
-static void free_error_state();
+static void free_error_state(void);
 
 DP_Mutex *DP_mutex_new(void)
 {
@@ -197,7 +197,7 @@ static THREAD_LOCAL unsigned int error_state_count = 0;
 static THREAD_LOCAL size_t error_state_buffer_size = 0;
 static THREAD_LOCAL char *error_state_buffer = NULL;
 
-static void free_error_state()
+static void free_error_state(void)
 {
     DP_free(error_state_buffer);
 }
