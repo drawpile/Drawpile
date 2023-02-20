@@ -700,7 +700,7 @@ static void load_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
 
     *out_blue = _mm_blend_epi16(blue_green, _mm_set1_epi32(0), 170); // Zero out upper bits (16 -> 32)
     *out_green = _mm_srli_epi32(blue_green, 16);                     // Move and zero out upper bits (16 -> 32)
-    *out_red = _mm_blend_epi16(blue_green, _mm_set1_epi32(0), 170);  // Zero out upper bits (16 -> 32)
+    *out_red = _mm_blend_epi16(red_alpha, _mm_set1_epi32(0), 170);   // Zero out upper bits (16 -> 32)
     *out_alpha = _mm_srli_epi32(red_alpha, 16);                      // Move and zero out upper bits (16 -> 32)
     // clang-format on
 }
