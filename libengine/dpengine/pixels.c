@@ -477,8 +477,8 @@ DP_TARGET_BEGIN("avx2")
 static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
     for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
-        __m256i source1 = _mm256_loadu_si256((__m256i *)&src[i]);
-        __m256i source2 = _mm256_loadu_si256((__m256i *)&src[i + 4]);
+        __m256i source1 = _mm256_load_si256((__m256i *)&src[i]);
+        __m256i source2 = _mm256_load_si256((__m256i *)&src[i + 4]);
 
         // Convert 2x(16x16bit) to 4x(8x32bit)
         __m256i p1 = _mm256_and_si256(source1, _mm256_set1_epi32(0xffff));
@@ -527,7 +527,7 @@ static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
         __m256i out = _mm256_permutevar8x32_epi32(
             combined, _mm256_setr_epi32(0, 2, 4, 6, 1, 3, 5, 7));
 
-        _mm256_storeu_si256((__m256i *)&dst[i], out);
+        _mm256_store_si256((__m256i *)&dst[i], out);
     }
 }
 DP_TARGET_END
@@ -796,8 +796,8 @@ static void load_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
     // clang-format off
     DP_ASSERT(((intptr_t)src) % 32 == 0);
 
-    __m256i source1 = _mm256_loadu_si256((const __m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
-    __m256i source2 = _mm256_loadu_si256((const __m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
+    __m256i source1 = _mm256_load_si256((const __m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
+    __m256i source2 = _mm256_load_si256((const __m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
     __m256i lo = _mm256_unpacklo_epi32(source1, source2);     // |B1|G1|B5|G5|R1|A1|R5|A5|B3|G3|B7|G7|R3|A3|R7|A7|
     __m256i hi = _mm256_unpackhi_epi32(source1, source2);     // |B2|G2|B6|G6|R2|A2|R6|A6|B4|G4|B8|G8|R4|A4|R8|A8|
@@ -829,8 +829,8 @@ static void store_avx2(__m256i blue, __m256i green, __m256i red, __m256i alpha,
     __m256i source1 = _mm256_unpacklo_epi64(lo, hi);                                 // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
     __m256i source2 = _mm256_unpackhi_epi64(lo, hi);                                 // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
-    _mm256_storeu_si256((__m256i *)dest, source1);
-    _mm256_storeu_si256((__m256i *)dest + 1, source2);
+    _mm256_store_si256((__m256i *)dest, source1);
+    _mm256_store_si256((__m256i *)dest + 1, source2);
     // clang-format on
 }
 
