@@ -31,12 +31,6 @@
 // IWYU pragma: no_include <pngconf.h>
 
 
-bool DP_image_png_guess(unsigned char *buf, size_t size)
-{
-    return png_sig_cmp(buf, 0, size) == 0;
-}
-
-
 static void error_png(png_structp png_ptr, png_const_charp error_msg)
 {
     DP_error_set("PNG error: %s", error_msg);

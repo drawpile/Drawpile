@@ -38,13 +38,6 @@ static_assert(sizeof(JSAMPLE) == 1, "JSAMPLE is char-sized");
 #define BUFFER_SIZE 4098
 
 
-bool DP_image_jpeg_guess(unsigned char *buf, size_t size)
-{
-    return size >= 4 && buf[0] == 0xff && buf[1] == 0xd8 && buf[2] == 0xff
-        && ((buf[3] >= 0xe0 && buf[3] <= 0xef) || buf[3] == 0xdb);
-}
-
-
 typedef struct DP_JpegErrorMgr {
     struct jpeg_error_mgr parent;
     jmp_buf env;

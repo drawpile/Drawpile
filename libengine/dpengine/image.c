@@ -32,30 +32,23 @@
 #include <dpcommon/output.h>
 
 
-struct DP_Image {
-    int width, height;
-    size_t count;
-    DP_Pixel8 pixels[];
-};
-
-DP_Image *DP_image_new(int width, int height)
-{
-    DP_ASSERT(width > 0);
-    DP_ASSERT(height > 0);
-    size_t count = DP_int_to_size(width) * DP_int_to_size(height);
-    DP_Image *img = DP_malloc_zeroed(DP_FLEX_SIZEOF(DP_Image, pixels, count));
-    img->width = width;
-    img->height = height;
-    img->count = count;
-    return img;
-}
-
-
 static void assign_type(DP_ImageFileType *out_type, DP_ImageFileType type)
 {
     if (out_type) {
         *out_type = type;
     }
+}
+
+static bool guess_png(unsigned char *buf, size_t size)
+{
+    unsigned char sig[] = {0x89, 0x50, 0x4e, 0x47, 0xd, 0xa, 0x1a, 0xa};
+    return size >= sizeof(sig) && memcmp(buf, sig, sizeof(sig)) == 0;
+}
+
+static bool guess_jpeg(unsigned char *buf, size_t size)
+{
+    return size >= 4 && buf[0] == 0xff && buf[1] == 0xd8 && buf[2] == 0xff
+        && ((buf[3] >= 0xe0 && buf[3] <= 0xef) || buf[3] == 0xdb);
 }
 
 static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
@@ -68,11 +61,11 @@ static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
     }
 
     DP_Image *(*read_fn)(DP_Input *);
-    if (DP_image_png_guess(buf, read)) {
+    if (guess_png(buf, read)) {
         assign_type(out_type, DP_IMAGE_FILE_TYPE_PNG);
         read_fn = DP_image_png_read;
     }
-    else if (DP_image_jpeg_guess(buf, read)) {
+    else if (guess_jpeg(buf, read)) {
         assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
         read_fn = DP_image_jpeg_read;
     }
@@ -126,7 +119,7 @@ static unsigned char *get_output_buffer(size_t out_size, void *user)
     if (out_size == expected_size) {
         DP_Image *img = DP_image_new(width, height);
         args->img = img;
-        return (unsigned char *)img->pixels;
+        return (unsigned char *)DP_image_pixels(img);
     }
     else {
         DP_error_set("Image decompression needs size %zu, but got %zu",
@@ -232,14 +225,14 @@ static void copy_pixels(DP_Image *DP_RESTRICT dst, DP_Image *DP_RESTRICT src,
     DP_ASSERT(src_y >= 0);
     DP_ASSERT(copy_width >= 0);
     DP_ASSERT(copy_height >= 0);
-    DP_ASSERT(dst_x + copy_width <= dst->width);
-    DP_ASSERT(src_x + copy_width <= src->width);
-    DP_ASSERT(dst_y + copy_height <= dst->height);
-    DP_ASSERT(src_y + copy_height <= src->height);
-    int dst_width = dst->width;
-    int src_width = src->width;
-    DP_Pixel8 *DP_RESTRICT dst_pixels = dst->pixels;
-    DP_Pixel8 *DP_RESTRICT src_pixels = src->pixels;
+    DP_ASSERT(dst_x + copy_width <= DP_image_width(dst));
+    DP_ASSERT(src_x + copy_width <= DP_image_width(src));
+    DP_ASSERT(dst_y + copy_height <= DP_image_height(dst));
+    DP_ASSERT(src_y + copy_height <= DP_image_height(src));
+    int dst_width = DP_image_width(dst);
+    int src_width = DP_image_width(src);
+    DP_Pixel8 *DP_RESTRICT dst_pixels = DP_image_pixels(dst);
+    DP_Pixel8 *DP_RESTRICT src_pixels = DP_image_pixels(src);
     size_t row_size = sizeof(uint32_t) * DP_int_to_size(copy_width);
     for (int y = 0; y < copy_height; ++y) {
         int d = (y + dst_y) * dst_width + dst_x;
@@ -259,54 +252,10 @@ DP_Image *DP_image_new_subimage(DP_Image *img, int x, int y, int width,
     int dst_y = y < 0 ? -y : 0;
     int src_x = x > 0 ? x : 0;
     int src_y = y > 0 ? y : 0;
-    int copy_width = DP_min_int(width - dst_x, img->width - src_x);
-    int copy_height = DP_min_int(height - dst_y, img->height - src_y);
+    int copy_width = DP_min_int(width - dst_x, DP_image_width(img) - src_x);
+    int copy_height = DP_min_int(height - dst_y, DP_image_height(img) - src_y);
     copy_pixels(sub, img, dst_x, dst_y, src_x, src_y, copy_width, copy_height);
     return sub;
-}
-
-
-void DP_image_free(DP_Image *img)
-{
-    DP_free(img);
-}
-
-int DP_image_width(DP_Image *img)
-{
-    DP_ASSERT(img);
-    return img->width;
-}
-
-int DP_image_height(DP_Image *img)
-{
-    DP_ASSERT(img);
-    return img->height;
-}
-
-DP_Pixel8 *DP_image_pixels(DP_Image *img)
-{
-    DP_ASSERT(img);
-    return img->pixels;
-}
-
-DP_Pixel8 DP_image_pixel_at(DP_Image *img, int x, int y)
-{
-    DP_ASSERT(img);
-    DP_ASSERT(x >= 0);
-    DP_ASSERT(y >= 0);
-    DP_ASSERT(x < img->width);
-    DP_ASSERT(y < img->height);
-    return img->pixels[y * img->width + x];
-}
-
-void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel8 pixel)
-{
-    DP_ASSERT(img);
-    DP_ASSERT(x >= 0);
-    DP_ASSERT(y >= 0);
-    DP_ASSERT(x < img->width);
-    DP_ASSERT(y < img->height);
-    img->pixels[y * img->width + x] = pixel;
 }
 
 
@@ -317,8 +266,8 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
     DP_ASSERT(img);
     DP_ASSERT(dst_quad);
 
-    int src_width = img->width;
-    int src_height = img->height;
+    int src_width = DP_image_width(img);
+    int src_height = DP_image_height(img);
     DP_Quad src_quad =
         DP_quad_make(0, 0, src_width, 0, src_width, src_height, 0, src_height);
 
@@ -373,8 +322,8 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
     DP_ASSERT(dc);
     DP_ASSERT(max_width > 0);
     DP_ASSERT(max_height > 0);
-    int width = img->width;
-    int height = img->height;
+    int width = DP_image_width(img);
+    int height = DP_image_height(img);
     if (width > max_width || height > max_height) {
         int thumb_width, thumb_height;
         thumbnail_scale(width, height, max_width, max_height, &thumb_width,
@@ -404,9 +353,10 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
 
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel)
 {
-    DP_Pixel8 *pixels = img->pixels;
+    DP_Pixel8 *pixels = DP_image_pixels(img);
     DP_Pixel8 pixel = pixels[0];
-    size_t count = img->count;
+    size_t count = DP_int_to_size(DP_image_width(img))
+                 * DP_int_to_size(DP_image_height(img));
     for (size_t i = 1; i < count; ++i) {
         if (pixels[i].color != pixel.color) {
             return false;
@@ -435,12 +385,14 @@ bool DP_image_write_png(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
     DP_ASSERT(output);
-    return DP_image_png_write(output, img->width, img->height, img->pixels);
+    return DP_image_png_write(output, DP_image_width(img), DP_image_height(img),
+                              DP_image_pixels(img));
 }
 
 bool DP_image_write_jpeg(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
     DP_ASSERT(output);
-    return DP_image_jpeg_write(output, img->width, img->height, img->pixels);
+    return DP_image_jpeg_write(output, DP_image_width(img),
+                               DP_image_height(img), DP_image_pixels(img));
 }

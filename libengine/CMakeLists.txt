@@ -35,8 +35,6 @@ set(dpengine_sources
     dpengine/flood_fill.c
     dpengine/frame.c
     dpengine/image.c
-    dpengine/image_jpeg.c
-    dpengine/image_png.c
     dpengine/image_transform.c
     dpengine/layer_content.c
     dpengine/layer_group.c
@@ -119,6 +117,8 @@ set(dpengine_tests
 set(dpengine_clang_format_files "${dpengine_sources}" "${dpengine_headers}"
                                 "${dptest_engine_sources}"
                                 "${dptest_engine_headers}" "${dpengine_tests}"
+                                dpengine/image_base.c dpengine/image_jpeg.c
+                                dpengine/image_png.c dpengine/image_qt.cpp
                                 dpengine/xml_stream_qt.cpp
                                 dpengine/zip_archive_karchive.cpp
                                 dpengine/zip_archive_libzip.c
@@ -155,8 +155,28 @@ set_dp_target_properties(dpengine)
 target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
 target_include_directories(dpengine PRIVATE "${CMAKE_BINARY_DIR}/config")
 target_link_libraries(dpengine PUBLIC dpengine_archive dpengine_xml
-                                      dpmsg_interface uthash mypaint PNG::PNG
-                                      JPEG::JPEG qgrayraster parson jo_gifx)
+                                      dpmsg_interface uthash mypaint qgrayraster
+                                      parson jo_gifx)
+
+if("${IMAGE_IMPL}" STREQUAL "LIBS")
+    target_sources(dpengine PRIVATE dpengine/image_base.c dpengine/image_jpeg.c
+                                    dpengine/image_png.c)
+    target_link_libraries(dpengine PUBLIC PNG::PNG JPEG::JPEG)
+elseif("${IMAGE_IMPL}" STREQUAL "QT")
+    add_library(dpengine_image STATIC dpengine/image_base.c
+                                      dpengine/image_qt.cpp)
+    set_dp_target_properties(dpengine_image CXX)
+    target_link_libraries(dpengine_image PUBLIC dpcommon Qt5::Gui)
+    target_link_libraries(dpengine PUBLIC dpengine_image)
+elseif("${IMAGE_IMPL}" STREQUAL "QT6")
+    add_library(dpengine_image STATIC dpengine/image_base.c
+                                      dpengine/image_qt.cpp)
+    set_dp_target_properties(dpengine_image CXX)
+    target_link_libraries(dpengine_image PUBLIC dpcommon Qt6::Gui)
+    target_link_libraries(dpengine PUBLIC dpengine_image)
+else()
+    message(SEND_ERROR "Unknown IMAGE_IMPL value '${IMAGE_IMPL}'")
+endif()
 
 if(BUILD_TESTS)
     add_library(dptest_engine STATIC "${dptest_engine_sources}"

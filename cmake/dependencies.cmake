@@ -43,13 +43,20 @@ if(DRAWDANCE_EMSCRIPTEN)
     # The set_dp_target_properties function sets the flag on all targets.
 else()
     find_package(ZLIB MODULE REQUIRED)
-    find_package(PNG MODULE REQUIRED)
-    find_package(JPEG MODULE REQUIRED)
+
+    if("${IMAGE_IMPL}" STREQUAL "LIBS")
+        find_package(PNG MODULE REQUIRED)
+        find_package(JPEG MODULE REQUIRED)
+    elseif("${IMAGE_IMPL}" STREQUAL "QT")
+        find_package(Qt5 COMPONENTS Gui REQUIRED)
+    elseif("${IMAGE_IMPL}" STREQUAL "QT6")
+        find_package(Qt6 COMPONENTS Gui REQUIRED)
+    endif()
 
     if(NOT WIN32)
         set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+        find_package(Threads REQUIRED)
     endif()
-    find_package(Threads REQUIRED)
 
     if("${XML_IMPL}" STREQUAL "QT")
         find_package(Qt5 COMPONENTS Xml REQUIRED)

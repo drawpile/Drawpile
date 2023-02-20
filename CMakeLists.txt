@@ -35,6 +35,8 @@ option(LINK_WITH_LIBM "Link with libm when using math" ON)
 option(BUILD_TESTS "Build TAP tests" ON)
 option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
 
+set(IMAGE_IMPL LIBS CACHE STRING "PNG and JPEG implementation (LIBS, QT, QT6)")
+
 set(XML_IMPL QT CACHE STRING "XML reader implementation (QT, QT6)")
 
 set(ZIP_IMPL LIBZIP CACHE STRING "ZIP folder implementation (LIBZIP, KARCHIVE)")
