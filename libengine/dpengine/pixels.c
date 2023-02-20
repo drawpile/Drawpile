@@ -535,17 +535,19 @@ DP_TARGET_END
 
 void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
+    DP_Pixel8 *aligned_dst = DP_ASSUME_SIMD_ALIGNED(dst);
+    const DP_Pixel15 *aligned_src = DP_ASSUME_SIMD_ALIGNED(src);
     switch (DP_cpu_support) {
 #ifdef DP_CPU_X64
     case DP_CPU_SUPPORT_AVX2:
-        pixels15_to_8_avx2(dst, src);
+        pixels15_to_8_avx2(aligned_dst, aligned_src);
         break;
     case DP_CPU_SUPPORT_SSE42:
-        pixels15_to_8_sse42(dst, src);
+        pixels15_to_8_sse42(aligned_dst, aligned_src);
         break;
 #endif
     default:
-        DP_pixels15_to_8(dst, src, DP_TILE_LENGTH);
+        DP_pixels15_to_8(aligned_dst, aligned_src, DP_TILE_LENGTH);
         break;
     }
 }
