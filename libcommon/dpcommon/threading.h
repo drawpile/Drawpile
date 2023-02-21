@@ -26,6 +26,17 @@
 
 #define DP_ERROR_STATE_INITIAL_BUFFER_SIZE 128
 
+#if defined(_WIN32)
+typedef int DP_ThreadId;
+#    define DP_THREAD_ID_FMT "d"
+#elif defined(__ANDROID__)
+typedef long DP_ThreadId;
+#    define DP_THREAD_ID_FMT "ld"
+#else
+typedef unsigned long long DP_ThreadId;
+#    define DP_THREAD_ID_FMT "llu"
+#endif
+
 typedef struct DP_Mutex DP_Mutex;
 typedef struct DP_Semaphore DP_Semaphore;
 typedef struct DP_Thread DP_Thread;
@@ -133,7 +144,7 @@ bool DP_semaphore_must_try_wait_at(const char *file, int line,
                                   (SEM))
 
 
-unsigned long long DP_thread_current_id(void);
+DP_ThreadId DP_thread_current_id(void);
 
 int DP_thread_cpu_count(void);
 

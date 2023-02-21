@@ -212,10 +212,10 @@ void DP_perf_end_internal(DP_Output *output, int handle)
     double start_seconds = DP_ullong_to_double(start) / NS_IN_S;
     double end_seconds = DP_uint64_to_double(end) / NS_IN_S;
 
-    bool ok = DP_output_format(output, "%llu %f %f %llu %s:%s%s%s\n",
-                               DP_thread_current_id(), start_seconds,
-                               end_seconds, diff, pe->realm, pe->categories,
-                               detail[0] == '\0' ? "" : " ", detail);
+    bool ok = DP_output_format(
+        output, "%" DP_THREAD_ID_FMT " %f %f %llu %s:%s%s%s\n",
+        DP_thread_current_id(), start_seconds, end_seconds, diff, pe->realm,
+        pe->categories, detail[0] == '\0' ? "" : " ", detail);
     if (!ok) {
         DP_warn("Error formatting perf output: %s", DP_error());
     }
