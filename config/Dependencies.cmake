@@ -1,6 +1,7 @@
 find_package("Qt${QT_VERSION}" COMPONENTS Network Sql REQUIRED)
 
 if(CLIENT)
+	find_package(ZLIB MODULE REQUIRED)
 	find_package(PNG MODULE REQUIRED)
 	find_package(JPEG MODULE REQUIRED)
 	find_package("Qt${QT_VERSION}" COMPONENTS Xml REQUIRED)
