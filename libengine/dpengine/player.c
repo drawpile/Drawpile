@@ -1497,6 +1497,15 @@ static bool read_index_input(DP_BufferedInput *input, size_t size)
     read_index_input((INPUT), sizeof(TYPE##_t)) \
         && ((OUT) = DP_read_littleendian_##TYPE((INPUT)->buffer), true)
 
+#define READ_INDEX_SIZE(INPUT, OUT)             \
+    read_index_input((INPUT), sizeof(uint64_t)) \
+        && ((OUT) = read_littleendian_size((INPUT)->buffer), true)
+
+static size_t read_littleendian_size(const unsigned char *d)
+{
+    return DP_uint64_to_size(DP_read_littleendian_uint64(d));
+}
+
 static bool read_index_header(DP_ReadIndexContext *c)
 {
     uint16_t version;
@@ -1505,7 +1514,7 @@ static bool read_index_header(DP_ReadIndexContext *c)
         && memcmp(input->buffer, INDEX_MAGIC, INDEX_MAGIC_LENGTH) == 0
         && READ_INDEX(input, uint16, version) && version == INDEX_VERSION
         && READ_INDEX(input, uint32, c->message_count)
-        && READ_INDEX(input, uint64, c->index_offset);
+        && READ_INDEX_SIZE(input, c->index_offset);
 }
 
 #define ENTRY_SIZE (sizeof(uint32_t) + sizeof(uint64_t) * (size_t)3)
@@ -1528,9 +1537,9 @@ static bool read_index_entries(DP_ReadIndexContext *c)
         else if (read == ENTRY_SIZE) {
             DP_PlayerIndexEntry entry = {
                 DP_read_littleendian_uint32(c->input.buffer),
-                DP_read_littleendian_uint64(c->input.buffer + 4),
-                DP_read_littleendian_uint64(c->input.buffer + 12),
-                DP_read_littleendian_uint64(c->input.buffer + 20),
+                read_littleendian_size(c->input.buffer + 4),
+                read_littleendian_size(c->input.buffer + 12),
+                read_littleendian_size(c->input.buffer + 20),
             };
             DP_debug("Read index entry %zu with message index %lld, message "
                      "offset %zu, snapshot offset %zu, thumbnail offset %zu",
@@ -1680,7 +1689,7 @@ static bool read_index_offsets(DP_BufferedInput *input, int count,
 
     size_t *offsets = scount == 0 ? NULL : DP_malloc(sizeof(*offsets) * scount);
     for (size_t i = 0, j = 0; i < scount; i += 1, j += sizeof(uint64_t)) {
-        offsets[i] = DP_read_littleendian_uint64(input->buffer + j);
+        offsets[i] = read_littleendian_size(input->buffer + j);
     }
     *out_offsets = offsets;
     return true;
@@ -2037,10 +2046,10 @@ static bool read_index_snapshot(DP_ReadSnapshotContext *c)
         layers_offset;
     int annotation_count;
     return READ_INDEX(input, uint32, width) && READ_INDEX(input, uint32, height)
-        && READ_INDEX(input, uint64, background_tile_offset)
-        && READ_INDEX(input, uint64, timeline_offset)
-        && READ_INDEX(input, uint64, metadata_offset)
-        && READ_INDEX(input, uint64, layers_offset)
+        && READ_INDEX_SIZE(input, background_tile_offset)
+        && READ_INDEX_SIZE(input, timeline_offset)
+        && READ_INDEX_SIZE(input, metadata_offset)
+        && READ_INDEX_SIZE(input, layers_offset)
         && READ_INDEX(input, uint16, annotation_count)
         && read_index_canvas_state(c, width, height)
         && read_index_annotations(c, annotation_count)
