@@ -201,7 +201,7 @@ public:
 
 	uint16_t layerId() const { return m_id; }
 
-	QStringList formats() const;
+	QStringList formats() const override;
 
 protected:
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
