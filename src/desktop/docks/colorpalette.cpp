@@ -189,8 +189,11 @@ void ColorPaletteDock::paletteChanged(int index)
 		// Save current palette if it has any changes before switching to another one
 		d->saveCurrentPalette();
 
-		d->paletteSwatch->setPalette(getSharedPaletteModel()->palette(index));
-		setPaletteReadonly(!d->paletteSwatch->palette().property("editable").toBool());
+		color_widgets::ColorPaletteModel *model = getSharedPaletteModel();
+		if(index < model->count()) {
+			d->paletteSwatch->setPalette(model->palette(index));
+			setPaletteReadonly(!d->paletteSwatch->palette().property("editable").toBool());
+		}
 	}
 }
 
