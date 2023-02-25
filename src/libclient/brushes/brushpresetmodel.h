@@ -27,9 +27,9 @@ class QFileInfo;
 
 namespace brushes {
 
-struct ActiveBrush;
+class ActiveBrush;
+class MyPaintBrush;
 struct ClassicBrush;
-struct MyPaintBrush;
 
 struct Tag {
 	int id;

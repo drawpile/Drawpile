@@ -26,7 +26,7 @@ class QAction;
 class QSpinBox;
 
 namespace brushes {
-	struct ActiveBrush;
+	class ActiveBrush;
 }
 
 namespace input {
