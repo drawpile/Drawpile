@@ -49,7 +49,7 @@ DP_SaveResult save(const canvas::PaintEngine *pe, QString path)
 	QByteArray pathBytes = path.toUtf8();
 	qDebug("Saving to '%s'", pathBytes.constData());
 	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
-	return DP_save(pe->viewCanvasState().get(), dc.get(), pathBytes.constData());
+	return DP_save(pe->viewCanvasState().get(), dc.get(), DP_SAVE_IMAGE_GUESS, pathBytes.constData());
 }
 
 }
