@@ -618,37 +618,68 @@ static DP_SaveResult save_flat_image(DP_CanvasState *cs, const char *path,
     return result;
 }
 
-static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
-                          const char *path)
+
+static DP_SaveResult guess_image_type(const char *path,
+                                      DP_SaveImageType *out_type)
 {
     const char *dot = strrchr(path, '.');
     if (!dot) {
+        DP_error_set("No file extension to guess image type from: %s", path);
         return DP_SAVE_RESULT_NO_EXTENSION;
     }
 
     const char *ext = dot + 1;
     if (DP_str_equal_lowercase(ext, "ora")) {
-        return save_ora(cs, path, dc);
+        *out_type = DP_SAVE_IMAGE_ORA;
+        return DP_SAVE_RESULT_SUCCESS;
     }
     else if (DP_str_equal_lowercase(ext, "png")) {
-        return save_flat_image(cs, path, save_png,
-                               DP_view_mode_filter_make_default());
+        *out_type = DP_SAVE_IMAGE_PNG;
+        return DP_SAVE_RESULT_SUCCESS;
     }
     else if (DP_str_equal_lowercase(ext, "jpg")
              || DP_str_equal_lowercase(ext, "jpeg")) {
-        return save_flat_image(cs, path, save_jpeg,
-                               DP_view_mode_filter_make_default());
+        *out_type = DP_SAVE_IMAGE_JPEG;
+        return DP_SAVE_RESULT_SUCCESS;
     }
     else {
+        DP_error_set("Unknown image format in '%s'", path);
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;
     }
 }
 
-DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc, const char *path)
+static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
+                          DP_SaveImageType type, const char *path)
+{
+    if (type == DP_SAVE_IMAGE_GUESS) {
+        DP_SaveResult guess_result = guess_image_type(path, &type);
+        if (guess_result != DP_SAVE_RESULT_SUCCESS) {
+            return guess_result;
+        }
+    }
+
+    switch (type) {
+    case DP_SAVE_IMAGE_ORA:
+        return save_ora(cs, path, dc);
+    case DP_SAVE_IMAGE_PNG:
+        return save_flat_image(cs, path, save_png,
+                               DP_view_mode_filter_make_default());
+    case DP_SAVE_IMAGE_JPEG:
+        return save_flat_image(cs, path, save_jpeg,
+                               DP_view_mode_filter_make_default());
+    default:
+        DP_error_set("Unknown save format");
+        return DP_SAVE_RESULT_UNKNOWN_FORMAT;
+    }
+}
+
+DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
+                      DP_SaveImageType type, const char *path)
+
 {
     if (cs && path) {
         DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
-        DP_SaveResult result = save(cs, dc, path);
+        DP_SaveResult result = save(cs, dc, type, path);
         DP_PERF_END(fn);
         return result;
     }

@@ -35,6 +35,7 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_Player DP_Player;
 
 typedef enum DP_PlayerType {
+    DP_PLAYER_TYPE_GUESS,
     DP_PLAYER_TYPE_BINARY,
     DP_PLAYER_TYPE_TEXT,
     DP_PLAYER_TYPE_DEBUG_DUMP,
@@ -59,9 +60,8 @@ typedef bool (*DP_PlayerIndexShouldSnapshotFn)(void *user);
 typedef void (*DP_PlayerIndexProgressFn)(void *user, int percent);
 
 
-DP_Player *DP_player_new(const char *path, DP_LoadResult *out_result);
-
-DP_Player *DP_player_new_debug_dump(DP_Input *input);
+DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
+                         DP_Input *input, DP_LoadResult *out_result);
 
 void DP_player_free(DP_Player *player);
 

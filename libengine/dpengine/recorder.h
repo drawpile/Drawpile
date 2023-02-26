@@ -38,7 +38,8 @@ typedef enum DP_RecorderType {
 typedef long long (*DP_RecorderGetTimeMsFn)(void *user);
 
 
-DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, DP_CanvasState *cs,
+DP_Recorder *DP_recorder_new_inc(DP_RecorderType type,
+                                 DP_CanvasState *cs_or_null,
                                  DP_RecorderGetTimeMsFn get_time_fn,
                                  void *get_time_user, DP_Output *output);
 

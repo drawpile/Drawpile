@@ -1103,7 +1103,16 @@ DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
 {
     if (path) {
         DP_PERF_BEGIN_DETAIL(fn, "recording", "path=%s", path);
-        DP_Player *player = DP_player_new(path, out_result);
+        DP_Input *input = DP_file_input_new_from_path(path);
+        DP_Player *player;
+        if (input) {
+            player =
+                DP_player_new(DP_PLAYER_TYPE_GUESS, path, input, out_result);
+        }
+        else {
+            player = NULL;
+            assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
+        }
         DP_PERF_END(fn);
         return player;
     }
@@ -1118,9 +1127,15 @@ DP_Player *DP_load_debug_dump(const char *path, DP_LoadResult *out_result)
     if (path) {
         DP_PERF_BEGIN_DETAIL(fn, "dump", "path=%s", path);
         DP_Input *input = DP_file_input_new_from_path(path);
-        DP_Player *player = input ? DP_player_new_debug_dump(input) : NULL;
-        assign_load_result(out_result, player ? DP_LOAD_RESULT_SUCCESS
-                                              : DP_LOAD_RESULT_OPEN_ERROR);
+        DP_Player *player;
+        if (input) {
+            return DP_player_new(DP_PLAYER_TYPE_DEBUG_DUMP, NULL, input,
+                                 out_result);
+        }
+        else {
+            player = NULL;
+            assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
+        }
         DP_PERF_END(fn);
         return player;
     }

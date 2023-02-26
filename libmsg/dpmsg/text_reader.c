@@ -73,6 +73,7 @@ DP_TextReader *DP_text_reader_new(DP_Input *input)
     bool error;
     size_t input_length = DP_input_length(input, &error);
     if (error) {
+        DP_input_free(input);
         return NULL;
     }
 

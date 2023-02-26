@@ -142,6 +142,7 @@ static DP_LoadResult guess_type(DP_Input *input, DP_PlayerType *out_type)
                 return finish_guess(input, out_type, DP_PLAYER_TYPE_TEXT);
             }
             else if (!isspace(c)) {
+                DP_error_set("Couldn't guess recording format");
                 return DP_LOAD_RESULT_UNKNOWN_FORMAT;
             }
         }
@@ -152,6 +153,7 @@ static DP_LoadResult guess_type(DP_Input *input, DP_PlayerType *out_type)
         }
     } while (read != 0);
 
+    DP_error_set("Couldn't guess recording format");
     return DP_LOAD_RESULT_BAD_MIMETYPE;
 }
 
@@ -291,55 +293,8 @@ static DP_Player *new_text_player(char *recording_path, char *index_path,
                        (DP_PlayerReader){.text = text_reader}, version);
 }
 
-DP_Player *DP_player_new(const char *path, DP_LoadResult *out_result)
+static DP_Player *new_debug_dump_player(DP_Input *input)
 {
-    DP_ASSERT(path);
-    DP_Input *input = DP_file_input_new_from_path(path);
-    if (!input) {
-        assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
-        return NULL;
-    }
-
-    DP_PlayerType type;
-    DP_LoadResult guess_result = guess_type(input, &type);
-    if (guess_result != DP_LOAD_RESULT_SUCCESS) {
-        assign_load_result(out_result, guess_result);
-        return NULL;
-    }
-
-    char *recording_path = DP_strdup(path);
-    char *index_path = make_index_path(path);
-    DP_Player *player;
-    switch (type) {
-    case DP_PLAYER_TYPE_BINARY:
-        player = new_binary_player(recording_path, index_path, input);
-        break;
-    case DP_PLAYER_TYPE_TEXT:
-        player = new_text_player(recording_path, index_path, input);
-        break;
-    default:
-        DP_UNREACHABLE();
-    }
-    if (!player) {
-        DP_free(index_path);
-        DP_free(recording_path);
-        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
-        return NULL;
-    }
-
-    if (!DP_player_compatible(player)) {
-        DP_player_free(player);
-        assign_load_result(out_result, DP_LOAD_RESULT_RECORDING_INCOMPATIBLE);
-        return NULL;
-    }
-
-    assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
-    return player;
-}
-
-DP_Player *DP_player_new_debug_dump(DP_Input *input)
-{
-    DP_ASSERT(input);
     DP_Player *player = DP_malloc(sizeof(*player));
     *player = (DP_Player){NULL,
                           NULL,
@@ -350,6 +305,66 @@ DP_Player *DP_player_new_debug_dump(DP_Input *input)
                           false,
                           false,
                           {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
+    return player;
+}
+
+DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
+                         DP_Input *input, DP_LoadResult *out_result)
+{
+    if (type == DP_PLAYER_TYPE_GUESS) {
+        DP_LoadResult guess_result = guess_type(input, &type);
+        if (guess_result != DP_LOAD_RESULT_SUCCESS) {
+            assign_load_result(out_result, guess_result);
+            DP_input_free(input);
+            return NULL;
+        }
+    }
+
+    char *recording_path, *index_path;
+    if (path_or_null && type != DP_PLAYER_TYPE_DEBUG_DUMP) {
+        recording_path = DP_strdup(path_or_null);
+        index_path = make_index_path(path_or_null);
+    }
+    else {
+        recording_path = NULL;
+        index_path = NULL;
+    }
+
+    DP_Player *player;
+    switch (type) {
+    case DP_PLAYER_TYPE_BINARY:
+        player = new_binary_player(recording_path, index_path, input);
+        break;
+    case DP_PLAYER_TYPE_TEXT:
+        player = new_text_player(recording_path, index_path, input);
+        break;
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        player = new_debug_dump_player(input);
+        break;
+    default:
+        DP_free(index_path);
+        DP_free(recording_path);
+        DP_input_free(input);
+        DP_error_set("Unknown player format");
+        assign_load_result(out_result, DP_LOAD_RESULT_UNKNOWN_FORMAT);
+        return NULL;
+    }
+
+    if (!player) {
+        DP_free(index_path);
+        DP_free(recording_path);
+        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        return NULL;
+    }
+
+    if (!DP_player_compatible(player)) {
+        DP_player_free(player);
+        DP_error_set("Incompatible recording");
+        assign_load_result(out_result, DP_LOAD_RESULT_RECORDING_INCOMPATIBLE);
+        return NULL;
+    }
+
+    assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
     return player;
 }
 
@@ -1434,7 +1449,19 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
         return false;
     }
 
-    DP_Player *index_player = DP_player_new(player->recording_path, NULL);
+    const char *recording_path = player->recording_path;
+    if (!recording_path || !player->index_path) {
+        DP_error_set("Can't index player without a path");
+        return false;
+    }
+
+    DP_Input *input = DP_file_input_new_from_path(recording_path);
+    if (!input) {
+        return false;
+    }
+
+    DP_Player *index_player =
+        DP_player_new(player->type, recording_path, input, NULL);
     if (!index_player) {
         return false;
     }
@@ -1568,6 +1595,11 @@ bool DP_player_index_load(DP_Player *player)
     }
 
     const char *path = player->index_path;
+    if (!path) {
+        DP_error_set("Can't load index of a player without a path");
+        return false;
+    }
+
     DP_Input *input = DP_file_input_new_from_path(path);
     if (!input) {
         return false;
