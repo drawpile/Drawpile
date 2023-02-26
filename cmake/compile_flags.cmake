@@ -21,7 +21,7 @@
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     unset(dp_common_cflags)
     set(dp_common_warnings -pedantic -Wall -Wextra -Wshadow
-                           -Wmissing-include-dirs -Wconversion)
+        -Wmissing-include-dirs -Wconversion)
 
     if(ENABLE_WERROR)
         list(APPEND dp_common_warnings -pedantic-errors -Werror -Wno-error=unused-parameter)

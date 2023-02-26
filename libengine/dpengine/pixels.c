@@ -529,6 +529,7 @@ static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
 
         _mm256_store_si256((__m256i *)&dst[i], out);
     }
+    _mm256_zeroupper();
 }
 DP_TARGET_END
 #endif
@@ -682,15 +683,13 @@ DP_Pixel15 DP_pixel15_premultiply(DP_UPixel15 pixel)
 
 #ifdef DP_CPU_X64
 DP_TARGET_BEGIN("sse4.2")
-// Load 4 16bit pixels and split them into 4x32 bit registers.
-static void load_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
-                       __m128i *out_green, __m128i *out_red, __m128i *out_alpha)
+static void shuffle_load_sse42(__m128i source1, __m128i source2,
+                               __m128i *out_blue, __m128i *out_green,
+                               __m128i *out_red, __m128i *out_alpha)
 {
     // clang-format off
-    DP_ASSERT(((intptr_t)src) % 16 == 0);
-
-    __m128i source1 = _mm_load_si128((const __m128i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|
-    __m128i source2 = _mm_load_si128((const __m128i *)src + 1); // |B3|G3|R3|A3|B4|G4|R4|A4|
+    // source1 |B1|G1|R1|A1|B2|G2|R2|A2|
+    // source2 |B3|G3|R3|A3|B4|G4|R4|A4|
 
     __m128i shuffled1 = _mm_shuffle_epi32(source1, _MM_SHUFFLE(3, 1, 2, 0)); // |B1|G1|B2|G2|R1|A1|R2|A2|
     __m128i shuffled2 = _mm_shuffle_epi32(source2, _MM_SHUFFLE(3, 1, 2, 0)); // |B3|G3|B4|G4|R3|A3|R3|A3|
@@ -704,28 +703,75 @@ static void load_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
     *out_alpha = _mm_srli_epi32(red_alpha, 16);                      // Move and zero out upper bits (16 -> 32)
     // clang-format on
 }
+// Load 4 16bit pixels and split them into 4x32 bit registers.
+static void load_aligned_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
+                               __m128i *out_green, __m128i *out_red,
+                               __m128i *out_alpha)
+{
+    DP_ASSERT(((intptr_t)src) % 16 == 0);
 
-// Store 4x32 bit registers into 4 16bit pixels.
-static void store_sse42(__m128i blue, __m128i green, __m128i red, __m128i alpha,
-                        DP_Pixel15 dest[4])
+    __m128i source1 = _mm_load_si128((const __m128i *)src);
+    __m128i source2 = _mm_load_si128((const __m128i *)src + 1);
+
+    shuffle_load_sse42(source1, source2, out_blue, out_green, out_red,
+                       out_alpha);
+}
+// Load 4 16bit pixels and split them into 4x32 bit registers.
+static void load_unaligned_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
+                                 __m128i *out_green, __m128i *out_red,
+                                 __m128i *out_alpha)
+{
+    __m128i source1 = _mm_loadu_si128((const __m128i *)src);
+    __m128i source2 = _mm_loadu_si128((const __m128i *)src + 1);
+
+    shuffle_load_sse42(source1, source2, out_blue, out_green, out_red,
+                       out_alpha);
+}
+
+static void shuffle_store_sse42(__m128i blue, __m128i green, __m128i red,
+                                __m128i alpha, __m128i *out1, __m128i *out2)
 {
     // clang-format off
-    DP_ASSERT(((intptr_t)dest) % 16 == 0);
-
     __m128i blue_green = _mm_blend_epi16(blue, _mm_slli_si128(green, 2), 170); // |B1|G1|B2|G2|B3|G3|B4|G4|
     __m128i red_alpha = _mm_blend_epi16(red, _mm_slli_si128(alpha, 2), 170);   // |R1|A1|R2|A2|R3|A3|R4|A4|
 
-    __m128i lo = _mm_unpacklo_epi32(blue_green, red_alpha); // |B1|G1|R1|A1|B2|G2|R2|A2|
-    __m128i hi = _mm_unpackhi_epi32(blue_green, red_alpha); // |B3|G3|R3|A3|B4|G4|R4|A4|
-
-    _mm_store_si128((__m128i *)dest, lo);
-    _mm_store_si128((__m128i *)dest + 1, hi);
+    *out1 = _mm_unpacklo_epi32(blue_green, red_alpha); // |B1|G1|R1|A1|B2|G2|R2|A2|
+    *out2 = _mm_unpackhi_epi32(blue_green, red_alpha); // |B3|G3|R3|A3|B4|G4|R4|A4|
     // clang-format on
+}
+// Store 4x32 bit registers into 4 16bit pixels.
+static void store_aligned_sse42(__m128i blue, __m128i green, __m128i red,
+                                __m128i alpha, DP_Pixel15 dest[4])
+{
+
+    DP_ASSERT(((intptr_t)dest) % 16 == 0);
+
+    __m128i out1, out2;
+    shuffle_store_sse42(blue, green, red, alpha, &out1, &out2);
+
+    _mm_store_si128((__m128i *)dest, out1);
+    _mm_store_si128((__m128i *)dest + 1, out2);
+}
+// Store 4x32 bit registers into 4 16bit pixels.
+static void store_unaligned_sse42(__m128i blue, __m128i green, __m128i red,
+                                  __m128i alpha, DP_Pixel15 dest[4])
+{
+    __m128i out1, out2;
+    shuffle_store_sse42(blue, green, red, alpha, &out1, &out2);
+
+    _mm_storeu_si128((__m128i *)dest, out1);
+    _mm_storeu_si128((__m128i *)dest + 1, out2);
 }
 
 static __m128i mul_sse42(__m128i a, __m128i b)
 {
     return _mm_srli_epi32(_mm_mullo_epi32(a, b), 15);
+}
+
+static __m128i sumprods_sse42(__m128i a1, __m128i a2, __m128i b1, __m128i b2)
+{
+    return _mm_srli_epi32(
+        _mm_add_epi32(_mm_mullo_epi32(a1, a2), _mm_mullo_epi32(b1, b2)), 15);
 }
 
 static void blend_tile_normal_sse42(DP_Pixel15 *DP_RESTRICT dst,
@@ -739,10 +785,10 @@ static void blend_tile_normal_sse42(DP_Pixel15 *DP_RESTRICT dst,
     for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
         // load
         __m128i srcB, srcG, srcR, srcA;
-        load_sse42(&src[i], &srcB, &srcG, &srcR, &srcA);
+        load_aligned_sse42(&src[i], &srcB, &srcG, &srcR, &srcA);
 
         __m128i dstB, dstG, dstR, dstA;
-        load_sse42(&dst[i], &dstB, &dstG, &dstR, &dstA);
+        load_aligned_sse42(&dst[i], &dstB, &dstG, &dstR, &dstA);
 
         // Normal blend
         __m128i srcAO = mul_sse42(srcA, o);
@@ -754,7 +800,7 @@ static void blend_tile_normal_sse42(DP_Pixel15 *DP_RESTRICT dst,
         dstA = _mm_add_epi32(mul_sse42(dstA, as1), srcAO);              // dstA = (dstA * as1) + (srcA * o)
 
         // store
-        store_sse42(dstB, dstG, dstR, dstA, &dst[i]);
+        store_aligned_sse42(dstB, dstG, dstR, dstA, &dst[i]);
     }
     // clang-format on
 }
@@ -770,10 +816,10 @@ static void blend_tile_behind_sse42(DP_Pixel15 *DP_RESTRICT dst,
     for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
         // load
         __m128i srcB, srcG, srcR, srcA;
-        load_sse42(&src[i], &srcB, &srcG, &srcR, &srcA);
+        load_aligned_sse42(&src[i], &srcB, &srcG, &srcR, &srcA);
 
         __m128i dstB, dstG, dstR, dstA;
-        load_sse42(&dst[i], &dstB, &dstG, &dstR, &dstA);
+        load_aligned_sse42(&dst[i], &dstB, &dstG, &dstR, &dstA);
 
         // Behind blend
         __m128i a1 = mul_sse42(_mm_sub_epi32(_mm_set1_epi32(DP_BIT15), dstA), mul_sse42(srcA, o));
@@ -784,22 +830,99 @@ static void blend_tile_behind_sse42(DP_Pixel15 *DP_RESTRICT dst,
         dstA = _mm_add_epi32(dstA, mul_sse42(srcA, a1));
 
         // store
-        store_sse42(dstB, dstG, dstR, dstA, &dst[i]);
+        store_aligned_sse42(dstB, dstG, dstR, dstA, &dst[i]);
     }
     // clang-format on
+}
+
+static void blend_mask_pixels_normal_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
+                                           const uint16_t *mask_int,
+                                           Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 4 == 0);
+
+    // Do in parent function ?
+    __m128i srcB = _mm_set1_epi32(src.b);
+    __m128i srcG = _mm_set1_epi32(src.g);
+    __m128i srcR = _mm_set1_epi32(src.r);
+    __m128i srcA = _mm_set1_epi32(DP_BIT15);
+
+    __m128i opacity = _mm_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
+        // load mask
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((__m128i *)mask_int));
+
+        // Load dest
+        __m128i dstB, dstG, dstR, dstA;
+        load_unaligned_sse42(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m128i o = mul_sse42(mask, opacity);
+
+        // Normal blend
+        __m128i srcAO = mul_sse42(srcA, o);
+        __m128i as1 = _mm_sub_epi32(_mm_set1_epi32(DP_BIT15), srcAO); // as1 = DP_BIT15 - srcA * o
+
+        dstB = _mm_add_epi32(mul_sse42(dstB, as1), mul_sse42(srcB, o)); // dstB = (dstB * as1) + (srcB * o)
+        dstG = _mm_add_epi32(mul_sse42(dstG, as1), mul_sse42(srcG, o)); // dstG = (dstG * as1) + (srcG * o)
+        dstR = _mm_add_epi32(mul_sse42(dstR, as1), mul_sse42(srcR, o)); // dstR = (dstR * as1) + (srcR * o)
+        dstA = _mm_add_epi32(mul_sse42(dstA, as1), srcAO);              // dstA = (dstA * as1) + (srcA * o)
+
+        store_unaligned_sse42(dstB, dstG, dstR, dstA, dst);
+    }
+    // clang-format on
+}
+
+static void blend_mask_pixels_normal_and_eraser_sse42(DP_Pixel15 *dst,
+                                                      DP_UPixel15 src,
+                                                      const uint16_t *mask_int,
+                                                      Fix15 opacity_int,
+                                                      int count)
+{
+    DP_ASSERT(count % 4 == 0);
+
+    // Do in parent function ?
+    __m128i srcB = _mm_set1_epi32(src.b);
+    __m128i srcG = _mm_set1_epi32(src.g);
+    __m128i srcR = _mm_set1_epi32(src.r);
+    __m128i srcA = _mm_set1_epi32(src.a);
+
+    __m128i opacity = _mm_set1_epi32((int)opacity_int);
+    __m128i bit15 = _mm_set1_epi32(DP_BIT15);
+
+    for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
+        // load mask
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((__m128i *)mask_int));
+
+        // Load dest
+        __m128i dstB, dstG, dstR, dstA;
+        load_unaligned_sse42(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m128i o = mul_sse42(mask, opacity);
+        __m128i opa_a = mul_sse42(o, srcA);
+        __m128i opa_b = _mm_sub_epi32(bit15, o);
+
+        dstB = sumprods_sse42(opa_a, srcB, opa_b, dstB);
+        dstG = sumprods_sse42(opa_a, srcG, opa_b, dstG);
+        dstR = sumprods_sse42(opa_a, srcR, opa_b, dstR);
+        dstA = _mm_add_epi32(opa_a,
+                             _mm_srli_epi32(_mm_mullo_epi32(opa_b, dstA), 15));
+
+        store_unaligned_sse42(dstB, dstG, dstR, dstA, dst);
+    }
 }
 DP_TARGET_END
 
 DP_TARGET_BEGIN("avx2")
-// Load 8 16bit pixels and split them into 8x32 bit registers.
-static void load_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
-                      __m256i *out_green, __m256i *out_red, __m256i *out_alpha)
+static void shuffle_load_avx2(__m256i source1, __m256i source2,
+                              __m256i *out_blue, __m256i *out_green,
+                              __m256i *out_red, __m256i *out_alpha)
 {
     // clang-format off
-    DP_ASSERT(((intptr_t)src) % 32 == 0);
 
-    __m256i source1 = _mm256_load_si256((const __m256i *)src);     // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
-    __m256i source2 = _mm256_load_si256((const __m256i *)src + 1); // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
+    // source1 |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
+    // source2 |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
 
     __m256i lo = _mm256_unpacklo_epi32(source1, source2);     // |B1|G1|B5|G5|R1|A1|R5|A5|B3|G3|B7|G7|R3|A3|R7|A7|
     __m256i hi = _mm256_unpackhi_epi32(source1, source2);     // |B2|G2|B6|G6|R2|A2|R6|A6|B4|G4|B8|G8|R4|A4|R8|A8|
@@ -814,31 +937,78 @@ static void load_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
     *out_alpha = _mm256_srli_epi32(red_alpha, 16);                         // |A1|0|A5|0|A2|0|A6|0|A3|0|A7|0|A4|0|A8|0|
     // clang-format on
 }
+// Load 8 16bit pixels and split them into 8x32 bit registers.
+static void load_aligned_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
+                              __m256i *out_green, __m256i *out_red,
+                              __m256i *out_alpha)
+{
+    DP_ASSERT(((intptr_t)src) % 32 == 0);
 
-// Store 8x32 bit registers into 8 16bit pixels.
-static void store_avx2(__m256i blue, __m256i green, __m256i red, __m256i alpha,
-                       DP_Pixel15 dest[8])
+    __m256i source1 = _mm256_load_si256((const __m256i *)src);
+    __m256i source2 = _mm256_load_si256((const __m256i *)src + 1);
+
+    shuffle_load_avx2(source1, source2, out_blue, out_green, out_red,
+                      out_alpha);
+}
+// Load 8 16bit pixels and split them into 8x32 bit registers.
+static void load_unaligned_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
+                                __m256i *out_green, __m256i *out_red,
+                                __m256i *out_alpha)
+{
+    __m256i source1 = _mm256_loadu_si256((const __m256i *)src);
+    __m256i source2 = _mm256_loadu_si256((const __m256i *)src + 1);
+
+    shuffle_load_avx2(source1, source2, out_blue, out_green, out_red,
+                      out_alpha);
+}
+
+static void shuffle_store_avx2(__m256i blue, __m256i green, __m256i red,
+                               __m256i alpha, __m256i *out1, __m256i *out2)
 {
     // clang-format off
-    DP_ASSERT(((intptr_t)dest) % 32 == 0);
-
     __m256i blue_green = _mm256_blend_epi16(blue, _mm256_slli_si256(green, 2), 170); // |B1|G1|B5|G5|B2|G2|B6|G6|B3|G3|B7|G7|B4|G4|B8|G8|
     __m256i red_alpha = _mm256_blend_epi16(red, _mm256_slli_si256(alpha, 2), 170);   // |R1|A1|R5|A5|R2|A2|R6|A6|R3|A3|R7|A7|R4|A4|R8|A8|
 
     __m256i lo = _mm256_unpacklo_epi32(blue_green, red_alpha);                       // |B1|G1|R1|A1|B5|G5|R5|A5|B3|G3|R3|A3|B7|G7|R7|A7|
     __m256i hi = _mm256_unpackhi_epi32(blue_green, red_alpha);                       // |B2|G2|R2|A2|B6|G6|R6|A6|B4|G4|R4|A4|B8|G8|R8|A8|
 
-    __m256i source1 = _mm256_unpacklo_epi64(lo, hi);                                 // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
-    __m256i source2 = _mm256_unpackhi_epi64(lo, hi);                                 // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
-
-    _mm256_store_si256((__m256i *)dest, source1);
-    _mm256_store_si256((__m256i *)dest + 1, source2);
+    *out1 = _mm256_unpacklo_epi64(lo, hi);                                           // |B1|G1|R1|A1|B2|G2|R2|A2|B3|G3|R3|A3|B4|G4|R4|A4|
+    *out2 = _mm256_unpackhi_epi64(lo, hi);                                           // |B5|G5|R5|A5|B6|G6|R6|A6|B7|G7|R7|A7|B8|G8|R8|A8|
     // clang-format on
+}
+// Store 8x32 bit registers into 8 16bit pixels.
+static void store_aligned_avx2(__m256i blue, __m256i green, __m256i red,
+                               __m256i alpha, DP_Pixel15 dest[8])
+{
+    DP_ASSERT(((intptr_t)dest) % 32 == 0);
+
+    __m256i out1, out2;
+    shuffle_store_avx2(blue, green, red, alpha, &out1, &out2);
+
+    _mm256_store_si256((__m256i *)dest, out1);
+    _mm256_store_si256((__m256i *)dest + 1, out2);
+}
+// Store 8x32 bit registers into 8 16bit pixels.
+static void store_unaligned_avx2(__m256i blue, __m256i green, __m256i red,
+                                 __m256i alpha, DP_Pixel15 dest[8])
+{
+    __m256i out1, out2;
+    shuffle_store_avx2(blue, green, red, alpha, &out1, &out2);
+
+    _mm256_storeu_si256((__m256i *)dest, out1);
+    _mm256_storeu_si256((__m256i *)dest + 1, out2);
 }
 
 static __m256i mul_avx2(__m256i a, __m256i b)
 {
     return _mm256_srli_epi32(_mm256_mullo_epi32(a, b), 15);
+}
+
+static __m256i sumprods_avx2(__m256i a1, __m256i a2, __m256i b1, __m256i b2)
+{
+    return _mm256_srli_epi32(_mm256_add_epi32(_mm256_mullo_epi32(a1, a2),
+                                              _mm256_mullo_epi32(b1, b2)),
+                             15);
 }
 
 static void blend_tile_normal_avx2(DP_Pixel15 *DP_RESTRICT dst,
@@ -852,10 +1022,10 @@ static void blend_tile_normal_avx2(DP_Pixel15 *DP_RESTRICT dst,
     for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
         // load
         __m256i srcB, srcG, srcR, srcA;
-        load_avx2(&src[i], &srcB, &srcG, &srcR, &srcA);
+        load_aligned_avx2(&src[i], &srcB, &srcG, &srcR, &srcA);
 
         __m256i dstB, dstG, dstR, dstA;
-        load_avx2(&dst[i], &dstB, &dstG, &dstR, &dstA);
+        load_aligned_avx2(&dst[i], &dstB, &dstG, &dstR, &dstA);
 
         // Normal blend
         __m256i srcAO = mul_avx2(srcA, o);
@@ -867,8 +1037,9 @@ static void blend_tile_normal_avx2(DP_Pixel15 *DP_RESTRICT dst,
         dstA = _mm256_add_epi32(mul_avx2(dstA, as1), srcAO);             // dstA = (dstA * as1) + (srcA * o)
 
         // store
-        store_avx2(dstB, dstG, dstR, dstA, &dst[i]);
+        store_aligned_avx2(dstB, dstG, dstR, dstA, &dst[i]);
     }
+    _mm256_zeroupper();
     // clang-format on
 }
 
@@ -883,10 +1054,10 @@ static void blend_tile_behind_avx2(DP_Pixel15 *DP_RESTRICT dst,
     for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
         // load
         __m256i srcB, srcG, srcR, srcA;
-        load_avx2(&src[i], &srcB, &srcG, &srcR, &srcA);
+        load_aligned_avx2(&src[i], &srcB, &srcG, &srcR, &srcA);
 
         __m256i dstB, dstG, dstR, dstA;
-        load_avx2(&dst[i], &dstB, &dstG, &dstR, &dstA);
+        load_aligned_avx2(&dst[i], &dstB, &dstG, &dstR, &dstA);
 
         // Behind blend
         __m256i a1 = mul_avx2(_mm256_sub_epi32(_mm256_set1_epi32(DP_BIT15), dstA), mul_avx2(srcA, o));
@@ -897,9 +1068,96 @@ static void blend_tile_behind_avx2(DP_Pixel15 *DP_RESTRICT dst,
         dstA = _mm256_add_epi32(dstA, mul_avx2(srcA, a1));
 
         // store
-        store_avx2(dstB, dstG, dstR, dstA, &dst[i]);
+        store_aligned_avx2(dstB, dstG, dstR, dstA, &dst[i]);
     }
+    _mm256_zeroupper();
     // clang-format on
+}
+
+static void blend_mask_pixels_normal_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
+                                          const uint16_t *mask_int,
+                                          Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 8 == 0);
+
+    // Do in parent function ?
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(DP_BIT15);
+
+    __m256i opacity = _mm256_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        // load mask
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((__m128i *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+
+        // Load dst
+        __m256i dstB, dstG, dstR, dstA;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m256i o = mul_avx2(mask, opacity);
+
+        // Normal blend
+        __m256i srcAO = mul_avx2(srcA, o);
+        __m256i as1 = _mm256_sub_epi32(_mm256_set1_epi32(1 << 15), srcAO); // as1 = 1 - srcA * o
+
+        dstB = _mm256_add_epi32(mul_avx2(dstB, as1), mul_avx2(srcB, o)); // dstB = (dstB * as1) + (srcB * o)
+        dstG = _mm256_add_epi32(mul_avx2(dstG, as1), mul_avx2(srcG, o)); // dstG = (dstG * as1) + (srcG * o)
+        dstR = _mm256_add_epi32(mul_avx2(dstR, as1), mul_avx2(srcR, o)); // dstR = (dstR * as1) + (srcR * o)
+        dstA = _mm256_add_epi32(mul_avx2(dstA, as1), srcAO);             // dstA = (dstA * as1) + (srcA * o)
+
+        store_unaligned_avx2(dstB, dstG, dstR, dstA, dst);
+    }
+    _mm256_zeroupper();
+    // clang-format on
+}
+
+static void blend_mask_pixels_normal_and_eraser_avx2(DP_Pixel15 *dst,
+                                                     DP_UPixel15 src,
+                                                     const uint16_t *mask_int,
+                                                     Fix15 opacity_int,
+                                                     int count)
+{
+    DP_ASSERT(count % 8 == 0);
+
+    // Do in parent function ?
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(src.a);
+
+    __m256i opacity = _mm256_set1_epi32((int)opacity_int);
+    __m256i bit15 = _mm256_set1_epi32(DP_BIT15);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        // load mask
+        __m256i mask =
+            _mm256_cvtepu16_epi32(_mm_loadu_si128((__m128i *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(
+            mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+
+        // Load dst
+        __m256i dstB, dstG, dstR, dstA;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m256i o = mul_avx2(mask, opacity);
+        __m256i opa_a = mul_avx2(o, srcA);
+        __m256i opa_b = _mm256_sub_epi32(bit15, o);
+
+        dstB = sumprods_avx2(opa_a, srcB, opa_b, dstB);
+        dstG = sumprods_avx2(opa_a, srcG, opa_b, dstG);
+        dstR = sumprods_avx2(opa_a, srcR, opa_b, dstR);
+        dstA = _mm256_add_epi32(
+            opa_a, _mm256_srli_epi32(_mm256_mullo_epi32(opa_b, dstA), 15));
+
+        store_unaligned_avx2(dstB, dstG, dstR, dstA, dst);
+    }
+    _mm256_zeroupper();
 }
 DP_TARGET_END
 #endif
@@ -935,20 +1193,6 @@ static BGRA15 blend_erase(BGR15 cb, DP_UNUSED BGR15 cs, Fix15 ab, Fix15 as,
         .g = fix15_mul(cb.g, as1),
         .r = fix15_mul(cb.r, as1),
         .a = fix15_mul(ab, as1),
-    };
-}
-
-// Adapted from libmypaint, see license above.
-static BGRA15 blend_normal_and_eraser(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as,
-                                      Fix15 o)
-{
-    Fix15 opa_a = fix15_mul(o, as);
-    Fix15 opa_b = BIT15_FIX - o;
-    return (BGRA15){
-        .b = fix15_sumprods(opa_a, cs.b, opa_b, cb.b),
-        .g = fix15_sumprods(opa_a, cs.g, opa_b, cb.g),
-        .r = fix15_sumprods(opa_a, cs.r, opa_b, cb.r),
-        .a = opa_a + opa_b * ab / BIT15_FIX,
     };
 }
 
@@ -1189,24 +1433,17 @@ static void blend_mask_alpha_op(DP_Pixel15 *dst, DP_UPixel15 src,
                                 BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15, Fix15))
 {
     BGR15 cs = to_ubgr(src);
-    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
-        BGRA15 b = to_bgra(*dst);
-        *dst = from_bgra(op(b.bgr, cs, b.a, BIT15_FIX, o));
-    });
-}
 
-// Adapted from libmypaint, see license above.
-static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
-                                         const uint16_t *mask, Fix15 opacity,
-                                         int w, int h, int mask_skip,
-                                         int base_skip)
-{
-    BGR15 cs = to_ubgr(src);
-    Fix15 as = to_fix(src.a);
-    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
-        BGRA15 b = to_bgra(*dst);
-        *dst = from_bgra(blend_normal_and_eraser(b.bgr, cs, b.a, as, o));
-    });
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, ++dst, ++mask) {
+            Fix15 o = fix15_mul(*mask, opacity);
+
+            BGRA15 b = to_bgra(*dst);
+            *dst = from_bgra(op(b.bgr, cs, b.a, ((Fix15)(1 << 15)), o));
+        }
+        dst += base_skip;
+        mask += mask_skip;
+    }
 }
 
 static void blend_mask_color_erase(DP_Pixel15 *dst, DP_UPixel15 src,
@@ -1289,6 +1526,142 @@ static void blend_mask_composite_nonseparable(DP_Pixel15 *dst, DP_UPixel15 src,
     });
 }
 
+static void blend_mask_pixels_normal(DP_Pixel15 *dst, DP_UPixel15 src,
+                                     const uint16_t *mask, Fix15 opacity,
+                                     int count)
+{
+    for (int x = 0; x < count; ++x, ++dst, ++mask) {
+        Fix15 o = fix15_mul(*mask, opacity);
+
+        Fix15 as1 = BIT15_FIX - fix15_mul(BIT15_FIX, o);
+
+        // clang-format off
+        dst->b = from_fix(fix15_mul(to_fix(dst->b), as1) + fix15_mul(to_fix(src.b), o)),
+        dst->g = from_fix(fix15_mul(to_fix(dst->g), as1) + fix15_mul(to_fix(src.g), o)),
+        dst->r = from_fix(fix15_mul(to_fix(dst->r), as1) + fix15_mul(to_fix(src.r), o)),
+        dst->a = from_fix(fix15_mul(to_fix(dst->a), as1) + fix15_mul(BIT15_FIX, o));
+        // clang-format on
+    }
+}
+
+// Adapted from libmypaint, see license above.
+static void blend_mask_pixels_normal_and_eraser(DP_Pixel15 *dst,
+                                                DP_UPixel15 src,
+                                                const uint16_t *mask,
+                                                Fix15 opacity, int count)
+{
+    for (int x = 0; x < count; ++x, ++dst, ++mask) {
+        Fix15 o = fix15_mul(*mask, opacity);
+
+        Fix15 opa_a = fix15_mul(o, src.a);
+        Fix15 opa_b = DP_BIT15 - o;
+
+        // clang-format off
+        dst->b = from_fix(fix15_sumprods(opa_a, to_fix(src.b), opa_b, to_fix(dst->b)));
+        dst->g = from_fix(fix15_sumprods(opa_a, to_fix(src.g), opa_b, to_fix(dst->g)));
+        dst->r = from_fix(fix15_sumprods(opa_a, to_fix(src.r), opa_b, to_fix(dst->r)));
+        dst->a = from_fix(opa_a + ((opa_b * to_fix(dst->a)) / DP_BIT15));
+        // clang-format on
+    }
+}
+
+static void blend_mask_normal(DP_Pixel15 *dst, DP_UPixel15 src,
+                              const uint16_t *mask, Fix15 opacity, int w, int h,
+                              int mask_skip, int base_skip)
+{
+#ifdef DP_CPU_X64
+    for (int y = 0; y < h; ++y) {
+        int remaining = w;
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
+
+            blend_mask_pixels_normal_avx2(dst, src, mask, opacity, avx_width);
+
+            remaining -= avx_width;
+            dst += avx_width;
+            mask += avx_width;
+        }
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+            int remaining_after_sse_width = remaining % 4;
+            int sse_width = remaining - remaining_after_sse_width;
+
+            blend_mask_pixels_normal_sse42(dst, src, mask, opacity, sse_width);
+
+            remaining -= sse_width;
+            dst += sse_width;
+            mask += sse_width;
+        }
+
+        blend_mask_pixels_normal(dst, src, mask, opacity, remaining);
+        dst += remaining;
+        mask += remaining;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+#else
+    for (int y = 0; y < h; ++y) {
+        blend_mask_pixels_normal(dst, src, mask, opacity, w);
+
+        dst += w + base_skip;
+        mask += w + mask_skip;
+    }
+#endif
+}
+
+static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
+                                         const uint16_t *mask, Fix15 opacity,
+                                         int w, int h, int mask_skip,
+                                         int base_skip)
+{
+#ifdef DP_CPU_X64
+    for (int y = 0; y < h; ++y) {
+        int remaining = w;
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
+
+            blend_mask_pixels_normal_and_eraser_avx2(dst, src, mask, opacity,
+                                                     avx_width);
+
+            remaining -= avx_width;
+            dst += avx_width;
+            mask += avx_width;
+        }
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+            int remaining_after_sse_width = remaining % 4;
+            int sse_width = remaining - remaining_after_sse_width;
+
+            blend_mask_pixels_normal_and_eraser_sse42(dst, src, mask, opacity,
+                                                      sse_width);
+
+            remaining -= sse_width;
+            dst += sse_width;
+            mask += sse_width;
+        }
+
+        blend_mask_pixels_normal_and_eraser(dst, src, mask, opacity, remaining);
+        dst += remaining;
+        mask += remaining;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+#else
+    for (int y = 0; y < h; ++y) {
+        blend_mask_pixels_normal_and_eraser(dst, src, mask, opacity, w);
+
+        dst += w + base_skip;
+        mask += w + mask_skip;
+    }
+#endif
+}
+
 void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
                    int mask_skip, int base_skip)
@@ -1296,8 +1669,8 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     switch (blend_mode) {
     // Alpha-affecting blend modes.
     case DP_BLEND_MODE_NORMAL:
-        blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,
-                            base_skip, blend_normal);
+        blend_mask_normal(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                          base_skip);
         break;
     case DP_BLEND_MODE_BEHIND:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,

@@ -69,12 +69,6 @@
 #    define DP_INLINE       DP_UNUSED static inline
 #    define DP_NOINLINE     __attribute__((noinline))
 #    define DP_FORCE_INLINE DP_INLINE __attribute__((__always_inline__))
-#    ifdef DP_CPU_X64
-#        define DP_ASSUME_SIMD_ALIGNED(PTR) \
-            __builtin_assume_aligned((PTR), DP_SIMD_ALIGNMENT)
-#    else
-#        define DP_ASSUME_SIMD_ALIGNED(PTR) (PTR)
-#    endif
 #else
 #    define DP_TRAP() abort()
 #    define DP_UNUSED // nothing
@@ -87,7 +81,18 @@
 #    define DP_MUST_CHECK                           // nothing
 #    define DP_INLINE                               static inline
 #    define DP_NOINLINE                             // nothing
-#    define DP_ASSUME_SIMD_ALIGNED(PTR)             (PTR)
+#endif
+
+#ifdef DP_CPU_X64
+#    if defined(__GNUC__)
+#        define DP_ASSUME_SIMD_ALIGNED(PTR) \
+            __builtin_assume_aligned((PTR), DP_SIMD_ALIGNMENT)
+#    elif defined(_MSC_VER)
+#        define DP_ASSUME_SIMD_ALIGNED(PTR) \
+            (__assume((intptr_t)(PTR) % DP_SIMD_ALIGNMENT == 0), PTR)
+#    endif
+#else
+#    define DP_ASSUME_SIMD_ALIGNED(PTR) (PTR)
 #endif
 
 #ifdef _MSC_VER
