@@ -34,6 +34,7 @@ option(ENABLE_ARCH_NATIVE "Optimize for this computer's CPU" OFF)
 option(LINK_WITH_LIBM "Link with libm when using math" ON)
 option(BUILD_TESTS "Build TAP tests" ON)
 option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
+option(BUILD_TOOLS "Build command-line tools, even if BUILD_APPS is OFF" OFF)
 
 set(IMAGE_IMPL LIBS CACHE STRING "PNG and JPEG implementation (LIBS, QT, QT6)")
 
@@ -134,6 +135,8 @@ if(BUILD_APPS)
     add_subdirectory(libclient)
     add_subdirectory(appconv)
     add_subdirectory(appdrawdance)
+elseif(BUILD_TOOLS)
+    add_subdirectory(appconv)
 endif()
 define_clang_format_target()
 
