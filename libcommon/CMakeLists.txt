@@ -34,6 +34,7 @@ set(dpcommon_sources
     dpcommon/event_log.c
     dpcommon/file.c
     dpcommon/input.c
+    dpcommon/memory_pool.c
     dpcommon/output.c
     dpcommon/perf.c
     dpcommon/queue.c
@@ -53,6 +54,7 @@ set(dpcommon_headers
     dpcommon/file.h
     dpcommon/geom.h
     dpcommon/input.h
+    dpcommon/memory_pool.h
     dpcommon/output.h
     dpcommon/perf.h
     dpcommon/queue.h
