@@ -394,6 +394,11 @@ int main(int argc, char *argv[]) {
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+#ifdef Q_OS_ANDROID
+	// Android has a weird title bar by default, we want a menu bar instead.
+	QApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
+#endif
+
 	// CanvasView does not work correctly with this enabled.
 	// (Scale factor must be taken in account when zooming)
 	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
