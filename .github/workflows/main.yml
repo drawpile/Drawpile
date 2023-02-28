@@ -52,7 +52,8 @@ jobs:
               libxcb-util-dev libinput-dev libvulkan-dev
               libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
               libasound2-dev libpulse-dev libcups2-dev libssl-dev
-              libfontconfig1-dev
+              libfontconfig1-dev &&
+              echo "Clang_ROOT=/usr/lib/llvm-13" >> $GITHUB_ENV
             other_packages: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
