@@ -49,7 +49,7 @@ function(target_add_translations target prefix)
 	endforeach()
 
 	if(UPDATE_TRANSLATIONS)
-		_create_translation(qm_files ${CMAKE_CURRENT_SOURCE_DIR} ${ts_files}
+		_create_translation(qm_files "${CMAKE_CURRENT_SOURCE_DIR}/.." ${ts_files}
 			OPTIONS -no-obsolete -locations relative
 		)
 	else()
