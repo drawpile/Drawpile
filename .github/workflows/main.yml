@@ -25,6 +25,7 @@ jobs:
     name: Test Qt ${{ matrix.qt }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
