@@ -1,9 +1,14 @@
-find_package("Qt${QT_VERSION}" COMPONENTS Network Sql REQUIRED)
+find_package("Qt${QT_VERSION}" COMPONENTS BuildInternals Network Sql REQUIRED)
 
 if(CLIENT)
 	find_package(ZLIB MODULE REQUIRED)
-	find_package(PNG MODULE REQUIRED)
-	find_package(JPEG MODULE REQUIRED)
+
+	# On Android we go through Qt instead of using these directly.
+	if(NOT ANDROID)
+		find_package(PNG MODULE REQUIRED)
+		find_package(JPEG MODULE REQUIRED)
+	endif()
+
 	find_package("Qt${QT_VERSION}" COMPONENTS Xml REQUIRED)
 	find_package(Threads REQUIRED)
 
