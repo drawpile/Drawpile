@@ -406,8 +406,13 @@ private:
 			if(initialPath.isEmpty()) {
 				qWarning("No initial brush preset database found");
 			} else if(QFile::copy(initialPath, databasePath)) {
-				qDebug("Created brush databse '%s' from '%s'",
+				qDebug("Created brush database '%s' from '%s'",
 					qPrintable(databasePath), qPrintable(initialPath));
+				if(QFile::setPermissions(databasePath, QFileDevice::ReadUser | QFileDevice::WriteUser)) {
+					qDebug("Set permissions of '%s' to read-write", qPrintable(databasePath));
+				} else {
+					qWarning("Could not set permissions of '%s' to read-write", qPrintable(databasePath));
+				}
 			} else {
 				qWarning("Could not create brush database '%s' from '%s'",
 					qPrintable(databasePath), qPrintable(initialPath));
