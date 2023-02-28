@@ -1,0 +1,89 @@
+--- a/src/widgets/widgets/qmainwindowlayout.cpp	2023-02-27 15:50:14.000000000 -0600
++++ b/src/widgets/widgets/qmainwindowlayout.cpp	2023-02-27 15:50:19.000000000 -0600
+@@ -46,6 +46,8 @@
+ #include <private/qlayoutengine_p.h>
+ #include <private/qwidgetresizehandler_p.h>
+ 
++#include <QScopedValueRollback>
++
+ QT_BEGIN_NAMESPACE
+ 
+ using namespace Qt::StringLiterals;
+@@ -1825,7 +1827,7 @@
+ 
+ QTabBar *QMainWindowLayout::getTabBar()
+ {
+-    if (!usedTabBars.isEmpty()) {
++    if (!usedTabBars.isEmpty() && !isInRestoreState) {
+         /*
+             If dock widgets have been removed and added while the main window was
+             hidden, then the layout hasn't been activated yet, and tab bars from empty
+@@ -2957,6 +2959,7 @@
+ 
+ bool QMainWindowLayout::restoreState(QDataStream &stream)
+ {
++    QScopedValueRollback<bool> guard(isInRestoreState, true);
+     savedState = layoutState;
+     layoutState.clear();
+     layoutState.rect = savedState.rect;
+--- a/src/widgets/widgets/qmainwindowlayout_p.h	2023-02-27 15:50:58.000000000 -0600
++++ b/src/widgets/widgets/qmainwindowlayout_p.h	2023-02-27 15:50:55.000000000 -0600
+@@ -586,6 +586,7 @@
+ #if QT_CONFIG(tabbar)
+     void updateTabBarShapes();
+ #endif
++    bool isInRestoreState = false;
+ };
+ 
+ #if QT_CONFIG(dockwidget) && !defined(QT_NO_DEBUG_STREAM)
+--- a/src/widgets/widgets/qdockarealayout.cpp	2023-02-27 15:49:23.000000000 -0600
++++ b/src/widgets/widgets/qdockarealayout.cpp	2023-02-27 15:53:46.000000000 -0600
+@@ -1989,14 +1989,20 @@
+             break;
+ 
+         QWidget *sepWidget;
+-        if (j < separatorWidgets.size() && separatorWidgets.at(j)) {
++        if (j < separatorWidgets.size()) {
+             sepWidget = separatorWidgets.at(j);
++            if (!sepWidget) {
++                qWarning("QDockAreaLayoutInfo::updateSeparatorWidgets: null separator widget");
++                sepWidget = mainWindowLayout()->getSeparatorWidget();
++                separatorWidgets[j] = sepWidget;
++            }
+         } else {
+             sepWidget = mainWindowLayout()->getSeparatorWidget();
+             separatorWidgets.append(sepWidget);
+         }
+         j++;
+ 
++        Q_ASSERT(sepWidget);
+         sepWidget->raise();
+ 
+         QRect sepRect = separatorRect(i).adjusted(-2, -2, 2, 2);
+@@ -2009,7 +2015,6 @@
+         separatorWidgets[k]->hide();
+     }
+     separatorWidgets.resize(j);
+-    Q_ASSERT(separatorWidgets.size() == j);
+ }
+ 
+ /*! \internal
+@@ -3271,12 +3276,18 @@
+         QWidget *sepWidget;
+         if (j < separatorWidgets.size()) {
+             sepWidget = separatorWidgets.at(j);
++            if (!sepWidget) {
++                qWarning("QDockAreaLayout::updateSeparatorWidgets: null separator widget");
++                sepWidget = qt_mainwindow_layout(mainWindow)->getSeparatorWidget();
++                separatorWidgets[j] = sepWidget;
++            }
+         } else {
+             sepWidget = qt_mainwindow_layout(mainWindow)->getSeparatorWidget();
+             separatorWidgets.append(sepWidget);
+         }
+         j++;
+ 
++        Q_ASSERT(sepWidget);
+         sepWidget->raise();
+ 
+         QRect sepRect = separatorRect(i).adjusted(-2, -2, 2, 2);

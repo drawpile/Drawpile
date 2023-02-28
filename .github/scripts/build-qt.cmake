@@ -123,6 +123,8 @@ if(BASE)
 					${BASE_FLAGS}
 				DEBUG -force-asserts -force-debug-info -sanitize address
 		PATCHES
+			ALL
+				patches/qtbug-111538.diff
 			5.15.8
 				patches/cast_types_for_egl_x11_test.diff
 	)
