@@ -191,7 +191,8 @@ set(bundled_qtcolorwidgets_sources
 	bundled/QtColorWidgets/include/QtColorWidgets/swatch.hpp
 )
 
-add_executable(${CLIENTNAME} ${desktop_sources})
+# On Android "executables" are shared libraries.
+add_dp_executable(${CLIENTNAME} ${desktop_sources})
 set_drawpile_target_properties(${CLIENTNAME})
 target_include_directories("${CLIENTNAME}" PUBLIC
 	"${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
@@ -294,9 +295,11 @@ if(APPLE)
 		COMMAND cp "${CMAKE_SOURCE_DIR}/desktop/initialbrushpresets.db" "${ResourcesDir}")
 endif()
 
-install(TARGETS ${CLIENTNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-if(NOT "${CMAKE_BUILD_TYPE}" MATCHES "Debug|RelWithDebInfo")
-	strip_exe(${CLIENTNAME})
+# We don't install anything on Android nor do we have an executable to strip.
+if(NOT ANDROID)
+	install(TARGETS ${CLIENTNAME} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+	if(NOT "${CMAKE_BUILD_TYPE}" MATCHES "Debug|RelWithDebInfo")
+		strip_exe(${CLIENTNAME})
+	endif()
 endif()
 

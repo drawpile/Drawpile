@@ -40,6 +40,19 @@ if(TESTS)
 	include("config/Tests.cmake")
 endif()
 
+if(ANDROID)
+	function(add_dp_executable target)
+		add_library("${target}" MODULE ${ARGN})
+		set_property(TARGET "${target}" PROPERTY C_VISIBILITY_PRESET default)
+		set_property(TARGET "${target}" PROPERTY CXX_VISIBILITY_PRESET default)
+        set_property(TARGET "${target}" PROPERTY SUFFIX "_${CMAKE_ANDROID_ARCH_ABI}.so")
+	endfunction()
+else()
+	function(add_dp_executable)
+		add_executable(${ARGN})
+	endfunction()
+endif()
+
 function(set_drawpile_target_properties target)
 	target_compile_definitions("${target}" PRIVATE
 		"DP_PERF_REALM=${target}"
@@ -74,7 +87,10 @@ configure_file(config/config.h.cmake "${CMAKE_BINARY_DIR}/config.h")
 file(WRITE "${CMAKE_BINARY_DIR}/DRAWPILE_VERSION.txt" ${DRAWPILE_VERSION}) # needed for packaging
 
 add_subdirectory(src)
-if(INSTALL_DOC)
-	add_subdirectory(doc)
+# We don't install anything on Android, we build an apk instead.
+if(NOT ANDROID)
+	if(INSTALL_DOC)
+		add_subdirectory(doc)
+	endif()
+	add_subdirectory(desktop)
 endif()
-add_subdirectory(desktop)
