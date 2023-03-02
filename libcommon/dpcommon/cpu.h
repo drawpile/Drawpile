@@ -104,21 +104,24 @@
 
 // Order matters
 typedef enum DP_CpuSupport {
-    DP_CPU_SUPPORT_DEFAULT,
+    DP_CPU_SUPPORT_DEFAULT, // for x64 implies SSE2
 #ifdef DP_CPU_X64
     DP_CPU_SUPPORT_SSE42,
+    DP_CPU_SUPPORT_AVX,
     DP_CPU_SUPPORT_AVX2,
 #endif
 } DP_CpuSupport;
 
 void DP_cpu_support_init(void);
 
-// If we AVX2 or SSE 4.2 are requested at compile-time, we switch to those at
+// If AVX2, AVX or SSE 4.2 are requested at compile-time, we switch to those at
 // compile-time instead of doing a dynamic check. If your processor supports
 // AVX2 but you ask for SSE 4.2 at compile-time then you only get the latter.
 #ifdef NDEBUG
 #    if defined(DP_CPU_X64) && defined(__AVX2__)
 #        define DP_cpu_support DP_CPU_SUPPORT_AVX2
+#    elif defined(DP_CPU_X64) && defined(__AVX__)
+#        define DP_cpu_support DP_CPU_SUPPORT_AVX
 #    elif defined(DP_CPU_X64) && defined(__SSE4_2__)
 #        define DP_cpu_support DP_CPU_SUPPORT_SSE42
 #    else

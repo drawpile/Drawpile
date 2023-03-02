@@ -38,6 +38,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/cpu.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <math.h>
@@ -428,14 +429,151 @@ static float aspect_ratio_from_uint8(uint8_t aspect_ratio)
 #define TWO_PI                       6.283185307179586f
 #define RADIUS_OF_CIRCLE_WITH_AREA_1 0.5641895835477563f /* sqrt(1.0 / pi) */
 
-static float calculate_rr(int xp, int yp, float radius, float aspect_ratio,
-                          float sn, float cs, float one_over_radius2)
+static void calculate_rr_mask_row(float *rr_mask_row, int start_x, int yp,
+                                  int count, float radius, float aspect_ratio,
+                                  float sn, float cs, float one_over_radius2)
 {
-    float yy = DP_int_to_float(yp) + 0.5f - radius;
-    float xx = DP_int_to_float(xp) + 0.5f - radius;
-    float yyr = (yy * cs - xx * sn) * aspect_ratio;
-    float xxr = yy * sn + xx * cs;
-    return (yyr * yyr + xxr * xxr) * one_over_radius2;
+    for (int xp = start_x; xp < start_x + count; ++xp) {
+        float yy = DP_int_to_float(yp) + 0.5f - radius;
+        float xx = DP_int_to_float(xp) + 0.5f - radius;
+        float yyr = (yy * cs - xx * sn) * aspect_ratio;
+        float xxr = yy * sn + xx * cs;
+        float rr = (yyr * yyr + xxr * xxr) * one_over_radius2;
+
+        rr_mask_row[xp] = rr;
+    }
+}
+
+#ifdef DP_CPU_X64
+static void calculate_rr_mask_row_sse(float *rr_mask_row, int start_x,
+                                      int yp_int, int count, float radius,
+                                      float aspect_ratio_float, float sn_float,
+                                      float cs_float,
+                                      float one_over_radius2_float)
+{
+    DP_ASSERT(count % 4 == 0);
+
+    // Refer to calculate_rr_mask_row for the formulas
+
+    __m128 half_minus_radius =
+        _mm_sub_ps(_mm_set1_ps(0.5f), _mm_set1_ps((float)radius));
+
+    __m128 aspect_ratio = _mm_set1_ps(aspect_ratio_float);
+    __m128 sn = _mm_set1_ps(sn_float);
+    __m128 cs = _mm_set1_ps(cs_float);
+    __m128 one_over_radius2 = _mm_set1_ps(one_over_radius2_float);
+
+    __m128 yp = _mm_set1_ps((float)yp_int);
+    __m128 yy = _mm_add_ps(yp, half_minus_radius);
+
+    __m128 xp = _mm_add_ps(_mm_setr_ps(0.0f, 1.0f, 2.0f, 3.0f),
+                           _mm_set1_ps((float)start_x));
+
+    for (int i = start_x; i < start_x + count; i += 4) {
+        __m128 xx = _mm_add_ps(xp, half_minus_radius);
+        __m128 yyr = _mm_mul_ps(
+            _mm_sub_ps(_mm_mul_ps(yy, cs), _mm_mul_ps(xx, sn)), aspect_ratio);
+
+        __m128 xxr = _mm_add_ps(_mm_mul_ps(yy, sn), _mm_mul_ps(xx, cs));
+
+        __m128 rr =
+            _mm_mul_ps(_mm_add_ps(_mm_mul_ps(yyr, yyr), _mm_mul_ps(xxr, xxr)),
+                       one_over_radius2);
+
+        _mm_storeu_ps(&rr_mask_row[i], rr);
+
+        xp = _mm_add_ps(xp, _mm_set1_ps(4.0f));
+    }
+}
+
+DP_TARGET_BEGIN("avx")
+static void calculate_rr_mask_row_avx(float *rr_mask_row, int start_x,
+                                      int yp_int, int count, float radius,
+                                      float aspect_ratio_float, float sn_float,
+                                      float cs_float,
+                                      float one_over_radius2_float)
+{
+    DP_ASSERT(count % 8 == 0);
+
+    // Refer to calculate_rr_mask_row for the formulas
+
+    __m256 half_minus_radius =
+        _mm256_sub_ps(_mm256_set1_ps(0.5f), _mm256_set1_ps((float)radius));
+
+    __m256 aspect_ratio = _mm256_set1_ps(aspect_ratio_float);
+    __m256 sn = _mm256_set1_ps(sn_float);
+    __m256 cs = _mm256_set1_ps(cs_float);
+    __m256 one_over_radius2 = _mm256_set1_ps(one_over_radius2_float);
+
+    __m256 yp = _mm256_set1_ps((float)yp_int);
+    __m256 yy = _mm256_add_ps(yp, half_minus_radius);
+
+    __m256 xp = _mm256_add_ps(
+        _mm256_setr_ps(0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f),
+        _mm256_set1_ps((float)start_x));
+
+    for (int i = start_x; i < start_x + count; i += 8) {
+        __m256 xx = _mm256_add_ps(xp, half_minus_radius);
+        __m256 yyr = _mm256_mul_ps(
+            _mm256_sub_ps(_mm256_mul_ps(yy, cs), _mm256_mul_ps(xx, sn)),
+            aspect_ratio);
+
+        __m256 xxr =
+            _mm256_add_ps(_mm256_mul_ps(yy, sn), _mm256_mul_ps(xx, cs));
+
+        __m256 rr = _mm256_mul_ps(
+            _mm256_add_ps(_mm256_mul_ps(yyr, yyr), _mm256_mul_ps(xxr, xxr)),
+            one_over_radius2);
+
+        _mm256_storeu_ps(&rr_mask_row[i], rr);
+
+        xp = _mm256_add_ps(xp, _mm256_set1_ps(8.0f));
+    }
+}
+DP_TARGET_END
+#endif
+
+static void calculate_rr_mask(float *rr_mask, int idia, float radius,
+                              float aspect_ratio, float sn, float cs,
+                              float one_over_radius2)
+{
+#ifdef DP_CPU_X64
+    for (int yp = 0; yp < idia; ++yp) {
+        int xp = 0;
+        int remaining = idia;
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
+
+            calculate_rr_mask_row_avx(&rr_mask[yp * idia], xp, yp, avx_width,
+                                      radius, aspect_ratio, sn, cs,
+                                      one_over_radius2);
+
+            remaining -= avx_width;
+            xp += avx_width;
+        }
+
+        int remaining_after_sse_width = remaining % 4;
+        int sse_width = remaining - remaining_after_sse_width;
+
+        calculate_rr_mask_row_sse(&rr_mask[yp * idia], xp, yp, sse_width,
+                                  radius, aspect_ratio, sn, cs,
+                                  one_over_radius2);
+
+        remaining -= sse_width;
+        xp += sse_width;
+
+
+        calculate_rr_mask_row(&rr_mask[yp * idia], xp, yp, remaining, radius,
+                              aspect_ratio, sn, cs, one_over_radius2);
+    }
+#else
+    for (int yp = 0; yp < idia; ++yp) {
+        calculate_rr_mask_row(&rr_mask[yp * idia], 0, yp, idia, radius,
+                              aspect_ratio, sn, cs, one_over_radius2);
+    }
+#endif
 }
 
 static float calculate_r_sample(float x, float y, float aspect_ratio, float sn,
@@ -582,12 +720,8 @@ static void get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc,
         }
     }
     else {
-        for (int yp = 0; yp < idia; ++yp) {
-            for (int xp = 0; xp < idia; ++xp) {
-                rr_mask[yp * idia + xp] = calculate_rr(
-                    xp, yp, radius, aspect_ratio, sn, cs, one_over_radius2);
-            }
-        }
+        calculate_rr_mask(rr_mask, idia, radius, aspect_ratio, sn, cs,
+                          one_over_radius2);
     }
 
     uint16_t *mask = DP_draw_context_stamp_buffer1(dc);

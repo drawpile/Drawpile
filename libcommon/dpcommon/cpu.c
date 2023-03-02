@@ -55,6 +55,21 @@ static bool supports_sse42(void)
 #    endif
 }
 
+static bool supports_avx(void)
+{
+#    if defined(__AVX__)
+    return true;
+#    elif defined(_MSC_VER)
+    int CPUInfo[4];
+    __cpuid(CPUInfo, 1);
+    return (CPUInfo[2] & (1 << 28)) != 0;
+#    elif defined(__clang__) || defined(__GNUC__)
+    return __builtin_cpu_supports("avx");
+#    else
+    return false; // unknown compiler
+#    endif
+}
+
 static bool supports_avx2(void)
 {
 #    if defined(__AVX2__)
@@ -74,6 +89,9 @@ void DP_cpu_support_init(void)
 {
     if (supports_avx2()) {
         DP_cpu_support_value = DP_CPU_SUPPORT_AVX2;
+    }
+    else if (supports_avx()) {
+        DP_cpu_support_value = DP_CPU_SUPPORT_AVX;
     }
     else if (supports_sse42()) {
         DP_cpu_support_value = DP_CPU_SUPPORT_SSE42;
