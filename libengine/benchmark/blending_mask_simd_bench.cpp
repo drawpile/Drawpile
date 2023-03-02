@@ -1,8 +1,5 @@
 #include "bench_common.hpp"
-#include "benchmark/bench_common.hpp"
-#include <emmintrin.h>
-#include <smmintrin.h>
-#include <stdint.h>
+
 
 extern "C" {
 #include "dpcommon/cpu.h"
@@ -159,6 +156,48 @@ static void blend_line_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
     _mm256_zeroupper();
 }
 
+static void blend_line_avx2_aligned(DP_Pixel15 *dst, DP_UPixel15 src,
+                                    const uint16_t *mask_int,
+                                    uint32_t opacity_int, int count)
+{
+    DP_ASSERT(count % 8 == 0);
+
+    // Do in parent function ?
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(src.a);
+
+    __m256i opacity = _mm256_set1_epi32(opacity_int);
+    __m256i bit15 = _mm256_set1_epi32(DP_BIT15);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        // load mask
+        __m256i mask =
+            _mm256_cvtepu16_epi32(_mm_load_si128((__m128i *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(
+            mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+
+        // Load dst
+        __m256i dstB, dstG, dstR, dstA;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m256i o = mul_avx2(mask, opacity);
+        __m256i opa_a = mul_avx2(o, srcA);
+        __m256i opa_b = _mm256_sub_epi32(bit15, o);
+
+        dstB = sumprods_avx2(opa_a, srcB, opa_b, dstB);
+        dstG = sumprods_avx2(opa_a, srcG, opa_b, dstG);
+        dstR = sumprods_avx2(opa_a, srcR, opa_b, dstR);
+        dstA = _mm256_add_epi32(
+            opa_a, _mm256_srli_epi32(_mm256_mullo_epi32(opa_b, dstA), 15));
+
+        store_aligned_avx2(dstB, dstG, dstR, dstA, dst);
+    }
+    _mm256_zeroupper();
+}
+
 static void blend_mask_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
                                               const uint16_t *mask,
                                               uint32_t opacity, int w, int h,
@@ -174,6 +213,44 @@ static void blend_mask_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
         blend_line_avx2(dst, src, mask, opacity, avx_width);
         dst += avx_width;
         mask += avx_width;
+
+        blend_line_sse42(dst, src, mask, opacity, sse_width);
+        dst += sse_width;
+        mask += sse_width;
+
+        blend_line_seq(dst, src, mask, opacity, remaining_after_sse_width);
+        dst += remaining_after_sse_width;
+        mask += remaining_after_sse_width;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+}
+
+static void blend_mask_normal_and_eraser_avx2_aligned(
+    DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask, uint32_t opacity,
+    int w, int h, int mask_skip, int base_skip)
+{
+    int modulo = (uintptr_t)dst % 32;
+    int to_alignement = modulo == 0 ? 0 : (32 - modulo) / sizeof(DP_Pixel15);
+    to_alignement = DP_min_int(to_alignement, w);
+    int remaining_after_alignement = w - to_alignement;
+
+    int remaining_after_avx_width = remaining_after_alignement % 8;
+    int avx_width = remaining_after_alignement - remaining_after_avx_width;
+
+    int remaining_after_sse_width = remaining_after_avx_width % 4;
+    int sse_width = remaining_after_avx_width - remaining_after_sse_width;
+
+    for (int y = 0; y < h; ++y) {
+        blend_line_seq(dst, src, mask, opacity, to_alignement);
+        dst += to_alignement;
+        mask += to_alignement;
+
+        blend_line_avx2_aligned(dst, src, mask, opacity, avx_width);
+        dst += avx_width;
+        mask += avx_width;
+
 
         blend_line_sse42(dst, src, mask, opacity, sse_width);
         dst += sse_width;
@@ -278,8 +355,8 @@ static void nop_(DP_Pixel15 *dst, DP_UPixel15 src, const uint16_t *mask,
 BENCH_BLEND(seq, blend_mask_normal_and_eraser_seq);
 BENCH_BLEND(sse42, blend_mask_normal_and_eraser_sse42);
 BENCH_BLEND(avx2, blend_mask_normal_and_eraser_avx2);
+BENCH_BLEND(avx2_aligned, blend_mask_normal_and_eraser_avx2_aligned);
 BENCH_BLEND(branch, blend_mask_normal_and_eraser_cpu_branch);
-
 
 BENCHMARK_MAIN();
 
@@ -331,8 +408,8 @@ DP_UNUSED int validate()
         DP_TILE_LENGTH * sizeof(DP_Pixel15));
     memcpy(dst_avx, dst, DP_TILE_LENGTH * sizeof(DP_Pixel15));
 
-    blend_mask_normal_and_eraser_avx2(dst_avx, src, mask, opacity, 64, 35,
-                                      64 - 35, 64 - 35);
+    blend_mask_normal_and_eraser_avx2_aligned(dst_avx, src, mask, opacity, 64,
+                                              35, 64 - 35, 64 - 35);
 
     for (int i = 0; i < DP_TILE_LENGTH; i++) {
         // clang-format off

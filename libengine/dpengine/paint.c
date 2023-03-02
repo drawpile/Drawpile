@@ -529,6 +529,7 @@ static void calculate_rr_mask_row_avx(float *rr_mask_row, int start_x,
 
         xp = _mm256_add_ps(xp, _mm256_set1_ps(8.0f));
     }
+    _mm256_zeroupper();
 }
 DP_TARGET_END
 #endif
@@ -651,25 +652,174 @@ static float calculate_rr_antialiased(int xp, int yp, float radius,
     }
 }
 
-static float calculate_opa(float rr, float hardness, float segment1_offset,
-                           float segment1_slope, float segment2_offset,
-                           float segment2_slope)
+static void calculate_opa_mask(uint16_t *mask, float *rr_mask, int count,
+                               float hardness, float segment1_offset,
+                               float segment1_slope, float segment2_offset,
+                               float segment2_slope)
 {
-    if (rr > 1.0f) {
-        return 0.0f;
-    }
-    else {
-        float fac, opa;
-        if (rr <= hardness) {
-            fac = segment1_slope;
-            opa = segment1_offset;
+
+    for (int i = 0; i < count; ++i) {
+        float rr = rr_mask[i];
+
+        float opa = 0.0f;
+        if (rr > 1.0f) {
+            opa = 0.0f;
         }
         else {
-            fac = segment2_slope;
-            opa = segment2_offset;
+            if (rr <= hardness) {
+                opa = segment1_offset + rr * segment1_slope;
+            }
+            else {
+                opa = segment2_offset + rr * segment2_slope;
+            }
         }
-        return opa + rr * fac;
+
+
+        DP_ASSERT(opa >= 0.0f);
+        DP_ASSERT(opa <= 1.0f);
+        mask[i] = DP_float_to_uint16(opa * (float)DP_BIT15);
     }
+}
+#ifdef DP_CPU_X64
+DP_TARGET_BEGIN("sse4.2")
+static void calculate_opa_mask_sse42(uint16_t *mask, float *rr_mask, int count,
+                                     float hardness, float segment1_offset,
+                                     float segment1_slope,
+                                     float segment2_offset,
+                                     float segment2_slope)
+{
+
+    DP_ASSERT(count % 4 == 0);
+    DP_ASSERT((intptr_t)rr_mask % 16 == 0);
+
+    // Refer to calculate_opa_mask for conditions
+
+    for (int i = 0; i < count; i += 4) {
+        __m128 rr = _mm_load_ps(&rr_mask[i]);
+
+        __m128 if_gt_1 = _mm_set1_ps(0.0f);
+
+        __m128 if_le_hardness =
+            _mm_add_ps(_mm_set1_ps(segment1_offset),
+                       _mm_mul_ps(rr, _mm_set1_ps(segment1_slope)));
+        __m128 else_le_hardness =
+            _mm_add_ps(_mm_set1_ps(segment2_offset),
+                       _mm_mul_ps(rr, _mm_set1_ps(segment2_slope)));
+
+        __m128 if_gt_1_mask = _mm_cmpgt_ps(rr, _mm_set1_ps(1.0f));
+        __m128 le_hardness_mask = _mm_cmple_ps(rr, _mm_set1_ps(hardness));
+
+        __m128 opa = _mm_blendv_ps(
+            _mm_blendv_ps(else_le_hardness, if_le_hardness, le_hardness_mask),
+            if_gt_1, if_gt_1_mask);
+
+        // Convert to 32 bit and shuffle to 16
+        __m128i _32 =
+            _mm_cvtps_epi32(_mm_mul_ps(opa, _mm_set1_ps((float)DP_BIT15)));
+        __m128i _16 =
+            _mm_shuffle_epi8(_32, _mm_setr_epi8(0, 1, 4, 5, 8, 9, 12, 13, -1,
+                                                -1, -1, -1, -1, -1, -1, -1));
+
+        _mm_storel_epi64((__m128i *)&mask[i], _16);
+    }
+}
+DP_TARGET_END
+
+DP_TARGET_BEGIN("avx2")
+static __m256i calculate_opa_mask_load_and_calculate_avx2(
+    float *rr_mask, __m256 hardness, __m256 segment1_offset,
+    __m256 segment1_slope, __m256 segment2_offset, __m256 segment2_slope)
+{
+    DP_ASSERT((intptr_t)rr_mask % 32 == 0);
+
+    __m256 rr = _mm256_load_ps(rr_mask);
+
+    __m256 if_gt_1 = _mm256_set1_ps(0.0f);
+
+    __m256 if_le_hardness =
+        _mm256_add_ps(segment1_offset, _mm256_mul_ps(rr, segment1_slope));
+    __m256 else_le_hardness =
+        _mm256_add_ps(segment2_offset, _mm256_mul_ps(rr, segment2_slope));
+
+    __m256 if_gt_1_mask = _mm256_cmp_ps(rr, _mm256_set1_ps(1.0f), _CMP_GT_OS);
+    __m256 le_hardness_mask = _mm256_cmp_ps(rr, hardness, _CMP_LE_OS);
+
+    __m256 opa = _mm256_blendv_ps(
+        _mm256_blendv_ps(else_le_hardness, if_le_hardness, le_hardness_mask),
+        if_gt_1, if_gt_1_mask);
+
+    return _mm256_cvtps_epi32(
+        _mm256_mul_ps(opa, _mm256_set1_ps((float)DP_BIT15)));
+}
+
+static void calculate_opa_mask_avx2(uint16_t *mask, float *rr_mask, int count,
+                                    float hardness_f, float segment1_offset_f,
+                                    float segment1_slope_f,
+                                    float segment2_offset_f,
+                                    float segment2_slope_f)
+{
+    DP_ASSERT(count % 16 == 0);
+    DP_ASSERT((intptr_t)rr_mask % 32 == 0);
+
+    // Refer to calculate_opa_mask for conditions
+    __m256 hardness = _mm256_set1_ps(hardness_f);
+    __m256 segment1_offset = _mm256_set1_ps(segment1_offset_f);
+    __m256 segment1_slope = _mm256_set1_ps(segment1_slope_f);
+    __m256 segment2_offset = _mm256_set1_ps(segment2_offset_f);
+    __m256 segment2_slope = _mm256_set1_ps(segment2_slope_f);
+
+    for (int i = 0; i < count; i += 16) {
+        __m256i _32_1 = calculate_opa_mask_load_and_calculate_avx2(
+            &rr_mask[i], hardness, segment1_offset, segment1_slope,
+            segment2_offset, segment2_slope);
+        __m256i _32_2 = calculate_opa_mask_load_and_calculate_avx2(
+            &rr_mask[i + 8], hardness, segment1_offset, segment1_slope,
+            segment2_offset, segment2_slope);
+
+        __m256i combined = _mm256_packus_epi32(_32_1, _32_2);
+        __m256i _16 = _mm256_permute4x64_epi64(combined, 0xD8);
+
+        _mm256_store_si256((__m256i *)&mask[i], _16);
+    }
+}
+DP_TARGET_END
+#endif
+
+static void calculate_opa(uint16_t *mask, float *rr_mask, int count,
+                          float hardness, float segment1_offset,
+                          float segment1_slope, float segment2_offset,
+                          float segment2_slope)
+{
+#ifdef DP_CPU_X64
+    if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        int remaining_after_avx_width = count % 16;
+        int avx_width = count - remaining_after_avx_width;
+
+        calculate_opa_mask_avx2(mask, rr_mask, avx_width, hardness,
+                                segment1_offset, segment1_slope,
+                                segment2_offset, segment2_slope);
+
+        count -= avx_width;
+        mask += avx_width;
+        rr_mask += avx_width;
+    }
+
+    if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        int remaining_after_sse_width = count % 4;
+        int sse_width = count - remaining_after_sse_width;
+
+        calculate_opa_mask_sse42(mask, rr_mask, sse_width, hardness,
+                                 segment1_offset, segment1_slope,
+                                 segment2_offset, segment2_slope);
+
+        count -= sse_width;
+        mask += sse_width;
+        rr_mask += sse_width;
+    }
+#endif
+
+    calculate_opa_mask(mask, rr_mask, count, hardness, segment1_offset,
+                       segment1_slope, segment2_offset, segment2_slope);
 }
 
 static void get_mypaint_brush_stamp_offsets(DP_BrushStamp *stamp, float x,
@@ -725,17 +875,8 @@ static void get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc,
     }
 
     uint16_t *mask = DP_draw_context_stamp_buffer1(dc);
-    for (int yp = 0; yp < idia; ++yp) {
-        for (int xp = 0; xp < idia; ++xp) {
-            float rr = rr_mask[yp * idia + xp];
-            float opa =
-                calculate_opa(rr, hardness, segment1_offset, segment1_slope,
-                              segment2_offset, segment2_slope);
-            DP_ASSERT(opa >= 0.0f);
-            DP_ASSERT(opa <= 1.0f);
-            mask[yp * idia + xp] = DP_float_to_uint16(opa * (float)DP_BIT15);
-        }
-    }
+    calculate_opa(mask, rr_mask, idia * idia, hardness, segment1_offset,
+                  segment1_slope, segment2_offset, segment2_slope);
 
     get_mypaint_brush_stamp_offsets(stamp, x, y, radius);
     stamp->diameter = idia;
