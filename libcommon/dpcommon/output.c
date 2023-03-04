@@ -294,7 +294,12 @@ static size_t gzip_output_write(void *internal, const void *buffer, size_t size)
 {
     DP_GzipOutputState *state = internal;
     gzFile gf = state->gf;
+#if ZLIB_VERNUM >= 0x1290
     size_t written = gzfwrite(buffer, 1, size, gf);
+#else
+    int result = gzwrite(gf, buffer, DP_size_to_uint(size));
+    size_t written = result <= 0 ? 0 : DP_int_to_size(result);
+#endif
     if (written != size) {
         DP_error_set("GZip output wrote %zu instead of expected %zu bytes: %s",
                      size, written, gzip_output_error(gf));
