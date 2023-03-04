@@ -25,8 +25,19 @@
 #include "conversions.h"
 #include "output.h"
 #include "threading.h"
-#include "time.h"
 #include "vector.h"
+
+// On Windows, we use QueryPerformanceCounter. On Darwin and old Android libc,
+// we use gettimeofday. On normal systems, we use the standard timespec_get.
+#if defined(_WIN32)
+#    include <windows.h>
+#elif defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
+#    include <errno.h>
+#    include <string.h>
+#    include <sys/time.h>
+#else
+#    include "time.h"
+#endif
 
 
 #define INITIAL_CAPACITY 64
@@ -152,7 +163,7 @@ static DP_PerfEntry *search_or_push_perf_entry(int *out_handle)
 
 static unsigned long long get_time(void)
 {
-#ifdef _WIN32
+#if defined(_WIN32)
     LARGE_INTEGER ticks;
     QueryPerformanceCounter(&ticks);
 
@@ -161,6 +172,16 @@ static unsigned long long get_time(void)
 
     return DP_llong_to_ullong(ticks.QuadPart) * NS_IN_S
          / DP_llong_to_ullong(freq.QuadPart);
+#elif defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
+    struct timeval tv;
+    if (gettimeofday(&tv, NULL) == 0) {
+        return (unsigned long long)tv.tv_sec * NS_IN_S
+             + (unsigned long long)tv.tv_usec * 1000ULL;
+    }
+    else {
+        DP_warn("Could not get perf time: %s", strerror(errno));
+        return 0;
+    }
 #else
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) != 0) {

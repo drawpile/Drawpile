@@ -24,7 +24,14 @@
 #include "common.h"
 #include "output.h"
 #include "threading.h"
-#include "time.h"
+
+// On Darwin and old Android libc, we use gettimeofday. On normal systems and
+// Windows, we use the standard timespec_get.
+#if defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
+#    include <sys/time.h>
+#else
+#    include "time.h"
+#endif
 
 
 static DP_Mutex *event_log_mutex;
@@ -97,16 +104,35 @@ bool DP_event_log_close(void)
     return ok;
 }
 
+static bool get_time(long long *out_seconds, long *out_nanoseconds)
+{
+#if defined(__APPLE__) || (defined(__ANDROID__) && __ANDROID_API__ < 29)
+    struct timeval tv;
+    if (gettimeofday(&tv, NULL) == 0) {
+        *out_seconds = (long long)tv.tv_sec;
+        *out_nanoseconds = (long)tv.tv_usec * 1000L;
+        return true;
+    }
+#else
+    struct timespec ts;
+    if (timespec_get(&ts, TIME_UTC) != 0) {
+        *out_seconds = ts.tv_sec;
+        *out_nanoseconds = ts.tv_nsec;
+        return true;
+    }
+#endif
+    return false;
+}
+
 static bool write_log(bool timestamped, const char *fmt, va_list ap)
 {
     DP_Output *output = DP_event_log_output;
     bool ok = true;
     DP_MUTEX_MUST_LOCK(event_log_mutex);
     if (timestamped) {
-        struct timespec ts;
-        if (timespec_get(&ts, TIME_UTC) != 0) {
-            long long seconds = ts.tv_sec;
-            long nanoseconds = ts.tv_nsec;
+        long long seconds;
+        long nanoseconds;
+        if (get_time(&seconds, &nanoseconds)) {
             DP_output_format(output, "%lld.%ld ", seconds, nanoseconds);
         }
     }
