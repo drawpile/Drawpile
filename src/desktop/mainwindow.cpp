@@ -2525,7 +2525,7 @@ void MainWindow::about()
 			"<p>You should have received a copy of the GNU General Public License "
 			"along with this program.  If not, see <a href=\"http://www.gnu.org/licences/\">http://www.gnu.org/licenses/</a>.</p>"
 			) +
-			QStringLiteral("<hr><dl><dt><b>%1</b></dt><dd>%2</dd><dt><b>%3</b></dt><dd>%4</dd></dl>")
+			QStringLiteral("<hr><p><b>%1</b> %2</p><p><b>%3</b> %4</p>")
 				.arg(tr("Settings File:"))
 				.arg(QSettings{}.fileName().toHtmlEscaped())
 				.arg(tr("Tablet Input:"))
