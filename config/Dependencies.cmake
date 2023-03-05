@@ -1,4 +1,4 @@
-find_package("Qt${QT_VERSION}" COMPONENTS BuildInternals Network Sql REQUIRED)
+find_package("Qt${QT_VERSION}" COMPONENTS Network Sql REQUIRED)
 
 if(CLIENT)
 	find_package(ZLIB MODULE REQUIRED)
