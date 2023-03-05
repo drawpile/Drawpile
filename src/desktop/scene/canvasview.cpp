@@ -66,7 +66,8 @@ CanvasView::CanvasView(QWidget *parent)
 	m_enableTablet(true),
 	m_locked(false), m_pointertracking(false), m_pixelgrid(true),
 	m_isFirstPoint(false),
-	m_enableTouchScroll(true), m_enableTouchPinch(true), m_enableTouchTwist(true),
+	m_enableTouchScroll(true), m_enableTouchDraw(false),
+	m_enableTouchPinch(true), m_enableTouchTwist(true),
 	m_touching(false), m_touchRotating(false),
 	m_dpi(96),
 	m_brushCursorStyle(0),
@@ -1027,9 +1028,10 @@ static qreal squareDist(const QPointF &p)
 	return p.x()*p.x() + p.y()*p.y();
 }
 
-void CanvasView::setTouchGestures(bool scroll, bool pinch, bool twist)
+void CanvasView::setTouchGestures(bool scroll, bool draw, bool pinch, bool twist)
 {
 	m_enableTouchScroll = scroll;
+	m_enableTouchDraw = draw;
 	m_enableTouchPinch = pinch;
 	m_enableTouchTwist = twist;
 }
@@ -1038,90 +1040,141 @@ void CanvasView::touchEvent(QTouchEvent *event)
 {
 	event->accept();
 
+	int pointsCount = event->touchPoints().size();
 	switch(event->type()) {
 	case QEvent::TouchBegin:
-		DP_EVENT_LOG("touch_begin pendown=%d touching=%d", m_pendown, m_touching);
-		m_touchRotating = false;
+		if(m_enableTouchDraw && pointsCount == 1) {
+			QPointF pos = event->touchPoints().first().pos();
+			DP_EVENT_LOG(
+				"touch_draw_begin x=%f y=%f pendown=%d touching=%d",
+				pos.x(), pos.y(), m_pendown, m_touching);
+			penPressEvent(
+				pos,
+				1.0,
+				0.0,
+				0.0,
+				0.0,
+				Qt::LeftButton,
+				event->modifiers(),
+				false
+			);
+		} else {
+			DP_EVENT_LOG("touch_begin pendown=%d touching=%d", m_pendown, m_touching);
+			m_touchRotating = false;
+		}
 		break;
 
-	case QEvent::TouchUpdate: {
-		QPointF startCenter, lastCenter, center;
-		const int points = event->touchPoints().size();
-		for(const auto &tp : event->touchPoints()) {
-			startCenter += tp.startPos();
-			lastCenter += tp.lastPos();
-			center += tp.pos();
-		}
-		startCenter /= points;
-		lastCenter /= points;
-		center /= points;
-
-		DP_EVENT_LOG(
-			"touch_update points=%d x=%f y=%f pendown=%d touching=%d",
-			points, center.x(), center.y(), m_pendown, m_touching);
-
-		if(!m_touching) {
-			m_touchStartZoom = zoom();
-			m_touchStartRotate = rotation();
-		}
-
-		// Single finger drag when touch scroll is enabled,
-		// but also drag with a pinch gesture. Single finger drag
-		// may be deactivated to support finger painting.
-		if(m_enableTouchScroll || (m_enableTouchPinch && points >= 2)) {
-			m_touching = true;
-			float dx = center.x() - lastCenter.x();
-			float dy = center.y() - lastCenter.y();
-			horizontalScrollBar()->setValue(horizontalScrollBar()->value() - dx);
-			verticalScrollBar()->setValue(verticalScrollBar()->value() - dy);
-		}
-
-		// Scaling and rotation with two fingers
-		if(points >= 2 && (m_enableTouchPinch | m_enableTouchTwist)) {
-			m_touching = true;
-			float startAvgDist=0, avgDist=0;
+	case QEvent::TouchUpdate:
+		if(m_enableTouchDraw && pointsCount == 1) {
+			QPointF pos = event->touchPoints().first().pos();
+			DP_EVENT_LOG(
+				"touch_draw_update x=%f y=%f pendown=%d touching=%d",
+				pos.x(), pos.y(), m_pendown, m_touching);
+			penMoveEvent(
+				pos,
+				1.0,
+				0.0,
+				0.0,
+				0.0,
+				Qt::LeftButton,
+				event->modifiers(),
+				false
+			);
+		} else {
+			QPointF startCenter, lastCenter, center;
 			for(const auto &tp : event->touchPoints()) {
-				startAvgDist += squareDist(tp.startPos() - startCenter);
-				avgDist += squareDist(tp.pos() - center);
+				startCenter += tp.startPos();
+				lastCenter += tp.lastPos();
+				center += tp.pos();
 			}
-			startAvgDist = sqrt(startAvgDist);
+			startCenter /= pointsCount;
+			lastCenter /= pointsCount;
+			center /= pointsCount;
 
-			if(m_enableTouchPinch) {
-				avgDist = sqrt(avgDist);
-				const qreal dZoom = avgDist / startAvgDist;
-				m_zoom = m_touchStartZoom * dZoom;
+			DP_EVENT_LOG(
+				"touch_update points=%d x=%f y=%f pendown=%d touching=%d",
+				pointsCount, center.x(), center.y(), m_pendown, m_touching);
+
+			if(!m_touching) {
+				m_touchStartZoom = zoom();
+				m_touchStartRotate = rotation();
 			}
 
-			if(m_enableTouchTwist) {
-				const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
-				const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+			// Single finger drag when touch scroll is enabled,
+			// but also drag with a pinch gesture. Single finger drag
+			// may be deactivated to support finger painting.
+			if(m_enableTouchScroll || (m_enableTouchPinch && pointsCount >= 2)) {
+				m_touching = true;
+				float dx = center.x() - lastCenter.x();
+				float dy = center.y() - lastCenter.y();
+				horizontalScrollBar()->setValue(horizontalScrollBar()->value() - dx);
+				verticalScrollBar()->setValue(verticalScrollBar()->value() - dy);
+			}
 
-				const qreal dAngle = l1.angle() - l2.angle();
+			// Scaling and rotation with two fingers
+			if(pointsCount >= 2 && (m_enableTouchPinch | m_enableTouchTwist)) {
+				m_touching = true;
+				float startAvgDist=0, avgDist=0;
+				for(const auto &tp : event->touchPoints()) {
+					startAvgDist += squareDist(tp.startPos() - startCenter);
+					avgDist += squareDist(tp.pos() - center);
+				}
+				startAvgDist = sqrt(startAvgDist);
 
-				// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
-				// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
-				// is inaccurate when touchpoints are close together.
-				if(startAvgDist / m_dpi > 0.8 && (qAbs(dAngle) > 3.0 || m_touchRotating)) {
-					m_touchRotating = true;
-					m_rotate = m_touchStartRotate + dAngle;
+				if(m_enableTouchPinch) {
+					avgDist = sqrt(avgDist);
+					const qreal dZoom = avgDist / startAvgDist;
+					m_zoom = m_touchStartZoom * dZoom;
 				}
 
+				if(m_enableTouchTwist) {
+					const QLineF l1 { event->touchPoints().first().startPos(), event->touchPoints().last().startPos() };
+					const QLineF l2 { event->touchPoints().first().pos(), event->touchPoints().last().pos() };
+
+					const qreal dAngle = l1.angle() - l2.angle();
+
+					// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
+					// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
+					// is inaccurate when touchpoints are close together.
+					if(startAvgDist / m_dpi > 0.8 && (qAbs(dAngle) > 3.0 || m_touchRotating)) {
+						m_touchRotating = true;
+						m_rotate = m_touchStartRotate + dAngle;
+					}
+
+				}
+
+				// Recalculate view matrix
+				setZoom(zoom());
 			}
-
-			// Recalculate view matrix
-			setZoom(zoom());
 		}
-
-	} break;
+		break;
 
 	case QEvent::TouchEnd:
-		DP_EVENT_LOG("touch_end pendown=%d touching=%d", m_pendown, m_touching);
-		m_touching = false;
+		if(m_enableTouchDraw && pointsCount == 1) {
+			DP_EVENT_LOG("touch_draw_end pendown=%d touching=%d", m_pendown, m_touching);
+			penReleaseEvent(
+				event->touchPoints().first().pos(),
+				Qt::LeftButton,
+				event->modifiers()
+			);
+		} else {
+			DP_EVENT_LOG("touch_end pendown=%d touching=%d", m_pendown, m_touching);
+			m_touching = false;
+		}
 		break;
 
 	case QEvent::TouchCancel:
-		DP_EVENT_LOG("touch_cancel pendown=%d touching=%d", m_pendown, m_touching);
-		m_touching = false;
+		if(m_enableTouchDraw && pointsCount == 1) {
+			DP_EVENT_LOG("touch_draw_cancel pendown=%d touching=%d", m_pendown, m_touching);
+			penReleaseEvent(
+				event->touchPoints().first().pos(),
+				Qt::LeftButton,
+				event->modifiers()
+			);
+		} else {
+			DP_EVENT_LOG("touch_cancel pendown=%d touching=%d", m_pendown, m_touching);
+			m_touching = false;
+		}
 		break;
 
 	default:

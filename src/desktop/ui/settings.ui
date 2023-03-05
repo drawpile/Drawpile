@@ -482,26 +482,73 @@
               <property name="title">
                <string>Touch</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_8">
-               <item>
-                <widget class="QCheckBox" name="touchscroll">
+              <layout class="QFormLayout" name="formLayout_4">
+               <item row="0" column="0">
+                <widget class="QLabel" name="oneFingerTouchLabel">
                  <property name="text">
-                  <string>Scroll with finger</string>
+                  <string>One Finger Touch:</string>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="touchpinch">
+               <item row="0" column="1">
+                <widget class="QComboBox" name="oneFingerTouchCombo">
+                 <item>
+                  <property name="text">
+                   <string>Do Nothing</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Pan Canvas</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Draw</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="twoFingerPinchLabel">
                  <property name="text">
-                  <string>Pinch to zoom</string>
+                  <string>Two Finger Pinch:</string>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="touchtwist">
+               <item row="1" column="1">
+                <widget class="QComboBox" name="twoFingerPinchCombo">
+                 <item>
+                  <property name="text">
+                   <string>Do Nothing</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Zoom Canvas</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="twoFingerTwistLabel">
                  <property name="text">
-                  <string>Twist to rotate</string>
+                  <string>Two Finger Twist:</string>
                  </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="twoFingerTwistCombo">
+                 <item>
+                  <property name="text">
+                   <string>Do Nothing</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Rotate Canvas</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>

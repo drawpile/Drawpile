@@ -711,9 +711,9 @@ void MainWindow::updateSettings()
 	// not really tablet related, but close enough
 	m_view->setTouchGestures(
 		cfg.value("touchscroll", true).toBool(),
+		cfg.value("touchdraw", false).toBool(),
 		cfg.value("touchpinch", true).toBool(),
-		cfg.value("touchtwist", true).toBool()
-	);
+		cfg.value("touchtwist", true).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings");

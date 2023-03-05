@@ -348,13 +348,19 @@ void SettingsDialog::restoreSettings()
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
 #ifdef Q_OS_MAC
 	// Gesture scrolling is always enabled on Macs
-	m_ui->touchscroll->setChecked(true);
-	m_ui->touchscroll->setEnabled(false);
+	m_ui->oneFingerTouchCombo->setCurrentIndex(1);
+	m_ui->oneFingerTouchCombo->setEnabled(false);
 #else
-	m_ui->touchscroll->setChecked(cfg.value("touchscroll", true).toBool());
+	if(cfg.value("touchdraw", false).toBool()) {
+		m_ui->oneFingerTouchCombo->setCurrentIndex(2);
+	} else if(cfg.value("touchscroll", true).toBool()) {
+		m_ui->oneFingerTouchCombo->setCurrentIndex(1);
+	} else {
+		m_ui->oneFingerTouchCombo->setCurrentIndex(0);
+	}
 #endif
-	m_ui->touchpinch->setChecked(cfg.value("touchpinch", true).toBool());
-	m_ui->touchtwist->setChecked(cfg.value("touchtwist", true).toBool());
+	m_ui->twoFingerPinchCombo->setCurrentIndex(cfg.value("touchpinch", true).toBool() ? 1 : 0);
+	m_ui->twoFingerTwistCombo->setCurrentIndex(cfg.value("touchtwist", true).toBool() ? 1 : 0);
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
@@ -486,9 +492,10 @@ void SettingsDialog::rememberSettings()
 #endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
-	cfg.setValue("touchscroll", m_ui->touchscroll->isChecked());
-	cfg.setValue("touchpinch", m_ui->touchpinch->isChecked());
-	cfg.setValue("touchtwist", m_ui->touchtwist->isChecked());
+	cfg.setValue("touchdraw", m_ui->oneFingerTouchCombo->currentIndex() == 2);
+	cfg.setValue("touchscroll", m_ui->oneFingerTouchCombo->currentIndex() == 1);
+	cfg.setValue("touchpinch", m_ui->twoFingerPinchCombo->currentIndex() == 1);
+	cfg.setValue("touchtwist", m_ui->twoFingerTwistCombo->currentIndex() == 1);
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");

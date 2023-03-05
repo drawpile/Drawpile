@@ -72,7 +72,7 @@ public:
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
 
 	//! Enable/disable touch gestures
-	void setTouchGestures(bool scroll, bool pinch, bool twist);
+	void setTouchGestures(bool scroll, bool draw, bool pinch, bool twist);
 
 	//! Is drawing in progress at the moment?
 	bool isPenDown() const { return m_pendown != NOTDOWN; }
@@ -290,7 +290,8 @@ private:
 	bool m_pixelgrid;
 
 	bool m_isFirstPoint;
-	bool m_enableTouchScroll, m_enableTouchPinch, m_enableTouchTwist;
+	bool m_enableTouchScroll, m_enableTouchDraw;
+	bool m_enableTouchPinch, m_enableTouchTwist;
 	bool m_touching, m_touchRotating;
 	qreal m_touchStartZoom, m_touchStartRotate;
 	qreal m_dpi;
