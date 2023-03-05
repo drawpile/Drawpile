@@ -165,50 +165,6 @@ preset_drawpile_qt6_release() {
           -B builddpqt6release
 }
 
-preset_drawpile_android() {
-    have_error=0
-    if [ -z "$DP_ANDROID_NDK" ]; then
-        echo 'Error: DP_ANDROID_NDK environment variable not set.' 1>&2
-        echo '       Set it to the path to your NDK root directory.' 1>&2
-        have_error=1
-    fi
-    if [ -z "$DP_ANDROID_PREFIX" ]; then
-        echo 'Error: DP_ANDROID_PREFIX environment variable not set.' 1>&2
-        echo '       Set it to the CMAKE_PREFIX_PATH you used when' 1>&2
-        echo '       building Qt and other dependencies.' 1>&2
-        have_error=1
-    fi
-    # TODO: Figure out the NDK version (major.minor) from the NDK's
-    # source.properties and pass it in -DCMAKE_ANDROID_NDK_VERSION. This is
-    # required for LTO (-DCMAKE_INTERPROCEDURAL_OPTIMIZATION) to work,
-    # otherwise CMake will try to use the LLVM Gold linker, which isn't
-    # available since really ancient NDKs. For now, we'll just leave it off.
-    # CMake is *supposed* to figure out that version on its own, but it only
-    # does it when using the built-in Android support stuff instead of the NDK
-    # toolchain file, but trying to use that just gives weird include errors.
-    if [ "$have_error" -ne 0 ]; then
-        echo 'Errors encountered, bailing out.' 1>&2
-        exit 1
-    fi
-    cmake -DCMAKE_TOOLCHAIN_FILE="$DP_ANDROID_NDK/build/cmake/android.toolchain.cmake" \
-          -DCMAKE_FIND_ROOT_PATH="$DP_ANDROID_PREFIX" \
-          -DANDROID_PLATFORM=android-31 \
-          -DANDROID_ABI=armeabi-v7a \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
-          -DUSE_ADDRESS_SANITIZER=OFF \
-          -DUSE_STRICT_ALIASING=ON \
-          -DUSE_GENERATORS=OFF \
-          -DENABLE_ARCH_NATIVE=OFF \
-          -DBUILD_APPS=OFF \
-          -DIMAGE_IMPL=QT6 \
-          -DXML_IMPL=QT6 \
-          -DZIP_IMPL=LIBZIP \
-          $GENERATOR \
-          -B buildandroid
-}
-
 if [ "$#" -ne 1 ] || [ "$(type -t "preset_$1")" != 'function' ]; then
     echo "Usage: $0 $(perl -ne 'push @p, $1 if /^preset_(\w+)\(/; END { print join "|", @p }' "$BASH_SOURCE")" 1>&2
     exit 2
