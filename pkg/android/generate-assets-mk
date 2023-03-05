@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+use 5.020;
+use warnings;
+use File::Basename qw(dirname);
+use FindBin;
+use List::Util qw(pairmap);
+
+chdir "$FindBin::Bin/../.." or die "Can't chdir: $!\n";
+
+my @install = (
+    'desktop/initialbrushpresets.db',
+    'desktop/kritabright.colors',
+    'desktop/kritadark.colors',
+    'desktop/kritadarker.colors',
+    'desktop/nightmode.colors',
+    glob('desktop/palettes/*.gpl'),
+    glob('desktop/sounds/*.wav'),
+    glob('desktop/theme/dark/*.svg'),
+    glob('desktop/theme/light/*.svg'),
+);
+
+my %install_types;
+for my $path (@install) {
+    if ($path !~ m{\Adesktop/}) {
+        die "Path does not start with desktop: '$path'"
+    }
+    while ($path !~ m{\Adesktop/?\z}) {
+        if (!exists $install_types{$path}) {
+            my $type = -f $path ? 'f' : -d $path ? 'd'
+                     : die "Neither file nor directory: '$path'";
+            $install_types{$path} = $type;
+        }
+        $path = dirname($path);
+    }
+}
+
+sub get_paths {
+    my ($predicate) = @_;
+    my @results;
+    for my $key (keys %install_types) {
+        local $_ = $install_types{$key};
+        if (!$predicate || $predicate->()) {
+            push @results, $key =~ s{\Adesktop/}{}r;
+        }
+    }
+    return sort { $a cmp $b } @results;
+}
+
+print qq{export DRAWPILE_DESKTOP_PATH := \$(DRAWPILE_PATH)/desktop\n};
+print qq{export GRADLE_ASSETS_PATH := \$(GRADLE_PATH)/assets\n};
+
+print qq{\n};
+print qq{gradle-assets: \\\n};
+for my $path (get_paths()) {
+    print qq{\t\$(GRADLE_ASSETS_PATH)/$path \\\n};
+}
+
+for my $path (get_paths(sub { $_ eq 'f' })) {
+    my $dir = '$(GRADLE_ASSETS_PATH)';
+    if ($path =~ m{/}) {
+        $dir .= '/' . dirname($path);
+    }
+    print qq{\n};
+    print qq{\$(GRADLE_ASSETS_PATH)/$path: },
+          qq{\$(DRAWPILE_DESKTOP_PATH)/$path | $dir\n};
+    print qq{\tcp "\$\$DRAWPILE_DESKTOP_PATH/$path" },
+          qq{"\$\$GRADLE_ASSETS_PATH/$path"\n};
+}
+
+for my $path (get_paths(sub { $_ eq 'd' })) {
+    print qq{\n};
+    print qq{\$(GRADLE_ASSETS_PATH)/$path:\n};
+    print qq{\tmkdir -p "\$\$GRADLE_ASSETS_PATH/$path"\n};
+}
+
+print qq{\n};
+print qq{\$(GRADLE_ASSETS_PATH):\n};
+print qq{\tmkdir -p "\$\$GRADLE_ASSETS_PATH"\n};
+
+print qq{\n};
+print qq{.PHONY: gradle-assets\n};

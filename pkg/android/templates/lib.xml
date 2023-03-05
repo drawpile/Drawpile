@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <array name="bundled_libs">
+        <item>{{ANDROID_ABI}};crypto_1_1</item>
+        <item>{{ANDROID_ABI}};ssl_1_1</item>
+        <item>{{ANDROID_ABI}};zip</item>
+    </array>
+
+    <array name="qt_libs">
+        <item>{{ANDROID_ABI}};c++_shared</item>
+        <item>{{ANDROID_ABI}};QtCore_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtGui_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtNetwork_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtMultimedia_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtSql_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtSvg_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtWidgets_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtXml_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};zip</item>
+    </array>
+
+    <array name="load_local_libs">
+        <item>{{ANDROID_ABI}};libplugins_platforms_qtforandroid_{{ANDROID_ABI}}.so</item>
+    </array>
+
+    <string name="static_init_classes">org.qtproject.qt.android.multimedia.QtAudioDeviceManager:org.qtproject.qt.android.multimedia.QtMultimediaUtils</string>
+    <string name="use_local_qt_libs">1</string>
+    <string name="bundle_local_qt_libs">1</string>
+    <string name="system_libs_prefix"></string>
+</resources>

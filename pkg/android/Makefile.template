@@ -1,0 +1,376 @@
+BUILDDIR := {{BUILDDIR}}
+
+export ANDROID_VERSION := 21
+
+export QT_NAME := qt-everywhere-src-5.15.2
+export QT_URL  := https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
+
+export LIBZIP_NAME := libzip-1.9.2
+export LIBZIP_URL  := https://libzip.org/download/$(LIBZIP_NAME).tar.xz
+
+export ECM_NAME := extra-cmake-modules-5.103.0
+export ECM_URL  := https://github.com/KDE/extra-cmake-modules/archive/refs/tags/v5.103.0.tar.gz
+
+export LIBSODIUM_NAME := libsodium-stable
+export LIBSODIUM_URL  := https://download.libsodium.org/libsodium/releases/libsodium-1.0.18-stable.tar.gz
+
+export ANDROID_OPENSSL_NAME := android_openssl-1.1.1l_1.0.2u
+export ANDROID_OPENSSL_URL  := https://github.com/KDAB/android_openssl/archive/refs/tags/1.1.1l_1.0.2u.tar.gz
+
+export GRADLE_NAME := gradle-7.4.2
+export GRADLE_URL  := https://services.gradle.org/distributions/gradle-7.4.2-bin.zip
+
+export SDK_PATH := {{SDK_PATH}}
+export NDK_PATH := {{NDK_PATH}}
+
+export NDK_VERSION         := {{NDK_VERSION}}
+export BUILD_TOOLS_VERSION := {{BUILD_TOOLS_VERSION}}
+
+export DRAWDANCE_PATH := {{DRAWDANCE_PATH}}
+export DRAWPILE_PATH  := {{DRAWPILE_PATH}}
+
+export PKGDIR    := {{PKGDIR}}
+export ARCHDIR   := $(BUILDDIR)/$(ARCH)
+export PREFIXDIR := $(ARCHDIR)/prefix
+export GRADLEDIR := $(ARCHDIR)/gradle
+
+export OPENSSLINCLUDEDIR := $(BUILDDIR)/$(ANDROID_OPENSSL_NAME)/static/include
+
+
+all:
+	@echo 'Nothing to do by default.'
+	@echo 'Use one of the following to build for a specific architecture:'
+	@echo '    For actual devices: make build.arm64-v8a'
+	@echo '    For the Android emulator: make build.x86_64'
+
+build.arm64-v8a:
+	mkdir -p arm64-v8a
+	$(MAKE) ARCH=arm64-v8a buildarch
+	$(MAKE) ARCH=arm64-v8a gradle
+
+build.x86_64:
+	mkdir -p x86_64
+	$(MAKE) ARCH=x86_64 buildarch
+	$(MAKE) ARCH=x86_64 gradle
+
+
+ifdef ARCH
+
+export ANDROID_ABI := $(ARCH)
+
+ifeq ($(ARCH),arm64-v8a)
+BUILD_TYPE          := {{BUILD_TYPE_ARM64}}
+QT_BUILD_TYPE       := {{QT_BUILD_TYPE_ARM64}}
+export TARGET_ARCH  := armv8-a+crypto
+export HOST_ARCH    := aarch64-linux-android
+export OPENSSL_ARCH := arm64
+else ifeq ($(ARCH),x86_64)
+BUILD_TYPE          := {{BUILD_TYPE_X86_64}}
+QT_BUILD_TYPE       := {{QT_BUILD_TYPE_X86_64}}
+export TARGET_ARCH  := westmere
+export HOST_ARCH    := x86_64-linux-android
+export OPENSSL_ARCH := x86_64
+else
+$(error Unknown architecture '$(ARCH)')
+endif
+
+buildarch: $(ARCH)/drawdance/drawdance.configured $(ARCH)/drawpile/drawpile.configured
+	cmake --build $(ARCH)/drawdance
+	cmake --build $(ARCH)/drawpile
+
+$(ARCH)/drawpile/drawpile.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/libzip/libzip.installed $(ARCH)/libsodium/libsodium.installed $(ARCH)/qt/qt.installed $(ARCH)/drawdance/drawdance.configured
+	cd "$$DRAWPILE_PATH" && cmake \
+		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
+		-DCMAKE_FIND_ROOT_PATH="$$PREFIXDIR" \
+		-DANDROID_SDK_ROOT="$$SDK_PATH" \
+		-DANDROID_PLATFORM=android-$(ANDROID_VERSION) \
+		-DANDROID_ABI=$(ARCH) \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+		-DADDRESS_SANITIZER=OFF \
+		-DCLANG_TIDY=OFF \
+		-DSERVER=OFF \
+		-DSERVERGUI=OFF \
+		-DTOOLS=OFF \
+		-DTESTS=OFF \
+		-DINSTALL_DOC=OFF \
+		-DENABLE_ARCH_NATIVE=OFF \
+		-DQT_VERSION=5 \
+		-DDRAWDANCE_EXPORT_PATH="$$ARCHDIR/drawdance/Drawdance.cmake" \
+		-G Ninja \
+		-B "$$ARCHDIR/drawpile"
+	touch $@
+
+$(ARCH)/drawdance/drawdance.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/libzip/libzip.installed $(ARCH)/qt/qt.installed
+	cd "$$DRAWDANCE_PATH" && cmake \
+		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
+		-DCMAKE_FIND_ROOT_PATH="$$PREFIXDIR" \
+		-DANDROID_PLATFORM=android-$(ANDROID_VERSION) \
+		-DANDROID_ABI=$(ARCH) \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+		-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+		-DUSE_ADDRESS_SANITIZER=OFF \
+		-DUSE_STRICT_ALIASING=ON \
+		-DUSE_GENERATORS=OFF \
+		-DENABLE_ARCH_NATIVE=OFF \
+		-DBUILD_APPS=OFF \
+		-DBUILD_TESTS=OFF \
+		-DIMAGE_IMPL=QT \
+		-DXML_IMPL=QT \
+		-DZIP_IMPL=LIBZIP \
+		-G Ninja \
+		-B "$$ARCHDIR/drawdance"
+	touch $@
+
+$(ARCH)/ecm/ecm.installed: $(ARCH)/ecm/ecm.built
+	cmake --install $(ARCH)/ecm
+	touch $@
+
+$(ARCH)/ecm/ecm.built: | $(ECM_NAME)
+	cd $(ECM_NAME) && cmake \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DCMAKE_INSTALL_PREFIX="$$PREFIXDIR" \
+		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
+		-DANDROID_PLATFORM=android-$(ANDROID_VERSION) \
+		-DANDROID_ABI=$(ARCH) \
+		-G Ninja \
+		-B ../$(ARCH)/ecm
+	cmake --build $(ARCH)/ecm --parallel
+	touch $@
+
+$(ARCH)/libzip/libzip.installed: $(ARCH)/libzip/libzip.built
+	cmake --install $(ARCH)/libzip
+	touch $@
+
+$(ARCH)/libzip/libzip.built: | $(LIBZIP_NAME)
+	cd $(LIBZIP_NAME) && cmake \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DCMAKE_INSTALL_PREFIX="$$PREFIXDIR" \
+		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
+		-DANDROID_PLATFORM=android-$(ANDROID_VERSION) \
+		-DANDROID_ABI=$(ARCH) \
+		-DENABLE_COMMON_CRYPTO=OFF \
+		-DENABLE_GNUTLS=OFF \
+		-DENABLE_MBEDTLS=OFF \
+		-DENABLE_OPENSSL=OFF \
+		-DENABLE_WINDOWS_CRYPTO=OFF \
+		-DENABLE_BZIP2=OFF \
+		-DENABLE_LZMA=OFF \
+		-DENABLE_ZSTD=OFF \
+		-DENABLE_FDOPEN=OFF \
+		-DBUILD_REGRESS=OFF \
+		-DBUILD_EXAMPLES=OFF \
+		-DBUILD_DOC=OFF \
+		-DBUILD_SHARED_LIBS=OFF \
+		-G Ninja \
+		-B ../$(ARCH)/libzip
+	cmake --build $(ARCH)/libzip --parallel
+	touch $@
+
+$(ARCH)/libsodium/libsodium.installed: | $(LIBSODIUM_NAME)
+	mkdir -p $(ARCH)/libsodium
+	export CFLAGS="-Os -march=$$TARGET_ARCH"; \
+		export NDK_PLATFORM='android-$(ANDROID_VERSION)'; \
+		export ARCH='$(ARCH)'; \
+		export TOOLCHAIN_DIR="$$NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64"; \
+		export PATH="$$PATH:$$TOOLCHAIN_DIR/bin"; \
+		export CC='$(HOST_ARCH)$(ANDROID_VERSION)-clang'; \
+		cd $(ARCH)/libsodium && \
+			../../$(LIBSODIUM_NAME)/configure \
+				--enable-static \
+				--disable-shared \
+				--enable-minimal \
+				--host='$(HOST_ARCH)' \
+				--prefix="$$PREFIXDIR" \
+				--with-sysroot="$$TOOLCHAIN_DIR/sysroot" && \
+			$(MAKE) clean && \
+			$(MAKE) -j "$$(nproc)" && \
+			$(MAKE) install
+	touch $@
+
+$(ARCH)/qt/qt.installed: $(ARCH)/qt/qt.built
+	$(MAKE) -C $(ARCH)/qt install
+	touch $@
+
+$(ARCH)/qt/qt.built: | $(QT_NAME)/qt.patched $(ANDROID_OPENSSL_NAME)
+	mkdir -p $(ARCH)/qt
+	cd $(ARCH)/qt && ../../$(QT_NAME)/configure \
+		-$(QT_BUILD_TYPE) \
+		-opensource -confirm-license \
+		-xplatform android-clang \
+		-prefix "$$PREFIXDIR" \
+		-disable-rpath \
+		-nomake tests \
+		-nomake examples \
+		-android-ndk "$$NDK_PATH" \
+		-android-sdk "$$SDK_PATH" \
+		-no-warnings-are-errors \
+		-android-ndk-platform android-$(ANDROID_VERSION) \
+		-android-abis $(ARCH) \
+		-openssl-runtime -I "$$OPENSSLINCLUDEDIR" \
+		-no-avx -no-avx2 -no-avx512
+	$(MAKE) -C $(ARCH)/qt -j"$$(nproc)"
+	touch $@
+
+$(QT_NAME)/qt.patched: | $(QT_NAME)
+	patch -p1 <"$$PKGDIR/patches/qt-5.15.2.patch"
+	touch $@
+
+
+gradle: \
+		assets \
+		$(ARCH)/gradle/gradlew \
+		$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.jar \
+		$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.properties \
+		$(ARCH)/gradle/AndroidManifest.xml \
+		$(ARCH)/gradle/build.gradle \
+		$(ARCH)/gradle/gradle.properties \
+		$(ARCH)/gradle/local.properties \
+		$(ARCH)/gradle/res \
+		$(ARCH)/gradle/res/values/lib.xml \
+		$(ARCH)/gradle/libs/QtAndroid.jar \
+		$(ARCH)/gradle/libs/QtMultimedia.jar \
+		$(ARCH)/gradle/libs/QtAndroidNetwork.jar \
+		$(ARCH)/gradle/libs/QtAndroidExtras.jar \
+		$(ARCH)/gradle/libs/$(ARCH)/libc++_shared.so \
+		$(ARCH)/gradle/libs/$(ARCH)/libcrypto_1_1.so \
+		$(ARCH)/gradle/libs/$(ARCH)/libssl_1_1.so \
+		$(ARCH)/gradle/libs/$(ARCH)/libdrawpile_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Core_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Gui_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Multimedia_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Network_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Sql_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Svg_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Widgets_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5Xml_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_iconengines_qsvgicon_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qgif_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qicns_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qico_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qjpeg_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qsvg_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qtga_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qtiff_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qwbmp_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_qwebp_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_platforms_qtforandroid_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_sqldrivers_qsqlite_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libplugins_styles_qandroidstyle_$(ARCH).so
+	cd "$$GRADLEDIR" && ./gradlew assembleDebug
+
+$(ARCH)/gradle/gradlew \
+	$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.jar \
+	$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.properties &: \
+		$(ARCH)/gradle/build.gradle \
+		$(ARCH)/gradle/gradle.properties \
+		$(ARCH)/gradle/local.properties \
+		| $(GRADLE_NAME)
+	cd "$$GRADLEDIR" && "../../$$GRADLE_NAME/bin/gradle" wrapper
+
+$(ARCH)/gradle/AndroidManifest.xml: $(PKGDIR)/templates/AndroidManifest.xml
+	cp "$$PKGDIR/templates/AndroidManifest.xml" $@
+
+$(ARCH)/gradle/build.gradle: $(PKGDIR)/templates/build.gradle
+	cp $< $@
+
+$(ARCH)/gradle/res: | $(PKGDIR)/templates/res
+	cp -r "$$PKGDIR/templates/res" $@
+
+$(ARCH)/gradle/gradle.properties: $(PKGDIR)/templates/gradle.properties
+	"$$PKGDIR/envreplace" <"$$PKGDIR/templates/gradle.properties" >$@
+
+$(ARCH)/gradle/local.properties: $(PKGDIR)/templates/local.properties
+	"$$PKGDIR/envreplace" <"$$PKGDIR/templates/local.properties" >$@
+
+$(ARCH)/gradle/res/values/lib.xml: $(PKGDIR)/templates/lib.xml | $(ARCH)/gradle/res/values
+	"$$PKGDIR/envreplace" <"$$PKGDIR/templates/lib.xml" >$@
+
+$(ARCH)/gradle/res/values: | $(ARCH)/gradle/res
+	mkdir -p $@
+
+$(ARCH)/gradle/libs/%.jar: x86_64/prefix/jar/%.jar | $(ARCH)/gradle/libs
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libc++_shared.so: $(NDK_PATH)/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/$(HOST_ARCH)/libc++_shared.so | $(ARCH)/gradle/libs/$(ARCH)
+	cp "$$NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/$(HOST_ARCH)/libc++_shared.so" $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libcrypto_1_1.so: $(ANDROID_OPENSSL_NAME)/latest/$(OPENSSL_ARCH)/libcrypto_1_1.so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libssl_1_1.so: $(ANDROID_OPENSSL_NAME)/latest/$(OPENSSL_ARCH)/libssl_1_1.so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libdrawpile_$(ARCH).so: $(ARCH)/drawpile/android-build/libs/$(ARCH)/libdrawpile_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libQt%.so: $(ARCH)/prefix/lib/libQt%.so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libplugins_iconengines_qsvgicon_$(ARCH).so: $(ARCH)/prefix/plugins/iconengines/libplugins_iconengines_qsvgicon_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libplugins_imageformats_%.so: $(ARCH)/prefix/plugins/imageformats/libplugins_imageformats_%.so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libplugins_platforms_qtforandroid_$(ARCH).so: $(ARCH)/prefix/plugins/platforms/libplugins_platforms_qtforandroid_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libplugins_sqldrivers_qsqlite_$(ARCH).so: $(ARCH)/prefix/plugins/sqldrivers/libplugins_sqldrivers_qsqlite_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH)/libplugins_styles_qandroidstyle_$(ARCH).so: $(ARCH)/prefix/plugins/styles/libplugins_styles_qandroidstyle_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
+$(ARCH)/gradle/libs/$(ARCH):
+	mkdir -p $@
+
+$(ARCH)/gradle/libs:
+	mkdir -p $@
+
+endif
+
+
+assets: assets.mk
+	$(MAKE) -f assets.mk "DRAWPILE_PATH=$$DRAWPILE_PATH" "GRADLE_PATH=$$GRADLEDIR"
+
+assets.mk: $(PKGDIR)/generate-assets-mk
+	"$$PKDGIR/generate-assets-mk" >$@
+
+
+download: | $(QT_NAME) $(LIBZIP_NAME) $(ECM_NAME) $(LIBSODIUM_NAME) $(ANDROID_OPENSSL_NAME)
+
+$(QT_NAME):
+	wget "$$QT_URL" -O "$$QT_NAME.tar.xz"
+	tar xf "$$QT_NAME.tar.xz"
+	rm "$$QT_NAME.tar.xz"
+
+$(LIBZIP_NAME):
+	wget "$$LIBZIP_URL" -O "$$LIBZIP_NAME.tar.xz"
+	tar xf "$$LIBZIP_NAME.tar.xz"
+	rm "$$LIBZIP_NAME.tar.xz"
+
+$(ECM_NAME):
+	wget "$$ECM_URL" -O "$$ECM_NAME.tar.gz"
+	tar xf "$$ECM_NAME.tar.gz"
+	rm "$$ECM_NAME.tar.gz"
+
+$(LIBSODIUM_NAME):
+	wget "$$LIBSODIUM_URL" -O "$$LIBSODIUM_NAME.tar.gz"
+	tar xf "$$LIBSODIUM_NAME.tar.gz"
+	rm "$$LIBSODIUM_NAME.tar.gz"
+
+$(ANDROID_OPENSSL_NAME):
+	wget "$$ANDROID_OPENSSL_URL" -O "$$ANDROID_OPENSSL_NAME.tar.gz"
+	tar xf "$$ANDROID_OPENSSL_NAME.tar.gz"
+	rm "$$ANDROID_OPENSSL_NAME.tar.gz"
+
+$(GRADLE_NAME):
+	wget "$$GRADLE_URL" -O "$$GRADLE_NAME.zip"
+	unzip "$$GRADLE_NAME.zip"
+	rm "$$GRADLE_NAME.zip"
+
+
+.PHONY: all assets build.arm64-v8a build.x86_64 buildarch download gradle
