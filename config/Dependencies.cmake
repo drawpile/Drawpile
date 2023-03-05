@@ -12,7 +12,7 @@ if(CLIENT)
 	find_package("Qt${QT_VERSION}" COMPONENTS Xml REQUIRED)
 	find_package(Threads REQUIRED)
 
-	if("${QT_VERSION}" EQUAL 5)
+	if("${QT_VERSION}" EQUAL 5 AND NOT ANDROID)
 		find_package(KF5Archive REQUIRED)
 	else()
 		find_package(libzip REQUIRED)
