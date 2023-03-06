@@ -72,6 +72,6 @@ else()
     endif()
 
     if(USE_GENERATORS)
-        find_package(Qt5 COMPONENTS Core Gui)
+        find_package("Qt${QT_VERSION}" COMPONENTS Core Gui)
     endif()
 endif()
