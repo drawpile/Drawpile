@@ -26,6 +26,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef DP_QT_IO
+#    include "input_qt.h"
+#endif
+
 
 struct DP_Input {
     const DP_InputMethods *methods;
@@ -264,6 +268,9 @@ DP_Input *DP_file_input_new(FILE *fp, bool close)
 DP_Input *DP_file_input_new_from_path(const char *path)
 {
     DP_ASSERT(path);
+#ifdef DP_QT_IO
+    return DP_qfile_input_new_from_path(path, DP_input_new);
+#else
     FILE *fp = fopen(path, "rb");
     if (fp) {
         return DP_file_input_new(fp, true);
@@ -272,6 +279,7 @@ DP_Input *DP_file_input_new_from_path(const char *path)
         DP_error_set("Can't open '%s': %s", path, strerror(errno));
         return NULL;
     }
+#endif
 }
 
 

@@ -67,11 +67,19 @@ set(dpcommon_tests
     test/rect.c
     test/vector.c)
 
-add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
-    "${dpcommon_tests}" dpcommon/threading_pthread.c
-    dpcommon/threading_qt.cpp dpcommon/threading_sdl.c)
+set(dpcommon_qt_io_sources
+    dpcommon/input_qt.cpp
+    dpcommon/output_qt.cpp)
 
-# thread impl
+set(dpcommon_qt_io_headers
+    dpcommon/input_qt.h
+    dpcommon/output_qt.h)
+
+add_clang_format_files("${dpcommon_sources}" "${dpcommon_headers}"
+    "${dpcommon_tests}" "${dpcommon_qt_io_sources}" "${dpcommon_qt_io_headers}"
+    dpcommon/threading_pthread.c dpcommon/threading_qt.cpp
+    dpcommon/threading_sdl.c)
+
 if(WIN32)
     list(APPEND dpcommon_sources dpcommon/threading_win32.c)
 else()
@@ -94,6 +102,20 @@ if(IS_BIG_ENDIAN)
     target_compile_definitions(dpcommon PUBLIC DP_BYTE_ORDER=2)
 else()
     target_compile_definitions(dpcommon PUBLIC DP_BYTE_ORDER=1)
+endif()
+
+if("${FILE_IO_IMPL}" STREQUAL "STDIO")
+    # Nothing to do.
+elseif("${FILE_IO_IMPL}" STREQUAL "QT")
+    add_library(dpcommon_qt_io STATIC
+        "${dpcommon_qt_io_sources}" "${dpcommon_qt_io_headers}")
+    set_dp_target_properties(dpcommon_qt_io CXX)
+    target_link_libraries(
+        dpcommon_qt_io PUBLIC dpcommon "Qt${QT_VERSION}::Core")
+    target_compile_definitions(dpcommon PUBLIC DP_QT_IO=1)
+    target_link_libraries(dpcommon PUBLIC dpcommon_qt_io)
+else()
+    message(SEND_ERROR "Unknown FILE_IO_IMPL value '${FILE_IO_IMPL}'")
 endif()
 
 if(BUILD_TESTS)

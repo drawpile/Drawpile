@@ -36,11 +36,15 @@ option(BUILD_TESTS "Build TAP tests" ON)
 option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
 option(BUILD_TOOLS "Build command-line tools, even if BUILD_APPS is OFF" OFF)
 
-set(IMAGE_IMPL LIBS CACHE STRING "PNG and JPEG implementation (LIBS, QT, QT6)")
+set(IMAGE_IMPL LIBS CACHE STRING "PNG and JPEG implementation (LIBS, QT)")
 
-set(XML_IMPL QT CACHE STRING "XML reader implementation (QT, QT6)")
+set(FILE_IO_IMPL STDIO CACHE STRING "Default file I/O (STDIO, QT)")
+
+set(XML_IMPL QT CACHE STRING "XML reader implementation (QT)")
 
 set(ZIP_IMPL LIBZIP CACHE STRING "ZIP folder implementation (LIBZIP, KARCHIVE)")
+
+set(QT_VERSION 5 CACHE STRING "Qt version to use, if pulled in (5, 6)")
 
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross-compiling for platform '${CMAKE_SYSTEM_NAME}'")

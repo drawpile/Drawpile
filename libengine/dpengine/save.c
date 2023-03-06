@@ -606,7 +606,7 @@ static DP_SaveResult save_flat_image(DP_CanvasState *cs, const char *path,
         return DP_SAVE_RESULT_FLATTEN_ERROR;
     }
 
-    DP_Output *output = DP_file_output_new_from_path(path);
+    DP_Output *output = DP_file_output_save_new_from_path(path);
     if (!output) {
         DP_warn("Save: %s", DP_error());
         return DP_SAVE_RESULT_OPEN_ERROR;

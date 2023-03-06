@@ -66,6 +66,12 @@ DP_Output *DP_file_output_new(FILE *fp, bool close);
 
 DP_Output *DP_file_output_new_from_path(const char *path);
 
+// With Qt file IO turned on, this writes to a temporary file and then renames
+// it if there were no errors. Otherwise, this just opens the file normally.
+// If Qt can't manage to create a temporary file, it will fall back to writing
+// the file directly too. This always happens on Android, for example.
+DP_Output *DP_file_output_save_new_from_path(const char *path);
+
 
 DP_Output *DP_gzip_output_new(void *gf, bool close);
 

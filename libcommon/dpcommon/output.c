@@ -26,6 +26,10 @@
 #include <errno.h>
 #include <zlib.h>
 
+#ifdef DP_QT_IO
+#    include "output_qt.h"
+#endif
+
 #define DP_MEM_OUTPUT_MIN_CAPACITY 32
 
 
@@ -267,6 +271,9 @@ DP_Output *DP_file_output_new(FILE *fp, bool close)
 DP_Output *DP_file_output_new_from_path(const char *path)
 {
     DP_ASSERT(path);
+#ifdef DP_QT_IO
+    return DP_qfile_output_new_from_path(path, DP_output_new);
+#else
     FILE *fp = fopen(path, "wb");
     if (fp) {
         return DP_file_output_new(fp, true);
@@ -275,6 +282,17 @@ DP_Output *DP_file_output_new_from_path(const char *path)
         DP_error_set("Can't open '%s': %s", path, strerror(errno));
         return NULL;
     }
+#endif
+}
+
+DP_Output *DP_file_output_save_new_from_path(const char *path)
+{
+    DP_ASSERT(path);
+#ifdef DP_QT_IO
+    return DP_qsavefile_output_new_from_path(path, DP_output_new);
+#else
+    return DP_file_output_new_from_path(path);
+#endif
 }
 
 

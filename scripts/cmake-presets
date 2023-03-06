@@ -88,8 +88,10 @@ preset_drawpile_debug() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
+          -DFILE_IO_IMPL=QT \
           -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
+          -DQT_VERSION=5 \
           $GENERATOR \
           -B builddp
 }
@@ -103,8 +105,10 @@ preset_drawpile_relwithdebinfo() {
           -DUSE_STRICT_ALIASING=ON \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
+          -DFILE_IO_IMPL=QT \
           -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
+          -DQT_VERSION=5 \
           $GENERATOR \
           -B builddprelwithdebinfo
 }
@@ -118,8 +122,10 @@ preset_drawpile_release() {
           -DUSE_STRICT_ALIASING=ON \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
+          -DFILE_IO_IMPL=QT \
           -DXML_IMPL=QT \
           -DZIP_IMPL=KARCHIVE \
+          -DQT_VERSION=5 \
           $GENERATOR \
           -B builddprelease
 }
@@ -129,8 +135,10 @@ preset_drawpile_qt6_debug() {
           -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
           -DUSE_ADDRESS_SANITIZER=ON \
           -DBUILD_APPS=OFF \
-          -DXML_IMPL=QT6 \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
           -DZIP_IMPL=LIBZIP \
+          -DQT_VERSION=6 \
           $GENERATOR \
           -B builddpqt6
 }
@@ -144,8 +152,10 @@ preset_drawpile_qt6_relwithdebinfo() {
           -DUSE_GENERATORS=OFF \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
-          -DXML_IMPL=QT6 \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
           -DZIP_IMPL=LIBZIP \
+          -DQT_VERSION=6 \
           $GENERATOR \
           -B builddpqt6relwithdebinfo
 }
@@ -159,8 +169,10 @@ preset_drawpile_qt6_release() {
           -DUSE_GENERATORS=OFF \
           -DENABLE_ARCH_NATIVE=ON \
           -DBUILD_APPS=OFF \
-          -DXML_IMPL=QT6 \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
           -DZIP_IMPL=LIBZIP \
+          -DQT_VERSION=6 \
           $GENERATOR \
           -B builddpqt6release
 }
