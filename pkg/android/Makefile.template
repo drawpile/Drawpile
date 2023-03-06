@@ -5,8 +5,8 @@ export ANDROID_VERSION := 21
 export QT_NAME := qt-everywhere-src-5.15.2
 export QT_URL  := https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz
 
-export LIBZIP_NAME := libzip-1.9.2
-export LIBZIP_URL  := https://libzip.org/download/$(LIBZIP_NAME).tar.xz
+export KARCHIVE_NAME := karchive-v5.103.0
+export KARCHIVE_URL  := https://invent.kde.org/frameworks/karchive/-/archive/v5.103.0/karchive-v5.103.0.tar.gz
 
 export ECM_NAME := extra-cmake-modules-5.103.0
 export ECM_URL  := https://github.com/KDE/extra-cmake-modules/archive/refs/tags/v5.103.0.tar.gz
@@ -78,7 +78,7 @@ buildarch: $(ARCH)/drawdance/drawdance.configured $(ARCH)/drawpile/drawpile.conf
 	cmake --build $(ARCH)/drawdance
 	cmake --build $(ARCH)/drawpile
 
-$(ARCH)/drawpile/drawpile.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/libzip/libzip.installed $(ARCH)/libsodium/libsodium.installed $(ARCH)/qt/qt.installed $(ARCH)/drawdance/drawdance.configured
+$(ARCH)/drawpile/drawpile.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/karchive/karchive.installed $(ARCH)/libsodium/libsodium.installed $(ARCH)/qt/qt.installed $(ARCH)/drawdance/drawdance.configured
 	cd "$$DRAWPILE_PATH" && cmake \
 		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
 		-DCMAKE_FIND_ROOT_PATH="$$PREFIXDIR" \
@@ -102,7 +102,7 @@ $(ARCH)/drawpile/drawpile.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/libzip/l
 		-B "$$ARCHDIR/drawpile"
 	touch $@
 
-$(ARCH)/drawdance/drawdance.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/libzip/libzip.installed $(ARCH)/qt/qt.installed
+$(ARCH)/drawdance/drawdance.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/karchive/karchive.installed $(ARCH)/qt/qt.installed
 	cd "$$DRAWDANCE_PATH" && cmake \
 		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
 		-DCMAKE_FIND_ROOT_PATH="$$PREFIXDIR" \
@@ -117,9 +117,11 @@ $(ARCH)/drawdance/drawdance.configured: $(ARCH)/ecm/ecm.installed $(ARCH)/libzip
 		-DENABLE_ARCH_NATIVE=OFF \
 		-DBUILD_APPS=OFF \
 		-DBUILD_TESTS=OFF \
+		-DFILE_IO_IMPL=QT \
 		-DIMAGE_IMPL=QT \
 		-DXML_IMPL=QT \
-		-DZIP_IMPL=LIBZIP \
+		-DZIP_IMPL=KARCHIVE \
+		-DQT_VERSION=5 \
 		-G Ninja \
 		-B "$$ARCHDIR/drawdance"
 	touch $@
@@ -140,33 +142,26 @@ $(ARCH)/ecm/ecm.built: | $(ECM_NAME)
 	cmake --build $(ARCH)/ecm --parallel
 	touch $@
 
-$(ARCH)/libzip/libzip.installed: $(ARCH)/libzip/libzip.built
-	cmake --install $(ARCH)/libzip
+$(ARCH)/karchive/karchive.installed: $(ARCH)/karchive/karchive.built
+	cmake --install $(ARCH)/karchive
 	touch $@
 
-$(ARCH)/libzip/libzip.built: | $(LIBZIP_NAME)
-	cd $(LIBZIP_NAME) && cmake \
+$(ARCH)/karchive/karchive.built: $(ARCH)/ecm/ecm.installed | $(KARCHIVE_NAME)
+	cd $(KARCHIVE_NAME) && cmake \
 		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
 		-DCMAKE_INSTALL_PREFIX="$$PREFIXDIR" \
+		-DCMAKE_FIND_ROOT_PATH="$$PREFIXDIR" \
 		-DCMAKE_TOOLCHAIN_FILE="$$NDK_PATH/build/cmake/android.toolchain.cmake" \
 		-DANDROID_PLATFORM=android-$(ANDROID_VERSION) \
 		-DANDROID_ABI=$(ARCH) \
-		-DENABLE_COMMON_CRYPTO=OFF \
-		-DENABLE_GNUTLS=OFF \
-		-DENABLE_MBEDTLS=OFF \
-		-DENABLE_OPENSSL=OFF \
-		-DENABLE_WINDOWS_CRYPTO=OFF \
-		-DENABLE_BZIP2=OFF \
-		-DENABLE_LZMA=OFF \
-		-DENABLE_ZSTD=OFF \
-		-DENABLE_FDOPEN=OFF \
-		-DBUILD_REGRESS=OFF \
-		-DBUILD_EXAMPLES=OFF \
-		-DBUILD_DOC=OFF \
-		-DBUILD_SHARED_LIBS=OFF \
+		-DCMAKE_DISABLE_FIND_PACKAGE_BZip2=ON \
+		-DCMAKE_DISABLE_FIND_PACKAGE_LibLZMA=ON \
+		-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=ON \
+		-DBUILD_TESTING=OFF \
+		-DBUILD_QCH=OFF \
 		-G Ninja \
-		-B ../$(ARCH)/libzip
-	cmake --build $(ARCH)/libzip --parallel
+		-B ../$(ARCH)/karchive
+	cmake --build $(ARCH)/karchive --parallel
 	touch $@
 
 $(ARCH)/libsodium/libsodium.installed: | $(LIBSODIUM_NAME)
@@ -237,6 +232,7 @@ gradle: \
 		$(ARCH)/gradle/libs/$(ARCH)/libc++_shared.so \
 		$(ARCH)/gradle/libs/$(ARCH)/libcrypto_1_1.so \
 		$(ARCH)/gradle/libs/$(ARCH)/libssl_1_1.so \
+		$(ARCH)/gradle/libs/$(ARCH)/libKF5Archive_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libdrawpile_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libQt5Core_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libQt5Gui_$(ARCH).so \
@@ -306,6 +302,9 @@ $(ARCH)/gradle/libs/$(ARCH)/libssl_1_1.so: $(ANDROID_OPENSSL_NAME)/latest/$(OPEN
 $(ARCH)/gradle/libs/$(ARCH)/libdrawpile_$(ARCH).so: $(ARCH)/drawpile/android-build/libs/$(ARCH)/libdrawpile_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
 	cp $< $@
 
+$(ARCH)/gradle/libs/$(ARCH)/libKF5Archive_$(ARCH).so: $(ARCH)/prefix/lib/libKF5Archive_$(ARCH).so | $(ARCH)/gradle/libs/$(ARCH)
+	cp $< $@
+
 $(ARCH)/gradle/libs/$(ARCH)/libQt%.so: $(ARCH)/prefix/lib/libQt%.so | $(ARCH)/gradle/libs/$(ARCH)
 	cp $< $@
 
@@ -340,17 +339,17 @@ assets.mk: $(PKGDIR)/generate-assets-mk
 	"$$PKDGIR/generate-assets-mk" >$@
 
 
-download: | $(QT_NAME) $(LIBZIP_NAME) $(ECM_NAME) $(LIBSODIUM_NAME) $(ANDROID_OPENSSL_NAME)
+download: | $(QT_NAME) $(KARCHIVE_NAME) $(ECM_NAME) $(LIBSODIUM_NAME) $(ANDROID_OPENSSL_NAME)
 
 $(QT_NAME):
 	wget "$$QT_URL" -O "$$QT_NAME.tar.xz"
 	tar xf "$$QT_NAME.tar.xz"
 	rm "$$QT_NAME.tar.xz"
 
-$(LIBZIP_NAME):
-	wget "$$LIBZIP_URL" -O "$$LIBZIP_NAME.tar.xz"
-	tar xf "$$LIBZIP_NAME.tar.xz"
-	rm "$$LIBZIP_NAME.tar.xz"
+$(KARCHIVE_NAME):
+	wget "$$KARCHIVE_URL" -O "$$KARCHIVE_NAME.tar.gz"
+	tar xf "$$KARCHIVE_NAME.tar.gz"
+	rm "$$KARCHIVE_NAME.tar.gz"
 
 $(ECM_NAME):
 	wget "$$ECM_URL" -O "$$ECM_NAME.tar.gz"
