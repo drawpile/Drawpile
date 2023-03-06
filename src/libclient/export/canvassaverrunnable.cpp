@@ -19,39 +19,9 @@
 #include "canvassaverrunnable.h"
 #include "canvas/paintengine.h"
 #include "drawdance/global.h"
-#include <QDir>
-#include <QFileInfo>
-#include <QTemporaryFile>
 
 extern "C" {
 #include <dpengine/save.h>
-}
-
-namespace {
-
-QString makeTemporaryPath(QString path)
-{
-	QFileInfo info{path};
-	QString templateName = info.dir().filePath(
-		info.baseName() + ".XXXXXX." + info.completeSuffix());
-	QTemporaryFile tempFile{templateName};
-	if(tempFile.open()) {
-		return tempFile.fileName();
-	} else {
-		qWarning("Can't open temporary template '%s', writing to '%s' instead",
-			qUtf8Printable(templateName), qUtf8Printable(path));
-		return QString{};
-	}
-}
-
-DP_SaveResult save(const canvas::PaintEngine *pe, QString path)
-{
-	QByteArray pathBytes = path.toUtf8();
-	qDebug("Saving to '%s'", pathBytes.constData());
-	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
-	return DP_save(pe->viewCanvasState().get(), dc.get(), DP_SAVE_IMAGE_GUESS, pathBytes.constData());
-}
-
 }
 
 CanvasSaverRunnable::CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent)
@@ -63,25 +33,11 @@ CanvasSaverRunnable::CanvasSaverRunnable(const canvas::PaintEngine *pe, const QS
 
 void CanvasSaverRunnable::run()
 {
-	DP_SaveResult result;
-	QString tempPath = makeTemporaryPath(m_filename);
-	if(tempPath.isEmpty()) {
-		result = save(m_pe, m_filename);
-	} else {
-		result = save(m_pe, tempPath);
-		if(result != DP_SAVE_RESULT_SUCCESS) {
-			QFile::remove(tempPath);
-		} else {
-			qDebug("Renaming temporary '%s' to '%s'", qUtf8Printable(tempPath),
-				qUtf8Printable(m_filename));
-			QFile::remove(m_filename); // Qt won't rename over existing files.
-			if(!QFile::rename(tempPath, m_filename)) {
-				emit saveComplete(tr("Error moving temporary file %1 to %2.")
-					.arg(tempPath, m_filename));
-				return;
-			}
-		}
-	}
+	QByteArray pathBytes = m_filename.toUtf8();
+	qDebug("Saving to '%s'", pathBytes.constData());
+	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
+	DP_SaveResult result = DP_save(
+		m_pe->viewCanvasState().get(), dc.get(), DP_SAVE_IMAGE_GUESS, pathBytes.constData());
 	emit saveComplete(saveResultToErrorString(result));
 }
 
