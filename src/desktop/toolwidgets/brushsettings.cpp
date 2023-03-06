@@ -22,16 +22,17 @@ extern "C" {
 #include <dpengine/brush.h>
 }
 
-#include "brushes/brush.h"
 #include "brushsettings.h"
-#include "canvas/blendmodes.h"
-#include "canvas/inputpresetmodel.h"
 #include "main.h"
 #include "tools/toolcontroller.h"
 #include "tools/toolproperties.h"
+#include "brushes/brush.h"
+#include "dialogs/inputsettings.h"
+
+#include "canvas/inputpresetmodel.h"
+#include "canvas/blendmodes.h"
 #include "ui_brushdock.h"
 #include "ui_brushdockpopup.h"
-#include "widgets/inputsettings.h"
 #include "widgets/popup.h"
 
 #include <QJsonDocument>
@@ -64,8 +65,8 @@ namespace {
 
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
+	QPointer<dialogs::InputSettings> inputSettingsDialog = nullptr;
 	input::PresetModel *presetModel;
-	widgets::InputSettings *inputSettingsPopup;
 
 	QStandardItemModel *blendModes, *eraseModes;
 
@@ -196,29 +197,27 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.setupUi(widget);
 	d->ui.inputPreset->setModel(d->presetModel);
 
-	d->inputSettingsPopup = new widgets::InputSettings(widget);
-	connect(d->inputSettingsPopup, &widgets::InputSettings::activePresetModified,
-			this, &BrushSettings::emitPresetChanges);
-	connect(d->inputSettingsPopup, &widgets::InputSettings::currentIndexChanged,
-			d->ui.inputPreset, &QComboBox::setCurrentIndex);
-	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged),
-			d->inputSettingsPopup, &widgets::InputSettings::setCurrentIndex);
-	connect(d->inputSettingsPopup, &widgets::Popup::targetChanged, [this](QWidget *widget){
-		d->ui.configureInput->setChecked(widget != nullptr);
-	});
-	connect(d->ui.configureInput, &QAbstractButton::toggled, [this](bool checked) {
-		if(checked) {
-			d->inputSettingsPopup->setCurrentPreset(d->currentTool().inputPresetId);
-		}
-		d->inputSettingsPopup->setVisibleOn(d->ui.configureInput, checked);
-	});
-
 	// The blend mode combo is ever so slightly higher than the buttons, so
 	// hiding it causes some jerking normally, so we'll tell it to retain its
 	// size. The space it's taking up is supposed to be empty anyway.
 	QSizePolicy blendmodeSizePolicy = d->ui.blendmode->sizePolicy();
 	blendmodeSizePolicy.setRetainSizeWhenHidden(true);
 	d->ui.blendmode->setSizePolicy(blendmodeSizePolicy);
+
+	connect(d->ui.configureInput, &QAbstractButton::clicked, [this, parent]() {
+		if(!d->inputSettingsDialog) {
+			d->inputSettingsDialog = new dialogs::InputSettings(parent);
+			d->inputSettingsDialog->setAttribute(Qt::WA_DeleteOnClose);
+			connect(d->inputSettingsDialog, &dialogs::InputSettings::activePresetModified,
+					this, &BrushSettings::emitPresetChanges);
+			connect(d->inputSettingsDialog, &dialogs::InputSettings::currentIndexChanged,
+					d->ui.inputPreset, &QComboBox::setCurrentIndex);
+			connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged),
+					d->inputSettingsDialog, &dialogs::InputSettings::setCurrentIndex);
+		}
+		d->inputSettingsDialog->setCurrentPreset(d->currentTool().inputPresetId);
+		d->inputSettingsDialog->show();
+	});
 
 	// Outside communication
 	connect(this, SIGNAL(pixelSizeChanged(int)), parent, SIGNAL(sizeChanged(int)));

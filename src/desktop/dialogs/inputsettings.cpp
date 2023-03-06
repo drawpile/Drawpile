@@ -22,10 +22,13 @@
 
 #include "ui_inputcfg.h"
 
-namespace widgets {
+#include <QDebug>
+#include <qpushbutton.h>
+
+namespace dialogs {
 
 InputSettings::InputSettings(QWidget *parent) :
-	Popup(parent),
+	QDialog(parent),
 	m_presetModel(input::PresetModel::getSharedInstance()),
 	m_updateInProgress(false),
 	m_indexChangeInProgress(false)
@@ -55,6 +58,8 @@ InputSettings::InputSettings(QWidget *parent) :
 	connect(m_presetModel, &QAbstractItemModel::rowsInserted, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::rowsRemoved, this, &InputSettings::onPresetCountChanged);
 	connect(m_presetModel, &QAbstractItemModel::modelReset, this, &InputSettings::onPresetCountChanged);
+
+	connect(m_ui->closeButton, &QPushButton::pressed, this, &QDialog::reject);
 
 	onPresetCountChanged();
 }

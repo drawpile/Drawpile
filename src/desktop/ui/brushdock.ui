@@ -295,14 +295,11 @@
      <item row="10" column="3">
       <widget class="widgets::GroupedToolButton" name="configureInput">
        <property name="toolTip">
-        <string>Input Preset Settings</string>
+        <string>Configure input presets</string>
        </property>
        <property name="icon">
         <iconset theme="configure">
          <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
        </property>
       </widget>
      </item>

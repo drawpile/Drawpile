@@ -41,6 +41,7 @@ set(desktop_sources
 	dialogs/tablettester.cpp
 	dialogs/avatarimport.cpp
 	dialogs/addserverdialog.cpp
+	dialogs/inputsettings.cpp
 	dialogs/layerproperties.cpp
 	dialogs/brushpresetproperties.cpp
 	widgets/viewstatus.cpp
@@ -60,7 +61,6 @@ set(desktop_sources
 	widgets/presetselector.cpp
 	widgets/spinner.cpp
 	widgets/notifbar.cpp
-	widgets/inputsettings.cpp
 	widgets/kis_double_parse_spin_box.cpp
 	widgets/kis_int_parse_spin_box.cpp
 	widgets/kis_num_parser.cpp

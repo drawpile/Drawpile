@@ -7,15 +7,12 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>313</height>
+    <height>400</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>6</number>
-   </property>
-   <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
    </property>
    <property name="leftMargin">
     <number>9</number>
@@ -195,7 +192,7 @@
        <property name="minimumSize">
         <size>
          <width>50</width>
-         <height>200</height>
+         <height>50</height>
         </size>
        </property>
       </widget>
@@ -203,17 +200,28 @@
     </layout>
    </item>
    <item>
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>300</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -233,6 +241,11 @@
    <extends>QWidget</extends>
    <header>widgets/kis_curve_widget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>widgets::GroupedToolButton</class>
+   <extends>QToolButton</extends>
+   <header>widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
