@@ -236,11 +236,11 @@
      <item row="4" column="3">
       <widget class="widgets::GroupedToolButton" name="pressureSmudging">
        <property name="toolTip">
-        <string>Smudging Pressure Settings</string>
+        <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="configure">
-         <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -250,11 +250,11 @@
      <item row="3" column="3">
       <widget class="widgets::GroupedToolButton" name="pressureHardness">
        <property name="toolTip">
-        <string>Hardness Pressure Settings</string>
+        <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="configure">
-         <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -264,11 +264,11 @@
      <item row="2" column="3">
       <widget class="widgets::GroupedToolButton" name="pressureOpacity">
        <property name="toolTip">
-        <string>Opacity Pressure Settings</string>
+        <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="configure">
-         <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -306,11 +306,11 @@
      <item row="0" column="3">
       <widget class="widgets::GroupedToolButton" name="pressureSize">
        <property name="toolTip">
-        <string>Size Pressure Settings</string>
+        <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="configure">
-         <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -323,7 +323,7 @@
         <string>px</string>
        </property>
        <property name="prefix">
-        <string notr="true">Size: </string>
+        <string>Size: </string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -349,7 +349,7 @@
         <string notr="true">%</string>
        </property>
        <property name="prefix">
-        <string notr="true">Opacity: </string>
+        <string>Opacity: </string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -365,7 +365,7 @@
         <string notr="true">%</string>
        </property>
        <property name="prefix">
-        <string notr="true">Hardness: </string>
+        <string>Hardness: </string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -381,7 +381,7 @@
         <string notr="true">%</string>
        </property>
        <property name="prefix">
-        <string notr="true">Smudging: </string>
+        <string>Smudging: </string>
        </property>
        <property name="minimum">
         <number>0</number>

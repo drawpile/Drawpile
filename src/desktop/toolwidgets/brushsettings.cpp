@@ -32,19 +32,18 @@ extern "C" {
 #include "canvas/inputpresetmodel.h"
 #include "canvas/blendmodes.h"
 #include "ui_brushdock.h"
-#include "ui_brushdockpopup.h"
-#include "widgets/popup.h"
 
+#include <mypaint-brush-settings.h>
+#include <QKeyEvent>
+#include <QPainter>
+#include <QMimeData>
+#include <QSettings>
+#include <QStandardItemModel>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QKeyEvent>
-#include <QMimeData>
-#include <QPainter>
 #include <QPointer>
-#include <QSettings>
-#include <QSignalBlocker>
-#include <QStandardItemModel>
-#include <mypaint-brush-settings.h>
+#include <qapplication.h>
+#include <qglobal.h>
 
 namespace tools {
 
@@ -73,10 +72,6 @@ struct BrushSettings::Private {
 	ToolSlot toolSlots[BRUSH_COUNT];
 	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
 	QWidget *brushSlotWidget = nullptr;
-
-	widgets::Popup *popup;
-	Ui_BrushDockPopup popupUi;
-	QWidget *popupTarget = nullptr;
 
 	int current = 0;
 	int previousNonEraser = 0;
@@ -238,9 +233,16 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.mypaintMode, &QToolButton::clicked, this, &BrushSettings::changeBrushType);
 
 	connect(d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureSize, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
 	connect(d->ui.opacityBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureOpacity, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
 	connect(d->ui.hardnessBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureHardness, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
+
 	connect(d->ui.smudgingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.pressureSmudging, &QToolButton::toggled, this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.radiusLogarithmicBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.colorpickupBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
@@ -258,24 +260,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	// startup and messing up the application layout. This will hide the excess
 	// UI elements and bring the docker to a reasonable size to begin with.
 	adjustSettingVisibilities(false, false);
-
-	d->popup = new widgets::Popup{widget};
-	d->popupUi.setupUi(d->popup);
-	connect(d->popup, &widgets::Popup::targetChanged, this, &BrushSettings::togglePopup);
-	connect(d->popupUi.pressureBox, &QCheckBox::stateChanged, this, &BrushSettings::updateFromPopupUi);
-	connect(d->popupUi.minSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromPopupUi);
-	connect(d->ui.pressureSize, &QToolButton::toggled, [this](bool checked){
-		d->popup->setVisibleOn(d->ui.pressureSize, checked);
-	});
-	connect(d->ui.pressureOpacity, &QToolButton::toggled, [this](bool checked){
-		d->popup->setVisibleOn(d->ui.pressureOpacity, checked);
-	});
-	connect(d->ui.pressureHardness, &QToolButton::toggled, [this](bool checked){
-		d->popup->setVisibleOn(d->ui.pressureHardness, checked);
-	});
-	connect(d->ui.pressureSmudging, &QToolButton::toggled, [this](bool checked){
-		d->popup->setVisibleOn(d->ui.pressureSmudging, checked);
-	});
 
 	return widget;
 }
@@ -512,12 +496,17 @@ void BrushSettings::updateUi()
 	// This is so that when loading a brush from settings, the hidden elements
 	// don't get left in their default state.
 	d->ui.brushsizeBox->setValue(classic.size.max);
+	d->ui.pressureSize->setChecked(classic.size_pressure);
+	d->ui.pressureOpacity->setChecked(classic.opacity_pressure);
 	d->ui.smudgingBox->setValue(classic.smudge.max * 100);
+	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(classic.spacing * 100);
 	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
-	updateSpinnerLabels();
+	if(softmode) {
+		d->ui.pressureHardness->setChecked(classic.hardness_pressure);
+	}
 
 	const DP_MyPaintSettings &myPaintSettings = myPaint.constSettings();
 	d->ui.radiusLogarithmicBox->setValue(
@@ -544,29 +533,6 @@ void BrushSettings::updateUi()
 		emitPresetChanges(d->presetModel->at(presetIndex));
 	}
 
-	// Update pressure settings popup if it's currently visible.
-	bool pressure = false;
-	float minRatio = -1.0f;
-	if(d->popupTarget == d->ui.pressureSize) {
-		pressure = classic.size_pressure;
-		minRatio = classic.size.min_ratio;
-	} else if(d->popupTarget == d->ui.pressureOpacity) {
-		pressure = classic.opacity_pressure;
-		minRatio = classic.opacity.min_ratio;
-	} else if(d->popupTarget == d->ui.pressureHardness) {
-		pressure = classic.hardness_pressure;
-		minRatio = classic.hardness.min_ratio;
-	} else if(d->popupTarget == d->ui.pressureSmudging) {
-		pressure = classic.smudge_pressure;
-		minRatio = classic.smudge.min_ratio;
-	}
-
-	if(minRatio >= 0.0f) {
-		d->popupUi.pressureBox->setChecked(pressure);
-		d->popupUi.minSpinner->setEnabled(pressure);
-		d->popupUi.minSpinner->setValue(qRound(minRatio * 100.0f));
-	}
-
 	// Communicate the current size of the brush cursor to the outside. These
 	// functions check for their applicability themselves, so we just call both.
 	changeSizeSetting(d->ui.brushsizeBox->value());
@@ -580,12 +546,6 @@ void BrushSettings::updateUi()
 void BrushSettings::updateFromUi()
 {
 	updateFromUiWith(true);
-}
-
-void BrushSettings::updateFromPopupUi()
-{
-	updateFromUiWith(true);
-	d->popupUi.minSpinner->setEnabled(d->popupUi.pressureBox->isChecked());
 }
 
 void BrushSettings::updateFromUiWith(bool updateShared)
@@ -611,27 +571,16 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		classic.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
 
 	classic.size.max = d->ui.brushsizeBox->value();
+	classic.size_pressure = d->ui.pressureSize->isChecked();
+
 	classic.smudge.max = d->ui.smudgingBox->value() / 100.0;
 	classic.smudge_pressure = d->ui.pressureSmudging->isChecked();
 	classic.resmudge = d->ui.colorpickupBox->value();
+
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
 	classic.incremental = d->ui.modeIncremental->isChecked();
 	classic.colorpick = d->ui.modeColorpick->isChecked();
 	classic.mode = DP_BlendMode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
-
-	if(d->popupTarget == d->ui.pressureSize) {
-		classic.size_pressure = d->popupUi.pressureBox->isChecked();
-		classic.size.min_ratio = d->popupUi.minSpinner->value() / 100.0f;
-	} else if(d->popupTarget == d->ui.pressureOpacity) {
-		classic.opacity_pressure = d->popupUi.pressureBox->isChecked();
-		classic.opacity.min_ratio = d->popupUi.minSpinner->value() / 100.0f;
-	} else if(d->popupTarget == d->ui.pressureHardness) {
-		classic.hardness_pressure = d->popupUi.pressureBox->isChecked();
-		classic.hardness.min_ratio = d->popupUi.minSpinner->value() / 100.0f;
-	} else if(d->popupTarget == d->ui.pressureSmudging) {
-		classic.smudge_pressure = d->popupUi.pressureBox->isChecked();
-		classic.smudge.min_ratio = d->popupUi.minSpinner->value() / 100.0f;
-	}
 
 	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value =
@@ -653,7 +602,11 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				d->ui.hardnessBox->value() / 100.0;
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
+			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
 			classic.hardness.max = d->ui.hardnessBox->value() / 100.0;
+			if(classic.shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND) {
+				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
+			}
 		}
 	}
 
@@ -663,45 +616,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 
 	d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
 
-	updateSpinnerLabels();
 	pushSettings();
-}
-
-void BrushSettings::updateSpinnerLabels()
-{
-	const brushes::ActiveBrush &brush = d->currentBrush();
-	bool isClassic = brush.activeType() == brushes::ActiveBrush::CLASSIC;
-	const brushes::ClassicBrush &classic = brush.classic();
-
-	if(isClassic) {
-		if(classic.size_pressure) {
-			int size = qRound(classic.size.min_ratio * classic.size.max);
-			d->ui.brushsizeBox->setPrefix(tr("Size: %1 - ").arg(size));
-		} else {
-			d->ui.brushsizeBox->setPrefix(tr("Size: "));
-		}
-
-		if(classic.smudge_pressure) {
-			int smudge = qRound(classic.smudge.min_ratio * classic.smudge.max * 100.0f);
-			d->ui.smudgingBox->setPrefix(tr("Smudging: %1 - ").arg(smudge));
-		} else {
-			d->ui.smudgingBox->setPrefix(tr("Smudging: "));
-		}
-	}
-
-	if(isClassic && classic.opacity_pressure) {
-		int opacity = qRound(classic.opacity.min_ratio * classic.opacity.max * 100.0f);
-		d->ui.opacityBox->setPrefix(tr("Opacity: %1 - ").arg(opacity));
-	} else {
-		d->ui.opacityBox->setPrefix(tr("Opacity: "));
-	}
-
-	if(isClassic && classic.hardness_pressure) {
-		int hardness = qRound(classic.hardness.min_ratio * classic.hardness.max * 100.0f);
-		d->ui.hardnessBox->setPrefix(tr("Hardness: %1 - ").arg(hardness));
-	} else {
-		d->ui.hardnessBox->setPrefix(tr("Hardness: "));
-	}
 }
 
 void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
@@ -749,45 +664,6 @@ void BrushSettings::chooseInputPreset(int index)
 		tool.inputPresetId = preset->id;
 		emitPresetChanges(preset);
 	}
-}
-
-void BrushSettings::togglePopup(QWidget *widget)
-{
-	QSignalBlocker blocker{this};
-	QSignalBlocker popupBlocker{d->popup};
-	d->popupTarget = widget;
-	d->ui.pressureSize->setChecked(false);
-	d->ui.pressureOpacity->setChecked(false);
-	d->ui.pressureHardness->setChecked(false);
-	d->ui.pressureSmudging->setChecked(false);
-
-	widgets::GroupedToolButton *button;
-	QString title;
-	QString prefix;
-	if(widget == d->ui.pressureSize) {
-		button = d->ui.pressureSize;
-		title = tr("Size");
-		prefix = tr("Minimum Size: ");
-	} else if(widget == d->ui.pressureOpacity) {
-		button = d->ui.pressureOpacity;
-		title = tr("Opacity");
-		prefix = tr("Minimum Opacity: ");
-	} else if(widget == d->ui.pressureHardness) {
-		button = d->ui.pressureHardness;
-		title = tr("Hardness");
-		prefix = tr("Minimum Hardness: ");
-	} else if(widget == d->ui.pressureSmudging) {
-		button = d->ui.pressureSmudging;
-		title = tr("Smudging");
-		prefix = tr("Minimum Smudging: ");
-	} else {
-		return;
-	}
-
-	button->setChecked(true);
-	d->popup->setWindowTitle(title);
-	d->popupUi.minSpinner->setPrefix(prefix);
-	updateUi();
 }
 
 void BrushSettings::emitPresetChanges(const input::Preset *preset)
