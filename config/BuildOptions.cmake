@@ -11,6 +11,7 @@ option(ADDRESS_SANITIZER "Enable address sanitizer" OFF)
 option(CLANG_TIDY "Enable clang-tidy" OFF)
 option(ENABLE_ARCH_NATIVE "Optimize for this computer's CPU" OFF)
 option(BUILD_LABEL "A custom label to add to the version")
+option(ENABLE_VERSION_CHECK "Allow checking for new versions" OFF)
 
 set(QT_VERSION 5 CACHE STRING "Which Qt version to use (5, 6)")
 if(NOT "${QT_VERSION}" MATCHES "^(5|6)$")

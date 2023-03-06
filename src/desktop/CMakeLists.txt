@@ -40,7 +40,6 @@ set(desktop_sources
 	dialogs/serverlogdialog.cpp
 	dialogs/tablettester.cpp
 	dialogs/avatarimport.cpp
-	dialogs/versioncheckdialog.cpp
 	dialogs/addserverdialog.cpp
 	dialogs/layerproperties.cpp
 	dialogs/brushpresetproperties.cpp
@@ -123,7 +122,6 @@ set(desktop_uis
 	ui/settings.ui
 	ui/tablettest.ui
 	ui/textsettings.ui
-	ui/versioncheck.ui
 	ui/videoexport.ui
 )
 
@@ -208,6 +206,12 @@ endif()
 # up with no way to switch between them, so we don't allow that there.
 if(ANDROID)
 	target_compile_definitions(${CLIENTNAME} PRIVATE SINGLE_MAIN_WINDOW=1)
+endif()
+
+if(ENABLE_VERSION_CHECK)
+	target_compile_definitions(${CLIENTNAME} PRIVATE ENABLE_VERSION_CHECK=1)
+	target_sources(${CLIENTNAME} PRIVATE dialogs/versioncheckdialog.cpp)
+	list(APPEND desktop_uis ui/versioncheck.ui)
 endif()
 
 set_target_properties(${CLIENTNAME} PROPERTIES

@@ -129,7 +129,10 @@
 #include "dialogs/serverlogdialog.h"
 #include "dialogs/tablettester.h"
 #include "dialogs/abusereport.h"
-#include "dialogs/versioncheckdialog.h"
+
+#ifdef ENABLE_VERSION_CHECK
+#	include "dialogs/versioncheckdialog.h"
+#endif
 
 static QString getLastPath() { return QSettings().value("window/lastpath").toString(); }
 
@@ -3250,16 +3253,21 @@ void MainWindow::setupActions()
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File"));
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole);
 	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole);
+#ifdef ENABLE_VERSION_CHECK
 	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates"));
+#endif
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
+
+#ifdef ENABLE_VERSION_CHECK
 	connect(versioncheck, &QAction::triggered, this, [this]() {
 		auto *dlg = new dialogs::VersionCheckDialog(this);
 		dlg->show();
 		dlg->queryNewVersions();
 	});
+#endif
 
 	connect(tablettester, &QAction::triggered, []() {
 		dialogs::TabletTestDialog *ttd=nullptr;
@@ -3289,7 +3297,9 @@ void MainWindow::setupActions()
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
 	helpmenu->addSeparator();
+#ifdef ENABLE_VERSION_CHECK
 	helpmenu->addAction(versioncheck);
+#endif
 
 	// Brush slot shortcuts
 
