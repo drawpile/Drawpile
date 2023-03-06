@@ -204,6 +204,12 @@ if("${QT_VERSION}" EQUAL 6)
 	include_directories("${CLIENTNAME}" PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
 
+# Android doesn't sensibly support multiple windows, they just cover each other
+# up with no way to switch between them, so we don't allow that there.
+if(ANDROID)
+	target_compile_definitions(${CLIENTNAME} PRIVATE SINGLE_MAIN_WINDOW=1)
+endif()
+
 set_target_properties(${CLIENTNAME} PROPERTIES
 	VERSION ${DRAWPILE_VERSION}
 	PROJECT_LABEL drawpile-client)

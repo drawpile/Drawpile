@@ -223,6 +223,16 @@ void DrawpileApp::openBlankDocument()
 	win->newDocument(size, color);
 }
 
+void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
+{
+	for(QWidget *widget : topLevelWidgets()) {
+		MainWindow *mw = qobject_cast<MainWindow *>(widget);
+		if(mw && mw != win) {
+			mw->deleteLater();
+		}
+	}
+}
+
 QString DrawpileApp::greeting()
 {
 	return QStringLiteral("is using Dancepile " DRAWPILE_VERSION " on Qt " QT_VERSION_STR " (%1) with %2.")

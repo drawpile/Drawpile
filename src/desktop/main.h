@@ -23,6 +23,7 @@
 #include <QMap>
 #include "notifications.h"
 
+class MainWindow;
 class QSoundEffect;
 
 class DrawpileApp : public QApplication {
@@ -60,6 +61,8 @@ public:
 	void openUrl(QUrl url);
 
 	void openBlankDocument();
+
+	void deleteAllMainWindowsExcept(MainWindow *win);
 
 	QString greeting();
 

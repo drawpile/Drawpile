@@ -42,7 +42,9 @@ public:
 
 signals:
 	void resetSelected();
+#ifndef SINGLE_MAIN_WINDOW
 	void newSelected();
+#endif
 
 private slots:
 	void onSelectionChanged(int pos);

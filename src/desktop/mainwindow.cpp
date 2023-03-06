@@ -451,6 +451,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 	setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
 
+#ifdef SINGLE_MAIN_WINDOW
+	app->deleteAllMainWindowsExcept(this);
+#endif
+
 	static bool warningShown;
 	if(!warningShown) {
 		warningShown = true;
@@ -1667,12 +1671,14 @@ void MainWindow::resetSession()
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
+#ifndef SINGLE_MAIN_WINDOW
 	// It's always possible to create a new document from a snapshot
 	connect(dlg, &dialogs::ResetDialog::newSelected, this, [dlg]() {
 		MainWindow *w = new MainWindow(false);
 		w->m_doc->sendResetSession(dlg->getResetImage());
 		dlg->deleteLater();
 	});
+#endif
 
 	// Session resetting is available only to session operators
 	if(m_doc->canvas()->aclState()->amOperator()) {

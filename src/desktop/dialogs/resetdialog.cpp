@@ -132,15 +132,18 @@ ResetDialog::ResetDialog(const canvas::PaintEngine *pe, QWidget *parent)
 	d->ui->setupUi(this);
 
 	d->resetButton = d->ui->buttonBox->addButton(tr("Reset Session"), QDialogButtonBox::DestructiveRole);
-	auto *newButton = d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
-	auto *openButton = d->ui->buttonBox->addButton(tr("Open..."), QDialogButtonBox::ActionRole);
-
 	d->resetButton->setIcon(icon::fromTheme("edit-undo"));
 	connect(d->resetButton, &QPushButton::clicked, this, &ResetDialog::resetSelected);
 
+#ifndef SINGLE_MAIN_WINDOW
+	// If we can't open a new window, this would obliterate the current session.
+	// That's confusing and not terribly useful, so we don't offer this option.
+	QPushButton *newButton = d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
 	newButton->setIcon(icon::fromTheme("document-new"));
 	connect(newButton, &QPushButton::clicked, this, &ResetDialog::newSelected);
+#endif
 
+	QPushButton *openButton = d->ui->buttonBox->addButton(tr("Open..."), QDialogButtonBox::ActionRole);
 	openButton->setIcon(icon::fromTheme("document-open"));
 	connect(openButton, &QPushButton::clicked, this, &ResetDialog::onOpenClicked);
 
