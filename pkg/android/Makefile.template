@@ -46,12 +46,22 @@ all:
 build.arm64-v8a:
 	mkdir -p arm64-v8a
 	$(MAKE) ARCH=arm64-v8a buildarch
-	$(MAKE) ARCH=arm64-v8a gradle
+	$(MAKE) ARCH=arm64-v8a gradle-debug
+
+release.arm64-v8a:
+	mkdir -p arm64-v8a
+	$(MAKE) ARCH=arm64-v8a buildarch
+	$(MAKE) ARCH=arm64-v8a gradle-release
 
 build.x86_64:
 	mkdir -p x86_64
 	$(MAKE) ARCH=x86_64 buildarch
-	$(MAKE) ARCH=x86_64 gradle
+	$(MAKE) ARCH=x86_64 gradle-debug
+
+release.x86_64:
+	mkdir -p x86_64
+	$(MAKE) ARCH=x86_64 buildarch
+	$(MAKE) ARCH=x86_64 gradle-release
 
 
 ifdef ARCH
@@ -214,6 +224,15 @@ $(QT_NAME)/qt.patched: | $(QT_NAME)
 	touch $@
 
 
+gradle-debug: gradle
+	cd "$$GRADLEDIR" && ./gradlew assembleDebug
+
+gradle-release: gradle
+	cd "$$GRADLEDIR" && ./gradlew assembleRelease
+	"$$PKGDIR/sign-apk"
+	cp "$$GRADLEDIR/build/outputs/apk/release/drawpile_$(ARCH).apk" \
+		"drawpile-$$(cat "$$ARCHDIR/drawpile/DRAWPILE_VERSION.txt")_$(ARCH).apk"
+
 gradle: \
 		assets \
 		$(ARCH)/gradle/gradlew \
@@ -255,7 +274,6 @@ gradle: \
 		$(ARCH)/gradle/libs/$(ARCH)/libplugins_platforms_qtforandroid_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libplugins_sqldrivers_qsqlite_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libplugins_styles_qandroidstyle_$(ARCH).so
-	cd "$$GRADLEDIR" && ./gradlew assembleDebug
 
 $(ARCH)/gradle/gradlew \
 	$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.jar \
@@ -372,4 +390,4 @@ $(GRADLE_NAME):
 	rm "$$GRADLE_NAME.zip"
 
 
-.PHONY: all assets build.arm64-v8a build.x86_64 buildarch download gradle
+.PHONY: all assets build.arm64-v8a build.x86_64 buildarch download gradle gradle-debug gradle-release release.arm64-v8a release.x86_64

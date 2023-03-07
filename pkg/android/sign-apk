@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+
+error=0
+
+check_var() {
+    if [[ -z ${!1} ]]; then
+        echo
+    fi
+}
+
+for var in ANDROID_ABI BUILD_TOOLS_VERSION GRADLEDIR KEYSTORE_PASSWORD \
+           KEYSTORE_PATH KEY_ALIAS SDK_PATH; do
+    if [[ -z ${!var} ]]; then
+        echo "Missing environment variable '$var'" 1>&2
+        error=1
+    fi
+done
+
+if [ $error -ne 0 ]; then
+    exit 1
+fi
+
+
+BUILD_TOOLS_PATH="$SDK_PATH/build-tools/$BUILD_TOOLS_VERSION"
+GRADLE_OUTPUT_PATH="$GRADLEDIR/build/outputs/apk/release"
+INPUT_APK_PATH="$GRADLE_OUTPUT_PATH/gradle-release-unsigned.apk"
+ALIGNED_APK_PATH="$GRADLE_OUTPUT_PATH/drawpile_$ANDROID_ABI-unsigned.apk"
+SIGNED_APK_PATH="$GRADLE_OUTPUT_PATH/drawpile_$ANDROID_ABI.apk"
+
+rm -vf "$ALIGNED_APK_PATH" "$OUTPUT_APK_PATH"
+
+"$BUILD_TOOLS_PATH/zipalign" -v -p 4 "$INPUT_APK_PATH" "$ALIGNED_APK_PATH"
+
+"$BUILD_TOOLS_PATH/apksigner" sign \
+    --verbose \
+    --ks "$KEYSTORE_PATH" \
+    --ks-pass env:KEYSTORE_PASSWORD \
+    --ks-key-alias "$KEY_ALIAS" \
+    --in "$ALIGNED_APK_PATH" \
+    --out "$SIGNED_APK_PATH"
+
+echo "Aligned and signed $SIGNED_APK_PATH"
