@@ -260,10 +260,10 @@ gradle: \
 $(ARCH)/gradle/gradlew \
 	$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.jar \
 	$(ARCH)/gradle/gradle/wrapper/gradle-wrapper.properties &: \
-		$(ARCH)/gradle/build.gradle \
+		| $(ARCH)/gradle/build.gradle \
 		$(ARCH)/gradle/gradle.properties \
 		$(ARCH)/gradle/local.properties \
-		| $(GRADLE_NAME)
+		$(GRADLE_NAME)
 	cd "$$GRADLEDIR" && "../../$$GRADLE_NAME/bin/gradle" wrapper
 
 $(ARCH)/gradle/AndroidManifest.xml: $(PKGDIR)/templates/AndroidManifest.xml
