@@ -116,12 +116,12 @@
         <location filename="../../desktop/ui/brushdock.ui" line="267"/>
         <location filename="../../desktop/ui/brushdock.ui" line="309"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucksensibilität</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="298"/>
         <source>Configure input presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabevoreinstellungen konfigurieren</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="291"/>
@@ -136,7 +136,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="326"/>
         <source>Size: </source>
-        <translation type="unfinished">Größe: </translation>
+        <translation>Größe: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="339"/>
@@ -146,17 +146,17 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="352"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Deckkraft: </translation>
+        <translation>Deckkraft: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="368"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Härte: </translation>
+        <translation>Härte: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="384"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Schmieren: </translation>
+        <translation>Schmieren: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="400"/>
@@ -984,7 +984,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
         <source>Close</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -3546,44 +3546,44 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="489"/>
         <source>One Finger Touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit einem Finger berühren:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="497"/>
         <location filename="../../desktop/ui/settings.ui" line="523"/>
         <location filename="../../desktop/ui/settings.ui" line="544"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts tun</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="502"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished">Leinwand bewegen</translation>
+        <translation>Leinwand bewegen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="507"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeichnen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="515"/>
         <source>Two Finger Pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit zwei Fingern kneifen:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="528"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished">Leinwand zoomen</translation>
+        <translation>Leinwand zoomen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="536"/>
         <source>Two Finger Twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit zwei Fingern drehen:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="549"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished">Leinwand rotieren</translation>
+        <translation>Leinwand rotieren</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="719"/>
@@ -4692,22 +4692,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
         <source>New</source>
-        <translation type="unfinished">Neu</translation>
+        <translation>Neu</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
         <source>Duplicate</source>
-        <translation type="unfinished">Duplizieren</translation>
+        <translation>Duplizieren</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
         <source>New %1</source>
-        <translation type="unfinished">%1 (neu)</translation>
+        <translation>%1 (neu)</translation>
     </message>
 </context>
 <context>
