@@ -40,10 +40,10 @@ struct DP_DrawContext {
         // Brush stamp masks. Pixel brushes use only stamp buffer 1, classic
         // brushes use 1 and 2, MyPaint brushes use 1 and the RR mask buffer.
         struct {
-            alignas(DP_SIMD_ALIGNMENT) DP_BrushStampBuffer stamp_buffer1;
+            DP_ALIGNAS_SIMD DP_BrushStampBuffer stamp_buffer1;
             union {
-                alignas(DP_SIMD_ALIGNMENT) DP_BrushStampBuffer stamp_buffer2;
-                alignas(DP_SIMD_ALIGNMENT) DP_RrMaskBuffer rr_mask_buffer;
+                DP_ALIGNAS_SIMD DP_BrushStampBuffer stamp_buffer2;
+                DP_ALIGNAS_SIMD DP_RrMaskBuffer rr_mask_buffer;
             };
         };
         // Pixel buffer for image transformation. Used by region move transform.

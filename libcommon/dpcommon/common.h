@@ -53,6 +53,9 @@
 #if defined(_M_X64) || defined(__x86_64__)
 #    define DP_CPU_X64
 #    define DP_SIMD_ALIGNMENT 32
+#    define DP_ALIGNAS_SIMD   alignas(DP_SIMD_ALIGNMENT)
+#else
+#    define DP_ALIGNAS_SIMD // nothing
 #endif
 
 #ifdef __GNUC__

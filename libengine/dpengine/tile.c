@@ -43,7 +43,7 @@
 #ifdef DP_NO_STRICT_ALIASING
 
 struct DP_Tile {
-    alignas(DP_SIMD_ALIGNMENT) DP_Pixel15 pixels[DP_TILE_LENGTH];
+    DP_ALIGNAS_SIMD DP_Pixel15 pixels[DP_TILE_LENGTH];
     DP_Atomic refcount;
     const bool transient;
     const bool maybe_blank;
@@ -51,7 +51,7 @@ struct DP_Tile {
 };
 
 struct DP_TransientTile {
-    alignas(DP_SIMD_ALIGNMENT) DP_Pixel15 pixels[DP_TILE_LENGTH];
+    DP_ALIGNAS_SIMD DP_Pixel15 pixels[DP_TILE_LENGTH];
     DP_Atomic refcount;
     bool transient;
     bool maybe_blank;
@@ -61,7 +61,7 @@ struct DP_TransientTile {
 #else
 
 struct DP_Tile {
-    alignas(DP_SIMD_ALIGNMENT) DP_Pixel15 pixels[DP_TILE_LENGTH];
+    DP_ALIGNAS_SIMD DP_Pixel15 pixels[DP_TILE_LENGTH];
     DP_Atomic refcount;
     bool transient;
     bool maybe_blank;
