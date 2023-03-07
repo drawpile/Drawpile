@@ -110,6 +110,7 @@ typedef enum DP_CpuSupport {
     DP_CPU_SUPPORT_AVX,
     DP_CPU_SUPPORT_AVX2,
 #endif
+    DP_CPU_SUPPORT_COUNT,
 } DP_CpuSupport;
 
 void DP_cpu_support_init(void);

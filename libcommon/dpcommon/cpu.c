@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 #include "cpu.h"
+#include <stdlib.h>
 
 DP_CpuSupport DP_cpu_support_value = DP_CPU_SUPPORT_DEFAULT;
 
@@ -38,7 +39,38 @@ DP_CpuSupport DP_cpu_support_debug_get(const char *file, int line)
 }
 #endif
 
+static DP_CpuSupport get_env_cpu_support(void)
+{
+    const char *value = getenv("DP_CPU_SUPPORT");
+    if (value == NULL || DP_str_equal(value, "")) {
+        return DP_CPU_SUPPORT_COUNT;
+    }
+    else if (DP_str_equal_lowercase(value, "default")) {
+        DP_warn("Restricting CPU support to minimum defaults");
+        return DP_CPU_SUPPORT_DEFAULT;
+    }
 #ifdef DP_CPU_X64
+    else if (DP_str_equal_lowercase(value, "sse42")) {
+        DP_warn("Restricting CPU support to at most SSE 4.2");
+        return DP_CPU_SUPPORT_SSE42;
+    }
+    else if (DP_str_equal_lowercase(value, "avx")) {
+        DP_warn("Restricting CPU support to at most AVX");
+        return DP_CPU_SUPPORT_AVX;
+    }
+    else if (DP_str_equal_lowercase(value, "avx2")) {
+        DP_warn("Restricting CPU support to at most AVX2");
+        return DP_CPU_SUPPORT_AVX2;
+    }
+#endif
+    else {
+        DP_warn("Unknown DP_CPU_SUPPORT value '%s', ignoring it", value);
+        return DP_CPU_SUPPORT_COUNT;
+    }
+}
+
+#ifdef DP_CPU_X64
+
 static bool supports_sse42(void)
 {
 #    if defined(__SSE4_2__)
@@ -49,7 +81,6 @@ static bool supports_sse42(void)
     return (CPUInfo[2] & (1 << 20)) != 0;
 #    elif defined(__clang__) || defined(__GNUC__)
     return __builtin_cpu_supports("sse4.2");
-
 #    else
     return false; // unknown compiler
 #    endif
@@ -85,31 +116,30 @@ static bool supports_avx2(void)
 #    endif
 }
 
+#endif
+
 void DP_cpu_support_init(void)
 {
-    if (supports_avx2()) {
+    DP_CpuSupport max_support = get_env_cpu_support();
+#ifdef DP_CPU_X64
+    if (max_support >= DP_CPU_SUPPORT_AVX2 && supports_avx2()) {
         DP_cpu_support_value = DP_CPU_SUPPORT_AVX2;
     }
-    else if (supports_avx()) {
+    else if (max_support >= DP_CPU_SUPPORT_AVX && supports_avx()) {
         DP_cpu_support_value = DP_CPU_SUPPORT_AVX;
     }
-    else if (supports_sse42()) {
+    else if (max_support >= DP_CPU_SUPPORT_SSE42 && supports_sse42()) {
         DP_cpu_support_value = DP_CPU_SUPPORT_SSE42;
     }
     else {
         DP_cpu_support_value = DP_CPU_SUPPORT_DEFAULT;
     }
-#    ifndef NDEBUG
-    init_called = true;
-#    endif
-}
-
 #else
-void DP_cpu_support_init(void)
-{
+    (void)max_support;
     DP_cpu_support_value = DP_CPU_SUPPORT_DEFAULT;
-#    ifndef NDEBUG
-    init_called = true;
-#    endif
-}
 #endif
+
+#ifndef NDEBUG
+    init_called = true;
+#endif
+}
