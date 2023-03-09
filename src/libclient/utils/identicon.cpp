@@ -20,6 +20,7 @@
 #include "libclient/utils/identicon.h"
 
 #include <QPainter>
+#include <QRegularExpression>
 
 QImage make_identicon(const QString &name, const QSize &size)
 {
@@ -29,12 +30,14 @@ QImage make_identicon(const QString &name, const QSize &size)
 	QImage image(size, QImage::Format_ARGB32_Premultiplied);
 	image.fill(color);
 
+	const auto firstGrapheme = QRegularExpression{"^\\X"}.match(name).captured();
+
 	QPainter painter(&image);
 	QFont font;
 	font.setPixelSize(size.height() * 0.7);
 	painter.setFont(font);
 	painter.setPen(Qt::white);
-	painter.drawText(QRect(QPoint(), size), Qt::AlignCenter, name.left(1));
+	painter.drawText(QRect(QPoint(), size), Qt::AlignCenter, firstGrapheme);
 
 	return image;
 }
