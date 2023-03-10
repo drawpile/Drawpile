@@ -610,6 +610,12 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		}
 	}
 
+	// TODO: Remove this when minimum values are implemented in the UI.
+	classic.size.min_ratio = 0.0f;
+	classic.opacity.min_ratio = 0.0f;
+	classic.hardness.min_ratio = 0.0f;
+	classic.smudge.min_ratio = 0.0f;
+
 	chooseInputPreset(d->ui.inputPreset->currentIndex());
 
 	d->ui.preview->setBrush(brush);
