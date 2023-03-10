@@ -45,11 +45,11 @@ namespace brushes {
 
 ClassicBrush::ClassicBrush()
 	: DP_ClassicBrush{
-		{1.0, 10.0},
-		{0, 1},
-		{0, 1},
-		{0, 0},
-		0.1,
+		{0.0f, 10.0f},
+		{0.0f, 1.0f},
+		{0.0f, 1.0f},
+		{0.0f, 0.0f},
+		0.1f,
 		0,
 		{0.0f, 0.0f, 0.0f, 1.0f},
 		DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND,
