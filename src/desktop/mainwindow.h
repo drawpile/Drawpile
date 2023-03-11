@@ -275,9 +275,11 @@ private:
 
 	QMetaObject::Connection m_textCopyConnection;
 
+#ifndef Q_OS_ANDROID
 	// Remember window state to return from fullscreen mode
 	QRect m_fullscreenOldGeometry;
 	bool m_fullscreenOldMaximized;
+#endif
 
 	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool change button
 	ShortcutDetector *m_tempToolSwitchShortcut;

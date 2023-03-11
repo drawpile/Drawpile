@@ -76,6 +76,7 @@
 #include "utils/customshortcutmodel.h"
 #include "utils/logging.h"
 #include "utils/actionbuilder.h"
+#include "utils/widgetutils.h"
 #include "../libshared/qtshims.h"
 
 #include "widgets/viewstatus.h"
@@ -174,7 +175,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_brushSlots(nullptr),
 	  m_dockToggles(nullptr),
 	  m_lastToolBeforePaste(-1),
+#ifndef Q_OS_ANDROID
 	  m_fullscreenOldMaximized(false),
+#endif
 	  m_tempToolSwitchShortcut(nullptr),
 	  m_titleBarsHidden(false),
 	  m_doc(nullptr),
@@ -447,7 +450,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Show self
 	updateTitle();
-	show();
+	utils::showWindow(this);
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
@@ -1994,12 +1997,11 @@ void MainWindow::setShowLaserTrails(bool show)
  * @brief Enter/leave fullscreen mode
  *
  * Window position and configuration is saved when entering fullscreen mode
- * and restored when leaving
- *
- * @param enable
+ * and restored when leaving. On Android, the window is always fullscreen.
  */
 void MainWindow::toggleFullscreen()
 {
+#ifndef Q_OS_ANDROID
 	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
 		// Save windowed mode state
 		m_fullscreenOldGeometry = geometry();
@@ -2014,6 +2016,7 @@ void MainWindow::toggleFullscreen()
 			setGeometry(m_fullscreenOldGeometry);
 		}
 	}
+#endif
 }
 
 void MainWindow::setFreezeDocks(bool freeze)
@@ -2922,10 +2925,8 @@ void MainWindow::setupActions()
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked().remembered();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked().remembered();
 
+#ifndef Q_OS_ANDROID
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
-
-	m_currentdoctools->addAction(showFlipbook);
-
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
 			// Update the mode tickmark on fulscreen state change.
@@ -2934,6 +2935,9 @@ void MainWindow::setupActions()
 			fullscreen->setChecked(state & Qt::WindowFullScreen);
 		});
 	}
+#endif
+
+	m_currentdoctools->addAction(showFlipbook);
 
 	connect(layoutsAction, &QAction::triggered, this, &MainWindow::showLayoutsDialog);
 
@@ -2975,7 +2979,9 @@ void MainWindow::setupActions()
 	connect(viewflip, SIGNAL(triggered(bool)), m_view, SLOT(setViewFlip(bool)));
 	connect(viewmirror, SIGNAL(triggered(bool)), m_view, SLOT(setViewMirror(bool)));
 
+#ifndef Q_OS_ANDROID
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
+#endif
 
 	connect(showannotations, &QAction::toggled, this, &MainWindow::setShowAnnotations);
 	connect(showusermarkers, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserMarkers);
@@ -3047,8 +3053,10 @@ void MainWindow::setupActions()
 
 	viewmenu->addAction(showgrid);
 
+#ifndef Q_OS_ANDROID
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);
+#endif
 
 	//
 	// Layer menu
