@@ -70,7 +70,12 @@ BrushPalette::BrushPalette(QWidget *parent)
 	: QDockWidget(parent)
 	, d(new Private)
 {
-	d->tagModel = new brushes::BrushPresetTagModel(this);
+	static brushes::BrushPresetTagModel *tagModelInstance;
+	if(!tagModelInstance) {
+		tagModelInstance = new brushes::BrushPresetTagModel;
+	}
+
+	d->tagModel = tagModelInstance;
 	d->presetModel = d->tagModel->presetModel();
 
 	d->tagProxyModel = new QSortFilterProxyModel(this);
