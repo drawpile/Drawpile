@@ -30,6 +30,7 @@ set(libshared_sources
 
 add_library(dpshared STATIC ${libshared_sources})
 set_drawpile_target_properties(dpshared)
+target_include_directories(dpshared PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(dpshared PUBLIC DP::QtNetwork)
 
 if(Sodium_FOUND)
