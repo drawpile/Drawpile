@@ -33,6 +33,11 @@ set_drawpile_target_properties(dpshared)
 target_include_directories(dpshared PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(dpshared PUBLIC DP::QtNetwork)
 
+if(ANDROID)
+	target_sources(dpshared PRIVATE util/androidutils.cpp)
+	target_link_libraries(dpshared PUBLIC DP::QtAndroidExtras)
+endif()
+
 if(Sodium_FOUND)
 	target_sources(dpshared PRIVATE util/authtoken.cpp)
 	target_compile_definitions(dpshared PUBLIC HAVE_LIBSODIUM)

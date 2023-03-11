@@ -29,6 +29,10 @@ if(CLIENT)
 		find_package("Qt${QT_VERSION}" COMPONENTS Keychain)
 	endif()
 	find_package(QtColorWidgets)
+
+	if(ANDROID)
+		find_package("Qt${QT_VERSION}" COMPONENTS AndroidExtras REQUIRED)
+	endif()
 endif()
 
 if(CLIENT OR SERVERGUI)

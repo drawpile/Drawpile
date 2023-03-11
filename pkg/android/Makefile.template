@@ -254,6 +254,7 @@ gradle: \
 		$(ARCH)/gradle/libs/$(ARCH)/libKF5Archive_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libdrawpile_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libQt5Core_$(ARCH).so \
+		$(ARCH)/gradle/libs/$(ARCH)/libQt5AndroidExtras_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libQt5Gui_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libQt5Multimedia_$(ARCH).so \
 		$(ARCH)/gradle/libs/$(ARCH)/libQt5Network_$(ARCH).so \

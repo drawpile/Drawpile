@@ -16,6 +16,7 @@
         <item>{{ANDROID_ABI}};QtSvg_{{ANDROID_ABI}}</item>
         <item>{{ANDROID_ABI}};QtWidgets_{{ANDROID_ABI}}</item>
         <item>{{ANDROID_ABI}};QtXml_{{ANDROID_ABI}}</item>
+        <item>{{ANDROID_ABI}};QtAndroidExtras_{{ANDROID_ABI}}</item>
     </array>
 
     <array name="load_local_libs">

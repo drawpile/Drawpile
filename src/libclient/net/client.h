@@ -32,6 +32,11 @@ namespace drawdance {
 	class Message;
 }
 
+namespace utils {
+	class AndroidWakeLock;
+	class AndroidWifiLock;
+}
+
 namespace net {
 
 class LoginHandler;
@@ -208,6 +213,10 @@ private:
 	void handleResetRequest(const ServerReply &msg);
 
 	Server *m_server = nullptr;
+#ifdef Q_OS_ANDROID
+	utils::AndroidWakeLock *m_wakeLock = nullptr;
+	utils::AndroidWifiLock *m_wifiLock = nullptr;
+#endif
 
 	QUrl m_lastUrl;
 	uint8_t m_myId = 1;

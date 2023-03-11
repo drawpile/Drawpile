@@ -23,6 +23,10 @@
 #include "net/login.h"
 #include "net/servercmd.h"
 
+#ifdef Q_OS_ANDROID
+#	include "util/androidutils.h"
+#endif
+
 #include <QDebug>
 
 namespace net {
@@ -38,6 +42,24 @@ void Client::connectToServer(LoginHandler *loginhandler)
 
 	TcpServer *server = new TcpServer(this);
 	m_server = server;
+
+#ifdef Q_OS_ANDROID
+	if(!m_wakeLock) {
+		QString tag{QStringLiteral("Drawpile::TcpWake%1")
+						.arg(
+							reinterpret_cast<quintptr>(server),
+							QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))};
+		m_wakeLock = new utils::AndroidWakeLock{"PARTIAL_WAKE_LOCK", tag};
+	}
+
+	if(!m_wifiLock) {
+		QString tag{QStringLiteral("Drawpile::TcpWifi%1")
+						.arg(
+							reinterpret_cast<quintptr>(server),
+							QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))};
+		m_wifiLock = new utils::AndroidWifiLock{"WIFI_MODE_FULL_LOW_LATENCY", tag};
+	}
+#endif
 
 	connect(server, &TcpServer::loggingOut, this, &Client::serverDisconnecting);
 	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);
@@ -121,6 +143,13 @@ void Client::handleDisconnect(const QString &message,const QString &errorcode, b
 	m_server->deleteLater();
 	m_server = nullptr;
 	m_moderator = false;
+
+#ifdef Q_OS_ANDROID
+	delete m_wakeLock;
+	delete m_wifiLock;
+	m_wakeLock = nullptr;
+	m_wifiLock = nullptr;
+#endif
 }
 
 int Client::uploadQueueBytes() const
