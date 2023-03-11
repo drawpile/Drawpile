@@ -58,17 +58,8 @@ struct OldPresetFolder {
 class BrushPresetTagModel::Private {
 public:
 	Private()
-		: m_db(QSqlDatabase::addDatabase("QSQLITE"))
+		: m_db(getDbInstance())
 	{
-		QString databasePath = createDb();
-		m_db.setDatabaseName(databasePath);
-		if(m_db.open()) {
-			QSqlQuery query(m_db);
-			initDb(query);
-		} else {
-			qWarning("Can't open brush preset model database at '%s'",
-				qPrintable(m_db.databaseName()));
-		}
 	}
 
 	int createTag(const QString &name)
@@ -338,7 +329,7 @@ public:
 	}
 
 private:
-	QSqlDatabase m_db;
+	QSqlDatabase &m_db;
 
 	int readInt(const QString &sql,const QList<QVariant> &params = {}, int defaultValue = 0)
 	{
@@ -370,7 +361,7 @@ private:
 		}
 	}
 
-	bool exec(QSqlQuery &query, const QString &sql, const QList<QVariant> &params = {})
+	static bool exec(QSqlQuery &query, const QString &sql, const QList<QVariant> &params = {})
 	{
 		if(!query.prepare(sql)) {
 			qWarning("Error preparing statement '%s': %s", qPrintable(sql),
@@ -390,7 +381,7 @@ private:
 		return true;
 	}
 
-	QString createDb()
+	static QString createDb()
 	{
 		QString databasePath = utils::paths::writablePath("brushpresets.db");
 		QFileInfo fileInfo(databasePath);
@@ -421,7 +412,7 @@ private:
 		return databasePath;
 	}
 
-	void initDb(QSqlQuery &query)
+	static void initDb(QSqlQuery &query)
 	{
 		exec(query, "pragma foreign_keys = on");
 		exec(query,
@@ -447,6 +438,25 @@ private:
 			"	tag_id integer not null\n"
 			"		references tag (id) on delete cascade,\n"
 			"	primary key (preset_id, tag_id))");
+	}
+
+	static QSqlDatabase &getDbInstance()
+	{
+		static QSqlDatabase db;
+		if(!db.isValid()) {
+			QString databasePath = createDb();
+			db = QSqlDatabase::addDatabase(
+				"QSQLITE", QStringLiteral("drawpile_brush_preset_connection"));
+			db.setDatabaseName(databasePath);
+			if(db.open()) {
+				QSqlQuery query(db);
+				initDb(query);
+			} else {
+				qWarning("Can't open brush preset model database at '%s'",
+					qPrintable(db.databaseName()));
+			}
+		}
+		return db;
 	}
 };
 
