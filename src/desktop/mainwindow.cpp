@@ -1021,7 +1021,7 @@ void MainWindow::showNew()
 	auto dlg = new dialogs::NewDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(dlg, &dialogs::NewDialog::accepted, this, &MainWindow::newDocument);
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::newDocument(const QSize &size, const QColor &background)
@@ -1375,7 +1375,7 @@ void MainWindow::showFlipbook()
 	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
 	fp->setAttribute(Qt::WA_DeleteOnClose);
 	fp->setPaintEngine(m_doc->canvas()->paintEngine());
-	fp->show();
+	utils::showWindow(fp);
 }
 
 void MainWindow::setRecorderStatus(bool on)
@@ -1495,7 +1495,7 @@ void MainWindow::showSettings()
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog;
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowModality(Qt::ApplicationModal);
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::host()
@@ -1514,7 +1514,7 @@ void MainWindow::host()
 		}
 		dlg->deleteLater();
 	});
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::hostSession(dialogs::HostDialog *dlg)
@@ -1534,7 +1534,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	}
 
 	if(address.isValid() == false || address.host().isEmpty()) {
-		dlg->show();
+		utils::showWindow(dlg);
 		showErrorMessage(tr("Invalid address"));
 		return;
 	}
@@ -1577,7 +1577,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 		login->setInitialState(m_doc->canvas()->generateSnapshot());
 	}
 
-	(new dialogs::LoginDialog(login, this))->show();
+	utils::showWindow(new dialogs::LoginDialog(login, this));
 
 	m_doc->client()->connectToServer(login);
 }
@@ -1605,7 +1605,7 @@ void MainWindow::join(const QUrl &url)
 		}
 		dlg->deleteLater();
 	});
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 /**
@@ -1656,7 +1656,7 @@ void MainWindow::reportAbuse()
 		m_doc->sendAbuseReport(dlg->userId(), dlg->message());
 	});
 
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::tryToGainOp()
@@ -1702,7 +1702,7 @@ void MainWindow::resetSession()
 		dlg->setCanReset(false);
 	}
 
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::terminateSession()
@@ -2316,7 +2316,7 @@ void MainWindow::resizeCanvas()
 			m_doc->sendResizeCanvas(r.top, r.right, r.bottom, r.left);
 		}
 	});
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 static QIcon makeBackgroundColorIcon(QColor &color)
@@ -2377,7 +2377,7 @@ void MainWindow::changeCanvasBackground()
 	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
 		m_doc->canvas()->paintEngine()->backgroundColor(), this);
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::changeLocalCanvasBackground()
@@ -2398,7 +2398,7 @@ void MainWindow::changeLocalCanvasBackground()
 	connect(
 		dlg, &color_widgets::ColorDialog::colorSelected, paintEngine,
 		&canvas::PaintEngine::setLocalBackgroundColor);
-	dlg->show();
+	utils::showWindow(dlg);
 }
 
 void MainWindow::clearLocalCanvasBackground()
@@ -3121,8 +3121,12 @@ void MainWindow::setupActions()
 	connect(host, &QAction::triggered, this, &MainWindow::host);
 	connect(join, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
-	connect(sessionSettings, &QAction::triggered, m_sessionSettings, &dialogs::SessionSettingsDialog::show);
-	connect(serverlog, &QAction::triggered, m_serverLogDialog, &dialogs::ServerLogDialog::show);
+	connect(sessionSettings, &QAction::triggered, m_sessionSettings, [this](){
+		utils::showWindow(m_sessionSettings);
+	});
+	connect(serverlog, &QAction::triggered, m_serverLogDialog, [this](){
+		utils::showWindow(m_serverLogDialog);
+	});
 	connect(reportabuse, &QAction::triggered, this, &MainWindow::reportAbuse);
 	connect(gainop, &QAction::triggered, this, &MainWindow::tryToGainOp);
 	connect(locksession, &QAction::triggered, m_doc, &Document::sendLockSession);
@@ -3272,7 +3276,7 @@ void MainWindow::setupActions()
 #ifdef ENABLE_VERSION_CHECK
 	connect(versioncheck, &QAction::triggered, this, [this]() {
 		auto *dlg = new dialogs::VersionCheckDialog(this);
-		dlg->show();
+		utils::showWindow(dlg);
 		dlg->queryNewVersions();
 	});
 #endif
@@ -3289,7 +3293,7 @@ void MainWindow::setupActions()
 			ttd = new dialogs::TabletTestDialog;
 			ttd->setAttribute(Qt::WA_DeleteOnClose);
 		}
-		ttd->show();
+		utils::showWindow(ttd);
 		ttd->raise();
 	});
 
