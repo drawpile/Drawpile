@@ -22,6 +22,7 @@
 
 #include "../utils/icon.h"
 #include "../libshared/util/paths.h"
+#include <drawdance/ziparchive.h>
 
 #include <QBuffer>
 #include <QDebug>
@@ -29,6 +30,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QPixmap>
+#include <QRegularExpression>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -75,6 +77,11 @@ public:
 	int readTagCount()
 	{
 		return readInt("select count(*) from tag");
+	}
+
+	int readTagCountByName(const QString &name)
+	{
+		return readInt("select count(*) from tag where name = ?", {name});
 	}
 
 	int readTagIdAtIndex(int index)
@@ -840,6 +847,145 @@ void BrushPresetTagModel::newClassicPreset(int tagId, const QString &name,
 	}
 }
 
+bool BrushPresetTagModel::importMyPaintBrushPack(
+		const QString &file, int &outTagId, QString &outTagName,
+		QStringList &outErrors)
+{
+	drawdance::ZipReader zr{file};
+	if(zr.isNull()) {
+		qWarning("Error opening '%s': %s", qUtf8Printable(file), DP_error());
+		outErrors.append(tr("Can't open '%1'.").arg(qUtf8Printable(file)));
+		return false;
+	}
+
+	drawdance::ZipReader::File orderFile = zr.readFile(QStringLiteral("order.conf"));
+	if(orderFile.isNull()) {
+		qWarning("Error reading order.conf from zip: %s", DP_error());
+		outErrors.append(tr("Invalid brush pack: order.conf not found inside"));
+		return false;
+	}
+
+	QStringList order = orderFile.readUtf8()
+		.split(QRegularExpression{"\\s*\n\\s*"}, Qt::SkipEmptyParts);
+	int orderCount = order.size();
+	if(orderCount < 2) {
+		outErrors.append(tr("Invalid brush pack: order.conf contains no brushes"));
+		return false;
+	}
+
+	QRegularExpressionMatch match =
+		QRegularExpression{"^Group:\\s*(\\S.+?)\\s*$"}.match(order.first());
+	if(!match.hasMatch()) {
+		outErrors.append(tr("Invalid brush pack: order.conf does not start with 'Group: ...'"));
+		return false;
+	}
+
+	outTagName = match.captured(1);
+	if(d->readTagCountByName(outTagName) != 0) {
+		for(int i = 2; i < 100; ++i) {
+			QString candidate = QStringLiteral("%1 (%2)").arg(outTagName).arg(i);
+			if(d->readTagCountByName(candidate) == 0) {
+				outTagName = candidate;
+				break;
+			}
+		}
+	}
+
+	outTagId = -1;
+	for(int i = 1; i < orderCount; ++i) {
+		QString prefix = order[i];
+		ActiveBrush brush;
+		QString description;
+		QPixmap thumbnail;
+		if(readMyPaintBrush(zr, prefix, outErrors, brush, description, thumbnail)) {
+			if(outTagId == -1) {
+				beginResetModel();
+				outTagId = d->createTag(outTagName);
+				if(outTagId < 1) {
+					outErrors.append(tr("Could not create tag '%1'.").arg(outTagName));
+					endResetModel();
+					return false;
+				}
+				m_presetModel->beginResetModel();
+			}
+
+			int slashIndex = prefix.indexOf("/");
+			QString name = QStringLiteral("%1/%2-%3")
+				.arg(outTagName)
+				.arg(i * 100, 4, 10, QLatin1Char('0'))
+				.arg(slashIndex < 0 ? prefix : prefix.mid(slashIndex + 1));
+
+			int presetId = d->createPreset(
+				brush.presetType(), name, description,
+				BrushPresetModel::toPng(thumbnail), brush.presetData());
+			d->createPresetTag(presetId, outTagId);
+		}
+	}
+
+	if(outTagId == -1) {
+		outErrors.append(tr("Could not read any brushes from brush pack."));
+		return false;
+	}
+
+	m_presetModel->endResetModel();
+	endResetModel();
+	return true;
+}
+
+bool BrushPresetTagModel::readMyPaintBrush(
+	const drawdance::ZipReader &zr, const QString &prefix, QStringList &outErrors,
+	ActiveBrush &outBrush, QString &outDescription, QPixmap &outThumbnail)
+{
+	QString mybPath = QStringLiteral("%1.myb").arg(prefix);
+	drawdance::ZipReader::File mybFile = zr.readFile(mybPath);
+	if(mybFile.isNull()) {
+		qWarning("Error reading '%s' from zip: %s", qUtf8Printable(mybPath), DP_error());
+		outErrors.append(tr("Can't read brush file '%1'").arg(qUtf8Printable(mybPath)));
+		return false;
+	}
+
+	QJsonParseError error;
+	QJsonDocument json = QJsonDocument::fromJson(mybFile.readBytes(), &error);
+	if(error.error != QJsonParseError::NoError) {
+		outErrors.append(tr("Brush file '%1' does not contain valid JSON: %1")
+			.arg(qUtf8Printable(mybPath)).arg(qUtf8Printable(error.errorString())));
+		return false;
+	}
+
+	outBrush = ActiveBrush{ActiveBrush::MYPAINT};
+	QJsonObject object = json.object();
+	if(!outBrush.myPaint().loadMyPaintJson(object)) {
+		outErrors.append(tr("Can't load brush from brush file '%1'")
+			.arg(qUtf8Printable(mybPath)));
+		return false;
+	}
+
+	outDescription = object["notes"].toString();
+	if (outDescription.isNull()) {
+		outDescription = object["description"].toString();
+		if (outDescription.isNull()) {
+			outDescription = "";
+		}
+	}
+
+	QString prevPath = QStringLiteral("%1_prev.png").arg(prefix);
+	drawdance::ZipReader::File prevFile = zr.readFile(prevPath);
+	if(!prevFile.isNull()) {
+		outThumbnail.loadFromData(prevFile.readBytes());
+	}
+
+	if(outThumbnail.isNull()) {
+		outThumbnail = outBrush.presetThumbnail();
+	}
+
+	if(outThumbnail.width() != THUMBNAIL_SIZE || outThumbnail.height() != THUMBNAIL_SIZE) {
+		outThumbnail = outThumbnail.scaled(THUMBNAIL_SIZE, THUMBNAIL_SIZE,
+			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	}
+
+	return true;
+}
+
 
 BrushPresetModel::BrushPresetModel(BrushPresetTagModel *tagModel)
 	: QAbstractItemModel(tagModel)
@@ -1010,50 +1156,6 @@ void BrushPresetModel::setIconDimension(int dimension)
 	beginResetModel();
 	d->createOrUpdateState(QStringLiteral("preset_icon_size"), dimension);
 	endResetModel();
-}
-
-int BrushPresetModel::importMyPaintBrush(const QString &file)
-{
-	QFile f(file);
-	if(!f.open(QFile::ReadOnly)) {
-		qWarning() << file << f.errorString();
-		return false;
-	}
-
-	QJsonParseError error;
-	QJsonDocument json = QJsonDocument::fromJson(f.readAll(), &error);
-	if(error.error != QJsonParseError::NoError) {
-		qWarning() << file << error.errorString();
-		return false;
-	}
-
-	ActiveBrush brush(ActiveBrush::MYPAINT);
-	QJsonObject object = json.object();
-	if(!brush.myPaint().loadMyPaintJson(object)) {
-		return false;
-	}
-
-	QFileInfo fileInfo(file);
-	QString name = fileInfo.completeBaseName();
-
-	QString description = object["notes"].toString();
-	if (description.isNull()) {
-		description = object["description"].toString();
-		if (description.isNull()) {
-			description = "";
-		}
-	}
-
-	QPixmap thumbnail = loadBrushPreview(fileInfo);
-	if(thumbnail.isNull()) {
-		thumbnail = brush.presetThumbnail();
-	}
-	if(thumbnail.width() != THUMBNAIL_SIZE || thumbnail.height() != THUMBNAIL_SIZE) {
-		thumbnail = thumbnail.scaled(THUMBNAIL_SIZE, THUMBNAIL_SIZE,
-			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	}
-
-	return newPreset(brush.presetType(), name, description, thumbnail, brush.presetData());
 }
 
 void BrushPresetModel::tagsAboutToBeReset()

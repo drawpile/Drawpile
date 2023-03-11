@@ -27,13 +27,17 @@
 #include "titlewidget.h"
 
 #include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QListView>
 #include <QMenu>
-#include <QMessageBox>
 #include <QSortFilterProxyModel>
+#include <QTextBrowser>
+#include <QVBoxLayout>
 
 static constexpr char SELECTED_TAG_ID_KEY[] = "brushpalette:selected_tag_id";
 
@@ -345,33 +349,60 @@ void BrushPalette::deleteCurrentPreset()
 
 void BrushPalette::importMyPaintBrushes()
 {
-	QStringList files = QFileDialog::getOpenFileNames(this,
-		tr("Select one or more MyPaint brushes to import"), QString(),
-		"MyPaint Brush (*.myb)");
+	QString file = QFileDialog::getOpenFileName(this,
+		tr("Select MyPaint brush pack to import"), QString(),
+		tr("MyPaint Brush Pack (%1)").arg("*.zip"));
 
-	if(!files.isEmpty()) {
-		int tagId = d->currentTag.id;
-		QStringList successes, failures;
-		for(const QString &file : files) {
-			int presetId = d->presetModel->importMyPaintBrush(file);
-			(presetId > 0 ? successes : failures).append(QFileInfo(file).completeBaseName());
-			if(tagId > 0) {
-				d->presetModel->changeTagAssignment(presetId, tagId, true);
+	if(!file.isEmpty()) {
+		int tagId;
+		QString tagName;
+		QStringList errors;
+		bool importOk = d->tagModel->importMyPaintBrushPack(
+			file, tagId, tagName, errors);
+		if(importOk) {
+			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(tagId));
+		}
+
+		QDialog *dlg = new QDialog{this};
+		dlg->setWindowTitle(tr("MyPaint Brush Import"));
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setModal(true);
+
+		QVBoxLayout *layout = new QVBoxLayout{dlg};
+		dlg->setLayout(layout);
+
+		QString text;
+		int errorCount = errors.size();
+		if(importOk) {
+			if(errorCount == 0) {
+				text = tr("Imported MyPaint brush pack '%1'.").arg(tagName);
+			} else {
+				text = tr("Imported MyPaint brush pack '%1', but encountered %n"
+					"error(s) along the way.", "", errorCount).arg(tagName);
 			}
+		} else {
+			text =
+				tr("Failed to import MyPaint brush pack from '%1'.").arg(file);
 		}
 
-		QStringList messages;
-		messages.append(tr("Import of %1 MyPaint brush(es).").arg(files.count()));
-		if(!successes.isEmpty()) {
-			messages.append(tr("%1 successfully imported: %2")
-				.arg(successes.count()).arg(successes.join(", ")));
-		}
-		if(!failures.isEmpty()) {
-			messages.append(tr("%1 failed to import: %2")
-				.arg(failures.count()).arg(failures.join(", ")));
+		QLabel *label = new QLabel{text, dlg};
+		layout->addWidget(label);
+
+		if(errorCount != 0) {
+			dlg->resize(400, 200);
+			label->setWordWrap(true);
+			QTextBrowser *browser = new QTextBrowser{dlg};
+			browser->setPlainText(errors.join("\n"));
+			layout->addWidget(browser);
 		}
 
-		QMessageBox::information(this, tr("MyPaint Brush Import"), messages.join("\n\n"));
+		QDialogButtonBox *buttons = new QDialogButtonBox{dlg};
+		buttons->setStandardButtons(QDialogButtonBox::StandardButton::Ok);
+		layout->addWidget(buttons);
+
+		connect(buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
+		connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
+		dlg->show();
 	}
 }
 

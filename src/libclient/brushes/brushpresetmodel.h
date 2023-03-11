@@ -25,6 +25,10 @@
 class QFile;
 class QFileInfo;
 
+namespace drawdance {
+	class ZipReader;
+}
+
 namespace brushes {
 
 class ActiveBrush;
@@ -83,6 +87,10 @@ public:
 	void setState(const QString &key, const QVariant &value);
 	QVariant getState(const QString &key) const;
 
+	bool importMyPaintBrushPack(
+		const QString &file, int &outTagId, QString &outTagName,
+		QStringList &outErrors);
+
 private:
 	class Private;
 	Private *d;
@@ -95,10 +103,16 @@ private:
 	void createDefaultClassicPresets();
 	void newClassicPreset(int tagId, const QString &name,
 		const QString &description, const ActiveBrush &brush);
+
+	static bool readMyPaintBrush(
+		const drawdance::ZipReader &zr, const QString &prefix, QStringList &outErrors,
+		ActiveBrush &outBrush, QString &outDescription, QPixmap &outThumbnail);
 };
 
 class BrushPresetModel : public QAbstractItemModel {
 	Q_OBJECT
+	friend class BrushPresetTagModel;
+
 public:
 	enum Roles {
 		SortRole = Qt::UserRole + 1,
@@ -137,8 +151,6 @@ public:
 	QSize iconSize() const;
 	int iconDimension() const;
 	void setIconDimension(int dimension);
-
-	int importMyPaintBrush(const QString &file);
 
 public slots:
 	void tagsAboutToBeReset();

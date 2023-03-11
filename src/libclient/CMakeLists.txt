@@ -37,6 +37,7 @@ set(libclient_sources
 	drawdance/snapshotqueue.cpp
 	drawdance/tile.cpp
 	drawdance/timeline.cpp
+	drawdance/ziparchive.cpp
 	export/animationsaverrunnable.cpp
 	export/canvassaverrunnable.cpp
 	export/ffmpegexporter.cpp
