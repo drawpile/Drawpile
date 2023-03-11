@@ -308,9 +308,12 @@ static uint8_t get_mypaint_dab_angle(float angle)
 }
 
 // Spread the aspect ratio into a range between 0.1 and 10.0, then into a byte.
+// FIXME: the minimum aspect ratio is 1.0, so that spread is silly. We should
+// go from 1.0 to 10.0 instead. MyPaint also clamps the aspect ratio at 1.0 at
+// minimum, anything below just glitches out the mask.
 static uint8_t get_mypaint_dab_aspect_ratio(float aspect_ratio)
 {
-    return DP_float_to_uint8((CLAMP(aspect_ratio, 0.1f, 10.0f) - 0.1f) * 25.755f
+    return DP_float_to_uint8((CLAMP(aspect_ratio, 1.0f, 10.0f) - 0.1f) * 25.755f
                              + 0.5f);
 }
 
