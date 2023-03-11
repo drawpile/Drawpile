@@ -182,9 +182,12 @@ void UserListModel::allLogout()
 
 void UserListModel::reset()
 {
-	beginRemoveRows(QModelIndex(), 0, m_users.size()-1);
-	m_users.clear();
-	endRemoveRows();
+	int size = m_users.size();
+	if(size != 0) {
+		beginRemoveRows(QModelIndex(), 0, size - 1);
+		m_users.clear();
+		endRemoveRows();
+	}
 }
 
 void UserListModel::updateAclState(const AclState *acl)
