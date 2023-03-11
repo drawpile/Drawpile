@@ -50,6 +50,8 @@ public:
 	//! Focus the text input widget
 	void focusInput();
 
+	bool isCollapsed() const { return m_state == State::Collapsed; }
+
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onServerLogin();

@@ -426,6 +426,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
 	connect(m_doc->client(), &net::Client::youWereKicked, m_netstatus, &widgets::NetStatus::kicked);
+	connect(m_doc->client(), &net::Client::serverMessage, [=](const QString &message, bool alert) {
+		if (alert && m_chatbox->isCollapsed()) {
+			m_netstatus->message(message);
+		}
+	});
 
 	DrawpileApp *app = static_cast<DrawpileApp *>(qApp);
 	connect(app, &DrawpileApp::settingsChanged, this, &MainWindow::loadShortcuts);

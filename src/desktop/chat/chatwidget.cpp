@@ -654,9 +654,9 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 	const bool wasAtEnd = d->isAtEnd();
 	if(alert) {
 		d->publicChat().appendAlert(QString(), message);
-		emit expandRequested();
-	} else
+	} else {
 		d->publicChat().appendNotification(message.toHtmlEscaped());
+	}
 
 	if(wasAtEnd)
 		d->scrollChatToEnd(0);
