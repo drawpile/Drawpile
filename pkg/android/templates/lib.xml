@@ -3,7 +3,7 @@
     <array name="bundled_libs">
         <item>{{ANDROID_ABI}};crypto_1_1</item>
         <item>{{ANDROID_ABI}};ssl_1_1</item>
-        <item>{{ANDROID_ABI}};KF5Archive_{{ANDROID_ABI}}.so</item>
+        <item>{{ANDROID_ABI}};KF5Archive_{{ANDROID_ABI}}</item>
     </array>
 
     <array name="qt_libs">
