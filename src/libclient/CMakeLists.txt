@@ -109,6 +109,9 @@ target_link_libraries(dpclient PUBLIC
 	dpshared Drawdance::dpengine Drawdance::dpengine_archive Drawdance::dpmsg
 	Drawdance::dpcommon DP::QtGui DP::QtNetwork DP::QtSql)
 
+# Required in libshared/qtshims.h to enable QtGui-related shims.
+target_compile_definitions(dpclient PUBLIC HAVE_QT_GUI)
+
 if(WIN32)
 	target_sources(dpclient PRIVATE parentalcontrols/parentalcontrols_win.cpp)
 	target_link_libraries(dpclient PUBLIC ws2_32 userenv bcrypt)
