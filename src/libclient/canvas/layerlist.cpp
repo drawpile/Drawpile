@@ -392,25 +392,23 @@ QStringList LayerMimeData::formats() const
 QVariant LayerMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
 {
 	Q_UNUSED(mimeType);
-	if(type == QVariant::Image) {
-		if(m_source->m_getlayerfn) {
-			return m_source->m_getlayerfn(m_id);
-		}
-	}
-	return QVariant{};
+	return retrieveImageData(type == QVariant::Image);
 }
 #else
 QVariant LayerMimeData::retrieveData(const QString &mimeType, QMetaType type) const
 {
 	Q_UNUSED(mimeType);
-	if(type.id() == QMetaType::QImage) {
-		if(m_source->m_getlayerfn) {
-			return m_source->m_getlayerfn(m_id);
-		}
+	return retrieveImageData(type.id() == QMetaType::QImage);
+}
+#endif
+
+QVariant LayerMimeData::retrieveImageData(bool isImageType) const
+{
+	if(isImageType && m_source->m_getlayerfn) {
+		return m_source->m_getlayerfn(m_id);
 	}
 	return QVariant{};
 }
-#endif
 
 int LayerListModel::getAvailableLayerId() const
 {

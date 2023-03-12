@@ -213,6 +213,8 @@ protected:
 private:
 	const LayerListModel *m_source;
 	uint16_t m_id;
+
+	QVariant retrieveImageData(bool isImageType) const;
 };
 
 }
