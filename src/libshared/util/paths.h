@@ -60,6 +60,15 @@ inline QString writablePath(const QString &dirOrFileName, const QString &filenam
 	return writablePath(QStandardPaths::AppDataLocation, dirOrFileName, filename);
 }
 
+/**
+ * @brief Gets the name of the file without any directories.
+ *
+ * On normal platforms, this is just the basename of the file. On Android, the
+ * basename is extracted from the content URI that it uses. The returned path
+ * could conceivably be empty, consider checking for it.
+ */
+QString extractBasename(QString filename);
+
 }
 }
 

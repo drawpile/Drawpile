@@ -23,6 +23,7 @@
 #include <QMenu>
 
 #include "recentfiles.h"
+#include "util/paths.h"
 
 /**
  * @param filename filename to add
@@ -87,10 +88,11 @@ void RecentFiles::initMenu(QMenu *menu)
 	menu->setEnabled(!files.isEmpty());
 	int index = 1;
 	for(const QString &filename : files) {
-		const QFileInfo file(filename);
-		QAction *a = menu->addAction(QString(index<10?"&%1. %2":"%1. %2").arg(index).arg(file.fileName()));
-		a->setStatusTip(file.absoluteFilePath());
-		a->setProperty("filepath",file.absoluteFilePath());
+		QAction *a = menu->addAction(QString(index<10?"&%1. %2":"%1. %2")
+			.arg(index).arg(utils::paths::extractBasename(filename)));
+		QString absoluteFilePath = QFileInfo{filename}.absoluteFilePath();
+		a->setStatusTip(absoluteFilePath);
+		a->setProperty("filepath", absoluteFilePath);
 		++index;
 	}
 }

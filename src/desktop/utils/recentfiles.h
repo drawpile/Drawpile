@@ -20,6 +20,7 @@
 #define RECENTFILES_H
 
 class QMenu;
+class QString;
 
 /**
  * The RecentFiles class keeps a global list of recently opened and

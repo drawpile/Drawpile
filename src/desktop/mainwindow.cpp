@@ -23,7 +23,6 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QSettings>
-#include <QFileDialog>
 #include <QDesktopServices>
 #include <QScreen>
 #include <QUrl>
@@ -109,6 +108,7 @@
 #include "toolwidgets/inspectorsettings.h"
 #include "widgets/toolmessage.h"
 
+#include "filewrangler.h"
 #include "export/animationsaverrunnable.h"
 #include "../libshared/record/reader.h"
 #include "drawdance/eventlog.h"
@@ -134,10 +134,6 @@
 #ifdef ENABLE_VERSION_CHECK
 #	include "dialogs/versioncheckdialog.h"
 #endif
-
-static QString getLastPath() { return QSettings().value("window/lastpath").toString(); }
-
-static void setLastPath(const QString &lastpath) { QSettings().setValue("window/lastpath", lastpath); }
 
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(),
@@ -1115,16 +1111,9 @@ void MainWindow::open(const QUrl& url)
  */
 void MainWindow::open()
 {
-	const QString file = QFileDialog::getOpenFileName(
-		this,
-		tr("Open Image"),
-		getLastPath(),
-		utils::fileFormatFilter(utils::FileFormatOption::OpenEverything)
-	);
-
-	const QUrl url = QUrl::fromLocalFile(file);
+	QString filename = FileWrangler{this}.getOpenPath();
+	QUrl url = QUrl::fromLocalFile(filename);
 	if(url.isValid()) {
-		setLastPath(file);
 		open(url);
 	}
 }
@@ -1165,23 +1154,10 @@ bool MainWindow::confirmFlatten(QString& file) const
  */
 void MainWindow::save()
 {
-	QString filename = m_doc->currentFilename();
-
-	if(filename.isEmpty() || !utils::isWritableFormat(filename)) {
-		saveas();
-		return;
+	QString result = FileWrangler{this}.saveImage(m_doc);
+	if(!result.isEmpty()) {
+		addRecentFile(result);
 	}
-
-	if(!filename.endsWith("ora", Qt::CaseInsensitive) && m_doc->canvas()->paintEngine()->needsOpenRaster()) {
-		// Note: the user may decide to save an ORA file instead, in which case the name is changed
-		if(confirmFlatten(filename)==false)
-			return;
-	}
-
-	// Overwrite current file
-	m_doc->saveCanvas(filename);
-
-	addRecentFile(filename);
 }
 
 /**
@@ -1190,79 +1166,17 @@ void MainWindow::save()
  */
 void MainWindow::saveas()
 {
-	QString selfilter;
-
-	QString file = QFileDialog::getSaveFileName(
-			this,
-			tr("Save Image"),
-			getLastPath(),
-			utils::fileFormatFilter(utils::FileFormatOption::SaveImages),
-			&selfilter);
-
-	if(!file.isEmpty()) {
-
-		// Set file suffix if missing
-		const QFileInfo info(file);
-		if(info.suffix().isEmpty()) {
-			if(selfilter.isEmpty()) {
-				// If we don't have selfilter, pick what is best
-				if(m_doc->canvas()->paintEngine()->needsOpenRaster())
-					file += ".ora";
-				else
-					file += ".png";
-			} else {
-				// Use the currently selected filter
-				int i = selfilter.indexOf("*.")+1;
-				int i2 = selfilter.indexOf(')', i);
-				file += selfilter.mid(i, i2-i);
-			}
-		}
-
-		// Confirm format choice if saving would result in flattening layers
-		if(m_doc->canvas()->paintEngine()->needsOpenRaster() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
-			if(confirmFlatten(file)==false)
-				return;
-		}
-
-		// Save the image
-		setLastPath(file);
-		m_doc->saveCanvas(file);
-		addRecentFile(file);
+	QString result = FileWrangler{this}.saveImageAs(m_doc);
+	if(!result.isEmpty()) {
+		addRecentFile(result);
 	}
 }
 
 void MainWindow::saveSelection()
 {
-	QString selfilter = "PNG (*.png)";
-
-	QString file = QFileDialog::getSaveFileName(
-			this,
-			tr("Save Image"),
-			getLastPath(),
-			utils::fileFormatFilter(utils::FileFormatOption::SaveImages | utils::FileFormatOption::QtImagesOnly),
-			&selfilter);
-
-	if(!file.isEmpty()) {
-		// Set file suffix if missing
-		const QFileInfo info(file);
-		if(info.suffix().isEmpty()) {
-			if(selfilter.isEmpty()) {
-				file += ".png";
-			} else {
-				// Use the currently selected filter
-				int i = selfilter.indexOf("*.")+1;
-				int i2 = selfilter.indexOf(')', i);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-				file += selfilter.mid(i, i2-i);
-#else
-				file += QStringView{selfilter}.mid(i, i2-i);
-#endif
-			}
-		}
-
-		// Save the image
-		setLastPath(file);
-		m_doc->saveSelection(file);
+	QString result = FileWrangler{this}.saveSelectionAs(m_doc);
+	if(!result.isEmpty()) {
+		addRecentFile(result);
 	}
 }
 
@@ -1297,58 +1211,26 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 }
 
-static QString withSuffix(QString path, const QString &wantedSuffix)
-{
-	if(!path.isEmpty()) {
-		QFileInfo info{path};
-		QString suffix = info.suffix();
-		if(suffix.compare(wantedSuffix, Qt::CaseInsensitive) != 0) {
-			path.chop(suffix.length());
-			if(!path.endsWith(".")) {
-				path.append(".");
-			}
-			path.append(wantedSuffix);
-		}
-	}
-	return path;
-}
-
 void MainWindow::exportGifAnimation()
 {
-	QString path = QFileDialog::getSaveFileName(
-		this,
-		tr("Export Animated GIF"),
-		withSuffix(getLastPath(), "gif"),
-		"GIF (*.gif)"
-	);
-
-	exportAnimation(withSuffix(path, "gif"), DP_save_animation_gif);
+	QString filename = FileWrangler{this}.getSaveGifPath();
+	if(!filename.isEmpty()) {
+		exportAnimation(filename, DP_save_animation_gif);
+	}
 }
 
+#ifndef Q_OS_ANDROID
 void MainWindow::exportAnimationFrames()
 {
-	QString lastPath = getLastPath();
-	if(!lastPath.isEmpty()) {
-		QFileInfo info{lastPath};
-		if(!info.isDir()) {
-			lastPath = info.dir().path();
-		}
+	QString dirname = FileWrangler{this}.getSaveAnimationFramesPath();
+	if(!dirname.isEmpty()) {
+		exportAnimation(dirname, DP_save_animation_frames);
 	}
-
-	const QString path = QFileDialog::getExistingDirectory(
-		this,
-		tr("Choose folder to save frames in"),
-		lastPath
-	);
-
-	exportAnimation(path, DP_save_animation_frames);
 }
+#endif
 
 void MainWindow::exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn)
 {
-	if(path.isEmpty())
-		return;
-
 	auto *progressDialog = new QProgressDialog(
 		tr("Saving animation..."),
 		tr("Cancel"),
@@ -1414,15 +1296,9 @@ void MainWindow::toggleRecording()
 		return; // There was a recording and we just stopped it.
 	}
 
-	QString file = QFileDialog::getSaveFileName(
-		this,
-		tr("Record Session"),
-		getLastPath(),
-		utils::fileFormatFilter(utils::FileFormatOption::SaveRecordings)
-	);
-
-	if(!file.isEmpty()) {
-		drawdance::RecordStartResult result = m_doc->startRecording(file);
+	QString filename = FileWrangler{this}.getSaveRecordingPath();
+	if(!filename.isEmpty()) {
+		drawdance::RecordStartResult result = m_doc->startRecording(filename);
 		switch(result) {
 		case drawdance::RECORD_START_SUCCESS:
 			break;
@@ -1446,14 +1322,9 @@ void MainWindow::toggleProfile()
 			showErrorMessageWithDetails(tr("Error closing profile."), DP_error());
 		}
 	} else {
-		QString path = QFileDialog::getSaveFileName(
-			this,
-			tr("Profile"),
-			withSuffix(getLastPath(), "dpperf"),
-			utils::fileFormatFilter(utils::FileFormatOption::SaveProfile)
-		);
+		QString path = FileWrangler{this}.getSavePerformanceProfilePath();
 		if(!path.isEmpty()) {
-			if(!drawdance::Perf::open(withSuffix(path, "dpperf"))) {
+			if(!drawdance::Perf::open(path)) {
 				showErrorMessageWithDetails(tr("Error opening profile."), DP_error());
 			}
 		}
@@ -1467,14 +1338,9 @@ void MainWindow::toggleTabletEventLog()
 			showErrorMessageWithDetails(tr("Error closing tablet event log."), DP_error());
 		}
 	} else {
-		QString path = QFileDialog::getSaveFileName(
-			this,
-			tr("Event Log"),
-			withSuffix(getLastPath(), "dplog"),
-			utils::fileFormatFilter(utils::FileFormatOption::SaveEventLog)
-		);
+		QString path = FileWrangler{this}.getSaveTabletEventLogPath();
 		if(!path.isEmpty()) {
-			if(drawdance::EventLog::open(withSuffix(path, "dplog"))) {
+			if(drawdance::EventLog::open(path)) {
 				DP_event_log_write_meta("Drawpile: %s", DRAWPILE_VERSION);
 				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
 				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
@@ -2189,19 +2055,10 @@ void MainWindow::pasteCentered()
 
 void MainWindow::pasteFile()
 {
-	const QString file = QFileDialog::getOpenFileName(
-		this,
-		tr("Paste Image"),
-		getLastPath(),
-		// note: Only Qt's native image formats are supported at the moment
-		utils::fileFormatFilter(utils::FileFormatOption::OpenImages | utils::FileFormatOption::QtImagesOnly)
-	);
-
-	if(file.isEmpty()==false) {
-		const QFileInfo info(file);
-		setLastPath(info.absolutePath());
-
-		pasteFile(QUrl::fromLocalFile(file));
+	QString filename = FileWrangler{this}.getOpenPasteImagePath();
+	QUrl url = QUrl::fromLocalFile(filename);
+	if(url.isValid()) {
+		pasteFile(url);
 	}
 }
 
@@ -2498,13 +2355,8 @@ void MainWindow::toggleDebugDump()
 
 void MainWindow::openDebugDump()
 {
-	const QString file = QFileDialog::getOpenFileName(
-		this,
-		tr("Open Debug Dump"),
-		utils::paths::writablePath("dumps"),
-		utils::fileFormatFilter(utils::FileFormatOption::OpenDebugDumps)
-	);
-	QUrl url = QUrl::fromLocalFile(file);
+	QString filename = FileWrangler{this}.getOpenDebugDumpsPath();
+	QUrl url = QUrl::fromLocalFile(filename);
 	if(url.isValid()) {
 		open(url);
 	}
@@ -2671,7 +2523,9 @@ void MainWindow::setupActions()
 	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as");
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
+#ifndef Q_OS_ANDROID
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
+#endif
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
@@ -2683,7 +2537,9 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(saveas);
 	m_currentdoctools->addAction(savesel);
 	m_currentdoctools->addAction(exportGifAnimation);
+#ifndef Q_OS_ANDROID
 	m_currentdoctools->addAction(exportAnimationFrames);
+#endif
 	m_currentdoctools->addAction(record);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
@@ -2697,7 +2553,9 @@ void MainWindow::setupActions()
 	connect(m_doc, &Document::canAutosaveChanged, autosave, &QAction::setEnabled);
 
 	connect(exportGifAnimation, &QAction::triggered, this, &MainWindow::exportGifAnimation);
+#ifndef Q_OS_ANDROID
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
+#endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
 #ifdef Q_OS_MAC
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
@@ -2724,7 +2582,9 @@ void MainWindow::setupActions()
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(icon::fromTheme("document-export"));
 	exportMenu->addAction(exportGifAnimation);
+#ifndef Q_OS_ANDROID
 	exportMenu->addAction(exportAnimationFrames);
+#endif
 	filemenu->addAction(record);
 	filemenu->addSeparator();
 

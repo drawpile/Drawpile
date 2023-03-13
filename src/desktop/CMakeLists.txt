@@ -1,5 +1,6 @@
 set(desktop_sources
 	main.cpp
+	filewrangler.cpp
 	mainwindow.cpp
 	notifications.cpp
 	tabletinput.cpp
@@ -204,6 +205,8 @@ endif()
 # up with no way to switch between them, so we don't allow that there.
 if(ANDROID)
 	target_compile_definitions(${CLIENTNAME} PRIVATE SINGLE_MAIN_WINDOW=1)
+	target_sources(${CLIENTNAME} PRIVATE dialogs/androidfiledialog.cpp)
+	list(APPEND desktop_uis ui/androidfiledialog.ui)
 endif()
 
 if(ENABLE_VERSION_CHECK)

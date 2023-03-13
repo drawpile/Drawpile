@@ -50,17 +50,27 @@ enum FileFormatOption {
 	Profile = 0x20,
 	DebugDumps = 0x40,
 	EventLog = 0x80,
+	Gif = 0x100,
+
+#ifdef Q_OS_ANDROID
+	SaveAllFiles = 0x0,
+#else
+	SaveAllFiles = AllFiles,
+#endif
 
 	OpenImages = Images | AllFiles,
 	OpenEverything = Images | Recordings | AllFiles,
 	OpenDebugDumps = DebugDumps,
-	SaveImages = Images | AllFiles | Save,
-	SaveRecordings = Recordings | AllFiles | Save,
+	SaveImages = Images | SaveAllFiles | Save,
+	SaveRecordings = Recordings | SaveAllFiles | Save,
 	SaveProfile = Profile | Save,
 	SaveEventLog = EventLog | Save,
+	SaveGif = Gif | Save,
 };
 Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)
+
+QStringList fileFormatFilterList(FileFormatOptions formats);
 
 //! Get a filter string to use in an Open or Save dialog
 QString fileFormatFilter(FileFormatOptions formats);

@@ -138,7 +138,11 @@ private slots:
 	void toggleTabletEventLog();
 
 	void exportGifAnimation();
+	// On Android, we can only save stuff to individual files that the user
+	// specifies, we're not allowed to spew multiple files into a directory.
+#ifndef Q_OS_ANDROID
 	void exportAnimationFrames();
+#endif
 
 	void onOperatorModeChange(bool op);
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);

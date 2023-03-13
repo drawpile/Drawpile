@@ -107,7 +107,7 @@ bool isWritableFormat(const QString &filename)
 	return false;
 }
 
-QString fileFormatFilter(FileFormatOptions formats)
+QStringList fileFormatFilterList(FileFormatOptions formats)
 {
 	QStringList filter;
 	QString readImages, recordings;
@@ -141,6 +141,10 @@ QString fileFormatFilter(FileFormatOptions formats)
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
 		}
+	}
+
+	if(formats.testFlag(FileFormatOption::Gif)) {
+		filter << QGuiApplication::tr("GIF (%1)").arg("*.gif");
 	}
 
 	if(formats.testFlag(FileFormatOption::Recordings)) {
@@ -195,7 +199,12 @@ QString fileFormatFilter(FileFormatOptions formats)
 		filter << QGuiApplication::tr("All Files (*)");
 	}
 
-	return filter.join(";;");
+	return filter;
+}
+
+QString fileFormatFilter(FileFormatOptions formats)
+{
+	return fileFormatFilterList(formats).join(";;");
 }
 
 }
