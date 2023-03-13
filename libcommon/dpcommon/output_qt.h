@@ -15,5 +15,10 @@ DP_Output *DP_qfile_output_new_from_path(const char *path,
 DP_Output *DP_qsavefile_output_new_from_path(const char *path,
                                              DP_OutputQtNewFn new_fn);
 
+#ifdef DP_QT_IO_KARCHIVE
+DP_Output *DP_karchive_gzip_output_new_from_path(const char *path,
+                                                 DP_OutputQtNewFn new_fn);
+#endif
+
 
 #endif

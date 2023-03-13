@@ -403,6 +403,9 @@ DP_Output *DP_gzip_output_new(void *gf, bool close)
 DP_Output *DP_gzip_output_new_from_path(const char *path)
 {
     DP_ASSERT(path);
+#if defined(DP_QT_IO) && defined(DP_QT_IO_KARCHIVE)
+    return DP_karchive_gzip_output_new_from_path(path, DP_output_new);
+#else
     gzFile gf = gzopen(path, "wb");
     if (gf) {
         return DP_gzip_output_new(gf, true);
@@ -411,6 +414,7 @@ DP_Output *DP_gzip_output_new_from_path(const char *path)
         DP_error_set("Can't open '%s': %s", path, strerror(errno));
         return NULL;
     }
+#endif
 }
 
 
