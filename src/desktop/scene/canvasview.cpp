@@ -22,8 +22,6 @@
 #include "canvas/canvasmodel.h"
 #include "drawdance/eventlog.h"
 
-#include "notifications.h"
-
 #include "widgets/notifbar.h"
 
 #include <QMouseEvent>
@@ -271,11 +269,6 @@ void CanvasView::setViewMirror(bool mirror)
 
 void CanvasView::setLocked(bool lock)
 {
-	if(lock && !m_locked)
-		notification::playSound(notification::Event::LOCKED);
-	else if(!lock && m_locked)
-		notification::playSound(notification::Event::UNLOCKED);
-
 	m_locked = lock;
 	resetCursor();
 }

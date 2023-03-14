@@ -24,7 +24,7 @@ namespace notification {
 enum class Event {
 	CHAT,     // Chat message received
 	MARKER,   // Recording playback stopped on a marker
-	LOCKED,   // Active layer was locked
+	LOCKED,   // Canvas was locked
 	UNLOCKED, // ...unlocked
 	LOGIN,    // A user just logged in
 	LOGOUT    // ...logged out

@@ -176,6 +176,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 #endif
 	  m_tempToolSwitchShortcut(nullptr),
 	  m_titleBarsHidden(false),
+	  m_wasSessionLocked(false),
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
@@ -1714,6 +1715,13 @@ void MainWindow::updateLockWidget()
 {
 	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->isSessionLocked();
 	getAction("locksession")->setChecked(locked);
+
+	if(locked && !m_wasSessionLocked) {
+		notification::playSound(notification::Event::LOCKED);
+	} else if(!locked && m_wasSessionLocked) {
+		notification::playSound(notification::Event::UNLOCKED);
+	}
+	m_wasSessionLocked = locked;
 
 	locked |= m_dockLayers->isCurrentLayerLocked();
 

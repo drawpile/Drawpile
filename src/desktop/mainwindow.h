@@ -288,6 +288,7 @@ private:
 	QElapsedTimer m_toolChangeTime; // how long the user has held down the tool change button
 	ShortcutDetector *m_tempToolSwitchShortcut;
 	bool m_titleBarsHidden;
+	bool m_wasSessionLocked;
 
 	Document *m_doc;
 	bool m_exitAfterSave;
