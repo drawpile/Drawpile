@@ -27,7 +27,6 @@
 
 #include <QGraphicsView>
 
-class QGestureEvent;
 class QTouchEvent;
 
 namespace drawingboard {
@@ -198,10 +197,17 @@ protected:
 	void resizeEvent(QResizeEvent *) override;
 
 private:
+	static constexpr qreal TOUCH_DRAW_DISTANCE = 10.0;
+	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
+
 	// unified mouse/stylus event handlers
 	void penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
+
+	void touchPressEvent(const QPointF &pos);
+	void touchMoveEvent(const QPointF &pos);
+	void touchReleaseEvent(const QPointF &pos);
 
 	qreal mapPressure(qreal pressure, bool stylus);
 
@@ -218,7 +224,8 @@ private:
 	void onPenMove(const canvas::Point &p, bool right, bool constrain1, bool constrain2);
 	void onPenUp();
 
-	void gestureEvent(QGestureEvent *event);
+	void flushTouchDrawBuffer();
+
 	void touchEvent(QTouchEvent *event);
 
 	void resetCursor();
@@ -239,6 +246,10 @@ private:
 
 	enum class PenMode {
 		Normal, Colorpick, Layerpick
+	};
+
+	enum class TouchMode {
+		Unknown, Drawing, Moving
 	};
 
 	NotificationBar *m_notificationBar;
@@ -262,9 +273,6 @@ private:
 	bool m_prevoutline;
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
-
-	qreal m_gestureStartZoom;
-	qreal m_gestureStartAngle;
 
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_squareoutline;
@@ -293,6 +301,8 @@ private:
 	bool m_enableTouchScroll, m_enableTouchDraw;
 	bool m_enableTouchPinch, m_enableTouchTwist;
 	bool m_touching, m_touchRotating;
+	TouchMode m_touchMode;
+	QVector<QPointF> m_touchDrawBuffer;
 	qreal m_touchStartZoom, m_touchStartRotate;
 	qreal m_dpi;
 	int m_brushCursorStyle;

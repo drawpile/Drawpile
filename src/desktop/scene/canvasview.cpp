@@ -32,11 +32,11 @@
 #include <QPainter>
 #include <QMimeData>
 #include <QApplication>
-#include <QGestureEvent>
 #include <QSettings>
 #include <QWindow>
 #include <QScreen>
 #include <QtMath>
+#include <QLineF>
 
 // When KIS_TABLET isn't enabled (and maybe when the Qt version is new enough
 // too, so I'm putting this into a separate #define), Qt will only generate
@@ -69,16 +69,13 @@ CanvasView::CanvasView(QWidget *parent)
 	m_enableTouchScroll(true), m_enableTouchDraw(false),
 	m_enableTouchPinch(true), m_enableTouchTwist(true),
 	m_touching(false), m_touchRotating(false),
+	m_touchMode(TouchMode::Unknown),
 	m_dpi(96),
 	m_brushCursorStyle(0),
 	m_brushOutlineWidth(1.0)
 {
 	viewport()->setAcceptDrops(true);
-#ifdef Q_OS_MAC // Standard touch events seem to work better with mac touchpad
-	viewport()->grabGesture(Qt::PinchGesture);
-#else
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
-#endif
 	viewport()->setMouseTracking(true);
 	setAcceptDrops(true);
 	setFrameShape(QFrame::NoFrame);
@@ -776,6 +773,21 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 	updateOutline(point);
 }
 
+void CanvasView::touchPressEvent(const QPointF &pos)
+{
+	penPressEvent(pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
+}
+
+void CanvasView::touchMoveEvent(const QPointF &pos)
+{
+	penMoveEvent(pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
+}
+
+void CanvasView::touchReleaseEvent(const QPointF &pos)
+{
+	penReleaseEvent(pos, Qt::LeftButton, Qt::NoModifier);
+}
+
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -1001,28 +1013,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	updateOutline();
 }
 
-void CanvasView::gestureEvent(QGestureEvent *event)
-{
-	QPinchGesture *pinch = static_cast<QPinchGesture*>(event->gesture(Qt::PinchGesture));
-	if(pinch) {
-		DP_EVENT_LOG(
-			"pinch change=0x%x scale=%f rotation=%f pendown=%d touching=%d",
-			unsigned(pinch->changeFlags()), pinch->totalScaleFactor(),
-			pinch->totalRotationAngle(), m_pendown, m_touching);
-
-		if(pinch->state() == Qt::GestureStarted) {
-			m_gestureStartZoom = m_zoom;
-			m_gestureStartAngle = m_rotate;
-		}
-
-		if(m_enableTouchPinch && (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged))
-			setZoom(m_gestureStartZoom * pinch->totalScaleFactor());
-
-		if(m_enableTouchTwist && (pinch->changeFlags() & QPinchGesture::RotationAngleChanged))
-			setRotation(m_gestureStartAngle + pinch->totalRotationAngle());
-	}
-}
-
 static qreal squareDist(const QPointF &p)
 {
 	return p.x()*p.x() + p.y()*p.y();
@@ -1043,44 +1033,63 @@ void CanvasView::touchEvent(QTouchEvent *event)
 	int pointsCount = event->touchPoints().size();
 	switch(event->type()) {
 	case QEvent::TouchBegin:
+		m_touchDrawBuffer.clear();
+		m_touchRotating = false;
 		if(m_enableTouchDraw && pointsCount == 1) {
 			QPointF pos = event->touchPoints().first().pos();
 			DP_EVENT_LOG(
-				"touch_draw_begin x=%f y=%f pendown=%d touching=%d",
-				pos.x(), pos.y(), m_pendown, m_touching);
-			penPressEvent(
-				pos,
-				1.0,
-				0.0,
-				0.0,
-				0.0,
-				Qt::LeftButton,
-				event->modifiers(),
-				false
-			);
+				"touch_draw_begin x=%f y=%f pendown=%d touching=%d points=%d",
+				pos.x(), pos.y(), m_pendown, m_touching, pointsCount);
+			if(m_enableTouchScroll || m_enableTouchPinch || m_enableTouchTwist) {
+				// Buffer the touch first, since it might end up being the
+				// beginning of an action that involves multiple fingers.
+				m_touchDrawBuffer.append(pos);
+				m_touchMode = TouchMode::Unknown;
+			} else {
+				// There's no other actions other than drawing enabled, so we
+				// can just start drawing without awaiting what happens next.
+				m_touchMode = TouchMode::Drawing;
+				touchPressEvent(pos);
+			}
 		} else {
-			DP_EVENT_LOG("touch_begin pendown=%d touching=%d", m_pendown, m_touching);
-			m_touchRotating = false;
+			DP_EVENT_LOG("touch_begin pendown=%d touching=%d points=%d",
+				m_pendown, m_touching, pointsCount);
+			m_touchMode = TouchMode::Moving;
 		}
 		break;
 
 	case QEvent::TouchUpdate:
-		if(m_enableTouchDraw && pointsCount == 1) {
+		if(m_enableTouchDraw && ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) || m_touchMode == TouchMode::Drawing)) {
 			QPointF pos = event->touchPoints().first().pos();
 			DP_EVENT_LOG(
-				"touch_draw_update x=%f y=%f pendown=%d touching=%d",
-				pos.x(), pos.y(), m_pendown, m_touching);
-			penMoveEvent(
-				pos,
-				1.0,
-				0.0,
-				0.0,
-				0.0,
-				Qt::LeftButton,
-				event->modifiers(),
-				false
-			);
+				"touch_draw_update x=%f y=%f pendown=%d touching=%d points=%d",
+				pos.x(), pos.y(), m_pendown, m_touching, pointsCount);
+			int bufferCount = m_touchDrawBuffer.size();
+			if(bufferCount == 0) {
+				if(m_touchMode == TouchMode::Drawing) {
+					touchMoveEvent(pos);
+				} else { // Shouldn't happen, but we'll deal with it anyway.
+					m_touchMode = TouchMode::Drawing;
+					touchPressEvent(pos);
+				}
+			} else {
+				// This still might be the beginning of a multitouch operation.
+				// If the finger didn't move enough of a distance and we didn't
+				// buffer an excessive amount of touches yet. Buffer the touched
+				// point and wait a bit more as to what's going to happen.
+				bool shouldAppend = bufferCount < TOUCH_DRAW_BUFFER_COUNT &&
+					QLineF{m_touchDrawBuffer.first(), pos}.length() < TOUCH_DRAW_DISTANCE;
+				if(shouldAppend) {
+					m_touchDrawBuffer.append(pos);
+				} else {
+					m_touchMode = TouchMode::Drawing;
+					flushTouchDrawBuffer();
+					touchMoveEvent(pos);
+				}
+			}
 		} else {
+			m_touchMode = TouchMode::Moving;
+
 			QPointF startCenter, lastCenter, center;
 			for(const auto &tp : event->touchPoints()) {
 				startCenter += tp.startPos();
@@ -1092,18 +1101,22 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			center /= pointsCount;
 
 			DP_EVENT_LOG(
-				"touch_update points=%d x=%f y=%f pendown=%d touching=%d",
-				pointsCount, center.x(), center.y(), m_pendown, m_touching);
+				"touch_update x=%f y=%f pendown=%d touching=%d points=%d",
+				center.x(), center.y(), m_pendown, m_touching, pointsCount);
 
 			if(!m_touching) {
 				m_touchStartZoom = zoom();
 				m_touchStartRotate = rotation();
 			}
 
-			// Single finger drag when touch scroll is enabled,
-			// but also drag with a pinch gesture. Single finger drag
-			// may be deactivated to support finger painting.
-			if(m_enableTouchScroll || (m_enableTouchPinch && pointsCount >= 2)) {
+			// We want to pan with one finger if one-finger pan is enabled and
+			// also when pinching to zoom. Slightly non-obviously, we also want
+			// to pan with one finger when finger drawing is enabled, because if
+			// we got here with one finger, we've come out of a multitouch
+			// operation and aren't going to be drawing until all fingers leave
+			// the surface anyway, so panning is the only sensible option.
+			bool havePinchOrTwist = pointsCount >= 2 && (m_enableTouchPinch || m_enableTouchTwist);
+			if(m_enableTouchScroll || m_enableTouchDraw || havePinchOrTwist) {
 				m_touching = true;
 				float dx = center.x() - lastCenter.x();
 				float dy = center.y() - lastCenter.y();
@@ -1112,7 +1125,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			}
 
 			// Scaling and rotation with two fingers
-			if(pointsCount >= 2 && (m_enableTouchPinch | m_enableTouchTwist)) {
+			if(havePinchOrTwist) {
 				m_touching = true;
 				float startAvgDist=0, avgDist=0;
 				for(const auto &tp : event->touchPoints()) {
@@ -1150,35 +1163,35 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		break;
 
 	case QEvent::TouchEnd:
-		if(m_enableTouchDraw && pointsCount == 1) {
-			DP_EVENT_LOG("touch_draw_end pendown=%d touching=%d", m_pendown, m_touching);
-			penReleaseEvent(
-				event->touchPoints().first().pos(),
-				Qt::LeftButton,
-				event->modifiers()
-			);
-		} else {
-			DP_EVENT_LOG("touch_end pendown=%d touching=%d", m_pendown, m_touching);
-			m_touching = false;
-		}
-		break;
-
 	case QEvent::TouchCancel:
-		if(m_enableTouchDraw && pointsCount == 1) {
-			DP_EVENT_LOG("touch_draw_cancel pendown=%d touching=%d", m_pendown, m_touching);
-			penReleaseEvent(
-				event->touchPoints().first().pos(),
-				Qt::LeftButton,
-				event->modifiers()
-			);
+		if(m_enableTouchDraw && ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty()) || m_touchMode == TouchMode::Drawing)) {
+			DP_EVENT_LOG("touch_draw_%s pendown=%d touching=%d points=%d",
+				event->type() == QEvent::TouchEnd ? "end" : "cancel",
+				m_pendown, m_touching, pointsCount);
+			flushTouchDrawBuffer();
+			touchReleaseEvent(event->touchPoints().first().pos());
 		} else {
-			DP_EVENT_LOG("touch_cancel pendown=%d touching=%d", m_pendown, m_touching);
-			m_touching = false;
+			DP_EVENT_LOG("touch_%s pendown=%d touching=%d points=%d",
+				event->type() == QEvent::TouchEnd ? "end" : "cancel",
+				m_pendown, m_touching, pointsCount);
 		}
+		m_touching = false;
 		break;
 
 	default:
 		break;
+	}
+}
+
+void CanvasView::flushTouchDrawBuffer()
+{
+	int bufferCount = m_touchDrawBuffer.size();
+	if(bufferCount != 0) {
+		touchPressEvent(m_touchDrawBuffer.first());
+		for(int i = 0; i < bufferCount; ++i) {
+			touchMoveEvent(m_touchDrawBuffer[i]);
+		}
+		m_touchDrawBuffer.clear();
 	}
 }
 
@@ -1189,15 +1202,11 @@ void CanvasView::touchEvent(QTouchEvent *event)
  */
 bool CanvasView::viewportEvent(QEvent *event)
 {
-	if(event->type() == QEvent::Gesture) {
-		gestureEvent(static_cast<QGestureEvent*>(event));
-	}
-#ifndef Q_OS_MAC // On Mac, the above gesture events work better
-	else if(event->type()==QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel) {
+	QEvent::Type type = event->type();
+	if(type == QEvent::TouchBegin || type == QEvent::TouchUpdate || type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
 		touchEvent(static_cast<QTouchEvent*>(event));
 	}
-#endif
-	else if(event->type() == QEvent::TabletPress && m_enableTablet) {
+	else if(type == QEvent::TabletPress && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		DP_EVENT_LOG(
 			"tablet_press x=%d y=%d pressure=%f xtilt=%f ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
@@ -1226,7 +1235,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			true
 		);
 	}
-	else if(event->type() == QEvent::TabletMove && m_enableTablet) {
+	else if(type == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		DP_EVENT_LOG(
 			"tablet_move x=%d y=%d pressure=%f xtilt=%f ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
@@ -1249,7 +1258,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			true
 		);
 	}
-	else if(event->type() == QEvent::TabletRelease && m_enableTablet) {
+	else if(type == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		DP_EVENT_LOG(
 			"tablet_release x=%d y=%d buttons=0x%x pendown=%d touching=%d",
