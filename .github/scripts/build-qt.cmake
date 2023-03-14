@@ -121,7 +121,9 @@ if(BASE)
 					-no-sql-mysql -no-sql-odbc -no-sql-psql -sql-sqlite
 					-qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
 					${BASE_FLAGS}
-				DEBUG -force-asserts -force-debug-info -sanitize address
+				DEBUG
+					-force-asserts -force-debug-info -separate-debug-info
+					-sanitize address
 		PATCHES
 			ALL
 				patches/qtbug-111538.diff
