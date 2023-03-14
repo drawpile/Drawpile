@@ -38,6 +38,7 @@
 #include "../libshared/util/networkaccess.h"
 #include "../libshared/util/paths.h"
 #include "canvas/paintengine.h"
+#include "notifications.h"
 
 #include "ui_settings.h"
 
@@ -242,6 +243,22 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(m_ui->colorwheelSpaceBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
 			this, &SettingsDialog::changeColorWheelSpace);
 
+	// Sound test
+	QPair<QToolButton *, notification::Event> buttonEventPairs[] = {
+		{m_ui->playChat, notification::Event::CHAT},
+		{m_ui->playMarker, notification::Event::MARKER},
+		{m_ui->playLogin, notification::Event::LOGIN},
+		{m_ui->playLogout, notification::Event::LOGOUT},
+		{m_ui->playLock, notification::Event::LOCKED},
+		{m_ui->playUnlock, notification::Event::UNLOCKED},
+	};
+	for(const QPair<QToolButton *, notification::Event> &p : buttonEventPairs) {
+		notification::Event event = p.second;
+		connect(p.first, &QToolButton::clicked, [=](){
+			notification::playSoundNow(event, m_ui->notificationVolume->value());
+		});
+	}
+
 	// Load configuration
 	restoreSettings();
 
@@ -300,8 +317,15 @@ void SettingsDialog::restoreSettings()
 	m_ui->notificationVolume->setValue(cfg.value("volume", 40).toInt());
 	m_ui->notifChat->setChecked(cfg.value("chat", true).toBool());
 	m_ui->notifMarker->setChecked(cfg.value("marker", true).toBool());
-	m_ui->notifLogin->setChecked(cfg.value("login", true).toBool());
-	m_ui->notifLock->setChecked(cfg.value("lock", true).toBool());
+	// Compatibility: login and logout as well as lock and unlock used to be the
+	// same sound setting. If the latter is missing, default it to the former so
+	// that we don't unexpectedly turn one of them on if they've been disabled.
+	bool notifLogin = cfg.value("login", true).toBool();
+	m_ui->notifLogin->setChecked(notifLogin);
+	m_ui->notifLogout->setChecked(cfg.value("logout", notifLogin).toBool());
+	bool notifLock = cfg.value("lock", true).toBool();
+	m_ui->notifLock->setChecked(notifLock);
+	m_ui->notifUnlock->setChecked(cfg.value("unlock", notifLock).toBool());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings");
@@ -449,7 +473,9 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("chat", m_ui->notifChat->isChecked());
 	cfg.setValue("marker", m_ui->notifMarker->isChecked());
 	cfg.setValue("login", m_ui->notifLogin->isChecked());
+	cfg.setValue("logout", m_ui->notifLogout->isChecked());
 	cfg.setValue("lock", m_ui->notifLock->isChecked());
+	cfg.setValue("unlock", m_ui->notifUnlock->isChecked());
 	cfg.endGroup();
 
 	// Remember general settings

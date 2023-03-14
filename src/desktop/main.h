@@ -28,7 +28,7 @@ class QSoundEffect;
 
 class DrawpileApp : public QApplication {
 Q_OBJECT
-   friend void notification::playSound(notification::Event);
+   friend void notification::playSoundNow(notification::Event, int);
 public:
 	// A config marker to indicate what themes the user last saw. 0 or missing
 	// was Drawpile 2.1 with only System, Fusion and Fusion Dark.

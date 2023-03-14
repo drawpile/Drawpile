@@ -674,43 +674,8 @@
            </layout>
           </widget>
           <widget class="QWidget" name="page_2">
-           <layout class="QFormLayout" name="formLayout_6">
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Notifications:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QCheckBox" name="notifChat">
-              <property name="text">
-               <string>Chat</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QCheckBox" name="notifMarker">
-              <property name="text">
-               <string>Recording marker</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QCheckBox" name="notifLogin">
-              <property name="text">
-               <string>User login and logout</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QCheckBox" name="notifLock">
-              <property name="text">
-               <string>Canvas lock</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="2">
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
              <widget class="KisSliderSpinBox" name="notificationVolume">
               <property name="suffix">
                <string>%</string>
@@ -722,6 +687,167 @@
                <number>100</number>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="notificationsGroup">
+              <property name="title">
+               <string>Notifications</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="notifMarker">
+                 <property name="text">
+                  <string>Recording Marker</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QCheckBox" name="notifLogin">
+                 <property name="text">
+                  <string>User Joined</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QCheckBox" name="notifLock">
+                 <property name="text">
+                  <string>Canvas Locked</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QToolButton" name="playChat">
+                 <property name="text">
+                  <string>Play</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="media-playback-start">
+                   <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QToolButton" name="playLogout">
+                 <property name="text">
+                  <string>Play</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="media-playback-start">
+                   <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2" rowspan="5">
+                <spacer name="notificationsGroupSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="4" column="1">
+                <widget class="QToolButton" name="playLock">
+                 <property name="text">
+                  <string>Play</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="media-playback-start">
+                   <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="notifChat">
+                 <property name="text">
+                  <string>Chat</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QToolButton" name="playLogin">
+                 <property name="text">
+                  <string>Play</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="media-playback-start">
+                   <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QCheckBox" name="notifLogout">
+                 <property name="text">
+                  <string>User Left</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QToolButton" name="playMarker">
+                 <property name="text">
+                  <string>Play</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="media-playback-start">
+                   <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QCheckBox" name="notifUnlock">
+                 <property name="text">
+                  <string>Canvas Unlocked</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QToolButton" name="playUnlock">
+                 <property name="text">
+                  <string>Play</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="media-playback-start">
+                   <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="notifSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>

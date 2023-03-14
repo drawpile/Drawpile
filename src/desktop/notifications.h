@@ -30,6 +30,8 @@ enum class Event {
 	LOGOUT    // ...logged out
 };
 
+void playSoundNow(Event event, int volume);
+
 void playSound(Event event);
 
 void setVolume(int volume);

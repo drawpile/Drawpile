@@ -33,36 +33,11 @@ namespace notification {
 
 static qint64 lasttime = 0;
 
-void playSound(Event event)
+void playSoundNow(Event event, int volume)
 {
-	// Notification rate limiting
-	const qint64 t = QDateTime::currentMSecsSinceEpoch();
-	if(t - lasttime < 1500)
+	if(volume <= 0) {
 		return;
-	lasttime = t;
-
-	// Check if this notification is enabled
-	QSettings cfg;
-	cfg.beginGroup("notifications");
-	int volume = qBound(0, cfg.value("volume", 40).toInt(), 100);
-	if(volume==0)
-		return;
-
-	bool enabled = false;
-	switch(event) {
-	case Event::CHAT: enabled = cfg.value("chat", true).toBool(); break;
-	case Event::MARKER: enabled = cfg.value("marker", true).toBool(); break;
-	case Event::LOCKED:
-	case Event::UNLOCKED:
-		enabled = cfg.value("lock", true).toBool();
-		break;
-	case Event::LOGIN:
-	case Event::LOGOUT:
-		enabled = cfg.value("login", true).toBool();
-		break;
 	}
-	if(!enabled)
-		return;
 
 	// Lazily load the sound effect
 	DrawpileApp *app = static_cast<DrawpileApp *>(qApp);
@@ -95,8 +70,42 @@ void playSound(Event event)
 	}
 
 	// We have a sound effect... play it now
-	app->m_sounds[event]->setVolume(volume / 100.0);
+	app->m_sounds[event]->setVolume(qMin(volume, 100) / 100.0);
 	app->m_sounds[event]->play();
+}
+
+static bool isEnabled(Event event, QSettings &cfg)
+{
+	switch(event) {
+	case Event::CHAT:
+		return cfg.value("chat", true).toBool(); break;
+	case Event::MARKER:
+		return cfg.value("marker", true).toBool(); break;
+	case Event::LOCKED:
+		return cfg.value("lock", true).toBool();
+	case Event::UNLOCKED:
+		// Used to be the same value as lock, so default to that if not found.
+		return cfg.value("unlock", cfg.value("lock", true).toBool()).toBool();
+	case Event::LOGIN:
+		return cfg.value("login", true).toBool();
+	case Event::LOGOUT:
+		// Used to be the same value as login, so default to that if not found.
+		return cfg.value("logout", cfg.value("login", true).toBool()).toBool();
+	default:
+		return false;
+	}
+}
+
+void playSound(Event event)
+{
+	// Notification rate limiting
+	const qint64 t = QDateTime::currentMSecsSinceEpoch();
+	if(t - lasttime >= 1500) {
+		QSettings cfg;
+		if(isEnabled(event, cfg)) {
+			playSoundNow(event, cfg.value("volume", 40).toInt());
+		}
+	}
 }
 
 }
