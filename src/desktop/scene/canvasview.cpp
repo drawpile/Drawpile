@@ -57,7 +57,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_allowColorPick(false), m_allowToolAdjust(false), m_toolHandlesRightClick(false), m_penmode(PenMode::Normal),
 	m_dragmode(ViewDragMode::None), m_dragAction(CanvasShortcuts::NO_ACTION),
 	m_dragByKey(true), m_dragInverted(false), m_dragSwapAxes(false),
-	m_prevoutline(false), m_outlineSize(2), m_showoutline(true), m_subpixeloutline(true), m_squareoutline(false),
+	m_prevoutline(false), m_outlineSize(2), m_showoutline(false), m_subpixeloutline(true), m_squareoutline(false),
 	m_zoom(100), m_rotate(0), m_flip(false), m_mirror(false),
 	m_scene(nullptr),
 	m_zoomWheelDelta(0),
