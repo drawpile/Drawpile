@@ -355,7 +355,7 @@ assets: assets.mk
 	$(MAKE) -f assets.mk "DRAWPILE_PATH=$$DRAWPILE_PATH" "GRADLE_PATH=$$GRADLEDIR"
 
 assets.mk: $(PKGDIR)/generate-assets-mk
-	"$$PKDGIR/generate-assets-mk" >$@
+	"$$PKGDIR/generate-assets-mk" >$@
 
 
 download: | $(QT_NAME) $(KARCHIVE_NAME) $(ECM_NAME) $(LIBSODIUM_NAME) $(ANDROID_OPENSSL_NAME)
