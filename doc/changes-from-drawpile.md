@@ -35,6 +35,8 @@ This is probably a non-exhaustive list, but it should hit the most important poi
 
 * Reworked the CMake scripts for CMake 3, allowing e.g. link-time optimization to be enabled now. There's also address sanitizer and clang-tidy support now, which are great for finding bugs.
 
+* Android support, with the same UI as on desktop. Works well on tablets, if you have a pressure-sensitive pen then it's basically the full experience. Phones not so much, since the UI doesn't fit, but I don't know many people that draw on such a tiny screen.
+
 * Added Qt 6 support. I don't see it replacing Qt 5 anytime soon due to Qt 6 not supporting Windows 7 and 8 anymore, but having the upgrade path clear is good.
 
 * Added a proper, native Windows build using vcpkg and MSVC, with bonus support for building these through Github Actions. It's a lot less fragile than the cross-compile setup, lets us update our libraries and allows for cool stuff like producing statically-linked executables (which doesn't work for Qt 5.12 with KIS_TABLET patches, but Qt 5.15 and Qt 6 do.)
