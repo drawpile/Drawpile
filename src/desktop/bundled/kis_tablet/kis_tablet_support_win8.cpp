@@ -866,7 +866,6 @@ bool handlePenUpdateMsg(const POINTER_PEN_INFO &penInfo)
             dbgTablet << "GetPointerPenInfoHistory failed";
             return false;
         }
-        bool handled = false;
         // The returned array is in reverse chronological order
         const auto rbegin = penInfoArray.rbegin();
         const auto rend = penInfoArray.rend();
