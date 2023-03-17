@@ -33,6 +33,9 @@ static const uint8_t BrushMode = 0x02;
 // Mode can be used for both brushes and layers
 static const uint8_t UniversalMode = 0x03;
 
+// Mode is available when the eraser option is checked
+static const uint8_t EraserMode = 0x04;
+
 struct BlendModeInfo {
 	//! The blend mode's translatable name
 	const char *name;
@@ -114,7 +117,12 @@ static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
 		DP_BLEND_MODE_ERASE,
-		LayerMode
+		LayerMode | EraserMode
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Color Erase"),
+		DP_BLEND_MODE_COLOR_ERASE,
+		EraserMode
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
@@ -170,30 +178,59 @@ QString svgName(DP_BlendMode mode)
 	return QString::fromUtf8(DP_blend_mode_svg_name(mode));
 }
 
-DP_BlendMode fromSvgName(const QString &name)
+DP_BlendMode fromSvgName(const QString &name, DP_BlendMode defaultMode)
 {
-	return DP_blend_mode_by_svg_name(name.toUtf8().constData(), DP_BLEND_MODE_NORMAL);
+	return DP_blend_mode_by_svg_name(name.toUtf8().constData(), defaultMode);
 }
 
 
-QVector<QPair<DP_BlendMode, QString>> brushModeNames()
+static QVector<Named> modeNames(uint8_t flag)
 {
-	QVector<QPair<DP_BlendMode, QString>> list;
+	QVector<Named> list;
 	for(int i=0;i<BLEND_MODES;++i) {
-		if((BLEND_MODE[i].flags & BrushMode))
-			list << QPair<DP_BlendMode, QString>{BLEND_MODE[i].id, QCoreApplication::translate("blendmode", BLEND_MODE[i].name)};
+		if((BLEND_MODE[i].flags & flag)) {
+			list.append(Named{
+				BLEND_MODE[i].id,
+				QCoreApplication::translate("blendmode", BLEND_MODE[i].name),
+			});
+		}
 	}
 	return list;
 }
 
-QVector<QPair<DP_BlendMode, QString>> layerModeNames()
+QVector<Named> brushModeNames()
 {
-	QVector<QPair<DP_BlendMode, QString>> list;
-	for(int i=0;i<BLEND_MODES;++i) {
-		if((BLEND_MODE[i].flags & LayerMode))
-			list << QPair<DP_BlendMode, QString>{BLEND_MODE[i].id, QCoreApplication::translate("blendmode", BLEND_MODE[i].name)};
+	return modeNames(BrushMode);
+}
+
+QVector<Named> eraserModeNames()
+{
+	return modeNames(EraserMode);
+}
+
+QVector<Named> layerModeNames()
+{
+	return modeNames(LayerMode);
+}
+
+static bool hasFlag(DP_BlendMode mode, uint8_t flag)
+{
+	for(const BlendModeInfo &info : BLEND_MODE) {
+		if(info.id == mode) {
+			return info.flags & flag;
+		}
 	}
-	return list;
+	return false;
+}
+
+bool isValidBrushMode(DP_BlendMode mode)
+{
+	return hasFlag(mode, BrushMode);
+}
+
+bool isValidEraseMode(DP_BlendMode mode)
+{
+	return hasFlag(mode, EraserMode);
 }
 
 }

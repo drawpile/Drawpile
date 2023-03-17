@@ -33,8 +33,8 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
     m_ui->setupUi(this);
 
 	const auto modes = canvas::blendmode::layerModeNames();
-	for(const auto &bm : modes) {
-		m_ui->blendMode->addItem(bm.second, int(bm.first));
+	for(const auto &m : modes) {
+		m_ui->blendMode->addItem(m.name, int(m.mode));
     }
 
     connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);

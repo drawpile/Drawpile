@@ -754,7 +754,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	ActiveBrush brush(ActiveBrush::CLASSIC);
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
 		b.size.max = 16;
 		b.opacity.max = 1.0;
 		b.spacing = 0.15;
@@ -765,7 +765,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	}
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 		b.size.max = 10;
 		b.opacity.max = 1.0;
 		b.hardness.max = 0.8;
@@ -778,7 +778,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	}
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 		b.size.max = 30;
 		b.opacity.max = 0.34;
 		b.hardness.max = 1.0;
@@ -789,7 +789,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	}
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
 		b.incremental = false;
 		b.size.max = 32;
 		b.opacity.max = 0.65;
@@ -800,7 +800,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	}
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
 		b.incremental = false;
 		b.size.max = 70;
 		b.opacity.max = 0.42;
@@ -812,7 +812,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	}
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 		b.size.max = 113;
 		b.opacity.max = 0.6;
 		b.hardness.max = 1.0;
@@ -824,7 +824,7 @@ void BrushPresetTagModel::createDefaultClassicPresets()
 	}
 	{
 		ClassicBrush b;
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 		b.size.max = 43;
 		b.opacity.max = 0.3;
 		b.hardness.max = 1.0;

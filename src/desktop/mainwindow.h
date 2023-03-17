@@ -110,6 +110,7 @@ public slots:
 	void saveSelection();
 	void showFlipbook();
 
+	void showBrushSettingsDialog();
 	static void showSettings();
 	void reportAbuse();
 	void tryToGainOp();

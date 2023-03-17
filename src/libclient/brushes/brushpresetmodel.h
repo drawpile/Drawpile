@@ -33,7 +33,7 @@ namespace brushes {
 
 class ActiveBrush;
 class MyPaintBrush;
-struct ClassicBrush;
+class ClassicBrush;
 
 struct Tag {
 	int id;

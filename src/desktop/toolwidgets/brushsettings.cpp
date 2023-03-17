@@ -53,11 +53,6 @@ static const int ERASER_SLOT = 5; // Index of the dedicated erser slot
 namespace {
 	struct ToolSlot {
 		brushes::ActiveBrush brush;
-
-		// For remembering previous selection when switching between normal/erase mode
-		DP_BlendMode normalMode = DP_BLEND_MODE_NORMAL;
-		DP_BlendMode eraserMode = DP_BLEND_MODE_ERASE;
-
 		QString inputPresetId;
 	};
 }
@@ -96,20 +91,18 @@ struct BrushSettings::Private {
 		presetModel = input::PresetModel::getSharedInstance();
 
 		blendModes = new QStandardItemModel(0, 1, b);
-		for(const auto &bm : canvas::blendmode::brushModeNames()) {
-			auto item = new QStandardItem(bm.second);
-			item->setData(int(bm.first), Qt::UserRole);
+		for(const canvas::blendmode::Named &m : canvas::blendmode::brushModeNames()) {
+			QStandardItem *item = new QStandardItem(m.name);
+			item->setData(int(m.mode), Qt::UserRole);
 			blendModes->appendRow(item);
 		}
 
 		eraseModes = new QStandardItemModel(0, 1, b);
-		auto erase1 = new QStandardItem(QApplication::tr("Erase"));
-		erase1->setData(QVariant(int(DP_BLEND_MODE_ERASE)), Qt::UserRole);
-		eraseModes->appendRow(erase1);
-
-		auto erase2 = new QStandardItem(QApplication::tr("Color Erase"));
-		erase2->setData(QVariant(int(DP_BLEND_MODE_COLOR_ERASE)), Qt::UserRole);
-		eraseModes->appendRow(erase2);
+		for(const canvas::blendmode::Named &m : canvas::blendmode::eraserModeNames()) {
+			QStandardItem *item = new QStandardItem(m.name);
+			item->setData(int(m.mode), Qt::UserRole);
+			eraseModes->appendRow(item);
+		}
 	}
 
 	void updateInputPresetUuid(ToolSlot &tool)
@@ -159,12 +152,13 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	d->brushSlotWidget->setLayout(brushSlotWidgetLayout);
 
-	// A spacer for centering the tool slots in the title bar
-	{
-		const int iconSize = parent->style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, parent);
-		int marginSize = parent->style()->pixelMetric(QStyle::PM_DockWidgetTitleBarButtonMargin, nullptr, parent);
-		brushSlotWidgetLayout->addSpacing(marginSize+iconSize);
-	}
+	widgets::GroupedToolButton *brushSettingsDialogButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped, d->brushSlotWidget);
+	brushSlotWidgetLayout->addWidget(brushSettingsDialogButton);
+	brushSettingsDialogButton->setIcon(icon::fromTheme("configure"));
+	brushSettingsDialogButton->setToolTip(tr("Brush Settings"));
+	connect(brushSettingsDialogButton, &widgets::GroupedToolButton::pressed,
+		this, &BrushSettings::brushSettingsDialogRequested);
 
 	brushSlotWidgetLayout->addStretch();
 
@@ -288,7 +282,7 @@ void BrushSettings::setCurrentBrush(brushes::ActiveBrush brush)
 	switch(activeType) {
 	case brushes::ActiveBrush::CLASSIC:
 		if(d->current == ERASER_SLOT) {
-			brush.classic().mode = d->currentBrush().classic().mode;
+			brush.classic().erase = true;
 		}
 		currentBrush.setClassic(brush.classic());
 		break;
@@ -354,10 +348,10 @@ void BrushSettings::toggleRecolorMode()
 		switch(brush.activeType()) {
 		case brushes::ActiveBrush::CLASSIC: {
 			brushes::ClassicBrush &cb = brush.classic();
-			if(cb.mode == DP_BLEND_MODE_RECOLOR) {
-				cb.mode = DP_BLEND_MODE_NORMAL;
+			if(cb.brush_mode == DP_BLEND_MODE_RECOLOR) {
+				cb.brush_mode = DP_BLEND_MODE_NORMAL;
 			} else {
-				cb.mode = DP_BLEND_MODE_RECOLOR;
+				cb.brush_mode = DP_BLEND_MODE_RECOLOR;
 			}
 			break;
 		}
@@ -379,14 +373,16 @@ void BrushSettings::setEraserMode(bool erase)
 
 	ToolSlot &tool = d->currentTool();
 	brushes::ClassicBrush &classic = tool.brush.classic();
-	classic.mode = erase ? tool.eraserMode : tool.normalMode;
+	classic.erase = erase;
 	tool.brush.myPaint().brush().erase = erase;
 
-	if(classic.isEraser() != erase) {
-		// Uh oh, an inconsistency. Try to fix it.
-		// This can happen if the settings data was broken
-		qWarning("setEraserMode(%d): wrong mode %d", erase, int(classic.mode));
-		classic.mode = erase ? DP_BLEND_MODE_ERASE : DP_BLEND_MODE_NORMAL;
+	if(!canvas::blendmode::isValidBrushMode(classic.brush_mode)) {
+		qWarning("setEraserMode(%d): wrong brush mode %d", erase, int(classic.brush_mode));
+		classic.brush_mode = DP_BLEND_MODE_NORMAL;
+	}
+	if(!canvas::blendmode::isValidEraseMode(classic.erase_mode)) {
+		qWarning("setEraserMode(%d): wrong erase mode %d", erase, int(classic.erase_mode));
+		classic.erase_mode = DP_BLEND_MODE_ERASE;
 	}
 
 	updateUi();
@@ -436,13 +432,11 @@ void BrushSettings::selectBlendMode(int modeIndex)
 	const DP_BlendMode mode = DP_BlendMode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
 	ToolSlot &tool = d->currentTool();
 	brushes::ClassicBrush &classic = tool.brush.classic();
-
-	classic.mode = mode;
-	if(classic.isEraser())
-		tool.eraserMode = mode;
-	else
-		tool.normalMode = mode;
-
+	if(classic.erase) {
+		classic.erase_mode = mode;
+	} else {
+		classic.brush_mode = mode;
+	}
 	updateUi();
 }
 
@@ -461,15 +455,15 @@ void BrushSettings::updateUi()
 
 	// Select brush type
 	const bool mypaintmode = brush.activeType() == brushes::ActiveBrush::MYPAINT;
-	const bool softmode = mypaintmode || classic.shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+	const bool softmode = mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 
 	if(mypaintmode) {
 		d->ui.mypaintMode->setChecked(true);
 	} else {
 		switch(classic.shape) {
-		case DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND: d->ui.hardedgeMode->setChecked(true); break;
-		case DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE: d->ui.squareMode->setChecked(true); break;
-		case DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND: d->ui.softedgeMode->setChecked(true); break;
+		case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND: d->ui.hardedgeMode->setChecked(true); break;
+		case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE: d->ui.squareMode->setChecked(true); break;
+		default: d->ui.softedgeMode->setChecked(true); break;
 		}
 	}
 
@@ -480,12 +474,14 @@ void BrushSettings::updateUi()
 	d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
 
 	// Show correct blending mode
-	d->ui.blendmode->setModel(classic.isEraser() ? d->eraseModes : d->blendModes);
+	d->ui.blendmode->setModel(classic.erase ? d->eraseModes : d->blendModes);
 	d->ui.modeEraser->setChecked(brush.isEraser());
 	d->ui.modeEraser->setEnabled(d->current != ERASER_SLOT);
 
+	int mode = DP_classic_brush_blend_mode(&classic);
+	d->ui.modeColorpick->setEnabled(mode != DP_BLEND_MODE_ERASE);
 	for(int i=0;i<d->ui.blendmode->model()->rowCount();++i) {
-		if(d->ui.blendmode->model()->index(i,0).data(Qt::UserRole) == int(brush.classic().mode)) {
+		if(d->ui.blendmode->model()->index(i,0).data(Qt::UserRole) == mode) {
 			d->ui.blendmode->setCurrentIndex(i);
 			break;
 		}
@@ -501,7 +497,7 @@ void BrushSettings::updateUi()
 	d->ui.smudgingBox->setValue(classic.smudge.max * 100);
 	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
-	d->ui.brushspacingBox->setValue(classic.spacing * 100);
+	d->ui.brushspacingBox->setValue(classic.spacing * 100.0 + 0.5);
 	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
 	if(softmode) {
@@ -564,11 +560,11 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	brushes::MyPaintBrush &myPaint = brush.myPaint();
 
 	if(d->ui.hardedgeMode->isChecked())
-		classic.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
+		classic.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
 	else if(d->ui.squareMode->isChecked())
-		classic.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE;
+		classic.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
 	else
-		classic.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+		classic.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 
 	classic.size.max = d->ui.brushsizeBox->value();
 	classic.size_pressure = d->ui.pressureSize->isChecked();
@@ -580,7 +576,13 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
 	classic.incremental = d->ui.modeIncremental->isChecked();
 	classic.colorpick = d->ui.modeColorpick->isChecked();
-	classic.mode = DP_BlendMode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
+
+	DP_BlendMode mode = DP_BlendMode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
+	if(classic.erase && canvas::blendmode::isValidEraseMode(mode)) {
+		classic.erase_mode = mode;
+	} else if(canvas::blendmode::isValidBrushMode(mode)) {
+		classic.brush_mode = mode;
+	}
 
 	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value =
@@ -604,17 +606,11 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
 			classic.hardness.max = d->ui.hardnessBox->value() / 100.0;
-			if(classic.shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND) {
+			if(classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND) {
 				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
 			}
 		}
 	}
-
-	// TODO: Remove this when minimum values are implemented in the UI.
-	classic.size.min_ratio = 0.0f;
-	classic.opacity.min_ratio = 0.0f;
-	classic.hardness.min_ratio = 0.0f;
-	classic.smudge.min_ratio = 0.0f;
 
 	chooseInputPreset(d->ui.inputPreset->currentIndex());
 
@@ -710,8 +706,6 @@ ToolProperties BrushSettings::saveToolSettings()
 		QJsonObject b = tool.brush.toJson();
 
 		b["_slot"] = QJsonObject {
-			{"normalMode", int(tool.normalMode)},
-			{"eraserMode", int(tool.eraserMode)},
 			{"color", tool.brush.qColor().name()},
 			{"inputPresetId", tool.inputPresetId}
 		};
@@ -745,8 +739,6 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		tool.brush = brushes::ActiveBrush::fromJson(o);
 		const auto color = QColor(s["color"].toString());
 		tool.brush.setQColor(color.isValid() ? color : Qt::black);
-		tool.normalMode = DP_BlendMode(s["normalMode"].toInt());
-		tool.eraserMode = DP_BlendMode(s["eraserMode"].toInt());
 		tool.inputPresetId = s["inputPresetId"].toString();
 		d->updateInputPresetUuid(tool);
 
@@ -755,7 +747,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 
 	if(!d->toolSlots[ERASER_SLOT].brush.isEraser()) {
-		d->toolSlots[ERASER_SLOT].brush.classic().mode = DP_BLEND_MODE_ERASE;
+		d->toolSlots[ERASER_SLOT].brush.classic().erase = true;
 		d->toolSlots[ERASER_SLOT].brush.myPaint().brush().erase = true;
 	}
 
@@ -850,12 +842,12 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().classic().shape == DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+	return d->currentBrush().classic().shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 }
 
 bool BrushSettings::isSquare() const
 {
-	return d->currentBrush().classic().shape == DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE;
+	return d->currentBrush().classic().shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)

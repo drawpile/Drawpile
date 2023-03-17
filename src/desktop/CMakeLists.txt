@@ -21,6 +21,8 @@ set(desktop_sources
 	scene/usermarkeritem.cpp
 	scene/lasertrailitem.cpp
 	dialogs/abusereport.cpp
+	dialogs/brushsettingsdialog.cpp
+	dialogs/brushsettingsdialog_gen.cpp
 	dialogs/canvasshortcutsdialog.cpp
 	dialogs/certificateview.cpp
 	dialogs/colordialog.cpp
@@ -68,6 +70,7 @@ set(desktop_sources
 	widgets/KisAngleGauge.cpp
 	widgets/timelinewidget.cpp
 	widgets/toolmessage.cpp
+	widgets/mypaintinput.cpp
 	docks/toolsettingsdock.cpp
 	docks/brushpalettedock.cpp
 	docks/navigator.cpp

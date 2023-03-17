@@ -83,9 +83,12 @@ public:
      */
     void setPixmap(const QPixmap & pix);
     QPixmap getPixmap();
-    
+
     void setBasePixmap(const QPixmap & pix);
     QPixmap getBasePixmap();
+
+    void setLinear(bool linear);
+    bool linear() const;
 
 public slots:
 	/**

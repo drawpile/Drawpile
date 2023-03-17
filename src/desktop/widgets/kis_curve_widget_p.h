@@ -82,6 +82,9 @@ public:
      */
     enumState m_state;
 
+    /* Drawpile patch */
+    bool m_linear = false;
+
     inline void setState(enumState st);
     inline enumState state() const;
 

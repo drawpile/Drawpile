@@ -73,8 +73,8 @@ LayerList::LayerList(QWidget *parent)
 
 	m_blendModeCombo = new QComboBox;
 	m_blendModeCombo->setMinimumWidth(24);
-	for(const QPair<DP_BlendMode, QString> &bm : canvas::blendmode::layerModeNames()) {
-		m_blendModeCombo->addItem(bm.second, int(bm.first));
+	for(const canvas::blendmode::Named &m : canvas::blendmode::layerModeNames()) {
+		m_blendModeCombo->addItem(m.name, int(m.mode));
 	}
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),

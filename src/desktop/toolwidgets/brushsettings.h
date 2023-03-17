@@ -88,6 +88,7 @@ signals:
 	void smoothingChanged(int smoothing);
 	void pressureMappingChanged(const PressureMapping &pressureMapping);
 	void pixelSizeChanged(int size);
+	void brushSettingsDialogRequested();
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;

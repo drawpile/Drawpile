@@ -45,28 +45,53 @@ namespace brushes {
 
 ClassicBrush::ClassicBrush()
 	: DP_ClassicBrush{
-		{0.0f, 10.0f},
-		{0.0f, 1.0f},
-		{0.0f, 1.0f},
-		{0.0f, 0.0f},
+		{1.0f, 10.0f, {}},
+		{0.0f, 1.0f, {}},
+		{0.0f, 1.0f, {}},
+		{0.0f, 0.0f, {}},
 		0.1f,
 		0,
 		{0.0f, 0.0f, 0.0f, 1.0f},
-		DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND,
+		DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
 		DP_BLEND_MODE_NORMAL,
+		DP_BLEND_MODE_ERASE,
+		false,
 		true,
 		false,
 		false,
 		false,
 		false,
-		false
+		false,
 	}
 {
+	updateCurve(m_sizeCurve, size.curve);
+	updateCurve(m_opacityCurve, opacity.curve);
+	updateCurve(m_hardnessCurve, hardness.curve);
+	updateCurve(m_smudgeCurve, smudge.curve);
 }
 
-bool ClassicBrush::isEraser() const
+void ClassicBrush::setSizeCurve(const KisCubicCurve &sizeCurve)
 {
-	return mode == DP_BLEND_MODE_ERASE || mode == DP_BLEND_MODE_COLOR_ERASE;
+	m_sizeCurve = sizeCurve;
+	updateCurve(m_sizeCurve, size.curve);
+}
+
+void ClassicBrush::setOpacityCurve(const KisCubicCurve &opacityCurve)
+{
+	m_opacityCurve = opacityCurve;
+	updateCurve(m_opacityCurve, opacity.curve);
+}
+
+void ClassicBrush::setHardnessCurve(const KisCubicCurve &hardnessCurve)
+{
+	m_hardnessCurve = hardnessCurve;
+	updateCurve(m_hardnessCurve, hardness.curve);
+}
+
+void ClassicBrush::setSmudgeCurve(const KisCubicCurve &smudgeCurve)
+{
+	m_smudgeCurve = smudgeCurve;
+	updateCurve(m_smudgeCurve, smudge.curve);
 }
 
 void ClassicBrush::setQColor(const QColor& c)
@@ -83,22 +108,26 @@ QJsonObject ClassicBrush::toJson() const
 {
 	QJsonObject o;
 	switch(shape) {
-	case DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND: o["shape"] = "round-pixel"; break;
-	case DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE: o["shape"] = "square-pixel"; break;
-	case DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND: o["shape"] = "round-soft"; break;
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND: o["shape"] = "round-pixel"; break;
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE: o["shape"] = "square-pixel"; break;
+	default: o["shape"] = "round-soft"; break;
 	}
 
 	o["size"] = size.max;
-	if(size.min_ratio>0) o["sizeratio"] = size.min_ratio;
+	if(size.min > 0) o["size2"] = size.min;
+	o["sizecurve"] = m_sizeCurve.toString();
 
 	o["opacity"] = opacity.max;
-	if(opacity.min_ratio>0) o["opacityratio"] = opacity.min_ratio;
+	if(opacity.min > 0) o["opacity2"] = opacity.min;
+	o["opacitycurve"] = m_opacityCurve.toString();
 
 	o["hard"] = hardness.max;
-	if(hardness.min_ratio>0) o["hardratio"] = hardness.min_ratio;
+	if(hardness.min > 0) o["hard2"] = hardness.min;
+	o["hardcurve"] = m_hardnessCurve.toString();
 
 	if(smudge.max > 0) o["smudge"] = smudge.max;
-	if(smudge.min_ratio > 0) o["smudgeratio"] = smudge.min_ratio;
+	if(smudge.min > 0) o["smudgeratio"] = smudge.min;
+	o["smudgecurve"] = m_smudgeCurve.toString();
 
 	o["spacing"] = spacing;
 	if(resmudge>0) o["resmudge"] = resmudge;
@@ -110,7 +139,8 @@ QJsonObject ClassicBrush::toJson() const
 	if(opacity_pressure) o["opacityp"] = true;
 	if(smudge_pressure) o["smudgep"] = true;
 
-	o["blend"] = canvas::blendmode::svgName(mode);
+	o["blend"] = canvas::blendmode::svgName(brush_mode);
+	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
 
 	// Note: color is intentionally omitted
 
@@ -132,26 +162,34 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	const QJsonObject o = json["settings"].toObject();
 
 	if(o["shape"] == "round-pixel")
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
 	else if(o["shape"] == "square-pixel")
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
 	else
-		b.shape = DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND;
+		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 
 	b.size.max = o["size"].toDouble();
-	b.size.min_ratio = o["sizeratio"].toDouble();
+	b.size.min = o["size2"].toDouble();
+	b.m_sizeCurve.fromString(o["sizecurve"].toString());
+	b.updateCurve(b.m_sizeCurve, b.size.curve);
 
 	b.opacity.max = o["opacity"].toDouble();
-	b.opacity.min_ratio= o["opacityratio"].toDouble();
+	b.opacity.min = o["opacity2"].toDouble();
+	b.m_opacityCurve.fromString(o["opacitycurve"].toString());
+	b.updateCurve(b.m_opacityCurve, b.opacity.curve);
 
 	b.hardness.max = o["hard"].toDouble();
-	b.hardness.min_ratio = o["hardratio"].toDouble();
+	b.hardness.min = o["hard2"].toDouble();
+	b.m_hardnessCurve.fromString(o["hardcurve"].toString());
+	b.updateCurve(b.m_hardnessCurve, b.hardness.curve);
 
 	b.smudge.max = o["smudge"].toDouble();
-	b.smudge.min_ratio = o["smudgeratio"].toDouble();
-	b.resmudge = o["resmudge"].toInt();
+	b.smudge.min = o["smudge2"].toDouble();
+	b.m_smudgeCurve.fromString(o["smudgecurve"].toString());
+	b.updateCurve(b.m_smudgeCurve, b.smudge.curve);
 
 	b.spacing = o["spacing"].toDouble();
+	b.resmudge = o["resmudge"].toInt();
 
 	b.incremental = o["inc"].toBool();
 	b.colorpick = o["colorpick"].toBool();
@@ -160,7 +198,9 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.opacity_pressure = o["opacityp"].toBool();
 	b.smudge_pressure = o["smudgep"].toBool();
 
-	b.mode = canvas::blendmode::fromSvgName(o["blend"].toString());
+	b.brush_mode = canvas::blendmode::fromSvgName(o["blend"].toString());
+	b.erase_mode = canvas::blendmode::fromSvgName(
+		o["blenderase"].toString(), DP_BLEND_MODE_ERASE);
 
 	return b;
 }
@@ -178,10 +218,19 @@ QPixmap ClassicBrush::presetThumbnail() const
 	return drawdance::BrushPreview::classicBrushPreviewDab(*this, 64, 64, c);
 }
 
+void ClassicBrush::updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &dst)
+{
+	const QVector<qreal> &values = src.floatTransfer(DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT);
+	for(int i = 0; i < DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT; ++i) {
+		dst.values[i] = values[i];
+	}
+}
+
 
 MyPaintBrush::MyPaintBrush()
 	: m_brush{{0.0f, 0.0f, 0.0f, 1.0f}, false, false}
-	, m_settings(nullptr)
+	, m_settings{nullptr}
+	, m_curves{}
 {
 }
 
@@ -192,7 +241,8 @@ MyPaintBrush::~MyPaintBrush()
 
 MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	: m_brush{other.m_brush}
-	, m_settings(nullptr)
+	, m_settings{nullptr}
+	, m_curves{other.m_curves}
 {
 	if(other.m_settings) {
 		m_settings = new DP_MyPaintSettings;
@@ -202,7 +252,8 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 
 MyPaintBrush::MyPaintBrush(MyPaintBrush &&other)
 	: m_brush{other.m_brush}
-	, m_settings(other.m_settings)
+	, m_settings{other.m_settings}
+	, m_curves{other.m_curves}
 {
 	other.m_settings = nullptr;
 }
@@ -211,6 +262,7 @@ MyPaintBrush &MyPaintBrush::operator=(MyPaintBrush &&other)
 {
 	std::swap(m_brush, other.m_brush);
 	std::swap(m_settings, other.m_settings);
+	std::swap(m_curves, other.m_curves);
 	return *this;
 }
 
@@ -226,6 +278,7 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 		delete m_settings;
 		m_settings = nullptr;
 	}
+	m_curves = other.m_curves;
 	return *this;
 }
 
@@ -240,6 +293,21 @@ DP_MyPaintSettings &MyPaintBrush::settings()
 const DP_MyPaintSettings &MyPaintBrush::constSettings() const
 {
 	return m_settings ? *m_settings : getDefaultSettings();
+}
+
+MyPaintCurve MyPaintBrush::getCurve(int setting, int input) const
+{
+	return m_curves.value({setting, input});
+}
+
+void MyPaintBrush::setCurve(int setting, int input, const MyPaintCurve &curve)
+{
+	m_curves.insert({setting, input}, curve);
+}
+
+void MyPaintBrush::removeCurve(int setting, int input)
+{
+	m_curves.remove({setting, input});
 }
 
 void MyPaintBrush::setQColor(const QColor& c)
@@ -442,9 +510,14 @@ ActiveBrush::ActiveBrush(ActiveType activeType)
 {
 }
 
+DP_BrushShape ActiveBrush::shape() const
+{
+	return m_activeType == CLASSIC ? m_classic.shape : DP_BRUSH_SHAPE_MYPAINT;
+}
+
 bool ActiveBrush::isEraser() const
 {
-	return m_activeType == CLASSIC ? m_classic.isEraser() : m_myPaint.constBrush().erase;
+	return m_activeType == CLASSIC ? m_classic.erase : m_myPaint.constBrush().erase;
 }
 
 DP_UPixelFloat ActiveBrush::color() const

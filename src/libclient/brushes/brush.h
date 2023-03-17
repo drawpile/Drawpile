@@ -27,9 +27,13 @@ extern "C" {
 #include "drawdance/brushpreview.h"
 
 #include <QColor>
+#include <QHash>
 #include <QJsonObject>
 #include <QMetaType>
+#include <QPair>
 #include <QPixmap>
+#include <limits>
+#include <utils/kis_cubic_curve.h>
 
 struct MyPaintBrush;
 
@@ -40,11 +44,23 @@ namespace drawdance {
 namespace brushes {
 
 //! A convenience wrapper for classic brush settings
-struct ClassicBrush : public DP_ClassicBrush
+class ClassicBrush final : public DP_ClassicBrush
 {
+public:
 	ClassicBrush();
 
-	bool isEraser() const;
+	const KisCubicCurve &sizeCurve() const { return m_sizeCurve; }
+	void setSizeCurve(const KisCubicCurve &sizeCurve);
+
+	const KisCubicCurve &opacityCurve() const { return m_opacityCurve; }
+	void setOpacityCurve(const KisCubicCurve &opacityCurve);
+
+	const KisCubicCurve &hardnessCurve() const { return m_hardnessCurve; }
+	void setHardnessCurve(const KisCubicCurve &hardnessCurve);
+
+	const KisCubicCurve &smudgeCurve() const { return m_smudgeCurve; }
+	void setSmudgeCurve(const KisCubicCurve &smudgeCurve);
+
 	void setQColor(const QColor& c);
 	QColor qColor() const;
 
@@ -52,6 +68,29 @@ struct ClassicBrush : public DP_ClassicBrush
 	static ClassicBrush fromJson(const QJsonObject &json);
 
 	QPixmap presetThumbnail() const;
+
+private:
+	void updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &dst);
+
+	KisCubicCurve m_sizeCurve;
+	KisCubicCurve m_opacityCurve;
+	KisCubicCurve m_hardnessCurve;
+	KisCubicCurve m_smudgeCurve;
+};
+
+struct MyPaintCurve final
+{
+	bool visible = false;
+	double xMax = std::numeric_limits<double>::lowest();
+	double xMin = std::numeric_limits<double>::max();
+	double yMax = std::numeric_limits<double>::lowest();
+	double yMin = std::numeric_limits<double>::max();
+	KisCubicCurve curve;
+
+	bool isValid() const
+	{
+		return xMin <= xMax && yMin <= yMax;
+	}
 };
 
 class MyPaintBrush final
@@ -72,6 +111,10 @@ public:
 	DP_MyPaintSettings &settings();
 	const DP_MyPaintSettings &constSettings() const;
 
+	MyPaintCurve getCurve(int setting, int input) const;
+	void setCurve(int setting, int input, const MyPaintCurve &curve);
+	void removeCurve(int setting, int input);
+
 	void setQColor(const QColor& c);
 	QColor qColor() const;
 
@@ -85,6 +128,7 @@ public:
 private:
 	DP_MyPaintBrush m_brush;
 	DP_MyPaintSettings *m_settings;
+	QHash<QPair<int, int>, MyPaintCurve> m_curves;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
 
@@ -107,6 +151,8 @@ public:
 
 	ActiveType activeType() const { return m_activeType; }
 	void setActiveType(ActiveType activeType) { m_activeType = activeType; }
+
+	DP_BrushShape shape() const;
 
 	ClassicBrush &classic() { return m_classic; }
 	const ClassicBrush &classic() const { return m_classic; }

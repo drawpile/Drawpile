@@ -216,6 +216,16 @@ QPixmap KisCurveWidget::getBasePixmap()
     return d->m_pixmapBase;
 }
 
+void KisCurveWidget::setLinear(bool linear)
+{
+    d->m_linear = linear;
+}
+
+bool KisCurveWidget::linear() const
+{
+    return d->m_linear;
+}
+
 void KisCurveWidget::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace) {
@@ -296,20 +306,35 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
     int x;
 
     QPolygonF poly;
+    // Drawpile patch: linear graph for MyPaint brush settings.
+    if(d->m_linear) {
+        QList<QPointF> points = d->m_curve.points();
+        int count = points.count();
+        if(count == 0) {
+            poly.append(QPointF(0.0, wHeight));
+            poly.append(QPointF(wWidth, 0.0));
+        } else {
+            poly.append(QPointF(0.0, (1.0 - points.first().y()) * wHeight));
+            for(int i = 0; i < count; ++i) {
+                poly.append(QPointF(points[i].x() * wWidth, (1.0 - points[i].y()) * wHeight));
+            }
+            poly.append(QPointF(wWidth, (1.0 - points.last().y()) * wHeight));
+        }
+    } else {
+        p.setPen(QPen(palette().color(QPalette::WindowText), 1, Qt::SolidLine));
+        for (x = 0 ; x < wWidth ; x++) {
+            normalizedX = double(x) / wWidth;
+            curY = wHeight - d->m_curve.value(normalizedX) * wHeight;
 
-	p.setPen(QPen(palette().color(QPalette::WindowText), 1, Qt::SolidLine));
-    for (x = 0 ; x < wWidth ; x++) {
-        normalizedX = double(x) / wWidth;
-        curY = wHeight - d->m_curve.value(normalizedX) * wHeight;
-
-        /**
-         * Keep in mind that QLineF rounds doubles
-         * to ints mathematically, not just rounds down
-         * like in C
-         */
-        poly.append(QPointF(x, curY));
+            /**
+            * Keep in mind that QLineF rounds doubles
+            * to ints mathematically, not just rounds down
+            * like in C
+            */
+            poly.append(QPointF(x, curY));
+        }
+        poly.append(QPointF(x, wHeight - d->m_curve.value(1.0) * wHeight));
     }
-    poly.append(QPointF(x, wHeight - d->m_curve.value(1.0) * wHeight));
     p.drawPolyline(poly);
 
     // Drawing curve handles.

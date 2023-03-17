@@ -130,6 +130,7 @@
 #include "dialogs/serverlogdialog.h"
 #include "dialogs/tablettester.h"
 #include "dialogs/abusereport.h"
+#include "dialogs/brushsettingsdialog.h"
 
 #ifdef ENABLE_VERSION_CHECK
 #	include "dialogs/versioncheckdialog.h"
@@ -304,6 +305,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
 	connect(brushSettings, &tools::BrushSettings::pressureMappingChanged, m_view, &widgets::CanvasView::setPressureMapping);
+	connect(brushSettings, &tools::BrushSettings::brushSettingsDialogRequested, this, &MainWindow::showBrushSettingsDialog);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
@@ -1351,6 +1353,34 @@ void MainWindow::toggleTabletEventLog()
 			}
 		}
 	}
+}
+
+void MainWindow::showBrushSettingsDialog()
+{
+	dialogs::BrushSettingsDialog *dlg = findChild<dialogs::BrushSettingsDialog *>(
+		"brushsettingsdialog", Qt::FindDirectChildrenOnly);
+	if(!dlg) {
+		dlg = new dialogs::BrushSettingsDialog{this};
+		dlg->setObjectName("brushsettingsdialog");
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+
+		tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(
+			m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
+		connect(dlg, &dialogs::BrushSettingsDialog::brushSettingsChanged,
+			brushSettings, &tools::BrushSettings::setCurrentBrush);
+		connect(brushSettings, &tools::BrushSettings::eraseModeChanged, dlg,
+			&dialogs::BrushSettingsDialog::setForceEraseMode);
+		dlg->setForceEraseMode(brushSettings->isCurrentEraserSlot());
+
+		tools::ToolController *toolCtrl = m_doc->toolCtrl();
+		connect(toolCtrl, &tools::ToolController::activeBrushChanged, dlg,
+			&dialogs::BrushSettingsDialog::updateUiFromActiveBrush);
+		dlg->updateUiFromActiveBrush(toolCtrl->activeBrush());
+	}
+
+	utils::showWindow(dlg);
+	dlg->activateWindow();
+	dlg->raise();
 }
 
 /**
@@ -2630,6 +2660,7 @@ void MainWindow::setupActions()
 	QAction *canvasBackground = makeAction("canvas-background", tr("Set Session Background..."));
 	QAction *setLocalBackground = makeAction("set-local-background", tr("Set Local Background..."));
 	QAction *clearLocalBackground = makeAction("clear-local-background", tr("Clear Local Background"));
+	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings")).shortcut("F7");
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
@@ -2703,6 +2734,7 @@ void MainWindow::setupActions()
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
 	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
+	connect(brushSettings, &QAction::triggered, this, &MainWindow::showBrushSettingsDialog);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Expanding by multiples of tile size allows efficient resizing
@@ -2748,6 +2780,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(recolorarea);
 	editmenu->addAction(colorerasearea);
 	editmenu->addSeparator();
+	editmenu->addAction(brushSettings);
 	editmenu->addAction(preferences);
 
 	QToolBar *edittools = new QToolBar(tr("Edit Tools"));
