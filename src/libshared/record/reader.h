@@ -64,7 +64,7 @@ struct MessageRecord {
  *
  * Supports both binary and text encodings.
  */
-class Reader : public QObject
+class Reader final : public QObject
 {
 	Q_OBJECT
 public:
@@ -95,7 +95,7 @@ public:
 	 */
 	Reader(const QString &filename, QIODevice *file, bool autoclose=false, Encoding=Encoding::Autodetect, QObject *parent=nullptr);
 
-	~Reader();
+	~Reader() override;
 
 	/**
 	 * @brief Check if the given filename has a .dprec(+compression type) extension

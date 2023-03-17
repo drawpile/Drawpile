@@ -27,7 +27,7 @@ namespace server {
 /**
  * The (thin) serverside session state.
  */
-class ThinSession : public Session {
+class ThinSession final : public Session {
 	Q_OBJECT
 public:
 	ThinSession(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent=nullptr);

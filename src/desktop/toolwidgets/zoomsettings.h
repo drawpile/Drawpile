@@ -26,7 +26,7 @@ namespace tools {
 /**
  * @brief Zoom tool options
  */
-class ZoomSettings : public ToolSettings {
+class ZoomSettings final : public ToolSettings {
 	Q_OBJECT
 public:
 	ZoomSettings(ToolController *ctrl, QObject *parent=nullptr);

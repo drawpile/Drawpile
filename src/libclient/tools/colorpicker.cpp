@@ -50,9 +50,9 @@ void ColorPicker::motion(const canvas::Point& point, bool constrain, bool center
 
 	int layer=0;
 	if(m_pickFromCurrentLayer)
-		layer = owner.activeLayer();
+		layer = m_owner.activeLayer();
 
-	owner.model()->pickColor(point.x(), point.y(), layer, m_size);
+	m_owner.model()->pickColor(point.x(), point.y(), layer, m_size);
 }
 
 void ColorPicker::end()

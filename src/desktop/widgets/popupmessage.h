@@ -31,7 +31,7 @@ namespace widgets {
  * @brief Popup messagebox
  * A simple box that can be popped up to display a message.
  */
-class PopupMessage : public QWidget
+class PopupMessage final : public QWidget
 {
 	Q_OBJECT
 public:
@@ -49,8 +49,7 @@ public:
 	void showMessage(const QPoint& point, const QString &message);
 
 protected:
-	//void resizeEvent(QResizeEvent *);
-	void paintEvent(QPaintEvent *);
+	void paintEvent(QPaintEvent *) override;
 
 private:
 	void setMessage(const QString &message);

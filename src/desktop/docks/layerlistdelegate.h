@@ -27,8 +27,8 @@ namespace docks {
 /**
  * \brief A custom item delegate for displaying layer names and editing layer settings.
  */
-class LayerListDelegate : public QItemDelegate {
-Q_OBJECT
+class LayerListDelegate final : public QItemDelegate {
+	Q_OBJECT
 public:
 	LayerListDelegate(QObject *parent=nullptr);
 

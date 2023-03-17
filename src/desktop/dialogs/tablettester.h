@@ -25,16 +25,15 @@ class Ui_TabletTest;
 
 namespace dialogs {
 
-class TabletTestDialog : public QDialog
+class TabletTestDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	TabletTestDialog(QWidget *parent=nullptr);
-	~TabletTestDialog();
+	~TabletTestDialog() override;
 
 private:
 	Ui_TabletTest *m_ui;
-
 };
 
 }

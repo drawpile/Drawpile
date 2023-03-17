@@ -34,7 +34,7 @@ namespace protocol {
  *
  * A nonzero persistence indicates the start of the trail and zero the end.
  */
-class LaserTrail : public Message {
+class LaserTrail final : public Message {
 public:
 	LaserTrail(uint8_t ctx, quint32 color, uint8_t persistence) : Message(MSG_LASERTRAIL, ctx), m_color(color), m_persistence(persistence) { }
 	static LaserTrail *deserialize(uint8_t ctx, const uchar *data, uint len);
@@ -63,7 +63,7 @@ private:
  * Note. This is a META message, since this is used for a temporary visual effect only,
  * and thus doesn't affect the actual canvas content.
  */
-class MovePointer : public Message {
+class MovePointer final : public Message {
 public:
 	MovePointer(uint8_t ctx, int32_t x, int32_t y)
 		: Message(MSG_MOVEPOINTER, ctx), m_x(x), m_y(y)
@@ -93,7 +93,7 @@ private:
  * This is an opaque meta command that contains a list of users to be locked.
  * It can only be sent by session operators.
  */
-class UserACL : public Message {
+class UserACL final : public Message {
 public:
 	UserACL(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_USER_ACL, ctx), m_ids(ids) { }
 
@@ -125,7 +125,7 @@ private:
  * Using layer ID 0 sets or clears a general canvaswide lock. The tier and exclusive user list is not
  * used in this case.
  */
-class LayerACL : public Message {
+class LayerACL final : public Message {
 public:
 	LayerACL(uint8_t ctx, uint16_t id, bool locked, uint8_t tier, const QList<uint8_t> &exclusive)
 		: LayerACL(ctx, id, (locked?0x80:0) | (tier&0x07), exclusive)
@@ -161,7 +161,7 @@ private:
  *
  * This is an opaque meta command.
  */
-class FeatureAccessLevels : public Message {
+class FeatureAccessLevels final : public Message {
 public:
 	static const int FEATURES = 9; // Number of configurable features
 
@@ -194,7 +194,7 @@ private:
  * The default layer is the one new users default to when logging in.
  * If no default layer is set, the newest layer will be selected by default.
  */
-class DefaultLayer : public Message {
+class DefaultLayer final : public Message {
 public:
 	DefaultLayer(uint8_t ctx, uint16_t id)
 		: Message(MSG_LAYER_DEFAULT, ctx),

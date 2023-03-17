@@ -37,7 +37,7 @@ namespace canvas {
  *
  * A selection can contain in image to be pasted.
  */
-class Selection : public QObject
+class Selection final : public QObject
 {
 	Q_PROPERTY(QPolygonF shape READ shape WRITE setShape NOTIFY shapeChanged)
 	Q_PROPERTY(QImage pasteImage READ pasteImage WRITE setPasteImage NOTIFY pasteImageChanged)

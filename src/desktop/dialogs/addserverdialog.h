@@ -29,7 +29,7 @@ namespace sessionlisting {
 
 namespace dialogs {
 
-class AddServerDialog : public QMessageBox
+class AddServerDialog final : public QMessageBox
 {
 	Q_OBJECT
 public:

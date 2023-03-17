@@ -40,12 +40,12 @@ namespace docks {
  * @brief Tool settings window
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettings : public QDockWidget
+class ToolSettings final : public QDockWidget
 {
 Q_OBJECT
 public:
 	ToolSettings(tools::ToolController *ctrl, QWidget *parent=nullptr);
-	~ToolSettings();
+	~ToolSettings() override;
 
 	//! Get the current foreground color
 	QColor foregroundColor() const;

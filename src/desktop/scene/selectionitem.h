@@ -25,15 +25,15 @@
 
 namespace drawingboard {
 
-class SelectionItem : public QGraphicsObject
+class SelectionItem final : public QGraphicsObject
 {
 public:
 	enum { Type= UserType + 11 };
 
-	SelectionItem(canvas::Selection *selection, QGraphicsItem *parent=0);
+	SelectionItem(canvas::Selection *selection, QGraphicsItem *parent = nullptr);
 
-	QRectF boundingRect() const;
-	int type() const { return Type; }
+	QRectF boundingRect() const override;
+	int type() const override { return Type; }
 
 	void marchingAnts(double dt);
 
@@ -42,7 +42,7 @@ private slots:
 	void onAdjustmentModeChanged();
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
 
 private:
 	QPolygonF m_shape;

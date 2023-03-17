@@ -223,34 +223,34 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	// Serverwide settings that are adjustable via the API
 	layout->addWidget(new SubheaderWidget(tr("Settings"), 2), row++, 0, 1,	2);
 
-	addWidgets(d, layout, row++, tr("Server Title"), d->serverTitle);
-	addWidgets(d, layout, row++, tr("Welcome Message"), d->welcomeMessage);
+	addWidgets(d.get(), layout, row++, tr("Server Title"), d->serverTitle);
+	addWidgets(d.get(), layout, row++, tr("Welcome Message"), d->welcomeMessage);
 
-	addWidgets(d, layout, row++, tr("Connection timeout"), d->clientTimeout, true);
-	addWidgets(d, layout, row++, QString(), d->allowGuests);
-	addWidgets(d, layout, row++, QString(), d->allowGuestHosts);
-	addWidgets(d, layout, row++, tr("Server log"), d->logPurge, true);
-
-	layout->addItem(new QSpacerItem(1,10), row++, 0);
-
-	addWidgets(d, layout, row++, tr("Session size limit"), d->sessionSizeLimit, true);
-	addWidgets(d, layout, row++, tr("Default autoreset threshold"), d->autoresetTreshold, true);
-	addWidgets(d, layout, row++, tr("Session idle timeout"), d->idleTimeout, true);
-	addWidgets(d, layout, row++, tr("Maximum sessions"), d->maxSessions, true);
-	addWidgets(d, layout, row++, QString(), d->persistence);
-	addWidgets(d, layout, row++, QString(), d->archiveSessions);
-	addWidgets(d, layout, row++, QString(), d->privateUserList);
-	addWidgets(d, layout, row++, QString(), d->customAvatars);
+	addWidgets(d.get(), layout, row++, tr("Connection timeout"), d->clientTimeout, true);
+	addWidgets(d.get(), layout, row++, QString(), d->allowGuests);
+	addWidgets(d.get(), layout, row++, QString(), d->allowGuestHosts);
+	addWidgets(d.get(), layout, row++, tr("Server log"), d->logPurge, true);
 
 	layout->addItem(new QSpacerItem(1,10), row++, 0);
 
-	addWidgets(d, layout, row++, tr("External authentication"), d->useExtAuth);
-	addWidgets(d, layout, row++, tr("Validation key"), d->extAuthKey);
-	addWidgets(d, layout, row++, tr("User group"), d->extAuthGroup, true);
-	addWidgets(d, layout, row++, QString(), d->extAuthFallback);
-	addWidgets(d, layout, row++, QString(), d->extAuthMod);
-	addWidgets(d, layout, row++, QString(), d->extAuthHost);
-	addWidgets(d, layout, row++, QString(), d->extAuthAvatars);
+	addWidgets(d.get(), layout, row++, tr("Session size limit"), d->sessionSizeLimit, true);
+	addWidgets(d.get(), layout, row++, tr("Default autoreset threshold"), d->autoresetTreshold, true);
+	addWidgets(d.get(), layout, row++, tr("Session idle timeout"), d->idleTimeout, true);
+	addWidgets(d.get(), layout, row++, tr("Maximum sessions"), d->maxSessions, true);
+	addWidgets(d.get(), layout, row++, QString(), d->persistence);
+	addWidgets(d.get(), layout, row++, QString(), d->archiveSessions);
+	addWidgets(d.get(), layout, row++, QString(), d->privateUserList);
+	addWidgets(d.get(), layout, row++, QString(), d->customAvatars);
+
+	layout->addItem(new QSpacerItem(1,10), row++, 0);
+
+	addWidgets(d.get(), layout, row++, tr("External authentication"), d->useExtAuth);
+	addWidgets(d.get(), layout, row++, tr("Validation key"), d->extAuthKey);
+	addWidgets(d.get(), layout, row++, tr("User group"), d->extAuthGroup, true);
+	addWidgets(d.get(), layout, row++, QString(), d->extAuthFallback);
+	addWidgets(d.get(), layout, row++, QString(), d->extAuthMod);
+	addWidgets(d.get(), layout, row++, QString(), d->extAuthHost);
+	addWidgets(d.get(), layout, row++, QString(), d->extAuthAvatars);
 
 
 	layout->addItem(new QSpacerItem(1,1, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
@@ -268,6 +268,7 @@ ServerSummaryPage::~ServerSummaryPage()
 {
 	if(d->saveTimer->isActive())
 		saveSettings();
+
 	delete d;
 }
 
@@ -402,32 +403,34 @@ void ServerSummaryPage::showSettingsDialog()
 	connect(ui.pickCert, &QPushButton::clicked, std::bind(&pickFilePath, this, ui.certFile));
 	connect(ui.pickKey, &QPushButton::clicked, std::bind(&pickFilePath, this, ui.keyFile));
 
-	QSettings cfg;
-	cfg.beginGroup("ui");
+	{
+		QSettings cfg;
+		cfg.beginGroup("ui");
 
-	ui.trayIcon->setChecked(cfg.value("trayicon", true).toBool());
-	ui.trayIcon->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
+		ui.trayIcon->setChecked(cfg.value("trayicon", true).toBool());
+		ui.trayIcon->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
 
-	cfg.endGroup();
+		cfg.endGroup();
 
-	cfg.beginGroup("guiserver");
-	if(cfg.value("session-storage", "file").toString() == "file")
-		ui.storageFile->setChecked(true);
-	else
-		ui.storageMemory->setChecked(true);
+		cfg.beginGroup("guiserver");
+		if(cfg.value("session-storage", "file").toString() == "file")
+			ui.storageFile->setChecked(true);
+		else
+			ui.storageMemory->setChecked(true);
 
-	ui.port->setValue(cfg.value("port", 27750).toInt());
-	ui.localAddress->setText(cfg.value("local-address").toString());
+		ui.port->setValue(cfg.value("port", 27750).toInt());
+		ui.localAddress->setText(cfg.value("local-address").toString());
 
-#ifdef HAVE_LIBSODIUM
-	ui.extAuthUrl->setText(cfg.value("extauth").toString());
-#else
-	ui.extAuthUrl->setEnabled(false);
-#endif
+	#ifdef HAVE_LIBSODIUM
+		ui.extAuthUrl->setText(cfg.value("extauth").toString());
+	#else
+		ui.extAuthUrl->setEnabled(false);
+	#endif
 
-	ui.enableTls->setChecked(cfg.value("use-ssl", false).toBool());
-	ui.certFile->setText(cfg.value("sslcert").toString());
-	ui.keyFile->setText(cfg.value("sslkey").toString());
+		ui.enableTls->setChecked(cfg.value("use-ssl", false).toBool());
+		ui.certFile->setText(cfg.value("sslcert").toString());
+		ui.keyFile->setText(cfg.value("sslkey").toString());
+	}
 
 	connect(dlg, &QDialog::accepted, this, [ui]() {
 		QSettings cfg;

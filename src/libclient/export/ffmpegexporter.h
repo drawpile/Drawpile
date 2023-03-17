@@ -24,7 +24,7 @@
 
 #include "libclient/export/videoexporter.h"
 
-class FfmpegExporter : public VideoExporter
+class FfmpegExporter final : public VideoExporter
 {
 	Q_OBJECT
 public:
@@ -51,9 +51,9 @@ private slots:
 	void bytesWritten(qint64 bytes);
 
 protected:
-	void initExporter();
-	void writeFrame(const QImage &image, int repeat);
-	void shutdownExporter();
+	void initExporter() override;
+	void writeFrame(const QImage &image, int repeat) override;
+	void shutdownExporter() override;
 
 private:
 	QProcess *m_encoder;

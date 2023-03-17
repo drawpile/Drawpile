@@ -318,6 +318,13 @@ private:
 	int m_lastIndex;
 };
 
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
+namespace diagnostic_marker_private {
+	class [[maybe_unused]] AbstractSessionHistoryMarker : SessionHistory {
+		inline void joinUser(uint8_t, const QString&) override {}
+	};
+}
+
 Q_DECLARE_OPERATORS_FOR_FLAGS(SessionHistory::Flags)
 
 }

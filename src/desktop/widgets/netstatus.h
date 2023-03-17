@@ -43,7 +43,7 @@ class PopupMessage;
  * This widget displays the current status of the connection with the server
  * and the address of the host.
  */
-class NetStatus : public QWidget
+class NetStatus final : public QWidget
 {
 Q_OBJECT
 public:

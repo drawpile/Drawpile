@@ -25,11 +25,11 @@ class Ui_LaserSettings;
 
 namespace tools {
 
-class LaserPointerSettings : public ToolSettings {
+class LaserPointerSettings final : public ToolSettings {
 	Q_OBJECT
 public:
 	LaserPointerSettings(ToolController *ctrl, QObject *parent=nullptr);
-	~LaserPointerSettings();
+	~LaserPointerSettings() override;
 
 	QString toolType() const override { return QStringLiteral("laser"); }
 

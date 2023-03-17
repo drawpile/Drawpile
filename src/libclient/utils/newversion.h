@@ -33,7 +33,7 @@ class QXmlStreamReader;
  * list of versions newer than the current one.
  *
  */
-class NewVersionCheck : public QObject {
+class NewVersionCheck final : public QObject {
 	Q_OBJECT
 public:
 	//! Discovered version

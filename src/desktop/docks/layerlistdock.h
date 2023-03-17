@@ -50,7 +50,7 @@ namespace docks {
 
 class LayerAclMenu;
 
-class LayerList : public QDockWidget
+class LayerList final : public QDockWidget
 {
 Q_OBJECT
 public:

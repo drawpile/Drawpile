@@ -165,9 +165,11 @@ void AccountListPage::editSelectedAccount()
 
 	ui.username->setText(account["username"].toString());
 	ui.locked->setChecked(account["locked"].toBool());
-	const QStringList flags = account["flags"].toString().split(',', shim::SKIP_EMPTY_PARTS);
-	ui.flagHost->setChecked(flags.contains("HOST"));
-	ui.flagMod->setChecked(flags.contains("MOD"));
+	{
+		const QStringList flags = account["flags"].toString().split(',', shim::SKIP_EMPTY_PARTS);
+		ui.flagHost->setChecked(flags.contains("HOST"));
+		ui.flagMod->setChecked(flags.contains("MOD"));
+	}
 
 	connect(dlg, &QDialog::accepted, this, [this, ui, id]() {
 		QJsonObject body;

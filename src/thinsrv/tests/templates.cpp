@@ -13,7 +13,7 @@
 
 using namespace server;
 
-class TestTemplates: public QObject
+class TestTemplates final : public QObject
 {
 	Q_OBJECT
 private slots:

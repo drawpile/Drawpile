@@ -121,7 +121,7 @@ MessagePtr Command::error(const QString &message)
 
 Command *Command::deserialize(uint8_t ctxid, const uchar *data, uint len)
 {
-	return new Command(ctxid, QByteArray((const char*)data, len));
+	return new Command(ctxid, QByteArray(reinterpret_cast<const char*>(data), len));
 }
 
 int Command::serializePayload(uchar *data) const
@@ -154,8 +154,8 @@ QString Command::toString() const
 Disconnect *Disconnect::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<1)
-		return 0;
-	return new Disconnect(ctx, Reason(*data), QByteArray((const char*)data+1, len-1));
+		return nullptr;
+	return new Disconnect(ctx, Reason(*data), QByteArray(reinterpret_cast<const char*>(data)+1, len-1));
 }
 
 int Disconnect::serializePayload(uchar *data) const

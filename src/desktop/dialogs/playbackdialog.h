@@ -34,12 +34,12 @@ class VideoExporter;
 
 namespace dialogs {
 
-class PlaybackDialog : public QDialog
+class PlaybackDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent=nullptr);
-	~PlaybackDialog();
+	~PlaybackDialog() override;
 
 	void centerOnParent();
 

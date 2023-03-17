@@ -23,7 +23,7 @@
 #include <QVector>
 #include <QPixmap>
 
-class AvatarListModel : public QAbstractListModel
+class AvatarListModel final : public QAbstractListModel
 {
 	Q_OBJECT
 public:

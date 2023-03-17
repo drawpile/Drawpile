@@ -30,7 +30,7 @@
 
 namespace widgets {
 
-class Spinner : public QWidget {
+class Spinner final : public QWidget {
 	Q_OBJECT
 	Q_PROPERTY(int dots READ dots WRITE setDots)
 public:
@@ -40,8 +40,8 @@ public:
 	void setDots(int dots) { m_dots = qBound(2, dots, 32); }
 
 protected:
-	void paintEvent(QPaintEvent *);
-	void timerEvent(QTimerEvent *);
+	void paintEvent(QPaintEvent *) override;
+	void timerEvent(QTimerEvent *) override;
 
 private:
 	int m_dots;

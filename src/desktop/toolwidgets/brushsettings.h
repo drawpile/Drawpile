@@ -40,12 +40,12 @@ namespace tools {
  *
  * This is a settings class for the brush tool.
  */
-class BrushSettings : public ToolSettings {
+class BrushSettings final : public ToolSettings {
 	Q_OBJECT
 	friend class AdvancedBrushSettings;
 public:
 	BrushSettings(ToolController *ctrl, QObject *parent=nullptr);
-	~BrushSettings();
+	~BrushSettings() override;
 
 	QString toolType() const override { return QStringLiteral("brush"); }
 

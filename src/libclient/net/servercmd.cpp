@@ -76,7 +76,7 @@ drawdance::Message ServerCommand::toMessage() const
 		qWarning(
 			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%lld bytes)",
 			qPrintable(cmd),
-			qlonglong(payload.length())
+			shim::cast<long long>(payload.length())
 		);
 		return drawdance::Message{};
 	}

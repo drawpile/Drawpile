@@ -34,7 +34,7 @@ namespace protocol {
  *
  * The new annotation created with this command is initally empy with a transparent background
  */
-class AnnotationCreate : public Message {
+class AnnotationCreate final : public Message {
 public:
 	AnnotationCreate(uint8_t ctx, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
 		: Message(MSG_ANNOTATION_CREATE, ctx), m_id(id), m_x(x), m_y(y), m_w(w), m_h(h)
@@ -84,7 +84,7 @@ private:
 /**
  * @brief A command for changing annotation position and size
  */
-class AnnotationReshape : public Message {
+class AnnotationReshape final : public Message {
 public:
 	AnnotationReshape(uint8_t ctx, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
 		: Message(MSG_ANNOTATION_RESHAPE, ctx), m_id(id), m_x(x), m_y(y), m_w(w), m_h(h)
@@ -122,7 +122,7 @@ private:
  * If an annotation is flagged as protected, it cannot be modified by users
  * other than the one who created it, or session operators.
  */
-class AnnotationEdit : public Message {
+class AnnotationEdit final : public Message {
 public:
 	static const uint8_t FLAG_PROTECT = 0x01;       // disallow further modifications from other users
 	static const uint8_t FLAG_VALIGN_CENTER = 0x02; // center vertically
@@ -168,7 +168,7 @@ private:
  * identical rendering on all clients, as due to font and possible rendering
  * engine differences, text annotations may appear differently on each client.
  */
-class AnnotationDelete : public Message {
+class AnnotationDelete final : public Message {
 public:
 	AnnotationDelete(uint8_t ctx, uint16_t id)
 		: Message(MSG_ANNOTATION_DELETE, ctx), m_id(id)

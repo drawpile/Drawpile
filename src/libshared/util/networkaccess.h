@@ -42,7 +42,7 @@ QNetworkAccessManager *getInstance();
 /**
  * @brief A file download wrapper that emits progress reports
  */
-class FileDownload : public QObject {
+class FileDownload final : public QObject {
 	Q_OBJECT
 public:
 	explicit FileDownload(QObject *parent=nullptr);

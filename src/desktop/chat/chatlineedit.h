@@ -25,11 +25,11 @@
 /**
  * @brief A specialized line edit widget for chatting, with history
   */
-class ChatLineEdit : public QPlainTextEdit
+class ChatLineEdit final : public QPlainTextEdit
 {
 Q_OBJECT
 public:
-	explicit ChatLineEdit(QWidget *parent = 0);
+	explicit ChatLineEdit(QWidget *parent = nullptr);
 
 	//! Push text to history
 	void pushHistory(const QString& text);
@@ -43,8 +43,8 @@ signals:
 public slots:
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
-	void resizeEvent(QResizeEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override;
 
 private:
 	QStringList _history;

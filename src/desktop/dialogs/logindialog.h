@@ -38,12 +38,12 @@ namespace dialogs {
  *
  * This dialog handles all the user interaction needed while logging in.
  */
-class LoginDialog : public QDialog
+class LoginDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit LoginDialog(net::LoginHandler *login, QWidget *parent=nullptr);
-	~LoginDialog();
+	~LoginDialog() override;
 
 public slots:
 	void catchupProgress(int value);

@@ -46,7 +46,7 @@ class KisCubicCurve;
  * response, color transformations, acceleration by time, aeroplane lift
  *by angle of attack.
  */
-class KisCurveWidget : public QWidget
+class KisCurveWidget final : public QWidget
 {
     Q_OBJECT
 
@@ -58,7 +58,7 @@ public:
      */
 	KisCurveWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 
-    virtual ~KisCurveWidget();
+	~KisCurveWidget() override;
 
     /**
      * Enable the guide and set the guide color to the specified color.
@@ -112,14 +112,14 @@ protected slots:
 
 protected:
 
-    void keyPressEvent(QKeyEvent *);
-    void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent * e);
-    void mouseReleaseEvent(QMouseEvent * e);
-    void mouseMoveEvent(QMouseEvent * e);
-	void contextMenuEvent(QContextMenuEvent * e);
-    void leaveEvent(QEvent *);
-    void resizeEvent(QResizeEvent *e);
+	void keyPressEvent(QKeyEvent *) override;
+	void paintEvent(QPaintEvent *) override;
+	void mousePressEvent(QMouseEvent * e) override;
+	void mouseReleaseEvent(QMouseEvent * e) override;
+	void mouseMoveEvent(QMouseEvent * e) override;
+	void contextMenuEvent(QContextMenuEvent * e) override;
+	void leaveEvent(QEvent *) override;
+	void resizeEvent(QResizeEvent *e) override;
 
 public:
 

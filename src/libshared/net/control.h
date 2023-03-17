@@ -74,7 +74,7 @@ struct ServerReply {
  * - setting session parameters (e.g. max user count and password)
  * - sending administration commands (e.g. kick user)
  */
-class Command : public Message {
+class Command final : public Message {
 public:
 	Command(uint8_t ctx, const QByteArray &msg) : Message(MSG_COMMAND, ctx), m_msg(msg) {}
 	Command(uint8_t ctx, const QJsonDocument &doc) : Command(ctx, doc.toJson(QJsonDocument::Compact)) {}
@@ -110,7 +110,7 @@ private:
  * This message is used when closing the connection gracefully. The message queue
  * will automatically close the socket after sending this message.
  */
-class Disconnect : public Message {
+class Disconnect final : public Message {
 public:
 	enum Reason {
 		ERROR,    // client/server error
@@ -157,7 +157,7 @@ private:
  *
  * The server should return with a Ping with the pong message setenv()
  */
-class Ping : public Message {
+class Ping final : public Message {
 public:
 	Ping(uint8_t ctx, bool pong) : Message(MSG_PING, ctx), m_isPong(pong) { }
 

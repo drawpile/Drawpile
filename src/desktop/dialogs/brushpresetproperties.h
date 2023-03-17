@@ -26,14 +26,14 @@ class Ui_BrushPresetProperties;
 
 namespace dialogs {
 
-class BrushPresetProperties : public QDialog
+class BrushPresetProperties final : public QDialog
 {
 Q_OBJECT
 public:
 	explicit BrushPresetProperties(int id, const QString &name, const QString &description,
         const QPixmap &thumbnail, QWidget *parent = nullptr);
 
-	virtual ~BrushPresetProperties();
+	~BrushPresetProperties() override;
 
 signals:
     void presetPropertiesApplied(int id, const QString &name, const QString &description,

@@ -31,7 +31,7 @@ namespace gui {
 class SidebarModel;
 class Server;
 
-class MainWindow : public QMainWindow
+class MainWindow final : public QMainWindow
 {
 	Q_OBJECT
 public:

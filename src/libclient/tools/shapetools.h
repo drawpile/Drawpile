@@ -59,7 +59,7 @@ private:
  *
  * The line tool draws straight lines.
  */
-class Line : public ShapeTool {
+class Line final : public ShapeTool {
 public:
 	Line(ToolController &owner);
 
@@ -74,7 +74,7 @@ protected:
  *
  * This tool is used for drawing squares and rectangles
  */
-class Rectangle : public ShapeTool {
+class Rectangle final : public ShapeTool {
 public:
 	Rectangle(ToolController &owner);
 
@@ -87,7 +87,7 @@ protected:
  *
  * This tool is used for drawing circles and ellipses
  */
-class Ellipse : public ShapeTool {
+class Ellipse final : public ShapeTool {
 public:
 	Ellipse(ToolController &owner);
 

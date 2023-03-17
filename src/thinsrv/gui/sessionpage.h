@@ -24,20 +24,20 @@
 
 #include <QWidget>
 
-namespace  server {
+namespace server {
 
 struct JsonApiResult;
 
 namespace gui {
 
-class SessionPage : public QWidget
+class SessionPage final : public QWidget
 {
 	Q_OBJECT
 public:
 	struct Private;
 
 	explicit SessionPage(Server *server, const QString &id, QWidget *parent=nullptr);
-	~SessionPage();
+	~SessionPage() override;
 
 private slots:
 	void saveSettings();
@@ -58,7 +58,7 @@ private:
 	Private *d;
 };
 
-class SessionPageFactory : public PageFactory
+class SessionPageFactory final : public PageFactory
 {
 public:
 	SessionPageFactory(const QString &id) : m_id(id) { }

@@ -34,12 +34,12 @@ namespace widgets {
  *
  * A widget for chatting with other users
  */
-class ChatWidget : public QWidget
+class ChatWidget final : public QWidget
 {
 	Q_OBJECT
 public:
 	explicit ChatWidget(QWidget *parent=nullptr);
-	~ChatWidget();
+	~ChatWidget() override;
 
 	void focusInput();
 	void setAttached(bool isAttached);

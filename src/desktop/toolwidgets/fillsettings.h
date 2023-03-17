@@ -28,11 +28,11 @@ namespace tools {
 /**
  * @brief Settings for the flood fill tool
  */
-class FillSettings : public ToolSettings {
+class FillSettings final : public ToolSettings {
 	Q_OBJECT
 public:
 	FillSettings(ToolController *ctrl, QObject *parent=nullptr);
-	~FillSettings();
+	~FillSettings() override;
 
 	QString toolType() const override { return QStringLiteral("fill"); }
 

@@ -35,12 +35,12 @@ namespace docks {
  *
  * This dock displays a list of brush presets to choose from.
  */
-class BrushPalette : public QDockWidget
+class BrushPalette final : public QDockWidget
 {
 Q_OBJECT
 public:
 	BrushPalette(QWidget *parent=nullptr);
-	~BrushPalette();
+	~BrushPalette() override;
 
 	void connectBrushSettings(tools::ToolSettings *toolSettings);
 

@@ -39,10 +39,10 @@ class ServerConfig;
 /**
  * The drawpile server.
  */
-class MultiServer : public QObject {
+class MultiServer final : public QObject {
 Q_OBJECT
 public:
-	explicit MultiServer(ServerConfig *config, QObject *parent=0);
+	explicit MultiServer(ServerConfig *config, QObject *parent = nullptr);
 
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setAutoStop(bool autostop);

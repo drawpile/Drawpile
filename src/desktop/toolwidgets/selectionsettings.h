@@ -36,11 +36,11 @@ namespace tools {
  * Unlike most tool settings widgets, this one also includes buttons to trigger
  * various actions on the active selection (e.g. flip/mirror.)
  */
-class SelectionSettings : public ToolSettings {
+class SelectionSettings final : public ToolSettings {
 	Q_OBJECT
 public:
 	SelectionSettings(ToolController *ctrl, QObject *parent=nullptr);
-	~SelectionSettings();
+	~SelectionSettings() override;
 
 	QString toolType() const override { return QStringLiteral("selection"); }
 

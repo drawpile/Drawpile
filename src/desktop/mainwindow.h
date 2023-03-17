@@ -80,11 +80,11 @@ namespace rustpile {
 class ShortcutDetector;
 
 //! The application main window
-class MainWindow : public QMainWindow {
+class MainWindow final : public QMainWindow {
 	Q_OBJECT
 public:
 	MainWindow(bool restoreWindowPosition=true);
-	~MainWindow();
+	~MainWindow() override;
 
 	MainWindow *loadRecording(const QString &path);
 

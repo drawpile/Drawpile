@@ -26,11 +26,12 @@ class Ui_NetStats;
 
 namespace dialogs {
 
-class NetStats : public QDialog
+class NetStats final : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit NetStats(QWidget *parent = 0);
+	explicit NetStats(QWidget *parent = nullptr);
+	~NetStats() override;
 
 public slots:
 	void setSentBytes(int bytes);

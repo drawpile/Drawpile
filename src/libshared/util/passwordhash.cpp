@@ -63,7 +63,7 @@ bool isValidHash(const QByteArray &hash)
 
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
-		return hash.length() > 7 && (unsigned int)hash.length() < 7+crypto_pwhash_STRBYTES;
+		return hash.length() > 7 && uint(hash.length()) < 7+crypto_pwhash_STRBYTES;
 #else
 		qWarning("Libsodium needed to support Argon2 hashes!");
 		return false;
@@ -97,10 +97,10 @@ bool check(const QString &password, const QByteArray &hash)
 	} else if(hash.startsWith("pbkdf2;")) {
 		const auto parts = hash.split(';');
 		const auto salt = QByteArray::fromBase64(parts.at(2));
-		const auto expectedHash = QByteArray::fromBase64(parts.at(3));
+		const auto expected = QByteArray::fromBase64(parts.at(3));
 		if(parts.at(1) == "1") { // version tag
-			const auto hash = QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64);
-			return hash == expectedHash;
+			const auto actual = QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64);
+			return actual == expected;
 		}
 
 	} else if(hash.startsWith("sodium;")) {

@@ -34,8 +34,6 @@ void playSoundNow(Event event, int volume);
 
 void playSound(Event event);
 
-void setVolume(int volume);
-
 }
 
 #endif // NOTIFICATIONS_H

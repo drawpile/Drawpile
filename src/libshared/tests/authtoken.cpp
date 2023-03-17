@@ -7,7 +7,7 @@ static const char *SAT_SAMPLE =
 static const char *PUBKEY =
 	"PUi/Xp04e2C7bk0BNFyAp0IPAiHG8nEkMKEcXo44qnY=";
 
-class TestAuthToken : public QObject
+class TestAuthToken final : public QObject
 {
 	Q_OBJECT
 private slots:

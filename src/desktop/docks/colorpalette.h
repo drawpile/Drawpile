@@ -27,11 +27,11 @@ namespace color_widgets {
 
 namespace docks {
 
-class ColorPaletteDock : public QDockWidget {
+class ColorPaletteDock final : public QDockWidget {
 	Q_OBJECT
 public:
 	ColorPaletteDock(const QString& title, QWidget *parent);
-	~ColorPaletteDock();
+	~ColorPaletteDock() override;
 
 public slots:
 	void setColor(const QColor& color);

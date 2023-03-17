@@ -108,7 +108,7 @@ void UnixSignals::connectNotify(const QMetaMethod &signal)
 		sigemptyset(&sa.sa_mask);
 		sa.sa_flags = 0;
 
-		sigaction(sm->sig, &sa, 0);
+		sigaction(sm->sig, &sa, nullptr);
 	}
 }
 

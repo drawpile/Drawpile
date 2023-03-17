@@ -58,6 +58,7 @@ set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Generated Targets")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC_PATH_PREFIX ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -69,9 +70,13 @@ if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
 endif()
 add_feature_info("Interprocedural optimization" CMAKE_INTERPROCEDURAL_OPTIMIZATION "")
 if (MSVC)
-	add_compile_options(/utf-8 /W4 /wd4456 /wd4457)
+	add_compile_options(/utf-8 /W4)
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-	add_link_options(/WX:NO)
+
+	if($ENV{CI})
+		add_compile_options(/WX)
+		add_link_options(/WX:NO)
+	endif()
 
 	# https://github.com/mozilla/sccache/pull/963
 	if(CMAKE_C_COMPILER_LAUNCHER MATCHES "sccache")
@@ -92,8 +97,68 @@ if (MSVC)
 			string(REPLACE "/Zi" "/Z7" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 		endif()
 	endif()
+
+	get_directory_property(IGNORE_WARNINGS_COMPILE_OPTIONS COMPILE_OPTIONS)
+	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "/W[0-9]$" "/W0")
+	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "/W([0-9]{4})" "/wn\\1")
 else()
-	add_compile_options(-Wall -Wextra -pedantic)
+	add_compile_options(-Wall -Wextra -Wpedantic
+		-Wcast-align
+		-Wcast-qual
+		-Wextra-semi
+		-Wformat-nonliteral
+		-Wimplicit-fallthrough
+		-Wnon-virtual-dtor
+		-Wold-style-cast
+		-Woverloaded-virtual
+		-Wshadow
+		-Wunused
+		-Wunused-parameter
+		-Wunused-macros
+		-Wzero-as-null-pointer-constant
+	)
+
+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105725
+	if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.2)
+		add_compile_options(-Wmismatched-tags)
+	endif()
+
+	include(CheckCXXCompilerFlag)
+	foreach(flag IN ITEMS
+		-Warray-bounds-pointer-arithmetic
+		-Walloc-zero
+		-Warray-bounds=2
+		-Wdeprecated
+		-Wduplicated-branches
+		-Wduplicated-cond
+		-Wformat-pedantic
+		-Wformat-security
+		-Wlogical-op
+		-Wlogical-op-parentheses
+		-Wsuggest-destructor-override
+		-Wsuggest-final-methods
+		-Wsuggest-final-types
+		-Wsuggest-override
+		-Wunused-member-function
+		-Wunused-template
+		-Wuseless-cast
+	)
+		string(TOUPPER ${flag} flag_name)
+		string(REPLACE "-W" "CXX_HAS_" flag_name ${flag_name})
+		string(REPLACE "-" "_" flag_name ${flag_name})
+		string(REPLACE "=" "_" flag_name ${flag_name})
+		check_cxx_compiler_flag(${flag} ${flag_name})
+		if(${flag_name})
+			add_compile_options(${flag})
+		endif()
+	endforeach()
+
+	if($ENV{CI})
+		add_compile_options(-Werror)
+	endif()
+
+	get_directory_property(IGNORE_WARNINGS_COMPILE_OPTIONS COMPILE_OPTIONS)
+	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "-W([^=]+)(=.*$)?" "-Wno-\\1")
 endif()
 
 include(AutoSourceGroup)
@@ -207,6 +272,32 @@ if(TOOLS)
 		COMPONENT tools
 	)
 endif()
+
+function (get_all_targets out_var current_dir)
+	get_property(targets DIRECTORY ${current_dir} PROPERTY BUILDSYSTEM_TARGETS)
+	get_property(subdirs DIRECTORY ${current_dir} PROPERTY SUBDIRECTORIES)
+
+	foreach(subdir ${subdirs})
+		get_all_targets(subdir_targets ${subdir})
+		list(APPEND targets ${subdir_targets})
+	endforeach()
+
+	set(${out_var} ${targets} PARENT_SCOPE)
+endfunction()
+
+get_all_targets(ALL_TARGETS "${CMAKE_CURRENT_LIST_DIR}")
+foreach(target IN LISTS ALL_TARGETS)
+	get_target_property(has_automoc ${target} AUTOMOC)
+	get_target_property(binary_dir ${target} BINARY_DIR)
+	if(has_automoc)
+		set_source_files_properties(
+			"${binary_dir}/${target}_autogen/mocs_compilation.cpp"
+			TARGET_DIRECTORY "${target}"
+			PROPERTIES
+			COMPILE_OPTIONS "${IGNORE_WARNINGS_COMPILE_OPTIONS}"
+		)
+	endif()
+endforeach()
 
 if(DIST_BUILD)
 	if(APPLE)

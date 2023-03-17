@@ -26,7 +26,7 @@ namespace canvas {
 
 class PaintEngine;
 
-class IndexBuilderRunnable : public QObject, public QRunnable
+class IndexBuilderRunnable final : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:

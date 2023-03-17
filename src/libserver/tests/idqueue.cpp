@@ -4,7 +4,7 @@
 
 using server::IdQueue;
 
-class TestIdQueue: public QObject
+class TestIdQueue final : public QObject
 {
 	Q_OBJECT
 private slots:

@@ -42,7 +42,7 @@ namespace drawdance {
 
 namespace canvas {
 
-class PaintEngine : public QObject {
+class PaintEngine final : public QObject {
 	Q_OBJECT
 public:
 	static constexpr int DEFAULT_FPS = 60;
@@ -53,7 +53,7 @@ public:
 		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
 		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
-	~PaintEngine();
+	~PaintEngine() override;
 
 	void setFps(int fps);
 	void setSnapshotMaxCount(int snapshotMaxCount);

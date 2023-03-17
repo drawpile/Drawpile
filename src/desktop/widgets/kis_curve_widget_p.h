@@ -37,8 +37,7 @@ class KisCurveWidget::Private
 
 
 public:
-    Private(KisCurveWidget *parent);
-    virtual ~Private();
+	Private(KisCurveWidget *parent);
 
     /* Dragging variables */
     int m_grab_point_index;
@@ -143,11 +142,6 @@ KisCurveWidget::Private::Private(KisCurveWidget *parent)
 {
     m_curveWidget = parent;
 }
-
-KisCurveWidget::Private::~Private()
-{
-}
-
 
 double KisCurveWidget::Private::io2sp(int x)
 {

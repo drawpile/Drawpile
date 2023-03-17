@@ -31,7 +31,7 @@ class PaintEngine;
 /**
  * Access control list state that is relevant to the UI.
  */
-class AclState : public QObject {
+class AclState final : public QObject {
 	Q_OBJECT
 public:
 	struct Layer {
@@ -44,7 +44,7 @@ public:
 	};
 
 	explicit AclState(QObject *parent=nullptr);
-	~AclState();
+	~AclState() override;
 
 	void setLocalUserId(uint8_t localUser);
 

@@ -53,7 +53,7 @@ struct LoginSession {
 /**
  * @brief List of available sessions
  */
-class LoginSessionModel : public QAbstractTableModel
+class LoginSessionModel final : public QAbstractTableModel
 {
 	Q_OBJECT
 public:
@@ -77,11 +77,11 @@ public:
 	void setModeratorMode(bool mod);
 	bool isModeratorMode() const { return m_moderatorMode; }
 
-	int rowCount(const QModelIndex &parent=QModelIndex()) const;
-	int columnCount(const QModelIndex &parent=QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
-	Qt::ItemFlags flags(const QModelIndex &index) const;
+	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);

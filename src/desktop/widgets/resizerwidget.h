@@ -30,7 +30,7 @@
 
 namespace widgets {
 
-class QDESIGNER_WIDGET_EXPORT ResizerWidget : public QWidget
+class QDESIGNER_WIDGET_EXPORT ResizerWidget final : public QWidget
 {
 	Q_PROPERTY(QSize targetSize READ targetSize WRITE setTargetSize)
 	Q_PROPERTY(QSize originalSize READ originalSize WRITE setOriginalSize)
@@ -56,10 +56,10 @@ signals:
 	void offsetChanged(const QPoint &);
 
 protected:
-	void paintEvent(QPaintEvent*);
-	void resizeEvent(QResizeEvent*);
-	void mousePressEvent(QMouseEvent*);
-	void mouseMoveEvent(QMouseEvent*);
+	void paintEvent(QPaintEvent*) override;
+	void resizeEvent(QResizeEvent*) override;
+	void mousePressEvent(QMouseEvent*) override;
+	void mouseMoveEvent(QMouseEvent*) override;
 
 private:
 	void updateScales();

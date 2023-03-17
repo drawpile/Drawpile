@@ -31,7 +31,7 @@ namespace drawingboard {
 /**
  * @brief A graphics item that draws a LayerStack
  */
-class CanvasItem : public QGraphicsObject
+class CanvasItem final : public QGraphicsObject
 {
 Q_OBJECT
 public:

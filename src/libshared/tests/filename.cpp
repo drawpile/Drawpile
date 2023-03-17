@@ -4,7 +4,7 @@
 #include <QTemporaryDir>
 #include <QDir>
 
-class TestFilename: public QObject
+class TestFilename final : public QObject
 {
 	Q_OBJECT
 private slots:

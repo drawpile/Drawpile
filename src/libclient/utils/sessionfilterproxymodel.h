@@ -29,7 +29,7 @@
  *
  * Otherwise works like normal QSortFilterProxyModel
  */
-class SessionFilterProxyModel : public QSortFilterProxyModel
+class SessionFilterProxyModel final : public QSortFilterProxyModel
 {
 	Q_OBJECT
 public:

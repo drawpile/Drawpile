@@ -30,12 +30,12 @@ class AvatarListModel;
 
 namespace dialogs {
 
-class AvatarImport : public QDialog
+class AvatarImport final : public QDialog
 {
 	Q_OBJECT
 public:
 	AvatarImport(const QImage &source, QWidget *parent=nullptr);
-	~AvatarImport();
+	~AvatarImport() override;
 
 	// Size of the final avatar image
 	static const int Size = 32;

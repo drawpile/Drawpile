@@ -47,7 +47,7 @@ struct ServerReply;
  * In some situations, the user must prompted for decisions (e.g. password is needed
  * or user must decide which session to join.) In these situations, a signal is emitted.
  */
-class LoginHandler : public QObject {
+class LoginHandler final : public QObject {
 	Q_OBJECT
 public:
 	enum class Mode {HostRemote, HostBuiltin, Join};

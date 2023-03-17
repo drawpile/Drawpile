@@ -30,8 +30,8 @@ namespace gui {
 
 AuthDialog::AuthDialog(QWidget *parent)
 	: QDialog(parent)
+	, m_ui(new Ui_AuthDialog)
 {
-	m_ui = new Ui_AuthDialog;
 	m_ui->setupUi(this);
 }
 

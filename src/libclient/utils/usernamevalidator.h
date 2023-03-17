@@ -22,13 +22,13 @@
 
 #include <QValidator>
 
-class UsernameValidator : public QValidator
+class UsernameValidator final : public QValidator
 {
 	Q_OBJECT
 public:
-	explicit UsernameValidator(QObject *parent = 0);
+	explicit UsernameValidator(QObject *parent = nullptr);
 
-	State validate(QString &input, int &pos) const;
+	State validate(QString &input, int &pos) const override;
 
 	static bool isValid(const QString &username);
 };

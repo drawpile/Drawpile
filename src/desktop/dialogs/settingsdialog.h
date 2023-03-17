@@ -36,12 +36,12 @@ namespace color_widgets { class ColorWheel; }
 
 namespace dialogs {
 
-class SettingsDialog : public QDialog
+class SettingsDialog final : public QDialog
 {
 Q_OBJECT
 public:
 	SettingsDialog(QWidget *parent=nullptr);
-	~SettingsDialog();
+	~SettingsDialog() override;
 
 private slots:
 	void resetSettings();

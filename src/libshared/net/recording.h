@@ -34,7 +34,7 @@ namespace protocol {
  * Note. The maximum interval (using a single message) is about 65 seconds.
  * Typically the intervals we want to store are a few seconds at most, so this should be enough.
  */
-class Interval : public Message
+class Interval final : public Message
 {
 public:
 	Interval(uint8_t ctx, uint16_t milliseconds) : Message(MSG_INTERVAL, ctx), m_msecs(milliseconds) {}
@@ -60,7 +60,7 @@ private:
  *
  * This is used to bookmark points in the session for quick access when playing back a recording.
  */
-class Marker : public Message
+class Marker final : public Message
 {
 public:
 	Marker(uint8_t ctx, const QString &text) : Message(MSG_MARKER, ctx), m_text(text.toUtf8()) { }
@@ -88,11 +88,11 @@ private:
  * valuable debugging information. They are ignored by the client.
  * When written in Text mode, they are written as comments.
  */
-class Filtered : public Message
+class Filtered final : public Message
 {
 public:
 	Filtered(uint8_t ctx, uchar *payload, int payloadLen);
-	~Filtered();
+	~Filtered() override;
 
 	static NullableMessageRef deserialize(uint8_t ctx, const uchar *data, uint len);
 	// Note: this type has no fromText function since it is serialized as a comment

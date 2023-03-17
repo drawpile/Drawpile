@@ -7,7 +7,7 @@ using server::Database;
 using server::DbLog;
 using server::Log;
 
-class TestDbLog : public QObject
+class TestDbLog final : public QObject
 {
 	Q_OBJECT
 private slots:

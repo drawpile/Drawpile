@@ -201,7 +201,7 @@ bool DrawDabsClassic::extend(const DrawDabs &dabs)
 {
 	if(dabs.type() != type())
 		return false;
-	const auto ddc = static_cast<const DrawDabsClassic&>(dabs);
+	const auto &ddc = static_cast<const DrawDabsClassic&>(dabs);
 
 	if(m_color != ddc.m_color ||
 		m_layer != ddc.m_layer ||
@@ -413,7 +413,7 @@ bool DrawDabsPixel::extend(const DrawDabs &dabs)
 {
 	if(dabs.type() != type())
 		return false;
-	const auto ddp = static_cast<const DrawDabsPixel&>(dabs);
+	const auto &ddp = static_cast<const DrawDabsPixel&>(dabs);
 
 	if(m_color != ddp.m_color ||
 		m_layer != ddp.m_layer ||

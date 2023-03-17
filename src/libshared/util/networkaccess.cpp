@@ -53,7 +53,7 @@ QNetworkAccessManager *getInstance()
 		t->connect(t, &QThread::finished, [nam, t]() {
 			qDebug() << "thread" << t << "ended. Removing NetworkAccessManager";
 			nam->deleteLater();
-			QMutexLocker lock(&MANAGERS.mutex);
+			QMutexLocker guard(&MANAGERS.mutex);
 			MANAGERS.perThreadManagers.remove(t);
 		});
 		MANAGERS.perThreadManagers[t] = nam;

@@ -79,7 +79,7 @@ class ServerConfig;
  * If the ID was specified by the user (vanity ID), it is prefixed with '!'
  *
  */
-class LoginHandler : public QObject
+class LoginHandler final : public QObject
 {
 	Q_OBJECT
 public:

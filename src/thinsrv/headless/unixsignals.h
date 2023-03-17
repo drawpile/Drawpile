@@ -26,7 +26,7 @@
  *
  * To use, simply connect to the signal you are interested.
  */
-class UnixSignals : public QObject
+class UnixSignals final : public QObject
 {
 	Q_OBJECT
 public:
@@ -38,7 +38,7 @@ signals:
 	void sigUsr1();
 
 protected:
-	void connectNotify(const QMetaMethod &signal);
+	void connectNotify(const QMetaMethod &signal) override;
 
 private slots:
 	void handleSignal();

@@ -29,12 +29,12 @@ class QPushButton;
 
 namespace dialogs {
 
-class VersionCheckDialog : public QDialog
+class VersionCheckDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit VersionCheckDialog(QWidget *parent=nullptr);
-	~VersionCheckDialog();
+	~VersionCheckDialog() override;
 
 	/**
 	 * @brief Perform version check (if needed) and show dialog if new version is available

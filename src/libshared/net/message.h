@@ -108,14 +108,18 @@ public:
 	static const int HEADER_LEN = 4;
 
 	Message(MessageType type, uint8_t ctx): m_type(type), _undone(DONE), m_refcount(0), m_contextid(ctx) {}
-	virtual ~Message() {}
-	
+	Message(Message &other) = delete;
+	Message(Message &&other) = delete;
+	Message &operator=(Message &other) = delete;
+	Message &operator=(Message &&other) = delete;
+	virtual ~Message() = default;
+
 	/**
 	 * @brief Get the type of this message.
 	 * @return message type
 	 */
 	MessageType type() const { return m_type; }
-	
+
 	/**
 	 * @brief Is this a control message
 	 *
@@ -135,7 +139,7 @@ public:
 
 	/**
 	 * @brief Check if this message type is a command stream type
-	 * 
+	 *
 	 * Command stream messages are the messages directly related to drawing.
 	 * The canvas can be reconstructed exactly using only command messages.
 	 * @return true if this is a drawing command
@@ -320,6 +324,13 @@ private:
 	int m_refcount;
 	uint8_t m_contextid;
 };
+
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
+namespace diagnostic_marker_private {
+	class [[maybe_unused]] AbstractMessageMarker : Message {
+		inline QString toString() const override { return QString(); }
+	};
+}
 
 typedef QList<MessagePtr> MessageList;
 

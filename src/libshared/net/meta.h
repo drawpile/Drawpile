@@ -33,7 +33,7 @@ namespace protocol {
  * with a context ID.
  *
  */
-class UserJoin : public Message {
+class UserJoin final : public Message {
 public:
 	static const uint8_t FLAG_AUTH = 0x01; // authenticated user (not a guest)
 	static const uint8_t FLAG_MOD = 0x02;  // user is a moderator
@@ -75,7 +75,7 @@ private:
  * clients will typically remove the user from the user listing. The client
  * is also allowed to release resources associated with this context ID.
  */
-class UserLeave : public ZeroLengthMessage<UserLeave> {
+class UserLeave final : public ZeroLengthMessage<UserLeave> {
 public:
 	explicit UserLeave(uint8_t ctx) : ZeroLengthMessage(MSG_USER_LEAVE, ctx) {}
 
@@ -94,7 +94,7 @@ public:
  * The server sanitizes the ID list so, when distributed to other users,
  * it does not contain any duplicates or non-existing users.
  */
-class SessionOwner : public Message {
+class SessionOwner final : public Message {
 public:
 	SessionOwner(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_SESSION_OWNER, ctx), m_ids(ids) { }
 
@@ -128,7 +128,7 @@ private:
  * The server sanitizes the ID list so, when distributed to other users,
  * it does not contain any duplicates or non-existing users.
  */
-class TrustedUsers : public Message {
+class TrustedUsers final : public Message {
 public:
 	TrustedUsers(uint8_t ctx, QList<uint8_t> ids) : Message(MSG_TRUSTED_USERS, ctx), m_ids(ids) { }
 
@@ -156,7 +156,7 @@ private:
  * (Typically a Command message is used for server announcements, but the Chat message
  * is used for those messages that must be stored in the session history.)
  */
-class Chat : public Message {
+class Chat final : public Message {
 public:
 	// Transparent flags: these affect serverside behavior
 	static const uint8_t FLAG_BYPASS = 0x01; // bypass session history and send directly to logged in users
@@ -244,7 +244,7 @@ private:
  *
  * Private messages always bypass the session history.
  */
-class PrivateChat : public Message {
+class PrivateChat final : public Message {
 public:
 	// Opaque flags: the server doesn't know anything about these
 	static const uint8_t FLAG_ACTION = 0x02; // this is an "action message" (like /me in IRC)
@@ -296,7 +296,7 @@ private:
  * The current client implementation handles the history truncation part. This is
  * enough to be compatible with future clients capable of initiating soft reset.
  */
-class SoftResetPoint : public ZeroLengthMessage<SoftResetPoint> {
+class SoftResetPoint final : public ZeroLengthMessage<SoftResetPoint> {
 public:
 	explicit SoftResetPoint(uint8_t ctx) : ZeroLengthMessage(MSG_SOFTRESET, ctx) { }
 	QString messageName() const override { return QStringLiteral("softreset"); }

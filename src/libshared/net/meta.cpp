@@ -37,8 +37,8 @@ UserJoin *UserJoin::deserialize(uint8_t ctx, const uchar *data, uint len)
 	if(nameLen==0 || nameLen+2 > len)
 		return nullptr;
 
-	const QByteArray name = QByteArray((const char*)data+2, nameLen);
-	const QByteArray avatar = QByteArray((const char*)data+2+nameLen, len-2-nameLen);
+	const QByteArray name = QByteArray(reinterpret_cast<const char*>(data)+2, nameLen);
+	const QByteArray avatar = QByteArray(reinterpret_cast<const char*>(data)+2+nameLen, len-2-nameLen);
 	return new UserJoin(ctx, flags, name, avatar);
 }
 
@@ -171,7 +171,7 @@ Chat *Chat::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<3)
 		return nullptr;
-	return new Chat(ctx, *(data+0), *(data+1), QByteArray((const char*)data+2, len-2));
+	return new Chat(ctx, *(data+0), *(data+1), QByteArray(reinterpret_cast<const char*>(data)+2, len-2));
 }
 
 int Chat::serializePayload(uchar *data) const
@@ -224,7 +224,7 @@ PrivateChat *PrivateChat::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<3)
 		return nullptr;
-	return new PrivateChat(ctx, *(data+0), *(data+1), QByteArray((const char*)data+2, len-2));
+	return new PrivateChat(ctx, *(data+0), *(data+1), QByteArray(reinterpret_cast<const char*>(data)+2, len-2));
 }
 
 int PrivateChat::serializePayload(uchar *data) const

@@ -49,12 +49,12 @@ namespace server {
  *
  * The default section is [config], so the header can be omitted.
  */
-class ConfigFile : public ServerConfig
+class ConfigFile final : public ServerConfig
 {
 	Q_OBJECT
 public:
 	explicit ConfigFile(const QString &path, QObject *parent=nullptr);
-	~ConfigFile();
+	~ConfigFile() override;
 
 	bool isModified() const;
 

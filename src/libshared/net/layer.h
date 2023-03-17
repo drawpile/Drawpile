@@ -38,7 +38,7 @@ namespace protocol {
  * parameters extend or rectract their respective borders.
  * Initial canvas resize should be (0, w, h, 0).
  */
-class CanvasResize : public Message {
+class CanvasResize final : public Message {
 public:
 	CanvasResize(uint8_t ctx, int32_t top, int32_t right, int32_t bottom, int32_t left)
 		: Message(MSG_CANVAS_RESIZE, ctx), m_top(top), m_right(right), m_bottom(bottom), m_left(left)
@@ -90,7 +90,7 @@ private:
  *
  * If layer controls are locked, this command requires session operator privileges.
  */
-class LayerCreate : public Message {
+class LayerCreate final : public Message {
 public:
 	static const uint8_t FLAG_COPY = 0x01;
 	static const uint8_t FLAG_INSERT = 0x02;
@@ -141,7 +141,7 @@ private:
  * Specifying a sublayer requires session operator privileges. Currently, it is used
  * only when sublayers are needed at canvas initialization.
  */
-class LayerAttributes : public Message {
+class LayerAttributes final : public Message {
 public:
 	static const uint8_t FLAG_CENSOR = 0x01; // censored layer
 	static const uint8_t FLAG_FIXED  = 0x02; // fixed background/foreground layer (drawn even in solo modo)
@@ -190,7 +190,7 @@ private:
  * Note: to hide the layer for all users, use LayerAttributes to set its opacity
  * to zero.
  */
-class LayerVisibility : public Message {
+class LayerVisibility final : public Message {
 public:
 	LayerVisibility(uint8_t ctx, uint16_t id, uint8_t visible)
 		: Message(MSG_LAYER_VISIBILITY, ctx), m_id(id), m_visible(visible)
@@ -220,7 +220,7 @@ private:
  * If the current layer or layer controls in general are locked, this command
  * requires session operator privileges.
  */
-class LayerRetitle : public Message {
+class LayerRetitle final : public Message {
 public:
 	LayerRetitle(uint8_t ctx, uint16_t id, const QByteArray &title)
 		: Message(MSG_LAYER_RETITLE, ctx), m_id(id), m_title(title)
@@ -263,7 +263,7 @@ private:
  *
  * If layer controls are locked, this command requires session operator privileges.
  */
-class LayerOrder : public Message {
+class LayerOrder final : public Message {
 public:
 	LayerOrder(uint8_t ctx, const QList<uint16_t> &order)
 		: Message(MSG_LAYER_ORDER, ctx),
@@ -310,7 +310,7 @@ private:
  * If the current layer or layer controls in general are locked, this command
  * requires session operator privileges.
  */
-class LayerDelete : public Message {
+class LayerDelete final : public Message {
 public:
 	LayerDelete(uint8_t ctx, uint16_t id, uint8_t merge)
 		: Message(MSG_LAYER_DELETE, ctx),

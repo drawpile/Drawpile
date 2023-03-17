@@ -37,12 +37,12 @@ namespace canvas { class CanvasModel; }
 
 namespace dialogs {
 
-class SessionSettingsDialog : public QDialog
+class SessionSettingsDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	SessionSettingsDialog(Document *doc, QWidget *parent=nullptr);
-	~SessionSettingsDialog();
+	~SessionSettingsDialog() override;
 
 	//! Is persistence available at all on this server?
 	void setPersistenceEnabled(bool);

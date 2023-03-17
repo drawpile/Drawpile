@@ -39,6 +39,7 @@ static QString parseHead(QXmlStreamReader &reader, const QString &metaHeaderName
 		case QXmlStreamReader::EndElement:
 			if(reader.name() == QStringLiteral("head"))
 				return QByteArray();
+			break;
 		default: break;
 		}
 	}
@@ -59,6 +60,7 @@ static QString parseHtml(QXmlStreamReader &reader, const QString &metaHeaderName
 				return parseHead(reader, metaHeaderName);
 			else if(reader.name() == QStringLiteral("body"))
 				return QByteArray(); // we went too far!
+			break;
 		default: break;
 		}
 	}

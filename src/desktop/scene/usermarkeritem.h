@@ -27,7 +27,7 @@
 
 namespace drawingboard {
 
-class UserMarkerItem : public QGraphicsItem
+class UserMarkerItem final : public QGraphicsItem
 {
 public:
 	enum { Type = UserType + 12 };

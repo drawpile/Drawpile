@@ -29,12 +29,12 @@ namespace server {
  *
  *
  */
-class Database : public ServerConfig
+class Database final : public ServerConfig
 {
 	Q_OBJECT
 public:
 	explicit Database(QObject *parent=nullptr);
-	~Database();
+	~Database() override;
 
 	Q_INVOKABLE bool openFile(const QString &path);
 

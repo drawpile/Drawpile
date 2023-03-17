@@ -30,7 +30,7 @@ namespace net {
 
 class LoginHandler;
 
-class TcpServer : public Server
+class TcpServer final : public Server
 {
 	Q_OBJECT
 	friend class LoginHandler;

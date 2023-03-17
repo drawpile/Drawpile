@@ -23,7 +23,7 @@
 
 class MainWindow;
 
-class MacMenu : public QMenuBar
+class MacMenu final : public QMenuBar
 {
 	Q_OBJECT
 public:

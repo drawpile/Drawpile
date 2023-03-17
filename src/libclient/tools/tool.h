@@ -52,14 +52,13 @@ public:
 	Tool(
 		ToolController &owner, Type type, const QCursor &cursor,
 		bool allowColorPick, bool allowToolAdjust, bool allowRightClick)
-		: owner{owner}
+		: m_owner{owner}
 		, m_type{type}
 		, m_cursor{cursor}
 		, m_allowColorPick{allowColorPick}
 		, m_allowToolAdjust{allowToolAdjust}
 		, m_handlesRightClick{allowRightClick}
 	{}
-
 	virtual ~Tool() {}
 
     Tool(const Tool &) = delete;
@@ -119,7 +118,7 @@ public:
 protected:
 	void setHandlesRightClick(bool handlesRightClickk);
 
-	ToolController &owner;
+	ToolController &m_owner;
 
 private:
 	const Type m_type;

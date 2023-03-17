@@ -41,7 +41,7 @@ namespace protocol {
  * large image may have to be divided into multiple PutImage
  * commands.
  */
-class PutImage : public Message {
+class PutImage final : public Message {
 public:
 	//! Maximum length of image data array
 	static const int MAX_LEN = 0xffff - 19;
@@ -90,7 +90,7 @@ private:
  * PutTiles can be targeted at sublayers as well. This is used when generating a reset image
  * with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
  */
-class PutTile : public Message {
+class PutTile final : public Message {
 public:
 	/**
 	 * @brief Construct a solid color PutTile
@@ -157,7 +157,7 @@ private:
  * @brief Set the canvas background
  *
  */
-class CanvasBackground : public Message {
+class CanvasBackground final : public Message {
 public:
 	/**
 	 * @brief Construct a solid color background
@@ -206,7 +206,7 @@ private:
  *
  * All brush blending modes are supported
  */
-class FillRect : public Message {
+class FillRect final : public Message {
 public:
 	FillRect(uint8_t ctx, uint16_t layer, uint8_t blend, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 		: Message(MSG_FILLRECT, ctx), m_layer(layer), m_blend(blend), m_x(x), m_y(y), m_w(w), m_h(h), m_color(color)
@@ -261,7 +261,7 @@ private:
  * is DEFLATEd 1 bit per pixel bitmap data.
  * For axis aligned rectangle selections, no bitmap is necessary.
  */
-class MoveRegion : public Message {
+class MoveRegion final : public Message {
 public:
 	//! Maximum length of the mask (it's compressed 1bpp image data, typically representing a simple polygon. ~64k should be more than plenty)
 	static const int MAX_LEN = 0xffff - 50;

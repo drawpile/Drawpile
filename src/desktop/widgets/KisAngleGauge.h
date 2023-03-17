@@ -18,7 +18,7 @@ namespace widgets {
 /**
  * @brief A circular widget that allows to choose an angle
  */
-class KisAngleGauge : public QWidget
+class KisAngleGauge final : public QWidget
 {
     Q_OBJECT
 
@@ -34,7 +34,7 @@ public:
      * @param parent the parent widget
      */
 	explicit KisAngleGauge(QWidget *parent = nullptr);
-    ~KisAngleGauge();
+	~KisAngleGauge() override;
 
     /**
      * @brief Gets the current angle

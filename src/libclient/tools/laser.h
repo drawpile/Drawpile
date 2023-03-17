@@ -23,7 +23,7 @@
 
 namespace tools {
 
-class LaserPointer : public Tool {
+class LaserPointer final : public Tool {
 public:
 	LaserPointer(ToolController &owner);
 

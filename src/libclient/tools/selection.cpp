@@ -39,7 +39,7 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 		return;
 	}
 
-	canvas::Selection *sel = m_allowTransform ? owner.model()->selection() : nullptr;
+	canvas::Selection *sel = m_allowTransform ? m_owner.model()->selection() : nullptr;
 	if(sel)
 		m_handle = sel->handleAt(point, zoom);
 	else
@@ -50,15 +50,15 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 	m_end = point;
 
 	if(m_handle == canvas::Selection::Handle::Outside) {
-		net::Client *client = owner.client();
-		if(sel && sel->pasteOrMoveToCanvas(m_messages, owner.client()->myId(), owner.activeLayer())) {
+		net::Client *client = m_owner.client();
+		if(sel && sel->pasteOrMoveToCanvas(m_messages, m_owner.client()->myId(), m_owner.activeLayer())) {
 			client->sendMessages(m_messages.count(), m_messages.constData());
 			m_messages.clear();
 		}
 
 		sel = new canvas::Selection;
 		initSelection(sel);
-		owner.model()->setSelection(sel);
+		m_owner.model()->setSelection(sel);
 	} else {
 		sel->beginAdjustment(m_handle);
 	}
@@ -66,7 +66,7 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 
 void SelectionTool::motion(const canvas::Point &point, bool constrain, bool center)
 {
-	canvas::Selection *sel = owner.model()->selection();
+	canvas::Selection *sel = m_owner.model()->selection();
 	if(!sel)
 		return;
 
@@ -76,7 +76,7 @@ void SelectionTool::motion(const canvas::Point &point, bool constrain, bool cent
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		if(sel->pasteImage().isNull() && !owner.model()->aclState()->isLayerLocked(owner.activeLayer())) {
+		if(sel->pasteImage().isNull() && !m_owner.model()->aclState()->isLayerLocked(m_owner.activeLayer())) {
 			startMove();
 		}
 
@@ -86,21 +86,21 @@ void SelectionTool::motion(const canvas::Point &point, bool constrain, bool cent
 
 void SelectionTool::end()
 {
-	canvas::Selection *sel = owner.model()->selection();
+	canvas::Selection *sel = m_owner.model()->selection();
 	if(!sel)
 		return;
 
 	// The shape must be closed after the end of the selection operation
-	if(!owner.model()->selection()->closeShape(QRectF(QPointF(), owner.model()->size()))) {
+	if(!m_owner.model()->selection()->closeShape(QRectF(QPointF(), m_owner.model()->size()))) {
 		// Clear selection if it was entirely outside the canvas
-		owner.model()->setSelection(nullptr);
+		m_owner.model()->setSelection(nullptr);
 		return;
 	}
 
 	// Remove tiny selections
 	QRectF selrect = sel->boundingRect();
 	if(selrect.width() * selrect.height() <= 2) {
-		owner.model()->setSelection(nullptr);
+		m_owner.model()->setSelection(nullptr);
 		return;
 	}
 
@@ -124,24 +124,24 @@ void SelectionTool::end()
 
 void SelectionTool::finishMultipart()
 {
-	canvas::Selection *sel = owner.model()->selection();
-	net::Client *client = owner.client();
-	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), owner.activeLayer())) {
-		owner.client()->sendMessages(m_messages.count(), m_messages.constData());
+	canvas::Selection *sel = m_owner.model()->selection();
+	net::Client *client = m_owner.client();
+	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), m_owner.activeLayer())) {
+		m_owner.client()->sendMessages(m_messages.count(), m_messages.constData());
 		m_messages.clear();
-		owner.model()->setSelection(nullptr);
+		m_owner.model()->setSelection(nullptr);
 	}
 }
 
 void SelectionTool::cancelMultipart()
 {
-	owner.model()->setSelection(nullptr);
+	m_owner.model()->setSelection(nullptr);
 }
 
 
 void SelectionTool::undoMultipart()
 {
-	canvas::Selection *sel = owner.model()->selection();
+	canvas::Selection *sel = m_owner.model()->selection();
 	if(sel) {
 		if(sel->isTransformed())
 			sel->reset();
@@ -152,12 +152,12 @@ void SelectionTool::undoMultipart()
 
 bool SelectionTool::isMultipart() const
 {
-	return owner.model()->selection() != nullptr;
+	return m_owner.model()->selection() != nullptr;
 }
 
 void SelectionTool::startMove()
 {
-	canvas::CanvasModel *model = owner.model();
+	canvas::CanvasModel *model = m_owner.model();
 	canvas::Selection *sel = model->selection();
 	Q_ASSERT(sel);
 
@@ -166,7 +166,7 @@ void SelectionTool::startMove()
 	QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
 
 	// Copy layer content into move preview buffer.
-	int layerId = owner.activeLayer();
+	int layerId = m_owner.activeLayer();
 	const QImage img = model->selectionToImage(layerId);
 	sel->setMoveImage(img, maskBounds, model->size(), layerId);
 
@@ -199,7 +199,7 @@ void RectangleSelection::newSelectionMotion(const canvas::Point& point, bool con
 	else
 		m_p1 = m_start;
 
-	owner.model()->selection()->setShapeRect(QRectF(m_p1, p).normalized().toRect());
+	m_owner.model()->selection()->setShapeRect(QRectF(m_p1, p).normalized().toRect());
 }
 
 PolygonSelection::PolygonSelection(ToolController &owner)
@@ -217,8 +217,8 @@ void PolygonSelection::newSelectionMotion(const canvas::Point &point, bool const
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	Q_ASSERT(owner.model()->selection());
-	owner.model()->selection()->addPointToShape(point);
+	Q_ASSERT(m_owner.model()->selection());
+	m_owner.model()->selection()->addPointToShape(point);
 }
 
 QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset)

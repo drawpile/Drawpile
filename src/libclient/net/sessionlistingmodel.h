@@ -27,7 +27,7 @@
 /**
  * @brief List of sessions received from a listing server
  */
-class SessionListingModel : public QAbstractItemModel
+class SessionListingModel final : public QAbstractItemModel
 {
 	Q_OBJECT
 public:

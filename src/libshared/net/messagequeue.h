@@ -33,7 +33,7 @@ namespace protocol {
 /**
  * A wrapper for an IO device for sending and receiving messages.
  */
-class MessageQueue : public QObject {
+class MessageQueue final : public QObject {
 Q_OBJECT
 public:
 	/**
@@ -41,9 +41,9 @@ public:
 	 *
 	 * The MessageQueue does not take ownership of the device.
 	 */
-	explicit MessageQueue(QTcpSocket *socket, QObject *parent=0);
+	explicit MessageQueue(QTcpSocket *socket, QObject *parent = nullptr);
 	MessageQueue(const MessageQueue&) = delete;
-	~MessageQueue();
+	~MessageQueue() override;
 
 	/**
 	 * @brief Automatically decode opaque messages?

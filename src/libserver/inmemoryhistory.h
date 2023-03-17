@@ -29,7 +29,7 @@ namespace server {
 /**
  * @brief A session history backend that stores the session in memory
  */
-class InMemoryHistory : public SessionHistory {
+class InMemoryHistory final : public SessionHistory {
 	Q_OBJECT
 public:
 	InMemoryHistory(const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent=nullptr);

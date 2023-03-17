@@ -36,7 +36,7 @@ namespace canvas {
 
 class CanvasModel;
 
-class TimelineModel : public QObject {
+class TimelineModel final : public QObject {
 	Q_OBJECT
 public:
 	struct TimelineFrame {

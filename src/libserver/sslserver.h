@@ -28,11 +28,11 @@ namespace server {
 /**
  * @brief A TcpServer subclass that creates QSslSockets instead of QTcpSockets
  */
-class SslServer : public QTcpServer
+class SslServer final : public QTcpServer
 {
 	Q_OBJECT
 public:
-	SslServer(const QString &certFile, const QString &keyFile, QObject *parent = 0);
+	SslServer(const QString &certFile, const QString &keyFile, QObject *parent = nullptr);
 
 	bool isValidCert() const;
 
@@ -42,7 +42,7 @@ public:
 	static void requireForwardSecrecy();
 
 protected:
-	void incomingConnection(qintptr handle);
+	void incomingConnection(qintptr handle) override;
 
 private:
 	bool reloadCertChain();

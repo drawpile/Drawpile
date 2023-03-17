@@ -25,12 +25,12 @@ class Ui_HostDialog;
 
 namespace dialogs {
 
-class HostDialog : public QDialog
+class HostDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit HostDialog(QWidget *parent=nullptr);
-	~HostDialog();
+	~HostDialog() override;
 
 	//! Store settings in configuration file
 	void rememberSettings() const;

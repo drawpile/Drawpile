@@ -29,7 +29,7 @@ class QTimer;
 
 namespace recording {
 
-class Writer : public QObject
+class Writer final : public QObject
 {
 	Q_OBJECT
 public:
@@ -55,7 +55,7 @@ public:
 	 * @param parent
 	 */
 	Writer(QIODevice *file, bool autoclose=false, QObject *parent=nullptr);
-	~Writer();
+	~Writer() override;
 
 	QString errorString() const;
 

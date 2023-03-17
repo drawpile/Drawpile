@@ -28,7 +28,7 @@ namespace tools {
  *
  * A moderation tool: show who last edited the selected tile
  */
-class Inspector : public Tool {
+class Inspector final : public Tool {
 public:
 	Inspector(ToolController &owner);
 

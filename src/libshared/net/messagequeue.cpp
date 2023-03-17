@@ -207,9 +207,9 @@ void MessageQueue::readData() {
 		int len;
 		while(m_recvbytes >= Message::HEADER_LEN && m_recvbytes >= (len=Message::sniffLength(m_recvbuffer))) {
 			// Whole message received!
-			NullableMessageRef msg = Message::deserialize((const uchar*)m_recvbuffer, m_recvbytes, m_decodeOpaque);
+			NullableMessageRef msg = Message::deserialize(reinterpret_cast<uchar*>(m_recvbuffer), m_recvbytes, m_decodeOpaque);
 			if(msg.isNull()) {
-				emit badData(len, (unsigned char)m_recvbuffer[2], (unsigned char)m_recvbuffer[3]);
+				emit badData(len, uchar(m_recvbuffer[2]), uchar(m_recvbuffer[3]));
 
 			} else {
 				 if(msg->type() == MSG_PING) {

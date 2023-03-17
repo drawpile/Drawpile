@@ -39,11 +39,11 @@ namespace tools {
  * The annotation tool is special because it is used to manipulate
  * annotation objects rather than pixel data.
  */
-class AnnotationSettings : public ToolSettings {
-Q_OBJECT
+class AnnotationSettings final : public ToolSettings {
+	Q_OBJECT
 public:
 	AnnotationSettings(ToolController *ctrl, QObject *parent=nullptr);
-	~AnnotationSettings();
+	~AnnotationSettings() override;
 
 	QString toolType() const override { return QStringLiteral("annotation"); }
 

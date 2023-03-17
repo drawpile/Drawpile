@@ -24,7 +24,7 @@
 
 namespace server {
 
-class ThinServerClient : public Client
+class ThinServerClient final : public Client
 {
 public:
 	ThinServerClient(QTcpSocket *socket, ServerLog *logger, QObject *parent=nullptr);

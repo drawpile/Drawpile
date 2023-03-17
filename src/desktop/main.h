@@ -26,7 +26,7 @@
 class MainWindow;
 class QSoundEffect;
 
-class DrawpileApp : public QApplication {
+class DrawpileApp final : public QApplication {
 Q_OBJECT
    friend void notification::playSoundNow(notification::Event, int);
 public:

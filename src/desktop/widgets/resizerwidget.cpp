@@ -118,7 +118,7 @@ void ResizerWidget::updateScales()
 
 void ResizerWidget::mousePressEvent(QMouseEvent *e)
 {
-	const QRectF orig(QPointF(m_targetScaled.topLeft() + m_offset*m_scale), m_originalScaled);
+	const QRectF orig(m_targetScaled.topLeft() + QPointF(m_offset)*m_scale, m_originalScaled);
 	if(orig.contains(e->pos())) {
 		m_grabPoint = e->pos();
 		m_grabOffset = m_offset;
@@ -149,7 +149,7 @@ void ResizerWidget::paintEvent(QPaintEvent *)
 
 	painter.fillRect(m_targetScaled, m_bgColor);
 
-	const QRect original = QRect(QPointF(m_targetScaled.topLeft() + m_offset*m_scale).toPoint(), m_originalScaled);
+	const QRect original = QRect((m_targetScaled.topLeft() + QPointF(m_offset)*m_scale).toPoint(), m_originalScaled);
 
 	if(m_originalPixmap.isNull()) {
 		painter.fillRect(original, QColor(200, 200, 200));

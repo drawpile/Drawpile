@@ -44,7 +44,7 @@ void ZoomTool::begin(const canvas::Point &point, bool right, float zoom)
 	// the zoom tool is active, and both tools can't be active at the same time
 	auto sel = new canvas::Selection;
 	sel->setShapeRect(QRect(m_start, m_start));
-	owner.model()->setSelection(sel);
+	m_owner.model()->setSelection(sel);
 }
 
 void ZoomTool::motion(const canvas::Point &point, bool constrain, bool center)
@@ -52,7 +52,7 @@ void ZoomTool::motion(const canvas::Point &point, bool constrain, bool center)
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	auto sel = owner.model()->selection();
+	auto sel = m_owner.model()->selection();
 	if(!sel) {
 		qWarning("ZoomTool::motion(): no selection!");
 		return;
@@ -64,15 +64,15 @@ void ZoomTool::motion(const canvas::Point &point, bool constrain, bool center)
 
 void ZoomTool::end()
 {
-	auto sel = owner.model()->selection();
+	auto sel = m_owner.model()->selection();
 	if(!sel)
 		return;
 
 	const int steps = 3;
 
-	emit owner.zoomRequested(sel->boundingRect(), m_reverse ? -steps : steps);
+	emit m_owner.zoomRequested(sel->boundingRect(), m_reverse ? -steps : steps);
 
-	owner.model()->setSelection(nullptr);
+	m_owner.model()->setSelection(nullptr);
 }
 
 }

@@ -28,7 +28,7 @@ namespace tools {
  * 
  * This changes the view only and has no actual drawing effect.
  */
-class ZoomTool : public Tool {
+class ZoomTool final : public Tool {
 public:
 	ZoomTool(ToolController &owner);
 

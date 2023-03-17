@@ -39,14 +39,14 @@ public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(owner, type, cursor, false, false, false), m_allowTransform(true) { }
 
-	void begin(const canvas::Point& point, bool right, float zoom) override;
-	void motion(const canvas::Point& point, bool constrain, bool center) override;
-	void end() override;
+	void begin(const canvas::Point& point, bool right, float zoom) override final;
+	void motion(const canvas::Point& point, bool constrain, bool center) override final;
+	void end() override final;
 
-	void finishMultipart() override;
-	void cancelMultipart() override;
-	void undoMultipart() override;
-	bool isMultipart() const override;
+	void finishMultipart() override final;
+	void cancelMultipart() override final;
+	void undoMultipart() override final;
+	bool isMultipart() const override final;
 
 	//! Start a layer region move operation
 	void startMove();
@@ -69,24 +69,22 @@ private:
 	drawdance::MessageList m_messages;
 };
 
-
-class RectangleSelection : public SelectionTool {
+class RectangleSelection final : public SelectionTool {
 public:
 	RectangleSelection(ToolController &owner);
 
 protected:
-	void initSelection(canvas::Selection *selection);
-	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center);
+	void initSelection(canvas::Selection *selection) override;
+	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center) override;
 };
 
-
-class PolygonSelection : public SelectionTool {
+class PolygonSelection final : public SelectionTool {
 public:
 	PolygonSelection(ToolController &owner);
 
 protected:
-	void initSelection(canvas::Selection *selection);
-	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center);
+	void initSelection(canvas::Selection *selection) override;
+	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center) override;
 };
 
 }

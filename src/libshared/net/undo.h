@@ -37,7 +37,7 @@ static const int UNDO_DEPTH_LIMIT = 30;
  *
  * The client sends an UndoPoint message to signal the start of an undoable sequence.
  */
-class UndoPoint : public ZeroLengthMessage<UndoPoint>
+class UndoPoint final : public ZeroLengthMessage<UndoPoint>
 {
 public:
 	UndoPoint(uint8_t ctx) : ZeroLengthMessage(MSG_UNDOPOINT, ctx) {}
@@ -49,7 +49,7 @@ public:
  * @brief Undo or redo actions
  *
  */
-class Undo : public Message
+class Undo final : public Message
 {
 public:
 	Undo(uint8_t ctx, uint8_t override, bool redo) : Message(MSG_UNDO, ctx), m_override(override), m_redo(redo) { }

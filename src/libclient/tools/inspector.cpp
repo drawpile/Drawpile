@@ -36,7 +36,7 @@ void Inspector::begin(const canvas::Point& point, bool right, float zoom)
 		return;
 	}
 
-	owner.model()->inspectCanvas(point.x(), point.y());
+	m_owner.model()->inspectCanvas(point.x(), point.y());
 }
 
 void Inspector::motion(const canvas::Point& point, bool constrain, bool center)
@@ -48,7 +48,7 @@ void Inspector::motion(const canvas::Point& point, bool constrain, bool center)
 
 void Inspector::end()
 {
-	owner.model()->stopInspectingCanvas();
+	m_owner.model()->stopInspectingCanvas();
 }
 
 void Inspector::cancelMultipart()

@@ -568,7 +568,7 @@ std::tuple<protocol::MessageList, int> FiledHistory::getBatch(int after) const
 				m_recording->close();
 				break;
 			}
-			protocol::NullableMessageRef msg = protocol::Message::deserialize((const uchar*)buffer.constData(), buffer.length(), false);
+			protocol::NullableMessageRef msg = protocol::Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.length(), false);
 			if(msg.isNull()) {
 				qWarning() << m_recording->fileName() << "Invalid message in block" << i;
 				m_recording->close();

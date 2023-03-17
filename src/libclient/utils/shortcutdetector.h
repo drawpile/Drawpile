@@ -26,17 +26,17 @@
  * is sent to the target object.
  *
  */
-class ShortcutDetector : public QObject
+class ShortcutDetector final : public QObject
 {
 	Q_OBJECT
 public:
-	explicit ShortcutDetector(QObject *parent = 0);
+	explicit ShortcutDetector(QObject *parent = nullptr);
 
 	bool isShortcutSent() const { return _shortcutSent; }
 	void reset() { _shortcutSent = false; }
 
 protected:
-	bool eventFilter(QObject *obj, QEvent *event);
+	bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
 	bool _shortcutSent;

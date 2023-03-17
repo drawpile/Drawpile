@@ -53,11 +53,20 @@ public:
 protected:
 	virtual QVariant getData(const QString &key, const QJsonObject &obj) const;
 	virtual Qt::ItemFlags getFlags(const QJsonObject &obj) const;
-	virtual int getId(const QJsonObject &obj) const;
+	int getId(const QJsonObject &obj) const;
 
 	QJsonArray m_list;
 	QVector<Column> m_columns;
 };
+
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
+namespace diagnostic_marker_private {
+	class [[maybe_unused]] AbstractJsonListModelMarker : JsonListModel
+	{
+		inline Qt::ItemFlags getFlags(const QJsonObject &) const override { return Qt::NoItemFlags; }
+		QVariant getData(const QString &, const QJsonObject &) const override { return QVariant(); }
+	};
+}
 
 }
 }

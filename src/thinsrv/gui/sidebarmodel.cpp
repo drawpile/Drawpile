@@ -195,12 +195,12 @@ QVariant SidebarModel::data(const QModelIndex &index, int role) const
 			case 1:
 				// Summary pages
 				if(index.row()>=0 && index.row()<m_summarypages.size())
-					return QVariant::fromValue((void*)m_summarypages.at(index.row()));
+					return QVariant::fromValue(m_summarypages.at(index.row()));
 				break;
 			case 2:
 				// Sessions
 				if(index.row()>=0 && index.row()<m_sessions.size())
-					return QVariant::fromValue((void*)m_sessions.at(index.row()));
+					return QVariant::fromValue(m_sessions.at(index.row()));
 				break;
 			}
 		}

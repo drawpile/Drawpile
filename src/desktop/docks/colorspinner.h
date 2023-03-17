@@ -27,11 +27,11 @@ namespace color_widgets {
 
 namespace docks {
 
-class ColorSpinnerDock : public QDockWidget {
+class ColorSpinnerDock final : public QDockWidget {
 	Q_OBJECT
 public:
 	ColorSpinnerDock(const QString& title, QWidget *parent);
-	~ColorSpinnerDock();
+	~ColorSpinnerDock() override;
 
 public slots:
 	void setColor(const QColor& color);

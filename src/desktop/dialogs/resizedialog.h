@@ -33,12 +33,12 @@ struct ResizeVector {
 	}
 };
 
-class ResizeDialog : public QDialog
+class ResizeDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit ResizeDialog(const QSize &oldsize, QWidget *parent=nullptr);
-	~ResizeDialog();
+	~ResizeDialog() override;
 
 	void setPreviewImage(const QImage &image);
 	void setBounds(const QRect &rect);

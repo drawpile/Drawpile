@@ -30,7 +30,7 @@
 
 namespace widgets {
 
-class QDESIGNER_WIDGET_EXPORT TabletTester : public QWidget {
+class QDESIGNER_WIDGET_EXPORT TabletTester final : public QWidget {
 	Q_OBJECT
 public:
 	TabletTester(QWidget *parent=nullptr);

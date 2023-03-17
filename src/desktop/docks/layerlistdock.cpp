@@ -221,6 +221,7 @@ void LayerList::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		case DP_FEATURE_EDIT_LAYERS:
 		case DP_FEATURE_OWN_LAYERS:
 			updateLockedControls();
+			break;
 		default: break;
 	}
 }

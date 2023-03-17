@@ -27,7 +27,7 @@
 
 class QHostAddress;
 
-namespace  server {
+namespace server {
 
 class ServerLog;
 
@@ -42,8 +42,8 @@ public:
 	};
 
 	ConfigKey() : index(0), name(nullptr), defaultValue(nullptr), type(STRING) { }
-	constexpr ConfigKey(int idx, const char *name, const char *defaultValue, Type type)
-		: index(idx), name(name), defaultValue(defaultValue), type(type) { }
+	constexpr ConfigKey(int index_, const char *name_, const char *defaultValue_, Type type_)
+		: index(index_), name(name_), defaultValue(defaultValue_), type(type_) { }
 
 	const int index;
 	const char *name;
@@ -202,6 +202,16 @@ protected:
 private:
 	InternalConfig m_internalCfg;
 };
+
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
+namespace diagnostic_marker_private {
+	class [[maybe_unused]] AbstractServerConfigMarker : ServerConfig
+	{
+		inline RegisteredUser getUserAccount(const QString &, const QString &) const override { return RegisteredUser(); }
+		inline bool isAllowedAnnouncementUrl(const QUrl &) const override { return false; }
+		inline bool isAddressBanned(const QHostAddress &) const override { return false; }
+	};
+}
 
 }
 

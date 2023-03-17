@@ -327,7 +327,7 @@ add_feature_info("Client password manager" ${QT_PACKAGE_NAME}Keychain_FOUND "")
 if(QtColorWidgets_FOUND)
 	target_link_libraries(drawpile QtColorWidgets::QtColorWidgets)
 else()
-	target_sources(drawpile PRIVATE
+	set(sources
 		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
 		bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
 		bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
@@ -392,6 +392,10 @@ else()
 		bundled/QtColorWidgets/harmony_color_wheel.cpp
 		bundled/QtColorWidgets/hue_slider.cpp
 		bundled/QtColorWidgets/swatch.cpp
+	)
+	target_sources(drawpile PRIVATE ${sources})
+	set_source_files_properties(${sources} PROPERTIES
+		COMPILE_OPTIONS "${IGNORE_WARNINGS_COMPILE_OPTIONS}"
 	)
 	target_include_directories(drawpile SYSTEM PRIVATE
 		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include"

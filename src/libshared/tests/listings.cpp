@@ -3,7 +3,7 @@
 #include <QtTest/QtTest>
 #include <QBuffer>
 
-class TestListings : public QObject
+class TestListings final : public QObject
 {
 	Q_OBJECT
 private slots:

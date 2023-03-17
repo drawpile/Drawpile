@@ -28,7 +28,7 @@ namespace tools {
  *
  * Color picker is a local tool, it does not affect the drawing board.
  */
-class ColorPicker : public Tool {
+class ColorPicker final : public Tool {
 public:
 	ColorPicker(ToolController &owner);
 

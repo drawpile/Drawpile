@@ -10,7 +10,7 @@ using server::Database;
 using server::ConfigKey;
 using server::ConfigFile;
 
-class TestServerConfig : public QObject
+class TestServerConfig final : public QObject
 {
 	Q_OBJECT
 private slots:

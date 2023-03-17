@@ -127,7 +127,7 @@ MainWindow::MainWindow(Server *serverConnection, QWidget *parent)
 
 void MainWindow::onPageSelect(const QModelIndex &index)
 {
-	PageFactory *pf = (PageFactory*)index.data(SidebarModel::PageFactoryRole).value<void*>();
+	PageFactory *pf = index.data(SidebarModel::PageFactoryRole).value<PageFactory*>();
 	if(!pf) {
 		qDebug() << "Switch to a blank page";
 		delete m_pageArea->takeWidget();

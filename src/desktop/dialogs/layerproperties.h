@@ -32,12 +32,12 @@ namespace drawdance {
 
 namespace dialogs {
 
-class LayerProperties : public QDialog
+class LayerProperties final : public QDialog
 {
 Q_OBJECT
 public:
 	explicit LayerProperties(uint8_t localUser, QWidget *parent = nullptr);
-	~LayerProperties();
+	~LayerProperties() override;
 
 	void setLayerItem(const canvas::LayerListItem &data, const QString &creator, bool isDefault);
 	void setControlsEnabled(bool enabled);

@@ -266,27 +266,26 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 	if(preferredLang == "en")
 		return;
 
+	QTranslator *translator;
 	// Qt's own translations
-	QTranslator *qtTranslator = new QTranslator(&app);
-	if(qtTranslator->load("qt_" + preferredLang, shim::translationsPath())) {
-		qApp->installTranslator(qtTranslator);
+	translator = new QTranslator(&app);
+	if(translator->load("qt_" + preferredLang, shim::translationsPath())) {
+		qApp->installTranslator(translator);
 	} else {
-		delete qtTranslator;
+		delete translator;
 	}
 
-	for(auto &bundle : { "libclient_", "drawpile_" }) {
-		// Our translations
-		QTranslator *myTranslator = new QTranslator;
-
+	for(auto &bundle : { "libshared_", "libclient_", "drawpile_" }) {
+		translator = new QTranslator(&app);
 		for(const QString &datapath : utils::paths::dataPaths()) {
-			if(myTranslator->load(bundle + preferredLang, datapath + "/i18n"))
+			if(translator->load(bundle + preferredLang, datapath + "/i18n"))
 				break;
 		}
 
 		if(myTranslator->isEmpty())
-			delete myTranslator;
+			delete translator;
 		else
-			qApp->installTranslator(myTranslator);
+			qApp->installTranslator(translator);
 	}
 }
 

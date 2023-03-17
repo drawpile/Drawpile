@@ -14,7 +14,7 @@ using namespace protocol;
 
 // A simple TCP server that echoes back whatever is written to it.
 // Used by the actual test case.
-class EchoServer : public QObject
+class EchoServer final : public QObject
 {
 	Q_OBJECT
 public:
@@ -97,7 +97,7 @@ private:
 
 
 // The actual test case
-class TestMessageQueue : public QObject
+class TestMessageQueue final : public QObject
 {
 	Q_OBJECT
 private slots:

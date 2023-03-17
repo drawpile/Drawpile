@@ -37,27 +37,6 @@ namespace {
 	struct Frame {
 		/// the original list of layers in this frame
 		QVector<int> layerIds;
-
-		/// lookup table generated from the above
-		QBitArray rows;
-
-		/// Regenerate the lookup table
-		void updateRows(const QVector<Layer> &layers)
-		{
-			rows.clear();
-			int layersCount = layers.count();
-			rows.resize(layersCount);
-			for(int layerId : layerIds) {
-				// TODO needs benchmarking? Number of layers is generally low enough
-				// that a linear search may still be faster than a hashmap?
-				for(int j = 0; j < layersCount; ++j) {
-					if(layers.at(j).layerId == layerId) {
-						rows.setBit(j);
-						break;
-					}
-				}
-			}
-		}
 	};
 }
 

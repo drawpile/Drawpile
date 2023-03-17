@@ -2,7 +2,7 @@
 
 #include <QtTest/QtTest>
 
-class TestHtmlUtils: public QObject
+class TestHtmlUtils final : public QObject
 {
 	Q_OBJECT
 private slots:

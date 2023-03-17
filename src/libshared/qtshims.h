@@ -29,6 +29,18 @@
 
 namespace shim {
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+template <typename T>
+inline T cast(T value) {
+	return value;
+}
+#else
+template <typename T, typename U>
+inline auto cast(U value) {
+	return static_cast<T>(value);
+}
+#endif
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 constexpr QString::SplitBehavior SKIP_EMPTY_PARTS = QString::SkipEmptyParts;
 #else

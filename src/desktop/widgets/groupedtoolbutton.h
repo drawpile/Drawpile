@@ -40,7 +40,7 @@ namespace widgets {
  *  - Dropdown arrow if a menu (and text) is attached
  *  - Color swatch mode
  */
-class QDESIGNER_WIDGET_EXPORT GroupedToolButton : public QToolButton
+class QDESIGNER_WIDGET_EXPORT GroupedToolButton final : public QToolButton
 {
 	Q_OBJECT
 	Q_PROPERTY(GroupPosition groupPosition READ groupPosition WRITE setGroupPosition)
@@ -53,8 +53,8 @@ public:
 		GroupCenter = 3
 	};
 
-	explicit GroupedToolButton(GroupPosition position, QWidget* parent=0);
-	explicit GroupedToolButton(QWidget* parent=0);
+	explicit GroupedToolButton(GroupPosition position, QWidget* parent = nullptr);
+	explicit GroupedToolButton(QWidget* parent = nullptr);
 
 	GroupPosition groupPosition() const { return mGroupPosition; }
 	void setGroupPosition(GroupPosition groupPosition);

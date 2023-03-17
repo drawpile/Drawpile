@@ -105,21 +105,12 @@ signals:
 	void exporterFinished();
 
 protected:
-	void run();
-
 	/**
 	 * @brief Initialize the exporter before any images have been fed to it
 	 *
 	 * exporterReady should be emitted when the exporter is ready to receive images.
 	 */
 	virtual void initExporter() = 0;
-
-	/**
-	 * @brief Make last minute preparations
-	 * This is called just before writeFrame is called for the first time.
-	 * The desired frame size is know at this point.
-	 */
-	virtual void startExporter() { }
 
 	/**
 	 * @brief Export a frame, possible repeated more than once
@@ -143,5 +134,12 @@ private:
 	int _frame;
 	QSize _targetsize;
 };
+
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
+namespace diagnostic_marker_private {
+	class [[maybe_unused]] AbstractVideoExporterMarker : VideoExporter {
+		inline bool variableSizeSupported() override { return false; }
+	};
+}
 
 #endif // VIDEOEXPORTER_H

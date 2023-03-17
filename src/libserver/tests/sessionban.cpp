@@ -7,7 +7,7 @@
 
 using server::SessionBanList;
 
-class TestSessionBan: public QObject
+class TestSessionBan final : public QObject
 {
 	Q_OBJECT
 private slots:

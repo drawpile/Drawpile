@@ -25,20 +25,18 @@
 #include <QWidget>
 #include <QApplication>
 
-namespace  server {
+namespace server {
 
 struct JsonApiResult;
 
 namespace gui {
 
-class ServerLogPage : public QWidget
+class ServerLogPage final : public QWidget
 {
 	Q_OBJECT
 public:
-	struct Private;
-
 	explicit ServerLogPage(Server *server, QWidget *parent=nullptr);
-	~ServerLogPage();
+	~ServerLogPage() override;
 
 private slots:
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
@@ -46,10 +44,11 @@ private slots:
 private:
 	void refreshPage();
 
+	struct Private;
 	Private *d;
 };
 
-class ServerLogPageFactory : public PageFactory
+class ServerLogPageFactory final : public PageFactory
 {
 public:
 	QString pageId() const override { return QStringLiteral("serverlog"); }

@@ -25,12 +25,12 @@ namespace server {
 
 class ServerLog;
 
-class InMemoryConfig : public ServerConfig
+class InMemoryConfig final : public ServerConfig
 {
 	Q_OBJECT
 public:
 	explicit InMemoryConfig(QObject *parent=nullptr);
-	~InMemoryConfig();
+	~InMemoryConfig() override;
 
 	ServerLog *logger() const override { return m_logger; }
 

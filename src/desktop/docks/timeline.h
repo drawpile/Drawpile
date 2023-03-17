@@ -39,7 +39,7 @@ namespace widgets {
 
 namespace docks {
 
-class Timeline : public QDockWidget {
+class Timeline final : public QDockWidget {
 	Q_OBJECT
 public:
 	Timeline(QWidget *parent);

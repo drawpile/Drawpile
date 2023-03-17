@@ -34,7 +34,7 @@ class QDir;
 
 namespace widgets {
 
-class QDESIGNER_WIDGET_EXPORT PresetSelector : public QWidget {
+class QDESIGNER_WIDGET_EXPORT PresetSelector final : public QWidget {
 	Q_OBJECT
 	Q_PROPERTY(QString presetFolder READ presetFolder WRITE setPresetFolder)
 	Q_PROPERTY(bool writeOnly READ writeOnly WRITE setWriteOnly)

@@ -27,7 +27,7 @@ namespace protocol {
 Interval *Interval::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=2)
-		return 0;
+		return nullptr;
 	return new Interval(ctx, qFromBigEndian<quint16>(data));
 }
 
@@ -61,7 +61,7 @@ Marker *Marker::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	return new Marker(
 		ctx,
-		QByteArray((const char*)data, len)
+		QByteArray(reinterpret_cast<const char*>(data), len)
 	);
 }
 

@@ -30,13 +30,12 @@ struct JsonApiResult;
 
 namespace gui {
 
-class UserListPage : public QWidget
+class UserListPage final : public QWidget
 {
 	Q_OBJECT
 public:
-	struct Private;
 	explicit UserListPage(Server *server, QWidget *parent=nullptr);
-	~UserListPage();
+	~UserListPage() override;
 
 private slots:
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
@@ -44,10 +43,11 @@ private slots:
 private:
 	void refreshPage();
 
+	struct Private;
 	Private *d;
 };
 
-class UserListPageFactory : public PageFactory
+class UserListPageFactory final : public PageFactory
 {
 public:
 	QString pageId() const override { return QStringLiteral("summary:users"); }

@@ -27,11 +27,11 @@ namespace KDNSSD {
 	class PublicService;
 }
 
-class ZeroConfAnnouncement : public QObject
+class ZeroConfAnnouncement final : public QObject
 {
 	Q_OBJECT
 public:
-	explicit ZeroConfAnnouncement(	QObject *parent=nullptr);
+	explicit ZeroConfAnnouncement(QObject *parent=nullptr);
 
 	void publish(quint16 port);
 	void stop();

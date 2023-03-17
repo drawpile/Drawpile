@@ -27,7 +27,7 @@ namespace drawingboard {
 /**
  * @brief A text box that can be overlaid on the picture.
  */
-class AnnotationItem : public QGraphicsItem {
+class AnnotationItem final : public QGraphicsItem {
 public:
 	enum { Type = UserType + 10 };
 	static const int HANDLE=10;
@@ -70,17 +70,15 @@ public:
 	//! Enable border
 	void setShowBorder(bool show);
 
-	//! reimplementation
-	QRectF boundingRect() const;
+	QRectF boundingRect() const override;
 
-	//! reimplementation
-	int type() const { return Type; }
+	int type() const override { return Type; }
 
 	//! Render this annotation into an image
 	QImage toImage() const;
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
 
 private:
 	void paintHiddenBorder(QPainter *painter);

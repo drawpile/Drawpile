@@ -26,16 +26,15 @@ class QSslCertificate;
 
 namespace dialogs {
 
-class CertificateView : public QDialog
+class CertificateView final : public QDialog
 {
 	Q_OBJECT
 public:
-	CertificateView(const QString &hostname, const QSslCertificate &certificate, QWidget *parent = 0);
-	~CertificateView();
+	CertificateView(const QString &hostname, const QSslCertificate &certificate, QWidget *parent = nullptr);
+	~CertificateView() override;
 
 private:
 	Ui_CertificateView *_ui;
-
 };
 
 }

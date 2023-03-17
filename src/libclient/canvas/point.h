@@ -28,7 +28,7 @@ namespace canvas {
 /**
  * @brief An extended point class that includes pressure and tilt information.
  */
-class Point : public QPointF {
+class Point final : public QPointF {
 public:
 	Point() : QPointF(), m_p(1), m_xt(0), m_yt(0), m_r(0) {}
 

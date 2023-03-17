@@ -37,12 +37,12 @@ namespace drawdance {
 
 namespace dialogs {
 
-class ServerLogDialog : public QDialog
+class ServerLogDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	ServerLogDialog(QWidget *parent=nullptr);
-	~ServerLogDialog();
+	~ServerLogDialog() override;
 
 	void setModel(QAbstractItemModel *model);
 	void setUserList(canvas::UserListModel *userlist);

@@ -59,8 +59,8 @@ struct Client::Private {
 	bool isHoldLocked = false;
 	bool isAwaitingReset = false;
 
-	Private(QTcpSocket *socket, ServerLog *logger)
-		: socket(socket), logger(logger)
+	Private(QTcpSocket *socket_, ServerLog *logger_)
+		: socket(socket_), logger(logger_)
 	{
 		Q_ASSERT(socket);
 		Q_ASSERT(logger);

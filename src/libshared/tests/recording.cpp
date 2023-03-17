@@ -29,7 +29,7 @@ static const char *TEST_TEXTMODE =
 	"!test=TESTING\n"
 	"1 join name=hello avatar=d29ybGQ=\n";
 
-class TestRecording: public QObject
+class TestRecording final : public QObject
 {
 	Q_OBJECT
 private slots:
@@ -62,7 +62,7 @@ private slots:
 		QVERIFY(b.startsWith(QByteArray("DPREC", 6)));
 
 		// Followed by the JSON encoded metadata block
-		quint16 mdlen = qFromBigEndian<quint16>((const uchar*)b.constData()+6);
+		quint16 mdlen = qFromBigEndian<quint16>(reinterpret_cast<const uchar*>(b.constData())+6);
         QJsonDocument mddoc = QJsonDocument::fromJson(b.mid(8, mdlen));
 
 		QVERIFY(mddoc.isObject());

@@ -56,7 +56,7 @@ void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 	m_firstPoint = true;
 	m_lastTimestamp = QDateTime::currentMSecsSinceEpoch();
 
-	owner.setBrushEngineBrush(m_brushEngine);
+	m_owner.setBrushEngineBrush(m_brushEngine);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
@@ -71,11 +71,11 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 	if(!m_drawing)
 		return;
 
-	drawdance::CanvasState canvasState = owner.model()->paintEngine()->sampleCanvasState();
+	drawdance::CanvasState canvasState = m_owner.model()->paintEngine()->sampleCanvasState();
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
-		m_brushEngine.beginStroke(owner.client()->myId());
+		m_brushEngine.beginStroke(m_owner.client()->myId());
 		m_brushEngine.strokeTo(
 			m_start.x(),
 			m_start.y(),
@@ -101,7 +101,7 @@ void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
 		deltaMsec,
 		canvasState);
 
-	m_brushEngine.sendMessagesTo(owner.client());
+	m_brushEngine.sendMessagesTo(m_owner.client());
 }
 
 void Freehand::end()
@@ -111,7 +111,7 @@ void Freehand::end()
 
 		if(m_firstPoint) {
 			m_firstPoint = false;
-			m_brushEngine.beginStroke(owner.client()->myId());
+			m_brushEngine.beginStroke(m_owner.client()->myId());
 			m_brushEngine.strokeTo(
 				m_start.x(),
 				m_start.y(),
@@ -124,7 +124,7 @@ void Freehand::end()
 		}
 
 		m_brushEngine.endStroke();
-		m_brushEngine.sendMessagesTo(owner.client());
+		m_brushEngine.sendMessagesTo(m_owner.client());
 	}
 }
 

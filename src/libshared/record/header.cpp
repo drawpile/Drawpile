@@ -21,6 +21,7 @@
 #include "libshared/record/header.h"
 #include "libshared/net/protover.h"
 #include "libshared/net/message.h"
+#include "libshared/qtshims.h"
 
 #include <QIODevice>
 #include <QJsonDocument>
@@ -48,7 +49,7 @@ QJsonObject readRecordingHeader(QIODevice *file)
 	if(file->read(buf, 2) != 2)
 		return QJsonObject();
 
-	const quint16 metadatalen = qFromBigEndian<quint16>((const uchar*)buf);
+	const quint16 metadatalen = qFromBigEndian<quint16>(reinterpret_cast<uchar*>(buf));
 
 	QByteArray metadatabuf = file->read(metadatalen);
 	if(metadatabuf.length() != metadatalen)
@@ -96,14 +97,14 @@ bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata)
 	QByteArray metadatabuf = QJsonDocument(md).toJson(QJsonDocument::Compact);
 
 	if(metadatabuf.length() > 0xffff) {
-		qWarning("Recording metadata block too long (%lld)", qlonglong(metadatabuf.length()));
+		qWarning("Recording metadata block too long (%lld)", shim::cast<long long>(metadatabuf.length()));
 		return false;
 	}
 
 	uchar lenbuf[2];
 	qToBigEndian(quint16(metadatabuf.length()), lenbuf);
 
-	if(file->write((const char*)lenbuf, 2) != 2)
+	if(file->write(reinterpret_cast<char*>(lenbuf), 2) != 2)
 		return false;
 
 	if(file->write(metadatabuf) != metadatabuf.length())
@@ -160,7 +161,7 @@ int skipRecordingMessage(QIODevice *file, uint8_t *msgType, uint8_t *ctxId)
 	if(file->read(header, protocol::Message::HEADER_LEN) != sizeof(protocol::Message::HEADER_LEN))
 		return -1;
 
-	const int payloadLen = qFromBigEndian<quint16>((uchar*)header);
+	const int payloadLen = qFromBigEndian<quint16>(reinterpret_cast<uchar*>(header));
 
 	const qint64 target = file->pos() + payloadLen;
 	if(target > file->size() || !file->seek(target))

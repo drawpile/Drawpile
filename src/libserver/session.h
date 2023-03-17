@@ -80,7 +80,7 @@ public:
 	const ServerConfig *config() const { return m_config; }
 
 	//! Get the unique ID of the session
-	QString id() const override { return m_history->id(); }
+	QString id() const override final { return m_history->id(); }
 
 	/**
 	 * @brief Get the custom alias for the session ID
@@ -413,7 +413,6 @@ private:
 	void abortReset();
 
 	void sendUpdatedSessionProperties();
-	void sendStatusUpdate();
 	void ensureOperatorExists();
 
 	JsonApiResult callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
@@ -438,6 +437,13 @@ private:
 
 	bool m_closed = false;
 };
+
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
+namespace diagnostic_marker_private {
+	class [[maybe_unused]] AbstractSessionMarker : Session
+	{
+	};
+}
 
 }
 

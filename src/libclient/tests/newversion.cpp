@@ -4,7 +4,7 @@
 #include <QFile>
 #include <QTest>
 
-class TestNewVersionCheck: public QObject
+class TestNewVersionCheck final : public QObject
 {
 	Q_OBJECT
 private slots:

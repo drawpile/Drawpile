@@ -25,7 +25,7 @@
 namespace server {
 namespace gui {
 
-class TrayIcon : public QSystemTrayIcon
+class TrayIcon final : public QSystemTrayIcon
 {
 	Q_OBJECT
 public:

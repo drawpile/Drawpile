@@ -36,12 +36,12 @@ typedef std::function<bool(const QHostAddress &)> AcceptPolicy;
 /**
  * A Qt style wrapper for GNU libmicrohttpd
  */
-class MicroHttpd : public QObject {
+class MicroHttpd final : public QObject {
 Q_OBJECT
 public:
 	struct Private;
-	explicit MicroHttpd(QObject *parent=0);
-	~MicroHttpd();
+	explicit MicroHttpd(QObject *parent = nullptr);
+	~MicroHttpd() override;
 
 	/**
 	 * Start listening on the given port.

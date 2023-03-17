@@ -31,7 +31,7 @@ namespace protocol {
 int Message::sniffLength(const char *data)
 {
 	// extract payload length
-	quint16 len = qFromBigEndian<quint16>((uchar*)data);
+	quint16 len = qFromBigEndian<quint16>(reinterpret_cast<const uchar*>(data));
 
 	// return total message length
 	return len + HEADER_LEN;
@@ -40,12 +40,12 @@ int Message::sniffLength(const char *data)
 int Message::serialize(char *data) const
 {
 	// Fixed header: payload length + message type + context ID
-	qToBigEndian(quint16(payloadLength()), (uchar*)data); data += 2;
+	qToBigEndian(quint16(payloadLength()), reinterpret_cast<uchar*>(data)); data += 2;
 	*(data++) = m_type;
 	*(data++) = m_contextid;
 
 	// Message payload. (May be 0 length)
-	int written = serializePayload((uchar*)data);
+	int written = serializePayload(reinterpret_cast<uchar*>(data));
 	Q_ASSERT(written == payloadLength());
 	Q_ASSERT(written <= 0xffff);
 
@@ -72,8 +72,8 @@ bool Message::payloadEquals(const Message &m) const
 	QByteArray b1(payloadLength(), 0);
 	QByteArray b2(payloadLength(), 0);
 
-	serializePayload((uchar*)b1.data());
-	m.serializePayload((uchar*)b2.data());
+	serializePayload(reinterpret_cast<uchar*>(b1.data()));
+	m.serializePayload(reinterpret_cast<uchar*>(b2.data()));
 
 	return b1 == b2;
 }
@@ -137,13 +137,15 @@ QString Message::toString() const
 	// Add non-multiline keyword args
 	const QRegularExpression space("\\s");
 	bool hasMultiline = false;
-	KwargsIterator i(kw);
-	while(i.hasNext()) {
-		i.next();
-		if(i.value().contains(space)) {
-			hasMultiline = true;
-		} else {
-			str = str + ' ' + i.key() + '=' + i.value();
+	{
+		KwargsIterator i(kw);
+		while(i.hasNext()) {
+			i.next();
+			if(i.value().contains(space)) {
+				hasMultiline = true;
+			} else {
+				str = str + ' ' + i.key() + '=' + i.value();
+			}
 		}
 	}
 

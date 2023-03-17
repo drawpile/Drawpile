@@ -32,7 +32,7 @@ class QFileSystemWatcher;
 
 namespace server {
 
-class TemplateFiles : public QObject, public TemplateLoader {
+class TemplateFiles final : public QObject, public TemplateLoader {
 public:
 	explicit TemplateFiles(const QDir &dir, QObject *parent=nullptr);
 

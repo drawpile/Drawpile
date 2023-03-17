@@ -21,21 +21,21 @@
 
 #include "libclient/export/videoexporter.h"
 
-class ImageSeriesExporter : public VideoExporter
+class ImageSeriesExporter final : public VideoExporter
 {
 	Q_OBJECT
 public:
-	ImageSeriesExporter(QObject *parent=0);
+	ImageSeriesExporter(QObject *parent = nullptr);
 
 	void setOutputPath(const QString &path) { _path = path; }
 	void setFilePattern(const QString &pattern) { _filepattern = pattern; }
 	void setFormat(const QString &format) { _format = format.toLatin1(); }
 
 protected:
-	void initExporter();
-	void writeFrame(const QImage &image, int repeat);
-	void shutdownExporter();
-	bool variableSizeSupported() { return true; }
+	void initExporter() override;
+	void writeFrame(const QImage &image, int repeat) override;
+	void shutdownExporter() override;
+	bool variableSizeSupported() override { return true; }
 
 private:
 	QString _path;

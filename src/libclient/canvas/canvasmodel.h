@@ -42,7 +42,7 @@ class Selection;
 class DocumentMetadata;
 class PaintEngine;
 
-class CanvasModel : public QObject
+class CanvasModel final : public QObject
 {
 	Q_OBJECT
 public:

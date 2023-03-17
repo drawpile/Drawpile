@@ -23,7 +23,7 @@
 
 class QRubberBand;
 
-class FlipbookView : public QWidget
+class FlipbookView final : public QWidget
 {
 	Q_OBJECT
 public:
@@ -44,10 +44,10 @@ signals:
 	void cropped(const QRectF &rect);
 
 protected:
-	void paintEvent(QPaintEvent *event);
-	void mousePressEvent(QMouseEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
+	void paintEvent(QPaintEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
 	QPixmap m_pixmap;

@@ -25,7 +25,7 @@
 namespace server {
 namespace gui {
 
-class BanListModel : public JsonListModel
+class BanListModel final : public JsonListModel
 {
 	Q_OBJECT
 public:

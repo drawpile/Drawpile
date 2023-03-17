@@ -114,11 +114,11 @@ void BezierTool::finishMultipart()
 	if(m_points.size() > 2) {
 		m_points.pop_back();
 
-		owner.setBrushEngineBrush(m_brushEngine, false);
+		m_owner.setBrushEngineBrush(m_brushEngine, false);
 
-		net::Client *client = owner.client();
+		net::Client *client = m_owner.client();
 		const uint8_t contextId = client->myId();
-		drawdance::CanvasState canvasState = owner.model()->paintEngine()->sampleCanvasState();
+		drawdance::CanvasState canvasState = m_owner.model()->paintEngine()->sampleCanvasState();
 
 		const PointVector pv = calculateBezierCurve();
 		m_brushEngine.beginStroke(contextId);
@@ -135,7 +135,7 @@ void BezierTool::finishMultipart()
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
-	owner.model()->paintEngine()->clearPreview();
+	m_owner.model()->paintEngine()->clearPreview();
 }
 
 void BezierTool::undoMultipart()
@@ -201,9 +201,9 @@ void BezierTool::updatePreview()
 	if(pv.size()<=1)
 		return;
 
-	owner.setBrushEngineBrush(m_brushEngine, false);
+	m_owner.setBrushEngineBrush(m_brushEngine, false);
 
-	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
+	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 	m_brushEngine.beginStroke(0);
 	for(const canvas::Point &p : pv) {
@@ -211,7 +211,7 @@ void BezierTool::updatePreview()
 	}
 	m_brushEngine.endStroke();
 
-	paintEngine->previewDabs(owner.activeLayer(), m_brushEngine.messages());
+	paintEngine->previewDabs(m_owner.activeLayer(), m_brushEngine.messages());
 	m_brushEngine.clearMessages();
 }
 

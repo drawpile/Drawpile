@@ -42,7 +42,7 @@ struct Announcement {
 /**
  * A list model to represent active session announcements.
  */
-class AnnouncementListModel : public QAbstractTableModel {
+class AnnouncementListModel final : public QAbstractTableModel {
 	Q_OBJECT
 public:
 	AnnouncementListModel(QObject *parent=nullptr);

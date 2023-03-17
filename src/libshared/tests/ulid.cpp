@@ -3,7 +3,7 @@
 #include <QtTest/QtTest>
 #include <QDateTime>
 
-class TestUlid: public QObject
+class TestUlid final : public QObject
 {
 	Q_OBJECT
 private slots:

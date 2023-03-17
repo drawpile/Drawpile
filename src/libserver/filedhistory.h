@@ -29,11 +29,11 @@
 
 namespace server {
 
-class FiledHistory : public SessionHistory
+class FiledHistory final : public SessionHistory
 {
 	Q_OBJECT
 public:
-	~FiledHistory();
+	~FiledHistory() override;
 
 	/**
 	 * @brief Start a new file backed history

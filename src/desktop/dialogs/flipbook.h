@@ -34,12 +34,12 @@ namespace canvas {
 
 namespace dialogs {
 
-class Flipbook : public QDialog
+class Flipbook final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit Flipbook(QWidget *parent=nullptr);
-	~Flipbook();
+	~Flipbook() override;
 
 	void setPaintEngine(canvas::PaintEngine *pe);
 

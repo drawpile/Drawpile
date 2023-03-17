@@ -32,12 +32,12 @@ namespace widgets {
  *
  * This can be removed once the clear button is implemented in QKeySequenceEdit.
  */
-class KeySequenceEdit : public QWidget
+class KeySequenceEdit final : public QWidget
 {
 	Q_OBJECT
 	Q_PROPERTY(QKeySequence keySequence READ keySequence WRITE setKeySequence USER true)
 public:
-	explicit KeySequenceEdit(QWidget *parent = 0);
+	explicit KeySequenceEdit(QWidget *parent = nullptr);
 
 	void setKeySequence(const QKeySequence &ks);
 	QKeySequence keySequence() const;

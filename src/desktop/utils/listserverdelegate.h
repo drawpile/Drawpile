@@ -23,13 +23,13 @@
 
 namespace sessionlisting {
 
-class ListServerDelegate : public QItemDelegate
+class ListServerDelegate final : public QItemDelegate
 {
 public:
-	ListServerDelegate(QObject *parent=0);
+	ListServerDelegate(QObject *parent = nullptr);
 
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 };
 

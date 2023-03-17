@@ -4,7 +4,7 @@
 
 #include <QtTest/QtTest>
 
-class TestListingFiltering : public QObject
+class TestListingFiltering final : public QObject
 {
 	Q_OBJECT
 private slots:

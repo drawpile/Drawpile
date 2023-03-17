@@ -163,6 +163,7 @@ bool Writer::writeMessage(const protocol::Message &msg)
 		case protocol::MSG_UNDOPOINT:
 			if(m_file->write("\n", 1) != 1)
 				return false;
+			break;
 		default: break;
 		}
 	}

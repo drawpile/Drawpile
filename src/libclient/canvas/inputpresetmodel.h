@@ -47,7 +47,7 @@ Q_DECLARE_TYPEINFO(input::Preset, Q_MOVABLE_TYPE);
 
 namespace input {
 
-class PresetModel : public QAbstractListModel {
+class PresetModel final : public QAbstractListModel {
 	Q_OBJECT
 public:
 	explicit PresetModel(QObject *parent = nullptr);

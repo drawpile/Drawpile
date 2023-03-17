@@ -40,7 +40,7 @@ class Tool;
 /**
  * @brief The ToolController dispatches user input to the currently active tool
  */
-class ToolController : public QObject
+class ToolController final : public QObject
 {
 	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor() NOTIFY toolCursorChanged)
 	Q_PROPERTY(int smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
@@ -52,7 +52,7 @@ class ToolController : public QObject
 	Q_OBJECT
 public:
 	explicit ToolController(net::Client *client, QObject *parent=nullptr);
-	~ToolController();
+	~ToolController() override;
 
 	void setActiveTool(Tool::Type tool);
 	Tool::Type activeTool() const;

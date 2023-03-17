@@ -28,7 +28,7 @@ class QWidget;
  * automatically disables the ok button when any widget
  * with a "mandatoryfield" property is unset.
  */
-class MandatoryFields : public QObject {
+class MandatoryFields final : public QObject {
 	Q_OBJECT
 public:
 	MandatoryFields(QWidget *parent, QWidget *okButton);

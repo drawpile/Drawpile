@@ -45,7 +45,7 @@ struct ServerReply;
 /**
  * The client for accessing the drawing server.
  */
-class Client : public QObject {
+class Client final : public QObject {
 	Q_OBJECT
 public:
 	explicit Client(QObject *parent=nullptr);

@@ -26,12 +26,12 @@ class Ui_VideoExport;
 
 namespace dialogs {
 
-class VideoExportDialog : public QDialog
+class VideoExportDialog final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit VideoExportDialog(QWidget *parent=nullptr);
-	~VideoExportDialog();
+	~VideoExportDialog() override;
 
 	/**
 	 * @brief Get the new video exporter configured in this dialog

@@ -41,11 +41,11 @@ typedef std::function<QImage(int)> LoadImageFn;
 /**
  * @brief Filmstrip widget for visualizing recording index
  */
-class QDESIGNER_WIDGET_EXPORT Filmstrip : public QWidget {
+class QDESIGNER_WIDGET_EXPORT Filmstrip final : public QWidget {
 	Q_OBJECT
 public:
 	Filmstrip(QWidget *parent=nullptr);
-	~Filmstrip();
+	~Filmstrip() override;
 
 	//! Set the length of the recording (in arbitrary units)
 	void setLength(int len);
@@ -66,10 +66,10 @@ signals:
 	void doubleClicked(int pos);
 
 protected:
-	void paintEvent(QPaintEvent *event);
-	void resizeEvent(QResizeEvent *);
-	void mouseDoubleClickEvent(QMouseEvent*);
-	void wheelEvent(QWheelEvent *);
+	void paintEvent(QPaintEvent *event) override;
+	void resizeEvent(QResizeEvent *) override;
+	void mouseDoubleClickEvent(QMouseEvent*) override;
+	void wheelEvent(QWheelEvent *) override;
 
 private:
 	QSize frameSize() const;

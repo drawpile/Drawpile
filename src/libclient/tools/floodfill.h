@@ -25,7 +25,7 @@
 
 namespace tools {
 
-class FloodFill : public Tool
+class FloodFill final : public Tool
 {
 	Q_DECLARE_TR_FUNCTIONS(FloodFill)
 public:

@@ -233,7 +233,7 @@ void PlaybackDialog::loadIndex()
 
 void PlaybackDialog::centerOnParent()
 {
-	if(parentWidget() != 0) {
+	if(parentWidget()) {
 		QRect parentG = parentWidget()->geometry();
 		QRect myG = geometry();
 

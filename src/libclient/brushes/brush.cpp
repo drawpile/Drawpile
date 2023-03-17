@@ -21,6 +21,7 @@
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/brushengine.h"
 #include "libclient/utils/icon.h"
+#include "libshared/qtshims.h"
 
 #include <cmath>
 #include <mypaint-brush.h>
@@ -31,7 +32,7 @@ namespace {
 
 void setDrawdanceColorToQColor(DP_UPixelFloat &r, const QColor &q)
 {
-	r = {float(q.blueF()), float(q.greenF()), float(q.redF()), float(q.alphaF())};
+	r = {shim::cast<float>(q.blueF()), shim::cast<float>(q.greenF()), shim::cast<float>(q.redF()), shim::cast<float>(q.alphaF())};
 }
 
 QColor drawdanceColorToQColor(const DP_UPixelFloat &color)
@@ -322,7 +323,7 @@ QColor MyPaintBrush::qColor() const
 
 QJsonObject MyPaintBrush::toJson() const
 {
-	QJsonValue mapping;
+	QJsonValue jsonMapping;
 	if(m_settings) {
 		QJsonObject o;
 		for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
@@ -350,7 +351,7 @@ QJsonObject MyPaintBrush::toJson() const
 				{"inputs", inputs},
 			};
 		}
-		mapping = o;
+		jsonMapping = o;
 	}
 
 	return QJsonObject {
@@ -359,7 +360,7 @@ QJsonObject MyPaintBrush::toJson() const
 		{"settings", QJsonObject {
 			{"lock_alpha", m_brush.lock_alpha},
 			{"erase", m_brush.erase},
-			{"mapping", mapping},
+			{"mapping", jsonMapping},
 		}},
 	};
 }

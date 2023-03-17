@@ -29,12 +29,12 @@ namespace gui {
 /**
  * @brief Make sure only a single instance of this application is started
  */
-class SingleInstance : public QObject
+class SingleInstance final : public QObject
 {
 	Q_OBJECT
 public:
 	explicit SingleInstance(QObject *parent=nullptr);
-	~SingleInstance();
+	~SingleInstance() override;
 
 	/**
 	 * @brief Try acquiring the single instance lock

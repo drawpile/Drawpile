@@ -23,7 +23,7 @@ namespace protocol {
 Undo *Undo::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=2)
-		return 0;
+		return nullptr;
 	return new Undo(
 		ctx,
 		data[0],

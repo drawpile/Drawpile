@@ -102,7 +102,7 @@ MHD_Result iterate_post(void *con_cls, enum MHD_ValueKind kind, const char *key,
 	Q_UNUSED(transfer_encoding);
 	Q_UNUSED(off);
 
-	RequestContext *ctx = reinterpret_cast<RequestContext*>(con_cls);
+	RequestContext *ctx = static_cast<RequestContext*>(con_cls);
 
 	//logger::debug() << "iterate post" << key << "file:" << filename << "content type:" << content_type << "encoding:" << transfer_encoding << "offset" << int(off) << "size" << int(size);
 
@@ -114,7 +114,7 @@ MHD_Result iterate_post(void *con_cls, enum MHD_ValueKind kind, const char *key,
 MHD_Result assign_to_hash(void *cls, enum MHD_ValueKind kind, const char *key, const char *value)
 {
 	Q_UNUSED(kind);
-	QHash<QString,QString> *hash = reinterpret_cast<QHash<QString,QString>*>(cls);
+	QHash<QString,QString> *hash = static_cast<QHash<QString,QString>*>(cls);
 	(*hash)[QString::fromUtf8(key)] = QString::fromUtf8(value);
 	return MHD_YES;
 }
@@ -125,7 +125,7 @@ void request_completed(void *cls, struct MHD_Connection *connection, void **con_
 	Q_UNUSED(connection);
 	Q_UNUSED(toe);
 
-	RequestContext *ctx = reinterpret_cast<RequestContext*>(*con_cls);
+	RequestContext *ctx = static_cast<RequestContext*>(*con_cls);
 
 	delete ctx;
 	*con_cls = nullptr;
@@ -134,7 +134,7 @@ void request_completed(void *cls, struct MHD_Connection *connection, void **con_
 MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *url, const char *methodstr, const char *version, const char *upload_data, size_t *upload_data_size, void **con_cls)
 {
 	Q_UNUSED(version);
-	MicroHttpd::Private *d = reinterpret_cast<MicroHttpd::Private*>(cls);
+	MicroHttpd::Private *d = static_cast<MicroHttpd::Private*>(cls);
 
 	// Create request context on first invocation
 	if(!*con_cls) {
@@ -251,7 +251,7 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 		return MHD_YES;
 	}
 
-	RequestContext *reqctx = reinterpret_cast<RequestContext*>(*con_cls);
+	RequestContext *reqctx = static_cast<RequestContext*>(*con_cls);
 
 	// Process POST data
 	if((reqctx->request.method() == HttpRequest::POST || reqctx->request.method() == HttpRequest::PUT) && *upload_data_size != 0) {
@@ -294,7 +294,7 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 MHD_Result access_policy(void *cls, const struct sockaddr * addr, socklen_t addrlen)
 {
 	Q_UNUSED(addrlen);
-	MicroHttpd::Private *d = reinterpret_cast<MicroHttpd::Private*>(cls);
+	MicroHttpd::Private *d = static_cast<MicroHttpd::Private*>(cls);
 
 	QHostAddress address(addr);
 

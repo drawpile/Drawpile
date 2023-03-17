@@ -27,7 +27,7 @@ namespace protocol {
 CanvasResize *CanvasResize::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=16)
-		return 0;
+		return nullptr;
 	return new CanvasResize(
 		ctx,
 		qFromBigEndian<qint32>(data+0),
@@ -80,7 +80,7 @@ CanvasResize *CanvasResize::fromText(uint8_t ctx, const Kwargs &kwargs)
 LayerCreate *LayerCreate::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<9)
-		return 0;
+		return nullptr;
 
 	return new LayerCreate(
 		ctx,
@@ -88,7 +88,7 @@ LayerCreate *LayerCreate::deserialize(uint8_t ctx, const uchar *data, uint len)
 		qFromBigEndian<quint16>(data+2),
 		qFromBigEndian<quint32>(data+4),
 		*(data+8),
-		QByteArray((const char*)data+9, len-9)
+		QByteArray(reinterpret_cast<const char*>(data)+9, len-9)
 	);
 }
 
@@ -210,7 +210,7 @@ LayerAttributes *LayerAttributes::fromText(uint8_t ctx, const Kwargs &kwargs)
 LayerVisibility *LayerVisibility::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len!=3)
-		return 0;
+		return nullptr;
 	return new LayerVisibility(
 		ctx,
 		qFromBigEndian<quint16>(data+0),
@@ -252,11 +252,11 @@ LayerVisibility *LayerVisibility::fromText(uint8_t ctx, const Kwargs &kwargs)
 LayerRetitle *LayerRetitle::deserialize(uint8_t ctx, const uchar *data, uint len)
 {
 	if(len<2)
-		return 0;
+		return nullptr;
 	return new LayerRetitle(
 		ctx,
 		qFromBigEndian<quint16>(data+0),
-		QByteArray((const char*)data+2,len-2)
+		QByteArray(reinterpret_cast<const char*>(data)+2,len-2)
 	);
 }
 

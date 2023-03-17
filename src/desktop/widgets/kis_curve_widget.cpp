@@ -54,8 +54,8 @@ KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
     d->m_pixmapCache = NULL;
     d->setState(ST_NORMAL);
 
-    d->m_intIn = NULL;
-    d->m_intOut = NULL;
+	d->m_intIn = nullptr;
+	d->m_intOut = nullptr;
 
 	d->m_ctxmenu = new QMenu(this);
 	d->m_removeCurrentPointAction = d->m_ctxmenu->addAction(tr("Remove point"));
@@ -108,7 +108,7 @@ void KisCurveWidget::dropInOutControls()
     disconnect(d->m_intIn, SIGNAL(valueChanged(int)), this, SLOT(inOutChanged(int)));
     disconnect(d->m_intOut, SIGNAL(valueChanged(int)), this, SLOT(inOutChanged(int)));
 
-    d->m_intIn = d->m_intOut = NULL;
+	d->m_intIn = d->m_intOut = nullptr;
 
 }
 
@@ -357,10 +357,8 @@ void KisCurveWidget::mousePressEvent(QMouseEvent * e)
     if (e->button() != Qt::LeftButton)
         return;
 
-    double x = e->pos().x() / (double)(width() - 1);
-    double y = 1.0 - e->pos().y() / (double)(height() - 1);
-
-
+	double x = e->pos().x() / double(width() - 1);
+	double y = 1.0 - e->pos().y() / double(height() - 1);
 
     int closest_point_index = d->nearestPointInRange(QPointF(x, y), width(), height());
     if (closest_point_index < 0) {
@@ -402,8 +400,8 @@ void KisCurveWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void KisCurveWidget::contextMenuEvent(QContextMenuEvent *e)
 {
-	double x = e->pos().x() / (double)(width() - 1);
-	double y = 1.0 - e->pos().y() / (double)(height() - 1);
+	double x = e->pos().x() / double(width() - 1);
+	double y = 1.0 - e->pos().y() / double(height() - 1);
 
 	int closest_point_index = d->nearestPointInRange(QPointF(x, y), width(), height());
 	if (closest_point_index >= 0) {
@@ -420,8 +418,8 @@ void KisCurveWidget::mouseMoveEvent(QMouseEvent * e)
 {
     if (d->m_readOnlyMode) return;
 
-    double x = e->pos().x() / (double)(width() - 1);
-    double y = 1.0 - e->pos().y() / (double)(height() - 1);
+	double x = e->pos().x() / double(width() - 1);
+	double y = 1.0 - e->pos().y() / double(height() - 1);
 
     if (d->state() == ST_NORMAL) { // If no point is selected set the cursor shape if on top
         int nearestPointIndex = d->nearestPointInRange(QPointF(x, y), width(), height());

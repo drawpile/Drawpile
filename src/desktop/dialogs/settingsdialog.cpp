@@ -87,12 +87,12 @@ using color_widgets::ColorWheel;
 class KeySequenceEditFactory : public QItemEditorCreatorBase
 {
 public:
-	QWidget *createWidget(QWidget *parent) const
+	QWidget *createWidget(QWidget *parent) const override
 	{
 		return new widgets::KeySequenceEdit(parent);
 	}
 
-	QByteArray valuePropertyName() const
+	QByteArray valuePropertyName() const override
 	{
 		return "keySequence";
 	}
@@ -486,7 +486,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/logfile", m_ui->logfile->isChecked());
 	cfg.setValue("settings/autosave", m_ui->autosaveInterval->value() * 1000);
 	cfg.setValue("settings/brushcursor", m_ui->brushCursorBox->currentIndex());
-	cfg.setValue("settings/brushoutlinewidth", static_cast<qreal>(m_ui->brushOutlineWidth->value()));
+	cfg.setValue("settings/brushoutlinewidth", shim::cast<qreal>(m_ui->brushOutlineWidth->value()));
 	cfg.setValue("settings/tooltoggle", m_ui->toolToggleShortcut->isChecked());
 	cfg.setValue("settings/sharebrushslotcolor", m_ui->shareBrushSlotColor->isChecked());
 	cfg.setValue("settings/confirmlayerdelete", m_ui->confirmLayerDeleteBox->isChecked());

@@ -109,7 +109,7 @@ public:
  * @brief Draw Classic Brush Dabs
  *
  */
-class DrawDabsClassic : public DrawDabs {
+class DrawDabsClassic final : public DrawDabs {
 public:
 	static const int MAX_DABS = (0xffff - 15) / ClassicBrushDab::LENGTH;
 
@@ -173,7 +173,7 @@ private:
  * @brief Draw Pixel Brush Dabs
  *
  */
-class DrawDabsPixel : public DrawDabs {
+class DrawDabsPixel final : public DrawDabs {
 public:
 	static const int MAX_DABS = (0xffff - 15) / PixelBrushDab::LENGTH;
 

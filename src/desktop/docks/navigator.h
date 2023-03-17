@@ -29,7 +29,7 @@ namespace canvas {
 
 namespace docks {
 
-class NavigatorView : public QWidget
+class NavigatorView final : public QWidget
 {
 	Q_OBJECT
 public:
@@ -47,11 +47,11 @@ signals:
 	void wheelZoom(int steps);
 	
 protected:
-	void paintEvent(QPaintEvent *event);
-	void resizeEvent(QResizeEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
-	void mousePressEvent(QMouseEvent *event);
-	void wheelEvent(QWheelEvent *event);
+	void paintEvent(QPaintEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void wheelEvent(QWheelEvent *event) override;
 
 private slots:
 	void onChange();
@@ -81,12 +81,12 @@ private:
 };
 
 //! Navigator dock widget
-class Navigator : public QDockWidget
+class Navigator final : public QDockWidget
 {
 	Q_OBJECT
 public:
 	Navigator(QWidget *parent);
-	~Navigator();
+	~Navigator() override;
 
 	void setCanvasModel(canvas::CanvasModel *model);
 

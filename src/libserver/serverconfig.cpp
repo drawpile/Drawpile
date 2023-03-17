@@ -25,7 +25,7 @@ namespace server {
 
 QString ServerConfig::getConfigString(ConfigKey key) const
 {
-	bool found;
+	bool found = false;
 	const QString val = getConfigValue(key, found);
 	if(!found) {
 		return key.defaultValue;
@@ -145,7 +145,7 @@ RegisteredUser ServerConfig::getUserAccount(const QString &username, const QStri
 		RegisteredUser::NotFound,
 		username,
 		QStringList(),
-		0
+		nullptr
 	};
 }
 

@@ -49,9 +49,9 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 
 	QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	canvas::CanvasModel *model = owner.model();
-	QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE ? Qt::black : owner.activeBrush().qColor();
-	int layerId = owner.activeLayer();
+	canvas::CanvasModel *model = m_owner.model();
+	QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE ? Qt::black : m_owner.activeBrush().qColor();
+	int layerId = m_owner.activeLayer();
 	int x, y;
 	QImage img;
 	DP_FloodFillResult result = model->paintEngine()->viewCanvasState().floodFill(

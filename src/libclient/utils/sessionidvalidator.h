@@ -22,13 +22,13 @@
 
 #include <QValidator>
 
-class SessionIdAliasValidator : public QValidator
+class SessionIdAliasValidator final : public QValidator
 {
 	Q_OBJECT
 public:
 	explicit SessionIdAliasValidator(QObject *parent=nullptr);
 
-	State validate(QString &input, int &pos) const;
+	State validate(QString &input, int &pos) const override;
 };
 
 #endif // SESSIONIDVALIDATOR_H

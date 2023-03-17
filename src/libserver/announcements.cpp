@@ -124,8 +124,8 @@ void Announcements::unlistSession(Announcable *session, const QUrl &listServer, 
 		const Listing &listing = i.next();
 		if(
 			(listServer.isEmpty() || listServer == listing.listServer) &&
-			(session==nullptr || session == listing.session)
-			)
+			(!session || session == listing.session)
+		)
 		{
 			changes.insert(listing.session);
 
@@ -144,8 +144,8 @@ void Announcements::unlistSession(Announcable *session, const QUrl &listServer, 
 		}
 	}
 
-	for(const Announcable *session : changes)
-		emit announcementsChanged(session);
+	for(const auto *changedSession : changes)
+		emit announcementsChanged(changedSession);
 }
 
 Announcements::Listing *Announcements::findListing(const QUrl &listServer, const Announcable *session)

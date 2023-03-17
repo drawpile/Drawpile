@@ -33,12 +33,12 @@ namespace input {
 
 namespace dialogs {
 
-class InputSettings : public QDialog
+class InputSettings final : public QDialog
 {
 	Q_OBJECT
 public:
 	explicit InputSettings(QWidget *parent=nullptr);
-	~InputSettings();
+	~InputSettings() override;
 
 	void setCurrentPreset(const QString &id);
 	const input::Preset *currentPreset() const;

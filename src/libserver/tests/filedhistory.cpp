@@ -10,7 +10,7 @@
 
 using namespace server;
 
-class TestFiledHistory: public QObject
+class TestFiledHistory final : public QObject
 {
 	Q_OBJECT
 private slots:

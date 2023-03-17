@@ -31,7 +31,7 @@ namespace canvas { class PaintEngine; }
 /**
  * @brief A runnable for saving the canvas content as an animation in a background thread
  */
-class AnimationSaverRunnable : public QObject, public QRunnable
+class AnimationSaverRunnable final : public QObject, public QRunnable
 {
 	Q_OBJECT
 public:

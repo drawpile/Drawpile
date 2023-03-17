@@ -451,7 +451,7 @@ MessageRecord Reader::readNext()
 			return MessageRecord::Eor();
 
 		protocol::NullableMessageRef message;
-		message = protocol::Message::deserialize((const uchar*)d->msgbuf.constData(), d->msgbuf.length(), !d->opaque);
+		message = protocol::Message::deserialize(reinterpret_cast<const uchar*>(d->msgbuf.constData()), d->msgbuf.length(), !d->opaque);
 
 		if(message.isNull())
 			return MessageRecord::Invalid(

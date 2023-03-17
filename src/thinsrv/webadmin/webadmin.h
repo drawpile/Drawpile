@@ -28,7 +28,7 @@ namespace server {
 
 class MultiServer;
 
-class Webadmin : public QObject
+class Webadmin final : public QObject
 {
 	Q_OBJECT
 public:

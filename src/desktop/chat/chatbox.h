@@ -41,7 +41,7 @@ class UserItemDelegate;
 /**
  * Chat box with user list
  */
-class ChatBox : public QWidget
+class ChatBox final : public QWidget
 {
 	Q_OBJECT
 public:

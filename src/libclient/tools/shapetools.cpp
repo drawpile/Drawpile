@@ -66,7 +66,7 @@ void ShapeTool::motion(const canvas::Point& point, bool constrain, bool center)
 
 void ShapeTool::cancelMultipart()
 {
-	owner.model()->paintEngine()->clearPreview();
+	m_owner.model()->paintEngine()->clearPreview();
 	m_drawing = false;
 }
 
@@ -77,11 +77,11 @@ void ShapeTool::end()
 
 	m_drawing = false;
 
-	net::Client *client = owner.client();
-	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
+	net::Client *client = m_owner.client();
+	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 
-	owner.setBrushEngineBrush(m_brushEngine, false);
+	m_owner.setBrushEngineBrush(m_brushEngine, false);
 
 	const canvas::PointVector pv = pointVector();
 	m_brushEngine.beginStroke(client->myId());
@@ -96,8 +96,8 @@ void ShapeTool::end()
 
 void ShapeTool::updatePreview()
 {
-	owner.setBrushEngineBrush(m_brushEngine, false);
-	canvas::PaintEngine *paintEngine = owner.model()->paintEngine();
+	m_owner.setBrushEngineBrush(m_brushEngine, false);
+	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 
 	const canvas::PointVector pv = pointVector();
@@ -108,7 +108,7 @@ void ShapeTool::updatePreview()
 	}
 	m_brushEngine.endStroke();
 
-	paintEngine->previewDabs(owner.activeLayer(), m_brushEngine.messages());
+	paintEngine->previewDabs(m_owner.activeLayer(), m_brushEngine.messages());
 	m_brushEngine.clearMessages();
 }
 

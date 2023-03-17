@@ -32,11 +32,11 @@ namespace protocol {
  * to decode these, though.
  *
  */
-class OpaqueMessage : public Message
+class OpaqueMessage final : public Message
 {
 public:
 	OpaqueMessage(MessageType type, uint8_t ctx, const uchar *payload, int payloadLen);
-	~OpaqueMessage();
+	~OpaqueMessage() override;
 	OpaqueMessage(const OpaqueMessage &m) = delete;
 	OpaqueMessage &operator=(const OpaqueMessage &m) = delete;
 
