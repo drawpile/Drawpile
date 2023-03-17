@@ -28,9 +28,26 @@
 static float lerp_range(const DP_ClassicBrushRange *cbr, float pressure)
 {
     float max = cbr->max;
-    float min_ratio = cbr->min_ratio;
-    float min = CLAMP(min_ratio, 0.0f, 1.0f) * max;
-    return (max - min) * pressure + min;
+    float min = cbr->min;
+    if (min < max) {
+        // Find the adjacent points in the curve and linearly interpolate
+        // between them. MyPaint does it like this too, rather than using some
+        // kind of more complicated smooth curve algorithm.
+        float fmax = DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT - 1;
+        int index = DP_max_int(0, DP_float_to_int(pressure * fmax));
+        float a = cbr->curve.values[index];
+        float p;
+        if (index < DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT - 1) {
+            float b = cbr->curve.values[index + 1];
+            float k = (pressure - DP_int_to_float(index) / fmax) * fmax;
+            p = a * (1.0f - k) + (b * k);
+        }
+        else {
+            p = a;
+        }
+        return (max - min) * p + min;
+    }
+    return max;
 }
 
 static float lerp_range_if(const DP_ClassicBrushRange *cbr, float pressure,
@@ -77,6 +94,12 @@ float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure)
     DP_ASSERT(pressure >= 0.0f);
     DP_ASSERT(pressure <= 1.0f);
     return lerp_range_if(&cb->smudge, pressure, cb->smudge_pressure);
+}
+
+DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb)
+{
+    DP_ASSERT(cb);
+    return cb->erase ? cb->erase_mode : cb->brush_mode;
 }
 
 

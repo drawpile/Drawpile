@@ -26,18 +26,26 @@
 #include <dpmsg/blend_mode.h>
 #include <mypaint-brush-settings-gen.h>
 
+#define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
 #define DP_MYPAINT_CONTROL_POINTS_COUNT 64
 
 
-typedef enum DP_ClassicBrushShape {
-    DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND,
-    DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE,
-    DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND,
-} DP_ClassicBrushShape;
+typedef enum DP_BrushShape {
+    DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
+    DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE,
+    DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
+    DP_BRUSH_SHAPE_MYPAINT,
+    DP_BRUSH_SHAPE_COUNT,
+} DP_BrushShape;
+
+typedef struct DP_ClassicBrushCurve {
+    float values[DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT];
+} DP_ClassicBrushCurve;
 
 typedef struct DP_ClassicBrushRange {
-    float min_ratio;
+    float min;
     float max;
+    DP_ClassicBrushCurve curve;
 } DP_ClassicBrushRange;
 
 typedef struct DP_ClassicBrush {
@@ -48,8 +56,10 @@ typedef struct DP_ClassicBrush {
     float spacing;
     int resmudge;
     DP_UPixelFloat color;
-    DP_ClassicBrushShape shape;
-    DP_BlendMode mode;
+    DP_BrushShape shape;
+    DP_BlendMode brush_mode;
+    DP_BlendMode erase_mode;
+    bool erase;
     bool incremental;
     bool colorpick;
     bool size_pressure;
@@ -90,6 +100,8 @@ float DP_classic_brush_hardness_at(const DP_ClassicBrush *cb, float pressure);
 float DP_classic_brush_opacity_at(const DP_ClassicBrush *cb, float pressure);
 
 float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure);
+
+DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb);
 
 
 uint16_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,

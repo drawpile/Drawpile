@@ -466,11 +466,11 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     be->layer_id = layer_id;
 
     switch (brush->shape) {
-    case DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND:
-    case DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE:
+    case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
+    case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
         be->active = DP_BRUSH_ENGINE_ACTIVE_PIXEL;
         break;
-    case DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND:
+    default:
         be->active = DP_BRUSH_ENGINE_ACTIVE_SOFT;
         break;
     }
@@ -491,7 +491,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         color.a = cb->opacity.max;
         cb->opacity.max = 1.0f;
         if (cb->opacity_pressure) {
-            cb->opacity.min_ratio = 0.0f;
+            cb->opacity.min = 0.0f;
         }
     }
     be->classic.brush_color = color;
@@ -565,17 +565,18 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
     DP_Message *(*new_fn)(unsigned int, uint16_t, int32_t, int32_t, uint32_t,
                           uint8_t, void (*)(int, DP_PixelDab *, void *), int,
                           void *);
-    if (be->classic.brush.shape == DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND) {
+    if (be->classic.brush.shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND) {
         new_fn = DP_msg_draw_dabs_pixel_new;
     }
     else {
         new_fn = DP_msg_draw_dabs_pixel_square_new;
     }
     be->push_message(
-        be->user, new_fn(be->context_id, DP_int_to_uint16(be->layer_id),
-                         be->classic.dab_x, be->classic.dab_y,
-                         be->classic.dab_color, (uint8_t)be->classic.brush.mode,
-                         set_pixel_dabs, used, be->dabs.buffer));
+        be->user,
+        new_fn(be->context_id, DP_int_to_uint16(be->layer_id),
+               be->classic.dab_x, be->classic.dab_y, be->classic.dab_color,
+               (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
+               set_pixel_dabs, used, be->dabs.buffer));
 }
 
 static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
@@ -590,12 +591,13 @@ static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
 
 static void flush_soft_dabs(DP_BrushEngine *be, int used)
 {
-    be->push_message(be->user,
-                     DP_msg_draw_dabs_classic_new(
-                         be->context_id, DP_int_to_uint16(be->layer_id),
-                         be->classic.dab_x, be->classic.dab_y,
-                         be->classic.dab_color, (uint8_t)be->classic.brush.mode,
-                         set_soft_dabs, used, be->dabs.buffer));
+    be->push_message(
+        be->user,
+        DP_msg_draw_dabs_classic_new(
+            be->context_id, DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+            be->classic.dab_y, be->classic.dab_color,
+            (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
+            set_soft_dabs, used, be->dabs.buffer));
 }
 
 static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
@@ -829,7 +831,10 @@ static void stroke_to_classic(
     }
     else {
         be->in_progress = true;
-        if (cb->colorpick && cb->mode != DP_BLEND_MODE_ERASE && lc) {
+        bool colorpick = cb->colorpick
+                      && DP_classic_brush_blend_mode(cb) != DP_BLEND_MODE_ERASE
+                      && lc;
+        if (colorpick) {
             be->classic.smudge_color =
                 sample_classic_smudge(be, cb, lc, x, y, pressure);
             be->classic.smudge_distance = -1;

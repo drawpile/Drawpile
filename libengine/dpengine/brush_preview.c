@@ -424,7 +424,8 @@ void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
     DP_ASSERT(dc);
     DP_ASSERT(brush);
     render_brush_preview(bp, dc, width, height, shape, brush->color,
-                         brush->smudge.max > 0.0f, brush->mode,
+                         brush->smudge.max > 0.0f,
+                         DP_classic_brush_blend_mode(brush),
                          set_preview_classic_brush, (void *)brush);
 }
 
@@ -533,21 +534,20 @@ static DP_Message *get_preview_draw_dab_message(const DP_ClassicBrush *cb,
                                                 uint32_t color)
 {
     switch (cb->shape) {
-    case DP_CLASSIC_BRUSH_SHAPE_PIXEL_ROUND:
+    case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
         return DP_msg_draw_dabs_pixel_new(
             0, 1, DP_int_to_int32(width / 2), DP_int_to_int32(height / 2),
             color, DP_BLEND_MODE_NORMAL, set_preview_pixel_dab, 1, (void *)cb);
-    case DP_CLASSIC_BRUSH_SHAPE_PIXEL_SQUARE:
+    case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
         return DP_msg_draw_dabs_pixel_square_new(
             0, 1, DP_int_to_int32(width / 2), DP_int_to_int32(height / 2),
             color, DP_BLEND_MODE_NORMAL, set_preview_pixel_dab, 1, (void *)cb);
-    case DP_CLASSIC_BRUSH_SHAPE_SOFT_ROUND:
+    default:
+        DP_ASSERT(cb->shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND);
         return DP_msg_draw_dabs_classic_new(
             0, 1, DP_int_to_int32(width * 4 / 2),
             DP_int_to_int32(height * 4 / 2), color, DP_BLEND_MODE_NORMAL,
             set_preview_classic_dab, 1, (void *)cb);
-    default:
-        DP_UNREACHABLE();
     }
 }
 
