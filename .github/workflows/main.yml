@@ -74,13 +74,14 @@ jobs:
                 https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage &&
                 chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage &&
                 popd >/dev/null
-              # libgl1-mesa-dev for Qt6, libsystemd-dev for systemd integration,
+              # libgl1-mesa-dev, libxkbcommon-dev, libvulkan-dev for Qt6,
+              # libsystemd-dev for systemd integration,
               # libsecret-1-0 and gir1.2-secret-1 for qtkeychain,
               # the rest are for Qt/linuxdeploy
               install: >
                 sudo rm -f /var/lib/man-db/auto-update &&
                 sudo apt-get install --no-install-recommends
-                libgl1-mesa-dev libsystemd-dev
+                libgl1-mesa-dev libsystemd-dev libxkbcommon-dev libvulkan-dev
                 gir1.2-atspi-2.0 gir1.2-gudev-1.0 libdrm-intel1 libegl-mesa0
                 libegl1 libevdev2 libgles1 libgles2 libglu1-mesa libinput-bin
                 libinput10 libllvm15 libmtdev1 libopengl0 libpciaccess0
