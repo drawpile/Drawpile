@@ -57,12 +57,12 @@
     <message>
         <location filename="../../desktop/ui/androidfiledialog.ui" line="20"/>
         <source>Name:</source>
-        <translation type="unfinished">Name:</translation>
+        <translation>Name:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/androidfiledialog.ui" line="33"/>
         <source>Type:</source>
-        <translation type="unfinished">Typ:</translation>
+        <translation>Typ:</translation>
     </message>
 </context>
 <context>
@@ -758,84 +758,84 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="28"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnen</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="34"/>
         <source>Paste Image</source>
-        <translation type="unfinished">Bild einfügen</translation>
+        <translation>Bild einfügen</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="42"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Debug-Dump öffnen</translation>
+        <translation>Debug-Dump öffnen</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="64"/>
         <location filename="../../desktop/filewrangler.cpp" line="156"/>
         <source>Save Image</source>
-        <translation type="unfinished">Bild speichern</translation>
+        <translation>Bild speichern</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="79"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektion speichern</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="97"/>
         <source>Record Session</source>
-        <translation type="unfinished">Sitzung aufzeichnen</translation>
+        <translation>Sitzung aufzeichnen</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="104"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished">Animiertes GIF exportieren</translation>
+        <translation>Animiertes GIF exportieren</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="111"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Performance-Profile</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="118"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Ereignislog</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="126"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Animations-Frames speichern</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="157"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation type="unfinished">Das gewählte Format unterstützt keine Ebenen oder Anmerkungen.</translation>
+        <translation>Das gewählte Format unterstützt keine Ebenen oder Anmerkungen.</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="159"/>
         <source>Flatten</source>
-        <translation type="unfinished">Vereinigen</translation>
+        <translation>Vereinigen</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="161"/>
         <source>Save as OpenRaster</source>
-        <translation type="unfinished">Im OpenRaster-Format speichern</translation>
+        <translation>Im OpenRaster-Format speichern</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="257"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Unbenannt%1</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="365"/>
         <source>Missing File Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlende Dateiendung</translation>
     </message>
     <message>
         <location filename="../../desktop/filewrangler.cpp" line="366"/>
         <source>The file name you gave does not end with &apos;%1&apos; and could not be saved. Please provide a name with an extension.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der gegebene Dateiname endet nicht mit &apos;%1&apos; und konnte nicht gespeichert werden. Bitte geben Sie einen Namen mit einer Endung an.</translation>
     </message>
 </context>
 <context>
@@ -1716,7 +1716,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2663"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseleinstell&amp;ungen</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2667"/>
@@ -2818,7 +2818,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../utils/images.cpp" line="147"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location filename="../utils/images.cpp" line="154"/>
@@ -3634,17 +3634,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="700"/>
         <source>Recording Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufzeichungs-Marker</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="707"/>
         <source>User Joined</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzer tritt Sitzung bei</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="714"/>
         <source>Canvas Locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand gesperrt</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="721"/>
@@ -3654,17 +3654,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location filename="../../desktop/ui/settings.ui" line="804"/>
         <location filename="../../desktop/ui/settings.ui" line="825"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="797"/>
         <source>User Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzer verlässt Sitzung</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="818"/>
         <source>Canvas Unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand entsperrt</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="859"/>
@@ -4133,7 +4133,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="123"/>
         <source>Color Erase</source>
-        <translation type="unfinished">Farbe radieren</translation>
+        <translation>Farbe radieren</translation>
     </message>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="128"/>
@@ -4229,47 +4229,47 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="757"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht öffnen.</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="764"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiges Pinselpaket: order.conf wurde darin nicht gefunden</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="772"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiges Pinselpaket: order.conf enthält keine Pinsel</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="779"/>
         <source>Invalid brush pack: order.conf does not start with &apos;Group: ...&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiges Pinselpaket: order.conf beginnt nicht mit &apos;Group: ...&apos;</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="805"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag &apos;%1&apos; konnte nicht erstellt werden.</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="826"/>
         <source>Could not read any brushes from brush pack.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte keine Pinsel aus dem Paket lesen.</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="843"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseldatei &apos;%1&apos; konnte nicht gelesen werden</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="850"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseldatei &apos;%1&apos; enthält kein gültiges JSON: %1</translation>
     </message>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="858"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel aus Pinseldatei &apos;%1&apos; konnte nicht geladen werden</translation>
     </message>
 </context>
 <context>
@@ -4548,78 +4548,78 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="74"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseleditor</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="103"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Generell</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="103"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Grundsätzliche Pinseleinstellungen.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="204"/>
         <source>Brush Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseltyp:</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="206"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Runder Pixel-Pinsel</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="209"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadratischer Pixel-Pinsel</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="212"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Weicher, runder Pinsel</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="215"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">MyPaint-Pinsel</translation>
+        <translation>MyPaint-Pinsel</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="238"/>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="252"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mischmodus:</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="266"/>
         <source>Paint Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Malmodus:</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="269"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished"></translation>
+        <translation>aufbauend/direkt</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="270"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished"></translation>
+        <translation>waschen/indirekt</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="279"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Radiermodus</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="288"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Startfarbe von Ebene aufnehmen</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="298"/>
         <source>Spacing: </source>
-        <translation type="unfinished">Abstand: </translation>
+        <translation>Abstand: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="299"/>
@@ -4630,23 +4630,23 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="498"/>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="531"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="307"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha sperren (Umfärbungsmodus)</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="330"/>
         <source>Size: </source>
-        <translation type="unfinished">Größe: </translation>
+        <translation>Größe: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="331"/>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="352"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="340"/>
@@ -4654,97 +4654,97 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="451"/>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="518"/>
         <source>Pressure Sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucksensibilität</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="351"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimalgröße: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="385"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Deckkraft: </translation>
+        <translation>Deckkraft: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="407"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Deckkraft: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="441"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Härte: </translation>
+        <translation>Härte: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="463"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Härte: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="497"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Schmieren: </translation>
+        <translation>Schmieren: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="509"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished">Farbaufnahme 1/</translation>
+        <translation>Farbaufnahme 1/</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="530"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimales Schmieren: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="567"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>Wert: </translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="578"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Pinseldynamiken.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="631"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="631"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Radius des Pinsels.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="633"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Deckkraft</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="634"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished"></translation>
+        <translation>Deckkraft des Pinsels, 0% ist transparent, 100% ist voll deckend.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="638"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Härte</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="638"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kantenhärte, 0% ist verwaschen, 100% ist scharf.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="642"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Schmieren</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog.cpp" line="642"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vermischen der Farben auf der zu bemalenden Ebene.</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/brushsettingsdialog_gen.cpp" line="12"/>
@@ -6683,30 +6683,30 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="353"/>
         <source>Select MyPaint brush pack to import</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie ein MyPaint-Pinselpaket zum Import aus</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="354"/>
         <source>MyPaint Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint-Pinselpaket (%1)</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="378"/>
         <source>Imported MyPaint brush pack &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint-Pinselpaket &apos;%1&apos; importiert.</translation>
     </message>
     <message numerus="yes">
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="380"/>
         <source>Imported MyPaint brush pack &apos;%1&apos;, but encountered %nerror(s) along the way.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>MyPaint-Pinselpaket &apos;%1&apos; importiert, aber %n Fehler ist aufgetreten.</numerusform>
+            <numerusform>MyPaint-Pinselpaket &apos;%1&apos; importiert, aber %n Fehler sind aufgetreten.</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="385"/>
         <source>Failed to import MyPaint brush pack from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint-Pinselpaket &apos;%1&apos; konnte nicht importiert werden.</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/brushpalettedock.cpp" line="367"/>
@@ -7332,7 +7332,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../../desktop/toolwidgets/brushsettings.cpp" line="159"/>
         <source>Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseleinstellungen</translation>
     </message>
 </context>
 <context>
@@ -7558,17 +7558,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../../desktop/widgets/mypaintinput.cpp" line="170"/>
         <source>Output Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabeintervall: </translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/mypaintinput.cpp" line="184"/>
         <source>Input Minimum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabeminimum: </translation>
     </message>
     <message>
         <location filename="../../desktop/widgets/mypaintinput.cpp" line="200"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabemaximum: </translation>
     </message>
 </context>
 <context>
