@@ -98,11 +98,8 @@ private:
 
 	static bool isBuiltInTag(int row);
 
-	void convertOrCreateClassicPresets();
-	bool convertOldPresets();
-	void createDefaultClassicPresets();
-	void newClassicPreset(int tagId, const QString &name,
-		const QString &description, const ActiveBrush &brush);
+	void maybeConvertOldPresets();
+	void convertOldPresets();
 
 	static bool readMyPaintBrush(
 		const drawdance::ZipReader &zr, const QString &prefix, QStringList &outErrors,

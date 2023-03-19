@@ -473,7 +473,7 @@ BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 	, d(new Private)
 	, m_presetModel(new BrushPresetModel(this))
 {
-	convertOrCreateClassicPresets();
+	maybeConvertOldPresets();
 	connect(this, &QAbstractItemModel::modelAboutToBeReset,
 		m_presetModel, &BrushPresetModel::tagsAboutToBeReset);
 	connect(this, &QAbstractItemModel::modelReset,
@@ -622,13 +622,11 @@ bool BrushPresetTagModel::isBuiltInTag(int row)
 	return row == ALL_ROW || row == UNTAGGED_ROW;
 }
 
-void BrushPresetTagModel::convertOrCreateClassicPresets()
+void BrushPresetTagModel::maybeConvertOldPresets()
 {
 	if(!d->readState("classic_presets_loaded").toBool() &&
 			d->createOrUpdateState("classic_presets_loaded", true)) {
-		if(!convertOldPresets()) {
-			createDefaultClassicPresets();
-		}
+		convertOldPresets();
 	}
 }
 
@@ -658,7 +656,7 @@ static OldMetadata loadOldMetadata(QFile &metadataFile)
 	return metadata;
 }
 
-bool BrushPresetTagModel::convertOldPresets()
+void BrushPresetTagModel::convertOldPresets()
 {
 	QString brushDir = utils::paths::writablePath("brushes/");
 
@@ -728,9 +726,7 @@ bool BrushPresetTagModel::convertOldPresets()
 		defaultFolder.presets << i.next().value();
 	}
 
-	if(folders.size() == 1 && folders.first().presets.isEmpty()) {
-		return false;
-	} else {
+	if(folders.size() > 1 || !folders.first().presets.isEmpty()) {
 		ActiveBrush brush(ActiveBrush::CLASSIC);
 		int brushCount = 0;
 
@@ -741,110 +737,13 @@ bool BrushPresetTagModel::convertOldPresets()
 				QString name = tr("Classic Brush %1").arg(brushCount);
 				QString description = tr("Converted from %1.").arg(preset.filename);
 				brush.setClassic(preset.brush);
-				newClassicPreset(tagId, name, description, brush);
+				int presetId = m_presetModel->newPreset(brush.presetType(), name,
+					description, brush.presetThumbnail(), brush.presetData());
+				if(tagId > 0 && presetId > 0) {
+					m_presetModel->changeTagAssignment(presetId, tagId, true);
+				}
 			}
 		}
-		return true;
-	}
-}
-
-void BrushPresetTagModel::createDefaultClassicPresets()
-{
-	int tagId = newTag(tr("Default"));
-	ActiveBrush brush(ActiveBrush::CLASSIC);
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
-		b.size.max = 16;
-		b.opacity.max = 1.0;
-		b.spacing = 0.15;
-		b.size_pressure = true;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(1),
-			tr("Default brush %1.").arg(1), brush);
-	}
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
-		b.size.max = 10;
-		b.opacity.max = 1.0;
-		b.hardness.max = 0.8;
-		b.spacing = 0.15;
-		b.size_pressure = true;
-		b.opacity_pressure = true;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Soft Brush %1").arg(1),
-			tr("Default brush %1.").arg(2), brush);
-	}
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
-		b.size.max = 30;
-		b.opacity.max = 0.34;
-		b.hardness.max = 1.0;
-		b.spacing = 0.18;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Soft Brush %1").arg(2),
-			tr("Default brush %1.").arg(3), brush);
-	}
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
-		b.incremental = false;
-		b.size.max = 32;
-		b.opacity.max = 0.65;
-		b.spacing = 0.15;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(2),
-			tr("Default brush %1.").arg(4), brush);
-	}
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
-		b.incremental = false;
-		b.size.max = 70;
-		b.opacity.max = 0.42;
-		b.spacing = 0.15;
-		b.opacity_pressure = true;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Round Pixel Brush %1").arg(3),
-			tr("Default brush %1.").arg(5), brush);
-	}
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
-		b.size.max = 113;
-		b.opacity.max = 0.6;
-		b.hardness.max = 1.0;
-		b.spacing = 0.19;
-		b.opacity_pressure = true;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Soft Brush %1").arg(3),
-			tr("Default brush %1.").arg(6), brush);
-	}
-	{
-		ClassicBrush b;
-		b.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
-		b.size.max = 43;
-		b.opacity.max = 0.3;
-		b.hardness.max = 1.0;
-		b.spacing = 0.25;
-		b.smudge.max = 1.0;
-		b.resmudge = 1;
-		b.opacity_pressure = true;
-		brush.setClassic(b);
-		newClassicPreset(tagId, tr("Soft Brush %1").arg(4),
-			tr("Default brush %1.").arg(7), brush);
-	}
-}
-
-void BrushPresetTagModel::newClassicPreset(int tagId, const QString &name,
-	const QString &description, const ActiveBrush &brush)
-{
-	int presetId = m_presetModel->newPreset(brush.presetType(), name, description,
-		brush.presetThumbnail(), brush.presetData());
-	if(tagId > 0 && presetId > 0) {
-		m_presetModel->changeTagAssignment(presetId, tagId, true);
 	}
 }
 
