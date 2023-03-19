@@ -486,12 +486,10 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         // If brush color alpha is nonzero, indirect drawing mode
         // is used and the alpha is used as the overall transparency
         // of the entire stroke.
-        // TODO this doesn't work right. We should use alpha-darken mode
-        // and set the opacity range properly
         color.a = cb->opacity.max;
         cb->opacity.max = 1.0f;
         if (cb->opacity_pressure) {
-            cb->opacity.min = 0.0f;
+            cb->opacity.min = cb->opacity.min / color.a;
         }
     }
     be->classic.brush_color = color;

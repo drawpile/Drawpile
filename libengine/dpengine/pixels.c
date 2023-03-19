@@ -1662,6 +1662,22 @@ static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
 #endif
 }
 
+static void blend_mask_alpha_darken(DP_Pixel15 *dst, DP_UPixel15 src,
+                                    const uint16_t *mask, Fix15 opacity, int w,
+                                    int h, int mask_skip, int base_skip)
+{
+    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
+        if (o > dst->a) {
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                src.b,
+                src.g,
+                src.r,
+                from_fix(o),
+            });
+        }
+    });
+}
+
 void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
                    int mask_skip, int base_skip)
@@ -1683,6 +1699,10 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     case DP_BLEND_MODE_NORMAL_AND_ERASER:
         blend_mask_normal_and_eraser(dst, src, mask, to_fix(opacity), w, h,
                                      mask_skip, base_skip);
+        break;
+    case DP_BLEND_MODE_ALPHA_DARKEN:
+        blend_mask_alpha_darken(dst, src, mask, to_fix(opacity), w, h,
+                                mask_skip, base_skip);
         break;
     case DP_BLEND_MODE_REPLACE:
         blend_mask_alpha_op(dst, src, mask, to_fix(opacity), w, h, mask_skip,

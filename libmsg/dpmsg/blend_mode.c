@@ -219,6 +219,13 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "svg:color",
             "Color",
         },
+    [DP_BLEND_MODE_ALPHA_DARKEN] =
+        {
+            INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_ALPHA_DARKEN",
+            "krita:alphadarken",
+            "Alpha Darken",
+        },
     [DP_BLEND_MODE_REPLACE] =
         {
             BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
