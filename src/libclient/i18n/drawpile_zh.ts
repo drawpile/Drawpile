@@ -98,7 +98,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="187"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation></translation>
+        <translation>锁定透明度 (recolor模式)</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="201"/>
@@ -116,12 +116,12 @@
         <location filename="../../desktop/ui/brushdock.ui" line="267"/>
         <location filename="../../desktop/ui/brushdock.ui" line="309"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>笔压感应</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="298"/>
         <source>Configure input presets</source>
-        <translation type="unfinished"></translation>
+        <translation>配置笔压预设</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="291"/>
@@ -136,7 +136,7 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="326"/>
         <source>Size: </source>
-        <translation type="unfinished">大小: </translation>
+        <translation>大小: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="339"/>
@@ -146,17 +146,17 @@
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="352"/>
         <source>Opacity: </source>
-        <translation type="unfinished">透明度: </translation>
+        <translation>透明度: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="368"/>
         <source>Hardness: </source>
-        <translation type="unfinished">硬度: </translation>
+        <translation>硬度: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="384"/>
         <source>Smudging: </source>
-        <translation type="unfinished">混合: </translation>
+        <translation>混合: </translation>
     </message>
     <message>
         <location filename="../../desktop/ui/brushdock.ui" line="400"/>
@@ -829,7 +829,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/flipbook.ui" line="172"/>
         <source>Flipbook FPS:</source>
-        <translation type="unfinished"></translation>
+        <translation>动画预览 每帧秒数:</translation>
     </message>
 </context>
 <context>
@@ -983,7 +983,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../../desktop/ui/inputcfg.ui" line="220"/>
         <source>Close</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -1151,7 +1151,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="87"/>
         <source>Censor content</source>
-        <translation>审查内容</translation>
+        <translation>显示审查</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/layerproperties.ui" line="110"/>
@@ -1752,7 +1752,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="3017"/>
         <source>Show Censored Layers</source>
-        <translation>显示屏蔽图层</translation>
+        <translation>显示审查内容</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="3065"/>
@@ -2215,7 +2215,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2632"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定面板</translation>
     </message>
     <message>
         <location filename="../../desktop/mainwindow.cpp" line="2636"/>
@@ -3494,44 +3494,44 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="489"/>
         <source>One Finger Touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>单指触摸:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="497"/>
         <location filename="../../desktop/ui/settings.ui" line="523"/>
         <location filename="../../desktop/ui/settings.ui" line="544"/>
         <source>Do Nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>无操作</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="502"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished">移动画布</translation>
+        <translation>移动画布</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="507"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>绘画</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="515"/>
         <source>Two Finger Pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>双指捏合:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="528"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished">缩放画布</translation>
+        <translation>缩放画布</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="536"/>
         <source>Two Finger Twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>双指扭动:</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="549"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished">旋转画布</translation>
+        <translation>旋转画布</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="594"/>
@@ -3726,7 +3726,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1296"/>
         <source>Block layer uncensoring</source>
-        <translation>Block layer uncensoring</translation>
+        <translation>停用图层审查功能</translation>
     </message>
     <message>
         <location filename="../../desktop/ui/settings.ui" line="1223"/>
@@ -4667,12 +4667,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/dialogs/flipbook.cpp" line="141"/>
         <source>Manual Timeline, %1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>手动时间轴, %1 每帧秒数</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/flipbook.cpp" line="143"/>
         <source>Automatic Timeline, %1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>自动时间轴, %1 每帧秒数</translation>
     </message>
 </context>
 <context>
@@ -4689,22 +4689,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="40"/>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="107"/>
         <source>New</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="41"/>
         <source>Duplicate</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="42"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../desktop/dialogs/inputsettings.cpp" line="125"/>
         <source>New %1</source>
-        <translation type="unfinished">新建 %1</translation>
+        <translation>新建 %1</translation>
     </message>
 </context>
 <context>
@@ -5451,12 +5451,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="40"/>
         <source>Lock this layer</source>
-        <translation>锁定当前图层</translation>
+        <translation>锁定</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="43"/>
         <source>Censor</source>
-        <translation>屏蔽图层内容</translation>
+        <translation>审查</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/layeraclmenu.cpp" line="46"/>
@@ -5606,17 +5606,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../../desktop/docks/titlewidget.cpp" line="54"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>停靠</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/titlewidget.cpp" line="59"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>可拖动停靠的</translation>
     </message>
     <message>
         <location filename="../../desktop/docks/titlewidget.cpp" line="64"/>
         <source>Close</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
