@@ -63,7 +63,11 @@ This is probably a non-exhaustive list, but it should hit the most important poi
 
 * Pen tilt and rotation support.
 
-* Minimum size/opacity/hardness/smudging settings for classic brushes in the brush dock.
+* Minimum size/opacity/hardness/smudging as well as pressure curves implemented for classic brushes.
+
+* Brush editor dialog, both for classic and MyPaint brushes.
+
+* Indirect drawing now actually works, scaling the opacity properly and painting with alpha darken mode.
 
 * Force NSFM option for the server, for servers that mandate all sessions to be marked NSFM.
 
