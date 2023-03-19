@@ -4,7 +4,7 @@ project(drawpile
 	VERSION "2.2.0"
 	LANGUAGES C CXX)
 
-set(DRAWPILE_VERSION_SUFFIX "dancepiledev20")
+set(DRAWPILE_VERSION_SUFFIX "dancepiledev21")
 set(DRAWPILE_VERSION "${PROJECT_VERSION}${DRAWPILE_VERSION_SUFFIX}")
 set(DRAWPILE_HOMEPAGE_URL "https://drawpile.net/")
 
