@@ -132,7 +132,7 @@ QJsonObject ClassicBrush::toJson() const
 	o["spacing"] = spacing;
 	if(resmudge>0) o["resmudge"] = resmudge;
 
-	if(incremental) o["inc"] = true;
+	if(!incremental) o["indirect"] = true;
 	if(colorpick) o["colorpick"] = true;
 	if(size_pressure) o["sizep"] = true;
 	if(hardness_pressure) o["hardp"] = true;
@@ -191,7 +191,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.spacing = o["spacing"].toDouble();
 	b.resmudge = o["resmudge"].toInt();
 
-	b.incremental = o["inc"].toBool();
+	b.incremental = !o["indirect"].toBool();
 	b.colorpick = o["colorpick"].toBool();
 	b.size_pressure = o["sizep"].toBool();
 	b.hardness_pressure = o["hardp"].toBool();
