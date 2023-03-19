@@ -835,6 +835,7 @@ static void stroke_to_classic(
         if (colorpick) {
             be->classic.smudge_color =
                 sample_classic_smudge(be, cb, lc, x, y, pressure);
+            be->classic.smudge_color.a = be->classic.brush_color.a;
             be->classic.smudge_distance = -1;
         }
         else {
