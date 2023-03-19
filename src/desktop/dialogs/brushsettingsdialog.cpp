@@ -33,9 +33,10 @@ struct BrushSettingsDialog::Private {
 	QComboBox *brushModeCombo;
 	QLabel *eraseModeLabel;
 	QComboBox *eraseModeCombo;
+	QLabel *paintModeLabel;
+	QComboBox *paintModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
-	QCheckBox *incrementalBox;
 	KisSliderSpinBox *spacingSpinner;
 	QCheckBox *lockAlphaBox;
 	KisSliderSpinBox *classicSizeSpinner;
@@ -262,6 +263,19 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		});
 
+	d->paintModeLabel = new QLabel{tr("Paint Mode:"), widget};
+	d->paintModeCombo = new QComboBox{widget};
+	layout->addRow(d->paintModeLabel, d->paintModeCombo);
+	d->paintModeCombo->addItem(tr("Build-Up/Direct"), true);
+	d->paintModeCombo->addItem(tr("Wash/Indirect"), false);
+	connect(
+		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		[this](int index) {
+			d->brush.classic().incremental =
+				d->paintModeCombo->itemData(index).toBool();
+			emitChange();
+		});
+
 	d->eraseModeBox = new QCheckBox{tr("Eraser Mode"), widget};
 	layout->addRow(d->eraseModeBox);
 	connect(d->eraseModeBox, &QCheckBox::stateChanged, [this](int state) {
@@ -275,13 +289,6 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	layout->addRow(d->colorPickBox);
 	connect(d->colorPickBox, &QCheckBox::stateChanged, [this](int state) {
 		d->brush.classic().colorpick = state != Qt::Unchecked;
-		emitChange();
-	});
-
-	d->incrementalBox = new QCheckBox{tr("Direct Drawing Mode"), widget};
-	layout->addRow(d->incrementalBox);
-	connect(d->incrementalBox, &QCheckBox::stateChanged, [this](int state) {
-		d->brush.classic().incremental = state != Qt::Unchecked;
 		emitChange();
 	});
 
@@ -679,9 +686,11 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->colorPickBox->setVisible(true);
 
 	bool haveSmudge = classic.smudge.max > 0.0f;
-	d->incrementalBox->setChecked(haveSmudge || classic.incremental);
-	d->incrementalBox->setDisabled(haveSmudge);
-	d->incrementalBox->setVisible(true);
+	d->paintModeCombo->setCurrentIndex(
+		haveSmudge || classic.incremental ? 0 : 1);
+	d->paintModeCombo->setDisabled(haveSmudge);
+	d->paintModeLabel->setVisible(true);
+	d->paintModeCombo->setVisible(true);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
 	d->spacingSpinner->setVisible(true);
@@ -725,7 +734,8 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->brushModeLabel->setVisible(false);
 	d->brushModeCombo->setVisible(false);
 	d->colorPickBox->setVisible(false);
-	d->incrementalBox->setVisible(false);
+	d->paintModeLabel->setVisible(false);
+	d->paintModeCombo->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
 	d->eraseModeBox->setChecked(brush.erase);
