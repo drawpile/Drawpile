@@ -207,6 +207,8 @@ void Annotation::end()
 		};
 		owner.client()->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 	}
+
+	m_selectedId = 0;
 }
 
 }
