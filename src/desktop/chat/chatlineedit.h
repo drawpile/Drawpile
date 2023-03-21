@@ -20,12 +20,12 @@
 #define CHATLINEEDIT_H
 
 #include <QStringList>
-#include <QLineEdit>
+#include <QPlainTextEdit>
 
 /**
  * @brief A specialized line edit widget for chatting, with history
   */
-class ChatLineEdit : public QLineEdit
+class ChatLineEdit : public QPlainTextEdit
 {
 Q_OBJECT
 public:
