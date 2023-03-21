@@ -344,7 +344,7 @@ void metaUserJoin(void *ctx, uint8_t user, uint8_t flags, const uint8_t *usernam
 	const QString name = QString::fromUtf8(reinterpret_cast<const char*>(username), name_len);
 
 	QImage avatar;
-	if(avatar_len == 0) {
+	if(avatar_len != 0) {
 		QByteArray avatarData = QByteArray::fromRawData(reinterpret_cast<const char*>(avatarbytes), avatar_len);
 		if(!avatar.loadFromData(avatarData))
 			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(name), user);
