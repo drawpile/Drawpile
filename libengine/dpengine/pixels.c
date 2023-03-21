@@ -1806,24 +1806,17 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
 }
 
 
-#define FOR_PIXEL(DST, SRC, PIXEL_COUNT, I, BLOCK)            \
-    do {                                                      \
-        for (int I = 0; I < PIXEL_COUNT; ++I, ++DST, ++SRC) { \
-            BLOCK                                             \
-        }                                                     \
-    } while (0)
-
 static void blend_pixels_alpha_op(DP_Pixel15 *DP_RESTRICT dst,
                                   const DP_Pixel15 *DP_RESTRICT src,
                                   int pixel_count, Fix15 opacity,
                                   BGRA15 (*op)(BGR15, BGR15, Fix15, Fix15,
                                                Fix15))
 {
-    FOR_PIXEL(dst, src, pixel_count, i, {
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         BGRA15 b = to_bgra(*dst);
         BGRA15 s = to_bgra(*src);
         *dst = from_bgra(op(b.bgr, s.bgr, b.a, s.a, opacity));
-    });
+    }
 }
 
 static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
@@ -1831,7 +1824,7 @@ static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
                                      int pixel_count, uint16_t opacity)
 {
     double o = DP_uint16_to_double(opacity) / BIT15_DOUBLE;
-    FOR_PIXEL(dst, src, pixel_count, i, {
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_UPixel15 udst = DP_pixel15_unpremultiply(*dst);
         DP_UPixel15 usrc = DP_pixel15_unpremultiply(*src);
         *dst =
@@ -1839,7 +1832,7 @@ static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
                               usrc.r / BIT15_DOUBLE, usrc.a / BIT15_DOUBLE * o,
                               udst.b / BIT15_DOUBLE, udst.g / BIT15_DOUBLE,
                               udst.r / BIT15_DOUBLE, udst.a / BIT15_DOUBLE);
-    });
+    }
 }
 
 static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
@@ -1847,7 +1840,7 @@ static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
                                              int pixel_count, Fix15 opacity,
                                              Fix15 (*comp_op)(Fix15, Fix15))
 {
-    FOR_PIXEL(dst, src, pixel_count, i, {
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 bp = *dst;
         DP_Pixel15 sp = *src;
         BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
@@ -1860,14 +1853,14 @@ static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
             from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r))),
             bp.a,
         });
-    });
+    }
 }
 
 static void blend_pixels_composite_separable_with_opacity(
     DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
     int pixel_count, Fix15 opacity, Fix15 (*comp_op)(Fix15, Fix15, Fix15))
 {
-    FOR_PIXEL(dst, src, pixel_count, i, {
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 bp = *dst;
         DP_Pixel15 sp = *src;
         BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
@@ -1880,14 +1873,14 @@ static void blend_pixels_composite_separable_with_opacity(
             from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r, o))),
             bp.a,
         });
-    });
+    }
 }
 
 static void blend_pixels_composite_nonseparable(
     DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
     int pixel_count, Fix15 opacity, BGR15 (*comp_op)(BGR15, BGR15))
 {
-    FOR_PIXEL(dst, src, pixel_count, i, {
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 bp = *dst;
         DP_Pixel15 sp = *src;
         BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
@@ -1900,7 +1893,7 @@ static void blend_pixels_composite_nonseparable(
             from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
             bp.a,
         });
-    });
+    }
 }
 
 void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
