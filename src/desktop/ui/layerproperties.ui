@@ -219,7 +219,7 @@
    <sender>passThrough</sender>
    <signal>toggled(bool)</signal>
    <receiver>blendMode</receiver>
-   <slot>setEnabled(bool)</slot>
+   <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>150</x>
