@@ -371,10 +371,10 @@ impl BitmapLayer {
     /// Get a weighted average of the color using a default sampling mask
     pub fn sample_color(&self, x: i32, y: i32, dia: i32) -> Color {
         if dia <= 1 {
-            if x < 0 || y < 0 || x as u32 > self.width || y as u32 > self.height {
-                Color::TRANSPARENT
-            } else {
+            if (x as u32) < self.width && (y as u32) < self.height {
                 Color::from_pixel15(self.pixel_at(x as u32, y as u32))
+            } else {
+                Color::TRANSPARENT
             }
         } else {
             let mask = BrushMask::new_round_pixel(dia as u32);
