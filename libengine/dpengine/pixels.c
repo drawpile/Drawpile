@@ -1475,14 +1475,16 @@ static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_UPixel15 src,
     BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         DP_Pixel15 bp = *dst;
-        BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
-        Fix15 o1 = BIT15_FIX - o;
-        *dst = DP_pixel15_premultiply((DP_UPixel15){
-            from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b))),
-            from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g))),
-            from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r))),
-            bp.a,
-        });
+        if (bp.a != 0) {
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+            Fix15 o1 = BIT15_FIX - o;
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b))),
+                from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g))),
+                from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r))),
+                bp.a,
+            });
+        }
     });
 }
 
@@ -1494,14 +1496,16 @@ static void blend_mask_composite_separable_with_opacity(
     BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         DP_Pixel15 bp = *dst;
-        BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
-        Fix15 o1 = BIT15_FIX - o;
-        *dst = DP_pixel15_premultiply((DP_UPixel15){
-            from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b, o))),
-            from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g, o))),
-            from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r, o))),
-            bp.a,
-        });
+        if (bp.a != 0) {
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+            Fix15 o1 = BIT15_FIX - o;
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b, o))),
+                from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g, o))),
+                from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r, o))),
+                bp.a,
+            });
+        }
     });
 }
 
@@ -1514,15 +1518,17 @@ static void blend_mask_composite_nonseparable(DP_Pixel15 *dst, DP_UPixel15 src,
     BGR15 cs = to_ubgr(src);
     FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, o, {
         DP_Pixel15 bp = *dst;
-        BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
-        BGR15 cr = comp_op(cb, cs);
-        Fix15 o1 = BIT15_FIX - o;
-        *dst = DP_pixel15_premultiply((DP_UPixel15){
-            from_fix(fix15_sumprods(o1, cb.b, o, cr.b)),
-            from_fix(fix15_sumprods(o1, cb.g, o, cr.g)),
-            from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
-            bp.a,
-        });
+        if (bp.a != 0) {
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+            BGR15 cr = comp_op(cb, cs);
+            Fix15 o1 = BIT15_FIX - o;
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_sumprods(o1, cb.b, o, cr.b)),
+                from_fix(fix15_sumprods(o1, cb.g, o, cr.g)),
+                from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
+                bp.a,
+            });
+        }
     });
 }
 
@@ -1842,17 +1848,19 @@ static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
 {
     for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 bp = *dst;
-        DP_Pixel15 sp = *src;
-        BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
-        BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
-        Fix15 o = fix15_mul(to_fix(sp.a), opacity);
-        Fix15 o1 = BIT15_FIX - o;
-        *dst = DP_pixel15_premultiply((DP_UPixel15){
-            from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b))),
-            from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g))),
-            from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r))),
-            bp.a,
-        });
+        if (bp.a != 0) {
+            DP_Pixel15 sp = *src;
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+            BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
+            Fix15 o = fix15_mul(to_fix(sp.a), opacity);
+            Fix15 o1 = BIT15_FIX - o;
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b))),
+                from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g))),
+                from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r))),
+                bp.a,
+            });
+        }
     }
 }
 
@@ -1862,17 +1870,19 @@ static void blend_pixels_composite_separable_with_opacity(
 {
     for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 bp = *dst;
-        DP_Pixel15 sp = *src;
-        BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
-        BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
-        Fix15 o = fix15_mul(to_fix(sp.a), opacity);
-        Fix15 o1 = BIT15_FIX - o;
-        *dst = DP_pixel15_premultiply((DP_UPixel15){
-            from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b, o))),
-            from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g, o))),
-            from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r, o))),
-            bp.a,
-        });
+        if (bp.a != 0) {
+            DP_Pixel15 sp = *src;
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+            BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(sp));
+            Fix15 o = fix15_mul(to_fix(sp.a), opacity);
+            Fix15 o1 = BIT15_FIX - o;
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_sumprods(o1, cb.b, o, comp_op(cb.b, cs.b, o))),
+                from_fix(fix15_sumprods(o1, cb.g, o, comp_op(cb.g, cs.g, o))),
+                from_fix(fix15_sumprods(o1, cb.r, o, comp_op(cb.r, cs.r, o))),
+                bp.a,
+            });
+        }
     }
 }
 
@@ -1882,17 +1892,19 @@ static void blend_pixels_composite_nonseparable(
 {
     for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 bp = *dst;
-        DP_Pixel15 sp = *src;
-        BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
-        BGR15 cr = comp_op(cb, to_ubgr(DP_pixel15_unpremultiply(sp)));
-        Fix15 o = fix15_mul(to_fix(sp.a), opacity);
-        Fix15 o1 = BIT15_FIX - o;
-        *dst = DP_pixel15_premultiply((DP_UPixel15){
-            from_fix(fix15_sumprods(o1, cb.b, o, cr.b)),
-            from_fix(fix15_sumprods(o1, cb.g, o, cr.g)),
-            from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
-            bp.a,
-        });
+        if (bp.a != 0) {
+            DP_Pixel15 sp = *src;
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(bp));
+            BGR15 cr = comp_op(cb, to_ubgr(DP_pixel15_unpremultiply(sp)));
+            Fix15 o = fix15_mul(to_fix(sp.a), opacity);
+            Fix15 o1 = BIT15_FIX - o;
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_sumprods(o1, cb.b, o, cr.b)),
+                from_fix(fix15_sumprods(o1, cb.g, o, cr.g)),
+                from_fix(fix15_sumprods(o1, cb.r, o, cr.r)),
+                bp.a,
+            });
+        }
     }
 }
 
