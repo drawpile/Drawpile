@@ -298,6 +298,16 @@ static DP_Pixel15 from_bgra(BGRA15 bgra)
     };
 }
 
+static DP_Pixel15 from_ubgra(BGRA15 bgra)
+{
+    return DP_pixel15_premultiply((DP_UPixel15){
+        .b = from_fix(bgra.b),
+        .g = from_fix(bgra.g),
+        .r = from_fix(bgra.r),
+        .a = from_fix(bgra.a),
+    });
+}
+
 
 uint16_t DP_fix15_mul(uint16_t a, uint16_t b)
 {
@@ -2089,6 +2099,6 @@ void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
     Fix15 ofix = to_fix(opacity);
     float p = DP_int_to_float(posterize_num);
     FOR_MASK_PIXEL(dst, mask, ofix, w, h, mask_skip, base_skip, x, y, o, {
-        *dst = from_bgra(posterize(p, o, DP_pixel15_unpremultiply(*dst)));
+        *dst = from_ubgra(posterize(p, o, DP_pixel15_unpremultiply(*dst)));
     });
 }
