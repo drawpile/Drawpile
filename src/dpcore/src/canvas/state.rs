@@ -722,10 +722,18 @@ impl CanvasState {
         let aoe = if msg.merge_to > 0 {
             if let Some(src) = stack.root().get_layer_rc(id) {
                 if let Some(target) = stack.root_mut().get_bitmaplayer_mut(msg.merge_to) {
-                    match src.as_ref() {
+                    let src_aoe = match src.as_ref() {
                         Layer::Group(g) => editlayer::merge_group(target, g),
                         Layer::Bitmap(b) => editlayer::merge_bitmap(target, b),
                     };
+                    // Merging a Normal layer causes no visual change, so we don't need
+                    // to update the canvas in that case. Other blend modes potentially
+                    // do, so we use the affected area as reported by the merge.
+                    if src.metadata().blendmode == Blendmode::Normal {
+                        AoE::Nothing
+                    } else {
+                        src_aoe
+                    }
                 } else {
                     warn!(
                         "LayerDelete: Cannot merge {:04x} to missing layer {:04x}",
@@ -737,9 +745,6 @@ impl CanvasState {
                 warn!("LayerDelete: Cannot merge missing layer {:04x}", id);
                 return CanvasStateChange::nothing();
             }
-
-            // merging a layer to the one below it causes no visual change
-            AoE::Nothing
         } else {
             stack
                 .root()
