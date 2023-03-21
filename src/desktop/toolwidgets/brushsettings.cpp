@@ -494,7 +494,7 @@ void BrushSettings::updateUi()
 	d->ui.brushsizeBox->setValue(classic.size.max);
 	d->ui.pressureSize->setChecked(classic.size_pressure);
 	d->ui.pressureOpacity->setChecked(classic.opacity_pressure);
-	d->ui.smudgingBox->setValue(classic.smudge.max * 100);
+	d->ui.smudgingBox->setValue(classic.smudge.max * 100.0 + 0.5);
 	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(classic.spacing * 100.0 + 0.5);
@@ -506,21 +506,21 @@ void BrushSettings::updateUi()
 
 	const DP_MyPaintSettings &myPaintSettings = myPaint.constSettings();
 	d->ui.radiusLogarithmicBox->setValue(
-		(myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value + 2.0) * 100.0);
+		(myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value + 2.0) * 100.0 + 0.5);
 	d->ui.gainBox->setValue(qRound(
-		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value * 100.0));
+		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value * 100.0 + 0.5));
 	d->ui.slowTrackingBox->setValue(qRound(
-		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value * 10.0));
+		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value * 10.0 + 0.5));
 	d->ui.modeLockAlpha->setChecked(myPaint.constBrush().lock_alpha);
 
 	if(mypaintmode) {
 		d->ui.opacityBox->setValue(qRound(
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value * 100.0));
+			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value * 100.0 + 0.5));
 		d->ui.hardnessBox->setValue(qRound(
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value * 100.0));
+			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value * 100.0 + 0.5));
 	} else {
-		d->ui.opacityBox->setValue(classic.opacity.max * 100);
-		d->ui.hardnessBox->setValue(classic.hardness.max * 100);
+		d->ui.opacityBox->setValue(classic.opacity.max * 100.0 + 0.5);
+		d->ui.hardnessBox->setValue(classic.hardness.max * 100.0 + 0.5);
 	}
 
 	const int presetIndex = d->presetModel->searchIndexById(tool.inputPresetId);

@@ -704,24 +704,24 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->classicSizeCurve->setCurve(classic.sizeCurve());
 	d->classicSizeCurve->setEnabled(classic.size_pressure);
 
-	d->classicOpacitySpinner->setValue(classic.opacity.max * 100.0);
+	d->classicOpacitySpinner->setValue(classic.opacity.max * 100.0 + 0.5);
 	d->classicOpacityPressureBox->setChecked(classic.opacity_pressure);
-	d->classicOpacityMinSpinner->setValue(classic.opacity.min * 100.0);
+	d->classicOpacityMinSpinner->setValue(classic.opacity.min * 100.0 + 0.5);
 	d->classicOpacityMinSpinner->setEnabled(classic.opacity_pressure);
 	d->classicOpacityCurve->setCurve(classic.opacityCurve());
 	d->classicOpacityCurve->setEnabled(classic.opacity_pressure);
 
-	d->classicHardnessSpinner->setValue(classic.hardness.max * 100.0);
+	d->classicHardnessSpinner->setValue(classic.hardness.max * 100.0 + 0.5);
 	d->classicHardnessPressureBox->setChecked(classic.hardness_pressure);
-	d->classicHardnessMinSpinner->setValue(classic.hardness.min * 100.0);
+	d->classicHardnessMinSpinner->setValue(classic.hardness.min * 100.0 + 0.5);
 	d->classicHardnessMinSpinner->setEnabled(classic.hardness_pressure);
 	d->classicHardnessCurve->setCurve(classic.hardnessCurve());
 	d->classicHardnessCurve->setEnabled(classic.hardness_pressure);
 
-	d->classicSmudgingSpinner->setValue(classic.smudge.max * 100.0);
+	d->classicSmudgingSpinner->setValue(classic.smudge.max * 100.0 + 0.5);
 	d->classicColorPickupSpinner->setValue(classic.resmudge);
 	d->classicSmudgingPressureBox->setChecked(classic.smudge_pressure);
-	d->classicSmudgingMinSpinner->setValue(classic.smudge.min * 100.0);
+	d->classicSmudgingMinSpinner->setValue(classic.smudge.min * 100.0 + 0.5);
 	d->classicSmudgingMinSpinner->setEnabled(classic.smudge_pressure);
 	d->classicSmudgingCurve->setCurve(classic.smudgeCurve());
 	d->classicSmudgingCurve->setEnabled(classic.smudge_pressure);
