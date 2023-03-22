@@ -105,7 +105,10 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 	// Redraw the background and show on screen
 	redrawBubble();
 	move(rect.topLeft());
-	show();
+	if (isVisible())
+		update();
+	else
+		show();
 	m_timer->start();
 }
 
