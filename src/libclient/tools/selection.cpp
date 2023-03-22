@@ -34,7 +34,7 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 
 	if(m_handle == canvas::Selection::Handle::Outside) {
 		net::Client *client = m_owner.client();
-		if(sel && sel->pasteOrMoveToCanvas(m_messages, m_owner.client()->myId(), m_owner.activeLayer())) {
+		if(sel && sel->pasteOrMoveToCanvas(m_messages, m_owner.client()->myId(), m_owner.activeLayer(), m_interpolation)) {
 			client->sendMessages(m_messages.count(), m_messages.constData());
 			m_messages.clear();
 		}
@@ -109,7 +109,7 @@ void SelectionTool::finishMultipart()
 {
 	canvas::Selection *sel = m_owner.model()->selection();
 	net::Client *client = m_owner.client();
-	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), m_owner.activeLayer())) {
+	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), m_owner.activeLayer(), m_interpolation)) {
 		m_owner.client()->sendMessages(m_messages.count(), m_messages.constData());
 		m_messages.clear();
 		m_owner.model()->setSelection(nullptr);

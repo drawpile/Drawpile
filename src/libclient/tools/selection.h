@@ -21,7 +21,10 @@ namespace tools {
 class SelectionTool : public Tool {
 public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool(owner, type, cursor, false, false, false), m_allowTransform(true) { }
+		: Tool(owner, type, cursor, false, false, false)
+		, m_allowTransform{true}
+		, m_interpolation{DP_MSG_MOVE_REGION_MODE_BILINEAR}
+	{}
 
 	void begin(const canvas::Point& point, bool right, float zoom) override final;
 	void motion(const canvas::Point& point, bool constrain, bool center) override final;
@@ -31,6 +34,9 @@ public:
 	void cancelMultipart() override final;
 	void undoMultipart() override final;
 	bool isMultipart() const override final;
+
+	int interpolation() const { return m_interpolation; }
+	void setInterpolation(int interpolation) { m_interpolation = interpolation; }
 
 	//! Start a layer region move operation
 	void startMove();
@@ -50,6 +56,7 @@ protected:
 
 private:
 	bool m_allowTransform;
+	bool m_interpolation;
 	drawdance::MessageList m_messages;
 };
 

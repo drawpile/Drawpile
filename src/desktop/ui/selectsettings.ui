@@ -6,11 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
+    <width>425</width>
     <height>300</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QFormLayout">
    <property name="leftMargin">
     <number>3</number>
    </property>
@@ -23,71 +23,146 @@
    <property name="bottomMargin">
     <number>3</number>
    </property>
-   <item>
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+   <item row="0" column="0">
+    <widget class="QLabel" name="interpolationLabel">
+     <property name="text">
+      <string>Interpolation:</string>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <layout class="QVBoxLayout">
-      <item>
-       <widget class="QPushButton" name="flip">
-        <property name="text">
-         <string>Flip Vertically</string>
-        </property>
-        <property name="icon">
-         <iconset theme="object-flip-vertical">
-          <normaloff>theme:object-flip-vertical.svg</normaloff>theme:object-flip-vertical.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="mirror">
-        <property name="text">
-         <string>Flip Horizontally</string>
-        </property>
-        <property name="icon">
-         <iconset theme="object-flip-horizontal">
-          <normaloff>theme:object-flip-horizontal.svg</normaloff>theme:object-flip-horizontal.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="fittoscreen">
-        <property name="text">
-         <string>Shrink to View</string>
-        </property>
-        <property name="icon">
-         <iconset theme="zoom-in">
-          <normaloff>theme:zoom-in.svg</normaloff>theme:zoom-in.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="resetsize">
-        <property name="text">
-         <string>Reset Transform</string>
-        </property>
-        <property name="icon">
-         <iconset theme="zoom-original">
-          <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QFrame" name="transforms">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="interpolationCombo"/>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="radioGroupBox">
+     <property name="title">
+      <string>Transform</string>
      </property>
      <layout class="QVBoxLayout">
+      <item>
+       <layout class="QHBoxLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="mirror">
+          <property name="toolTip">
+           <string>Flip Horizontally</string>
+          </property>
+          <property name="text">
+           <string>Flip Horizontally</string>
+          </property>
+          <property name="icon">
+           <iconset theme="object-flip-horizontal">
+            <normaloff>theme:object-flip-horizontal.svg</normaloff>theme:object-flip-horizontal.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>6</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="flip">
+          <property name="toolTip">
+           <string>Flip Vertically</string>
+          </property>
+          <property name="text">
+           <string>Flip Vertically</string>
+          </property>
+          <property name="icon">
+           <iconset theme="object-flip-vertical">
+            <normaloff>theme:object-flip-vertical.svg</normaloff>theme:object-flip-vertical.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>6</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="fittoscreen">
+          <property name="toolTip">
+           <string>Shrink to View</string>
+          </property>
+          <property name="text">
+           <string>Shrink to View</string>
+          </property>
+          <property name="icon">
+           <iconset theme="zoom-out">
+            <normaloff>theme:zoom-out.svg</normaloff>theme:zoom-out.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>6</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="resetsize">
+          <property name="toolTip">
+           <string>Reset Transform</string>
+          </property>
+          <property name="text">
+           <string>Reset Transform</string>
+          </property>
+          <property name="icon">
+           <iconset theme="zoom-original">
+            <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
       <item>
        <widget class="QRadioButton" name="scale">
         <property name="text">
@@ -115,30 +190,8 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>204</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>flip</tabstop>
-  <tabstop>mirror</tabstop>
-  <tabstop>fittoscreen</tabstop>
-  <tabstop>resetsize</tabstop>
-  <tabstop>scale</tabstop>
-  <tabstop>rotateShear</tabstop>
-  <tabstop>distort</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -152,9 +152,10 @@ public:
 	 * @param buffer vector to put the commands into
 	 * @param contextId user ID for the commands
 	 * @param layer target layer
+	 * @param interpolation how to interpolate, one of DP_MSG_MOVE_REGION_MODE_*
 	 * @return set of commands
 	 */
-	bool pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer) const;
+	bool pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation) const;
 
 	/**
 	 * @brief Generate the commands to fill the selection with solid color

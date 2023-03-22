@@ -13,8 +13,14 @@
 
 namespace tools {
 
+namespace props {
+static const ToolProperties::RangedValue<int> interpolation{
+	QStringLiteral("interpolation"), 1, 0, 1};
+}
+
 SelectionSettings::SelectionSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), m_ui(nullptr)
+	: ToolSettings{ctrl, parent}
+	, m_ui{nullptr}
 {
 }
 
@@ -30,14 +36,39 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_ui = new Ui_SelectionSettings;
 	m_ui->setupUi(uiwidget);
 
-	connect(m_ui->flip, &QAbstractButton::clicked, this, &SelectionSettings::flipSelection);
-	connect(m_ui->mirror, SIGNAL(clicked()), this, SLOT(mirrorSelection()));
-	connect(m_ui->fittoscreen, SIGNAL(clicked()), this, SLOT(fitToScreen()));
-	connect(m_ui->resetsize, SIGNAL(clicked()), this, SLOT(resetSize()));
-	connect(m_ui->scale, SIGNAL(clicked()), this, SLOT(scale()));
-	connect(m_ui->rotateShear, SIGNAL(clicked()), this, SLOT(rotateShear()));
-	connect(m_ui->distort, SIGNAL(clicked()), this, SLOT(distort()));
-	connect(controller(), &ToolController::modelChanged, this, &SelectionSettings::modelChanged);
+	m_ui->interpolationCombo->addItem(
+		tr("Nearest"), DP_MSG_MOVE_REGION_MODE_NEAREST);
+	m_ui->interpolationCombo->addItem(
+		tr("Bilinear"), DP_MSG_MOVE_REGION_MODE_BILINEAR);
+	connect(
+		m_ui->interpolationCombo,
+		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+		&SelectionSettings::pushSettings);
+
+	connect(
+		m_ui->flip, &QAbstractButton::pressed, this,
+		&SelectionSettings::flipSelection);
+	connect(
+		m_ui->mirror, &QAbstractButton::pressed, this,
+		&SelectionSettings::mirrorSelection);
+	connect(
+		m_ui->fittoscreen, &QAbstractButton::pressed, this,
+		&SelectionSettings::fitToScreen);
+	connect(
+		m_ui->resetsize, &QAbstractButton::pressed, this,
+		&SelectionSettings::resetSize);
+	connect(
+		m_ui->scale, &QAbstractButton::pressed, this,
+		&SelectionSettings::scale);
+	connect(
+		m_ui->rotateShear, &QAbstractButton::pressed, this,
+		&SelectionSettings::rotateShear);
+	connect(
+		m_ui->distort, &QAbstractButton::pressed, this,
+		&SelectionSettings::distort);
+	connect(
+		controller(), &ToolController::modelChanged, this,
+		&SelectionSettings::modelChanged);
 
 	setControlsEnabled(false);
 
@@ -46,10 +77,12 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 
 void SelectionSettings::flipSelection()
 {
-	if(!controller()->model())
+	canvas::CanvasModel *model = controller()->model();
+	if(!model) {
 		return;
+	}
 
-	canvas::Selection *sel = controller()->model()->selection();
+	canvas::Selection *sel = model->selection();
 	if(sel) {
 		cutSelection();
 		sel->scale(1, -1);
@@ -58,10 +91,12 @@ void SelectionSettings::flipSelection()
 
 void SelectionSettings::mirrorSelection()
 {
-	if(!controller()->model())
+	canvas::CanvasModel *model = controller()->model();
+	if(!model) {
 		return;
+	}
 
-	canvas::Selection *sel = controller()->model()->selection();
+	canvas::Selection *sel = model->selection();
 	if(sel) {
 		cutSelection();
 		sel->scale(-1, 1);
@@ -71,19 +106,24 @@ void SelectionSettings::mirrorSelection()
 void SelectionSettings::fitToScreen()
 {
 	Q_ASSERT(m_view);
-	if(!controller()->model())
+	canvas::CanvasModel *model = controller()->model();
+	if(!model) {
 		return;
+	}
 
-	canvas::Selection *sel = controller()->model()->selection();
+	canvas::Selection *sel = model->selection();
 	if(sel) {
 		cutSelection();
 		const QSizeF size = sel->shape().boundingRect().size();
-		const QRectF screenRect = m_view->mapToScene(m_view->rect()).boundingRect();
+		const QRectF screenRect =
+			m_view->mapToScene(m_view->rect()).boundingRect();
 		const QSizeF screen = screenRect.size() * 0.7;
 
 		if(size.width() > screen.width() || size.height() > screen.height()) {
 			const QSizeF newsize = size.scaled(screen, Qt::KeepAspectRatio);
-			sel->scale(newsize.width() / size.width(), newsize.height() / size.height());
+			sel->scale(
+				newsize.width() / size.width(),
+				newsize.height() / size.height());
 		}
 
 		if(!sel->boundingRect().intersects(screenRect.toRect())) {
@@ -95,12 +135,15 @@ void SelectionSettings::fitToScreen()
 
 void SelectionSettings::resetSize()
 {
-	if(!controller()->model())
+	canvas::CanvasModel *model = controller()->model();
+	if(!model) {
 		return;
+	}
 
-	canvas::Selection *sel = controller()->model()->selection();
-	if(sel)
+	canvas::Selection *sel = model->selection();
+	if(sel) {
 		sel->resetShape();
+	}
 }
 
 void SelectionSettings::scale()
@@ -118,20 +161,38 @@ void SelectionSettings::distort()
 	updateSelectionMode(canvas::Selection::AdjustmentMode::Distort);
 }
 
-void SelectionSettings::updateSelectionMode(canvas::Selection::AdjustmentMode mode)
+tools::RectangleSelection *SelectionSettings::getRectangleSelectionTool()
 {
-	if(!controller()->model())
-		return;
+	return static_cast<tools::RectangleSelection *>(
+		controller()->getTool(Tool::SELECTION));
+}
 
-	canvas::Selection *sel = controller()->model()->selection();
-	if(sel && sel->adjustmentMode() != mode)
+tools::PolygonSelection *SelectionSettings::getPolygonSelectionTool()
+{
+	return static_cast<tools::PolygonSelection *>(
+		controller()->getTool(Tool::POLYGONSELECTION));
+}
+
+void SelectionSettings::updateSelectionMode(
+	canvas::Selection::AdjustmentMode mode)
+{
+	canvas::CanvasModel *model = controller()->model();
+	if(!model) {
+		return;
+	}
+
+	canvas::Selection *sel = model->selection();
+	if(sel && sel->adjustmentMode() != mode) {
 		sel->setAdjustmentMode(mode);
+	}
 }
 
 void SelectionSettings::modelChanged(canvas::CanvasModel *model)
 {
 	if(model) {
-		connect(model, &canvas::CanvasModel::selectionChanged, this, &SelectionSettings::selectionChanged);
+		connect(
+			model, &canvas::CanvasModel::selectionChanged, this,
+			&SelectionSettings::selectionChanged);
 		selectionChanged(model->selection());
 	}
 }
@@ -140,8 +201,12 @@ void SelectionSettings::selectionChanged(canvas::Selection *selection)
 {
 	setControlsEnabled(selection && selection->isClosed());
 	if(selection) {
-		connect(selection, &canvas::Selection::adjustmentModeChanged, this, &SelectionSettings::selectionAdjustmentModeChanged);
-		connect(selection, &canvas::Selection::closed, this, &SelectionSettings::selectionClosed);
+		connect(
+			selection, &canvas::Selection::adjustmentModeChanged, this,
+			&SelectionSettings::selectionAdjustmentModeChanged);
+		connect(
+			selection, &canvas::Selection::closed, this,
+			&SelectionSettings::selectionClosed);
 		selectionAdjustmentModeChanged(selection->adjustmentMode());
 	}
 }
@@ -153,11 +218,14 @@ void SelectionSettings::selectionClosed()
 
 void SelectionSettings::cutSelection()
 {
-	canvas::Selection *sel = controller()->model()->selection();
-	const int layer = controller()->activeLayer();
-
-	if(sel && sel->pasteImage().isNull() && !controller()->model()->aclState()->isLayerLocked(layer)) {
-		static_cast<tools::SelectionTool*>(controller()->getTool(Tool::SELECTION))->startMove();
+	tools::ToolController *ctrl = controller();
+	canvas::CanvasModel *model = ctrl->model();
+	canvas::Selection *sel = model->selection();
+	int layer = ctrl->activeLayer();
+	bool canCut = sel && sel->pasteImage().isNull() &&
+				  !model->aclState()->isLayerLocked(layer);
+	if(canCut) {
+		getRectangleSelectionTool()->startMove();
 	}
 }
 
@@ -175,7 +243,35 @@ void SelectionSettings::setControlsEnabled(bool enabled)
 	}
 }
 
-void SelectionSettings::selectionAdjustmentModeChanged(canvas::Selection::AdjustmentMode mode)
+ToolProperties SelectionSettings::saveToolSettings()
+{
+	ToolProperties cfg(toolType());
+	cfg.setValue(
+		props::interpolation, m_ui->interpolationCombo->currentData().toInt());
+	return cfg;
+}
+
+void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
+{
+	int interpolation = cfg.value(props::interpolation);
+	for(int i = 0; i < m_ui->interpolationCombo->count(); ++i) {
+		if(m_ui->interpolationCombo->itemData(i).toInt() == interpolation) {
+			m_ui->interpolationCombo->setCurrentIndex(i);
+			break;
+		}
+	}
+	pushSettings();
+}
+
+void SelectionSettings::pushSettings()
+{
+	int interpolation = m_ui->interpolationCombo->currentData().toInt();
+	getRectangleSelectionTool()->setInterpolation(interpolation);
+	getPolygonSelectionTool()->setInterpolation(interpolation);
+}
+
+void SelectionSettings::selectionAdjustmentModeChanged(
+	canvas::Selection::AdjustmentMode mode)
 {
 	switch(mode) {
 	case canvas::Selection::AdjustmentMode::Scale:
@@ -188,10 +284,10 @@ void SelectionSettings::selectionAdjustmentModeChanged(canvas::Selection::Adjust
 		m_ui->distort->setChecked(true);
 		break;
 	default:
-		qWarning("SelectionSettings::selectionAdjustmentModeChanged: unknown adjustment mode");
+		qWarning("SelectionSettings::selectionAdjustmentModeChanged: unknown "
+				 "adjustment mode");
 		break;
 	}
 }
 
 }
-

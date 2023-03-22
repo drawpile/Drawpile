@@ -8,9 +8,13 @@
 
 class Ui_SelectionSettings;
 
-namespace canvas { class CanvasModel; }
+namespace canvas {
+class CanvasModel;
+}
 
-namespace widgets { class CanvasView; }
+namespace widgets {
+class CanvasView;
+}
 
 namespace tools {
 
@@ -23,7 +27,7 @@ namespace tools {
 class SelectionSettings final : public ToolSettings {
 	Q_OBJECT
 public:
-	SelectionSettings(ToolController *ctrl, QObject *parent=nullptr);
+	SelectionSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~SelectionSettings() override;
 
 	QString toolType() const override { return QStringLiteral("selection"); }
@@ -35,12 +39,18 @@ public:
 	 */
 	void setView(widgets::CanvasView *view) { m_view = view; }
 
-	void setForeground(const QColor&) override {}
+	void setForeground(const QColor &) override {}
 
 	int getSize() const override { return 0; }
 	bool getSubpixelMode() const override { return false; }
 
 	void setControlsEnabled(bool enabled);
+
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
+
+public slots:
+	void pushSettings() override;
 
 private slots:
 	void flipSelection();
@@ -59,6 +69,9 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	tools::RectangleSelection *getRectangleSelectionTool();
+	tools::PolygonSelection *getPolygonSelectionTool();
+
 	void updateSelectionMode(canvas::Selection::AdjustmentMode mode);
 	void cutSelection();
 
@@ -69,6 +82,3 @@ private:
 }
 
 #endif
-
-
-

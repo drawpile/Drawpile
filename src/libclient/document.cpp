@@ -10,6 +10,7 @@
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/functionrunnable.h"
@@ -777,7 +778,7 @@ void Document::selectAll()
 void Document::selectNone()
 {
 	if(m_canvas && m_canvas->selection() && m_canvas->selection()->pasteOrMoveToCanvas(
-			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer())) {
+			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(), getSelectionInterpolation())) {
 		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 	}
@@ -823,6 +824,12 @@ void Document::copyFromLayer(int layer)
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
 	QGuiApplication::clipboard()->setMimeData(data);
+}
+
+int Document::getSelectionInterpolation() const
+{
+	return static_cast<tools::SelectionTool *>(
+		m_toolctrl->getTool(tools::Tool::SELECTION))->interpolation();
 }
 
 bool Document::saveSelection(const QString &path)
@@ -881,7 +888,8 @@ void Document::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull() && sel->pasteOrMoveToCanvas(
-			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer())) {
+			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
+			getSelectionInterpolation())) {
 		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 		sel->detachMove();

@@ -526,7 +526,7 @@ static void appendPutImage(drawdance::MessageList &buffer, uint8_t contextId, ui
 	drawdance::Message::makePutImages(buffer, contextId, layer, mode, x, y, image);
 }
 
-bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer) const
+bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation) const
 {
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
@@ -572,7 +572,7 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
 				moveBounds.width(), moveBounds.height(), s[0].x(), s[0].y(),
 				s[1].x(), s[1].y(), s[2].x(), s[2].y(), s[3].x(), s[3].y(),
-				DP_MSG_MOVE_REGION_MODE_BILINEAR, mask);
+				interpolation, mask);
 			if(msg.isNull()) {
 				qWarning("Transform: mask too large");
 				return false;
