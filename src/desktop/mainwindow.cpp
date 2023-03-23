@@ -27,6 +27,7 @@
 #include <QTextEdit>
 #include <QThreadPool>
 #include <QKeySequence>
+#include <QJsonDocument>
 
 #ifdef Q_OS_MACOS
 static constexpr auto CTRL_KEY = Qt::META;
@@ -354,6 +355,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::opCommand, m_doc->client(), &net::Client::sendMessage);
 	connect(m_dockLayers, &docks::LayerList::layerCommands, m_doc->client(), &net::Client::sendMessages);
+
+	connect(m_doc->client(), &net::Client::userInfoRequested, this, &MainWindow::sendUserInfo);
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
@@ -873,6 +876,49 @@ void MainWindow::writeSettings()
 	cfg.endGroup();
 
 	m_dockToolSettings->saveSettings();
+}
+
+void MainWindow::requestUserInfo(int userId)
+{
+	net::Client *client = m_doc->client();
+	QJsonObject info{{"type", "request_user_info"}};
+	client->sendMessage(drawdance::Message::makeUserInfo(
+		client->myId(), userId, QJsonDocument{info}));
+}
+
+void MainWindow::sendUserInfo(int userId)
+{
+	net::Client *client = m_doc->client();
+	QString pressureMode;
+	switch(m_view->pressureMapping().mode) {
+	case PressureMapping::STYLUS:
+		pressureMode = "stylus";
+		break;
+	case PressureMapping::DISTANCE:
+		pressureMode = "distance";
+		break;
+	case PressureMapping::VELOCITY:
+		pressureMode = "velocity";
+		break;
+	default:
+		break;
+	}
+
+	QJsonObject info{
+		{"type", "user_info"},
+		{"app_version", cmake_config::version()},
+		{"protocol_version", DP_PROTOCOL_VERSION},
+		{"qt_version", QT_VERSION_STR},
+		{"os", QSysInfo::prettyProductName()},
+		{"tablet_input", tabletinput::current()},
+		{"tablet_mode", m_view->isTabletEnabled() ? "pressure" : "none"},
+		{"touch_mode", m_view->isTouchDrawEnabled() ? "draw"
+			: m_view->isTouchScrollEnabled() ? "scroll" : "none"},
+		{"pressure_mode", pressureMode},
+		{"smoothing", m_doc->toolCtrl()->smoothing()},
+	};
+	client->sendMessage(drawdance::Message::makeUserInfo(
+		client->myId(), userId, QJsonDocument{info}));
 }
 
 /**
@@ -2338,6 +2384,33 @@ void MainWindow::showLayoutsDialog()
 	dlg->raise();
 }
 
+void MainWindow::showUserInfoDialog(int userId)
+{
+	for(QObject *child : children()) {
+		dialogs::UserInfoDialog *dlg =
+			qobject_cast<dialogs::UserInfoDialog *>(child);
+		if(dlg && dlg->userId() == userId) {
+			dlg->triggerUpdate();
+			dlg->activateWindow();
+			dlg->raise();
+			return;
+		}
+	}
+
+	canvas::User user = m_doc->canvas()->userlist()->getOptionalUserById(userId)
+		.value_or(canvas::User{
+			userId, tr("User #%1").arg(userId), {}, false, false, false, false,
+			false, false, false, false, false});
+	dialogs::UserInfoDialog *dlg = new dialogs::UserInfoDialog{user, this};
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, &dialogs::UserInfoDialog::requestUserInfo, this,
+		&MainWindow::requestUserInfo);
+	connect(m_doc->client(), &net::Client::userInfoReceived, dlg,
+		&dialogs::UserInfoDialog::receiveUserInfo);
+	dlg->triggerUpdate();
+	dlg->show();
+}
+
 
 void MainWindow::changeUndoDepthLimit()
 {
@@ -2872,6 +2945,7 @@ void MainWindow::setupActions()
 
 	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
 
+	connect(m_chatbox, &widgets::ChatBox::requestUserInfo, this, &MainWindow::showUserInfoDialog);
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, toggleChat, &QAction::setChecked);
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton, &QToolButton::hide);
 	connect(m_chatbox, &widgets::ChatBox::expandPlease, toggleChat, &QAction::trigger);

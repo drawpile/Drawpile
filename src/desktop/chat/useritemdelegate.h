@@ -31,6 +31,7 @@ public:
 signals:
 	void opCommand(const drawdance::Message &msg);
 	void requestPrivateChat(int userId);
+	void requestUserInfo(int userId);
 
 private slots:
 	void toggleOpMode(bool op);
@@ -40,6 +41,7 @@ private slots:
 	void kickUser();
 	void banUser();
 	void pmUser();
+	void showUserInfo();
 	void undoByUser();
 	void redoByUser();
 

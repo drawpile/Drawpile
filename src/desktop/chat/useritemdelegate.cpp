@@ -46,6 +46,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 
 	m_userMenu->addSeparator();
 	m_chatAction = m_userMenu->addAction(tr("Private Message"));
+	QAction *infoAction = m_userMenu->addAction(tr("Show User Information"));
 
 	m_opAction->setCheckable(true);
 	m_trustAction->setCheckable(true);
@@ -59,6 +60,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	connect(m_kickAction, &QAction::triggered, this, &UserItemDelegate::kickUser);
 	connect(m_banAction, &QAction::triggered, this, &UserItemDelegate::banUser);
 	connect(m_chatAction, &QAction::triggered, this, &UserItemDelegate::pmUser);
+	connect(infoAction, &QAction::triggered, this, &UserItemDelegate::showUserInfo);
 	connect(m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
 	connect(m_redoAction, &QAction::triggered, this, &UserItemDelegate::redoByUser);
 
@@ -292,6 +294,11 @@ void UserItemDelegate::banUser()
 void UserItemDelegate::pmUser()
 {
 	emit requestPrivateChat(m_menuId);
+}
+
+void UserItemDelegate::showUserInfo()
+{
+	emit requestUserInfo(m_menuId);
 }
 
 void UserItemDelegate::undoByUser()

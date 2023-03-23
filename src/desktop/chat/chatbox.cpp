@@ -58,6 +58,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::opCommand, doc->client(), &net::Client::sendMessage);
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatWidget, &ChatWidget::openPrivateChat);
+	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestUserInfo, this, &ChatBox::requestUserInfo);
 }
 
 void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)

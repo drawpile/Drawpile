@@ -9,6 +9,7 @@
 #include <QSortFilterProxyModel>
 #include <QList>
 #include <QPixmap>
+#include <optional>
 
 class QJsonArray;
 
@@ -89,6 +90,8 @@ public:
 	 * @return
 	 */
 	User getUserById(int id) const;
+
+	std::optional<User> getOptionalUserById(int id) const;
 
 	/**
 	 * @brief Get the name of the user with the given context ID

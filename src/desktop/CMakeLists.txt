@@ -112,6 +112,8 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
+	dialogs/userinfodialog.cpp
+	dialogs/userinfodialog.h
 	dialogs/videoexportdialog.cpp
 	dialogs/videoexportdialog.h
 	docks/brushpalettedock.cpp
@@ -203,6 +205,7 @@ target_sources(drawpile PRIVATE
 	ui/settings.ui
 	ui/tablettest.ui
 	ui/textsettings.ui
+	ui/userinfodialog.ui
 	ui/videoexport.ui
 	utils/actionbuilder.h
 	utils/hidedocktitlebarseventfilter.cpp

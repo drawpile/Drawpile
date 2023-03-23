@@ -5,6 +5,7 @@
 #include "libclient/net/tcpserver.h"
 #include "libclient/net/login.h"
 #include "libclient/net/servercmd.h"
+#include "libshared/util/qtcompat.h"
 
 #ifdef Q_OS_ANDROID
 #	include "libshared/util/androidutils.h"
@@ -179,8 +180,15 @@ void Client::handleMessages(int count, const drawdance::Message *msgs)
 {
 	for(int i = 0; i < count; ++i) {
 		const drawdance::Message &msg = msgs[i];
-		if(msg.type() == DP_MSG_SERVER_COMMAND) {
+		switch(msg.type()) {
+		case DP_MSG_SERVER_COMMAND:
 			handleServerReply(ServerReply::fromMessage(msg));
+			break;
+		case DP_MSG_DATA:
+			handleData(msg);
+			break;
+		default:
+			break;
 		}
 	}
 	emit messagesReceived(count, msgs);
@@ -264,6 +272,46 @@ void Client::handleResetRequest(const ServerReply &msg)
 	} else {
 		qWarning() << "Unknown reset state:" << msg.reply["state"].toString();
 		qWarning() << msg.message;
+	}
+}
+
+void Client::handleData(const drawdance::Message &msg)
+{
+	DP_MsgData *md = msg.toData();
+	if(md && DP_msg_data_recipient(md) == m_myId) {
+		int type = DP_msg_data_type(md);
+		switch(type) {
+		case DP_MSG_DATA_TYPE_USER_INFO:
+			handleUserInfo(msg, md);
+			break;
+		default:
+			qWarning("Unknown data message type %d", type);
+			break;
+		}
+
+	}
+}
+
+void Client::Client::handleUserInfo(const drawdance::Message &msg, DP_MsgData *md)
+{
+	size_t size;
+	const unsigned char *bytes = DP_msg_data_body(md, &size);
+	QJsonParseError err;
+	QJsonDocument json = QJsonDocument::fromJson(QByteArray::fromRawData(
+		reinterpret_cast<const char *>(bytes), compat::castSize(size)), &err);
+	if(json.isObject()) {
+		QJsonObject info = json.object();
+		QString type = info["type"].toString();
+		if(type == "request_user_info") {
+			emit userInfoRequested(msg.contextId());
+		} else if(type == "user_info") {
+			emit userInfoReceived(msg.contextId(), info);
+		} else {
+			qWarning("Unknown user info type '%s'", qUtf8Printable(type));
+		}
+	} else {
+		qWarning("Could not parse JSON as an object: %s",
+			qUtf8Printable(err.errorString()));
 	}
 }
 

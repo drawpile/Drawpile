@@ -15,6 +15,7 @@ struct DP_Message;
 class QByteArray;
 class QColor;
 class QImage;
+class QJsonDocument;
 class QString;
 
 namespace drawdance {
@@ -59,6 +60,7 @@ public:
     static Message makeUndoDepth(uint8_t contextId, uint8_t depth);
     static Message makeUndoPoint(uint8_t contextId);
     static Message makeUserAcl(uint8_t contextId, const QVector<uint8_t> &users);
+    static Message makeUserInfo(uint8_t contextId, uint8_t recipient, const QJsonDocument &msg);
 
     // Fills given message list with put image messages, potentially cropping
     // the image if the given coordinates are negative and splitting it into
@@ -85,6 +87,7 @@ public:
     size_t length() const;
 
     DP_MsgServerCommand *toServerCommand() const;
+    DP_MsgData *toData() const;
 
     bool serialize(QByteArray &buffer) const;
 

@@ -164,6 +164,7 @@ private slots:
 	void clearLocalCanvasBackground();
 
 	void showLayoutsDialog();
+	void showUserInfoDialog(int userId);
 
 	void changeUndoDepthLimit();
 
@@ -215,6 +216,9 @@ private:
 
 	void readSettings(bool windowpos=true);
 	void writeSettings();
+
+	void requestUserInfo(int userId);
+	void sendUserInfo(int userId);
 
 	void createDocks();
 	void setupActions();

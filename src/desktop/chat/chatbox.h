@@ -46,6 +46,9 @@ signals:
 	//! User has written a new message
 	void message(const drawdance::Message &msg);
 
+	//! Request information dialog about this user
+	void requestUserInfo(int userId);
+
 	//! The chatbox was either expanded or collapsed
 	void expandedChanged(bool isExpanded);
 

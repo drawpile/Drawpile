@@ -251,12 +251,17 @@ QVector<uint8_t> UserListModel::trustedList() const
 
 User UserListModel::getUserById(int id) const
 {
-	for(const User &u : m_users)
-		if(u.id == id)
-			return u;
+	return getOptionalUserById(id).value_or(User{});
+}
 
-	// Nothing found
-	return User();
+std::optional<User> UserListModel::getOptionalUserById(int id) const
+{
+	for(const User &u : m_users) {
+		if(u.id == id) {
+			return u;
+		}
+	}
+	return {};
 }
 
 bool UserListModel::isOperator(int userId) const

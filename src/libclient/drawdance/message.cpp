@@ -9,6 +9,7 @@ extern "C" {
 
 #include <QByteArray>
 #include <QImage>
+#include <QJsonDocument>
 #include <QString>
 #include <QtEndian>
 
@@ -220,6 +221,14 @@ Message Message::makeUserAcl(uint8_t contextId, const QVector<uint8_t> &users)
         contextId, setUint8s, users.count(), const_cast<uint8_t *>(users.constData()))};
 }
 
+Message Message::makeUserInfo(uint8_t contextId, uint8_t recipient, const QJsonDocument &msg)
+{
+    QByteArray msgBytes = msg.toJson(QJsonDocument::Compact);
+    return Message{DP_msg_data_new(
+        contextId, DP_MSG_DATA_TYPE_USER_INFO, recipient, setUchars,
+        msgBytes.length(), const_cast<char *>(msgBytes.constData()))};
+}
+
 
 void Message::makePutImages(MessageList &msgs, uint8_t contextId, uint16_t layer, uint8_t mode, int x, int y, const QImage &image)
 {
@@ -303,6 +312,11 @@ size_t Message::length() const
 DP_MsgServerCommand *Message::toServerCommand() const
 {
     return DP_msg_server_command_cast(m_data);
+}
+
+DP_MsgData *Message::toData() const
+{
+    return DP_msg_data_cast(m_data);
 }
 
 bool Message::serialize(QByteArray &buffer) const

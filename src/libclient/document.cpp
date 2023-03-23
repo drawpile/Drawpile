@@ -25,6 +25,7 @@
 #include <QPainter>
 #include <QtEndian>
 #include <QRunnable>
+#include <QSysInfo>
 
 Document::Document(QObject *parent)
 	: QObject(parent),

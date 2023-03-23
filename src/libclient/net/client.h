@@ -11,6 +11,7 @@
 
 class QJsonObject;
 class QJsonArray;
+struct DP_MsgData;
 
 namespace drawdance {
 	class Message;
@@ -187,6 +188,9 @@ signals:
 	void autoresetRequested(int maxSize, bool query);
 	void serverStatusUpdate(int historySize);
 
+	void userInfoRequested(int userId);
+	void userInfoReceived(int userId, const QJsonObject &info);
+
 private slots:
 	void handleMessages(int count, const drawdance::Message *msgs);
 	void handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
@@ -195,6 +199,8 @@ private slots:
 private:
 	void handleServerReply(const ServerReply &msg);
 	void handleResetRequest(const ServerReply &msg);
+	void handleData(const drawdance::Message &msg);
+	void handleUserInfo(const drawdance::Message &msg, DP_MsgData *md);
 
 	Server *m_server = nullptr;
 #ifdef Q_OS_ANDROID

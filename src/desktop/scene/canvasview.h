@@ -43,6 +43,10 @@ public:
 	//! Get the current rotation angle in degrees
 	qreal rotation() const { return m_rotate; }
 
+	bool isTabletEnabled() const { return m_enableTablet; }
+	bool isTouchScrollEnabled() const { return m_enableTouchScroll; }
+	bool isTouchDrawEnabled() const { return m_enableTouchDraw; }
+
 	using QGraphicsView::mapToScene;
 	canvas::Point mapToScene(const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
 	canvas::Point mapToScene(const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
@@ -127,6 +131,7 @@ public slots:
 	//! Send pointer position updates even when not drawing
 	void setPointerTracking(bool tracking);
 
+	const PressureMapping &pressureMapping() const { return m_pressuremapping; }
 	void setPressureMapping(const PressureMapping &mapping);
 
 	//! Increase/decrease zoom factor by this many steps
