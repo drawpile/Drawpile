@@ -869,11 +869,7 @@ void Document::cutLayer()
 {
 	if(m_canvas) {
 		copyFromLayer(m_toolctrl->activeLayer());
-		if(m_canvas->selection() && m_canvas->selection()->isMovedFromCanvas())
-			m_canvas->selection()->setShape(m_canvas->selection()->moveSourceRegion());
-
-		fillArea(Qt::white, DP_BLEND_MODE_ERASE);
-		m_canvas->setSelection(nullptr);
+		clearArea();
 	}
 }
 
@@ -896,7 +892,18 @@ void Document::stamp()
 	}
 }
 
-void Document::fillArea(const QColor &color, DP_BlendMode mode)
+void Document::clearArea()
+{
+	if(m_canvas) {
+		canvas::Selection *sel = m_canvas->selection();
+		if(sel && (sel->isMovedFromCanvas() || !sel->hasPasteImage())) {
+			fillArea(Qt::white, DP_BLEND_MODE_ERASE, sel->isMovedFromCanvas());
+		}
+		m_canvas->setSelection(nullptr);
+	}
+}
+
+void Document::fillArea(const QColor &color, DP_BlendMode mode, bool source)
 {
 	if(!m_canvas) {
 		qWarning("fillArea: no canvas!");
@@ -904,7 +911,7 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode)
 	}
 	if(m_canvas->selection() && !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer())
 			&& m_canvas->selection()->fillCanvas(
-				m_messageBuffer, m_client->myId(), color, mode, m_toolctrl->activeLayer())) {
+				m_messageBuffer, m_client->myId(), color, mode, m_toolctrl->activeLayer(), source)) {
 		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 	}

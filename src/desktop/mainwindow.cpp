@@ -2243,7 +2243,7 @@ void MainWindow::clearOrDelete()
 	}
 
 	// No annotation selected: clear seleted area as usual
-	m_doc->fillArea(Qt::white, DP_BLEND_MODE_ERASE);
+	m_doc->clearArea();
 }
 
 void MainWindow::resizeCanvas()

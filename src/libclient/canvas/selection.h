@@ -103,7 +103,7 @@ public:
 	 *
 	 * Several optimizations can be used when this is true
 	 */
-	bool isAxisAlignedRectangle() const;
+	bool isAxisAlignedRectangle(bool source = false) const;
 
 	//! Forget that the selection buffer came from the canvas (will be treated as a pasted image)
 	void detachMove() { m_moveRegion = QPolygon(); }
@@ -114,9 +114,10 @@ public:
 	//! Get the shape at which the move started
 	QPolygonF moveSourceRegion() const { return m_moveRegion; }
 
-	QRect boundingRect() const { return m_shape.boundingRect().toRect(); }
+	QRect boundingRect(bool source = false) const;
 
-	QImage shapeMask(const QColor &color, QRect *maskBounds) const;
+	QImage shapeMask(
+		const QColor &color, QRect *maskBounds, bool source = false) const;
 
 	//! Set the pasted image
 	void setPasteImage(const QImage &image);
@@ -172,9 +173,12 @@ public:
 	 * @param color fill color
 	 * @param mode blending mode
 	 * @param layer target layer
+	 * @param source fill the move source region, not the current selection
 	 * @return set of commands
 	 */
-	bool fillCanvas(drawdance::MessageList &buffer, uint8_t contextId, const QColor &color, DP_BlendMode mode, int layer) const;
+	bool fillCanvas(
+		drawdance::MessageList &buffer, uint8_t contextId, const QColor &color,
+		DP_BlendMode mode, int layer, bool source = false) const;
 
 	/**
 	 * @brief Get the size of the adjustment handles in pixels at 1:1 zoom level

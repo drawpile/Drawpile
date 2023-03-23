@@ -207,7 +207,8 @@ public slots:
 	void stamp();
 
 	void removeEmptyAnnotations();
-	void fillArea(const QColor &color, DP_BlendMode mode);
+	void clearArea();
+	void fillArea(const QColor &color, DP_BlendMode mode, bool source = false);
 
 	void addServerLogEntry(const QString &log);
 

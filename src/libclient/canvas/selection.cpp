@@ -477,17 +477,23 @@ static bool isAxisAlignedRectangle(const QPolygon &p)
 		);
 }
 
-bool Selection::isAxisAlignedRectangle() const
+bool Selection::isAxisAlignedRectangle(bool source) const
 {
-	if(m_shape.size() != 4)
-		return false;
-
-	return canvas::isAxisAlignedRectangle(m_shape.toPolygon());
+	const QPolygonF &shape = source ? m_moveRegion : m_shape;
+	return shape.size() == 4 && canvas::isAxisAlignedRectangle(shape.toPolygon());
 }
 
-QImage Selection::shapeMask(const QColor &color, QRect *maskBounds) const
+QRect Selection::boundingRect(bool source) const
 {
-	return tools::SelectionTool::shapeMask(color, m_shape, maskBounds);
+	const QPolygonF &shape = source ? m_moveRegion : m_shape;
+	return shape.boundingRect().toRect();
+}
+
+QImage Selection::shapeMask(
+	const QColor &color, QRect *maskBounds, bool source) const
+{
+	const QPolygonF &shape = source ? m_moveRegion : m_shape;
+	return tools::SelectionTool::shapeMask(color, shape, maskBounds);
 }
 
 void Selection::setPasteImage(const QImage &image)
@@ -603,16 +609,19 @@ QPolygon Selection::destinationQuad() const
 	return tools::SelectionTool::destinationQuad(m_pasteImage, m_shape.toPolygon());
 }
 
-bool Selection::fillCanvas(drawdance::MessageList &buffer, uint8_t contextId, const QColor &color, DP_BlendMode mode, int layer) const
+bool Selection::fillCanvas(
+	drawdance::MessageList &buffer, uint8_t contextId, const QColor &color,
+	DP_BlendMode mode, int layer, bool source) const
 {
 	QRect area;
 	QImage mask;
 	QRect maskBounds;
 
-	if(isAxisAlignedRectangle())
-		area = boundingRect();
-	else
-		mask = shapeMask(color, &maskBounds);
+	if(isAxisAlignedRectangle(source)) {
+		area = boundingRect(source);
+	} else {
+		mask = shapeMask(color, &maskBounds, source);
+	}
 
 	if(!area.isEmpty() || !mask.isNull()) {
 		buffer.append(drawdance::Message::makeUndoPoint(contextId));
