@@ -25,14 +25,12 @@ extern "C" {
 namespace canvas {
 
 PaintEngine::PaintEngine(
-		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-		int undoDepthLimit, bool wantCanvasHistoryDump, QObject *parent)
+	int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
+	int undoDepthLimit, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
-	, m_paintEngine{
-		m_acls, m_snapshotQueue, undoDepthLimit, wantCanvasHistoryDump,
-		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this}
+	, m_paintEngine{m_acls, m_snapshotQueue, undoDepthLimit, wantCanvasHistoryDump, PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this}
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_changedTileBounds{}
@@ -92,7 +90,8 @@ void PaintEngine::reset(
 	int undoDepthLimit, uint8_t localUserId,
 	const drawdance::CanvasState &canvasState, DP_Player *player)
 {
-	m_paintEngine.reset(m_acls, m_snapshotQueue, undoDepthLimit, localUserId,
+	m_paintEngine.reset(
+		m_acls, m_snapshotQueue, undoDepthLimit, localUserId,
 		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this, canvasState,
 		player);
 	m_cache = QPixmap{};
@@ -114,9 +113,8 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onTileChanged, &PaintEngine::onLayerPropsChanged,
 		&PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
-		&PaintEngine::onTimelineChanged,
-		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer,
-		&PaintEngine::onUndoDepthLimitSet, this);
+		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
+		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet, this);
 
 	if(m_changedTileBounds.isValid()) {
 		QRect changedArea{
@@ -131,10 +129,10 @@ void PaintEngine::timerEvent(QTimerEvent *)
 int PaintEngine::receiveMessages(
 	bool local, int count, const drawdance::Message *msgs, bool overrideAcls)
 {
-	return DP_paint_engine_handle_inc(m_paintEngine.get(), local, overrideAcls,
-		count, drawdance::Message::asRawMessages(msgs),
-		&PaintEngine::onAclsChanged, &PaintEngine::onLaserTrail,
-		&PaintEngine::onMovePointer, this);
+	return DP_paint_engine_handle_inc(
+		m_paintEngine.get(), local, overrideAcls, count,
+		drawdance::Message::asRawMessages(msgs), &PaintEngine::onAclsChanged,
+		&PaintEngine::onLaserTrail, &PaintEngine::onMovePointer, this);
 }
 
 void PaintEngine::enqueueReset()
@@ -150,8 +148,10 @@ void PaintEngine::enqueueLoadBlank(
 		drawdance::Message::makeInternalReset(0),
 		drawdance::Message::makeUndoDepth(0, undoDepthLimit),
 		drawdance::Message::makeCanvasBackground(0, backgroundColor),
-		drawdance::Message::makeCanvasResize(0, 0, size.width(), size.height(), 0),
-		drawdance::Message::makeLayerCreate(0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
+		drawdance::Message::makeCanvasResize(
+			0, 0, size.width(), size.height(), 0),
+		drawdance::Message::makeLayerCreate(
+			0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
 		drawdance::Message::makeInternalSnapshot(0),
 	};
 	receiveMessages(false, DP_ARRAY_LENGTH(messages), messages);
@@ -159,7 +159,8 @@ void PaintEngine::enqueueLoadBlank(
 
 void PaintEngine::enqueueCatchupProgress(int progress)
 {
-	drawdance::Message msg = drawdance::Message::makeInternalCatchup(0, progress);
+	drawdance::Message msg =
+		drawdance::Message::makeInternalCatchup(0, progress);
 	receiveMessages(false, 1, &msg);
 }
 
@@ -229,7 +230,8 @@ uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
 	return 0;
 }
 
-drawdance::Annotation PaintEngine::getAnnotationAt(int x, int y, int expand) const
+drawdance::Annotation
+PaintEngine::getAnnotationAt(int x, int y, int expand) const
 {
 	QPoint point{x, y};
 	QMargins margins{expand, expand, expand, expand};
@@ -251,13 +253,15 @@ drawdance::Annotation PaintEngine::getAnnotationAt(int x, int y, int expand) con
 		}
 	}
 
-	return closestIndex == -1 ? drawdance::Annotation::null() : annotations.at(closestIndex);
+	return closestIndex == -1 ? drawdance::Annotation::null()
+							  : annotations.at(closestIndex);
 }
 
 bool PaintEngine::needsOpenRaster() const
 {
 	drawdance::CanvasState cs = viewCanvasState();
-	return cs.backgroundTile().isNull() && cs.layers().count() > 1 && cs.annotations().count() != 0;
+	return cs.backgroundTile().isNull() && cs.layers().count() > 1 &&
+		   cs.annotations().count() != 0;
 }
 
 void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)
@@ -270,7 +274,8 @@ void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 	m_paintEngine.setLayerVisibility(layerId, hidden);
 }
 
-void PaintEngine::setViewMode(DP_ViewMode vm, bool censor, bool enableOnionSkins)
+void PaintEngine::setViewMode(
+	DP_ViewMode vm, bool censor, bool enableOnionSkins)
 {
 	m_paintEngine.setViewMode(vm);
 	m_paintEngine.setRevealCensored(!censor);
@@ -330,13 +335,15 @@ void PaintEngine::setInspectContextId(unsigned int contextId)
 
 QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 {
-	drawdance::LayerContent lc = layerId == 0
-		? m_paintEngine.renderContent()
-		: viewCanvasState().searchLayerContent(layerId);
+	drawdance::LayerContent lc =
+		layerId == 0 ? m_paintEngine.renderContent()
+					 : viewCanvasState().searchLayerContent(layerId);
 	if(lc.isNull()) {
 		return Qt::transparent;
 	} else {
-		return lc.sampleColorAt(m_sampleColorStampBuffer, x, y, diameter, m_sampleColorLastDiameter);
+		return lc.sampleColorAt(
+			m_sampleColorStampBuffer, x, y, diameter,
+			m_sampleColorLastDiameter);
 	}
 }
 
@@ -379,7 +386,8 @@ DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position)
 	return result;
 }
 
-bool PaintEngine::buildPlaybackIndex(drawdance::PaintEngine::BuildIndexProgressFn progressFn)
+bool PaintEngine::buildPlaybackIndex(
+	drawdance::PaintEngine::BuildIndexProgressFn progressFn)
 {
 	return m_paintEngine.buildPlaybackIndex(progressFn);
 }
@@ -391,12 +399,12 @@ bool PaintEngine::loadPlaybackIndex()
 
 unsigned int PaintEngine::playbackIndexMessageCount()
 {
-    return m_paintEngine.playbackIndexMessageCount();
+	return m_paintEngine.playbackIndexMessageCount();
 }
 
 size_t PaintEngine::playbackIndexEntryCount()
 {
-    return m_paintEngine.playbackIndexEntryCount();
+	return m_paintEngine.playbackIndexEntryCount();
 }
 
 QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
@@ -415,7 +423,8 @@ DP_PlayerResult PaintEngine::stepDumpPlayback()
 DP_PlayerResult PaintEngine::jumpDumpPlaybackToPreviousReset()
 {
 	drawdance::MessageList msgs;
-	DP_PlayerResult result = m_paintEngine.jumpDumpPlaybackToPreviousReset(msgs);
+	DP_PlayerResult result =
+		m_paintEngine.jumpDumpPlaybackToPreviousReset(msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
 }
@@ -441,7 +450,8 @@ bool PaintEngine::closePlayback()
 	return m_paintEngine.closePlayback();
 }
 
-void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mask)
+void PaintEngine::previewCut(
+	int layerId, const QRect &bounds, const QImage &mask)
 {
 	m_paintEngine.previewCut(layerId, bounds, mask);
 }
@@ -477,8 +487,12 @@ void PaintEngine::clearDabsPreview()
 const QPixmap &PaintEngine::getPixmapView(const QRect &refreshArea)
 {
 	QRect refreshAreaTileBounds{
-		QPoint{refreshArea.left() / DP_TILE_SIZE, refreshArea.top() / DP_TILE_SIZE},
-		QPoint{refreshArea.right() / DP_TILE_SIZE, refreshArea.bottom() / DP_TILE_SIZE}};
+		QPoint{
+			refreshArea.left() / DP_TILE_SIZE,
+			refreshArea.top() / DP_TILE_SIZE},
+		QPoint{
+			refreshArea.right() / DP_TILE_SIZE,
+			refreshArea.bottom() / DP_TILE_SIZE}};
 	if(refreshAreaTileBounds == m_lastRefreshAreaTileBounds) {
 		if(m_lastRefreshAreaTileBoundsTouched) {
 			renderTileBounds(refreshAreaTileBounds);
@@ -532,7 +546,7 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 {
 	drawdance::CanvasState cs = viewCanvasState();
 	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
-	if (area.isEmpty()) {
+	if(area.isEmpty()) {
 		return QImage{};
 	}
 
@@ -548,7 +562,7 @@ QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 {
 	drawdance::CanvasState cs = viewCanvasState();
 	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
-	if (area.isEmpty()) {
+	if(area.isEmpty()) {
 		return QImage{};
 	}
 	DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs.get(), index);
@@ -562,10 +576,12 @@ void PaintEngine::onPlayback(void *user, long long position, int interval)
 	emit pe->playbackAt(position, interval);
 }
 
-void PaintEngine::onDumpPlayback(void *user, long long position, DP_CanvasHistorySnapshot *chs)
+void PaintEngine::onDumpPlayback(
+	void *user, long long position, DP_CanvasHistorySnapshot *chs)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->dumpPlaybackAt(position, drawdance::CanvasHistorySnapshot::inc(chs));
+	emit pe->dumpPlaybackAt(
+		position, drawdance::CanvasHistorySnapshot::inc(chs));
 }
 
 void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)
@@ -574,13 +590,15 @@ void PaintEngine::onAclsChanged(void *user, int aclChangeFlags)
 	emit pe->aclsChanged(pe->m_acls, aclChangeFlags, false);
 }
 
-void PaintEngine::onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color)
+void PaintEngine::onLaserTrail(
+	void *user, unsigned int contextId, int persistence, uint32_t color)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->laserTrail(contextId, persistence, color);
 }
 
-void PaintEngine::onMovePointer(void *user, unsigned int contextId, int x, int y)
+void PaintEngine::onMovePointer(
+	void *user, unsigned int contextId, int x, int y)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->cursorMoved(contextId, 0, x, y);
@@ -611,7 +629,8 @@ void PaintEngine::onRecorderStateChanged(void *user, bool started)
 	emit pe->recorderStateChanged(started);
 }
 
-void PaintEngine::onResized(void *user, int offsetX, int offsetY, int prevWidth, int prevHeight)
+void PaintEngine::onResized(
+	void *user, int offsetX, int offsetY, int prevWidth, int prevHeight)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	pe->resized(offsetX, offsetY, QSize{prevWidth, prevHeight});
@@ -621,7 +640,8 @@ void PaintEngine::onTileChanged(void *user, int x, int y)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	pe->m_changedTileBounds |= QRect{x, y, 1, 1};
-	if(!pe->m_lastRefreshAreaTileBoundsTouched && pe->m_lastRefreshAreaTileBounds.contains(x, y)) {
+	if(!pe->m_lastRefreshAreaTileBoundsTouched &&
+	   pe->m_lastRefreshAreaTileBounds.contains(x, y)) {
 		pe->m_lastRefreshAreaTileBoundsTouched = true;
 	}
 }
@@ -650,7 +670,8 @@ void PaintEngine::onTimelineChanged(void *user, DP_Timeline *tl)
 	emit pe->timelineChanged(drawdance::Timeline::inc(tl));
 }
 
-void PaintEngine::onCursorMoved(void *user, unsigned int contextId, int layerId, int x, int y)
+void PaintEngine::onCursorMoved(
+	void *user, unsigned int contextId, int layerId, int x, int y)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->cursorMoved(contextId, layerId, x, y);
@@ -665,7 +686,8 @@ void PaintEngine::onRenderSize(void *user, int width, int height)
 	}
 }
 
-void PaintEngine::onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int threadIndex)
+void PaintEngine::onRenderTile(
+	void *user, int x, int y, DP_Pixel8 *pixels, int threadIndex)
 {
 	// My initial idea was to use an array of QPainters to spew pixels into the
 	// pixmap in parallel, but Qt doesn't support multiple painters on a single
