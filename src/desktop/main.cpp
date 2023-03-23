@@ -226,14 +226,6 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 	}
 }
 
-QString DrawpileApp::greeting()
-{
-	return QStringLiteral("is using Drawpile %1 on Qt " QT_VERSION_STR " (%2) with %3.")
-		.arg(cmake_config::version())
-		.arg(QSysInfo::prettyProductName())
-		.arg(tabletinput::current());
-}
-
 static void initTranslations(DrawpileApp &app, const QLocale &locale)
 {
 	const auto preferredLangs = locale.uiLanguages();

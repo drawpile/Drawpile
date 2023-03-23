@@ -48,8 +48,6 @@ public:
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 
-	QString greeting();
-
 signals:
 	void settingsChanged();
 	void eraserNear(bool near);

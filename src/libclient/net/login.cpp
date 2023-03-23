@@ -43,11 +43,10 @@ QFileInfo getCertFile(CertLocation location, const QString &hostname)
 
 namespace net {
 
-LoginHandler::LoginHandler(Mode mode, const QUrl &url, const QString &greeting, QObject *parent)
+LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	: QObject(parent),
 	  m_mode(mode),
 	  m_address(url),
-	  m_greeting(greeting),
 	  m_state(EXPECT_HELLO),
 	  m_multisession(false),
 	  m_canPersist(false),
@@ -546,9 +545,6 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 				send("init-complete");
 			}
 		}
-
-		m_server->sendMessage(drawdance::Message::makeChat(
-			0, 0, DP_MSG_CHAT_OFLAGS_ACTION, m_greeting));
 
 		// Login phase over: any remaining messages belong to the session
 		return false;

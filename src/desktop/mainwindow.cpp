@@ -1453,7 +1453,6 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	net::LoginHandler *login = new net::LoginHandler(
 		useremote ? net::LoginHandler::Mode::HostRemote : net::LoginHandler::Mode::HostBuiltin,
 		address,
-		static_cast<DrawpileApp *>(qApp)->greeting(),
 		this);
 	login->setUserId(m_doc->canvas()->localUserId());
 	login->setSessionAlias(dlg->getSessionAlias());
@@ -1626,7 +1625,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 	}
 
 	net::LoginHandler *login = new net::LoginHandler(
-			net::LoginHandler::Mode::Join, url, static_cast<DrawpileApp *>(qApp)->greeting(), this);
+			net::LoginHandler::Mode::Join, url, this);
 	auto *dlg = new dialogs::LoginDialog(login, this);
 	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
 	connect(m_doc, &Document::serverLoggedIn, dlg, [dlg,this](bool join) {
