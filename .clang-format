@@ -1,0 +1,21 @@
+---
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: None
+BraceWrapping:
+  AfterFunction: true
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: BeforeComma
+FixNamespaceComments: false
+IndentAccessModifiers: false
+IndentPPDirectives: AfterHash
+IndentWidth: 4
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Right
+SpaceBeforeParens: Never
+TabWidth: 4
+UseCRLF: false
+UseTab: Always
+...
