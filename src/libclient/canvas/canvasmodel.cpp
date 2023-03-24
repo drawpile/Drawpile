@@ -250,20 +250,21 @@ void CanvasModel::onLaserTrail(uint8_t userId, int persistence, uint32_t color)
 	emit laserTrail(userId, qMin(15, persistence) * 1000, QColor::fromRgb(color));
 }
 
-drawdance::MessageList CanvasModel::generateSnapshot() const
+drawdance::MessageList CanvasModel::generateSnapshot(bool includeOnlineInfo) const
 {
 	drawdance::MessageList snapshot;
 	m_paintengine->historyCanvasState().toResetImage(snapshot, 0);
-	amendSnapshotMetadata(snapshot);
+	amendSnapshotMetadata(snapshot, includeOnlineInfo);
 	return snapshot;
 }
 
-void CanvasModel::amendSnapshotMetadata(drawdance::MessageList &snapshot) const
+void CanvasModel::amendSnapshotMetadata(
+	drawdance::MessageList &snapshot, bool includeOnlineInfo) const
 {
 	snapshot.prepend(drawdance::Message::makeUndoDepth(
 		0, m_paintengine->undoDepthLimit()));
 
-	if(!m_pinnedMessage.isEmpty()) {
+	if(includeOnlineInfo && !m_pinnedMessage.isEmpty()) {
 		snapshot.prepend(drawdance::Message::makeChat(
 			m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
 	}
@@ -273,7 +274,8 @@ void CanvasModel::amendSnapshotMetadata(drawdance::MessageList &snapshot) const
 		snapshot.append(drawdance::Message::makeDefaultLayer(0, defaultLayerId));
 	}
 
-	m_paintengine->aclState().toResetImage(snapshot, m_localUserId);
+	m_paintengine->aclState().toResetImage(
+		snapshot, m_localUserId, includeOnlineInfo);
 }
 
 void CanvasModel::pickLayer(int x, int y)

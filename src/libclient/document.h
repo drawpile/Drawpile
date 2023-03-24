@@ -88,7 +88,8 @@ public:
 
 	bool loadBlank(const QSize &size, const QColor &background);
 	DP_LoadResult loadFile(const QString &path);
-	DP_LoadResult loadRecording(const QString &path, bool debugDump);
+	DP_LoadResult loadRecording(
+		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 
 	/**
 	 * @brief Save the canvas content
@@ -100,6 +101,7 @@ public:
 	 * @param errorMessage if not null, error message is stored here
 	 */
 	void saveCanvas(const QString &filename);
+	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
 
@@ -172,6 +174,7 @@ signals:
 
 	void canvasSaveStarted();
 	void canvasSaved(const QString &errorMessage);
+	void templateExported(const QString &errorMessage);
 
 	void justInTimeSnapshotGenerated();
 

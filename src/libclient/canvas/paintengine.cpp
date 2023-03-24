@@ -9,6 +9,7 @@ extern "C" {
 #include <dpmsg/msg_internal.h>
 }
 
+#include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/layercontent.h"
 #include "libclient/drawdance/layerpropslist.h"
@@ -349,7 +350,15 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 
 drawdance::RecordStartResult PaintEngine::startRecording(const QString &path)
 {
-	return m_paintEngine.startRecorder(path);
+	return m_paintEngine.startRecorder(
+		path, "drawpile", cmake_config::version(), "recording");
+}
+
+drawdance::RecordStartResult PaintEngine::exportTemplate(
+	const QString &path, const drawdance::MessageList &snapshot)
+{
+	return m_paintEngine.exportTemplate(
+		path, snapshot, "drawpile", cmake_config::version(), "template");
 }
 
 bool PaintEngine::stopRecording()
@@ -443,6 +452,14 @@ DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position)
 	DP_PlayerResult result = m_paintEngine.jumpDumpPlayback(position, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
+}
+
+bool PaintEngine::flushPlayback()
+{
+	drawdance::MessageList msgs;
+	bool ok = m_paintEngine.flushPlayback(msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return ok;
 }
 
 bool PaintEngine::closePlayback()

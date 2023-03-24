@@ -37,6 +37,7 @@ public:
 	QString saveImageAs(Document *doc) const;
 	QString saveSelectionAs(Document *doc) const;
 	QString getSaveRecordingPath() const;
+	QString getSaveTemplatePath() const;
 	QString getSaveGifPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;

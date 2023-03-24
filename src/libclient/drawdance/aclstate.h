@@ -38,7 +38,7 @@ public:
 
     void eachLayerAcl(EachLayerFn fn) const;
 
-    void toResetImage(MessageList &msgs, uint8_t userId) const;
+    void toResetImage(MessageList &msgs, uint8_t userId, bool includeUsers) const;
 
 private:
     static void onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl);

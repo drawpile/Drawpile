@@ -181,6 +181,8 @@ public:
 	QColor sampleColor(int x, int y, int layerId, int diameter);
 
 	drawdance::RecordStartResult startRecording(const QString &path);
+	drawdance::RecordStartResult exportTemplate(
+		const QString &path, const drawdance::MessageList &snapshot);
 	bool stopRecording();
 	bool isRecording() const;
 
@@ -197,6 +199,7 @@ public:
 	DP_PlayerResult jumpDumpPlaybackToPreviousReset();
 	DP_PlayerResult jumpDumpPlaybackToNextReset();
 	DP_PlayerResult jumpDumpPlayback(long long position);
+	bool flushPlayback();
 	bool closePlayback();
 
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);

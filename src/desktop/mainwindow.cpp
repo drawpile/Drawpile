@@ -266,6 +266,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::canvasChanged, this, &MainWindow::onCanvasChanged);
 	connect(m_doc, &Document::canvasSaveStarted, this, &MainWindow::onCanvasSaveStarted);
 	connect(m_doc, &Document::canvasSaved, this, &MainWindow::onCanvasSaved);
+	connect(m_doc, &Document::templateExported, this, &MainWindow::onTemplateExported);
 	connect(m_doc, &Document::dirtyCanvas, this, &MainWindow::setWindowModified);
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
@@ -1082,9 +1083,10 @@ void MainWindow::open(const QUrl& url)
 		QString file = url.toLocalFile();
 		static constexpr auto opt = QRegularExpression::CaseInsensitiveOption;
 		if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(file).hasMatch()) {
-			DP_LoadResult result = m_doc->loadRecording(file, false);
+			bool isTemplate;
+			DP_LoadResult result = m_doc->loadRecording(file, false, &isTemplate);
 			showLoadResultMessage(result);
-			if(result == DP_LOAD_RESULT_SUCCESS) {
+			if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
 				QFileInfo fileinfo(file);
 				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
 				m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
@@ -1248,6 +1250,23 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 	if(m_exitAfterSave)
 		close();
+}
+
+void MainWindow::exportTemplate()
+{
+	QString filename = FileWrangler{this}.getSaveTemplatePath();
+	if(!filename.isEmpty()) {
+		m_doc->exportTemplate(filename);
+	}
+}
+
+void MainWindow::onTemplateExported(const QString &errorMessage)
+{
+	if(errorMessage.isEmpty()) {
+		m_viewStatusBar->showMessage(tr("Session template saved"), 1000);
+	} else {
+		showErrorMessageWithDetails(tr("Couldn't export session template"), errorMessage);
+	}
 }
 
 void MainWindow::exportGifAnimation()
@@ -2661,6 +2680,7 @@ void MainWindow::setupActions()
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
 	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as");
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
+	QAction *exportTemplate = makeAction("exporttemplate", tr("Session &Template..."));
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
 #ifndef Q_OS_ANDROID
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
@@ -2674,6 +2694,7 @@ void MainWindow::setupActions()
 #endif
 	m_currentdoctools->addAction(save);
 	m_currentdoctools->addAction(saveas);
+	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(savesel);
 	m_currentdoctools->addAction(exportGifAnimation);
 #ifndef Q_OS_ANDROID
@@ -2685,6 +2706,7 @@ void MainWindow::setupActions()
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
 	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
@@ -2720,6 +2742,7 @@ void MainWindow::setupActions()
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(icon::fromTheme("document-export"));
+	exportMenu->addAction(exportTemplate);
 	exportMenu->addAction(exportGifAnimation);
 #ifndef Q_OS_ANDROID
 	exportMenu->addAction(exportAnimationFrames);

@@ -22,7 +22,9 @@ class SnapshotQueue;
 enum RecordStartResult {
 	RECORD_START_SUCCESS,
 	RECORD_START_UNKNOWN_FORMAT,
+	RECORD_START_HEADER_ERROR,
 	RECORD_START_OPEN_ERROR,
+	RECORD_START_RECORDER_ERROR,
 };
 
 class PaintEngine {
@@ -76,7 +78,18 @@ public:
 	Tile localBackgroundTile() const;
 	void setLocalBackgroundTile(const Tile &tile);
 
-	RecordStartResult startRecorder(const QString &path);
+	static RecordStartResult makeRecorderParameters(
+		const QString &path, const QString &writer, const QString &writerVersion,
+		const QString &type, DP_RecorderType &outRecorderType, JSON_Value *&outHeader);
+
+	RecordStartResult startRecorder(
+		const QString &path, const QString &writer,
+		const QString &writerVersion, const QString &type);
+
+	RecordStartResult exportTemplate(
+		const QString &path, const drawdance::MessageList &snapshot,
+		const QString &writer, const QString &writerVersion, const QString &type);
+
 	bool stopRecorder();
 	bool recorderIsRecording() const;
 
@@ -92,6 +105,7 @@ public:
 	DP_PlayerResult jumpDumpPlaybackToPreviousReset(MessageList &outMsgs);
 	DP_PlayerResult jumpDumpPlaybackToNextReset(MessageList &outMsgs);
 	DP_PlayerResult jumpDumpPlayback(long long position, MessageList &outMsgs);
+	bool flushPlayback(MessageList &outMsgs);
 	bool closePlayback();
 
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);

@@ -26,6 +26,7 @@
 #include <QtEndian>
 #include <QRunnable>
 #include <QSysInfo>
+#include <parson.h>
 
 Document::Document(QObject *parent)
 	: QObject(parent),
@@ -172,24 +173,44 @@ DP_LoadResult Document::loadFile(const QString &path)
 	}
 }
 
-DP_LoadResult Document::loadRecording(const QString &path, bool debugDump)
+static bool isSessionTemplate(DP_Player *player)
+{
+	JSON_Object *header = DP_player_header(player);
+	return header && DP_str_equal(json_object_get_string(header, "type"), "template");
+}
+
+DP_LoadResult Document::loadRecording(
+	const QString &path, bool debugDump, bool *outIsTemplate)
 {
 	DP_LoadResult result;
 	DP_Player *player = debugDump
 		? DP_load_debug_dump(path.toUtf8().constData(), &result)
 		: DP_load_recording(path.toUtf8().constData(), &result);
+	bool isTemplate;
 	switch (result) {
 	case DP_LOAD_RESULT_SUCCESS:
 		setAutosave(false);
 		initCanvas();
 		unmarkDirty();
 		m_canvas->loadPlayer(getUndoDepthLimitSetting(), player);
+		// Session templates are played back to the end instantly. They're only
+		// supposed to contain a reset snapshot, so should be very quick.
+		isTemplate = isSessionTemplate(player);
+		if(isTemplate) {
+			m_canvas->paintEngine()->flushPlayback();
+			m_canvas->paintEngine()->closePlayback();
+		}
 		setCurrentFilename(path);
-		return result;
+		break;
 	default:
 		Q_ASSERT(!player);
-		return result;
+		isTemplate = false;
+		break;
 	}
+	if(outIsTemplate){
+		*outIsTemplate = isTemplate;
+	}
+	return result;
 }
 
 void Document::onServerLogin(bool join)
@@ -548,6 +569,34 @@ void Document::saveCanvas()
 	connect(saver, &CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
 	emit canvasSaveStarted();
 	QThreadPool::globalInstance()->start(saver);
+}
+
+void Document::exportTemplate(const QString &path)
+{
+	drawdance::MessageList snapshot = m_canvas->generateSnapshot(false);
+	drawdance::RecordStartResult result = m_canvas->paintEngine()->exportTemplate(path, snapshot);
+	QString errorMessage;
+	switch(result) {
+	case drawdance::RECORD_START_SUCCESS:
+		errorMessage = QString{};
+		break;
+	case drawdance::RECORD_START_UNKNOWN_FORMAT:
+		errorMessage = tr("Unknown format.");
+		break;
+	case drawdance::RECORD_START_HEADER_ERROR:
+		errorMessage = tr("Header error.");
+		break;
+	case drawdance::RECORD_START_OPEN_ERROR:
+		errorMessage = tr("Error opening file.");
+		break;
+	case drawdance::RECORD_START_RECORDER_ERROR:
+		errorMessage = tr("Error starting recorder.");
+		break;
+	default:
+		errorMessage = tr("Unknown error.");
+		break;
+	}
+	emit templateExported(errorMessage);
 }
 
 void Document::onCanvasSaved(const QString &errorMessage)

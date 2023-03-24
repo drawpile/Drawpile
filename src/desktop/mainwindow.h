@@ -122,6 +122,7 @@ private slots:
 	void toggleProfile();
 	void toggleTabletEventLog();
 
+	void exportTemplate();
 	void exportGifAnimation();
 	// On Android, we can only save stuff to individual files that the user
 	// specifies, we're not allowed to spew multiple files into a directory.
@@ -187,6 +188,7 @@ private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onCanvasSaveStarted();
 	void onCanvasSaved(const QString &errorMessage);
+	void onTemplateExported(const QString &errorMessage);
 
 protected:
 	void closeEvent(QCloseEvent *event) override;

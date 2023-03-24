@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 extern "C" {
+#include <dpcommon/output.h>
 #include <dpengine/tile.h>
 }
 
@@ -124,23 +125,80 @@ void PaintEngine::setLocalBackgroundTile(const Tile &tile)
 		m_data, DP_tile_incref_nullable(tile.get()));
 }
 
-RecordStartResult PaintEngine::startRecorder(const QString &path)
+RecordStartResult PaintEngine::makeRecorderParameters(
+	const QString &path, const QString &writer, const QString &writerVersion,
+	const QString &type, DP_RecorderType &outRecorderType, JSON_Value *&outHeader)
 {
-	DP_RecorderType type;
+	DP_RecorderType recorderType;
 	if(path.endsWith(".dprec", Qt::CaseInsensitive)) {
-		type = DP_RECORDER_TYPE_BINARY;
+		recorderType = DP_RECORDER_TYPE_BINARY;
 	} else if(path.endsWith(".dptxt", Qt::CaseInsensitive)) {
-		type = DP_RECORDER_TYPE_TEXT;
+		recorderType = DP_RECORDER_TYPE_TEXT;
 	} else {
 		return RECORD_START_UNKNOWN_FORMAT;
 	}
 
+	JSON_Value *header = DP_recorder_header_new(
+		"writer", qUtf8Printable(writer),
+		"writerversion", qUtf8Printable(writerVersion),
+		"type", qUtf8Printable(type), NULL);
+	if(!header) {
+		return RECORD_START_HEADER_ERROR;
+	}
+
+	outRecorderType = recorderType;
+	outHeader = header;
+	return RECORD_START_SUCCESS;
+}
+
+RecordStartResult PaintEngine::startRecorder(
+	const QString &path, const QString &writer, const QString &writerVersion,
+	const QString &type)
+{
+	DP_RecorderType recorderType;
+	JSON_Value *header;
+	RecordStartResult result = makeRecorderParameters(
+		path, writer, writerVersion, type, recorderType, header);
+	if(result != RECORD_START_SUCCESS) {
+		return result;
+	}
+
 	QByteArray pathBytes = path.toUtf8();
-	if (DP_paint_engine_recorder_start(m_data, type, pathBytes.constData())) {
+	if (DP_paint_engine_recorder_start(m_data, recorderType, header, pathBytes.constData())) {
 		return RECORD_START_SUCCESS;
 	} else {
 		return RECORD_START_OPEN_ERROR;
 	}
+}
+
+RecordStartResult PaintEngine::exportTemplate(
+	const QString &path, const drawdance::MessageList &snapshot,
+	const QString &writer, const QString &writerVersion, const QString &type)
+{
+	DP_RecorderType recorderType;
+	JSON_Value *header;
+	RecordStartResult result = PaintEngine::makeRecorderParameters(
+		path, writer, writerVersion, type, recorderType, header);
+	if(result != drawdance::RECORD_START_SUCCESS) {
+		return result;
+	}
+
+	QByteArray pathBytes = path.toUtf8();
+	DP_Output *output = DP_file_output_save_new_from_path(pathBytes.constData());
+	if(!output) {
+		return RECORD_START_OPEN_ERROR;
+	}
+
+	DP_Recorder *r = DP_recorder_new_inc(recorderType, header, nullptr, nullptr, nullptr, output);
+	if(!r) {
+		return RECORD_START_RECORDER_ERROR;
+	}
+
+	for(const drawdance::Message &msg : snapshot) {
+		DP_recorder_message_push_inc(r, msg.get());
+	}
+	DP_recorder_free_join(r);
+	return RECORD_START_SUCCESS;
 }
 
 bool PaintEngine::stopRecorder()
@@ -236,6 +294,11 @@ DP_PlayerResult PaintEngine::jumpDumpPlaybackToNextReset(MessageList &outMsgs)
 DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position, MessageList &outMsgs)
 {
 	return DP_paint_engine_playback_dump_jump(m_data, position, PaintEngine::pushMessage, &outMsgs);
+}
+
+bool PaintEngine::flushPlayback(MessageList &outMsgs)
+{
+	return DP_paint_engine_playback_flush(m_data, PaintEngine::pushMessage, &outMsgs);
 }
 
 bool PaintEngine::closePlayback()

@@ -97,6 +97,13 @@ QString FileWrangler::getSaveRecordingPath() const
 		utils::FileFormatOption::SaveRecordings);
 }
 
+QString FileWrangler::getSaveTemplatePath() const
+{
+	return showSaveFileDialog(
+		tr("Save Session Template"), LastPath::IMAGE, ".dprec",
+		utils::FileFormatOption::SaveRecordings);
+}
+
 QString FileWrangler::getSaveGifPath() const
 {
 	return showSaveFileDialog(
