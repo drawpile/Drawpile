@@ -33,6 +33,7 @@ private slots:
 	void toggleFloating();
 	void toggleDockable();
 	void updateContextMenuActions();
+	void onFeaturesChanged(QDockWidget::DockWidgetFeatures features);
 	void onDockLocationChanged(Qt::DockWidgetArea area);
 
 private:

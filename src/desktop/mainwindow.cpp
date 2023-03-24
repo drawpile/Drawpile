@@ -3380,8 +3380,7 @@ void MainWindow::setupActions()
 	connect(escapeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
 
-	const QList<QAction *> globalDockActions =
-		{freezeDocks, sideTabDocks, hideDocks, hideDockTitleBars};
+	const QList<QAction *> globalDockActions = {sideTabDocks, hideDocks, hideDockTitleBars};
 	for(QObject *c : children()) {
 		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
 		docks::TitleWidget *titlebar = dw ? qobject_cast<docks::TitleWidget *>(dw->titleBarWidget()) : nullptr;

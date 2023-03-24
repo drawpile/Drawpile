@@ -48,6 +48,7 @@ TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 	connect(m_closeAction, &QAction::triggered, parent, &QDockWidget::close);
 	m_menu->addAction(m_closeAction);
 
+	connect(parent, &QDockWidget::featuresChanged, this, &TitleWidget::onFeaturesChanged);
 	connect(parent, &QDockWidget::dockLocationChanged, this, &TitleWidget::onDockLocationChanged);
 	QMainWindow *mainWindow = qobject_cast<QMainWindow *>(parent->parentWidget());
 	if(mainWindow) {
@@ -116,7 +117,6 @@ void TitleWidget::updateContextMenuActions()
 
 	QDockWidget::DockWidgetFeatures features =
 		parent ? parent->features() : QDockWidget::NoDockWidgetFeatures;
-	m_dockAction->setEnabled(features.testFlag(QDockWidget::DockWidgetMovable));
 	m_closeAction->setEnabled(features.testFlag(QDockWidget::DockWidgetClosable));
 
 	if(parent && parent->isFloating()) {
@@ -128,6 +128,11 @@ void TitleWidget::updateContextMenuActions()
 		m_dockableAction->setEnabled(false);
 		m_dockableAction->setChecked(true);
 	}
+}
+
+void TitleWidget::onFeaturesChanged(QDockWidget::DockWidgetFeatures features)
+{
+	m_button->setVisible(features.testFlag(QDockWidget::DockWidgetMovable));
 }
 
 void TitleWidget::onDockLocationChanged(Qt::DockWidgetArea area)
