@@ -178,13 +178,13 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	root->layout()->addItem(layout);
 
 	// Add the actions to the context menu
-	m_contextMenu->addAction(m_propertiesAction);
-	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_addLayerAction);
 	m_contextMenu->addAction(m_addGroupAction);
 	m_contextMenu->addAction(m_duplicateLayerAction);
 	m_contextMenu->addAction(m_mergeLayerAction);
 	m_contextMenu->addAction(m_deleteLayerAction);
+	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(m_propertiesAction);
 
 	// Action functionality
 	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
