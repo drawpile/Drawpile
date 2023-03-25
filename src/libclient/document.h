@@ -21,6 +21,7 @@
 #define DRAWPILE_DOCUMENT_H
 
 extern "C" {
+#include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
 #include <dpengine/load.h>
 }

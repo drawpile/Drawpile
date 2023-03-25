@@ -11,8 +11,8 @@
 
 #include <QScopedPointer>
 
-#include "kis_int_parse_spin_box.h"
-#include "kis_double_parse_spin_box.h"
+#include "desktop/widgets/kis_int_parse_spin_box.h"
+#include "desktop/widgets/kis_double_parse_spin_box.h"
 
 template <typename SpinBoxTypeTP, typename BaseSpinBoxTypeTP>
 class KisSliderSpinBoxPrivate;

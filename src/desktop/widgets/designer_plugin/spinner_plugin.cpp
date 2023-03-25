@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "../spinner.h"
-#include "spinner_plugin.h"
+#include "desktop/widgets/spinner.h"
+#include "desktop/widgets/designer_plugin/spinner_plugin.h"
 
 SpinnerPlugin::SpinnerPlugin(QObject *parent)
 	: QObject(parent)

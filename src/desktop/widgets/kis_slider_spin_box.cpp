@@ -8,8 +8,8 @@
  * SPDX-License-Identifier: LGPL-2.0-or-later
  */
 
-#include "kis_slider_spin_box_p.h"
-#include "kis_slider_spin_box.h"
+#include "desktop/widgets/kis_slider_spin_box_p.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 
 KisSliderSpinBox::KisSliderSpinBox(QWidget * parent)
     : KisIntParseSpinBox(parent)

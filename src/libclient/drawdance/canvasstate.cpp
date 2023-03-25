@@ -7,11 +7,12 @@ extern "C" {
 #include <dpengine/snapshots.h>
 }
 
-#include "canvasstate.h"
-#include "global.h"
-#include "image.h"
-#include "layergroup.h"
-#include "layerprops.h"
+#include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/global.h"
+#include "libclient/drawdance/image.h"
+#include "libclient/drawdance/layergroup.h"
+#include "libclient/drawdance/layerprops.h"
+
 #include <QObject>
 
 namespace drawdance {

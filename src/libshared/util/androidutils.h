@@ -1,7 +1,17 @@
 #ifndef ANDROIDUTILS_H
 #define ANDROIDUTILS_H
 
+#include "libshared/util/qtcompat.h"
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QJniEnvironment>
+#include <QJniObject>
+#else
+#include <QAndroidJniEnvironment>
 #include <QAndroidJniObject>
+using QJniEnvironment = QAndroidJniEnvironment;
+using QJniObject = QAndroidJniObject;
+#endif
 
 class QString;
 
@@ -18,7 +28,7 @@ public:
 	AndroidWakeLock &operator=(AndroidWakeLock &&) = delete;
 
 private:
-	QAndroidJniObject m_wakeLock;
+	QJniObject m_wakeLock;
 };
 
 class AndroidWifiLock final {
@@ -32,7 +42,7 @@ public:
 	AndroidWifiLock &operator=(AndroidWifiLock &&) = delete;
 
 private:
-	QAndroidJniObject m_wifiLock;
+	QJniObject m_wifiLock;
 };
 
 }

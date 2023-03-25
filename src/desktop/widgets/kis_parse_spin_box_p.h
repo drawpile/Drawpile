@@ -27,8 +27,8 @@
 #include <utility>
 #include <type_traits>
 
-#include "kis_helpers.h"
-#include "kis_num_parser.h"
+#include "desktop/widgets/kis_helpers.h"
+#include "desktop/widgets/kis_num_parser.h"
 
 template <typename SpinBoxTypeTP, typename BaseSpinBoxTypeTP>
 class KisParseSpinBoxPrivate : public QObject

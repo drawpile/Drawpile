@@ -1,7 +1,7 @@
 #ifndef DRAWDANCE_LAYER_PROPS_LIST_H
 #define DRAWDANCE_LAYER_PROPS_LIST_H
 
-#include "layerprops.h"
+#include "libclient/drawdance/layerprops.h"
 
 struct DP_LayerPropsList;
 

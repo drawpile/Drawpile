@@ -5,8 +5,8 @@ extern "C" {
 #include <dpengine/paint_engine.h>
 }
 
-#include "canvasstate.h"
-#include "global.h"
+#include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/global.h"
 #include <QtGlobal>
 #include <functional>
 

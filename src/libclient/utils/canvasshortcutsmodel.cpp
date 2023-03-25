@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "canvasshortcutsmodel.h"
+#include "libclient/utils/canvasshortcutsmodel.h"
 #include <QCoreApplication>
 #include <QKeySequence>
 
@@ -26,8 +26,6 @@ CanvasShortcutsModel::CanvasShortcutsModel(QObject *parent)
 	, m_hasChanges{false}
 {
 }
-
-CanvasShortcutsModel::~CanvasShortcutsModel() {}
 
 void CanvasShortcutsModel::loadShortcuts(QSettings &cfg)
 {

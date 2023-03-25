@@ -29,10 +29,11 @@
 #include <utility>
 #include <type_traits>
 
-#include "kis_num_parser.h"
-#include "kis_helpers.h"
-#include "kis_int_parse_spin_box.h"
-#include "kis_double_parse_spin_box.h"
+#include "desktop/widgets/kis_num_parser.h"
+#include "desktop/widgets/kis_helpers.h"
+#include "desktop/widgets/kis_int_parse_spin_box.h"
+#include "desktop/widgets/kis_double_parse_spin_box.h"
+#include "desktop/utils/qtguicompat.h"
 
 template <typename SpinBoxTypeTP, typename BaseSpinBoxTypeTP>
 class KisSliderSpinBoxPrivate : public QObject

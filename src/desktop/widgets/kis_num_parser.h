@@ -18,10 +18,10 @@
 namespace KisNumericParser {
 
     //! \brief parse an expression to a double.
-    double parseSimpleMathExpr(QString const& expr, bool* noProblem = 0);
+    double parseSimpleMathExpr(QString const& expr, bool* noProblem = nullptr);
 
     //! \brief parse an expression to an int.
-    int parseIntegerMathExpr(QString const& expr, bool* noProblem = 0);
+    int parseIntegerMathExpr(QString const& expr, bool* noProblem = nullptr);
 }
 
 #endif // KIS_NUMPARSER_H

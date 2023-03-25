@@ -63,11 +63,11 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 		drawdance::MessageList msgs;
 		msgs.append(drawdance::Message::makeUndoPoint(contextId));
 		drawdance::Message::makePutImages(msgs, contextId, layerId, m_blendMode, x, y, img);
-		owner.client()->sendMessages(msgs.count(), msgs.constData());
+		m_owner.client()->sendMessages(msgs.count(), msgs.constData());
 	} else if(result == DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED) {
 		// The flood fill failing due to an exceeded size limit is non-obvious.
 		// Show a message to the user to explain the situation.
-		emit owner.toolTip(tr("Size limit exceeded."));
+		emit m_owner.toolTip(tr("Size limit exceeded."));
 	} else {
 		// Other stuff is obvious errors, like trying to fill out of bounds.
 		// Don't show a message in those cases.

@@ -17,7 +17,7 @@
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "layoutsdialog.h"
+#include "desktop/dialogs/layoutsdialog.h"
 #include "ui_layoutsdialog.h"
 #include <QByteArray>
 #include <QInputDialog>

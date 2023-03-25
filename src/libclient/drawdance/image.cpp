@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/image.h>
 }
 
-#include "image.h"
+#include "libclient/drawdance/image.h"
 
 static void cleanupImage(void *user)
 {

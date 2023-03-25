@@ -5,7 +5,7 @@ extern "C" {
 #include <dpmsg/acl.h>
 }
 
-#include "message.h"
+#include "libclient/drawdance/message.h"
 
 #include <functional>
 #include <QtGlobal>

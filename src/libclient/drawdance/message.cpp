@@ -2,7 +2,7 @@ extern "C" {
 #include <dpmsg/msg_internal.h>
 }
 
-#include "message.h"
+#include "libclient/drawdance/message.h"
 
 #include <QByteArray>
 #include <QImage>

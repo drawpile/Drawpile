@@ -1,13 +1,14 @@
-#include "mypaintinput.h"
-#include "brushes/brush.h"
-#include "widgets/kis_curve_widget.h"
-#include "widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/mypaintinput.h"
+#include "libclient/brushes/brush.h"
+#include "desktop/widgets/kis_curve_widget.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <helpers.h> // MIN, MAX, CLAMP
+#include <QtMath>
+#include <QtGlobal>
 
 namespace widgets {
 
@@ -136,10 +137,10 @@ void MyPaintInput::setMyPaintCurve(const brushes::MyPaintCurve &curve)
 				   m_xMin != curve.xMin || m_yMax != curve.yMax ||
 				   m_yMin != curve.yMin || m_box->isChecked() != curve.visible;
 	if(changed) {
-		m_xMax = MIN(curve.xMax, m_xHardMax);
-		m_xMin = MAX(curve.xMin, m_xHardMin);
-		m_yMax = MIN(curve.yMax, m_yHardMax);
-		m_yMin = MAX(curve.yMin, m_yHardMin);
+		m_xMax = qMin(curve.xMax, m_xHardMax);
+		m_xMin = qMax(curve.xMin, m_xHardMin);
+		m_yMax = qMin(curve.yMax, m_yHardMax);
+		m_yMin = qMax(curve.yMin, m_yHardMin);
 		if(curveChanged) {
 			if(!m_curve) {
 				constructCurveWidgets();
@@ -253,7 +254,7 @@ QPointF MyPaintInput::curveToControlPoint(const QPointF &point) const
 	double x = translateCoordinate(point.x(), 0.0, 1.0, m_xMin, m_xMax);
 	double y = translateCoordinate(point.y(), 0.0, 1.0, m_yMin, m_yMax);
 	return QPointF{
-		CLAMP(x, m_xHardMin, m_xHardMax), CLAMP(y, m_yHardMin, m_yHardMax)};
+		qBound(m_xHardMin, x, m_xHardMax), qBound(m_yHardMin, y, m_yHardMax)};
 }
 
 QPointF MyPaintInput::controlPointToCurve(
@@ -261,7 +262,7 @@ QPointF MyPaintInput::controlPointToCurve(
 {
 	double x = translateCoordinate(point.x(), curve.xMin, curve.xMax, 0.0, 1.0);
 	double y = translateCoordinate(point.y(), curve.yMin, curve.yMax, 0.0, 1.0);
-	return QPointF{CLAMP(x, 0.0, 1.0), CLAMP(y, 0.0, 1.0)};
+	return QPointF{qBound(0.0, x, 1.0), qBound(0.0, y, 1.0)};
 }
 
 double MyPaintInput::translateCoordinate(

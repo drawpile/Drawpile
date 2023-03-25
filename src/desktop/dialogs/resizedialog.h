@@ -48,7 +48,7 @@ public:
 	ResizeVector resizeVector() const;
 
 public slots:
-	void done(int r);
+	void done(int r) override;
 
 private slots:
 	void widthChanged(int);

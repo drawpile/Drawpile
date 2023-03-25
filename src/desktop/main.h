@@ -21,7 +21,7 @@
 
 #include <QApplication>
 #include <QMap>
-#include "notifications.h"
+#include "desktop/notifications.h"
 
 class MainWindow;
 class QSoundEffect;
@@ -53,7 +53,7 @@ public:
    };
 
 	DrawpileApp(int & argc, char ** argv );
-	virtual ~DrawpileApp();
+	~DrawpileApp() override;
 
 	void setTheme(int theme);
 	void notifySettingsChanged();
@@ -72,7 +72,7 @@ signals:
 	void setDockTitleBarsHidden(bool hidden);
 
 protected:
-	bool event(QEvent *e);
+	bool event(QEvent *e) override;
 
 private:
 	QMap<notification::Event, QSoundEffect*> m_sounds;

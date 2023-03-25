@@ -3,9 +3,9 @@ extern "C" {
 #include <dpengine/brush_engine.h>
 }
 
-#include "brushengine.h"
-#include "canvasstate.h"
-#include "net/client.h"
+#include "libclient/drawdance/brushengine.h"
+#include "libclient/drawdance/canvasstate.h"
+#include "libclient/net/client.h"
 
 namespace drawdance {
 

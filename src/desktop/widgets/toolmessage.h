@@ -23,12 +23,10 @@
 
 // A tooltip-like message to show messages from drawing tools. For example, the
 // floodfill tool tells the user if the size limit was exceeded through this.
-class ToolMessage : public QLabel {
+class ToolMessage final : public QLabel {
 	Q_OBJECT
 public:
 	static void showText(const QString &text);
-
-	virtual ~ToolMessage();
 
 protected:
 	virtual void timerEvent(QTimerEvent *e) override;

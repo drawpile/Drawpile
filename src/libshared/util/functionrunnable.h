@@ -33,7 +33,7 @@ class FunctionRunnable : public QRunnable
     std::function<void()> m_functionToRun;
 public:
     FunctionRunnable(std::function<void()> functionToRun);
-    void run();
+    void run() override;
 };
 
 }

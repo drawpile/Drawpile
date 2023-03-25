@@ -2,8 +2,8 @@ extern "C" {
 #include <dpengine/layer_content.h>
 }
 
-#include "image.h"
-#include "layercontent.h"
+#include "libclient/drawdance/image.h"
+#include "libclient/drawdance/layercontent.h"
 
 namespace drawdance {
 

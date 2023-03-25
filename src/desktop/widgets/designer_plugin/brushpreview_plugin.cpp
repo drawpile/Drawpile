@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "widgets/brushpreview.h"
-#include "brushpreview_plugin.h"
+#include "desktop/widgets/brushpreview.h"
+#include "desktop/widgets/designer_plugin/brushpreview_plugin.h"
 
 BrushPreviewPlugin::BrushPreviewPlugin(QObject *parent)
 	: QObject(parent)

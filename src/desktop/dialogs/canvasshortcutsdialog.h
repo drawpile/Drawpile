@@ -19,21 +19,21 @@
 #ifndef CANVASSHORTCUTSDIALOG_H
 #define CANVASSHORTCUTSDIALOG_H
 
-#include "canvas/canvasshortcuts.h"
+#include "libclient/canvas/canvasshortcuts.h"
 #include <QDialog>
 
 class CanvasShortcutsModel;
 
 namespace dialogs {
 
-class CanvasShortcutsDialog : public QDialog {
+class CanvasShortcutsDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit CanvasShortcutsDialog(
 		const CanvasShortcuts::Shortcut *s,
 		const CanvasShortcutsModel &canvasShortcuts, QWidget *parent);
 
-	~CanvasShortcutsDialog();
+	~CanvasShortcutsDialog() override;
 
 	CanvasShortcuts::Shortcut shortcut() const;
 

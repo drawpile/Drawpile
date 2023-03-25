@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "../colorbutton.h"
-#include "colorbutton_plugin.h"
+#include "desktop/widgets/colorbutton.h"
+#include "desktop/widgets/designer_plugin/colorbutton_plugin.h"
 
 ColorButtonPlugin::ColorButtonPlugin(QObject *parent)
 	: QObject(parent)

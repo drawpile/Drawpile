@@ -39,6 +39,7 @@
 #include "libshared/util/paths.h"
 #include "libclient/canvas/paintengine.h"
 #include "desktop/notifications.h"
+#include "libshared/qtshims.h"
 
 #include "ui_settings.h"
 

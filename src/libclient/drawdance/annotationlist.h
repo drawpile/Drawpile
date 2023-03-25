@@ -1,7 +1,7 @@
 #ifndef DRAWDANCE_ANNOTATION_LIST_H
 #define DRAWDANCE_ANNOTATION_LIST_H
 
-#include "annotation.h"
+#include "libclient/drawdance/annotation.h"
 
 struct DP_AnnotationList;
 

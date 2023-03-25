@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/annotation_list.h>
 }
 
-#include "annotationlist.h"
+#include "libclient/drawdance/annotationlist.h"
 
 namespace drawdance {
 

@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "widgets/modifierkeys.h"
-#include "modifierkeys_plugin.h"
+#include "desktop/widgets/modifierkeys.h"
+#include "desktop/widgets/designer_plugin/modifierkeys_plugin.h"
 
 ModifierKeysPlugin::ModifierKeysPlugin(QObject *parent)
 	: QObject(parent)

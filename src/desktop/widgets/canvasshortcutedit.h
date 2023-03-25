@@ -29,11 +29,10 @@ class QPushButton;
 
 namespace widgets {
 
-class CanvasShortcutEdit : public QWidget {
+class CanvasShortcutEdit final : public QWidget {
 	Q_OBJECT
 public:
 	explicit CanvasShortcutEdit(QWidget *parent = nullptr);
-	~CanvasShortcutEdit();
 
 	Qt::KeyboardModifiers mods() const;
 	void setMods(Qt::KeyboardModifiers mods);

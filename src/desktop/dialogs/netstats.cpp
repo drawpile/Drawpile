@@ -39,6 +39,11 @@ NetStats::NetStats(QWidget *parent) :
 	setDisconnected();
 }
 
+NetStats::~NetStats()
+{
+	delete _ui;
+}
+
 void NetStats::setRecvBytes(int bytes)
 {
 	_ui->recvLabel->setText(formatKb(bytes));

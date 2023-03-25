@@ -17,15 +17,13 @@
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "toolmessage.h"
+#include "desktop/widgets/toolmessage.h"
 #include <QTimerEvent>
 
 void ToolMessage::showText(const QString &text)
 {
 	new ToolMessage{text};
 }
-
-ToolMessage::~ToolMessage() {}
 
 void ToolMessage::timerEvent(QTimerEvent *e)
 {

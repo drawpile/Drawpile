@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "../resizerwidget.h"
-#include "resizer_plugin.h"
+#include "desktop/widgets/resizerwidget.h"
+#include "desktop/widgets/designer_plugin/resizer_plugin.h"
 
 ResizerPlugin::ResizerPlugin(QObject *parent)
 	: QObject(parent)

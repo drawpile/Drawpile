@@ -282,7 +282,7 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 				break;
 		}
 
-		if(myTranslator->isEmpty())
+		if(translator->isEmpty())
 			delete translator;
 		else
 			qApp->installTranslator(translator);

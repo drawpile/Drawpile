@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include "kis_parse_spin_box_p.h"
+#include "desktop/widgets/kis_parse_spin_box_p.h"
 
-#include "kis_double_parse_spin_box.h"
+#include "desktop/widgets/kis_double_parse_spin_box.h"
 
 KisDoubleParseSpinBox::KisDoubleParseSpinBox(QWidget *parent) :
     QDoubleSpinBox(parent),

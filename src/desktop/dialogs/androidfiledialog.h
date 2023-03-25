@@ -6,14 +6,12 @@
 
 namespace dialogs {
 
-class AndroidFileDialog : public QDialog {
+class AndroidFileDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit AndroidFileDialog(
 		const QString &name, const QStringList &formats,
 		QWidget *parent = nullptr);
-
-	~AndroidFileDialog();
 
 	QString name() const;
 	QString type() const;

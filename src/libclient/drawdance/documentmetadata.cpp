@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/document_metadata.h>
 }
 
-#include "documentmetadata.h"
+#include "libclient/drawdance/documentmetadata.h"
 
 namespace drawdance {
 

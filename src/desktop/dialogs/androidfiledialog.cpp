@@ -1,4 +1,4 @@
-#include "androidfiledialog.h"
+#include "desktop/dialogs/androidfiledialog.h"
 #include <QPushButton>
 
 namespace dialogs {
@@ -21,8 +21,6 @@ AndroidFileDialog::AndroidFileDialog(
 	connect(m_ui.buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 	updateUi();
 }
-
-AndroidFileDialog::~AndroidFileDialog() {}
 
 QString AndroidFileDialog::name() const
 {

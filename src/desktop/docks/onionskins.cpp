@@ -16,10 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "onionskins.h"
-#include "dialogs/colordialog.h"
-#include "main.h"
-#include "titlewidget.h"
+#include "desktop/docks/onionskins.h"
+#include "desktop/dialogs/colordialog.h"
+#include "desktop/main.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/utils/qtguicompat.h"
 
 #include <QFrame>
 #include <QHBoxLayout>
@@ -50,7 +51,7 @@ constexpr QRgb TINT_BELOW_DEFAULT = 0xffff3333u;
 constexpr QRgb TINT_ABOVE_DEFAULT = 0xff3333ffu;
 constexpr int DEBOUNCE_DELAY_MS = 500;
 
-class EqualizerSlider : public QSlider {
+class EqualizerSlider final : public QSlider {
 public:
 	EqualizerSlider(QWidget *parent)
 		: QSlider{Qt::Vertical, parent}
@@ -58,8 +59,6 @@ public:
 		setRange(0, 100);
 		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	}
-
-	virtual ~EqualizerSlider() {}
 
 protected:
 	void paintEvent(QPaintEvent *e) override

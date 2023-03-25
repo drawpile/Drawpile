@@ -1,4 +1,4 @@
-#include "snapshotqueue.h"
+#include "libclient/drawdance/snapshotqueue.h"
 
 #include <QDateTime>
 

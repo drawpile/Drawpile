@@ -24,7 +24,7 @@ class KisDoubleParseSpinBox : public QDoubleSpinBox
 {
     Q_OBJECT
 public:
-    KisDoubleParseSpinBox(QWidget *parent = 0);
+    KisDoubleParseSpinBox(QWidget *parent = nullptr);
     ~KisDoubleParseSpinBox() override;
 
     /**

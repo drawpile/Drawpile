@@ -33,7 +33,7 @@ extern "C" {
 #include "libclient/canvas/blendmodes.h"
 #include "ui_brushdock.h"
 
-#include <mypaint-brush-settings.h>
+#include <dpengine/libmypaint/mypaint-brush-settings.h>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QMimeData>

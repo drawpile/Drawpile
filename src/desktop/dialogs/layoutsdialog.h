@@ -25,7 +25,7 @@ class QByteArray;
 
 namespace dialogs {
 
-class LayoutsDialog : public QDialog {
+class LayoutsDialog final : public QDialog {
 	Q_OBJECT
 public:
 	struct Layout;
@@ -33,7 +33,7 @@ public:
 	explicit LayoutsDialog(
 		const QByteArray &currentState, QWidget *parent = nullptr);
 
-	~LayoutsDialog();
+	~LayoutsDialog() override;
 
 signals:
 	void applyState(const QByteArray &state);

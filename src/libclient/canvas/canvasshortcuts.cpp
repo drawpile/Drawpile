@@ -17,7 +17,7 @@
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "canvasshortcuts.h"
+#include "libclient/canvas/canvasshortcuts.h"
 #include <QSettings>
 #include <QWheelEvent>
 

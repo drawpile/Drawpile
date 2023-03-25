@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tool.h"
-#include "toolcontroller.h"
+#include "libclient/tools/tool.h"
+#include "libclient/tools/toolcontroller.h"
 
 namespace tools {
 
@@ -25,7 +25,7 @@ void Tool::setHandlesRightClick(bool handlesRightClick)
 {
 	if(handlesRightClick != m_handlesRightClick) {
 		m_handlesRightClick = handlesRightClick;
-		emit owner.toolCapabilitiesChanged(
+		emit m_owner.toolCapabilitiesChanged(
 			m_allowColorPick, m_allowToolAdjust, m_handlesRightClick);
 	}
 }

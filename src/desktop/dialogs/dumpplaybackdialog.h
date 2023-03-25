@@ -31,16 +31,16 @@ class CanvasHistorySnapshot;
 
 namespace dialogs {
 
-class DumpPlaybackDialog : public QDialog {
+class DumpPlaybackDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit DumpPlaybackDialog(
 		canvas::CanvasModel *canvas, QWidget *parent = nullptr);
 
-	~DumpPlaybackDialog();
+	~DumpPlaybackDialog() override;
 
 protected:
-	void closeEvent(QCloseEvent *);
+	void closeEvent(QCloseEvent *) override;
 
 private slots:
 	void onDumpPlaybackAt(

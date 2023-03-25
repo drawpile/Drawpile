@@ -196,12 +196,12 @@
   <customwidget>
    <class>KisSliderSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>widgets/kis_slider_spin_box.h</header>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
   </customwidget>
   <customwidget>
    <class>KisDoubleSliderSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>widgets/kis_slider_spin_box.h</header>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

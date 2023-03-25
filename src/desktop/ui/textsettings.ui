@@ -299,7 +299,7 @@
   <customwidget>
    <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
-   <header>widgets/groupedtoolbutton.h</header>
+   <header>desktop/widgets/groupedtoolbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

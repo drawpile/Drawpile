@@ -17,16 +17,16 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "collection.h"
-#include "colorbutton_plugin.h"
-#include "brushpreview_plugin.h"
-#include "groupedtoolbutton_plugin.h"
-#include "filmstrip_plugin.h"
-#include "resizer_plugin.h"
-#include "tablettester_plugin.h"
-#include "spinner_plugin.h"
-#include "presetselector_plugin.h"
-#include "modifierkeys_plugin.h"
+#include "desktop/widgets/designer_plugin/collection.h"
+#include "desktop/widgets/designer_plugin/colorbutton_plugin.h"
+#include "desktop/widgets/designer_plugin/brushpreview_plugin.h"
+#include "desktop/widgets/designer_plugin/groupedtoolbutton_plugin.h"
+#include "desktop/widgets/designer_plugin/filmstrip_plugin.h"
+#include "desktop/widgets/designer_plugin/resizer_plugin.h"
+#include "desktop/widgets/designer_plugin/tablettester_plugin.h"
+#include "desktop/widgets/designer_plugin/spinner_plugin.h"
+#include "desktop/widgets/designer_plugin/presetselector_plugin.h"
+#include "desktop/widgets/designer_plugin/modifierkeys_plugin.h"
 
 DrawpileWidgetCollection::DrawpileWidgetCollection(QObject *parent) :
 	QObject(parent)

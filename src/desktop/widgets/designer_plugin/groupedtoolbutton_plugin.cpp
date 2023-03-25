@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "../groupedtoolbutton.h"
-#include "groupedtoolbutton_plugin.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/designer_plugin/groupedtoolbutton_plugin.h"
 
 GroupedToolButtonPlugin::GroupedToolButtonPlugin(QObject *parent)
 	: QObject(parent)

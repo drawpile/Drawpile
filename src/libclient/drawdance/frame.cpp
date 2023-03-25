@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/frame.h>
 }
 
-#include "frame.h"
+#include "libclient/drawdance/frame.h"
 
 namespace drawdance {
 

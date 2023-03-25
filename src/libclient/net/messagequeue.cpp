@@ -18,6 +18,7 @@
 */
 
 #include "libclient/net/messagequeue.h"
+#include "libshared/qtshims.h"
 
 #include <QtEndian>
 #include <QTcpSocket>

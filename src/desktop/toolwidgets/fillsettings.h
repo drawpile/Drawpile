@@ -56,8 +56,14 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	enum Mode {
+		Normal,
+		Behind,
+		Erase,
+	};
+
 	Ui_FillSettings * m_ui;
-	int m_previousMode = 0;
+	Mode m_previousMode = Normal;
 	qreal m_quickAdjust1 = 0.0;
 };
 

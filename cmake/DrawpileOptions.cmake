@@ -2,6 +2,7 @@ include(CMakeDependentOption)
 
 option(CLIENT "Compile client" ON)
 add_feature_info("Drawpile client (CLIENT)" CLIENT "")
+
 option(BUILD_LABEL "A custom label to add to the version")
 
 option(UPDATE_TRANSLATIONS "Update translation files from source")
@@ -34,3 +35,6 @@ add_feature_info("Unit tests (TESTS)" TESTS "")
 
 option(DIST_BUILD "Build for stand-alone distribution")
 add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
+
+option(ENABLE_VERSION_CHECK "Enable code to check for updates" ON)
+add_feature_info("Automatic update checking code (ENABLE_VERSION_CHECK)" ENABLE_VERSION_CHECK "")

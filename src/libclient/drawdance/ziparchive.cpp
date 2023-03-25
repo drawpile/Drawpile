@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/zip_archive.h>
 }
 
-#include "ziparchive.h"
+#include "libclient/drawdance/ziparchive.h"
 
 namespace drawdance {
 

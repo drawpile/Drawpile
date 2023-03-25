@@ -2,11 +2,11 @@ extern "C" {
 #include <dpengine/tile.h>
 }
 
-#include "paintengine.h"
-#include "aclstate.h"
-#include "image.h"
-#include "snapshotqueue.h"
-#include "../../libshared/util/paths.h"
+#include "libclient/drawdance/paintengine.h"
+#include "libclient/drawdance/aclstate.h"
+#include "libclient/drawdance/image.h"
+#include "libclient/drawdance/snapshotqueue.h"
+#include "libshared/util/paths.h"
 #include <QDateTime>
 
 namespace drawdance {

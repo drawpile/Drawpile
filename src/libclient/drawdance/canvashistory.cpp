@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/canvas_history.h>
 }
 
-#include "canvashistory.h"
+#include "libclient/drawdance/canvashistory.h"
 
 namespace drawdance {
 

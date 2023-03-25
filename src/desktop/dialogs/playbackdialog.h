@@ -50,8 +50,8 @@ signals:
 	void playbackToggled(bool play);
 
 protected:
-	void closeEvent(QCloseEvent *);
-	void keyPressEvent(QKeyEvent *);
+	void closeEvent(QCloseEvent *) override;
+	void keyPressEvent(QKeyEvent *) override;
 
 private slots:
 	void onPlaybackAt(long long pos, int interval);

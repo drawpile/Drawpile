@@ -1,8 +1,8 @@
-#include "brushsettingsdialog.h"
-#include "canvas/blendmodes.h"
-#include "utils/icon.h"
-#include "widgets/kis_curve_widget.h"
-#include "widgets/kis_slider_spin_box.h"
+#include "desktop/dialogs/brushsettingsdialog.h"
+#include "libclient/canvas/blendmodes.h"
+#include "libclient/utils/icon.h"
+#include "desktop/widgets/kis_curve_widget.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -16,7 +16,7 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <mypaint-brush-settings.h>
+#include <dpengine/libmypaint/mypaint-brush-settings.h>
 
 namespace dialogs {
 

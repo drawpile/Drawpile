@@ -19,7 +19,7 @@
 #ifndef CANVASSHORTCUTSMODEL_H
 #define CANVASSHORTCUTSMODEL_H
 
-#include "canvas/canvasshortcuts.h"
+#include "libclient/canvas/canvasshortcuts.h"
 #include <QAbstractTableModel>
 #include <QVector>
 
@@ -27,8 +27,6 @@ class CanvasShortcutsModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
 	explicit CanvasShortcutsModel(QObject *parent = nullptr);
-
-	~CanvasShortcutsModel();
 
 	void loadShortcuts(QSettings &cfg);
 	void saveShortcuts(QSettings &cfg);

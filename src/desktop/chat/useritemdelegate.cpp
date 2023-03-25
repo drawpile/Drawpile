@@ -17,6 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "desktop/chat/useritemdelegate.h"
+#include "libclient/canvas/acl.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/message.h"

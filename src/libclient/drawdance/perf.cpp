@@ -1,7 +1,7 @@
 extern "C" {
 #include <dpcommon/output.h>
 }
-#include "perf.h"
+#include "libclient/drawdance/perf.h"
 
 namespace drawdance {
 

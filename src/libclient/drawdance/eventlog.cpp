@@ -1,7 +1,7 @@
 extern "C" {
 #include <dpcommon/output.h>
 }
-#include "eventlog.h"
+#include "libclient/drawdance/eventlog.h"
 #include <QString>
 
 namespace drawdance {

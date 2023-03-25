@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/tile.h>
 }
 
-#include "tile.h"
+#include "libclient/drawdance/tile.h"
 
 namespace drawdance {
 

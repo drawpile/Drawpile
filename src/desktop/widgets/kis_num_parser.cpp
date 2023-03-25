@@ -4,7 +4,7 @@
  *  SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include "kis_num_parser.h"
+#include "desktop/widgets/kis_num_parser.h"
 
 #include <qnumeric.h> // for qIsNaN
 #include <qmath.h>

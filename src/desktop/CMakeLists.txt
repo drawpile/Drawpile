@@ -93,8 +93,6 @@ add_executable(drawpile MACOSX_BUNDLE
 	dialogs/settingsdialog.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
-	dialogs/versioncheckdialog.cpp
-	dialogs/versioncheckdialog.h
 	dialogs/videoexportdialog.cpp
 	dialogs/videoexportdialog.h
 	docks/brushpalettedock.cpp
@@ -195,7 +193,6 @@ add_executable(drawpile MACOSX_BUNDLE
 	ui/settings.ui
 	ui/tablettest.ui
 	ui/textsettings.ui
-	ui/versioncheck.ui
 	ui/videoexport.ui
 	utils/actionbuilder.h
 	utils/hidedocktitlebarseventfilter.cpp
@@ -304,6 +301,14 @@ target_link_libraries(drawpile
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Multimedia
 )
+
+if(ENABLE_VERSION_CHECK)
+	target_sources(drawpile PRIVATE
+		dialogs/versioncheckdialog.cpp
+		dialogs/versioncheckdialog.h
+		ui/versioncheck.ui
+	)
+endif()
 
 if(KIS_TABLET)
 	target_sources(drawpile PRIVATE

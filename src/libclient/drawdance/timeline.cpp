@@ -2,7 +2,7 @@ extern "C" {
 #include <dpengine/timeline.h>
 }
 
-#include "timeline.h"
+#include "libclient/drawdance/timeline.h"
 
 namespace drawdance {
 

@@ -1,8 +1,8 @@
-#include "filewrangler.h"
-#include "canvas/canvasmodel.h"
-#include "canvas/paintengine.h"
-#include "document.h"
-#include "util/paths.h"
+#include "desktop/filewrangler.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/document.h"
+#include "libshared/util/paths.h"
 #include <QCoreApplication>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -10,7 +10,7 @@
 #include <QRegularExpression>
 #include <QSettings>
 #ifdef Q_OS_ANDROID
-#	include "dialogs/androidfiledialog.h"
+#	include "desktop/dialogs/androidfiledialog.h"
 #endif
 
 
@@ -18,9 +18,6 @@ FileWrangler::FileWrangler(QWidget *parent)
 	: QObject{parent}
 {
 }
-
-FileWrangler::~FileWrangler() {}
-
 
 QString FileWrangler::getOpenPath() const
 {

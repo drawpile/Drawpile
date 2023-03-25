@@ -25,9 +25,6 @@
 #include "ui_fillsettings.h"
 
 static constexpr int SOURCE_MERGED_IMAGE = 1;
-static constexpr int MODE_NORMAL = 0;
-static constexpr int MODE_BEHIND = 1;
-static constexpr int MODE_ERASE = 2;
 
 namespace tools {
 
@@ -78,9 +75,9 @@ void FillSettings::pushSettings()
 	tool->setFeatherRadius(m_ui->feather->value());
 	tool->setSizeLimit(m_ui->sizelimit->value() * m_ui->sizelimit->value() * 10 * 10);
 	tool->setSampleMerged(m_ui->source->currentIndex() == SOURCE_MERGED_IMAGE);
-	int mode = m_ui->mode->currentIndex();
+	const auto mode = static_cast<Mode>(m_ui->mode->currentIndex());
 	tool->setBlendMode(modeIndexToBlendMode(mode));
-	if(mode == MODE_ERASE) {
+	if(mode == Erase) {
 		m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_ERASE);
 	} else {
 		m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
@@ -91,7 +88,7 @@ void FillSettings::pushSettings()
 void FillSettings::toggleEraserMode()
 {
 	int mode = m_ui->mode->currentIndex();
-	m_ui->mode->setCurrentIndex(mode == MODE_ERASE ? m_previousMode : MODE_ERASE);
+	m_ui->mode->setCurrentIndex(mode == Erase ? m_previousMode : Erase);
 }
 
 ToolProperties FillSettings::saveToolSettings()
@@ -128,9 +125,9 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 int FillSettings::modeIndexToBlendMode(int mode)
 {
 	switch(mode) {
-	case MODE_BEHIND:
+	case Behind:
 		return DP_BLEND_MODE_BEHIND;
-	case MODE_ERASE:
+	case Erase:
 		return DP_BLEND_MODE_ERASE;
 	default:
 		return DP_BLEND_MODE_NORMAL;

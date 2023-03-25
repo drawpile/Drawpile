@@ -1,7 +1,7 @@
 #ifndef DRAWDANCE_TIMELINE_H
 #define DRAWDANCE_TIMELINE_H
 
-#include "frame.h"
+#include "libclient/drawdance/frame.h"
 
 struct DP_Timeline;
 

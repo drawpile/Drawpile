@@ -29,11 +29,11 @@ class QSettings;
 namespace docks {
 
 
-class OnionSkinsDock : public QDockWidget {
+class OnionSkinsDock final : public QDockWidget {
 	Q_OBJECT
 public:
 	OnionSkinsDock(const QString &title, QWidget *parent);
-	~OnionSkinsDock();
+	~OnionSkinsDock() override;
 
 	void triggerUpdate();
 

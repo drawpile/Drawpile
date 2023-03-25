@@ -4,13 +4,18 @@ extern "C" {
 #include <dpengine/draw_context.h>
 }
 
-#include "global.h"
+#include "libclient/drawdance/global.h"
 #include <QLoggingCategory>
 
 namespace drawdance {
 
+#ifdef __GNUC__
+#define PRINTF_LIKE [[gnu::format(printf, 5, 0)]]
+#else
+#define PRINTF_LIKE
+#endif
 
-static void logMessage(
+PRINTF_LIKE static void logMessage(
 	void *user, DP_LogLevel level, const char *file, int line, const char *fmt,
 	va_list ap)
 {

@@ -4,9 +4,9 @@ extern "C" {
 #include <dpmsg/blend_mode.h>
 }
 
-#include "brushpreview.h"
-#include "global.h"
-#include "image.h"
+#include "libclient/drawdance/brushpreview.h"
+#include "libclient/drawdance/global.h"
+#include "libclient/drawdance/image.h"
 #include <QPainter>
 
 namespace drawdance {

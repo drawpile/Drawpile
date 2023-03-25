@@ -1,7 +1,7 @@
 #ifndef FILEWRANGLER_H
 #define FILEWRANGLER_H
 
-#include "utils/images.h"
+#include "libclient/utils/images.h"
 #include <QObject>
 #include <QString>
 
@@ -9,7 +9,7 @@ class Document;
 class QSettings;
 class QWidget;
 
-class FileWrangler : public QObject {
+class FileWrangler final : public QObject {
 	Q_OBJECT
 public:
 	enum class LastPath {
@@ -21,7 +21,6 @@ public:
 	};
 
 	FileWrangler(QWidget *parent);
-	~FileWrangler();
 
 	FileWrangler(const FileWrangler &) = delete;
 	FileWrangler(FileWrangler &&) = delete;

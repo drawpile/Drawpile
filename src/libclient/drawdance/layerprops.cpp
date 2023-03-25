@@ -2,8 +2,8 @@ extern "C" {
 #include <dpengine/layer_props.h>
 }
 
-#include "layerprops.h"
-#include "layerpropslist.h"
+#include "libclient/drawdance/layerprops.h"
+#include "libclient/drawdance/layerpropslist.h"
 
 namespace drawdance {
 

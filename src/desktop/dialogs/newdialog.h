@@ -44,7 +44,7 @@ public:
 	void setBackground(const QColor &color);
 
 public slots:
-	void done(int r);
+	void done(int r) override;
 
 signals:
 	void accepted(const QSize &size, const QColor &background);

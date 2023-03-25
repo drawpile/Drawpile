@@ -32,6 +32,6 @@ void update(const QSettings &cfg);
 
 QString current();
 
-};
+}
 
 #endif

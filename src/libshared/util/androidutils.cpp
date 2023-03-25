@@ -1,11 +1,9 @@
-#include "androidutils.h"
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
+#include "libshared/util/androidutils.h"
 #include <QString>
 
 namespace utils {
 
-static bool clearException(QAndroidJniEnvironment &env)
+static bool clearException(QJniEnvironment &env)
 {
 	if(env->ExceptionCheck()) {
 		qWarning("JNI exception occurred");
@@ -17,7 +15,7 @@ static bool clearException(QAndroidJniEnvironment &env)
 	}
 }
 
-static bool checkValid(const char *name, QAndroidJniObject &obj)
+static bool checkValid(const char *name, QJniObject &obj)
 {
 	if(obj.isValid()) {
 		return true;
@@ -27,60 +25,60 @@ static bool checkValid(const char *name, QAndroidJniObject &obj)
 	}
 }
 
-static QAndroidJniObject acquireLock(
+static QJniObject acquireLock(
 	const char *what, const char *type, const QString &tag, const char *service,
 	const char *managerClass, const char *newFn, const char *newFnSignature)
 {
-	QAndroidJniEnvironment env;
-	QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod(
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
 		"org/qtproject/qt5/android/QtNative", "activity",
 		"()Landroid/app/Activity;");
 	if(clearException(env) || !checkValid("activity", activity)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
-	QAndroidJniObject serviceName =
-		QAndroidJniObject::getStaticObjectField<jstring>(
+	QJniObject serviceName =
+		QJniObject::getStaticObjectField<jstring>(
 			"android/content/Context", service);
 	if(clearException(env) || !checkValid("serviceName", serviceName)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
-	QAndroidJniObject manager = activity.callObjectMethod(
+	QJniObject manager = activity.callObjectMethod(
 		"getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;",
 		serviceName.object<jobject>());
 	if(clearException(env) || !checkValid("manager", manager)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
-	jint flags = QAndroidJniObject::getStaticField<jint>(managerClass, type);
+	jint flags = QJniObject::getStaticField<jint>(managerClass, type);
 	if(clearException(env)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
-	QAndroidJniObject tagObj = QAndroidJniObject::fromString(tag);
+	QJniObject tagObj = QJniObject::fromString(tag);
 	if(clearException(env) || !checkValid("tagObject", tagObj)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
-	QAndroidJniObject lock = manager.callObjectMethod(
+	QJniObject lock = manager.callObjectMethod(
 		newFn, newFnSignature, flags, tagObj.object<jstring>());
 	if(clearException(env) || !checkValid("lock", lock)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
 	lock.callMethod<void>("acquire", "()V");
 	if(clearException(env)) {
-		return QAndroidJniObject{};
+		return QJniObject{};
 	}
 
 	qDebug("Acquired %s lock", what);
 	return lock;
 }
 
-static void releaseLock(const char *what, QAndroidJniObject &lock)
+static void releaseLock(const char *what, QJniObject &lock)
 {
-	QAndroidJniEnvironment env;
+	QJniEnvironment env;
 	if(lock.isValid()) {
 		lock.callMethod<void>("release", "()V");
 		if(clearException(env)) {
@@ -92,7 +90,7 @@ static void releaseLock(const char *what, QAndroidJniObject &lock)
 }
 
 
-static QAndroidJniObject acquireWakeLock(const char *type, const QString &tag)
+static QJniObject acquireWakeLock(const char *type, const QString &tag)
 {
 	return acquireLock(
 		"wake", type, tag, "POWER_SERVICE", "android/os/PowerManager",
@@ -100,7 +98,7 @@ static QAndroidJniObject acquireWakeLock(const char *type, const QString &tag)
 		"(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;");
 }
 
-static void releaseWakeLock(QAndroidJniObject &wakeLock)
+static void releaseWakeLock(QJniObject &wakeLock)
 {
 	releaseLock("wake", wakeLock);
 }
@@ -116,7 +114,7 @@ AndroidWakeLock::~AndroidWakeLock()
 }
 
 
-static QAndroidJniObject acquireWifiLock(const char *type, const QString &tag)
+static QJniObject acquireWifiLock(const char *type, const QString &tag)
 {
 	return acquireLock(
 		"wifi", type, tag, "WIFI_SERVICE", "android/net/wifi/WifiManager",
@@ -124,7 +122,7 @@ static QAndroidJniObject acquireWifiLock(const char *type, const QString &tag)
 		"(ILjava/lang/String;)Landroid/net/wifi/WifiManager$WifiLock;");
 }
 
-static void releaseWifiLock(QAndroidJniObject &wifiLock)
+static void releaseWifiLock(QJniObject &wifiLock)
 {
 	releaseLock("wifi", wifiLock);
 }

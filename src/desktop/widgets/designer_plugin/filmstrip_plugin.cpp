@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "../filmstrip.h"
-#include "filmstrip_plugin.h"
+#include "desktop/widgets/filmstrip.h"
+#include "desktop/widgets/designer_plugin/filmstrip_plugin.h"
 
 FilmstripPlugin::FilmstripPlugin(QObject *parent)
 	: QObject(parent)

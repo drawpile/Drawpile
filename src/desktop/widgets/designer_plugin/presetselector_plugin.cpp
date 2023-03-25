@@ -19,8 +19,8 @@
 
 #include <QtPlugin>
 
-#include "../presetselector.h"
-#include "presetselector_plugin.h"
+#include "desktop/widgets/presetselector.h"
+#include "desktop/widgets/designer_plugin/presetselector_plugin.h"
 
 PresetSelectorPlugin::PresetSelectorPlugin(QObject *parent)
 	: QObject(parent)

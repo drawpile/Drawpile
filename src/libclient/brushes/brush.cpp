@@ -24,7 +24,7 @@
 #include "libshared/qtshims.h"
 
 #include <cmath>
-#include <mypaint-brush.h>
+#include <dpengine/libmypaint/mypaint-brush.h>
 #include <QJsonArray>
 #include <QJsonDocument>
 

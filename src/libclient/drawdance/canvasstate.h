@@ -6,13 +6,13 @@ extern "C" {
 #include <dpengine/load.h>
 }
 
-#include "annotationlist.h"
-#include "documentmetadata.h"
-#include "layercontent.h"
-#include "layerlist.h"
-#include "message.h"
-#include "tile.h"
-#include "timeline.h"
+#include "libclient/drawdance/annotationlist.h"
+#include "libclient/drawdance/documentmetadata.h"
+#include "libclient/drawdance/layercontent.h"
+#include "libclient/drawdance/layerlist.h"
+#include "libclient/drawdance/message.h"
+#include "libclient/drawdance/tile.h"
+#include "libclient/drawdance/timeline.h"
 #include <QImage>
 #include <QSize>
 

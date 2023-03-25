@@ -18,6 +18,7 @@
 */
 
 #include "libclient/net/servercmd.h"
+#include "libshared/qtshims.h"
 
 namespace net {
 

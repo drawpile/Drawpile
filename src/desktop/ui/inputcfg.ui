@@ -229,12 +229,12 @@
   <customwidget>
    <class>widgets::GroupedToolButton</class>
    <extends>QToolButton</extends>
-   <header>widgets/groupedtoolbutton.h</header>
+   <header>desktop/widgets/groupedtoolbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KisSliderSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>widgets/kis_slider_spin_box.h</header>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
   </customwidget>
   <customwidget>
    <class>KisCurveWidget</class>
