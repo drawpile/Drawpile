@@ -86,6 +86,13 @@ void TitleWidget::addGlobalDockActions(const QList<QAction *> &actions)
 	m_menu->addActions(actions);
 }
 
+void TitleWidget::setKeepButtonSpace(bool keepButtonSpace)
+{
+	QSizePolicy sizePolicy = m_button->sizePolicy();
+	sizePolicy.setRetainSizeWhenHidden(keepButtonSpace);
+	m_button->setSizePolicy(sizePolicy);
+}
+
 void TitleWidget::toggleFloating()
 {
 	QDockWidget *parent = qobject_cast<QDockWidget *>(parentWidget());

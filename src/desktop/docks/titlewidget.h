@@ -29,6 +29,11 @@ public:
 
 	void addGlobalDockActions(const QList<QAction *> &actions);
 
+	// Make the title bar button on the right always take up space. Useful for
+	// widgets that want to put something in the center and don't want it messed
+	// up by the button disappearing.
+	void setKeepButtonSpace(bool keepButtonSpace);
+
 private slots:
 	void toggleFloating();
 	void toggleDockable();
