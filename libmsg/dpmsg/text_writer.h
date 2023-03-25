@@ -22,7 +22,11 @@
 #ifndef DPMSG_TEXT_WRITER_H
 #define DPMSG_TEXT_WRITER_H
 #include <dpcommon/common.h>
+#ifdef DP_BUNDLED_PARSON
+#include "parson/parson.h"
+#else
 #include <parson.h>
+#endif
 
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;

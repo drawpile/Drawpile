@@ -244,6 +244,14 @@ static void run_send(void *data)
                            NULL);
 
     int sockfd = DP_atomic_get(&tsc->socket);
+    int sendflag = 0;
+#   if defined(SO_NOSIGPIPE)
+        int set = 1;
+        setsockopt(sockfd, SOL_SOCKET, SO_NOSIGPIPE, &set, sizeof(set));
+#   elif defined(MSG_NOSIGNAL)
+        // Use flag NOSIGNAL on send call
+        sendflag = MSG_NOSIGNAL;
+#   endif
     DP_Queue *queue = &tsc->queue;
     DP_Mutex *mutex_queue = tsc->mutex_queue;
     DP_Semaphore *sem_queue = tsc->sem_queue;
@@ -267,7 +275,7 @@ static void run_send(void *data)
         size_t sent = 0;
         do {
             ssize_t result =
-                send(sockfd, buffer + sent, length - sent, MSG_NOSIGNAL);
+                send(sockfd, buffer + sent, length - sent, sendflag);
             if (result >= 0) {
                 sent += (size_t)result;
             }

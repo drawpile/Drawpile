@@ -32,6 +32,9 @@ typedef int DP_ThreadId;
 #elif defined(__ANDROID__)
 typedef long DP_ThreadId;
 #    define DP_THREAD_ID_FMT "ld"
+#elif defined(__EMSCRIPTEN_PTHREADS__)
+typedef void * DP_ThreadId;
+#   define DP_THREAD_ID_FMT "p"
 #else
 typedef unsigned long long DP_ThreadId;
 #    define DP_THREAD_ID_FMT "llu"

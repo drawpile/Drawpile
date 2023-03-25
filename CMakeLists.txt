@@ -1,152 +1,129 @@
-# Copyright (c) 2022 askmeaboutloom
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.18)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13 CACHE STRING "macOS deployment target")
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-project(drawdance
+project(Drawdance
     VERSION 0.3.0
     DESCRIPTION "A Drawpile Client"
     LANGUAGES C CXX)
 
-option(USE_GENERATORS "Do code generation (turn off when cross-compiling)" ON)
-option(USE_ADDRESS_SANITIZER "Build with address sanitizer enabled" ON)
-option(USE_CLANG_TIDY "Run clang-tidy on build" ON)
-option(USE_STRICT_ALIASING "Enable strict aliasing optimizations" OFF)
+include(FeatureSummary)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+if(NOT CMAKE_CROSSCOMPILING)
+    option(USE_GENERATORS "Do code generation" ON)
+    add_feature_info("Code generation (USE_GENERATORS)" USE_GENERATORS "")
+endif()
+
+if(NOT MSVC AND NOT EMSCRIPTEN)
+    # Feature info will be emitted later once it is clear whether or not these
+    # features could actually be enabled
+    option(CLANG_TIDY "Automatically enable Clang-Tidy" ON)
+    option(ADDRESS_SANITIZER "Automatically enable AddressSanitizer" OFF)
+
+    option(USE_STRICT_ALIASING "Enable strict aliasing optimizations" OFF)
+    add_feature_info("Strict aliasing (USE_STRICT_ALIASING)" USE_STRICT_ALIASING "")
+
+    option(ENABLE_ARCH_NATIVE "Optimize for this computer's CPU" OFF)
+    add_feature_info("Non-portable optimizations (ENABLE_ARCH_NATIVE)" ENABLE_ARCH_NATIVE "")
+endif()
+
 option(ENABLE_WERROR "Fail the build when there's warnings" OFF)
-option(ENABLE_ARCH_NATIVE "Optimize for this computer's CPU" OFF)
-option(LINK_WITH_LIBM "Link with libm when using math" ON)
-option(BUILD_TESTS "Build TAP tests" ON)
+add_feature_info("Warning as errors (ENABLE_WERROR)" ENABLE_WERROR "")
+
 option(BUILD_APPS "Build applications (as opposed to only libraries)" ON)
-option(BUILD_TOOLS "Build command-line tools, even if BUILD_APPS is OFF" OFF)
+add_feature_info("Applications (BUILD_APPS)" BUILD_APPS "")
 
-set(IMAGE_IMPL LIBS CACHE STRING "PNG and JPEG implementation (LIBS, QT)")
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+add_feature_info("Shared libraries (BUILD_SHARED_LIBS)" BUILD_SHARED_LIBS "")
 
-set(FILE_IO_IMPL STDIO CACHE STRING "Default file I/O (STDIO, QT)")
+if(EMSCRIPTEN)
+    set(IMAGE_IMPL LIBS)
+    set(FILE_IO_IMPL STDIO)
+else()
+    set(IMAGE_IMPL LIBS CACHE STRING "PNG and JPEG implementation (LIBS, QT)")
+    string(TOUPPER IMAGE_IMPL ${IMAGE_IMPL})
+    add_feature_info("Image library implementation (IMAGE_IMPL)" ON ${IMAGE_IMPL})
 
-set(XML_IMPL QT CACHE STRING "XML reader implementation (QT)")
+    set(FILE_IO_IMPL STDIO CACHE STRING "Default file I/O (STDIO, QT)")
+    string(TOUPPER FILE_IO_IMPL ${FILE_IO_IMPL})
+    add_feature_info("File I/O implementation (FILE_IO_IMPL)" ON ${FILE_IO_IMPL})
 
-set(ZIP_IMPL LIBZIP CACHE STRING "ZIP folder implementation (LIBZIP, KARCHIVE)")
+    option(BUILD_TESTS "Build TAP tests" ON)
+    add_feature_info("TAP tests (BUILD_TESTS)" BUILD_TESTS "")
 
-set(QT_VERSION 5 CACHE STRING "Qt version to use, if pulled in (5, 6)")
+    option(BUILD_TOOLS "Build command-line tools, even if BUILD_APPS is OFF" OFF)
+    add_feature_info("Tools (BUILD_TOOLS)" BUILD_TOOLS "")
 
-if(CMAKE_CROSSCOMPILING)
-    message(STATUS "Cross-compiling for platform '${CMAKE_SYSTEM_NAME}'")
+    set(ZIP_IMPL LIBZIP CACHE STRING "ZIP folder implementation (LIBZIP, KARCHIVE)")
+    string(TOUPPER ZIP_IMPL ${ZIP_IMPL})
+    add_feature_info("ZIP implementation (ZIP_IMPL)" ON ${ZIP_IMPL})
+
+    set(QT_VERSION 5 CACHE STRING "Qt version to use, if pulled in (5, 6)")
+    add_feature_info("Qt version (QT_VERSION)" ON ${QT_VERSION})
 endif()
 
-if(CMAKE_TOOLCHAIN_FILE)
-    message(STATUS "Using toolchain file '${CMAKE_TOOLCHAIN_FILE}'")
-endif()
+string(LENGTH "${PROJECT_SOURCE_DIR}/" project_dir_length)
+add_compile_definitions(
+    "DP_PROJECT_DIR_LENGTH=${project_dir_length}"
+    _XOPEN_SOURCE=600
+    _CRT_SECURE_NO_WARNINGS
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
 
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/address_sanitizer.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_format.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/clang_tidy.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/compile_flags.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/dpconfig.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/language_standards.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/export.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/dependencies.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/tests.cmake")
+include(compile_flags)
+include(helper)
+include(dependencies)
 
-function(set_dp_target_properties target)
-    get_target_property(target_type "${target}" TYPE)
-
-    if(DRAWDANCE_EMSCRIPTEN)
-        if(NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
-            target_compile_options("${target}" PRIVATE "-pthread")
-            target_link_options("${target}" PRIVATE
-                                "-pthread" "SHELL:-s PROXY_TO_PTHREAD"
-                                "SHELL:-s ALLOW_BLOCKING_ON_MAIN_THREAD=0"
-                                "SHELL:-s ALLOW_MEMORY_GROWTH=1" "SHELL:-s FETCH=1"
-                                "SHELL:-s MODULARIZE=1"
-                                "SHELL:-s EXPORT_NAME=createModule"
-                                "SHELL:-s DYNAMIC_EXECUTION=0")
-        endif()
-
-        if("${target_type}" STREQUAL "EXECUTABLE")
-            set_property(TARGET "${target}" PROPERTY SUFFIX ".js")
-        endif()
-    endif()
-
-    if(NOT "NO_EXPORT" IN_LIST ARGN)
-        add_dp_export_target("${target}")
-    endif()
-
-    if(NOT "${target_type}" STREQUAL "INTERFACE_LIBRARY")
-        set_language_standards("${target}")
-        add_address_sanitizer("${target}")
-        target_compile_definitions("${target}" PRIVATE
-            "DP_PERF_REALM=${target}"
-            "_XOPEN_SOURCE=600"
-            "_CRT_SECURE_NO_WARNINGS"
-            "WIN32_LEAN_AND_MEAN"
-            "NOMINMAX")
-
-        if("CXX" IN_LIST ARGN)
-            target_compile_options("${target}" PRIVATE "${dp_cxxflags}")
-        else()
-            target_compile_options("${target}" PRIVATE "${dp_cflags}")
-        endif()
-
-        if(NOT "NO_CLANG_TIDY" IN_LIST ARGN)
-            add_clang_tidy("${target}")
-        endif()
-
-        if(NOT "NO_WARNINGS" IN_LIST ARGN)
-            if("CXX" IN_LIST ARGN)
-                target_compile_options("${target}" PRIVATE "${dp_cxxwarnings}")
-            else()
-                target_compile_options("${target}" PRIVATE "${dp_cwarnings}")
-            endif()
-        endif()
-
-        if(NOT USE_STRICT_ALIASING)
-            target_compile_definitions(
-                "${target}" PRIVATE "DP_NO_STRICT_ALIASING")
-        endif()
-
-        string(LENGTH "${PROJECT_SOURCE_DIR}/" project_dir_length)
-        target_compile_definitions(
-            "${target}" PRIVATE "DP_PROJECT_DIR_LENGTH=${project_dir_length}")
-    endif()
-endfunction()
+configure_file(cmake/dpconfig.h.in "${CMAKE_BINARY_DIR}/config/dpconfig.h")
 
 if(BUILD_TESTS)
+    include(tests)
     add_subdirectory(test)
 endif()
+
 add_subdirectory(3rdparty)
 add_subdirectory(generators)
 add_subdirectory(libcommon)
 add_subdirectory(libmsg)
 add_subdirectory(libengine)
+
 if(BUILD_APPS)
     add_subdirectory(libclient)
-    add_subdirectory(appconv)
     add_subdirectory(appdrawdance)
-elseif(BUILD_TOOLS)
+endif()
+
+if(BUILD_TOOLS)
     add_subdirectory(appconv)
 endif()
-define_clang_format_target()
 
-report_address_sanitizer_targets()
-report_clang_tidy_targets()
-report_dp_export_targets()
-report_dptest_targets()
+write_basic_package_version_file(
+    DrawdanceVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
 
-export_dp_export_targets()
+get_property(CONFIG_DEPS GLOBAL PROPERTY dp_dependencies)
+list(JOIN CONFIG_DEPS "\n" CONFIG_DEPS)
+get_property(CONFIG_COMPONENTS GLOBAL PROPERTY dp_components)
+configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+)
+
+feature_summary(INCLUDE_QUIET_PACKAGES
+    WHAT PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
+
+if(BUILD_TESTS)
+    report_dptest_targets()
+endif()

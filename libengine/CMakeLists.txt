@@ -1,24 +1,7 @@
-# Copyright (c) 2022 askmeaboutloom
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# SPDX-License-Identifier: MIT
 
-set(dpengine_sources
+dp_add_library(dpengine)
+dp_target_sources(dpengine
     dpengine/affected_area.c
     dpengine/annotation.c
     dpengine/annotation_list.c
@@ -35,6 +18,7 @@ set(dpengine_sources
     dpengine/flood_fill.c
     dpengine/frame.c
     dpengine/image.c
+    dpengine/image_base.c
     dpengine/image_transform.c
     dpengine/layer_content.c
     dpengine/layer_group.c
@@ -42,7 +26,6 @@ set(dpengine_sources
     dpengine/layer_props.c
     dpengine/layer_props_list.c
     dpengine/layer_routes.c
-    dpengine/load.c
     dpengine/model_changes.c
     dpengine/ops.c
     dpengine/paint.c
@@ -50,14 +33,11 @@ set(dpengine_sources
     dpengine/pixels.c
     dpengine/player.c
     dpengine/recorder.c
-    dpengine/save.c
     dpengine/snapshots.c
     dpengine/tile.c
     dpengine/tile_iterator.c
     dpengine/timeline.c
-    dpengine/view_mode.c)
-
-set(dpengine_headers
+    dpengine/view_mode.c
     dpengine/affected_area.h
     dpengine/annotation.h
     dpengine/annotation_list.h
@@ -83,7 +63,6 @@ set(dpengine_headers
     dpengine/layer_props.h
     dpengine/layer_props_list.h
     dpengine/layer_routes.h
-    dpengine/load.h
     dpengine/model_changes.h
     dpengine/ops.h
     dpengine/paint.h
@@ -91,91 +70,115 @@ set(dpengine_headers
     dpengine/pixels.h
     dpengine/player.h
     dpengine/recorder.h
-    dpengine/save.h
     dpengine/snapshots.h
     dpengine/tile.h
     dpengine/tile_iterator.h
     dpengine/timeline.h
     dpengine/view_mode.h
-    dpengine/xml_stream.h
-    dpengine/zip_archive.h)
+)
 
-set(dptest_engine_sources test/dptest/dptest_engine.c)
-set(dptest_engine_headers test/dptest/dptest_engine.h)
+target_include_directories(dpengine
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/config>
+)
+target_link_libraries(dpengine PRIVATE
+    $<BUILD_INTERFACE:mypaint>
+    $<BUILD_INTERFACE:uthash>
+    $<BUILD_INTERFACE:qgrayraster>
+    $<BUILD_INTERFACE:jo_gifx>
+    $<BUILD_INTERFACE:parson>
+    dpmsg
+    dpcommon
+)
 
-set(dpengine_tests
-    test/handle_annotations.c
-    test/handle_layers.c
-    test/handle_metadata.c
-    test/handle_timeline.c
-    test/image_thumbnail.c
-    test/model_changes.c
-    test/read_write_image.c
-    test/render_recording.c
-    test/resize_image.c)
+# Qt is too heavy a dependency just for an XML parser, libzip has to be compiled
+# manually out-of-tree, both of them are not used by the web app now anyway, so
+# just exclude them from emscripten builds
+if(NOT EMSCRIPTEN)
+    dp_target_sources(dpengine
+        dpengine/load.c
+        dpengine/load.h
+        dpengine/save.c
+        dpengine/save.h
+        dpengine/xml_stream.h
+        dpengine/xml_stream_qt.cpp
+        dpengine/zip_archive.h
+    )
+    target_link_libraries(dpengine PRIVATE
+        "Qt${QT_VERSION}::Xml"
+    )
 
-set(dpengine_clang_format_files "${dpengine_sources}" "${dpengine_headers}"
-                                "${dptest_engine_sources}"
-                                "${dptest_engine_headers}" "${dpengine_tests}"
-                                dpengine/image_base.c dpengine/image_jpeg.c
-                                dpengine/image_png.c dpengine/image_qt.cpp
-                                dpengine/xml_stream_qt.cpp
-                                dpengine/zip_archive_karchive.cpp
-                                dpengine/zip_archive_libzip.c
-                                test/resize_image.h)
-
-add_clang_format_files("${dpengine_clang_format_files}")
-
-if("${XML_IMPL}" STREQUAL "QT")
-    add_library(dpengine_xml STATIC dpengine/xml_stream_qt.cpp)
-    set_dp_target_properties(dpengine_xml CXX)
-    target_link_libraries(dpengine_xml PUBLIC dpcommon "Qt${QT_VERSION}::Xml")
-else()
-    message(SEND_ERROR "Unknown XML_IMPL value '${XML_IMPL}'")
+    if(ZIP_IMPL STREQUAL "LIBZIP")
+        target_sources(dpengine PRIVATE dpengine/zip_archive_libzip.c)
+        target_link_libraries(dpengine PRIVATE libzip::zip)
+    elseif(ZIP_IMPL STREQUAL "KARCHIVE")
+        target_sources(dpengine PRIVATE dpengine/zip_archive_karchive.cpp)
+        target_link_libraries(dpengine PRIVATE KF5::Archive)
+    else()
+        message(SEND_ERROR "Unknown ZIP_IMPL value '${ZIP_IMPL}'")
+    endif()
 endif()
 
-if("${ZIP_IMPL}" STREQUAL "LIBZIP")
-    add_library(dpengine_archive STATIC dpengine/zip_archive_libzip.c)
-    set_dp_target_properties(dpengine_archive)
-    target_link_libraries(dpengine_archive PUBLIC dpcommon libzip::zip)
-elseif("${ZIP_IMPL}" STREQUAL "KARCHIVE")
-    add_library(dpengine_archive STATIC dpengine/zip_archive_karchive.cpp)
-    set_dp_target_properties(dpengine_archive CXX)
-    target_link_libraries(dpengine_archive PUBLIC dpcommon KF5::Archive)
-else()
-    message(SEND_ERROR "Unknown ZIP_IMPL value '${ZIP_IMPL}'")
-endif()
+install(
+    FILES
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush.h"
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-config.h"
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush-settings.h"
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush-settings-gen.h"
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-glib-compat.h"
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-rectangle.h"
+        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-surface.h"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dpengine/libmypaint"
+)
+target_compile_definitions(dpengine INTERFACE $<INSTALL_INTERFACE:DP_BUNDLED_LIBMYPAINT>)
 
-add_library(dpengine STATIC "${dpengine_sources}" "${dpengine_headers}")
-set_dp_target_properties(dpengine)
-target_include_directories(dpengine INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
-target_include_directories(dpengine PRIVATE "${CMAKE_BINARY_DIR}/config")
-target_link_libraries(dpengine PUBLIC dpengine_archive dpengine_xml
-                                      dpmsg_interface uthash mypaint qgrayraster
-                                      parson jo_gifx)
-
-if("${IMAGE_IMPL}" STREQUAL "LIBS")
-    target_sources(dpengine PRIVATE dpengine/image_base.c dpengine/image_jpeg.c
-                                    dpengine/image_png.c)
-    target_link_libraries(dpengine PUBLIC PNG::PNG JPEG::JPEG)
-elseif("${IMAGE_IMPL}" STREQUAL "QT")
-    add_library(dpengine_image STATIC dpengine/image_base.c
-                                      dpengine/image_qt.cpp)
-    set_dp_target_properties(dpengine_image CXX)
-    target_link_libraries(dpengine_image PUBLIC dpcommon "Qt${QT_VERSION}::Gui")
-    target_link_libraries(dpengine PUBLIC dpengine_image)
+if(IMAGE_IMPL STREQUAL "LIBS")
+    target_sources(dpengine PRIVATE
+        dpengine/image_jpeg.c
+        dpengine/image_png.c
+    )
+    target_link_libraries(dpengine PRIVATE
+        PNG::PNG
+        JPEG::JPEG
+    )
+elseif(IMAGE_IMPL STREQUAL "QT")
+    target_sources(dpengine PRIVATE dpengine/image_qt.cpp)
+    target_link_libraries(dpengine PRIVATE "Qt${QT_VERSION}::Gui")
 else()
     message(SEND_ERROR "Unknown IMAGE_IMPL value '${IMAGE_IMPL}'")
 endif()
 
 if(BUILD_TESTS)
-    add_library(dptest_engine STATIC "${dptest_engine_sources}"
-                                     "${dptest_engine_headers}")
-    set_dp_target_properties(dptest_engine NO_EXPORT)
-    target_include_directories(dptest_engine INTERFACE
-                               "${CMAKE_CURRENT_LIST_DIR}/test/dptest")
-    target_link_libraries(dptest_engine PUBLIC dptest dpengine dpmsg)
+    set(dpengine_tests
+        test/handle_annotations.c
+        test/handle_layers.c
+        test/handle_metadata.c
+        test/handle_timeline.c
+        test/image_thumbnail.c
+        test/model_changes.c
+        test/read_write_image.c
+        test/render_recording.c
+        test/resize_image.c)
 
+    add_library(dptest_engine)
+    target_sources(dptest_engine PRIVATE
+        test/dptest/dptest_engine.c
+        test/dptest/dptest_engine.h
+    )
+    target_include_directories(dptest_engine PUBLIC
+        "${CMAKE_CURRENT_LIST_DIR}/test/dptest"
+    )
+    target_link_libraries(dptest_engine
+        PUBLIC
+            dptest
+            dpengine
+            dpmsg
+            dpcommon
+            parson
+    )
     add_dptest_targets(engine dptest_engine dpengine_tests)
 endif()
 
@@ -183,11 +186,9 @@ if(BUILD_BENCHMARKS)
     find_package(benchmark CONFIG REQUIRED)
 
     function(add_benchmark NAME SOURCES)
-        add_clang_format_files("${SOURCES}")
-
         add_executable("${NAME}" "${SOURCES}")
         set_dp_target_properties("${NAME}" CXX NO_WARNINGS)
-        target_link_libraries("${NAME}" PUBLIC dpcommon dpengine dpmsg benchmark::benchmark benchmark::benchmark_main)
+        target_link_libraries("${NAME}" PRIVATE dpcommon dpengine dpmsg benchmark::benchmark benchmark::benchmark_main)
     endfunction()
 
     add_benchmark(blending_simd_bench benchmark/blending_simd_bench.cpp)
