@@ -374,7 +374,7 @@ private:
 
 	static QString createDb()
 	{
-		QString databasePath = utils::paths::writablePath("brushpresets.db");
+		QString databasePath = utils::paths::writablePath("brushes.db");
 		QFileInfo fileInfo(databasePath);
 
 		QString dirName = fileInfo.canonicalPath();
