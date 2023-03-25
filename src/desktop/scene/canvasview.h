@@ -92,8 +92,12 @@ signals:
 	//! Pointer moved in pointer tracking mode
 	void pointerMoved(const QPointF &point);
 
-	void penDown(const QPointF &point, qreal pressure, bool right, float zoom);
-	void penMove(const QPointF &point, qreal pressure, bool shift, bool alt);
+	void penDown(
+		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
+		qreal rotation, bool right, float zoom);
+	void penMove(
+		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
+		qreal rotation, bool shift, bool alt);
 	void penHover(const QPointF &point);
 	void penUp();
 	void quickAdjust(qreal value);

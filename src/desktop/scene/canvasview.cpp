@@ -491,7 +491,7 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 		switch(m_penmode) {
 		case PenMode::Normal:
 			if(!m_locked)
-				emit penDown(p, p.pressure(), right, m_zoom / 100.0);
+				emit penDown(p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), right, m_zoom / 100.0);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -511,7 +511,7 @@ void CanvasView::onPenMove(const canvas::Point &p, bool right, bool constrain1, 
 		switch(m_penmode) {
 		case PenMode::Normal:
 			if(!m_locked)
-				emit penMove(p, p.pressure(), constrain1, constrain2);
+				emit penMove(p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), constrain1, constrain2);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);

@@ -92,10 +92,14 @@ public:
 
 public slots:
 	//! Start a new stroke
-	void startDrawing(const QPointF &point, qreal pressure, bool right, float zoom);
+	void startDrawing(
+		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
+		qreal rotation, bool right, float zoom);
 
 	//! Continue a stroke
-	void continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt);
+	void continueDrawing(
+		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
+		qreal rotation, bool shift, bool alt);
 
 	//! Stylus hover (not yet drawing)
 	void hoverDrawing(const QPointF &point);

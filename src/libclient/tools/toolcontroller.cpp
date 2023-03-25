@@ -217,7 +217,8 @@ void ToolController::setSelectInterpolation(int selectInterpolation)
 }
 
 void ToolController::startDrawing(
-	const QPointF &point, qreal pressure, bool right, float zoom)
+	const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
+	qreal rotation, bool right, float zoom)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -227,7 +228,7 @@ void ToolController::startDrawing(
 	}
 
 	m_smoother.reset();
-	m_activeTool->begin(canvas::Point(point, pressure), right, zoom);
+	m_activeTool->begin(canvas::Point(point, pressure, xtilt, ytilt, rotation), right, zoom);
 
 	if(!m_activeTool->isMultipart()) {
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
@@ -238,7 +239,8 @@ void ToolController::startDrawing(
 }
 
 void ToolController::continueDrawing(
-	const QPointF &point, qreal pressure, bool shift, bool alt)
+	const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
+	qreal rotation, bool shift, bool alt)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -247,15 +249,16 @@ void ToolController::continueDrawing(
 		return;
 	}
 
+	canvas::Point cp = canvas::Point(point, pressure, xtilt, ytilt, rotation);
 	if(m_smoothing > 0 && m_activeTool->allowSmoothing()) {
-		m_smoother.addPoint(canvas::Point(point, pressure));
+		m_smoother.addPoint(cp);
 
 		if(m_smoother.hasSmoothPoint()) {
 			m_activeTool->motion(m_smoother.smoothPoint(), shift, alt);
 		}
 
 	} else {
-		m_activeTool->motion(canvas::Point(point, pressure), shift, alt);
+		m_activeTool->motion(cp, shift, alt);
 	}
 
 	m_prevShift = shift;
