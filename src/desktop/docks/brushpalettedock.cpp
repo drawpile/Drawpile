@@ -99,13 +99,13 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->duplicateBrushAction = d->menu->addAction(icon::fromTheme("edit-copy"), tr("Duplicate Brush"));
 	d->overwriteBrushAction = d->menu->addAction(icon::fromTheme("document-save"), tr("Overwrite Brush"));
 	d->editBrushAction = d->menu->addAction(icon::fromTheme("configure"), tr("Edit Brush"));
-	d->deleteBrushAction = d->menu->addAction(icon::fromTheme("list-remove"), tr("Delete Brush"));
+	d->deleteBrushAction = d->menu->addAction(icon::fromTheme("trash-empty"), tr("Delete Brush"));
 	d->assignmentMenu = d->menu->addMenu(tr("Brush Tags"));
 	d->iconSizeMenu = d->menu->addMenu(tr("Icon Size"));
 	d->menu->addSeparator();
-	d->newTagAction = d->menu->addAction(tr("New Tag"));
-	d->editTagAction = d->menu->addAction(tr("Edit Tag"));
-	d->deleteTagAction = d->menu->addAction(tr("Delete Tag"));
+	d->newTagAction = d->menu->addAction(icon::fromTheme("folder-new"), tr("New Tag"));
+	d->editTagAction = d->menu->addAction(icon::fromTheme("edit-rename"), tr("Rename Tag"));
+	d->deleteTagAction = d->menu->addAction(icon::fromTheme("list-remove"), tr("Delete Tag"));
 	d->menu->addSeparator();
 	d->importMyPaintBrushesAction = d->menu->addAction(tr("Import MyPaint Brushes..."));
 	d->menuButton->setMenu(d->menu);

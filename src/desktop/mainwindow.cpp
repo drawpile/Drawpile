@@ -3092,7 +3092,7 @@ void MainWindow::setupActions()
 	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy");
 	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double");
 	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure");
-	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("list-remove");
+	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty");
 
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete);
 
