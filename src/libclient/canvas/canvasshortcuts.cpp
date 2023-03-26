@@ -60,9 +60,25 @@ void CanvasShortcuts::loadDefaults()
 	});
 	addShortcut({
 		MOUSE_BUTTON,
+		{CTRL},
+		{Qt::Key_Space},
+		Qt::LeftButton,
+		CANVAS_ZOOM,
+		NORMAL,
+	});
+	addShortcut({
+		MOUSE_BUTTON,
 		{ALT},
 		{},
 		Qt::MiddleButton,
+		CANVAS_ROTATE,
+		NORMAL,
+	});
+	addShortcut({
+		MOUSE_BUTTON,
+		{ALT},
+		{Qt::Key_Space},
+		Qt::LeftButton,
 		CANVAS_ROTATE,
 		NORMAL,
 	});
@@ -95,6 +111,14 @@ void CanvasShortcuts::loadDefaults()
 		{SHIFT},
 		{},
 		Qt::MiddleButton,
+		TOOL_ADJUST,
+		SWAP_AXES,
+	});
+	addShortcut({
+		MOUSE_BUTTON,
+		{SHIFT},
+		{Qt::Key_Space},
+		Qt::LeftButton,
 		TOOL_ADJUST,
 		SWAP_AXES,
 	});
