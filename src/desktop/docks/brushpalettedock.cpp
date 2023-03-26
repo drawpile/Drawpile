@@ -26,6 +26,31 @@ static constexpr char SELECTED_TAG_ID_KEY[] = "brushpalette:selected_tag_id";
 
 namespace docks {
 
+namespace {
+
+// By default, the list view will try to scroll a chosen preset into view. This
+// is already disorienting when it works as intended, but sometimes Qt ends up
+// overscrolling, causing an infinite feedback loop of the scroll bar bouncing
+// up and down in a desperate struggle against itself. So we just disable it.
+class IgnoreEnsureVisibleListView final : public QListView {
+public:
+	IgnoreEnsureVisibleListView(QWidget *parent = nullptr)
+		: QListView{parent}
+	{}
+
+protected:
+	void scrollTo(
+		const QModelIndex &index,
+		QAbstractItemView::ScrollHint hint = EnsureVisible) override final
+	{
+		if(hint != EnsureVisible) {
+			QListView::scrollTo(index, hint);
+		}
+	}
+};
+
+}
+
 struct BrushPalette::Private {
 	brushes::BrushPresetTagModel *tagModel;
 	brushes::BrushPresetModel *presetModel;
@@ -119,7 +144,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 		});
 	}
 
-	d->presetListView = new QListView(this);
+	d->presetListView = new IgnoreEnsureVisibleListView(this);
 	d->presetListView->setUniformItemSizes(true);
 	d->presetListView->setFlow(QListView::LeftToRight);
 	d->presetListView->setWrapping(true);
