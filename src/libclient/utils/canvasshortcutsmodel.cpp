@@ -75,8 +75,10 @@ bool CanvasShortcutsModel::removeRows(
 		m_canvasShortcuts.removeShortcutAt(row, count);
 		m_hasChanges = true;
 		endRemoveRows();
+		return true;
+	} else {
+		return false;
 	}
-	return false;
 }
 
 
