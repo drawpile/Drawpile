@@ -352,13 +352,10 @@ void BrushPalette::importMyPaintBrushes()
 		tr("MyPaint Brush Pack (%1)").arg("*.zip"));
 
 	if(!file.isEmpty()) {
-		int tagId;
-		QString tagName;
-		QStringList errors;
-		bool importOk = d->tagModel->importMyPaintBrushPack(
-			file, tagId, tagName, errors);
-		if(importOk) {
-			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(tagId));
+		brushes::MyPaintImportResult result =
+			d->tagModel->importMyPaintBrushPack(file);
+		if(!result.importedTags.isEmpty()) {
+			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(result.importedTags[0].id));
 		}
 
 		QDialog *dlg = new QDialog{this};
@@ -370,27 +367,37 @@ void BrushPalette::importMyPaintBrushes()
 		dlg->setLayout(layout);
 
 		QString text;
-		int errorCount = errors.size();
-		if(importOk) {
-			if(errorCount == 0) {
-				text = tr("Imported MyPaint brush pack '%1'.").arg(tagName);
-			} else {
-				text = tr("Imported MyPaint brush pack '%1', but encountered %n"
-					"error(s) along the way.", "", errorCount).arg(tagName);
+		int errorCount = result.errors.size();
+
+		QLabel *brushLabel = new QLabel{
+			tr("%n brush(es) imported.", "", result.importedBrushCount), dlg};
+		layout->addWidget(brushLabel);
+		brushLabel->setWordWrap(true);
+
+		QLabel *tagsLabel = new QLabel{dlg};
+		layout->addWidget(tagsLabel);
+		tagsLabel->setWordWrap(true);
+		int tagCount = result.importedTags.count();
+		if(tagCount > 0) {
+			QStringList tagNames;
+			for(const brushes::Tag &tag : result.importedTags) {
+				tagNames.append(tag.name);
 			}
+			tagsLabel->setText(
+				tr("%n tag(s) imported: %1", "", tagCount).arg(tagNames.join(", ")));
 		} else {
-			text =
-				tr("Failed to import MyPaint brush pack from '%1'.").arg(file);
+			tagsLabel->setText(tr("0 tags imported."));
 		}
 
-		QLabel *label = new QLabel{text, dlg};
-		layout->addWidget(label);
+		QLabel *errorsLabel = new QLabel{
+			tr("%n error(s) encountered.", "", errorCount), dlg};
+		layout->addWidget(errorsLabel);
+		errorsLabel->setWordWrap(true);
 
 		if(errorCount != 0) {
-			dlg->resize(400, 200);
-			label->setWordWrap(true);
+			dlg->resize(400, 400);
 			QTextBrowser *browser = new QTextBrowser{dlg};
-			browser->setPlainText(errors.join("\n"));
+			browser->setPlainText(result.errors.join("\n"));
 			layout->addWidget(browser);
 		}
 

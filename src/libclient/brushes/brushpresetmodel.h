@@ -37,6 +37,12 @@ struct PresetMetadata {
 	QByteArray thumbnail;
 };
 
+struct MyPaintImportResult {
+	QStringList errors;
+	QVector<Tag> importedTags;
+	int importedBrushCount;
+};
+
 class BrushPresetModel;
 
 class BrushPresetTagModel final : public QAbstractItemModel {
@@ -66,11 +72,14 @@ public:
 	void setState(const QString &key, const QVariant &value);
 	QVariant getState(const QString &key) const;
 
-	bool importMyPaintBrushPack(
-		const QString &file, int &outTagId, QString &outTagName,
-		QStringList &outErrors);
+	MyPaintImportResult importMyPaintBrushPack(const QString &file);
 
 private:
+	struct MyPaintBrushGroup {
+		QString name;
+		QStringList brushes;
+	};
+
 	class Private;
 	Private *d;
 	BrushPresetModel *m_presetModel;
@@ -80,9 +89,23 @@ private:
 	void maybeConvertOldPresets();
 	void convertOldPresets();
 
+	static QVector<MyPaintBrushGroup> readMyPaintOrderConf(
+		MyPaintImportResult &result, const QString &file, const drawdance::ZipReader &zr);
+
+	static int addMyPaintOrderConfGroup(
+		QVector<MyPaintBrushGroup> &groups, const QString &name);
+
+	static void addMyPaintOrderConfBrush(
+		QStringList &brushes, const QString &brush);
+
+	void readMyPaintBrushes(
+		MyPaintImportResult &result, const drawdance::ZipReader &zr,
+		const QString &groupName, const QStringList &brushes);
+
 	static bool readMyPaintBrush(
-		const drawdance::ZipReader &zr, const QString &prefix, QStringList &outErrors,
-		ActiveBrush &outBrush, QString &outDescription, QPixmap &outThumbnail);
+		MyPaintImportResult &result, const drawdance::ZipReader &zr,
+		const QString &prefix, ActiveBrush &outBrush, QString &outDescription,
+		QPixmap &outThumbnail);
 };
 
 class BrushPresetModel final : public QAbstractItemModel {

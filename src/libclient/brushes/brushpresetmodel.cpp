@@ -727,116 +727,187 @@ void BrushPresetTagModel::convertOldPresets()
 	}
 }
 
-bool BrushPresetTagModel::importMyPaintBrushPack(
-		const QString &file, int &outTagId, QString &outTagName,
-		QStringList &outErrors)
+MyPaintImportResult BrushPresetTagModel::importMyPaintBrushPack(const QString &file)
 {
+	MyPaintImportResult result = {{}, {}, 0};
+
 	drawdance::ZipReader zr{file};
 	if(zr.isNull()) {
 		qWarning("Error opening '%s': %s", qUtf8Printable(file), DP_error());
-		outErrors.append(tr("Can't open '%1'.").arg(qUtf8Printable(file)));
-		return false;
+		result.errors.append(tr("Can't open '%1'.").arg(qUtf8Printable(file)));
+		return result;
 	}
 
-	drawdance::ZipReader::File orderFile = zr.readFile(QStringLiteral("order.conf"));
+	beginResetModel();
+	m_presetModel->beginResetModel();
+
+	QVector<MyPaintBrushGroup> groups = readMyPaintOrderConf(result, file, zr);
+	for(const MyPaintBrushGroup &group : groups) {
+		if(!group.brushes.isEmpty()) {
+			readMyPaintBrushes(result, zr, group.name, group.brushes);
+		}
+	}
+
+	m_presetModel->endResetModel();
+	endResetModel();
+	return result;
+}
+
+QVector<BrushPresetTagModel::MyPaintBrushGroup>
+BrushPresetTagModel::readMyPaintOrderConf(
+	MyPaintImportResult &result, const QString &file, const drawdance::ZipReader &zr)
+{
+	static QRegularExpression newlineRe{"[\r\n]+"};
+	static QRegularExpression groupRe{"^Group:\\s*(.+)$"};
+
+	drawdance::ZipReader::File orderFile =
+		zr.readFile(QStringLiteral("order.conf"));
 	if(orderFile.isNull()) {
 		qWarning("Error reading order.conf from zip: %s", DP_error());
-		outErrors.append(tr("Invalid brush pack: order.conf not found inside"));
-		return false;
+		result.errors.append(tr("Invalid brush pack: order.conf not found inside"));
+		return {};
 	}
 
-	QStringList order = orderFile.readUtf8()
-		.split(QRegularExpression{"\\s*\n\\s*"}, compat::SkipEmptyParts);
-	int orderCount = order.size();
-	if(orderCount < 2) {
-		outErrors.append(tr("Invalid brush pack: order.conf contains no brushes"));
-		return false;
+	QFileInfo info{file};
+	QVector<BrushPresetTagModel::MyPaintBrushGroup> groups;
+	groups.append({tr("Uncategorized %1").arg(info.baseName()), {}});
+
+	int current = 0;
+	bool haveBrush = false;
+	QStringList order =
+		orderFile.readUtf8().split(newlineRe, compat::SkipEmptyParts);
+	for(const QString &line : order) {
+		QString trimmed = line.trimmed();
+		if(!trimmed.isEmpty() && !trimmed.startsWith("#")) {
+			QRegularExpressionMatch match = groupRe.match(trimmed);
+			if(match.hasMatch()) {
+				current = addMyPaintOrderConfGroup(groups, match.captured(1));
+			} else {
+				haveBrush = true;
+				addMyPaintOrderConfBrush(groups[current].brushes, trimmed);
+			}
+		}
 	}
 
-	QRegularExpressionMatch match =
-		QRegularExpression{"^Group:\\s*(\\S.+?)\\s*$"}.match(order.first());
-	if(!match.hasMatch()) {
-		outErrors.append(tr("Invalid brush pack: order.conf does not start with 'Group: ...'"));
-		return false;
+	if(haveBrush) {
+		return groups;
+	} else {
+		result.errors.append(tr("Invalid brush pack: order.conf contains no brushes"));
+		return {};
 	}
+}
 
-	outTagName = match.captured(1);
-	if(d->readTagCountByName(outTagName) != 0) {
-		for(int i = 2; i < 100; ++i) {
-			QString candidate = QStringLiteral("%1 (%2)").arg(outTagName).arg(i);
+int BrushPresetTagModel::addMyPaintOrderConfGroup(
+	QVector<MyPaintBrushGroup> &groups, const QString &name)
+{
+	int count = groups.size();
+	for(int i = 0; i < count; ++i) {
+		if(groups[i].name == name) {
+			return i;
+		}
+	}
+	groups.append({name, {}});
+	return count;
+}
+
+void BrushPresetTagModel::addMyPaintOrderConfBrush(
+	QStringList &brushes, const QString &brush)
+{
+	if(!brushes.contains(brush)) {
+		brushes.append(brush);
+	}
+}
+
+void BrushPresetTagModel::readMyPaintBrushes(
+	MyPaintImportResult &result, const drawdance::ZipReader &zr,
+	const QString &groupName, const QStringList &brushes)
+{
+	QString tagName = groupName;
+	if(d->readTagCountByName(groupName) != 0) {
+		for(int i = 1; i < 100; ++i) {
+			QString candidate =
+				QStringLiteral("%1 (%2)").arg(groupName).arg(i);
 			if(d->readTagCountByName(candidate) == 0) {
-				outTagName = candidate;
+				tagName = candidate;
 				break;
 			}
 		}
 	}
 
-	outTagId = -1;
-	for(int i = 1; i < orderCount; ++i) {
-		QString prefix = order[i];
+	int tagId = -1;
+	int count = brushes.size();
+	for(int i = 0; i < count; ++i) {
+		const QString &prefix = brushes[i];
 		ActiveBrush brush;
 		QString description;
 		QPixmap thumbnail;
-		if(readMyPaintBrush(zr, prefix, outErrors, brush, description, thumbnail)) {
-			if(outTagId == -1) {
-				beginResetModel();
-				outTagId = d->createTag(outTagName);
-				if(outTagId < 1) {
-					outErrors.append(tr("Could not create tag '%1'.").arg(outTagName));
-					endResetModel();
-					return false;
+		if(readMyPaintBrush(
+			   result, zr, prefix, brush, description, thumbnail)) {
+			if(tagId == -1) {
+				tagId = d->createTag(tagName);
+				if(tagId < 1) {
+					result.errors.append(
+						tr("Could not create tag '%1'.").arg(tagName));
+					break;
 				}
-				m_presetModel->beginResetModel();
+				result.importedTags.append({tagId, tagName, true});
 			}
 
 			int slashIndex = prefix.indexOf("/");
-			QString name = QStringLiteral("%1/%2-%3")
-				.arg(outTagName)
-				.arg(i * 100, 4, 10, QLatin1Char('0'))
-				.arg(slashIndex < 0 ? prefix : prefix.mid(slashIndex + 1));
+			QString name =
+				QStringLiteral("%1/%2-%3")
+					.arg(tagName)
+					.arg(i * 100, 4, 10, QLatin1Char('0'))
+					.arg(slashIndex < 0 ? prefix : prefix.mid(slashIndex + 1));
 
 			int presetId = d->createPreset(
 				brush.presetType(), name, description,
 				BrushPresetModel::toPng(thumbnail), brush.presetData());
-			d->createPresetTag(presetId, outTagId);
+			if(presetId < 1) {
+				result.errors.append(
+					tr("Could not create brush preset '%1'.").arg(name));
+			}
+
+			++result.importedBrushCount;
+
+			if(!d->createPresetTag(presetId, tagId)) {
+				result.errors.append(
+					tr("Could not assign brush '%1' to tag '%2'.").arg(name).arg(tagName));
+			}
 		}
 	}
-
-	if(outTagId == -1) {
-		outErrors.append(tr("Could not read any brushes from brush pack."));
-		return false;
-	}
-
-	m_presetModel->endResetModel();
-	endResetModel();
-	return true;
 }
 
 bool BrushPresetTagModel::readMyPaintBrush(
-	const drawdance::ZipReader &zr, const QString &prefix, QStringList &outErrors,
-	ActiveBrush &outBrush, QString &outDescription, QPixmap &outThumbnail)
+	MyPaintImportResult &result, const drawdance::ZipReader &zr,
+	const QString &prefix, ActiveBrush &outBrush, QString &outDescription,
+	QPixmap &outThumbnail)
 {
 	QString mybPath = QStringLiteral("%1.myb").arg(prefix);
 	drawdance::ZipReader::File mybFile = zr.readFile(mybPath);
 	if(mybFile.isNull()) {
-		qWarning("Error reading '%s' from zip: %s", qUtf8Printable(mybPath), DP_error());
-		outErrors.append(tr("Can't read brush file '%1'").arg(qUtf8Printable(mybPath)));
+		qWarning(
+			"Error reading '%s' from zip: %s", qUtf8Printable(mybPath),
+			DP_error());
+		result.errors.append(
+			tr("Can't read brush file '%1'").arg(qUtf8Printable(mybPath)));
 		return false;
 	}
 
 	QJsonParseError error;
 	QJsonDocument json = QJsonDocument::fromJson(mybFile.readBytes(), &error);
 	if(error.error != QJsonParseError::NoError) {
-		outErrors.append(tr("Brush file '%1' does not contain valid JSON: %1")
-			.arg(qUtf8Printable(mybPath)).arg(qUtf8Printable(error.errorString())));
+		result.errors.append(tr("Brush file '%1' does not contain valid JSON: %1")
+							 .arg(qUtf8Printable(mybPath))
+							 .arg(qUtf8Printable(error.errorString())));
 		return false;
 	}
 
 	outBrush = ActiveBrush{ActiveBrush::MYPAINT};
 	QJsonObject object = json.object();
 	if(!outBrush.myPaint().loadMyPaintJson(object)) {
-		outErrors.append(tr("Can't load brush from brush file '%1'")
-			.arg(qUtf8Printable(mybPath)));
+		result.errors.append(tr("Can't load brush from brush file '%1'")
+							 .arg(qUtf8Printable(mybPath)));
 		return false;
 	}
 
