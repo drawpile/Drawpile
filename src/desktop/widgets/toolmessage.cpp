@@ -23,6 +23,7 @@ ToolMessage::ToolMessage(const QString &text)
 	setAttribute(Qt::WA_TransparentForMouseEvents);
 	setContentsMargins(4, 4, 4, 4);
 	startTimer(500 + 40 * text.length());
-	move(QCursor::pos() + QPoint(1, 1));
+	QSize sh = sizeHint();
+	move(QCursor::pos() - QPoint(sh.width(), sh.height()));
 	show();
 }
