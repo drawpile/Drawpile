@@ -194,14 +194,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 
 QPixmap ClassicBrush::presetThumbnail() const
 {
-	QColor c;
-	if(smudge.max > 0.0f) {
-		c = QColor::fromRgbF(0.9f, 0.6f, 0.1f);
-	} else if(icon::isDarkThemeSelected()) {
-		c = Qt::white;
-	} else {
-		c = Qt::black;
-	}
+	QColor c = smudge.max > 0.0f ? QColor::fromRgbF(0.1f, 0.6f, 0.9f) : Qt::gray;
 	return drawdance::BrushPreview::classicBrushPreviewDab(*this, 64, 64, c);
 }
 
