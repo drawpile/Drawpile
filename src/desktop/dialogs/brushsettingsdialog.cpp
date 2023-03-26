@@ -3,8 +3,9 @@
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/utils/icon.h"
-#include "desktop/widgets/kis_curve_widget.h"
+#include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/toolmessage.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -12,6 +13,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QListWidget>
+#include <QPushButton>
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QSpacerItem>
@@ -47,20 +49,20 @@ struct BrushSettingsDialog::Private {
 	KisSliderSpinBox *classicSizeSpinner;
 	QCheckBox *classicSizePressureBox;
 	KisSliderSpinBox *classicSizeMinSpinner;
-	KisCurveWidget *classicSizeCurve;
+	widgets::CurveWidget *classicSizeCurve;
 	KisSliderSpinBox *classicOpacitySpinner;
 	QCheckBox *classicOpacityPressureBox;
 	KisSliderSpinBox *classicOpacityMinSpinner;
-	KisCurveWidget *classicOpacityCurve;
+	widgets::CurveWidget *classicOpacityCurve;
 	KisSliderSpinBox *classicHardnessSpinner;
 	QCheckBox *classicHardnessPressureBox;
 	KisSliderSpinBox *classicHardnessMinSpinner;
-	KisCurveWidget *classicHardnessCurve;
+	widgets::CurveWidget *classicHardnessCurve;
 	KisSliderSpinBox *classicSmudgingSpinner;
 	KisSliderSpinBox *classicColorPickupSpinner;
 	QCheckBox *classicSmudgingPressureBox;
 	KisSliderSpinBox *classicSmudgingMinSpinner;
-	KisCurveWidget *classicSmudgingCurve;
+	widgets::CurveWidget *classicSmudgingCurve;
 	MyPaintPage myPaintPages[MYPAINT_BRUSH_SETTINGS_COUNT];
 	int generalPageIndex;
 	int classicSizePageIndex;
@@ -424,14 +426,18 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 			emitChange();
 		});
 
-	d->classicSizeCurve = new KisCurveWidget{widget};
+	d->classicSizeCurve = new widgets::CurveWidget{false, widget};
 	layout->addWidget(d->classicSizeCurve);
+	buildClassicApplyToAllButton(d->classicSizeCurve);
 	connect(
-		d->classicSizeCurve, &KisCurveWidget::curveChanged,
+		d->classicSizeCurve, &widgets::CurveWidget::curveChanged,
 		[this](const KisCubicCurve &curve) {
 			d->brush.classic().setSizeCurve(curve);
 			emitChange();
 		});
+
+	layout->addSpacerItem(
+		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
 
 	return scroll;
 }
@@ -480,14 +486,18 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 			emitChange();
 		});
 
-	d->classicOpacityCurve = new KisCurveWidget{widget};
+	d->classicOpacityCurve = new widgets::CurveWidget{false, widget};
 	layout->addWidget(d->classicOpacityCurve);
+	buildClassicApplyToAllButton(d->classicOpacityCurve);
 	connect(
-		d->classicOpacityCurve, &KisCurveWidget::curveChanged,
+		d->classicOpacityCurve, &widgets::CurveWidget::curveChanged,
 		[this](const KisCubicCurve &curve) {
 			d->brush.classic().setOpacityCurve(curve);
 			emitChange();
 		});
+
+	layout->addSpacerItem(
+		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
 
 	return scroll;
 }
@@ -536,14 +546,18 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 			emitChange();
 		});
 
-	d->classicHardnessCurve = new KisCurveWidget{widget};
+	d->classicHardnessCurve = new widgets::CurveWidget{false, widget};
 	layout->addWidget(d->classicHardnessCurve);
+	buildClassicApplyToAllButton(d->classicHardnessCurve);
 	connect(
-		d->classicHardnessCurve, &KisCurveWidget::curveChanged,
+		d->classicHardnessCurve, &widgets::CurveWidget::curveChanged,
 		[this](const KisCubicCurve &curve) {
 			d->brush.classic().setHardnessCurve(curve);
 			emitChange();
 		});
+
+	layout->addSpacerItem(
+		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
 
 	return scroll;
 }
@@ -603,16 +617,34 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 			emitChange();
 		});
 
-	d->classicSmudgingCurve = new KisCurveWidget{widget};
+	d->classicSmudgingCurve = new widgets::CurveWidget{false, widget};
 	layout->addWidget(d->classicSmudgingCurve);
+	buildClassicApplyToAllButton(d->classicSmudgingCurve);
 	connect(
-		d->classicSmudgingCurve, &KisCurveWidget::curveChanged,
+		d->classicSmudgingCurve, &widgets::CurveWidget::curveChanged,
 		[this](const KisCubicCurve &curve) {
 			d->brush.classic().setSmudgeCurve(curve);
 			emitChange();
 		});
 
+	layout->addSpacerItem(
+		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
+
 	return scroll;
+}
+
+void BrushSettingsDialog::buildClassicApplyToAllButton(
+	widgets::CurveWidget *curve)
+{
+	QPushButton *applyToAllButton =
+		new QPushButton{icon::fromTheme("fill-color"), tr("Apply to All")};
+	applyToAllButton->setToolTip(
+		tr("Set this curve for Size, Opacity, Hardness and Smudging at once."));
+	curve->addButton(applyToAllButton);
+	connect(applyToAllButton, &QPushButton::pressed, [=]() {
+		applyCurveToAllClassicSettings(curve->curve());
+		ToolMessage::showText(tr("Curve set for all settings in this brush."));
+	});
 }
 
 QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
@@ -679,6 +711,17 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 			emitChange();
 		});
 	return inputWidget;
+}
+
+
+void BrushSettingsDialog::applyCurveToAllClassicSettings(
+	const KisCubicCurve &curve)
+{
+	d->brush.classic().setSizeCurve(curve);
+	d->brush.classic().setOpacityCurve(curve);
+	d->brush.classic().setHardnessCurve(curve);
+	d->brush.classic().setSmudgeCurve(curve);
+	emitChange();
 }
 
 

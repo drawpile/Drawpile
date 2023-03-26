@@ -40,9 +40,12 @@ private:
 	QWidget *buildClassicOpacityPageUi();
 	QWidget *buildClassicHardnessPageUi();
 	QWidget *buildClassicSmudgingPageUi();
+	void buildClassicApplyToAllButton(widgets::CurveWidget *curve);
 	QWidget *buildMyPaintPageUi(int setting);
 	widgets::MyPaintInput *buildMyPaintInputUi(
 		int setting, int input, const MyPaintBrushSettingInfo *settingInfo);
+
+	void applyCurveToAllClassicSettings(const KisCubicCurve &curve);
 
 	void
 	addCategory(const QString &text, const QString &toolTip, int pageIndex);

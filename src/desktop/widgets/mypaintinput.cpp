@@ -2,10 +2,9 @@
 
 #include "desktop/widgets/mypaintinput.h"
 #include "libclient/brushes/brush.h"
-#include "desktop/widgets/kis_curve_widget.h"
+#include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include <QCheckBox>
-#include <QGridLayout>
 #include <QLabel>
 #include <QSpacerItem>
 #include <QVBoxLayout>
@@ -47,10 +46,6 @@ MyPaintInput::MyPaintInput(
 	m_ySpinner = nullptr;
 	m_xMinSpinner = nullptr;
 	m_xMaxSpinner = nullptr;
-	m_yMaxLabel = nullptr;
-	m_yMinLabel = nullptr;
-	m_xMaxLabel = nullptr;
-	m_xMinLabel = nullptr;
 	m_curve = nullptr;
 }
 
@@ -164,12 +159,12 @@ void MyPaintInput::constructCurveWidgets()
 {
 	m_curveWrapper = new QWidget{this};
 	layout()->addWidget(m_curveWrapper);
-	QGridLayout *wrapperLayout = new QGridLayout;
+	QVBoxLayout *wrapperLayout = new QVBoxLayout;
 	m_curveWrapper->setLayout(wrapperLayout);
 	wrapperLayout->setContentsMargins(0, 0, 0, 0);
 
 	m_ySpinner = new KisDoubleSliderSpinBox{this};
-	wrapperLayout->addWidget(m_ySpinner, 0, 0, 1, 3);
+	wrapperLayout->addWidget(m_ySpinner);
 	m_ySpinner->setPrefix(tr("Output Range: "));
 	m_ySpinner->setRange(0.01, m_yHardMax, 2);
 	connect(
@@ -183,7 +178,7 @@ void MyPaintInput::constructCurveWidgets()
 		});
 
 	m_xMinSpinner = new KisDoubleSliderSpinBox{this};
-	wrapperLayout->addWidget(m_xMinSpinner, 1, 0, 1, 3);
+	wrapperLayout->addWidget(m_xMinSpinner);
 	m_xMinSpinner->setPrefix(tr("Input Minimum: "));
 	m_xMinSpinner->setRange(m_yHardMin, m_yHardMax - 0.01, 2);
 	connect(
@@ -199,7 +194,7 @@ void MyPaintInput::constructCurveWidgets()
 		});
 
 	m_xMaxSpinner = new KisDoubleSliderSpinBox{this};
-	wrapperLayout->addWidget(m_xMaxSpinner, 2, 0, 1, 3);
+	wrapperLayout->addWidget(m_xMaxSpinner);
 	m_xMaxSpinner->setPrefix(tr("Input Maximum: "));
 	m_xMaxSpinner->setRange(m_yHardMin + 0.01, m_yHardMax, 2);
 	connect(
@@ -214,30 +209,17 @@ void MyPaintInput::constructCurveWidgets()
 			emit controlPointsChanged();
 		});
 
-	m_yMaxLabel = new QLabel{this};
-	wrapperLayout->addWidget(m_yMaxLabel, 3, 0, Qt::AlignRight | Qt::AlignTop);
-	m_yMinLabel = new QLabel{this};
-	wrapperLayout->addWidget(
-		m_yMinLabel, 4, 0, Qt::AlignRight | Qt::AlignBottom);
-
-	m_curve = new KisCurveWidget{this};
-	wrapperLayout->addWidget(m_curve, 3, 1, 2, 2);
-	m_curve->setMinimumSize(300, 300);
-	m_curve->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	m_curve->setLinear(true);
+	m_curve = new CurveWidget{true, this};
+	wrapperLayout->addWidget(m_curve);
 	m_curve->setCurve(defaultCurve());
-
-	m_xMaxLabel = new QLabel{this};
-	wrapperLayout->addWidget(m_xMaxLabel, 5, 2, Qt::AlignRight | Qt::AlignTop);
-	m_xMinLabel = new QLabel{this};
-	wrapperLayout->addWidget(m_xMinLabel, 5, 1, Qt::AlignLeft | Qt::AlignTop);
-
-	wrapperLayout->setColumnStretch(0, 0);
-	wrapperLayout->setColumnStretch(1, 1);
-	wrapperLayout->setColumnStretch(2, 1);
+	// Keep the layout from jerking around as values change by adding an
+	// invisible label with text as wide as the widest possible output label.
+	m_curve->addVerticalSpacingLabel(
+		QString::number(-qAbs(m_yHardMax), 'f', 2)
+			.replace(QRegularExpression{"[0-8]"}, "9"));
 
 	connect(
-		m_curve, &KisCurveWidget::curveChanged, this,
+		m_curve, &CurveWidget::curveChanged, this,
 		&MyPaintInput::controlPointsChanged);
 }
 
@@ -301,10 +283,9 @@ void MyPaintInput::setCurveVisible(bool visible)
 void MyPaintInput::updateRanges()
 {
 	if(m_curveWrapper) {
-		m_xMinLabel->setText(QString::number(m_xMin, 'f', 2));
-		m_xMaxLabel->setText(QString::number(m_xMax, 'f', 2));
-		m_yMinLabel->setText(QString::number(m_yMin, 'f', 2));
-		m_yMaxLabel->setText(QString::number(m_yMax, 'f', 2));
+		m_curve->setAxisLabels(
+			QString::number(m_xMin, 'f', 2), QString::number(m_xMax, 'f', 2),
+			QString::number(m_yMin, 'f', 2), QString::number(m_yMax, 'f', 2));
 		m_ySpinner->setValue(m_yMax);
 		m_xMinSpinner->setValue(m_xMin);
 		m_xMaxSpinner->setValue(m_xMax);

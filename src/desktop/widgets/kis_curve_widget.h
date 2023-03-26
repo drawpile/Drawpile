@@ -71,6 +71,9 @@ public:
     void setBasePixmap(const QPixmap & pix);
     QPixmap getBasePixmap();
 
+    void setReadOnly(bool readOnly);
+    bool readOnly() const;
+
     void setLinear(bool linear);
     bool linear() const;
 

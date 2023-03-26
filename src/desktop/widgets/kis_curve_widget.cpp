@@ -189,6 +189,16 @@ QPixmap KisCurveWidget::getBasePixmap()
 	return d->m_pixmapBase;
 }
 
+void KisCurveWidget::setReadOnly(bool readOnly)
+{
+    d->m_readOnlyMode = readOnly;
+}
+
+bool KisCurveWidget::readOnly() const
+{
+    return d->m_readOnlyMode;
+}
+
 void KisCurveWidget::setLinear(bool linear)
 {
 	d->m_linear = linear;

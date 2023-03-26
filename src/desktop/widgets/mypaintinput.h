@@ -6,12 +6,13 @@
 #include <QWidget>
 #include <dpengine/libmypaint/mypaint-brush-settings.h>
 
-class KisCurveWidget;
 class KisDoubleSliderSpinBox;
 class QCheckBox;
 class QLabel;
 
 namespace widgets {
+
+class CurveWidget;
 
 class MyPaintInput final : public QWidget {
 	Q_OBJECT
@@ -72,11 +73,7 @@ private:
 	KisDoubleSliderSpinBox *m_ySpinner;
 	KisDoubleSliderSpinBox *m_xMinSpinner;
 	KisDoubleSliderSpinBox *m_xMaxSpinner;
-	QLabel *m_yMaxLabel;
-	QLabel *m_yMinLabel;
-	QLabel *m_xMaxLabel;
-	QLabel *m_xMinLabel;
-	KisCurveWidget *m_curve;
+	CurveWidget *m_curve;
 };
 
 }

@@ -76,6 +76,8 @@ target_sources(drawpile PRIVATE
 	dialogs/certificateview.h
 	dialogs/colordialog.cpp
 	dialogs/colordialog.h
+	dialogs/curvepresetdialog.cpp
+	dialogs/curvepresetdialog.h
 	dialogs/dumpplaybackdialog.cpp
 	dialogs/dumpplaybackdialog.h
 	dialogs/flipbook.cpp
@@ -221,6 +223,8 @@ target_sources(drawpile PRIVATE
 	widgets/canvasshortcutedit.h
 	widgets/colorbutton.cpp
 	widgets/colorbutton.h
+	widgets/curvewidget.cpp
+	widgets/curvewidget.h
 	widgets/filmstrip.cpp
 	widgets/filmstrip.h
 	widgets/flipbookview.cpp
