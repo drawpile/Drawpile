@@ -428,6 +428,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(app, &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
 
 	updateSettings();
+	m_doc->updateSettings();
 
 	// Create actions and menus
 	setupActions();
