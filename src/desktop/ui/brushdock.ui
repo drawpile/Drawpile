@@ -297,8 +297,8 @@
         <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -311,8 +311,8 @@
         <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -325,8 +325,8 @@
         <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -358,8 +358,8 @@
         <string>Pressure sensitivity</string>
        </property>
        <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
