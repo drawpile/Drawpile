@@ -137,6 +137,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.blendmode->setSizePolicy(blendmodeSizePolicy);
 
 	// Exponential sliders for easier picking of small values.
+	d->ui.brushspacingBox->setExponentRatio(3.0);
 	d->ui.stabilizerBox->setExponentRatio(3.0);
 
 	QMenu *stabilizerMenu = new QMenu{d->ui.stabilizerButton};

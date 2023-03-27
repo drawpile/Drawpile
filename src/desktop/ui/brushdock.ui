@@ -393,6 +393,9 @@
        <property name="maximum">
         <number>999</number>
        </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
       </widget>
      </item>
      <item row="7" column="0">

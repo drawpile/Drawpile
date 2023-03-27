@@ -309,6 +309,8 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->spacingSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->spacingSpinner);
 	d->spacingSpinner->setRange(1, 999);
+	d->spacingSpinner->setSingleStep(1);
+	d->spacingSpinner->setExponentRatio(3.0);
 	d->spacingSpinner->setPrefix(tr("Spacing: "));
 	d->spacingSpinner->setSuffix(tr("%"));
 	connect(
