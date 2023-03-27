@@ -14,11 +14,14 @@ class QVBoxLayout;
 
 namespace widgets {
 
-class CurveWidget : public QWidget {
+class CurveWidget final : public QWidget {
 	Q_OBJECT
 public:
-	explicit CurveWidget(bool linear, QWidget *parent = nullptr);
-	~CurveWidget();
+	explicit CurveWidget(
+		const QString &xTitle, const QString &yTitle, bool linear,
+		QWidget *parent = nullptr);
+
+	~CurveWidget() override;
 
 	CurveWidget(const CurveWidget &) = delete;
 	CurveWidget(CurveWidget &&) = delete;
@@ -32,7 +35,7 @@ public:
 
 	void addButton(QAbstractButton *button);
 
-	void setAxisLabels(
+	void setAxisValueLabels(
 		const QString &xMin, const QString &xMax, const QString &yMin,
 		const QString &yMax);
 
@@ -46,10 +49,14 @@ private slots:
 	void loadCurve();
 
 private:
+	class SideLabel;
+
 	KisCurveWidget *m_curve;
 	QLabel *m_yMaxLabel;
+	SideLabel *m_yTitleLabel;
 	QLabel *m_yMinLabel;
 	QLabel *m_xMaxLabel;
+	QLabel *m_xTitleLabel;
 	QLabel *m_xMinLabel;
 	QVBoxLayout *m_buttonLayout;
 	QPushButton *m_copyButton;

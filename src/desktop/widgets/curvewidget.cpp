@@ -2,6 +2,7 @@
 
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/dialogs/curvepresetdialog.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/toolmessage.h"
 #include "libclient/utils/icon.h"
@@ -9,26 +10,57 @@
 #include <QGridLayout>
 #include <QGuiApplication>
 #include <QLabel>
+#include <QPainter>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QStyle>
 #include <QVBoxLayout>
 
 namespace widgets {
 
-CurveWidget::CurveWidget(bool linear, QWidget *parent)
+class CurveWidget::SideLabel final : public QLabel {
+public:
+	explicit SideLabel(const QString &text, QWidget *parent = nullptr)
+		: QLabel{text, parent}
+	{
+	}
+
+protected:
+	void paintEvent(QPaintEvent *) override final
+	{
+		QPainter painter{this};
+		painter.translate(sizeHint().width(), 0);
+		painter.rotate(90.0);
+		painter.drawText(0, 0, height(), width(), alignment(), text());
+	}
+
+	QSize sizeHint() const override final
+	{
+		return QLabel::sizeHint().transposed();
+	}
+
+	QSize minimumSizeHint() const override final
+	{
+		return QWidget::minimumSizeHint().transposed();
+	}
+};
+
+CurveWidget::CurveWidget(
+	const QString &xTitle, const QString &yTitle, bool linear, QWidget *parent)
 	: QWidget{parent}
 {
-	QGridLayout *grid = new QGridLayout;
-	setLayout(grid);
-	grid->setContentsMargins(0, 0, 0, 0);
-
 	m_yMaxLabel = new QLabel{"1.00", this};
-	grid->addWidget(m_yMaxLabel, 0, 0, Qt::AlignRight | Qt::AlignTop);
+	m_yMaxLabel->setAlignment(Qt::AlignRight);
+
+	m_yTitleLabel = new SideLabel{yTitle, this};
+	m_yTitleLabel->setAlignment(Qt::AlignCenter);
+	m_yTitleLabel->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 	m_yMinLabel = new QLabel{"0.00", this};
-	grid->addWidget(m_yMinLabel, 1, 0, Qt::AlignRight | Qt::AlignBottom);
+	m_yMinLabel->setAlignment(Qt::AlignRight);
 
 	m_curve = new KisCurveWidget{this};
-	grid->addWidget(m_curve, 0, 1, 2, 2);
 	m_curve->setLinear(linear);
 	m_curve->setFixedSize(300, 300);
 	connect(
@@ -36,12 +68,17 @@ CurveWidget::CurveWidget(bool linear, QWidget *parent)
 		&CurveWidget::curveChanged);
 
 	m_xMaxLabel = new QLabel{"1.00", this};
-	grid->addWidget(m_xMaxLabel, 2, 2, Qt::AlignRight | Qt::AlignTop);
+	m_xMaxLabel->setAlignment(Qt::AlignRight);
+
+	m_xTitleLabel = new QLabel{xTitle, this};
+	m_xTitleLabel->setAlignment(Qt::AlignCenter);
+	m_xTitleLabel->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+
 	m_xMinLabel = new QLabel{"0.00", this};
-	grid->addWidget(m_xMinLabel, 2, 1, Qt::AlignLeft | Qt::AlignTop);
+	m_xMinLabel->setAlignment(Qt::AlignLeft);
 
 	m_buttonLayout = new QVBoxLayout;
-	grid->addLayout(m_buttonLayout, 0, 3, 1, 3);
 
 	m_copyButton =
 		new QPushButton{icon::fromTheme("edit-copy"), tr("Copy"), this};
@@ -66,7 +103,20 @@ CurveWidget::CurveWidget(bool linear, QWidget *parent)
 	connect(
 		m_presetsButton, &QPushButton::pressed, this, &CurveWidget::loadCurve);
 
-	grid->setColumnStretch(3, 1);
+	m_buttonLayout->addSpacerItem(
+		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
+
+	QGridLayout *grid = new QGridLayout{this};
+	grid->setContentsMargins(0, 0, 0, 0);
+	grid->addWidget(m_yMaxLabel, 0, 0, Qt::AlignRight | Qt::AlignTop);
+	grid->addWidget(m_yTitleLabel, 1, 0, Qt::AlignRight | Qt::AlignVCenter);
+	grid->addWidget(m_yMinLabel, 2, 0, Qt::AlignRight | Qt::AlignBottom);
+	grid->addWidget(m_curve, 0, 1, 3, 3);
+	grid->addWidget(m_xMinLabel, 3, 1, Qt::AlignLeft | Qt::AlignTop);
+	grid->addWidget(m_xTitleLabel, 3, 2, Qt::AlignCenter | Qt::AlignTop);
+	grid->addWidget(m_xMaxLabel, 3, 3, Qt::AlignRight | Qt::AlignTop);
+	grid->addLayout(m_buttonLayout, 0, 4, 4, 1);
+	grid->setColumnStretch(4, 1);
 }
 
 CurveWidget::~CurveWidget() {}
@@ -94,10 +144,10 @@ void CurveWidget::addVerticalSpacingLabel(const QString &text)
 void CurveWidget::addButton(QAbstractButton *button)
 {
 	button->setParent(this);
-	m_buttonLayout->addWidget(button);
+	m_buttonLayout->insertWidget(m_buttonLayout->count() - 2, button);
 }
 
-void CurveWidget::setAxisLabels(
+void CurveWidget::setAxisValueLabels(
 	const QString &xMin, const QString &xMax, const QString &yMin,
 	const QString &yMax)
 {

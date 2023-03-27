@@ -18,8 +18,8 @@ class MyPaintInput final : public QWidget {
 	Q_OBJECT
 public:
 	MyPaintInput(
-		const QString &title, const QString &description,
-		const MyPaintBrushSettingInfo *settingInfo,
+		const QString &inputTitle, const QString &inputDescription,
+		const QString &settingTitle, const MyPaintBrushSettingInfo *settingInfo,
 		const MyPaintBrushInputInfo *inputInfo, QWidget *parent = nullptr);
 
 	~MyPaintInput() override;
@@ -56,6 +56,8 @@ private:
 	void setCurveVisible(bool visible);
 	void updateRanges();
 
+	const QString m_inputTitle;
+	const QString m_settingTitle;
 	double m_xHardMax;
 	double m_xHardMin;
 	double m_yHardMax;

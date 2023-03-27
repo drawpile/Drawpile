@@ -386,7 +386,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 			emitChange();
 		});
 
-	d->classicSizeCurve = new widgets::CurveWidget{false, widget};
+	d->classicSizeCurve =
+		new widgets::CurveWidget{tr("Pressure"), tr("Size"), false, widget};
 	layout->addWidget(d->classicSizeCurve);
 	buildClassicApplyToAllButton(d->classicSizeCurve);
 	connect(
@@ -446,7 +447,8 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 			emitChange();
 		});
 
-	d->classicOpacityCurve = new widgets::CurveWidget{false, widget};
+	d->classicOpacityCurve =
+		new widgets::CurveWidget{tr("Pressure"), tr("Opacity"), false, widget};
 	layout->addWidget(d->classicOpacityCurve);
 	buildClassicApplyToAllButton(d->classicOpacityCurve);
 	connect(
@@ -506,7 +508,8 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 			emitChange();
 		});
 
-	d->classicHardnessCurve = new widgets::CurveWidget{false, widget};
+	d->classicHardnessCurve =
+		new widgets::CurveWidget{tr("Pressure"), tr("Hardness"), false, widget};
 	layout->addWidget(d->classicHardnessCurve);
 	buildClassicApplyToAllButton(d->classicHardnessCurve);
 	connect(
@@ -577,7 +580,8 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 			emitChange();
 		});
 
-	d->classicSmudgingCurve = new widgets::CurveWidget{false, widget};
+	d->classicSmudgingCurve =
+		new widgets::CurveWidget{tr("Pressure"), tr("Smudging"), false, widget};
 	layout->addWidget(d->classicSmudgingCurve);
 	buildClassicApplyToAllButton(d->classicSmudgingCurve);
 	connect(
@@ -657,7 +661,8 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 {
 	widgets::MyPaintInput *inputWidget = new widgets::MyPaintInput{
 		getMyPaintInputTitle(input), getMyPaintInputDescription(input),
-		settingInfo, mypaint_brush_input_info(MyPaintBrushInput(input))};
+		getMyPaintSettingTitle(setting), settingInfo,
+		mypaint_brush_input_info(MyPaintBrushInput(input))};
 	d->myPaintPages[setting].inputs[input] = inputWidget;
 	connect(
 		inputWidget, &widgets::MyPaintInput::controlPointsChanged,

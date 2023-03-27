@@ -14,10 +14,12 @@
 namespace widgets {
 
 MyPaintInput::MyPaintInput(
-	const QString &title, const QString &description,
-	const MyPaintBrushSettingInfo *settingInfo,
+	const QString &inputTitle, const QString &inputDescription,
+	const QString &settingTitle, const MyPaintBrushSettingInfo *settingInfo,
 	const MyPaintBrushInputInfo *inputInfo, QWidget *parent)
 	: QWidget{parent}
+	, m_inputTitle{inputTitle}
+	, m_settingTitle{settingTitle}
 	// Some values are "unlimited", using -FLT_MAX and FLT_MAX as their range.
 	// In those cases MyPaint uses -20 and 20 as the limits, so we do too.
 	, m_xHardMax{inputInfo->hard_max > 1e6 ? 20.0 : inputInfo->hard_max}
@@ -34,9 +36,9 @@ MyPaintInput::MyPaintInput(
 	setLayout(widgetLayout);
 	widgetLayout->setContentsMargins(0, 0, 0, 0);
 
-	m_box = new QCheckBox{title, this};
+	m_box = new QCheckBox{inputTitle, this};
 	widgetLayout->addWidget(m_box);
-	m_box->setToolTip(description);
+	m_box->setToolTip(inputDescription);
 	connect(
 		m_box, &QCheckBox::stateChanged, this, &MyPaintInput::changeBoxState);
 
@@ -209,7 +211,7 @@ void MyPaintInput::constructCurveWidgets()
 			emit controlPointsChanged();
 		});
 
-	m_curve = new CurveWidget{true, this};
+	m_curve = new CurveWidget{m_inputTitle, m_settingTitle, true, this};
 	wrapperLayout->addWidget(m_curve);
 	m_curve->setCurve(defaultCurve());
 	// Keep the layout from jerking around as values change by adding an
@@ -283,7 +285,7 @@ void MyPaintInput::setCurveVisible(bool visible)
 void MyPaintInput::updateRanges()
 {
 	if(m_curveWrapper) {
-		m_curve->setAxisLabels(
+		m_curve->setAxisValueLabels(
 			QString::number(m_xMin, 'f', 2), QString::number(m_xMax, 'f', 2),
 			QString::number(m_yMin, 'f', 2), QString::number(m_yMax, 'f', 2));
 		m_ySpinner->setValue(m_yMax);
