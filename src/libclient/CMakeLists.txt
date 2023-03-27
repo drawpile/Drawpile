@@ -173,6 +173,7 @@ target_sources(dpclient PRIVATE
 	utils/sessionfilterproxymodel.h
 	utils/sessionidvalidator.cpp
 	utils/sessionidvalidator.h
+	utils/settingdefault.h
 	utils/shortcutdetector.cpp
 	utils/shortcutdetector.h
 	utils/usernamevalidator.cpp

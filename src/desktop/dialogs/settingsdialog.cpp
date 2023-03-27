@@ -12,6 +12,7 @@
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/listservermodel.h"
+#include "libclient/utils/settingdefault.h"
 #include "desktop/utils/listserverdelegate.h"
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
@@ -369,7 +370,8 @@ void SettingsDialog::restoreSettings()
 #endif
 	m_ui->twoFingerPinchCombo->setCurrentIndex(cfg.value("touchpinch", true).toBool() ? 1 : 0);
 	m_ui->twoFingerTwistCombo->setCurrentIndex(cfg.value("touchtwist", true).toBool() ? 1 : 0);
-	m_ui->smoothingSpinner->setValue(cfg.value("smooth", 0).toInt());
+	m_ui->smoothingSpinner->setValue(cfg.value("smooth", setting_default::smoothing()).toInt());
+	m_ui->inputCurve->setCurveFromString(cfg.value("globalcurve").toString());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");

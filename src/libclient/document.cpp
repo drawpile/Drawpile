@@ -13,6 +13,7 @@
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/images.h"
+#include "libclient/utils/settingdefault.h"
 #include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
 
@@ -1006,8 +1007,8 @@ void Document::updateSettings()
 		paintEngine->setSnapshotMaxCount(snapshotMaxCount);
 		paintEngine->setSnapshotMinDelayMs(snapshotMinDelayMs);
 	}
-	if(m_toolctrl) {
-		QSettings cfg;
-		m_toolctrl->setSmoothing(cfg.value("settings/input/smooth").toInt());
-	}
+	QSettings cfg;
+	m_toolctrl->setSmoothing(
+		cfg.value("settings/input/smooth",
+		setting_default::smoothing()).toInt());
 }
