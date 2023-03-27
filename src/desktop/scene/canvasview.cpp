@@ -444,12 +444,12 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 
 canvas::Point CanvasView::mapToScene(long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
 {
-	return canvas::Point(timeMsec, mapToScene(point), pressure, xtilt, ytilt, rotation);
+	return canvas::Point(timeMsec, mapToScene(point), m_pressureCurve.value(pressure), xtilt, ytilt, rotation);
 }
 
 canvas::Point CanvasView::mapToScene(long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
 {
-	return canvas::Point(timeMsec, mapToSceneInterpolate(point), pressure, xtilt, ytilt, rotation);
+	return canvas::Point(timeMsec, mapToSceneInterpolate(point), m_pressureCurve.value(pressure), xtilt, ytilt, rotation);
 }
 
 QPointF CanvasView::mapToSceneInterpolate(const QPointF &point) const
@@ -588,7 +588,7 @@ void CanvasView::penPressEvent(long long timeMsec, const QPointF &pos, qreal pre
 			m_penmode = penmode;
 			resetCursor();
 		}
-		onPenDown(mapToScene(timeMsec, pos, isStylus ? pressure : 1.0, xtilt, ytilt, rotation), button == Qt::RightButton);
+		onPenDown(mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation), button == Qt::RightButton);
 	}
 }
 
@@ -627,7 +627,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	);
 }
 
-void CanvasView::penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
 	if(m_dragmode == ViewDragMode::Started) {
 		moveDrag(pos.toPoint());
@@ -639,7 +639,6 @@ void CanvasView::penMoveEvent(long long timeMsec, const QPointF &pos, qreal pres
 			if(m_pendown) {
 				m_pointervelocity = point.distance(m_prevpoint);
 				m_pointerdistance += m_pointervelocity;
-				point.setPressure(isStylus ? pressure : 1.0);
 				CanvasShortcuts::ConstraintMatch match =
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				onPenMove(
@@ -685,8 +684,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		0.0,
 		0.0,
 		event->buttons(),
-		event->modifiers(),
-		false
+		event->modifiers()
 	);
 }
 
@@ -757,7 +755,7 @@ void CanvasView::touchPressEvent(long long timeMsec, const QPointF &pos)
 
 void CanvasView::touchMoveEvent(long long timeMsec, const QPointF &pos)
 {
-	penMoveEvent(timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
+	penMoveEvent(timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier);
 }
 
 void CanvasView::touchReleaseEvent(long long timeMsec, const QPointF &pos)
@@ -994,6 +992,11 @@ void CanvasView::setTouchGestures(bool scroll, bool draw, bool pinch, bool twist
 	m_enableTouchDraw = draw;
 	m_enableTouchPinch = pinch;
 	m_enableTouchTwist = twist;
+}
+
+void CanvasView::setPressureCurve(const KisCubicCurve &pressureCurve)
+{
+	m_pressureCurve = pressureCurve;
 }
 
 void CanvasView::touchEvent(QTouchEvent *event)
@@ -1233,8 +1236,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			tabev->yTilt(),
 			qDegreesToRadians(tabev->rotation()),
 			tabev->buttons(),
-			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
-			true
+			QApplication::queryKeyboardModifiers() // TODO check if tablet event modifiers() is still broken in Qt 5.12
 		);
 	}
 	else if(type == QEvent::TabletRelease && m_enableTablet) {

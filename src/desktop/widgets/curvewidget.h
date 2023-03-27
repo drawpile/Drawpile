@@ -17,8 +17,10 @@ namespace widgets {
 class CurveWidget final : public QWidget {
 	Q_OBJECT
 public:
-	explicit CurveWidget(
-		const QString &xTitle, const QString &yTitle, bool linear,
+	explicit CurveWidget(QWidget *parent = nullptr);
+
+	CurveWidget(
+		const QString &xTitle, const QString &yTitle, bool,
 		QWidget *parent = nullptr);
 
 	~CurveWidget() override;
@@ -30,10 +32,13 @@ public:
 
 	KisCubicCurve curve() const;
 	void setCurve(const KisCubicCurve &curve);
+	void setCurveFromString(const QString &curveString);
 
 	void addVerticalSpacingLabel(const QString &text);
 
 	void addButton(QAbstractButton *button);
+
+	void setAxisTitleLabels(const QString &xTitle, const QString &yTitle);
 
 	void setAxisValueLabels(
 		const QString &xMin, const QString &xMax, const QString &yMin,

@@ -2,6 +2,7 @@
 
 #include "desktop/dialogs/userinfodialog.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/utils/kis_cubic_curve.h"
 #include "ui_userinfodialog.h"
 #include <QJsonObject>
 #include <QPushButton>
@@ -24,6 +25,7 @@ UserInfoDialog::UserInfoDialog(const canvas::User &user, QWidget *parent)
 
 	d->ui.nameValue->setText(user.name);
 	d->ui.userIdValue->setText(QString::number(user.id));
+	d->ui.pressureCurveValue->setReadOnly(true);
 
 	d->refreshButton = new QPushButton{this};
 	d->refreshButton->setText(tr("Refresh"));
@@ -115,6 +117,16 @@ void UserInfoDialog::updateInfo(const QJsonObject &info)
 	d->ui.tabletModeValue->setText(tabletModeText);
 	d->ui.touchModeValue->setText(touchModeText);
 	d->ui.smoothingValue->setText(smoothingText);
+
+	QString pressureCurveString = info["pressure_curve"].toString();
+	if(pressureCurveString.isEmpty()) {
+		d->ui.pressureCurveValue->setVisible(false);
+	} else {
+		d->ui.pressureCurveValue->setVisible(true);
+		KisCubicCurve curve;
+		curve.fromString(pressureCurveString);
+		d->ui.pressureCurveValue->setCurve(curve);
+	}
 }
 
 QString UserInfoDialog::getInfoValue(

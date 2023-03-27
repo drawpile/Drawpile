@@ -715,6 +715,11 @@ void MainWindow::updateSettings()
 		cfg.value("touchdraw", false).toBool(),
 		cfg.value("touchpinch", true).toBool(),
 		cfg.value("touchtwist", true).toBool());
+
+	KisCubicCurve curve;
+	curve.fromString(cfg.value("globalcurve").toString());
+	m_view->setPressureCurve(curve);
+
 	cfg.endGroup();
 
 	cfg.beginGroup("settings");
@@ -899,6 +904,7 @@ void MainWindow::sendUserInfo(int userId)
 		{"touch_mode", m_view->isTouchDrawEnabled() ? "draw"
 			: m_view->isTouchScrollEnabled() ? "scroll" : "none"},
 		{"smoothing", m_doc->toolCtrl()->smoothing()},
+		{"pressure_curve", m_view->pressureCurve().toString()},
 	};
 	client->sendMessage(drawdance::Message::makeUserInfo(
 		client->myId(), userId, QJsonDocument{info}));

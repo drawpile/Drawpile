@@ -6,6 +6,7 @@
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
 #include "libclient/tools/tool.h"
+#include "libclient/utils/kis_cubic_curve.h"
 #include "desktop/utils/qtguicompat.h"
 
 #include <QGraphicsView>
@@ -59,6 +60,9 @@ public:
 
 	//! Enable/disable touch gestures
 	void setTouchGestures(bool scroll, bool draw, bool pinch, bool twist);
+
+	KisCubicCurve pressureCurve() const { return m_pressureCurve; }
+	void setPressureCurve(const KisCubicCurve &pressureCurve);
 
 	//! Is drawing in progress at the moment?
 	bool isPenDown() const { return m_pendown != NOTDOWN; }
@@ -191,7 +195,7 @@ private:
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 	void penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
 
 	void touchPressEvent(long long timeMsec, const QPointF &pos);
@@ -287,9 +291,11 @@ private:
 	TouchMode m_touchMode;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	qreal m_touchStartZoom, m_touchStartRotate;
+
+	KisCubicCurve m_pressureCurve;
+
 	qreal m_dpi;
 	int m_brushCursorStyle;
-
 	qreal m_brushOutlineWidth;
 };
 

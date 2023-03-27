@@ -45,6 +45,11 @@ protected:
 	}
 };
 
+CurveWidget::CurveWidget(QWidget *parent)
+	: CurveWidget{QString{}, QString{}, false, parent}
+{
+}
+
 CurveWidget::CurveWidget(
 	const QString &xTitle, const QString &yTitle, bool linear, QWidget *parent)
 	: QWidget{parent}
@@ -131,6 +136,13 @@ void CurveWidget::setCurve(const KisCubicCurve &curve)
 	m_curve->setCurve(curve);
 }
 
+void CurveWidget::setCurveFromString(const QString& curveString)
+{
+	KisCubicCurve curve;
+	curve.fromString(curveString);
+	setCurve(curve);
+}
+
 void CurveWidget::addVerticalSpacingLabel(const QString &text)
 {
 	QLabel *label = new QLabel{text, this};
@@ -145,6 +157,13 @@ void CurveWidget::addButton(QAbstractButton *button)
 {
 	button->setParent(this);
 	m_buttonLayout->insertWidget(m_buttonLayout->count() - 2, button);
+}
+
+void CurveWidget::setAxisTitleLabels(
+	const QString &xTitle, const QString &yTitle)
+{
+	m_xTitleLabel->setText(xTitle);
+	m_yTitleLabel->setText(yTitle);
 }
 
 void CurveWidget::setAxisValueLabels(

@@ -136,6 +136,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	m_ui->tabletInputWrapper->hide();
 #endif
 
+	m_ui->inputCurve->setAxisTitleLabels(tr("Input Pressure"), tr("Mapped Pressure"));
+
 	// Editable shortcuts
 	m_customShortcuts = new CustomShortcutModel(this);
 	auto filteredShortcuts = new QSortFilterProxyModel(this);
@@ -512,6 +514,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("touchpinch", m_ui->twoFingerPinchCombo->currentIndex() == 1);
 	cfg.setValue("touchtwist", m_ui->twoFingerTwistCombo->currentIndex() == 1);
 	cfg.setValue("smooth", m_ui->smoothingSpinner->value());
+	cfg.setValue("globalcurve", m_ui->inputCurve->curve().toString());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");

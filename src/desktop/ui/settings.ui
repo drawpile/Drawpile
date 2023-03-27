@@ -25,6 +25,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Tablet and Touch</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Input</string>
         </property>
        </item>
@@ -555,11 +560,50 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="smoothingGroup">
+             <spacer name="tabletAndTouchSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="inputPage">
+           <layout class="QVBoxLayout">
+            <item>
+             <widget class="QGroupBox">
+              <property name="title">
+               <string>Global Pressure Curve</string>
+              </property>
+              <layout class="QVBoxLayout">
+               <item>
+                <widget class="widgets::CurveWidget" name="inputCurve" native="true"/>
+               </item>
+               <item>
+                <widget class="QLabel">
+                 <property name="text">
+                  <string>All tablet input is pre-processed according to this curve. If you want a different pressure curve for your brush, look for the brush editor under Edit &gt; Brush Settings instead.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox">
               <property name="title">
                <string>Smoothing</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_17">
+              <layout class="QVBoxLayout">
                <item>
                 <widget class="KisSliderSpinBox" name="smoothingSpinner">
                  <property name="prefix">
@@ -571,9 +615,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="smoothingDescription">
+                <widget class="QLabel">
                  <property name="text">
-                  <string>Makes all input smoother by averaging it. If you feel like you have to turn up the stabilizer on every brush, try turning this setting up instead.</string>
+                  <string>Makes all input smoother by averaging it. If you feel like you have to turn up the stabilizer on every brush, try turning this setting up instead. If it feels sluggish even without any stabilizer, turn it down.</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -584,7 +628,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="tabletAndTouchSpacer">
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -1621,6 +1665,12 @@
    <class>KisDoubleSliderSpinBox</class>
    <extends>QDoubleSpinBox</extends>
    <header>desktop/widgets/kis_slider_spin_box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>widgets::CurveWidget</class>
+   <extends>QWidget</extends>
+   <header>desktop/widgets/curvewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
