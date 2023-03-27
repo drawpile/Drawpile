@@ -619,8 +619,9 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	if(!d->myline->hasFocus() || chatId != d->currentChat)
 		notification::playSound(notification::Event::CHAT);
 
-	if(wasAtEnd)
+	if(wasAtEnd || isValidAlert) {
 		d->scrollChatToEnd(chatId);
+	}
 }
 
 void ChatWidget::setPinnedMessage(const QString &message)
@@ -637,12 +638,14 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 	const bool wasAtEnd = d->isAtEnd();
 	if(alert) {
 		d->publicChat().appendAlert(QString(), message);
+		emit expandRequested();
 	} else {
 		d->publicChat().appendNotification(message.toHtmlEscaped());
 	}
 
-	if(wasAtEnd)
+	if(wasAtEnd || alert) {
 		d->scrollChatToEnd(0);
+	}
 }
 
 void ChatWidget::scrollBarMoved(int)
