@@ -181,7 +181,7 @@ public:
 	 * @brief Send a message from the server directly to this user
 	 * @param message
 	 */
-	void sendSystemChat(const QString &message);
+	void sendSystemChat(const QString &message, bool alert = false);
 
 	/**
 	 * @brief Does this client socket support SSL connections?

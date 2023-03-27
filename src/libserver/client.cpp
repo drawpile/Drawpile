@@ -116,6 +116,10 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 		if(!msg.isEmpty())
 			sendSystemChat(msg);
 
+		QString alert = request["alert"].toString();
+		if(!alert.isEmpty())
+			sendSystemChat(alert, true);
+
 		if(request.contains("op")) {
 			const bool op = request["op"].toBool();
 			if(d->isOperator != op && d->session) {
@@ -288,10 +292,10 @@ void Client::sendDirectMessage(const protocol::MessageList &msgs)
 	}
 }
 
-void Client::sendSystemChat(const QString &message)
+void Client::sendSystemChat(const QString &message, bool alert)
 {
 	protocol::ServerReply msg {
-		protocol::ServerReply::MESSAGE,
+		alert ? protocol::ServerReply::ALERT : protocol::ServerReply::MESSAGE,
 		message,
 		QJsonObject()
 	};

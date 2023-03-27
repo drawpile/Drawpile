@@ -288,7 +288,7 @@ void SessionPage::sendMessage()
 	dlg->setLabelText(tr("Send message"));
 	connect(dlg, &QInputDialog::accepted, [dlg, this]() {
 		QJsonObject o;
-		o["message"] = dlg->textValue();
+		o["alert"] = dlg->textValue();
 		d->server->makeApiRequest(d->refreshReqId, JsonApiMethod::Update, QStringList() << "sessions" << d->id, o);
 		d->refreshTimer->start(); // reset refresh timer
 	});
@@ -326,7 +326,7 @@ void SessionPage::sendUserMessage()
 	dlg->setLabelText(tr("Send message"));
 	connect(dlg, &QInputDialog::accepted, [dlg, id, this]() {
 		QJsonObject o;
-		o["message"] = dlg->textValue();
+		o["alert"] = dlg->textValue();
 		d->server->makeApiRequest("msguser", JsonApiMethod::Update, QStringList() << "sessions" << d->id << QString::number(id), o);
 	});
 	dlg->show();

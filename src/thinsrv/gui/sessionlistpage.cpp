@@ -68,7 +68,7 @@ void SessionListPage::sendMessageToAll()
 	dlg->setLabelText(tr("Send message"));
 	connect(dlg, &QInputDialog::accepted, this, [dlg, this]() {
 			QJsonObject o;
-			o["message"] = dlg->textValue();
+			o["alert"] = dlg->textValue();
 			d->server->makeApiRequest(QString(), JsonApiMethod::Update, QStringList() << "sessions", o);
 	});
 	dlg->show();
