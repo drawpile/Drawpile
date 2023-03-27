@@ -247,6 +247,9 @@
        <property name="maximum">
         <number>255</number>
        </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
       </widget>
      </item>
      <item row="1" column="0">
