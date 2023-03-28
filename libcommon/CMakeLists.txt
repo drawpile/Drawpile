@@ -44,17 +44,6 @@ dp_target_sources(dpcommon
     dpcommon/worker.h
 )
 
-if(WIN32)
-    target_sources(dpcommon PRIVATE dpcommon/threading_win32.c)
-else()
-    target_sources(dpcommon PRIVATE dpcommon/threading_pthread.c)
-endif()
-
-if(APPLE)
-    # for _SC_NPROCESSORS_ONLN
-    target_compile_definitions(dpcommon PRIVATE _DARWIN_C_SOURCE)
-endif()
-
 target_include_directories(dpcommon ${SUBPROJECT_INCLUDE} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -62,7 +51,13 @@ target_include_directories(dpcommon ${SUBPROJECT_INCLUDE} PUBLIC
 
 target_link_libraries(dpcommon PRIVATE ZLIB::ZLIB)
 
-if(NOT WIN32)
+if(WIN32)
+    target_sources(dpcommon PRIVATE dpcommon/threading_win32.c)
+elseif(APPLE)
+    target_sources(dpcommon PRIVATE dpcommon/threading_qt.cpp)
+    target_link_libraries(dpcommon PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+else()
+    target_sources(dpcommon PRIVATE dpcommon/threading_pthread.c)
     target_link_libraries(dpcommon PRIVATE Threads::Threads)
 endif()
 
