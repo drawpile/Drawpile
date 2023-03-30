@@ -34,7 +34,7 @@ public:
 	QRectF boundingRect() const override;
 	int type() const override { return Type; }
 
-	bool animationStep(float dt);
+	bool animationStep(qreal dt);
 
 	void addPoint(const QPointF &point);
 

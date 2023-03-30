@@ -20,6 +20,7 @@
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/KisAngleGauge.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QComboBox>
 #include <QLineEdit>
@@ -199,11 +200,7 @@ void ViewStatus::zoomBoxChanged(const QString &text)
 		return;
 
 	const int suffix = text.indexOf(QChar('%'));
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-	const auto num = suffix>0 ? text.left(suffix) : text;
-#else
-	const auto num = suffix>0 ? QStringView{text}.left(suffix) : QStringView{text};
-#endif
+	const auto num = suffix>0 ? compat::StringView{text}.left(suffix) : compat::StringView{text};
 
 	bool ok;
 	const int number = num.toInt(&ok);
@@ -224,11 +221,7 @@ void ViewStatus::angleBoxChanged(const QString &text)
 		return;
 
 	const int suffix = text.indexOf(QChar(0x00b0));
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
-	const auto num = suffix>0 ? text.left(suffix) : text;
-#else
-	const auto num = suffix>0 ? QStringView{text}.left(suffix) : QStringView{text};
-#endif
+	const auto num = suffix>0 ? compat::StringView{text}.left(suffix) : compat::StringView{text};
 
 	bool ok;
 	const int number = num.toInt(&ok);

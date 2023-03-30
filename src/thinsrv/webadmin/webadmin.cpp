@@ -21,8 +21,8 @@
 #include "thinsrv/webadmin/qmhttp.h"
 #include "thinsrv/multiserver.h"
 
-#include "libshared/qtshims.h"
 #include "libserver/jsonapi.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QJsonObject>
 #include <QMetaObject>
@@ -67,7 +67,7 @@ void Webadmin::setSessions(MultiServer *server)
 			break;
 		}
 
-		const QStringList path = req.pathMatch().captured(1).split('/', shim::SKIP_EMPTY_PARTS);
+		const QStringList path = req.pathMatch().captured(1).split('/', compat::SkipEmptyParts);
 
 		QJsonDocument reqBodyDoc;
 		if(m == JsonApiMethod::Get) {

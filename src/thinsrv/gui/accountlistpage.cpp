@@ -21,7 +21,7 @@
 #include "thinsrv/gui/accountlistmodel.h"
 #include "thinsrv/gui/subheaderwidget.h"
 #include "thinsrv/gui/server.h"
-#include "libshared/qtshims.h"
+#include "libshared/util/qtcompat.h"
 
 #include "ui_accountdialog.h"
 
@@ -166,7 +166,7 @@ void AccountListPage::editSelectedAccount()
 	ui.username->setText(account["username"].toString());
 	ui.locked->setChecked(account["locked"].toBool());
 	{
-		const QStringList flags = account["flags"].toString().split(',', shim::SKIP_EMPTY_PARTS);
+		const QStringList flags = account["flags"].toString().split(',', compat::SkipEmptyParts);
 		ui.flagHost->setChecked(flags.contains("HOST"));
 		ui.flagMod->setChecked(flags.contains("MOD"));
 	}

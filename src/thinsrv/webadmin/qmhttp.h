@@ -19,6 +19,8 @@
 #ifndef QMICROHTTPD_H
 #define QMICROHTTPD_H
 
+#include "libshared/util/qtcompat.h"
+
 #include <QObject>
 #include <QRegularExpression>
 #include <QHostAddress>
@@ -120,7 +122,9 @@ public:
 	void setHeaders(const QHash<QString,QString> &data);
 	void setPostData(const QHash<QString,QString> &data) { _postdata = data; }
 	void setGetData(const QHash<QString,QString> &data) { _getdata = data; }
-	void addBodyData(const char *data, int len) { _body.append(data, len); }
+	void addBodyData(const char *data, size_t len) {
+		_body.append(data, compat::castSize(len));
+	}
 
 private:
 	Method _method;

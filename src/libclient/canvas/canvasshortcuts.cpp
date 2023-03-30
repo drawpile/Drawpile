@@ -26,8 +26,6 @@ CanvasShortcuts::CanvasShortcuts()
 {
 }
 
-CanvasShortcuts::~CanvasShortcuts() {}
-
 CanvasShortcuts CanvasShortcuts::load(QSettings &cfg)
 {
 	CanvasShortcuts cs;

@@ -28,9 +28,10 @@
 #include "desktop/utils/hidedocktitlebarseventfilter.h"
 #include "desktop/notifications.h"
 #include "desktop/dialogs/versioncheckdialog.h"
-#include "libshared/qtshims.h"
 #include "libshared/util/paths.h"
 #include "libclient/drawdance/global.h"
+#include "libshared/util/qtcompat.h"
+#include "desktop/utils/qtguicompat.h"
 
 #ifdef Q_OS_MACOS
 #include "desktop/widgets/macmenu.h"
@@ -99,13 +100,17 @@ DrawpileApp::~DrawpileApp()
 bool DrawpileApp::event(QEvent *e) {
 	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent*>(e);
-		if(te->pointerType() == shim::ERASER_TYPE)
+		if(te->pointerType()==compat::PointerType::Eraser)
 			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
 		return true;
 
 	} else if(e->type() == QEvent::FileOpen) {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent*>(e);
+
+		// Note. This is currently broken in Qt 5.3.1:
+		// https://bugreports.qt-project.org/browse/QTBUG-39972
 		openUrl(fe->url());
+
 		return true;
 
 	}
@@ -269,7 +274,7 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 	QTranslator *translator;
 	// Qt's own translations
 	translator = new QTranslator(&app);
-	if(translator->load("qt_" + preferredLang, shim::translationsPath())) {
+	if(translator->load("qt_" + preferredLang, compat::libraryPath(QLibraryInfo::TranslationsPath))) {
 		qApp->installTranslator(translator);
 	} else {
 		delete translator;
@@ -409,7 +414,7 @@ static QStringList initApp(DrawpileApp &app)
 }
 
 int main(int argc, char *argv[]) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif

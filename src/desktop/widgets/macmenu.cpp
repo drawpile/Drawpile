@@ -59,7 +59,7 @@ MacMenu::MacMenu() :
 	quit->setMenuRole(QAction::QuitRole);
 	connect(quit, &QAction::triggered, this, &MacMenu::quitAll);
 
-	QAction *preferences = makeAction(filemenu, 0, MainWindow::tr("Prefere&nces"), QKeySequence());
+	QAction *preferences = makeAction(filemenu, nullptr, MainWindow::tr("Prefere&nces"), QKeySequence());
 	preferences->setMenuRole(QAction::PreferencesRole);
 	connect(preferences, &QAction::triggered, &MainWindow::showSettings);
 
@@ -81,7 +81,7 @@ MacMenu::MacMenu() :
 	connect(_windows, &QMenu::triggered, this, &MacMenu::winSelect);
 	connect(_windows, &QMenu::aboutToShow, this, &MacMenu::updateWinMenu);
 
-	QAction *minimize = makeAction(_windows, 0, tr("Minimize"), QKeySequence("ctrl+m"));
+	QAction *minimize = makeAction(_windows, nullptr, tr("Minimize"), QKeySequence("ctrl+m"));
 
 	_windows->addSeparator();
 
@@ -162,7 +162,7 @@ void MacMenu::joinSession()
 
 			if(!url.isValid()) {
 				// TODO add validator to prevent this from happening
-				QMessageBox::warning(0, "Error", "Invalid address");
+				QMessageBox::warning(nullptr, "Error", "Invalid address");
 				return;
 			}
 

@@ -111,4 +111,4 @@ QString current()
 	return QString::fromUtf8(inputMode);
 }
 
-};
+}

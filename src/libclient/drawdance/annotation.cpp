@@ -3,6 +3,7 @@ extern "C" {
 }
 
 #include "libclient/drawdance/annotation.h"
+#include "libshared/util/qtcompat.h"
 
 namespace drawdance {
 
@@ -106,7 +107,7 @@ QByteArray Annotation::textBytes() const
 {
     size_t length;
     const char *text = DP_annotation_text(m_data, &length);
-    return QByteArray::fromRawData(text, length);
+    return QByteArray::fromRawData(text, compat::castSize(length));
 }
 
 QString Annotation::text() const

@@ -45,7 +45,7 @@ class KisSliderSpinBoxPrivate;
  * The "soft range" is considered valid if the "soft maximum" is greater than
  * the "soft minimum".
  */
-class KisSliderSpinBox : public KisIntParseSpinBox
+class KisSliderSpinBox final : public KisIntParseSpinBox
 {
     Q_OBJECT
 public:
@@ -206,7 +206,7 @@ private:
  *
  * @see KisSliderSpinBox
  */
-class KisDoubleSliderSpinBox : public KisDoubleParseSpinBox
+class KisDoubleSliderSpinBox final : public KisDoubleParseSpinBox
 {
     Q_OBJECT
 public:

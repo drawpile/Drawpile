@@ -21,8 +21,8 @@
 #include "thinsrv/dblog.h"
 #include "libshared/util/passwordhash.h"
 #include "libshared/util/validators.h"
-#include "libshared/qtshims.h"
 #include "libserver/serverlog.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -315,7 +315,7 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 		const int rowid = q.value(0).toInt();
 		const QByteArray passwordHash = q.value(1).toByteArray();
 		const int locked = q.value(2).toInt();
-		const QStringList flags = q.value(3).toString().split(',', shim::SKIP_EMPTY_PARTS);
+		const QStringList flags = q.value(3).toString().split(',', compat::SkipEmptyParts);
 
 		if(locked) {
 			return RegisteredUser {

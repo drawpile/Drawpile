@@ -30,6 +30,7 @@ extern "C" {
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/net/announcementlist.h"
 #include "libclient/net/banlistmodel.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QObject>
 #include <QStringListModel>

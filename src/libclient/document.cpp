@@ -30,6 +30,7 @@
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/functionrunnable.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QGuiApplication>
 #include <QSettings>
@@ -648,7 +649,7 @@ void Document::sendResetSession(const drawdance::MessageList &resetImage)
 	if(resetImage.isEmpty()) {
 		qInfo("Sending session reset request. (Just in time snapshot)");
 	} else {
-		qInfo("Sending session reset request. (Snapshot size is %lld bytes)", qlonglong(resetImage.length()));
+		qInfo("Sending session reset request. (Snapshot size is %lld bytes)", compat::cast<long long>(resetImage.length()));
 	}
 
 	m_resetstate = resetImage;
@@ -744,7 +745,7 @@ void Document::sendResetSnapshot()
 {
 	// Size limit check. The server will kick us if we send an oversized reset.
 	if(m_sessionHistoryMaxSize > 0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
-		qWarning("Reset snapshot (%lld) is larger than the size limit (%d)!", qlonglong(m_resetstate.length()), m_sessionHistoryMaxSize);
+		qWarning("Reset snapshot (%lld) is larger than the size limit (%d)!", compat::cast<long long>(m_resetstate.length()), m_sessionHistoryMaxSize);
 		emit autoResetTooLarge(m_sessionHistoryMaxSize);
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	} else {

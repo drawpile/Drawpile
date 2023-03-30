@@ -231,7 +231,7 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
  */
 void CanvasScene::advanceAnimations()
 {
-	const double STEP = 0.02; // time delta in seconds
+	const qreal STEP = 0.02; // time delta in seconds
 
 	const auto items = this->items();
 	for(QGraphicsItem *item : items) {

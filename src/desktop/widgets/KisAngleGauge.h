@@ -11,7 +11,7 @@
 
 #include <QWidget>
 #include <QScopedPointer>
-#include "libshared/qtshims.h"
+#include "desktop/utils/qtguicompat.h"
 
 namespace widgets {
 
@@ -116,7 +116,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *e) override;
     void keyPressEvent(QKeyEvent *e) override;
-    void enterEvent(shim::EnterEvent *e) override;
+    void enterEvent(compat::EnterEvent *e) override;
     void leaveEvent(QEvent *e) override;
 
 private:

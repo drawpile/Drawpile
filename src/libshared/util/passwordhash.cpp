@@ -18,11 +18,14 @@
 */
 
 #include "libshared/util/passwordhash.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QList>
 #include <QString>
 #include <QCryptographicHash>
-#include <qpassworddigestor.h>
+#ifdef HAVE_QT_COMPAT_PBKDF2
+#include <QPasswordDigestor>
+#endif
 #include <QRandomGenerator>
 
 #ifdef HAVE_LIBSODIUM
@@ -57,10 +60,13 @@ bool isValidHash(const QByteArray &hash)
 
 	} else if(hash.startsWith("s+sha1;")) {
 		return hash.count(';') == 2;
-
 	} else if(hash.startsWith("pbkdf2;")) {
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		return hash.count(';') == 3;
-
+#else
+		qWarning("Qt 5.12 needed to support PBKDF2 hashes!");
+		return false;
+#endif
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
 		return hash.length() > 7 && uint(hash.length()) < 7+crypto_pwhash_STRBYTES;
@@ -95,6 +101,7 @@ bool check(const QString &password, const QByteArray &hash)
 		return hp == QByteArray::fromHex(parts.at(2));
 
 	} else if(hash.startsWith("pbkdf2;")) {
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		const auto parts = hash.split(';');
 		const auto salt = QByteArray::fromBase64(parts.at(2));
 		const auto expected = QByteArray::fromBase64(parts.at(3));
@@ -102,7 +109,7 @@ bool check(const QString &password, const QByteArray &hash)
 			const auto actual = QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64);
 			return actual == expected;
 		}
-
+#endif
 	} else if(hash.startsWith("sodium;")) {
 #ifdef HAVE_LIBSODIUM
 		const QByteArray passwd = password.toUtf8();
@@ -132,6 +139,7 @@ QByteArray hashSaltedSha1(const QString &password)
 	return "s+sha1;" + salt.toHex() + ";" + saltedSha1(password, salt).toHex();
 }
 
+#ifdef HAVE_QT_COMPAT_PBKDF2
 QByteArray hashPbkdf2(const QString &password)
 {
 	const QByteArray salt = makesalt();
@@ -140,6 +148,7 @@ QByteArray hashPbkdf2(const QString &password)
 		QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha512, password.toUtf8(), salt, 20000, 64).toBase64()
 		;
 }
+#endif
 
 #ifdef HAVE_LIBSODIUM
 QByteArray hashSodium(const QString &password)
@@ -175,15 +184,19 @@ QByteArray hash(const QString &password, Algorithm algorithm)
 	case BEST_ALGORITHM:
 #ifdef HAVE_LIBSODIUM
 		return hashSodium(password);
-#else
+#elif defined(HAVE_QT_COMPAT_PBKDF2)
 		return hashPbkdf2(password);
+#else
+		return hashSaltedSha1(password);
 #endif
 	case PLAINTEXT:
 		return hashPlaintext(password);
 	case SALTED_SHA1:
 		return hashSaltedSha1(password);
 	case PBKDF2:
+#ifdef HAVE_QT_COMPAT_PBKDF2
 		return hashPbkdf2(password);
+#endif
 	case SODIUM:
 #ifdef HAVE_LIBSODIUM
 		return hashSodium(password);

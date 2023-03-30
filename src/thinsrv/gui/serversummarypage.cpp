@@ -223,34 +223,34 @@ ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	// Serverwide settings that are adjustable via the API
 	layout->addWidget(new SubheaderWidget(tr("Settings"), 2), row++, 0, 1,	2);
 
-	addWidgets(d.get(), layout, row++, tr("Server Title"), d->serverTitle);
-	addWidgets(d.get(), layout, row++, tr("Welcome Message"), d->welcomeMessage);
+	addWidgets(d, layout, row++, tr("Server Title"), d->serverTitle);
+	addWidgets(d, layout, row++, tr("Welcome Message"), d->welcomeMessage);
 
-	addWidgets(d.get(), layout, row++, tr("Connection timeout"), d->clientTimeout, true);
-	addWidgets(d.get(), layout, row++, QString(), d->allowGuests);
-	addWidgets(d.get(), layout, row++, QString(), d->allowGuestHosts);
-	addWidgets(d.get(), layout, row++, tr("Server log"), d->logPurge, true);
-
-	layout->addItem(new QSpacerItem(1,10), row++, 0);
-
-	addWidgets(d.get(), layout, row++, tr("Session size limit"), d->sessionSizeLimit, true);
-	addWidgets(d.get(), layout, row++, tr("Default autoreset threshold"), d->autoresetTreshold, true);
-	addWidgets(d.get(), layout, row++, tr("Session idle timeout"), d->idleTimeout, true);
-	addWidgets(d.get(), layout, row++, tr("Maximum sessions"), d->maxSessions, true);
-	addWidgets(d.get(), layout, row++, QString(), d->persistence);
-	addWidgets(d.get(), layout, row++, QString(), d->archiveSessions);
-	addWidgets(d.get(), layout, row++, QString(), d->privateUserList);
-	addWidgets(d.get(), layout, row++, QString(), d->customAvatars);
+	addWidgets(d, layout, row++, tr("Connection timeout"), d->clientTimeout, true);
+	addWidgets(d, layout, row++, QString(), d->allowGuests);
+	addWidgets(d, layout, row++, QString(), d->allowGuestHosts);
+	addWidgets(d, layout, row++, tr("Server log"), d->logPurge, true);
 
 	layout->addItem(new QSpacerItem(1,10), row++, 0);
 
-	addWidgets(d.get(), layout, row++, tr("External authentication"), d->useExtAuth);
-	addWidgets(d.get(), layout, row++, tr("Validation key"), d->extAuthKey);
-	addWidgets(d.get(), layout, row++, tr("User group"), d->extAuthGroup, true);
-	addWidgets(d.get(), layout, row++, QString(), d->extAuthFallback);
-	addWidgets(d.get(), layout, row++, QString(), d->extAuthMod);
-	addWidgets(d.get(), layout, row++, QString(), d->extAuthHost);
-	addWidgets(d.get(), layout, row++, QString(), d->extAuthAvatars);
+	addWidgets(d, layout, row++, tr("Session size limit"), d->sessionSizeLimit, true);
+	addWidgets(d, layout, row++, tr("Default autoreset threshold"), d->autoresetTreshold, true);
+	addWidgets(d, layout, row++, tr("Session idle timeout"), d->idleTimeout, true);
+	addWidgets(d, layout, row++, tr("Maximum sessions"), d->maxSessions, true);
+	addWidgets(d, layout, row++, QString(), d->persistence);
+	addWidgets(d, layout, row++, QString(), d->archiveSessions);
+	addWidgets(d, layout, row++, QString(), d->privateUserList);
+	addWidgets(d, layout, row++, QString(), d->customAvatars);
+
+	layout->addItem(new QSpacerItem(1,10), row++, 0);
+
+	addWidgets(d, layout, row++, tr("External authentication"), d->useExtAuth);
+	addWidgets(d, layout, row++, tr("Validation key"), d->extAuthKey);
+	addWidgets(d, layout, row++, tr("User group"), d->extAuthGroup, true);
+	addWidgets(d, layout, row++, QString(), d->extAuthFallback);
+	addWidgets(d, layout, row++, QString(), d->extAuthMod);
+	addWidgets(d, layout, row++, QString(), d->extAuthHost);
+	addWidgets(d, layout, row++, QString(), d->extAuthAvatars);
 
 
 	layout->addItem(new QSpacerItem(1,1, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);

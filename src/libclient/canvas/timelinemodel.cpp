@@ -150,10 +150,10 @@ drawdance::Message TimelineModel::makeToggleCommand(int frameCol, int layerRow) 
 	if(frameCol == m_frames.size()) {
 		layerIds.append(layerId);
 	} else {
-		for(int layerId : m_frames.at(frameCol).layerIds) {
-			layerIds.append(layerId);
+		for(int frameLayerId : m_frames.at(frameCol).layerIds) {
+			layerIds.append(frameLayerId);
 		}
-		int i = layerIds.indexOf(layerId);
+		auto i = layerIds.indexOf(layerId);
 		if(i == -1) {
 			layerIds.append(layerId);
 		} else {

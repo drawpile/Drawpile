@@ -35,7 +35,6 @@ namespace {
 
 class CmdError {
 public:
-	CmdError() {}
 	CmdError(const QString &msg) : m_msg(msg) {}
 
 	const QString &message() const { return m_msg; }

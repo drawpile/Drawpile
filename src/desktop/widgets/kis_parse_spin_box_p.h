@@ -31,7 +31,7 @@
 #include "desktop/widgets/kis_num_parser.h"
 
 template <typename SpinBoxTypeTP, typename BaseSpinBoxTypeTP>
-class KisParseSpinBoxPrivate : public QObject
+class KisParseSpinBoxPrivate final : public QObject
 {
 public:
     using SpinBoxType = SpinBoxTypeTP;
@@ -219,11 +219,7 @@ public:
         m_isWarningActive = true;
         if (!m_warningIcon.isNull()) {
             QFontMetricsF fm(m_lineEdit->font());
-#if QT_VERSION >= QT_VERSION_CHECK(5,11,0)
             const qreal textWidth = fm.horizontalAdvance(m_lineEdit->text());
-#else
-            const qreal textWidth = fm.width(m_lineEdit->text());
-#endif
             const int minimumWidth =
                 static_cast<int>(
                     std::ceil(

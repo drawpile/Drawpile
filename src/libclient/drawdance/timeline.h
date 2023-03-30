@@ -12,7 +12,7 @@ public:
     static Timeline inc(DP_Timeline *tl);
     static Timeline noinc(DP_Timeline *tl);
 
-    Timeline();
+    Timeline() {}
     Timeline(const Timeline &other);
     Timeline(Timeline &&other);
 

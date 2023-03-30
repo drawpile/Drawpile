@@ -411,7 +411,7 @@ void LayerList::deleteSelected()
 		QMessageBox::StandardButton result = QMessageBox::question(
 			this, tr("Delete Layer?"),
 			tr("Really delete the layer '%1'?").arg(layer.title),
-			QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
+			QMessageBox::Yes | QMessageBox::No,
 			QMessageBox::StandardButton::Yes);
 		if(result != QMessageBox::StandardButton::Yes) {
 			return;
@@ -462,12 +462,12 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 		connect(dlg, &dialogs::LayerProperties::layerCommands, this, &LayerList::layerCommands);
 		connect(dlg, &dialogs::LayerProperties::visibilityChanged, this, &LayerList::setLayerVisibility);
 		connect(m_canvas->layerlist(), &canvas::LayerListModel::modelReset, dlg, [this, dlg]() {
-			const auto index = m_canvas->layerlist()->layerIndex(dlg->layerId());
-			if(index.isValid()) {
+			const auto newIndex = m_canvas->layerlist()->layerIndex(dlg->layerId());
+			if(newIndex.isValid()) {
 				dlg->setLayerItem(
-					index.data().value<canvas::LayerListItem>(),
+					newIndex.data().value<canvas::LayerListItem>(),
 					layerCreatorName(dlg->layerId()),
-					index.data(canvas::LayerListModel::IsDefaultRole).toBool()
+					newIndex.data(canvas::LayerListModel::IsDefaultRole).toBool()
 				);
 			} else {
 				dlg->deleteLater();

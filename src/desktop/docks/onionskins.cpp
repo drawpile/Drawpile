@@ -82,7 +82,7 @@ protected:
 	{
 		if(e->button() == Qt::LeftButton) {
 			m_leftButtonDown = true;
-			moveSliderTo(e->y());
+			moveSliderTo(compat::mousePos(*e).y());
 			e->accept();
 		} else {
 			QSlider::mousePressEvent(e);
@@ -102,7 +102,7 @@ protected:
 	void mouseMoveEvent(QMouseEvent *e) override
 	{
 		if(m_leftButtonDown) {
-			moveSliderTo(e->y());
+			moveSliderTo(compat::mousePos(*e).y());
 			e->accept();
 		} else {
 			QSlider::mouseMoveEvent(e);

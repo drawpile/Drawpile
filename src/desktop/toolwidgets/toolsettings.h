@@ -24,6 +24,8 @@
 
 #include <QObject>
 
+#include <QObject>
+
 class QComboBox;
 
 namespace widgets { class BrushPreview; }

@@ -98,7 +98,6 @@ public:
 	};
 
 	CanvasShortcuts();
-	~CanvasShortcuts();
 
 	static CanvasShortcuts load(QSettings &cfg);
 	void loadDefaults();

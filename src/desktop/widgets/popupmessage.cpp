@@ -26,6 +26,7 @@
 #include <QTimer>
 
 #include "desktop/widgets/popupmessage.h"
+#include "desktop/utils/qtguicompat.h"
 
 namespace widgets {
 
@@ -84,11 +85,7 @@ void PopupMessage::showMessage(const QPoint& point, const QString &message)
 
 	QRect rect(point - QPoint(width() - width()/6,height()), size());
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-	const QRect screen = m_parentWidget->screen()->availableGeometry();
-#else
-	const QRect screen = qApp->primaryScreen()->availableGeometry();
-#endif
+	const QRect screen = compat::widgetScreen(*m_parentWidget)->availableGeometry();
 
 	// Make sure the popup fits horizontally
 	if(rect.x() + rect.width() > screen.x() + screen.width()) {

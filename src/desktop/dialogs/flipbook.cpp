@@ -20,6 +20,7 @@
 #include "desktop/dialogs/flipbook.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/utils/icon.h"
+#include "desktop/utils/qtguicompat.h"
 
 #include "ui_flipbook.h"
 
@@ -194,11 +195,7 @@ void Flipbook::loadFrame()
 			QImage img = m_paintengine->getFrameImage(f, m_crop);
 
 			// Scale down the image if it is too big
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-			const QSize maxSize = screen()->availableSize() * 0.7;
-#else
-			const QSize maxSize = qApp->primaryScreen()->availableSize() * 0.7;
-#endif
+			const QSize maxSize = compat::widgetScreen(*this)->availableSize() * 0.7;
 
 			if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
 				const QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);

@@ -1,5 +1,4 @@
 add_library(dpshared STATIC
-	qtshims.h
 	listings/announcementapi.cpp
 	listings/announcementapi.h
 	listings/listserverfinder.cpp
@@ -48,6 +47,7 @@ add_library(dpshared STATIC
 	util/passwordhash.h
 	util/paths.cpp
 	util/paths.h
+	util/qtcompat.h
 	util/ulid.cpp
 	util/ulid.h
 	util/validators.cpp

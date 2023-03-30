@@ -17,7 +17,7 @@ private slots:
 		QVERIFY(touch(dir.filePath("hello.txt")));
 
 		// Non-existenting file: no change to filename
-		QFileInfo uniq1 = utils::uniqueFilename(dir, "test", "txt");
+		QFileInfo uniq1 = QFileInfo(utils::uniqueFilename(dir, "test", "txt"));
 		QCOMPARE(uniq1.fileName(), QString("test.txt"));
 
 		// Existing file: file name must be changed
@@ -25,7 +25,7 @@ private slots:
 		uniqueNames << "hello.txt";
 
 		for(int tries=0;tries<10;++tries) {
-			QFileInfo uniq2 = utils::uniqueFilename(dir, "hello", "txt");
+			QFileInfo uniq2 = QFileInfo(utils::uniqueFilename(dir, "hello", "txt"));
 			QVERIFY(!uniqueNames.contains(uniq2.fileName()));
 			QVERIFY(touch(uniq2.filePath()));
 			uniqueNames << uniq2.fileName();

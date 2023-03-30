@@ -71,12 +71,12 @@
 #include "libclient/utils/images.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
+#include "libshared/util/qtcompat.h"
 #include "libclient/utils/shortcutdetector.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libclient/utils/logging.h"
 #include "desktop/utils/actionbuilder.h"
 #include "desktop/utils/widgetutils.h"
-#include "libshared/qtshims.h"
 
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/netstatus.h"
@@ -978,7 +978,7 @@ bool MainWindow::event(QEvent *event)
 						// Return from temporary tool change
 						for(const QAction *act : m_drawingtools->actions()) {
 							const QKeySequence &seq = act->shortcut();
-							if(seq.count()==1 && shim::getKey(e) == seq[0]) {
+							if(seq.count()==1 && compat::keyPressed(*e) == seq[0]) {
 								m_dockToolSettings->setPreviousTool();
 								break;
 							}
@@ -987,7 +987,7 @@ bool MainWindow::event(QEvent *event)
 						// Return from temporary tool slot change
 						for(const QAction *act : m_brushSlots->actions()) {
 							const QKeySequence &seq = act->shortcut();
-							if(seq.count()==1 && shim::getKey(e) == seq[0]) {
+							if(seq.count()==1 && compat::keyPressed(*e) == seq[0]) {
 								m_dockToolSettings->setPreviousTool();
 								break;
 							}
@@ -1485,9 +1485,9 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 /**
  * Show the join dialog
  */
-void MainWindow::join(const QUrl &url)
+void MainWindow::join(const QUrl &initialUrl)
 {
-	auto dlg = new dialogs::JoinDialog(url, this);
+	auto dlg = new dialogs::JoinDialog(initialUrl, this);
 
 	connect(dlg, &dialogs::JoinDialog::finished, this, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
@@ -2059,13 +2059,13 @@ void MainWindow::copyText()
 
 void MainWindow::paste()
 {
-	const QMimeData *data = QApplication::clipboard()->mimeData();
-	if(data->hasImage()) {
+	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+	if(mimeData->hasImage()) {
 		QPoint pastepos;
 		bool pasteAtPos = false;
 
 		// Get source position
-		QByteArray srcpos = data->data("x-drawpile/pastesrc");
+		QByteArray srcpos = mimeData->data("x-drawpile/pastesrc");
 		if(!srcpos.isNull()) {
 			QList<QByteArray> pos = srcpos.split(',');
 			if(pos.size() == 4) {
@@ -2080,17 +2080,17 @@ void MainWindow::paste()
 
 		// Paste-in-place if we're the source (same process, same document)
 		if(pasteAtPos && m_view->isPointVisible(pastepos))
-			pasteImage(data->imageData().value<QImage>(), &pastepos, true);
+			pasteImage(mimeData->imageData().value<QImage>(), &pastepos, true);
 		else
-			pasteImage(data->imageData().value<QImage>());
+			pasteImage(mimeData->imageData().value<QImage>());
 	}
 }
 
 void MainWindow::pasteCentered()
 {
-	const QMimeData *data = QApplication::clipboard()->mimeData();
-	if(data->hasImage()) {
-		pasteImage(data->imageData().value<QImage>(), nullptr, true);
+	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+	if(mimeData->hasImage()) {
+		pasteImage(mimeData->imageData().value<QImage>(), nullptr, true);
 	}
 }
 
@@ -2813,10 +2813,10 @@ void MainWindow::setupActions()
 
 	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
-	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
-	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
-	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence(Qt::SHIFT | Qt::Key_Period)).icon("object-rotate-right");
-	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence(Qt::SHIFT | Qt::Key_Comma)).icon("object-rotate-left");
+	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
+	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence("ctrl+r"));
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("object-rotate-right");
+	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("object-rotate-left");
 
 	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
 	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();

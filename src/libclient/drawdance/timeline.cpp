@@ -16,11 +16,6 @@ Timeline Timeline::noinc(DP_Timeline *tl)
     return Timeline{tl};
 }
 
-Timeline::Timeline()
-    : Timeline{nullptr}
-{
-}
-
 Timeline::Timeline(const Timeline &other)
     : Timeline{DP_timeline_incref_nullable(other.m_data)}
 {

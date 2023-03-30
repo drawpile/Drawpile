@@ -26,6 +26,7 @@
 #include "libclient/net/client.h"
 #include "libclient/utils/icon.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/utils/qtguicompat.h"
 
 
 #include "ui_textsettings.h"
@@ -140,7 +141,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 	// Set initial content format
 	QTextCharFormat fmt;
-	setFontFamily(fmt);
+	compat::setFontFamily(fmt, m_ui->font->currentText());
 	fmt.setFontPointSize(m_ui->size->value());
 	fmt.setForeground(m_ui->btnTextColor->color());
 	m_ui->content->setCurrentCharFormat(fmt);
@@ -275,14 +276,7 @@ void AnnotationSettings::updateFontIfUniform()
 				first = false;
 
 			} else {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-				uniformFontFamily &= fr.format.fontFamily() == fmt1.fontFamily();
-#else
-				// Font families are always a string list, according to the Qt
-				// docs the QVariant return is a historical issue.
-				uniformFontFamily &=
-					fr.format.fontFamilies().toStringList() == fmt1.fontFamilies().toStringList();
-#endif
+				uniformFontFamily &= compat::fontFamily(fr.format) == compat::fontFamily(fmt1);
 				uniformSize &= qFuzzyCompare(fr.format.fontPointSize(), fmt1.fontPointSize());
 				uniformColor &= fr.format.foreground() == fmt1.foreground();
 			}
@@ -303,7 +297,7 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 	QTextCharFormat fmt;
 
 	if(resetFamily)
-		setFontFamily(fmt);
+		compat::setFontFamily(fmt, m_ui->font->currentText());
 
 	if(resetSize)
 		fmt.setFontPointSize(m_ui->size->value());
@@ -316,11 +310,7 @@ void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool
 
 void AnnotationSettings::setFontFamily(QTextCharFormat &fmt)
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	fmt.setFontFamily(m_ui->font->currentText());
-#else
-	fmt.setFontFamilies({m_ui->font->currentText()});
-#endif
+	compat::setFontFamily(fmt, m_ui->font->currentText());
 }
 
 void AnnotationSettings::setSelectionId(uint16_t id)

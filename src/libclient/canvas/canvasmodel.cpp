@@ -31,6 +31,7 @@ extern "C" {
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/utils/identicon.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -167,13 +168,13 @@ void CanvasModel::handleJoin(const drawdance::Message &msg)
 
 	size_t nameLength;
 	const char *nameBytes = DP_msg_join_name(mj, &nameLength);
-	QString name = QString::fromUtf8(nameBytes, nameLength);
+	QString name = QString::fromUtf8(nameBytes, compat::castSize(nameLength));
 
 	size_t avatarSize;
 	const unsigned char *avatarBytes = DP_msg_join_avatar(mj, &avatarSize);
 	QImage avatar;
 	if(avatarSize != 0) {
-		QByteArray avatarData = QByteArray::fromRawData(reinterpret_cast<const char*>(avatarBytes), avatarSize);
+		QByteArray avatarData = QByteArray::fromRawData(reinterpret_cast<const char*>(avatarBytes), compat::castSize(avatarSize));
 		if(!avatar.loadFromData(avatarData)) {
 			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(name), user_id);
 		}
@@ -221,7 +222,7 @@ void CanvasModel::handleChat(const drawdance::Message &msg)
 
 	size_t messageLength;
 	const char *messageBytes = DP_msg_chat_message(mc, &messageLength);
-	QString message = QString::fromUtf8(messageBytes, messageLength);
+	QString message = QString::fromUtf8(messageBytes, compat::castSize(messageLength));
 
 	uint8_t oflags = DP_msg_chat_oflags(mc);
 	if(oflags & DP_MSG_CHAT_OFLAGS_PIN) {
@@ -250,7 +251,7 @@ void CanvasModel::handlePrivateChat(const drawdance::Message &msg)
 
 	size_t messageLength;
 	const char *messageBytes = DP_msg_private_chat_message(mpc, &messageLength);
-	QString message = QString::fromUtf8(messageBytes, messageLength);
+	QString message = QString::fromUtf8(messageBytes, compat::castSize(messageLength));
 
 	uint8_t target = DP_msg_private_chat_target(mpc);
 	uint8_t oflags = DP_msg_private_chat_oflags(mpc);
@@ -367,7 +368,7 @@ QImage CanvasModel::selectionToImage(int layerId) const
 		drawdance::LayerContent layerContent = canvasState.searchLayerContent(layerId);
 		if(layerContent.isNull()) {
 			qWarning("selectionToImage: layer %d not found", layerId);
-			QImage img(rect.size(), QImage::Format_ARGB32_Premultiplied);
+			img = QImage(rect.size(), QImage::Format_ARGB32_Premultiplied);
 			img.fill(0);
 			return img;
 		}

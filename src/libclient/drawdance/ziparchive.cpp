@@ -3,6 +3,8 @@ extern "C" {
 }
 
 #include "libclient/drawdance/ziparchive.h"
+#include "libshared/util/qtcompat.h"
+
 
 namespace drawdance {
 
@@ -32,7 +34,7 @@ QByteArray ZipReader::File::readBytes() const
 	if(m_zrf) {
 		return QByteArray::fromRawData(
 			static_cast<const char *>(DP_zip_reader_file_content(m_zrf)),
-			DP_zip_reader_file_size(m_zrf));
+			compat::castSize(DP_zip_reader_file_size(m_zrf)));
 	} else {
 		return QByteArray{};
 	}
@@ -43,7 +45,7 @@ QString ZipReader::File::readUtf8() const
 	if(m_zrf) {
 		return QString::fromUtf8(
 			static_cast<const char *>(DP_zip_reader_file_content(m_zrf)),
-			DP_zip_reader_file_size(m_zrf));
+			compat::castSize(DP_zip_reader_file_size(m_zrf)));
 	} else {
 		return QString{};
 	}

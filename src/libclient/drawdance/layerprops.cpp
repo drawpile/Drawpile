@@ -4,6 +4,7 @@ extern "C" {
 
 #include "libclient/drawdance/layerprops.h"
 #include "libclient/drawdance/layerpropslist.h"
+#include "libshared/util/qtcompat.h"
 
 namespace drawdance {
 
@@ -67,7 +68,7 @@ QString LayerProps::title() const
 {
     size_t length;
     const char *title = DP_layer_props_title(m_data, &length);
-    return QString::fromUtf8(title, length);
+    return QString::fromUtf8(title, compat::castSize(length));
 }
 
 uint16_t LayerProps::opacity() const

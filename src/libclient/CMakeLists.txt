@@ -192,7 +192,6 @@ else()
 	)
 endif()
 
-target_compile_definitions(dpclient PUBLIC HAVE_QT_GUI)
 target_link_libraries(dpclient
 	dpshared
 	${QT_PACKAGE_NAME}::Gui

@@ -19,6 +19,8 @@
 #ifndef PAGEFACTORY_H
 #define PAGEFACTORY_H
 
+#include <QMetaType>
+
 class QString;
 class QWidget;
 

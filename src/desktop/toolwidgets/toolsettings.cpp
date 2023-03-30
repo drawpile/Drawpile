@@ -26,7 +26,7 @@ namespace tools {
 
 QWidget *ToolSettings::createUi(QWidget *parent)
 {
-	Q_ASSERT(m_widget==0);
+	Q_ASSERT(!m_widget);
 	m_widget = createUiWidget(parent);
 	return m_widget;
 }

@@ -18,7 +18,7 @@
 */
 
 #include "libclient/net/servercmd.h"
-#include "libshared/qtshims.h"
+#include "libshared/util/qtcompat.h"
 
 namespace net {
 
@@ -77,7 +77,7 @@ drawdance::Message ServerCommand::toMessage() const
 		qWarning(
 			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%lld bytes)",
 			qPrintable(cmd),
-			shim::cast<long long>(payload.length())
+			compat::cast<long long>(payload.length())
 		);
 		return drawdance::Message{};
 	}
@@ -138,7 +138,7 @@ ServerReply ServerReply::fromMessage(const drawdance::Message &msg)
 
 	size_t len;
 	const char *data = DP_msg_server_command_msg(msg.toServerCommand(), &len);
-	QByteArray bytes = QByteArray::fromRawData(data, len);
+	QByteArray bytes = QByteArray::fromRawData(data, compat::castSize(len));
 
 	QJsonParseError err;
 	const QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);

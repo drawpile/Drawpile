@@ -603,12 +603,12 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 	connect(
 		inputWidget, &widgets::MyPaintInput::controlPointsChanged,
 		[this, setting, input]() {
-			widgets::MyPaintInput *inputWidget =
+			widgets::MyPaintInput *otherWidget =
 				d->myPaintPages[setting].inputs[input];
 			brushes::MyPaintBrush &mypaint = d->brush.myPaint();
-			mypaint.setCurve(setting, input, inputWidget->myPaintCurve());
+			mypaint.setCurve(setting, input, otherWidget->myPaintCurve());
 			mypaint.settings().mappings[setting].inputs[input] =
-				inputWidget->controlPoints();
+				otherWidget->controlPoints();
 			emitChange();
 		});
 	return inputWidget;

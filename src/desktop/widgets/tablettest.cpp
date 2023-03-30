@@ -18,6 +18,7 @@
 */
 
 #include "desktop/widgets/tablettest.h"
+#include "desktop/utils/qtguicompat.h"
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -64,7 +65,8 @@ void TabletTester::paintEvent(QPaintEvent *e)
 
 void TabletTester::mousePressEvent(QMouseEvent *e)
 {
-	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3").arg(e->x()).arg(e->y()).arg(e->button()));
+	const auto mousePos = compat::mousePos(*e);
+	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3").arg(mousePos.x()).arg(mousePos.y()).arg(e->button()));
 	m_mouseDown = true;
 	m_mousePath.clear();
 	update();
@@ -72,7 +74,8 @@ void TabletTester::mousePressEvent(QMouseEvent *e)
 
 void TabletTester::mouseMoveEvent(QMouseEvent *e)
 {
-	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3").arg(e->x()).arg(e->y()).arg(e->buttons()));
+	const auto mousePos = compat::mousePos(*e);
+	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3").arg(mousePos.x()).arg(mousePos.y()).arg(e->buttons()));
 	m_mousePath << e->pos();
 	update();
 }
@@ -89,28 +92,16 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	e->accept();
 
 	QString msg;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-	switch(e->device()) {
-		case QTabletEvent::Stylus: msg = "Stylus"; break;
-		default: msg = QString("Device(%1)").arg(e->device()); break;
+
+	auto device = compat::tabDevice(*e);
+
+	switch(device) {
+		case compat::DeviceType::Stylus: msg = "Stylus"; break;
+		default: {
+			msg = QString("Device(%1)").arg(int(device));
+			break;
+		}
 	}
-#elif QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	switch(e->deviceType()) {
-		case QTabletEvent::Stylus: msg = "Stylus"; break;
-		default: msg = QString("Device(%1)").arg(e->deviceType()); break;
-	}
-#else
-	switch(e->deviceType()) {
-        case QInputDevice::DeviceType::Mouse: msg = "Mouse"; break;
-        case QInputDevice::DeviceType::TouchScreen: msg = "TouchScreen"; break;
-        case QInputDevice::DeviceType::TouchPad: msg = "TouchPad"; break;
-        case QInputDevice::DeviceType::Puck: msg = "Puck"; break;
-        case QInputDevice::DeviceType::Stylus: msg = "Stylus"; break;
-        case QInputDevice::DeviceType::Airbrush: msg = "Airbrush"; break;
-        case QInputDevice::DeviceType::Keyboard: msg = "Keyboard"; break;
-		default: msg = QString("Device(%1)").arg(int(e->deviceType())); break;
-	}
-#endif
 
 	switch(e->type()) {
 		case QEvent::TabletMove:
@@ -130,9 +121,10 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 			break;
 	}
 
+	const auto posF = compat::tabPosF(*e);
 	msg += QString(" X=%1 Y=%2 B=%3 P=%4%")
-		.arg(e->posF().x(), 0, 'f', 2)
-		.arg(e->posF().y(), 0, 'f', 2)
+		.arg(posF.x(), 0, 'f', 2)
+		.arg(posF.y(), 0, 'f', 2)
 		.arg(e->buttons())
 		.arg(e->pressure()*100, 0, 'f', 1)
 		;
@@ -140,7 +132,7 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	if(e->type() == QEvent::TabletMove) {
 		if(m_tabletDown) {
 			msg += " (DRAW)";
-			m_tabletPath << e->pos();
+			m_tabletPath << compat::tabPosF(*e).toPoint();
 			update();
 		} else {
 			msg += " (HOVER)";

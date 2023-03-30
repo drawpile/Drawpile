@@ -26,6 +26,7 @@
 #include "libshared/net/messagequeue.h"
 #include "libshared/net/control.h"
 #include "libshared/net/meta.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QSslSocket>
 #include <QStringList>
@@ -74,11 +75,7 @@ Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
 	d->socket->setParent(this);
 
 	connect(d->socket, &QAbstractSocket::disconnected, this, &Client::socketDisconnect);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-	connect(d->socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &Client::socketError);
-#else
-	connect(d->socket, &QAbstractSocket::errorOccurred, this, &Client::socketError);
-#endif
+	connect(d->socket, compat::SocketError, this, &Client::socketError);
 	connect(d->msgqueue, &protocol::MessageQueue::messageAvailable, this, &Client::receiveMessages);
 	connect(d->msgqueue, &protocol::MessageQueue::badData, this, &Client::gotBadData);
 }

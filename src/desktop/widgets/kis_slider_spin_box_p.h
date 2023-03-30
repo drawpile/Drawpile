@@ -36,7 +36,7 @@
 #include "desktop/utils/qtguicompat.h"
 
 template <typename SpinBoxTypeTP, typename BaseSpinBoxTypeTP>
-class KisSliderSpinBoxPrivate : public QObject
+class KisSliderSpinBoxPrivate final : public QObject
 {
     Q_DECLARE_TR_FUNCTIONS(KisSliderSpinBoxPrivate)
 public:
@@ -596,7 +596,7 @@ public:
         painter.setClipRect(clipRect);
         painter.drawText(rect, text, textOption);
         painter.setClipping(false);
-    };
+    }
 
     void paintGenericSliderText(QPainter &painter, const QString &text, const QRectF &rect, const QRectF &sliderRect)
     {
@@ -606,7 +606,7 @@ public:
         paintSliderText(painter, text, rect, rect.adjusted(sliderRect.width(), 0, 0, 0), m_lineEdit->palette().text().color(), textOption);
         // Draw portion of the text that is over the progress bar
         paintSliderText(painter, text, rect, sliderRect, m_lineEdit->palette().highlightedText().color(), textOption);
-    };
+    }
 
     void paintSlider(QPainter &painter, const QString &text, double slider01Width, double slider02Width = -1.0)
     {
@@ -725,7 +725,7 @@ public:
             if (e->button() == Qt::LeftButton) {
                 m_lastMousePressPosition = e->pos();
                 const QPoint currentValuePosition = pointForValue(m_q->value());
-                m_relativeDraggingOffset = currentValuePosition.x() - e->x();
+                m_relativeDraggingOffset = currentValuePosition.x() - compat::mousePos(*e).x();
                 m_useRelativeDragging = (e->modifiers() & Qt::ShiftModifier)
                                         || qAbs(m_relativeDraggingOffset) <= relativeDraggingMargin;
                 m_timerStartEditing.start(qApp->styleHints()->mousePressAndHoldInterval());

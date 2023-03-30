@@ -24,6 +24,7 @@ extern "C" {
 }
 
 #include "libclient/canvas/acl.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QAbstractItemModel>
 #include <QMimeData>
@@ -204,11 +205,7 @@ public:
 	QStringList formats() const override;
 
 protected:
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const override;
-#else
-	QVariant retrieveData(const QString &mimeType, QMetaType type) const override;
-#endif
+	QVariant retrieveData(const QString& mimeType, compat::RetrieveDataMetaType type) const override;
 
 private:
 	const LayerListModel *m_source;

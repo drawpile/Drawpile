@@ -37,9 +37,8 @@
 
 #include "desktop/widgets/kis_curve_widget.h"
 
-#define MOUSE_AWAY_THRES 15
-#define POINT_AREA       1E-4
-#define CURVE_AREA       1E-4
+static constexpr int MOUSE_AWAY_THRES = 15;
+static constexpr double POINT_AREA = 1E-4;
 
 #include "desktop/widgets/kis_curve_widget_p.h"
 

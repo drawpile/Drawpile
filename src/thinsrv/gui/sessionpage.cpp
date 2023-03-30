@@ -151,10 +151,10 @@ SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 		addLabels(grid, row++, tr("Started by"), d->founder);
 		addLabels(grid, row++, tr("Password protected"), d->password);
 		addLabels(grid, row++, tr("Size"), d->size);
-		addWidgets(d.get(), grid, row++, tr("Maximum users"), d->maxUsers, true);
-		addWidgets(d.get(), grid, row++, QString(), d->closed);
-		addWidgets(d.get(), grid, row++, QString(), d->persistent);
-		addWidgets(d.get(), grid, row++, QString(), d->nsfm);
+		addWidgets(d, grid, row++, tr("Maximum users"), d->maxUsers, true);
+		addWidgets(d, grid, row++, QString(), d->closed);
+		addWidgets(d, grid, row++, QString(), d->persistent);
+		addWidgets(d, grid, row++, QString(), d->nsfm);
 	}
 
 	{

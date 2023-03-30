@@ -21,7 +21,7 @@
 #include "libshared/record/header.h"
 #include "libshared/net/protover.h"
 #include "libshared/net/message.h"
-#include "libshared/qtshims.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QIODevice>
 #include <QJsonDocument>
@@ -97,7 +97,7 @@ bool writeRecordingHeader(QIODevice *file, const QJsonObject &metadata)
 	QByteArray metadatabuf = QJsonDocument(md).toJson(QJsonDocument::Compact);
 
 	if(metadatabuf.length() > 0xffff) {
-		qWarning("Recording metadata block too long (%lld)", shim::cast<long long>(metadatabuf.length()));
+		qWarning("Recording metadata block too long (%lld)", compat::cast<long long>(metadatabuf.length()));
 		return false;
 	}
 

@@ -3,6 +3,7 @@ extern "C" {
 }
 
 #include "libclient/drawdance/message.h"
+#include "libshared/util/qtcompat.h"
 
 #include <QByteArray>
 #include <QImage>
@@ -332,7 +333,7 @@ void Message::makePutImagesRecursive(MessageList &msgs, uint8_t contextId, uint1
 unsigned char *Message::getDeserializeBuffer(void *user, size_t size)
 {
     QByteArray *buffer = static_cast<QByteArray *>(user);
-    buffer->resize(size);
+    buffer->resize(compat::castSize(size));
     return reinterpret_cast<unsigned char *>(buffer->data());
 }
 
