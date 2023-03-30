@@ -10,7 +10,12 @@
 namespace drawingboard {
 
 LaserTrailItem::LaserTrailItem(uint8_t owner, int persistenceMs, const QColor &color, QGraphicsItem *parent)
-	: QGraphicsItem(parent), m_blink(0.0f), m_fadeout(false), m_owner(owner), m_lastModified(0), m_persistence(persistenceMs)
+	: QGraphicsItem(parent)
+	, m_blink(0.0f)
+	, m_fadeout(false)
+	, m_owner(owner)
+	, m_lastModified(QDateTime::currentMSecsSinceEpoch())
+	, m_persistence(persistenceMs)
 {
 	m_pen.setWidth(qApp->devicePixelRatio() * 3);
 	m_pen.setCapStyle(Qt::RoundCap);
