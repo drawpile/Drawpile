@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH
 )
 
 set(BUILD_TYPE "release" CACHE STRING
-	"The type of build ('debug' or 'release')")
+	"The type of build ('debug', 'debugnoasan', or 'release')")
 set(QT_VERSION "" CACHE STRING
 	"The version of Qt to build")
 
@@ -23,10 +23,13 @@ endif()
 
 string(TOLOWER "${BUILD_TYPE}" BUILD_TYPE)
 if(BUILD_TYPE STREQUAL "debug")
+	set(USE_ASAN true)
 	message(WARNING "This build type enables ASan for some dependencies!\n"
 		"You may need to use `-DCMAKE_EXE_LINKER_FLAGS_INIT=-fsanitize=address`"
 		" when linking to these libraries."
 	)
+elseif(BUILD_TYPE STREQUAL "debugnoasan")
+	set(BUILD_TYPE "debug")
 elseif(NOT BUILD_TYPE STREQUAL "release")
 	message(FATAL_ERROR "Unknown build type '${BUILD_TYPE}'")
 endif()
@@ -53,6 +56,16 @@ if(QT_VERSION VERSION_GREATER_EQUAL 6.4)
 		-no-feature-ffmpeg
 		-no-feature-spatialaudio
 	)
+endif()
+
+# https://bugreports.qt.io/browse/QTBUG-72846 regressed in Qt6 due to
+# https://gitlab.kitware.com/cmake/cmake/-/issues/23864
+if(NOT APPLE OR QT_VERSION VERSION_LESS 6)
+	list(APPEND BASE_FLAGS -ltcg)
+endif()
+
+if(USE_ASAN)
+	list(APPEND BASE_FLAGS -sanitize address)
 endif()
 
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
@@ -116,14 +129,13 @@ if(BASE)
 		ALL_PLATFORMS
 			${BASE_GENERATOR}
 				ALL
-					-release -opensource -confirm-license -ltcg
+					-release -opensource -confirm-license
 					-nomake examples
 					-no-sql-mysql -no-sql-odbc -no-sql-psql -sql-sqlite
 					-qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
 					${BASE_FLAGS}
 				DEBUG
 					-force-asserts -force-debug-info -separate-debug-info
-					-sanitize address
 		PATCHES
 			ALL
 				patches/qtbug-111538.diff
