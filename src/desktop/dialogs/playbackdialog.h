@@ -46,7 +46,9 @@ private slots:
 	void loadIndex();
 
 	void onBuildIndexClicked();
+#ifndef Q_OS_ANDROID
 	void onVideoExportClicked();
+#endif
 
 	void exportFrame(int count=1);
 

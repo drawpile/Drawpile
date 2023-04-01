@@ -114,8 +114,6 @@ target_sources(drawpile PRIVATE
 	dialogs/tablettester.h
 	dialogs/userinfodialog.cpp
 	dialogs/userinfodialog.h
-	dialogs/videoexportdialog.cpp
-	dialogs/videoexportdialog.h
 	docks/brushpalettedock.cpp
 	docks/brushpalettedock.h
 	docks/colorpalette.cpp
@@ -205,7 +203,6 @@ target_sources(drawpile PRIVATE
 	ui/tablettest.ui
 	ui/textsettings.ui
 	ui/userinfodialog.ui
-	ui/videoexport.ui
 	utils/actionbuilder.h
 	utils/hidedocktitlebarseventfilter.cpp
 	utils/hidedocktitlebarseventfilter.h
@@ -335,6 +332,14 @@ if(ANDROID)
 	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
 		target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::AndroidExtras)
 	endif()
+else()
+	# Android can neither deal with exporting multiple files nor can it spawn an
+	# ffmpeg process for video recording, so we only allow it outside of it.
+	target_sources(drawpile PRIVATE
+		dialogs/videoexportdialog.cpp
+		dialogs/videoexportdialog.h
+		ui/videoexport.ui
+	)
 endif()
 
 if(KIS_TABLET)

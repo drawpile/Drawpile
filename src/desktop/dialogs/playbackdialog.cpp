@@ -41,7 +41,11 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	m_ui->buildIndexProgress->hide();
 
 	connect(m_ui->buildIndexButton, &QAbstractButton::clicked, this, &PlaybackDialog::onBuildIndexClicked);
+#ifdef Q_OS_ANDROID
+	m_ui->configureExportButton->setVisible(false);
+#else
 	connect(m_ui->configureExportButton, &QAbstractButton::clicked, this, &PlaybackDialog::onVideoExportClicked);
+#endif
 
 	m_playTimer = new QTimer{this};
 	m_playTimer->setTimerType(Qt::PreciseTimer);
@@ -256,9 +260,9 @@ void PlaybackDialog::keyPressEvent(QKeyEvent *event)
 	event->ignore();
 }
 
+#ifndef Q_OS_ANDROID
 void PlaybackDialog::onVideoExportClicked()
 {
-
 	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
 	VideoExporter *ve=nullptr;
 
@@ -293,12 +297,9 @@ void PlaybackDialog::onVideoExportClicked()
 	connect(m_ui->saveFrame, &QAbstractButton::clicked, this, &PlaybackDialog::exportFrame);
 	connect(m_ui->stopExport, &QAbstractButton::clicked, m_exporter, &VideoExporter::finish);
 
-	connect(m_exporter, &VideoExporter::exporterReady, this, [this]() {
-		m_exporting = false;
-		m_ui->saveFrame->setEnabled(true);
-		m_ui->frameLabel->setText(QString::number(m_exporter->frame()));
-	});
+	connect(m_exporter, &VideoExporter::exporterReady, this, &PlaybackDialog::onExporterReady);
 }
+#endif
 
 void PlaybackDialog::exportFrame(int count)
 {
