@@ -2671,6 +2671,7 @@ void MainWindow::setupActions()
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
 	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as");
 	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
+	QAction *importBrushes = makeAction("importbrushes", tr("&Brushes..."));
 	QAction *exportTemplate = makeAction("exporttemplate", tr("Session &Template..."));
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
 #ifndef Q_OS_ANDROID
@@ -2698,6 +2699,7 @@ void MainWindow::setupActions()
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
+	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importMyPaintBrushes);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
 	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
@@ -2730,6 +2732,10 @@ void MainWindow::setupActions()
 	filemenu->addAction(savesel);
 	filemenu->addAction(autosave);
 	filemenu->addSeparator();
+
+	QMenu *importMenu = filemenu->addMenu(tr("&Import"));
+	importMenu->setIcon(icon::fromTheme("document-import"));
+	importMenu->addAction(importBrushes);
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(icon::fromTheme("document-export"));

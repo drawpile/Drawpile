@@ -73,7 +73,7 @@ struct BrushPalette::Private {
 	QAction *newTagAction;
 	QAction *editTagAction;
 	QAction *deleteTagAction;
-	QAction *importMyPaintBrushesAction;
+	QAction *importBrushesAction;
 	QListView *presetListView;
 };
 
@@ -132,7 +132,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->editTagAction = d->menu->addAction(icon::fromTheme("edit-rename"), tr("Rename Tag"));
 	d->deleteTagAction = d->menu->addAction(icon::fromTheme("list-remove"), tr("Delete Tag"));
 	d->menu->addSeparator();
-	d->importMyPaintBrushesAction = d->menu->addAction(tr("Import MyPaint Brushes..."));
+	d->importBrushesAction = d->menu->addAction(tr("Import Brushes..."));
 	d->menuButton->setMenu(d->menu);
 
 	for(int dimension = 16; dimension <= 128; dimension += 16) {
@@ -170,7 +170,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	connect(d->overwriteBrushAction, &QAction::triggered, this, &BrushPalette::overwriteCurrentPreset);
 	connect(d->editBrushAction, &QAction::triggered, this, &BrushPalette::editCurrentPreset);
 	connect(d->deleteBrushAction, &QAction::triggered, this, &BrushPalette::deleteCurrentPreset);
-	connect(d->importMyPaintBrushesAction, &QAction::triggered, this, &BrushPalette::importMyPaintBrushes);
+	connect(d->importBrushesAction, &QAction::triggered, this, &BrushPalette::importMyPaintBrushes);
 	connect(d->presetListView, &QAbstractItemView::clicked, this, &BrushPalette::applyToBrushSettings);
 	connect(d->presetListView, &QAbstractItemView::doubleClicked, this, &BrushPalette::editCurrentPreset);
 	connect(d->presetListView, &QWidget::customContextMenuRequested, this, &BrushPalette::showPresetContextMenu);
@@ -192,6 +192,72 @@ BrushPalette::~BrushPalette()
 void BrushPalette::connectBrushSettings(tools::ToolSettings *toolSettings)
 {
 	d->brushSettings = qobject_cast<tools::BrushSettings*>(toolSettings);
+}
+
+void BrushPalette::importMyPaintBrushes()
+{
+	QString file = QFileDialog::getOpenFileName(this,
+		tr("Select MyPaint brush pack to import"), QString(),
+		tr("MyPaint Brush Pack (%1)").arg("*.zip"));
+
+	if(!file.isEmpty()) {
+		brushes::MyPaintImportResult result =
+			d->tagModel->importMyPaintBrushPack(file);
+		if(!result.importedTags.isEmpty()) {
+			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(result.importedTags[0].id));
+		}
+
+		QDialog *dlg = new QDialog{this};
+		dlg->setWindowTitle(tr("MyPaint Brush Import"));
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setModal(true);
+
+		QVBoxLayout *layout = new QVBoxLayout{dlg};
+		dlg->setLayout(layout);
+
+		QString text;
+		int errorCount = result.errors.size();
+
+		QLabel *brushLabel = new QLabel{
+			tr("%n brush(es) imported.", "", result.importedBrushCount), dlg};
+		layout->addWidget(brushLabel);
+		brushLabel->setWordWrap(true);
+
+		QLabel *tagsLabel = new QLabel{dlg};
+		layout->addWidget(tagsLabel);
+		tagsLabel->setWordWrap(true);
+		int tagCount = result.importedTags.count();
+		if(tagCount > 0) {
+			QStringList tagNames;
+			for(const brushes::Tag &tag : result.importedTags) {
+				tagNames.append(tag.name);
+			}
+			tagsLabel->setText(
+				tr("%n tag(s) imported: %1", "", tagCount).arg(tagNames.join(", ")));
+		} else {
+			tagsLabel->setText(tr("0 tags imported."));
+		}
+
+		QLabel *errorsLabel = new QLabel{
+			tr("%n error(s) encountered.", "", errorCount), dlg};
+		layout->addWidget(errorsLabel);
+		errorsLabel->setWordWrap(true);
+
+		if(errorCount != 0) {
+			dlg->resize(400, 400);
+			QTextBrowser *browser = new QTextBrowser{dlg};
+			browser->setPlainText(result.errors.join("\n"));
+			layout->addWidget(browser);
+		}
+
+		QDialogButtonBox *buttons = new QDialogButtonBox{dlg};
+		buttons->setStandardButtons(QDialogButtonBox::StandardButton::Ok);
+		layout->addWidget(buttons);
+
+		connect(buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
+		connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
+		dlg->show();
+	}
 }
 
 void BrushPalette::tagIndexChanged(int row)
@@ -342,72 +408,6 @@ void BrushPalette::deleteCurrentPreset()
 	int presetId = currentPresetId();
 	if(presetId > 0) {
 		d->presetModel->deletePreset(presetId);
-	}
-}
-
-void BrushPalette::importMyPaintBrushes()
-{
-	QString file = QFileDialog::getOpenFileName(this,
-		tr("Select MyPaint brush pack to import"), QString(),
-		tr("MyPaint Brush Pack (%1)").arg("*.zip"));
-
-	if(!file.isEmpty()) {
-		brushes::MyPaintImportResult result =
-			d->tagModel->importMyPaintBrushPack(file);
-		if(!result.importedTags.isEmpty()) {
-			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(result.importedTags[0].id));
-		}
-
-		QDialog *dlg = new QDialog{this};
-		dlg->setWindowTitle(tr("MyPaint Brush Import"));
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setModal(true);
-
-		QVBoxLayout *layout = new QVBoxLayout{dlg};
-		dlg->setLayout(layout);
-
-		QString text;
-		int errorCount = result.errors.size();
-
-		QLabel *brushLabel = new QLabel{
-			tr("%n brush(es) imported.", "", result.importedBrushCount), dlg};
-		layout->addWidget(brushLabel);
-		brushLabel->setWordWrap(true);
-
-		QLabel *tagsLabel = new QLabel{dlg};
-		layout->addWidget(tagsLabel);
-		tagsLabel->setWordWrap(true);
-		int tagCount = result.importedTags.count();
-		if(tagCount > 0) {
-			QStringList tagNames;
-			for(const brushes::Tag &tag : result.importedTags) {
-				tagNames.append(tag.name);
-			}
-			tagsLabel->setText(
-				tr("%n tag(s) imported: %1", "", tagCount).arg(tagNames.join(", ")));
-		} else {
-			tagsLabel->setText(tr("0 tags imported."));
-		}
-
-		QLabel *errorsLabel = new QLabel{
-			tr("%n error(s) encountered.", "", errorCount), dlg};
-		layout->addWidget(errorsLabel);
-		errorsLabel->setWordWrap(true);
-
-		if(errorCount != 0) {
-			dlg->resize(400, 400);
-			QTextBrowser *browser = new QTextBrowser{dlg};
-			browser->setPlainText(result.errors.join("\n"));
-			layout->addWidget(browser);
-		}
-
-		QDialogButtonBox *buttons = new QDialogButtonBox{dlg};
-		buttons->setStandardButtons(QDialogButtonBox::StandardButton::Ok);
-		layout->addWidget(buttons);
-
-		connect(buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
-		connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
-		dlg->show();
 	}
 }
 

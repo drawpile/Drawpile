@@ -28,6 +28,9 @@ public:
 
 	void connectBrushSettings(tools::ToolSettings *toolSettings);
 
+public slots:
+	void importMyPaintBrushes();
+
 private slots:
    void tagIndexChanged(int proxyRow);
    void presetsReset();
@@ -40,7 +43,6 @@ private slots:
    void overwriteCurrentPreset();
    void editCurrentPreset();
    void deleteCurrentPreset();
-   void importMyPaintBrushes();
    void applyPresetProperties(int id, const QString &name, const QString &description,
         const QPixmap &thumbnail);
    void applyToBrushSettings(const QModelIndex &index);
