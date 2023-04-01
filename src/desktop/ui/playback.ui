@@ -36,16 +36,13 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="skipBackward">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+      <widget class="QToolButton" name="firstButton">
        <property name="toolTip">
-        <string>Skip backward</string>
+        <string>Rewind to Beginning</string>
        </property>
        <property name="icon">
-        <iconset theme="media-skip-backward">
-         <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+        <iconset theme="go-first">
+         <normaloff>theme:go-first.svg</normaloff>theme:go-first.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -53,13 +50,27 @@
          <height>32</height>
         </size>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="prevSkipButton">
+       <property name="toolTip">
+        <string>Skip Backward</string>
+       </property>
+       <property name="icon">
+        <iconset theme="go-previous-skip">
+         <normaloff>theme:go-previous-skip.svg</normaloff>theme:go-previous-skip.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="play">
+      <widget class="QToolButton" name="playButton">
        <property name="toolTip">
         <string>Play</string>
        </property>
@@ -76,19 +87,16 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="stepForward">
+      <widget class="QToolButton" name="nextButton">
        <property name="toolTip">
-        <string>Step</string>
+        <string>Next Stroke</string>
        </property>
        <property name="icon">
-        <iconset theme="media-seek-forward">
-         <normaloff>theme:media-seek-forward.svg</normaloff>theme:media-seek-forward.svg</iconset>
+        <iconset theme="go-next">
+         <normaloff>theme:go-next.svg</normaloff>theme:go-next.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -96,28 +104,22 @@
          <height>32</height>
         </size>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="skipForward">
+      <widget class="QToolButton" name="nextSkipButton">
        <property name="toolTip">
-        <string>Skip stroke</string>
+        <string>Skip Forward</string>
        </property>
        <property name="icon">
-        <iconset theme="media-skip-forward">
-         <normaloff>theme:media-skip-forward.svg</normaloff>theme:media-skip-forward.svg</iconset>
+        <iconset theme="go-next-skip">
+         <normaloff>theme:go-next-skip.svg</normaloff>theme:go-next-skip.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
          <width>32</width>
          <height>32</height>
         </size>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -148,7 +150,7 @@
       <number>1</number>
      </property>
      <property name="minimum">
-      <double>0.100000000000000</double>
+      <double>1.000000000000000</double>
      </property>
      <property name="maximum">
       <double>10000.000000000000000</double>
@@ -209,10 +211,13 @@ border-right: 2px solid black;
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Build an index file for this recording to quickly skip to any part.</string>
+          <string>Building an index will let you quickly skip to any part of your recording.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

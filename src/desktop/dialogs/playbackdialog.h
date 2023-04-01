@@ -3,26 +3,29 @@
 #ifndef PLAYBACKDIALOG_H
 #define PLAYBACKDIALOG_H
 
+extern "C" {
+#include <dpengine/player.h>
+}
 #include <QDialog>
-#include <QPointer>
 #include <QElapsedTimer>
+#include <QPointer>
+#include <functional>
 
 namespace canvas {
-	class CanvasModel;
-	class PaintEngine;
+class CanvasModel;
+class PaintEngine;
 }
 
 class Ui_PlaybackDialog;
-class QMenu;
 class VideoExporter;
 
 namespace dialogs {
 
-class PlaybackDialog final : public QDialog
-{
+class PlaybackDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent=nullptr);
+	explicit PlaybackDialog(
+		canvas::CanvasModel *canvas, QWidget *parent = nullptr);
 	~PlaybackDialog() override;
 
 	void centerOnParent();
@@ -38,9 +41,14 @@ protected:
 	void keyPressEvent(QKeyEvent *) override;
 
 private slots:
+	void skipBeginning();
+	void skipPreviousSnapshot();
+	void skipNextStroke();
+	void skipForward();
+
 	void onPlaybackAt(long long pos);
-	void playNext();
-	void stepNext();
+	void onExporterReady();
+	void playNext(double msecs);
 	void jumpTo(int pos);
 
 	void loadIndex();
@@ -50,24 +58,26 @@ private slots:
 	void onVideoExportClicked();
 #endif
 
-	void exportFrame(int count=1);
+	void exportFrame(int count = 1);
 
 private:
+	void playbackCommand(std::function<DP_PlayerResult()> fn);
+	void updateButtons();
+	static bool isErrorResult(DP_PlayerResult result);
+
 	Ui_PlaybackDialog *m_ui;
 	canvas::PaintEngine *m_paintengine;
-	void *m_index;
 	QPointer<VideoExporter> m_exporter;
 
 	QTimer *m_playTimer;
 	QElapsedTimer m_lastFrameTime;
-	float m_speed;
+	double m_speed;
 
-	qint32 m_intervalAfterExport;
+	bool m_haveIndex;
 	bool m_autoplay;
 	bool m_awaiting;
-	bool m_exporting;
 };
 
 }
 
-#endif // PLAYBACKDIALOG_H
+#endif

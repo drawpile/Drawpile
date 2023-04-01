@@ -181,13 +181,13 @@ public:
 	QColor sampleColor(int x, int y, int layerId, int diameter);
 
 	drawdance::RecordStartResult startRecording(const QString &path);
-	drawdance::RecordStartResult exportTemplate(
-		const QString &path, const drawdance::MessageList &snapshot);
+	drawdance::RecordStartResult
+	exportTemplate(const QString &path, const drawdance::MessageList &snapshot);
 	bool stopRecording();
 	bool isRecording() const;
 
 	DP_PlayerResult stepPlayback(long long steps);
-	DP_PlayerResult skipPlaybackBy(long long steps);
+	DP_PlayerResult skipPlaybackBy(long long steps, bool bySnapshots);
 	DP_PlayerResult jumpPlaybackTo(long long position);
 	DP_PlayerResult beginPlayback();
 	DP_PlayerResult playPlayback(long long msecs);

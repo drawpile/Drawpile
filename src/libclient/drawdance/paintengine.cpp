@@ -216,11 +216,11 @@ DP_PlayerResult PaintEngine::stepPlayback(long long steps, MessageList &outMsgs)
 	return DP_paint_engine_playback_step(m_data, steps, PaintEngine::pushMessage, &outMsgs);
 }
 
-DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, MessageList &outMsgs)
+DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, bool bySnapshots, MessageList &outMsgs)
 {
 	DrawContext drawContext = DrawContextPool::acquire();
 	return DP_paint_engine_playback_skip_by(
-		m_data, drawContext.get(), steps, PaintEngine::pushMessage, &outMsgs);
+		m_data, drawContext.get(), steps, bySnapshots, PaintEngine::pushMessage, &outMsgs);
 }
 
 DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position, MessageList &outMsgs)

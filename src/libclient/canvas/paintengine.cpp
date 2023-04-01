@@ -379,10 +379,11 @@ DP_PlayerResult PaintEngine::stepPlayback(long long steps)
 	return result;
 }
 
-DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps)
+DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, bool bySnapshots)
 {
 	drawdance::MessageList msgs;
-	DP_PlayerResult result = m_paintEngine.skipPlaybackBy(steps, msgs);
+	DP_PlayerResult result =
+		m_paintEngine.skipPlaybackBy(steps, bySnapshots, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
 }
