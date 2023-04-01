@@ -43,7 +43,7 @@ public:
 private:
     static void onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl);
 
-    static void pushMessage(void *user, DP_Message *msg);
+    static bool pushMessage(void *user, DP_Message *msg);
 
     DP_AclState *m_data;
 };
