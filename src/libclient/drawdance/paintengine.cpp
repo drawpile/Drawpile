@@ -246,7 +246,6 @@ namespace {
 
 struct BuildIndexParams {
 	PaintEngine::BuildIndexProgressFn progressFn;
-	long long lastSnapshotTime;
 	long long messagesSinceLastSnapshot;
 };
 
@@ -255,7 +254,7 @@ struct BuildIndexParams {
 bool PaintEngine::buildPlaybackIndex(BuildIndexProgressFn progressFn)
 {
 	DrawContext drawContext = DrawContextPool::acquire();
-	BuildIndexParams params = {progressFn, -1, 0};
+	BuildIndexParams params = {progressFn, 0};
 	return DP_paint_engine_playback_index_build(
 		m_data, drawContext.get(), PaintEngine::shouldSnapshot,
 		PaintEngine::indexProgress, &params);
@@ -400,23 +399,9 @@ void PaintEngine::pushMessage(void *user, DP_Message *msg)
 
 bool PaintEngine::shouldSnapshot(void *user)
 {
-	static constexpr long long MS_INTERVAL = 300;
-	static constexpr long long MESSAGE_INDEX_INTERVAL = 1000;
+	static constexpr long long MESSAGE_INDEX_INTERVAL = 10000;
 	BuildIndexParams *params = static_cast<BuildIndexParams *>(user);
-	long long messagesSinceLastSnapshot = params->messagesSinceLastSnapshot++;
-	long long now = QDateTime::currentMSecsSinceEpoch();
-
-	// We want to create snapshots that will load quickly when skipped to, so we
-	// try to measure the time it took to process the messages since the last
-	// snapshot. But creating the snapshot also takes time, which we don't want
-	// to count. So the first message after a snapshot resets our timer.
-	if (messagesSinceLastSnapshot == 0) {
-		params->lastSnapshotTime = now;
-	}
-
-	bool wantSnapshot = now - params->lastSnapshotTime > MS_INTERVAL
-		&& messagesSinceLastSnapshot > MESSAGE_INDEX_INTERVAL;
-	if(wantSnapshot) {
+	if( params->messagesSinceLastSnapshot++ > MESSAGE_INDEX_INTERVAL) {
 		params->messagesSinceLastSnapshot = 0;
 		return true;
 	} else {
