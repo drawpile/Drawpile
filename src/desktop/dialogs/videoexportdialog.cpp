@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/videoexportdialog.h"
+#include "desktop/filewrangler.h"
 #include "libclient/export/imageseriesexporter.h"
 #include "libclient/export/ffmpegexporter.h"
 #include "libshared/util/qtcompat.h"
@@ -26,12 +27,10 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 {
 	m_ui->setupUi(this);
 
-#ifdef Q_OS_MACOS
-	// Flat style doesn't look good on Mac
-	for(QGroupBox *box : findChildren<QGroupBox*>()) {
-		box->setFlat(false);
-	}
-#endif
+	m_ui->exportFormatChoice->addItem(tr("Image Series"), VideoExporter::IMAGE_SERIES);
+	m_ui->exportFormatChoice->addItem(tr("MP4 Video"), VideoExporter::FFMPEG_MP4);
+	m_ui->exportFormatChoice->addItem(tr("WebM Video"), VideoExporter::FFMPEG_WEBM);
+	m_ui->exportFormatChoice->addItem(tr("Custom FFmpeg Command"), VideoExporter::FFMPEG_CUSTOM);
 
 	QStandardItemModel *sizes = new QStandardItemModel(this);
 	sizes->appendRow(sizeItem(tr("Original"), QVariant(false)));
@@ -63,20 +62,19 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	// Load settings
 	QSettings cfg;
 	cfg.beginGroup("videoexport");
-	m_ui->fps->setValue(cfg.value("fps", 25).toInt());
+	m_ui->exportFormatChoice->setCurrentIndex(cfg.value("formatchoice", 0).toInt());
+	m_ui->fps->setValue(cfg.value("fps", 30).toInt());
 	m_ui->framewidth->setValue(cfg.value("framewidth", 1280).toInt());
 	m_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
 	m_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
-
-	m_ui->ffmpegUseCustom->setChecked(cfg.value("usecustomffmpeg").toBool());
 	m_ui->ffmpegCustom->setPlainText(cfg.value("customffmpeg").toString());
 
 	// Check for ffmpeg
 	m_ui->ffmpegNotFoundWarning->setHidden(FfmpegExporter::checkIsFfmpegAvailable());
 
-	connect(m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &VideoExportDialog::updateFfmpegArgumentPreview);
-	connect(m_ui->ffmpegUseCustom, &QCheckBox::toggled, this, &VideoExportDialog::updateFfmpegArgumentPreview);
-	updateFfmpegArgumentPreview();
+	connect(m_ui->exportFormatChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &VideoExportDialog::updateUi);
+	connect(m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &VideoExportDialog::updateUi);
+	updateUi();
 }
 
 VideoExportDialog::~VideoExportDialog()
@@ -84,28 +82,38 @@ VideoExportDialog::~VideoExportDialog()
 	// Remember settings
 	QSettings cfg;
 	cfg.beginGroup("videoexport");
+	cfg.setValue("formatchoice", m_ui->exportFormatChoice->currentIndex());
 	cfg.setValue("fps", m_ui->fps->value());
 	cfg.setValue("framewidth", m_ui->framewidth->value());
 	cfg.setValue("frameheight", m_ui->frameheight->value());
 	cfg.setValue("sizeChoice", m_ui->sizeChoice->currentIndex());
-	cfg.setValue("usecustomffmpeg", m_ui->ffmpegUseCustom->isChecked());
 	cfg.setValue("customffmpeg", m_ui->ffmpegCustom->toPlainText());
 
 	delete m_ui;
 }
 
-void VideoExportDialog::updateFfmpegArgumentPreview()
+void VideoExportDialog::updateUi()
 {
-	QStringList args = FfmpegExporter::getCommonArguments(m_ui->fps->value());
-	if(!m_ui->ffmpegUseCustom->isChecked())
-		args << FfmpegExporter::getDefaultArguments();
-	else
-		args << "<CUSTOM ARGS>";
+	VideoExporter::Format format =
+		VideoExporter::Format(m_ui->exportFormatChoice->currentData().toInt());
+	if(format == VideoExporter::IMAGE_SERIES) {
+		m_ui->optionStack->setCurrentIndex(0);
+	} else {
+		m_ui->optionStack->setCurrentIndex(1);
+		QStringList args = FfmpegExporter::getCommonArguments(m_ui->fps->value());
+		if(format == VideoExporter::FFMPEG_MP4) {
+			args.append(FfmpegExporter::getDefaultMp4Arguments());
+		} else if(format == VideoExporter::FFMPEG_WEBM) {
+			args.append(FfmpegExporter::getDefaultWebmArguments());
+		} else {
+			args.append("<CUSTOM ARGS>");
+		}
+		args.append({"-y", "<FILENAME>"});
 
-	args << "-y" << "<FILENAME>";
-
-	m_ui->ffmpegBasics->setText("ffmpeg " + args.join(QChar(' ')));
-	m_ui->ffmpegCustom->setEnabled(m_ui->ffmpegUseCustom->isChecked());
+		m_ui->ffmpegBasics->setText("ffmpeg " + args.join(QChar(' ')));
+		m_ui->ffmpegCustomLabel->setVisible(format == VideoExporter::FFMPEG_CUSTOM);
+		m_ui->ffmpegCustom->setVisible(format == VideoExporter::FFMPEG_CUSTOM);
+	}
 }
 
 VideoExporter *VideoExportDialog::getExporter()
@@ -114,14 +122,11 @@ VideoExporter *VideoExportDialog::getExporter()
 		return nullptr;
 
 	// Return appropriate exporter based on exporter format box selection
-	VideoExporter *ve = nullptr;
-	switch(m_ui->exportFormatChoice->currentIndex()) {
-	case 0: ve = getImageSeriesExporter(); break;
-	case 1: ve = getFfmpegExporter(); break;
-	}
-
-	if(!ve)
-		return nullptr;
+	VideoExporter::Format format =
+		VideoExporter::Format(m_ui->exportFormatChoice->currentData().toInt());
+	VideoExporter *ve = format == VideoExporter::IMAGE_SERIES
+							? getImageSeriesExporter()
+							: getFfmpegExporter(format);
 
 	// Set common settings
 	ve->setFps(m_ui->fps->value());
@@ -145,47 +150,36 @@ VideoExporter *VideoExportDialog::getExporter()
 
 VideoExporter *VideoExportDialog::getImageSeriesExporter()
 {
-
-	const QString dir = QFileDialog::getExistingDirectory(
-		this,
-		tr("Select output directory"),
-		QSettings().value("window/lastpath").toString()
-	);
-
-	if(dir.isEmpty())
+	QString dir = FileWrangler{this}.getSaveAnimationFramesPath();
+	if(dir.isEmpty()) {
 		return nullptr;
-
-	QSettings().setValue("window/lastpath", dir);
-
-	ImageSeriesExporter *exporter = new ImageSeriesExporter;
-
-	exporter->setFilePattern(m_ui->filenamePattern->text());
-	exporter->setOutputPath(dir);
-	exporter->setFormat(m_ui->imageFormatChoice->currentText());
-
-	return exporter;
+	} else {
+		ImageSeriesExporter *exporter = new ImageSeriesExporter;
+		exporter->setFilePattern(m_ui->filenamePattern->text());
+		exporter->setOutputPath(dir);
+		exporter->setFormat(m_ui->imageFormatChoice->currentText());
+		return exporter;
+	}
 }
 
-VideoExporter *VideoExportDialog::getFfmpegExporter()
+VideoExporter *VideoExportDialog::getFfmpegExporter(VideoExporter::Format format)
 {
-	const QString outfile = QFileDialog::getSaveFileName(
-		this,
-		tr("Export video"),
-		QSettings().value("window/lastpath").toString(),
-		"MKV (*.mkv);;WebM (*.webm);;AVI (*.avi);;All files (*)"
-	);
-	if(outfile.isEmpty())
+	FileWrangler fw{this};
+	QString filename;
+	if(format == VideoExporter::FFMPEG_MP4) {
+		filename = FileWrangler{this}.getSaveFfmpegMp4Path();
+	} else if(format == VideoExporter::FFMPEG_WEBM) {
+		filename = FileWrangler{this}.getSaveFfmpegWebmPath();
+	} else {
+		filename = FileWrangler{this}.getSaveFfmpegCustomPath();
+	}
+
+	if(filename.isEmpty()) {
 		return nullptr;
-
-	QSettings().setValue("window/lastpath", QFileInfo(outfile).dir().absolutePath());
-
-	// Set exporter settings
-	FfmpegExporter *exporter = new FfmpegExporter;
-	exporter->setFilename(outfile);
-	if(m_ui->ffmpegUseCustom)
-		exporter->setCustomArguments(m_ui->ffmpegCustom->toPlainText());
-
-	return exporter;
+	} else {
+		return new FfmpegExporter{
+			format, filename, m_ui->ffmpegCustom->toPlainText()};
+	}
 }
 
 }

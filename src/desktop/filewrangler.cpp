@@ -126,10 +126,44 @@ QString FileWrangler::getSaveTabletEventLogPath() const
 }
 
 #ifndef Q_OS_ANDROID
+QString FileWrangler::getSaveFfmpegMp4Path() const
+{
+	return showSaveFileDialog(
+		tr("Export MP4 Video"), LastPath::IMAGE, ".mp4",
+		utils::FileFormatOption::SaveMp4);
+}
+
+QString FileWrangler::getSaveFfmpegWebmPath() const
+{
+	return showSaveFileDialog(
+		tr("Export WebM Video"), LastPath::IMAGE, ".webm",
+		utils::FileFormatOption::SaveWebm);
+}
+
+QString FileWrangler::getSaveFfmpegCustomPath() const
+{
+	return showSaveFileDialog(
+		tr("Export Custom FFmpeg Video"), LastPath::IMAGE, ".mp4",
+		utils::FileFormatOption::SaveAllFiles);
+}
+
 QString FileWrangler::getSaveAnimationFramesPath() const
 {
 	QString dirname = QFileDialog::getExistingDirectory(
 		parentWidget(), tr("Save Animation Frames"),
+		getLastPath(LastPath::ANIMATION_FRAMES));
+	if(dirname.isEmpty()) {
+		return QString{};
+	} else {
+		setLastPath(LastPath::ANIMATION_FRAMES, dirname);
+		return dirname;
+	}
+}
+
+QString FileWrangler::getSaveImageSeriesPath() const
+{
+	QString dirname = QFileDialog::getExistingDirectory(
+		parentWidget(), tr("Save Image Series"),
 		getLastPath(LastPath::ANIMATION_FRAMES));
 	if(dirname.isEmpty()) {
 		return QString{};

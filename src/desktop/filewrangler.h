@@ -42,7 +42,11 @@ public:
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
 #ifndef Q_OS_ANDROID
+	QString getSaveFfmpegMp4Path() const;
+	QString getSaveFfmpegWebmPath() const;
+	QString getSaveFfmpegCustomPath() const;
 	QString getSaveAnimationFramesPath() const;
+	QString getSaveImageSeriesPath() const;
 #endif
 
 private:

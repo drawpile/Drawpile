@@ -78,18 +78,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="exportFormatChoice">
-        <item>
-         <property name="text">
-          <string>Image series</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">FFmpeg</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="exportFormatChoice"/>
       </item>
       <item row="3" column="1">
        <layout class="QHBoxLayout">
@@ -182,7 +171,7 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="page">
+        <widget class="QWidget">
          <layout class="QFormLayout">
           <item row="0" column="0">
            <widget class="QLabel">
@@ -245,27 +234,6 @@
         </widget>
         <widget class="QWidget">
          <layout class="QFormLayout">
-          <item row="1" column="0" colspan="2">
-           <widget class="QLineEdit" name="ffmpegBasics">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QCheckBox" name="ffmpegUseCustom">
-            <property name="text">
-             <string>Use custom arguments:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QPlainTextEdit" name="ffmpegCustom">
-            <property name="readOnly">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" colspan="2">
            <widget class="QLabel" name="ffmpegNotFoundWarning">
             <property name="styleSheet">
@@ -276,6 +244,27 @@
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QLineEdit" name="ffmpegBasics">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QPlainTextEdit" name="ffmpegCustom">
+            <property name="placeholderText">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="ffmpegCustomLabel">
+            <property name="text">
+             <string>Custom Arguments:</string>
             </property>
            </widget>
           </item>
@@ -329,22 +318,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>exportFormatChoice</sender>
-   <signal>activated(int)</signal>
-   <receiver>optionStack</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>379</x>
-     <y>59</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>51</x>
-     <y>335</y>
     </hint>
    </hints>
   </connection>

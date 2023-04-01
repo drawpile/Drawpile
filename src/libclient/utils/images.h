@@ -34,6 +34,8 @@ enum FileFormatOption {
 	DebugDumps = 0x40,
 	EventLog = 0x80,
 	Gif = 0x100,
+	Mp4 = 0x200,
+	Webm = 0x400,
 
 #ifdef Q_OS_ANDROID
 	SaveAllFiles = 0x0,
@@ -49,6 +51,8 @@ enum FileFormatOption {
 	SaveProfile = Profile | Save,
 	SaveEventLog = EventLog | Save,
 	SaveGif = Gif | Save,
+	SaveMp4 = Mp4 | Save,
+	SaveWebm = Webm | Save,
 };
 Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)

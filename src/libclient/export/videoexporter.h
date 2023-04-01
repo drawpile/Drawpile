@@ -13,6 +13,13 @@ class VideoExporter : public QObject
 {
 	Q_OBJECT
 public:
+	enum Format {
+		IMAGE_SERIES,
+		FFMPEG_MP4,
+		FFMPEG_WEBM,
+		FFMPEG_CUSTOM,
+	};
+
 	VideoExporter(QObject *parent);
 
 	/**

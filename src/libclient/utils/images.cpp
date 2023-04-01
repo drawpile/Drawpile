@@ -145,6 +145,22 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 		}
 	}
 
+	if(formats.testFlag(FileFormatOption::Mp4)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			filter << QGuiApplication::tr("MP4 Video (%1)").arg("*.mp4");
+		} else {
+			// Can't read MP4 videos.
+		}
+	}
+
+	if(formats.testFlag(FileFormatOption::Webm)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			filter << QGuiApplication::tr("WebM Video (%1)").arg("*.webm");
+		} else {
+			// Can't read WebM videos.
+		}
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

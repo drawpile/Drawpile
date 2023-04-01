@@ -8,8 +8,14 @@
 #include "libclient/export/ffmpegexporter.h"
 #include "libshared/util/qtcompat.h"
 
-FfmpegExporter::FfmpegExporter(QObject *parent)
-	: VideoExporter(parent), m_encoder(nullptr)
+FfmpegExporter::FfmpegExporter(
+	Format format, const QString &filename, const QString &customArguments,
+	QObject *parent)
+	: VideoExporter(parent)
+	, m_format{format}
+	, m_filename{filename}
+	, m_customArguments{customArguments}
+	, m_encoder{nullptr}
 {
 }
 
@@ -26,15 +32,14 @@ QStringList FfmpegExporter::getCommonArguments(int fps)
 	return args;
 }
 
-QStringList FfmpegExporter::getDefaultArguments()
+QStringList FfmpegExporter::getDefaultMp4Arguments()
 {
-	QStringList args;
+	return {"-c:v", "libx264", "-pix_fmt", "yuv420p", "-an"};
+}
 
-	// Codec options
-	args << "-c:v" << "libvpx";
-	args << "-crf" << "15" << "-b:v" << "1M";
-
-	return args;
+QStringList FfmpegExporter::getDefaultWebmArguments()
+{
+	return {"-c:v", "libvpx", "-crf", "15", "-b:v", "1M", "-an"};
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -90,16 +95,18 @@ void FfmpegExporter::initExporter()
 	Q_ASSERT(m_encoder == nullptr);
 
 	QStringList args;
+	args.append(getCommonArguments(fps()));
 
-	args << getCommonArguments(fps());
-
-	if(m_customArguments.isEmpty())
-		args << getDefaultArguments();
-	else
-		args << splitCommand(m_customArguments);
+	if(m_format == FFMPEG_MP4) {
+		args.append(getDefaultMp4Arguments());
+	} else if(m_format == FFMPEG_WEBM) {
+		args.append(getDefaultWebmArguments());
+	} else {
+		args.append(splitCommand(m_customArguments));
+	}
 
 	// Output file (overwrite)
-	args << "-y" << m_filename;
+	args.append({"-y", m_filename});
 
 	m_encoder = new QProcess(this);
 	m_encoder->setProcessChannelMode(QProcess::ForwardedChannels);

@@ -12,20 +12,14 @@ class FfmpegExporter final : public VideoExporter
 {
 	Q_OBJECT
 public:
-	explicit FfmpegExporter(QObject *parent=nullptr);
-
-	//! Set the output filename
-	void setFilename(const QString &filename) { m_filename = filename; }
-
-	//! Set custom arguments to use
-	//! If not set, the default arguments will be used
-	void setCustomArguments(const QString &args) { m_customArguments = args; }
+	explicit FfmpegExporter(
+		Format format, const QString &filename, const QString &customArguments,
+		QObject *parent = nullptr);
 
 	//! Get the arguments that are always given to the encoder process
 	static QStringList getCommonArguments(int fps);
-
-	//! Get the default encoding arguments (which can be replaced by custom user inputted arguments)
-	static QStringList getDefaultArguments();
+	static QStringList getDefaultMp4Arguments();
+	static QStringList getDefaultWebmArguments();
 
 	//! Try to see if ffmpeg is found and executable
 	static bool checkIsFfmpegAvailable();
@@ -40,11 +34,11 @@ protected:
 	void shutdownExporter() override;
 
 private:
-	QProcess *m_encoder;
-
+	Format m_format;
 	QString m_filename;
 	QString m_customArguments;
 
+	QProcess *m_encoder;
 	QByteArray m_writebuffer;
 	qint64 m_written;
 	int m_repeats;

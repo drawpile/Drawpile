@@ -3,9 +3,9 @@
 #ifndef VIDEOEXPORTDIALOG_H
 #define VIDEOEXPORTDIALOG_H
 
+#include "libclient/export/videoexporter.h"
 #include <QDialog>
 
-class VideoExporter;
 class Ui_VideoExport;
 
 namespace dialogs {
@@ -24,11 +24,11 @@ public:
 	VideoExporter *getExporter();
 
 private slots:
-	void updateFfmpegArgumentPreview();
+	void updateUi();
 
 private:
 	VideoExporter *getImageSeriesExporter();
-	VideoExporter *getFfmpegExporter();
+	VideoExporter *getFfmpegExporter(VideoExporter::Format format);
 
 	Ui_VideoExport *m_ui;
 };
