@@ -5,6 +5,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/toolmessage.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/icon.h"
 #include <QClipboard>
 #include <QGridLayout>
@@ -136,7 +137,7 @@ void CurveWidget::setCurve(const KisCubicCurve &curve)
 	m_curve->setCurve(curve);
 }
 
-void CurveWidget::setCurveFromString(const QString& curveString)
+void CurveWidget::setCurveFromString(const QString &curveString)
 {
 	KisCubicCurve curve;
 	curve.fromString(curveString);
@@ -147,9 +148,7 @@ void CurveWidget::addVerticalSpacingLabel(const QString &text)
 {
 	QLabel *label = new QLabel{text, this};
 	static_cast<QGridLayout *>(layout())->addWidget(label, 3, 0);
-	QSizePolicy sizePolicy = label->sizePolicy();
-	sizePolicy.setRetainSizeWhenHidden(true);
-	label->setSizePolicy(sizePolicy);
+	utils::setWidgetRetainSizeWhenHidden(label, true);
 	label->setVisible(false);
 }
 

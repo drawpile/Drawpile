@@ -20,6 +20,13 @@ inline void showWindow(QWidget *widget)
 #endif
 }
 
+inline void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize)
+{
+	QSizePolicy sp = widget->sizePolicy();
+	sp.setRetainSizeWhenHidden(retainSize);
+	widget->setSizePolicy(sp);
+}
+
 }
 
 #endif

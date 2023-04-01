@@ -12,6 +12,7 @@ extern "C" {
 #include "libclient/brushes/brush.h"
 
 #include "libclient/canvas/blendmodes.h"
+#include "desktop/utils/widgetutils.h"
 #include "ui_brushdock.h"
 
 #include <dpengine/libmypaint/mypaint-brush-settings.h>
@@ -132,9 +133,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	// The blend mode combo is ever so slightly higher than the buttons, so
 	// hiding it causes some jerking normally, so we'll tell it to retain its
 	// size. The space it's taking up is supposed to be empty anyway.
-	QSizePolicy blendmodeSizePolicy = d->ui.blendmode->sizePolicy();
-	blendmodeSizePolicy.setRetainSizeWhenHidden(true);
-	d->ui.blendmode->setSizePolicy(blendmodeSizePolicy);
+	utils::setWidgetRetainSizeWhenHidden(d->ui.blendmode, true);
 
 	// Exponential sliders for easier picking of small values.
 	d->ui.brushsizeBox->setExponentRatio(2.0);

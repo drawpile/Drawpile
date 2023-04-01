@@ -4,6 +4,7 @@
 #include "libclient/utils/icon.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/widgetutils.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -15,9 +16,7 @@ namespace docks {
 TitleWidget::TitleWidget(QDockWidget *parent) : QWidget(parent)
 {
 	// Retain the title bar's size when it's hidden to avoid jiggering.
-	QSizePolicy sp = sizePolicy();
-	sp.setRetainSizeWhenHidden(true);
-	setSizePolicy(sp);
+	utils::setWidgetRetainSizeWhenHidden(this, true);
 
 	m_layout = new QHBoxLayout;
 	m_layout->setSpacing(0);
