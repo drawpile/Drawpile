@@ -3246,6 +3246,7 @@ void MainWindow::setupActions()
 	QAction *swapcolors = makeAction("swapcolors", tr("Swap Last Colors")).shortcut("X");
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight);
+	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reload Last Brush Preset")).shortcut("Shift+P");
 
 	smallerbrush->setAutoRepeat(true);
 	biggerbrush->setAutoRepeat(true);
@@ -3256,12 +3257,14 @@ void MainWindow::setupActions()
 
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
+	connect(reloadPreset, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::reloadPreset);
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(currentRecolorMode);
 	toolshortcuts->addAction(swapcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
+	toolshortcuts->addAction(reloadPreset);
 
 	QToolBar *drawtools = new QToolBar(tr("Drawing tools"));
 	drawtools->setObjectName("drawtoolsbar");

@@ -30,6 +30,7 @@ public:
 
 public slots:
 	void importMyPaintBrushes();
+	void reloadPreset();
 
 private slots:
    void tagIndexChanged(int proxyRow);

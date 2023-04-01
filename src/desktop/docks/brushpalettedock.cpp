@@ -58,6 +58,8 @@ struct BrushPalette::Private {
 	tools::BrushSettings *brushSettings;
 	brushes::Tag currentTag;
 	brushes::ActiveBrush newBrush;
+	brushes::ActiveBrush previousBrush;
+	bool havePreviousBrush = false;
 
 	QComboBox *tagComboBox;
 	QLineEdit *searchLineEdit;
@@ -260,6 +262,13 @@ void BrushPalette::importMyPaintBrushes()
 	}
 }
 
+void BrushPalette::reloadPreset()
+{
+	if(d->brushSettings && d->havePreviousBrush) {
+		d->brushSettings->setCurrentBrush(d->previousBrush);
+	}
+}
+
 void BrushPalette::tagIndexChanged(int row)
 {
 	d->currentTag = d->tagModel->getTagAt(row);
@@ -440,7 +449,9 @@ void BrushPalette::applyToBrushSettings(const QModelIndex &proxyIndex)
 		return;
 	}
 
-	d->brushSettings->setCurrentBrush(v.value<brushes::ActiveBrush>());
+	d->previousBrush = v.value<brushes::ActiveBrush>();
+	d->havePreviousBrush = true;
+	d->brushSettings->setCurrentBrush(d->previousBrush);
 }
 
 void BrushPalette::showPresetContextMenu(const QPoint &pos)
