@@ -1,6 +1,6 @@
-find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS Network)
+add_library(dpserver)
 
-add_library(dpserver STATIC
+target_sources(dpserver PRIVATE
 	announcable.h
 	announcements.cpp
 	announcements.h
@@ -42,8 +42,9 @@ add_library(dpserver STATIC
 	thinsession.h
 )
 
-target_link_libraries(dpserver
+target_link_libraries(dpserver PUBLIC
 	dpshared
+	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Network
 )
 
@@ -51,4 +52,4 @@ if(TESTS)
 	add_subdirectory(tests)
 endif()
 
-target_auto_source_group(dpserver)
+directory_auto_source_groups()

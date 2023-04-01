@@ -1,3 +1,5 @@
+#[[ This module contains data and functions for internationalisation. #]]
+
 set(SUPPORTED_LANGS cs_CZ de_DE fi_FI fr_FR it_IT ja_JP pt_BR ru_RU uk_UA vi_VN zh_CN)
 
 # Using a variable name used anywhere else as a parameter causes CMake to

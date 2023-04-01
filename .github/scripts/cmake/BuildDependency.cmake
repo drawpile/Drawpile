@@ -18,6 +18,27 @@ endforeach()
 set(CMAKE_PREFIX_PATH ${NEW_CMAKE_PREFIX_PATH})
 unset(NEW_CMAKE_PREFIX_PATH)
 
+set(BUILD_TYPE "release" CACHE STRING
+	"The type of build ('debug', 'debugnoasan', or 'release')")
+string(TOLOWER "${BUILD_TYPE}" BUILD_TYPE)
+if(BUILD_TYPE STREQUAL "debug")
+	set(USE_ASAN true)
+	message(WARNING "This build type enables ASan for some dependencies!\n"
+		"You may need to use `-DCMAKE_EXE_LINKER_FLAGS_INIT=-fsanitize=address`"
+		" when linking to these libraries."
+	)
+elseif(BUILD_TYPE STREQUAL "debugnoasan")
+	set(BUILD_TYPE "debug")
+elseif(NOT BUILD_TYPE STREQUAL "release")
+	message(FATAL_ERROR "Unknown build type '${BUILD_TYPE}'")
+endif()
+
+# It is probably the qt-cmake toolchain that contains useful information
+# that we would enjoy having.
+if(CMAKE_TOOLCHAIN_FILE)
+	include(${CMAKE_TOOLCHAIN_FILE})
+endif()
+
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
 	set(oneValueArgs URL SOURCE_DIR)
@@ -109,7 +130,8 @@ endfunction()
 
 function(_build_automake build_type source_dir)
 	set(configure "${source_dir}/configure")
-	_parse_flags("${build_type}" "${source_dir}" configure configure_flags ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 2 ARG "ASSIGN_PREFIX;BROKEN_INSTALL" "INSTALL_TARGET" "MAKE_FLAGS")
+	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${ARG_UNPARSED_ARGUMENTS})
 
 	if(NPROCS EQUAL 0)
 		set(make_flags "")
@@ -117,16 +139,56 @@ function(_build_automake build_type source_dir)
 		set(make_flags "-j${NPROCS}")
 	endif()
 
+	if(ARG_MAKE_FLAGS)
+		list(APPEND make_flags ${ARG_MAKE_FLAGS})
+	endif()
+
+	list(APPEND env "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+
+	# https://developer.android.com/ndk/guides/other_build_systems#autoconf
+	if(CMAKE_ANDROID_NDK)
+		get_android_env(android_env abi "${CMAKE_ANDROID_NDK}" "${CMAKE_ANDROID_ARCH_ABI}" "${ANDROID_PLATFORM}")
+		list(APPEND env ${android_env})
+		list(APPEND configure_flags --host "${abi}")
+	endif()
+
+	# OpenSSL has a terrible configurator that only accepts `--prefix=foo` and
+	# does not bail out when it receives a bogus argument, so if you send
+	# `--prefix foo` it will just install to its default prefix!
+	if(ARG_ASSIGN_PREFIX)
+		set(prefix "--prefix=${CMAKE_INSTALL_PREFIX}")
+	else()
+		set(prefix "--prefix" "${CMAKE_INSTALL_PREFIX}")
+	endif()
+
+	if(ARG_INSTALL_TARGET)
+		set(install ${ARG_INSTALL_TARGET})
+	else()
+		set(install install)
+	endif()
+
 	execute_process(
-		COMMAND "${CMAKE_COMMAND}" -E env "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-			"${configure}" --prefix "${CMAKE_INSTALL_PREFIX}" ${configure_flags}
+		COMMAND "${CMAKE_COMMAND}" -E env ${env}
+			"${configure}" ${prefix} ${configure_flags}
 		COMMAND_ECHO STDOUT
 		WORKING_DIRECTORY "${source_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
+
+	# More special stuff for OpenSSL which has a broken install target
+	if(ARG_BROKEN_INSTALL)
+		execute_process(
+			COMMAND "${CMAKE_COMMAND}" -E env ${env}
+				make ${make_flags}
+			COMMAND_ECHO STDOUT
+			WORKING_DIRECTORY "${source_dir}"
+			COMMAND_ERROR_IS_FATAL ANY
+		)
+	endif()
+
 	execute_process(
-		COMMAND "${CMAKE_COMMAND}" -E env "MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-			make install ${make_flags}
+		COMMAND "${CMAKE_COMMAND}" -E env ${env}
+			make ${install} ${make_flags}
 		COMMAND_ECHO STDOUT
 		WORKING_DIRECTORY "${source_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
@@ -136,7 +198,7 @@ endfunction()
 function(_build_cmake build_type source_dir)
 	set(configure "${CMAKE_COMMAND}" -S "${source_dir}" -B .)
 	cmake_parse_arguments(PARSE_ARGV 2 "CMAKE_ARG" "NO_DEFAULT_FLAGS;NO_DEFAULT_BUILD_TYPE" "" "")
-	_parse_flags("${build_type}" "${source_dir}" configure configure_flags ${CMAKE_ARG_UNPARSED_ARGUMENTS})
+	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${CMAKE_ARG_UNPARSED_ARGUMENTS})
 
 	if(build_type STREQUAL "debug")
 		set(install_flags "--config;RelWithDebInfo")
@@ -151,10 +213,28 @@ function(_build_cmake build_type source_dir)
 	if(CMAKE_ARG_NO_DEFAULT_FLAGS)
 		set(default_flags "")
 	else()
+		list(JOIN CMAKE_PREFIX_PATH "\\;" prefix_path)
 		set(default_flags
 			"-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-			"-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}"
+			"-DCMAKE_PREFIX_PATH=${prefix_path}"
 			"-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
+		)
+	endif()
+
+	if(CMAKE_TOOLCHAIN_FILE)
+		list(APPEND default_flags
+			"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
+			"-DANDROID_ABI=${ANDROID_ABI}"
+			"-DANDROID_PLATFORM=${ANDROID_PLATFORM}"
+			"-DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on"
+		)
+	elseif(CMAKE_ANDROID_NDK)
+		list(APPEND default_flags
+			"-DCMAKE_TOOLCHAIN_FILE=${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake"
+			"-DCMAKE_ANDROID_NDK=${CMAKE_ANDROID_NDK}"
+			"-DCMAKE_ANDROID_ARCH_ABI=${CMAKE_ANDROID_ARCH_ABI}"
+			"-DANDROID_PLATFORM=${ANDROID_PLATFORM}"
+			"-DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on"
 		)
 	endif()
 
@@ -169,7 +249,8 @@ function(_build_cmake build_type source_dir)
 	set(binary_dir "${source_dir}-build")
 	file(MAKE_DIRECTORY "${binary_dir}")
 	execute_process(
-		COMMAND ${configure}
+		COMMAND "${CMAKE_COMMAND}" -E env ${env}
+			${configure}
 			${configure_flags}
 			${build_flag}
 			${default_flags}
@@ -190,6 +271,54 @@ function(_build_cmake build_type source_dir)
 		COMMAND_ERROR_IS_FATAL ANY
 	)
 	file(REMOVE_RECURSE "${binary_dir}")
+endfunction()
+
+function(get_android_env _out_env _out_triplet ndk abi platform)
+	if(abi STREQUAL "armeabi-v7a")
+		set(triplet armv7a-linux-androideabi)
+	elseif(abi STREQUAL "arm64-v8a")
+		set(triplet aarch64-linux-android)
+	elseif(abi STREQUAL "x86")
+		set(triplet i686-linux-android)
+	elseif(abi STREQUAL "x86_64")
+		set(triplet x86_64-linux-android)
+	else()
+		message(FATAL_ERROR "Unknown Android ABI '${abi}'")
+	endif()
+
+	if(platform MATCHES "^android-([0-9]+)$")
+		set(api ${CMAKE_MATCH_1})
+	else()
+		message(FATAL_ERROR "Unknown Android platform '${ANDROID_PLATFORM}'")
+	endif()
+
+	get_android_toolchain(toolchain "${ndk}")
+	set(cc "${toolchain}/bin/${triplet}${api}-clang")
+
+	set(${_out_env}
+		"PATH=${toolchain}/bin:$ENV{PATH}"
+		"TOOLCHAIN=${toolchain}"
+		"TARGET=${triplet}"
+		"AR=${toolchain}/bin/llvm-ar"
+		"CC=${cc}"
+		"AS=${cc}"
+		"CXX=${cc}++"
+		"LD=${toolchain}/bin/ld"
+		"RANLIB=${toolchain}/bin/llvm-ranlib"
+		"STRIP=${toolchain}/bin/llvm-strip"
+		PARENT_SCOPE
+	)
+	set(${_out_triplet} ${triplet} PARENT_SCOPE)
+endfunction()
+
+function(get_android_toolchain out_var ndk)
+	if(APPLE)
+		set(kernel darwin)
+	else()
+		set(kernel linux)
+	endif()
+
+	set(${out_var} "${ndk}/toolchains/llvm/prebuilt/${kernel}-x86_64" PARENT_SCOPE)
 endfunction()
 
 function(_build_msbuild build_type source_dir)
@@ -233,7 +362,7 @@ endfunction()
 
 function(_build_qmake build_type source_dir)
 	set(configure qmake)
-	_parse_flags("${build_type}" "${source_dir}" configure configure_flags ${ARGN})
+	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${ARGN})
 
 	if(configure STREQUAL qmake)
 		find_program(configure qmake REQUIRED)
@@ -253,7 +382,8 @@ function(_build_qmake build_type source_dir)
 	set(binary_dir "${source_dir}-build")
 	file(MAKE_DIRECTORY "${binary_dir}")
 	execute_process(
-		COMMAND ${configure}
+		COMMAND "${CMAKE_COMMAND}" -E env ${env}
+			${configure}
 			"QMAKE_MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
 			${configure_flags}
 		COMMAND_ECHO STDOUT
@@ -319,8 +449,8 @@ function(_download url hash)
 	file(REMOVE "${filename}")
 endfunction()
 
-function(_parse_flags build_type source_dir out_configurator out_flags)
-	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "CONFIGURATOR;ALL;DEBUG;RELEASE")
+function(_parse_flags build_type source_dir out_configurator out_flags out_env)
+	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "CONFIGURATOR;ENV;ALL;DEBUG;RELEASE")
 
 	if(ARG_CONFIGURATOR)
 		if(NOT IS_ABSOLUTE "${ARG_CONFIGURATOR}")
@@ -328,6 +458,10 @@ function(_parse_flags build_type source_dir out_configurator out_flags)
 		endif()
 		string(CONFIGURE "${ARG_CONFIGURATOR}" configurator @ONLY)
 		set(${out_configurator} ${configurator} PARENT_SCOPE)
+	endif()
+
+	if(ARG_ENV)
+		set(${out_env} ${ARG_ENV} PARENT_SCOPE)
 	endif()
 
 	if(build_type STREQUAL "debug" AND ARG_DEBUG)

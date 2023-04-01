@@ -8,21 +8,8 @@ env:
   CLICOLOR_FORCE: 1
 
 jobs:
-  lint:
-    name: Lint Rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-      - name: Check formatting
-        run: cargo fmt -- --check
-      - name: Run clippy
-        run: cargo clippy --all-targets -- -D warnings
-
   test:
-    name: Test Qt ${{ matrix.qt }} on ${{ matrix.os }}
+    name: Qt ${{ matrix.qt }} on ${{ matrix.os }}${{ matrix.cross_os && format(' ({0})', matrix.cross_os) }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -31,16 +18,23 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-        libsodium: [ 1.0.18 ]
         qt: [ 5.15.8, 6.4.2 ]
-        qtkeychain: [ c6f0b66318f8da6917fb4681103f7303b1836194 ]
-        libmicrohttpd: [ 0.9.75 ]
-        libzip: [ 1.9.2 ]
-        zlib: [ 1.2.13 ]
+        cross_os: [ '', Android ]
+
+        exclude:
+          - os: windows-latest
+            cross_os: Android
+          - os: macos-latest
+            cross_os: Android
+
         include:
+          # Linux common
           - os: ubuntu-latest
-            sccache_tuple: x86_64-unknown-linux-musl
-            qt_packages: >
+            sccache_triplet: x86_64-unknown-linux-musl
+            # The runner has multiple clang versions installed and CMake/Qt gets
+            # confused about which one to pick for some reason, so this also
+            # sets Clang_ROOT during the Qt build
+            qt_pre_build: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
               libatspi2.0-dev libmtdev-dev libts-dev libgtk-3-dev
@@ -57,64 +51,88 @@ jobs:
               libasound2-dev libpulse-dev libcups2-dev libssl-dev
               libfontconfig1-dev &&
               echo "Clang_ROOT=/usr/lib/llvm-13" >> $GITHUB_ENV
-            other_packages: >
+            other_pre_build: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
               libsecret-1-dev
-            build_packages:
-              pre_restore: sudo chmod 777 /var/cache/apt/archives /var/lib/apt/lists
-              path: |-
-                /var/cache/apt/archives/*.deb
-                /var/lib/apt/lists/*_Packages
-                .github/linuxdeploy-bin
-              update: >
-                sudo apt-get clean && sudo apt-get update &&
-                mkdir .github/linuxdeploy-bin &&
-                pushd .github/linuxdeploy-bin >/dev/null &&
-                curl -L --remote-name-all
-                https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-                https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage &&
-                chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage &&
-                popd >/dev/null
-              # libgl1-mesa-dev, libxkbcommon-dev, libvulkan-dev for Qt6,
-              # libsystemd-dev for systemd integration,
-              # libsecret-1-0 and gir1.2-secret-1 for qtkeychain,
-              # the rest are for Qt/linuxdeploy
-              install: >
-                sudo rm -f /var/lib/man-db/auto-update &&
-                sudo apt-get install --no-install-recommends
-                libgl1-mesa-dev libsystemd-dev libxkbcommon-dev libvulkan-dev
-                gir1.2-atspi-2.0 gir1.2-gudev-1.0 libdrm-intel1 libegl-mesa0
-                libegl1 libevdev2 libgles1 libgles2 libglu1-mesa libinput-bin
-                libinput10 libllvm15 libmtdev1 libopengl0 libpciaccess0
-                libwacom-common libwacom9 libxcb-icccm4 libxcb-image0
-                libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0
-                libxcb-util1 libxcb-xinerama0 libxcb-xinput0 libxcb-xkb1
-                libxkbcommon-x11-0 libdrm-amdgpu1 libdrm-common libdrm-nouveau2
-                libdrm-radeon1 libdrm2 libgbm1 libgl1-mesa-dri libglapi-mesa
-                libglx-mesa0 libts0 libgtk-3-bin librsvg2-common gir1.2-gtk-3.0
-                wayland-protocols libfontconfig1
-                libpulse0 libasound2 libcups2
-                libsecret-1-0 gir1.2-secret-1
-                libfuse2 appstream &&
-                echo "$GITHUB_WORKSPACE/.github/linuxdeploy-bin" >> $GITHUB_PATH
+
+          # Linux non-cross-compile
+          - os: ubuntu-latest
+            cross_os:
             build_flags: -DINITSYS=systemd
+
+          # Linux Qt 5 (release)
+          - os: ubuntu-latest
+            cross_os:
+            qt: 5.15.8
+            # This causes the AppImage to be generated, instead of just creating
+            # the portable tree, because there seems to be no way to separate
+            # these steps with linuxdeploy
+            packager: VERSION=$(git describe --tags) cmake --install build --config RelWithDebInfo
+
+          # Android common
+          - os: ubuntu-latest
+            cross_os: Android
+            cross_qt_args: >-
+              "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+              "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+              "-DANDROID_HOST_PATH=$GITHUB_WORKSPACE/.github/deps/qt"
+
+          # Android Qt 6
+          - os: ubuntu-latest
+            cross_os: Android
+            qt: 6.4.2
+            cross_other_args: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/.github/cross-deps/qt/lib/cmake/Qt6/qt.toolchain.cmake"
+            build_flags: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/.github/cross-deps/qt/lib/cmake/Qt6/qt.toolchain.cmake"
+              -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
+              -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
+
+          # Android Qt 5 (release)
+          - os: ubuntu-latest
+            cross_os: Android
+            qt: 5.15.8
+            cross_other_args: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              -DANDROID_PLATFORM=android-23
+              -DANDROID_ABI=arm64-v8a
+            build_flags: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              -DANDROID_PLATFORM=android-23
+              -DANDROID_ABI=arm64-v8a
+              -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
+              -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
+            packager: cmake --install build --config RelWithDebInfo --prefix .
+
+          # macOS common
           - os: macos-latest
-            sccache_tuple: x86_64-apple-darwin
+            sccache_triplet: x86_64-apple-darwin
+
+          # macOS Qt 5 (release)
+          - os: macos-latest
+            qt: 5.15.8
+            packager: cpack --config build/CPackConfig.cmake -C RelWithDebInfo
+
+          # Windows common
           - os: windows-latest
-            sccache_tuple: x86_64-pc-windows-msvc
-            other_deps_flags: >-
+            sccache_triplet: x86_64-pc-windows-msvc
+            other_args: >-
               "-DCMAKE_VS_MSBUILD_COMMAND=$(
               vswhere -latest -requires Microsoft.Component.MSBuild
               -find MSBuild\\**\\Bin\\amd64\\MSBuild.exe | select-object -first 1
               )"
             build_flags: -G Ninja -DKIS_TABLET=on
+
+          # Windows Qt 5 (release)
           - os: windows-latest
             qt: 5.15.8
-            qt_packages: >
-              choco install gperf jom openssl winflexbison3 &&
-              (echo "INCLUDE=${env:INCLUDE};C:\Program Files\OpenSSL-Win64\include" >> $env:GITHUB_ENV) &&
-              (echo "LIB=${env:LIB};C:\Program Files\OpenSSL-Win64\lib" >> $env:GITHUB_ENV) &&
+            qt_pre_build: >
+              choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
             # Copying files is a disgusting hack because windeployqt does not
@@ -122,164 +140,105 @@ jobs:
             packager: >
               cp .github/deps/other/bin/*.dll .github/deps/qt/bin &&
               cpack --config build/CPackConfig.cmake -C RelWithDebInfo
-          - os: macos-latest
-            qt: 5.15.8
-            packager: cpack --config build/CPackConfig.cmake -C RelWithDebInfo
-          - os: ubuntu-latest
-            qt: 5.15.8
-            # This causes the AppImage to be generated, instead of just creating
-            # the portable tree, because there seems to be no way to separate
-            # these steps with linuxdeploy
-            packager: VERSION=$(git describe --tags) cmake --install build --config RelWithDebInfo
     steps:
       - name: Check out code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0 # for git-describe
           submodules: true
+
       - name: Activate MSVC
         uses: ilammy/msvc-dev-cmd@v1
         if: runner.os == 'Windows'
 
-      - name: Restore Qt from cache
-        uses: actions/cache/restore@v3
-        id: deps-qt-cache
-        with:
-          path: .github/deps/qt
-          key: qt-${{ runner.os }}-${{ matrix.qt }}
-      - name: Install Qt system dependencies
-        run: ${{ matrix.qt_packages }}
-        if: matrix.qt_packages && steps.deps-qt-cache.outputs.cache-hit != 'true'
-      - name: Build Qt from source
-        run: >
-          cmake
-          -DBUILD_TYPE=Release
-          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.github/deps/qt"
-          "-DQT_VERSION=${{ matrix.qt }}"
-          -P .github/scripts/build-qt.cmake
-        working-directory: ${{ env.RUNNER_TEMP }}
-        if: steps.deps-qt-cache.outputs.cache-hit != 'true'
-      - name: Store Qt to cache
-        uses: actions/cache/save@v3
-        if: steps.deps-qt-cache.outputs.cache-hit != 'true'
-        with:
-          path: .github/deps/qt
-          key: qt-${{ runner.os }}-${{ matrix.qt }}
-      - name: Activate Qt
-        run: echo "${{ github.workspace }}/.github/deps/qt/bin" >> $GITHUB_PATH
+      - name: Work around QTBUG-112465
+        run: |
+          # Moving directories is faster than deleting everything inside them
+          mv ${ANDROID_SDK_ROOT}/platforms/{android-*-*,..}
+          ls "${ANDROID_SDK_ROOT}/platforms"
         shell: bash
+        if: matrix.cross_os == 'Android'
 
-      - name: Restore other dependencies from cache
-        uses: actions/cache/restore@v3
-        id: deps-other-cache
-        with:
-          path: .github/deps/other
-          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}-${{ matrix.libzip }}-${{ matrix.zlib }}
-      - name: Install other system dependencies
-        run: ${{ matrix.other_packages }}
-        if: matrix.other_packages && steps.deps-other-cache.outputs.cache-hit != 'true'
-      - name: Build other dependencies from source
-        run: >
-          cmake
-          "-DZLIB=${{ matrix.zlib }}"
-          "-DLIBMICROHTTPD=${{ matrix.libmicrohttpd }}"
-          "-DLIBSODIUM=${{ matrix.libsodium }}"
-          "-DQTKEYCHAIN=${{ matrix.qtkeychain }}"
-          "-DLIBZIP=${{ matrix.libzip }}"
-          "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt"
-          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.github/deps/other"
-          ${{ matrix.other_deps_flags }}
-          -P "${{ github.workspace }}/.github/scripts/build-other.cmake"
-        working-directory: ${{ env.RUNNER_TEMP }}
-        if: steps.deps-other-cache.outputs.cache-hit != 'true'
-      - name: Store other dependencies to cache
-        uses: actions/cache/save@v3
-        if: steps.deps-other-cache.outputs.cache-hit != 'true'
-        with:
-          path: .github/deps/other
-          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}-${{ matrix.libzip }}-${{ matrix.zlib }}
+      - name: Configure Linux system dependencies
+        uses: ./.github/actions/restore-linux
+        if: runner.os == 'Linux'
 
-      - name: Save/restore Cargo database from cache
-        uses: actions/cache@v3
-        id: cargo-cache
+      # This is intended to allow the cross-compile and non-cross-compile
+      # workers to reuse the same host build dependencies, since Qt6 needs these
+      - name: Build dependencies
+        uses: ./.github/actions/build-deps
+        id: deps
         with:
-          path: |-
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
-          key: cargo-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
-      - name: Install Cargo database
-        if: steps.cargo-cache.outputs.cache-hit != 'true'
-        run: bash .github/scripts/init-cargo.sh
-      - name: Use Cargo from cache
-        if: steps.cargo-cache.outputs.cache-hit == 'true'
-        run: echo "CARGO_NET_OFFLINE=1" >> $GITHUB_ENV
-        shell: bash
+          path: .github/deps
+          qt: ${{ matrix.qt }}
+          qt_pre_build: ${{ matrix.qt_pre_build }}
+          qt_args: ${{ matrix.qt_args }}
+          other_pre_build: ${{ matrix.other_pre_build }}
+          other_args: ${{ matrix.other_args }}
 
-      - name: Restore sccache
-        uses: actions/cache/restore@v3
+      - name: Build cross-compiler dependencies
+        uses: ./.github/actions/build-deps
+        id: cross-deps
+        with:
+          cache_key: ${{ runner.os }}+${{ matrix.cross_os }}
+          path: .github/cross-deps
+          qt: ${{ matrix.qt }}
+          qt_pre_build: ${{ matrix.cross_qt_pre_build }}
+          qt_args: ${{ matrix.cross_qt_args }}
+          other_pre_build: ${{ matrix.cross_other_pre_build }}
+          other_args: ${{ matrix.cross_other_args }}
+        if: matrix.cross_os
+
+      - name: Set up compiler cache
+        uses: ./.github/actions/pre-sccache
         id: sccache
         with:
-          path: .github/sccache
-          key: sccache-${{ runner.os }}-${{ matrix.qt }}
-      - name: Install sccache
-        if: steps.sccache.outputs.cache-hit != 'true'
-        run: bash .github/scripts/install-sccache.sh 0.3.3 ${{ matrix.sccache_tuple }}
-      - name: Activate sccache
-        run: echo "${{ github.workspace }}/.github/sccache/bin" >> $GITHUB_PATH
-        shell: bash
+          triplet: ${{ matrix.sccache_triplet }}
+          cache_key: ${{ runner.os }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
 
-      - name: Prepare to restore system build dependencies
-        run: ${{ matrix.build_packages.pre_restore }}
-        if: matrix.build_packages.pre_restore
-      - name: Restore system build dependencies from cache
-        uses: actions/cache/restore@v3
-        id: deps-build-cache
+      - name: Cache gradle
+        uses: actions/cache@v3
         with:
-          path: ${{ matrix.build_packages.path }}
-          key: build-packages-${{ matrix.os }}
-        if: matrix.build_packages.install
-      - name: Prepare system package manager
-        run: ${{ matrix.build_packages.update }}
-        if: matrix.build_packages.update && steps.deps-build-cache.outputs.cache-hit != 'true'
-      - name: Install system build dependencies
-        run: ${{ matrix.build_packages.install }}
-        if: matrix.build_packages.install
-      - name: Store system build dependencies to cache
-        uses: actions/cache/save@v3
-        if: matrix.build_packages.install && steps.deps-build-cache.outputs.cache-hit != 'true'
-        with:
-          path: ${{ matrix.build_packages.path }}
-          key: build-packages-${{ matrix.os }}
+          # The zip file is unnecessary but the .zip.ok file is needed or it
+          # will blow away the installation and redownload everything
+          path: |-
+            ~/.gradle/wrapper/dists/gradle-*/*/gradle-*
+            !~/.gradle/wrapper/dists/gradle-*/*/gradle-*.zip
+          key: gradle-${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.qt }}
+        if: matrix.cross_os == 'Android'
 
       - name: Generate project
         run: >
-          cmake -S . -B build --log-level=VERBOSE -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          cmake -S . -B build --log-level=VERBOSE
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo
           -DCMAKE_C_COMPILER_LAUNCHER=sccache
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-          -DCLIENT=on -DSERVER=on -DSERVERGUI=on -DTOOLS=on -DTESTS=on
-          ${{ matrix.build_flags }}
-          "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt;${{ github.workspace }}/.github/deps/other"
+          -DCLIENT=on
+          -DSERVER=on
+          -DSERVERGUI=on
+          -DTOOLS=on
+          -DTESTS=on
+          "-DCMAKE_PREFIX_PATH=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
           -DCMAKE_INSTALL_PREFIX=out
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
-          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{ matrix.packager && startsWith(github.ref, 'refs/tags/') && 'on' }}
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{
+            matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
+            && 'on'
+          }}
+          ${{ matrix.build_flags }}
+
       - name: Build project
         run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
         env:
           RUSTC_WRAPPER: sccache
-          SCCACHE_CACHE_SIZE: 400M
-          SCCACHE_DIR: ${{ github.workspace }}/.github/sccache/cache
+          SCCACHE_CACHE_SIZE: 200M
+          SCCACHE_DIR: ${{ steps.sccache.outputs.path }}/cache
 
       - name: Run C++ tests
         run: ctest -C RelWithDebInfo --output-on-failure
         working-directory: build
-
-      - name: Run Rust tests
-        run: cargo test --target-dir build/cargo --profile relwithdebinfo
-        env:
-          RUSTC_WRAPPER: sccache
-          SCCACHE_CACHE_SIZE: 400M
-          SCCACHE_DIR: ${{ github.workspace }}/.github/sccache/cache
+        if: '!matrix.cross_os'
 
       - name: Run packaging
         run: ${{ matrix.packager }}
@@ -287,59 +246,52 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
-        if: matrix.packager && !startsWith(github.ref, 'refs/tags/')
+        if: matrix.packager && startsWith(github.ref, 'refs/tags/') != 'true'
         with:
-          name: ${{ runner.os }} binaries
+          name: ${{ matrix.cross_os || runner.os }} binaries
           path: |
+            Drawpile-*.AppImage
+            Drawpile-*.apk
+            Drawpile-*.dmg
             Drawpile-*.msi
             Drawpile-*.zip
-            Drawpile-*.dmg
-            Drawpile-*.AppImage
 
       - name: Collect release notes
         run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' ChangeLog | tail '+2' > ChangeLog-release
-        if: matrix.packager && startsWith(github.ref, 'refs/tags/')
+        if: matrix.packager && startsWith(github.ref, 'refs/tags/') == 'true'
 
       - name: Upload release
         uses: softprops/action-gh-release@v1
-        if: matrix.packager && startsWith(github.ref, 'refs/tags/')
+        if: matrix.packager && startsWith(github.ref, 'refs/tags/') == 'true'
         with:
           body_path: ChangeLog-release
-          # In SemVer, hyphen indicates a pre-release tag
+          # In semver, hyphen indicates a pre-release tag
           prerelease: contains(github.ref, '-')
           files: |
+            Drawpile-*.AppImage
+            Drawpile-*.apk
+            Drawpile-*.dmg
             Drawpile-*.msi
             Drawpile-*.zip
-            Drawpile-*.dmg
-            Drawpile-*.AppImage
 
       - name: Upload error logs and artefacts
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: ${{ runner.os }} error logs and artefacts
+          name: ${{ matrix.cross_os || runner.os }} error logs and artefacts
           path: |
             **/*.log
             **/*.wxs
 
-      - name: Evict sccache from cache
-        if: (success() || failure()) && steps.sccache.outputs.cache-hit == 'true' && github.ref == 'refs/heads/master'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh extension install actions/gh-actions-cache || true
-          gh actions-cache delete "sccache-${{ runner.os }}-${{ matrix.qt }}" --confirm
-        continue-on-error: true
-
       - name: Save sccache
-        if: (success() || failure()) && github.ref == 'refs/heads/master'
-        uses: actions/cache/save@v3
+        uses: ./.github/actions/post-sccache
         with:
-          path: .github/sccache
-          key: sccache-${{ runner.os }}-${{ matrix.qt }}
+          cache-hit: ${{ steps.sccache.outputs.cache-hit }}
+          cache_key: ${{ steps.sccache.outputs.cache_key }}
+        if: success() || failure()
         continue-on-error: true
 
       - name: sccache stats
         run: sccache --show-stats
+        if: success() || failure()
         continue-on-error: true

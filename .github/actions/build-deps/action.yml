@@ -1,0 +1,100 @@
+name: Build and activate Drawpile dependencies
+description: >
+  Builds or restores Drawpile dependencies from cache, then activates them by
+  adding them to the environment PATH.
+
+inputs:
+  cache_key:
+    description: >
+      A cache key fragment that will be used to generate a complete cache key
+      for each group of dependencies
+    default: ${{ runner.os }}
+    type: string
+  path:
+    description: >
+      Output base path. Each group of dependencies will generate a separate
+      sub-tree within this path.
+    default: .github/deps
+    type: string
+
+  qt_pre_build:
+    description: Command to run before building Qt
+    type: string
+  qt_args:
+    description: Additional arguments to the Qt build script
+    type: string
+
+  other_pre_build:
+    description: Command to run before building other dependencies
+    type: string
+  other_args:
+    description: Additional arguments to the other dependencies build script
+    type: string
+
+  qt:
+    description: Version of Qt to build
+    required: true
+    type: string
+  libmicrohttpd:
+    description: Version of libmicrohttpd to build
+    default: 0.9.75
+    type: string
+  libsodium:
+    description: Version of libsodium to build
+    default: 1.0.18
+    type: string
+  qtkeychain:
+    description: Git revision of qtkeychain to build
+    default: c6f0b66318f8da6917fb4681103f7303b1836194
+    type: string
+  libzip:
+    description: Version of libzip to build
+    default: 1.9.2
+    type: string
+  zlib:
+    description: Version of zlib to build (Win32 only)
+    default: 1.2.13
+    type: string
+
+outputs:
+  path:
+    description: >
+      A semicolon-separated list of all generated dependency trees suitable for
+      use with `CMAKE_PREFIX_PATH`
+    value: ${{ github.workspace }}/${{ inputs.path }}/qt;${{ github.workspace }}/${{ inputs.path }}/other
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/build-and-cache
+      with:
+        name: Qt
+        cache_key: qt-${{ inputs.cache_key }}-${{ inputs.qt }}
+        path: ${{ inputs.path }}/qt
+        pre_build: ${{ inputs.qt_pre_build }}
+        build: >
+          cmake
+          -DBUILD_TYPE=Release
+          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/qt"
+          "-DQT_VERSION=${{ inputs.qt }}"
+          ${{ inputs.qt_args }}
+          -P .github/scripts/build-qt.cmake
+
+    - uses: ./.github/actions/build-and-cache
+      with:
+        name: other dependencies
+        cache_key: other-${{ inputs.cache_key }}-${{ inputs.libmicrohttpd }}-${{ inputs.libsodium }}-${{ inputs.qtkeychain }}-${{ inputs.qt }}-${{ inputs.libzip }}-${{ inputs.zlib }}
+        path: ${{ inputs.path }}/other
+        pre_build: ${{ inputs.other_pre_build }}
+        build: >
+          cmake
+          -DBUILD_TYPE=Release
+          "-DZLIB=${{ inputs.zlib }}"
+          "-DLIBMICROHTTPD=${{ inputs.libmicrohttpd }}"
+          "-DLIBSODIUM=${{ inputs.libsodium }}"
+          "-DQTKEYCHAIN=${{ inputs.qtkeychain }}"
+          "-DLIBZIP=${{ inputs.libzip }}"
+          "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
+          "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/other"
+          ${{ inputs.other_args }}
+          -P .github/scripts/build-other.cmake

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="${ANDROID_PACKAGE_NAMESPACE}"
+    android:installLocation="auto"
+    android:versionCode="-- %%INSERT_VERSION_CODE%% --"
+    android:versionName="-- %%INSERT_VERSION_NAME%% --">
+    <!-- %%INSERT_PERMISSIONS -->
+    <!-- WAKE_LOCK is used to prevent the device from severing the connection to
+         the server by sleeping when it is locked -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- %%INSERT_FEATURES -->
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" />
+    <application
+        android:name="${ANDROID_QT_NAMESPACE}.android.bindings.QtApplication"
+        android:hardwareAccelerated="true"
+        android:label="-- %%INSERT_APP_NAME%% --"
+        android:requestLegacyExternalStorage="true"
+        android:allowNativeHeapPointerTagging="false"
+        android:allowBackup="true"
+        android:fullBackupOnly="false"
+        ${ANDROID_APPLICATION_ATTRIBUTES}>
+        <activity
+            android:name="${ANDROID_QT_NAMESPACE}.android.bindings.QtActivity"
+            android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
+            android:label="-- %%INSERT_APP_NAME%% --"
+            android:launchMode="singleTop"
+            android:screenOrientation="unspecified"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="-- %%INSERT_APP_LIB_NAME%% --" />
+
+            <meta-data
+                android:name="android.app.extract_android_style"
+                android:value="minimal" />
+
+            ${ANDROID_EXTRA_METADATA}
+
+            <!-- Customisations start here; everything above that is -->
+            <!-- not a replacement string comes from the default Qt6 -->
+            <!-- AndroidManifest.xml -->
+
+            <!-- Wire up Samsung S-Pen events -->
+            <intent-filter>
+                <action android:name="com.samsung.android.support.REMOTE_ACTION" />
+            </intent-filter>
+            <meta-data
+                android:name="com.samsung.android.support.REMOTE_ACTION"
+                android:resource="@xml/remote_action" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                ${ANDROID_VIEW_INTENTS}
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

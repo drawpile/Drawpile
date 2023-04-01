@@ -1,0 +1,47 @@
+name: Install sccache
+description: >
+  Downloads or restores sccache cache from a cache and then activates it.
+
+inputs:
+  triplet:
+    description: sccache binary triplet
+    required: true
+    type: string
+  path:
+    description: sccache path, relative to workspace
+    default: .github/sccache
+    type: string
+  cache_key:
+    description: Key for cached sccache binary and data
+    default: ${{ runner.os }}
+    type: string
+  version:
+    description: sccache version
+    default: 0.3.3
+    type: string
+
+outputs:
+  path:
+    description: Prefix path for sccache
+    value: ${{ github.workspace }}/${{ inputs.path }}
+  cache-hit:
+    description: Whether or not sccache was restored from cache
+    value: ${{ steps.cache.cache-hit }}
+  cache_key:
+    description: Cache key fragment used by sccache
+    value: ${{ inputs.cache_key }}
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/build-and-cache
+      id: cache
+      with:
+        name: sccache
+        cache_key: sccache-${{ inputs.cache_key }}
+        path: ${{ inputs.path }}
+        build: >
+          bash .github/scripts/install-sccache.sh
+          ${{ github.workspace }}/${{ inputs.path }}
+          ${{ inputs.version }}
+          ${{ inputs.triplet }}

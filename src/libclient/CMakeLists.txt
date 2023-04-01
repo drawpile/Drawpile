@@ -1,7 +1,8 @@
-find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} REQUIRED COMPONENTS Gui Sql)
-find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_GUI} QUIET COMPONENTS LinguistTools)
+find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Sql)
 
-add_library(dpclient STATIC
+add_library(dpclient)
+
+target_sources(dpclient PRIVATE
 	document.cpp
 	document.h
 	brushes/brush.cpp
@@ -192,10 +193,11 @@ else()
 	)
 endif()
 
-target_link_libraries(dpclient
+target_link_libraries(dpclient PUBLIC
 	dpshared
-	${QT_PACKAGE_NAME}::Gui
+	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Network
+	${QT_PACKAGE_NAME}::Gui
 	${QT_PACKAGE_NAME}::Sql
 	Drawdance::dpcommon
 	Drawdance::dpengine
@@ -205,10 +207,9 @@ target_link_libraries(dpclient
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	add_subdirectory(i18n)
 endif()
-add_feature_info("Client translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
 
 if(TESTS)
 	add_subdirectory(tests)
 endif()
 
-target_auto_source_group(dpclient)
+directory_auto_source_groups()

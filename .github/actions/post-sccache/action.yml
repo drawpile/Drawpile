@@ -1,0 +1,33 @@
+name: Post sccache
+description: Does stuff for sccache after the build.
+
+inputs:
+  cache_key:
+    description: The sccache cache key fragment
+    default: ${{ runner.os }}
+    type: string
+  cache-hit:
+    description: Whether or not the cache existed when the job started
+    required: true
+    type: boolean
+
+runs:
+  using: composite
+  steps:
+    - name: Evict sccache from cache
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh extension install actions/gh-actions-cache || true
+        gh actions-cache delete "sccache-${{ inputs.cache_key }}" --confirm
+      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
+      continue-on-error: true
+      if: (success() || failure()) && inputs.cache-hit == 'true' && github.ref == 'refs/heads/master'
+
+    - name: Save sccache
+      uses: actions/cache/save@v3
+      with:
+        path: .github/sccache
+        key: sccache-${{ inputs.cache_key }}
+      continue-on-error: true
+      if: (success() || failure()) && github.ref == 'refs/heads/master'

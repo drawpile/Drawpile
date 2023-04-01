@@ -1,3 +1,8 @@
+#[[
+This module contains all the file extensions and URIs that are supported by
+Drawpile and functions for generating metadata to register them in the OS.
+#]]
+
 set(SUPPORTED_FILE_TYPES
 	TYPE
 		EXPORTED
@@ -27,8 +32,6 @@ set(SUPPORTED_FILE_TYPES
 		UTI org.krita.ora
 		EXT ora
 
-	# Drawpile supports whatever additional formats the Rust image crate is
-	# configured to support in dpimpex
 	TYPE
 		NAME PNG image
 		GROUP IMAGE
@@ -70,6 +73,22 @@ set(_FT_FLAG_TOKENS EXPORTED IMPORTED)
 set(_FT_ANY_TOKENS TYPE ${_FT_VALUE_TOKENS} ${_FT_FLAG_TOKENS})
 set(_URL_VALUE_TOKENS NAME UTI SCHEME)
 set(_URL_ANY_TOKENS PROTOCOL ${_URL_VALUE_TOKENS})
+
+#[[
+Gets registered file extensions and URL protocols in a format suitable for use
+in AndroidManifest.xml.
+#]]
+function(get_android_extensions out_var)
+	_android_generate_extensions(exts)
+	_android_generate_urls(urls)
+	if(exts AND urls)
+		set(exts "${exts};")
+	endif()
+	set(indent "                ")
+	set(intents "${exts}${urls}")
+	list(JOIN intents "\n${indent}" intents)
+	set(${out_var} "${intents}" PARENT_SCOPE)
+endfunction()
 
 #[[
 Gets registered file extensions and URL protocols in a format suitable for
@@ -185,6 +204,35 @@ function(generate_xdg_mime_info out_dir)
 			list(APPEND ${in_var} ${token})
 		endif()
 	endforeach()
+endfunction()
+
+function(_android_generate_extensions out_var)
+	set(mimes "")
+	set(in_var FALSE)
+	foreach(token IN LISTS SUPPORTED_FILE_TYPES)
+		if(token STREQUAL "MIME")
+			set(in_var TRUE)
+		elseif(token IN_LIST _FT_ANY_TOKENS)
+			set(in_var FALSE)
+		elseif(in_var)
+			list(APPEND mimes "<data android:mimeType=\"${token}\" />")
+		endif()
+	endforeach()
+	set(${out_var} ${mimes} PARENT_SCOPE)
+endfunction()
+
+function(_android_generate_urls out_var)
+	set(schemes "")
+	foreach(token IN LISTS SUPPORTED_URL_PROTOCOLS)
+		if(token STREQUAL "SCHEME")
+			set(in_var TRUE)
+		elseif(token IN_LIST _URL_ANY_TOKENS)
+			set(in_var FALSE)
+		elseif(in_var)
+			list(APPEND schemes "<data android:scheme=\"${token}\" />")
+		endif()
+	endforeach()
+	set(${out_var} "${schemes}" PARENT_SCOPE)
 endfunction()
 
 # CMake is an abomination for content generation

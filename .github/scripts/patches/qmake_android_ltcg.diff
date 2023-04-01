@@ -1,0 +1,13 @@
+--- a/mkspecs/android-clang/qmake.conf    2023-04-02 00:10:00.000000000 -0500
++++ b/mkspecs/android-clang/qmake.conf    2023-04-02 00:10:25.000000000 -0500
+@@ -52,8 +52,10 @@
+ QMAKE_LINK       = $$QMAKE_CXX
+ QMAKE_OBJCOPY    = $$NDK_LLVM_PATH/bin/llvm-objcopy
+ QMAKE_AR         = $$NDK_LLVM_PATH/bin/llvm-ar cqs
++QMAKE_AR_LTCG    = $$QMAKE_AR
+ QMAKE_OBJCOPY    = $$NDK_LLVM_PATH/bin/llvm-objcopy
+ QMAKE_NM         = $$NDK_LLVM_PATH/bin/llvm-nm -P
++QMAKE_NM_LTCG    = $$QMAKE_NM
+ 
+ QMAKE_CFLAGS_OPTIMIZE      = -Oz
+ QMAKE_CFLAGS_OPTIMIZE_FULL = -Oz

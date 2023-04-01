@@ -1,4 +1,6 @@
-add_library(dpshared STATIC
+add_library(dpshared)
+
+target_sources(dpshared PRIVATE
 	listings/announcementapi.cpp
 	listings/announcementapi.h
 	listings/listserverfinder.cpp
@@ -56,7 +58,8 @@ add_library(dpshared STATIC
 	util/whatismyip.h
 )
 
-target_link_libraries(dpshared
+target_link_libraries(dpshared PUBLIC
+	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Network
 )
 
@@ -65,32 +68,32 @@ if(ANDROID)
 		util/androidutils.cpp
 		util/androidutils.h
 	)
-	target_link_libraries(dpshared PRIVATE
-		${QT_PACKAGE_NAME}::AndroidExtras
-	)
+
+	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
+		target_link_libraries(dpshared PUBLIC ${QT_PACKAGE_NAME}::AndroidExtras)
+	endif()
 endif()
 
-if(libsodium_FOUND)
+if(TARGET libsodium::libsodium)
 	target_sources(dpshared PRIVATE
 		util/authtoken.cpp
 		util/authtoken.h
 	)
-	target_link_libraries(dpshared libsodium::libsodium)
+	target_link_libraries(dpshared PUBLIC libsodium::libsodium)
 endif()
 
-if(KF5DNSSD_FOUND)
+if(TARGET KF5::DNSSD)
 	target_sources(dpshared PRIVATE
 		listings/zeroconfannouncement.cpp
 		listings/zeroconfannouncement.h
 		listings/zeroconfdiscovery.cpp
 		listings/zeroconfdiscovery.h
 	)
-	target_link_libraries(dpshared KF5::DNSSD)
+	target_link_libraries(dpshared PUBLIC KF5::DNSSD)
 endif()
-add_feature_info("Zeroconf support" KF5DNSSD_FOUND "")
 
 if(TESTS)
 	add_subdirectory(tests)
 endif()
 
-target_auto_source_group(dpshared)
+directory_auto_source_groups()

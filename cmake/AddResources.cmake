@@ -24,7 +24,8 @@ function(add_resources target)
 			)
 		endforeach()
 		# Assets will already be installed by MACOSX_PACKAGE_LOCATION on macOS
-		if (NOT APPLE)
+		# and by symlinking on Android
+		if(NOT APPLE AND NOT ANDROID)
 			# No trailing slash is required or else it will strip the last path
 			# of the directory
 			install(DIRECTORY "assets/${dir}"

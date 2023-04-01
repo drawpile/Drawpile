@@ -1,5 +1,24 @@
+#[[ This module defines settings and functions for generating source groups. #]]
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
+set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Generated Targets")
+
+#[[
+Generates source groups used by Xcode and Visual Studio projects for all targets
+in the current source directory.
+This must be run in every single directory separately; see
+https://gitlab.kitware.com/cmake/cmake/-/issues/18856.
+#]]
+function(directory_auto_source_groups)
+	get_property(targets DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY BUILDSYSTEM_TARGETS)
+	target_auto_source_group(${targets})
+endfunction()
+
 #[[
 Generates idiomatic source groups used by Xcode and Visual Studio projects.
+This must be run in every single directory separately; see
+https://gitlab.kitware.com/cmake/cmake/-/issues/18856.
 #]]
 function(target_auto_source_group)
 	foreach(target IN LISTS ARGN)

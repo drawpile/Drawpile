@@ -1,0 +1,75 @@
+name: Restore Linux build dependencies
+description: >
+  Downloads and installs, or restores from cache, system dependencies required
+  to build and release Drawpile on Linux.
+
+inputs:
+  path:
+    description: Paths to cache
+    default: |-
+      /var/cache/apt/archives/*.deb
+      /var/lib/apt/lists/*_Packages
+      .github/linuxdeploy-bin
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare to restore system build dependencies
+      run: sudo chmod 777 /var/cache/apt/archives /var/lib/apt/lists
+      shell: bash
+
+    - name: Restore system build dependencies from cache
+      uses: actions/cache/restore@v3
+      id: cache
+      with:
+        path: ${{ inputs.path }}
+        key: build-packages-${{ matrix.os }}
+
+    - name: Prepare system package manager
+      run: >
+        sudo apt-get clean && sudo apt-get update &&
+        mkdir .github/linuxdeploy-bin &&
+        pushd .github/linuxdeploy-bin >/dev/null &&
+        curl -L --remote-name-all
+        https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage &&
+        chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage &&
+        popd >/dev/null
+      shell: bash
+      if: steps.cache.outputs.cache-hit != 'true'
+
+    # libgl1-mesa-dev, libxkbcommon-dev, libvulkan-dev for Qt6,
+    # libsystemd-dev for systemd integration,
+    # libsecret-1-0 and gir1.2-secret-1 for qtkeychain,
+    # the rest are for Qt/linuxdeploy
+    - name: Install system build dependencies
+      run: >
+        sudo rm -f /var/lib/man-db/auto-update &&
+        sudo apt-get install --no-install-recommends
+        libgl1-mesa-dev libsystemd-dev libxkbcommon-dev libvulkan-dev
+        gir1.2-atspi-2.0 gir1.2-gudev-1.0 libdrm-intel1 libegl-mesa0
+        libegl1 libevdev2 libgles1 libgles2 libglu1-mesa libinput-bin
+        libinput10 libllvm15 libmtdev1 libopengl0 libpciaccess0
+        libwacom-common libwacom9 libxcb-icccm4 libxcb-image0
+        libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0
+        libxcb-util1 libxcb-xinerama0 libxcb-xinput0 libxcb-xkb1
+        libxkbcommon-x11-0 libdrm-amdgpu1 libdrm-common libdrm-nouveau2
+        libdrm-radeon1 libdrm2 libgbm1 libgl1-mesa-dri libglapi-mesa
+        libglx-mesa0 libts0 libgtk-3-bin librsvg2-common gir1.2-gtk-3.0
+        wayland-protocols libfontconfig1
+        libpulse0 libasound2 libcups2
+        libsecret-1-0 gir1.2-secret-1
+        libfuse2 appstream
+      shell: bash
+
+    - name: Store system build dependencies to cache
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ inputs.path }}
+        key: build-packages-${{ matrix.os }}
+      if: steps.cache.outputs.cache-hit != 'true'
+
+    - name: Activate linuxdeploy
+      run: echo "$GITHUB_WORKSPACE/.github/linuxdeploy-bin" >> $GITHUB_PATH
+      shell: bash

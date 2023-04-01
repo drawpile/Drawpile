@@ -108,9 +108,9 @@ function(_add_cargo target is_exe)
 	# used today, so YAGNI
 	if(ARG_PACKAGE AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.20)
 		foreach(item IN LISTS ARG_PACKAGE)
-			file(GLOB_RECURSE sources ${CMAKE_SOURCE_DIR}/src/${item}/*)
+			file(GLOB_RECURSE sources ${PROJECT_SOURCE_DIR}/src/${item}/*)
 			target_sources(cargo-build_${target} PRIVATE ${sources})
-			source_group(TREE "${CMAKE_SOURCE_DIR}/src/${item}" PREFIX "Source Files" FILES ${sources})
+			source_group(TREE "${PROJECT_SOURCE_DIR}/src/${item}" PREFIX "Source Files" FILES ${sources})
 		endforeach()
 	endif()
 

@@ -1,0 +1,70 @@
+name: Build and cache
+description: >
+  Restores something from cache, or else builds it, and in either case
+  optionally activates it by adding the bin directory of the input `path` to the
+  environment `PATH`.
+
+inputs:
+  name:
+    description: Name of the whatsits being built
+    required: true
+    type: string
+  cache_key:
+    description: Cache key
+    required: true
+    type: string
+  path:
+    description: Path where the thingummer should live
+    required: true
+    type: string
+  build:
+    description: Build command
+    required: true
+    type: string
+  pre_build:
+    description: Pre-build command
+    type: string
+  activate:
+    description: >
+      Whether this majigger should be activated by adding `<path>/bin` to the
+      environment PATH
+    default: true
+    type: boolean
+
+outputs:
+  cache-hit:
+    description: True if the thingus was restored from the cache
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Restore ${{ inputs.name }} from cache
+      uses: actions/cache/restore@v3
+      id: cache
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.cache_key }}
+
+    - name: Run ${{ inputs.name }} pre-build command
+      run: ${{ inputs.pre_build }}
+      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
+      if: inputs.pre_build && steps.cache.outputs.cache-hit != 'true'
+
+    - name: Build ${{ inputs.name }} from source
+      run: ${{ inputs.build }}
+      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
+      working-directory: ${{ env.RUNNER_TEMP }}
+      if: steps.cache.outputs.cache-hit != 'true'
+
+    - name: Store ${{ inputs.name }} to cache
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.cache_key }}
+      if: steps.cache.outputs.cache-hit != 'true'
+
+    - name: Activate ${{ inputs.name }}
+      run: echo "${{ github.workspace }}/${{ inputs.path }}/bin" >> $GITHUB_PATH
+      shell: bash
+      if: inputs.activate

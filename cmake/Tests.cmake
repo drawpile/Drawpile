@@ -17,6 +17,9 @@ function(add_unit_tests prefix)
 	endforeach()
 endfunction()
 
+#[[
+Adds a single unit test executable.
+#]]
 function(add_unit_test prefix name)
 	set(multiValueArgs LIBS SOURCES DEFINITIONS)
 	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "" "${multiValueArgs}")
