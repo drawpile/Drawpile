@@ -133,6 +133,9 @@ private:
 	static void pushMessage(void *user, DP_Message *msg);
 	static bool shouldSnapshot(void *user);
 	static void indexProgress(void *user, int percent);
+
+	static const DP_Pixel8 *getTransformPreviewPixels(void *user);
+	static void disposeTransformPreviewPixels(void *user);
 };
 
 }

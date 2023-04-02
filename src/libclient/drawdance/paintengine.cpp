@@ -342,9 +342,9 @@ void PaintEngine::previewTransform(
 		DP_Quad dstQuad = DP_quad_make(
 			p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
 		DP_paint_engine_preview_transform(
-			m_data, layerId, x, y, img.width(), img.height(),
-			reinterpret_cast<const DP_Pixel8 *>(img.constBits()), &dstQuad,
-			interpolation);
+			m_data, layerId, x, y, img.width(), img.height(), &dstQuad,
+			interpolation, getTransformPreviewPixels,
+			disposeTransformPreviewPixels, new QImage{img});
 	} else {
 		qWarning("Preview transform destination is not a quad");
 	}
@@ -413,6 +413,18 @@ void PaintEngine::indexProgress(void *user, int percent)
 {
 	BuildIndexParams *params = static_cast<BuildIndexParams *>(user);
 	params->progressFn(percent);
+}
+
+const DP_Pixel8 *PaintEngine::getTransformPreviewPixels(void *user)
+{
+	QImage *img = static_cast<QImage *>(user);
+	return reinterpret_cast<const DP_Pixel8 *>(img->constBits());
+}
+
+void PaintEngine::disposeTransformPreviewPixels(void *user)
+{
+	QImage *img = static_cast<QImage *>(user);
+	delete img;
 }
 
 }
