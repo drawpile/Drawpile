@@ -63,6 +63,8 @@ private:
    QModelIndex presetIndexToProxy(const QModelIndex &sourceIndex);
    int presetProxyIndexToId(const QModelIndex &proxyIndex);
    int currentPresetId();
+
+   bool question(const QString &title, const QString &text) const;
 };
 
 }

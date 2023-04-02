@@ -21,6 +21,7 @@
 #include <QSortFilterProxyModel>
 #include <QTextBrowser>
 #include <QVBoxLayout>
+#include <QMessageBox>
 
 static constexpr char SELECTED_TAG_ID_KEY[] = "brushpalette:selected_tag_id";
 
@@ -349,7 +350,13 @@ void BrushPalette::editCurrentTag()
 void BrushPalette::deleteCurrentTag()
 {
 	if(d->currentTag.editable) {
-		d->tagModel->deleteTag(d->currentTag.id);
+		bool confirmed = question(
+			tr("Delete Tag"), tr("Really delete tag '%1'? This will not delete "
+								 "the brushes within.")
+								  .arg(d->currentTag.name));
+		if(confirmed) {
+			d->tagModel->deleteTag(d->currentTag.id);
+		}
 	}
 }
 
@@ -386,8 +393,13 @@ void BrushPalette::overwriteCurrentPreset()
 	}
 	int presetId = currentPresetId();
 	if(presetId > 0) {
-		brushes::ActiveBrush brush = d->brushSettings->currentBrush();
-		d->presetModel->updatePresetData(presetId, brush.presetType(), brush.presetData());
+		QString name = d->presetModel->getPresetMetadata(presetId).name;
+		bool confirmed = question(tr("Overwrite Brush Preset"),
+			tr("Really overwrite brush preset '%1' with the current brush?").arg(name));
+		if(confirmed) {
+			brushes::ActiveBrush brush = d->brushSettings->currentBrush();
+			d->presetModel->updatePresetData(presetId, brush.presetType(), brush.presetData());
+		}
 	}
 }
 
@@ -416,7 +428,12 @@ void BrushPalette::deleteCurrentPreset()
 {
 	int presetId = currentPresetId();
 	if(presetId > 0) {
-		d->presetModel->deletePreset(presetId);
+		QString name = d->presetModel->getPresetMetadata(presetId).name;
+		bool confirmed = question(tr("Delete Brush Preset"),
+			tr("Really delete brush preset '%1'?").arg(name));
+		if(confirmed) {
+			d->presetModel->deletePreset(presetId);
+		}
 	}
 }
 
@@ -500,6 +517,11 @@ int BrushPalette::presetProxyIndexToId(const QModelIndex &proxyIndex)
 int BrushPalette::currentPresetId()
 {
 	return presetProxyIndexToId(d->presetListView->currentIndex());
+}
+
+bool BrushPalette::question(const QString &title, const QString &text) const
+{
+	return QMessageBox::question(widget(), title, text) == QMessageBox::Yes;
 }
 
 }
