@@ -122,11 +122,11 @@ BrushPalette::BrushPalette(QWidget *parent)
 	titleWidget->addSpace(4);
 
 	d->menu = new QMenu(this);
-	d->newBrushAction = d->menu->addAction(icon::fromTheme("list-add"), tr("New Brush"));
-	d->duplicateBrushAction = d->menu->addAction(icon::fromTheme("edit-copy"), tr("Duplicate Brush"));
-	d->overwriteBrushAction = d->menu->addAction(icon::fromTheme("document-save"), tr("Overwrite Brush"));
-	d->editBrushAction = d->menu->addAction(icon::fromTheme("configure"), tr("Edit Brush"));
-	d->deleteBrushAction = d->menu->addAction(icon::fromTheme("trash-empty"), tr("Delete Brush"));
+	d->newBrushAction = d->menu->addAction(icon::fromTheme("list-add"), tr("New Brush Preset"));
+	d->duplicateBrushAction = d->menu->addAction(icon::fromTheme("edit-copy"), tr("Duplicate Brush Preset"));
+	d->overwriteBrushAction = d->menu->addAction(icon::fromTheme("document-save"), tr("Overwrite Brush Preset"));
+	d->editBrushAction = d->menu->addAction(icon::fromTheme("configure"), tr("Edit Brush Preset"));
+	d->deleteBrushAction = d->menu->addAction(icon::fromTheme("trash-empty"), tr("Delete Brush Preset"));
 	d->assignmentMenu = d->menu->addMenu(tr("Brush Tags"));
 	d->iconSizeMenu = d->menu->addMenu(tr("Icon Size"));
 	d->menu->addSeparator();
