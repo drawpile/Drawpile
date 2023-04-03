@@ -27,11 +27,11 @@ namespace canvas {
 
 PaintEngine::PaintEngine(
 	int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-	int undoDepthLimit, bool wantCanvasHistoryDump, QObject *parent)
+	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
-	, m_paintEngine{m_acls, m_snapshotQueue, undoDepthLimit, wantCanvasHistoryDump, PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this}
+	, m_paintEngine{m_acls, m_snapshotQueue, wantCanvasHistoryDump, PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this}
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_changedTileBounds{}
@@ -43,7 +43,7 @@ PaintEngine::PaintEngine(
 	, m_sampleColorLastDiameter(-1)
 	, m_onionSkins{nullptr}
 	, m_enableOnionSkins{false}
-	, m_undoDepthLimit{undoDepthLimit}
+	, m_undoDepthLimit{DP_UNDO_DEPTH_DEFAULT}
 {
 	m_painterMutex = DP_mutex_new();
 	start();
@@ -88,17 +88,16 @@ void PaintEngine::start()
 }
 
 void PaintEngine::reset(
-	int undoDepthLimit, uint8_t localUserId,
-	const drawdance::CanvasState &canvasState, DP_Player *player)
+	uint8_t localUserId, const drawdance::CanvasState &canvasState,
+	DP_Player *player)
 {
 	m_paintEngine.reset(
-		m_acls, m_snapshotQueue, undoDepthLimit, localUserId,
-		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this, canvasState,
-		player);
+		m_acls, m_snapshotQueue, localUserId, PaintEngine::onPlayback,
+		PaintEngine::onDumpPlayback, this, canvasState, player);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
-	m_undoDepthLimit = undoDepthLimit;
+	m_undoDepthLimit = DP_UNDO_DEPTH_DEFAULT;
 	start();
 	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
 	emit defaultLayer(0);

@@ -23,13 +23,12 @@ extern "C" {
 namespace canvas {
 
 CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, int undoDepthLimit,
-		bool wantCanvasHistoryDump, QObject *parent)
+		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
+		QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_localUserId(1)
 {
 	m_paintengine = new PaintEngine(
-		fps, snapshotMaxCount, snapshotMinDelayMs, undoDepthLimit,
-		wantCanvasHistoryDump, this);
+		fps, snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
@@ -64,13 +63,15 @@ void CanvasModel::loadBlank(int undoDepthLimit, const QSize &size, const QColor 
 void CanvasModel::loadCanvasState(
 	int undoDepthLimit, const drawdance::CanvasState &canvasState)
 {
-	m_paintengine->reset(undoDepthLimit, m_localUserId, canvasState);
+	m_paintengine->reset(m_localUserId, canvasState);
+	drawdance::Message undoDepthMessage = drawdance::Message::makeUndoDepth(0, undoDepthLimit);
+	m_paintengine->receiveMessages(false, 1, &undoDepthMessage);
 }
 
-void CanvasModel::loadPlayer(int undoDepthLimit, DP_Player *player)
+void CanvasModel::loadPlayer(DP_Player *player)
 {
 	return m_paintengine->reset(
-		undoDepthLimit, m_localUserId, drawdance::CanvasState::null(), player);
+		m_localUserId, drawdance::CanvasState::null(), player);
 }
 
 QSize CanvasModel::size() const

@@ -32,8 +32,8 @@ public:
 	using BuildIndexProgressFn = std::function<void (int)>;
 
 	PaintEngine(
-		AclState &acls, SnapshotQueue &sq, int undoDepthLimit,
-		bool wantCanvasHistoryDump, DP_PaintEnginePlaybackFn playbackFn,
+		AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
+		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null());
 
@@ -46,8 +46,8 @@ public:
 
 	DP_PaintEngine *get();
 
-	void reset(AclState &acls, SnapshotQueue &sq, int undoDepthLimit,
-		uint8_t localUserId, DP_PaintEnginePlaybackFn playbackFn,
+	void reset(AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null(),
 		DP_Player *player = nullptr);

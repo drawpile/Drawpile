@@ -107,7 +107,7 @@ void Document::initCanvas()
 	getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
 	m_canvas = new canvas::CanvasModel{
 		m_client->myId(), fps, snapshotMaxCount, snapshotMinDelayMs,
-		getUndoDepthLimitSetting(), m_wantCanvasHistoryDump, this};
+		m_wantCanvasHistoryDump, this};
 
 	m_toolctrl->setModel(m_canvas);
 
@@ -193,7 +193,7 @@ DP_LoadResult Document::loadRecording(
 		setAutosave(false);
 		initCanvas();
 		unmarkDirty();
-		m_canvas->loadPlayer(getUndoDepthLimitSetting(), player);
+		m_canvas->loadPlayer(player);
 		// Session templates are played back to the end instantly. They're only
 		// supposed to contain a reset snapshot, so should be very quick.
 		isTemplate = isSessionTemplate(player);

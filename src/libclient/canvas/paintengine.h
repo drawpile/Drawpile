@@ -34,8 +34,7 @@ public:
 
 	PaintEngine(
 		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-		int undoDepthLimit, bool wantCanvasHistoryDump,
-		QObject *parent = nullptr);
+		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
 	~PaintEngine() override;
 
@@ -46,7 +45,7 @@ public:
 
 	/// Reset the paint engine to its default state
 	void reset(
-		int undoDepthLimit, uint8_t localUserId,
+		uint8_t localUserId,
 		const drawdance::CanvasState &canvasState =
 			drawdance::CanvasState::null(),
 		DP_Player *player = nullptr);

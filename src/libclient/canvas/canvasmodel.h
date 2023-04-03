@@ -31,8 +31,8 @@ class CanvasModel final : public QObject
 public:
 	CanvasModel(
 		uint8_t localUserId, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, int undoDepthLimit,
-		bool wantCanvasHistoryDump, QObject *parent = nullptr);
+		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
+		QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 
@@ -42,7 +42,7 @@ public:
 	void loadCanvasState(int undoDepthLimit, const drawdance::CanvasState &canvasState);
 
 	//! Prepare to start playback, takes ownership of the given player
-	void loadPlayer(int undoDepthLimit, DP_Player *player);
+	void loadPlayer(DP_Player *player);
 
 	QString title() const { return m_title; }
 	void setTitle(const QString &title) { if(m_title!=title) { m_title = title; emit titleChanged(title); } }
