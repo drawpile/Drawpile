@@ -62,6 +62,20 @@ include(DrawpileCompileOptions)
 
 include(AutoSourceGroup)
 
+# This is done before DrawpileCompilerOptions to make sure that only the
+# compiler options that the extern projects need are used. Once CMake 3.25 is
+# the minimum required version it is possible that the SYSTEM flag may do this
+# so this can be moved down the list to where the rest of the dependencies are.
+if(CLIENT OR SERVER)
+	if(EXISTS ${PROJECT_SOURCE_DIR}/extern/drawdance/CMakeLists.txt)
+		add_subdirectory(extern/drawdance EXCLUDE_FROM_ALL)
+	else()
+		find_package(Drawdance REQUIRED COMPONENTS dpcommon dpengine dpmsg)
+	endif()
+endif()
+
+include(DrawpileCompilerOptions)
+
 if(TESTS)
 	enable_testing()
 	include(Tests)
@@ -112,7 +126,10 @@ else()
 endif()
 
 if(CLIENT OR SERVER)
-	include_directories(${CMAKE_SOURCE_DIR}/src)
+	# Everything needs these dependencies so just do it in one place
+	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Core Network)
+	find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS LinguistTools)
+	find_package(libsodium QUIET)
 
 	find_package(${QT_PACKAGE_NAME} ${QT_MIN_VERSION_SERVER} REQUIRED COMPONENTS Core Network)
 	find_package(libsodium QUIET)
