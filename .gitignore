@@ -1,18 +1,13 @@
 # Generated files
-/src/client/ui_*.h
-config.h
 Makefile
 Makefile.*
-CMakeLists.txt.user
-example_*.png
+CMakeLists.txt.user*
 
 # Build directories
-/bin/
 /*build*/
 **/target
 
 *.swp
-*.so
 
 # Hidden files
 .*/*
