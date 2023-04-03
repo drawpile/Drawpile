@@ -7,12 +7,16 @@ list(APPEND CMAKE_MODULE_PATH
 
 set(BUILD_TYPE "release" CACHE STRING
 	"The type of build ('debug' or 'release')")
+set(ZLIB "1.2.13" CACHE STRING
+	"The version of zlib to build")
 set(LIBMICROHTTPD "0.9.75" CACHE STRING
 	"The version of libmicrohttpd to build")
 set(LIBSODIUM "1.0.18" CACHE STRING
 	"The version of libsodium to build")
 set(QTKEYCHAIN "c6f0b66318f8da6917fb4681103f7303b1836194" CACHE STRING
 	"The Git refspec of QtKeychain to build")
+set(LIBZIP "1.9.2" CACHE STRING
+	"The version of libzip to build")
 
 string(TOLOWER "${BUILD_TYPE}" BUILD_TYPE)
 if(BUILD_TYPE STREQUAL "debug")
@@ -60,6 +64,24 @@ set_mac_deployment_target(${QT_VERSION})
 
 include(BuildDependency)
 
+# macdeployqt does not search rpaths correctly so give a full path of the
+# library instead
+if(APPLE AND NOT ANDROID)
+	set(extra_cmake_flags "-DCMAKE_INSTALL_NAME_DIR=${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
+if(WIN32 AND ZLIB)
+	build_dependency(zlib ${ZLIB} ${BUILD_TYPE}
+		URL https://github.com/madler/zlib/releases/download/v@version@/zlib-@version@.tar.xz
+		VERSIONS
+			1.2.13
+			SHA384=57f9fd368500c413cf5fafd5ffddf150651a43de580051d659fab0fcacbf1fb63f4954851895148e530afa3b75d48433
+		ALL_PLATFORMS
+			CMAKE
+				ALL -DBUILD_SHARED_LIBS=on ${extra_cmake_flags}
+	)
+endif()
+
 if(LIBMICROHTTPD)
 	build_dependency(libmicrohttpd ${LIBMICROHTTPD} ${BUILD_TYPE}
 		URL https://ftpmirror.gnu.org/libmicrohttpd/libmicrohttpd-@version@.tar.gz
@@ -97,12 +119,6 @@ if(LIBSODIUM)
 endif()
 
 if(QTKEYCHAIN)
-	# macdeployqt does not search rpaths correctly so give a
-	# full path of the library instead
-	if(APPLE)
-		set(QTKEYCHAIN_FLAGS "-DCMAKE_INSTALL_NAME_DIR=${CMAKE_INSTALL_PREFIX}/lib")
-	endif()
-
 	build_dependency(qtkeychain ${QTKEYCHAIN} ${BUILD_TYPE}
 		URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
 		VERSIONS
@@ -112,6 +128,25 @@ if(QTKEYCHAIN)
 			CMAKE
 				ALL
 					-DBUILD_WITH_QT6=${BUILD_WITH_QT6}
-					${QTKEYCHAIN_FLAGS}
+					${extra_cmake_flags}
+	)
+endif()
+
+if(LIBZIP)
+	build_dependency(libzip ${LIBZIP} ${BUILD_TYPE}
+		URL https://libzip.org/download/libzip-@version@.tar.xz
+		VERSIONS
+			1.9.2
+			SHA384=3fae34c63ac4e40d696bf5b95ff25d38c572c9e01f71350f065902f371c93db14fdee727d0179421f03b67c129d0f567
+		ALL_PLATFORMS
+			CMAKE
+				ALL
+					-DBUILD_TOOLS=off -DBUILD_REGRESS=off
+					-DBUILD_DOC=off -DBUILD_EXAMPLES=off
+					-DENABLE_COMMONCRYPTO=off -DENABLE_GNUTLS=off
+					-DENABLE_MBEDTLS=off -DENABLE_OPENSSL=off
+					-DENABLE_WINDOWS_CRYPTO=off -DENABLE_BZIP2=off
+					-DENABLE_LZMA=off -DENABLE_ZSTD=off
+					${extra_cmake_flags}
 	)
 endif()

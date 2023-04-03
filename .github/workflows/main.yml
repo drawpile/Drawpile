@@ -35,6 +35,8 @@ jobs:
         qt: [ 5.15.8, 6.4.2 ]
         qtkeychain: [ c6f0b66318f8da6917fb4681103f7303b1836194 ]
         libmicrohttpd: [ 0.9.75 ]
+        libzip: [ 1.9.2 ]
+        zlib: [ 1.2.13 ]
         include:
           - os: ubuntu-latest
             sccache_tuple: x86_64-unknown-linux-musl
@@ -172,16 +174,18 @@ jobs:
         id: deps-other-cache
         with:
           path: .github/deps/other
-          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}
+          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}-${{ matrix.libzip }}-${{ matrix.zlib }}
       - name: Install other system dependencies
         run: ${{ matrix.other_packages }}
         if: matrix.other_packages && steps.deps-other-cache.outputs.cache-hit != 'true'
       - name: Build other dependencies from source
         run: >
           cmake
+          "-DZLIB=${{ matrix.zlib }}"
           "-DLIBMICROHTTPD=${{ matrix.libmicrohttpd }}"
           "-DLIBSODIUM=${{ matrix.libsodium }}"
           "-DQTKEYCHAIN=${{ matrix.qtkeychain }}"
+          "-DLIBZIP=${{ matrix.libzip }}"
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/.github/deps/qt"
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/.github/deps/other"
           ${{ matrix.other_deps_flags }}
@@ -193,7 +197,7 @@ jobs:
         if: steps.deps-other-cache.outputs.cache-hit != 'true'
         with:
           path: .github/deps/other
-          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}
+          key: other-${{ runner.os }}-${{ matrix.libmicrohttpd }}-${{ matrix.libsodium }}-${{ matrix.qtkeychain }}-${{ matrix.qt }}-${{ matrix.libzip }}-${{ matrix.zlib }}
 
       - name: Save/restore Cargo database from cache
         uses: actions/cache@v3
