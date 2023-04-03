@@ -36,6 +36,9 @@ namespace blendmode {
 
 	bool isValidBrushMode(DP_BlendMode mode);
 	bool isValidEraseMode(DP_BlendMode mode);
+
+	//! Is this blend mode compatible with Drawpile 2.1?
+	bool isBackwardCompatibleMode(DP_BlendMode mode);
 }
 }
 

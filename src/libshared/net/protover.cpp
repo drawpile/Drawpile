@@ -61,12 +61,20 @@ bool ProtocolVersion::isFuture() const
 		asInteger() > current().asInteger();
 }
 
+bool ProtocolVersion::isPastCompatible() const
+{
+	return m_namespace == QStringLiteral("dp") &&
+			m_server == 4 && m_major == 21 && m_minor == 2;
+}
+
 QString ProtocolVersion::versionName() const
 {
 	if(m_namespace != QStringLiteral("dp"))
 		return QString();
 
-	if(m_server == 4 && m_major == 21 && m_minor == 2)
+	if(m_server == 4 && m_major == 22)
+		return QStringLiteral("2.2.0 beta");
+	else if(m_server == 4 && m_major == 21 && m_minor == 2)
 		return QStringLiteral("2.1.x");
 	else if(m_server == 4 && m_major == 20 && m_minor == 1)
 		return QStringLiteral("2.0.x");

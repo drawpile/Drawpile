@@ -66,7 +66,7 @@ Document::Document(QObject *parent)
 
 	// Make connections
 	connect(m_client, &net::Client::serverConnected, this, &Document::serverConnected);
-	connect(m_client, &net::Client::serverLoggedin, this, &Document::onServerLogin);
+	connect(m_client, &net::Client::serverLoggedIn, this, &Document::onServerLogin);
 	connect(m_client, &net::Client::serverDisconnected, this, &Document::onServerDisconnect);
 	connect(m_client, &net::Client::serverDisconnected, this, &Document::serverDisconnected);
 
@@ -214,14 +214,14 @@ DP_LoadResult Document::loadRecording(
 	return result;
 }
 
-void Document::onServerLogin(bool join)
+void Document::onServerLogin(bool join, bool compatibilityMode)
 {
 	if(join)
 		initCanvas();
 
 	Q_ASSERT(m_canvas);
 
-	m_canvas->connectedToServer(m_client->myId(), join);
+	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
 
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;
@@ -335,10 +335,9 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 			// subsequent server command comes in too fast.
 			sendLockSession(true);
 
-			QByteArray bytes = QStringLiteral("beginning session autoreset...").toUtf8();
-			m_client->sendMessage(drawdance::Message::noinc(DP_msg_chat_new(
+			m_client->sendMessage(drawdance::Message::makeChat(
 				m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS, DP_MSG_CHAT_OFLAGS_ACTION,
-				bytes.constData(), bytes.length())));
+				QStringLiteral("beginning session autoreset...")));
 
 			sendResetSession();
 		}
@@ -350,15 +349,19 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 void Document::onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, bool below)
 {
 	uint8_t contextId = m_client->myId();
-	drawdance::Message layerOrderMessage = m_canvas->paintEngine()->historyCanvasState()
-		.makeLayerTreeOrder(contextId, sourceId, targetId, intoGroup, below);
-	if(layerOrderMessage.isNull()) {
+	drawdance::Message msg;
+	if(m_client->isCompatibilityMode()) {
+		msg = m_canvas->paintEngine()->historyCanvasState()
+			.makeLayerOrder(contextId, sourceId, targetId, below);
+	} else {
+		msg = m_canvas->paintEngine()->historyCanvasState()
+			.makeLayerTreeOrder(contextId, sourceId, targetId, intoGroup, below);
+	}
+	if(msg.isNull()) {
 		qWarning("Can't move layer: %s", DP_error());
 	} else {
 		drawdance::Message messages[] = {
-			layerOrderMessage,
-			drawdance::Message::noinc(DP_msg_undo_point_new(contextId)),
-		};
+			drawdance::Message::makeUndoPoint(contextId), msg};
 		m_client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 	}
 }
@@ -536,6 +539,11 @@ QString Document::sessionTitle() const
 		return QString();
 }
 
+bool Document::isCompatibilityMode() const
+{
+	return m_client->isCompatibilityMode();
+}
+
 void Document::autosave()
 {
 	if(!m_autosaveTimer->isActive()) {
@@ -634,8 +642,8 @@ bool Document::isRecording() const
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(drawdance::Message::noinc(DP_msg_move_pointer_new(
-		m_client->myId(), point.x(), point.y())));
+	m_client->sendMessage(drawdance::Message::makeMovePointer(
+		m_client->myId(), point.x() * 4, point.y() * 4));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
@@ -643,21 +651,17 @@ void Document::sendSessionConf(const QJsonObject &sessionconf)
 	m_client->sendMessage(net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
 }
 
-static void setFeatureTiers(int count, uint8_t *out, void *tiers)
-{
-	memcpy(out, tiers, count * sizeof(*out));
-}
-
 void Document::sendFeatureAccessLevelChange(const uint8_t tiers[DP_FEATURE_COUNT])
 {
-	m_client->sendMessage(drawdance::Message::noinc(DP_msg_feature_access_levels_new(
-		m_client->myId(), setFeatureTiers, DP_FEATURE_COUNT, const_cast<uint8_t *>(tiers))));
+	int featureCount = isCompatibilityMode() ? 9 : DP_FEATURE_COUNT;
+	m_client->sendMessage(drawdance::Message::makeFeatureAccessLevels(
+		m_client->myId(), featureCount, tiers));
 }
 
 void Document::sendLockSession(bool lock)
 {
-	m_client->sendMessage(drawdance::Message::noinc(DP_msg_layer_acl_new(
-		m_client->myId(), 0, lock ? DP_ACL_ALL_LOCKED_BIT : 0, nullptr, 0, nullptr)));
+	m_client->sendMessage(drawdance::Message::makeLayerAcl(
+		m_client->myId(), 0, lock ? DP_ACL_ALL_LOCKED_BIT : 0, {}));
 }
 
 void Document::sendOpword(const QString &opword)
@@ -698,9 +702,10 @@ void Document::sendResetSession(const drawdance::MessageList &resetImage)
 
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
+	uint8_t contextId = m_client->myId();
 	drawdance::Message msgs[] = {
-		drawdance::Message::noinc(DP_msg_undo_point_new(m_client->myId())),
-		drawdance::Message::noinc(DP_msg_canvas_resize_new(m_client->myId(), top, right, bottom, left)),
+		drawdance::Message::makeUndoPoint(contextId),
+		drawdance::Message::makeCanvasResize(contextId, top, right, bottom, left),
 	};
 	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
 }
@@ -725,18 +730,12 @@ void Document::sendTerminateSession()
 	m_client->sendMessage(net::ServerCommand::make("kill-session"));
 }
 
-static void setBackgroundColor(size_t size, unsigned char *out, void *user)
-{
-	memcpy(out, user, size);
-}
-
 void Document::sendCanvasBackground(const QColor &color)
 {
-	uint32_t c = qToBigEndian(color.rgba());
+	uint8_t contextId = m_client->myId();
 	drawdance::Message msgs[] = {
-		drawdance::Message::noinc(DP_msg_undo_point_new(m_client->myId())),
-		drawdance::Message::noinc(DP_msg_canvas_background_new(
-			m_client->myId(), setBackgroundColor, 4, &c)),
+		drawdance::Message::makeUndoPoint(contextId),
+		drawdance::Message::makeCanvasBackground(contextId, color),
 	};
 	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
 }
@@ -803,8 +802,8 @@ void Document::undo()
 		return;
 
 	if(!m_toolctrl->undoMultipartDrawing()) {
-		m_client->sendMessage(drawdance::Message::noinc(
-			DP_msg_undo_new(m_client->myId(), 0, false)));
+		m_client->sendMessage(
+			drawdance::Message::makeUndo(m_client->myId(), 0, false));
 	}
 }
 
@@ -815,8 +814,8 @@ void Document::redo()
 
 	// Cannot redo while a multipart drawing action is in progress
 	if(!m_toolctrl->isMultipartDrawing()) {
-		m_client->sendMessage(drawdance::Message::noinc(
-			DP_msg_undo_new(m_client->myId(), 0, true)));
+		m_client->sendMessage(
+			drawdance::Message::makeUndo(m_client->myId(), 0, true));
 	}
 }
 
@@ -834,7 +833,8 @@ void Document::selectAll()
 void Document::selectNone()
 {
 	if(m_canvas && m_canvas->selection() && m_canvas->selection()->pasteOrMoveToCanvas(
-			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(), m_toolctrl->selectInterpolation())) {
+			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
+			m_toolctrl->selectInterpolation(), m_client->isCompatibilityMode())) {
 		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 	}
@@ -935,7 +935,7 @@ void Document::stamp()
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
 	if(sel && !sel->pasteImage().isNull() && sel->pasteOrMoveToCanvas(
 			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
-			m_toolctrl->selectInterpolation())) {
+			m_toolctrl->selectInterpolation(), m_client->isCompatibilityMode())) {
 		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 		sel->detachMove();
@@ -980,8 +980,8 @@ void Document::removeEmptyAnnotations()
 	for(int i = 0; i < count; ++i) {
 		drawdance::Annotation a = al.at(i);
 		if(a.textBytes().length() == 0) {
-			m_messageBuffer.append(drawdance::Message::noinc(
-				DP_msg_annotation_delete_new(contextId, a.id())));
+			m_messageBuffer.append(
+				drawdance::Message::makeAnnotationDelete(contextId, a.id()));
 		}
 	}
 

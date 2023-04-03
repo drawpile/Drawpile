@@ -44,7 +44,7 @@ public:
 	static QPolygon destinationQuad(
 		const QImage &source, const QPolygon &target,
 		QRect *outBounds = nullptr, QPolygonF *outSrcPolygon = nullptr);
-	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds);
+	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono);
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;

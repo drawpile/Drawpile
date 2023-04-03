@@ -424,16 +424,19 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 		for(const auto jsv : msg.reply["sessions"].toArray()) {
 			const QJsonObject js = jsv.toObject();
 
-			const auto protoVer = protocol::ProtocolVersion::fromString(js["protocol"].toString());
+			m_protocolVersion = protocol::ProtocolVersion::fromString(js["protocol"].toString());
 
 			QString incompatibleSeries;
-			if(!protoVer.isCurrent()) {
-				if(protoVer.isFuture())
+			if(!m_protocolVersion.isCompatible()) {
+				if(m_protocolVersion.isFuture()) {
 					incompatibleSeries = tr("New version");
-				else
-					incompatibleSeries = protoVer.versionName();
-				if(incompatibleSeries.isEmpty())
+				} else {
+					incompatibleSeries = m_protocolVersion.versionName();
+				}
+
+				if(incompatibleSeries.isEmpty()) {
 					incompatibleSeries = tr("Unknown version");
+				}
 			}
 
 			const LoginSession session {
@@ -480,7 +483,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			failLogin(tr("Blocked by parental controls"));
 
 		} else if(!session.incompatibleSeries.isEmpty()) {
-				failLogin(tr("Session for a different Drawpile version (%s) in progress!").arg(session.incompatibleSeries));
+				failLogin(tr("Session for a different Drawpile version (%1) in progress!").arg(session.incompatibleSeries));
 
 		} else {
 			joinSelectedSession(session.id, session.needPassword);

@@ -108,6 +108,8 @@ public:
 
 	bool sessionSupportsAutoReset() const { return m_supportsAutoReset; }
 
+	bool isCompatibilityMode() const { return m_compatibilityMode; }
+
 	/**
 	 * @brief Get the number of bytes waiting to be sent
 	 * @return upload queue length
@@ -174,7 +176,7 @@ signals:
 	void sessionConfChange(const QJsonObject &config);
 
 	void serverConnected(const QString &address, int port);
-	void serverLoggedin(bool join);
+	void serverLoggedIn(bool join, bool compatibilityMode);
 	void serverDisconnecting();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 	void youWereKicked(const QString &kickedBy);
@@ -193,10 +195,16 @@ signals:
 
 private slots:
 	void handleMessages(int count, const drawdance::Message *msgs);
-	void handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset);
+	void handleConnect(
+		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
+		bool supportsAutoReset, const protocol::ProtocolVersion &protocolVersion);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
+	void sendCompatibleMessages(int count, const drawdance::Message *msgs);
+	void sendCompatibleResetMessages(int count, const drawdance::Message *msgs);
+	QVector<drawdance::Message> filterCompatibleMessages(int count, const drawdance::Message *msgs);
+
 	void handleServerReply(const ServerReply &msg);
 	void handleResetRequest(const ServerReply &msg);
 	void handleData(const drawdance::Message &msg);
@@ -213,6 +221,7 @@ private:
 	bool m_moderator = false;
 	bool m_isAuthenticated = false;
 	bool m_supportsAutoReset = false;
+	bool m_compatibilityMode = false;
 
 	int m_catchupTo = 0;
 	int m_caughtUp = 0;

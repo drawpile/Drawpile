@@ -4,6 +4,7 @@
 #define DP_NET_SERVER_H
 
 #include <QObject>
+#include "libshared/net/protover.h"
 
 class QSslCertificate;
 
@@ -68,6 +69,8 @@ public:
 	 */
 	virtual bool supportsPersistence() const = 0;
 	virtual bool supportsAbuseReports() const = 0;
+
+	virtual protocol::ProtocolVersion protocolVersion() const = 0;
 
 	// Artificial lag for debugging.
 	virtual int artificialLagMs() const = 0;

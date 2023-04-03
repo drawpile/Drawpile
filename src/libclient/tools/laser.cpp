@@ -29,8 +29,8 @@ void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
 	uint8_t contextId = client->myId();
 	uint32_t color = m_owner.activeBrush().qColor().rgb();
 	drawdance::Message messages[] = {
-		drawdance::Message::noinc(DP_msg_laser_trail_new(contextId, color, m_persistence)),
-		drawdance::Message::noinc(DP_msg_move_pointer_new(contextId, point.x(), point.y())),
+		drawdance::Message::makeLaserTrail(contextId, color, m_persistence),
+		drawdance::Message::makeMovePointer(contextId, point.x() * 4, point.y() * 4),
 	};
 	client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 }
@@ -40,8 +40,8 @@ void LaserPointer::motion(const canvas::Point &point, bool constrain, bool cente
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 	if(m_drawing) {
-		m_owner.client()->sendMessage(drawdance::Message::noinc(
-			DP_msg_move_pointer_new(m_owner.client()->myId(), point.x(), point.y())));
+		m_owner.client()->sendMessage(drawdance::Message::makeMovePointer(
+			m_owner.client()->myId(), point.x() * 4, point.y() * 4));
 	}
 }
 
@@ -49,8 +49,8 @@ void LaserPointer::end()
 {
 	if(m_drawing) {
 		m_drawing = false;
-		m_owner.client()->sendMessage(drawdance::Message::noinc(
-			DP_msg_laser_trail_new(m_owner.client()->myId(), 0, 0)));
+		m_owner.client()->sendMessage(drawdance::Message::makeLaserTrail(
+			m_owner.client()->myId(), 0, 0));
 	}
 }
 

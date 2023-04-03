@@ -61,7 +61,7 @@ public:
 	QImage selectionToImage(int layerId) const;
 	void pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault);
 
-	void connectedToServer(uint8_t myUserId, bool join);
+	void connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode);
 	void disconnectedFromServer();
 
 	AclState *aclState() const { return m_aclstate; }
@@ -69,6 +69,7 @@ public:
 	LayerListModel *layerlist() const { return m_layerlist; }
 	TimelineModel *timeline() const { return m_timeline; }
 	DocumentMetadata *metadata() const { return m_metadata; }
+	bool isCompatibilityMode() const { return m_compatibilityMode; }
 
 	//! Open a recording file and start recording
 	drawdance::RecordStartResult startRecording(const QString &path);
@@ -137,6 +138,8 @@ signals:
 
 	void recorderStateChanged(bool recording);
 
+	void compatibilityModeChanged(bool compatibilityMode);
+
 private slots:
 	void onCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 	void onLaserTrail(uint8_t userId, int persistence, uint32_t color);
@@ -161,6 +164,7 @@ private:
 	QString m_pinnedMessage;
 
 	uint8_t m_localUserId;
+	bool m_compatibilityMode;
 };
 
 }

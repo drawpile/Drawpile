@@ -170,8 +170,8 @@ void Annotation::end()
 
 	if(!m_isNew) {
 		if(m_p1.toPoint() != m_p2.toPoint()) {
-			msg = drawdance::Message::noinc(DP_msg_annotation_reshape_new(
-				contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height()));
+			msg = drawdance::Message::makeAnnotationReshape(
+				contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height());
 		}
 	} else if(m_handle != Handle::Outside) {
 		if(m_shape.width() < 10 && m_shape.height() < 10) {
@@ -179,13 +179,13 @@ void Annotation::end()
 			// Create a nice and big annotation box rather than a minimum size one.
 			m_shape.setSize(QSize(160, 60));
 		}
-		msg = drawdance::Message::noinc(DP_msg_annotation_create_new(
-			contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height()));
+		msg = drawdance::Message::makeAnnotationCreate(
+			contextId, m_selectedId, m_shape.x(), m_shape.y(), m_shape.width(), m_shape.height());
 	}
 
 	if(!msg.isNull()) {
 		drawdance::Message messages[] = {
-			drawdance::Message::noinc(DP_msg_undo_point_new(contextId)),
+			drawdance::Message::makeUndoPoint(contextId),
 			msg,
 		};
 		m_owner.client()->sendMessages(DP_ARRAY_LENGTH(messages), messages);

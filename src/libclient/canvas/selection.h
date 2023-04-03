@@ -158,9 +158,10 @@ public:
 	 * @param contextId user ID for the commands
 	 * @param layer target layer
 	 * @param interpolation how to interpolate, one of DP_MSG_MOVE_REGION_MODE_*
+	 * @param compatibilityMode use MoveRegion messages for Drawpile 2.1 compatibility
 	 * @return set of commands
 	 */
-	bool pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation) const;
+	bool pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation, bool compatibilityMode) const;
 
 	/**
 	 * @brief Generate the commands to fill the selection with solid color

@@ -218,7 +218,7 @@ public slots:
 	void updateSettings();
 
 private slots:
-	void onServerLogin(bool join);
+	void onServerLogin(bool join, bool compatibilityMode);
 	void onServerDisconnect();
 	void onSessionResetted();
 

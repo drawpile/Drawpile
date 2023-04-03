@@ -13,6 +13,7 @@
 #include <QJsonObject>
 
 #include "libclient/drawdance/message.h"
+#include "libshared/net/protover.h"
 
 class QImage;
 
@@ -130,6 +131,8 @@ public:
 	 * @brief Can the server receive abuse reports?
 	 */
 	bool supportsAbuseReports() const { return m_canReport; }
+
+	protocol::ProtocolVersion protocolVersion() const { return m_protocolVersion; }
 
 	/**
 	 * @brief Check if the user has the given flag
@@ -392,6 +395,7 @@ private:
 	bool m_needUserPassword;
 	bool m_supportsCustomAvatars;
 	bool m_supportsExtAuthAvatars;
+	protocol::ProtocolVersion m_protocolVersion;
 
 	// User flags
 	QStringList m_userFlags;

@@ -5,6 +5,8 @@ extern "C" {
 }
 
 #include "libclient/drawdance/message.h"
+
+#include "libclient/canvas/blendmodes.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QByteArray>
@@ -53,6 +55,11 @@ DP_Message **Message::asRawMessages(const drawdance::Message *msgs)
 }
 
 
+Message Message::makeAnnotationCreate(unsigned int contextId, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
+{
+    return Message{DP_msg_annotation_create_new(contextId, id, x, y, w, h)};
+}
+
 Message Message::makeAnnotationDelete(uint8_t contextId, uint16_t id)
 {
     return Message{DP_msg_annotation_delete_new(contextId, id)};
@@ -63,6 +70,11 @@ Message Message::makeAnnotationEdit(uint8_t contextId, uint16_t id, uint32_t bg,
     QByteArray bytes = text.toUtf8();
     return Message{DP_msg_annotation_edit_new(
         contextId, id, bg, flags, border, bytes.constData(), bytes.length())};
+}
+
+Message Message::makeAnnotationReshape(uint8_t contextId, uint16_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
+{
+    return Message{DP_msg_annotation_reshape_new(contextId, id, x, y, w, h)};
 }
 
 Message Message::makeCanvasBackground(uint8_t contextId, const QColor &color)
@@ -85,6 +97,17 @@ Message Message::makeChat(uint8_t contextId, uint8_t tflags, uint8_t oflags, con
 Message Message::makeDefaultLayer(uint8_t contextId, uint16_t id)
 {
     return Message{DP_msg_default_layer_new(contextId, id)};
+}
+
+Message Message::makeDisconnect(uint8_t contextId, uint8_t reason, const QString &message)
+{
+    QByteArray bytes = message.toUtf8();
+    return Message{DP_msg_disconnect_new(contextId, reason, bytes.constData(), bytes.length())};
+}
+
+Message Message::makeFeatureAccessLevels(uint8_t contextId, int featureCount, const uint8_t *features)
+{
+    return Message{DP_msg_feature_access_levels_new(contextId, setUint8s, featureCount, const_cast<uint8_t *>(features))};
 }
 
 Message Message::makeFillRect(uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QColor &color)
@@ -112,6 +135,11 @@ Message Message::makeInternalSnapshot(uint8_t contextId)
     return Message{DP_msg_internal_snapshot_new(contextId)};
 }
 
+Message Message::makeLaserTrail(uint8_t contextId, uint32_t color, uint8_t persistence)
+{
+    return Message{DP_msg_laser_trail_new(contextId, color, persistence)};
+}
+
 Message Message::makeLayerAttributes(uint8_t contextId, uint16_t id, uint8_t sublayer, uint8_t flags, uint8_t opacity, uint8_t blend)
 {
     return Message{DP_msg_layer_attributes_new(contextId, id, sublayer, flags, opacity, blend)};
@@ -123,11 +151,23 @@ Message Message::makeLayerAcl(uint8_t contextId, uint16_t id, uint8_t flags, con
         contextId, id, flags, setUint8s, exclusive.count(), const_cast<uint8_t *>(exclusive.constData()))};
 }
 
+Message Message::makeLayerCreate(uint8_t contextId, uint16_t id, uint16_t source, uint32_t fill, uint8_t flags, const QString &name)
+{
+    QByteArray bytes = name.toUtf8();
+    return Message{DP_msg_layer_create_new(
+        contextId, id, source, fill, flags, bytes.constData(), bytes.length())};
+}
+
 Message Message::makeLayerTreeCreate(uint8_t contextId, uint16_t id, uint16_t source, uint16_t target, uint32_t fill, uint8_t flags, const QString &name)
 {
     QByteArray bytes = name.toUtf8();
     return Message{DP_msg_layer_tree_create_new(
         contextId, id, source, target, fill, flags, bytes.constData(), bytes.length())};
+}
+
+Message Message::makeLayerDelete(uint8_t contextId, uint16_t id, bool merge)
+{
+    return Message{DP_msg_layer_delete_new(contextId, id, merge)};
 }
 
 Message Message::makeLayerTreeDelete(uint8_t contextId, uint16_t id, uint16_t mergeTo)
@@ -139,6 +179,21 @@ Message Message::makeLayerRetitle(uint8_t contextId, uint16_t id, const QString 
 {
     QByteArray bytes = title.toUtf8();
     return Message{DP_msg_layer_retitle_new(contextId, id, bytes.constData(), bytes.length())};
+}
+
+Message Message::makeMovePointer(uint8_t contextId, int32_t x, int32_t y)
+{
+    return Message{DP_msg_move_pointer_new(contextId, x, y)};
+}
+
+Message Message::makeMoveRegion(uint8_t contextId, uint16_t layer, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, const QImage &mask)
+{
+    QByteArray compressed = mask.isNull() ? QByteArray{} : qCompress(mask.constBits(), mask.sizeInBytes());
+    if(compressed.size() <= DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_REGION_STATIC_LENGTH) {
+        return Message{DP_msg_move_region_new(contextId, layer, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4, &Message::setUchars, compressed.size(), compressed.data())};
+    } else {
+        return Message::null();
+    }
 }
 
 Message Message::makeMoveRect(uint8_t contextId, uint16_t layer, uint16_t source, int32_t sx, int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
@@ -161,6 +216,11 @@ Message Message::makeTransformRegion(uint8_t contextId, uint16_t layer, uint16_t
     }
 }
 
+Message Message::makePing(uint8_t contextId, bool isPong)
+{
+    return Message{DP_msg_ping_new(contextId, isPong)};
+}
+
 Message Message::makePrivateChat(uint8_t contextId, uint8_t target, uint8_t oflags, const QString &message)
 {
     QByteArray bytes = message.toUtf8();
@@ -171,6 +231,17 @@ Message Message::makePutImage(uint8_t contextId, uint16_t layer, uint8_t mode, u
 {
     return Message{DP_msg_put_image_new(
         contextId, layer, mode, x, y, w, h, setUchars, compressedImage.size(), const_cast<char *>(compressedImage.data()))};
+}
+
+Message Message::makeServerCommand(uint8_t contextId, const QJsonDocument &msg)
+{
+    QByteArray msgBytes = msg.toJson(QJsonDocument::Compact);
+	if(msgBytes.length() <= DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_SERVER_COMMAND_STATIC_LENGTH) {
+        return Message{DP_msg_server_command_new(contextId, msgBytes.constData(), msgBytes.length())};
+    } else {
+		qWarning("ServerCommand too long (%lld bytes)", compat::cast<long long>(msgBytes.length()));
+		return drawdance::Message::null();
+	}
 }
 
 Message Message::makeSessionOwner(uint8_t contextId, const QVector<uint8_t> &users)
@@ -299,6 +370,11 @@ DP_MessageType Message::type() const
     return DP_message_type(m_data);
 }
 
+QString Message::typeName() const
+{
+    return QString::fromUtf8(DP_message_type_name(type()));
+}
+
 unsigned int Message::contextId() const
 {
     return DP_message_context_id(m_data);
@@ -322,6 +398,181 @@ DP_MsgData *Message::toData() const
 bool Message::serialize(QByteArray &buffer) const
 {
     return DP_message_serialize(m_data, true, getDeserializeBuffer, &buffer) != 0;
+}
+
+Message Message::makeBackwardCompatible() const
+{
+    switch(type()) {
+    case DP_MSG_SERVER_COMMAND:
+    case DP_MSG_DISCONNECT:
+    case DP_MSG_PING:
+    case DP_MSG_INTERNAL:
+    case DP_MSG_JOIN:
+    case DP_MSG_LEAVE:
+    case DP_MSG_SESSION_OWNER:
+    case DP_MSG_CHAT:
+    case DP_MSG_TRUSTED_USERS:
+    case DP_MSG_SOFT_RESET:
+    case DP_MSG_PRIVATE_CHAT:
+    case DP_MSG_INTERVAL:
+    case DP_MSG_LASER_TRAIL:
+    case DP_MSG_MOVE_POINTER:
+    case DP_MSG_MARKER:
+    case DP_MSG_USER_ACL:
+    case DP_MSG_LAYER_ACL:
+    case DP_MSG_DEFAULT_LAYER:
+    case DP_MSG_FILTERED:
+    case DP_MSG_EXTENSION:
+    case DP_MSG_UNDO_POINT:
+    case DP_MSG_CANVAS_RESIZE:
+    case DP_MSG_LAYER_CREATE:
+    case DP_MSG_LAYER_RETITLE:
+    case DP_MSG_LAYER_ORDER:
+    case DP_MSG_LAYER_DELETE:
+    case DP_MSG_PEN_UP:
+    case DP_MSG_ANNOTATION_CREATE:
+    case DP_MSG_ANNOTATION_RESHAPE:
+    case DP_MSG_ANNOTATION_EDIT:
+    case DP_MSG_ANNOTATION_DELETE:
+    case DP_MSG_MOVE_REGION:
+    case DP_MSG_PUT_TILE:
+    case DP_MSG_CANVAS_BACKGROUND:
+    case DP_MSG_UNDO:
+        return *this;
+    case DP_MSG_FEATURE_ACCESS_LEVELS: {
+        DP_MsgFeatureAccessLevels *mfal = DP_msg_feature_access_levels_cast(m_data);
+        int count;
+        const uint8_t *tiers =
+            DP_msg_feature_access_levels_feature_tiers(mfal, &count);
+        if(count == 9) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            uint8_t compatibleTiers[9];
+            for(int i = 0; i < 9; ++i) {
+                compatibleTiers[i] = i < count ? tiers[i] : 0;
+            }
+            return noinc(DP_msg_feature_access_levels_new(
+                contextId(), setUint8s, 9, compatibleTiers));
+        }
+    }
+    case DP_MSG_LAYER_ATTRIBUTES: {
+        DP_MsgLayerAttributes *mla = DP_msg_layer_attributes_cast(m_data);
+        bool compatible = canvas::blendmode::isBackwardCompatibleMode(
+            DP_BlendMode(DP_msg_layer_attributes_blend(mla)));
+        if(compatible) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            return noinc(DP_msg_layer_attributes_new(
+                contextId(), DP_msg_layer_attributes_id(mla),
+                DP_msg_layer_attributes_sublayer(mla),
+                DP_msg_layer_attributes_flags(mla),
+                DP_msg_layer_attributes_opacity(mla), DP_BLEND_MODE_NORMAL));
+        }
+    }
+    case DP_MSG_PUT_IMAGE: {
+        DP_MsgPutImage *mpi = DP_msg_put_image_cast(m_data);
+        bool compatible = canvas::blendmode::isBackwardCompatibleMode(
+            DP_BlendMode(DP_msg_put_image_mode(mpi)));
+        if(compatible) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            size_t size;
+            const unsigned char *image = DP_msg_put_image_image(mpi, &size);
+            return noinc(DP_msg_put_image_new(
+                contextId(), DP_msg_put_image_layer(mpi),
+                DP_BLEND_MODE_NORMAL, DP_msg_put_image_x(mpi),
+                DP_msg_put_image_y(mpi), DP_msg_put_image_w(mpi),
+                DP_msg_put_image_h(mpi), setUchars, size,
+                const_cast<unsigned char *>(image)));
+        }
+    }
+    case DP_MSG_FILL_RECT: {
+        DP_MsgFillRect *mfr = DP_msg_fill_rect_cast(m_data);
+        bool compatible = canvas::blendmode::isBackwardCompatibleMode(
+            DP_BlendMode(DP_msg_fill_rect_mode(mfr)));
+        if(compatible) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            return noinc(DP_msg_fill_rect_new(
+                contextId(), DP_msg_fill_rect_layer(mfr), DP_BLEND_MODE_NORMAL,
+                DP_msg_fill_rect_x(mfr), DP_msg_fill_rect_y(mfr),
+                DP_msg_fill_rect_w(mfr), DP_msg_fill_rect_h(mfr),
+                DP_msg_fill_rect_color(mfr)));
+        }
+    }
+    case DP_MSG_DRAW_DABS_CLASSIC: {
+        DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(m_data);
+        bool compatible = canvas::blendmode::isBackwardCompatibleMode(
+            DP_BlendMode(DP_msg_draw_dabs_classic_mode(mddc)));
+        if(compatible) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            int count;
+            const DP_ClassicDab *cds =
+                DP_msg_draw_dabs_classic_dabs(mddc, &count);
+            return noinc(DP_msg_draw_dabs_classic_new(
+                contextId(), DP_msg_draw_dabs_classic_layer(mddc),
+                DP_msg_draw_dabs_classic_x(mddc),
+                DP_msg_draw_dabs_classic_y(mddc),
+                DP_msg_draw_dabs_classic_color(mddc), DP_BLEND_MODE_NORMAL,
+                setClassicDabs, count, const_cast<DP_ClassicDab *>(cds)));
+        }
+    }
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
+        DP_MsgDrawDabsPixel *mddp =
+            static_cast<DP_MsgDrawDabsPixel *>(DP_message_internal(m_data));
+        bool compatible = canvas::blendmode::isBackwardCompatibleMode(
+            DP_BlendMode(DP_msg_draw_dabs_pixel_mode(mddp)));
+        if(compatible) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            int count;
+            const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
+            return noinc((type() == DP_MSG_DRAW_DABS_PIXEL
+                    ? DP_msg_draw_dabs_pixel_new
+                    : DP_msg_draw_dabs_pixel_square_new)(
+                contextId(), DP_msg_draw_dabs_pixel_layer(mddp),
+                DP_msg_draw_dabs_pixel_x(mddp), DP_msg_draw_dabs_pixel_y(mddp),
+                DP_msg_draw_dabs_pixel_color(mddp), DP_BLEND_MODE_NORMAL,
+                setPixelDabs, count, const_cast<DP_PixelDab *>(pds)));
+        }
+    }
+    case DP_MSG_LAYER_TREE_CREATE: {
+        DP_MsgLayerTreeCreate *mltc = DP_msg_layer_tree_create_cast(m_data);
+        uint8_t flags = DP_msg_layer_tree_create_flags(mltc);
+        uint16_t sourceId = DP_msg_layer_tree_create_source(mltc);
+        uint16_t targetId = DP_msg_layer_tree_create_target(mltc);
+        bool involvesGroups = (flags & DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP)
+            || (flags & DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO);
+        bool sourceAndTargetDiffer =
+            sourceId != 0 && targetId != 0 && sourceId != targetId;
+        if(involvesGroups || sourceAndTargetDiffer) {
+            return null();
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            uint8_t compatFlags =
+                (sourceId == 0 ? 0 : DP_MSG_LAYER_CREATE_FLAGS_COPY) |
+                (targetId == 0 ? 0 : DP_MSG_LAYER_CREATE_FLAGS_INSERT);
+            uint16_t compatSourceId = sourceId == 0 ? targetId : sourceId;
+            size_t titleLength;
+            const char *title =
+                DP_msg_layer_tree_create_title(mltc, &titleLength);
+            return noinc(DP_msg_layer_create_new(
+                contextId(), DP_msg_layer_tree_create_id(mltc), compatSourceId,
+                DP_msg_layer_tree_create_fill(mltc), compatFlags, title,
+                titleLength));
+        }
+    }
+    default:
+        return null();
+    }
 }
 
 Message::Message(DP_Message *msg)
@@ -390,17 +641,46 @@ unsigned char *Message::getDeserializeBuffer(void *user, size_t size)
 
 void Message::setUchars(size_t size, unsigned char *out, void *user)
 {
-    memcpy(out, user, size);
+    if(size > 0) {
+        memcpy(out, user, size);
+    }
 }
 
 void Message::setUint8s(int count, uint8_t *out, void *user)
 {
-    memcpy(out, user, sizeof(uint8_t) * count);
+    if(count > 0) {
+        memcpy(out, user, sizeof(uint8_t) * count);
+    }
 }
 
 void Message::setUint16s(int count, uint16_t *out, void *user)
 {
-    memcpy(out, user, sizeof(uint16_t) * count);
+    if(count > 0) {
+        memcpy(out, user, sizeof(uint16_t) * count);
+    }
+}
+
+void Message::setClassicDabs(int count, DP_ClassicDab *out, void *user)
+{
+    const DP_ClassicDab *cds = static_cast<const DP_ClassicDab *>(user);
+    for(int i = 0; i < count; ++i) {
+        const DP_ClassicDab *cd = DP_classic_dab_at(cds, i);
+        DP_classic_dab_init(
+            out, i, DP_classic_dab_x(cd), DP_classic_dab_y(cd),
+            DP_classic_dab_size(cd), DP_classic_dab_hardness(cd),
+            DP_classic_dab_opacity(cd));
+    }
+}
+
+void Message::setPixelDabs(int count, DP_PixelDab *out, void *user)
+{
+    const DP_PixelDab *pds = static_cast<const DP_PixelDab *>(user);
+    for(int i = 0; i < count; ++i) {
+        const DP_PixelDab *pd = DP_pixel_dab_at(pds, i);
+        DP_pixel_dab_init(
+            out, i, DP_pixel_dab_x(pd), DP_pixel_dab_y(pd),
+            DP_pixel_dab_size(pd), DP_pixel_dab_opacity(pd));
+    }
 }
 
 }

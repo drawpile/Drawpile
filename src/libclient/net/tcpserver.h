@@ -39,13 +39,17 @@ public:
 	bool supportsPersistence() const override { return m_supportsPersistence; }
 	bool supportsAbuseReports() const override { return m_supportsAbuseReports; }
 
+	protocol::ProtocolVersion protocolVersion() const override { return m_protocolVersion; }
+
 	int artificialLagMs() const override { return m_msgqueue->artificalLagMs(); }
 	void setArtificialLagMs(int msecs) override { m_msgqueue->setArtificialLagMs(msecs); }
 
 	void artificialDisconnect() override;
 
 signals:
-	void loggedIn(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool hasAutoreset);
+	void loggedIn(
+		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
+		bool hasAutoreset, const protocol::ProtocolVersion &protocolVersion);
 	void loggingOut();
 	void gracefullyDisconnecting(MessageQueue::GracefulDisconnect, const QString &message);
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
@@ -75,6 +79,7 @@ private:
 	bool m_localDisconnect;
 	bool m_supportsPersistence;
 	bool m_supportsAbuseReports;
+	protocol::ProtocolVersion m_protocolVersion;
 };
 
 }

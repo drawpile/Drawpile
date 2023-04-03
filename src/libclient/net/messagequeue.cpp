@@ -167,7 +167,7 @@ void MessageQueue::enqueueMessages(int count, const drawdance::Message *msgs)
 
 void MessageQueue::sendPingMsg(bool pong)
 {
-	send(drawdance::Message::noinc(DP_msg_ping_new(0, pong)));
+	send(drawdance::Message::makePing(0, pong));
 }
 
 void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &message)
@@ -175,8 +175,8 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 	if(m_gracefullyDisconnecting)
 		qWarning("sendDisconnect: already disconnecting.");
 
-	QByteArray data = message.toUtf8();
-	drawdance::Message msg = drawdance::Message::noinc(DP_msg_disconnect_new(0, uint8_t(reason), data.constData(), data.size()));
+	drawdance::Message msg =
+		drawdance::Message::makeDisconnect(0, uint8_t(reason), message);
 
 	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%lld messages) is empty.", int(reason), compat::cast<long long>(m_outbox.size()));
 	send(msg);

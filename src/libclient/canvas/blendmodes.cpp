@@ -19,6 +19,9 @@ static const uint8_t UniversalMode = 0x03;
 // Mode is available when the eraser option is checked
 static const uint8_t EraserMode = 0x04;
 
+// Mode is backward compatible with Drawpile 2.1
+static const uint8_t BackwardCompatibleMode = 0x08;
+
 struct BlendModeInfo {
 	//! The blend mode's translatable name
 	const char *name;
@@ -35,22 +38,22 @@ static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Normal"),
 		DP_BLEND_MODE_NORMAL,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Recolor"),
 		DP_BLEND_MODE_RECOLOR,
-		UniversalMode,
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Behind"),
 		DP_BLEND_MODE_BEHIND,
-		BrushMode
+		BrushMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
 		DP_BLEND_MODE_MULTIPLY,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Screen"),
@@ -65,47 +68,47 @@ static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Divide"),
 		DP_BLEND_MODE_DIVIDE,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Burn"),
 		DP_BLEND_MODE_BURN,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Dodge"),
 		DP_BLEND_MODE_DODGE,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Darken"),
 		DP_BLEND_MODE_DARKEN,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Lighten"),
 		DP_BLEND_MODE_LIGHTEN,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Subtract"),
 		DP_BLEND_MODE_SUBTRACT,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Add"),
 		DP_BLEND_MODE_ADD,
-		UniversalMode
+		UniversalMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
 		DP_BLEND_MODE_ERASE,
-		LayerMode | EraserMode
+		LayerMode | EraserMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Color Erase"),
 		DP_BLEND_MODE_COLOR_ERASE,
-		EraserMode
+		EraserMode | BackwardCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
@@ -214,6 +217,11 @@ bool isValidBrushMode(DP_BlendMode mode)
 bool isValidEraseMode(DP_BlendMode mode)
 {
 	return hasFlag(mode, EraserMode);
+}
+
+bool isBackwardCompatibleMode(DP_BlendMode mode)
+{
+	return hasFlag(mode, BackwardCompatibleMode);
 }
 
 }

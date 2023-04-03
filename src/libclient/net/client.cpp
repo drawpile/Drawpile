@@ -108,21 +108,25 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator, bool supportsAutoReset)
+void Client::handleConnect(
+	const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
+	bool supportsAutoReset, const protocol::ProtocolVersion &protocolVersion)
 {
 	m_lastUrl = url;
 	m_myId = userid;
 	m_moderator = moderator;
 	m_isAuthenticated = auth;
 	m_supportsAutoReset = supportsAutoReset;
+	m_compatibilityMode = protocolVersion.isPastCompatible();
 
-	emit serverLoggedin(join);
+	emit serverLoggedIn(join, m_compatibilityMode);
 }
 
 void Client::handleDisconnect(const QString &message,const QString &errorcode, bool localDisconnect)
 {
 	Q_ASSERT(isConnected());
 
+	m_compatibilityMode = false;
 	emit serverDisconnected(message, errorcode, localDisconnect);
 	m_server->deleteLater();
 	m_server = nullptr;
@@ -151,14 +155,26 @@ void Client::sendMessage(const drawdance::Message &msg)
 
 void Client::sendMessages(int count, const drawdance::Message *msgs)
 {
-	emit drawingCommandsLocal(count, msgs);
-	// Note: we could emit drawingCommandLocal only in connected mode,
-	// but it's good to exercise the code path in local mode too
-	// to make potential bugs more obvious.
-	if(m_server) {
-		m_server->sendMessages(count, msgs);
+	if(m_compatibilityMode) {
+		QVector<drawdance::Message> compatibleMsgs = filterCompatibleMessages(count, msgs);
+		sendCompatibleMessages(compatibleMsgs.count(), compatibleMsgs.constData());
 	} else {
-		emit messagesReceived(count, msgs);
+		sendCompatibleMessages(count, msgs);
+	}
+}
+
+void Client::sendCompatibleMessages(int count, const drawdance::Message *msgs)
+{
+	if(count > 0) {
+		emit drawingCommandsLocal(count, msgs);
+		// Note: we could emit drawingCommandLocal only in connected mode,
+		// but it's good to exercise the code path in local mode too
+		// to make potential bugs more obvious.
+		if(m_server) {
+			m_server->sendMessages(count, msgs);
+		} else {
+			emit messagesReceived(count, msgs);
+		}
 	}
 }
 
@@ -169,11 +185,42 @@ void Client::sendResetMessage(const drawdance::Message &msg)
 
 void Client::sendResetMessages(int count, const drawdance::Message *msgs)
 {
-	if(m_server) {
-		m_server->sendMessages(count, msgs);
+	if(m_compatibilityMode) {
+		QVector<drawdance::Message> compatibleMsgs = filterCompatibleMessages(count, msgs);
+		sendCompatibleResetMessages(compatibleMsgs.count(), compatibleMsgs.constData());
 	} else {
-		emit messagesReceived(count, msgs);
+		sendCompatibleResetMessages(count, msgs);
 	}
+}
+
+void Client::sendCompatibleResetMessages(int count, const drawdance::Message *msgs)
+{
+	if(count > 0) {
+		if(m_server) {
+			m_server->sendMessages(count, msgs);
+		} else {
+			emit messagesReceived(count, msgs);
+		}
+	}
+}
+
+QVector<drawdance::Message> Client::filterCompatibleMessages(int count, const drawdance::Message *msgs)
+{
+	// Ideally, the client shouldn't be attempting to send any incompatible
+	// messages in the first place, but we'll err on the side of caution. In
+	// particular, a thick server will kick us out if we send a wrong message.
+	QVector<drawdance::Message> compatibleMsgs;
+	compatibleMsgs.reserve(count);
+	for(int i = 0; i < count; ++i) {
+		const drawdance::Message &msg = msgs[i];
+		const drawdance::Message compatibleMsg = msg.makeBackwardCompatible();
+		if(compatibleMsg.isNull()) {
+			qWarning("Incompatible %s message", qUtf8Printable(msg.typeName()));
+		} else {
+			compatibleMsgs.append(compatibleMsg);
+		}
+	}
+	return compatibleMsgs;
 }
 
 void Client::handleMessages(int count, const drawdance::Message *msgs)

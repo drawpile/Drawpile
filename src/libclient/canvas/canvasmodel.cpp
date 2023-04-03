@@ -25,7 +25,10 @@ namespace canvas {
 CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
 		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
 		QObject *parent)
-	: QObject(parent), m_selection(nullptr), m_localUserId(1)
+	: QObject(parent)
+	, m_selection(nullptr)
+	, m_localUserId(1)
+	, m_compatibilityMode(false)
 {
 	m_paintengine = new PaintEngine(
 		fps, snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
@@ -84,7 +87,7 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 	emit previewAnnotationRequested(id, shape);
 }
 
-void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
+void CanvasModel::connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode)
 {
 	if(myUserId == 0) {
 		// Zero is a reserved "null" user ID
@@ -92,6 +95,7 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 	}
 
 	m_localUserId = myUserId;
+	m_compatibilityMode = compatibilityMode;
 	m_layerlist->setAutoselectAny(true);
 
 	m_aclstate->setLocalUserId(myUserId);
@@ -101,14 +105,17 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 	}
 
 	m_userlist->reset();
+	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
 void CanvasModel::disconnectedFromServer()
 {
+	m_compatibilityMode = false;
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
 	m_paintengine->resetAcl(m_localUserId);
 	m_paintengine->cleanup();
+	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
 void CanvasModel::handleCommands(int count, const drawdance::Message *msgs)

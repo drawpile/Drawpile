@@ -493,7 +493,7 @@ QImage Selection::shapeMask(
 	const QColor &color, QRect *maskBounds, bool source) const
 {
 	const QPolygonF &shape = source ? m_moveRegion : m_shape;
-	return tools::SelectionTool::shapeMask(color, shape, maskBounds);
+	return tools::SelectionTool::shapeMask(color, shape, maskBounds, false);
 }
 
 void Selection::setPasteImage(const QImage &image)
@@ -532,7 +532,7 @@ static void appendPutImage(drawdance::MessageList &buffer, uint8_t contextId, ui
 	drawdance::Message::makePutImages(buffer, contextId, layer, mode, x, y, image);
 }
 
-bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation) const
+bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation, bool compatibilityMode) const
 {
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
@@ -552,15 +552,30 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 		QImage mask;
 
 		if(!canvas::isAxisAlignedRectangle(m_moveRegion.toPolygon())) {
-			mask = tools::SelectionTool::shapeMask(Qt::white, m_moveRegion, &moveBounds);
-
+			mask = tools::SelectionTool::shapeMask(
+				Qt::white, m_moveRegion, &moveBounds, compatibilityMode);
 		} else {
 			moveBounds = m_moveRegion.boundingRect().toRect();
 		}
 
 		// If we've only moved the selection without scaling, rotating or
 		// distorting it, we can use the faster MoveRect, otherwise MoveRegion.
-		if(isOnlyTranslated()) {
+		if(compatibilityMode) {
+			QPolygon s = m_shape.toPolygon();
+			// TODO: moving between different layers via putimage?
+			drawdance::Message msg = drawdance::Message::makeMoveRegion(
+				contextId, layer, moveBounds.x(), moveBounds.y(),
+				moveBounds.width(), moveBounds.height(), s[0].x(), s[0].y(),
+				s[1].x(), s[1].y(), s[2].x(), s[2].y(), s[3].x(), s[3].y(),
+				mask);
+			if(msg.isNull()) {
+				qWarning("Transform: mask too large");
+				return false;
+			} else {
+				buffer.append(drawdance::Message::makeUndoPoint(contextId));
+				buffer.append(msg);
+			}
+		} else if(isOnlyTranslated()) {
 			drawdance::Message msg = drawdance::Message::makeMoveRect(
 				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
 				m_shape.at(0).x(), m_shape.at(0).y(), moveBounds.width(),

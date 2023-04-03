@@ -48,25 +48,13 @@ drawdance::Message ServerCommand::toMessage() const
 {
 	QJsonObject o;
 	o["cmd"] = cmd;
-	if(!args.isEmpty())
+	if(!args.isEmpty()) {
 		o["args"] = args;
-	if(!kwargs.isEmpty())
-		o["kwargs"] = kwargs;
-
-	const QByteArray payload = QJsonDocument(o).toJson(QJsonDocument::Compact);
-
-	// TODO we should have a message type for splitting up overlong messages
-	if(payload.length() > 0xffff - DP_MESSAGE_HEADER_LENGTH) {
-		qWarning(
-			"ServerCommand::toEnvelope(%s) produced a message that is too long! (%lld bytes)",
-			qPrintable(cmd),
-			compat::cast<long long>(payload.length())
-		);
-		return drawdance::Message{};
 	}
-
-	return drawdance::Message::noinc(DP_msg_server_command_new(
-		0, payload.constData(), payload.length()));
+	if(!kwargs.isEmpty()) {
+		o["kwargs"] = kwargs;
+	}
+	return drawdance::Message::makeServerCommand(0, QJsonDocument{o});
 }
 
 static ServerReply ServerReplyFromJson(const QJsonDocument &doc)

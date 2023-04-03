@@ -3,6 +3,7 @@
 #ifndef PROTOCOL_VERSION_H
 #define PROTOCOL_VERSION_H
 
+#include <QMetaType>
 #include <QString>
 
 namespace protocol {
@@ -55,6 +56,16 @@ public:
 	 * Note: returns false if the namespace is different
 	 */
 	bool isFuture() const;
+
+	/**
+	 * Is this an older, but compatible version?
+	 */
+	bool isPastCompatible() const;
+
+	/**
+	 * Is this some kind of compatible recording?
+	 */
+	bool isCompatible() const { return isCurrent() || isPastCompatible(); }
 
 	/**
 	 * Get the client version series that support this
@@ -120,5 +131,7 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(protocol::ProtocolVersion)
 
 #endif
