@@ -3,9 +3,11 @@
 function(dp_add_executable target)
     add_executable(${target})
 
-    install(TARGETS ${target}
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    )
+    if(NOT SUBPROJECT)
+        install(TARGETS ${target}
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        )
+    endif()
 endfunction()
 
 function(dp_add_library target)
@@ -14,19 +16,21 @@ function(dp_add_library target)
 
     set_property(GLOBAL APPEND PROPERTY dp_components "${target}")
 
-    install(TARGETS ${target}
-        EXPORT ${target}Targets
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    )
+    if(NOT SUBPROJECT)
+        install(TARGETS ${target}
+            EXPORT ${target}Targets
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        )
 
-    install(EXPORT ${target}Targets
-        FILE ${PROJECT_NAME}${target}Targets.cmake
-        NAMESPACE ${PROJECT_NAME}::
-        DESTINATION lib/cmake/${PROJECT_NAME}
-    )
+        install(EXPORT ${target}Targets
+            FILE ${PROJECT_NAME}${target}Targets.cmake
+            NAMESPACE ${PROJECT_NAME}::
+            DESTINATION lib/cmake/${PROJECT_NAME}
+        )
+    endif()
 endfunction()
 
 function(dp_find_package)
@@ -74,12 +78,14 @@ endfunction()
 
 function(dp_target_sources target)
     target_sources(${target} PRIVATE ${ARGN})
-    foreach(file IN LISTS ARGN)
-        if(file MATCHES "(\\.[Hh]([Pp][Pp])?|include[\\/][^.]*)$")
-            install(
-                FILES "${file}"
-                DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${target}"
-            )
-        endif()
-    endforeach()
+    if(NOT SUBPROJECT)
+        foreach(file IN LISTS ARGN)
+            if(file MATCHES "(\\.[Hh]([Pp][Pp])?|include[\\/][^.]*)$")
+                install(
+                    FILES "${file}"
+                    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${target}"
+                )
+            endif()
+        endforeach()
+    endif()
 endfunction()

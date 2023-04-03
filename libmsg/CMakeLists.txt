@@ -24,7 +24,7 @@ dp_target_sources(dpmsg
     dpmsg/text_reader.h
     dpmsg/text_writer.h
 )
-target_include_directories(dpmsg PUBLIC
+target_include_directories(dpmsg ${SUBPROJECT_INCLUDE} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
@@ -33,11 +33,30 @@ target_link_libraries(dpmsg PRIVATE
     $<BUILD_INTERFACE:uthash>
     $<BUILD_INTERFACE:parson>
 )
-target_compile_definitions(dpmsg INTERFACE $<INSTALL_INTERFACE:DP_BUNDLED_PARSON>)
-install(
-    FILES "${CMAKE_SOURCE_DIR}/3rdparty/parson/parson.h"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dpmsg/parson"
-)
+
+if(SUBPROJECT)
+    # Parent projects that expect to be able to include headers as if the
+    # project was installed will expect to be able to
+    # `#include <dpmsg/parson/parson.h>`, so we need to fake it
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/fakeroot/dpmsg")
+    file(CREATE_LINK
+        "${PROJECT_SOURCE_DIR}/3rdparty/parson"
+        "${CMAKE_CURRENT_BINARY_DIR}/fakeroot/dpmsg/parson"
+        SYMBOLIC
+    )
+    target_include_directories(dpmsg SYSTEM INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/fakeroot>
+        # We also need to make sure transitive includes of those headers from
+        # this library’s headers will be able to find them
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/3rdparty/parson>
+    )
+else()
+    target_compile_definitions(dpmsg INTERFACE $<INSTALL_INTERFACE:DP_BUNDLED_PARSON>)
+    install(
+        FILES "${PROJECT_SOURCE_DIR}/3rdparty/parson/parson.h"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dpmsg/parson"
+    )
+endif()
 
 if(BUILD_TESTS)
     add_dptest_targets(msg dptest

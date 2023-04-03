@@ -7,11 +7,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(ANDROID OR EMSCRIPTEN)
+    # This is required to use CMAKE_PREFIX_PATH for find_package in config mode,
+    # otherwise it will only look in the sysroot cache
+    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ON)
+endif()
+
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".js")
-    # This is required to use CMAKE_PREFIX_PATH for find_package in config mode,
-    # otherwise it will only look in the emscripten sysroot cache
-    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ON)
     # This flag is required when compiling all objects or linking will fail
     # when --shared-memory is used, which it is implicitly
     add_compile_options(-pthread)

@@ -9,7 +9,7 @@ function(add_dptest_targets type lib tests)
 
         add_executable("${test_name}" "${test_file}")
         target_include_directories("${test_name}" PRIVATE
-            "${CMAKE_SOURCE_DIR}/test/dptest"
+            "${PROJECT_SOURCE_DIR}/test/dptest"
         )
         target_link_libraries("${test_name}" PRIVATE "dp${type}" "${lib}")
 

@@ -2,9 +2,9 @@
 
 if(USE_GENERATORS)
     add_custom_command(
-        OUTPUT "${CMAKE_SOURCE_DIR}/libcommon/dpcommon/conversions.h"
+        OUTPUT "${PROJECT_SOURCE_DIR}/libcommon/dpcommon/conversions.h"
         COMMAND generate_conversions
-        ARGS "${CMAKE_SOURCE_DIR}/libcommon/dpcommon/conversions.h")
+        ARGS "${PROJECT_SOURCE_DIR}/libcommon/dpcommon/conversions.h")
 endif()
 
 dp_add_library(dpcommon)
@@ -55,7 +55,7 @@ if(APPLE)
     target_compile_definitions(dpcommon PRIVATE _DARWIN_C_SOURCE)
 endif()
 
-target_include_directories(dpcommon PUBLIC
+target_include_directories(dpcommon ${SUBPROJECT_INCLUDE} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
@@ -85,7 +85,7 @@ if(FILE_IO_IMPL STREQUAL "QT")
         dpcommon/output_qt.cpp
         dpcommon/output_qt.h
     )
-    target_link_libraries(dpcommon PRIVATE "Qt${QT_VERSION}::Core")
+    target_link_libraries(dpcommon PRIVATE "Qt${QT_VERSION_MAJOR}::Core")
 
     if(ZIP_IMPL STREQUAL "KARCHIVE")
         target_compile_definitions(dpcommon PUBLIC DP_QT_IO_KARCHIVE)

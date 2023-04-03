@@ -77,12 +77,12 @@ dp_target_sources(dpengine
     dpengine/view_mode.h
 )
 
-target_include_directories(dpengine
+target_include_directories(dpengine ${SUBPROJECT_INCLUDE}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/config>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/config>
 )
 target_link_libraries(dpengine PRIVATE
     $<BUILD_INTERFACE:mypaint>
@@ -108,7 +108,7 @@ if(NOT EMSCRIPTEN)
         dpengine/zip_archive.h
     )
     target_link_libraries(dpengine PRIVATE
-        "Qt${QT_VERSION}::Xml"
+        "Qt${QT_VERSION_MAJOR}::Xml"
     )
 
     if(ZIP_IMPL STREQUAL "LIBZIP")
@@ -122,18 +122,36 @@ if(NOT EMSCRIPTEN)
     endif()
 endif()
 
-install(
-    FILES
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush.h"
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-config.h"
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush-settings.h"
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush-settings-gen.h"
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-glib-compat.h"
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-rectangle.h"
-        "${CMAKE_SOURCE_DIR}/3rdparty/libmypaint/mypaint-surface.h"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dpengine/libmypaint"
-)
-target_compile_definitions(dpengine INTERFACE $<INSTALL_INTERFACE:DP_BUNDLED_LIBMYPAINT>)
+if(SUBPROJECT)
+    # Parent projects that expect to be able to include headers as if the
+    # project was installed will expect to be able to
+    # `#include <dpengine/libmypaint/...>`, so we need to fake that
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/fakeroot/dpengine")
+    file(CREATE_LINK
+        "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint"
+        "${CMAKE_CURRENT_BINARY_DIR}/fakeroot/dpengine/libmypaint"
+        SYMBOLIC
+    )
+    target_include_directories(dpengine SYSTEM INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/fakeroot>
+        # We also need to make sure transitive includes of those headers from
+        # this library’s headers will be able to find them
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/3rdparty/libmypaint>
+    )
+else()
+    install(
+        FILES
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush.h"
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-config.h"
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush-settings.h"
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-brush-settings-gen.h"
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-glib-compat.h"
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-rectangle.h"
+            "${PROJECT_SOURCE_DIR}/3rdparty/libmypaint/mypaint-surface.h"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dpengine/libmypaint"
+    )
+    target_compile_definitions(dpengine INTERFACE $<INSTALL_INTERFACE:DP_BUNDLED_LIBMYPAINT>)
+endif()
 
 if(IMAGE_IMPL STREQUAL "LIBS")
     target_sources(dpengine PRIVATE
@@ -146,7 +164,7 @@ if(IMAGE_IMPL STREQUAL "LIBS")
     )
 elseif(IMAGE_IMPL STREQUAL "QT")
     target_sources(dpengine PRIVATE dpengine/image_qt.cpp)
-    target_link_libraries(dpengine PRIVATE "Qt${QT_VERSION}::Gui")
+    target_link_libraries(dpengine PRIVATE "Qt${QT_VERSION_MAJOR}::Gui")
 else()
     message(SEND_ERROR "Unknown IMAGE_IMPL value '${IMAGE_IMPL}'")
 endif()

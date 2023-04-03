@@ -28,7 +28,7 @@ target_include_directories(drawdance PRIVATE
     drawdance
     drawdance_gui
     drawdance_lua
-    "${CMAKE_BINARY_DIR}/config"
+    "${PROJECT_BINARY_DIR}/config"
 )
 target_link_libraries(drawdance PRIVATE
     dpcommon
@@ -53,7 +53,7 @@ if(EMSCRIPTEN)
         "-sDYNAMIC_EXECUTION=0"
         "-sEXPORTED_FUNCTIONS=_main,_DP_send_from_browser"
         "-sEXPORTED_RUNTIME_METHODS=ALLOC_NORMAL,allocate,intArrayFromString"
-        "--preload-file=${CMAKE_SOURCE_DIR}/appdrawdance/lua@appdrawdance/lua"
+        "--preload-file=${PROJECT_SOURCE_DIR}/appdrawdance/lua@appdrawdance/lua"
     )
 else()
     target_compile_definitions(drawdance PRIVATE DRAWDANCE_IMGUI)
