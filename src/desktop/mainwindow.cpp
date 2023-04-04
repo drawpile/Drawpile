@@ -271,6 +271,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
+	connect(m_doc, &Document::sessionResetState, this, &MainWindow::promptForSaveOnReset, Qt::QueuedConnection);
 
 	connect(m_doc, &Document::autoResetTooLarge, this, [this](int maxSize) {
 		m_doc->sendLockSession(true);
@@ -1239,6 +1240,53 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 	if(m_exitAfterSave)
 		close();
+}
+
+void MainWindow::promptForSaveOnReset(const drawdance::CanvasState &canvasState)
+{
+	const char *objectName = "resetsessionmessagebox";
+	bool saveOrPromptInProgress = m_doc->isSaveInProgress() ||
+		findChild<QMessageBox *>(objectName, Qt::FindDirectChildrenOnly);
+	if(!saveOrPromptInProgress) {
+		QMessageBox::Icon icon;
+		QString message;
+		if(m_doc->isCompatibilityMode()) {
+			icon = QMessageBox::Warning;
+			message = tr(
+				"The session has been reset. Since this is a Drawpile 2.1 "
+				"session and you're running Drawpile 2.2, this probably "
+				"changed how things on the canvas look. Do you want to save "
+				"the canvas as it was before the reset?");
+		} else {
+			icon = QMessageBox::Question;
+			message = tr(
+				"The session has been reset. Normally, everything on the "
+				"canvas should look the same as it did before, but that's "
+				"not guaranteed. Do you want to save the canvas as it was "
+				"before the reset?");
+		}
+
+		QMessageBox *box = new QMessageBox{
+			icon, tr("Session Reset"), message, QMessageBox::Cancel, this};
+		box->setAttribute(Qt::WA_DeleteOnClose);
+		box->setObjectName(objectName);
+		box->setModal(false);
+
+		QPushButton *saveButton = new QPushButton{
+			icon::fromTheme("document-save-as"), tr("Save As..."), box};
+		box->addButton(saveButton, QMessageBox::ActionRole);
+
+		connect(box, &QMessageBox::buttonClicked, this, [=](QAbstractButton *button) {
+			if(button == saveButton) {
+				QString result = FileWrangler{this}.savePreResetImageAs(m_doc, canvasState);
+				if(!result.isEmpty()) {
+					addRecentFile(result);
+				}
+			}
+		});
+
+		box->show();
+	}
 }
 
 void MainWindow::showCompatibilityModeWarning()

@@ -16,6 +16,7 @@ extern "C" {
 #include "libclient/drawdance/tile.h"
 #include "libclient/drawdance/timeline.h"
 #include <QImage>
+#include <QMetaType>
 #include <QSize>
 
 struct DP_CanvasState;
@@ -92,5 +93,7 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(drawdance::CanvasState)
 
 #endif

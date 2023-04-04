@@ -141,6 +141,8 @@ void Document::onSessionResetted()
 	m_toolctrl->cancelMultipartDrawing();
 	m_toolctrl->endDrawing();
 
+	emit sessionResetState(m_canvas->paintEngine()->viewCanvasState());
+
 	// Clear out the canvas in preparation for the new data that is about to follow
 	m_canvas->resetCanvas();
 	m_resetstate.clear();
@@ -561,22 +563,31 @@ void Document::autosaveNow()
 
 	Q_ASSERT(utils::isWritableFormat(currentFilename()));
 
-	saveCanvas();
+	saveCanvasState(m_canvas->paintEngine()->viewCanvasState(), true);
 }
 
-void Document::saveCanvas(const QString &filename)
+void Document::saveCanvasAs(const QString &filename)
+{
+	saveCanvasStateAs(filename, m_canvas->paintEngine()->viewCanvasState(), true);
+}
+
+void Document::saveCanvasStateAs(
+	const QString &filename, const drawdance::CanvasState &canvasState,
+	bool isCurrentState)
 {
 	setCurrentFilename(filename);
-	saveCanvas();
+	saveCanvasState(canvasState, isCurrentState);
 }
 
-void Document::saveCanvas()
+void Document::saveCanvasState(const drawdance::CanvasState &canvasState, bool isCurrentState)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	auto *saver = new CanvasSaverRunnable(m_canvas->paintEngine(), m_currentFilename);
-	unmarkDirty();
+	CanvasSaverRunnable *saver = new CanvasSaverRunnable(canvasState, m_currentFilename);
+	if(isCurrentState) {
+		unmarkDirty();
+	}
 	connect(saver, &CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
 	emit canvasSaveStarted();
 	QThreadPool::globalInstance()->start(saver);

@@ -11,6 +11,14 @@ class Document;
 class QSettings;
 class QWidget;
 
+namespace drawdance {
+class CanvasState;
+}
+
+namespace drawdance {
+class CanvasState;
+}
+
 class FileWrangler final : public QObject {
 	Q_OBJECT
 public:
@@ -35,6 +43,8 @@ public:
 
 	QString saveImage(Document *doc) const;
 	QString saveImageAs(Document *doc) const;
+	QString savePreResetImageAs(
+		Document *doc, const drawdance::CanvasState &canvasState) const;
 	QString saveSelectionAs(Document *doc) const;
 	QString getSaveRecordingPath() const;
 	QString getSaveTemplatePath() const;

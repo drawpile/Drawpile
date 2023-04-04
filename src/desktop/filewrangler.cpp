@@ -49,7 +49,7 @@ QString FileWrangler::saveImage(Document *doc) const
 	if(filename.isEmpty() || !utils::isWritableFormat(filename)) {
 		return saveImageAs(doc);
 	} else if(confirmFlatten(doc, filename)) {
-		doc->saveCanvas(filename);
+		doc->saveCanvasAs(filename);
 		return filename;
 	} else {
 		return QString{};
@@ -64,7 +64,23 @@ QString FileWrangler::saveImageAs(Document *doc) const
 		utils::FileFormatOption::SaveImages, &selectedFilter);
 
 	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
-		doc->saveCanvas(filename);
+		doc->saveCanvasAs(filename);
+		return filename;
+	} else {
+		return QString{};
+	}
+}
+
+QString FileWrangler::savePreResetImageAs(
+	Document *doc, const drawdance::CanvasState &canvasState) const
+{
+	QString selectedFilter;
+	QString filename = showSaveFileDialog(
+		tr("Save Pre-Reset Image"), LastPath::IMAGE, ".ora",
+		utils::FileFormatOption::SaveImages, &selectedFilter);
+
+	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
+		doc->saveCanvasStateAs(filename, canvasState, false);
 		return filename;
 	} else {
 		return QString{};
@@ -81,7 +97,7 @@ QString FileWrangler::saveSelectionAs(Document *doc) const
 		&selectedFilter);
 
 	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
-		doc->saveCanvas(filename);
+		doc->saveCanvasAs(filename);
 		return filename;
 	} else {
 		return QString{};

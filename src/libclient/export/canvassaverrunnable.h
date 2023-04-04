@@ -7,21 +7,19 @@ extern "C" {
 #include <dpengine/save.h>
 }
 
+#include "libclient/drawdance/canvasstate.h"
 #include <QObject>
 #include <QRunnable>
 
-namespace canvas { class PaintEngine; }
-
 /**
  * @brief A runnable for saving a canvas in a background thread
- *
- * When constructed, a copy of the layerstack is made.
  */
-class CanvasSaverRunnable final : public QObject, public QRunnable
-{
+class CanvasSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
-	CanvasSaverRunnable(const canvas::PaintEngine *pe, const QString &filename, QObject *parent = nullptr);
+	CanvasSaverRunnable(
+		const drawdance::CanvasState &canvasState, const QString &filename,
+		QObject *parent = nullptr);
 
 	void run() override;
 
@@ -35,7 +33,7 @@ signals:
 	void saveComplete(const QString &error);
 
 private:
-	const canvas::PaintEngine *m_pe;
+	drawdance::CanvasState m_canvasState;
 	QString m_filename;
 };
 

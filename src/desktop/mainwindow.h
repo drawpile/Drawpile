@@ -56,9 +56,8 @@ namespace drawingboard {
 namespace canvas {
 	class CanvasModel;
 }
-namespace rustpile {
-	enum class CanvasIoError;
-	enum class AnimationExportMode;
+namespace drawdance {
+	class CanvasState;
 }
 
 class ShortcutDetector;
@@ -130,6 +129,7 @@ private slots:
 	void exportAnimationFrames();
 #endif
 
+	void promptForSaveOnReset(const drawdance::CanvasState &canvasState);
 	void showCompatibilityModeWarning();
 
 	void onOperatorModeChange(bool op);

@@ -100,7 +100,10 @@ public:
 	 * @param filename the file to save to
 	 * @param errorMessage if not null, error message is stored here
 	 */
-	void saveCanvas(const QString &filename);
+	void saveCanvasAs(const QString &filename);
+	void saveCanvasStateAs(
+		const QString &filename, const drawdance::CanvasState &canvasState,
+		bool isCurrentState);
 	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
@@ -172,6 +175,7 @@ signals:
 	void sessionResetThresholdChanged(double threshold);
 	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
+	void sessionResetState(const drawdance::CanvasState &canvasState);
 
 	void catchupProgress(int percent);
 
@@ -237,7 +241,7 @@ private slots:
 	void onCanvasSaved(const QString &errorMessage);
 
 private:
-	void saveCanvas();
+	void saveCanvasState(const drawdance::CanvasState &canvasState, bool isCurrentState);
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
