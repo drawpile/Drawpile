@@ -125,12 +125,19 @@ foreach(lang IN LISTS enabled_languages)
 		endif()
 	endif()
 
-	# If a different compiler or compiler version than clang-tidy was used,
-	# different compatible warning flags will have been detected previously,
-	# which will cause it to warn about unknown warnings if we do not ask
-	# politely to not do that
 	if(CMAKE_${lang}_CLANG_TIDY)
+		# If a different compiler or compiler version than clang-tidy was used,
+		# different compatible warning flags will have been detected previously,
+		# which will cause it to warn about unknown warnings if we do not ask
+		# politely to not do that
 		list(APPEND CMAKE_${lang}_CLANG_TIDY "--extra-arg=-Wno-unknown-warning-option")
+
+		# For whatever reason with at least VS2022 clang-tidy thinks exceptions
+		# are disabled when they are not, so try to let it know that really
+		# they are not turned off
+		if(MSVC AND lang STREQUAL CXX)
+			list(APPEND CMAKE_${lang}_CLANG_TIDY "--extra-arg=/EHsc")
+		endif()
 	endif()
 endforeach()
 unset(enabled_languages)

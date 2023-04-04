@@ -45,7 +45,7 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 {
 	QVector<ResetPoint> resetPoints;
 	pe->snapshotQueue().getSnapshotsWith([&](size_t count, drawdance::SnapshotQueue::SnapshotAtFn at) {
-		resetPoints.reserve(count + 1);
+		resetPoints.reserve(compat::castSize(count + 1));
 		for (size_t i = 0; i < count; ++i) {
 			DP_Snapshot *s = at(i);
 			resetPoints.append(ResetPoint{
