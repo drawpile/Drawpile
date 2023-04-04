@@ -76,7 +76,11 @@
 #    define DP_TRAP() abort()
 #    define DP_UNUSED // nothing
 #    ifndef DP_UNREACHABLE
-#        define DP_UNREACHABLE() // nothing
+#        ifdef _MSC_VER
+#            define DP_UNREACHABLE() __assume(0)
+#        else
+#            define DP_UNREACHABLE() // nothing
+#        endif
 #    endif
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) // nothing
 #    define DP_MALLOC_ATTR                          // nothing
