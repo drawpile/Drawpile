@@ -687,7 +687,7 @@ void Document::sendResetSession(const drawdance::MessageList &resetImage)
 		}
 		// Not connected? Do a local reset
 		initCanvas();
-		m_client->sendMessages(resetImage.count(), resetImage.data());
+		m_client->sendResetMessages(resetImage.count(), resetImage.data());
 		return;
 	}
 
