@@ -71,6 +71,8 @@ private slots:
 	void updatePasswordLabel(QLabel *label);
 	void updateNsfmCheckbox(bool);
 
+	void setCompatibilityMode(bool compatibilityMode);
+
 protected:
 	void showEvent(QShowEvent *event) override;
 

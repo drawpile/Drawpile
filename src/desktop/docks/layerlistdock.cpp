@@ -56,9 +56,7 @@ LayerList::LayerList(QWidget *parent)
 
 	m_blendModeCombo = new QComboBox;
 	m_blendModeCombo->setMinimumWidth(24);
-	for(const canvas::blendmode::Named &m : canvas::blendmode::layerModeNames()) {
-		m_blendModeCombo->addItem(m.name, int(m.mode));
-	}
+	dialogs::LayerProperties::initBlendModeCombo(m_blendModeCombo);
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &LayerList::blendModeChanged);
@@ -131,6 +129,8 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::layerLockStatusChanged);
 	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &LayerList::userLockStatusChanged);
 	connect(m_view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
+	connect(canvas, &canvas::CanvasModel::compatibilityModeChanged, this, &LayerList::updateLockedControls);
+	connect(canvas, &canvas::CanvasModel::compatibilityModeChanged, this, &LayerList::updateBlendModes);
 
 	// Init
 	m_view->setEnabled(true);
@@ -216,13 +216,14 @@ void LayerList::updateLockedControls()
 	const bool locked = acls ? acls->amLocked() : true;
 	const bool canEdit = acls && acls->canUseFeature(DP_FEATURE_EDIT_LAYERS);
 	const bool ownLayers = acls && acls->canUseFeature(DP_FEATURE_OWN_LAYERS);
+	const bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 
 	// Layer creation actions work as long as we have an editing permission
 	const bool canAdd = !locked && (canEdit || ownLayers);
 	const bool hasEditActions = m_addLayerAction != nullptr;
 	if(hasEditActions) {
 		m_addLayerAction->setEnabled(canAdd);
-		m_addGroupAction->setEnabled(canAdd);
+		m_addGroupAction->setEnabled(canAdd && !compatibilityMode);
 	}
 
 	// Rest of the controls need a selection to work.
@@ -237,6 +238,12 @@ void LayerList::updateLockedControls()
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
 	}
+}
+
+void LayerList::updateBlendModes(bool compatibilityMode)
+{
+	dialogs::LayerProperties::setBlendModeComboCompatibilityMode(
+		m_blendModeCombo, compatibilityMode);
 }
 
 void LayerList::selectLayer(int id)
@@ -488,6 +495,8 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->setModal(false);
 
+		connect(m_canvas, &canvas::CanvasModel::compatibilityModeChanged, dlg,
+			&dialogs::LayerProperties::setCompatibilityMode);
 		connect(dlg, &dialogs::LayerProperties::layerCommands, this, &LayerList::layerCommands);
 		connect(dlg, &dialogs::LayerProperties::visibilityChanged, this, &LayerList::setLayerVisibility);
 		connect(m_canvas->layerlist(), &canvas::LayerListModel::modelReset, dlg, [this, dlg]() {
@@ -518,6 +527,7 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 			);
 		dlg->setControlsEnabled(canEdit);
 		dlg->setOpControlsEnabled(canEditAll);
+		dlg->setCompatibilityMode(m_canvas->isCompatibilityMode());
 
 		dlg->show();
 	}

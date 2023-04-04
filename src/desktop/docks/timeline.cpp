@@ -2,6 +2,7 @@
 
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
+#include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/message.h"
 #include "desktop/widgets/timelinewidget.h"
@@ -55,6 +56,8 @@ void Timeline::setTimeline(canvas::TimelineModel *model)
 {
 	m_widget->setModel(model);
 	connect(model, &canvas::TimelineModel::framesChanged, this, &Timeline::onFramesChanged, Qt::QueuedConnection);
+	connect(model->canvas(), &canvas::CanvasModel::compatibilityModeChanged, this, &Timeline::setCompatibilityMode);
+	setCompatibilityMode(model->canvas()->isCompatibilityMode());
 }
 
 void Timeline::setFeatureAccess(bool access)
@@ -123,6 +126,15 @@ void Timeline::autoSelectLayer()
 int Timeline::currentFrame() const
 {
 	return m_currentFrame->value();
+}
+
+void Timeline::setCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode) {
+		setUseTimeline(false);
+	}
+	m_useTimeline->setDisabled(compatibilityMode);
+	m_fps->setDisabled(compatibilityMode);
 }
 
 void Timeline::onFramesChanged()

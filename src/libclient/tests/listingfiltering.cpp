@@ -102,6 +102,7 @@ private:
 			"Title: " + id,
 			QString(),
 			QString(),
+			false,
 			0,
 			password,
 			false,

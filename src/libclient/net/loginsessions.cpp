@@ -24,61 +24,94 @@ void LoginSessionModel::setModeratorMode(bool mod)
 
 int LoginSessionModel::rowCount(const QModelIndex &parent) const
 {
-	if(parent.isValid())
-		return 0;
-	return m_sessions.size();
+	return parent.isValid() ? 0 : m_sessions.size();
 }
 
 int LoginSessionModel::columnCount(const QModelIndex &parent) const
 {
-	if(parent.isValid())
-		return 0;
-
-	// Columns:
-	// 0 - closed/incompatible/password needed status icon
-	// 1 - title
-	// 2 - session founder name
-	// 3 - user count
-
-	return 4;
+	return parent.isValid() ? 0 : ColumnCount;
 }
 
 QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 {
-	if(index.row()<0 || index.row() >= m_sessions.size())
-		return QVariant();
+	if(index.row() < 0 || index.row() >= m_sessions.size()) {
+		return QVariant{};
+	}
 
 	const LoginSession &ls = m_sessions.at(index.row());
 
 	if(role == Qt::DisplayRole) {
 		switch(index.column()) {
-		case 1: {
+		case ColumnTitle: {
 			QString title = ls.title.isEmpty() ? tr("(untitled)") : ls.title;
-			if(!ls.alias.isEmpty())
-				title = QStringLiteral("%1 [%2]").arg(title).arg(ls.alias);
-			return title;
+			if(ls.alias.isEmpty()) {
+				return title;
+			} else {
+				return QStringLiteral("%1 [%2]").arg(title).arg(ls.alias);
+			}
 		}
-		case 2: return ls.founder;
-		case 3: return ls.userCount;
+		case ColumnFounder:
+			return ls.founder;
+		case ColumnUsers:
+			return ls.userCount;
+		default:
+			return QVariant{};
 		}
 
 	} else if(role == Qt::DecorationRole) {
-		if(index.column()==0) {
-			if(!ls.incompatibleSeries.isEmpty())
+		switch(index.column()) {
+		case ColumnVersion:
+			if(ls.isIncompatible()) {
+				return icon::fromTheme("dialog-error");
+			} else if(ls.compatibilityMode) {
+				return icon::fromTheme("dialog-warning");
+			} else {
+				return icon::fromTheme("dialog-positive");
+			}
+		case ColumnStatus:
+			if(ls.isIncompatible()) {
 				return icon::fromTheme("dontknow");
-			else if(ls.closed)
+			} else if(ls.closed) {
 				return icon::fromTheme("im-ban-user");
-			else if(ls.needPassword)
+			} else if(ls.needPassword) {
 				return icon::fromTheme("object-locked");
-		} else if(index.column()==1) {
-			if(ls.nsfm)
-				return QIcon(":/icons/censored.svg");
+			} else {
+				return QVariant{};
+			}
+		case ColumnTitle:
+			return ls.nsfm ? QIcon(":/icons/censored.svg") : QVariant{};
+		default:
+			return QVariant{};
 		}
 
 	} else if(role == Qt::ToolTipRole) {
-		if(!ls.incompatibleSeries.isEmpty()) {
-			return tr("Incompatible version (%1)").arg(ls.incompatibleSeries);
+		switch(index.column()) {
+		case ColumnVersion:
+			if(ls.isIncompatible()) {
+				return tr("%1 (incompatible)").arg(ls.incompatibleSeries);
+			} else if(ls.compatibilityMode) {
+				return tr("Drawpile 2.1 (compatibility mode)");
+			} else {
+				return tr("Drawpile 2.2 (fully compatible)");
+			}
+		case ColumnStatus:
+			if(ls.isIncompatible()) {
+				return tr("Incompatible version");
+			} else if(ls.closed) {
+				return tr("Closed (new logins blocked)");
+			} else if(ls.needPassword) {
+				return tr("Session password required");
+			} else {
+				return QVariant{};
+			}
+		case ColumnTitle:
+			return ls.nsfm ? tr("Not safe for minors") : QVariant{};
+		default:
+			return QVariant{};
 		}
+
+	} else if(role == Qt::TextAlignmentRole) {
+		return index.column() == ColumnUsers ? Qt::AlignCenter : QVariant{};
 
 	} else {
 		switch(role) {
@@ -94,10 +127,10 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
 		case JoinableRole: return (!ls.closed || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
 		case NsfmRole: return ls.nsfm;
+		case CompatibilityModeRole: return ls.compatibilityMode;
+		default: return QVariant{};
 		}
 	}
-
-	return QVariant();
 }
 
 Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
@@ -114,16 +147,16 @@ Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 
 QVariant LoginSessionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if(role != Qt::DisplayRole || orientation != Qt::Horizontal)
-		return QVariant();
-
-	switch(section) {
-	case 1: return tr("Title");
-	case 2: return tr("Started by");
-	case 3: return tr("Users");
+	if(role != Qt::DisplayRole || orientation != Qt::Horizontal) {
+		return QVariant{};
 	}
 
-	return QVariant();
+	switch(section) {
+	case ColumnTitle: return tr("Title");
+	case ColumnFounder: return tr("Started by");
+	case ColumnUsers: return tr("Users");
+	default: return QVariant{};
+	}
 }
 
 void LoginSessionModel::updateSession(const LoginSession &session)

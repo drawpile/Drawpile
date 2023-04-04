@@ -73,7 +73,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(m_doc, &Document::baseResetThresholdChanged, this, [this](int threshold) {
 		m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(threshold/(1024.0*1024.0), 0, 'f', 1));
 	});
-
+	connect(m_doc, &Document::compatibilityModeChanged, this, &SessionSettingsDialog::setCompatibilityMode);
 
 	// Set up permissions tab
 	connect(m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this, &SessionSettingsDialog::permissionPresetSaving);
@@ -127,6 +127,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	// So we'll hide that setting for now, until it actually does something.
 	m_ui->permMetadata->hide();
 	m_ui->labelMetadata->hide();
+	setCompatibilityMode(m_doc->isCompatibilityMode());
 }
 
 SessionSettingsDialog::~SessionSettingsDialog()
@@ -228,6 +229,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	m_ui->permissionPresets->setWriteOnly(!op);
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
+	setCompatibilityMode(m_doc->isCompatibilityMode());
 }
 
 QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
@@ -367,6 +369,15 @@ void SessionSettingsDialog::updateNsfmCheckbox(bool)
 	} else {
 		m_ui->nsfm->setEnabled(true);
 		m_ui->nsfm->setChecked(m_doc->isSessionNsfm());
+	}
+}
+
+void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode) {
+		m_ui->permMyPaint->setEnabled(false);
+		m_ui->permTimeline->setEnabled(false);
+		m_ui->permMetadata->setEnabled(false);
 	}
 }
 

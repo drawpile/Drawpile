@@ -10,8 +10,15 @@
 class QStackedWidget;
 
 namespace tools {
-	class ToolSettings;
+	class AnnotationSettings;
+	class BrushSettings;
+	class ColorPickerSettings;
+	class InspectorSettings;
+	class LaserPointerSettings;
+	class SelectionSettings;
 	class ToolController;
+	class ToolSettings;
+	class ZoomSettings;
 }
 
 namespace color_widgets {
@@ -39,6 +46,14 @@ public:
 
 	//! Get a tool settings page
 	tools::ToolSettings *getToolSettingsPage(tools::Tool::Type tool);
+
+	tools::AnnotationSettings *annotationSettings();
+	tools::BrushSettings *brushSettings();
+	tools::ColorPickerSettings *colorPickerSettings();
+	tools::InspectorSettings *inspectorSettings();
+	tools::LaserPointerSettings *laserPointerSettings();
+	tools::SelectionSettings *selectionSettings();
+	tools::ZoomSettings *zoomSettings();
 
 	//! Load tool related settings
 	void readSettings();

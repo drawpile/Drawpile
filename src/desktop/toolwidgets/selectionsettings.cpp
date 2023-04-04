@@ -237,6 +237,11 @@ void SelectionSettings::setControlsEnabled(bool enabled)
 	}
 }
 
+void SelectionSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	m_ui->interpolationCombo->setDisabled(compatibilityMode);
+}
+
 ToolProperties SelectionSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());

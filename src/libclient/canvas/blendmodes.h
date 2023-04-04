@@ -11,6 +11,8 @@ extern "C" {
 #include <QVector>
 #include <QPair>
 
+class QStandardItemModel;
+
 namespace canvas {
 namespace blendmode {
 	struct Named {
@@ -39,6 +41,9 @@ namespace blendmode {
 
 	//! Is this blend mode compatible with Drawpile 2.1?
 	bool isBackwardCompatibleMode(DP_BlendMode mode);
+
+	//! Disables incompatible blend modes, mode must be in the UserRole data.
+	void setCompatibilityMode(QStandardItemModel *model, bool compatibilityMode);
 }
 }
 

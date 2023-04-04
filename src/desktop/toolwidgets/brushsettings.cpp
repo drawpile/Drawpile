@@ -54,10 +54,16 @@ struct BrushSettings::Private {
 	bool shareBrushSlotColor = false;
 	bool updateInProgress = false;
 	bool myPaintAllowed = true;
+	bool compatibilityMode = false;
 
 	inline brushes::ActiveBrush &currentBrush() {
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
 		return brushSlots[current];
+	}
+
+	inline bool currentIsMyPaint()
+	{
+		return currentBrush().activeType() == brushes::ActiveBrush::MYPAINT;
 	}
 
 	Private(BrushSettings *b)
@@ -210,12 +216,20 @@ QWidget *BrushSettings::getHeaderWidget()
 
 bool BrushSettings::isLocked()
 {
-	return d->currentBrush().activeType() == brushes::ActiveBrush::MYPAINT && !d->myPaintAllowed;
+	return d->currentBrush().activeType() == brushes::ActiveBrush::MYPAINT &&
+		(!d->myPaintAllowed || d->compatibilityMode);
 }
 
 void BrushSettings::setMyPaintAllowed(bool myPaintAllowed)
 {
 	d->myPaintAllowed = myPaintAllowed;
+	updateUi();
+}
+
+void BrushSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	d->compatibilityMode = compatibilityMode;
+	canvas::blendmode::setCompatibilityMode(d->blendModes, compatibilityMode);
 	updateUi();
 }
 
@@ -609,6 +623,11 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 	}
 	bool locked = isLocked();
 	d->ui.noPermissionLabel->setVisible(locked);
+	if(locked) {
+		d->ui.noPermissionLabel->setText(d->compatibilityMode
+			? tr("This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.")
+			: tr("You don't have permission to use MyPaint brushes."));
+	}
 	d->ui.preview->setDisabled(locked);
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
 		pair.first->setVisible(pair.second && !locked);

@@ -6,6 +6,8 @@
 
 #include "ui_layerproperties.h"
 
+#include <QStandardItemModel>
+
 
 namespace dialogs {
 
@@ -15,10 +17,7 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
     m_ui = new Ui_LayerProperties;
     m_ui->setupUi(this);
 
-	const auto modes = canvas::blendmode::layerModeNames();
-	for(const auto &m : modes) {
-		m_ui->blendMode->addItem(m.name, int(m.mode));
-    }
+	initBlendModeCombo(m_ui->blendMode);
 
     connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
     connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -78,6 +77,30 @@ void LayerProperties::setControlsEnabled(bool enabled) {
 void LayerProperties::setOpControlsEnabled(bool enabled)
 {
 	m_ui->defaultLayer->setEnabled(enabled);
+}
+
+void LayerProperties::setCompatibilityMode(bool compatibilityMode)
+{
+	setBlendModeComboCompatibilityMode(m_ui->blendMode, compatibilityMode);
+}
+
+void LayerProperties::initBlendModeCombo(QComboBox *combo)
+{
+	combo->clear();
+	for(const canvas::blendmode::Named &m : canvas::blendmode::layerModeNames()) {
+		combo->addItem(m.name, int(m.mode));
+    }
+}
+
+void LayerProperties::setBlendModeComboCompatibilityMode(
+	QComboBox *combo, bool compatibilityMode)
+{
+	QStandardItemModel *model = qobject_cast<QStandardItemModel *>(combo->model());
+	if(model) {
+		canvas::blendmode::setCompatibilityMode(model, compatibilityMode);
+	} else {
+		qWarning("Blend mode combo does not use standard item model");
+	}
 }
 
 void LayerProperties::showEvent(QShowEvent *event)

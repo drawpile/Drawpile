@@ -469,15 +469,24 @@ void LoginDialog::onBadLoginPassword()
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 {
+	QRect geom = geometry();
+	int newWidth = qMax(geom.width(), 600);
+	int newHeight = qMax(geom.height(), 400);
+	int newX = geom.x() + (geom.width() - newWidth) / 2;
+	int newY = geom.y() + (geom.height() - newHeight) / 2;
+	setGeometry(newX, newY, newWidth, newHeight);
+
 	if(d->ui->showNsfw->isEnabled())
 		d->ui->showNsfw->setChecked(QSettings().value("history/filternsfw").toBool());
 
 	d->sessions->setSourceModel(sessions);
+	d->ui->sessionList->resizeColumnsToContents();
+	d->ui->sessionList->sortByColumn(
+		net::LoginSessionModel::ColumnTitle, Qt::AscendingOrder);
 
 	QHeaderView *header = d->ui->sessionList->horizontalHeader();
-	header->setSectionResizeMode(1, QHeaderView::Stretch);
-	header->setSectionResizeMode(0, QHeaderView::Fixed);
-	header->resizeSection(0, 24);
+	header->setSectionResizeMode(net::LoginSessionModel::ColumnTitle, QHeaderView::Stretch);
+	header->setSectionResizeMode(net::LoginSessionModel::ColumnFounder, QHeaderView::ResizeToContents);
 
 	d->resetMode(Mode::sessionlist);
 	updateOkButtonEnabled();

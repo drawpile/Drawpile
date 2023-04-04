@@ -445,6 +445,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				js["title"].toString(),
 				js["founder"].toString(),
 				incompatibleSeries,
+				m_protocolVersion.isPastCompatible(),
 				js["userCount"].toInt(),
 				js["hasPassword"].toBool(),
 				js["persistent"].toBool(),

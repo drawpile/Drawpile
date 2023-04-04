@@ -141,11 +141,14 @@ public:
 
 	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
 
+	bool isCompatibilityMode() const;
+
 signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);
 	void serverLoggedIn(bool join);
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
+	void compatibilityModeChanged(bool compatibilityMode);
 
 	void canvasChanged(canvas::CanvasModel *canvas);
 	void dirtyCanvas(bool isDirty);

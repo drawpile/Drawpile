@@ -81,6 +81,8 @@ public:
         bool sampleMerged, int sizeLimit, int expand, int featherRadius,
         QImage &outImg, int &outX, int &outY) const;
 
+    drawdance::CanvasState makeBackwardCompatible() const;
+
 private:
     explicit CanvasState(DP_CanvasState *cs);
 

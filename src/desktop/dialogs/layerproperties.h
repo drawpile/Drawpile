@@ -7,6 +7,7 @@
 
 #include <QDialog>
 
+class QComboBox;
 class Ui_LayerProperties;
 
 namespace drawdance {
@@ -25,8 +26,13 @@ public:
 	void setLayerItem(const canvas::LayerListItem &data, const QString &creator, bool isDefault);
 	void setControlsEnabled(bool enabled);
 	void setOpControlsEnabled(bool enabled);
+    void setCompatibilityMode(bool compatibilityMode);
 
 	int layerId() const { return m_item.id; }
+
+    static void initBlendModeCombo(QComboBox *combo);
+    static void setBlendModeComboCompatibilityMode(
+        QComboBox *combo, bool compatibilityMode);
 
 signals:
 	void layerCommands(int count, const drawdance::Message *msgs);

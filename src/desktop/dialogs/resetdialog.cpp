@@ -58,13 +58,15 @@ namespace dialogs {
 struct ResetDialog::Private {
 	QScopedPointer<Ui_ResetDialog> ui;
 	const canvas::PaintEngine *paintEngine;
+	bool compatibilityMode;
 	QPushButton *resetButton;
 	QVector<ResetPoint> resetPoints;
 	compat::sizetype selection;
 
-	Private(const canvas::PaintEngine *pe)
+	Private(const canvas::PaintEngine *pe, bool cm)
 		: ui{new Ui_ResetDialog}
 		, paintEngine{pe}
+		, compatibilityMode(cm)
 		, resetPoints{makeResetPoints(pe)}
 		, selection{resetPoints.size() - 1}
 	{
@@ -110,8 +112,8 @@ struct ResetDialog::Private {
 	}
 };
 
-ResetDialog::ResetDialog(const canvas::PaintEngine *pe, QWidget *parent)
-	: QDialog(parent), d(new Private(pe))
+ResetDialog::ResetDialog(const canvas::PaintEngine *pe, bool compatibilityMode, QWidget *parent)
+	: QDialog(parent), d(new Private(pe, compatibilityMode))
 {
 	d->ui->setupUi(this);
 
@@ -174,6 +176,9 @@ void ResetDialog::onOpenClicked()
 	if(canvasState.isNull()) {
 		QMessageBox::warning(this, tr("Reset"), tr("Couldn't open file"));
 	} else {
+		if(d->compatibilityMode) {
+			canvasState = canvasState.makeBackwardCompatible();
+		}
 		d->resetPoints.append({canvasState, QPixmap{}});
 		d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
 		d->ui->snapshotSlider->setValue(0);

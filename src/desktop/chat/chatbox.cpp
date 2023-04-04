@@ -51,6 +51,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 
 	connect(doc, &Document::canvasChanged, this, &ChatBox::onCanvasChanged);
 	connect(doc, &Document::serverLoggedIn, this, &ChatBox::onServerLogin);
+	connect(doc, &Document::compatibilityModeChanged, this, &ChatBox::onCompatibilityModeChanged);
 
 	connect(doc, &Document::sessionPreserveChatChanged, m_chatWidget, &ChatWidget::setPreserveMode);
 	connect(doc->client(), &net::Client::serverMessage, m_chatWidget, &ChatWidget::systemMessage);
@@ -75,6 +76,11 @@ void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
 void ChatBox::onServerLogin()
 {
 	m_chatWidget->loggedIn(static_cast<Document*>(sender())->client()->myId());
+}
+
+void ChatBox::onCompatibilityModeChanged(bool compatibilityMode)
+{
+	m_userItemDelegate->setCompatibilityMode(compatibilityMode);
 }
 
 void ChatBox::focusInput()

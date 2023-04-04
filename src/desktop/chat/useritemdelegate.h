@@ -27,6 +27,7 @@ public:
 	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 	void setDocument(Document *doc) { m_doc = doc; }
+	void setCompatibilityMode(bool compatibilityMode);
 
 signals:
 	void opCommand(const drawdance::Message &msg);
@@ -65,6 +66,7 @@ private:
 	QAction *m_chatAction;
 	QAction *m_undoAction;
 	QAction *m_redoAction;
+	QAction *m_infoAction;
 
 	int m_menuId;
 };

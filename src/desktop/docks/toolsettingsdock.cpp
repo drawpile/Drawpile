@@ -249,6 +249,48 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 		return nullptr;
 }
 
+tools::AnnotationSettings *ToolSettings::annotationSettings()
+{
+	return static_cast<tools::AnnotationSettings *>(
+		getToolSettingsPage(tools::Tool::ANNOTATION));
+}
+
+tools::BrushSettings *ToolSettings::brushSettings()
+{
+	return static_cast<tools::BrushSettings *>(
+		getToolSettingsPage(tools::Tool::FREEHAND));
+}
+
+tools::ColorPickerSettings *ToolSettings::colorPickerSettings()
+{
+	return static_cast<tools::ColorPickerSettings *>(
+		getToolSettingsPage(tools::Tool::PICKER));
+}
+
+tools::InspectorSettings *ToolSettings::inspectorSettings()
+{
+	return static_cast<tools::InspectorSettings *>(
+		getToolSettingsPage(tools::Tool::INSPECTOR));
+}
+
+tools::LaserPointerSettings *ToolSettings::laserPointerSettings()
+{
+	return static_cast<tools::LaserPointerSettings *>(
+		getToolSettingsPage(tools::Tool::LASERPOINTER));
+}
+
+tools::SelectionSettings *ToolSettings::selectionSettings()
+{
+	return static_cast<tools::SelectionSettings *>(
+		getToolSettingsPage(tools::Tool::SELECTION));
+}
+
+tools::ZoomSettings *ToolSettings::zoomSettings()
+{
+	return static_cast<tools::ZoomSettings *>(
+		getToolSettingsPage(tools::Tool::ZOOM));
+}
+
 /**
  * Set which tool setting widget is visible
  * @param tool tool identifier

@@ -17,7 +17,10 @@ class ResetDialog final : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit ResetDialog(const canvas::PaintEngine *pe, QWidget *parent=nullptr);
+	ResetDialog(
+      const canvas::PaintEngine *pe, bool compatibilityMode,
+      QWidget *parent = nullptr);
+
 	~ResetDialog() override;
 
 	void setCanReset(bool canReset);

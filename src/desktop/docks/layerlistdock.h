@@ -94,6 +94,7 @@ private slots:
 
 private:
 	void updateLockedControls();
+	void updateBlendModes(bool compatibilityMode);
 	bool canMergeCurrent() const;
 
 	void updateUiFromSelection();

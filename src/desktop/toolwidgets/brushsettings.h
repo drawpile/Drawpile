@@ -54,6 +54,7 @@ public:
 	bool isLocked() override;
 	bool keepTitleBarButtonSpace() const override { return true; }
 	void setMyPaintAllowed(bool myPaintAllowed);
+	void setCompatibilityMode(bool compatibilityMode);
 
 public slots:
 	void selectBrushSlot(int i);
@@ -83,6 +84,7 @@ private slots:
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:
+	QString getLockedReason() const;
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 

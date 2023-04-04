@@ -3,6 +3,7 @@
 #include "libclient/canvas/blendmodes.h"
 
 #include <QCoreApplication>
+#include <QStandardItemModel>
 
 namespace canvas {
 namespace blendmode {
@@ -222,6 +223,19 @@ bool isValidEraseMode(DP_BlendMode mode)
 bool isBackwardCompatibleMode(DP_BlendMode mode)
 {
 	return hasFlag(mode, BackwardCompatibleMode);
+}
+
+void setCompatibilityMode(QStandardItemModel *model, bool compatibilityMode)
+{
+	int count = model->rowCount();
+	for(int i = 0; i < count; ++i) {
+		QStandardItem *item = model->item(i);
+		Qt::ItemFlags flags = item->flags();
+		bool enabled = !compatibilityMode || isBackwardCompatibleMode(
+			DP_BlendMode(item->data(Qt::UserRole).toInt()));
+		flags.setFlag(Qt::ItemIsEnabled, enabled);
+		item->setFlags(flags);
+	}
 }
 
 }

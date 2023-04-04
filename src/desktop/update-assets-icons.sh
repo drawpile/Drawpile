@@ -16,7 +16,7 @@ update_icons() {
 			folder.svg)
 				category=places
 				;;
-			security-*.svg | update-none.svg)
+			dialog-*.svg | security-*.svg | update-none.svg)
 				category=status
 				;;
 			application-exit.svg | edit-delete.svg | im-kick-user.svg | irc-unvoice.svg)

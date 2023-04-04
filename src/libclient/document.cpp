@@ -232,6 +232,7 @@ void Document::onServerLogin(bool join, bool compatibilityMode)
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
 	emit serverLoggedIn(join);
+	emit compatibilityModeChanged(compatibilityMode);
 }
 
 void Document::onServerDisconnect()
@@ -243,6 +244,7 @@ void Document::onServerDisconnect()
 	m_banlist->clear();
 	m_announcementlist->clear();
 	setSessionOpword(false);
+	emit compatibilityModeChanged(false);
 }
 
 void Document::onSessionConfChanged(const QJsonObject &config)
@@ -653,9 +655,8 @@ void Document::sendSessionConf(const QJsonObject &sessionconf)
 
 void Document::sendFeatureAccessLevelChange(const uint8_t tiers[DP_FEATURE_COUNT])
 {
-	int featureCount = isCompatibilityMode() ? 9 : DP_FEATURE_COUNT;
 	m_client->sendMessage(drawdance::Message::makeFeatureAccessLevels(
-		m_client->myId(), featureCount, tiers));
+		m_client->myId(), DP_FEATURE_COUNT, tiers));
 }
 
 void Document::sendLockSession(bool lock)

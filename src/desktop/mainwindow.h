@@ -130,6 +130,8 @@ private slots:
 	void exportAnimationFrames();
 #endif
 
+	void showCompatibilityModeWarning();
+
 	void onOperatorModeChange(bool op);
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 	void onUndoDepthLimitSet(int undoDepthLimit);
@@ -137,6 +139,7 @@ private slots:
 	void onServerConnected();
 	void onServerLogin();
 	void onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
+	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
 	void updateLockWidget();

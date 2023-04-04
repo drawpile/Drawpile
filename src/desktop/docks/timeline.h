@@ -48,6 +48,7 @@ signals:
 	void layerSelectRequested(int layerId);
 
 private slots:
+	void setCompatibilityMode(bool compatibilityMode);
 	void onFrameChanged(int frame);
 	void onUseTimelineClicked();
 	void onFpsChanged();

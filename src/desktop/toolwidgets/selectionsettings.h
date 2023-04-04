@@ -45,6 +45,7 @@ public:
 	bool getSubpixelMode() const override { return false; }
 
 	void setControlsEnabled(bool enabled);
+	void setCompatibilityMode(bool compatibilityMode);
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

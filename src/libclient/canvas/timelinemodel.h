@@ -36,6 +36,7 @@ public:
 	explicit TimelineModel(CanvasModel *canvas);
 
 	uint8_t localUserId() const;
+	const CanvasModel *canvas() { return m_canvas; }
 	const QVector<TimelineFrame> &frames() const { return m_manualMode ? m_frames : m_autoFrames; }
 	const QVector<TimelineLayer> &layers() const { return m_layers; }
 

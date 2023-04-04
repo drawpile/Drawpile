@@ -288,15 +288,15 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Tool dock connections
 	m_tempToolSwitchShortcut = new ShortcutDetector(this);
 
-	connect(static_cast<tools::LaserPointerSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::LASERPOINTER)), &tools::LaserPointerSettings::pointerTrackingToggled,
+	connect(m_dockToolSettings->laserPointerSettings(), &tools::LaserPointerSettings::pointerTrackingToggled,
 		m_view, &widgets::CanvasView::setPointerTracking);
-	connect(static_cast<tools::ZoomSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ZOOM)), &tools::ZoomSettings::resetZoom,
+	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::resetZoom,
 		this, [this]() { m_view->setZoom(100.0); });
-	connect(static_cast<tools::ZoomSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ZOOM)), &tools::ZoomSettings::fitToWindow,
+	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::fitToWindow,
 		m_view, &widgets::CanvasView::zoomToFit);
 
-	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
-	connect(brushSettings, &tools::BrushSettings::brushSettingsDialogRequested, this, &MainWindow::showBrushSettingsDialog);
+	connect(m_dockToolSettings->brushSettings(), &tools::BrushSettings::brushSettingsDialogRequested,
+		this, &MainWindow::showBrushSettingsDialog);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
@@ -388,7 +388,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
-			static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION)), &tools::AnnotationSettings::setSelectionId);
+			m_dockToolSettings->annotationSettings(), &tools::AnnotationSettings::setSelectionId);
 
 	connect(m_canvasscene, &drawingboard::CanvasScene::canvasResized, m_doc->toolCtrl(), &tools::ToolController::offsetActiveTool);
 
@@ -403,6 +403,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverDisconnected, sessionHistorySize, [sessionHistorySize]() {
 		sessionHistorySize->setText(QString());
 	});
+	connect(m_doc, &Document::compatibilityModeChanged, this, &MainWindow::onCompatibilityModeChanged);
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
@@ -496,8 +497,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas, &canvas::CanvasModel::layerAutoselectRequest, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
-	connect(canvas, &canvas::CanvasModel::colorPicked, static_cast<tools::ColorPickerSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::addColor);
-	connect(canvas, &canvas::CanvasModel::canvasInspected, static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR)), &tools::InspectorSettings::onCanvasInspected);
+	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::addColor);
+	connect(canvas, &canvas::CanvasModel::canvasInspected, m_dockToolSettings->inspectorSettings(), &tools::InspectorSettings::onCanvasInspected);
 	connect(canvas, &canvas::CanvasModel::previewAnnotationRequested, m_doc->toolCtrl(), &tools::ToolController::setActiveAnnotation);
 
 	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
@@ -527,7 +528,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
 
-	static_cast<tools::InspectorSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::INSPECTOR))->setUserList(m_canvasscene->model()->userlist());
+	m_dockToolSettings->inspectorSettings()->setUserList(m_canvasscene->model()->userlist());
 
 	// Make sure the UI matches the default feature access level
 	m_currentdoctools->setEnabled(true);
@@ -724,7 +725,7 @@ void MainWindow::updateSettings()
 
 	cfg.beginGroup("settings");
 	m_view->setBrushCursorStyle(cfg.value("brushcursor", 3).toInt(), cfg.value("brushoutlinewidth", 2.0).toReal());
-	static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->setShareBrushSlotColor(cfg.value("sharebrushslotcolor", false).toBool());
+	m_dockToolSettings->brushSettings()->setShareBrushSlotColor(cfg.value("sharebrushslotcolor", false).toBool());
 	cfg.endGroup();
 }
 
@@ -1240,6 +1241,22 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 }
 
+void MainWindow::showCompatibilityModeWarning()
+{
+	if(m_doc->isCompatibilityMode()) {
+		QString message = tr(
+			"This session was hosted with an older version of Drawpile, some "
+			"newer features won't be available. Other Drawpile versions will "
+			"see different results, session resets may cause abrupt changes.");
+		QMessageBox *box = new QMessageBox{
+			QMessageBox::Warning, tr("Compatibility Mode"), message,
+			QMessageBox::Ok, this};
+		box->setAttribute(Qt::WA_DeleteOnClose);
+		box->setModal(false);
+		box->show();
+	}
+}
+
 void MainWindow::exportTemplate()
 {
 	QString filename = FileWrangler{this}.getSaveTemplatePath();
@@ -1407,8 +1424,7 @@ void MainWindow::showBrushSettingsDialog()
 		dlg->setObjectName("brushsettingsdialog");
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 
-		tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(
-			m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
+		tools::BrushSettings *brushSettings = m_dockToolSettings->brushSettings();
 		connect(dlg, &dialogs::BrushSettingsDialog::brushSettingsChanged,
 			brushSettings, &tools::BrushSettings::setCurrentBrush);
 		connect(brushSettings, &tools::BrushSettings::eraseModeChanged, dlg,
@@ -1615,7 +1631,8 @@ void MainWindow::tryToGainOp()
 
 void MainWindow::resetSession()
 {
-	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(m_doc->canvas()->paintEngine(), this);
+	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(
+		m_doc->canvas()->paintEngine(), m_doc->isCompatibilityMode(), this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -1689,6 +1706,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 		m_canvasscene->hideCanvas();
 	});
 	connect(dlg, &dialogs::LoginDialog::destroyed, m_canvasscene, &drawingboard::CanvasScene::showCanvas);
+	connect(dlg, &dialogs::LoginDialog::destroyed, this, &MainWindow::showCompatibilityModeWarning);
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
@@ -1786,6 +1804,12 @@ void MainWindow::onServerLogin()
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
 }
 
+void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
+{
+	m_dockToolSettings->brushSettings()->setCompatibilityMode(compatibilityMode);
+	m_dockToolSettings->selectionSettings()->setCompatibilityMode(compatibilityMode);
+}
+
 void MainWindow::updateLockWidget()
 {
 	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->isSessionLocked();
@@ -1835,7 +1859,7 @@ void MainWindow::onOperatorModeChange(bool op)
 	m_admintools->setEnabled(op);
 	m_serverLogDialog->setOperatorMode(op);
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
-	getAction("sessionundodepthlimit")->setEnabled(op);
+	getAction("sessionundodepthlimit")->setEnabled(op && !m_doc->client()->isCompatibilityMode());
 }
 
 void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
@@ -1861,8 +1885,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		m_dockTimeline->setFeatureAccess(canUse);
 		break;
 	case DP_FEATURE_MYPAINT:
-		static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))
-			->setMyPaintAllowed(canUse);
+		m_dockToolSettings->brushSettings()->setMyPaintAllowed(canUse);
 		break;
 	default: break;
 	}
@@ -2091,7 +2114,9 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	m_canvasscene->showAnnotationBorders(tool==tools::Tool::ANNOTATION);
 
 	// Send pointer updates when using the laser pointer (TODO checkbox)
-	m_view->setPointerTracking(tool==tools::Tool::LASERPOINTER && static_cast<tools::LaserPointerSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::LASERPOINTER))->pointerTracking());
+	m_view->setPointerTracking(
+		tool == tools::Tool::LASERPOINTER &&
+		m_dockToolSettings->laserPointerSettings()->pointerTracking());
 
 	// Remove selection when not using selection tool
 	if(tool != tools::Tool::SELECTION && tool != tools::Tool::POLYGONSELECTION)
@@ -2239,7 +2264,7 @@ void MainWindow::clearOrDelete()
 	// that instead of clearing out the canvas.
 	QAction *annotationtool = getAction("tooltext");
 	if(annotationtool->isChecked()) {
-		const uint16_t a = static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->selected();
+		const uint16_t a = m_dockToolSettings->annotationSettings()->selected();
 		if(a>0) {
 			net::Client *client = m_doc->client();
 			uint8_t contextId = client->myId();
@@ -3403,8 +3428,8 @@ void MainWindow::createDocks()
 	m_dockToolSettings->setObjectName("ToolSettings");
 	m_dockToolSettings->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
-	static_cast<tools::SelectionSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(m_view);
-	static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->setScene(m_canvasscene);
+	m_dockToolSettings->selectionSettings()->setView(m_view);
+	m_dockToolSettings->annotationSettings()->setScene(m_canvasscene);
 
 	// Create brush palette
 	m_dockBrushPalette = new docks::BrushPalette(this);
@@ -3412,8 +3437,8 @@ void MainWindow::createDocks()
 	m_dockBrushPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::LeftDockWidgetArea, m_dockBrushPalette);
 
-	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
-	m_dockBrushPalette->connectBrushSettings(brushSettings);
+	m_dockBrushPalette->connectBrushSettings(
+		m_dockToolSettings->brushSettings());
 
 	// Create color docks
 	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Color Wheel"), this);

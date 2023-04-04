@@ -440,7 +440,10 @@
        </property>
        <property name="icon">
         <iconset theme="application-menu">
-        <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
+         <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>
@@ -449,7 +452,10 @@
    <item>
     <widget class="QLabel" name="noPermissionLabel">
      <property name="text">
-      <string>You don't have permission to use MyPaint brushes.</string>
+      <string notr="true">Lock reason text goes here.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

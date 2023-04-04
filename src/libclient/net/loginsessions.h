@@ -17,6 +17,7 @@ struct LoginSession {
 	QString title;
 	QString founder;
 	QString incompatibleSeries; // if not empty, this session is for a different version series
+	bool compatibilityMode;
 
 	int userCount;
 
@@ -31,6 +32,8 @@ struct LoginSession {
 		Q_ASSERT(!idOrAlias.isEmpty());
 		return id == idOrAlias || alias == idOrAlias;
 	}
+
+	bool isIncompatible() const { return !incompatibleSeries.isEmpty(); }
 };
 
 /**
@@ -52,7 +55,17 @@ public:
 		ClosedRole,                // Is this session closed to new users
 		IncompatibleRole,          // Is the session meant for some other client version
 		JoinableRole,              // Is this session joinable
-		NsfmRole                   // Is this session tagged as Not Suitable For Minors
+		NsfmRole,                  // Is this session tagged as Not Suitable For Minors
+		CompatibilityModeRole,     // Is this a Drawpile 2.1.x session
+	};
+
+	enum Column : int {
+		ColumnVersion,
+		ColumnStatus,
+		ColumnTitle,
+		ColumnFounder,
+		ColumnUsers,
+		ColumnCount,
 	};
 
 	explicit LoginSessionModel(QObject *parent=nullptr);
