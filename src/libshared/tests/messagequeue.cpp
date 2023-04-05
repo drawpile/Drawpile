@@ -38,9 +38,9 @@ public:
 		return true;
 	}
 
-	static EchoServer *startInAnotherThread()
+	static EchoServer *startInAnotherThread(QObject *parent)
 	{
-		QThread *thread = new QThread;
+		QThread *thread = new QThread{parent};
 		EchoServer *server;
 
 		QMutex mutex;
@@ -103,7 +103,7 @@ class TestMessageQueue final : public QObject
 private slots:
 	void initTestCase()
 	{
-		m_server = EchoServer::startInAnotherThread();
+		m_server = EchoServer::startInAnotherThread(this);
 		QVERIFY(m_server);
 	}
 
