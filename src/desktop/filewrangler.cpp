@@ -97,7 +97,7 @@ QString FileWrangler::saveSelectionAs(Document *doc) const
 		&selectedFilter);
 
 	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
-		doc->saveCanvasAs(filename);
+		doc->saveSelection(filename);
 		return filename;
 	} else {
 		return QString{};
