@@ -1150,37 +1150,6 @@ void MainWindow::open()
 }
 
 /**
- * Allows the user three choices:
- * <ul>
- * <li>Cancel</li>
- * <li>Go ahead and flatten the image, then save<li>
- * <li>Save in OpenRaster format instead</li>
- * </ul>
- * If user chooces to save in OpenRaster, the suffix of file parameter is
- * altered.
- * @param file file name (may be altered)
- * @return true if file should be saved
- */
-bool MainWindow::confirmFlatten(QString& file) const
-{
-	QMessageBox box(QMessageBox::Information, tr("Save Image"),
-			tr("The selected format does not support layers or annotations."),
-			QMessageBox::Cancel);
-	box.addButton(tr("Flatten"), QMessageBox::AcceptRole);
-	QPushButton *saveora = box.addButton(tr("Save as OpenRaster"), QMessageBox::ActionRole);
-
-	// Don't save at all
-	if(box.exec() == QMessageBox::Cancel)
-		return false;
-
-	// Save
-	if(box.clickedButton() == saveora) {
-		file = file.left(file.lastIndexOf('.')) + ".ora";
-	}
-	return true;
-}
-
-/**
  * If no file name has been selected, \a saveas is called.
  */
 void MainWindow::save()

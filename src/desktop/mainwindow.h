@@ -200,9 +200,6 @@ protected:
 private:
 	MainWindow *replaceableWindow();
 
-	//! Confirm saving of image in a format that doesn't support all required features
-	bool confirmFlatten(QString& file) const;
-
 	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
