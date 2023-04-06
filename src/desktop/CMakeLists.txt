@@ -429,21 +429,7 @@ else()
 endif()
 add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidgets" "")
 
-if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
-	add_subdirectory(i18n)
-endif()
-
-include(AddResources)
-add_resources(drawpile
-	FILES
-		kritabright.colors
-		kritadark.colors
-		kritadarker.colors
-		nightmode.colors
-		initialbrushpresets.db
-	DIRS palettes sounds theme
-)
-
+# On Android the target is a non-installable library
 if(NOT ANDROID)
 	install(TARGETS drawpile
 		BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}"
@@ -567,6 +553,9 @@ elseif(ANDROID)
 		# Qt5 requires the output name to match the project name; Qt6 does not
 		# but might as well be consistent
 		OUTPUT_NAME ${PROJECT_NAME}
+		# This normally only applies to Qt6 but AddResources also uses it to
+		# find the place where assets go
+		QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/android"
 	)
 
 	set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}.apk")
@@ -580,9 +569,6 @@ elseif(ANDROID)
 		file(READ AndroidManifest.xml.qt6 ANDROID_EXTRA_METADATA)
 		qt_android_generate_deployment_settings(drawpile)
 		qt_android_add_apk_target(drawpile)
-		set_target_properties(drawpile PROPERTIES
-			QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/android"
-		)
 		add_custom_command(TARGET drawpile_make_apk POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different
 				"android-build/drawpile.apk"
@@ -681,6 +667,48 @@ elseif(UNIX)
 		icons/hicolor/scalable/mimetypes
 		RENAME text-vnd.drawpile.recording.svg
 	)
+endif()
+
+include(AddResources)
+add_resources(drawpile
+	FILES
+		kritabright.colors
+		kritadark.colors
+		kritadarker.colors
+		nightmode.colors
+		initialbrushpresets.db
+	DIRS palettes sounds theme
+)
+
+if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
+	add_subdirectory(i18n)
+
+	include(DrawpileTranslations)
+	bundle_translations(bundle_files
+		NAME all
+		OUTPUT_LOCATION i18n-bundle
+		QT qt qtbase qtmultimedia
+		TARGETS dpclient drawpile
+	)
+
+	target_sources(drawpile PRIVATE ${bundle_files})
+
+	if(APPLE)
+		set_source_files_properties(${bundle_files}
+			PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/i18n"
+		)
+	elseif(ANDROID)
+		file(CREATE_LINK
+			"${CMAKE_CURRENT_BINARY_DIR}/i18n-bundle"
+			"${CMAKE_CURRENT_BINARY_DIR}/android/assets/i18n"
+			SYMBOLIC
+		)
+	else()
+		install(
+			FILES ${bundle_files}
+			DESTINATION "${INSTALL_APPDATADIR}/i18n"
+		)
+	endif()
 endif()
 
 directory_auto_source_groups()

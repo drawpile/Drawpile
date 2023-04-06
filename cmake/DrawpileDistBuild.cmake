@@ -76,12 +76,6 @@ if(qt_conf_path)
 		DESTINATION "${qt_conf_path}"
 		COMPONENT fixup
 	)
-	if(CLIENT)
-		include(DrawpileTranslations)
-		install_qt_translations(${INSTALL_APPDATADIR}/i18n
-			qt qtbase qtmultimedia
-		)
-	endif()
 endif()
 
 if(TARGET ${QT_PACKAGE_NAME}::${helper_name})

@@ -67,6 +67,8 @@ message(STATUS "Git revision: ${PROJECT_GIT_REVISION}")
 find_package(QT ${DP_MIN_QT_VERSION} NAMES Qt6 Qt5 REQUIRED)
 message(STATUS "Using Qt version ${QT_VERSION_MAJOR}")
 set(QT_PACKAGE_NAME Qt${QT_VERSION_MAJOR})
+# Qt5AndroidSupport.cmake clobbers this variable, so make a copy
+set(DP_QT_DIR ${QT_DIR})
 
 # There is an inherent conflict where the docs say `CMAKE_OSX_DEPLOYMENT_TARGET`
 # needs to be set before calling `enable_language` or `project`, but it is

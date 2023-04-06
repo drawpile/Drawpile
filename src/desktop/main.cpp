@@ -268,30 +268,20 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 	preferredLang.replace('-', '_');
 
 	// Special case: if english is preferred language, no translations are needed.
-	if(preferredLang == "en")
+	// TODO: This is wrong since English still needs translations for N-variants
+	if(preferredLang.mid(0, 2) == "en")
 		return;
 
-	QTranslator *translator;
-	// Qt's own translations
-	translator = new QTranslator(&app);
-	if(translator->load("qt_" + preferredLang, compat::libraryPath(QLibraryInfo::TranslationsPath))) {
-		qApp->installTranslator(translator);
-	} else {
+	auto *translator = new QTranslator(&app);
+	for(const QString &datapath : utils::paths::dataPaths()) {
+		if(translator->load("all_" + preferredLang, datapath + "/i18n"))
+			break;
+	}
+
+	if(translator->isEmpty())
 		delete translator;
-	}
-
-	for(auto &bundle : { "libshared_", "libclient_", "drawpile_" }) {
-		translator = new QTranslator(&app);
-		for(const QString &datapath : utils::paths::dataPaths()) {
-			if(translator->load(bundle + preferredLang, datapath + "/i18n"))
-				break;
-		}
-
-		if(translator->isEmpty())
-			delete translator;
-		else
-			qApp->installTranslator(translator);
-	}
+	else
+		qApp->installTranslator(translator);
 }
 
 static bool shouldCopyNativeSettings(const QSettings &settings, const QString mode)
