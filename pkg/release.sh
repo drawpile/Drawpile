@@ -34,7 +34,7 @@ if [ "$2" != "" ]; then
 fi
 
 REPO=${REPO:-$DEFAULT_REPO}
-ROOT_DIR=$(cd $(dirname $0)/.. && pwd)
+ROOT_DIR=$(cd "$(dirname "$0")"/.. && pwd)
 BUILD_DIR="$ROOT_DIR/build-release"
 
 if [ -d "$BUILD_DIR" ]; then
@@ -51,7 +51,7 @@ else
 	echo -e "\nwith version override $VERSION."
 fi
 echo "(You can abort pushing upstream later on if something goes wrong.)"
-read -s -n 1
+read -r -s -n 1
 
 if [ "$REPLY" != "y" ]; then
 	echo "Aborted."
@@ -69,7 +69,6 @@ cd "$BUILD_DIR"
 
 # Newly created tags and updated branches are stored so they can be pushed all
 # at once at the end after the other work is guaranteed to be successful
-RELEASE_TAG=
 PUSH_BRANCHES="$BRANCH"
 
 echo -e "\nBuilding $BRANCH branch...\n"
@@ -88,24 +87,24 @@ if [ "$VERSION" == "" ]; then
 	# release version number
 	OLDIFS=$IFS
 	IFS="."
-	PRE_VERSION=($VERSION)
+	PRE_VERSION_SPLIT=("$VERSION")
 	IFS=$OLDIFS
 
 	if [[ $VERSION =~ \.0$ ]]; then
-		MAKE_BRANCH="${PRE_VERSION[0]}.${PRE_VERSION[1]}"
-		BRANCH_VERSION="${PRE_VERSION[0]}.${PRE_VERSION[1]}.$((PRE_VERSION[2] + 1))-pre"
+		MAKE_BRANCH="${PRE_VERSION_SPLIT[0]}.${PRE_VERSION_SPLIT[1]}"
+		BRANCH_VERSION="${PRE_VERSION_SPLIT[0]}.${PRE_VERSION_SPLIT[1]}.$((PRE_VERSION_SPLIT[2] + 1))-pre"
 
 		# The next release is usually going to be a minor release; if the next
 		# version is to be a major release, the package version in Git will need
 		# to be manually updated
-		PRE_VERSION="${PRE_VERSION[0]}.$((PRE_VERSION[1] + 1)).0-pre"
+		PRE_VERSION="${PRE_VERSION_SPLIT[0]}.$((PRE_VERSION_SPLIT[1] + 1)).0-pre"
 	else
 		# Patch releases do not get branches
 		MAKE_BRANCH=
 		BRANCH_VERSION=
 
 		# The next release version will always be another patch version
-		PRE_VERSION="${PRE_VERSION[0]}.${PRE_VERSION[1]}.$((PRE_VERSION[2] + 1))-pre"
+		PRE_VERSION="${PRE_VERSION_SPLIT[0]}.${PRE_VERSION_SPLIT[1]}.$((PRE_VERSION_SPLIT[2] + 1))-pre"
 	fi
 else
 	MAKE_BRANCH=
@@ -128,7 +127,7 @@ TAG_VERSION=$VERSION
 # minor release branch
 
 # Something is messed up and this release has already happened
-if [ $(git tag | grep -c "^$TAG_VERSION$") -gt 0 ]; then
+if [ "$(git tag | grep -c "^$TAG_VERSION$")" -gt 0 ]; then
 	echo -e "\nTag $TAG_VERSION already exists! Please check the branch.\n"
 	exit 1
 fi
@@ -141,7 +140,7 @@ sed -i '' -e "s/^Unreleased\\( Version \\).*$/$NOW\\1$VERSION/" ChangeLog
 "$BUILD_DIR/pkg/update-appdata-releases.py"
 
 git commit -m "Updating metadata for $VERSION" -m "[ci skip]" Cargo.toml ChangeLog src/desktop/appdata.xml
-git tag -s -m "Release $VERSION" $TAG_VERSION
+git tag -s -m "Release $VERSION" "$TAG_VERSION"
 
 set_package_version "$PRE_VERSION"
 echo -e "Unreleased Version $PRE_VERSION\n" | cat - ChangeLog > ChangeLog.new
@@ -150,7 +149,7 @@ mv ChangeLog.new ChangeLog
 git commit -m "Updating source version to $PRE_VERSION" -m "[ci skip]" Cargo.toml ChangeLog
 
 if [ "$MAKE_BRANCH" != "" ]; then
-	git checkout -b $MAKE_BRANCH $TAG_VERSION
+	git checkout -b "$MAKE_BRANCH" "$TAG_VERSION"
 	set_package_version "$BRANCH_VERSION"
 	sed -i '' -e "s/^\\(Unreleased Version \\).*$/\\1$BRANCH_VERSION/" ChangeLog
 
@@ -175,7 +174,7 @@ echo "- Update templates/pages/help/compatibility.html if needed"
 echo
 echo "Please confirm packaging success, then press 'y', ENTER to push"
 echo "tags $TAG_VERSION${PUSH_BRANCHES_MSG:-}, or any other key to bail."
-read -p "> "
+read -r -p "> "
 
 if [ "$REPLY" != "y" ]; then
 	echo "Aborted."
@@ -183,7 +182,7 @@ if [ "$REPLY" != "y" ]; then
 fi
 
 for BRANCH in $PUSH_BRANCHES; do
-	git push origin $BRANCH
+	git push origin "$BRANCH"
 done
 
 git push origin --tags
