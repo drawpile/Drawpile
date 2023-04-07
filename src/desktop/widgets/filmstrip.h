@@ -56,7 +56,7 @@ public:
 	int cursor() const { return m_cursor; }
 
 	//! Set the number of frames in the strip
-	void setFrames(int f);
+	void setFrames(size_t f);
 
 	//! Set the function used to load frame images
 	void setLoadImageFn(LoadImageFn fn) { m_loadimagefn = fn; }

@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPixmap>
+#include <limits>
 
 namespace widgets {
 
@@ -49,11 +50,11 @@ void Filmstrip::setLength(int len)
 	m_length = len;
 }
 
-void Filmstrip::setFrames(int f)
+void Filmstrip::setFrames(size_t f)
 {
-	Q_ASSERT(f>0);
-	m_frames = f;
-	m_scrollbar->setMaximum(qMax(0, (frameSize().width()+FRAME_MARGIN) * f - width()));
+	Q_ASSERT(f>0 && f<=size_t(std::numeric_limits<int>().max()));
+	m_frames = int(f);
+	m_scrollbar->setMaximum(qMax(0, (frameSize().width()+FRAME_MARGIN) * int(f) - width()));
 }
 
 void Filmstrip::setCursor(int c) {

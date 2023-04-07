@@ -50,7 +50,7 @@ long long SnapshotQueue::getTimestampMs(void *)
 void SnapshotQueue::getSnapshots(
     void *user, DP_SnapshotQueue *sq, size_t count, DP_SnapshotAtFn at)
 {
-    (*static_cast<GetSnapshotsFn *>(user))(count, [&](int index) {
+    (*static_cast<GetSnapshotsFn *>(user))(count, [&](size_t index) {
         return at(sq, index);
     });
 }

@@ -12,7 +12,7 @@ namespace drawdance {
 
 class SnapshotQueue {
 public:
-    using SnapshotAtFn = std::function<DP_Snapshot * (int index)>;
+    using SnapshotAtFn = std::function<DP_Snapshot * (size_t index)>;
     using GetSnapshotsFn = std::function<void (size_t count, SnapshotAtFn at)>;
 
     SnapshotQueue(int maxCount, long long minDelayMs);
