@@ -108,7 +108,7 @@ bool startServer()
 
 	// Quit when last window is closed, but not if the tray icon is visible
 	qApp->setQuitOnLastWindowClosed(false);
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 	QObject::connect(qApp, &QApplication::lastWindowClosed, []() {
 		if(!TrayIcon::isTrayIconVisible())
 			qApp->quit();

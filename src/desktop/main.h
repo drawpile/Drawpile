@@ -45,7 +45,7 @@ public:
 		// On OSX, there's no theme selection. The settings code says something
 		// about it being broken prior to Qt5.12, but I have no way of checking
 		// if it works now. So we'll just always use the system theme there.
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 		THEME_DEFAULT = THEME_SYSTEM,
 #else
 		THEME_DEFAULT = THEME_KRITA_DARK,

@@ -378,7 +378,7 @@ static QStringList initApp(DrawpileApp &app)
 
 	app.setTheme(theme);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
 	app.setQuitOnLastWindowClosed(false);

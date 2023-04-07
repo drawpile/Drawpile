@@ -45,7 +45,7 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 {
 	m_ui->setupUi(this);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	// Flat style doesn't look good on Mac
 	for(QGroupBox *box : findChildren<QGroupBox*>()) {
 		box->setFlat(false);

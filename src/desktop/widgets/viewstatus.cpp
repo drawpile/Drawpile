@@ -52,7 +52,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	m_viewMirror = new widgets::GroupedToolButton(this);
 	m_viewMirror->setAutoRaise(true);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	// Auto-raise style doesn't work on mac (because of a stylesheet),
 	// but grouping only looks nice /without/ auto-raise
 	m_viewFlip->setGroupPosition(widgets::GroupedToolButton::GroupLeft);
@@ -152,7 +152,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 
 void ViewStatus::updatePalette()
 {
-#ifndef Q_OS_MAC
+#ifndef Q_OS_MACOS
 	auto boxPalette = palette();
 	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
 	m_angleBox->setPalette(boxPalette);

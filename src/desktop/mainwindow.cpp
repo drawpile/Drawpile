@@ -208,7 +208,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_viewStatusBar->setSizeGripEnabled(false);
 	mainwinlayout->addWidget(m_viewStatusBar);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	// The "native" style status bar appears slightly glitchy.
 	// This makes it look better.
 	if(icon::isDark(palette().color(QPalette::Window)))
@@ -475,7 +475,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 MainWindow::~MainWindow()
 {
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->removeWindow(this);
 #endif
 
@@ -600,7 +600,7 @@ void MainWindow::addRecentFile(const QString& file)
 		if(win)
 			RecentFiles::initMenu(win->m_recentMenu);
 	}
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->updateRecentMenu();
 #endif
 }
@@ -624,7 +624,7 @@ void MainWindow::updateTitle()
 	else
 		setWindowTitle(QStringLiteral("%1[*] - %2").arg(name, m_doc->sessionTitle()));
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	MacMenu::instance()->updateWindow(this);
 #endif
 }
@@ -2557,7 +2557,7 @@ void MainWindow::setupActions()
 	//
 	QAction *newdocument = makeAction("newdocument", tr("&New")).icon("document-new").shortcut(QKeySequence::New);
 	QAction *open = makeAction("opendocument", tr("&Open...")).icon("document-open").shortcut(QKeySequence::Open);
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	QAction *closefile = makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
@@ -2572,7 +2572,7 @@ void MainWindow::setupActions()
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	m_currentdoctools->addAction(closefile);
 #endif
 	m_currentdoctools->addAction(save);
@@ -2599,7 +2599,7 @@ void MainWindow::setupActions()
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
 #else
@@ -2612,7 +2612,7 @@ void MainWindow::setupActions()
 	m_recentMenu = filemenu->addMenu(tr("Open &Recent"));
 	filemenu->addSeparator();
 
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	filemenu->addAction(closefile);
 #endif
 	filemenu->addAction(save);
@@ -2669,7 +2669,7 @@ void MainWindow::setupActions()
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
 	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
-#if (defined(Q_OS_MAC) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
+#if (defined(Q_OS_MACOS) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
 		.shortcut("Shift+Ctrl+A")
 #else
 		.shortcut(QKeySequence::Deselect)
@@ -3158,7 +3158,7 @@ void MainWindow::setupActions()
 	//
 	// Window menu (Mac only)
 	//
-#ifdef Q_OS_MAC
+#ifdef Q_OS_MACOS
 	menuBar()->addMenu(MacMenu::instance()->windowMenu());
 #endif
 
