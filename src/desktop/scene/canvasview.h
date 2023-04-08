@@ -297,7 +297,6 @@ private:
 	bool m_pointertracking;
 	bool m_pixelgrid;
 
-	bool m_isFirstPoint;
 	bool m_enableTouchScroll, m_enableTouchDraw;
 	bool m_enableTouchPinch, m_enableTouchTwist;
 	bool m_touching, m_touchRotating;
