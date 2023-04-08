@@ -182,7 +182,16 @@ source directory and all subdirectories.
 function(disable_automoc_warnings)
 	include(GetAllTargets)
 	get_all_targets(targets ${CMAKE_CURRENT_SOURCE_DIR})
-	target_disable_automoc_warnings(${targets})
+	if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+		target_disable_automoc_warnings(${targets})
+	else()
+		foreach(target IN LISTS targets)
+			get_target_property(type ${target} TYPE)
+			if(NOT type STREQUAL "INTERFACE_LIBRARY")
+				target_disable_automoc_warnings(${target})
+			endif()
+		endforeach()
+	endif()
 endfunction()
 
 #[[

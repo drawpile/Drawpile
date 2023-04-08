@@ -115,9 +115,23 @@ target_include_directories(jo_gifx SYSTEM PUBLIC
 # third-party code does not follow the same code hygiene rules, so turn those
 # off for everything in this directory
 get_directory_property(third_party_targets BUILDSYSTEM_TARGETS)
-set_property(TARGET ${third_party_targets} APPEND PROPERTY
-    COMPILE_OPTIONS "${IGNORE_WARNINGS_COMPILE_OPTIONS}"
-)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+    set_property(TARGET ${third_party_targets} APPEND PROPERTY
+        COMPILE_OPTIONS "${IGNORE_WARNINGS_COMPILE_OPTIONS}"
+    )
+else()
+    foreach(target IN LISTS third_party_targets)
+        get_target_property(type ${target} TYPE)
+        if(type STREQUAL "INTERFACE_LIBRARY")
+            set(option INTERFACE_COMPILE_OPTIONS)
+        else()
+            set(option COMPILE_OPTIONS)
+        endif()
+        set_property(TARGET ${target} APPEND PROPERTY
+            ${option} "${IGNORE_WARNINGS_COMPILE_OPTIONS}"
+        )
+    endforeach()
+endif()
 # It is not possible to use the same approach that was used to disable
 # warnings because CMake apparently discards empty list items when a list is
 # passed to set_target_properties, so instead we must loop to unset each
