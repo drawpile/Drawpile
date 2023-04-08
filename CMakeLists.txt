@@ -134,7 +134,7 @@ if(CLIENT OR SERVER)
 
 	# LinguistTools does not generate a target so its existence must be checked
 	# using the old-style FOUND flag
-	add_feature_info("Client translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
+	add_feature_info("Translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
 	add_feature_info("Ext-auth support" "TARGET libsodium::libsodium" "")
 
 	#find_package(KF5DNSSD NO_MODULE) # disabled pending built-in server rewrite
@@ -191,8 +191,7 @@ endif()
 
 include(DrawpilePackaging)
 
-feature_summary(INCLUDE_QUIET_PACKAGES
-	WHAT PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
+feature_summary(WHAT PACKAGES_NOT_FOUND ENABLED_FEATURES DISABLED_FEATURES)
 
 if(CMAKE_CONFIGURATION_TYPES)
 	message(NOTICE
