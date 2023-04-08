@@ -219,6 +219,15 @@ function(_build_cmake build_type source_dir)
 			"-DCMAKE_PREFIX_PATH=${prefix_path}"
 			"-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
 		)
+		if(NOT CMAKE_ARG_NO_DEFAULT_BUILD_TYPE AND USE_ASAN)
+			list(APPEND default_flags
+				"-DCMAKE_EXE_LINKER_FLAGS_INIT=-fno-omit-frame-pointer -fsanitize=address"
+				"-DCMAKE_C_FLAGS_INIT=-fno-omit-frame-pointer -fsanitize=address"
+				"-DCMAKE_CXX_FLAGS_INIT=-fno-omit-frame-pointer -fsanitize=address"
+				"-DCMAKE_OBJC_FLAGS_INIT=-fno-omit-frame-pointer -fsanitize=address"
+				"-DCMAKE_OBJCXX_FLAGS_INIT=-fno-omit-frame-pointer -fsanitize=address"
+			)
+		endif()
 	endif()
 
 	if(CMAKE_TOOLCHAIN_FILE)
