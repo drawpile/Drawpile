@@ -1,21 +1,4 @@
-/*
-   Drawpile - a collaborative drawing program.
-
-   Copyright (C) 2019 Calle Laakkonen
-
-   Drawpile is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Drawpile is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DP_CLIENT_NEWVERSION_CHECK_H
 #define DP_CLIENT_NEWVERSION_CHECK_H
@@ -70,7 +53,7 @@ public:
 	 * Is a new version check needed?
 	 *
 	 * A version check should be performed if:
-	 * 
+	 *
 	 *  - the user hasn't opted out (QSettings: versioncheck/enabled, default=true)
 	 *  - it has been at least one day since the previous check
 	 *  - if the last version checked failed, it has been at least one week

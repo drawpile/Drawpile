@@ -88,11 +88,11 @@ If two sockets are passed, the second one will be used for the web admin API.
 .
 .SH AUTHOR
 .
-Written by Calle Laakkonen <laakkonenc@gmail.com>.
+Written by Calle Laakkonen <laakkonenc@gmail.com> and Drawpile contributors.
 .
 .SH COPYRIGHT
 .
-Copyright \(co 2013-2017 Calle Laakkonen <laakkonenc@gmail.com>
+Copyright \(co Calle Laakkonen <laakkonenc@gmail.com> and Drawpile contributors
 .br
 This is Free Software; this software is licensed under the GPL version 3, as published by the Free Software Foundation.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libshared/record/reader.h"
 #include "libshared/record/writer.h"
 #include "libshared/record/header.h"

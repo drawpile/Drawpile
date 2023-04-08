@@ -1,21 +1,5 @@
-/*
-   Drawpile - a collaborative drawing program.
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-   Copyright (C) 2013-2019 Calle Laakkonen
-
-   Drawpile is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Drawpile is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
-*/
 #ifndef DP_NET_LAYER_H
 #define DP_NET_LAYER_H
 
@@ -29,7 +13,7 @@ namespace protocol {
 
 /**
  * \brief Canvas size adjustment command
- * 
+ *
  * This is the first command that must be sent to initialize the session.
  *
  * This affects the size of all existing and future layers.
@@ -68,7 +52,7 @@ private:
 
 /**
  * \brief Layer creation command.
- * 
+ *
  * A session starts with zero layers, so a layer creation command is typically
  * the second command to be sent, right after setting the canvas size.
  *
@@ -269,7 +253,7 @@ public:
 		: Message(MSG_LAYER_ORDER, ctx),
 		m_order(order)
 		{}
-	
+
 	static LayerOrder *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static LayerOrder *fromText(uint8_t ctx, const Kwargs &kwargs);
 

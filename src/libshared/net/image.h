@@ -1,21 +1,5 @@
-/*
-   Drawpile - a collaborative drawing program.
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-   Copyright (C) 2013-2018 Calle Laakkonen
-
-   Drawpile is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Drawpile is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
-*/
 #ifndef DP_NET_IMAGE_H
 #define DP_NET_IMAGE_H
 
@@ -54,7 +38,7 @@ public:
 
 	static PutImage *deserialize(uint8_t ctx, const uchar *data, uint len);
 	static PutImage *fromText(uint8_t ctx, const Kwargs &kwargs);
-	
+
 	uint16_t layer() const override { return m_layer; }
 	uint8_t blendmode() const { return m_mode; }
 	uint32_t x() const { return m_x; }

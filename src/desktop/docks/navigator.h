@@ -1,19 +1,4 @@
-/*
-   Copyright (C) 2008-2021 Calle Laakkonen, 2007 M.K.A.
-
-   Drawpile is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Drawpile is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef Navigator_H
 #define Navigator_H
@@ -45,7 +30,7 @@ public slots:
 signals:
 	void focusMoved(const QPoint& to);
 	void wheelZoom(int steps);
-	
+
 protected:
 	void paintEvent(QPaintEvent *event) override;
 	void resizeEvent(QResizeEvent *event) override;
@@ -106,7 +91,7 @@ signals:
 	void focusMoved(const QPoint& to);
 	void wheelZoom(int steps);
 	void zoomChanged(qreal newZoom);
-	
+
 private:
 	QSlider *m_zoomSlider;
 	QToolButton *m_resetZoomButton;

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DP_LIBSHARED_UTIL_QTCOMPAT_H
 #define DP_LIBSHARED_UTIL_QTCOMPAT_H
 

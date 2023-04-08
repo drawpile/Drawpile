@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 extern "C" {
 #include <dpcommon/geom.h>
 #include <dpengine/canvas_state.h>

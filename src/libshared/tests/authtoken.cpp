@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libshared/util/authtoken.h"
 
 #include <QtTest/QtTest>

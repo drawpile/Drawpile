@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DRAWDANCE_LAYERCONTENT_H
 #define DRAWDANCE_LAYERCONTENT_H
 

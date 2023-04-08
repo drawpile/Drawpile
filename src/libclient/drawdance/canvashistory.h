@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DRAWDANCE_CANVASHISTORY_H
 #define DRAWDANCE_CANVASHISTORY_H
 

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 extern "C" {
 #include <dpmsg/msg_internal.h>
 }

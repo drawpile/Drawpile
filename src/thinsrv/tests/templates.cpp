@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "thinsrv/templatefiles.h"
 #include "libserver/inmemoryhistory.h"
 #include "libshared/net/protover.h"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libserver/inmemoryconfig.h"
 #include "thinsrv/database.h"
 #include "thinsrv/headless/configfile.h"

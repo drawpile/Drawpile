@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DRAWDANCE_DOCUMENT_METADATA_H
 #define DRAWDANCE_DOCUMENT_METADATA_H
 

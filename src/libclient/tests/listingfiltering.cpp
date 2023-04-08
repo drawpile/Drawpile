@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libclient/net/sessionlistingmodel.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/utils/sessionfilterproxymodel.h"

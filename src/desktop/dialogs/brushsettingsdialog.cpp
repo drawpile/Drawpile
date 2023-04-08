@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/utils/icon.h"

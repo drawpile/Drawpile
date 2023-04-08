@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libclient/utils/newversion.h"
 
 #include <QXmlStreamReader>
@@ -68,7 +70,7 @@ private slots:
 		QVERIFY(vc.parseAppDataFile(reader));
 
 		// All versions included when showBetas is true
-		QCOMPARE(vc.getNewer().size(), 6); 
+		QCOMPARE(vc.getNewer().size(), 6);
 	}
 
 	void testDescription()

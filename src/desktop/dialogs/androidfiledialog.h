@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef ANDROIDFILEDIALOG_H
 #define ANDROIDFILEDIALOG_H
 

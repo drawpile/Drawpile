@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DRAWDANCE_ANNOTATION_LIST_H
 #define DRAWDANCE_ANNOTATION_LIST_H
 

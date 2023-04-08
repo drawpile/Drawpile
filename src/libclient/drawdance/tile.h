@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DRAWDANCE_TILE_H
 #define DRAWDANCE_TILE_H
 

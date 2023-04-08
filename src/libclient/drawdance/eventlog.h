@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DRAWDANCE_EVENTLOG_H
 #define DRAWDANCE_EVENTLOG_H
 

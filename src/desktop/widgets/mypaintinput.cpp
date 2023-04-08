@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "desktop/widgets/mypaintinput.h"
 #include "libclient/brushes/brush.h"
 #include "desktop/widgets/kis_curve_widget.h"

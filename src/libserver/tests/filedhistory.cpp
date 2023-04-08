@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libserver/filedhistory.h"
 #include "libshared/util/passwordhash.h"
 #include "libshared/util/ulid.h"

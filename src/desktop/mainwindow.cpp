@@ -1,21 +1,4 @@
-/*
-   Drawpile - a collaborative drawing program.
-
-   Copyright (C) 2006-2021 Calle Laakkonen
-
-   Drawpile is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Drawpile is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QApplication>
 #include <QActionGroup>
@@ -2421,7 +2404,7 @@ void MainWindow::about()
 			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(version) +
 			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
-			"<p>Copyright © 2006-2022 Calle Laakkonen</p>"
+			"<p>Copyright © Calle Laakkonen and Drawpile contributors</p>"
 
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as "

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "libshared/net/annotation.h"
 #include "libshared/net/control.h"
 #include "libshared/net/meta.h"

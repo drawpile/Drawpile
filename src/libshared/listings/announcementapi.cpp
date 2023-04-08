@@ -1,21 +1,4 @@
-/*
-   Drawpile - a collaborative drawing program.
-
-   Copyright (C) 2015-2019 Calle Laakkonen
-
-   Drawpile is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   Drawpile is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libshared/listings/announcementapi.h"
 #include "libshared/listings/listserverfinder.h"
@@ -183,7 +166,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 				return;
 			}
 
-			const auto realApiUrl = findListserverLinkHtml(reply);  
+			const auto realApiUrl = findListserverLinkHtml(reply);
 			if(realApiUrl.isEmpty()) {
 				res->setError("No listserver link found!");
 
@@ -273,7 +256,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &proto
 		res->setResult(QVariant::fromValue(sessions));
 	});
 	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
-	
+
 	return res;
 }
 
@@ -360,7 +343,7 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(a.apiUrl);
 
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
-	reply->connect(reply, &QNetworkReply::finished, res, [reply, res, a]() { 
+	reply->connect(reply, &QNetworkReply::finished, res, [reply, res, a]() {
 		auto r = readReply(reply);
 		if(IsApiError(r)) {
 			res->setError(ApiError(r));
