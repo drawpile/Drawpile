@@ -138,8 +138,6 @@ target_sources(drawpile PRIVATE
 	docks/toolsettingsdock.h
 	icons/builtin.qrc
 	icons/censored.svg
-	icons/drawpile.ico
-	icons/drawpile.iconset/icon_512x512@2x.png
 	icons/drawpile.png
 	icons/drawpile.svg
 	scene/annotationitem.cpp
@@ -175,13 +173,6 @@ target_sources(drawpile PRIVATE
 	toolwidgets/toolsettings.h
 	toolwidgets/zoomsettings.cpp
 	toolwidgets/zoomsettings.h
-	icons/builtin.qrc
-	icons/censored.svg
-	icons/dancepile.png
-	icons/drawpile.ico
-	icons/drawpile.iconset/icon_512x512@2x.png
-	icons/drawpile.png
-	icons/drawpile.svg
 	ui/abusereport.ui
 	ui/avatarimport.ui
 	ui/brushdock.ui
@@ -302,9 +293,12 @@ if(VERSION_CHECK)
 	target_compile_definitions(drawpile PRIVATE ENABLE_VERSION_CHECK)
 endif()
 
+if(WIN32)
+	target_sources(drawpile PRIVATE icons/drawpile.ico)
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
-if(APPLE)
+elseif(APPLE)
 	target_sources(drawpile PRIVATE
+		icons/drawpile.iconset/icon_512x512@2x.png
 		widgets/macmenu.cpp
 		widgets/macmenu.h
 	)
@@ -323,6 +317,12 @@ if(ANDROID)
 	target_sources(drawpile PRIVATE
 		dialogs/androidfiledialog.cpp
 		dialogs/androidfiledialog.h
+		icons/android/drawable-anydpi-v26/ic_launcher.xml
+		icons/android/drawable-anydpi/ic_launcher.xml
+		icons/android/drawable-anydpi/ic_launcher_foreground.xml
+		icons/android/drawable-anydpi/ic_launcher_monochrome.xml
+		icons/android/values/strings.xml
+		icons/android/xml/remote_action.xml
 		ui/androidfiledialog.ui
 	)
 	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
