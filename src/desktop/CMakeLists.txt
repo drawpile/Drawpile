@@ -331,7 +331,8 @@ if(ANDROID)
 endif()
 
 if(KIS_TABLET)
-	target_sources(drawpile PRIVATE
+	add_library(drawpile-kis_tablet OBJECT)
+	target_sources(drawpile-kis_tablet PRIVATE
 		bundled/kis_tablet/debug.h
 		bundled/kis_tablet/kis_tablet_support_win_p.h
 		bundled/kis_tablet/kis_tablet_support_win.cpp
@@ -341,8 +342,18 @@ if(KIS_TABLET)
 		bundled/kis_tablet/pktdef.h
 		bundled/kis_tablet/wintab.h
 	)
-	target_sources(drawpile PRIVATE ${sources})
-	source_files_disable_warnings(drawpile ${sources})
+	target_link_libraries(drawpile-kis_tablet PUBLIC
+		${QT_PACKAGE_NAME}::Core
+		${QT_PACKAGE_NAME}::Gui
+		${QT_PACKAGE_NAME}::Network
+		${QT_PACKAGE_NAME}::Widgets
+	)
+	set_target_properties(drawpile-kis_tablet
+		PROPERTIES DP_AUTO_SOURCE_TREE_BASE bundled/kis_tablet
+	)
+	target_disable_all_warnings(drawpile-kis_tablet)
+
+	target_link_libraries(drawpile PRIVATE drawpile-kis_tablet)
 endif()
 
 if(${QT_PACKAGE_NAME}Keychain_FOUND)
@@ -359,7 +370,8 @@ add_feature_info("Client password manager" ${QT_PACKAGE_NAME}Keychain_FOUND "")
 if(TARGET QtColorWidgets::QtColorWidgets)
 	target_link_libraries(drawpile PRIVATE QtColorWidgets::QtColorWidgets)
 else()
-	set(sources
+	add_library(drawpile-QtColorWidgets OBJECT)
+	target_sources(drawpile-QtColorWidgets PRIVATE
 		bundled/QtColorWidgets/include/QtColorWidgets/abstract_widget_list.hpp
 		bundled/QtColorWidgets/include/QtColorWidgets/AbstractWidgetList
 		bundled/QtColorWidgets/include/QtColorWidgets/bound_color_selector.hpp
@@ -425,12 +437,21 @@ else()
 		bundled/QtColorWidgets/hue_slider.cpp
 		bundled/QtColorWidgets/swatch.cpp
 	)
-	target_sources(drawpile PRIVATE ${sources})
-	source_files_disable_warnings(drawpile ${sources})
-	target_include_directories(drawpile SYSTEM PRIVATE
+	target_include_directories(drawpile-QtColorWidgets SYSTEM PUBLIC
 		"${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorWidgets/include"
 	)
-	target_compile_definitions(drawpile PRIVATE QTCOLORPICKER_STATICALLY_LINKED)
+	target_compile_definitions(drawpile-QtColorWidgets INTERFACE QTCOLORPICKER_STATICALLY_LINKED)
+	target_link_libraries(drawpile-QtColorWidgets PUBLIC
+		${QT_PACKAGE_NAME}::Core
+		${QT_PACKAGE_NAME}::Gui
+		${QT_PACKAGE_NAME}::Widgets
+	)
+	target_disable_all_warnings(drawpile-QtColorWidgets)
+	set_target_properties(drawpile-QtColorWidgets
+		PROPERTIES DP_AUTO_SOURCE_TREE_BASE bundled/QtColorWidgets
+	)
+
+	target_link_libraries(drawpile PRIVATE drawpile-QtColorWidgets)
 endif()
 add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidgets" "")
 
