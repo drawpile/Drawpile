@@ -1,0 +1,5 @@
+The qgrayraster code comes from Qt, but is based on code from the FreeType project.
+
+For Qt's licenses, see LICENSE.GPL2, LICENSE.GPL3 and LICENSE.LGPL3.
+
+For FreeType's licenses, see LICENSE.TXT, docs/FTL.TXT and docs/GPLv2.TXT.

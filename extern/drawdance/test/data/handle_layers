@@ -1,0 +1,1286 @@
+begin testing
+
+-- initial layers
+0 layer(s), 0 layer prop(s)
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_CREATE ok - 0 error(s)
+
+-- create initial group
+1 layer(s), 1 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    0 child layer(s), 0 child layer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_CREATE ok - 0 error(s)
+
+-- create initial layer
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    0 child layer(s), 0 child layer prop(s)
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: false
+    width: 0
+    height: 0
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_CREATE ok - 0 error(s)
+
+-- create layer in group
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 0
+        height: 0
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: false
+    width: 0
+    height: 0
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_CREATE ok - 0 error(s)
+
+-- create group in group
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 0
+        height: 0
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 0
+        height: 0
+        0 child layer(s), 0 child layer prop(s)
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: false
+    width: 0
+    height: 0
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_ATTRIBUTES ok - 0 error(s)
+
+-- change layer attributes
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 0
+        height: 0
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 0
+        height: 0
+        0 child layer(s), 0 child layer prop(s)
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 0
+    height: 0
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_CREATE ok - 0 error(s)
+
+-- create layer duplicate in inner group
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 0
+        height: 0
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 0
+        height: 0
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Layer 1 Copy"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 0
+            height: 0
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 0
+    height: 0
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_RETITLE ok - 0 error(s)
+
+-- rename layer
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 0
+    height: 0
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 0
+        height: 0
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 0
+        height: 0
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 0
+            height: 0
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 0
+    height: 0
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_CANVAS_RESIZE ok - 0 error(s)
+
+-- resize layers
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_DRAW_DABS_PIXEL_SQUARE ok - 0 error(s)
+
+-- draw dab in direct mode
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_PEN_UP ok - 0 error(s)
+
+-- pen up in direct mode
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_DRAW_DABS_PIXEL_SQUARE ok - 0 error(s)
+
+-- draw dab in indirect mode
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            1 sublayer(s), 1 sublayer prop(s)
+            [0] = {
+                type: layer
+                id: 1
+                title: ""
+                opacity: 16319 (49.80%)
+                blend mode: SCREEN
+                hidden: false
+                censored: false
+                isolated: false
+                width: 16
+                height: 9
+                0 sublayer(s), 0 sublayer prop(s)
+            }
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_PEN_UP ok - 0 error(s)
+
+-- pen up in indirect mode
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: ordering empty
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: ordering not even
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: id 999 not found
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: missing layers
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: invalid tree
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: id 257 has child count of 1, but is not a group
+-> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: id 257 not found
+
+-- invalid layer orders
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_ORDER ok - 0 error(s)
+
+-- order layers in root
+4 layer(s), 4 layer prop(s)
+[0] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+[1] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    0 child layer(s), 0 child layer prop(s)
+}
+[2] = {
+    type: layer
+    id: 259
+    title: "Layer 2"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+[3] = {
+    type: group
+    id: 260
+    title: "Group 2"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 261
+        title: "Copy of Layer 1"
+        opacity: 32768 (100.00%)
+        blend mode: MULTIPLY
+        hidden: false
+        censored: true
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+}
+
+-> DP_MSG_UNDO ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_ORDER ok - 0 error(s)
+
+-- order layers in group
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        2 child layer(s), 2 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 259
+            title: "Layer 2"
+            opacity: 32768 (100.00%)
+            blend mode: NORMAL
+            hidden: false
+            censored: false
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+        [1] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_CREATE ok - 0 error(s)
+
+-- create group duplicate in inner group
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        2 child layer(s), 2 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+        [1] = {
+            type: group
+            id: 262
+            title: "Group 1 Copy"
+            opacity: 32768 (100.00%)
+            blend mode: NORMAL
+            hidden: false
+            censored: false
+            isolated: true
+            width: 16
+            height: 9
+            2 child layer(s), 2 child layer prop(s)
+            [0] = {
+                type: layer
+                id: 265
+                title: "Layer 2"
+                opacity: 32768 (100.00%)
+                blend mode: NORMAL
+                hidden: false
+                censored: false
+                isolated: false
+                width: 16
+                height: 9
+                0 sublayer(s), 0 sublayer prop(s)
+            }
+            [1] = {
+                type: group
+                id: 263
+                title: "Group 2"
+                opacity: 32768 (100.00%)
+                blend mode: NORMAL
+                hidden: false
+                censored: false
+                isolated: true
+                width: 16
+                height: 9
+                1 child layer(s), 1 child layer prop(s)
+                [0] = {
+                    type: layer
+                    id: 264
+                    title: "Copy of Layer 1"
+                    opacity: 32768 (100.00%)
+                    blend mode: MULTIPLY
+                    hidden: false
+                    censored: true
+                    isolated: false
+                    width: 16
+                    height: 9
+                    0 sublayer(s), 0 sublayer prop(s)
+                }
+            }
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_DELETE ok - 0 error(s)
+
+-- merge layer
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_DELETE ok - 0 error(s)
+
+-- merge group
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+}
+[1] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+
+-> DP_MSG_UNDO ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_DELETE ok - 0 error(s)
+
+-- delete layer in root
+1 layer(s), 1 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_DELETE ok - 0 error(s)
+
+-- delete nested layer
+1 layer(s), 1 layer prop(s)
+[0] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        0 child layer(s), 0 child layer prop(s)
+    }
+}
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_DELETE ok - 0 error(s)
+
+-- delete group
+0 layer(s), 0 layer prop(s)
+
+done testing

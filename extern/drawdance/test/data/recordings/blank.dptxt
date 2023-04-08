@@ -1,0 +1,11 @@
+!version=dp:4.21.2
+!writerversion=2.1.19
+
+1 resize bottom=600 right=800
+1 background color=#ffffff
+1 newlayer id=0x0102 {
+	title=Layer 1
+}
+1 layerattr blend=1 layer=0x0102 opacity=100.00
+1 featureaccess createannotation=guest laser=guest ownlayers=guest putimage=guest regionmove=guest undo=guest
+1 useracl

@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2022 askmeaboutloom
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  border: 0px none;
+  margin: 0;
+  padding: 0;
+  overflow: none;
+  overscroll-behavior: none; /* Disable pull to refresh on mobile. */
+}
+
+#main-row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+#canvas-column {
+  background-color: rgb(127, 127, 127);
+  padding: 0;
+}
+
+#canvas-dialog {
+  margin: 0;
+}
+
+#canvas {
+  display: block;
+}
+
+#fold-button {
+  background-color: #f7f7f7;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-right: none;
+  position: absolute;
+  right: 0;
+  z-index: 1;
+}
+
+/* Can't figure out how to get this to be a relative value, CSS is hard. */
+#rooms-table-height-limiter {
+  max-height: 300px;
+}
+
+#sidebar-column {
+  flex: 0 0 auto;
+  padding: 0;
+  width: 50%;
+}
+
+/* sm */
+@media (min-width: 576px) {
+  #sidebar-column {
+    width: 45%;
+  }
+}
+
+/* md */
+@media (min-width: 768px) {
+  #sidebar-column {
+    width: 40%;
+  }
+}
+
+/* lg */
+@media (min-width: 992px) {
+  #sidebar-column {
+    width: 35%;
+  }
+}
+
+/* xl */
+@media (min-width: 1200px) {
+  #sidebar-column {
+    width: 30%;
+  }
+}
+
+/* xxl */
+@media (min-width: 1400px) {
+  #sidebar-column {
+    width: 25%;
+  }
+}
+
+.header-logo {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+
+#chat-input {
+  resize: none;
+}
+
+.chat-message {
+  white-space: pre-line;
+}

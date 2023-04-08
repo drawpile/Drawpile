@@ -1,0 +1,191 @@
+#!/bin/bash
+# Copyright (c) 2022 - 2023 askmeaboutloom
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+set -e
+cd "$(dirname "$0")/.."
+
+if command -v ninja >/dev/null; then
+    GENERATOR='-G Ninja'
+fi
+
+preset_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          $GENERATOR \
+          -B build
+}
+
+preset_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
+          $GENERATOR \
+          -B buildrelease
+}
+
+preset_emscripten_debug() {
+    cmake -DCMAKE_TOOLCHAIN_FILE="cmake/emscripten.cmake" \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DUSE_GENERATORS=OFF \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_CLANG_TIDY=OFF \
+          -DLINK_WITH_LIBM=OFF \
+          -DBUILD_TESTS=OFF \
+          -DCMAKE_C_COMPILER="$(which emcc)" \
+          -DCMAKE_C_COMPILER_AR="$(which emar)" \
+          -DCMAKE_C_COMPILER_RANLIB="$(which emranlib)" \
+          -DCMAKE_CXX_COMPILER="$(which 'em++')" \
+          -DCMAKE_CXX_COMPILER_AR="$(which emar)" \
+          -DCMAKE_CXX_COMPILER_RANLIB="$(which emranlib)" \
+          $GENERATOR \
+          -B buildem
+}
+
+preset_emscripten_release() {
+    cmake -DCMAKE_TOOLCHAIN_FILE="cmake/emscripten.cmake" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DUSE_GENERATORS=OFF \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_CLANG_TIDY=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DLINK_WITH_LIBM=OFF \
+          -DBUILD_TESTS=OFF \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DCMAKE_C_COMPILER="$(which emcc)" \
+          -DCMAKE_C_COMPILER_AR="$(which emar)" \
+          -DCMAKE_C_COMPILER_RANLIB="$(which emranlib)" \
+          -DCMAKE_CXX_COMPILER="$(which 'em++')" \
+          -DCMAKE_CXX_COMPILER_AR="$(which emar)" \
+          -DCMAKE_CXX_COMPILER_RANLIB="$(which emranlib)" \
+          $GENERATOR \
+          -B buildemrelease
+}
+
+preset_drawpile_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DUSE_ADDRESS_SANITIZER=ON \
+          -DBUILD_APPS=OFF \
+          -DBUILD_TOOLS=ON \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
+          -DZIP_IMPL=KARCHIVE \
+          -DQT_VERSION=5 \
+          $GENERATOR \
+          -B builddp
+}
+
+preset_drawpile_relwithdebinfo() {
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_GENERATORS=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DBUILD_APPS=OFF \
+          -DBUILD_TOOLS=ON \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
+          -DZIP_IMPL=KARCHIVE \
+          -DQT_VERSION=5 \
+          $GENERATOR \
+          -B builddprelwithdebinfo
+}
+
+preset_drawpile_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_GENERATORS=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DBUILD_APPS=OFF \
+          -DBUILD_TOOLS=ON \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
+          -DZIP_IMPL=KARCHIVE \
+          -DQT_VERSION=5 \
+          $GENERATOR \
+          -B builddprelease
+}
+
+preset_drawpile_qt6_debug() {
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DUSE_ADDRESS_SANITIZER=ON \
+          -DBUILD_APPS=OFF \
+          -DBUILD_TOOLS=ON \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
+          -DZIP_IMPL=LIBZIP \
+          -DQT_VERSION=6 \
+          $GENERATOR \
+          -B builddpqt6
+}
+
+preset_drawpile_qt6_relwithdebinfo() {
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DUSE_GENERATORS=OFF \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DBUILD_APPS=OFF \
+          -DBUILD_TOOLS=ON \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
+          -DZIP_IMPL=LIBZIP \
+          -DQT_VERSION=6 \
+          $GENERATOR \
+          -B builddpqt6relwithdebinfo
+}
+
+preset_drawpile_qt6_release() {
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+          -DUSE_ADDRESS_SANITIZER=OFF \
+          -DUSE_STRICT_ALIASING=ON \
+          -DUSE_GENERATORS=OFF \
+          -DENABLE_ARCH_NATIVE=ON \
+          -DBUILD_APPS=OFF \
+          -DBUILD_TOOLS=ON \
+          -DFILE_IO_IMPL=QT \
+          -DXML_IMPL=QT \
+          -DZIP_IMPL=LIBZIP \
+          -DQT_VERSION=6 \
+          $GENERATOR \
+          -B builddpqt6release
+}
+
+if [ "$#" -ne 1 ] || [ "$(type -t "preset_$1")" != 'function' ]; then
+    echo "Usage: $0 $(perl -ne 'push @p, $1 if /^preset_(\w+)\(/; END { print join "|", @p }' "$BASH_SOURCE")" 1>&2
+    exit 2
+fi
+
+"preset_$1"

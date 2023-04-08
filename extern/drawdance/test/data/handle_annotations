@@ -1,0 +1,256 @@
+begin testing
+
+-- initial empty annotations
+0 annotation(s)
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_CREATE ok - 0 error(s)
+
+-- first annotation created
+1 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 1, 51, 101, 201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_CREATE fail - 1 error(s): Annotation create: id 257 already exists
+
+-- duplicate annotation id not created with error
+1 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 1, 51, 101, 201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_CREATE ok - 0 error(s)
+
+-- second annotation created
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 1, 51, 101, 201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO ok - 0 error(s)
+
+-- second annotation undone
+1 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 1, 51, 101, 201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO ok - 0 error(s)
+
+-- second annotation redone
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 1, 51, 101, 201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_RESHAPE ok - 0 error(s)
+
+-- first annotation reshaped
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 101, 151, 1101, 1201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_RESHAPE fail - 1 error(s): Annotation reshape: id 259 not found
+
+-- unknown annotation reshaped with error
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 101, 151, 1101, 1201
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_EDIT ok - 0 error(s)
+
+-- first annotation edited
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 101, 151, 1101, 1201
+    background_color = #ffffffff
+    protect = true
+    valign = center
+    text_length = 16
+    text = "first annotation"
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_EDIT ok - 0 error(s)
+
+-- first annotation edited with empty text
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 101, 151, 1101, 1201
+    background_color = #ffabcdef
+    protect = false
+    valign = bottom
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 0
+    text = ""
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_EDIT ok - 0 error(s)
+
+-- second annotation edited
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 101, 151, 1101, 1201
+    background_color = #ffabcdef
+    protect = false
+    valign = bottom
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 17
+    text = "second annotation"
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_EDIT fail - 1 error(s): Annotation edit: id 259 not found
+
+-- nonexistent annotation edited with error
+2 annotation(s)
+[0]
+    id = 257
+    x, y, w, h = 101, 151, 1101, 1201
+    background_color = #ffabcdef
+    protect = false
+    valign = bottom
+    text_length = 0
+    text = ""
+[1]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 17
+    text = "second annotation"
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_DELETE ok - 0 error(s)
+
+-- first annotation deleted
+1 annotation(s)
+[0]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 17
+    text = "second annotation"
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_DELETE fail - 1 error(s): Annotation delete: id 257 not found
+
+-- first annotation deleted again with error
+1 annotation(s)
+[0]
+    id = 258
+    x, y, w, h = 202, 202, 202, 202
+    background_color = #00000000
+    protect = false
+    valign = top
+    text_length = 17
+    text = "second annotation"
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_ANNOTATION_DELETE ok - 0 error(s)
+
+-- second annotation deleted
+0 annotation(s)
+
+done testing

@@ -1,0 +1,47 @@
+---
+BasedOnStyle: LLVM
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: Left
+AlignOperands: AlignAfterOperator
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Stroustrup
+DeriveLineEnding: false
+DerivePointerAlignment: false
+ForEachMacros:
+  - HASH_ITER
+IncludeCategories:
+  - Regex: '^"'
+    Priority: 1
+    SortPriority: 0
+    CaseSensitive: false
+  - Regex: '^<(dp[a-z]*)/'
+    Priority: 2
+    SortPriority: 0
+    CaseSensitive: false
+  # MyPaint helpers.h checks for definedness of M_PI, so it should come after
+  # inclusion of math.h. So we'll just put it at the end, it's fine there.
+  - Regex: '^<helpers.h>'
+    Priority: 4
+    SortPriority: 0
+    CaseSensitive: false
+  - Regex: '.*'
+    Priority: 3
+    SortPriority: 0
+    CaseSensitive: false
+IndentPPDirectives: AfterHash
+IndentWidth: 4
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Right
+SpaceBeforeParens: ControlStatementsExceptControlMacros
+UseCRLF: false
+UseTab: Never
+...
