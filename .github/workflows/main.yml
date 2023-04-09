@@ -72,7 +72,7 @@ jobs:
             # This causes the AppImage to be generated, instead of just creating
             # the portable tree, because there seems to be no way to separate
             # these steps with linuxdeploy
-            packager: VERSION=$(git describe --tags) cmake --install build --config RelWithDebInfo
+            packager: VERSION=$(git describe --tags) cmake --install build --config Release
 
           # Android common
           - os: ubuntu-latest
@@ -111,7 +111,7 @@ jobs:
               -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
               -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
               -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
-            packager: cmake --install build --config RelWithDebInfo --prefix .
+            packager: cmake --install build --config Release --prefix .
 
           # macOS common
           - os: macos-latest
@@ -120,7 +120,7 @@ jobs:
           # macOS Qt 5 (release)
           - os: macos-latest
             qt: 5.15.8
-            packager: cpack --config build/CPackConfig.cmake -C RelWithDebInfo
+            packager: cpack --config build/CPackConfig.cmake -C Release
 
           # Windows common
           - os: windows-latest
@@ -143,7 +143,7 @@ jobs:
             # search PATH to find DLLs
             packager: >
               cp .github/deps/other/bin/*.dll .github/deps/qt/bin &&
-              cpack --config build/CPackConfig.cmake -C RelWithDebInfo
+              cpack --config build/CPackConfig.cmake -C Release
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -214,7 +214,7 @@ jobs:
       - name: Generate project
         run: >
           cmake -S . -B build --log-level=VERBOSE
-          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER_LAUNCHER=sccache
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
           -DCLIENT=on
@@ -234,14 +234,14 @@ jobs:
           ${{ matrix.build_flags }}
 
       - name: Build project
-        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config RelWithDebInfo
+        run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config Release
         env:
           RUSTC_WRAPPER: sccache
           SCCACHE_CACHE_SIZE: 200M
           SCCACHE_DIR: ${{ steps.sccache.outputs.path }}/cache
 
       - name: Run C++ tests
-        run: ctest -C RelWithDebInfo --output-on-failure
+        run: ctest -C Release --output-on-failure
         working-directory: build
         if: '!matrix.cross_os'
 
