@@ -197,7 +197,7 @@ QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 			continue;
 
 		if(ls.iconName == "drawpile")
-			ls.icon = QIcon(":/icons/dancepile.png");
+			ls.icon = QIcon(":/icons/drawpile.png");
 		else if(!ls.iconName.isEmpty())
 			ls.icon = QIcon(iconPath + ls.iconName);
 

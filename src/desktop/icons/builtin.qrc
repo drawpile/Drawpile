@@ -2,6 +2,5 @@
     <qresource prefix="/icons">
         <file>drawpile.png</file>
         <file>censored.svg</file>
-        <file>dancepile.png</file>
     </qresource>
 </RCC>

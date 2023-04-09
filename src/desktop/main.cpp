@@ -55,7 +55,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setApplicationVersion(DRAWPILE_VERSION);
 	setApplicationDisplayName("Drawpile");
 #endif
-	setWindowIcon(QIcon(":/icons/dancepile.png"));
+	setWindowIcon(QIcon(":/icons/drawpile.png"));
 
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
@@ -234,7 +234,7 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 
 QString DrawpileApp::greeting()
 {
-	return QStringLiteral("is using Dancepile " DRAWPILE_VERSION " on Qt " QT_VERSION_STR " (%1) with %2.")
+	return QStringLiteral("is using Drawpile " DRAWPILE_VERSION " on Qt " QT_VERSION_STR " (%1) with %2.")
 		.arg(QSysInfo::prettyProductName()).arg(tabletinput::current());
 }
 

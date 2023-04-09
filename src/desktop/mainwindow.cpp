@@ -451,14 +451,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 #ifdef SINGLE_MAIN_WINDOW
 	app->deleteAllMainWindowsExcept(this);
 #endif
-
-	static bool warningShown;
-	if(!warningShown) {
-		warningShown = true;
-		QMessageBox::warning(this, tr("Dancepile Test Build"), tr(
-			"<p><strong>This is a development test build.</strong> Do <strong>not</strong> report problems in the official Drawpile issue tracker. Tell me about them on Discord or something instead.</p>"
-			"<p>This has not been fully tested. There are probably still bugs. The application icon is a ferret. Save often.</p>"));
-	}
 }
 
 MainWindow::~MainWindow()
