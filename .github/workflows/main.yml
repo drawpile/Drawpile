@@ -217,6 +217,8 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER_LAUNCHER=sccache
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+          -DCMAKE_OBJC_COMPILER_LAUNCHER=sccache
+          -DCMAKE_OBJCXX_COMPILER_LAUNCHER=sccache
           -DCLIENT=on
           -DSERVER=on
           -DSERVERGUI=on
