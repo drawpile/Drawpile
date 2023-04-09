@@ -62,4 +62,12 @@ add_feature_info("Automatic update checking code (VERSION_CHECK)" VERSION_CHECK 
 # Feature info will be emitted later once it is clear whether or not these
 # features could actually be enabled
 option(CLANG_TIDY "Automatically enable Clang-Tidy" ON)
-option(ADDRESS_SANITIZER "Automatically enable AddressSanitizer" OFF)
+foreach(sanitizer IN ITEMS Address Leak Memory Thread UndefinedBehavior)
+	if(sanitizer STREQUAL "UndefinedBehavior")
+		set(san_upper UNDEFINED)
+	else()
+		string(TOUPPER "${sanitizer}" san_upper)
+	endif()
+	option(${san_upper}_SANITIZER "Automatically enable ${sanitizer}Sanitizer" OFF)
+endforeach()
+unset(san_upper)

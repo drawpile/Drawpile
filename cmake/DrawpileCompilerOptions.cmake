@@ -144,24 +144,41 @@ unset(enabled_languages)
 unset(clang_tidy_exe)
 add_feature_info("Clang-Tidy (CLANG_TIDY)" CMAKE_CXX_CLANG_TIDY "${CMAKE_CXX_CLANG_TIDY}")
 
-if(ADDRESS_SANITIZER)
-	include(CheckLinkerFlag)
-	check_linker_flag(CXX "-fsanitize=address" HAVE_SANITIZE_ADDRESS)
-	if(HAVE_SANITIZE_ADDRESS)
-		# In at least CMake 3.19, `add_compile_options` flags are used by
-		# `try_compile` but `add_link_options` flags are not, so to prevent
-		# accidental failures of feature detection caused by ASan linker
-		# failures, explicitly set `CMAKE_EXE_LINKER_FLAGS` instead, which does
-		# get used by `try_compile`.
-		# Also, this variable is treated as a string, not a list, so using
-		# `list(APPEND)` would break the compiler.
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
-		add_compile_options(-fno-omit-frame-pointer -fsanitize=address)
+include(CheckLinkerFlag)
+foreach(sanitizer IN ITEMS Address Leak Memory Thread UndefinedBehavior)
+	if(sanitizer STREQUAL "UndefinedBehavior")
+		set(san_lower "undefined")
+		set(san_upper "UNDEFINED")
 	else()
-		set(ADDRESS_SANITIZER OFF)
+		string(TOLOWER ${sanitizer} san_lower)
+		string(TOUPPER ${sanitizer} san_upper)
 	endif()
-endif()
-add_feature_info("AddressSanitizer (ADDRESS_SANITIZER)" ADDRESS_SANITIZER "")
+
+	if(${san_upper}_SANITIZER)
+		check_linker_flag(CXX "-fsanitize=${san_lower}" HAVE_SANITIZE_${san_upper})
+		if(HAVE_SANITIZE_${san_upper})
+			# In at least CMake 3.19, `add_compile_options` flags are used by
+			# `try_compile` but `add_link_options` flags are not, so to prevent
+			# accidental failures of feature detection caused by ASan linker
+			# failures, explicitly set `CMAKE_EXE_LINKER_FLAGS` instead, which
+			# does get used by `try_compile`.
+			# Also, this variable is treated as a string, not a list, so using
+			# `list(APPEND)` would break the compiler.
+			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${san_lower}")
+			add_compile_options(-fsanitize=${san_lower})
+
+			if(sanitizer STREQUAL "Address")
+				set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fno-omit-frame-pointer")
+				add_compile_options(-fno-omit-frame-pointer)
+			endif()
+		else()
+			set(${san_upper}_SANITIZER OFF)
+		endif()
+	endif()
+	add_feature_info("${sanitizer}Sanitizer (${san_upper}_SANITIZER)" ${san_upper}_SANITIZER "")
+endforeach()
+unset(san_lower)
+unset(san_upper)
 
 #[[
 Disables compiler warnings for the given source files.
