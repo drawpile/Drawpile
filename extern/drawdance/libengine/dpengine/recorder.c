@@ -316,18 +316,21 @@ JSON_Value *DP_recorder_header(DP_Recorder *r)
     return r->header;
 }
 
-void DP_recorder_message_push_initial_inc(DP_Recorder *r, int count,
-                                          DP_Message *(*get)(void *, int),
-                                          void *user)
+void DP_recorder_message_push_initial_noinc(DP_Recorder *r,
+                                            DP_Message *(*get_next)(void *),
+                                            void *user)
 {
     DP_ASSERT(r);
-    DP_ASSERT(get);
+    DP_ASSERT(get_next);
     DP_Mutex *mutex = r->mutex;
     DP_Semaphore *sem = r->sem;
     DP_Queue *queue = &r->queue;
     DP_MUTEX_MUST_LOCK(mutex);
-    for (int i = 0; i < count; ++i) {
-        DP_message_queue_push_inc(queue, get(user, i));
+    int count = 0;
+    DP_Message *msg;
+    while ((msg = get_next(user))) {
+        DP_message_queue_push_noinc(queue, msg);
+        ++count;
     }
     DP_SEMAPHORE_MUST_POST_N(sem, count);
     DP_MUTEX_MUST_UNLOCK(mutex);
