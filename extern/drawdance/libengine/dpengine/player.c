@@ -728,7 +728,7 @@ static bool write_index_header(DP_BuildIndexContext *c)
     return DP_OUTPUT_WRITE_LITTLEENDIAN(
         c->output, DP_OUTPUT_BYTES(INDEX_MAGIC, INDEX_MAGIC_LENGTH),
         DP_OUTPUT_UINT16(INDEX_VERSION), DP_OUTPUT_UINT32(0),
-        DP_OUTPUT_UINT32(0));
+        DP_OUTPUT_UINT64(0));
 }
 
 static DP_BuildIndexTileMap *search_tile(DP_BuildIndexTileMap *tiles,
