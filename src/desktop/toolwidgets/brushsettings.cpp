@@ -10,9 +10,7 @@ extern "C" {
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/brushes/brush.h"
-#include "desktop/dialogs/inputsettings.h"
 
-#include "libclient/canvas/inputpresetmodel.h"
 #include "libclient/canvas/blendmodes.h"
 #include "ui_brushdock.h"
 
@@ -25,29 +23,18 @@ extern "C" {
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QPointer>
-#include <qapplication.h>
-#include <qglobal.h>
 
 namespace tools {
 
 static const int BRUSH_COUNT = 6; // Last is the dedicated eraser slot
 static const int ERASER_SLOT = 5; // Index of the dedicated erser slot
 
-namespace {
-	struct ToolSlot {
-		brushes::ActiveBrush brush;
-		QString inputPresetId;
-	};
-}
-
 struct BrushSettings::Private {
 	Ui_BrushDock ui;
-	QPointer<dialogs::InputSettings> inputSettingsDialog = nullptr;
-	input::PresetModel *presetModel;
 
 	QStandardItemModel *blendModes, *eraseModes;
 
-	ToolSlot toolSlots[BRUSH_COUNT];
+	brushes::ActiveBrush brushSlots[BRUSH_COUNT];
 	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
 	QWidget *brushSlotWidget = nullptr;
 
@@ -62,18 +49,11 @@ struct BrushSettings::Private {
 
 	inline brushes::ActiveBrush &currentBrush() {
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
-		return toolSlots[current].brush;
-	}
-
-	inline ToolSlot &currentTool() {
-		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
-		return toolSlots[current];
+		return brushSlots[current];
 	}
 
 	Private(BrushSettings *b)
 	{
-		presetModel = input::PresetModel::getSharedInstance();
-
 		blendModes = new QStandardItemModel(0, 1, b);
 		for(const canvas::blendmode::Named &m : canvas::blendmode::brushModeNames()) {
 			QStandardItem *item = new QStandardItem(m.name);
@@ -87,33 +67,6 @@ struct BrushSettings::Private {
 			item->setData(int(m.mode), Qt::UserRole);
 			eraseModes->appendRow(item);
 		}
-	}
-
-	void updateInputPresetUuid(ToolSlot &tool)
-	{
-		const input::Preset *preset = presetFor(tool);
-		if(!preset) {
-			preset = presetModel->at(0);
-			if(preset)
-				tool.inputPresetId = preset->id;
-		}
-	}
-
-	const input::Preset *currentPreset()
-	{
-		const input::Preset *p = presetFor(currentTool());
-		if(!p) {
-			if(presetModel->rowCount()>0) {
-				p = presetModel->at(0);
-				currentTool().inputPresetId = p->id;
-			}
-		}
-		return p;
-	}
-
-	const input::Preset *presetFor(const ToolSlot &tool)
-	{
-		return presetModel->searchPresetById(tool.inputPresetId);
 	}
 };
 
@@ -168,7 +121,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
-	d->ui.inputPreset->setModel(d->presetModel);
 
 	// The blend mode combo is ever so slightly higher than the buttons, so
 	// hiding it causes some jerking normally, so we'll tell it to retain its
@@ -176,21 +128,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	QSizePolicy blendmodeSizePolicy = d->ui.blendmode->sizePolicy();
 	blendmodeSizePolicy.setRetainSizeWhenHidden(true);
 	d->ui.blendmode->setSizePolicy(blendmodeSizePolicy);
-
-	connect(d->ui.configureInput, &QAbstractButton::clicked, [this, parent]() {
-		if(!d->inputSettingsDialog) {
-			d->inputSettingsDialog = new dialogs::InputSettings(parent);
-			d->inputSettingsDialog->setAttribute(Qt::WA_DeleteOnClose);
-			connect(d->inputSettingsDialog, &dialogs::InputSettings::activePresetModified,
-					this, &BrushSettings::emitPresetChanges);
-			connect(d->inputSettingsDialog, &dialogs::InputSettings::currentIndexChanged,
-					d->ui.inputPreset, &QComboBox::setCurrentIndex);
-			connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged),
-					d->inputSettingsDialog, &dialogs::InputSettings::setCurrentIndex);
-		}
-		d->inputSettingsDialog->setCurrentPreset(d->currentTool().inputPresetId);
-		d->inputSettingsDialog->show();
-	});
 
 	// Outside communication
 	connect(this, SIGNAL(pixelSizeChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -232,8 +169,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeLockAlpha, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 
-	connect(d->ui.inputPreset, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &BrushSettings::updateFromUi);
-
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
 	// UI elements and bring the docker to a reasonable size to begin with.
@@ -263,7 +198,7 @@ void BrushSettings::setShareBrushSlotColor(bool sameColor)
 	d->shareBrushSlotColor = sameColor;
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		d->brushSlotButton[i]->setColorSwatch(
-			sameColor ? QColor() : d->toolSlots[i].brush.qColor()
+			sameColor ? QColor() : d->brushSlots[i].qColor()
 		);
 	}
 }
@@ -320,8 +255,6 @@ void BrushSettings::selectBrushSlot(int i)
 	if(!d->shareBrushSlotColor)
 		emit colorChanged(d->currentBrush().qColor());
 
-	d->updateInputPresetUuid(d->currentTool());
-
 	updateUi();
 
 	if((previousSlot==ERASER_SLOT) != (i==ERASER_SLOT))
@@ -366,10 +299,10 @@ void BrushSettings::setEraserMode(bool erase)
 {
 	Q_ASSERT(!isCurrentEraserSlot());
 
-	ToolSlot &tool = d->currentTool();
-	brushes::ClassicBrush &classic = tool.brush.classic();
+	brushes::ActiveBrush &brush = d->currentBrush();
+	brushes::ClassicBrush &classic = brush.classic();
 	classic.erase = erase;
-	tool.brush.myPaint().brush().erase = erase;
+	brush.myPaint().brush().erase = erase;
 
 	if(!canvas::blendmode::isValidBrushMode(classic.brush_mode)) {
 		qWarning("setEraserMode(%d): wrong brush mode %d", erase, int(classic.brush_mode));
@@ -425,8 +358,7 @@ void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 void BrushSettings::selectBlendMode(int modeIndex)
 {
 	const DP_BlendMode mode = DP_BlendMode(d->ui.blendmode->model()->index(modeIndex,0).data(Qt::UserRole).toInt());
-	ToolSlot &tool = d->currentTool();
-	brushes::ClassicBrush &classic = tool.brush.classic();
+	brushes::ClassicBrush &classic = d->currentBrush().classic();
 	if(classic.erase) {
 		classic.erase_mode = mode;
 	} else {
@@ -443,8 +375,7 @@ void BrushSettings::updateUi()
 
 	d->updateInProgress = true;
 
-	const ToolSlot &tool = d->currentTool();
-	const brushes::ActiveBrush &brush = tool.brush;
+	const brushes::ActiveBrush &brush = d->currentBrush();
 	const brushes::ClassicBrush &classic = brush.classic();
 	const brushes::MyPaintBrush &myPaint = brush.myPaint();
 
@@ -504,8 +435,6 @@ void BrushSettings::updateUi()
 		(myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value + 2.0) * 100.0 + 0.5);
 	d->ui.gainBox->setValue(qRound(
 		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value * 100.0 + 0.5));
-	d->ui.slowTrackingBox->setValue(qRound(
-		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value * 10.0 + 0.5));
 	d->ui.modeLockAlpha->setChecked(myPaint.constBrush().lock_alpha);
 
 	if(mypaintmode) {
@@ -513,15 +442,12 @@ void BrushSettings::updateUi()
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value * 100.0 + 0.5));
 		d->ui.hardnessBox->setValue(qRound(
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value * 100.0 + 0.5));
+		d->ui.slowTrackingBox->setValue(qRound(
+			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value * 10.0));
 	} else {
 		d->ui.opacityBox->setValue(classic.opacity.max * 100.0 + 0.5);
 		d->ui.hardnessBox->setValue(classic.hardness.max * 100.0 + 0.5);
-	}
-
-	const int presetIndex = d->presetModel->searchIndexById(tool.inputPresetId);
-	if(presetIndex >= 0) {
-		d->ui.inputPreset->setCurrentIndex(presetIndex);
-		emitPresetChanges(d->presetModel->at(presetIndex));
+		d->ui.slowTrackingBox->setValue(classic.stabilizer * 100.0 + 0.5);
 	}
 
 	// Communicate the current size of the brush cursor to the outside. These
@@ -545,7 +471,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		return;
 
 	bool mypaintmode = d->ui.mypaintMode->isChecked();
-	d->currentTool().brush.setActiveType(
+	d->currentBrush().setActiveType(
 		mypaintmode ? brushes::ActiveBrush::MYPAINT : brushes::ActiveBrush::CLASSIC);
 
 	// Copy changes from the UI to the brush properties object,
@@ -584,8 +510,6 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		d->ui.radiusLogarithmicBox->value() / 100.0 - 2.0;
 	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value =
 		d->ui.gainBox->value() / 100.0;
-	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value =
-		d->ui.slowTrackingBox->value() / 10.0;
 	myPaint.brush().lock_alpha = d->ui.modeLockAlpha->isChecked();
 
 	// We want to keep MyPaint and classic brush opacity and hardness separate,
@@ -597,6 +521,8 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				d->ui.opacityBox->value() / 100.0;
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value =
 				d->ui.hardnessBox->value() / 100.0;
+			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value =
+				d->ui.slowTrackingBox->value() / 10.0;
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
@@ -604,10 +530,9 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			if(classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND) {
 				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
 			}
+			classic.stabilizer = d->ui.slowTrackingBox->value() / 100.0;
 		}
 	}
-
-	chooseInputPreset(d->ui.inputPreset->currentIndex());
 
 	d->ui.preview->setBrush(brush);
 
@@ -637,10 +562,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.colorpickupBox, !mypaintmode},
 		{d->ui.brushspacingBox, !mypaintmode},
 		{d->ui.gainBox, mypaintmode},
-		{d->ui.slowTrackingBox, mypaintmode},
-		{d->ui.inputPresetLabel, true},
-		{d->ui.inputPreset, true},
-		{d->ui.configureInput, true},
+		{d->ui.slowTrackingBox, true},
 	};
 	// First hide them all so that the docker doesn't end up bigger temporarily
 	// and messes up the layout. Then afterwards show the applicable ones.
@@ -660,36 +582,6 @@ void BrushSettings::pushSettings()
 	controller()->setActiveBrush(d->ui.preview->brush());
 }
 
-void BrushSettings::chooseInputPreset(int index)
-{
-	ToolSlot &tool = d->currentTool();
-	const input::Preset *preset = d->presetModel->at(index);
-	if(preset && tool.inputPresetId != preset->id) {
-		tool.inputPresetId = preset->id;
-		emitPresetChanges(preset);
-	}
-}
-
-void BrushSettings::emitPresetChanges(const input::Preset *preset)
-{
-	if(preset) {
-		emit smoothingChanged(preset->smoothing);
-		emit pressureMappingChanged(preset->curve);
-	}
-}
-
-int BrushSettings::getSmoothing() const
-{
-	const input::Preset *preset = d->currentPreset();
-	return preset ? preset->smoothing : 0;
-}
-
-PressureMapping BrushSettings::getPressureMapping() const
-{
-	const input::Preset *preset = d->currentPreset();
-	return preset ? preset->curve : PressureMapping{};
-}
-
 namespace toolprop {
 	static const ToolProperties::RangedValue<int>
 		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1}
@@ -704,12 +596,11 @@ ToolProperties BrushSettings::saveToolSettings()
 	cfg.setValue(toolprop::activeSlot, d->current);
 
 	for(int i=0;i<BRUSH_COUNT;++i) {
-		const ToolSlot &tool = d->toolSlots[i];
-		QJsonObject b = tool.brush.toJson();
+		const brushes::ActiveBrush &brush = d->brushSlots[i];
+		QJsonObject b = brush.toJson();
 
 		b["_slot"] = QJsonObject {
-			{"color", tool.brush.qColor().name()},
-			{"inputPresetId", tool.inputPresetId}
+			{"color", brush.qColor().name()},
 		};
 
 		cfg.setValue(
@@ -728,7 +619,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
 
 	for(int i=0;i<BRUSH_COUNT;++i) {
-		ToolSlot &tool = d->toolSlots[i];
+		brushes::ActiveBrush &brush = d->brushSlots[i];
 
 		const QJsonObject o = QJsonDocument::fromJson(
 			cfg.value(ToolProperties::Value<QByteArray> {
@@ -738,19 +629,18 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 			).object();
 		const QJsonObject s = o["_slot"].toObject();
 
-		tool.brush = brushes::ActiveBrush::fromJson(o);
+		brush = brushes::ActiveBrush::fromJson(o);
 		const auto color = QColor(s["color"].toString());
-		tool.brush.setQColor(color.isValid() ? color : Qt::black);
-		tool.inputPresetId = s["inputPresetId"].toString();
-		d->updateInputPresetUuid(tool);
+		brush.setQColor(color.isValid() ? color : Qt::black);
 
 		if(!d->shareBrushSlotColor)
-			d->brushSlotButton[i]->setColorSwatch(tool.brush.qColor());
+			d->brushSlotButton[i]->setColorSwatch(brush.qColor());
 	}
 
-	if(!d->toolSlots[ERASER_SLOT].brush.isEraser()) {
-		d->toolSlots[ERASER_SLOT].brush.classic().erase = true;
-		d->toolSlots[ERASER_SLOT].brush.myPaint().brush().erase = true;
+	brushes::ActiveBrush &eraser = d->brushSlots[ERASER_SLOT];
+	if(!eraser.isEraser()) {
+		eraser.classic().erase = true;
+		eraser.myPaint().brush().erase = true;
 	}
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
@@ -783,7 +673,7 @@ void BrushSettings::setForeground(const QColor& color)
 	if(color != d->currentBrush().qColor()) {
 		if(d->shareBrushSlotColor) {
 			for(int i=0;i<BRUSH_COUNT;++i)
-				d->toolSlots[i].brush.setQColor(color);
+				d->brushSlots[i].setQColor(color);
 
 		} else {
 			Q_ASSERT(d->current>=0 && d->current < BRUSH_COUNT);

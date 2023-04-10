@@ -296,7 +296,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 		m_view, &widgets::CanvasView::zoomToFit);
 
 	tools::BrushSettings *brushSettings = static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND));
-	connect(brushSettings, &tools::BrushSettings::pressureMappingChanged, m_view, &widgets::CanvasView::setPressureMapping);
 	connect(brushSettings, &tools::BrushSettings::brushSettingsDialogRequested, this, &MainWindow::showBrushSettingsDialog);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
@@ -372,8 +371,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 			m_doc->toolCtrl()->setActiveAnnotation(0);
 	});
 
-	connect(brushSettings, &tools::BrushSettings::smoothingChanged, m_doc->toolCtrl(), &tools::ToolController::setSmoothing);
-	m_doc->toolCtrl()->setSmoothing(brushSettings->getSmoothing());
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, m_view, &widgets::CanvasView::setToolCursor);
 	m_view->setToolCursor(m_doc->toolCtrl()->activeToolCursor());
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolCapabilitiesChanged, m_view, &widgets::CanvasView::setToolCapabilities);
@@ -890,21 +887,6 @@ void MainWindow::requestUserInfo(int userId)
 void MainWindow::sendUserInfo(int userId)
 {
 	net::Client *client = m_doc->client();
-	QString pressureMode;
-	switch(m_view->pressureMapping().mode) {
-	case PressureMapping::STYLUS:
-		pressureMode = "stylus";
-		break;
-	case PressureMapping::DISTANCE:
-		pressureMode = "distance";
-		break;
-	case PressureMapping::VELOCITY:
-		pressureMode = "velocity";
-		break;
-	default:
-		break;
-	}
-
 	QJsonObject info{
 		{"type", "user_info"},
 		{"app_version", cmake_config::version()},
@@ -915,7 +897,6 @@ void MainWindow::sendUserInfo(int userId)
 		{"tablet_mode", m_view->isTabletEnabled() ? "pressure" : "none"},
 		{"touch_mode", m_view->isTouchDrawEnabled() ? "draw"
 			: m_view->isTouchScrollEnabled() ? "scroll" : "none"},
-		{"pressure_mode", pressureMode},
 		{"smoothing", m_doc->toolCtrl()->smoothing()},
 	};
 	client->sendMessage(drawdance::Message::makeUserInfo(
@@ -3405,7 +3386,6 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
 	static_cast<tools::SelectionSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::SELECTION))->setView(m_view);
 	static_cast<tools::AnnotationSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::ANNOTATION))->setScene(m_canvasscene);
-	m_view->setPressureMapping(static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))->getPressureMapping());
 
 	// Create brush palette
 	m_dockBrushPalette = new docks::BrushPalette(this);

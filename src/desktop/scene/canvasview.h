@@ -4,7 +4,6 @@
 #define EDITORVIEW_H
 
 #include "libclient/canvas/canvasshortcuts.h"
-#include "libclient/canvas/pressure.h"
 #include "libclient/canvas/point.h"
 #include "libclient/tools/tool.h"
 #include "desktop/utils/qtguicompat.h"
@@ -135,9 +134,6 @@ public slots:
 	//! Send pointer position updates even when not drawing
 	void setPointerTracking(bool tracking);
 
-	const PressureMapping &pressureMapping() const { return m_pressuremapping; }
-	void setPressureMapping(const PressureMapping &mapping);
-
 	//! Increase/decrease zoom factor by this many steps
 	void zoomSteps(int steps);
 
@@ -201,8 +197,6 @@ private:
 	void touchPressEvent(const QPointF &pos);
 	void touchMoveEvent(const QPointF &pos);
 	void touchReleaseEvent(const QPointF &pos);
-
-	qreal mapPressure(qreal pressure, bool stylus);
 
 	enum class ViewDragMode {None, Prepared, Started};
 
@@ -279,9 +273,6 @@ private:
 	bool m_mirror; // Flip X axis
 
 	drawingboard::CanvasScene *m_scene;
-
-	// Input settings
-	PressureMapping m_pressuremapping;
 
 	int m_zoomWheelDelta;
 

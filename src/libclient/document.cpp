@@ -1006,4 +1006,8 @@ void Document::updateSettings()
 		paintEngine->setSnapshotMaxCount(snapshotMaxCount);
 		paintEngine->setSnapshotMinDelayMs(snapshotMinDelayMs);
 	}
+	if(m_toolctrl) {
+		QSettings cfg;
+		m_toolctrl->setSmoothing(cfg.value("settings/input/smooth").toInt());
+	}
 }

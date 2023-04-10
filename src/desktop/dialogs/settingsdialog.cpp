@@ -369,6 +369,7 @@ void SettingsDialog::restoreSettings()
 #endif
 	m_ui->twoFingerPinchCombo->setCurrentIndex(cfg.value("touchpinch", true).toBool() ? 1 : 0);
 	m_ui->twoFingerTwistCombo->setCurrentIndex(cfg.value("touchtwist", true).toBool() ? 1 : 0);
+	m_ui->smoothingSpinner->setValue(cfg.value("smooth", 0).toInt());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");
@@ -508,6 +509,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("touchscroll", m_ui->oneFingerTouchCombo->currentIndex() == 1);
 	cfg.setValue("touchpinch", m_ui->twoFingerPinchCombo->currentIndex() == 1);
 	cfg.setValue("touchtwist", m_ui->twoFingerTwistCombo->currentIndex() == 1);
+	cfg.setValue("smooth", m_ui->smoothingSpinner->value());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/recording");

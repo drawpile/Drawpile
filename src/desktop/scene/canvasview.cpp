@@ -480,11 +480,6 @@ void CanvasView::setPointerTracking(bool tracking)
 	}
 }
 
-void CanvasView::setPressureMapping(const PressureMapping &mapping)
-{
-	m_pressuremapping = mapping;
-}
-
 void CanvasView::onPenDown(const canvas::Point &p, bool right)
 {
 	if(m_scene->hasImage()) {
@@ -592,7 +587,7 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, 
 			m_penmode = penmode;
 			resetCursor();
 		}
-		onPenDown(mapToScene(pos, mapPressure(pressure, isStylus), xtilt, ytilt, rotation), button == Qt::RightButton);
+		onPenDown(mapToScene(pos, isStylus ? pressure : 1.0, xtilt, ytilt, rotation), button == Qt::RightButton);
 	}
 }
 
@@ -642,7 +637,7 @@ void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, q
 			if(m_pendown) {
 				m_pointervelocity = point.distance(m_prevpoint);
 				m_pointerdistance += m_pointervelocity;
-				point.setPressure(mapPressure(pressure, isStylus));
+				point.setPressure(isStylus ? pressure : 1.0);
 				CanvasShortcuts::ConstraintMatch match =
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				onPenMove(
@@ -1253,28 +1248,6 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 
 	return true;
-}
-
-qreal CanvasView::mapPressure(qreal pressure, bool stylus)
-{
-	switch(m_pressuremapping.mode) {
-	case PressureMapping::STYLUS:
-		return stylus ? m_pressuremapping.curve.value(pressure) : 1.0;
-
-	case PressureMapping::DISTANCE: {
-		const qreal scale = 10 + m_pressuremapping.param * 190.0;
-		return m_pressuremapping.curve.value(m_pointerdistance / scale);
-	}
-
-	case PressureMapping::VELOCITY: {
-		const qreal scale = 10 + m_pressuremapping.param * 90.0;
-		return m_pressuremapping.curve.value(m_pointervelocity / scale);
-	}
-	}
-
-	// Shouldn't be reached
-	Q_ASSERT(false);
-	return 0;
 }
 
 void CanvasView::updateOutline(canvas::Point point) {

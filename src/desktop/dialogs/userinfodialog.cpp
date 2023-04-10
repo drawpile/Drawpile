@@ -82,7 +82,6 @@ void UserInfoDialog::updateInfo(const QJsonObject &info)
 
 	QString tabletModeText;
 	QString touchModeText;
-	QString pressureModeText;
 	QString smoothingText;
 	if(!info.isEmpty()) {
 		QString touchMode = info["touch_mode"].toString();
@@ -105,17 +104,6 @@ void UserInfoDialog::updateInfo(const QJsonObject &info)
 			tabletModeText = tr("Unknown");
 		}
 
-		QString pressureMode = info["pressure_mode"].toString();
-		if(pressureMode == "stylus") {
-			pressureModeText = tr("Stylus");
-		} else if(pressureMode == "distance") {
-			pressureModeText = tr("Distance");
-		} else if(pressureMode == "velocity") {
-			pressureModeText = tr("Velocity");
-		} else {
-			pressureModeText = tr("Unknown");
-		}
-
 		int smoothing = info["smoothing"].toInt(-1);
 		if(smoothing >= 0) {
 			smoothingText = QString::number(smoothing);
@@ -126,7 +114,6 @@ void UserInfoDialog::updateInfo(const QJsonObject &info)
 
 	d->ui.tabletModeValue->setText(tabletModeText);
 	d->ui.touchModeValue->setText(touchModeText);
-	d->ui.pressureModeValue->setText(pressureModeText);
 	d->ui.smoothingValue->setText(smoothingText);
 }
 

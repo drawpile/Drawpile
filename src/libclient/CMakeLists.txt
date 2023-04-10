@@ -21,14 +21,11 @@ target_sources(dpclient PRIVATE
 	canvas/documentmetadata.h
 	canvas/indexbuilderrunnable.cpp
 	canvas/indexbuilderrunnable.h
-	canvas/inputpresetmodel.cpp
-	canvas/inputpresetmodel.h
 	canvas/layerlist.cpp
 	canvas/layerlist.h
 	canvas/paintengine.cpp
 	canvas/paintengine.h
 	canvas/point.h
-	canvas/pressure.h
 	canvas/selection.cpp
 	canvas/selection.h
 	canvas/timelinemodel.cpp

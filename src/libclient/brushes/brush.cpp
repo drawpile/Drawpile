@@ -34,6 +34,7 @@ ClassicBrush::ClassicBrush()
 		{0.0f, 1.0f, {}},
 		{0.0f, 0.0f, {}},
 		0.1f,
+		0.3f,
 		0,
 		{0.0f, 0.0f, 0.0f, 1.0f},
 		DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
@@ -114,6 +115,7 @@ QJsonObject ClassicBrush::toJson() const
 	o["smudgecurve"] = m_smudgeCurve.toString();
 
 	o["spacing"] = spacing;
+	o["stabilizer"] = stabilizer;
 	if(resmudge>0) o["resmudge"] = resmudge;
 
 	if(!incremental) o["indirect"] = true;
@@ -173,6 +175,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.updateCurve(b.m_smudgeCurve, b.smudge.curve);
 
 	b.spacing = o["spacing"].toDouble();
+	b.stabilizer = o["stabilizer"].toDouble(0.3);
 	b.resmudge = o["resmudge"].toInt();
 
 	b.incremental = !o["indirect"].toBool();
@@ -574,7 +577,7 @@ QPixmap ActiveBrush::presetThumbnail() const
 void ActiveBrush::setInBrushEngine(drawdance::BrushEngine &be, uint16_t layer, bool freehand) const
 {
 	if(m_activeType == CLASSIC) {
-		be.setClassicBrush(m_classic, layer);
+		be.setClassicBrush(m_classic, layer, freehand);
 	} else {
 		be.setMyPaintBrush(
 			m_myPaint.constBrush(), m_myPaint.constSettings(), layer, freehand);

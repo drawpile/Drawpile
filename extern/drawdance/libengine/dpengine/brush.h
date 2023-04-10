@@ -58,6 +58,7 @@ typedef struct DP_ClassicBrush {
     DP_ClassicBrushRange opacity;
     DP_ClassicBrushRange smudge;
     float spacing;
+    float stabilizer;
     int resmudge;
     DP_UPixelFloat color;
     DP_BrushShape shape;

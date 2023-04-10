@@ -3,7 +3,6 @@
 #ifndef TOOLSETTINGS_BRUSHES_H
 #define TOOLSETTINGS_BRUSHES_H
 
-#include "libclient/canvas/pressure.h"
 #include "desktop/toolwidgets/toolsettings.h"
 
 class QAction;
@@ -11,10 +10,6 @@ class QSpinBox;
 
 namespace brushes {
 	class ActiveBrush;
-}
-
-namespace input {
-	struct Preset;
 }
 
 namespace tools {
@@ -54,9 +49,6 @@ public:
 
 	void setShareBrushSlotColor(bool sameColor);
 
-	int getSmoothing() const;
-	PressureMapping getPressureMapping() const;
-
 	QWidget *getHeaderWidget() override;
 
 	bool isLocked() override;
@@ -73,8 +65,6 @@ signals:
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
-	void smoothingChanged(int smoothing);
-	void pressureMappingChanged(const PressureMapping &pressureMapping);
 	void pixelSizeChanged(int size);
 	void brushSettingsDialogRequested();
 
@@ -90,12 +80,10 @@ private slots:
 	void updateUi();
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
-	void chooseInputPreset(int index);
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
-	void emitPresetChanges(const input::Preset *preset);
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
 	struct Private;

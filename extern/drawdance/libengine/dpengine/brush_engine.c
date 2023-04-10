@@ -501,7 +501,8 @@ void DP_brush_engine_free(DP_BrushEngine *be)
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
-                                       int layer_id, DP_UPixelFloat color)
+                                       int layer_id, bool freehand,
+                                       DP_UPixelFloat color)
 {
     DP_ASSERT(be);
     DP_ASSERT(brush);
@@ -538,6 +539,12 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         }
     }
     be->classic.brush_color = color;
+
+    // The stabilizer interferes with automated drawing of lines, shapes et
+    // cetera, so we turn it off when it's not a living creature drawing.
+    if (!freehand) {
+        be->classic.brush.stabilizer = false;
+    }
 }
 
 void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
@@ -580,8 +587,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     be->mypaint.lock_alpha = brush->lock_alpha;
     be->mypaint.erase = brush->erase;
 
-    // Slow tracking interferes with automated drawing of lines, shapes et
-    // cetera, so we turn it off when it's not a living creature drawing.
+    // Slow tracking is MyPaint's stabilizer, see the note on classic brushes.
     if (!freehand) {
         mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING,
                                      0.0f);
@@ -831,7 +837,7 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
     float diff_x = x - last_x;
     float diff_y = y - last_y;
     float dist = hypotf(diff_x, diff_y);
-    if (dist >= 0.25f) {
+    if (dist >= 0.001f) {
         float dx = diff_x / dist;
         float dy = diff_y / dist;
         float last_pressure = be->classic.last_pressure;
@@ -863,8 +869,11 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
     }
 }
 
+// A function in mypaint-brush.c. Has external linkage, but is not in a header.
+extern float exp_decay(float, float);
+
 static void stroke_to_classic(
-    DP_BrushEngine *be, float x, float y, float pressure,
+    DP_BrushEngine *be, float x, float y, float pressure, long long delta_msec,
     void (*first_dab)(DP_BrushEngine *, DP_ClassicBrush *, float, float, float),
     void (*stroke)(DP_BrushEngine *, DP_ClassicBrush *, DP_LayerContent *,
                    float, float, float))
@@ -872,7 +881,24 @@ static void stroke_to_classic(
     DP_ClassicBrush *cb = &be->classic.brush;
     DP_LayerContent *lc = be->lc;
     if (be->in_progress) {
-        stroke(be, cb, lc, x, y, pressure);
+        float stabilizer = cb->stabilizer;
+        float stabilized_x, stabilized_y;
+        if (stabilizer >= 0.0f) {
+            float fac = 1.0f
+                      - exp_decay(cb->stabilizer * 10.0f,
+                                  DP_llong_to_float(delta_msec) / 10.0f);
+            float last_x = be->classic.last_x;
+            float last_y = be->classic.last_y;
+            stabilized_x = last_x + (x - last_x) * fac;
+            stabilized_y = last_y + (y - last_y) * fac;
+        }
+        else {
+            stabilized_x = x;
+            stabilized_y = y;
+        }
+        stroke(be, cb, lc, stabilized_x, stabilized_y, pressure);
+        be->classic.last_x = stabilized_x;
+        be->classic.last_y = stabilized_y;
     }
     else {
         be->in_progress = true;
@@ -890,9 +916,9 @@ static void stroke_to_classic(
             be->classic.smudge_distance = 0;
         }
         first_dab(be, cb, x, y, pressure);
+        be->classic.last_x = x;
+        be->classic.last_y = y;
     }
-    be->classic.last_x = x;
-    be->classic.last_y = y;
     be->classic.last_pressure = pressure;
 }
 
@@ -960,12 +986,14 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
     case DP_BRUSH_ENGINE_ACTIVE_PIXEL:
         DP_EVENT_LOG("stroke_to active=pixel x=%f y=%f pressure=%f", x, y,
                      pressure);
-        stroke_to_classic(be, x, y, pressure, first_dab_pixel, stroke_pixel);
+        stroke_to_classic(be, x, y, pressure, delta_msec, first_dab_pixel,
+                          stroke_pixel);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_SOFT:
         DP_EVENT_LOG("stroke_to active=soft x=%f y=%f pressure=%f", x, y,
                      pressure);
-        stroke_to_classic(be, x, y, pressure, first_dab_soft, stroke_soft);
+        stroke_to_classic(be, x, y, pressure, delta_msec, first_dab_soft,
+                          stroke_soft);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_MYPAINT:
         DP_EVENT_LOG("stroke_to active=mypaint x=%f y=%f pressure=%f xtilt=%f "

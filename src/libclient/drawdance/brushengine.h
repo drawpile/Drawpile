@@ -28,7 +28,8 @@ public:
     BrushEngine &operator=(const BrushEngine &) = delete;
     BrushEngine &operator=(BrushEngine &&) = delete;
 
-    void setClassicBrush(const DP_ClassicBrush &brush, int layerId);
+    void setClassicBrush(
+        const DP_ClassicBrush &brush, int layerId, bool freehand);
 
     void setMyPaintBrush(
         const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,

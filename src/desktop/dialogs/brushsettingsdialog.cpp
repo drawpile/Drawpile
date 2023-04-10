@@ -39,8 +39,11 @@ struct BrushSettingsDialog::Private {
 	QComboBox *paintModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
-	KisSliderSpinBox *spacingSpinner;
 	QCheckBox *lockAlphaBox;
+	KisSliderSpinBox *spacingSpinner;
+	QLabel *spacingExplanationLabel;
+	KisSliderSpinBox *stabilizerSpinner;
+	QLabel *stabilizerExplanationLabel;
 	KisSliderSpinBox *classicSizeSpinner;
 	QCheckBox *classicSizePressureBox;
 	KisSliderSpinBox *classicSizeMinSpinner;
@@ -103,13 +106,7 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 		d->categoryWidget->clear();
 		addCategory(
 			tr("General"), tr("Core brush settings."), d->generalPageIndex);
-		int brushTypeCount = d->brushTypeCombo->count();
-		for(int i = 0; i < brushTypeCount; ++i) {
-			if(d->brushTypeCombo->itemData(i).toInt() == shape) {
-				d->brushTypeCombo->setCurrentIndex(i);
-				break;
-			}
-		}
+		setComboBoxIndexByData(d->brushTypeCombo, int(shape));
 	}
 
 	switch(shape) {
@@ -143,6 +140,23 @@ void BrushSettingsDialog::categoryChanged(
 {
 	if(current) {
 		d->stackedWidget->setCurrentIndex(current->data(Qt::UserRole).toInt());
+	}
+}
+
+void BrushSettingsDialog::myPaintCategoryLinkActivated(const QString &link)
+{
+	bool ok;
+	int setting = link.toInt(&ok);
+	if(ok && setting >= 0 && setting < MYPAINT_BRUSH_SETTINGS_COUNT) {
+		int pageIndex = d->mypaintPageIndexes[setting];
+		int count = d->categoryWidget->count();
+		for(int i = 0; i < count; ++i) {
+			QListWidgetItem *item = d->categoryWidget->item(i);
+			if(item && item->data(Qt::UserRole).toInt() == pageIndex) {
+				d->categoryWidget->setCurrentRow(i);
+				break;
+			}
+		}
 	}
 }
 
@@ -185,10 +199,10 @@ void BrushSettingsDialog::buildDialogUi()
 	d->classicSmudgePageIndex =
 		d->stackedWidget->addWidget(buildClassicSmudgingPageUi());
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
-		if(shouldIncludeMyPaintSetting(setting)) {
-			d->mypaintPageIndexes[setting] =
-				d->stackedWidget->addWidget(buildMyPaintPageUi(setting));
-		}
+		d->mypaintPageIndexes[setting] =
+			shouldIncludeMyPaintSetting(setting)
+				? d->stackedWidget->addWidget(buildMyPaintPageUi(setting))
+				: -1;
 	}
 }
 
@@ -294,6 +308,13 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		emitChange();
 	});
 
+	d->lockAlphaBox = new QCheckBox{tr("Lock Alpha (Recolor Mode)"), widget};
+	layout->addRow(d->lockAlphaBox);
+	connect(d->lockAlphaBox, &QCheckBox::stateChanged, [this](int state) {
+		d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
+		emitChange();
+	});
+
 	d->spacingSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->spacingSpinner);
 	d->spacingSpinner->setRange(1, 999);
@@ -306,12 +327,56 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		});
 
-	d->lockAlphaBox = new QCheckBox{tr("Lock Alpha (Recolor Mode)"), widget};
-	layout->addRow(d->lockAlphaBox);
-	connect(d->lockAlphaBox, &QCheckBox::stateChanged, [this](int state) {
-		d->brush.myPaint().brush().lock_alpha = state != Qt::Unchecked;
-		emitChange();
-	});
+	d->spacingExplanationLabel = new QLabel{widget};
+	layout->addRow(d->spacingExplanationLabel);
+	d->spacingExplanationLabel->setWordWrap(true);
+	d->spacingExplanationLabel->setTextFormat(Qt::RichText);
+	d->spacingExplanationLabel->setText(
+		tr("<b>Spacing</b> settings for MyPaint brushes are found in "
+		   "<nobr><a href=\"%1\">%2</a></nobr>, "
+		   "<nobr><a href=\"%3\">%4</a></nobr> "
+		   "and <nobr><a href=\"%5\">%6</a><nobr>.")
+			.arg(int(MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS))
+			.arg(getMyPaintSettingTitle(
+				MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS))
+			.arg(int(MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS))
+			.arg(getMyPaintSettingTitle(
+				MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS))
+			.arg(int(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND))
+			.arg(
+				getMyPaintSettingTitle(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND)));
+	connect(
+		d->spacingExplanationLabel, &QLabel::linkActivated, this,
+		&BrushSettingsDialog::myPaintCategoryLinkActivated);
+
+	d->stabilizerSpinner = new KisSliderSpinBox{widget};
+	layout->addRow(d->stabilizerSpinner);
+	d->stabilizerSpinner->setRange(0, 100);
+	d->stabilizerSpinner->setPrefix(tr("Stabilizer: "));
+	d->stabilizerSpinner->setSuffix(tr("%"));
+	connect(
+		d->stabilizerSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		[this](int value) {
+			d->brush.classic().stabilizer = value / 100.0;
+			emitChange();
+		});
+
+	d->stabilizerExplanationLabel = new QLabel{widget};
+	layout->addRow(d->stabilizerExplanationLabel);
+	d->stabilizerExplanationLabel->setWordWrap(true);
+	d->stabilizerExplanationLabel->setTextFormat(Qt::RichText);
+	d->stabilizerExplanationLabel->setText(
+		tr("<b>Stabilizer</b> settings for MyPaint brushes are found in "
+		   "<nobr><a href=\"%1\">%2</a></nobr> and "
+		   "<nobr><a href=\"%3\">%4</a></nobr>.")
+			.arg(int(MYPAINT_BRUSH_SETTING_SLOW_TRACKING))
+			.arg(getMyPaintSettingTitle(MYPAINT_BRUSH_SETTING_SLOW_TRACKING))
+			.arg(int(MYPAINT_BRUSH_SETTING_SLOW_TRACKING_PER_DAB))
+			.arg(getMyPaintSettingTitle(
+				MYPAINT_BRUSH_SETTING_SLOW_TRACKING_PER_DAB)));
+	connect(
+		d->stabilizerExplanationLabel, &QLabel::linkActivated, this,
+		&BrushSettingsDialog::myPaintCategoryLinkActivated);
 
 	return scroll;
 }
@@ -664,21 +729,11 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 
 	d->brushModeLabel->setVisible(!classic.erase);
 	d->brushModeCombo->setVisible(!classic.erase);
-	for(int i = 0; i < d->brushModeCombo->count(); ++i) {
-		if(d->brushModeCombo->itemData(i).toInt() == classic.brush_mode) {
-			d->brushModeCombo->setCurrentIndex(i);
-			break;
-		}
-	}
+	setComboBoxIndexByData(d->brushModeCombo, int(classic.brush_mode));
 
 	d->eraseModeLabel->setVisible(classic.erase);
 	d->eraseModeCombo->setVisible(classic.erase);
-	for(int i = 0; i < d->eraseModeCombo->count(); ++i) {
-		if(d->eraseModeCombo->itemData(i).toInt() == classic.erase_mode) {
-			d->eraseModeCombo->setCurrentIndex(i);
-			break;
-		}
-	}
+	setComboBoxIndexByData(d->eraseModeCombo, int(classic.erase_mode));
 
 	d->eraseModeBox->setChecked(classic.erase);
 
@@ -686,6 +741,7 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->colorPickBox->setEnabled(
 		DP_classic_brush_blend_mode(&classic) != DP_BLEND_MODE_ERASE);
 	d->colorPickBox->setVisible(true);
+	d->lockAlphaBox->setVisible(false);
 
 	bool haveSmudge = classic.smudge.max > 0.0f;
 	d->paintModeCombo->setCurrentIndex(
@@ -695,9 +751,11 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->paintModeCombo->setVisible(true);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
+	d->stabilizerSpinner->setValue(classic.stabilizer * 100.0 + 0.5);
 	d->spacingSpinner->setVisible(true);
-
-	d->lockAlphaBox->setVisible(false);
+	d->spacingExplanationLabel->setVisible(false);
+	d->stabilizerSpinner->setVisible(true);
+	d->stabilizerExplanationLabel->setVisible(false);
 
 	d->classicSizeSpinner->setValue(classic.size.max);
 	d->classicSizePressureBox->setChecked(classic.size_pressure);
@@ -739,6 +797,9 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->paintModeLabel->setVisible(false);
 	d->paintModeCombo->setVisible(false);
 	d->spacingSpinner->setVisible(false);
+	d->spacingExplanationLabel->setVisible(true);
+	d->stabilizerSpinner->setVisible(false);
+	d->stabilizerExplanationLabel->setVisible(true);
 
 	d->eraseModeBox->setChecked(brush.erase);
 	d->lockAlphaBox->setChecked(brush.lock_alpha);
@@ -784,6 +845,17 @@ void BrushSettingsDialog::emitChange()
 	emit brushSettingsChanged(d->brush);
 }
 
+
+void BrushSettingsDialog::setComboBoxIndexByData(QComboBox *combo, int data)
+{
+	int count = combo->count();
+	for(int i = 0; i < count; ++i) {
+		if(combo->itemData(i).toInt() == data) {
+			combo->setCurrentIndex(i);
+			break;
+		}
+	}
+}
 
 bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 {

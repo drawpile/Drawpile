@@ -42,7 +42,8 @@ void DP_brush_engine_free(DP_BrushEngine *be);
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
-                                       int layer_id, DP_UPixelFloat color);
+                                       int layer_id, bool freehand,
+                                       DP_UPixelFloat color);
 
 void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        const DP_MyPaintBrush *brush,

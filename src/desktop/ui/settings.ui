@@ -25,7 +25,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Tablet and Touch</string>
+         <string>Input</string>
         </property>
        </item>
        <item>
@@ -549,6 +549,35 @@
                    <string>Rotate Canvas</string>
                   </property>
                  </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="smoothingGroup">
+              <property name="title">
+               <string>Smoothing</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_17">
+               <item>
+                <widget class="KisSliderSpinBox" name="smoothingSpinner">
+                 <property name="prefix">
+                  <string>Smoothing Level: </string>
+                 </property>
+                 <property name="maximum">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="smoothingDescription">
+                 <property name="text">
+                  <string>Makes all input smoother by averaging it. If you feel like you have to turn up the stabilizer on every brush, try turning this setting up instead.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
               </layout>

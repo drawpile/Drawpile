@@ -22,9 +22,9 @@ BrushEngine::~BrushEngine()
     DP_brush_engine_free(m_data);
 }
 
-void BrushEngine::setClassicBrush(const DP_ClassicBrush &brush, int layerId)
+void BrushEngine::setClassicBrush(const DP_ClassicBrush &brush, int layerId, bool freehand)
 {
-    DP_brush_engine_classic_brush_set(m_data, &brush, layerId, brush.color);
+    DP_brush_engine_classic_brush_set(m_data, &brush, layerId, freehand, brush.color);
 }
 
 void BrushEngine::setMyPaintBrush(

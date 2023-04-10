@@ -412,7 +412,7 @@ void render_brush_preview(
 static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
                                       DP_UPixelFloat color)
 {
-    DP_brush_engine_classic_brush_set(be, user, 1, color);
+    DP_brush_engine_classic_brush_set(be, user, 1, false, color);
 }
 
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,

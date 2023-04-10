@@ -8,6 +8,7 @@
 #include <dpengine/libmypaint/mypaint-brush-settings.h>
 #include <QDialog>
 
+class QComboBox;
 class QListWidgetItem;
 
 namespace dialogs {
@@ -27,6 +28,7 @@ public slots:
 
 private slots:
 	void categoryChanged(QListWidgetItem *current, QListWidgetItem *);
+	void myPaintCategoryLinkActivated(const QString &link);
 
 private:
 	struct Private;
@@ -52,6 +54,7 @@ private:
 	void updateMyPaintSettingPage(int setting);
 	void emitChange();
 
+	static void setComboBoxIndexByData(QComboBox *combo, int data);
 	static bool shouldIncludeMyPaintSetting(int setting);
 	static bool shouldIncludeMyPaintInput(int input);
 
