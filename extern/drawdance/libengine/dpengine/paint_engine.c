@@ -1716,9 +1716,11 @@ static void record_message(DP_PaintEngine *pe, DP_Message *msg,
                 restart_recording(pe);
             }
         }
-        else if (!DP_recorder_message_push_inc(r, msg)) {
-            DP_warn("Failed to push message to recorder: %s", DP_error());
-            DP_paint_engine_recorder_stop(pe);
+        else if (!DP_message_type_control(type)) {
+            if (!DP_recorder_message_push_inc(r, msg)) {
+                DP_warn("Failed to push message to recorder: %s", DP_error());
+                DP_paint_engine_recorder_stop(pe);
+            }
         }
     }
 }
