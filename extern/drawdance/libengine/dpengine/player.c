@@ -91,6 +91,12 @@ struct DP_Player {
     DP_PlayerIndex index;
 };
 
+struct DP_PlayerIndexEntrySnapshot {
+    DP_CanvasState *cs;
+    int message_count;
+    DP_Message *messages[];
+};
+
 
 static void player_index_dispose(DP_PlayerIndex *pi)
 {
@@ -678,11 +684,13 @@ typedef struct DP_BuildIndexMaps {
 
 typedef struct DP_BuildIndexEntryContext {
     DP_Output *output;
+    DP_CanvasHistory *ch;
     DP_CanvasState *cs;
     DP_DrawContext *dc;
     DP_BuildIndexMaps current;
     DP_BuildIndexMaps *last;
     struct {
+        size_t history;
         size_t layers;
         size_t background_tile;
         size_t snapshot;
@@ -728,6 +736,119 @@ static bool write_index_header(DP_BuildIndexContext *c)
         c->output, DP_OUTPUT_BYTES(INDEX_MAGIC, INDEX_MAGIC_LENGTH),
         DP_OUTPUT_UINT16(INDEX_VERSION), DP_OUTPUT_UINT32(0),
         DP_OUTPUT_UINT64(0));
+}
+
+unsigned char *get_message_buffer(void *user, size_t length)
+{
+    return DP_draw_context_pool_require(user, length);
+}
+
+static bool write_index_history_message(DP_BuildIndexEntryContext *e,
+                                        DP_Message *msg,
+                                        int *in_out_message_count)
+{
+    size_t length = DP_message_serialize(msg, false, get_message_buffer, e->dc);
+    if (length == 0) {
+        DP_error_set("Error serializing history message %d",
+                     *in_out_message_count + 1);
+        return true; // Not a fatal error.
+    }
+    else {
+        DP_Output *output = e->output;
+        bool ok = DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(length))
+               && DP_output_write(output, DP_draw_context_pool(e->dc), length);
+        if (ok) {
+            ++*in_out_message_count;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+static bool write_undo_depth_history_message(DP_BuildIndexEntryContext *e,
+                                             DP_CanvasHistorySnapshot *chs,
+                                             int *in_out_message_count)
+{
+    int undo_depth_limit =
+        DP_canvas_history_snapshot_history_undo_depth_limit(chs);
+    DP_Message *msg =
+        DP_msg_undo_depth_new(0, DP_int_to_uint8(undo_depth_limit));
+    bool ok = write_index_history_message(e, msg, in_out_message_count);
+    DP_message_decref(msg);
+    return ok;
+}
+
+static bool write_index_history(DP_BuildIndexEntryContext *e,
+                                DP_CanvasHistorySnapshot *chs,
+                                int *out_message_count)
+{
+    // Find the oldest canvas state in the history, since that's the one still
+    // potentially reachable by undos that will follow.
+    int entry_count = DP_canvas_history_snapshot_history_count(chs);
+    int first_entry_index = -1;
+    for (int i = 0; i < entry_count; ++i) {
+        const DP_CanvasHistoryEntry *entry =
+            DP_canvas_history_snapshot_history_entry_at(chs, i);
+        if (entry->state) {
+            // If this is a drawing command, it's already been applied to the
+            // canvas state. We don't want to play it back again in that case.
+            first_entry_index =
+                DP_message_type(entry->msg) == DP_MSG_UNDO_POINT ? i : i + 1;
+            e->cs = entry->state;
+            break;
+        }
+    }
+
+    if (first_entry_index == -1) {
+        DP_error_set("No canvas state in history");
+        return false;
+    }
+
+    bool error;
+    size_t offset = DP_output_tell(e->output, &error);
+    if (error) {
+        return false;
+    }
+
+    int message_count = 0;
+    if (!write_undo_depth_history_message(e, chs, &message_count)) {
+        return false;
+    }
+    // Write all done and undone messages, leave out gone ones.
+    for (int i = first_entry_index; i < entry_count; ++i) {
+        const DP_CanvasHistoryEntry *entry =
+            DP_canvas_history_snapshot_history_entry_at(chs, i);
+        DP_Undo undo = entry->undo;
+        if (undo == DP_UNDO_DONE || undo == DP_UNDO_UNDONE) {
+            if (!write_index_history_message(e, entry->msg, &message_count)) {
+                return false;
+            }
+        }
+    }
+    // Write an undo for every undone undo point we wrote. This should restore
+    // the history to effectively the same state, including undo information.
+    DP_Message *undo_msg = DP_msg_undo_new(0, 0, false);
+    for (int i = first_entry_index; i < entry_count; ++i) {
+        const DP_CanvasHistoryEntry *entry =
+            DP_canvas_history_snapshot_history_entry_at(chs, i);
+        DP_Message *msg = entry->msg;
+        bool is_undone_undo_point = entry->undo == DP_UNDO_UNDONE
+                                 && DP_message_type(msg) == DP_MSG_UNDO_POINT;
+        if (is_undone_undo_point) {
+            DP_message_context_id_set(undo_msg, DP_message_context_id(msg));
+            if (!write_index_history_message(e, undo_msg, &message_count)) {
+                DP_message_decref(undo_msg);
+                return false;
+            }
+        }
+    }
+    DP_message_decref(undo_msg);
+
+    e->offset.history = offset;
+    *out_message_count = message_count;
+    return true;
 }
 
 static DP_BuildIndexTileMap *search_tile(DP_BuildIndexTileMap *tiles,
@@ -1220,7 +1341,8 @@ static bool write_index_metadata(DP_BuildIndexEntryContext *e)
     return true;
 }
 
-static bool wite_index_canvas_state(DP_BuildIndexEntryContext *e)
+static bool write_index_canvas_state(DP_BuildIndexEntryContext *e,
+                                     int message_count)
 {
     DP_Output *output = e->output;
     bool error;
@@ -1234,6 +1356,8 @@ static bool wite_index_canvas_state(DP_BuildIndexEntryContext *e)
     if (!DP_OUTPUT_WRITE_LITTLEENDIAN(
             output, DP_OUTPUT_UINT32(DP_canvas_state_width(cs)),
             DP_OUTPUT_UINT32(DP_canvas_state_height(cs)),
+            DP_OUTPUT_UINT16(message_count),
+            DP_OUTPUT_UINT64(e->offset.history),
             DP_OUTPUT_UINT64(e->offset.background_tile),
             DP_OUTPUT_UINT64(e->current.timeline.offset),
             DP_OUTPUT_UINT64(e->current.metadata.offset),
@@ -1251,10 +1375,16 @@ static bool wite_index_canvas_state(DP_BuildIndexEntryContext *e)
 
 static bool write_index_snapshot(DP_BuildIndexEntryContext *e)
 {
-    bool ok = write_index_layers(e) && write_index_annotations(e)
+    DP_CanvasHistorySnapshot *chs = DP_canvas_history_snapshot_new(e->ch);
+    int message_count;
+    bool ok = write_index_history(e, chs, &message_count)
+           && write_index_layers(e) && write_index_annotations(e)
            && write_index_background_tile(e) && write_index_timeline(e)
-           && write_index_metadata(e) && wite_index_canvas_state(e);
+           && write_index_metadata(e)
+           && write_index_canvas_state(e, message_count);
+
     DP_free(e->annotation.buffer);
+    DP_canvas_history_snapshot_decref(chs);
     return ok;
 }
 
@@ -1357,14 +1487,15 @@ static void dispose_index_maps(DP_BuildIndexMaps *maps)
 static bool make_index_entry(DP_BuildIndexContext *c, long long message_index,
                              size_t message_offset)
 {
-    DP_CanvasState *cs = DP_canvas_history_compare_and_get(c->ch, NULL, NULL);
-    DP_BuildIndexEntryContext e = {
-        c->output, cs,
-        c->dc,     {NULL, NULL, NULL, {NULL, 0}, {NULL, 0}},
-        &c->last,  {0, 0, 0, 0},
-        {NULL, 0}};
+    DP_BuildIndexEntryContext e = {c->output,
+                                   c->ch,
+                                   NULL,
+                                   c->dc,
+                                   {NULL, NULL, NULL, {NULL, 0}, {NULL, 0}},
+                                   &c->last,
+                                   {0, 0, 0, 0, 0},
+                                   {NULL, 0}};
     bool ok = write_index_snapshot(&e) && write_index_thumbnail(&e);
-    DP_canvas_state_decref(cs);
     if (!ok) {
         dispose_index_maps(&e.current);
         return false;
@@ -1687,6 +1818,7 @@ typedef struct DP_ReadSnapshotContext {
     DP_DrawContext *dc;
     DP_TransientCanvasState *tcs;
     DP_ReadTileMap *tiles;
+    DP_PlayerIndexEntrySnapshot *snapshot;
 } DP_ReadSnapshotContext;
 
 struct DP_ReadSnapshotLayer {
@@ -2125,14 +2257,54 @@ static bool read_index_layers(DP_ReadSnapshotContext *c, size_t offset)
     }
 }
 
+static bool read_index_history(DP_ReadSnapshotContext *c, size_t offset,
+                               int message_count)
+{
+    DP_BufferedInput *input = c->input;
+    if (!DP_buffered_input_seek(input, offset)) {
+        return false;
+    }
+
+    DP_PlayerIndexEntrySnapshot *snapshot = DP_malloc(DP_FLEX_SIZEOF(
+        DP_PlayerIndexEntrySnapshot, messages, DP_int_to_size(message_count)));
+    snapshot->cs = NULL;
+    snapshot->message_count = message_count;
+    for (int i = 0; i < message_count; ++i) {
+        snapshot->messages[i] = NULL;
+    }
+    c->snapshot = snapshot;
+
+    for (int i = 0; i < message_count; ++i) {
+        size_t length;
+        bool ok = READ_INDEX(input, uint16, length)
+               && read_index_input(input, length);
+        if (!ok) {
+            return NULL;
+        }
+
+        DP_Message *msg = DP_message_deserialize_length(
+            input->buffer, length, length < 2 ? 0 : length - 2);
+        if (msg) {
+            snapshot->messages[i] = msg;
+        }
+        else {
+            DP_warn("Error deserializing history message %d", i);
+        }
+    }
+
+    return true;
+}
+
 static bool read_index_snapshot(DP_ReadSnapshotContext *c)
 {
     DP_BufferedInput *input = c->input;
     uint32_t width, height;
-    size_t background_tile_offset, timeline_offset, metadata_offset,
-        layers_offset;
-    int annotation_count;
+    size_t history_offset, background_tile_offset, timeline_offset,
+        metadata_offset, layers_offset;
+    int message_count, annotation_count;
     return READ_INDEX(input, uint32, width) && READ_INDEX(input, uint32, height)
+        && READ_INDEX(input, uint16, message_count)
+        && READ_INDEX_SIZE(input, history_offset)
         && READ_INDEX_SIZE(input, background_tile_offset)
         && READ_INDEX_SIZE(input, timeline_offset)
         && READ_INDEX_SIZE(input, metadata_offset)
@@ -2143,18 +2315,22 @@ static bool read_index_snapshot(DP_ReadSnapshotContext *c)
         && read_index_background_tile(c, background_tile_offset)
         && read_index_timeline(c, timeline_offset)
         && read_index_metadata(c, metadata_offset)
-        && read_index_layers(c, layers_offset);
+        && read_index_layers(c, layers_offset)
+        && read_index_history(c, history_offset, message_count);
 }
 
-DP_CanvasState *DP_player_index_entry_load(DP_Player *player,
-                                           DP_DrawContext *dc,
-                                           DP_PlayerIndexEntry entry)
+DP_PlayerIndexEntrySnapshot *
+DP_player_index_entry_load(DP_Player *player, DP_DrawContext *dc,
+                           DP_PlayerIndexEntry entry)
 {
     DP_ASSERT(player);
     size_t snapshot_offset = entry.snapshot_offset;
     DP_debug("Load snapshot from offset %zu", snapshot_offset);
     if (snapshot_offset == 0) {
-        return DP_canvas_state_new();
+        DP_PlayerIndexEntrySnapshot *snapshot = DP_malloc(sizeof(*snapshot));
+        snapshot->cs = DP_canvas_state_new();
+        snapshot->message_count = 0;
+        return snapshot;
     }
 
     DP_BufferedInput *input = &player->index.input;
@@ -2163,7 +2339,7 @@ DP_CanvasState *DP_player_index_entry_load(DP_Player *player,
     }
 
     DP_PERF_BEGIN_DETAIL(fn, "index_entry_load", "offset=%zu", snapshot_offset);
-    DP_ReadSnapshotContext c = {input, dc, NULL, NULL};
+    DP_ReadSnapshotContext c = {input, dc, NULL, NULL, NULL};
     bool ok = read_index_snapshot(&c);
 
     DP_ReadTileMap *tile_entry, *tile_tmp;
@@ -2173,18 +2349,54 @@ DP_CanvasState *DP_player_index_entry_load(DP_Player *player,
         DP_free(tile_entry);
     }
 
-    DP_CanvasState *cs;
     if (ok) {
         DP_transient_canvas_state_layer_routes_reindex(c.tcs, dc);
         DP_transient_canvas_state_timeline_cleanup(c.tcs);
-        cs = DP_transient_canvas_state_persist(c.tcs);
+        c.snapshot->cs = DP_transient_canvas_state_persist(c.tcs);
     }
     else {
         DP_transient_canvas_state_decref_nullable(c.tcs);
-        cs = NULL;
+        DP_player_index_entry_snapshot_free(c.snapshot);
+        c.snapshot = NULL;
     }
+
     DP_PERF_END(fn);
-    return cs;
+    return c.snapshot;
+}
+
+DP_CanvasState *DP_player_index_entry_snapshot_canvas_state_inc(
+    DP_PlayerIndexEntrySnapshot *snapshot)
+{
+    DP_ASSERT(snapshot);
+    return DP_canvas_state_incref(snapshot->cs);
+}
+
+int DP_player_index_entry_snapshot_message_count(
+    DP_PlayerIndexEntrySnapshot *snapshot)
+{
+    DP_ASSERT(snapshot);
+    return snapshot->message_count;
+}
+
+DP_Message *DP_player_index_entry_snapshot_message_at_inc(
+    DP_PlayerIndexEntrySnapshot *snapshot, int i)
+{
+    DP_ASSERT(snapshot);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(i < snapshot->message_count);
+    return DP_message_incref_nullable(snapshot->messages[i]);
+}
+
+void DP_player_index_entry_snapshot_free(DP_PlayerIndexEntrySnapshot *snapshot)
+{
+    if (snapshot) {
+        int message_count = snapshot->message_count;
+        for (int i = 0; i < message_count; ++i) {
+            DP_message_decref_nullable(snapshot->messages[i]);
+        }
+        DP_canvas_state_decref_nullable(snapshot->cs);
+        DP_free(snapshot);
+    }
 }
 
 

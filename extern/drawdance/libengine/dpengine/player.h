@@ -57,6 +57,8 @@ typedef struct DP_PlayerIndexEntry {
     size_t thumbnail_offset;
 } DP_PlayerIndexEntry;
 
+typedef struct DP_PlayerIndexEntrySnapshot DP_PlayerIndexEntrySnapshot;
+
 typedef bool (*DP_PlayerIndexShouldSnapshotFn)(void *user);
 typedef void (*DP_PlayerIndexProgressFn)(void *user, int percent);
 
@@ -103,9 +105,20 @@ size_t DP_player_index_entry_count(DP_Player *player);
 DP_PlayerIndexEntry DP_player_index_entry_search(DP_Player *player,
                                                  long long position);
 
-DP_CanvasState *DP_player_index_entry_load(DP_Player *player,
-                                           DP_DrawContext *dc,
-                                           DP_PlayerIndexEntry entry);
+DP_PlayerIndexEntrySnapshot *
+DP_player_index_entry_load(DP_Player *player, DP_DrawContext *dc,
+                           DP_PlayerIndexEntry entry);
+
+DP_CanvasState *DP_player_index_entry_snapshot_canvas_state_inc(
+    DP_PlayerIndexEntrySnapshot *snapshot);
+
+int DP_player_index_entry_snapshot_message_count(
+    DP_PlayerIndexEntrySnapshot *snapshot);
+
+DP_Message *DP_player_index_entry_snapshot_message_at_inc(
+    DP_PlayerIndexEntrySnapshot *snapshot, int i);
+
+void DP_player_index_entry_snapshot_free(DP_PlayerIndexEntrySnapshot *snapshot);
 
 DP_Image *DP_player_index_thumbnail_at(DP_Player *player, size_t index,
                                        bool *out_error);

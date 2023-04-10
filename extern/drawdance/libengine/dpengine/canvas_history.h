@@ -159,6 +159,9 @@ void DP_canvas_history_snapshot_decref_nullable(
 
 int DP_canvas_history_snapshot_refs(DP_CanvasHistorySnapshot *chs);
 
+int DP_canvas_history_snapshot_history_undo_depth_limit(
+    DP_CanvasHistorySnapshot *chs);
+
 int DP_canvas_history_snapshot_history_offset(DP_CanvasHistorySnapshot *chs);
 
 int DP_canvas_history_snapshot_history_count(DP_CanvasHistorySnapshot *chs);

@@ -105,6 +105,7 @@ struct DP_CanvasHistory {
 struct DP_CanvasHistorySnapshot {
     DP_Atomic refcount;
     struct {
+        int undo_depth_limit;
         int offset;
         int count;
         DP_CanvasHistoryEntry *entries;
@@ -709,10 +710,6 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch)
 void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
                                             DP_CanvasState *cs)
 {
-    // FIXME: This function is used for jumping around in recordings, but it's
-    // conceptually broken. It doesn't handle undos correctly, meaning after
-    // resetting the state, the undo stack will be empty and the undo depth
-    // limit will be in some stale state.
     HISTORY_DEBUG("Reset to state");
     dump_internal(ch, DP_DUMP_RESET);
     reset_to_state_noinc(ch, cs);
@@ -1596,7 +1593,7 @@ DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_new(DP_CanvasHistory *ch)
     DP_CanvasHistorySnapshot *chs = DP_malloc(sizeof(*chs));
     *chs = (DP_CanvasHistorySnapshot){
         DP_ATOMIC_INIT(1),
-        {ch->offset, ch->used, snapshot_history(ch)},
+        {ch->undo_depth_limit, ch->offset, ch->used, snapshot_history(ch)},
         {ch->fork.start, ch->fork.fallbehind,
          DP_size_to_int(ch->fork.queue.used), snapshot_fork(ch)}};
     return chs;
@@ -1651,6 +1648,14 @@ int DP_canvas_history_snapshot_refs(DP_CanvasHistorySnapshot *chs)
     DP_ASSERT(chs);
     DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
     return DP_atomic_get(&chs->refcount);
+}
+
+int DP_canvas_history_snapshot_history_undo_depth_limit(
+    DP_CanvasHistorySnapshot *chs)
+{
+    DP_ASSERT(chs);
+    DP_ASSERT(DP_atomic_get(&chs->refcount) > 0);
+    return chs->history.undo_depth_limit;
 }
 
 int DP_canvas_history_snapshot_history_offset(DP_CanvasHistorySnapshot *chs)

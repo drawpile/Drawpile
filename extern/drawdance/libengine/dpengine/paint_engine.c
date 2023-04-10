@@ -327,8 +327,6 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
         DP_canvas_history_reset_to_state_noinc(
             pe->ch, DP_msg_internal_reset_to_state_data(mi));
-        DP_canvas_history_undo_depth_limit_set(
-            pe->ch, DP_msg_internal_reset_to_state_undo_depth_limit(mi));
         break;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
         if (!DP_canvas_history_snapshot(pe->ch)) {
@@ -1307,20 +1305,34 @@ jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
         }
     }
 
-    DP_CanvasState *cs = DP_player_index_entry_load(player, dc, entry);
-    if (!cs) {
+    DP_PlayerIndexEntrySnapshot *snapshot =
+        DP_player_index_entry_load(player, dc, entry);
+    if (!snapshot) {
         DP_debug("Reading snapshot failed: %s", DP_error());
         push_playback(push_message, user, player_position);
         return DP_PLAYER_ERROR_INPUT;
     }
 
     if (!DP_player_seek(player, entry.message_index, entry.message_offset)) {
-        DP_canvas_state_decref(cs);
+        DP_player_index_entry_snapshot_free(snapshot);
         push_playback(push_message, user, player_position);
         return DP_PLAYER_ERROR_INPUT;
     }
 
+    DP_CanvasState *cs =
+        DP_player_index_entry_snapshot_canvas_state_inc(snapshot);
     push_message(user, DP_msg_internal_reset_to_state_new(0, cs));
+
+    int count = DP_player_index_entry_snapshot_message_count(snapshot);
+    for (int i = 0; i < count; ++i) {
+        DP_Message *msg =
+            DP_player_index_entry_snapshot_message_at_inc(snapshot, i);
+        if (msg) {
+            push_message(user, msg);
+        }
+    }
+
+    DP_player_index_entry_snapshot_free(snapshot);
     return skip_playback_forward(
         pe, exact ? target_position - entry.message_index : 0,
         PLAYBACK_STEP_MESSAGES, push_message, user);
