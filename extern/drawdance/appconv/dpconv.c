@@ -417,8 +417,7 @@ static void on_move_pointer(DP_UNUSED void *user,
 {
 }
 
-static void on_playback(void *user, DP_UNUSED long long position,
-                        DP_UNUSED int interval)
+static void on_playback(void *user, DP_UNUSED long long position)
 {
     DP_SEMAPHORE_MUST_POST(user);
 }
@@ -470,7 +469,7 @@ static int render_image(DP_ConvContext *c, DP_SaveImageType save_type)
         }
     }
 
-    msgs[fill++] = DP_msg_internal_playback_new(0, 0, 0);
+    msgs[fill++] = DP_msg_internal_playback_new(0, 0);
     flush_messages(pe, msgs, fill);
 
     DP_SEMAPHORE_MUST_WAIT(sem);

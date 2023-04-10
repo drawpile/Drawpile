@@ -62,7 +62,7 @@ DP_Message *DP_msg_internal_preview_new(unsigned int context_id, int type,
 DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id);
 
 DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
-                                         long long position, int interval);
+                                         long long position);
 
 DP_Message *DP_msg_internal_dump_playback_new(unsigned int context_id,
                                               long long position);
@@ -85,8 +85,6 @@ int DP_msg_internal_preview_type(DP_MsgInternal *mi);
 void *DP_msg_internal_preview_data(DP_MsgInternal *mi);
 
 long long DP_msg_internal_playback_position(DP_MsgInternal *mi);
-
-int DP_msg_internal_playback_interval(DP_MsgInternal *mi);
 
 long long DP_msg_internal_dump_playback_position(DP_MsgInternal *mi);
 

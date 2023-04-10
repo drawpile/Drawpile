@@ -43,8 +43,7 @@ typedef struct DP_TransientLayerContent DP_TransientLayerContent;
 typedef struct DP_LayerContent DP_TransientLayerContent;
 #endif
 
-typedef void (*DP_PaintEnginePlaybackFn)(void *user, long long position,
-                                         int interval);
+typedef void (*DP_PaintEnginePlaybackFn)(void *user, long long position);
 typedef void (*DP_PaintEngineDumpPlaybackFn)(void *user, long long position,
                                              DP_CanvasHistorySnapshot *chs);
 typedef void (*DP_PaintEngineAclsChangedFn)(void *user, int acl_change_flags);
@@ -147,6 +146,14 @@ DP_PlayerResult DP_paint_engine_playback_skip_by(
 DP_PlayerResult DP_paint_engine_playback_jump_to(
     DP_PaintEngine *pe, DP_DrawContext *dc, long long position,
     DP_PaintEnginePushMessageFn push_message, void *user);
+
+DP_PlayerResult
+DP_paint_engine_playback_begin(DP_PaintEngine *pe);
+
+DP_PlayerResult
+DP_paint_engine_playback_play(DP_PaintEngine *pe, long long msecs,
+                              DP_PaintEnginePushMessageFn push_message,
+                              void *user);
 
 bool DP_paint_engine_playback_index_build(
     DP_PaintEngine *pe, DP_DrawContext *dc,

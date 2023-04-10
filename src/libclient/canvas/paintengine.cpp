@@ -395,6 +395,19 @@ DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position)
 	return result;
 }
 
+DP_PlayerResult PaintEngine::beginPlayback()
+{
+	return m_paintEngine.beginPlayback();
+}
+
+DP_PlayerResult PaintEngine::playPlayback(long long msecs)
+{
+	drawdance::MessageList msgs;
+	DP_PlayerResult result = m_paintEngine.playPlayback(msecs, msgs);
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
+	return result;
+}
+
 bool PaintEngine::buildPlaybackIndex(
 	drawdance::PaintEngine::BuildIndexProgressFn progressFn)
 {
@@ -587,10 +600,10 @@ QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
 }
 
 
-void PaintEngine::onPlayback(void *user, long long position, int interval)
+void PaintEngine::onPlayback(void *user, long long position)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->playbackAt(position, interval);
+	emit pe->playbackAt(position);
 }
 
 void PaintEngine::onDumpPlayback(

@@ -50,7 +50,6 @@ typedef struct DP_MsgInternalPreview {
 typedef struct DP_MsgInternalPlayback {
     DP_MsgInternal parent;
     long long position;
-    int interval;
 } DP_MsgInternalPlayback;
 
 typedef struct DP_MsgInternalDumpPlayback {
@@ -175,14 +174,13 @@ DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id)
 }
 
 DP_Message *DP_msg_internal_playback_new(unsigned int context_id,
-                                         long long position, int interval)
+                                         long long position)
 {
     DP_Message *msg =
         msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_PLAYBACK,
                          sizeof(DP_MsgInternalPlayback));
     DP_MsgInternalPlayback *mip = DP_message_internal(msg);
     mip->position = position;
-    mip->interval = interval;
     return msg;
 }
 
@@ -260,13 +258,6 @@ long long DP_msg_internal_playback_position(DP_MsgInternal *mi)
     DP_ASSERT(mi);
     DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PLAYBACK);
     return ((DP_MsgInternalPlayback *)mi)->position;
-}
-
-int DP_msg_internal_playback_interval(DP_MsgInternal *mi)
-{
-    DP_ASSERT(mi);
-    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PLAYBACK);
-    return ((DP_MsgInternalPlayback *)mi)->interval;
 }
 
 long long DP_msg_internal_dump_playback_position(DP_MsgInternal *mi)

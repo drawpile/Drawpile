@@ -231,6 +231,17 @@ DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position, MessageList &out
 		m_data, drawContext.get(), position, PaintEngine::pushMessage, &outMsgs);
 }
 
+DP_PlayerResult PaintEngine::beginPlayback()
+{
+	return DP_paint_engine_playback_begin(m_data);
+}
+
+DP_PlayerResult PaintEngine::playPlayback(long long msecs, MessageList &outMsgs)
+{
+	return DP_paint_engine_playback_play(
+		m_data, msecs, PaintEngine::pushMessage, &outMsgs);
+}
+
 namespace {
 
 struct BuildIndexParams {

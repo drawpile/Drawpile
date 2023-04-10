@@ -96,6 +96,8 @@ public:
 	DP_PlayerResult stepPlayback(long long steps, MessageList &outMsgs);
 	DP_PlayerResult skipPlaybackBy(long long steps, MessageList &outMsgs);
 	DP_PlayerResult jumpPlaybackTo(long long position, MessageList &outMsgs);
+	DP_PlayerResult beginPlayback();
+	DP_PlayerResult playPlayback(long long msecs, MessageList &outMsgs);
 	bool buildPlaybackIndex(BuildIndexProgressFn progressFn);
 	bool loadPlaybackIndex();
 	unsigned int playbackIndexMessageCount();

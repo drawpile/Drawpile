@@ -10,6 +10,7 @@
 #include "libclient/export/videoexporter.h"
 
 #include "desktop/mainwindow.h"
+#include "libclient/utils/icon.h"
 
 #include "ui_playback.h"
 
@@ -26,9 +27,8 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	QDialog(parent), m_ui(new Ui_PlaybackDialog),
 	m_paintengine(canvas->paintEngine()),
 	m_index(nullptr),
-	m_speedFactor(1.0),
-	m_intervalAfterExport(0),
-	m_autoplay(false), m_awaiting(false)
+	m_speed(1.0),
+	m_autoplay(false), m_awaiting(false), m_exporting(false)
 {
 	setWindowTitle(tr("Playback"));
 	setWindowFlags(Qt::Tool);
@@ -43,20 +43,15 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent) :
 	connect(m_ui->buildIndexButton, &QAbstractButton::clicked, this, &PlaybackDialog::onBuildIndexClicked);
 	connect(m_ui->configureExportButton, &QAbstractButton::clicked, this, &PlaybackDialog::onVideoExportClicked);
 
-	// Step timer is used to limit playback speed
-	m_autoStepTimer = new QTimer(this);
-	m_autoStepTimer->setSingleShot(true);
-	connect(m_autoStepTimer, &QTimer::timeout, this, &PlaybackDialog::stepNext);
+	m_playTimer = new QTimer{this};
+	m_playTimer->setTimerType(Qt::PreciseTimer);
+	m_playTimer->setSingleShot(false);
+	m_playTimer->setInterval(1000.0 / 60.0);
+	connect(m_playTimer, &QTimer::timeout, this, &PlaybackDialog::playNext);
 
-	connect(m_ui->speedcontrol, &QAbstractSlider::valueChanged, this, [this](int speed) {
-		qreal s;
-		if(speed<=100)
-			s = qMax(1, speed) / 100.0;
-		else
-			s = 1.0 + ((speed-100) / 100.0) * 8.0;
-
-		m_speedFactor = 1.0 / s;
-		m_ui->speedLabel->setText(QString("x %1").arg(s, 0, 'f', 1));
+	m_ui->speedSpinner->setExponentRatio(3.0);
+	connect(m_ui->speedSpinner, &KisDoubleSliderSpinBox::valueChanged, this, [this](qreal speed) {
+		m_speed = speed / 100.0;
 	});
 
 	// The paint engine's playback callback lets us know when the step/sequence
@@ -105,7 +100,7 @@ PlaybackDialog::~PlaybackDialog()
  *
  * We can now automatically step forward again
  */
-void PlaybackDialog::onPlaybackAt(long long pos, int interval)
+void PlaybackDialog::onPlaybackAt(long long pos)
 {
 	m_awaiting = false;
 	if(pos < 0) {
@@ -128,25 +123,18 @@ void PlaybackDialog::onPlaybackAt(long long pos, int interval)
 	}
 
 	if(pos>=0 && m_exporter && m_ui->autoSaveFrame->isChecked()) {
-		const int writeFrames = qBound(1, int(interval / 1000.0 * m_exporter->fps()), m_exporter->fps());
-		m_intervalAfterExport = interval;
-		exportFrame(writeFrames);
-
-		// Note: autoStepNext will be called  when the exporter becomes ready again.
-
-	} else if(pos>=0 && m_autoplay) {
-		autoStepNext(interval);
+		exportFrame(1);
 	}
 }
 
-void PlaybackDialog::autoStepNext(int interval)
+void PlaybackDialog::playNext()
 {
-	if(interval > 0) {
-		const auto elapsed = m_lastInterval.elapsed();
-		m_lastInterval.restart();
-		m_autoStepTimer->start(qMax(0.0f, qMin(interval, 5000) * m_speedFactor - elapsed));
-	} else {
-		m_autoStepTimer->start(33.0 * m_speedFactor);
+	if(!m_awaiting && !m_exporting) {
+		long long elapsed = m_lastFrameTime.restart();
+		m_awaiting = true;
+		if(m_paintengine->playPlayback(elapsed * m_speed) != DP_PLAYER_SUCCESS) {
+			qWarning("Error playing next: %s", DP_error());
+		}
 	}
 }
 
@@ -229,23 +217,20 @@ void PlaybackDialog::centerOnParent()
 
 bool PlaybackDialog::isPlaying() const
 {
-	return m_ui->play->isChecked();
+	return m_autoplay;
 }
 
 void PlaybackDialog::setPlaying(bool playing)
 {
-	m_ui->play->setChecked(playing);
-	if(playing)
-		m_lastInterval.restart();
-	else
-		m_autoStepTimer->stop();
-
-	m_autoplay = playing;
-	if(playing && !m_awaiting) {
-		m_awaiting = true;
-		if(m_paintengine->stepPlayback(1)) {
-			qWarning("Error stepping next: %s", DP_error());
-		}
+	m_autoplay = playing && m_paintengine->beginPlayback() == DP_PLAYER_SUCCESS;
+	m_ui->play->setChecked(m_autoplay);
+	m_ui->play->setIcon(icon::fromTheme(
+		m_autoplay ? "media-playback-pause" : "media-playback-start"));
+	if(m_autoplay) {
+		m_lastFrameTime.restart();
+		m_playTimer->start();
+	} else {
+		m_playTimer->stop();
 	}
 }
 
@@ -293,11 +278,15 @@ void PlaybackDialog::onVideoExportClicked()
 	m_ui->exportStack->setCurrentIndex(0);
 	m_ui->saveFrame->setEnabled(true);
 	connect(m_exporter, &VideoExporter::exporterFinished, this, [this]() {
+		m_exporting = false;
+		setPlaying(false);
 		m_ui->exportStack->setCurrentIndex(1);
 	});
 	connect(m_exporter, &VideoExporter::exporterFinished, m_exporter, &VideoExporter::deleteLater);
 
 	connect(m_exporter, &VideoExporter::exporterError, this, [this](const QString &msg) {
+		m_exporting = false;
+		setPlaying(false);
 		QMessageBox::warning(this, tr("Video error"), msg);
 	});
 
@@ -305,14 +294,9 @@ void PlaybackDialog::onVideoExportClicked()
 	connect(m_ui->stopExport, &QAbstractButton::clicked, m_exporter, &VideoExporter::finish);
 
 	connect(m_exporter, &VideoExporter::exporterReady, this, [this]() {
+		m_exporting = false;
 		m_ui->saveFrame->setEnabled(true);
 		m_ui->frameLabel->setText(QString::number(m_exporter->frame()));
-
-		// When exporter is active, autoplay step isn't taken immediately when
-		// the sequence point is received, because exporting is/can be asynchronous.
-		// We must wait for the exporter to become ready again until taking the next step.
-		if(m_autoplay)
-			autoStepNext(m_intervalAfterExport);
 	});
 }
 
@@ -327,6 +311,7 @@ void PlaybackDialog::exportFrame(int count)
 		return;
 	}
 
+	m_exporting = true;
 	m_ui->saveFrame->setEnabled(false);
 	m_exporter->saveFrame(image, count);
 }

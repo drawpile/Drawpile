@@ -22,101 +22,104 @@
    </property>
    <item>
     <layout class="QHBoxLayout">
-     <property name="leftMargin">
-      <number>6</number>
-     </property>
-     <property name="rightMargin">
-      <number>6</number>
-     </property>
      <item>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="QToolButton" name="skipBackward">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Skip backward</string>
-         </property>
-         <property name="icon">
-          <iconset theme="media-skip-backward">
-           <normaloff>theme:media-skip-backward.svg</normaloff>theme:media-skip-backward.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="play">
-         <property name="toolTip">
-          <string>Play</string>
-         </property>
-         <property name="icon">
-          <iconset theme="media-playback-start">
-           <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>42</width>
-           <height>42</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="stepForward">
-         <property name="toolTip">
-          <string>Step</string>
-         </property>
-         <property name="icon">
-          <iconset theme="media-seek-forward">
-           <normaloff>theme:media-seek-forward.svg</normaloff>theme:media-seek-forward.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="skipForward">
-         <property name="toolTip">
-          <string>Skip stroke</string>
-         </property>
-         <property name="icon">
-          <iconset theme="media-skip-forward">
-           <normaloff>theme:media-skip-forward.svg</normaloff>theme:media-skip-forward.svg</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="skipBackward">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Skip backward</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-skip-backward">
+         <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="play">
+       <property name="toolTip">
+        <string>Play</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-playback-start">
+         <normaloff>theme:media-playback-start.svg</normaloff>theme:media-playback-start.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>42</width>
+         <height>42</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="stepForward">
+       <property name="toolTip">
+        <string>Step</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-seek-forward">
+         <normaloff>theme:media-seek-forward.svg</normaloff>theme:media-seek-forward.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="skipForward">
+       <property name="toolTip">
+        <string>Skip stroke</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-skip-forward">
+         <normaloff>theme:media-skip-forward.svg</normaloff>theme:media-skip-forward.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer>
@@ -125,68 +128,35 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item>
-      <layout class="QGridLayout">
-       <item row="0" column="0" rowspan="2">
-        <widget class="QDial" name="speedcontrol">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>200</number>
-         </property>
-         <property name="value">
-          <number>100</number>
-         </property>
-         <property name="notchTarget">
-          <double>25.000000000000000</double>
-         </property>
-         <property name="notchesVisible">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel">
-         <property name="text">
-          <string>Speed:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="speedLabel">
-         <property name="text">
-          <string notr="true">x1.0</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="KisDoubleSliderSpinBox" name="speedSpinner">
+     <property name="prefix">
+      <string>Playback Speed: </string>
+     </property>
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>10000.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>100.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QStackedWidget" name="indexStack">
@@ -317,7 +287,7 @@ border-right: 2px solid black;
        <property name="currentIndex">
         <number>1</number>
        </property>
-       <widget class="QWidget">
+       <widget class="QWidget" name="page">
         <layout class="QHBoxLayout">
          <property name="leftMargin">
           <number>0</number>
@@ -464,6 +434,11 @@ border-right: 2px solid black;
    <class>widgets::Filmstrip</class>
    <extends>QWidget</extends>
    <header>desktop/widgets/filmstrip.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KisDoubleSliderSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

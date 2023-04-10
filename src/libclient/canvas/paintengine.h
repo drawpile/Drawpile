@@ -189,6 +189,8 @@ public:
 	DP_PlayerResult stepPlayback(long long steps);
 	DP_PlayerResult skipPlaybackBy(long long steps);
 	DP_PlayerResult jumpPlaybackTo(long long position);
+	DP_PlayerResult beginPlayback();
+	DP_PlayerResult playPlayback(long long msecs);
 	bool
 	buildPlaybackIndex(drawdance::PaintEngine::BuildIndexProgressFn progressFn);
 	bool loadPlaybackIndex();
@@ -217,7 +219,7 @@ signals:
 	void layersChanged(const drawdance::LayerPropsList &lpl);
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
-	void playbackAt(long long pos, int interval);
+	void playbackAt(long long pos);
 	void
 	dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
 	void caughtUpTo(int progress);
@@ -235,7 +237,7 @@ protected:
 	void timerEvent(QTimerEvent *) override;
 
 private:
-	static void onPlayback(void *user, long long position, int interval);
+	static void onPlayback(void *user, long long position);
 	static void onDumpPlayback(
 		void *user, long long position, DP_CanvasHistorySnapshot *chs);
 	static void onAclsChanged(void *user, int aclChangeFlags);

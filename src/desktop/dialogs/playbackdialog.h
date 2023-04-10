@@ -38,9 +38,9 @@ protected:
 	void keyPressEvent(QKeyEvent *) override;
 
 private slots:
-	void onPlaybackAt(long long pos, int interval);
+	void onPlaybackAt(long long pos);
+	void playNext();
 	void stepNext();
-	void autoStepNext(int interval);
 	void jumpTo(int pos);
 
 	void loadIndex();
@@ -56,13 +56,14 @@ private:
 	void *m_index;
 	QPointer<VideoExporter> m_exporter;
 
-	QTimer *m_autoStepTimer;
-	QElapsedTimer m_lastInterval;
-	float m_speedFactor;
+	QTimer *m_playTimer;
+	QElapsedTimer m_lastFrameTime;
+	float m_speed;
 
 	qint32 m_intervalAfterExport;
 	bool m_autoplay;
 	bool m_awaiting;
+	bool m_exporting;
 };
 
 }
