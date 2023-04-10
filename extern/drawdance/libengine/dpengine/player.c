@@ -619,6 +619,26 @@ bool DP_player_seek(DP_Player *player, long long position, size_t offset)
     }
 }
 
+static size_t player_body_offset(DP_Player *player)
+{
+    switch (player->type) {
+    case DP_PLAYER_TYPE_BINARY:
+        return DP_binary_reader_body_offset(player->reader.binary);
+    case DP_PLAYER_TYPE_TEXT:
+        return DP_text_reader_body_offset(player->reader.text);
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        return 0;
+    default:
+        DP_UNREACHABLE();
+    }
+}
+
+bool DP_player_rewind(DP_Player *player)
+{
+    DP_ASSERT(player);
+    return DP_player_seek(player, 0, player_body_offset(player));
+}
+
 bool DP_player_seek_dump(DP_Player *player, long long position)
 {
     DP_ASSERT(player);
@@ -2410,18 +2430,6 @@ size_t DP_player_index_entry_count(DP_Player *player)
 {
     DP_ASSERT(player);
     return check_index(player) ? player->index.entry_count : 0;
-}
-
-static size_t player_body_offset(DP_Player *player)
-{
-    switch (player->type) {
-    case DP_PLAYER_TYPE_BINARY:
-        return DP_binary_reader_body_offset(player->reader.binary);
-    case DP_PLAYER_TYPE_TEXT:
-        return DP_text_reader_body_offset(player->reader.text);
-    default:
-        DP_UNREACHABLE();
-    }
 }
 
 DP_PlayerIndexEntry DP_player_index_entry_search(DP_Player *player,

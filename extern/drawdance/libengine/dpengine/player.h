@@ -88,6 +88,8 @@ DP_PlayerResult DP_player_step_dump(DP_Player *player, DP_DumpType *out_type,
 
 bool DP_player_seek(DP_Player *player, long long position, size_t offset);
 
+bool DP_player_rewind(DP_Player *player);
+
 bool DP_player_seek_dump(DP_Player *player, long long position);
 
 

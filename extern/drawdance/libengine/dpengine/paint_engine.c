@@ -1233,6 +1233,28 @@ DP_paint_engine_playback_step(DP_PaintEngine *pe, long long steps,
                                  push_message, user);
 }
 
+static DP_PlayerResult rewind_playback(DP_PaintEngine *pe,
+                                       DP_PaintEnginePushMessageFn push_message,
+                                       void *user)
+{
+    DP_Player *player = pe->playback.player;
+    if (!player) {
+        DP_error_set("No player set");
+        push_playback(push_message, user, -1);
+        return DP_PLAYER_ERROR_OPERATION;
+    }
+
+    if (DP_player_rewind(player)) {
+        push_message(user, DP_msg_internal_reset_new(0));
+        push_playback(push_message, user, 0);
+        return DP_PLAYER_SUCCESS;
+    }
+    else {
+        push_playback(push_message, user, -1);
+        return DP_PLAYER_ERROR_INPUT;
+    }
+}
+
 static DP_PlayerResult
 jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
                  bool relative, bool exact,
@@ -1350,7 +1372,13 @@ DP_PlayerResult DP_paint_engine_playback_jump_to(
     DP_PaintEnginePushMessageFn push_message, void *user)
 {
     DP_ASSERT(pe);
-    return jump_playback_to(pe, dc, position, false, true, push_message, user);
+    if (position <= 0) {
+        return rewind_playback(pe, push_message, user);
+    }
+    else {
+        return jump_playback_to(pe, dc, position, false, true, push_message,
+                                user);
+    }
 }
 
 DP_PlayerResult DP_paint_engine_playback_begin(DP_PaintEngine *pe)
