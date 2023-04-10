@@ -60,7 +60,6 @@
 #define INDEX_VERSION         10
 #define INDEX_VERSION_LENGTH  2
 #define INITAL_ENTRY_CAPACITY 64
-#define FRAME_COUNT           12
 
 static_assert(INDEX_MAGIC_LENGTH < sizeof(DP_OutputBinaryEntry),
               "index header fits into output binary entry");
@@ -1169,12 +1168,16 @@ static bool write_index_timeline(DP_BuildIndexEntryContext *e)
     if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(frame_count))) {
         return false;
     }
-    // FIXME: Rustpile has a fixed count of 12 layers per frame. Change this
-    // to a more sensible format that allows an arbitrary number of layers.
+
     for (int i = 0; i < frame_count; ++i) {
         DP_Frame *f = DP_timeline_frame_at_noinc(tl, i);
         int layer_id_count = DP_frame_layer_id_count(f);
-        for (int j = 0; j < FRAME_COUNT; ++j) {
+        if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output,
+                                          DP_OUTPUT_UINT16(layer_id_count))) {
+            return false;
+        }
+
+        for (int j = 0; j < layer_id_count; ++j) {
             int layer_id = j < layer_id_count ? DP_frame_layer_id_at(f, j) : 0;
             if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output,
                                               DP_OUTPUT_UINT16(layer_id))) {
@@ -1847,6 +1850,26 @@ static bool read_index_background_tile(DP_ReadSnapshotContext *c, size_t offset)
     }
 }
 
+static DP_TransientFrame *read_index_frame(DP_ReadSnapshotContext *c)
+{
+    DP_BufferedInput *input = c->input;
+    int layer_id_count;
+    bool ok = READ_INDEX(input, uint16, layer_id_count)
+           && read_index_input(input, sizeof(uint16_t)
+                                          * DP_int_to_size(layer_id_count));
+    if (!ok) {
+        return NULL;
+    }
+
+    DP_TransientFrame *tf = DP_transient_frame_new_init(layer_id_count);
+    for (int j = 0; j < layer_id_count; ++j) {
+        int layer_id = DP_read_littleendian_uint16(
+            input->buffer + sizeof(uint16_t) * DP_int_to_size(j));
+        DP_transient_frame_layer_id_set_at(tf, layer_id, j);
+    }
+    return tf;
+}
+
 static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
 {
     DP_debug("Read timeline at offset %zu", offset);
@@ -1862,17 +1885,9 @@ static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
         DP_transient_canvas_state_transient_timeline(c->tcs, frame_count);
     DP_debug("Read %d timeline frame(s)", frame_count);
     for (int i = 0; i < frame_count; ++i) {
-        // FIXME: Rustpile has a fixed count of 12 layers per frame. Change this
-        // to a more sensible format that allows an arbitrary number of layers.
-        if (!read_index_input(input, sizeof(uint16_t) * FRAME_COUNT)) {
+        DP_TransientFrame *tf = read_index_frame(c);
+        if (!tf) {
             return false;
-        }
-
-        DP_TransientFrame *tf = DP_transient_frame_new_init(FRAME_COUNT);
-        for (int j = 0; j < FRAME_COUNT; ++j) {
-            int layer_id = DP_read_littleendian_uint16(
-                input->buffer + sizeof(uint16_t) * DP_int_to_size(j));
-            DP_transient_frame_layer_id_set_at(tf, layer_id, j);
         }
         DP_transient_timeline_insert_transient_noinc(ttl, tf, i);
     }
