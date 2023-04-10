@@ -1032,9 +1032,19 @@ static void set_feature_tiers(int count, uint8_t *out, void *user)
     }
 }
 
-void DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
+DP_Message *DP_acl_state_msg_feature_access_all_new(unsigned int context_id)
+{
+    DP_AccessTier tiers[DP_FEATURE_COUNT];
+    for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+        tiers[i] = DP_ACCESS_TIER_GUEST;
+    }
+    return DP_msg_feature_access_levels_new(context_id, set_feature_tiers,
+                                            DP_FEATURE_COUNT, tiers);
+}
+
+bool DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
                                     bool include_users,
-                                    void (*push_message)(void *, DP_Message *),
+                                    bool (*push_message)(void *, DP_Message *),
                                     void *user)
 {
     DP_ASSERT(acls);
@@ -1051,18 +1061,26 @@ void DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
             context_id, DP_int_to_uint16(entry->layer_id), flags,
             exclusive ? set_message_user_bits : NULL,
             exclusive ? exclusive_count : 0, l->exclusive);
-        push_message(user, layer_acl_msg);
+        if (!push_message(user, layer_acl_msg)) {
+            return false;
+        }
     }
 
     DP_Message *feature_access_levels_msg = DP_msg_feature_access_levels_new(
         context_id, set_feature_tiers, DP_FEATURE_COUNT, acls->feature.tiers);
-    push_message(user, feature_access_levels_msg);
+    if (!push_message(user, feature_access_levels_msg)) {
+        return false;
+    }
 
     if (include_users) {
         int locked_count = count_user_bits(acls->users.locked);
         DP_Message *user_acl_message =
             DP_msg_user_acl_new(context_id, set_message_user_bits, locked_count,
                                 acls->users.locked);
-        push_message(user, user_acl_message);
+        if (!push_message(user, user_acl_message)) {
+            return false;
+        }
     }
+
+    return true;
 }

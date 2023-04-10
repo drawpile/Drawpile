@@ -337,10 +337,8 @@ void DP_recorder_message_push_initial_noinc(DP_Recorder *r,
     r->last_timestamp = get_timestamp(r);
 }
 
-bool DP_recorder_message_push_inc(DP_Recorder *r, DP_Message *msg)
+static bool push_message(DP_Recorder *r, DP_Message *msg, bool inc)
 {
-    DP_ASSERT(r);
-    DP_ASSERT(msg);
     if (DP_atomic_get(&r->running)) {
         long long timestamp = get_timestamp(r);
         long long interval = timestamp - r->last_timestamp;
@@ -355,13 +353,34 @@ bool DP_recorder_message_push_inc(DP_Recorder *r, DP_Message *msg)
                 queue, DP_msg_interval_new(0, clamped_interval));
             DP_SEMAPHORE_MUST_POST(sem);
         }
-        DP_message_queue_push_inc(queue, msg);
+        if(inc) {
+            DP_message_queue_push_inc(queue, msg);
+        } else {
+            DP_message_queue_push_noinc(queue, msg);
+        }
         DP_SEMAPHORE_MUST_POST(sem);
         DP_MUTEX_MUST_UNLOCK(mutex);
         r->last_timestamp = timestamp;
         return true;
     }
     else {
+        if(!inc) {
+            DP_message_decref(msg);
+        }
         return false;
     }
+}
+
+bool DP_recorder_message_push_inc(DP_Recorder *r, DP_Message *msg)
+{
+    DP_ASSERT(r);
+    DP_ASSERT(msg);
+    return push_message(r, msg, true);
+}
+
+bool DP_recorder_message_push_noinc(DP_Recorder *r, DP_Message *msg)
+{
+    DP_ASSERT(r);
+    DP_ASSERT(msg);
+    return push_message(r, msg, false);
 }

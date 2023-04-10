@@ -1012,6 +1012,11 @@ void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
 }
 
 
+static bool record_acl_message(void *user, DP_Message *msg)
+{
+    return DP_recorder_message_push_noinc(user, msg);
+}
+
 static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
                             JSON_Value *header, char *path)
 {
@@ -1044,6 +1049,16 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
     DP_Recorder *r = DP_canvas_history_recorder_new(
         pe->ch, type, header, pe->record.get_time_ms_fn,
         pe->record.get_time_ms_user, output);
+
+    // After initializing the state, we can set up permissions.
+    if (r) {
+        if (!DP_acl_state_reset_image_build(pe->acls, 0, true,
+                                            record_acl_message, r)) {
+            DP_warn("Error build recorder reset image");
+            DP_recorder_free_join(r);
+            r = NULL;
+        }
+    }
 
     if (r) {
         if (pe->record.recorder) {

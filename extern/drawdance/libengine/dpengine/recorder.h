@@ -61,5 +61,7 @@ void DP_recorder_message_push_initial_noinc(DP_Recorder *r,
 
 bool DP_recorder_message_push_inc(DP_Recorder *r, DP_Message *msg);
 
+bool DP_recorder_message_push_noinc(DP_Recorder *r, DP_Message *msg);
+
 
 #endif

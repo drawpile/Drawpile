@@ -30,6 +30,7 @@
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
+#include <dpmsg/acl.h>
 #include <dpmsg/message.h>
 #include <dpmsg/msg_internal.h>
 #include <time.h>
@@ -1528,9 +1529,17 @@ struct DP_RecorderMessageParams {
 };
 
 static DP_Message *
-get_recorder_undo_depth(struct DP_RecorderMessageParams *params)
+get_recorder_init_acl(struct DP_RecorderMessageParams *params)
 {
     params->phase = 1;
+    params->current_index = params->first_entry_index;
+    return DP_acl_state_msg_feature_access_all_new(0);
+}
+
+static DP_Message *
+get_recorder_undo_depth(struct DP_RecorderMessageParams *params)
+{
+    params->phase = 2;
     params->current_index = params->first_entry_index;
     return DP_msg_undo_depth_new(0,
                                  DP_int_to_uint8(params->ch->undo_depth_limit));
@@ -1564,7 +1573,7 @@ static DP_Message *get_recorder_entry(struct DP_RecorderMessageParams *params)
         }
     }
     // Out of messages, start the undo phase.
-    params->phase = 2;
+    params->phase = 3;
     params->current_index = params->first_entry_index;
     return get_recorder_undo(params);
 }
@@ -1573,9 +1582,11 @@ static DP_Message *get_recorder_message(void *user)
 {
     struct DP_RecorderMessageParams *params = user;
     switch (params->phase) {
-    case 0: // First the undo depth.
+    case 0: // First make the ACL state allow anything.
+        return get_recorder_init_acl(params);
+    case 1: // Then get the the undo depth.
         return get_recorder_undo_depth(params);
-    case 1: // Then all done or undone messages.
+    case 2: // Then all done or undone messages.
         return get_recorder_entry(params);
     default: // Then undos for every undone undo point.
         return get_recorder_undo(params);
