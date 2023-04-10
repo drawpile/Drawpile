@@ -46,8 +46,8 @@
 #define FOREGROUND_BARS  1
 #define FOREGROUND_DABS  2
 
-#define PI_FLOAT ((float)M_PI)
-#define DELTA_MS 20
+#define PI_FLOAT   ((float)M_PI)
+#define DELTA_MSEC 20
 
 
 struct DP_BrushPreview {
@@ -65,7 +65,7 @@ static void push_message(void *user, DP_Message *msg)
 DP_BrushPreview *DP_brush_preview_new(void)
 {
     DP_BrushPreview *bp = DP_malloc(sizeof(*bp));
-    *bp = (DP_BrushPreview){DP_brush_engine_new(push_message, bp), NULL,
+    *bp = (DP_BrushPreview){DP_brush_engine_new(push_message, NULL, bp), NULL,
                             DP_VECTOR_NULL};
     DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
     return bp;
@@ -150,8 +150,16 @@ static void set_preview_foreground_dab(DP_UNUSED int count, DP_PixelDab *pds,
     DP_pixel_dab_init(pds, 0, 0, 0, DP_int_to_uint8(*d_ptr), 255);
 }
 
+static void stroke_to(DP_BrushEngine *be, float x, float y, float pressure,
+                      DP_CanvasState *cs, long long *in_out_time_msec)
+{
+    DP_BrushPoint bp = {x, y, pressure, 0.0f, 0.0f, 0.0f, *in_out_time_msec};
+    DP_brush_engine_stroke_to(be, bp, cs);
+    *in_out_time_msec += DELTA_MSEC;
+}
+
 static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
-                            DP_Rect rect)
+                            DP_Rect rect, long long *in_out_time_msec)
 {
     int rw = DP_rect_width(rect);
     int rh = DP_rect_height(rect);
@@ -169,37 +177,37 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
         float raw_pressure = (p * p - p * p * p) * 6.756f;
         float pressure = CLAMP(raw_pressure, 0.0f, 1.0f);
         float y = sinf(phase) * h;
-        DP_brush_engine_stroke_to(be, rxf + xf, offy + y, pressure, 0.0f, 0.0f,
-                                  0.0f, DELTA_MS, cs);
+        stroke_to(be, rxf + xf, offy + y, pressure, cs, in_out_time_msec);
         phase += dphase;
     }
 }
 
-static void stroke_line(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect)
+static void stroke_line(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
+                        long long *in_out_time_msec)
 {
-    DP_brush_engine_stroke_to(be, DP_int_to_float(DP_rect_x(rect)),
-                              DP_int_to_float(DP_rect_y(rect)), 1.0f, 0.0f,
-                              0.0f, 0.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, DP_int_to_float(DP_rect_right(rect)),
-                              DP_int_to_float(DP_rect_bottom(rect)), 1.0f, 0.0f,
-                              0.0f, 0.0f, DELTA_MS, cs);
+    stroke_to(be, DP_int_to_float(DP_rect_x(rect)),
+              DP_int_to_float(DP_rect_y(rect)), 1.0f, cs, in_out_time_msec);
+    stroke_to(be, DP_int_to_float(DP_rect_right(rect)),
+              DP_int_to_float(DP_rect_bottom(rect)), 1.0f, cs,
+              in_out_time_msec);
 }
 
 static void stroke_rectangle(DP_BrushEngine *be, DP_CanvasState *cs,
-                             DP_Rect rect)
+                             DP_Rect rect, long long *in_out_time_msec)
 {
     float l = DP_int_to_float(DP_rect_left(rect));
     float r = DP_int_to_float(DP_rect_right(rect));
     float t = DP_int_to_float(DP_rect_top(rect));
     float b = DP_int_to_float(DP_rect_bottom(rect));
-    DP_brush_engine_stroke_to(be, l, t, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, r, t, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, r, b, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, l, b, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
-    DP_brush_engine_stroke_to(be, l, t, 1.0f, 0.0f, 0.0f, 0.0f, DELTA_MS, cs);
+    stroke_to(be, l, t, 1.0f, cs, in_out_time_msec);
+    stroke_to(be, r, t, 1.0f, cs, in_out_time_msec);
+    stroke_to(be, r, b, 1.0f, cs, in_out_time_msec);
+    stroke_to(be, l, b, 1.0f, cs, in_out_time_msec);
+    stroke_to(be, l, t, 1.0f, cs, in_out_time_msec);
 }
 
-static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect)
+static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
+                           long long *in_out_time_msec)
 {
     float a = DP_int_to_float(DP_rect_width(rect)) / 2.0f;
     float b = DP_int_to_float(DP_rect_height(rect)) / 2.0f;
@@ -207,13 +215,13 @@ static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect)
     float cy = DP_int_to_float(DP_rect_y(rect)) + b;
     for (int i = 0; i <= 40; ++i) {
         float t = PI_FLOAT / 20.0f * DP_int_to_float(i);
-        DP_brush_engine_stroke_to(be, cx + a * cosf(t), cy + b * sinf(t), 1.0f,
-                                  0.0f, 0.0f, 0.0f, DELTA_MS, cs);
+        stroke_to(be, cx + a * cosf(t), cy + b * sinf(t), 1.0f, cs,
+                  in_out_time_msec);
     }
 }
 
 static void stroke_flood_fill_blob(DP_BrushEngine *be, DP_CanvasState *cs,
-                                   DP_Rect rect)
+                                   DP_Rect rect, long long *in_out_time_msec)
 {
     int rx = DP_rect_x(rect);
     int ry = DP_rect_y(rect);
@@ -229,8 +237,7 @@ static void stroke_flood_fill_blob(DP_BrushEngine *be, DP_CanvasState *cs,
     while (a < PI_FLOAT) {
         float x = rxf + a / PI_FLOAT * rwf;
         float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 3.0f) * 0.3f;
-        DP_brush_engine_stroke_to(be, x, mid - y * h, 1.0f, 0.0f, 0.0f, 0.0f,
-                                  DELTA_MS, cs);
+        stroke_to(be, x, mid - y * h, 1.0f, cs, in_out_time_msec);
         a += 0.1f;
     }
 
@@ -238,16 +245,14 @@ static void stroke_flood_fill_blob(DP_BrushEngine *be, DP_CanvasState *cs,
     while (a < PI_FLOAT) {
         float x = rrf - (a / PI_FLOAT * rwf);
         float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 2.8f) * 0.2f;
-        DP_brush_engine_stroke_to(be, x, mid + y * h, 1.0f, 0.0f, 0.0f, 0.0f,
-                                  DELTA_MS, cs);
+        stroke_to(be, x, mid + y * h, 1.0f, cs, in_out_time_msec);
         a += 0.1f;
     }
 
     a = 0.0f;
     float x = rxf + a / PI_FLOAT * rwf;
     float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 3.0f) * 0.3f;
-    DP_brush_engine_stroke_to(be, x, mid - y * h, 1.0f, 0.0f, 0.0f, 0.0f,
-                              DELTA_MS, cs);
+    stroke_to(be, x, mid - y * h, 1.0f, cs, in_out_time_msec);
 }
 
 void render_brush_preview(
@@ -377,29 +382,30 @@ void render_brush_preview(
                                 height - height / 2);
     DP_BrushEngine *be = bp->be;
     set_brush(user, be, brush_color);
-    DP_brush_engine_stroke_begin(be, 1, false);
+    DP_brush_engine_stroke_begin(be, 1, false, 1.0f);
+    long long time_msec = 0;
     switch (shape) {
     case DP_BRUSH_PREVIEW_STROKE:
-        stroke_freehand(be, cs, rect);
+        stroke_freehand(be, cs, rect, &time_msec);
         break;
     case DP_BRUSH_PREVIEW_LINE:
-        stroke_line(be, cs, rect);
+        stroke_line(be, cs, rect, &time_msec);
         break;
     case DP_BRUSH_PREVIEW_RECTANGLE:
-        stroke_rectangle(be, cs, rect);
+        stroke_rectangle(be, cs, rect, &time_msec);
         break;
     case DP_BRUSH_PREVIEW_ELLIPSE:
-        stroke_ellipse(be, cs, rect);
+        stroke_ellipse(be, cs, rect, &time_msec);
         break;
     case DP_BRUSH_PREVIEW_FLOOD_FILL:
     case DP_BRUSH_PREVIEW_FLOOD_ERASE:
-        stroke_flood_fill_blob(be, cs, rect);
+        stroke_flood_fill_blob(be, cs, rect, &time_msec);
         break;
     default:
         DP_warn("Unknown preview shape %d", (int)shape);
         break;
     }
-    DP_brush_engine_stroke_end(be, false);
+    DP_brush_engine_stroke_end(be, time_msec, cs, false);
     DP_brush_engine_dabs_flush(be);
 
     cs = handle_preview_messages_multidab(
@@ -412,7 +418,8 @@ void render_brush_preview(
 static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
                                       DP_UPixelFloat color)
 {
-    DP_brush_engine_classic_brush_set(be, user, 1, false, color);
+    DP_StrokeParams stroke = {1, 0, false};
+    DP_brush_engine_classic_brush_set(be, user, &stroke, &color);
 }
 
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
@@ -434,7 +441,8 @@ static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
 {
     const DP_MyPaintBrush *brush = ((void **)user)[0];
     const DP_MyPaintSettings *settings = ((void **)user)[1];
-    DP_brush_engine_mypaint_brush_set(be, brush, settings, 1, false, color);
+    DP_StrokeParams stroke = {1, 0, false};
+    DP_brush_engine_mypaint_brush_set(be, brush, settings, &stroke, &color);
 }
 
 void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,

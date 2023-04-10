@@ -7,13 +7,15 @@ extern "C" {
 
 #include "libclient/drawdance/brushengine.h"
 #include "libclient/drawdance/canvasstate.h"
+#include "libclient/canvas/point.h"
 #include "libclient/net/client.h"
 
 namespace drawdance {
 
-BrushEngine::BrushEngine()
+BrushEngine::BrushEngine(PollControlFn pollControl)
     : m_messages{}
-    , m_data{DP_brush_engine_new(&BrushEngine::pushMessage, &m_messages)}
+    , m_pollControl{pollControl}
+    , m_data{DP_brush_engine_new(&BrushEngine::pushMessage, pollControl ? &BrushEngine::pollControl : nullptr, this)}
 {
 }
 
@@ -22,16 +24,18 @@ BrushEngine::~BrushEngine()
     DP_brush_engine_free(m_data);
 }
 
-void BrushEngine::setClassicBrush(const DP_ClassicBrush &brush, int layerId, bool freehand)
+void BrushEngine::setClassicBrush(
+    const DP_ClassicBrush &brush, const DP_StrokeParams &stroke)
 {
-    DP_brush_engine_classic_brush_set(m_data, &brush, layerId, freehand, brush.color);
+    DP_brush_engine_classic_brush_set(m_data, &brush, &stroke, nullptr);
 }
 
 void BrushEngine::setMyPaintBrush(
     const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-    int layerId, bool freehand)
+    const DP_StrokeParams &stroke)
 {
-    DP_brush_engine_mypaint_brush_set(m_data, &brush, &settings, layerId, freehand, brush.color);
+    DP_brush_engine_mypaint_brush_set(
+        m_data, &brush, &settings, &stroke, nullptr);
 }
 
 void BrushEngine::flushDabs()
@@ -39,23 +43,30 @@ void BrushEngine::flushDabs()
     DP_brush_engine_dabs_flush(m_data);
 }
 
-void BrushEngine::beginStroke(unsigned int contextId, bool pushUndoPoint)
+void BrushEngine::beginStroke(unsigned int contextId, bool pushUndoPoint, float zoom)
 {
     m_messages.clear();
-    DP_brush_engine_stroke_begin(m_data, contextId, pushUndoPoint);
+    DP_brush_engine_stroke_begin(m_data, contextId, pushUndoPoint, zoom);
 }
 
-void BrushEngine::strokeTo(
-    float x, float y, float pressure, float xtilt, float ytilt,
-    float rotation, long long deltaMsec,
-    const drawdance::CanvasState &cs)
+void BrushEngine::strokeTo(const canvas::Point &point, const drawdance::CanvasState &cs)
 {
-    DP_brush_engine_stroke_to(m_data, x, y, pressure, xtilt, ytilt, rotation, deltaMsec, cs.get());
+    DP_BrushPoint bp = {
+        float(point.x()), float(point.y()), float(point.pressure()),
+        float(point.xtilt()), float(point.ytilt()), float(point.rotation()),
+        point.timeMsec()};
+    DP_brush_engine_stroke_to(m_data, bp, cs.get());
 }
 
-void BrushEngine::endStroke(bool pushPenUp)
+void BrushEngine::poll(long long timeMsec, const drawdance::CanvasState &cs)
 {
-    DP_brush_engine_stroke_end(m_data, pushPenUp);
+    DP_brush_engine_poll(m_data, timeMsec, cs.get());
+}
+
+void BrushEngine::endStroke(
+    long long timeMsec, const drawdance::CanvasState &cs, bool pushPenUp)
+{
+    DP_brush_engine_stroke_end(m_data, timeMsec, cs.get(), pushPenUp);
 }
 
 void BrushEngine::addOffset(float x, float y)
@@ -73,8 +84,14 @@ void BrushEngine::sendMessagesTo(net::Client *client)
 
 void BrushEngine::pushMessage(void *user, DP_Message *msg)
 {
-    static_cast<drawdance::MessageList *>(user)
-        ->append(drawdance::Message::noinc(msg));
+    BrushEngine *brushEngine = static_cast<BrushEngine *>(user);
+    brushEngine->m_messages.append(drawdance::Message::noinc(msg));
+}
+
+void BrushEngine::pollControl(void *user, bool enable)
+{
+    BrushEngine *brushEngine = static_cast<BrushEngine *>(user);
+    brushEngine->m_pollControl(enable);
 }
 
 }

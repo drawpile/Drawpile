@@ -19,6 +19,7 @@ extern "C" {
 #include <QPixmap>
 #include <limits>
 
+struct DP_StrokeParams;
 struct MyPaintBrush;
 
 namespace drawdance {
@@ -52,6 +53,8 @@ public:
 	static ClassicBrush fromJson(const QJsonObject &json);
 
 	QPixmap presetThumbnail() const;
+
+	int stabilizerSampleCount;
 
 private:
 	void updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &dst);
@@ -95,6 +98,12 @@ public:
 	DP_MyPaintSettings &settings();
 	const DP_MyPaintSettings &constSettings() const;
 
+	int stabilizerSampleCount() const { return m_stabilizerSampleCount; }
+	void setStabilizerSampleCount(int stabilizerSampleCount)
+	{
+		m_stabilizerSampleCount = stabilizerSampleCount;
+	}
+
 	MyPaintCurve getCurve(int setting, int input) const;
 	void setCurve(int setting, int input, const MyPaintCurve &curve);
 	void removeCurve(int setting, int input);
@@ -112,6 +121,7 @@ public:
 private:
 	DP_MyPaintBrush m_brush;
 	DP_MyPaintSettings *m_settings;
+	int m_stabilizerSampleCount;
 	QHash<QPair<int, int>, MyPaintCurve> m_curves;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
@@ -152,6 +162,9 @@ public:
 	QColor qColor() const;
 	void setQColor(const QColor &c);
 
+	int stabilizerSampleCount() const;
+	void setStabilizerSampleCount(int stabilizerSampleCount);
+
 	QJsonObject toJson() const;
 	static ActiveBrush fromJson(const QJsonObject &json);
 
@@ -159,7 +172,9 @@ public:
 	QByteArray presetData() const;
 	QPixmap presetThumbnail() const;
 
-	void setInBrushEngine(drawdance::BrushEngine &be, uint16_t layer, bool freehand = true) const;
+	void setInBrushEngine(
+		drawdance::BrushEngine &be, const DP_StrokeParams &stroke) const;
+
 	void renderPreview(drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;
 
 private:

@@ -43,7 +43,6 @@ struct BrushSettingsDialog::Private {
 	QCheckBox *colorPickBox;
 	QCheckBox *lockAlphaBox;
 	KisSliderSpinBox *spacingSpinner;
-	QLabel *spacingExplanationLabel;
 	KisSliderSpinBox *stabilizerSpinner;
 	QLabel *stabilizerExplanationLabel;
 	KisSliderSpinBox *classicSizeSpinner;
@@ -95,6 +94,13 @@ void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
 	d->eraseModeBox->setEnabled(!forceEraseMode);
 }
 
+void BrushSettingsDialog::setStabilizerUseBrushSampleCount(
+	bool useBrushSampleCount)
+{
+	d->stabilizerSpinner->setEnabled(useBrushSampleCount);
+	d->stabilizerExplanationLabel->setHidden(useBrushSampleCount);
+}
+
 void BrushSettingsDialog::updateUiFromActiveBrush(
 	const brushes::ActiveBrush &brush)
 {
@@ -142,23 +148,6 @@ void BrushSettingsDialog::categoryChanged(
 {
 	if(current) {
 		d->stackedWidget->setCurrentIndex(current->data(Qt::UserRole).toInt());
-	}
-}
-
-void BrushSettingsDialog::myPaintCategoryLinkActivated(const QString &link)
-{
-	bool ok;
-	int setting = link.toInt(&ok);
-	if(ok && setting >= 0 && setting < MYPAINT_BRUSH_SETTINGS_COUNT) {
-		int pageIndex = d->mypaintPageIndexes[setting];
-		int count = d->categoryWidget->count();
-		for(int i = 0; i < count; ++i) {
-			QListWidgetItem *item = d->categoryWidget->item(i);
-			if(item && item->data(Qt::UserRole).toInt() == pageIndex) {
-				d->categoryWidget->setCurrentRow(i);
-				break;
-			}
-		}
 	}
 }
 
@@ -329,37 +318,16 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		});
 
-	d->spacingExplanationLabel = new QLabel{widget};
-	layout->addRow(d->spacingExplanationLabel);
-	d->spacingExplanationLabel->setWordWrap(true);
-	d->spacingExplanationLabel->setTextFormat(Qt::RichText);
-	d->spacingExplanationLabel->setText(
-		tr("<b>Spacing</b> settings for MyPaint brushes are found in "
-		   "<nobr><a href=\"%1\">%2</a></nobr>, "
-		   "<nobr><a href=\"%3\">%4</a></nobr> "
-		   "and <nobr><a href=\"%5\">%6</a><nobr>.")
-			.arg(int(MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS))
-			.arg(getMyPaintSettingTitle(
-				MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS))
-			.arg(int(MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS))
-			.arg(getMyPaintSettingTitle(
-				MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS))
-			.arg(int(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND))
-			.arg(
-				getMyPaintSettingTitle(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND)));
-	connect(
-		d->spacingExplanationLabel, &QLabel::linkActivated, this,
-		&BrushSettingsDialog::myPaintCategoryLinkActivated);
-
 	d->stabilizerSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->stabilizerSpinner);
-	d->stabilizerSpinner->setRange(0, 100);
+	d->stabilizerSpinner->setRange(0, 1000);
 	d->stabilizerSpinner->setPrefix(tr("Stabilizer: "));
-	d->stabilizerSpinner->setSuffix(tr("%"));
+	d->stabilizerSpinner->setSingleStep(1);
+	d->stabilizerSpinner->setExponentRatio(3.0);
 	connect(
 		d->stabilizerSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		[this](int value) {
-			d->brush.classic().stabilizer = value / 100.0;
+			d->brush.setStabilizerSampleCount(value);
 			emitChange();
 		});
 
@@ -368,17 +336,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->stabilizerExplanationLabel->setWordWrap(true);
 	d->stabilizerExplanationLabel->setTextFormat(Qt::RichText);
 	d->stabilizerExplanationLabel->setText(
-		tr("<b>Stabilizer</b> settings for MyPaint brushes are found in "
-		   "<nobr><a href=\"%1\">%2</a></nobr> and "
-		   "<nobr><a href=\"%3\">%4</a></nobr>.")
-			.arg(int(MYPAINT_BRUSH_SETTING_SLOW_TRACKING))
-			.arg(getMyPaintSettingTitle(MYPAINT_BRUSH_SETTING_SLOW_TRACKING))
-			.arg(int(MYPAINT_BRUSH_SETTING_SLOW_TRACKING_PER_DAB))
-			.arg(getMyPaintSettingTitle(
-				MYPAINT_BRUSH_SETTING_SLOW_TRACKING_PER_DAB)));
-	connect(
-		d->stabilizerExplanationLabel, &QLabel::linkActivated, this,
-		&BrushSettingsDialog::myPaintCategoryLinkActivated);
+		tr("Synchronizing stabilizer settings with brushes disabled."));
 
 	return scroll;
 }
@@ -794,11 +752,8 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->paintModeCombo->setVisible(true);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
-	d->stabilizerSpinner->setValue(classic.stabilizer * 100.0 + 0.5);
+	d->stabilizerSpinner->setValue(classic.stabilizerSampleCount);
 	d->spacingSpinner->setVisible(true);
-	d->spacingExplanationLabel->setVisible(false);
-	d->stabilizerSpinner->setVisible(true);
-	d->stabilizerExplanationLabel->setVisible(false);
 
 	d->classicSizeSpinner->setValue(classic.size.max);
 	d->classicSizePressureBox->setChecked(classic.size_pressure);
@@ -840,13 +795,11 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->paintModeLabel->setVisible(false);
 	d->paintModeCombo->setVisible(false);
 	d->spacingSpinner->setVisible(false);
-	d->spacingExplanationLabel->setVisible(true);
-	d->stabilizerSpinner->setVisible(false);
-	d->stabilizerExplanationLabel->setVisible(true);
 
 	d->eraseModeBox->setChecked(brush.erase);
 	d->lockAlphaBox->setChecked(brush.lock_alpha);
 	d->lockAlphaBox->setVisible(true);
+	d->stabilizerSpinner->setValue(d->brush.myPaint().stabilizerSampleCount());
 
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
 		if(shouldIncludeMyPaintSetting(setting)) {
@@ -909,6 +862,8 @@ bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 	case MYPAINT_BRUSH_SETTING_COLOR_V:
 	// Spectral painting is not supported in Drawpile.
 	case MYPAINT_BRUSH_SETTING_PAINT_MODE:
+	// This is a stabilizer, but Drawpile has its own one.
+	case MYPAINT_BRUSH_SETTING_SLOW_TRACKING:
 		return false;
 	default:
 		return true;
@@ -918,9 +873,6 @@ bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 bool BrushSettingsDialog::shouldIncludeMyPaintInput(int input)
 {
 	switch(input) {
-	// Drawpile doesn't inform MyPaint brushes about the view's zoom level.
-	case MYPAINT_BRUSH_INPUT_VIEWZOOM:
-		return false;
 	default:
 		return true;
 	}

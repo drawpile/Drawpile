@@ -34,7 +34,6 @@ ClassicBrush::ClassicBrush()
 		{0.0f, 1.0f, {}},
 		{0.0f, 0.0f, {}},
 		0.1f,
-		0.3f,
 		0,
 		{0.0f, 0.0f, 0.0f, 1.0f},
 		DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
@@ -48,6 +47,7 @@ ClassicBrush::ClassicBrush()
 		false,
 		false,
 	}
+	, stabilizerSampleCount(0)
 {
 	updateCurve(m_sizeCurve, size.curve);
 	updateCurve(m_opacityCurve, opacity.curve);
@@ -115,7 +115,6 @@ QJsonObject ClassicBrush::toJson() const
 	o["smudgecurve"] = m_smudgeCurve.toString();
 
 	o["spacing"] = spacing;
-	o["stabilizer"] = stabilizer;
 	if(resmudge>0) o["resmudge"] = resmudge;
 
 	if(!incremental) o["indirect"] = true;
@@ -127,6 +126,8 @@ QJsonObject ClassicBrush::toJson() const
 
 	o["blend"] = canvas::blendmode::svgName(brush_mode);
 	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
+
+	o["stabilizer"] = stabilizerSampleCount;
 
 	// Note: color is intentionally omitted
 
@@ -175,7 +176,6 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.updateCurve(b.m_smudgeCurve, b.smudge.curve);
 
 	b.spacing = o["spacing"].toDouble();
-	b.stabilizer = o["stabilizer"].toDouble(0.3);
 	b.resmudge = o["resmudge"].toInt();
 
 	b.incremental = !o["indirect"].toBool();
@@ -188,6 +188,8 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.brush_mode = canvas::blendmode::fromSvgName(o["blend"].toString());
 	b.erase_mode = canvas::blendmode::fromSvgName(
 		o["blenderase"].toString(), DP_BLEND_MODE_ERASE);
+
+	b.stabilizerSampleCount = o["stabilizer"].toInt();
 
 	return b;
 }
@@ -210,6 +212,7 @@ void ClassicBrush::updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &d
 MyPaintBrush::MyPaintBrush()
 	: m_brush{{0.0f, 0.0f, 0.0f, 1.0f}, false, false}
 	, m_settings{nullptr}
+	, m_stabilizerSampleCount{0}
 	, m_curves{}
 {
 }
@@ -222,6 +225,7 @@ MyPaintBrush::~MyPaintBrush()
 MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	: m_brush{other.m_brush}
 	, m_settings{nullptr}
+	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
 	, m_curves{other.m_curves}
 {
 	if(other.m_settings) {
@@ -233,6 +237,7 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 MyPaintBrush::MyPaintBrush(MyPaintBrush &&other)
 	: m_brush{other.m_brush}
 	, m_settings{other.m_settings}
+	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
 	, m_curves{other.m_curves}
 {
 	other.m_settings = nullptr;
@@ -242,6 +247,7 @@ MyPaintBrush &MyPaintBrush::operator=(MyPaintBrush &&other)
 {
 	std::swap(m_brush, other.m_brush);
 	std::swap(m_settings, other.m_settings);
+	std::swap(m_stabilizerSampleCount, other.m_stabilizerSampleCount);
 	std::swap(m_curves, other.m_curves);
 	return *this;
 }
@@ -258,6 +264,7 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 		delete m_settings;
 		m_settings = nullptr;
 	}
+	m_stabilizerSampleCount = other.m_stabilizerSampleCount;
 	m_curves = other.m_curves;
 	return *this;
 }
@@ -339,6 +346,7 @@ QJsonObject MyPaintBrush::toJson() const
 		{"settings", QJsonObject {
 			{"lock_alpha", m_brush.lock_alpha},
 			{"erase", m_brush.erase},
+			{"stabilizer", m_stabilizerSampleCount},
 			{"mapping", jsonMapping},
 		}},
 	};
@@ -356,6 +364,21 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 	b.m_brush.lock_alpha = o["lock_alpha"].toBool();
 	b.m_brush.erase = o["erase"].toBool();
 	b.loadJsonSettings(o["mapping"].toObject());
+
+	// If there's no Drawpile stabilizer defined, we get a sensible default
+	// value from the slow tracking setting, which is also a kind of stabilizer.
+	int stabilizerSampleCount = o["stabilizer"].toInt(-1);
+	if(stabilizerSampleCount < 0) {
+		if(b.m_settings) {
+			const DP_MyPaintMapping &slowTrackingSetting =
+				b.m_settings->mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING];
+			stabilizerSampleCount =
+				qRound(slowTrackingSetting.base_value * 10.0f);
+		} else {
+			stabilizerSampleCount = 0;
+		}
+	}
+	b.m_stabilizerSampleCount = stabilizerSampleCount;
 
 	return b;
 }
@@ -516,6 +539,20 @@ void ActiveBrush::setQColor(const QColor &c)
 	m_myPaint.setQColor(c);
 }
 
+int ActiveBrush::stabilizerSampleCount() const
+{
+	return m_activeType == CLASSIC ? m_classic.stabilizerSampleCount : m_myPaint.stabilizerSampleCount();
+}
+
+void ActiveBrush::setStabilizerSampleCount(int stabilizerSampleCount)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.stabilizerSampleCount = stabilizerSampleCount;
+	} else {
+		m_myPaint.setStabilizerSampleCount(stabilizerSampleCount);
+	}
+}
+
 
 QJsonObject ActiveBrush::toJson() const
 {
@@ -567,13 +604,14 @@ QPixmap ActiveBrush::presetThumbnail() const
 	return m_activeType == MYPAINT ? m_myPaint.presetThumbnail() : m_classic.presetThumbnail();
 }
 
-void ActiveBrush::setInBrushEngine(drawdance::BrushEngine &be, uint16_t layer, bool freehand) const
+void ActiveBrush::setInBrushEngine(
+	drawdance::BrushEngine &be, const DP_StrokeParams &stroke) const
 {
 	if(m_activeType == CLASSIC) {
-		be.setClassicBrush(m_classic, layer, freehand);
+		be.setClassicBrush(m_classic, stroke);
 	} else {
 		be.setMyPaintBrush(
-			m_myPaint.constBrush(), m_myPaint.constSettings(), layer, freehand);
+			m_myPaint.constBrush(), m_myPaint.constSettings(), stroke);
 	}
 }
 

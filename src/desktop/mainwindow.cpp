@@ -1411,7 +1411,10 @@ void MainWindow::showBrushSettingsDialog()
 		tools::ToolController *toolCtrl = m_doc->toolCtrl();
 		connect(toolCtrl, &tools::ToolController::activeBrushChanged, dlg,
 			&dialogs::BrushSettingsDialog::updateUiFromActiveBrush);
+		connect(toolCtrl, &tools::ToolController::stabilizerUseBrushSampleCountChanged,
+			dlg, &dialogs::BrushSettingsDialog::setStabilizerUseBrushSampleCount);
 		dlg->updateUiFromActiveBrush(toolCtrl->activeBrush());
+		dlg->setStabilizerUseBrushSampleCount(toolCtrl->stabilizerUseBrushSampleCount());
 	}
 
 	utils::showWindow(dlg);

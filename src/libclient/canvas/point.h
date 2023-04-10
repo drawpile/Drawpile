@@ -10,29 +10,35 @@
 namespace canvas {
 
 /**
- * @brief An extended point class that includes pressure and tilt information.
+ * @brief An extended point class that includes pen and timing information.
  */
 class Point final : public QPointF {
 public:
-	Point() : QPointF(), m_p(1), m_xt(0), m_yt(0), m_r(0) {}
+	Point() : QPointF(), m_timeMsec(0), m_p(1), m_xt(0), m_yt(0), m_r(0) {}
 
-	Point(qreal x, qreal y, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
-		: QPointF(x, y), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
+	Point(long long timeMsec, qreal x, qreal y, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
+		: QPointF(x, y), m_timeMsec(timeMsec), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
-	Point(const QPointF& point, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
-		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
+	Point(long long timeMsec, const QPointF& point, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
+		: QPointF(point), m_timeMsec(timeMsec), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
-	Point(const QPoint& point, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
-		: QPointF(point), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
+	Point(long long timeMsec, const QPoint& point, qreal p, qreal xt = 0.0, qreal yt = 0.0, qreal r = 0.0)
+		: QPointF(point), m_timeMsec(timeMsec), m_p(p), m_xt(xt), m_yt(yt), m_r(r)
 	{
 		Q_ASSERT(p>=0 && p<=1);
 	}
+
+	//! Get the time at which this point was put on the canvas
+	long long timeMsec() const { return m_timeMsec; }
+
+	//! Set the time at which this point was put on the canvas
+	void setTimeMsec(long long timeMsec) { m_timeMsec = timeMsec; }
 
 	//! Get the pressure value for this point
 	qreal pressure() const { return m_p; }
@@ -52,10 +58,10 @@ public:
 	//! Set this point's y axis tilt value in degrees
 	void setYtilt(qreal yt) { m_yt = yt; }
 
-	//! Get pen barrel rotation in degrees for this point
+	//! Get pen barrel rotation in radians for this point
 	qreal rotation() const { return m_r; }
 
-	//! Set this point's barrel rotation value in degrees
+	//! Set this point's barrel rotation value in radians
 	void setRotation(qreal r) { m_r = r; }
 
 	//! Compare two points at subpixel resolution
@@ -83,6 +89,7 @@ public:
 	float distance(const QPointF &point) const { return distance(*this, point); }
 
 private:
+	long long m_timeMsec;
 	qreal m_p;
 	qreal m_xt;
 	qreal m_yt;

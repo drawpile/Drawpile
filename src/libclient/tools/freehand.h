@@ -6,6 +6,7 @@
 #include "libclient/tools/tool.h"
 #include "libclient/drawdance/brushengine.h"
 #include "libclient/drawdance/message.h"
+#include <QTimer>
 
 namespace tools {
 
@@ -25,11 +26,15 @@ public:
 	void offsetActiveTool(int x, int y) override;
 
 private:
+	void pollControl(bool enable);
+	void poll();
+
+	QTimer m_pollTimer;
 	drawdance::BrushEngine m_brushEngine;
 	bool m_drawing;
 	bool m_firstPoint;
-	qint64 m_lastTimestamp;
 	canvas::Point m_start;
+	float m_zoom;
 };
 
 }

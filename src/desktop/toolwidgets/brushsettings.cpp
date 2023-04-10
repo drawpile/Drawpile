@@ -23,6 +23,7 @@ extern "C" {
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QPointer>
+#include <QMenu>
 
 namespace tools {
 
@@ -38,10 +39,16 @@ struct BrushSettings::Private {
 	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
 	QWidget *brushSlotWidget = nullptr;
 
+	QAction *finishStrokesAction;
+	QAction *useBrushSampleCountAction;
+
 	int current = 0;
 	int previousNonEraser = 0;
 
 	qreal quickAdjust1 = 0.0;
+
+	bool finishStrokes = true;
+	bool useBrushSampleCount = true;
 
 	bool shareBrushSlotColor = false;
 	bool updateInProgress = false;
@@ -129,6 +136,21 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	blendmodeSizePolicy.setRetainSizeWhenHidden(true);
 	d->ui.blendmode->setSizePolicy(blendmodeSizePolicy);
 
+	// Exponential sliders for easier picking of small values.
+	d->ui.stabilizerBox->setExponentRatio(3.0);
+
+	QMenu *stabilizerMenu = new QMenu{d->ui.stabilizerButton};
+	d->finishStrokesAction = stabilizerMenu->addAction(tr("Finish Strokes"));
+	d->finishStrokesAction->setStatusTip(tr(
+		"Draws stabilized strokes to the end, rather than cutting them off."));
+	d->finishStrokesAction->setCheckable(true);
+	d->useBrushSampleCountAction = stabilizerMenu->addAction(tr("Synchronize With Brush"));
+	d->useBrushSampleCountAction->setStatusTip(tr(
+		"Makes the stabilizer a brush setting, like in MyPaint, rather than an "
+		"independent setting, like in Krita."));
+	d->useBrushSampleCountAction->setCheckable(true);
+	d->ui.stabilizerButton->setMenu(stabilizerMenu);
+
 	// Outside communication
 	connect(this, SIGNAL(pixelSizeChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(d->ui.preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
@@ -163,11 +185,14 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.colorpickupBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.gainBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
-	connect(d->ui.slowTrackingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.stabilizerBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeLockAlpha, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+
+	connect(d->finishStrokesAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
+	connect(d->useBrushSampleCountAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
 
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
@@ -374,6 +399,8 @@ void BrushSettings::updateUi()
 		return;
 
 	d->updateInProgress = true;
+	d->finishStrokesAction->setChecked(d->finishStrokes);
+	d->useBrushSampleCountAction->setChecked(d->useBrushSampleCount);
 
 	const brushes::ActiveBrush &brush = d->currentBrush();
 	const brushes::ClassicBrush &classic = brush.classic();
@@ -442,12 +469,15 @@ void BrushSettings::updateUi()
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value * 100.0 + 0.5));
 		d->ui.hardnessBox->setValue(qRound(
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value * 100.0 + 0.5));
-		d->ui.slowTrackingBox->setValue(qRound(
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value * 10.0));
+		if(d->useBrushSampleCount) {
+			d->ui.stabilizerBox->setValue(myPaint.stabilizerSampleCount());
+		}
 	} else {
 		d->ui.opacityBox->setValue(classic.opacity.max * 100.0 + 0.5);
 		d->ui.hardnessBox->setValue(classic.hardness.max * 100.0 + 0.5);
-		d->ui.slowTrackingBox->setValue(classic.stabilizer * 100.0 + 0.5);
+		if(d->useBrushSampleCount) {
+			d->ui.stabilizerBox->setValue(classic.stabilizerSampleCount);
+		}
 	}
 
 	// Communicate the current size of the brush cursor to the outside. These
@@ -469,6 +499,9 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 {
 	if(d->updateInProgress)
 		return;
+
+	d->finishStrokes = d->finishStrokesAction->isChecked();
+	d->useBrushSampleCount = d->useBrushSampleCountAction->isChecked();
 
 	bool mypaintmode = d->ui.mypaintMode->isChecked();
 	d->currentBrush().setActiveType(
@@ -521,8 +554,9 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				d->ui.opacityBox->value() / 100.0;
 			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value =
 				d->ui.hardnessBox->value() / 100.0;
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_SLOW_TRACKING].base_value =
-				d->ui.slowTrackingBox->value() / 10.0;
+			if(d->useBrushSampleCount) {
+				myPaint.setStabilizerSampleCount(d->ui.stabilizerBox->value());
+			}
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
@@ -530,7 +564,9 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			if(classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND) {
 				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
 			}
-			classic.stabilizer = d->ui.slowTrackingBox->value() / 100.0;
+			if(d->useBrushSampleCount) {
+				classic.stabilizerSampleCount = d->ui.stabilizerBox->value();
+			}
 		}
 	}
 
@@ -562,7 +598,8 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.colorpickupBox, !mypaintmode},
 		{d->ui.brushspacingBox, !mypaintmode},
 		{d->ui.gainBox, mypaintmode},
-		{d->ui.slowTrackingBox, true},
+		{d->ui.stabilizerBox, true},
+		{d->ui.stabilizerButton, true},
 	};
 	// First hide them all so that the docker doesn't end up bigger temporarily
 	// and messes up the layout. Then afterwards show the applicable ones.
@@ -579,13 +616,19 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 
 void BrushSettings::pushSettings()
 {
-	controller()->setActiveBrush(d->ui.preview->brush());
+	tools::ToolController *ctrl = controller();
+	ctrl->setActiveBrush(d->ui.preview->brush());
+	ctrl->setStabilizerFinishStrokes(d->finishStrokes);
+	ctrl->setStabilizerSampleCount(d->ui.stabilizerBox->value());
+	ctrl->setStabilizerUseBrushSampleCount(d->useBrushSampleCount);
 }
 
 namespace toolprop {
 	static const ToolProperties::RangedValue<int>
-		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1}
-		;
+		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1};
+	static const ToolProperties::Value<bool>
+		finishStrokes = {QStringLiteral("finishstrokes"), true},
+		useBrushSampleCount = {QStringLiteral("usebrushsamplecount"), true};
 	// dynamic toolprops: brush[0-5] (serialized JSON)
 }
 
@@ -594,6 +637,8 @@ ToolProperties BrushSettings::saveToolSettings()
 	ToolProperties cfg(toolType());
 
 	cfg.setValue(toolprop::activeSlot, d->current);
+	cfg.setValue(toolprop::finishStrokes, d->finishStrokes);
+	cfg.setValue(toolprop::useBrushSampleCount, d->useBrushSampleCount);
 
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		const brushes::ActiveBrush &brush = d->brushSlots[i];
@@ -645,6 +690,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
 	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;
+	d->finishStrokes = cfg.value(toolprop::finishStrokes);
+	d->useBrushSampleCount = cfg.value(toolprop::useBrushSampleCount);
 }
 
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)

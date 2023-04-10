@@ -28,6 +28,9 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_prevShift(false)
 	, m_prevAlt(false)
 	, m_smoothing(0)
+	, m_stabilizerSampleCount(0)
+	, m_stabilizerFinishStrokes(true)
+	, m_stabilizerUseBrushSampleCount(true)
 	, m_selectInterpolation{DP_MSG_MOVE_REGION_MODE_BILINEAR}
 {
 	Q_ASSERT(client);
@@ -145,6 +148,24 @@ void ToolController::setActiveBrush(const brushes::ActiveBrush &b)
 	emit activeBrushChanged(b);
 }
 
+void ToolController::setStabilizerSampleCount(int stabilizerSampleCount)
+{
+	m_stabilizerSampleCount = stabilizerSampleCount;
+}
+
+void ToolController::setStabilizerFinishStrokes(bool stabilizerFinishStrokes)
+{
+	m_stabilizerFinishStrokes = stabilizerFinishStrokes;
+}
+
+void ToolController::setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount)
+{
+	if(m_stabilizerUseBrushSampleCount != stabilizerUseBrushSampleCount) {
+		m_stabilizerUseBrushSampleCount = stabilizerUseBrushSampleCount;
+		emit stabilizerUseBrushSampleCountChanged(m_stabilizerUseBrushSampleCount);
+	}
+}
+
 void ToolController::setModel(canvas::CanvasModel *model)
 {
 	if(m_model != model) {
@@ -217,8 +238,8 @@ void ToolController::setSelectInterpolation(int selectInterpolation)
 }
 
 void ToolController::startDrawing(
-	const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
-	qreal rotation, bool right, float zoom)
+	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation, bool right, float zoom)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -228,7 +249,7 @@ void ToolController::startDrawing(
 	}
 
 	m_smoother.reset();
-	m_activeTool->begin(canvas::Point(point, pressure, xtilt, ytilt, rotation), right, zoom);
+	m_activeTool->begin(canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right, zoom);
 
 	if(!m_activeTool->isMultipart()) {
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
@@ -239,8 +260,8 @@ void ToolController::startDrawing(
 }
 
 void ToolController::continueDrawing(
-	const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
-	qreal rotation, bool shift, bool alt)
+	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation, bool shift, bool alt)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -249,7 +270,7 @@ void ToolController::continueDrawing(
 		return;
 	}
 
-	canvas::Point cp = canvas::Point(point, pressure, xtilt, ytilt, rotation);
+	canvas::Point cp = canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
 	if(m_smoothing > 0 && m_activeTool->allowSmoothing()) {
 		m_smoother.addPoint(cp);
 
@@ -361,10 +382,15 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 	m_smoother.addOffset(QPointF(xOffset, yOffset));
 }
 
-void ToolController::setBrushEngineBrush(
-	drawdance::BrushEngine &be, bool freehand)
+void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be)
 {
-	activeBrush().setInBrushEngine(be, activeLayer(), freehand);
+	const brushes::ActiveBrush &brush = activeBrush();
+	DP_StrokeParams stroke = {
+		activeLayer(),
+		m_stabilizerUseBrushSampleCount ? brush.stabilizerSampleCount() : m_stabilizerSampleCount,
+		m_stabilizerFinishStrokes,
+	};
+	brush.setInBrushEngine(be, stroke);
 }
 
 }

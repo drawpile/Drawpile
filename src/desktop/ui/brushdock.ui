@@ -415,15 +415,26 @@
       </widget>
      </item>
      <item row="9" column="0">
-      <widget class="KisSliderSpinBox" name="slowTrackingBox">
-       <property name="suffix">
-        <string>%</string>
-       </property>
+      <widget class="KisSliderSpinBox" name="stabilizerBox">
        <property name="prefix">
         <string>Stabilizer: </string>
        </property>
        <property name="maximum">
-        <number>100</number>
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="widgets::GroupedToolButton" name="stabilizerButton">
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="icon">
+        <iconset theme="application-menu">
+        <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
        </property>
       </widget>
      </item>
@@ -487,7 +498,7 @@
   <tabstop>colorpickupBox</tabstop>
   <tabstop>brushspacingBox</tabstop>
   <tabstop>gainBox</tabstop>
-  <tabstop>slowTrackingBox</tabstop>
+  <tabstop>stabilizerBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -24,11 +24,11 @@ signals:
 
 public slots:
 	void setForceEraseMode(bool forceEraseMode);
+	void setStabilizerUseBrushSampleCount(bool useBrushSampleCount);
 	void updateUiFromActiveBrush(const brushes::ActiveBrush &brush);
 
 private slots:
 	void categoryChanged(QListWidgetItem *current, QListWidgetItem *);
-	void myPaintCategoryLinkActivated(const QString &link);
 
 private:
 	struct Private;

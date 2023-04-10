@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022-2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,41 +30,62 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_MyPaintBrush DP_MyPaintBrush;
 typedef struct DP_MyPaintSettings DP_MyPaintSettings;
 
+typedef struct DP_BrushPoint {
+    float x, y;
+    float pressure;
+    float xtilt, ytilt;
+    float rotation;
+    long long time_msec;
+} DP_BrushPoint;
+
+typedef struct DP_StrokeParams {
+    int layer_id;
+    int stabilizer_sample_count;
+    bool stabilizer_finish_strokes;
+} DP_StrokeParams;
+
 
 typedef void (*DP_BrushEnginePushMessageFn)(void *user, DP_Message *msg);
+typedef void (*DP_BrushEnginePollControlFn)(void *user, bool enable);
 
 typedef struct DP_BrushEngine DP_BrushEngine;
 
-DP_BrushEngine *DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
-                                    void *user);
+DP_BrushEngine *
+DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
+                    DP_BrushEnginePollControlFn poll_control_or_null,
+                    void *user);
 
 void DP_brush_engine_free(DP_BrushEngine *be);
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
-                                       int layer_id, bool freehand,
-                                       DP_UPixelFloat color);
+                                       const DP_StrokeParams *stroke,
+                                       const DP_UPixelFloat *color_override);
 
 void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        const DP_MyPaintBrush *brush,
                                        const DP_MyPaintSettings *settings,
-                                       int layer_id, bool freehand,
-                                       DP_UPixelFloat color);
+                                       const DP_StrokeParams *stroke,
+                                       const DP_UPixelFloat *color_override);
 
 void DP_brush_engine_dabs_flush(DP_BrushEngine *be);
 
 // Sets the context id for this stroke, optionally pushes an undo point message.
 void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
-                                  bool push_undo_point);
+                                  bool push_undo_point, float zoom);
 
-// Pushes draw dabs messages.
-void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
-                               float pressure, float xtilt, float ytilt,
-                               float rotation, long long delta_msec,
+// Pushes draw dabs messages or fills up the stabilizer.
+void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
                                DP_CanvasState *cs_or_null);
 
-// Finishes a stroke, optionally pushes a pen up message.
-void DP_brush_engine_stroke_end(DP_BrushEngine *be, bool push_pen_up);
+// Pushes draw dabs messages if stabilizing.
+void DP_brush_engine_poll(DP_BrushEngine *be, long long time_msec,
+                          DP_CanvasState *cs_or_null);
+
+// Finishes a stroke, pushing draw dabs messages if stabilizing, optionally
+// pushes a pen up message.
+void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
+                                DP_CanvasState *cs_or_null, bool push_pen_up);
 
 void DP_brush_engine_offset_add(DP_BrushEngine *be, float x, float y);
 

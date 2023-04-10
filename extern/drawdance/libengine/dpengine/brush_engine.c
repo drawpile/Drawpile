@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboufoom
+ * Copyright (C) 2022-2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,12 @@
  *
  * This code is based on Drawpile, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
+ *
+ * --------------------------------------------------------------------
+ *
+ * The stabilizer implementation is based on Krita, using it under the GNU
+ * General Public License, version 3. See 3rdparty/licenses/krita/COPYING.txt
+ * for details.
  */
 #include "brush_engine.h"
 #include "brush.h"
@@ -30,6 +36,8 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/event_log.h>
 #include <dpcommon/perf.h>
+#include <dpcommon/queue.h>
+#include <dpcommon/vector.h>
 #include <dpmsg/message.h>
 #include <math.h>
 #include <mypaint-brush.h>
@@ -38,6 +46,9 @@
 
 #define DP_PERF_CONTEXT "brush_engine"
 
+
+#define STABILIZER_MIN_QUEUE_SIZE 3
+#define STABILIZER_SAMPLE_TIME    1
 
 // Same amount of smudge buckets that MyPaint uses.
 #define SMUDGE_BUCKET_COUNT 256
@@ -77,7 +88,6 @@ typedef struct DP_BrushEngineMyPaintDab {
 
 struct DP_BrushEngine {
     int layer_id;
-    unsigned int context_id;
     DP_LayerContent *lc;
     DP_CanvasState *cs;
     DP_BrushStampBuffer stamp_buffer;
@@ -85,7 +95,21 @@ struct DP_BrushEngine {
     DP_BrushEngineActiveType active;
     MyPaintBrush *mypaint_brush;
     MyPaintSurface2 mypaint_surface2;
-    bool in_progress;
+    struct {
+        unsigned int context_id;
+        float zoom;
+        bool in_progress;
+        long long last_time_msec;
+    } stroke;
+    struct {
+        int sample_count;
+        bool finish_strokes;
+        bool active;
+        long long last_time_msec;
+        DP_Queue queue;
+        DP_Vector points;
+        DP_BrushPoint last_point;
+    } stabilizer;
     union {        // Active type decides which of these is relevant.
         int dummy; // Make this initializable without the compiler whining.
         struct {
@@ -124,8 +148,131 @@ struct DP_BrushEngine {
         void *buffer;
     } dabs;
     DP_BrushEnginePushMessageFn push_message;
+    DP_BrushEnginePollControlFn poll_control;
     void *user;
 };
+
+
+static void stabilizer_queue_push(DP_BrushEngine *be, DP_BrushPoint bp)
+{
+    *((DP_BrushPoint *)DP_queue_push(&be->stabilizer.queue,
+                                     sizeof(DP_BrushPoint))) = bp;
+}
+
+static DP_BrushPoint stabilizer_queue_at(DP_BrushEngine *be, size_t i)
+{
+    return *(DP_BrushPoint *)DP_queue_at(&be->stabilizer.queue,
+                                         sizeof(DP_BrushPoint), i);
+}
+
+static void stabilizer_queue_replace(DP_BrushEngine *be, DP_BrushPoint bp)
+{
+    DP_queue_shift(&be->stabilizer.queue);
+    stabilizer_queue_push(be, bp);
+}
+
+static void stabilizer_points_clear(DP_BrushEngine *be, long long time_msec)
+{
+    DP_BrushPoint *last_point_or_null =
+        DP_vector_last(&be->stabilizer.points, sizeof(DP_BrushPoint));
+    if (last_point_or_null) {
+        be->stabilizer.last_point = *last_point_or_null;
+    }
+    be->stabilizer.points.used = 0;
+    be->stabilizer.last_time_msec = time_msec;
+}
+
+static void stabilizer_points_push(DP_BrushEngine *be, DP_BrushPoint bp)
+{
+    *((DP_BrushPoint *)DP_vector_push(&be->stabilizer.points,
+                                      sizeof(DP_BrushPoint))) = bp;
+}
+
+static DP_BrushPoint stabilizer_points_get(DP_BrushEngine *be, long long i,
+                                           double alpha)
+{
+    size_t k = DP_double_to_size(alpha * DP_llong_to_double(i));
+    if (k < be->stabilizer.points.used) {
+        return *(DP_BrushPoint *)DP_vector_at(&be->stabilizer.points,
+                                              sizeof(DP_BrushPoint), k);
+    }
+    else {
+        return be->stabilizer.last_point;
+    }
+}
+
+static void stabilizer_init(DP_BrushEngine *be, DP_BrushPoint bp)
+{
+    be->stabilizer.active = true;
+
+    int queue_size =
+        DP_max_int(STABILIZER_MIN_QUEUE_SIZE, be->stabilizer.sample_count);
+    be->stabilizer.queue.used = 0;
+    for (int i = 0; i < queue_size; ++i) {
+        stabilizer_queue_push(be, bp);
+    }
+
+    stabilizer_points_clear(be, bp.time_msec);
+    stabilizer_points_push(be, bp);
+
+    be->poll_control(be->user, true);
+}
+
+static void stabilizer_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp)
+{
+    if (be->stabilizer.active) {
+        stabilizer_points_push(be, bp);
+    }
+    else {
+        stabilizer_init(be, bp);
+    }
+}
+
+static DP_BrushPoint stabilizer_stabilize(DP_BrushEngine *be, DP_BrushPoint bp)
+{
+    size_t used = be->stabilizer.queue.used;
+    // First queue entry is stale, since bp is the one that's replacing it.
+    for (size_t i = 1; i < used; ++i) {
+        // Uniform averaging.
+        float k = DP_size_to_float(i) / DP_size_to_float(i + 1);
+        float k1 = 1.0f - k;
+        DP_BrushPoint sample = stabilizer_queue_at(be, i);
+        bp.x = k1 * sample.x + k * bp.x;
+        bp.y = k1 * sample.y + k * bp.y;
+        bp.pressure = k1 * sample.pressure + k * bp.pressure;
+        bp.xtilt = k1 * sample.xtilt + k * bp.xtilt;
+        bp.ytilt = k1 * sample.ytilt + k * bp.ytilt;
+        float a1 = bp.rotation;
+        float a2 = sample.rotation;
+        if (a1 != a2) {
+            float distance = smallest_angular_difference(a1, a2);
+            float inc = k * distance;
+            float b1 = a1 + inc;
+            float b2 = a1 - inc;
+            float d1 = smallest_angular_difference(b1, a2);
+            float d2 = smallest_angular_difference(b2, a2);
+            bp.rotation = d1 < d2 ? b1 : b2;
+        }
+    }
+    return bp;
+}
+
+static void stabilizer_finish(DP_BrushEngine *be, long long time_msec,
+                              DP_CanvasState *cs_or_null)
+{
+    be->poll_control(be->user, false);
+    if (be->stabilizer.finish_strokes) {
+        // Flush existing events.
+        DP_brush_engine_poll(be, time_msec, cs_or_null);
+        // Drain the queue with a delay matching its size.
+        stabilizer_points_push(be, be->stabilizer.last_point);
+        long long queue_size_samples = DP_size_to_llong(
+            be->stabilizer.queue.used * STABILIZER_SAMPLE_TIME);
+        DP_brush_engine_poll(
+            be, be->stabilizer.last_time_msec + queue_size_samples, cs_or_null);
+    }
+    be->stabilizer.active = false;
+}
 
 
 static bool delta_xy(DP_BrushEngine *be, int32_t dab_x, int32_t dab_y,
@@ -462,13 +609,14 @@ static void get_color_mypaint(MyPaintSurface *self, float x, float y,
 }
 
 
-DP_BrushEngine *DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
-                                    void *user)
+DP_BrushEngine *
+DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
+                    DP_BrushEnginePollControlFn poll_control_or_null,
+                    void *user)
 {
     init_mypaint_once();
     DP_BrushEngine *be = DP_malloc(sizeof(*be));
     *be = (DP_BrushEngine){
-        0,
         0,
         NULL,
         NULL,
@@ -480,11 +628,21 @@ DP_BrushEngine *DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          add_dab_mypaint_pigment,
          get_color_mypaint_pigment,
          NULL},
-        false,
+        {0, 1.0f, false, 0},
+        {0,
+         true,
+         false,
+         0,
+         DP_QUEUE_NULL,
+         DP_VECTOR_NULL,
+         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}},
         {0},
         {0, 0, 0, 0, NULL},
         push_message,
+        poll_control_or_null,
         user};
+    DP_queue_init(&be->stabilizer.queue, 128, sizeof(DP_BrushPoint));
+    DP_vector_init(&be->stabilizer.points, 128, sizeof(DP_BrushPoint));
     return be;
 }
 
@@ -494,6 +652,8 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_free(be->dabs.buffer);
         mypaint_brush_unref(be->mypaint_brush);
         DP_layer_content_decref_nullable(be->lc);
+        DP_vector_dispose(&be->stabilizer.points);
+        DP_queue_dispose(&be->stabilizer.queue);
         DP_free(be);
     }
 }
@@ -501,15 +661,16 @@ void DP_brush_engine_free(DP_BrushEngine *be)
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
-                                       int layer_id, bool freehand,
-                                       DP_UPixelFloat color)
+                                       const DP_StrokeParams *stroke,
+                                       const DP_UPixelFloat *color_override)
 {
     DP_ASSERT(be);
     DP_ASSERT(brush);
-    DP_ASSERT(layer_id >= 0);
-    DP_ASSERT(layer_id <= UINT16_MAX);
+    DP_ASSERT(stroke);
+    DP_ASSERT(stroke->layer_id >= 0);
+    DP_ASSERT(stroke->layer_id <= UINT16_MAX);
 
-    be->layer_id = layer_id;
+    be->layer_id = stroke->layer_id;
 
     switch (brush->shape) {
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
@@ -523,6 +684,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
 
     be->classic.brush = *brush;
     DP_ClassicBrush *cb = &be->classic.brush;
+    DP_UPixelFloat color = color_override ? *color_override : brush->color;
     if (cb->incremental || cb->smudge.max > 0.0f) {
         // Incremental mode must be used when smudging, because color is not
         // picked up from sublayers
@@ -540,25 +702,23 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     }
     be->classic.brush_color = color;
 
-    // The stabilizer interferes with automated drawing of lines, shapes et
-    // cetera, so we turn it off when it's not a living creature drawing.
-    if (!freehand) {
-        be->classic.brush.stabilizer = false;
-    }
+    be->stabilizer.sample_count = stroke->stabilizer_sample_count;
+    be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
 }
 
 void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        const DP_MyPaintBrush *brush,
                                        const DP_MyPaintSettings *settings,
-                                       int layer_id, bool freehand,
-                                       DP_UPixelFloat color)
+                                       const DP_StrokeParams *stroke,
+                                       const DP_UPixelFloat *color_override)
 {
     DP_ASSERT(be);
     DP_ASSERT(brush);
     DP_ASSERT(settings);
-    DP_ASSERT(layer_id >= 0);
-    DP_ASSERT(layer_id <= UINT16_MAX);
-    be->layer_id = layer_id;
+    DP_ASSERT(stroke);
+    DP_ASSERT(stroke->layer_id >= 0);
+    DP_ASSERT(stroke->layer_id <= UINT16_MAX);
+    be->layer_id = stroke->layer_id;
     be->active = DP_BRUSH_ENGINE_ACTIVE_MYPAINT;
 
     MyPaintBrush *mb = be->mypaint_brush;
@@ -576,6 +736,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
         }
     }
 
+    DP_UPixelFloat color = color_override ? *color_override : brush->color;
     float r_h = color.r;
     float g_s = color.g;
     float b_v = color.b;
@@ -587,16 +748,16 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     be->mypaint.lock_alpha = brush->lock_alpha;
     be->mypaint.erase = brush->erase;
 
-    // Slow tracking is MyPaint's stabilizer, see the note on classic brushes.
-    if (!freehand) {
-        mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING,
-                                     0.0f);
-    }
-
     // We don't support spectral painting (aka Pigment mode), so we'll turn
     // that off at the source here. It's like turning the Pigment slider in
     // MyPaint all the way to zero.
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_PAINT_MODE, 0.0f);
+
+    // We have our own, better stabilizer, so turn the MyPaint one off.
+    mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING, 0.0f);
+
+    be->stabilizer.sample_count = stroke->stabilizer_sample_count;
+    be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
 }
 
 
@@ -622,7 +783,7 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
     }
     be->push_message(
         be->user,
-        new_fn(be->context_id, DP_int_to_uint16(be->layer_id),
+        new_fn(be->stroke.context_id, DP_int_to_uint16(be->layer_id),
                be->classic.dab_x, be->classic.dab_y, be->classic.dab_color,
                (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
                set_pixel_dabs, used, be->dabs.buffer));
@@ -643,8 +804,8 @@ static void flush_soft_dabs(DP_BrushEngine *be, int used)
     be->push_message(
         be->user,
         DP_msg_draw_dabs_classic_new(
-            be->context_id, DP_int_to_uint16(be->layer_id), be->classic.dab_x,
-            be->classic.dab_y, be->classic.dab_color,
+            be->stroke.context_id, DP_int_to_uint16(be->layer_id),
+            be->classic.dab_x, be->classic.dab_y, be->classic.dab_color,
             (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
             set_soft_dabs, used, be->dabs.buffer));
 }
@@ -663,7 +824,7 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
 {
     be->push_message(be->user,
                      DP_msg_draw_dabs_mypaint_new(
-                         be->context_id, DP_int_to_uint16(be->layer_id),
+                         be->stroke.context_id, DP_int_to_uint16(be->layer_id),
                          be->mypaint.dab_x, be->mypaint.dab_y,
                          be->mypaint.dab_color, be->mypaint.dab_lock_alpha,
                          be->mypaint.dab_colorize, be->mypaint.dab_posterize,
@@ -695,15 +856,16 @@ void DP_brush_engine_dabs_flush(DP_BrushEngine *be)
 
 
 void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
-                                  bool push_undo_point)
+                                  bool push_undo_point, float zoom)
 {
     DP_ASSERT(be);
-    DP_ASSERT(!be->in_progress);
+    DP_ASSERT(!be->stroke.in_progress);
     DP_ASSERT(be->dabs.used == 0);
     DP_PERF_BEGIN_DETAIL(fn, "stroke_begin", "active=%d", (int)be->active);
     DP_EVENT_LOG("stroke_begin");
 
-    be->context_id = context_id;
+    be->stroke.context_id = context_id;
+    be->stroke.zoom = zoom;
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
@@ -869,39 +1031,19 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
     }
 }
 
-// A function in mypaint-brush.c. Has external linkage, but is not in a header.
-extern float exp_decay(float, float);
-
 static void stroke_to_classic(
-    DP_BrushEngine *be, float x, float y, float pressure, long long delta_msec,
+    DP_BrushEngine *be, float x, float y, float pressure,
     void (*first_dab)(DP_BrushEngine *, DP_ClassicBrush *, float, float, float),
     void (*stroke)(DP_BrushEngine *, DP_ClassicBrush *, DP_LayerContent *,
                    float, float, float))
 {
     DP_ClassicBrush *cb = &be->classic.brush;
     DP_LayerContent *lc = be->lc;
-    if (be->in_progress) {
-        float stabilizer = cb->stabilizer;
-        float stabilized_x, stabilized_y;
-        if (stabilizer >= 0.0f) {
-            float fac = 1.0f
-                      - exp_decay(cb->stabilizer * 10.0f,
-                                  DP_llong_to_float(delta_msec) / 10.0f);
-            float last_x = be->classic.last_x;
-            float last_y = be->classic.last_y;
-            stabilized_x = last_x + (x - last_x) * fac;
-            stabilized_y = last_y + (y - last_y) * fac;
-        }
-        else {
-            stabilized_x = x;
-            stabilized_y = y;
-        }
-        stroke(be, cb, lc, stabilized_x, stabilized_y, pressure);
-        be->classic.last_x = stabilized_x;
-        be->classic.last_y = stabilized_y;
+    if (be->stroke.in_progress) {
+        stroke(be, cb, lc, x, y, pressure);
     }
     else {
-        be->in_progress = true;
+        be->stroke.in_progress = true;
         bool colorpick = cb->colorpick
                       && DP_classic_brush_blend_mode(cb) != DP_BLEND_MODE_ERASE
                       && lc;
@@ -916,22 +1058,26 @@ static void stroke_to_classic(
             be->classic.smudge_distance = 0;
         }
         first_dab(be, cb, x, y, pressure);
-        be->classic.last_x = x;
-        be->classic.last_y = y;
     }
+    be->classic.last_x = x;
+    be->classic.last_y = y;
     be->classic.last_pressure = pressure;
 }
 
 
-static void stroke_to_mypaint(DP_BrushEngine *be, float x, float y,
-                              float pressure, float xtilt, float ytilt,
-                              float rotation, long long delta_msec)
+static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
 {
     MyPaintBrush *mb = be->mypaint_brush;
     MyPaintSurface2 *surface = &be->mypaint_surface2;
+    float zoom = be->stroke.zoom;
 
-    if (!be->in_progress) {
-        be->in_progress = true;
+    double delta_sec;
+    if (be->stroke.in_progress) {
+        delta_sec = DP_llong_to_float(bp.time_msec - be->stroke.last_time_msec)
+                  / 1000.0f;
+    }
+    else {
+        be->stroke.in_progress = true;
         mypaint_brush_reset(mb);
         mypaint_brush_new_stroke(mb);
         // Generate a phantom stroke point with zero pressure and a really
@@ -943,13 +1089,13 @@ static void stroke_to_mypaint(DP_BrushEngine *be, float x, float y,
         // you crank up the smoothing really high there and move the pen
         // really fast, you can get strokes from when your pen wasn't on the
         // tablet, which is just weird.
-        mypaint_brush_stroke_to_2(mb, surface, x, y, 0.0f, xtilt, ytilt,
-                                  1000.0f, 1.0f, 0.0f, rotation);
+        mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, 0.0f, bp.xtilt,
+                                  bp.ytilt, 1000.0f, zoom, 0.0f, bp.rotation);
+        delta_sec = 0.0f;
     }
 
-    double delta_sec = ((double)delta_msec) / 1000.0f;
-    mypaint_brush_stroke_to_2(mb, surface, x, y, pressure, xtilt, ytilt,
-                              delta_sec, 1.0f, 0.0f, rotation);
+    mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, bp.pressure, bp.xtilt,
+                              bp.ytilt, delta_sec, zoom, 0.0f, bp.rotation);
 }
 
 static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
@@ -965,12 +1111,9 @@ static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
     }
 }
 
-void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
-                               float pressure, float xtilt, float ytilt,
-                               float rotation, long long delta_msec,
-                               DP_CanvasState *cs_or_null)
+static void stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
+                      DP_CanvasState *cs_or_null)
 {
-    DP_ASSERT(be);
     DP_BrushEngineActiveType active = be->active;
     DP_PERF_BEGIN_DETAIL(fn, "stroke_to", "active=%d", (int)active);
 
@@ -984,36 +1127,74 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, float x, float y,
 
     switch (active) {
     case DP_BRUSH_ENGINE_ACTIVE_PIXEL:
-        DP_EVENT_LOG("stroke_to active=pixel x=%f y=%f pressure=%f", x, y,
-                     pressure);
-        stroke_to_classic(be, x, y, pressure, delta_msec, first_dab_pixel,
+        DP_EVENT_LOG("stroke_to active=pixel x=%f y=%f pressure=%f", bp.x, bp.y,
+                     bp.pressure);
+        stroke_to_classic(be, bp.x, bp.y, bp.pressure, first_dab_pixel,
                           stroke_pixel);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_SOFT:
-        DP_EVENT_LOG("stroke_to active=soft x=%f y=%f pressure=%f", x, y,
-                     pressure);
-        stroke_to_classic(be, x, y, pressure, delta_msec, first_dab_soft,
+        DP_EVENT_LOG("stroke_to active=soft x=%f y=%f pressure=%f", bp.x, bp.y,
+                     bp.pressure);
+        stroke_to_classic(be, bp.x, bp.y, bp.pressure, first_dab_soft,
                           stroke_soft);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_MYPAINT:
         DP_EVENT_LOG("stroke_to active=mypaint x=%f y=%f pressure=%f xtilt=%f "
-                     "ytilt=%f rotation=%f delta_msec=%lld",
-                     x, y, pressure, xtilt, ytilt, rotation, delta_msec);
-        stroke_to_mypaint(be, x, y, pressure, xtilt, ytilt, rotation,
-                          delta_msec);
+                     "ytilt=%f rotation=%f time_msec=%lld",
+                     bp.x, bp.y, bp.pressure, bp.xtilt, bp.ytilt, bp.rotation,
+                     bp.time_msec);
+        stroke_to_mypaint(be, bp);
         break;
     default:
         DP_UNREACHABLE();
     }
 
+    be->stroke.last_time_msec = bp.time_msec;
     DP_PERF_END(fn);
 }
 
-void DP_brush_engine_stroke_end(DP_BrushEngine *be, bool push_pen_up)
+void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
+                               DP_CanvasState *cs_or_null)
+{
+    DP_ASSERT(be);
+    if (be->poll_control && be->stabilizer.sample_count > 0) {
+        stabilizer_stroke_to(be, bp);
+    }
+    else {
+        stroke_to(be, bp, cs_or_null);
+    }
+}
+
+void DP_brush_engine_poll(DP_BrushEngine *be, long long time_msec,
+                          DP_CanvasState *cs_or_null)
+{
+    DP_ASSERT(be);
+    if (be->stabilizer.active) {
+        long long elapsed_msec = time_msec - be->stabilizer.last_time_msec;
+        long long elapsed = elapsed_msec / STABILIZER_SAMPLE_TIME;
+        double alpha = DP_size_to_double(be->stabilizer.points.used)
+                     / DP_llong_to_double(elapsed);
+
+        for (long long i = 0; i < elapsed; ++i) {
+            DP_BrushPoint bp = stabilizer_points_get(be, i, alpha);
+            stroke_to(be, stabilizer_stabilize(be, bp), cs_or_null);
+            stabilizer_queue_replace(be, bp);
+        }
+
+        stabilizer_points_clear(be, time_msec);
+    }
+}
+
+void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
+                                DP_CanvasState *cs_or_null, bool push_pen_up)
 {
     DP_ASSERT(be);
     DP_PERF_BEGIN_DETAIL(fn, "stroke_end", "active=%d", (int)be->active);
     DP_EVENT_LOG("stroke_end");
+
+    if (be->stabilizer.active) {
+        stabilizer_finish(be, time_msec, cs_or_null);
+    }
 
     DP_layer_content_decref_nullable(be->lc);
     be->lc = NULL;
@@ -1022,9 +1203,9 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, bool push_pen_up)
     DP_brush_engine_dabs_flush(be);
 
     if (push_pen_up) {
-        be->push_message(be->user, DP_msg_pen_up_new(be->context_id));
+        be->push_message(be->user, DP_msg_pen_up_new(be->stroke.context_id));
     }
-    be->in_progress = false;
+    be->stroke.in_progress = false;
 
     DP_PERF_END(fn);
 }

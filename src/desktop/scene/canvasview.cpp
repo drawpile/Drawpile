@@ -20,6 +20,7 @@
 #include <QScreen>
 #include <QtMath>
 #include <QLineF>
+#include <QDateTime>
 
 // When KIS_TABLET isn't enabled (and maybe when the Qt version is new enough
 // too, so I'm putting this into a separate #define), Qt will only generate
@@ -441,14 +442,14 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 	m_keysDown.clear();
 }
 
-canvas::Point CanvasView::mapToScene(const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
+canvas::Point CanvasView::mapToScene(long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
 {
-	return canvas::Point(mapToScene(point), pressure, xtilt, ytilt, rotation);
+	return canvas::Point(timeMsec, mapToScene(point), pressure, xtilt, ytilt, rotation);
 }
 
-canvas::Point CanvasView::mapToScene(const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
+canvas::Point CanvasView::mapToScene(long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
 {
-	return canvas::Point(mapToSceneInterpolate(point), pressure, xtilt, ytilt, rotation);
+	return canvas::Point(timeMsec, mapToSceneInterpolate(point), pressure, xtilt, ytilt, rotation);
 }
 
 QPointF CanvasView::mapToSceneInterpolate(const QPointF &point) const
@@ -486,7 +487,7 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 		switch(m_penmode) {
 		case PenMode::Normal:
 			if(!m_locked)
-				emit penDown(p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), right, m_zoom / 100.0);
+				emit penDown(p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), right, m_zoom / 100.0);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -506,7 +507,7 @@ void CanvasView::onPenMove(const canvas::Point &p, bool right, bool constrain1, 
 		switch(m_penmode) {
 		case PenMode::Normal:
 			if(!m_locked)
-				emit penMove(p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), constrain1, constrain2);
+				emit penMove(p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), constrain1, constrain2);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -525,7 +526,7 @@ void CanvasView::onPenUp()
 	}
 }
 
-void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penPressEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_pendown != NOTDOWN) {
 		return;
@@ -582,12 +583,12 @@ void CanvasView::penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, 
 		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		m_pointerdistance = 0;
 		m_pointervelocity = 0;
-		m_prevpoint = mapToScene(pos, pressure, xtilt, ytilt, rotation);
+		m_prevpoint = mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		if(penmode != m_penmode) {
 			m_penmode = penmode;
 			resetCursor();
 		}
-		onPenDown(mapToScene(pos, isStylus ? pressure : 1.0, xtilt, ytilt, rotation), button == Qt::RightButton);
+		onPenDown(mapToScene(timeMsec, pos, isStylus ? pressure : 1.0, xtilt, ytilt, rotation), button == Qt::RightButton);
 	}
 }
 
@@ -614,6 +615,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	}
 
 	penPressEvent(
+		QDateTime::currentMSecsSinceEpoch(),
 		mousePos,
 		1.0,
 		0.0,
@@ -625,13 +627,13 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	);
 }
 
-void CanvasView::penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_dragmode == ViewDragMode::Started) {
 		moveDrag(pos.toPoint());
 
 	} else {
-		canvas::Point point = mapToScene(pos, pressure, xtilt, ytilt, rotation);
+		canvas::Point point = mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
@@ -676,6 +678,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	}
 
 	penMoveEvent(
+		QDateTime::currentMSecsSinceEpoch(),
 		mousePos,
 		1.0,
 		0.0,
@@ -687,9 +690,9 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	);
 }
 
-void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+void CanvasView::penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
-	canvas::Point point = mapToScene(pos, 0.0, 0.0, 0.0, 0.0);
+	canvas::Point point = mapToScene(timeMsec, pos, 0.0, 0.0, 0.0, 0.0);
 	m_prevpoint = point;
 	CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
 		modifiers, m_keysDown, Qt::LeftButton);
@@ -747,19 +750,19 @@ void CanvasView::penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt:
 	updateOutline(point);
 }
 
-void CanvasView::touchPressEvent(const QPointF &pos)
+void CanvasView::touchPressEvent(long long timeMsec, const QPointF &pos)
 {
-	penPressEvent(pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
+	penPressEvent(timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
 }
 
-void CanvasView::touchMoveEvent(const QPointF &pos)
+void CanvasView::touchMoveEvent(long long timeMsec, const QPointF &pos)
 {
-	penMoveEvent(pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
+	penMoveEvent(timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
 }
 
-void CanvasView::touchReleaseEvent(const QPointF &pos)
+void CanvasView::touchReleaseEvent(long long timeMsec, const QPointF &pos)
 {
-	penReleaseEvent(pos, Qt::LeftButton, Qt::NoModifier);
+	penReleaseEvent(timeMsec, pos, Qt::LeftButton, Qt::NoModifier);
 }
 
 //! Handle mouse release events
@@ -773,7 +776,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 	if(isSynthetic(event) || m_touching) {
 		return;
 	}
-	penReleaseEvent(mousePos, event->button(), event->modifiers());
+	penReleaseEvent(QDateTime::currentMSecsSinceEpoch(), mousePos, event->button(), event->modifiers());
 }
 
 void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
@@ -1011,13 +1014,13 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			if(m_enableTouchScroll || m_enableTouchPinch || m_enableTouchTwist) {
 				// Buffer the touch first, since it might end up being the
 				// beginning of an action that involves multiple fingers.
-				m_touchDrawBuffer.append(pos);
+				m_touchDrawBuffer.append({QDateTime::currentMSecsSinceEpoch(), pos});
 				m_touchMode = TouchMode::Unknown;
 			} else {
 				// There's no other actions other than drawing enabled, so we
 				// can just start drawing without awaiting what happens next.
 				m_touchMode = TouchMode::Drawing;
-				touchPressEvent(pos);
+				touchPressEvent(QDateTime::currentMSecsSinceEpoch(), pos);
 			}
 		} else {
 			DP_EVENT_LOG("touch_begin pendown=%d touching=%d points=%d",
@@ -1035,10 +1038,10 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			int bufferCount = m_touchDrawBuffer.size();
 			if(bufferCount == 0) {
 				if(m_touchMode == TouchMode::Drawing) {
-					touchMoveEvent(pos);
+					touchMoveEvent(QDateTime::currentMSecsSinceEpoch(), pos);
 				} else { // Shouldn't happen, but we'll deal with it anyway.
 					m_touchMode = TouchMode::Drawing;
-					touchPressEvent(pos);
+					touchPressEvent(QDateTime::currentMSecsSinceEpoch(), pos);
 				}
 			} else {
 				// This still might be the beginning of a multitouch operation.
@@ -1046,13 +1049,13 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				// buffer an excessive amount of touches yet. Buffer the touched
 				// point and wait a bit more as to what's going to happen.
 				bool shouldAppend = bufferCount < TOUCH_DRAW_BUFFER_COUNT &&
-					QLineF{m_touchDrawBuffer.first(), pos}.length() < TOUCH_DRAW_DISTANCE;
+					QLineF{m_touchDrawBuffer.first().second, pos}.length() < TOUCH_DRAW_DISTANCE;
 				if(shouldAppend) {
-					m_touchDrawBuffer.append(pos);
+					m_touchDrawBuffer.append({QDateTime::currentMSecsSinceEpoch(), pos});
 				} else {
 					m_touchMode = TouchMode::Drawing;
 					flushTouchDrawBuffer();
-					touchMoveEvent(pos);
+					touchMoveEvent(QDateTime::currentMSecsSinceEpoch(), pos);
 				}
 			}
 		} else {
@@ -1139,7 +1142,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				event->type() == QEvent::TouchEnd ? "end" : "cancel",
 				m_pendown, m_touching, pointsCount);
 			flushTouchDrawBuffer();
-			touchReleaseEvent(compat::touchPos(compat::touchPoints(*event).first()));
+			touchReleaseEvent(QDateTime::currentMSecsSinceEpoch(), compat::touchPos(compat::touchPoints(*event).first()));
 		} else {
 			DP_EVENT_LOG("touch_%s pendown=%d touching=%d points=%d",
 				event->type() == QEvent::TouchEnd ? "end" : "cancel",
@@ -1157,9 +1160,11 @@ void CanvasView::flushTouchDrawBuffer()
 {
 	int bufferCount = m_touchDrawBuffer.size();
 	if(bufferCount != 0) {
-		touchPressEvent(m_touchDrawBuffer.first());
+		const QPair<long long, QPointF> &press = m_touchDrawBuffer.first();
+		touchPressEvent(press.first, press.second);
 		for(int i = 0; i < bufferCount; ++i) {
-			touchMoveEvent(m_touchDrawBuffer[i]);
+			const QPair<long long, QPointF> &move = m_touchDrawBuffer[i];
+			touchMoveEvent(move.first, move.second);
 		}
 		m_touchDrawBuffer.clear();
 	}
@@ -1182,7 +1187,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		DP_EVENT_LOG(
 			"tablet_press x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
 			tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
-			tabev->rotation(), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
+			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
 			m_pendown, m_touching);
 
 		// Note: it is possible to get a mouse press event for a tablet event (even before
@@ -1196,11 +1201,12 @@ bool CanvasView::viewportEvent(QEvent *event)
 #endif
 
 		penPressEvent(
+			QDateTime::currentMSecsSinceEpoch(),
 			compat::tabPosF(*tabev),
 			tabev->pressure(),
 			tabev->xTilt(),
 			tabev->yTilt(),
-			tabev->rotation(),
+			qDegreesToRadians(tabev->rotation()),
 			tabev->button(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
 			true
@@ -1212,7 +1218,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		DP_EVENT_LOG(
 			"tablet_move x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
 			tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
-			tabev->rotation(), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
+			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
 			m_pendown, m_touching);
 
 #ifndef PASS_PEN_EVENTS
@@ -1220,11 +1226,12 @@ bool CanvasView::viewportEvent(QEvent *event)
 #endif
 
 		penMoveEvent(
+			QDateTime::currentMSecsSinceEpoch(),
 			compat::tabPosF(*tabev),
 			tabev->pressure(),
 			tabev->xTilt(),
 			tabev->yTilt(),
-			tabev->rotation(),
+			qDegreesToRadians(tabev->rotation()),
 			tabev->buttons(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
 			true
@@ -1241,7 +1248,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		tabev->accept();
 #endif
 		// TODO check if tablet event modifiers() is still broken in Qt 5.12
-		penReleaseEvent(tabPos, tabev->button(), QApplication::queryKeyboardModifiers());
+		penReleaseEvent(QDateTime::currentMSecsSinceEpoch(), tabPos, tabev->button(), QApplication::queryKeyboardModifiers());
 	}
 	else {
 		return QGraphicsView::viewportEvent(event);

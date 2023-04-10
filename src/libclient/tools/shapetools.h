@@ -34,6 +34,7 @@ protected:
 	QPointF m_start, m_p1, m_p2;
 
 private:
+	float m_zoom;
 	bool m_drawing;
 	drawdance::BrushEngine m_brushEngine;
 };

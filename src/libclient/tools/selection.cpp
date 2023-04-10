@@ -169,7 +169,7 @@ void RectangleSelection::initSelection(canvas::Selection *selection)
 	selection->setShapeRect(QRect(p, p));
 }
 
-void RectangleSelection::newSelectionMotion(const canvas::Point& point, bool constrain, bool center)
+void RectangleSelection::newSelectionMotion(const canvas::Point &point, bool constrain, bool center)
 {
 	QPointF p;
 	if(constrain)

@@ -47,8 +47,8 @@ public:
 	bool isTouchDrawEnabled() const { return m_enableTouchDraw; }
 
 	using QGraphicsView::mapToScene;
-	canvas::Point mapToScene(const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
-	canvas::Point mapToScene(const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
+	canvas::Point mapToScene(long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
+	canvas::Point mapToScene(long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
 	QPointF mapToSceneInterpolate(const QPointF &point) const;
 
 	//! The center point of the view in scene coordinates
@@ -92,11 +92,11 @@ signals:
 	void pointerMoved(const QPointF &point);
 
 	void penDown(
-		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
-		qreal rotation, bool right, float zoom);
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, bool right, float zoom);
 	void penMove(
-		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
-		qreal rotation, bool shift, bool alt);
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, bool shift, bool alt);
 	void penHover(const QPointF &point);
 	void penUp();
 	void quickAdjust(qreal value);
@@ -190,13 +190,13 @@ private:
 	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
 
 	// unified mouse/stylus event handlers
-	void penPressEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penMoveEvent(const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penReleaseEvent(const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
+	void penPressEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
 
-	void touchPressEvent(const QPointF &pos);
-	void touchMoveEvent(const QPointF &pos);
-	void touchReleaseEvent(const QPointF &pos);
+	void touchPressEvent(long long timeMsec, const QPointF &pos);
+	void touchMoveEvent(long long timeMsec, const QPointF &pos);
+	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
 
 	enum class ViewDragMode {None, Prepared, Started};
 
@@ -285,7 +285,7 @@ private:
 	bool m_enableTouchPinch, m_enableTouchTwist;
 	bool m_touching, m_touchRotating;
 	TouchMode m_touchMode;
-	QVector<QPointF> m_touchDrawBuffer;
+	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;
 	qreal m_touchStartZoom, m_touchStartRotate;
 	qreal m_dpi;
 	int m_brushCursorStyle;

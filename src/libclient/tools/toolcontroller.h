@@ -57,6 +57,15 @@ public:
 	void setActiveBrush(const brushes::ActiveBrush &b);
 	const brushes::ActiveBrush &activeBrush() const { return m_activebrush; }
 
+	void setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount);
+	bool stabilizerUseBrushSampleCount() { return m_stabilizerUseBrushSampleCount; }
+
+	void setStabilizerSampleCount(int stabilizerSampleCount);
+	int stabilizerSampleCount() { return m_stabilizerSampleCount; }
+
+	void setStabilizerFinishStrokes(bool stabilizerFinishStrokes);
+	bool stabilizerFinishStrokes() { return m_stabilizerFinishStrokes; }
+
 	void setModel(canvas::CanvasModel *model);
 	canvas::CanvasModel *model() const { return m_model; }
 
@@ -88,18 +97,18 @@ public:
 	 * The freehand parameter can be used to turn off stabilizer
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
-	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand = true);
+	void setBrushEngineBrush(drawdance::BrushEngine &be);
 
 public slots:
 	//! Start a new stroke
 	void startDrawing(
-		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
-		qreal rotation, bool right, float zoom);
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, bool right, float zoom);
 
 	//! Continue a stroke
 	void continueDrawing(
-		const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt,
-		qreal rotation, bool shift, bool alt);
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, bool shift, bool alt);
 
 	//! Stylus hover (not yet drawing)
 	void hoverDrawing(const QPointF &point);
@@ -132,6 +141,7 @@ signals:
 	void activeBrushChanged(const brushes::ActiveBrush&);
 	void modelChanged(canvas::CanvasModel *model);
 	void smoothingChanged(int smoothing);
+	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
 
 	void colorUsed(const QColor &color);
 	void zoomRequested(const QRect &rect, int steps);
@@ -159,6 +169,10 @@ private:
 
 	int m_smoothing;
 	StrokeSmoother m_smoother;
+
+	int m_stabilizerSampleCount;
+	bool m_stabilizerFinishStrokes;
+	bool m_stabilizerUseBrushSampleCount;
 
 	int m_selectInterpolation;
 };

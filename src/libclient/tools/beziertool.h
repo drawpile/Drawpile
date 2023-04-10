@@ -37,6 +37,7 @@ private:
 	QVector<ControlPoint> m_points;
 	QPointF m_beginPoint;
 	bool m_rightButton;
+	float m_zoom;
 };
 
 }

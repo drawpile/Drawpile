@@ -3,12 +3,20 @@
 #ifndef DRAWDANCE_BRUSH_ENGINE_H
 #define DRAWDANCE_BRUSH_ENGINE_H
 
-#include "libclient/drawdance/message.h"
+extern "C" {
+#include <dpengine/brush_engine.h>
+}
 
-struct DP_BrushEngine;
+#include "libclient/drawdance/message.h"
+#include <functional>
+
 struct DP_ClassicBrush;
 struct DP_MyPaintBrush;
 struct DP_MyPaintSettings;
+
+namespace canvas {
+    class Point;
+}
 
 namespace net {
     class Client;
@@ -20,7 +28,9 @@ class CanvasState;
 
 class BrushEngine final {
 public:
-    BrushEngine();
+    using PollControlFn = std::function<void(bool)>;
+
+    BrushEngine(PollControlFn pollControl = nullptr);
     ~BrushEngine();
 
     BrushEngine(const BrushEngine &) = delete;
@@ -29,11 +39,11 @@ public:
     BrushEngine &operator=(BrushEngine &&) = delete;
 
     void setClassicBrush(
-        const DP_ClassicBrush &brush, int layerId, bool freehand);
+        const DP_ClassicBrush &brush, const DP_StrokeParams &stroke);
 
     void setMyPaintBrush(
         const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-        int layerId, bool freehand);
+        const DP_StrokeParams &stroke);
 
     void flushDabs();
 
@@ -41,14 +51,14 @@ public:
 
     void clearMessages() { m_messages.clear(); }
 
-    void beginStroke(unsigned int contextId, bool pushUndoPoint = true);
+    void beginStroke(unsigned int contextId, bool pushUndoPoint, float zoom);
 
-    void strokeTo(
-        float x, float y, float pressure, float xtilt, float ytilt,
-        float rotation, long long deltaMsec,
-        const drawdance::CanvasState &cs);
+    void strokeTo(const canvas::Point &point, const drawdance::CanvasState &cs);
 
-    void endStroke(bool pushPenUp = true);
+    void poll(long long timeMsec, const drawdance::CanvasState &cs);
+
+    void endStroke(
+        long long timeMsec, const drawdance::CanvasState &cs, bool pushPenUp);
 
     void addOffset(float x, float y);
 
@@ -57,8 +67,10 @@ public:
 
 private:
     static void pushMessage(void *user, DP_Message *msg);
+    static void pollControl(void *user, bool enable);
 
     drawdance::MessageList m_messages;
+    PollControlFn m_pollControl;
     DP_BrushEngine *m_data;
 };
 
