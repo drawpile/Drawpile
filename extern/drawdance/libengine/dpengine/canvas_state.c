@@ -866,15 +866,6 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
     return DP_transient_canvas_state_persist(tcs);
 }
 
-static DP_CanvasState *handle_set_metadata_str(DP_UNUSED DP_CanvasState *cs,
-                                               DP_MsgSetMetadataStr *msms)
-{
-    // No string metadata is actually implemented, so just error out.
-    int field = DP_msg_set_metadata_str_field(msms);
-    DP_error_set("Set metadata str: unknown field %d", field);
-    return NULL;
-}
-
 static int get_layer_id(void *user, int index)
 {
     const uint16_t *layer_ids = user;
@@ -1060,9 +1051,6 @@ static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_SET_METADATA_INT:
         return DP_canvas_state_change_of(
             handle_set_metadata_int(cs, DP_msg_set_metadata_int_cast(msg)));
-    case DP_MSG_SET_METADATA_STR:
-        return DP_canvas_state_change_of(
-            handle_set_metadata_str(cs, DP_msg_set_metadata_str_cast(msg)));
     case DP_MSG_SET_TIMELINE_FRAME:
         return DP_canvas_state_change_of(
             handle_set_timeline_frame(cs, DP_msg_set_timeline_frame_cast(msg)));

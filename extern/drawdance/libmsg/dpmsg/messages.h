@@ -92,7 +92,6 @@ typedef enum DP_MessageType {
     DP_MSG_DRAW_DABS_MYPAINT = 151,
     DP_MSG_MOVE_RECT = 160,
     DP_MSG_SET_METADATA_INT = 161,
-    DP_MSG_SET_METADATA_STR = 162,
     DP_MSG_SET_TIMELINE_FRAME = 163,
     DP_MSG_REMOVE_TIMELINE_FRAME = 164,
     DP_MSG_LAYER_TREE_CREATE = 165,
@@ -1965,37 +1964,6 @@ DP_MsgSetMetadataInt *DP_msg_set_metadata_int_cast(DP_Message *msg);
 uint8_t DP_msg_set_metadata_int_field(const DP_MsgSetMetadataInt *msmi);
 
 int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
-
-
-/*
- * DP_MSG_SET_METADATA_STR
- *
- * Set a document metadata field (string type)
- */
-
-#define DP_MSG_SET_METADATA_STR_STATIC_LENGTH 1
-
-typedef struct DP_MsgSetMetadataStr DP_MsgSetMetadataStr;
-
-DP_Message *DP_msg_set_metadata_str_new(unsigned int context_id, uint8_t field,
-                                        const char *value_value,
-                                        size_t value_len);
-
-DP_Message *DP_msg_set_metadata_str_deserialize(unsigned int context_id,
-                                                const unsigned char *buffer,
-                                                size_t length);
-
-DP_Message *DP_msg_set_metadata_str_parse(unsigned int context_id,
-                                          DP_TextReader *reader);
-
-DP_MsgSetMetadataStr *DP_msg_set_metadata_str_cast(DP_Message *msg);
-
-uint8_t DP_msg_set_metadata_str_field(const DP_MsgSetMetadataStr *msms);
-
-const char *DP_msg_set_metadata_str_value(const DP_MsgSetMetadataStr *msms,
-                                          size_t *out_len);
-
-size_t DP_msg_set_metadata_str_value_len(const DP_MsgSetMetadataStr *msms);
 
 
 /*

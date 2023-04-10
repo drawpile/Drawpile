@@ -750,13 +750,6 @@ SetMetadataInt:
               - UseTimeline
         - value i32
 
-SetMetadataStr:
-    id: 162
-    comment: Set a document metadata field (string type)
-    fields:
-        - field u8
-        - value utf8
-
 SetTimelineFrame:
     id: 163
     comment: |

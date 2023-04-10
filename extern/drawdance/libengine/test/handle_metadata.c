@@ -50,14 +50,6 @@ static void add_handle_metadata_int(DP_Output *output, DP_CanvasHistory *ch,
     add_message(output, ch, dc, DP_msg_set_metadata_int_new(1, field, value));
 }
 
-static void add_handle_metadata_str(DP_Output *output, DP_CanvasHistory *ch,
-                                    DP_DrawContext *dc, uint8_t field,
-                                    const char *value)
-{
-    add_message(output, ch, dc,
-                DP_msg_set_metadata_str_new(1, field, value, strlen(value)));
-}
-
 
 static void handle_metadata(DP_Output *output, DP_CanvasHistory *ch,
                             DP_DrawContext *dc)
@@ -104,10 +96,6 @@ static void handle_metadata(DP_Output *output, DP_CanvasHistory *ch,
     add_undo_point(output, ch, dc);
     add_handle_metadata_int(output, ch, dc, 255, 0);
     dump_metadata(output, ch, "setting invalid int metadata changes nothing");
-
-    add_undo_point(output, ch, dc);
-    add_handle_metadata_str(output, ch, dc, 0, "xyzzy");
-    dump_metadata(output, ch, "setting string metadata changes nothing");
 }
 
 

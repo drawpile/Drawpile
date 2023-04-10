@@ -940,9 +940,6 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return handle_move_rect(acls, msg, user_id, override);
     case DP_MSG_SET_METADATA_INT:
         return handle_set_metadata_int(acls, msg, user_id, override);
-    case DP_MSG_SET_METADATA_STR:
-        return override
-            || DP_acl_state_can_use_feature(acls, DP_FEATURE_METADATA, user_id);
     case DP_MSG_SET_TIMELINE_FRAME:
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return override

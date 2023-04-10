@@ -79,13 +79,4 @@ dpiy: 96
 framerate: 120
 use_timeline: false
 
--> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_SET_METADATA_STR fail - 1 error(s): Set metadata str: unknown field 0
-
--- setting string metadata changes nothing
-dpix: 96
-dpiy: 96
-framerate: 120
-use_timeline: false
-
 done testing

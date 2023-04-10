@@ -424,9 +424,6 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_SET_METADATA_INT:
         return make_document_metadata(
             DP_msg_set_metadata_int_field(DP_msg_set_metadata_int_cast(msg)));
-    case DP_MSG_SET_METADATA_STR:
-        return make_document_metadata(
-            DP_msg_set_metadata_str_field(DP_msg_set_metadata_str_cast(msg)));
     case DP_MSG_SET_TIMELINE_FRAME:
         return make_timeline(DP_msg_set_timeline_frame_frame(
             DP_msg_set_timeline_frame_cast(msg)));

@@ -109,7 +109,6 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_DRAW_DABS_MYPAINT:
     case DP_MSG_MOVE_RECT:
     case DP_MSG_SET_METADATA_INT:
-    case DP_MSG_SET_METADATA_STR:
     case DP_MSG_SET_TIMELINE_FRAME:
     case DP_MSG_REMOVE_TIMELINE_FRAME:
     case DP_MSG_LAYER_TREE_CREATE:
@@ -226,8 +225,6 @@ const char *DP_message_type_name(DP_MessageType type)
         return "moverect";
     case DP_MSG_SET_METADATA_INT:
         return "setmetadataint";
-    case DP_MSG_SET_METADATA_STR:
-        return "setmetadatastr";
     case DP_MSG_SET_TIMELINE_FRAME:
         return "settimelineframe";
     case DP_MSG_REMOVE_TIMELINE_FRAME:
@@ -350,8 +347,6 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_MOVE_RECT";
     case DP_MSG_SET_METADATA_INT:
         return "DP_MSG_SET_METADATA_INT";
-    case DP_MSG_SET_METADATA_STR:
-        return "DP_MSG_SET_METADATA_STR";
     case DP_MSG_SET_TIMELINE_FRAME:
         return "DP_MSG_SET_TIMELINE_FRAME";
     case DP_MSG_REMOVE_TIMELINE_FRAME:
@@ -517,9 +512,6 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "setmetadataint")) {
         return DP_MSG_SET_METADATA_INT;
     }
-    else if (DP_str_equal(type_name, "setmetadatastr")) {
-        return DP_MSG_SET_METADATA_STR;
-    }
     else if (DP_str_equal(type_name, "settimelineframe")) {
         return DP_MSG_SET_TIMELINE_FRAME;
     }
@@ -674,8 +666,6 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return DP_msg_move_rect_deserialize(context_id, buf, length);
     case DP_MSG_SET_METADATA_INT:
         return DP_msg_set_metadata_int_deserialize(context_id, buf, length);
-    case DP_MSG_SET_METADATA_STR:
-        return DP_msg_set_metadata_str_deserialize(context_id, buf, length);
     case DP_MSG_SET_TIMELINE_FRAME:
         return DP_msg_set_timeline_frame_deserialize(context_id, buf, length);
     case DP_MSG_REMOVE_TIMELINE_FRAME:
@@ -806,8 +796,6 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_move_rect_parse(context_id, reader);
     case DP_MSG_SET_METADATA_INT:
         return DP_msg_set_metadata_int_parse(context_id, reader);
-    case DP_MSG_SET_METADATA_STR:
-        return DP_msg_set_metadata_str_parse(context_id, reader);
     case DP_MSG_SET_TIMELINE_FRAME:
         return DP_msg_set_timeline_frame_parse(context_id, reader);
     case DP_MSG_REMOVE_TIMELINE_FRAME:
@@ -7314,124 +7302,6 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi)
 {
     DP_ASSERT(msmi);
     return msmi->value;
-}
-
-
-/* DP_MSG_SET_METADATA_STR */
-
-struct DP_MsgSetMetadataStr {
-    uint8_t field;
-    uint16_t value_len;
-    char value[];
-};
-
-static size_t msg_set_metadata_str_payload_length(DP_Message *msg)
-{
-    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
-    return ((size_t)1) + DP_uint16_to_size(msms->value_len);
-}
-
-static size_t msg_set_metadata_str_serialize_payload(DP_Message *msg,
-                                                     unsigned char *data)
-{
-    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
-    size_t written = 0;
-    written += DP_write_bigendian_uint8(msms->field, data + written);
-    written += DP_write_bytes(msms->value, 1, msms->value_len, data + written);
-    DP_ASSERT(written == msg_set_metadata_str_payload_length(msg));
-    return written;
-}
-
-static bool msg_set_metadata_str_write_payload_text(DP_Message *msg,
-                                                    DP_TextWriter *writer)
-{
-    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "field", msms->field, false)
-        && DP_text_writer_write_string(writer, "value", msms->value);
-}
-
-static bool msg_set_metadata_str_equals(DP_Message *DP_RESTRICT msg,
-                                        DP_Message *DP_RESTRICT other)
-{
-    DP_MsgSetMetadataStr *a = DP_message_internal(msg);
-    DP_MsgSetMetadataStr *b = DP_message_internal(other);
-    return a->field == b->field && a->value_len == b->value_len
-        && memcmp(a->value, b->value, a->value_len) == 0;
-}
-
-static const DP_MessageMethods msg_set_metadata_str_methods = {
-    msg_set_metadata_str_payload_length,
-    msg_set_metadata_str_serialize_payload,
-    msg_set_metadata_str_write_payload_text,
-    msg_set_metadata_str_equals,
-};
-
-DP_Message *DP_msg_set_metadata_str_new(unsigned int context_id, uint8_t field,
-                                        const char *value_value,
-                                        size_t value_len)
-{
-    DP_Message *msg = DP_message_new(
-        DP_MSG_SET_METADATA_STR, context_id, &msg_set_metadata_str_methods,
-        DP_FLEX_SIZEOF(DP_MsgSetMetadataStr, value, value_len + 1));
-    DP_MsgSetMetadataStr *msms = DP_message_internal(msg);
-    msms->field = field;
-    msms->value_len = DP_size_to_uint16(value_len);
-    assign_string(msms->value, value_value, msms->value_len);
-    return msg;
-}
-
-DP_Message *DP_msg_set_metadata_str_deserialize(unsigned int context_id,
-                                                const unsigned char *buffer,
-                                                size_t length)
-{
-    if (length < 1 || length > 65535) {
-        DP_error_set("Wrong length for setmetadatastr message; "
-                     "expected between 1 and 65535, got %zu",
-                     length);
-        return NULL;
-    }
-    size_t read = 0;
-    uint8_t field = read_uint8(buffer + read, &read);
-    size_t value_bytes = length - read;
-    uint16_t value_len = DP_size_to_uint16(value_bytes);
-    const char *value = (const char *)buffer + read;
-    return DP_msg_set_metadata_str_new(context_id, field, value, value_len);
-}
-
-DP_Message *DP_msg_set_metadata_str_parse(unsigned int context_id,
-                                          DP_TextReader *reader)
-{
-    uint8_t field =
-        (uint8_t)DP_text_reader_get_ulong(reader, "field", UINT8_MAX);
-    uint16_t value_len;
-    const char *value = DP_text_reader_get_string(reader, "value", &value_len);
-    return DP_msg_set_metadata_str_new(context_id, field, value, value_len);
-}
-
-DP_MsgSetMetadataStr *DP_msg_set_metadata_str_cast(DP_Message *msg)
-{
-    return DP_message_cast(msg, DP_MSG_SET_METADATA_STR);
-}
-
-uint8_t DP_msg_set_metadata_str_field(const DP_MsgSetMetadataStr *msms)
-{
-    DP_ASSERT(msms);
-    return msms->field;
-}
-
-const char *DP_msg_set_metadata_str_value(const DP_MsgSetMetadataStr *msms,
-                                          size_t *out_len)
-{
-    DP_ASSERT(msms);
-    if (out_len) {
-        *out_len = msms->value_len;
-    }
-    return msms->value;
-}
-
-size_t DP_msg_set_metadata_str_value_len(const DP_MsgSetMetadataStr *msms)
-{
-    return msms->value_len;
 }
 
 
