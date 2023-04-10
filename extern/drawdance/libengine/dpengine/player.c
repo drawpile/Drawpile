@@ -1557,13 +1557,13 @@ static bool read_index_input(DP_BufferedInput *input, size_t size)
     }
 }
 
-#define READ_INDEX(INPUT, TYPE, OUT)            \
-    read_index_input((INPUT), sizeof(TYPE##_t)) \
-        && ((OUT) = DP_read_littleendian_##TYPE((INPUT)->buffer), true)
+#define READ_INDEX(INPUT, TYPE, OUT)             \
+    (read_index_input((INPUT), sizeof(TYPE##_t)) \
+     && ((OUT) = DP_read_littleendian_##TYPE((INPUT)->buffer), true))
 
-#define READ_INDEX_SIZE(INPUT, OUT)             \
-    read_index_input((INPUT), sizeof(uint64_t)) \
-        && ((OUT) = read_littleendian_size((INPUT)->buffer), true)
+#define READ_INDEX_SIZE(INPUT, OUT)              \
+    (read_index_input((INPUT), sizeof(uint64_t)) \
+     && ((OUT) = read_littleendian_size((INPUT)->buffer), true))
 
 static size_t read_littleendian_size(const unsigned char *d)
 {
