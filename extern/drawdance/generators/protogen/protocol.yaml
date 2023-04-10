@@ -750,29 +750,8 @@ SetMetadataInt:
               - UseTimeline
         - value i32
 
-SetTimelineFrame:
-    id: 163
-    comment: |
-             Set the layers included in the given animation frame
-
-             The frame number must be between zero and last frame number + 1.
-
-             If the `insert` flag is true, the frame will be inserted at the given
-             position rather than replacing the existing frame.
-    fields:
-        - frame u16
-        - insert bool
-        - layers vec_u16: hex
-          max_len: 12
-
-RemoveTimelineFrame:
-  id: 164
-  comment: Remove a frame from the timeline
-  fields:
-    - frame u16
-
 LayerTreeCreate:
-    id: 165
+    id: 162
     comment: |
              Create a new layer
 
@@ -807,7 +786,7 @@ LayerTreeCreate:
         - title utf8
 
 LayerTreeOrder:
-    id: 166
+    id: 163
     comment: |
              Reorder layers
 
@@ -834,7 +813,7 @@ LayerTreeOrder:
       - layers vec_u16: hex
 
 LayerTreeDelete:
-    id: 167
+    id: 164
     comment: |
              Delete a layer
 
@@ -849,7 +828,7 @@ LayerTreeDelete:
         - merge_to u16: hex
 
 TransformRegion:
-    id: 168
+    id: 165
     comment: |
              Transform an area, optionally moving it between two layers.
 
@@ -891,6 +870,24 @@ TransformRegion:
               - Nearest
               - Bilinear
         - mask bytes
+
+SetTimelineFrame:
+    id: 166
+    comment: |
+             Set the layers included in the given animation frame
+             The frame number must be between zero and last frame number + 1.
+             If the `insert` flag is true, the frame will be inserted at the given
+             position rather than replacing the existing frame.
+    fields:
+        - frame u16
+        - insert bool
+        - layers vec_u16: hex
+
+RemoveTimelineFrame:
+  id: 167
+  comment: Remove a frame from the timeline
+  fields:
+    - frame u16
 
 Undo:
     id: 255

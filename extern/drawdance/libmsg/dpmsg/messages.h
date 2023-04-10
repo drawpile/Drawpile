@@ -92,12 +92,12 @@ typedef enum DP_MessageType {
     DP_MSG_DRAW_DABS_MYPAINT = 151,
     DP_MSG_MOVE_RECT = 160,
     DP_MSG_SET_METADATA_INT = 161,
-    DP_MSG_SET_TIMELINE_FRAME = 163,
-    DP_MSG_REMOVE_TIMELINE_FRAME = 164,
-    DP_MSG_LAYER_TREE_CREATE = 165,
-    DP_MSG_LAYER_TREE_ORDER = 166,
-    DP_MSG_LAYER_TREE_DELETE = 167,
-    DP_MSG_TRANSFORM_REGION = 168,
+    DP_MSG_LAYER_TREE_CREATE = 162,
+    DP_MSG_LAYER_TREE_ORDER = 163,
+    DP_MSG_LAYER_TREE_DELETE = 164,
+    DP_MSG_TRANSFORM_REGION = 165,
+    DP_MSG_SET_TIMELINE_FRAME = 166,
+    DP_MSG_REMOVE_TIMELINE_FRAME = 167,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -1967,72 +1967,6 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
 
 
 /*
- * DP_MSG_SET_TIMELINE_FRAME
- *
- * Set the layers included in the given animation frame
- *
- * The frame number must be between zero and last frame number + 1.
- *
- * If the `insert` flag is true, the frame will be inserted at the given
- * position rather than replacing the existing frame.
- */
-
-#define DP_MSG_SET_TIMELINE_FRAME_STATIC_LENGTH 3
-
-typedef struct DP_MsgSetTimelineFrame DP_MsgSetTimelineFrame;
-
-DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
-                                          uint16_t frame, bool insert,
-                                          void (*set_layers)(int, uint16_t *,
-                                                             void *),
-                                          int layers_count, void *layers_user);
-
-DP_Message *DP_msg_set_timeline_frame_deserialize(unsigned int context_id,
-                                                  const unsigned char *buffer,
-                                                  size_t length);
-
-DP_Message *DP_msg_set_timeline_frame_parse(unsigned int context_id,
-                                            DP_TextReader *reader);
-
-DP_MsgSetTimelineFrame *DP_msg_set_timeline_frame_cast(DP_Message *msg);
-
-uint16_t DP_msg_set_timeline_frame_frame(const DP_MsgSetTimelineFrame *mstf);
-
-bool DP_msg_set_timeline_frame_insert(const DP_MsgSetTimelineFrame *mstf);
-
-const uint16_t *
-DP_msg_set_timeline_frame_layers(const DP_MsgSetTimelineFrame *mstf,
-                                 int *out_count);
-
-int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf);
-
-
-/*
- * DP_MSG_REMOVE_TIMELINE_FRAME
- *
- * Remove a frame from the timeline
- */
-
-#define DP_MSG_REMOVE_TIMELINE_FRAME_STATIC_LENGTH 2
-
-typedef struct DP_MsgRemoveTimelineFrame DP_MsgRemoveTimelineFrame;
-
-DP_Message *DP_msg_remove_timeline_frame_new(unsigned int context_id,
-                                             uint16_t frame);
-
-DP_Message *DP_msg_remove_timeline_frame_deserialize(
-    unsigned int context_id, const unsigned char *buffer, size_t length);
-
-DP_Message *DP_msg_remove_timeline_frame_parse(unsigned int context_id,
-                                               DP_TextReader *reader);
-
-DP_MsgRemoveTimelineFrame *DP_msg_remove_timeline_frame_cast(DP_Message *msg);
-
-uint16_t
-DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf);
-
-
-/*
  * DP_MSG_LAYER_TREE_CREATE
  *
  * Create a new layer
@@ -2271,6 +2205,70 @@ DP_msg_transform_region_mask(const DP_MsgTransformRegion *mtr,
                              size_t *out_size);
 
 size_t DP_msg_transform_region_mask_size(const DP_MsgTransformRegion *mtr);
+
+
+/*
+ * DP_MSG_SET_TIMELINE_FRAME
+ *
+ * Set the layers included in the given animation frame
+ * The frame number must be between zero and last frame number + 1.
+ * If the `insert` flag is true, the frame will be inserted at the given
+ * position rather than replacing the existing frame.
+ */
+
+#define DP_MSG_SET_TIMELINE_FRAME_STATIC_LENGTH 3
+
+typedef struct DP_MsgSetTimelineFrame DP_MsgSetTimelineFrame;
+
+DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
+                                          uint16_t frame, bool insert,
+                                          void (*set_layers)(int, uint16_t *,
+                                                             void *),
+                                          int layers_count, void *layers_user);
+
+DP_Message *DP_msg_set_timeline_frame_deserialize(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length);
+
+DP_Message *DP_msg_set_timeline_frame_parse(unsigned int context_id,
+                                            DP_TextReader *reader);
+
+DP_MsgSetTimelineFrame *DP_msg_set_timeline_frame_cast(DP_Message *msg);
+
+uint16_t DP_msg_set_timeline_frame_frame(const DP_MsgSetTimelineFrame *mstf);
+
+bool DP_msg_set_timeline_frame_insert(const DP_MsgSetTimelineFrame *mstf);
+
+const uint16_t *
+DP_msg_set_timeline_frame_layers(const DP_MsgSetTimelineFrame *mstf,
+                                 int *out_count);
+
+int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf);
+
+
+/*
+ * DP_MSG_REMOVE_TIMELINE_FRAME
+ *
+ * Remove a frame from the timeline
+ */
+
+#define DP_MSG_REMOVE_TIMELINE_FRAME_STATIC_LENGTH 2
+
+typedef struct DP_MsgRemoveTimelineFrame DP_MsgRemoveTimelineFrame;
+
+DP_Message *DP_msg_remove_timeline_frame_new(unsigned int context_id,
+                                             uint16_t frame);
+
+DP_Message *DP_msg_remove_timeline_frame_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_remove_timeline_frame_parse(unsigned int context_id,
+                                               DP_TextReader *reader);
+
+DP_MsgRemoveTimelineFrame *DP_msg_remove_timeline_frame_cast(DP_Message *msg);
+
+uint16_t
+DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf);
 
 
 /*

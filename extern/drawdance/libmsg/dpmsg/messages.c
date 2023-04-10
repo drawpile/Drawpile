@@ -109,12 +109,12 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_DRAW_DABS_MYPAINT:
     case DP_MSG_MOVE_RECT:
     case DP_MSG_SET_METADATA_INT:
-    case DP_MSG_SET_TIMELINE_FRAME:
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
     case DP_MSG_LAYER_TREE_CREATE:
     case DP_MSG_LAYER_TREE_ORDER:
     case DP_MSG_LAYER_TREE_DELETE:
     case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_SET_TIMELINE_FRAME:
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -225,10 +225,6 @@ const char *DP_message_type_name(DP_MessageType type)
         return "moverect";
     case DP_MSG_SET_METADATA_INT:
         return "setmetadataint";
-    case DP_MSG_SET_TIMELINE_FRAME:
-        return "settimelineframe";
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return "removetimelineframe";
     case DP_MSG_LAYER_TREE_CREATE:
         return "layertreecreate";
     case DP_MSG_LAYER_TREE_ORDER:
@@ -237,6 +233,10 @@ const char *DP_message_type_name(DP_MessageType type)
         return "layertreedelete";
     case DP_MSG_TRANSFORM_REGION:
         return "transformregion";
+    case DP_MSG_SET_TIMELINE_FRAME:
+        return "settimelineframe";
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
+        return "removetimelineframe";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -347,10 +347,6 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_MOVE_RECT";
     case DP_MSG_SET_METADATA_INT:
         return "DP_MSG_SET_METADATA_INT";
-    case DP_MSG_SET_TIMELINE_FRAME:
-        return "DP_MSG_SET_TIMELINE_FRAME";
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return "DP_MSG_REMOVE_TIMELINE_FRAME";
     case DP_MSG_LAYER_TREE_CREATE:
         return "DP_MSG_LAYER_TREE_CREATE";
     case DP_MSG_LAYER_TREE_ORDER:
@@ -359,6 +355,10 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_LAYER_TREE_DELETE";
     case DP_MSG_TRANSFORM_REGION:
         return "DP_MSG_TRANSFORM_REGION";
+    case DP_MSG_SET_TIMELINE_FRAME:
+        return "DP_MSG_SET_TIMELINE_FRAME";
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
+        return "DP_MSG_REMOVE_TIMELINE_FRAME";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -512,12 +512,6 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "setmetadataint")) {
         return DP_MSG_SET_METADATA_INT;
     }
-    else if (DP_str_equal(type_name, "settimelineframe")) {
-        return DP_MSG_SET_TIMELINE_FRAME;
-    }
-    else if (DP_str_equal(type_name, "removetimelineframe")) {
-        return DP_MSG_REMOVE_TIMELINE_FRAME;
-    }
     else if (DP_str_equal(type_name, "layertreecreate")) {
         return DP_MSG_LAYER_TREE_CREATE;
     }
@@ -529,6 +523,12 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "transformregion")) {
         return DP_MSG_TRANSFORM_REGION;
+    }
+    else if (DP_str_equal(type_name, "settimelineframe")) {
+        return DP_MSG_SET_TIMELINE_FRAME;
+    }
+    else if (DP_str_equal(type_name, "removetimelineframe")) {
+        return DP_MSG_REMOVE_TIMELINE_FRAME;
     }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
@@ -666,11 +666,6 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return DP_msg_move_rect_deserialize(context_id, buf, length);
     case DP_MSG_SET_METADATA_INT:
         return DP_msg_set_metadata_int_deserialize(context_id, buf, length);
-    case DP_MSG_SET_TIMELINE_FRAME:
-        return DP_msg_set_timeline_frame_deserialize(context_id, buf, length);
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return DP_msg_remove_timeline_frame_deserialize(context_id, buf,
-                                                        length);
     case DP_MSG_LAYER_TREE_CREATE:
         return DP_msg_layer_tree_create_deserialize(context_id, buf, length);
     case DP_MSG_LAYER_TREE_ORDER:
@@ -679,6 +674,11 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return DP_msg_layer_tree_delete_deserialize(context_id, buf, length);
     case DP_MSG_TRANSFORM_REGION:
         return DP_msg_transform_region_deserialize(context_id, buf, length);
+    case DP_MSG_SET_TIMELINE_FRAME:
+        return DP_msg_set_timeline_frame_deserialize(context_id, buf, length);
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
+        return DP_msg_remove_timeline_frame_deserialize(context_id, buf,
+                                                        length);
     case DP_MSG_UNDO:
         return DP_msg_undo_deserialize(context_id, buf, length);
     default:
@@ -796,10 +796,6 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_move_rect_parse(context_id, reader);
     case DP_MSG_SET_METADATA_INT:
         return DP_msg_set_metadata_int_parse(context_id, reader);
-    case DP_MSG_SET_TIMELINE_FRAME:
-        return DP_msg_set_timeline_frame_parse(context_id, reader);
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return DP_msg_remove_timeline_frame_parse(context_id, reader);
     case DP_MSG_LAYER_TREE_CREATE:
         return DP_msg_layer_tree_create_parse(context_id, reader);
     case DP_MSG_LAYER_TREE_ORDER:
@@ -808,6 +804,10 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_layer_tree_delete_parse(context_id, reader);
     case DP_MSG_TRANSFORM_REGION:
         return DP_msg_transform_region_parse(context_id, reader);
+    case DP_MSG_SET_TIMELINE_FRAME:
+        return DP_msg_set_timeline_frame_parse(context_id, reader);
+    case DP_MSG_REMOVE_TIMELINE_FRAME:
+        return DP_msg_remove_timeline_frame_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -7305,248 +7305,6 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi)
 }
 
 
-/* DP_MSG_SET_TIMELINE_FRAME */
-
-struct DP_MsgSetTimelineFrame {
-    uint16_t frame;
-    bool insert;
-    uint16_t layers_count;
-    uint16_t layers[];
-};
-
-static size_t msg_set_timeline_frame_payload_length(DP_Message *msg)
-{
-    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
-    return ((size_t)3) + DP_int_to_size(mstf->layers_count) * 2;
-}
-
-static size_t msg_set_timeline_frame_serialize_payload(DP_Message *msg,
-                                                       unsigned char *data)
-{
-    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
-    size_t written = 0;
-    written += DP_write_bigendian_uint16(mstf->frame, data + written);
-    written += DP_write_bigendian_uint8(mstf->insert, data + written);
-    written += DP_write_bigendian_uint16_array(mstf->layers, mstf->layers_count,
-                                               data + written);
-    DP_ASSERT(written == msg_set_timeline_frame_payload_length(msg));
-    return written;
-}
-
-static bool msg_set_timeline_frame_write_payload_text(DP_Message *msg,
-                                                      DP_TextWriter *writer)
-{
-    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "frame", mstf->frame, false)
-        && DP_text_writer_write_bool(writer, "insert", mstf->insert)
-        && DP_text_writer_write_uint16_list(writer, "layers", mstf->layers,
-                                            mstf->layers_count, true);
-}
-
-static bool msg_set_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
-                                          DP_Message *DP_RESTRICT other)
-{
-    DP_MsgSetTimelineFrame *a = DP_message_internal(msg);
-    DP_MsgSetTimelineFrame *b = DP_message_internal(other);
-    return a->frame == b->frame && a->insert == b->insert
-        && a->layers_count == b->layers_count
-        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
-               == 0;
-}
-
-static const DP_MessageMethods msg_set_timeline_frame_methods = {
-    msg_set_timeline_frame_payload_length,
-    msg_set_timeline_frame_serialize_payload,
-    msg_set_timeline_frame_write_payload_text,
-    msg_set_timeline_frame_equals,
-};
-
-DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
-                                          uint16_t frame, bool insert,
-                                          void (*set_layers)(int, uint16_t *,
-                                                             void *),
-                                          int layers_count, void *layers_user)
-{
-    DP_Message *msg = DP_message_new(
-        DP_MSG_SET_TIMELINE_FRAME, context_id, &msg_set_timeline_frame_methods,
-        DP_FLEX_SIZEOF(DP_MsgSetTimelineFrame, layers,
-                       DP_int_to_size(layers_count) * 2));
-    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
-    mstf->frame = frame;
-    mstf->insert = insert;
-    mstf->layers_count = DP_int_to_uint16(layers_count);
-    if (set_layers) {
-        set_layers(mstf->layers_count, mstf->layers, layers_user);
-    }
-    return msg;
-}
-
-DP_Message *DP_msg_set_timeline_frame_deserialize(unsigned int context_id,
-                                                  const unsigned char *buffer,
-                                                  size_t length)
-{
-    if (length < 3 || length > 27) {
-        DP_error_set("Wrong length for settimelineframe message; "
-                     "expected between 3 and 27, got %zu",
-                     length);
-        return NULL;
-    }
-    size_t read = 0;
-    uint16_t frame = read_uint16(buffer + read, &read);
-    bool insert = read_bool(buffer + read, &read);
-    size_t layers_bytes = length - read;
-    if ((layers_bytes % 2) != 0) {
-        DP_error_set(
-            "Wrong length for layers field in settimelineframe message; "
-            "%zu not divisible by 2",
-            layers_bytes);
-        return NULL;
-    }
-    uint16_t layers_count = DP_size_to_uint16(layers_bytes / 2);
-    void *layers_user = (void *)(buffer + read);
-    return DP_msg_set_timeline_frame_new(context_id, frame, insert,
-                                         read_uint16_array, layers_count,
-                                         layers_user);
-}
-
-DP_Message *DP_msg_set_timeline_frame_parse(unsigned int context_id,
-                                            DP_TextReader *reader)
-{
-    uint16_t frame =
-        (uint16_t)DP_text_reader_get_ulong(reader, "frame", UINT16_MAX);
-    bool insert = DP_text_reader_get_bool(reader, "insert");
-    int layers_count;
-    DP_TextReaderParseParams layers_params =
-        DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
-    return DP_msg_set_timeline_frame_new(context_id, frame, insert,
-                                         DP_text_reader_parse_uint16_array_hex,
-                                         layers_count, &layers_params);
-}
-
-DP_MsgSetTimelineFrame *DP_msg_set_timeline_frame_cast(DP_Message *msg)
-{
-    return DP_message_cast(msg, DP_MSG_SET_TIMELINE_FRAME);
-}
-
-uint16_t DP_msg_set_timeline_frame_frame(const DP_MsgSetTimelineFrame *mstf)
-{
-    DP_ASSERT(mstf);
-    return mstf->frame;
-}
-
-bool DP_msg_set_timeline_frame_insert(const DP_MsgSetTimelineFrame *mstf)
-{
-    DP_ASSERT(mstf);
-    return mstf->insert;
-}
-
-const uint16_t *
-DP_msg_set_timeline_frame_layers(const DP_MsgSetTimelineFrame *mstf,
-                                 int *out_count)
-{
-    DP_ASSERT(mstf);
-    if (out_count) {
-        *out_count = mstf->layers_count;
-    }
-    return mstf->layers;
-}
-
-int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf)
-{
-    return mstf->layers_count;
-}
-
-
-/* DP_MSG_REMOVE_TIMELINE_FRAME */
-
-struct DP_MsgRemoveTimelineFrame {
-    uint16_t frame;
-};
-
-static size_t
-msg_remove_timeline_frame_payload_length(DP_UNUSED DP_Message *msg)
-{
-    return ((size_t)2);
-}
-
-static size_t msg_remove_timeline_frame_serialize_payload(DP_Message *msg,
-                                                          unsigned char *data)
-{
-    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
-    size_t written = 0;
-    written += DP_write_bigendian_uint16(mrtf->frame, data + written);
-    DP_ASSERT(written == msg_remove_timeline_frame_payload_length(msg));
-    return written;
-}
-
-static bool msg_remove_timeline_frame_write_payload_text(DP_Message *msg,
-                                                         DP_TextWriter *writer)
-{
-    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
-    return DP_text_writer_write_uint(writer, "frame", mrtf->frame, false);
-}
-
-static bool msg_remove_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
-                                             DP_Message *DP_RESTRICT other)
-{
-    DP_MsgRemoveTimelineFrame *a = DP_message_internal(msg);
-    DP_MsgRemoveTimelineFrame *b = DP_message_internal(other);
-    return a->frame == b->frame;
-}
-
-static const DP_MessageMethods msg_remove_timeline_frame_methods = {
-    msg_remove_timeline_frame_payload_length,
-    msg_remove_timeline_frame_serialize_payload,
-    msg_remove_timeline_frame_write_payload_text,
-    msg_remove_timeline_frame_equals,
-};
-
-DP_Message *DP_msg_remove_timeline_frame_new(unsigned int context_id,
-                                             uint16_t frame)
-{
-    DP_Message *msg = DP_message_new(DP_MSG_REMOVE_TIMELINE_FRAME, context_id,
-                                     &msg_remove_timeline_frame_methods,
-                                     sizeof(DP_MsgRemoveTimelineFrame));
-    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
-    mrtf->frame = frame;
-    return msg;
-}
-
-DP_Message *DP_msg_remove_timeline_frame_deserialize(
-    unsigned int context_id, const unsigned char *buffer, size_t length)
-{
-    if (length != 2) {
-        DP_error_set("Wrong length for removetimelineframe message; "
-                     "expected 2, got %zu",
-                     length);
-        return NULL;
-    }
-    size_t read = 0;
-    uint16_t frame = read_uint16(buffer + read, &read);
-    return DP_msg_remove_timeline_frame_new(context_id, frame);
-}
-
-DP_Message *DP_msg_remove_timeline_frame_parse(unsigned int context_id,
-                                               DP_TextReader *reader)
-{
-    uint16_t frame =
-        (uint16_t)DP_text_reader_get_ulong(reader, "frame", UINT16_MAX);
-    return DP_msg_remove_timeline_frame_new(context_id, frame);
-}
-
-DP_MsgRemoveTimelineFrame *DP_msg_remove_timeline_frame_cast(DP_Message *msg)
-{
-    return DP_message_cast(msg, DP_MSG_REMOVE_TIMELINE_FRAME);
-}
-
-uint16_t
-DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf)
-{
-    DP_ASSERT(mrtf);
-    return mrtf->frame;
-}
-
-
 /* DP_MSG_LAYER_TREE_CREATE */
 
 const char *DP_msg_layer_tree_create_flags_flag_name(unsigned int value)
@@ -8300,6 +8058,248 @@ DP_msg_transform_region_mask(const DP_MsgTransformRegion *mtr, size_t *out_size)
 size_t DP_msg_transform_region_mask_size(const DP_MsgTransformRegion *mtr)
 {
     return mtr->mask_size;
+}
+
+
+/* DP_MSG_SET_TIMELINE_FRAME */
+
+struct DP_MsgSetTimelineFrame {
+    uint16_t frame;
+    bool insert;
+    uint16_t layers_count;
+    uint16_t layers[];
+};
+
+static size_t msg_set_timeline_frame_payload_length(DP_Message *msg)
+{
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
+    return ((size_t)3) + DP_int_to_size(mstf->layers_count) * 2;
+}
+
+static size_t msg_set_timeline_frame_serialize_payload(DP_Message *msg,
+                                                       unsigned char *data)
+{
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mstf->frame, data + written);
+    written += DP_write_bigendian_uint8(mstf->insert, data + written);
+    written += DP_write_bigendian_uint16_array(mstf->layers, mstf->layers_count,
+                                               data + written);
+    DP_ASSERT(written == msg_set_timeline_frame_payload_length(msg));
+    return written;
+}
+
+static bool msg_set_timeline_frame_write_payload_text(DP_Message *msg,
+                                                      DP_TextWriter *writer)
+{
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "frame", mstf->frame, false)
+        && DP_text_writer_write_bool(writer, "insert", mstf->insert)
+        && DP_text_writer_write_uint16_list(writer, "layers", mstf->layers,
+                                            mstf->layers_count, true);
+}
+
+static bool msg_set_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
+                                          DP_Message *DP_RESTRICT other)
+{
+    DP_MsgSetTimelineFrame *a = DP_message_internal(msg);
+    DP_MsgSetTimelineFrame *b = DP_message_internal(other);
+    return a->frame == b->frame && a->insert == b->insert
+        && a->layers_count == b->layers_count
+        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
+               == 0;
+}
+
+static const DP_MessageMethods msg_set_timeline_frame_methods = {
+    msg_set_timeline_frame_payload_length,
+    msg_set_timeline_frame_serialize_payload,
+    msg_set_timeline_frame_write_payload_text,
+    msg_set_timeline_frame_equals,
+};
+
+DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
+                                          uint16_t frame, bool insert,
+                                          void (*set_layers)(int, uint16_t *,
+                                                             void *),
+                                          int layers_count, void *layers_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_SET_TIMELINE_FRAME, context_id, &msg_set_timeline_frame_methods,
+        DP_FLEX_SIZEOF(DP_MsgSetTimelineFrame, layers,
+                       DP_int_to_size(layers_count) * 2));
+    DP_MsgSetTimelineFrame *mstf = DP_message_internal(msg);
+    mstf->frame = frame;
+    mstf->insert = insert;
+    mstf->layers_count = DP_int_to_uint16(layers_count);
+    if (set_layers) {
+        set_layers(mstf->layers_count, mstf->layers, layers_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_set_timeline_frame_deserialize(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length)
+{
+    if (length < 3 || length > 65535) {
+        DP_error_set("Wrong length for settimelineframe message; "
+                     "expected between 3 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t frame = read_uint16(buffer + read, &read);
+    bool insert = read_bool(buffer + read, &read);
+    size_t layers_bytes = length - read;
+    if ((layers_bytes % 2) != 0) {
+        DP_error_set(
+            "Wrong length for layers field in settimelineframe message; "
+            "%zu not divisible by 2",
+            layers_bytes);
+        return NULL;
+    }
+    uint16_t layers_count = DP_size_to_uint16(layers_bytes / 2);
+    void *layers_user = (void *)(buffer + read);
+    return DP_msg_set_timeline_frame_new(context_id, frame, insert,
+                                         read_uint16_array, layers_count,
+                                         layers_user);
+}
+
+DP_Message *DP_msg_set_timeline_frame_parse(unsigned int context_id,
+                                            DP_TextReader *reader)
+{
+    uint16_t frame =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame", UINT16_MAX);
+    bool insert = DP_text_reader_get_bool(reader, "insert");
+    int layers_count;
+    DP_TextReaderParseParams layers_params =
+        DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
+    return DP_msg_set_timeline_frame_new(context_id, frame, insert,
+                                         DP_text_reader_parse_uint16_array_hex,
+                                         layers_count, &layers_params);
+}
+
+DP_MsgSetTimelineFrame *DP_msg_set_timeline_frame_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_SET_TIMELINE_FRAME);
+}
+
+uint16_t DP_msg_set_timeline_frame_frame(const DP_MsgSetTimelineFrame *mstf)
+{
+    DP_ASSERT(mstf);
+    return mstf->frame;
+}
+
+bool DP_msg_set_timeline_frame_insert(const DP_MsgSetTimelineFrame *mstf)
+{
+    DP_ASSERT(mstf);
+    return mstf->insert;
+}
+
+const uint16_t *
+DP_msg_set_timeline_frame_layers(const DP_MsgSetTimelineFrame *mstf,
+                                 int *out_count)
+{
+    DP_ASSERT(mstf);
+    if (out_count) {
+        *out_count = mstf->layers_count;
+    }
+    return mstf->layers;
+}
+
+int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf)
+{
+    return mstf->layers_count;
+}
+
+
+/* DP_MSG_REMOVE_TIMELINE_FRAME */
+
+struct DP_MsgRemoveTimelineFrame {
+    uint16_t frame;
+};
+
+static size_t
+msg_remove_timeline_frame_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)2);
+}
+
+static size_t msg_remove_timeline_frame_serialize_payload(DP_Message *msg,
+                                                          unsigned char *data)
+{
+    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mrtf->frame, data + written);
+    DP_ASSERT(written == msg_remove_timeline_frame_payload_length(msg));
+    return written;
+}
+
+static bool msg_remove_timeline_frame_write_payload_text(DP_Message *msg,
+                                                         DP_TextWriter *writer)
+{
+    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "frame", mrtf->frame, false);
+}
+
+static bool msg_remove_timeline_frame_equals(DP_Message *DP_RESTRICT msg,
+                                             DP_Message *DP_RESTRICT other)
+{
+    DP_MsgRemoveTimelineFrame *a = DP_message_internal(msg);
+    DP_MsgRemoveTimelineFrame *b = DP_message_internal(other);
+    return a->frame == b->frame;
+}
+
+static const DP_MessageMethods msg_remove_timeline_frame_methods = {
+    msg_remove_timeline_frame_payload_length,
+    msg_remove_timeline_frame_serialize_payload,
+    msg_remove_timeline_frame_write_payload_text,
+    msg_remove_timeline_frame_equals,
+};
+
+DP_Message *DP_msg_remove_timeline_frame_new(unsigned int context_id,
+                                             uint16_t frame)
+{
+    DP_Message *msg = DP_message_new(DP_MSG_REMOVE_TIMELINE_FRAME, context_id,
+                                     &msg_remove_timeline_frame_methods,
+                                     sizeof(DP_MsgRemoveTimelineFrame));
+    DP_MsgRemoveTimelineFrame *mrtf = DP_message_internal(msg);
+    mrtf->frame = frame;
+    return msg;
+}
+
+DP_Message *DP_msg_remove_timeline_frame_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 2) {
+        DP_error_set("Wrong length for removetimelineframe message; "
+                     "expected 2, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t frame = read_uint16(buffer + read, &read);
+    return DP_msg_remove_timeline_frame_new(context_id, frame);
+}
+
+DP_Message *DP_msg_remove_timeline_frame_parse(unsigned int context_id,
+                                               DP_TextReader *reader)
+{
+    uint16_t frame =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame", UINT16_MAX);
+    return DP_msg_remove_timeline_frame_new(context_id, frame);
+}
+
+DP_MsgRemoveTimelineFrame *DP_msg_remove_timeline_frame_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_REMOVE_TIMELINE_FRAME);
+}
+
+uint16_t
+DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf)
+{
+    DP_ASSERT(mrtf);
+    return mrtf->frame;
 }
 
 
