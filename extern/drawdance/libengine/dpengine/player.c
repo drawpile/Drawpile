@@ -58,7 +58,7 @@
 #define INDEX_EXTENSION       "dpidx"
 #define INDEX_MAGIC           "DPIDX"
 #define INDEX_MAGIC_LENGTH    6
-#define INDEX_VERSION         10
+#define INDEX_VERSION         11
 #define INDEX_VERSION_LENGTH  2
 #define INITAL_ENTRY_CAPACITY 64
 
