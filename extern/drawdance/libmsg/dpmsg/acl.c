@@ -513,7 +513,10 @@ static uint8_t handle_trusted_users(DP_AclState *acls, DP_Message *msg)
 static uint8_t handle_internal(DP_AclState *acls, DP_Message *msg)
 {
     DP_MsgInternal *mi = DP_message_internal(msg);
-    if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+    DP_MsgInternalType type = DP_msg_internal_type(mi);
+    bool is_reset = type == DP_MSG_INTERNAL_TYPE_RESET
+                 || type == DP_MSG_INTERNAL_TYPE_RESET_TO_STATE;
+    if (is_reset) {
         clear_layers(acls);
         clear_annotations(acls);
         acls->users.all_locked = false;
