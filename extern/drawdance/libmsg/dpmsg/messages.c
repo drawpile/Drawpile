@@ -2668,9 +2668,9 @@ DP_Message *DP_msg_feature_access_levels_new(
 DP_Message *DP_msg_feature_access_levels_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length)
 {
-    if (length != 11) {
+    if (length < 1 || length > 255) {
         DP_error_set("Wrong length for featureaccess message; "
-                     "expected 11, got %zu",
+                     "expected between 1 and 255, got %zu",
                      length);
         return NULL;
     }

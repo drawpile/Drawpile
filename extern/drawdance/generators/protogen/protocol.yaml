@@ -258,11 +258,16 @@ LayerACL:
 FeatureAccessLevels:
     id: 70
     name: featureaccess
-    comment: Change feature access tiers
+    comment: |
+             Change feature access tiers
+
+             Tier 0 is operator, 1 is trusted, 2 is authenticated, 3 and above
+             is guest. A value of 255 means to leave that tier unchanged. Any
+             unknown features will be ignored by the client.
     fields:
         - feature_tiers vec_u8:
-          min_len: 11
-          max_len: 11
+          min_len: 1
+          max_len: 255
 
 DefaultLayer:
     id: 71

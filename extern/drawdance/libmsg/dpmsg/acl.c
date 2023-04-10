@@ -652,8 +652,11 @@ static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg,
 
         int count = DP_min_int(feature_tiers_count, DP_FEATURE_COUNT);
         for (int i = 0; i < count; ++i) {
-            acls->feature.tiers[i] =
-                DP_min_uint8(feature_tiers[i], DP_ACCESS_TIER_GUEST);
+            uint8_t feature_tier = feature_tiers[i];
+            if (feature_tier != 255) {
+                acls->feature.tiers[i] =
+                    DP_min_uint8(feature_tier, DP_ACCESS_TIER_GUEST);
+            }
         }
 
         return DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT;

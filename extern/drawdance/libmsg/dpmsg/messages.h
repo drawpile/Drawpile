@@ -663,6 +663,10 @@ int DP_msg_layer_acl_exclusive_count(const DP_MsgLayerAcl *mla);
  * DP_MSG_FEATURE_ACCESS_LEVELS
  *
  * Change feature access tiers
+ *
+ * Tier 0 is operator, 1 is trusted, 2 is authenticated, 3 and above
+ * is guest. A value of 255 means to leave that tier unchanged. Any
+ * unknown features will be ignored by the client.
  */
 
 typedef struct DP_MsgFeatureAccessLevels DP_MsgFeatureAccessLevels;
