@@ -42,6 +42,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/cpu.h>
 #include <dpcommon/file.h>
+#include <dpcommon/geom.h>
 #include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
@@ -112,8 +113,15 @@ typedef struct DP_PaintEngineTransformPreview {
     DP_LayerProps *lp;
     int layer_id;
     int target_layer_id;
-    int x, y;
+    int x, y, width, height;
+    DP_Quad dst_quad;
+    int interpolation;
     DP_Image *img;
+    struct {
+        DP_PaintEngineTransformGetPixelsFn get;
+        DP_PaintEngineTransformDisposePixelsFn dispose;
+        void *user;
+    } pixels;
 } DP_PaintEngineTransformPreview;
 
 typedef struct DP_PaintEngineDabsPreview {
@@ -2523,6 +2531,37 @@ void DP_paint_engine_preview_cut_clear(DP_PaintEngine *pe)
 }
 
 
+static bool transform_preview_image(DP_PaintEngineTransformPreview *petp,
+                                    DP_DrawContext *dc)
+{
+    if (petp->img) {
+        return true; // Image alread transformed successfully.
+    }
+
+    DP_PaintEngineTransformGetPixelsFn get_pixels = petp->pixels.get;
+    if (!get_pixels) {
+        return false; // Transform already attempted, but failed.
+    }
+
+    void *user = petp->pixels.user;
+    const DP_Pixel8 *pixels = get_pixels(user);
+    petp->pixels.get = NULL;
+    DP_Image *img = DP_image_transform_pixels(petp->width, petp->height, pixels,
+                                              dc, &petp->dst_quad,
+                                              petp->interpolation, NULL, NULL);
+    petp->pixels.dispose(user);
+    petp->pixels.dispose = NULL;
+
+    if (img) {
+        petp->img = img;
+        return true;
+    }
+    else {
+        DP_warn("Error transforming preview: %s", DP_error());
+        return false;
+    }
+}
+
 static DP_LayerContent *
 get_transform_preview_content(DP_PaintEngineTransformPreview *petp,
                               DP_CanvasState *cs, int offset_x, int offset_y)
@@ -2551,7 +2590,7 @@ get_transform_preview_content(DP_PaintEngineTransformPreview *petp,
 
 static DP_CanvasState *transform_preview_render(DP_PaintEnginePreview *preview,
                                                 DP_CanvasState *cs,
-                                                DP_UNUSED DP_DrawContext *dc,
+                                                DP_DrawContext *dc,
                                                 int offset_x, int offset_y)
 {
     DP_PaintEngineTransformPreview *petp =
@@ -2559,7 +2598,8 @@ static DP_CanvasState *transform_preview_render(DP_PaintEnginePreview *preview,
     int layer_id = petp->layer_id;
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre || DP_layer_routes_entry_is_group(lre)) {
+    if (!lre || DP_layer_routes_entry_is_group(lre)
+        || !transform_preview_image(petp, dc)) {
         return cs;
     }
 
@@ -2582,49 +2622,45 @@ static void transform_preview_dispose(DP_PaintEnginePreview *preview)
 {
     DP_PaintEngineTransformPreview *petp =
         (DP_PaintEngineTransformPreview *)preview;
+    DP_PaintEngineTransformDisposePixelsFn dispose = petp->pixels.dispose;
+    if (dispose) {
+        dispose(petp->pixels.user);
+    }
     DP_layer_props_decref_nullable(petp->lp);
     DP_layer_content_decref_nullable(petp->lc);
     DP_image_free(petp->img);
 }
 
-static bool transform_preview_image(DP_PaintEngine *pe, int width, int height,
-                                    const DP_Pixel8 *pixels,
-                                    const DP_Quad *dst_quad, int interpolation,
-                                    DP_Image **out_img)
-{
-    if (width > 0 && height > 0) {
-        DP_Image *img =
-            DP_image_transform_pixels(width, height, pixels, pe->paint_dc,
-                                      dst_quad, interpolation, NULL, NULL);
-        if (img) {
-            *out_img = img;
-            return true;
-        }
-    }
-    return false;
-}
-
-void DP_paint_engine_preview_transform(DP_PaintEngine *pe, int layer_id, int x,
-                                       int y, int width, int height,
-                                       const DP_Pixel8 *pixels,
-                                       const DP_Quad *dst_quad,
-                                       int interpolation)
+void DP_paint_engine_preview_transform(
+    DP_PaintEngine *pe, int layer_id, int x, int y, int width, int height,
+    const DP_Quad *dst_quad, int interpolation,
+    DP_PaintEngineTransformGetPixelsFn get_pixels,
+    DP_PaintEngineTransformDisposePixelsFn dispose_pixels, void *user)
 {
     DP_ASSERT(pe);
-    DP_Image *img;
-    if (transform_preview_image(pe, width, height, pixels, dst_quad,
-                                interpolation, &img)) {
+    DP_ASSERT(dst_quad);
+    DP_ASSERT(get_pixels);
+    DP_ASSERT(dispose_pixels);
+    if (width > 0 && height > 0) {
         DP_PaintEngineTransformPreview *petp = DP_malloc(sizeof(*petp));
         petp->lc = NULL;
         petp->lp = NULL;
         petp->layer_id = layer_id;
         petp->x = x;
         petp->y = y;
-        petp->img = img;
+        petp->width = width;
+        petp->height = height;
+        petp->dst_quad = *dst_quad;
+        petp->interpolation = interpolation;
+        petp->pixels.get = get_pixels;
+        petp->pixels.dispose = dispose_pixels;
+        petp->pixels.user = user;
+        petp->img = NULL;
         set_preview(pe, DP_PAINT_ENGINE_PREVIEW_TRANSFORM, &petp->parent,
                     transform_preview_render, transform_preview_dispose);
     }
     else {
+        dispose_pixels(user);
         DP_paint_engine_preview_transform_clear(pe);
     }
 }

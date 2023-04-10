@@ -35,6 +35,7 @@ typedef struct DP_DocumentMetadata DP_DocumentMetadata;
 typedef struct DP_Image DP_Image;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
+typedef struct DP_Quad DP_Quad;
 typedef union DP_Pixel8 DP_Pixel8;
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -71,6 +72,8 @@ typedef void (*DP_PaintEngineRenderSizeFn)(void *user, int width, int height);
 typedef void (*DP_PaintEngineRenderTileFn)(void *user, int x, int y,
                                            DP_Pixel8 *pixels, int thread_index);
 typedef void (*DP_PaintEnginePushMessageFn)(void *user, DP_Message *msg);
+typedef const DP_Pixel8 *(*DP_PaintEngineTransformGetPixelsFn)(void *user);
+typedef void (*DP_PaintEngineTransformDisposePixelsFn)(void *user);
 
 
 typedef struct DP_PaintEngine DP_PaintEngine;
@@ -229,11 +232,11 @@ void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
 
 void DP_paint_engine_preview_cut_clear(DP_PaintEngine *pe);
 
-void DP_paint_engine_preview_transform(DP_PaintEngine *pe, int layer_id, int x,
-                                       int y, int width, int height,
-                                       const DP_Pixel8 *pixels,
-                                       const DP_Quad *dst_quad,
-                                       int interpolation);
+void DP_paint_engine_preview_transform(
+    DP_PaintEngine *pe, int layer_id, int x, int y, int width, int height,
+    const DP_Quad *dst_quad, int interpolation,
+    DP_PaintEngineTransformGetPixelsFn get_pixels,
+    DP_PaintEngineTransformDisposePixelsFn dispose_pixels, void *user);
 
 void DP_paint_engine_preview_transform_clear(DP_PaintEngine *pe);
 
