@@ -60,6 +60,7 @@
 #define INDEX_MAGIC_LENGTH    6
 #define INDEX_VERSION         11
 #define INDEX_VERSION_LENGTH  2
+#define INDEX_HEADER_LENGTH   (INDEX_MAGIC_LENGTH + INDEX_VERSION_LENGTH + 12)
 #define INITAL_ENTRY_CAPACITY 64
 
 static_assert(INDEX_MAGIC_LENGTH < sizeof(DP_OutputBinaryEntry),
@@ -1779,12 +1780,25 @@ static bool check_index_version(DP_ReadIndexContext *c)
     return false;
 }
 
+static bool read_index_offset(DP_ReadIndexContext *c)
+{
+    if (READ_INDEX_SIZE(&c->input, c->index_offset)) {
+        if (c->index_offset >= INDEX_HEADER_LENGTH) {
+            return true;
+        }
+        else {
+            DP_error_set("Offset %zu is inside header (incomplete index?)",
+                         c->index_offset);
+        }
+    }
+    return false;
+}
+
 static bool read_index_header(DP_ReadIndexContext *c)
 {
     DP_BufferedInput *input = &c->input;
     return check_index_magic(c) && check_index_version(c)
-        && READ_INDEX(input, uint32, c->message_count)
-        && READ_INDEX_SIZE(input, c->index_offset);
+        && READ_INDEX(input, uint32, c->message_count) && read_index_offset(c);
 }
 
 #define ENTRY_SIZE (sizeof(uint32_t) + sizeof(uint64_t) * (size_t)3)
