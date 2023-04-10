@@ -338,20 +338,19 @@ static DP_CanvasState *handle_layer_create(DP_CanvasState *cs,
     }
 
     unsigned int flags = DP_msg_layer_create_flags(mlc);
-    bool into = flags & DP_MSG_LAYER_CREATE_FLAGS_INTO;
-    bool group = flags & DP_MSG_LAYER_CREATE_FLAGS_GROUP;
+    bool copy = flags & DP_MSG_LAYER_CREATE_FLAGS_COPY;
+    bool insert = flags & DP_MSG_LAYER_CREATE_FLAGS_INSERT;
 
     uint32_t fill = DP_msg_layer_create_fill(mlc);
-    DP_Tile *tile =
-        group || fill == 0 ? NULL : DP_tile_new_from_bgra(context_id, fill);
+    DP_Tile *tile = fill == 0 ? NULL : DP_tile_new_from_bgra(context_id, fill);
 
     size_t title_length;
-    const char *title = DP_msg_layer_create_name(mlc, &title_length);
+    const char *title = DP_msg_layer_create_title(mlc, &title_length);
 
-    DP_CanvasState *next =
-        DP_ops_layer_create(cs, dc, layer_id, DP_msg_layer_create_source(mlc),
-                            DP_msg_layer_create_target(mlc), tile, into, group,
-                            title, title_length);
+    int source_id = DP_msg_layer_create_source(mlc);
+    DP_CanvasState *next = DP_ops_layer_tree_create(
+        cs, dc, DP_msg_layer_create_id(mlc), copy ? source_id : 0,
+        insert ? source_id : 0, tile, false, false, title, title_length);
 
     DP_tile_decref_nullable(tile);
     return next;
@@ -377,11 +376,10 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
 }
 
 
-static struct DP_LayerOrderPair get_layer_order_pair(void *user, int index)
+static int get_layer_order_id(void *user, int index)
 {
-    const uint16_t *layers = user;
-    const uint16_t *pair = &layers[index * 2];
-    return (struct DP_LayerOrderPair){pair[0], pair[1]};
+    const uint16_t *layer_ids = user;
+    return layer_ids[index];
 }
 
 static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
@@ -389,18 +387,11 @@ static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
                                           DP_MsgLayerOrder *mlo)
 {
     int count;
-    const uint16_t *layers = DP_msg_layer_order_layers(mlo, &count);
-    if (count != 0 && count % 2 == 0) {
-        return DP_ops_layer_order(cs, dc, DP_msg_layer_order_root(mlo),
-                                  count / 2, get_layer_order_pair,
-                                  (void *)layers);
-    }
-    else {
-        DP_error_set("Layer order: ordering %s",
-                     count == 0 ? "empty" : "not even");
-        return NULL;
-    }
+    const uint16_t *layer_ids = DP_msg_layer_order_layers(mlo, &count);
+    return DP_ops_layer_order(cs, dc, count, get_layer_order_id,
+                              (void *)layer_ids);
 }
+
 
 static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,
                                             DP_MsgLayerRetitle *mlr)
@@ -429,7 +420,7 @@ static DP_CanvasState *handle_layer_delete(DP_CanvasState *cs,
     }
 
     return DP_ops_layer_delete(cs, dc, context_id, layer_id,
-                               DP_msg_layer_delete_merge_to(mld));
+                               DP_msg_layer_delete_merge(mld));
 }
 
 static DP_CanvasState *handle_layer_visibility(DP_CanvasState *cs,
@@ -498,17 +489,16 @@ static DP_CanvasStateChange handle_fill_rect(DP_CanvasState *cs,
                             blend_mode, left, top, right, bottom, pixel);
 }
 
-static DP_CanvasStateChange handle_move_region(DP_CanvasState *cs,
-                                               DP_DrawContext *dc,
-                                               unsigned int context_id,
-                                               DP_MsgMoveRegion *mmr)
+static DP_CanvasStateChange
+handle_region(DP_CanvasState *cs, DP_DrawContext *dc, unsigned int context_id,
+              const char *title, int src_layer_id, int dst_layer_id,
+              int interpolation, int bx, int by, int bw, int bh, int x1, int y1,
+              int x2, int y2, int x3, int y3, int x4, int y4,
+              const unsigned char *in_mask, size_t in_mask_size,
+              DP_Image *(*decompress)(int, int, const unsigned char *, size_t))
 {
-    int src_x = DP_msg_move_region_bx(mmr);
-    int src_y = DP_msg_move_region_by(mmr);
-    int src_width = DP_msg_move_region_bw(mmr);
-    int src_height = DP_msg_move_region_bh(mmr);
-    if (src_width <= 0 || src_height <= 0) {
-        DP_error_set("Move region: selection is empty");
+    if (bw <= 0 || bh <= 0) {
+        DP_error_set("%s: selection is empty", title);
         return DP_canvas_state_change_null();
     }
 
@@ -516,36 +506,29 @@ static DP_CanvasStateChange handle_move_region(DP_CanvasState *cs,
     int canvas_height = cs->height;
     DP_Rect canvas_bounds = DP_rect_make(0, 0, canvas_width, canvas_height);
 
-    DP_Rect src_rect = DP_rect_make(src_x, src_y, src_width, src_height);
+    DP_Rect src_rect = DP_rect_make(bx, by, bw, bh);
     if (!DP_rect_intersects(canvas_bounds, src_rect)) {
-        DP_error_set("Move region: source out of bounds");
+        DP_error_set("%s: source out of bounds", title);
         return DP_canvas_state_change_null();
     }
 
-    DP_Quad dst_quad =
-        DP_quad_make(DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
-                     DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
-                     DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
-                     DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr));
+    DP_Quad dst_quad = DP_quad_make(x1, y1, x2, y2, x3, y3, x4, y4);
 
     DP_Rect dst_bounds = DP_quad_bounds(dst_quad);
     if (!DP_rect_intersects(canvas_bounds, dst_bounds)) {
-        DP_error_set("Move region: destination out of bounds");
+        DP_error_set("%s: destination out of bounds", title);
         return DP_canvas_state_change_null();
     }
 
     long long max_size = (canvas_width + 1LL) * (canvas_height + 1LL);
     if (DP_rect_size(dst_bounds) > max_size) {
-        DP_error_set("Move region: attempt to scale beyond image size");
+        DP_error_set("%s: attempt to scale beyond image size", title);
         return DP_canvas_state_change_null();
     }
 
-    size_t in_mask_size;
-    const unsigned char *in_mask = DP_msg_move_region_mask(mmr, &in_mask_size);
     DP_Image *mask;
     if (in_mask_size > 0) {
-        mask = DP_image_new_from_compressed_alpha_mask(src_width, src_height,
-                                                       in_mask, in_mask_size);
+        mask = decompress(bw, bh, in_mask, in_mask_size);
         if (!mask) {
             return DP_canvas_state_change_null();
         }
@@ -555,11 +538,30 @@ static DP_CanvasStateChange handle_move_region(DP_CanvasState *cs,
     }
 
     DP_CanvasStateChange change =
-        DP_ops_move_region(cs, dc, context_id, DP_msg_move_region_source(mmr),
-                           DP_msg_move_region_layer(mmr), &src_rect, &dst_quad,
-                           DP_msg_move_region_mode(mmr), mask);
+        DP_ops_move_region(cs, dc, context_id, src_layer_id, dst_layer_id,
+                           &src_rect, &dst_quad, interpolation, mask);
     DP_free(mask);
     return change;
+}
+
+static DP_CanvasStateChange handle_move_region(DP_CanvasState *cs,
+                                               DP_DrawContext *dc,
+                                               unsigned int context_id,
+                                               DP_MsgMoveRegion *mmr)
+{
+    int layer_id = DP_msg_move_region_layer(mmr);
+    size_t in_mask_size;
+    const unsigned char *in_mask = DP_msg_move_region_mask(mmr, &in_mask_size);
+    return handle_region(cs, dc, context_id, "Move region", layer_id, layer_id,
+                         DP_MSG_TRANSFORM_REGION_MODE_BILINEAR,
+                         DP_msg_move_region_bx(mmr), DP_msg_move_region_by(mmr),
+                         DP_msg_move_region_bw(mmr), DP_msg_move_region_bh(mmr),
+                         DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
+                         DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
+                         DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
+                         DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr),
+                         in_mask, in_mask_size,
+                         DP_image_new_from_compressed_monochrome);
 }
 
 static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
@@ -899,6 +901,98 @@ handle_remove_timeline_frame(DP_CanvasState *cs,
         cs, DP_msg_remove_timeline_frame_frame(mrtf));
 }
 
+static DP_CanvasState *handle_layer_tree_create(DP_CanvasState *cs,
+                                                DP_DrawContext *dc,
+                                                unsigned int context_id,
+                                                DP_MsgLayerTreeCreate *mtlc)
+{
+    int layer_id = DP_msg_layer_tree_create_id(mtlc);
+    if (layer_id == 0) {
+        DP_error_set("Create layer tree: layer id 0 is invalid");
+        return NULL;
+    }
+
+    unsigned int flags = DP_msg_layer_tree_create_flags(mtlc);
+    bool into = flags & DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
+    bool group = flags & DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP;
+
+    uint32_t fill = DP_msg_layer_tree_create_fill(mtlc);
+    DP_Tile *tile =
+        group || fill == 0 ? NULL : DP_tile_new_from_bgra(context_id, fill);
+
+    size_t title_length;
+    const char *title = DP_msg_layer_tree_create_title(mtlc, &title_length);
+
+    DP_CanvasState *next = DP_ops_layer_tree_create(
+        cs, dc, layer_id, DP_msg_layer_tree_create_source(mtlc),
+        DP_msg_layer_tree_create_target(mtlc), tile, into, group, title,
+        title_length);
+
+    DP_tile_decref_nullable(tile);
+    return next;
+}
+
+static struct DP_LayerOrderPair get_layer_tree_order_pair(void *user, int index)
+{
+    const uint16_t *layers = user;
+    const uint16_t *pair = &layers[index * 2];
+    return (struct DP_LayerOrderPair){pair[0], pair[1]};
+}
+
+static DP_CanvasState *handle_layer_tree_order(DP_CanvasState *cs,
+                                               DP_DrawContext *dc,
+                                               DP_MsgLayerTreeOrder *mtlo)
+{
+    int count;
+    const uint16_t *layers = DP_msg_layer_tree_order_layers(mtlo, &count);
+    if (count != 0 && count % 2 == 0) {
+        return DP_ops_layer_tree_order(
+            cs, dc, DP_msg_layer_tree_order_root(mtlo), count / 2,
+            get_layer_tree_order_pair, (void *)layers);
+    }
+    else {
+        DP_error_set("Layer tree order: ordering %s",
+                     count == 0 ? "empty" : "not even");
+        return NULL;
+    }
+}
+
+static DP_CanvasState *handle_layer_tree_delete(DP_CanvasState *cs,
+                                                DP_DrawContext *dc,
+                                                unsigned int context_id,
+                                                DP_MsgLayerTreeDelete *mltd)
+{
+    int layer_id = DP_msg_layer_tree_delete_id(mltd);
+    if (layer_id == 0) {
+        DP_error_set("Layer tree delete: layer id 0 is invalid");
+        return NULL;
+    }
+
+    return DP_ops_layer_tree_delete(cs, dc, context_id, layer_id,
+                                    DP_msg_layer_tree_delete_merge_to(mltd));
+}
+
+static DP_CanvasStateChange handle_transform_region(DP_CanvasState *cs,
+                                                    DP_DrawContext *dc,
+                                                    unsigned int context_id,
+                                                    DP_MsgTransformRegion *mtr)
+{
+    size_t in_mask_size;
+    const unsigned char *in_mask =
+        DP_msg_transform_region_mask(mtr, &in_mask_size);
+    return handle_region(
+        cs, dc, context_id, "Transform region",
+        DP_msg_transform_region_source(mtr), DP_msg_transform_region_layer(mtr),
+        DP_MSG_TRANSFORM_REGION_MODE_BILINEAR, DP_msg_transform_region_bx(mtr),
+        DP_msg_transform_region_by(mtr), DP_msg_transform_region_bw(mtr),
+        DP_msg_transform_region_bh(mtr), DP_msg_transform_region_x1(mtr),
+        DP_msg_transform_region_y1(mtr), DP_msg_transform_region_x2(mtr),
+        DP_msg_transform_region_y2(mtr), DP_msg_transform_region_x3(mtr),
+        DP_msg_transform_region_y3(mtr), DP_msg_transform_region_x4(mtr),
+        DP_msg_transform_region_y4(mtr), in_mask, in_mask_size,
+        DP_image_new_from_compressed_alpha_mask);
+}
+
 static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                    DP_Message *msg, DP_MessageType type)
 {
@@ -975,6 +1069,20 @@ static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return DP_canvas_state_change_of(handle_remove_timeline_frame(
             cs, DP_msg_remove_timeline_frame_cast(msg)));
+    case DP_MSG_LAYER_TREE_CREATE:
+        return DP_canvas_state_change_of(
+            handle_layer_tree_create(cs, dc, DP_message_context_id(msg),
+                                     DP_msg_layer_tree_create_cast(msg)));
+    case DP_MSG_LAYER_TREE_ORDER:
+        return DP_canvas_state_change_of(
+            handle_layer_tree_order(cs, dc, DP_msg_layer_tree_order_cast(msg)));
+    case DP_MSG_LAYER_TREE_DELETE:
+        return DP_canvas_state_change_of(
+            handle_layer_tree_delete(cs, dc, DP_message_context_id(msg),
+                                     DP_msg_layer_tree_delete_cast(msg)));
+    case DP_MSG_TRANSFORM_REGION:
+        return handle_transform_region(cs, dc, DP_message_context_id(msg),
+                                       DP_msg_transform_region_cast(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return DP_canvas_state_change_of(NULL);

@@ -146,7 +146,7 @@ DP_LayerRoutesEntry *DP_layer_routes_search(DP_LayerRoutes *lr, int layer_id)
 }
 
 
-struct DP_MakeLayerOrderContext {
+struct DP_MakeLayerTreeOrderContext {
     int source_id;
     int target_id;
     bool into;
@@ -186,11 +186,11 @@ static int count_order_layers(DP_LayerPropsList *lpl)
     return total;
 }
 
-static void build_order_layers(struct DP_MakeLayerOrderContext *c,
+static void build_order_layers(struct DP_MakeLayerTreeOrderContext *c,
                                DP_LayerPropsList *lpl, uint16_t *out,
                                uint16_t *parent_child_count);
 
-static void append_order_layer(struct DP_MakeLayerOrderContext *c,
+static void append_order_layer(struct DP_MakeLayerTreeOrderContext *c,
                                uint16_t *out, uint16_t *parent_child_count,
                                DP_LayerProps *lp, bool insert_source)
 {
@@ -210,7 +210,7 @@ static void append_order_layer(struct DP_MakeLayerOrderContext *c,
     }
 }
 
-static void build_order_layers(struct DP_MakeLayerOrderContext *c,
+static void build_order_layers(struct DP_MakeLayerTreeOrderContext *c,
                                DP_LayerPropsList *lpl, uint16_t *out,
                                uint16_t *parent_child_count)
 {
@@ -241,7 +241,7 @@ static void build_order_layers(struct DP_MakeLayerOrderContext *c,
 
 static void set_order_layers(DP_UNUSED int count, uint16_t *out, void *user)
 {
-    struct DP_MakeLayerOrderContext *c = user;
+    struct DP_MakeLayerTreeOrderContext *c = user;
     if (c->into && c->target_id == c->root_id) {
         append_order_layer(c, out, NULL, c->source_lp, false);
     }
@@ -249,33 +249,36 @@ static void set_order_layers(DP_UNUSED int count, uint16_t *out, void *user)
     DP_ASSERT(c->index == count);
 }
 
-DP_Message *DP_layer_routes_layer_order_make(DP_LayerRoutes *lr,
-                                             DP_CanvasState *cs,
-                                             unsigned int context_id,
-                                             int source_id, int target_id,
-                                             bool into, bool below)
+DP_Message *DP_layer_routes_layer_tree_order_make(DP_LayerRoutes *lr,
+                                                  DP_CanvasState *cs,
+                                                  unsigned int context_id,
+                                                  int source_id, int target_id,
+                                                  bool into, bool below)
 {
-    DP_debug("Make layer order source %d target %d into %d below %d", source_id,
-             target_id, into, below);
+    DP_debug("Make layer tree order source %d target %d into %d below %d",
+             source_id, target_id, into, below);
     if (source_id == target_id) {
-        DP_error_set("Make layer order: source and target are both %d",
+        DP_error_set("Make layer tree order: source and target are both %d",
                      source_id);
         return NULL;
     }
 
     DP_LayerRoutesEntry *source_lre = DP_layer_routes_search(lr, source_id);
     if (!source_lre) {
-        DP_error_set("Make layer order: source layer %d not found", source_id);
+        DP_error_set("Make layer tree order: source layer %d not found",
+                     source_id);
         return NULL;
     }
 
     DP_LayerRoutesEntry *target_lre = DP_layer_routes_search(lr, target_id);
     if (!target_lre) {
-        DP_error_set("Make layer order: target layer %d not found", target_id);
+        DP_error_set("Make layer tree order: target layer %d not found",
+                     target_id);
         return NULL;
     }
     else if (into && !target_lre->is_group) {
-        DP_error_set("Make layer order: target %d is not a group", target_id);
+        DP_error_set("Make layer tree order: target %d is not a group",
+                     target_id);
         return NULL;
     }
 
@@ -286,7 +289,7 @@ DP_Message *DP_layer_routes_layer_order_make(DP_LayerRoutes *lr,
         target_lre->index_count - (into ? 0 : 1), target_lre->indexes);
 
     if (common_count == source_index_count) {
-        DP_error_set("Make layer order: target %d is child of source %d",
+        DP_error_set("Make layer tree order: target %d is child of source %d",
                      target_id, source_id);
         return NULL;
     }
@@ -300,13 +303,14 @@ DP_Message *DP_layer_routes_layer_order_make(DP_LayerRoutes *lr,
 
     int root_id = common_count > 0 ? DP_layer_props_id(lp) : 0;
     DP_LayerProps *source_lp = DP_layer_routes_entry_props(source_lre, cs);
-    struct DP_MakeLayerOrderContext params = {
+    struct DP_MakeLayerTreeOrderContext params = {
         source_id, target_id, into, below, source_lp, lpl, root_id, 0};
 
     // The message contains pairs of child count and layer id.
     int layer_pair_count = count_order_layers(lpl) * 2;
-    return DP_msg_layer_order_new(context_id, DP_int_to_uint16(root_id),
-                                  set_order_layers, layer_pair_count, &params);
+    return DP_msg_layer_tree_order_new(context_id, DP_int_to_uint16(root_id),
+                                       set_order_layers, layer_pair_count,
+                                       &params);
 }
 
 

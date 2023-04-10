@@ -351,7 +351,7 @@ void Document::onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, 
 {
 	uint8_t contextId = m_client->myId();
 	drawdance::Message layerOrderMessage = m_canvas->paintEngine()->historyCanvasState()
-		.makeLayerOrder(contextId, sourceId, targetId, intoGroup, below);
+		.makeLayerTreeOrder(contextId, sourceId, targetId, intoGroup, below);
 	if(layerOrderMessage.isNull()) {
 		qWarning("Can't move layer: %s", DP_error());
 	} else {

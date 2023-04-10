@@ -151,7 +151,7 @@ void PaintEngine::enqueueLoadBlank(
 		drawdance::Message::makeCanvasBackground(0, backgroundColor),
 		drawdance::Message::makeCanvasResize(
 			0, 0, size.width(), size.height(), 0),
-		drawdance::Message::makeLayerCreate(
+		drawdance::Message::makeLayerTreeCreate(
 			0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
 		drawdance::Message::makeInternalSnapshot(0),
 	};

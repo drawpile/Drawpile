@@ -318,7 +318,8 @@ void render_brush_preview(
         DP_msg_canvas_resize_new(0, 0, DP_int_to_int32(width),
                                  DP_int_to_int32(height), 0));
     cs = handle_preview_message_dec(
-        cs, dc, DP_msg_layer_create_new(0, 1, 0, 0, layer_color, 0, "", 0));
+        cs, dc,
+        DP_msg_layer_tree_create_new(0, 1, 0, 0, layer_color, 0, "", 0));
 
     switch (foreground_style) {
     case FOREGROUND_SOLID:
@@ -569,7 +570,7 @@ DP_Image *DP_classic_brush_preview_dab(const DP_ClassicBrush *cb,
     cs = handle_preview_message_dec(
         cs, dc, DP_msg_canvas_resize_new(0, 0, width, height, 0));
     cs = handle_preview_message_dec(
-        cs, dc, DP_msg_layer_create_new(0, 1, 0, 0, 0, 0, "", 0));
+        cs, dc, DP_msg_layer_tree_create_new(0, 1, 0, 0, 0, 0, "", 0));
     cs = handle_preview_message_dec(
         cs, dc, get_preview_draw_dab_message(cb, width, height, color));
 

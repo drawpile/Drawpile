@@ -64,7 +64,7 @@ public:
 
     void toResetImage(MessageList &msgs, uint8_t contextId) const;
 
-    drawdance::Message makeLayerOrder(
+    drawdance::Message makeLayerTreeOrder(
         uint8_t contextId, int sourceId, int targetId, bool intoGroup, bool below) const;
 
     LayerContent searchLayerContent(int layerId) const;

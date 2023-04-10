@@ -124,7 +124,7 @@ static uint32_t fetch_transformed_pixel(int interpolation, int width,
                                         double px, double py)
 {
     switch (interpolation) {
-    case DP_MSG_MOVE_REGION_MODE_NEAREST:
+    case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
         return fetch_transformed_pixel_nearest(width, height, pixels, px, py);
     default:
         return fetch_transformed_pixel_bilinear(width, height, pixels, px, py);
@@ -172,7 +172,7 @@ static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
 unsigned int get_span_opacity(int interpolation, int coverage)
 {
     switch (interpolation) {
-    case DP_MSG_MOVE_REGION_MODE_NEAREST:
+    case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
         return coverage < 128 ? 0u : 255u;
     default:
         return DP_int_to_uint(CLAMP(coverage, 0, 255));

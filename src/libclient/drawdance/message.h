@@ -44,11 +44,11 @@ public:
     static Message makeInternalSnapshot(uint8_t contextId);
     static Message makeLayerAttributes(uint8_t contextId, uint16_t id, uint8_t sublayer, uint8_t flags, uint8_t opacity, uint8_t blend);
     static Message makeLayerAcl(uint8_t contextId, uint16_t id, uint8_t flags, const QVector<uint8_t> &exclusive);
-    static Message makeLayerCreate(uint8_t contextId, uint16_t id, uint16_t source, uint16_t target, uint32_t fill, uint8_t flags, const QString &name);
-    static Message makeLayerDelete(uint8_t contextId, uint16_t id, uint16_t mergeTo);
+    static Message makeLayerTreeCreate(uint8_t contextId, uint16_t id, uint16_t source, uint16_t target, uint32_t fill, uint8_t flags, const QString &name);
+    static Message makeLayerTreeDelete(uint8_t contextId, uint16_t id, uint16_t mergeTo);
     static Message makeLayerRetitle(uint8_t contextId, uint16_t id, const QString &title);
     static Message makeMoveRect(uint8_t contextId, uint16_t layer, uint16_t source, int32_t sx, int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask);
-    static Message makeMoveRegion(uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, const QImage &mask);
+    static Message makeTransformRegion(uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, const QImage &mask);
     static Message makePrivateChat(uint8_t contextId, uint8_t target, uint8_t oflags, const QString &message);
     static Message makePutImage(uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const QByteArray &compressedImage);
     static Message makeSessionOwner(uint8_t contextId, const QVector<uint8_t> &users);

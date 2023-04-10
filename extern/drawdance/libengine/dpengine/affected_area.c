@@ -166,22 +166,15 @@ static DP_Rect pixel_dabs_bounds(DP_MsgDrawDabsPixel *mddp)
     return bounds;
 }
 
-static DP_Rect move_region_bounds(DP_MsgMoveRegion *mmr)
+static DP_Rect region_bounds(int bx, int by, int bw, int bh, int x1, int y1,
+                             int x2, int y2, int x3, int y3, int x4, int y4)
 {
-    int src_x = DP_msg_move_region_bx(mmr);
-    int src_y = DP_msg_move_region_by(mmr);
-    int src_width = DP_msg_move_region_bw(mmr);
-    int src_height = DP_msg_move_region_bh(mmr);
-    DP_Rect src = DP_rect_make(src_x, src_y, src_width, src_height);
+    DP_Rect src = DP_rect_make(bx, by, bw, bh);
     if (!DP_rect_valid(src)) {
         return INVALID_BOUNDS;
     }
 
-    DP_Quad dst_quad =
-        DP_quad_make(DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
-                     DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
-                     DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
-                     DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr));
+    DP_Quad dst_quad = DP_quad_make(x1, y1, x2, y2, x3, y3, x4, y4);
     DP_Rect dst = DP_quad_bounds(dst_quad);
     if (!DP_rect_valid(dst)) {
         return INVALID_BOUNDS;
@@ -259,6 +252,7 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_CANVAS_RESIZE:
         return make_everything();
     case DP_MSG_LAYER_CREATE:
+    case DP_MSG_LAYER_TREE_CREATE:
         // Creating a layer is complicated business, it might copy an entire
         // layer group for example. So we'll err on the side of caution and
         // say that it conflicts with every other layer domain message. Not
@@ -271,17 +265,27 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         return make_layer_attrs(
             DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
     case DP_MSG_LAYER_ORDER:
+    case DP_MSG_LAYER_TREE_ORDER:
         // Reordering layers affects an arbitrary number of them, so
         // punt to conflicting with every other layer domain message.
         return make_layer_attrs(ALL_IDS);
     case DP_MSG_LAYER_DELETE: {
         DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
+        // If the layer gets merged, we affect two layers, but we don't know
+        // which ones, since the message doesn't contain the second id. So we
+        // mark it as conflicting with all layers to be safe.
+        return make_layer_attrs(DP_msg_layer_delete_merge(mld)
+                                    ? ALL_IDS
+                                    : DP_msg_layer_delete_id(mld));
+    }
+    case DP_MSG_LAYER_TREE_DELETE: {
+        DP_MsgLayerTreeDelete *mtld = DP_msg_layer_tree_delete_cast(msg);
         // If this layer gets merged into another, we affect two layers, which
         // we can't represent in our affected area structure. But since changing
         // layer properties is pretty rare, we'll just say that it conflicts
         // with every other layer domain message and not bother special-casing.
-        return make_layer_attrs(DP_msg_layer_delete_merge_to(mld) == 0
-                                    ? DP_msg_layer_delete_id(mld)
+        return make_layer_attrs(DP_msg_layer_tree_delete_merge_to(mtld) == 0
+                                    ? DP_msg_layer_tree_delete_id(mtld)
                                     : ALL_IDS);
     }
     case DP_MSG_PUT_IMAGE: {
@@ -372,23 +376,46 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return make_annotations(
             DP_msg_annotation_delete_id(DP_msg_annotation_delete_cast(msg)));
-    // Move region and move rect messages can take stuff from one layer and move
-    // it to another, affecting two different layers. Since we can't represent
-    // that, we punt to affecting all layers in that case. Switching layers
-    // during a transform is pretty uncommon, so that's okay.
     case DP_MSG_MOVE_REGION: {
         DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
-        uint16_t source_id = DP_msg_move_region_source(mmr);
-        uint16_t target_id = DP_msg_move_region_layer(mmr);
-        return make_pixels(source_id == target_id ? source_id : ALL_IDS,
-                           move_region_bounds(mmr));
+        return make_pixels(
+            DP_msg_move_region_layer(mmr),
+            region_bounds(
+                DP_msg_move_region_bx(mmr), DP_msg_move_region_by(mmr),
+                DP_msg_move_region_bw(mmr), DP_msg_move_region_bh(mmr),
+                DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
+                DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
+                DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
+                DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr)));
     }
+    // Move rect and transform regionmessages can take stuff from one layer and
+    // move it to another, affecting two different layers. Since we can't
+    // represent that, we punt to affecting all layers in that case. Switching
+    // layers during a transform is pretty uncommon, so that's okay.
     case DP_MSG_MOVE_RECT: {
         DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
         uint16_t source_id = DP_msg_move_rect_source(mmr);
         uint16_t target_id = DP_msg_move_rect_layer(mmr);
         return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            move_rect_bounds(mmr));
+    }
+    case DP_MSG_TRANSFORM_REGION: {
+        DP_MsgTransformRegion *mtr = DP_msg_transform_region_cast(msg);
+        uint16_t source_id = DP_msg_transform_region_source(mtr);
+        uint16_t target_id = DP_msg_transform_region_layer(mtr);
+        return make_pixels(source_id == target_id ? source_id : ALL_IDS,
+                           region_bounds(DP_msg_transform_region_bx(mtr),
+                                         DP_msg_transform_region_by(mtr),
+                                         DP_msg_transform_region_bw(mtr),
+                                         DP_msg_transform_region_bh(mtr),
+                                         DP_msg_transform_region_x1(mtr),
+                                         DP_msg_transform_region_y1(mtr),
+                                         DP_msg_transform_region_x2(mtr),
+                                         DP_msg_transform_region_y2(mtr),
+                                         DP_msg_transform_region_x3(mtr),
+                                         DP_msg_transform_region_y3(mtr),
+                                         DP_msg_transform_region_x4(mtr),
+                                         DP_msg_transform_region_y4(mtr)));
     }
     case DP_MSG_UNDO_POINT:
         return make_user_attrs();

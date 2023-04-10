@@ -4,7 +4,7 @@ begin testing
 0 layer(s), 0 layer prop(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
 
 -- create initial group
 1 layer(s), 1 layer prop(s)
@@ -23,7 +23,7 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
 
 -- create initial layer
 2 layer(s), 2 layer prop(s)
@@ -55,7 +55,7 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
 
 -- create layer in group
 2 layer(s), 2 layer prop(s)
@@ -100,7 +100,7 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
 
 -- create group in group
 2 layer(s), 2 layer prop(s)
@@ -216,7 +216,7 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
 
 -- create layer duplicate in inner group
 2 layer(s), 2 layer prop(s)
@@ -724,13 +724,13 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: ordering empty
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: ordering not even
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: id 999 not found
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: missing layers
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: invalid tree
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: id 257 has child count of 1, but is not a group
--> DP_MSG_LAYER_ORDER fail - 1 error(s): Layer order: id 257 not found
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: ordering empty
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: ordering not even
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: id 999 not found
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: missing layers
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: invalid tree
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: id 257 has child count of 1, but is not a group
+-> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: id 257 not found
 
 -- invalid layer orders
 2 layer(s), 2 layer prop(s)
@@ -802,7 +802,7 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_ORDER ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_ORDER ok - 0 error(s)
 
 -- order layers in root
 4 layer(s), 4 layer prop(s)
@@ -874,7 +874,7 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_ORDER ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_ORDER ok - 0 error(s)
 
 -- order layers in group
 2 layer(s), 2 layer prop(s)
@@ -946,7 +946,7 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
 
 -- create group duplicate in inner group
 2 layer(s), 2 layer prop(s)
@@ -1070,7 +1070,7 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_DELETE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
 
 -- merge layer
 2 layer(s), 2 layer prop(s)
@@ -1129,7 +1129,7 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_DELETE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
 
 -- merge group
 2 layer(s), 2 layer prop(s)
@@ -1175,7 +1175,7 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_DELETE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
 
 -- delete layer in root
 1 layer(s), 1 layer prop(s)
@@ -1233,7 +1233,7 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_DELETE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
 
 -- delete nested layer
 1 layer(s), 1 layer prop(s)
@@ -1278,7 +1278,7 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_DELETE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
 
 -- delete group
 0 layer(s), 0 layer prop(s)

@@ -111,6 +111,10 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_SET_METADATA_STR:
     case DP_MSG_SET_TIMELINE_FRAME:
     case DP_MSG_REMOVE_TIMELINE_FRAME:
+    case DP_MSG_LAYER_TREE_CREATE:
+    case DP_MSG_LAYER_TREE_ORDER:
+    case DP_MSG_LAYER_TREE_DELETE:
+    case DP_MSG_TRANSFORM_REGION:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -225,6 +229,14 @@ const char *DP_message_type_name(DP_MessageType type)
         return "settimelineframe";
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return "removetimelineframe";
+    case DP_MSG_LAYER_TREE_CREATE:
+        return "layertreecreate";
+    case DP_MSG_LAYER_TREE_ORDER:
+        return "layertreeorder";
+    case DP_MSG_LAYER_TREE_DELETE:
+        return "layertreedelete";
+    case DP_MSG_TRANSFORM_REGION:
+        return "transformregion";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -339,6 +351,14 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_SET_TIMELINE_FRAME";
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return "DP_MSG_REMOVE_TIMELINE_FRAME";
+    case DP_MSG_LAYER_TREE_CREATE:
+        return "DP_MSG_LAYER_TREE_CREATE";
+    case DP_MSG_LAYER_TREE_ORDER:
+        return "DP_MSG_LAYER_TREE_ORDER";
+    case DP_MSG_LAYER_TREE_DELETE:
+        return "DP_MSG_LAYER_TREE_DELETE";
+    case DP_MSG_TRANSFORM_REGION:
+        return "DP_MSG_TRANSFORM_REGION";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -498,6 +518,18 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "removetimelineframe")) {
         return DP_MSG_REMOVE_TIMELINE_FRAME;
     }
+    else if (DP_str_equal(type_name, "layertreecreate")) {
+        return DP_MSG_LAYER_TREE_CREATE;
+    }
+    else if (DP_str_equal(type_name, "layertreeorder")) {
+        return DP_MSG_LAYER_TREE_ORDER;
+    }
+    else if (DP_str_equal(type_name, "layertreedelete")) {
+        return DP_MSG_LAYER_TREE_DELETE;
+    }
+    else if (DP_str_equal(type_name, "transformregion")) {
+        return DP_MSG_TRANSFORM_REGION;
+    }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
     }
@@ -639,6 +671,14 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return DP_msg_remove_timeline_frame_deserialize(context_id, buf,
                                                         length);
+    case DP_MSG_LAYER_TREE_CREATE:
+        return DP_msg_layer_tree_create_deserialize(context_id, buf, length);
+    case DP_MSG_LAYER_TREE_ORDER:
+        return DP_msg_layer_tree_order_deserialize(context_id, buf, length);
+    case DP_MSG_LAYER_TREE_DELETE:
+        return DP_msg_layer_tree_delete_deserialize(context_id, buf, length);
+    case DP_MSG_TRANSFORM_REGION:
+        return DP_msg_transform_region_deserialize(context_id, buf, length);
     case DP_MSG_UNDO:
         return DP_msg_undo_deserialize(context_id, buf, length);
     default:
@@ -760,6 +800,14 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_set_timeline_frame_parse(context_id, reader);
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return DP_msg_remove_timeline_frame_parse(context_id, reader);
+    case DP_MSG_LAYER_TREE_CREATE:
+        return DP_msg_layer_tree_create_parse(context_id, reader);
+    case DP_MSG_LAYER_TREE_ORDER:
+        return DP_msg_layer_tree_order_parse(context_id, reader);
+    case DP_MSG_LAYER_TREE_DELETE:
+        return DP_msg_layer_tree_delete_parse(context_id, reader);
+    case DP_MSG_TRANSFORM_REGION:
+        return DP_msg_transform_region_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -3335,10 +3383,10 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr)
 const char *DP_msg_layer_create_flags_flag_name(unsigned int value)
 {
     switch (value) {
-    case DP_MSG_LAYER_CREATE_FLAGS_GROUP:
-        return "group";
-    case DP_MSG_LAYER_CREATE_FLAGS_INTO:
-        return "into";
+    case DP_MSG_LAYER_CREATE_FLAGS_COPY:
+        return "copy";
+    case DP_MSG_LAYER_CREATE_FLAGS_INSERT:
+        return "insert";
     default:
         return NULL;
     }
@@ -3347,17 +3395,16 @@ const char *DP_msg_layer_create_flags_flag_name(unsigned int value)
 struct DP_MsgLayerCreate {
     uint16_t id;
     uint16_t source;
-    uint16_t target;
     uint32_t fill;
     uint8_t flags;
-    uint16_t name_len;
-    char name[];
+    uint16_t title_len;
+    char title[];
 };
 
 static size_t msg_layer_create_payload_length(DP_Message *msg)
 {
     DP_MsgLayerCreate *mlc = DP_message_internal(msg);
-    return ((size_t)11) + DP_uint16_to_size(mlc->name_len);
+    return ((size_t)9) + DP_uint16_to_size(mlc->title_len);
 }
 
 static size_t msg_layer_create_serialize_payload(DP_Message *msg,
@@ -3367,10 +3414,9 @@ static size_t msg_layer_create_serialize_payload(DP_Message *msg,
     size_t written = 0;
     written += DP_write_bigendian_uint16(mlc->id, data + written);
     written += DP_write_bigendian_uint16(mlc->source, data + written);
-    written += DP_write_bigendian_uint16(mlc->target, data + written);
     written += DP_write_bigendian_uint32(mlc->fill, data + written);
     written += DP_write_bigendian_uint8(mlc->flags, data + written);
-    written += DP_write_bytes(mlc->name, 1, mlc->name_len, data + written);
+    written += DP_write_bytes(mlc->title, 1, mlc->title_len, data + written);
     DP_ASSERT(written == msg_layer_create_payload_length(msg));
     return written;
 }
@@ -3382,13 +3428,12 @@ static bool msg_layer_create_write_payload_text(DP_Message *msg,
     return DP_text_writer_write_argb_color(writer, "fill", mlc->fill)
         && DP_text_writer_write_flags(
                writer, "flags", mlc->flags, 2,
-               (const char *[]){"group", "into"},
-               (unsigned int[]){DP_MSG_LAYER_CREATE_FLAGS_GROUP,
-                                DP_MSG_LAYER_CREATE_FLAGS_INTO})
+               (const char *[]){"copy", "insert"},
+               (unsigned int[]){DP_MSG_LAYER_CREATE_FLAGS_COPY,
+                                DP_MSG_LAYER_CREATE_FLAGS_INSERT})
         && DP_text_writer_write_uint(writer, "id", mlc->id, true)
-        && DP_text_writer_write_string(writer, "name", mlc->name)
         && DP_text_writer_write_uint(writer, "source", mlc->source, true)
-        && DP_text_writer_write_uint(writer, "target", mlc->target, true);
+        && DP_text_writer_write_string(writer, "title", mlc->title);
 }
 
 static bool msg_layer_create_equals(DP_Message *DP_RESTRICT msg,
@@ -3396,10 +3441,9 @@ static bool msg_layer_create_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgLayerCreate *a = DP_message_internal(msg);
     DP_MsgLayerCreate *b = DP_message_internal(other);
-    return a->id == b->id && a->source == b->source && a->target == b->target
-        && a->fill == b->fill && a->flags == b->flags
-        && a->name_len == b->name_len
-        && memcmp(a->name, b->name, a->name_len) == 0;
+    return a->id == b->id && a->source == b->source && a->fill == b->fill
+        && a->flags == b->flags && a->title_len == b->title_len
+        && memcmp(a->title, b->title, a->title_len) == 0;
 }
 
 static const DP_MessageMethods msg_layer_create_methods = {
@@ -3410,21 +3454,20 @@ static const DP_MessageMethods msg_layer_create_methods = {
 };
 
 DP_Message *DP_msg_layer_create_new(unsigned int context_id, uint16_t id,
-                                    uint16_t source, uint16_t target,
-                                    uint32_t fill, uint8_t flags,
-                                    const char *name_value, size_t name_len)
+                                    uint16_t source, uint32_t fill,
+                                    uint8_t flags, const char *title_value,
+                                    size_t title_len)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_LAYER_CREATE, context_id, &msg_layer_create_methods,
-        DP_FLEX_SIZEOF(DP_MsgLayerCreate, name, name_len + 1));
+        DP_FLEX_SIZEOF(DP_MsgLayerCreate, title, title_len + 1));
     DP_MsgLayerCreate *mlc = DP_message_internal(msg);
     mlc->id = id;
     mlc->source = source;
-    mlc->target = target;
     mlc->fill = fill;
     mlc->flags = flags;
-    mlc->name_len = DP_size_to_uint16(name_len);
-    assign_string(mlc->name, name_value, mlc->name_len);
+    mlc->title_len = DP_size_to_uint16(title_len);
+    assign_string(mlc->title, title_value, mlc->title_len);
     return msg;
 }
 
@@ -3432,23 +3475,22 @@ DP_Message *DP_msg_layer_create_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length)
 {
-    if (length < 11 || length > 65535) {
+    if (length < 9 || length > 65535) {
         DP_error_set("Wrong length for newlayer message; "
-                     "expected between 11 and 65535, got %zu",
+                     "expected between 9 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
     uint16_t source = read_uint16(buffer + read, &read);
-    uint16_t target = read_uint16(buffer + read, &read);
     uint32_t fill = read_uint32(buffer + read, &read);
     uint8_t flags = read_uint8(buffer + read, &read);
-    size_t name_bytes = length - read;
-    uint16_t name_len = DP_size_to_uint16(name_bytes);
-    const char *name = (const char *)buffer + read;
-    return DP_msg_layer_create_new(context_id, id, source, target, fill, flags,
-                                   name, name_len);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    return DP_msg_layer_create_new(context_id, id, source, fill, flags, title,
+                                   title_len);
 }
 
 DP_Message *DP_msg_layer_create_parse(unsigned int context_id,
@@ -3458,17 +3500,15 @@ DP_Message *DP_msg_layer_create_parse(unsigned int context_id,
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
     uint16_t source =
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
-    uint16_t target =
-        (uint16_t)DP_text_reader_get_ulong_hex(reader, "target", UINT16_MAX);
     uint32_t fill = DP_text_reader_get_argb_color(reader, "fill");
     uint8_t flags = (uint8_t)DP_text_reader_get_flags(
-        reader, "flags", 2, (const char *[]){"group", "into"},
-        (unsigned int[]){DP_MSG_LAYER_CREATE_FLAGS_GROUP,
-                         DP_MSG_LAYER_CREATE_FLAGS_INTO});
-    uint16_t name_len;
-    const char *name = DP_text_reader_get_string(reader, "name", &name_len);
-    return DP_msg_layer_create_new(context_id, id, source, target, fill, flags,
-                                   name, name_len);
+        reader, "flags", 2, (const char *[]){"copy", "insert"},
+        (unsigned int[]){DP_MSG_LAYER_CREATE_FLAGS_COPY,
+                         DP_MSG_LAYER_CREATE_FLAGS_INSERT});
+    uint16_t title_len;
+    const char *title = DP_text_reader_get_string(reader, "title", &title_len);
+    return DP_msg_layer_create_new(context_id, id, source, fill, flags, title,
+                                   title_len);
 }
 
 DP_MsgLayerCreate *DP_msg_layer_create_cast(DP_Message *msg)
@@ -3488,12 +3528,6 @@ uint16_t DP_msg_layer_create_source(const DP_MsgLayerCreate *mlc)
     return mlc->source;
 }
 
-uint16_t DP_msg_layer_create_target(const DP_MsgLayerCreate *mlc)
-{
-    DP_ASSERT(mlc);
-    return mlc->target;
-}
-
 uint32_t DP_msg_layer_create_fill(const DP_MsgLayerCreate *mlc)
 {
     DP_ASSERT(mlc);
@@ -3506,19 +3540,19 @@ uint8_t DP_msg_layer_create_flags(const DP_MsgLayerCreate *mlc)
     return mlc->flags;
 }
 
-const char *DP_msg_layer_create_name(const DP_MsgLayerCreate *mlc,
-                                     size_t *out_len)
+const char *DP_msg_layer_create_title(const DP_MsgLayerCreate *mlc,
+                                      size_t *out_len)
 {
     DP_ASSERT(mlc);
     if (out_len) {
-        *out_len = mlc->name_len;
+        *out_len = mlc->title_len;
     }
-    return mlc->name;
+    return mlc->title;
 }
 
-size_t DP_msg_layer_create_name_len(const DP_MsgLayerCreate *mlc)
+size_t DP_msg_layer_create_title_len(const DP_MsgLayerCreate *mlc)
 {
-    return mlc->name_len;
+    return mlc->title_len;
 }
 
 
@@ -3808,7 +3842,6 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr)
 /* DP_MSG_LAYER_ORDER */
 
 struct DP_MsgLayerOrder {
-    uint16_t root;
     uint16_t layers_count;
     uint16_t layers[];
 };
@@ -3816,7 +3849,7 @@ struct DP_MsgLayerOrder {
 static size_t msg_layer_order_payload_length(DP_Message *msg)
 {
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
-    return ((size_t)2) + DP_int_to_size(mlo->layers_count) * 2;
+    return DP_int_to_size(mlo->layers_count) * 2;
 }
 
 static size_t msg_layer_order_serialize_payload(DP_Message *msg,
@@ -3824,7 +3857,6 @@ static size_t msg_layer_order_serialize_payload(DP_Message *msg,
 {
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
     size_t written = 0;
-    written += DP_write_bigendian_uint16(mlo->root, data + written);
     written += DP_write_bigendian_uint16_array(mlo->layers, mlo->layers_count,
                                                data + written);
     DP_ASSERT(written == msg_layer_order_payload_length(msg));
@@ -3836,8 +3868,7 @@ static bool msg_layer_order_write_payload_text(DP_Message *msg,
 {
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
     return DP_text_writer_write_uint16_list(writer, "layers", mlo->layers,
-                                            mlo->layers_count, true)
-        && DP_text_writer_write_uint(writer, "root", mlo->root, true);
+                                            mlo->layers_count, true);
 }
 
 static bool msg_layer_order_equals(DP_Message *DP_RESTRICT msg,
@@ -3845,7 +3876,7 @@ static bool msg_layer_order_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgLayerOrder *a = DP_message_internal(msg);
     DP_MsgLayerOrder *b = DP_message_internal(other);
-    return a->root == b->root && a->layers_count == b->layers_count
+    return a->layers_count == b->layers_count
         && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
                == 0;
 }
@@ -3857,7 +3888,7 @@ static const DP_MessageMethods msg_layer_order_methods = {
     msg_layer_order_equals,
 };
 
-DP_Message *DP_msg_layer_order_new(unsigned int context_id, uint16_t root,
+DP_Message *DP_msg_layer_order_new(unsigned int context_id,
                                    void (*set_layers)(int, uint16_t *, void *),
                                    int layers_count, void *layers_user)
 {
@@ -3866,7 +3897,6 @@ DP_Message *DP_msg_layer_order_new(unsigned int context_id, uint16_t root,
                        DP_FLEX_SIZEOF(DP_MsgLayerOrder, layers,
                                       DP_int_to_size(layers_count) * 2));
     DP_MsgLayerOrder *mlo = DP_message_internal(msg);
-    mlo->root = root;
     mlo->layers_count = DP_int_to_uint16(layers_count);
     if (set_layers) {
         set_layers(mlo->layers_count, mlo->layers, layers_user);
@@ -3878,14 +3908,13 @@ DP_Message *DP_msg_layer_order_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
                                            size_t length)
 {
-    if (length < 2 || length > 65535) {
+    if (length > 65535) {
         DP_error_set("Wrong length for layerorder message; "
-                     "expected between 2 and 65535, got %zu",
+                     "expected between 0 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
-    uint16_t root = read_uint16(buffer + read, &read);
     size_t layers_bytes = length - read;
     if ((layers_bytes % 2) != 0) {
         DP_error_set("Wrong length for layers field in layerorder message; "
@@ -3895,19 +3924,17 @@ DP_Message *DP_msg_layer_order_deserialize(unsigned int context_id,
     }
     uint16_t layers_count = DP_size_to_uint16(layers_bytes / 2);
     void *layers_user = (void *)(buffer + read);
-    return DP_msg_layer_order_new(context_id, root, read_uint16_array,
-                                  layers_count, layers_user);
+    return DP_msg_layer_order_new(context_id, read_uint16_array, layers_count,
+                                  layers_user);
 }
 
 DP_Message *DP_msg_layer_order_parse(unsigned int context_id,
                                      DP_TextReader *reader)
 {
-    uint16_t root =
-        (uint16_t)DP_text_reader_get_ulong_hex(reader, "root", UINT16_MAX);
     int layers_count;
     DP_TextReaderParseParams layers_params =
         DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
-    return DP_msg_layer_order_new(context_id, root,
+    return DP_msg_layer_order_new(context_id,
                                   DP_text_reader_parse_uint16_array_hex,
                                   layers_count, &layers_params);
 }
@@ -3915,12 +3942,6 @@ DP_Message *DP_msg_layer_order_parse(unsigned int context_id,
 DP_MsgLayerOrder *DP_msg_layer_order_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_LAYER_ORDER);
-}
-
-uint16_t DP_msg_layer_order_root(const DP_MsgLayerOrder *mlo)
-{
-    DP_ASSERT(mlo);
-    return mlo->root;
 }
 
 const uint16_t *DP_msg_layer_order_layers(const DP_MsgLayerOrder *mlo,
@@ -3943,12 +3964,12 @@ int DP_msg_layer_order_layers_count(const DP_MsgLayerOrder *mlo)
 
 struct DP_MsgLayerDelete {
     uint16_t id;
-    uint16_t merge_to;
+    bool merge;
 };
 
 static size_t msg_layer_delete_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return ((size_t)4);
+    return ((size_t)3);
 }
 
 static size_t msg_layer_delete_serialize_payload(DP_Message *msg,
@@ -3957,7 +3978,7 @@ static size_t msg_layer_delete_serialize_payload(DP_Message *msg,
     DP_MsgLayerDelete *mld = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mld->id, data + written);
-    written += DP_write_bigendian_uint16(mld->merge_to, data + written);
+    written += DP_write_bigendian_uint8(mld->merge, data + written);
     DP_ASSERT(written == msg_layer_delete_payload_length(msg));
     return written;
 }
@@ -3967,7 +3988,7 @@ static bool msg_layer_delete_write_payload_text(DP_Message *msg,
 {
     DP_MsgLayerDelete *mld = DP_message_internal(msg);
     return DP_text_writer_write_uint(writer, "id", mld->id, true)
-        && DP_text_writer_write_uint(writer, "merge_to", mld->merge_to, true);
+        && DP_text_writer_write_bool(writer, "merge", mld->merge);
 }
 
 static bool msg_layer_delete_equals(DP_Message *DP_RESTRICT msg,
@@ -3975,7 +3996,7 @@ static bool msg_layer_delete_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgLayerDelete *a = DP_message_internal(msg);
     DP_MsgLayerDelete *b = DP_message_internal(other);
-    return a->id == b->id && a->merge_to == b->merge_to;
+    return a->id == b->id && a->merge == b->merge;
 }
 
 static const DP_MessageMethods msg_layer_delete_methods = {
@@ -3986,14 +4007,14 @@ static const DP_MessageMethods msg_layer_delete_methods = {
 };
 
 DP_Message *DP_msg_layer_delete_new(unsigned int context_id, uint16_t id,
-                                    uint16_t merge_to)
+                                    bool merge)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_LAYER_DELETE, context_id,
                        &msg_layer_delete_methods, sizeof(DP_MsgLayerDelete));
     DP_MsgLayerDelete *mld = DP_message_internal(msg);
     mld->id = id;
-    mld->merge_to = merge_to;
+    mld->merge = merge;
     return msg;
 }
 
@@ -4001,16 +4022,16 @@ DP_Message *DP_msg_layer_delete_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length)
 {
-    if (length != 4) {
+    if (length != 3) {
         DP_error_set("Wrong length for deletelayer message; "
-                     "expected 4, got %zu",
+                     "expected 3, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
-    uint16_t merge_to = read_uint16(buffer + read, &read);
-    return DP_msg_layer_delete_new(context_id, id, merge_to);
+    bool merge = read_bool(buffer + read, &read);
+    return DP_msg_layer_delete_new(context_id, id, merge);
 }
 
 DP_Message *DP_msg_layer_delete_parse(unsigned int context_id,
@@ -4018,9 +4039,8 @@ DP_Message *DP_msg_layer_delete_parse(unsigned int context_id,
 {
     uint16_t id =
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
-    uint16_t merge_to =
-        (uint16_t)DP_text_reader_get_ulong_hex(reader, "merge_to", UINT16_MAX);
-    return DP_msg_layer_delete_new(context_id, id, merge_to);
+    bool merge = DP_text_reader_get_bool(reader, "merge");
+    return DP_msg_layer_delete_new(context_id, id, merge);
 }
 
 DP_MsgLayerDelete *DP_msg_layer_delete_cast(DP_Message *msg)
@@ -4034,10 +4054,10 @@ uint16_t DP_msg_layer_delete_id(const DP_MsgLayerDelete *mld)
     return mld->id;
 }
 
-uint16_t DP_msg_layer_delete_merge_to(const DP_MsgLayerDelete *mld)
+bool DP_msg_layer_delete_merge(const DP_MsgLayerDelete *mld)
 {
     DP_ASSERT(mld);
-    return mld->merge_to;
+    return mld->merge;
 }
 
 
@@ -5075,21 +5095,8 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad)
 
 /* DP_MSG_MOVE_REGION */
 
-const char *DP_msg_move_region_mode_variant_name(unsigned int value)
-{
-    switch (value) {
-    case DP_MSG_MOVE_REGION_MODE_NEAREST:
-        return "Nearest";
-    case DP_MSG_MOVE_REGION_MODE_BILINEAR:
-        return "Bilinear";
-    default:
-        return NULL;
-    }
-}
-
 struct DP_MsgMoveRegion {
     uint16_t layer;
-    uint16_t source;
     int32_t bx;
     int32_t by;
     int32_t bw;
@@ -5102,7 +5109,6 @@ struct DP_MsgMoveRegion {
     int32_t y3;
     int32_t x4;
     int32_t y4;
-    uint8_t mode;
     uint16_t mask_size;
     unsigned char mask[];
 };
@@ -5110,7 +5116,7 @@ struct DP_MsgMoveRegion {
 static size_t msg_move_region_payload_length(DP_Message *msg)
 {
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-    return ((size_t)53) + mmr->mask_size;
+    return ((size_t)50) + mmr->mask_size;
 }
 
 static size_t msg_move_region_serialize_payload(DP_Message *msg,
@@ -5119,7 +5125,6 @@ static size_t msg_move_region_serialize_payload(DP_Message *msg,
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mmr->layer, data + written);
-    written += DP_write_bigendian_uint16(mmr->source, data + written);
     written += DP_write_bigendian_int32(mmr->bx, data + written);
     written += DP_write_bigendian_int32(mmr->by, data + written);
     written += DP_write_bigendian_int32(mmr->bw, data + written);
@@ -5132,7 +5137,6 @@ static size_t msg_move_region_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_int32(mmr->y3, data + written);
     written += DP_write_bigendian_int32(mmr->x4, data + written);
     written += DP_write_bigendian_int32(mmr->y4, data + written);
-    written += DP_write_bigendian_uint8(mmr->mode, data + written);
     written += write_bytes(mmr->mask, mmr->mask_size, data + written);
     DP_ASSERT(written == msg_move_region_payload_length(msg));
     return written;
@@ -5149,8 +5153,6 @@ static bool msg_move_region_write_payload_text(DP_Message *msg,
         && DP_text_writer_write_uint(writer, "layer", mmr->layer, true)
         && DP_text_writer_write_base64(writer, "mask", mmr->mask,
                                        mmr->mask_size)
-        && DP_text_writer_write_uint(writer, "mode", mmr->mode, false)
-        && DP_text_writer_write_uint(writer, "source", mmr->source, true)
         && DP_text_writer_write_int(writer, "x1", mmr->x1)
         && DP_text_writer_write_int(writer, "x2", mmr->x2)
         && DP_text_writer_write_int(writer, "x3", mmr->x3)
@@ -5166,11 +5168,10 @@ static bool msg_move_region_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgMoveRegion *a = DP_message_internal(msg);
     DP_MsgMoveRegion *b = DP_message_internal(other);
-    return a->layer == b->layer && a->source == b->source && a->bx == b->bx
-        && a->by == b->by && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1
-        && a->y1 == b->y1 && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3
-        && a->y3 == b->y3 && a->x4 == b->x4 && a->y4 == b->y4
-        && a->mode == b->mode && a->mask_size == b->mask_size
+    return a->layer == b->layer && a->bx == b->bx && a->by == b->by
+        && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1 && a->y1 == b->y1
+        && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3 && a->y3 == b->y3
+        && a->x4 == b->x4 && a->y4 == b->y4 && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
@@ -5181,19 +5182,19 @@ static const DP_MessageMethods msg_move_region_methods = {
     msg_move_region_equals,
 };
 
-DP_Message *DP_msg_move_region_new(
-    unsigned int context_id, uint16_t layer, uint16_t source, int32_t bx,
-    int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
-    int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
-    void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
-    void *mask_user)
+DP_Message *
+DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
+                       int32_t by, int32_t bw, int32_t bh, int32_t x1,
+                       int32_t y1, int32_t x2, int32_t y2, int32_t x3,
+                       int32_t y3, int32_t x4, int32_t y4,
+                       void (*set_mask)(size_t, unsigned char *, void *),
+                       size_t mask_size, void *mask_user)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_MOVE_REGION, context_id, &msg_move_region_methods,
                        DP_FLEX_SIZEOF(DP_MsgMoveRegion, mask, mask_size));
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     mmr->layer = layer;
-    mmr->source = source;
     mmr->bx = bx;
     mmr->by = by;
     mmr->bw = bw;
@@ -5206,7 +5207,6 @@ DP_Message *DP_msg_move_region_new(
     mmr->y3 = y3;
     mmr->x4 = x4;
     mmr->y4 = y4;
-    mmr->mode = mode;
     mmr->mask_size = DP_size_to_uint16(mask_size);
     if (set_mask) {
         set_mask(mmr->mask_size, mmr->mask, mask_user);
@@ -5218,15 +5218,14 @@ DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
                                            size_t length)
 {
-    if (length < 53 || length > 65535) {
+    if (length < 50 || length > 65535) {
         DP_error_set("Wrong length for moveregion message; "
-                     "expected between 53 and 65535, got %zu",
+                     "expected between 50 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
     uint16_t layer = read_uint16(buffer + read, &read);
-    uint16_t source = read_uint16(buffer + read, &read);
     int32_t bx = read_int32(buffer + read, &read);
     int32_t by = read_int32(buffer + read, &read);
     int32_t bw = read_int32(buffer + read, &read);
@@ -5239,13 +5238,12 @@ DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
     int32_t y3 = read_int32(buffer + read, &read);
     int32_t x4 = read_int32(buffer + read, &read);
     int32_t y4 = read_int32(buffer + read, &read);
-    uint8_t mode = read_uint8(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
-    return DP_msg_move_region_new(context_id, layer, source, bx, by, bw, bh, x1,
-                                  y1, x2, y2, x3, y3, x4, y4, mode, read_bytes,
-                                  mask_size, mask_user);
+    return DP_msg_move_region_new(context_id, layer, bx, by, bw, bh, x1, y1, x2,
+                                  y2, x3, y3, x4, y4, read_bytes, mask_size,
+                                  mask_user);
 }
 
 DP_Message *DP_msg_move_region_parse(unsigned int context_id,
@@ -5253,8 +5251,6 @@ DP_Message *DP_msg_move_region_parse(unsigned int context_id,
 {
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
-    uint16_t source =
-        (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
     int32_t bx =
         (int32_t)DP_text_reader_get_long(reader, "bx", INT32_MIN, INT32_MAX);
     int32_t by =
@@ -5279,13 +5275,12 @@ DP_Message *DP_msg_move_region_parse(unsigned int context_id,
         (int32_t)DP_text_reader_get_long(reader, "x4", INT32_MIN, INT32_MAX);
     int32_t y4 =
         (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
-    uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
     return DP_msg_move_region_new(
-        context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
-        y4, mode, DP_text_reader_parse_base64, mask_size, &mask_params);
+        context_id, layer, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4,
+        DP_text_reader_parse_base64, mask_size, &mask_params);
 }
 
 DP_MsgMoveRegion *DP_msg_move_region_cast(DP_Message *msg)
@@ -5297,12 +5292,6 @@ uint16_t DP_msg_move_region_layer(const DP_MsgMoveRegion *mmr)
 {
     DP_ASSERT(mmr);
     return mmr->layer;
-}
-
-uint16_t DP_msg_move_region_source(const DP_MsgMoveRegion *mmr)
-{
-    DP_ASSERT(mmr);
-    return mmr->source;
 }
 
 int32_t DP_msg_move_region_bx(const DP_MsgMoveRegion *mmr)
@@ -5377,12 +5366,6 @@ int32_t DP_msg_move_region_y4(const DP_MsgMoveRegion *mmr)
     return mmr->y4;
 }
 
-uint8_t DP_msg_move_region_mode(const DP_MsgMoveRegion *mmr)
-{
-    DP_ASSERT(mmr);
-    return mmr->mode;
-}
-
 const unsigned char *DP_msg_move_region_mask(const DP_MsgMoveRegion *mmr,
                                              size_t *out_size)
 {
@@ -5404,7 +5387,6 @@ size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr)
 struct DP_MsgPutTile {
     uint16_t layer;
     uint8_t sublayer;
-    uint8_t last_touch;
     uint16_t col;
     uint16_t row;
     uint16_t repeat;
@@ -5415,7 +5397,7 @@ struct DP_MsgPutTile {
 static size_t msg_put_tile_payload_length(DP_Message *msg)
 {
     DP_MsgPutTile *mpt = DP_message_internal(msg);
-    return ((size_t)10) + mpt->image_size;
+    return ((size_t)9) + mpt->image_size;
 }
 
 static size_t msg_put_tile_serialize_payload(DP_Message *msg,
@@ -5425,7 +5407,6 @@ static size_t msg_put_tile_serialize_payload(DP_Message *msg,
     size_t written = 0;
     written += DP_write_bigendian_uint16(mpt->layer, data + written);
     written += DP_write_bigendian_uint8(mpt->sublayer, data + written);
-    written += DP_write_bigendian_uint8(mpt->last_touch, data + written);
     written += DP_write_bigendian_uint16(mpt->col, data + written);
     written += DP_write_bigendian_uint16(mpt->row, data + written);
     written += DP_write_bigendian_uint16(mpt->repeat, data + written);
@@ -5441,8 +5422,6 @@ static bool msg_put_tile_write_payload_text(DP_Message *msg,
     return DP_text_writer_write_uint(writer, "col", mpt->col, false)
         && DP_text_writer_write_base64(writer, "image", mpt->image,
                                        mpt->image_size)
-        && DP_text_writer_write_uint(writer, "last_touch", mpt->last_touch,
-                                     false)
         && DP_text_writer_write_uint(writer, "layer", mpt->layer, true)
         && DP_text_writer_write_uint(writer, "repeat", mpt->repeat, false)
         && DP_text_writer_write_uint(writer, "row", mpt->row, false)
@@ -5455,8 +5434,7 @@ static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgPutTile *a = DP_message_internal(msg);
     DP_MsgPutTile *b = DP_message_internal(other);
     return a->layer == b->layer && a->sublayer == b->sublayer
-        && a->last_touch == b->last_touch && a->col == b->col
-        && a->row == b->row && a->repeat == b->repeat
+        && a->col == b->col && a->row == b->row && a->repeat == b->repeat
         && a->image_size == b->image_size
         && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
@@ -5468,12 +5446,11 @@ static const DP_MessageMethods msg_put_tile_methods = {
     msg_put_tile_equals,
 };
 
-DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint16_t layer,
-                                uint8_t sublayer, uint8_t last_touch,
-                                uint16_t col, uint16_t row, uint16_t repeat,
-                                void (*set_image)(size_t, unsigned char *,
-                                                  void *),
-                                size_t image_size, void *image_user)
+DP_Message *
+DP_msg_put_tile_new(unsigned int context_id, uint16_t layer, uint8_t sublayer,
+                    uint16_t col, uint16_t row, uint16_t repeat,
+                    void (*set_image)(size_t, unsigned char *, void *),
+                    size_t image_size, void *image_user)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_PUT_TILE, context_id, &msg_put_tile_methods,
@@ -5481,7 +5458,6 @@ DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint16_t layer,
     DP_MsgPutTile *mpt = DP_message_internal(msg);
     mpt->layer = layer;
     mpt->sublayer = sublayer;
-    mpt->last_touch = last_touch;
     mpt->col = col;
     mpt->row = row;
     mpt->repeat = repeat;
@@ -5496,24 +5472,23 @@ DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
                                         size_t length)
 {
-    if (length < 10 || length > 65535) {
+    if (length < 9 || length > 65535) {
         DP_error_set("Wrong length for puttile message; "
-                     "expected between 10 and 65535, got %zu",
+                     "expected between 9 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
     uint16_t layer = read_uint16(buffer + read, &read);
     uint8_t sublayer = read_uint8(buffer + read, &read);
-    uint8_t last_touch = read_uint8(buffer + read, &read);
     uint16_t col = read_uint16(buffer + read, &read);
     uint16_t row = read_uint16(buffer + read, &read);
     uint16_t repeat = read_uint16(buffer + read, &read);
     size_t image_bytes = length - read;
     uint16_t image_size = DP_size_to_uint16(image_bytes);
     void *image_user = (void *)(buffer + read);
-    return DP_msg_put_tile_new(context_id, layer, sublayer, last_touch, col,
-                               row, repeat, read_bytes, image_size, image_user);
+    return DP_msg_put_tile_new(context_id, layer, sublayer, col, row, repeat,
+                               read_bytes, image_size, image_user);
 }
 
 DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
@@ -5523,8 +5498,6 @@ DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
     uint8_t sublayer =
         (uint8_t)DP_text_reader_get_ulong(reader, "sublayer", UINT8_MAX);
-    uint8_t last_touch =
-        (uint8_t)DP_text_reader_get_ulong(reader, "last_touch", UINT8_MAX);
     uint16_t col =
         (uint16_t)DP_text_reader_get_ulong(reader, "col", UINT16_MAX);
     uint16_t row =
@@ -5534,9 +5507,9 @@ DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
     size_t image_size;
     DP_TextReaderParseParams image_params =
         DP_text_reader_get_base64_string(reader, "image", &image_size);
-    return DP_msg_put_tile_new(context_id, layer, sublayer, last_touch, col,
-                               row, repeat, DP_text_reader_parse_base64,
-                               image_size, &image_params);
+    return DP_msg_put_tile_new(context_id, layer, sublayer, col, row, repeat,
+                               DP_text_reader_parse_base64, image_size,
+                               &image_params);
 }
 
 DP_MsgPutTile *DP_msg_put_tile_cast(DP_Message *msg)
@@ -5554,12 +5527,6 @@ uint8_t DP_msg_put_tile_sublayer(const DP_MsgPutTile *mpt)
 {
     DP_ASSERT(mpt);
     return mpt->sublayer;
-}
-
-uint8_t DP_msg_put_tile_last_touch(const DP_MsgPutTile *mpt)
-{
-    DP_ASSERT(mpt);
-    return mpt->last_touch;
 }
 
 uint16_t DP_msg_put_tile_col(const DP_MsgPutTile *mpt)
@@ -7559,6 +7526,762 @@ DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf)
 {
     DP_ASSERT(mrtf);
     return mrtf->frame;
+}
+
+
+/* DP_MSG_LAYER_TREE_CREATE */
+
+const char *DP_msg_layer_tree_create_flags_flag_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP:
+        return "group";
+    case DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO:
+        return "into";
+    default:
+        return NULL;
+    }
+}
+
+struct DP_MsgLayerTreeCreate {
+    uint16_t id;
+    uint16_t source;
+    uint16_t target;
+    uint32_t fill;
+    uint8_t flags;
+    uint16_t title_len;
+    char title[];
+};
+
+static size_t msg_layer_tree_create_payload_length(DP_Message *msg)
+{
+    DP_MsgLayerTreeCreate *mltc = DP_message_internal(msg);
+    return ((size_t)11) + DP_uint16_to_size(mltc->title_len);
+}
+
+static size_t msg_layer_tree_create_serialize_payload(DP_Message *msg,
+                                                      unsigned char *data)
+{
+    DP_MsgLayerTreeCreate *mltc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mltc->id, data + written);
+    written += DP_write_bigendian_uint16(mltc->source, data + written);
+    written += DP_write_bigendian_uint16(mltc->target, data + written);
+    written += DP_write_bigendian_uint32(mltc->fill, data + written);
+    written += DP_write_bigendian_uint8(mltc->flags, data + written);
+    written += DP_write_bytes(mltc->title, 1, mltc->title_len, data + written);
+    DP_ASSERT(written == msg_layer_tree_create_payload_length(msg));
+    return written;
+}
+
+static bool msg_layer_tree_create_write_payload_text(DP_Message *msg,
+                                                     DP_TextWriter *writer)
+{
+    DP_MsgLayerTreeCreate *mltc = DP_message_internal(msg);
+    return DP_text_writer_write_argb_color(writer, "fill", mltc->fill)
+        && DP_text_writer_write_flags(
+               writer, "flags", mltc->flags, 2,
+               (const char *[]){"group", "into"},
+               (unsigned int[]){DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP,
+                                DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO})
+        && DP_text_writer_write_uint(writer, "id", mltc->id, true)
+        && DP_text_writer_write_uint(writer, "source", mltc->source, true)
+        && DP_text_writer_write_uint(writer, "target", mltc->target, true)
+        && DP_text_writer_write_string(writer, "title", mltc->title);
+}
+
+static bool msg_layer_tree_create_equals(DP_Message *DP_RESTRICT msg,
+                                         DP_Message *DP_RESTRICT other)
+{
+    DP_MsgLayerTreeCreate *a = DP_message_internal(msg);
+    DP_MsgLayerTreeCreate *b = DP_message_internal(other);
+    return a->id == b->id && a->source == b->source && a->target == b->target
+        && a->fill == b->fill && a->flags == b->flags
+        && a->title_len == b->title_len
+        && memcmp(a->title, b->title, a->title_len) == 0;
+}
+
+static const DP_MessageMethods msg_layer_tree_create_methods = {
+    msg_layer_tree_create_payload_length,
+    msg_layer_tree_create_serialize_payload,
+    msg_layer_tree_create_write_payload_text,
+    msg_layer_tree_create_equals,
+};
+
+DP_Message *DP_msg_layer_tree_create_new(unsigned int context_id, uint16_t id,
+                                         uint16_t source, uint16_t target,
+                                         uint32_t fill, uint8_t flags,
+                                         const char *title_value,
+                                         size_t title_len)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_LAYER_TREE_CREATE, context_id, &msg_layer_tree_create_methods,
+        DP_FLEX_SIZEOF(DP_MsgLayerTreeCreate, title, title_len + 1));
+    DP_MsgLayerTreeCreate *mltc = DP_message_internal(msg);
+    mltc->id = id;
+    mltc->source = source;
+    mltc->target = target;
+    mltc->fill = fill;
+    mltc->flags = flags;
+    mltc->title_len = DP_size_to_uint16(title_len);
+    assign_string(mltc->title, title_value, mltc->title_len);
+    return msg;
+}
+
+DP_Message *DP_msg_layer_tree_create_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    if (length < 11 || length > 65535) {
+        DP_error_set("Wrong length for layertreecreate message; "
+                     "expected between 11 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
+    uint16_t target = read_uint16(buffer + read, &read);
+    uint32_t fill = read_uint32(buffer + read, &read);
+    uint8_t flags = read_uint8(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    return DP_msg_layer_tree_create_new(context_id, id, source, target, fill,
+                                        flags, title, title_len);
+}
+
+DP_Message *DP_msg_layer_tree_create_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint16_t source =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
+    uint16_t target =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "target", UINT16_MAX);
+    uint32_t fill = DP_text_reader_get_argb_color(reader, "fill");
+    uint8_t flags = (uint8_t)DP_text_reader_get_flags(
+        reader, "flags", 2, (const char *[]){"group", "into"},
+        (unsigned int[]){DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP,
+                         DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO});
+    uint16_t title_len;
+    const char *title = DP_text_reader_get_string(reader, "title", &title_len);
+    return DP_msg_layer_tree_create_new(context_id, id, source, target, fill,
+                                        flags, title, title_len);
+}
+
+DP_MsgLayerTreeCreate *DP_msg_layer_tree_create_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_LAYER_TREE_CREATE);
+}
+
+uint16_t DP_msg_layer_tree_create_id(const DP_MsgLayerTreeCreate *mltc)
+{
+    DP_ASSERT(mltc);
+    return mltc->id;
+}
+
+uint16_t DP_msg_layer_tree_create_source(const DP_MsgLayerTreeCreate *mltc)
+{
+    DP_ASSERT(mltc);
+    return mltc->source;
+}
+
+uint16_t DP_msg_layer_tree_create_target(const DP_MsgLayerTreeCreate *mltc)
+{
+    DP_ASSERT(mltc);
+    return mltc->target;
+}
+
+uint32_t DP_msg_layer_tree_create_fill(const DP_MsgLayerTreeCreate *mltc)
+{
+    DP_ASSERT(mltc);
+    return mltc->fill;
+}
+
+uint8_t DP_msg_layer_tree_create_flags(const DP_MsgLayerTreeCreate *mltc)
+{
+    DP_ASSERT(mltc);
+    return mltc->flags;
+}
+
+const char *DP_msg_layer_tree_create_title(const DP_MsgLayerTreeCreate *mltc,
+                                           size_t *out_len)
+{
+    DP_ASSERT(mltc);
+    if (out_len) {
+        *out_len = mltc->title_len;
+    }
+    return mltc->title;
+}
+
+size_t DP_msg_layer_tree_create_title_len(const DP_MsgLayerTreeCreate *mltc)
+{
+    return mltc->title_len;
+}
+
+
+/* DP_MSG_LAYER_TREE_ORDER */
+
+struct DP_MsgLayerTreeOrder {
+    uint16_t root;
+    uint16_t layers_count;
+    uint16_t layers[];
+};
+
+static size_t msg_layer_tree_order_payload_length(DP_Message *msg)
+{
+    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
+    return ((size_t)2) + DP_int_to_size(mlto->layers_count) * 2;
+}
+
+static size_t msg_layer_tree_order_serialize_payload(DP_Message *msg,
+                                                     unsigned char *data)
+{
+    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mlto->root, data + written);
+    written += DP_write_bigendian_uint16_array(mlto->layers, mlto->layers_count,
+                                               data + written);
+    DP_ASSERT(written == msg_layer_tree_order_payload_length(msg));
+    return written;
+}
+
+static bool msg_layer_tree_order_write_payload_text(DP_Message *msg,
+                                                    DP_TextWriter *writer)
+{
+    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
+    return DP_text_writer_write_uint16_list(writer, "layers", mlto->layers,
+                                            mlto->layers_count, true)
+        && DP_text_writer_write_uint(writer, "root", mlto->root, true);
+}
+
+static bool msg_layer_tree_order_equals(DP_Message *DP_RESTRICT msg,
+                                        DP_Message *DP_RESTRICT other)
+{
+    DP_MsgLayerTreeOrder *a = DP_message_internal(msg);
+    DP_MsgLayerTreeOrder *b = DP_message_internal(other);
+    return a->root == b->root && a->layers_count == b->layers_count
+        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
+               == 0;
+}
+
+static const DP_MessageMethods msg_layer_tree_order_methods = {
+    msg_layer_tree_order_payload_length,
+    msg_layer_tree_order_serialize_payload,
+    msg_layer_tree_order_write_payload_text,
+    msg_layer_tree_order_equals,
+};
+
+DP_Message *DP_msg_layer_tree_order_new(unsigned int context_id, uint16_t root,
+                                        void (*set_layers)(int, uint16_t *,
+                                                           void *),
+                                        int layers_count, void *layers_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_LAYER_TREE_ORDER, context_id, &msg_layer_tree_order_methods,
+        DP_FLEX_SIZEOF(DP_MsgLayerTreeOrder, layers,
+                       DP_int_to_size(layers_count) * 2));
+    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
+    mlto->root = root;
+    mlto->layers_count = DP_int_to_uint16(layers_count);
+    if (set_layers) {
+        set_layers(mlto->layers_count, mlto->layers, layers_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_layer_tree_order_deserialize(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    if (length < 2 || length > 65535) {
+        DP_error_set("Wrong length for layertreeorder message; "
+                     "expected between 2 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t root = read_uint16(buffer + read, &read);
+    size_t layers_bytes = length - read;
+    if ((layers_bytes % 2) != 0) {
+        DP_error_set("Wrong length for layers field in layertreeorder message; "
+                     "%zu not divisible by 2",
+                     layers_bytes);
+        return NULL;
+    }
+    uint16_t layers_count = DP_size_to_uint16(layers_bytes / 2);
+    void *layers_user = (void *)(buffer + read);
+    return DP_msg_layer_tree_order_new(context_id, root, read_uint16_array,
+                                       layers_count, layers_user);
+}
+
+DP_Message *DP_msg_layer_tree_order_parse(unsigned int context_id,
+                                          DP_TextReader *reader)
+{
+    uint16_t root =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "root", UINT16_MAX);
+    int layers_count;
+    DP_TextReaderParseParams layers_params =
+        DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
+    return DP_msg_layer_tree_order_new(context_id, root,
+                                       DP_text_reader_parse_uint16_array_hex,
+                                       layers_count, &layers_params);
+}
+
+DP_MsgLayerTreeOrder *DP_msg_layer_tree_order_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_LAYER_TREE_ORDER);
+}
+
+uint16_t DP_msg_layer_tree_order_root(const DP_MsgLayerTreeOrder *mlto)
+{
+    DP_ASSERT(mlto);
+    return mlto->root;
+}
+
+const uint16_t *DP_msg_layer_tree_order_layers(const DP_MsgLayerTreeOrder *mlto,
+                                               int *out_count)
+{
+    DP_ASSERT(mlto);
+    if (out_count) {
+        *out_count = mlto->layers_count;
+    }
+    return mlto->layers;
+}
+
+int DP_msg_layer_tree_order_layers_count(const DP_MsgLayerTreeOrder *mlto)
+{
+    return mlto->layers_count;
+}
+
+
+/* DP_MSG_LAYER_TREE_DELETE */
+
+struct DP_MsgLayerTreeDelete {
+    uint16_t id;
+    uint16_t merge_to;
+};
+
+static size_t msg_layer_tree_delete_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)4);
+}
+
+static size_t msg_layer_tree_delete_serialize_payload(DP_Message *msg,
+                                                      unsigned char *data)
+{
+    DP_MsgLayerTreeDelete *mltd = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mltd->id, data + written);
+    written += DP_write_bigendian_uint16(mltd->merge_to, data + written);
+    DP_ASSERT(written == msg_layer_tree_delete_payload_length(msg));
+    return written;
+}
+
+static bool msg_layer_tree_delete_write_payload_text(DP_Message *msg,
+                                                     DP_TextWriter *writer)
+{
+    DP_MsgLayerTreeDelete *mltd = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "id", mltd->id, true)
+        && DP_text_writer_write_uint(writer, "merge_to", mltd->merge_to, true);
+}
+
+static bool msg_layer_tree_delete_equals(DP_Message *DP_RESTRICT msg,
+                                         DP_Message *DP_RESTRICT other)
+{
+    DP_MsgLayerTreeDelete *a = DP_message_internal(msg);
+    DP_MsgLayerTreeDelete *b = DP_message_internal(other);
+    return a->id == b->id && a->merge_to == b->merge_to;
+}
+
+static const DP_MessageMethods msg_layer_tree_delete_methods = {
+    msg_layer_tree_delete_payload_length,
+    msg_layer_tree_delete_serialize_payload,
+    msg_layer_tree_delete_write_payload_text,
+    msg_layer_tree_delete_equals,
+};
+
+DP_Message *DP_msg_layer_tree_delete_new(unsigned int context_id, uint16_t id,
+                                         uint16_t merge_to)
+{
+    DP_Message *msg = DP_message_new(DP_MSG_LAYER_TREE_DELETE, context_id,
+                                     &msg_layer_tree_delete_methods,
+                                     sizeof(DP_MsgLayerTreeDelete));
+    DP_MsgLayerTreeDelete *mltd = DP_message_internal(msg);
+    mltd->id = id;
+    mltd->merge_to = merge_to;
+    return msg;
+}
+
+DP_Message *DP_msg_layer_tree_delete_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    if (length != 4) {
+        DP_error_set("Wrong length for layertreedelete message; "
+                     "expected 4, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint16_t merge_to = read_uint16(buffer + read, &read);
+    return DP_msg_layer_tree_delete_new(context_id, id, merge_to);
+}
+
+DP_Message *DP_msg_layer_tree_delete_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t id =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
+    uint16_t merge_to =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "merge_to", UINT16_MAX);
+    return DP_msg_layer_tree_delete_new(context_id, id, merge_to);
+}
+
+DP_MsgLayerTreeDelete *DP_msg_layer_tree_delete_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_LAYER_TREE_DELETE);
+}
+
+uint16_t DP_msg_layer_tree_delete_id(const DP_MsgLayerTreeDelete *mltd)
+{
+    DP_ASSERT(mltd);
+    return mltd->id;
+}
+
+uint16_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd)
+{
+    DP_ASSERT(mltd);
+    return mltd->merge_to;
+}
+
+
+/* DP_MSG_TRANSFORM_REGION */
+
+const char *DP_msg_transform_region_mode_variant_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
+        return "Nearest";
+    case DP_MSG_TRANSFORM_REGION_MODE_BILINEAR:
+        return "Bilinear";
+    default:
+        return NULL;
+    }
+}
+
+struct DP_MsgTransformRegion {
+    uint16_t layer;
+    uint16_t source;
+    int32_t bx;
+    int32_t by;
+    int32_t bw;
+    int32_t bh;
+    int32_t x1;
+    int32_t y1;
+    int32_t x2;
+    int32_t y2;
+    int32_t x3;
+    int32_t y3;
+    int32_t x4;
+    int32_t y4;
+    uint8_t mode;
+    uint16_t mask_size;
+    unsigned char mask[];
+};
+
+static size_t msg_transform_region_payload_length(DP_Message *msg)
+{
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    return ((size_t)53) + mtr->mask_size;
+}
+
+static size_t msg_transform_region_serialize_payload(DP_Message *msg,
+                                                     unsigned char *data)
+{
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mtr->layer, data + written);
+    written += DP_write_bigendian_uint16(mtr->source, data + written);
+    written += DP_write_bigendian_int32(mtr->bx, data + written);
+    written += DP_write_bigendian_int32(mtr->by, data + written);
+    written += DP_write_bigendian_int32(mtr->bw, data + written);
+    written += DP_write_bigendian_int32(mtr->bh, data + written);
+    written += DP_write_bigendian_int32(mtr->x1, data + written);
+    written += DP_write_bigendian_int32(mtr->y1, data + written);
+    written += DP_write_bigendian_int32(mtr->x2, data + written);
+    written += DP_write_bigendian_int32(mtr->y2, data + written);
+    written += DP_write_bigendian_int32(mtr->x3, data + written);
+    written += DP_write_bigendian_int32(mtr->y3, data + written);
+    written += DP_write_bigendian_int32(mtr->x4, data + written);
+    written += DP_write_bigendian_int32(mtr->y4, data + written);
+    written += DP_write_bigendian_uint8(mtr->mode, data + written);
+    written += write_bytes(mtr->mask, mtr->mask_size, data + written);
+    DP_ASSERT(written == msg_transform_region_payload_length(msg));
+    return written;
+}
+
+static bool msg_transform_region_write_payload_text(DP_Message *msg,
+                                                    DP_TextWriter *writer)
+{
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    return DP_text_writer_write_int(writer, "bh", mtr->bh)
+        && DP_text_writer_write_int(writer, "bw", mtr->bw)
+        && DP_text_writer_write_int(writer, "bx", mtr->bx)
+        && DP_text_writer_write_int(writer, "by", mtr->by)
+        && DP_text_writer_write_uint(writer, "layer", mtr->layer, true)
+        && DP_text_writer_write_base64(writer, "mask", mtr->mask,
+                                       mtr->mask_size)
+        && DP_text_writer_write_uint(writer, "mode", mtr->mode, false)
+        && DP_text_writer_write_uint(writer, "source", mtr->source, true)
+        && DP_text_writer_write_int(writer, "x1", mtr->x1)
+        && DP_text_writer_write_int(writer, "x2", mtr->x2)
+        && DP_text_writer_write_int(writer, "x3", mtr->x3)
+        && DP_text_writer_write_int(writer, "x4", mtr->x4)
+        && DP_text_writer_write_int(writer, "y1", mtr->y1)
+        && DP_text_writer_write_int(writer, "y2", mtr->y2)
+        && DP_text_writer_write_int(writer, "y3", mtr->y3)
+        && DP_text_writer_write_int(writer, "y4", mtr->y4);
+}
+
+static bool msg_transform_region_equals(DP_Message *DP_RESTRICT msg,
+                                        DP_Message *DP_RESTRICT other)
+{
+    DP_MsgTransformRegion *a = DP_message_internal(msg);
+    DP_MsgTransformRegion *b = DP_message_internal(other);
+    return a->layer == b->layer && a->source == b->source && a->bx == b->bx
+        && a->by == b->by && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1
+        && a->y1 == b->y1 && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3
+        && a->y3 == b->y3 && a->x4 == b->x4 && a->y4 == b->y4
+        && a->mode == b->mode && a->mask_size == b->mask_size
+        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
+}
+
+static const DP_MessageMethods msg_transform_region_methods = {
+    msg_transform_region_payload_length,
+    msg_transform_region_serialize_payload,
+    msg_transform_region_write_payload_text,
+    msg_transform_region_equals,
+};
+
+DP_Message *DP_msg_transform_region_new(
+    unsigned int context_id, uint16_t layer, uint16_t source, int32_t bx,
+    int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
+    int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
+    void *mask_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_TRANSFORM_REGION, context_id, &msg_transform_region_methods,
+        DP_FLEX_SIZEOF(DP_MsgTransformRegion, mask, mask_size));
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    mtr->layer = layer;
+    mtr->source = source;
+    mtr->bx = bx;
+    mtr->by = by;
+    mtr->bw = bw;
+    mtr->bh = bh;
+    mtr->x1 = x1;
+    mtr->y1 = y1;
+    mtr->x2 = x2;
+    mtr->y2 = y2;
+    mtr->x3 = x3;
+    mtr->y3 = y3;
+    mtr->x4 = x4;
+    mtr->y4 = y4;
+    mtr->mode = mode;
+    mtr->mask_size = DP_size_to_uint16(mask_size);
+    if (set_mask) {
+        set_mask(mtr->mask_size, mtr->mask, mask_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_transform_region_deserialize(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    if (length < 53 || length > 65535) {
+        DP_error_set("Wrong length for transformregion message; "
+                     "expected between 53 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
+    int32_t bx = read_int32(buffer + read, &read);
+    int32_t by = read_int32(buffer + read, &read);
+    int32_t bw = read_int32(buffer + read, &read);
+    int32_t bh = read_int32(buffer + read, &read);
+    int32_t x1 = read_int32(buffer + read, &read);
+    int32_t y1 = read_int32(buffer + read, &read);
+    int32_t x2 = read_int32(buffer + read, &read);
+    int32_t y2 = read_int32(buffer + read, &read);
+    int32_t x3 = read_int32(buffer + read, &read);
+    int32_t y3 = read_int32(buffer + read, &read);
+    int32_t x4 = read_int32(buffer + read, &read);
+    int32_t y4 = read_int32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    return DP_msg_transform_region_new(context_id, layer, source, bx, by, bw,
+                                       bh, x1, y1, x2, y2, x3, y3, x4, y4, mode,
+                                       read_bytes, mask_size, mask_user);
+}
+
+DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
+                                          DP_TextReader *reader)
+{
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint16_t source =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
+    int32_t bx =
+        (int32_t)DP_text_reader_get_long(reader, "bx", INT32_MIN, INT32_MAX);
+    int32_t by =
+        (int32_t)DP_text_reader_get_long(reader, "by", INT32_MIN, INT32_MAX);
+    int32_t bw =
+        (int32_t)DP_text_reader_get_long(reader, "bw", INT32_MIN, INT32_MAX);
+    int32_t bh =
+        (int32_t)DP_text_reader_get_long(reader, "bh", INT32_MIN, INT32_MAX);
+    int32_t x1 =
+        (int32_t)DP_text_reader_get_long(reader, "x1", INT32_MIN, INT32_MAX);
+    int32_t y1 =
+        (int32_t)DP_text_reader_get_long(reader, "y1", INT32_MIN, INT32_MAX);
+    int32_t x2 =
+        (int32_t)DP_text_reader_get_long(reader, "x2", INT32_MIN, INT32_MAX);
+    int32_t y2 =
+        (int32_t)DP_text_reader_get_long(reader, "y2", INT32_MIN, INT32_MAX);
+    int32_t x3 =
+        (int32_t)DP_text_reader_get_long(reader, "x3", INT32_MIN, INT32_MAX);
+    int32_t y3 =
+        (int32_t)DP_text_reader_get_long(reader, "y3", INT32_MIN, INT32_MAX);
+    int32_t x4 =
+        (int32_t)DP_text_reader_get_long(reader, "x4", INT32_MIN, INT32_MAX);
+    int32_t y4 =
+        (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
+    uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_transform_region_new(
+        context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
+        y4, mode, DP_text_reader_parse_base64, mask_size, &mask_params);
+}
+
+DP_MsgTransformRegion *DP_msg_transform_region_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_TRANSFORM_REGION);
+}
+
+uint16_t DP_msg_transform_region_layer(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->layer;
+}
+
+uint16_t DP_msg_transform_region_source(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->source;
+}
+
+int32_t DP_msg_transform_region_bx(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->bx;
+}
+
+int32_t DP_msg_transform_region_by(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->by;
+}
+
+int32_t DP_msg_transform_region_bw(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->bw;
+}
+
+int32_t DP_msg_transform_region_bh(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->bh;
+}
+
+int32_t DP_msg_transform_region_x1(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->x1;
+}
+
+int32_t DP_msg_transform_region_y1(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->y1;
+}
+
+int32_t DP_msg_transform_region_x2(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->x2;
+}
+
+int32_t DP_msg_transform_region_y2(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->y2;
+}
+
+int32_t DP_msg_transform_region_x3(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->x3;
+}
+
+int32_t DP_msg_transform_region_y3(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->y3;
+}
+
+int32_t DP_msg_transform_region_x4(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->x4;
+}
+
+int32_t DP_msg_transform_region_y4(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->y4;
+}
+
+uint8_t DP_msg_transform_region_mode(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->mode;
+}
+
+const unsigned char *
+DP_msg_transform_region_mask(const DP_MsgTransformRegion *mtr, size_t *out_size)
+{
+    DP_ASSERT(mtr);
+    if (out_size) {
+        *out_size = mtr->mask_size;
+    }
+    return mtr->mask;
+}
+
+size_t DP_msg_transform_region_mask_size(const DP_MsgTransformRegion *mtr)
+{
+    return mtr->mask_size;
 }
 
 

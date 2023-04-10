@@ -640,6 +640,26 @@ void DP_transient_layer_list_set_group_noinc(DP_TransientLayerList *tll,
     set_element_at(tll, index, (DP_LayerListEntry){true, {.group = lg}});
 }
 
+void DP_transient_layer_list_set_group_inc(DP_TransientLayerList *tll,
+                                           DP_LayerGroup *lg, int index)
+{
+    DP_ASSERT(lg);
+    DP_transient_layer_list_set_group_noinc(tll, DP_layer_group_incref(lg),
+                                            index);
+}
+
+void DP_transient_layer_list_set_inc(DP_TransientLayerList *tll,
+                                     DP_LayerListEntry *lle, int index)
+{
+    DP_ASSERT(lle);
+    if (lle->is_group) {
+        DP_transient_layer_list_set_group_inc(tll, lle->group, index);
+    }
+    else {
+        DP_transient_layer_list_set_content_inc(tll, lle->content, index);
+    }
+}
+
 static void insert_element_at(DP_TransientLayerList *tll, int index,
                               DP_LayerListEntry lle)
 {

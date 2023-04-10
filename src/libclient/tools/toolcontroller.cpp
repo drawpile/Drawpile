@@ -31,7 +31,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_stabilizerSampleCount(0)
 	, m_stabilizerFinishStrokes(true)
 	, m_stabilizerUseBrushSampleCount(true)
-	, m_selectInterpolation{DP_MSG_MOVE_REGION_MODE_BILINEAR}
+	, m_selectInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
 {
 	Q_ASSERT(client);
 

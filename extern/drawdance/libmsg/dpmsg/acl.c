@@ -671,14 +671,12 @@ static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg,
     }
 }
 
-static bool handle_layer_create(DP_AclState *acls, DP_Message *msg,
+static bool handle_layer_create(DP_AclState *acls, int layer_id,
                                 uint8_t user_id, bool override)
 {
     if (override) {
         return true;
     }
-    DP_MsgLayerCreate *mlc = DP_msg_layer_create_cast(msg);
-    int layer_id = DP_msg_layer_create_id(mlc);
     // Only operators can create layers under a different owner.
     bool can_create =
         (owns_layer(user_id, layer_id) || DP_acl_state_is_op(acls, user_id))
@@ -696,14 +694,10 @@ static bool can_delete_layer(DP_AclState *acls, uint8_t user_id, int layer_id,
             || !DP_acl_state_layer_locked_for(acls, user_id, merge_id));
 }
 
-static bool handle_layer_delete(DP_AclState *acls, DP_Message *msg,
+static bool handle_layer_delete(DP_AclState *acls, int layer_id, int merge_id,
                                 uint8_t user_id, bool override)
 {
-    DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
-    int layer_id = DP_msg_layer_delete_id(mld);
-    if (override
-        || can_delete_layer(acls, user_id, layer_id,
-                            DP_msg_layer_delete_merge_to(mld))) {
+    if (override || can_delete_layer(acls, user_id, layer_id, merge_id)) {
         DP_LayerAclEntry *entry;
         HASH_FIND_INT(acls->layers, &layer_id, entry);
         if (entry) {
@@ -813,8 +807,8 @@ static bool handle_move_region(DP_AclState *acls, DP_Message *msg,
                                uint8_t user_id, bool override)
 {
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-    return handle_move(acls, user_id, override, DP_msg_move_region_source(mmr),
-                       DP_msg_move_region_layer(mmr));
+    int layer_id = DP_msg_move_region_layer(mmr);
+    return handle_move(acls, user_id, override, layer_id, layer_id);
 }
 
 static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
@@ -823,6 +817,15 @@ static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
     return handle_move(acls, user_id, override, DP_msg_move_rect_source(mmr),
                        DP_msg_move_rect_layer(mmr));
+}
+
+static bool handle_transform_region(DP_AclState *acls, DP_Message *msg,
+                                    uint8_t user_id, bool override)
+{
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    return handle_move(acls, user_id, override,
+                       DP_msg_transform_region_source(mtr),
+                       DP_msg_transform_region_layer(mtr));
 }
 
 static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
@@ -854,7 +857,9 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_RESIZE, user_id);
     case DP_MSG_LAYER_CREATE:
-        return handle_layer_create(acls, msg, user_id, override);
+        return handle_layer_create(
+            acls, DP_msg_layer_create_id(DP_msg_layer_create_cast(msg)),
+            user_id, override);
     case DP_MSG_LAYER_ATTRIBUTES:
         return override
             || can_edit_layer(acls, user_id,
@@ -867,11 +872,13 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                    DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
     case DP_MSG_LAYER_ORDER:
         return override
-            || can_edit_layer(
-                   acls, user_id,
-                   DP_msg_layer_order_root(DP_msg_layer_order_cast(msg)));
-    case DP_MSG_LAYER_DELETE:
-        return handle_layer_delete(acls, msg, user_id, override);
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS,
+                                            user_id);
+    case DP_MSG_LAYER_DELETE: {
+        DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
+        return handle_layer_delete(acls, DP_msg_layer_delete_id(mld), 0,
+                                   user_id, override);
+    }
     case DP_MSG_LAYER_VISIBILITY:
         return false; // Layer hiding is client-side.
     case DP_MSG_PUT_IMAGE:
@@ -931,9 +938,6 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                         DP_msg_draw_dabs_mypaint_cast(msg))));
     case DP_MSG_MOVE_RECT:
         return handle_move_rect(acls, msg, user_id, override);
-    case DP_MSG_UNDO:
-        return override
-            || DP_acl_state_can_use_feature(acls, DP_FEATURE_UNDO, user_id);
     case DP_MSG_SET_METADATA_INT:
         return handle_set_metadata_int(acls, msg, user_id, override);
     case DP_MSG_SET_METADATA_STR:
@@ -943,6 +947,27 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_REMOVE_TIMELINE_FRAME:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
+    case DP_MSG_LAYER_TREE_CREATE:
+        return handle_layer_create(
+            acls,
+            DP_msg_layer_tree_create_id(DP_msg_layer_tree_create_cast(msg)),
+            user_id, override);
+    case DP_MSG_LAYER_TREE_ORDER:
+        return override
+            || can_edit_layer(acls, user_id,
+                              DP_msg_layer_tree_order_root(
+                                  DP_msg_layer_tree_order_cast(msg)));
+    case DP_MSG_LAYER_TREE_DELETE: {
+        DP_MsgLayerTreeDelete *mltd = DP_msg_layer_tree_delete_cast(msg);
+        return handle_layer_delete(acls, DP_msg_layer_tree_delete_id(mltd),
+                                   DP_msg_layer_tree_delete_merge_to(mltd), user_id,
+                                   override);
+    }
+    case DP_MSG_TRANSFORM_REGION:
+        return handle_transform_region(acls, msg, user_id, override);
+    case DP_MSG_UNDO:
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_UNDO, user_id);
     default:
         return true;
     }

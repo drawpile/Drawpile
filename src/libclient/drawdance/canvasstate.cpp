@@ -176,11 +176,11 @@ void CanvasState::toResetImage(MessageList &msgs, uint8_t contextId) const
     DP_reset_image_build(m_data, contextId, &CanvasState::pushMessage, &msgs);
 }
 
-drawdance::Message CanvasState::makeLayerOrder(
+drawdance::Message CanvasState::makeLayerTreeOrder(
     uint8_t contextId, int sourceId, int targetId, bool intoGroup, bool below) const
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
-	return drawdance::Message::noinc(DP_layer_routes_layer_order_make(
+	return drawdance::Message::noinc(DP_layer_routes_layer_tree_order_make(
 		lr, m_data, contextId, sourceId, targetId, intoGroup, below));
 }
 

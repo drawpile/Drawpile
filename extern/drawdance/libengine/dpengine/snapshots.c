@@ -294,11 +294,12 @@ static uint16_t layer_to_reset_image(struct DP_ResetImageContext *c,
     size_t name_len;
     const char *name = DP_layer_props_title(lp, &name_len);
     uint8_t create_flags = 0;
-    SET_FLAG_IF(create_flags, target_id != 0, DP_MSG_LAYER_CREATE_FLAGS_INTO);
-    SET_FLAG_IF(create_flags, group, DP_MSG_LAYER_CREATE_FLAGS_GROUP);
-    reset_image_push(c, DP_msg_layer_create_new(c->context_id, layer_id, 0,
-                                                target_id, fill, create_flags,
-                                                name, name_len));
+    SET_FLAG_IF(create_flags, target_id != 0,
+                DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO);
+    SET_FLAG_IF(create_flags, group, DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP);
+    reset_image_push(
+        c, DP_msg_layer_tree_create_new(c->context_id, layer_id, 0, target_id,
+                                        fill, create_flags, name, name_len));
     layer_props_to_reset_image(c, lp, group, layer_id, 0);
     return layer_id;
 }
@@ -321,7 +322,6 @@ static bool tiles_to_reset_image(struct DP_ResetImageContext *c,
                     reset_image_push(
                         c, DP_msg_put_tile_new(
                                c->context_id, layer_id, sublayer_id,
-                               DP_uint_to_uint8(DP_tile_context_id(t)),
                                DP_int_to_uint16(x), DP_int_to_uint16(y), 0,
                                set_tile_data, size, c->output_buffer));
                 }

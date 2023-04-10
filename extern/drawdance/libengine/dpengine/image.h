@@ -51,6 +51,10 @@ DP_Image *DP_image_new_from_compressed_alpha_mask(int width, int height,
                                                   const unsigned char *in,
                                                   size_t in_size);
 
+DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
+                                                  const unsigned char *in,
+                                                  size_t in_size);
+
 DP_Image *DP_image_new_subimage(DP_Image *img, int x, int y, int width,
                                 int height);
 

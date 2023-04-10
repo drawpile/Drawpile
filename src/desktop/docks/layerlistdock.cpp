@@ -329,18 +329,18 @@ void LayerList::addLayerOrGroup(bool group)
 	uint8_t contextId = m_canvas->localUserId();
 	QModelIndex index = layers->layerIndex(m_selectedId);
 	uint16_t targetId;
-	uint8_t flags = group ? DP_MSG_LAYER_CREATE_FLAGS_GROUP : 0;
+	uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
 	if(index.isValid()) {
 		targetId = m_selectedId;
 		if(index.data(canvas::LayerListModel::IsGroupRole).toBool() && m_view->isExpanded(index)) {
-			flags |= DP_MSG_LAYER_CREATE_FLAGS_INTO;
+			flags |= DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
 		}
 	} else {
 		targetId = 0;
 	}
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeLayerCreate(
+		drawdance::Message::makeLayerTreeCreate(
 			contextId, id, 0, targetId, 0, flags,
 			layers->getAvailableLayerName(group ? tr("Group") : tr("Layer"))),
 	};
@@ -364,7 +364,7 @@ void LayerList::duplicateLayer()
 	uint8_t contextId = m_canvas->localUserId();
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeLayerCreate(
+		drawdance::Message::makeLayerTreeCreate(
 			contextId, id, layer.id, layer.id, 0, 0,
 			layers->getAvailableLayerName(layer.title)),
 	};
@@ -410,7 +410,7 @@ void LayerList::deleteSelected()
 	uint8_t contextId = m_canvas->localUserId();
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeLayerDelete(
+		drawdance::Message::makeLayerTreeDelete(
 			contextId, index.data().value<canvas::LayerListItem>().id, 0),
 	};
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
@@ -438,7 +438,7 @@ void LayerList::mergeSelected()
 	uint8_t contextId = m_canvas->localUserId();
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeLayerDelete(contextId, layerId, mergeId),
+		drawdance::Message::makeLayerTreeDelete(contextId, layerId, mergeId),
 	};
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
 }

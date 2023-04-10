@@ -37,9 +37,9 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	m_ui->setupUi(uiwidget);
 
 	m_ui->interpolationCombo->addItem(
-		tr("Nearest"), DP_MSG_MOVE_REGION_MODE_NEAREST);
+		tr("Nearest"), DP_MSG_TRANSFORM_REGION_MODE_NEAREST);
 	m_ui->interpolationCombo->addItem(
-		tr("Bilinear"), DP_MSG_MOVE_REGION_MODE_BILINEAR);
+		tr("Bilinear"), DP_MSG_TRANSFORM_REGION_MODE_BILINEAR);
 	connect(
 		m_ui->interpolationCombo,
 		QOverload<int>::of(&QComboBox::currentIndexChanged), this,

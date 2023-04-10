@@ -574,7 +574,7 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 			}
 		} else {
 			QPolygon s = m_shape.toPolygon();
-			drawdance::Message msg = drawdance::Message::makeMoveRegion(
+			drawdance::Message msg = drawdance::Message::makeTransformRegion(
 				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
 				moveBounds.width(), moveBounds.height(), s[0].x(), s[0].y(),
 				s[1].x(), s[1].y(), s[2].x(), s[2].y(), s[3].x(), s[3].y(),

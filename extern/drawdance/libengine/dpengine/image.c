@@ -177,6 +177,65 @@ DP_Image *DP_image_new_from_compressed_alpha_mask(int width, int height,
     }
 }
 
+// Monochrome MSB format: 1 bit per pixel, bytes packed with the most
+// significant bit first, lines padded to 32 bit boundaries.
+
+struct DP_MonochromeInflateArgs {
+    int line_width;
+    int line_count;
+    uint8_t *buffer;
+};
+
+static unsigned char *get_monochrome_buffer(size_t out_size, void *user)
+{
+    struct DP_MonochromeInflateArgs *args = user;
+    size_t expected_size =
+        DP_int_to_size(args->line_width) * DP_int_to_size(args->line_count);
+    if (out_size == expected_size) {
+        uint8_t *buffer = DP_malloc(out_size);
+        args->buffer = buffer;
+        return buffer;
+    }
+    else {
+        DP_error_set("Monochrome decompression needs size %zu, but got %zu",
+                     expected_size, out_size);
+        return NULL;
+    }
+}
+
+static DP_Image *extract_monochrome(int width, int height, int line_width,
+                                    const unsigned char *buffer)
+{
+    DP_Image *img = DP_image_new(width, height);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int byte_index = y * line_width + x / 8;
+            int bit_mask = 1 << (7 - (x % 8)); // most significant bit first
+            bool white = buffer[byte_index] & bit_mask;
+            DP_Pixel8 pixel = {white ? 0xffffffff : 0x00000000};
+            DP_image_pixel_at_set(img, x, y, pixel);
+        }
+    }
+    return img;
+}
+
+DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
+                                                  const unsigned char *in,
+                                                  size_t in_size)
+{
+    int line_width = (width + 31) / 32 * 4;
+    struct DP_MonochromeInflateArgs args = {line_width, height, NULL};
+    DP_Image *img;
+    if (DP_compress_inflate(in, in_size, get_monochrome_buffer, &args)) {
+        img = extract_monochrome(width, height, line_width, args.buffer);
+    }
+    else {
+        img = NULL;
+    }
+    DP_free(args.buffer);
+    return img;
+}
+
 
 static void copy_pixels(DP_Image *DP_RESTRICT dst, DP_Image *DP_RESTRICT src,
                         int dst_x, int dst_y, int src_x, int src_y,
@@ -322,7 +381,7 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
 
         if (DP_image_transform_draw(width, height, DP_image_pixels(img), dc,
                                     thumb, tf,
-                                    DP_MSG_MOVE_REGION_MODE_BILINEAR)) {
+                                    DP_MSG_TRANSFORM_REGION_MODE_BILINEAR)) {
             *out_thumb = thumb;
             return true;
         }

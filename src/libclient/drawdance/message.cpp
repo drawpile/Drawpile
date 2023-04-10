@@ -123,16 +123,16 @@ Message Message::makeLayerAcl(uint8_t contextId, uint16_t id, uint8_t flags, con
         contextId, id, flags, setUint8s, exclusive.count(), const_cast<uint8_t *>(exclusive.constData()))};
 }
 
-Message Message::makeLayerCreate(uint8_t contextId, uint16_t id, uint16_t source, uint16_t target, uint32_t fill, uint8_t flags, const QString &name)
+Message Message::makeLayerTreeCreate(uint8_t contextId, uint16_t id, uint16_t source, uint16_t target, uint32_t fill, uint8_t flags, const QString &name)
 {
     QByteArray bytes = name.toUtf8();
-    return Message{DP_msg_layer_create_new(
+    return Message{DP_msg_layer_tree_create_new(
         contextId, id, source, target, fill, flags, bytes.constData(), bytes.length())};
 }
 
-Message Message::makeLayerDelete(uint8_t contextId, uint16_t id, uint16_t mergeTo)
+Message Message::makeLayerTreeDelete(uint8_t contextId, uint16_t id, uint16_t mergeTo)
 {
-    return Message{DP_msg_layer_delete_new(contextId, id, mergeTo)};
+    return Message{DP_msg_layer_tree_delete_new(contextId, id, mergeTo)};
 }
 
 Message Message::makeLayerRetitle(uint8_t contextId, uint16_t id, const QString &title)
@@ -151,11 +151,11 @@ Message Message::makeMoveRect(uint8_t contextId, uint16_t layer, uint16_t source
     }
 }
 
-Message Message::makeMoveRegion(uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, const QImage &mask)
+Message Message::makeTransformRegion(uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, const QImage &mask)
 {
     QByteArray compressed = mask.isNull() ? QByteArray{} : compressAlphaMask(mask);
-    if(compressed.size() <= DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_REGION_STATIC_LENGTH) {
-        return Message{DP_msg_move_region_new(contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4, mode, &Message::setUchars, compressed.size(), compressed.data())};
+    if(compressed.size() <= DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_TRANSFORM_REGION_STATIC_LENGTH) {
+        return Message{DP_msg_transform_region_new(contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4, mode, &Message::setUchars, compressed.size(), compressed.data())};
     } else {
         return Message::null();
     }
