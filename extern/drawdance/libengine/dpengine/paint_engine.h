@@ -140,15 +140,14 @@ DP_paint_engine_playback_step(DP_PaintEngine *pe, long long steps,
                               void *user);
 
 DP_PlayerResult DP_paint_engine_playback_skip_by(
-    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps,
+    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps, bool by_snapshots,
     DP_PaintEnginePushMessageFn push_message, void *user);
 
 DP_PlayerResult DP_paint_engine_playback_jump_to(
     DP_PaintEngine *pe, DP_DrawContext *dc, long long position,
     DP_PaintEnginePushMessageFn push_message, void *user);
 
-DP_PlayerResult
-DP_paint_engine_playback_begin(DP_PaintEngine *pe);
+DP_PlayerResult DP_paint_engine_playback_begin(DP_PaintEngine *pe);
 
 DP_PlayerResult
 DP_paint_engine_playback_play(DP_PaintEngine *pe, long long msecs,

@@ -1272,8 +1272,8 @@ jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
     DP_debug("Clamped position to %lld (message count %lld)", target_position,
              message_count);
 
-    DP_PlayerIndexEntry entry =
-        DP_player_index_entry_search(player, target_position);
+    DP_PlayerIndexEntry entry = DP_player_index_entry_search(
+        player, target_position, relative && !exact && to > 0);
     DP_debug("Loaded entry with message index %lld, message offset %zu, "
              "snapshot offset %zu, thumbnail offset %zu",
              entry.message_index, entry.message_offset, entry.snapshot_offset,
@@ -1331,12 +1331,13 @@ jump_playback_to(DP_PaintEngine *pe, DP_DrawContext *dc, long long to,
 }
 
 DP_PlayerResult DP_paint_engine_playback_skip_by(
-    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps,
+    DP_PaintEngine *pe, DP_DrawContext *dc, long long steps, bool by_snapshots,
     DP_PaintEnginePushMessageFn push_message, void *user)
 {
     DP_ASSERT(pe);
-    if (steps < 0) {
-        return jump_playback_to(pe, dc, steps, true, false, push_message, user);
+    if (steps < 0 || by_snapshots) {
+        return jump_playback_to(pe, dc, steps, true, !by_snapshots,
+                                push_message, user);
     }
     else {
         return skip_playback_forward(pe, steps, PLAYBACK_STEP_UNDO_POINTS,

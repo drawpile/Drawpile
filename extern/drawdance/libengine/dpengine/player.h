@@ -102,8 +102,8 @@ unsigned int DP_player_index_message_count(DP_Player *player);
 
 size_t DP_player_index_entry_count(DP_Player *player);
 
-DP_PlayerIndexEntry DP_player_index_entry_search(DP_Player *player,
-                                                 long long position);
+DP_PlayerIndexEntry
+DP_player_index_entry_search(DP_Player *player, long long position, bool after);
 
 DP_PlayerIndexEntrySnapshot *
 DP_player_index_entry_load(DP_Player *player, DP_DrawContext *dc,

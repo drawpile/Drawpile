@@ -2425,7 +2425,7 @@ static size_t player_body_offset(DP_Player *player)
 }
 
 DP_PlayerIndexEntry DP_player_index_entry_search(DP_Player *player,
-                                                 long long position)
+                                                 long long position, bool after)
 {
     DP_ASSERT(player);
     if (!check_index(player)) {
@@ -2438,7 +2438,13 @@ DP_PlayerIndexEntry DP_player_index_entry_search(DP_Player *player,
     for (size_t i = 0; i < entry_count; ++i) {
         DP_PlayerIndexEntry entry = player->index.entries[i];
         long long message_index = entry.message_index;
-        if (message_index <= position && message_index > best_message_index) {
+        bool is_best_candidate = after
+                                   ? (message_index >= position
+                                      && (message_index < best_message_index
+                                          || best_message_index == -1))
+                                   : (message_index <= position
+                                      && message_index > best_message_index);
+        if (is_best_candidate) {
             best_entry = entry;
             best_message_index = message_index;
         }
