@@ -461,7 +461,7 @@ bool DP_affected_area_concurrent_with(const DP_AffectedArea *a,
                || affected_ids_differ(a->affected_id, b->affected_id)
                // Affecting different pixels on the same layer is concurrent.
                || (a_domain == DP_AFFECTED_DOMAIN_PIXELS
-                   && DP_rect_intersects(a->bounds, b->bounds)));
+                   && !DP_rect_intersects(a->bounds, b->bounds)));
 }
 
 void DP_affected_indirect_areas_clear(DP_AffectedIndirectAreas *aia)
