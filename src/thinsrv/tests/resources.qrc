@@ -1,7 +1,0 @@
-<RCC>
-	<qresource prefix="/test">
-		<file>test-config.cfg</file>
-		<file>test.dptxt</file>
-	</qresource>
-</RCC>
-
