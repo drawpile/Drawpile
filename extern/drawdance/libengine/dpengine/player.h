@@ -30,6 +30,7 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Input DP_Input;
 typedef struct DP_Message DP_Message;
+typedef struct json_object_t JSON_Object;
 
 
 typedef struct DP_Player DP_Player;
@@ -64,6 +65,8 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
                          DP_Input *input, DP_LoadResult *out_result);
 
 void DP_player_free(DP_Player *player);
+
+JSON_Object *DP_player_header(DP_Player *player);
 
 bool DP_player_compatible(DP_Player *player);
 

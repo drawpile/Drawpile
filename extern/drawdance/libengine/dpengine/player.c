@@ -84,6 +84,7 @@ struct DP_Player {
     char *index_path;
     DP_PlayerType type;
     DP_PlayerReader reader;
+    JSON_Value *text_reader_header_value;
     long long position;
     bool compatible;
     bool input_error;
@@ -235,15 +236,16 @@ static bool is_version_compatible(char *version)
 
 static DP_Player *make_player(DP_PlayerType type, char *recording_path,
                               char *index_path, DP_PlayerReader reader,
-                              char *version)
+                              char *version, JSON_Value *header_value)
 {
     bool compatible = is_version_compatible(version);
     DP_free(version);
     DP_Player *player = DP_malloc(sizeof(*player));
-    *player = (DP_Player){
-        recording_path, index_path, type,
-        reader,         0,          compatible,
-        false,          false,      {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
+    *player = (DP_Player){recording_path, index_path,
+                          type,           reader,
+                          header_value,   0,
+                          compatible,     false,
+                          false,          {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
     return player;
 }
 
@@ -258,7 +260,8 @@ static DP_Player *new_binary_player(char *recording_path, char *index_path,
     JSON_Object *header = DP_binary_reader_header(binary_reader);
     char *version = DP_strdup(json_object_get_string(header, "version"));
     return make_player(DP_PLAYER_TYPE_BINARY, recording_path, index_path,
-                       (DP_PlayerReader){.binary = binary_reader}, version);
+                       (DP_PlayerReader){.binary = binary_reader}, version,
+                       NULL);
 }
 
 static DP_Player *new_text_player(char *recording_path, char *index_path,
@@ -269,12 +272,28 @@ static DP_Player *new_text_player(char *recording_path, char *index_path,
         return NULL;
     }
 
+    JSON_Value *header_value = json_value_init_object();
+    if (!header_value) {
+        DP_error_set("Error creating JSON header");
+        DP_text_reader_free(text_reader);
+        return NULL;
+    }
+
+    JSON_Object *header = json_value_get_object(header_value);
     char *version = NULL;
     while (true) {
         const char *key, *value;
         DP_TextReaderResult result =
             DP_text_reader_read_header_field(text_reader, &key, &value);
         if (result == DP_TEXT_READER_SUCCESS) {
+            if (json_object_set_string(header, key, value) != JSONSuccess) {
+                DP_error_set("Error setting JSON header field %s=%s", key,
+                             value);
+                DP_free(version);
+                json_value_free(header_value);
+                DP_text_reader_free(text_reader);
+                return NULL;
+            }
             if (DP_str_equal(key, "version") && !version) {
                 version = DP_strdup(value);
             }
@@ -290,7 +309,8 @@ static DP_Player *new_text_player(char *recording_path, char *index_path,
     }
 
     return make_player(DP_PLAYER_TYPE_TEXT, recording_path, index_path,
-                       (DP_PlayerReader){.text = text_reader}, version);
+                       (DP_PlayerReader){.text = text_reader}, version,
+                       header_value);
 }
 
 static DP_Player *new_debug_dump_player(DP_Input *input)
@@ -300,6 +320,7 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           NULL,
                           DP_PLAYER_TYPE_DEBUG_DUMP,
                           {.dump = DP_dump_reader_new(input)},
+                          NULL,
                           0,
                           true,
                           false,
@@ -378,6 +399,7 @@ void DP_player_free(DP_Player *player)
             break;
         case DP_PLAYER_TYPE_TEXT:
             DP_text_reader_free(player->reader.text);
+            json_value_free(player->text_reader_header_value);
             break;
         case DP_PLAYER_TYPE_DEBUG_DUMP:
             DP_dump_reader_free(player->reader.dump);
@@ -387,6 +409,21 @@ void DP_player_free(DP_Player *player)
         DP_free(player->index_path);
         DP_free(player->recording_path);
         DP_free(player);
+    }
+}
+
+JSON_Object *DP_player_header(DP_Player *player)
+{
+    DP_ASSERT(player);
+    switch (player->type) {
+    case DP_PLAYER_TYPE_BINARY:
+        return DP_binary_reader_header(player->reader.binary);
+    case DP_PLAYER_TYPE_TEXT:
+        return json_value_get_object(player->text_reader_header_value);
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        return NULL;
+    default:
+        DP_UNREACHABLE();
     }
 }
 
