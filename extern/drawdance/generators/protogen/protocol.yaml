@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Calle Laakkonen, askmeaboutloom
+# Copyright 2020-2023 Calle Laakkonen, askmeaboutloom
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -13,7 +13,7 @@
 # PERFORMANCE OF THIS SOFTWARE.
 
 _protocol:
-    version: dp:4.22.2
+    version: dp:4.23.0
     undo_depth: 30
 
 # Control messages (transparent)

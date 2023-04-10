@@ -29,9 +29,9 @@ typedef struct DP_TextWriter DP_TextWriter;
 
 #define DP_PROTOCOL_VERSION_NAMESPACE "dp"
 #define DP_PROTOCOL_VERSION_SERVER    4
-#define DP_PROTOCOL_VERSION_MAJOR     22
-#define DP_PROTOCOL_VERSION_MINOR     2
-#define DP_PROTOCOL_VERSION           "dp:4.22.2"
+#define DP_PROTOCOL_VERSION_MAJOR     23
+#define DP_PROTOCOL_VERSION_MINOR     0
+#define DP_PROTOCOL_VERSION           "dp:4.23.0"
 #define DP_UNDO_DEPTH                 30
 
 typedef struct DP_MessageMethods {

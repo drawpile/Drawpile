@@ -19,15 +19,15 @@ using namespace protocol;
 
 // Hex encoded test recording.
 // Header contains one extra key: "test": "TESTING"
-// Protocol version is "dp:4.22.2"
+// Protocol version is "dp:4.23.0"
 // Body contains one message: UserJoin(1, 0, "hello", "world")
-static const char *TEST_RECORDING = "44505245430000427b2274657374223a2254455354494e47222c2276657273696f6e223a2264703a342e32322e32222c2277726974657276657273696f6e223a22322e302e306232227d000c2001000568656c6c6f776f726c64";
+static const char *TEST_RECORDING = "44505245430000427b2274657374223a2254455354494e47222c2276657273696f6e223a2264703a342e32332e30222c2277726974657276657273696f6e223a22322e302e306232227d000c2001000568656c6c6f776f726c64";
 
 // A test recording with a version number of dp:4.10.0, containing a single NewLayer message.
 static const char *TEST_RECORDING_OLD = "44505245430000317b2276657273696f6e223a2264703a342e31302e30222c2277726974657276657273696f6e223a22322e302e306232227d00098201000100000000000000";
 
 static const char *TEST_TEXTMODE =
-	"!version=dp:4.22.2\n"
+	"!version=dp:4.23.0\n"
 	"!test=TESTING\n"
 	"1 join name=hello avatar=d29ybGQ=\n";
 
@@ -105,7 +105,7 @@ private slots:
 			QCOMPARE(reader.filesize(), testRecording.length());
 
 			Compatibility compat = reader.open();
-			QCOMPARE(reader.formatVersion().asString(), QString("dp:4.22.2"));
+			QCOMPARE(reader.formatVersion().asString(), QString("dp:4.23.0"));
 			QCOMPARE(compat, COMPATIBLE);
 			QCOMPARE(int(reader.encoding()), encoding);
 			QCOMPARE(reader.metadata()["test"].toString(), QString("TESTING"));
