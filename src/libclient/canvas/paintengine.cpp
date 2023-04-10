@@ -435,14 +435,32 @@ void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mas
 	m_paintEngine.previewCut(layerId, bounds, mask);
 }
 
+void PaintEngine::clearCutPreview()
+{
+	m_paintEngine.clearCutPreview();
+}
+
+void PaintEngine::previewTransform(
+	int layerId, int x, int y, const QImage &img, const QPolygon &dstPolygon,
+	int interpolation)
+{
+	m_paintEngine.previewTransform(
+		layerId, x, y, img, dstPolygon, interpolation);
+}
+
+void PaintEngine::clearTransformPreview()
+{
+	m_paintEngine.clearTransformPreview();
+}
+
 void PaintEngine::previewDabs(int layerId, const drawdance::MessageList &msgs)
 {
 	m_paintEngine.previewDabs(layerId, msgs.count(), msgs.constData());
 }
 
-void PaintEngine::clearPreview()
+void PaintEngine::clearDabsPreview()
 {
-	m_paintEngine.clearPreview();
+	m_paintEngine.clearDabsPreview();
 }
 
 const QPixmap &PaintEngine::getPixmapView(const QRect &refreshArea)

@@ -167,12 +167,6 @@ tools::RectangleSelection *SelectionSettings::getRectangleSelectionTool()
 		controller()->getTool(Tool::SELECTION));
 }
 
-tools::PolygonSelection *SelectionSettings::getPolygonSelectionTool()
-{
-	return static_cast<tools::PolygonSelection *>(
-		controller()->getTool(Tool::POLYGONSELECTION));
-}
-
 void SelectionSettings::updateSelectionMode(
 	canvas::Selection::AdjustmentMode mode)
 {
@@ -266,8 +260,7 @@ void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 void SelectionSettings::pushSettings()
 {
 	int interpolation = m_ui->interpolationCombo->currentData().toInt();
-	getRectangleSelectionTool()->setInterpolation(interpolation);
-	getPolygonSelectionTool()->setInterpolation(interpolation);
+	controller()->setSelectInterpolation(interpolation);
 }
 
 void SelectionSettings::selectionAdjustmentModeChanged(

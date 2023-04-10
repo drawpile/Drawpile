@@ -224,15 +224,14 @@ DP_Image *DP_image_new_subimage(DP_Image *img, int x, int y, int width,
 }
 
 
-DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
-                             const DP_Quad *dst_quad, int interpolation,
-                             int *out_offset_x, int *out_offset_y)
+DP_Image *DP_image_transform_pixels(int src_width, int src_height,
+                                    const DP_Pixel8 *src_pixels,
+                                    DP_DrawContext *dc, const DP_Quad *dst_quad,
+                                    int interpolation, int *out_offset_x,
+                                    int *out_offset_y)
 {
-    DP_ASSERT(img);
+    DP_ASSERT(src_pixels);
     DP_ASSERT(dst_quad);
-
-    int src_width = DP_image_width(img);
-    int src_height = DP_image_height(img);
     DP_Quad src_quad =
         DP_quad_make(0, 0, src_width, 0, src_width, src_height, 0, src_height);
 
@@ -275,6 +274,17 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
     return dst_img;
 }
 
+DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
+                             const DP_Quad *dst_quad, int interpolation,
+                             int *out_offset_x, int *out_offset_y)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(dst_quad);
+    return DP_image_transform_pixels(DP_image_width(img), DP_image_height(img),
+                                     DP_image_pixels(img), dc, dst_quad,
+                                     interpolation, out_offset_x, out_offset_y);
+}
+
 static void thumbnail_scale(int width, int height, int max_width,
                             int max_height, int *out_width, int *out_height)
 {
@@ -310,7 +320,8 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
             DP_int_to_double(thumb_width) / DP_int_to_double(width),
             DP_int_to_double(thumb_height) / DP_int_to_double(height));
 
-        if (DP_image_transform_draw(img, dc, thumb, tf,
+        if (DP_image_transform_draw(width, height, DP_image_pixels(img), dc,
+                                    thumb, tf,
                                     DP_MSG_MOVE_REGION_MODE_BILINEAR)) {
             *out_thumb = thumb;
             return true;

@@ -20,17 +20,21 @@
 namespace tools {
 
 ToolController::ToolController(net::Client *client, QObject *parent)
-	: QObject(parent),
-	m_toolbox{},
-	m_client(client), m_model(nullptr),
-	m_activeTool(nullptr),
-	m_prevShift(false), m_prevAlt(false),
-	m_smoothing(0)
+	: QObject(parent)
+	, m_toolbox{}
+	, m_client(client)
+	, m_model(nullptr)
+	, m_activeTool(nullptr)
+	, m_prevShift(false)
+	, m_prevAlt(false)
+	, m_smoothing(0)
+	, m_selectInterpolation{DP_MSG_MOVE_REGION_MODE_BILINEAR}
 {
 	Q_ASSERT(client);
 
 	registerTool(new Freehand(*this, false));
-	registerTool(new Freehand(*this, true)); // eraser is a specialized freehand tool
+	registerTool(
+		new Freehand(*this, true)); // eraser is a specialized freehand tool
 	registerTool(new ColorPicker(*this));
 	registerTool(new Line(*this));
 	registerTool(new Rectangle(*this));
@@ -130,6 +134,7 @@ void ToolController::setActiveLayer(uint16_t id)
 			m_model->paintEngine()->setViewLayer(id);
 		}
 
+		updateSelectionPreview();
 		emit activeLayerChanged(id);
 	}
 }
@@ -144,7 +149,12 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	if(m_model != model) {
 		m_model = model;
-		connect(m_model->aclState(), &canvas::AclState::featureAccessChanged, this, &ToolController::onFeatureAccessChange);
+		connect(
+			m_model->aclState(), &canvas::AclState::featureAccessChanged, this,
+			&ToolController::onFeatureAccessChange);
+		connect(
+			m_model, &canvas::CanvasModel::selectionChanged, this,
+			&ToolController::onSelectionChange);
 	}
 	emit modelChanged(model);
 }
@@ -152,8 +162,41 @@ void ToolController::setModel(canvas::CanvasModel *model)
 void ToolController::onFeatureAccessChange(DP_Feature feature, bool canUse)
 {
 	if(feature == DP_FEATURE_REGION_MOVE) {
-		static_cast<SelectionTool*>(getTool(Tool::SELECTION))->setTransformEnabled(canUse);
-		static_cast<SelectionTool*>(getTool(Tool::POLYGONSELECTION))->setTransformEnabled(canUse);
+		static_cast<SelectionTool *>(getTool(Tool::SELECTION))
+			->setTransformEnabled(canUse);
+		static_cast<SelectionTool *>(getTool(Tool::POLYGONSELECTION))
+			->setTransformEnabled(canUse);
+	}
+}
+
+void ToolController::onSelectionChange(canvas::Selection *sel)
+{
+	if(sel) {
+		connect(
+			sel, &canvas::Selection::pasteImageChanged, this,
+			&ToolController::updateSelectionPreview);
+		connect(
+			sel, &canvas::Selection::shapeChanged, this,
+			&ToolController::updateSelectionPreview);
+	}
+	updateSelectionPreview();
+}
+
+void ToolController::updateSelectionPreview()
+{
+	if(!m_model) {
+		return;
+	}
+
+	canvas::PaintEngine *paintEngine = m_model->paintEngine();
+	canvas::Selection *sel = m_model->selection();
+	if(sel && sel->hasPasteImage()) {
+		QPoint point = sel->shape().boundingRect().topLeft().toPoint();
+		paintEngine->previewTransform(
+			m_activeLayer, point.x(), point.y(), sel->pasteImage(),
+			sel->destinationQuad(), m_selectInterpolation);
+	} else {
+		paintEngine->clearTransformPreview();
 	}
 }
 
@@ -161,13 +204,20 @@ void ToolController::setSmoothing(int smoothing)
 {
 	if(m_smoothing != smoothing) {
 		m_smoothing = smoothing;
-		if(smoothing>0)
+		if(smoothing > 0)
 			m_smoother.setSmoothing(smoothing);
 		emit smoothingChanged(smoothing);
 	}
 }
 
-void ToolController::startDrawing(const QPointF &point, qreal pressure, bool right, float zoom)
+void ToolController::setSelectInterpolation(int selectInterpolation)
+{
+	m_selectInterpolation = selectInterpolation;
+	updateSelectionPreview();
+}
+
+void ToolController::startDrawing(
+	const QPointF &point, qreal pressure, bool right, float zoom)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -187,7 +237,8 @@ void ToolController::startDrawing(const QPointF &point, qreal pressure, bool rig
 		emit colorUsed(m_activebrush.qColor());
 }
 
-void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool shift, bool alt)
+void ToolController::continueDrawing(
+	const QPointF &point, qreal pressure, bool shift, bool alt)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -196,7 +247,7 @@ void ToolController::continueDrawing(const QPointF &point, qreal pressure, bool 
 		return;
 	}
 
-	if(m_smoothing>0 && m_activeTool->allowSmoothing()) {
+	if(m_smoothing > 0 && m_activeTool->allowSmoothing()) {
 		m_smoother.addPoint(canvas::Point(point, pressure));
 
 		if(m_smoother.hasSmoothPoint()) {
@@ -230,12 +281,12 @@ void ToolController::endDrawing()
 	}
 
 	// Drain any remaining points from the smoothing buffer
-	if(m_smoothing>0 && m_activeTool->allowSmoothing()) {
+	if(m_smoothing > 0 && m_activeTool->allowSmoothing()) {
 		if(m_smoother.hasSmoothPoint())
 			m_smoother.removePoint();
 		while(m_smoother.hasSmoothPoint()) {
-			m_activeTool->motion(m_smoother.smoothPoint(),
-				m_prevShift, m_prevAlt);
+			m_activeTool->motion(
+				m_smoother.smoothPoint(), m_prevShift, m_prevAlt);
 			m_smoother.removePoint();
 		}
 	}
@@ -307,7 +358,8 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 	m_smoother.addOffset(QPointF(xOffset, yOffset));
 }
 
-void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand)
+void ToolController::setBrushEngineBrush(
+	drawdance::BrushEngine &be, bool freehand)
 {
 	activeBrush().setInBrushEngine(be, activeLayer(), freehand);
 }

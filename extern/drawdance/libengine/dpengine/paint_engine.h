@@ -213,10 +213,20 @@ void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
                                  int width, int height,
                                  const DP_Pixel8 *mask_or_null);
 
+void DP_paint_engine_preview_cut_clear(DP_PaintEngine *pe);
+
+void DP_paint_engine_preview_transform(DP_PaintEngine *pe, int layer_id, int x,
+                                       int y, int width, int height,
+                                       const DP_Pixel8 *pixels,
+                                       const DP_Quad *dst_quad,
+                                       int interpolation);
+
+void DP_paint_engine_preview_transform_clear(DP_PaintEngine *pe);
+
 void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
                                       int count, DP_Message **messages);
 
-void DP_paint_engine_preview_clear(DP_PaintEngine *pe);
+void DP_paint_engine_preview_dabs_clear(DP_PaintEngine *pe);
 
 DP_CanvasState *DP_paint_engine_view_canvas_state_inc(DP_PaintEngine *pe);
 

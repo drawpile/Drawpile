@@ -247,7 +247,6 @@ private:
 	void setRoomcode(const QString &roomcode);
 
 	void copyFromLayer(int layer);
-	int getSelectionInterpolation() const;
 
 	void autosave();
 

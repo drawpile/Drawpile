@@ -310,7 +310,7 @@ void CanvasModel::stopInspectingCanvas()
 void CanvasModel::setSelection(Selection *selection)
 {
 	if(m_selection != selection) {
-		m_paintengine->clearPreview();
+		m_paintengine->clearCutPreview();
 
 		const bool hadSelection = m_selection != nullptr;
 

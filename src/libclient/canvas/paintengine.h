@@ -177,8 +177,13 @@ public:
 	bool closePlayback();
 
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);
+	void clearCutPreview();
+	void previewTransform(
+		int layerId, int x, int y, const QImage &img,
+		const QPolygon &dstPolygon, int interpolation);
+	void clearTransformPreview();
 	void previewDabs(int layerId, const drawdance::MessageList &msgs);
-	void clearPreview();
+	void clearDabsPreview();
 
 signals:
 	void areaChanged(const QRect &area);

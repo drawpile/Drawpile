@@ -43,6 +43,7 @@ typedef struct DP_MsgInternalCatchup {
 
 typedef struct DP_MsgInternalPreview {
     DP_MsgInternal parent;
+    int type;
     void *data;
 } DP_MsgInternalPreview;
 
@@ -156,11 +157,13 @@ DP_Message *DP_msg_internal_cleanup_new(unsigned int context_id)
                             sizeof(DP_MsgInternal));
 }
 
-DP_Message *DP_msg_internal_preview_new(unsigned int context_id, void *data)
+DP_Message *DP_msg_internal_preview_new(unsigned int context_id, int type,
+                                        void *data)
 {
     DP_Message *msg = msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_PREVIEW,
                                        sizeof(DP_MsgInternalPreview));
     DP_MsgInternalPreview *mip = DP_message_internal(msg);
+    mip->type = type;
     mip->data = data;
     return msg;
 }
@@ -236,6 +239,13 @@ int DP_msg_internal_catchup_progress(DP_MsgInternal *mi)
     DP_ASSERT(mi);
     DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_CATCHUP);
     return ((DP_MsgInternalCatchup *)mi)->progress;
+}
+
+int DP_msg_internal_preview_type(DP_MsgInternal *mi)
+{
+    DP_ASSERT(mi);
+    DP_ASSERT(mi->type == DP_MSG_INTERNAL_TYPE_PREVIEW);
+    return ((DP_MsgInternalPreview *)mi)->type;
 }
 
 void *DP_msg_internal_preview_data(DP_MsgInternal *mi)

@@ -135,8 +135,12 @@ public:
 	//! Get the image to be pasted (or the move preview)
 	QImage pasteImage() const { return m_pasteImage; }
 
+	bool hasPasteImage() const { return !m_pasteImage.isNull(); }
+
 	//! Get the image to be pasted with the current transformation applied
 	QImage transformedPasteImage() const;
+
+	QPolygon destinationQuad() const;
 
 	/**
 	 * @brief Generate the commands to paste or move an image

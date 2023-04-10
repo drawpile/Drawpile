@@ -49,7 +49,7 @@ void ShapeTool::motion(const canvas::Point& point, bool constrain, bool center)
 
 void ShapeTool::cancelMultipart()
 {
-	m_owner.model()->paintEngine()->clearPreview();
+	m_owner.model()->paintEngine()->clearDabsPreview();
 	m_drawing = false;
 }
 
@@ -73,7 +73,7 @@ void ShapeTool::end()
 	}
 	m_brushEngine.endStroke();
 
-	paintEngine->clearPreview();
+	paintEngine->clearDabsPreview();
 	m_brushEngine.sendMessagesTo(client);
 }
 

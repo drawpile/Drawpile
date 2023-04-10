@@ -253,15 +253,45 @@ void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mas
 		mask.isNull() ? nullptr : reinterpret_cast<const DP_Pixel8 *>(mask.constBits()));
 }
 
+void PaintEngine::clearCutPreview()
+{
+	DP_paint_engine_preview_cut_clear(m_data);
+}
+
+void PaintEngine::previewTransform(
+	int layerId, int x, int y, const QImage &img, const QPolygon &dstPolygon,
+	int interpolation)
+{
+	if(dstPolygon.count() == 4) {
+		QPoint p1 = dstPolygon.point(0);
+		QPoint p2 = dstPolygon.point(1);
+		QPoint p3 = dstPolygon.point(2);
+		QPoint p4 = dstPolygon.point(3);
+		DP_Quad dstQuad = DP_quad_make(
+			p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
+		DP_paint_engine_preview_transform(
+			m_data, layerId, x, y, img.width(), img.height(),
+			reinterpret_cast<const DP_Pixel8 *>(img.constBits()), &dstQuad,
+			interpolation);
+	} else {
+		qWarning("Preview transform destination is not a quad");
+	}
+}
+
+void PaintEngine::clearTransformPreview()
+{
+	DP_paint_engine_preview_transform_clear(m_data);
+}
+
 void PaintEngine::previewDabs(int layerId, int count, const drawdance::Message *msgs)
 {
 	DP_paint_engine_preview_dabs_inc(
 		m_data, layerId, count, drawdance::Message::asRawMessages(msgs));
 }
 
-void PaintEngine::clearPreview()
+void PaintEngine::clearDabsPreview()
 {
-	DP_paint_engine_preview_clear(m_data);
+	DP_paint_engine_preview_dabs_clear(m_data);
 }
 
 CanvasState PaintEngine::viewCanvasState() const

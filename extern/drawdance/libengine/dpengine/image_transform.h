@@ -27,9 +27,11 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef union DP_Pixel8 DP_Pixel8;
 
 
-bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
+bool DP_image_transform_draw(int src_width, int src_height,
+                             const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
                              DP_Image *dst_img, DP_Transform tf,
                              int interpolation) DP_MUST_CHECK;
 

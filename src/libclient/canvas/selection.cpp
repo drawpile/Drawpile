@@ -598,6 +598,11 @@ QImage Selection::transformedPasteImage() const
 	return tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), nullptr);
 }
 
+QPolygon Selection::destinationQuad() const
+{
+	return tools::SelectionTool::destinationQuad(m_pasteImage, m_shape.toPolygon());
+}
+
 bool Selection::fillCanvas(drawdance::MessageList &buffer, uint8_t contextId, const QColor &color, DP_BlendMode mode, int layer) const
 {
 	QRect area;

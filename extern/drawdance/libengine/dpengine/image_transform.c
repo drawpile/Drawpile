@@ -41,7 +41,7 @@
 
 struct DP_RenderSpansData {
     int src_width, src_height;
-    DP_Pixel8 *src_pixels;
+    const DP_Pixel8 *src_pixels;
     int dst_width, dst_height;
     DP_Pixel8 *dst_pixels;
     DP_Transform tf;
@@ -51,8 +51,8 @@ struct DP_RenderSpansData {
 
 
 static uint32_t fetch_transformed_pixel_nearest(int width, int height,
-                                                DP_Pixel8 *pixels, double px,
-                                                double py)
+                                                const DP_Pixel8 *pixels,
+                                                double px, double py)
 {
     int x = CLAMP(DP_double_to_int(px + 0.5), 0, width - 1);
     int y = CLAMP(DP_double_to_int(py + 0.5), 0, height - 1);
@@ -100,8 +100,8 @@ static uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr, uint32_t bl,
 }
 
 static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
-                                                 DP_Pixel8 *pixels, double px,
-                                                 double py)
+                                                 const DP_Pixel8 *pixels,
+                                                 double px, double py)
 {
     int x1 = DP_double_to_int(px) - (px < 0 ? 1 : 0);
     int y1 = DP_double_to_int(py) - (py < 0 ? 1 : 0);
@@ -113,14 +113,14 @@ static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
     fetch_transformed_bilinear_pixel_bounds(0, width - 1, x1, &x1, &x2);
     fetch_transformed_bilinear_pixel_bounds(0, height - 1, y1, &y1, &y2);
 
-    DP_Pixel8 *s1 = pixels + y1 * width;
-    DP_Pixel8 *s2 = pixels + y2 * width;
+    const DP_Pixel8 *s1 = pixels + y1 * width;
+    const DP_Pixel8 *s2 = pixels + y2 * width;
     return interpolate_4_pixels(s1[x1].color, s1[x2].color, s2[x1].color,
                                 s2[x2].color, distx, disty);
 }
 
 static uint32_t fetch_transformed_pixel(int interpolation, int width,
-                                        int height, DP_Pixel8 *pixels,
+                                        int height, const DP_Pixel8 *pixels,
                                         double px, double py)
 {
     switch (interpolation) {
@@ -132,9 +132,10 @@ static uint32_t fetch_transformed_pixel(int interpolation, int width,
 }
 
 static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
-                                           DP_Pixel8 *pixels, DP_Transform tf,
-                                           int interpolation, int x, int y,
-                                           int length, DP_Pixel8 *out_buffer)
+                                           const DP_Pixel8 *pixels,
+                                           DP_Transform tf, int interpolation,
+                                           int x, int y, int length,
+                                           DP_Pixel8 *out_buffer)
 {
     double *m = tf.matrix;
     double fdx = m[0];
@@ -210,7 +211,7 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
     struct DP_RenderSpansData *rsd = user;
     int src_width = rsd->src_width;
     int src_height = rsd->src_height;
-    DP_Pixel8 *src_pixels = rsd->src_pixels;
+    const DP_Pixel8 *src_pixels = rsd->src_pixels;
     int dst_width = rsd->dst_width;
     DP_Pixel8 *dst_pixels = rsd->dst_pixels;
     DP_Transform tf = rsd->tf;
@@ -275,9 +276,10 @@ static DP_FT_Vector transform_outline_point(DP_Transform tf, double x, double y)
                           DP_double_to_int(v.y * 64.0 + 0.5)};
 }
 
-bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
-                             DP_Image *dst_img, DP_Transform tf,
-                             int interpolation)
+bool DP_image_transform_draw(int src_width, int src_height,
+                                    const DP_Pixel8 *src_pixels,
+                                    DP_DrawContext *dc, DP_Image *dst_img,
+                                    DP_Transform tf, int interpolation)
 {
     DP_Transform delta = DP_transform_make(1.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                                            1.0 / 65536.0, 1.0 / 65536.0, 1.0);
@@ -293,13 +295,11 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
         return false;
     }
 
-    int src_width = DP_image_width(img);
-    int src_height = DP_image_height(img);
     int dst_width = DP_image_width(dst_img);
     int dst_height = DP_image_height(dst_img);
     struct DP_RenderSpansData rsd = {src_width,
                                      src_height,
-                                     DP_image_pixels(img),
+                                     src_pixels,
                                      dst_width,
                                      dst_height,
                                      DP_image_pixels(dst_img),

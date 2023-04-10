@@ -34,7 +34,7 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 
 	if(m_handle == canvas::Selection::Handle::Outside) {
 		net::Client *client = m_owner.client();
-		if(sel && sel->pasteOrMoveToCanvas(m_messages, m_owner.client()->myId(), m_owner.activeLayer(), m_interpolation)) {
+		if(sel && sel->pasteOrMoveToCanvas(m_messages, m_owner.client()->myId(), m_owner.activeLayer(), m_owner.selectInterpolation())) {
 			client->sendMessages(m_messages.count(), m_messages.constData());
 			m_messages.clear();
 		}
@@ -109,7 +109,7 @@ void SelectionTool::finishMultipart()
 {
 	canvas::Selection *sel = m_owner.model()->selection();
 	net::Client *client = m_owner.client();
-	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), m_owner.activeLayer(), m_interpolation)) {
+	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(), m_owner.activeLayer(), m_owner.selectInterpolation())) {
 		m_owner.client()->sendMessages(m_messages.count(), m_messages.constData());
 		m_messages.clear();
 		m_owner.model()->setSelection(nullptr);
@@ -209,15 +209,9 @@ QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolyg
 	Q_ASSERT(!source.isNull());
 	Q_ASSERT(target.size() == 4);
 
-	const QRect bounds = target.boundingRect();
-	const QPolygonF srcPolygon({
-		QPointF(0, 0),
-		QPointF(source.width(), 0),
-		QPointF(source.width(), source.height()),
-		QPointF(0, source.height())
-	});
-
-	const QPolygon xTarget = target.translated(-bounds.topLeft());
+	QRect bounds;
+	QPolygonF srcPolygon;
+	QPolygon xTarget = destinationQuad(source, target, &bounds, &srcPolygon);
 	QTransform transform;
 	if(!QTransform::quadToQuad(srcPolygon, xTarget, transform)) {
 		qWarning("Couldn't transform selection image!");
@@ -235,6 +229,28 @@ QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolyg
 	painter.drawImage(0, 0, source);
 
 	return out;
+}
+
+QPolygon SelectionTool::destinationQuad(const QImage &source, const QPolygon &target, QRect *outBounds, QPolygonF *outSrcPolygon)
+{
+	Q_ASSERT(!source.isNull());
+	Q_ASSERT(target.size() == 4);
+
+	const QRect bounds = target.boundingRect();
+	const QPolygonF srcPolygon({
+		QPointF(0, 0),
+		QPointF(source.width(), 0),
+		QPointF(source.width(), source.height()),
+		QPointF(0, source.height())
+	});
+
+	if(outBounds) {
+		*outBounds = bounds;
+	}
+	if(outSrcPolygon) {
+		*outSrcPolygon = srcPolygon;
+	}
+	return target.translated(-bounds.topLeft());
 }
 
 QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds)

@@ -56,7 +56,8 @@ DP_Message *DP_msg_internal_catchup_new(unsigned int context_id, int progress);
 
 DP_Message *DP_msg_internal_cleanup_new(unsigned int context_id);
 
-DP_Message *DP_msg_internal_preview_new(unsigned int context_id, void *data);
+DP_Message *DP_msg_internal_preview_new(unsigned int context_id, int type,
+                                        void *data);
 
 DP_Message *DP_msg_internal_recorder_start_new(unsigned int context_id);
 
@@ -78,6 +79,8 @@ DP_MsgInternalType DP_msg_internal_type(DP_MsgInternal *mi);
 void *DP_msg_internal_reset_to_state_data(DP_MsgInternal *mi);
 
 int DP_msg_internal_catchup_progress(DP_MsgInternal *mi);
+
+int DP_msg_internal_preview_type(DP_MsgInternal *mi);
 
 void *DP_msg_internal_preview_data(DP_MsgInternal *mi);
 

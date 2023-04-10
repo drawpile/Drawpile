@@ -118,7 +118,7 @@ void BezierTool::finishMultipart()
 void BezierTool::cancelMultipart()
 {
 	m_points.clear();
-	m_owner.model()->paintEngine()->clearPreview();
+	m_owner.model()->paintEngine()->clearDabsPreview();
 }
 
 void BezierTool::undoMultipart()

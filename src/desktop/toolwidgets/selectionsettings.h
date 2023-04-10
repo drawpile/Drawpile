@@ -70,7 +70,6 @@ protected:
 
 private:
 	tools::RectangleSelection *getRectangleSelectionTool();
-	tools::PolygonSelection *getPolygonSelectionTool();
 
 	void updateSelectionMode(canvas::Selection::AdjustmentMode mode);
 	void cutSelection();

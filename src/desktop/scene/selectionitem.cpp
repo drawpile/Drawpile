@@ -166,29 +166,6 @@ static void drawHandle(QPainter *painter, const QPointF &point, qreal size,
 
 void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt, QWidget *)
 {
-	if(!m_selection->pasteImage().isNull()) {
-		if(m_shape.size() == 4) {
-			QPolygonF src({
-				QPointF(0, 0),
-				QPointF(m_selection->pasteImage().width(), 0),
-				QPointF(m_selection->pasteImage().width(), m_selection->pasteImage().height()),
-				QPointF(0, m_selection->pasteImage().height())
-			});
-
-			QTransform t;
-			if(QTransform::quadToQuad(src, m_shape, t)) {
-				painter->save();
-				painter->setTransform(t, true);
-				painter->drawImage(0, 0, m_selection->pasteImage());
-				painter->restore();
-			} else
-				qWarning("Couldn't transform pasted image!");
-
-		} else {
-			qWarning("Pasted selection item with non-rectangular polygon!");
-		}
-	}
-
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	QPen pen;

@@ -12,7 +12,10 @@
 
 class QCursor;
 
-namespace canvas { class CanvasModel; }
+namespace canvas {
+	class CanvasModel;
+	class Selection;
+}
 namespace drawdance { class BrushEngine; }
 namespace net { class Client; }
 
@@ -59,6 +62,9 @@ public:
 
 	void setSmoothing(int smoothing);
 	int smoothing() const { return m_smoothing; }
+
+	void setSelectInterpolation(int selectInterpolation);
+	int selectInterpolation() const { return m_selectInterpolation; }
 
 	// TODO this is used just for sending the commands. Replace with a signal?
 	inline net::Client *client() const { return m_client; }
@@ -130,6 +136,8 @@ signals:
 
 private slots:
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
+	void onSelectionChange(canvas::Selection *sel);
+	void updateSelectionPreview();
 
 private:
 	void registerTool(Tool *tool);
@@ -147,6 +155,8 @@ private:
 
 	int m_smoothing;
 	StrokeSmoother m_smoother;
+
+	int m_selectInterpolation;
 };
 
 }

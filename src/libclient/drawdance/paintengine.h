@@ -95,8 +95,13 @@ public:
 	bool closePlayback();
 
 	void previewCut(int layerId, const QRect &bounds, const QImage &mask);
+	void clearCutPreview();
+	void previewTransform(
+		int layerId, int x, int y, const QImage &img,
+		const QPolygon &dstPolygon, int interpolation);
+	void clearTransformPreview();
 	void previewDabs(int layerId, int count, const Message *msgs);
-	void clearPreview();
+	void clearDabsPreview();
 
 	CanvasState viewCanvasState() const;
 	CanvasState historyCanvasState() const;

@@ -23,7 +23,6 @@ public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(owner, type, cursor, false, false, false)
 		, m_allowTransform{true}
-		, m_interpolation{DP_MSG_MOVE_REGION_MODE_BILINEAR}
 	{}
 
 	void begin(const canvas::Point& point, bool right, float zoom) override final;
@@ -35,9 +34,6 @@ public:
 	void undoMultipart() override final;
 	bool isMultipart() const override final;
 
-	int interpolation() const { return m_interpolation; }
-	void setInterpolation(int interpolation) { m_interpolation = interpolation; }
-
 	//! Start a layer region move operation
 	void startMove();
 
@@ -45,6 +41,9 @@ public:
 	void setTransformEnabled(bool enable) { m_allowTransform = enable; }
 
 	static QImage transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset);
+	static QPolygon destinationQuad(
+		const QImage &source, const QPolygon &target,
+		QRect *outBounds = nullptr, QPolygonF *outSrcPolygon = nullptr);
 	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds);
 
 protected:
@@ -56,7 +55,6 @@ protected:
 
 private:
 	bool m_allowTransform;
-	bool m_interpolation;
 	drawdance::MessageList m_messages;
 };
 
