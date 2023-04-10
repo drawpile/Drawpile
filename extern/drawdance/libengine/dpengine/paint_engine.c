@@ -37,6 +37,7 @@
 #include "recorder.h"
 #include "tile.h"
 #include "timeline.h"
+#include "track.h"
 #include "view_mode.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
@@ -134,6 +135,7 @@ typedef struct DP_PaintEngineDabsPreview {
 
 typedef struct DP_PaintEngineRenderBuffer {
     DP_ALIGNAS_SIMD DP_Pixel8 pixels[DP_TILE_LENGTH];
+    DP_ViewModeBuffer *vmb;
 } DP_PaintEngineRenderBuffer;
 
 typedef struct DP_PaintEngineCursorChange {
@@ -167,9 +169,15 @@ struct DP_PaintEngine {
         const DP_OnionSkins *onion_skins;
         bool reveal_censored;
         unsigned int inspect_context_id;
-        DP_LayerPropsList *prev_lpl;
-        DP_Timeline *prev_tl;
-        DP_LayerPropsList *lpl;
+        struct {
+            DP_LayerPropsList *prev_lpl;
+            DP_Timeline *prev_tl;
+            DP_LayerPropsList *lpl;
+        } layers;
+        struct {
+            DP_Timeline *prev_tl;
+            DP_Timeline *tl;
+        } tracks;
         bool layers_can_decrease_opacity;
     } local_view;
     DP_DrawContext *paint_dc;
@@ -611,60 +619,17 @@ static void run_paint_engine(void *user)
 }
 
 
-static void flatten_onion_skin(DP_TransientTile *tt, DP_CanvasState *cs,
-                               int tile_index, int frame_index,
-                               const DP_OnionSkin *os)
-{
-    DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs, frame_index);
-    uint16_t opacity = os->opacity;
-    if (!DP_view_mode_filter_excludes_everything(&vmf) && opacity != 0) {
-        DP_TransientTile *skin_tt = DP_canvas_state_flatten_tile(
-            cs, tile_index, DP_FLAT_IMAGE_RENDER_ONION_SKIN_FLAGS, &vmf);
-
-        DP_UPixel15 tint = os->tint;
-        if (tint.a != 0) {
-            DP_transient_tile_brush_apply(skin_tt, tint, DP_BLEND_MODE_RECOLOR,
-                                          DP_tile_opaque_mask(), tint.a, 0, 0,
-                                          DP_TILE_SIZE, DP_TILE_SIZE, 0);
-        }
-
-        DP_transient_tile_merge(tt, (DP_Tile *)skin_tt, opacity,
-                                DP_BLEND_MODE_NORMAL);
-        DP_transient_tile_decref(skin_tt);
-    }
-}
-
-static DP_TransientTile *flatten_tile(DP_PaintEngine *pe, bool needs_checkers,
-                                      int tile_index)
+static DP_TransientTile *flatten_tile(DP_PaintEngine *pe,
+                                      DP_ViewModeBuffer *vmb,
+                                      bool needs_checkers, int tile_index)
 {
     DP_CanvasState *cs = pe->view_cs;
     DP_TransientTile *tt = DP_transient_tile_new_nullable(
         DP_canvas_state_background_tile_noinc(cs), 0);
-
-    DP_ViewMode vm = pe->local_view.view_mode;
-    const DP_OnionSkins *oss = pe->local_view.onion_skins;
-    int active_frame_index = pe->local_view.active_frame_index;
-    if (vm == DP_VIEW_MODE_FRAME && oss) {
-        int count_below = DP_onion_skins_count_below(oss);
-        for (int i = 0; i < count_below; ++i) {
-            int skin_frame_index = active_frame_index - count_below + i;
-            flatten_onion_skin(tt, cs, tile_index, skin_frame_index,
-                               DP_onion_skins_skin_below_at(oss, i));
-        }
-
-        int count_above = DP_onion_skins_count_above(oss);
-        for (int i = 0; i < count_above; ++i) {
-            int skin_frame_index = active_frame_index + i + 1;
-            flatten_onion_skin(tt, cs, tile_index, skin_frame_index,
-                               DP_onion_skins_skin_above_at(oss, i));
-        }
-    }
-
     DP_ViewModeFilter vmf = DP_view_mode_filter_make(
-        vm, cs, pe->local_view.active_layer_id, active_frame_index);
-    DP_layer_list_flatten_tile_to(DP_canvas_state_layers_noinc(cs),
-                                  DP_canvas_state_layer_props_noinc(cs),
-                                  tile_index, tt, DP_BIT15, true, &vmf);
+        vmb, pe->local_view.view_mode, cs, pe->local_view.active_layer_id,
+        pe->local_view.active_frame_index, pe->local_view.onion_skins);
+    DP_canvas_state_flatten_tile_to(cs, tile_index, tt, true, &vmf);
 
     if (needs_checkers) {
         DP_transient_tile_merge(tt, pe->checker, DP_BIT15,
@@ -686,7 +651,8 @@ static void render_job(void *user, int thread_index)
     DP_PaintEngine *pe = render_params->pe;
     int tile_index = y * render_params->xtiles + x;
     DP_TransientTile *tt =
-        flatten_tile(pe, render_params->needs_checkers, tile_index);
+        flatten_tile(pe, pe->render.buffers[thread_index].vmb,
+                     render_params->needs_checkers, tile_index);
 
     DP_Pixel8 *pixel_buffer = pe->render.buffers[thread_index].pixels;
     DP_pixels15_to_8_tile(pixel_buffer, DP_transient_tile_pixels(tt));
@@ -699,8 +665,10 @@ static void render_job(void *user, int thread_index)
 
 static void invalidate_local_view(DP_PaintEngine *pe, bool check_all)
 {
-    DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
-    pe->local_view.prev_lpl = NULL;
+    DP_layer_props_list_decref_nullable(pe->local_view.layers.prev_lpl);
+    pe->local_view.layers.prev_lpl = NULL;
+    DP_timeline_decref_nullable(pe->local_view.tracks.prev_tl);
+    pe->local_view.tracks.prev_tl = NULL;
     if (check_all) {
         DP_canvas_diff_check_all(pe->diff);
     }
@@ -731,6 +699,12 @@ static void local_background_tile_changed(void *user)
     invalidate_local_view(pe, false);
 }
 
+static void local_track_state_changed(void *user, DP_UNUSED int track_id)
+{
+    DP_PaintEngine *pe = user;
+    invalidate_local_view(pe, pe->local_view.view_mode == DP_VIEW_MODE_FRAME);
+}
+
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
@@ -753,18 +727,20 @@ DP_PaintEngine *DP_paint_engine_new_inc(
         (DP_Pixel15){DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15});
     pe->history_cs = DP_canvas_state_new();
     pe->view_cs = DP_canvas_state_incref(pe->history_cs);
-    pe->local_state =
-        DP_local_state_new(cs_or_null, local_layer_visibility_changed,
-                           local_background_tile_changed, pe);
+    pe->local_state = DP_local_state_new(
+        cs_or_null, local_layer_visibility_changed,
+        local_background_tile_changed, local_track_state_changed, pe);
     pe->local_view.active_layer_id = 0;
     pe->local_view.active_frame_index = 0;
     pe->local_view.view_mode = DP_VIEW_MODE_NORMAL;
     pe->local_view.onion_skins = NULL;
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
-    pe->local_view.prev_lpl = NULL;
-    pe->local_view.prev_tl = NULL;
-    pe->local_view.lpl = NULL;
+    pe->local_view.layers.prev_lpl = NULL;
+    pe->local_view.layers.prev_tl = NULL;
+    pe->local_view.layers.lpl = NULL;
+    pe->local_view.tracks.prev_tl = NULL;
+    pe->local_view.tracks.tl = NULL;
     pe->local_view.layers_can_decrease_opacity = true;
     pe->paint_dc = paint_dc;
     for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
@@ -805,6 +781,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->render.tiles_waiting = 0;
     pe->render.buffers = DP_malloc_simd(sizeof(DP_PaintEngineRenderBuffer)
                                         * DP_int_to_size(render_thread_count));
+    for (int i = 0; i < render_thread_count; ++i) {
+        pe->render.buffers[i].vmb = DP_view_mode_buffer_new();
+    }
     return pe;
 }
 
@@ -814,6 +793,10 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_paint_engine_recorder_stop(pe);
         DP_atomic_set(&pe->running, false);
         DP_semaphore_free(pe->render.tiles_done_sem);
+        int render_thread_count = DP_paint_engine_render_thread_count(pe);
+        for (int i = 0; i < render_thread_count; ++i) {
+            DP_view_mode_buffer_free(pe->render.buffers[i].vmb);
+        }
         DP_free_simd(pe->render.buffers);
         DP_worker_free_join(pe->render.worker);
         DP_SEMAPHORE_MUST_POST(pe->queue_sem);
@@ -853,9 +836,11 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
             free_preview(DP_atomic_ptr_xch(&pe->next_previews[i], NULL));
             free_preview(pe->previews[i]);
         }
-        DP_layer_props_list_decref_nullable(pe->local_view.lpl);
-        DP_timeline_decref_nullable(pe->local_view.prev_tl);
-        DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
+        DP_timeline_decref_nullable(pe->local_view.tracks.tl);
+        DP_timeline_decref_nullable(pe->local_view.tracks.prev_tl);
+        DP_layer_props_list_decref_nullable(pe->local_view.layers.lpl);
+        DP_timeline_decref_nullable(pe->local_view.layers.prev_tl);
+        DP_layer_props_list_decref_nullable(pe->local_view.layers.prev_lpl);
         DP_local_state_free(pe->local_state);
         DP_canvas_state_decref_nullable(pe->history_cs);
         DP_canvas_state_decref_nullable(pe->view_cs);
@@ -2030,7 +2015,7 @@ static void set_hidden_layer_props(DP_PaintEngine *pe,
                                    DP_TransientCanvasState *tcs)
 {
     int count;
-    int *hidden_layer_ids =
+    const int *hidden_layer_ids =
         DP_local_state_hidden_layer_ids(pe->local_state, &count);
     DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
     for (int i = 0; i < count; ++i) {
@@ -2061,8 +2046,8 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
     // We remember the root layer props list for later and then jam it into
     // subsequent canvas states. That'll make them diff correctly instead of
     // reporting a layer props change on every tick.
-    DP_layer_props_list_decref_nullable(pe->local_view.lpl);
-    pe->local_view.lpl =
+    DP_layer_props_list_decref_nullable(pe->local_view.layers.lpl);
+    pe->local_view.layers.lpl =
         DP_layer_props_list_incref(DP_transient_layer_props_list_persist(
             DP_transient_canvas_state_transient_layer_props(tcs, 0)));
     return (DP_CanvasState *)tcs;
@@ -2078,8 +2063,8 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
     // have been any meddling with it beforehand. Any layer props changes must
     // be part of this function so that they're cached properly.
     DP_ASSERT(!DP_layer_props_list_transient(lpl));
-    DP_LayerPropsList *prev_lpl = pe->local_view.prev_lpl;
-    DP_Timeline *prev_tl = pe->local_view.prev_tl;
+    DP_LayerPropsList *prev_lpl = pe->local_view.layers.prev_lpl;
+    DP_Timeline *prev_tl = pe->local_view.layers.prev_tl;
     if (lpl == prev_lpl && tl == prev_tl) {
         // If our local view doesn't have anything to change about the canvas
         // state, we don't need to replace anything in the target state either.
@@ -2092,8 +2077,8 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         else {
             DP_TransientCanvasState *tcs =
                 get_or_make_transient_canvas_state(cs);
-            DP_transient_canvas_state_layer_props_set_inc(tcs,
-                                                          pe->local_view.lpl);
+            DP_transient_canvas_state_layer_props_set_inc(
+                tcs, pe->local_view.layers.lpl);
             return (DP_CanvasState *)tcs;
         }
     }
@@ -2109,11 +2094,87 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         }
         DP_layer_props_list_decref_nullable(prev_lpl);
         DP_timeline_decref_nullable(prev_tl);
-        pe->local_view.prev_lpl = DP_layer_props_list_incref(lpl);
-        pe->local_view.prev_tl = DP_timeline_incref_nullable(tl);
+        pe->local_view.layers.prev_lpl = DP_layer_props_list_incref(lpl);
+        pe->local_view.layers.prev_tl = DP_timeline_incref_nullable(tl);
         DP_CanvasState *next_cs = set_local_layer_props(pe, cs);
         DP_PERF_END(local);
         return next_cs;
+    }
+}
+
+static bool get_local_track_state(const DP_LocalTrackState *track_states,
+                                  int count, int track_id, bool *out_hidden,
+                                  bool *out_onion_skin)
+{
+    for (int i = 0; i < count; ++i) {
+        const DP_LocalTrackState *lts = &track_states[i];
+        if (lts->track_id == track_id) {
+            *out_hidden = lts->hidden;
+            *out_onion_skin = lts->onion_skin;
+            return true;
+        }
+    }
+    *out_hidden = false;
+    *out_onion_skin = false;
+    return false;
+}
+
+static DP_CanvasState *apply_local_track_state(DP_PaintEngine *pe,
+                                               DP_CanvasState *cs)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    if (tl == pe->local_view.tracks.prev_tl) {
+        // Timeline didn't change, jam the previous one in there or leave as-is.
+        DP_Timeline *tracks_tl = pe->local_view.tracks.tl;
+        if (tracks_tl) {
+            DP_TransientCanvasState *tcs =
+                get_or_make_transient_canvas_state(cs);
+            DP_transient_canvas_state_timeline_set_inc(tcs, tracks_tl);
+            return (DP_CanvasState *)tcs;
+        }
+        else {
+            return cs;
+        }
+    }
+    else {
+        // Timeline changed, make a new local view.
+        int lts_count;
+        const DP_LocalTrackState *track_states =
+            DP_local_state_track_states(pe->local_state, &lts_count);
+        DP_TransientCanvasState *tcs = NULL;
+        DP_TransientTimeline *ttl = NULL;
+        int track_count = DP_timeline_count(tl);
+        for (int i = 0; i < track_count; ++i) {
+            DP_Track *t = DP_timeline_at_noinc(tl, i);
+            bool hidden, onion_skin;
+            get_local_track_state(track_states, lts_count, DP_track_id(t),
+                                  &hidden, &onion_skin);
+            bool local_state_changed = DP_track_hidden(t) != hidden
+                                    || DP_track_onion_skin(t) != onion_skin;
+            if (local_state_changed) {
+                if (!tcs) {
+                    tcs = get_or_make_transient_canvas_state(cs);
+                    ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+                }
+                DP_TransientTrack *tt =
+                    DP_transient_timeline_transient_at_noinc(ttl, i, 0);
+                DP_transient_track_hidden_set(tt, hidden);
+                DP_transient_track_onion_skin_set(tt, onion_skin);
+            }
+        }
+        // Remember the local view (or NULL if there's no change) for next time.
+        DP_timeline_decref_nullable(pe->local_view.tracks.prev_tl);
+        DP_timeline_decref_nullable(pe->local_view.tracks.tl);
+        pe->local_view.tracks.prev_tl = DP_timeline_incref(tl);
+        if (tcs) {
+            pe->local_view.tracks.tl =
+                DP_timeline_incref(DP_transient_timeline_persist(ttl));
+            return (DP_CanvasState *)tcs;
+        }
+        else {
+            pe->local_view.tracks.tl = NULL;
+            return cs;
+        }
     }
 }
 
@@ -2242,16 +2303,20 @@ void DP_paint_engine_tick(
         }
     }
 
-    bool local_view_changed = !pe->local_view.prev_lpl;
+    bool local_view_changed =
+        !pe->local_view.layers.prev_lpl || !pe->local_view.tracks.prev_tl;
 
     if (next_history_cs || preview_changed || local_view_changed) {
         DP_PERF_BEGIN(changes, "tick:changes");
         // Previews, hidden layers etc. are local changes, so we have to apply
         // them on top of the canvas state we got out of the history.
         DP_CanvasState *prev_view_cs = pe->view_cs;
-        DP_CanvasState *next_view_cs = apply_local_background_tile(
-            pe, apply_local_layer_props(
-                    pe, apply_inspect(pe, apply_previews(pe, pe->history_cs))));
+        DP_CanvasState *next_view_cs = pe->history_cs;
+        next_view_cs = apply_previews(pe, next_view_cs);
+        next_view_cs = apply_inspect(pe, next_view_cs);
+        next_view_cs = apply_local_layer_props(pe, next_view_cs);
+        next_view_cs = apply_local_track_state(pe, next_view_cs);
+        next_view_cs = apply_local_background_tile(pe, next_view_cs);
         pe->view_cs = next_view_cs;
 
         DP_LayerPropsList *lpl =

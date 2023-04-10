@@ -16,9 +16,9 @@ dp_target_sources(dpengine
     dpengine/draw_context.c
     dpengine/dump_reader.c
     dpengine/flood_fill.c
-    dpengine/frame.c
     dpengine/image.c
     dpengine/image_transform.c
+    dpengine/key_frame.c
     dpengine/layer_content.c
     dpengine/layer_group.c
     dpengine/layer_list.c
@@ -39,6 +39,8 @@ dp_target_sources(dpengine
     dpengine/tile_iterator.c
     dpengine/timeline.c
     dpengine/view_mode.c
+    dpengine/track.c
+    dpengine/view_mode.c
     dpengine/affected_area.h
     dpengine/annotation.h
     dpengine/annotation_list.h
@@ -53,11 +55,11 @@ dp_target_sources(dpengine
     dpengine/draw_context.h
     dpengine/dump_reader.h
     dpengine/flood_fill.h
-    dpengine/frame.h
     dpengine/image.h
     dpengine/image_jpeg.h
     dpengine/image_png.h
     dpengine/image_transform.h
+    dpengine/key_frame.h
     dpengine/layer_content.h
     dpengine/layer_group.h
     dpengine/layer_list.h
@@ -77,6 +79,7 @@ dp_target_sources(dpengine
     dpengine/tile.h
     dpengine/tile_iterator.h
     dpengine/timeline.h
+    dpengine/track.h
     dpengine/view_mode.h
 )
 

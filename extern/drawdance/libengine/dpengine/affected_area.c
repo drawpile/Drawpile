@@ -73,9 +73,9 @@ static DP_AffectedArea make_document_metadata(int field)
                              INVALID_BOUNDS};
 }
 
-static DP_AffectedArea make_timeline(int frame)
+static DP_AffectedArea make_timeline(int track_id)
 {
-    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_TIMELINE, frame,
+    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_TIMELINE, track_id,
                              INVALID_BOUNDS};
 }
 
@@ -421,15 +421,50 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         return make_user_attrs();
     case DP_MSG_CANVAS_BACKGROUND:
         return make_canvas_background();
-    case DP_MSG_SET_METADATA_INT:
-        return make_document_metadata(
-            DP_msg_set_metadata_int_field(DP_msg_set_metadata_int_cast(msg)));
-    case DP_MSG_SET_TIMELINE_FRAME:
-        return make_timeline(DP_msg_set_timeline_frame_frame(
-            DP_msg_set_timeline_frame_cast(msg)));
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return make_timeline(DP_msg_remove_timeline_frame_frame(
-            DP_msg_remove_timeline_frame_cast(msg)));
+    case DP_MSG_SET_METADATA_INT: {
+        int field =
+            DP_msg_set_metadata_int_field(DP_msg_set_metadata_int_cast(msg));
+        return field == DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT
+                 ? make_timeline(ALL_IDS)
+                 : make_document_metadata(field);
+    }
+    case DP_MSG_TRACK_CREATE: {
+        DP_MsgTrackCreate *mtc = DP_msg_track_create_cast(msg);
+        // Duplicating a track affects two track ids, so we punt to all.
+        return make_timeline(DP_msg_track_create_source_id(mtc) == 0
+                                 ? DP_msg_track_create_id(mtc)
+                                 : ALL_IDS);
+    }
+    case DP_MSG_TRACK_RETITLE:
+        return make_timeline(
+            DP_msg_track_retitle_id(DP_msg_track_retitle_cast(msg)));
+    case DP_MSG_TRACK_DELETE:
+        return make_timeline(
+            DP_msg_track_delete_id(DP_msg_track_delete_cast(msg)));
+    case DP_MSG_TRACK_ORDER:
+        return make_timeline(ALL_IDS);
+    case DP_MSG_KEY_FRAME_SET: {
+        DP_MsgKeyFrameSet *mkfs = DP_msg_key_frame_set_cast(msg);
+        int track_id = DP_msg_key_frame_set_track_id(mkfs);
+        bool is_layer_source = DP_msg_key_frame_set_source(mkfs)
+                            == DP_MSG_KEY_FRAME_SET_SOURCE_LAYER;
+        bool single_track_id =
+            is_layer_source || track_id == DP_msg_key_frame_set_source_id(mkfs);
+        return make_timeline(single_track_id ? track_id : ALL_IDS);
+    }
+    case DP_MSG_KEY_FRAME_RETITLE:
+        return make_timeline(DP_msg_key_frame_retitle_track_id(
+            DP_msg_key_frame_retitle_cast(msg)));
+    case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+        return make_timeline(DP_msg_key_frame_layer_attributes_track_id(
+            DP_msg_key_frame_layer_attributes_cast(msg)));
+    case DP_MSG_KEY_FRAME_DELETE: {
+        DP_MsgKeyFrameDelete *mkfd = DP_msg_key_frame_delete_cast(msg);
+        int track_id = DP_msg_key_frame_delete_track_id(mkfd);
+        int move_track_id = DP_msg_key_frame_delete_move_track_id(mkfd);
+        bool single_track_id = move_track_id == 0 || track_id == move_track_id;
+        return make_timeline(single_track_id ? track_id : ALL_IDS);
+    }
     case DP_MSG_UNDO:
         return make_user_attrs();
     default:
@@ -437,6 +472,20 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
                  (int)type, DP_message_type_enum_name(type));
         return make_everything();
     }
+}
+
+static bool domains_conflict(DP_AffectedDomain a, DP_AffectedDomain b)
+{
+    // Affecting everything means being concurrent with nothing. The timeline
+    // refers to layers, so to be safe, we make those domains always conflict
+    // with each other too. It may work without this, but layer and timeline
+    // operations are so rare that it ain't worth the desync risk.
+    return a == DP_AFFECTED_DOMAIN_EVERYTHING
+        || b == DP_AFFECTED_DOMAIN_EVERYTHING
+        || (a == DP_AFFECTED_DOMAIN_LAYER_ATTRS
+            && b == DP_AFFECTED_DOMAIN_TIMELINE)
+        || (a == DP_AFFECTED_DOMAIN_TIMELINE
+            && b == DP_AFFECTED_DOMAIN_LAYER_ATTRS);
 }
 
 static bool affected_ids_differ(int a, int b)
@@ -450,18 +499,16 @@ bool DP_affected_area_concurrent_with(const DP_AffectedArea *a,
     DP_ASSERT(a);
     DP_ASSERT(b);
     DP_AffectedDomain a_domain = a->domain, b_domain = b->domain;
-    // Affecting everything means being concurrent with nothing.
-    return a_domain != DP_AFFECTED_DOMAIN_EVERYTHING
-        && b_domain != DP_AFFECTED_DOMAIN_EVERYTHING
+    return !domains_conflict(a_domain, b_domain)
         && ( // The local user's changes are always concurrent.
-               a_domain == DP_AFFECTED_DOMAIN_USER_ATTRS
-               // Affecting different domains is concurrent.
-               || a_domain != b_domain
-               // Affecting different layers, annotations etc. is concurrent.
-               || affected_ids_differ(a->affected_id, b->affected_id)
-               // Affecting different pixels on the same layer is concurrent.
-               || (a_domain == DP_AFFECTED_DOMAIN_PIXELS
-                   && !DP_rect_intersects(a->bounds, b->bounds)));
+            a_domain == DP_AFFECTED_DOMAIN_USER_ATTRS
+            // Affecting different domains is generally concurrent.
+            || a_domain != b_domain
+            // Affecting different layers, annotations etc. is concurrent.
+            || affected_ids_differ(a->affected_id, b->affected_id)
+            // Affecting different pixels on the same layer is concurrent.
+            || (a_domain == DP_AFFECTED_DOMAIN_PIXELS
+                && !DP_rect_intersects(a->bounds, b->bounds)));
 }
 
 void DP_affected_indirect_areas_clear(DP_AffectedIndirectAreas *aia)

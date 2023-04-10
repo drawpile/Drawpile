@@ -25,8 +25,9 @@
 #include "canvas_diff.h"
 #include "compress.h"
 #include "document_metadata.h"
-#include "frame.h"
+#include "draw_context.h"
 #include "image.h"
+#include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -38,6 +39,7 @@
 #include "tile.h"
 #include "tile_iterator.h"
 #include "timeline.h"
+#include "track.h"
 #include "view_mode.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
@@ -311,8 +313,16 @@ bool DP_canvas_state_use_timeline(DP_CanvasState *cs)
 int DP_canvas_state_frame_count(DP_CanvasState *cs)
 {
     return DP_canvas_state_use_timeline(cs)
-             ? DP_timeline_frame_count(cs->timeline)
+             ? DP_document_metadata_frame_count(cs->metadata)
              : DP_layer_list_count(cs->layers);
+}
+
+bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
+                                int frame_index_b)
+{
+    return DP_canvas_state_use_timeline(cs)
+        && DP_timeline_same_frame(DP_canvas_state_timeline_noinc(cs),
+                                  frame_index_a, frame_index_b);
 }
 
 
@@ -376,7 +386,7 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
 }
 
 
-static int get_layer_order_id(void *user, int index)
+static int get_order_id(void *user, int index)
 {
     const uint16_t *layer_ids = user;
     return layer_ids[index];
@@ -388,8 +398,7 @@ static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
 {
     int count;
     const uint16_t *layer_ids = DP_msg_layer_order_layers(mlo, &count);
-    return DP_ops_layer_order(cs, dc, count, get_layer_order_id,
-                              (void *)layer_ids);
+    return DP_ops_layer_order(cs, dc, count, get_order_id, (void *)layer_ids);
 }
 
 
@@ -837,6 +846,28 @@ static DP_CanvasStateChange handle_move_rect(DP_CanvasState *cs,
     return change;
 }
 
+static void truncate_tracks(DP_TransientCanvasState *tcs, int frame_count)
+{
+    DP_Timeline *tl = tcs->timeline;
+    DP_TransientTimeline *ttl =
+        DP_timeline_transient(tl) ? (DP_TransientTimeline *)tl : NULL;
+    int track_count = DP_timeline_count(tl);
+    for (int t_index = 0; t_index < track_count; ++t_index) {
+        DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+        int kf_index =
+            DP_track_key_frame_search_at_or_after(t, frame_count, NULL);
+        if (kf_index != -1) {
+            if (!ttl) {
+                ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+                tl = (DP_Timeline *)ttl;
+            }
+            DP_TransientTrack *tt =
+                DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+            DP_transient_track_truncate(tt, kf_index);
+        }
+    }
+}
+
 static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
                                                DP_MsgSetMetadataInt *msmi)
 {
@@ -855,6 +886,9 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
     case DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE:
         set_field = DP_transient_document_metadata_use_timeline_set;
         break;
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
+        set_field = DP_transient_document_metadata_frame_count_set;
+        break;
     default:
         DP_error_set("Set metadata int: unknown field %d", field);
         return NULL;
@@ -862,34 +896,12 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientDocumentMetadata *tdm =
         DP_transient_canvas_state_transient_metadata(tcs);
-    set_field(tdm, DP_msg_set_metadata_int_value(msmi));
+    int value = DP_msg_set_metadata_int_value(msmi);
+    set_field(tdm, value);
+    if (field == DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT) {
+        truncate_tracks(tcs, value);
+    }
     return DP_transient_canvas_state_persist(tcs);
-}
-
-static int get_layer_id(void *user, int index)
-{
-    const uint16_t *layer_ids = user;
-    return layer_ids[index];
-}
-
-static DP_CanvasState *handle_set_timeline_frame(DP_CanvasState *cs,
-                                                 DP_MsgSetTimelineFrame *mstf)
-{
-    int layer_id_count;
-    const uint16_t *layer_ids =
-        DP_msg_set_timeline_frame_layers(mstf, &layer_id_count);
-    return DP_ops_timeline_frame_set(cs, DP_msg_set_timeline_frame_frame(mstf),
-                                     DP_msg_set_timeline_frame_insert(mstf),
-                                     layer_id_count, get_layer_id,
-                                     (void *)layer_ids);
-}
-
-static DP_CanvasState *
-handle_remove_timeline_frame(DP_CanvasState *cs,
-                             DP_MsgRemoveTimelineFrame *mrtf)
-{
-    return DP_ops_timeline_frame_delete(
-        cs, DP_msg_remove_timeline_frame_frame(mrtf));
 }
 
 static DP_CanvasState *handle_layer_tree_create(DP_CanvasState *cs,
@@ -984,6 +996,156 @@ static DP_CanvasStateChange handle_transform_region(DP_CanvasState *cs,
         DP_image_new_from_compressed_alpha_mask);
 }
 
+static DP_CanvasState *handle_track_create(DP_CanvasState *cs,
+                                           DP_MsgTrackCreate *mtc)
+{
+    int track_id = DP_msg_track_create_id(mtc);
+    if (track_id == 0) {
+        DP_error_set("Track create: track id 0 is invalid");
+        return NULL;
+    }
+
+    size_t title_length;
+    const char *title = DP_msg_track_create_title(mtc, &title_length);
+
+    return DP_ops_track_create(cs, track_id, DP_msg_track_create_insert_id(mtc),
+                               DP_msg_track_create_source_id(mtc), title,
+                               title_length);
+}
+
+static DP_CanvasState *handle_track_retitle(DP_CanvasState *cs,
+                                            DP_MsgTrackRetitle *mtr)
+{
+    int track_id = DP_msg_track_retitle_id(mtr);
+    if (track_id == 0) {
+        DP_error_set("Track retitle: track id 0 is invalid");
+        return NULL;
+    }
+
+    size_t title_length;
+    const char *title = DP_msg_track_retitle_title(mtr, &title_length);
+
+    return DP_ops_track_retitle(cs, track_id, title, title_length);
+}
+
+static DP_CanvasState *handle_track_delete(DP_CanvasState *cs,
+                                           DP_MsgTrackDelete *mtd)
+{
+    int track_id = DP_msg_track_delete_id(mtd);
+    if (track_id == 0) {
+        DP_error_set("Track delete: track id 0 is invalid");
+        return NULL;
+    }
+
+    return DP_ops_track_delete(cs, track_id);
+}
+
+static DP_CanvasState *handle_track_order(DP_CanvasState *cs,
+                                          DP_MsgTrackOrder *mto)
+{
+    int count;
+    const uint16_t *track_ids = DP_msg_track_order_tracks(mto, &count);
+    return DP_ops_track_order(cs, count, get_order_id, (void *)track_ids);
+}
+
+static DP_CanvasState *handle_key_frame_set(DP_CanvasState *cs,
+                                            DP_MsgKeyFrameSet *mkfs)
+{
+    int track_id = DP_msg_key_frame_set_track_id(mkfs);
+    if (track_id == 0) {
+        DP_error_set("Key frame set: track id 0 is invalid");
+        return NULL;
+    }
+
+    int frame_index = DP_msg_key_frame_set_frame_index(mkfs);
+    int source_id = DP_msg_key_frame_set_source_id(mkfs);
+    int source = DP_msg_key_frame_set_source(mkfs);
+    switch (source) {
+    case DP_MSG_KEY_FRAME_SET_SOURCE_LAYER:
+        return DP_ops_key_frame_set(cs, track_id, frame_index, source_id);
+    case DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME: {
+        int source_index = DP_msg_key_frame_set_source_index(mkfs);
+        if (track_id == source_id && frame_index == source_index) {
+            DP_error_set("Key frame set: can't copy a key frame to itself");
+            return NULL;
+        }
+        return DP_ops_key_frame_copy(cs, track_id, frame_index, source_id,
+                                     source_index);
+    }
+    default:
+        DP_error_set("Key frame set: unknown source type %d", source);
+        return NULL;
+    }
+}
+
+static DP_CanvasState *handle_key_frame_retitle(DP_CanvasState *cs,
+                                                DP_MsgKeyFrameRetitle *mkfr)
+{
+    int track_id = DP_msg_key_frame_retitle_track_id(mkfr);
+    if (track_id == 0) {
+        DP_error_set("Key frame retitle: track id 0 is invalid");
+        return NULL;
+    }
+
+    size_t title_length;
+    const char *title = DP_msg_key_frame_retitle_title(mkfr, &title_length);
+
+    return DP_ops_key_frame_retitle(cs, track_id,
+                                    DP_msg_key_frame_retitle_frame_index(mkfr),
+                                    title, title_length);
+}
+
+static DP_KeyFrameLayer get_key_frame_layer_attribute(void *user, int index)
+{
+    const uint16_t *layers = user;
+    const uint16_t *pair = &layers[index * 2];
+    return (DP_KeyFrameLayer){pair[0], pair[1]};
+}
+
+static DP_CanvasState *
+handle_key_frame_layer_attributes(DP_CanvasState *cs, DP_DrawContext *dc,
+                                  DP_MsgKeyFrameLayerAttributes *mkfla)
+{
+    int track_id = DP_msg_key_frame_layer_attributes_track_id(mkfla);
+    if (track_id == 0) {
+        DP_error_set("Key frame layer attributes: track id 0 is invalid");
+        return NULL;
+    }
+
+    int count;
+    const uint16_t *layers =
+        DP_msg_key_frame_layer_attributes_layers(mkfla, &count);
+    if (count % 2 != 0) {
+        DP_error_set("Key frame layer attributes: count %d is not even", count);
+        return NULL;
+    }
+
+    return DP_ops_key_frame_layer_attributes(
+        cs, dc, track_id, DP_msg_key_frame_layer_attributes_frame_index(mkfla),
+        count / 2, get_key_frame_layer_attribute, (void *)layers);
+}
+
+static DP_CanvasState *handle_key_frame_delete(DP_CanvasState *cs,
+                                               DP_MsgKeyFrameDelete *mkfd)
+{
+    int track_id = DP_msg_key_frame_delete_track_id(mkfd);
+    if (track_id == 0) {
+        DP_error_set("Key frame delete: track id 0 is invalid");
+        return NULL;
+    }
+
+    int frame_index = DP_msg_key_frame_delete_frame_index(mkfd);
+    int move_track_id = DP_msg_key_frame_delete_move_track_id(mkfd);
+    int move_frame_index = DP_msg_key_frame_delete_move_frame_index(mkfd);
+    if (track_id == move_track_id && frame_index == move_frame_index) {
+        DP_error_set("Key frame delete: can't move a key frame to itself");
+        return NULL;
+    }
+
+    return DP_ops_key_frame_delete(cs, track_id, frame_index, move_track_id,
+                                   move_frame_index);
+}
+
 static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                    DP_Message *msg, DP_MessageType type)
 {
@@ -1051,12 +1213,6 @@ static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_SET_METADATA_INT:
         return DP_canvas_state_change_of(
             handle_set_metadata_int(cs, DP_msg_set_metadata_int_cast(msg)));
-    case DP_MSG_SET_TIMELINE_FRAME:
-        return DP_canvas_state_change_of(
-            handle_set_timeline_frame(cs, DP_msg_set_timeline_frame_cast(msg)));
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return DP_canvas_state_change_of(handle_remove_timeline_frame(
-            cs, DP_msg_remove_timeline_frame_cast(msg)));
     case DP_MSG_LAYER_TREE_CREATE:
         return DP_canvas_state_change_of(
             handle_layer_tree_create(cs, dc, DP_message_context_id(msg),
@@ -1071,6 +1227,30 @@ static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_TRANSFORM_REGION:
         return handle_transform_region(cs, dc, DP_message_context_id(msg),
                                        DP_msg_transform_region_cast(msg));
+    case DP_MSG_TRACK_CREATE:
+        return DP_canvas_state_change_of(
+            handle_track_create(cs, DP_msg_track_create_cast(msg)));
+    case DP_MSG_TRACK_RETITLE:
+        return DP_canvas_state_change_of(
+            handle_track_retitle(cs, DP_msg_track_retitle_cast(msg)));
+    case DP_MSG_TRACK_DELETE:
+        return DP_canvas_state_change_of(
+            handle_track_delete(cs, DP_msg_track_delete_cast(msg)));
+    case DP_MSG_TRACK_ORDER:
+        return DP_canvas_state_change_of(
+            handle_track_order(cs, DP_msg_track_order_cast(msg)));
+    case DP_MSG_KEY_FRAME_SET:
+        return DP_canvas_state_change_of(
+            handle_key_frame_set(cs, DP_msg_key_frame_set_cast(msg)));
+    case DP_MSG_KEY_FRAME_RETITLE:
+        return DP_canvas_state_change_of(
+            handle_key_frame_retitle(cs, DP_msg_key_frame_retitle_cast(msg)));
+    case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+        return DP_canvas_state_change_of(handle_key_frame_layer_attributes(
+            cs, dc, DP_msg_key_frame_layer_attributes_cast(msg)));
+    case DP_MSG_KEY_FRAME_DELETE:
+        return DP_canvas_state_change_of(
+            handle_key_frame_delete(cs, DP_msg_key_frame_delete_cast(msg)));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return DP_canvas_state_change_of(NULL);
@@ -1284,6 +1464,61 @@ static void flattening_tile_to_image(DP_TransientTile *tt, DP_Image *img,
     }
 }
 
+static DP_TransientTile *
+flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
+                   DP_LayerProps *lp, bool include_sublayers,
+                   DP_ViewModeContext *vmc, const DP_OnionSkin *os)
+{
+    DP_TransientTile *skin_tt = DP_layer_list_entry_flatten_tile_to(
+        lle, lp, tile_index, DP_transient_tile_new_blank(0), os->opacity,
+        include_sublayers, vmc);
+
+    DP_UPixel15 tint = os->tint;
+    if (tint.a != 0) {
+        DP_transient_tile_brush_apply(skin_tt, tint, DP_BLEND_MODE_RECOLOR,
+                                      DP_tile_opaque_mask(), tint.a, 0, 0,
+                                      DP_TILE_SIZE, DP_TILE_SIZE, 0);
+    }
+
+    if (tt) {
+        DP_transient_tile_merge(tt, (DP_Tile *)skin_tt, DP_BIT15,
+                                DP_BLEND_MODE_NORMAL);
+        DP_transient_tile_decref(skin_tt);
+        return tt;
+    }
+    else {
+        return skin_tt;
+    }
+}
+
+DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
+                                                  int tile_index,
+                                                  DP_TransientTile *tt_or_null,
+                                                  bool include_sublayers,
+                                                  const DP_ViewModeFilter *vmf)
+{
+    DP_ViewModeContextRoot vmcr = DP_view_mode_context_root_init(vmf, cs);
+    DP_TransientTile *tt = tt_or_null;
+    for (int i = 0; i < vmcr.count; ++i) {
+        DP_LayerListEntry *lle;
+        DP_LayerProps *lp;
+        const DP_OnionSkin *os;
+        DP_ViewModeContext vmc =
+            DP_view_mode_context_root_at(&vmcr, cs, i, &lle, &lp, &os);
+        if (!DP_view_mode_context_excludes_everything(&vmc)) {
+            if (os) {
+                tt = flatten_onion_skin(tile_index, tt, lle, lp,
+                                        include_sublayers, &vmc, os);
+            }
+            else {
+                tt = DP_layer_list_entry_flatten_tile_to(
+                    lle, lp, tile_index, tt, DP_BIT15, include_sublayers, &vmc);
+            }
+        }
+    }
+    return tt;
+}
+
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
                                         const DP_Rect *area_or_null,
                                         const DP_ViewModeFilter *vmf_or_null)
@@ -1299,8 +1534,6 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
     }
 
     DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
-    DP_LayerList *ll = cs->layers;
-    DP_LayerPropsList *lpl = cs->layer_props;
     int wt = DP_tile_count_round(cs->width);
     bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
     DP_ViewModeFilter vmf =
@@ -1312,8 +1545,7 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
     while (DP_tile_iterator_next(&ti)) {
         init_flattening_tile(tt, background_tile);
         int i = ti.row * wt + ti.col;
-        DP_layer_list_flatten_tile_to(ll, lpl, i, tt, DP_BIT15,
-                                      include_sublayers, &vmf);
+        DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, &vmf);
         flattening_tile_to_image(tt, img, &ti);
     }
     DP_transient_tile_decref(tt);
@@ -1336,9 +1568,8 @@ DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index,
     bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
     DP_ViewModeFilter vmf =
         vmf_or_null ? *vmf_or_null : DP_view_mode_filter_make_default();
-    return DP_layer_list_flatten_tile_to(cs->layers, cs->layer_props,
-                                         tile_index, tt, DP_BIT15,
-                                         include_sublayers, &vmf);
+    return DP_canvas_state_flatten_tile_to(cs, tile_index, tt,
+                                           include_sublayers, &vmf);
 }
 
 DP_TransientTile *
@@ -1465,6 +1696,20 @@ DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
 }
 
 DP_TransientCanvasState *
+DP_transient_canvas_state_new_with_timeline_noinc(DP_CanvasState *cs,
+                                                  DP_TransientTimeline *ttl)
+{
+    DP_TransientCanvasState *tcs = new_transient_canvas_state(cs);
+    tcs->layers = DP_layer_list_incref(cs->layers);
+    tcs->layer_props = DP_layer_props_list_incref(cs->layer_props);
+    tcs->layer_routes = DP_layer_routes_incref(cs->layer_routes);
+    tcs->annotations = DP_annotation_list_incref(cs->annotations);
+    tcs->transient_timeline = ttl;
+    tcs->metadata = DP_document_metadata_incref(cs->metadata);
+    return tcs;
+}
+
+DP_TransientCanvasState *
 DP_transient_canvas_state_incref(DP_TransientCanvasState *tcs)
 {
     return (DP_TransientCanvasState *)DP_canvas_state_incref(
@@ -1582,58 +1827,65 @@ void DP_transient_canvas_state_layer_routes_reindex(
     tcs->layer_routes = lr;
 }
 
-static bool layer_id_exists(DP_LayerRoutes *lr, int layer_id)
+static void timeline_cleanup_make_transient(
+    DP_TransientCanvasState *tcs, DP_Timeline **ptl,
+    DP_TransientTimeline **pttl, DP_Track **pt, DP_TransientTrack **ptt,
+    DP_KeyFrame **pkf, DP_TransientKeyFrame **ptkf, int t_index, int kf_index)
 {
-    return DP_layer_routes_search(lr, layer_id) != NULL;
-}
-
-static bool frame_has_layer_id_before(DP_Frame *f, int layer_id, int index)
-{
-    for (int i = 0; i < index; ++i) {
-        if (DP_frame_layer_id_at(f, i) == layer_id) {
-            return true;
-        }
+    if (!*pttl) {
+        *pttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+        *ptl = (DP_Timeline *)*pttl;
     }
-    return false;
+
+    if (!*ptt) {
+        *ptt = DP_transient_timeline_transient_at_noinc(*pttl, t_index, 0);
+        *pt = (DP_Track *)*ptt;
+    }
+
+    if (!*ptkf) {
+        *ptkf = DP_transient_track_transient_at_noinc(*ptt, kf_index);
+        *pkf = (DP_KeyFrame *)*ptkf;
+    }
 }
 
 void DP_transient_canvas_state_timeline_cleanup(DP_TransientCanvasState *tcs)
 {
+    DP_LayerRoutes *lr = tcs->layer_routes;
     DP_Timeline *tl = tcs->timeline;
     DP_TransientTimeline *ttl =
         DP_timeline_transient(tl) ? (DP_TransientTimeline *)tl : NULL;
-    DP_LayerRoutes *lr = tcs->layer_routes;
-    int frame_count = DP_timeline_frame_count(tl);
-    DP_debug("Frame count: %d", frame_count);
-    for (int i = 0; i < frame_count; ++i) {
-        DP_Frame *f = DP_timeline_frame_at_noinc(tl, i);
-        DP_TransientFrame *tf =
-            DP_frame_transient(f) ? (DP_TransientFrame *)f : NULL;
-        int layer_id_count = DP_frame_layer_id_count(f);
-        DP_debug("Layer id count of frame %d: %d", i, layer_id_count);
-        int j = 0;
-        while (j < layer_id_count) {
-            int layer_id = DP_frame_layer_id_at(f, j);
-            DP_debug("Layer id %d: %d", j, layer_id);
-            bool should_keep = layer_id_exists(lr, layer_id)
-                            && !frame_has_layer_id_before(f, layer_id, j);
-            if (should_keep) {
-                DP_debug("Should keep");
-                ++j;
+
+    int t_count = DP_timeline_count(tl);
+    for (int t_index = 0; t_index < t_count; ++t_index) {
+        DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+        DP_TransientTrack *tt =
+            DP_track_transient(t) ? (DP_TransientTrack *)t : NULL;
+
+        int kf_count = DP_track_key_frame_count(t);
+        for (int kf_index = 0; kf_index < kf_count; ++kf_index) {
+            DP_KeyFrame *kf = DP_track_key_frame_at_noinc(t, kf_index);
+            DP_TransientKeyFrame *tkf =
+                DP_key_frame_transient(kf) ? (DP_TransientKeyFrame *)kf : NULL;
+            // Key frames pointing at invalid layers get set to layer 0 (none).
+            int layer_id = DP_key_frame_layer_id(kf);
+            if (layer_id != 0 && !DP_layer_routes_search(lr, layer_id)) {
+                timeline_cleanup_make_transient(tcs, &tl, &ttl, &t, &tt, &kf,
+                                                &tkf, t_index, kf_index);
+                DP_transient_key_frame_layer_id_set(tkf, 0);
             }
-            else {
-                DP_debug("Delete");
-                if (!ttl) {
-                    ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
-                    tl = (DP_Timeline *)ttl;
+            // Layer attributes referring to invalid layers get removed.
+            int kfl_count;
+            const DP_KeyFrameLayer *kfls = DP_key_frame_layers(kf, &kfl_count);
+            int kfls_deleted = 0;
+            for (int kfl_index = 0; kfl_index < kfl_count; ++kfl_index) {
+                DP_KeyFrameLayer kfl = kfls[kfl_index];
+                if (!DP_layer_routes_search(lr, kfl.layer_id)) {
+                    timeline_cleanup_make_transient(
+                        tcs, &tl, &ttl, &t, &tt, &kf, &tkf, t_index, kf_index);
+                    DP_transient_key_frame_layer_delete_at(
+                        tkf, kfl_index - kfls_deleted);
+                    ++kfls_deleted;
                 }
-                if (!tf) {
-                    tf = DP_transient_frame_new(f, 0);
-                    f = (DP_Frame *)tf;
-                    DP_transient_timeline_replace_transient_noinc(ttl, tf, i);
-                }
-                DP_transient_frame_layer_id_delete_at(tf, j);
-                --layer_id_count;
             }
         }
     }
@@ -1665,6 +1917,15 @@ DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs)
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     return DP_canvas_state_layer_routes_noinc((DP_CanvasState *)tcs);
+}
+
+DP_DocumentMetadata *
+DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    return DP_canvas_state_metadata_noinc((DP_CanvasState *)tcs);
 }
 
 void DP_transient_canvas_state_layers_set_inc(DP_TransientCanvasState *tcs,
@@ -1778,6 +2039,16 @@ DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
             DP_transient_timeline_reserve(tcs->transient_timeline, reserve);
     }
     return tcs->transient_timeline;
+}
+
+void DP_transient_canvas_state_timeline_set_inc(DP_TransientCanvasState *tcs,
+                                                DP_Timeline *tl)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_timeline_decref(tcs->timeline);
+    tcs->timeline = DP_timeline_incref(tl);
 }
 
 DP_TransientDocumentMetadata *

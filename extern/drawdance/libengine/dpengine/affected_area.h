@@ -61,7 +61,7 @@ typedef struct DP_Message DP_Message;
                   _aa->affected_id);                                          \
             break;                                                            \
         case DP_AFFECTED_DOMAIN_TIMELINE:                                     \
-            PRINT("%s affects timeline frame %d", (TITLE), _aa->affected_id); \
+            PRINT("%s affects timeline track %d", (TITLE), _aa->affected_id); \
             break;                                                            \
         case DP_AFFECTED_DOMAIN_EVERYTHING:                                   \
             PRINT("%s affects everything", (TITLE));                          \
@@ -85,7 +85,7 @@ typedef enum DP_AffectedDomain {
 
 typedef struct DP_AffectedArea {
     DP_AffectedDomain domain;
-    int affected_id; // layer, annotation, field or frame id
+    int affected_id; // layer, annotation, field or track id
     DP_Rect bounds;
 } DP_AffectedArea;
 

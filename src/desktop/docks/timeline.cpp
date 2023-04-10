@@ -2,180 +2,107 @@
 
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/timelinewidget.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/message.h"
-#include "desktop/widgets/timelinewidget.h"
 
 #include <QCheckBox>
-#include <QSpinBox>
 #include <QLabel>
+#include <QSpinBox>
 
 namespace docks {
 
 Timeline::Timeline(QWidget *parent)
-	: QDockWidget(tr("Timeline"), parent)
+	: QDockWidget{tr("Timeline"), parent}
+	, m_featureAccessEnabled{true}
 {
 	m_widget = new widgets::TimelineWidget(this);
-	connect(m_widget, &widgets::TimelineWidget::timelineEditCommands, this, &Timeline::timelineEditCommands);
-	connect(m_widget, &widgets::TimelineWidget::selectFrameRequest, this, &Timeline::setCurrentFrame);
 	m_widget->setMinimumHeight(40);
 	setWidget(m_widget);
+	connect(
+		m_widget, &widgets::TimelineWidget::timelineEditCommands, this,
+		&Timeline::timelineEditCommands);
+	connect(
+		m_widget, &widgets::TimelineWidget::frameSelected, this,
+		&Timeline::frameSelected);
+	connect(
+		m_widget, &widgets::TimelineWidget::trackHidden, this,
+		&Timeline::trackHidden);
+	connect(
+		m_widget, &widgets::TimelineWidget::trackOnionSkinEnabled, this,
+		&Timeline::trackOnionSkinEnabled);
 
-	// Create the title bar widget
-	auto *titlebar = new TitleWidget(this);
+	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
-
-	m_useTimeline = new QCheckBox(tr("Use manual timeline"));
-	connect(m_useTimeline, &QCheckBox::clicked, this, &Timeline::onUseTimelineClicked);
-
-	titlebar->addCustomWidget(m_useTimeline);
 	titlebar->addStretch();
-
-	titlebar->addCustomWidget(new QLabel(tr("Frame:")));
-	m_currentFrame = new QSpinBox;
-	m_currentFrame->setWrapping(true);
-	m_currentFrame->setMinimum(1);
-	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), this, &Timeline::onFrameChanged);
-	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), this, &Timeline::currentFrameChanged);
-	connect(m_currentFrame, QOverload<int>::of(&QSpinBox::valueChanged), m_widget, &widgets::TimelineWidget::setCurrentFrame);
-	titlebar->addCustomWidget(m_currentFrame);
-
-	titlebar->addSpace(12);
-	titlebar->addCustomWidget(new QLabel(tr("FPS:")));
-
-	m_fps = new QSpinBox;
-	m_fps->setMinimum(1);
-	m_fps->setMaximum(99);
-	connect(m_fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &Timeline::onFpsChanged);
-
-	titlebar->addCustomWidget(m_fps);
 }
 
 void Timeline::setTimeline(canvas::TimelineModel *model)
 {
 	m_widget->setModel(model);
-	connect(model, &canvas::TimelineModel::framesChanged, this, &Timeline::onFramesChanged, Qt::QueuedConnection);
-	connect(model->canvas(), &canvas::CanvasModel::compatibilityModeChanged, this, &Timeline::setCompatibilityMode);
+	connect(
+		model->canvas(), &canvas::CanvasModel::compatibilityModeChanged, this,
+		&Timeline::setCompatibilityMode);
 	setCompatibilityMode(model->canvas()->isCompatibilityMode());
 }
 
-void Timeline::setFeatureAccess(bool access)
+void Timeline::setActions(const widgets::TimelineWidget::Actions &actions)
 {
-	m_useTimeline->setEnabled(access);
-	m_widget->setEditable(access);
+	m_widget->setActions(actions);
 }
 
-void Timeline::setUseTimeline(bool useTimeline)
+void Timeline::setFrameCount(int frameCount)
 {
-	m_useTimeline->setChecked(useTimeline);
-	m_widget->model()->setManualMode(useTimeline);
+	m_widget->model()->setFrameCount(frameCount);
 }
 
-void Timeline::setFps(int fps)
+void Timeline::setManualMode(bool manualMode)
 {
-	m_fps->blockSignals(true);
-	m_fps->setValue(fps);
-	m_fps->blockSignals(false);
-}
-
-void Timeline::setCurrentFrame(int frame, int layerId)
-{
-	m_currentFrame->setValue(frame);
-
-	if(layerId > 0)
-		emit layerSelectRequested(layerId);
+	m_widget->model()->setManualMode(manualMode);
+	updateControlsEnabled(
+		m_featureAccessEnabled, isCompatibilityMode(), manualMode);
 }
 
 void Timeline::setCurrentLayer(int layerId)
 {
 	m_widget->setCurrentLayer(layerId);
-	// Synchronize frames and layer selection in manual mode.
-	canvas::TimelineModel *model = m_widget->model();
-	if(!model->isManualMode()) {
-		int frame = model->getAutoFrameForLayerId(layerId);
-		if(frame > 0 && currentFrame() != frame) {
-			setCurrentFrame(frame, 0);
-		}
-	}
-}
-
-void Timeline::setNextFrame()
-{
-	m_currentFrame->setValue(m_currentFrame->value() + 1);
-	autoSelectLayer();
-}
-
-void Timeline::setPreviousFrame()
-{
-	m_currentFrame->setValue(m_currentFrame->value() - 1);
-	autoSelectLayer();
-}
-
-void Timeline::autoSelectLayer()
-{
-	const auto layerId = m_widget->model()->nearestLayerTo(
-		m_widget->currentFrame(),
-		m_widget->currentLayerId()
-	);
-
-	if(layerId > 0)
-		emit layerSelectRequested(layerId);
 }
 
 int Timeline::currentFrame() const
 {
-	return m_currentFrame->value();
+	return m_widget->currentFrame();
+}
+
+void Timeline::setFeatureAccess(bool access)
+{
+	m_featureAccessEnabled = access;
+	updateControlsEnabled(access, isCompatibilityMode(), isManualMode());
 }
 
 void Timeline::setCompatibilityMode(bool compatibilityMode)
 {
-	if(compatibilityMode) {
-		setUseTimeline(false);
-	}
-	m_useTimeline->setDisabled(compatibilityMode);
-	m_fps->setDisabled(compatibilityMode);
+	updateControlsEnabled(
+		m_featureAccessEnabled, compatibilityMode, isManualMode());
 }
 
-void Timeline::onFramesChanged()
-{
-	m_currentFrame->setMaximum(qMax(1, m_widget->model()->frames().size()));
-	emit currentFrameChanged(m_currentFrame->value());
-}
-
-void Timeline::onFrameChanged(int frame)
+bool Timeline::isCompatibilityMode() const
 {
 	canvas::TimelineModel *model = m_widget->model();
-	if(!model->isManualMode()) {
-		int currentLayerId = m_widget->currentLayerId();
-		if(frame != model->getAutoFrameForLayerId(currentLayerId)) {
-			int layerId = model->frames().value(frame - 1).layerIds.value(0);
-			if(layerId > 0) {
-				emit layerSelectRequested(layerId);
-			}
-		}
-	}
+	return model && model->canvas()->isCompatibilityMode();
 }
 
-void Timeline::onUseTimelineClicked()
+bool Timeline::isManualMode() const
 {
 	canvas::TimelineModel *model = m_widget->model();
-	if(model) {
-		drawdance::Message msg = drawdance::Message::makeSetMetadataInt(
-			model->localUserId(), DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE, m_useTimeline->isChecked());
-		emit timelineEditCommands(1, &msg);
-	}
+	return model && model->isManualMode();
 }
 
-void Timeline::onFpsChanged()
+void Timeline::updateControlsEnabled(
+	bool access, bool compatibilityMode, bool manualMode)
 {
-	// TODO debounce
-	canvas::TimelineModel *model = m_widget->model();
-	if(model) {
-		drawdance::Message msg = drawdance::Message::makeSetMetadataInt(
-			model->localUserId(), DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, m_fps->value());
-		emit timelineEditCommands(1, &msg);
-	}
+	m_widget->updateControlsEnabled(access, compatibilityMode, manualMode);
 }
 
 }

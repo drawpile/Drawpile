@@ -96,8 +96,14 @@ typedef enum DP_MessageType {
     DP_MSG_LAYER_TREE_ORDER = 163,
     DP_MSG_LAYER_TREE_DELETE = 164,
     DP_MSG_TRANSFORM_REGION = 165,
-    DP_MSG_SET_TIMELINE_FRAME = 166,
-    DP_MSG_REMOVE_TIMELINE_FRAME = 167,
+    DP_MSG_TRACK_CREATE = 166,
+    DP_MSG_TRACK_RETITLE = 167,
+    DP_MSG_TRACK_DELETE = 168,
+    DP_MSG_TRACK_ORDER = 169,
+    DP_MSG_KEY_FRAME_SET = 170,
+    DP_MSG_KEY_FRAME_RETITLE = 171,
+    DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES = 172,
+    DP_MSG_KEY_FRAME_DELETE = 173,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -872,6 +878,8 @@ size_t DP_msg_data_body_size(const DP_MsgData *md);
 
 #define DP_MSG_LOCAL_CHANGE_TYPE_LAYER_VISIBILITY 0
 #define DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE  1
+#define DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY 2
+#define DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN 3
 
 const char *DP_msg_local_change_type_variant_name(unsigned int value);
 
@@ -1944,6 +1952,7 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
 #define DP_MSG_SET_METADATA_INT_FIELD_DPIY         1
 #define DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE    2
 #define DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE 3
+#define DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT  4
 
 const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value);
 
@@ -2208,67 +2217,298 @@ size_t DP_msg_transform_region_mask_size(const DP_MsgTransformRegion *mtr);
 
 
 /*
- * DP_MSG_SET_TIMELINE_FRAME
+ * DP_MSG_TRACK_CREATE
  *
- * Set the layers included in the given animation frame
- * The frame number must be between zero and last frame number + 1.
- * If the `insert` flag is true, the frame will be inserted at the given
- * position rather than replacing the existing frame.
+ * Create a timeline track.
+ *
+ * The track id must be prefixed by the user's context id, like layer
+ * and annotation ids. Operators are exempt from this restriction.
  */
 
-#define DP_MSG_SET_TIMELINE_FRAME_STATIC_LENGTH 3
+#define DP_MSG_TRACK_CREATE_STATIC_LENGTH 6
 
-typedef struct DP_MsgSetTimelineFrame DP_MsgSetTimelineFrame;
+typedef struct DP_MsgTrackCreate DP_MsgTrackCreate;
 
-DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
-                                          uint16_t frame, bool insert,
-                                          void (*set_layers)(int, uint16_t *,
-                                                             void *),
-                                          int layers_count, void *layers_user);
+DP_Message *DP_msg_track_create_new(unsigned int context_id, uint16_t id,
+                                    uint16_t insert_id, uint16_t source_id,
+                                    const char *title_value, size_t title_len);
 
-DP_Message *DP_msg_set_timeline_frame_deserialize(unsigned int context_id,
-                                                  const unsigned char *buffer,
-                                                  size_t length);
+DP_Message *DP_msg_track_create_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length);
 
-DP_Message *DP_msg_set_timeline_frame_parse(unsigned int context_id,
-                                            DP_TextReader *reader);
+DP_Message *DP_msg_track_create_parse(unsigned int context_id,
+                                      DP_TextReader *reader);
 
-DP_MsgSetTimelineFrame *DP_msg_set_timeline_frame_cast(DP_Message *msg);
+DP_MsgTrackCreate *DP_msg_track_create_cast(DP_Message *msg);
 
-uint16_t DP_msg_set_timeline_frame_frame(const DP_MsgSetTimelineFrame *mstf);
+uint16_t DP_msg_track_create_id(const DP_MsgTrackCreate *mtc);
 
-bool DP_msg_set_timeline_frame_insert(const DP_MsgSetTimelineFrame *mstf);
+uint16_t DP_msg_track_create_insert_id(const DP_MsgTrackCreate *mtc);
 
-const uint16_t *
-DP_msg_set_timeline_frame_layers(const DP_MsgSetTimelineFrame *mstf,
-                                 int *out_count);
+uint16_t DP_msg_track_create_source_id(const DP_MsgTrackCreate *mtc);
 
-int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf);
+const char *DP_msg_track_create_title(const DP_MsgTrackCreate *mtc,
+                                      size_t *out_len);
+
+size_t DP_msg_track_create_title_len(const DP_MsgTrackCreate *mtc);
 
 
 /*
- * DP_MSG_REMOVE_TIMELINE_FRAME
+ * DP_MSG_TRACK_RETITLE
  *
- * Remove a frame from the timeline
+ * Rename a timeline track.
  */
 
-#define DP_MSG_REMOVE_TIMELINE_FRAME_STATIC_LENGTH 2
+#define DP_MSG_TRACK_RETITLE_STATIC_LENGTH 2
 
-typedef struct DP_MsgRemoveTimelineFrame DP_MsgRemoveTimelineFrame;
+typedef struct DP_MsgTrackRetitle DP_MsgTrackRetitle;
 
-DP_Message *DP_msg_remove_timeline_frame_new(unsigned int context_id,
-                                             uint16_t frame);
+DP_Message *DP_msg_track_retitle_new(unsigned int context_id, uint16_t id,
+                                     const char *title_value, size_t title_len);
 
-DP_Message *DP_msg_remove_timeline_frame_deserialize(
-    unsigned int context_id, const unsigned char *buffer, size_t length);
+DP_Message *DP_msg_track_retitle_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
 
-DP_Message *DP_msg_remove_timeline_frame_parse(unsigned int context_id,
-                                               DP_TextReader *reader);
+DP_Message *DP_msg_track_retitle_parse(unsigned int context_id,
+                                       DP_TextReader *reader);
 
-DP_MsgRemoveTimelineFrame *DP_msg_remove_timeline_frame_cast(DP_Message *msg);
+DP_MsgTrackRetitle *DP_msg_track_retitle_cast(DP_Message *msg);
+
+uint16_t DP_msg_track_retitle_id(const DP_MsgTrackRetitle *mtr);
+
+const char *DP_msg_track_retitle_title(const DP_MsgTrackRetitle *mtr,
+                                       size_t *out_len);
+
+size_t DP_msg_track_retitle_title_len(const DP_MsgTrackRetitle *mtr);
+
+
+/*
+ * DP_MSG_TRACK_DELETE
+ *
+ * Delete a timeline track.
+ */
+
+#define DP_MSG_TRACK_DELETE_STATIC_LENGTH 2
+
+typedef struct DP_MsgTrackDelete DP_MsgTrackDelete;
+
+DP_Message *DP_msg_track_delete_new(unsigned int context_id, uint16_t id);
+
+DP_Message *DP_msg_track_delete_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length);
+
+DP_Message *DP_msg_track_delete_parse(unsigned int context_id,
+                                      DP_TextReader *reader);
+
+DP_MsgTrackDelete *DP_msg_track_delete_cast(DP_Message *msg);
+
+uint16_t DP_msg_track_delete_id(const DP_MsgTrackDelete *mtd);
+
+
+/*
+ * DP_MSG_TRACK_ORDER
+ *
+ * Reorder timeline tracks.
+ *
+ * Works like the LayerOrder command, just for tracks: duplicates are
+ * ignored and missing tracks are appended to the end.
+ */
+
+#define DP_MSG_TRACK_ORDER_STATIC_LENGTH 0
+
+typedef struct DP_MsgTrackOrder DP_MsgTrackOrder;
+
+DP_Message *DP_msg_track_order_new(unsigned int context_id,
+                                   void (*set_tracks)(int, uint16_t *, void *),
+                                   int tracks_count, void *tracks_user);
+
+DP_Message *DP_msg_track_order_deserialize(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
+
+DP_Message *DP_msg_track_order_parse(unsigned int context_id,
+                                     DP_TextReader *reader);
+
+DP_MsgTrackOrder *DP_msg_track_order_cast(DP_Message *msg);
+
+const uint16_t *DP_msg_track_order_tracks(const DP_MsgTrackOrder *mto,
+                                          int *out_count);
+
+int DP_msg_track_order_tracks_count(const DP_MsgTrackOrder *mto);
+
+
+/*
+ * DP_MSG_KEY_FRAME_SET
+ *
+ * Create or modify a key frame.
+ *
+ * If there's no key frame at the given frame index, it will be
+ * created, otherwise it will be clobbered. The layer must exist and
+ * the frame index must be within the document's frame count.
+ *
+ * If the source is `Layer`, a new key frame will be created with
+ * `source_id` as the layer id, `source_index` will be ignored. If the
+ * source is `KeyFrame`, the key frame is copied from the key frame at
+ * track with id `source_id` and frame index `source_index`.
+ */
+
+#define DP_MSG_KEY_FRAME_SET_STATIC_LENGTH 9
+
+#define DP_MSG_KEY_FRAME_SET_SOURCE_LAYER     0
+#define DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME 1
+
+const char *DP_msg_key_frame_set_source_variant_name(unsigned int value);
+
+typedef struct DP_MsgKeyFrameSet DP_MsgKeyFrameSet;
+
+DP_Message *DP_msg_key_frame_set_new(unsigned int context_id, uint16_t track_id,
+                                     uint16_t frame_index, uint16_t source_id,
+                                     uint16_t source_index, uint8_t source);
+
+DP_Message *DP_msg_key_frame_set_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
+
+DP_Message *DP_msg_key_frame_set_parse(unsigned int context_id,
+                                       DP_TextReader *reader);
+
+DP_MsgKeyFrameSet *DP_msg_key_frame_set_cast(DP_Message *msg);
+
+uint16_t DP_msg_key_frame_set_track_id(const DP_MsgKeyFrameSet *mkfs);
+
+uint16_t DP_msg_key_frame_set_frame_index(const DP_MsgKeyFrameSet *mkfs);
+
+uint16_t DP_msg_key_frame_set_source_id(const DP_MsgKeyFrameSet *mkfs);
+
+uint16_t DP_msg_key_frame_set_source_index(const DP_MsgKeyFrameSet *mkfs);
+
+uint8_t DP_msg_key_frame_set_source(const DP_MsgKeyFrameSet *mkfs);
+
+
+/*
+ * DP_MSG_KEY_FRAME_RETITLE
+ *
+ * Rename a key frame.
+ */
+
+#define DP_MSG_KEY_FRAME_RETITLE_STATIC_LENGTH 4
+
+typedef struct DP_MsgKeyFrameRetitle DP_MsgKeyFrameRetitle;
+
+DP_Message *DP_msg_key_frame_retitle_new(unsigned int context_id,
+                                         uint16_t track_id,
+                                         uint16_t frame_index,
+                                         const char *title_value,
+                                         size_t title_len);
+
+DP_Message *DP_msg_key_frame_retitle_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
+
+DP_Message *DP_msg_key_frame_retitle_parse(unsigned int context_id,
+                                           DP_TextReader *reader);
+
+DP_MsgKeyFrameRetitle *DP_msg_key_frame_retitle_cast(DP_Message *msg);
+
+uint16_t DP_msg_key_frame_retitle_track_id(const DP_MsgKeyFrameRetitle *mkfr);
 
 uint16_t
-DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf);
+DP_msg_key_frame_retitle_frame_index(const DP_MsgKeyFrameRetitle *mkfr);
+
+const char *DP_msg_key_frame_retitle_title(const DP_MsgKeyFrameRetitle *mkfr,
+                                           size_t *out_len);
+
+size_t DP_msg_key_frame_retitle_title_len(const DP_MsgKeyFrameRetitle *mkfr);
+
+
+/*
+ * DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES
+ *
+ * Set (clobber) flags for layers inside of a key frame.
+ *
+ * This takes a list of (layer id, flags) pairs. If a layer appears
+ * multiple times, only the first occurrence will apply. If a layer
+ * doesn't exist or the flags value is 0, it will be ignored. Unknown
+ * flags will be retained for forward-compatibility.
+ *
+ * Used flags are:
+ *
+ * * `0x1` hidden: hides a layer in the key frame. Children can
+ *   override being hidden by setting the revealed flag on them.
+ *
+ * * `0x2` revealed: overrides the hidden state given by a parent
+ *   group, making it visible again. Putting both hidden and revealed
+ *   on the same layer cancels each other out and will act like
+ *   neither is set.
+ */
+
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH 4
+
+typedef struct DP_MsgKeyFrameLayerAttributes DP_MsgKeyFrameLayerAttributes;
+
+DP_Message *DP_msg_key_frame_layer_attributes_new(
+    unsigned int context_id, uint16_t track_id, uint16_t frame_index,
+    void (*set_layers)(int, uint16_t *, void *), int layers_count,
+    void *layers_user);
+
+DP_Message *DP_msg_key_frame_layer_attributes_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_key_frame_layer_attributes_parse(unsigned int context_id,
+                                                    DP_TextReader *reader);
+
+DP_MsgKeyFrameLayerAttributes *
+DP_msg_key_frame_layer_attributes_cast(DP_Message *msg);
+
+uint16_t DP_msg_key_frame_layer_attributes_track_id(
+    const DP_MsgKeyFrameLayerAttributes *mkfla);
+
+uint16_t DP_msg_key_frame_layer_attributes_frame_index(
+    const DP_MsgKeyFrameLayerAttributes *mkfla);
+
+const uint16_t *DP_msg_key_frame_layer_attributes_layers(
+    const DP_MsgKeyFrameLayerAttributes *mkfla, int *out_count);
+
+int DP_msg_key_frame_layer_attributes_layers_count(
+    const DP_MsgKeyFrameLayerAttributes *mkfla);
+
+
+/*
+ * DP_MSG_KEY_FRAME_DELETE
+ *
+ * Delete a key frame, possibly moving it somewhere else.
+ */
+
+#define DP_MSG_KEY_FRAME_DELETE_STATIC_LENGTH 8
+
+typedef struct DP_MsgKeyFrameDelete DP_MsgKeyFrameDelete;
+
+DP_Message *DP_msg_key_frame_delete_new(unsigned int context_id,
+                                        uint16_t track_id, uint16_t frame_index,
+                                        uint16_t move_track_id,
+                                        uint16_t move_frame_index);
+
+DP_Message *DP_msg_key_frame_delete_deserialize(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length);
+
+DP_Message *DP_msg_key_frame_delete_parse(unsigned int context_id,
+                                          DP_TextReader *reader);
+
+DP_MsgKeyFrameDelete *DP_msg_key_frame_delete_cast(DP_Message *msg);
+
+uint16_t DP_msg_key_frame_delete_track_id(const DP_MsgKeyFrameDelete *mkfd);
+
+uint16_t DP_msg_key_frame_delete_frame_index(const DP_MsgKeyFrameDelete *mkfd);
+
+uint16_t
+DP_msg_key_frame_delete_move_track_id(const DP_MsgKeyFrameDelete *mkfd);
+
+uint16_t
+DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
 
 
 /*

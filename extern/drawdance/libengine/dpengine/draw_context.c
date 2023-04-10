@@ -146,14 +146,13 @@ int DP_draw_context_id_generator_next(DP_DrawContext *dc)
 }
 
 
-unsigned char *DP_draw_context_pool(DP_DrawContext *dc)
+void *DP_draw_context_pool(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
     return dc->pool;
 }
 
-unsigned char *DP_draw_context_pool_require(DP_DrawContext *dc,
-                                            size_t required_capacity)
+void *DP_draw_context_pool_require(DP_DrawContext *dc, size_t required_capacity)
 {
     if (dc->pool) {
         if (dc->pool_size < required_capacity) {

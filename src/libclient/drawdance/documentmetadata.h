@@ -26,6 +26,7 @@ public:
     int dpiy() const;
     int framerate() const;
     bool useTimeline() const;
+    int frameCount() const;
 
 private:
     explicit DocumentMetadata(DP_DocumentMetadata *dm);

@@ -27,7 +27,7 @@
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
-typedef struct DP_ViewModeFilter DP_ViewModeFilter;
+typedef struct DP_ViewModeContext DP_ViewModeContext;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_LayerContent DP_LayerContent;
@@ -101,11 +101,16 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
                                        uint16_t parent_opacity,
                                        bool include_sublayers);
 
+DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
+    DP_LayerListEntry *lle, DP_LayerProps *lp, int tile_index,
+    DP_TransientTile *tt, uint16_t parent_opacity, bool include_sublayers,
+    const DP_ViewModeContext *vmc);
+
 DP_TransientTile *
 DP_layer_list_flatten_tile_to(DP_LayerList *ll, DP_LayerPropsList *lpl,
                               int tile_index, DP_TransientTile *tt_or_null,
                               uint16_t parent_opacity, bool include_sublayers,
-                              const DP_ViewModeFilter *vmf);
+                              const DP_ViewModeContext *vmc);
 
 
 DP_TransientLayerList *DP_transient_layer_list_new_init(int reserve);

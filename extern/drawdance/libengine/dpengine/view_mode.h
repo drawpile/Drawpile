@@ -25,8 +25,8 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
-typedef struct DP_Frame DP_Frame;
-typedef struct DP_Timeline DP_Timeline;
+typedef struct DP_LayerList DP_LayerList;
+typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 
@@ -37,32 +37,36 @@ typedef enum DP_ViewMode {
     DP_VIEW_MODE_FRAME,
 } DP_ViewMode;
 
+typedef struct DP_ViewModeBuffer DP_ViewModeBuffer;
+
 typedef struct DP_ViewModeFilter {
     int internal_type;
     union {
         int layer_id;
-        DP_Frame *frame;
-    };
+        DP_ViewModeBuffer *vmb;
+    } DP_ANONYMOUS(data);
 } DP_ViewModeFilter;
 
-typedef struct DP_ViewModeFilterResult {
+typedef struct DP_ViewModeContext {
+    int internal_type;
+    union {
+        int layer_id;
+        struct {
+            int track_index;
+            DP_ViewModeBuffer *vmb;
+        } frame;
+    } DP_ANONYMOUS(data);
+} DP_ViewModeContext;
+
+typedef struct DP_ViewModeContextRoot {
+    DP_ViewModeFilter vmf;
+    int count;
+} DP_ViewModeContextRoot;
+
+typedef struct DP_ViewModeResult {
     bool hidden_by_view_mode;
-    DP_ViewModeFilter child_vmf;
-} DP_ViewModeFilterResult;
-
-DP_ViewModeFilter DP_view_mode_filter_make_default(void);
-
-DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_CanvasState *cs,
-                                                 int frame_index);
-
-DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewMode vm, DP_CanvasState *cs,
-                                           int layer_id, int frame_index);
-
-bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf);
-
-DP_ViewModeFilterResult DP_view_mode_filter_apply(const DP_ViewModeFilter *vmf,
-                                                  DP_LayerProps *lp);
-
+    DP_ViewModeContext child_vmc;
+} DP_ViewModeResult;
 
 typedef struct DP_OnionSkin {
     uint16_t opacity;
@@ -70,6 +74,48 @@ typedef struct DP_OnionSkin {
 } DP_OnionSkin;
 
 typedef struct DP_OnionSkins DP_OnionSkins;
+
+
+DP_ViewModeBuffer *DP_view_mode_buffer_new(void);
+
+void DP_view_mode_buffer_free(DP_ViewModeBuffer *vmb);
+
+
+DP_ViewModeFilter DP_view_mode_filter_make_default(void);
+
+DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_ViewModeBuffer *vmb,
+                                                 DP_CanvasState *cs,
+                                                 int frame_index,
+                                                 const DP_OnionSkins *oss);
+
+DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
+                                           DP_ViewMode vm, DP_CanvasState *cs,
+                                           int layer_id, int frame_index,
+                                           const DP_OnionSkins *oss);
+
+bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf);
+
+
+DP_ViewModeContextRoot
+DP_view_mode_context_root_init(const DP_ViewModeFilter *vmf,
+                               DP_CanvasState *cs);
+
+DP_ViewModeContext DP_view_mode_context_make_default(void);
+
+bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc);
+
+DP_ViewModeContext DP_view_mode_context_root_at(
+    const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
+    DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
+    const DP_OnionSkin **out_os);
+
+DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
+                                             DP_LayerProps *lp);
+
+bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
+                                         DP_LayerProps *lp,
+                                         uint16_t parent_opacity);
+
 
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above);
 

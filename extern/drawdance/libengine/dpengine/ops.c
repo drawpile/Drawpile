@@ -23,9 +23,10 @@
 #include "annotation.h"
 #include "annotation_list.h"
 #include "canvas_state.h"
+#include "document_metadata.h"
 #include "draw_context.h"
-#include "frame.h"
 #include "image.h"
+#include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -35,6 +36,7 @@
 #include "paint.h"
 #include "tile.h"
 #include "timeline.h"
+#include "track.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
@@ -912,6 +914,7 @@ DP_CanvasState *DP_ops_layer_tree_delete(DP_CanvasState *cs, DP_DrawContext *dc,
     }
 
     DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+    DP_transient_canvas_state_timeline_cleanup(tcs);
     return DP_transient_canvas_state_persist(tcs);
 }
 
@@ -1503,74 +1506,432 @@ DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
 }
 
 
-DP_CanvasState *DP_ops_timeline_frame_set(DP_CanvasState *cs, int frame_index,
-                                          bool insert, int layer_id_count,
-                                          int get_layer_id(void *, int),
-                                          void *user)
+DP_CanvasState *DP_ops_track_create(DP_CanvasState *cs, int new_id,
+                                    int insert_id, int source_id,
+                                    const char *title, size_t title_length)
 {
-    DP_ASSERT(frame_index >= 0);
-    DP_ASSERT(layer_id_count >= 0);
-
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int old_frame_count = DP_timeline_frame_count(tl);
-    if (frame_index > DP_timeline_frame_count(tl)) {
-        DP_error_set("Set timeline frame: given frame %d beyond end %d",
-                     frame_index, old_frame_count);
+    int track_count = DP_timeline_count(tl);
+
+    int index = 0;
+    DP_Track *source = NULL;
+    for (int i = 0; i < track_count; ++i) {
+        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        int track_id = DP_track_id(t);
+        if (track_id == new_id) {
+            DP_error_set("Track create: id %d already exists", new_id);
+            return NULL;
+        }
+        if (track_id == insert_id) {
+            index = i + 1;
+        }
+        if (track_id == source_id) {
+            source = t;
+        }
+    }
+
+    if (insert_id != 0 && index == 0) {
+        DP_error_set("Track create: insert id %d not found", insert_id);
         return NULL;
     }
 
-    // Filter out invalid layer ids. Rustpile likes to send lots of zeroes.
-    int actual_layer_id_count = 0;
-    for (int i = 0; i < layer_id_count; ++i) {
-        int layer_id = get_layer_id(user, i);
-        if (layer_id > 0 && layer_id <= UINT16_MAX) {
-            ++actual_layer_id_count;
-        }
+    if (source_id != 0 && !source) {
+        DP_error_set("Track create: source id %d not found", source_id);
+        return NULL;
     }
 
-    DP_TransientFrame *tf = DP_transient_frame_new_init(actual_layer_id_count);
-    int actual_index = 0;
-    for (int i = 0; i < layer_id_count; ++i) {
-        int layer_id = get_layer_id(user, i);
-        if (layer_id > 0 && layer_id <= UINT16_MAX) {
-            DP_transient_frame_layer_id_set_at(tf, layer_id, actual_index++);
-        }
-    }
+    DP_TransientTrack *tt = source ? DP_transient_track_new(source, 0)
+                                   : DP_transient_track_new_init(0);
+    DP_transient_track_id_set(tt, new_id);
+    DP_transient_track_title_set(tt, title, title_length);
 
-    bool replace = frame_index < old_frame_count && !insert;
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, replace ? 0 : 1);
+        DP_transient_canvas_state_transient_timeline(tcs, 1);
+    DP_transient_timeline_insert_transient_noinc(ttl, tt, index);
+    return DP_transient_canvas_state_persist(tcs);
+}
 
-    if (replace) {
-        DP_transient_timeline_replace_transient_noinc(ttl, tf, frame_index);
+
+static DP_CanvasState *retitle_track(DP_CanvasState *cs, int index,
+                                     const char *title, size_t title_length)
+{
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+    DP_TransientTrack *tt =
+        DP_transient_timeline_transient_at_noinc(ttl, index, 0);
+    DP_transient_track_title_set(tt, title, title_length);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_track_retitle(DP_CanvasState *cs, int track_id,
+                                     const char *title, size_t title_length)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int track_count = DP_timeline_count(tl);
+
+    for (int i = 0; i < track_count; ++i) {
+        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        if (DP_track_id(t) == track_id) {
+            return retitle_track(cs, i, title, title_length);
+        }
     }
-    else {
-        DP_transient_timeline_insert_transient_noinc(ttl, tf, frame_index);
+
+    DP_error_set("Track retitle: track %d not found", track_id);
+    return NULL;
+}
+
+
+static DP_CanvasState *delete_track(DP_CanvasState *cs, int index)
+{
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+    DP_transient_timeline_delete_at(ttl, index);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_track_delete(DP_CanvasState *cs, int track_id)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int track_count = DP_timeline_count(tl);
+
+    for (int i = 0; i < track_count; ++i) {
+        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        if (DP_track_id(t) == track_id) {
+            return delete_track(cs, i);
+        }
+    }
+
+    DP_error_set("Track delete: track %d not found", track_id);
+    return NULL;
+}
+
+DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
+                                   int (*get_track_id)(void *, int), void *user)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int track_count = DP_timeline_count(tl);
+
+    DP_TransientTimeline *ttl = DP_transient_timeline_new_init(track_count);
+    DP_TransientCanvasState *tcs =
+        DP_transient_canvas_state_new_with_timeline_noinc(cs, ttl);
+
+    int fill = 0;
+    for (int i = 0; i < track_id_count; ++i) {
+        int track_id = get_track_id(user, i);
+        if (DP_transient_timeline_index_by_id(ttl, track_id) == -1) {
+            int from_index = DP_timeline_index_by_id(tl, track_id);
+            if (from_index != -1) {
+                DP_Track *t = DP_timeline_at_noinc(tl, from_index);
+                DP_transient_timeline_set_inc(ttl, t, fill);
+                ++fill;
+            }
+            else {
+                DP_warn("Track order: unknown track id %d", track_id);
+            }
+        }
+        else {
+            DP_warn("Track order: duplicate track id %d", track_id);
+        }
+    }
+
+    // If further tracks remain, just move them over in the order they appear.
+    for (int i = 0; fill < track_count && i < track_count; ++i) {
+        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        int track_id = DP_track_id(t);
+        if (DP_transient_timeline_index_by_id(ttl, track_id) == -1) {
+            DP_transient_timeline_set_inc(ttl, t, fill);
+            ++fill;
+        }
     }
 
     return DP_transient_canvas_state_persist(tcs);
 }
 
 
-DP_CanvasState *DP_ops_timeline_frame_delete(DP_CanvasState *cs,
-                                             int frame_index)
+static void insert_or_replace_key_frame(DP_TransientTimeline *ttl, int t_index,
+                                        int kf_index, int frame_index,
+                                        DP_Track *t, DP_KeyFrame *kf,
+                                        bool replace)
 {
-    DP_ASSERT(frame_index >= 0);
+    if (replace) {
+        DP_TransientTrack *tt =
+            DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+        DP_transient_track_replace_noinc(tt, frame_index, kf, kf_index);
+    }
+    else {
+        DP_TransientTrack *tt =
+            DP_transient_timeline_transient_at_noinc(ttl, t_index, 1);
+        DP_transient_track_insert_noinc(
+            tt, frame_index, kf,
+            kf_index == -1 ? DP_track_key_frame_count(t) : kf_index);
+    }
+}
+
+static DP_CanvasState *
+set_key_frame(const char *what, DP_CanvasState *cs, int track_id,
+              int frame_index,
+              DP_KeyFrame *(*get_key_frame)(void *, DP_KeyFrame *), void *user)
+{
+    DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
+    int frame_count = DP_document_metadata_frame_count(dm);
+    if (frame_index >= frame_count) {
+        DP_error_set("Key frame %s: frame index %d beyond frame count %d", what,
+                     frame_index, frame_count);
+        return NULL;
+    }
 
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int old_frame_count = DP_timeline_frame_count(tl);
-    if (frame_index >= DP_timeline_frame_count(tl)) {
-        DP_error_set("Remove timeline frame: given frame %d beyond end %d",
-                     frame_index, old_frame_count);
+    int t_index = DP_timeline_index_by_id(tl, track_id);
+    if (t_index == -1) {
+        DP_error_set("Key frame %s: track id %d not found", what, track_id);
+        return NULL;
+    }
+
+    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    bool replace;
+    int kf_index =
+        DP_track_key_frame_search_at_or_after(t, frame_index, &replace);
+
+    DP_KeyFrame *kf = get_key_frame(
+        user, replace ? DP_track_key_frame_at_noinc(t, kf_index) : NULL);
+    if (!kf) {
         return NULL;
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 0);
+    insert_or_replace_key_frame(ttl, t_index, kf_index, frame_index, t, kf,
+                                replace);
 
-    DP_transient_timeline_delete_at(ttl, frame_index);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+static DP_KeyFrame *get_key_frame_set(void *user, DP_KeyFrame *prev_kf)
+{
+    int layer_id = *(int *)user;
+    if (prev_kf) {
+        DP_TransientKeyFrame *tkf = DP_transient_key_frame_new(prev_kf);
+        DP_transient_key_frame_layer_id_set(tkf, layer_id);
+        return DP_transient_key_frame_persist(tkf);
+    }
+    else {
+        return DP_key_frame_new_init(layer_id);
+    }
+}
+
+DP_CanvasState *DP_ops_key_frame_set(DP_CanvasState *cs, int track_id,
+                                     int frame_index, int layer_id)
+{
+    return set_key_frame("set", cs, track_id, frame_index, get_key_frame_set,
+                         &layer_id);
+}
+
+struct KeyFrameCopyParams {
+    DP_CanvasState *cs;
+    int source_track_id;
+    int source_frame_index;
+};
+
+static DP_KeyFrame *get_key_frame_copy(void *user,
+                                       DP_UNUSED DP_KeyFrame *prev_kf)
+{
+    struct KeyFrameCopyParams *params = user;
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(params->cs);
+
+    int track_id = params->source_track_id;
+    int t_index = DP_timeline_index_by_id(tl, track_id);
+    if (t_index == -1) {
+        DP_error_set("Key frame copy: source track id %d not found", track_id);
+        return NULL;
+    }
+
+    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    int frame_index = params->source_frame_index;
+    int kf_index = DP_track_key_frame_search_at(t, frame_index);
+    if (kf_index == -1) {
+        DP_error_set("Key frame copy: source key frame at %d not found",
+                     frame_index);
+        return NULL;
+    }
+
+    return DP_track_key_frame_at_inc(t, kf_index);
+}
+
+DP_CanvasState *DP_ops_key_frame_copy(DP_CanvasState *cs, int track_id,
+                                      int frame_index, int source_track_id,
+                                      int source_frame_index)
+{
+    struct KeyFrameCopyParams params = {cs, source_track_id,
+                                        source_frame_index};
+    return set_key_frame("copy", cs, track_id, frame_index, get_key_frame_copy,
+                         &params);
+}
+
+DP_CanvasState *DP_ops_key_frame_retitle(DP_CanvasState *cs, int track_id,
+                                         int frame_index, const char *title,
+                                         size_t title_length)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int t_index = DP_timeline_index_by_id(tl, track_id);
+    if (t_index == -1) {
+        DP_error_set("Key frame retitle: track id %d not found", track_id);
+        return NULL;
+    }
+
+    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    int kf_index = DP_track_key_frame_search_at(t, frame_index);
+    if (kf_index == -1) {
+        DP_error_set("Key frame retitle: no frame at index %d", frame_index);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+    DP_TransientTrack *tt =
+        DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+    DP_TransientKeyFrame *tkf =
+        DP_transient_track_transient_at_noinc(tt, kf_index);
+
+    DP_transient_key_frame_title_set(tkf, title, title_length);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+static bool is_valid_key_frame_layer(DP_LayerRoutes *lr,
+                                     DP_KeyFrameLayer *buffer, int used,
+                                     int layer_id, unsigned int flags)
+{
+    if (flags == 0) {
+        DP_warn("Key frame layer attributes: flags on layer %d are 0",
+                layer_id);
+        return false;
+    }
+
+    for (int i = 0; i < used; ++i) {
+        if (buffer[i].layer_id == layer_id) {
+            DP_warn("Key frame layer attributes: duplicate layer id %d",
+                    layer_id);
+            return false;
+        }
+    }
+
+    if (!DP_layer_routes_search(lr, layer_id)) {
+        DP_warn("Key frame layer attributes: layer id %d not found", layer_id);
+        return false;
+    }
+
+    return true;
+}
+
+DP_CanvasState *DP_ops_key_frame_layer_attributes(
+    DP_CanvasState *cs, DP_DrawContext *dc, int track_id, int frame_index,
+    int count, struct DP_KeyFrameLayer (*get_layer)(void *, int), void *user)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int t_index = DP_timeline_index_by_id(tl, track_id);
+    if (t_index == -1) {
+        DP_error_set("Key frame layer attributes: track id %d not found",
+                     track_id);
+        return NULL;
+    }
+
+    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    int kf_index = DP_track_key_frame_search_at(t, frame_index);
+    if (kf_index == -1) {
+        DP_error_set("Key frame layer attributes: no frame at index %d",
+                     frame_index);
+        return NULL;
+    }
+
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_KeyFrameLayer *buffer = DP_draw_context_pool_require(
+        dc, sizeof(*buffer) * DP_int_to_size(count));
+    int used = 0;
+    for (int i = 0; i < count; ++i) {
+        DP_KeyFrameLayer kfl = get_layer(user, i);
+        if (is_valid_key_frame_layer(lr, buffer, used, kfl.layer_id,
+                                     kfl.flags)) {
+            buffer[used++] = kfl;
+        }
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+    DP_TransientTrack *tt =
+        DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+
+    DP_KeyFrame *kf = DP_transient_track_key_frame_at_noinc(tt, kf_index);
+    DP_TransientKeyFrame *tkf =
+        DP_transient_key_frame_new_with_layers(kf, buffer, used);
+    DP_transient_track_replace_transient_noinc(tt, frame_index, tkf, kf_index);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
+                                        int frame_index, int move_track_id,
+                                        int move_frame_index)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int t_index = DP_timeline_index_by_id(tl, track_id);
+    if (t_index == -1) {
+        DP_error_set("Key frame delete: track id %d not found", track_id);
+        return NULL;
+    }
+
+    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    int kf_index = DP_track_key_frame_search_at(t, frame_index);
+    if (kf_index == -1) {
+        DP_error_set("Key frame delete: no frame at index %d", frame_index);
+        return NULL;
+    }
+
+    int move_t_index;
+    if (move_track_id == 0) {
+        move_t_index = -1;
+    }
+    else {
+        move_t_index = DP_timeline_index_by_id(tl, move_track_id);
+        if (move_t_index == -1) {
+            DP_error_set("Key frame delete: move track id %d not found",
+                         track_id);
+            return NULL;
+        }
+
+        DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
+        int frame_count = DP_document_metadata_frame_count(dm);
+        if (move_frame_index >= frame_count) {
+            DP_error_set(
+                "Key frame delete: move frame index %d beyond frame count %d",
+                move_frame_index, frame_count);
+            return NULL;
+        }
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0);
+
+    if (move_t_index != -1) {
+        DP_Track *move_t = DP_transient_timeline_at_noinc(ttl, move_t_index);
+        bool replace;
+        int move_kf_index = DP_track_key_frame_search_at_or_after(
+            move_t, move_frame_index, &replace);
+        insert_or_replace_key_frame(
+            ttl, move_t_index, move_kf_index, move_frame_index, move_t,
+            DP_track_key_frame_at_inc(t, kf_index), replace);
+    }
+
+    DP_TransientTrack *tt =
+        DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+    DP_transient_track_delete_at(
+        tt, DP_transient_track_key_frame_search_at(tt, frame_index));
 
     return DP_transient_canvas_state_persist(tcs);
 }

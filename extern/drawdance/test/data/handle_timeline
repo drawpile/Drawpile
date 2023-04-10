@@ -1,94 +1,654 @@
 begin testing
 
 -- initial timeline
-0 frame(s)
+frame_count: 24
+0 track(s)
 
--> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_SET_METADATA_INT ok - 0 error(s)
 
--- append first frame with layers
-1 frame(s)
-[0] 3 layer(s): 1 2 3
+-- layer setup
+frame_count: 30
+0 track(s)
+layers:
+    layer 257 L1
+    group 258 G2
+        layer 259 G2/L1
+        layer 260 G2/L2
+        group 261 G2/G3
+            layer 262 G2/G3/L1
+            layer 263 G2/G3/L2
+    layer 264 L3
+    layer 265 L4
 
--> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_CREATE ok - 0 error(s)
 
--- append second frame without layers
-2 frame(s)
-[0] 3 layer(s): 1 2 3
-[1] 0 layer(s):
+-- create track 1
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 0 key frame(s):
 
--> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
 
--- insert frame at beginning with lots of layers
-3 frame(s)
-[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-[1] 3 layer(s): 1 2 3
-[2] 0 layer(s):
+-- create track 1 key 0
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 257 at 0
 
--> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
 
--- insert frame in middle with single layer
-4 frame(s)
-[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-[1] 1 layer(s): 1
-[2] 3 layer(s): 1 2 3
-[3] 0 layer(s):
+-- create track 1 key 20 without layer
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 2 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 0 at 20
 
--> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
 
--- change last frame layers
-4 frame(s)
-[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-[1] 1 layer(s): 1
-[2] 3 layer(s): 1 2 3
-[3] 3 layer(s): 9 99 999
+-- create track 1 key 10
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 3 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 0 at 20
 
--> DP_MSG_REMOVE_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET fail - 1 error(s): Key frame set: frame index 30 beyond frame count 30
 
--- remove last frame
-3 frame(s)
-[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-[1] 1 layer(s): 1
-[2] 3 layer(s): 1 2 3
+-- fail to create track 1 key 30
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 3 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 0 at 20
 
--> DP_MSG_REMOVE_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
 
--- remove second frame
-2 frame(s)
-[0] 16 layer(s): 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
-[1] 3 layer(s): 1 2 3
+-- create track 1 key 29
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 0 at 20
+        [3] key on layer 265 at 29
 
--> DP_MSG_REMOVE_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
 
--- remove first frame
-1 frame(s)
-[0] 3 layer(s): 1 2 3
+-- change track 1 key 20
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 265 at 20
+        [3] key on layer 265 at 29
 
--> DP_MSG_SET_TIMELINE_FRAME ok - 0 error(s)
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_RETITLE ok - 0 error(s)
 
--- changing frame at end appends it
-2 frame(s)
-[0] 3 layer(s): 1 2 3
-[1] 1 layer(s): 1
+-- name track 1 key 20
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 265 at 20 "T1 K20"
+        [3] key on layer 265 at 29
 
--> DP_MSG_REMOVE_TIMELINE_FRAME fail - 1 error(s): Remove timeline frame: given frame 2 beyond end 2
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_RETITLE ok - 0 error(s)
 
--- remove nonexistent frame does nothing
-2 frame(s)
-[0] 3 layer(s): 1 2 3
-[1] 1 layer(s): 1
+-- rename track 1 key 20
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 265 at 20 "Key 20"
+        [3] key on layer 265 at 29
 
--> DP_MSG_SET_TIMELINE_FRAME fail - 1 error(s): Set timeline frame: given frame 3 beyond end 2
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
 
--- adding frame beyond end does nothing
-2 frame(s)
-[0] 3 layer(s): 1 2 3
-[1] 1 layer(s): 1
+-- change named track layer id
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20"
+        [3] key on layer 265 at 29
 
--> DP_MSG_SET_TIMELINE_FRAME fail - 1 error(s): Set timeline frame: given frame 3 beyond end 2
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES ok - 0 error(s)
 
--- changing frame beyond end does nothing
-2 frame(s)
-[0] 3 layer(s): 1 2 3
-[1] 1 layer(s): 1
+-- add track 1 key 20 layer attributes
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 261 flags 0x2
+            [2] layer 263 flags 0x1
+        [3] key on layer 265 at 29
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES ok - 0 error(s)
+
+-- clobber track 1 key 20 layer attributes, invalid and dupes are ignored, layers outside of group are accepted
+frame_count: 30
+1 track(s)
+    [0] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_CREATE ok - 0 error(s)
+
+-- duplicate track 1
+frame_count: 30
+2 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_CREATE ok - 0 error(s)
+
+-- insert track
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_RETITLE ok - 0 error(s)
+
+-- unname track 1 key 20
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
+
+-- delete track 1 key 20
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 3 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 265 at 29
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE fail - 1 error(s): Key frame delete: no frame at index 20
+
+-- attempt to delete track 1 key 20 again
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 3 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 265 at 29
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
+
+-- delete track 1 key 29
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 2 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
+
+-- delete track 1 key 0
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 258 at 10
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
+
+-- delete track 1 key 10
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_CREATE ok - 0 error(s)
+
+-- duplicate and insert track 2
+frame_count: 30
+4 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 303 "Track 4" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [3] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_RETITLE ok - 0 error(s)
+
+-- rename track 4
+frame_count: 30
+4 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 303 "Track Four" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [3] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
+
+-- change track 4 layers
+frame_count: 30
+4 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 303 "Track Four" 4 key frame(s):
+        [0] key on layer 262 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 263 at 20 "Key 20" 3 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 263 flags 0x2
+            [2] layer 257 flags 0x1
+        [3] key on layer 261 at 29
+    [3] 302 "Track 0" 0 key frame(s):
+layers:
+    layer 257 L1
+    group 258 G2
+        layer 259 G2/L1
+        layer 260 G2/L2
+        group 261 G2/G3
+            layer 262 G2/G3/L1
+            layer 263 G2/G3/L2
+    layer 264 L3
+    layer 265 L4
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
+
+-- delete layer 263
+frame_count: 30
+4 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 258 at 20 "Key 20" 2 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 303 "Track Four" 4 key frame(s):
+        [0] key on layer 262 at 0
+        [1] key on layer 258 at 10
+        [2] key on layer 0 at 20 "Key 20" 2 layer flag(s):
+            [0] layer 258 flags 0x1
+            [1] layer 257 flags 0x1
+        [3] key on layer 261 at 29
+    [3] 302 "Track 0" 0 key frame(s):
+layers:
+    layer 257 L1
+    group 258 G2
+        layer 259 G2/L1
+        layer 260 G2/L2
+        group 261 G2/G3
+            layer 262 G2/G3/L1
+    layer 264 L3
+    layer 265 L4
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_DELETE ok - 0 error(s)
+
+-- delete layer 258
+frame_count: 30
+4 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 303 "Track Four" 4 key frame(s):
+        [0] key on layer 0 at 0
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 0 at 29
+    [3] 302 "Track 0" 0 key frame(s):
+layers:
+    layer 257 L1
+    layer 264 L3
+    layer 265 L4
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_DELETE ok - 0 error(s)
+
+-- delete track 4
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
+
+-- copy track 2 key 20 to 25
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 5 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 0 at 25 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [4] key on layer 265 at 29
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
+
+-- move track 2 key 25 to track 1 key 3
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 0 at 3 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
+
+-- move track 1 key 3 to track 1 key 0
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 257 at 0
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
+
+-- copy track 1 key 0 to track 2 key 0
+frame_count: 30
+3 track(s)
+    [0] 301 "Track 2" 4 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [1] key on layer 0 at 10
+        [2] key on layer 0 at 20 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [3] key on layer 265 at 29
+    [1] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_SET_METADATA_INT ok - 0 error(s)
+
+-- decrease frame count truncates
+frame_count: 20
+3 track(s)
+    [0] 301 "Track 2" 2 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [1] key on layer 0 at 10
+    [1] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_SET_METADATA_INT ok - 0 error(s)
+
+-- increasing frame count again changes nothing
+frame_count: 60
+3 track(s)
+    [0] 301 "Track 2" 2 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+        [1] key on layer 0 at 10
+    [1] 300 "Track 1" 1 key frame(s):
+        [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
+            [0] layer 257 flags 0x1
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_SET_METADATA_INT ok - 0 error(s)
+
+-- setting frame count to 0 gives 1
+frame_count: 1
+3 track(s)
+    [0] 301 "Track 2" 0 key frame(s):
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_SET_METADATA_INT ok - 0 error(s)
+
+-- setting frame count to -1 gives 1
+frame_count: 1
+3 track(s)
+    [0] 301 "Track 2" 0 key frame(s):
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_DELETE fail - 1 error(s): Track delete: track 404 not found
+
+-- delete nonexistent track
+frame_count: 1
+3 track(s)
+    [0] 301 "Track 2" 0 key frame(s):
+    [1] 300 "Track 1" 0 key frame(s):
+    [2] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_DELETE ok - 0 error(s)
+
+-- delete track 1
+frame_count: 1
+2 track(s)
+    [0] 301 "Track 2" 0 key frame(s):
+    [1] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_DELETE ok - 0 error(s)
+
+-- delete track 2
+frame_count: 1
+1 track(s)
+    [0] 302 "Track 0" 0 key frame(s):
+
+-> DP_MSG_UNDO_POINT ok - 0 error(s)
+-> DP_MSG_TRACK_DELETE ok - 0 error(s)
+
+-- delete track 0
+frame_count: 1
+0 track(s)
+layers:
+    layer 257 L1
+    layer 264 L3
+    layer 265 L4
 
 done testing

@@ -55,12 +55,12 @@ target_sources(dpclient PRIVATE
 	drawdance/documentmetadata.h
 	drawdance/eventlog.cpp
 	drawdance/eventlog.h
-	drawdance/frame.cpp
-	drawdance/frame.h
 	drawdance/global.cpp
 	drawdance/global.h
 	drawdance/image.cpp
 	drawdance/image.h
+	drawdance/keyframe.cpp
+	drawdance/keyframe.h
 	drawdance/layercontent.cpp
 	drawdance/layercontent.h
 	drawdance/layergroup.cpp
@@ -83,6 +83,10 @@ target_sources(dpclient PRIVATE
 	drawdance/tile.h
 	drawdance/timeline.cpp
 	drawdance/timeline.h
+	drawdance/track.cpp
+	drawdance/track.h
+	drawdance/viewmode.cpp
+	drawdance/viewmode.h
 	drawdance/ziparchive.cpp
 	drawdance/ziparchive.h
 	export/animationsaverrunnable.cpp
@@ -165,6 +169,8 @@ target_sources(dpclient PRIVATE
 	utils/identicon.h
 	utils/images.cpp
 	utils/images.h
+	utils/keyframelayermodel.cpp
+	utils/keyframelayermodel.h
 	utils/kis_cubic_curve.cpp
 	utils/kis_cubic_curve.h
 	utils/listservermodel.cpp

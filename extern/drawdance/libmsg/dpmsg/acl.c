@@ -459,14 +459,9 @@ static uint8_t filter_unless(bool condition)
     return condition ? 0 : DP_ACL_STATE_FILTERED_BIT;
 }
 
-static bool owns_layer(uint8_t user_id, int layer_id)
+static bool owns_id(uint8_t user_id, int id)
 {
-    return (layer_id >> 8) == user_id;
-}
-
-static bool owns_annotation(uint8_t user_id, int annotation_id)
-{
-    return (annotation_id >> 8) == user_id;
+    return (id >> 8) == user_id;
 }
 
 static uint8_t handle_join(DP_AclState *acls, DP_Message *msg)
@@ -548,7 +543,7 @@ static bool can_edit_layer(DP_AclState *acls, uint8_t user_id, int layer_id)
 {
     return DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
         || (DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS, user_id)
-            && owns_layer(user_id, layer_id));
+            && owns_id(user_id, layer_id));
 }
 
 static void set_layer_acl(DP_AclState *acls, int layer_id,
@@ -679,7 +674,7 @@ static bool handle_layer_create(DP_AclState *acls, int layer_id,
     }
     // Only operators can create layers under a different owner.
     bool can_create =
-        (owns_layer(user_id, layer_id) || DP_acl_state_is_op(acls, user_id))
+        (owns_id(user_id, layer_id) || DP_acl_state_is_op(acls, user_id))
         && (DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS,
                                             user_id));
@@ -721,7 +716,7 @@ static bool handle_annotation_create(DP_AclState *acls, DP_Message *msg,
     int annotation_id = DP_msg_annotation_create_id(mac);
     return DP_acl_state_can_use_feature(acls, DP_FEATURE_CREATE_ANNOTATION,
                                         user_id)
-        && (owns_annotation(user_id, annotation_id)
+        && (owns_id(user_id, annotation_id)
             || DP_acl_state_is_op(acls, user_id));
 }
 
@@ -733,8 +728,7 @@ static bool handle_annotation_reshape(DP_AclState *acls, DP_Message *msg,
     }
     DP_MsgAnnotationReshape *mar = DP_msg_annotation_reshape_cast(msg);
     int annotation_id = DP_msg_annotation_reshape_id(mar);
-    return owns_annotation(user_id, annotation_id)
-        || DP_acl_state_is_op(acls, user_id)
+    return owns_id(user_id, annotation_id) || DP_acl_state_is_op(acls, user_id)
         || !DP_acl_state_annotation_locked(acls, annotation_id);
 }
 
@@ -743,7 +737,7 @@ static bool handle_annotation_edit(DP_AclState *acls, DP_Message *msg,
 {
     DP_MsgAnnotationEdit *mae = DP_msg_annotation_edit_cast(msg);
     int annotation_id = DP_msg_annotation_edit_id(mae);
-    bool can_edit = override || owns_annotation(user_id, annotation_id)
+    bool can_edit = override || owns_id(user_id, annotation_id)
                  || DP_acl_state_is_op(acls, user_id);
     if (can_edit) {
         DP_AnnotationAclEntry *entry;
@@ -771,7 +765,7 @@ static bool handle_annotation_delete(DP_AclState *acls, DP_Message *msg,
 {
     DP_MsgAnnotationDelete *mad = DP_msg_annotation_delete_cast(msg);
     int annotation_id = DP_msg_annotation_delete_id(mad);
-    bool can_delete = override || owns_annotation(user_id, annotation_id)
+    bool can_delete = override || owns_id(user_id, annotation_id)
                    || DP_acl_state_is_op(acls, user_id)
                    || !DP_acl_state_annotation_locked(acls, annotation_id);
     if (can_delete) {
@@ -839,6 +833,7 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
     switch (DP_msg_set_metadata_int_field(msmi)) {
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
     case DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE:
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
         feature = DP_FEATURE_TIMELINE;
         break;
     default:
@@ -846,6 +841,17 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
         break;
     }
     return DP_acl_state_can_use_feature(acls, feature, user_id);
+}
+
+static bool handle_track_create(DP_AclState *acls, int track_id,
+                                uint8_t user_id, bool override)
+{
+    if (override) {
+        return true;
+    }
+    // Only operators can create tracks under a different owner.
+    return (owns_id(user_id, track_id) || DP_acl_state_is_op(acls, user_id))
+        && DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
 }
 
 static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
@@ -940,10 +946,6 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return handle_move_rect(acls, msg, user_id, override);
     case DP_MSG_SET_METADATA_INT:
         return handle_set_metadata_int(acls, msg, user_id, override);
-    case DP_MSG_SET_TIMELINE_FRAME:
-    case DP_MSG_REMOVE_TIMELINE_FRAME:
-        return override
-            || DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
     case DP_MSG_LAYER_TREE_CREATE:
         return handle_layer_create(
             acls,
@@ -962,6 +964,19 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     }
     case DP_MSG_TRANSFORM_REGION:
         return handle_transform_region(acls, msg, user_id, override);
+    case DP_MSG_TRACK_CREATE:
+        return handle_track_create(
+            acls, DP_msg_track_create_id(DP_msg_track_create_cast(msg)),
+            user_id, override);
+    case DP_MSG_TRACK_RETITLE:
+    case DP_MSG_TRACK_DELETE:
+    case DP_MSG_TRACK_ORDER:
+    case DP_MSG_KEY_FRAME_SET:
+    case DP_MSG_KEY_FRAME_RETITLE:
+    case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+    case DP_MSG_KEY_FRAME_DELETE:
+        return override
+            || DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
     case DP_MSG_UNDO:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_UNDO, user_id);

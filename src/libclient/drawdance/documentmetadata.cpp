@@ -74,6 +74,11 @@ bool DocumentMetadata::useTimeline() const
     return DP_document_metadata_use_timeline(m_data);
 }
 
+int DocumentMetadata::frameCount() const
+{
+    return DP_document_metadata_frame_count(m_data);
+}
+
 DocumentMetadata::DocumentMetadata(DP_DocumentMetadata *dm)
     : m_data{dm}
 {

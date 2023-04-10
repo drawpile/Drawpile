@@ -24,9 +24,10 @@
 #include <dpcommon/common.h>
 
 
-#define DP_DOCUMENT_METADATA_DPIX_DEFAULT      72
-#define DP_DOCUMENT_METADATA_DPIY_DEFAULT      72
-#define DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT 24
+#define DP_DOCUMENT_METADATA_DPIX_DEFAULT        72
+#define DP_DOCUMENT_METADATA_DPIY_DEFAULT        72
+#define DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT   24
+#define DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT 24
 
 typedef struct DP_DocumentMetadata DP_DocumentMetadata;
 
@@ -58,6 +59,8 @@ int DP_document_metadata_dpiy(DP_DocumentMetadata *dm);
 
 int DP_document_metadata_framerate(DP_DocumentMetadata *dm);
 
+int DP_document_metadata_frame_count(DP_DocumentMetadata *dm);
+
 bool DP_document_metadata_use_timeline(DP_DocumentMetadata *dm);
 
 
@@ -80,6 +83,8 @@ int DP_transient_document_metadata_dpiy(DP_TransientDocumentMetadata *tdm);
 
 int DP_transient_document_metadata_framerate(DP_TransientDocumentMetadata *tdm);
 
+int DP_transient_document_metadata_frame_count(DP_TransientDocumentMetadata *dm);
+
 bool DP_transient_document_metadata_use_timeline(
     DP_TransientDocumentMetadata *tdm);
 
@@ -91,6 +96,9 @@ void DP_transient_document_metadata_dpiy_set(DP_TransientDocumentMetadata *tdm,
 
 void DP_transient_document_metadata_framerate_set(
     DP_TransientDocumentMetadata *tdm, int framerate);
+
+void DP_transient_document_metadata_frame_count_set(
+    DP_TransientDocumentMetadata *tdm, int frame_count);
 
 void DP_transient_document_metadata_use_timeline_set(
     DP_TransientDocumentMetadata *tdm, int use_timeline);

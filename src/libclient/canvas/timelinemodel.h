@@ -1,65 +1,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_TIMELINE_MODEL_H
 #define DP_TIMELINE_MODEL_H
 
-#include "libclient/canvas/layerlist.h"
-#include "libclient/drawdance/message.h"
-
-#include <QVector>
 #include <QHash>
 #include <QObject>
+#include <QVector>
 
 namespace drawdance {
-	class LayerProps;
-	class LayerPropsList;
-	class Timeline;
+class KeyFrame;
+class LayerPropsList;
+class Timeline;
+class Track;
 }
 
 namespace canvas {
 
 class CanvasModel;
 
+struct TimelineKeyFrame final {
+	int layerId;
+	QString title;
+	int frameIndex;
+	QHash<int, bool> layerVisibility;
+};
+
+struct TimelineTrack final {
+	int id;
+	QString title;
+	bool hidden;
+	bool onionSkin;
+	QVector<TimelineKeyFrame> keyFrames;
+};
+
 class TimelineModel final : public QObject {
 	Q_OBJECT
 public:
-	struct TimelineFrame {
-		QVector<int> layerIds;
-	};
-
-	struct TimelineLayer {
-		int layerId;
-		int group;
-		QString name;
-	};
-
 	explicit TimelineModel(CanvasModel *canvas);
 
-	uint8_t localUserId() const;
 	const CanvasModel *canvas() { return m_canvas; }
-	const QVector<TimelineFrame> &frames() const { return m_manualMode ? m_frames : m_autoFrames; }
-	const QVector<TimelineLayer> &layers() const { return m_layers; }
+	const QVector<TimelineTrack> &tracks() { return m_tracks; }
 
-	int layerRow(int layerId) const { return m_layerIdsToRows[layerId]; }
+	int frameCount() const { return m_frameCount; }
+	void setFrameCount(int frameCount);
 
-	int layerRowId(int row) const {
-		if(row >= 0 && row < m_layers.size()) {
-			return m_layers[row].layerId;
-		} else {
-			return 0;
-		}
-	}
+	bool isManualMode() { return m_manualMode; }
+	void setManualMode(bool manualMode) { m_manualMode = manualMode; }
 
-	int nearestLayerTo(int frame, int nearest) const;
+	uint8_t localUserId() const;
 
-	// These may return null messages!
-	drawdance::Message makeToggleCommand(int frameCol, int layerRow) const;
-	drawdance::Message makeRemoveCommand(int frameCol) const;
-
-	void setManualMode(bool manual);
-	bool isManualMode() const { return m_manualMode; }
-
-	int getAutoFrameForLayerId(int layerId);
+	int getAvailableTrackId() const;
+	QString getAvailableTrackName(QString basename) const;
 
 public slots:
 	void setLayers(const drawdance::LayerPropsList &lpl);
@@ -67,21 +57,18 @@ public slots:
 
 signals:
 	void layersChanged();
-	void framesChanged();
+	void tracksChanged();
+	void frameCountChanged(int frameCount);
 
 private:
-	void setLayersRecursive(const drawdance::LayerPropsList &lpl, int group, const QString &prefix);
-	void setLayerIdsToAutoFrame(const drawdance::LayerPropsList &lpl);
-	void setLayerIdsToAutoFrameRecursive(drawdance::LayerProps lp, int autoFrame);
-	void updateAutoFrames();
+	static TimelineTrack trackToModel(const drawdance::Track &t);
+	static TimelineKeyFrame
+	keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex);
 
-	CanvasModel *m_canvas;
-	QVector<TimelineFrame> m_frames;
-	QVector<TimelineFrame> m_autoFrames;
-	QVector<TimelineLayer> m_layers;
-	QHash<int, int> m_layerIdsToRows;
-	QHash<int, int> m_layerIdsToAutoFrame;
 	bool m_manualMode;
+	CanvasModel *m_canvas;
+	QVector<TimelineTrack> m_tracks;
+	int m_frameCount;
 };
 
 }

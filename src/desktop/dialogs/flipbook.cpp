@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+extern "C" {
+#include <dpengine/view_mode.h>
+}
+
 #include "desktop/dialogs/flipbook.h"
 #include "desktop/main.h"
 #include "desktop/utils/qtguicompat.h"
@@ -7,6 +11,7 @@
 
 #include "ui_flipbook.h"
 
+#include <QApplication>
 #include <QEvent>
 #include <QRect>
 #include <QScreen>
@@ -15,7 +20,11 @@
 namespace dialogs {
 
 Flipbook::Flipbook(QWidget *parent)
-	: QDialog(parent), m_ui(new Ui_Flipbook), m_paintengine(nullptr)
+	: QDialog{parent}
+	, m_ui{new Ui_Flipbook}
+	, m_paintengine{nullptr}
+	, m_canvasState{}
+	, m_vmb{}
 {
 	m_ui->setupUi(this);
 
@@ -23,15 +32,24 @@ Flipbook::Flipbook(QWidget *parent)
 
 	auto &settings = dpApp().settings();
 	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
-	connect(m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
-	connect(m_ui->layerIndex, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
-	connect(m_ui->loopStart, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	connect(m_ui->loopEnd, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	settings.bindFlipbookFrameRate(m_ui->fps);
-	settings.bindFlipbookFrameRate(this, &Flipbook::updateFps);
+	connect(
+		m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
+	connect(
+		m_ui->layerIndex, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&Flipbook::loadFrame);
+	connect(
+		m_ui->loopStart, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&Flipbook::updateRange);
+	connect(
+		m_ui->loopEnd, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&Flipbook::updateRange);
+	connect(
+		m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&Flipbook::updateFps);
 	connect(m_timer, &QTimer::timeout, m_ui->layerIndex, &QSpinBox::stepUp);
 	connect(m_ui->view, &FlipbookView::cropped, this, &Flipbook::setCrop);
-	connect(m_ui->zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);
+	connect(
+		m_ui->zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);
 
 	updateRange();
 
@@ -53,12 +71,13 @@ Flipbook::~Flipbook()
 
 bool Flipbook::event(QEvent *event)
 {
-	switch (event->type()) {
+	switch(event->type()) {
 	case QEvent::Move:
 	case QEvent::Resize:
 		dpApp().settings().setFlipbookWindow(geometry());
 		break;
-	default: {}
+	default: {
+	}
 	}
 
 	return QDialog::event(event);
@@ -96,18 +115,17 @@ void Flipbook::updateFps(int newFps)
 
 void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 {
-	Q_ASSERT(pe);
-
 	m_paintengine = pe;
-	const int max = m_paintengine->frameCount();
+	m_canvasState = pe->viewCanvasState();
+
+	const int max = m_canvasState.frameCount();
 	m_ui->loopStart->setMaximum(max);
 	m_ui->loopEnd->setMaximum(max);
 	m_ui->layerIndex->setMaximum(max);
 	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
 	m_ui->loopEnd->setValue(max);
 
-	drawdance::CanvasState canvasState = pe->viewCanvasState();
-	m_crop = QRect(QPoint(), canvasState.size());
+	m_crop = QRect(QPoint(), m_canvasState.size());
 
 	const auto crop = dpApp().settings().flipbookCrop();
 	if(m_crop.contains(crop, true)) {
@@ -118,7 +136,8 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 	}
 	dpApp().settings().setFlipbookCrop(m_crop);
 
-	drawdance::DocumentMetadata documentMetadata = canvasState.documentMetadata();
+	drawdance::DocumentMetadata documentMetadata =
+		m_canvasState.documentMetadata();
 	m_realFps = documentMetadata.framerate();
 
 	QString timelineMode;
@@ -139,16 +158,14 @@ void Flipbook::setCrop(const QRectF &rect)
 	const int w = m_crop.width();
 	const int h = m_crop.height();
 
-	if(rect.width()*w<=5 || rect.height()*h<=5) {
-		m_crop = QRect(QPoint(), m_paintengine->viewCanvasState().size());
+	if(rect.width() * w <= 5 || rect.height() * h <= 5) {
+		m_crop = QRect{
+			QPoint(), m_canvasState.isNull() ? QSize{} : m_canvasState.size()};
 		m_ui->zoomButton->setEnabled(false);
 	} else {
 		m_crop = QRect(
-			m_crop.x() + rect.x()*w,
-			m_crop.y() + rect.y()*h,
-			rect.width()*w,
-			rect.height()*h
-		);
+			m_crop.x() + rect.x() * w, m_crop.y() + rect.y() * h,
+			rect.width() * w, rect.height() * h);
 		m_ui->zoomButton->setEnabled(true);
 	}
 	dpApp().settings().setFlipbookCrop(m_crop);
@@ -164,34 +181,57 @@ void Flipbook::resetCrop()
 void Flipbook::resetFrameCache()
 {
 	m_frames.clear();
-	if(m_paintengine) {
-		const int frames = m_paintengine->frameCount();
-		for(int i=0;i<frames;++i)
-			m_frames.append(QPixmap());
+	if(!m_canvasState.isNull()) {
+		const int frames = m_canvasState.frameCount();
+		for(int i = 0; i < frames; ++i) {
+			m_frames.append(QPixmap{});
+		}
 	}
 }
 
 void Flipbook::loadFrame()
 {
 	const int f = m_ui->layerIndex->value() - 1;
-	if(m_paintengine && f>=0 && f < m_frames.size()) {
+	if(!m_canvasState.isNull() && f >= 0 && f < m_frames.size()) {
 		if(m_frames.at(f).isNull()) {
-			QImage img = m_paintengine->getFrameImage(f, m_crop);
+			QPixmap frame;
+			if(!m_crop.isEmpty() && !searchIdenticalFrame(f, frame)) {
+				DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(
+					m_vmb.get(), m_canvasState.get(), f, nullptr);
+				QImage img =
+					m_canvasState.toFlatImage(true, true, &m_crop, &vmf);
 
-			// Scale down the image if it is too big
-			const QSize maxSize = compat::widgetScreen(*this)->availableSize() * 0.7;
+				// Scale down the image if it is too big
+				QSize maxSize =
+					compat::widgetScreen(*this)->availableSize() * 0.7;
+				if(img.width() > maxSize.width() ||
+				   img.height() > maxSize.height()) {
+					const QSize newSize =
+						QSize(img.width(), img.height()).boundedTo(maxSize);
+					img = img.scaled(
+						newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				}
 
-			if(img.width() > maxSize.width() || img.height() > maxSize.height()) {
-				const QSize newSize = QSize(img.width(), img.height()).boundedTo(maxSize);
-				img = img.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				frame = QPixmap::fromImage(img);
 			}
-
-			m_frames[f] = QPixmap::fromImage(img);
+			m_frames[f] = frame;
 		}
-
 		m_ui->view->setPixmap(m_frames.at(f));
-	} else
-		m_ui->view->setPixmap(QPixmap());
+	} else {
+		m_ui->view->setPixmap(QPixmap{});
+	}
+}
+
+bool Flipbook::searchIdenticalFrame(int f, QPixmap &outFrame)
+{
+	int frameCount = m_frames.size();
+	for(int i = 0; i < frameCount; ++i) {
+		if(f != i && !m_frames[i].isNull() && m_canvasState.sameFrame(f, i)) {
+			outFrame = m_frames[i];
+			return true;
+		}
+	}
+	return false;
 }
 
 }

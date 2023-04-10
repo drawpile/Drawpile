@@ -30,6 +30,12 @@ void DocumentMetadata::refreshMetadata(const drawdance::DocumentMetadata &dm)
 		m_useTimeline = useTimeline;
 		emit useTimelineChanged(useTimeline);
 	}
+
+	const int frameCount = dm.frameCount();
+	if(frameCount != m_frameCount) {
+		m_frameCount = frameCount;
+		emit frameCountChanged(frameCount);
+	}
 }
 
 }

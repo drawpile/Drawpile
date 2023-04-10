@@ -21,10 +21,12 @@ public:
 
 	int framerate() const { return m_framerate; }
 	bool useTimeline() const { return m_useTimeline; }
+	int frameCount() const { return m_frameCount; }
 
 signals:
 	void framerateChanged(int fps);
 	void useTimelineChanged(bool useTimeline);
+	void frameCountChanged(int frameCount);
 
 private slots:
 	void refreshMetadata(const drawdance::DocumentMetadata &dm);
@@ -33,6 +35,7 @@ private:
 	PaintEngine *m_engine;
 	int m_framerate;
 	bool m_useTimeline;
+	int m_frameCount;
 };
 
 }

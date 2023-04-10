@@ -27,6 +27,7 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct DP_KeyFrameLayer DP_KeyFrameLayer;
 typedef struct DP_PaintDrawDabsParams DP_PaintDrawDabsParams;
 typedef struct DP_Quad DP_Quad;
 typedef struct DP_Rect DP_Rect;
@@ -53,8 +54,9 @@ DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
                                         bool isolated);
 
 DP_CanvasState *DP_ops_layer_order(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   int order_count,
-                                   int (*get_order)(void *, int), void *user);
+                                   int layer_id_count,
+                                   int (*get_layer_id)(void *, int),
+                                   void *user);
 
 DP_CanvasState *DP_ops_layer_tree_order(
     DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int order_count,
@@ -120,13 +122,37 @@ DP_CanvasStateChange
 DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
                  bool (*next)(void *, DP_PaintDrawDabsParams *), void *user);
 
-DP_CanvasState *DP_ops_timeline_frame_set(DP_CanvasState *cs, int frame_index,
-                                          bool insert, int layer_id_count,
-                                          int get_layer_id(void *, int),
-                                          void *user);
+DP_CanvasState *DP_ops_track_create(DP_CanvasState *cs, int new_id,
+                                    int insert_id, int source_id,
+                                    const char *title, size_t title_length);
 
-DP_CanvasState *DP_ops_timeline_frame_delete(DP_CanvasState *cs,
-                                             int frame_index);
+DP_CanvasState *DP_ops_track_retitle(DP_CanvasState *cs, int track_id,
+                                     const char *title, size_t title_length);
+
+DP_CanvasState *DP_ops_track_delete(DP_CanvasState *cs, int track_id);
+
+DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
+                                   int (*get_track_id)(void *, int),
+                                   void *user);
+
+DP_CanvasState *DP_ops_key_frame_set(DP_CanvasState *cs, int track_id,
+                                     int frame_index, int layer_id);
+
+DP_CanvasState *DP_ops_key_frame_copy(DP_CanvasState *cs, int track_id,
+                                      int frame_index, int source_track_id,
+                                      int source_frame_index);
+
+DP_CanvasState *DP_ops_key_frame_retitle(DP_CanvasState *cs, int track_id,
+                                         int frame_index, const char *title,
+                                         size_t title_length);
+
+DP_CanvasState *DP_ops_key_frame_layer_attributes(
+    DP_CanvasState *cs, DP_DrawContext *dc, int track_id, int frame_index,
+    int count, DP_KeyFrameLayer (*get_layer)(void *, int), void *user);
+
+DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
+                                        int frame_index, int move_track_id,
+                                        int move_frame_index);
 
 
 #endif

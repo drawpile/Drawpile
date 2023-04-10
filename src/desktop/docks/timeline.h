@@ -3,22 +3,25 @@
 #ifndef TIMELINE_DOCK_H
 #define TIMELINE_DOCK_H
 
+#include "desktop/widgets/timelinewidget.h"
 #include <QDockWidget>
 #include <QModelIndex>
 
+class QAction;
 class QCheckBox;
 class QSpinBox;
 
 namespace canvas {
-	class TimelineModel;
+class TimelineModel;
 }
 
 namespace drawdance {
-	class Message;
+class Message;
 }
 
 namespace widgets {
-    class TimelineWidget;
+class GroupedToolButton;
+class TimelineWidget;
 }
 
 namespace docks {
@@ -29,37 +32,35 @@ public:
 	Timeline(QWidget *parent);
 
 	void setTimeline(canvas::TimelineModel *model);
+	void setActions(const widgets::TimelineWidget::Actions &actions);
 
-	void setFps(int fps);
-	void setUseTimeline(bool useTimeline);
+	void setFrameCount(int frameCount);
+	void setManualMode(bool manualMode);
+	void setCurrentLayer(int layerId);
 
 	int currentFrame() const;
-	void setCurrentFrame(int frame, int layerId);
 
 public slots:
-	void setNextFrame();
-	void setCurrentLayer(int layerId);
-	void setPreviousFrame();
 	void setFeatureAccess(bool access);
 
 signals:
 	void timelineEditCommands(int count, const drawdance::Message *msgs);
-	void currentFrameChanged(int frame);
-	void layerSelectRequested(int layerId);
+	void frameSelected(int frame);
+	void trackHidden(int trackId, bool hidden);
+	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 
 private slots:
 	void setCompatibilityMode(bool compatibilityMode);
-	void onFrameChanged(int frame);
-	void onUseTimelineClicked();
-	void onFpsChanged();
-	void onFramesChanged();
-	void autoSelectLayer();
 
 private:
+	bool isCompatibilityMode() const;
+	bool isManualMode() const;
+
+	void
+	updateControlsEnabled(bool access, bool compatibilityMode, bool manualMode);
+
 	widgets::TimelineWidget *m_widget;
-	QCheckBox *m_useTimeline;
-	QSpinBox *m_currentFrame;
-	QSpinBox *m_fps;
+	bool m_featureAccessEnabled;
 };
 
 }

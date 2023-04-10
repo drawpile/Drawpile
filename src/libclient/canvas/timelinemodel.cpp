@@ -1,31 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "libclient/canvas/timelinemodel.h"
-#include "libclient/canvas/layerlist.h"
+extern "C" {
+#include <dpengine/key_frame.h>
+}
+
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/layerpropslist.h"
 #include "libclient/drawdance/timeline.h"
-#include "libclient/drawdance/frame.h"
 
-#include <QBitArray>
+#include <QRegularExpression>
+#include <QSet>
 
 namespace canvas {
 
-namespace {
-	struct Layer {
-		int layerId;
-		QString name;
-	};
-
-	struct Frame {
-		/// the original list of layers in this frame
-		QVector<int> layerIds;
-	};
+TimelineModel::TimelineModel(CanvasModel *canvas)
+	: QObject{canvas}
+	, m_canvas{canvas}
+	, m_tracks{}
+	, m_frameCount{0}
+{
 }
 
-TimelineModel::TimelineModel(CanvasModel *canvas)
-    : QObject(canvas), m_canvas(canvas), m_manualMode(true)
+void TimelineModel::setFrameCount(int frameCount)
 {
+	if(frameCount != m_frameCount) {
+		m_frameCount = frameCount;
+		emit frameCountChanged(frameCount);
+	}
 }
 
 uint8_t TimelineModel::localUserId() const
@@ -33,174 +36,81 @@ uint8_t TimelineModel::localUserId() const
 	return m_canvas->localUserId();
 }
 
-void TimelineModel::setLayers(const drawdance::LayerPropsList &lpl)
+int TimelineModel::getAvailableTrackId() const
 {
-	m_layers.clear();
-	m_layerIdsToRows.clear();
-	setLayersRecursive(lpl, 0, QString{});
-	setLayerIdsToAutoFrame(lpl);
-	emit layersChanged();
-	if(!m_manualMode) {
-		updateAutoFrames();
-		emit framesChanged();
-	}
-}
-
-void TimelineModel::setLayersRecursive(const drawdance::LayerPropsList &lpl, int group, const QString &prefix)
-{
-	int count = lpl.count();
-	for(int i = count - 1; i >= 0; --i) {
-		drawdance::LayerProps lp = lpl.at(i);
-		drawdance::LayerPropsList children;
-		if(lp.isGroup(&children) && !lp.isolated()) {
-			setLayersRecursive(children, lp.id(),
-				QString{"%1%2 / "}.arg(prefix).arg(lp.title()));
-		} else {
-			int id = lp.id();
-			m_layerIdsToRows[id] = m_layers.count();
-			m_layers.append(TimelineLayer{id, group,
-				QString{"%1%2"}.arg(prefix).arg(lp.title())});
+	int prefix = int(localUserId()) << 8;
+	QSet<int> takenIds;
+	for(const TimelineTrack &track : m_tracks) {
+		if((track.id & 0xff00) == prefix) {
+			takenIds.insert(track.id);
 		}
 	}
-}
 
-void TimelineModel::setLayerIdsToAutoFrame(const drawdance::LayerPropsList &lpl)
-{
-	m_layerIdsToAutoFrame.clear();
-	int count = lpl.count();
-	for(int i = count - 1; i >= 0; --i) {
-		setLayerIdsToAutoFrameRecursive(lpl.at(i), i + 1);
-	}
-}
-
-void TimelineModel::setLayerIdsToAutoFrameRecursive(drawdance::LayerProps lp, int autoFrame)
-{
-	m_layerIdsToAutoFrame.insert(lp.id(), autoFrame);
-	drawdance::LayerPropsList children;
-	if(lp.isGroup(&children)) {
-		int childCount = children.count();
-		for(int i = 0; i < childCount; ++i) {
-			setLayerIdsToAutoFrameRecursive(children.at(i), autoFrame);
+	for(int i = 0; i < 256; ++i) {
+		int id = prefix | i;
+		if(!takenIds.contains(id)) {
+			return id;
 		}
 	}
+
+	return 0;
 }
+
+QString TimelineModel::getAvailableTrackName(QString basename) const
+{
+	QRegularExpression suffixNumRe{QStringLiteral("\\s*([0-9])+\\z")};
+	QRegularExpressionMatch suffixNumMatch = suffixNumRe.match(basename);
+	if(suffixNumMatch.hasMatch()) {
+		basename = basename.mid(0, suffixNumMatch.capturedStart());
+	}
+
+	QRegularExpression re{QStringLiteral("\\A%1\\s*([0-9]+)\\z").arg(basename)};
+	int maxFound = 0;
+	for(const TimelineTrack &track : m_tracks) {
+		QRegularExpressionMatch match = re.match(track.title);
+		if(match.hasMatch()) {
+			maxFound = qMax(maxFound, match.captured(1).toInt());
+		}
+	}
+	return QStringLiteral("%1 %2").arg(basename).arg(maxFound + 1);
+}
+
+void TimelineModel::setLayers(const drawdance::LayerPropsList &) {}
 
 void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 {
-	int frameCount = tl.frameCount();
-	m_frames.resize(frameCount);
-	for(int i = 0; i < frameCount; ++i) {
-		const drawdance::Frame frame = tl.frameAt(i);
-		int layerIdCount = frame.layerIdCount();
-		QVector<int> &layerIds = m_frames[i].layerIds;
-		layerIds.resize(layerIdCount);
-		for (int j = 0; j < layerIdCount; ++j) {
-			layerIds[j] = frame.layerIdAt(j);
+	m_tracks.clear();
+	int trackCount = tl.trackCount();
+	m_tracks.reserve(trackCount);
+	for(int i = 0; i < trackCount; ++i) {
+		m_tracks.append(trackToModel(tl.trackAt(i)));
+	}
+	emit tracksChanged();
+}
+
+TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)
+{
+	int keyFrameCount = t.keyFrameCount();
+	QVector<TimelineKeyFrame> keyFrames;
+	keyFrames.reserve(keyFrameCount);
+	for(int i = 0; i < keyFrameCount; ++i) {
+		keyFrames.append(keyFrameToModel(t.keyFrameAt(i), t.frameIndexAt(i)));
+	}
+	return {t.id(), t.title(), t.hidden(), t.onionSkin(), keyFrames};
+}
+
+TimelineKeyFrame
+TimelineModel::keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex)
+{
+	QHash<int, bool> layerVisibility;
+	for(const DP_KeyFrameLayer &kfl : kf.layers()) {
+		if(DP_key_frame_layer_hidden(&kfl)) {
+			layerVisibility.insert(kfl.layer_id, false);
+		} else if(DP_key_frame_layer_revealed(&kfl)) {
+			layerVisibility.insert(kfl.layer_id, true);
 		}
 	}
-	emit framesChanged();
-}
-
-void TimelineModel::updateAutoFrames()
-{
-	m_autoFrames.clear();
-	int lastGroup = 0;
-	// This odd ruleset reflects the way the paint engine handles non-isolated
-	// groups in auto-timeline mode.
-	// TODO: treat non-isolated groups the same as isolated groups in auto-mode.
-	// This could be represented in the UI by showing all the layers in the group as
-	// selected.
-	for(auto i=m_layers.rbegin();i!=m_layers.rend();++i) {
-		if(i->group != 0 && i->group != lastGroup) {
-			m_autoFrames.append(TimelineFrame{{}});
-			lastGroup = i->group;
-		} else if(i->group != 0) {
-			// skip
-		} else {
-			m_autoFrames.append(TimelineFrame{{i->layerId}});
-		}
-	}
-}
-
-drawdance::Message TimelineModel::makeToggleCommand(int frameCol, int layerRow) const
-{
-	if(frameCol < 0 || frameCol > m_frames.size() || layerRow < 0 || layerRow >= m_layers.size()) {
-		return drawdance::Message::null();
-	}
-
-	QVector<uint16_t> layerIds;
-	int layerId = m_layers.at(layerRow).layerId;
-	if(frameCol == m_frames.size()) {
-		layerIds.append(layerId);
-	} else {
-		for(int frameLayerId : m_frames.at(frameCol).layerIds) {
-			layerIds.append(frameLayerId);
-		}
-		auto i = layerIds.indexOf(layerId);
-		if(i == -1) {
-			layerIds.append(layerId);
-		} else {
-			layerIds.remove(i);
-		}
-	}
-
-	return drawdance::Message::makeSetTimelineFrame(
-		m_canvas->localUserId(), frameCol, false, layerIds);
-}
-
-drawdance::Message TimelineModel::makeRemoveCommand(int frameCol) const
-{
-	if(frameCol < 0 || frameCol > m_frames.size()) {
-		return drawdance::Message::null();
-	}
-	return drawdance::Message::makeRemoveTimelineFrame(
-		m_canvas->localUserId(), frameCol);
-}
-
-void TimelineModel::setManualMode(bool manual)
-{
-	if(m_manualMode != manual) {
-		m_manualMode = manual;
-		if(!manual)
-			updateAutoFrames();
-		emit framesChanged();
-	}
-}
-
-int TimelineModel::getAutoFrameForLayerId(int layerId)
-{
-	return m_layerIdsToAutoFrame.value(layerId, -1);
-}
-
-int TimelineModel::nearestLayerTo(int frameIdx, int originalLayer) const
-{
-	const auto &frames = m_manualMode ? m_frames : m_autoFrames;
-	if(frameIdx < 1 || frameIdx > frames.size())
-		return 0;
-
-	frameIdx--;
-
-	if(!m_layerIdsToRows.contains(originalLayer))
-		return 0;
-
-	const int originalLayerRow = m_layerIdsToRows[originalLayer];
-
-	int nearestRow = -1;
-	int nearestDist = 999;
-
-	for(int layerId : frames[frameIdx].layerIds) {
-		if(layerId == originalLayer)
-			continue;
-
-		const int r = layerRow(layerId);
-		const int dist = qAbs(r-originalLayerRow);
-		if(dist < nearestDist) {
-			nearestRow = r;
-			nearestDist = dist;
-		}
-	}
-
-	return layerRowId(nearestRow);
+	return {kf.layerId(), kf.title(), frameIndex, layerVisibility};
 }
 
 }

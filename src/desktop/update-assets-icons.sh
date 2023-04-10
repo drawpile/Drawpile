@@ -10,7 +10,7 @@ update_icons() {
 		commit=v5.103.0
 		dir="$2"
 		case "$icon" in
-			drawpile_*)
+			drawpile_*|onion-*)
 				continue
 				;;
 			folder.svg | network-server-database.svg)

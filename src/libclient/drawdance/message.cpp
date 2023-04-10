@@ -138,6 +138,27 @@ Message Message::makeInternalSnapshot(uint8_t contextId)
     return Message{DP_msg_internal_snapshot_new(contextId)};
 }
 
+Message Message::makeKeyFrameLayerAttributes(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, const QVector<uint16_t> &layers)
+{
+    return Message{DP_msg_key_frame_layer_attributes_new(contextId, trackId, frameIndex, setUint16s, layers.size(), const_cast<uint16_t *>(layers.constData()))};
+}
+
+Message Message::makeKeyFrameSet(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint16_t sourceId, uint16_t sourceIndex, uint8_t source)
+{
+    return Message{DP_msg_key_frame_set_new(contextId, trackId, frameIndex, sourceId, sourceIndex, source)};
+}
+
+Message Message::makeKeyFrameRetitle(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, const QString &title)
+{
+    QByteArray bytes = title.toUtf8();
+    return Message{DP_msg_key_frame_retitle_new(contextId, trackId, frameIndex, bytes.constData(), bytes.length())};
+}
+
+Message Message::makeKeyFrameDelete(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint16_t moveTrackId, uint16_t moveFrameIndex)
+{
+    return Message{DP_msg_key_frame_delete_new(contextId, trackId, frameIndex, moveTrackId, moveFrameIndex)};
+}
+
 Message Message::makeLaserTrail(uint8_t contextId, uint32_t color, uint8_t persistence)
 {
     return Message{DP_msg_laser_trail_new(contextId, color, persistence)};
@@ -258,6 +279,28 @@ Message Message::makeSetMetadataInt(uint8_t contextId, uint8_t field, int32_t va
     return Message{DP_msg_set_metadata_int_new(contextId, field, value)};
 }
 
+Message Message::makeTrackCreate(uint8_t contextId, uint16_t id, uint16_t insertId, uint16_t sourceId, const QString &title)
+{
+    QByteArray bytes = title.toUtf8();
+    return Message{DP_msg_track_create_new(contextId, id, insertId, sourceId, bytes.constData(), bytes.length())};
+}
+
+Message Message::makeTrackDelete(uint8_t contextId, uint16_t id)
+{
+    return Message{DP_msg_track_delete_new(contextId, id)};
+}
+
+Message Message::makeTrackOrder(uint8_t contextId, const QVector<uint16_t> &tracks)
+{
+    return Message{DP_msg_track_order_new(contextId, setUint16s, tracks.size(), const_cast<uint16_t *>(tracks.constData()))};
+}
+
+Message Message::makeTrackRetitle(uint8_t contextId, uint16_t id, const QString &title)
+{
+    QByteArray bytes = title.toUtf8();
+    return Message{DP_msg_track_retitle_new(contextId, id, bytes.constData(), bytes.length())};
+}
+
 Message Message::makeTrustedUsers(uint8_t contextId, const QVector<uint8_t> &users)
 {
     return Message{DP_msg_trusted_users_new(
@@ -267,16 +310,6 @@ Message Message::makeTrustedUsers(uint8_t contextId, const QVector<uint8_t> &use
 Message Message::makeUndo(uint8_t contextId, uint8_t overrideUser, bool redo)
 {
     return Message{DP_msg_undo_new(contextId, overrideUser, redo)};
-}
-
-Message Message::makeSetTimelineFrame(uint8_t contextId, uint16_t frame, bool insert, const QVector<uint16_t> &layerIds)
-{
-    return Message{DP_msg_set_timeline_frame_new(contextId, frame, insert, setUint16s, layerIds.count(), const_cast<uint16_t *>(layerIds.constData()))};
-}
-
-Message Message::makeRemoveTimelineFrame(uint8_t contextId, uint16_t frame)
-{
-    return Message{DP_msg_remove_timeline_frame_new(contextId, frame)};
 }
 
 Message Message::makeUndoDepth(uint8_t contextId, uint8_t depth)
@@ -338,6 +371,15 @@ Message Message::makeLocalChangeBackgroundColor(const QColor &color)
 Message Message::makeLocalChangeBackgroundClear()
 {
     return Message{DP_local_state_msg_background_tile_new(nullptr, nullptr)};
+}
+
+Message Message::makeLocalChangeTrackVisibility(int trackId, bool hidden)
+{
+    return Message{DP_local_state_msg_track_visibility_new(trackId, hidden)};
+}
+Message Message::makeLocalChangeTrackOnionSkin(int trackId, bool onionSkin)
+{
+    return Message{DP_local_state_msg_track_onion_skin_new(trackId, onionSkin)};
 }
 
 

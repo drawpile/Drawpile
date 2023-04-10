@@ -457,6 +457,14 @@ static DP_LayerListEntry *get_layer_list_entry(DP_LayerRoutesEntry *lre,
     return DP_layer_list_at_noinc(ll, last_index);
 }
 
+DP_LayerListEntry *DP_layer_routes_entry_layer(DP_LayerRoutesEntry *lre,
+                                               DP_CanvasState *cs)
+{
+    DP_ASSERT(lre);
+    DP_ASSERT(cs);
+    return get_layer_list_entry(lre, cs);
+}
+
 DP_LayerContent *DP_layer_routes_entry_content(DP_LayerRoutesEntry *lre,
                                                DP_CanvasState *cs)
 {

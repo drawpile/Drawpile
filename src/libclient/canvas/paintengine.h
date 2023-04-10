@@ -21,6 +21,7 @@ struct DP_Mutex;
 
 namespace drawdance {
 class LayerPropsList;
+class ViewModeBuffer;
 }
 
 namespace canvas {
@@ -70,7 +71,9 @@ public:
 	QImage getLayerImage(int id, const QRect &rect = QRect()) const;
 
 	//! Render a frame
-	QImage getFrameImage(int index, const QRect &rect = QRect()) const;
+	QImage getFrameImage(
+		const drawdance::ViewModeBuffer &vmb, int index,
+		const QRect &rect = QRect()) const;
 
 	//! Receive and handle messages, returns how many messages were actually
 	//! pushed to the paint engine.
@@ -125,9 +128,11 @@ public:
 	void setLocalDrawingInProgress(bool localDrawingInProgress);
 
 	void setLayerVisibility(int layerId, bool hidden);
+	void setTrackVisibility(int trackId, bool hidden);
+	void setTrackOnionSkin(int trackId, bool onionSkin);
 
-	//! Set layerstack rendering mode (normal, solo, frame, onionskin)
-	void setViewMode(DP_ViewMode vm, bool censor, bool enableOnionSkins);
+	//! Set layerstack rendering mode (normal, solo, frame)
+	void setViewMode(DP_ViewMode vm, bool censor);
 
 	//! Is the "censor" view mode flag set?
 	bool isCensored() const;
@@ -136,7 +141,6 @@ public:
 	void setViewLayer(int id);
 
 	//! Set the active view frame (for frame and onionskin modes)
-	//! This index is 1-based like in the UI, not 0-based like in Drawdance.
 	void setViewFrame(int frame);
 
 	void setOnionSkins(
@@ -276,7 +280,6 @@ private:
 	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 	int m_sampleColorLastDiameter;
 	DP_OnionSkins *m_onionSkins;
-	bool m_enableOnionSkins;
 	int m_undoDepthLimit;
 };
 

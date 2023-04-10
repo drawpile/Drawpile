@@ -25,6 +25,7 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_ViewModeBuffer DP_ViewModeBuffer;
 
 
 typedef struct DP_SaveFormat {
@@ -61,11 +62,13 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
 
 typedef bool (*DP_SaveAnimationProgressFn)(void *user, double progress);
 
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs,
+                                       DP_ViewModeBuffer *vmb, const char *path,
                                        DP_SaveAnimationProgressFn progress_fn,
                                        void *user);
 
-DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
+                                    const char *path,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user);
 

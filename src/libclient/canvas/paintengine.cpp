@@ -15,6 +15,7 @@ extern "C" {
 #include "libclient/drawdance/layerpropslist.h"
 #include "libclient/drawdance/message.h"
 #include "libclient/drawdance/perf.h"
+#include "libclient/drawdance/viewmode.h"
 
 #include <QPainter>
 #include <QSet>
@@ -42,7 +43,6 @@ PaintEngine::PaintEngine(
 	, m_painterMutex{nullptr}
 	, m_sampleColorLastDiameter(-1)
 	, m_onionSkins{nullptr}
-	, m_enableOnionSkins{false}
 	, m_undoDepthLimit{DP_UNDO_DEPTH_DEFAULT}
 {
 	m_painterMutex = DP_mutex_new();
@@ -94,6 +94,7 @@ void PaintEngine::reset(
 	m_paintEngine.reset(
 		m_acls, m_snapshotQueue, localUserId, PaintEngine::onPlayback,
 		PaintEngine::onDumpPlayback, this, canvasState, player);
+	m_paintEngine.setOnionSkins(m_onionSkins);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
@@ -284,13 +285,24 @@ void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 	receiveMessages(false, 1, &msg);
 }
 
-void PaintEngine::setViewMode(
-	DP_ViewMode vm, bool censor, bool enableOnionSkins)
+void PaintEngine::setTrackVisibility(int trackId, bool hidden)
+{
+	drawdance::Message msg =
+		drawdance::Message::makeLocalChangeTrackVisibility(trackId, hidden);
+	receiveMessages(false, 1, &msg);
+}
+
+void PaintEngine::setTrackOnionSkin(int trackId, bool onionSkin)
+{
+	drawdance::Message msg =
+		drawdance::Message::makeLocalChangeTrackOnionSkin(trackId, onionSkin);
+	receiveMessages(false, 1, &msg);
+}
+
+void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 {
 	m_paintEngine.setViewMode(vm);
 	m_paintEngine.setRevealCensored(!censor);
-	m_enableOnionSkins = enableOnionSkins;
-	m_paintEngine.setOnionSkins(m_enableOnionSkins ? m_onionSkins : nullptr);
 }
 
 bool PaintEngine::isCensored() const
@@ -322,9 +334,7 @@ void PaintEngine::setOnionSkins(
 
 	DP_OnionSkins *prev_oss = m_onionSkins;
 	m_onionSkins = oss;
-	if(m_enableOnionSkins) {
-		m_paintEngine.setOnionSkins(m_onionSkins);
-	}
+	m_paintEngine.setOnionSkins(m_onionSkins);
 	DP_onion_skins_free(prev_oss);
 }
 
@@ -335,7 +345,7 @@ void PaintEngine::setViewLayer(int id)
 
 void PaintEngine::setViewFrame(int frame)
 {
-	m_paintEngine.setActiveFrameIndex(frame - 1); // 1-based to 0-based index.
+	m_paintEngine.setActiveFrameIndex(frame);
 }
 
 void PaintEngine::setInspectContextId(unsigned int contextId)
@@ -598,14 +608,16 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 	}
 }
 
-QImage PaintEngine::getFrameImage(int index, const QRect &rect) const
+QImage PaintEngine::getFrameImage(
+	const drawdance::ViewModeBuffer &vmb, int index, const QRect &rect) const
 {
 	drawdance::CanvasState cs = viewCanvasState();
 	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
 	if(area.isEmpty()) {
 		return QImage{};
 	}
-	DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs.get(), index);
+	DP_ViewModeFilter vmf =
+		DP_view_mode_filter_make_frame(vmb.get(), cs.get(), index, nullptr);
 	return cs.toFlatImage(true, true, &area, &vmf);
 }
 

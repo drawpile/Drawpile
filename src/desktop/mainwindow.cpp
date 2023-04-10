@@ -503,13 +503,14 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockNavigator->setCanvasModel(canvas);
 	m_dockTimeline->setTimeline(canvas->timeline());
 
-	m_dockTimeline->setFps(canvas->metadata()->framerate());
-	m_dockTimeline->setUseTimeline(canvas->metadata()->useTimeline());
-	connect(canvas->metadata(), &canvas::DocumentMetadata::framerateChanged, m_dockTimeline, &docks::Timeline::setFps);
-	connect(canvas->metadata(), &canvas::DocumentMetadata::useTimelineChanged, m_dockTimeline, &docks::Timeline::setUseTimeline);
+	m_dockTimeline->setFrameCount(canvas->metadata()->frameCount());
+	m_dockTimeline->setManualMode(canvas->metadata()->useTimeline());
+	connect(canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, m_dockTimeline, &docks::Timeline::setFrameCount);
+	connect(canvas->metadata(), &canvas::DocumentMetadata::useTimelineChanged, m_dockTimeline, &docks::Timeline::setManualMode);
 
-	connect(m_dockTimeline, &docks::Timeline::currentFrameChanged, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
-	connect(m_dockTimeline, &docks::Timeline::layerSelectRequested, m_dockLayers, &docks::LayerList::selectLayer);
+	connect(m_dockTimeline, &docks::Timeline::frameSelected, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
+	connect(m_dockTimeline, &docks::Timeline::trackHidden, canvas->paintEngine(), &canvas::PaintEngine::setTrackVisibility);
+	connect(m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, canvas->paintEngine(), &canvas::PaintEngine::setTrackOnionSkin);
 
 	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
@@ -686,7 +687,6 @@ void MainWindow::toggleLayerViewMode()
 	QAction *actions[] = {
 		getAction("layerviewcurrentlayer"),
 		getAction("layerviewcurrentframe"),
-		getAction("layerviewonionskin"),
 	};
 	for (QAction *action : actions) {
 		if (action->isChecked() && m_lastLayerViewMode == action) {
@@ -705,25 +705,18 @@ void MainWindow::updateLayerViewMode()
 	const bool censor = !getAction("layerviewuncensor")->isChecked();
 
 	DP_ViewMode mode;
-	bool enableOnionSkins;
 	QAction *action;
 	if((action = getAction("layerviewcurrentlayer"))->isChecked()) {
 		mode = DP_VIEW_MODE_LAYER;
-		enableOnionSkins = false;
 	} else if((action = getAction("layerviewcurrentframe"))->isChecked()) {
 		mode = DP_VIEW_MODE_FRAME;
-		enableOnionSkins = false;
-	} else if((action = getAction("layerviewonionskin"))->isChecked()) {
-		mode = DP_VIEW_MODE_FRAME;
-		enableOnionSkins = true;
 	} else {
 		action = getAction("layerviewnormal");
 		mode = DP_VIEW_MODE_NORMAL;
-		enableOnionSkins = false;
 	}
 	m_lastLayerViewMode = action;
 
-	m_doc->canvas()->paintEngine()->setViewMode(mode, censor, enableOnionSkins);
+	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
 	updateLockWidget();
 }
 
@@ -2949,7 +2942,6 @@ void MainWindow::setupActions()
 
 	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
 
-	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
 
 	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
@@ -2981,8 +2973,6 @@ void MainWindow::setupActions()
 	}
 #endif
 
-	m_currentdoctools->addAction(showFlipbook);
-
 	connect(layoutsAction, &QAction::triggered, this, &MainWindow::showLayoutsDialog);
 
 	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
@@ -3013,8 +3003,6 @@ void MainWindow::setupActions()
 		m_splitter->setSizes(sizes);
 	});
 
-	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
-
 	connect(zoomin, &QAction::triggered, m_view, &widgets::CanvasView::zoomin);
 	connect(zoomout, &QAction::triggered, m_view, &widgets::CanvasView::zoomout);
 	connect(zoomorig, &QAction::triggered, this, [this]() { m_view->setZoom(100.0); });
@@ -3043,7 +3031,6 @@ void MainWindow::setupActions()
 	viewmenu->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
 	viewmenu->addAction(toggleChat);
-	viewmenu->addAction(showFlipbook);
 	viewmenu->addSeparator();
 
 	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));
@@ -3064,7 +3051,6 @@ void MainWindow::setupActions()
 	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal")).checkable().checked();
 	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Current Layer Only")).shortcut("Home").checkable();
 	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Current Frame Only")).shortcut("Shift+Home").checkable();
-	QAction *layerViewOnionSkin = makeAction("layerviewonionskin", tr("Onion Skin")).shortcut("Ctrl+Shift+O").checkable();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 	m_lastLayerViewMode = layerViewNormal;
 
@@ -3073,13 +3059,11 @@ void MainWindow::setupActions()
 	layerViewModeGroup->addAction(layerViewNormal);
 	layerViewModeGroup->addAction(layerViewCurrentLayer);
 	layerViewModeGroup->addAction(layerViewCurrentFrame);
-	layerViewModeGroup->addAction(layerViewOnionSkin);
 
 	QMenu *layerViewMenu = viewmenu->addMenu(tr("Layer View Mode"));
 	layerViewMenu->addAction(layerViewNormal);
 	layerViewMenu->addAction(layerViewCurrentLayer);
 	layerViewMenu->addAction(layerViewCurrentFrame);
-	layerViewMenu->addAction(layerViewOnionSkin);
 	viewmenu->addAction(layerUncensor);
 
 	connect(layerViewModeGroup, &QActionGroup::triggered, this, &MainWindow::toggleLayerViewMode);
@@ -3113,17 +3097,11 @@ void MainWindow::setupActions()
 	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure");
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty");
 
-	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete);
-
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
-	QAction *nextFrameAct = makeAction("frame-next", tr("Next Frame")).shortcut("Alt+Shift+X");
-	QAction *prevFrameAct = makeAction("frame-prev", tr("Previous Frame")).shortcut("Alt+Shift+Z");
 
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
-	connect(nextFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setNextFrame);
-	connect(prevFrameAct, &QAction::triggered, m_dockTimeline, &docks::Timeline::setPreviousFrame);
 
 	QMenu *layerMenu = menuBar()->addMenu(tr("&Layer"));
 	layerMenu->addAction(layerAdd);
@@ -3136,11 +3114,56 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerUpAct);
 	layerMenu->addAction(layerDownAct);
 
-	layerMenu->addSeparator();
-	layerMenu->addAction(nextFrameAct);
-	layerMenu->addAction(prevFrameAct);
+	//
+	// Animation menu
+	//
+	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
+	QAction *manualModeSet = makeAction("manual-mode-set", tr("Enable Timeline")).checkable();
+	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count..."));
+	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)..."));
+	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", QString{}).icon("keyframe-add").shortcut("Ctrl+Shift+F");
+	QAction *keyFrameSetEmpty = makeAction("key-frame-set-empty", tr("Set Blank Key Frame")).icon("keyframe-disable").shortcut("Ctrl+Shift+B");
+	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
+	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
+	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add");
+	QAction *trackVisible = makeAction("track-visible", tr("Track Visible")).checkable();
+	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin")).checkable();
+	QAction *trackDuplicate = makeAction("track-duplicate", tr("Duplicate Track")).icon("edit-copy");
+	QAction *trackRetitle = makeAction("track-retitle", tr("Rename Track")).icon("edit-rename");
+	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty");
+	QAction *frameNext = makeAction("frame-next", tr("Next Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+L");
+	QAction *framePrev = makeAction("frame-prev", tr("Previous Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+H");
+	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K");
+	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J");
 
+	m_currentdoctools->addAction(showFlipbook);
+	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, keyFrameSetLayer);
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, manualModeSet, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow});
 
+	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
+
+	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
+	animationMenu->addAction(showFlipbook);
+	animationMenu->addAction(manualModeSet);
+	animationMenu->addAction(frameCountSet);
+	animationMenu->addAction(framerateSet);
+	animationMenu->addSeparator();
+	animationMenu->addAction(keyFrameSetLayer);
+	animationMenu->addAction(keyFrameSetEmpty);
+	animationMenu->addAction(keyFrameProperties);
+	animationMenu->addAction(keyFrameDelete);
+	animationMenu->addSeparator();
+	animationMenu->addAction(trackAdd);
+	animationMenu->addAction(trackDuplicate);
+	animationMenu->addAction(trackRetitle);
+	animationMenu->addAction(trackDelete);
+	animationMenu->addAction(trackVisible);
+	animationMenu->addAction(trackOnionSkin);
+	animationMenu->addSeparator();
+	animationMenu->addAction(frameNext);
+	animationMenu->addAction(framePrev);
+	animationMenu->addAction(trackAbove);
+	animationMenu->addAction(trackBelow);
 
 	//
 	// Session menu
