@@ -1750,13 +1750,39 @@ static size_t read_littleendian_size(const unsigned char *d)
     return DP_uint64_to_size(DP_read_littleendian_uint64(d));
 }
 
+static bool check_index_magic(DP_ReadIndexContext *c)
+{
+    DP_BufferedInput *input = &c->input;
+    if (read_index_input(input, INDEX_MAGIC_LENGTH)) {
+        if (memcmp(input->buffer, INDEX_MAGIC, INDEX_MAGIC_LENGTH) == 0) {
+            return true;
+        }
+        else {
+            DP_error_set("File does not start with magic '" INDEX_MAGIC "\\0'");
+        }
+    }
+    return false;
+}
+
+static bool check_index_version(DP_ReadIndexContext *c)
+{
+    int version;
+    if (READ_INDEX(&c->input, uint16, version)) {
+        if (version == INDEX_VERSION) {
+            return true;
+        }
+        else {
+            DP_error_set("Index version mismatch: expected %d, got %d",
+                         INDEX_VERSION, version);
+        }
+    }
+    return false;
+}
+
 static bool read_index_header(DP_ReadIndexContext *c)
 {
-    uint16_t version;
     DP_BufferedInput *input = &c->input;
-    return read_index_input(input, INDEX_MAGIC_LENGTH)
-        && memcmp(input->buffer, INDEX_MAGIC, INDEX_MAGIC_LENGTH) == 0
-        && READ_INDEX(input, uint16, version) && version == INDEX_VERSION
+    return check_index_magic(c) && check_index_version(c)
         && READ_INDEX(input, uint32, c->message_count)
         && READ_INDEX_SIZE(input, c->index_offset);
 }
