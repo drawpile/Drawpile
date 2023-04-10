@@ -31,7 +31,6 @@
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
 #include <dpmsg/text_writer.h>
-#include <dpconfig.h>
 
 #define MIN_INTERVAL 500
 #define MAX_INTERVAL UINT16_MAX

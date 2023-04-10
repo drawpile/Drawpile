@@ -45,6 +45,7 @@ dp_target_sources(dpcommon
 )
 
 target_include_directories(dpcommon ${SUBPROJECT_INCLUDE} PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/config>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )

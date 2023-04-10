@@ -30,7 +30,6 @@
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
 #include <dpmsg/message.h>
-#include <dpconfig.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>

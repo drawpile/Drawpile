@@ -21,7 +21,8 @@
  */
 #ifndef DPCOMMON_COMMON_H
 #define DPCOMMON_COMMON_H
-#include <assert.h>   // IWYU pragma: export
+#include <assert.h> // IWYU pragma: export
+#include <dpconfig.h>
 #include <stdalign.h> // IWYU pragma: export
 #include <stdarg.h>   // IWYU pragma: export
 #include <stdbool.h>  // IWYU pragma: export

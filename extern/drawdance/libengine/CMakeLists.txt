@@ -77,13 +77,11 @@ dp_target_sources(dpengine
     dpengine/view_mode.h
 )
 
-target_include_directories(dpengine ${SUBPROJECT_INCLUDE}
-    PUBLIC
+target_include_directories(dpengine ${SUBPROJECT_INCLUDE} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-    PRIVATE
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/config>
 )
+
 target_link_libraries(dpengine PRIVATE
     $<BUILD_INTERFACE:mypaint>
     $<BUILD_INTERFACE:uthash>
