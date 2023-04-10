@@ -201,6 +201,7 @@ struct DP_PaintEngine {
     struct {
         DP_Player *player;
         long long msecs;
+        bool next_has_time;
         DP_PaintEnginePlaybackFn fn;
         DP_PaintEngineDumpPlaybackFn dump_fn;
         void *user;
@@ -792,6 +793,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->record.get_time_ms_user = get_time_ms_user;
     pe->playback.player = player_or_null;
     pe->playback.msecs = 0;
+    pe->playback.next_has_time = true;
     pe->playback.fn = playback_fn;
     pe->playback.dump_fn = dump_playback_fn;
     pe->playback.user = playback_user;
@@ -1081,7 +1083,8 @@ static void push_playback(DP_PaintEnginePushMessageFn push_message, void *user,
     push_message(user, DP_msg_internal_playback_new(0, position));
 }
 
-static long long guess_message_msecs(DP_MessageType type)
+static long long guess_message_msecs(DP_Message *msg, DP_MessageType type,
+                                     bool *out_next_has_time)
 {
     // The recording format doesn't contain proper timing information, so we
     // just make some wild guesses as to how long each message takes to try to
@@ -1105,10 +1108,22 @@ static long long guess_message_msecs(DP_MessageType type)
     case DP_MSG_LAYER_VISIBILITY:
     case DP_MSG_ANNOTATION_RESHAPE:
     case DP_MSG_ANNOTATION_EDIT:
-    case DP_MSG_UNDO:
         return 20;
     case DP_MSG_CANVAS_RESIZE:
         return 60;
+    case DP_MSG_UNDO:
+        // An undo for user 0 means that the next message is actually an undone
+        // entry, which happens at the start of recordings. We treat those
+        // messages as having a length of 0, since they just get appended to the
+        // history and aren't visible.
+        if (DP_message_context_id(msg) == 0
+            && DP_msg_undo_override_user(DP_message_internal(msg)) == 0) {
+            *out_next_has_time = false;
+            return 0;
+        }
+        else {
+            return 20;
+        }
     default:
         return 0;
     }
@@ -1164,7 +1179,13 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
                     ++done;
                 }
                 else if (what == PLAYBACK_STEP_MSECS) {
-                    done += guess_message_msecs(type);
+                    if (pe->playback.next_has_time) {
+                        done += guess_message_msecs(
+                            msg, type, &pe->playback.next_has_time);
+                    }
+                    else {
+                        pe->playback.next_has_time = true;
+                    }
                 }
                 push_message(user, msg);
             }

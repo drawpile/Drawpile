@@ -64,6 +64,10 @@ typedef struct DP_UserCursorBuffer {
 
 typedef void (*DP_CanvasHistorySavePointFn)(void *user, DP_CanvasState *cs,
                                             bool snapshot_requested);
+typedef bool (*DP_CanvasHistoryAcceptResetStateFn)(void *user,
+                                                   DP_CanvasState *cs);
+typedef bool (*DP_CanvasHistoryAcceptResetMessageFn)(void *user,
+                                                     DP_Message *msg);
 
 typedef enum DP_DumpType {
     DP_DUMP_REMOTE_MESSAGE,
@@ -136,6 +140,10 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
 void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
                                                  DP_DrawContext *dc, int count,
                                                  DP_Message **msgs);
+
+bool DP_canvas_history_reset_image_new(
+    DP_CanvasHistory *ch, DP_CanvasHistoryAcceptResetStateFn accept_state,
+    DP_CanvasHistoryAcceptResetMessageFn accept_message, void *user);
 
 // May return NULL if something goes wrong. Takes ownership of the output and
 // header, so no matter the return value, the caller must not free it.

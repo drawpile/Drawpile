@@ -80,6 +80,7 @@ struct DP_CanvasHistory {
     int used;
     DP_CanvasHistoryEntry *entries;
     DP_AffectedIndirectAreas aia;
+    bool mark_command_done;
     struct {
         int start;
         int fallbehind;
@@ -516,6 +517,7 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
         1,
         DP_malloc(entries_size),
         {0},
+        true,
         {0, 0, DP_QUEUE_NULL},
         {save_point_fn, save_point_user},
         {0, {0}},
@@ -691,6 +693,7 @@ static void reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs)
     set_initial_entry(ch, cs);
     ch->used = 1;
     ch->offset = 0;
+    ch->mark_command_done = true;
     validate_history(ch);
 }
 
@@ -833,21 +836,23 @@ static void ensure_append_capacity(DP_CanvasHistory *ch)
     }
 }
 
-static int append_to_history_noinc(DP_CanvasHistory *ch, DP_Message *msg)
+static int append_to_history_noinc(DP_CanvasHistory *ch, DP_Message *msg,
+                                   DP_Undo undo)
 {
     DP_ASSERT(DP_message_type(msg) != DP_MSG_UNDO);
     ensure_append_capacity(ch);
     int index = ch->used;
     HISTORY_DEBUG("Append history entry %d", index);
-    ch->entries[index] = (DP_CanvasHistoryEntry){DP_UNDO_DONE, msg, NULL};
+    ch->entries[index] = (DP_CanvasHistoryEntry){undo, msg, NULL};
     ch->used = index + 1;
     return index;
 }
 
-static int append_to_history_inc(DP_CanvasHistory *ch, DP_Message *msg)
+static int append_to_history_inc(DP_CanvasHistory *ch, DP_Message *msg,
+                                 DP_Undo undo)
 {
     DP_ASSERT(DP_message_type(msg) != DP_MSG_UNDO);
-    return append_to_history_noinc(ch, DP_message_incref(msg));
+    return append_to_history_noinc(ch, DP_message_incref(msg), undo);
 }
 
 
@@ -1357,15 +1362,12 @@ static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
 
 static bool handle_remote_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                   DP_Message *msg, DP_MessageType type,
-                                  bool local_drawing_in_progress)
+                                  bool local_drawing_in_progress, int index)
 {
     DP_ASSERT(DP_message_type(msg) == type);
     HISTORY_DEBUG("Handle remote %s command from user %u",
                   DP_message_type_enum_name_unprefixed(type),
                   DP_message_context_id(msg));
-
-    int index = type == DP_MSG_UNDO ? -1 : append_to_history_inc(ch, msg);
-
     DP_ForkAction fork_action =
         reconcile_remote_command(ch, msg, type, local_drawing_in_progress);
     switch (fork_action) {
@@ -1376,6 +1378,39 @@ static bool handle_remote_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
     default:
         DP_ASSERT(fork_action == DP_FORK_ACTION_ALREADY_DONE);
         return true;
+    }
+}
+
+static bool handle_remote_message(DP_CanvasHistory *ch, DP_DrawContext *dc,
+                                  DP_Message *msg, DP_MessageType type,
+                                  bool local_drawing_in_progress)
+{
+    switch (type) {
+    case DP_MSG_INTERNAL:
+        return handle_internal(ch, DP_msg_internal_cast(msg));
+    case DP_MSG_UNDO:
+        // An undo of user 0 means the next command should be appended as an
+        // undone state. This is so we can get a proper undo history when
+        // starting a recording or jumping to a recording index.
+        if (get_undo_context_id(msg, DP_message_internal(msg)) == 0) {
+            ch->mark_command_done = false;
+            return true;
+        }
+        else {
+            return handle_remote_command(ch, dc, msg, type,
+                                         local_drawing_in_progress, -1);
+        }
+    default:
+        if (ch->mark_command_done) {
+            return handle_remote_command(
+                ch, dc, msg, type, local_drawing_in_progress,
+                append_to_history_inc(ch, msg, DP_UNDO_DONE));
+        }
+        else {
+            ch->mark_command_done = true;
+            append_to_history_inc(ch, msg, DP_UNDO_UNDONE);
+            return true;
+        }
     }
 }
 
@@ -1398,13 +1433,9 @@ bool DP_canvas_history_handle(DP_CanvasHistory *ch, DP_DrawContext *dc,
     DP_MessageType type = DP_message_type(msg);
     DP_PERF_BEGIN_DETAIL(fn, "handle", "type=%d,local_drawing=%d", (int)type,
                          local_drawing_in_progress);
-
-    bool ok = type == DP_MSG_INTERNAL
-                ? handle_internal(ch, DP_msg_internal_cast(msg))
-                : handle_remote_command(ch, dc, msg, type,
-                                        local_drawing_in_progress);
+    bool ok =
+        handle_remote_message(ch, dc, msg, type, local_drawing_in_progress);
     validate_history(ch);
-
     DP_PERF_END(fn);
     return ok;
 }
@@ -1458,7 +1489,7 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
     int offset = 0;
     for (int i = 0; i < count; ++i) {
         DP_Message *msg = msgs[i];
-        append_to_history_noinc(ch, msg);
+        append_to_history_noinc(ch, msg, DP_UNDO_DONE);
         DP_ForkAction fork_action = reconcile_remote_command(
             ch, msg, DP_message_type(msg), local_drawing_in_progress);
         switch (fork_action) {
@@ -1523,76 +1554,104 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
 }
 
 
-struct DP_RecorderMessageParams {
+static int find_first_reachable_state_index(DP_CanvasHistoryEntry *entries,
+                                            int entries_used,
+                                            int undo_depth_limit,
+                                            DP_CanvasState **out_cs)
+{
+    int start = entries_used - 1;
+    int depth = 0;
+    for (; start > 0 && depth < undo_depth_limit; --start) {
+        if (is_undo_point_entry(&entries[start])) {
+            ++depth;
+        }
+    }
+    // There must be a save point at or before the furthest undo point.
+    while (start > 0 && !entries[start].state) {
+        --start;
+    }
+
+    DP_CanvasHistoryEntry *entry = &entries[start];
+    DP_ASSERT(entry->state);
+    *out_cs = entry->state;
+    // If the starting point is not an undo point, the command inside the entry
+    // has already been applied to the canvas state, so don't record it again.
+    return is_undo_point_entry(entry) ? start : start + 1;
+}
+
+bool DP_canvas_history_reset_image_new(
+    DP_CanvasHistory *ch, DP_CanvasHistoryAcceptResetStateFn accept_state,
+    DP_CanvasHistoryAcceptResetMessageFn accept_message, void *user)
+{
+    DP_ASSERT(ch);
+    DP_ASSERT(accept_state);
+    DP_ASSERT(accept_message);
+
+    DP_CanvasHistoryEntry *entries = ch->entries;
+    int entries_used = ch->used;
+    int undo_depth_limit = ch->undo_depth_limit;
+
+    DP_CanvasState *cs;
+    int start = find_first_reachable_state_index(entries, entries_used,
+                                                 undo_depth_limit, &cs);
+    if (!accept_state(user, cs)) {
+        return false;
+    }
+
+    if (!accept_message(user, DP_msg_undo_depth_new(
+                                  0, DP_int_to_uint8(undo_depth_limit)))) {
+        return false;
+    }
+
+    for (int i = start; i < entries_used; ++i) {
+        DP_CanvasHistoryEntry *entry = &entries[i];
+        switch (entry->undo) {
+        case DP_UNDO_UNDONE:
+            // If this is an undone entry, prefix it with an undo by user 0.
+            // That's never a valid user for an undo otherwise, so it instead
+            // gets interpreted as meaning to mark the next command undone.
+            if (!accept_message(user, DP_msg_undo_new(0, 0, false))) {
+                return false;
+            }
+            // fallthrough
+        case DP_UNDO_DONE:
+            if (!accept_message(user, DP_message_incref(entry->msg))) {
+                return false;
+            }
+        default:
+            break;
+        }
+    }
+
+    return true;
+}
+
+
+struct DP_CanvasHistoryRecorderParams {
     DP_CanvasHistory *ch;
-    int first_entry_index;
-    int phase;
-    int current_index;
+    DP_RecorderType type;
+    JSON_Value *header;
+    DP_RecorderGetTimeMsFn get_time_fn;
+    void *get_time_user;
+    DP_Output *output;
+    DP_Recorder *r;
 };
 
-static DP_Message *
-get_recorder_init_acl(struct DP_RecorderMessageParams *params)
+static bool accept_recorder_state(void *user, DP_CanvasState *cs)
 {
-    params->phase = 1;
-    params->current_index = params->first_entry_index;
-    return DP_acl_state_msg_feature_access_all_new(0);
+    struct DP_CanvasHistoryRecorderParams *params = user;
+    DP_ASSERT(!params->r);
+    params->r = DP_recorder_new_inc(params->type, params->header, cs,
+                                    params->get_time_fn, params->get_time_user,
+                                    params->output);
+    return params->r != NULL;
 }
 
-static DP_Message *
-get_recorder_undo_depth(struct DP_RecorderMessageParams *params)
+static bool accept_recorder_message(void *user, DP_Message *msg)
 {
-    params->phase = 2;
-    params->current_index = params->first_entry_index;
-    return DP_msg_undo_depth_new(0,
-                                 DP_int_to_uint8(params->ch->undo_depth_limit));
-}
-
-static DP_Message *get_recorder_undo(struct DP_RecorderMessageParams *params)
-{
-    DP_CanvasHistory *ch = params->ch;
-    int used = ch->used;
-    for (int i = params->current_index; i < used; ++i) {
-        DP_CanvasHistoryEntry *entry = &ch->entries[i];
-        if (is_undo_point_entry(entry) && entry->undo == DP_UNDO_UNDONE) {
-            params->current_index = i + 1;
-            return DP_msg_undo_new(DP_message_context_id(entry->msg), 0, false);
-        }
-    }
-    // Out of undone undo points, we're done recording initial messages.
-    return NULL;
-}
-
-static DP_Message *get_recorder_entry(struct DP_RecorderMessageParams *params)
-{
-    DP_CanvasHistory *ch = params->ch;
-    int used = ch->used;
-    for (int i = params->current_index; i < used; ++i) {
-        DP_CanvasHistoryEntry *entry = &ch->entries[i];
-        DP_Undo undo = entry->undo;
-        if (undo == DP_UNDO_DONE || undo == DP_UNDO_UNDONE) {
-            params->current_index = i + 1;
-            return DP_message_incref(entry->msg);
-        }
-    }
-    // Out of messages, start the undo phase.
-    params->phase = 3;
-    params->current_index = params->first_entry_index;
-    return get_recorder_undo(params);
-}
-
-static DP_Message *get_recorder_message(void *user)
-{
-    struct DP_RecorderMessageParams *params = user;
-    switch (params->phase) {
-    case 0: // First make the ACL state allow anything.
-        return get_recorder_init_acl(params);
-    case 1: // Then get the the undo depth.
-        return get_recorder_undo_depth(params);
-    case 2: // Then all done or undone messages.
-        return get_recorder_entry(params);
-    default: // Then undos for every undone undo point.
-        return get_recorder_undo(params);
-    }
+    struct DP_CanvasHistoryRecorderParams *params = user;
+    DP_ASSERT(params->r);
+    return DP_recorder_message_push_noinc(params->r, msg);
 }
 
 DP_Recorder *DP_canvas_history_recorder_new(
@@ -1602,32 +1661,17 @@ DP_Recorder *DP_canvas_history_recorder_new(
     DP_ASSERT(ch);
     DP_ASSERT(header);
     DP_ASSERT(output);
-
-    int used = ch->used;
-    DP_Recorder *r = NULL;
-    int i;
-    for (i = 0; i < used; ++i) {
-        DP_CanvasHistoryEntry *entry = &ch->entries[i];
-        DP_CanvasState *cs = entry->state;
-        if (cs) {
-            r = DP_recorder_new_inc(type, header, cs, get_time_fn,
-                                    get_time_user, output);
-            if (r) {
-                if (!is_undo_point_entry(entry)) {
-                    ++i; // This is a command entry, don't duplicate it.
-                }
-                break;
-            }
-            else {
-                return NULL;
-            }
-        }
+    struct DP_CanvasHistoryRecorderParams params = {
+        ch, type, header, get_time_fn, get_time_user, output, NULL};
+    bool ok = DP_canvas_history_reset_image_new(
+        ch, accept_recorder_state, accept_recorder_message, &params);
+    if (ok && params.r) {
+        return params.r;
     }
-
-    DP_ASSERT(r); // There must be a canvas state somewhere in the history.
-    struct DP_RecorderMessageParams params = {ch, i, 0, 0};
-    DP_recorder_message_push_initial_noinc(r, get_recorder_message, &params);
-    return r;
+    else {
+        DP_recorder_free_join(params.r);
+        return NULL;
+    }
 }
 
 

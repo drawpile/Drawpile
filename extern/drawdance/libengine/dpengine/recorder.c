@@ -27,6 +27,7 @@
 #include <dpcommon/output.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
+#include <dpmsg/acl.h>
 #include <dpmsg/binary_writer.h>
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
@@ -172,6 +173,12 @@ static void write_reset_image_message(void *user, DP_Message *msg)
     }
 }
 
+static bool write_initial(DP_Recorder *r)
+{
+    return write_header(r)
+        && write_message_dec(r, DP_acl_state_msg_feature_access_all_new(0));
+}
+
 static bool shift_message(DP_Recorder *r, DP_Message **out_msg)
 {
     DP_Mutex *mutex = r->mutex;
@@ -194,7 +201,7 @@ static void run_recorder(void *user)
     DP_CanvasState *cs_or_null = args->cs_or_null;
     DP_free(args);
 
-    if (write_header(r)) {
+    if (write_initial(r)) {
         if (cs_or_null) {
             DP_reset_image_build(cs_or_null, 0, write_reset_image_message, r);
             DP_canvas_state_decref(cs_or_null);
@@ -316,27 +323,6 @@ JSON_Value *DP_recorder_header(DP_Recorder *r)
     return r->header;
 }
 
-void DP_recorder_message_push_initial_noinc(DP_Recorder *r,
-                                            DP_Message *(*get_next)(void *),
-                                            void *user)
-{
-    DP_ASSERT(r);
-    DP_ASSERT(get_next);
-    DP_Mutex *mutex = r->mutex;
-    DP_Semaphore *sem = r->sem;
-    DP_Queue *queue = &r->queue;
-    DP_MUTEX_MUST_LOCK(mutex);
-    int count = 0;
-    DP_Message *msg;
-    while ((msg = get_next(user))) {
-        DP_message_queue_push_noinc(queue, msg);
-        ++count;
-    }
-    DP_SEMAPHORE_MUST_POST_N(sem, count);
-    DP_MUTEX_MUST_UNLOCK(mutex);
-    r->last_timestamp = get_timestamp(r);
-}
-
 static bool push_message(DP_Recorder *r, DP_Message *msg, bool inc)
 {
     if (DP_atomic_get(&r->running)) {
@@ -353,9 +339,10 @@ static bool push_message(DP_Recorder *r, DP_Message *msg, bool inc)
                 queue, DP_msg_interval_new(0, clamped_interval));
             DP_SEMAPHORE_MUST_POST(sem);
         }
-        if(inc) {
+        if (inc) {
             DP_message_queue_push_inc(queue, msg);
-        } else {
+        }
+        else {
             DP_message_queue_push_noinc(queue, msg);
         }
         DP_SEMAPHORE_MUST_POST(sem);
@@ -364,7 +351,7 @@ static bool push_message(DP_Recorder *r, DP_Message *msg, bool inc)
         return true;
     }
     else {
-        if(!inc) {
+        if (!inc) {
             DP_message_decref(msg);
         }
         return false;

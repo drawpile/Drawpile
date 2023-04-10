@@ -771,10 +771,11 @@ unsigned char *get_message_buffer(void *user, size_t length)
     return DP_draw_context_pool_require(user, length);
 }
 
-static bool write_index_history_message(DP_BuildIndexEntryContext *e,
-                                        DP_Message *msg)
+static bool write_index_history_message_dec(DP_BuildIndexEntryContext *e,
+                                            DP_Message *msg)
 {
     size_t length = DP_message_serialize(msg, false, get_message_buffer, e->dc);
+    DP_message_decref(msg);
     if (length == 0) {
         DP_error_set("Error serializing history message %d",
                      e->message_count + 1);
@@ -794,98 +795,32 @@ static bool write_index_history_message(DP_BuildIndexEntryContext *e,
     }
 }
 
-static bool write_acl_init_history_message(DP_BuildIndexEntryContext *e)
+static bool init_reset_image(void *user, DP_CanvasState *cs)
 {
+    DP_BuildIndexEntryContext *e = user;
+    e->cs = cs;
     DP_Message *msg = DP_acl_state_msg_feature_access_all_new(0);
-    bool ok = write_index_history_message(e, msg);
-    DP_message_decref(msg);
-    return ok;
-}
-
-static bool write_undo_depth_history_message(DP_BuildIndexEntryContext *e,
-                                             DP_CanvasHistorySnapshot *chs)
-{
-    int undo_depth_limit =
-        DP_canvas_history_snapshot_history_undo_depth_limit(chs);
-    DP_Message *msg =
-        DP_msg_undo_depth_new(0, DP_int_to_uint8(undo_depth_limit));
-    bool ok = write_index_history_message(e, msg);
-    DP_message_decref(msg);
-    return ok;
+    return write_index_history_message_dec(e, msg);
 }
 
 static bool write_reset_image_message(void *user, DP_Message *msg)
 {
-    DP_BuildIndexEntryContext *e = user;
-    bool ok = write_index_history_message(e, msg);
-    DP_message_decref(msg);
-    return ok;
+    return write_index_history_message_dec(user, msg);
 }
 
-static bool write_index_history(DP_BuildIndexEntryContext *e,
-                                DP_CanvasHistorySnapshot *chs)
+static bool write_index_history(DP_BuildIndexEntryContext *e)
 {
-    // Find the oldest canvas state in the history, since that's the one still
-    // potentially reachable by undos that will follow.
-    int entry_count = DP_canvas_history_snapshot_history_count(chs);
-    int first_entry_index = -1;
-    for (int i = 0; i < entry_count; ++i) {
-        const DP_CanvasHistoryEntry *entry =
-            DP_canvas_history_snapshot_history_entry_at(chs, i);
-        if (entry->state) {
-            // If this is a drawing command, it's already been applied to the
-            // canvas state. We don't want to play it back again in that case.
-            first_entry_index =
-                DP_message_type(entry->msg) == DP_MSG_UNDO_POINT ? i : i + 1;
-            e->cs = entry->state;
-            break;
-        }
-    }
-
-    if (first_entry_index == -1) {
-        DP_error_set("No canvas state in history");
-        return false;
-    }
-
     bool error;
     size_t offset = DP_output_tell(e->output, &error);
     if (error) {
         return false;
     }
 
-    if (!write_acl_init_history_message(e)
-        || !write_undo_depth_history_message(e, chs)) {
+    if (!DP_canvas_history_reset_image_new(e->ch, init_reset_image,
+                                           write_reset_image_message, e)) {
         return false;
     }
-    // Write all done and undone messages, leave out gone ones.
-    for (int i = first_entry_index; i < entry_count; ++i) {
-        const DP_CanvasHistoryEntry *entry =
-            DP_canvas_history_snapshot_history_entry_at(chs, i);
-        DP_Undo undo = entry->undo;
-        if (undo == DP_UNDO_DONE || undo == DP_UNDO_UNDONE) {
-            if (!write_index_history_message(e, entry->msg)) {
-                return false;
-            }
-        }
-    }
-    // Write an undo for every undone undo point we wrote. This should restore
-    // the history to effectively the same state, including undo information.
-    DP_Message *undo_msg = DP_msg_undo_new(0, 0, false);
-    for (int i = first_entry_index; i < entry_count; ++i) {
-        const DP_CanvasHistoryEntry *entry =
-            DP_canvas_history_snapshot_history_entry_at(chs, i);
-        DP_Message *msg = entry->msg;
-        bool is_undone_undo_point = entry->undo == DP_UNDO_UNDONE
-                                 && DP_message_type(msg) == DP_MSG_UNDO_POINT;
-        if (is_undone_undo_point) {
-            DP_message_context_id_set(undo_msg, DP_message_context_id(msg));
-            if (!write_index_history_message(e, undo_msg)) {
-                DP_message_decref(undo_msg);
-                return false;
-            }
-        }
-    }
-    DP_message_decref(undo_msg);
+
     // The state of the permissions at this point.
     if (!DP_acl_state_reset_image_build(e->acls, 0, true,
                                         write_reset_image_message, e)) {
@@ -1424,14 +1359,11 @@ static bool write_index_canvas_state(DP_BuildIndexEntryContext *e)
 
 static bool write_index_snapshot(DP_BuildIndexEntryContext *e)
 {
-    DP_CanvasHistorySnapshot *chs = DP_canvas_history_snapshot_new(e->ch);
-    bool ok = write_index_history(e, chs) && write_index_layers(e)
+    bool ok = write_index_history(e) && write_index_layers(e)
            && write_index_annotations(e) && write_index_background_tile(e)
            && write_index_timeline(e) && write_index_metadata(e)
            && write_index_canvas_state(e);
-
     DP_free(e->annotation.buffer);
-    DP_canvas_history_snapshot_decref(chs);
     return ok;
 }
 

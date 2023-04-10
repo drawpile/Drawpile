@@ -55,10 +55,6 @@ DP_RecorderType DP_recorder_type(DP_Recorder *r);
 
 JSON_Value *DP_recorder_header(DP_Recorder *r);
 
-void DP_recorder_message_push_initial_noinc(DP_Recorder *r,
-                                            DP_Message *(*get_next)(void *),
-                                            void *user);
-
 bool DP_recorder_message_push_inc(DP_Recorder *r, DP_Message *msg);
 
 bool DP_recorder_message_push_noinc(DP_Recorder *r, DP_Message *msg);
