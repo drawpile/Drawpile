@@ -415,11 +415,11 @@ static DP_UserCursor draw_dabs_pixel(DP_DrawContext *dc,
 
 static float aspect_ratio_from_uint8(uint8_t aspect_ratio)
 {
-    if (aspect_ratio == 23) {
+    if (aspect_ratio == 0) {
         return 1.0f; // Fudged to be a perfectly round dab.
     }
     else {
-        return DP_uint8_to_float(aspect_ratio) / 25.755f + 0.1f;
+        return DP_uint8_to_float(aspect_ratio) / 28.333f + 1.0f;
     }
 }
 
