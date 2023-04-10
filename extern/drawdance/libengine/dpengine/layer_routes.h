@@ -66,11 +66,16 @@ void DP_layer_routes_decref_nullable(DP_LayerRoutes *lr_or_null);
 
 DP_LayerRoutesEntry *DP_layer_routes_search(DP_LayerRoutes *lr, int layer_id);
 
-DP_Message *DP_layer_routes_layer_tree_order_make(DP_LayerRoutes *lr,
-                                             DP_CanvasState *cs,
+DP_Message *DP_layer_routes_layer_order_make(DP_CanvasState *cs,
                                              unsigned int context_id,
                                              int source_id, int target_id,
-                                             bool into, bool below);
+                                             bool below);
+
+DP_Message *DP_layer_routes_layer_tree_order_make(DP_LayerRoutes *lr,
+                                                  DP_CanvasState *cs,
+                                                  unsigned int context_id,
+                                                  int source_id, int target_id,
+                                                  bool into, bool below);
 
 
 int DP_layer_routes_entry_layer_id(DP_LayerRoutesEntry *lre);
