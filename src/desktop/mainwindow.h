@@ -131,6 +131,7 @@ private slots:
 
 	void onOperatorModeChange(bool op);
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
+	void onUndoDepthLimitSet(int undoDepthLimit);
 
 	void onServerConnected();
 	void onServerLogin();
@@ -163,6 +164,8 @@ private slots:
 	void clearLocalCanvasBackground();
 
 	void showLayoutsDialog();
+
+	void changeUndoDepthLimit();
 
 	void updateDevToolsActions();
 	void setArtificialLag();

@@ -115,6 +115,9 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/tablettester.h"
 #include "desktop/dialogs/abusereport.h"
 #include "desktop/dialogs/brushsettingsdialog.h"
+#include "desktop/dialogs/sessionundodepthlimitdialog.h"
+#include "desktop/dialogs/userinfodialog.h"
+
 #ifdef ENABLE_VERSION_CHECK
 #include "desktop/dialogs/versioncheckdialog.h"
 #endif
@@ -480,6 +483,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->aclState(), &canvas::AclState::localOpChanged, this, &MainWindow::onOperatorModeChange);
 	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &MainWindow::updateLockWidget);
 	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
+	connect(canvas->paintEngine(), &canvas::PaintEngine::undoDepthLimitSet, this, &MainWindow::onUndoDepthLimitSet);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
@@ -530,6 +534,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		DP_Feature f = DP_Feature(i);
 		onFeatureAccessChange(f, m_doc->canvas()->aclState()->canUseFeature(f));
 	}
+	onUndoDepthLimitSet(canvas->paintEngine()->undoDepthLimit());
 }
 
 /**
@@ -1775,6 +1780,7 @@ void MainWindow::onOperatorModeChange(bool op)
 	m_admintools->setEnabled(op);
 	m_serverLogDialog->setOperatorMode(op);
 	getAction("gainop")->setEnabled(!op && m_doc->isSessionOpword());
+	getAction("sessionundodepthlimit")->setEnabled(op);
 }
 
 void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
@@ -1805,6 +1811,14 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		break;
 	default: break;
 	}
+}
+
+void MainWindow::onUndoDepthLimitSet(int undoDepthLimit)
+{
+	QAction *action = getAction("sessionundodepthlimit");
+	action->setProperty("undodepthlimit", undoDepthLimit);
+	action->setText(tr("Undo Limit... (%1)").arg(undoDepthLimit));
+	action->setStatusTip(tr("Change the session's undo limit, current limit is %1.").arg(undoDepthLimit));
 }
 
 /**
@@ -2323,6 +2337,24 @@ void MainWindow::showLayoutsDialog()
 	dlg->show();
 	dlg->activateWindow();
 	dlg->raise();
+}
+
+
+void MainWindow::changeUndoDepthLimit()
+{
+	QAction *action = getAction("sessionundodepthlimit");
+	bool ok;
+	int previousUndoDepthLimit = action->property("undodepthlimit").toInt(&ok);
+
+	dialogs::SessionUndoDepthLimitDialog dlg{
+		ok ? previousUndoDepthLimit : DP_DUMP_UNDO_DEPTH_LIMIT, this};
+	if(dlg.exec() == QDialog::Accepted) {
+		int undoDepthLimit = dlg.undoDepthLimit();
+		if(undoDepthLimit != previousUndoDepthLimit) {
+			m_doc->client()->sendMessage(drawdance::Message::makeUndoDepth(
+				m_doc->canvas()->localUserId(), undoDepthLimit));
+		}
+	}
 }
 
 
@@ -3004,6 +3036,7 @@ void MainWindow::setupActions()
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
+	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit").disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
 	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
@@ -3022,6 +3055,7 @@ void MainWindow::setupActions()
 	connect(sessionSettings, &QAction::triggered, m_sessionSettings, [this](){
 		utils::showWindow(m_sessionSettings);
 	});
+	connect(sessionUndoDepthLimit, &QAction::triggered, this, &MainWindow::changeUndoDepthLimit);
 	connect(serverlog, &QAction::triggered, m_serverLogDialog, [this](){
 		utils::showWindow(m_serverLogDialog);
 	});
@@ -3051,6 +3085,7 @@ void MainWindow::setupActions()
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(serverlog);
 	sessionmenu->addAction(sessionSettings);
+	sessionmenu->addAction(sessionUndoDepthLimit);
 	sessionmenu->addAction(locksession);
 
 	//

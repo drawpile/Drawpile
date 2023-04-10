@@ -53,6 +53,8 @@ typedef void (*DP_PaintEngineLaserTrailFn)(void *user, unsigned int context_id,
 typedef void (*DP_PaintEngineMovePointerFn)(void *user, unsigned int context_id,
                                             int x, int y);
 typedef void (*DP_PaintEngineDefaultLayerSetFn)(void *user, int layer_id);
+typedef void (*DP_PaintEngineUndoDepthLimitSetFn)(void *user,
+                                                  int undo_depth_limit);
 typedef void (*DP_PaintEngineCatchupFn)(void *user, int progress);
 typedef void (*DP_PaintEngineRecorderStateChanged)(void *user, bool started);
 typedef void (*DP_PaintEngineResizedFn)(void *user, int offset_x, int offset_y,
@@ -77,7 +79,7 @@ typedef struct DP_PaintEngine DP_PaintEngine;
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
-    void *save_point_user, bool want_canvas_history_dump,
+    void *save_point_user, int undo_depth_limit, bool want_canvas_history_dump,
     const char *canvas_history_dump_dir, DP_RecorderGetTimeMsFn get_time_ms_fn,
     void *get_time_ms_user, DP_Player *player_or_null,
     DP_PaintEnginePlaybackFn playback_fn,
@@ -193,7 +195,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
     DP_PaintEngineTimelineChangedFn timeline_changed,
     DP_PaintEngineCursorMovedFn cursor_moved,
-    DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user);
+    DP_PaintEngineDefaultLayerSetFn default_layer_set,
+    DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set, void *user);
 
 void DP_paint_engine_prepare_render(DP_PaintEngine *pe,
                                     DP_PaintEngineRenderSizeFn render_size,

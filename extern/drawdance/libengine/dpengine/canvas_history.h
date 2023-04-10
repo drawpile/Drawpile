@@ -30,6 +30,9 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Message DP_Message;
 
 
+#define DP_CANVAS_HISTORY_UNDO_DEPTH_MIN 3
+#define DP_CANVAS_HISTORY_UNDO_DEPTH_MAX 255
+
 #define DP_USER_CURSOR_COUNT 256
 
 typedef struct DP_CanvasHistory DP_CanvasHistory;
@@ -71,6 +74,7 @@ typedef enum DP_DumpType {
     DP_DUMP_RESET,
     DP_DUMP_SOFT_RESET,
     DP_DUMP_CLEANUP,
+    DP_DUMP_UNDO_DEPTH_LIMIT,
 } DP_DumpType;
 
 DP_CanvasHistory *
@@ -103,6 +107,11 @@ void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
                                             DP_CanvasState *cs);
 
 void DP_canvas_history_soft_reset(DP_CanvasHistory *ch);
+
+int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch);
+
+void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
+                                            int undo_depth_limit);
 
 bool DP_canvas_history_snapshot(DP_CanvasHistory *ch);
 

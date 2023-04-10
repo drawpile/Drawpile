@@ -32,7 +32,7 @@ typedef struct DP_TextWriter DP_TextWriter;
 #define DP_PROTOCOL_VERSION_MAJOR     {{ version.major }}
 #define DP_PROTOCOL_VERSION_MINOR     {{ version.minor }}
 #define DP_PROTOCOL_VERSION           "{{ version.string }}"
-#define DP_UNDO_DEPTH                 {{ undo_depth }}
+#define DP_UNDO_DEPTH_DEFAULT         {{ undo_depth }}
 
 typedef struct DP_MessageMethods {
     size_t (*payload_length)(DP_Message *msg);

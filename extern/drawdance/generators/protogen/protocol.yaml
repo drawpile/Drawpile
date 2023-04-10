@@ -294,6 +294,12 @@ Extension:
     comment: Reserved for non-standard extension use
     reserved: true
 
+UndoDepth:
+    id: 74
+    comment: Set maximum undo depth
+    fields:
+        - depth u8
+
 # Command messages (opaque)
 UndoPoint:
     id: 128

@@ -73,6 +73,7 @@ struct DP_CanvasHistory {
         bool active_by_user[DP_USER_CURSOR_COUNT];
         DP_Cursor cursors_by_user[DP_USER_CURSOR_COUNT];
     } cursors;
+    int undo_depth_limit;
     int offset;
     int capacity;
     int used;
@@ -297,6 +298,18 @@ static void dump_internal(DP_CanvasHistory *ch, unsigned char type)
     }
 }
 
+static void dump_undo_depth_limit(DP_CanvasHistory *ch, int undo_depth_limit)
+{
+    DP_Output *output;
+    if (dump_check(ch, &output)) {
+        if (!DP_OUTPUT_WRITE_BIGENDIAN(
+                output, DP_OUTPUT_UINT8(DP_MSG_UNDO_DEPTH),
+                DP_OUTPUT_UINT8(undo_depth_limit), DP_OUTPUT_END)) {
+            dump_dispose_error(ch, output);
+        }
+    }
+}
+
 static void dump_snapshot_message(void *user, DP_Message *msg)
 {
     DP_CanvasHistory *ch = user;
@@ -495,6 +508,7 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
         mutex,
         cs,
         {0},
+        DP_UNDO_DEPTH_DEFAULT,
         0,
         INITIAL_CAPACITY,
         1,
@@ -688,12 +702,17 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch)
     HISTORY_DEBUG("Hard reset");
     dump_internal(ch, DP_DUMP_RESET);
     reset_to_state_noinc(ch, DP_canvas_state_new());
+    ch->undo_depth_limit = DP_UNDO_DEPTH_DEFAULT;
     dump_init(ch);
 }
 
 void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
                                             DP_CanvasState *cs)
 {
+    // FIXME: This function is used for jumping around in recordings, but it's
+    // conceptually broken. It doesn't handle undos correctly, meaning after
+    // resetting the state, the undo stack will be empty and the undo depth
+    // limit will be in some stale state.
     HISTORY_DEBUG("Reset to state");
     dump_internal(ch, DP_DUMP_RESET);
     reset_to_state_noinc(ch, cs);
@@ -712,6 +731,29 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch)
     // client joined at.
     HISTORY_DEBUG("Soft reset");
     dump_internal(ch, DP_DUMP_SOFT_RESET);
+    reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
+}
+
+int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch)
+{
+    DP_ASSERT(ch);
+    return ch->undo_depth_limit;
+}
+
+void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
+                                            int undo_depth_limit)
+{
+    DP_ASSERT(ch);
+
+    int effective_limit =
+        DP_clamp_int(undo_depth_limit, DP_CANVAS_HISTORY_UNDO_DEPTH_MIN,
+                     DP_CANVAS_HISTORY_UNDO_DEPTH_MAX);
+    DP_debug("Set undo depth limit to %d (%d given)", effective_limit,
+             undo_depth_limit);
+    dump_undo_depth_limit(ch, effective_limit);
+    ch->undo_depth_limit = effective_limit;
+
+    HISTORY_DEBUG("Set undo depth limit");
     reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
 }
 
@@ -816,7 +858,8 @@ static int mark_undone_actions_gone(DP_CanvasHistory *ch, int index,
     DP_CanvasHistoryEntry *entries = ch->entries;
     int i = index - 1;
     int depth = 1;
-    for (; i >= 0 && depth < DP_UNDO_DEPTH; --i) {
+    int undo_depth_limit = ch->undo_depth_limit;
+    for (; i >= 0 && depth < undo_depth_limit; --i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_undo_point_entry(entry)) {
             ++depth;
@@ -846,7 +889,8 @@ static int mark_undone_actions_gone(DP_CanvasHistory *ch, int index,
 static void truncate_unreachable(DP_CanvasHistory *ch, int i, int depth)
 {
     DP_CanvasHistoryEntry *entries = ch->entries;
-    for (; i >= 0 && depth < DP_UNDO_DEPTH; --i) {
+    int undo_depth_limit = ch->undo_depth_limit;
+    for (; i >= 0 && depth < undo_depth_limit; --i) {
         if (is_undo_point_entry(&entries[i])) {
             ++depth;
         }
@@ -1064,7 +1108,8 @@ static int find_first_undo_point(DP_CanvasHistory *ch, unsigned int context_id,
     DP_CanvasHistoryEntry *entries = ch->entries;
     int i;
     int depth = 0;
-    for (i = ch->used - 1; i >= 0 && depth <= DP_UNDO_DEPTH; --i) {
+    int undo_depth_limit = ch->undo_depth_limit;
+    for (i = ch->used - 1; i >= 0 && depth <= undo_depth_limit; --i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_undo_point_entry(entry)) {
             ++depth;
@@ -1106,8 +1151,10 @@ static bool undo(DP_CanvasHistory *ch, DP_DrawContext *dc,
     int depth;
     int undo_start = find_first_undo_point(ch, context_id, &depth);
     HISTORY_DEBUG("Undo for user %u from %d", context_id, undo_start);
-    if (depth > DP_UNDO_DEPTH) {
-        DP_error_set("Undo by user %u beyond history limit", context_id);
+    int undo_depth_limit = ch->undo_depth_limit;
+    if (depth > undo_depth_limit) {
+        DP_error_set("Undo by user %u beyond history limit %d", context_id,
+                     undo_depth_limit);
         return false;
     }
     else if (undo_start < 0) {
@@ -1127,7 +1174,8 @@ static int find_oldest_redo_point(DP_CanvasHistory *ch, unsigned int context_id,
     DP_CanvasHistoryEntry *entries = ch->entries;
     int redo_start = -1;
     int depth = 0;
-    for (int i = ch->used - 1; i >= 0 && depth <= DP_UNDO_DEPTH; --i) {
+    int undo_depth_limit = ch->undo_depth_limit;
+    for (int i = ch->used - 1; i >= 0 && depth <= undo_depth_limit; --i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
         if (is_undo_point_entry(entry)) {
             ++depth;
@@ -1172,8 +1220,10 @@ static bool redo(DP_CanvasHistory *ch, DP_DrawContext *dc,
     int depth;
     int redo_start = find_oldest_redo_point(ch, context_id, &depth);
     HISTORY_DEBUG("Redo for user %u from %d", context_id, redo_start);
-    if (depth > DP_UNDO_DEPTH) {
-        DP_error_set("Redo by user %u beyond history limit", context_id);
+    int undo_depth_limit = ch->undo_depth_limit;
+    if (depth >> undo_depth_limit) {
+        DP_error_set("Redo by user %u beyond history limit %d", context_id,
+                     undo_depth_limit);
         return false;
     }
     else if (redo_start < 0) {

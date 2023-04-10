@@ -71,6 +71,7 @@ bool DP_message_type_client_meta(DP_MessageType type)
     case DP_MSG_DEFAULT_LAYER:
     case DP_MSG_FILTERED:
     case DP_MSG_EXTENSION:
+    case DP_MSG_UNDO_DEPTH:
         return true;
     default:
         return false;
@@ -161,6 +162,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "filtered";
     case DP_MSG_EXTENSION:
         return "extension";
+    case DP_MSG_UNDO_DEPTH:
+        return "undodepth";
     case DP_MSG_UNDO_POINT:
         return "undopoint";
     case DP_MSG_CANVAS_RESIZE:
@@ -271,6 +274,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_FILTERED";
     case DP_MSG_EXTENSION:
         return "DP_MSG_EXTENSION";
+    case DP_MSG_UNDO_DEPTH:
+        return "DP_MSG_UNDO_DEPTH";
     case DP_MSG_UNDO_POINT:
         return "DP_MSG_UNDO_POINT";
     case DP_MSG_CANVAS_RESIZE:
@@ -400,6 +405,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "filtered")) {
         return DP_MSG_FILTERED;
+    }
+    else if (DP_str_equal(type_name, "undodepth")) {
+        return DP_MSG_UNDO_DEPTH;
     }
     else if (DP_str_equal(type_name, "undopoint")) {
         return DP_MSG_UNDO_POINT;
@@ -555,6 +563,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         DP_error_set(
             "Can't deserialize reserved message type 73 DP_MSG_EXTENSION");
         return NULL;
+    case DP_MSG_UNDO_DEPTH:
+        return DP_msg_undo_depth_deserialize(context_id, buf, length);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_deserialize(context_id, buf, length);
     case DP_MSG_CANVAS_RESIZE:
@@ -675,6 +685,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
     case DP_MSG_EXTENSION:
         DP_error_set("Can't parse reserved message type 73 DP_MSG_EXTENSION");
         return NULL;
+    case DP_MSG_UNDO_DEPTH:
+        return DP_msg_undo_depth_parse(context_id, reader);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_parse(context_id, reader);
     case DP_MSG_CANVAS_RESIZE:
@@ -2914,6 +2926,94 @@ const unsigned char *DP_msg_filtered_message(const DP_MsgFiltered *mf,
 size_t DP_msg_filtered_message_size(const DP_MsgFiltered *mf)
 {
     return mf->message_size;
+}
+
+
+/* DP_MSG_UNDO_DEPTH */
+
+struct DP_MsgUndoDepth {
+    uint8_t depth;
+};
+
+static size_t msg_undo_depth_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)1);
+}
+
+static size_t msg_undo_depth_serialize_payload(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgUndoDepth *mud = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mud->depth, data + written);
+    DP_ASSERT(written == msg_undo_depth_payload_length(msg));
+    return written;
+}
+
+static bool msg_undo_depth_write_payload_text(DP_Message *msg,
+                                              DP_TextWriter *writer)
+{
+    DP_MsgUndoDepth *mud = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "depth", mud->depth, false);
+}
+
+static bool msg_undo_depth_equals(DP_Message *DP_RESTRICT msg,
+                                  DP_Message *DP_RESTRICT other)
+{
+    DP_MsgUndoDepth *a = DP_message_internal(msg);
+    DP_MsgUndoDepth *b = DP_message_internal(other);
+    return a->depth == b->depth;
+}
+
+static const DP_MessageMethods msg_undo_depth_methods = {
+    msg_undo_depth_payload_length,
+    msg_undo_depth_serialize_payload,
+    msg_undo_depth_write_payload_text,
+    msg_undo_depth_equals,
+};
+
+DP_Message *DP_msg_undo_depth_new(unsigned int context_id, uint8_t depth)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_UNDO_DEPTH, context_id, &msg_undo_depth_methods,
+                       sizeof(DP_MsgUndoDepth));
+    DP_MsgUndoDepth *mud = DP_message_internal(msg);
+    mud->depth = depth;
+    return msg;
+}
+
+DP_Message *DP_msg_undo_depth_deserialize(unsigned int context_id,
+                                          const unsigned char *buffer,
+                                          size_t length)
+{
+    if (length != 1) {
+        DP_error_set("Wrong length for undodepth message; "
+                     "expected 1, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t depth = read_uint8(buffer + read, &read);
+    return DP_msg_undo_depth_new(context_id, depth);
+}
+
+DP_Message *DP_msg_undo_depth_parse(unsigned int context_id,
+                                    DP_TextReader *reader)
+{
+    uint8_t depth =
+        (uint8_t)DP_text_reader_get_ulong(reader, "depth", UINT8_MAX);
+    return DP_msg_undo_depth_new(context_id, depth);
+}
+
+DP_MsgUndoDepth *DP_msg_undo_depth_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_UNDO_DEPTH);
+}
+
+uint8_t DP_msg_undo_depth_depth(const DP_MsgUndoDepth *mud)
+{
+    DP_ASSERT(mud);
+    return mud->depth;
 }
 
 

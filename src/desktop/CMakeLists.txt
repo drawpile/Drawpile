@@ -104,6 +104,8 @@ target_sources(drawpile PRIVATE
 	dialogs/resizedialog.h
 	dialogs/serverlogdialog.cpp
 	dialogs/serverlogdialog.h
+	dialogs/sessionundodepthlimitdialog.cpp
+	dialogs/sessionundodepthlimitdialog.h
 	dialogs/sessionsettings.cpp
 	dialogs/sessionsettings.h
 	dialogs/settingsdialog.cpp

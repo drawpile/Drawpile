@@ -183,6 +183,7 @@ struct DP_PaintEngine {
     DP_Atomic running;
     DP_Atomic catchup;
     DP_Atomic default_layer_id;
+    DP_Atomic undo_depth_limit;
     DP_Thread *paint_thread;
     struct {
         char *path;
@@ -298,6 +299,12 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
     case DP_DUMP_CLEANUP:
         decref_messages(count, msgs);
         DP_canvas_history_cleanup(ch, dc, drop_message, NULL);
+        break;
+    case DP_DUMP_UNDO_DEPTH_LIMIT:
+        DP_ASSERT(count == 1);
+        DP_canvas_history_undo_depth_limit_set(
+            ch, DP_msg_undo_depth_depth(DP_message_internal(msgs[0])));
+        decref_messages(count, msgs);
         break;
     default:
         decref_messages(count, msgs);
@@ -517,6 +524,12 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
         int default_layer_id = DP_msg_default_layer_id(mdl);
         DP_atomic_xch(&pe->default_layer_id, default_layer_id);
     }
+    else if (type == DP_MSG_UNDO_DEPTH) {
+        DP_MsgUndoDepth *mud = DP_message_internal(msg);
+        int undo_depth_limit = DP_msg_undo_depth_depth(mud);
+        DP_canvas_history_undo_depth_limit_set(pe->ch, undo_depth_limit);
+        DP_atomic_xch(&pe->undo_depth_limit, undo_depth_limit);
+    }
     else if (local) {
         if (!DP_canvas_history_handle_local(pe->ch, dc, msg)) {
             DP_warn("Handle local command: %s", DP_error());
@@ -687,7 +700,7 @@ static void apply_hidden_layers_recursive(DP_Vector *hidden_layers,
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
     DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
-    void *save_point_user, bool want_canvas_history_dump,
+    void *save_point_user, int undo_depth_limit, bool want_canvas_history_dump,
     const char *canvas_history_dump_dir, DP_RecorderGetTimeMsFn get_time_ms_fn,
     void *get_time_ms_user, DP_Player *player_or_null,
     DP_PaintEnginePlaybackFn playback_fn,
@@ -705,6 +718,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->ch = DP_canvas_history_new_inc(
         cs_or_null, save_point_fn, save_point_user, want_canvas_history_dump,
         canvas_history_dump_dir);
+    DP_canvas_history_undo_depth_limit_set(pe->ch, undo_depth_limit);
     pe->diff = DP_canvas_diff_new();
     pe->tlc = DP_transient_layer_content_new_init(0, 0, NULL);
     pe->checker = DP_tile_new_checker(
@@ -738,6 +752,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_atomic_set(&pe->running, true);
     DP_atomic_set(&pe->catchup, -1);
     DP_atomic_set(&pe->default_layer_id, -1);
+    DP_atomic_set(&pe->undo_depth_limit,
+                  DP_canvas_history_undo_depth_limit(pe->ch));
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->record.path = NULL;
     pe->record.recorder = NULL;
@@ -1612,7 +1628,7 @@ static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
     else {
         DP_MessageType type = DP_message_type(msg);
         record_message(pe, msg, type);
-        if (is_pushable_type(type)) {
+        if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH) {
             return true;
         }
         else if (type == DP_MSG_LASER_TRAIL) {
@@ -2050,7 +2066,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
     DP_PaintEngineTimelineChangedFn timeline_changed,
     DP_PaintEngineCursorMovedFn cursor_moved,
-    DP_PaintEngineDefaultLayerSetFn default_layer_set, void *user)
+    DP_PaintEngineDefaultLayerSetFn default_layer_set,
+    DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set, void *user)
 {
     DP_ASSERT(pe);
     DP_ASSERT(catchup);
@@ -2128,6 +2145,11 @@ void DP_paint_engine_tick(
     int default_layer_id = DP_atomic_xch(&pe->default_layer_id, -1);
     if (default_layer_id != -1) {
         default_layer_set(user, default_layer_id);
+    }
+
+    int undo_depth_limit = DP_atomic_xch(&pe->undo_depth_limit, -1);
+    if (undo_depth_limit != -1) {
+        undo_depth_limit_set(user, undo_depth_limit);
     }
 
     DP_PERF_END(fn);

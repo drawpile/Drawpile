@@ -204,6 +204,11 @@ Message Message::makeRemoveTimelineFrame(uint8_t contextId, uint16_t frame)
     return Message{DP_msg_remove_timeline_frame_new(contextId, frame)};
 }
 
+Message Message::makeUndoDepth(uint8_t contextId, uint8_t depth)
+{
+    return Message{DP_msg_undo_depth_new(contextId, depth)};
+}
+
 Message Message::makeUndoPoint(uint8_t contextId)
 {
     return Message{DP_msg_undo_point_new(contextId)};

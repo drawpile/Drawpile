@@ -979,6 +979,9 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
                 override || DP_acl_state_is_op(acls, message_user_id(msg)));
         case DP_MSG_FILTERED:
             return DP_ACL_STATE_FILTERED_BIT;
+        case DP_MSG_UNDO_DEPTH:
+            return filter_unless(
+                override || DP_acl_state_is_op(acls, message_user_id(msg)));
         default:
             return 0;
         }

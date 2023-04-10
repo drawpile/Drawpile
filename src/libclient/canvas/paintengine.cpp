@@ -26,13 +26,13 @@ namespace canvas {
 
 PaintEngine::PaintEngine(
 		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-		bool wantCanvasHistoryDump, QObject *parent)
+		int undoDepthLimit, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine{
-		m_acls, m_snapshotQueue, wantCanvasHistoryDump, PaintEngine::onPlayback,
-		PaintEngine::onDumpPlayback, this}
+		m_acls, m_snapshotQueue, undoDepthLimit, wantCanvasHistoryDump,
+		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this}
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_changedTileBounds{}
@@ -44,6 +44,7 @@ PaintEngine::PaintEngine(
 	, m_sampleColorLastDiameter(-1)
 	, m_onionSkins{nullptr}
 	, m_enableOnionSkins{false}
+	, m_undoDepthLimit{undoDepthLimit}
 {
 	m_painterMutex = DP_mutex_new();
 	start();
@@ -88,14 +89,16 @@ void PaintEngine::start()
 }
 
 void PaintEngine::reset(
-	uint8_t localUserId, const drawdance::CanvasState &canvasState, DP_Player *player)
+	int undoDepthLimit, uint8_t localUserId,
+	const drawdance::CanvasState &canvasState, DP_Player *player)
 {
-	m_paintEngine.reset(m_acls, m_snapshotQueue, localUserId,
+	m_paintEngine.reset(m_acls, m_snapshotQueue, undoDepthLimit, localUserId,
 		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this, canvasState,
 		player);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
+	m_undoDepthLimit = undoDepthLimit;
 	start();
 	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
 	emit defaultLayer(0);
@@ -112,7 +115,8 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
 		&PaintEngine::onTimelineChanged,
-		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer, this);
+		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer,
+		&PaintEngine::onUndoDepthLimitSet, this);
 
 	if(m_changedTileBounds.isValid()) {
 		QRect changedArea{
@@ -139,10 +143,12 @@ void PaintEngine::enqueueReset()
 	receiveMessages(false, 1, &msg);
 }
 
-void PaintEngine::enqueueLoadBlank(const QSize &size, const QColor &backgroundColor)
+void PaintEngine::enqueueLoadBlank(
+	int undoDepthLimit, const QSize &size, const QColor &backgroundColor)
 {
 	drawdance::Message messages[] = {
 		drawdance::Message::makeInternalReset(0),
+		drawdance::Message::makeUndoDepth(0, undoDepthLimit),
 		drawdance::Message::makeCanvasBackground(0, backgroundColor),
 		drawdance::Message::makeCanvasResize(0, 0, size.width(), size.height(), 0),
 		drawdance::Message::makeLayerCreate(0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
@@ -172,6 +178,11 @@ void PaintEngine::cleanup()
 QColor PaintEngine::backgroundColor() const
 {
 	return historyCanvasState().backgroundTile().singleColor(Qt::transparent);
+}
+
+int PaintEngine::undoDepthLimit() const
+{
+	return m_undoDepthLimit;
 }
 
 bool PaintEngine::localBackgroundColor(QColor &outColor) const
@@ -579,6 +590,13 @@ void PaintEngine::onDefaultLayer(void *user, int layerId)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->defaultLayer(layerId >= 0 && layerId <= UINT16_MAX ? layerId : 0);
+}
+
+void PaintEngine::onUndoDepthLimitSet(void *user, int undoDepthLimit)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	pe->m_undoDepthLimit = undoDepthLimit;
+	emit pe->undoDepthLimitSet(undoDepthLimit);
 }
 
 void PaintEngine::onCatchup(void *user, int progress)

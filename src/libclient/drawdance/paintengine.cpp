@@ -13,7 +13,7 @@ extern "C" {
 
 namespace drawdance {
 
-PaintEngine::PaintEngine(AclState &acls, SnapshotQueue &sq,
+PaintEngine::PaintEngine(AclState &acls, SnapshotQueue &sq, int undoDepthLimit,
 		bool wantCanvasHistoryDump, DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState)
@@ -21,7 +21,7 @@ PaintEngine::PaintEngine(AclState &acls, SnapshotQueue &sq,
 	, m_previewDc{DrawContextPool::acquire()}
 	, m_data(DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
-		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		undoDepthLimit, wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
 		&PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, dumpPlaybackFn,
 		playbackUser))
 {
@@ -38,7 +38,7 @@ DP_PaintEngine *PaintEngine::get()
 }
 
 void PaintEngine::reset(
-	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+	AclState &acls, SnapshotQueue &sq, int undoDepthLimit, uint8_t localUserId,
 	DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
@@ -48,7 +48,7 @@ void PaintEngine::reset(
 	acls.reset(localUserId);
 	m_data = DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
 		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
-		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		undoDepthLimit, wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
 		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
 		playbackUser);
 }
@@ -120,7 +120,6 @@ Tile PaintEngine::localBackgroundTile() const
 
 void PaintEngine::setLocalBackgroundTile(const Tile &tile)
 {
-
 	DP_paint_engine_local_background_tile_set_noinc(
 		m_data, DP_tile_incref_nullable(tile.get()));
 }

@@ -420,6 +420,8 @@ void SettingsDialog::restoreSettings()
 		"snapshotcount", canvas::PaintEngine::DEFAULT_SNAPSHOT_MAX_COUNT).toInt());
 	m_ui->snapshotIntervalSpinner->setValue(cfg.value(
 		"snapshotinterval", canvas::PaintEngine::DEFAULT_SNAPSHOT_MIN_DELAY_MS / 1000).toInt());
+	m_ui->undoDepthLimitSpinner->setValue(cfg.value(
+		"undodepthlimit", DP_UNDO_DEPTH_DEFAULT).toInt());
 	cfg.endGroup();
 
 	m_customShortcuts->loadShortcuts();
@@ -555,6 +557,7 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("fps", m_ui->fpsSpinner->value());
 	cfg.setValue("snapshotcount", m_ui->snapshotCountSpinner->value());
 	cfg.setValue("snapshotinterval", m_ui->snapshotIntervalSpinner->value());
+	cfg.setValue("undodepthlimit", m_ui->undoDepthLimitSpinner->value());
 	cfg.endGroup();
 
 	if(!parentalcontrols::isLocked())

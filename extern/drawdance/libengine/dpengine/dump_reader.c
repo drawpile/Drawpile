@@ -127,6 +127,17 @@ static DP_DumpReaderResult handle_reset(DP_DumpReader *dr)
     return DP_DUMP_READER_SUCCESS;
 }
 
+static DP_DumpReaderResult handle_undo_depth_limit(DP_DumpReader *dr)
+{
+    if (!read_exactly(dr, sizeof(uint8_t))) {
+        return DP_DUMP_READER_ERROR_INPUT;
+    }
+    uint8_t undo_depth_limit = DP_read_bigendian_uint8(dr->input.buffer);
+    DP_Message *msg = DP_msg_undo_depth_new(0, undo_depth_limit);
+    DP_VECTOR_PUSH_TYPE(&dr->messages, DP_Message *, msg);
+    return DP_DUMP_READER_SUCCESS;
+}
+
 static DP_DumpReaderResult read_type(DP_DumpReader *dr, int type)
 {
     switch (type) {
@@ -143,6 +154,8 @@ static DP_DumpReaderResult read_type(DP_DumpReader *dr, int type)
     case DP_DUMP_SOFT_RESET:
     case DP_DUMP_CLEANUP:
         return DP_DUMP_READER_SUCCESS;
+    case DP_DUMP_UNDO_DEPTH_LIMIT:
+        return handle_undo_depth_limit(dr);
     default:
         DP_error_set("Invalid dump type: %d", type);
         return DP_DUMP_READER_ERROR_PARSE;

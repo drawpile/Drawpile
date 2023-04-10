@@ -56,6 +56,7 @@ public:
     static Message makeRemoveTimelineFrame(uint8_t contextId, uint16_t frame);
     static Message makeTrustedUsers(uint8_t contextId, const QVector<uint8_t> &users);
     static Message makeUndo(uint8_t contextId, uint8_t overrideUser, bool redo);
+    static Message makeUndoDepth(uint8_t contextId, uint8_t depth);
     static Message makeUndoPoint(uint8_t contextId);
     static Message makeUserAcl(uint8_t contextId, const QVector<uint8_t> &users);
 

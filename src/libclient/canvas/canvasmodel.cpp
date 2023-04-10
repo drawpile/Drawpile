@@ -23,11 +23,13 @@ extern "C" {
 namespace canvas {
 
 CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
+		long long snapshotMinDelayMs, int undoDepthLimit,
+		bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent), m_selection(nullptr), m_localUserId(1)
 {
 	m_paintengine = new PaintEngine(
-		fps, snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
+		fps, snapshotMaxCount, snapshotMinDelayMs, undoDepthLimit,
+		wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
@@ -54,19 +56,21 @@ CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
 	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);
 }
 
-void CanvasModel::loadBlank(const QSize &size, const QColor &background)
+void CanvasModel::loadBlank(int undoDepthLimit, const QSize &size, const QColor &background)
 {
-	m_paintengine->enqueueLoadBlank(size, background);
+	m_paintengine->enqueueLoadBlank(undoDepthLimit, size, background);
 }
 
-void CanvasModel::loadCanvasState(const drawdance::CanvasState &canvasState)
+void CanvasModel::loadCanvasState(
+	int undoDepthLimit, const drawdance::CanvasState &canvasState)
 {
-	m_paintengine->reset(m_localUserId, canvasState);
+	m_paintengine->reset(undoDepthLimit, m_localUserId, canvasState);
 }
 
-void CanvasModel::loadPlayer(DP_Player *player)
+void CanvasModel::loadPlayer(int undoDepthLimit, DP_Player *player)
 {
-	return m_paintengine->reset(m_localUserId, drawdance::CanvasState::null(), player);
+	return m_paintengine->reset(
+		undoDepthLimit, m_localUserId, drawdance::CanvasState::null(), player);
 }
 
 QSize CanvasModel::size() const
@@ -256,6 +260,9 @@ drawdance::MessageList CanvasModel::generateSnapshot() const
 
 void CanvasModel::amendSnapshotMetadata(drawdance::MessageList &snapshot) const
 {
+	snapshot.prepend(drawdance::Message::makeUndoDepth(
+		0, m_paintengine->undoDepthLimit()));
+
 	if(!m_pinnedMessage.isEmpty()) {
 		snapshot.prepend(drawdance::Message::makeChat(
 			m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));

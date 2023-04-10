@@ -32,7 +32,7 @@ typedef struct DP_TextWriter DP_TextWriter;
 #define DP_PROTOCOL_VERSION_MAJOR     23
 #define DP_PROTOCOL_VERSION_MINOR     0
 #define DP_PROTOCOL_VERSION           "dp:4.23.0"
-#define DP_UNDO_DEPTH                 30
+#define DP_UNDO_DEPTH_DEFAULT         30
 
 typedef struct DP_MessageMethods {
     size_t (*payload_length)(DP_Message *msg);
@@ -63,6 +63,7 @@ typedef enum DP_MessageType {
     DP_MSG_DEFAULT_LAYER = 71,
     DP_MSG_FILTERED = 72,
     DP_MSG_EXTENSION = 73,
+    DP_MSG_UNDO_DEPTH = 74,
     DP_MSG_UNDO_POINT = 128,
     DP_MSG_CANVAS_RESIZE = 129,
     DP_MSG_LAYER_CREATE = 130,
@@ -789,6 +790,30 @@ size_t DP_msg_filtered_message_size(const DP_MsgFiltered *mf);
  *
  * Reserved for non-standard extension use
  */
+
+
+/*
+ * DP_MSG_UNDO_DEPTH
+ *
+ * Set maximum undo depth
+ */
+
+#define DP_MSG_UNDO_DEPTH_STATIC_LENGTH 1
+
+typedef struct DP_MsgUndoDepth DP_MsgUndoDepth;
+
+DP_Message *DP_msg_undo_depth_new(unsigned int context_id, uint8_t depth);
+
+DP_Message *DP_msg_undo_depth_deserialize(unsigned int context_id,
+                                          const unsigned char *buffer,
+                                          size_t length);
+
+DP_Message *DP_msg_undo_depth_parse(unsigned int context_id,
+                                    DP_TextReader *reader);
+
+DP_MsgUndoDepth *DP_msg_undo_depth_cast(DP_Message *msg);
+
+uint8_t DP_msg_undo_depth_depth(const DP_MsgUndoDepth *mud);
 
 
 /*

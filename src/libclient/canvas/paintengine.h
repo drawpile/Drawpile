@@ -34,7 +34,8 @@ public:
 
 	PaintEngine(
 		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-		bool wantCanvasHistoryDump, QObject *parent = nullptr);
+		int undoDepthLimit, bool wantCanvasHistoryDump,
+		QObject *parent = nullptr);
 
 	~PaintEngine() override;
 
@@ -45,7 +46,7 @@ public:
 
 	/// Reset the paint engine to its default state
 	void reset(
-		uint8_t localUserId,
+		int undoDepthLimit, uint8_t localUserId,
 		const drawdance::CanvasState &canvasState = drawdance::CanvasState::null(),
 		DP_Player *player = nullptr);
 
@@ -79,7 +80,8 @@ public:
 
 	void enqueueReset();
 
-	void enqueueLoadBlank(const QSize &size, const QColor &backgroundColor);
+	void enqueueLoadBlank(
+		int undoDepthLimit, const QSize &size, const QColor &backgroundColor);
 
 	//! Enqueue a "catchup progress" marker.
 	//! Will trigger the emission of caughtUpTo signal once the marker
@@ -93,6 +95,8 @@ public:
 
 	//! Get the color of the background tile
 	QColor backgroundColor() const;
+
+	int undoDepthLimit() const;
 
 	//! Get the color of the local background tile, returning if one exists
 	bool localBackgroundColor(QColor &outColor) const;
@@ -201,6 +205,7 @@ signals:
 	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 	void laserTrail(uint8_t userId, int persistence, uint32_t color);
 	void defaultLayer(uint16_t layerId);
+	void undoDepthLimitSet(int undoDepthLimit);
 
 protected:
 	void timerEvent(QTimerEvent *) override;
@@ -212,6 +217,7 @@ private:
 	static void onLaserTrail(void *user, unsigned int contextId, int persistence, uint32_t color);
 	static void onMovePointer(void *user, unsigned int contextId, int x, int y);
 	static void onDefaultLayer(void *user, int layerId);
+	static void onUndoDepthLimitSet(void *user, int undoDepthLimit);
 	static void onCatchup(void *user, int progress);
 	static void onRecorderStateChanged(void *user, bool started);
 	static void onResized(void *user, int offsetX, int offsetY, int prevWidth, int prevHeight);
@@ -245,6 +251,7 @@ private:
 	int m_sampleColorLastDiameter;
 	DP_OnionSkins *m_onionSkins;
 	bool m_enableOnionSkins;
+	int m_undoDepthLimit;
 };
 
 }

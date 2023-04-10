@@ -90,6 +90,11 @@ static void getPaintEngineSettings(
 		"snapshotinterval", canvas::PaintEngine::DEFAULT_SNAPSHOT_MIN_DELAY_MS / 1000).toInt() * 1000LL;
 }
 
+static int getUndoDepthLimitSetting()
+{
+	return QSettings{}.value("settings/paintengine/undodepthlimit", DP_UNDO_DEPTH_DEFAULT).toInt();
+}
+
 void Document::initCanvas()
 {
 	delete m_canvas;
@@ -99,7 +104,7 @@ void Document::initCanvas()
 	getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
 	m_canvas = new canvas::CanvasModel{
 		m_client->myId(), fps, snapshotMaxCount, snapshotMinDelayMs,
-		m_wantCanvasHistoryDump, this};
+		getUndoDepthLimitSetting(), m_wantCanvasHistoryDump, this};
 
 	m_toolctrl->setModel(m_canvas);
 
@@ -144,7 +149,7 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 	initCanvas();
 	unmarkDirty();
 
-	m_canvas->loadBlank(size, background);
+	m_canvas->loadBlank(getUndoDepthLimitSetting(), size, background);
 	setCurrentFilename(QString());
 	return true;
 }
@@ -160,7 +165,7 @@ DP_LoadResult Document::loadFile(const QString &path)
 		setAutosave(false);
 		initCanvas();
 		unmarkDirty();
-		m_canvas->loadCanvasState(canvasState);
+		m_canvas->loadCanvasState(getUndoDepthLimitSetting(), canvasState);
 		setCurrentFilename(path);
 		return DP_LOAD_RESULT_SUCCESS;
 	}
@@ -177,7 +182,7 @@ DP_LoadResult Document::loadRecording(const QString &path, bool debugDump)
 		setAutosave(false);
 		initCanvas();
 		unmarkDirty();
-		m_canvas->loadPlayer(player);
+		m_canvas->loadPlayer(getUndoDepthLimitSetting(), player);
 		setCurrentFilename(path);
 		return result;
 	default:

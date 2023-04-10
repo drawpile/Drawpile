@@ -943,7 +943,42 @@
              </widget>
             </item>
             <item>
-             <spacer name="paintEngineSpacer">
+             <widget class="QGroupBox">
+              <property name="title">
+               <string>Undo</string>
+              </property>
+              <layout class="QVBoxLayout">
+               <item>
+                <widget class="KisSliderSpinBox" name="undoDepthLimitSpinner">
+                 <property name="prefix">
+                  <string>Default Undo Limit: </string>
+                 </property>
+                 <property name="minimum">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <number>255</number>
+                 </property>
+                 <property name="value">
+                  <number>30</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel">
+                 <property name="text">
+                  <string>How many undos are allowed by default. When drawing online, the number of undos are shared between all users. Large values use more memory and can cause visual stutter when an undo happens that's far down the stack. This is only the default limit, you can change the sessions limit under Session &gt; Undo Limit...</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>

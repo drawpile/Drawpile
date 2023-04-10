@@ -430,9 +430,9 @@ static int render_image(DP_ConvContext *c, DP_SaveImageType save_type)
 
     DP_DrawContext *dc = DP_draw_context_new();
     DP_AclState *acls = DP_acl_state_new();
-    DP_PaintEngine *pe =
-        DP_paint_engine_new_inc(dc, NULL, acls, NULL, NULL, NULL, false, NULL,
-                                NULL, NULL, NULL, on_playback, NULL, sem);
+    DP_PaintEngine *pe = DP_paint_engine_new_inc(
+        dc, NULL, acls, NULL, NULL, NULL, DP_UNDO_DEPTH_DEFAULT, false, NULL,
+        NULL, NULL, NULL, on_playback, NULL, sem);
 
     DP_Message *msgs[MESSAGE_BUFFER_SIZE];
     int fill = 0;
