@@ -76,6 +76,7 @@ static DP_FeatureAttributes feature_attributes[] = {
     [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO", "undo"},
     [DP_FEATURE_METADATA] = {"DP_FEATURE_METADATA", "metadata"},
     [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE", "timeline"},
+    [DP_FEATURE_MYPAINT] = {"DP_FEATURE_MYPAINT", "mypaint"},
 };
 
 int DP_access_tier_clamp(int tier)
@@ -245,6 +246,7 @@ static DP_FeatureTiers null_feature_tiers(void)
         DP_ACCESS_TIER_GUEST,
         DP_ACCESS_TIER_GUEST,
         DP_ACCESS_TIER_OPERATOR,
+        DP_ACCESS_TIER_GUEST,
         DP_ACCESS_TIER_GUEST,
     }};
 }
@@ -919,10 +921,11 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                        DP_msg_draw_dabs_pixel_square_cast(msg)));
     case DP_MSG_DRAW_DABS_MYPAINT:
         return override
-            || !DP_acl_state_layer_locked_for(
-                   acls, user_id,
-                   DP_msg_draw_dabs_mypaint_layer(
-                       DP_msg_draw_dabs_mypaint_cast(msg)));
+            || (DP_acl_state_can_use_feature(acls, DP_FEATURE_MYPAINT, user_id)
+                && !DP_acl_state_layer_locked_for(
+                    acls, user_id,
+                    DP_msg_draw_dabs_mypaint_layer(
+                        DP_msg_draw_dabs_mypaint_cast(msg))));
     case DP_MSG_MOVE_RECT:
         return handle_move_rect(acls, msg, user_id, override);
     case DP_MSG_UNDO:

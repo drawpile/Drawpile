@@ -144,6 +144,8 @@ public:
 	static int stepLinear(
 		int min, int max, int current, bool increase, int stepSize = 12);
 
+	virtual bool isLocked() { return false; }
+
 public slots:
 	//! Toggle tool eraser mode (if it has one)
 	virtual void toggleEraserMode() { }

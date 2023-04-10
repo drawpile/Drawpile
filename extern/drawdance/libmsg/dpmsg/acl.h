@@ -60,6 +60,7 @@ typedef enum DP_Feature {
     DP_FEATURE_UNDO,
     DP_FEATURE_METADATA,
     DP_FEATURE_TIMELINE,
+    DP_FEATURE_MYPAINT,
     DP_FEATURE_COUNT,
 } DP_Feature;
 

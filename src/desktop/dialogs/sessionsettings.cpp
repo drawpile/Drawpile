@@ -244,6 +244,7 @@ QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 	case DP_FEATURE_UNDO: return m_ui->permUndo;
 	case DP_FEATURE_METADATA: return m_ui->permMetadata;
 	case DP_FEATURE_TIMELINE: return m_ui->permTimeline;
+	case DP_FEATURE_MYPAINT: return m_ui->permMyPaint;
 	default: Q_ASSERT_X(false, "featureBox", "unhandled case"); return nullptr;
 	}
 }
@@ -260,6 +261,7 @@ void SessionSettingsDialog::onFeatureTiersChanged(const DP_FeatureTiers &feature
 	m_ui->permUndo->setCurrentIndex(int(features.tiers[DP_FEATURE_UNDO]));
 	m_ui->permMetadata->setCurrentIndex(int(features.tiers[DP_FEATURE_METADATA]));
 	m_ui->permTimeline->setCurrentIndex(int(features.tiers[DP_FEATURE_TIMELINE]));
+	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));
 }
 
 void SessionSettingsDialog::initPermissionComboBoxes()

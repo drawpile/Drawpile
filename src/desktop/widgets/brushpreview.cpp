@@ -98,10 +98,17 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 #ifdef DESIGNER_PLUGIN
 	Q_UNUSED(event)
-	painter.drawTiledPixmap(0, 0, width(), height(), m_background);
+	QRect rect{0, 0, width(), height()};
+	painter.drawTiledPixmap(rect, m_background);
 #else
-	painter.drawPixmap(event->rect(), m_brushPreview.pixmap(), event->rect());
+	QRect rect = event->rect();
+	painter.drawPixmap(rect, m_brushPreview.pixmap(), rect);
 #endif
+	if(!isEnabled()) {
+		QColor color = palette().color(QPalette::Window);
+		color.setAlphaF(0.75);
+		painter.fillRect(rect, color);
+	}
 }
 
 void BrushPreview::updatePreview()

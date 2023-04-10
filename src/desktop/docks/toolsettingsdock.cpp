@@ -11,6 +11,7 @@
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/dialogs/colordialog.h"
+#include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 
 #include <QtColorWidgets/color_palette.hpp>
@@ -185,6 +186,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 			this, &ToolSettings::subpixelModeChanged);
 	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
+	connect(d->ctrl, &tools::ToolController::activeBrushChanged, this, &ToolSettings::activeBrushChanged);
 
 	d->colorDialog = dialogs::newColorDialog(this);
 	d->colorDialog->setAlphaEnabled(false);
@@ -219,6 +221,11 @@ void ToolSettings::saveSettings()
 			ts->saveToolSettings().save(cfg);
 		}
 	}
+}
+
+bool ToolSettings::isCurrentToolLocked() const
+{
+	return d->pages[d->currentTool].settings->isLocked();
 }
 
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)

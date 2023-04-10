@@ -46,6 +46,8 @@ public:
 	//! Save tool related settings
 	void saveSettings();
 
+	bool isCurrentToolLocked() const;
+
 public slots:
 	//! Set the active tool
 	void setTool(tools::Tool::Type tool);
@@ -98,6 +100,8 @@ signals:
 
 	//! Currently active tool was changed
 	void toolChanged(tools::Tool::Type tool);
+
+	void activeBrushChanged();
 
 private:
 	void selectTool(tools::Tool::Type tool);

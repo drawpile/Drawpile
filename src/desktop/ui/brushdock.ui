@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>325</width>
-    <height>370</height>
+    <height>411</height>
    </rect>
   </property>
   <layout class="QVBoxLayout">
@@ -233,65 +233,6 @@
      <property name="verticalSpacing">
       <number>0</number>
      </property>
-     <item row="4" column="3">
-      <widget class="widgets::GroupedToolButton" name="pressureSmudging">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="widgets::GroupedToolButton" name="pressureHardness">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="widgets::GroupedToolButton" name="pressureOpacity">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="1" colspan="2">
-      <widget class="QComboBox" name="inputPreset">
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>Input: </string>
-       </property>
-      </widget>
-     </item>
      <item row="10" column="3">
       <widget class="widgets::GroupedToolButton" name="configureInput">
        <property name="toolTip">
@@ -300,97 +241,6 @@
        <property name="icon">
         <iconset theme="configure">
          <normaloff>theme:configure.svg</normaloff>theme:configure.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="widgets::GroupedToolButton" name="pressureSize">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="draw-brush">
-         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="3">
-      <widget class="KisSliderSpinBox" name="brushsizeBox">
-       <property name="suffix">
-        <string>px</string>
-       </property>
-       <property name="prefix">
-        <string>Size: </string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="KisSliderSpinBox" name="radiusLogarithmicBox">
-       <property name="prefix">
-        <string>Radius: </string>
-       </property>
-       <property name="maximum">
-        <number>800</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="3">
-      <widget class="KisSliderSpinBox" name="opacityBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="prefix">
-        <string>Opacity: </string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="3">
-      <widget class="KisSliderSpinBox" name="hardnessBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="prefix">
-        <string>Hardness: </string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="3">
-      <widget class="KisSliderSpinBox" name="smudgingBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="prefix">
-        <string>Smudging: </string>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>0</number>
        </property>
       </widget>
      </item>
@@ -423,6 +273,155 @@
        </property>
       </widget>
      </item>
+     <item row="9" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="slowTrackingBox">
+       <property name="suffix">
+        <string>%</string>
+       </property>
+       <property name="prefix">
+        <string>Stabilizer: </string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="opacityBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Opacity: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="smudgingBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Smudging: </string>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="widgets::GroupedToolButton" name="pressureSmudging">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="widgets::GroupedToolButton" name="pressureHardness">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="radiusLogarithmicBox">
+       <property name="prefix">
+        <string>Radius: </string>
+       </property>
+       <property name="maximum">
+        <number>800</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="hardnessBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Hardness: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="inputPresetLabel">
+       <property name="text">
+        <string>Input: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1" colspan="2">
+      <widget class="QComboBox" name="inputPreset">
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="3">
+      <widget class="KisSliderSpinBox" name="brushsizeBox">
+       <property name="suffix">
+        <string>px</string>
+       </property>
+       <property name="prefix">
+        <string>Size: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="widgets::GroupedToolButton" name="pressureSize">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="7" column="0" colspan="3">
       <widget class="KisSliderSpinBox" name="gainBox">
        <property name="suffix">
@@ -442,20 +441,28 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="3">
-      <widget class="KisSliderSpinBox" name="slowTrackingBox">
-       <property name="suffix">
-        <string>%</string>
+     <item row="2" column="3">
+      <widget class="widgets::GroupedToolButton" name="pressureOpacity">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
        </property>
-       <property name="prefix">
-        <string>Stabilizer: </string>
+       <property name="icon">
+        <iconset theme="draw-brush">
+         <normaloff>theme:draw-brush.svg</normaloff>theme:draw-brush.svg</iconset>
        </property>
-       <property name="maximum">
-        <number>100</number>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="noPermissionLabel">
+     <property name="text">
+      <string>You don't have permission to use MyPaint brushes.</string>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer>

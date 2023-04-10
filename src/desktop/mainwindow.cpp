@@ -316,6 +316,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
+	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::updateLockWidget);
 
 	// Color docks
 	connect(m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged, m_dockColorPalette, &docks::ColorPaletteDock::setColor);
@@ -1729,6 +1730,10 @@ void MainWindow::updateLockWidget()
 {
 	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->isSessionLocked();
 	getAction("locksession")->setChecked(locked);
+	QString toolTip;
+	if(locked) {
+		toolTip = tr("Board is locked");
+	}
 
 	if(locked && !m_wasSessionLocked) {
 		notification::playSound(notification::Event::LOCKED);
@@ -1737,15 +1742,23 @@ void MainWindow::updateLockWidget()
 	}
 	m_wasSessionLocked = locked;
 
-	locked |= m_dockLayers->isCurrentLayerLocked();
+	if(!locked && m_dockLayers->isCurrentLayerLocked()) {
+		locked = true;
+		toolTip = tr("Layer is locked");
+	}
+
+	if(!locked && m_dockToolSettings->isCurrentToolLocked()) {
+		locked = true;
+		toolTip = tr("Tool is locked");
+	}
 
 	if(locked) {
 		m_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
-		m_lockstatus->setToolTip(tr("Board is locked"));
 	} else {
 		m_lockstatus->setPixmap(QPixmap());
-		m_lockstatus->setToolTip(QString());
 	}
+	m_lockstatus->setToolTip(toolTip);
+
 	m_view->setLocked(locked);
 }
 
@@ -1785,6 +1798,10 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		break;
 	case DP_FEATURE_TIMELINE:
 		m_dockTimeline->setFeatureAccess(canUse);
+		break;
+	case DP_FEATURE_MYPAINT:
+		static_cast<tools::BrushSettings*>(m_dockToolSettings->getToolSettingsPage(tools::Tool::FREEHAND))
+			->setMyPaintAllowed(canUse);
 		break;
 	default: break;
 	}
@@ -2016,6 +2033,7 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 		m_doc->toolCtrl()->setActiveAnnotation(0);
 
 	m_doc->toolCtrl()->setActiveTool(tool);
+	updateLockWidget();
 }
 
 void MainWindow::selectionRemoved()

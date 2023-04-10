@@ -58,6 +58,7 @@ struct BrushSettings::Private {
 
 	bool shareBrushSlotColor = false;
 	bool updateInProgress = false;
+	bool myPaintAllowed = true;
 
 	inline brushes::ActiveBrush &currentBrush() {
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
@@ -244,6 +245,17 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 QWidget *BrushSettings::getHeaderWidget()
 {
 	return d->brushSlotWidget;
+}
+
+bool BrushSettings::isLocked()
+{
+	return d->currentBrush().activeType() == brushes::ActiveBrush::MYPAINT && !d->myPaintAllowed;
+}
+
+void BrushSettings::setMyPaintAllowed(bool myPaintAllowed)
+{
+	d->myPaintAllowed = myPaintAllowed;
+	updateUi();
 }
 
 void BrushSettings::setShareBrushSlotColor(bool sameColor)
@@ -606,10 +618,11 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 
 void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 {
-	// Hide certain features based on the brush type
+	// Hide certain features based on the brush type and lock state.
 	QPair<QWidget *, bool> widgetVisibilities[] = {
 		{d->ui.modeColorpick, !mypaintmode},
 		{d->ui.modeLockAlpha, mypaintmode},
+		{d->ui.modeEraser, true},
 		{d->ui.modeIncremental, !mypaintmode},
 		{d->ui.blendmode, !mypaintmode},
 		{d->ui.pressureHardness, softmode && !mypaintmode},
@@ -617,6 +630,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.brushsizeBox, !mypaintmode},
 		{d->ui.pressureSize, !mypaintmode},
 		{d->ui.radiusLogarithmicBox, mypaintmode},
+		{d->ui.opacityBox, true},
 		{d->ui.pressureOpacity, !mypaintmode},
 		{d->ui.smudgingBox, !mypaintmode},
 		{d->ui.pressureSmudging, !mypaintmode},
@@ -624,16 +638,21 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.brushspacingBox, !mypaintmode},
 		{d->ui.gainBox, mypaintmode},
 		{d->ui.slowTrackingBox, mypaintmode},
+		{d->ui.inputPresetLabel, true},
+		{d->ui.inputPreset, true},
+		{d->ui.configureInput, true},
 	};
 	// First hide them all so that the docker doesn't end up bigger temporarily
 	// and messes up the layout. Then afterwards show the applicable ones.
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
 		pair.first->setVisible(false);
 	}
+	bool locked = isLocked();
+	d->ui.noPermissionLabel->setVisible(locked);
+	d->ui.preview->setDisabled(locked);
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
-		pair.first->setVisible(pair.second);
+		pair.first->setVisible(pair.second && !locked);
 	}
-	d->ui.blendmode->setEnabled(!mypaintmode);
 }
 
 void BrushSettings::pushSettings()

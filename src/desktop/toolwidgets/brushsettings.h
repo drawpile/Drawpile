@@ -59,6 +59,9 @@ public:
 
 	QWidget *getHeaderWidget() override;
 
+	bool isLocked() override;
+	void setMyPaintAllowed(bool myPaintAllowed);
+
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
